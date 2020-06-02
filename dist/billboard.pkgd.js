@@ -15724,6 +15724,385 @@ var Store = /*#__PURE__*/function () {
 }();
 
 
+// CONCATENATED MODULE: ./src/config/Options/common/main.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * main config options
+ */
+/* harmony default export */ var common_main = ({
+  /**
+   * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
+   * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
+   * - **NOTE:** In case of element doesn't exist or not specified, will add a `<div>` element to the body.
+   * @name bindto
+   * @memberof Options
+   * @property {string|HTMLElement|d3.selection|object} [bindto="#chart"] Specify the element where chart will be drawn.
+   * @property {string|HTMLElement|d3.selection} bindto.element="#chart" Specify the element where chart will be drawn.
+   * @property {string} [bindto.classname=bb] Specify the class name of bind element.<br>
+   *     **NOTE:** When class name isn't `bb`, then you also need to update the default CSS to be rendered correctly.
+   * @default #chart
+   * @example
+   * bindto: "#myContainer"
+   *
+   * // or HTMLElement
+   * bindto: document.getElementById("myContainer")
+   *
+   * // or D3 selection object
+   * bindto: d3.select("#myContainer")
+   *
+   * // or to change default classname
+   * bindto: {
+   *    element: "#chart",
+   *    classname: "bill-board"  // ex) <div id='chart' class='bill-board'>
+   * }
+   */
+  bindto: "#chart",
+
+  /**
+   * Set chart background.
+   * @name background
+   * @memberof Options
+   * @property {object} background background object
+   * @property {string} background.class Specify the class name for background element.
+   * @property {string} background.color Specify the fill color for background element.<br>**NOTE:** Will be ignored if `imgUrl` option is set.
+   * @property {string} background.imgUrl Specify the image url string for background.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Background)
+   * @example
+   * background: {
+   *    class: "myClass",
+   *    color: "red",
+   *
+   *    // Set image url for background.
+   *    // If specified, 'color' option will be ignored.
+   *    imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
+   * }
+   */
+  background: {},
+
+  /**
+   * Set 'clip-path' attribute for chart element
+   * - **NOTE:**
+   *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
+   *  > Is to make chart element positioned over axis element.
+   * @name clipPath
+   * @memberof Options
+   * @type {boolean}
+   * @default true
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.clipPath)
+   * @example
+   * // don't set 'clip-path' attribute
+   * clipPath: false
+   */
+  clipPath: !0,
+
+  /**
+   * Set svg element's class name
+   * @name svg
+   * @memberof Options
+   * @type {object}
+   * @property {object} [svg] svg object
+   * @property {string} [svg.classname] class name for svg element
+   * @example
+   * svg: {
+   *   classname: "test_class"
+   * }
+   */
+  svg_classname: undefined,
+
+  /**
+   * The desired size of the chart element.
+   * If value is not specified, the width of the chart will be calculated by the size of the parent element it's appended to.
+   * @name size
+   * @memberof Options
+   * @type {object}
+   * @property {object} [size] size object
+   * @property {number} [size.width] width of the chart element
+   * @property {number} [size.height] height of the chart element
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.ChartSize)
+   * @example
+   * size: {
+   *   width: 640,
+   *   height: 480
+   * }
+   */
+  size_width: undefined,
+  size_height: undefined,
+
+  /**
+   * The padding of the chart element.
+   * @name padding
+   * @memberof Options
+   * @type {object}
+   * @property {object} [padding] padding object
+   * @property {number} [padding.top] padding on the top of chart
+   * @property {number} [padding.right] padding on the right of chart
+   * @property {number} [padding.bottom] padding on the bottom of chart
+   * @property {number} [padding.left] padding on the left of chart
+   * @example
+   * padding: {
+   *   top: 20,
+   *   right: 20,
+   *   bottom: 20,
+   *   left: 20
+   * }
+   */
+  padding_left: undefined,
+  padding_right: undefined,
+  padding_top: undefined,
+  padding_bottom: undefined,
+
+  /**
+   * Set chart resize options
+   * @name resize
+   * @memberof Options
+   * @type {object}
+   * @property {object} [resize] resize object
+   * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
+   * @example
+   *  resize: {
+   *      auto: false
+   *  }
+   */
+  resize_auto: !0,
+
+  /**
+   * Set a callback to execute when mouse/touch enters the chart.
+   * @name onover
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   * // @param {Chart} ctx - Instance itself
+   * onover: function(ctx) {
+   *   ...
+   * }
+   */
+  onover: undefined,
+
+  /**
+   * Set a callback to execute when mouse/touch leaves the chart.
+   * @name onout
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   * // @param {Chart} ctx - Instance itself
+   * onout: function(ctx) {
+   *   ...
+   * }
+   */
+  onout: undefined,
+
+  /**
+   * Set a callback to execute when user resizes the screen.
+   * @name onresize
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   * // @param {Chart} ctx - Instance itself
+   * onresize: function(ctx) {
+   *   ...
+   * }
+   */
+  onresize: undefined,
+
+  /**
+   * Set a callback to execute when screen resize finished.
+   * @name onresized
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   * // @param {Chart} ctx - Instance itself
+   * onresized: function(ctx) {
+   *   ...
+   * }
+   */
+  onresized: undefined,
+
+  /**
+   * Set a callback to execute before the chart is initialized
+   * @name onbeforeinit
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   * // @param {Chart} ctx - Instance itself
+   * onbeforeinit: function(ctx) {
+   *   ...
+   * }
+   */
+  onbeforeinit: undefined,
+
+  /**
+   * Set a callback to execute when the chart is initialized.
+   * @name oninit
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   * // @param {Chart} ctx - Instance itself
+   * oninit: function(ctx) {
+   *   ...
+   * }
+   */
+  oninit: undefined,
+
+  /**
+   * Set a callback to execute after the chart is initialized
+   * @name onafterinit
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   * // @param {Chart} ctx - Instance itself
+   * onafterinit: function(ctx) {
+   *   ...
+   * }
+   */
+  onafterinit: undefined,
+
+  /**
+   * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
+   * @name onrendered
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   * // @param {Chart} ctx - Instance itself
+   * onrendered: function(ctx) {
+   *   ...
+   * }
+   */
+  onrendered: undefined,
+
+  /**
+   * Set duration of transition (in milliseconds) for chart animation.<br><br>
+   * - **NOTE:** If `0 `or `null` set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
+   * @name transition
+   * @memberof Options
+   * @type {object}
+   * @property {object} [transition] transition object
+   * @property {number} [transition.duration=350] duration in milliseconds
+   * @example
+   * transition: {
+   *    duration: 500
+   * }
+   */
+  transition_duration: 350,
+
+  /**
+   * Set scatter options
+   * @name scatter
+   * @memberof Options
+   * @type {object}
+   * @property {object} [scatter] scatter object
+   * @property {boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+   * @example
+   *  scatter: {
+   *      connectNull: true,
+   *      step: {
+   *          type: "step-after"
+   *      },
+   *
+   *      // hide all data points ('point.show=false' also has similar effect)
+   *      point: false,
+   *
+   *      // show data points for only indicated datas
+   *      point: [
+   *          "data1", "data3"
+   *      ],
+   *
+   *      zerobased: false
+   *  }
+   */
+  scatter_zerobased: !1,
+
+  /**
+   * Set plugins
+   * @name plugins
+   * @memberof Options
+   * @type {Array}
+   * @example
+   *  plugins: [
+   *    new bb.plugin.stanford({ ... }),
+   *    new PluginA(),
+   *    ...
+   * ]
+   */
+  plugins: [],
+
+  /**
+   * Control the render timing
+   * @name render
+   * @memberof Options
+   * @type {object}
+   * @property {object} [render] render object
+   * @property {boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+   * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
+   * @example
+   *  render: {
+   *    lazy: true,
+   *    observe: true
+   * }
+   *
+   * @example
+   *	// <!-- render.lazy will detect visibility defined -->
+   *  // (a) <div id='chart' class='hide'></div>
+   *  // (b) <div id='chart' style='display:none'></div>
+   *
+   *  // render.lazy enabled by default when element is hidden
+   *  var chart = bb.generate({ ... });
+   *
+   *  // chart will be rendered automatically when element's visibility changes
+   *  // Note: works only for inlined css property or class attribute changes
+   *  document.getElementById('chart').classList.remove('hide')  // (a)
+   *  document.getElementById('chart').style.display = 'block';  // (b)
+   *
+   * @example
+   *	// chart won't be rendered and not observing bind element's visiblity changes
+   *  var chart = bb.generate({
+   *     render: {
+   *          lazy: true,
+   *          observe: false
+   *     }
+   *  });
+   *
+   *  // call at any point when you want to render
+   *  chart.flush();
+   */
+  render: {},
+
+  /**
+   * Show rectangles inside the chart.<br><br>
+   * This option accepts array including object that has axis, start, end and class.
+   * The keys start, end and class are optional.
+   * axis must be x, y or y2. start and end should be the value where regions start and end.
+   * If not specified, the edge values will be used.
+   * If timeseries x axis, date string, Date object and unixtime integer can be used.
+   * If class is set, the region element will have it as class.
+   * @name regions
+   * @memberof Options
+   * @type {Array}
+   * @default []
+   * @example
+   *  regions: [
+   *    {
+   *      axis: "x",
+   *      start: 1,
+   *      end: 4,
+   *      class: "region-1-4"
+   *    }
+   *  ]
+   */
+  regions: []
+});
 // CONCATENATED MODULE: ./src/config/Options/data/data.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -22965,11 +23344,18 @@ function convertInputType(mouse, touch) {
   return hasMouse && "mouse" || isMobile && "touch" || null;
 }
 // CONCATENATED MODULE: ./src/config/Options/Options.ts
+
+
+function Options_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function Options_objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? Options_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : Options_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 // common
+
 
 
 
@@ -23004,376 +23390,7 @@ function convertInputType(mouse, touch) {
 
 var Options = function () {
   var config = [data_data, common_color, interaction, common_legend, common_title, common_tooltip].concat([donut, gauge, shape_pie, shape_radar], [data_axis, data_selection, axis_axis, common_grid, common_point, common_subchart, common_zoom], [shape_area, shape_bar, bubble, shape_line, shape_spline]);
-  return mergeObj.apply(void 0, [{
-    /**
-     * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
-     * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
-     * - **NOTE:** In case of element doesn't exist or not specified, will add a `<div>` element to the body.
-     * @name bindto
-     * @memberof Options
-     * @property {string|HTMLElement|d3.selection|object} [bindto="#chart"] Specify the element where chart will be drawn.
-     * @property {string|HTMLElement|d3.selection} bindto.element="#chart" Specify the element where chart will be drawn.
-     * @property {string} [bindto.classname=bb] Specify the class name of bind element.<br>
-     *     **NOTE:** When class name isn't `bb`, then you also need to update the default CSS to be rendered correctly.
-     * @default #chart
-     * @example
-     * bindto: "#myContainer"
-     *
-     * // or HTMLElement
-     * bindto: document.getElementById("myContainer")
-     *
-     * // or D3 selection object
-     * bindto: d3.select("#myContainer")
-     *
-     * // or to change default classname
-     * bindto: {
-     *    element: "#chart",
-     *    classname: "bill-board"  // ex) <div id='chart' class='bill-board'>
-     * }
-     */
-    bindto: "#chart",
-
-    /**
-     * Set chart background.
-     * @name background
-     * @memberof Options
-     * @property {object} background background object
-     * @property {string} background.class Specify the class name for background element.
-     * @property {string} background.color Specify the fill color for background element.<br>**NOTE:** Will be ignored if `imgUrl` option is set.
-     * @property {string} background.imgUrl Specify the image url string for background.
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Background)
-     * @example
-     * background: {
-     *    class: "myClass",
-     *    color: "red",
-     *
-     *    // Set image url for background.
-     *    // If specified, 'color' option will be ignored.
-     *    imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
-     * }
-     */
-    background: {},
-
-    /**
-     * Set 'clip-path' attribute for chart element
-     * - **NOTE:**
-     *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
-     *  > Is to make chart element positioned over axis element.
-     * @name clipPath
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.clipPath)
-     * @example
-     * // don't set 'clip-path' attribute
-     * clipPath: false
-     */
-    clipPath: !0,
-
-    /**
-     * Set svg element's class name
-     * @name svg
-     * @memberof Options
-     * @type {object}
-     * @property {object} [svg] svg object
-     * @property {string} [svg.classname] class name for svg element
-     * @example
-     * svg: {
-     *   classname: "test_class"
-     * }
-     */
-    svg_classname: undefined,
-
-    /**
-     * The desired size of the chart element.
-     * If value is not specified, the width of the chart will be calculated by the size of the parent element it's appended to.
-     * @name size
-     * @memberof Options
-     * @type {object}
-     * @property {object} [size] size object
-     * @property {number} [size.width] width of the chart element
-     * @property {number} [size.height] height of the chart element
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.ChartSize)
-     * @example
-     * size: {
-     *   width: 640,
-     *   height: 480
-     * }
-     */
-    size_width: undefined,
-    size_height: undefined,
-
-    /**
-     * The padding of the chart element.
-     * @name padding
-     * @memberof Options
-     * @type {object}
-     * @property {object} [padding] padding object
-     * @property {number} [padding.top] padding on the top of chart
-     * @property {number} [padding.right] padding on the right of chart
-     * @property {number} [padding.bottom] padding on the bottom of chart
-     * @property {number} [padding.left] padding on the left of chart
-     * @example
-     * padding: {
-     *   top: 20,
-     *   right: 20,
-     *   bottom: 20,
-     *   left: 20
-     * }
-     */
-    padding_left: undefined,
-    padding_right: undefined,
-    padding_top: undefined,
-    padding_bottom: undefined,
-
-    /**
-     * Set chart resize options
-     * @name resize
-     * @memberof Options
-     * @type {object}
-     * @property {object} [resize] resize object
-     * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
-     * @example
-     *  resize: {
-     *      auto: false
-     *  }
-     */
-    resize_auto: !0,
-
-    /**
-     * Set a callback to execute when mouse/touch enters the chart.
-     * @name onover
-     * @memberof Options
-     * @type {Function}
-     * @default undefined
-     * @example
-     * // @param {Chart} ctx - Instance itself
-     * onover: function(ctx) {
-     *   ...
-     * }
-     */
-    onover: undefined,
-
-    /**
-     * Set a callback to execute when mouse/touch leaves the chart.
-     * @name onout
-     * @memberof Options
-     * @type {Function}
-     * @default undefined
-     * @example
-     * // @param {Chart} ctx - Instance itself
-     * onout: function(ctx) {
-     *   ...
-     * }
-     */
-    onout: undefined,
-
-    /**
-     * Set a callback to execute when user resizes the screen.
-     * @name onresize
-     * @memberof Options
-     * @type {Function}
-     * @default undefined
-     * @example
-     * // @param {Chart} ctx - Instance itself
-     * onresize: function(ctx) {
-     *   ...
-     * }
-     */
-    onresize: undefined,
-
-    /**
-     * Set a callback to execute when screen resize finished.
-     * @name onresized
-     * @memberof Options
-     * @type {Function}
-     * @default undefined
-     * @example
-     * // @param {Chart} ctx - Instance itself
-     * onresized: function(ctx) {
-     *   ...
-     * }
-     */
-    onresized: undefined,
-
-    /**
-     * Set a callback to execute before the chart is initialized
-     * @name onbeforeinit
-     * @memberof Options
-     * @type {Function}
-     * @default undefined
-     * @example
-     * // @param {Chart} ctx - Instance itself
-     * onbeforeinit: function(ctx) {
-     *   ...
-     * }
-     */
-    onbeforeinit: undefined,
-
-    /**
-     * Set a callback to execute when the chart is initialized.
-     * @name oninit
-     * @memberof Options
-     * @type {Function}
-     * @default undefined
-     * @example
-     * // @param {Chart} ctx - Instance itself
-     * oninit: function(ctx) {
-     *   ...
-     * }
-     */
-    oninit: undefined,
-
-    /**
-     * Set a callback to execute after the chart is initialized
-     * @name onafterinit
-     * @memberof Options
-     * @type {Function}
-     * @default undefined
-     * @example
-     * // @param {Chart} ctx - Instance itself
-     * onafterinit: function(ctx) {
-     *   ...
-     * }
-     */
-    onafterinit: undefined,
-
-    /**
-     * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
-     * @name onrendered
-     * @memberof Options
-     * @type {Function}
-     * @default undefined
-     * @example
-     * // @param {Chart} ctx - Instance itself
-     * onrendered: function(ctx) {
-     *   ...
-     * }
-     */
-    onrendered: undefined,
-
-    /**
-     * Set duration of transition (in milliseconds) for chart animation.<br><br>
-     * - **NOTE:** If `0 `or `null` set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
-     * @name transition
-     * @memberof Options
-     * @type {object}
-     * @property {object} [transition] transition object
-     * @property {number} [transition.duration=350] duration in milliseconds
-     * @example
-     * transition: {
-     *    duration: 500
-     * }
-     */
-    transition_duration: 350,
-
-    /**
-     * Set scatter options
-     * @name scatter
-     * @memberof Options
-     * @type {object}
-     * @property {object} [scatter] scatter object
-     * @property {boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
-     * @example
-     *  scatter: {
-     *      connectNull: true,
-     *      step: {
-     *          type: "step-after"
-     *      },
-     *
-     *      // hide all data points ('point.show=false' also has similar effect)
-     *      point: false,
-     *
-     *      // show data points for only indicated datas
-     *      point: [
-     *          "data1", "data3"
-     *      ],
-     *
-     *      zerobased: false
-     *  }
-     */
-    scatter_zerobased: !1,
-
-    /**
-     * Set plugins
-     * @name plugins
-     * @memberof Options
-     * @type {Array}
-     * @example
-     *  plugins: [
-     *    new bb.plugin.stanford({ ... }),
-     *    new PluginA(),
-     *    ...
-     * ]
-     */
-    plugins: [],
-
-    /**
-     * Control the render timing
-     * @name render
-     * @memberof Options
-     * @type {object}
-     * @property {object} [render] render object
-     * @property {boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
-     * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
-     * @example
-     *  render: {
-     *    lazy: true,
-     *    observe: true
-     * }
-     *
-     * @example
-     *	// <!-- render.lazy will detect visibility defined -->
-     *  // (a) <div id='chart' class='hide'></div>
-     *  // (b) <div id='chart' style='display:none'></div>
-     *
-     *  // render.lazy enabled by default when element is hidden
-     *  var chart = bb.generate({ ... });
-     *
-     *  // chart will be rendered automatically when element's visibility changes
-     *  // Note: works only for inlined css property or class attribute changes
-     *  document.getElementById('chart').classList.remove('hide')  // (a)
-     *  document.getElementById('chart').style.display = 'block';  // (b)
-     *
-     * @example
-     *	// chart won't be rendered and not observing bind element's visiblity changes
-     *  var chart = bb.generate({
-     *     render: {
-     *          lazy: true,
-     *          observe: false
-     *     }
-     *  });
-     *
-     *  // call at any point when you want to render
-     *  chart.flush();
-     */
-    render: {},
-
-    /**
-     * Show rectangles inside the chart.<br><br>
-     * This option accepts array including object that has axis, start, end and class.
-     * The keys start, end and class are optional.
-     * axis must be x, y or y2. start and end should be the value where regions start and end.
-     * If not specified, the edge values will be used.
-     * If timeseries x axis, date string, Date object and unixtime integer can be used.
-     * If class is set, the region element will have it as class.
-     * @name regions
-     * @memberof Options
-     * @type {Array}
-     * @default []
-     * @example
-     *  regions: [
-     *    {
-     *      axis: "x",
-     *      start: 1,
-     *      end: 4,
-     *      class: "region-1-4"
-     *    }
-     *  ]
-     */
-    regions: []
-  }].concat(config));
+  return mergeObj.apply(void 0, [Options_objectSpread({}, common_main)].concat(config));
 };
 
 
@@ -23553,2822 +23570,6 @@ function generateWait() {
     isArray(t) ? transitionsToWait = transitionsToWait.concat(t) : transitionsToWait.push(t);
   }, f;
 }
-// CONCATENATED MODULE: ./node_modules/d3-axis/src/array.js
-var slice = Array.prototype.slice;
-// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
-/* harmony default export */ var src_identity = (function (x) {
-  return x;
-});
-// CONCATENATED MODULE: ./node_modules/d3-axis/src/axis.js
-
-
-var axis_top = 1,
-    axis_right = 2,
-    axis_bottom = 3,
-    axis_left = 4,
-    epsilon = 1e-6;
-
-function axis_translateX(x) {
-  return "translate(" + (x + .5) + ",0)";
-}
-
-function translateY(y) {
-  return "translate(0," + (y + .5) + ")";
-}
-
-function axis_number(scale) {
-  return function (d) {
-    return +scale(d);
-  };
-}
-
-function axis_center(scale) {
-  var offset = Math.max(0, scale.bandwidth() - 1) / 2; // Adjust for 0.5px offset.
-
-  return scale.round() && (offset = Math.round(offset)), function (d) {
-    return +scale(d) + offset;
-  };
-}
-
-function entering() {
-  return !this.__axis;
-}
-
-function src_axis_axis(orient, scale) {
-  function axis(context) {
-    var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues,
-        format = tickFormat == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : src_identity : tickFormat,
-        spacing = Math.max(tickSizeInner, 0) + tickPadding,
-        range = scale.range(),
-        range0 = +range[0] + .5,
-        range1 = +range[range.length - 1] + .5,
-        position = (scale.bandwidth ? axis_center : axis_number)(scale.copy()),
-        selection = context.selection ? context.selection() : context,
-        path = selection.selectAll(".domain").data([null]),
-        tick = selection.selectAll(".tick").data(values, scale).order(),
-        tickExit = tick.exit(),
-        tickEnter = tick.enter().append("g").attr("class", "tick"),
-        line = tick.select("line"),
-        text = tick.select("text");
-    path = path.merge(path.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor")), tick = tick.merge(tickEnter), line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x + "2", k * tickSizeInner)), text = text.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x, k * spacing).attr("dy", orient === axis_top ? "0em" : orient === axis_bottom ? "0.71em" : "0.32em")), context !== selection && (path = path.transition(context), tick = tick.transition(context), line = line.transition(context), text = text.transition(context), tickExit = tickExit.transition(context).attr("opacity", epsilon).attr("transform", function (d) {
-      return isFinite(d = position(d)) ? transform(d) : this.getAttribute("transform");
-    }), tickEnter.attr("opacity", epsilon).attr("transform", function (d) {
-      var p = this.parentNode.__axis;
-      return transform(p && isFinite(p = p(d)) ? p : position(d));
-    })), tickExit.remove(), path.attr("d", orient === axis_left || orient == axis_right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H0.5V" + range1 + "H" + k * tickSizeOuter : "M0.5," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V0.5H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + ",0.5H" + range1), tick.attr("opacity", 1).attr("transform", function (d) {
-      return transform(position(d));
-    }), line.attr(x + "2", k * tickSizeInner), text.attr(x, k * spacing).text(format), selection.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === axis_right ? "start" : orient === axis_left ? "end" : "middle"), selection.each(function () {
-      this.__axis = position;
-    });
-  }
-
-  var tickArguments = [],
-      tickValues = null,
-      tickFormat = null,
-      tickSizeInner = 6,
-      tickSizeOuter = 6,
-      tickPadding = 3,
-      k = orient === axis_top || orient === axis_left ? -1 : 1,
-      x = orient === axis_left || orient === axis_right ? "x" : "y",
-      transform = orient === axis_top || orient === axis_bottom ? axis_translateX : translateY;
-  return axis.scale = function (_) {
-    return arguments.length ? (scale = _, axis) : scale;
-  }, axis.ticks = function () {
-    return tickArguments = slice.call(arguments), axis;
-  }, axis.tickArguments = function (_) {
-    return arguments.length ? (tickArguments = _ == null ? [] : slice.call(_), axis) : tickArguments.slice();
-  }, axis.tickValues = function (_) {
-    return arguments.length ? (tickValues = _ == null ? null : slice.call(_), axis) : tickValues && tickValues.slice();
-  }, axis.tickFormat = function (_) {
-    return arguments.length ? (tickFormat = _, axis) : tickFormat;
-  }, axis.tickSize = function (_) {
-    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis) : tickSizeInner;
-  }, axis.tickSizeInner = function (_) {
-    return arguments.length ? (tickSizeInner = +_, axis) : tickSizeInner;
-  }, axis.tickSizeOuter = function (_) {
-    return arguments.length ? (tickSizeOuter = +_, axis) : tickSizeOuter;
-  }, axis.tickPadding = function (_) {
-    return arguments.length ? (tickPadding = +_, axis) : tickPadding;
-  }, axis;
-}
-
-function axisTop(scale) {
-  return src_axis_axis(axis_top, scale);
-}
-function axisRight(scale) {
-  return src_axis_axis(axis_right, scale);
-}
-function axisBottom(scale) {
-  return src_axis_axis(axis_bottom, scale);
-}
-function axisLeft(scale) {
-  return src_axis_axis(axis_left, scale);
-}
-// CONCATENATED MODULE: ./node_modules/d3-axis/src/index.js
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
-/* harmony default export */ var src_ascending = (function (a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
-
-/* harmony default export */ var bisector = (function (compare) {
-  return compare.length === 1 && (compare = ascendingComparator(compare)), {
-    left: function left(a, x, lo, hi) {
-      for (lo == null && (lo = 0), hi == null && (hi = a.length); lo < hi;) {
-        var mid = lo + hi >>> 1;
-        compare(a[mid], x) < 0 ? lo = mid + 1 : hi = mid;
-      }
-
-      return lo;
-    },
-    right: function right(a, x, lo, hi) {
-      for (lo == null && (lo = 0), hi == null && (hi = a.length); lo < hi;) {
-        var mid = lo + hi >>> 1;
-        compare(a[mid], x) > 0 ? hi = mid : lo = mid + 1;
-      }
-
-      return lo;
-    }
-  };
-});
-
-function ascendingComparator(f) {
-  return function (d, x) {
-    return src_ascending(f(d), x);
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/bisect.js
-
-
-var ascendingBisect = bisector(src_ascending);
-var bisectRight = ascendingBisect.right;
-var bisectLeft = ascendingBisect.left;
-/* harmony default export */ var bisect = (bisectRight);
-// CONCATENATED MODULE: ./node_modules/d3-array/src/pairs.js
-/* harmony default export */ var pairs = (function (array, f) {
-  f == null && (f = pair);
-
-  for (var i = 0, n = array.length - 1, p = array[0], pairs = Array(n < 0 ? 0 : n); i < n;) pairs[i] = f(p, p = array[++i]);
-
-  return pairs;
-});
-function pair(a, b) {
-  return [a, b];
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/cross.js
-
-/* harmony default export */ var cross = (function (values0, values1, reduce) {
-  var i0,
-      i1,
-      i,
-      value0,
-      n0 = values0.length,
-      n1 = values1.length,
-      values = Array(n0 * n1);
-
-  for (reduce == null && (reduce = pair), i0 = i = 0; i0 < n0; ++i0) for (value0 = values0[i0], i1 = 0; i1 < n1; ++i1, ++i) values[i] = reduce(value0, values1[i1]);
-
-  return values;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/descending.js
-/* harmony default export */ var descending = (function (a, b) {
-  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
-/* harmony default export */ var src_number = (function (x) {
-  return x === null ? NaN : +x;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/variance.js
-
-/* harmony default export */ var variance = (function (values, valueof) {
-  var value,
-      delta,
-      n = values.length,
-      m = 0,
-      i = -1,
-      mean = 0,
-      sum = 0;
-  if (valueof == null) for (; ++i < n;) isNaN(value = src_number(values[i])) || (delta = value - mean, mean += delta / ++m, sum += delta * (value - mean));else for (; ++i < n;) isNaN(value = src_number(valueof(values[i], i, values))) || (delta = value - mean, mean += delta / ++m, sum += delta * (value - mean));
-  return m > 1 ? sum / (m - 1) : void 0;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/deviation.js
-
-/* harmony default export */ var deviation = (function (array, f) {
-  var v = variance(array, f);
-  return v ? Math.sqrt(v) : v;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/extent.js
-/* harmony default export */ var src_extent = (function (values, valueof) {
-  var value,
-      min,
-      max,
-      n = values.length,
-      i = -1;
-  if (valueof == null) {
-    for (; ++i < n;) // Find the first comparable value.
-    if ((value = values[i]) != null && value >= value) for (min = max = value; ++i < n;) (value = values[i]) != null && (min > value && (min = value), max < value && (max = value));
-  } else for (; ++i < n;) // Find the first comparable value.
-  if ((value = valueof(values[i], i, values)) != null && value >= value) for (min = max = value; ++i < n;) (value = valueof(values[i], i, values)) != null && (min > value && (min = value), max < value && (max = value));
-  return [min, max];
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/array.js
-var array_array = Array.prototype;
-var array_slice = array_array.slice;
-var map = array_array.map;
-// CONCATENATED MODULE: ./node_modules/d3-array/src/constant.js
-/* harmony default export */ var d3_array_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/identity.js
-/* harmony default export */ var d3_array_src_identity = (function (x) {
-  return x;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/range.js
-/* harmony default export */ var src_range = (function (start, stop, step) {
-  start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
-
-  for (var i = -1, n = Math.max(0, Math.ceil((stop - start) / step)) | 0, range = Array(n); ++i < n;) range[i] = start + i * step;
-
-  return range;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/ticks.js
-var e10 = Math.sqrt(50),
-    e5 = Math.sqrt(10),
-    e2 = Math.sqrt(2);
-/* harmony default export */ var src_ticks = (function (start, stop, count) {
-  var reverse,
-      n,
-      ticks,
-      step,
-      i = -1;
-  if (stop = +stop, start = +start, count = +count, start === stop && count > 0) return [start];
-  if ((reverse = stop < start) && (n = start, start = stop, stop = n), (step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
-  if (step > 0) for (start = Math.ceil(start / step), stop = Math.floor(stop / step), ticks = Array(n = Math.ceil(stop - start + 1)); ++i < n;) ticks[i] = (start + i) * step;else for (start = Math.floor(start * step), stop = Math.ceil(stop * step), ticks = Array(n = Math.ceil(start - stop + 1)); ++i < n;) ticks[i] = (start - i) / step;
-  return reverse && ticks.reverse(), ticks;
-});
-function tickIncrement(start, stop, count) {
-  var step = (stop - start) / Math.max(0, count),
-      power = Math.floor(Math.log(step) / Math.LN10),
-      error = step / Math.pow(10, power);
-  return power >= 0 ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power) : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
-}
-function tickStep(start, stop, count) {
-  var step0 = Math.abs(stop - start) / Math.max(0, count),
-      step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
-      error = step0 / step1;
-  return error >= e10 ? step1 *= 10 : error >= e5 ? step1 *= 5 : error >= e2 && (step1 *= 2), stop < start ? -step1 : step1;
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/sturges.js
-/* harmony default export */ var sturges = (function (values) {
-  return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/histogram.js
-
-
-
-
-
-
-
-
-/* harmony default export */ var src_histogram = (function () {
-  function histogram(data) {
-    var i,
-        x,
-        n = data.length,
-        values = Array(n);
-
-    for (i = 0; i < n; ++i) values[i] = value(data[i], i, data);
-
-    var xz = domain(values),
-        x0 = xz[0],
-        x1 = xz[1],
-        tz = threshold(values, x0, x1); // Convert number of thresholds into uniform thresholds.
-
-    Array.isArray(tz) || (tz = tickStep(x0, x1, tz), tz = src_range(Math.ceil(x0 / tz) * tz, x1, tz));
-
-    for ( // Remove any thresholds outside the domain.
-    var m = tz.length; tz[0] <= x0;) tz.shift(), --m;
-
-    for (; tz[m - 1] > x1;) tz.pop(), --m;
-
-    var bin,
-        bins = Array(m + 1); // Initialize bins.
-
-    for (i = 0; i <= m; ++i) bin = bins[i] = [], bin.x0 = i > 0 ? tz[i - 1] : x0, bin.x1 = i < m ? tz[i] : x1; // Assign data to bins by value, ignoring any outside the domain.
-
-
-    for (i = 0; i < n; ++i) x = values[i], x0 <= x && x <= x1 && bins[bisect(tz, x, 0, m)].push(data[i]);
-
-    return bins;
-  }
-
-  var value = d3_array_src_identity,
-      domain = src_extent,
-      threshold = sturges;
-  return histogram.value = function (_) {
-    return arguments.length ? (value = typeof _ === "function" ? _ : d3_array_src_constant(_), histogram) : value;
-  }, histogram.domain = function (_) {
-    return arguments.length ? (domain = typeof _ === "function" ? _ : d3_array_src_constant([_[0], _[1]]), histogram) : domain;
-  }, histogram.thresholds = function (_) {
-    return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? d3_array_src_constant(array_slice.call(_)) : d3_array_src_constant(_), histogram) : threshold;
-  }, histogram;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/quantile.js
-
-/* harmony default export */ var quantile = (function (values, p, valueof) {
-  if (valueof == null && (valueof = src_number), !!(n = values.length)) {
-    if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
-    if (p >= 1) return +valueof(values[n - 1], n - 1, values);
-    var n,
-        i = (n - 1) * p,
-        i0 = Math.floor(i),
-        value0 = +valueof(values[i0], i0, values),
-        value1 = +valueof(values[i0 + 1], i0 + 1, values);
-    return value0 + (value1 - value0) * (i - i0);
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/freedmanDiaconis.js
-
-
-
-
-/* harmony default export */ var freedmanDiaconis = (function (values, min, max) {
-  return values = map.call(values, src_number).sort(src_ascending), Math.ceil((max - min) / (2 * (quantile(values, .75) - quantile(values, .25)) * Math.pow(values.length, -1 / 3)));
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/scott.js
-
-/* harmony default export */ var scott = (function (values, min, max) {
-  return Math.ceil((max - min) / (3.5 * deviation(values) * Math.pow(values.length, -1 / 3)));
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/max.js
-/* harmony default export */ var src_max = (function (values, valueof) {
-  var value,
-      max,
-      n = values.length,
-      i = -1;
-  if (valueof == null) {
-    for (; ++i < n;) // Find the first comparable value.
-    if ((value = values[i]) != null && value >= value) for (max = value; ++i < n;) (value = values[i]) != null && value > max && (max = value);
-  } else for (; ++i < n;) // Find the first comparable value.
-  if ((value = valueof(values[i], i, values)) != null && value >= value) for (max = value; ++i < n;) (value = valueof(values[i], i, values)) != null && value > max && (max = value);
-  return max;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/mean.js
-
-/* harmony default export */ var src_mean = (function (values, valueof) {
-  var value,
-      n = values.length,
-      m = n,
-      i = -1,
-      sum = 0;
-  if (valueof == null) for (; ++i < n;) isNaN(value = src_number(values[i])) ? --m : sum += value;else for (; ++i < n;) isNaN(value = src_number(valueof(values[i], i, values))) ? --m : sum += value;
-  return m ? sum / m : void 0;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/median.js
-
-
-
-/* harmony default export */ var median = (function (values, valueof) {
-  var value,
-      n = values.length,
-      i = -1,
-      numbers = [];
-  if (valueof == null) for (; ++i < n;) isNaN(value = src_number(values[i])) || numbers.push(value);else for (; ++i < n;) isNaN(value = src_number(valueof(values[i], i, values))) || numbers.push(value);
-  return quantile(numbers.sort(src_ascending), .5);
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/merge.js
-/* harmony default export */ var src_merge = (function (arrays) {
-  for (var m, merged, array, n = arrays.length, i = -1, j = 0; ++i < n;) j += arrays[i].length;
-
-  for (merged = Array(j); --n >= 0;) for (array = arrays[n], m = array.length; --m >= 0;) merged[--j] = array[m];
-
-  return merged;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/min.js
-/* harmony default export */ var src_min = (function (values, valueof) {
-  var value,
-      min,
-      n = values.length,
-      i = -1;
-  if (valueof == null) {
-    for (; ++i < n;) // Find the first comparable value.
-    if ((value = values[i]) != null && value >= value) for (min = value; ++i < n;) (value = values[i]) != null && min > value && (min = value);
-  } else for (; ++i < n;) // Find the first comparable value.
-  if ((value = valueof(values[i], i, values)) != null && value >= value) for (min = value; ++i < n;) (value = valueof(values[i], i, values)) != null && min > value && (min = value);
-  return min;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/permute.js
-/* harmony default export */ var permute = (function (array, indexes) {
-  for (var i = indexes.length, permutes = Array(i); i--;) permutes[i] = array[indexes[i]];
-
-  return permutes;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/scan.js
-
-/* harmony default export */ var scan = (function (values, compare) {
-  if (n = values.length) {
-    var n,
-        xi,
-        i = 0,
-        j = 0,
-        xj = values[j];
-
-    for (compare == null && (compare = src_ascending); ++i < n;) (compare(xi = values[i], xj) < 0 || compare(xj, xj) !== 0) && (xj = xi, j = i);
-
-    if (compare(xj, xj) === 0) return j;
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/shuffle.js
-/* harmony default export */ var shuffle = (function (array, i0, i1) {
-  for (var t, i, m = (i1 == null ? array.length : i1) - (i0 = i0 == null ? 0 : +i0); m;) i = Math.random() * m-- | 0, t = array[m + i0], array[m + i0] = array[i + i0], array[i + i0] = t;
-
-  return array;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/sum.js
-/* harmony default export */ var src_sum = (function (values, valueof) {
-  var value,
-      n = values.length,
-      i = -1,
-      sum = 0;
-  if (valueof == null) for (; ++i < n;) (value = +values[i]) && (sum += value);else for (; ++i < n;) (value = +valueof(values[i], i, values)) && (sum += value);
-  return sum;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/transpose.js
-
-/* harmony default export */ var src_transpose = (function (matrix) {
-  if (!(n = matrix.length)) return [];
-
-  for (var i = -1, m = src_min(matrix, transpose_length), transpose = Array(m); ++i < m;) for (var n, j = -1, row = transpose[i] = Array(n); ++j < n;) row[j] = matrix[j][i];
-
-  return transpose;
-});
-
-function transpose_length(d) {
-  return d.length;
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/zip.js
-
-/* harmony default export */ var zip = (function () {
-  return src_transpose(arguments);
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/init.js
-function initRange(domain, range) {
-  switch (arguments.length) {
-    case 0:
-      break;
-
-    case 1:
-      this.range(domain);
-      break;
-
-    default:
-      this.range(range).domain(domain);
-  }
-
-  return this;
-}
-function initInterpolator(domain, interpolator) {
-  switch (arguments.length) {
-    case 0:
-      break;
-
-    case 1:
-      this.interpolator(domain);
-      break;
-
-    default:
-      this.interpolator(interpolator).domain(domain);
-  }
-
-  return this;
-}
-// CONCATENATED MODULE: ./node_modules/d3-collection/src/map.js
-var map_prefix = "$";
-
-function Map() {}
-
-Map.prototype = map_map.prototype = {
-  constructor: Map,
-  has: function has(key) {
-    return map_prefix + key in this;
-  },
-  get: function get(key) {
-    return this[map_prefix + key];
-  },
-  set: function set(key, value) {
-    return this[map_prefix + key] = value, this;
-  },
-  remove: function remove(key) {
-    var property = map_prefix + key;
-    return property in this && delete this[property];
-  },
-  clear: function clear() {
-    for (var property in this) property[0] === map_prefix && delete this[property];
-  },
-  keys: function () {
-    var keys = [];
-
-    for (var property in this) property[0] === map_prefix && keys.push(property.slice(1));
-
-    return keys;
-  },
-  values: function () {
-    var values = [];
-
-    for (var property in this) property[0] === map_prefix && values.push(this[property]);
-
-    return values;
-  },
-  entries: function () {
-    var entries = [];
-
-    for (var property in this) property[0] === map_prefix && entries.push({
-      key: property.slice(1),
-      value: this[property]
-    });
-
-    return entries;
-  },
-  size: function () {
-    var size = 0;
-
-    for (var property in this) property[0] === map_prefix && ++size;
-
-    return size;
-  },
-  empty: function empty() {
-    for (var property in this) if (property[0] === map_prefix) return !1;
-
-    return !0;
-  },
-  each: function each(f) {
-    for (var property in this) property[0] === map_prefix && f(this[property], property.slice(1), this);
-  }
-};
-
-function map_map(object, f) {
-  var map = new Map(); // Copy constructor.
-
-  if (object instanceof Map) object.each(function (value, key) {
-    map.set(key, value);
-  }); // Index array by numeric index or specified key function.
-  else if (Array.isArray(object)) {
-      var o,
-          i = -1,
-          n = object.length;
-      if (f == null) for (; ++i < n;) map.set(i, object[i]);else for (; ++i < n;) map.set(f(o = object[i], i, object), o);
-    } // Convert object to map.
-    else if (object) for (var key in object) map.set(key, object[key]);
-  return map;
-}
-
-/* harmony default export */ var src_map = (map_map);
-// CONCATENATED MODULE: ./node_modules/d3-collection/src/nest.js
-
-/* harmony default export */ var src_nest = (function () {
-  function apply(array, depth, createResult, setResult) {
-    if (depth >= keys.length) return _sortValues != null && array.sort(_sortValues), _rollup == null ? array : _rollup(array);
-
-    for (var keyValue, value, values, i = -1, n = array.length, key = keys[depth++], valuesByKey = src_map(), result = createResult(); ++i < n;) (values = valuesByKey.get(keyValue = key(value = array[i]) + "")) ? values.push(value) : valuesByKey.set(keyValue, [value]);
-
-    return valuesByKey.each(function (values, key) {
-      setResult(result, key, apply(values, depth, createResult, setResult));
-    }), result;
-  }
-
-  function _entries(map, depth) {
-    if (++depth > keys.length) return map;
-    var array,
-        sortKey = _sortKeys[depth - 1];
-    return _rollup != null && depth >= keys.length ? array = map.entries() : (array = [], map.each(function (v, k) {
-      array.push({
-        key: k,
-        values: _entries(v, depth)
-      });
-    })), sortKey == null ? array : array.sort(function (a, b) {
-      return sortKey(a.key, b.key);
-    });
-  }
-
-  var _sortValues,
-      _rollup,
-      nest,
-      keys = [],
-      _sortKeys = [];
-
-  return nest = {
-    object: function object(array) {
-      return apply(array, 0, createObject, setObject);
-    },
-    map: function (array) {
-      return apply(array, 0, createMap, setMap);
-    },
-    entries: function entries(array) {
-      return _entries(apply(array, 0, createMap, setMap), 0);
-    },
-    key: function key(d) {
-      return keys.push(d), nest;
-    },
-    sortKeys: function sortKeys(order) {
-      return _sortKeys[keys.length - 1] = order, nest;
-    },
-    sortValues: function sortValues(order) {
-      return _sortValues = order, nest;
-    },
-    rollup: function rollup(f) {
-      return _rollup = f, nest;
-    }
-  };
-});
-
-function createObject() {
-  return {};
-}
-
-function setObject(object, key, value) {
-  object[key] = value;
-}
-
-function createMap() {
-  return src_map();
-}
-
-function setMap(map, key, value) {
-  map.set(key, value);
-}
-// CONCATENATED MODULE: ./node_modules/d3-collection/src/set.js
-
-
-function Set() {}
-
-var proto = src_map.prototype;
-Set.prototype = set_set.prototype = {
-  constructor: Set,
-  has: proto.has,
-  add: function add(value) {
-    return value += "", this[map_prefix + value] = value, this;
-  },
-  remove: proto.remove,
-  clear: proto.clear,
-  values: proto.keys,
-  size: proto.size,
-  empty: proto.empty,
-  each: proto.each
-};
-
-function set_set(object, f) {
-  var set = new Set(); // Copy constructor.
-
-  if (object instanceof Set) object.each(function (value) {
-    set.add(value);
-  }); // Otherwise, assume it’s an array.
-  else if (object) {
-      var i = -1,
-          n = object.length;
-      if (f == null) for (; ++i < n;) set.add(object[i]);else for (; ++i < n;) set.add(f(object[i], i, object));
-    }
-  return set;
-}
-
-/* harmony default export */ var src_set = (set_set);
-// CONCATENATED MODULE: ./node_modules/d3-collection/src/keys.js
-/* harmony default export */ var src_keys = (function (map) {
-  var keys = [];
-
-  for (var key in map) keys.push(key);
-
-  return keys;
-});
-// CONCATENATED MODULE: ./node_modules/d3-collection/src/values.js
-/* harmony default export */ var src_values = (function (map) {
-  var values = [];
-
-  for (var key in map) values.push(map[key]);
-
-  return values;
-});
-// CONCATENATED MODULE: ./node_modules/d3-collection/src/entries.js
-/* harmony default export */ var entries = (function (map) {
-  var entries = [];
-
-  for (var key in map) entries.push({
-    key: key,
-    value: map[key]
-  });
-
-  return entries;
-});
-// CONCATENATED MODULE: ./node_modules/d3-collection/src/index.js
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/array.js
-var src_array_array = Array.prototype;
-var array_map = src_array_array.map;
-var src_array_slice = src_array_array.slice;
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/ordinal.js
-
-
-
-var implicit = {
-  name: "implicit"
-};
-function ordinal() {
-  function scale(d) {
-    var key = d + "",
-        i = index.get(key);
-
-    if (!i) {
-      if (unknown !== implicit) return unknown;
-      index.set(key, i = domain.push(d));
-    }
-
-    return range[(i - 1) % range.length];
-  }
-
-  var index = src_map(),
-      domain = [],
-      range = [],
-      unknown = implicit;
-  return scale.domain = function (_) {
-    if (!arguments.length) return domain.slice();
-    domain = [], index = src_map();
-
-    for (var d, key, i = -1, n = _.length; ++i < n;) index.has(key = (d = _[i]) + "") || index.set(key, domain.push(d));
-
-    return scale;
-  }, scale.range = function (_) {
-    return arguments.length ? (range = src_array_slice.call(_), scale) : range.slice();
-  }, scale.unknown = function (_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  }, scale.copy = function () {
-    return ordinal(domain, range).unknown(unknown);
-  }, initRange.apply(scale, arguments), scale;
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/band.js
-
-
-
-function band() {
-  function rescale() {
-    var n = domain().length,
-        reverse = range[1] < range[0],
-        start = range[reverse - 0],
-        stop = range[1 - reverse];
-    step = (stop - start) / Math.max(1, n - paddingInner + paddingOuter * 2), round && (step = Math.floor(step)), start += (stop - start - step * (n - paddingInner)) * align, bandwidth = step * (1 - paddingInner), round && (start = Math.round(start), bandwidth = Math.round(bandwidth));
-    var values = src_range(n).map(function (i) {
-      return start + step * i;
-    });
-    return ordinalRange(reverse ? values.reverse() : values);
-  }
-
-  var step,
-      bandwidth,
-      scale = ordinal().unknown(undefined),
-      domain = scale.domain,
-      ordinalRange = scale.range,
-      range = [0, 1],
-      round = !1,
-      paddingInner = 0,
-      paddingOuter = 0,
-      align = .5;
-  return delete scale.unknown, scale.domain = function (_) {
-    return arguments.length ? (domain(_), rescale()) : domain();
-  }, scale.range = function (_) {
-    return arguments.length ? (range = [+_[0], +_[1]], rescale()) : range.slice();
-  }, scale.rangeRound = function (_) {
-    return range = [+_[0], +_[1]], round = !0, rescale();
-  }, scale.bandwidth = function () {
-    return bandwidth;
-  }, scale.step = function () {
-    return step;
-  }, scale.round = function (_) {
-    return arguments.length ? (round = !!_, rescale()) : round;
-  }, scale.padding = function (_) {
-    return arguments.length ? (paddingInner = Math.min(1, paddingOuter = +_), rescale()) : paddingInner;
-  }, scale.paddingInner = function (_) {
-    return arguments.length ? (paddingInner = Math.min(1, _), rescale()) : paddingInner;
-  }, scale.paddingOuter = function (_) {
-    return arguments.length ? (paddingOuter = +_, rescale()) : paddingOuter;
-  }, scale.align = function (_) {
-    return arguments.length ? (align = Math.max(0, Math.min(1, _)), rescale()) : align;
-  }, scale.copy = function () {
-    return band(domain(), range).round(round).paddingInner(paddingInner).paddingOuter(paddingOuter).align(align);
-  }, initRange.apply(rescale(), arguments);
-}
-
-function pointish(scale) {
-  var copy = scale.copy;
-  return scale.padding = scale.paddingOuter, delete scale.paddingInner, delete scale.paddingOuter, scale.copy = function () {
-    return pointish(copy());
-  }, scale;
-}
-
-function band_point() {
-  return pointish(band.apply(null, arguments).paddingInner(1));
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/constant.js
-/* harmony default export */ var d3_scale_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/number.js
-/* harmony default export */ var d3_scale_src_number = (function (x) {
-  return +x;
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/continuous.js
-
-
-
-
-
-var unit = [0, 1];
-function continuous_identity(x) {
-  return x;
-}
-
-function normalize(a, b) {
-  return (b -= a = +a) ? function (x) {
-    return (x - a) / b;
-  } : d3_scale_src_constant(isNaN(b) ? NaN : .5);
-}
-
-function clamper(domain) {
-  var t,
-      a = domain[0],
-      b = domain[domain.length - 1];
-  return a > b && (t = a, a = b, b = t), function (x) {
-    return Math.max(a, Math.min(b, x));
-  };
-} // normalize(a, b)(x) takes a domain value x in [a,b] and returns the corresponding parameter t in [0,1].
-// interpolate(a, b)(t) takes a parameter t in [0,1] and returns the corresponding range value x in [a,b].
-
-
-function bimap(domain, range, interpolate) {
-  var d0 = domain[0],
-      d1 = domain[1],
-      r0 = range[0],
-      r1 = range[1];
-  return d1 < d0 ? (d0 = normalize(d1, d0), r0 = interpolate(r1, r0)) : (d0 = normalize(d0, d1), r0 = interpolate(r0, r1)), function (x) {
-    return r0(d0(x));
-  };
-}
-
-function polymap(domain, range, interpolate) {
-  var j = Math.min(domain.length, range.length) - 1,
-      d = Array(j),
-      r = Array(j),
-      i = -1; // Reverse descending domains.
-
-  for (domain[j] < domain[0] && (domain = domain.slice().reverse(), range = range.slice().reverse()); ++i < j;) d[i] = normalize(domain[i], domain[i + 1]), r[i] = interpolate(range[i], range[i + 1]);
-
-  return function (x) {
-    var i = bisect(domain, x, 1, j) - 1;
-    return r[i](d[i](x));
-  };
-}
-
-function copy(source, target) {
-  return target.domain(source.domain()).range(source.range()).interpolate(source.interpolate()).clamp(source.clamp()).unknown(source.unknown());
-}
-function transformer() {
-  function rescale() {
-    return piecewise = Math.min(domain.length, range.length) > 2 ? polymap : bimap, output = input = null, scale;
-  }
-
-  function scale(x) {
-    return isNaN(x = +x) ? unknown : (output || (output = piecewise(domain.map(transform), range, interpolate)))(transform(clamp(x)));
-  }
-
-  var transform,
-      untransform,
-      unknown,
-      piecewise,
-      output,
-      input,
-      domain = unit,
-      range = unit,
-      interpolate = src_value,
-      clamp = continuous_identity;
-  return scale.invert = function (y) {
-    return clamp(untransform((input || (input = piecewise(range, domain.map(transform), number)))(y)));
-  }, scale.domain = function (_) {
-    return arguments.length ? (domain = array_map.call(_, d3_scale_src_number), clamp === continuous_identity || (clamp = clamper(domain)), rescale()) : domain.slice();
-  }, scale.range = function (_) {
-    return arguments.length ? (range = src_array_slice.call(_), rescale()) : range.slice();
-  }, scale.rangeRound = function (_) {
-    return range = src_array_slice.call(_), interpolate = src_round, rescale();
-  }, scale.clamp = function (_) {
-    return arguments.length ? (clamp = _ ? clamper(domain) : continuous_identity, scale) : clamp !== continuous_identity;
-  }, scale.interpolate = function (_) {
-    return arguments.length ? (interpolate = _, rescale()) : interpolate;
-  }, scale.unknown = function (_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  }, function (t, u) {
-    return transform = t, untransform = u, rescale();
-  };
-}
-function continuous(transform, untransform) {
-  return transformer()(transform, untransform);
-}
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatDecimal.js
-// Computes the decimal coefficient and exponent of the specified number x with
-// significant digits p, where x is positive and p is in [1, 21] or undefined.
-// For example, formatDecimal(1.23) returns ["123", 0].
-/* harmony default export */ var formatDecimal = (function (x, p) {
-  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
-
-  var i,
-      coefficient = x.slice(0, i); // The string returned by toExponential either has the form \d\.\d+e[-+]\d+
-  // (e.g., 1.2e+3) or the form \de[-+]\d+ (e.g., 1e+3).
-
-  return [coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient, +x.slice(i + 1)];
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/exponent.js
-
-/* harmony default export */ var src_exponent = (function (x) {
-  return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatGroup.js
-/* harmony default export */ var formatGroup = (function (grouping, thousands) {
-  return function (value, width) {
-    for (var i = value.length, t = [], j = 0, g = grouping[0], length = 0; i > 0 && g > 0 && (length + g + 1 > width && (g = Math.max(1, width - length)), t.push(value.substring(i -= g, i + g)), !((length += g + 1) > width));) g = grouping[j = (j + 1) % grouping.length];
-
-    return t.reverse().join(thousands);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatNumerals.js
-/* harmony default export */ var formatNumerals = (function (numerals) {
-  return function (value) {
-    return value.replace(/[0-9]/g, function (i) {
-      return numerals[+i];
-    });
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
-// [[fill]align][sign][symbol][0][width][,][.precision][~][type]
-var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
-function formatSpecifier(specifier) {
-  if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
-  var match;
-  return new FormatSpecifier({
-    fill: match[1],
-    align: match[2],
-    sign: match[3],
-    symbol: match[4],
-    zero: match[5],
-    width: match[6],
-    comma: match[7],
-    precision: match[8] && match[8].slice(1),
-    trim: match[9],
-    type: match[10]
-  });
-}
-formatSpecifier.prototype = FormatSpecifier.prototype;
-// instanceof
-function FormatSpecifier(specifier) {
-  this.fill = specifier.fill === undefined ? " " : specifier.fill + "", this.align = specifier.align === undefined ? ">" : specifier.align + "", this.sign = specifier.sign === undefined ? "-" : specifier.sign + "", this.symbol = specifier.symbol === undefined ? "" : specifier.symbol + "", this.zero = !!specifier.zero, this.width = specifier.width === undefined ? undefined : +specifier.width, this.comma = !!specifier.comma, this.precision = specifier.precision === undefined ? undefined : +specifier.precision, this.trim = !!specifier.trim, this.type = specifier.type === undefined ? "" : specifier.type + "";
-}
-
-FormatSpecifier.prototype.toString = function () {
-  return this.fill + this.align + this.sign + this.symbol + (this.zero ? "0" : "") + (this.width === undefined ? "" : Math.max(1, this.width | 0)) + (this.comma ? "," : "") + (this.precision === undefined ? "" : "." + Math.max(0, this.precision | 0)) + (this.trim ? "~" : "") + this.type;
-};
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTrim.js
-// Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
-/* harmony default export */ var formatTrim = (function (s) {
-  out: for (var i1, n = s.length, i = 1, i0 = -1; i < n; ++i) switch (s[i]) {
-    case ".":
-      i0 = i1 = i;
-      break;
-
-    case "0":
-      i0 === 0 && (i0 = i), i1 = i;
-      break;
-
-    default:
-      if (!+s[i]) break out;
-      i0 > 0 && (i0 = 0);
-  }
-
-  return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatPrefixAuto.js
-
-var prefixExponent;
-/* harmony default export */ var formatPrefixAuto = (function (x, p) {
-  var d = formatDecimal(x, p);
-  if (!d) return x + "";
-  var coefficient = d[0],
-      exponent = d[1],
-      i = exponent - (prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1,
-      n = coefficient.length;
-  return i === n ? coefficient : i > n ? coefficient + Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + Array(1 - i).join("0") + formatDecimal(x, Math.max(0, p + i - 1))[0]; // less than 1y!
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatRounded.js
-
-/* harmony default export */ var formatRounded = (function (x, p) {
-  var d = formatDecimal(x, p);
-  if (!d) return x + "";
-  var coefficient = d[0],
-      exponent = d[1];
-  return exponent < 0 ? "0." + Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + Array(exponent - coefficient.length + 2).join("0");
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTypes.js
-
-
-/* harmony default export */ var formatTypes = ({
-  "%": function _(x, p) {
-    return (x * 100).toFixed(p);
-  },
-  "b": function b(x) {
-    return Math.round(x).toString(2);
-  },
-  "c": function c(x) {
-    return x + "";
-  },
-  "d": function d(x) {
-    return Math.round(x).toString(10);
-  },
-  "e": function e(x, p) {
-    return x.toExponential(p);
-  },
-  "f": function f(x, p) {
-    return x.toFixed(p);
-  },
-  "g": function g(x, p) {
-    return x.toPrecision(p);
-  },
-  "o": function o(x) {
-    return Math.round(x).toString(8);
-  },
-  "p": function p(x, _p) {
-    return formatRounded(x * 100, _p);
-  },
-  "r": formatRounded,
-  "s": formatPrefixAuto,
-  "X": function X(x) {
-    return Math.round(x).toString(16).toUpperCase();
-  },
-  "x": function x(_x) {
-    return Math.round(_x).toString(16);
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/identity.js
-/* harmony default export */ var d3_format_src_identity = (function (x) {
-  return x;
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/locale.js
-
-
-
-
-
-
-
-
-var locale_map = Array.prototype.map,
-    prefixes = ["y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y"];
-/* harmony default export */ var src_locale = (function (locale) {
-  function newFormat(specifier) {
-    function format(value) {
-      var i,
-          n,
-          c,
-          valuePrefix = prefix,
-          valueSuffix = suffix;
-      if (type === "c") valueSuffix = formatType(value) + valueSuffix, value = "";else {
-        value = +value;
-        // Determine the sign. -0 is not less than 0, but 1 / -0 is!
-        var valueNegative = value < 0 || 1 / value < 0; // Perform the initial formatting.
-
-        // Break the formatted value into the integer “value” part that can be
-        // grouped, and fractional or exponential “suffix” part that is not.
-        if (value = isNaN(value) ? nan : formatType(Math.abs(value), precision), trim && (value = formatTrim(value)), valueNegative && +value === 0 && sign !== "+" && (valueNegative = !1), valuePrefix = (valueNegative ? sign === "(" ? sign : minus : sign === "-" || sign === "(" ? "" : sign) + valuePrefix, valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : ""), maybeSuffix) for (i = -1, n = value.length; ++i < n;) if (c = value.charCodeAt(i), 48 > c || c > 57) {
-          valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix, value = value.slice(0, i);
-          break;
-        }
-      } // If the fill character is not "0", grouping is applied before padding.
-
-      comma && !zero && (value = group(value, Infinity));
-      // Compute the padding.
-      var length = valuePrefix.length + value.length + valueSuffix.length,
-          padding = length < width ? Array(width - length + 1).join(fill) : ""; // If the fill character is "0", grouping is applied after padding.
-
-      // Reconstruct the final output based on the desired alignment.
-      switch (comma && zero && (value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = ""), align) {
-        case "<":
-          value = valuePrefix + value + valueSuffix + padding;
-          break;
-
-        case "=":
-          value = valuePrefix + padding + value + valueSuffix;
-          break;
-
-        case "^":
-          value = padding.slice(0, length = padding.length >> 1) + valuePrefix + value + valueSuffix + padding.slice(length);
-          break;
-
-        default:
-          value = padding + valuePrefix + value + valueSuffix;
-      }
-
-      return numerals(value);
-    }
-
-    specifier = formatSpecifier(specifier);
-    var fill = specifier.fill,
-        align = specifier.align,
-        sign = specifier.sign,
-        symbol = specifier.symbol,
-        zero = specifier.zero,
-        width = specifier.width,
-        comma = specifier.comma,
-        precision = specifier.precision,
-        trim = specifier.trim,
-        type = specifier.type; // The "n" type is an alias for ",g".
-
-    type === "n" ? (comma = !0, type = "g") : !formatTypes[type] && (precision === undefined && (precision = 12), trim = !0, type = "g"), (zero || fill === "0" && align === "=") && (zero = !0, fill = "0", align = "=");
-    // Compute the prefix and suffix.
-    // For SI-prefix, the suffix is lazily computed.
-    var prefix = symbol === "$" ? currencyPrefix : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "",
-        suffix = symbol === "$" ? currencySuffix : /[%p]/.test(type) ? percent : "",
-        formatType = formatTypes[type],
-        maybeSuffix = /[defgprs%]/.test(type); // What format function should we use?
-    // Is this an integer type?
-    // Can this type generate exponential notation?
-
-    return precision = precision === undefined ? 6 : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision)) : Math.max(0, Math.min(20, precision)), format.toString = function () {
-      return specifier + "";
-    }, format;
-  }
-
-  var group = locale.grouping === undefined || locale.thousands === undefined ? d3_format_src_identity : formatGroup(locale_map.call(locale.grouping, Number), locale.thousands + ""),
-      currencyPrefix = locale.currency === undefined ? "" : locale.currency[0] + "",
-      currencySuffix = locale.currency === undefined ? "" : locale.currency[1] + "",
-      decimal = locale.decimal === undefined ? "." : locale.decimal + "",
-      numerals = locale.numerals === undefined ? d3_format_src_identity : formatNumerals(locale_map.call(locale.numerals, String)),
-      percent = locale.percent === undefined ? "%" : locale.percent + "",
-      minus = locale.minus === undefined ? "-" : locale.minus + "",
-      nan = locale.nan === undefined ? "NaN" : locale.nan + "";
-  return {
-    format: newFormat,
-    formatPrefix: function (specifier, value) {
-      var f = newFormat((specifier = formatSpecifier(specifier), specifier.type = "f", specifier)),
-          e = Math.max(-8, Math.min(8, Math.floor(src_exponent(value) / 3))) * 3,
-          k = Math.pow(10, -e),
-          prefix = prefixes[8 + e / 3];
-      return function (value) {
-        return f(k * value) + prefix;
-      };
-    }
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/defaultLocale.js
-
-var src_defaultLocale_locale;
-var defaultLocale_format;
-var formatPrefix;
-defaultLocale_defaultLocale({
-  decimal: ".",
-  thousands: ",",
-  grouping: [3],
-  currency: ["$", ""],
-  minus: "-"
-});
-function defaultLocale_defaultLocale(definition) {
-  return src_defaultLocale_locale = src_locale(definition), defaultLocale_format = src_defaultLocale_locale.format, formatPrefix = src_defaultLocale_locale.formatPrefix, src_defaultLocale_locale;
-}
-// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionFixed.js
-
-/* harmony default export */ var precisionFixed = (function (step) {
-  return Math.max(0, -src_exponent(Math.abs(step)));
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionPrefix.js
-
-/* harmony default export */ var precisionPrefix = (function (step, value) {
-  return Math.max(0, Math.max(-8, Math.min(8, Math.floor(src_exponent(value) / 3))) * 3 - src_exponent(Math.abs(step)));
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionRound.js
-
-/* harmony default export */ var precisionRound = (function (step, max) {
-  return step = Math.abs(step), max = Math.abs(max) - step, Math.max(0, src_exponent(max) - src_exponent(step)) + 1;
-});
-// CONCATENATED MODULE: ./node_modules/d3-format/src/index.js
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/tickFormat.js
-
-
-/* harmony default export */ var src_tickFormat = (function (start, stop, count, specifier) {
-  var precision,
-      step = tickStep(start, stop, count);
-
-  switch (specifier = formatSpecifier(specifier == null ? ",f" : specifier), specifier.type) {
-    case "s":
-      {
-        var value = Math.max(Math.abs(start), Math.abs(stop));
-        return specifier.precision != null || isNaN(precision = precisionPrefix(step, value)) || (specifier.precision = precision), formatPrefix(specifier, value);
-      }
-
-    case "":
-    case "e":
-    case "g":
-    case "p":
-    case "r":
-      {
-        specifier.precision != null || isNaN(precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop)))) || (specifier.precision = precision - (specifier.type === "e"));
-        break;
-      }
-
-    case "f":
-    case "%":
-      {
-        specifier.precision != null || isNaN(precision = precisionFixed(step)) || (specifier.precision = precision - (specifier.type === "%") * 2);
-        break;
-      }
-  }
-
-  return defaultLocale_format(specifier);
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/linear.js
-
-
-
-
-function linearish(scale) {
-  var domain = scale.domain;
-  return scale.ticks = function (count) {
-    var d = domain();
-    return src_ticks(d[0], d[d.length - 1], count == null ? 10 : count);
-  }, scale.tickFormat = function (count, specifier) {
-    var d = domain();
-    return src_tickFormat(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
-  }, scale.nice = function (count) {
-    count == null && (count = 10);
-    var step,
-        d = domain(),
-        i0 = 0,
-        i1 = d.length - 1,
-        start = d[i0],
-        stop = d[i1];
-    return stop < start && (step = start, start = stop, stop = step, step = i0, i0 = i1, i1 = step), step = tickIncrement(start, stop, count), step > 0 ? (start = Math.floor(start / step) * step, stop = Math.ceil(stop / step) * step, step = tickIncrement(start, stop, count)) : step < 0 && (start = Math.ceil(start * step) / step, stop = Math.floor(stop * step) / step, step = tickIncrement(start, stop, count)), step > 0 ? (d[i0] = Math.floor(start / step) * step, d[i1] = Math.ceil(stop / step) * step, domain(d)) : step < 0 && (d[i0] = Math.ceil(start * step) / step, d[i1] = Math.floor(stop * step) / step, domain(d)), scale;
-  }, scale;
-}
-function src_linear_linear() {
-  var scale = continuous(continuous_identity, continuous_identity);
-  return scale.copy = function () {
-    return copy(scale, src_linear_linear());
-  }, initRange.apply(scale, arguments), linearish(scale);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/identity.js
-
-
-
-function identity_identity(domain) {
-  function scale(x) {
-    return isNaN(x = +x) ? unknown : x;
-  }
-
-  var unknown;
-  return scale.invert = scale, scale.domain = scale.range = function (_) {
-    return arguments.length ? (domain = array_map.call(_, d3_scale_src_number), scale) : domain.slice();
-  }, scale.unknown = function (_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  }, scale.copy = function () {
-    return identity_identity(domain).unknown(unknown);
-  }, domain = arguments.length ? array_map.call(domain, d3_scale_src_number) : [0, 1], linearish(scale);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/nice.js
-/* harmony default export */ var nice = (function (domain, interval) {
-  domain = domain.slice();
-  var t,
-      i0 = 0,
-      i1 = domain.length - 1,
-      x0 = domain[i0],
-      x1 = domain[i1];
-  return x1 < x0 && (t = i0, i0 = i1, i1 = t, t = x0, x0 = x1, x1 = t), domain[i0] = interval.floor(x0), domain[i1] = interval.ceil(x1), domain;
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/log.js
-
-
-
-
-
-
-function transformLog(x) {
-  return Math.log(x);
-}
-
-function transformExp(x) {
-  return Math.exp(x);
-}
-
-function transformLogn(x) {
-  return -Math.log(-x);
-}
-
-function transformExpn(x) {
-  return -Math.exp(-x);
-}
-
-function pow10(x) {
-  return isFinite(x) ? +("1e" + x) : x < 0 ? 0 : x;
-}
-
-function powp(base) {
-  return base === 10 ? pow10 : base === Math.E ? Math.exp : function (x) {
-    return Math.pow(base, x);
-  };
-}
-
-function logp(base) {
-  return base === Math.E ? Math.log : base === 10 && Math.log10 || base === 2 && Math.log2 || (base = Math.log(base), function (x) {
-    return Math.log(x) / base;
-  });
-}
-
-function reflect(f) {
-  return function (x) {
-    return -f(-x);
-  };
-}
-
-function loggish(transform) {
-  function rescale() {
-    return logs = logp(base), pows = powp(base), domain()[0] < 0 ? (logs = reflect(logs), pows = reflect(pows), transform(transformLogn, transformExpn)) : transform(transformLog, transformExp), scale;
-  }
-
-  var logs,
-      pows,
-      scale = transform(transformLog, transformExp),
-      domain = scale.domain,
-      base = 10;
-  return scale.base = function (_) {
-    return arguments.length ? (base = +_, rescale()) : base;
-  }, scale.domain = function (_) {
-    return arguments.length ? (domain(_), rescale()) : domain();
-  }, scale.ticks = function (count) {
-    var r,
-        d = domain(),
-        u = d[0],
-        v = d[d.length - 1];
-    (r = v < u) && (i = u, u = v, v = i);
-    var p,
-        k,
-        t,
-        i = logs(u),
-        j = logs(v),
-        n = count == null ? 10 : +count,
-        z = [];
-    if (base % 1 || !(j - i < n)) z = src_ticks(i, j, Math.min(j - i, n)).map(pows);else if (i = Math.round(i) - 1, j = Math.round(j) + 1, u > 0) {
-      for (; i < j; ++i) for (k = 1, p = pows(i); k < base; ++k) if (t = p * k, !(t < u)) {
-        if (t > v) break;
-        z.push(t);
-      }
-    } else for (; i < j; ++i) for (k = base - 1, p = pows(i); k >= 1; --k) if (t = p * k, !(t < u)) {
-      if (t > v) break;
-      z.push(t);
-    }
-    return r ? z.reverse() : z;
-  }, scale.tickFormat = function (count, specifier) {
-    if (specifier == null && (specifier = base === 10 ? ".0e" : ","), typeof specifier !== "function" && (specifier = defaultLocale_format(specifier)), count === Infinity) return specifier;
-    count == null && (count = 10);
-    var k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
-
-    return function (d) {
-      var i = d / pows(Math.round(logs(d)));
-      return i * base < base - .5 && (i *= base), i <= k ? specifier(d) : "";
-    };
-  }, scale.nice = function () {
-    return domain(nice(domain(), {
-      floor: function floor(x) {
-        return pows(Math.floor(logs(x)));
-      },
-      ceil: function ceil(x) {
-        return pows(Math.ceil(logs(x)));
-      }
-    }));
-  }, scale;
-}
-function log() {
-  var scale = loggish(transformer()).domain([1, 10]);
-  return scale.copy = function () {
-    return copy(scale, log()).base(scale.base());
-  }, initRange.apply(scale, arguments), scale;
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/symlog.js
-
-
-
-
-function transformSymlog(c) {
-  return function (x) {
-    return Math.sign(x) * Math.log1p(Math.abs(x / c));
-  };
-}
-
-function transformSymexp(c) {
-  return function (x) {
-    return Math.sign(x) * Math.expm1(Math.abs(x)) * c;
-  };
-}
-
-function symlogish(transform) {
-  var c = 1,
-      scale = transform(transformSymlog(c), transformSymexp(c));
-  return scale.constant = function (_) {
-    return arguments.length ? transform(transformSymlog(c = +_), transformSymexp(c)) : c;
-  }, linearish(scale);
-}
-function symlog() {
-  var scale = symlogish(transformer());
-  return scale.copy = function () {
-    return copy(scale, symlog()).constant(scale.constant());
-  }, initRange.apply(scale, arguments);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/pow.js
-
-
-
-
-function transformPow(exponent) {
-  return function (x) {
-    return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
-  };
-}
-
-function transformSqrt(x) {
-  return x < 0 ? -Math.sqrt(-x) : Math.sqrt(x);
-}
-
-function transformSquare(x) {
-  return x < 0 ? -x * x : x * x;
-}
-
-function powish(transform) {
-  function rescale() {
-    return exponent === 1 ? transform(continuous_identity, continuous_identity) : exponent === .5 ? transform(transformSqrt, transformSquare) : transform(transformPow(exponent), transformPow(1 / exponent));
-  }
-
-  var scale = transform(continuous_identity, continuous_identity),
-      exponent = 1;
-  return scale.exponent = function (_) {
-    return arguments.length ? (exponent = +_, rescale()) : exponent;
-  }, linearish(scale);
-}
-function pow() {
-  var scale = powish(transformer());
-  return scale.copy = function () {
-    return copy(scale, pow()).exponent(scale.exponent());
-  }, initRange.apply(scale, arguments), scale;
-}
-function sqrt() {
-  return pow.apply(null, arguments).exponent(.5);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/quantile.js
-
-
-
-function quantile_quantile() {
-  function rescale() {
-    var i = 0,
-        n = Math.max(1, range.length);
-
-    for (thresholds = Array(n - 1); ++i < n;) thresholds[i - 1] = quantile(domain, i / n);
-
-    return scale;
-  }
-
-  function scale(x) {
-    return isNaN(x = +x) ? unknown : range[bisect(thresholds, x)];
-  }
-
-  var unknown,
-      domain = [],
-      range = [],
-      thresholds = [];
-  return scale.invertExtent = function (y) {
-    var i = range.indexOf(y);
-    return i < 0 ? [NaN, NaN] : [i > 0 ? thresholds[i - 1] : domain[0], i < thresholds.length ? thresholds[i] : domain[domain.length - 1]];
-  }, scale.domain = function (_) {
-    if (!arguments.length) return domain.slice();
-    domain = [];
-
-    for (var d, i = 0, n = _.length; i < n; ++i) (d = _[i], d != null && !isNaN(d = +d)) && domain.push(d);
-
-    return domain.sort(src_ascending), rescale();
-  }, scale.range = function (_) {
-    return arguments.length ? (range = src_array_slice.call(_), rescale()) : range.slice();
-  }, scale.unknown = function (_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  }, scale.quantiles = function () {
-    return thresholds.slice();
-  }, scale.copy = function () {
-    return quantile_quantile().domain(domain).range(range).unknown(unknown);
-  }, initRange.apply(scale, arguments);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/quantize.js
-
-
-
-
-function quantize_quantize() {
-  function scale(x) {
-    return x <= x ? range[bisect(domain, x, 0, n)] : unknown;
-  }
-
-  function rescale() {
-    var i = -1;
-
-    for (domain = Array(n); ++i < n;) domain[i] = ((i + 1) * x1 - (i - n) * x0) / (n + 1);
-
-    return scale;
-  }
-
-  var unknown,
-      x0 = 0,
-      x1 = 1,
-      n = 1,
-      domain = [.5],
-      range = [0, 1];
-  return scale.domain = function (_) {
-    return arguments.length ? (x0 = +_[0], x1 = +_[1], rescale()) : [x0, x1];
-  }, scale.range = function (_) {
-    return arguments.length ? (n = (range = src_array_slice.call(_)).length - 1, rescale()) : range.slice();
-  }, scale.invertExtent = function (y) {
-    var i = range.indexOf(y);
-    return i < 0 ? [NaN, NaN] : i < 1 ? [x0, domain[0]] : i >= n ? [domain[n - 1], x1] : [domain[i - 1], domain[i]];
-  }, scale.unknown = function (_) {
-    return arguments.length ? (unknown = _, scale) : scale;
-  }, scale.thresholds = function () {
-    return domain.slice();
-  }, scale.copy = function () {
-    return quantize_quantize().domain([x0, x1]).range(range).unknown(unknown);
-  }, initRange.apply(linearish(scale), arguments);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/threshold.js
-
-
-
-function threshold_threshold() {
-  function scale(x) {
-    return x <= x ? range[bisect(domain, x, 0, n)] : unknown;
-  }
-
-  var unknown,
-      domain = [.5],
-      range = [0, 1],
-      n = 1;
-  return scale.domain = function (_) {
-    return arguments.length ? (domain = src_array_slice.call(_), n = Math.min(domain.length, range.length - 1), scale) : domain.slice();
-  }, scale.range = function (_) {
-    return arguments.length ? (range = src_array_slice.call(_), n = Math.min(domain.length, range.length - 1), scale) : range.slice();
-  }, scale.invertExtent = function (y) {
-    var i = range.indexOf(y);
-    return [domain[i - 1], domain[i]];
-  }, scale.unknown = function (_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  }, scale.copy = function () {
-    return threshold_threshold().domain(domain).range(range).unknown(unknown);
-  }, initRange.apply(scale, arguments);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/time.js
-
-
-
-
-
-
-
-var time_durationSecond = 1e3,
-    time_durationMinute = 60000,
-    time_durationHour = 3600000,
-    time_durationDay = 86400000,
-    time_durationWeek = 604800000,
-    durationMonth = 2592000000,
-    durationYear = 31536000000;
-
-function time_date(t) {
-  return new Date(t);
-}
-
-function time_number(t) {
-  return t instanceof Date ? +t : +new Date(+t);
-}
-
-function calendar(year, month, week, day, hour, minute, second, millisecond, format) {
-  function tickFormat(date) {
-    return (second(date) < date ? formatMillisecond : minute(date) < date ? formatSecond : hour(date) < date ? formatMinute : day(date) < date ? formatHour : month(date) < date ? week(date) < date ? formatDay : formatWeek : year(date) < date ? formatMonth : formatYear)(date);
-  }
-
-  function tickInterval(interval, start, stop, step) {
-    // If a desired tick count is specified, pick a reasonable tick interval
-    // based on the extent of the domain and a rough estimate of tick size.
-    // Otherwise, assume interval is already a time interval and use it.
-    if (interval == null && (interval = 10), typeof interval === "number") {
-      var target = Math.abs(stop - start) / interval,
-          i = bisector(function (i) {
-        return i[2];
-      }).right(tickIntervals, target);
-      i === tickIntervals.length ? (step = tickStep(start / durationYear, stop / durationYear, interval), interval = year) : i ? (i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i], step = i[1], interval = i[0]) : (step = Math.max(tickStep(start, stop, interval), 1), interval = millisecond);
-    }
-
-    return step == null ? interval : interval.every(step);
-  }
-
-  var scale = continuous(continuous_identity, continuous_identity),
-      invert = scale.invert,
-      domain = scale.domain,
-      formatMillisecond = format(".%L"),
-      formatSecond = format(":%S"),
-      formatMinute = format("%I:%M"),
-      formatHour = format("%I %p"),
-      formatDay = format("%a %d"),
-      formatWeek = format("%b %d"),
-      formatMonth = format("%B"),
-      formatYear = format("%Y"),
-      tickIntervals = [[second, 1, time_durationSecond], [second, 5, 5000], [second, 15, 15000], [second, 30, 30000], [minute, 1, time_durationMinute], [minute, 5, 300000], [minute, 15, 900000], [minute, 30, 1800000], [hour, 1, time_durationHour], [hour, 3, 10800000], [hour, 6, 21600000], [hour, 12, 43200000], [day, 1, time_durationDay], [day, 2, 172800000], [week, 1, time_durationWeek], [month, 1, durationMonth], [month, 3, 7776000000], [year, 1, durationYear]];
-  return scale.invert = function (y) {
-    return new Date(invert(y));
-  }, scale.domain = function (_) {
-    return arguments.length ? domain(array_map.call(_, time_number)) : domain().map(time_date);
-  }, scale.ticks = function (interval, step) {
-    var t,
-        d = domain(),
-        t0 = d[0],
-        t1 = d[d.length - 1],
-        r = t1 < t0;
-    // inclusive stop
-    return r && (t = t0, t0 = t1, t1 = t), t = tickInterval(interval, t0, t1, step), t = t ? t.range(t0, t1 + 1) : [], r ? t.reverse() : t;
-  }, scale.tickFormat = function (count, specifier) {
-    return specifier == null ? tickFormat : format(specifier);
-  }, scale.nice = function (interval, step) {
-    var d = domain();
-    return (interval = tickInterval(interval, d[0], d[d.length - 1], step)) ? domain(nice(d, interval)) : scale;
-  }, scale.copy = function () {
-    return copy(scale, calendar(year, month, week, day, hour, minute, second, millisecond, format));
-  }, scale;
-}
-/* harmony default export */ var src_time = (function () {
-  return initRange.apply(calendar(src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, src_millisecond, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/utcTime.js
-
-
-
-
-/* harmony default export */ var utcTime = (function () {
-  return initRange.apply(calendar(src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute, src_second, src_millisecond, utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/sequential.js
-
-
-
-
-
-
-
-function sequential_transformer() {
-  function scale(x) {
-    return isNaN(x = +x) ? unknown : interpolator(k10 === 0 ? .5 : (x = (transform(x) - t0) * k10, clamp ? Math.max(0, Math.min(1, x)) : x));
-  }
-
-  var t0,
-      t1,
-      k10,
-      transform,
-      unknown,
-      x0 = 0,
-      x1 = 1,
-      interpolator = continuous_identity,
-      clamp = !1;
-  return scale.domain = function (_) {
-    return arguments.length ? (t0 = transform(x0 = +_[0]), t1 = transform(x1 = +_[1]), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
-  }, scale.clamp = function (_) {
-    return arguments.length ? (clamp = !!_, scale) : clamp;
-  }, scale.interpolator = function (_) {
-    return arguments.length ? (interpolator = _, scale) : interpolator;
-  }, scale.unknown = function (_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  }, function (t) {
-    return transform = t, t0 = t(x0), t1 = t(x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale;
-  };
-}
-
-function sequential_copy(source, target) {
-  return target.domain(source.domain()).interpolator(source.interpolator()).clamp(source.clamp()).unknown(source.unknown());
-}
-function sequential() {
-  var scale = linearish(sequential_transformer()(continuous_identity));
-  return scale.copy = function () {
-    return sequential_copy(scale, sequential());
-  }, initInterpolator.apply(scale, arguments);
-}
-function sequentialLog() {
-  var scale = loggish(sequential_transformer()).domain([1, 10]);
-  return scale.copy = function () {
-    return sequential_copy(scale, sequentialLog()).base(scale.base());
-  }, initInterpolator.apply(scale, arguments);
-}
-function sequentialSymlog() {
-  var scale = symlogish(sequential_transformer());
-  return scale.copy = function () {
-    return sequential_copy(scale, sequentialSymlog()).constant(scale.constant());
-  }, initInterpolator.apply(scale, arguments);
-}
-function sequentialPow() {
-  var scale = powish(sequential_transformer());
-  return scale.copy = function () {
-    return sequential_copy(scale, sequentialPow()).exponent(scale.exponent());
-  }, initInterpolator.apply(scale, arguments);
-}
-function sequentialSqrt() {
-  return sequentialPow.apply(null, arguments).exponent(.5);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/sequentialQuantile.js
-
-
-
-function sequentialQuantile() {
-  function scale(x) {
-    if (!isNaN(x = +x)) return interpolator((bisect(domain, x) - 1) / (domain.length - 1));
-  }
-
-  var domain = [],
-      interpolator = continuous_identity;
-  return scale.domain = function (_) {
-    if (!arguments.length) return domain.slice();
-    domain = [];
-
-    for (var d, i = 0, n = _.length; i < n; ++i) (d = _[i], d != null && !isNaN(d = +d)) && domain.push(d);
-
-    return domain.sort(src_ascending), scale;
-  }, scale.interpolator = function (_) {
-    return arguments.length ? (interpolator = _, scale) : interpolator;
-  }, scale.copy = function () {
-    return sequentialQuantile(interpolator).domain(domain);
-  }, initInterpolator.apply(scale, arguments);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/diverging.js
-
-
-
-
-
-
-
-
-function diverging_transformer() {
-  function scale(x) {
-    return isNaN(x = +x) ? unknown : (x = .5 + ((x = +transform(x)) - t1) * (x < t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
-  }
-
-  var t0,
-      t1,
-      t2,
-      k10,
-      k21,
-      transform,
-      unknown,
-      x0 = 0,
-      x1 = .5,
-      x2 = 1,
-      interpolator = continuous_identity,
-      clamp = !1;
-  return scale.domain = function (_) {
-    return arguments.length ? (t0 = transform(x0 = +_[0]), t1 = transform(x1 = +_[1]), t2 = transform(x2 = +_[2]), k10 = t0 === t1 ? 0 : .5 / (t1 - t0), k21 = t1 === t2 ? 0 : .5 / (t2 - t1), scale) : [x0, x1, x2];
-  }, scale.clamp = function (_) {
-    return arguments.length ? (clamp = !!_, scale) : clamp;
-  }, scale.interpolator = function (_) {
-    return arguments.length ? (interpolator = _, scale) : interpolator;
-  }, scale.unknown = function (_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  }, function (t) {
-    return transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : .5 / (t1 - t0), k21 = t1 === t2 ? 0 : .5 / (t2 - t1), scale;
-  };
-}
-
-function diverging() {
-  var scale = linearish(diverging_transformer()(continuous_identity));
-  return scale.copy = function () {
-    return sequential_copy(scale, diverging());
-  }, initInterpolator.apply(scale, arguments);
-}
-function divergingLog() {
-  var scale = loggish(diverging_transformer()).domain([.1, 1, 10]);
-  return scale.copy = function () {
-    return sequential_copy(scale, divergingLog()).base(scale.base());
-  }, initInterpolator.apply(scale, arguments);
-}
-function divergingSymlog() {
-  var scale = symlogish(diverging_transformer());
-  return scale.copy = function () {
-    return sequential_copy(scale, divergingSymlog()).constant(scale.constant());
-  }, initInterpolator.apply(scale, arguments);
-}
-function divergingPow() {
-  var scale = powish(diverging_transformer());
-  return scale.copy = function () {
-    return sequential_copy(scale, divergingPow()).exponent(scale.exponent());
-  }, initInterpolator.apply(scale, arguments);
-}
-function divergingSqrt() {
-  return divergingPow.apply(null, arguments).exponent(.5);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRendererHelper.ts
-
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
-
-
-
-var AxisRendererHelper_AxisRendererHelper = /*#__PURE__*/function () {
-  function AxisRendererHelper(owner) {
-    _defineProperty(this, "owner", void 0), _defineProperty(this, "config", void 0), _defineProperty(this, "scale", void 0);
-    var scale = src_linear_linear(),
-        config = owner.config,
-        params = owner.params;
-    this.owner = owner, this.config = config, this.scale = scale, (config.noTransition || !params.config.transition_duration) && (config.withoutTransition = !0), config.range = this.scaleExtent((params.orgXScale || scale).range());
-  }
-  /**
-   * Compute a character dimension
-   * @param {d3.selection} node <g class=tick> node
-   * @returns {{w: number, h: number}}
-   * @private
-   */
-
-
-  AxisRendererHelper.getSizeFor1Char = function getSizeFor1Char(node) {
-    // default size for one character
-    var size = {
-      w: 5.5,
-      h: 11.5
-    };
-    return node.empty() || node.select("text").text("0").call(function (el) {
-      try {
-        var _el$node$getBBox = el.node().getBBox(),
-            width = _el$node$getBBox.width,
-            height = _el$node$getBBox.height;
-
-        width && height && (size.w = width, size.h = height);
-      } catch (e) {} finally {
-        el.text("");
-      }
-    }), this.getSizeFor1Char = function () {
-      return size;
-    }, size;
-  }
-  /**
-   * Get tick transform setter function
-   * @param {string} id Axis id
-   * @returns {Function} transfrom setter function
-   * @private
-   */
-  ;
-
-  var _proto = AxisRendererHelper.prototype;
-  return _proto.getTickTransformSetter = function getTickTransformSetter(id) {
-    var config = this.config,
-        fn = id === "x" ? function (value) {
-      return "translate(" + (value + config.tickOffset) + ",0)";
-    } : function (value) {
-      return "translate(0," + value + ")";
-    };
-    return function (selection, scale) {
-      selection.attr("transform", function (d) {
-        return fn(Math.ceil(scale(d)));
-      });
-    };
-  }, _proto.scaleExtent = function scaleExtent(domain) {
-    var start = domain[0],
-        stop = domain[domain.length - 1];
-    return start < stop ? [start, stop] : [stop, start];
-  }, _proto.generateTicks = function generateTicks(scale, isYAxes) {
-    var tickStepSize = this.owner.params.tickStepSize,
-        ticks = [];
-    // When 'axis[y|y2].tick.stepSize' option is set
-    if (isYAxes && tickStepSize) for (var _scale$domain = scale.domain(), start = _scale$domain[0], end = _scale$domain[1], interval = start; interval <= end;) ticks.push(interval), interval += tickStepSize;else if (scale.ticks) ticks = scale.ticks.apply(scale, this.config.tickArguments || []).map(function (v) {
-      return (// round the tick value if is number
-        isString(v) && isNumber(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
-      );
-    });else {
-      for (var domain = scale.domain(), i = Math.ceil(domain[0]); i < domain[1]; i++) ticks.push(i);
-
-      ticks.length > 0 && ticks[0] > 0 && ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
-    }
-    return ticks;
-  }, _proto.copyScale = function copyScale() {
-    var newScale = this.scale.copy();
-    return newScale.domain().length || newScale.domain(this.scale.domain()), newScale;
-  }, _proto.textFormatted = function textFormatted(v) {
-    var tickFormat = this.config.tickFormat,
-        value = /\d+\.\d+0{5,}\d$/.test(v) ? +(v + "").replace(/0+\d$/, "") : v,
-        formatted = tickFormat ? tickFormat(value) : value; // to round float numbers from 'binary floating point'
-    // https://en.wikipedia.org/wiki/Double-precision_floating-point_format
-    // https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
-
-    return isDefined(formatted) ? formatted : "";
-  }, _proto.transitionise = function transitionise(selection) {
-    var config = this.config;
-    return config.withoutTransition ? selection.interrupt() : selection.transition(config.transition);
-  }, AxisRendererHelper;
-}();
-
-
-// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRenderer.ts
-
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
-
-
-
-
-var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
-  function AxisRenderer(params) {
-    params === void 0 && (params = {}), _defineProperty(this, "helper", void 0), _defineProperty(this, "config", void 0), _defineProperty(this, "params", void 0), _defineProperty(this, "g", void 0);
-    var config = {
-      innerTickSize: 6,
-      outerTickSize: params.outerTick ? 6 : 0,
-      orient: "bottom",
-      range: [],
-      tickArguments: null,
-      tickCentered: null,
-      tickCulling: !0,
-      tickFormat: null,
-      tickLength: 9,
-      tickOffset: 0,
-      tickPadding: 3,
-      tickValues: null,
-      transition: null,
-      noTransition: params.noTransition
-    };
-    config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding, this.config = config, this.params = params, this.helper = new AxisRendererHelper_AxisRendererHelper(this);
-  }
-  /**
-   * Create axis element
-   * @param {d3.selection} g Axis selection
-   * @private
-   */
-
-
-  var _proto = AxisRenderer.prototype;
-  return _proto.create = function create(g) {
-    var ctx = this,
-        config = this.config,
-        helper = this.helper,
-        params = this.params,
-        scale = helper.scale,
-        orient = config.orient,
-        splitTickText = this.splitTickText.bind(this),
-        isLeftRight = /^(left|right)$/.test(orient),
-        isTopBottom = /^(top|bottom)$/.test(orient),
-        tickTransform = helper.getTickTransformSetter(isTopBottom ? "x" : "y"),
-        axisPx = tickTransform === helper.axisX ? "y" : "x",
-        sign = /^(top|left)$/.test(orient) ? -1 : 1,
-        rotate = params.tickTextRotate;
-    this.config.range = scale.rangeExtent ? scale.rangeExtent() : helper.scaleExtent((params.orgXScale || scale).range());
-    var $g,
-        _config2 = config,
-        innerTickSize = _config2.innerTickSize,
-        tickLength = _config2.tickLength,
-        range = _config2.range,
-        id = params.id,
-        tickTextPos = id && /^(x|y|y2)$/.test(id) ? params.config["axis_" + id + "_tick_text_position"] : {
-      x: 0,
-      y: 0
-    },
-        prefix = id === "subX" ? "subchart_axis_x" : "axis_" + id,
-        axisShow = params.config[prefix + "_show"],
-        tickShow = {
-      tick: !!axisShow && params.config[prefix + "_tick_show"],
-      text: !!axisShow && params.config[prefix + "_tick_text_show"]
-    }; // // get the axis' tick position configuration
-
-    g.each(function () {
-      var g = src_select(this),
-          scale0 = this.__chart__ || scale,
-          scale1 = helper.copyScale();
-      $g = g, this.__chart__ = scale1, config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
-      // update selection - data join
-      var path = g.selectAll(".domain").data([0]); // enter + update selection
-
-      if (path.enter().append("path").attr("class", "domain").merge(helper.transitionise(path)).attr("d", function () {
-        var outerTickSized = config.outerTickSize * sign;
-        return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
-      }), tickShow.tick || tickShow.text) {
-        // count of tick data in array
-        var ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight),
-            tick = g.selectAll(".tick").data(ticks, scale1),
-            tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
-            tickExit = tick.exit().remove(); // update selection
-
-        tick = tickEnter.merge(tick), tickShow.tick && tickEnter.append("line"), tickShow.text && tickEnter.append("text");
-        var sizeFor1Char = AxisRendererHelper_AxisRendererHelper.getSizeFor1Char(tick),
-            counts = [],
-            tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
-          var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
-          return counts[index] = split.length, split.map(function (splitted) {
-            return {
-              index: index,
-              splitted: splitted
-            };
-          });
-        });
-        tspan.exit().remove(), tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
-          return d.splitted;
-        }), tspan.attr("x", isTopBottom ? 0 : tickLength * sign).attr("dx", function () {
-          var dx = 0;
-          return /(top|bottom)/.test(orient) && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180)) * (orient === "top" ? -1 : 1)), dx + (tickTextPos.x || 0);
-        }()).attr("dy", function (d, i) {
-          var dy = 0;
-          return orient !== "top" && (dy = sizeFor1Char.h, i === 0 && (dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0)), isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
-        });
-        var lineUpdate = tick.select("line"),
-            textUpdate = tick.select("text");
-
-        // Append <title> for tooltip display
-        if (tickEnter.select("line").attr(axisPx + "2", innerTickSize * sign), tickEnter.select("text").attr(axisPx, tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle) {
-          var title = textUpdate.select("title");
-          (title.empty() ? textUpdate.append("title") : title).text(function (index) {
-            return params.tickTitle[index];
-          });
-        }
-
-        if (scale1.bandwidth) {
-          var x = scale1,
-              dx = x.bandwidth() / 2;
-          scale0 = function (d) {
-            return x(d) + dx;
-          }, scale1 = scale0;
-        } else scale0.bandwidth ? scale0 = scale1 : tickTransform(tickExit, scale1);
-
-        tickTransform(tickEnter, scale0), tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
-      }
-    }), this.g = $g;
-  }
-  /**
-   * Get tick x/y coordinate
-   * @returns {{x: number, y: number}}
-   * @private
-   */
-  , _proto.getTickXY = function getTickXY() {
-    var config = this.config,
-        pos = {
-      x: 0,
-      y: 0
-    };
-    return this.params.isCategory && (pos.x = config.tickCentered ? 0 : config.tickOffset, pos.y = config.tickCentered ? config.tickOffset : 0), pos;
-  }
-  /**
-   * Get tick size
-   * @param {object} d data object
-   * @returns {number}
-   * @private
-   */
-  , _proto.getTickSize = function getTickSize(d) {
-    var scale = this.helper.scale,
-        config = this.config,
-        _config3 = config,
-        innerTickSize = _config3.innerTickSize,
-        range = _config3.range,
-        tickPosition = scale(d) + (config.tickCentered ? 0 : config.tickOffset);
-    return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
-  }
-  /**
-   * Set tick's line & text position
-   * @param {d3.selection} lineUpdate Line selection
-   * @param {d3.selection} textUpdate Text selection
-   * @private
-   */
-  , _proto.setTickLineTextPosition = function setTickLineTextPosition(lineUpdate, textUpdate) {
-    var tickPos = this.getTickXY(),
-        _this$config = this.config,
-        innerTickSize = _this$config.innerTickSize,
-        orient = _this$config.orient,
-        tickLength = _this$config.tickLength,
-        tickOffset = _this$config.tickOffset,
-        rotate = this.params.tickTextRotate,
-        textAnchorForText = function (r) {
-      var value = ["start", "end"];
-      return orient === "top" && value.reverse(), r ? r > 0 ? value[0] : value[1] : "middle";
-    },
-        textTransform = function (r) {
-      return r ? "rotate(" + r + ")" : null;
-    },
-        yForText = function (r) {
-      var r2 = r / (orient === "bottom" ? 15 : 23);
-      return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
-    };
-
-    orient === "bottom" ? (lineUpdate.attr("x1", tickPos.x).attr("x2", tickPos.x).attr("y2", this.getTickSize.bind(this)), textUpdate.attr("x", 0).attr("y", yForText(rotate)).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -innerTickSize), textUpdate.attr("x", 0).attr("y", -yForText(rotate) * 2).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate))) : orient === "left" ? (lineUpdate.attr("x2", -innerTickSize).attr("y1", tickPos.y).attr("y2", tickPos.y), textUpdate.attr("x", -tickLength).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", innerTickSize).attr("y2", 0), textUpdate.attr("x", tickLength).attr("y", 0).style("text-anchor", "start")) : void 0;
-  } // this should be called only when category axis
-  , _proto.splitTickText = function splitTickText(d, scale, ticks, isLeftRight, charWidth) {
-    // split given text by tick width size
-    // eslint-disable-next-line
-    function split(splitted, text) {
-      for (var subtext, spaceIndex, textWidth, i = 1; i < text.length; i++) // if text width gets over tick width, split by space index or current index
-      if (text.charAt(i) === " " && (spaceIndex = i), subtext = text.substr(0, i + 1), textWidth = charWidth * subtext.length, tickWidth < textWidth) return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
-
-      return splitted.concat(text);
-    }
-
-    var params = this.params,
-        tickText = this.helper.textFormatted(d),
-        splitted = isString(tickText) && tickText.indexOf("\n") > -1 ? tickText.split("\n") : [];
-    if (splitted.length) return splitted;
-    if (isArray(tickText)) return tickText;
-    var tickWidth = params.tickWidth;
-    return (!tickWidth || tickWidth <= 0) && (tickWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(scale(ticks[1]) - scale(ticks[0])) - 12 : 110), split(splitted, tickText + "");
-  }, _proto.scale = function scale(x) {
-    return arguments.length ? (this.helper.scale = x, this) : this.helper.scale;
-  }, _proto.orient = function orient(x) {
-    return arguments.length ? (this.config.orient = x in {
-      top: 1,
-      right: 1,
-      bottom: 1,
-      left: 1
-    } ? x + "" : "bottom", this) : this.config.orient;
-  }, _proto.tickFormat = function tickFormat(format) {
-    var config = this.config;
-    return arguments.length ? (config.tickFormat = format, this) : config.tickFormat;
-  }, _proto.tickCentered = function tickCentered(isCentered) {
-    var config = this.config;
-    return arguments.length ? (config.tickCentered = isCentered, this) : config.tickCentered;
-  }
-  /**
-   * Return tick's offset value.
-   * The value will be set for 'category' axis type.
-   * @returns {number}
-   * @private
-   */
-  , _proto.tickOffset = function tickOffset() {
-    return this.config.tickOffset;
-  }
-  /**
-   * Get tick interval count
-   * @private
-   * @param {number} size Total data size
-   * @returns {number}
-   */
-  , _proto.tickInterval = function tickInterval(size) {
-    var interval;
-    if (this.params.isCategory) interval = this.config.tickOffset * 2;else {
-      var length = this.g.select("path.domain").node().getTotalLength() - this.config.outerTickSize * 2;
-      interval = length / (size || this.g.selectAll("line").size());
-    }
-    return interval === Infinity ? 0 : interval;
-  }, _proto.ticks = function ticks() {
-    for (var config = this.config, _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) args[_key] = arguments[_key];
-
-    return args.length ? (config.tickArguments = toArray(args), this) : config.tickArguments;
-  }, _proto.tickCulling = function tickCulling(culling) {
-    var config = this.config;
-    return arguments.length ? (config.tickCulling = culling, this) : config.tickCulling;
-  }, _proto.tickValues = function tickValues(x) {
-    var _this = this,
-        config = this.config;
-
-    if (isFunction(x)) config.tickValues = function () {
-      return x(_this.helper.scale.domain());
-    };else {
-      if (!arguments.length) return config.tickValues;
-      config.tickValues = x;
-    }
-    return this;
-  }, _proto.setTransition = function setTransition(t) {
-    return this.config.transition = t, this;
-  }, AxisRenderer;
-}();
-
-
-// CONCATENATED MODULE: ./src/ChartInternal/Axis/Axis.ts
-
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-
-
-
-
-
-var Axis_Axis = /*#__PURE__*/function () {
-  function Axis(owner) {
-    _defineProperty(this, "owner", void 0), _defineProperty(this, "x", void 0), _defineProperty(this, "subX", void 0), _defineProperty(this, "y", void 0), _defineProperty(this, "y2", void 0), _defineProperty(this, "axesList", {}), _defineProperty(this, "tick", {
-      x: null,
-      y: null,
-      y2: null
-    }), _defineProperty(this, "xs", []), _defineProperty(this, "orient", {
-      x: "bottom",
-      y: "left",
-      y2: "right",
-      subX: "bottom"
-    }), this.owner = owner, this.setOrient();
-  }
-
-  var _proto = Axis.prototype;
-  return _proto.getAxisClassName = function getAxisClassName(id) {
-    return config_classes.axis + " " + config_classes["axis" + capitalize(id)];
-  }, _proto.isHorizontal = function isHorizontal($$, forHorizontal) {
-    var isRotated = $$.config.axis_rotated;
-    return forHorizontal ? isRotated : !isRotated;
-  }, _proto.isCategorized = function isCategorized() {
-    var _this$owner = this.owner,
-        config = _this$owner.config,
-        state = _this$owner.state;
-    return config.axis_x_type.indexOf("category") >= 0 || state.hasRadar;
-  }, _proto.isCustomX = function isCustomX() {
-    var config = this.owner.config;
-    return !this.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
-  }, _proto.isTimeSeries = function isTimeSeries(id) {
-    id === void 0 && (id = "x");
-    var config = this.owner.config;
-    return config["axis_" + id + "_type"] === "timeseries";
-  }, _proto.isTimeSeriesY = function isTimeSeriesY() {
-    return this.isTimeSeries("y");
-  }, _proto.init = function init() {
-    var _this = this,
-        $$ = this.owner,
-        config = $$.config,
-        _$$$$el = $$.$el,
-        main = _$$$$el.main,
-        axis = _$$$$el.axis,
-        clip = $$.state.clip,
-        isRotated = config.axis_rotated,
-        target = ["x", "y"];
-
-    config.axis_y2_show && target.push("y2"), target.forEach(function (v) {
-      var classAxis = _this.getAxisClassName(v),
-          classLabel = config_classes["axis" + v.toUpperCase() + "Label"];
-
-      axis[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
-        var res = null;
-        return v === "x" ? res = clip.pathXAxis : v === "y" && config.axis_y_inner && (res = clip.pathYAxis), res;
-      }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_" + v + "_show"] ? "visible" : "hidden"), axis[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", function () {
-        return _this.textAnchorForAxisLabel(v);
-      }), _this.generateAxes(v);
-    });
-  }
-  /**
-   * Set axis orient according option value
-   * @private
-   */
-  , _proto.setOrient = function setOrient() {
-    var $$ = this.owner,
-        _$$$config = $$.config,
-        isRotated = _$$$config.axis_rotated,
-        yInner = _$$$config.axis_y_inner,
-        y2Inner = _$$$config.axis_y2_inner;
-    this.orient = {
-      x: isRotated ? "left" : "bottom",
-      y: isRotated ? yInner ? "top" : "bottom" : yInner ? "right" : "left",
-      y2: isRotated ? y2Inner ? "bottom" : "top" : y2Inner ? "left" : "right",
-      subX: isRotated ? "left" : "bottom"
-    };
-  }
-  /**
-   * Generate axes
-   * It's used when axis' axes option is set
-   * @param {string} id Axis id
-   * @private
-   */
-  , _proto.generateAxes = function generateAxes(id) {
-    var d3Axis,
-        $$ = this.owner,
-        config = $$.config,
-        axes = [],
-        axesConfig = config["axis_" + id + "_axes"],
-        isRotated = config.axis_rotated;
-    id === "x" ? d3Axis = isRotated ? axisLeft : axisBottom : id === "y" ? d3Axis = isRotated ? axisBottom : axisLeft : id === "y2" && (d3Axis = isRotated ? axisTop : axisRight), axesConfig.length && axesConfig.forEach(function (v) {
-      var tick = v.tick || {},
-          scale = $$.scale[id].copy();
-      v.domain && scale.domain(v.domain), axes.push(d3Axis(scale).ticks(tick.count).tickFormat(isFunction(tick.format) ? tick.format.bind($$.api) : function (x) {
-        return x;
-      }).tickValues(tick.values).tickSizeOuter(tick.outer === !1 ? 0 : 6));
-    }), this.axesList[id] = axes;
-  }
-  /**
-   * Update axes nodes
-   * @private
-   */
-  , _proto.updateAxes = function updateAxes() {
-    var _this2 = this,
-        $$ = this.owner,
-        config = $$.config,
-        main = $$.$el.main;
-
-    Object.keys(this.axesList).forEach(function (id) {
-      var axesConfig = config["axis_" + id + "_axes"],
-          scale = $$.scale[id].copy(),
-          range = scale.range();
-
-      _this2.axesList[id].forEach(function (v, i) {
-        var axisRange = v.scale().range(); // adjust range value with the current
-        // https://github.com/naver/billboard.js/issues/859
-
-        range.every(function (v, i) {
-          return v === axisRange[i];
-        }) || v.scale().range(range);
-        var className = _this2.getAxisClassName(id) + "-" + (i + 1),
-            g = main.select("." + className.replace(/\s/, "."));
-        g.empty() ? g = main.append("g").attr("class", className).style("visibility", config["axis_" + id + "_show"] ? "visible" : "hidden").call(v) : (axesConfig[i].domain && scale.domain(axesConfig[i].domain), _this2.x.helper.transitionise(g).call(v.scale(scale))), g.attr("transform", $$.getTranslate(id, i + 1));
-      });
-    });
-  }
-  /**
-   * Set Axis & tick values
-   * called from: updateScales()
-   * @param {string} id Axis id string
-   * @param {Array} args Arguments
-   * @private
-   */
-  , _proto.setAxis = function setAxis(id) {
-    id !== "subX" && (this.tick[id] = this.getTickValues(id));
-
-    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
-
-    this[id] = this.getAxis.apply(this, [id].concat(args));
-  } // called from : getMaxTickWidth()
-  , _proto.getAxis = function getAxis(id, scale, outerTick, noTransition, noTickTextRotate) {
-    var tickFormat,
-        $$ = this.owner,
-        config = $$.config,
-        isX = /^(x|subX)$/.test(id),
-        type = isX ? "x" : id,
-        isCategory = isX && this.isCategorized(),
-        orient = this.orient[id],
-        tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
-    if (isX) tickFormat = $$.format.xAxisTick;else {
-      var fn = config["axis_" + id + "_tick_format"];
-      isFunction(fn) && (tickFormat = fn.bind($$.api));
-    }
-    var tickValues = this.tick[type],
-        axisParams = mergeObj({
-      outerTick: outerTick,
-      noTransition: noTransition,
-      config: config,
-      id: id,
-      tickTextRotate: tickTextRotate
-    }, isX && {
-      isCategory: isCategory,
-      tickMultiline: config.axis_x_tick_multiline,
-      tickWidth: config.axis_x_tick_width,
-      tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
-      orgXScale: $$.scale.x
-    });
-    isX || (axisParams.tickStepSize = config["axis_" + type + "_tick_stepSize"]);
-    var axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.scale.zoom || scale).orient(orient);
-
-    if (isX && this.isTimeSeries() && tickValues && !isFunction(tickValues)) {
-      var _fn = parseDate.bind($$);
-
-      tickValues = tickValues.map(function (v) {
-        return _fn(v);
-      });
-    } else !isX && this.isTimeSeriesY() && ( // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
-    axis.ticks(config.axis_y_tick_time_value), tickValues = null);
-
-    tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
-      return x + "%";
-    }), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1));
-    var tickCount = config["axis_" + type + "_tick_count"];
-    return tickCount && axis.ticks(tickCount), axis;
-  }, _proto.updateXAxisTickValues = function updateXAxisTickValues(targets, axis) {
-    var values,
-        $$ = this.owner,
-        config = $$.config,
-        fit = config.axis_x_tick_fit,
-        count = config.axis_x_tick_count;
-    return (fit || count && fit) && (values = $$.mapTargetsToUniqueXs(targets), this.isCategorized() && count > values.length && (count = values.length), values = this.generateTickValues(values, count, this.isTimeSeries())), axis ? axis.tickValues(values) : this.x && (this.x.tickValues(values), this.subX && this.subX.tickValues(values)), values;
-  }, _proto.getId = function getId(id) {
-    var _this$owner2 = this.owner,
-        config = _this$owner2.config,
-        scale = _this$owner2.scale,
-        axis = config.data_axes[id];
-    return axis && scale[axis] || (axis = "y"), axis;
-  }, _proto.getXAxisTickFormat = function getXAxisTickFormat() {
-    var currFormat,
-        $$ = this.owner,
-        config = $$.config,
-        format = $$.format,
-        tickFormat = config.axis_x_tick_format,
-        isTimeSeries = this.isTimeSeries(),
-        isCategorized = this.isCategorized();
-    return tickFormat ? isFunction(tickFormat) ? currFormat = tickFormat.bind($$.api) : isTimeSeries && (currFormat = function (date) {
-      return date ? format.axisTime(tickFormat)(date) : "";
-    }) : currFormat = isTimeSeries ? format.defaultAxisTime : isCategorized ? $$.categoryName : function (v) {
-      return v < 0 ? v.toFixed(0) : v;
-    }, isFunction(currFormat) ? function (v) {
-      return currFormat.apply($$, isCategorized ? [v, $$.categoryName(v)] : [v]);
-    } : currFormat;
-  }, _proto.getTickValues = function getTickValues(id) {
-    var $$ = this.owner,
-        tickValues = $$.config["axis_" + id + "_tick_values"],
-        axis = $$[id + "Axis"];
-    return (isFunction(tickValues) ? tickValues.call($$.api) : tickValues) || (axis ? axis.tickValues() : undefined);
-  }, _proto.getLabelOptionByAxisId = function getLabelOptionByAxisId(id) {
-    return this.owner.config["axis_" + id + "_label"];
-  }, _proto.getLabelText = function getLabelText(id) {
-    var option = this.getLabelOptionByAxisId(id);
-    return isString(option) ? option : option ? option.text : null;
-  }, _proto.setLabelText = function setLabelText(id, text) {
-    var $$ = this.owner,
-        config = $$.config,
-        option = this.getLabelOptionByAxisId(id);
-    isString(option) ? config["axis_" + id + "_label"] = text : option && (option.text = text);
-  }, _proto.getLabelPosition = function getLabelPosition(id, defaultPosition) {
-    var isRotated = this.owner.config.axis_rotated,
-        option = this.getLabelOptionByAxisId(id),
-        position = isObjectType(option) && option.position ? option.position : defaultPosition[+!isRotated],
-        has = function (v) {
-      return !!~position.indexOf(v);
-    };
-
-    return {
-      isInner: has("inner"),
-      isOuter: has("outer"),
-      isLeft: has("left"),
-      isCenter: has("center"),
-      isRight: has("right"),
-      isTop: has("top"),
-      isMiddle: has("middle"),
-      isBottom: has("bottom")
-    };
-  }, _proto.getAxisLabelPosition = function getAxisLabelPosition(id) {
-    return this.getLabelPosition(id, id === "x" ? ["inner-top", "inner-right"] : ["inner-right", "inner-top"]);
-  }, _proto.getLabelPositionById = function getLabelPositionById(id) {
-    return this.getAxisLabelPosition(id);
-  }, _proto.xForAxisLabel = function xForAxisLabel(id) {
-    var $$ = this.owner,
-        _$$$state = $$.state,
-        width = _$$$state.width,
-        height = _$$$state.height,
-        position = this.getAxisLabelPosition(id),
-        x = position.isMiddle ? -height / 2 : 0;
-    return this.isHorizontal($$, id !== "x") ? x = position.isLeft ? 0 : position.isCenter ? width / 2 : width : position.isBottom && (x = -height), x;
-  }, _proto.dxForAxisLabel = function dxForAxisLabel(id) {
-    var $$ = this.owner,
-        position = this.getAxisLabelPosition(id),
-        dx = position.isBottom ? "0.5em" : "0";
-    return this.isHorizontal($$, id !== "x") ? dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0" : position.isTop && (dx = "-0.5em"), dx;
-  }, _proto.textAnchorForAxisLabel = function textAnchorForAxisLabel(id) {
-    var $$ = this.owner,
-        position = this.getAxisLabelPosition(id),
-        anchor = position.isMiddle ? "middle" : "end";
-    return this.isHorizontal($$, id !== "x") ? anchor = position.isLeft ? "start" : position.isCenter ? "middle" : "end" : position.isBottom && (anchor = "start"), anchor;
-  }, _proto.dyForAxisLabel = function dyForAxisLabel(id) {
-    var dy,
-        $$ = this.owner,
-        config = $$.config,
-        isRotated = config.axis_rotated,
-        isInner = this.getAxisLabelPosition(id).isInner,
-        tickRotate = config["axis_" + id + "_tick_rotate"] ? $$.getHorizontalAxisHeight(id) : 0,
-        maxTickWidth = this.getMaxTickWidth(id);
-
-    if (id === "x") {
-      var xHeight = config.axis_x_height;
-      dy = isRotated ? isInner ? "1.2em" : -25 - maxTickWidth : isInner ? "-0.5em" : xHeight ? xHeight - 10 : tickRotate ? tickRotate - 10 : "3em";
-    } else dy = {
-      y: ["-0.5em", 10, "3em", "1.2em", 10],
-      y2: ["1.2em", -20, "-2.2em", "-0.5em", 15]
-    }[id], dy = isRotated ? isInner ? dy[0] : tickRotate ? tickRotate * (id === "y2" ? -1 : 1) - dy[1] : dy[2] : isInner ? dy[3] : (dy[4] + (config["axis_" + id + "_inner"] ? 0 : maxTickWidth + dy[4])) * (id === "y" ? -1 : 1);
-
-    return dy;
-  }, _proto.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
-    var $$ = this.owner,
-        config = $$.config,
-        current = $$.state.current,
-        _$$$$el2 = $$.$el,
-        svg = _$$$$el2.svg,
-        chart = _$$$$el2.chart,
-        currentTickMax = current.maxTickWidths[id],
-        maxWidth = 0;
-    if (withoutRecompute || !config["axis_" + id + "_show"] || $$.filterTargetsToShow().length === 0) return currentTickMax.size;
-
-    if (svg) {
-      var isYAxis = /^y2?$/.test(id),
-          targetsToShow = $$.filterTargetsToShow($$.data.targets),
-          scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id)),
-          domain = scale.domain();
-      // do not compute if domain is same
-      if (domain[0] === domain[1] || isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1]) return currentTickMax.size;
-      currentTickMax.domain = domain;
-      var axis = this.getAxis(id, scale, !1, !1, !0),
-          tickCount = config["axis_" + id + "_tick_count"],
-          tickValues = config["axis_" + id + "_tick_values"];
-      !tickValues && tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
-      var dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
-      axis.create(dummy), dummy.selectAll("text").each(function (d, i) {
-        var currentTextWidth = this.getBoundingClientRect().width;
-        maxWidth = Math.max(maxWidth, currentTextWidth), id === "x" && (currentTickMax.ticks[i] = currentTextWidth);
-      }), dummy.remove();
-    }
-
-    return maxWidth > 0 && (currentTickMax.size = maxWidth), currentTickMax.size;
-  }, _proto.getXAxisTickTextY2Overflow = function getXAxisTickTextY2Overflow(defaultPadding) {
-    var $$ = this.owner,
-        axis = $$.axis,
-        config = $$.config,
-        state = $$.state,
-        xAxisTickRotate = $$.getAxisTickRotate("x");
-
-    if ((axis.isCategorized() || axis.isTimeSeries()) && config.axis_x_tick_fit && !config.axis_x_tick_culling && !config.axis_x_tick_multiline && xAxisTickRotate > 0 && xAxisTickRotate < 90) {
-      var widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingLeft(),
-          maxOverflow = this.getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding),
-          xAxisTickTextY2Overflow = Math.max(0, maxOverflow) + defaultPadding;
-      // for display inconsistencies between browsers
-      return Math.min(xAxisTickTextY2Overflow, widthWithoutCurrentPaddingLeft / 2);
-    }
-
-    return 0;
-  }, _proto.getXAxisTickMaxOverflow = function getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
-    for (var $$ = this.owner, axis = $$.axis, config = $$.config, state = $$.state, isTimeSeries = axis.isTimeSeries(), tickTextWidths = state.current.maxTickWidths.x.ticks, tickCount = tickTextWidths.length, _state$axis$x$padding = state.axis.x.padding, left = _state$axis$x$padding.left, right = _state$axis$x$padding.right, maxOverflow = 0, remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? .5 : 0), i = 0; i < tickCount; i++) {
-      var tickIndex = i + 1,
-          rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidths[i],
-          ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : .5) + left;
-
-      // Skip ticks if there are no ticks before them
-      if (!(ticksBeforeTickText <= 0)) {
-        var tickLength = (widthWithoutCurrentPaddingLeft - rotatedTickTextWidth) / ticksBeforeTickText;
-        maxOverflow = Math.max(maxOverflow, rotatedTickTextWidth - tickLength / 2 - ((remaining - tickIndex) * tickLength + right * tickLength));
-      }
-    }
-
-    var tickOffset = 0;
-
-    if (!isTimeSeries) {
-      var scale = src_linear_linear().domain([left * -1, $$.getXDomainMax($$.data.targets) + 1 + right]).range([0, widthWithoutCurrentPaddingLeft - maxOverflow]);
-      tickOffset = Math.ceil((scale(1) - scale(0)) / 2);
-    }
-
-    return maxOverflow + tickOffset;
-  }
-  /**
-   * Get x Axis padding
-   * @param {number} tickCount Tick count
-   * @returns {object} Padding object values with 'left' & 'right' key
-   * @private
-   */
-  , _proto.getXAxisPadding = function getXAxisPadding(tickCount) {
-    var $$ = this.owner,
-        padding = $$.config.axis_x_padding;
-
-    if (isEmpty(padding) ? padding = {
-      left: 0,
-      right: 0
-    } : (padding.left = padding.left || 0, padding.right = padding.right || 0), $$.axis.isTimeSeries()) {
-      var firstX = +$$.getXDomainMin($$.data.targets),
-          lastX = +$$.getXDomainMax($$.data.targets),
-          timeDiff = lastX - firstX,
-          range = timeDiff + padding.left + padding.right,
-          relativeTickWidth = timeDiff / tickCount / range,
-          left = padding.left / range / relativeTickWidth || 0,
-          _right = padding.right / range / relativeTickWidth || 0;
-
-      padding = {
-        left: left,
-        right: _right
-      };
-    }
-
-    return padding;
-  }, _proto.updateLabels = function updateLabels(withTransition) {
-    var _this3 = this,
-        $$ = this.owner,
-        main = $$.$el.main,
-        labels = {
-      x: main.select("." + config_classes.axisX + " ." + config_classes.axisXLabel),
-      y: main.select("." + config_classes.axisY + " ." + config_classes.axisYLabel),
-      y2: main.select("." + config_classes.axisY2 + " ." + config_classes.axisY2Label)
-    };
-
-    Object.keys(labels).filter(function (id) {
-      return !labels[id].empty();
-    }).forEach(function (v) {
-      var node = labels[v];
-      (withTransition ? node.transition() : node).attr("x", function () {
-        return _this3.xForAxisLabel(v);
-      }).attr("dx", function () {
-        return _this3.dxForAxisLabel(v);
-      }).attr("dy", function () {
-        return _this3.dyForAxisLabel(v);
-      }).text(function () {
-        return _this3.getLabelText(v);
-      });
-    });
-  }, _proto.getPadding = function getPadding(padding, key, defaultValue, domainLength) {
-    var p = isNumber(padding) ? padding : padding[key];
-    return isValue(p) ? this.convertPixelsToAxisPadding(p, domainLength) : defaultValue;
-  }, _proto.convertPixelsToAxisPadding = function convertPixelsToAxisPadding(pixels, domainLength) {
-    var $$ = this.owner,
-        config = $$.config,
-        _$$$state2 = $$.state,
-        width = _$$$state2.width,
-        height = _$$$state2.height,
-        length = config.axis_rotated ? width : height;
-    return domainLength * (pixels / length);
-  }, _proto.generateTickValues = function generateTickValues(values, tickCount, forTimeSeries) {
-    var tickValues = values;
-
-    if (tickCount) {
-      var targetCount = isFunction(tickCount) ? tickCount() : tickCount; // compute ticks according to tickCount
-
-      if (targetCount === 1) tickValues = [values[0]];else if (targetCount === 2) tickValues = [values[0], values[values.length - 1]];else if (targetCount > 2) {
-        var tickValue,
-            isCategorized = this.isCategorized(),
-            count = targetCount - 2,
-            start = values[0],
-            end = values[values.length - 1];
-        tickValues = [start];
-
-        for (var i = 0; i < count; i++) tickValue = +start + (end - start) / (count + 1) * (i + 1), tickValues.push(forTimeSeries ? new Date(tickValue) : isCategorized ? Math.round(tickValue) : tickValue);
-
-        tickValues.push(end);
-      }
-    }
-
-    return forTimeSeries || (tickValues = tickValues.sort(function (a, b) {
-      return a - b;
-    })), tickValues;
-  }, _proto.generateTransitions = function generateTransitions(duration) {
-    var $$ = this.owner,
-        axis = $$.$el.axis,
-        _map = ["x", "y", "y2", "subX"].map(function (v) {
-      var ax = axis[v];
-      return ax && duration && (ax = ax.transition().duration(duration)), ax;
-    }),
-        axisX = _map[0],
-        axisY = _map[1],
-        axisY2 = _map[2],
-        axisSubX = _map[3];
-
-    return {
-      axisX: axisX,
-      axisY: axisY,
-      axisY2: axisY2,
-      axisSubX: axisSubX
-    };
-  }, _proto.redraw = function redraw(transitions, isHidden, isInit) {
-    var _this4 = this,
-        $$ = this.owner,
-        config = $$.config,
-        $el = $$.$el,
-        opacity = isHidden ? "0" : "1";
-
-    ["x", "y", "y2", "subX"].forEach(function (id) {
-      var axis = _this4[id],
-          $axis = $el.axis[id];
-      axis && $axis && (!isInit && (axis.config.withoutTransition = !config.transition_duration), $axis.style("opacity", opacity), axis.create(transitions["axis" + capitalize(id)]));
-    }), this.updateAxes();
-  }
-  /**
-   * Redraw axis
-   * @param {Array} targetsToShow targets data to be shown
-   * @param {object} wth option object
-   * @param {d3.Transition} transitions Transition object
-   * @param {object} flow flow object
-   * @param {boolean} isInit called from initialization
-   * @private
-   */
-  , _proto.redrawAxis = function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
-    var xDomainForZoom,
-        _this5 = this,
-        $$ = this.owner,
-        config = $$.config,
-        scale = $$.scale,
-        $el = $$.$el,
-        hasZoom = !!scale.zoom;
-
-    !hasZoom && this.isCategorized() && targetsToShow.length === 0 && scale.x.domain([0, $el.axis.x.selectAll(".tick").size()]), scale.x && targetsToShow.length ? (!hasZoom && $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && this.updateXAxisTickValues(targetsToShow)) : this.x && (this.x.tickValues([]), this.subX && this.subX.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = scale.x.orgDomain()), ["y", "y2"].forEach(function (key) {
-      var axisScale = scale[key];
-
-      if (axisScale) {
-        var tickValues = config["axis_" + key + "_tick_values"],
-            tickCount = config["axis_" + key + "_tick_count"];
-
-        if (axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom)), !tickValues && tickCount) {
-          var _axis = $$.axis[key],
-              domain = axisScale.domain();
-
-          _axis.tickValues(_this5.generateTickValues(domain, domain.every(function (v) {
-            return v === 0;
-          }) ? 1 : tickCount, _this5.isTimeSeriesY()));
-        }
-      }
-    }), this.redraw(transitions, $$.hasArcType(), isInit), this.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis || wth.Y) && targetsToShow.length && this.setCulling(), wth.Y && (scale.subY && scale.subY.domain($$.getYDomain(targetsToShow, "y")), scale.subY2 && scale.subY2.domain($$.getYDomain(targetsToShow, "y2")));
-  }
-  /**
-   * Set manual culling
-   * @private
-   */
-  , _proto.setCulling = function setCulling() {
-    var $$ = this.owner,
-        config = $$.config,
-        _$$$state3 = $$.state,
-        clip = _$$$state3.clip,
-        current = _$$$state3.current,
-        $el = $$.$el;
-    ["subX", "x", "y", "y2"].forEach(function (type) {
-      var axis = $el.axis[type],
-          id = type === "subX" ? "x" : type,
-          toCull = config["axis_" + id + "_tick_culling"]; // subchart x axis should be aligned with x axis culling
-
-      if (axis && toCull) {
-        var intervalForCulling,
-            tickText = axis.selectAll(".tick text"),
-            tickValues = util_sortValue(tickText.data()),
-            tickSize = tickValues.length,
-            cullingMax = config["axis_" + id + "_tick_culling_max"];
-
-        if (tickSize) {
-          for (var i = 1; i < tickSize; i++) if (tickSize / i < cullingMax) {
-            intervalForCulling = i;
-            break;
-          }
-
-          tickText.each(function (d) {
-            this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
-          });
-        } else tickText.style("display", "block"); // set/unset x_axis_tick_clippath
-
-
-        if (type === "x") {
-          var clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
-          $el.svg.selectAll("." + config_classes.axisX + " .tick text").attr("clip-path", clipPath);
-        }
-      }
-    });
-  }, Axis;
-}();
-
-
 // CONCATENATED MODULE: ./node_modules/d3-dsv/src/dsv.js
 var EOL = {},
     EOF = {},
@@ -27424,6 +24625,17 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
         index === undefined && (index = valueIndex), value.index = index;
       });
     });
+  },
+
+  /**
+   * Determine if bubble has dimension data
+   * @param {object|Array} d data value
+   * @returns {boolean}
+   * @private
+   */
+  isBubbleZType: function isBubbleZType(d) {
+    var $$ = this;
+    return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/data/load.ts
@@ -27734,6 +24946,1772 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
     return i < categories.length ? categories[i] : i;
   }
 });
+// CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
+/* harmony default export */ var src_ascending = (function (a, b) {
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
+
+/* harmony default export */ var bisector = (function (compare) {
+  return compare.length === 1 && (compare = ascendingComparator(compare)), {
+    left: function left(a, x, lo, hi) {
+      for (lo == null && (lo = 0), hi == null && (hi = a.length); lo < hi;) {
+        var mid = lo + hi >>> 1;
+        compare(a[mid], x) < 0 ? lo = mid + 1 : hi = mid;
+      }
+
+      return lo;
+    },
+    right: function right(a, x, lo, hi) {
+      for (lo == null && (lo = 0), hi == null && (hi = a.length); lo < hi;) {
+        var mid = lo + hi >>> 1;
+        compare(a[mid], x) > 0 ? hi = mid : lo = mid + 1;
+      }
+
+      return lo;
+    }
+  };
+});
+
+function ascendingComparator(f) {
+  return function (d, x) {
+    return src_ascending(f(d), x);
+  };
+}
+// CONCATENATED MODULE: ./node_modules/d3-array/src/bisect.js
+
+
+var ascendingBisect = bisector(src_ascending);
+var bisectRight = ascendingBisect.right;
+var bisectLeft = ascendingBisect.left;
+/* harmony default export */ var bisect = (bisectRight);
+// CONCATENATED MODULE: ./node_modules/d3-array/src/pairs.js
+/* harmony default export */ var pairs = (function (array, f) {
+  f == null && (f = pair);
+
+  for (var i = 0, n = array.length - 1, p = array[0], pairs = Array(n < 0 ? 0 : n); i < n;) pairs[i] = f(p, p = array[++i]);
+
+  return pairs;
+});
+function pair(a, b) {
+  return [a, b];
+}
+// CONCATENATED MODULE: ./node_modules/d3-array/src/cross.js
+
+/* harmony default export */ var cross = (function (values0, values1, reduce) {
+  var i0,
+      i1,
+      i,
+      value0,
+      n0 = values0.length,
+      n1 = values1.length,
+      values = Array(n0 * n1);
+
+  for (reduce == null && (reduce = pair), i0 = i = 0; i0 < n0; ++i0) for (value0 = values0[i0], i1 = 0; i1 < n1; ++i1, ++i) values[i] = reduce(value0, values1[i1]);
+
+  return values;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/descending.js
+/* harmony default export */ var descending = (function (a, b) {
+  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
+/* harmony default export */ var src_number = (function (x) {
+  return x === null ? NaN : +x;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/variance.js
+
+/* harmony default export */ var variance = (function (values, valueof) {
+  var value,
+      delta,
+      n = values.length,
+      m = 0,
+      i = -1,
+      mean = 0,
+      sum = 0;
+  if (valueof == null) for (; ++i < n;) isNaN(value = src_number(values[i])) || (delta = value - mean, mean += delta / ++m, sum += delta * (value - mean));else for (; ++i < n;) isNaN(value = src_number(valueof(values[i], i, values))) || (delta = value - mean, mean += delta / ++m, sum += delta * (value - mean));
+  return m > 1 ? sum / (m - 1) : void 0;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/deviation.js
+
+/* harmony default export */ var deviation = (function (array, f) {
+  var v = variance(array, f);
+  return v ? Math.sqrt(v) : v;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/extent.js
+/* harmony default export */ var src_extent = (function (values, valueof) {
+  var value,
+      min,
+      max,
+      n = values.length,
+      i = -1;
+  if (valueof == null) {
+    for (; ++i < n;) // Find the first comparable value.
+    if ((value = values[i]) != null && value >= value) for (min = max = value; ++i < n;) (value = values[i]) != null && (min > value && (min = value), max < value && (max = value));
+  } else for (; ++i < n;) // Find the first comparable value.
+  if ((value = valueof(values[i], i, values)) != null && value >= value) for (min = max = value; ++i < n;) (value = valueof(values[i], i, values)) != null && (min > value && (min = value), max < value && (max = value));
+  return [min, max];
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/array.js
+var array_array = Array.prototype;
+var slice = array_array.slice;
+var map = array_array.map;
+// CONCATENATED MODULE: ./node_modules/d3-array/src/constant.js
+/* harmony default export */ var d3_array_src_constant = (function (x) {
+  return function () {
+    return x;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/identity.js
+/* harmony default export */ var src_identity = (function (x) {
+  return x;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/range.js
+/* harmony default export */ var src_range = (function (start, stop, step) {
+  start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
+
+  for (var i = -1, n = Math.max(0, Math.ceil((stop - start) / step)) | 0, range = Array(n); ++i < n;) range[i] = start + i * step;
+
+  return range;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/ticks.js
+var e10 = Math.sqrt(50),
+    e5 = Math.sqrt(10),
+    e2 = Math.sqrt(2);
+/* harmony default export */ var src_ticks = (function (start, stop, count) {
+  var reverse,
+      n,
+      ticks,
+      step,
+      i = -1;
+  if (stop = +stop, start = +start, count = +count, start === stop && count > 0) return [start];
+  if ((reverse = stop < start) && (n = start, start = stop, stop = n), (step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
+  if (step > 0) for (start = Math.ceil(start / step), stop = Math.floor(stop / step), ticks = Array(n = Math.ceil(stop - start + 1)); ++i < n;) ticks[i] = (start + i) * step;else for (start = Math.floor(start * step), stop = Math.ceil(stop * step), ticks = Array(n = Math.ceil(start - stop + 1)); ++i < n;) ticks[i] = (start - i) / step;
+  return reverse && ticks.reverse(), ticks;
+});
+function tickIncrement(start, stop, count) {
+  var step = (stop - start) / Math.max(0, count),
+      power = Math.floor(Math.log(step) / Math.LN10),
+      error = step / Math.pow(10, power);
+  return power >= 0 ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power) : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
+}
+function tickStep(start, stop, count) {
+  var step0 = Math.abs(stop - start) / Math.max(0, count),
+      step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
+      error = step0 / step1;
+  return error >= e10 ? step1 *= 10 : error >= e5 ? step1 *= 5 : error >= e2 && (step1 *= 2), stop < start ? -step1 : step1;
+}
+// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/sturges.js
+/* harmony default export */ var sturges = (function (values) {
+  return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/histogram.js
+
+
+
+
+
+
+
+
+/* harmony default export */ var src_histogram = (function () {
+  function histogram(data) {
+    var i,
+        x,
+        n = data.length,
+        values = Array(n);
+
+    for (i = 0; i < n; ++i) values[i] = value(data[i], i, data);
+
+    var xz = domain(values),
+        x0 = xz[0],
+        x1 = xz[1],
+        tz = threshold(values, x0, x1); // Convert number of thresholds into uniform thresholds.
+
+    Array.isArray(tz) || (tz = tickStep(x0, x1, tz), tz = src_range(Math.ceil(x0 / tz) * tz, x1, tz));
+
+    for ( // Remove any thresholds outside the domain.
+    var m = tz.length; tz[0] <= x0;) tz.shift(), --m;
+
+    for (; tz[m - 1] > x1;) tz.pop(), --m;
+
+    var bin,
+        bins = Array(m + 1); // Initialize bins.
+
+    for (i = 0; i <= m; ++i) bin = bins[i] = [], bin.x0 = i > 0 ? tz[i - 1] : x0, bin.x1 = i < m ? tz[i] : x1; // Assign data to bins by value, ignoring any outside the domain.
+
+
+    for (i = 0; i < n; ++i) x = values[i], x0 <= x && x <= x1 && bins[bisect(tz, x, 0, m)].push(data[i]);
+
+    return bins;
+  }
+
+  var value = src_identity,
+      domain = src_extent,
+      threshold = sturges;
+  return histogram.value = function (_) {
+    return arguments.length ? (value = typeof _ === "function" ? _ : d3_array_src_constant(_), histogram) : value;
+  }, histogram.domain = function (_) {
+    return arguments.length ? (domain = typeof _ === "function" ? _ : d3_array_src_constant([_[0], _[1]]), histogram) : domain;
+  }, histogram.thresholds = function (_) {
+    return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? d3_array_src_constant(slice.call(_)) : d3_array_src_constant(_), histogram) : threshold;
+  }, histogram;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/quantile.js
+
+/* harmony default export */ var quantile = (function (values, p, valueof) {
+  if (valueof == null && (valueof = src_number), !!(n = values.length)) {
+    if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
+    if (p >= 1) return +valueof(values[n - 1], n - 1, values);
+    var n,
+        i = (n - 1) * p,
+        i0 = Math.floor(i),
+        value0 = +valueof(values[i0], i0, values),
+        value1 = +valueof(values[i0 + 1], i0 + 1, values);
+    return value0 + (value1 - value0) * (i - i0);
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/freedmanDiaconis.js
+
+
+
+
+/* harmony default export */ var freedmanDiaconis = (function (values, min, max) {
+  return values = map.call(values, src_number).sort(src_ascending), Math.ceil((max - min) / (2 * (quantile(values, .75) - quantile(values, .25)) * Math.pow(values.length, -1 / 3)));
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/scott.js
+
+/* harmony default export */ var scott = (function (values, min, max) {
+  return Math.ceil((max - min) / (3.5 * deviation(values) * Math.pow(values.length, -1 / 3)));
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/max.js
+/* harmony default export */ var src_max = (function (values, valueof) {
+  var value,
+      max,
+      n = values.length,
+      i = -1;
+  if (valueof == null) {
+    for (; ++i < n;) // Find the first comparable value.
+    if ((value = values[i]) != null && value >= value) for (max = value; ++i < n;) (value = values[i]) != null && value > max && (max = value);
+  } else for (; ++i < n;) // Find the first comparable value.
+  if ((value = valueof(values[i], i, values)) != null && value >= value) for (max = value; ++i < n;) (value = valueof(values[i], i, values)) != null && value > max && (max = value);
+  return max;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/mean.js
+
+/* harmony default export */ var src_mean = (function (values, valueof) {
+  var value,
+      n = values.length,
+      m = n,
+      i = -1,
+      sum = 0;
+  if (valueof == null) for (; ++i < n;) isNaN(value = src_number(values[i])) ? --m : sum += value;else for (; ++i < n;) isNaN(value = src_number(valueof(values[i], i, values))) ? --m : sum += value;
+  return m ? sum / m : void 0;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/median.js
+
+
+
+/* harmony default export */ var median = (function (values, valueof) {
+  var value,
+      n = values.length,
+      i = -1,
+      numbers = [];
+  if (valueof == null) for (; ++i < n;) isNaN(value = src_number(values[i])) || numbers.push(value);else for (; ++i < n;) isNaN(value = src_number(valueof(values[i], i, values))) || numbers.push(value);
+  return quantile(numbers.sort(src_ascending), .5);
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/merge.js
+/* harmony default export */ var src_merge = (function (arrays) {
+  for (var m, merged, array, n = arrays.length, i = -1, j = 0; ++i < n;) j += arrays[i].length;
+
+  for (merged = Array(j); --n >= 0;) for (array = arrays[n], m = array.length; --m >= 0;) merged[--j] = array[m];
+
+  return merged;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/min.js
+/* harmony default export */ var src_min = (function (values, valueof) {
+  var value,
+      min,
+      n = values.length,
+      i = -1;
+  if (valueof == null) {
+    for (; ++i < n;) // Find the first comparable value.
+    if ((value = values[i]) != null && value >= value) for (min = value; ++i < n;) (value = values[i]) != null && min > value && (min = value);
+  } else for (; ++i < n;) // Find the first comparable value.
+  if ((value = valueof(values[i], i, values)) != null && value >= value) for (min = value; ++i < n;) (value = valueof(values[i], i, values)) != null && min > value && (min = value);
+  return min;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/permute.js
+/* harmony default export */ var permute = (function (array, indexes) {
+  for (var i = indexes.length, permutes = Array(i); i--;) permutes[i] = array[indexes[i]];
+
+  return permutes;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/scan.js
+
+/* harmony default export */ var scan = (function (values, compare) {
+  if (n = values.length) {
+    var n,
+        xi,
+        i = 0,
+        j = 0,
+        xj = values[j];
+
+    for (compare == null && (compare = src_ascending); ++i < n;) (compare(xi = values[i], xj) < 0 || compare(xj, xj) !== 0) && (xj = xi, j = i);
+
+    if (compare(xj, xj) === 0) return j;
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/shuffle.js
+/* harmony default export */ var shuffle = (function (array, i0, i1) {
+  for (var t, i, m = (i1 == null ? array.length : i1) - (i0 = i0 == null ? 0 : +i0); m;) i = Math.random() * m-- | 0, t = array[m + i0], array[m + i0] = array[i + i0], array[i + i0] = t;
+
+  return array;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/sum.js
+/* harmony default export */ var src_sum = (function (values, valueof) {
+  var value,
+      n = values.length,
+      i = -1,
+      sum = 0;
+  if (valueof == null) for (; ++i < n;) (value = +values[i]) && (sum += value);else for (; ++i < n;) (value = +valueof(values[i], i, values)) && (sum += value);
+  return sum;
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/transpose.js
+
+/* harmony default export */ var src_transpose = (function (matrix) {
+  if (!(n = matrix.length)) return [];
+
+  for (var i = -1, m = src_min(matrix, transpose_length), transpose = Array(m); ++i < m;) for (var n, j = -1, row = transpose[i] = Array(n); ++j < n;) row[j] = matrix[j][i];
+
+  return transpose;
+});
+
+function transpose_length(d) {
+  return d.length;
+}
+// CONCATENATED MODULE: ./node_modules/d3-array/src/zip.js
+
+/* harmony default export */ var zip = (function () {
+  return src_transpose(arguments);
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/init.js
+function initRange(domain, range) {
+  switch (arguments.length) {
+    case 0:
+      break;
+
+    case 1:
+      this.range(domain);
+      break;
+
+    default:
+      this.range(range).domain(domain);
+  }
+
+  return this;
+}
+function initInterpolator(domain, interpolator) {
+  switch (arguments.length) {
+    case 0:
+      break;
+
+    case 1:
+      this.interpolator(domain);
+      break;
+
+    default:
+      this.interpolator(interpolator).domain(domain);
+  }
+
+  return this;
+}
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/map.js
+var map_prefix = "$";
+
+function Map() {}
+
+Map.prototype = map_map.prototype = {
+  constructor: Map,
+  has: function has(key) {
+    return map_prefix + key in this;
+  },
+  get: function get(key) {
+    return this[map_prefix + key];
+  },
+  set: function set(key, value) {
+    return this[map_prefix + key] = value, this;
+  },
+  remove: function remove(key) {
+    var property = map_prefix + key;
+    return property in this && delete this[property];
+  },
+  clear: function clear() {
+    for (var property in this) property[0] === map_prefix && delete this[property];
+  },
+  keys: function () {
+    var keys = [];
+
+    for (var property in this) property[0] === map_prefix && keys.push(property.slice(1));
+
+    return keys;
+  },
+  values: function () {
+    var values = [];
+
+    for (var property in this) property[0] === map_prefix && values.push(this[property]);
+
+    return values;
+  },
+  entries: function () {
+    var entries = [];
+
+    for (var property in this) property[0] === map_prefix && entries.push({
+      key: property.slice(1),
+      value: this[property]
+    });
+
+    return entries;
+  },
+  size: function () {
+    var size = 0;
+
+    for (var property in this) property[0] === map_prefix && ++size;
+
+    return size;
+  },
+  empty: function empty() {
+    for (var property in this) if (property[0] === map_prefix) return !1;
+
+    return !0;
+  },
+  each: function each(f) {
+    for (var property in this) property[0] === map_prefix && f(this[property], property.slice(1), this);
+  }
+};
+
+function map_map(object, f) {
+  var map = new Map(); // Copy constructor.
+
+  if (object instanceof Map) object.each(function (value, key) {
+    map.set(key, value);
+  }); // Index array by numeric index or specified key function.
+  else if (Array.isArray(object)) {
+      var o,
+          i = -1,
+          n = object.length;
+      if (f == null) for (; ++i < n;) map.set(i, object[i]);else for (; ++i < n;) map.set(f(o = object[i], i, object), o);
+    } // Convert object to map.
+    else if (object) for (var key in object) map.set(key, object[key]);
+  return map;
+}
+
+/* harmony default export */ var src_map = (map_map);
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/nest.js
+
+/* harmony default export */ var src_nest = (function () {
+  function apply(array, depth, createResult, setResult) {
+    if (depth >= keys.length) return _sortValues != null && array.sort(_sortValues), _rollup == null ? array : _rollup(array);
+
+    for (var keyValue, value, values, i = -1, n = array.length, key = keys[depth++], valuesByKey = src_map(), result = createResult(); ++i < n;) (values = valuesByKey.get(keyValue = key(value = array[i]) + "")) ? values.push(value) : valuesByKey.set(keyValue, [value]);
+
+    return valuesByKey.each(function (values, key) {
+      setResult(result, key, apply(values, depth, createResult, setResult));
+    }), result;
+  }
+
+  function _entries(map, depth) {
+    if (++depth > keys.length) return map;
+    var array,
+        sortKey = _sortKeys[depth - 1];
+    return _rollup != null && depth >= keys.length ? array = map.entries() : (array = [], map.each(function (v, k) {
+      array.push({
+        key: k,
+        values: _entries(v, depth)
+      });
+    })), sortKey == null ? array : array.sort(function (a, b) {
+      return sortKey(a.key, b.key);
+    });
+  }
+
+  var _sortValues,
+      _rollup,
+      nest,
+      keys = [],
+      _sortKeys = [];
+
+  return nest = {
+    object: function object(array) {
+      return apply(array, 0, createObject, setObject);
+    },
+    map: function (array) {
+      return apply(array, 0, createMap, setMap);
+    },
+    entries: function entries(array) {
+      return _entries(apply(array, 0, createMap, setMap), 0);
+    },
+    key: function key(d) {
+      return keys.push(d), nest;
+    },
+    sortKeys: function sortKeys(order) {
+      return _sortKeys[keys.length - 1] = order, nest;
+    },
+    sortValues: function sortValues(order) {
+      return _sortValues = order, nest;
+    },
+    rollup: function rollup(f) {
+      return _rollup = f, nest;
+    }
+  };
+});
+
+function createObject() {
+  return {};
+}
+
+function setObject(object, key, value) {
+  object[key] = value;
+}
+
+function createMap() {
+  return src_map();
+}
+
+function setMap(map, key, value) {
+  map.set(key, value);
+}
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/set.js
+
+
+function Set() {}
+
+var proto = src_map.prototype;
+Set.prototype = set_set.prototype = {
+  constructor: Set,
+  has: proto.has,
+  add: function add(value) {
+    return value += "", this[map_prefix + value] = value, this;
+  },
+  remove: proto.remove,
+  clear: proto.clear,
+  values: proto.keys,
+  size: proto.size,
+  empty: proto.empty,
+  each: proto.each
+};
+
+function set_set(object, f) {
+  var set = new Set(); // Copy constructor.
+
+  if (object instanceof Set) object.each(function (value) {
+    set.add(value);
+  }); // Otherwise, assume it’s an array.
+  else if (object) {
+      var i = -1,
+          n = object.length;
+      if (f == null) for (; ++i < n;) set.add(object[i]);else for (; ++i < n;) set.add(f(object[i], i, object));
+    }
+  return set;
+}
+
+/* harmony default export */ var src_set = (set_set);
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/keys.js
+/* harmony default export */ var src_keys = (function (map) {
+  var keys = [];
+
+  for (var key in map) keys.push(key);
+
+  return keys;
+});
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/values.js
+/* harmony default export */ var src_values = (function (map) {
+  var values = [];
+
+  for (var key in map) values.push(map[key]);
+
+  return values;
+});
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/entries.js
+/* harmony default export */ var entries = (function (map) {
+  var entries = [];
+
+  for (var key in map) entries.push({
+    key: key,
+    value: map[key]
+  });
+
+  return entries;
+});
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/index.js
+
+
+
+
+
+
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/array.js
+var src_array_array = Array.prototype;
+var array_map = src_array_array.map;
+var array_slice = src_array_array.slice;
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/ordinal.js
+
+
+
+var implicit = {
+  name: "implicit"
+};
+function ordinal() {
+  function scale(d) {
+    var key = d + "",
+        i = index.get(key);
+
+    if (!i) {
+      if (unknown !== implicit) return unknown;
+      index.set(key, i = domain.push(d));
+    }
+
+    return range[(i - 1) % range.length];
+  }
+
+  var index = src_map(),
+      domain = [],
+      range = [],
+      unknown = implicit;
+  return scale.domain = function (_) {
+    if (!arguments.length) return domain.slice();
+    domain = [], index = src_map();
+
+    for (var d, key, i = -1, n = _.length; ++i < n;) index.has(key = (d = _[i]) + "") || index.set(key, domain.push(d));
+
+    return scale;
+  }, scale.range = function (_) {
+    return arguments.length ? (range = array_slice.call(_), scale) : range.slice();
+  }, scale.unknown = function (_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  }, scale.copy = function () {
+    return ordinal(domain, range).unknown(unknown);
+  }, initRange.apply(scale, arguments), scale;
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/band.js
+
+
+
+function band() {
+  function rescale() {
+    var n = domain().length,
+        reverse = range[1] < range[0],
+        start = range[reverse - 0],
+        stop = range[1 - reverse];
+    step = (stop - start) / Math.max(1, n - paddingInner + paddingOuter * 2), round && (step = Math.floor(step)), start += (stop - start - step * (n - paddingInner)) * align, bandwidth = step * (1 - paddingInner), round && (start = Math.round(start), bandwidth = Math.round(bandwidth));
+    var values = src_range(n).map(function (i) {
+      return start + step * i;
+    });
+    return ordinalRange(reverse ? values.reverse() : values);
+  }
+
+  var step,
+      bandwidth,
+      scale = ordinal().unknown(undefined),
+      domain = scale.domain,
+      ordinalRange = scale.range,
+      range = [0, 1],
+      round = !1,
+      paddingInner = 0,
+      paddingOuter = 0,
+      align = .5;
+  return delete scale.unknown, scale.domain = function (_) {
+    return arguments.length ? (domain(_), rescale()) : domain();
+  }, scale.range = function (_) {
+    return arguments.length ? (range = [+_[0], +_[1]], rescale()) : range.slice();
+  }, scale.rangeRound = function (_) {
+    return range = [+_[0], +_[1]], round = !0, rescale();
+  }, scale.bandwidth = function () {
+    return bandwidth;
+  }, scale.step = function () {
+    return step;
+  }, scale.round = function (_) {
+    return arguments.length ? (round = !!_, rescale()) : round;
+  }, scale.padding = function (_) {
+    return arguments.length ? (paddingInner = Math.min(1, paddingOuter = +_), rescale()) : paddingInner;
+  }, scale.paddingInner = function (_) {
+    return arguments.length ? (paddingInner = Math.min(1, _), rescale()) : paddingInner;
+  }, scale.paddingOuter = function (_) {
+    return arguments.length ? (paddingOuter = +_, rescale()) : paddingOuter;
+  }, scale.align = function (_) {
+    return arguments.length ? (align = Math.max(0, Math.min(1, _)), rescale()) : align;
+  }, scale.copy = function () {
+    return band(domain(), range).round(round).paddingInner(paddingInner).paddingOuter(paddingOuter).align(align);
+  }, initRange.apply(rescale(), arguments);
+}
+
+function pointish(scale) {
+  var copy = scale.copy;
+  return scale.padding = scale.paddingOuter, delete scale.paddingInner, delete scale.paddingOuter, scale.copy = function () {
+    return pointish(copy());
+  }, scale;
+}
+
+function band_point() {
+  return pointish(band.apply(null, arguments).paddingInner(1));
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/constant.js
+/* harmony default export */ var d3_scale_src_constant = (function (x) {
+  return function () {
+    return x;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/number.js
+/* harmony default export */ var d3_scale_src_number = (function (x) {
+  return +x;
+});
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/continuous.js
+
+
+
+
+
+var unit = [0, 1];
+function continuous_identity(x) {
+  return x;
+}
+
+function normalize(a, b) {
+  return (b -= a = +a) ? function (x) {
+    return (x - a) / b;
+  } : d3_scale_src_constant(isNaN(b) ? NaN : .5);
+}
+
+function clamper(domain) {
+  var t,
+      a = domain[0],
+      b = domain[domain.length - 1];
+  return a > b && (t = a, a = b, b = t), function (x) {
+    return Math.max(a, Math.min(b, x));
+  };
+} // normalize(a, b)(x) takes a domain value x in [a,b] and returns the corresponding parameter t in [0,1].
+// interpolate(a, b)(t) takes a parameter t in [0,1] and returns the corresponding range value x in [a,b].
+
+
+function bimap(domain, range, interpolate) {
+  var d0 = domain[0],
+      d1 = domain[1],
+      r0 = range[0],
+      r1 = range[1];
+  return d1 < d0 ? (d0 = normalize(d1, d0), r0 = interpolate(r1, r0)) : (d0 = normalize(d0, d1), r0 = interpolate(r0, r1)), function (x) {
+    return r0(d0(x));
+  };
+}
+
+function polymap(domain, range, interpolate) {
+  var j = Math.min(domain.length, range.length) - 1,
+      d = Array(j),
+      r = Array(j),
+      i = -1; // Reverse descending domains.
+
+  for (domain[j] < domain[0] && (domain = domain.slice().reverse(), range = range.slice().reverse()); ++i < j;) d[i] = normalize(domain[i], domain[i + 1]), r[i] = interpolate(range[i], range[i + 1]);
+
+  return function (x) {
+    var i = bisect(domain, x, 1, j) - 1;
+    return r[i](d[i](x));
+  };
+}
+
+function copy(source, target) {
+  return target.domain(source.domain()).range(source.range()).interpolate(source.interpolate()).clamp(source.clamp()).unknown(source.unknown());
+}
+function transformer() {
+  function rescale() {
+    return piecewise = Math.min(domain.length, range.length) > 2 ? polymap : bimap, output = input = null, scale;
+  }
+
+  function scale(x) {
+    return isNaN(x = +x) ? unknown : (output || (output = piecewise(domain.map(transform), range, interpolate)))(transform(clamp(x)));
+  }
+
+  var transform,
+      untransform,
+      unknown,
+      piecewise,
+      output,
+      input,
+      domain = unit,
+      range = unit,
+      interpolate = src_value,
+      clamp = continuous_identity;
+  return scale.invert = function (y) {
+    return clamp(untransform((input || (input = piecewise(range, domain.map(transform), number)))(y)));
+  }, scale.domain = function (_) {
+    return arguments.length ? (domain = array_map.call(_, d3_scale_src_number), clamp === continuous_identity || (clamp = clamper(domain)), rescale()) : domain.slice();
+  }, scale.range = function (_) {
+    return arguments.length ? (range = array_slice.call(_), rescale()) : range.slice();
+  }, scale.rangeRound = function (_) {
+    return range = array_slice.call(_), interpolate = src_round, rescale();
+  }, scale.clamp = function (_) {
+    return arguments.length ? (clamp = _ ? clamper(domain) : continuous_identity, scale) : clamp !== continuous_identity;
+  }, scale.interpolate = function (_) {
+    return arguments.length ? (interpolate = _, rescale()) : interpolate;
+  }, scale.unknown = function (_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  }, function (t, u) {
+    return transform = t, untransform = u, rescale();
+  };
+}
+function continuous(transform, untransform) {
+  return transformer()(transform, untransform);
+}
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatDecimal.js
+// Computes the decimal coefficient and exponent of the specified number x with
+// significant digits p, where x is positive and p is in [1, 21] or undefined.
+// For example, formatDecimal(1.23) returns ["123", 0].
+/* harmony default export */ var formatDecimal = (function (x, p) {
+  if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
+
+  var i,
+      coefficient = x.slice(0, i); // The string returned by toExponential either has the form \d\.\d+e[-+]\d+
+  // (e.g., 1.2e+3) or the form \de[-+]\d+ (e.g., 1e+3).
+
+  return [coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient, +x.slice(i + 1)];
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/exponent.js
+
+/* harmony default export */ var src_exponent = (function (x) {
+  return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatGroup.js
+/* harmony default export */ var formatGroup = (function (grouping, thousands) {
+  return function (value, width) {
+    for (var i = value.length, t = [], j = 0, g = grouping[0], length = 0; i > 0 && g > 0 && (length + g + 1 > width && (g = Math.max(1, width - length)), t.push(value.substring(i -= g, i + g)), !((length += g + 1) > width));) g = grouping[j = (j + 1) % grouping.length];
+
+    return t.reverse().join(thousands);
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatNumerals.js
+/* harmony default export */ var formatNumerals = (function (numerals) {
+  return function (value) {
+    return value.replace(/[0-9]/g, function (i) {
+      return numerals[+i];
+    });
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
+// [[fill]align][sign][symbol][0][width][,][.precision][~][type]
+var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
+function formatSpecifier(specifier) {
+  if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
+  var match;
+  return new FormatSpecifier({
+    fill: match[1],
+    align: match[2],
+    sign: match[3],
+    symbol: match[4],
+    zero: match[5],
+    width: match[6],
+    comma: match[7],
+    precision: match[8] && match[8].slice(1),
+    trim: match[9],
+    type: match[10]
+  });
+}
+formatSpecifier.prototype = FormatSpecifier.prototype;
+// instanceof
+function FormatSpecifier(specifier) {
+  this.fill = specifier.fill === undefined ? " " : specifier.fill + "", this.align = specifier.align === undefined ? ">" : specifier.align + "", this.sign = specifier.sign === undefined ? "-" : specifier.sign + "", this.symbol = specifier.symbol === undefined ? "" : specifier.symbol + "", this.zero = !!specifier.zero, this.width = specifier.width === undefined ? undefined : +specifier.width, this.comma = !!specifier.comma, this.precision = specifier.precision === undefined ? undefined : +specifier.precision, this.trim = !!specifier.trim, this.type = specifier.type === undefined ? "" : specifier.type + "";
+}
+
+FormatSpecifier.prototype.toString = function () {
+  return this.fill + this.align + this.sign + this.symbol + (this.zero ? "0" : "") + (this.width === undefined ? "" : Math.max(1, this.width | 0)) + (this.comma ? "," : "") + (this.precision === undefined ? "" : "." + Math.max(0, this.precision | 0)) + (this.trim ? "~" : "") + this.type;
+};
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTrim.js
+// Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
+/* harmony default export */ var formatTrim = (function (s) {
+  out: for (var i1, n = s.length, i = 1, i0 = -1; i < n; ++i) switch (s[i]) {
+    case ".":
+      i0 = i1 = i;
+      break;
+
+    case "0":
+      i0 === 0 && (i0 = i), i1 = i;
+      break;
+
+    default:
+      if (!+s[i]) break out;
+      i0 > 0 && (i0 = 0);
+  }
+
+  return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatPrefixAuto.js
+
+var prefixExponent;
+/* harmony default export */ var formatPrefixAuto = (function (x, p) {
+  var d = formatDecimal(x, p);
+  if (!d) return x + "";
+  var coefficient = d[0],
+      exponent = d[1],
+      i = exponent - (prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1,
+      n = coefficient.length;
+  return i === n ? coefficient : i > n ? coefficient + Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + Array(1 - i).join("0") + formatDecimal(x, Math.max(0, p + i - 1))[0]; // less than 1y!
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatRounded.js
+
+/* harmony default export */ var formatRounded = (function (x, p) {
+  var d = formatDecimal(x, p);
+  if (!d) return x + "";
+  var coefficient = d[0],
+      exponent = d[1];
+  return exponent < 0 ? "0." + Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + Array(exponent - coefficient.length + 2).join("0");
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTypes.js
+
+
+/* harmony default export */ var formatTypes = ({
+  "%": function _(x, p) {
+    return (x * 100).toFixed(p);
+  },
+  "b": function b(x) {
+    return Math.round(x).toString(2);
+  },
+  "c": function c(x) {
+    return x + "";
+  },
+  "d": function d(x) {
+    return Math.round(x).toString(10);
+  },
+  "e": function e(x, p) {
+    return x.toExponential(p);
+  },
+  "f": function f(x, p) {
+    return x.toFixed(p);
+  },
+  "g": function g(x, p) {
+    return x.toPrecision(p);
+  },
+  "o": function o(x) {
+    return Math.round(x).toString(8);
+  },
+  "p": function p(x, _p) {
+    return formatRounded(x * 100, _p);
+  },
+  "r": formatRounded,
+  "s": formatPrefixAuto,
+  "X": function X(x) {
+    return Math.round(x).toString(16).toUpperCase();
+  },
+  "x": function x(_x) {
+    return Math.round(_x).toString(16);
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/identity.js
+/* harmony default export */ var d3_format_src_identity = (function (x) {
+  return x;
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/locale.js
+
+
+
+
+
+
+
+
+var locale_map = Array.prototype.map,
+    prefixes = ["y", "z", "a", "f", "p", "n", "µ", "m", "", "k", "M", "G", "T", "P", "E", "Z", "Y"];
+/* harmony default export */ var src_locale = (function (locale) {
+  function newFormat(specifier) {
+    function format(value) {
+      var i,
+          n,
+          c,
+          valuePrefix = prefix,
+          valueSuffix = suffix;
+      if (type === "c") valueSuffix = formatType(value) + valueSuffix, value = "";else {
+        value = +value;
+        // Determine the sign. -0 is not less than 0, but 1 / -0 is!
+        var valueNegative = value < 0 || 1 / value < 0; // Perform the initial formatting.
+
+        // Break the formatted value into the integer “value” part that can be
+        // grouped, and fractional or exponential “suffix” part that is not.
+        if (value = isNaN(value) ? nan : formatType(Math.abs(value), precision), trim && (value = formatTrim(value)), valueNegative && +value === 0 && sign !== "+" && (valueNegative = !1), valuePrefix = (valueNegative ? sign === "(" ? sign : minus : sign === "-" || sign === "(" ? "" : sign) + valuePrefix, valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : ""), maybeSuffix) for (i = -1, n = value.length; ++i < n;) if (c = value.charCodeAt(i), 48 > c || c > 57) {
+          valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix, value = value.slice(0, i);
+          break;
+        }
+      } // If the fill character is not "0", grouping is applied before padding.
+
+      comma && !zero && (value = group(value, Infinity));
+      // Compute the padding.
+      var length = valuePrefix.length + value.length + valueSuffix.length,
+          padding = length < width ? Array(width - length + 1).join(fill) : ""; // If the fill character is "0", grouping is applied after padding.
+
+      // Reconstruct the final output based on the desired alignment.
+      switch (comma && zero && (value = group(padding + value, padding.length ? width - valueSuffix.length : Infinity), padding = ""), align) {
+        case "<":
+          value = valuePrefix + value + valueSuffix + padding;
+          break;
+
+        case "=":
+          value = valuePrefix + padding + value + valueSuffix;
+          break;
+
+        case "^":
+          value = padding.slice(0, length = padding.length >> 1) + valuePrefix + value + valueSuffix + padding.slice(length);
+          break;
+
+        default:
+          value = padding + valuePrefix + value + valueSuffix;
+      }
+
+      return numerals(value);
+    }
+
+    specifier = formatSpecifier(specifier);
+    var fill = specifier.fill,
+        align = specifier.align,
+        sign = specifier.sign,
+        symbol = specifier.symbol,
+        zero = specifier.zero,
+        width = specifier.width,
+        comma = specifier.comma,
+        precision = specifier.precision,
+        trim = specifier.trim,
+        type = specifier.type; // The "n" type is an alias for ",g".
+
+    type === "n" ? (comma = !0, type = "g") : !formatTypes[type] && (precision === undefined && (precision = 12), trim = !0, type = "g"), (zero || fill === "0" && align === "=") && (zero = !0, fill = "0", align = "=");
+    // Compute the prefix and suffix.
+    // For SI-prefix, the suffix is lazily computed.
+    var prefix = symbol === "$" ? currencyPrefix : symbol === "#" && /[boxX]/.test(type) ? "0" + type.toLowerCase() : "",
+        suffix = symbol === "$" ? currencySuffix : /[%p]/.test(type) ? percent : "",
+        formatType = formatTypes[type],
+        maybeSuffix = /[defgprs%]/.test(type); // What format function should we use?
+    // Is this an integer type?
+    // Can this type generate exponential notation?
+
+    return precision = precision === undefined ? 6 : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision)) : Math.max(0, Math.min(20, precision)), format.toString = function () {
+      return specifier + "";
+    }, format;
+  }
+
+  var group = locale.grouping === undefined || locale.thousands === undefined ? d3_format_src_identity : formatGroup(locale_map.call(locale.grouping, Number), locale.thousands + ""),
+      currencyPrefix = locale.currency === undefined ? "" : locale.currency[0] + "",
+      currencySuffix = locale.currency === undefined ? "" : locale.currency[1] + "",
+      decimal = locale.decimal === undefined ? "." : locale.decimal + "",
+      numerals = locale.numerals === undefined ? d3_format_src_identity : formatNumerals(locale_map.call(locale.numerals, String)),
+      percent = locale.percent === undefined ? "%" : locale.percent + "",
+      minus = locale.minus === undefined ? "-" : locale.minus + "",
+      nan = locale.nan === undefined ? "NaN" : locale.nan + "";
+  return {
+    format: newFormat,
+    formatPrefix: function (specifier, value) {
+      var f = newFormat((specifier = formatSpecifier(specifier), specifier.type = "f", specifier)),
+          e = Math.max(-8, Math.min(8, Math.floor(src_exponent(value) / 3))) * 3,
+          k = Math.pow(10, -e),
+          prefix = prefixes[8 + e / 3];
+      return function (value) {
+        return f(k * value) + prefix;
+      };
+    }
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/defaultLocale.js
+
+var src_defaultLocale_locale;
+var defaultLocale_format;
+var formatPrefix;
+defaultLocale_defaultLocale({
+  decimal: ".",
+  thousands: ",",
+  grouping: [3],
+  currency: ["$", ""],
+  minus: "-"
+});
+function defaultLocale_defaultLocale(definition) {
+  return src_defaultLocale_locale = src_locale(definition), defaultLocale_format = src_defaultLocale_locale.format, formatPrefix = src_defaultLocale_locale.formatPrefix, src_defaultLocale_locale;
+}
+// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionFixed.js
+
+/* harmony default export */ var precisionFixed = (function (step) {
+  return Math.max(0, -src_exponent(Math.abs(step)));
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionPrefix.js
+
+/* harmony default export */ var precisionPrefix = (function (step, value) {
+  return Math.max(0, Math.max(-8, Math.min(8, Math.floor(src_exponent(value) / 3))) * 3 - src_exponent(Math.abs(step)));
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionRound.js
+
+/* harmony default export */ var precisionRound = (function (step, max) {
+  return step = Math.abs(step), max = Math.abs(max) - step, Math.max(0, src_exponent(max) - src_exponent(step)) + 1;
+});
+// CONCATENATED MODULE: ./node_modules/d3-format/src/index.js
+
+
+
+
+
+
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/tickFormat.js
+
+
+/* harmony default export */ var src_tickFormat = (function (start, stop, count, specifier) {
+  var precision,
+      step = tickStep(start, stop, count);
+
+  switch (specifier = formatSpecifier(specifier == null ? ",f" : specifier), specifier.type) {
+    case "s":
+      {
+        var value = Math.max(Math.abs(start), Math.abs(stop));
+        return specifier.precision != null || isNaN(precision = precisionPrefix(step, value)) || (specifier.precision = precision), formatPrefix(specifier, value);
+      }
+
+    case "":
+    case "e":
+    case "g":
+    case "p":
+    case "r":
+      {
+        specifier.precision != null || isNaN(precision = precisionRound(step, Math.max(Math.abs(start), Math.abs(stop)))) || (specifier.precision = precision - (specifier.type === "e"));
+        break;
+      }
+
+    case "f":
+    case "%":
+      {
+        specifier.precision != null || isNaN(precision = precisionFixed(step)) || (specifier.precision = precision - (specifier.type === "%") * 2);
+        break;
+      }
+  }
+
+  return defaultLocale_format(specifier);
+});
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/linear.js
+
+
+
+
+function linearish(scale) {
+  var domain = scale.domain;
+  return scale.ticks = function (count) {
+    var d = domain();
+    return src_ticks(d[0], d[d.length - 1], count == null ? 10 : count);
+  }, scale.tickFormat = function (count, specifier) {
+    var d = domain();
+    return src_tickFormat(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
+  }, scale.nice = function (count) {
+    count == null && (count = 10);
+    var step,
+        d = domain(),
+        i0 = 0,
+        i1 = d.length - 1,
+        start = d[i0],
+        stop = d[i1];
+    return stop < start && (step = start, start = stop, stop = step, step = i0, i0 = i1, i1 = step), step = tickIncrement(start, stop, count), step > 0 ? (start = Math.floor(start / step) * step, stop = Math.ceil(stop / step) * step, step = tickIncrement(start, stop, count)) : step < 0 && (start = Math.ceil(start * step) / step, stop = Math.floor(stop * step) / step, step = tickIncrement(start, stop, count)), step > 0 ? (d[i0] = Math.floor(start / step) * step, d[i1] = Math.ceil(stop / step) * step, domain(d)) : step < 0 && (d[i0] = Math.ceil(start * step) / step, d[i1] = Math.floor(stop * step) / step, domain(d)), scale;
+  }, scale;
+}
+function src_linear_linear() {
+  var scale = continuous(continuous_identity, continuous_identity);
+  return scale.copy = function () {
+    return copy(scale, src_linear_linear());
+  }, initRange.apply(scale, arguments), linearish(scale);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/identity.js
+
+
+
+function identity_identity(domain) {
+  function scale(x) {
+    return isNaN(x = +x) ? unknown : x;
+  }
+
+  var unknown;
+  return scale.invert = scale, scale.domain = scale.range = function (_) {
+    return arguments.length ? (domain = array_map.call(_, d3_scale_src_number), scale) : domain.slice();
+  }, scale.unknown = function (_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  }, scale.copy = function () {
+    return identity_identity(domain).unknown(unknown);
+  }, domain = arguments.length ? array_map.call(domain, d3_scale_src_number) : [0, 1], linearish(scale);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/nice.js
+/* harmony default export */ var nice = (function (domain, interval) {
+  domain = domain.slice();
+  var t,
+      i0 = 0,
+      i1 = domain.length - 1,
+      x0 = domain[i0],
+      x1 = domain[i1];
+  return x1 < x0 && (t = i0, i0 = i1, i1 = t, t = x0, x0 = x1, x1 = t), domain[i0] = interval.floor(x0), domain[i1] = interval.ceil(x1), domain;
+});
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/log.js
+
+
+
+
+
+
+function transformLog(x) {
+  return Math.log(x);
+}
+
+function transformExp(x) {
+  return Math.exp(x);
+}
+
+function transformLogn(x) {
+  return -Math.log(-x);
+}
+
+function transformExpn(x) {
+  return -Math.exp(-x);
+}
+
+function pow10(x) {
+  return isFinite(x) ? +("1e" + x) : x < 0 ? 0 : x;
+}
+
+function powp(base) {
+  return base === 10 ? pow10 : base === Math.E ? Math.exp : function (x) {
+    return Math.pow(base, x);
+  };
+}
+
+function logp(base) {
+  return base === Math.E ? Math.log : base === 10 && Math.log10 || base === 2 && Math.log2 || (base = Math.log(base), function (x) {
+    return Math.log(x) / base;
+  });
+}
+
+function reflect(f) {
+  return function (x) {
+    return -f(-x);
+  };
+}
+
+function loggish(transform) {
+  function rescale() {
+    return logs = logp(base), pows = powp(base), domain()[0] < 0 ? (logs = reflect(logs), pows = reflect(pows), transform(transformLogn, transformExpn)) : transform(transformLog, transformExp), scale;
+  }
+
+  var logs,
+      pows,
+      scale = transform(transformLog, transformExp),
+      domain = scale.domain,
+      base = 10;
+  return scale.base = function (_) {
+    return arguments.length ? (base = +_, rescale()) : base;
+  }, scale.domain = function (_) {
+    return arguments.length ? (domain(_), rescale()) : domain();
+  }, scale.ticks = function (count) {
+    var r,
+        d = domain(),
+        u = d[0],
+        v = d[d.length - 1];
+    (r = v < u) && (i = u, u = v, v = i);
+    var p,
+        k,
+        t,
+        i = logs(u),
+        j = logs(v),
+        n = count == null ? 10 : +count,
+        z = [];
+    if (base % 1 || !(j - i < n)) z = src_ticks(i, j, Math.min(j - i, n)).map(pows);else if (i = Math.round(i) - 1, j = Math.round(j) + 1, u > 0) {
+      for (; i < j; ++i) for (k = 1, p = pows(i); k < base; ++k) if (t = p * k, !(t < u)) {
+        if (t > v) break;
+        z.push(t);
+      }
+    } else for (; i < j; ++i) for (k = base - 1, p = pows(i); k >= 1; --k) if (t = p * k, !(t < u)) {
+      if (t > v) break;
+      z.push(t);
+    }
+    return r ? z.reverse() : z;
+  }, scale.tickFormat = function (count, specifier) {
+    if (specifier == null && (specifier = base === 10 ? ".0e" : ","), typeof specifier !== "function" && (specifier = defaultLocale_format(specifier)), count === Infinity) return specifier;
+    count == null && (count = 10);
+    var k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
+
+    return function (d) {
+      var i = d / pows(Math.round(logs(d)));
+      return i * base < base - .5 && (i *= base), i <= k ? specifier(d) : "";
+    };
+  }, scale.nice = function () {
+    return domain(nice(domain(), {
+      floor: function floor(x) {
+        return pows(Math.floor(logs(x)));
+      },
+      ceil: function ceil(x) {
+        return pows(Math.ceil(logs(x)));
+      }
+    }));
+  }, scale;
+}
+function log() {
+  var scale = loggish(transformer()).domain([1, 10]);
+  return scale.copy = function () {
+    return copy(scale, log()).base(scale.base());
+  }, initRange.apply(scale, arguments), scale;
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/symlog.js
+
+
+
+
+function transformSymlog(c) {
+  return function (x) {
+    return Math.sign(x) * Math.log1p(Math.abs(x / c));
+  };
+}
+
+function transformSymexp(c) {
+  return function (x) {
+    return Math.sign(x) * Math.expm1(Math.abs(x)) * c;
+  };
+}
+
+function symlogish(transform) {
+  var c = 1,
+      scale = transform(transformSymlog(c), transformSymexp(c));
+  return scale.constant = function (_) {
+    return arguments.length ? transform(transformSymlog(c = +_), transformSymexp(c)) : c;
+  }, linearish(scale);
+}
+function symlog() {
+  var scale = symlogish(transformer());
+  return scale.copy = function () {
+    return copy(scale, symlog()).constant(scale.constant());
+  }, initRange.apply(scale, arguments);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/pow.js
+
+
+
+
+function transformPow(exponent) {
+  return function (x) {
+    return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
+  };
+}
+
+function transformSqrt(x) {
+  return x < 0 ? -Math.sqrt(-x) : Math.sqrt(x);
+}
+
+function transformSquare(x) {
+  return x < 0 ? -x * x : x * x;
+}
+
+function powish(transform) {
+  function rescale() {
+    return exponent === 1 ? transform(continuous_identity, continuous_identity) : exponent === .5 ? transform(transformSqrt, transformSquare) : transform(transformPow(exponent), transformPow(1 / exponent));
+  }
+
+  var scale = transform(continuous_identity, continuous_identity),
+      exponent = 1;
+  return scale.exponent = function (_) {
+    return arguments.length ? (exponent = +_, rescale()) : exponent;
+  }, linearish(scale);
+}
+function pow() {
+  var scale = powish(transformer());
+  return scale.copy = function () {
+    return copy(scale, pow()).exponent(scale.exponent());
+  }, initRange.apply(scale, arguments), scale;
+}
+function sqrt() {
+  return pow.apply(null, arguments).exponent(.5);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/quantile.js
+
+
+
+function quantile_quantile() {
+  function rescale() {
+    var i = 0,
+        n = Math.max(1, range.length);
+
+    for (thresholds = Array(n - 1); ++i < n;) thresholds[i - 1] = quantile(domain, i / n);
+
+    return scale;
+  }
+
+  function scale(x) {
+    return isNaN(x = +x) ? unknown : range[bisect(thresholds, x)];
+  }
+
+  var unknown,
+      domain = [],
+      range = [],
+      thresholds = [];
+  return scale.invertExtent = function (y) {
+    var i = range.indexOf(y);
+    return i < 0 ? [NaN, NaN] : [i > 0 ? thresholds[i - 1] : domain[0], i < thresholds.length ? thresholds[i] : domain[domain.length - 1]];
+  }, scale.domain = function (_) {
+    if (!arguments.length) return domain.slice();
+    domain = [];
+
+    for (var d, i = 0, n = _.length; i < n; ++i) (d = _[i], d != null && !isNaN(d = +d)) && domain.push(d);
+
+    return domain.sort(src_ascending), rescale();
+  }, scale.range = function (_) {
+    return arguments.length ? (range = array_slice.call(_), rescale()) : range.slice();
+  }, scale.unknown = function (_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  }, scale.quantiles = function () {
+    return thresholds.slice();
+  }, scale.copy = function () {
+    return quantile_quantile().domain(domain).range(range).unknown(unknown);
+  }, initRange.apply(scale, arguments);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/quantize.js
+
+
+
+
+function quantize_quantize() {
+  function scale(x) {
+    return x <= x ? range[bisect(domain, x, 0, n)] : unknown;
+  }
+
+  function rescale() {
+    var i = -1;
+
+    for (domain = Array(n); ++i < n;) domain[i] = ((i + 1) * x1 - (i - n) * x0) / (n + 1);
+
+    return scale;
+  }
+
+  var unknown,
+      x0 = 0,
+      x1 = 1,
+      n = 1,
+      domain = [.5],
+      range = [0, 1];
+  return scale.domain = function (_) {
+    return arguments.length ? (x0 = +_[0], x1 = +_[1], rescale()) : [x0, x1];
+  }, scale.range = function (_) {
+    return arguments.length ? (n = (range = array_slice.call(_)).length - 1, rescale()) : range.slice();
+  }, scale.invertExtent = function (y) {
+    var i = range.indexOf(y);
+    return i < 0 ? [NaN, NaN] : i < 1 ? [x0, domain[0]] : i >= n ? [domain[n - 1], x1] : [domain[i - 1], domain[i]];
+  }, scale.unknown = function (_) {
+    return arguments.length ? (unknown = _, scale) : scale;
+  }, scale.thresholds = function () {
+    return domain.slice();
+  }, scale.copy = function () {
+    return quantize_quantize().domain([x0, x1]).range(range).unknown(unknown);
+  }, initRange.apply(linearish(scale), arguments);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/threshold.js
+
+
+
+function threshold_threshold() {
+  function scale(x) {
+    return x <= x ? range[bisect(domain, x, 0, n)] : unknown;
+  }
+
+  var unknown,
+      domain = [.5],
+      range = [0, 1],
+      n = 1;
+  return scale.domain = function (_) {
+    return arguments.length ? (domain = array_slice.call(_), n = Math.min(domain.length, range.length - 1), scale) : domain.slice();
+  }, scale.range = function (_) {
+    return arguments.length ? (range = array_slice.call(_), n = Math.min(domain.length, range.length - 1), scale) : range.slice();
+  }, scale.invertExtent = function (y) {
+    var i = range.indexOf(y);
+    return [domain[i - 1], domain[i]];
+  }, scale.unknown = function (_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  }, scale.copy = function () {
+    return threshold_threshold().domain(domain).range(range).unknown(unknown);
+  }, initRange.apply(scale, arguments);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/time.js
+
+
+
+
+
+
+
+var time_durationSecond = 1e3,
+    time_durationMinute = 60000,
+    time_durationHour = 3600000,
+    time_durationDay = 86400000,
+    time_durationWeek = 604800000,
+    durationMonth = 2592000000,
+    durationYear = 31536000000;
+
+function time_date(t) {
+  return new Date(t);
+}
+
+function time_number(t) {
+  return t instanceof Date ? +t : +new Date(+t);
+}
+
+function calendar(year, month, week, day, hour, minute, second, millisecond, format) {
+  function tickFormat(date) {
+    return (second(date) < date ? formatMillisecond : minute(date) < date ? formatSecond : hour(date) < date ? formatMinute : day(date) < date ? formatHour : month(date) < date ? week(date) < date ? formatDay : formatWeek : year(date) < date ? formatMonth : formatYear)(date);
+  }
+
+  function tickInterval(interval, start, stop, step) {
+    // If a desired tick count is specified, pick a reasonable tick interval
+    // based on the extent of the domain and a rough estimate of tick size.
+    // Otherwise, assume interval is already a time interval and use it.
+    if (interval == null && (interval = 10), typeof interval === "number") {
+      var target = Math.abs(stop - start) / interval,
+          i = bisector(function (i) {
+        return i[2];
+      }).right(tickIntervals, target);
+      i === tickIntervals.length ? (step = tickStep(start / durationYear, stop / durationYear, interval), interval = year) : i ? (i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i], step = i[1], interval = i[0]) : (step = Math.max(tickStep(start, stop, interval), 1), interval = millisecond);
+    }
+
+    return step == null ? interval : interval.every(step);
+  }
+
+  var scale = continuous(continuous_identity, continuous_identity),
+      invert = scale.invert,
+      domain = scale.domain,
+      formatMillisecond = format(".%L"),
+      formatSecond = format(":%S"),
+      formatMinute = format("%I:%M"),
+      formatHour = format("%I %p"),
+      formatDay = format("%a %d"),
+      formatWeek = format("%b %d"),
+      formatMonth = format("%B"),
+      formatYear = format("%Y"),
+      tickIntervals = [[second, 1, time_durationSecond], [second, 5, 5000], [second, 15, 15000], [second, 30, 30000], [minute, 1, time_durationMinute], [minute, 5, 300000], [minute, 15, 900000], [minute, 30, 1800000], [hour, 1, time_durationHour], [hour, 3, 10800000], [hour, 6, 21600000], [hour, 12, 43200000], [day, 1, time_durationDay], [day, 2, 172800000], [week, 1, time_durationWeek], [month, 1, durationMonth], [month, 3, 7776000000], [year, 1, durationYear]];
+  return scale.invert = function (y) {
+    return new Date(invert(y));
+  }, scale.domain = function (_) {
+    return arguments.length ? domain(array_map.call(_, time_number)) : domain().map(time_date);
+  }, scale.ticks = function (interval, step) {
+    var t,
+        d = domain(),
+        t0 = d[0],
+        t1 = d[d.length - 1],
+        r = t1 < t0;
+    // inclusive stop
+    return r && (t = t0, t0 = t1, t1 = t), t = tickInterval(interval, t0, t1, step), t = t ? t.range(t0, t1 + 1) : [], r ? t.reverse() : t;
+  }, scale.tickFormat = function (count, specifier) {
+    return specifier == null ? tickFormat : format(specifier);
+  }, scale.nice = function (interval, step) {
+    var d = domain();
+    return (interval = tickInterval(interval, d[0], d[d.length - 1], step)) ? domain(nice(d, interval)) : scale;
+  }, scale.copy = function () {
+    return copy(scale, calendar(year, month, week, day, hour, minute, second, millisecond, format));
+  }, scale;
+}
+/* harmony default export */ var src_time = (function () {
+  return initRange.apply(calendar(src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, src_millisecond, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
+});
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/utcTime.js
+
+
+
+
+/* harmony default export */ var utcTime = (function () {
+  return initRange.apply(calendar(src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute, src_second, src_millisecond, utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
+});
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/sequential.js
+
+
+
+
+
+
+
+function sequential_transformer() {
+  function scale(x) {
+    return isNaN(x = +x) ? unknown : interpolator(k10 === 0 ? .5 : (x = (transform(x) - t0) * k10, clamp ? Math.max(0, Math.min(1, x)) : x));
+  }
+
+  var t0,
+      t1,
+      k10,
+      transform,
+      unknown,
+      x0 = 0,
+      x1 = 1,
+      interpolator = continuous_identity,
+      clamp = !1;
+  return scale.domain = function (_) {
+    return arguments.length ? (t0 = transform(x0 = +_[0]), t1 = transform(x1 = +_[1]), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
+  }, scale.clamp = function (_) {
+    return arguments.length ? (clamp = !!_, scale) : clamp;
+  }, scale.interpolator = function (_) {
+    return arguments.length ? (interpolator = _, scale) : interpolator;
+  }, scale.unknown = function (_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  }, function (t) {
+    return transform = t, t0 = t(x0), t1 = t(x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale;
+  };
+}
+
+function sequential_copy(source, target) {
+  return target.domain(source.domain()).interpolator(source.interpolator()).clamp(source.clamp()).unknown(source.unknown());
+}
+function sequential() {
+  var scale = linearish(sequential_transformer()(continuous_identity));
+  return scale.copy = function () {
+    return sequential_copy(scale, sequential());
+  }, initInterpolator.apply(scale, arguments);
+}
+function sequentialLog() {
+  var scale = loggish(sequential_transformer()).domain([1, 10]);
+  return scale.copy = function () {
+    return sequential_copy(scale, sequentialLog()).base(scale.base());
+  }, initInterpolator.apply(scale, arguments);
+}
+function sequentialSymlog() {
+  var scale = symlogish(sequential_transformer());
+  return scale.copy = function () {
+    return sequential_copy(scale, sequentialSymlog()).constant(scale.constant());
+  }, initInterpolator.apply(scale, arguments);
+}
+function sequentialPow() {
+  var scale = powish(sequential_transformer());
+  return scale.copy = function () {
+    return sequential_copy(scale, sequentialPow()).exponent(scale.exponent());
+  }, initInterpolator.apply(scale, arguments);
+}
+function sequentialSqrt() {
+  return sequentialPow.apply(null, arguments).exponent(.5);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/sequentialQuantile.js
+
+
+
+function sequentialQuantile() {
+  function scale(x) {
+    if (!isNaN(x = +x)) return interpolator((bisect(domain, x) - 1) / (domain.length - 1));
+  }
+
+  var domain = [],
+      interpolator = continuous_identity;
+  return scale.domain = function (_) {
+    if (!arguments.length) return domain.slice();
+    domain = [];
+
+    for (var d, i = 0, n = _.length; i < n; ++i) (d = _[i], d != null && !isNaN(d = +d)) && domain.push(d);
+
+    return domain.sort(src_ascending), scale;
+  }, scale.interpolator = function (_) {
+    return arguments.length ? (interpolator = _, scale) : interpolator;
+  }, scale.copy = function () {
+    return sequentialQuantile(interpolator).domain(domain);
+  }, initInterpolator.apply(scale, arguments);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/diverging.js
+
+
+
+
+
+
+
+
+function diverging_transformer() {
+  function scale(x) {
+    return isNaN(x = +x) ? unknown : (x = .5 + ((x = +transform(x)) - t1) * (x < t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
+  }
+
+  var t0,
+      t1,
+      t2,
+      k10,
+      k21,
+      transform,
+      unknown,
+      x0 = 0,
+      x1 = .5,
+      x2 = 1,
+      interpolator = continuous_identity,
+      clamp = !1;
+  return scale.domain = function (_) {
+    return arguments.length ? (t0 = transform(x0 = +_[0]), t1 = transform(x1 = +_[1]), t2 = transform(x2 = +_[2]), k10 = t0 === t1 ? 0 : .5 / (t1 - t0), k21 = t1 === t2 ? 0 : .5 / (t2 - t1), scale) : [x0, x1, x2];
+  }, scale.clamp = function (_) {
+    return arguments.length ? (clamp = !!_, scale) : clamp;
+  }, scale.interpolator = function (_) {
+    return arguments.length ? (interpolator = _, scale) : interpolator;
+  }, scale.unknown = function (_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  }, function (t) {
+    return transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : .5 / (t1 - t0), k21 = t1 === t2 ? 0 : .5 / (t2 - t1), scale;
+  };
+}
+
+function diverging() {
+  var scale = linearish(diverging_transformer()(continuous_identity));
+  return scale.copy = function () {
+    return sequential_copy(scale, diverging());
+  }, initInterpolator.apply(scale, arguments);
+}
+function divergingLog() {
+  var scale = loggish(diverging_transformer()).domain([.1, 1, 10]);
+  return scale.copy = function () {
+    return sequential_copy(scale, divergingLog()).base(scale.base());
+  }, initInterpolator.apply(scale, arguments);
+}
+function divergingSymlog() {
+  var scale = symlogish(diverging_transformer());
+  return scale.copy = function () {
+    return sequential_copy(scale, divergingSymlog()).constant(scale.constant());
+  }, initInterpolator.apply(scale, arguments);
+}
+function divergingPow() {
+  var scale = powish(diverging_transformer());
+  return scale.copy = function () {
+    return sequential_copy(scale, divergingPow()).exponent(scale.exponent());
+  }, initInterpolator.apply(scale, arguments);
+}
+function divergingSqrt() {
+  return divergingPow.apply(null, arguments).exponent(.5);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // CONCATENATED MODULE: ./src/ChartInternal/internals/color.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -28653,7 +27631,7 @@ function getFormat($$, typeValue, v) {
         transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
     // text
     // title
-    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), !state.resizing && ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $el.radar && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.updateTypesElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY && $$.updateCircleY(), !state.resizing && ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $el.radar && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.updateTypesElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
   },
 
   /**
@@ -28723,7 +27701,7 @@ function getFormat($$, typeValue, v) {
       (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition)), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition)), !flow && grid.main && list.push($$.updateGridFocus());
     }
 
-    return (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), ($$.hasPointType() || hasRadar) && !config.point_focus_only && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
+    return (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), ($$.hasPointType() || hasRadar) && !config.point_focus_only && $$.redrawCircle && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
   },
   updateAndRedraw: function updateAndRedraw(options) {
     options === void 0 && (options = {});
@@ -28913,6 +27891,2065 @@ function getFormat($$, typeValue, v) {
     return d ? this.scale.subX(d.x) : null;
   }
 });
+// CONCATENATED MODULE: ./node_modules/d3-path/src/path.js
+var path_pi = Math.PI,
+    path_tau = 2 * path_pi,
+    epsilon = 1e-6,
+    tauEpsilon = path_tau - epsilon;
+
+function Path() {
+  // end of current subpath
+  this._x0 = this._y0 = // start of current subpath
+  this._x1 = this._y1 = null, this._ = "";
+}
+
+function path_path() {
+  return new Path();
+}
+
+Path.prototype = path_path.prototype = {
+  constructor: Path,
+  moveTo: function moveTo(x, y) {
+    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y);
+  },
+  closePath: function closePath() {
+    this._x1 !== null && (this._x1 = this._x0, this._y1 = this._y0, this._ += "Z");
+  },
+  lineTo: function lineTo(x, y) {
+    this._ += "L" + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  quadraticCurveTo: function quadraticCurveTo(x1, y1, x, y) {
+    this._ += "Q" + +x1 + "," + +y1 + "," + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  bezierCurveTo: function bezierCurveTo(x1, y1, x2, y2, x, y) {
+    this._ += "C" + +x1 + "," + +y1 + "," + +x2 + "," + +y2 + "," + (this._x1 = +x) + "," + (this._y1 = +y);
+  },
+  arcTo: function arcTo(x1, y1, x2, y2, r) {
+    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
+    var x0 = this._x1,
+        y0 = this._y1,
+        x21 = x2 - x1,
+        y21 = y2 - y1,
+        x01 = x0 - x1,
+        y01 = y0 - y1,
+        l01_2 = x01 * x01 + y01 * y01; // Is the radius negative? Error.
+
+    if (r < 0) throw new Error("negative radius: " + r); // Is this path empty? Move to (x1,y1).
+
+    if (this._x1 === null) this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1); // Or, is (x1,y1) coincident with (x0,y0)? Do nothing.
+    else if (!(l01_2 > epsilon)) ; // Or, are (x0,y0), (x1,y1) and (x2,y2) collinear?
+      // Equivalently, is (x1,y1) coincident with (x2,y2)?
+      // Or, is the radius zero? Line to (x1,y1).
+      else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon) || !r) this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1); // Otherwise, draw an arc!
+        else {
+            var x20 = x2 - x0,
+                y20 = y2 - y0,
+                l21_2 = x21 * x21 + y21 * y21,
+                l21 = Math.sqrt(l21_2),
+                l01 = Math.sqrt(l01_2),
+                l = r * Math.tan((path_pi - Math.acos((l21_2 + l01_2 - (x20 * x20 + y20 * y20)) / (2 * l21 * l01))) / 2),
+                t01 = l / l01,
+                t21 = l / l21; // If the start tangent is not coincident with (x0,y0), line to.
+
+            Math.abs(t01 - 1) > epsilon && (this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01)), this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
+          }
+  },
+  arc: function arc(x, y, r, a0, a1, ccw) {
+    x = +x, y = +y, r = +r, ccw = !!ccw;
+    var dx = r * Math.cos(a0),
+        dy = r * Math.sin(a0),
+        x0 = x + dx,
+        y0 = y + dy,
+        cw = 1 ^ ccw,
+        da = ccw ? a0 - a1 : a1 - a0; // Is the radius negative? Error.
+
+    if (r < 0) throw new Error("negative radius: " + r); // Is this path empty? Move to (x0,y0).
+
+    this._x1 === null ? this._ += "M" + x0 + "," + y0 : (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) && (this._ += "L" + x0 + "," + y0);
+    // Is this arc empty? We’re done.
+    r && (da < 0 && (da = da % path_tau + path_tau), da > tauEpsilon ? this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x - dx) + "," + (y - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0) : da > epsilon && (this._ += "A" + r + "," + r + ",0," + +(da >= path_pi) + "," + cw + "," + (this._x1 = x + r * Math.cos(a1)) + "," + (this._y1 = y + r * Math.sin(a1)))); // Does the angle go the wrong way? Flip the direction.
+  },
+  rect: function rect(x, y, w, h) {
+    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y) + "h" + +w + "v" + +h + "h" + -w + "Z";
+  },
+  toString: function toString() {
+    return this._;
+  }
+};
+/* harmony default export */ var src_path = (path_path);
+// CONCATENATED MODULE: ./node_modules/d3-path/src/index.js
+
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/constant.js
+/* harmony default export */ var d3_shape_src_constant = (function (x) {
+  return function () {
+    return x;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/math.js
+var abs = Math.abs;
+var atan2 = Math.atan2;
+var cos = Math.cos;
+var math_max = Math.max;
+var math_min = Math.min;
+var sin = Math.sin;
+var math_sqrt = Math.sqrt;
+var math_epsilon = 1e-12;
+var math_pi = Math.PI;
+var math_halfPi = math_pi / 2;
+var math_tau = 2 * math_pi;
+function acos(x) {
+  return x > 1 ? 0 : x < -1 ? math_pi : Math.acos(x);
+}
+function asin(x) {
+  return x >= 1 ? math_halfPi : x <= -1 ? -math_halfPi : Math.asin(x);
+}
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/arc.js
+
+
+
+
+function arc_arcInnerRadius(d) {
+  return d.innerRadius;
+}
+
+function arcOuterRadius(d) {
+  return d.outerRadius;
+}
+
+function arcStartAngle(d) {
+  return d.startAngle;
+}
+
+function arcEndAngle(d) {
+  return d.endAngle;
+}
+
+function arcPadAngle(d) {
+  return d && d.padAngle; // Note: optional!
+}
+
+function intersect(x0, y0, x1, y1, x2, y2, x3, y3) {
+  var x10 = x1 - x0,
+      y10 = y1 - y0,
+      x32 = x3 - x2,
+      y32 = y3 - y2,
+      t = y32 * x10 - x32 * y10;
+  if (!(t * t < math_epsilon)) return t = (x32 * (y0 - y2) - y32 * (x0 - x2)) / t, [x0 + t * x10, y0 + t * y10];
+} // Compute perpendicular offset line of length rc.
+// http://mathworld.wolfram.com/Circle-LineIntersection.html
+
+
+function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
+  var x01 = x0 - x1,
+      y01 = y0 - y1,
+      lo = (cw ? rc : -rc) / math_sqrt(x01 * x01 + y01 * y01),
+      ox = lo * y01,
+      oy = -lo * x01,
+      x11 = x0 + ox,
+      y11 = y0 + oy,
+      x10 = x1 + ox,
+      y10 = y1 + oy,
+      x00 = (x11 + x10) / 2,
+      y00 = (y11 + y10) / 2,
+      dx = x10 - x11,
+      dy = y10 - y11,
+      d2 = dx * dx + dy * dy,
+      r = r1 - rc,
+      D = x11 * y10 - x10 * y11,
+      d = (dy < 0 ? -1 : 1) * math_sqrt(math_max(0, r * r * d2 - D * D)),
+      cx0 = (D * dy - dx * d) / d2,
+      cy0 = (-D * dx - dy * d) / d2,
+      cx1 = (D * dy + dx * d) / d2,
+      cy1 = (-D * dx + dy * d) / d2,
+      dx0 = cx0 - x00,
+      dy0 = cy0 - y00,
+      dx1 = cx1 - x00,
+      dy1 = cy1 - y00; // Pick the closer of the two intersection points.
+  // TODO Is there a faster way to determine which intersection to use?
+
+  return dx0 * dx0 + dy0 * dy0 > dx1 * dx1 + dy1 * dy1 && (cx0 = cx1, cy0 = cy1), {
+    cx: cx0,
+    cy: cy0,
+    x01: -ox,
+    y01: -oy,
+    x11: cx0 * (r1 / r - 1),
+    y11: cy0 * (r1 / r - 1)
+  };
+}
+
+/* harmony default export */ var src_arc = (function () {
+  function arc() {
+    var buffer,
+        r,
+        r0 = +innerRadius.apply(this, arguments),
+        r1 = +outerRadius.apply(this, arguments),
+        a0 = startAngle.apply(this, arguments) - math_halfPi,
+        a1 = endAngle.apply(this, arguments) - math_halfPi,
+        da = abs(a1 - a0),
+        cw = a1 > a0;
+    // Is it a point?
+    if (context || (context = buffer = src_path()), r1 < r0 && (r = r1, r1 = r0, r0 = r), !(r1 > math_epsilon)) context.moveTo(0, 0); // Or is it a circle or annulus?
+    else if (da > math_tau - math_epsilon) context.moveTo(r1 * cos(a0), r1 * sin(a0)), context.arc(0, 0, r1, a0, a1, !cw), r0 > math_epsilon && (context.moveTo(r0 * cos(a1), r0 * sin(a1)), context.arc(0, 0, r0, a1, a0, cw)); // Or is it a circular or annular sector?
+      else {
+          var t0,
+              t1,
+              a01 = a0,
+              a11 = a1,
+              a00 = a0,
+              a10 = a1,
+              da0 = da,
+              da1 = da,
+              ap = padAngle.apply(this, arguments) / 2,
+              rp = ap > math_epsilon && (padRadius ? +padRadius.apply(this, arguments) : math_sqrt(r0 * r0 + r1 * r1)),
+              rc = math_min(abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments)),
+              rc0 = rc,
+              rc1 = rc; // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
+
+          if (rp > math_epsilon) {
+            var p0 = asin(rp / r0 * sin(ap)),
+                p1 = asin(rp / r1 * sin(ap));
+            (da0 -= p0 * 2) > math_epsilon ? (p0 *= cw ? 1 : -1, a00 += p0, a10 -= p0) : (da0 = 0, a00 = a10 = (a0 + a1) / 2), (da1 -= p1 * 2) > math_epsilon ? (p1 *= cw ? 1 : -1, a01 += p1, a11 -= p1) : (da1 = 0, a01 = a11 = (a0 + a1) / 2);
+          }
+
+          var x01 = r1 * cos(a01),
+              y01 = r1 * sin(a01),
+              x10 = r0 * cos(a10),
+              y10 = r0 * sin(a10); // Apply rounded corners?
+
+          if (rc > math_epsilon) {
+            var oc,
+                x11 = r1 * cos(a11),
+                y11 = r1 * sin(a11),
+                x00 = r0 * cos(a00),
+                y00 = r0 * sin(a00); // Restrict the corner radius according to the sector angle.
+
+            if (da < math_pi && (oc = intersect(x01, y01, x00, y00, x11, y11, x10, y10))) {
+              var ax = x01 - oc[0],
+                  ay = y01 - oc[1],
+                  bx = x11 - oc[0],
+                  by = y11 - oc[1],
+                  kc = 1 / sin(acos((ax * bx + ay * by) / (math_sqrt(ax * ax + ay * ay) * math_sqrt(bx * bx + by * by))) / 2),
+                  lc = math_sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
+              rc0 = math_min(rc, (r0 - lc) / (kc - 1)), rc1 = math_min(rc, (r1 - lc) / (kc + 1));
+            }
+          } // Is the sector collapsed to a line?
+
+
+          da1 > math_epsilon ? rc1 > math_epsilon ? (t0 = cornerTangents(x00, y00, x01, y01, r1, rc1, cw), t1 = cornerTangents(x11, y11, x10, y10, r1, rc1, cw), context.moveTo(t0.cx + t0.x01, t0.cy + t0.y01), rc1 < rc ? context.arc(t0.cx, t0.cy, rc1, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !cw) : (context.arc(t0.cx, t0.cy, rc1, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !cw), context.arc(0, 0, r1, atan2(t0.cy + t0.y11, t0.cx + t0.x11), atan2(t1.cy + t1.y11, t1.cx + t1.x11), !cw), context.arc(t1.cx, t1.cy, rc1, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !cw))) : ( // Or is the outer ring just a circular arc?
+          context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw)) : context.moveTo(x01, y01), r0 > math_epsilon && da0 > math_epsilon ? rc0 > math_epsilon ? (t0 = cornerTangents(x10, y10, x11, y11, r0, -rc0, cw), t1 = cornerTangents(x01, y01, x00, y00, r0, -rc0, cw), context.lineTo(t0.cx + t0.x01, t0.cy + t0.y01), rc0 < rc ? context.arc(t0.cx, t0.cy, rc0, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !cw) : (context.arc(t0.cx, t0.cy, rc0, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !cw), context.arc(0, 0, r0, atan2(t0.cy + t0.y11, t0.cx + t0.x11), atan2(t1.cy + t1.y11, t1.cx + t1.x11), cw), context.arc(t1.cx, t1.cy, rc0, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !cw))) : // Or is the inner ring just a circular arc?
+          context.arc(0, 0, r0, a10, a00, cw) : context.lineTo(x10, y10);
+        }
+    return (context.closePath(), buffer) ? (context = null, buffer + "" || null) : void 0;
+  }
+
+  var innerRadius = arc_arcInnerRadius,
+      outerRadius = arcOuterRadius,
+      cornerRadius = d3_shape_src_constant(0),
+      padRadius = null,
+      startAngle = arcStartAngle,
+      endAngle = arcEndAngle,
+      padAngle = arcPadAngle,
+      context = null;
+  return arc.centroid = function () {
+    var r = (+innerRadius.apply(this, arguments) + +outerRadius.apply(this, arguments)) / 2,
+        a = (+startAngle.apply(this, arguments) + +endAngle.apply(this, arguments)) / 2 - math_pi / 2;
+    return [cos(a) * r, sin(a) * r];
+  }, arc.innerRadius = function (_) {
+    return arguments.length ? (innerRadius = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : innerRadius;
+  }, arc.outerRadius = function (_) {
+    return arguments.length ? (outerRadius = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : outerRadius;
+  }, arc.cornerRadius = function (_) {
+    return arguments.length ? (cornerRadius = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : cornerRadius;
+  }, arc.padRadius = function (_) {
+    return arguments.length ? (padRadius = _ == null ? null : typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : padRadius;
+  }, arc.startAngle = function (_) {
+    return arguments.length ? (startAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : startAngle;
+  }, arc.endAngle = function (_) {
+    return arguments.length ? (endAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : endAngle;
+  }, arc.padAngle = function (_) {
+    return arguments.length ? (padAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : padAngle;
+  }, arc.context = function (_) {
+    return arguments.length ? (context = _ == null ? null : _, arc) : context;
+  }, arc;
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/linear.js
+function Linear(context) {
+  this._context = context;
+}
+
+Linear.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    switch (x = +x, y = +y, this._point) {
+      case 0:
+        this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2;
+      // proceed
+
+      default:
+        this._context.lineTo(x, y);
+
+    }
+  }
+};
+/* harmony default export */ var curve_linear = (function (context) {
+  return new Linear(context);
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/point.js
+function point_x(p) {
+  return p[0];
+}
+function point_y(p) {
+  return p[1];
+}
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/line.js
+
+
+
+
+/* harmony default export */ var src_line = (function () {
+  function line(data) {
+    var i,
+        d,
+        buffer,
+        n = data.length,
+        defined0 = !1;
+
+    for (context == null && (output = curve(buffer = src_path())), i = 0; i <= n; ++i) !(i < n && defined(d = data[i], i, data)) === defined0 && ((defined0 = !defined0) ? output.lineStart() : output.lineEnd()), defined0 && output.point(+x(d, i, data), +y(d, i, data));
+
+    if (buffer) return output = null, buffer + "" || null;
+  }
+
+  var x = point_x,
+      y = point_y,
+      defined = d3_shape_src_constant(!0),
+      context = null,
+      curve = curve_linear,
+      output = null;
+  return line.x = function (_) {
+    return arguments.length ? (x = typeof _ === "function" ? _ : d3_shape_src_constant(+_), line) : x;
+  }, line.y = function (_) {
+    return arguments.length ? (y = typeof _ === "function" ? _ : d3_shape_src_constant(+_), line) : y;
+  }, line.defined = function (_) {
+    return arguments.length ? (defined = typeof _ === "function" ? _ : d3_shape_src_constant(!!_), line) : defined;
+  }, line.curve = function (_) {
+    return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
+  }, line.context = function (_) {
+    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
+  }, line;
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/area.js
+
+
+
+
+
+/* harmony default export */ var src_area = (function () {
+  function area(data) {
+    var i,
+        j,
+        k,
+        d,
+        buffer,
+        n = data.length,
+        defined0 = !1,
+        x0z = Array(n),
+        y0z = Array(n);
+
+    for (context == null && (output = curve(buffer = src_path())), i = 0; i <= n; ++i) {
+      if (!(i < n && defined(d = data[i], i, data)) === defined0) if (defined0 = !defined0) j = i, output.areaStart(), output.lineStart();else {
+        for (output.lineEnd(), output.lineStart(), k = i - 1; k >= j; --k) output.point(x0z[k], y0z[k]);
+
+        output.lineEnd(), output.areaEnd();
+      }
+      defined0 && (x0z[i] = +x0(d, i, data), y0z[i] = +y0(d, i, data), output.point(x1 ? +x1(d, i, data) : x0z[i], y1 ? +y1(d, i, data) : y0z[i]));
+    }
+
+    if (buffer) return output = null, buffer + "" || null;
+  }
+
+  function arealine() {
+    return src_line().defined(defined).curve(curve).context(context);
+  }
+
+  var x0 = point_x,
+      x1 = null,
+      y0 = d3_shape_src_constant(0),
+      y1 = point_y,
+      defined = d3_shape_src_constant(!0),
+      context = null,
+      curve = curve_linear,
+      output = null;
+  return area.x = function (_) {
+    return arguments.length ? (x0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), x1 = null, area) : x0;
+  }, area.x0 = function (_) {
+    return arguments.length ? (x0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : x0;
+  }, area.x1 = function (_) {
+    return arguments.length ? (x1 = _ == null ? null : typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : x1;
+  }, area.y = function (_) {
+    return arguments.length ? (y0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), y1 = null, area) : y0;
+  }, area.y0 = function (_) {
+    return arguments.length ? (y0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : y0;
+  }, area.y1 = function (_) {
+    return arguments.length ? (y1 = _ == null ? null : typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : y1;
+  }, area.lineX0 = area.lineY0 = function () {
+    return arealine().x(x0).y(y0);
+  }, area.lineY1 = function () {
+    return arealine().x(x0).y(y1);
+  }, area.lineX1 = function () {
+    return arealine().x(x1).y(y0);
+  }, area.defined = function (_) {
+    return arguments.length ? (defined = typeof _ === "function" ? _ : d3_shape_src_constant(!!_), area) : defined;
+  }, area.curve = function (_) {
+    return arguments.length ? (curve = _, context != null && (output = curve(context)), area) : curve;
+  }, area.context = function (_) {
+    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), area) : context;
+  }, area;
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/descending.js
+/* harmony default export */ var src_descending = (function (a, b) {
+  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/identity.js
+/* harmony default export */ var d3_shape_src_identity = (function (d) {
+  return d;
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/pie.js
+
+
+
+
+/* harmony default export */ var src_pie = (function () {
+  function pie(data) {
+    var i,
+        j,
+        k,
+        a1,
+        v,
+        n = data.length,
+        sum = 0,
+        index = Array(n),
+        arcs = Array(n),
+        a0 = +startAngle.apply(this, arguments),
+        da = Math.min(math_tau, Math.max(-math_tau, endAngle.apply(this, arguments) - a0)),
+        p = Math.min(Math.abs(da) / n, padAngle.apply(this, arguments)),
+        pa = p * (da < 0 ? -1 : 1);
+
+    for (i = 0; i < n; ++i) (v = arcs[index[i] = i] = +value(data[i], i, data)) > 0 && (sum += v); // Optionally sort the arcs by previously-computed values or by data.
+
+
+    // Compute the arcs! They are stored in the original data's order.
+    for (sortValues == null ? sort != null && index.sort(function (i, j) {
+      return sort(data[i], data[j]);
+    }) : index.sort(function (i, j) {
+      return sortValues(arcs[i], arcs[j]);
+    }), i = 0, k = sum ? (da - n * pa) / sum : 0; i < n; ++i, a0 = a1) j = index[i], v = arcs[j], a1 = a0 + (v > 0 ? v * k : 0) + pa, arcs[j] = {
+      data: data[j],
+      index: i,
+      value: v,
+      startAngle: a0,
+      endAngle: a1,
+      padAngle: p
+    };
+
+    return arcs;
+  }
+
+  var value = d3_shape_src_identity,
+      sortValues = src_descending,
+      sort = null,
+      startAngle = d3_shape_src_constant(0),
+      endAngle = d3_shape_src_constant(math_tau),
+      padAngle = d3_shape_src_constant(0);
+  return pie.value = function (_) {
+    return arguments.length ? (value = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : value;
+  }, pie.sortValues = function (_) {
+    return arguments.length ? (sortValues = _, sort = null, pie) : sortValues;
+  }, pie.sort = function (_) {
+    return arguments.length ? (sort = _, sortValues = null, pie) : sort;
+  }, pie.startAngle = function (_) {
+    return arguments.length ? (startAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : startAngle;
+  }, pie.endAngle = function (_) {
+    return arguments.length ? (endAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : endAngle;
+  }, pie.padAngle = function (_) {
+    return arguments.length ? (padAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : padAngle;
+  }, pie;
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/radial.js
+
+var curveRadialLinear = curveRadial(curve_linear);
+
+function Radial(curve) {
+  this._curve = curve;
+}
+
+Radial.prototype = {
+  areaStart: function areaStart() {
+    this._curve.areaStart();
+  },
+  areaEnd: function areaEnd() {
+    this._curve.areaEnd();
+  },
+  lineStart: function lineStart() {
+    this._curve.lineStart();
+  },
+  lineEnd: function lineEnd() {
+    this._curve.lineEnd();
+  },
+  point: function point(a, r) {
+    this._curve.point(r * Math.sin(a), r * -Math.cos(a));
+  }
+};
+function curveRadial(curve) {
+  function radial(context) {
+    return new Radial(curve(context));
+  }
+
+  return radial._curve = curve, radial;
+}
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/lineRadial.js
+
+
+function lineRadial(l) {
+  var c = l.curve;
+  return l.angle = l.x, delete l.x, l.radius = l.y, delete l.y, l.curve = function (_) {
+    return arguments.length ? c(curveRadial(_)) : c()._curve;
+  }, l;
+}
+/* harmony default export */ var src_lineRadial = (function () {
+  return lineRadial(src_line().curve(curveRadialLinear));
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/areaRadial.js
+
+
+
+/* harmony default export */ var areaRadial = (function () {
+  var a = src_area().curve(curveRadialLinear),
+      c = a.curve,
+      x0 = a.lineX0,
+      x1 = a.lineX1,
+      y0 = a.lineY0,
+      y1 = a.lineY1;
+  return a.angle = a.x, delete a.x, a.startAngle = a.x0, delete a.x0, a.endAngle = a.x1, delete a.x1, a.radius = a.y, delete a.y, a.innerRadius = a.y0, delete a.y0, a.outerRadius = a.y1, delete a.y1, a.lineStartAngle = function () {
+    return lineRadial(x0());
+  }, delete a.lineX0, a.lineEndAngle = function () {
+    return lineRadial(x1());
+  }, delete a.lineX1, a.lineInnerRadius = function () {
+    return lineRadial(y0());
+  }, delete a.lineY0, a.lineOuterRadius = function () {
+    return lineRadial(y1());
+  }, delete a.lineY1, a.curve = function (_) {
+    return arguments.length ? c(curveRadial(_)) : c()._curve;
+  }, a;
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/pointRadial.js
+/* harmony default export */ var pointRadial = (function (x, y) {
+  return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/array.js
+var src_array_slice = Array.prototype.slice;
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/link/index.js
+
+
+
+
+
+
+function linkSource(d) {
+  return d.source;
+}
+
+function linkTarget(d) {
+  return d.target;
+}
+
+function link_link(curve) {
+  function link() {
+    var buffer,
+        argv = src_array_slice.call(arguments),
+        s = source.apply(this, argv),
+        t = target.apply(this, argv);
+    if (context || (context = buffer = src_path()), curve(context, +x.apply(this, (argv[0] = s, argv)), +y.apply(this, argv), +x.apply(this, (argv[0] = t, argv)), +y.apply(this, argv)), buffer) return context = null, buffer + "" || null;
+  }
+
+  var source = linkSource,
+      target = linkTarget,
+      x = point_x,
+      y = point_y,
+      context = null;
+  return link.source = function (_) {
+    return arguments.length ? (source = _, link) : source;
+  }, link.target = function (_) {
+    return arguments.length ? (target = _, link) : target;
+  }, link.x = function (_) {
+    return arguments.length ? (x = typeof _ === "function" ? _ : d3_shape_src_constant(+_), link) : x;
+  }, link.y = function (_) {
+    return arguments.length ? (y = typeof _ === "function" ? _ : d3_shape_src_constant(+_), link) : y;
+  }, link.context = function (_) {
+    return arguments.length ? (context = _ == null ? null : _, link) : context;
+  }, link;
+}
+
+function curveHorizontal(context, x0, y0, x1, y1) {
+  context.moveTo(x0, y0), context.bezierCurveTo(x0 = (x0 + x1) / 2, y0, x0, y1, x1, y1);
+}
+
+function curveVertical(context, x0, y0, x1, y1) {
+  context.moveTo(x0, y0), context.bezierCurveTo(x0, y0 = (y0 + y1) / 2, x1, y0, x1, y1);
+}
+
+function link_curveRadial(context, x0, y0, x1, y1) {
+  var p0 = pointRadial(x0, y0),
+      p1 = pointRadial(x0, y0 = (y0 + y1) / 2),
+      p2 = pointRadial(x1, y0),
+      p3 = pointRadial(x1, y1);
+  context.moveTo(p0[0], p0[1]), context.bezierCurveTo(p1[0], p1[1], p2[0], p2[1], p3[0], p3[1]);
+}
+
+function linkHorizontal() {
+  return link_link(curveHorizontal);
+}
+function linkVertical() {
+  return link_link(curveVertical);
+}
+function linkRadial() {
+  var l = link_link(link_curveRadial);
+  return l.angle = l.x, delete l.x, l.radius = l.y, delete l.y, l;
+}
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/circle.js
+
+/* harmony default export */ var symbol_circle = ({
+  draw: function draw(context, size) {
+    var r = Math.sqrt(size / math_pi);
+    context.moveTo(r, 0), context.arc(0, 0, r, 0, math_tau);
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/cross.js
+/* harmony default export */ var symbol_cross = ({
+  draw: function draw(context, size) {
+    var r = Math.sqrt(size / 5) / 2;
+    context.moveTo(-3 * r, -r), context.lineTo(-r, -r), context.lineTo(-r, -3 * r), context.lineTo(r, -3 * r), context.lineTo(r, -r), context.lineTo(3 * r, -r), context.lineTo(3 * r, r), context.lineTo(r, r), context.lineTo(r, 3 * r), context.lineTo(-r, 3 * r), context.lineTo(-r, r), context.lineTo(-3 * r, r), context.closePath();
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/diamond.js
+var tan30 = Math.sqrt(1 / 3),
+    tan30_2 = tan30 * 2;
+/* harmony default export */ var diamond = ({
+  draw: function draw(context, size) {
+    var y = Math.sqrt(size / tan30_2),
+        x = y * tan30;
+    context.moveTo(0, -y), context.lineTo(x, 0), context.lineTo(0, y), context.lineTo(-x, 0), context.closePath();
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/star.js
+
+var ka = .8908130915292852,
+    kr = Math.sin(math_pi / 10) / Math.sin(7 * math_pi / 10),
+    kx = Math.sin(math_tau / 10) * kr,
+    ky = -Math.cos(math_tau / 10) * kr;
+/* harmony default export */ var star = ({
+  draw: function draw(context, size) {
+    var r = Math.sqrt(size * ka),
+        x = kx * r,
+        y = ky * r;
+    context.moveTo(0, -r), context.lineTo(x, y);
+
+    for (var i = 1; i < 5; ++i) {
+      var a = math_tau * i / 5,
+          c = Math.cos(a),
+          s = Math.sin(a);
+      context.lineTo(s * r, -c * r), context.lineTo(c * x - s * y, s * x + c * y);
+    }
+
+    context.closePath();
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/square.js
+/* harmony default export */ var square = ({
+  draw: function draw(context, size) {
+    var w = Math.sqrt(size),
+        x = -w / 2;
+    context.rect(x, x, w, w);
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/triangle.js
+var sqrt3 = Math.sqrt(3);
+/* harmony default export */ var triangle = ({
+  draw: function draw(context, size) {
+    var y = -Math.sqrt(size / (sqrt3 * 3));
+    context.moveTo(0, y * 2), context.lineTo(-sqrt3 * y, -y), context.lineTo(sqrt3 * y, -y), context.closePath();
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/wye.js
+var wye_c = -.5,
+    wye_s = Math.sqrt(3) / 2,
+    wye_k = 1 / Math.sqrt(12),
+    wye_a = (wye_k / 2 + 1) * 3;
+/* harmony default export */ var wye = ({
+  draw: function draw(context, size) {
+    var r = Math.sqrt(size / wye_a),
+        x0 = r / 2,
+        y0 = r * wye_k,
+        x1 = x0,
+        y1 = r * wye_k + r,
+        x2 = -x1,
+        y2 = y1;
+    context.moveTo(x0, y0), context.lineTo(x1, y1), context.lineTo(x2, y2), context.lineTo(wye_c * x0 - wye_s * y0, wye_s * x0 + wye_c * y0), context.lineTo(wye_c * x1 - wye_s * y1, wye_s * x1 + wye_c * y1), context.lineTo(wye_c * x2 - wye_s * y2, wye_s * x2 + wye_c * y2), context.lineTo(wye_c * x0 + wye_s * y0, wye_c * y0 - wye_s * x0), context.lineTo(wye_c * x1 + wye_s * y1, wye_c * y1 - wye_s * x1), context.lineTo(wye_c * x2 + wye_s * y2, wye_c * y2 - wye_s * x2), context.closePath();
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol.js
+
+
+
+
+
+
+
+
+
+var symbols = [symbol_circle, symbol_cross, diamond, square, star, triangle, wye];
+/* harmony default export */ var src_symbol = (function () {
+  function symbol() {
+    var buffer;
+    if (context || (context = buffer = src_path()), type.apply(this, arguments).draw(context, +size.apply(this, arguments)), buffer) return context = null, buffer + "" || null;
+  }
+
+  var type = d3_shape_src_constant(symbol_circle),
+      size = d3_shape_src_constant(64),
+      context = null;
+  return symbol.type = function (_) {
+    return arguments.length ? (type = typeof _ === "function" ? _ : d3_shape_src_constant(_), symbol) : type;
+  }, symbol.size = function (_) {
+    return arguments.length ? (size = typeof _ === "function" ? _ : d3_shape_src_constant(+_), symbol) : size;
+  }, symbol.context = function (_) {
+    return arguments.length ? (context = _ == null ? null : _, symbol) : context;
+  }, symbol;
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/noop.js
+/* harmony default export */ var src_noop = (function () {});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/basis.js
+function _point(that, x, y) {
+  that._context.bezierCurveTo((2 * that._x0 + that._x1) / 3, (2 * that._y0 + that._y1) / 3, (that._x0 + 2 * that._x1) / 3, (that._y0 + 2 * that._y1) / 3, (that._x0 + 4 * that._x1 + x) / 6, (that._y0 + 4 * that._y1 + y) / 6);
+}
+
+
+function Basis(context) {
+  this._context = context;
+}
+Basis.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._y0 = this._y1 = NaN, this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 3:
+        _point(this, this._x1, this._y1);
+
+      // proceed
+
+      case 2:
+        this._context.lineTo(this._x1, this._y1);
+
+    }
+
+    (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    switch (x = +x, y = +y, this._point) {
+      case 0:
+        this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3, this._context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6);
+      // proceed
+
+      default:
+        _point(this, x, y);
+
+    }
+
+    this._x0 = this._x1, this._x1 = x, this._y0 = this._y1, this._y1 = y;
+  }
+};
+/* harmony default export */ var curve_basis = (function (context) {
+  return new Basis(context);
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/basisClosed.js
+
+
+
+function BasisClosed(context) {
+  this._context = context;
+}
+
+BasisClosed.prototype = {
+  areaStart: src_noop,
+  areaEnd: src_noop,
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = NaN, this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 1:
+        {
+          this._context.moveTo(this._x2, this._y2), this._context.closePath();
+          break;
+        }
+
+      case 2:
+        {
+          this._context.moveTo((this._x2 + 2 * this._x3) / 3, (this._y2 + 2 * this._y3) / 3), this._context.lineTo((this._x3 + 2 * this._x2) / 3, (this._y3 + 2 * this._y2) / 3), this._context.closePath();
+          break;
+        }
+
+      case 3:
+        {
+          this.point(this._x2, this._y2), this.point(this._x3, this._y3), this.point(this._x4, this._y4);
+          break;
+        }
+    }
+  },
+  point: function point(x, y) {
+    switch (x = +x, y = +y, this._point) {
+      case 0:
+        this._point = 1, this._x2 = x, this._y2 = y;
+        break;
+
+      case 1:
+        this._point = 2, this._x3 = x, this._y3 = y;
+        break;
+
+      case 2:
+        this._point = 3, this._x4 = x, this._y4 = y, this._context.moveTo((this._x0 + 4 * this._x1 + x) / 6, (this._y0 + 4 * this._y1 + y) / 6);
+        break;
+
+      default:
+        _point(this, x, y);
+
+    }
+
+    this._x0 = this._x1, this._x1 = x, this._y0 = this._y1, this._y1 = y;
+  }
+};
+/* harmony default export */ var curve_basisClosed = (function (context) {
+  return new BasisClosed(context);
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/basisOpen.js
+
+
+function BasisOpen(context) {
+  this._context = context;
+}
+
+BasisOpen.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._y0 = this._y1 = NaN, this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    (this._line || this._line !== 0 && this._point === 3) && this._context.closePath(), this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    switch (x = +x, y = +y, this._point) {
+      case 0:
+        this._point = 1;
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3;
+        var x0 = (this._x0 + 4 * this._x1 + x) / 6,
+            y0 = (this._y0 + 4 * this._y1 + y) / 6;
+        this._line ? this._context.lineTo(x0, y0) : this._context.moveTo(x0, y0);
+        break;
+
+      case 3:
+        this._point = 4;
+      // proceed
+
+      default:
+        _point(this, x, y);
+
+    }
+
+    this._x0 = this._x1, this._x1 = x, this._y0 = this._y1, this._y1 = y;
+  }
+};
+/* harmony default export */ var basisOpen = (function (context) {
+  return new BasisOpen(context);
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/bundle.js
+
+
+function Bundle(context, beta) {
+  this._basis = new Basis(context), this._beta = beta;
+}
+
+Bundle.prototype = {
+  lineStart: function lineStart() {
+    this._x = [], this._y = [], this._basis.lineStart();
+  },
+  lineEnd: function lineEnd() {
+    var x = this._x,
+        y = this._y,
+        j = x.length - 1;
+    if (j > 0) for (var t, x0 = x[0], y0 = y[0], dx = x[j] - x0, dy = y[j] - y0, i = -1; ++i <= j;) t = i / j, this._basis.point(this._beta * x[i] + (1 - this._beta) * (x0 + t * dx), this._beta * y[i] + (1 - this._beta) * (y0 + t * dy));
+    this._x = this._y = null, this._basis.lineEnd();
+  },
+  point: function point(x, y) {
+    this._x.push(+x), this._y.push(+y);
+  }
+};
+/* harmony default export */ var curve_bundle = ((function custom(beta) {
+  function bundle(context) {
+    return beta === 1 ? new Basis(context) : new Bundle(context, beta);
+  }
+
+  return bundle.beta = function (beta) {
+    return custom(+beta);
+  }, bundle;
+})(.85));
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/cardinal.js
+function cardinal_point(that, x, y) {
+  that._context.bezierCurveTo(that._x1 + that._k * (that._x2 - that._x0), that._y1 + that._k * (that._y2 - that._y0), that._x2 + that._k * (that._x1 - x), that._y2 + that._k * (that._y1 - y), that._x2, that._y2);
+}
+
+
+function Cardinal(context, tension) {
+  this._context = context, this._k = (1 - tension) / 6;
+}
+Cardinal.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN, this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 2:
+        this._context.lineTo(this._x2, this._y2);
+
+        break;
+
+      case 3:
+        cardinal_point(this, this._x1, this._y1);
+
+    }
+
+    (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    switch (x = +x, y = +y, this._point) {
+      case 0:
+        this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2, this._x1 = x, this._y1 = y;
+        break;
+
+      case 2:
+        this._point = 3;
+      // proceed
+
+      default:
+        cardinal_point(this, x, y);
+
+    }
+
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+/* harmony default export */ var cardinal = ((function custom(tension) {
+  function cardinal(context) {
+    return new Cardinal(context, tension);
+  }
+
+  return cardinal.tension = function (tension) {
+    return custom(+tension);
+  }, cardinal;
+})(0));
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/cardinalClosed.js
+
+
+function CardinalClosed(context, tension) {
+  this._context = context, this._k = (1 - tension) / 6;
+}
+CardinalClosed.prototype = {
+  areaStart: src_noop,
+  areaEnd: src_noop,
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN, this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 1:
+        {
+          this._context.moveTo(this._x3, this._y3), this._context.closePath();
+          break;
+        }
+
+      case 2:
+        {
+          this._context.lineTo(this._x3, this._y3), this._context.closePath();
+          break;
+        }
+
+      case 3:
+        {
+          this.point(this._x3, this._y3), this.point(this._x4, this._y4), this.point(this._x5, this._y5);
+          break;
+        }
+    }
+  },
+  point: function point(x, y) {
+    switch (x = +x, y = +y, this._point) {
+      case 0:
+        this._point = 1, this._x3 = x, this._y3 = y;
+        break;
+
+      case 1:
+        this._point = 2, this._context.moveTo(this._x4 = x, this._y4 = y);
+        break;
+
+      case 2:
+        this._point = 3, this._x5 = x, this._y5 = y;
+        break;
+
+      default:
+        cardinal_point(this, x, y);
+
+    }
+
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+/* harmony default export */ var cardinalClosed = ((function custom(tension) {
+  function cardinal(context) {
+    return new CardinalClosed(context, tension);
+  }
+
+  return cardinal.tension = function (tension) {
+    return custom(+tension);
+  }, cardinal;
+})(0));
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/cardinalOpen.js
+
+function CardinalOpen(context, tension) {
+  this._context = context, this._k = (1 - tension) / 6;
+}
+CardinalOpen.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN, this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    (this._line || this._line !== 0 && this._point === 3) && this._context.closePath(), this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    switch (x = +x, y = +y, this._point) {
+      case 0:
+        this._point = 1;
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3, this._line ? this._context.lineTo(this._x2, this._y2) : this._context.moveTo(this._x2, this._y2);
+        break;
+
+      case 3:
+        this._point = 4;
+      // proceed
+
+      default:
+        cardinal_point(this, x, y);
+
+    }
+
+    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+/* harmony default export */ var cardinalOpen = ((function custom(tension) {
+  function cardinal(context) {
+    return new CardinalOpen(context, tension);
+  }
+
+  return cardinal.tension = function (tension) {
+    return custom(+tension);
+  }, cardinal;
+})(0));
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/catmullRom.js
+
+
+
+function catmullRom_point(that, x, y) {
+  var x1 = that._x1,
+      y1 = that._y1,
+      x2 = that._x2,
+      y2 = that._y2;
+
+  if (that._l01_a > math_epsilon) {
+    var a = 2 * that._l01_2a + 3 * that._l01_a * that._l12_a + that._l12_2a,
+        n = 3 * that._l01_a * (that._l01_a + that._l12_a);
+    x1 = (x1 * a - that._x0 * that._l12_2a + that._x2 * that._l01_2a) / n, y1 = (y1 * a - that._y0 * that._l12_2a + that._y2 * that._l01_2a) / n;
+  }
+
+  if (that._l23_a > math_epsilon) {
+    var b = 2 * that._l23_2a + 3 * that._l23_a * that._l12_a + that._l12_2a,
+        m = 3 * that._l23_a * (that._l23_a + that._l12_a);
+    x2 = (x2 * b + that._x1 * that._l23_2a - x * that._l12_2a) / m, y2 = (y2 * b + that._y1 * that._l23_2a - y * that._l12_2a) / m;
+  }
+
+  that._context.bezierCurveTo(x1, y1, x2, y2, that._x2, that._y2);
+}
+
+
+
+function CatmullRom(context, alpha) {
+  this._context = context, this._alpha = alpha;
+}
+
+CatmullRom.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN, this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 2:
+        this._context.lineTo(this._x2, this._y2);
+
+        break;
+
+      case 3:
+        this.point(this._x2, this._y2);
+    }
+
+    (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    if (x = +x, y = +y, this._point) {
+      var x23 = this._x2 - x,
+          y23 = this._y2 - y;
+      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
+    }
+
+    switch (this._point) {
+      case 0:
+        this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3;
+      // proceed
+
+      default:
+        catmullRom_point(this, x, y);
+
+    }
+
+    this._l01_a = this._l12_a, this._l12_a = this._l23_a, this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a, this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+/* harmony default export */ var curve_catmullRom = ((function custom(alpha) {
+  function catmullRom(context) {
+    return alpha ? new CatmullRom(context, alpha) : new Cardinal(context, 0);
+  }
+
+  return catmullRom.alpha = function (alpha) {
+    return custom(+alpha);
+  }, catmullRom;
+})(.5));
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/catmullRomClosed.js
+
+
+
+
+function CatmullRomClosed(context, alpha) {
+  this._context = context, this._alpha = alpha;
+}
+
+CatmullRomClosed.prototype = {
+  areaStart: src_noop,
+  areaEnd: src_noop,
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN, this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 1:
+        {
+          this._context.moveTo(this._x3, this._y3), this._context.closePath();
+          break;
+        }
+
+      case 2:
+        {
+          this._context.lineTo(this._x3, this._y3), this._context.closePath();
+          break;
+        }
+
+      case 3:
+        {
+          this.point(this._x3, this._y3), this.point(this._x4, this._y4), this.point(this._x5, this._y5);
+          break;
+        }
+    }
+  },
+  point: function point(x, y) {
+    if (x = +x, y = +y, this._point) {
+      var x23 = this._x2 - x,
+          y23 = this._y2 - y;
+      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
+    }
+
+    switch (this._point) {
+      case 0:
+        this._point = 1, this._x3 = x, this._y3 = y;
+        break;
+
+      case 1:
+        this._point = 2, this._context.moveTo(this._x4 = x, this._y4 = y);
+        break;
+
+      case 2:
+        this._point = 3, this._x5 = x, this._y5 = y;
+        break;
+
+      default:
+        catmullRom_point(this, x, y);
+
+    }
+
+    this._l01_a = this._l12_a, this._l12_a = this._l23_a, this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a, this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+/* harmony default export */ var catmullRomClosed = ((function custom(alpha) {
+  function catmullRom(context) {
+    return alpha ? new CatmullRomClosed(context, alpha) : new CardinalClosed(context, 0);
+  }
+
+  return catmullRom.alpha = function (alpha) {
+    return custom(+alpha);
+  }, catmullRom;
+})(.5));
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/catmullRomOpen.js
+
+
+
+function CatmullRomOpen(context, alpha) {
+  this._context = context, this._alpha = alpha;
+}
+
+CatmullRomOpen.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN, this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    (this._line || this._line !== 0 && this._point === 3) && this._context.closePath(), this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    if (x = +x, y = +y, this._point) {
+      var x23 = this._x2 - x,
+          y23 = this._y2 - y;
+      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
+    }
+
+    switch (this._point) {
+      case 0:
+        this._point = 1;
+        break;
+
+      case 1:
+        this._point = 2;
+        break;
+
+      case 2:
+        this._point = 3, this._line ? this._context.lineTo(this._x2, this._y2) : this._context.moveTo(this._x2, this._y2);
+        break;
+
+      case 3:
+        this._point = 4;
+      // proceed
+
+      default:
+        catmullRom_point(this, x, y);
+
+    }
+
+    this._l01_a = this._l12_a, this._l12_a = this._l23_a, this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a, this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
+  }
+};
+/* harmony default export */ var catmullRomOpen = ((function custom(alpha) {
+  function catmullRom(context) {
+    return alpha ? new CatmullRomOpen(context, alpha) : new CardinalOpen(context, 0);
+  }
+
+  return catmullRom.alpha = function (alpha) {
+    return custom(+alpha);
+  }, catmullRom;
+})(.5));
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/linearClosed.js
+
+
+function LinearClosed(context) {
+  this._context = context;
+}
+
+LinearClosed.prototype = {
+  areaStart: src_noop,
+  areaEnd: src_noop,
+  lineStart: function lineStart() {
+    this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    this._point && this._context.closePath();
+  },
+  point: function point(x, y) {
+    x = +x, y = +y, this._point ? this._context.lineTo(x, y) : (this._point = 1, this._context.moveTo(x, y));
+  }
+};
+/* harmony default export */ var linearClosed = (function (context) {
+  return new LinearClosed(context);
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/monotone.js
+function monotone_sign(x) {
+  return x < 0 ? -1 : 1;
+} // Calculate the slopes of the tangents (Hermite-type interpolation) based on
+// the following paper: Steffen, M. 1990. A Simple Method for Monotonic
+// Interpolation in One Dimension. Astronomy and Astrophysics, Vol. 239, NO.
+// NOV(II), P. 443, 1990.
+
+
+function slope3(that, x2, y2) {
+  var h0 = that._x1 - that._x0,
+      h1 = x2 - that._x1,
+      s0 = (that._y1 - that._y0) / (h0 || h1 < 0 && -0),
+      s1 = (y2 - that._y1) / (h1 || h0 < 0 && -0);
+  return (monotone_sign(s0) + monotone_sign(s1)) * Math.min(Math.abs(s0), Math.abs(s1), .5 * Math.abs((s0 * h1 + s1 * h0) / (h0 + h1))) || 0;
+} // Calculate a one-sided slope.
+
+
+function slope2(that, t) {
+  var h = that._x1 - that._x0;
+  return h ? (3 * (that._y1 - that._y0) / h - t) / 2 : t;
+} // According to https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Representations
+// "you can express cubic Hermite interpolation in terms of cubic Bézier curves
+// with respect to the four values p0, p0 + m0 / 3, p1 - m1 / 3, p1".
+
+
+function monotone_point(that, t0, t1) {
+  var x0 = that._x0,
+      y0 = that._y0,
+      x1 = that._x1,
+      y1 = that._y1,
+      dx = (x1 - x0) / 3;
+
+  that._context.bezierCurveTo(x0 + dx, y0 + dx * t0, x1 - dx, y1 - dx * t1, x1, y1);
+}
+
+function MonotoneX(context) {
+  this._context = context;
+}
+
+MonotoneX.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x0 = this._x1 = this._y0 = this._y1 = this._t0 = NaN, this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    switch (this._point) {
+      case 2:
+        this._context.lineTo(this._x1, this._y1);
+
+        break;
+
+      case 3:
+        monotone_point(this, this._t0, slope2(this, this._t0));
+
+    }
+
+    (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line = 1 - this._line;
+  },
+  point: function point(x, y) {
+    var t1 = NaN;
+
+    if (x = +x, y = +y, x !== this._x1 || y !== this._y1) {
+      // Ignore coincident points.
+      switch (this._point) {
+        case 0:
+          this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+          break;
+
+        case 1:
+          this._point = 2;
+          break;
+
+        case 2:
+          this._point = 3, monotone_point(this, slope2(this, t1 = slope3(this, x, y)), t1);
+          break;
+
+        default:
+          monotone_point(this, this._t0, t1 = slope3(this, x, y));
+
+      }
+
+      this._x0 = this._x1, this._x1 = x, this._y0 = this._y1, this._y1 = y, this._t0 = t1;
+    }
+  }
+};
+
+function MonotoneY(context) {
+  this._context = new ReflectContext(context);
+}
+
+(MonotoneY.prototype = Object.create(MonotoneX.prototype)).point = function (x, y) {
+  MonotoneX.prototype.point.call(this, y, x);
+};
+
+function ReflectContext(context) {
+  this._context = context;
+}
+
+ReflectContext.prototype = {
+  moveTo: function moveTo(x, y) {
+    this._context.moveTo(y, x);
+  },
+  closePath: function closePath() {
+    this._context.closePath();
+  },
+  lineTo: function lineTo(x, y) {
+    this._context.lineTo(y, x);
+  },
+  bezierCurveTo: function bezierCurveTo(x1, y1, x2, y2, x, y) {
+    this._context.bezierCurveTo(y1, x1, y2, x2, y, x);
+  }
+};
+function monotoneX(context) {
+  return new MonotoneX(context);
+}
+function monotoneY(context) {
+  return new MonotoneY(context);
+}
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/natural.js
+function Natural(context) {
+  this._context = context;
+}
+
+Natural.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x = [], this._y = [];
+  },
+  lineEnd: function lineEnd() {
+    var x = this._x,
+        y = this._y,
+        n = x.length;
+    if (n) if (this._line ? this._context.lineTo(x[0], y[0]) : this._context.moveTo(x[0], y[0]), n === 2) this._context.lineTo(x[1], y[1]);else for (var px = controlPoints(x), py = controlPoints(y), i0 = 0, i1 = 1; i1 < n; ++i0, ++i1) this._context.bezierCurveTo(px[0][i0], py[0][i0], px[1][i0], py[1][i0], x[i1], y[i1]);
+    (this._line || this._line !== 0 && n === 1) && this._context.closePath(), this._line = 1 - this._line, this._x = this._y = null;
+  },
+  point: function point(x, y) {
+    this._x.push(+x), this._y.push(+y);
+  }
+};
+
+// See https://www.particleincell.com/2012/bezier-splines/ for derivation.
+function controlPoints(x) {
+  var i,
+      m,
+      n = x.length - 1,
+      a = Array(n),
+      b = Array(n),
+      r = Array(n);
+
+  for (a[0] = 0, b[0] = 2, r[0] = x[0] + 2 * x[1], i = 1; i < n - 1; ++i) a[i] = 1, b[i] = 4, r[i] = 4 * x[i] + 2 * x[i + 1];
+
+  for (a[n - 1] = 2, b[n - 1] = 7, r[n - 1] = 8 * x[n - 1] + x[n], i = 1; i < n; ++i) m = a[i] / b[i - 1], b[i] -= m, r[i] -= m * r[i - 1];
+
+  for (a[n - 1] = r[n - 1] / b[n - 1], i = n - 2; i >= 0; --i) a[i] = (r[i] - a[i + 1]) / b[i];
+
+  for (b[n - 1] = (x[n] + a[n - 1]) / 2, i = 0; i < n - 1; ++i) b[i] = 2 * x[i + 1] - a[i + 1];
+
+  return [a, b];
+}
+
+/* harmony default export */ var natural = (function (context) {
+  return new Natural(context);
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/step.js
+function Step(context, t) {
+  this._context = context, this._t = t;
+}
+
+Step.prototype = {
+  areaStart: function areaStart() {
+    this._line = 0;
+  },
+  areaEnd: function areaEnd() {
+    this._line = NaN;
+  },
+  lineStart: function lineStart() {
+    this._x = this._y = NaN, this._point = 0;
+  },
+  lineEnd: function lineEnd() {
+    0 < this._t && this._t < 1 && this._point === 2 && this._context.lineTo(this._x, this._y), (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line >= 0 && (this._t = 1 - this._t, this._line = 1 - this._line);
+  },
+  point: function point(x, y) {
+    switch (x = +x, y = +y, this._point) {
+      case 0:
+        this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
+        break;
+
+      case 1:
+        this._point = 2;
+      // proceed
+
+      default:
+        {
+          if (this._t <= 0) this._context.lineTo(this._x, y), this._context.lineTo(x, y);else {
+            var x1 = this._x * (1 - this._t) + x * this._t;
+            this._context.lineTo(x1, this._y), this._context.lineTo(x1, y);
+          }
+          break;
+        }
+    }
+
+    this._x = x, this._y = y;
+  }
+};
+/* harmony default export */ var curve_step = (function (context) {
+  return new Step(context, .5);
+});
+function stepBefore(context) {
+  return new Step(context, 0);
+}
+function stepAfter(context) {
+  return new Step(context, 1);
+}
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/none.js
+/* harmony default export */ var offset_none = (function (series, order) {
+  if ((n = series.length) > 1) for (var j, s0, n, i = 1, s1 = series[order[0]], m = s1.length; i < n; ++i) for (s0 = s1, s1 = series[order[i]], j = 0; j < m; ++j) s1[j][1] += s1[j][0] = isNaN(s0[j][1]) ? s0[j][0] : s0[j][1];
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/none.js
+/* harmony default export */ var order_none = (function (series) {
+  for (var n = series.length, o = Array(n); --n >= 0;) o[n] = n;
+
+  return o;
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/stack.js
+
+
+
+
+
+function stackValue(d, key) {
+  return d[key];
+}
+
+/* harmony default export */ var src_stack = (function () {
+  function stack(data) {
+    var i,
+        oz,
+        kz = keys.apply(this, arguments),
+        m = data.length,
+        n = kz.length,
+        sz = Array(n);
+
+    for (i = 0; i < n; ++i) {
+      for (var sij, ki = kz[i], si = sz[i] = Array(m), j = 0; j < m; ++j) si[j] = sij = [0, +value(data[j], ki, j, data)], sij.data = data[j];
+
+      si.key = ki;
+    }
+
+    for (i = 0, oz = order(sz); i < n; ++i) sz[oz[i]].index = i;
+
+    return offset(sz, oz), sz;
+  }
+
+  var keys = d3_shape_src_constant([]),
+      order = order_none,
+      offset = offset_none,
+      value = stackValue;
+  return stack.keys = function (_) {
+    return arguments.length ? (keys = typeof _ === "function" ? _ : d3_shape_src_constant(src_array_slice.call(_)), stack) : keys;
+  }, stack.value = function (_) {
+    return arguments.length ? (value = typeof _ === "function" ? _ : d3_shape_src_constant(+_), stack) : value;
+  }, stack.order = function (_) {
+    return arguments.length ? (order = _ == null ? order_none : typeof _ === "function" ? _ : d3_shape_src_constant(src_array_slice.call(_)), stack) : order;
+  }, stack.offset = function (_) {
+    return arguments.length ? (offset = _ == null ? offset_none : _, stack) : offset;
+  }, stack;
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/expand.js
+
+/* harmony default export */ var expand = (function (series, order) {
+  if ((n = series.length) > 0) {
+    for (var i, n, y, j = 0, m = series[0].length; j < m; ++j) {
+      for (y = i = 0; i < n; ++i) y += series[i][j][1] || 0;
+
+      if (y) for (i = 0; i < n; ++i) series[i][j][1] /= y;
+    }
+
+    offset_none(series, order);
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/diverging.js
+/* harmony default export */ var offset_diverging = (function (series, order) {
+  if ((n = series.length) > 0) for (var i, d, dy, yp, yn, n, j = 0, m = series[order[0]].length; j < m; ++j) for (yp = yn = 0, i = 0; i < n; ++i) (dy = (d = series[order[i]][j])[1] - d[0]) > 0 ? (d[0] = yp, d[1] = yp += dy) : dy < 0 ? (d[1] = yn, d[0] = yn += dy) : (d[0] = 0, d[1] = dy);
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/silhouette.js
+
+/* harmony default export */ var silhouette = (function (series, order) {
+  if ((n = series.length) > 0) {
+    for (var n, j = 0, s0 = series[order[0]], m = s0.length; j < m; ++j) {
+      for (var i = 0, y = 0; i < n; ++i) y += series[i][j][1] || 0;
+
+      s0[j][1] += s0[j][0] = -y / 2;
+    }
+
+    offset_none(series, order);
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/wiggle.js
+
+/* harmony default export */ var wiggle = (function (series, order) {
+  if ((n = series.length) > 0 && (m = (s0 = series[order[0]]).length) > 0) {
+    for (var s0, m, n, y = 0, j = 1; j < m; ++j) {
+      for (var i = 0, s1 = 0, s2 = 0; i < n; ++i) {
+        for (var si = series[order[i]], sij0 = si[j][1] || 0, sij1 = si[j - 1][1] || 0, s3 = (sij0 - sij1) / 2, k = 0; k < i; ++k) {
+          var sk = series[order[k]],
+              skj0 = sk[j][1] || 0,
+              skj1 = sk[j - 1][1] || 0;
+          s3 += skj0 - skj1;
+        }
+
+        s1 += sij0, s2 += s3 * sij0;
+      }
+
+      s0[j - 1][1] += s0[j - 1][0] = y, s1 && (y -= s2 / s1);
+    }
+
+    s0[j - 1][1] += s0[j - 1][0] = y, offset_none(series, order);
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/appearance.js
+
+/* harmony default export */ var appearance = (function (series) {
+  var peaks = series.map(peak);
+  return order_none(series).sort(function (a, b) {
+    return peaks[a] - peaks[b];
+  });
+});
+
+function peak(series) {
+  for (var vi, i = -1, j = 0, n = series.length, vj = -Infinity; ++i < n;) (vi = +series[i][1]) > vj && (vj = vi, j = i);
+
+  return j;
+}
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/ascending.js
+
+/* harmony default export */ var order_ascending = (function (series) {
+  var sums = series.map(ascending_sum);
+  return order_none(series).sort(function (a, b) {
+    return sums[a] - sums[b];
+  });
+});
+function ascending_sum(series) {
+  for (var v, s = 0, i = -1, n = series.length; ++i < n;) (v = +series[i][1]) && (s += v);
+
+  return s;
+}
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/descending.js
+
+/* harmony default export */ var order_descending = (function (series) {
+  return order_ascending(series).reverse();
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/insideOut.js
+
+
+/* harmony default export */ var insideOut = (function (series) {
+  var i,
+      j,
+      n = series.length,
+      sums = series.map(ascending_sum),
+      order = appearance(series),
+      top = 0,
+      bottom = 0,
+      tops = [],
+      bottoms = [];
+
+  for (i = 0; i < n; ++i) j = order[i], top < bottom ? (top += sums[j], tops.push(j)) : (bottom += sums[j], bottoms.push(j));
+
+  return bottoms.reverse().concat(tops);
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/reverse.js
+
+/* harmony default export */ var order_reverse = (function (series) {
+  return order_none(series).reverse();
+});
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/index.js
+
+
+
+
+ // Note: radialArea is deprecated!
+
+ // Note: radialLine is deprecated!
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CONCATENATED MODULE: ./src/ChartInternal/shape/shape.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+
+/* harmony default export */ var shape_shape = ({
+  /**
+   * Get the shape draw function
+   * @returns {object}
+   * @private
+   */
+  getDrawShape: function getDrawShape() {
+    var $$ = this,
+        isRotated = $$.config.axis_rotated,
+        hasRadar = $$.state.hasRadar,
+        shape = {
+      type: {},
+      indices: {},
+      pos: {}
+    };
+
+    // setup drawer - MEMO: these must be called after axis updated
+    if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
+      var indices = $$.getShapeIndices($$.isLineType);
+
+      if (shape.indices.line = indices, shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, !1) : undefined, $$.hasTypeOf("Area")) {
+        var _indices = $$.getShapeIndices($$.isAreaType);
+
+        shape.indices.area = _indices, shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(_indices, !1) : undefined;
+      }
+    }
+
+    if ($$.hasType("bar")) {
+      var _indices2 = $$.getShapeIndices($$.isBarType);
+
+      shape.indices.bar = _indices2, shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(_indices2) : undefined;
+    }
+
+    if (!$$.hasArcType() || hasRadar) {
+      // generate circle x/y functions depending on updated params
+      var cx = hasRadar ? $$.radarCircleX : isRotated ? $$.circleY : $$.circleX,
+          cy = hasRadar ? $$.radarCircleY : isRotated ? $$.circleX : $$.circleY;
+      shape.pos = {
+        xForText: $$.generateXYForText(shape.indices, !0),
+        yForText: $$.generateXYForText(shape.indices, !1),
+        cx: (cx || function () {}).bind($$),
+        cy: (cy || function () {}).bind($$)
+      };
+    }
+
+    return shape;
+  },
+  getShapeIndices: function getShapeIndices(typeFilter) {
+    var $$ = this,
+        config = $$.config,
+        xs = config.data_xs,
+        hasXs = notEmpty(xs),
+        indices = {},
+        i = hasXs ? {} : 0;
+    return hasXs && getUnique(Object.keys(xs).map(function (v) {
+      return xs[v];
+    })).forEach(function (v) {
+      i[v] = 0, indices[v] = {};
+    }), $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(function (d) {
+      for (var groups, xKey = (d.id in xs) ? xs[d.id] : "", ind = xKey ? indices[xKey] : indices, j = 0; groups = config.data_groups[j]; j++) if (!(groups.indexOf(d.id) < 0)) for (var _row4, _k4 = 0; _row4 = groups[_k4]; _k4++) if (_row4 in ind) {
+        ind[d.id] = ind[_row4];
+        break;
+      }
+
+      isUndefined(ind[d.id]) && (ind[d.id] = xKey ? i[xKey]++ : i++, ind.__max__ = (xKey ? i[xKey] : i) - 1);
+    }), indices;
+  },
+
+  /**
+   * Get indices value based on data ID value
+   * @param {object} indices Indices object
+   * @param {string} id Data id value
+   * @returns {object} Indices object
+   * @private
+   */
+  getIndices: function getIndices(indices, id) {
+    var xs = this.config.data_xs;
+    return notEmpty(xs) ? indices[xs[id]] : indices;
+  },
+
+  /**
+   * Get indices max number
+   * @param {object} indices Indices object
+   * @returns {number} Max number
+   * @private
+   */
+  getIndicesMax: function getIndicesMax(indices) {
+    return notEmpty(this.config.data_xs) ? // if is multiple xs, return total sum of xs' __max__ value
+    Object.keys(indices).map(function (v) {
+      return indices[v].__max__ || 0;
+    }).reduce(function (acc, curr) {
+      return acc + curr;
+    }) : indices.__max__;
+  },
+  getShapeX: function getShapeX(offset, indices, isSub) {
+    var $$ = this,
+        config = $$.config,
+        scale = $$.scale,
+        currScale = isSub ? scale.subX : scale.zoom || scale.x,
+        barPadding = config.bar_padding,
+        sum = function (p, c) {
+      return p + c;
+    },
+        halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
+
+    return function (d) {
+      var ind = $$.getIndices(indices, d.id),
+          index = d.id in ind ? ind[d.id] : 0,
+          targetsNum = (ind.__max__ || 0) + 1,
+          x = 0;
+
+      if (notEmpty(d.x)) {
+        var xPos = currScale(d.x);
+        x = halfWidth ? xPos - (offset[d.id] || offset.width) + offset.total.slice(0, index + 1).reduce(sum) - halfWidth : xPos - (isNumber(offset) ? offset : offset.width) * (targetsNum / 2 - index);
+      } // adjust x position for bar.padding optionq
+
+
+      return offset && x && targetsNum > 1 && barPadding && (index && (x += barPadding * index), targetsNum > 2 ? x -= (targetsNum - 1) * barPadding / 2 : targetsNum === 2 && (x -= barPadding / 2)), x;
+    };
+  },
+  getShapeY: function getShapeY(isSub) {
+    var $$ = this,
+        isStackNormalized = $$.isStackNormalized();
+    return function (d) {
+      var value = isStackNormalized ? $$.getRatio("index", d, !0) : $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value;
+      return $$.getYScaleById(d.id, isSub)(value);
+    };
+  },
+
+  /**
+   * Get shape based y Axis min value
+   * @param {string} id Data id
+   * @returns {number}
+   * @private
+   */
+  getShapeYMin: function getShapeYMin(id) {
+    var $$ = this,
+        _$$$scale$$$$axis$get = $$.scale[$$.axis.getId(id)].domain(),
+        yMin = _$$$scale$$$$axis$get[0];
+
+    return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
+  },
+
+  /**
+   * Get Shape's offset data
+   * @param {Function} typeFilter Type filter function
+   * @returns {object}
+   * @private
+   */
+  getShapeOffsetData: function getShapeOffsetData(typeFilter) {
+    var $$ = this,
+        targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
+        isStackNormalized = $$.isStackNormalized(),
+        shapeOffsetTargets = targets.map(function (target) {
+      var rowValues = target.values,
+          values = {};
+      $$.isStepType(target) && (rowValues = $$.convertValuesToStep(rowValues));
+      var rowValueMapByXValue = rowValues.reduce(function (out, d) {
+        var key = +d.x;
+        return out[key] = d, values[key] = isStackNormalized ? $$.getRatio("index", d, !0) : d.value, out;
+      }, {});
+      return {
+        id: target.id,
+        rowValues: rowValues,
+        rowValueMapByXValue: rowValueMapByXValue,
+        values: values
+      };
+    }),
+        indexMapByTargetId = targets.reduce(function (out, _ref, index) {
+      var id = _ref.id;
+      return out[id] = index, out;
+    }, {});
+    return {
+      indexMapByTargetId: indexMapByTargetId,
+      shapeOffsetTargets: shapeOffsetTargets
+    };
+  },
+  getShapeOffset: function getShapeOffset(typeFilter, indices, isSub) {
+    var $$ = this,
+        _$$$getShapeOffsetDat = $$.getShapeOffsetData(typeFilter),
+        shapeOffsetTargets = _$$$getShapeOffsetDat.shapeOffsetTargets,
+        indexMapByTargetId = _$$$getShapeOffsetDat.indexMapByTargetId;
+
+    return function (d, idx) {
+      var ind = $$.getIndices(indices, d.id),
+          scale = $$.getYScaleById(d.id, isSub),
+          y0 = scale($$.getShapeYMin(d.id)),
+          dataXAsNumber = +d.x,
+          offset = y0;
+      return shapeOffsetTargets.filter(function (t) {
+        return t.id !== d.id;
+      }).forEach(function (t) {
+        if (ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
+          var row = t.rowValues[idx]; // check if the x values line up
+
+          row && +row.x === dataXAsNumber || (row = t.rowValueMapByXValue[dataXAsNumber]), row && row.value * d.value >= 0 && (offset += scale(t.values[dataXAsNumber]) - y0);
+        }
+      }), offset;
+    };
+  },
+  isWithinShape: function isWithinShape(that, d) {
+    var isWithin,
+        $$ = this,
+        shape = src_select(that);
+    return $$.isTargetToShow(d.id) ? $$.hasValidPointType(that.nodeName) ? isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) : $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0) : that.nodeName === "path" && (isWithin = !shape.classed(config_classes.bar) || $$.isWithinBar(that)) : isWithin = !1, isWithin;
+  },
+  getInterpolate: function getInterpolate(d) {
+    var $$ = this,
+        interpolation = $$.getInterpolateType(d);
+    return {
+      "basis": curve_basis,
+      "basis-closed": curve_basisClosed,
+      "basis-open": basisOpen,
+      "bundle": curve_bundle,
+      "cardinal": cardinal,
+      "cardinal-closed": cardinalClosed,
+      "cardinal-open": cardinalOpen,
+      "catmull-rom": curve_catmullRom,
+      "catmull-rom-closed": catmullRomClosed,
+      "catmull-rom-open": catmullRomOpen,
+      "monotone-x": monotoneX,
+      "monotone-y": monotoneY,
+      "natural": natural,
+      "linear-closed": linearClosed,
+      "linear": curve_linear,
+      "step": curve_step,
+      "step-after": stepAfter,
+      "step-before": stepBefore
+    }[interpolation];
+  },
+  getInterpolateType: function getInterpolateType(d) {
+    var $$ = this,
+        config = $$.config,
+        type = config.spline_interpolation_type,
+        interpolation = $$.isInterpolationType(type) ? type : "cardinal";
+    return $$.isSplineType(d) ? interpolation : $$.isStepType(d) ? config.line_step_type : "linear";
+  }
+});
 // CONCATENATED MODULE: ./src/ChartInternal/internals/size.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -28940,18 +29977,6 @@ function getFormat($$, typeValue, v) {
         config = $$.config,
         h = config.size_height || $$.getParentHeight();
     return h > 0 ? h : 320 / ($$.hasType("gauge") && !config.gauge_fullCircle ? 2 : 1);
-  },
-
-  /**
-   * Get Axis size according its position
-   * @param {string} id Axis id value - x, y or y2
-   * @returns {number} size Axis size value
-   * @private
-   */
-  getAxisSize: function getAxisSize(id) {
-    var $$ = this,
-        isRotated = $$.config.axis_rotated;
-    return isRotated && id === "x" || !isRotated && /y2?/.test(id) ? $$.getAxisWidthByAxisId(id, !0) : $$.getHorizontalAxisHeight(id);
   },
   getCurrentPaddingTop: function getCurrentPaddingTop() {
     var $$ = this,
@@ -28985,10 +30010,11 @@ function getFormat($$, typeValue, v) {
     var padding,
         $$ = this,
         config = $$.config,
+        hasAxis = $$.state.hasAxis,
         defaultPadding = 10,
         legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
         axesLen = config.axis_y2_axes.length,
-        axisWidth = $$.getAxisWidthByAxisId("y2"),
+        axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0,
         xAxisTickTextOverflow = withoutTickTextOverflow ? 0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
     return padding = isValue(config.padding_right) ? config.padding_right + 1 : $$.axis && config.axis_rotated ? defaultPadding + legendWidthOnRight : $$.axis && (!config.axis_y2_show || config.axis_y2_inner) ? Math.max(2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0), xAxisTickTextOverflow) : Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow), padding + axisWidth * axesLen;
   },
@@ -29040,79 +30066,6 @@ function getFormat($$, typeValue, v) {
         hasArc = $$.hasArcType(),
         svgLeft = svgRect.right - chartRect.left - (hasArc ? 0 : $$.getCurrentPaddingLeft(withoutRecompute));
     return svgLeft > 0 ? svgLeft : 0;
-  },
-  getAxisWidthByAxisId: function getAxisWidthByAxisId(id, withoutRecompute) {
-    var $$ = this;
-
-    if ($$.axis) {
-      var position = $$.axis && $$.axis.getLabelPositionById(id);
-      return $$.axis.getMaxTickWidth(id, withoutRecompute) + (position.isInner ? 20 : 40);
-    }
-
-    return 40;
-  },
-  getHorizontalAxisHeight: function getHorizontalAxisHeight(id) {
-    var $$ = this,
-        config = $$.config,
-        state = $$.state,
-        _state = state,
-        current = _state.current,
-        rotatedPadding = _state.rotatedPadding,
-        isLegendRight = _state.isLegendRight,
-        isLegendInset = _state.isLegendInset,
-        isRotated = config.axis_rotated,
-        h = 30;
-    if (id === "x" && !config.axis_x_show) return 8;
-    if (id === "x" && config.axis_x_height) return config.axis_x_height;
-    if (id === "y" && !config.axis_y_show) return !config.legend_show || isLegendRight || isLegendInset ? 1 : 10;
-    if (id === "y2" && !config.axis_y2_show) return rotatedPadding.top;
-    var rotate = $$.getAxisTickRotate(id); // Calculate x/y axis height when tick rotated
-
-    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - rotate) / 180), !config.axis_x_tick_multiline && current.height && h > current.height / 2 && (h = current.height / 2)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
-  },
-  getEventRectWidth: function getEventRectWidth() {
-    return Math.max(0, this.axis.x.tickInterval());
-  },
-
-  /**
-   * Get axis tick test rotate value
-   * @param {string} id Axis id
-   * @returns {number} rotate value
-   * @private
-   */
-  getAxisTickRotate: function getAxisTickRotate(id) {
-    var $$ = this,
-        axis = $$.axis,
-        config = $$.config,
-        state = $$.state,
-        $el = $$.$el,
-        rotate = config["axis_" + id + "_tick_rotate"];
-
-    if (id === "x") {
-      var isCategorized = axis.isCategorized(),
-          isTimeSeries = axis.isTimeSeries(),
-          allowedXAxisTypes = isCategorized || isTimeSeries,
-          tickCount = 0;
-      config.axis_x_tick_fit && allowedXAxisTypes && (tickCount = state.current.maxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1), tickCount !== state.axis.x.tickCount && (state.axis.x.padding = $$.axis.getXAxisPadding(tickCount)), state.axis.x.tickCount = tickCount), $el.svg && config.axis_x_tick_fit && !config.axis_x_tick_multiline && !config.axis_x_tick_culling && config.axis_x_tick_autorotate && allowedXAxisTypes && (rotate = $$.needToRotateXAxisTickTexts() ? config.axis_x_tick_rotate : 0);
-    }
-
-    return rotate;
-  },
-
-  /**
-   * Check weather axis tick text needs to be rotated
-   * @returns {boolean}
-   * @private
-   */
-  needToRotateXAxisTickTexts: function needToRotateXAxisTickTexts() {
-    var $$ = this,
-        _$$$state = $$.state,
-        axis = _$$$state.axis,
-        current = _$$$state.current,
-        xAxisLength = current.width - $$.getCurrentPaddingLeft(!1) - $$.getCurrentPaddingRight(!0),
-        tickCountWithPadding = axis.x.tickCount + axis.x.padding.left + axis.x.padding.right,
-        maxTickWidth = $$.axis.getMaxTickWidth("x");
-    return maxTickWidth > (xAxisLength / tickCountWithPadding || 0);
   },
   updateDimension: function updateDimension(withoutAxis) {
     var $$ = this,
@@ -30153,8 +31106,6 @@ function getTextPos(pos, width) {
 
 
 
- // Axis
-
  // data
 
 
@@ -30165,6 +31116,7 @@ function getTextPos(pos, width) {
 
 
  // used to retrieve radar Axis name
+
 
 
 
@@ -30307,7 +31259,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         org = $$.org,
         hasAxis = state.hasAxis,
         hasInteraction = config.interaction_enabled;
-    hasAxis && ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom()), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter.bind($$.api))), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.updateSizes(), $$.updateScales(!0);
+    hasAxis && ($$.axis = $$.getAxisInstance(), config.zoom_enabled && $$.initZoom()), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter.bind($$.api))), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.updateSizes(), $$.updateScales(!0);
     // retrieve scale after the 'updateScales()' is called
     var x = scale.x,
         y = scale.y,
@@ -30427,7 +31379,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         _$$$state2 = $$.state,
         hasAxis = _$$$state2.hasAxis,
         hasRadar = _$$$state2.hasRadar;
-    $$.updateTargetsForText(targets), ($$.hasPointType() || hasRadar) && $$.updateTargetForCircle(), hasAxis ? ($$.hasType("bar") && $$.updateTargetsForBar(targets), $$.hasTypeOf("Line") && $$.updateTargetsForLine(targets), $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets)) : $$.hasArcType(targets) && (hasRadar ? $$.updateTargetsForRadar(targets) : $$.updateTargetsForArc(targets)), $$.showTargets();
+    $$.updateTargetsForText(targets), ($$.hasPointType() || hasRadar) && $$.updateTargetForCircle && $$.updateTargetForCircle(), hasAxis ? ($$.hasType("bar") && $$.updateTargetsForBar(targets), $$.hasTypeOf("Line") && $$.updateTargetsForLine(targets), $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets)) : $$.hasArcType(targets) && (hasRadar ? $$.updateTargetsForRadar(targets) : $$.updateTargetsForArc(targets)), $$.showTargets();
   }
   /**
    * Display targeted elements
@@ -30497,7 +31449,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
 
 
 util_extend(ChartInternal_ChartInternal.prototype, [// common
-convert, ChartInternal_data_data, load, category, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_redraw, internals_scale, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type]);
+convert, ChartInternal_data_data, load, category, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_redraw, internals_scale, shape_shape, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type]);
 // CONCATENATED MODULE: ./src/config/config.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -32886,6 +33838,1059 @@ util_extend(zoom_zoom, {
     }
   }
 });
+// CONCATENATED MODULE: ./node_modules/d3-axis/src/array.js
+var d3_axis_src_array_slice = Array.prototype.slice;
+// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
+/* harmony default export */ var d3_axis_src_identity = (function (x) {
+  return x;
+});
+// CONCATENATED MODULE: ./node_modules/d3-axis/src/axis.js
+
+
+var axis_top = 1,
+    axis_right = 2,
+    axis_bottom = 3,
+    axis_left = 4,
+    axis_epsilon = 1e-6;
+
+function axis_translateX(x) {
+  return "translate(" + (x + .5) + ",0)";
+}
+
+function translateY(y) {
+  return "translate(0," + (y + .5) + ")";
+}
+
+function axis_number(scale) {
+  return function (d) {
+    return +scale(d);
+  };
+}
+
+function axis_center(scale) {
+  var offset = Math.max(0, scale.bandwidth() - 1) / 2; // Adjust for 0.5px offset.
+
+  return scale.round() && (offset = Math.round(offset)), function (d) {
+    return +scale(d) + offset;
+  };
+}
+
+function entering() {
+  return !this.__axis;
+}
+
+function src_axis_axis(orient, scale) {
+  function axis(context) {
+    var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues,
+        format = tickFormat == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : d3_axis_src_identity : tickFormat,
+        spacing = Math.max(tickSizeInner, 0) + tickPadding,
+        range = scale.range(),
+        range0 = +range[0] + .5,
+        range1 = +range[range.length - 1] + .5,
+        position = (scale.bandwidth ? axis_center : axis_number)(scale.copy()),
+        selection = context.selection ? context.selection() : context,
+        path = selection.selectAll(".domain").data([null]),
+        tick = selection.selectAll(".tick").data(values, scale).order(),
+        tickExit = tick.exit(),
+        tickEnter = tick.enter().append("g").attr("class", "tick"),
+        line = tick.select("line"),
+        text = tick.select("text");
+    path = path.merge(path.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor")), tick = tick.merge(tickEnter), line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x + "2", k * tickSizeInner)), text = text.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x, k * spacing).attr("dy", orient === axis_top ? "0em" : orient === axis_bottom ? "0.71em" : "0.32em")), context !== selection && (path = path.transition(context), tick = tick.transition(context), line = line.transition(context), text = text.transition(context), tickExit = tickExit.transition(context).attr("opacity", axis_epsilon).attr("transform", function (d) {
+      return isFinite(d = position(d)) ? transform(d) : this.getAttribute("transform");
+    }), tickEnter.attr("opacity", axis_epsilon).attr("transform", function (d) {
+      var p = this.parentNode.__axis;
+      return transform(p && isFinite(p = p(d)) ? p : position(d));
+    })), tickExit.remove(), path.attr("d", orient === axis_left || orient == axis_right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H0.5V" + range1 + "H" + k * tickSizeOuter : "M0.5," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V0.5H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + ",0.5H" + range1), tick.attr("opacity", 1).attr("transform", function (d) {
+      return transform(position(d));
+    }), line.attr(x + "2", k * tickSizeInner), text.attr(x, k * spacing).text(format), selection.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === axis_right ? "start" : orient === axis_left ? "end" : "middle"), selection.each(function () {
+      this.__axis = position;
+    });
+  }
+
+  var tickArguments = [],
+      tickValues = null,
+      tickFormat = null,
+      tickSizeInner = 6,
+      tickSizeOuter = 6,
+      tickPadding = 3,
+      k = orient === axis_top || orient === axis_left ? -1 : 1,
+      x = orient === axis_left || orient === axis_right ? "x" : "y",
+      transform = orient === axis_top || orient === axis_bottom ? axis_translateX : translateY;
+  return axis.scale = function (_) {
+    return arguments.length ? (scale = _, axis) : scale;
+  }, axis.ticks = function () {
+    return tickArguments = d3_axis_src_array_slice.call(arguments), axis;
+  }, axis.tickArguments = function (_) {
+    return arguments.length ? (tickArguments = _ == null ? [] : d3_axis_src_array_slice.call(_), axis) : tickArguments.slice();
+  }, axis.tickValues = function (_) {
+    return arguments.length ? (tickValues = _ == null ? null : d3_axis_src_array_slice.call(_), axis) : tickValues && tickValues.slice();
+  }, axis.tickFormat = function (_) {
+    return arguments.length ? (tickFormat = _, axis) : tickFormat;
+  }, axis.tickSize = function (_) {
+    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis) : tickSizeInner;
+  }, axis.tickSizeInner = function (_) {
+    return arguments.length ? (tickSizeInner = +_, axis) : tickSizeInner;
+  }, axis.tickSizeOuter = function (_) {
+    return arguments.length ? (tickSizeOuter = +_, axis) : tickSizeOuter;
+  }, axis.tickPadding = function (_) {
+    return arguments.length ? (tickPadding = +_, axis) : tickPadding;
+  }, axis;
+}
+
+function axisTop(scale) {
+  return src_axis_axis(axis_top, scale);
+}
+function axisRight(scale) {
+  return src_axis_axis(axis_right, scale);
+}
+function axisBottom(scale) {
+  return src_axis_axis(axis_bottom, scale);
+}
+function axisLeft(scale) {
+  return src_axis_axis(axis_left, scale);
+}
+// CONCATENATED MODULE: ./node_modules/d3-axis/src/index.js
+
+// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRendererHelper.ts
+
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+
+
+
+var AxisRendererHelper_AxisRendererHelper = /*#__PURE__*/function () {
+  function AxisRendererHelper(owner) {
+    _defineProperty(this, "owner", void 0), _defineProperty(this, "config", void 0), _defineProperty(this, "scale", void 0);
+    var scale = src_linear_linear(),
+        config = owner.config,
+        params = owner.params;
+    this.owner = owner, this.config = config, this.scale = scale, (config.noTransition || !params.config.transition_duration) && (config.withoutTransition = !0), config.range = this.scaleExtent((params.orgXScale || scale).range());
+  }
+  /**
+   * Compute a character dimension
+   * @param {d3.selection} node <g class=tick> node
+   * @returns {{w: number, h: number}}
+   * @private
+   */
+
+
+  AxisRendererHelper.getSizeFor1Char = function getSizeFor1Char(node) {
+    // default size for one character
+    var size = {
+      w: 5.5,
+      h: 11.5
+    };
+    return node.empty() || node.select("text").text("0").call(function (el) {
+      try {
+        var _el$node$getBBox = el.node().getBBox(),
+            width = _el$node$getBBox.width,
+            height = _el$node$getBBox.height;
+
+        width && height && (size.w = width, size.h = height);
+      } catch (e) {} finally {
+        el.text("");
+      }
+    }), this.getSizeFor1Char = function () {
+      return size;
+    }, size;
+  }
+  /**
+   * Get tick transform setter function
+   * @param {string} id Axis id
+   * @returns {Function} transfrom setter function
+   * @private
+   */
+  ;
+
+  var _proto = AxisRendererHelper.prototype;
+  return _proto.getTickTransformSetter = function getTickTransformSetter(id) {
+    var config = this.config,
+        fn = id === "x" ? function (value) {
+      return "translate(" + (value + config.tickOffset) + ",0)";
+    } : function (value) {
+      return "translate(0," + value + ")";
+    };
+    return function (selection, scale) {
+      selection.attr("transform", function (d) {
+        return fn(Math.ceil(scale(d)));
+      });
+    };
+  }, _proto.scaleExtent = function scaleExtent(domain) {
+    var start = domain[0],
+        stop = domain[domain.length - 1];
+    return start < stop ? [start, stop] : [stop, start];
+  }, _proto.generateTicks = function generateTicks(scale, isYAxes) {
+    var tickStepSize = this.owner.params.tickStepSize,
+        ticks = [];
+    // When 'axis[y|y2].tick.stepSize' option is set
+    if (isYAxes && tickStepSize) for (var _scale$domain = scale.domain(), start = _scale$domain[0], end = _scale$domain[1], interval = start; interval <= end;) ticks.push(interval), interval += tickStepSize;else if (scale.ticks) ticks = scale.ticks.apply(scale, this.config.tickArguments || []).map(function (v) {
+      return (// round the tick value if is number
+        isString(v) && isNumber(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
+      );
+    });else {
+      for (var domain = scale.domain(), i = Math.ceil(domain[0]); i < domain[1]; i++) ticks.push(i);
+
+      ticks.length > 0 && ticks[0] > 0 && ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
+    }
+    return ticks;
+  }, _proto.copyScale = function copyScale() {
+    var newScale = this.scale.copy();
+    return newScale.domain().length || newScale.domain(this.scale.domain()), newScale;
+  }, _proto.textFormatted = function textFormatted(v) {
+    var tickFormat = this.config.tickFormat,
+        value = /\d+\.\d+0{5,}\d$/.test(v) ? +(v + "").replace(/0+\d$/, "") : v,
+        formatted = tickFormat ? tickFormat(value) : value; // to round float numbers from 'binary floating point'
+    // https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+    // https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
+
+    return isDefined(formatted) ? formatted : "";
+  }, _proto.transitionise = function transitionise(selection) {
+    var config = this.config;
+    return config.withoutTransition ? selection.interrupt() : selection.transition(config.transition);
+  }, AxisRendererHelper;
+}();
+
+
+// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRenderer.ts
+
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+
+
+
+
+var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
+  function AxisRenderer(params) {
+    params === void 0 && (params = {}), _defineProperty(this, "helper", void 0), _defineProperty(this, "config", void 0), _defineProperty(this, "params", void 0), _defineProperty(this, "g", void 0);
+    var config = {
+      innerTickSize: 6,
+      outerTickSize: params.outerTick ? 6 : 0,
+      orient: "bottom",
+      range: [],
+      tickArguments: null,
+      tickCentered: null,
+      tickCulling: !0,
+      tickFormat: null,
+      tickLength: 9,
+      tickOffset: 0,
+      tickPadding: 3,
+      tickValues: null,
+      transition: null,
+      noTransition: params.noTransition
+    };
+    config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding, this.config = config, this.params = params, this.helper = new AxisRendererHelper_AxisRendererHelper(this);
+  }
+  /**
+   * Create axis element
+   * @param {d3.selection} g Axis selection
+   * @private
+   */
+
+
+  var _proto = AxisRenderer.prototype;
+  return _proto.create = function create(g) {
+    var ctx = this,
+        config = this.config,
+        helper = this.helper,
+        params = this.params,
+        scale = helper.scale,
+        orient = config.orient,
+        splitTickText = this.splitTickText.bind(this),
+        isLeftRight = /^(left|right)$/.test(orient),
+        isTopBottom = /^(top|bottom)$/.test(orient),
+        tickTransform = helper.getTickTransformSetter(isTopBottom ? "x" : "y"),
+        axisPx = tickTransform === helper.axisX ? "y" : "x",
+        sign = /^(top|left)$/.test(orient) ? -1 : 1,
+        rotate = params.tickTextRotate;
+    this.config.range = scale.rangeExtent ? scale.rangeExtent() : helper.scaleExtent((params.orgXScale || scale).range());
+    var $g,
+        _config2 = config,
+        innerTickSize = _config2.innerTickSize,
+        tickLength = _config2.tickLength,
+        range = _config2.range,
+        id = params.id,
+        tickTextPos = id && /^(x|y|y2)$/.test(id) ? params.config["axis_" + id + "_tick_text_position"] : {
+      x: 0,
+      y: 0
+    },
+        prefix = id === "subX" ? "subchart_axis_x" : "axis_" + id,
+        axisShow = params.config[prefix + "_show"],
+        tickShow = {
+      tick: !!axisShow && params.config[prefix + "_tick_show"],
+      text: !!axisShow && params.config[prefix + "_tick_text_show"]
+    }; // // get the axis' tick position configuration
+
+    g.each(function () {
+      var g = src_select(this),
+          scale0 = this.__chart__ || scale,
+          scale1 = helper.copyScale();
+      $g = g, this.__chart__ = scale1, config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
+      // update selection - data join
+      var path = g.selectAll(".domain").data([0]); // enter + update selection
+
+      if (path.enter().append("path").attr("class", "domain").merge(helper.transitionise(path)).attr("d", function () {
+        var outerTickSized = config.outerTickSize * sign;
+        return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
+      }), tickShow.tick || tickShow.text) {
+        // count of tick data in array
+        var ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight),
+            tick = g.selectAll(".tick").data(ticks, scale1),
+            tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
+            tickExit = tick.exit().remove(); // update selection
+
+        tick = tickEnter.merge(tick), tickShow.tick && tickEnter.append("line"), tickShow.text && tickEnter.append("text");
+        var sizeFor1Char = AxisRendererHelper_AxisRendererHelper.getSizeFor1Char(tick),
+            counts = [],
+            tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
+          var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
+          return counts[index] = split.length, split.map(function (splitted) {
+            return {
+              index: index,
+              splitted: splitted
+            };
+          });
+        });
+        tspan.exit().remove(), tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
+          return d.splitted;
+        }), tspan.attr("x", isTopBottom ? 0 : tickLength * sign).attr("dx", function () {
+          var dx = 0;
+          return /(top|bottom)/.test(orient) && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180)) * (orient === "top" ? -1 : 1)), dx + (tickTextPos.x || 0);
+        }()).attr("dy", function (d, i) {
+          var dy = 0;
+          return orient !== "top" && (dy = sizeFor1Char.h, i === 0 && (dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0)), isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
+        });
+        var lineUpdate = tick.select("line"),
+            textUpdate = tick.select("text");
+
+        // Append <title> for tooltip display
+        if (tickEnter.select("line").attr(axisPx + "2", innerTickSize * sign), tickEnter.select("text").attr(axisPx, tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle) {
+          var title = textUpdate.select("title");
+          (title.empty() ? textUpdate.append("title") : title).text(function (index) {
+            return params.tickTitle[index];
+          });
+        }
+
+        if (scale1.bandwidth) {
+          var x = scale1,
+              dx = x.bandwidth() / 2;
+          scale0 = function (d) {
+            return x(d) + dx;
+          }, scale1 = scale0;
+        } else scale0.bandwidth ? scale0 = scale1 : tickTransform(tickExit, scale1);
+
+        tickTransform(tickEnter, scale0), tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
+      }
+    }), this.g = $g;
+  }
+  /**
+   * Get tick x/y coordinate
+   * @returns {{x: number, y: number}}
+   * @private
+   */
+  , _proto.getTickXY = function getTickXY() {
+    var config = this.config,
+        pos = {
+      x: 0,
+      y: 0
+    };
+    return this.params.isCategory && (pos.x = config.tickCentered ? 0 : config.tickOffset, pos.y = config.tickCentered ? config.tickOffset : 0), pos;
+  }
+  /**
+   * Get tick size
+   * @param {object} d data object
+   * @returns {number}
+   * @private
+   */
+  , _proto.getTickSize = function getTickSize(d) {
+    var scale = this.helper.scale,
+        config = this.config,
+        _config3 = config,
+        innerTickSize = _config3.innerTickSize,
+        range = _config3.range,
+        tickPosition = scale(d) + (config.tickCentered ? 0 : config.tickOffset);
+    return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
+  }
+  /**
+   * Set tick's line & text position
+   * @param {d3.selection} lineUpdate Line selection
+   * @param {d3.selection} textUpdate Text selection
+   * @private
+   */
+  , _proto.setTickLineTextPosition = function setTickLineTextPosition(lineUpdate, textUpdate) {
+    var tickPos = this.getTickXY(),
+        _this$config = this.config,
+        innerTickSize = _this$config.innerTickSize,
+        orient = _this$config.orient,
+        tickLength = _this$config.tickLength,
+        tickOffset = _this$config.tickOffset,
+        rotate = this.params.tickTextRotate,
+        textAnchorForText = function (r) {
+      var value = ["start", "end"];
+      return orient === "top" && value.reverse(), r ? r > 0 ? value[0] : value[1] : "middle";
+    },
+        textTransform = function (r) {
+      return r ? "rotate(" + r + ")" : null;
+    },
+        yForText = function (r) {
+      var r2 = r / (orient === "bottom" ? 15 : 23);
+      return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+    };
+
+    orient === "bottom" ? (lineUpdate.attr("x1", tickPos.x).attr("x2", tickPos.x).attr("y2", this.getTickSize.bind(this)), textUpdate.attr("x", 0).attr("y", yForText(rotate)).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -innerTickSize), textUpdate.attr("x", 0).attr("y", -yForText(rotate) * 2).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate))) : orient === "left" ? (lineUpdate.attr("x2", -innerTickSize).attr("y1", tickPos.y).attr("y2", tickPos.y), textUpdate.attr("x", -tickLength).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", innerTickSize).attr("y2", 0), textUpdate.attr("x", tickLength).attr("y", 0).style("text-anchor", "start")) : void 0;
+  } // this should be called only when category axis
+  , _proto.splitTickText = function splitTickText(d, scale, ticks, isLeftRight, charWidth) {
+    // split given text by tick width size
+    // eslint-disable-next-line
+    function split(splitted, text) {
+      for (var subtext, spaceIndex, textWidth, i = 1; i < text.length; i++) // if text width gets over tick width, split by space index or current index
+      if (text.charAt(i) === " " && (spaceIndex = i), subtext = text.substr(0, i + 1), textWidth = charWidth * subtext.length, tickWidth < textWidth) return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
+
+      return splitted.concat(text);
+    }
+
+    var params = this.params,
+        tickText = this.helper.textFormatted(d),
+        splitted = isString(tickText) && tickText.indexOf("\n") > -1 ? tickText.split("\n") : [];
+    if (splitted.length) return splitted;
+    if (isArray(tickText)) return tickText;
+    var tickWidth = params.tickWidth;
+    return (!tickWidth || tickWidth <= 0) && (tickWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(scale(ticks[1]) - scale(ticks[0])) - 12 : 110), split(splitted, tickText + "");
+  }, _proto.scale = function scale(x) {
+    return arguments.length ? (this.helper.scale = x, this) : this.helper.scale;
+  }, _proto.orient = function orient(x) {
+    return arguments.length ? (this.config.orient = x in {
+      top: 1,
+      right: 1,
+      bottom: 1,
+      left: 1
+    } ? x + "" : "bottom", this) : this.config.orient;
+  }, _proto.tickFormat = function tickFormat(format) {
+    var config = this.config;
+    return arguments.length ? (config.tickFormat = format, this) : config.tickFormat;
+  }, _proto.tickCentered = function tickCentered(isCentered) {
+    var config = this.config;
+    return arguments.length ? (config.tickCentered = isCentered, this) : config.tickCentered;
+  }
+  /**
+   * Return tick's offset value.
+   * The value will be set for 'category' axis type.
+   * @returns {number}
+   * @private
+   */
+  , _proto.tickOffset = function tickOffset() {
+    return this.config.tickOffset;
+  }
+  /**
+   * Get tick interval count
+   * @private
+   * @param {number} size Total data size
+   * @returns {number}
+   */
+  , _proto.tickInterval = function tickInterval(size) {
+    var interval;
+    if (this.params.isCategory) interval = this.config.tickOffset * 2;else {
+      var length = this.g.select("path.domain").node().getTotalLength() - this.config.outerTickSize * 2;
+      interval = length / (size || this.g.selectAll("line").size());
+    }
+    return interval === Infinity ? 0 : interval;
+  }, _proto.ticks = function ticks() {
+    for (var config = this.config, _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) args[_key] = arguments[_key];
+
+    return args.length ? (config.tickArguments = toArray(args), this) : config.tickArguments;
+  }, _proto.tickCulling = function tickCulling(culling) {
+    var config = this.config;
+    return arguments.length ? (config.tickCulling = culling, this) : config.tickCulling;
+  }, _proto.tickValues = function tickValues(x) {
+    var _this = this,
+        config = this.config;
+
+    if (isFunction(x)) config.tickValues = function () {
+      return x(_this.helper.scale.domain());
+    };else {
+      if (!arguments.length) return config.tickValues;
+      config.tickValues = x;
+    }
+    return this;
+  }, _proto.setTransition = function setTransition(t) {
+    return this.config.transition = t, this;
+  }, AxisRenderer;
+}();
+
+
+// CONCATENATED MODULE: ./src/ChartInternal/Axis/Axis.ts
+
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+
+
+/* harmony default export */ var Axis_Axis = ({
+  getAxisInstance: function getAxisInstance() {
+    return this.axis || new Axis_Axis_Axis(this);
+  }
+});
+
+var Axis_Axis_Axis = /*#__PURE__*/function () {
+  function Axis(owner) {
+    _defineProperty(this, "owner", void 0), _defineProperty(this, "x", void 0), _defineProperty(this, "subX", void 0), _defineProperty(this, "y", void 0), _defineProperty(this, "y2", void 0), _defineProperty(this, "axesList", {}), _defineProperty(this, "tick", {
+      x: null,
+      y: null,
+      y2: null
+    }), _defineProperty(this, "xs", []), _defineProperty(this, "orient", {
+      x: "bottom",
+      y: "left",
+      y2: "right",
+      subX: "bottom"
+    }), this.owner = owner, this.setOrient();
+  }
+
+  var _proto = Axis.prototype;
+  return _proto.getAxisClassName = function getAxisClassName(id) {
+    return config_classes.axis + " " + config_classes["axis" + capitalize(id)];
+  }, _proto.isHorizontal = function isHorizontal($$, forHorizontal) {
+    var isRotated = $$.config.axis_rotated;
+    return forHorizontal ? isRotated : !isRotated;
+  }, _proto.isCategorized = function isCategorized() {
+    var _this$owner = this.owner,
+        config = _this$owner.config,
+        state = _this$owner.state;
+    return config.axis_x_type.indexOf("category") >= 0 || state.hasRadar;
+  }, _proto.isCustomX = function isCustomX() {
+    var config = this.owner.config;
+    return !this.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
+  }, _proto.isTimeSeries = function isTimeSeries(id) {
+    id === void 0 && (id = "x");
+    var config = this.owner.config;
+    return config["axis_" + id + "_type"] === "timeseries";
+  }, _proto.isTimeSeriesY = function isTimeSeriesY() {
+    return this.isTimeSeries("y");
+  }, _proto.init = function init() {
+    var _this = this,
+        $$ = this.owner,
+        config = $$.config,
+        _$$$$el = $$.$el,
+        main = _$$$$el.main,
+        axis = _$$$$el.axis,
+        clip = $$.state.clip,
+        isRotated = config.axis_rotated,
+        target = ["x", "y"];
+
+    config.axis_y2_show && target.push("y2"), target.forEach(function (v) {
+      var classAxis = _this.getAxisClassName(v),
+          classLabel = config_classes["axis" + v.toUpperCase() + "Label"];
+
+      axis[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
+        var res = null;
+        return v === "x" ? res = clip.pathXAxis : v === "y" && config.axis_y_inner && (res = clip.pathYAxis), res;
+      }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_" + v + "_show"] ? "visible" : "hidden"), axis[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", function () {
+        return _this.textAnchorForAxisLabel(v);
+      }), _this.generateAxes(v);
+    });
+  }
+  /**
+   * Set axis orient according option value
+   * @private
+   */
+  , _proto.setOrient = function setOrient() {
+    var $$ = this.owner,
+        _$$$config = $$.config,
+        isRotated = _$$$config.axis_rotated,
+        yInner = _$$$config.axis_y_inner,
+        y2Inner = _$$$config.axis_y2_inner;
+    this.orient = {
+      x: isRotated ? "left" : "bottom",
+      y: isRotated ? yInner ? "top" : "bottom" : yInner ? "right" : "left",
+      y2: isRotated ? y2Inner ? "bottom" : "top" : y2Inner ? "left" : "right",
+      subX: isRotated ? "left" : "bottom"
+    };
+  }
+  /**
+   * Generate axes
+   * It's used when axis' axes option is set
+   * @param {string} id Axis id
+   * @private
+   */
+  , _proto.generateAxes = function generateAxes(id) {
+    var d3Axis,
+        $$ = this.owner,
+        config = $$.config,
+        axes = [],
+        axesConfig = config["axis_" + id + "_axes"],
+        isRotated = config.axis_rotated;
+    id === "x" ? d3Axis = isRotated ? axisLeft : axisBottom : id === "y" ? d3Axis = isRotated ? axisBottom : axisLeft : id === "y2" && (d3Axis = isRotated ? axisTop : axisRight), axesConfig.length && axesConfig.forEach(function (v) {
+      var tick = v.tick || {},
+          scale = $$.scale[id].copy();
+      v.domain && scale.domain(v.domain), axes.push(d3Axis(scale).ticks(tick.count).tickFormat(isFunction(tick.format) ? tick.format.bind($$.api) : function (x) {
+        return x;
+      }).tickValues(tick.values).tickSizeOuter(tick.outer === !1 ? 0 : 6));
+    }), this.axesList[id] = axes;
+  }
+  /**
+   * Update axes nodes
+   * @private
+   */
+  , _proto.updateAxes = function updateAxes() {
+    var _this2 = this,
+        $$ = this.owner,
+        config = $$.config,
+        main = $$.$el.main;
+
+    Object.keys(this.axesList).forEach(function (id) {
+      var axesConfig = config["axis_" + id + "_axes"],
+          scale = $$.scale[id].copy(),
+          range = scale.range();
+
+      _this2.axesList[id].forEach(function (v, i) {
+        var axisRange = v.scale().range(); // adjust range value with the current
+        // https://github.com/naver/billboard.js/issues/859
+
+        range.every(function (v, i) {
+          return v === axisRange[i];
+        }) || v.scale().range(range);
+        var className = _this2.getAxisClassName(id) + "-" + (i + 1),
+            g = main.select("." + className.replace(/\s/, "."));
+        g.empty() ? g = main.append("g").attr("class", className).style("visibility", config["axis_" + id + "_show"] ? "visible" : "hidden").call(v) : (axesConfig[i].domain && scale.domain(axesConfig[i].domain), _this2.x.helper.transitionise(g).call(v.scale(scale))), g.attr("transform", $$.getTranslate(id, i + 1));
+      });
+    });
+  }
+  /**
+   * Set Axis & tick values
+   * called from: updateScales()
+   * @param {string} id Axis id string
+   * @param {Array} args Arguments
+   * @private
+   */
+  , _proto.setAxis = function setAxis(id) {
+    id !== "subX" && (this.tick[id] = this.getTickValues(id));
+
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
+
+    this[id] = this.getAxis.apply(this, [id].concat(args));
+  } // called from : getMaxTickWidth()
+  , _proto.getAxis = function getAxis(id, scale, outerTick, noTransition, noTickTextRotate) {
+    var tickFormat,
+        $$ = this.owner,
+        config = $$.config,
+        isX = /^(x|subX)$/.test(id),
+        type = isX ? "x" : id,
+        isCategory = isX && this.isCategorized(),
+        orient = this.orient[id],
+        tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
+    if (isX) tickFormat = $$.format.xAxisTick;else {
+      var fn = config["axis_" + id + "_tick_format"];
+      isFunction(fn) && (tickFormat = fn.bind($$.api));
+    }
+    var tickValues = this.tick[type],
+        axisParams = mergeObj({
+      outerTick: outerTick,
+      noTransition: noTransition,
+      config: config,
+      id: id,
+      tickTextRotate: tickTextRotate
+    }, isX && {
+      isCategory: isCategory,
+      tickMultiline: config.axis_x_tick_multiline,
+      tickWidth: config.axis_x_tick_width,
+      tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
+      orgXScale: $$.scale.x
+    });
+    isX || (axisParams.tickStepSize = config["axis_" + type + "_tick_stepSize"]);
+    var axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.scale.zoom || scale).orient(orient);
+
+    if (isX && this.isTimeSeries() && tickValues && !isFunction(tickValues)) {
+      var _fn = parseDate.bind($$);
+
+      tickValues = tickValues.map(function (v) {
+        return _fn(v);
+      });
+    } else !isX && this.isTimeSeriesY() && ( // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
+    axis.ticks(config.axis_y_tick_time_value), tickValues = null);
+
+    tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
+      return x + "%";
+    }), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1));
+    var tickCount = config["axis_" + type + "_tick_count"];
+    return tickCount && axis.ticks(tickCount), axis;
+  }, _proto.updateXAxisTickValues = function updateXAxisTickValues(targets, axis) {
+    var values,
+        $$ = this.owner,
+        config = $$.config,
+        fit = config.axis_x_tick_fit,
+        count = config.axis_x_tick_count;
+    return (fit || count && fit) && (values = $$.mapTargetsToUniqueXs(targets), this.isCategorized() && count > values.length && (count = values.length), values = this.generateTickValues(values, count, this.isTimeSeries())), axis ? axis.tickValues(values) : this.x && (this.x.tickValues(values), this.subX && this.subX.tickValues(values)), values;
+  }, _proto.getId = function getId(id) {
+    var _this$owner2 = this.owner,
+        config = _this$owner2.config,
+        scale = _this$owner2.scale,
+        axis = config.data_axes[id];
+    return axis && scale[axis] || (axis = "y"), axis;
+  }, _proto.getXAxisTickFormat = function getXAxisTickFormat() {
+    var currFormat,
+        $$ = this.owner,
+        config = $$.config,
+        format = $$.format,
+        tickFormat = config.axis_x_tick_format,
+        isTimeSeries = this.isTimeSeries(),
+        isCategorized = this.isCategorized();
+    return tickFormat ? isFunction(tickFormat) ? currFormat = tickFormat.bind($$.api) : isTimeSeries && (currFormat = function (date) {
+      return date ? format.axisTime(tickFormat)(date) : "";
+    }) : currFormat = isTimeSeries ? format.defaultAxisTime : isCategorized ? $$.categoryName : function (v) {
+      return v < 0 ? v.toFixed(0) : v;
+    }, isFunction(currFormat) ? function (v) {
+      return currFormat.apply($$, isCategorized ? [v, $$.categoryName(v)] : [v]);
+    } : currFormat;
+  }, _proto.getTickValues = function getTickValues(id) {
+    var $$ = this.owner,
+        tickValues = $$.config["axis_" + id + "_tick_values"],
+        axis = $$[id + "Axis"];
+    return (isFunction(tickValues) ? tickValues.call($$.api) : tickValues) || (axis ? axis.tickValues() : undefined);
+  }, _proto.getLabelOptionByAxisId = function getLabelOptionByAxisId(id) {
+    return this.owner.config["axis_" + id + "_label"];
+  }, _proto.getLabelText = function getLabelText(id) {
+    var option = this.getLabelOptionByAxisId(id);
+    return isString(option) ? option : option ? option.text : null;
+  }, _proto.setLabelText = function setLabelText(id, text) {
+    var $$ = this.owner,
+        config = $$.config,
+        option = this.getLabelOptionByAxisId(id);
+    isString(option) ? config["axis_" + id + "_label"] = text : option && (option.text = text);
+  }, _proto.getLabelPosition = function getLabelPosition(id, defaultPosition) {
+    var isRotated = this.owner.config.axis_rotated,
+        option = this.getLabelOptionByAxisId(id),
+        position = isObjectType(option) && option.position ? option.position : defaultPosition[+!isRotated],
+        has = function (v) {
+      return !!~position.indexOf(v);
+    };
+
+    return {
+      isInner: has("inner"),
+      isOuter: has("outer"),
+      isLeft: has("left"),
+      isCenter: has("center"),
+      isRight: has("right"),
+      isTop: has("top"),
+      isMiddle: has("middle"),
+      isBottom: has("bottom")
+    };
+  }, _proto.getAxisLabelPosition = function getAxisLabelPosition(id) {
+    return this.getLabelPosition(id, id === "x" ? ["inner-top", "inner-right"] : ["inner-right", "inner-top"]);
+  }, _proto.getLabelPositionById = function getLabelPositionById(id) {
+    return this.getAxisLabelPosition(id);
+  }, _proto.xForAxisLabel = function xForAxisLabel(id) {
+    var $$ = this.owner,
+        _$$$state = $$.state,
+        width = _$$$state.width,
+        height = _$$$state.height,
+        position = this.getAxisLabelPosition(id),
+        x = position.isMiddle ? -height / 2 : 0;
+    return this.isHorizontal($$, id !== "x") ? x = position.isLeft ? 0 : position.isCenter ? width / 2 : width : position.isBottom && (x = -height), x;
+  }, _proto.dxForAxisLabel = function dxForAxisLabel(id) {
+    var $$ = this.owner,
+        position = this.getAxisLabelPosition(id),
+        dx = position.isBottom ? "0.5em" : "0";
+    return this.isHorizontal($$, id !== "x") ? dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0" : position.isTop && (dx = "-0.5em"), dx;
+  }, _proto.textAnchorForAxisLabel = function textAnchorForAxisLabel(id) {
+    var $$ = this.owner,
+        position = this.getAxisLabelPosition(id),
+        anchor = position.isMiddle ? "middle" : "end";
+    return this.isHorizontal($$, id !== "x") ? anchor = position.isLeft ? "start" : position.isCenter ? "middle" : "end" : position.isBottom && (anchor = "start"), anchor;
+  }, _proto.dyForAxisLabel = function dyForAxisLabel(id) {
+    var dy,
+        $$ = this.owner,
+        config = $$.config,
+        isRotated = config.axis_rotated,
+        isInner = this.getAxisLabelPosition(id).isInner,
+        tickRotate = config["axis_" + id + "_tick_rotate"] ? $$.getHorizontalAxisHeight(id) : 0,
+        maxTickWidth = this.getMaxTickWidth(id);
+
+    if (id === "x") {
+      var xHeight = config.axis_x_height;
+      dy = isRotated ? isInner ? "1.2em" : -25 - maxTickWidth : isInner ? "-0.5em" : xHeight ? xHeight - 10 : tickRotate ? tickRotate - 10 : "3em";
+    } else dy = {
+      y: ["-0.5em", 10, "3em", "1.2em", 10],
+      y2: ["1.2em", -20, "-2.2em", "-0.5em", 15]
+    }[id], dy = isRotated ? isInner ? dy[0] : tickRotate ? tickRotate * (id === "y2" ? -1 : 1) - dy[1] : dy[2] : isInner ? dy[3] : (dy[4] + (config["axis_" + id + "_inner"] ? 0 : maxTickWidth + dy[4])) * (id === "y" ? -1 : 1);
+
+    return dy;
+  }, _proto.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
+    var $$ = this.owner,
+        config = $$.config,
+        current = $$.state.current,
+        _$$$$el2 = $$.$el,
+        svg = _$$$$el2.svg,
+        chart = _$$$$el2.chart,
+        currentTickMax = current.maxTickWidths[id],
+        maxWidth = 0;
+    if (withoutRecompute || !config["axis_" + id + "_show"] || $$.filterTargetsToShow().length === 0) return currentTickMax.size;
+
+    if (svg) {
+      var isYAxis = /^y2?$/.test(id),
+          targetsToShow = $$.filterTargetsToShow($$.data.targets),
+          scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id)),
+          domain = scale.domain();
+      // do not compute if domain is same
+      if (domain[0] === domain[1] || isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1]) return currentTickMax.size;
+      currentTickMax.domain = domain;
+      var axis = this.getAxis(id, scale, !1, !1, !0),
+          tickCount = config["axis_" + id + "_tick_count"],
+          tickValues = config["axis_" + id + "_tick_values"];
+      !tickValues && tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
+      var dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
+      axis.create(dummy), dummy.selectAll("text").each(function (d, i) {
+        var currentTextWidth = this.getBoundingClientRect().width;
+        maxWidth = Math.max(maxWidth, currentTextWidth), id === "x" && (currentTickMax.ticks[i] = currentTextWidth);
+      }), dummy.remove();
+    }
+
+    return maxWidth > 0 && (currentTickMax.size = maxWidth), currentTickMax.size;
+  }, _proto.getXAxisTickTextY2Overflow = function getXAxisTickTextY2Overflow(defaultPadding) {
+    var $$ = this.owner,
+        axis = $$.axis,
+        config = $$.config,
+        state = $$.state,
+        xAxisTickRotate = $$.getAxisTickRotate("x");
+
+    if ((axis.isCategorized() || axis.isTimeSeries()) && config.axis_x_tick_fit && !config.axis_x_tick_culling && !config.axis_x_tick_multiline && xAxisTickRotate > 0 && xAxisTickRotate < 90) {
+      var widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingLeft(),
+          maxOverflow = this.getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding),
+          xAxisTickTextY2Overflow = Math.max(0, maxOverflow) + defaultPadding;
+      // for display inconsistencies between browsers
+      return Math.min(xAxisTickTextY2Overflow, widthWithoutCurrentPaddingLeft / 2);
+    }
+
+    return 0;
+  }, _proto.getXAxisTickMaxOverflow = function getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
+    for (var $$ = this.owner, axis = $$.axis, config = $$.config, state = $$.state, isTimeSeries = axis.isTimeSeries(), tickTextWidths = state.current.maxTickWidths.x.ticks, tickCount = tickTextWidths.length, _state$axis$x$padding = state.axis.x.padding, left = _state$axis$x$padding.left, right = _state$axis$x$padding.right, maxOverflow = 0, remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? .5 : 0), i = 0; i < tickCount; i++) {
+      var tickIndex = i + 1,
+          rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidths[i],
+          ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : .5) + left;
+
+      // Skip ticks if there are no ticks before them
+      if (!(ticksBeforeTickText <= 0)) {
+        var tickLength = (widthWithoutCurrentPaddingLeft - rotatedTickTextWidth) / ticksBeforeTickText;
+        maxOverflow = Math.max(maxOverflow, rotatedTickTextWidth - tickLength / 2 - ((remaining - tickIndex) * tickLength + right * tickLength));
+      }
+    }
+
+    var tickOffset = 0;
+
+    if (!isTimeSeries) {
+      var scale = src_linear_linear().domain([left * -1, $$.getXDomainMax($$.data.targets) + 1 + right]).range([0, widthWithoutCurrentPaddingLeft - maxOverflow]);
+      tickOffset = Math.ceil((scale(1) - scale(0)) / 2);
+    }
+
+    return maxOverflow + tickOffset;
+  }
+  /**
+   * Get x Axis padding
+   * @param {number} tickCount Tick count
+   * @returns {object} Padding object values with 'left' & 'right' key
+   * @private
+   */
+  , _proto.getXAxisPadding = function getXAxisPadding(tickCount) {
+    var $$ = this.owner,
+        padding = $$.config.axis_x_padding;
+
+    if (isEmpty(padding) ? padding = {
+      left: 0,
+      right: 0
+    } : (padding.left = padding.left || 0, padding.right = padding.right || 0), $$.axis.isTimeSeries()) {
+      var firstX = +$$.getXDomainMin($$.data.targets),
+          lastX = +$$.getXDomainMax($$.data.targets),
+          timeDiff = lastX - firstX,
+          range = timeDiff + padding.left + padding.right,
+          relativeTickWidth = timeDiff / tickCount / range,
+          left = padding.left / range / relativeTickWidth || 0,
+          _right = padding.right / range / relativeTickWidth || 0;
+
+      padding = {
+        left: left,
+        right: _right
+      };
+    }
+
+    return padding;
+  }, _proto.updateLabels = function updateLabels(withTransition) {
+    var _this3 = this,
+        $$ = this.owner,
+        main = $$.$el.main,
+        labels = {
+      x: main.select("." + config_classes.axisX + " ." + config_classes.axisXLabel),
+      y: main.select("." + config_classes.axisY + " ." + config_classes.axisYLabel),
+      y2: main.select("." + config_classes.axisY2 + " ." + config_classes.axisY2Label)
+    };
+
+    Object.keys(labels).filter(function (id) {
+      return !labels[id].empty();
+    }).forEach(function (v) {
+      var node = labels[v];
+      (withTransition ? node.transition() : node).attr("x", function () {
+        return _this3.xForAxisLabel(v);
+      }).attr("dx", function () {
+        return _this3.dxForAxisLabel(v);
+      }).attr("dy", function () {
+        return _this3.dyForAxisLabel(v);
+      }).text(function () {
+        return _this3.getLabelText(v);
+      });
+    });
+  }, _proto.getPadding = function getPadding(padding, key, defaultValue, domainLength) {
+    var p = isNumber(padding) ? padding : padding[key];
+    return isValue(p) ? this.convertPixelsToAxisPadding(p, domainLength) : defaultValue;
+  }, _proto.convertPixelsToAxisPadding = function convertPixelsToAxisPadding(pixels, domainLength) {
+    var $$ = this.owner,
+        config = $$.config,
+        _$$$state2 = $$.state,
+        width = _$$$state2.width,
+        height = _$$$state2.height,
+        length = config.axis_rotated ? width : height;
+    return domainLength * (pixels / length);
+  }, _proto.generateTickValues = function generateTickValues(values, tickCount, forTimeSeries) {
+    var tickValues = values;
+
+    if (tickCount) {
+      var targetCount = isFunction(tickCount) ? tickCount() : tickCount; // compute ticks according to tickCount
+
+      if (targetCount === 1) tickValues = [values[0]];else if (targetCount === 2) tickValues = [values[0], values[values.length - 1]];else if (targetCount > 2) {
+        var tickValue,
+            isCategorized = this.isCategorized(),
+            count = targetCount - 2,
+            start = values[0],
+            end = values[values.length - 1];
+        tickValues = [start];
+
+        for (var i = 0; i < count; i++) tickValue = +start + (end - start) / (count + 1) * (i + 1), tickValues.push(forTimeSeries ? new Date(tickValue) : isCategorized ? Math.round(tickValue) : tickValue);
+
+        tickValues.push(end);
+      }
+    }
+
+    return forTimeSeries || (tickValues = tickValues.sort(function (a, b) {
+      return a - b;
+    })), tickValues;
+  }, _proto.generateTransitions = function generateTransitions(duration) {
+    var $$ = this.owner,
+        axis = $$.$el.axis,
+        _map = ["x", "y", "y2", "subX"].map(function (v) {
+      var ax = axis[v];
+      return ax && duration && (ax = ax.transition().duration(duration)), ax;
+    }),
+        axisX = _map[0],
+        axisY = _map[1],
+        axisY2 = _map[2],
+        axisSubX = _map[3];
+
+    return {
+      axisX: axisX,
+      axisY: axisY,
+      axisY2: axisY2,
+      axisSubX: axisSubX
+    };
+  }, _proto.redraw = function redraw(transitions, isHidden, isInit) {
+    var _this4 = this,
+        $$ = this.owner,
+        config = $$.config,
+        $el = $$.$el,
+        opacity = isHidden ? "0" : "1";
+
+    ["x", "y", "y2", "subX"].forEach(function (id) {
+      var axis = _this4[id],
+          $axis = $el.axis[id];
+      axis && $axis && (!isInit && (axis.config.withoutTransition = !config.transition_duration), $axis.style("opacity", opacity), axis.create(transitions["axis" + capitalize(id)]));
+    }), this.updateAxes();
+  }
+  /**
+   * Redraw axis
+   * @param {Array} targetsToShow targets data to be shown
+   * @param {object} wth option object
+   * @param {d3.Transition} transitions Transition object
+   * @param {object} flow flow object
+   * @param {boolean} isInit called from initialization
+   * @private
+   */
+  , _proto.redrawAxis = function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
+    var xDomainForZoom,
+        _this5 = this,
+        $$ = this.owner,
+        config = $$.config,
+        scale = $$.scale,
+        $el = $$.$el,
+        hasZoom = !!scale.zoom;
+
+    !hasZoom && this.isCategorized() && targetsToShow.length === 0 && scale.x.domain([0, $el.axis.x.selectAll(".tick").size()]), scale.x && targetsToShow.length ? (!hasZoom && $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && this.updateXAxisTickValues(targetsToShow)) : this.x && (this.x.tickValues([]), this.subX && this.subX.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = scale.x.orgDomain()), ["y", "y2"].forEach(function (key) {
+      var axisScale = scale[key];
+
+      if (axisScale) {
+        var tickValues = config["axis_" + key + "_tick_values"],
+            tickCount = config["axis_" + key + "_tick_count"];
+
+        if (axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom)), !tickValues && tickCount) {
+          var _axis = $$.axis[key],
+              domain = axisScale.domain();
+
+          _axis.tickValues(_this5.generateTickValues(domain, domain.every(function (v) {
+            return v === 0;
+          }) ? 1 : tickCount, _this5.isTimeSeriesY()));
+        }
+      }
+    }), this.redraw(transitions, $$.hasArcType(), isInit), this.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis || wth.Y) && targetsToShow.length && this.setCulling(), wth.Y && (scale.subY && scale.subY.domain($$.getYDomain(targetsToShow, "y")), scale.subY2 && scale.subY2.domain($$.getYDomain(targetsToShow, "y2")));
+  }
+  /**
+   * Set manual culling
+   * @private
+   */
+  , _proto.setCulling = function setCulling() {
+    var $$ = this.owner,
+        config = $$.config,
+        _$$$state3 = $$.state,
+        clip = _$$$state3.clip,
+        current = _$$$state3.current,
+        $el = $$.$el;
+    ["subX", "x", "y", "y2"].forEach(function (type) {
+      var axis = $el.axis[type],
+          id = type === "subX" ? "x" : type,
+          toCull = config["axis_" + id + "_tick_culling"]; // subchart x axis should be aligned with x axis culling
+
+      if (axis && toCull) {
+        var intervalForCulling,
+            tickText = axis.selectAll(".tick text"),
+            tickValues = util_sortValue(tickText.data()),
+            tickSize = tickValues.length,
+            cullingMax = config["axis_" + id + "_tick_culling_max"];
+
+        if (tickSize) {
+          for (var i = 1; i < tickSize; i++) if (tickSize / i < cullingMax) {
+            intervalForCulling = i;
+            break;
+          }
+
+          tickText.each(function (d) {
+            this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
+          });
+        } else tickText.style("display", "block"); // set/unset x_axis_tick_clippath
+
+
+        if (type === "x") {
+          var clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
+          $el.svg.selectAll("." + config_classes.axisX + " .tick text").attr("clip-path", clipPath);
+        }
+      }
+    });
+  }, Axis;
+}();
 // CONCATENATED MODULE: ./src/ChartInternal/interactions/drag.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -33154,7 +35159,7 @@ util_extend(zoom_zoom, {
       // Set data and update $el.eventRect
       var xAxisTickValues = $$.getMaxDataCountTarget(); // update data's index value to be alinged with the x Axis
 
-      $$.updateDataIndexByX(xAxisTickValues), $$.updateXs(xAxisTickValues), $$.updatePointClass(!0), eventRects.datum(xAxisTickValues), $el.eventRect = eventRects.selectAll("." + config_classes.eventRect), eventRectUpdate = $el.eventRect.data(function (d) {
+      $$.updateDataIndexByX(xAxisTickValues), $$.updateXs(xAxisTickValues), $$.updatePointClass && $$.updatePointClass(!0), eventRects.datum(xAxisTickValues), $el.eventRect = eventRects.selectAll("." + config_classes.eventRect), eventRectUpdate = $el.eventRect.data(function (d) {
         return d;
       }), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate);
     }
@@ -34244,14 +36249,14 @@ function smoothLines(el, type) {
         ["x1", "y1", "x2", "y2"].forEach(function (v, i) {
           return el.attr(v, xy[i]);
         });
-      }), smoothLines(focusEl, "grid"), $$.showCircleFocus(data);
+      }), smoothLines(focusEl, "grid"), $$.showCircleFocus && $$.showCircleFocus(data);
     }
   },
   hideGridFocus: function hideGridFocus() {
     var $$ = this,
         inputType = $$.state.inputType,
         main = $$.$el.main;
-    inputType === "mouse" && (main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus).style("visibility", "hidden"), $$.hideCircleFocus());
+    inputType === "mouse" && (main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus).style("visibility", "hidden"), $$.hideCircleFocus && $$.hideCircleFocus());
   },
   updateGridFocus: function updateGridFocus() {
     var $$ = this,
@@ -34526,2057 +36531,95 @@ function smoothLines(el, type) {
     }
   }
 });
-// CONCATENATED MODULE: ./node_modules/d3-path/src/path.js
-var path_pi = Math.PI,
-    path_tau = 2 * path_pi,
-    path_epsilon = 1e-6,
-    tauEpsilon = path_tau - path_epsilon;
-
-function Path() {
-  // end of current subpath
-  this._x0 = this._y0 = // start of current subpath
-  this._x1 = this._y1 = null, this._ = "";
-}
-
-function path_path() {
-  return new Path();
-}
-
-Path.prototype = path_path.prototype = {
-  constructor: Path,
-  moveTo: function moveTo(x, y) {
-    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y);
-  },
-  closePath: function closePath() {
-    this._x1 !== null && (this._x1 = this._x0, this._y1 = this._y0, this._ += "Z");
-  },
-  lineTo: function lineTo(x, y) {
-    this._ += "L" + (this._x1 = +x) + "," + (this._y1 = +y);
-  },
-  quadraticCurveTo: function quadraticCurveTo(x1, y1, x, y) {
-    this._ += "Q" + +x1 + "," + +y1 + "," + (this._x1 = +x) + "," + (this._y1 = +y);
-  },
-  bezierCurveTo: function bezierCurveTo(x1, y1, x2, y2, x, y) {
-    this._ += "C" + +x1 + "," + +y1 + "," + +x2 + "," + +y2 + "," + (this._x1 = +x) + "," + (this._y1 = +y);
-  },
-  arcTo: function arcTo(x1, y1, x2, y2, r) {
-    x1 = +x1, y1 = +y1, x2 = +x2, y2 = +y2, r = +r;
-    var x0 = this._x1,
-        y0 = this._y1,
-        x21 = x2 - x1,
-        y21 = y2 - y1,
-        x01 = x0 - x1,
-        y01 = y0 - y1,
-        l01_2 = x01 * x01 + y01 * y01; // Is the radius negative? Error.
-
-    if (r < 0) throw new Error("negative radius: " + r); // Is this path empty? Move to (x1,y1).
-
-    if (this._x1 === null) this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1); // Or, is (x1,y1) coincident with (x0,y0)? Do nothing.
-    else if (!(l01_2 > path_epsilon)) ; // Or, are (x0,y0), (x1,y1) and (x2,y2) collinear?
-      // Equivalently, is (x1,y1) coincident with (x2,y2)?
-      // Or, is the radius zero? Line to (x1,y1).
-      else if (!(Math.abs(y01 * x21 - y21 * x01) > path_epsilon) || !r) this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1); // Otherwise, draw an arc!
-        else {
-            var x20 = x2 - x0,
-                y20 = y2 - y0,
-                l21_2 = x21 * x21 + y21 * y21,
-                l21 = Math.sqrt(l21_2),
-                l01 = Math.sqrt(l01_2),
-                l = r * Math.tan((path_pi - Math.acos((l21_2 + l01_2 - (x20 * x20 + y20 * y20)) / (2 * l21 * l01))) / 2),
-                t01 = l / l01,
-                t21 = l / l21; // If the start tangent is not coincident with (x0,y0), line to.
-
-            Math.abs(t01 - 1) > path_epsilon && (this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01)), this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
-          }
-  },
-  arc: function arc(x, y, r, a0, a1, ccw) {
-    x = +x, y = +y, r = +r, ccw = !!ccw;
-    var dx = r * Math.cos(a0),
-        dy = r * Math.sin(a0),
-        x0 = x + dx,
-        y0 = y + dy,
-        cw = 1 ^ ccw,
-        da = ccw ? a0 - a1 : a1 - a0; // Is the radius negative? Error.
-
-    if (r < 0) throw new Error("negative radius: " + r); // Is this path empty? Move to (x0,y0).
-
-    this._x1 === null ? this._ += "M" + x0 + "," + y0 : (Math.abs(this._x1 - x0) > path_epsilon || Math.abs(this._y1 - y0) > path_epsilon) && (this._ += "L" + x0 + "," + y0);
-    // Is this arc empty? We’re done.
-    r && (da < 0 && (da = da % path_tau + path_tau), da > tauEpsilon ? this._ += "A" + r + "," + r + ",0,1," + cw + "," + (x - dx) + "," + (y - dy) + "A" + r + "," + r + ",0,1," + cw + "," + (this._x1 = x0) + "," + (this._y1 = y0) : da > path_epsilon && (this._ += "A" + r + "," + r + ",0," + +(da >= path_pi) + "," + cw + "," + (this._x1 = x + r * Math.cos(a1)) + "," + (this._y1 = y + r * Math.sin(a1)))); // Does the angle go the wrong way? Flip the direction.
-  },
-  rect: function rect(x, y, w, h) {
-    this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y) + "h" + +w + "v" + +h + "h" + -w + "Z";
-  },
-  toString: function toString() {
-    return this._;
-  }
-};
-/* harmony default export */ var src_path = (path_path);
-// CONCATENATED MODULE: ./node_modules/d3-path/src/index.js
-
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/constant.js
-/* harmony default export */ var d3_shape_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/math.js
-var abs = Math.abs;
-var atan2 = Math.atan2;
-var cos = Math.cos;
-var math_max = Math.max;
-var math_min = Math.min;
-var sin = Math.sin;
-var math_sqrt = Math.sqrt;
-var math_epsilon = 1e-12;
-var math_pi = Math.PI;
-var math_halfPi = math_pi / 2;
-var math_tau = 2 * math_pi;
-function acos(x) {
-  return x > 1 ? 0 : x < -1 ? math_pi : Math.acos(x);
-}
-function asin(x) {
-  return x >= 1 ? math_halfPi : x <= -1 ? -math_halfPi : Math.asin(x);
-}
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/arc.js
-
-
-
-
-function arc_arcInnerRadius(d) {
-  return d.innerRadius;
-}
-
-function arcOuterRadius(d) {
-  return d.outerRadius;
-}
-
-function arcStartAngle(d) {
-  return d.startAngle;
-}
-
-function arcEndAngle(d) {
-  return d.endAngle;
-}
-
-function arcPadAngle(d) {
-  return d && d.padAngle; // Note: optional!
-}
-
-function intersect(x0, y0, x1, y1, x2, y2, x3, y3) {
-  var x10 = x1 - x0,
-      y10 = y1 - y0,
-      x32 = x3 - x2,
-      y32 = y3 - y2,
-      t = y32 * x10 - x32 * y10;
-  if (!(t * t < math_epsilon)) return t = (x32 * (y0 - y2) - y32 * (x0 - x2)) / t, [x0 + t * x10, y0 + t * y10];
-} // Compute perpendicular offset line of length rc.
-// http://mathworld.wolfram.com/Circle-LineIntersection.html
-
-
-function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
-  var x01 = x0 - x1,
-      y01 = y0 - y1,
-      lo = (cw ? rc : -rc) / math_sqrt(x01 * x01 + y01 * y01),
-      ox = lo * y01,
-      oy = -lo * x01,
-      x11 = x0 + ox,
-      y11 = y0 + oy,
-      x10 = x1 + ox,
-      y10 = y1 + oy,
-      x00 = (x11 + x10) / 2,
-      y00 = (y11 + y10) / 2,
-      dx = x10 - x11,
-      dy = y10 - y11,
-      d2 = dx * dx + dy * dy,
-      r = r1 - rc,
-      D = x11 * y10 - x10 * y11,
-      d = (dy < 0 ? -1 : 1) * math_sqrt(math_max(0, r * r * d2 - D * D)),
-      cx0 = (D * dy - dx * d) / d2,
-      cy0 = (-D * dx - dy * d) / d2,
-      cx1 = (D * dy + dx * d) / d2,
-      cy1 = (-D * dx + dy * d) / d2,
-      dx0 = cx0 - x00,
-      dy0 = cy0 - y00,
-      dx1 = cx1 - x00,
-      dy1 = cy1 - y00; // Pick the closer of the two intersection points.
-  // TODO Is there a faster way to determine which intersection to use?
-
-  return dx0 * dx0 + dy0 * dy0 > dx1 * dx1 + dy1 * dy1 && (cx0 = cx1, cy0 = cy1), {
-    cx: cx0,
-    cy: cy0,
-    x01: -ox,
-    y01: -oy,
-    x11: cx0 * (r1 / r - 1),
-    y11: cy0 * (r1 / r - 1)
-  };
-}
-
-/* harmony default export */ var src_arc = (function () {
-  function arc() {
-    var buffer,
-        r,
-        r0 = +innerRadius.apply(this, arguments),
-        r1 = +outerRadius.apply(this, arguments),
-        a0 = startAngle.apply(this, arguments) - math_halfPi,
-        a1 = endAngle.apply(this, arguments) - math_halfPi,
-        da = abs(a1 - a0),
-        cw = a1 > a0;
-    // Is it a point?
-    if (context || (context = buffer = src_path()), r1 < r0 && (r = r1, r1 = r0, r0 = r), !(r1 > math_epsilon)) context.moveTo(0, 0); // Or is it a circle or annulus?
-    else if (da > math_tau - math_epsilon) context.moveTo(r1 * cos(a0), r1 * sin(a0)), context.arc(0, 0, r1, a0, a1, !cw), r0 > math_epsilon && (context.moveTo(r0 * cos(a1), r0 * sin(a1)), context.arc(0, 0, r0, a1, a0, cw)); // Or is it a circular or annular sector?
-      else {
-          var t0,
-              t1,
-              a01 = a0,
-              a11 = a1,
-              a00 = a0,
-              a10 = a1,
-              da0 = da,
-              da1 = da,
-              ap = padAngle.apply(this, arguments) / 2,
-              rp = ap > math_epsilon && (padRadius ? +padRadius.apply(this, arguments) : math_sqrt(r0 * r0 + r1 * r1)),
-              rc = math_min(abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments)),
-              rc0 = rc,
-              rc1 = rc; // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
-
-          if (rp > math_epsilon) {
-            var p0 = asin(rp / r0 * sin(ap)),
-                p1 = asin(rp / r1 * sin(ap));
-            (da0 -= p0 * 2) > math_epsilon ? (p0 *= cw ? 1 : -1, a00 += p0, a10 -= p0) : (da0 = 0, a00 = a10 = (a0 + a1) / 2), (da1 -= p1 * 2) > math_epsilon ? (p1 *= cw ? 1 : -1, a01 += p1, a11 -= p1) : (da1 = 0, a01 = a11 = (a0 + a1) / 2);
-          }
-
-          var x01 = r1 * cos(a01),
-              y01 = r1 * sin(a01),
-              x10 = r0 * cos(a10),
-              y10 = r0 * sin(a10); // Apply rounded corners?
-
-          if (rc > math_epsilon) {
-            var oc,
-                x11 = r1 * cos(a11),
-                y11 = r1 * sin(a11),
-                x00 = r0 * cos(a00),
-                y00 = r0 * sin(a00); // Restrict the corner radius according to the sector angle.
-
-            if (da < math_pi && (oc = intersect(x01, y01, x00, y00, x11, y11, x10, y10))) {
-              var ax = x01 - oc[0],
-                  ay = y01 - oc[1],
-                  bx = x11 - oc[0],
-                  by = y11 - oc[1],
-                  kc = 1 / sin(acos((ax * bx + ay * by) / (math_sqrt(ax * ax + ay * ay) * math_sqrt(bx * bx + by * by))) / 2),
-                  lc = math_sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
-              rc0 = math_min(rc, (r0 - lc) / (kc - 1)), rc1 = math_min(rc, (r1 - lc) / (kc + 1));
-            }
-          } // Is the sector collapsed to a line?
-
-
-          da1 > math_epsilon ? rc1 > math_epsilon ? (t0 = cornerTangents(x00, y00, x01, y01, r1, rc1, cw), t1 = cornerTangents(x11, y11, x10, y10, r1, rc1, cw), context.moveTo(t0.cx + t0.x01, t0.cy + t0.y01), rc1 < rc ? context.arc(t0.cx, t0.cy, rc1, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !cw) : (context.arc(t0.cx, t0.cy, rc1, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !cw), context.arc(0, 0, r1, atan2(t0.cy + t0.y11, t0.cx + t0.x11), atan2(t1.cy + t1.y11, t1.cx + t1.x11), !cw), context.arc(t1.cx, t1.cy, rc1, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !cw))) : ( // Or is the outer ring just a circular arc?
-          context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw)) : context.moveTo(x01, y01), r0 > math_epsilon && da0 > math_epsilon ? rc0 > math_epsilon ? (t0 = cornerTangents(x10, y10, x11, y11, r0, -rc0, cw), t1 = cornerTangents(x01, y01, x00, y00, r0, -rc0, cw), context.lineTo(t0.cx + t0.x01, t0.cy + t0.y01), rc0 < rc ? context.arc(t0.cx, t0.cy, rc0, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !cw) : (context.arc(t0.cx, t0.cy, rc0, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !cw), context.arc(0, 0, r0, atan2(t0.cy + t0.y11, t0.cx + t0.x11), atan2(t1.cy + t1.y11, t1.cx + t1.x11), cw), context.arc(t1.cx, t1.cy, rc0, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !cw))) : // Or is the inner ring just a circular arc?
-          context.arc(0, 0, r0, a10, a00, cw) : context.lineTo(x10, y10);
-        }
-    return (context.closePath(), buffer) ? (context = null, buffer + "" || null) : void 0;
-  }
-
-  var innerRadius = arc_arcInnerRadius,
-      outerRadius = arcOuterRadius,
-      cornerRadius = d3_shape_src_constant(0),
-      padRadius = null,
-      startAngle = arcStartAngle,
-      endAngle = arcEndAngle,
-      padAngle = arcPadAngle,
-      context = null;
-  return arc.centroid = function () {
-    var r = (+innerRadius.apply(this, arguments) + +outerRadius.apply(this, arguments)) / 2,
-        a = (+startAngle.apply(this, arguments) + +endAngle.apply(this, arguments)) / 2 - math_pi / 2;
-    return [cos(a) * r, sin(a) * r];
-  }, arc.innerRadius = function (_) {
-    return arguments.length ? (innerRadius = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : innerRadius;
-  }, arc.outerRadius = function (_) {
-    return arguments.length ? (outerRadius = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : outerRadius;
-  }, arc.cornerRadius = function (_) {
-    return arguments.length ? (cornerRadius = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : cornerRadius;
-  }, arc.padRadius = function (_) {
-    return arguments.length ? (padRadius = _ == null ? null : typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : padRadius;
-  }, arc.startAngle = function (_) {
-    return arguments.length ? (startAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : startAngle;
-  }, arc.endAngle = function (_) {
-    return arguments.length ? (endAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : endAngle;
-  }, arc.padAngle = function (_) {
-    return arguments.length ? (padAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), arc) : padAngle;
-  }, arc.context = function (_) {
-    return arguments.length ? (context = _ == null ? null : _, arc) : context;
-  }, arc;
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/linear.js
-function Linear(context) {
-  this._context = context;
-}
-
-Linear.prototype = {
-  areaStart: function areaStart() {
-    this._line = 0;
-  },
-  areaEnd: function areaEnd() {
-    this._line = NaN;
-  },
-  lineStart: function lineStart() {
-    this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line = 1 - this._line;
-  },
-  point: function point(x, y) {
-    switch (x = +x, y = +y, this._point) {
-      case 0:
-        this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
-        break;
-
-      case 1:
-        this._point = 2;
-      // proceed
-
-      default:
-        this._context.lineTo(x, y);
-
-    }
-  }
-};
-/* harmony default export */ var curve_linear = (function (context) {
-  return new Linear(context);
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/point.js
-function point_x(p) {
-  return p[0];
-}
-function point_y(p) {
-  return p[1];
-}
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/line.js
-
-
-
-
-/* harmony default export */ var src_line = (function () {
-  function line(data) {
-    var i,
-        d,
-        buffer,
-        n = data.length,
-        defined0 = !1;
-
-    for (context == null && (output = curve(buffer = src_path())), i = 0; i <= n; ++i) !(i < n && defined(d = data[i], i, data)) === defined0 && ((defined0 = !defined0) ? output.lineStart() : output.lineEnd()), defined0 && output.point(+x(d, i, data), +y(d, i, data));
-
-    if (buffer) return output = null, buffer + "" || null;
-  }
-
-  var x = point_x,
-      y = point_y,
-      defined = d3_shape_src_constant(!0),
-      context = null,
-      curve = curve_linear,
-      output = null;
-  return line.x = function (_) {
-    return arguments.length ? (x = typeof _ === "function" ? _ : d3_shape_src_constant(+_), line) : x;
-  }, line.y = function (_) {
-    return arguments.length ? (y = typeof _ === "function" ? _ : d3_shape_src_constant(+_), line) : y;
-  }, line.defined = function (_) {
-    return arguments.length ? (defined = typeof _ === "function" ? _ : d3_shape_src_constant(!!_), line) : defined;
-  }, line.curve = function (_) {
-    return arguments.length ? (curve = _, context != null && (output = curve(context)), line) : curve;
-  }, line.context = function (_) {
-    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), line) : context;
-  }, line;
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/area.js
-
-
-
-
-
-/* harmony default export */ var src_area = (function () {
-  function area(data) {
-    var i,
-        j,
-        k,
-        d,
-        buffer,
-        n = data.length,
-        defined0 = !1,
-        x0z = Array(n),
-        y0z = Array(n);
-
-    for (context == null && (output = curve(buffer = src_path())), i = 0; i <= n; ++i) {
-      if (!(i < n && defined(d = data[i], i, data)) === defined0) if (defined0 = !defined0) j = i, output.areaStart(), output.lineStart();else {
-        for (output.lineEnd(), output.lineStart(), k = i - 1; k >= j; --k) output.point(x0z[k], y0z[k]);
-
-        output.lineEnd(), output.areaEnd();
-      }
-      defined0 && (x0z[i] = +x0(d, i, data), y0z[i] = +y0(d, i, data), output.point(x1 ? +x1(d, i, data) : x0z[i], y1 ? +y1(d, i, data) : y0z[i]));
-    }
-
-    if (buffer) return output = null, buffer + "" || null;
-  }
-
-  function arealine() {
-    return src_line().defined(defined).curve(curve).context(context);
-  }
-
-  var x0 = point_x,
-      x1 = null,
-      y0 = d3_shape_src_constant(0),
-      y1 = point_y,
-      defined = d3_shape_src_constant(!0),
-      context = null,
-      curve = curve_linear,
-      output = null;
-  return area.x = function (_) {
-    return arguments.length ? (x0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), x1 = null, area) : x0;
-  }, area.x0 = function (_) {
-    return arguments.length ? (x0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : x0;
-  }, area.x1 = function (_) {
-    return arguments.length ? (x1 = _ == null ? null : typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : x1;
-  }, area.y = function (_) {
-    return arguments.length ? (y0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), y1 = null, area) : y0;
-  }, area.y0 = function (_) {
-    return arguments.length ? (y0 = typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : y0;
-  }, area.y1 = function (_) {
-    return arguments.length ? (y1 = _ == null ? null : typeof _ === "function" ? _ : d3_shape_src_constant(+_), area) : y1;
-  }, area.lineX0 = area.lineY0 = function () {
-    return arealine().x(x0).y(y0);
-  }, area.lineY1 = function () {
-    return arealine().x(x0).y(y1);
-  }, area.lineX1 = function () {
-    return arealine().x(x1).y(y0);
-  }, area.defined = function (_) {
-    return arguments.length ? (defined = typeof _ === "function" ? _ : d3_shape_src_constant(!!_), area) : defined;
-  }, area.curve = function (_) {
-    return arguments.length ? (curve = _, context != null && (output = curve(context)), area) : curve;
-  }, area.context = function (_) {
-    return arguments.length ? (_ == null ? context = output = null : output = curve(context = _), area) : context;
-  }, area;
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/descending.js
-/* harmony default export */ var src_descending = (function (a, b) {
-  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/identity.js
-/* harmony default export */ var d3_shape_src_identity = (function (d) {
-  return d;
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/pie.js
-
-
-
-
-/* harmony default export */ var src_pie = (function () {
-  function pie(data) {
-    var i,
-        j,
-        k,
-        a1,
-        v,
-        n = data.length,
-        sum = 0,
-        index = Array(n),
-        arcs = Array(n),
-        a0 = +startAngle.apply(this, arguments),
-        da = Math.min(math_tau, Math.max(-math_tau, endAngle.apply(this, arguments) - a0)),
-        p = Math.min(Math.abs(da) / n, padAngle.apply(this, arguments)),
-        pa = p * (da < 0 ? -1 : 1);
-
-    for (i = 0; i < n; ++i) (v = arcs[index[i] = i] = +value(data[i], i, data)) > 0 && (sum += v); // Optionally sort the arcs by previously-computed values or by data.
-
-
-    // Compute the arcs! They are stored in the original data's order.
-    for (sortValues == null ? sort != null && index.sort(function (i, j) {
-      return sort(data[i], data[j]);
-    }) : index.sort(function (i, j) {
-      return sortValues(arcs[i], arcs[j]);
-    }), i = 0, k = sum ? (da - n * pa) / sum : 0; i < n; ++i, a0 = a1) j = index[i], v = arcs[j], a1 = a0 + (v > 0 ? v * k : 0) + pa, arcs[j] = {
-      data: data[j],
-      index: i,
-      value: v,
-      startAngle: a0,
-      endAngle: a1,
-      padAngle: p
-    };
-
-    return arcs;
-  }
-
-  var value = d3_shape_src_identity,
-      sortValues = src_descending,
-      sort = null,
-      startAngle = d3_shape_src_constant(0),
-      endAngle = d3_shape_src_constant(math_tau),
-      padAngle = d3_shape_src_constant(0);
-  return pie.value = function (_) {
-    return arguments.length ? (value = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : value;
-  }, pie.sortValues = function (_) {
-    return arguments.length ? (sortValues = _, sort = null, pie) : sortValues;
-  }, pie.sort = function (_) {
-    return arguments.length ? (sort = _, sortValues = null, pie) : sort;
-  }, pie.startAngle = function (_) {
-    return arguments.length ? (startAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : startAngle;
-  }, pie.endAngle = function (_) {
-    return arguments.length ? (endAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : endAngle;
-  }, pie.padAngle = function (_) {
-    return arguments.length ? (padAngle = typeof _ === "function" ? _ : d3_shape_src_constant(+_), pie) : padAngle;
-  }, pie;
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/radial.js
-
-var curveRadialLinear = curveRadial(curve_linear);
-
-function Radial(curve) {
-  this._curve = curve;
-}
-
-Radial.prototype = {
-  areaStart: function areaStart() {
-    this._curve.areaStart();
-  },
-  areaEnd: function areaEnd() {
-    this._curve.areaEnd();
-  },
-  lineStart: function lineStart() {
-    this._curve.lineStart();
-  },
-  lineEnd: function lineEnd() {
-    this._curve.lineEnd();
-  },
-  point: function point(a, r) {
-    this._curve.point(r * Math.sin(a), r * -Math.cos(a));
-  }
-};
-function curveRadial(curve) {
-  function radial(context) {
-    return new Radial(curve(context));
-  }
-
-  return radial._curve = curve, radial;
-}
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/lineRadial.js
-
-
-function lineRadial(l) {
-  var c = l.curve;
-  return l.angle = l.x, delete l.x, l.radius = l.y, delete l.y, l.curve = function (_) {
-    return arguments.length ? c(curveRadial(_)) : c()._curve;
-  }, l;
-}
-/* harmony default export */ var src_lineRadial = (function () {
-  return lineRadial(src_line().curve(curveRadialLinear));
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/areaRadial.js
-
-
-
-/* harmony default export */ var areaRadial = (function () {
-  var a = src_area().curve(curveRadialLinear),
-      c = a.curve,
-      x0 = a.lineX0,
-      x1 = a.lineX1,
-      y0 = a.lineY0,
-      y1 = a.lineY1;
-  return a.angle = a.x, delete a.x, a.startAngle = a.x0, delete a.x0, a.endAngle = a.x1, delete a.x1, a.radius = a.y, delete a.y, a.innerRadius = a.y0, delete a.y0, a.outerRadius = a.y1, delete a.y1, a.lineStartAngle = function () {
-    return lineRadial(x0());
-  }, delete a.lineX0, a.lineEndAngle = function () {
-    return lineRadial(x1());
-  }, delete a.lineX1, a.lineInnerRadius = function () {
-    return lineRadial(y0());
-  }, delete a.lineY0, a.lineOuterRadius = function () {
-    return lineRadial(y1());
-  }, delete a.lineY1, a.curve = function (_) {
-    return arguments.length ? c(curveRadial(_)) : c()._curve;
-  }, a;
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/pointRadial.js
-/* harmony default export */ var pointRadial = (function (x, y) {
-  return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/array.js
-var d3_shape_src_array_slice = Array.prototype.slice;
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/link/index.js
-
-
-
-
-
-
-function linkSource(d) {
-  return d.source;
-}
-
-function linkTarget(d) {
-  return d.target;
-}
-
-function link_link(curve) {
-  function link() {
-    var buffer,
-        argv = d3_shape_src_array_slice.call(arguments),
-        s = source.apply(this, argv),
-        t = target.apply(this, argv);
-    if (context || (context = buffer = src_path()), curve(context, +x.apply(this, (argv[0] = s, argv)), +y.apply(this, argv), +x.apply(this, (argv[0] = t, argv)), +y.apply(this, argv)), buffer) return context = null, buffer + "" || null;
-  }
-
-  var source = linkSource,
-      target = linkTarget,
-      x = point_x,
-      y = point_y,
-      context = null;
-  return link.source = function (_) {
-    return arguments.length ? (source = _, link) : source;
-  }, link.target = function (_) {
-    return arguments.length ? (target = _, link) : target;
-  }, link.x = function (_) {
-    return arguments.length ? (x = typeof _ === "function" ? _ : d3_shape_src_constant(+_), link) : x;
-  }, link.y = function (_) {
-    return arguments.length ? (y = typeof _ === "function" ? _ : d3_shape_src_constant(+_), link) : y;
-  }, link.context = function (_) {
-    return arguments.length ? (context = _ == null ? null : _, link) : context;
-  }, link;
-}
-
-function curveHorizontal(context, x0, y0, x1, y1) {
-  context.moveTo(x0, y0), context.bezierCurveTo(x0 = (x0 + x1) / 2, y0, x0, y1, x1, y1);
-}
-
-function curveVertical(context, x0, y0, x1, y1) {
-  context.moveTo(x0, y0), context.bezierCurveTo(x0, y0 = (y0 + y1) / 2, x1, y0, x1, y1);
-}
-
-function link_curveRadial(context, x0, y0, x1, y1) {
-  var p0 = pointRadial(x0, y0),
-      p1 = pointRadial(x0, y0 = (y0 + y1) / 2),
-      p2 = pointRadial(x1, y0),
-      p3 = pointRadial(x1, y1);
-  context.moveTo(p0[0], p0[1]), context.bezierCurveTo(p1[0], p1[1], p2[0], p2[1], p3[0], p3[1]);
-}
-
-function linkHorizontal() {
-  return link_link(curveHorizontal);
-}
-function linkVertical() {
-  return link_link(curveVertical);
-}
-function linkRadial() {
-  var l = link_link(link_curveRadial);
-  return l.angle = l.x, delete l.x, l.radius = l.y, delete l.y, l;
-}
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/circle.js
-
-/* harmony default export */ var symbol_circle = ({
-  draw: function draw(context, size) {
-    var r = Math.sqrt(size / math_pi);
-    context.moveTo(r, 0), context.arc(0, 0, r, 0, math_tau);
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/cross.js
-/* harmony default export */ var symbol_cross = ({
-  draw: function draw(context, size) {
-    var r = Math.sqrt(size / 5) / 2;
-    context.moveTo(-3 * r, -r), context.lineTo(-r, -r), context.lineTo(-r, -3 * r), context.lineTo(r, -3 * r), context.lineTo(r, -r), context.lineTo(3 * r, -r), context.lineTo(3 * r, r), context.lineTo(r, r), context.lineTo(r, 3 * r), context.lineTo(-r, 3 * r), context.lineTo(-r, r), context.lineTo(-3 * r, r), context.closePath();
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/diamond.js
-var tan30 = Math.sqrt(1 / 3),
-    tan30_2 = tan30 * 2;
-/* harmony default export */ var diamond = ({
-  draw: function draw(context, size) {
-    var y = Math.sqrt(size / tan30_2),
-        x = y * tan30;
-    context.moveTo(0, -y), context.lineTo(x, 0), context.lineTo(0, y), context.lineTo(-x, 0), context.closePath();
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/star.js
-
-var ka = .8908130915292852,
-    kr = Math.sin(math_pi / 10) / Math.sin(7 * math_pi / 10),
-    kx = Math.sin(math_tau / 10) * kr,
-    ky = -Math.cos(math_tau / 10) * kr;
-/* harmony default export */ var star = ({
-  draw: function draw(context, size) {
-    var r = Math.sqrt(size * ka),
-        x = kx * r,
-        y = ky * r;
-    context.moveTo(0, -r), context.lineTo(x, y);
-
-    for (var i = 1; i < 5; ++i) {
-      var a = math_tau * i / 5,
-          c = Math.cos(a),
-          s = Math.sin(a);
-      context.lineTo(s * r, -c * r), context.lineTo(c * x - s * y, s * x + c * y);
-    }
-
-    context.closePath();
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/square.js
-/* harmony default export */ var square = ({
-  draw: function draw(context, size) {
-    var w = Math.sqrt(size),
-        x = -w / 2;
-    context.rect(x, x, w, w);
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/triangle.js
-var sqrt3 = Math.sqrt(3);
-/* harmony default export */ var triangle = ({
-  draw: function draw(context, size) {
-    var y = -Math.sqrt(size / (sqrt3 * 3));
-    context.moveTo(0, y * 2), context.lineTo(-sqrt3 * y, -y), context.lineTo(sqrt3 * y, -y), context.closePath();
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/wye.js
-var wye_c = -.5,
-    wye_s = Math.sqrt(3) / 2,
-    wye_k = 1 / Math.sqrt(12),
-    wye_a = (wye_k / 2 + 1) * 3;
-/* harmony default export */ var wye = ({
-  draw: function draw(context, size) {
-    var r = Math.sqrt(size / wye_a),
-        x0 = r / 2,
-        y0 = r * wye_k,
-        x1 = x0,
-        y1 = r * wye_k + r,
-        x2 = -x1,
-        y2 = y1;
-    context.moveTo(x0, y0), context.lineTo(x1, y1), context.lineTo(x2, y2), context.lineTo(wye_c * x0 - wye_s * y0, wye_s * x0 + wye_c * y0), context.lineTo(wye_c * x1 - wye_s * y1, wye_s * x1 + wye_c * y1), context.lineTo(wye_c * x2 - wye_s * y2, wye_s * x2 + wye_c * y2), context.lineTo(wye_c * x0 + wye_s * y0, wye_c * y0 - wye_s * x0), context.lineTo(wye_c * x1 + wye_s * y1, wye_c * y1 - wye_s * x1), context.lineTo(wye_c * x2 + wye_s * y2, wye_c * y2 - wye_s * x2), context.closePath();
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol.js
-
-
-
-
-
-
-
-
-
-var symbols = [symbol_circle, symbol_cross, diamond, square, star, triangle, wye];
-/* harmony default export */ var src_symbol = (function () {
-  function symbol() {
-    var buffer;
-    if (context || (context = buffer = src_path()), type.apply(this, arguments).draw(context, +size.apply(this, arguments)), buffer) return context = null, buffer + "" || null;
-  }
-
-  var type = d3_shape_src_constant(symbol_circle),
-      size = d3_shape_src_constant(64),
-      context = null;
-  return symbol.type = function (_) {
-    return arguments.length ? (type = typeof _ === "function" ? _ : d3_shape_src_constant(_), symbol) : type;
-  }, symbol.size = function (_) {
-    return arguments.length ? (size = typeof _ === "function" ? _ : d3_shape_src_constant(+_), symbol) : size;
-  }, symbol.context = function (_) {
-    return arguments.length ? (context = _ == null ? null : _, symbol) : context;
-  }, symbol;
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/noop.js
-/* harmony default export */ var src_noop = (function () {});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/basis.js
-function _point(that, x, y) {
-  that._context.bezierCurveTo((2 * that._x0 + that._x1) / 3, (2 * that._y0 + that._y1) / 3, (that._x0 + 2 * that._x1) / 3, (that._y0 + 2 * that._y1) / 3, (that._x0 + 4 * that._x1 + x) / 6, (that._y0 + 4 * that._y1 + y) / 6);
-}
-
-
-function Basis(context) {
-  this._context = context;
-}
-Basis.prototype = {
-  areaStart: function areaStart() {
-    this._line = 0;
-  },
-  areaEnd: function areaEnd() {
-    this._line = NaN;
-  },
-  lineStart: function lineStart() {
-    this._x0 = this._x1 = this._y0 = this._y1 = NaN, this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    switch (this._point) {
-      case 3:
-        _point(this, this._x1, this._y1);
-
-      // proceed
-
-      case 2:
-        this._context.lineTo(this._x1, this._y1);
-
-    }
-
-    (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line = 1 - this._line;
-  },
-  point: function point(x, y) {
-    switch (x = +x, y = +y, this._point) {
-      case 0:
-        this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
-        break;
-
-      case 1:
-        this._point = 2;
-        break;
-
-      case 2:
-        this._point = 3, this._context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6);
-      // proceed
-
-      default:
-        _point(this, x, y);
-
-    }
-
-    this._x0 = this._x1, this._x1 = x, this._y0 = this._y1, this._y1 = y;
-  }
-};
-/* harmony default export */ var curve_basis = (function (context) {
-  return new Basis(context);
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/basisClosed.js
-
-
-
-function BasisClosed(context) {
-  this._context = context;
-}
-
-BasisClosed.prototype = {
-  areaStart: src_noop,
-  areaEnd: src_noop,
-  lineStart: function lineStart() {
-    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = NaN, this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    switch (this._point) {
-      case 1:
-        {
-          this._context.moveTo(this._x2, this._y2), this._context.closePath();
-          break;
-        }
-
-      case 2:
-        {
-          this._context.moveTo((this._x2 + 2 * this._x3) / 3, (this._y2 + 2 * this._y3) / 3), this._context.lineTo((this._x3 + 2 * this._x2) / 3, (this._y3 + 2 * this._y2) / 3), this._context.closePath();
-          break;
-        }
-
-      case 3:
-        {
-          this.point(this._x2, this._y2), this.point(this._x3, this._y3), this.point(this._x4, this._y4);
-          break;
-        }
-    }
-  },
-  point: function point(x, y) {
-    switch (x = +x, y = +y, this._point) {
-      case 0:
-        this._point = 1, this._x2 = x, this._y2 = y;
-        break;
-
-      case 1:
-        this._point = 2, this._x3 = x, this._y3 = y;
-        break;
-
-      case 2:
-        this._point = 3, this._x4 = x, this._y4 = y, this._context.moveTo((this._x0 + 4 * this._x1 + x) / 6, (this._y0 + 4 * this._y1 + y) / 6);
-        break;
-
-      default:
-        _point(this, x, y);
-
-    }
-
-    this._x0 = this._x1, this._x1 = x, this._y0 = this._y1, this._y1 = y;
-  }
-};
-/* harmony default export */ var curve_basisClosed = (function (context) {
-  return new BasisClosed(context);
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/basisOpen.js
-
-
-function BasisOpen(context) {
-  this._context = context;
-}
-
-BasisOpen.prototype = {
-  areaStart: function areaStart() {
-    this._line = 0;
-  },
-  areaEnd: function areaEnd() {
-    this._line = NaN;
-  },
-  lineStart: function lineStart() {
-    this._x0 = this._x1 = this._y0 = this._y1 = NaN, this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    (this._line || this._line !== 0 && this._point === 3) && this._context.closePath(), this._line = 1 - this._line;
-  },
-  point: function point(x, y) {
-    switch (x = +x, y = +y, this._point) {
-      case 0:
-        this._point = 1;
-        break;
-
-      case 1:
-        this._point = 2;
-        break;
-
-      case 2:
-        this._point = 3;
-        var x0 = (this._x0 + 4 * this._x1 + x) / 6,
-            y0 = (this._y0 + 4 * this._y1 + y) / 6;
-        this._line ? this._context.lineTo(x0, y0) : this._context.moveTo(x0, y0);
-        break;
-
-      case 3:
-        this._point = 4;
-      // proceed
-
-      default:
-        _point(this, x, y);
-
-    }
-
-    this._x0 = this._x1, this._x1 = x, this._y0 = this._y1, this._y1 = y;
-  }
-};
-/* harmony default export */ var basisOpen = (function (context) {
-  return new BasisOpen(context);
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/bundle.js
-
-
-function Bundle(context, beta) {
-  this._basis = new Basis(context), this._beta = beta;
-}
-
-Bundle.prototype = {
-  lineStart: function lineStart() {
-    this._x = [], this._y = [], this._basis.lineStart();
-  },
-  lineEnd: function lineEnd() {
-    var x = this._x,
-        y = this._y,
-        j = x.length - 1;
-    if (j > 0) for (var t, x0 = x[0], y0 = y[0], dx = x[j] - x0, dy = y[j] - y0, i = -1; ++i <= j;) t = i / j, this._basis.point(this._beta * x[i] + (1 - this._beta) * (x0 + t * dx), this._beta * y[i] + (1 - this._beta) * (y0 + t * dy));
-    this._x = this._y = null, this._basis.lineEnd();
-  },
-  point: function point(x, y) {
-    this._x.push(+x), this._y.push(+y);
-  }
-};
-/* harmony default export */ var curve_bundle = ((function custom(beta) {
-  function bundle(context) {
-    return beta === 1 ? new Basis(context) : new Bundle(context, beta);
-  }
-
-  return bundle.beta = function (beta) {
-    return custom(+beta);
-  }, bundle;
-})(.85));
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/cardinal.js
-function cardinal_point(that, x, y) {
-  that._context.bezierCurveTo(that._x1 + that._k * (that._x2 - that._x0), that._y1 + that._k * (that._y2 - that._y0), that._x2 + that._k * (that._x1 - x), that._y2 + that._k * (that._y1 - y), that._x2, that._y2);
-}
-
-
-function Cardinal(context, tension) {
-  this._context = context, this._k = (1 - tension) / 6;
-}
-Cardinal.prototype = {
-  areaStart: function areaStart() {
-    this._line = 0;
-  },
-  areaEnd: function areaEnd() {
-    this._line = NaN;
-  },
-  lineStart: function lineStart() {
-    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN, this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    switch (this._point) {
-      case 2:
-        this._context.lineTo(this._x2, this._y2);
-
-        break;
-
-      case 3:
-        cardinal_point(this, this._x1, this._y1);
-
-    }
-
-    (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line = 1 - this._line;
-  },
-  point: function point(x, y) {
-    switch (x = +x, y = +y, this._point) {
-      case 0:
-        this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
-        break;
-
-      case 1:
-        this._point = 2, this._x1 = x, this._y1 = y;
-        break;
-
-      case 2:
-        this._point = 3;
-      // proceed
-
-      default:
-        cardinal_point(this, x, y);
-
-    }
-
-    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
-  }
-};
-/* harmony default export */ var cardinal = ((function custom(tension) {
-  function cardinal(context) {
-    return new Cardinal(context, tension);
-  }
-
-  return cardinal.tension = function (tension) {
-    return custom(+tension);
-  }, cardinal;
-})(0));
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/cardinalClosed.js
-
-
-function CardinalClosed(context, tension) {
-  this._context = context, this._k = (1 - tension) / 6;
-}
-CardinalClosed.prototype = {
-  areaStart: src_noop,
-  areaEnd: src_noop,
-  lineStart: function lineStart() {
-    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN, this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    switch (this._point) {
-      case 1:
-        {
-          this._context.moveTo(this._x3, this._y3), this._context.closePath();
-          break;
-        }
-
-      case 2:
-        {
-          this._context.lineTo(this._x3, this._y3), this._context.closePath();
-          break;
-        }
-
-      case 3:
-        {
-          this.point(this._x3, this._y3), this.point(this._x4, this._y4), this.point(this._x5, this._y5);
-          break;
-        }
-    }
-  },
-  point: function point(x, y) {
-    switch (x = +x, y = +y, this._point) {
-      case 0:
-        this._point = 1, this._x3 = x, this._y3 = y;
-        break;
-
-      case 1:
-        this._point = 2, this._context.moveTo(this._x4 = x, this._y4 = y);
-        break;
-
-      case 2:
-        this._point = 3, this._x5 = x, this._y5 = y;
-        break;
-
-      default:
-        cardinal_point(this, x, y);
-
-    }
-
-    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
-  }
-};
-/* harmony default export */ var cardinalClosed = ((function custom(tension) {
-  function cardinal(context) {
-    return new CardinalClosed(context, tension);
-  }
-
-  return cardinal.tension = function (tension) {
-    return custom(+tension);
-  }, cardinal;
-})(0));
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/cardinalOpen.js
-
-function CardinalOpen(context, tension) {
-  this._context = context, this._k = (1 - tension) / 6;
-}
-CardinalOpen.prototype = {
-  areaStart: function areaStart() {
-    this._line = 0;
-  },
-  areaEnd: function areaEnd() {
-    this._line = NaN;
-  },
-  lineStart: function lineStart() {
-    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN, this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    (this._line || this._line !== 0 && this._point === 3) && this._context.closePath(), this._line = 1 - this._line;
-  },
-  point: function point(x, y) {
-    switch (x = +x, y = +y, this._point) {
-      case 0:
-        this._point = 1;
-        break;
-
-      case 1:
-        this._point = 2;
-        break;
-
-      case 2:
-        this._point = 3, this._line ? this._context.lineTo(this._x2, this._y2) : this._context.moveTo(this._x2, this._y2);
-        break;
-
-      case 3:
-        this._point = 4;
-      // proceed
-
-      default:
-        cardinal_point(this, x, y);
-
-    }
-
-    this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
-  }
-};
-/* harmony default export */ var cardinalOpen = ((function custom(tension) {
-  function cardinal(context) {
-    return new CardinalOpen(context, tension);
-  }
-
-  return cardinal.tension = function (tension) {
-    return custom(+tension);
-  }, cardinal;
-})(0));
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/catmullRom.js
-
-
-
-function catmullRom_point(that, x, y) {
-  var x1 = that._x1,
-      y1 = that._y1,
-      x2 = that._x2,
-      y2 = that._y2;
-
-  if (that._l01_a > math_epsilon) {
-    var a = 2 * that._l01_2a + 3 * that._l01_a * that._l12_a + that._l12_2a,
-        n = 3 * that._l01_a * (that._l01_a + that._l12_a);
-    x1 = (x1 * a - that._x0 * that._l12_2a + that._x2 * that._l01_2a) / n, y1 = (y1 * a - that._y0 * that._l12_2a + that._y2 * that._l01_2a) / n;
-  }
-
-  if (that._l23_a > math_epsilon) {
-    var b = 2 * that._l23_2a + 3 * that._l23_a * that._l12_a + that._l12_2a,
-        m = 3 * that._l23_a * (that._l23_a + that._l12_a);
-    x2 = (x2 * b + that._x1 * that._l23_2a - x * that._l12_2a) / m, y2 = (y2 * b + that._y1 * that._l23_2a - y * that._l12_2a) / m;
-  }
-
-  that._context.bezierCurveTo(x1, y1, x2, y2, that._x2, that._y2);
-}
-
-
-
-function CatmullRom(context, alpha) {
-  this._context = context, this._alpha = alpha;
-}
-
-CatmullRom.prototype = {
-  areaStart: function areaStart() {
-    this._line = 0;
-  },
-  areaEnd: function areaEnd() {
-    this._line = NaN;
-  },
-  lineStart: function lineStart() {
-    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN, this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    switch (this._point) {
-      case 2:
-        this._context.lineTo(this._x2, this._y2);
-
-        break;
-
-      case 3:
-        this.point(this._x2, this._y2);
-    }
-
-    (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line = 1 - this._line;
-  },
-  point: function point(x, y) {
-    if (x = +x, y = +y, this._point) {
-      var x23 = this._x2 - x,
-          y23 = this._y2 - y;
-      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
-    }
-
-    switch (this._point) {
-      case 0:
-        this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
-        break;
-
-      case 1:
-        this._point = 2;
-        break;
-
-      case 2:
-        this._point = 3;
-      // proceed
-
-      default:
-        catmullRom_point(this, x, y);
-
-    }
-
-    this._l01_a = this._l12_a, this._l12_a = this._l23_a, this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a, this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
-  }
-};
-/* harmony default export */ var curve_catmullRom = ((function custom(alpha) {
-  function catmullRom(context) {
-    return alpha ? new CatmullRom(context, alpha) : new Cardinal(context, 0);
-  }
-
-  return catmullRom.alpha = function (alpha) {
-    return custom(+alpha);
-  }, catmullRom;
-})(.5));
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/catmullRomClosed.js
-
-
-
-
-function CatmullRomClosed(context, alpha) {
-  this._context = context, this._alpha = alpha;
-}
-
-CatmullRomClosed.prototype = {
-  areaStart: src_noop,
-  areaEnd: src_noop,
-  lineStart: function lineStart() {
-    this._x0 = this._x1 = this._x2 = this._x3 = this._x4 = this._x5 = this._y0 = this._y1 = this._y2 = this._y3 = this._y4 = this._y5 = NaN, this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    switch (this._point) {
-      case 1:
-        {
-          this._context.moveTo(this._x3, this._y3), this._context.closePath();
-          break;
-        }
-
-      case 2:
-        {
-          this._context.lineTo(this._x3, this._y3), this._context.closePath();
-          break;
-        }
-
-      case 3:
-        {
-          this.point(this._x3, this._y3), this.point(this._x4, this._y4), this.point(this._x5, this._y5);
-          break;
-        }
-    }
-  },
-  point: function point(x, y) {
-    if (x = +x, y = +y, this._point) {
-      var x23 = this._x2 - x,
-          y23 = this._y2 - y;
-      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
-    }
-
-    switch (this._point) {
-      case 0:
-        this._point = 1, this._x3 = x, this._y3 = y;
-        break;
-
-      case 1:
-        this._point = 2, this._context.moveTo(this._x4 = x, this._y4 = y);
-        break;
-
-      case 2:
-        this._point = 3, this._x5 = x, this._y5 = y;
-        break;
-
-      default:
-        catmullRom_point(this, x, y);
-
-    }
-
-    this._l01_a = this._l12_a, this._l12_a = this._l23_a, this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a, this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
-  }
-};
-/* harmony default export */ var catmullRomClosed = ((function custom(alpha) {
-  function catmullRom(context) {
-    return alpha ? new CatmullRomClosed(context, alpha) : new CardinalClosed(context, 0);
-  }
-
-  return catmullRom.alpha = function (alpha) {
-    return custom(+alpha);
-  }, catmullRom;
-})(.5));
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/catmullRomOpen.js
-
-
-
-function CatmullRomOpen(context, alpha) {
-  this._context = context, this._alpha = alpha;
-}
-
-CatmullRomOpen.prototype = {
-  areaStart: function areaStart() {
-    this._line = 0;
-  },
-  areaEnd: function areaEnd() {
-    this._line = NaN;
-  },
-  lineStart: function lineStart() {
-    this._x0 = this._x1 = this._x2 = this._y0 = this._y1 = this._y2 = NaN, this._l01_a = this._l12_a = this._l23_a = this._l01_2a = this._l12_2a = this._l23_2a = this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    (this._line || this._line !== 0 && this._point === 3) && this._context.closePath(), this._line = 1 - this._line;
-  },
-  point: function point(x, y) {
-    if (x = +x, y = +y, this._point) {
-      var x23 = this._x2 - x,
-          y23 = this._y2 - y;
-      this._l23_a = Math.sqrt(this._l23_2a = Math.pow(x23 * x23 + y23 * y23, this._alpha));
-    }
-
-    switch (this._point) {
-      case 0:
-        this._point = 1;
-        break;
-
-      case 1:
-        this._point = 2;
-        break;
-
-      case 2:
-        this._point = 3, this._line ? this._context.lineTo(this._x2, this._y2) : this._context.moveTo(this._x2, this._y2);
-        break;
-
-      case 3:
-        this._point = 4;
-      // proceed
-
-      default:
-        catmullRom_point(this, x, y);
-
-    }
-
-    this._l01_a = this._l12_a, this._l12_a = this._l23_a, this._l01_2a = this._l12_2a, this._l12_2a = this._l23_2a, this._x0 = this._x1, this._x1 = this._x2, this._x2 = x, this._y0 = this._y1, this._y1 = this._y2, this._y2 = y;
-  }
-};
-/* harmony default export */ var catmullRomOpen = ((function custom(alpha) {
-  function catmullRom(context) {
-    return alpha ? new CatmullRomOpen(context, alpha) : new CardinalOpen(context, 0);
-  }
-
-  return catmullRom.alpha = function (alpha) {
-    return custom(+alpha);
-  }, catmullRom;
-})(.5));
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/linearClosed.js
-
-
-function LinearClosed(context) {
-  this._context = context;
-}
-
-LinearClosed.prototype = {
-  areaStart: src_noop,
-  areaEnd: src_noop,
-  lineStart: function lineStart() {
-    this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    this._point && this._context.closePath();
-  },
-  point: function point(x, y) {
-    x = +x, y = +y, this._point ? this._context.lineTo(x, y) : (this._point = 1, this._context.moveTo(x, y));
-  }
-};
-/* harmony default export */ var linearClosed = (function (context) {
-  return new LinearClosed(context);
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/monotone.js
-function monotone_sign(x) {
-  return x < 0 ? -1 : 1;
-} // Calculate the slopes of the tangents (Hermite-type interpolation) based on
-// the following paper: Steffen, M. 1990. A Simple Method for Monotonic
-// Interpolation in One Dimension. Astronomy and Astrophysics, Vol. 239, NO.
-// NOV(II), P. 443, 1990.
-
-
-function slope3(that, x2, y2) {
-  var h0 = that._x1 - that._x0,
-      h1 = x2 - that._x1,
-      s0 = (that._y1 - that._y0) / (h0 || h1 < 0 && -0),
-      s1 = (y2 - that._y1) / (h1 || h0 < 0 && -0);
-  return (monotone_sign(s0) + monotone_sign(s1)) * Math.min(Math.abs(s0), Math.abs(s1), .5 * Math.abs((s0 * h1 + s1 * h0) / (h0 + h1))) || 0;
-} // Calculate a one-sided slope.
-
-
-function slope2(that, t) {
-  var h = that._x1 - that._x0;
-  return h ? (3 * (that._y1 - that._y0) / h - t) / 2 : t;
-} // According to https://en.wikipedia.org/wiki/Cubic_Hermite_spline#Representations
-// "you can express cubic Hermite interpolation in terms of cubic Bézier curves
-// with respect to the four values p0, p0 + m0 / 3, p1 - m1 / 3, p1".
-
-
-function monotone_point(that, t0, t1) {
-  var x0 = that._x0,
-      y0 = that._y0,
-      x1 = that._x1,
-      y1 = that._y1,
-      dx = (x1 - x0) / 3;
-
-  that._context.bezierCurveTo(x0 + dx, y0 + dx * t0, x1 - dx, y1 - dx * t1, x1, y1);
-}
-
-function MonotoneX(context) {
-  this._context = context;
-}
-
-MonotoneX.prototype = {
-  areaStart: function areaStart() {
-    this._line = 0;
-  },
-  areaEnd: function areaEnd() {
-    this._line = NaN;
-  },
-  lineStart: function lineStart() {
-    this._x0 = this._x1 = this._y0 = this._y1 = this._t0 = NaN, this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    switch (this._point) {
-      case 2:
-        this._context.lineTo(this._x1, this._y1);
-
-        break;
-
-      case 3:
-        monotone_point(this, this._t0, slope2(this, this._t0));
-
-    }
-
-    (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line = 1 - this._line;
-  },
-  point: function point(x, y) {
-    var t1 = NaN;
-
-    if (x = +x, y = +y, x !== this._x1 || y !== this._y1) {
-      // Ignore coincident points.
-      switch (this._point) {
-        case 0:
-          this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
-          break;
-
-        case 1:
-          this._point = 2;
-          break;
-
-        case 2:
-          this._point = 3, monotone_point(this, slope2(this, t1 = slope3(this, x, y)), t1);
-          break;
-
-        default:
-          monotone_point(this, this._t0, t1 = slope3(this, x, y));
-
-      }
-
-      this._x0 = this._x1, this._x1 = x, this._y0 = this._y1, this._y1 = y, this._t0 = t1;
-    }
-  }
-};
-
-function MonotoneY(context) {
-  this._context = new ReflectContext(context);
-}
-
-(MonotoneY.prototype = Object.create(MonotoneX.prototype)).point = function (x, y) {
-  MonotoneX.prototype.point.call(this, y, x);
-};
-
-function ReflectContext(context) {
-  this._context = context;
-}
-
-ReflectContext.prototype = {
-  moveTo: function moveTo(x, y) {
-    this._context.moveTo(y, x);
-  },
-  closePath: function closePath() {
-    this._context.closePath();
-  },
-  lineTo: function lineTo(x, y) {
-    this._context.lineTo(y, x);
-  },
-  bezierCurveTo: function bezierCurveTo(x1, y1, x2, y2, x, y) {
-    this._context.bezierCurveTo(y1, x1, y2, x2, y, x);
-  }
-};
-function monotoneX(context) {
-  return new MonotoneX(context);
-}
-function monotoneY(context) {
-  return new MonotoneY(context);
-}
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/natural.js
-function Natural(context) {
-  this._context = context;
-}
-
-Natural.prototype = {
-  areaStart: function areaStart() {
-    this._line = 0;
-  },
-  areaEnd: function areaEnd() {
-    this._line = NaN;
-  },
-  lineStart: function lineStart() {
-    this._x = [], this._y = [];
-  },
-  lineEnd: function lineEnd() {
-    var x = this._x,
-        y = this._y,
-        n = x.length;
-    if (n) if (this._line ? this._context.lineTo(x[0], y[0]) : this._context.moveTo(x[0], y[0]), n === 2) this._context.lineTo(x[1], y[1]);else for (var px = controlPoints(x), py = controlPoints(y), i0 = 0, i1 = 1; i1 < n; ++i0, ++i1) this._context.bezierCurveTo(px[0][i0], py[0][i0], px[1][i0], py[1][i0], x[i1], y[i1]);
-    (this._line || this._line !== 0 && n === 1) && this._context.closePath(), this._line = 1 - this._line, this._x = this._y = null;
-  },
-  point: function point(x, y) {
-    this._x.push(+x), this._y.push(+y);
-  }
-};
-
-// See https://www.particleincell.com/2012/bezier-splines/ for derivation.
-function controlPoints(x) {
-  var i,
-      m,
-      n = x.length - 1,
-      a = Array(n),
-      b = Array(n),
-      r = Array(n);
-
-  for (a[0] = 0, b[0] = 2, r[0] = x[0] + 2 * x[1], i = 1; i < n - 1; ++i) a[i] = 1, b[i] = 4, r[i] = 4 * x[i] + 2 * x[i + 1];
-
-  for (a[n - 1] = 2, b[n - 1] = 7, r[n - 1] = 8 * x[n - 1] + x[n], i = 1; i < n; ++i) m = a[i] / b[i - 1], b[i] -= m, r[i] -= m * r[i - 1];
-
-  for (a[n - 1] = r[n - 1] / b[n - 1], i = n - 2; i >= 0; --i) a[i] = (r[i] - a[i + 1]) / b[i];
-
-  for (b[n - 1] = (x[n] + a[n - 1]) / 2, i = 0; i < n - 1; ++i) b[i] = 2 * x[i + 1] - a[i + 1];
-
-  return [a, b];
-}
-
-/* harmony default export */ var natural = (function (context) {
-  return new Natural(context);
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/curve/step.js
-function Step(context, t) {
-  this._context = context, this._t = t;
-}
-
-Step.prototype = {
-  areaStart: function areaStart() {
-    this._line = 0;
-  },
-  areaEnd: function areaEnd() {
-    this._line = NaN;
-  },
-  lineStart: function lineStart() {
-    this._x = this._y = NaN, this._point = 0;
-  },
-  lineEnd: function lineEnd() {
-    0 < this._t && this._t < 1 && this._point === 2 && this._context.lineTo(this._x, this._y), (this._line || this._line !== 0 && this._point === 1) && this._context.closePath(), this._line >= 0 && (this._t = 1 - this._t, this._line = 1 - this._line);
-  },
-  point: function point(x, y) {
-    switch (x = +x, y = +y, this._point) {
-      case 0:
-        this._point = 1, this._line ? this._context.lineTo(x, y) : this._context.moveTo(x, y);
-        break;
-
-      case 1:
-        this._point = 2;
-      // proceed
-
-      default:
-        {
-          if (this._t <= 0) this._context.lineTo(this._x, y), this._context.lineTo(x, y);else {
-            var x1 = this._x * (1 - this._t) + x * this._t;
-            this._context.lineTo(x1, this._y), this._context.lineTo(x1, y);
-          }
-          break;
-        }
-    }
-
-    this._x = x, this._y = y;
-  }
-};
-/* harmony default export */ var curve_step = (function (context) {
-  return new Step(context, .5);
-});
-function stepBefore(context) {
-  return new Step(context, 0);
-}
-function stepAfter(context) {
-  return new Step(context, 1);
-}
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/none.js
-/* harmony default export */ var offset_none = (function (series, order) {
-  if ((n = series.length) > 1) for (var j, s0, n, i = 1, s1 = series[order[0]], m = s1.length; i < n; ++i) for (s0 = s1, s1 = series[order[i]], j = 0; j < m; ++j) s1[j][1] += s1[j][0] = isNaN(s0[j][1]) ? s0[j][0] : s0[j][1];
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/none.js
-/* harmony default export */ var order_none = (function (series) {
-  for (var n = series.length, o = Array(n); --n >= 0;) o[n] = n;
-
-  return o;
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/stack.js
-
-
-
-
-
-function stackValue(d, key) {
-  return d[key];
-}
-
-/* harmony default export */ var src_stack = (function () {
-  function stack(data) {
-    var i,
-        oz,
-        kz = keys.apply(this, arguments),
-        m = data.length,
-        n = kz.length,
-        sz = Array(n);
-
-    for (i = 0; i < n; ++i) {
-      for (var sij, ki = kz[i], si = sz[i] = Array(m), j = 0; j < m; ++j) si[j] = sij = [0, +value(data[j], ki, j, data)], sij.data = data[j];
-
-      si.key = ki;
-    }
-
-    for (i = 0, oz = order(sz); i < n; ++i) sz[oz[i]].index = i;
-
-    return offset(sz, oz), sz;
-  }
-
-  var keys = d3_shape_src_constant([]),
-      order = order_none,
-      offset = offset_none,
-      value = stackValue;
-  return stack.keys = function (_) {
-    return arguments.length ? (keys = typeof _ === "function" ? _ : d3_shape_src_constant(d3_shape_src_array_slice.call(_)), stack) : keys;
-  }, stack.value = function (_) {
-    return arguments.length ? (value = typeof _ === "function" ? _ : d3_shape_src_constant(+_), stack) : value;
-  }, stack.order = function (_) {
-    return arguments.length ? (order = _ == null ? order_none : typeof _ === "function" ? _ : d3_shape_src_constant(d3_shape_src_array_slice.call(_)), stack) : order;
-  }, stack.offset = function (_) {
-    return arguments.length ? (offset = _ == null ? offset_none : _, stack) : offset;
-  }, stack;
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/expand.js
-
-/* harmony default export */ var expand = (function (series, order) {
-  if ((n = series.length) > 0) {
-    for (var i, n, y, j = 0, m = series[0].length; j < m; ++j) {
-      for (y = i = 0; i < n; ++i) y += series[i][j][1] || 0;
-
-      if (y) for (i = 0; i < n; ++i) series[i][j][1] /= y;
-    }
-
-    offset_none(series, order);
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/diverging.js
-/* harmony default export */ var offset_diverging = (function (series, order) {
-  if ((n = series.length) > 0) for (var i, d, dy, yp, yn, n, j = 0, m = series[order[0]].length; j < m; ++j) for (yp = yn = 0, i = 0; i < n; ++i) (dy = (d = series[order[i]][j])[1] - d[0]) > 0 ? (d[0] = yp, d[1] = yp += dy) : dy < 0 ? (d[1] = yn, d[0] = yn += dy) : (d[0] = 0, d[1] = dy);
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/silhouette.js
-
-/* harmony default export */ var silhouette = (function (series, order) {
-  if ((n = series.length) > 0) {
-    for (var n, j = 0, s0 = series[order[0]], m = s0.length; j < m; ++j) {
-      for (var i = 0, y = 0; i < n; ++i) y += series[i][j][1] || 0;
-
-      s0[j][1] += s0[j][0] = -y / 2;
-    }
-
-    offset_none(series, order);
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/offset/wiggle.js
-
-/* harmony default export */ var wiggle = (function (series, order) {
-  if ((n = series.length) > 0 && (m = (s0 = series[order[0]]).length) > 0) {
-    for (var s0, m, n, y = 0, j = 1; j < m; ++j) {
-      for (var i = 0, s1 = 0, s2 = 0; i < n; ++i) {
-        for (var si = series[order[i]], sij0 = si[j][1] || 0, sij1 = si[j - 1][1] || 0, s3 = (sij0 - sij1) / 2, k = 0; k < i; ++k) {
-          var sk = series[order[k]],
-              skj0 = sk[j][1] || 0,
-              skj1 = sk[j - 1][1] || 0;
-          s3 += skj0 - skj1;
-        }
-
-        s1 += sij0, s2 += s3 * sij0;
-      }
-
-      s0[j - 1][1] += s0[j - 1][0] = y, s1 && (y -= s2 / s1);
-    }
-
-    s0[j - 1][1] += s0[j - 1][0] = y, offset_none(series, order);
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/appearance.js
-
-/* harmony default export */ var appearance = (function (series) {
-  var peaks = series.map(peak);
-  return order_none(series).sort(function (a, b) {
-    return peaks[a] - peaks[b];
-  });
-});
-
-function peak(series) {
-  for (var vi, i = -1, j = 0, n = series.length, vj = -Infinity; ++i < n;) (vi = +series[i][1]) > vj && (vj = vi, j = i);
-
-  return j;
-}
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/ascending.js
-
-/* harmony default export */ var order_ascending = (function (series) {
-  var sums = series.map(ascending_sum);
-  return order_none(series).sort(function (a, b) {
-    return sums[a] - sums[b];
-  });
-});
-function ascending_sum(series) {
-  for (var v, s = 0, i = -1, n = series.length; ++i < n;) (v = +series[i][1]) && (s += v);
-
-  return s;
-}
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/descending.js
-
-/* harmony default export */ var order_descending = (function (series) {
-  return order_ascending(series).reverse();
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/insideOut.js
-
-
-/* harmony default export */ var insideOut = (function (series) {
-  var i,
-      j,
-      n = series.length,
-      sums = series.map(ascending_sum),
-      order = appearance(series),
-      top = 0,
-      bottom = 0,
-      tops = [],
-      bottoms = [];
-
-  for (i = 0; i < n; ++i) j = order[i], top < bottom ? (top += sums[j], tops.push(j)) : (bottom += sums[j], bottoms.push(j));
-
-  return bottoms.reverse().concat(tops);
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/reverse.js
-
-/* harmony default export */ var order_reverse = (function (series) {
-  return order_none(series).reverse();
-});
-// CONCATENATED MODULE: ./node_modules/d3-shape/src/index.js
-
-
-
-
- // Note: radialArea is deprecated!
-
- // Note: radialLine is deprecated!
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./src/ChartInternal/shape/shape.ts
+// CONCATENATED MODULE: ./src/ChartInternal/internals/size.axis.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
-
-
-
-/* harmony default export */ var shape_shape = ({
+/* harmony default export */ var size_axis = ({
   /**
-   * Get the shape draw function
-   * @returns {object}
+   * Get Axis size according its position
+   * @param {string} id Axis id value - x, y or y2
+   * @returns {number} size Axis size value
    * @private
    */
-  getDrawShape: function getDrawShape() {
+  getAxisSize: function getAxisSize(id) {
     var $$ = this,
-        isRotated = $$.config.axis_rotated,
-        hasRadar = $$.state.hasRadar,
-        shape = {
-      type: {},
-      indices: {},
-      pos: {}
-    };
+        isRotated = $$.config.axis_rotated;
+    return isRotated && id === "x" || !isRotated && /y2?/.test(id) ? $$.getAxisWidthByAxisId(id, !0) : $$.getHorizontalAxisHeight(id);
+  },
+  getAxisWidthByAxisId: function getAxisWidthByAxisId(id, withoutRecompute) {
+    var $$ = this;
 
-    // setup drawer - MEMO: these must be called after axis updated
-    if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
-      var indices = $$.getShapeIndices($$.isLineType);
-
-      if (shape.indices.line = indices, shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, !1) : undefined, $$.hasTypeOf("Area")) {
-        var _indices = $$.getShapeIndices($$.isAreaType);
-
-        shape.indices.area = _indices, shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(_indices, !1) : undefined;
-      }
+    if ($$.axis) {
+      var position = $$.axis && $$.axis.getLabelPositionById(id);
+      return $$.axis.getMaxTickWidth(id, withoutRecompute) + (position.isInner ? 20 : 40);
     }
 
-    if ($$.hasType("bar")) {
-      var _indices2 = $$.getShapeIndices($$.isBarType);
+    return 40;
+  },
+  getHorizontalAxisHeight: function getHorizontalAxisHeight(id) {
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        _state = state,
+        current = _state.current,
+        rotatedPadding = _state.rotatedPadding,
+        isLegendRight = _state.isLegendRight,
+        isLegendInset = _state.isLegendInset,
+        isRotated = config.axis_rotated,
+        h = 30;
+    if (id === "x" && !config.axis_x_show) return 8;
+    if (id === "x" && config.axis_x_height) return config.axis_x_height;
+    if (id === "y" && !config.axis_y_show) return !config.legend_show || isLegendRight || isLegendInset ? 1 : 10;
+    if (id === "y2" && !config.axis_y2_show) return rotatedPadding.top;
+    var rotate = $$.getAxisTickRotate(id); // Calculate x/y axis height when tick rotated
 
-      shape.indices.bar = _indices2, shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(_indices2) : undefined;
+    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - rotate) / 180), !config.axis_x_tick_multiline && current.height && h > current.height / 2 && (h = current.height / 2)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
+  },
+  getEventRectWidth: function getEventRectWidth() {
+    return Math.max(0, this.axis.x.tickInterval());
+  },
+
+  /**
+   * Get axis tick test rotate value
+   * @param {string} id Axis id
+   * @returns {number} rotate value
+   * @private
+   */
+  getAxisTickRotate: function getAxisTickRotate(id) {
+    var $$ = this,
+        axis = $$.axis,
+        config = $$.config,
+        state = $$.state,
+        $el = $$.$el,
+        rotate = config["axis_" + id + "_tick_rotate"];
+
+    if (id === "x") {
+      var isCategorized = axis.isCategorized(),
+          isTimeSeries = axis.isTimeSeries(),
+          allowedXAxisTypes = isCategorized || isTimeSeries,
+          tickCount = 0;
+      config.axis_x_tick_fit && allowedXAxisTypes && (tickCount = state.current.maxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1), tickCount !== state.axis.x.tickCount && (state.axis.x.padding = $$.axis.getXAxisPadding(tickCount)), state.axis.x.tickCount = tickCount), $el.svg && config.axis_x_tick_fit && !config.axis_x_tick_multiline && !config.axis_x_tick_culling && config.axis_x_tick_autorotate && allowedXAxisTypes && (rotate = $$.needToRotateXAxisTickTexts() ? config.axis_x_tick_rotate : 0);
     }
 
-    return (!$$.hasArcType() || hasRadar) && (shape.pos = {
-      xForText: $$.generateXYForText(shape.indices, !0),
-      yForText: $$.generateXYForText(shape.indices, !1),
-      // generate circle x/y functions depending on updated params
-      cx: (hasRadar ? $$.radarCircleX : isRotated ? $$.circleY : $$.circleX).bind($$),
-      cy: (hasRadar ? $$.radarCircleY : isRotated ? $$.circleX : $$.circleY).bind($$)
-    }), shape;
-  },
-  getShapeIndices: function getShapeIndices(typeFilter) {
-    var $$ = this,
-        config = $$.config,
-        xs = config.data_xs,
-        hasXs = notEmpty(xs),
-        indices = {},
-        i = hasXs ? {} : 0;
-    return hasXs && getUnique(Object.keys(xs).map(function (v) {
-      return xs[v];
-    })).forEach(function (v) {
-      i[v] = 0, indices[v] = {};
-    }), $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(function (d) {
-      for (var groups, xKey = (d.id in xs) ? xs[d.id] : "", ind = xKey ? indices[xKey] : indices, j = 0; groups = config.data_groups[j]; j++) if (!(groups.indexOf(d.id) < 0)) for (var _row4, _k4 = 0; _row4 = groups[_k4]; _k4++) if (_row4 in ind) {
-        ind[d.id] = ind[_row4];
-        break;
-      }
-
-      isUndefined(ind[d.id]) && (ind[d.id] = xKey ? i[xKey]++ : i++, ind.__max__ = (xKey ? i[xKey] : i) - 1);
-    }), indices;
+    return rotate;
   },
 
   /**
-   * Get indices value based on data ID value
-   * @param {object} indices Indices object
-   * @param {string} id Data id value
-   * @returns {object} Indices object
+   * Check weather axis tick text needs to be rotated
+   * @returns {boolean}
    * @private
    */
-  getIndices: function getIndices(indices, id) {
-    var xs = this.config.data_xs;
-    return notEmpty(xs) ? indices[xs[id]] : indices;
-  },
-
-  /**
-   * Get indices max number
-   * @param {object} indices Indices object
-   * @returns {number} Max number
-   * @private
-   */
-  getIndicesMax: function getIndicesMax(indices) {
-    return notEmpty(this.config.data_xs) ? // if is multiple xs, return total sum of xs' __max__ value
-    Object.keys(indices).map(function (v) {
-      return indices[v].__max__ || 0;
-    }).reduce(function (acc, curr) {
-      return acc + curr;
-    }) : indices.__max__;
-  },
-  getShapeX: function getShapeX(offset, indices, isSub) {
+  needToRotateXAxisTickTexts: function needToRotateXAxisTickTexts() {
     var $$ = this,
-        config = $$.config,
-        scale = $$.scale,
-        currScale = isSub ? scale.subX : scale.zoom || scale.x,
-        barPadding = config.bar_padding,
-        sum = function (p, c) {
-      return p + c;
-    },
-        halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
-
-    return function (d) {
-      var ind = $$.getIndices(indices, d.id),
-          index = d.id in ind ? ind[d.id] : 0,
-          targetsNum = (ind.__max__ || 0) + 1,
-          x = 0;
-
-      if (notEmpty(d.x)) {
-        var xPos = currScale(d.x);
-        x = halfWidth ? xPos - (offset[d.id] || offset.width) + offset.total.slice(0, index + 1).reduce(sum) - halfWidth : xPos - (isNumber(offset) ? offset : offset.width) * (targetsNum / 2 - index);
-      } // adjust x position for bar.padding optionq
-
-
-      return offset && x && targetsNum > 1 && barPadding && (index && (x += barPadding * index), targetsNum > 2 ? x -= (targetsNum - 1) * barPadding / 2 : targetsNum === 2 && (x -= barPadding / 2)), x;
-    };
-  },
-  getShapeY: function getShapeY(isSub) {
-    var $$ = this,
-        isStackNormalized = $$.isStackNormalized();
-    return function (d) {
-      var value = isStackNormalized ? $$.getRatio("index", d, !0) : $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value;
-      return $$.getYScaleById(d.id, isSub)(value);
-    };
-  },
-
-  /**
-   * Get shape based y Axis min value
-   * @param {string} id Data id
-   * @returns {number}
-   * @private
-   */
-  getShapeYMin: function getShapeYMin(id) {
-    var $$ = this,
-        _$$$scale$$$$axis$get = $$.scale[$$.axis.getId(id)].domain(),
-        yMin = _$$$scale$$$$axis$get[0];
-
-    return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
-  },
-
-  /**
-   * Get Shape's offset data
-   * @param {Function} typeFilter Type filter function
-   * @returns {object}
-   * @private
-   */
-  getShapeOffsetData: function getShapeOffsetData(typeFilter) {
-    var $$ = this,
-        targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
-        isStackNormalized = $$.isStackNormalized(),
-        shapeOffsetTargets = targets.map(function (target) {
-      var rowValues = target.values,
-          values = {};
-      $$.isStepType(target) && (rowValues = $$.convertValuesToStep(rowValues));
-      var rowValueMapByXValue = rowValues.reduce(function (out, d) {
-        var key = +d.x;
-        return out[key] = d, values[key] = isStackNormalized ? $$.getRatio("index", d, !0) : d.value, out;
-      }, {});
-      return {
-        id: target.id,
-        rowValues: rowValues,
-        rowValueMapByXValue: rowValueMapByXValue,
-        values: values
-      };
-    }),
-        indexMapByTargetId = targets.reduce(function (out, _ref, index) {
-      var id = _ref.id;
-      return out[id] = index, out;
-    }, {});
-    return {
-      indexMapByTargetId: indexMapByTargetId,
-      shapeOffsetTargets: shapeOffsetTargets
-    };
-  },
-  getShapeOffset: function getShapeOffset(typeFilter, indices, isSub) {
-    var $$ = this,
-        _$$$getShapeOffsetDat = $$.getShapeOffsetData(typeFilter),
-        shapeOffsetTargets = _$$$getShapeOffsetDat.shapeOffsetTargets,
-        indexMapByTargetId = _$$$getShapeOffsetDat.indexMapByTargetId;
-
-    return function (d, idx) {
-      var ind = $$.getIndices(indices, d.id),
-          scale = $$.getYScaleById(d.id, isSub),
-          y0 = scale($$.getShapeYMin(d.id)),
-          dataXAsNumber = +d.x,
-          offset = y0;
-      return shapeOffsetTargets.filter(function (t) {
-        return t.id !== d.id;
-      }).forEach(function (t) {
-        if (ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-          var row = t.rowValues[idx]; // check if the x values line up
-
-          row && +row.x === dataXAsNumber || (row = t.rowValueMapByXValue[dataXAsNumber]), row && row.value * d.value >= 0 && (offset += scale(t.values[dataXAsNumber]) - y0);
-        }
-      }), offset;
-    };
-  },
-  isWithinShape: function isWithinShape(that, d) {
-    var isWithin,
-        $$ = this,
-        shape = src_select(that);
-    return $$.isTargetToShow(d.id) ? $$.hasValidPointType(that.nodeName) ? isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) : $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0) : that.nodeName === "path" && (isWithin = !shape.classed(config_classes.bar) || $$.isWithinBar(that)) : isWithin = !1, isWithin;
-  },
-  getInterpolate: function getInterpolate(d) {
-    var $$ = this,
-        interpolation = $$.getInterpolateType(d);
-    return {
-      "basis": curve_basis,
-      "basis-closed": curve_basisClosed,
-      "basis-open": basisOpen,
-      "bundle": curve_bundle,
-      "cardinal": cardinal,
-      "cardinal-closed": cardinalClosed,
-      "cardinal-open": cardinalOpen,
-      "catmull-rom": curve_catmullRom,
-      "catmull-rom-closed": catmullRomClosed,
-      "catmull-rom-open": catmullRomOpen,
-      "monotone-x": monotoneX,
-      "monotone-y": monotoneY,
-      "natural": natural,
-      "linear-closed": linearClosed,
-      "linear": curve_linear,
-      "step": curve_step,
-      "step-after": stepAfter,
-      "step-before": stepBefore
-    }[interpolation];
-  },
-  getInterpolateType: function getInterpolateType(d) {
-    var $$ = this,
-        config = $$.config,
-        type = config.spline_interpolation_type,
-        interpolation = $$.isInterpolationType(type) ? type : "cardinal";
-    return $$.isSplineType(d) ? interpolation : $$.isStepType(d) ? config.line_step_type : "linear";
+        _$$$state = $$.state,
+        axis = _$$$state.axis,
+        current = _$$$state.current,
+        xAxisLength = current.width - $$.getCurrentPaddingLeft(!1) - $$.getCurrentPaddingRight(!0),
+        tickCountWithPadding = axis.x.tickCount + axis.x.padding.left + axis.x.padding.right,
+        maxTickWidth = $$.axis.getMaxTickWidth("x");
+    return maxTickWidth > (xAxisLength / tickCountWithPadding || 0);
   }
 });
 // CONCATENATED MODULE: ./src/config/resolver/axis.ts
@@ -36610,8 +36653,9 @@ function ascending_sum(series) {
 
 
 
+
 var axis_api = [api_axis, api_category, api_flow, grid_x, grid_y, api_group, api_regions, api_selection, api_x, api_zoom];
-var internal = [interactions_drag, interactions_flow, interactions_subchart, interactions_zoom, internals_clip, internals_grid, region, internals_selection, eventrect, shape_shape];
+var internal = [Axis_Axis, interactions_drag, interactions_flow, interactions_subchart, interactions_zoom, internals_clip, eventrect, internals_grid, region, internals_selection, size_axis];
 // CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -37447,17 +37491,6 @@ var internal = [interactions_drag, interactions_flow, interactions_subchart, int
    */
   getBubbleZData: function getBubbleZData(d, type) {
     return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
-  },
-
-  /**
-   * Determine if bubble has dimension data
-   * @param {object|Array} d data value
-   * @returns {boolean}
-   * @private
-   */
-  isBubbleZType: function isBubbleZType(d) {
-    var $$ = this;
-    return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/shape/line.ts
@@ -37562,27 +37595,35 @@ var internal = [interactions_drag, interactions_flow, interactions_subchart, int
       return path || "M 0 0";
     };
   },
-  generateGetLinePoints: function generateGetLinePoints(lineIndices, isSubValue) {
-    // partial duplication of generateGetBarPoints
-    var $$ = this,
-        config = $$.config,
-        isSub = !!isSubValue,
-        x = $$.getShapeX(0, lineIndices, isSub),
-        y = $$.getShapeY(isSub),
-        lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub),
-        yScale = $$.getYScaleById.bind($$);
-    return function (d, i) {
-      var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id)),
-          offset = lineOffset(d, i) || y0,
-          posX = x(d),
-          posY = y(d);
-      config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0);
-      // 1 point that marks the line position
-      var point = [posX, posY - (y0 - offset)];
-      return [point, point, // from here and below, needed for compatibility
-      point, point];
-    };
-  },
+  // generateGetLinePoints(lineIndices, isSubValue?: boolean):Function { // partial duplication of generateGetBarPoints
+  // 	const $$ = this;
+  // 	const {config} = $$;
+  // 	const isSub = !!isSubValue;
+  // 	const x = $$.getShapeX(0, lineIndices, isSub);
+  // 	const y = $$.getShapeY(isSub);
+  // 	const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
+  // 	const yScale = $$.getYScaleById.bind($$);
+  // 	return (d, i) => {
+  // 		const y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
+  // 		const offset = lineOffset(d, i) || y0; // offset is for stacked area chart
+  // 		const posX = x(d);
+  // 		let posY = y(d);
+  // 		// fix posY not to overflow opposite quadrant
+  // 		if (config.axis_rotated && (
+  // 			(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+  // 		)) {
+  // 			posY = y0;
+  // 		}
+  // 		// 1 point that marks the line position
+  // 		const point = [posX, posY - (y0 - offset)];
+  // 		return [
+  // 			point,
+  // 			point, // from here and below, needed for compatibility
+  // 			point,
+  // 			point
+  // 		];
+  // 	};
+  // },
   lineWithRegions: function lineWithRegions(d, x, y, _regions) {
     var xp,
         yp,
@@ -38043,6 +38084,27 @@ var getTransitionName = function () {
       var className = $$.classCircle.bind($$)(d);
       this.getAttribute("class").indexOf(config_classes.EXPANDED) > -1 && (className += " " + config_classes.EXPANDED), this.setAttribute("class", className);
     }) : $$.classCircle(d)), pointClass;
+  },
+  generateGetLinePoints: function generateGetLinePoints(lineIndices, isSubValue) {
+    // partial duplication of generateGetBarPoints
+    var $$ = this,
+        config = $$.config,
+        isSub = !!isSubValue,
+        x = $$.getShapeX(0, lineIndices, isSub),
+        y = $$.getShapeY(isSub),
+        lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub),
+        yScale = $$.getYScaleById.bind($$);
+    return function (d, i) {
+      var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id)),
+          offset = lineOffset(d, i) || y0,
+          posX = x(d),
+          posY = y(d);
+      config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0);
+      // 1 point that marks the line position
+      var point = [posX, posY - (y0 - offset)];
+      return [point, point, // from here and below, needed for compatibility
+      point, point];
+    };
   },
   generatePoint: function generatePoint() {
     var $$ = this,

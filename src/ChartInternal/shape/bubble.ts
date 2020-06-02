@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {KEY} from "../../module/Cache";
-import {getMinMax, isArray, isFunction, isNumber, isObject} from "../../module/util";
+import {getMinMax, isFunction, isNumber, isObject} from "../../module/util";
 
 export default {
 	/**
