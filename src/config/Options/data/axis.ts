@@ -89,22 +89,6 @@ export default {
 	data_xSort: true,
 
 	/**
-	 * Set groups for the data for stacking.
-	 * @name data․groups
-	 * @memberof Options
-	 * @type {Array}
-	 * @default []
-	 * @example
-	 * data: {
-	 *   groups: [
-	 *     ["data1", "data2"],
-	 *     ["data3"]
-	 *   ]
-	 * }
-	 */
-	data_groups: <string[][]> [],
-
-	/**
 	 * Set y axis the data related to. y and y2 can be used.
 	 * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
 	 * @name data․axes

@@ -152,6 +152,22 @@ export default {
 	data_order: <"desc"|"asc"|Function|null> "desc",
 
 	/**
+	 * Set groups for the data for stacking.
+	 * @name data․groups
+	 * @memberof Options
+	 * @type {Array}
+	 * @default []
+	 * @example
+	 * data: {
+	 *   groups: [
+	 *     ["data1", "data2"],
+	 *     ["data3"]
+	 *   ]
+	 * }
+	 */
+	data_groups: <string[][]> [],
+
+	/**
 	 * Set color converter function.<br><br>
 	 * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
 	 * @name data․color

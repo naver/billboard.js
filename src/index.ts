@@ -22,6 +22,30 @@ import shapeLine from "./ChartInternal/shape/line";
 import shapePoint from "./ChartInternal/shape/point";
 import shapeRadar from "./ChartInternal/shape/radar";
 
+// Options
+import Options from "./config/Options/Options";
+
+// Axis based
+import optDataAxis from "./config/Options/data/axis";
+import optDataSelection from "./config/Options/data/selection";
+import optAxis from "./config/Options/axis/axis";
+import optGrid from "./config/Options/common/grid";
+import optPoint from "./config/Options/common/point";
+import optSubchart from "./config/Options/common/subchart";
+import optZoom from "./config/Options/common/zoom";
+
+import optArea from "./config/Options/shape/area";
+import optBar from "./config/Options/shape/bar";
+import optBubble from "./config/Options/shape/bubble";
+import optLine from "./config/Options/shape/line";
+import optSpline from "./config/Options/shape/spline";
+
+// Non-Axis based
+import optDonut from "./config/Options/shape/donut";
+import optGauge from "./config/Options/shape/gauge";
+import optPie from "./config/Options/shape/pie";
+import optRadar from "./config/Options/shape/radar";
+
 export {default, bb} from "./core";
 
 extend(ChartInternal.prototype, [
@@ -36,3 +60,24 @@ extend(ChartInternal.prototype, [
 ]);
 
 extend(Chart.prototype, apiAxis);
+
+// extend options
+Options.data = {
+	...optDataAxis,
+	...optDataSelection,
+	...optAxis,
+	...optGrid,
+	...optPoint,
+	...optSubchart,
+	...optZoom,
+
+	...optArea,
+	...optBar,
+	...optBubble,
+	...optLine,
+	...optSpline,
+	...optDonut,
+	...optGauge,
+	...optPie,
+	...optRadar
+};

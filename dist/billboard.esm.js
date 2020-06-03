@@ -14,8 +14,8 @@ import { csvParseRows, csvParse, tsvParseRows, tsvParse } from 'd3-dsv';
 import { drag as drag$1 } from 'd3-drag';
 import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
 import { transition } from 'd3-transition';
-import { curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen, curveCatmullRom, curveCatmullRomClosed, curveCatmullRomOpen, curveMonotoneX, curveMonotoneY, curveNatural, curveLinearClosed, curveLinear, curveStep, curveStepAfter, curveStepBefore, pie as pie$2, arc, area as area$2, line as line$2 } from 'd3-shape';
-import { zoomIdentity, zoomTransform, zoom as zoom$3 } from 'd3-zoom';
+import { curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen, curveCatmullRom, curveCatmullRomClosed, curveCatmullRomOpen, curveMonotoneX, curveMonotoneY, curveNatural, curveLinearClosed, curveLinear, curveStep, curveStepAfter, curveStepBefore, pie as pie$1, arc, area as area$1, line as line$1 } from 'd3-shape';
+import { zoomIdentity, zoomTransform, zoom as zoom$2 } from 'd3-zoom';
 import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
 import { easeLinear } from 'd3-ease';
 import { rgb } from 'd3-color';
@@ -623,32 +623,6 @@ var main = {
      */
     transition_duration: 350,
     /**
-     * Set scatter options
-     * @name scatter
-     * @memberof Options
-     * @type {object}
-     * @property {object} [scatter] scatter object
-     * @property {boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
-     * @example
-     *  scatter: {
-     *      connectNull: true,
-     *      step: {
-     *          type: "step-after"
-     *      },
-     *
-     *      // hide all data points ('point.show=false' also has similar effect)
-     *      point: false,
-     *
-     *      // show data points for only indicated datas
-     *      point: [
-     *          "data1", "data3"
-     *      ],
-     *
-     *      zerobased: false
-     *  }
-     */
-    scatter_zerobased: false,
-    /**
      * Set plugins
      * @name plugins
      * @memberof Options
@@ -868,6 +842,21 @@ var data = {
      * }
      */
     data_order: "desc",
+    /**
+     * Set groups for the data for stacking.
+     * @name data․groups
+     * @memberof Options
+     * @type {Array}
+     * @default []
+     * @example
+     * data: {
+     *   groups: [
+     *     ["data1", "data2"],
+     *     ["data3"]
+     *   ]
+     * }
+     */
+    data_groups: [],
     /**
      * Set color converter function.<br><br>
      * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
@@ -1241,6 +1230,125 @@ var data = {
      * }
      */
     data_empty_label_text: ""
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * data.selection config options
+ */
+var dataSelection = {
+    /**
+     * Set data selection enabled<br><br>
+     * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
+     * @name data․selection․enabled
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataSelection)
+     * @example
+     * data: {
+     *    selection: {
+     *       enabled: true
+     *    }
+     * }
+     */
+    data_selection_enabled: false,
+    /**
+     * Set grouped selection enabled.<br><br>
+     * If this option set true, multiple data points that have same x value will be selected by one selection.
+     * @name data․selection․grouped
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * data: {
+     *    selection: {
+     *       grouped: true
+     *    }
+     * }
+     */
+    data_selection_grouped: false,
+    /**
+     * Set a callback for each data point to determine if it's selectable or not.<br><br>
+     * The callback will receive d as an argument and it has some parameters like id, value, index. This callback should return boolean.
+     * @name data․selection․isselectable
+     * @memberof Options
+     * @type {Function}
+     * @default function() { return true; }
+     * @example
+     * data: {
+     *    selection: {
+     *       isselectable: function(d) { ... }
+     *    }
+     * }
+     */
+    data_selection_isselectable: function () { return true; },
+    /**
+     * Set multiple data points selection enabled.<br><br>
+     * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
+     * @name data․selection․multiple
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * data: {
+     *    selection: {
+     *       multiple: false
+     *    }
+     * }
+     */
+    data_selection_multiple: true,
+    /**
+     * Enable to select data points by dragging.
+     * If this option set true, data points can be selected by dragging.
+     * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
+     * @name data․selection․draggable
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * data: {
+     *    selection: {
+     *       draggable: true
+     *   }
+     * }
+     */
+    data_selection_draggable: false,
+    /**
+     * Set a callback for on data selection.
+     * @name data․onselected
+     * @memberof Options
+     * @type {Function}
+     * @default function() {}
+     * @example
+     * data: {
+     *     onselected: function(d, element) {
+     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+     *        // element - <circle>
+     *        ...
+     *    }
+     * }
+     */
+    data_onselected: function () { },
+    /**
+     * Set a callback for on data un-selection.
+     * @name data․onunselected
+     * @memberof Options
+     * @type {Function}
+     * @default function() {}
+     * @example
+     * data: {
+     *     onunselected: function(d, element) {
+     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+     *        // element - <circle>
+     *        ...
+     *    }
+     * }
+     */
+    data_onunselected: function () { }
 };
 
 /**
@@ -1740,2742 +1848,6 @@ var tooltip = {
     tooltip_onshown: function () { },
     tooltip_onhidden: function () { },
     tooltip_order: null
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Axis based chart data config options
- */
-var dataAxis = {
-    /**
-     * Specify the key of x values in the data.<br><br>
-     * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
-     * @name data․x
-     * @memberof Options
-     * @type {string}
-     * @default undefined
-     * @example
-     * data: {
-     *   x: "date"
-     * }
-     */
-    data_x: undefined,
-    /**
-     * Specify the keys of the x values for each data.<br><br>
-     * This option can be used if we want to show the data that has different x values.
-     * @name data․xs
-     * @memberof Options
-     * @type {object}
-     * @default {}
-     * @example
-     * data: {
-     *   xs: {
-     *      data1: "x1",
-     *      data2: "x2"
-     *   }
-     * }
-     */
-    data_xs: {},
-    /**
-     * Set a format specifier to parse string specifed as x.
-     * @name data․xFormat
-     * @memberof Options
-     * @type {string}
-     * @default %Y-%m-%d
-     * @example
-     * data: {
-     *    x: "x",
-     *    columns: [
-     *        ["x", "01012019", "02012019", "03012019"],
-     *        ["data1", 30, 200, 100]
-     *    ],
-     *    // Format specifier to parse as datetime for given 'x' string value
-     *    xFormat: "%m%d%Y"
-     * },
-     * axis: {
-     *    x: {
-     *        type: "timeseries"
-     *    }
-     * }
-     * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
-     */
-    data_xFormat: "%Y-%m-%d",
-    /**
-     * Set localtime format to parse x axis.
-     * @name data․xLocaltime
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @example
-     * data: {
-     *   xLocaltime: false
-     * }
-     */
-    data_xLocaltime: true,
-    /**
-     * Sort on x axis.
-     * @name data․xSort
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @example
-     * data: {
-     *   xSort: false
-     * }
-     */
-    data_xSort: true,
-    /**
-     * Set groups for the data for stacking.
-     * @name data․groups
-     * @memberof Options
-     * @type {Array}
-     * @default []
-     * @example
-     * data: {
-     *   groups: [
-     *     ["data1", "data2"],
-     *     ["data3"]
-     *   ]
-     * }
-     */
-    data_groups: [],
-    /**
-     * Set y axis the data related to. y and y2 can be used.
-     * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
-     * @name data․axes
-     * @memberof Options
-     * @type {object}
-     * @default {}
-     * @example
-     * data: {
-     *   axes: {
-     *     data1: "y",
-     *     data2: "y2"
-     *   }
-     * }
-     */
-    data_axes: {},
-    /**
-     * Set labels options
-     * @name data․labels
-     * @memberof Options
-     * @type {object}
-     * @property {object} data Data object
-     * @property {boolean} [data.labels=false] Show or hide labels on each data points
-     * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
-     * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
-     * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
-     *  - `v` is the value of the data point where the label is shown.
-     *  - `id` is the id of the data where the label is shown.
-     *  - `i` is the index of the data point where the label is shown.
-     *  - `j` is the sub index of the data point where the label is shown.<br><br>
-     * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-     * @property {string|object} [data.labels.colors] Set label text colors.
-     * @property {object} [data.labels.position] Set each dataset position, relative the original.
-     * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
-     * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
-     * @memberof Options
-     * @type {object}
-     * @default {}
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
-     * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
-     * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
-     * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
-     * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
-     * @example
-     * data: {
-     *   labels: true,
-     *
-     *   // or set specific options
-     *   labels: {
-     *     format: function(v, id, i, j) { ... },
-     *
-     *     // it's possible to set for each data
-     *     format: {
-     *         data1: function(v, id, i, j) { ... },
-     *         ...
-     *     },
-     *
-     *     // align text to center of the 'bar' shape (works only for 'bar' type)
-     *     centered: true,
-     *
-     *     // apply for all label texts
-     *     colors: "red",
-     *
-     *     // or set different colors per dataset
-     *     // for not specified dataset, will have the default color value
-     *     colors: {
-     *        data1: "yellow",
-     *        data3: "green"
-     *     },
-     *
-     *     // set x, y coordinate position
-     *     position: {
-     *        x: -10,
-     *        y: 10
-     *     },
-     *
-     *     // or set x, y coordinate position by each dataset
-     *     position: {
-     *        data1: {x: 5, y: 5},
-     *        data2: {x: 10, y: -20}
-     *     }
-     *   }
-     * }
-     */
-    data_labels: {},
-    data_labels_colors: undefined,
-    data_labels_position: {},
-    /**
-     * Define regions for each data.<br>
-     * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
-     * - The object type should be as:
-     *   - start {number}: Start data point number. If not set, the start will be the first data point.
-     *   - [end] {number}: End data point number. If not set, the end will be the last data point.
-     *   - [style.dasharray="2 2"] {object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
-     * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
-     * @name data․regions
-     * @memberof Options
-     * @type {object}
-     * @default {}
-     * @example
-     * data: {
-     *   regions: {
-     *     data1: [{
-     *         start: 1,
-     *         end: 2,
-     *         style: {
-     *             dasharray: "5 2"
-     *         }
-     *     }, {
-     *         start: 3
-     *     }],
-     *     ...
-     *   }
-     * }
-     */
-    data_regions: {},
-    /**
-     * Set the stacking to be normalized
-     * - **NOTE:**
-     *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
-     *   - y Axis will be set in percentage value (0 ~ 100%)
-     *   - Must have postive values
-     * @name data․stack․normalize
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
-     * @example
-     * data: {
-     *   stack: {
-     *      normalize: true
-     *   }
-     * }
-     */
-    data_stack_normalize: false
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * data.selection config options
- */
-var dataSelection = {
-    /**
-     * Set data selection enabled<br><br>
-     * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
-     * @name data․selection․enabled
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataSelection)
-     * @example
-     * data: {
-     *    selection: {
-     *       enabled: true
-     *    }
-     * }
-     */
-    data_selection_enabled: false,
-    /**
-     * Set grouped selection enabled.<br><br>
-     * If this option set true, multiple data points that have same x value will be selected by one selection.
-     * @name data․selection․grouped
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * data: {
-     *    selection: {
-     *       grouped: true
-     *    }
-     * }
-     */
-    data_selection_grouped: false,
-    /**
-     * Set a callback for each data point to determine if it's selectable or not.<br><br>
-     * The callback will receive d as an argument and it has some parameters like id, value, index. This callback should return boolean.
-     * @name data․selection․isselectable
-     * @memberof Options
-     * @type {Function}
-     * @default function() { return true; }
-     * @example
-     * data: {
-     *    selection: {
-     *       isselectable: function(d) { ... }
-     *    }
-     * }
-     */
-    data_selection_isselectable: function () { return true; },
-    /**
-     * Set multiple data points selection enabled.<br><br>
-     * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
-     * @name data․selection․multiple
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @example
-     * data: {
-     *    selection: {
-     *       multiple: false
-     *    }
-     * }
-     */
-    data_selection_multiple: true,
-    /**
-     * Enable to select data points by dragging.
-     * If this option set true, data points can be selected by dragging.
-     * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
-     * @name data․selection․draggable
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * data: {
-     *    selection: {
-     *       draggable: true
-     *   }
-     * }
-     */
-    data_selection_draggable: false,
-    /**
-     * Set a callback for on data selection.
-     * @name data․onselected
-     * @memberof Options
-     * @type {Function}
-     * @default function() {}
-     * @example
-     * data: {
-     *     onselected: function(d, element) {
-     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
-     *        // element - <circle>
-     *        ...
-     *    }
-     * }
-     */
-    data_onselected: function () { },
-    /**
-     * Set a callback for on data un-selection.
-     * @name data․onunselected
-     * @memberof Options
-     * @type {Function}
-     * @default function() {}
-     * @example
-     * data: {
-     *     onunselected: function(d, element) {
-     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
-     *        // element - <circle>
-     *        ...
-     *    }
-     * }
-     */
-    data_onunselected: function () { }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * x Axis config options
- */
-var x = {
-    /**
-     * Set clip-path attribute for x axis element
-     * @name axis․x․clipPath
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @see [Demo]()
-     * @example
-     * // don't set 'clip-path' attribute
-     * clipPath: false
-     */
-    axis_x_clipPath: true,
-    /**
-     * Show or hide x axis.
-     * @name axis․x․show
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @example
-     * axis: {
-     *   x: {
-     *     show: false
-     *   }
-     * }
-     */
-    axis_x_show: true,
-    /**
-     * Set type of x axis.<br><br>
-     * **Available Values:**
-     * - timeseries
-     * - category
-     * - indexed
-     * @name axis․x․type
-     * @memberof Options
-     * @type {string}
-     * @default indexed
-     * @see [Demo: indexed](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
-     * @see [Demo: timeseries](https://naver.github.io/billboard.js/demo/#Chart.TimeseriesChart)
-     * @see [Demo: category](https://naver.github.io/billboard.js/demo/#Data.CategoryData)
-     * @example
-     * axis: {
-     *   x: {
-     *     type: "timeseries"
-     *   }
-     * }
-     */
-    axis_x_type: "indexed",
-    /**
-     * Set how to treat the timezone of x values.<br>
-     * If true, treat x value as localtime. If false, convert to UTC internally.
-     * @name axis․x․localtime
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @example
-     * axis: {
-     *   x: {
-     *     localtime: false
-     *   }
-     * }
-     */
-    axis_x_localtime: true,
-    /**
-     * Set category names on category axis.
-     * This must be an array that includes category names in string. If category names are included in the date by data.x option, this is not required.
-     * @name axis․x․categories
-     * @memberof Options
-     * @type {Array}
-     * @default []
-     * @example
-     * axis: {
-     *   x: {
-     *     categories: ["Category 1", "Category 2", ...]
-     *   }
-     * }
-     */
-    axis_x_categories: [],
-    /**
-     * centerize ticks on category axis.
-     * @name axis․x․tick․centered
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       centered: true
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_centered: false,
-    /**
-     * A function to format tick value. Format string is also available for timeseries data.
-     * @name axis․x․tick․format
-     * @memberof Options
-     * @type {Function|string}
-     * @default undefined
-     * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *        // for timeseries, a 'datetime' object is given as parameter
-     *       format: function(x) {
-     *           return x.getFullYear();
-     *       }
-     *
-     *       // for category, index(Number) and categoryName(String) are given as parameter
-     *       format: function(index, categoryName) {
-     *           return categoryName.substr(0, 10);
-     *       },
-     *
-     *        // for timeseries format specifier
-     *        format: "%Y-%m-%d %H:%M:%S"
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_format: undefined,
-    /**
-     * Setting for culling ticks.<br><br>
-     * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
-     * We can change the number of ticks to be shown by axis.x.tick.culling.max.
-     * @name axis․x․tick․culling
-     * @memberof Options
-     * @type {boolean}
-     * @default
-     * - true for indexed axis and timeseries axis
-     * - false for category axis
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       culling: false
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_culling: {},
-    /**
-     * The number of tick texts will be adjusted to less than this value.
-     * @name axis․x․tick․culling․max
-     * @memberof Options
-     * @type {number}
-     * @default 10
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       culling: {
-     *           max: 5
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_culling_max: 10,
-    /**
-     * The number of x axis ticks to show.<br><br>
-     * This option hides tick lines together with tick text. If this option is used on timeseries axis, the ticks position will be determined precisely and not nicely positioned (e.g. it will have rough second value).
-     * @name axis․x․tick․count
-     * @memberof Options
-     * @type {number}
-     * @default undefined
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       count: 5
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_count: undefined,
-    /**
-     * Show or hide x axis tick line.
-     * @name axis․x․tick․show
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       show: false
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_show: true,
-    /**
-     * Show or hide x axis tick text.
-     * @name axis․x․tick․text․show
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       text: {
-     *           show: false
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_text_show: true,
-    /**
-     * Set the x Axis tick text's position relatively its original position
-     * @name axis․x․tick․text․position
-     * @memberof Options
-     * @type {object}
-     * @default {x: 0, y:0}
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       text: {
-     *         position: {
-     *           x: 10,
-     *           y: 10
-     *         }
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_text_position: { x: 0, y: 0 },
-    /**
-     * Fit x axis ticks.
-     * - **true**: ticks will be positioned nicely to have same intervals.
-     * - **false**: ticks will be positioned according to x value of the data points.
-     * @name axis․x․tick․fit
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickFitting)
-     * @see [Demo: for timeseries zoom](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickTimeseries)
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       fit: false
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_fit: true,
-    /**
-     * Set the x values of ticks manually.<br><br>
-     * If this option is provided, the position of the ticks will be determined based on those values.<br>
-     * This option works with `timeseries` data and the x values will be parsed accoding to the type of the value and data.xFormat option.
-     * @name axis․x․tick․values
-     * @memberof Options
-     * @type {Array|Function}
-     * @default null
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       values: [1, 2, 4, 8, 16, 32, ...],
-     *
-     *       // an Array value should be returned
-     *       values: function() {
-     *       	return [ ... ];
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_values: null,
-    /**
-     * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
-     * - **NOTE:** The conditions where `autorotate` is enabled are:
-     *   - axis.x.type='category' or 'timeseries
-     *   - axis.x.tick.multiline=false
-     *   - axis.x.tick.culling=false
-     *   - axis.x.tick.fit=true
-     * @name axis․x․tick․autorotate
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickAutorotate)
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       rotate: 15,
-     *       autorotate: true,
-     *       multiline: false,
-     *       culling: false,
-     *       fit: true
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_autorotate: false,
-    /**
-     * Rotate x axis tick text.
-     * - If you set negative value, it will rotate to opposite direction.
-     * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.
-     * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
-     * @name axis․x․tick․rotate
-     * @memberof Options
-     * @type {number}
-     * @default 0
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.RotateXAxisTickText)
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       rotate: 60
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_rotate: 0,
-    /**
-     * Show x axis outer tick.
-     * @name axis․x․tick․outer
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       outer: false
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_outer: true,
-    /**
-     * Set tick text to be multiline
-     * - **NOTE:**
-     *  > When x tick text contains `\n`, it's used as line break and 'axis.x.tick.width' option is ignored.
-     * @name axis․x․tick․multiline
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickMultiline)
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       multiline: false
-     *     }
-     *   }
-     * }
-     * @example
-     * // example of line break with '\n'
-     * // In this case, 'axis.x.tick.width' is ignored
-     * data: {
-     *    x: "x",
-     *    columns: [
-     *        ["x", "long\ntext", "Another\nLong\nText"],
-     *        ...
-     *    ],
-     * }
-     */
-    axis_x_tick_multiline: true,
-    /**
-     * Set tick width
-     * - **NOTE:**
-     *  > When x tick text contains `\n`, this option is ignored.
-     * @name axis․x․tick․width
-     * @memberof Options
-     * @type {number}
-     * @default null
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       width: 50
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_width: null,
-    /**
-     * Set to display system tooltip(via 'title' attribute) for tick text
-     * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
-     * @name axis․x․tick․tooltip
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * axis: {
-     *   x: {
-     *     tick: {
-     *       tooltip: true
-     *     }
-     *   }
-     * }
-     */
-    axis_x_tick_tooltip: false,
-    /**
-     * Set max value of x axis range.
-     * @name axis․x․max
-     * @memberof Options
-     * @property {number} max Set the max value
-     * @property {boolean} [max.fit=false] When specified `max.value` is greater than the bound data value, setting `true` will make x axis max to be fitted to the bound data max value.
-     * - **NOTE:** If the bound data max value is greater than the `max.value`, the x axis max will be limited as the given `max.value`.
-     * @property {number} [max.value] Set the max value
-     * @example
-     * axis: {
-     *   x: {
-     *     max: 100,
-     *
-     *     max: {
-     *       // 'fit=true' will make x axis max to be limited as the bound data value max when 'max.value' is greater.
-     *       // - when bound data max is '10' and max.value: '100' ==>  x axis max will be '10'
-     *       // - when bound data max is '1000' and max.value: '100' ==> x axis max will be '100'
-     *       fit: true,
-     *       value: 100
-     *     }
-     *   }
-     * }
-     */
-    axis_x_max: undefined,
-    /**
-     * Set min value of x axis range.
-     * @name axis․x․min
-     * @memberof Options
-     * @property {number} min Set the min value
-     * @property {boolean} [min.fit=false] When specified `min.value` is lower than the bound data value, setting `true` will make x axis min to be fitted to the bound data min value.
-     * - **NOTE:** If the bound data min value is lower than the `min.value`, the x axis min will be limited as the given `min.value`.
-     * @property {number} [min.value] Set the min value
-     * @example
-     * axis: {
-     *   x: {
-     *     min: -100,
-     *
-     *     min: {
-     *       // 'fit=true' will make x axis min to be limited as the bound data value min when 'min.value' is lower.
-     *       // - when bound data min is '-10' and min.value: '-100' ==>  x axis min will be '-10'
-     *       // - when bound data min is '-1000' and min.value: '-100' ==> x axis min will be '-100'
-     *       fit: true,
-     *       value: -100
-     *     }
-     *   }
-     * }
-     */
-    axis_x_min: undefined,
-    /**
-     * Set padding for x axis.<br><br>
-     * If this option is set, the range of x axis will increase/decrease according to the values.
-     * If no padding is needed in the rage of x axis, 0 should be set.
-     * - **NOTE:**
-     *   The padding values aren't based on pixels. It differs according axis types<br>
-     *   - **category:** The unit of tick value
-     *     ex. the given value `1`, is same as the width of 1 tick width
-     *   - **timeseries:** Numeric time value
-     *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
-     * @name axis․x․padding
-     * @memberof Options
-     * @type {object|number}
-     * @default {}
-     * @example
-     * axis: {
-     *   x: {
-     *     padding: {
-     *       // when axis type is 'category'
-     *       left: 1,  // set left padding width of equivalent value of a tick's width
-     *       right: 0.5  // set right padding width as half of equivalent value of tick's width
-     *
-     *       // when axis type is 'timeseries'
-     *       left: 1000*60*60*24,  // set left padding width of equivalent value of a day tick's width
-     *       right: 1000*60*60*12   // set right padding width as half of equivalent value of a day tick's width
-     *     },
-     *
-     *     // or set both values at once.
-     *     padding: 10
-     *   }
-     * }
-     */
-    axis_x_padding: {},
-    /**
-     * Set height of x axis.<br><br>
-     * The height of x axis can be set manually by this option. If you need more space for x axis, please use this option for that. The unit is pixel.
-     * @name axis․x․height
-     * @memberof Options
-     * @type {number}
-     * @default undefined
-     * @example
-     * axis: {
-     *   x: {
-     *     height: 20
-     *   }
-     * }
-     */
-    axis_x_height: undefined,
-    /**
-     * Set default extent for subchart and zoom. This can be an array or function that returns an array.
-     * @name axis․x․extent
-     * @memberof Options
-     * @type {Array|Function}
-     * @default undefined
-     * @example
-     * axis: {
-     *   x: {
-     *     // extent range as a pixel value
-     *     extent: [0, 200],
-     *
-     *     // when axis is 'timeseries', parsable datetime string
-     *     extent: ["2019-03-01", "2019-03-05"],
-     *
-     *     // return extent value
-     *     extent: function(domain, scale) {
-     *    	 var extent = domain.map(function(v) {
-     *     	    return scale(v);
-     *     	 });
-     *
-     *   	 // it should return a format of array
-     *   	 // ex) [0, 584]
-     *     	 return extent;
-     *     }
-     *   }
-     * }
-     */
-    axis_x_extent: undefined,
-    /**
-     * Set label on x axis.<br><br>
-     * You can set x axis label and change its position by this option.
-     * `string` and `object` can be passed and we can change the poisiton by passing object that has position key.<br>
-     * Available position differs according to the axis direction (vertical or horizontal).
-     * If string set, the position will be the default.
-     *
-     *  - **If it's horizontal axis:**
-     *    - inner-right [default]
-     *    - inner-center
-     *    - inner-left
-     *    - outer-right
-     *    - outer-center
-     *    - outer-left
-     *  - **If it's vertical axis:**
-     *    - inner-top [default]
-     *    - inner-middle
-     *    - inner-bottom
-     *    - outer-top
-     *    - outer-middle
-     *    - outer-bottom
-     * @name axis․x․label
-     * @memberof Options
-     * @type {string|object}
-     * @default undefined
-     * @example
-     * axis: {
-     *   x: {
-     *     label: "Your X Axis"
-     *   }
-     * }
-     *
-     * axis: {
-     *   x: {
-     *     label: {
-     *        text: "Your X Axis",
-     *        position: "outer-center"
-     *     }
-     *   }
-     * }
-     */
-    axis_x_label: {},
-    /**
-     * Set additional axes for x Axis.
-     * - **NOTE:** Axis' scale is based on x Axis value if domain option isn't set.
-     *
-     * Each axis object should consist with following options:
-     *
-     * | Name | Type | Default | Description |
-     * | --- | --- | --- | --- |
-     * | domain | Array | - | Set the domain value |
-     * | tick.outer | boolean | true | Show outer tick |
-     * | tick.format | Function | - | Set formatter for tick text |
-     * | tick.count | Number | - | Set the number of y axis ticks |
-     * | tick.values | Array | - | Set tick values manually |
-     * @name axis․x․axes
-     * @memberof Options
-     * @type {Array}
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
-     * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
-     * @example
-     * x: {
-     *    axes: [
-     *      {
-     *        // if set, will not be correlated with the main x Axis domain value
-     *        domain: [0, 1000],
-     *        tick: {
-     *          outer: false,
-     *          format: function(x) {
-     *             return x + "%";
-     *          },
-     *          count: 2,
-     *          values: [10, 20, 30]
-     *        }
-     *      },
-     *      ...
-     *    ]
-     * }
-     */
-    axis_x_axes: []
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * y Axis  config options
- */
-var y = {
-    /**
-     * Set clip-path attribute for y axis element
-     * - **NOTE**: `clip-path` attribute for y Axis is set only when `axis.y.inner` option is true.
-     * @name axis․y․clipPath
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @example
-     * // don't set 'clip-path' attribute
-     * clipPath: false
-     */
-    axis_y_clipPath: true,
-    /**
-     * Show or hide y axis.
-     * @name axis․y․show
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @example
-     * axis: {
-     *   y: {
-     *     show: false
-     *   }
-     * }
-     */
-    axis_y_show: true,
-    /**
-     * Set type of y axis.<br><br>
-     * **Available Values:**
-     *   - timeseries
-     *   - indexed
-     * @name axis․y․type
-     * @memberof Options
-     * @type {string}
-     * @default "indexed"
-     * @example
-     * axis: {
-     *   y: {
-     *     type: "timeseries"
-     *   }
-     * }
-     */
-    axis_y_type: undefined,
-    /**
-     * Set max value of y axis.
-     * - **NOTE:** Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
-     * @name axis․y․max
-     * @memberof Options
-     * @type {number}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y: {
-     *     max: 1000
-     *   }
-     * }
-     */
-    axis_y_max: undefined,
-    /**
-     * Set min value of y axis.
-     * - **NOTE:**
-     *   Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
-     * @name axis․y․min
-     * @memberof Options
-     * @type {number}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y: {
-     *     min: 1000
-     *   }
-     * }
-     */
-    axis_y_min: undefined,
-    /**
-     * Change the direction of y axis.<br><br>
-     * If true set, the direction will be from the top to the bottom.
-     * @name axis․y․inverted
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * axis: {
-     *   y: {
-     *     inverted: true
-     *   }
-     * }
-     */
-    axis_y_inverted: false,
-    /**
-     * Set center value of y axis.
-     * @name axis․y․center
-     * @memberof Options
-     * @type {number}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y: {
-     *     center: 0
-     *   }
-     * }
-     */
-    axis_y_center: undefined,
-    /**
-     * Show y axis inside of the chart.
-     * @name axis․y․inner
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * axis: {
-     *   y: {
-     *     inner: true
-     *   }
-     * }
-     */
-    axis_y_inner: false,
-    /**
-     * Set label on y axis.<br><br>
-     * You can set y axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
-     * @name axis․y․label
-     * @memberof Options
-     * @type {string|object}
-     * @default {}
-     * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
-     * @example
-     * axis: {
-     *   y: {
-     *     label: "Your Y Axis"
-     *   }
-     * }
-     *
-     * axis: {
-     *   y: {
-     *     label: {
-     *        text: "Your Y Axis",
-     *        position: "outer-middle"
-     *     }
-     *   }
-     * }
-     */
-    axis_y_label: {},
-    /**
-     * Set formatter for y axis tick text.<br><br>
-     * This option accepts d3.format object as well as a function you define.
-     * @name axis․y․tick․format
-     * @memberof Options
-     * @type {Function}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       format: function(x) {
-     *           return x.getFullYear();
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_format: undefined,
-    /**
-     * Setting for culling ticks.<br><br>
-     * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
-     * We can change the number of ticks to be shown by axis.y.tick.culling.max.
-     * @name axis․y․tick․culling
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       culling: false
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_culling: false,
-    /**
-     * The number of tick texts will be adjusted to less than this value.
-     * @name axis․y․tick․culling․max
-     * @memberof Options
-     * @type {number}
-     * @default 5
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       culling: {
-     *           max: 5
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_culling_max: 5,
-    /**
-     * Show y axis outer tick.
-     * @name axis․y․tick․outer
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       outer: false
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_outer: true,
-    /**
-     * Set y axis tick values manually.
-     * @name axis․y․tick․values
-     * @memberof Options
-     * @type {Array|Function}
-     * @default null
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       values: [100, 1000, 10000],
-     *
-     *       // an Array value should be returned
-     *       values: function() {
-     *       	return [ ... ];
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_values: null,
-    /**
-     * Rotate y axis tick text.
-     * - If you set negative value, it will rotate to opposite direction.
-     * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
-     * @name axis․y․tick․rotate
-     * @memberof Options
-     * @type {number}
-     * @default 0
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       rotate: 60
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_rotate: 0,
-    /**
-     * Set the number of y axis ticks.<br><br>
-     * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
-     * @name axis․y․tick․count
-     * @memberof Options
-     * @type {number}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       count: 5
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_count: undefined,
-    /**
-     * Show or hide y axis tick line.
-     * @name axis․y․tick․show
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       show: false
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_show: true,
-    /**
-     * Set axis tick step(interval) size.
-     * - **NOTE:** Will be ignored if `axis.y.tick.count` or `axis.y.tick.values` options are set.
-     * @name axis․y․tick․stepSize
-     * @memberof Options
-     * @type {number}
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       // tick value will step as indicated interval value.
-     *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
-     *       stepSize: 15
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_stepSize: null,
-    /**
-     * Show or hide y axis tick text.
-     * @name axis․y․tick․text․show
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       text: {
-     *           show: false
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_text_show: true,
-    /**
-     * Set the y Axis tick text's position relatively its original position
-     * @name axis․y․tick․text․position
-     * @memberof Options
-     * @type {object}
-     * @default {x: 0, y:0}
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       text: {
-     *         position: {
-     *           x: 10,
-     *           y: 10
-     *         }
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_y_tick_text_position: { x: 0, y: 0 },
-    /**
-     * Set the number of y axis ticks.<br><br>
-     * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
-     * @name axis․y․tick․time
-     * @memberof Options
-     * @private
-     * @type {object}
-     * @property {object} time time object
-     * @property {Function} [time.value] D3's time interval function (https://github.com/d3/d3-time#intervals)
-     * @example
-     * axis: {
-     *   y: {
-     *     tick: {
-     *       time: {
-     *          // ticks at 15-minute intervals
-     *          // https://github.com/d3/d3-scale/blob/master/README.md#time_ticks
-     *          value: d3.timeMinute.every(15)
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    // @TODO: not fully implemented yet
-    axis_y_tick_time_value: undefined,
-    /**
-     * Set padding for y axis.<br><br>
-     * You can set padding for y axis to create more space on the edge of the axis.
-     * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
-     *
-     * - **NOTE:**
-     *   - Given values are translated relative to the y Axis domain value for padding
-     *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
-     * @name axis․y․padding
-     * @memberof Options
-     * @type {object|number}
-     * @default {}
-     * @example
-     * axis: {
-     *   y: {
-     *     padding: {
-     *       top: 0,
-     *       bottom: 0
-     *     },
-     *
-     *     // or set both values at once.
-     *     padding: 10
-     *   }
-     * }
-     */
-    axis_y_padding: {},
-    /**
-     * Set default range of y axis.<br><br>
-     * This option set the default value for y axis when there is no data on init.
-     * @name axis․y․default
-     * @memberof Options
-     * @type {Array}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y: {
-     *     default: [0, 1000]
-     *   }
-     * }
-     */
-    axis_y_default: undefined,
-    /**
-     * Set additional axes for y Axis.
-     * - **NOTE:** Axis' scale is based on y Axis value if domain option isn't set.
-     *
-     * Each axis object should consist with following options:
-     *
-     * | Name | Type | Default | Description |
-     * | --- | --- | --- | --- |
-     * | domain | Array | - | Set the domain value |
-     * | tick.outer | boolean | true | Show outer tick |
-     * | tick.format | Function | - | Set formatter for tick text |
-     * | tick.count | Number | - | Set the number of y axis ticks |
-     * | tick.values | Array | - | Set tick values manually |
-     * @name axis․y․axes
-     * @memberof Options
-     * @type {Array}
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
-     * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
-     * @example
-     * y: {
-     *    axes: [
-     *      {
-     *        // if set, will not be correlated with the main y Axis domain value
-     *        domain: [0, 1000],
-     *        tick: {
-     *          outer: false,
-     *          format: function(x) {
-     *             return x + "%";
-     *          },
-     *          count: 2,
-     *          values: [10, 20, 30]
-     *        }
-     *      },
-     *      ...
-     *    ]
-     * }
-     */
-    axis_y_axes: []
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * y2 Axis  config options
- */
-var y2 = {
-    /**
-     * Show or hide y2 axis.
-     * - **NOTE**:
-     *   - When set to `false` will not generate y2 axis node. In this case, all 'y2' axis related functionality won't work properly.
-     *   - If need to use 'y2' related options while y2 isn't visible, set the value `true` and control visibility by css display property.
-     * @name axis․y2․show
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * axis: {
-     *   y2: {
-     *     show: true
-     *   }
-     * }
-     */
-    axis_y2_show: false,
-    /**
-     * Set max value of y2 axis.
-     * @name axis․y2․max
-     * @memberof Options
-     * @type {number}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y2: {
-     *     max: 1000
-     *   }
-     * }
-     */
-    axis_y2_max: undefined,
-    /**
-     * Set min value of y2 axis.
-     * @name axis․y2․min
-     * @memberof Options
-     * @type {number}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y2: {
-     *     min: -1000
-     *   }
-     * }
-     */
-    axis_y2_min: undefined,
-    /**
-     * Change the direction of y2 axis.<br><br>
-     * If true set, the direction will be from the top to the bottom.
-     * @name axis․y2․inverted
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * axis: {
-     *   y2: {
-     *     inverted: true
-     *   }
-     * }
-     */
-    axis_y2_inverted: false,
-    /**
-     * Set center value of y2 axis.
-     * @name axis․y2․center
-     * @memberof Options
-     * @type {number}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y2: {
-     *     center: 0
-     *   }
-     * }
-     */
-    axis_y2_center: undefined,
-    /**
-     * Show y2 axis inside of the chart.
-     * @name axis․y2․inner
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * axis: {
-     *   y2: {
-     *     inner: true
-     *   }
-     * }
-     */
-    axis_y2_inner: false,
-    /**
-     * Set label on y2 axis.<br><br>
-     * You can set y2 axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
-     * @name axis․y2․label
-     * @memberof Options
-     * @type {string|object}
-     * @default {}
-     * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
-     * @example
-     * axis: {
-     *   y2: {
-     *     label: "Your Y2 Axis"
-     *   }
-     * }
-     *
-     * axis: {
-     *   y2: {
-     *     label: {
-     *        text: "Your Y2 Axis",
-     *        position: "outer-middle"
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_label: {},
-    /**
-     * Set formatter for y2 axis tick text.<br><br>
-     * This option works in the same way as axis.y.format.
-     * @name axis․y2․tick․format
-     * @memberof Options
-     * @type {Function}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       format: d3.format("$,")
-     *       //or format: function(d) { return "$" + d; }
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_format: undefined,
-    /**
-     * Setting for culling ticks.<br><br>
-     * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
-     * We can change the number of ticks to be shown by axis.y.tick.culling.max.
-     * @name axis․y2․tick․culling
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       culling: false
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_culling: false,
-    /**
-     * The number of tick texts will be adjusted to less than this value.
-     * @name axis․y2․tick․culling․max
-     * @memberof Options
-     * @type {number}
-     * @default 5
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       culling: {
-     *           max: 5
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_culling_max: 5,
-    /**
-     * Show or hide y2 axis outer tick.
-     * @name axis․y2․tick․outer
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       outer: false
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_outer: true,
-    /**
-     * Set y2 axis tick values manually.
-     * @name axis․y2․tick․values
-     * @memberof Options
-     * @type {Array|Function}
-     * @default null
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       values: [100, 1000, 10000],
-     *
-     *       // an Array value should be returned
-     *       values: function() {
-     *       	return [ ... ];
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_values: null,
-    /**
-     * Rotate y2 axis tick text.
-     * - If you set negative value, it will rotate to opposite direction.
-     * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
-     * @name axis․y2․tick․rotate
-     * @memberof Options
-     * @type {number}
-     * @default 0
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       rotate: 60
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_rotate: 0,
-    /**
-     * Set the number of y2 axis ticks.
-     * - **NOTE:** This works in the same way as axis.y.tick.count.
-     * @name axis․y2․tick․count
-     * @memberof Options
-     * @type {number}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       count: 5
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_count: undefined,
-    /**
-     * Show or hide y2 axis tick line.
-     * @name axis․y2․tick․show
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       show: false
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_show: true,
-    /**
-     * Set axis tick step(interval) size.
-     * - **NOTE:** Will be ignored if `axis.y2.tick.count` or `axis.y2.tick.values` options are set.
-     * @name axis․y2․tick․stepSize
-     * @memberof Options
-     * @type {number}
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       // tick value will step as indicated interval value.
-     *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
-     *       stepSize: 15
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_stepSize: null,
-    /**
-     * Show or hide y2 axis tick text.
-     * @name axis․y2․tick․text․show
-     * @memberof Options
-     * @type {boolean}
-     * @default true
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       text: {
-     *           show: false
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_text_show: true,
-    /**
-     * Set the y2 Axis tick text's position relatively its original position
-     * @name axis․y2․tick․text․position
-     * @memberof Options
-     * @type {object}
-     * @default {x: 0, y:0}
-     * @example
-     * axis: {
-     *   y2: {
-     *     tick: {
-     *       text: {
-     *         position: {
-     *           x: 10,
-     *           y: 10
-     *         }
-     *       }
-     *     }
-     *   }
-     * }
-     */
-    axis_y2_tick_text_position: { x: 0, y: 0 },
-    /**
-     * Set padding for y2 axis.<br><br>
-     * You can set padding for y2 axis to create more space on the edge of the axis.
-     * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
-     *
-     * - **NOTE:**
-     *   - Given values are translated relative to the y2 Axis domain value for padding
-     *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
-     * @name axis․y2․padding
-     * @memberof Options
-     * @type {object|number}
-     * @default {}
-     * @example
-     * axis: {
-     *   y2: {
-     *     padding: {
-     *       top: 100,
-     *       bottom: 100
-     *     }
-     *
-     *     // or set both values at once.
-     *     padding: 10
-     * }
-     */
-    axis_y2_padding: {},
-    /**
-     * Set default range of y2 axis.<br><br>
-     * This option set the default value for y2 axis when there is no data on init.
-     * @name axis․y2․default
-     * @memberof Options
-     * @type {Array}
-     * @default undefined
-     * @example
-     * axis: {
-     *   y2: {
-     *     default: [0, 1000]
-     *   }
-     * }
-     */
-    axis_y2_default: undefined,
-    /**
-     * Set additional axes for y2 Axis.
-     * - **NOTE:** Axis' scale is based on y2 Axis value if domain option isn't set.
-     *
-     * Each axis object should consist with following options:
-     *
-     * | Name | Type | Default | Description |
-     * | --- | --- | --- | --- |
-     * | domain | Array | - | Set the domain value |
-     * | tick.outer | boolean | true | Show outer tick |
-     * | tick.format | Function | - | Set formatter for tick text |
-     * | tick.count | Number | - | Set the number of y axis ticks |
-     * | tick.values | Array | - | Set tick values manually |
-     * @name axis․y2․axes
-     * @memberof Options
-     * @type {Array}
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
-     * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
-     * @example
-     * y2: {
-     *    axes: [
-     *      {
-     *        // if set, will not be correlated with the main y2 Axis domain value
-     *        domain: [0, 1000],
-     *        tick: {
-     *          outer: false,
-     *          format: function(x) {
-     *             return x + "%";
-     *          },
-     *          count: 2,
-     *          values: [10, 20, 30]
-     *        }
-     *      },
-     *      ...
-     *    ]
-     * }
-     */
-    axis_y2_axes: []
-};
-
-/**
- * y Axis  config options
- */
-var axis = _assign(_assign(_assign({ 
-    /**
-     * Switch x and y axis position.
-     * @name axis․rotated
-     * @memberof Options
-     * @type {boolean}
-     * @default false
-     * @example
-     * axis: {
-     *   rotated: true
-     * }
-     */
-    axis_rotated: false }, x), y), y2);
-
-var grid = {
-    /**
-     * Set related options
-     * @name grid
-     * @memberof Options
-     * @type {object}
-     * @property {boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
-     * @property {object} x Grid x object
-     * @property {boolean} [x.show=false] Show grids along x axis.
-     * @property {Array} [x.lines=[]] Show additional grid lines along x axis.<br>
-     *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
-     *  If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
-     * @property {object} y Grid y object
-     * @property {boolean} [y.show=false] Show grids along x axis.
-     * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
-     *  This option accepts array including object that has value, text, position and class.
-     * @property {number} [y.ticks=10] Number of y grids to be shown.
-     * @property {object} focus Grid focus object
-     * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
-     * @property {boolean} [focus.show=true] Show grid line when focus.
-     * @property {boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
-     * @property {object} lines Grid lines object
-     * @property {boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
-     * @default undefined
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
-     * @see [Demo: X Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalXGridLines)
-     * @see [Demo: Y Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalYGridLines)
-     * @example
-     * grid: {
-     *   x: {
-     *     show: true,
-     *     lines: [
-     *       {value: 2, text: "Label on 2"},
-     *       {value: 5, text: "Label on 5", class: "label-5"},
-     *       {value: 6, text: "Label on 6", position: "start"}
-     *     ]
-     *   },
-     *   y: {
-     *     show: true,
-     *     lines: [
-     *       {value: 100, text: "Label on 100"},
-     *       {value: 200, text: "Label on 200", class: "label-200"},
-     *       {value: 300, text: "Label on 300", position: 'middle'}
-     *     ],
-     *     ticks: 5
-     *   },
-     *   front: true,
-     *   focus: {
-     *      show: false,
-     *
-     *      // Below options are available when 'tooltip.grouped=false' option is set
-     *      edge: true,
-     *      y: true
-     *   },
-     *   lines: {
-     *      front: false
-     *   }
-     * }
-     */
-    grid_x_show: false,
-    grid_x_type: "tick",
-    grid_x_lines: [],
-    grid_y_show: false,
-    grid_y_lines: [],
-    grid_y_ticks: 10,
-    grid_focus_edge: false,
-    grid_focus_show: true,
-    grid_focus_y: false,
-    grid_front: false,
-    grid_lines_front: true
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * point config options
- */
-var point = {
-    /**
-     * Set point options
-     * @name point
-     * @memberof Options
-     * @type {object}
-     * @property {object} point Point object
-     * @property {boolean} [point.show=true] Whether to show each point in line.
-     * @property {number|Function} [point.r=2.5] The radius size of each point.
-     *  - **NOTE:** Disabled for 'bubble' type
-     * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
-     * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
-     *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
-     * @property {boolean} [point.focus.only=false] Show point only when is focused.
-     * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
-     * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
-     * @property {string} [point.type="circle"] The type of point to be drawn
-     * - **NOTE:**
-     *   - If chart has 'bubble' type, only circle can be used.
-     *   - For IE, non circle point expansions are not supported due to lack of transform support.
-     * - **Available Values:**
-     *   - circle
-     *   - rectangle
-     * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
-     * - **NOTE:**
-     *   - This is an `experimental` feature and can have some unexpected behaviors.
-     *   - If chart has 'bubble' type, only circle can be used.
-     *   - For IE, non circle point expansions are not supported due to lack of transform support.
-     * - **Available Values:**
-     *   - circle
-     *   - rectangle
-     *   - svg shape tag interpreted as string<br>
-     *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
-     * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
-     * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
-     * @example
-     *  point: {
-     *      show: false,
-     *      r: 5,
-     *
-     *      // or customize the radius
-     *      r: function(d) {
-     *          ...
-     *          return r;
-     *      },
-     *
-     *      focus: {
-     *          expand: {
-     *              enabled: true,
-     *              r: 1
-     *          },
-     *          only: true
-     *      },
-     *      select: {
-     *          r: 3
-     *      },
-     *
-     *      // having lower value, means how closer to be for interaction
-     *      sensitivity: 3,
-     *
-     *      // valid values are "circle" or "rectangle"
-     *      type: "rectangle",
-     *
-     *      // or indicate as pattern
-     *      pattern: [
-     *        "circle",
-     *        "rectangle",
-     *        "<polygon points='0 6 4 0 -4 0'></polygon>"
-     *     ],
-     *  }
-     */
-    point_show: true,
-    point_r: 2.5,
-    point_sensitivity: 10,
-    point_focus_expand_enabled: true,
-    point_focus_expand_r: undefined,
-    point_focus_only: false,
-    point_pattern: [],
-    point_select_r: undefined,
-    point_type: "circle"
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * x Axis config options
- */
-var subchart = {
-    /**
-     * Set subchart options
-     * @name subchart
-     * @memberof Options
-     * @type {object}
-     * @property {object} subchart Subchart object
-     * @property {boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
-     * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
-     * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
-     * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
-     * @property {number} [subchart.size.height] Change the height of the subchart.
-     * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
-     *  Specified function receives the current zoomed x domain.
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
-     * @example
-     *  subchart: {
-     *      axis: {
-     *      	x: {
-     *      	  show: true,
-     *      	    tick: {
-     *      	      show: true,
-     *      	      text: {
-     *      	        show: false
-     *      	      }
-     *      	    }
-     *      	}
-     *      },
-     *      show: true,
-     *      size: {
-     *          height: 20
-     *      },
-     *      onbrush: function(domain) { ... }
-     *  }
-     */
-    subchart_show: false,
-    subchart_size_height: 60,
-    subchart_axis_x_show: true,
-    subchart_axis_x_tick_show: true,
-    subchart_axis_x_tick_text_show: true,
-    subchart_onbrush: function () { }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * zoom config options
- */
-var zoom = {
-    /**
-     * Set zoom options
-     * @name zoom
-     * @memberof Options
-     * @type {object}
-     * @property {object} zoom Zoom object
-     * @property {boolean} [zoom.enabled=false] Enable zooming.
-     * @property {string} [zoom.enabled.type='wheel'] Set zoom interaction type.
-     *  - **Available types:**
-     *    - wheel
-     *    - drag
-     * @property {boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
-     *  If true set, y domain will be updated according to the zoomed region.
-     * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
-     * @property {number|Date} [zoom.x.min] Set x Axis minimum zoom range
-     * @property {number|Date} [zoom.x.max] Set x Axis maximum zoom range
-     * @property {Function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
-     *  Specified function receives the zoom event.
-     * @property {Function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
-     *  Specified function receives the zoomed domain.
-     * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
-     *  Specified function receives the zoomed domain.
-     * @property {boolean|object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
-     * @property {Function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
-     * @property {string} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
-     * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
-     * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
-     * @example
-     *  zoom: {
-     *      enabled: {
-     *          type: "drag"
-     *      },
-     *      rescale: true,
-     *      extent: [1, 100]  // enable more zooming
-     *      x: {
-     *          min: -1,  // set min range
-     *          max: 10  // set max range
-     *      },
-     *      onzoomstart: function(event) { ... },
-     *      onzoom: function(domain) { ... },
-     *      onzoomend: function(domain) { ... },
-     *
-     *      // show reset button when is zoomed-in
-     *      resetButton: true,
-     *
-     *      resetButton: {
-     *          // onclick callback when reset button is clicked
-     *          onclick: function(button) {
-     *            button; // Reset button element reference
-     *            ...
-     *          },
-     *
-     *          // customized text value for reset zoom button
-     *          text: "Unzoom"
-     *      }
-     *  }
-     */
-    zoom_enabled: undefined,
-    zoom_extent: undefined,
-    zoom_privileged: false,
-    zoom_rescale: false,
-    zoom_onzoom: undefined,
-    zoom_onzoomstart: undefined,
-    zoom_onzoomend: undefined,
-    zoom_resetButton: true,
-    zoom_x_min: undefined,
-    zoom_x_max: undefined
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * area config options
- */
-var area = {
-    /**
-     * Set area options
-     * @name area
-     * @memberof Options
-     * @type {object}
-     * @property {object} area Area object
-     * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
-     * @property {boolean} [area.above=false] Set background area above the data chart line.
-     * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
-     * Or customize by giving below object value:
-     *  - x {Array}: `x1`, `x2` value
-     *  - y {Array}: `y1`, `y2` value
-     *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
-     * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
-     * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
-     * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
-     * @example
-     *  area: {
-     *      zerobased: false,
-     *      above: true,
-     *
-     *      // will generate follwing linearGradient:
-     *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
-     *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
-     *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
-     *      // </linearGradient>
-     *      linearGradient: true,
-     *
-     *      // Or customized gradient
-     *      linearGradient: {
-     *      	x: [0, 0],  // x1, x2 attributes
-     *      	y: [0, 0],  // y1, y2 attributes
-     *      	stops: [
-     *      	  // offset, stop-color, stop-opacity
-     *      	  [0, "#7cb5ec", 1],
-     *
-     *      	  // setting 'null' for stop-color, will set its original data color
-     *      	  [0.5, null, 0],
-     *
-     *      	  // setting 'function' for stop-color, will pass data id as argument.
-     *      	  // It should return color string or null value
-     *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
-     *      	]
-     *      }
-     *  }
-     */
-    area_zerobased: true,
-    area_above: false,
-    area_linearGradient: false
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * bar config options
- */
-var bar = {
-    /**
-     * Set bar options
-     * @name bar
-     * @memberof Options
-     * @type {object}
-     * @property {object} bar Bar object
-     * @property {number} [bar.padding=0] The padding pixel value between each bar.
-     * @property {number} [bar.radius] Set the radius of bar edge in pixel.
-     * - **NOTE:** Works only for non-stacked bar
-     * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
-     * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
-     * @property {number} [bar.width] Change the width of bar chart.
-     * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
-     * @property {number} [bar.width.max] The maximum width value for ratio.
-     * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
-     * - **NOTE:**
-     *   - Works only for non-stacked bar
-     *   - Bars are centered accoding its total width value
-     * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
-     * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
-     * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
-     * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
-     * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
-     * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
-     * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
-     * @example
-     *  bar: {
-     *      padding: 1,
-     *
-     *      // the 'radius' option can be used only for non-stacking bars
-     *      radius: 10,
-     *      // or
-     *      radius: {
-     *          ratio: 0.5
-     *      }
-     *
-     *      // will not have offset between each bar elements for interaction
-     *      sensitivity: 0,
-     *
-     *      width: 10,
-     *
-     *      // or
-     *      width: {
-     *          ratio: 0.2,
-     *          max: 20
-     *      },
-     *
-     *      // or specify width per dataset
-     *      width: {
-     *          data1: 20,
-     *          data2: {
-     *              ratio: 0.2,
-     *              max: 20
-     *          }
-     *      },
-     *
-     *      zerobased: false
-     *  }
-     */
-    bar_padding: 0,
-    bar_radius: undefined,
-    bar_radius_ratio: undefined,
-    bar_sensitivity: 2,
-    bar_width: undefined,
-    bar_width_ratio: 0.6,
-    bar_width_max: undefined,
-    bar_zerobased: true
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * bubble config options
- */
-var bubble = {
-    /**
-     * Set bubble options
-     * @name bubble
-     * @memberof Options
-     * @type {object}
-     * @property {object} bubble bubble object
-     * @property {number|Function} [bubble.maxR=35] Set the max bubble radius value
-     * @property {boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
-     * @example
-     *  bubble: {
-     *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
-     *      // And the lesser will have radius relatively from tha max value.
-     *      maxR: 50,
-     *
-     *      // or set radius callback
-     *      maxR: function(d) {
-     *          // ex. of d param - {x: Fri Oct 06 2017 00:00:00 GMT+0900, value: 80, id: "data2", index: 5}
-     *          ...
-     *          return Math.sqrt(d.value * 2);
-     *      },
-     *      zerobased: false
-     *  }
-     */
-    bubble_maxR: 35,
-    bubble_zerobased: false
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * line config options
- */
-var line = {
-    /**
-     * Set line options
-     * @name line
-     * @memberof Options
-     * @type {object}
-     * @property {object} line Line object
-     * @property {boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
-     *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
-     * @property {Array}   [line.classes=undefined] If set, used to set a css class on each line.
-     * @property {boolean} [line.step.type=step] Change step type for step chart.<br>
-     * **Available values:**
-     * - step
-     * - step-before
-     * - step-after
-     * @property {boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
-     * @property {boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
-     * @example
-     *  line: {
-     *      connectNull: true,
-     *      classes: [
-     *          "line-class1",
-     *          "line-class2"
-     *      ],
-     *      step: {
-     *          type: "step-after"
-     *      },
-     *
-     *      // hide all data points ('point.show=false' also has similar effect)
-     *      point: false,
-     *
-     *      // show data points for only indicated datas
-     *      point: [
-     *          "data1", "data3"
-     *      ],
-     *
-     *      zerobased: false
-     *  }
-     */
-    line_connectNull: false,
-    line_step_type: "step",
-    line_zerobased: false,
-    line_classes: undefined,
-    line_point: true
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * x Axis config options
- */
-var spline = {
-    /**
-     * Set spline options
-     * - **Available interpolation type values:**
-     *  - basis (d3.curveBasis)
-     *  - basis-closed (d3.curveBasisClosed)
-     *  - basis-open (d3.curveBasisOpen)
-     *  - bundle (d3.curveBundle)
-     *  - cardinal (d3.curveCardinal)
-     *  - cardinal-closed (d3.curveCardinalClosed)
-     *  - cardinal-open (d3.curveCardinalOpen)
-     *  - catmull-rom (d3.curveCatmullRom)
-     *  - catmull-rom-closed (d3.curveCatmullRomClosed)
-     *  - catmull-rom-open (d3.curveCatmullRomOpen)
-     *  - monotone-x (d3.curveMonotoneX)
-     *  - monotone-y (d3.curveMonotoneY)
-     *  - natural (d3.curveNatural)
-     *  - linear-closed (d3.curveLinearClosed)
-     *  - linear (d3.curveLinear)
-     *  - step (d3.curveStep)
-     *  - step-after (d3.curveStepAfter)
-     *  - step-before (d3.curveStepBefore)
-     * @name spline
-     * @memberof Options
-     * @type {object}
-     * @property {object} spline Spline object
-     * @property {object} spline.interpolation Spline interpolation object
-     * @property {string} [spline.interpolation.type="cardinal"] Interpolation type
-     * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
-     * @example
-     *  spline: {
-     *      interpolation: {
-     *          type: "cardinal"
-     *      }
-     *  }
-     */
-    spline_interpolation_type: "cardinal"
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * donut config options
- */
-var donut = {
-    /**
-     * Set donut options
-     * @name donut
-     * @memberof Options
-     * @type {object}
-     * @property {object} donut Donut object
-     * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
-     * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
-     * @property {number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
-     * @property {number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
-     * @property {boolean} [donut.expand=true] Enable or disable expanding donut pieces.
-     * @property {number} [donut.expand.rate=0.98] Set expand rate.
-     * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
-     * @property {number} [donut.width] Set width of donut chart.
-     * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
-     * @property {number} [donut.padAngle=0] Set padding between data.
-     * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
-     * @example
-     *  donut: {
-     *      label: {
-     *          show: false,
-     *          format: function(value, ratio, id) {
-     *              return d3.format("$")(value);
-     *
-     *              // to multiline, return with '\n' character
-     *              // return value +"%\nLine1\n2Line2";
-     *          },
-     *          threshold: 0.1,
-     *
-     *          // set ratio callback. Should return ratio value
-     *          ratio: function(d, radius, h) {
-     *          	...
-     *          	return ratio;
-     *          },
-     *          // or set ratio number
-     *          ratio: 0.5
-     *      },
-     *
-     *      // disable expand transition for interaction
-     *      expand: false,
-     *
-     *      expand: {
-     *      	// set duration of expand transition to 500ms.
-     *          duration: 500,
-     *
-     *      	// set expand area rate
-     *          rate: 1
-     *      },
-     *
-     *      width: 10,
-     *      padAngle: 0.2,
-     *      startingAngle: 1,
-     *      title: "Donut Title"
-     *
-     *      // title with line break
-     *      title: "Title1\nTitle2"
-     *  }
-     */
-    donut_label_show: true,
-    donut_label_format: undefined,
-    donut_label_threshold: 0.05,
-    donut_label_ratio: undefined,
-    donut_width: undefined,
-    donut_title: "",
-    donut_expand: {},
-    donut_expand_rate: 0.98,
-    donut_expand_duration: 50,
-    donut_padAngle: 0,
-    donut_startingAngle: 0
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * gauge config options
- */
-var gauge = {
-    /**
-     * Set gauge options
-     * @name gauge
-     * @memberof Options
-     * @type {object}
-     * @property {object} gauge Gauge object
-     * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
-     * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
-     * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
-     * @property {Function} [gauge.label.extents] Set customized min/max label text.
-     * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
-     * @property {number} [gauge.expand.rate=0.98] Set expand rate.
-     * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
-     * @property {number} [gauge.min=0] Set min value of the gauge.
-     * @property {number} [gauge.max=100] Set max value of the gauge.
-     * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
-     * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
-     * @property {string} [gauge.units] Set units of the gauge.
-     * @property {number} [gauge.width] Set width of gauge chart.
-     * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
-     * **Available Values:**
-     * - single
-     * - multi
-     * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
-     * @example
-     *  gauge: {
-     *      fullCircle: false,
-     *      label: {
-     *          show: false,
-     *          format: function(value, ratio) {
-     *              return value;
-     *
-     *              // to multiline, return with '\n' character
-     *              // return value +"%\nLine1\n2Line2";
-     *          },
-     *          extents: function(value, isMax) {
-     *              return (isMax ? "Max:" : "Min:") + value;
-     *          }
-     *      },
-     *
-     *      // disable expand transition for interaction
-     *      expand: false,
-     *
-     *      expand: {
-     *      	// set duration of expand transition to 500ms.
-     *          duration: 500,
-     *
-     *      	// set expand area rate
-     *          rate: 1
-     *      },
-     *
-     *      min: -100,
-     *      max: 200,
-     *      type: "single"  // or 'multi'
-     *      title: "Title Text",
-     *      units: "%",
-     *      width: 10,
-     *      arcs: {
-     *          minWidth: 5
-     *      }
-     *  }
-     */
-    gauge_fullCircle: false,
-    gauge_label_show: true,
-    gauge_label_format: undefined,
-    gauge_label_extents: undefined,
-    gauge_min: 0,
-    gauge_max: 100,
-    gauge_type: "single",
-    gauge_startingAngle: -1 * Math.PI / 2,
-    gauge_title: "",
-    gauge_units: undefined,
-    gauge_width: undefined,
-    gauge_arcs_minWidth: 5,
-    gauge_expand: {},
-    gauge_expand_rate: 0.98,
-    gauge_expand_duration: 50
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * x Axis config options
- */
-var pie = {
-    /**
-     * Set pie options
-     * @name pie
-     * @memberof Options
-     * @type {object}
-     * @property {object} pie Pie object
-     * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
-     * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
-     * @property {number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
-     * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
-     * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
-     * @property {number} [pie.expand.rate=0.98] Set expand rate.
-     * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
-     * @property {number|object} [pie.innerRadius=0] Sets the inner radius of pie arc.
-     * @property {number} [pie.padAngle=0] Set padding between data.
-     * @property {number} [pie.padding=0] Sets the gap between pie arcs.
-     * @property {object} donut Donut object
-     * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
-     * @example
-     *  pie: {
-     *      label: {
-     *          show: false,
-     *          format: function(value, ratio, id) {
-     *              return d3.format("$")(value);
-     *
-     *              // to multiline, return with '\n' character
-     *              // return value +"%\nLine1\n2Line2";
-     *          },
-     *          threshold: 0.1,
-     *
-     *          // set ratio callback. Should return ratio value
-     *          ratio: function(d, radius, h) {
-     *              ...
-     *              return ratio;
-     *          },
-     *          // or set ratio number
-     *          ratio: 0.5
-     *      },
-     *
-     *      // disable expand transition for interaction
-     *      expand: false,
-     *
-     *      expand: {
-     *      	// set duration of expand transition to 500ms.
-     *          duration: 500,
-     *
-     *      	// set expand area rate
-     *          rate: 1
-     *      },
-     *
-     *      innerRadius: 0,
-     *
-     *      // set different innerRadius for each data
-     *      innerRadius: {
-     *      	data1: 10,
-     *      	data2: 0
-     *      }
-     *
-     *      padAngle: 0.1,
-     *      padding: 0,
-     *      startingAngle: 1
-     *  }
-     */
-    pie_label_show: true,
-    pie_label_format: undefined,
-    pie_label_threshold: 0.05,
-    pie_label_ratio: undefined,
-    pie_expand: {},
-    pie_expand_rate: 0.98,
-    pie_expand_duration: 50,
-    pie_innerRadius: 0,
-    pie_padAngle: 0,
-    pie_padding: 0,
-    pie_startingAngle: 0
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * x Axis config options
- */
-var radar = {
-    /**
-     * Set radar options
-     * - **NOTE:**
-     *  > When x tick text contains `\n`, it's used as line break.
-     * @name radar
-     * @memberof Options
-     * @type {object}
-     * @property {object} radar Radar object
-     * @property {number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
-     * @property {boolean} [radar.axis.line.show=true] Show or hide axis line.
-     * @property {number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
-     * @property {number} [radar.axis.text.position.y=0] y coordinate position, relative the original.
-     * @property {boolean} [radar.axis.text.show=true] Show or hide axis text.
-     * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
-     * @property {number} [radar.level.depth=3] Set the level depth.
-     * @property {boolean} [radar.level.show=true] Show or hide level.
-     * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
-     * @property {boolean} [radar.level.text.show=true] Show or hide level text.
-     * @property {number} [radar.size.ratio=0.87] Set size ratio.
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)
-     * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
-     * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
-     * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
-     * @see [Demo: radar axis multiline](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxisMultiline)
-     * @example
-     *  radar: {
-     *      axis: {
-     *          max: 50,
-     *          line: {
-     *              show: false
-     *          },
-     *          text: {
-     *              position: {
-     *              	x: 0,
-     *              	y: 0
-     *              },
-     *              show: false
-     *          }
-     *      },
-     *      direction: {
-     *          clockwise: true
-     *      },
-     *      level: {
-     *          show: false,
-     *          text: {
-     *              format: function(x) {
-     *                  return x + "%";
-     *              },
-     *              show: true
-     *          }
-     *      },
-     *      size: {
-     *          ratio: 0.7
-     *      }
-     *  }
-     */
-    radar_axis_max: undefined,
-    radar_axis_line_show: true,
-    radar_axis_text_show: true,
-    radar_axis_text_position: {},
-    radar_level_depth: 3,
-    radar_level_show: true,
-    radar_level_text_format: function (x) { return (x % 1 === 0 ? x : x.toFixed(2)); },
-    radar_level_text_show: true,
-    radar_size_ratio: 0.87,
-    radar_direction_clockwise: false
 };
 
 /**
@@ -5010,6 +2382,30 @@ function convertInputType(mouse, touch) {
 }
 
 /**
+ * Merge object returning new object
+ * @param {object} objectN Source object
+ * @returns {object} merged target object
+ * @private
+ */
+function deepCopy() {
+    var objectN = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        objectN[_i] = arguments[_i];
+    }
+    var clone = function (v) {
+        if (isObject(v) && v.constructor) {
+            var r = new v.constructor();
+            for (var k in v) {
+                r[k] = clone(v[k]);
+            }
+            return r;
+        }
+        return v;
+    };
+    return objectN.map(function (v) { return clone(v); })
+        .reduce(function (a, c) { return (_assign(_assign({}, a), c)); });
+}
+/**
  * Class to set options on generating chart.
  * - It's instantiated internally, not exposed for public.
  * @class Options
@@ -5017,19 +2413,9 @@ function convertInputType(mouse, touch) {
  */
 var Options = /** @class */ (function () {
     function Options() {
-        var arcShapeConfig = [donut, gauge, pie, radar];
-        var axisConfig = [dataAxis, dataSelection, axis, grid, point, subchart, zoom];
-        var axisShapeConfig = [area, bar, bubble, line, spline];
-        var config = __spreadArrays([
-            data,
-            color,
-            interaction,
-            legend,
-            title,
-            tooltip
-        ], arcShapeConfig, axisConfig, axisShapeConfig);
-        return mergeObj.apply(void 0, __spreadArrays([_assign({}, main)], config));
+        return deepCopy(main, data, dataSelection, color, interaction, legend, title, tooltip, Options.data);
     }
+    Options.data = {};
     return Options;
 }());
 
@@ -6567,7 +3953,7 @@ var category = {
      */
     categoryName: function (i) {
         var categories = this.config.axis_x_categories;
-        return i < categories.length ? categories[i] : i;
+        return i < categories && categories.length ? categories[i] : i;
     }
 };
 
@@ -8424,8 +5810,8 @@ var size = {
     },
     getCurrentPaddingTop: function () {
         var $$ = this;
-        var config = $$.config, $el = $$.$el;
-        var axesLen = config.axis_y2_axes.length;
+        var config = $$.config, hasAxis = $$.state.hasAxis, $el = $$.$el;
+        var axesLen = hasAxis ? config.axis_y2_axes.length : 0;
         var padding = isValue(config.padding_top) ?
             config.padding_top : 0;
         if ($el.title && $el.title.node()) {
@@ -8438,9 +5824,9 @@ var size = {
     },
     getCurrentPaddingBottom: function () {
         var $$ = this;
-        var config = $$.config;
+        var config = $$.config, hasAxis = $$.state.hasAxis;
         var axisId = config.axis_rotated ? "y" : "x";
-        var axesLen = config["axis_" + axisId + "_axes"].length;
+        var axesLen = hasAxis ? config["axis_" + axisId + "_axes"].length : 0;
         var padding = isValue(config.padding_bottom) ?
             config.padding_bottom : 0;
         return padding + (axesLen ? $$.getHorizontalAxisHeight(axisId) * axesLen : 0);
@@ -8450,7 +5836,7 @@ var size = {
         var config = $$.config, hasAxis = $$.state.hasAxis;
         var isRotated = config.axis_rotated;
         var axisId = isRotated ? "x" : "y";
-        var axesLen = config["axis_" + axisId + "_axes"].length;
+        var axesLen = hasAxis ? config["axis_" + axisId + "_axes"].length : 0;
         var axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
         var padding;
         if (isValue(config.padding_left)) {
@@ -8474,7 +5860,7 @@ var size = {
         var config = $$.config, hasAxis = $$.state.hasAxis;
         var defaultPadding = 10;
         var legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
-        var axesLen = config.axis_y2_axes.length;
+        var axesLen = hasAxis ? config.axis_y2_axes.length : 0;
         var axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0;
         var xAxisTickTextOverflow = withoutTickTextOverflow ?
             0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
@@ -11481,7 +8867,7 @@ function getMinMax$1($$, type) {
  * Define axis
  * @ignore
  */
-var axis$1 = {
+var axis = {
     /**
      * Get and set axis labels.
      * @function axis․labels
@@ -11587,7 +8973,7 @@ var axis$1 = {
         return undefined;
     }
 };
-var apiAxis = { axis: axis$1 };
+var apiAxis = { axis: axis };
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -12353,7 +9739,7 @@ function withinRange(domain, range) {
  *  // Get the current zoomed domain
  *  chart.zoom();
  */
-var zoom$1 = function (domainValue) {
+var zoom = function (domainValue) {
     var $$ = this.internal;
     var config = $$.config, scale = $$.scale;
     var domain = domainValue;
@@ -12389,7 +9775,7 @@ var zoom$1 = function (domainValue) {
     }
     return resultDomain;
 };
-extend(zoom$1, {
+extend(zoom, {
     /**
      * Enable and disable zooming.
      * @function zoom․enable
@@ -12495,7 +9881,7 @@ extend(zoom$1, {
     }
 });
 var apiZoom = {
-    zoom: zoom$1,
+    zoom: zoom,
     /**
      * Unzoom zoomed area
      * @function unzoom
@@ -13053,7 +10439,7 @@ var AxisRenderer = /** @class */ (function () {
     return AxisRenderer;
 }());
 
-var axis$2 = {
+var axis$1 = {
     getAxisInstance: function () {
         return this.axis || new Axis(this);
     }
@@ -14594,7 +11980,7 @@ var eventrect = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-var subchart$1 = {
+var subchart = {
     /**
      * Initialize the brush.
      * @private
@@ -14970,7 +12356,7 @@ var subchart$1 = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-var zoom$2 = {
+var zoom$1 = {
     /**
      * Initialize zoom.
      * @private
@@ -15012,7 +12398,7 @@ var zoom$2 = {
     generateZoom: function () {
         var $$ = this;
         var config = $$.config, org = $$.org, scale = $$.scale;
-        var zoom = zoom$3().duration(0)
+        var zoom = zoom$2().duration(0)
             .on("start", $$.onZoomStart.bind($$))
             .on("zoom", $$.onZoom.bind($$))
             .on("end", $$.onZoomEnd.bind($$));
@@ -15448,7 +12834,7 @@ function smoothLines(el, type) {
         });
     }
 }
-var grid$1 = {
+var grid = {
     hasGrid: function () {
         var config = this.config;
         return ["x", "y"]
@@ -16239,14 +13625,14 @@ var api = [
     apiZoom
 ];
 var internal = [
-    axis$2,
+    axis$1,
     drag,
     flow,
-    subchart$1,
-    zoom$2,
+    subchart,
+    zoom$1,
     clip,
     eventrect,
-    grid$1,
+    grid,
     region,
     selection,
     sizeAxis
@@ -16267,7 +13653,7 @@ var shapeArc = {
             config[dataType + "_padAngle"]) || 0;
         var sortValue = $$.isOrderAsc() || $$.isOrderDesc() ?
             function (a, b) { return ($$.isOrderAsc() ? a - b : b - a); } : null;
-        $$.pie = pie$2()
+        $$.pie = pie$1()
             .startAngle(startingAngle)
             .endAngle(startingAngle + (2 * Math.PI))
             .padAngle(padAngle)
@@ -17051,7 +14437,7 @@ var shapeArea = {
             var y0 = 0;
             var path;
             if ($$.isAreaType(d)) {
-                var area = area$2();
+                var area = area$1();
                 area = isRotated ?
                     area.y(xValue)
                         .x0(value0)
@@ -17469,7 +14855,7 @@ var shapeLine = {
         var yValue = function (d, i) { return ($$.isGrouped(d.id) ?
             getPoints(d, i)[0][1] :
             yScale(d.id, isSub)($$.getBaseValue(d))); };
-        var line = line$2();
+        var line = line$1();
         line = isRotated ?
             line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
         if (!lineConnectNull) {
@@ -17715,7 +15101,7 @@ var shapeLine = {
             var y0 = 0;
             var path;
             if ($$.isAreaType(d)) {
-                var area = area$2();
+                var area = area$1();
                 area = isRotated ?
                     area.y(xValue)
                         .x0(value0)
@@ -18540,6 +15926,2644 @@ var shapeRadar = {
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Axis based chart data config options
+ */
+var optDataAxis = {
+    /**
+     * Specify the key of x values in the data.<br><br>
+     * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
+     * @name data․x
+     * @memberof Options
+     * @type {string}
+     * @default undefined
+     * @example
+     * data: {
+     *   x: "date"
+     * }
+     */
+    data_x: undefined,
+    /**
+     * Specify the keys of the x values for each data.<br><br>
+     * This option can be used if we want to show the data that has different x values.
+     * @name data․xs
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @example
+     * data: {
+     *   xs: {
+     *      data1: "x1",
+     *      data2: "x2"
+     *   }
+     * }
+     */
+    data_xs: {},
+    /**
+     * Set a format specifier to parse string specifed as x.
+     * @name data․xFormat
+     * @memberof Options
+     * @type {string}
+     * @default %Y-%m-%d
+     * @example
+     * data: {
+     *    x: "x",
+     *    columns: [
+     *        ["x", "01012019", "02012019", "03012019"],
+     *        ["data1", 30, 200, 100]
+     *    ],
+     *    // Format specifier to parse as datetime for given 'x' string value
+     *    xFormat: "%m%d%Y"
+     * },
+     * axis: {
+     *    x: {
+     *        type: "timeseries"
+     *    }
+     * }
+     * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
+     */
+    data_xFormat: "%Y-%m-%d",
+    /**
+     * Set localtime format to parse x axis.
+     * @name data․xLocaltime
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * data: {
+     *   xLocaltime: false
+     * }
+     */
+    data_xLocaltime: true,
+    /**
+     * Sort on x axis.
+     * @name data․xSort
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * data: {
+     *   xSort: false
+     * }
+     */
+    data_xSort: true,
+    /**
+     * Set y axis the data related to. y and y2 can be used.
+     * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
+     * @name data․axes
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @example
+     * data: {
+     *   axes: {
+     *     data1: "y",
+     *     data2: "y2"
+     *   }
+     * }
+     */
+    data_axes: {},
+    /**
+     * Set labels options
+     * @name data․labels
+     * @memberof Options
+     * @type {object}
+     * @property {object} data Data object
+     * @property {boolean} [data.labels=false] Show or hide labels on each data points
+     * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+     * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
+     * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
+     *  - `v` is the value of the data point where the label is shown.
+     *  - `id` is the id of the data where the label is shown.
+     *  - `i` is the index of the data point where the label is shown.
+     *  - `j` is the sub index of the data point where the label is shown.<br><br>
+     * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+     * @property {string|object} [data.labels.colors] Set label text colors.
+     * @property {object} [data.labels.position] Set each dataset position, relative the original.
+     * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
+     * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
+     * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
+     * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+     * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
+     * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+     * @example
+     * data: {
+     *   labels: true,
+     *
+     *   // or set specific options
+     *   labels: {
+     *     format: function(v, id, i, j) { ... },
+     *
+     *     // it's possible to set for each data
+     *     format: {
+     *         data1: function(v, id, i, j) { ... },
+     *         ...
+     *     },
+     *
+     *     // align text to center of the 'bar' shape (works only for 'bar' type)
+     *     centered: true,
+     *
+     *     // apply for all label texts
+     *     colors: "red",
+     *
+     *     // or set different colors per dataset
+     *     // for not specified dataset, will have the default color value
+     *     colors: {
+     *        data1: "yellow",
+     *        data3: "green"
+     *     },
+     *
+     *     // set x, y coordinate position
+     *     position: {
+     *        x: -10,
+     *        y: 10
+     *     },
+     *
+     *     // or set x, y coordinate position by each dataset
+     *     position: {
+     *        data1: {x: 5, y: 5},
+     *        data2: {x: 10, y: -20}
+     *     }
+     *   }
+     * }
+     */
+    data_labels: {},
+    data_labels_colors: undefined,
+    data_labels_position: {},
+    /**
+     * Define regions for each data.<br>
+     * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
+     * - The object type should be as:
+     *   - start {number}: Start data point number. If not set, the start will be the first data point.
+     *   - [end] {number}: End data point number. If not set, the end will be the last data point.
+     *   - [style.dasharray="2 2"] {object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
+     * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
+     * @name data․regions
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @example
+     * data: {
+     *   regions: {
+     *     data1: [{
+     *         start: 1,
+     *         end: 2,
+     *         style: {
+     *             dasharray: "5 2"
+     *         }
+     *     }, {
+     *         start: 3
+     *     }],
+     *     ...
+     *   }
+     * }
+     */
+    data_regions: {},
+    /**
+     * Set the stacking to be normalized
+     * - **NOTE:**
+     *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
+     *   - y Axis will be set in percentage value (0 ~ 100%)
+     *   - Must have postive values
+     * @name data․stack․normalize
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
+     * @example
+     * data: {
+     *   stack: {
+     *      normalize: true
+     *   }
+     * }
+     */
+    data_stack_normalize: false
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * x Axis config options
+ */
+var x = {
+    /**
+     * Set clip-path attribute for x axis element
+     * @name axis․x․clipPath
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @see [Demo]()
+     * @example
+     * // don't set 'clip-path' attribute
+     * clipPath: false
+     */
+    axis_x_clipPath: true,
+    /**
+     * Show or hide x axis.
+     * @name axis․x․show
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * axis: {
+     *   x: {
+     *     show: false
+     *   }
+     * }
+     */
+    axis_x_show: true,
+    /**
+     * Set type of x axis.<br><br>
+     * **Available Values:**
+     * - timeseries
+     * - category
+     * - indexed
+     * @name axis․x․type
+     * @memberof Options
+     * @type {string}
+     * @default indexed
+     * @see [Demo: indexed](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
+     * @see [Demo: timeseries](https://naver.github.io/billboard.js/demo/#Chart.TimeseriesChart)
+     * @see [Demo: category](https://naver.github.io/billboard.js/demo/#Data.CategoryData)
+     * @example
+     * axis: {
+     *   x: {
+     *     type: "timeseries"
+     *   }
+     * }
+     */
+    axis_x_type: "indexed",
+    /**
+     * Set how to treat the timezone of x values.<br>
+     * If true, treat x value as localtime. If false, convert to UTC internally.
+     * @name axis․x․localtime
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * axis: {
+     *   x: {
+     *     localtime: false
+     *   }
+     * }
+     */
+    axis_x_localtime: true,
+    /**
+     * Set category names on category axis.
+     * This must be an array that includes category names in string. If category names are included in the date by data.x option, this is not required.
+     * @name axis․x․categories
+     * @memberof Options
+     * @type {Array}
+     * @default []
+     * @example
+     * axis: {
+     *   x: {
+     *     categories: ["Category 1", "Category 2", ...]
+     *   }
+     * }
+     */
+    axis_x_categories: [],
+    /**
+     * centerize ticks on category axis.
+     * @name axis․x․tick․centered
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       centered: true
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_centered: false,
+    /**
+     * A function to format tick value. Format string is also available for timeseries data.
+     * @name axis․x․tick․format
+     * @memberof Options
+     * @type {Function|string}
+     * @default undefined
+     * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *        // for timeseries, a 'datetime' object is given as parameter
+     *       format: function(x) {
+     *           return x.getFullYear();
+     *       }
+     *
+     *       // for category, index(Number) and categoryName(String) are given as parameter
+     *       format: function(index, categoryName) {
+     *           return categoryName.substr(0, 10);
+     *       },
+     *
+     *        // for timeseries format specifier
+     *        format: "%Y-%m-%d %H:%M:%S"
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_format: undefined,
+    /**
+     * Setting for culling ticks.<br><br>
+     * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+     * We can change the number of ticks to be shown by axis.x.tick.culling.max.
+     * @name axis․x․tick․culling
+     * @memberof Options
+     * @type {boolean}
+     * @default
+     * - true for indexed axis and timeseries axis
+     * - false for category axis
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       culling: false
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_culling: {},
+    /**
+     * The number of tick texts will be adjusted to less than this value.
+     * @name axis․x․tick․culling․max
+     * @memberof Options
+     * @type {number}
+     * @default 10
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       culling: {
+     *           max: 5
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_culling_max: 10,
+    /**
+     * The number of x axis ticks to show.<br><br>
+     * This option hides tick lines together with tick text. If this option is used on timeseries axis, the ticks position will be determined precisely and not nicely positioned (e.g. it will have rough second value).
+     * @name axis․x․tick․count
+     * @memberof Options
+     * @type {number}
+     * @default undefined
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       count: 5
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_count: undefined,
+    /**
+     * Show or hide x axis tick line.
+     * @name axis․x․tick․show
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       show: false
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_show: true,
+    /**
+     * Show or hide x axis tick text.
+     * @name axis․x․tick․text․show
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       text: {
+     *           show: false
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_text_show: true,
+    /**
+     * Set the x Axis tick text's position relatively its original position
+     * @name axis․x․tick․text․position
+     * @memberof Options
+     * @type {object}
+     * @default {x: 0, y:0}
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       text: {
+     *         position: {
+     *           x: 10,
+     *           y: 10
+     *         }
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_text_position: { x: 0, y: 0 },
+    /**
+     * Fit x axis ticks.
+     * - **true**: ticks will be positioned nicely to have same intervals.
+     * - **false**: ticks will be positioned according to x value of the data points.
+     * @name axis․x․tick․fit
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickFitting)
+     * @see [Demo: for timeseries zoom](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickTimeseries)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       fit: false
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_fit: true,
+    /**
+     * Set the x values of ticks manually.<br><br>
+     * If this option is provided, the position of the ticks will be determined based on those values.<br>
+     * This option works with `timeseries` data and the x values will be parsed accoding to the type of the value and data.xFormat option.
+     * @name axis․x․tick․values
+     * @memberof Options
+     * @type {Array|Function}
+     * @default null
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       values: [1, 2, 4, 8, 16, 32, ...],
+     *
+     *       // an Array value should be returned
+     *       values: function() {
+     *       	return [ ... ];
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_values: null,
+    /**
+     * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
+     * - **NOTE:** The conditions where `autorotate` is enabled are:
+     *   - axis.x.type='category' or 'timeseries
+     *   - axis.x.tick.multiline=false
+     *   - axis.x.tick.culling=false
+     *   - axis.x.tick.fit=true
+     * @name axis․x․tick․autorotate
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickAutorotate)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       rotate: 15,
+     *       autorotate: true,
+     *       multiline: false,
+     *       culling: false,
+     *       fit: true
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_autorotate: false,
+    /**
+     * Rotate x axis tick text.
+     * - If you set negative value, it will rotate to opposite direction.
+     * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.
+     * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
+     * @name axis․x․tick․rotate
+     * @memberof Options
+     * @type {number}
+     * @default 0
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.RotateXAxisTickText)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       rotate: 60
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_rotate: 0,
+    /**
+     * Show x axis outer tick.
+     * @name axis․x․tick․outer
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       outer: false
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_outer: true,
+    /**
+     * Set tick text to be multiline
+     * - **NOTE:**
+     *  > When x tick text contains `\n`, it's used as line break and 'axis.x.tick.width' option is ignored.
+     * @name axis․x․tick․multiline
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickMultiline)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       multiline: false
+     *     }
+     *   }
+     * }
+     * @example
+     * // example of line break with '\n'
+     * // In this case, 'axis.x.tick.width' is ignored
+     * data: {
+     *    x: "x",
+     *    columns: [
+     *        ["x", "long\ntext", "Another\nLong\nText"],
+     *        ...
+     *    ],
+     * }
+     */
+    axis_x_tick_multiline: true,
+    /**
+     * Set tick width
+     * - **NOTE:**
+     *  > When x tick text contains `\n`, this option is ignored.
+     * @name axis․x․tick․width
+     * @memberof Options
+     * @type {number}
+     * @default null
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       width: 50
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_width: null,
+    /**
+     * Set to display system tooltip(via 'title' attribute) for tick text
+     * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
+     * @name axis․x․tick․tooltip
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       tooltip: true
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_tooltip: false,
+    /**
+     * Set max value of x axis range.
+     * @name axis․x․max
+     * @memberof Options
+     * @property {number} max Set the max value
+     * @property {boolean} [max.fit=false] When specified `max.value` is greater than the bound data value, setting `true` will make x axis max to be fitted to the bound data max value.
+     * - **NOTE:** If the bound data max value is greater than the `max.value`, the x axis max will be limited as the given `max.value`.
+     * @property {number} [max.value] Set the max value
+     * @example
+     * axis: {
+     *   x: {
+     *     max: 100,
+     *
+     *     max: {
+     *       // 'fit=true' will make x axis max to be limited as the bound data value max when 'max.value' is greater.
+     *       // - when bound data max is '10' and max.value: '100' ==>  x axis max will be '10'
+     *       // - when bound data max is '1000' and max.value: '100' ==> x axis max will be '100'
+     *       fit: true,
+     *       value: 100
+     *     }
+     *   }
+     * }
+     */
+    axis_x_max: undefined,
+    /**
+     * Set min value of x axis range.
+     * @name axis․x․min
+     * @memberof Options
+     * @property {number} min Set the min value
+     * @property {boolean} [min.fit=false] When specified `min.value` is lower than the bound data value, setting `true` will make x axis min to be fitted to the bound data min value.
+     * - **NOTE:** If the bound data min value is lower than the `min.value`, the x axis min will be limited as the given `min.value`.
+     * @property {number} [min.value] Set the min value
+     * @example
+     * axis: {
+     *   x: {
+     *     min: -100,
+     *
+     *     min: {
+     *       // 'fit=true' will make x axis min to be limited as the bound data value min when 'min.value' is lower.
+     *       // - when bound data min is '-10' and min.value: '-100' ==>  x axis min will be '-10'
+     *       // - when bound data min is '-1000' and min.value: '-100' ==> x axis min will be '-100'
+     *       fit: true,
+     *       value: -100
+     *     }
+     *   }
+     * }
+     */
+    axis_x_min: undefined,
+    /**
+     * Set padding for x axis.<br><br>
+     * If this option is set, the range of x axis will increase/decrease according to the values.
+     * If no padding is needed in the rage of x axis, 0 should be set.
+     * - **NOTE:**
+     *   The padding values aren't based on pixels. It differs according axis types<br>
+     *   - **category:** The unit of tick value
+     *     ex. the given value `1`, is same as the width of 1 tick width
+     *   - **timeseries:** Numeric time value
+     *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
+     * @name axis․x․padding
+     * @memberof Options
+     * @type {object|number}
+     * @default {}
+     * @example
+     * axis: {
+     *   x: {
+     *     padding: {
+     *       // when axis type is 'category'
+     *       left: 1,  // set left padding width of equivalent value of a tick's width
+     *       right: 0.5  // set right padding width as half of equivalent value of tick's width
+     *
+     *       // when axis type is 'timeseries'
+     *       left: 1000*60*60*24,  // set left padding width of equivalent value of a day tick's width
+     *       right: 1000*60*60*12   // set right padding width as half of equivalent value of a day tick's width
+     *     },
+     *
+     *     // or set both values at once.
+     *     padding: 10
+     *   }
+     * }
+     */
+    axis_x_padding: {},
+    /**
+     * Set height of x axis.<br><br>
+     * The height of x axis can be set manually by this option. If you need more space for x axis, please use this option for that. The unit is pixel.
+     * @name axis․x․height
+     * @memberof Options
+     * @type {number}
+     * @default undefined
+     * @example
+     * axis: {
+     *   x: {
+     *     height: 20
+     *   }
+     * }
+     */
+    axis_x_height: undefined,
+    /**
+     * Set default extent for subchart and zoom. This can be an array or function that returns an array.
+     * @name axis․x․extent
+     * @memberof Options
+     * @type {Array|Function}
+     * @default undefined
+     * @example
+     * axis: {
+     *   x: {
+     *     // extent range as a pixel value
+     *     extent: [0, 200],
+     *
+     *     // when axis is 'timeseries', parsable datetime string
+     *     extent: ["2019-03-01", "2019-03-05"],
+     *
+     *     // return extent value
+     *     extent: function(domain, scale) {
+     *    	 var extent = domain.map(function(v) {
+     *     	    return scale(v);
+     *     	 });
+     *
+     *   	 // it should return a format of array
+     *   	 // ex) [0, 584]
+     *     	 return extent;
+     *     }
+     *   }
+     * }
+     */
+    axis_x_extent: undefined,
+    /**
+     * Set label on x axis.<br><br>
+     * You can set x axis label and change its position by this option.
+     * `string` and `object` can be passed and we can change the poisiton by passing object that has position key.<br>
+     * Available position differs according to the axis direction (vertical or horizontal).
+     * If string set, the position will be the default.
+     *
+     *  - **If it's horizontal axis:**
+     *    - inner-right [default]
+     *    - inner-center
+     *    - inner-left
+     *    - outer-right
+     *    - outer-center
+     *    - outer-left
+     *  - **If it's vertical axis:**
+     *    - inner-top [default]
+     *    - inner-middle
+     *    - inner-bottom
+     *    - outer-top
+     *    - outer-middle
+     *    - outer-bottom
+     * @name axis․x․label
+     * @memberof Options
+     * @type {string|object}
+     * @default undefined
+     * @example
+     * axis: {
+     *   x: {
+     *     label: "Your X Axis"
+     *   }
+     * }
+     *
+     * axis: {
+     *   x: {
+     *     label: {
+     *        text: "Your X Axis",
+     *        position: "outer-center"
+     *     }
+     *   }
+     * }
+     */
+    axis_x_label: {},
+    /**
+     * Set additional axes for x Axis.
+     * - **NOTE:** Axis' scale is based on x Axis value if domain option isn't set.
+     *
+     * Each axis object should consist with following options:
+     *
+     * | Name | Type | Default | Description |
+     * | --- | --- | --- | --- |
+     * | domain | Array | - | Set the domain value |
+     * | tick.outer | boolean | true | Show outer tick |
+     * | tick.format | Function | - | Set formatter for tick text |
+     * | tick.count | Number | - | Set the number of y axis ticks |
+     * | tick.values | Array | - | Set tick values manually |
+     * @name axis․x․axes
+     * @memberof Options
+     * @type {Array}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+     * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
+     * @example
+     * x: {
+     *    axes: [
+     *      {
+     *        // if set, will not be correlated with the main x Axis domain value
+     *        domain: [0, 1000],
+     *        tick: {
+     *          outer: false,
+     *          format: function(x) {
+     *             return x + "%";
+     *          },
+     *          count: 2,
+     *          values: [10, 20, 30]
+     *        }
+     *      },
+     *      ...
+     *    ]
+     * }
+     */
+    axis_x_axes: []
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * y Axis  config options
+ */
+var y = {
+    /**
+     * Set clip-path attribute for y axis element
+     * - **NOTE**: `clip-path` attribute for y Axis is set only when `axis.y.inner` option is true.
+     * @name axis․y․clipPath
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * // don't set 'clip-path' attribute
+     * clipPath: false
+     */
+    axis_y_clipPath: true,
+    /**
+     * Show or hide y axis.
+     * @name axis․y․show
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * axis: {
+     *   y: {
+     *     show: false
+     *   }
+     * }
+     */
+    axis_y_show: true,
+    /**
+     * Set type of y axis.<br><br>
+     * **Available Values:**
+     *   - timeseries
+     *   - indexed
+     * @name axis․y․type
+     * @memberof Options
+     * @type {string}
+     * @default "indexed"
+     * @example
+     * axis: {
+     *   y: {
+     *     type: "timeseries"
+     *   }
+     * }
+     */
+    axis_y_type: undefined,
+    /**
+     * Set max value of y axis.
+     * - **NOTE:** Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
+     * @name axis․y․max
+     * @memberof Options
+     * @type {number}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y: {
+     *     max: 1000
+     *   }
+     * }
+     */
+    axis_y_max: undefined,
+    /**
+     * Set min value of y axis.
+     * - **NOTE:**
+     *   Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
+     * @name axis․y․min
+     * @memberof Options
+     * @type {number}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y: {
+     *     min: 1000
+     *   }
+     * }
+     */
+    axis_y_min: undefined,
+    /**
+     * Change the direction of y axis.<br><br>
+     * If true set, the direction will be from the top to the bottom.
+     * @name axis․y․inverted
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y: {
+     *     inverted: true
+     *   }
+     * }
+     */
+    axis_y_inverted: false,
+    /**
+     * Set center value of y axis.
+     * @name axis․y․center
+     * @memberof Options
+     * @type {number}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y: {
+     *     center: 0
+     *   }
+     * }
+     */
+    axis_y_center: undefined,
+    /**
+     * Show y axis inside of the chart.
+     * @name axis․y․inner
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y: {
+     *     inner: true
+     *   }
+     * }
+     */
+    axis_y_inner: false,
+    /**
+     * Set label on y axis.<br><br>
+     * You can set y axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
+     * @name axis․y․label
+     * @memberof Options
+     * @type {string|object}
+     * @default {}
+     * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
+     * @example
+     * axis: {
+     *   y: {
+     *     label: "Your Y Axis"
+     *   }
+     * }
+     *
+     * axis: {
+     *   y: {
+     *     label: {
+     *        text: "Your Y Axis",
+     *        position: "outer-middle"
+     *     }
+     *   }
+     * }
+     */
+    axis_y_label: {},
+    /**
+     * Set formatter for y axis tick text.<br><br>
+     * This option accepts d3.format object as well as a function you define.
+     * @name axis․y․tick․format
+     * @memberof Options
+     * @type {Function}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       format: function(x) {
+     *           return x.getFullYear();
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_format: undefined,
+    /**
+     * Setting for culling ticks.<br><br>
+     * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+     * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+     * @name axis․y․tick․culling
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       culling: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_culling: false,
+    /**
+     * The number of tick texts will be adjusted to less than this value.
+     * @name axis․y․tick․culling․max
+     * @memberof Options
+     * @type {number}
+     * @default 5
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       culling: {
+     *           max: 5
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_culling_max: 5,
+    /**
+     * Show y axis outer tick.
+     * @name axis․y․tick․outer
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       outer: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_outer: true,
+    /**
+     * Set y axis tick values manually.
+     * @name axis․y․tick․values
+     * @memberof Options
+     * @type {Array|Function}
+     * @default null
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       values: [100, 1000, 10000],
+     *
+     *       // an Array value should be returned
+     *       values: function() {
+     *       	return [ ... ];
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_values: null,
+    /**
+     * Rotate y axis tick text.
+     * - If you set negative value, it will rotate to opposite direction.
+     * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
+     * @name axis․y․tick․rotate
+     * @memberof Options
+     * @type {number}
+     * @default 0
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       rotate: 60
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_rotate: 0,
+    /**
+     * Set the number of y axis ticks.<br><br>
+     * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
+     * @name axis․y․tick․count
+     * @memberof Options
+     * @type {number}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       count: 5
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_count: undefined,
+    /**
+     * Show or hide y axis tick line.
+     * @name axis․y․tick․show
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       show: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_show: true,
+    /**
+     * Set axis tick step(interval) size.
+     * - **NOTE:** Will be ignored if `axis.y.tick.count` or `axis.y.tick.values` options are set.
+     * @name axis․y․tick․stepSize
+     * @memberof Options
+     * @type {number}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       // tick value will step as indicated interval value.
+     *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
+     *       stepSize: 15
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_stepSize: null,
+    /**
+     * Show or hide y axis tick text.
+     * @name axis․y․tick․text․show
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       text: {
+     *           show: false
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_text_show: true,
+    /**
+     * Set the y Axis tick text's position relatively its original position
+     * @name axis․y․tick․text․position
+     * @memberof Options
+     * @type {object}
+     * @default {x: 0, y:0}
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       text: {
+     *         position: {
+     *           x: 10,
+     *           y: 10
+     *         }
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_text_position: { x: 0, y: 0 },
+    /**
+     * Set the number of y axis ticks.<br><br>
+     * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
+     * @name axis․y․tick․time
+     * @memberof Options
+     * @private
+     * @type {object}
+     * @property {object} time time object
+     * @property {Function} [time.value] D3's time interval function (https://github.com/d3/d3-time#intervals)
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       time: {
+     *          // ticks at 15-minute intervals
+     *          // https://github.com/d3/d3-scale/blob/master/README.md#time_ticks
+     *          value: d3.timeMinute.every(15)
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    // @TODO: not fully implemented yet
+    axis_y_tick_time_value: undefined,
+    /**
+     * Set padding for y axis.<br><br>
+     * You can set padding for y axis to create more space on the edge of the axis.
+     * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+     *
+     * - **NOTE:**
+     *   - Given values are translated relative to the y Axis domain value for padding
+     *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
+     * @name axis․y․padding
+     * @memberof Options
+     * @type {object|number}
+     * @default {}
+     * @example
+     * axis: {
+     *   y: {
+     *     padding: {
+     *       top: 0,
+     *       bottom: 0
+     *     },
+     *
+     *     // or set both values at once.
+     *     padding: 10
+     *   }
+     * }
+     */
+    axis_y_padding: {},
+    /**
+     * Set default range of y axis.<br><br>
+     * This option set the default value for y axis when there is no data on init.
+     * @name axis․y․default
+     * @memberof Options
+     * @type {Array}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y: {
+     *     default: [0, 1000]
+     *   }
+     * }
+     */
+    axis_y_default: undefined,
+    /**
+     * Set additional axes for y Axis.
+     * - **NOTE:** Axis' scale is based on y Axis value if domain option isn't set.
+     *
+     * Each axis object should consist with following options:
+     *
+     * | Name | Type | Default | Description |
+     * | --- | --- | --- | --- |
+     * | domain | Array | - | Set the domain value |
+     * | tick.outer | boolean | true | Show outer tick |
+     * | tick.format | Function | - | Set formatter for tick text |
+     * | tick.count | Number | - | Set the number of y axis ticks |
+     * | tick.values | Array | - | Set tick values manually |
+     * @name axis․y․axes
+     * @memberof Options
+     * @type {Array}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+     * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
+     * @example
+     * y: {
+     *    axes: [
+     *      {
+     *        // if set, will not be correlated with the main y Axis domain value
+     *        domain: [0, 1000],
+     *        tick: {
+     *          outer: false,
+     *          format: function(x) {
+     *             return x + "%";
+     *          },
+     *          count: 2,
+     *          values: [10, 20, 30]
+     *        }
+     *      },
+     *      ...
+     *    ]
+     * }
+     */
+    axis_y_axes: []
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * y2 Axis  config options
+ */
+var y2 = {
+    /**
+     * Show or hide y2 axis.
+     * - **NOTE**:
+     *   - When set to `false` will not generate y2 axis node. In this case, all 'y2' axis related functionality won't work properly.
+     *   - If need to use 'y2' related options while y2 isn't visible, set the value `true` and control visibility by css display property.
+     * @name axis․y2․show
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y2: {
+     *     show: true
+     *   }
+     * }
+     */
+    axis_y2_show: false,
+    /**
+     * Set max value of y2 axis.
+     * @name axis․y2․max
+     * @memberof Options
+     * @type {number}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y2: {
+     *     max: 1000
+     *   }
+     * }
+     */
+    axis_y2_max: undefined,
+    /**
+     * Set min value of y2 axis.
+     * @name axis․y2․min
+     * @memberof Options
+     * @type {number}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y2: {
+     *     min: -1000
+     *   }
+     * }
+     */
+    axis_y2_min: undefined,
+    /**
+     * Change the direction of y2 axis.<br><br>
+     * If true set, the direction will be from the top to the bottom.
+     * @name axis․y2․inverted
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y2: {
+     *     inverted: true
+     *   }
+     * }
+     */
+    axis_y2_inverted: false,
+    /**
+     * Set center value of y2 axis.
+     * @name axis․y2․center
+     * @memberof Options
+     * @type {number}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y2: {
+     *     center: 0
+     *   }
+     * }
+     */
+    axis_y2_center: undefined,
+    /**
+     * Show y2 axis inside of the chart.
+     * @name axis․y2․inner
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y2: {
+     *     inner: true
+     *   }
+     * }
+     */
+    axis_y2_inner: false,
+    /**
+     * Set label on y2 axis.<br><br>
+     * You can set y2 axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
+     * @name axis․y2․label
+     * @memberof Options
+     * @type {string|object}
+     * @default {}
+     * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
+     * @example
+     * axis: {
+     *   y2: {
+     *     label: "Your Y2 Axis"
+     *   }
+     * }
+     *
+     * axis: {
+     *   y2: {
+     *     label: {
+     *        text: "Your Y2 Axis",
+     *        position: "outer-middle"
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_label: {},
+    /**
+     * Set formatter for y2 axis tick text.<br><br>
+     * This option works in the same way as axis.y.format.
+     * @name axis․y2․tick․format
+     * @memberof Options
+     * @type {Function}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       format: d3.format("$,")
+     *       //or format: function(d) { return "$" + d; }
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_format: undefined,
+    /**
+     * Setting for culling ticks.<br><br>
+     * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+     * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+     * @name axis․y2․tick․culling
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       culling: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_culling: false,
+    /**
+     * The number of tick texts will be adjusted to less than this value.
+     * @name axis․y2․tick․culling․max
+     * @memberof Options
+     * @type {number}
+     * @default 5
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       culling: {
+     *           max: 5
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_culling_max: 5,
+    /**
+     * Show or hide y2 axis outer tick.
+     * @name axis․y2․tick․outer
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       outer: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_outer: true,
+    /**
+     * Set y2 axis tick values manually.
+     * @name axis․y2․tick․values
+     * @memberof Options
+     * @type {Array|Function}
+     * @default null
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       values: [100, 1000, 10000],
+     *
+     *       // an Array value should be returned
+     *       values: function() {
+     *       	return [ ... ];
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_values: null,
+    /**
+     * Rotate y2 axis tick text.
+     * - If you set negative value, it will rotate to opposite direction.
+     * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
+     * @name axis․y2․tick․rotate
+     * @memberof Options
+     * @type {number}
+     * @default 0
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       rotate: 60
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_rotate: 0,
+    /**
+     * Set the number of y2 axis ticks.
+     * - **NOTE:** This works in the same way as axis.y.tick.count.
+     * @name axis․y2․tick․count
+     * @memberof Options
+     * @type {number}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       count: 5
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_count: undefined,
+    /**
+     * Show or hide y2 axis tick line.
+     * @name axis․y2․tick․show
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       show: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_show: true,
+    /**
+     * Set axis tick step(interval) size.
+     * - **NOTE:** Will be ignored if `axis.y2.tick.count` or `axis.y2.tick.values` options are set.
+     * @name axis․y2․tick․stepSize
+     * @memberof Options
+     * @type {number}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       // tick value will step as indicated interval value.
+     *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
+     *       stepSize: 15
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_stepSize: null,
+    /**
+     * Show or hide y2 axis tick text.
+     * @name axis․y2․tick․text․show
+     * @memberof Options
+     * @type {boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       text: {
+     *           show: false
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_text_show: true,
+    /**
+     * Set the y2 Axis tick text's position relatively its original position
+     * @name axis․y2․tick․text․position
+     * @memberof Options
+     * @type {object}
+     * @default {x: 0, y:0}
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       text: {
+     *         position: {
+     *           x: 10,
+     *           y: 10
+     *         }
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_text_position: { x: 0, y: 0 },
+    /**
+     * Set padding for y2 axis.<br><br>
+     * You can set padding for y2 axis to create more space on the edge of the axis.
+     * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+     *
+     * - **NOTE:**
+     *   - Given values are translated relative to the y2 Axis domain value for padding
+     *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
+     * @name axis․y2․padding
+     * @memberof Options
+     * @type {object|number}
+     * @default {}
+     * @example
+     * axis: {
+     *   y2: {
+     *     padding: {
+     *       top: 100,
+     *       bottom: 100
+     *     }
+     *
+     *     // or set both values at once.
+     *     padding: 10
+     * }
+     */
+    axis_y2_padding: {},
+    /**
+     * Set default range of y2 axis.<br><br>
+     * This option set the default value for y2 axis when there is no data on init.
+     * @name axis․y2․default
+     * @memberof Options
+     * @type {Array}
+     * @default undefined
+     * @example
+     * axis: {
+     *   y2: {
+     *     default: [0, 1000]
+     *   }
+     * }
+     */
+    axis_y2_default: undefined,
+    /**
+     * Set additional axes for y2 Axis.
+     * - **NOTE:** Axis' scale is based on y2 Axis value if domain option isn't set.
+     *
+     * Each axis object should consist with following options:
+     *
+     * | Name | Type | Default | Description |
+     * | --- | --- | --- | --- |
+     * | domain | Array | - | Set the domain value |
+     * | tick.outer | boolean | true | Show outer tick |
+     * | tick.format | Function | - | Set formatter for tick text |
+     * | tick.count | Number | - | Set the number of y axis ticks |
+     * | tick.values | Array | - | Set tick values manually |
+     * @name axis․y2․axes
+     * @memberof Options
+     * @type {Array}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+     * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
+     * @example
+     * y2: {
+     *    axes: [
+     *      {
+     *        // if set, will not be correlated with the main y2 Axis domain value
+     *        domain: [0, 1000],
+     *        tick: {
+     *          outer: false,
+     *          format: function(x) {
+     *             return x + "%";
+     *          },
+     *          count: 2,
+     *          values: [10, 20, 30]
+     *        }
+     *      },
+     *      ...
+     *    ]
+     * }
+     */
+    axis_y2_axes: []
+};
+
+/**
+ * y Axis  config options
+ */
+var optAxis = _assign(_assign(_assign({ 
+    /**
+     * Switch x and y axis position.
+     * @name axis․rotated
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   rotated: true
+     * }
+     */
+    axis_rotated: false }, x), y), y2);
+
+var optGrid = {
+    /**
+     * Set related options
+     * @name grid
+     * @memberof Options
+     * @type {object}
+     * @property {boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
+     * @property {object} x Grid x object
+     * @property {boolean} [x.show=false] Show grids along x axis.
+     * @property {Array} [x.lines=[]] Show additional grid lines along x axis.<br>
+     *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
+     *  If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
+     * @property {object} y Grid y object
+     * @property {boolean} [y.show=false] Show grids along x axis.
+     * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
+     *  This option accepts array including object that has value, text, position and class.
+     * @property {number} [y.ticks=10] Number of y grids to be shown.
+     * @property {object} focus Grid focus object
+     * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+     * @property {boolean} [focus.show=true] Show grid line when focus.
+     * @property {boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+     * @property {object} lines Grid lines object
+     * @property {boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
+     * @default undefined
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
+     * @see [Demo: X Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalXGridLines)
+     * @see [Demo: Y Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalYGridLines)
+     * @example
+     * grid: {
+     *   x: {
+     *     show: true,
+     *     lines: [
+     *       {value: 2, text: "Label on 2"},
+     *       {value: 5, text: "Label on 5", class: "label-5"},
+     *       {value: 6, text: "Label on 6", position: "start"}
+     *     ]
+     *   },
+     *   y: {
+     *     show: true,
+     *     lines: [
+     *       {value: 100, text: "Label on 100"},
+     *       {value: 200, text: "Label on 200", class: "label-200"},
+     *       {value: 300, text: "Label on 300", position: 'middle'}
+     *     ],
+     *     ticks: 5
+     *   },
+     *   front: true,
+     *   focus: {
+     *      show: false,
+     *
+     *      // Below options are available when 'tooltip.grouped=false' option is set
+     *      edge: true,
+     *      y: true
+     *   },
+     *   lines: {
+     *      front: false
+     *   }
+     * }
+     */
+    grid_x_show: false,
+    grid_x_type: "tick",
+    grid_x_lines: [],
+    grid_y_show: false,
+    grid_y_lines: [],
+    grid_y_ticks: 10,
+    grid_focus_edge: false,
+    grid_focus_show: true,
+    grid_focus_y: false,
+    grid_front: false,
+    grid_lines_front: true
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * point config options
+ */
+var optPoint = {
+    /**
+     * Set point options
+     * @name point
+     * @memberof Options
+     * @type {object}
+     * @property {object} point Point object
+     * @property {boolean} [point.show=true] Whether to show each point in line.
+     * @property {number|Function} [point.r=2.5] The radius size of each point.
+     *  - **NOTE:** Disabled for 'bubble' type
+     * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
+     * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
+     *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
+     * @property {boolean} [point.focus.only=false] Show point only when is focused.
+     * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
+     * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
+     * @property {string} [point.type="circle"] The type of point to be drawn
+     * - **NOTE:**
+     *   - If chart has 'bubble' type, only circle can be used.
+     *   - For IE, non circle point expansions are not supported due to lack of transform support.
+     * - **Available Values:**
+     *   - circle
+     *   - rectangle
+     * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
+     * - **NOTE:**
+     *   - This is an `experimental` feature and can have some unexpected behaviors.
+     *   - If chart has 'bubble' type, only circle can be used.
+     *   - For IE, non circle point expansions are not supported due to lack of transform support.
+     * - **Available Values:**
+     *   - circle
+     *   - rectangle
+     *   - svg shape tag interpreted as string<br>
+     *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
+     * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
+     * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
+     * @example
+     *  point: {
+     *      show: false,
+     *      r: 5,
+     *
+     *      // or customize the radius
+     *      r: function(d) {
+     *          ...
+     *          return r;
+     *      },
+     *
+     *      focus: {
+     *          expand: {
+     *              enabled: true,
+     *              r: 1
+     *          },
+     *          only: true
+     *      },
+     *      select: {
+     *          r: 3
+     *      },
+     *
+     *      // having lower value, means how closer to be for interaction
+     *      sensitivity: 3,
+     *
+     *      // valid values are "circle" or "rectangle"
+     *      type: "rectangle",
+     *
+     *      // or indicate as pattern
+     *      pattern: [
+     *        "circle",
+     *        "rectangle",
+     *        "<polygon points='0 6 4 0 -4 0'></polygon>"
+     *     ],
+     *  }
+     */
+    point_show: true,
+    point_r: 2.5,
+    point_sensitivity: 10,
+    point_focus_expand_enabled: true,
+    point_focus_expand_r: undefined,
+    point_focus_only: false,
+    point_pattern: [],
+    point_select_r: undefined,
+    point_type: "circle"
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * x Axis config options
+ */
+var optSubchart = {
+    /**
+     * Set subchart options
+     * @name subchart
+     * @memberof Options
+     * @type {object}
+     * @property {object} subchart Subchart object
+     * @property {boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
+     * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
+     * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
+     * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
+     * @property {number} [subchart.size.height] Change the height of the subchart.
+     * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
+     *  Specified function receives the current zoomed x domain.
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
+     * @example
+     *  subchart: {
+     *      axis: {
+     *      	x: {
+     *      	  show: true,
+     *      	    tick: {
+     *      	      show: true,
+     *      	      text: {
+     *      	        show: false
+     *      	      }
+     *      	    }
+     *      	}
+     *      },
+     *      show: true,
+     *      size: {
+     *          height: 20
+     *      },
+     *      onbrush: function(domain) { ... }
+     *  }
+     */
+    subchart_show: false,
+    subchart_size_height: 60,
+    subchart_axis_x_show: true,
+    subchart_axis_x_tick_show: true,
+    subchart_axis_x_tick_text_show: true,
+    subchart_onbrush: function () { }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * zoom config options
+ */
+var optZoom = {
+    /**
+     * Set zoom options
+     * @name zoom
+     * @memberof Options
+     * @type {object}
+     * @property {object} zoom Zoom object
+     * @property {boolean} [zoom.enabled=false] Enable zooming.
+     * @property {string} [zoom.enabled.type='wheel'] Set zoom interaction type.
+     *  - **Available types:**
+     *    - wheel
+     *    - drag
+     * @property {boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
+     *  If true set, y domain will be updated according to the zoomed region.
+     * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
+     * @property {number|Date} [zoom.x.min] Set x Axis minimum zoom range
+     * @property {number|Date} [zoom.x.max] Set x Axis maximum zoom range
+     * @property {Function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
+     *  Specified function receives the zoom event.
+     * @property {Function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
+     *  Specified function receives the zoomed domain.
+     * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
+     *  Specified function receives the zoomed domain.
+     * @property {boolean|object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
+     * @property {Function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
+     * @property {string} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
+     * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
+     * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
+     * @example
+     *  zoom: {
+     *      enabled: {
+     *          type: "drag"
+     *      },
+     *      rescale: true,
+     *      extent: [1, 100]  // enable more zooming
+     *      x: {
+     *          min: -1,  // set min range
+     *          max: 10  // set max range
+     *      },
+     *      onzoomstart: function(event) { ... },
+     *      onzoom: function(domain) { ... },
+     *      onzoomend: function(domain) { ... },
+     *
+     *      // show reset button when is zoomed-in
+     *      resetButton: true,
+     *
+     *      resetButton: {
+     *          // onclick callback when reset button is clicked
+     *          onclick: function(button) {
+     *            button; // Reset button element reference
+     *            ...
+     *          },
+     *
+     *          // customized text value for reset zoom button
+     *          text: "Unzoom"
+     *      }
+     *  }
+     */
+    zoom_enabled: undefined,
+    zoom_extent: undefined,
+    zoom_privileged: false,
+    zoom_rescale: false,
+    zoom_onzoom: undefined,
+    zoom_onzoomstart: undefined,
+    zoom_onzoomend: undefined,
+    zoom_resetButton: true,
+    zoom_x_min: undefined,
+    zoom_x_max: undefined
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * area config options
+ */
+var optArea = {
+    /**
+     * Set area options
+     * @name area
+     * @memberof Options
+     * @type {object}
+     * @property {object} area Area object
+     * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
+     * @property {boolean} [area.above=false] Set background area above the data chart line.
+     * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
+     * Or customize by giving below object value:
+     *  - x {Array}: `x1`, `x2` value
+     *  - y {Array}: `y1`, `y2` value
+     *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+     * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
+     * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
+     * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
+     * @example
+     *  area: {
+     *      zerobased: false,
+     *      above: true,
+     *
+     *      // will generate follwing linearGradient:
+     *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
+     *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+     *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+     *      // </linearGradient>
+     *      linearGradient: true,
+     *
+     *      // Or customized gradient
+     *      linearGradient: {
+     *      	x: [0, 0],  // x1, x2 attributes
+     *      	y: [0, 0],  // y1, y2 attributes
+     *      	stops: [
+     *      	  // offset, stop-color, stop-opacity
+     *      	  [0, "#7cb5ec", 1],
+     *
+     *      	  // setting 'null' for stop-color, will set its original data color
+     *      	  [0.5, null, 0],
+     *
+     *      	  // setting 'function' for stop-color, will pass data id as argument.
+     *      	  // It should return color string or null value
+     *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+     *      	]
+     *      }
+     *  }
+     */
+    area_zerobased: true,
+    area_above: false,
+    area_linearGradient: false
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * bar config options
+ */
+var optBar = {
+    /**
+     * Set bar options
+     * @name bar
+     * @memberof Options
+     * @type {object}
+     * @property {object} bar Bar object
+     * @property {number} [bar.padding=0] The padding pixel value between each bar.
+     * @property {number} [bar.radius] Set the radius of bar edge in pixel.
+     * - **NOTE:** Works only for non-stacked bar
+     * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
+     * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
+     * @property {number} [bar.width] Change the width of bar chart.
+     * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
+     * @property {number} [bar.width.max] The maximum width value for ratio.
+     * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
+     * - **NOTE:**
+     *   - Works only for non-stacked bar
+     *   - Bars are centered accoding its total width value
+     * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
+     * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
+     * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+     * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
+     * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
+     * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
+     * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
+     * @example
+     *  bar: {
+     *      padding: 1,
+     *
+     *      // the 'radius' option can be used only for non-stacking bars
+     *      radius: 10,
+     *      // or
+     *      radius: {
+     *          ratio: 0.5
+     *      }
+     *
+     *      // will not have offset between each bar elements for interaction
+     *      sensitivity: 0,
+     *
+     *      width: 10,
+     *
+     *      // or
+     *      width: {
+     *          ratio: 0.2,
+     *          max: 20
+     *      },
+     *
+     *      // or specify width per dataset
+     *      width: {
+     *          data1: 20,
+     *          data2: {
+     *              ratio: 0.2,
+     *              max: 20
+     *          }
+     *      },
+     *
+     *      zerobased: false
+     *  }
+     */
+    bar_padding: 0,
+    bar_radius: undefined,
+    bar_radius_ratio: undefined,
+    bar_sensitivity: 2,
+    bar_width: undefined,
+    bar_width_ratio: 0.6,
+    bar_width_max: undefined,
+    bar_zerobased: true
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * bubble config options
+ */
+var optBubble = {
+    /**
+     * Set bubble options
+     * @name bubble
+     * @memberof Options
+     * @type {object}
+     * @property {object} bubble bubble object
+     * @property {number|Function} [bubble.maxR=35] Set the max bubble radius value
+     * @property {boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
+     * @example
+     *  bubble: {
+     *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
+     *      // And the lesser will have radius relatively from tha max value.
+     *      maxR: 50,
+     *
+     *      // or set radius callback
+     *      maxR: function(d) {
+     *          // ex. of d param - {x: Fri Oct 06 2017 00:00:00 GMT+0900, value: 80, id: "data2", index: 5}
+     *          ...
+     *          return Math.sqrt(d.value * 2);
+     *      },
+     *      zerobased: false
+     *  }
+     */
+    bubble_maxR: 35,
+    bubble_zerobased: false
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * line config options
+ */
+var optLine = {
+    /**
+     * Set line options
+     * @name line
+     * @memberof Options
+     * @type {object}
+     * @property {object} line Line object
+     * @property {boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
+     *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
+     * @property {Array}   [line.classes=undefined] If set, used to set a css class on each line.
+     * @property {boolean} [line.step.type=step] Change step type for step chart.<br>
+     * **Available values:**
+     * - step
+     * - step-before
+     * - step-after
+     * @property {boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
+     * @property {boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
+     * @example
+     *  line: {
+     *      connectNull: true,
+     *      classes: [
+     *          "line-class1",
+     *          "line-class2"
+     *      ],
+     *      step: {
+     *          type: "step-after"
+     *      },
+     *
+     *      // hide all data points ('point.show=false' also has similar effect)
+     *      point: false,
+     *
+     *      // show data points for only indicated datas
+     *      point: [
+     *          "data1", "data3"
+     *      ],
+     *
+     *      zerobased: false
+     *  }
+     */
+    line_connectNull: false,
+    line_step_type: "step",
+    line_zerobased: false,
+    line_classes: undefined,
+    line_point: true
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * scatter config options
+ */
+var optScatter = {
+    /**
+     * Set scatter options
+     * @name scatter
+     * @memberof Options
+     * @type {object}
+     * @property {object} [scatter] scatter object
+     * @property {boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+     * @example
+     *  scatter: {
+     *      connectNull: true,
+     *      step: {
+     *          type: "step-after"
+     *      },
+     *
+     *      // hide all data points ('point.show=false' also has similar effect)
+     *      point: false,
+     *
+     *      // show data points for only indicated datas
+     *      point: [
+     *          "data1", "data3"
+     *      ],
+     *
+     *      zerobased: false
+     *  }
+     */
+    scatter_zerobased: false
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * x Axis config options
+ */
+var optSpline = {
+    /**
+     * Set spline options
+     * - **Available interpolation type values:**
+     *  - basis (d3.curveBasis)
+     *  - basis-closed (d3.curveBasisClosed)
+     *  - basis-open (d3.curveBasisOpen)
+     *  - bundle (d3.curveBundle)
+     *  - cardinal (d3.curveCardinal)
+     *  - cardinal-closed (d3.curveCardinalClosed)
+     *  - cardinal-open (d3.curveCardinalOpen)
+     *  - catmull-rom (d3.curveCatmullRom)
+     *  - catmull-rom-closed (d3.curveCatmullRomClosed)
+     *  - catmull-rom-open (d3.curveCatmullRomOpen)
+     *  - monotone-x (d3.curveMonotoneX)
+     *  - monotone-y (d3.curveMonotoneY)
+     *  - natural (d3.curveNatural)
+     *  - linear-closed (d3.curveLinearClosed)
+     *  - linear (d3.curveLinear)
+     *  - step (d3.curveStep)
+     *  - step-after (d3.curveStepAfter)
+     *  - step-before (d3.curveStepBefore)
+     * @name spline
+     * @memberof Options
+     * @type {object}
+     * @property {object} spline Spline object
+     * @property {object} spline.interpolation Spline interpolation object
+     * @property {string} [spline.interpolation.type="cardinal"] Interpolation type
+     * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
+     * @example
+     *  spline: {
+     *      interpolation: {
+     *          type: "cardinal"
+     *      }
+     *  }
+     */
+    spline_interpolation_type: "cardinal"
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * donut config options
+ */
+var optDonut = {
+    /**
+     * Set donut options
+     * @name donut
+     * @memberof Options
+     * @type {object}
+     * @property {object} donut Donut object
+     * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
+     * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
+     * @property {number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
+     * @property {number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
+     * @property {boolean} [donut.expand=true] Enable or disable expanding donut pieces.
+     * @property {number} [donut.expand.rate=0.98] Set expand rate.
+     * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
+     * @property {number} [donut.width] Set width of donut chart.
+     * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
+     * @property {number} [donut.padAngle=0] Set padding between data.
+     * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
+     * @example
+     *  donut: {
+     *      label: {
+     *          show: false,
+     *          format: function(value, ratio, id) {
+     *              return d3.format("$")(value);
+     *
+     *              // to multiline, return with '\n' character
+     *              // return value +"%\nLine1\n2Line2";
+     *          },
+     *          threshold: 0.1,
+     *
+     *          // set ratio callback. Should return ratio value
+     *          ratio: function(d, radius, h) {
+     *          	...
+     *          	return ratio;
+     *          },
+     *          // or set ratio number
+     *          ratio: 0.5
+     *      },
+     *
+     *      // disable expand transition for interaction
+     *      expand: false,
+     *
+     *      expand: {
+     *      	// set duration of expand transition to 500ms.
+     *          duration: 500,
+     *
+     *      	// set expand area rate
+     *          rate: 1
+     *      },
+     *
+     *      width: 10,
+     *      padAngle: 0.2,
+     *      startingAngle: 1,
+     *      title: "Donut Title"
+     *
+     *      // title with line break
+     *      title: "Title1\nTitle2"
+     *  }
+     */
+    donut_label_show: true,
+    donut_label_format: undefined,
+    donut_label_threshold: 0.05,
+    donut_label_ratio: undefined,
+    donut_width: undefined,
+    donut_title: "",
+    donut_expand: {},
+    donut_expand_rate: 0.98,
+    donut_expand_duration: 50,
+    donut_padAngle: 0,
+    donut_startingAngle: 0
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * gauge config options
+ */
+var optGauge = {
+    /**
+     * Set gauge options
+     * @name gauge
+     * @memberof Options
+     * @type {object}
+     * @property {object} gauge Gauge object
+     * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
+     * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
+     * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
+     * @property {Function} [gauge.label.extents] Set customized min/max label text.
+     * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
+     * @property {number} [gauge.expand.rate=0.98] Set expand rate.
+     * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
+     * @property {number} [gauge.min=0] Set min value of the gauge.
+     * @property {number} [gauge.max=100] Set max value of the gauge.
+     * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
+     * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
+     * @property {string} [gauge.units] Set units of the gauge.
+     * @property {number} [gauge.width] Set width of gauge chart.
+     * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
+     * **Available Values:**
+     * - single
+     * - multi
+     * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+     * @example
+     *  gauge: {
+     *      fullCircle: false,
+     *      label: {
+     *          show: false,
+     *          format: function(value, ratio) {
+     *              return value;
+     *
+     *              // to multiline, return with '\n' character
+     *              // return value +"%\nLine1\n2Line2";
+     *          },
+     *          extents: function(value, isMax) {
+     *              return (isMax ? "Max:" : "Min:") + value;
+     *          }
+     *      },
+     *
+     *      // disable expand transition for interaction
+     *      expand: false,
+     *
+     *      expand: {
+     *      	// set duration of expand transition to 500ms.
+     *          duration: 500,
+     *
+     *      	// set expand area rate
+     *          rate: 1
+     *      },
+     *
+     *      min: -100,
+     *      max: 200,
+     *      type: "single"  // or 'multi'
+     *      title: "Title Text",
+     *      units: "%",
+     *      width: 10,
+     *      arcs: {
+     *          minWidth: 5
+     *      }
+     *  }
+     */
+    gauge_fullCircle: false,
+    gauge_label_show: true,
+    gauge_label_format: undefined,
+    gauge_label_extents: undefined,
+    gauge_min: 0,
+    gauge_max: 100,
+    gauge_type: "single",
+    gauge_startingAngle: -1 * Math.PI / 2,
+    gauge_title: "",
+    gauge_units: undefined,
+    gauge_width: undefined,
+    gauge_arcs_minWidth: 5,
+    gauge_expand: {},
+    gauge_expand_rate: 0.98,
+    gauge_expand_duration: 50
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * x Axis config options
+ */
+var optPie = {
+    /**
+     * Set pie options
+     * @name pie
+     * @memberof Options
+     * @type {object}
+     * @property {object} pie Pie object
+     * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
+     * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
+     * @property {number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
+     * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
+     * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
+     * @property {number} [pie.expand.rate=0.98] Set expand rate.
+     * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
+     * @property {number|object} [pie.innerRadius=0] Sets the inner radius of pie arc.
+     * @property {number} [pie.padAngle=0] Set padding between data.
+     * @property {number} [pie.padding=0] Sets the gap between pie arcs.
+     * @property {object} donut Donut object
+     * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
+     * @example
+     *  pie: {
+     *      label: {
+     *          show: false,
+     *          format: function(value, ratio, id) {
+     *              return d3.format("$")(value);
+     *
+     *              // to multiline, return with '\n' character
+     *              // return value +"%\nLine1\n2Line2";
+     *          },
+     *          threshold: 0.1,
+     *
+     *          // set ratio callback. Should return ratio value
+     *          ratio: function(d, radius, h) {
+     *              ...
+     *              return ratio;
+     *          },
+     *          // or set ratio number
+     *          ratio: 0.5
+     *      },
+     *
+     *      // disable expand transition for interaction
+     *      expand: false,
+     *
+     *      expand: {
+     *      	// set duration of expand transition to 500ms.
+     *          duration: 500,
+     *
+     *      	// set expand area rate
+     *          rate: 1
+     *      },
+     *
+     *      innerRadius: 0,
+     *
+     *      // set different innerRadius for each data
+     *      innerRadius: {
+     *      	data1: 10,
+     *      	data2: 0
+     *      }
+     *
+     *      padAngle: 0.1,
+     *      padding: 0,
+     *      startingAngle: 1
+     *  }
+     */
+    pie_label_show: true,
+    pie_label_format: undefined,
+    pie_label_threshold: 0.05,
+    pie_label_ratio: undefined,
+    pie_expand: {},
+    pie_expand_rate: 0.98,
+    pie_expand_duration: 50,
+    pie_innerRadius: 0,
+    pie_padAngle: 0,
+    pie_padding: 0,
+    pie_startingAngle: 0
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * x Axis config options
+ */
+var optRadar = {
+    /**
+     * Set radar options
+     * - **NOTE:**
+     *  > When x tick text contains `\n`, it's used as line break.
+     * @name radar
+     * @memberof Options
+     * @type {object}
+     * @property {object} radar Radar object
+     * @property {number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
+     * @property {boolean} [radar.axis.line.show=true] Show or hide axis line.
+     * @property {number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
+     * @property {number} [radar.axis.text.position.y=0] y coordinate position, relative the original.
+     * @property {boolean} [radar.axis.text.show=true] Show or hide axis text.
+     * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
+     * @property {number} [radar.level.depth=3] Set the level depth.
+     * @property {boolean} [radar.level.show=true] Show or hide level.
+     * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
+     * @property {boolean} [radar.level.text.show=true] Show or hide level text.
+     * @property {number} [radar.size.ratio=0.87] Set size ratio.
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)
+     * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
+     * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
+     * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
+     * @see [Demo: radar axis multiline](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxisMultiline)
+     * @example
+     *  radar: {
+     *      axis: {
+     *          max: 50,
+     *          line: {
+     *              show: false
+     *          },
+     *          text: {
+     *              position: {
+     *              	x: 0,
+     *              	y: 0
+     *              },
+     *              show: false
+     *          }
+     *      },
+     *      direction: {
+     *          clockwise: true
+     *      },
+     *      level: {
+     *          show: false,
+     *          text: {
+     *              format: function(x) {
+     *                  return x + "%";
+     *              },
+     *              show: true
+     *          }
+     *      },
+     *      size: {
+     *          ratio: 0.7
+     *      }
+     *  }
+     */
+    radar_axis_max: undefined,
+    radar_axis_line_show: true,
+    radar_axis_text_show: true,
+    radar_axis_text_position: {},
+    radar_level_depth: 3,
+    radar_level_show: true,
+    radar_level_text_format: function (x) { return (x % 1 === 0 ? x : x.toFixed(2)); },
+    radar_level_text_show: true,
+    radar_size_ratio: 0.87,
+    radar_direction_clockwise: false
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
  */
 var defaults = {};
@@ -18643,62 +18667,66 @@ var bb = {
 /**
  * Extend Axis
  * @param {Array} module Module to be extended
+ * @param {object} option Option object to be extended
  * @returns {boolean}
+ * @private
  */
-function extendAxis() {
-    var module = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        module[_i] = arguments[_i];
-    }
+function extendAxis(module, option) {
     extend(ChartInternal.prototype, __spreadArrays(internal, module));
     extend(Chart.prototype, api);
+    extend(Options.data, [
+        optDataAxis,
+        optAxis,
+        optGrid,
+        optSubchart,
+        optZoom
+    ].concat(option || []));
     return true;
 }
 /**
  * Extend Line type modules
- * @param {Array} module Module to be extended
+ * @param {object} module Module to be extended
+ * @param {Array} option Option object to be extended
  * @returns {boolean}
+ * @private
  */
-function extendLine() {
-    var module = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        module[_i] = arguments[_i];
-    }
-    extendAxis.apply(void 0, __spreadArrays([shapePoint, shapeLine], module));
+function extendLine(module, option) {
+    extendAxis([shapePoint, shapeLine, module]);
+    // @ts-ignore
+    extend(Options.data, [optPoint, optLine].concat(option || []));
     return true;
 }
 /**
  * Extend Arc type modules
  * @param {Array} module Module to be extended
+ * @param {Array} option Option object to be extended
  * @returns {boolean}
+ * @private
  */
-function extendArc() {
-    var module = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        module[_i] = arguments[_i];
-    }
-    extend(ChartInternal.prototype, __spreadArrays([shapeArc], module));
+function extendArc(module, option) {
+    extend(ChartInternal.prototype, [shapeArc].concat(module || []));
+    extend(Options.data, option);
     return true;
 }
 // Area types
-var area$1 = function () { return (extendLine(shapeArea) && TYPE.AREA); };
-var areaLineRange = function () { return (extendLine(shapeArea) && TYPE.AREA_LINE_RANGE); };
-var areaSpline = function () { return (extendLine(shapeArea) && TYPE.AREA_SPLINE); };
-var areaSplineRange = function () { return (extendLine(shapeArea) && TYPE.AREA_SPLINE_RANGE); };
-var areaStep = function () { return (extendLine(shapeArea) && TYPE.AREA_STEP); };
+var area = function () { return (extendLine(shapeArea, [optArea]) && TYPE.AREA); };
+var areaLineRange = function () { return (extendLine(shapeArea, [optArea]) && TYPE.AREA_LINE_RANGE); };
+var areaSpline = function () { return (extendLine(shapeArea, [optArea, optSpline]) && TYPE.AREA_SPLINE); };
+var areaSplineRange = function () { return (extendLine(shapeArea, [optArea, optSpline]) && TYPE.AREA_SPLINE_RANGE); };
+var areaStep = function () { return (extendLine(shapeArea, [optArea]) && TYPE.AREA_STEP); };
 // Line types
-var line$1 = function () { return (extendLine() && TYPE.LINE); };
-var spline$1 = function () { return (extendLine() && TYPE.SPLINE); };
+var line = function () { return (extendLine() && TYPE.LINE); };
+var spline = function () { return (extendLine(undefined, [optSpline]) && TYPE.SPLINE); };
 var step = function () { return (extendLine() && TYPE.STEP); };
 // Arc types
-var donut$1 = function () { return (extendArc() && TYPE.DONUT); };
-var gauge$1 = function () { return (extendArc() && TYPE.GAUGE); };
-var pie$1 = function () { return (extendArc() && TYPE.PIE); };
-var radar$1 = function () { return (extendArc(shapePoint, shapeRadar) && TYPE.RADAR); };
+var donut = function () { return (extendArc(undefined, optDonut) && TYPE.DONUT); };
+var gauge = function () { return (extendArc(undefined, optGauge) && TYPE.GAUGE); };
+var pie = function () { return (extendArc(undefined, optPie) && TYPE.PIE); };
+var radar = function () { return (extendArc([shapePoint, shapeRadar], optRadar) && TYPE.RADAR); };
 // Axis based types
-var bar$1 = function () { return (extendAxis(shapeBar) && TYPE.BAR); };
-var bubble$1 = function () { return (extendAxis(shapePoint, shapeBubble) && TYPE.BUBBLE); };
-var scatter = function () { return (extendAxis(shapePoint) && TYPE.SCATTER); };
+var bar = function () { return (extendAxis([shapeBar], optBar) && TYPE.BAR); };
+var bubble = function () { return (extendAxis([shapePoint, shapeBubble], optBubble) && TYPE.BUBBLE); };
+var scatter = function () { return (extendAxis([shapePoint], [optPoint, optScatter]) && TYPE.SCATTER); };
 
 export default bb;
-export { area$1 as area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar$1 as bar, bb, bubble$1 as bubble, donut$1 as donut, gauge$1 as gauge, line$1 as line, pie$1 as pie, radar$1 as radar, scatter, spline$1 as spline, step };
+export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, donut, gauge, line, pie, radar, scatter, spline, step };

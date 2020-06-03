@@ -35,8 +35,8 @@ export default {
 
 	getCurrentPaddingTop(): number {
 		const $$ = this;
-		const {config, $el} = $$;
-		const axesLen = config.axis_y2_axes.length;
+		const {config, state: {hasAxis}, $el} = $$;
+		const axesLen = hasAxis ? config.axis_y2_axes.length : 0;
 
 		let padding = isValue(config.padding_top) ?
 			config.padding_top : 0;
@@ -54,9 +54,9 @@ export default {
 
 	getCurrentPaddingBottom(): number {
 		const $$ = this;
-		const {config} = $$;
+		const {config, state: {hasAxis}} = $$;
 		const axisId = config.axis_rotated ? "y" : "x";
-		const axesLen = config[`axis_${axisId}_axes`].length;
+		const axesLen = hasAxis ? config[`axis_${axisId}_axes`].length : 0;
 		const padding = isValue(config.padding_bottom) ?
 			config.padding_bottom : 0;
 
@@ -70,7 +70,7 @@ export default {
 		const {config, state: {hasAxis}} = $$;
 		const isRotated = config.axis_rotated;
 		const axisId = isRotated ? "x" : "y";
-		const axesLen = config[`axis_${axisId}_axes`].length;
+		const axesLen = hasAxis ? config[`axis_${axisId}_axes`].length : 0;
 		const axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
 		let padding;
 
@@ -93,7 +93,7 @@ export default {
 		const {config, state: {hasAxis}} = $$;
 		const defaultPadding = 10;
 		const legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
-		const axesLen = config.axis_y2_axes.length;
+		const axesLen = hasAxis ? config.axis_y2_axes.length : 0;
 		const axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0;
 		const xAxisTickTextOverflow = withoutTickTextOverflow ?
 			0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
