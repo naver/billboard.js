@@ -2382,9 +2382,9 @@ function convertInputType(mouse, touch) {
 }
 
 /**
- * Merge object returning new object
+ * Deep copy object
  * @param {object} objectN Source object
- * @returns {object} merged target object
+ * @returns {object} Cloned object
  * @private
  */
 function deepCopy() {
@@ -2415,6 +2415,14 @@ var Options = /** @class */ (function () {
     function Options() {
         return deepCopy(main, data, dataSelection, color, interaction, legend, title, tooltip, Options.data);
     }
+    Options.setOptions = function () {
+        var options = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            options[_i] = arguments[_i];
+        }
+        this.data = options
+            .reduce(function (a, c) { return (_assign(_assign({}, a), c)); }, this.data);
+    };
     Options.data = {};
     return Options;
 }());
@@ -3953,7 +3961,7 @@ var category = {
      */
     categoryName: function (i) {
         var categories = this.config.axis_x_categories;
-        return i < categories && categories.length ? categories[i] : i;
+        return categories && i < categories.length ? categories[i] : i;
     }
 };
 
@@ -18674,7 +18682,7 @@ var bb = {
 function extendAxis(module, option) {
     extend(ChartInternal.prototype, __spreadArrays(internal, module));
     extend(Chart.prototype, api);
-    extend(Options.data, [
+    Options.setOptions([
         optDataAxis,
         optAxis,
         optGrid,
@@ -18692,8 +18700,7 @@ function extendAxis(module, option) {
  */
 function extendLine(module, option) {
     extendAxis([shapePoint, shapeLine, module]);
-    // @ts-ignore
-    extend(Options.data, [optPoint, optLine].concat(option || []));
+    Options.setOptions([optPoint, optLine].concat(option || []));
     return true;
 }
 /**
@@ -18705,7 +18712,7 @@ function extendLine(module, option) {
  */
 function extendArc(module, option) {
     extend(ChartInternal.prototype, [shapeArc].concat(module || []));
-    extend(Options.data, option);
+    Options.setOptions(option);
     return true;
 }
 // Area types

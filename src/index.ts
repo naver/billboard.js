@@ -38,6 +38,7 @@ import optArea from "./config/Options/shape/area";
 import optBar from "./config/Options/shape/bar";
 import optBubble from "./config/Options/shape/bubble";
 import optLine from "./config/Options/shape/line";
+import optScatter from "./config/Options/shape/scatter";
 import optSpline from "./config/Options/shape/spline";
 
 // Non-Axis based
@@ -62,22 +63,23 @@ extend(ChartInternal.prototype, [
 extend(Chart.prototype, apiAxis);
 
 // extend options
-Options.data = {
-	...optDataAxis,
-	...optDataSelection,
-	...optAxis,
-	...optGrid,
-	...optPoint,
-	...optSubchart,
-	...optZoom,
+Options.setOptions(
+	optDataAxis,
+	optDataSelection,
+	optAxis,
+	optGrid,
+	optPoint,
+	optSubchart,
+	optZoom,
 
-	...optArea,
-	...optBar,
-	...optBubble,
-	...optLine,
-	...optSpline,
-	...optDonut,
-	...optGauge,
-	...optPie,
-	...optRadar
-};
+	optArea,
+	optBar,
+	optBubble,
+	optLine,
+	optScatter,
+	optSpline,
+	optDonut,
+	optGauge,
+	optPie,
+	optRadar
+);

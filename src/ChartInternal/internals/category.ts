@@ -12,6 +12,6 @@ export default {
 	categoryName(i: number): string {
 		const {axis_x_categories: categories} = this.config;
 
-		return i < categories && categories.length ? categories[i] : i;
+		return categories && i < categories.length ? categories[i] : i;
 	},
 };

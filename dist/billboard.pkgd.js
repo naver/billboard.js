@@ -17362,911 +17362,36 @@ function set(type, name, callback) {
 /* harmony default export */ var src_dispatch = (dispatch_dispatch);
 // CONCATENATED MODULE: ./node_modules/d3-dispatch/src/index.js
 
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/namespaces.js
-var namespaces_xhtml = "http://www.w3.org/1999/xhtml";
-/* harmony default export */ var src_namespaces = ({
-  svg: "http://www.w3.org/2000/svg",
-  xhtml: "http://www.w3.org/1999/xhtml",
-  xlink: "http://www.w3.org/1999/xlink",
-  xml: "http://www.w3.org/XML/1998/namespace",
-  xmlns: "http://www.w3.org/2000/xmlns/"
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/namespace.js
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
 
-/* harmony default export */ var src_namespace = (function (name) {
-  var prefix = name += "",
-      i = prefix.indexOf(":");
-  return i >= 0 && (prefix = name.slice(0, i)) !== "xmlns" && (name = name.slice(i + 1)), src_namespaces.hasOwnProperty(prefix) ? {
-    space: src_namespaces[prefix],
-    local: name
-  } : name;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/creator.js
-
-
-
-function creator_creatorInherit(name) {
-  return function () {
-    var document = this.ownerDocument,
-        uri = this.namespaceURI;
-    return uri === namespaces_xhtml && document.documentElement.namespaceURI === namespaces_xhtml ? document.createElement(name) : document.createElementNS(uri, name);
-  };
+function nopropagation() {
+  on_event.stopImmediatePropagation();
 }
+/* harmony default export */ var noevent = (function () {
+  on_event.preventDefault(), on_event.stopImmediatePropagation();
+});
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/nodrag.js
 
-function creator_creatorFixed(fullname) {
-  return function () {
-    return this.ownerDocument.createElementNS(fullname.space, fullname.local);
-  };
+
+/* harmony default export */ var nodrag = (function (view) {
+  var root = view.document.documentElement,
+      selection = src_select(view).on("dragstart.drag", noevent, !0);
+  "onselectstart" in root ? selection.on("selectstart.drag", noevent, !0) : (root.__noselect = root.style.MozUserSelect, root.style.MozUserSelect = "none");
+});
+function yesdrag(view, noclick) {
+  var root = view.document.documentElement,
+      selection = src_select(view).on("dragstart.drag", null);
+  noclick && (selection.on("click.drag", noevent, !0), setTimeout(function () {
+    selection.on("click.drag", null);
+  }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
 }
-
-/* harmony default export */ var src_creator = (function (name) {
-  var fullname = src_namespace(name);
-  return (fullname.local ? creator_creatorFixed : creator_creatorInherit)(fullname);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selector.js
-function selector_none() {}
-
-/* harmony default export */ var d3_selection_src_selector = (function (selector) {
-  return selector == null ? selector_none : function () {
-    return this.querySelector(selector);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/select.js
-
-
-/* harmony default export */ var src_selection_select = (function (select) {
-  typeof select !== "function" && (select = d3_selection_src_selector(select));
-
-  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, subnode, group = groups[j], n = group.length, subgroup = subgroups[j] = Array(n), i = 0; i < n; ++i) (node = group[i]) && (subnode = select.call(node, node.__data__, i, group)) && ("__data__" in node && (subnode.__data__ = node.__data__), subgroup[i] = subnode);
-
-  return new selection_Selection(subgroups, this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selectorAll.js
-function src_selectorAll_empty() {
-  return [];
-}
-
-/* harmony default export */ var src_selectorAll = (function (selector) {
-  return selector == null ? src_selectorAll_empty : function () {
-    return this.querySelectorAll(selector);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/selectAll.js
-
-
-/* harmony default export */ var selection_selectAll = (function (select) {
-  typeof select !== "function" && (select = src_selectorAll(select));
-
-  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) (node = group[i]) && (subgroups.push(select.call(node, node.__data__, i, group)), parents.push(node));
-
-  return new selection_Selection(subgroups, parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/matcher.js
-/* harmony default export */ var src_matcher = (function (selector) {
-  return function () {
-    return this.matches(selector);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/filter.js
-
-
-/* harmony default export */ var src_selection_filter = (function (match) {
-  typeof match !== "function" && (match = src_matcher(match));
-
-  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, subgroup = subgroups[j] = [], i = 0; i < n; ++i) (node = group[i]) && match.call(node, node.__data__, i, group) && subgroup.push(node);
-
-  return new selection_Selection(subgroups, this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/sparse.js
-/* harmony default export */ var selection_sparse = (function (update) {
-  return Array(update.length);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/enter.js
-
-
-/* harmony default export */ var src_selection_enter = (function () {
-  return new selection_Selection(this._enter || this._groups.map(selection_sparse), this._parents);
-});
-function enter_EnterNode(parent, datum) {
-  this.ownerDocument = parent.ownerDocument, this.namespaceURI = parent.namespaceURI, this._next = null, this._parent = parent, this.__data__ = datum;
-}
-enter_EnterNode.prototype = {
-  constructor: enter_EnterNode,
-  appendChild: function appendChild(child) {
-    return this._parent.insertBefore(child, this._next);
-  },
-  insertBefore: function insertBefore(child, next) {
-    return this._parent.insertBefore(child, next);
-  },
-  querySelector: function querySelector(selector) {
-    return this._parent.querySelector(selector);
-  },
-  querySelectorAll: function querySelectorAll(selector) {
-    return this._parent.querySelectorAll(selector);
-  }
-};
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/constant.js
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/constant.js
 /* harmony default export */ var src_constant = (function (x) {
   return function () {
     return x;
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/data.js
-
-
-
-var data_keyPrefix = "$"; // Protect against keys like “__proto__”.
-
-function data_bindIndex(parent, group, enter, update, exit, data) {
-  // Put any non-null nodes that fit into update.
-  // Put any null nodes into enter.
-  // Put any remaining data into enter.
-  for (var node, i = 0, groupLength = group.length, dataLength = data.length; i < dataLength; ++i) (node = group[i]) ? (node.__data__ = data[i], update[i] = node) : enter[i] = new enter_EnterNode(parent, data[i]); // Put any non-null nodes that don’t fit into exit.
-
-
-  for (; i < groupLength; ++i) (node = group[i]) && (exit[i] = node);
-}
-
-function data_bindKey(parent, group, enter, update, exit, data, key) {
-  var i,
-      node,
-      keyValue,
-      nodeByKeyValue = {},
-      groupLength = group.length,
-      dataLength = data.length,
-      keyValues = Array(groupLength); // Compute the key for each node.
-  // If multiple nodes have the same key, the duplicates are added to exit.
-
-  for (i = 0; i < groupLength; ++i) (node = group[i]) && (keyValues[i] = keyValue = data_keyPrefix + key.call(node, node.__data__, i, group), keyValue in nodeByKeyValue ? exit[i] = node : nodeByKeyValue[keyValue] = node); // Compute the key for each datum.
-  // If there a node associated with this key, join and add it to update.
-  // If there is not (or the key is a duplicate), add it to enter.
-
-
-  for (i = 0; i < dataLength; ++i) keyValue = data_keyPrefix + key.call(parent, data[i], i, data), (node = nodeByKeyValue[keyValue]) ? (update[i] = node, node.__data__ = data[i], nodeByKeyValue[keyValue] = null) : enter[i] = new enter_EnterNode(parent, data[i]); // Add any remaining nodes that were not bound to data to exit.
-
-
-  for (i = 0; i < groupLength; ++i) (node = group[i]) && nodeByKeyValue[keyValues[i]] === node && (exit[i] = node);
-}
-
-/* harmony default export */ var src_selection_data = (function (value, key) {
-  if (!value) return data = Array(this.size()), j = -1, this.each(function (d) {
-    data[++j] = d;
-  }), data;
-  var bind = key ? data_bindKey : data_bindIndex,
-      parents = this._parents,
-      groups = this._groups;
-  typeof value !== "function" && (value = src_constant(value));
-
-  for (var m = groups.length, update = Array(m), enter = Array(m), exit = Array(m), j = 0; j < m; ++j) {
-    var parent = parents[j],
-        group = groups[j],
-        groupLength = group.length,
-        data = value.call(parent, parent && parent.__data__, j, parents),
-        dataLength = data.length,
-        enterGroup = enter[j] = Array(dataLength),
-        updateGroup = update[j] = Array(dataLength),
-        exitGroup = exit[j] = Array(groupLength);
-    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key);
-
-    // Now connect the enter nodes to their following update node, such that
-    // appendChild can insert the materialized enter node before this node,
-    // rather than at the end of the parent node.
-    for (var previous, next, i0 = 0, i1 = 0; i0 < dataLength; ++i0) if (previous = enterGroup[i0]) {
-      for (i0 >= i1 && (i1 = i0 + 1); !(next = updateGroup[i1]) && ++i1 < dataLength;);
-
-      previous._next = next || null;
-    }
-  }
-
-  return update = new selection_Selection(update, parents), update._enter = enter, update._exit = exit, update;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/exit.js
-
-
-/* harmony default export */ var src_selection_exit = (function () {
-  return new selection_Selection(this._exit || this._groups.map(selection_sparse), this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/join.js
-/* harmony default export */ var selection_join = (function (onenter, onupdate, onexit) {
-  var enter = this.enter(),
-      update = this,
-      exit = this.exit();
-  return enter = typeof onenter === "function" ? onenter(enter) : enter.append(onenter + ""), onupdate != null && (update = onupdate(update)), onexit == null ? exit.remove() : onexit(exit), enter && update ? enter.merge(update).order() : update;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/merge.js
-
-/* harmony default export */ var src_selection_merge = (function (selection) {
-  for (var groups0 = this._groups, groups1 = selection._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = Array(m0), j = 0; j < m; ++j) for (var node, group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = Array(n), i = 0; i < n; ++i) (node = group0[i] || group1[i]) && (merge[i] = node);
-
-  for (; j < m0; ++j) merges[j] = groups0[j];
-
-  return new selection_Selection(merges, this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/order.js
-/* harmony default export */ var src_selection_order = (function () {
-  for (var groups = this._groups, j = -1, m = groups.length; ++j < m;) for (var node, group = groups[j], i = group.length - 1, next = group[i]; --i >= 0;) (node = group[i]) && (next && node.compareDocumentPosition(next) ^ 4 && next.parentNode.insertBefore(node, next), next = node);
-
-  return this;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/sort.js
-
-/* harmony default export */ var src_selection_sort = (function (compare) {
-  function compareNode(a, b) {
-    return a && b ? compare(a.__data__, b.__data__) : !a - !b;
-  }
-
-  compare || (compare = sort_ascending);
-
-  for (var groups = this._groups, m = groups.length, sortgroups = Array(m), j = 0; j < m; ++j) {
-    for (var node, group = groups[j], n = group.length, sortgroup = sortgroups[j] = Array(n), i = 0; i < n; ++i) (node = group[i]) && (sortgroup[i] = node);
-
-    sortgroup.sort(compareNode);
-  }
-
-  return new selection_Selection(sortgroups, this._parents).order();
-});
-
-function sort_ascending(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-}
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/call.js
-/* harmony default export */ var selection_call = (function () {
-  var callback = arguments[0];
-  return arguments[0] = this, callback.apply(null, arguments), this;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/nodes.js
-/* harmony default export */ var selection_nodes = (function () {
-  var nodes = Array(this.size()),
-      i = -1;
-  return this.each(function () {
-    nodes[++i] = this;
-  }), nodes;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/node.js
-/* harmony default export */ var src_selection_node = (function () {
-  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) for (var node, group = groups[j], i = 0, n = group.length; i < n; ++i) if (node = group[i], node) return node;
-
-  return null;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/size.js
-/* harmony default export */ var src_selection_size = (function () {
-  var size = 0;
-  return this.each(function () {
-    ++size;
-  }), size;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/empty.js
-/* harmony default export */ var src_selection_empty = (function () {
-  return !this.node();
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/each.js
-/* harmony default export */ var selection_each = (function (callback) {
-  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) for (var node, group = groups[j], i = 0, n = group.length; i < n; ++i) (node = group[i]) && callback.call(node, node.__data__, i, group);
-
-  return this;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/attr.js
-
-
-function attr_attrRemove(name) {
-  return function () {
-    this.removeAttribute(name);
-  };
-}
-
-function attr_attrRemoveNS(fullname) {
-  return function () {
-    this.removeAttributeNS(fullname.space, fullname.local);
-  };
-}
-
-function attr_attrConstant(name, value) {
-  return function () {
-    this.setAttribute(name, value);
-  };
-}
-
-function attr_attrConstantNS(fullname, value) {
-  return function () {
-    this.setAttributeNS(fullname.space, fullname.local, value);
-  };
-}
-
-function attr_attrFunction(name, value) {
-  return function () {
-    var v = value.apply(this, arguments);
-    v == null ? this.removeAttribute(name) : this.setAttribute(name, v);
-  };
-}
-
-function attr_attrFunctionNS(fullname, value) {
-  return function () {
-    var v = value.apply(this, arguments);
-    v == null ? this.removeAttributeNS(fullname.space, fullname.local) : this.setAttributeNS(fullname.space, fullname.local, v);
-  };
-}
-
-/* harmony default export */ var selection_attr = (function (name, value) {
-  var fullname = src_namespace(name);
-
-  if (arguments.length < 2) {
-    var node = this.node();
-    return fullname.local ? node.getAttributeNS(fullname.space, fullname.local) : node.getAttribute(fullname);
-  }
-
-  return this.each((value == null ? fullname.local ? attr_attrRemoveNS : attr_attrRemove : typeof value === "function" ? fullname.local ? attr_attrFunctionNS : attr_attrFunction : fullname.local ? attr_attrConstantNS : attr_attrConstant)(fullname, value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/window.js
-/* harmony default export */ var d3_selection_src_window = (function (node) {
-  return node.ownerDocument && node.ownerDocument.defaultView || // node is a Node
-  node.document && node // node is a Window
-  || node.defaultView; // node is a Document
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/style.js
-
-
-function style_styleRemove(name) {
-  return function () {
-    this.style.removeProperty(name);
-  };
-}
-
-function style_styleConstant(name, value, priority) {
-  return function () {
-    this.style.setProperty(name, value, priority);
-  };
-}
-
-function style_styleFunction(name, value, priority) {
-  return function () {
-    var v = value.apply(this, arguments);
-    v == null ? this.style.removeProperty(name) : this.style.setProperty(name, v, priority);
-  };
-}
-
-/* harmony default export */ var src_selection_style = (function (name, value, priority) {
-  return arguments.length > 1 ? this.each((value == null ? style_styleRemove : typeof value === "function" ? style_styleFunction : style_styleConstant)(name, value, priority == null ? "" : priority)) : style_styleValue(this.node(), name);
-});
-function style_styleValue(node, name) {
-  return node.style.getPropertyValue(name) || d3_selection_src_window(node).getComputedStyle(node, null).getPropertyValue(name);
-}
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/property.js
-function property_propertyRemove(name) {
-  return function () {
-    delete this[name];
-  };
-}
-
-function property_propertyConstant(name, value) {
-  return function () {
-    this[name] = value;
-  };
-}
-
-function property_propertyFunction(name, value) {
-  return function () {
-    var v = value.apply(this, arguments);
-    v == null ? delete this[name] : this[name] = v;
-  };
-}
-
-/* harmony default export */ var selection_property = (function (name, value) {
-  return arguments.length > 1 ? this.each((value == null ? property_propertyRemove : typeof value === "function" ? property_propertyFunction : property_propertyConstant)(name, value)) : this.node()[name];
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/classed.js
-function classed_classArray(string) {
-  return string.trim().split(/^|\s+/);
-}
-
-function classed_classList(node) {
-  return node.classList || new classed_ClassList(node);
-}
-
-function classed_ClassList(node) {
-  this._node = node, this._names = classed_classArray(node.getAttribute("class") || "");
-}
-
-classed_ClassList.prototype = {
-  add: function add(name) {
-    var i = this._names.indexOf(name);
-
-    i < 0 && (this._names.push(name), this._node.setAttribute("class", this._names.join(" ")));
-  },
-  remove: function remove(name) {
-    var i = this._names.indexOf(name);
-
-    i >= 0 && (this._names.splice(i, 1), this._node.setAttribute("class", this._names.join(" ")));
-  },
-  contains: function contains(name) {
-    return this._names.indexOf(name) >= 0;
-  }
-};
-
-function classed_classedAdd(node, names) {
-  for (var list = classed_classList(node), i = -1, n = names.length; ++i < n;) list.add(names[i]);
-}
-
-function classed_classedRemove(node, names) {
-  for (var list = classed_classList(node), i = -1, n = names.length; ++i < n;) list.remove(names[i]);
-}
-
-function classed_classedTrue(names) {
-  return function () {
-    classed_classedAdd(this, names);
-  };
-}
-
-function classed_classedFalse(names) {
-  return function () {
-    classed_classedRemove(this, names);
-  };
-}
-
-function classed_classedFunction(names, value) {
-  return function () {
-    (value.apply(this, arguments) ? classed_classedAdd : classed_classedRemove)(this, names);
-  };
-}
-
-/* harmony default export */ var selection_classed = (function (name, value) {
-  var names = classed_classArray(name + "");
-
-  if (arguments.length < 2) {
-    for (var list = classed_classList(this.node()), i = -1, n = names.length; ++i < n;) if (!list.contains(names[i])) return !1;
-
-    return !0;
-  }
-
-  return this.each((typeof value === "function" ? classed_classedFunction : value ? classed_classedTrue : classed_classedFalse)(names, value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/text.js
-function text_textRemove() {
-  this.textContent = "";
-}
-
-function text_textConstant(value) {
-  return function () {
-    this.textContent = value;
-  };
-}
-
-function text_textFunction(value) {
-  return function () {
-    var v = value.apply(this, arguments);
-    this.textContent = v == null ? "" : v;
-  };
-}
-
-/* harmony default export */ var src_selection_text = (function (value) {
-  return arguments.length ? this.each(value == null ? text_textRemove : (typeof value === "function" ? text_textFunction : text_textConstant)(value)) : this.node().textContent;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/html.js
-function html_htmlRemove() {
-  this.innerHTML = "";
-}
-
-function html_htmlConstant(value) {
-  return function () {
-    this.innerHTML = value;
-  };
-}
-
-function html_htmlFunction(value) {
-  return function () {
-    var v = value.apply(this, arguments);
-    this.innerHTML = v == null ? "" : v;
-  };
-}
-
-/* harmony default export */ var src_selection_html = (function (value) {
-  return arguments.length ? this.each(value == null ? html_htmlRemove : (typeof value === "function" ? html_htmlFunction : html_htmlConstant)(value)) : this.node().innerHTML;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/raise.js
-function raise_raise() {
-  this.nextSibling && this.parentNode.appendChild(this);
-}
-
-/* harmony default export */ var src_selection_raise = (function () {
-  return this.each(raise_raise);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/lower.js
-function lower_lower() {
-  this.previousSibling && this.parentNode.insertBefore(this, this.parentNode.firstChild);
-}
-
-/* harmony default export */ var src_selection_lower = (function () {
-  return this.each(lower_lower);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/append.js
-
-/* harmony default export */ var selection_append = (function (name) {
-  var create = typeof name === "function" ? name : src_creator(name);
-  return this.select(function () {
-    return this.appendChild(create.apply(this, arguments));
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/insert.js
-
-
-
-function insert_constantNull() {
-  return null;
-}
-
-/* harmony default export */ var selection_insert = (function (name, before) {
-  var create = typeof name === "function" ? name : src_creator(name),
-      select = before == null ? insert_constantNull : typeof before === "function" ? before : d3_selection_src_selector(before);
-  return this.select(function () {
-    return this.insertBefore(create.apply(this, arguments), select.apply(this, arguments) || null);
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/remove.js
-function selection_remove_remove() {
-  var parent = this.parentNode;
-  parent && parent.removeChild(this);
-}
-
-/* harmony default export */ var src_selection_remove = (function () {
-  return this.each(selection_remove_remove);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/clone.js
-function clone_selection_cloneShallow() {
-  var clone = this.cloneNode(!1),
-      parent = this.parentNode;
-  return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
-}
-
-function clone_selection_cloneDeep() {
-  var clone = this.cloneNode(!0),
-      parent = this.parentNode;
-  return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
-}
-
-/* harmony default export */ var src_selection_clone = (function (deep) {
-  return this.select(deep ? clone_selection_cloneDeep : clone_selection_cloneShallow);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/datum.js
-/* harmony default export */ var src_selection_datum = (function (value) {
-  return arguments.length ? this.property("__data__", value) : this.node().__data__;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/on.js
-var on_filterEvents = {};
-var selection_on_event = null;
-
-if (typeof document !== "undefined") {
-  var selection_on_element = document.documentElement;
-  "onmouseenter" in selection_on_element || (on_filterEvents = {
-    mouseenter: "mouseover",
-    mouseleave: "mouseout"
-  });
-}
-
-function on_filterContextListener(listener, index, group) {
-  return listener = on_contextListener(listener, index, group), function (event) {
-    var related = event.relatedTarget;
-    related && (related === this || related.compareDocumentPosition(this) & 8) || listener.call(this, event);
-  };
-}
-
-function on_contextListener(listener, index, group) {
-  return function (event1) {
-    var event0 = selection_on_event; // Events can be reentrant (e.g., focus).
-
-    selection_on_event = event1;
-
-    try {
-      listener.call(this, this.__data__, index, group);
-    } finally {
-      selection_on_event = event0;
-    }
-  };
-}
-
-function on_parseTypenames(typenames) {
-  return typenames.trim().split(/^|\s+/).map(function (t) {
-    var name = "",
-        i = t.indexOf(".");
-    return i >= 0 && (name = t.slice(i + 1), t = t.slice(0, i)), {
-      type: t,
-      name: name
-    };
-  });
-}
-
-function on_onRemove(typename) {
-  return function () {
-    var on = this.__on;
-
-    if (on) {
-      for (var o, j = 0, i = -1, m = on.length; j < m; ++j) (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) ? this.removeEventListener(o.type, o.listener, o.capture) : on[++i] = o;
-
-      ++i ? on.length = i : delete this.__on;
-    }
-  };
-}
-
-function on_onAdd(typename, value, capture) {
-  var wrap = on_filterEvents.hasOwnProperty(typename.type) ? on_filterContextListener : on_contextListener;
-  return function (d, i, group) {
-    var o,
-        on = this.__on,
-        listener = wrap(value, i, group);
-    if (on) for (var j = 0, m = on.length; j < m; ++j) if ((o = on[j]).type === typename.type && o.name === typename.name) return this.removeEventListener(o.type, o.listener, o.capture), this.addEventListener(o.type, o.listener = listener, o.capture = capture), void (o.value = value);
-    this.addEventListener(typename.type, listener, capture), o = {
-      type: typename.type,
-      name: typename.name,
-      value: value,
-      listener: listener,
-      capture: capture
-    }, on ? on.push(o) : this.__on = [o];
-  };
-}
-
-/* harmony default export */ var src_selection_on = (function (typename, value, capture) {
-  var i,
-      t,
-      typenames = on_parseTypenames(typename + ""),
-      n = typenames.length;
-
-  if (arguments.length < 2) {
-    var on = this.node().__on;
-
-    if (on) for (var o, j = 0, m = on.length; j < m; ++j) for (i = 0, o = on[j]; i < n; ++i) if ((t = typenames[i]).type === o.type && t.name === o.name) return o.value;
-    return;
-  }
-
-  for (on = value ? on_onAdd : on_onRemove, capture == null && (capture = !1), i = 0; i < n; ++i) this.each(on(typenames[i], value, capture));
-
-  return this;
-});
-function on_customEvent(event1, listener, that, args) {
-  var event0 = selection_on_event;
-  event1.sourceEvent = selection_on_event, selection_on_event = event1;
-
-  try {
-    return listener.apply(that, args);
-  } finally {
-    selection_on_event = event0;
-  }
-}
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/dispatch.js
-
-
-function selection_dispatch_dispatchEvent(node, type, params) {
-  var window = d3_selection_src_window(node),
-      event = window.CustomEvent;
-  typeof event === "function" ? event = new event(type, params) : (event = window.document.createEvent("Event"), params ? (event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail) : event.initEvent(type, !1, !1)), node.dispatchEvent(event);
-}
-
-function dispatch_dispatchConstant(type, params) {
-  return function () {
-    return selection_dispatch_dispatchEvent(this, type, params);
-  };
-}
-
-function dispatch_dispatchFunction(type, params) {
-  return function () {
-    return selection_dispatch_dispatchEvent(this, type, params.apply(this, arguments));
-  };
-}
-
-/* harmony default export */ var selection_dispatch = (function (type, params) {
-  return this.each((typeof params === "function" ? dispatch_dispatchFunction : dispatch_dispatchConstant)(type, params));
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selection/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var src_selection_root = [null];
-function selection_Selection(groups, parents) {
-  this._groups = groups, this._parents = parents;
-}
-
-function src_selection_selection() {
-  return new selection_Selection([[document.documentElement]], src_selection_root);
-}
-
-selection_Selection.prototype = src_selection_selection.prototype = {
-  constructor: selection_Selection,
-  select: src_selection_select,
-  selectAll: selection_selectAll,
-  filter: src_selection_filter,
-  data: src_selection_data,
-  enter: src_selection_enter,
-  exit: src_selection_exit,
-  join: selection_join,
-  merge: src_selection_merge,
-  order: src_selection_order,
-  sort: src_selection_sort,
-  call: selection_call,
-  nodes: selection_nodes,
-  node: src_selection_node,
-  size: src_selection_size,
-  empty: src_selection_empty,
-  each: selection_each,
-  attr: selection_attr,
-  style: src_selection_style,
-  property: selection_property,
-  classed: selection_classed,
-  text: src_selection_text,
-  html: src_selection_html,
-  raise: src_selection_raise,
-  lower: src_selection_lower,
-  append: selection_append,
-  insert: selection_insert,
-  remove: src_selection_remove,
-  clone: src_selection_clone,
-  datum: src_selection_datum,
-  on: src_selection_on,
-  dispatch: selection_dispatch
-};
-/* harmony default export */ var d3_selection_src_selection = (src_selection_selection);
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/select.js
-
-/* harmony default export */ var d3_selection_src_select = (function (selector) {
-  return typeof selector === "string" ? new selection_Selection([[document.querySelector(selector)]], [document.documentElement]) : new selection_Selection([[selector]], src_selection_root);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/create.js
-
-
-/* harmony default export */ var d3_selection_src_create = (function (name) {
-  return d3_selection_src_select(src_creator(name).call(document.documentElement));
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/local.js
-var local_nextId = 0;
-function local_local() {
-  return new local_Local();
-}
-
-function local_Local() {
-  this._ = "@" + (++local_nextId).toString(36);
-}
-
-local_Local.prototype = local_local.prototype = {
-  constructor: local_Local,
-  get: function get(node) {
-    for (var id = this._; !(id in node);) if (!(node = node.parentNode)) return;
-
-    return node[id];
-  },
-  set: function set(node, value) {
-    return node[this._] = value;
-  },
-  remove: function remove(node) {
-    return this._ in node && delete node[this._];
-  },
-  toString: function toString() {
-    return this._;
-  }
-};
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/sourceEvent.js
-
-/* harmony default export */ var d3_selection_src_sourceEvent = (function () {
-  for (var source, current = selection_on_event; source = current.sourceEvent;) current = source;
-
-  return current;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/point.js
-/* harmony default export */ var d3_selection_src_point = (function (node, event) {
-  var svg = node.ownerSVGElement || node;
-
-  if (svg.createSVGPoint) {
-    var point = svg.createSVGPoint();
-    return point.x = event.clientX, point.y = event.clientY, point = point.matrixTransform(node.getScreenCTM().inverse()), [point.x, point.y];
-  }
-
-  var rect = node.getBoundingClientRect();
-  return [event.clientX - rect.left - node.clientLeft, event.clientY - rect.top - node.clientTop];
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/mouse.js
-
-
-/* harmony default export */ var d3_selection_src_mouse = (function (node) {
-  var event = d3_selection_src_sourceEvent();
-  return event.changedTouches && (event = event.changedTouches[0]), d3_selection_src_point(node, event);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/selectAll.js
-
-/* harmony default export */ var d3_selection_src_selectAll = (function (selector) {
-  return typeof selector === "string" ? new selection_Selection([document.querySelectorAll(selector)], [document.documentElement]) : new selection_Selection([selector == null ? [] : selector], src_selection_root);
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/touch.js
-
-
-/* harmony default export */ var d3_selection_src_touch = (function (node, touches, identifier) {
-  arguments.length < 3 && (identifier = touches, touches = d3_selection_src_sourceEvent().changedTouches);
-
-  for (var touch, i = 0, n = touches ? touches.length : 0; i < n; ++i) if ((touch = touches[i]).identifier === identifier) return d3_selection_src_point(node, touch);
-
-  return null;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/touches.js
-
-
-/* harmony default export */ var d3_selection_src_touches = (function (node, touches) {
-  touches == null && (touches = d3_selection_src_sourceEvent().touches);
-
-  for (var i = 0, n = touches ? touches.length : 0, points = Array(n); i < n; ++i) points[i] = d3_selection_src_point(node, touches[i]);
-
-  return points;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-selection/src/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-drag/src/noevent.js
-
-function nopropagation() {
-  selection_on_event.stopImmediatePropagation();
-}
-/* harmony default export */ var noevent = (function () {
-  selection_on_event.preventDefault(), selection_on_event.stopImmediatePropagation();
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-drag/src/nodrag.js
-
-
-/* harmony default export */ var nodrag = (function (view) {
-  var root = view.document.documentElement,
-      selection = d3_selection_src_select(view).on("dragstart.drag", noevent, !0);
-  "onselectstart" in root ? selection.on("selectstart.drag", noevent, !0) : (root.__noselect = root.style.MozUserSelect, root.style.MozUserSelect = "none");
-});
-function yesdrag(view, noclick) {
-  var root = view.document.documentElement,
-      selection = d3_selection_src_select(view).on("dragstart.drag", null);
-  noclick && (selection.on("click.drag", noevent, !0), setTimeout(function () {
-    selection.on("click.drag", null);
-  }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
-}
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-drag/src/constant.js
-/* harmony default export */ var d3_drag_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-drag/src/event.js
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/event.js
 function DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
   this.target = target, this.type = type, this.subject = subject, this.identifier = id, this.active = active, this.x = x, this.y = y, this.dx = dx, this.dy = dy, this._ = dispatch;
 }
@@ -18276,7 +17401,7 @@ DragEvent.prototype.on = function () {
 
   return value === this._ ? this : value;
 };
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-drag/src/drag.js
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/drag.js
 
 
 
@@ -18285,7 +17410,7 @@ DragEvent.prototype.on = function () {
  // Ignore right-click, since that should open the context menu.
 
 function defaultFilter() {
-  return !selection_on_event.ctrlKey && !selection_on_event.button;
+  return !on_event.ctrlKey && !on_event.button;
 }
 
 function defaultContainer() {
@@ -18294,8 +17419,8 @@ function defaultContainer() {
 
 function defaultSubject(d) {
   return d == null ? {
-    x: selection_on_event.x,
-    y: selection_on_event.y
+    x: on_event.x,
+    y: on_event.y
   } : d;
 }
 
@@ -18310,15 +17435,15 @@ function defaultTouchable() {
 
   function mousedowned() {
     if (!touchending && filter.apply(this, arguments)) {
-      var gesture = beforestart("mouse", container.apply(this, arguments), d3_selection_src_mouse, this, arguments);
-      gesture && (d3_selection_src_select(selection_on_event.view).on("mousemove.drag", mousemoved, !0).on("mouseup.drag", mouseupped, !0), nodrag(selection_on_event.view), nopropagation(), mousemoving = !1, mousedownx = selection_on_event.clientX, mousedowny = selection_on_event.clientY, gesture("start"));
+      var gesture = beforestart("mouse", container.apply(this, arguments), src_mouse, this, arguments);
+      gesture && (src_select(on_event.view).on("mousemove.drag", mousemoved, !0).on("mouseup.drag", mouseupped, !0), nodrag(on_event.view), nopropagation(), mousemoving = !1, mousedownx = on_event.clientX, mousedowny = on_event.clientY, gesture("start"));
     }
   }
 
   function mousemoved() {
     if (noevent(), !mousemoving) {
-      var dx = selection_on_event.clientX - mousedownx,
-          dy = selection_on_event.clientY - mousedowny;
+      var dx = on_event.clientX - mousedownx,
+          dy = on_event.clientY - mousedowny;
       mousemoving = dx * dx + dy * dy > clickDistance2;
     }
 
@@ -18326,25 +17451,25 @@ function defaultTouchable() {
   }
 
   function mouseupped() {
-    d3_selection_src_select(selection_on_event.view).on("mousemove.drag mouseup.drag", null), yesdrag(selection_on_event.view, mousemoving), noevent(), gestures.mouse("end");
+    src_select(on_event.view).on("mousemove.drag mouseup.drag", null), yesdrag(on_event.view, mousemoving), noevent(), gestures.mouse("end");
   }
 
   function touchstarted() {
     if (filter.apply(this, arguments)) {
       var i,
           gesture,
-          touches = selection_on_event.changedTouches,
+          touches = on_event.changedTouches,
           c = container.apply(this, arguments),
           n = touches.length;
 
-      for (i = 0; i < n; ++i) (gesture = beforestart(touches[i].identifier, c, d3_selection_src_touch, this, arguments)) && (nopropagation(), gesture("start"));
+      for (i = 0; i < n; ++i) (gesture = beforestart(touches[i].identifier, c, src_touch, this, arguments)) && (nopropagation(), gesture("start"));
     }
   }
 
   function touchmoved() {
     var i,
         gesture,
-        touches = selection_on_event.changedTouches,
+        touches = on_event.changedTouches,
         n = touches.length;
 
     for (i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (noevent(), gesture("drag"));
@@ -18353,7 +17478,7 @@ function defaultTouchable() {
   function touchended() {
     var i,
         gesture,
-        touches = selection_on_event.changedTouches,
+        touches = on_event.changedTouches,
         n = touches.length;
 
     // Ghost clicks are delayed!
@@ -18368,8 +17493,8 @@ function defaultTouchable() {
         dy,
         p = point(container, id),
         sublisteners = listeners.copy();
-    return on_customEvent(new DragEvent(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
-      return (selection_on_event.subject = s = subject.apply(that, args)) != null && (dx = s.x - p[0] || 0, dy = s.y - p[1] || 0, !0);
+    return customEvent(new DragEvent(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
+      return (on_event.subject = s = subject.apply(that, args)) != null && (dx = s.x - p[0] || 0, dy = s.y - p[1] || 0, !0);
     }) ? function gesture(type) {
       var n,
           p0 = p;
@@ -18387,7 +17512,7 @@ function defaultTouchable() {
           p = point(container, id), n = active;
       }
 
-      on_customEvent(new DragEvent(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
+      customEvent(new DragEvent(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
     } : void 0;
   }
 
@@ -18404,13 +17529,13 @@ function defaultTouchable() {
       active = 0,
       clickDistance2 = 0;
   return drag.filter = function (_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : filter;
+    return arguments.length ? (filter = typeof _ === "function" ? _ : src_constant(!!_), drag) : filter;
   }, drag.container = function (_) {
-    return arguments.length ? (container = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : container;
+    return arguments.length ? (container = typeof _ === "function" ? _ : src_constant(_), drag) : container;
   }, drag.subject = function (_) {
-    return arguments.length ? (subject = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : subject;
+    return arguments.length ? (subject = typeof _ === "function" ? _ : src_constant(_), drag) : subject;
   }, drag.touchable = function (_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : touchable;
+    return arguments.length ? (touchable = typeof _ === "function" ? _ : src_constant(!!_), drag) : touchable;
   }, drag.on = function () {
     var value = listeners.on.apply(listeners, arguments);
     return value === listeners ? drag : value;
@@ -18418,10 +17543,10 @@ function defaultTouchable() {
     return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
   }, drag;
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-drag/src/index.js
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/index.js
 
 
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-color/src/define.js
+// CONCATENATED MODULE: ./node_modules/d3-color/src/define.js
 /* harmony default export */ var define = (function (constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype, prototype.constructor = constructor;
 });
@@ -18432,7 +17557,7 @@ function extend(parent, definition) {
 
   return prototype;
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-color/src/color.js
+// CONCATENATED MODULE: ./node_modules/d3-color/src/color.js
 
 function Color() {}
 var _darker = .7;
@@ -18750,10 +17875,10 @@ define(Hsl, hsl, extend(Color, {
 function hsl2rgb(h, m1, m2) {
   return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-color/src/math.js
+// CONCATENATED MODULE: ./node_modules/d3-color/src/math.js
 var deg2rad = Math.PI / 180;
 var rad2deg = 180 / Math.PI;
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-color/src/lab.js
+// CONCATENATED MODULE: ./node_modules/d3-color/src/lab.js
 
 
  // https://observablehq.com/@mbostock/lab-and-rgb
@@ -18854,7 +17979,7 @@ define(Hcl, hcl, extend(Color, {
     return hcl2lab(this).rgb();
   }
 }));
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-color/src/cubehelix.js
+// CONCATENATED MODULE: ./node_modules/d3-color/src/cubehelix.js
 
 
 
@@ -18904,11 +18029,11 @@ define(Cubehelix, cubehelix_cubehelix, extend(Color, {
     return new Rgb(255 * (l + a * (A * cosh + B * sinh)), 255 * (l + a * (C * cosh + cubehelix_D * sinh)), 255 * (l + a * (cubehelix_E * cosh)), this.opacity);
   }
 }));
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-color/src/index.js
+// CONCATENATED MODULE: ./node_modules/d3-color/src/index.js
 
 
 
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/basis.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basis.js
 function basis(t1, v0, v1, v2, v3) {
   var t2 = t1 * t1,
       t3 = t2 * t1;
@@ -18925,7 +18050,7 @@ function basis(t1, v0, v1, v2, v3) {
     return basis((t - i / n) * n, v0, v1, v2, v3);
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/basisClosed.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basisClosed.js
 
 /* harmony default export */ var basisClosed = (function (values) {
   var n = values.length;
@@ -18938,13 +18063,13 @@ function basis(t1, v0, v1, v2, v3) {
     return basis((t - i / n) * n, v0, v1, v2, v3);
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/constant.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/constant.js
 /* harmony default export */ var d3_interpolate_src_constant = (function (x) {
   return function () {
     return x;
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/color.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/color.js
 
 
 function linear(a, d) {
@@ -18972,7 +18097,7 @@ function nogamma(a, b) {
   var d = b - a;
   return d ? linear(a, d) : d3_interpolate_src_constant(isNaN(a) ? b : a);
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/rgb.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/rgb.js
 
 
 
@@ -19011,7 +18136,7 @@ function rgbSpline(spline) {
 
 var rgbBasis = rgbSpline(src_basis);
 var rgbBasisClosed = rgbSpline(basisClosed);
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/numberArray.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/numberArray.js
 /* harmony default export */ var numberArray = (function (a, b) {
   b || (b = []);
   var i,
@@ -19026,7 +18151,7 @@ var rgbBasisClosed = rgbSpline(basisClosed);
 function isNumberArray(x) {
   return ArrayBuffer.isView(x) && !(x instanceof DataView);
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/array.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/array.js
 
 
 /* harmony default export */ var src_array = (function (a, b) {
@@ -19049,20 +18174,20 @@ function genericArray(a, b) {
     return c;
   };
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/date.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/date.js
 /* harmony default export */ var src_date = (function (a, b) {
   var d = new Date();
   return a = +a, b = +b, function (t) {
     return d.setTime(a * (1 - t) + b * t), d;
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/number.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/number.js
 /* harmony default export */ var number = (function (a, b) {
   return a = +a, b = +b, function (t) {
     return a * (1 - t) + b * t;
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/object.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/object.js
 
 /* harmony default export */ var object = (function (a, b) {
   var k,
@@ -19077,7 +18202,7 @@ function genericArray(a, b) {
     return c;
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/string.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/string.js
 
 var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g,
     reB = new RegExp(reA.source, "g");
@@ -19128,7 +18253,7 @@ function one(b) {
     return s.join("");
   });
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/value.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/value.js
 
 
 
@@ -19143,14 +18268,14 @@ function one(b) {
       t = typeof b;
   return b == null || t === "boolean" ? d3_interpolate_src_constant(b) : (t === "number" ? number : t === "string" ? (c = color_color(b)) ? (b = c, src_rgb) : src_string : b instanceof color_color ? src_rgb : b instanceof Date ? src_date : isNumberArray(b) ? numberArray : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object : number)(a, b);
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/discrete.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/discrete.js
 /* harmony default export */ var discrete = (function (range) {
   var n = range.length;
   return function (t) {
     return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/hue.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hue.js
 
 /* harmony default export */ var src_hue = (function (a, b) {
   var i = color_hue(+a, +b);
@@ -19159,13 +18284,13 @@ function one(b) {
     return x - 360 * Math.floor(x / 360);
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/round.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/round.js
 /* harmony default export */ var src_round = (function (a, b) {
   return a = +a, b = +b, function (t) {
     return Math.round(a * (1 - t) + b * t);
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/transform/decompose.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/decompose.js
 var degrees = 180 / Math.PI;
 var identity = {
   translateX: 0,
@@ -19186,7 +18311,7 @@ var identity = {
     scaleY: scaleY
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/transform/parse.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/parse.js
 
 var cssNode, cssRoot, cssView, svgNode;
 function parseCss(value) {
@@ -19195,7 +18320,7 @@ function parseCss(value) {
 function parseSvg(value) {
   return value == null ? identity : (svgNode || (svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g")), svgNode.setAttribute("transform", value), !(value = svgNode.transform.baseVal.consolidate())) ? identity : (value = value.matrix, decompose(value.a, value.b, value.c, value.d, value.e, value.f));
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/transform/index.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/index.js
 
 
 
@@ -19260,7 +18385,7 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
 
 var interpolateTransformCss = interpolateTransform(parseCss, "px, ", "px)", "deg)");
 var interpolateTransformSvg = interpolateTransform(parseSvg, ", ", ")", ")");
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/zoom.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/zoom.js
 var rho = Math.SQRT2,
     rho2 = 2,
     rho4 = 4,
@@ -19311,7 +18436,7 @@ function tanh(x) {
     }
   return i.duration = S * 1e3, i;
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/hsl.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hsl.js
 
 
 
@@ -19329,7 +18454,7 @@ function hsl_hsl(hue) {
 
 /* harmony default export */ var src_hsl = (hsl_hsl(color_hue));
 var hslLong = hsl_hsl(nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/lab.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/lab.js
 
 
 function lab_lab(start, end) {
@@ -19341,7 +18466,7 @@ function lab_lab(start, end) {
     return start.l = l(t), start.a = a(t), start.b = b(t), start.opacity = opacity(t), start + "";
   };
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/hcl.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hcl.js
 
 
 
@@ -19359,7 +18484,7 @@ function hcl_hcl(hue) {
 
 /* harmony default export */ var src_hcl = (hcl_hcl(color_hue));
 var hclLong = hcl_hcl(nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/cubehelix.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/cubehelix.js
 
 
 
@@ -19381,7 +18506,7 @@ function src_cubehelix_cubehelix(hue) {
 
 /* harmony default export */ var src_cubehelix = (src_cubehelix_cubehelix(color_hue));
 var cubehelixLong = src_cubehelix_cubehelix(nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/piecewise.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/piecewise.js
 function piecewise_piecewise(interpolate, values) {
   for (var i = 0, n = values.length - 1, v = values[0], I = Array(n < 0 ? 0 : n); i < n;) I[i] = interpolate(v, v = values[++i]);
 
@@ -19390,13 +18515,13 @@ function piecewise_piecewise(interpolate, values) {
     return I[i](t - i);
   };
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/quantize.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/quantize.js
 /* harmony default export */ var quantize = (function (interpolator, n) {
   for (var samples = Array(n), i = 0; i < n; ++i) samples[i] = interpolator(i / (n - 1));
 
   return samples;
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-interpolate/src/index.js
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/index.js
 
 
 
@@ -19522,7 +18647,7 @@ function sleep(time) {
 
 
 
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/schedule.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/schedule.js
 
 
 var emptyOn = src_dispatch("start", "end", "cancel", "interrupt"),
@@ -19620,7 +18745,7 @@ function schedule_create(node, id, self) {
     self.state = SCHEDULED, self.timer.restart(start, self.delay, self.time), self.delay <= elapsed && start(elapsed - self.delay);
   }, 0, self.time);
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/interrupt.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/interrupt.js
 
 /* harmony default export */ var interrupt = (function (node, name) {
   var schedule,
@@ -19642,14 +18767,14 @@ function schedule_create(node, id, self) {
     empty && delete node.__transition;
   }
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/selection/interrupt.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/interrupt.js
 
 /* harmony default export */ var selection_interrupt = (function (name) {
   return this.each(function () {
     interrupt(this, name);
   });
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/tween.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/tween.js
 
 
 function tweenRemove(id, name) {
@@ -19720,32 +18845,32 @@ function tweenValue(transition, name, value) {
     return schedule_get(node, id).value[name];
   };
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/interpolate.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/interpolate.js
 
 
 /* harmony default export */ var transition_interpolate = (function (a, b) {
   var c;
   return (typeof b === "number" ? number : b instanceof color_color ? src_rgb : (c = color_color(b)) ? (b = c, src_rgb) : src_string)(a, b);
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/attr.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attr.js
 
 
 
 
 
-function transition_attr_attrRemove(name) {
+function attr_attrRemove(name) {
   return function () {
     this.removeAttribute(name);
   };
 }
 
-function transition_attr_attrRemoveNS(fullname) {
+function attr_attrRemoveNS(fullname) {
   return function () {
     this.removeAttributeNS(fullname.space, fullname.local);
   };
 }
 
-function transition_attr_attrConstant(name, interpolate, value1) {
+function attr_attrConstant(name, interpolate, value1) {
   var string00, interpolate0;
   return function () {
     var string0 = this.getAttribute(name);
@@ -19753,7 +18878,7 @@ function transition_attr_attrConstant(name, interpolate, value1) {
   };
 }
 
-function transition_attr_attrConstantNS(fullname, interpolate, value1) {
+function attr_attrConstantNS(fullname, interpolate, value1) {
   var string00, interpolate0;
   return function () {
     var string0 = this.getAttributeNS(fullname.space, fullname.local);
@@ -19761,7 +18886,7 @@ function transition_attr_attrConstantNS(fullname, interpolate, value1) {
   };
 }
 
-function transition_attr_attrFunction(name, interpolate, value) {
+function attr_attrFunction(name, interpolate, value) {
   var string00, string10, interpolate0;
   return function () {
     var string0,
@@ -19771,7 +18896,7 @@ function transition_attr_attrFunction(name, interpolate, value) {
   };
 }
 
-function transition_attr_attrFunctionNS(fullname, interpolate, value) {
+function attr_attrFunctionNS(fullname, interpolate, value) {
   var string00, string10, interpolate0;
   return function () {
     var string0,
@@ -19782,11 +18907,11 @@ function transition_attr_attrFunctionNS(fullname, interpolate, value) {
 }
 
 /* harmony default export */ var transition_attr = (function (name, value) {
-  var fullname = src_namespace(name),
+  var fullname = namespace(name),
       i = fullname === "transform" ? interpolateTransformSvg : transition_interpolate;
-  return this.attrTween(name, typeof value === "function" ? (fullname.local ? transition_attr_attrFunctionNS : transition_attr_attrFunction)(fullname, i, tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? transition_attr_attrRemoveNS : transition_attr_attrRemove)(fullname) : (fullname.local ? transition_attr_attrConstantNS : transition_attr_attrConstant)(fullname, i, value));
+  return this.attrTween(name, typeof value === "function" ? (fullname.local ? attr_attrFunctionNS : attr_attrFunction)(fullname, i, tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? attr_attrRemoveNS : attr_attrRemove)(fullname) : (fullname.local ? attr_attrConstantNS : attr_attrConstant)(fullname, i, value));
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/attrTween.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attrTween.js
 
 
 function attrInterpolate(name, i) {
@@ -19826,10 +18951,10 @@ function attrTween(name, value) {
   if (arguments.length < 2) return (key = this.tween(key)) && key._value;
   if (value == null) return this.tween(key, null);
   if (typeof value !== "function") throw new Error();
-  var fullname = src_namespace(name);
+  var fullname = namespace(name);
   return this.tween(key, (fullname.local ? attrTweenNS : attrTween)(fullname, value));
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/delay.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/delay.js
 
 
 function delayFunction(id, value) {
@@ -19848,7 +18973,7 @@ function delayConstant(id, value) {
   var id = this._id;
   return arguments.length ? this.each((typeof value === "function" ? delayFunction : delayConstant)(id, value)) : schedule_get(this.node(), id).delay;
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/duration.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/duration.js
 
 
 function durationFunction(id, value) {
@@ -19867,7 +18992,7 @@ function durationConstant(id, value) {
   var id = this._id;
   return arguments.length ? this.each((typeof value === "function" ? durationFunction : durationConstant)(id, value)) : schedule_get(this.node(), id).duration;
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/ease.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/ease.js
 
 
 function easeConstant(id, value) {
@@ -19881,17 +19006,17 @@ function easeConstant(id, value) {
   var id = this._id;
   return arguments.length ? this.each(easeConstant(id, value)) : schedule_get(this.node(), id).ease;
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/filter.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/filter.js
 
 
 /* harmony default export */ var transition_filter = (function (match) {
-  typeof match !== "function" && (match = src_matcher(match));
+  typeof match !== "function" && (match = matcher(match));
 
   for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, subgroup = subgroups[j] = [], i = 0; i < n; ++i) (node = group[i]) && match.call(node, node.__data__, i, group) && subgroup.push(node);
 
   return new Transition(subgroups, this._parents, this._name, this._id);
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/merge.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/merge.js
 
 /* harmony default export */ var transition_merge = (function (transition) {
   if (transition._id !== this._id) throw new Error();
@@ -19902,7 +19027,7 @@ function easeConstant(id, value) {
 
   return new Transition(merges, this._parents, this._name, this._id);
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/on.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/on.js
 
 
 function on_start(name) {
@@ -19930,7 +19055,7 @@ function onFunction(id, name, listener) {
   var id = this._id;
   return arguments.length < 2 ? schedule_get(this.node(), id).on.on(name) : this.each(onFunction(id, name, listener));
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/remove.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/remove.js
 function removeFunction(id) {
   return function () {
     var parent = this.parentNode;
@@ -19944,27 +19069,27 @@ function removeFunction(id) {
 /* harmony default export */ var transition_remove = (function () {
   return this.on("end.remove", removeFunction(this._id));
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/select.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/select.js
 
 
 
 /* harmony default export */ var transition_select = (function (select) {
   var name = this._name,
       id = this._id;
-  typeof select !== "function" && (select = d3_selection_src_selector(select));
+  typeof select !== "function" && (select = src_selector(select));
 
   for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, subnode, group = groups[j], n = group.length, subgroup = subgroups[j] = Array(n), i = 0; i < n; ++i) (node = group[i]) && (subnode = select.call(node, node.__data__, i, group)) && ("__data__" in node && (subnode.__data__ = node.__data__), subgroup[i] = subnode, transition_schedule(subgroup[i], name, id, i, subgroup, schedule_get(node, id)));
 
   return new Transition(subgroups, this._parents, name, id);
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/selectAll.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selectAll.js
 
 
 
 /* harmony default export */ var transition_selectAll = (function (select) {
   var name = this._name,
       id = this._id;
-  typeof select !== "function" && (select = src_selectorAll(select));
+  typeof select !== "function" && (select = selectorAll(select));
 
   for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) if (node = group[i]) {
     for (var child, children = select.call(node, node.__data__, i, group), inherit = schedule_get(node, id), k = 0, l = children.length; k < l; ++k) (child = children[k]) && transition_schedule(child, name, id, k, children, inherit);
@@ -19974,13 +19099,13 @@ function removeFunction(id) {
 
   return new Transition(subgroups, parents, name, id);
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/selection.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selection.js
 
-var transition_selection_Selection = d3_selection_src_selection.prototype.constructor;
+var selection_Selection = src_selection.prototype.constructor;
 /* harmony default export */ var transition_selection = (function () {
-  return new transition_selection_Selection(this._groups, this._parents);
+  return new selection_Selection(this._groups, this._parents);
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/style.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/style.js
 
 
 
@@ -19990,33 +19115,33 @@ var transition_selection_Selection = d3_selection_src_selection.prototype.constr
 function styleNull(name, interpolate) {
   var string00, string10, interpolate0;
   return function () {
-    var string0 = style_styleValue(this, name),
-        string1 = (this.style.removeProperty(name), style_styleValue(this, name));
+    var string0 = styleValue(this, name),
+        string1 = (this.style.removeProperty(name), styleValue(this, name));
     return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : interpolate0 = interpolate(string00 = string0, string10 = string1);
   };
 }
 
-function transition_style_styleRemove(name) {
+function style_styleRemove(name) {
   return function () {
     this.style.removeProperty(name);
   };
 }
 
-function transition_style_styleConstant(name, interpolate, value1) {
+function style_styleConstant(name, interpolate, value1) {
   var string00, interpolate0;
   return function () {
-    var string0 = style_styleValue(this, name);
+    var string0 = styleValue(this, name);
     return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
   };
 }
 
-function transition_style_styleFunction(name, interpolate, value) {
+function style_styleFunction(name, interpolate, value) {
   var string00, string10, interpolate0;
   return function () {
-    var string0 = style_styleValue(this, name),
+    var string0 = styleValue(this, name),
         value1 = value(this),
         string1 = value1 + "";
-    return value1 == null && (string1 = value1 = (this.style.removeProperty(name), style_styleValue(this, name))), string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
+    return value1 == null && (string1 = value1 = (this.style.removeProperty(name), styleValue(this, name))), string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
   };
 }
 
@@ -20029,7 +19154,7 @@ function styleMaybeRemove(id, name) {
   return function () {
     var schedule = schedule_set(this, id),
         on = schedule.on,
-        listener = schedule.value[key] == null ? remove || (remove = transition_style_styleRemove(name)) : undefined; // If this node shared a dispatch with the previous node,
+        listener = schedule.value[key] == null ? remove || (remove = style_styleRemove(name)) : undefined; // If this node shared a dispatch with the previous node,
     // just assign the updated shared dispatch and we’re done!
     // Otherwise, copy-on-write.
 
@@ -20039,9 +19164,9 @@ function styleMaybeRemove(id, name) {
 
 /* harmony default export */ var transition_style = (function (name, value, priority) {
   var i = (name += "") === "transform" ? interpolateTransformCss : transition_interpolate;
-  return value == null ? this.styleTween(name, styleNull(name, i)).on("end.style." + name, transition_style_styleRemove(name)) : typeof value === "function" ? this.styleTween(name, transition_style_styleFunction(name, i, tweenValue(this, "style." + name, value))).each(styleMaybeRemove(this._id, name)) : this.styleTween(name, transition_style_styleConstant(name, i, value), priority).on("end.style." + name, null);
+  return value == null ? this.styleTween(name, styleNull(name, i)).on("end.style." + name, style_styleRemove(name)) : typeof value === "function" ? this.styleTween(name, style_styleFunction(name, i, tweenValue(this, "style." + name, value))).each(styleMaybeRemove(this._id, name)) : this.styleTween(name, style_styleConstant(name, i, value), priority).on("end.style." + name, null);
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/styleTween.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/styleTween.js
 function styleInterpolate(name, i, priority) {
   return function (t) {
     this.style.setProperty(name, i.call(this, t), priority);
@@ -20065,16 +19190,16 @@ function styleTween(name, value, priority) {
   if (typeof value !== "function") throw new Error();
   return this.tween(key, styleTween(name, value, priority == null ? "" : priority));
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/text.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/text.js
 
 
-function transition_text_textConstant(value) {
+function text_textConstant(value) {
   return function () {
     this.textContent = value;
   };
 }
 
-function transition_text_textFunction(value) {
+function text_textFunction(value) {
   return function () {
     var value1 = value(this);
     this.textContent = value1 == null ? "" : value1;
@@ -20082,9 +19207,9 @@ function transition_text_textFunction(value) {
 }
 
 /* harmony default export */ var transition_text = (function (value) {
-  return this.tween("text", typeof value === "function" ? transition_text_textFunction(tweenValue(this, "text", value)) : transition_text_textConstant(value == null ? "" : value + ""));
+  return this.tween("text", typeof value === "function" ? text_textFunction(tweenValue(this, "text", value)) : text_textConstant(value == null ? "" : value + ""));
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/textTween.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/textTween.js
 function textInterpolate(i) {
   return function (t) {
     this.textContent = i.call(this, t);
@@ -20108,7 +19233,7 @@ function textTween(value) {
   if (typeof value !== "function") throw new Error();
   return this.tween(key, textTween(value));
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/transition.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/transition.js
 
 
 /* harmony default export */ var transition_transition = (function () {
@@ -20124,7 +19249,7 @@ function textTween(value) {
 
   return new Transition(groups, this._parents, name, id1);
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/end.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/end.js
 
 /* harmony default export */ var transition_end = (function () {
   var on0,
@@ -20151,7 +19276,7 @@ function textTween(value) {
     });
   });
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/transition/index.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/index.js
 
 
 
@@ -20177,12 +19302,12 @@ function Transition(groups, parents, name, id) {
   this._groups = groups, this._parents = parents, this._name = name, this._id = id;
 }
 function src_transition_transition(name) {
-  return d3_selection_src_selection().transition(name);
+  return src_selection().transition(name);
 }
 function newId() {
   return ++transition_id;
 }
-var selection_prototype = d3_selection_src_selection.prototype;
+var selection_prototype = src_selection.prototype;
 Transition.prototype = src_transition_transition.prototype = {
   constructor: Transition,
   select: transition_select,
@@ -20211,11 +19336,11 @@ Transition.prototype = src_transition_transition.prototype = {
   ease: ease,
   end: transition_end
 };
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/linear.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/linear.js
 function linear_linear(t) {
   return +t;
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/quad.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/quad.js
 function quadIn(t) {
   return t * t;
 }
@@ -20225,7 +19350,7 @@ function quadOut(t) {
 function quadInOut(t) {
   return ((t *= 2) <= 1 ? t * t : --t * (2 - t) + 1) / 2;
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/cubic.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/cubic.js
 function cubicIn(t) {
   return t * t * t;
 }
@@ -20235,7 +19360,7 @@ function cubicOut(t) {
 function cubicInOut(t) {
   return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/poly.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/poly.js
 var poly_exponent = 3;
 var polyIn = function custom(e) {
   function polyIn(t) {
@@ -20258,7 +19383,7 @@ var polyInOut = function custom(e) {
 
   return e = +e, polyInOut.exponent = custom, polyInOut;
 }(3);
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/sin.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/sin.js
 var pi = Math.PI,
     halfPi = pi / 2;
 function sinIn(t) {
@@ -20270,7 +19395,7 @@ function sinOut(t) {
 function sinInOut(t) {
   return (1 - Math.cos(pi * t)) / 2;
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/exp.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/exp.js
 function expIn(t) {
   return Math.pow(2, 10 * t - 10);
 }
@@ -20280,7 +19405,7 @@ function expOut(t) {
 function expInOut(t) {
   return ((t *= 2) <= 1 ? Math.pow(2, 10 * t - 10) : 2 - Math.pow(2, 10 - 10 * t)) / 2;
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/circle.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/circle.js
 function circleIn(t) {
   return 1 - Math.sqrt(1 - t * t);
 }
@@ -20290,7 +19415,7 @@ function circleOut(t) {
 function circleInOut(t) {
   return ((t *= 2) <= 1 ? 1 - Math.sqrt(1 - t * t) : Math.sqrt(1 - (t -= 2) * t) + 1) / 2;
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/bounce.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/bounce.js
 var b1 = 4 / 11,
     b2 = 6 / 11,
     b3 = 8 / 11,
@@ -20310,7 +19435,7 @@ function bounceOut(t) {
 function bounceInOut(t) {
   return ((t *= 2) <= 1 ? 1 - bounceOut(1 - t) : bounceOut(t - 1) + 1) / 2;
 }
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/back.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/back.js
 var overshoot = 1.70158;
 var backIn = function custom(s) {
   function backIn(t) {
@@ -20333,7 +19458,7 @@ var backInOut = function custom(s) {
 
   return s = +s, backInOut.overshoot = custom, backInOut;
 }(overshoot);
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/elastic.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/elastic.js
 var tau = 2 * Math.PI,
     amplitude = 1,
     period = .3;
@@ -20373,7 +19498,7 @@ var elasticInOut = function custom(a, p) {
     return custom(a, p);
   }, elasticInOut;
 }(1, period);
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-ease/src/index.js
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/index.js
 
 
 
@@ -20384,7 +19509,7 @@ var elasticInOut = function custom(a, p) {
 
 
 
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/selection/transition.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/transition.js
 
 
 
@@ -20411,12 +19536,12 @@ function transition_inherit(node, id) {
 
   return new Transition(groups, this._parents, name, id);
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/selection/index.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/index.js
 
 
 
-d3_selection_src_selection.prototype.interrupt = selection_interrupt, d3_selection_src_selection.prototype.transition = selection_transition;
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/active.js
+src_selection.prototype.interrupt = selection_interrupt, src_selection.prototype.transition = selection_transition;
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/active.js
 
 
 var active_root = [null];
@@ -20427,7 +19552,7 @@ var active_root = [null];
   if (schedules) for (i in name = name == null ? null : name + "", schedules) if ((schedule = schedules[i]).state > SCHEDULED && schedule.name === name) return new Transition([[node]], active_root, name, +i);
   return null;
 });
-// CONCATENATED MODULE: ./node_modules/d3-brush/node_modules/d3-transition/src/index.js
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/index.js
 
 
 
@@ -20445,10 +19570,10 @@ var active_root = [null];
 // CONCATENATED MODULE: ./node_modules/d3-brush/src/noevent.js
 
 function noevent_nopropagation() {
-  selection_on_event.stopImmediatePropagation();
+  on_event.stopImmediatePropagation();
 }
 /* harmony default export */ var src_noevent = (function () {
-  selection_on_event.preventDefault(), selection_on_event.stopImmediatePropagation();
+  on_event.preventDefault(), on_event.stopImmediatePropagation();
 });
 // CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
 
@@ -20482,7 +19607,7 @@ function number2(e) {
 
 function toucher(identifier) {
   return function (target) {
-    return d3_selection_src_touch(target, selection_on_event.touches, identifier);
+    return src_touch(target, on_event.touches, identifier);
   };
 }
 
@@ -20577,7 +19702,7 @@ function brush_type(t) {
 
 
 function brush_defaultFilter() {
-  return !selection_on_event.ctrlKey && !selection_on_event.button;
+  return !on_event.ctrlKey && !on_event.button;
 }
 
 function defaultExtent() {
@@ -20619,7 +19744,7 @@ function brush_brush(dim) {
     var overlay = group.property("__brush", initialize).selectAll(".overlay").data([brush_type("overlay")]);
     overlay.enter().append("rect").attr("class", "overlay").attr("pointer-events", "all").attr("cursor", cursors.overlay).merge(overlay).each(function () {
       var extent = brush_local(this).extent;
-      d3_selection_src_select(this).attr("x", extent[0][0]).attr("y", extent[0][1]).attr("width", extent[1][0] - extent[0][0]).attr("height", extent[1][1] - extent[0][1]);
+      src_select(this).attr("x", extent[0][0]).attr("y", extent[0][1]).attr("width", extent[1][0] - extent[0][0]).attr("height", extent[1][1] - extent[0][1]);
     }), group.selectAll(".selection").data([brush_type("selection")]).enter().append("rect").attr("class", "selection").attr("cursor", cursors.selection).attr("fill", "#777").attr("fill-opacity", .3).attr("stroke", "#fff").attr("shape-rendering", "crispEdges");
     var handle = group.selectAll(".handle").data(dim.handles, function (d) {
       return d.type;
@@ -20632,7 +19757,7 @@ function brush_brush(dim) {
   }
 
   function redraw() {
-    var group = d3_selection_src_select(this),
+    var group = src_select(this),
         selection = brush_local(this).selection;
     selection ? (group.selectAll(".selection").style("display", null).attr("x", selection[0][0]).attr("y", selection[0][1]).attr("width", selection[1][0] - selection[0][0]).attr("height", selection[1][1] - selection[0][1]), group.selectAll(".handle").style("display", null).attr("x", function (d) {
       return d.type[d.type.length - 1] === "e" ? selection[1][0] - handleSize / 2 : selection[0][0] - handleSize / 2;
@@ -20687,18 +19812,18 @@ function brush_brush(dim) {
     }
 
     function ended() {
-      if (noevent_nopropagation(), selection_on_event.touches) {
-        if (selection_on_event.touches.length) return;
+      if (noevent_nopropagation(), on_event.touches) {
+        if (on_event.touches.length) return;
         touchending && clearTimeout(touchending), touchending = setTimeout(function () {
           touchending = null;
         }, 500);
-      } else yesdrag(selection_on_event.view, moving), view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
+      } else yesdrag(on_event.view, moving), view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
 
       group.attr("pointer-events", "all"), overlay.attr("cursor", cursors.overlay), state.selection && (selection = state.selection), brush_empty(selection) && (state.selection = null, redraw.call(that)), emit.end();
     }
 
     function keydowned() {
-      switch (selection_on_event.keyCode) {
+      switch (on_event.keyCode) {
         case 16:
           {
             shifting = signX && signY;
@@ -20725,7 +19850,7 @@ function brush_brush(dim) {
     }
 
     function keyupped() {
-      switch (selection_on_event.keyCode) {
+      switch (on_event.keyCode) {
         case 16:
           {
             shifting && (lockX = lockY = shifting = !1, move());
@@ -20740,7 +19865,7 @@ function brush_brush(dim) {
 
         case 32:
           {
-            mode === MODE_SPACE && (selection_on_event.altKey ? (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER) : (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE), overlay.attr("cursor", cursors[type]), move());
+            mode === MODE_SPACE && (on_event.altKey ? (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER) : (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE), overlay.attr("cursor", cursors[type]), move());
             break;
           }
 
@@ -20751,7 +19876,7 @@ function brush_brush(dim) {
       src_noevent();
     }
 
-    if ((!touchending || selection_on_event.touches) && filter.apply(this, arguments)) {
+    if ((!touchending || on_event.touches) && filter.apply(this, arguments)) {
       var w0,
           w1,
           n0,
@@ -20764,8 +19889,8 @@ function brush_brush(dim) {
           lockX,
           lockY,
           that = this,
-          type = selection_on_event.target.__data__.type,
-          mode = (keys && selection_on_event.metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : keys && selection_on_event.altKey ? MODE_CENTER : MODE_HANDLE,
+          type = on_event.target.__data__.type,
+          mode = (keys && on_event.metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : keys && on_event.altKey ? MODE_CENTER : MODE_HANDLE,
           signX = dim === Y ? null : signsX[type],
           signY = dim === X ? null : signsY[type],
           state = brush_local(that),
@@ -20777,17 +19902,17 @@ function brush_brush(dim) {
           S = extent[1][1],
           dx = 0,
           dy = 0,
-          shifting = signX && signY && keys && selection_on_event.shiftKey,
-          pointer = selection_on_event.touches ? toucher(selection_on_event.changedTouches[0].identifier) : d3_selection_src_mouse,
+          shifting = signX && signY && keys && on_event.shiftKey,
+          pointer = on_event.touches ? toucher(on_event.changedTouches[0].identifier) : src_mouse,
           point0 = pointer(that),
           point = point0,
           emit = emitter(that, arguments, !0).beforestart();
       type === "overlay" ? (selection && (moving = !0), state.selection = selection = [[w0 = dim === Y ? W : point0[0], n0 = dim === X ? N : point0[1]], [e0 = dim === Y ? E : w0, s0 = dim === X ? S : n0]]) : (w0 = selection[0][0], n0 = selection[0][1], e0 = selection[1][0], s0 = selection[1][1]), w1 = w0, n1 = n0, e1 = e0, s1 = s0;
-      var group = d3_selection_src_select(that).attr("pointer-events", "none"),
+      var group = src_select(that).attr("pointer-events", "none"),
           overlay = group.selectAll(".overlay").attr("cursor", cursors[type]);
-      if (selection_on_event.touches) emit.moved = moved, emit.ended = ended;else {
-        var view = d3_selection_src_select(selection_on_event.view).on("mousemove.brush", moved, !0).on("mouseup.brush", ended, !0);
-        keys && view.on("keydown.brush", keydowned, !0).on("keyup.brush", keyupped, !0), nodrag(selection_on_event.view);
+      if (on_event.touches) emit.moved = moved, emit.ended = ended;else {
+        var view = src_select(on_event.view).on("mousemove.brush", moved, !0).on("mouseup.brush", ended, !0);
+        keys && view.on("keydown.brush", keydowned, !0).on("keyup.brush", keyupped, !0), nodrag(on_event.view);
       }
       noevent_nopropagation(), interrupt(that), redraw.call(that), emit.start();
     }
@@ -20856,7 +19981,7 @@ function brush_brush(dim) {
       return --this.active === 0 && (delete this.state.emitter, this.emit("end")), this;
     },
     emit: function emit(type) {
-      on_customEvent(new src_event(brush, type, dim.output(this.state.selection)), listeners.apply, listeners, [type, this.that, this.args]);
+      customEvent(new src_event(brush, type, dim.output(this.state.selection)), listeners.apply, listeners, [type, this.that, this.args]);
     }
   }, brush.extent = function (_) {
     return arguments.length ? (extent = typeof _ === "function" ? _ : d3_brush_src_constant(number2(_)), brush) : extent;
@@ -20899,12 +20024,6 @@ var win = function () {
     browser_doc = win && win.document;
 /* eslint-enable no-new-func, no-undef */
 // CONCATENATED MODULE: ./src/module/util.ts
-
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -21279,38 +20398,22 @@ function mergeArray(arr) {
 }
 /**
  * Merge object returning new object
+ * @param {object} target Target object
  * @param {object} objectN Source object
  * @returns {object} merged target object
  * @private
  */
 
 
-function cloneObj() {
-  for (var clone = function (_clone) {
-    function clone() {
-      return _clone.apply(this, arguments);
-    }
+function mergeObj(target) {
+  for (var _len3 = arguments.length, objectN = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) objectN[_key3 - 1] = arguments[_key3];
 
-    return clone.toString = function () {
-      return _clone.toString();
-    }, clone;
-  }(function (v) {
-    if (isObject(v)) {
-      var r = new v.constructor();
-
-      for (var k in v) r[k] = clone(v[k]);
-
-      return r;
-    }
-
-    return v;
-  }), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) objectN[_key3] = arguments[_key3];
-
-  return objectN.map(function (v) {
-    return clone(v);
-  }).reduce(function (a, c) {
-    return _objectSpread(_objectSpread({}, a), c);
-  });
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
+  var source = objectN.shift();
+  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
+    var value = source[key];
+    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
+  }), mergeObj.apply(void 0, [target].concat(objectN));
 }
 /**
  * Sort value
@@ -21397,7 +20500,7 @@ var getRange = function (start, end, step) {
     }
   }(),
   touch: function touch(el, eventType, params) {
-    var touchObj = new Touch(cloneObj({
+    var touchObj = new Touch(mergeObj({
       identifier: Date.now(),
       target: el,
       radiusX: 2.5,
@@ -21486,6 +20589,10 @@ function convertInputType(mouse, touch) {
 // CONCATENATED MODULE: ./src/config/Options/Options.ts
 
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -21501,15 +20608,60 @@ function convertInputType(mouse, touch) {
 
 
 /**
+ * Deep copy object
+ * @param {object} objectN Source object
+ * @returns {object} Cloned object
+ * @private
+ */
+
+function deepCopy() {
+  for (var clone = function (_clone) {
+    function clone() {
+      return _clone.apply(this, arguments);
+    }
+
+    return clone.toString = function () {
+      return _clone.toString();
+    }, clone;
+  }(function (v) {
+    if (isObject(v) && v.constructor) {
+      var r = new v.constructor();
+
+      for (var k in v) r[k] = clone(v[k]);
+
+      return r;
+    }
+
+    return v;
+  }), _len = arguments.length, objectN = Array(_len), _key = 0; _key < _len; _key++) objectN[_key] = arguments[_key];
+
+  return objectN.map(function (v) {
+    return clone(v);
+  }).reduce(function (a, c) {
+    return _objectSpread(_objectSpread({}, a), c);
+  });
+}
+/**
  * Class to set options on generating chart.
  * - It's instantiated internally, not exposed for public.
  * @class Options
  * @see {@link bb.generate} to use these options on generating the chart
  */
 
-var Options_Options = function Options() {
-  return cloneObj(common_main, data_data, data_selection, common_color, interaction, common_legend, common_title, common_tooltip, Options.data);
-};
+
+var Options_Options = /*#__PURE__*/function () {
+  function Options() {
+    return deepCopy(common_main, data_data, data_selection, common_color, interaction, common_legend, common_title, common_tooltip, Options.data);
+  }
+
+  return Options.setOptions = function setOptions() {
+    for (var _len2 = arguments.length, options = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) options[_key2] = arguments[_key2];
+
+    this.data = options.reduce(function (a, c) {
+      return _objectSpread(_objectSpread({}, a), c);
+    }, this.data);
+  }, Options;
+}();
 
 _defineProperty(Options_Options, "data", {});
 
@@ -22817,190 +21969,6 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
     }), $$.updateTypesElements()) : void done();
   }
 });
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
-
-function src_noevent_nopropagation() {
-  on_event.stopImmediatePropagation();
-}
-/* harmony default export */ var d3_drag_src_noevent = (function () {
-  on_event.preventDefault(), on_event.stopImmediatePropagation();
-});
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/nodrag.js
-
-
-/* harmony default export */ var src_nodrag = (function (view) {
-  var root = view.document.documentElement,
-      selection = src_select(view).on("dragstart.drag", d3_drag_src_noevent, !0);
-  "onselectstart" in root ? selection.on("selectstart.drag", d3_drag_src_noevent, !0) : (root.__noselect = root.style.MozUserSelect, root.style.MozUserSelect = "none");
-});
-function nodrag_yesdrag(view, noclick) {
-  var root = view.document.documentElement,
-      selection = src_select(view).on("dragstart.drag", null);
-  noclick && (selection.on("click.drag", d3_drag_src_noevent, !0), setTimeout(function () {
-    selection.on("click.drag", null);
-  }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
-}
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/constant.js
-/* harmony default export */ var node_modules_d3_drag_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/event.js
-function event_DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
-  this.target = target, this.type = type, this.subject = subject, this.identifier = id, this.active = active, this.x = x, this.y = y, this.dx = dx, this.dy = dy, this._ = dispatch;
-}
-
-event_DragEvent.prototype.on = function () {
-  var value = this._.on.apply(this._, arguments);
-
-  return value === this._ ? this : value;
-};
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/drag.js
-
-
-
-
-
- // Ignore right-click, since that should open the context menu.
-
-function drag_defaultFilter() {
-  return !on_event.ctrlKey && !on_event.button;
-}
-
-function drag_defaultContainer() {
-  return this.parentNode;
-}
-
-function drag_defaultSubject(d) {
-  return d == null ? {
-    x: on_event.x,
-    y: on_event.y
-  } : d;
-}
-
-function drag_defaultTouchable() {
-  return navigator.maxTouchPoints || "ontouchstart" in this;
-}
-
-/* harmony default export */ var d3_drag_src_drag = (function () {
-  function drag(selection) {
-    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
-  }
-
-  function mousedowned() {
-    if (!touchending && filter.apply(this, arguments)) {
-      var gesture = beforestart("mouse", container.apply(this, arguments), src_mouse, this, arguments);
-      gesture && (src_select(on_event.view).on("mousemove.drag", mousemoved, !0).on("mouseup.drag", mouseupped, !0), src_nodrag(on_event.view), src_noevent_nopropagation(), mousemoving = !1, mousedownx = on_event.clientX, mousedowny = on_event.clientY, gesture("start"));
-    }
-  }
-
-  function mousemoved() {
-    if (d3_drag_src_noevent(), !mousemoving) {
-      var dx = on_event.clientX - mousedownx,
-          dy = on_event.clientY - mousedowny;
-      mousemoving = dx * dx + dy * dy > clickDistance2;
-    }
-
-    gestures.mouse("drag");
-  }
-
-  function mouseupped() {
-    src_select(on_event.view).on("mousemove.drag mouseup.drag", null), nodrag_yesdrag(on_event.view, mousemoving), d3_drag_src_noevent(), gestures.mouse("end");
-  }
-
-  function touchstarted() {
-    if (filter.apply(this, arguments)) {
-      var i,
-          gesture,
-          touches = on_event.changedTouches,
-          c = container.apply(this, arguments),
-          n = touches.length;
-
-      for (i = 0; i < n; ++i) (gesture = beforestart(touches[i].identifier, c, src_touch, this, arguments)) && (src_noevent_nopropagation(), gesture("start"));
-    }
-  }
-
-  function touchmoved() {
-    var i,
-        gesture,
-        touches = on_event.changedTouches,
-        n = touches.length;
-
-    for (i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (d3_drag_src_noevent(), gesture("drag"));
-  }
-
-  function touchended() {
-    var i,
-        gesture,
-        touches = on_event.changedTouches,
-        n = touches.length;
-
-    // Ghost clicks are delayed!
-    for (touchending && clearTimeout(touchending), touchending = setTimeout(function () {
-      touchending = null;
-    }, 500), i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (src_noevent_nopropagation(), gesture("end"));
-  }
-
-  function beforestart(id, container, point, that, args) {
-    var s,
-        dx,
-        dy,
-        p = point(container, id),
-        sublisteners = listeners.copy();
-    return customEvent(new event_DragEvent(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
-      return (on_event.subject = s = subject.apply(that, args)) != null && (dx = s.x - p[0] || 0, dy = s.y - p[1] || 0, !0);
-    }) ? function gesture(type) {
-      var n,
-          p0 = p;
-
-      switch (type) {
-        case "start":
-          gestures[id] = gesture, n = active++;
-          break;
-
-        case "end":
-          delete gestures[id], --active;
-        // nobreak
-
-        case "drag":
-          p = point(container, id), n = active;
-      }
-
-      customEvent(new event_DragEvent(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
-    } : void 0;
-  }
-
-  var mousedownx,
-      mousedowny,
-      mousemoving,
-      touchending,
-      filter = drag_defaultFilter,
-      container = drag_defaultContainer,
-      subject = drag_defaultSubject,
-      touchable = drag_defaultTouchable,
-      gestures = {},
-      listeners = src_dispatch("start", "drag", "end"),
-      active = 0,
-      clickDistance2 = 0;
-  return drag.filter = function (_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : node_modules_d3_drag_src_constant(!!_), drag) : filter;
-  }, drag.container = function (_) {
-    return arguments.length ? (container = typeof _ === "function" ? _ : node_modules_d3_drag_src_constant(_), drag) : container;
-  }, drag.subject = function (_) {
-    return arguments.length ? (subject = typeof _ === "function" ? _ : node_modules_d3_drag_src_constant(_), drag) : subject;
-  }, drag.touchable = function (_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : node_modules_d3_drag_src_constant(!!_), drag) : touchable;
-  }, drag.on = function () {
-    var value = listeners.on.apply(listeners, arguments);
-    return value === listeners ? drag : value;
-  }, drag.clickDistance = function (_) {
-    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
-  }, drag;
-});
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/index.js
-
-
 // CONCATENATED MODULE: ./src/ChartInternal/interactions/interaction.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -23067,7 +22035,7 @@ function drag_defaultTouchable() {
   getDraggableSelection: function getDraggableSelection() {
     var $$ = this,
         config = $$.config;
-    return config.interaction_enabled && config.data_selection_draggable && $$.drag ? d3_drag_src_drag().on("drag", function () {
+    return config.interaction_enabled && config.data_selection_draggable && $$.drag ? src_drag().on("drag", function () {
       // @ts-ignore
       $$.drag(src_mouse(this));
     }).on("start", function () {
@@ -23247,7 +22215,7 @@ function drag_defaultTouchable() {
    */
   categoryName: function categoryName(i) {
     var categories = this.config.axis_x_categories;
-    return i < categories && categories.length ? categories[i] : i;
+    return categories && i < categories.length ? categories[i] : i;
   }
 });
 // CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
@@ -23986,1003 +22954,6 @@ function pointish(scale) {
 function band_point() {
   return pointish(band.apply(null, arguments).paddingInner(1));
 }
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-color/src/define.js
-/* harmony default export */ var src_define = (function (constructor, factory, prototype) {
-  constructor.prototype = factory.prototype = prototype, prototype.constructor = constructor;
-});
-function define_extend(parent, definition) {
-  var prototype = Object.create(parent.prototype);
-
-  for (var key in definition) prototype[key] = definition[key];
-
-  return prototype;
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-color/src/color.js
-
-function color_Color() {}
-var color_darker = .7;
-
-
-var color_brighter = 1 / color_darker;
-
-
-var color_reI = "\\s*([+-]?\\d+)\\s*",
-    color_reN = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*",
-    color_reP = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
-    color_reHex = /^#([0-9a-f]{3,8})$/,
-    color_reRgbInteger = new RegExp("^rgb\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*\\)$"),
-    color_reRgbPercent = new RegExp("^rgb\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
-    color_reRgbaInteger = new RegExp("^rgba\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    color_reRgbaPercent = new RegExp("^rgba\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    color_reHslPercent = new RegExp("^hsl\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
-    color_reHslaPercent = new RegExp("^hsla\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    color_named = {
-  aliceblue: 0xf0f8ff,
-  antiquewhite: 0xfaebd7,
-  aqua: 65535,
-  aquamarine: 8388564,
-  azure: 0xf0ffff,
-  beige: 0xf5f5dc,
-  bisque: 0xffe4c4,
-  black: 0,
-  blanchedalmond: 0xffebcd,
-  blue: 255,
-  blueviolet: 9055202,
-  brown: 0xa52a2a,
-  burlywood: 0xdeb887,
-  cadetblue: 6266528,
-  chartreuse: 8388352,
-  chocolate: 0xd2691e,
-  coral: 0xff7f50,
-  cornflowerblue: 6591981,
-  cornsilk: 0xfff8dc,
-  crimson: 0xdc143c,
-  cyan: 65535,
-  darkblue: 139,
-  darkcyan: 35723,
-  darkgoldenrod: 0xb8860b,
-  darkgray: 0xa9a9a9,
-  darkgreen: 25600,
-  darkgrey: 0xa9a9a9,
-  darkkhaki: 0xbdb76b,
-  darkmagenta: 9109643,
-  darkolivegreen: 5597999,
-  darkorange: 0xff8c00,
-  darkorchid: 0x9932cc,
-  darkred: 9109504,
-  darksalmon: 0xe9967a,
-  darkseagreen: 9419919,
-  darkslateblue: 4734347,
-  darkslategray: 3100495,
-  darkslategrey: 3100495,
-  darkturquoise: 52945,
-  darkviolet: 9699539,
-  deeppink: 0xff1493,
-  deepskyblue: 49151,
-  dimgray: 6908265,
-  dimgrey: 6908265,
-  dodgerblue: 2003199,
-  firebrick: 0xb22222,
-  floralwhite: 0xfffaf0,
-  forestgreen: 2263842,
-  fuchsia: 0xff00ff,
-  gainsboro: 0xdcdcdc,
-  ghostwhite: 0xf8f8ff,
-  gold: 0xffd700,
-  goldenrod: 0xdaa520,
-  gray: 8421504,
-  green: 32768,
-  greenyellow: 0xadff2f,
-  grey: 8421504,
-  honeydew: 0xf0fff0,
-  hotpink: 0xff69b4,
-  indianred: 0xcd5c5c,
-  indigo: 4915330,
-  ivory: 0xfffff0,
-  khaki: 0xf0e68c,
-  lavender: 0xe6e6fa,
-  lavenderblush: 0xfff0f5,
-  lawngreen: 8190976,
-  lemonchiffon: 0xfffacd,
-  lightblue: 0xadd8e6,
-  lightcoral: 0xf08080,
-  lightcyan: 0xe0ffff,
-  lightgoldenrodyellow: 0xfafad2,
-  lightgray: 0xd3d3d3,
-  lightgreen: 9498256,
-  lightgrey: 0xd3d3d3,
-  lightpink: 0xffb6c1,
-  lightsalmon: 0xffa07a,
-  lightseagreen: 2142890,
-  lightskyblue: 8900346,
-  lightslategray: 7833753,
-  lightslategrey: 7833753,
-  lightsteelblue: 0xb0c4de,
-  lightyellow: 0xffffe0,
-  lime: 65280,
-  limegreen: 3329330,
-  linen: 0xfaf0e6,
-  magenta: 0xff00ff,
-  maroon: 8388608,
-  mediumaquamarine: 6737322,
-  mediumblue: 205,
-  mediumorchid: 0xba55d3,
-  mediumpurple: 9662683,
-  mediumseagreen: 3978097,
-  mediumslateblue: 8087790,
-  mediumspringgreen: 64154,
-  mediumturquoise: 4772300,
-  mediumvioletred: 0xc71585,
-  midnightblue: 1644912,
-  mintcream: 0xf5fffa,
-  mistyrose: 0xffe4e1,
-  moccasin: 0xffe4b5,
-  navajowhite: 0xffdead,
-  navy: 128,
-  oldlace: 0xfdf5e6,
-  olive: 8421376,
-  olivedrab: 7048739,
-  orange: 0xffa500,
-  orangered: 0xff4500,
-  orchid: 0xda70d6,
-  palegoldenrod: 0xeee8aa,
-  palegreen: 0x98fb98,
-  paleturquoise: 0xafeeee,
-  palevioletred: 0xdb7093,
-  papayawhip: 0xffefd5,
-  peachpuff: 0xffdab9,
-  peru: 0xcd853f,
-  pink: 0xffc0cb,
-  plum: 0xdda0dd,
-  powderblue: 0xb0e0e6,
-  purple: 8388736,
-  rebeccapurple: 6697881,
-  red: 0xff0000,
-  rosybrown: 0xbc8f8f,
-  royalblue: 4286945,
-  saddlebrown: 9127187,
-  salmon: 0xfa8072,
-  sandybrown: 0xf4a460,
-  seagreen: 3050327,
-  seashell: 0xfff5ee,
-  sienna: 0xa0522d,
-  silver: 0xc0c0c0,
-  skyblue: 8900331,
-  slateblue: 6970061,
-  slategray: 7372944,
-  slategrey: 7372944,
-  snow: 0xfffafa,
-  springgreen: 65407,
-  steelblue: 4620980,
-  tan: 0xd2b48c,
-  teal: 32896,
-  thistle: 0xd8bfd8,
-  tomato: 0xff6347,
-  turquoise: 4251856,
-  violet: 0xee82ee,
-  wheat: 0xf5deb3,
-  white: 0xffffff,
-  whitesmoke: 0xf5f5f5,
-  yellow: 0xffff00,
-  yellowgreen: 0x9acd32
-};
-src_define(color_Color, src_color_color, {
-  copy: function copy(channels) {
-    return Object.assign(new this.constructor(), this, channels);
-  },
-  displayable: function displayable() {
-    return this.rgb().displayable();
-  },
-  hex: color_color_formatHex,
-  // Deprecated! Use color.formatHex.
-  formatHex: color_color_formatHex,
-  formatHsl: color_color_formatHsl,
-  formatRgb: color_color_formatRgb,
-  toString: color_color_formatRgb
-});
-
-function color_color_formatHex() {
-  return this.rgb().formatHex();
-}
-
-function color_color_formatHsl() {
-  return color_hslConvert(this).formatHsl();
-}
-
-function color_color_formatRgb() {
-  return this.rgb().formatRgb();
-}
-
-function src_color_color(format) {
-  var m, l;
-  return format = (format + "").trim().toLowerCase(), (m = color_reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? color_rgbn(m) // #ff0000
-  : l === 3 ? new color_Rgb(m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, (m & 15) << 4 | m & 15, 1) // #f00
-  : l === 8 ? color_rgba(m >> 24 & 255, m >> 16 & 255, m >> 8 & 255, (m & 255) / 255) // #ff000000
-  : l === 4 ? color_rgba(m >> 12 & 15 | m >> 8 & 240, m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, ((m & 15) << 4 | m & 15) / 255) // #f000
-  : null // invalid hex
-  ) : (m = color_reRgbInteger.exec(format)) ? new color_Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
-  : (m = color_reRgbPercent.exec(format)) ? new color_Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
-  : (m = color_reRgbaInteger.exec(format)) ? color_rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
-  : (m = color_reRgbaPercent.exec(format)) ? color_rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) // rgb(100%, 0%, 0%, 1)
-  : (m = color_reHslPercent.exec(format)) ? color_hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
-  : (m = color_reHslaPercent.exec(format)) ? color_hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
-  : color_named.hasOwnProperty(format) ? color_rgbn(color_named[format]) // eslint-disable-line no-prototype-builtins
-  : format === "transparent" ? new color_Rgb(NaN, NaN, NaN, 0) : null;
-}
-
-function color_rgbn(n) {
-  return new color_Rgb(n >> 16 & 255, n >> 8 & 255, n & 255, 1);
-}
-
-function color_rgba(r, g, b, a) {
-  return a <= 0 && (r = g = b = NaN), new color_Rgb(r, g, b, a);
-}
-
-function color_rgbConvert(o) {
-  return (o instanceof color_Color || (o = src_color_color(o)), !o) ? new color_Rgb() : (o = o.rgb(), new color_Rgb(o.r, o.g, o.b, o.opacity));
-}
-function src_color_rgb(r, g, b, opacity) {
-  return arguments.length === 1 ? color_rgbConvert(r) : new color_Rgb(r, g, b, opacity == null ? 1 : opacity);
-}
-function color_Rgb(r, g, b, opacity) {
-  this.r = +r, this.g = +g, this.b = +b, this.opacity = +opacity;
-}
-src_define(color_Rgb, src_color_rgb, define_extend(color_Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? color_brighter : Math.pow(color_brighter, k), new color_Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? color_darker : Math.pow(color_darker, k), new color_Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  rgb: function () {
-    return this;
-  },
-  displayable: function displayable() {
-    return -.5 <= this.r && this.r < 255.5 && -.5 <= this.g && this.g < 255.5 && -.5 <= this.b && this.b < 255.5 && 0 <= this.opacity && this.opacity <= 1;
-  },
-  hex: color_rgb_formatHex,
-  // Deprecated! Use color.formatHex.
-  formatHex: color_rgb_formatHex,
-  formatRgb: color_rgb_formatRgb,
-  toString: color_rgb_formatRgb
-}));
-
-function color_rgb_formatHex() {
-  return "#" + color_hex(this.r) + color_hex(this.g) + color_hex(this.b);
-}
-
-function color_rgb_formatRgb() {
-  var a = this.opacity;
-  return a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a)), (a === 1 ? "rgb(" : "rgba(") + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", " + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", " + Math.max(0, Math.min(255, Math.round(this.b) || 0)) + (a === 1 ? ")" : ", " + a + ")");
-}
-
-function color_hex(value) {
-  return value = Math.max(0, Math.min(255, Math.round(value) || 0)), (value < 16 ? "0" : "") + value.toString(16);
-}
-
-function color_hsla(h, s, l, a) {
-  return a <= 0 ? h = s = l = NaN : l <= 0 || l >= 1 ? h = s = NaN : s <= 0 && (h = NaN), new color_Hsl(h, s, l, a);
-}
-
-function color_hslConvert(o) {
-  if (o instanceof color_Hsl) return new color_Hsl(o.h, o.s, o.l, o.opacity);
-  if (o instanceof color_Color || (o = src_color_color(o)), !o) return new color_Hsl();
-  if (o instanceof color_Hsl) return o;
-  o = o.rgb();
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      min = Math.min(r, g, b),
-      max = Math.max(r, g, b),
-      h = NaN,
-      s = max - min,
-      l = (max + min) / 2;
-  return s ? (h = r === max ? (g - b) / s + (g < b) * 6 : g === max ? (b - r) / s + 2 : (r - g) / s + 4, s /= l < .5 ? max + min : 2 - max - min, h *= 60) : s = l > 0 && l < 1 ? 0 : h, new color_Hsl(h, s, l, o.opacity);
-}
-function color_hsl(h, s, l, opacity) {
-  return arguments.length === 1 ? color_hslConvert(h) : new color_Hsl(h, s, l, opacity == null ? 1 : opacity);
-}
-
-function color_Hsl(h, s, l, opacity) {
-  this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
-}
-
-src_define(color_Hsl, color_hsl, define_extend(color_Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? color_brighter : Math.pow(color_brighter, k), new color_Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? color_darker : Math.pow(color_darker, k), new color_Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb: function () {
-    var h = this.h % 360 + (this.h < 0) * 360,
-        s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
-        l = this.l,
-        m2 = l + (l < .5 ? l : 1 - l) * s,
-        m1 = 2 * l - m2;
-    return new color_Rgb(color_hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2), color_hsl2rgb(h, m1, m2), color_hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2), this.opacity);
-  },
-  displayable: function displayable() {
-    return (0 <= this.s && this.s <= 1 || isNaN(this.s)) && 0 <= this.l && this.l <= 1 && 0 <= this.opacity && this.opacity <= 1;
-  },
-  formatHsl: function formatHsl() {
-    var a = this.opacity;
-    return a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a)), (a === 1 ? "hsl(" : "hsla(") + (this.h || 0) + ", " + (this.s || 0) * 100 + "%, " + (this.l || 0) * 100 + "%" + (a === 1 ? ")" : ", " + a + ")");
-  }
-}));
-
-/* From FvD 13.37, CSS Color Module Level 3 */
-function color_hsl2rgb(h, m1, m2) {
-  return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-color/src/math.js
-var math_deg2rad = Math.PI / 180;
-var math_rad2deg = 180 / Math.PI;
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-color/src/lab.js
-
-
- // https://observablehq.com/@mbostock/lab-and-rgb
-
-var lab_K = 18,
-    lab_Xn = .96422,
-    lab_Yn = 1,
-    lab_Zn = .82521,
-    src_lab_t0 = 4 / 29,
-    src_lab_t1 = 6 / 29,
-    src_lab_t2 = 3 * src_lab_t1 * src_lab_t1,
-    lab_t3 = src_lab_t1 * src_lab_t1 * src_lab_t1;
-
-function lab_labConvert(o) {
-  if (o instanceof lab_Lab) return new lab_Lab(o.l, o.a, o.b, o.opacity);
-  if (o instanceof lab_Hcl) return lab_hcl2lab(o);
-  o instanceof color_Rgb || (o = color_rgbConvert(o));
-  var x,
-      z,
-      r = lab_rgb2lrgb(o.r),
-      g = lab_rgb2lrgb(o.g),
-      b = lab_rgb2lrgb(o.b),
-      y = lab_xyz2lab((.2225045 * r + .7168786 * g + .0606169 * b) / lab_Yn);
-  return r === g && g === b ? x = z = y : (x = lab_xyz2lab((.4360747 * r + .3850649 * g + .1430804 * b) / lab_Xn), z = lab_xyz2lab((.0139322 * r + .0971045 * g + .7141733 * b) / lab_Zn)), new lab_Lab(116 * y - 16, 500 * (x - y), 200 * (y - z), o.opacity);
-}
-
-function lab_gray(l, opacity) {
-  return new lab_Lab(l, 0, 0, opacity == null ? 1 : opacity);
-}
-function src_lab_lab(l, a, b, opacity) {
-  return arguments.length === 1 ? lab_labConvert(l) : new lab_Lab(l, a, b, opacity == null ? 1 : opacity);
-}
-function lab_Lab(l, a, b, opacity) {
-  this.l = +l, this.a = +a, this.b = +b, this.opacity = +opacity;
-}
-src_define(lab_Lab, src_lab_lab, define_extend(color_Color, {
-  brighter: function brighter(k) {
-    return new lab_Lab(this.l + lab_K * (k == null ? 1 : k), this.a, this.b, this.opacity);
-  },
-  darker: function darker(k) {
-    return new lab_Lab(this.l - lab_K * (k == null ? 1 : k), this.a, this.b, this.opacity);
-  },
-  rgb: function rgb() {
-    var y = (this.l + 16) / 116,
-        x = isNaN(this.a) ? y : y + this.a / 500,
-        z = isNaN(this.b) ? y : y - this.b / 200;
-    return x = lab_Xn * lab_lab2xyz(x), y = lab_Yn * lab_lab2xyz(y), z = lab_Zn * lab_lab2xyz(z), new color_Rgb(lab_lrgb2rgb(3.1338561 * x - 1.6168667 * y - .4906146 * z), lab_lrgb2rgb(-.9787684 * x + 1.9161415 * y + .033454 * z), lab_lrgb2rgb(.0719453 * x - .2289914 * y + 1.4052427 * z), this.opacity);
-  }
-}));
-
-function lab_xyz2lab(t) {
-  return t > lab_t3 ? Math.pow(t, 1 / 3) : t / src_lab_t2 + src_lab_t0;
-}
-
-function lab_lab2xyz(t) {
-  return t > src_lab_t1 ? t * t * t : src_lab_t2 * (t - src_lab_t0);
-}
-
-function lab_lrgb2rgb(x) {
-  return 255 * (x <= .0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - .055);
-}
-
-function lab_rgb2lrgb(x) {
-  return (x /= 255) <= .04045 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4);
-}
-
-function lab_hclConvert(o) {
-  if (o instanceof lab_Hcl) return new lab_Hcl(o.h, o.c, o.l, o.opacity);
-  if (o instanceof lab_Lab || (o = lab_labConvert(o)), o.a === 0 && o.b === 0) return new lab_Hcl(NaN, 0 < o.l && o.l < 100 ? 0 : NaN, o.l, o.opacity);
-  var h = Math.atan2(o.b, o.a) * math_rad2deg;
-  return new lab_Hcl(h < 0 ? h + 360 : h, Math.sqrt(o.a * o.a + o.b * o.b), o.l, o.opacity);
-}
-
-function lab_lch(l, c, h, opacity) {
-  return arguments.length === 1 ? lab_hclConvert(l) : new lab_Hcl(h, c, l, opacity == null ? 1 : opacity);
-}
-function lab_hcl(h, c, l, opacity) {
-  return arguments.length === 1 ? lab_hclConvert(h) : new lab_Hcl(h, c, l, opacity == null ? 1 : opacity);
-}
-function lab_Hcl(h, c, l, opacity) {
-  this.h = +h, this.c = +c, this.l = +l, this.opacity = +opacity;
-}
-
-function lab_hcl2lab(o) {
-  if (isNaN(o.h)) return new lab_Lab(o.l, 0, 0, o.opacity);
-  var h = o.h * math_deg2rad;
-  return new lab_Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
-}
-
-src_define(lab_Hcl, lab_hcl, define_extend(color_Color, {
-  brighter: function brighter(k) {
-    return new lab_Hcl(this.h, this.c, this.l + lab_K * (k == null ? 1 : k), this.opacity);
-  },
-  darker: function darker(k) {
-    return new lab_Hcl(this.h, this.c, this.l - lab_K * (k == null ? 1 : k), this.opacity);
-  },
-  rgb: function rgb() {
-    return lab_hcl2lab(this).rgb();
-  }
-}));
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-color/src/cubehelix.js
-
-
-
-var cubehelix_A = -.14861,
-    cubehelix_B = +1.78277,
-    cubehelix_C = -.29227,
-    src_cubehelix_D = -.90649,
-    src_cubehelix_E = +1.97294,
-    cubehelix_ED = src_cubehelix_E * src_cubehelix_D,
-    cubehelix_EB = src_cubehelix_E * cubehelix_B,
-    cubehelix_BC_DA = cubehelix_B * cubehelix_C - src_cubehelix_D * cubehelix_A;
-
-function cubehelix_cubehelixConvert(o) {
-  if (o instanceof cubehelix_Cubehelix) return new cubehelix_Cubehelix(o.h, o.s, o.l, o.opacity);
-  o instanceof color_Rgb || (o = color_rgbConvert(o));
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      l = (cubehelix_BC_DA * b + cubehelix_ED * r - cubehelix_EB * g) / (cubehelix_BC_DA + cubehelix_ED - cubehelix_EB),
-      bl = b - l,
-      k = (src_cubehelix_E * (g - l) - cubehelix_C * bl) / src_cubehelix_D,
-      s = Math.sqrt(k * k + bl * bl) / (src_cubehelix_E * l * (1 - l)),
-      // NaN if l=0 or l=1
-  h = s ? Math.atan2(k, bl) * math_rad2deg - 120 : NaN;
-  return new cubehelix_Cubehelix(h < 0 ? h + 360 : h, s, l, o.opacity);
-}
-
-function d3_color_src_cubehelix_cubehelix(h, s, l, opacity) {
-  return arguments.length === 1 ? cubehelix_cubehelixConvert(h) : new cubehelix_Cubehelix(h, s, l, opacity == null ? 1 : opacity);
-}
-function cubehelix_Cubehelix(h, s, l, opacity) {
-  this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
-}
-src_define(cubehelix_Cubehelix, d3_color_src_cubehelix_cubehelix, define_extend(color_Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? color_brighter : Math.pow(color_brighter, k), new cubehelix_Cubehelix(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? color_darker : Math.pow(color_darker, k), new cubehelix_Cubehelix(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb: function rgb() {
-    var h = isNaN(this.h) ? 0 : (this.h + 120) * math_deg2rad,
-        l = +this.l,
-        a = isNaN(this.s) ? 0 : this.s * l * (1 - l),
-        cosh = Math.cos(h),
-        sinh = Math.sin(h);
-    return new color_Rgb(255 * (l + a * (cubehelix_A * cosh + cubehelix_B * sinh)), 255 * (l + a * (cubehelix_C * cosh + src_cubehelix_D * sinh)), 255 * (l + a * (src_cubehelix_E * cosh)), this.opacity);
-  }
-}));
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-color/src/index.js
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/basis.js
-function basis_basis(t1, v0, v1, v2, v3) {
-  var t2 = t1 * t1,
-      t3 = t2 * t1;
-  return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
-}
-/* harmony default export */ var d3_interpolate_src_basis = (function (values) {
-  var n = values.length - 1;
-  return function (t) {
-    var i = t <= 0 ? t = 0 : t >= 1 ? (t = 1, n - 1) : Math.floor(t * n),
-        v1 = values[i],
-        v2 = values[i + 1],
-        v0 = i > 0 ? values[i - 1] : 2 * v1 - v2,
-        v3 = i < n - 1 ? values[i + 2] : 2 * v2 - v1;
-    return basis_basis((t - i / n) * n, v0, v1, v2, v3);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/basisClosed.js
-
-/* harmony default export */ var src_basisClosed = (function (values) {
-  var n = values.length;
-  return function (t) {
-    var i = Math.floor(((t %= 1) < 0 ? ++t : t) * n),
-        v0 = values[(i + n - 1) % n],
-        v1 = values[i % n],
-        v2 = values[(i + 1) % n],
-        v3 = values[(i + 2) % n];
-    return basis_basis((t - i / n) * n, v0, v1, v2, v3);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/constant.js
-/* harmony default export */ var node_modules_d3_interpolate_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/color.js
-
-
-function color_linear(a, d) {
-  return function (t) {
-    return a + t * d;
-  };
-}
-
-function color_exponential(a, b, y) {
-  return a = Math.pow(a, y), b = Math.pow(b, y) - a, y = 1 / y, function (t) {
-    return Math.pow(a + t * b, y);
-  };
-}
-
-function src_color_hue(a, b) {
-  var d = b - a;
-  return d ? color_linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : node_modules_d3_interpolate_src_constant(isNaN(a) ? b : a);
-}
-function color_gamma(y) {
-  return (y = +y) === 1 ? color_nogamma : function (a, b) {
-    return b - a ? color_exponential(a, b, y) : node_modules_d3_interpolate_src_constant(isNaN(a) ? b : a);
-  };
-}
-function color_nogamma(a, b) {
-  var d = b - a;
-  return d ? color_linear(a, d) : node_modules_d3_interpolate_src_constant(isNaN(a) ? b : a);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/rgb.js
-
-
-
-
-/* harmony default export */ var d3_interpolate_src_rgb = ((function rgbGamma(y) {
-  function rgb(start, end) {
-    var r = color((start = src_color_rgb(start)).r, (end = src_color_rgb(end)).r),
-        g = color(start.g, end.g),
-        b = color(start.b, end.b),
-        opacity = color_nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.r = r(t), start.g = g(t), start.b = b(t), start.opacity = opacity(t), start + "";
-    };
-  }
-
-  var color = color_gamma(y);
-  return rgb.gamma = rgbGamma, rgb;
-})(1));
-
-function rgb_rgbSpline(spline) {
-  return function (colors) {
-    var i,
-        color,
-        n = colors.length,
-        r = Array(n),
-        g = Array(n),
-        b = Array(n);
-
-    for (i = 0; i < n; ++i) color = src_color_rgb(colors[i]), r[i] = color.r || 0, g[i] = color.g || 0, b[i] = color.b || 0;
-
-    return r = spline(r), g = spline(g), b = spline(b), color.opacity = 1, function (t) {
-      return color.r = r(t), color.g = g(t), color.b = b(t), color + "";
-    };
-  };
-}
-
-var rgb_rgbBasis = rgb_rgbSpline(d3_interpolate_src_basis);
-var rgb_rgbBasisClosed = rgb_rgbSpline(src_basisClosed);
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/numberArray.js
-/* harmony default export */ var src_numberArray = (function (a, b) {
-  b || (b = []);
-  var i,
-      n = a ? Math.min(b.length, a.length) : 0,
-      c = b.slice();
-  return function (t) {
-    for (i = 0; i < n; ++i) c[i] = a[i] * (1 - t) + b[i] * t;
-
-    return c;
-  };
-});
-function numberArray_isNumberArray(x) {
-  return ArrayBuffer.isView(x) && !(x instanceof DataView);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/array.js
-
-
-/* harmony default export */ var d3_interpolate_src_array = (function (a, b) {
-  return (numberArray_isNumberArray(b) ? src_numberArray : array_genericArray)(a, b);
-});
-function array_genericArray(a, b) {
-  var i,
-      nb = b ? b.length : 0,
-      na = a ? Math.min(nb, a.length) : 0,
-      x = Array(na),
-      c = Array(nb);
-
-  for (i = 0; i < na; ++i) x[i] = d3_interpolate_src_value(a[i], b[i]);
-
-  for (; i < nb; ++i) c[i] = b[i];
-
-  return function (t) {
-    for (i = 0; i < na; ++i) c[i] = x[i](t);
-
-    return c;
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/date.js
-/* harmony default export */ var d3_interpolate_src_date = (function (a, b) {
-  var d = new Date();
-  return a = +a, b = +b, function (t) {
-    return d.setTime(a * (1 - t) + b * t), d;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/number.js
-/* harmony default export */ var d3_interpolate_src_number = (function (a, b) {
-  return a = +a, b = +b, function (t) {
-    return a * (1 - t) + b * t;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/object.js
-
-/* harmony default export */ var src_object = (function (a, b) {
-  var k,
-      i = {},
-      c = {};
-
-  for (k in (a === null || typeof a !== "object") && (a = {}), (b === null || typeof b !== "object") && (b = {}), b) k in a ? i[k] = d3_interpolate_src_value(a[k], b[k]) : c[k] = b[k];
-
-  return function (t) {
-    for (k in i) c[k] = i[k](t);
-
-    return c;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/string.js
-
-var string_reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g,
-    string_reB = new RegExp(string_reA.source, "g");
-
-function src_string_zero(b) {
-  return function () {
-    return b;
-  };
-}
-
-function string_one(b) {
-  return function (t) {
-    return b(t) + "";
-  };
-}
-
-/* harmony default export */ var d3_interpolate_src_string = (function (a, b) {
-  var // scan index for next number in b
-  am,
-      // current match in a
-  bm,
-      // current match in b
-  bs,
-      bi = string_reA.lastIndex = string_reB.lastIndex = 0,
-      // string preceding current number in b, if any
-  i = -1,
-      // index in s
-  s = [],
-      // string constants and placeholders
-  q = []; // number interpolators
-  // Coerce inputs to strings.
-
-  // Interpolate pairs of numbers in a & b.
-  for (a += "", b += ""; (am = string_reA.exec(a)) && (bm = string_reB.exec(b));) (bs = bm.index) > bi && (bs = b.slice(bi, bs), s[i] ? s[i] += bs : // coalesce with previous string
-  s[++i] = bs), (am = am[0]) === (bm = bm[0]) ? s[i] ? s[i] += bm : // coalesce with previous string
-  s[++i] = bm : (s[++i] = null, q.push({
-    i: i,
-    x: d3_interpolate_src_number(am, bm)
-  })), bi = string_reB.lastIndex; // Add remains of b.
-
-
-  // Special optimization for only a single match.
-  // Otherwise, interpolate each of the numbers and rejoin the string.
-  return bi < b.length && (bs = b.slice(bi), s[i] ? s[i] += bs : // coalesce with previous string
-  s[++i] = bs), s.length < 2 ? q[0] ? string_one(q[0].x) : src_string_zero(b) : (b = q.length, function (t) {
-    for (var o, i = 0; i < b; ++i) s[(o = q[i]).i] = o.x(t);
-
-    return s.join("");
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/value.js
-
-
-
-
-
-
-
-
-
-/* harmony default export */ var d3_interpolate_src_value = (function (a, b) {
-  var c,
-      t = typeof b;
-  return b == null || t === "boolean" ? node_modules_d3_interpolate_src_constant(b) : (t === "number" ? d3_interpolate_src_number : t === "string" ? (c = src_color_color(b)) ? (b = c, d3_interpolate_src_rgb) : d3_interpolate_src_string : b instanceof src_color_color ? d3_interpolate_src_rgb : b instanceof Date ? d3_interpolate_src_date : numberArray_isNumberArray(b) ? src_numberArray : Array.isArray(b) ? array_genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? src_object : d3_interpolate_src_number)(a, b);
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/discrete.js
-/* harmony default export */ var src_discrete = (function (range) {
-  var n = range.length;
-  return function (t) {
-    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/hue.js
-
-/* harmony default export */ var d3_interpolate_src_hue = (function (a, b) {
-  var i = src_color_hue(+a, +b);
-  return function (t) {
-    var x = i(t);
-    return x - 360 * Math.floor(x / 360);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/round.js
-/* harmony default export */ var d3_interpolate_src_round = (function (a, b) {
-  return a = +a, b = +b, function (t) {
-    return Math.round(a * (1 - t) + b * t);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/transform/decompose.js
-var decompose_degrees = 180 / Math.PI;
-var decompose_identity = {
-  translateX: 0,
-  translateY: 0,
-  rotate: 0,
-  skewX: 0,
-  scaleX: 1,
-  scaleY: 1
-};
-/* harmony default export */ var transform_decompose = (function (a, b, c, d, e, f) {
-  var scaleX, scaleY, skewX;
-  return (scaleX = Math.sqrt(a * a + b * b)) && (a /= scaleX, b /= scaleX), (skewX = a * c + b * d) && (c -= a * skewX, d -= b * skewX), (scaleY = Math.sqrt(c * c + d * d)) && (c /= scaleY, d /= scaleY, skewX /= scaleY), a * d < b * c && (a = -a, b = -b, skewX = -skewX, scaleX = -scaleX), {
-    translateX: e,
-    translateY: f,
-    rotate: Math.atan2(b, a) * decompose_degrees,
-    skewX: Math.atan(skewX) * decompose_degrees,
-    scaleX: scaleX,
-    scaleY: scaleY
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/transform/parse.js
-
-var parse_cssNode, parse_cssRoot, parse_cssView, parse_svgNode;
-function parse_parseCss(value) {
-  return value === "none" ? decompose_identity : (parse_cssNode || (parse_cssNode = document.createElement("DIV"), parse_cssRoot = document.documentElement, parse_cssView = document.defaultView), parse_cssNode.style.transform = value, value = parse_cssView.getComputedStyle(parse_cssRoot.appendChild(parse_cssNode), null).getPropertyValue("transform"), parse_cssRoot.removeChild(parse_cssNode), value = value.slice(7, -1).split(","), transform_decompose(+value[0], +value[1], +value[2], +value[3], +value[4], +value[5]));
-}
-function parse_parseSvg(value) {
-  return value == null ? decompose_identity : (parse_svgNode || (parse_svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g")), parse_svgNode.setAttribute("transform", value), !(value = parse_svgNode.transform.baseVal.consolidate())) ? decompose_identity : (value = value.matrix, transform_decompose(value.a, value.b, value.c, value.d, value.e, value.f));
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/transform/index.js
-
-
-
-function transform_interpolateTransform(parse, pxComma, pxParen, degParen) {
-  function pop(s) {
-    return s.length ? s.pop() + " " : "";
-  }
-
-  function translate(xa, ya, xb, yb, s, q) {
-    if (xa !== xb || ya !== yb) {
-      var i = s.push("translate(", null, pxComma, null, pxParen);
-      q.push({
-        i: i - 4,
-        x: d3_interpolate_src_number(xa, xb)
-      }, {
-        i: i - 2,
-        x: d3_interpolate_src_number(ya, yb)
-      });
-    } else (xb || yb) && s.push("translate(" + xb + pxComma + yb + pxParen);
-  }
-
-  function rotate(a, b, s, q) {
-    a === b ? b && s.push(pop(s) + "rotate(" + b + degParen) : (a - b > 180 ? b += 360 : b - a > 180 && (a += 360), q.push({
-      i: s.push(pop(s) + "rotate(", null, degParen) - 2,
-      x: d3_interpolate_src_number(a, b)
-    }));
-  }
-
-  function skewX(a, b, s, q) {
-    a === b ? b && s.push(pop(s) + "skewX(" + b + degParen) : q.push({
-      i: s.push(pop(s) + "skewX(", null, degParen) - 2,
-      x: d3_interpolate_src_number(a, b)
-    });
-  }
-
-  function scale(xa, ya, xb, yb, s, q) {
-    if (xa !== xb || ya !== yb) {
-      var i = s.push(pop(s) + "scale(", null, ",", null, ")");
-      q.push({
-        i: i - 4,
-        x: d3_interpolate_src_number(xa, xb)
-      }, {
-        i: i - 2,
-        x: d3_interpolate_src_number(ya, yb)
-      });
-    } else (xb !== 1 || yb !== 1) && s.push(pop(s) + "scale(" + xb + "," + yb + ")");
-  }
-
-  return function (a, b) {
-    var s = [],
-        // string constants and placeholders
-    q = []; // number interpolators
-
-    // gc
-    return a = parse(a), b = parse(b), translate(a.translateX, a.translateY, b.translateX, b.translateY, s, q), rotate(a.rotate, b.rotate, s, q), skewX(a.skewX, b.skewX, s, q), scale(a.scaleX, a.scaleY, b.scaleX, b.scaleY, s, q), a = b = null, function (t) {
-      for (var o, i = -1, n = q.length; ++i < n;) s[(o = q[i]).i] = o.x(t);
-
-      return s.join("");
-    };
-  };
-}
-
-var transform_interpolateTransformCss = transform_interpolateTransform(parse_parseCss, "px, ", "px)", "deg)");
-var transform_interpolateTransformSvg = transform_interpolateTransform(parse_parseSvg, ", ", ")", ")");
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/zoom.js
-var zoom_rho = Math.SQRT2,
-    zoom_rho2 = 2,
-    zoom_rho4 = 4,
-    zoom_epsilon2 = 1e-12;
-
-function src_zoom_cosh(x) {
-  return ((x = Math.exp(x)) + 1 / x) / 2;
-}
-
-function src_zoom_sinh(x) {
-  return ((x = Math.exp(x)) - 1 / x) / 2;
-}
-
-function zoom_tanh(x) {
-  return ((x = Math.exp(2 * x)) - 1) / (x + 1);
-} // p0 = [ux0, uy0, w0]
-// p1 = [ux1, uy1, w1]
-
-
-/* harmony default export */ var d3_interpolate_src_zoom = (function (p0, p1) {
-  var i,
-      S,
-      ux0 = p0[0],
-      uy0 = p0[1],
-      w0 = p0[2],
-      ux1 = p1[0],
-      uy1 = p1[1],
-      w1 = p1[2],
-      dx = ux1 - ux0,
-      dy = uy1 - uy0,
-      d2 = dx * dx + dy * dy; // Special case for u0 ≅ u1.
-
-  if (d2 < zoom_epsilon2) S = Math.log(w1 / w0) / zoom_rho, i = function (t) {
-    return [ux0 + t * dx, uy0 + t * dy, w0 * Math.exp(zoom_rho * t * S)];
-  }; // General case.
-  else {
-      var d1 = Math.sqrt(d2),
-          b0 = (w1 * w1 - w0 * w0 + zoom_rho4 * d2) / (2 * w0 * zoom_rho2 * d1),
-          b1 = (w1 * w1 - w0 * w0 - zoom_rho4 * d2) / (2 * w1 * zoom_rho2 * d1),
-          r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
-          r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
-      S = (r1 - r0) / zoom_rho, i = function (t) {
-        var s = t * S,
-            coshr0 = src_zoom_cosh(r0),
-            u = w0 / (zoom_rho2 * d1) * (coshr0 * zoom_tanh(zoom_rho * s + r0) - src_zoom_sinh(r0));
-        return [ux0 + u * dx, uy0 + u * dy, w0 * coshr0 / src_zoom_cosh(zoom_rho * s + r0)];
-      };
-    }
-  return i.duration = S * 1e3, i;
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/hsl.js
-
-
-
-function src_hsl_hsl(hue) {
-  return function (start, end) {
-    var h = hue((start = color_hsl(start)).h, (end = color_hsl(end)).h),
-        s = color_nogamma(start.s, end.s),
-        l = color_nogamma(start.l, end.l),
-        opacity = color_nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.h = h(t), start.s = s(t), start.l = l(t), start.opacity = opacity(t), start + "";
-    };
-  };
-}
-
-/* harmony default export */ var d3_interpolate_src_hsl = (src_hsl_hsl(src_color_hue));
-var hsl_hslLong = src_hsl_hsl(color_nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/lab.js
-
-
-function d3_interpolate_src_lab_lab(start, end) {
-  var l = color_nogamma((start = src_lab_lab(start)).l, (end = src_lab_lab(end)).l),
-      a = color_nogamma(start.a, end.a),
-      b = color_nogamma(start.b, end.b),
-      opacity = color_nogamma(start.opacity, end.opacity);
-  return function (t) {
-    return start.l = l(t), start.a = a(t), start.b = b(t), start.opacity = opacity(t), start + "";
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/hcl.js
-
-
-
-function src_hcl_hcl(hue) {
-  return function (start, end) {
-    var h = hue((start = lab_hcl(start)).h, (end = lab_hcl(end)).h),
-        c = color_nogamma(start.c, end.c),
-        l = color_nogamma(start.l, end.l),
-        opacity = color_nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.h = h(t), start.c = c(t), start.l = l(t), start.opacity = opacity(t), start + "";
-    };
-  };
-}
-
-/* harmony default export */ var d3_interpolate_src_hcl = (src_hcl_hcl(src_color_hue));
-var hcl_hclLong = src_hcl_hcl(color_nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/cubehelix.js
-
-
-
-function d3_interpolate_src_cubehelix_cubehelix(hue) {
-  return function cubehelixGamma(y) {
-    function cubehelix(start, end) {
-      var h = hue((start = d3_color_src_cubehelix_cubehelix(start)).h, (end = d3_color_src_cubehelix_cubehelix(end)).h),
-          s = color_nogamma(start.s, end.s),
-          l = color_nogamma(start.l, end.l),
-          opacity = color_nogamma(start.opacity, end.opacity);
-      return function (t) {
-        return start.h = h(t), start.s = s(t), start.l = l(Math.pow(t, y)), start.opacity = opacity(t), start + "";
-      };
-    }
-
-    return y = +y, cubehelix.gamma = cubehelixGamma, cubehelix;
-  }(1);
-}
-
-/* harmony default export */ var d3_interpolate_src_cubehelix = (d3_interpolate_src_cubehelix_cubehelix(src_color_hue));
-var cubehelix_cubehelixLong = d3_interpolate_src_cubehelix_cubehelix(color_nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/piecewise.js
-function src_piecewise_piecewise(interpolate, values) {
-  for (var i = 0, n = values.length - 1, v = values[0], I = Array(n < 0 ? 0 : n); i < n;) I[i] = interpolate(v, v = values[++i]);
-
-  return function (t) {
-    var i = Math.max(0, Math.min(n - 1, Math.floor(t *= n)));
-    return I[i](t - i);
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/quantize.js
-/* harmony default export */ var src_quantize = (function (interpolator, n) {
-  for (var samples = Array(n), i = 0; i < n; ++i) samples[i] = interpolator(i / (n - 1));
-
-  return samples;
-});
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-interpolate/src/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/constant.js
 /* harmony default export */ var d3_scale_src_constant = (function (x) {
   return function () {
@@ -25065,16 +23036,16 @@ function transformer() {
       input,
       domain = unit,
       range = unit,
-      interpolate = d3_interpolate_src_value,
+      interpolate = src_value,
       clamp = continuous_identity;
   return scale.invert = function (y) {
-    return clamp(untransform((input || (input = piecewise(range, domain.map(transform), d3_interpolate_src_number)))(y)));
+    return clamp(untransform((input || (input = piecewise(range, domain.map(transform), number)))(y)));
   }, scale.domain = function (_) {
     return arguments.length ? (domain = array_map.call(_, d3_scale_src_number), clamp === continuous_identity || (clamp = clamper(domain)), rescale()) : domain.slice();
   }, scale.range = function (_) {
     return arguments.length ? (range = array_slice.call(_), rescale()) : range.slice();
   }, scale.rangeRound = function (_) {
-    return range = array_slice.call(_), interpolate = d3_interpolate_src_round, rescale();
+    return range = array_slice.call(_), interpolate = src_round, rescale();
   }, scale.clamp = function (_) {
     return arguments.length ? (clamp = _ ? clamper(domain) : continuous_identity, scale) : clamp !== continuous_identity;
   }, scale.interpolate = function (_) {
@@ -25753,605 +23724,6 @@ function threshold_threshold() {
     return threshold_threshold().domain(domain).range(range).unknown(unknown);
   }, initRange.apply(scale, arguments);
 }
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-time-format/src/locale.js
-
-
-function locale_localDate(d) {
-  if (0 <= d.y && d.y < 100) {
-    var date = new Date(-1, d.m, d.d, d.H, d.M, d.S, d.L);
-    return date.setFullYear(d.y), date;
-  }
-
-  return new Date(d.y, d.m, d.d, d.H, d.M, d.S, d.L);
-}
-
-function locale_utcDate(d) {
-  if (0 <= d.y && d.y < 100) {
-    var date = new Date(Date.UTC(-1, d.m, d.d, d.H, d.M, d.S, d.L));
-    return date.setUTCFullYear(d.y), date;
-  }
-
-  return new Date(Date.UTC(d.y, d.m, d.d, d.H, d.M, d.S, d.L));
-}
-
-function locale_newDate(y, m, d) {
-  return {
-    y: y,
-    m: m,
-    d: d,
-    H: 0,
-    M: 0,
-    S: 0,
-    L: 0
-  };
-}
-
-function locale_formatLocale(locale) {
-  function newFormat(specifier, formats) {
-    return function (date) {
-      var c,
-          pad,
-          format,
-          string = [],
-          i = -1,
-          j = 0,
-          n = specifier.length;
-
-      for (date instanceof Date || (date = new Date(+date)); ++i < n;) specifier.charCodeAt(i) === 37 && (string.push(specifier.slice(j, i)), (pad = locale_pads[c = specifier.charAt(++i)]) == null ? pad = c === "e" ? " " : "0" : c = specifier.charAt(++i), (format = formats[c]) && (c = format(date, pad)), string.push(c), j = i + 1);
-
-      return string.push(specifier.slice(j, i)), string.join("");
-    };
-  }
-
-  function newParse(specifier, Z) {
-    return function (string) {
-      var week,
-          day,
-          d = locale_newDate(1900, undefined, 1),
-          i = parseSpecifier(d, specifier, string += "", 0);
-      if (i != string.length) return null; // If a UNIX timestamp is specified, return it.
-
-      if ("Q" in d) return new Date(d.Q);
-      if ("s" in d) return new Date(d.s * 1e3 + ("L" in d ? d.L : 0)); // If this is utcParse, never use the local timezone.
-
-      // Convert day-of-week and week-of-year to day-of-year.
-      if (Z && !("Z" in d) && (d.Z = 0), "p" in d && (d.H = d.H % 12 + d.p * 12), d.m === undefined && (d.m = "q" in d ? d.q : 0), "V" in d) {
-        if (d.V < 1 || d.V > 53) return null;
-        "w" in d || (d.w = 1), "Z" in d ? (week = locale_utcDate(locale_newDate(d.y, 0, 1)), day = week.getUTCDay(), week = day > 4 || day === 0 ? utcMonday.ceil(week) : utcMonday(week), week = src_utcDay.offset(week, (d.V - 1) * 7), d.y = week.getUTCFullYear(), d.m = week.getUTCMonth(), d.d = week.getUTCDate() + (d.w + 6) % 7) : (week = locale_localDate(locale_newDate(d.y, 0, 1)), day = week.getDay(), week = day > 4 || day === 0 ? monday.ceil(week) : monday(week), week = src_day.offset(week, (d.V - 1) * 7), d.y = week.getFullYear(), d.m = week.getMonth(), d.d = week.getDate() + (d.w + 6) % 7);
-      } else ("W" in d || "U" in d) && ("w" in d || (d.w = "u" in d ? d.u % 7 : "W" in d ? 1 : 0), day = "Z" in d ? locale_utcDate(locale_newDate(d.y, 0, 1)).getUTCDay() : locale_localDate(locale_newDate(d.y, 0, 1)).getDay(), d.m = 0, d.d = "W" in d ? (d.w + 6) % 7 + d.W * 7 - (day + 5) % 7 : d.w + d.U * 7 - (day + 6) % 7); // If a time zone is specified, all fields are interpreted as UTC and then
-      // offset according to the specified time zone.
-
-
-      return "Z" in d ? (d.H += d.Z / 100 | 0, d.M += d.Z % 100, locale_utcDate(d)) : locale_localDate(d); // Otherwise, all fields are in local time.
-    };
-  }
-
-  function parseSpecifier(d, specifier, string, j) {
-    for (var c, parse, i = 0, n = specifier.length, m = string.length; i < n;) {
-      if (j >= m) return -1;
-      if (c = specifier.charCodeAt(i++), c === 37) {
-        if (c = specifier.charAt(i++), parse = parses[c in locale_pads ? specifier.charAt(i++) : c], !parse || (j = parse(d, string, j)) < 0) return -1;
-      } else if (c != string.charCodeAt(j++)) return -1;
-    }
-
-    return j;
-  }
-
-  var locale_dateTime = locale.dateTime,
-      locale_date = locale.date,
-      locale_time = locale.time,
-      locale_periods = locale.periods,
-      locale_weekdays = locale.days,
-      locale_shortWeekdays = locale.shortDays,
-      locale_months = locale.months,
-      locale_shortMonths = locale.shortMonths,
-      periodRe = locale_formatRe(locale_periods),
-      periodLookup = locale_formatLookup(locale_periods),
-      weekdayRe = locale_formatRe(locale_weekdays),
-      weekdayLookup = locale_formatLookup(locale_weekdays),
-      shortWeekdayRe = locale_formatRe(locale_shortWeekdays),
-      shortWeekdayLookup = locale_formatLookup(locale_shortWeekdays),
-      monthRe = locale_formatRe(locale_months),
-      monthLookup = locale_formatLookup(locale_months),
-      shortMonthRe = locale_formatRe(locale_shortMonths),
-      shortMonthLookup = locale_formatLookup(locale_shortMonths),
-      formats = {
-    "a": function (d) {
-      return locale_shortWeekdays[d.getDay()];
-    },
-    "A": function (d) {
-      return locale_weekdays[d.getDay()];
-    },
-    "b": function (d) {
-      return locale_shortMonths[d.getMonth()];
-    },
-    "B": function (d) {
-      return locale_months[d.getMonth()];
-    },
-    "c": null,
-    "d": locale_formatDayOfMonth,
-    "e": locale_formatDayOfMonth,
-    "f": locale_formatMicroseconds,
-    "H": locale_formatHour24,
-    "I": locale_formatHour12,
-    "j": locale_formatDayOfYear,
-    "L": locale_formatMilliseconds,
-    "m": locale_formatMonthNumber,
-    "M": locale_formatMinutes,
-    "p": function (d) {
-      return locale_periods[+(d.getHours() >= 12)];
-    },
-    "q": function (d) {
-      return 1 + ~~(d.getMonth() / 3);
-    },
-    "Q": locale_formatUnixTimestamp,
-    "s": locale_formatUnixTimestampSeconds,
-    "S": locale_formatSeconds,
-    "u": locale_formatWeekdayNumberMonday,
-    "U": locale_formatWeekNumberSunday,
-    "V": locale_formatWeekNumberISO,
-    "w": locale_formatWeekdayNumberSunday,
-    "W": locale_formatWeekNumberMonday,
-    "x": null,
-    "X": null,
-    "y": src_locale_formatYear,
-    "Y": locale_formatFullYear,
-    "Z": locale_formatZone,
-    "%": locale_formatLiteralPercent
-  },
-      utcFormats = {
-    "a": function (d) {
-      return locale_shortWeekdays[d.getUTCDay()];
-    },
-    "A": function (d) {
-      return locale_weekdays[d.getUTCDay()];
-    },
-    "b": function (d) {
-      return locale_shortMonths[d.getUTCMonth()];
-    },
-    "B": function (d) {
-      return locale_months[d.getUTCMonth()];
-    },
-    "c": null,
-    "d": locale_formatUTCDayOfMonth,
-    "e": locale_formatUTCDayOfMonth,
-    "f": locale_formatUTCMicroseconds,
-    "H": locale_formatUTCHour24,
-    "I": locale_formatUTCHour12,
-    "j": locale_formatUTCDayOfYear,
-    "L": locale_formatUTCMilliseconds,
-    "m": locale_formatUTCMonthNumber,
-    "M": locale_formatUTCMinutes,
-    "p": function (d) {
-      return locale_periods[+(d.getUTCHours() >= 12)];
-    },
-    "q": function (d) {
-      return 1 + ~~(d.getUTCMonth() / 3);
-    },
-    "Q": locale_formatUnixTimestamp,
-    "s": locale_formatUnixTimestampSeconds,
-    "S": locale_formatUTCSeconds,
-    "u": locale_formatUTCWeekdayNumberMonday,
-    "U": locale_formatUTCWeekNumberSunday,
-    "V": locale_formatUTCWeekNumberISO,
-    "w": locale_formatUTCWeekdayNumberSunday,
-    "W": locale_formatUTCWeekNumberMonday,
-    "x": null,
-    "X": null,
-    "y": locale_formatUTCYear,
-    "Y": locale_formatUTCFullYear,
-    "Z": locale_formatUTCZone,
-    "%": locale_formatLiteralPercent
-  },
-      parses = {
-    "a": function (d, string, i) {
-      var n = shortWeekdayRe.exec(string.slice(i));
-      return n ? (d.w = shortWeekdayLookup[n[0].toLowerCase()], i + n[0].length) : -1;
-    },
-    "A": function (d, string, i) {
-      var n = weekdayRe.exec(string.slice(i));
-      return n ? (d.w = weekdayLookup[n[0].toLowerCase()], i + n[0].length) : -1;
-    },
-    "b": function (d, string, i) {
-      var n = shortMonthRe.exec(string.slice(i));
-      return n ? (d.m = shortMonthLookup[n[0].toLowerCase()], i + n[0].length) : -1;
-    },
-    "B": function (d, string, i) {
-      var n = monthRe.exec(string.slice(i));
-      return n ? (d.m = monthLookup[n[0].toLowerCase()], i + n[0].length) : -1;
-    },
-    "c": function (d, string, i) {
-      return parseSpecifier(d, locale_dateTime, string, i);
-    },
-    "d": locale_parseDayOfMonth,
-    "e": locale_parseDayOfMonth,
-    "f": locale_parseMicroseconds,
-    "H": locale_parseHour24,
-    "I": locale_parseHour24,
-    "j": locale_parseDayOfYear,
-    "L": locale_parseMilliseconds,
-    "m": locale_parseMonthNumber,
-    "M": locale_parseMinutes,
-    "p": function (d, string, i) {
-      var n = periodRe.exec(string.slice(i));
-      return n ? (d.p = periodLookup[n[0].toLowerCase()], i + n[0].length) : -1;
-    },
-    "q": locale_parseQuarter,
-    "Q": locale_parseUnixTimestamp,
-    "s": locale_parseUnixTimestampSeconds,
-    "S": locale_parseSeconds,
-    "u": locale_parseWeekdayNumberMonday,
-    "U": locale_parseWeekNumberSunday,
-    "V": locale_parseWeekNumberISO,
-    "w": locale_parseWeekdayNumberSunday,
-    "W": locale_parseWeekNumberMonday,
-    "x": function (d, string, i) {
-      return parseSpecifier(d, locale_date, string, i);
-    },
-    "X": function (d, string, i) {
-      return parseSpecifier(d, locale_time, string, i);
-    },
-    "y": locale_parseYear,
-    "Y": locale_parseFullYear,
-    "Z": locale_parseZone,
-    "%": locale_parseLiteralPercent
-  };
-  return formats.x = newFormat(locale_date, formats), formats.X = newFormat(locale_time, formats), formats.c = newFormat(locale_dateTime, formats), utcFormats.x = newFormat(locale_date, utcFormats), utcFormats.X = newFormat(locale_time, utcFormats), utcFormats.c = newFormat(locale_dateTime, utcFormats), {
-    format: function format(specifier) {
-      var f = newFormat(specifier += "", formats);
-      return f.toString = function () {
-        return specifier;
-      }, f;
-    },
-    parse: function parse(specifier) {
-      var p = newParse(specifier += "", !1);
-      return p.toString = function () {
-        return specifier;
-      }, p;
-    },
-    utcFormat: function utcFormat(specifier) {
-      var f = newFormat(specifier += "", utcFormats);
-      return f.toString = function () {
-        return specifier;
-      }, f;
-    },
-    utcParse: function utcParse(specifier) {
-      var p = newParse(specifier += "", !0);
-      return p.toString = function () {
-        return specifier;
-      }, p;
-    }
-  };
-}
-var locale_pads = {
-  "-": "",
-  "_": " ",
-  "0": "0"
-},
-    locale_numberRe = /^\s*\d+/,
-    // note: ignores next directive
-locale_percentRe = /^%/,
-    locale_requoteRe = /[\\^$*+?|[\]().{}]/g;
-
-function locale_pad(value, fill, width) {
-  var sign = value < 0 ? "-" : "",
-      string = (sign ? -value : value) + "",
-      length = string.length;
-  return sign + (length < width ? Array(width - length + 1).join(fill) + string : string);
-}
-
-function locale_requote(s) {
-  return s.replace(locale_requoteRe, "\\$&");
-}
-
-function locale_formatRe(names) {
-  return new RegExp("^(?:" + names.map(locale_requote).join("|") + ")", "i");
-}
-
-function locale_formatLookup(names) {
-  for (var map = {}, i = -1, n = names.length; ++i < n;) map[names[i].toLowerCase()] = i;
-
-  return map;
-}
-
-function locale_parseWeekdayNumberSunday(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 1));
-  return n ? (d.w = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseWeekdayNumberMonday(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 1));
-  return n ? (d.u = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseWeekNumberSunday(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 2));
-  return n ? (d.U = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseWeekNumberISO(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 2));
-  return n ? (d.V = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseWeekNumberMonday(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 2));
-  return n ? (d.W = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseFullYear(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 4));
-  return n ? (d.y = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseYear(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 2));
-  return n ? (d.y = +n[0] + (+n[0] > 68 ? 1900 : 2e3), i + n[0].length) : -1;
-}
-
-function locale_parseZone(d, string, i) {
-  var n = /^(Z)|([+-]\d\d)(?::?(\d\d))?/.exec(string.slice(i, i + 6));
-  return n ? (d.Z = n[1] ? 0 : -(n[2] + (n[3] || "00")), i + n[0].length) : -1;
-}
-
-function locale_parseQuarter(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 1));
-  return n ? (d.q = n[0] * 3 - 3, i + n[0].length) : -1;
-}
-
-function locale_parseMonthNumber(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 2));
-  return n ? (d.m = n[0] - 1, i + n[0].length) : -1;
-}
-
-function locale_parseDayOfMonth(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 2));
-  return n ? (d.d = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseDayOfYear(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 3));
-  return n ? (d.m = 0, d.d = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseHour24(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 2));
-  return n ? (d.H = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseMinutes(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 2));
-  return n ? (d.M = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseSeconds(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 2));
-  return n ? (d.S = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseMilliseconds(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 3));
-  return n ? (d.L = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseMicroseconds(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i, i + 6));
-  return n ? (d.L = Math.floor(n[0] / 1e3), i + n[0].length) : -1;
-}
-
-function locale_parseLiteralPercent(d, string, i) {
-  var n = locale_percentRe.exec(string.slice(i, i + 1));
-  return n ? i + n[0].length : -1;
-}
-
-function locale_parseUnixTimestamp(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i));
-  return n ? (d.Q = +n[0], i + n[0].length) : -1;
-}
-
-function locale_parseUnixTimestampSeconds(d, string, i) {
-  var n = locale_numberRe.exec(string.slice(i));
-  return n ? (d.s = +n[0], i + n[0].length) : -1;
-}
-
-function locale_formatDayOfMonth(d, p) {
-  return locale_pad(d.getDate(), p, 2);
-}
-
-function locale_formatHour24(d, p) {
-  return locale_pad(d.getHours(), p, 2);
-}
-
-function locale_formatHour12(d, p) {
-  return locale_pad(d.getHours() % 12 || 12, p, 2);
-}
-
-function locale_formatDayOfYear(d, p) {
-  return locale_pad(1 + src_day.count(src_year(d), d), p, 3);
-}
-
-function locale_formatMilliseconds(d, p) {
-  return locale_pad(d.getMilliseconds(), p, 3);
-}
-
-function locale_formatMicroseconds(d, p) {
-  return locale_formatMilliseconds(d, p) + "000";
-}
-
-function locale_formatMonthNumber(d, p) {
-  return locale_pad(d.getMonth() + 1, p, 2);
-}
-
-function locale_formatMinutes(d, p) {
-  return locale_pad(d.getMinutes(), p, 2);
-}
-
-function locale_formatSeconds(d, p) {
-  return locale_pad(d.getSeconds(), p, 2);
-}
-
-function locale_formatWeekdayNumberMonday(d) {
-  var day = d.getDay();
-  return day === 0 ? 7 : day;
-}
-
-function locale_formatWeekNumberSunday(d, p) {
-  return locale_pad(sunday.count(src_year(d) - 1, d), p, 2);
-}
-
-function locale_formatWeekNumberISO(d, p) {
-  var day = d.getDay();
-  return d = day >= 4 || day === 0 ? thursday(d) : thursday.ceil(d), locale_pad(thursday.count(src_year(d), d) + (src_year(d).getDay() === 4), p, 2);
-}
-
-function locale_formatWeekdayNumberSunday(d) {
-  return d.getDay();
-}
-
-function locale_formatWeekNumberMonday(d, p) {
-  return locale_pad(monday.count(src_year(d) - 1, d), p, 2);
-}
-
-function src_locale_formatYear(d, p) {
-  return locale_pad(d.getFullYear() % 100, p, 2);
-}
-
-function locale_formatFullYear(d, p) {
-  return locale_pad(d.getFullYear() % 1e4, p, 4);
-}
-
-function locale_formatZone(d) {
-  var z = d.getTimezoneOffset();
-  return (z > 0 ? "-" : (z *= -1, "+")) + locale_pad(z / 60 | 0, "0", 2) + locale_pad(z % 60, "0", 2);
-}
-
-function locale_formatUTCDayOfMonth(d, p) {
-  return locale_pad(d.getUTCDate(), p, 2);
-}
-
-function locale_formatUTCHour24(d, p) {
-  return locale_pad(d.getUTCHours(), p, 2);
-}
-
-function locale_formatUTCHour12(d, p) {
-  return locale_pad(d.getUTCHours() % 12 || 12, p, 2);
-}
-
-function locale_formatUTCDayOfYear(d, p) {
-  return locale_pad(1 + src_utcDay.count(src_utcYear(d), d), p, 3);
-}
-
-function locale_formatUTCMilliseconds(d, p) {
-  return locale_pad(d.getUTCMilliseconds(), p, 3);
-}
-
-function locale_formatUTCMicroseconds(d, p) {
-  return locale_formatUTCMilliseconds(d, p) + "000";
-}
-
-function locale_formatUTCMonthNumber(d, p) {
-  return locale_pad(d.getUTCMonth() + 1, p, 2);
-}
-
-function locale_formatUTCMinutes(d, p) {
-  return locale_pad(d.getUTCMinutes(), p, 2);
-}
-
-function locale_formatUTCSeconds(d, p) {
-  return locale_pad(d.getUTCSeconds(), p, 2);
-}
-
-function locale_formatUTCWeekdayNumberMonday(d) {
-  var dow = d.getUTCDay();
-  return dow === 0 ? 7 : dow;
-}
-
-function locale_formatUTCWeekNumberSunday(d, p) {
-  return locale_pad(utcSunday.count(src_utcYear(d) - 1, d), p, 2);
-}
-
-function locale_formatUTCWeekNumberISO(d, p) {
-  var day = d.getUTCDay();
-  return d = day >= 4 || day === 0 ? utcThursday(d) : utcThursday.ceil(d), locale_pad(utcThursday.count(src_utcYear(d), d) + (src_utcYear(d).getUTCDay() === 4), p, 2);
-}
-
-function locale_formatUTCWeekdayNumberSunday(d) {
-  return d.getUTCDay();
-}
-
-function locale_formatUTCWeekNumberMonday(d, p) {
-  return locale_pad(utcMonday.count(src_utcYear(d) - 1, d), p, 2);
-}
-
-function locale_formatUTCYear(d, p) {
-  return locale_pad(d.getUTCFullYear() % 100, p, 2);
-}
-
-function locale_formatUTCFullYear(d, p) {
-  return locale_pad(d.getUTCFullYear() % 1e4, p, 4);
-}
-
-function locale_formatUTCZone() {
-  return "+0000";
-}
-
-function locale_formatLiteralPercent() {
-  return "%";
-}
-
-function locale_formatUnixTimestamp(d) {
-  return +d;
-}
-
-function locale_formatUnixTimestampSeconds(d) {
-  return Math.floor(+d / 1e3);
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-time-format/src/defaultLocale.js
-
-var d3_time_format_src_defaultLocale_locale;
-var defaultLocale_timeFormat;
-var defaultLocale_timeParse;
-var defaultLocale_utcFormat;
-var defaultLocale_utcParse;
-src_defaultLocale_defaultLocale({
-  dateTime: "%x, %X",
-  date: "%-m/%-d/%Y",
-  time: "%-I:%M:%S %p",
-  periods: ["AM", "PM"],
-  days: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
-  shortDays: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
-  months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-  shortMonths: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-});
-function src_defaultLocale_defaultLocale(definition) {
-  return d3_time_format_src_defaultLocale_locale = locale_formatLocale(definition), defaultLocale_timeFormat = d3_time_format_src_defaultLocale_locale.format, defaultLocale_timeParse = d3_time_format_src_defaultLocale_locale.parse, defaultLocale_utcFormat = d3_time_format_src_defaultLocale_locale.utcFormat, defaultLocale_utcParse = d3_time_format_src_defaultLocale_locale.utcParse, d3_time_format_src_defaultLocale_locale;
-}
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-time-format/src/isoFormat.js
-
-var isoFormat_isoSpecifier = "%Y-%m-%dT%H:%M:%S.%LZ";
-
-function isoFormat_formatIsoNative(date) {
-  return date.toISOString();
-}
-
-var isoFormat_formatIso = Date.prototype.toISOString ? isoFormat_formatIsoNative : defaultLocale_utcFormat("%Y-%m-%dT%H:%M:%S.%LZ");
-/* harmony default export */ var src_isoFormat = (isoFormat_formatIso);
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-time-format/src/isoParse.js
-
-
-
-function isoParse_parseIsoNative(string) {
-  var date = new Date(string);
-  return isNaN(date) ? null : date;
-}
-
-var isoParse_parseIso = +new Date("2000-01-01T00:00:00.000Z") ? isoParse_parseIsoNative : defaultLocale_utcParse(isoFormat_isoSpecifier);
-/* harmony default export */ var src_isoParse = (isoParse_parseIso);
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-time-format/src/index.js
-
-
-
-
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/time.js
 
 
@@ -26430,7 +23802,7 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
   }, scale;
 }
 /* harmony default export */ var src_time = (function () {
-  return initRange.apply(calendar(src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, src_millisecond, defaultLocale_timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
+  return initRange.apply(calendar(src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, src_millisecond, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
 });
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/utcTime.js
 
@@ -26438,7 +23810,7 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
 
 
 /* harmony default export */ var utcTime = (function () {
-  return initRange.apply(calendar(src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute, src_second, src_millisecond, defaultLocale_utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
+  return initRange.apply(calendar(src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute, src_second, src_millisecond, utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
 });
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/sequential.js
 
@@ -27504,1913 +24876,6 @@ function getFormat($$, typeValue, v) {
     background && (withTransition ? background.transition() : background).attr("height", $$.getLegendHeight() - 12).attr("width", maxWidth * (step + 1) + 10), $$.updateLegendItemWidth(maxWidth), $$.updateLegendItemHeight(maxHeight), $$.updateLegendStep(step);
   }
 });
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/schedule.js
-
-
-var schedule_emptyOn = src_dispatch("start", "end", "cancel", "interrupt"),
-    schedule_emptyTween = [];
-var schedule_CREATED = 0;
-var schedule_SCHEDULED = 1;
-var schedule_STARTING = 2;
-var schedule_STARTED = 3;
-var schedule_RUNNING = 4;
-var schedule_ENDING = 5;
-var schedule_ENDED = 6;
-/* harmony default export */ var src_transition_schedule = (function (node, name, id, index, group, timing) {
-  var schedules = node.__transition;
-  if (!schedules) node.__transition = {};else if (id in schedules) return;
-  transition_schedule_create(node, id, {
-    name: name,
-    index: index,
-    // For context during callback.
-    group: group,
-    // For context during callback.
-    on: schedule_emptyOn,
-    tween: schedule_emptyTween,
-    time: timing.time,
-    delay: timing.delay,
-    duration: timing.duration,
-    ease: timing.ease,
-    timer: null,
-    state: schedule_CREATED
-  });
-});
-function transition_schedule_init(node, id) {
-  var schedule = transition_schedule_get(node, id);
-  if (schedule.state > schedule_CREATED) throw new Error("too late; already scheduled");
-  return schedule;
-}
-function transition_schedule_set(node, id) {
-  var schedule = transition_schedule_get(node, id);
-  if (schedule.state > schedule_STARTED) throw new Error("too late; already running");
-  return schedule;
-}
-function transition_schedule_get(node, id) {
-  var schedule = node.__transition;
-  if (!schedule || !(schedule = schedule[id])) throw new Error("transition not found");
-  return schedule;
-}
-
-function transition_schedule_create(node, id, self) {
-  function start(elapsed) {
-    var i, j, n, o; // If the state is not SCHEDULED, then we previously errored on start.
-
-    if (self.state !== schedule_SCHEDULED) return stop();
-
-    for (i in schedules) if (o = schedules[i], o.name === self.name) {
-      // While this element already has a starting transition during this frame,
-      // defer starting an interrupting transition until that transition has a
-      // chance to tick (and possibly end); see d3/d3-transition#54!
-      if (o.state === schedule_STARTED) return src_timeout(start); // Interrupt the active transition, if any.
-
-      o.state === schedule_RUNNING ? (o.state = schedule_ENDED, o.timer.stop(), o.on.call("interrupt", node, node.__data__, o.index, o.group), delete schedules[i]) : +i < id && (o.state = schedule_ENDED, o.timer.stop(), o.on.call("cancel", node, node.__data__, o.index, o.group), delete schedules[i]);
-    } // Defer the first tick to end of the current frame; see d3/d3#1576.
-    // Note the transition may be canceled after start and before the first tick!
-    // Note this must be scheduled before the start event; see d3/d3-transition#16!
-    // Assuming this is successful, subsequent callbacks go straight to tick.
-
-
-    if (src_timeout(function () {
-      self.state === schedule_STARTED && (self.state = schedule_RUNNING, self.timer.restart(tick, self.delay, self.time), tick(elapsed));
-    }), self.state = schedule_STARTING, self.on.call("start", node, node.__data__, self.index, self.group), self.state === schedule_STARTING) {
-      for (self.state = schedule_STARTED, tween = Array(n = self.tween.length), (i = 0, j = -1); i < n; ++i) (o = self.tween[i].value.call(node, node.__data__, self.index, self.group)) && (tween[++j] = o);
-
-      tween.length = j + 1;
-    } // interrupted
-
-  }
-
-  function tick(elapsed) {
-    for (var t = elapsed < self.duration ? self.ease.call(null, elapsed / self.duration) : (self.timer.restart(stop), self.state = schedule_ENDING, 1), i = -1, n = tween.length; ++i < n;) tween[i].call(node, t); // Dispatch the end event.
-
-
-    self.state === schedule_ENDING && (self.on.call("end", node, node.__data__, self.index, self.group), stop());
-  }
-
-  function stop() {
-    for (var i in self.state = schedule_ENDED, self.timer.stop(), delete schedules[id], schedules) return; // eslint-disable-line no-unused-vars
-
-
-    delete node.__transition;
-  }
-
-  var tween,
-      schedules = node.__transition; // Initialize the self timer when the transition is created.
-  // Note the actual delay is not known until the first callback!
-
-  schedules[id] = self, self.timer = timer(function (elapsed) {
-    self.state = schedule_SCHEDULED, self.timer.restart(start, self.delay, self.time), self.delay <= elapsed && start(elapsed - self.delay);
-  }, 0, self.time);
-}
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/interrupt.js
-
-/* harmony default export */ var src_interrupt = (function (node, name) {
-  var schedule,
-      active,
-      i,
-      schedules = node.__transition,
-      empty = !0;
-
-  if (schedules) {
-    for (i in name = name == null ? null : name + "", schedules) {
-      if ((schedule = schedules[i]).name !== name) {
-        empty = !1;
-        continue;
-      }
-
-      active = schedule.state > schedule_STARTING && schedule.state < schedule_ENDING, schedule.state = schedule_ENDED, schedule.timer.stop(), schedule.on.call(active ? "interrupt" : "cancel", node, node.__data__, schedule.index, schedule.group), delete schedules[i];
-    }
-
-    empty && delete node.__transition;
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/interrupt.js
-
-/* harmony default export */ var src_selection_interrupt = (function (name) {
-  return this.each(function () {
-    src_interrupt(this, name);
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-color/src/define.js
-/* harmony default export */ var d3_color_src_define = (function (constructor, factory, prototype) {
-  constructor.prototype = factory.prototype = prototype, prototype.constructor = constructor;
-});
-function src_define_extend(parent, definition) {
-  var prototype = Object.create(parent.prototype);
-
-  for (var key in definition) prototype[key] = definition[key];
-
-  return prototype;
-}
-// CONCATENATED MODULE: ./node_modules/d3-color/src/color.js
-
-function src_color_Color() {}
-var src_color_darker = .7;
-
-
-var src_color_brighter = 1 / src_color_darker;
-
-
-var src_color_reI = "\\s*([+-]?\\d+)\\s*",
-    src_color_reN = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*",
-    src_color_reP = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
-    src_color_reHex = /^#([0-9a-f]{3,8})$/,
-    src_color_reRgbInteger = new RegExp("^rgb\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*\\)$"),
-    src_color_reRgbPercent = new RegExp("^rgb\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
-    src_color_reRgbaInteger = new RegExp("^rgba\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    src_color_reRgbaPercent = new RegExp("^rgba\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    src_color_reHslPercent = new RegExp("^hsl\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
-    src_color_reHslaPercent = new RegExp("^hsla\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    src_color_named = {
-  aliceblue: 0xf0f8ff,
-  antiquewhite: 0xfaebd7,
-  aqua: 65535,
-  aquamarine: 8388564,
-  azure: 0xf0ffff,
-  beige: 0xf5f5dc,
-  bisque: 0xffe4c4,
-  black: 0,
-  blanchedalmond: 0xffebcd,
-  blue: 255,
-  blueviolet: 9055202,
-  brown: 0xa52a2a,
-  burlywood: 0xdeb887,
-  cadetblue: 6266528,
-  chartreuse: 8388352,
-  chocolate: 0xd2691e,
-  coral: 0xff7f50,
-  cornflowerblue: 6591981,
-  cornsilk: 0xfff8dc,
-  crimson: 0xdc143c,
-  cyan: 65535,
-  darkblue: 139,
-  darkcyan: 35723,
-  darkgoldenrod: 0xb8860b,
-  darkgray: 0xa9a9a9,
-  darkgreen: 25600,
-  darkgrey: 0xa9a9a9,
-  darkkhaki: 0xbdb76b,
-  darkmagenta: 9109643,
-  darkolivegreen: 5597999,
-  darkorange: 0xff8c00,
-  darkorchid: 0x9932cc,
-  darkred: 9109504,
-  darksalmon: 0xe9967a,
-  darkseagreen: 9419919,
-  darkslateblue: 4734347,
-  darkslategray: 3100495,
-  darkslategrey: 3100495,
-  darkturquoise: 52945,
-  darkviolet: 9699539,
-  deeppink: 0xff1493,
-  deepskyblue: 49151,
-  dimgray: 6908265,
-  dimgrey: 6908265,
-  dodgerblue: 2003199,
-  firebrick: 0xb22222,
-  floralwhite: 0xfffaf0,
-  forestgreen: 2263842,
-  fuchsia: 0xff00ff,
-  gainsboro: 0xdcdcdc,
-  ghostwhite: 0xf8f8ff,
-  gold: 0xffd700,
-  goldenrod: 0xdaa520,
-  gray: 8421504,
-  green: 32768,
-  greenyellow: 0xadff2f,
-  grey: 8421504,
-  honeydew: 0xf0fff0,
-  hotpink: 0xff69b4,
-  indianred: 0xcd5c5c,
-  indigo: 4915330,
-  ivory: 0xfffff0,
-  khaki: 0xf0e68c,
-  lavender: 0xe6e6fa,
-  lavenderblush: 0xfff0f5,
-  lawngreen: 8190976,
-  lemonchiffon: 0xfffacd,
-  lightblue: 0xadd8e6,
-  lightcoral: 0xf08080,
-  lightcyan: 0xe0ffff,
-  lightgoldenrodyellow: 0xfafad2,
-  lightgray: 0xd3d3d3,
-  lightgreen: 9498256,
-  lightgrey: 0xd3d3d3,
-  lightpink: 0xffb6c1,
-  lightsalmon: 0xffa07a,
-  lightseagreen: 2142890,
-  lightskyblue: 8900346,
-  lightslategray: 7833753,
-  lightslategrey: 7833753,
-  lightsteelblue: 0xb0c4de,
-  lightyellow: 0xffffe0,
-  lime: 65280,
-  limegreen: 3329330,
-  linen: 0xfaf0e6,
-  magenta: 0xff00ff,
-  maroon: 8388608,
-  mediumaquamarine: 6737322,
-  mediumblue: 205,
-  mediumorchid: 0xba55d3,
-  mediumpurple: 9662683,
-  mediumseagreen: 3978097,
-  mediumslateblue: 8087790,
-  mediumspringgreen: 64154,
-  mediumturquoise: 4772300,
-  mediumvioletred: 0xc71585,
-  midnightblue: 1644912,
-  mintcream: 0xf5fffa,
-  mistyrose: 0xffe4e1,
-  moccasin: 0xffe4b5,
-  navajowhite: 0xffdead,
-  navy: 128,
-  oldlace: 0xfdf5e6,
-  olive: 8421376,
-  olivedrab: 7048739,
-  orange: 0xffa500,
-  orangered: 0xff4500,
-  orchid: 0xda70d6,
-  palegoldenrod: 0xeee8aa,
-  palegreen: 0x98fb98,
-  paleturquoise: 0xafeeee,
-  palevioletred: 0xdb7093,
-  papayawhip: 0xffefd5,
-  peachpuff: 0xffdab9,
-  peru: 0xcd853f,
-  pink: 0xffc0cb,
-  plum: 0xdda0dd,
-  powderblue: 0xb0e0e6,
-  purple: 8388736,
-  rebeccapurple: 6697881,
-  red: 0xff0000,
-  rosybrown: 0xbc8f8f,
-  royalblue: 4286945,
-  saddlebrown: 9127187,
-  salmon: 0xfa8072,
-  sandybrown: 0xf4a460,
-  seagreen: 3050327,
-  seashell: 0xfff5ee,
-  sienna: 0xa0522d,
-  silver: 0xc0c0c0,
-  skyblue: 8900331,
-  slateblue: 6970061,
-  slategray: 7372944,
-  slategrey: 7372944,
-  snow: 0xfffafa,
-  springgreen: 65407,
-  steelblue: 4620980,
-  tan: 0xd2b48c,
-  teal: 32896,
-  thistle: 0xd8bfd8,
-  tomato: 0xff6347,
-  turquoise: 4251856,
-  violet: 0xee82ee,
-  wheat: 0xf5deb3,
-  white: 0xffffff,
-  whitesmoke: 0xf5f5f5,
-  yellow: 0xffff00,
-  yellowgreen: 0x9acd32
-};
-d3_color_src_define(src_color_Color, d3_color_src_color_color, {
-  copy: function copy(channels) {
-    return Object.assign(new this.constructor(), this, channels);
-  },
-  displayable: function displayable() {
-    return this.rgb().displayable();
-  },
-  hex: src_color_color_formatHex,
-  // Deprecated! Use color.formatHex.
-  formatHex: src_color_color_formatHex,
-  formatHsl: src_color_color_formatHsl,
-  formatRgb: src_color_color_formatRgb,
-  toString: src_color_color_formatRgb
-});
-
-function src_color_color_formatHex() {
-  return this.rgb().formatHex();
-}
-
-function src_color_color_formatHsl() {
-  return src_color_hslConvert(this).formatHsl();
-}
-
-function src_color_color_formatRgb() {
-  return this.rgb().formatRgb();
-}
-
-function d3_color_src_color_color(format) {
-  var m, l;
-  return format = (format + "").trim().toLowerCase(), (m = src_color_reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? src_color_rgbn(m) // #ff0000
-  : l === 3 ? new src_color_Rgb(m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, (m & 15) << 4 | m & 15, 1) // #f00
-  : l === 8 ? src_color_rgba(m >> 24 & 255, m >> 16 & 255, m >> 8 & 255, (m & 255) / 255) // #ff000000
-  : l === 4 ? src_color_rgba(m >> 12 & 15 | m >> 8 & 240, m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, ((m & 15) << 4 | m & 15) / 255) // #f000
-  : null // invalid hex
-  ) : (m = src_color_reRgbInteger.exec(format)) ? new src_color_Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
-  : (m = src_color_reRgbPercent.exec(format)) ? new src_color_Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
-  : (m = src_color_reRgbaInteger.exec(format)) ? src_color_rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
-  : (m = src_color_reRgbaPercent.exec(format)) ? src_color_rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) // rgb(100%, 0%, 0%, 1)
-  : (m = src_color_reHslPercent.exec(format)) ? src_color_hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
-  : (m = src_color_reHslaPercent.exec(format)) ? src_color_hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
-  : src_color_named.hasOwnProperty(format) ? src_color_rgbn(src_color_named[format]) // eslint-disable-line no-prototype-builtins
-  : format === "transparent" ? new src_color_Rgb(NaN, NaN, NaN, 0) : null;
-}
-
-function src_color_rgbn(n) {
-  return new src_color_Rgb(n >> 16 & 255, n >> 8 & 255, n & 255, 1);
-}
-
-function src_color_rgba(r, g, b, a) {
-  return a <= 0 && (r = g = b = NaN), new src_color_Rgb(r, g, b, a);
-}
-
-function src_color_rgbConvert(o) {
-  return (o instanceof src_color_Color || (o = d3_color_src_color_color(o)), !o) ? new src_color_Rgb() : (o = o.rgb(), new src_color_Rgb(o.r, o.g, o.b, o.opacity));
-}
-function d3_color_src_color_rgb(r, g, b, opacity) {
-  return arguments.length === 1 ? src_color_rgbConvert(r) : new src_color_Rgb(r, g, b, opacity == null ? 1 : opacity);
-}
-function src_color_Rgb(r, g, b, opacity) {
-  this.r = +r, this.g = +g, this.b = +b, this.opacity = +opacity;
-}
-d3_color_src_define(src_color_Rgb, d3_color_src_color_rgb, src_define_extend(src_color_Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? src_color_brighter : Math.pow(src_color_brighter, k), new src_color_Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? src_color_darker : Math.pow(src_color_darker, k), new src_color_Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  rgb: function () {
-    return this;
-  },
-  displayable: function displayable() {
-    return -.5 <= this.r && this.r < 255.5 && -.5 <= this.g && this.g < 255.5 && -.5 <= this.b && this.b < 255.5 && 0 <= this.opacity && this.opacity <= 1;
-  },
-  hex: src_color_rgb_formatHex,
-  // Deprecated! Use color.formatHex.
-  formatHex: src_color_rgb_formatHex,
-  formatRgb: src_color_rgb_formatRgb,
-  toString: src_color_rgb_formatRgb
-}));
-
-function src_color_rgb_formatHex() {
-  return "#" + src_color_hex(this.r) + src_color_hex(this.g) + src_color_hex(this.b);
-}
-
-function src_color_rgb_formatRgb() {
-  var a = this.opacity;
-  return a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a)), (a === 1 ? "rgb(" : "rgba(") + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", " + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", " + Math.max(0, Math.min(255, Math.round(this.b) || 0)) + (a === 1 ? ")" : ", " + a + ")");
-}
-
-function src_color_hex(value) {
-  return value = Math.max(0, Math.min(255, Math.round(value) || 0)), (value < 16 ? "0" : "") + value.toString(16);
-}
-
-function src_color_hsla(h, s, l, a) {
-  return a <= 0 ? h = s = l = NaN : l <= 0 || l >= 1 ? h = s = NaN : s <= 0 && (h = NaN), new src_color_Hsl(h, s, l, a);
-}
-
-function src_color_hslConvert(o) {
-  if (o instanceof src_color_Hsl) return new src_color_Hsl(o.h, o.s, o.l, o.opacity);
-  if (o instanceof src_color_Color || (o = d3_color_src_color_color(o)), !o) return new src_color_Hsl();
-  if (o instanceof src_color_Hsl) return o;
-  o = o.rgb();
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      min = Math.min(r, g, b),
-      max = Math.max(r, g, b),
-      h = NaN,
-      s = max - min,
-      l = (max + min) / 2;
-  return s ? (h = r === max ? (g - b) / s + (g < b) * 6 : g === max ? (b - r) / s + 2 : (r - g) / s + 4, s /= l < .5 ? max + min : 2 - max - min, h *= 60) : s = l > 0 && l < 1 ? 0 : h, new src_color_Hsl(h, s, l, o.opacity);
-}
-function src_color_hsl(h, s, l, opacity) {
-  return arguments.length === 1 ? src_color_hslConvert(h) : new src_color_Hsl(h, s, l, opacity == null ? 1 : opacity);
-}
-
-function src_color_Hsl(h, s, l, opacity) {
-  this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
-}
-
-d3_color_src_define(src_color_Hsl, src_color_hsl, src_define_extend(src_color_Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? src_color_brighter : Math.pow(src_color_brighter, k), new src_color_Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? src_color_darker : Math.pow(src_color_darker, k), new src_color_Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb: function () {
-    var h = this.h % 360 + (this.h < 0) * 360,
-        s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
-        l = this.l,
-        m2 = l + (l < .5 ? l : 1 - l) * s,
-        m1 = 2 * l - m2;
-    return new src_color_Rgb(src_color_hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2), src_color_hsl2rgb(h, m1, m2), src_color_hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2), this.opacity);
-  },
-  displayable: function displayable() {
-    return (0 <= this.s && this.s <= 1 || isNaN(this.s)) && 0 <= this.l && this.l <= 1 && 0 <= this.opacity && this.opacity <= 1;
-  },
-  formatHsl: function formatHsl() {
-    var a = this.opacity;
-    return a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a)), (a === 1 ? "hsl(" : "hsla(") + (this.h || 0) + ", " + (this.s || 0) * 100 + "%, " + (this.l || 0) * 100 + "%" + (a === 1 ? ")" : ", " + a + ")");
-  }
-}));
-
-/* From FvD 13.37, CSS Color Module Level 3 */
-function src_color_hsl2rgb(h, m1, m2) {
-  return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
-}
-// CONCATENATED MODULE: ./node_modules/d3-color/src/math.js
-var src_math_deg2rad = Math.PI / 180;
-var src_math_rad2deg = 180 / Math.PI;
-// CONCATENATED MODULE: ./node_modules/d3-color/src/lab.js
-
-
- // https://observablehq.com/@mbostock/lab-and-rgb
-
-var src_lab_K = 18,
-    src_lab_Xn = .96422,
-    src_lab_Yn = 1,
-    src_lab_Zn = .82521,
-    d3_color_src_lab_t0 = 4 / 29,
-    d3_color_src_lab_t1 = 6 / 29,
-    d3_color_src_lab_t2 = 3 * d3_color_src_lab_t1 * d3_color_src_lab_t1,
-    src_lab_t3 = d3_color_src_lab_t1 * d3_color_src_lab_t1 * d3_color_src_lab_t1;
-
-function src_lab_labConvert(o) {
-  if (o instanceof src_lab_Lab) return new src_lab_Lab(o.l, o.a, o.b, o.opacity);
-  if (o instanceof src_lab_Hcl) return src_lab_hcl2lab(o);
-  o instanceof src_color_Rgb || (o = src_color_rgbConvert(o));
-  var x,
-      z,
-      r = src_lab_rgb2lrgb(o.r),
-      g = src_lab_rgb2lrgb(o.g),
-      b = src_lab_rgb2lrgb(o.b),
-      y = src_lab_xyz2lab((.2225045 * r + .7168786 * g + .0606169 * b) / src_lab_Yn);
-  return r === g && g === b ? x = z = y : (x = src_lab_xyz2lab((.4360747 * r + .3850649 * g + .1430804 * b) / src_lab_Xn), z = src_lab_xyz2lab((.0139322 * r + .0971045 * g + .7141733 * b) / src_lab_Zn)), new src_lab_Lab(116 * y - 16, 500 * (x - y), 200 * (y - z), o.opacity);
-}
-
-function src_lab_gray(l, opacity) {
-  return new src_lab_Lab(l, 0, 0, opacity == null ? 1 : opacity);
-}
-function d3_color_src_lab_lab(l, a, b, opacity) {
-  return arguments.length === 1 ? src_lab_labConvert(l) : new src_lab_Lab(l, a, b, opacity == null ? 1 : opacity);
-}
-function src_lab_Lab(l, a, b, opacity) {
-  this.l = +l, this.a = +a, this.b = +b, this.opacity = +opacity;
-}
-d3_color_src_define(src_lab_Lab, d3_color_src_lab_lab, src_define_extend(src_color_Color, {
-  brighter: function brighter(k) {
-    return new src_lab_Lab(this.l + src_lab_K * (k == null ? 1 : k), this.a, this.b, this.opacity);
-  },
-  darker: function darker(k) {
-    return new src_lab_Lab(this.l - src_lab_K * (k == null ? 1 : k), this.a, this.b, this.opacity);
-  },
-  rgb: function rgb() {
-    var y = (this.l + 16) / 116,
-        x = isNaN(this.a) ? y : y + this.a / 500,
-        z = isNaN(this.b) ? y : y - this.b / 200;
-    return x = src_lab_Xn * src_lab_lab2xyz(x), y = src_lab_Yn * src_lab_lab2xyz(y), z = src_lab_Zn * src_lab_lab2xyz(z), new src_color_Rgb(src_lab_lrgb2rgb(3.1338561 * x - 1.6168667 * y - .4906146 * z), src_lab_lrgb2rgb(-.9787684 * x + 1.9161415 * y + .033454 * z), src_lab_lrgb2rgb(.0719453 * x - .2289914 * y + 1.4052427 * z), this.opacity);
-  }
-}));
-
-function src_lab_xyz2lab(t) {
-  return t > src_lab_t3 ? Math.pow(t, 1 / 3) : t / d3_color_src_lab_t2 + d3_color_src_lab_t0;
-}
-
-function src_lab_lab2xyz(t) {
-  return t > d3_color_src_lab_t1 ? t * t * t : d3_color_src_lab_t2 * (t - d3_color_src_lab_t0);
-}
-
-function src_lab_lrgb2rgb(x) {
-  return 255 * (x <= .0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - .055);
-}
-
-function src_lab_rgb2lrgb(x) {
-  return (x /= 255) <= .04045 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4);
-}
-
-function src_lab_hclConvert(o) {
-  if (o instanceof src_lab_Hcl) return new src_lab_Hcl(o.h, o.c, o.l, o.opacity);
-  if (o instanceof src_lab_Lab || (o = src_lab_labConvert(o)), o.a === 0 && o.b === 0) return new src_lab_Hcl(NaN, 0 < o.l && o.l < 100 ? 0 : NaN, o.l, o.opacity);
-  var h = Math.atan2(o.b, o.a) * src_math_rad2deg;
-  return new src_lab_Hcl(h < 0 ? h + 360 : h, Math.sqrt(o.a * o.a + o.b * o.b), o.l, o.opacity);
-}
-
-function src_lab_lch(l, c, h, opacity) {
-  return arguments.length === 1 ? src_lab_hclConvert(l) : new src_lab_Hcl(h, c, l, opacity == null ? 1 : opacity);
-}
-function src_lab_hcl(h, c, l, opacity) {
-  return arguments.length === 1 ? src_lab_hclConvert(h) : new src_lab_Hcl(h, c, l, opacity == null ? 1 : opacity);
-}
-function src_lab_Hcl(h, c, l, opacity) {
-  this.h = +h, this.c = +c, this.l = +l, this.opacity = +opacity;
-}
-
-function src_lab_hcl2lab(o) {
-  if (isNaN(o.h)) return new src_lab_Lab(o.l, 0, 0, o.opacity);
-  var h = o.h * src_math_deg2rad;
-  return new src_lab_Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
-}
-
-d3_color_src_define(src_lab_Hcl, src_lab_hcl, src_define_extend(src_color_Color, {
-  brighter: function brighter(k) {
-    return new src_lab_Hcl(this.h, this.c, this.l + src_lab_K * (k == null ? 1 : k), this.opacity);
-  },
-  darker: function darker(k) {
-    return new src_lab_Hcl(this.h, this.c, this.l - src_lab_K * (k == null ? 1 : k), this.opacity);
-  },
-  rgb: function rgb() {
-    return src_lab_hcl2lab(this).rgb();
-  }
-}));
-// CONCATENATED MODULE: ./node_modules/d3-color/src/cubehelix.js
-
-
-
-var src_cubehelix_A = -.14861,
-    src_cubehelix_B = +1.78277,
-    src_cubehelix_C = -.29227,
-    d3_color_src_cubehelix_D = -.90649,
-    d3_color_src_cubehelix_E = +1.97294,
-    src_cubehelix_ED = d3_color_src_cubehelix_E * d3_color_src_cubehelix_D,
-    src_cubehelix_EB = d3_color_src_cubehelix_E * src_cubehelix_B,
-    src_cubehelix_BC_DA = src_cubehelix_B * src_cubehelix_C - d3_color_src_cubehelix_D * src_cubehelix_A;
-
-function src_cubehelix_cubehelixConvert(o) {
-  if (o instanceof src_cubehelix_Cubehelix) return new src_cubehelix_Cubehelix(o.h, o.s, o.l, o.opacity);
-  o instanceof src_color_Rgb || (o = src_color_rgbConvert(o));
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      l = (src_cubehelix_BC_DA * b + src_cubehelix_ED * r - src_cubehelix_EB * g) / (src_cubehelix_BC_DA + src_cubehelix_ED - src_cubehelix_EB),
-      bl = b - l,
-      k = (d3_color_src_cubehelix_E * (g - l) - src_cubehelix_C * bl) / d3_color_src_cubehelix_D,
-      s = Math.sqrt(k * k + bl * bl) / (d3_color_src_cubehelix_E * l * (1 - l)),
-      // NaN if l=0 or l=1
-  h = s ? Math.atan2(k, bl) * src_math_rad2deg - 120 : NaN;
-  return new src_cubehelix_Cubehelix(h < 0 ? h + 360 : h, s, l, o.opacity);
-}
-
-function node_modules_d3_color_src_cubehelix_cubehelix(h, s, l, opacity) {
-  return arguments.length === 1 ? src_cubehelix_cubehelixConvert(h) : new src_cubehelix_Cubehelix(h, s, l, opacity == null ? 1 : opacity);
-}
-function src_cubehelix_Cubehelix(h, s, l, opacity) {
-  this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
-}
-d3_color_src_define(src_cubehelix_Cubehelix, node_modules_d3_color_src_cubehelix_cubehelix, src_define_extend(src_color_Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? src_color_brighter : Math.pow(src_color_brighter, k), new src_cubehelix_Cubehelix(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? src_color_darker : Math.pow(src_color_darker, k), new src_cubehelix_Cubehelix(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb: function rgb() {
-    var h = isNaN(this.h) ? 0 : (this.h + 120) * src_math_deg2rad,
-        l = +this.l,
-        a = isNaN(this.s) ? 0 : this.s * l * (1 - l),
-        cosh = Math.cos(h),
-        sinh = Math.sin(h);
-    return new src_color_Rgb(255 * (l + a * (src_cubehelix_A * cosh + src_cubehelix_B * sinh)), 255 * (l + a * (src_cubehelix_C * cosh + d3_color_src_cubehelix_D * sinh)), 255 * (l + a * (d3_color_src_cubehelix_E * cosh)), this.opacity);
-  }
-}));
-// CONCATENATED MODULE: ./node_modules/d3-color/src/index.js
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basis.js
-function src_basis_basis(t1, v0, v1, v2, v3) {
-  var t2 = t1 * t1,
-      t3 = t2 * t1;
-  return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
-}
-/* harmony default export */ var node_modules_d3_interpolate_src_basis = (function (values) {
-  var n = values.length - 1;
-  return function (t) {
-    var i = t <= 0 ? t = 0 : t >= 1 ? (t = 1, n - 1) : Math.floor(t * n),
-        v1 = values[i],
-        v2 = values[i + 1],
-        v0 = i > 0 ? values[i - 1] : 2 * v1 - v2,
-        v3 = i < n - 1 ? values[i + 2] : 2 * v2 - v1;
-    return src_basis_basis((t - i / n) * n, v0, v1, v2, v3);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basisClosed.js
-
-/* harmony default export */ var d3_interpolate_src_basisClosed = (function (values) {
-  var n = values.length;
-  return function (t) {
-    var i = Math.floor(((t %= 1) < 0 ? ++t : t) * n),
-        v0 = values[(i + n - 1) % n],
-        v1 = values[i % n],
-        v2 = values[(i + 1) % n],
-        v3 = values[(i + 2) % n];
-    return src_basis_basis((t - i / n) * n, v0, v1, v2, v3);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/constant.js
-/* harmony default export */ var node_modules_d3_interpolate_src_constant_0 = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/color.js
-
-
-function src_color_linear(a, d) {
-  return function (t) {
-    return a + t * d;
-  };
-}
-
-function src_color_exponential(a, b, y) {
-  return a = Math.pow(a, y), b = Math.pow(b, y) - a, y = 1 / y, function (t) {
-    return Math.pow(a + t * b, y);
-  };
-}
-
-function d3_interpolate_src_color_hue(a, b) {
-  var d = b - a;
-  return d ? src_color_linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : node_modules_d3_interpolate_src_constant_0(isNaN(a) ? b : a);
-}
-function src_color_gamma(y) {
-  return (y = +y) === 1 ? src_color_nogamma : function (a, b) {
-    return b - a ? src_color_exponential(a, b, y) : node_modules_d3_interpolate_src_constant_0(isNaN(a) ? b : a);
-  };
-}
-function src_color_nogamma(a, b) {
-  var d = b - a;
-  return d ? src_color_linear(a, d) : node_modules_d3_interpolate_src_constant_0(isNaN(a) ? b : a);
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/rgb.js
-
-
-
-
-/* harmony default export */ var node_modules_d3_interpolate_src_rgb = ((function rgbGamma(y) {
-  function rgb(start, end) {
-    var r = color((start = d3_color_src_color_rgb(start)).r, (end = d3_color_src_color_rgb(end)).r),
-        g = color(start.g, end.g),
-        b = color(start.b, end.b),
-        opacity = src_color_nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.r = r(t), start.g = g(t), start.b = b(t), start.opacity = opacity(t), start + "";
-    };
-  }
-
-  var color = src_color_gamma(y);
-  return rgb.gamma = rgbGamma, rgb;
-})(1));
-
-function src_rgb_rgbSpline(spline) {
-  return function (colors) {
-    var i,
-        color,
-        n = colors.length,
-        r = Array(n),
-        g = Array(n),
-        b = Array(n);
-
-    for (i = 0; i < n; ++i) color = d3_color_src_color_rgb(colors[i]), r[i] = color.r || 0, g[i] = color.g || 0, b[i] = color.b || 0;
-
-    return r = spline(r), g = spline(g), b = spline(b), color.opacity = 1, function (t) {
-      return color.r = r(t), color.g = g(t), color.b = b(t), color + "";
-    };
-  };
-}
-
-var src_rgb_rgbBasis = src_rgb_rgbSpline(node_modules_d3_interpolate_src_basis);
-var src_rgb_rgbBasisClosed = src_rgb_rgbSpline(d3_interpolate_src_basisClosed);
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/numberArray.js
-/* harmony default export */ var d3_interpolate_src_numberArray = (function (a, b) {
-  b || (b = []);
-  var i,
-      n = a ? Math.min(b.length, a.length) : 0,
-      c = b.slice();
-  return function (t) {
-    for (i = 0; i < n; ++i) c[i] = a[i] * (1 - t) + b[i] * t;
-
-    return c;
-  };
-});
-function src_numberArray_isNumberArray(x) {
-  return ArrayBuffer.isView(x) && !(x instanceof DataView);
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/array.js
-
-
-/* harmony default export */ var node_modules_d3_interpolate_src_array = (function (a, b) {
-  return (src_numberArray_isNumberArray(b) ? d3_interpolate_src_numberArray : src_array_genericArray)(a, b);
-});
-function src_array_genericArray(a, b) {
-  var i,
-      nb = b ? b.length : 0,
-      na = a ? Math.min(nb, a.length) : 0,
-      x = Array(na),
-      c = Array(nb);
-
-  for (i = 0; i < na; ++i) x[i] = node_modules_d3_interpolate_src_value(a[i], b[i]);
-
-  for (; i < nb; ++i) c[i] = b[i];
-
-  return function (t) {
-    for (i = 0; i < na; ++i) c[i] = x[i](t);
-
-    return c;
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/date.js
-/* harmony default export */ var node_modules_d3_interpolate_src_date = (function (a, b) {
-  var d = new Date();
-  return a = +a, b = +b, function (t) {
-    return d.setTime(a * (1 - t) + b * t), d;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/number.js
-/* harmony default export */ var node_modules_d3_interpolate_src_number = (function (a, b) {
-  return a = +a, b = +b, function (t) {
-    return a * (1 - t) + b * t;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/object.js
-
-/* harmony default export */ var d3_interpolate_src_object = (function (a, b) {
-  var k,
-      i = {},
-      c = {};
-
-  for (k in (a === null || typeof a !== "object") && (a = {}), (b === null || typeof b !== "object") && (b = {}), b) k in a ? i[k] = node_modules_d3_interpolate_src_value(a[k], b[k]) : c[k] = b[k];
-
-  return function (t) {
-    for (k in i) c[k] = i[k](t);
-
-    return c;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/string.js
-
-var src_string_reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g,
-    src_string_reB = new RegExp(src_string_reA.source, "g");
-
-function d3_interpolate_src_string_zero(b) {
-  return function () {
-    return b;
-  };
-}
-
-function src_string_one(b) {
-  return function (t) {
-    return b(t) + "";
-  };
-}
-
-/* harmony default export */ var node_modules_d3_interpolate_src_string = (function (a, b) {
-  var // scan index for next number in b
-  am,
-      // current match in a
-  bm,
-      // current match in b
-  bs,
-      bi = src_string_reA.lastIndex = src_string_reB.lastIndex = 0,
-      // string preceding current number in b, if any
-  i = -1,
-      // index in s
-  s = [],
-      // string constants and placeholders
-  q = []; // number interpolators
-  // Coerce inputs to strings.
-
-  // Interpolate pairs of numbers in a & b.
-  for (a += "", b += ""; (am = src_string_reA.exec(a)) && (bm = src_string_reB.exec(b));) (bs = bm.index) > bi && (bs = b.slice(bi, bs), s[i] ? s[i] += bs : // coalesce with previous string
-  s[++i] = bs), (am = am[0]) === (bm = bm[0]) ? s[i] ? s[i] += bm : // coalesce with previous string
-  s[++i] = bm : (s[++i] = null, q.push({
-    i: i,
-    x: node_modules_d3_interpolate_src_number(am, bm)
-  })), bi = src_string_reB.lastIndex; // Add remains of b.
-
-
-  // Special optimization for only a single match.
-  // Otherwise, interpolate each of the numbers and rejoin the string.
-  return bi < b.length && (bs = b.slice(bi), s[i] ? s[i] += bs : // coalesce with previous string
-  s[++i] = bs), s.length < 2 ? q[0] ? src_string_one(q[0].x) : d3_interpolate_src_string_zero(b) : (b = q.length, function (t) {
-    for (var o, i = 0; i < b; ++i) s[(o = q[i]).i] = o.x(t);
-
-    return s.join("");
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/value.js
-
-
-
-
-
-
-
-
-
-/* harmony default export */ var node_modules_d3_interpolate_src_value = (function (a, b) {
-  var c,
-      t = typeof b;
-  return b == null || t === "boolean" ? node_modules_d3_interpolate_src_constant_0(b) : (t === "number" ? node_modules_d3_interpolate_src_number : t === "string" ? (c = d3_color_src_color_color(b)) ? (b = c, node_modules_d3_interpolate_src_rgb) : node_modules_d3_interpolate_src_string : b instanceof d3_color_src_color_color ? node_modules_d3_interpolate_src_rgb : b instanceof Date ? node_modules_d3_interpolate_src_date : src_numberArray_isNumberArray(b) ? d3_interpolate_src_numberArray : Array.isArray(b) ? src_array_genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? d3_interpolate_src_object : node_modules_d3_interpolate_src_number)(a, b);
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/discrete.js
-/* harmony default export */ var d3_interpolate_src_discrete = (function (range) {
-  var n = range.length;
-  return function (t) {
-    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hue.js
-
-/* harmony default export */ var node_modules_d3_interpolate_src_hue = (function (a, b) {
-  var i = d3_interpolate_src_color_hue(+a, +b);
-  return function (t) {
-    var x = i(t);
-    return x - 360 * Math.floor(x / 360);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/round.js
-/* harmony default export */ var node_modules_d3_interpolate_src_round = (function (a, b) {
-  return a = +a, b = +b, function (t) {
-    return Math.round(a * (1 - t) + b * t);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/decompose.js
-var transform_decompose_degrees = 180 / Math.PI;
-var transform_decompose_identity = {
-  translateX: 0,
-  translateY: 0,
-  rotate: 0,
-  skewX: 0,
-  scaleX: 1,
-  scaleY: 1
-};
-/* harmony default export */ var src_transform_decompose = (function (a, b, c, d, e, f) {
-  var scaleX, scaleY, skewX;
-  return (scaleX = Math.sqrt(a * a + b * b)) && (a /= scaleX, b /= scaleX), (skewX = a * c + b * d) && (c -= a * skewX, d -= b * skewX), (scaleY = Math.sqrt(c * c + d * d)) && (c /= scaleY, d /= scaleY, skewX /= scaleY), a * d < b * c && (a = -a, b = -b, skewX = -skewX, scaleX = -scaleX), {
-    translateX: e,
-    translateY: f,
-    rotate: Math.atan2(b, a) * transform_decompose_degrees,
-    skewX: Math.atan(skewX) * transform_decompose_degrees,
-    scaleX: scaleX,
-    scaleY: scaleY
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/parse.js
-
-var transform_parse_cssNode, transform_parse_cssRoot, transform_parse_cssView, transform_parse_svgNode;
-function transform_parse_parseCss(value) {
-  return value === "none" ? transform_decompose_identity : (transform_parse_cssNode || (transform_parse_cssNode = document.createElement("DIV"), transform_parse_cssRoot = document.documentElement, transform_parse_cssView = document.defaultView), transform_parse_cssNode.style.transform = value, value = transform_parse_cssView.getComputedStyle(transform_parse_cssRoot.appendChild(transform_parse_cssNode), null).getPropertyValue("transform"), transform_parse_cssRoot.removeChild(transform_parse_cssNode), value = value.slice(7, -1).split(","), src_transform_decompose(+value[0], +value[1], +value[2], +value[3], +value[4], +value[5]));
-}
-function transform_parse_parseSvg(value) {
-  return value == null ? transform_decompose_identity : (transform_parse_svgNode || (transform_parse_svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g")), transform_parse_svgNode.setAttribute("transform", value), !(value = transform_parse_svgNode.transform.baseVal.consolidate())) ? transform_decompose_identity : (value = value.matrix, src_transform_decompose(value.a, value.b, value.c, value.d, value.e, value.f));
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/index.js
-
-
-
-function src_transform_interpolateTransform(parse, pxComma, pxParen, degParen) {
-  function pop(s) {
-    return s.length ? s.pop() + " " : "";
-  }
-
-  function translate(xa, ya, xb, yb, s, q) {
-    if (xa !== xb || ya !== yb) {
-      var i = s.push("translate(", null, pxComma, null, pxParen);
-      q.push({
-        i: i - 4,
-        x: node_modules_d3_interpolate_src_number(xa, xb)
-      }, {
-        i: i - 2,
-        x: node_modules_d3_interpolate_src_number(ya, yb)
-      });
-    } else (xb || yb) && s.push("translate(" + xb + pxComma + yb + pxParen);
-  }
-
-  function rotate(a, b, s, q) {
-    a === b ? b && s.push(pop(s) + "rotate(" + b + degParen) : (a - b > 180 ? b += 360 : b - a > 180 && (a += 360), q.push({
-      i: s.push(pop(s) + "rotate(", null, degParen) - 2,
-      x: node_modules_d3_interpolate_src_number(a, b)
-    }));
-  }
-
-  function skewX(a, b, s, q) {
-    a === b ? b && s.push(pop(s) + "skewX(" + b + degParen) : q.push({
-      i: s.push(pop(s) + "skewX(", null, degParen) - 2,
-      x: node_modules_d3_interpolate_src_number(a, b)
-    });
-  }
-
-  function scale(xa, ya, xb, yb, s, q) {
-    if (xa !== xb || ya !== yb) {
-      var i = s.push(pop(s) + "scale(", null, ",", null, ")");
-      q.push({
-        i: i - 4,
-        x: node_modules_d3_interpolate_src_number(xa, xb)
-      }, {
-        i: i - 2,
-        x: node_modules_d3_interpolate_src_number(ya, yb)
-      });
-    } else (xb !== 1 || yb !== 1) && s.push(pop(s) + "scale(" + xb + "," + yb + ")");
-  }
-
-  return function (a, b) {
-    var s = [],
-        // string constants and placeholders
-    q = []; // number interpolators
-
-    // gc
-    return a = parse(a), b = parse(b), translate(a.translateX, a.translateY, b.translateX, b.translateY, s, q), rotate(a.rotate, b.rotate, s, q), skewX(a.skewX, b.skewX, s, q), scale(a.scaleX, a.scaleY, b.scaleX, b.scaleY, s, q), a = b = null, function (t) {
-      for (var o, i = -1, n = q.length; ++i < n;) s[(o = q[i]).i] = o.x(t);
-
-      return s.join("");
-    };
-  };
-}
-
-var src_transform_interpolateTransformCss = src_transform_interpolateTransform(transform_parse_parseCss, "px, ", "px)", "deg)");
-var src_transform_interpolateTransformSvg = src_transform_interpolateTransform(transform_parse_parseSvg, ", ", ")", ")");
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/zoom.js
-var src_zoom_rho = Math.SQRT2,
-    src_zoom_rho2 = 2,
-    src_zoom_rho4 = 4,
-    src_zoom_epsilon2 = 1e-12;
-
-function d3_interpolate_src_zoom_cosh(x) {
-  return ((x = Math.exp(x)) + 1 / x) / 2;
-}
-
-function d3_interpolate_src_zoom_sinh(x) {
-  return ((x = Math.exp(x)) - 1 / x) / 2;
-}
-
-function src_zoom_tanh(x) {
-  return ((x = Math.exp(2 * x)) - 1) / (x + 1);
-} // p0 = [ux0, uy0, w0]
-// p1 = [ux1, uy1, w1]
-
-
-/* harmony default export */ var node_modules_d3_interpolate_src_zoom = (function (p0, p1) {
-  var i,
-      S,
-      ux0 = p0[0],
-      uy0 = p0[1],
-      w0 = p0[2],
-      ux1 = p1[0],
-      uy1 = p1[1],
-      w1 = p1[2],
-      dx = ux1 - ux0,
-      dy = uy1 - uy0,
-      d2 = dx * dx + dy * dy; // Special case for u0 ≅ u1.
-
-  if (d2 < src_zoom_epsilon2) S = Math.log(w1 / w0) / src_zoom_rho, i = function (t) {
-    return [ux0 + t * dx, uy0 + t * dy, w0 * Math.exp(src_zoom_rho * t * S)];
-  }; // General case.
-  else {
-      var d1 = Math.sqrt(d2),
-          b0 = (w1 * w1 - w0 * w0 + src_zoom_rho4 * d2) / (2 * w0 * src_zoom_rho2 * d1),
-          b1 = (w1 * w1 - w0 * w0 - src_zoom_rho4 * d2) / (2 * w1 * src_zoom_rho2 * d1),
-          r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
-          r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
-      S = (r1 - r0) / src_zoom_rho, i = function (t) {
-        var s = t * S,
-            coshr0 = d3_interpolate_src_zoom_cosh(r0),
-            u = w0 / (src_zoom_rho2 * d1) * (coshr0 * src_zoom_tanh(src_zoom_rho * s + r0) - d3_interpolate_src_zoom_sinh(r0));
-        return [ux0 + u * dx, uy0 + u * dy, w0 * coshr0 / d3_interpolate_src_zoom_cosh(src_zoom_rho * s + r0)];
-      };
-    }
-  return i.duration = S * 1e3, i;
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hsl.js
-
-
-
-function d3_interpolate_src_hsl_hsl(hue) {
-  return function (start, end) {
-    var h = hue((start = src_color_hsl(start)).h, (end = src_color_hsl(end)).h),
-        s = src_color_nogamma(start.s, end.s),
-        l = src_color_nogamma(start.l, end.l),
-        opacity = src_color_nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.h = h(t), start.s = s(t), start.l = l(t), start.opacity = opacity(t), start + "";
-    };
-  };
-}
-
-/* harmony default export */ var node_modules_d3_interpolate_src_hsl = (d3_interpolate_src_hsl_hsl(d3_interpolate_src_color_hue));
-var src_hsl_hslLong = d3_interpolate_src_hsl_hsl(src_color_nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/lab.js
-
-
-function node_modules_d3_interpolate_src_lab_lab(start, end) {
-  var l = src_color_nogamma((start = d3_color_src_lab_lab(start)).l, (end = d3_color_src_lab_lab(end)).l),
-      a = src_color_nogamma(start.a, end.a),
-      b = src_color_nogamma(start.b, end.b),
-      opacity = src_color_nogamma(start.opacity, end.opacity);
-  return function (t) {
-    return start.l = l(t), start.a = a(t), start.b = b(t), start.opacity = opacity(t), start + "";
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hcl.js
-
-
-
-function d3_interpolate_src_hcl_hcl(hue) {
-  return function (start, end) {
-    var h = hue((start = src_lab_hcl(start)).h, (end = src_lab_hcl(end)).h),
-        c = src_color_nogamma(start.c, end.c),
-        l = src_color_nogamma(start.l, end.l),
-        opacity = src_color_nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.h = h(t), start.c = c(t), start.l = l(t), start.opacity = opacity(t), start + "";
-    };
-  };
-}
-
-/* harmony default export */ var node_modules_d3_interpolate_src_hcl = (d3_interpolate_src_hcl_hcl(d3_interpolate_src_color_hue));
-var src_hcl_hclLong = d3_interpolate_src_hcl_hcl(src_color_nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/cubehelix.js
-
-
-
-function node_modules_d3_interpolate_src_cubehelix_cubehelix(hue) {
-  return function cubehelixGamma(y) {
-    function cubehelix(start, end) {
-      var h = hue((start = node_modules_d3_color_src_cubehelix_cubehelix(start)).h, (end = node_modules_d3_color_src_cubehelix_cubehelix(end)).h),
-          s = src_color_nogamma(start.s, end.s),
-          l = src_color_nogamma(start.l, end.l),
-          opacity = src_color_nogamma(start.opacity, end.opacity);
-      return function (t) {
-        return start.h = h(t), start.s = s(t), start.l = l(Math.pow(t, y)), start.opacity = opacity(t), start + "";
-      };
-    }
-
-    return y = +y, cubehelix.gamma = cubehelixGamma, cubehelix;
-  }(1);
-}
-
-/* harmony default export */ var node_modules_d3_interpolate_src_cubehelix = (node_modules_d3_interpolate_src_cubehelix_cubehelix(d3_interpolate_src_color_hue));
-var src_cubehelix_cubehelixLong = node_modules_d3_interpolate_src_cubehelix_cubehelix(src_color_nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/piecewise.js
-function d3_interpolate_src_piecewise_piecewise(interpolate, values) {
-  for (var i = 0, n = values.length - 1, v = values[0], I = Array(n < 0 ? 0 : n); i < n;) I[i] = interpolate(v, v = values[++i]);
-
-  return function (t) {
-    var i = Math.max(0, Math.min(n - 1, Math.floor(t *= n)));
-    return I[i](t - i);
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/quantize.js
-/* harmony default export */ var d3_interpolate_src_quantize = (function (interpolator, n) {
-  for (var samples = Array(n), i = 0; i < n; ++i) samples[i] = interpolator(i / (n - 1));
-
-  return samples;
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/tween.js
-
-
-function tween_tweenRemove(id, name) {
-  var tween0, tween1;
-  return function () {
-    var schedule = transition_schedule_set(this, id),
-        tween = schedule.tween; // If this node shared tween with the previous node,
-    // just assign the updated shared tween and we’re done!
-    // Otherwise, copy-on-write.
-
-    if (tween !== tween0) {
-      tween1 = tween0 = tween;
-
-      for (var i = 0, n = tween1.length; i < n; ++i) if (tween1[i].name === name) {
-        tween1 = tween1.slice(), tween1.splice(i, 1);
-        break;
-      }
-    }
-
-    schedule.tween = tween1;
-  };
-}
-
-function tween_tweenFunction(id, name, value) {
-  var tween0, tween1;
-  if (typeof value !== "function") throw new Error();
-  return function () {
-    var schedule = transition_schedule_set(this, id),
-        tween = schedule.tween; // If this node shared tween with the previous node,
-    // just assign the updated shared tween and we’re done!
-    // Otherwise, copy-on-write.
-
-    if (tween !== tween0) {
-      tween1 = (tween0 = tween).slice();
-
-      for (var t = {
-        name: name,
-        value: value
-      }, i = 0, n = tween1.length; i < n; ++i) if (tween1[i].name === name) {
-        tween1[i] = t;
-        break;
-      }
-
-      i === n && tween1.push(t);
-    }
-
-    schedule.tween = tween1;
-  };
-}
-
-/* harmony default export */ var src_transition_tween = (function (name, value) {
-  var id = this._id;
-
-  if (name += "", arguments.length < 2) {
-    for (var t, tween = transition_schedule_get(this.node(), id).tween, i = 0, n = tween.length; i < n; ++i) if ((t = tween[i]).name === name) return t.value;
-
-    return null;
-  }
-
-  return this.each((value == null ? tween_tweenRemove : tween_tweenFunction)(id, name, value));
-});
-function tween_tweenValue(transition, name, value) {
-  var id = transition._id;
-  return transition.each(function () {
-    var schedule = transition_schedule_set(this, id);
-    (schedule.value || (schedule.value = {}))[name] = value.apply(this, arguments);
-  }), function (node) {
-    return transition_schedule_get(node, id).value[name];
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/interpolate.js
-
-
-/* harmony default export */ var src_transition_interpolate = (function (a, b) {
-  var c;
-  return (typeof b === "number" ? node_modules_d3_interpolate_src_number : b instanceof d3_color_src_color_color ? node_modules_d3_interpolate_src_rgb : (c = d3_color_src_color_color(b)) ? (b = c, node_modules_d3_interpolate_src_rgb) : node_modules_d3_interpolate_src_string)(a, b);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attr.js
-
-
-
-
-
-function src_transition_attr_attrRemove(name) {
-  return function () {
-    this.removeAttribute(name);
-  };
-}
-
-function src_transition_attr_attrRemoveNS(fullname) {
-  return function () {
-    this.removeAttributeNS(fullname.space, fullname.local);
-  };
-}
-
-function src_transition_attr_attrConstant(name, interpolate, value1) {
-  var string00, interpolate0;
-  return function () {
-    var string0 = this.getAttribute(name);
-    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-
-function src_transition_attr_attrConstantNS(fullname, interpolate, value1) {
-  var string00, interpolate0;
-  return function () {
-    var string0 = this.getAttributeNS(fullname.space, fullname.local);
-    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-
-function src_transition_attr_attrFunction(name, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0,
-        string1,
-        value1 = value(this);
-    return value1 == null ? void this.removeAttribute(name) : (string0 = this.getAttribute(name), string1 = value1 + "", string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1)));
-  };
-}
-
-function src_transition_attr_attrFunctionNS(fullname, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0,
-        string1,
-        value1 = value(this);
-    return value1 == null ? void this.removeAttributeNS(fullname.space, fullname.local) : (string0 = this.getAttributeNS(fullname.space, fullname.local), string1 = value1 + "", string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1)));
-  };
-}
-
-/* harmony default export */ var src_transition_attr = (function (name, value) {
-  var fullname = namespace(name),
-      i = fullname === "transform" ? src_transform_interpolateTransformSvg : src_transition_interpolate;
-  return this.attrTween(name, typeof value === "function" ? (fullname.local ? src_transition_attr_attrFunctionNS : src_transition_attr_attrFunction)(fullname, i, tween_tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? src_transition_attr_attrRemoveNS : src_transition_attr_attrRemove)(fullname) : (fullname.local ? src_transition_attr_attrConstantNS : src_transition_attr_attrConstant)(fullname, i, value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attrTween.js
-
-
-function attrTween_attrInterpolate(name, i) {
-  return function (t) {
-    this.setAttribute(name, i.call(this, t));
-  };
-}
-
-function attrTween_attrInterpolateNS(fullname, i) {
-  return function (t) {
-    this.setAttributeNS(fullname.space, fullname.local, i.call(this, t));
-  };
-}
-
-function attrTween_attrTweenNS(fullname, value) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t0 = (i0 = i) && attrTween_attrInterpolateNS(fullname, i)), t0;
-  }
-
-  var t0, i0;
-  return tween._value = value, tween;
-}
-
-function attrTween_attrTween(name, value) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t0 = (i0 = i) && attrTween_attrInterpolate(name, i)), t0;
-  }
-
-  var t0, i0;
-  return tween._value = value, tween;
-}
-
-/* harmony default export */ var src_transition_attrTween = (function (name, value) {
-  var key = "attr." + name;
-  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  var fullname = namespace(name);
-  return this.tween(key, (fullname.local ? attrTween_attrTweenNS : attrTween_attrTween)(fullname, value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/delay.js
-
-
-function delay_delayFunction(id, value) {
-  return function () {
-    transition_schedule_init(this, id).delay = +value.apply(this, arguments);
-  };
-}
-
-function delay_delayConstant(id, value) {
-  return value = +value, function () {
-    transition_schedule_init(this, id).delay = value;
-  };
-}
-
-/* harmony default export */ var src_transition_delay = (function (value) {
-  var id = this._id;
-  return arguments.length ? this.each((typeof value === "function" ? delay_delayFunction : delay_delayConstant)(id, value)) : transition_schedule_get(this.node(), id).delay;
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/duration.js
-
-
-function duration_durationFunction(id, value) {
-  return function () {
-    transition_schedule_set(this, id).duration = +value.apply(this, arguments);
-  };
-}
-
-function duration_durationConstant(id, value) {
-  return value = +value, function () {
-    transition_schedule_set(this, id).duration = value;
-  };
-}
-
-/* harmony default export */ var src_transition_duration = (function (value) {
-  var id = this._id;
-  return arguments.length ? this.each((typeof value === "function" ? duration_durationFunction : duration_durationConstant)(id, value)) : transition_schedule_get(this.node(), id).duration;
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/ease.js
-
-
-function ease_easeConstant(id, value) {
-  if (typeof value !== "function") throw new Error();
-  return function () {
-    transition_schedule_set(this, id).ease = value;
-  };
-}
-
-/* harmony default export */ var transition_ease = (function (value) {
-  var id = this._id;
-  return arguments.length ? this.each(ease_easeConstant(id, value)) : transition_schedule_get(this.node(), id).ease;
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/filter.js
-
-
-/* harmony default export */ var src_transition_filter = (function (match) {
-  typeof match !== "function" && (match = matcher(match));
-
-  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, subgroup = subgroups[j] = [], i = 0; i < n; ++i) (node = group[i]) && match.call(node, node.__data__, i, group) && subgroup.push(node);
-
-  return new transition_Transition(subgroups, this._parents, this._name, this._id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/merge.js
-
-/* harmony default export */ var src_transition_merge = (function (transition) {
-  if (transition._id !== this._id) throw new Error();
-
-  for (var groups0 = this._groups, groups1 = transition._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = Array(m0), j = 0; j < m; ++j) for (var node, group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = Array(n), i = 0; i < n; ++i) (node = group0[i] || group1[i]) && (merge[i] = node);
-
-  for (; j < m0; ++j) merges[j] = groups0[j];
-
-  return new transition_Transition(merges, this._parents, this._name, this._id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/on.js
-
-
-function transition_on_start(name) {
-  return (name + "").trim().split(/^|\s+/).every(function (t) {
-    var i = t.indexOf(".");
-    return i >= 0 && (t = t.slice(0, i)), !t || t === "start";
-  });
-}
-
-function on_onFunction(id, name, listener) {
-  var on0,
-      on1,
-      sit = transition_on_start(name) ? transition_schedule_init : transition_schedule_set;
-  return function () {
-    var schedule = sit(this, id),
-        on = schedule.on; // If this node shared a dispatch with the previous node,
-    // just assign the updated shared dispatch and we’re done!
-    // Otherwise, copy-on-write.
-
-    on !== on0 && (on1 = (on0 = on).copy()).on(name, listener), schedule.on = on1;
-  };
-}
-
-/* harmony default export */ var src_transition_on = (function (name, listener) {
-  var id = this._id;
-  return arguments.length < 2 ? transition_schedule_get(this.node(), id).on.on(name) : this.each(on_onFunction(id, name, listener));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/remove.js
-function remove_removeFunction(id) {
-  return function () {
-    var parent = this.parentNode;
-
-    for (var i in this.__transition) if (+i !== id) return;
-
-    parent && parent.removeChild(this);
-  };
-}
-
-/* harmony default export */ var src_transition_remove = (function () {
-  return this.on("end.remove", remove_removeFunction(this._id));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/select.js
-
-
-
-/* harmony default export */ var src_transition_select = (function (select) {
-  var name = this._name,
-      id = this._id;
-  typeof select !== "function" && (select = src_selector(select));
-
-  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, subnode, group = groups[j], n = group.length, subgroup = subgroups[j] = Array(n), i = 0; i < n; ++i) (node = group[i]) && (subnode = select.call(node, node.__data__, i, group)) && ("__data__" in node && (subnode.__data__ = node.__data__), subgroup[i] = subnode, src_transition_schedule(subgroup[i], name, id, i, subgroup, transition_schedule_get(node, id)));
-
-  return new transition_Transition(subgroups, this._parents, name, id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selectAll.js
-
-
-
-/* harmony default export */ var src_transition_selectAll = (function (select) {
-  var name = this._name,
-      id = this._id;
-  typeof select !== "function" && (select = selectorAll(select));
-
-  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) if (node = group[i]) {
-    for (var child, children = select.call(node, node.__data__, i, group), inherit = transition_schedule_get(node, id), k = 0, l = children.length; k < l; ++k) (child = children[k]) && src_transition_schedule(child, name, id, k, children, inherit);
-
-    subgroups.push(children), parents.push(node);
-  }
-
-  return new transition_Transition(subgroups, parents, name, id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selection.js
-
-var src_transition_selection_Selection = src_selection.prototype.constructor;
-/* harmony default export */ var src_transition_selection = (function () {
-  return new src_transition_selection_Selection(this._groups, this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/style.js
-
-
-
-
-
-
-function style_styleNull(name, interpolate) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0 = styleValue(this, name),
-        string1 = (this.style.removeProperty(name), styleValue(this, name));
-    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : interpolate0 = interpolate(string00 = string0, string10 = string1);
-  };
-}
-
-function src_transition_style_styleRemove(name) {
-  return function () {
-    this.style.removeProperty(name);
-  };
-}
-
-function src_transition_style_styleConstant(name, interpolate, value1) {
-  var string00, interpolate0;
-  return function () {
-    var string0 = styleValue(this, name);
-    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-
-function src_transition_style_styleFunction(name, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0 = styleValue(this, name),
-        value1 = value(this),
-        string1 = value1 + "";
-    return value1 == null && (string1 = value1 = (this.style.removeProperty(name), styleValue(this, name))), string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
-  };
-}
-
-function style_styleMaybeRemove(id, name) {
-  var on0,
-      on1,
-      listener0,
-      remove,
-      key = "style." + name;
-  return function () {
-    var schedule = transition_schedule_set(this, id),
-        on = schedule.on,
-        listener = schedule.value[key] == null ? remove || (remove = src_transition_style_styleRemove(name)) : undefined; // If this node shared a dispatch with the previous node,
-    // just assign the updated shared dispatch and we’re done!
-    // Otherwise, copy-on-write.
-
-    (on !== on0 || listener0 !== listener) && (on1 = (on0 = on).copy()).on("end." + key, listener0 = listener), schedule.on = on1;
-  };
-}
-
-/* harmony default export */ var src_transition_style = (function (name, value, priority) {
-  var i = (name += "") === "transform" ? src_transform_interpolateTransformCss : src_transition_interpolate;
-  return value == null ? this.styleTween(name, style_styleNull(name, i)).on("end.style." + name, src_transition_style_styleRemove(name)) : typeof value === "function" ? this.styleTween(name, src_transition_style_styleFunction(name, i, tween_tweenValue(this, "style." + name, value))).each(style_styleMaybeRemove(this._id, name)) : this.styleTween(name, src_transition_style_styleConstant(name, i, value), priority).on("end.style." + name, null);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/styleTween.js
-function styleTween_styleInterpolate(name, i, priority) {
-  return function (t) {
-    this.style.setProperty(name, i.call(this, t), priority);
-  };
-}
-
-function styleTween_styleTween(name, value, priority) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t = (i0 = i) && styleTween_styleInterpolate(name, i, priority)), t;
-  }
-
-  var t, i0;
-  return tween._value = value, tween;
-}
-
-/* harmony default export */ var src_transition_styleTween = (function (name, value, priority) {
-  var key = "style." + (name += "");
-  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  return this.tween(key, styleTween_styleTween(name, value, priority == null ? "" : priority));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/text.js
-
-
-function src_transition_text_textConstant(value) {
-  return function () {
-    this.textContent = value;
-  };
-}
-
-function src_transition_text_textFunction(value) {
-  return function () {
-    var value1 = value(this);
-    this.textContent = value1 == null ? "" : value1;
-  };
-}
-
-/* harmony default export */ var src_transition_text = (function (value) {
-  return this.tween("text", typeof value === "function" ? src_transition_text_textFunction(tween_tweenValue(this, "text", value)) : src_transition_text_textConstant(value == null ? "" : value + ""));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/textTween.js
-function textTween_textInterpolate(i) {
-  return function (t) {
-    this.textContent = i.call(this, t);
-  };
-}
-
-function textTween_textTween(value) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t0 = (i0 = i) && textTween_textInterpolate(i)), t0;
-  }
-
-  var t0, i0;
-  return tween._value = value, tween;
-}
-
-/* harmony default export */ var src_transition_textTween = (function (value) {
-  var key = "text";
-  if (arguments.length < 1) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  return this.tween(key, textTween_textTween(value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/transition.js
-
-
-/* harmony default export */ var d3_transition_src_transition_transition = (function () {
-  for (var name = this._name, id0 = this._id, id1 = transition_newId(), groups = this._groups, m = groups.length, j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) if (node = group[i]) {
-    var inherit = transition_schedule_get(node, id0);
-    src_transition_schedule(node, name, id1, i, group, {
-      time: inherit.time + inherit.delay + inherit.duration,
-      delay: 0,
-      duration: inherit.duration,
-      ease: inherit.ease
-    });
-  }
-
-  return new transition_Transition(groups, this._parents, name, id1);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/end.js
-
-/* harmony default export */ var src_transition_end = (function () {
-  var on0,
-      on1,
-      that = this,
-      id = that._id,
-      size = that.size();
-  return new Promise(function (resolve, reject) {
-    var cancel = {
-      value: reject
-    },
-        end = {
-      value: function value() {
-        --size === 0 && resolve();
-      }
-    };
-    that.each(function () {
-      var schedule = transition_schedule_set(this, id),
-          on = schedule.on; // If this node shared a dispatch with the previous node,
-      // just assign the updated shared dispatch and we’re done!
-      // Otherwise, copy-on-write.
-
-      on !== on0 && (on1 = (on0 = on).copy(), on1._.cancel.push(cancel), on1._.interrupt.push(cancel), on1._.end.push(end)), schedule.on = on1;
-    });
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var src_transition_id = 0;
-function transition_Transition(groups, parents, name, id) {
-  this._groups = groups, this._parents = parents, this._name = name, this._id = id;
-}
-function node_modules_d3_transition_src_transition_transition(name) {
-  return src_selection().transition(name);
-}
-function transition_newId() {
-  return ++src_transition_id;
-}
-var transition_selection_prototype = src_selection.prototype;
-transition_Transition.prototype = node_modules_d3_transition_src_transition_transition.prototype = {
-  constructor: transition_Transition,
-  select: src_transition_select,
-  selectAll: src_transition_selectAll,
-  filter: src_transition_filter,
-  merge: src_transition_merge,
-  selection: src_transition_selection,
-  transition: d3_transition_src_transition_transition,
-  call: transition_selection_prototype.call,
-  nodes: transition_selection_prototype.nodes,
-  node: transition_selection_prototype.node,
-  size: transition_selection_prototype.size,
-  empty: transition_selection_prototype.empty,
-  each: transition_selection_prototype.each,
-  on: src_transition_on,
-  attr: src_transition_attr,
-  attrTween: src_transition_attrTween,
-  style: src_transition_style,
-  styleTween: src_transition_styleTween,
-  text: src_transition_text,
-  textTween: src_transition_textTween,
-  remove: src_transition_remove,
-  tween: src_transition_tween,
-  delay: src_transition_delay,
-  duration: src_transition_duration,
-  ease: transition_ease,
-  end: src_transition_end
-};
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/linear.js
-function d3_ease_src_linear_linear(t) {
-  return +t;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/quad.js
-function quad_quadIn(t) {
-  return t * t;
-}
-function quad_quadOut(t) {
-  return t * (2 - t);
-}
-function quad_quadInOut(t) {
-  return ((t *= 2) <= 1 ? t * t : --t * (2 - t) + 1) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/cubic.js
-function cubic_cubicIn(t) {
-  return t * t * t;
-}
-function cubic_cubicOut(t) {
-  return --t * t * t + 1;
-}
-function cubic_cubicInOut(t) {
-  return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/poly.js
-var src_poly_exponent = 3;
-var poly_polyIn = function custom(e) {
-  function polyIn(t) {
-    return Math.pow(t, e);
-  }
-
-  return e = +e, polyIn.exponent = custom, polyIn;
-}(3);
-var poly_polyOut = function custom(e) {
-  function polyOut(t) {
-    return 1 - Math.pow(1 - t, e);
-  }
-
-  return e = +e, polyOut.exponent = custom, polyOut;
-}(3);
-var poly_polyInOut = function custom(e) {
-  function polyInOut(t) {
-    return ((t *= 2) <= 1 ? Math.pow(t, e) : 2 - Math.pow(2 - t, e)) / 2;
-  }
-
-  return e = +e, polyInOut.exponent = custom, polyInOut;
-}(3);
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/sin.js
-var sin_pi = Math.PI,
-    sin_halfPi = sin_pi / 2;
-function sin_sinIn(t) {
-  return 1 - Math.cos(t * sin_halfPi);
-}
-function sin_sinOut(t) {
-  return Math.sin(t * sin_halfPi);
-}
-function sin_sinInOut(t) {
-  return (1 - Math.cos(sin_pi * t)) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/exp.js
-function exp_expIn(t) {
-  return Math.pow(2, 10 * t - 10);
-}
-function exp_expOut(t) {
-  return 1 - Math.pow(2, -10 * t);
-}
-function exp_expInOut(t) {
-  return ((t *= 2) <= 1 ? Math.pow(2, 10 * t - 10) : 2 - Math.pow(2, 10 - 10 * t)) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/circle.js
-function circle_circleIn(t) {
-  return 1 - Math.sqrt(1 - t * t);
-}
-function circle_circleOut(t) {
-  return Math.sqrt(1 - --t * t);
-}
-function circle_circleInOut(t) {
-  return ((t *= 2) <= 1 ? 1 - Math.sqrt(1 - t * t) : Math.sqrt(1 - (t -= 2) * t) + 1) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/bounce.js
-var bounce_b1 = 4 / 11,
-    bounce_b2 = 6 / 11,
-    bounce_b3 = 8 / 11,
-    bounce_b4 = 3 / 4,
-    bounce_b5 = 9 / 11,
-    bounce_b6 = 10 / 11,
-    bounce_b7 = 15 / 16,
-    bounce_b8 = 21 / 22,
-    bounce_b9 = 63 / 64,
-    bounce_b0 = 1 / bounce_b1 / bounce_b1;
-function bounce_bounceIn(t) {
-  return 1 - bounce_bounceOut(1 - t);
-}
-function bounce_bounceOut(t) {
-  return (t = +t) < bounce_b1 ? bounce_b0 * t * t : t < bounce_b3 ? bounce_b0 * (t -= bounce_b2) * t + bounce_b4 : t < bounce_b6 ? bounce_b0 * (t -= bounce_b5) * t + bounce_b7 : bounce_b0 * (t -= bounce_b8) * t + bounce_b9;
-}
-function bounce_bounceInOut(t) {
-  return ((t *= 2) <= 1 ? 1 - bounce_bounceOut(1 - t) : bounce_bounceOut(t - 1) + 1) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/back.js
-var back_overshoot = 1.70158;
-var back_backIn = function custom(s) {
-  function backIn(t) {
-    return t * t * ((s + 1) * t - s);
-  }
-
-  return s = +s, backIn.overshoot = custom, backIn;
-}(back_overshoot);
-var back_backOut = function custom(s) {
-  function backOut(t) {
-    return --t * t * ((s + 1) * t + s) + 1;
-  }
-
-  return s = +s, backOut.overshoot = custom, backOut;
-}(back_overshoot);
-var back_backInOut = function custom(s) {
-  function backInOut(t) {
-    return ((t *= 2) < 1 ? t * t * ((s + 1) * t - s) : (t -= 2) * t * ((s + 1) * t + s) + 2) / 2;
-  }
-
-  return s = +s, backInOut.overshoot = custom, backInOut;
-}(back_overshoot);
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/elastic.js
-var elastic_tau = 2 * Math.PI,
-    elastic_amplitude = 1,
-    elastic_period = .3;
-var elastic_elasticIn = function custom(a, p) {
-  function elasticIn(t) {
-    return a * Math.pow(2, 10 * --t) * Math.sin((s - t) / p);
-  }
-
-  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= elastic_tau);
-  return elasticIn.amplitude = function (a) {
-    return custom(a, p * elastic_tau);
-  }, elasticIn.period = function (p) {
-    return custom(a, p);
-  }, elasticIn;
-}(1, elastic_period);
-var elastic_elasticOut = function custom(a, p) {
-  function elasticOut(t) {
-    return 1 - a * Math.pow(2, -10 * (t = +t)) * Math.sin((t + s) / p);
-  }
-
-  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= elastic_tau);
-  return elasticOut.amplitude = function (a) {
-    return custom(a, p * elastic_tau);
-  }, elasticOut.period = function (p) {
-    return custom(a, p);
-  }, elasticOut;
-}(1, elastic_period);
-var elastic_elasticInOut = function custom(a, p) {
-  function elasticInOut(t) {
-    return ((t = t * 2 - 1) < 0 ? a * Math.pow(2, 10 * t) * Math.sin((s - t) / p) : 2 - a * Math.pow(2, -10 * t) * Math.sin((s + t) / p)) / 2;
-  }
-
-  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= elastic_tau);
-  return elasticInOut.amplitude = function (a) {
-    return custom(a, p * elastic_tau);
-  }, elasticInOut.period = function (p) {
-    return custom(a, p);
-  }, elasticInOut;
-}(1, elastic_period);
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/index.js
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/transition.js
-
-
-
-
-var transition_defaultTiming = {
-  time: null,
-  // Set on use.
-  delay: 0,
-  duration: 250,
-  ease: cubic_cubicInOut
-};
-
-function selection_transition_inherit(node, id) {
-  for (var timing; !(timing = node.__transition) || !(timing = timing[id]);) if (!(node = node.parentNode)) return transition_defaultTiming.time = now(), transition_defaultTiming;
-
-  return timing;
-}
-
-/* harmony default export */ var src_selection_transition = (function (name) {
-  var id, timing;
-  name instanceof transition_Transition ? (id = name._id, name = name._name) : (id = transition_newId(), (timing = transition_defaultTiming).time = now(), name = name == null ? null : name + "");
-
-  for (var groups = this._groups, m = groups.length, j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) (node = group[i]) && src_transition_schedule(node, name, id, i, group, timing || selection_transition_inherit(node, id));
-
-  return new transition_Transition(groups, this._parents, name, id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/index.js
-
-
-
-src_selection.prototype.interrupt = src_selection_interrupt, src_selection.prototype.transition = src_selection_transition;
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/active.js
-
-
-var src_active_root = [null];
-/* harmony default export */ var d3_transition_src_active = (function (node, name) {
-  var schedule,
-      i,
-      schedules = node.__transition;
-  if (schedules) for (i in name = name == null ? null : name + "", schedules) if ((schedule = schedules[i]).state > schedule_SCHEDULED && schedule.name === name) return new transition_Transition([[node]], src_active_root, name, +i);
-  return null;
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/index.js
-
-
-
-
 // CONCATENATED MODULE: ./src/ChartInternal/internals/redraw.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -29473,7 +24938,7 @@ var src_active_root = [null];
         // Wait for end of transitions for callback
         var waitForDraw = generateWait(); // transition should be derived from one transition
 
-        node_modules_d3_transition_src_transition_transition().duration(duration).each(function () {
+        src_transition_transition().duration(duration).each(function () {
           redrawList.reduce(function (acc, t1) {
             return acc.concat(t1);
           }, []).forEach(function (t) {
@@ -35083,2972 +30548,6 @@ util_extend(regions_regions, {
     })), $$.data.xs;
   }
 });
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/namespaces.js
-var src_namespaces_xhtml = "http://www.w3.org/1999/xhtml";
-/* harmony default export */ var d3_selection_src_namespaces = ({
-  svg: "http://www.w3.org/2000/svg",
-  xhtml: "http://www.w3.org/1999/xhtml",
-  xlink: "http://www.w3.org/1999/xlink",
-  xml: "http://www.w3.org/XML/1998/namespace",
-  xmlns: "http://www.w3.org/2000/xmlns/"
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/namespace.js
-
-/* harmony default export */ var d3_selection_src_namespace = (function (name) {
-  var prefix = name += "",
-      i = prefix.indexOf(":");
-  return i >= 0 && (prefix = name.slice(0, i)) !== "xmlns" && (name = name.slice(i + 1)), d3_selection_src_namespaces.hasOwnProperty(prefix) ? {
-    space: d3_selection_src_namespaces[prefix],
-    local: name
-  } : name;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/creator.js
-
-
-
-function src_creator_creatorInherit(name) {
-  return function () {
-    var document = this.ownerDocument,
-        uri = this.namespaceURI;
-    return uri === src_namespaces_xhtml && document.documentElement.namespaceURI === src_namespaces_xhtml ? document.createElement(name) : document.createElementNS(uri, name);
-  };
-}
-
-function src_creator_creatorFixed(fullname) {
-  return function () {
-    return this.ownerDocument.createElementNS(fullname.space, fullname.local);
-  };
-}
-
-/* harmony default export */ var d3_selection_src_creator = (function (name) {
-  var fullname = d3_selection_src_namespace(name);
-  return (fullname.local ? src_creator_creatorFixed : src_creator_creatorInherit)(fullname);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selector.js
-function src_selector_none() {}
-
-/* harmony default export */ var node_modules_d3_selection_src_selector = (function (selector) {
-  return selector == null ? src_selector_none : function () {
-    return this.querySelector(selector);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/select.js
-
-
-/* harmony default export */ var d3_selection_src_selection_select = (function (select) {
-  typeof select !== "function" && (select = node_modules_d3_selection_src_selector(select));
-
-  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, subnode, group = groups[j], n = group.length, subgroup = subgroups[j] = Array(n), i = 0; i < n; ++i) (node = group[i]) && (subnode = select.call(node, node.__data__, i, group)) && ("__data__" in node && (subnode.__data__ = node.__data__), subgroup[i] = subnode);
-
-  return new src_selection_Selection(subgroups, this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selectorAll.js
-function d3_selection_src_selectorAll_empty() {
-  return [];
-}
-
-/* harmony default export */ var d3_selection_src_selectorAll = (function (selector) {
-  return selector == null ? d3_selection_src_selectorAll_empty : function () {
-    return this.querySelectorAll(selector);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/selectAll.js
-
-
-/* harmony default export */ var src_selection_selectAll = (function (select) {
-  typeof select !== "function" && (select = d3_selection_src_selectorAll(select));
-
-  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) (node = group[i]) && (subgroups.push(select.call(node, node.__data__, i, group)), parents.push(node));
-
-  return new src_selection_Selection(subgroups, parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/matcher.js
-/* harmony default export */ var d3_selection_src_matcher = (function (selector) {
-  return function () {
-    return this.matches(selector);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/filter.js
-
-
-/* harmony default export */ var d3_selection_src_selection_filter = (function (match) {
-  typeof match !== "function" && (match = d3_selection_src_matcher(match));
-
-  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, subgroup = subgroups[j] = [], i = 0; i < n; ++i) (node = group[i]) && match.call(node, node.__data__, i, group) && subgroup.push(node);
-
-  return new src_selection_Selection(subgroups, this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/sparse.js
-/* harmony default export */ var src_selection_sparse = (function (update) {
-  return Array(update.length);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/enter.js
-
-
-/* harmony default export */ var d3_selection_src_selection_enter = (function () {
-  return new src_selection_Selection(this._enter || this._groups.map(src_selection_sparse), this._parents);
-});
-function selection_enter_EnterNode(parent, datum) {
-  this.ownerDocument = parent.ownerDocument, this.namespaceURI = parent.namespaceURI, this._next = null, this._parent = parent, this.__data__ = datum;
-}
-selection_enter_EnterNode.prototype = {
-  constructor: selection_enter_EnterNode,
-  appendChild: function appendChild(child) {
-    return this._parent.insertBefore(child, this._next);
-  },
-  insertBefore: function insertBefore(child, next) {
-    return this._parent.insertBefore(child, next);
-  },
-  querySelector: function querySelector(selector) {
-    return this._parent.querySelector(selector);
-  },
-  querySelectorAll: function querySelectorAll(selector) {
-    return this._parent.querySelectorAll(selector);
-  }
-};
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/constant.js
-/* harmony default export */ var d3_selection_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/data.js
-
-
-
-var selection_data_keyPrefix = "$"; // Protect against keys like “__proto__”.
-
-function selection_data_bindIndex(parent, group, enter, update, exit, data) {
-  // Put any non-null nodes that fit into update.
-  // Put any null nodes into enter.
-  // Put any remaining data into enter.
-  for (var node, i = 0, groupLength = group.length, dataLength = data.length; i < dataLength; ++i) (node = group[i]) ? (node.__data__ = data[i], update[i] = node) : enter[i] = new selection_enter_EnterNode(parent, data[i]); // Put any non-null nodes that don’t fit into exit.
-
-
-  for (; i < groupLength; ++i) (node = group[i]) && (exit[i] = node);
-}
-
-function selection_data_bindKey(parent, group, enter, update, exit, data, key) {
-  var i,
-      node,
-      keyValue,
-      nodeByKeyValue = {},
-      groupLength = group.length,
-      dataLength = data.length,
-      keyValues = Array(groupLength); // Compute the key for each node.
-  // If multiple nodes have the same key, the duplicates are added to exit.
-
-  for (i = 0; i < groupLength; ++i) (node = group[i]) && (keyValues[i] = keyValue = selection_data_keyPrefix + key.call(node, node.__data__, i, group), keyValue in nodeByKeyValue ? exit[i] = node : nodeByKeyValue[keyValue] = node); // Compute the key for each datum.
-  // If there a node associated with this key, join and add it to update.
-  // If there is not (or the key is a duplicate), add it to enter.
-
-
-  for (i = 0; i < dataLength; ++i) keyValue = selection_data_keyPrefix + key.call(parent, data[i], i, data), (node = nodeByKeyValue[keyValue]) ? (update[i] = node, node.__data__ = data[i], nodeByKeyValue[keyValue] = null) : enter[i] = new selection_enter_EnterNode(parent, data[i]); // Add any remaining nodes that were not bound to data to exit.
-
-
-  for (i = 0; i < groupLength; ++i) (node = group[i]) && nodeByKeyValue[keyValues[i]] === node && (exit[i] = node);
-}
-
-/* harmony default export */ var d3_selection_src_selection_data = (function (value, key) {
-  if (!value) return data = Array(this.size()), j = -1, this.each(function (d) {
-    data[++j] = d;
-  }), data;
-  var bind = key ? selection_data_bindKey : selection_data_bindIndex,
-      parents = this._parents,
-      groups = this._groups;
-  typeof value !== "function" && (value = d3_selection_src_constant(value));
-
-  for (var m = groups.length, update = Array(m), enter = Array(m), exit = Array(m), j = 0; j < m; ++j) {
-    var parent = parents[j],
-        group = groups[j],
-        groupLength = group.length,
-        data = value.call(parent, parent && parent.__data__, j, parents),
-        dataLength = data.length,
-        enterGroup = enter[j] = Array(dataLength),
-        updateGroup = update[j] = Array(dataLength),
-        exitGroup = exit[j] = Array(groupLength);
-    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key);
-
-    // Now connect the enter nodes to their following update node, such that
-    // appendChild can insert the materialized enter node before this node,
-    // rather than at the end of the parent node.
-    for (var previous, next, i0 = 0, i1 = 0; i0 < dataLength; ++i0) if (previous = enterGroup[i0]) {
-      for (i0 >= i1 && (i1 = i0 + 1); !(next = updateGroup[i1]) && ++i1 < dataLength;);
-
-      previous._next = next || null;
-    }
-  }
-
-  return update = new src_selection_Selection(update, parents), update._enter = enter, update._exit = exit, update;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/exit.js
-
-
-/* harmony default export */ var d3_selection_src_selection_exit = (function () {
-  return new src_selection_Selection(this._exit || this._groups.map(src_selection_sparse), this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/join.js
-/* harmony default export */ var src_selection_join = (function (onenter, onupdate, onexit) {
-  var enter = this.enter(),
-      update = this,
-      exit = this.exit();
-  return enter = typeof onenter === "function" ? onenter(enter) : enter.append(onenter + ""), onupdate != null && (update = onupdate(update)), onexit == null ? exit.remove() : onexit(exit), enter && update ? enter.merge(update).order() : update;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/merge.js
-
-/* harmony default export */ var d3_selection_src_selection_merge = (function (selection) {
-  for (var groups0 = this._groups, groups1 = selection._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = Array(m0), j = 0; j < m; ++j) for (var node, group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = Array(n), i = 0; i < n; ++i) (node = group0[i] || group1[i]) && (merge[i] = node);
-
-  for (; j < m0; ++j) merges[j] = groups0[j];
-
-  return new src_selection_Selection(merges, this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/order.js
-/* harmony default export */ var d3_selection_src_selection_order = (function () {
-  for (var groups = this._groups, j = -1, m = groups.length; ++j < m;) for (var node, group = groups[j], i = group.length - 1, next = group[i]; --i >= 0;) (node = group[i]) && (next && node.compareDocumentPosition(next) ^ 4 && next.parentNode.insertBefore(node, next), next = node);
-
-  return this;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/sort.js
-
-/* harmony default export */ var d3_selection_src_selection_sort = (function (compare) {
-  function compareNode(a, b) {
-    return a && b ? compare(a.__data__, b.__data__) : !a - !b;
-  }
-
-  compare || (compare = selection_sort_ascending);
-
-  for (var groups = this._groups, m = groups.length, sortgroups = Array(m), j = 0; j < m; ++j) {
-    for (var node, group = groups[j], n = group.length, sortgroup = sortgroups[j] = Array(n), i = 0; i < n; ++i) (node = group[i]) && (sortgroup[i] = node);
-
-    sortgroup.sort(compareNode);
-  }
-
-  return new src_selection_Selection(sortgroups, this._parents).order();
-});
-
-function selection_sort_ascending(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/call.js
-/* harmony default export */ var src_selection_call = (function () {
-  var callback = arguments[0];
-  return arguments[0] = this, callback.apply(null, arguments), this;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/nodes.js
-/* harmony default export */ var src_selection_nodes = (function () {
-  var nodes = Array(this.size()),
-      i = -1;
-  return this.each(function () {
-    nodes[++i] = this;
-  }), nodes;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/node.js
-/* harmony default export */ var d3_selection_src_selection_node = (function () {
-  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) for (var node, group = groups[j], i = 0, n = group.length; i < n; ++i) if (node = group[i], node) return node;
-
-  return null;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/size.js
-/* harmony default export */ var d3_selection_src_selection_size = (function () {
-  var size = 0;
-  return this.each(function () {
-    ++size;
-  }), size;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/empty.js
-/* harmony default export */ var d3_selection_src_selection_empty = (function () {
-  return !this.node();
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/each.js
-/* harmony default export */ var src_selection_each = (function (callback) {
-  for (var groups = this._groups, j = 0, m = groups.length; j < m; ++j) for (var node, group = groups[j], i = 0, n = group.length; i < n; ++i) (node = group[i]) && callback.call(node, node.__data__, i, group);
-
-  return this;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/attr.js
-
-
-function selection_attr_attrRemove(name) {
-  return function () {
-    this.removeAttribute(name);
-  };
-}
-
-function selection_attr_attrRemoveNS(fullname) {
-  return function () {
-    this.removeAttributeNS(fullname.space, fullname.local);
-  };
-}
-
-function selection_attr_attrConstant(name, value) {
-  return function () {
-    this.setAttribute(name, value);
-  };
-}
-
-function selection_attr_attrConstantNS(fullname, value) {
-  return function () {
-    this.setAttributeNS(fullname.space, fullname.local, value);
-  };
-}
-
-function selection_attr_attrFunction(name, value) {
-  return function () {
-    var v = value.apply(this, arguments);
-    v == null ? this.removeAttribute(name) : this.setAttribute(name, v);
-  };
-}
-
-function selection_attr_attrFunctionNS(fullname, value) {
-  return function () {
-    var v = value.apply(this, arguments);
-    v == null ? this.removeAttributeNS(fullname.space, fullname.local) : this.setAttributeNS(fullname.space, fullname.local, v);
-  };
-}
-
-/* harmony default export */ var src_selection_attr = (function (name, value) {
-  var fullname = d3_selection_src_namespace(name);
-
-  if (arguments.length < 2) {
-    var node = this.node();
-    return fullname.local ? node.getAttributeNS(fullname.space, fullname.local) : node.getAttribute(fullname);
-  }
-
-  return this.each((value == null ? fullname.local ? selection_attr_attrRemoveNS : selection_attr_attrRemove : typeof value === "function" ? fullname.local ? selection_attr_attrFunctionNS : selection_attr_attrFunction : fullname.local ? selection_attr_attrConstantNS : selection_attr_attrConstant)(fullname, value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/window.js
-/* harmony default export */ var node_modules_d3_selection_src_window = (function (node) {
-  return node.ownerDocument && node.ownerDocument.defaultView || // node is a Node
-  node.document && node // node is a Window
-  || node.defaultView; // node is a Document
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/style.js
-
-
-function selection_style_styleRemove(name) {
-  return function () {
-    this.style.removeProperty(name);
-  };
-}
-
-function selection_style_styleConstant(name, value, priority) {
-  return function () {
-    this.style.setProperty(name, value, priority);
-  };
-}
-
-function selection_style_styleFunction(name, value, priority) {
-  return function () {
-    var v = value.apply(this, arguments);
-    v == null ? this.style.removeProperty(name) : this.style.setProperty(name, v, priority);
-  };
-}
-
-/* harmony default export */ var d3_selection_src_selection_style = (function (name, value, priority) {
-  return arguments.length > 1 ? this.each((value == null ? selection_style_styleRemove : typeof value === "function" ? selection_style_styleFunction : selection_style_styleConstant)(name, value, priority == null ? "" : priority)) : selection_style_styleValue(this.node(), name);
-});
-function selection_style_styleValue(node, name) {
-  return node.style.getPropertyValue(name) || node_modules_d3_selection_src_window(node).getComputedStyle(node, null).getPropertyValue(name);
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/property.js
-function selection_property_propertyRemove(name) {
-  return function () {
-    delete this[name];
-  };
-}
-
-function selection_property_propertyConstant(name, value) {
-  return function () {
-    this[name] = value;
-  };
-}
-
-function selection_property_propertyFunction(name, value) {
-  return function () {
-    var v = value.apply(this, arguments);
-    v == null ? delete this[name] : this[name] = v;
-  };
-}
-
-/* harmony default export */ var src_selection_property = (function (name, value) {
-  return arguments.length > 1 ? this.each((value == null ? selection_property_propertyRemove : typeof value === "function" ? selection_property_propertyFunction : selection_property_propertyConstant)(name, value)) : this.node()[name];
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/classed.js
-function selection_classed_classArray(string) {
-  return string.trim().split(/^|\s+/);
-}
-
-function selection_classed_classList(node) {
-  return node.classList || new selection_classed_ClassList(node);
-}
-
-function selection_classed_ClassList(node) {
-  this._node = node, this._names = selection_classed_classArray(node.getAttribute("class") || "");
-}
-
-selection_classed_ClassList.prototype = {
-  add: function add(name) {
-    var i = this._names.indexOf(name);
-
-    i < 0 && (this._names.push(name), this._node.setAttribute("class", this._names.join(" ")));
-  },
-  remove: function remove(name) {
-    var i = this._names.indexOf(name);
-
-    i >= 0 && (this._names.splice(i, 1), this._node.setAttribute("class", this._names.join(" ")));
-  },
-  contains: function contains(name) {
-    return this._names.indexOf(name) >= 0;
-  }
-};
-
-function selection_classed_classedAdd(node, names) {
-  for (var list = selection_classed_classList(node), i = -1, n = names.length; ++i < n;) list.add(names[i]);
-}
-
-function selection_classed_classedRemove(node, names) {
-  for (var list = selection_classed_classList(node), i = -1, n = names.length; ++i < n;) list.remove(names[i]);
-}
-
-function selection_classed_classedTrue(names) {
-  return function () {
-    selection_classed_classedAdd(this, names);
-  };
-}
-
-function selection_classed_classedFalse(names) {
-  return function () {
-    selection_classed_classedRemove(this, names);
-  };
-}
-
-function selection_classed_classedFunction(names, value) {
-  return function () {
-    (value.apply(this, arguments) ? selection_classed_classedAdd : selection_classed_classedRemove)(this, names);
-  };
-}
-
-/* harmony default export */ var src_selection_classed = (function (name, value) {
-  var names = selection_classed_classArray(name + "");
-
-  if (arguments.length < 2) {
-    for (var list = selection_classed_classList(this.node()), i = -1, n = names.length; ++i < n;) if (!list.contains(names[i])) return !1;
-
-    return !0;
-  }
-
-  return this.each((typeof value === "function" ? selection_classed_classedFunction : value ? selection_classed_classedTrue : selection_classed_classedFalse)(names, value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/text.js
-function selection_text_textRemove() {
-  this.textContent = "";
-}
-
-function selection_text_textConstant(value) {
-  return function () {
-    this.textContent = value;
-  };
-}
-
-function selection_text_textFunction(value) {
-  return function () {
-    var v = value.apply(this, arguments);
-    this.textContent = v == null ? "" : v;
-  };
-}
-
-/* harmony default export */ var d3_selection_src_selection_text = (function (value) {
-  return arguments.length ? this.each(value == null ? selection_text_textRemove : (typeof value === "function" ? selection_text_textFunction : selection_text_textConstant)(value)) : this.node().textContent;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/html.js
-function selection_html_htmlRemove() {
-  this.innerHTML = "";
-}
-
-function selection_html_htmlConstant(value) {
-  return function () {
-    this.innerHTML = value;
-  };
-}
-
-function selection_html_htmlFunction(value) {
-  return function () {
-    var v = value.apply(this, arguments);
-    this.innerHTML = v == null ? "" : v;
-  };
-}
-
-/* harmony default export */ var d3_selection_src_selection_html = (function (value) {
-  return arguments.length ? this.each(value == null ? selection_html_htmlRemove : (typeof value === "function" ? selection_html_htmlFunction : selection_html_htmlConstant)(value)) : this.node().innerHTML;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/raise.js
-function selection_raise_raise() {
-  this.nextSibling && this.parentNode.appendChild(this);
-}
-
-/* harmony default export */ var d3_selection_src_selection_raise = (function () {
-  return this.each(selection_raise_raise);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/lower.js
-function selection_lower_lower() {
-  this.previousSibling && this.parentNode.insertBefore(this, this.parentNode.firstChild);
-}
-
-/* harmony default export */ var d3_selection_src_selection_lower = (function () {
-  return this.each(selection_lower_lower);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/append.js
-
-/* harmony default export */ var src_selection_append = (function (name) {
-  var create = typeof name === "function" ? name : d3_selection_src_creator(name);
-  return this.select(function () {
-    return this.appendChild(create.apply(this, arguments));
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/insert.js
-
-
-
-function selection_insert_constantNull() {
-  return null;
-}
-
-/* harmony default export */ var src_selection_insert = (function (name, before) {
-  var create = typeof name === "function" ? name : d3_selection_src_creator(name),
-      select = before == null ? selection_insert_constantNull : typeof before === "function" ? before : node_modules_d3_selection_src_selector(before);
-  return this.select(function () {
-    return this.insertBefore(create.apply(this, arguments), select.apply(this, arguments) || null);
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/remove.js
-function src_selection_remove_remove() {
-  var parent = this.parentNode;
-  parent && parent.removeChild(this);
-}
-
-/* harmony default export */ var d3_selection_src_selection_remove = (function () {
-  return this.each(src_selection_remove_remove);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/clone.js
-function selection_clone_selection_cloneShallow() {
-  var clone = this.cloneNode(!1),
-      parent = this.parentNode;
-  return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
-}
-
-function selection_clone_selection_cloneDeep() {
-  var clone = this.cloneNode(!0),
-      parent = this.parentNode;
-  return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
-}
-
-/* harmony default export */ var d3_selection_src_selection_clone = (function (deep) {
-  return this.select(deep ? selection_clone_selection_cloneDeep : selection_clone_selection_cloneShallow);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/datum.js
-/* harmony default export */ var d3_selection_src_selection_datum = (function (value) {
-  return arguments.length ? this.property("__data__", value) : this.node().__data__;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/on.js
-var selection_on_filterEvents = {};
-var src_selection_on_event = null;
-
-if (typeof document !== "undefined") {
-  var src_selection_on_element = document.documentElement;
-  "onmouseenter" in src_selection_on_element || (selection_on_filterEvents = {
-    mouseenter: "mouseover",
-    mouseleave: "mouseout"
-  });
-}
-
-function selection_on_filterContextListener(listener, index, group) {
-  return listener = selection_on_contextListener(listener, index, group), function (event) {
-    var related = event.relatedTarget;
-    related && (related === this || related.compareDocumentPosition(this) & 8) || listener.call(this, event);
-  };
-}
-
-function selection_on_contextListener(listener, index, group) {
-  return function (event1) {
-    var event0 = src_selection_on_event; // Events can be reentrant (e.g., focus).
-
-    src_selection_on_event = event1;
-
-    try {
-      listener.call(this, this.__data__, index, group);
-    } finally {
-      src_selection_on_event = event0;
-    }
-  };
-}
-
-function selection_on_parseTypenames(typenames) {
-  return typenames.trim().split(/^|\s+/).map(function (t) {
-    var name = "",
-        i = t.indexOf(".");
-    return i >= 0 && (name = t.slice(i + 1), t = t.slice(0, i)), {
-      type: t,
-      name: name
-    };
-  });
-}
-
-function selection_on_onRemove(typename) {
-  return function () {
-    var on = this.__on;
-
-    if (on) {
-      for (var o, j = 0, i = -1, m = on.length; j < m; ++j) (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) ? this.removeEventListener(o.type, o.listener, o.capture) : on[++i] = o;
-
-      ++i ? on.length = i : delete this.__on;
-    }
-  };
-}
-
-function selection_on_onAdd(typename, value, capture) {
-  var wrap = selection_on_filterEvents.hasOwnProperty(typename.type) ? selection_on_filterContextListener : selection_on_contextListener;
-  return function (d, i, group) {
-    var o,
-        on = this.__on,
-        listener = wrap(value, i, group);
-    if (on) for (var j = 0, m = on.length; j < m; ++j) if ((o = on[j]).type === typename.type && o.name === typename.name) return this.removeEventListener(o.type, o.listener, o.capture), this.addEventListener(o.type, o.listener = listener, o.capture = capture), void (o.value = value);
-    this.addEventListener(typename.type, listener, capture), o = {
-      type: typename.type,
-      name: typename.name,
-      value: value,
-      listener: listener,
-      capture: capture
-    }, on ? on.push(o) : this.__on = [o];
-  };
-}
-
-/* harmony default export */ var d3_selection_src_selection_on = (function (typename, value, capture) {
-  var i,
-      t,
-      typenames = selection_on_parseTypenames(typename + ""),
-      n = typenames.length;
-
-  if (arguments.length < 2) {
-    var on = this.node().__on;
-
-    if (on) for (var o, j = 0, m = on.length; j < m; ++j) for (i = 0, o = on[j]; i < n; ++i) if ((t = typenames[i]).type === o.type && t.name === o.name) return o.value;
-    return;
-  }
-
-  for (on = value ? selection_on_onAdd : selection_on_onRemove, capture == null && (capture = !1), i = 0; i < n; ++i) this.each(on(typenames[i], value, capture));
-
-  return this;
-});
-function selection_on_customEvent(event1, listener, that, args) {
-  var event0 = src_selection_on_event;
-  event1.sourceEvent = src_selection_on_event, src_selection_on_event = event1;
-
-  try {
-    return listener.apply(that, args);
-  } finally {
-    src_selection_on_event = event0;
-  }
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/dispatch.js
-
-
-function src_selection_dispatch_dispatchEvent(node, type, params) {
-  var window = node_modules_d3_selection_src_window(node),
-      event = window.CustomEvent;
-  typeof event === "function" ? event = new event(type, params) : (event = window.document.createEvent("Event"), params ? (event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail) : event.initEvent(type, !1, !1)), node.dispatchEvent(event);
-}
-
-function selection_dispatch_dispatchConstant(type, params) {
-  return function () {
-    return src_selection_dispatch_dispatchEvent(this, type, params);
-  };
-}
-
-function selection_dispatch_dispatchFunction(type, params) {
-  return function () {
-    return src_selection_dispatch_dispatchEvent(this, type, params.apply(this, arguments));
-  };
-}
-
-/* harmony default export */ var src_selection_dispatch = (function (type, params) {
-  return this.each((typeof params === "function" ? selection_dispatch_dispatchFunction : selection_dispatch_dispatchConstant)(type, params));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selection/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var d3_selection_src_selection_root = [null];
-function src_selection_Selection(groups, parents) {
-  this._groups = groups, this._parents = parents;
-}
-
-function d3_selection_src_selection_selection() {
-  return new src_selection_Selection([[document.documentElement]], d3_selection_src_selection_root);
-}
-
-src_selection_Selection.prototype = d3_selection_src_selection_selection.prototype = {
-  constructor: src_selection_Selection,
-  select: d3_selection_src_selection_select,
-  selectAll: src_selection_selectAll,
-  filter: d3_selection_src_selection_filter,
-  data: d3_selection_src_selection_data,
-  enter: d3_selection_src_selection_enter,
-  exit: d3_selection_src_selection_exit,
-  join: src_selection_join,
-  merge: d3_selection_src_selection_merge,
-  order: d3_selection_src_selection_order,
-  sort: d3_selection_src_selection_sort,
-  call: src_selection_call,
-  nodes: src_selection_nodes,
-  node: d3_selection_src_selection_node,
-  size: d3_selection_src_selection_size,
-  empty: d3_selection_src_selection_empty,
-  each: src_selection_each,
-  attr: src_selection_attr,
-  style: d3_selection_src_selection_style,
-  property: src_selection_property,
-  classed: src_selection_classed,
-  text: d3_selection_src_selection_text,
-  html: d3_selection_src_selection_html,
-  raise: d3_selection_src_selection_raise,
-  lower: d3_selection_src_selection_lower,
-  append: src_selection_append,
-  insert: src_selection_insert,
-  remove: d3_selection_src_selection_remove,
-  clone: d3_selection_src_selection_clone,
-  datum: d3_selection_src_selection_datum,
-  on: d3_selection_src_selection_on,
-  dispatch: src_selection_dispatch
-};
-/* harmony default export */ var node_modules_d3_selection_src_selection = (d3_selection_src_selection_selection);
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/select.js
-
-/* harmony default export */ var node_modules_d3_selection_src_select = (function (selector) {
-  return typeof selector === "string" ? new src_selection_Selection([[document.querySelector(selector)]], [document.documentElement]) : new src_selection_Selection([[selector]], d3_selection_src_selection_root);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/create.js
-
-
-/* harmony default export */ var node_modules_d3_selection_src_create = (function (name) {
-  return node_modules_d3_selection_src_select(d3_selection_src_creator(name).call(document.documentElement));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/local.js
-var src_local_nextId = 0;
-function src_local_local() {
-  return new src_local_Local();
-}
-
-function src_local_Local() {
-  this._ = "@" + (++src_local_nextId).toString(36);
-}
-
-src_local_Local.prototype = src_local_local.prototype = {
-  constructor: src_local_Local,
-  get: function get(node) {
-    for (var id = this._; !(id in node);) if (!(node = node.parentNode)) return;
-
-    return node[id];
-  },
-  set: function set(node, value) {
-    return node[this._] = value;
-  },
-  remove: function remove(node) {
-    return this._ in node && delete node[this._];
-  },
-  toString: function toString() {
-    return this._;
-  }
-};
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/sourceEvent.js
-
-/* harmony default export */ var node_modules_d3_selection_src_sourceEvent = (function () {
-  for (var source, current = src_selection_on_event; source = current.sourceEvent;) current = source;
-
-  return current;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/point.js
-/* harmony default export */ var node_modules_d3_selection_src_point = (function (node, event) {
-  var svg = node.ownerSVGElement || node;
-
-  if (svg.createSVGPoint) {
-    var point = svg.createSVGPoint();
-    return point.x = event.clientX, point.y = event.clientY, point = point.matrixTransform(node.getScreenCTM().inverse()), [point.x, point.y];
-  }
-
-  var rect = node.getBoundingClientRect();
-  return [event.clientX - rect.left - node.clientLeft, event.clientY - rect.top - node.clientTop];
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/mouse.js
-
-
-/* harmony default export */ var node_modules_d3_selection_src_mouse = (function (node) {
-  var event = node_modules_d3_selection_src_sourceEvent();
-  return event.changedTouches && (event = event.changedTouches[0]), node_modules_d3_selection_src_point(node, event);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/selectAll.js
-
-/* harmony default export */ var node_modules_d3_selection_src_selectAll = (function (selector) {
-  return typeof selector === "string" ? new src_selection_Selection([document.querySelectorAll(selector)], [document.documentElement]) : new src_selection_Selection([selector == null ? [] : selector], d3_selection_src_selection_root);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/touch.js
-
-
-/* harmony default export */ var node_modules_d3_selection_src_touch = (function (node, touches, identifier) {
-  arguments.length < 3 && (identifier = touches, touches = node_modules_d3_selection_src_sourceEvent().changedTouches);
-
-  for (var touch, i = 0, n = touches ? touches.length : 0; i < n; ++i) if ((touch = touches[i]).identifier === identifier) return node_modules_d3_selection_src_point(node, touch);
-
-  return null;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/touches.js
-
-
-/* harmony default export */ var node_modules_d3_selection_src_touches = (function (node, touches) {
-  touches == null && (touches = node_modules_d3_selection_src_sourceEvent().touches);
-
-  for (var i = 0, n = touches ? touches.length : 0, points = Array(n); i < n; ++i) points[i] = node_modules_d3_selection_src_point(node, touches[i]);
-
-  return points;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-selection/src/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-drag/src/noevent.js
-
-function d3_drag_src_noevent_nopropagation() {
-  src_selection_on_event.stopImmediatePropagation();
-}
-/* harmony default export */ var node_modules_d3_drag_src_noevent = (function () {
-  src_selection_on_event.preventDefault(), src_selection_on_event.stopImmediatePropagation();
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-drag/src/nodrag.js
-
-
-/* harmony default export */ var d3_drag_src_nodrag = (function (view) {
-  var root = view.document.documentElement,
-      selection = node_modules_d3_selection_src_select(view).on("dragstart.drag", node_modules_d3_drag_src_noevent, !0);
-  "onselectstart" in root ? selection.on("selectstart.drag", node_modules_d3_drag_src_noevent, !0) : (root.__noselect = root.style.MozUserSelect, root.style.MozUserSelect = "none");
-});
-function src_nodrag_yesdrag(view, noclick) {
-  var root = view.document.documentElement,
-      selection = node_modules_d3_selection_src_select(view).on("dragstart.drag", null);
-  noclick && (selection.on("click.drag", node_modules_d3_drag_src_noevent, !0), setTimeout(function () {
-    selection.on("click.drag", null);
-  }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-drag/src/constant.js
-/* harmony default export */ var d3_zoom_node_modules_d3_drag_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-drag/src/event.js
-function src_event_DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
-  this.target = target, this.type = type, this.subject = subject, this.identifier = id, this.active = active, this.x = x, this.y = y, this.dx = dx, this.dy = dy, this._ = dispatch;
-}
-
-src_event_DragEvent.prototype.on = function () {
-  var value = this._.on.apply(this._, arguments);
-
-  return value === this._ ? this : value;
-};
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-drag/src/drag.js
-
-
-
-
-
- // Ignore right-click, since that should open the context menu.
-
-function src_drag_defaultFilter() {
-  return !src_selection_on_event.ctrlKey && !src_selection_on_event.button;
-}
-
-function src_drag_defaultContainer() {
-  return this.parentNode;
-}
-
-function src_drag_defaultSubject(d) {
-  return d == null ? {
-    x: src_selection_on_event.x,
-    y: src_selection_on_event.y
-  } : d;
-}
-
-function src_drag_defaultTouchable() {
-  return navigator.maxTouchPoints || "ontouchstart" in this;
-}
-
-/* harmony default export */ var node_modules_d3_drag_src_drag = (function () {
-  function drag(selection) {
-    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
-  }
-
-  function mousedowned() {
-    if (!touchending && filter.apply(this, arguments)) {
-      var gesture = beforestart("mouse", container.apply(this, arguments), node_modules_d3_selection_src_mouse, this, arguments);
-      gesture && (node_modules_d3_selection_src_select(src_selection_on_event.view).on("mousemove.drag", mousemoved, !0).on("mouseup.drag", mouseupped, !0), d3_drag_src_nodrag(src_selection_on_event.view), d3_drag_src_noevent_nopropagation(), mousemoving = !1, mousedownx = src_selection_on_event.clientX, mousedowny = src_selection_on_event.clientY, gesture("start"));
-    }
-  }
-
-  function mousemoved() {
-    if (node_modules_d3_drag_src_noevent(), !mousemoving) {
-      var dx = src_selection_on_event.clientX - mousedownx,
-          dy = src_selection_on_event.clientY - mousedowny;
-      mousemoving = dx * dx + dy * dy > clickDistance2;
-    }
-
-    gestures.mouse("drag");
-  }
-
-  function mouseupped() {
-    node_modules_d3_selection_src_select(src_selection_on_event.view).on("mousemove.drag mouseup.drag", null), src_nodrag_yesdrag(src_selection_on_event.view, mousemoving), node_modules_d3_drag_src_noevent(), gestures.mouse("end");
-  }
-
-  function touchstarted() {
-    if (filter.apply(this, arguments)) {
-      var i,
-          gesture,
-          touches = src_selection_on_event.changedTouches,
-          c = container.apply(this, arguments),
-          n = touches.length;
-
-      for (i = 0; i < n; ++i) (gesture = beforestart(touches[i].identifier, c, node_modules_d3_selection_src_touch, this, arguments)) && (d3_drag_src_noevent_nopropagation(), gesture("start"));
-    }
-  }
-
-  function touchmoved() {
-    var i,
-        gesture,
-        touches = src_selection_on_event.changedTouches,
-        n = touches.length;
-
-    for (i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (node_modules_d3_drag_src_noevent(), gesture("drag"));
-  }
-
-  function touchended() {
-    var i,
-        gesture,
-        touches = src_selection_on_event.changedTouches,
-        n = touches.length;
-
-    // Ghost clicks are delayed!
-    for (touchending && clearTimeout(touchending), touchending = setTimeout(function () {
-      touchending = null;
-    }, 500), i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (d3_drag_src_noevent_nopropagation(), gesture("end"));
-  }
-
-  function beforestart(id, container, point, that, args) {
-    var s,
-        dx,
-        dy,
-        p = point(container, id),
-        sublisteners = listeners.copy();
-    return selection_on_customEvent(new src_event_DragEvent(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
-      return (src_selection_on_event.subject = s = subject.apply(that, args)) != null && (dx = s.x - p[0] || 0, dy = s.y - p[1] || 0, !0);
-    }) ? function gesture(type) {
-      var n,
-          p0 = p;
-
-      switch (type) {
-        case "start":
-          gestures[id] = gesture, n = active++;
-          break;
-
-        case "end":
-          delete gestures[id], --active;
-        // nobreak
-
-        case "drag":
-          p = point(container, id), n = active;
-      }
-
-      selection_on_customEvent(new src_event_DragEvent(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
-    } : void 0;
-  }
-
-  var mousedownx,
-      mousedowny,
-      mousemoving,
-      touchending,
-      filter = src_drag_defaultFilter,
-      container = src_drag_defaultContainer,
-      subject = src_drag_defaultSubject,
-      touchable = src_drag_defaultTouchable,
-      gestures = {},
-      listeners = src_dispatch("start", "drag", "end"),
-      active = 0,
-      clickDistance2 = 0;
-  return drag.filter = function (_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_zoom_node_modules_d3_drag_src_constant(!!_), drag) : filter;
-  }, drag.container = function (_) {
-    return arguments.length ? (container = typeof _ === "function" ? _ : d3_zoom_node_modules_d3_drag_src_constant(_), drag) : container;
-  }, drag.subject = function (_) {
-    return arguments.length ? (subject = typeof _ === "function" ? _ : d3_zoom_node_modules_d3_drag_src_constant(_), drag) : subject;
-  }, drag.touchable = function (_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_zoom_node_modules_d3_drag_src_constant(!!_), drag) : touchable;
-  }, drag.on = function () {
-    var value = listeners.on.apply(listeners, arguments);
-    return value === listeners ? drag : value;
-  }, drag.clickDistance = function (_) {
-    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
-  }, drag;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-drag/src/index.js
-
-
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-color/src/define.js
-/* harmony default export */ var node_modules_d3_color_src_define = (function (constructor, factory, prototype) {
-  constructor.prototype = factory.prototype = prototype, prototype.constructor = constructor;
-});
-function d3_color_src_define_extend(parent, definition) {
-  var prototype = Object.create(parent.prototype);
-
-  for (var key in definition) prototype[key] = definition[key];
-
-  return prototype;
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-color/src/color.js
-
-function d3_color_src_color_Color() {}
-var d3_color_src_color_darker = .7;
-
-
-var d3_color_src_color_brighter = 1 / d3_color_src_color_darker;
-
-
-var d3_color_src_color_reI = "\\s*([+-]?\\d+)\\s*",
-    d3_color_src_color_reN = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*",
-    d3_color_src_color_reP = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
-    d3_color_src_color_reHex = /^#([0-9a-f]{3,8})$/,
-    d3_color_src_color_reRgbInteger = new RegExp("^rgb\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*\\)$"),
-    d3_color_src_color_reRgbPercent = new RegExp("^rgb\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
-    d3_color_src_color_reRgbaInteger = new RegExp("^rgba\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    d3_color_src_color_reRgbaPercent = new RegExp("^rgba\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    d3_color_src_color_reHslPercent = new RegExp("^hsl\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
-    d3_color_src_color_reHslaPercent = new RegExp("^hsla\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    d3_color_src_color_named = {
-  aliceblue: 0xf0f8ff,
-  antiquewhite: 0xfaebd7,
-  aqua: 65535,
-  aquamarine: 8388564,
-  azure: 0xf0ffff,
-  beige: 0xf5f5dc,
-  bisque: 0xffe4c4,
-  black: 0,
-  blanchedalmond: 0xffebcd,
-  blue: 255,
-  blueviolet: 9055202,
-  brown: 0xa52a2a,
-  burlywood: 0xdeb887,
-  cadetblue: 6266528,
-  chartreuse: 8388352,
-  chocolate: 0xd2691e,
-  coral: 0xff7f50,
-  cornflowerblue: 6591981,
-  cornsilk: 0xfff8dc,
-  crimson: 0xdc143c,
-  cyan: 65535,
-  darkblue: 139,
-  darkcyan: 35723,
-  darkgoldenrod: 0xb8860b,
-  darkgray: 0xa9a9a9,
-  darkgreen: 25600,
-  darkgrey: 0xa9a9a9,
-  darkkhaki: 0xbdb76b,
-  darkmagenta: 9109643,
-  darkolivegreen: 5597999,
-  darkorange: 0xff8c00,
-  darkorchid: 0x9932cc,
-  darkred: 9109504,
-  darksalmon: 0xe9967a,
-  darkseagreen: 9419919,
-  darkslateblue: 4734347,
-  darkslategray: 3100495,
-  darkslategrey: 3100495,
-  darkturquoise: 52945,
-  darkviolet: 9699539,
-  deeppink: 0xff1493,
-  deepskyblue: 49151,
-  dimgray: 6908265,
-  dimgrey: 6908265,
-  dodgerblue: 2003199,
-  firebrick: 0xb22222,
-  floralwhite: 0xfffaf0,
-  forestgreen: 2263842,
-  fuchsia: 0xff00ff,
-  gainsboro: 0xdcdcdc,
-  ghostwhite: 0xf8f8ff,
-  gold: 0xffd700,
-  goldenrod: 0xdaa520,
-  gray: 8421504,
-  green: 32768,
-  greenyellow: 0xadff2f,
-  grey: 8421504,
-  honeydew: 0xf0fff0,
-  hotpink: 0xff69b4,
-  indianred: 0xcd5c5c,
-  indigo: 4915330,
-  ivory: 0xfffff0,
-  khaki: 0xf0e68c,
-  lavender: 0xe6e6fa,
-  lavenderblush: 0xfff0f5,
-  lawngreen: 8190976,
-  lemonchiffon: 0xfffacd,
-  lightblue: 0xadd8e6,
-  lightcoral: 0xf08080,
-  lightcyan: 0xe0ffff,
-  lightgoldenrodyellow: 0xfafad2,
-  lightgray: 0xd3d3d3,
-  lightgreen: 9498256,
-  lightgrey: 0xd3d3d3,
-  lightpink: 0xffb6c1,
-  lightsalmon: 0xffa07a,
-  lightseagreen: 2142890,
-  lightskyblue: 8900346,
-  lightslategray: 7833753,
-  lightslategrey: 7833753,
-  lightsteelblue: 0xb0c4de,
-  lightyellow: 0xffffe0,
-  lime: 65280,
-  limegreen: 3329330,
-  linen: 0xfaf0e6,
-  magenta: 0xff00ff,
-  maroon: 8388608,
-  mediumaquamarine: 6737322,
-  mediumblue: 205,
-  mediumorchid: 0xba55d3,
-  mediumpurple: 9662683,
-  mediumseagreen: 3978097,
-  mediumslateblue: 8087790,
-  mediumspringgreen: 64154,
-  mediumturquoise: 4772300,
-  mediumvioletred: 0xc71585,
-  midnightblue: 1644912,
-  mintcream: 0xf5fffa,
-  mistyrose: 0xffe4e1,
-  moccasin: 0xffe4b5,
-  navajowhite: 0xffdead,
-  navy: 128,
-  oldlace: 0xfdf5e6,
-  olive: 8421376,
-  olivedrab: 7048739,
-  orange: 0xffa500,
-  orangered: 0xff4500,
-  orchid: 0xda70d6,
-  palegoldenrod: 0xeee8aa,
-  palegreen: 0x98fb98,
-  paleturquoise: 0xafeeee,
-  palevioletred: 0xdb7093,
-  papayawhip: 0xffefd5,
-  peachpuff: 0xffdab9,
-  peru: 0xcd853f,
-  pink: 0xffc0cb,
-  plum: 0xdda0dd,
-  powderblue: 0xb0e0e6,
-  purple: 8388736,
-  rebeccapurple: 6697881,
-  red: 0xff0000,
-  rosybrown: 0xbc8f8f,
-  royalblue: 4286945,
-  saddlebrown: 9127187,
-  salmon: 0xfa8072,
-  sandybrown: 0xf4a460,
-  seagreen: 3050327,
-  seashell: 0xfff5ee,
-  sienna: 0xa0522d,
-  silver: 0xc0c0c0,
-  skyblue: 8900331,
-  slateblue: 6970061,
-  slategray: 7372944,
-  slategrey: 7372944,
-  snow: 0xfffafa,
-  springgreen: 65407,
-  steelblue: 4620980,
-  tan: 0xd2b48c,
-  teal: 32896,
-  thistle: 0xd8bfd8,
-  tomato: 0xff6347,
-  turquoise: 4251856,
-  violet: 0xee82ee,
-  wheat: 0xf5deb3,
-  white: 0xffffff,
-  whitesmoke: 0xf5f5f5,
-  yellow: 0xffff00,
-  yellowgreen: 0x9acd32
-};
-node_modules_d3_color_src_define(d3_color_src_color_Color, node_modules_d3_color_src_color_color, {
-  copy: function copy(channels) {
-    return Object.assign(new this.constructor(), this, channels);
-  },
-  displayable: function displayable() {
-    return this.rgb().displayable();
-  },
-  hex: d3_color_src_color_color_formatHex,
-  // Deprecated! Use color.formatHex.
-  formatHex: d3_color_src_color_color_formatHex,
-  formatHsl: d3_color_src_color_color_formatHsl,
-  formatRgb: d3_color_src_color_color_formatRgb,
-  toString: d3_color_src_color_color_formatRgb
-});
-
-function d3_color_src_color_color_formatHex() {
-  return this.rgb().formatHex();
-}
-
-function d3_color_src_color_color_formatHsl() {
-  return d3_color_src_color_hslConvert(this).formatHsl();
-}
-
-function d3_color_src_color_color_formatRgb() {
-  return this.rgb().formatRgb();
-}
-
-function node_modules_d3_color_src_color_color(format) {
-  var m, l;
-  return format = (format + "").trim().toLowerCase(), (m = d3_color_src_color_reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? d3_color_src_color_rgbn(m) // #ff0000
-  : l === 3 ? new d3_color_src_color_Rgb(m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, (m & 15) << 4 | m & 15, 1) // #f00
-  : l === 8 ? d3_color_src_color_rgba(m >> 24 & 255, m >> 16 & 255, m >> 8 & 255, (m & 255) / 255) // #ff000000
-  : l === 4 ? d3_color_src_color_rgba(m >> 12 & 15 | m >> 8 & 240, m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, ((m & 15) << 4 | m & 15) / 255) // #f000
-  : null // invalid hex
-  ) : (m = d3_color_src_color_reRgbInteger.exec(format)) ? new d3_color_src_color_Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
-  : (m = d3_color_src_color_reRgbPercent.exec(format)) ? new d3_color_src_color_Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
-  : (m = d3_color_src_color_reRgbaInteger.exec(format)) ? d3_color_src_color_rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
-  : (m = d3_color_src_color_reRgbaPercent.exec(format)) ? d3_color_src_color_rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) // rgb(100%, 0%, 0%, 1)
-  : (m = d3_color_src_color_reHslPercent.exec(format)) ? d3_color_src_color_hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
-  : (m = d3_color_src_color_reHslaPercent.exec(format)) ? d3_color_src_color_hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
-  : d3_color_src_color_named.hasOwnProperty(format) ? d3_color_src_color_rgbn(d3_color_src_color_named[format]) // eslint-disable-line no-prototype-builtins
-  : format === "transparent" ? new d3_color_src_color_Rgb(NaN, NaN, NaN, 0) : null;
-}
-
-function d3_color_src_color_rgbn(n) {
-  return new d3_color_src_color_Rgb(n >> 16 & 255, n >> 8 & 255, n & 255, 1);
-}
-
-function d3_color_src_color_rgba(r, g, b, a) {
-  return a <= 0 && (r = g = b = NaN), new d3_color_src_color_Rgb(r, g, b, a);
-}
-
-function d3_color_src_color_rgbConvert(o) {
-  return (o instanceof d3_color_src_color_Color || (o = node_modules_d3_color_src_color_color(o)), !o) ? new d3_color_src_color_Rgb() : (o = o.rgb(), new d3_color_src_color_Rgb(o.r, o.g, o.b, o.opacity));
-}
-function node_modules_d3_color_src_color_rgb(r, g, b, opacity) {
-  return arguments.length === 1 ? d3_color_src_color_rgbConvert(r) : new d3_color_src_color_Rgb(r, g, b, opacity == null ? 1 : opacity);
-}
-function d3_color_src_color_Rgb(r, g, b, opacity) {
-  this.r = +r, this.g = +g, this.b = +b, this.opacity = +opacity;
-}
-node_modules_d3_color_src_define(d3_color_src_color_Rgb, node_modules_d3_color_src_color_rgb, d3_color_src_define_extend(d3_color_src_color_Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? d3_color_src_color_brighter : Math.pow(d3_color_src_color_brighter, k), new d3_color_src_color_Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? d3_color_src_color_darker : Math.pow(d3_color_src_color_darker, k), new d3_color_src_color_Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  rgb: function () {
-    return this;
-  },
-  displayable: function displayable() {
-    return -.5 <= this.r && this.r < 255.5 && -.5 <= this.g && this.g < 255.5 && -.5 <= this.b && this.b < 255.5 && 0 <= this.opacity && this.opacity <= 1;
-  },
-  hex: d3_color_src_color_rgb_formatHex,
-  // Deprecated! Use color.formatHex.
-  formatHex: d3_color_src_color_rgb_formatHex,
-  formatRgb: d3_color_src_color_rgb_formatRgb,
-  toString: d3_color_src_color_rgb_formatRgb
-}));
-
-function d3_color_src_color_rgb_formatHex() {
-  return "#" + d3_color_src_color_hex(this.r) + d3_color_src_color_hex(this.g) + d3_color_src_color_hex(this.b);
-}
-
-function d3_color_src_color_rgb_formatRgb() {
-  var a = this.opacity;
-  return a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a)), (a === 1 ? "rgb(" : "rgba(") + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", " + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", " + Math.max(0, Math.min(255, Math.round(this.b) || 0)) + (a === 1 ? ")" : ", " + a + ")");
-}
-
-function d3_color_src_color_hex(value) {
-  return value = Math.max(0, Math.min(255, Math.round(value) || 0)), (value < 16 ? "0" : "") + value.toString(16);
-}
-
-function d3_color_src_color_hsla(h, s, l, a) {
-  return a <= 0 ? h = s = l = NaN : l <= 0 || l >= 1 ? h = s = NaN : s <= 0 && (h = NaN), new d3_color_src_color_Hsl(h, s, l, a);
-}
-
-function d3_color_src_color_hslConvert(o) {
-  if (o instanceof d3_color_src_color_Hsl) return new d3_color_src_color_Hsl(o.h, o.s, o.l, o.opacity);
-  if (o instanceof d3_color_src_color_Color || (o = node_modules_d3_color_src_color_color(o)), !o) return new d3_color_src_color_Hsl();
-  if (o instanceof d3_color_src_color_Hsl) return o;
-  o = o.rgb();
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      min = Math.min(r, g, b),
-      max = Math.max(r, g, b),
-      h = NaN,
-      s = max - min,
-      l = (max + min) / 2;
-  return s ? (h = r === max ? (g - b) / s + (g < b) * 6 : g === max ? (b - r) / s + 2 : (r - g) / s + 4, s /= l < .5 ? max + min : 2 - max - min, h *= 60) : s = l > 0 && l < 1 ? 0 : h, new d3_color_src_color_Hsl(h, s, l, o.opacity);
-}
-function d3_color_src_color_hsl(h, s, l, opacity) {
-  return arguments.length === 1 ? d3_color_src_color_hslConvert(h) : new d3_color_src_color_Hsl(h, s, l, opacity == null ? 1 : opacity);
-}
-
-function d3_color_src_color_Hsl(h, s, l, opacity) {
-  this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
-}
-
-node_modules_d3_color_src_define(d3_color_src_color_Hsl, d3_color_src_color_hsl, d3_color_src_define_extend(d3_color_src_color_Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? d3_color_src_color_brighter : Math.pow(d3_color_src_color_brighter, k), new d3_color_src_color_Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? d3_color_src_color_darker : Math.pow(d3_color_src_color_darker, k), new d3_color_src_color_Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb: function () {
-    var h = this.h % 360 + (this.h < 0) * 360,
-        s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
-        l = this.l,
-        m2 = l + (l < .5 ? l : 1 - l) * s,
-        m1 = 2 * l - m2;
-    return new d3_color_src_color_Rgb(d3_color_src_color_hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2), d3_color_src_color_hsl2rgb(h, m1, m2), d3_color_src_color_hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2), this.opacity);
-  },
-  displayable: function displayable() {
-    return (0 <= this.s && this.s <= 1 || isNaN(this.s)) && 0 <= this.l && this.l <= 1 && 0 <= this.opacity && this.opacity <= 1;
-  },
-  formatHsl: function formatHsl() {
-    var a = this.opacity;
-    return a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a)), (a === 1 ? "hsl(" : "hsla(") + (this.h || 0) + ", " + (this.s || 0) * 100 + "%, " + (this.l || 0) * 100 + "%" + (a === 1 ? ")" : ", " + a + ")");
-  }
-}));
-
-/* From FvD 13.37, CSS Color Module Level 3 */
-function d3_color_src_color_hsl2rgb(h, m1, m2) {
-  return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-color/src/math.js
-var d3_color_src_math_deg2rad = Math.PI / 180;
-var d3_color_src_math_rad2deg = 180 / Math.PI;
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-color/src/lab.js
-
-
- // https://observablehq.com/@mbostock/lab-and-rgb
-
-var d3_color_src_lab_K = 18,
-    d3_color_src_lab_Xn = .96422,
-    d3_color_src_lab_Yn = 1,
-    d3_color_src_lab_Zn = .82521,
-    node_modules_d3_color_src_lab_t0 = 4 / 29,
-    node_modules_d3_color_src_lab_t1 = 6 / 29,
-    node_modules_d3_color_src_lab_t2 = 3 * node_modules_d3_color_src_lab_t1 * node_modules_d3_color_src_lab_t1,
-    d3_color_src_lab_t3 = node_modules_d3_color_src_lab_t1 * node_modules_d3_color_src_lab_t1 * node_modules_d3_color_src_lab_t1;
-
-function d3_color_src_lab_labConvert(o) {
-  if (o instanceof d3_color_src_lab_Lab) return new d3_color_src_lab_Lab(o.l, o.a, o.b, o.opacity);
-  if (o instanceof d3_color_src_lab_Hcl) return d3_color_src_lab_hcl2lab(o);
-  o instanceof d3_color_src_color_Rgb || (o = d3_color_src_color_rgbConvert(o));
-  var x,
-      z,
-      r = d3_color_src_lab_rgb2lrgb(o.r),
-      g = d3_color_src_lab_rgb2lrgb(o.g),
-      b = d3_color_src_lab_rgb2lrgb(o.b),
-      y = d3_color_src_lab_xyz2lab((.2225045 * r + .7168786 * g + .0606169 * b) / d3_color_src_lab_Yn);
-  return r === g && g === b ? x = z = y : (x = d3_color_src_lab_xyz2lab((.4360747 * r + .3850649 * g + .1430804 * b) / d3_color_src_lab_Xn), z = d3_color_src_lab_xyz2lab((.0139322 * r + .0971045 * g + .7141733 * b) / d3_color_src_lab_Zn)), new d3_color_src_lab_Lab(116 * y - 16, 500 * (x - y), 200 * (y - z), o.opacity);
-}
-
-function d3_color_src_lab_gray(l, opacity) {
-  return new d3_color_src_lab_Lab(l, 0, 0, opacity == null ? 1 : opacity);
-}
-function node_modules_d3_color_src_lab_lab(l, a, b, opacity) {
-  return arguments.length === 1 ? d3_color_src_lab_labConvert(l) : new d3_color_src_lab_Lab(l, a, b, opacity == null ? 1 : opacity);
-}
-function d3_color_src_lab_Lab(l, a, b, opacity) {
-  this.l = +l, this.a = +a, this.b = +b, this.opacity = +opacity;
-}
-node_modules_d3_color_src_define(d3_color_src_lab_Lab, node_modules_d3_color_src_lab_lab, d3_color_src_define_extend(d3_color_src_color_Color, {
-  brighter: function brighter(k) {
-    return new d3_color_src_lab_Lab(this.l + d3_color_src_lab_K * (k == null ? 1 : k), this.a, this.b, this.opacity);
-  },
-  darker: function darker(k) {
-    return new d3_color_src_lab_Lab(this.l - d3_color_src_lab_K * (k == null ? 1 : k), this.a, this.b, this.opacity);
-  },
-  rgb: function rgb() {
-    var y = (this.l + 16) / 116,
-        x = isNaN(this.a) ? y : y + this.a / 500,
-        z = isNaN(this.b) ? y : y - this.b / 200;
-    return x = d3_color_src_lab_Xn * d3_color_src_lab_lab2xyz(x), y = d3_color_src_lab_Yn * d3_color_src_lab_lab2xyz(y), z = d3_color_src_lab_Zn * d3_color_src_lab_lab2xyz(z), new d3_color_src_color_Rgb(d3_color_src_lab_lrgb2rgb(3.1338561 * x - 1.6168667 * y - .4906146 * z), d3_color_src_lab_lrgb2rgb(-.9787684 * x + 1.9161415 * y + .033454 * z), d3_color_src_lab_lrgb2rgb(.0719453 * x - .2289914 * y + 1.4052427 * z), this.opacity);
-  }
-}));
-
-function d3_color_src_lab_xyz2lab(t) {
-  return t > d3_color_src_lab_t3 ? Math.pow(t, 1 / 3) : t / node_modules_d3_color_src_lab_t2 + node_modules_d3_color_src_lab_t0;
-}
-
-function d3_color_src_lab_lab2xyz(t) {
-  return t > node_modules_d3_color_src_lab_t1 ? t * t * t : node_modules_d3_color_src_lab_t2 * (t - node_modules_d3_color_src_lab_t0);
-}
-
-function d3_color_src_lab_lrgb2rgb(x) {
-  return 255 * (x <= .0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - .055);
-}
-
-function d3_color_src_lab_rgb2lrgb(x) {
-  return (x /= 255) <= .04045 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4);
-}
-
-function d3_color_src_lab_hclConvert(o) {
-  if (o instanceof d3_color_src_lab_Hcl) return new d3_color_src_lab_Hcl(o.h, o.c, o.l, o.opacity);
-  if (o instanceof d3_color_src_lab_Lab || (o = d3_color_src_lab_labConvert(o)), o.a === 0 && o.b === 0) return new d3_color_src_lab_Hcl(NaN, 0 < o.l && o.l < 100 ? 0 : NaN, o.l, o.opacity);
-  var h = Math.atan2(o.b, o.a) * d3_color_src_math_rad2deg;
-  return new d3_color_src_lab_Hcl(h < 0 ? h + 360 : h, Math.sqrt(o.a * o.a + o.b * o.b), o.l, o.opacity);
-}
-
-function d3_color_src_lab_lch(l, c, h, opacity) {
-  return arguments.length === 1 ? d3_color_src_lab_hclConvert(l) : new d3_color_src_lab_Hcl(h, c, l, opacity == null ? 1 : opacity);
-}
-function d3_color_src_lab_hcl(h, c, l, opacity) {
-  return arguments.length === 1 ? d3_color_src_lab_hclConvert(h) : new d3_color_src_lab_Hcl(h, c, l, opacity == null ? 1 : opacity);
-}
-function d3_color_src_lab_Hcl(h, c, l, opacity) {
-  this.h = +h, this.c = +c, this.l = +l, this.opacity = +opacity;
-}
-
-function d3_color_src_lab_hcl2lab(o) {
-  if (isNaN(o.h)) return new d3_color_src_lab_Lab(o.l, 0, 0, o.opacity);
-  var h = o.h * d3_color_src_math_deg2rad;
-  return new d3_color_src_lab_Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
-}
-
-node_modules_d3_color_src_define(d3_color_src_lab_Hcl, d3_color_src_lab_hcl, d3_color_src_define_extend(d3_color_src_color_Color, {
-  brighter: function brighter(k) {
-    return new d3_color_src_lab_Hcl(this.h, this.c, this.l + d3_color_src_lab_K * (k == null ? 1 : k), this.opacity);
-  },
-  darker: function darker(k) {
-    return new d3_color_src_lab_Hcl(this.h, this.c, this.l - d3_color_src_lab_K * (k == null ? 1 : k), this.opacity);
-  },
-  rgb: function rgb() {
-    return d3_color_src_lab_hcl2lab(this).rgb();
-  }
-}));
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-color/src/cubehelix.js
-
-
-
-var d3_color_src_cubehelix_A = -.14861,
-    d3_color_src_cubehelix_B = +1.78277,
-    d3_color_src_cubehelix_C = -.29227,
-    node_modules_d3_color_src_cubehelix_D = -.90649,
-    node_modules_d3_color_src_cubehelix_E = +1.97294,
-    d3_color_src_cubehelix_ED = node_modules_d3_color_src_cubehelix_E * node_modules_d3_color_src_cubehelix_D,
-    d3_color_src_cubehelix_EB = node_modules_d3_color_src_cubehelix_E * d3_color_src_cubehelix_B,
-    d3_color_src_cubehelix_BC_DA = d3_color_src_cubehelix_B * d3_color_src_cubehelix_C - node_modules_d3_color_src_cubehelix_D * d3_color_src_cubehelix_A;
-
-function d3_color_src_cubehelix_cubehelixConvert(o) {
-  if (o instanceof d3_color_src_cubehelix_Cubehelix) return new d3_color_src_cubehelix_Cubehelix(o.h, o.s, o.l, o.opacity);
-  o instanceof d3_color_src_color_Rgb || (o = d3_color_src_color_rgbConvert(o));
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      l = (d3_color_src_cubehelix_BC_DA * b + d3_color_src_cubehelix_ED * r - d3_color_src_cubehelix_EB * g) / (d3_color_src_cubehelix_BC_DA + d3_color_src_cubehelix_ED - d3_color_src_cubehelix_EB),
-      bl = b - l,
-      k = (node_modules_d3_color_src_cubehelix_E * (g - l) - d3_color_src_cubehelix_C * bl) / node_modules_d3_color_src_cubehelix_D,
-      s = Math.sqrt(k * k + bl * bl) / (node_modules_d3_color_src_cubehelix_E * l * (1 - l)),
-      // NaN if l=0 or l=1
-  h = s ? Math.atan2(k, bl) * d3_color_src_math_rad2deg - 120 : NaN;
-  return new d3_color_src_cubehelix_Cubehelix(h < 0 ? h + 360 : h, s, l, o.opacity);
-}
-
-function d3_zoom_node_modules_d3_color_src_cubehelix_cubehelix(h, s, l, opacity) {
-  return arguments.length === 1 ? d3_color_src_cubehelix_cubehelixConvert(h) : new d3_color_src_cubehelix_Cubehelix(h, s, l, opacity == null ? 1 : opacity);
-}
-function d3_color_src_cubehelix_Cubehelix(h, s, l, opacity) {
-  this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
-}
-node_modules_d3_color_src_define(d3_color_src_cubehelix_Cubehelix, d3_zoom_node_modules_d3_color_src_cubehelix_cubehelix, d3_color_src_define_extend(d3_color_src_color_Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? d3_color_src_color_brighter : Math.pow(d3_color_src_color_brighter, k), new d3_color_src_cubehelix_Cubehelix(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? d3_color_src_color_darker : Math.pow(d3_color_src_color_darker, k), new d3_color_src_cubehelix_Cubehelix(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb: function rgb() {
-    var h = isNaN(this.h) ? 0 : (this.h + 120) * d3_color_src_math_deg2rad,
-        l = +this.l,
-        a = isNaN(this.s) ? 0 : this.s * l * (1 - l),
-        cosh = Math.cos(h),
-        sinh = Math.sin(h);
-    return new d3_color_src_color_Rgb(255 * (l + a * (d3_color_src_cubehelix_A * cosh + d3_color_src_cubehelix_B * sinh)), 255 * (l + a * (d3_color_src_cubehelix_C * cosh + node_modules_d3_color_src_cubehelix_D * sinh)), 255 * (l + a * (node_modules_d3_color_src_cubehelix_E * cosh)), this.opacity);
-  }
-}));
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-color/src/index.js
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/basis.js
-function d3_interpolate_src_basis_basis(t1, v0, v1, v2, v3) {
-  var t2 = t1 * t1,
-      t3 = t2 * t1;
-  return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
-}
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_basis = (function (values) {
-  var n = values.length - 1;
-  return function (t) {
-    var i = t <= 0 ? t = 0 : t >= 1 ? (t = 1, n - 1) : Math.floor(t * n),
-        v1 = values[i],
-        v2 = values[i + 1],
-        v0 = i > 0 ? values[i - 1] : 2 * v1 - v2,
-        v3 = i < n - 1 ? values[i + 2] : 2 * v2 - v1;
-    return d3_interpolate_src_basis_basis((t - i / n) * n, v0, v1, v2, v3);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/basisClosed.js
-
-/* harmony default export */ var node_modules_d3_interpolate_src_basisClosed = (function (values) {
-  var n = values.length;
-  return function (t) {
-    var i = Math.floor(((t %= 1) < 0 ? ++t : t) * n),
-        v0 = values[(i + n - 1) % n],
-        v1 = values[i % n],
-        v2 = values[(i + 1) % n],
-        v3 = values[(i + 2) % n];
-    return d3_interpolate_src_basis_basis((t - i / n) * n, v0, v1, v2, v3);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/constant.js
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/color.js
-
-
-function d3_interpolate_src_color_linear(a, d) {
-  return function (t) {
-    return a + t * d;
-  };
-}
-
-function d3_interpolate_src_color_exponential(a, b, y) {
-  return a = Math.pow(a, y), b = Math.pow(b, y) - a, y = 1 / y, function (t) {
-    return Math.pow(a + t * b, y);
-  };
-}
-
-function node_modules_d3_interpolate_src_color_hue(a, b) {
-  var d = b - a;
-  return d ? d3_interpolate_src_color_linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : d3_zoom_node_modules_d3_interpolate_src_constant(isNaN(a) ? b : a);
-}
-function d3_interpolate_src_color_gamma(y) {
-  return (y = +y) === 1 ? d3_interpolate_src_color_nogamma : function (a, b) {
-    return b - a ? d3_interpolate_src_color_exponential(a, b, y) : d3_zoom_node_modules_d3_interpolate_src_constant(isNaN(a) ? b : a);
-  };
-}
-function d3_interpolate_src_color_nogamma(a, b) {
-  var d = b - a;
-  return d ? d3_interpolate_src_color_linear(a, d) : d3_zoom_node_modules_d3_interpolate_src_constant(isNaN(a) ? b : a);
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/rgb.js
-
-
-
-
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_rgb = ((function rgbGamma(y) {
-  function rgb(start, end) {
-    var r = color((start = node_modules_d3_color_src_color_rgb(start)).r, (end = node_modules_d3_color_src_color_rgb(end)).r),
-        g = color(start.g, end.g),
-        b = color(start.b, end.b),
-        opacity = d3_interpolate_src_color_nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.r = r(t), start.g = g(t), start.b = b(t), start.opacity = opacity(t), start + "";
-    };
-  }
-
-  var color = d3_interpolate_src_color_gamma(y);
-  return rgb.gamma = rgbGamma, rgb;
-})(1));
-
-function d3_interpolate_src_rgb_rgbSpline(spline) {
-  return function (colors) {
-    var i,
-        color,
-        n = colors.length,
-        r = Array(n),
-        g = Array(n),
-        b = Array(n);
-
-    for (i = 0; i < n; ++i) color = node_modules_d3_color_src_color_rgb(colors[i]), r[i] = color.r || 0, g[i] = color.g || 0, b[i] = color.b || 0;
-
-    return r = spline(r), g = spline(g), b = spline(b), color.opacity = 1, function (t) {
-      return color.r = r(t), color.g = g(t), color.b = b(t), color + "";
-    };
-  };
-}
-
-var d3_interpolate_src_rgb_rgbBasis = d3_interpolate_src_rgb_rgbSpline(d3_zoom_node_modules_d3_interpolate_src_basis);
-var d3_interpolate_src_rgb_rgbBasisClosed = d3_interpolate_src_rgb_rgbSpline(node_modules_d3_interpolate_src_basisClosed);
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/numberArray.js
-/* harmony default export */ var node_modules_d3_interpolate_src_numberArray = (function (a, b) {
-  b || (b = []);
-  var i,
-      n = a ? Math.min(b.length, a.length) : 0,
-      c = b.slice();
-  return function (t) {
-    for (i = 0; i < n; ++i) c[i] = a[i] * (1 - t) + b[i] * t;
-
-    return c;
-  };
-});
-function d3_interpolate_src_numberArray_isNumberArray(x) {
-  return ArrayBuffer.isView(x) && !(x instanceof DataView);
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/array.js
-
-
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_array = (function (a, b) {
-  return (d3_interpolate_src_numberArray_isNumberArray(b) ? node_modules_d3_interpolate_src_numberArray : d3_interpolate_src_array_genericArray)(a, b);
-});
-function d3_interpolate_src_array_genericArray(a, b) {
-  var i,
-      nb = b ? b.length : 0,
-      na = a ? Math.min(nb, a.length) : 0,
-      x = Array(na),
-      c = Array(nb);
-
-  for (i = 0; i < na; ++i) x[i] = d3_zoom_node_modules_d3_interpolate_src_value(a[i], b[i]);
-
-  for (; i < nb; ++i) c[i] = b[i];
-
-  return function (t) {
-    for (i = 0; i < na; ++i) c[i] = x[i](t);
-
-    return c;
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/date.js
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_date = (function (a, b) {
-  var d = new Date();
-  return a = +a, b = +b, function (t) {
-    return d.setTime(a * (1 - t) + b * t), d;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/number.js
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_number = (function (a, b) {
-  return a = +a, b = +b, function (t) {
-    return a * (1 - t) + b * t;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/object.js
-
-/* harmony default export */ var node_modules_d3_interpolate_src_object = (function (a, b) {
-  var k,
-      i = {},
-      c = {};
-
-  for (k in (a === null || typeof a !== "object") && (a = {}), (b === null || typeof b !== "object") && (b = {}), b) k in a ? i[k] = d3_zoom_node_modules_d3_interpolate_src_value(a[k], b[k]) : c[k] = b[k];
-
-  return function (t) {
-    for (k in i) c[k] = i[k](t);
-
-    return c;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/string.js
-
-var d3_interpolate_src_string_reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g,
-    d3_interpolate_src_string_reB = new RegExp(d3_interpolate_src_string_reA.source, "g");
-
-function node_modules_d3_interpolate_src_string_zero(b) {
-  return function () {
-    return b;
-  };
-}
-
-function d3_interpolate_src_string_one(b) {
-  return function (t) {
-    return b(t) + "";
-  };
-}
-
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_string = (function (a, b) {
-  var // scan index for next number in b
-  am,
-      // current match in a
-  bm,
-      // current match in b
-  bs,
-      bi = d3_interpolate_src_string_reA.lastIndex = d3_interpolate_src_string_reB.lastIndex = 0,
-      // string preceding current number in b, if any
-  i = -1,
-      // index in s
-  s = [],
-      // string constants and placeholders
-  q = []; // number interpolators
-  // Coerce inputs to strings.
-
-  // Interpolate pairs of numbers in a & b.
-  for (a += "", b += ""; (am = d3_interpolate_src_string_reA.exec(a)) && (bm = d3_interpolate_src_string_reB.exec(b));) (bs = bm.index) > bi && (bs = b.slice(bi, bs), s[i] ? s[i] += bs : // coalesce with previous string
-  s[++i] = bs), (am = am[0]) === (bm = bm[0]) ? s[i] ? s[i] += bm : // coalesce with previous string
-  s[++i] = bm : (s[++i] = null, q.push({
-    i: i,
-    x: d3_zoom_node_modules_d3_interpolate_src_number(am, bm)
-  })), bi = d3_interpolate_src_string_reB.lastIndex; // Add remains of b.
-
-
-  // Special optimization for only a single match.
-  // Otherwise, interpolate each of the numbers and rejoin the string.
-  return bi < b.length && (bs = b.slice(bi), s[i] ? s[i] += bs : // coalesce with previous string
-  s[++i] = bs), s.length < 2 ? q[0] ? d3_interpolate_src_string_one(q[0].x) : node_modules_d3_interpolate_src_string_zero(b) : (b = q.length, function (t) {
-    for (var o, i = 0; i < b; ++i) s[(o = q[i]).i] = o.x(t);
-
-    return s.join("");
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/value.js
-
-
-
-
-
-
-
-
-
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_value = (function (a, b) {
-  var c,
-      t = typeof b;
-  return b == null || t === "boolean" ? d3_zoom_node_modules_d3_interpolate_src_constant(b) : (t === "number" ? d3_zoom_node_modules_d3_interpolate_src_number : t === "string" ? (c = node_modules_d3_color_src_color_color(b)) ? (b = c, d3_zoom_node_modules_d3_interpolate_src_rgb) : d3_zoom_node_modules_d3_interpolate_src_string : b instanceof node_modules_d3_color_src_color_color ? d3_zoom_node_modules_d3_interpolate_src_rgb : b instanceof Date ? d3_zoom_node_modules_d3_interpolate_src_date : d3_interpolate_src_numberArray_isNumberArray(b) ? node_modules_d3_interpolate_src_numberArray : Array.isArray(b) ? d3_interpolate_src_array_genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? node_modules_d3_interpolate_src_object : d3_zoom_node_modules_d3_interpolate_src_number)(a, b);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/discrete.js
-/* harmony default export */ var node_modules_d3_interpolate_src_discrete = (function (range) {
-  var n = range.length;
-  return function (t) {
-    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/hue.js
-
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_hue = (function (a, b) {
-  var i = node_modules_d3_interpolate_src_color_hue(+a, +b);
-  return function (t) {
-    var x = i(t);
-    return x - 360 * Math.floor(x / 360);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/round.js
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_round = (function (a, b) {
-  return a = +a, b = +b, function (t) {
-    return Math.round(a * (1 - t) + b * t);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/transform/decompose.js
-var src_transform_decompose_degrees = 180 / Math.PI;
-var src_transform_decompose_identity = {
-  translateX: 0,
-  translateY: 0,
-  rotate: 0,
-  skewX: 0,
-  scaleX: 1,
-  scaleY: 1
-};
-/* harmony default export */ var d3_interpolate_src_transform_decompose = (function (a, b, c, d, e, f) {
-  var scaleX, scaleY, skewX;
-  return (scaleX = Math.sqrt(a * a + b * b)) && (a /= scaleX, b /= scaleX), (skewX = a * c + b * d) && (c -= a * skewX, d -= b * skewX), (scaleY = Math.sqrt(c * c + d * d)) && (c /= scaleY, d /= scaleY, skewX /= scaleY), a * d < b * c && (a = -a, b = -b, skewX = -skewX, scaleX = -scaleX), {
-    translateX: e,
-    translateY: f,
-    rotate: Math.atan2(b, a) * src_transform_decompose_degrees,
-    skewX: Math.atan(skewX) * src_transform_decompose_degrees,
-    scaleX: scaleX,
-    scaleY: scaleY
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/transform/parse.js
-
-var src_transform_parse_cssNode, src_transform_parse_cssRoot, src_transform_parse_cssView, src_transform_parse_svgNode;
-function src_transform_parse_parseCss(value) {
-  return value === "none" ? src_transform_decompose_identity : (src_transform_parse_cssNode || (src_transform_parse_cssNode = document.createElement("DIV"), src_transform_parse_cssRoot = document.documentElement, src_transform_parse_cssView = document.defaultView), src_transform_parse_cssNode.style.transform = value, value = src_transform_parse_cssView.getComputedStyle(src_transform_parse_cssRoot.appendChild(src_transform_parse_cssNode), null).getPropertyValue("transform"), src_transform_parse_cssRoot.removeChild(src_transform_parse_cssNode), value = value.slice(7, -1).split(","), d3_interpolate_src_transform_decompose(+value[0], +value[1], +value[2], +value[3], +value[4], +value[5]));
-}
-function src_transform_parse_parseSvg(value) {
-  return value == null ? src_transform_decompose_identity : (src_transform_parse_svgNode || (src_transform_parse_svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g")), src_transform_parse_svgNode.setAttribute("transform", value), !(value = src_transform_parse_svgNode.transform.baseVal.consolidate())) ? src_transform_decompose_identity : (value = value.matrix, d3_interpolate_src_transform_decompose(value.a, value.b, value.c, value.d, value.e, value.f));
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/transform/index.js
-
-
-
-function d3_interpolate_src_transform_interpolateTransform(parse, pxComma, pxParen, degParen) {
-  function pop(s) {
-    return s.length ? s.pop() + " " : "";
-  }
-
-  function translate(xa, ya, xb, yb, s, q) {
-    if (xa !== xb || ya !== yb) {
-      var i = s.push("translate(", null, pxComma, null, pxParen);
-      q.push({
-        i: i - 4,
-        x: d3_zoom_node_modules_d3_interpolate_src_number(xa, xb)
-      }, {
-        i: i - 2,
-        x: d3_zoom_node_modules_d3_interpolate_src_number(ya, yb)
-      });
-    } else (xb || yb) && s.push("translate(" + xb + pxComma + yb + pxParen);
-  }
-
-  function rotate(a, b, s, q) {
-    a === b ? b && s.push(pop(s) + "rotate(" + b + degParen) : (a - b > 180 ? b += 360 : b - a > 180 && (a += 360), q.push({
-      i: s.push(pop(s) + "rotate(", null, degParen) - 2,
-      x: d3_zoom_node_modules_d3_interpolate_src_number(a, b)
-    }));
-  }
-
-  function skewX(a, b, s, q) {
-    a === b ? b && s.push(pop(s) + "skewX(" + b + degParen) : q.push({
-      i: s.push(pop(s) + "skewX(", null, degParen) - 2,
-      x: d3_zoom_node_modules_d3_interpolate_src_number(a, b)
-    });
-  }
-
-  function scale(xa, ya, xb, yb, s, q) {
-    if (xa !== xb || ya !== yb) {
-      var i = s.push(pop(s) + "scale(", null, ",", null, ")");
-      q.push({
-        i: i - 4,
-        x: d3_zoom_node_modules_d3_interpolate_src_number(xa, xb)
-      }, {
-        i: i - 2,
-        x: d3_zoom_node_modules_d3_interpolate_src_number(ya, yb)
-      });
-    } else (xb !== 1 || yb !== 1) && s.push(pop(s) + "scale(" + xb + "," + yb + ")");
-  }
-
-  return function (a, b) {
-    var s = [],
-        // string constants and placeholders
-    q = []; // number interpolators
-
-    // gc
-    return a = parse(a), b = parse(b), translate(a.translateX, a.translateY, b.translateX, b.translateY, s, q), rotate(a.rotate, b.rotate, s, q), skewX(a.skewX, b.skewX, s, q), scale(a.scaleX, a.scaleY, b.scaleX, b.scaleY, s, q), a = b = null, function (t) {
-      for (var o, i = -1, n = q.length; ++i < n;) s[(o = q[i]).i] = o.x(t);
-
-      return s.join("");
-    };
-  };
-}
-
-var d3_interpolate_src_transform_interpolateTransformCss = d3_interpolate_src_transform_interpolateTransform(src_transform_parse_parseCss, "px, ", "px)", "deg)");
-var d3_interpolate_src_transform_interpolateTransformSvg = d3_interpolate_src_transform_interpolateTransform(src_transform_parse_parseSvg, ", ", ")", ")");
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/zoom.js
-var d3_interpolate_src_zoom_rho = Math.SQRT2,
-    d3_interpolate_src_zoom_rho2 = 2,
-    d3_interpolate_src_zoom_rho4 = 4,
-    d3_interpolate_src_zoom_epsilon2 = 1e-12;
-
-function node_modules_d3_interpolate_src_zoom_cosh(x) {
-  return ((x = Math.exp(x)) + 1 / x) / 2;
-}
-
-function node_modules_d3_interpolate_src_zoom_sinh(x) {
-  return ((x = Math.exp(x)) - 1 / x) / 2;
-}
-
-function d3_interpolate_src_zoom_tanh(x) {
-  return ((x = Math.exp(2 * x)) - 1) / (x + 1);
-} // p0 = [ux0, uy0, w0]
-// p1 = [ux1, uy1, w1]
-
-
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_zoom = (function (p0, p1) {
-  var i,
-      S,
-      ux0 = p0[0],
-      uy0 = p0[1],
-      w0 = p0[2],
-      ux1 = p1[0],
-      uy1 = p1[1],
-      w1 = p1[2],
-      dx = ux1 - ux0,
-      dy = uy1 - uy0,
-      d2 = dx * dx + dy * dy; // Special case for u0 ≅ u1.
-
-  if (d2 < d3_interpolate_src_zoom_epsilon2) S = Math.log(w1 / w0) / d3_interpolate_src_zoom_rho, i = function (t) {
-    return [ux0 + t * dx, uy0 + t * dy, w0 * Math.exp(d3_interpolate_src_zoom_rho * t * S)];
-  }; // General case.
-  else {
-      var d1 = Math.sqrt(d2),
-          b0 = (w1 * w1 - w0 * w0 + d3_interpolate_src_zoom_rho4 * d2) / (2 * w0 * d3_interpolate_src_zoom_rho2 * d1),
-          b1 = (w1 * w1 - w0 * w0 - d3_interpolate_src_zoom_rho4 * d2) / (2 * w1 * d3_interpolate_src_zoom_rho2 * d1),
-          r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
-          r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
-      S = (r1 - r0) / d3_interpolate_src_zoom_rho, i = function (t) {
-        var s = t * S,
-            coshr0 = node_modules_d3_interpolate_src_zoom_cosh(r0),
-            u = w0 / (d3_interpolate_src_zoom_rho2 * d1) * (coshr0 * d3_interpolate_src_zoom_tanh(d3_interpolate_src_zoom_rho * s + r0) - node_modules_d3_interpolate_src_zoom_sinh(r0));
-        return [ux0 + u * dx, uy0 + u * dy, w0 * coshr0 / node_modules_d3_interpolate_src_zoom_cosh(d3_interpolate_src_zoom_rho * s + r0)];
-      };
-    }
-  return i.duration = S * 1e3, i;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/hsl.js
-
-
-
-function node_modules_d3_interpolate_src_hsl_hsl(hue) {
-  return function (start, end) {
-    var h = hue((start = d3_color_src_color_hsl(start)).h, (end = d3_color_src_color_hsl(end)).h),
-        s = d3_interpolate_src_color_nogamma(start.s, end.s),
-        l = d3_interpolate_src_color_nogamma(start.l, end.l),
-        opacity = d3_interpolate_src_color_nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.h = h(t), start.s = s(t), start.l = l(t), start.opacity = opacity(t), start + "";
-    };
-  };
-}
-
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_hsl = (node_modules_d3_interpolate_src_hsl_hsl(node_modules_d3_interpolate_src_color_hue));
-var d3_interpolate_src_hsl_hslLong = node_modules_d3_interpolate_src_hsl_hsl(d3_interpolate_src_color_nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/lab.js
-
-
-function d3_zoom_node_modules_d3_interpolate_src_lab_lab(start, end) {
-  var l = d3_interpolate_src_color_nogamma((start = node_modules_d3_color_src_lab_lab(start)).l, (end = node_modules_d3_color_src_lab_lab(end)).l),
-      a = d3_interpolate_src_color_nogamma(start.a, end.a),
-      b = d3_interpolate_src_color_nogamma(start.b, end.b),
-      opacity = d3_interpolate_src_color_nogamma(start.opacity, end.opacity);
-  return function (t) {
-    return start.l = l(t), start.a = a(t), start.b = b(t), start.opacity = opacity(t), start + "";
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/hcl.js
-
-
-
-function node_modules_d3_interpolate_src_hcl_hcl(hue) {
-  return function (start, end) {
-    var h = hue((start = d3_color_src_lab_hcl(start)).h, (end = d3_color_src_lab_hcl(end)).h),
-        c = d3_interpolate_src_color_nogamma(start.c, end.c),
-        l = d3_interpolate_src_color_nogamma(start.l, end.l),
-        opacity = d3_interpolate_src_color_nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.h = h(t), start.c = c(t), start.l = l(t), start.opacity = opacity(t), start + "";
-    };
-  };
-}
-
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_hcl = (node_modules_d3_interpolate_src_hcl_hcl(node_modules_d3_interpolate_src_color_hue));
-var d3_interpolate_src_hcl_hclLong = node_modules_d3_interpolate_src_hcl_hcl(d3_interpolate_src_color_nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/cubehelix.js
-
-
-
-function d3_zoom_node_modules_d3_interpolate_src_cubehelix_cubehelix(hue) {
-  return function cubehelixGamma(y) {
-    function cubehelix(start, end) {
-      var h = hue((start = d3_zoom_node_modules_d3_color_src_cubehelix_cubehelix(start)).h, (end = d3_zoom_node_modules_d3_color_src_cubehelix_cubehelix(end)).h),
-          s = d3_interpolate_src_color_nogamma(start.s, end.s),
-          l = d3_interpolate_src_color_nogamma(start.l, end.l),
-          opacity = d3_interpolate_src_color_nogamma(start.opacity, end.opacity);
-      return function (t) {
-        return start.h = h(t), start.s = s(t), start.l = l(Math.pow(t, y)), start.opacity = opacity(t), start + "";
-      };
-    }
-
-    return y = +y, cubehelix.gamma = cubehelixGamma, cubehelix;
-  }(1);
-}
-
-/* harmony default export */ var d3_zoom_node_modules_d3_interpolate_src_cubehelix = (d3_zoom_node_modules_d3_interpolate_src_cubehelix_cubehelix(node_modules_d3_interpolate_src_color_hue));
-var d3_interpolate_src_cubehelix_cubehelixLong = d3_zoom_node_modules_d3_interpolate_src_cubehelix_cubehelix(d3_interpolate_src_color_nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/piecewise.js
-function node_modules_d3_interpolate_src_piecewise_piecewise(interpolate, values) {
-  for (var i = 0, n = values.length - 1, v = values[0], I = Array(n < 0 ? 0 : n); i < n;) I[i] = interpolate(v, v = values[++i]);
-
-  return function (t) {
-    var i = Math.max(0, Math.min(n - 1, Math.floor(t *= n)));
-    return I[i](t - i);
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/quantize.js
-/* harmony default export */ var node_modules_d3_interpolate_src_quantize = (function (interpolator, n) {
-  for (var samples = Array(n), i = 0; i < n; ++i) samples[i] = interpolator(i / (n - 1));
-
-  return samples;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-interpolate/src/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/schedule.js
-
-
-var transition_schedule_emptyOn = src_dispatch("start", "end", "cancel", "interrupt"),
-    transition_schedule_emptyTween = [];
-var transition_schedule_CREATED = 0;
-var transition_schedule_SCHEDULED = 1;
-var transition_schedule_STARTING = 2;
-var transition_schedule_STARTED = 3;
-var transition_schedule_RUNNING = 4;
-var transition_schedule_ENDING = 5;
-var transition_schedule_ENDED = 6;
-/* harmony default export */ var d3_transition_src_transition_schedule = (function (node, name, id, index, group, timing) {
-  var schedules = node.__transition;
-  if (!schedules) node.__transition = {};else if (id in schedules) return;
-  src_transition_schedule_create(node, id, {
-    name: name,
-    index: index,
-    // For context during callback.
-    group: group,
-    // For context during callback.
-    on: transition_schedule_emptyOn,
-    tween: transition_schedule_emptyTween,
-    time: timing.time,
-    delay: timing.delay,
-    duration: timing.duration,
-    ease: timing.ease,
-    timer: null,
-    state: transition_schedule_CREATED
-  });
-});
-function src_transition_schedule_init(node, id) {
-  var schedule = src_transition_schedule_get(node, id);
-  if (schedule.state > transition_schedule_CREATED) throw new Error("too late; already scheduled");
-  return schedule;
-}
-function src_transition_schedule_set(node, id) {
-  var schedule = src_transition_schedule_get(node, id);
-  if (schedule.state > transition_schedule_STARTED) throw new Error("too late; already running");
-  return schedule;
-}
-function src_transition_schedule_get(node, id) {
-  var schedule = node.__transition;
-  if (!schedule || !(schedule = schedule[id])) throw new Error("transition not found");
-  return schedule;
-}
-
-function src_transition_schedule_create(node, id, self) {
-  function start(elapsed) {
-    var i, j, n, o; // If the state is not SCHEDULED, then we previously errored on start.
-
-    if (self.state !== transition_schedule_SCHEDULED) return stop();
-
-    for (i in schedules) if (o = schedules[i], o.name === self.name) {
-      // While this element already has a starting transition during this frame,
-      // defer starting an interrupting transition until that transition has a
-      // chance to tick (and possibly end); see d3/d3-transition#54!
-      if (o.state === transition_schedule_STARTED) return src_timeout(start); // Interrupt the active transition, if any.
-
-      o.state === transition_schedule_RUNNING ? (o.state = transition_schedule_ENDED, o.timer.stop(), o.on.call("interrupt", node, node.__data__, o.index, o.group), delete schedules[i]) : +i < id && (o.state = transition_schedule_ENDED, o.timer.stop(), o.on.call("cancel", node, node.__data__, o.index, o.group), delete schedules[i]);
-    } // Defer the first tick to end of the current frame; see d3/d3#1576.
-    // Note the transition may be canceled after start and before the first tick!
-    // Note this must be scheduled before the start event; see d3/d3-transition#16!
-    // Assuming this is successful, subsequent callbacks go straight to tick.
-
-
-    if (src_timeout(function () {
-      self.state === transition_schedule_STARTED && (self.state = transition_schedule_RUNNING, self.timer.restart(tick, self.delay, self.time), tick(elapsed));
-    }), self.state = transition_schedule_STARTING, self.on.call("start", node, node.__data__, self.index, self.group), self.state === transition_schedule_STARTING) {
-      for (self.state = transition_schedule_STARTED, tween = Array(n = self.tween.length), (i = 0, j = -1); i < n; ++i) (o = self.tween[i].value.call(node, node.__data__, self.index, self.group)) && (tween[++j] = o);
-
-      tween.length = j + 1;
-    } // interrupted
-
-  }
-
-  function tick(elapsed) {
-    for (var t = elapsed < self.duration ? self.ease.call(null, elapsed / self.duration) : (self.timer.restart(stop), self.state = transition_schedule_ENDING, 1), i = -1, n = tween.length; ++i < n;) tween[i].call(node, t); // Dispatch the end event.
-
-
-    self.state === transition_schedule_ENDING && (self.on.call("end", node, node.__data__, self.index, self.group), stop());
-  }
-
-  function stop() {
-    for (var i in self.state = transition_schedule_ENDED, self.timer.stop(), delete schedules[id], schedules) return; // eslint-disable-line no-unused-vars
-
-
-    delete node.__transition;
-  }
-
-  var tween,
-      schedules = node.__transition; // Initialize the self timer when the transition is created.
-  // Note the actual delay is not known until the first callback!
-
-  schedules[id] = self, self.timer = timer(function (elapsed) {
-    self.state = transition_schedule_SCHEDULED, self.timer.restart(start, self.delay, self.time), self.delay <= elapsed && start(elapsed - self.delay);
-  }, 0, self.time);
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/interrupt.js
-
-/* harmony default export */ var d3_transition_src_interrupt = (function (node, name) {
-  var schedule,
-      active,
-      i,
-      schedules = node.__transition,
-      empty = !0;
-
-  if (schedules) {
-    for (i in name = name == null ? null : name + "", schedules) {
-      if ((schedule = schedules[i]).name !== name) {
-        empty = !1;
-        continue;
-      }
-
-      active = schedule.state > transition_schedule_STARTING && schedule.state < transition_schedule_ENDING, schedule.state = transition_schedule_ENDED, schedule.timer.stop(), schedule.on.call(active ? "interrupt" : "cancel", node, node.__data__, schedule.index, schedule.group), delete schedules[i];
-    }
-
-    empty && delete node.__transition;
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/selection/interrupt.js
-
-/* harmony default export */ var d3_transition_src_selection_interrupt = (function (name) {
-  return this.each(function () {
-    d3_transition_src_interrupt(this, name);
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/tween.js
-
-
-function transition_tween_tweenRemove(id, name) {
-  var tween0, tween1;
-  return function () {
-    var schedule = src_transition_schedule_set(this, id),
-        tween = schedule.tween; // If this node shared tween with the previous node,
-    // just assign the updated shared tween and we’re done!
-    // Otherwise, copy-on-write.
-
-    if (tween !== tween0) {
-      tween1 = tween0 = tween;
-
-      for (var i = 0, n = tween1.length; i < n; ++i) if (tween1[i].name === name) {
-        tween1 = tween1.slice(), tween1.splice(i, 1);
-        break;
-      }
-    }
-
-    schedule.tween = tween1;
-  };
-}
-
-function transition_tween_tweenFunction(id, name, value) {
-  var tween0, tween1;
-  if (typeof value !== "function") throw new Error();
-  return function () {
-    var schedule = src_transition_schedule_set(this, id),
-        tween = schedule.tween; // If this node shared tween with the previous node,
-    // just assign the updated shared tween and we’re done!
-    // Otherwise, copy-on-write.
-
-    if (tween !== tween0) {
-      tween1 = (tween0 = tween).slice();
-
-      for (var t = {
-        name: name,
-        value: value
-      }, i = 0, n = tween1.length; i < n; ++i) if (tween1[i].name === name) {
-        tween1[i] = t;
-        break;
-      }
-
-      i === n && tween1.push(t);
-    }
-
-    schedule.tween = tween1;
-  };
-}
-
-/* harmony default export */ var d3_transition_src_transition_tween = (function (name, value) {
-  var id = this._id;
-
-  if (name += "", arguments.length < 2) {
-    for (var t, tween = src_transition_schedule_get(this.node(), id).tween, i = 0, n = tween.length; i < n; ++i) if ((t = tween[i]).name === name) return t.value;
-
-    return null;
-  }
-
-  return this.each((value == null ? transition_tween_tweenRemove : transition_tween_tweenFunction)(id, name, value));
-});
-function transition_tween_tweenValue(transition, name, value) {
-  var id = transition._id;
-  return transition.each(function () {
-    var schedule = src_transition_schedule_set(this, id);
-    (schedule.value || (schedule.value = {}))[name] = value.apply(this, arguments);
-  }), function (node) {
-    return src_transition_schedule_get(node, id).value[name];
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/interpolate.js
-
-
-/* harmony default export */ var d3_transition_src_transition_interpolate = (function (a, b) {
-  var c;
-  return (typeof b === "number" ? d3_zoom_node_modules_d3_interpolate_src_number : b instanceof node_modules_d3_color_src_color_color ? d3_zoom_node_modules_d3_interpolate_src_rgb : (c = node_modules_d3_color_src_color_color(b)) ? (b = c, d3_zoom_node_modules_d3_interpolate_src_rgb) : d3_zoom_node_modules_d3_interpolate_src_string)(a, b);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/attr.js
-
-
-
-
-
-function d3_transition_src_transition_attr_attrRemove(name) {
-  return function () {
-    this.removeAttribute(name);
-  };
-}
-
-function d3_transition_src_transition_attr_attrRemoveNS(fullname) {
-  return function () {
-    this.removeAttributeNS(fullname.space, fullname.local);
-  };
-}
-
-function d3_transition_src_transition_attr_attrConstant(name, interpolate, value1) {
-  var string00, interpolate0;
-  return function () {
-    var string0 = this.getAttribute(name);
-    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-
-function d3_transition_src_transition_attr_attrConstantNS(fullname, interpolate, value1) {
-  var string00, interpolate0;
-  return function () {
-    var string0 = this.getAttributeNS(fullname.space, fullname.local);
-    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-
-function d3_transition_src_transition_attr_attrFunction(name, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0,
-        string1,
-        value1 = value(this);
-    return value1 == null ? void this.removeAttribute(name) : (string0 = this.getAttribute(name), string1 = value1 + "", string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1)));
-  };
-}
-
-function d3_transition_src_transition_attr_attrFunctionNS(fullname, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0,
-        string1,
-        value1 = value(this);
-    return value1 == null ? void this.removeAttributeNS(fullname.space, fullname.local) : (string0 = this.getAttributeNS(fullname.space, fullname.local), string1 = value1 + "", string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1)));
-  };
-}
-
-/* harmony default export */ var d3_transition_src_transition_attr = (function (name, value) {
-  var fullname = d3_selection_src_namespace(name),
-      i = fullname === "transform" ? d3_interpolate_src_transform_interpolateTransformSvg : d3_transition_src_transition_interpolate;
-  return this.attrTween(name, typeof value === "function" ? (fullname.local ? d3_transition_src_transition_attr_attrFunctionNS : d3_transition_src_transition_attr_attrFunction)(fullname, i, transition_tween_tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? d3_transition_src_transition_attr_attrRemoveNS : d3_transition_src_transition_attr_attrRemove)(fullname) : (fullname.local ? d3_transition_src_transition_attr_attrConstantNS : d3_transition_src_transition_attr_attrConstant)(fullname, i, value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/attrTween.js
-
-
-function transition_attrTween_attrInterpolate(name, i) {
-  return function (t) {
-    this.setAttribute(name, i.call(this, t));
-  };
-}
-
-function transition_attrTween_attrInterpolateNS(fullname, i) {
-  return function (t) {
-    this.setAttributeNS(fullname.space, fullname.local, i.call(this, t));
-  };
-}
-
-function transition_attrTween_attrTweenNS(fullname, value) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t0 = (i0 = i) && transition_attrTween_attrInterpolateNS(fullname, i)), t0;
-  }
-
-  var t0, i0;
-  return tween._value = value, tween;
-}
-
-function transition_attrTween_attrTween(name, value) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t0 = (i0 = i) && transition_attrTween_attrInterpolate(name, i)), t0;
-  }
-
-  var t0, i0;
-  return tween._value = value, tween;
-}
-
-/* harmony default export */ var d3_transition_src_transition_attrTween = (function (name, value) {
-  var key = "attr." + name;
-  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  var fullname = d3_selection_src_namespace(name);
-  return this.tween(key, (fullname.local ? transition_attrTween_attrTweenNS : transition_attrTween_attrTween)(fullname, value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/delay.js
-
-
-function transition_delay_delayFunction(id, value) {
-  return function () {
-    src_transition_schedule_init(this, id).delay = +value.apply(this, arguments);
-  };
-}
-
-function transition_delay_delayConstant(id, value) {
-  return value = +value, function () {
-    src_transition_schedule_init(this, id).delay = value;
-  };
-}
-
-/* harmony default export */ var d3_transition_src_transition_delay = (function (value) {
-  var id = this._id;
-  return arguments.length ? this.each((typeof value === "function" ? transition_delay_delayFunction : transition_delay_delayConstant)(id, value)) : src_transition_schedule_get(this.node(), id).delay;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/duration.js
-
-
-function transition_duration_durationFunction(id, value) {
-  return function () {
-    src_transition_schedule_set(this, id).duration = +value.apply(this, arguments);
-  };
-}
-
-function transition_duration_durationConstant(id, value) {
-  return value = +value, function () {
-    src_transition_schedule_set(this, id).duration = value;
-  };
-}
-
-/* harmony default export */ var d3_transition_src_transition_duration = (function (value) {
-  var id = this._id;
-  return arguments.length ? this.each((typeof value === "function" ? transition_duration_durationFunction : transition_duration_durationConstant)(id, value)) : src_transition_schedule_get(this.node(), id).duration;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/ease.js
-
-
-function transition_ease_easeConstant(id, value) {
-  if (typeof value !== "function") throw new Error();
-  return function () {
-    src_transition_schedule_set(this, id).ease = value;
-  };
-}
-
-/* harmony default export */ var src_transition_ease = (function (value) {
-  var id = this._id;
-  return arguments.length ? this.each(transition_ease_easeConstant(id, value)) : src_transition_schedule_get(this.node(), id).ease;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/filter.js
-
-
-/* harmony default export */ var d3_transition_src_transition_filter = (function (match) {
-  typeof match !== "function" && (match = d3_selection_src_matcher(match));
-
-  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, subgroup = subgroups[j] = [], i = 0; i < n; ++i) (node = group[i]) && match.call(node, node.__data__, i, group) && subgroup.push(node);
-
-  return new src_transition_Transition(subgroups, this._parents, this._name, this._id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/merge.js
-
-/* harmony default export */ var d3_transition_src_transition_merge = (function (transition) {
-  if (transition._id !== this._id) throw new Error();
-
-  for (var groups0 = this._groups, groups1 = transition._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = Array(m0), j = 0; j < m; ++j) for (var node, group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = Array(n), i = 0; i < n; ++i) (node = group0[i] || group1[i]) && (merge[i] = node);
-
-  for (; j < m0; ++j) merges[j] = groups0[j];
-
-  return new src_transition_Transition(merges, this._parents, this._name, this._id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/on.js
-
-
-function src_transition_on_start(name) {
-  return (name + "").trim().split(/^|\s+/).every(function (t) {
-    var i = t.indexOf(".");
-    return i >= 0 && (t = t.slice(0, i)), !t || t === "start";
-  });
-}
-
-function transition_on_onFunction(id, name, listener) {
-  var on0,
-      on1,
-      sit = src_transition_on_start(name) ? src_transition_schedule_init : src_transition_schedule_set;
-  return function () {
-    var schedule = sit(this, id),
-        on = schedule.on; // If this node shared a dispatch with the previous node,
-    // just assign the updated shared dispatch and we’re done!
-    // Otherwise, copy-on-write.
-
-    on !== on0 && (on1 = (on0 = on).copy()).on(name, listener), schedule.on = on1;
-  };
-}
-
-/* harmony default export */ var d3_transition_src_transition_on = (function (name, listener) {
-  var id = this._id;
-  return arguments.length < 2 ? src_transition_schedule_get(this.node(), id).on.on(name) : this.each(transition_on_onFunction(id, name, listener));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/remove.js
-function transition_remove_removeFunction(id) {
-  return function () {
-    var parent = this.parentNode;
-
-    for (var i in this.__transition) if (+i !== id) return;
-
-    parent && parent.removeChild(this);
-  };
-}
-
-/* harmony default export */ var d3_transition_src_transition_remove = (function () {
-  return this.on("end.remove", transition_remove_removeFunction(this._id));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/select.js
-
-
-
-/* harmony default export */ var d3_transition_src_transition_select = (function (select) {
-  var name = this._name,
-      id = this._id;
-  typeof select !== "function" && (select = node_modules_d3_selection_src_selector(select));
-
-  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, subnode, group = groups[j], n = group.length, subgroup = subgroups[j] = Array(n), i = 0; i < n; ++i) (node = group[i]) && (subnode = select.call(node, node.__data__, i, group)) && ("__data__" in node && (subnode.__data__ = node.__data__), subgroup[i] = subnode, d3_transition_src_transition_schedule(subgroup[i], name, id, i, subgroup, src_transition_schedule_get(node, id)));
-
-  return new src_transition_Transition(subgroups, this._parents, name, id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/selectAll.js
-
-
-
-/* harmony default export */ var d3_transition_src_transition_selectAll = (function (select) {
-  var name = this._name,
-      id = this._id;
-  typeof select !== "function" && (select = d3_selection_src_selectorAll(select));
-
-  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) if (node = group[i]) {
-    for (var child, children = select.call(node, node.__data__, i, group), inherit = src_transition_schedule_get(node, id), k = 0, l = children.length; k < l; ++k) (child = children[k]) && d3_transition_src_transition_schedule(child, name, id, k, children, inherit);
-
-    subgroups.push(children), parents.push(node);
-  }
-
-  return new src_transition_Transition(subgroups, parents, name, id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/selection.js
-
-var d3_transition_src_transition_selection_Selection = node_modules_d3_selection_src_selection.prototype.constructor;
-/* harmony default export */ var d3_transition_src_transition_selection = (function () {
-  return new d3_transition_src_transition_selection_Selection(this._groups, this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/style.js
-
-
-
-
-
-
-function transition_style_styleNull(name, interpolate) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0 = selection_style_styleValue(this, name),
-        string1 = (this.style.removeProperty(name), selection_style_styleValue(this, name));
-    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : interpolate0 = interpolate(string00 = string0, string10 = string1);
-  };
-}
-
-function d3_transition_src_transition_style_styleRemove(name) {
-  return function () {
-    this.style.removeProperty(name);
-  };
-}
-
-function d3_transition_src_transition_style_styleConstant(name, interpolate, value1) {
-  var string00, interpolate0;
-  return function () {
-    var string0 = selection_style_styleValue(this, name);
-    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-
-function d3_transition_src_transition_style_styleFunction(name, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0 = selection_style_styleValue(this, name),
-        value1 = value(this),
-        string1 = value1 + "";
-    return value1 == null && (string1 = value1 = (this.style.removeProperty(name), selection_style_styleValue(this, name))), string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
-  };
-}
-
-function transition_style_styleMaybeRemove(id, name) {
-  var on0,
-      on1,
-      listener0,
-      remove,
-      key = "style." + name;
-  return function () {
-    var schedule = src_transition_schedule_set(this, id),
-        on = schedule.on,
-        listener = schedule.value[key] == null ? remove || (remove = d3_transition_src_transition_style_styleRemove(name)) : undefined; // If this node shared a dispatch with the previous node,
-    // just assign the updated shared dispatch and we’re done!
-    // Otherwise, copy-on-write.
-
-    (on !== on0 || listener0 !== listener) && (on1 = (on0 = on).copy()).on("end." + key, listener0 = listener), schedule.on = on1;
-  };
-}
-
-/* harmony default export */ var d3_transition_src_transition_style = (function (name, value, priority) {
-  var i = (name += "") === "transform" ? d3_interpolate_src_transform_interpolateTransformCss : d3_transition_src_transition_interpolate;
-  return value == null ? this.styleTween(name, transition_style_styleNull(name, i)).on("end.style." + name, d3_transition_src_transition_style_styleRemove(name)) : typeof value === "function" ? this.styleTween(name, d3_transition_src_transition_style_styleFunction(name, i, transition_tween_tweenValue(this, "style." + name, value))).each(transition_style_styleMaybeRemove(this._id, name)) : this.styleTween(name, d3_transition_src_transition_style_styleConstant(name, i, value), priority).on("end.style." + name, null);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/styleTween.js
-function transition_styleTween_styleInterpolate(name, i, priority) {
-  return function (t) {
-    this.style.setProperty(name, i.call(this, t), priority);
-  };
-}
-
-function transition_styleTween_styleTween(name, value, priority) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t = (i0 = i) && transition_styleTween_styleInterpolate(name, i, priority)), t;
-  }
-
-  var t, i0;
-  return tween._value = value, tween;
-}
-
-/* harmony default export */ var d3_transition_src_transition_styleTween = (function (name, value, priority) {
-  var key = "style." + (name += "");
-  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  return this.tween(key, transition_styleTween_styleTween(name, value, priority == null ? "" : priority));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/text.js
-
-
-function d3_transition_src_transition_text_textConstant(value) {
-  return function () {
-    this.textContent = value;
-  };
-}
-
-function d3_transition_src_transition_text_textFunction(value) {
-  return function () {
-    var value1 = value(this);
-    this.textContent = value1 == null ? "" : value1;
-  };
-}
-
-/* harmony default export */ var d3_transition_src_transition_text = (function (value) {
-  return this.tween("text", typeof value === "function" ? d3_transition_src_transition_text_textFunction(transition_tween_tweenValue(this, "text", value)) : d3_transition_src_transition_text_textConstant(value == null ? "" : value + ""));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/textTween.js
-function transition_textTween_textInterpolate(i) {
-  return function (t) {
-    this.textContent = i.call(this, t);
-  };
-}
-
-function transition_textTween_textTween(value) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t0 = (i0 = i) && transition_textTween_textInterpolate(i)), t0;
-  }
-
-  var t0, i0;
-  return tween._value = value, tween;
-}
-
-/* harmony default export */ var d3_transition_src_transition_textTween = (function (value) {
-  var key = "text";
-  if (arguments.length < 1) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  return this.tween(key, transition_textTween_textTween(value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/transition.js
-
-
-/* harmony default export */ var d3_zoom_node_modules_d3_transition_src_transition_transition = (function () {
-  for (var name = this._name, id0 = this._id, id1 = src_transition_newId(), groups = this._groups, m = groups.length, j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) if (node = group[i]) {
-    var inherit = src_transition_schedule_get(node, id0);
-    d3_transition_src_transition_schedule(node, name, id1, i, group, {
-      time: inherit.time + inherit.delay + inherit.duration,
-      delay: 0,
-      duration: inherit.duration,
-      ease: inherit.ease
-    });
-  }
-
-  return new src_transition_Transition(groups, this._parents, name, id1);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/end.js
-
-/* harmony default export */ var d3_transition_src_transition_end = (function () {
-  var on0,
-      on1,
-      that = this,
-      id = that._id,
-      size = that.size();
-  return new Promise(function (resolve, reject) {
-    var cancel = {
-      value: reject
-    },
-        end = {
-      value: function value() {
-        --size === 0 && resolve();
-      }
-    };
-    that.each(function () {
-      var schedule = src_transition_schedule_set(this, id),
-          on = schedule.on; // If this node shared a dispatch with the previous node,
-      // just assign the updated shared dispatch and we’re done!
-      // Otherwise, copy-on-write.
-
-      on !== on0 && (on1 = (on0 = on).copy(), on1._.cancel.push(cancel), on1._.interrupt.push(cancel), on1._.end.push(end)), schedule.on = on1;
-    });
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/transition/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var d3_transition_src_transition_id = 0;
-function src_transition_Transition(groups, parents, name, id) {
-  this._groups = groups, this._parents = parents, this._name = name, this._id = id;
-}
-function node_modules_d3_zoom_node_modules_d3_transition_src_transition_transition(name) {
-  return node_modules_d3_selection_src_selection().transition(name);
-}
-function src_transition_newId() {
-  return ++d3_transition_src_transition_id;
-}
-var src_transition_selection_prototype = node_modules_d3_selection_src_selection.prototype;
-src_transition_Transition.prototype = node_modules_d3_zoom_node_modules_d3_transition_src_transition_transition.prototype = {
-  constructor: src_transition_Transition,
-  select: d3_transition_src_transition_select,
-  selectAll: d3_transition_src_transition_selectAll,
-  filter: d3_transition_src_transition_filter,
-  merge: d3_transition_src_transition_merge,
-  selection: d3_transition_src_transition_selection,
-  transition: d3_zoom_node_modules_d3_transition_src_transition_transition,
-  call: src_transition_selection_prototype.call,
-  nodes: src_transition_selection_prototype.nodes,
-  node: src_transition_selection_prototype.node,
-  size: src_transition_selection_prototype.size,
-  empty: src_transition_selection_prototype.empty,
-  each: src_transition_selection_prototype.each,
-  on: d3_transition_src_transition_on,
-  attr: d3_transition_src_transition_attr,
-  attrTween: d3_transition_src_transition_attrTween,
-  style: d3_transition_src_transition_style,
-  styleTween: d3_transition_src_transition_styleTween,
-  text: d3_transition_src_transition_text,
-  textTween: d3_transition_src_transition_textTween,
-  remove: d3_transition_src_transition_remove,
-  tween: d3_transition_src_transition_tween,
-  delay: d3_transition_src_transition_delay,
-  duration: d3_transition_src_transition_duration,
-  ease: src_transition_ease,
-  end: d3_transition_src_transition_end
-};
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/linear.js
-function node_modules_d3_ease_src_linear_linear(t) {
-  return +t;
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/quad.js
-function src_quad_quadIn(t) {
-  return t * t;
-}
-function src_quad_quadOut(t) {
-  return t * (2 - t);
-}
-function src_quad_quadInOut(t) {
-  return ((t *= 2) <= 1 ? t * t : --t * (2 - t) + 1) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/cubic.js
-function src_cubic_cubicIn(t) {
-  return t * t * t;
-}
-function src_cubic_cubicOut(t) {
-  return --t * t * t + 1;
-}
-function src_cubic_cubicInOut(t) {
-  return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/poly.js
-var d3_ease_src_poly_exponent = 3;
-var src_poly_polyIn = function custom(e) {
-  function polyIn(t) {
-    return Math.pow(t, e);
-  }
-
-  return e = +e, polyIn.exponent = custom, polyIn;
-}(3);
-var src_poly_polyOut = function custom(e) {
-  function polyOut(t) {
-    return 1 - Math.pow(1 - t, e);
-  }
-
-  return e = +e, polyOut.exponent = custom, polyOut;
-}(3);
-var src_poly_polyInOut = function custom(e) {
-  function polyInOut(t) {
-    return ((t *= 2) <= 1 ? Math.pow(t, e) : 2 - Math.pow(2 - t, e)) / 2;
-  }
-
-  return e = +e, polyInOut.exponent = custom, polyInOut;
-}(3);
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/sin.js
-var src_sin_pi = Math.PI,
-    src_sin_halfPi = src_sin_pi / 2;
-function src_sin_sinIn(t) {
-  return 1 - Math.cos(t * src_sin_halfPi);
-}
-function src_sin_sinOut(t) {
-  return Math.sin(t * src_sin_halfPi);
-}
-function src_sin_sinInOut(t) {
-  return (1 - Math.cos(src_sin_pi * t)) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/exp.js
-function src_exp_expIn(t) {
-  return Math.pow(2, 10 * t - 10);
-}
-function src_exp_expOut(t) {
-  return 1 - Math.pow(2, -10 * t);
-}
-function src_exp_expInOut(t) {
-  return ((t *= 2) <= 1 ? Math.pow(2, 10 * t - 10) : 2 - Math.pow(2, 10 - 10 * t)) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/circle.js
-function src_circle_circleIn(t) {
-  return 1 - Math.sqrt(1 - t * t);
-}
-function src_circle_circleOut(t) {
-  return Math.sqrt(1 - --t * t);
-}
-function src_circle_circleInOut(t) {
-  return ((t *= 2) <= 1 ? 1 - Math.sqrt(1 - t * t) : Math.sqrt(1 - (t -= 2) * t) + 1) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/bounce.js
-var src_bounce_b1 = 4 / 11,
-    src_bounce_b2 = 6 / 11,
-    src_bounce_b3 = 8 / 11,
-    src_bounce_b4 = 3 / 4,
-    src_bounce_b5 = 9 / 11,
-    src_bounce_b6 = 10 / 11,
-    src_bounce_b7 = 15 / 16,
-    src_bounce_b8 = 21 / 22,
-    src_bounce_b9 = 63 / 64,
-    src_bounce_b0 = 1 / src_bounce_b1 / src_bounce_b1;
-function src_bounce_bounceIn(t) {
-  return 1 - src_bounce_bounceOut(1 - t);
-}
-function src_bounce_bounceOut(t) {
-  return (t = +t) < src_bounce_b1 ? src_bounce_b0 * t * t : t < src_bounce_b3 ? src_bounce_b0 * (t -= src_bounce_b2) * t + src_bounce_b4 : t < src_bounce_b6 ? src_bounce_b0 * (t -= src_bounce_b5) * t + src_bounce_b7 : src_bounce_b0 * (t -= src_bounce_b8) * t + src_bounce_b9;
-}
-function src_bounce_bounceInOut(t) {
-  return ((t *= 2) <= 1 ? 1 - src_bounce_bounceOut(1 - t) : src_bounce_bounceOut(t - 1) + 1) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/back.js
-var src_back_overshoot = 1.70158;
-var src_back_backIn = function custom(s) {
-  function backIn(t) {
-    return t * t * ((s + 1) * t - s);
-  }
-
-  return s = +s, backIn.overshoot = custom, backIn;
-}(src_back_overshoot);
-var src_back_backOut = function custom(s) {
-  function backOut(t) {
-    return --t * t * ((s + 1) * t + s) + 1;
-  }
-
-  return s = +s, backOut.overshoot = custom, backOut;
-}(src_back_overshoot);
-var src_back_backInOut = function custom(s) {
-  function backInOut(t) {
-    return ((t *= 2) < 1 ? t * t * ((s + 1) * t - s) : (t -= 2) * t * ((s + 1) * t + s) + 2) / 2;
-  }
-
-  return s = +s, backInOut.overshoot = custom, backInOut;
-}(src_back_overshoot);
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/elastic.js
-var src_elastic_tau = 2 * Math.PI,
-    src_elastic_amplitude = 1,
-    src_elastic_period = .3;
-var src_elastic_elasticIn = function custom(a, p) {
-  function elasticIn(t) {
-    return a * Math.pow(2, 10 * --t) * Math.sin((s - t) / p);
-  }
-
-  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= src_elastic_tau);
-  return elasticIn.amplitude = function (a) {
-    return custom(a, p * src_elastic_tau);
-  }, elasticIn.period = function (p) {
-    return custom(a, p);
-  }, elasticIn;
-}(1, src_elastic_period);
-var src_elastic_elasticOut = function custom(a, p) {
-  function elasticOut(t) {
-    return 1 - a * Math.pow(2, -10 * (t = +t)) * Math.sin((t + s) / p);
-  }
-
-  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= src_elastic_tau);
-  return elasticOut.amplitude = function (a) {
-    return custom(a, p * src_elastic_tau);
-  }, elasticOut.period = function (p) {
-    return custom(a, p);
-  }, elasticOut;
-}(1, src_elastic_period);
-var src_elastic_elasticInOut = function custom(a, p) {
-  function elasticInOut(t) {
-    return ((t = t * 2 - 1) < 0 ? a * Math.pow(2, 10 * t) * Math.sin((s - t) / p) : 2 - a * Math.pow(2, -10 * t) * Math.sin((s + t) / p)) / 2;
-  }
-
-  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= src_elastic_tau);
-  return elasticInOut.amplitude = function (a) {
-    return custom(a, p * src_elastic_tau);
-  }, elasticInOut.period = function (p) {
-    return custom(a, p);
-  }, elasticInOut;
-}(1, src_elastic_period);
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-ease/src/index.js
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/selection/transition.js
-
-
-
-
-var selection_transition_defaultTiming = {
-  time: null,
-  // Set on use.
-  delay: 0,
-  duration: 250,
-  ease: src_cubic_cubicInOut
-};
-
-function src_selection_transition_inherit(node, id) {
-  for (var timing; !(timing = node.__transition) || !(timing = timing[id]);) if (!(node = node.parentNode)) return selection_transition_defaultTiming.time = now(), selection_transition_defaultTiming;
-
-  return timing;
-}
-
-/* harmony default export */ var d3_transition_src_selection_transition = (function (name) {
-  var id, timing;
-  name instanceof src_transition_Transition ? (id = name._id, name = name._name) : (id = src_transition_newId(), (timing = selection_transition_defaultTiming).time = now(), name = name == null ? null : name + "");
-
-  for (var groups = this._groups, m = groups.length, j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) (node = group[i]) && d3_transition_src_transition_schedule(node, name, id, i, group, timing || src_selection_transition_inherit(node, id));
-
-  return new src_transition_Transition(groups, this._parents, name, id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/selection/index.js
-
-
-
-node_modules_d3_selection_src_selection.prototype.interrupt = d3_transition_src_selection_interrupt, node_modules_d3_selection_src_selection.prototype.transition = d3_transition_src_selection_transition;
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/active.js
-
-
-var d3_transition_src_active_root = [null];
-/* harmony default export */ var node_modules_d3_transition_src_active = (function (node, name) {
-  var schedule,
-      i,
-      schedules = node.__transition;
-  if (schedules) for (i in name = name == null ? null : name + "", schedules) if ((schedule = schedules[i]).state > transition_schedule_SCHEDULED && schedule.name === name) return new src_transition_Transition([[node]], d3_transition_src_active_root, name, +i);
-  return null;
-});
-// CONCATENATED MODULE: ./node_modules/d3-zoom/node_modules/d3-transition/src/index.js
-
-
-
-
 // CONCATENATED MODULE: ./node_modules/d3-zoom/src/constant.js
 /* harmony default export */ var d3_zoom_src_constant = (function (x) {
   return function () {
@@ -38108,11 +30607,11 @@ function transform_transform(node) {
 }
 // CONCATENATED MODULE: ./node_modules/d3-zoom/src/noevent.js
 
-function d3_zoom_src_noevent_nopropagation() {
-  src_selection_on_event.stopImmediatePropagation();
+function src_noevent_nopropagation() {
+  on_event.stopImmediatePropagation();
 }
 /* harmony default export */ var d3_zoom_src_noevent = (function () {
-  src_selection_on_event.preventDefault(), src_selection_on_event.stopImmediatePropagation();
+  on_event.preventDefault(), on_event.stopImmediatePropagation();
 });
 // CONCATENATED MODULE: ./node_modules/d3-zoom/src/zoom.js
 
@@ -38126,7 +30625,7 @@ function d3_zoom_src_noevent_nopropagation() {
  // Ignore right-click, since that should open the context menu.
 
 function zoom_defaultFilter() {
-  return !src_selection_on_event.ctrlKey && !src_selection_on_event.button;
+  return !on_event.ctrlKey && !on_event.button;
 }
 
 function zoom_defaultExtent() {
@@ -38139,7 +30638,7 @@ function defaultTransform() {
 }
 
 function defaultWheelDelta() {
-  return -src_selection_on_event.deltaY * (src_selection_on_event.deltaMode === 1 ? .05 : src_selection_on_event.deltaMode ? 1 : .002);
+  return -on_event.deltaY * (on_event.deltaMode === 1 ? .05 : on_event.deltaMode ? 1 : .002);
 }
 
 function zoom_defaultTouchable() {
@@ -38217,14 +30716,14 @@ function defaultConstrain(transform, extent, translateExtent) {
       var g = gesture(this, arguments),
           t = this.__zoom,
           k = Math.max(scaleExtent[0], Math.min(scaleExtent[1], t.k * Math.pow(2, wheelDelta.apply(this, arguments)))),
-          p = node_modules_d3_selection_src_mouse(this); // If the mouse is in the same location as before, reuse it.
+          p = src_mouse(this); // If the mouse is in the same location as before, reuse it.
       // If there were recent wheel events, reset the wheel idle timeout.
 
       if (g.wheel) (g.mouse[0][0] !== p[0] || g.mouse[0][1] !== p[1]) && (g.mouse[1] = t.invert(g.mouse[0] = p)), clearTimeout(g.wheel); // If this wheel event won’t trigger a transform change, ignore it.
       else {
           if (t.k === k) return; // Otherwise, capture the mouse point and location at the start.
 
-          g.mouse = [p, t.invert(p)], d3_transition_src_interrupt(this), g.start();
+          g.mouse = [p, t.invert(p)], interrupt(this), g.start();
         }
       d3_zoom_src_noevent(), g.wheel = setTimeout(wheelidled, 150), g.zoom("mouse", constrain(translate(scale(t, k), g.mouse[0], g.mouse[1]), g.extent, translateExtent));
     }
@@ -38233,36 +30732,36 @@ function defaultConstrain(transform, extent, translateExtent) {
   function mousedowned() {
     function mousemoved() {
       if (d3_zoom_src_noevent(), !g.moved) {
-        var dx = src_selection_on_event.clientX - x0,
-            dy = src_selection_on_event.clientY - y0;
+        var dx = on_event.clientX - x0,
+            dy = on_event.clientY - y0;
         g.moved = dx * dx + dy * dy > clickDistance2;
       }
 
-      g.zoom("mouse", constrain(translate(g.that.__zoom, g.mouse[0] = node_modules_d3_selection_src_mouse(g.that), g.mouse[1]), g.extent, translateExtent));
+      g.zoom("mouse", constrain(translate(g.that.__zoom, g.mouse[0] = src_mouse(g.that), g.mouse[1]), g.extent, translateExtent));
     }
 
     function mouseupped() {
-      v.on("mousemove.zoom mouseup.zoom", null), src_nodrag_yesdrag(src_selection_on_event.view, g.moved), d3_zoom_src_noevent(), g.end();
+      v.on("mousemove.zoom mouseup.zoom", null), yesdrag(on_event.view, g.moved), d3_zoom_src_noevent(), g.end();
     }
 
     if (!touchending && filter.apply(this, arguments)) {
       var g = gesture(this, arguments, !0),
-          v = node_modules_d3_selection_src_select(src_selection_on_event.view).on("mousemove.zoom", mousemoved, !0).on("mouseup.zoom", mouseupped, !0),
-          p = node_modules_d3_selection_src_mouse(this),
-          x0 = src_selection_on_event.clientX,
-          y0 = src_selection_on_event.clientY;
-      d3_drag_src_nodrag(src_selection_on_event.view), d3_zoom_src_noevent_nopropagation(), g.mouse = [p, this.__zoom.invert(p)], d3_transition_src_interrupt(this), g.start();
+          v = src_select(on_event.view).on("mousemove.zoom", mousemoved, !0).on("mouseup.zoom", mouseupped, !0),
+          p = src_mouse(this),
+          x0 = on_event.clientX,
+          y0 = on_event.clientY;
+      nodrag(on_event.view), src_noevent_nopropagation(), g.mouse = [p, this.__zoom.invert(p)], interrupt(this), g.start();
     }
   }
 
   function dblclicked() {
     if (filter.apply(this, arguments)) {
       var t0 = this.__zoom,
-          p0 = node_modules_d3_selection_src_mouse(this),
+          p0 = src_mouse(this),
           p1 = t0.invert(p0),
-          k1 = t0.k * (src_selection_on_event.shiftKey ? .5 : 2),
+          k1 = t0.k * (on_event.shiftKey ? .5 : 2),
           t1 = constrain(translate(scale(t0, k1), p0, p1), extent.apply(this, arguments), translateExtent);
-      d3_zoom_src_noevent(), duration > 0 ? node_modules_d3_selection_src_select(this).transition().duration(duration).call(schedule, t1, p0) : node_modules_d3_selection_src_select(this).call(zoom.transform, t1);
+      d3_zoom_src_noevent(), duration > 0 ? src_select(this).transition().duration(duration).call(schedule, t1, p0) : src_select(this).call(zoom.transform, t1);
     }
   }
 
@@ -38272,15 +30771,15 @@ function defaultConstrain(transform, extent, translateExtent) {
           i,
           t,
           p,
-          touches = src_selection_on_event.touches,
+          touches = on_event.touches,
           n = touches.length,
-          g = gesture(this, arguments, src_selection_on_event.changedTouches.length === n);
+          g = gesture(this, arguments, on_event.changedTouches.length === n);
 
-      for (d3_zoom_src_noevent_nopropagation(), i = 0; i < n; ++i) t = touches[i], p = node_modules_d3_selection_src_touch(this, touches, t.identifier), p = [p, this.__zoom.invert(p), t.identifier], g.touch0 ? !g.touch1 && g.touch0[2] !== p[2] && (g.touch1 = p, g.taps = 0) : (g.touch0 = p, started = !0, g.taps = 1 + !!touchstarting);
+      for (src_noevent_nopropagation(), i = 0; i < n; ++i) t = touches[i], p = src_touch(this, touches, t.identifier), p = [p, this.__zoom.invert(p), t.identifier], g.touch0 ? !g.touch1 && g.touch0[2] !== p[2] && (g.touch1 = p, g.taps = 0) : (g.touch0 = p, started = !0, g.taps = 1 + !!touchstarting);
 
       touchstarting && (touchstarting = clearTimeout(touchstarting)), started && (g.taps < 2 && (touchstarting = setTimeout(function () {
         touchstarting = null;
-      }, 500)), d3_transition_src_interrupt(this), g.start());
+      }, 500)), interrupt(this), g.start());
     }
   }
 
@@ -38291,10 +30790,10 @@ function defaultConstrain(transform, extent, translateExtent) {
           p,
           l,
           g = gesture(this, arguments),
-          touches = src_selection_on_event.changedTouches,
+          touches = on_event.changedTouches,
           n = touches.length;
 
-      for (d3_zoom_src_noevent(), touchstarting && (touchstarting = clearTimeout(touchstarting)), g.taps = 0, i = 0; i < n; ++i) t = touches[i], p = node_modules_d3_selection_src_touch(this, touches, t.identifier), g.touch0 && g.touch0[2] === t.identifier ? g.touch0[0] = p : g.touch1 && g.touch1[2] === t.identifier && (g.touch1[0] = p);
+      for (d3_zoom_src_noevent(), touchstarting && (touchstarting = clearTimeout(touchstarting)), g.taps = 0, i = 0; i < n; ++i) t = touches[i], p = src_touch(this, touches, t.identifier), g.touch0 && g.touch0[2] === t.identifier ? g.touch0[0] = p : g.touch1 && g.touch1[2] === t.identifier && (g.touch1[0] = p);
 
       if (t = g.that.__zoom, g.touch1) {
         var p0 = g.touch0[0],
@@ -38315,16 +30814,16 @@ function defaultConstrain(transform, extent, translateExtent) {
       var i,
           t,
           g = gesture(this, arguments),
-          touches = src_selection_on_event.changedTouches,
+          touches = on_event.changedTouches,
           n = touches.length;
 
-      for (d3_zoom_src_noevent_nopropagation(), touchending && clearTimeout(touchending), touchending = setTimeout(function () {
+      for (src_noevent_nopropagation(), touchending && clearTimeout(touchending), touchending = setTimeout(function () {
         touchending = null;
       }, 500), i = 0; i < n; ++i) t = touches[i], g.touch0 && g.touch0[2] === t.identifier ? delete g.touch0 : g.touch1 && g.touch1[2] === t.identifier && delete g.touch1;
 
       if (g.touch1 && !g.touch0 && (g.touch0 = g.touch1, delete g.touch1), g.touch0) g.touch0[1] = this.__zoom.invert(g.touch0[0]);else // If this was a dbltap, reroute to the (optional) dblclick.zoom handler.
         if (g.end(), g.taps === 2) {
-          var p = node_modules_d3_selection_src_select(this).on("dblclick.zoom");
+          var p = src_select(this).on("dblclick.zoom");
           p && p.apply(this, arguments);
         }
     }
@@ -38340,7 +30839,7 @@ function defaultConstrain(transform, extent, translateExtent) {
       scaleExtent = [0, Infinity],
       translateExtent = [[-Infinity, -Infinity], [Infinity, Infinity]],
       duration = 250,
-      interpolate = d3_zoom_node_modules_d3_interpolate_src_zoom,
+      interpolate = src_zoom,
       listeners = src_dispatch("start", "zoom", "end"),
       clickDistance2 = 0;
   return zoom.transform = function (collection, transform, point) {
@@ -38385,7 +30884,7 @@ function defaultConstrain(transform, extent, translateExtent) {
       return --this.active === 0 && (delete this.that.__zooming, this.emit("end")), this;
     },
     emit: function emit(type) {
-      selection_on_customEvent(new ZoomEvent(zoom, type, this.that.__zoom), listeners.apply, listeners, [type, this.that, this.args]);
+      customEvent(new ZoomEvent(zoom, type, this.that.__zoom), listeners.apply, listeners, [type, this.that, this.args]);
     }
   }, zoom.wheelDelta = function (_) {
     return arguments.length ? (wheelDelta = typeof _ === "function" ? _ : d3_zoom_src_constant(+_), zoom) : wheelDelta;
@@ -39269,7 +31768,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
       isFunction(fn) && (tickFormat = fn.bind($$.api));
     }
     var tickValues = this.tick[type],
-        axisParams = cloneObj({
+        axisParams = mergeObj({
       outerTick: outerTick,
       noTransition: noTransition,
       config: config,
@@ -39814,7 +32313,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         orgDataCount = _flow.orgDataCount,
         transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength),
         wait = generateWait(),
-        gt = node_modules_d3_transition_src_transition_transition().ease(d3_ease_src_linear_linear).duration(duration);
+        gt = src_transition_transition().ease(linear_linear).duration(duration);
     wait.add(Object.keys(elements).map(function (v) {
       var n = elements[v];
       return n = v === "axis.x" ? n.transition(gt).call(function (g) {
@@ -40630,7 +33129,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
       attr: isRotated ? "height" : "width",
       index: isRotated ? 1 : 0
     };
-    $$.zoomBehaviour = d3_drag_src_drag().clickDistance(4).on("start", function () {
+    $$.zoomBehaviour = src_drag().clickDistance(4).on("start", function () {
       // @ts-ignore
       $$.setDragStatus(!0), zoomRect || (zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", config_classes.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height)), start = src_mouse(this)[prop.index], end = start, zoomRect.attr(prop.axis, start).attr(prop.attr, 0), $$.onZoomStart();
     }).on("drag", function () {
@@ -41234,7 +33733,7 @@ function smoothLines(el, type) {
     var $$ = this,
         config = $$.config;
     callFn(config.data_onselected, $$.api, d, target.node()), config.interaction_brighten && target.transition().duration(100).style("fill", function () {
-      return d3_color_src_color_rgb($$.color(d)).brighter(.75);
+      return color_rgb($$.color(d)).brighter(.75);
     });
   },
 
@@ -41752,7 +34251,7 @@ var internal = [Axis_Axis, interactions_drag, interactions_flow, interactions_su
         return "M 0 0";
       };
       isNaN(this._current.startAngle) && (this._current.startAngle = 0), isNaN(this._current.endAngle) && (this._current.endAngle = this._current.startAngle);
-      var interpolate = node_modules_d3_interpolate_src_value(this._current, updated);
+      var interpolate = src_value(this._current, updated);
       return this._current = interpolate(0), function (t) {
         var interpolated = interpolate(t);
         // data.id will be updated by interporator
@@ -45586,6 +38085,43 @@ function axis_objectSpread(target) { for (var source, i = 1; i < arguments.lengt
   line_classes: undefined,
   line_point: !0
 });
+// CONCATENATED MODULE: ./src/config/Options/shape/scatter.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * scatter config options
+ */
+/* harmony default export */ var scatter = ({
+  /**
+   * Set scatter options
+   * @name scatter
+   * @memberof Options
+   * @type {object}
+   * @property {object} [scatter] scatter object
+   * @property {boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+   * @example
+   *  scatter: {
+   *      connectNull: true,
+   *      step: {
+   *          type: "step-after"
+   *      },
+   *
+   *      // hide all data points ('point.show=false' also has similar effect)
+   *      point: false,
+   *
+   *      // show data points for only indicated datas
+   *      point: [
+   *          "data1", "data3"
+   *      ],
+   *
+   *      zerobased: false
+   *  }
+   */
+  scatter_zerobased: !1
+});
 // CONCATENATED MODULE: ./src/config/Options/shape/spline.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -46012,7 +38548,7 @@ var _defaults = {},
    *  chart.data("data1");
    */
   generate: function generate(config) {
-    var options = cloneObj({}, _defaults, config),
+    var options = mergeObj({}, _defaults, config),
         inst = new Chart_Chart(options);
     return inst.internal.charts = this.instance, this.instance.push(inst), inst;
   },
@@ -46071,12 +38607,6 @@ var _defaults = {},
  * @version 2.0.0-alpha
  */
 // CONCATENATED MODULE: ./src/index.ts
-
-
-function src_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
-function src_objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? src_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : src_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
@@ -46108,6 +38638,7 @@ function src_objectSpread(target) { for (var source, i = 1; i < arguments.length
 
 
 
+
  // Non-Axis based
 
 
@@ -46116,7 +38647,7 @@ function src_objectSpread(target) { for (var source, i = 1; i < arguments.length
 
 
 // extend options
-util_extend(ChartInternal_ChartInternal.prototype, [].concat(internal, [shape_arc, shape_area, shape_bar, bubble, shape_line, shape_point, shape_radar])), util_extend(Chart_Chart.prototype, axis_api), Options_Options.data = src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread(src_objectSpread({}, data_axis), data_selection), Options_axis_axis), common_grid), common_point), common_subchart), common_zoom), Options_shape_area), Options_shape_bar), shape_bubble), Options_shape_line), shape_spline), donut), gauge), shape_pie), Options_shape_radar);
+util_extend(ChartInternal_ChartInternal.prototype, [].concat(internal, [shape_arc, shape_area, shape_bar, bubble, shape_line, shape_point, shape_radar])), util_extend(Chart_Chart.prototype, axis_api), Options_Options.setOptions(data_axis, data_selection, Options_axis_axis, common_grid, common_point, common_subchart, common_zoom, Options_shape_area, Options_shape_bar, shape_bubble, Options_shape_line, scatter, shape_spline, donut, gauge, shape_pie, Options_shape_radar);
 
 /***/ })
 /******/ ]);

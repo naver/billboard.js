@@ -75,13 +75,15 @@ export {
 function extendAxis(module, option?) {
 	extend(ChartInternal.prototype, [...internalAxis, ...module]);
 	extend(Chart.prototype, apiAxis);
-	extend(Options.data, [
+
+	Options.setOptions([
 		optDataAxis,
 		optAxis,
 		optGrid,
 		optSubchart,
 		optZoom
 	].concat(option || []));
+
 	return true;
 }
 
@@ -94,8 +96,8 @@ function extendAxis(module, option?) {
  */
 function extendLine(module?, option?) {
 	extendAxis([shapePoint, shapeLine, module]);
-	// @ts-ignore
-	extend(Options.data, [optPoint, optLine].concat(option || []));
+	Options.setOptions([optPoint, optLine].concat(option || []));
+
 	return true;
 }
 
@@ -108,7 +110,8 @@ function extendLine(module?, option?) {
  */
 function extendArc(module?, option?) {
 	extend(ChartInternal.prototype, [shapeArc].concat(module || []));
-	extend(Options.data, option);
+	Options.setOptions(option);
+
 	return true;
 }
 

@@ -48,7 +48,12 @@ function deepCopy(...objectN) {
  * @see {@link bb.generate} to use these options on generating the chart
  */
 export default class Options {
-	static data: any = {};
+	static data = {};
+
+	static setOptions(...options) {
+		this.data = options
+			.reduce((a, c) => ({...a, ...c}), this.data);
+	}
 
 	constructor() {
 		return deepCopy(
