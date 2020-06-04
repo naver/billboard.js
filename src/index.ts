@@ -63,7 +63,7 @@ extend(ChartInternal.prototype, [
 extend(Chart.prototype, apiAxis);
 
 // extend options
-Options.setOptions(
+Options.setOptions([
 	optDataAxis,
 	optDataSelection,
 	optAxis,
@@ -82,4 +82,4 @@ Options.setOptions(
 	optGauge,
 	optPie,
 	optRadar
-);
+]);

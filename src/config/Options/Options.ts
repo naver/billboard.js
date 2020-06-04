@@ -12,34 +12,7 @@ import legend from "./common/legend";
 import title from "./common/title";
 import tooltip from "./common/tooltip";
 
-import {isObject} from "../../module/util";
-
-/**
- * Deep copy object
- * @param {object} objectN Source object
- * @returns {object} Cloned object
- * @private
- */
-function deepCopy(...objectN) {
-	const clone = v => {
-		if (isObject(v) && v.constructor) {
-			const r = new v.constructor();
-
-			for (const k in v) {
-				r[k] = clone(v[k]);
-			}
-
-			return r;
-		}
-
-		return v;
-	};
-
-	return objectN.map(v => clone(v))
-		.reduce((a, c) => (
-			{...a, ...c}
-		));
-}
+import {deepClone} from "../../module/util";
 
 /**
  * Class to set options on generating chart.
@@ -50,13 +23,13 @@ function deepCopy(...objectN) {
 export default class Options {
 	static data = {};
 
-	static setOptions(...options) {
+	static setOptions(options) {
 		this.data = options
 			.reduce((a, c) => ({...a, ...c}), this.data);
 	}
 
 	constructor() {
-		return deepCopy(
+		return deepClone(
 			main,
 			data,
 			dataSelection,

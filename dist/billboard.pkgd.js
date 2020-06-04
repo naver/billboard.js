@@ -20024,6 +20024,12 @@ var win = function () {
     browser_doc = win && win.document;
 /* eslint-enable no-new-func, no-undef */
 // CONCATENATED MODULE: ./src/module/util.ts
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -20292,6 +20298,41 @@ function brushEmpty(ctx) {
   return !selection || selection[0] === selection[1];
 }
 /**
+ * Deep copy object
+ * @param {object} objectN Source object
+ * @returns {object} Cloned object
+ * @private
+ */
+
+
+function deepClone() {
+  for (var clone = function (_clone) {
+    function clone() {
+      return _clone.apply(this, arguments);
+    }
+
+    return clone.toString = function () {
+      return _clone.toString();
+    }, clone;
+  }(function (v) {
+    if (isObject(v) && v.constructor) {
+      var r = new v.constructor();
+
+      for (var k in v) r[k] = clone(v[k]);
+
+      return r;
+    }
+
+    return v;
+  }), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) objectN[_key3] = arguments[_key3];
+
+  return objectN.map(function (v) {
+    return clone(v);
+  }).reduce(function (a, c) {
+    return _objectSpread(_objectSpread({}, a), c);
+  });
+}
+/**
  * Extend target from source object
  * @param {object} target Target object
  * @param {object} source Source object
@@ -20406,7 +20447,7 @@ function mergeArray(arr) {
 
 
 function mergeObj(target) {
-  for (var _len3 = arguments.length, objectN = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) objectN[_key3 - 1] = arguments[_key3];
+  for (var _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) objectN[_key4 - 1] = arguments[_key4];
 
   if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
   var source = objectN.shift();
@@ -20589,9 +20630,9 @@ function convertInputType(mouse, touch) {
 // CONCATENATED MODULE: ./src/config/Options/Options.ts
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function Options_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
+function Options_objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? Options_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : Options_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -20608,57 +20649,20 @@ function _objectSpread(target) { for (var source, i = 1; i < arguments.length; i
 
 
 /**
- * Deep copy object
- * @param {object} objectN Source object
- * @returns {object} Cloned object
- * @private
- */
-
-function deepCopy() {
-  for (var clone = function (_clone) {
-    function clone() {
-      return _clone.apply(this, arguments);
-    }
-
-    return clone.toString = function () {
-      return _clone.toString();
-    }, clone;
-  }(function (v) {
-    if (isObject(v) && v.constructor) {
-      var r = new v.constructor();
-
-      for (var k in v) r[k] = clone(v[k]);
-
-      return r;
-    }
-
-    return v;
-  }), _len = arguments.length, objectN = Array(_len), _key = 0; _key < _len; _key++) objectN[_key] = arguments[_key];
-
-  return objectN.map(function (v) {
-    return clone(v);
-  }).reduce(function (a, c) {
-    return _objectSpread(_objectSpread({}, a), c);
-  });
-}
-/**
  * Class to set options on generating chart.
  * - It's instantiated internally, not exposed for public.
  * @class Options
  * @see {@link bb.generate} to use these options on generating the chart
  */
 
-
 var Options_Options = /*#__PURE__*/function () {
   function Options() {
-    return deepCopy(common_main, data_data, data_selection, common_color, interaction, common_legend, common_title, common_tooltip, Options.data);
+    return deepClone(common_main, data_data, data_selection, common_color, interaction, common_legend, common_title, common_tooltip, Options.data);
   }
 
-  return Options.setOptions = function setOptions() {
-    for (var _len2 = arguments.length, options = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) options[_key2] = arguments[_key2];
-
+  return Options.setOptions = function setOptions(options) {
     this.data = options.reduce(function (a, c) {
-      return _objectSpread(_objectSpread({}, a), c);
+      return Options_objectSpread(Options_objectSpread({}, a), c);
     }, this.data);
   }, Options;
 }();
@@ -37539,11 +37543,12 @@ function axis_objectSpread(target) { for (var source, i = 1; i < arguments.lengt
 
 
 
+
 /**
  * y Axis  config options
  */
 
-/* harmony default export */ var Options_axis_axis = (axis_objectSpread(axis_objectSpread(axis_objectSpread({
+/* harmony default export */ var Options_axis_axis = (axis_objectSpread({
   /**
    * Switch x and y axis position.
    * @name axis․rotated
@@ -37556,7 +37561,7 @@ function axis_objectSpread(target) { for (var source, i = 1; i < arguments.lengt
    * }
    */
   axis_rotated: !1
-}, axis_x), axis_y), axis_y2));
+}, deepClone(axis_x, axis_y, axis_y2)));
 // CONCATENATED MODULE: ./src/config/Options/common/grid.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -38647,7 +38652,7 @@ var _defaults = {},
 
 
 // extend options
-util_extend(ChartInternal_ChartInternal.prototype, [].concat(internal, [shape_arc, shape_area, shape_bar, bubble, shape_line, shape_point, shape_radar])), util_extend(Chart_Chart.prototype, axis_api), Options_Options.setOptions(data_axis, data_selection, Options_axis_axis, common_grid, common_point, common_subchart, common_zoom, Options_shape_area, Options_shape_bar, shape_bubble, Options_shape_line, scatter, shape_spline, donut, gauge, shape_pie, Options_shape_radar);
+util_extend(ChartInternal_ChartInternal.prototype, [].concat(internal, [shape_arc, shape_area, shape_bar, bubble, shape_line, shape_point, shape_radar])), util_extend(Chart_Chart.prototype, axis_api), Options_Options.setOptions([data_axis, data_selection, Options_axis_axis, common_grid, common_point, common_subchart, common_zoom, Options_shape_area, Options_shape_bar, shape_bubble, Options_shape_line, scatter, shape_spline, donut, gauge, shape_pie, Options_shape_radar]), console.log("--> 1");
 
 /***/ })
 /******/ ]);

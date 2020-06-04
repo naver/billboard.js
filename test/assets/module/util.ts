@@ -15,6 +15,7 @@ export const {
 	callFn,
 	capitalize,
 	ceil10,
+	deepClone,
 	diffDomain,
 	endall,
 	emulateEvent,

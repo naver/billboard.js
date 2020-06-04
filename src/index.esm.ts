@@ -110,7 +110,7 @@ function extendLine(module?, option?) {
  */
 function extendArc(module?, option?) {
 	extend(ChartInternal.prototype, [shapeArc].concat(module || []));
-	Options.setOptions(option);
+	Options.setOptions([option]);
 
 	return true;
 }

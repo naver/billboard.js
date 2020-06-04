@@ -2086,6 +2086,30 @@ function brushEmpty(ctx) {
     return true;
 }
 /**
+ * Deep copy object
+ * @param {object} objectN Source object
+ * @returns {object} Cloned object
+ * @private
+ */
+function deepClone() {
+    var objectN = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        objectN[_i] = arguments[_i];
+    }
+    var clone = function (v) {
+        if (isObject(v) && v.constructor) {
+            var r = new v.constructor();
+            for (var k in v) {
+                r[k] = clone(v[k]);
+            }
+            return r;
+        }
+        return v;
+    };
+    return objectN.map(function (v) { return clone(v); })
+        .reduce(function (a, c) { return (_assign(_assign({}, a), c)); });
+}
+/**
  * Extend target from source object
  * @param {object} target Target object
  * @param {object} source Source object
@@ -2382,30 +2406,6 @@ function convertInputType(mouse, touch) {
 }
 
 /**
- * Deep copy object
- * @param {object} objectN Source object
- * @returns {object} Cloned object
- * @private
- */
-function deepCopy() {
-    var objectN = [];
-    for (var _i = 0; _i < arguments.length; _i++) {
-        objectN[_i] = arguments[_i];
-    }
-    var clone = function (v) {
-        if (isObject(v) && v.constructor) {
-            var r = new v.constructor();
-            for (var k in v) {
-                r[k] = clone(v[k]);
-            }
-            return r;
-        }
-        return v;
-    };
-    return objectN.map(function (v) { return clone(v); })
-        .reduce(function (a, c) { return (_assign(_assign({}, a), c)); });
-}
-/**
  * Class to set options on generating chart.
  * - It's instantiated internally, not exposed for public.
  * @class Options
@@ -2413,13 +2413,9 @@ function deepCopy() {
  */
 var Options = /** @class */ (function () {
     function Options() {
-        return deepCopy(main, data, dataSelection, color, interaction, legend, title, tooltip, Options.data);
+        return deepClone(main, data, dataSelection, color, interaction, legend, title, tooltip, Options.data);
     }
-    Options.setOptions = function () {
-        var options = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            options[_i] = arguments[_i];
-        }
+    Options.setOptions = function (options) {
         this.data = options
             .reduce(function (a, c) { return (_assign(_assign({}, a), c)); }, this.data);
     };
@@ -17635,7 +17631,7 @@ var y2 = {
 /**
  * y Axis  config options
  */
-var optAxis = _assign(_assign(_assign({ 
+var optAxis = _assign({ 
     /**
      * Switch x and y axis position.
      * @name axis․rotated
@@ -17647,7 +17643,7 @@ var optAxis = _assign(_assign(_assign({
      *   rotated: true
      * }
      */
-    axis_rotated: false }, x), y), y2);
+    axis_rotated: false }, deepClone(x, y, y2));
 
 var optGrid = {
     /**
@@ -18712,7 +18708,7 @@ function extendLine(module, option) {
  */
 function extendArc(module, option) {
     extend(ChartInternal.prototype, [shapeArc].concat(module || []));
-    Options.setOptions(option);
+    Options.setOptions([option]);
     return true;
 }
 // Area types
@@ -18734,6 +18730,7 @@ var radar = function () { return (extendArc([shapePoint, shapeRadar], optRadar) 
 var bar = function () { return (extendAxis([shapeBar], optBar) && TYPE.BAR); };
 var bubble = function () { return (extendAxis([shapePoint, shapeBubble], optBubble) && TYPE.BUBBLE); };
 var scatter = function () { return (extendAxis([shapePoint], [optPoint, optScatter]) && TYPE.SCATTER); };
+console.log("--> 2");
 
 export default bb;
 export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, donut, gauge, line, pie, radar, scatter, spline, step };

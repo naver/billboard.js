@@ -16,6 +16,7 @@ export {
 	capitalize,
 	ceil10,
 	convertInputType,
+	deepClone,
 	diffDomain,
 	endall,
 	emulateEvent,
@@ -305,6 +306,33 @@ function brushEmpty(ctx): boolean {
 	}
 
 	return true;
+}
+
+/**
+ * Deep copy object
+ * @param {object} objectN Source object
+ * @returns {object} Cloned object
+ * @private
+ */
+function deepClone(...objectN) {
+	const clone = v => {
+		if (isObject(v) && v.constructor) {
+			const r = new v.constructor();
+
+			for (const k in v) {
+				r[k] = clone(v[k]);
+			}
+
+			return r;
+		}
+
+		return v;
+	};
+
+	return objectN.map(v => clone(v))
+		.reduce((a, c) => (
+			{...a, ...c}
+		));
 }
 
 /**
