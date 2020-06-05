@@ -478,7 +478,7 @@ export default class Axis {
 			const domain = scale.domain();
 
 			// do not compute if domain is same
-			if (domain[0] === domain[1] ||
+			if ((domain[0] === domain[1] && domain.every(v => v > 0)) ||
 				(isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1])
 			) {
 				return currentTickMax.size;
