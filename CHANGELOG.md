@@ -1,3 +1,10 @@
+## [1.12.11](https://github.com/naver/billboard.js/compare/1.12.10...1.12.11) (2020-06-05)
+
+
+### Bug Fixes
+
+* **axis:** Fix evaluating tick text size ([0b921b2](https://github.com/naver/billboard.js/commit/0b921b2274612cbc6ee45737f5754bcfe3006638)), closes [#1429](https://github.com/naver/billboard.js/issues/1429)
+
 ## [1.12.10](https://github.com/naver/billboard.js/compare/1.12.9...1.12.10) (2020-05-26)
 
 
