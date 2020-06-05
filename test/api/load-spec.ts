@@ -313,6 +313,35 @@ describe("API load", function() {
 		});
 	});
 
+	describe("data point circle display", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 130, 100, 140, 200, 150],
+						["data2", 230, 200, 240, 300, 250]
+					  ]
+				}
+			};
+		});
+
+		it("when 'bar' type is loaded, circles should be removed", done => {
+			const circleSize = chart.$.circles.size();
+
+			// when
+			chart.load({
+				columns: [
+					["data1", 200, 140, 240, 250, 250]
+				],
+				type: "bar",
+				done: function() {
+					expect(chart.$.circles.size()).to.be.equal(circleSize / 2);
+					done();
+				}
+			});
+		});
+	});
+
 	describe("y Axis Label", () => {
 		before(() => {
 			args = {

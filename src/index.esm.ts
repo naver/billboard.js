@@ -68,11 +68,10 @@ export {
 /**
  * Extend Axis
  * @param {Array} module Module to be extended
- * @param {object} option Option object to be extended
- * @returns {boolean}
+ * @param {Array} option Option object to be extended
  * @private
  */
-function extendAxis(module, option?) {
+function extendAxis(module, option?): void {
 	extend(ChartInternal.prototype, [...internalAxis, ...module]);
 	extend(Chart.prototype, apiAxis);
 
@@ -83,59 +82,53 @@ function extendAxis(module, option?) {
 		optSubchart,
 		optZoom
 	].concat(option || []));
-
-	return true;
 }
 
 /**
  * Extend Line type modules
  * @param {object} module Module to be extended
  * @param {Array} option Option object to be extended
- * @returns {boolean}
  * @private
  */
-function extendLine(module?, option?) {
-	extendAxis([shapePoint, shapeLine, module]);
+function extendLine(module?, option?): void {
+	extendAxis([shapePoint, shapeLine].concat(module || []));
 	Options.setOptions([optPoint, optLine].concat(option || []));
-
-	return true;
 }
 
 /**
  * Extend Arc type modules
  * @param {Array} module Module to be extended
  * @param {Array} option Option object to be extended
- * @returns {boolean}
  * @private
  */
-function extendArc(module?, option?) {
+function extendArc(module?, option?): void {
 	extend(ChartInternal.prototype, [shapeArc].concat(module || []));
-	Options.setOptions([option]);
-
-	return true;
+	Options.setOptions(option);
 }
 
 // Area types
-const area = () => (extendLine(shapeArea, [optArea]) && TYPE.AREA);
-const areaLineRange = () => (extendLine(shapeArea, [optArea]) && TYPE.AREA_LINE_RANGE);
-const areaSpline = () => (extendLine(shapeArea, [optArea, optSpline]) && TYPE.AREA_SPLINE);
-const areaSplineRange = () => (
-	extendLine(shapeArea, [optArea, optSpline]) && TYPE.AREA_SPLINE_RANGE
+const area = (): string => (extendLine(shapeArea, [optArea]), TYPE.AREA);
+const areaLineRange = (): string => (extendLine(shapeArea, [optArea]), TYPE.AREA_LINE_RANGE);
+const areaSpline = () => (extendLine(shapeArea, [optArea, optSpline]), TYPE.AREA_SPLINE);
+const areaSplineRange = (): string => (
+	extendLine(shapeArea, [optArea, optSpline]), TYPE.AREA_SPLINE_RANGE
 );
-const areaStep = () => (extendLine(shapeArea, [optArea]) && TYPE.AREA_STEP);
+const areaStep = (): string => (extendLine(shapeArea, [optArea]), TYPE.AREA_STEP);
 
 // Line types
-const line = () => (extendLine() && TYPE.LINE);
-const spline = () => (extendLine(undefined, [optSpline]) && TYPE.SPLINE);
-const step = () => (extendLine() && TYPE.STEP);
+const line = (): string => (extendLine(), TYPE.LINE);
+const spline = (): string => (extendLine(undefined, [optSpline]), TYPE.SPLINE);
+const step = (): string => (extendLine(), TYPE.STEP);
 
 // Arc types
-const donut = () => (extendArc(undefined, optDonut) && TYPE.DONUT);
-const gauge = () => (extendArc(undefined, optGauge) && TYPE.GAUGE);
-const pie = () => (extendArc(undefined, optPie) && TYPE.PIE);
-const radar = () => (extendArc([shapePoint, shapeRadar], optRadar) && TYPE.RADAR);
+const donut = (): string => (extendArc(undefined, [optDonut]), TYPE.DONUT);
+const gauge = (): string => (extendArc(undefined, [optGauge]), TYPE.GAUGE);
+const pie = (): string => (extendArc(undefined, [optPie]), TYPE.PIE);
+const radar = (): string => (extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), TYPE.RADAR);
 
 // Axis based types
-const bar = () => (extendAxis([shapeBar], optBar) && TYPE.BAR);
-const bubble = () => (extendAxis([shapePoint, shapeBubble], optBubble) && TYPE.BUBBLE);
-const scatter = () => (extendAxis([shapePoint], [optPoint, optScatter]) && TYPE.SCATTER);
+const bar = (): string => (extendAxis([shapeBar], optBar), TYPE.BAR);
+const bubble = (): string => (
+	extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), TYPE.BUBBLE
+);
+const scatter = (): string => (extendAxis([shapePoint], [optPoint, optScatter]), TYPE.SCATTER);

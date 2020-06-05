@@ -16282,6 +16282,78 @@ var Store = /*#__PURE__*/function () {
   data_colors: {},
 
   /**
+   * Set labels options
+   * @name data․labels
+   * @memberof Options
+   * @type {object}
+   * @property {object} data Data object
+   * @property {boolean} [data.labels=false] Show or hide labels on each data points
+   * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+   * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
+   * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data point where the label is shown.
+   *  - `j` is the sub index of the data point where the label is shown.<br><br>
+   * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+   * @property {string|object} [data.labels.colors] Set label text colors.
+   * @property {object} [data.labels.position] Set each dataset position, relative the original.
+   * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
+   * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
+   * @memberof Options
+   * @type {object}
+   * @default {}
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
+   * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
+   * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+   * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
+   * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+   * @example
+   * data: {
+   *   labels: true,
+   *
+   *   // or set specific options
+   *   labels: {
+   *     format: function(v, id, i, j) { ... },
+   *
+   *     // it's possible to set for each data
+   *     format: {
+   *         data1: function(v, id, i, j) { ... },
+   *         ...
+   *     },
+   *
+   *     // align text to center of the 'bar' shape (works only for 'bar' type)
+   *     centered: true,
+   *
+   *     // apply for all label texts
+   *     colors: "red",
+   *
+   *     // or set different colors per dataset
+   *     // for not specified dataset, will have the default color value
+   *     colors: {
+   *        data1: "yellow",
+   *        data3: "green"
+   *     },
+   *
+   *     // set x, y coordinate position
+   *     position: {
+   *        x: -10,
+   *        y: 10
+   *     },
+   *
+   *     // or set x, y coordinate position by each dataset
+   *     position: {
+   *        data1: {x: 5, y: 5},
+   *        data2: {x: 10, y: -20}
+   *     }
+   *   }
+   * }
+   */
+  data_labels: {},
+  data_labels_colors: undefined,
+  data_labels_position: {},
+
+  /**
    * Hide each data when the chart appears.<br><br>
    * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.
    * @name data․hide
@@ -21984,6 +22056,34 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
 
 /* harmony default export */ var interactions_interaction = ({
+  selectRectForSingle: function selectRectForSingle(context, eventRect, index) {
+    var $$ = this,
+        config = $$.config,
+        main = $$.$el.main,
+        isSelectionEnabled = config.data_selection_enabled,
+        isSelectionGrouped = config.data_selection_grouped,
+        isTooltipGrouped = config.tooltip_grouped,
+        selectedData = $$.getAllValuesOnIndex(index);
+    isTooltipGrouped && ($$.showTooltip(selectedData, context), $$.showGridFocus && $$.showGridFocus(selectedData), !isSelectionEnabled || isSelectionGrouped) || main.selectAll("." + config_classes.shape + "-" + index).each(function () {
+      src_select(this).classed(config_classes.EXPANDED, !0), isSelectionEnabled && eventRect.style("cursor", isSelectionGrouped ? "pointer" : null), isTooltipGrouped || ($$.hideGridFocus && $$.hideGridFocus(), $$.hideTooltip(), !isSelectionGrouped && $$.expandCirclesBars(index));
+    }).filter(function (d) {
+      return $$.isWithinShape(this, d);
+    }).call(function (selected) {
+      var d = selected.data();
+      isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable.bind($$.api)(d)) && eventRect.style("cursor", "pointer"), isTooltipGrouped || ($$.showTooltip(d, context), $$.showGridFocus && $$.showGridFocus(d), $$.unexpandCircles(), selected.each(function (d) {
+        return $$.expandCirclesBars(index, d.id);
+      }));
+    });
+  },
+  expandCirclesBars: function expandCirclesBars(index, id, reset) {
+    var $$ = this,
+        config = $$.config,
+        _$$$$el = $$.$el,
+        bar = _$$$$el.bar,
+        circle = _$$$$el.circle;
+    circle && config.point_focus_expand_enabled && $$.expandCircles(index, id, reset), bar && $$.expandBars(index, id, reset);
+  },
+
   /**
    * Handle data.onover/out callback options
    * @param {boolean} isOver Over or not
@@ -22060,9 +22160,9 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   dispatchEvent: function dispatchEvent(type, index, mouse) {
     var $$ = this,
         hasRadar = $$.state.hasRadar,
-        _$$$$el = $$.$el,
-        main = _$$$$el.main,
-        radar = _$$$$el.radar,
+        _$$$$el2 = $$.$el,
+        main = _$$$$el2.main,
+        radar = _$$$$el2.radar,
         isMultipleX = $$.isMultipleX(),
         selector = hasRadar ? "." + config_classes.axis + "-" + index + " text" : "." + (isMultipleX ? config_classes.eventRect : config_classes.eventRect + "-" + index),
         eventRect = (hasRadar ? radar.axes : main).select(selector).node(),
@@ -28334,6 +28434,9 @@ function getTextPos(pos, width) {
   isArcType: function isArcType(d) {
     return this.isPieType(d) || this.isDonutType(d) || this.isGaugeType(d) || this.isRadarType(d);
   },
+  isPointType: function isPointType(d) {
+    return this.isLineType(d) || this.isBubbleType(d) || this.isRadarType(d) || this.isScatterType(d);
+  },
   // determine if is 'circle' data point
   isCirclePoint: function isCirclePoint(node) {
     var config = this.config,
@@ -32536,33 +32639,6 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
     }
     eventRectData.attr("class", $$.classEvent.bind($$)).attr("x", x).attr("y", y).attr("width", w).attr("height", h);
   },
-  selectRectForSingle: function selectRectForSingle(context, eventRect, index) {
-    var $$ = this,
-        config = $$.config,
-        main = $$.$el.main,
-        isSelectionEnabled = config.data_selection_enabled,
-        isSelectionGrouped = config.data_selection_grouped,
-        isTooltipGrouped = config.tooltip_grouped,
-        selectedData = $$.getAllValuesOnIndex(index);
-    isTooltipGrouped && ($$.showTooltip(selectedData, context), $$.showGridFocus(selectedData), !isSelectionEnabled || isSelectionGrouped) || main.selectAll("." + config_classes.shape + "-" + index).each(function () {
-      src_select(this).classed(config_classes.EXPANDED, !0), isSelectionEnabled && eventRect.style("cursor", isSelectionGrouped ? "pointer" : null), isTooltipGrouped || ($$.hideGridFocus(), $$.hideTooltip(), !isSelectionGrouped && $$.expandCirclesBars(index));
-    }).filter(function (d) {
-      return $$.isWithinShape(this, d);
-    }).call(function (selected) {
-      var d = selected.data();
-      isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable.bind($$.api)(d)) && eventRect.style("cursor", "pointer"), isTooltipGrouped || ($$.showTooltip(d, context), $$.showGridFocus(d), $$.unexpandCircles(), selected.each(function (d) {
-        return $$.expandCirclesBars(index, d.id);
-      }));
-    });
-  },
-  expandCirclesBars: function expandCirclesBars(index, id, reset) {
-    var $$ = this,
-        config = $$.config,
-        _$$$$el = $$.$el,
-        bar = _$$$$el.bar,
-        circle = _$$$$el.circle;
-    circle && config.point_focus_expand_enabled && $$.expandCircles(index, id, reset), bar && $$.expandBars(index, id, reset);
-  },
   selectRectForMultipleXs: function selectRectForMultipleXs(context) {
     var $$ = this,
         config = $$.config,
@@ -32570,7 +32646,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
     // do nothing when dragging
-    if (!($$.dragging || $$.hasArcType(targetsToShow))) {
+    if (!(state.dragging || $$.hasArcType(targetsToShow))) {
       var mouse = src_mouse(context),
           closest = $$.findClosestFromTargets(targetsToShow, mouse);
       if (state.mouseover && (!closest || closest.id !== state.mouseover.id) && (config.data_onout.call($$.api, state.mouseover), state.mouseover = undefined), !closest) return void $$.unselectRect();
@@ -32590,10 +32666,10 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
   unselectRect: function unselectRect() {
     var $$ = this,
         config = $$.config,
-        _$$$$el2 = $$.$el,
-        bar = _$$$$el2.bar,
-        circle = _$$$$el2.circle,
-        tooltip = _$$$$el2.tooltip;
+        _$$$$el = $$.$el,
+        bar = _$$$$el.bar,
+        circle = _$$$$el.circle,
+        tooltip = _$$$$el.tooltip;
     $$.$el.svg.select("." + config_classes.eventRect).style("cursor", null), $$.hideGridFocus(), tooltip && ($$.hideTooltip(), $$._handleLinkedCharts(!1)), circle && !config.point_focus_only && $$.unexpandCircles(), bar && $$.unexpandBars();
   },
 
@@ -35154,9 +35230,10 @@ var getTransitionName = function () {
         targets = (t || data.targets).filter(function (v) {
       return !$$.isBarType(v) && (!$$.isLineType(v) || $$.shouldDrawPointsForLine(v)) && $$.labelishData(v);
     }),
-        mainCircle = $el.main.select("." + config_classes.chartCircles).style("pointer-events", "none").selectAll("." + config_classes.circles).data(targets).attr("class", classCircles),
-        mainCircleEnter = mainCircle.enter();
-    // Circles for each data point on lines
+        mainCircle = $el.main.select("." + config_classes.chartCircles).style("pointer-events", "none").selectAll("." + config_classes.circles).data(targets).attr("class", classCircles);
+    mainCircle.exit().remove();
+    var mainCircleEnter = mainCircle.enter(); // Circles for each data point on lines
+
     // Update date for selected circles
     config.data_selection_enabled && mainCircleEnter.append("g").attr("class", function (d) {
       return $$.generateClass(config_classes.selectedCircles, d.id);
@@ -35178,13 +35255,13 @@ var getTransitionName = function () {
     if (config.point_show && !state.toggling) {
       var currIndex = focusOnly && $el.circle ? $el.circle.data()[0].index : 0,
           circles = $el.main.selectAll("." + config_classes.circles).selectAll("." + config_classes.circle).data(function (d) {
-        return focusOnly ? [d.values[currIndex]] : d.values;
+        return $$.isPointType(d) ? focusOnly ? [d.values[currIndex]] : d.values : [];
       });
       circles.exit().remove();
       var fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
       circles.enter().filter(function (d) {
         return d;
-      }).append(fn).merge(circles).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$)), $el.circle = $el.main.selectAll("." + config_classes.circles + " ." + config_classes.circle);
+      }).append(fn), $el.circle = $el.main.selectAll("." + config_classes.circles + " ." + config_classes.circle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$));
     }
   },
   redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
@@ -35846,78 +35923,6 @@ var radar_cacheKey = KEY.radarPoints;
    * }
    */
   data_axes: {},
-
-  /**
-   * Set labels options
-   * @name data․labels
-   * @memberof Options
-   * @type {object}
-   * @property {object} data Data object
-   * @property {boolean} [data.labels=false] Show or hide labels on each data points
-   * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
-   * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
-   * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
-   *  - `v` is the value of the data point where the label is shown.
-   *  - `id` is the id of the data where the label is shown.
-   *  - `i` is the index of the data point where the label is shown.
-   *  - `j` is the sub index of the data point where the label is shown.<br><br>
-   * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-   * @property {string|object} [data.labels.colors] Set label text colors.
-   * @property {object} [data.labels.position] Set each dataset position, relative the original.
-   * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
-   * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
-   * @memberof Options
-   * @type {object}
-   * @default {}
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
-   * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
-   * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
-   * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
-   * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
-   * @example
-   * data: {
-   *   labels: true,
-   *
-   *   // or set specific options
-   *   labels: {
-   *     format: function(v, id, i, j) { ... },
-   *
-   *     // it's possible to set for each data
-   *     format: {
-   *         data1: function(v, id, i, j) { ... },
-   *         ...
-   *     },
-   *
-   *     // align text to center of the 'bar' shape (works only for 'bar' type)
-   *     centered: true,
-   *
-   *     // apply for all label texts
-   *     colors: "red",
-   *
-   *     // or set different colors per dataset
-   *     // for not specified dataset, will have the default color value
-   *     colors: {
-   *        data1: "yellow",
-   *        data3: "green"
-   *     },
-   *
-   *     // set x, y coordinate position
-   *     position: {
-   *        x: -10,
-   *        y: 10
-   *     },
-   *
-   *     // or set x, y coordinate position by each dataset
-   *     position: {
-   *        data1: {x: 5, y: 5},
-   *        data2: {x: 10, y: -20}
-   *     }
-   *   }
-   * }
-   */
-  data_labels: {},
-  data_labels_colors: undefined,
-  data_labels_position: {},
 
   /**
    * Define regions for each data.<br>
@@ -38652,7 +38657,7 @@ var _defaults = {},
 
 
 // extend options
-util_extend(ChartInternal_ChartInternal.prototype, [].concat(internal, [shape_arc, shape_area, shape_bar, bubble, shape_line, shape_point, shape_radar])), util_extend(Chart_Chart.prototype, axis_api), Options_Options.setOptions([data_axis, data_selection, Options_axis_axis, common_grid, common_point, common_subchart, common_zoom, Options_shape_area, Options_shape_bar, shape_bubble, Options_shape_line, scatter, shape_spline, donut, gauge, shape_pie, Options_shape_radar]), console.log("--> 1");
+util_extend(ChartInternal_ChartInternal.prototype, [].concat(internal, [shape_arc, shape_area, shape_bar, bubble, shape_line, shape_point, shape_radar])), util_extend(Chart_Chart.prototype, axis_api), Options_Options.setOptions([data_axis, data_selection, Options_axis_axis, common_grid, common_point, common_subchart, common_zoom, Options_shape_area, Options_shape_bar, shape_bubble, Options_shape_line, scatter, shape_spline, donut, gauge, shape_pie, Options_shape_radar]);
 
 /***/ })
 /******/ ]);

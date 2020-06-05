@@ -271,77 +271,13 @@ export default {
 			.attr("height", h);
 	},
 
-	selectRectForSingle(context, eventRect, index: number): void {
-		const $$ = this;
-		const {config, $el: {main}} = $$;
-		const isSelectionEnabled = config.data_selection_enabled;
-		const isSelectionGrouped = config.data_selection_grouped;
-		const isTooltipGrouped = config.tooltip_grouped;
-		const selectedData = $$.getAllValuesOnIndex(index);
-
-		if (isTooltipGrouped) {
-			$$.showTooltip(selectedData, context);
-			$$.showGridFocus(selectedData);
-
-			if (!isSelectionEnabled || isSelectionGrouped) {
-				return;
-			}
-		}
-
-		main.selectAll(`.${CLASS.shape}-${index}`)
-			.each(function() {
-				d3Select(this).classed(CLASS.EXPANDED, true);
-
-				if (isSelectionEnabled) {
-					eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
-				}
-
-				if (!isTooltipGrouped) {
-					$$.hideGridFocus();
-					$$.hideTooltip();
-
-					!isSelectionGrouped && $$.expandCirclesBars(index);
-				}
-			})
-			.filter(function(d) {
-				return $$.isWithinShape(this, d);
-			})
-			.call(selected => {
-				const d = selected.data();
-
-				if (isSelectionEnabled &&
-					(isSelectionGrouped || config.data_selection_isselectable.bind($$.api)(d))
-				) {
-					eventRect.style("cursor", "pointer");
-				}
-
-				if (!isTooltipGrouped) {
-					$$.showTooltip(d, context);
-					$$.showGridFocus(d);
-
-					$$.unexpandCircles();
-					selected.each(d => $$.expandCirclesBars(index, d.id));
-				}
-			});
-	},
-
-	expandCirclesBars(index: number, id: string, reset: boolean): void {
-		const $$ = this;
-		const {config, $el: {bar, circle}} = $$;
-
-		circle && config.point_focus_expand_enabled &&
-			$$.expandCircles(index, id, reset);
-
-		bar && $$.expandBars(index, id, reset);
-	},
-
 	selectRectForMultipleXs(context): void {
 		const $$ = this;
 		const {config, state} = $$;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
 		// do nothing when dragging
-		if ($$.dragging || $$.hasArcType(targetsToShow)) {
+		if (state.dragging || $$.hasArcType(targetsToShow)) {
 			return;
 		}
 

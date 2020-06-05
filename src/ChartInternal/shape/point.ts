@@ -77,6 +77,8 @@ export default {
 			.data(targets)
 			.attr("class", classCircles);
 
+		mainCircle.exit().remove();
+
 		const mainCircleEnter = mainCircle.enter();
 
 		// Circles for each data point on lines
@@ -108,7 +110,9 @@ export default {
 
 			const circles = $el.main.selectAll(`.${CLASS.circles}`)
 				.selectAll(`.${CLASS.circle}`)
-				.data(d => (focusOnly ? [d.values[currIndex]] : d.values));
+				.data(d => ($$.isPointType(d) ?
+					(focusOnly ? [d.values[currIndex]] : d.values) : []
+				));
 
 			circles.exit().remove();
 
@@ -116,12 +120,11 @@ export default {
 
 			circles.enter()
 				.filter(d => d)
-				.append(fn)
-				.merge(circles)
+				.append(fn);
+
+			$el.circle = $el.main.selectAll(`.${CLASS.circles} .${CLASS.circle}`)
 				.style("stroke", $$.color)
 				.style("opacity", $$.initialOpacityForCircle.bind($$));
-
-			$el.circle = $el.main.selectAll(`.${CLASS.circles} .${CLASS.circle}`);
 		}
 	},
 

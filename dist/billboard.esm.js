@@ -890,6 +890,77 @@ var data = {
      */
     data_colors: {},
     /**
+     * Set labels options
+     * @name data․labels
+     * @memberof Options
+     * @type {object}
+     * @property {object} data Data object
+     * @property {boolean} [data.labels=false] Show or hide labels on each data points
+     * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+     * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
+     * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
+     *  - `v` is the value of the data point where the label is shown.
+     *  - `id` is the id of the data where the label is shown.
+     *  - `i` is the index of the data point where the label is shown.
+     *  - `j` is the sub index of the data point where the label is shown.<br><br>
+     * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+     * @property {string|object} [data.labels.colors] Set label text colors.
+     * @property {object} [data.labels.position] Set each dataset position, relative the original.
+     * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
+     * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
+     * @memberof Options
+     * @type {object}
+     * @default {}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
+     * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
+     * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+     * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
+     * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+     * @example
+     * data: {
+     *   labels: true,
+     *
+     *   // or set specific options
+     *   labels: {
+     *     format: function(v, id, i, j) { ... },
+     *
+     *     // it's possible to set for each data
+     *     format: {
+     *         data1: function(v, id, i, j) { ... },
+     *         ...
+     *     },
+     *
+     *     // align text to center of the 'bar' shape (works only for 'bar' type)
+     *     centered: true,
+     *
+     *     // apply for all label texts
+     *     colors: "red",
+     *
+     *     // or set different colors per dataset
+     *     // for not specified dataset, will have the default color value
+     *     colors: {
+     *        data1: "yellow",
+     *        data3: "green"
+     *     },
+     *
+     *     // set x, y coordinate position
+     *     position: {
+     *        x: -10,
+     *        y: 10
+     *     },
+     *
+     *     // or set x, y coordinate position by each dataset
+     *     position: {
+     *        data1: {x: 5, y: 5},
+     *        data2: {x: 10, y: -20}
+     *     }
+     *   }
+     * }
+     */
+    data_labels: {},
+    data_labels_colors: undefined,
+    data_labels_position: {},
+    /**
      * Hide each data when the chart appears.<br><br>
      * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.
      * @name data․hide
@@ -3707,6 +3778,56 @@ var dataLoad = {
  * billboard.js project is licensed under the MIT license
  */
 var interaction$1 = {
+    selectRectForSingle: function (context, eventRect, index) {
+        var $$ = this;
+        var config = $$.config, main = $$.$el.main;
+        var isSelectionEnabled = config.data_selection_enabled;
+        var isSelectionGrouped = config.data_selection_grouped;
+        var isTooltipGrouped = config.tooltip_grouped;
+        var selectedData = $$.getAllValuesOnIndex(index);
+        if (isTooltipGrouped) {
+            $$.showTooltip(selectedData, context);
+            $$.showGridFocus && $$.showGridFocus(selectedData);
+            if (!isSelectionEnabled || isSelectionGrouped) {
+                return;
+            }
+        }
+        main.selectAll("." + CLASS.shape + "-" + index)
+            .each(function () {
+            select(this).classed(CLASS.EXPANDED, true);
+            if (isSelectionEnabled) {
+                eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
+            }
+            if (!isTooltipGrouped) {
+                $$.hideGridFocus && $$.hideGridFocus();
+                $$.hideTooltip();
+                !isSelectionGrouped && $$.expandCirclesBars(index);
+            }
+        })
+            .filter(function (d) {
+            return $$.isWithinShape(this, d);
+        })
+            .call(function (selected) {
+            var d = selected.data();
+            if (isSelectionEnabled &&
+                (isSelectionGrouped || config.data_selection_isselectable.bind($$.api)(d))) {
+                eventRect.style("cursor", "pointer");
+            }
+            if (!isTooltipGrouped) {
+                $$.showTooltip(d, context);
+                $$.showGridFocus && $$.showGridFocus(d);
+                $$.unexpandCircles();
+                selected.each(function (d) { return $$.expandCirclesBars(index, d.id); });
+            }
+        });
+    },
+    expandCirclesBars: function (index, id, reset) {
+        var $$ = this;
+        var config = $$.config, _a = $$.$el, bar = _a.bar, circle = _a.circle;
+        circle && config.point_focus_expand_enabled &&
+            $$.expandCircles(index, id, reset);
+        bar && $$.expandBars(index, id, reset);
+    },
     /**
      * Handle data.onover/out callback options
      * @param {boolean} isOver Over or not
@@ -7144,6 +7265,12 @@ var type = {
             this.isDonutType(d) ||
             this.isGaugeType(d) ||
             this.isRadarType(d);
+    },
+    isPointType: function (d) {
+        return this.isLineType(d) ||
+            this.isBubbleType(d) ||
+            this.isRadarType(d) ||
+            this.isScatterType(d);
     },
     // determine if is 'circle' data point
     isCirclePoint: function (node) {
@@ -11744,62 +11871,12 @@ var eventrect = {
             .attr("width", w)
             .attr("height", h);
     },
-    selectRectForSingle: function (context, eventRect, index) {
-        var $$ = this;
-        var config = $$.config, main = $$.$el.main;
-        var isSelectionEnabled = config.data_selection_enabled;
-        var isSelectionGrouped = config.data_selection_grouped;
-        var isTooltipGrouped = config.tooltip_grouped;
-        var selectedData = $$.getAllValuesOnIndex(index);
-        if (isTooltipGrouped) {
-            $$.showTooltip(selectedData, context);
-            $$.showGridFocus(selectedData);
-            if (!isSelectionEnabled || isSelectionGrouped) {
-                return;
-            }
-        }
-        main.selectAll("." + CLASS.shape + "-" + index)
-            .each(function () {
-            select(this).classed(CLASS.EXPANDED, true);
-            if (isSelectionEnabled) {
-                eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
-            }
-            if (!isTooltipGrouped) {
-                $$.hideGridFocus();
-                $$.hideTooltip();
-                !isSelectionGrouped && $$.expandCirclesBars(index);
-            }
-        })
-            .filter(function (d) {
-            return $$.isWithinShape(this, d);
-        })
-            .call(function (selected) {
-            var d = selected.data();
-            if (isSelectionEnabled &&
-                (isSelectionGrouped || config.data_selection_isselectable.bind($$.api)(d))) {
-                eventRect.style("cursor", "pointer");
-            }
-            if (!isTooltipGrouped) {
-                $$.showTooltip(d, context);
-                $$.showGridFocus(d);
-                $$.unexpandCircles();
-                selected.each(function (d) { return $$.expandCirclesBars(index, d.id); });
-            }
-        });
-    },
-    expandCirclesBars: function (index, id, reset) {
-        var $$ = this;
-        var config = $$.config, _a = $$.$el, bar = _a.bar, circle = _a.circle;
-        circle && config.point_focus_expand_enabled &&
-            $$.expandCircles(index, id, reset);
-        bar && $$.expandBars(index, id, reset);
-    },
     selectRectForMultipleXs: function (context) {
         var $$ = this;
         var config = $$.config, state = $$.state;
         var targetsToShow = $$.filterTargetsToShow($$.data.targets);
         // do nothing when dragging
-        if ($$.dragging || $$.hasArcType(targetsToShow)) {
+        if (state.dragging || $$.hasArcType(targetsToShow)) {
             return;
         }
         var mouse$1 = mouse(context);
@@ -15214,6 +15291,7 @@ var shapePoint = {
             .selectAll("." + CLASS.circles)
             .data(targets)
             .attr("class", classCircles);
+        mainCircle.exit().remove();
         var mainCircleEnter = mainCircle.enter();
         // Circles for each data point on lines
         config.data_selection_enabled && mainCircleEnter.append("g")
@@ -15239,16 +15317,16 @@ var shapePoint = {
                 $el.circle.data()[0].index : 0;
             var circles = $el.main.selectAll("." + CLASS.circles)
                 .selectAll("." + CLASS.circle)
-                .data(function (d) { return (focusOnly ? [d.values[currIndex_1]] : d.values); });
+                .data(function (d) { return ($$.isPointType(d) ?
+                (focusOnly ? [d.values[currIndex_1]] : d.values) : []); });
             circles.exit().remove();
             var fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
             circles.enter()
                 .filter(function (d) { return d; })
-                .append(fn)
-                .merge(circles)
+                .append(fn);
+            $el.circle = $el.main.selectAll("." + CLASS.circles + " ." + CLASS.circle)
                 .style("stroke", $$.color)
                 .style("opacity", $$.initialOpacityForCircle.bind($$));
-            $el.circle = $el.main.selectAll("." + CLASS.circles + " ." + CLASS.circle);
         }
     },
     redrawCircle: function (cx, cy, withTransition, flow) {
@@ -16029,77 +16107,6 @@ var optDataAxis = {
      * }
      */
     data_axes: {},
-    /**
-     * Set labels options
-     * @name data․labels
-     * @memberof Options
-     * @type {object}
-     * @property {object} data Data object
-     * @property {boolean} [data.labels=false] Show or hide labels on each data points
-     * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
-     * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
-     * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
-     *  - `v` is the value of the data point where the label is shown.
-     *  - `id` is the id of the data where the label is shown.
-     *  - `i` is the index of the data point where the label is shown.
-     *  - `j` is the sub index of the data point where the label is shown.<br><br>
-     * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-     * @property {string|object} [data.labels.colors] Set label text colors.
-     * @property {object} [data.labels.position] Set each dataset position, relative the original.
-     * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
-     * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
-     * @memberof Options
-     * @type {object}
-     * @default {}
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
-     * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
-     * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
-     * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
-     * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
-     * @example
-     * data: {
-     *   labels: true,
-     *
-     *   // or set specific options
-     *   labels: {
-     *     format: function(v, id, i, j) { ... },
-     *
-     *     // it's possible to set for each data
-     *     format: {
-     *         data1: function(v, id, i, j) { ... },
-     *         ...
-     *     },
-     *
-     *     // align text to center of the 'bar' shape (works only for 'bar' type)
-     *     centered: true,
-     *
-     *     // apply for all label texts
-     *     colors: "red",
-     *
-     *     // or set different colors per dataset
-     *     // for not specified dataset, will have the default color value
-     *     colors: {
-     *        data1: "yellow",
-     *        data3: "green"
-     *     },
-     *
-     *     // set x, y coordinate position
-     *     position: {
-     *        x: -10,
-     *        y: 10
-     *     },
-     *
-     *     // or set x, y coordinate position by each dataset
-     *     position: {
-     *        data1: {x: 5, y: 5},
-     *        data2: {x: 10, y: -20}
-     *     }
-     *   }
-     * }
-     */
-    data_labels: {},
-    data_labels_colors: undefined,
-    data_labels_position: {},
     /**
      * Define regions for each data.<br>
      * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
@@ -18671,8 +18678,7 @@ var bb = {
 /**
  * Extend Axis
  * @param {Array} module Module to be extended
- * @param {object} option Option object to be extended
- * @returns {boolean}
+ * @param {Array} option Option object to be extended
  * @private
  */
 function extendAxis(module, option) {
@@ -18685,52 +18691,46 @@ function extendAxis(module, option) {
         optSubchart,
         optZoom
     ].concat(option || []));
-    return true;
 }
 /**
  * Extend Line type modules
  * @param {object} module Module to be extended
  * @param {Array} option Option object to be extended
- * @returns {boolean}
  * @private
  */
 function extendLine(module, option) {
-    extendAxis([shapePoint, shapeLine, module]);
+    extendAxis([shapePoint, shapeLine].concat(module || []));
     Options.setOptions([optPoint, optLine].concat(option || []));
-    return true;
 }
 /**
  * Extend Arc type modules
  * @param {Array} module Module to be extended
  * @param {Array} option Option object to be extended
- * @returns {boolean}
  * @private
  */
 function extendArc(module, option) {
     extend(ChartInternal.prototype, [shapeArc].concat(module || []));
-    Options.setOptions([option]);
-    return true;
+    Options.setOptions(option);
 }
 // Area types
-var area = function () { return (extendLine(shapeArea, [optArea]) && TYPE.AREA); };
-var areaLineRange = function () { return (extendLine(shapeArea, [optArea]) && TYPE.AREA_LINE_RANGE); };
-var areaSpline = function () { return (extendLine(shapeArea, [optArea, optSpline]) && TYPE.AREA_SPLINE); };
-var areaSplineRange = function () { return (extendLine(shapeArea, [optArea, optSpline]) && TYPE.AREA_SPLINE_RANGE); };
-var areaStep = function () { return (extendLine(shapeArea, [optArea]) && TYPE.AREA_STEP); };
+var area = function () { return (extendLine(shapeArea, [optArea]), TYPE.AREA); };
+var areaLineRange = function () { return (extendLine(shapeArea, [optArea]), TYPE.AREA_LINE_RANGE); };
+var areaSpline = function () { return (extendLine(shapeArea, [optArea, optSpline]), TYPE.AREA_SPLINE); };
+var areaSplineRange = function () { return (extendLine(shapeArea, [optArea, optSpline]), TYPE.AREA_SPLINE_RANGE); };
+var areaStep = function () { return (extendLine(shapeArea, [optArea]), TYPE.AREA_STEP); };
 // Line types
-var line = function () { return (extendLine() && TYPE.LINE); };
-var spline = function () { return (extendLine(undefined, [optSpline]) && TYPE.SPLINE); };
-var step = function () { return (extendLine() && TYPE.STEP); };
+var line = function () { return (extendLine(), TYPE.LINE); };
+var spline = function () { return (extendLine(undefined, [optSpline]), TYPE.SPLINE); };
+var step = function () { return (extendLine(), TYPE.STEP); };
 // Arc types
-var donut = function () { return (extendArc(undefined, optDonut) && TYPE.DONUT); };
-var gauge = function () { return (extendArc(undefined, optGauge) && TYPE.GAUGE); };
-var pie = function () { return (extendArc(undefined, optPie) && TYPE.PIE); };
-var radar = function () { return (extendArc([shapePoint, shapeRadar], optRadar) && TYPE.RADAR); };
+var donut = function () { return (extendArc(undefined, [optDonut]), TYPE.DONUT); };
+var gauge = function () { return (extendArc(undefined, [optGauge]), TYPE.GAUGE); };
+var pie = function () { return (extendArc(undefined, [optPie]), TYPE.PIE); };
+var radar = function () { return (extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), TYPE.RADAR); };
 // Axis based types
-var bar = function () { return (extendAxis([shapeBar], optBar) && TYPE.BAR); };
-var bubble = function () { return (extendAxis([shapePoint, shapeBubble], optBubble) && TYPE.BUBBLE); };
-var scatter = function () { return (extendAxis([shapePoint], [optPoint, optScatter]) && TYPE.SCATTER); };
-console.log("--> 2");
+var bar = function () { return (extendAxis([shapeBar], optBar), TYPE.BAR); };
+var bubble = function () { return (extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), TYPE.BUBBLE); };
+var scatter = function () { return (extendAxis([shapePoint], [optPoint, optScatter]), TYPE.SCATTER); };
 
 export default bb;
 export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, donut, gauge, line, pie, radar, scatter, spline, step };
