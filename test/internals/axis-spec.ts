@@ -2446,4 +2446,40 @@ describe("AXIS", function() {
 			});
 		});
 	});
+
+	describe("x Axis tick width size", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "City of New York"],
+						["data1", 380],
+						["data2", 302]
+					],
+					order: null,
+					type: "bar",
+					groups: [['data1', 'data2']],
+				},
+				axis: {
+					x: {
+						type: 'category',
+						tick: {
+							multiline: false
+						}
+					},
+					rotated: true,
+				}
+			};
+		});
+
+		it("x Axis tick width should be evaluated correctly", () => {
+			const {state: {current}} = chart.internal;
+
+			const maxTickWidth = current.maxTickWidths.x.size;
+			const tickWdith = chart.$.main.select(`.${CLASS.axisX} tspan`).node().getBoundingClientRect().width;
+
+			expect(maxTickWidth).to.be.equal(tickWdith);
+		});
+	});
 });
