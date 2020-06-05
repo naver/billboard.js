@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200530141107
+ * @version 1.11.1-nightly-20200605141532
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -21253,7 +21253,9 @@ var Axis_Axis = /*#__PURE__*/function () {
             scale = $$[id].copy().domain($$["get".concat(isYAxis ? "Y" : "X", "Domain")](targetsToShow, id)),
             domain = scale.domain();
         // do not compute if domain is same
-        if (domain[0] === domain[1] || isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1]) return currentTickMax.size;
+        if (domain[0] === domain[1] && domain.every(function (v) {
+          return v > 0;
+        }) || isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1]) return currentTickMax.size;
         currentTickMax.domain = domain;
         var axis = this.getAxis(id, scale, !1, !1, !0),
             tickCount = config["axis_".concat(id, "_tick_count")],
@@ -37005,7 +37007,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200530141107",
+  version: "1.11.1-nightly-20200605141532",
 
   /**
    * Generate chart
@@ -37104,7 +37106,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200530141107
+ * @version 1.11.1-nightly-20200605141532
  */
 
 
