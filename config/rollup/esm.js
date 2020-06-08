@@ -8,6 +8,7 @@ import path from "path";
 import fs from "fs";
 
 const banner = require("../banner.js");
+const version = process.env.VERSION || pkg.version;
 
 function getBanner(isPlugin) {
 	const {plugin, production} = banner;
@@ -24,7 +25,7 @@ const plugins = [
     }),
     typescript(),
     replace({
-        "__VERSION__": pkg.version
+        "__VERSION__": version
     })
 ];
 const external = id => /^d3-/.test(id);
