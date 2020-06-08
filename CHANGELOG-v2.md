@@ -1,10 +1,11 @@
 # General direction
+
 - Move codebase to TypeScript
 - Restructure of file system & class architecture
 - Make smaller build & run faster
 - Do not break backward compatibility
 
-# Breaking Changes
+# BREAKING CHANGES
 
 ## Updates on private state variables
 Reorganized `selection` and `state` variables. (Note: Even is accessible, do not use nor access private values)
@@ -248,7 +249,7 @@ In an internal test, we got from `10 ~ 43%` size (minified with [terser](https:/
 > The bundle size will vary depending the bundler and the envrionments that is used.
 
 
-Type | Rollup.js (reduced) | wepack (reduced)
+Type | Rollup.js (reduced) | Webpack (reduced)
 --- | --- | --- 
 **Full size** | `208kb` | `210kb`
 area | 184kb (-10.57%) | 186kb (-11.42%)
