@@ -12,6 +12,8 @@ export default {
 	 * @instance
 	 * @memberof Chart
 	 * @param {object} size This argument should include width and height in pixels.
+	 * @param {number} [size.width] width value
+	 * @param {number} [size.height] height value
 	 * @example
 	 * // Resize to 640x480
 	 * chart.resize({

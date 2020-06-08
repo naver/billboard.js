@@ -3,7 +3,6 @@
 # v2.0 dev branch
 
 Branch for next major release 2.0.
-> DO NOT use for production.
 
 ## Installation
 
@@ -258,12 +257,12 @@ bb.generate({
 ### Example of size reduction by types
 
 Take as a reference the amount of bundle size reduction by types.
-In an internal test, we got from 10 ~ 43% size reduction.
+In an internal test, we got from `10 ~ 43%` size (minified with [terser](https://github.com/terser/terser)) reduction.
 
 > The bundle size will vary depending the bundler and the envrionments that is used.
 
 
-Shape | Rollup.js (reduced) | wepack (reduced)
+Type | Rollup.js (reduced) | wepack (reduced)
 --- | --- | --- 
 **Full size** | `208kb` | `210kb`
 area | 184kb (-10.57%) | 186kb (-11.42%)
@@ -281,3 +280,106 @@ radar | 132kb (-36.53%) | 152kb (-27.61%)
 scatter | 175kb (-15.86%) | 176kb (-16.19%)
 spline | 181kb (-12.98%) | 183kb (-12.85%)
 step | 181kb (-12.98%) | 183kb (-12.85%)
+
+<details>
+	<summary>Expand to see generation option used for the test result</summary>
+
+  ```js
+  bb.generate({
+    data: {
+      columns: [
+        ["data1", 30, 20, 50, 40, 60, 50],
+        ["data2", 200, 130, 90, 240, 130, 220],
+        ["data3", 300, 200, 160, 400, 250, 250],
+        ["data4", 200, 130, 90, 240, 130, 220],
+        ["data5", 130, 120, 150, 140, 160, 150],
+        ["data6", 90, 70, 20, 50, 60, 120],
+        ["data7", 283, 170, 275, 143, 220, 255],
+
+        /* for area-line-range and area-spline-range
+        ["data8",
+          [150, 140, 110],
+          [155, 130, 115],
+          [160, 135, 120],
+          [135, 120, 110],
+          [180, 150, 130],
+          [199, 160, 125]
+        ],
+        */
+      ]
+    },
+    type: "..."
+  });
+  ```
+</details>
+
+## Reduced node generation
+
+`v2` minimize generating redundant nodes, generating necessary nodes by its types.
+Following is the test example measuring generated DOM length by chart types.
+
+The result show a size reduction of DOM lengths, in a range of `6 ~ 50%`.
+
+Type | v1.12 | v2 | Reduction rate
+--- | --- | --- | --- 
+area | 24,585 | 22,948 | -6.65%
+area-spline | 27,021 | 25,411 | -5.95%
+area-step | 26,659 | 24,082 | -9.66%
+area-line-range | 15,589 | 14,800 | -5.06%
+area-spline-range | 17,553 | 16,715 | -4.77%
+bar | 19,437 | 17,855 | -8.13%
+bubble | 20,323 | 17,129 | -15.71%
+donut | 16,978 | 7,947 | -53.19%
+gauge | 17,430 | 8,726 | -49.93%
+line | 23,393 | 20,616 | -11.87%
+pie | 15,851 | 7,463 | -52.91%
+radar | 24,579 | 16,619 | -32.38%
+scatter | 19,726 | 16,229 | -17.72%
+spline | 24,954 | 22,169 | -11.16%
+step | 24,452 | 20,650 | -15.54%
+
+<details>
+	<summary>Expand to see generation option used for the test result</summary>
+
+  ```js
+  bb.generate({
+    data: {
+      columns: [
+        ["data1", 30, 20, 50, 40, 60, 50],
+        ["data2", 200, 130, 90, 240, 130, 220],
+        ["data3", 300, 200, 160, 400, 250, 250],
+        ["data4", 200, 130, 90, 240, 130, 220],
+        ["data5", 130, 120, 150, 140, 160, 150],
+        ["data6", 90, 70, 20, 50, 60, 120],
+        ["data7", 283, 170, 275, 143, 220, 255],
+
+        /* for area-line-range and area-spline-range
+        ["data1",
+          [150, 140, 110],
+          [155, 130, 115],
+          [160, 135, 120],
+          [135, 120, 110],
+          [180, 150, 130],
+          [199, 160, 125]
+        ],
+        ["data2", [220, 215, 205], [240, 225, 215], [260, 235, 225], [280, 245, 235], [270, 255, 225], [240, 225, 215]],
+        ["data3",
+          {high: 155, low: 145, mid: 150},
+          {high: 200, mid: 190, low: 150},
+          {high: 230, mid: 215, low: 200},
+          {high: 210, mid: 200, low: 180},
+          {high: 220, mid: 210, low: 190},
+          {high: 200, mid: 180, low: 160}
+        ]
+        */
+      ]
+    },
+    type: "..."
+  });
+  ```
+</details>
+
+
+## Deprecation
+
+As anticipated by [#801](https://github.com/naver/billboard.js/issues/801), removed the `.transform()` API.

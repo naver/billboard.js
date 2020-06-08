@@ -68,6 +68,8 @@ extend(ygrids, {
 	 * @instance
 	 * @memberof Chart
 	 * @param {object} params This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
+	 * @param {number} [params.value] target value
+	 * @param {string} [params.class] target class
 	 * @example
 	 * // y grid line on y = 200 will be removed
 	 * chart.ygrids.remove({value: 200});

@@ -245,7 +245,8 @@ function getPathBox(
 
 /**
  * Return brush selection array
- * @param {object} $el Selection object
+ * @param {object} {} Selection object
+ * @param {object} {}.$el Selection object
  * @returns {d3.brushSelection}
  * @private
  */

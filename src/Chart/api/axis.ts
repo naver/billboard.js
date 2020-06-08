@@ -62,11 +62,15 @@ const axis = {
 	 * @instance
 	 * @memberof Chart
 	 * @param {object} labels specified axis' label to be updated.
+	 * @param {string} [labels.x] x Axis string
+	 * @param {string} [labels.y] y Axis string
+	 * @param {string} [labels.y2] y2 Axis string
 	 * @example
 	 * // Update axis' label
 	 * chart.axis.labels({
 	 *   x: "New X Axis Label",
-	 *   y: "New Y Axis Label"
+	 *   y: "New Y Axis Label",
+	 *   y2: "New Y2 Axis Label"
 	 * });
 	 */
 	labels: function(labels: {x?: string, y?: string, y2?: string}): void {

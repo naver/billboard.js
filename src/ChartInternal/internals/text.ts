@@ -369,7 +369,7 @@ export default {
 			const overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) <
 				Math.ceil(nodeForWidth.node().getComputedTextLength());
 			const overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) <
-				parseInt(textNode.style("font-size"), 0);
+				parseInt(textNode.style("font-size"), 10);
 
 			filteredTextNode.classed(CLASS.TextOverlapping, overlapsX && overlapsY);
 		});
