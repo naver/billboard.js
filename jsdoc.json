@@ -7,11 +7,12 @@
 			"./src",
 			"./README.md"
 		],
-		"includePattern": ".+\\.js$",
+		"includePattern": ".+\\.ts$",
 		"excludePattern": "(node_modules|doc|theme|types)/"
 	},
 	"plugins": [
-		"plugins/markdown"
+		"plugins/markdown",
+		"node_modules/better-docs/typescript"
 	],
 	"opts": {
 		"template": "node_modules/docdash",

@@ -9,11 +9,14 @@ const config = {
 	entry: {
 		billboard: [
 			"./src/scss/billboard.scss",
-			"./src/core.js"
-		]
+			"./src/index.ts"
+		],
+		// arc: "./src/resolver.arc.ts",
+		// axis: "./src/resolver.axis.ts"
 	},
 	output: {
 		path: path.resolve(__dirname, "dist"),
+		chunkFilename: "[name].bundle.js",
 		filename: "[name].js",
 		libraryTarget: "umd",
 		umdNamedDefine: true,
@@ -33,27 +36,25 @@ const config = {
 		callback();
 	},
 	devtool: "cheap-module-source-map",
+	resolve: {
+		extensions: [".ts", ".js"]
+	},
 	module: {
 		rules: [
 			{
-				test: /(\.js)$/,
+				test: /(\.[jt]s)$/,
+				loader: "babel-loader",
 				exclude: {
 					test: /node_modules/,
 					not: [/(d3\-.*)$/]
-				},
-				use: {
-					loader: "babel-loader",
-					options: {
-						presets: ["@babel/preset-env"]
-					}
-				},
+				}
 			},
 			{
-				test: /(\.js)$/,
+				test: /(\.[jt]s)$/,
 				loader: StringReplacePlugin.replace({
 					replacements: [
 						{
-							pattern: /#__VERSION__#/ig,
+							pattern: /__VERSION__/ig,
 							replacement: () => pkg.version
 						}
 					]
@@ -100,5 +101,5 @@ module.exports = () => {
 
 	mode === "packaged" && delete config.externals;
 
-	return require(`./config/webpack.config.${mode}.js`)(config, env);
+	return require(`./config/webpack/${mode}.js`)(config, env);
 };

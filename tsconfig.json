@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"module": "ES2015",
+		"moduleResolution": "node",
+		"noImplicitAny": false,
+		"noImplicitThis": false,
+		"strictNullChecks": true,
+		"strictFunctionTypes": false,
+		"baseUrl": "../",
+		"lib": [
+			"es6", "dom"
+		]
+	},
+	"include": [
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"spec/**/*.ts"
+	],
+	"noEmit": true,
+	"forceConsistentCasingInFileNames": true
+}

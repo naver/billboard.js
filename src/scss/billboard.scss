@@ -109,7 +109,7 @@
 }
 
 /*-- Focus --*/
-.bb-target {
+.bb-target, .bb-circles {
 	&.bb-focused {
 		opacity: 1;
 	}

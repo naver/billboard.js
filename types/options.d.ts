@@ -2,10 +2,10 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import { Axis } from "./axis";
-import { ChartTypes, d3Selection, DataItem, GaugeTypes, PrimitiveArray } from "./types";
+import {Axis} from "./axis";
+import {ChartTypes, d3Selection, DataItem, GaugeTypes, PrimitiveArray} from "./types";
 import Stanford from "./plugin/stanford/index";
-import { Chart } from "./chart";
+import {Chart} from "./chart";
 
 export interface ChartOptions {
 	/**
@@ -94,8 +94,10 @@ export interface ChartOptions {
 	color?: {
 		/**
 		 * Set custom color pattern.
+		 *
+		 * Passing 'null' will not set a color for these elements, which requires the usage of custom CSS-based theming to work.
 		 */
-		pattern?: string[];
+		pattern?: (string|null)[];
 
 		/**
 		 * color threshold for gauge and tooltip color
@@ -740,15 +742,12 @@ export interface AreaLinearGradientOptions {
 
 	/**
 	 * The ramp of colors to use on a gradient
+	 *
+	 * offset, stop-color, stop-opacity
+	 * - setting 'null' for stop-color, will set its original data color
+	 * - setting 'function' for stop-color, will pass data id as argument. It should return color string or null value
 	 */
-	stops?: [
-		/**
-		 * offset, stop-color, stop-opacity
-		 * - setting 'null' for stop-color, will set its original data color
-		 * - setting 'function' for stop-color, will pass data id as argument. It should return color string or null value
-		 */
-		[number, string | null | ((id: string) => string), number]
-	];
+	stops?: [number, string | null | ((this: void, id: string) => string), number][];
 }
 
 export interface RegionOptions {
@@ -1125,6 +1124,11 @@ export interface PointOptions {
 			 */
 			r?: number;
 		};
+
+		/**
+		 * Show point only when is focused.
+		 */
+		only?: boolean;
 	};
 
 	select?: {

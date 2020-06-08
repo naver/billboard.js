@@ -1,15 +1,21 @@
+const webpack = require("webpack");
+const isWin = require("os").platform() === "win32";
+
+// file extension to be tested
+const fileExtensions = /(\.[jt]s)$/;
+
 module.exports = function(config) {
 	const karmaConfig = {
 		frameworks: ["mocha", "chai", "sinon"],
 		files: [
 			"./node_modules/lite-fixture/index.js",
 			"./node_modules/hammer-simulator/index.js",
-			"./spec/assets/hammer-simulator.run.js",
+			"./test/assets/hammer-simulator.run.js",
 			"./src/scss/billboard.scss",
-			"./spec/assets/common.css",
-			"./spec/**/*-spec.js",
+			"./test/assets/common.css",
+			"./test/**/*-spec.ts",
 			{
-				pattern: "./spec/assets/data/*",
+				pattern: "./test/assets/data/*",
 				watched: false,
 				included: false,
 				served: true
@@ -26,35 +32,52 @@ module.exports = function(config) {
 			devtool: "inline-source-map",
 			mode: "development",
 			stats: "none",
+			resolve: {
+				extensions: [".ts", ".js"]
+			},
 			module: {
 				rules: [
 					{
-						test: /\.js$/,
-						exclude: /node_modules/,
-						use: {
-							loader: "babel-loader",
-							options: {
-								presets: [
-									[
-										"@babel/preset-env", {
-											loose: true,
-											modules: false
-										}
-									]
-								],
-								plugins: ["add-module-exports"]
-							}
+						test: /(\.[jt]s)$/,
+						loader: "babel-loader",
+						exclude: {
+							test: /node_modules/,
+							not: [/(d3\-.*)$/]
 						}
 					}
 				]
-			}
+			},
+			optimization: {
+				usedExports: true
+			},
+			plugins: isWin ? [
+				new webpack.NormalModuleReplacementPlugin(
+					/module\/util/i, function(resource) {
+						resource.request = resource.request.replace("module/util", "../test/assets/module/util");
+					}
+				),
+				new webpack.NormalModuleReplacementPlugin(
+					/fake/i, function(resource) {
+						if (/test\\assets\\module/i.test(resource.context)) {
+							resource.request = "../../../src/module/util";
+						}
+					}
+				)
+			] : [
+				new webpack.NormalModuleReplacementPlugin(
+					/module\/util\.ts/i, "../../test/assets/module/util.ts"
+				),
+				new webpack.NormalModuleReplacementPlugin(
+					/fake\.ts/i, "../../../src/module/util.ts"
+				)
+			]
 		},
 
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
 			"./src/scss/billboard.scss": ["scss"],
-			"./spec/**/*-spec.js": config.coverage ? ["webpack"] : ["webpack", "sourcemap"],
+			"./test/**/*-spec.ts": config.coverage ? ["webpack"] : ["webpack", "sourcemap"],
 		},
 
 		scssPreprocessor: {
@@ -89,7 +112,7 @@ module.exports = function(config) {
 		};
 
 		karmaConfig.webpack.module.rules.unshift({
-			test: /\.js$/,
+			test: fileExtensions,
 			exclude: /(node_modules|test)/,
 			use: {
 				loader: "istanbul-instrumenter-loader",
