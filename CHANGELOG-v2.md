@@ -191,7 +191,7 @@ unload.done
   }
   ```
   
- - Enable shoing point by default for `step` type<br>
+ - Enable showing point by default for `step` type<br>
    By default, data point will be shown for step types. If want to hide, set `point.show=false`.
    ```js
    point: {
