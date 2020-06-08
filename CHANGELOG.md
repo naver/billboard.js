@@ -1,3 +1,34 @@
+# [2.0.0-next.1](https://github.com/naver/billboard.js/compare/1.12.0-next.5...2.0.0-next.1) (2020-06-08)
+
+
+### Bug Fixes
+
+* **all:** Fix test cases ([2e1ad79](https://github.com/naver/billboard.js/commit/2e1ad799345353f2a2a6ee26f1338c2e9c3cba9d))
+* **point:** Correct focus.only to work in mobile env ([67eea16](https://github.com/naver/billboard.js/commit/67eea16b494b8ea9c96cab01568813147dbff754))
+* **point:** Correct point.focus.only ([1686594](https://github.com/naver/billboard.js/commit/1686594f19bb24185f3829740224b1285512dc49))
+
+
+### Code Refactoring
+
+* **all:** v2 updates ([e23998f](https://github.com/naver/billboard.js/commit/e23998f994595c308d440e011124d590cd79b4d1)), closes [#758](https://github.com/naver/billboard.js/issues/758) [#757](https://github.com/naver/billboard.js/issues/757) [#756](https://github.com/naver/billboard.js/issues/756) [#36](https://github.com/naver/billboard.js/issues/36)
+* **module:** implement ESM index ([85caf71](https://github.com/naver/billboard.js/commit/85caf71f25371fb35fffd5a763b533f8e1a7ece0))
+
+
+### Features
+
+* **point:** Intent to ship point.focus.only ([bb70347](https://github.com/naver/billboard.js/commit/bb7034727d54f4bba2507e998651bde2e1d1f116))
+
+
+### BREAKING CHANGES
+
+* **all:** v2 updates
+* **module:** new index for ESM build
+
+- split Axis releated size from size.ts --> size.axis.ts
+- split common main option from Options.ts --> ./common/main.ts
+- Instead export Axis class, add .getAxisInstance() to make beneficial
+  from tree-shaking
+
 # [1.12.0-next.5](https://github.com/naver/billboard.js/compare/1.12.0-next.4...1.12.0-next.5) (2020-03-11)
 
 
