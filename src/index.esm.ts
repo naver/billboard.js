@@ -107,28 +107,40 @@ function extendArc(module?, option?): void {
 }
 
 // Area types
-const area = (): string => (extendLine(shapeArea, [optArea]), TYPE.AREA);
-const areaLineRange = (): string => (extendLine(shapeArea, [optArea]), TYPE.AREA_LINE_RANGE);
-const areaSpline = () => (extendLine(shapeArea, [optArea, optSpline]), TYPE.AREA_SPLINE);
-const areaSplineRange = (): string => (
-	extendLine(shapeArea, [optArea, optSpline]), TYPE.AREA_SPLINE_RANGE
+let area = (): string => (
+	extendLine(shapeArea, [optArea]), (area = () => TYPE.AREA)()
 );
-const areaStep = (): string => (extendLine(shapeArea, [optArea]), TYPE.AREA_STEP);
+let areaLineRange = (): string => (
+	extendLine(shapeArea, [optArea]), (areaLineRange = () => TYPE.AREA_LINE_RANGE)()
+);
+let areaSpline = () => (
+	extendLine(shapeArea, [optArea, optSpline]), (areaSpline = () => TYPE.AREA_SPLINE)()
+);
+let areaSplineRange = (): string => (
+	extendLine(shapeArea, [optArea, optSpline]), (areaSplineRange = () => TYPE.AREA_SPLINE_RANGE)()
+);
+let areaStep = (): string => (
+	extendLine(shapeArea, [optArea]), (areaStep = () => TYPE.AREA_STEP)()
+);
 
 // Line types
-const line = (): string => (extendLine(), TYPE.LINE);
-const spline = (): string => (extendLine(undefined, [optSpline]), TYPE.SPLINE);
-const step = (): string => (extendLine(), TYPE.STEP);
+let line = (): string => (extendLine(), (line = () => TYPE.LINE)());
+let spline = (): string => (extendLine(undefined, [optSpline]), (spline = () => TYPE.SPLINE)());
+let step = (): string => (extendLine(), (step = () => TYPE.STEP)());
 
 // Arc types
-const donut = (): string => (extendArc(undefined, [optDonut]), TYPE.DONUT);
-const gauge = (): string => (extendArc(undefined, [optGauge]), TYPE.GAUGE);
-const pie = (): string => (extendArc(undefined, [optPie]), TYPE.PIE);
-const radar = (): string => (extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), TYPE.RADAR);
+let donut = (): string => (extendArc(undefined, [optDonut]), (donut = () => TYPE.DONUT)());
+let gauge = (): string => (extendArc(undefined, [optGauge]), (gauge = () => TYPE.GAUGE)());
+let pie = (): string => (extendArc(undefined, [optPie]), (pie = () => TYPE.PIE)());
+let radar = (): string => (
+	extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), (radar = () => TYPE.RADAR)()
+);
 
 // Axis based types
-const bar = (): string => (extendAxis([shapeBar], optBar), TYPE.BAR);
-const bubble = (): string => (
-	extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), TYPE.BUBBLE
+let bar = (): string => (extendAxis([shapeBar], optBar), (bar = () => TYPE.BAR)());
+let bubble = (): string => (
+	extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), (bubble = () => TYPE.BUBBLE)()
 );
-const scatter = (): string => (extendAxis([shapePoint], [optPoint, optScatter]), TYPE.SCATTER);
+let scatter = (): string => (
+	extendAxis([shapePoint], [optPoint, optScatter]), (scatter = () => TYPE.SCATTER)()
+);

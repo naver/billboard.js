@@ -11014,7 +11014,7 @@ var Axis = /** @class */ (function () {
             var scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id));
             var domain = scale.domain();
             // do not compute if domain is same
-            if (domain[0] === domain[1] ||
+            if ((domain[0] === domain[1] && domain.every(function (v) { return v > 0; })) ||
                 (isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1])) {
                 return currentTickMax.size;
             }
@@ -18713,24 +18713,24 @@ function extendArc(module, option) {
     Options.setOptions(option);
 }
 // Area types
-var area = function () { return (extendLine(shapeArea, [optArea]), TYPE.AREA); };
-var areaLineRange = function () { return (extendLine(shapeArea, [optArea]), TYPE.AREA_LINE_RANGE); };
-var areaSpline = function () { return (extendLine(shapeArea, [optArea, optSpline]), TYPE.AREA_SPLINE); };
-var areaSplineRange = function () { return (extendLine(shapeArea, [optArea, optSpline]), TYPE.AREA_SPLINE_RANGE); };
-var areaStep = function () { return (extendLine(shapeArea, [optArea]), TYPE.AREA_STEP); };
+var area = function () { return (extendLine(shapeArea, [optArea]), (area = function () { return TYPE.AREA; })()); };
+var areaLineRange = function () { return (extendLine(shapeArea, [optArea]), (areaLineRange = function () { return TYPE.AREA_LINE_RANGE; })()); };
+var areaSpline = function () { return (extendLine(shapeArea, [optArea, optSpline]), (areaSpline = function () { return TYPE.AREA_SPLINE; })()); };
+var areaSplineRange = function () { return (extendLine(shapeArea, [optArea, optSpline]), (areaSplineRange = function () { return TYPE.AREA_SPLINE_RANGE; })()); };
+var areaStep = function () { return (extendLine(shapeArea, [optArea]), (areaStep = function () { return TYPE.AREA_STEP; })()); };
 // Line types
-var line = function () { return (extendLine(), TYPE.LINE); };
-var spline = function () { return (extendLine(undefined, [optSpline]), TYPE.SPLINE); };
-var step = function () { return (extendLine(), TYPE.STEP); };
+var line = function () { return (extendLine(), (line = function () { return TYPE.LINE; })()); };
+var spline = function () { return (extendLine(undefined, [optSpline]), (spline = function () { return TYPE.SPLINE; })()); };
+var step = function () { return (extendLine(), (step = function () { return TYPE.STEP; })()); };
 // Arc types
-var donut = function () { return (extendArc(undefined, [optDonut]), TYPE.DONUT); };
-var gauge = function () { return (extendArc(undefined, [optGauge]), TYPE.GAUGE); };
-var pie = function () { return (extendArc(undefined, [optPie]), TYPE.PIE); };
-var radar = function () { return (extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), TYPE.RADAR); };
+var donut = function () { return (extendArc(undefined, [optDonut]), (donut = function () { return TYPE.DONUT; })()); };
+var gauge = function () { return (extendArc(undefined, [optGauge]), (gauge = function () { return TYPE.GAUGE; })()); };
+var pie = function () { return (extendArc(undefined, [optPie]), (pie = function () { return TYPE.PIE; })()); };
+var radar = function () { return (extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), (radar = function () { return TYPE.RADAR; })()); };
 // Axis based types
-var bar = function () { return (extendAxis([shapeBar], optBar), TYPE.BAR); };
-var bubble = function () { return (extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), TYPE.BUBBLE); };
-var scatter = function () { return (extendAxis([shapePoint], [optPoint, optScatter]), TYPE.SCATTER); };
+var bar = function () { return (extendAxis([shapeBar], optBar), (bar = function () { return TYPE.BAR; })()); };
+var bubble = function () { return (extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), (bubble = function () { return TYPE.BUBBLE; })()); };
+var scatter = function () { return (extendAxis([shapePoint], [optPoint, optScatter]), (scatter = function () { return TYPE.SCATTER; })()); };
 
 export default bb;
 export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, donut, gauge, line, pie, radar, scatter, spline, step };

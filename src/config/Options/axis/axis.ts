@@ -6,8 +6,6 @@ import x from "./x";
 import y from "./y";
 import y2 from "./y2";
 
-import {deepClone} from "../../../module/util";
-
 /**
  * y Axis  config options
  */
@@ -24,5 +22,7 @@ export default {
 	 * }
 	 */
 	axis_rotated: false,
-	...deepClone(x, y, y2)
+	...x,
+	...y,
+	...y2
 };
