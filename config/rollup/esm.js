@@ -35,7 +35,7 @@ const bbPlugins = fs.readdirSync(path.resolve(__dirname, "../../src/Plugin/"), {
 })
 .filter(dirent => dirent.isDirectory())
 .map(({name}) => ({
-    input: `src/plugin/${name}/index.ts`,
+    input: `src/Plugin/${name}/index.ts`,
     output: {
         file: `dist/plugin/billboardjs-plugin-${name}.esm.js`,
         format: "es",
