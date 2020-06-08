@@ -24,9 +24,9 @@ import apiTooltip from "./api/tooltip";
  * var chart = bb.generate({
  *  data: {
  *    columns: [
- *	    ["x", "2015-11-02", "2015-12-01", "2016-01-01", "2016-02-01", "2016-03-01"],
- * 	    ["count1", 11, 8, 7, 6, 5 ],
- *	    ["count2", 9, 3, 6, 2, 8 ]
+ *        ["x", "2015-11-02", "2015-12-01", "2016-01-01", "2016-02-01", "2016-03-01"],
+ *        ["count1", 11, 8, 7, 6, 5 ],
+ *        ["count2", 9, 3, 6, 2, 8 ]
  *   ]}
  * }
  * @see {@link bb.generate} for the initialization.

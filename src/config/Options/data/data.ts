@@ -85,11 +85,38 @@ export default {
 	 * @name data․type
 	 * @memberof Options
 	 * @type {string}
-	 * @default line
+	 * @default "line"<br>NOTE: When importing shapes by ESM, `line()` should be specified for type.
 	 * @example
 	 * data: {
 	 *    type: "bar"
 	 * }
+	 * @example
+	 * // Generate chart by importing ESM
+	 * // Import types to be used only, where this will make smaller bundle size.
+	 * import bb, {
+	 *   area,
+	 *   areaLineRange,
+	 *   areaSpline,
+	 *   areaSplineRange,
+	 *   areaStep,
+	 *   bar,
+	 *   bubble,
+	 *   donut,
+	 *   gauge,
+	 *   line,
+	 *   pie,
+	 *   radar,
+	 *   scatter,
+	 *   spline,
+	 *   step
+	 * }
+	 *
+	 * bb.generate({
+	 *   ...,
+	 *   data: {
+	 *     type: bar()
+	 *   }
+	 * });
 	 */
 	data_type: <ChartTypes|undefined> undefined,
 
@@ -108,6 +135,36 @@ export default {
 	 *     data2: "spline"
 	 *   }
 	 * }
+	 * @example
+	 * // Generate chart by importing ESM
+	 * // Import types to be used only, where this will make smaller bundle size.
+	 * import bb, {
+	 *   area,
+	 *   areaLineRange,
+	 *   areaSpline,
+	 *   areaSplineRange,
+	 *   areaStep,
+	 *   bar,
+	 *   bubble,
+	 *   donut,
+	 *   gauge,
+	 *   line,
+	 *   pie,
+	 *   radar,
+	 *   scatter,
+	 *   spline,
+	 *   step
+	 * }
+	 *
+	 * bb.generate({
+	 *   ...,
+	 *   data: {
+	 *     types: {
+	 *       data1: bar(),
+	 *       data1: spline()
+	 *     }
+	 *   }
+	 * });
 	 */
 	data_types: <{[key: string]: ChartTypes}> {},
 

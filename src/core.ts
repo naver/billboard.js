@@ -35,20 +35,58 @@ const bb = {
 	 *  <!-- chart holder -->
 	 * <div id="LineChart"></div>
 	 * @example
-	 *   // generate chart with options
+	 *  // Generate chart with options
 	 *  var chart = bb.generate({
 	 *      "bindto": "#LineChart"
 	 *      "data": {
 	 *          "columns": [
 	 *              ["data1", 30, 200, 100, 400, 150, 250],
 	 *              ["data2", 50, 20, 10, 40, 15, 25]
-	 *           ]
+	 *           ],
+	 *          "type": "line"
 	 *      }
 	 *  });
 	 *
 	 *  // call some API
 	 *  // ex) get the data of 'data1'
 	 *  chart.data("data1");
+	 * @example
+	 * // Generate chart by importing ESM
+	 * // Import types to be used only, where this will make smaller bundle size.
+	 * import bb, {
+	 *   area,
+	 *   areaLineRange,
+	 *   areaSpline,
+	 *   areaSplineRange,
+	 *   areaStep,
+	 *   bar,
+	 *   bubble,
+	 *   donut,
+	 *   gauge,
+	 *   line,
+	 *   pie,
+	 *   radar,
+	 *   scatter,
+	 *   spline,
+	 *   step
+	 * }
+	 *
+	 * bb.generate({
+	 *      "bindto": "#LineChart"
+	 *      "data": {
+	 *          "columns": [
+	 *              ["data1", 30, 200, 100, 400, 150, 250],
+	 *              ["data2", 50, 20, 10, 40, 15, 25]
+	 *           ]
+	 *      },
+	 *      type: line(),
+	 *
+	 *      // or
+	 *      types: {
+	 *        data1: bar(),
+	 *        data2: step()
+	 *      }
+	 * })
 	 */
 	generate(config) {
 		const options = mergeObj({}, defaults, config);
