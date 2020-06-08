@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200605141532
+ * @version 1.11.1-nightly-20200608141723
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -14945,7 +14945,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200605141532",
+  version: "1.11.1-nightly-20200608141723",
 
   /**
    * Generate chart
@@ -15044,7 +15044,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200605141532
+ * @version 1.11.1-nightly-20200608141723
  */
 
 
