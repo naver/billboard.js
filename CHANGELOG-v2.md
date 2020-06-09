@@ -366,6 +366,14 @@ step | 24,452 | 20,650 | -15.54%
   ```
 </details>
 
+# Benchmark
+
+Try small benchmark by yourself by executing a test to load random data and resize.
+- https://output.jsbin.com/pecafih
+
+> The runtime performance can be measured via chrome's devtool [Performance Monitor](https://developers.google.com/web/updates/2017/11/devtools-release-notes#perf-monitor).
+
+
 # Deprecation
 
 As anticipated by [#801](https://github.com/naver/billboard.js/issues/801), removed the `.transform()` API.
