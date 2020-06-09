@@ -187,40 +187,6 @@ export default {
 		};
 	},
 
-	// generateGetLinePoints(lineIndices, isSubValue?: boolean):Function { // partial duplication of generateGetBarPoints
-	// 	const $$ = this;
-	// 	const {config} = $$;
-	// 	const isSub = !!isSubValue;
-	// 	const x = $$.getShapeX(0, lineIndices, isSub);
-	// 	const y = $$.getShapeY(isSub);
-	// 	const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
-	// 	const yScale = $$.getYScaleById.bind($$);
-
-	// 	return (d, i) => {
-	// 		const y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
-	// 		const offset = lineOffset(d, i) || y0; // offset is for stacked area chart
-	// 		const posX = x(d);
-	// 		let posY = y(d);
-
-	// 		// fix posY not to overflow opposite quadrant
-	// 		if (config.axis_rotated && (
-	// 			(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
-	// 		)) {
-	// 			posY = y0;
-	// 		}
-
-	// 		// 1 point that marks the line position
-	// 		const point = [posX, posY - (y0 - offset)];
-
-	// 		return [
-	// 			point,
-	// 			point, // from here and below, needed for compatibility
-	// 			point,
-	// 			point
-	// 		];
-	// 	};
-	// },
-
 	lineWithRegions(d, x, y, _regions): string {
 		const $$ = this;
 		const {config} = $$;
