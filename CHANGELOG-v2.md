@@ -305,7 +305,7 @@ step | 181kb (-12.98%) | 183kb (-12.85%)
 `v2` minimize generating redundant nodes, generating necessary nodes by its types.
 Following is the test example measuring generated DOM length by chart types.
 
-The result show a size reduction of DOM lengths, in a range of `4 ~ 50%`.
+The result show a size reduction of DOM lengths, in a range of `4 ~ 53%`.
 
 Type | v1.12 | v2 | Reduction rate
 --- | --- | --- | --- 
