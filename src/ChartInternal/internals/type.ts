@@ -192,13 +192,6 @@ export default {
 			this.isRadarType(d);
 	},
 
-	isPointType(d): boolean {
-		return this.isLineType(d) ||
-			this.isBubbleType(d) ||
-			this.isRadarType(d) ||
-			this.isScatterType(d);
-	},
-
 	// determine if is 'circle' data point
 	isCirclePoint(node?): boolean {
 		const {config} = this;

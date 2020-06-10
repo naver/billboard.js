@@ -42,11 +42,6 @@ export default {
 			$$.updateCircleY && $$.updateCircleY();
 		}
 
-		// @TODO: Axis & Radar type
-		if (!state.resizing && ($$.hasPointType() || state.hasRadar)) {
-			$$.updateCircle();
-		}
-
 		// update axis
 		if (state.hasAxis) {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
@@ -93,6 +88,11 @@ export default {
 
 			// radar
 			$el.radar && $$.redrawRadar(durationForExit);
+		}
+
+		// @TODO: Axis & Radar type
+		if (!state.resizing && ($$.hasPointType() || state.hasRadar)) {
+			$$.updateCircle();
 		}
 
 		// title

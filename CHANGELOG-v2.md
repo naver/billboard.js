@@ -65,7 +65,11 @@ element: div.bb
 
 ## Node structure updates
 
-- Dettach `<circle>` point elements separately from being line's children.
+- Changes of `<circle>` point elements position.
+  - for `line`, `area`(area-line-range, area-spline, area-spline-range, area-step) types, stays as is.
+  - for `bubble`, `scatter` types, they will be child nodes of newly added `<g class='bb-chart-circles'>` node.
+  - for `radar` type, will be positioned as child of `<g class='bb-target-*'>` node.
+
 - chart.$.line.circles
   --> chart.$.circles
  - chart.element (removed)
@@ -251,22 +255,22 @@ In an internal test, we got from `10 ~ 43%` size (minified with [terser](https:/
 
 Type | Rollup.js (reduced) | gzipped | Webpack (reduced) | gzipped
 :---: | :---: | :---: | :---: | :---:
-**Full size** | `208kb` | 63kb | `210kb` | 62kb
-area | 184kb `(-10.57%)` | 56kb | 186kb `(-11.42%)` | 55kb
-area-spline | 184kb `(-10.57%)` | 56kb | 186kb `(-11.42%)` | 55kb
-area-step | 184kb `(-10.57%)` | 56kb | 186kb `(-11.42%)` | 55kb
-area-line-range | 184kb `(-10.57%)` | 56kb | 186kb `(-11.42%)` | 55kb
-area-spline-range | 184kb `(-10.57%)` | 56kb | 186kb `(-11.42%)` | 55kb
-bar | 170kb `(-18.26%)` | 52kb | 171kb `(-18.57%)` | 52kb
-bubble | 175kb `(-15.86%)` | 54kb | 177kb `(-15.71%)` | 54kb
-donut | 118kb `(-43.26%)` | 37kb | 138kb `(-34.28%)` | 43kb
-gauge | 119kb `(-42.78%)` | 37kb | 138kb `(-34.28%)` | 43kb
-line | 181kb  `(-12.98%)` | 55kb | 183kb `(-12.85%)` | 55kb
-pie | 118kb `(-43.26%)` | 37kb | 138kb `(-34.28%)` | 43kb
-radar | 132kb `(-36.53%)` | 41kb | 152kb `(-27.61%)` | 47kb
-scatter | 175kb `(-15.86%)` | 53kb | 176kb `(-16.19%)` | 53kb
-spline | 181kb `(-12.98%)` | 55kb | 183kb `(-12.85%)` | 55kb
-step | 181kb `(-12.98%)` | 55kb | 183kb `(-12.85%)` | 55kb
+**Full size** | `207kb` | 63kb | `209kb` | 63kb
+area | 182kb `(-12.07%)` | 56kb | 183kb `(-12.44%)` | 56kb
+area-spline | 182kb `(-10.57%)` | 56kb | 183kb `(-12.44%)` | 56kb
+area-step | 182kb `(-12.07%)` | 56kb | 183kb `(-12.44%)` | 56kb
+area-line-range | 182kb `(-12.07%)` | 56kb | 183kb `(-12.44%)` | 56kb
+area-spline-range | 182kb `(-12.07%)` | 56kb | 183kb `(-12.44%)` | 56kb
+bar | 170kb `(-17.87%)` | 52kb | 171kb `(-18.18%)` | 52kb
+bubble | 176kb `(-14.97%)` | 54kb | 177kb `(-15.31%)` | 54kb
+donut | 119kb `(-42.51%)` | 37kb | 139kb `(-33.49%)` | 43kb
+gauge | 119kb `(-42.51%)` | 37kb | 139kb `(-33.49%)` | 43kb
+line | 179kb  `(-13.52%)` | 55kb | 180kb `(-13.87%)` | 55kb
+pie | 119kb `(-42.51%)` | 37kb | 139kb `(-33.49%)` | 43kb
+radar | 134kb `(-35.26%)` | 41kb | 153kb `(-26.79%)` | 47kb
+scatter | 175kb `(-15.45%)` | 53kb | 176kb `(-15.78%)` | 53kb
+spline | 179kb `(-13.52%)` | 55kb | 181kb `(-13.39%)` | 55kb
+step | 179kb `(-13.52%)` | 55kb | 180kb `(-13.87%)` | 55kb
 
 <details>
 	<summary>Expand to see generation option used for the test result</summary>

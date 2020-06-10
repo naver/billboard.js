@@ -129,7 +129,6 @@ export default {
 		// Adjust radar, circles and texts' position
 		if (translate) {
 			radar.attr("transform", translate);
-			main.selectAll(`.${CLASS.circles}`).attr("transform", translate);
 			main.select(`.${CLASS.chartTexts}`).attr("transform", translate);
 
 			$$.generateRadarPoints();
@@ -356,7 +355,7 @@ export default {
 
 	updateRadarShape(durationForExit): void {
 		const $$ = this;
-		const targets = $$.data.targets;
+		const targets = $$.data.targets.filter(d => $$.isRadarType(d));
 		const points = $$.cache.get(cacheKey);
 
 		const areas = $$.$el.radar.shapes
@@ -376,6 +375,8 @@ export default {
 			.style("fill", $$.color)
 			.style("stroke", $$.color)
 			.attr("points", d => points[d.id].join(" "));
+
+		$$.updateTargetForCircle(targets, areasEnter);
 	},
 
 	/**

@@ -40,8 +40,8 @@ describe("SHAPE RADAR", () => {
 			expect(left).to.be.closeTo(rect.x, 3);
 		});
 
-		it("data points should positioned over radar chart element", () => {
-			expect(chart.internal.$el.radar.node().nextSibling.classList.contains(CLASS.chartCircles)).to.be.true;
+		it("data points should positioned next to radar polygon element", () => {
+			expect(chart.internal.$el.radar.select(`.${CLASS.target}-data1 polygon`).node().nextSibling.querySelectorAll("circle").length).to.equal(3);
 		});
 
 		it("check for shape rendering", done => {

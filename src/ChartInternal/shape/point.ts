@@ -44,53 +44,57 @@ export default {
 
 	initCircle(): void {
 		const $$ = this;
-		const {config, $el: {main}} = $$;
+		const {$el: {main}} = $$;
 
 		$$.point = $$.generatePoint();
 
-		if (config.point_show) {
+		if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select(`.${CLASS.chartCircles}`).empty()) {
 			main.select(`.${CLASS.chart}`)
 				.append("g")
 				.attr("class", CLASS.chartCircles);
 		}
 	},
 
-	updateTargetForCircle(t): void {
+	updateTargetForCircle(targetsValue, enterNodeValue): void {
 		const $$ = this;
 		const {config, data, $el} = $$;
+		const selectionEnabled = config.data_selection_enabled;
+		const classCircles = $$.classCircles.bind($$);
 
-		if (!$el.circle && config.point_show) {
-			$$.initCircle();
+		if (!config.point_show) {
+			return;
 		}
 
-		const classCircles = $$.classCircles.bind($$);
-		const targets = (t || data.targets)
-			.filter(v => (
-				!$$.isBarType(v) && (
-					!$$.isLineType(v) || $$.shouldDrawPointsForLine(v)
-				) && $$.labelishData(v)
-			));
+		!$el.circle && $$.initCircle();
 
-		const mainCircle = $el.main.select(`.${CLASS.chartCircles}`)
-			.style("pointer-events", "none")
-			.selectAll(`.${CLASS.circles}`)
-			.data(targets)
-			.attr("class", classCircles);
+		let targets = targetsValue;
+		let enterNode = enterNodeValue;
 
-		mainCircle.exit().remove();
+		// only for scatter & bubble type should generate seprate <g> node
+		if (!targets) {
+			targets = (data.targets)
+				.filter(d => this.isScatterType(d) || this.isBubbleType(d));
 
-		const mainCircleEnter = mainCircle.enter();
+			const mainCircle = $el.main.select(`.${CLASS.chartCircles}`)
+				.style("pointer-events", "none")
+				.selectAll(`.${CLASS.circles}`)
+				.data(targets)
+				.attr("class", classCircles);
+
+			mainCircle.exit().remove();
+			enterNode = mainCircle.enter();
+		}
 
 		// Circles for each data point on lines
-		config.data_selection_enabled && mainCircleEnter.append("g")
+		selectionEnabled && enterNode.append("g")
 			.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
 
-		mainCircleEnter.append("g")
+		enterNode.append("g")
 			.attr("class", classCircles)
-			.style("cursor", d => (config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null));
+			.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
 
 		// Update date for selected circles
-		targets.forEach(t => {
+		selectionEnabled && targets.forEach(t => {
 			$el.main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
 				.selectAll(`${CLASS.selectedCircle}`)
 				.each(d => {
@@ -110,8 +114,10 @@ export default {
 
 			const circles = $el.main.selectAll(`.${CLASS.circles}`)
 				.selectAll(`.${CLASS.circle}`)
-				.data(d => ($$.isPointType(d) ?
-					(focusOnly ? [d.values[currIndex]] : d.values) : []
+				.data(d => (
+					($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
+						$$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
+						(focusOnly ? [d.values[currIndex]] : d.values) : []
 				));
 
 			circles.exit().remove();

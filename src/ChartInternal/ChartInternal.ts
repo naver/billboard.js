@@ -532,11 +532,6 @@ export default class ChartInternal {
 		// Text
 		$$.updateTargetsForText(targets);
 
-		// circle
-		if ($$.hasPointType() || hasRadar) {
-			$$.updateTargetForCircle && $$.updateTargetForCircle();
-		}
-
 		if (hasAxis) {
 			$$.hasType("bar") && $$.updateTargetsForBar(targets); // Bar
 			$$.hasTypeOf("Line") && $$.updateTargetsForLine(targets); // Line
@@ -551,6 +546,11 @@ export default class ChartInternal {
 					$$.updateTargetsForRadar(targets) :
 					$$.updateTargetsForArc(targets)
 			);
+		}
+
+		// circle
+		if ($$.hasType("bubble") || $$.hasType("scatter")) {
+			$$.updateTargetForCircle && $$.updateTargetForCircle();
 		}
 
 		// Fade-in each chart
