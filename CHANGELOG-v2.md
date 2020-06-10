@@ -249,24 +249,24 @@ In an internal test, we got from `10 ~ 43%` size (minified with [terser](https:/
 > The bundle size will vary depending the bundler and the envrionments that is used.
 
 
-Type | Rollup.js (reduced) | Webpack (reduced)
---- | --- | --- 
-**Full size** | `208kb` | `210kb`
-area | 184kb (-10.57%) | 186kb (-11.42%)
-area-spline | 184kb (-10.57%) | 186kb (-11.42%)
-area-step | 184kb (-10.57%) | 186kb (-11.42%)
-area-line-range | 184kb (-10.57%) | 186kb (-11.42%)
-area-spline-range | 184kb (-10.57%) | 186kb (-11.42%)
-bar | 170kb (-18.26%) | 171kb (-18.57%)
-bubble | 175kb (-15.86%) | 177kb (-15.71%)
-donut | 118kb (-43.26%) | 138kb (-34.28%)
-gauge | 119kb (-42.78%) | 138kb (-34.28%)
-line | 181kb  (-12.98%) | 183kb (-12.85%)
-pie | 118kb (-43.26%) | 138kb (-34.28%)
-radar | 132kb (-36.53%) | 152kb (-27.61%)
-scatter | 175kb (-15.86%) | 176kb (-16.19%)
-spline | 181kb (-12.98%) | 183kb (-12.85%)
-step | 181kb (-12.98%) | 183kb (-12.85%)
+Type | Rollup.js (reduced) | gzipped | Webpack (reduced) | gzipped
+:---: | :---: | :---: | :---: | :---:
+**Full size** | `208kb` | 63kb | `210kb` | 62kb
+area | 184kb `(-10.57%)` | 56kb | 186kb `(-11.42%)` | 55kb
+area-spline | 184kb `(-10.57%)` | 56kb | 186kb `(-11.42%)` | 55kb
+area-step | 184kb `(-10.57%)` | 56kb | 186kb `(-11.42%)` | 55kb
+area-line-range | 184kb `(-10.57%)` | 56kb | 186kb `(-11.42%)` | 55kb
+area-spline-range | 184kb `(-10.57%)` | 56kb | 186kb `(-11.42%)` | 55kb
+bar | 170kb `(-18.26%)` | 52kb | 171kb `(-18.57%)` | 52kb
+bubble | 175kb `(-15.86%)` | 54kb | 177kb `(-15.71%)` | 54kb
+donut | 118kb `(-43.26%)` | 37kb | 138kb `(-34.28%)` | 43kb
+gauge | 119kb `(-42.78%)` | 37kb | 138kb `(-34.28%)` | 43kb
+line | 181kb  `(-12.98%)` | 55kb | 183kb `(-12.85%)` | 55kb
+pie | 118kb `(-43.26%)` | 37kb | 138kb `(-34.28%)` | 43kb
+radar | 132kb `(-36.53%)` | 41kb | 152kb `(-27.61%)` | 47kb
+scatter | 175kb `(-15.86%)` | 53kb | 176kb `(-16.19%)` | 53kb
+spline | 181kb `(-12.98%)` | 55kb | 183kb `(-12.85%)` | 55kb
+step | 181kb `(-12.98%)` | 55kb | 183kb `(-12.85%)` | 55kb
 
 <details>
 	<summary>Expand to see generation option used for the test result</summary>
@@ -308,22 +308,22 @@ Following is the test example measuring generated DOM length by chart types.
 The result show a size reduction of DOM lengths, in a range of `4 ~ 53%`.
 
 Type | v1.12 | v2 | Reduction rate
---- | --- | --- | --- 
-area | 24,585 | 22,948 | -6.65%
-area-spline | 27,021 | 25,411 | -5.95%
-area-step | 26,659 | 24,082 | -9.66%
-area-line-range | 15,589 | 14,800 | -5.06%
-area-spline-range | 17,553 | 16,715 | -4.77%
-bar | 19,437 | 17,855 | -8.13%
-bubble | 20,323 | 17,129 | -15.71%
-donut | 16,978 | 7,947 | -53.19%
-gauge | 17,430 | 8,726 | -49.93%
-line | 23,393 | 20,616 | -11.87%
-pie | 15,851 | 7,463 | -52.91%
-radar | 24,579 | 16,619 | -32.38%
-scatter | 19,726 | 16,229 | -17.72%
-spline | 24,954 | 22,169 | -11.16%
-step | 24,452 | 20,650 | -15.54%
+:---: | :---: | :---: | :---:
+area | 24,585 | 22,948 | `-6.65%`
+area-spline | 27,021 | 25,411 | `-5.95%`
+area-step | 26,659 | 24,082 | `-9.66%`
+area-line-range | 15,589 | 14,800 | `-5.06%`
+area-spline-range | 17,553 | 16,715 | `-4.77%`
+bar | 19,437 | 17,855 | `-8.13%`
+bubble | 20,323 | 17,129 | `-15.71%`
+donut | 16,978 | 7,947 | `-53.19%`
+gauge | 17,430 | 8,726 | `-49.93%`
+line | 23,393 | 20,616 | `-11.87%`
+pie | 15,851 | 7,463 | `-52.91%`
+radar | 24,579 | 16,619 | `-32.38%`
+scatter | 19,726 | 16,229 | `-17.72%`
+spline | 24,954 | 22,169 | `-11.16%`
+step | 24,452 | 20,650 | `-15.54%`
 
 <details>
 	<summary>Expand to see generation option used for the test result</summary>
