@@ -79,22 +79,7 @@ export default class Chart {
 	public internal: ChartInternal;
 
 	constructor(options) {
-		const ctx = this;
-		// const {type, types} = options.data;
-		// let isArc = false;
-
-		// if (type) {
-		// 	isArc = TYPES.Arc.indexOf(type) > -1;
-		// } else if (types) {
-		// 	for (const x in types) {
-		// 		if (TYPES.Arc.indexOf(types[x]) > -1) {
-		// 			isArc = true;
-		// 			break;
-		// 		}
-		// 	}
-		// }
-
-		const $$ = new ChartInternal(ctx);
+		const $$ = new ChartInternal(this);
 
 		this.internal = $$;
 

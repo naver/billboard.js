@@ -1,385 +1,324 @@
 <img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js"><br>
 
-# v2.0 dev branch
+[![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![semantic-release][badge-semantic-release]][link-semantic-release]
 
-Branch for next major release 2.0.
+[![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size] [![Known Vulnerabilities][badge-snyk]][link-snyk]
 
-## Installation
+billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
+> The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
+> - [Why we decided to start billboard.js?](https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F)
 
-### Directly from the github repository
+## Documents
+- [API Documentation](https://naver.github.io/billboard.js/release/latest/doc/)
+- [Examples](https://naver.github.io/billboard.js/demo/)
+- [Roadmap](https://github.com/naver/billboard.js/wiki/Roadmap)
+- [Contribution Guide](CONTRIBUTING.md)
+- [Comparison table with other libraries](https://github.com/naver/billboard.js/wiki/Comparison-table)
+- [Migration guide from C3.js](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F)
+- [Third Party Applications](https://github.com/naver/billboard.js/wiki/Third-party-applications)
+- [Who's using billboard.js](https://github.com/naver/billboard.js/wiki/Who's-using-billboard.js)
+
+## Playground
+Play with the diverse options generating on the fly!
+- https://naver.github.io/billboard.js/playground/
+- https://beta.observablehq.com/@idris-maps/billboard-js-playground (by [@idris-maps](https://github.com/idris-maps))
+
+## Questions?
+If you have any questions, checkout the previous posts or create a new one at:
+- [Stack Overflow: billboard.js tagged posts](https://stackoverflow.com/questions/tagged/billboard.js)
+- [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
+
+## Supported chart types
+![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=5)
+
+## Download and Installation
+
+Download dist files from the repo directly or install it via npm.
+
+### For development (Uncompressed)
+
+You can download the uncompressed files for development
+
+#### Latest
+  - https://naver.github.io/billboard.js/release/latest/dist/billboard.js
+  - https://naver.github.io/billboard.js/release/latest/dist/billboard.css
+
+#### Specific version
+  - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.js
+  - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.css
+
+### For production (Compressed)
+
+You can download the compressed files for production
+
+#### Latest
+  - https://naver.github.io/billboard.js/release/latest/dist/billboard.min.js
+  - https://naver.github.io/billboard.js/release/latest/dist/billboard.min.css
+
+#### Specific version
+  - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.js
+  - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.css
+
+### Packaged version (with D3.js inclusion)
+> Packaged version is not an official distribution.
+> It's to provide an easy way to load 'billboard.js' with dependency.
+
+ - **Latest**
+    - https://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.js
+    - https://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.min.js
+ - **Specific version**
+    - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.js
+    - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.min.js
+
+### Themes
+> If you want apply themes, simply load one of the theme css file provided instead of the default css file.
+
+#### insight
+- https://naver.github.io/billboard.js/release/latest/dist/theme/insight.css
+- https://naver.github.io/billboard.js/release/latest/dist/theme/insight.min.css
+
+#### graph
+- https://naver.github.io/billboard.js/release/latest/dist/theme/graph.css
+- https://naver.github.io/billboard.js/release/latest/dist/theme/graph.min.css
+
+### Nightly version
+
+Nightly version is the latest build from the master branch.
+With nightly, you can try upcoming changes prior the official release.
+
+- https://github.com/naver/billboard.js/tree/nightly/dist
+
+> The version info will be given as the build datetime: `x.x.x-nightly-yyyymmddhhmmss`
+
+There're two ways to install from `nightly` branch directly.
+```js
+// Specify on 'package.json' file
+"dependencies": {
+      ...
+      "billboard.js": "git://github.com/naver/billboard.js.git#nightly"
+},
+```
+
 ```sh
 # Run install command from shell
-$ npm install git+https://github.com/naver/billboard.js.git#v2 --save
+$ npm install git+https://github.com/naver/billboard.js.git#nightly --save
 ```
 
-## Main Goals
-- Move codebase to TypeScript
-- Restructure of file system & class architecture
-- Make smaller build & run faster
-- Do not break backward compatibility
+### Next(Release Canditate) version
 
-## Breaking Changes
-
-### Updates on private state variables
-Reorganized `selection` and `state` variables. (Note: Even is accessible, do not use nor access private values)
-
-- All states are member of `state` prop.
-- All selections are member of `$el` prop.
-
-```js
-const chart = bb.generate({});
-
-chart.internal.width;
-// --> chart.internal.state.width
-
-chart.internal.selectChart;
-// --> chart.internal.$el.chart
-```
-
-### Do not extend APIs as own member
-When chart is instantiated, APIs were assigned as own member to the instance. The reason mainly comes to handle namespaced APIs, like `.data.shown()`.
-
-```js
-const chart = bb.generate({});
-
-chart;
-```
-
-`1.x` was extending methods from Chart.prototype, to its instance.
-```js
-// 1.x
-Chart { ... }
-plugins: []
-internal: ChartInternal {api: Chart, config: {…}, data: {…}, cache: {…}, axes: {…}, …}
-$: {chart: Selection, svg: Selection, defs: Selection, main: Selection, tooltip: Selection, …}
-element: div.bb
-focus: ƒ ()
-defocus: ƒ ()
-...
-```
-
-`2.x` avoid extending as possible. Only will extend those namespaced APIs to keep the backward compatibility.
-```js
-// 2.x
-Chart { ... }
-plugins: []
-internal: ChartInternal {api: Chart, config: {…}, cache: Cache, state: {…}, charts: Array(1), …}
-axis: {labels: ƒ, min: ƒ, max: ƒ, range: ƒ}
-data: ƒ ()
-xgrids: ƒ ()
-ygrids: ƒ ()
-legend: {show: ƒ, hide: ƒ}
-regions: ƒ ()
-tooltip: {show: ƒ, hide: ƒ}
-zoom: ƒ ()
-$: {chart: Selection, svg: Selection, defs: Selection, main: Selection, tooltip: Selection, …}
-element: div.bb
-```
-
-### Node structure updates
-
-- Dettach `<circle>` point elements separately from being line's children.
-- chart.$.line.circles
-  --> chart.$.circles
- - chart.element (removed)
-   --> chart.$.chart.node()
-
-### Callbacks context
-- Make consistent context for all callback-ish options.
-```js
-tooltip: {
-    position: function() {
-        this;  // <-- should point current chart instance
-    }
-}
-```
-
-Full affected lists:
+Next version is the 'release candidate' build, prior the latest official release.
 
 ```sh
-# Options
-
-area.linearGradient
-
-axis.x.extent
-
-axis.x.axes.tick.format
-axis.y.axes.tick.format
-axis.y2.axes.tick.format
-
-axis.x.tick.values
-axis.y.tick.values
-axis.y2.tick.values
-
-axis.x.tick.format
-axis.y.tick.format
-axis.y2.tick.format
-
-bubble.maxR
-
-data.color
-data.colors
-data.onout
-data.onover
-color.onover
-color.tiles
-data.filter
-data.idConverter
-data.labels.format
-data.order
-data.selection.isselectable
-data.onclick
-data.onmax
-data.onmin
-data.onselected
-data.onunselected
-
-donut.label.format
-donut.label.ratio
-
-gauge.label.format
-gauge.label.extents
-
-legend.contents.template
-legend.item.onclick
-legend.item.onover
-legend.item.onout
-
-pie.label.format
-pie.label.ratio
-
-point.r
-radar.level.text.format
-subchart.onbrush
-
-tooltip.format.title
-tooltip.format.name
-tooltip.format.value
-tooltip.order
-tooltip.contents
-tooltip.position
-
-zoom.onzoomstart
-zoom.onzoom
-zoom.onzoomend
-zoom.resetButton.onclick
-
---------------
-
-# ctx param removes
-
-onafterinit(ctx)
-onbeforeinit(ctx)
-oninit(ctx)
-onout(ctx)
-onover(ctx)
-onrendered(ctx)
-onresize(ctx)
-onresized(ctx)
-tooltip.onshow(ctx)
-tooltip.onshown(ctx)
-tooltip.onhide(ctx)
-tooltip.onhidden(ctx)
-
---------------
-
-# APIs
-
-export.callback
-flow.done
-load.done
-unload.done
+# Run install command from shell
+$ npm install billboard.js@next --save
 ```
 
-## New option
+### Installation with npm
 
-- `point.focus.only`<br>
-  Show point only when is focused.<br>
-  This option will generate one `<circle>` node per data series and can make more performant when dealing with big amount of data.
+```bash
+$ npm install billboard.js
+```
 
-  ```js
-  point: {
-      focus: {
-          only: true
-      }
-  }
-  ```
-  
- - Enable shoing point by default for `step` type<br>
-   By default, data point will be shown for step types. If want to hide, set `point.show=false`.
-   ```js
-   point: {
-       show: false
-   }
-   ```
-## Modularization by its functionality
+### Using CDN
 
-`1.x` wasn't providing the way to cut the bundle size, and included all shape types codes even  they aren't used.<br>
-This was problematic delivering unused codes for all circumstances.
+If you want to use 'billboard.js' without installation, load files directly from one of the CDN providers.
 
-To improve this, `v2.0` will export each chart types as named binding module function. If you use certain types only, just import the type and run once or specify as `data.type` or `data.types` option value.
+- cdnjs: https://cdnjs.com/libraries/billboard.js
+- jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/
+- unpkg: https://unpkg.com/billboard.js/dist/
+
+## Supported Browsers
+
+> Basically will work on all SVG supported browsers.
+
+|Internet Explorer|Chrome|Firefox|Safari|iOS|Android|
+|---|---|---|---|---|---|
+|9+|Latest|Latest|Latest|8+|4+|
+
+
+## Dependency
+
+|[D3](https://d3js.org/) (required)|
+| --- |
+| 4+ |
+
+Load billboard.js after D3.js.
+
+```html
+<!-- 1) Load D3.js and billboard.js separately -->
+    <!-- Load D3 -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <!-- Load billboard.js with base(or theme) style -->
+    <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
+    <script src="$YOUR_PATH/billboard.js"></script>
+
+<!-- 2) or Load billboard.js packaged with D3.js -->
+    <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
+    <script src="$YOUR_PATH/billboard.pkgd.js"></script>
+```
+
+or use importing ESM.
 
 ```js
-import bb, {
-  area,
-  areaLineRange,
-  areaSpline,
-  areaSplineRange,
-  areaStep,
-  bar,
-  bubble,
-  donut,
-  gauge,
-  line,
-  pie,
-  radar,
-  scatter,
-  spline,
-  step
-}
+// 1) import billboard.js
+// as named import
+import {bb} from "billboard.js";
 
-bb.generate({
-  ...,
-  data: {
-    // by calling `line()`, will make internally extend 'line' type related functionality.
-    // line() will return "line" string.
-    type: line(),
-    
-    // or spcifying type for each data
-    types: {
-      data1: bar(),
-      data1: spline()
-    }
-  }
-});
+// or as importing default
+import bb from "billboard.js";
+
+// 2) import css if your dev-env supports. If don't, include them via <link>
+import "billboard.js/dist/billboard.css";
+
+// or theme style. Find more themes from 'theme' folder
+import "billboard.js/dist/theme/insight.css"
 ```
 
-### Example of size reduction by types
+> **Note**
+> - For migration from C3.js, checkout the [migration guide](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F).
+> - If has an issue bundling for legacy browsers, checkout "[How to bundle for legacy browsers?](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F)".
 
-Take as a reference the amount of bundle size reduction by types.
-In an internal test, we got from `10 ~ 43%` size (minified with [terser](https://github.com/terser/terser)) reduction.
+## Basic usage example
 
-> The bundle size will vary depending the bundler and the envrionments that is used.
+#### 1) Create chart holder element
+```html
+<div id="chart"></div>
+```
 
-
-Type | Rollup.js (reduced) | wepack (reduced)
---- | --- | --- 
-**Full size** | `208kb` | `210kb`
-area | 184kb (-10.57%) | 186kb (-11.42%)
-area-spline | 184kb (-10.57%) | 186kb (-11.42%)
-area-step | 184kb (-10.57%) | 186kb (-11.42%)
-area-line-range | 184kb (-10.57%) | 186kb (-11.42%)
-area-spline-range | 184kb (-10.57%) | 186kb (-11.42%)
-bar | 170kb (-18.26%) | 171kb (-18.57%)
-bubble | 175kb (-15.86%) | 177kb (-15.71%)
-donut | 118kb (-43.26%) | 138kb (-34.28%)
-gauge | 119kb (-42.78%) | 138kb (-34.28%)
-line | 181kb  (-12.98%) | 183kb (-12.85%)
-pie | 118kb (-43.26%) | 138kb (-34.28%)
-radar | 132kb (-36.53%) | 152kb (-27.61%)
-scatter | 175kb (-15.86%) | 176kb (-16.19%)
-spline | 181kb (-12.98%) | 183kb (-12.85%)
-step | 181kb (-12.98%) | 183kb (-12.85%)
-
-<details>
-	<summary>Expand to see generation option used for the test result</summary>
-
-  ```js
-  bb.generate({
+#### 2) Generate a chart with options
+```js
+// generate the chart
+var chart = bb.generate({
+    bindto: "#chart",
     data: {
-      columns: [
-        ["data1", 30, 20, 50, 40, 60, 50],
-        ["data2", 200, 130, 90, 240, 130, 220],
-        ["data3", 300, 200, 160, 400, 250, 250],
-        ["data4", 200, 130, 90, 240, 130, 220],
-        ["data5", 130, 120, 150, 140, 160, 150],
-        ["data6", 90, 70, 20, 50, 60, 120],
-        ["data7", 283, 170, 275, 143, 220, 255],
-
-        /* for area-line-range and area-spline-range
-        ["data8",
-          [150, 140, 110],
-          [155, 130, 115],
-          [160, 135, 120],
-          [135, 120, 110],
-          [180, 150, 130],
-          [199, 160, 125]
-        ],
-        */
-      ]
-    },
-    type: "..."
-  });
-  ```
-</details>
-
-## Reduced node generation
-
-`v2` minimize generating redundant nodes, generating necessary nodes by its types.
-Following is the test example measuring generated DOM length by chart types.
-
-The result show a size reduction of DOM lengths, in a range of `6 ~ 50%`.
-
-Type | v1.12 | v2 | Reduction rate
---- | --- | --- | --- 
-area | 24,585 | 22,948 | -6.65%
-area-spline | 27,021 | 25,411 | -5.95%
-area-step | 26,659 | 24,082 | -9.66%
-area-line-range | 15,589 | 14,800 | -5.06%
-area-spline-range | 17,553 | 16,715 | -4.77%
-bar | 19,437 | 17,855 | -8.13%
-bubble | 20,323 | 17,129 | -15.71%
-donut | 16,978 | 7,947 | -53.19%
-gauge | 17,430 | 8,726 | -49.93%
-line | 23,393 | 20,616 | -11.87%
-pie | 15,851 | 7,463 | -52.91%
-radar | 24,579 | 16,619 | -32.38%
-scatter | 19,726 | 16,229 | -17.72%
-spline | 24,954 | 22,169 | -11.16%
-step | 24,452 | 20,650 | -15.54%
-
-<details>
-	<summary>Expand to see generation option used for the test result</summary>
-
-  ```js
-  bb.generate({
-    data: {
-      columns: [
-        ["data1", 30, 20, 50, 40, 60, 50],
-        ["data2", 200, 130, 90, 240, 130, 220],
-        ["data3", 300, 200, 160, 400, 250, 250],
-        ["data4", 200, 130, 90, 240, 130, 220],
-        ["data5", 130, 120, 150, 140, 160, 150],
-        ["data6", 90, 70, 20, 50, 60, 120],
-        ["data7", 283, 170, 275, 143, 220, 255],
-
-        /* for area-line-range and area-spline-range
-        ["data1",
-          [150, 140, 110],
-          [155, 130, 115],
-          [160, 135, 120],
-          [135, 120, 110],
-          [180, 150, 130],
-          [199, 160, 125]
-        ],
-        ["data2", [220, 215, 205], [240, 225, 215], [260, 235, 225], [280, 245, 235], [270, 255, 225], [240, 225, 215]],
-        ["data3",
-          {high: 155, low: 145, mid: 150},
-          {high: 200, mid: 190, low: 150},
-          {high: 230, mid: 215, low: 200},
-          {high: 210, mid: 200, low: 180},
-          {high: 220, mid: 210, low: 190},
-          {high: 200, mid: 180, low: 160}
+      type: "line",
+        columns: [
+            ["data1", 30, 200, 100, 400, 150, 250]
         ]
-        */
-      ]
-    },
-    type: "..."
-  });
-  ```
-</details>
+    }
+});
 
+// call some API
+chart.load( ... );
+```
 
-## Deprecation
+## How to start developing billboard.js?
 
-As anticipated by [#801](https://github.com/naver/billboard.js/issues/801), removed the `.transform()` API.
+For anyone interested in developing billboard.js, follow the instructions below.
+> Required Node.js version: `10.10.0+`
+
+### Development Environment
+
+#### 1. Clone the repository
+
+Clone the billboard.js repository and install the dependency modules.
+
+```bash
+# Create a folder and move.
+$ mkdir billboard.js && cd billboard.js
+
+# Clone the repository.
+$ git clone https://github.com/naver/billboard.js.git
+```
+
+#### 2. Install dependencies
+`npm` and `Yarn` are supported.
+
+```
+# Install the dependency modules.
+$ npm install
+
+# or
+$ yarn
+```
+
+#### 3. Build
+
+Use npm script to build billboard.js
+
+```bash
+# Run webpack-dev-server for development
+$ npm start
+
+# Build
+$ npm run build
+
+# Generate jsdoc
+$ npm run jsdoc
+```
+
+Two folders will be created after the build is completed.
+
+- **dist** folder: Includes the **billboard.js** and **billboard.min.js** files.
+- **doc** folder: Includes API documentation. The home page for the documentation is **doc/index.html**.
+
+### Linting
+
+To maintain the same code style and quality, we adopted [ESLint](https://eslint.org/). The [rules](https://github.com/naver/eslint-config-naver/tree/master/rules) are based on the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) with some modifications.
+Setup your editor for check or run the below command for linting.
+
+```bash
+$ npm run lint
+```
+
+### Test
+
+Once you created a branch and finished the development, you must perform a test with `npm test` command before the push to a remote repository.
+
+```bash
+$ npm test
+```
+Running the `npm test` command will start [Mocha](https://mochajs.org/) tests via [Karma-runner](https://karma-runner.github.io/).
+
+## Bug Report
+
+If you find a bug, please report to us by posting [issues](https://github.com/naver/billboard.js/issues) on GitHub.
+
+## License
+billboard.js is released under the [MIT license](https://github.com/naver/billboard.js/blob/master/LICENSE).
+
+```
+Copyright (c) 2017 ~ present NAVER Corp.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+```
+
+<!-- badges -->
+[badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
+[badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
+[badge-build-status]: https://travis-ci.org/naver/billboard.js.svg?branch=master
+[badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
+[badge-snyk]: https://snyk.io/test/github/naver/billboard.js/badge.svg?targetFile=package.json
+[badge-gzip-size]: https://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
+[badge-latest]: https://img.shields.io/npm/v/billboard.js/latest.svg
+[badge-next]: https://img.shields.io/npm/v/billboard.js/next.svg
+[badge-semantic-release]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+
+<!-- links -->
+[link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
+[link-jsDelivr]: https://www.jsdelivr.com/package/npm/billboard.js
+[link-version]: https://www.npmjs.com/package/billboard.js
+[link-build-status]: https://travis-ci.org/naver/billboard.js
+[link-coverage]: https://coveralls.io/github/naver/billboard.js
+[link-snyk]: https://snyk.io/test/github/naver/billboard.js?targetFile=package.json
+[link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
+[link-semantic-release]: https://github.com/semantic-release/semantic-release
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js?ref=badge_large)

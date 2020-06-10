@@ -13,9 +13,7 @@ const config = {
 		"billboard.min": [
 			"./src/scss/billboard.scss",
 			"./src/index.ts"
-		],
-		// "arc.min": "./src/resolver.arc.ts",
-		// "axis.min": "./src/resolver.axis.ts"
+		]
 	},
 	module: {
 		rules: [

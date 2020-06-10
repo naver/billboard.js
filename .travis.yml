@@ -6,8 +6,8 @@ sudo: false  # no need for virtualization.
 
 before_install:
   - npm install -g npm@latest
-  - npm install -g greenkeeper-lockfile@1
 install:
+  - npm config set package-lock false
   - npm install
 
 cache:
@@ -15,12 +15,6 @@ cache:
   npm: true
   directories:
     - $HOME/.npm
-
-before_script:
-  - greenkeeper-lockfile-update
-
-after_script:
-  - greenkeeper-lockfile-upload
 
 stages:
   - lint
@@ -51,5 +45,3 @@ jobs:
           repo: naver/billboard.js
           all_branches: true
           condition: $TRAVIS_BRANCH =~ ^latest|next$
-      after_deploy:
-        - bash ./config/deploy.sh

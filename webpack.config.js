@@ -10,9 +10,7 @@ const config = {
 		billboard: [
 			"./src/scss/billboard.scss",
 			"./src/index.ts"
-		],
-		// arc: "./src/resolver.arc.ts",
-		// axis: "./src/resolver.axis.ts"
+		]
 	},
 	output: {
 		path: path.resolve(__dirname, "dist"),
