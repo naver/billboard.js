@@ -142,7 +142,7 @@
     "karma-webpack": "^4.0.2",
     "lite-fixture": "^1.0.2",
     "mini-css-extract-plugin": "^0.9.0",
-    "mocha": "^7.2.0",
+    "mocha": "^8.0.0",
     "node-sass": "^4.14.1",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "regenerator-runtime": "^0.13.5",
