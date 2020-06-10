@@ -124,7 +124,7 @@
     "eslint-config-naver": "^2.1.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.21.1",
-    "exports-loader": "^0.7.0",
+    "exports-loader": "^1.0.0",
     "hammer-simulator": "0.0.1",
     "husky": "^4.2.3",
     "istanbul-instrumenter-loader": "^3.0.1",
