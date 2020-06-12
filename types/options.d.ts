@@ -286,6 +286,13 @@ export interface ChartOptions {
 		headers?: Array<{ [key: string]: string; }>;
 
 		/**
+		 * Set threshold ratio to show/hide labels.
+		 */
+		label?: {
+			threshold?: number;
+		}
+
+		/**
 		 * Set if min or max value will be 0 on bar chart.
 		 */
 		zerobased?: boolean;
@@ -410,7 +417,7 @@ export interface ChartOptions {
 			show?: boolean;
 
 			/**
-			 * Set threshold to show/hide labels.
+			 * Set threshold ratio to show/hide labels.
 			 */
 			threshold?: number;
 
@@ -471,7 +478,7 @@ export interface ChartOptions {
 			show?: boolean;
 
 			/**
-			 * Set threshold to show/hide labels.
+			 * Set threshold ratio to show/hide labels.
 			 */
 			threshold?: number;
 

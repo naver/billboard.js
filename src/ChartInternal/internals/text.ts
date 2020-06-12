@@ -13,8 +13,11 @@ import {AxisType} from "../../../types/types";
 
 
 export default {
-	opacityForText(): "1" | "0" {
-		return this.hasDataLabel() ? "1" : "0";
+	opacityForText(d): "1" | "0" {
+		const $$ = this;
+
+		return $$.isBarType(d) && !$$.meetsBarLabelThreshold(d) ?
+			"0" : ($$.hasDataLabel ? "1" : "0");
 	},
 
 	/**
@@ -63,7 +66,7 @@ export default {
 		const classText = $$.classText.bind($$);
 
 		$el.text = $el.main.selectAll(`.${CLASS.texts}`).selectAll(`.${CLASS.text}`)
-			.data(d => (this.isRadarType(d) ? d.values : dataFn(d)));
+			.data(d => ($$.isRadarType(d) ? d.values : dataFn(d)));
 
 		$el.text.exit()
 			.transition()

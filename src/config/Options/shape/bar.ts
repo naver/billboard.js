@@ -12,6 +12,7 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} bar Bar object
+	 * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
 	 * @property {number} [bar.padding=0] The padding pixel value between each bar.
 	 * @property {number} [bar.radius] Set the radius of bar edge in pixel.
 	 * - **NOTE:** Works only for non-stacked bar
@@ -42,6 +43,12 @@ export default {
 	 *          ratio: 0.5
 	 *      }
 	 *
+	 *      label: {
+	 *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the y Axis domain range value.
+	 *          // if data value is below than 0.1, text label will be hidden.
+	 *          threshold: 0.1,
+	 *      },
+	 *
 	 *      // will not have offset between each bar elements for interaction
 	 *      sensitivity: 0,
 	 *
@@ -65,6 +72,7 @@ export default {
 	 *      zerobased: false
 	 *  }
 	 */
+	bar_label_threshold: 0,
 	bar_padding: 0,
 	bar_radius: <number|{ratio: number}|undefined> undefined,
 	bar_radius_ratio: <number|undefined> undefined,

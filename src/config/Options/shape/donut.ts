@@ -14,7 +14,7 @@ export default {
 	 * @property {object} donut Donut object
 	 * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
 	 * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
-	 * @property {number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
+	 * @property {number} [donut.label.threshold=0.05] Set threshold ratio to show/hide labels.
 	 * @property {number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
 	 * @property {boolean} [donut.expand=true] Enable or disable expanding donut pieces.
 	 * @property {number} [donut.expand.rate=0.98] Set expand rate.
@@ -33,6 +33,9 @@ export default {
 	 *              // to multiline, return with '\n' character
 	 *              // return value +"%\nLine1\n2Line2";
 	 *          },
+	 *
+	 *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
+	 *          // if data value is below than 0.1, text label will be hidden.
 	 *          threshold: 0.1,
 	 *
 	 *          // set ratio callback. Should return ratio value

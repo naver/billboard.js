@@ -602,4 +602,71 @@ describe("SHAPE BAR", () => {
 			expect(chart.$.tooltip.selectAll(".name").size()).to.be.equal(1);
 		});
 	});
+
+	describe("bar label.threshold", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 230],
+						["data2", 1000, 0],
+						["data3", -30, -230],
+						["data4", -1000, 0]
+					],
+					type: "bar",
+					groups: [
+						["data1", "data2"]
+					],
+					labels: true
+				},
+				bar: {
+					label: {
+						threshold: 0.1
+					}
+				}
+			};
+		});
+
+		const checkLabel = function(expected) {
+			const hiddenIds = chart.internal.state.hiddenTargetIds;
+
+			const res = chart.$.text.texts.filter(function(d) {
+				return hiddenIds.indexOf(d.id) === -1 && this.style.fillOpacity === "1";
+			}).nodes().map(n => +n.textContent);
+
+			expect(res).to.be.deep.equal(expected);
+		}
+
+		it("check data label shown #1", done => {
+			checkLabel([1000, -1000]);
+
+			// when
+			chart.hide("data2");
+
+			setTimeout(() => {
+				checkLabel([230, -230, -1000]);
+				done();
+			}, 350);
+		});
+
+		it("check data label shown #2", done => {
+			// when
+			chart.hide(["data2", "data4"]);
+
+			setTimeout(() => {
+				checkLabel([230, -230]);
+				done();
+			}, 350);
+		});
+
+		it("check data label shown #3", done => {
+			// when
+			chart.hide(["data1", "data2", "data4"]);
+
+			setTimeout(() => {
+				checkLabel([-30, -230]);
+				done();
+			}, 350);
+		});
+	});
 });

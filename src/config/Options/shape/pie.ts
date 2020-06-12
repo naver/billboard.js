@@ -14,7 +14,7 @@ export default {
 	 * @property {object} pie Pie object
 	 * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
 	 * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
-	 * @property {number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
+	 * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
 	 * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
 	 * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
 	 * @property {number} [pie.expand.rate=0.98] Set expand rate.
@@ -34,6 +34,9 @@ export default {
 	 *              // to multiline, return with '\n' character
 	 *              // return value +"%\nLine1\n2Line2";
 	 *          },
+	 *
+	 *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
+	 *          // if data value is below than 0.1, text label will be hidden.
 	 *          threshold: 0.1,
 	 *
 	 *          // set ratio callback. Should return ratio value

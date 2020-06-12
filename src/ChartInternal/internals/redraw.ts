@@ -34,9 +34,6 @@ export default {
 			$$.updateDimension(true);
 		}
 
-		// text
-		$$.hasDataLabel() && $$.updateText(durationForExit);
-
 		// update circleY based on updated parameters
 		if (!$$.hasArcType() || state.hasRadar) {
 			$$.updateCircleY && $$.updateCircleY();
@@ -94,6 +91,9 @@ export default {
 		if (!state.resizing && ($$.hasPointType() || state.hasRadar)) {
 			$$.updateCircle();
 		}
+
+		// text
+		$$.hasDataLabel() && $$.updateText(durationForExit);
 
 		// title
 		$$.redrawTitle && $$.redrawTitle();

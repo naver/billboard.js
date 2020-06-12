@@ -132,6 +132,14 @@ export default {
 		this.getBars(i).classed(CLASS.EXPANDED, false);
 	},
 
+	meetsBarLabelThreshold(d): boolean {
+		const $$ = this;
+		const {config} = $$;
+		const threshold = config.bar_label_threshold;
+
+		return Math.abs($$.getRatio("bar", d)) >= threshold;
+	},
+
 	generateDrawBar(barIndices, isSub?: boolean): Function {
 		const $$ = this;
 		const {config} = $$;
@@ -186,6 +194,7 @@ export default {
 	generateGetBarPoints(barIndices, isSub?: boolean): Function {
 		const $$ = this;
 		const {config} = $$;
+
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
 		const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
 		const barW = $$.getBarW(axis, barTargetsNum);

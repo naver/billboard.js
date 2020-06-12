@@ -854,6 +854,11 @@ export default {
 				ratio = (
 					parseFloat(String(Math.max(d.value, 0))) / state.current.dataMax
 				) * config.radar_size_ratio;
+			} else if (type === "bar") {
+				const yScale = $$.getYScaleById.bind($$)(d.id);
+				const max = yScale.domain().reduce((a, c) => c - a);
+
+				ratio = Math.abs(d.value) / max;
 			}
 		}
 
