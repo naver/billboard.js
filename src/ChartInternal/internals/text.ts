@@ -16,8 +16,9 @@ export default {
 	opacityForText(d): "1" | "0" {
 		const $$ = this;
 
-		return $$.isBarType(d) && !$$.meetsBarLabelThreshold(d) ?
-			"0" : ($$.hasDataLabel ? "1" : "0");
+		return $$.isBarType(d) && !$$.meetsLabelThreshold(
+			Math.abs($$.getRatio("bar", d),), "bar"
+		) ? "0" : ($$.hasDataLabel ? "1" : "0");
 	},
 
 	/**
@@ -391,5 +392,20 @@ export default {
 				d3SelectAll([this, this.previousSibling])
 					.classed(CLASS.TextOverlapping, false);
 			});
+	},
+
+	/**
+	 * Check if meets the ratio to show data label text
+	 * @param {number} ratio ratio to meet
+	 * @param {string} type chart type
+	 * @returns {boolean}
+	 * @private
+	 */
+	meetsLabelThreshold(ratio: number = 0, type: "bar" | "donut" | "gauge" | "pie"): boolean {
+		const $$ = this;
+		const {config} = $$;
+		const threshold = config[`${type}_label_threshold`] || 0;
+
+		return ratio >= threshold;
 	}
 };

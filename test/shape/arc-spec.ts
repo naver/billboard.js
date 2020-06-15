@@ -600,6 +600,34 @@ describe("SHAPE ARC", () => {
 				chart.config("gauge.startingAngle")
 			);
 		});
+
+		it("check for Gauge's threshold data label text", () => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 30],
+						["data3", 20],
+						["data4", 15],
+						["data5", 5]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					label: {
+						threshold: 0.15
+					}
+				}
+			});
+
+			const hiddenIds = chart.internal.state.hiddenTargetIds;
+			const target = chart.$.text.texts.filter(function(d) {
+				return hiddenIds.indexOf(d.id) === -1 && !this.textContent;
+			});
+
+			expect(target.size()).to.be.equal(1);
+			expect(target.datum().value).to.be.equal(5);
+		});
 	});
 
 	describe("show multi-arc-gauge", () => {

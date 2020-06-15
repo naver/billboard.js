@@ -91,7 +91,6 @@ export default {
 	 * @private
 	 */
 	hasTypeOf(type, targets, exclude = []): boolean {
-		// 실제 노드 존재 여부도 확인필요
 		return !TYPE_BY_CATEGORY[type]
 			// @ts-ignore
 			.filter(v => exclude.indexOf(v) === -1)
