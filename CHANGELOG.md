@@ -1,3 +1,11 @@
+# [2.0.0-next.3](https://github.com/naver/billboard.js/compare/2.0.0-next.2...2.0.0-next.3) (2020-06-15)
+
+
+### Features
+
+* **bar:** Intent to ship bar.label.threshold ([72a7b7f](https://github.com/naver/billboard.js/commit/72a7b7fd1220c2364ea7f6db5e0710bbdc984f59)), closes [#1427](https://github.com/naver/billboard.js/issues/1427)
+* **gauge:** Intent to ship gauge.label.threshold ([#1443](https://github.com/naver/billboard.js/issues/1443)) ([9a0807e](https://github.com/naver/billboard.js/commit/9a0807e827de48709334f1c709e0e1ef2a632bb3)), closes [#1439](https://github.com/naver/billboard.js/issues/1439)
+
 # [2.0.0-next.2](https://github.com/naver/billboard.js/compare/2.0.0-next.1...2.0.0-next.2) (2020-06-11)
 
 
