@@ -76,12 +76,18 @@ element: div.bb
    --> chart.$.chart.node()
 
 ## Callbacks context
-- Make consistent context for all callback-ish options.
+- Make consistent context for all callback-ish options and removed passing "context" param to callback function.
 ```js
 tooltip: {
     position: function() {
         this;  // <-- should point current chart instance
-    }
+    },
+
+    // v1
+    onshow: function(ctx, selectedData) { ... },
+
+    // v2
+    onshow: function(selectedData) { ... }
 }
 ```
 
@@ -182,7 +188,15 @@ load.done
 unload.done
 ```
 
-# New option
+## Enabled showing data points by default for `step`.
+By default, data point will be shown for step types. If want to hide, set `point.show=false`.
+```js
+point: {
+    show: false
+}
+```
+
+# New options
 
 - `point.focus.only`<br>
   Show point only when is focused.<br>
@@ -196,13 +210,18 @@ unload.done
   }
   ```
   
- - Enable showing point by default for `step` type<br>
-   By default, data point will be shown for step types. If want to hide, set `point.show=false`.
+ - `label.threshold` for bar and gauge<br>
+   Label threshold option to configure the visibility of data text label by its value.
    ```js
-   point: {
-       show: false
+   bar|gauge: {
+     label: {
+       // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the y Axis domain range(for bar) or total value(for gauge) value.
+       // if data value is below than 0.1, text label will be hidden.
+       threshold: 0.1
+     }
    }
    ```
+
 # Modularization by its functionality
 
 `1.x` wasn't providing the way to cut the bundle size, and included all shape types codes even  they aren't used.<br>
