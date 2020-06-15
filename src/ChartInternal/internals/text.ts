@@ -16,8 +16,9 @@ export default {
 	opacityForText(d): "1" | "0" {
 		const $$ = this;
 
-		return $$.isBarType(d) && !$$.meetsBarLabelThreshold(d) ?
-			"0" : ($$.hasDataLabel ? "1" : "0");
+		return $$.isBarType(d) && !$$.meetsLabelThreshold(
+			Math.abs($$.getRatio("bar", d),), "bar"
+		) ? "0" : ($$.hasDataLabel ? "1" : "0");
 	},
 
 	/**
@@ -391,5 +392,13 @@ export default {
 				d3SelectAll([this, this.previousSibling])
 					.classed(CLASS.TextOverlapping, false);
 			});
+	},
+
+	meetsLabelThreshold(ratio: number, type: string): boolean {
+		const $$ = this;
+		const {config} = $$;
+		const threshold = config[`${type}_label_threshold`];
+
+		return ratio >= threshold;
 	}
 };

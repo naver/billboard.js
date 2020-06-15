@@ -284,7 +284,7 @@ export default {
 				const updated = $$.updateAngle(d);
 				const ratio = $$.getRatio("arc", updated);
 				const isUnderThreshold = !(
-					!hasGauge && !$$.meetsArcLabelThreshold(ratio)
+					!hasGauge && !$$.meetsLabelThreshold(ratio, $$.hasType("donut") ? "donut" : "pie")
 				);
 
 				if (isUnderThreshold) {
@@ -410,14 +410,6 @@ export default {
 
 		return ["pie", "donut", "gauge"]
 			.some(v => $$.hasType(v) && config[`${v}_label_show`]);
-	},
-
-	meetsArcLabelThreshold(ratio: number): boolean {
-		const $$ = this;
-		const {config} = $$;
-		const threshold = $$.hasType("donut") ? config.donut_label_threshold : config.pie_label_threshold;
-
-		return ratio >= threshold;
 	},
 
 	getArcLabelFormat(): number | string {
