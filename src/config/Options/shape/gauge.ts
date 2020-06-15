@@ -16,6 +16,7 @@ export default {
 	 * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
 	 * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
 	 * @property {Function} [gauge.label.extents] Set customized min/max label text.
+	 * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
 	 * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
 	 * @property {number} [gauge.expand.rate=0.98] Set expand rate.
 	 * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
@@ -41,9 +42,14 @@ export default {
 	 *              // to multiline, return with '\n' character
 	 *              // return value +"%\nLine1\n2Line2";
 	 *          },
-	 *          extents: function(value, isMax) {
+	 *
+	 *           extents: function(value, isMax) {
 	 *              return (isMax ? "Max:" : "Min:") + value;
-	 *          }
+	 *          },
+	 *
+	 *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
+	 *          // if data value is below than 0.1, text label will be hidden.
+	 *          threshold: 0.1,
 	 *      },
 	 *
 	 *      // disable expand transition for interaction
@@ -72,6 +78,7 @@ export default {
 	gauge_label_show: true,
 	gauge_label_format: <(() => string)|undefined> undefined,
 	gauge_label_extents: <(() => string)|undefined> undefined,
+	gauge_label_threshold: 0,
 	gauge_min: 0,
 	gauge_max: 100,
 	gauge_type: "single",

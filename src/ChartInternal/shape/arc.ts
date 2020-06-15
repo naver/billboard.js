@@ -283,8 +283,8 @@ export default {
 				const node = d3Select(this);
 				const updated = $$.updateAngle(d);
 				const ratio = $$.getRatio("arc", updated);
-				const isUnderThreshold = !(
-					!hasGauge && !$$.meetsLabelThreshold(ratio, $$.hasType("donut") ? "donut" : "pie")
+				const isUnderThreshold = $$.meetsLabelThreshold(ratio,
+					($$.hasType("donut") && "donut") || ($$.hasType("gauge") && "gauge") || ($$.hasType("pie") && "pie")
 				);
 
 				if (isUnderThreshold) {
@@ -440,7 +440,9 @@ export default {
 		const classChartArc = $$.classChartArc.bind($$);
 		const classArcs = $$.classArcs.bind($$);
 		const classFocus = $$.classFocus.bind($$);
-		const mainPieUpdate = main.select(`.${CLASS.chartArcs}`)
+		const chartArcs = main.select(`.${CLASS.chartArcs}`);
+
+		const mainPieUpdate = chartArcs
 			.selectAll(`.${CLASS.chartArc}`)
 			.data($$.pie(targets))
 			.attr("class", d => classChartArc(d) + classFocus(d.data));
@@ -457,6 +459,8 @@ export default {
 			.style("opacity", "0")
 			.style("text-anchor", "middle")
 			.style("pointer-events", "none");
+
+		$$.$el.text = chartArcs.selectAll(`.${CLASS.target} text`);
 		// MEMO: can not keep same color..., but not bad to update color in redraw
 		// mainPieUpdate.exit().remove();
 	},

@@ -547,6 +547,11 @@ export interface ChartOptions {
 			 * Set customized min/max label text.
 			 */
 			extents?(value: number, isMax: boolean): string | number;
+
+			/**
+			 * Set threshold ratio to show/hide labels.
+			 */
+			threshold?: number;
 		};
 
 		/**
