@@ -153,6 +153,10 @@ tooltip.format.title
 tooltip.format.name
 tooltip.format.value
 tooltip.order
+tooltip.onshow
+tooltip.onshown
+tooltip.onhide
+tooltip.onhidden
 tooltip.contents
 tooltip.position
 
