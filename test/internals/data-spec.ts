@@ -628,6 +628,15 @@ describe("DATA", () => {
 				expect(texts.empty()).to.be.false;
 				expect(texts.size() > 0).to.be.true;
 			});
+
+			it("set option data.labels=false", () => {
+				args.data.labels = false;
+			});
+
+			it("shouldn't be thrown error", () => {
+				// reaching this test, means test was passed.
+				expect(true).to.be.true;
+			});
 		});
 
 		describe("on area chart", () => {

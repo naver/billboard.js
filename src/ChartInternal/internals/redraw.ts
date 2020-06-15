@@ -190,7 +190,7 @@ export default {
 		}
 
 		if (!$$.hasArcType() || hasRadar) {
-			notEmpty(config.data_labels) &&
+			notEmpty(config.data_labels) && config.data_labels !== false &&
 				list.push($$.redrawText(xForText, yForText, flow, isTransition));
 		}
 
