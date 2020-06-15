@@ -388,24 +388,26 @@ export default {
 
 				return itemClass + $$.generateClass(CLASS.legendItem, id);
 			})
-			.style("visibility", id => ($$.isLegendToShow(id) ? "visible" : "hidden"))
-			.style("cursor", "pointer")
-			.on("click", id => {
-				if (!callFn(config.legend_item_onclick, api, id)) {
-					if (d3Event.altKey) {
-						api.hide();
-						api.show(id);
-					} else {
-						api.toggle(id);
-						!isTouch && $$.isTargetToShow(id) ? api.focus(id) : api.revert();
-					}
-				}
+			.style("visibility", id => ($$.isLegendToShow(id) ? "visible" : "hidden"));
 
-				isTouch && $$.hideTooltip();
-			});
-
-		if (!isTouch) {
+		if (config.interaction_enabled) {
 			item
+				.style("cursor", "pointer")
+				.on("click", id => {
+					if (!callFn(config.legend_item_onclick, api, id)) {
+						if (d3Event.altKey) {
+							api.hide();
+							api.show(id);
+						} else {
+							api.toggle(id);
+							!isTouch && $$.isTargetToShow(id) ? api.focus(id) : api.revert();
+						}
+					}
+
+					isTouch && $$.hideTooltip();
+				});
+
+			!isTouch && item
 				.on("mouseout", function(id) {
 					if (!callFn(config.legend_item_onout, api, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, false);

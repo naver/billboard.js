@@ -821,6 +821,10 @@ describe("INTERACTION", () => {
 				expect(chart.$.grid.main).to.be.null;
 				expect(chart.$.main.select(`.${CLASS.eventRects}`).empty()).to.be.true;
 			});
+
+			it("Event listener shouldn't be set for legend", () => {
+				expect(chart.$.legend.select("g").on("click mouseout mouseover")).to.be.undefined;
+			});
 		});
 
 		describe("check for data.selection", () => {
