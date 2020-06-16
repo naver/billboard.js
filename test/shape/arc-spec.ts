@@ -639,7 +639,10 @@ describe("SHAPE ARC", () => {
 					["padded3", 50],
 					["padded4", 20]
 				],
-				type: "gauge"
+				type: "gauge",
+				labels: {
+					colors: {}
+				}
 			},
 			gauge: {
 				type: "multi",
@@ -785,6 +788,31 @@ describe("SHAPE ARC", () => {
 			expect(gaugeValuesNodes[2].className.baseVal).to.be.equal("bb-gauge-value text-overlapping");
 			expect(gaugeValuesNodes[3].className.baseVal).to.be.equal("bb-gauge-value");
 			expect(gaugeValuesNodes[4].className.baseVal).to.be.equal("bb-gauge-value");
+		});
+
+		it("set options data.labels.colors", () => {
+			args.data.labels.colors = "red";
+		});
+
+		it("should apply data label colors for all data", () => {
+			chart.$.text.texts.each(function() {
+				expect(this.style.fill).to.be.equal(args.data.labels.colors);
+			});
+		});
+
+		it("set options data.labels.colors", () => {
+			args.data.labels.colors = {
+				padded1: "red",
+				padded4: "cyan"
+			};
+		});
+
+		it("should apply data label colors by each data", () => {
+			chart.$.text.texts.each(function(d) {
+				const color = args.data.labels.colors[d.id];
+
+				color && expect(this.style.fill).to.be.equal(color);
+			});
 		});
 	});
 

@@ -106,7 +106,7 @@ export default {
 	 */
 	isTypeOf(d, type): boolean {
 		const id = isString(d) ? d : d.id;
-		const dataType = this.config.data_types[id];
+		const dataType = this.config.data_types[id] || this.config.data_type;
 
 		return isArray(type) ?
 			type.indexOf(dataType) >= 0 : dataType === type;

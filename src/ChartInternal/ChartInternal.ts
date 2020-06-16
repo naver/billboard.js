@@ -461,7 +461,7 @@ export default class ChartInternal {
 			$$[`init${v}`]();
 		});
 
-		notEmpty($$.config.data_labels) && $$.initText();
+		notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
 	}
 
 	setChartElements(): void {

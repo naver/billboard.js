@@ -93,7 +93,7 @@ export default {
 		}
 
 		// text
-		$$.hasDataLabel() && $$.updateText(durationForExit);
+		$$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText(durationForExit);
 
 		// title
 		$$.redrawTitle && $$.redrawTitle();
