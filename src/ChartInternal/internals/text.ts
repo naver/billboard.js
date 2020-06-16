@@ -89,7 +89,7 @@ export default {
 			});
 	},
 
-	updateTextColor(d): object | string {
+	updateTextColor(d): null | object | string {
 		const $$ = this;
 		const labelColors = $$.config.data_labels_colors;
 		let color;
@@ -97,10 +97,14 @@ export default {
 		if (isString(labelColors)) {
 			color = labelColors;
 		} else if (isObject(labelColors)) {
-			color = labelColors[d.id];
+			const {id} = d.data || d;
+
+			color = labelColors[id];
 		}
 
-		return color || $$.color(d);
+		return color || (
+			$$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d)
+		);
 	},
 
 	/**

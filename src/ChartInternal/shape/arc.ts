@@ -279,25 +279,27 @@ export default {
 		const hasGauge = $$.hasType("gauge");
 
 		if ($$.shouldShowArcLabel()) {
-			selection.each(function(d) {
-				const node = d3Select(this);
-				const updated = $$.updateAngle(d);
-				const ratio = $$.getRatio("arc", updated);
-				const isUnderThreshold = $$.meetsLabelThreshold(ratio,
-					($$.hasType("donut") && "donut") || ($$.hasType("gauge") && "gauge") || ($$.hasType("pie") && "pie")
-				);
+			selection
+				.style("fill", $$.updateTextColor.bind($$))
+				.each(function(d) {
+					const node = d3Select(this);
+					const updated = $$.updateAngle(d);
+					const ratio = $$.getRatio("arc", updated);
+					const isUnderThreshold = $$.meetsLabelThreshold(ratio,
+						($$.hasType("donut") && "donut") || ($$.hasType("gauge") && "gauge") || ($$.hasType("pie") && "pie")
+					);
 
-				if (isUnderThreshold) {
-					const {value} = updated || d;
-					const text = (
-						$$.getArcLabelFormat() || $$.defaultArcValueFormat
-					)(value, ratio, d.data.id).toString();
+					if (isUnderThreshold) {
+						const {value} = updated || d;
+						const text = (
+							$$.getArcLabelFormat() || $$.defaultArcValueFormat
+						)(value, ratio, d.data.id).toString();
 
-					setTextValue(node, text, [-1, 1], hasGauge);
-				} else {
-					node.text("");
-				}
-			});
+						setTextValue(node, text, [-1, 1], hasGauge);
+					} else {
+						node.text("");
+					}
+				});
 		}
 	},
 
@@ -435,12 +437,12 @@ export default {
 
 	updateTargetsForArc(targets): void {
 		const $$ = this;
-		const {main} = $$.$el;
+		const {$el} = $$;
 		const hasGauge = $$.hasType("gauge");
 		const classChartArc = $$.classChartArc.bind($$);
 		const classArcs = $$.classArcs.bind($$);
 		const classFocus = $$.classFocus.bind($$);
-		const chartArcs = main.select(`.${CLASS.chartArcs}`);
+		const chartArcs = $el.main.select(`.${CLASS.chartArcs}`);
 
 		const mainPieUpdate = chartArcs
 			.selectAll(`.${CLASS.chartArc}`)
@@ -460,7 +462,7 @@ export default {
 			.style("text-anchor", "middle")
 			.style("pointer-events", "none");
 
-		$$.$el.text = chartArcs.selectAll(`.${CLASS.target} text`);
+		$el.text = chartArcs.selectAll(`.${CLASS.target} text`);
 		// MEMO: can not keep same color..., but not bad to update color in redraw
 		// mainPieUpdate.exit().remove();
 	},
