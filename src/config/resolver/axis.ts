@@ -31,6 +31,13 @@ import region from "../../ChartInternal/internals/region";
 import selection from "../../ChartInternal/internals/selection";
 import sizeAxis from "../../ChartInternal/internals/size.axis";
 
+// Axis based options
+import optDataAxis from "../Options/data/axis";
+import optAxis from "../Options/axis/axis";
+import optGrid from "../Options/common/grid";
+import optSubchart from "../Options/common/subchart";
+import optZoom from "../Options/common/zoom";
+
 export const api = [
 	apiAxis,
 	apiCategory,
@@ -57,4 +64,12 @@ export const internal = [
 	region,
 	selection,
 	sizeAxis
+];
+
+export const options = [
+	optDataAxis,
+	optAxis,
+	optGrid,
+	optSubchart,
+	optZoom
 ];

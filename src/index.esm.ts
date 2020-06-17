@@ -4,67 +4,18 @@
  */
 import Chart from "./Chart/Chart";
 import ChartInternal from "./ChartInternal/ChartInternal";
+import Options from "./config/Options/Options";
 import {TYPE} from "./config/const";
 import {extend} from "./module/util";
-
-// Axis
 import {
-	api as apiAxis,
-	internal as internalAxis
-} from "./config/resolver/axis";
+	axisAPI, axisInternal, axisOptions,
 
-// Shape
-import shapeArc from "./ChartInternal/shape/arc";
-import shapeArea from "./ChartInternal/shape/area";
-import shapeBar from "./ChartInternal/shape/bar";
-import shapeBubble from "./ChartInternal/shape/bubble";
-import shapeGauge from "./ChartInternal/shape/gauge";
-import shapeLine from "./ChartInternal/shape/line";
-import shapePoint from "./ChartInternal/shape/point";
-import shapeRadar from "./ChartInternal/shape/radar";
+	shapeArc, shapeArea, shapeBar, shapeBubble,
+	shapeGauge, shapeLine, shapePoint, shapeRadar,
 
-// Options
-import Options from "./config/Options/Options";
-
-// Axis based
-import optDataAxis from "./config/Options/data/axis";
-import optAxis from "./config/Options/axis/axis";
-import optGrid from "./config/Options/common/grid";
-import optPoint from "./config/Options/common/point";
-import optSubchart from "./config/Options/common/subchart";
-import optZoom from "./config/Options/common/zoom";
-
-import optArea from "./config/Options/shape/area";
-import optBar from "./config/Options/shape/bar";
-import optBubble from "./config/Options/shape/bubble";
-import optLine from "./config/Options/shape/line";
-import optScatter from "./config/Options/shape/scatter";
-import optSpline from "./config/Options/shape/spline";
-
-// Non-Axis based
-import optDonut from "./config/Options/shape/donut";
-import optGauge from "./config/Options/shape/gauge";
-import optPie from "./config/Options/shape/pie";
-import optRadar from "./config/Options/shape/radar";
-
-export {default, bb} from "./core";
-export {
-	area,
-	areaLineRange,
-	areaSpline,
-	areaSplineRange,
-	areaStep,
-	bar,
-	bubble,
-	donut,
-	gauge,
-	line,
-	pie,
-	radar,
-	scatter,
-	spline,
-	step
-};
+	optPoint, optArea, optBar, optBubble, optLine, optScatter,
+	optSpline, optDonut, optGauge, optPie, optRadar
+} from "./config/resolver";
 
 /**
  * Extend Axis
@@ -73,16 +24,10 @@ export {
  * @private
  */
 function extendAxis(module, option?): void {
-	extend(ChartInternal.prototype, [...internalAxis, ...module]);
-	extend(Chart.prototype, apiAxis);
+	extend(ChartInternal.prototype, axisInternal.concat(module));
+	extend(Chart.prototype, axisAPI);
 
-	Options.setOptions([
-		optDataAxis,
-		optAxis,
-		optGrid,
-		optSubchart,
-		optZoom
-	].concat(option || []));
+	Options.setOptions(axisOptions.concat(option || []));
 }
 
 /**
@@ -145,3 +90,22 @@ let bubble = (): string => (
 let scatter = (): string => (
 	extendAxis([shapePoint], [optPoint, optScatter]), (scatter = () => TYPE.SCATTER)()
 );
+
+export {default, bb} from "./core";
+export {
+	area,
+	areaLineRange,
+	areaSpline,
+	areaSplineRange,
+	areaStep,
+	bar,
+	bubble,
+	donut,
+	gauge,
+	line,
+	pie,
+	radar,
+	scatter,
+	spline,
+	step
+};
