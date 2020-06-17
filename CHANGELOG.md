@@ -1,3 +1,12 @@
+# [2.0.0-next.4](https://github.com/naver/billboard.js/compare/2.0.0-next.3...2.0.0-next.4) (2020-06-17)
+
+
+### Bug Fixes
+
+* **arc:** fix applying data.labels.colors ([#1448](https://github.com/naver/billboard.js/issues/1448)) ([c128fad](https://github.com/naver/billboard.js/commit/c128fad2b62fafcbae54d754b77fe7d04e4cf403)), closes [#1440](https://github.com/naver/billboard.js/issues/1440)
+* **data:** fix for data.labels=false ([b7a0972](https://github.com/naver/billboard.js/commit/b7a09726b5d62a3737685fdc3ae64fde597b8b61)), closes [#1444](https://github.com/naver/billboard.js/issues/1444)
+* **legend:** Don't bind event when interaction is false ([4546c00](https://github.com/naver/billboard.js/commit/4546c00391eb2a50711a17ee5c1a2577f1c69140))
+
 # [2.0.0-next.3](https://github.com/naver/billboard.js/compare/2.0.0-next.2...2.0.0-next.3) (2020-06-15)
 
 
