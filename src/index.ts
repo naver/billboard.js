@@ -17,6 +17,7 @@ import {
 import shapeArc from "./ChartInternal/shape/arc";
 import shapeArea from "./ChartInternal/shape/area";
 import shapeBar from "./ChartInternal/shape/bar";
+import shapeGauge from "./ChartInternal/shape/gauge";
 import shapeBubble from "./ChartInternal/shape/bubble";
 import shapeLine from "./ChartInternal/shape/line";
 import shapePoint from "./ChartInternal/shape/point";
@@ -55,6 +56,7 @@ extend(ChartInternal.prototype, [
 	shapeArea,
 	shapeBar,
 	shapeBubble,
+	shapeGauge,
 	shapeLine,
 	shapePoint,
 	shapeRadar

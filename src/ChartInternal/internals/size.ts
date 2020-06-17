@@ -270,7 +270,7 @@ export default {
 			(config.subchart_size_height + subchartXAxisHeight) : 0;
 
 		// for main
-		state.margin = isRotated ? {
+		state.margin = !hasArc && isRotated ? {
 			top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
 			right: hasArc ? 0 : $$.getCurrentPaddingRight(),
 			bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),

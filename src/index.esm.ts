@@ -18,6 +18,7 @@ import shapeArc from "./ChartInternal/shape/arc";
 import shapeArea from "./ChartInternal/shape/area";
 import shapeBar from "./ChartInternal/shape/bar";
 import shapeBubble from "./ChartInternal/shape/bubble";
+import shapeGauge from "./ChartInternal/shape/gauge";
 import shapeLine from "./ChartInternal/shape/line";
 import shapePoint from "./ChartInternal/shape/point";
 import shapeRadar from "./ChartInternal/shape/radar";
@@ -130,7 +131,7 @@ let step = (): string => (extendLine(), (step = () => TYPE.STEP)());
 
 // Arc types
 let donut = (): string => (extendArc(undefined, [optDonut]), (donut = () => TYPE.DONUT)());
-let gauge = (): string => (extendArc(undefined, [optGauge]), (gauge = () => TYPE.GAUGE)());
+let gauge = (): string => (extendArc([shapeGauge], [optGauge]), (gauge = () => TYPE.GAUGE)());
 let pie = (): string => (extendArc(undefined, [optPie]), (pie = () => TYPE.PIE)());
 let radar = (): string => (
 	extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), (radar = () => TYPE.RADAR)()
