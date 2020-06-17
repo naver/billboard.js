@@ -61,14 +61,16 @@ export default {
 
 	getXAxisClipX(): number {
 		const $$ = this;
+		const isRotated = $$.config.axis_rotated;
 
-		return $$.getAxisClipX(!$$.config.axis_rotated);
+		return !isRotated ? 0 : $$.getAxisClipX(!$$.config.axis_rotated);
 	},
 
 	getXAxisClipY(): number {
 		const $$ = this;
+		const isRotated = $$.config.axis_rotated;
 
-		return $$.getAxisClipY(!$$.config.axis_rotated);
+		return isRotated ? 0 : $$.getAxisClipY(!$$.config.axis_rotated);
 	},
 
 	getYAxisClipX(): number {
@@ -104,14 +106,16 @@ export default {
 
 	getXAxisClipWidth(): number {
 		const $$ = this;
+		const isRotated = $$.config.axis_rotated;
 
-		return $$.getAxisClipWidth(!$$.config.axis_rotated);
+		return isRotated ? $$.getAxisClipWidth(!isRotated) : $$.scale.x.range()[1];
 	},
 
 	getXAxisClipHeight(): number {
 		const $$ = this;
+		const isRotated = $$.config.axis_rotated;
 
-		return $$.getAxisClipHeight(!$$.config.axis_rotated);
+		return isRotated ? $$.scale.x.range()[1] : $$.getAxisClipHeight(!isRotated);
 	},
 
 	getYAxisClipWidth(): number {
