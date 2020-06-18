@@ -198,13 +198,13 @@ export default {
 
 	updateSvgSize(): void {
 		const $$ = this;
-		const {state, $el: {svg}} = $$;
+		const {state: {clip, current, hasAxis, width, height}, $el: {svg}} = $$;
 
 		svg
-			.attr("width", state.current.width)
-			.attr("height", state.current.height);
+			.attr("width", current.width)
+			.attr("height", current.height);
 
-		if (state.hasAxis) {
+		if (hasAxis) {
 			const brush = svg.select(`.${CLASS.brush} .overlay`);
 			const brushSize = {width: 0, height: 0};
 
@@ -213,33 +213,23 @@ export default {
 				brushSize.height = +brush.attr("height");
 			}
 
-			svg.selectAll([`#${state.clip.id}`, `#${state.clip.idGrid}`])
+			svg.selectAll([`#${clip.id}`, `#${clip.idGrid}`])
 				.select("rect")
-				.attr("width", state.width)
-				.attr("height", state.height);
+				.attr("width", width)
+				.attr("height", height);
 
-			svg.select(`#${state.clip.idXAxis}`)
+			svg.select(`#${clip.idXAxis}`)
 				.select("rect")
-				.attr("x", $$.getXAxisClipX.bind($$))
-				.attr("y", $$.getXAxisClipY.bind($$))
-				.attr("width", $$.getXAxisClipWidth.bind($$))
-				.attr("height", $$.getXAxisClipHeight.bind($$));
+				.call($$.setXAxisClipPath.bind($$));
 
-			svg.select(`#${state.clip.idYAxis}`)
+			svg.select(`#${clip.idYAxis}`)
 				.select("rect")
-				.attr("x", $$.getYAxisClipX.bind($$))
-				.attr("y", $$.getYAxisClipY.bind($$))
-				.attr("width", $$.getYAxisClipWidth.bind($$))
-				.attr("height", $$.getYAxisClipHeight.bind($$));
+				.call($$.setYAxisClipPath.bind($$));
 
-			state.clip.idSubchart && svg.select(`#${state.clip.idSubchart}`)
+			clip.idSubchart && svg.select(`#${clip.idSubchart}`)
 				.select("rect")
-				.attr("width", state.width)
+				.attr("width", width)
 				.attr("height", brushSize.height);
-
-			svg.select(`.${CLASS.zoomRect}`)
-				.attr("width", state.width)
-				.attr("height", state.height);
 		}
 	},
 

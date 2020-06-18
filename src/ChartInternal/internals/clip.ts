@@ -45,89 +45,51 @@ export default {
 			.append("rect");
 	},
 
-	getAxisClipX(forHorizontal?: boolean): number {
-		const {margin} = this.state;
-		// axis line width + padding for left
-		const left = Math.max(30, margin.left);
-
-		return forHorizontal ? -(1 + left) : -(left - 1);
-	},
-
-	getAxisClipY(forHorizontal?: boolean): number {
-		const {margin} = this.state;
-
-		return forHorizontal ? -20 : -margin.top;
-	},
-
-	getXAxisClipX(): number {
+	/**
+	 * Set x Axis clipPath dimension
+	 * @param {d3Selecton} node clipPath <rect> selection
+	 * @private
+	 */
+	setXAxisClipPath(node): void {
 		const $$ = this;
-		const isRotated = $$.config.axis_rotated;
+		const {config, state: {margin, width, height}} = $$;
+		const isRotated = config.axis_rotated;
+		const left = Math.max(30, margin.left) - (isRotated ? 0 : 20);
 
-		return !isRotated ? 0 : $$.getAxisClipX(!$$.config.axis_rotated);
+		const x = isRotated ? -(1 + left) : -(left - 1);
+		const y = -Math.max(15, margin.top);
+		const w = isRotated ? margin.left + 20 : width + 10 + left;
+		const h = isRotated ? (margin.top + height) + 10 : margin.bottom;
+
+		node
+			.attr("x", x)
+			.attr("y", y)
+			.attr("width", w)
+			.attr("height", h);
 	},
 
-	getXAxisClipY(): number {
+	/**
+	 * Set y Axis clipPath dimension
+	 * @param {d3Selecton} node clipPath <rect> selection
+	 * @private
+	 */
+	setYAxisClipPath(node): void {
 		const $$ = this;
-		const isRotated = $$.config.axis_rotated;
+		const {config, state: {margin, width, height}} = $$;
+		const isRotated = config.axis_rotated;
+		const isInner = config.axis_y_inner;
+		const left = Math.max(30, margin.left) - (isRotated ? 20 : 0);
 
-		return isRotated ? 0 : $$.getAxisClipY(!$$.config.axis_rotated);
-	},
+		const x = isInner ? -1 : (isRotated ? -(1 + left) : -(left - 1));
+		const y = isRotated ? -20 : -(margin.top - 5);
+		const w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0);
+		const h = (isRotated ? margin.bottom : (margin.top + height)) + 10;
 
-	getYAxisClipX(): number {
-		const $$ = this;
-
-		return $$.config.axis_y_inner ?
-			-1 : $$.getAxisClipX($$.config.axis_rotated);
-	},
-
-	getYAxisClipY(): number {
-		const $$ = this;
-
-		return $$.getAxisClipY($$.config.axis_rotated);
-	},
-
-	getAxisClipWidth(forHorizontal?: boolean): number {
-		const $$ = this;
-		const {margin, width} = $$.state;
-		const left = Math.max(30, margin.left);
-		const right = Math.max(30, margin.right);
-
-		// width + axis line width + padding for left/right
-		return forHorizontal ?
-			width + 2 + left + right : margin.left + 20;
-	},
-
-	getAxisClipHeight(forHorizontal?: boolean): void {
-		const {margin, height} = this.state;
-
-		// less than 20 is not enough to show the axis label 'outer' without legend
-		return (forHorizontal ? margin.bottom : (margin.top + height)) + 20;
-	},
-
-	getXAxisClipWidth(): number {
-		const $$ = this;
-		const isRotated = $$.config.axis_rotated;
-
-		return isRotated ? $$.getAxisClipWidth(!isRotated) : $$.scale.x.range()[1];
-	},
-
-	getXAxisClipHeight(): number {
-		const $$ = this;
-		const isRotated = $$.config.axis_rotated;
-
-		return isRotated ? $$.scale.x.range()[1] : $$.getAxisClipHeight(!isRotated);
-	},
-
-	getYAxisClipWidth(): number {
-		const $$ = this;
-
-		return $$.getAxisClipWidth($$.config.axis_rotated) + ($$.config.axis_y_inner ? 20 : 0);
-	},
-
-	getYAxisClipHeight(): number {
-		const $$ = this;
-
-		return $$.getAxisClipHeight($$.config.axis_rotated);
+		node
+			.attr("x", x)
+			.attr("y", y)
+			.attr("width", w)
+			.attr("height", h);
 	},
 
 	updateXAxisTickClip(): void {

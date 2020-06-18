@@ -99,7 +99,6 @@ export default {
 	ygridLines: "bb-ygrid-lines",
 	ygrids: "bb-ygrids",
 	zoomBrush: "bb-zoom-brush",
-	zoomRect: "bb-zoom-rect",
 	EXPANDED: "_expanded_",
 	SELECTED: "_selected_",
 	INCLUDED: "_included_",

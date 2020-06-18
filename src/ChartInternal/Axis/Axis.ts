@@ -95,7 +95,7 @@ class Axis {
 
 					if (v === "x") {
 						res = clip.pathXAxis;
-					} else if (v === "y" && config.axis_y_inner) {
+					} else if (v === "y") { // && config.axis_y_inner) {
 						res = clip.pathYAxis;
 					}
 
