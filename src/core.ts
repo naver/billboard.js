@@ -26,6 +26,11 @@ const bb = {
 
 	/**
 	 * Generate chart
+	 * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
+	 *   - Unused option value is given.
+	 *     - ex) For `data.type="pie"` option, setting 'axis' option can cause unexpected generation error.
+	 *   - Insufficient value is given for certain option used.
+	 *     - ex) `data: { x: "x", columns: [["x"], ["data1", 30, 200, 100]] }`
 	 * @param {Options} config chart options
 	 * @memberof bb
 	 * @returns {Chart}
@@ -86,7 +91,7 @@ const bb = {
 	 *        data1: bar(),
 	 *        data2: step()
 	 *      }
-	 * })
+	 * });
 	 */
 	generate(config) {
 		const options = mergeObj({}, defaults, config);
