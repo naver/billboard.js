@@ -1,3 +1,11 @@
+# [2.0.0-next.5](https://github.com/naver/billboard.js/compare/2.0.0-next.4...2.0.0-next.5) (2020-06-19)
+
+
+### Bug Fixes
+
+* **axis:** fix incorrect clip node handling ([a8c6f96](https://github.com/naver/billboard.js/commit/a8c6f961f3b938256013a91304a373fa709c3e81)), closes [#1449](https://github.com/naver/billboard.js/issues/1449)
+* **axis:** make axis clip-path to fit real axis size ([7419f44](https://github.com/naver/billboard.js/commit/7419f44c38037681a886e113b3e70a69b7cc1434)), closes [#1449](https://github.com/naver/billboard.js/issues/1449)
+
 # [2.0.0-next.4](https://github.com/naver/billboard.js/compare/2.0.0-next.3...2.0.0-next.4) (2020-06-17)
 
 
