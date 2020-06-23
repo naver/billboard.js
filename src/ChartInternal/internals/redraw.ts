@@ -77,7 +77,8 @@ export default {
 
 			// event rects will redrawn when flow called
 			if (config.interaction_enabled && !flow && wth.EventRect) {
-				$$.bindZoomEvent();
+				$$.redrawEventRect();
+				$$.bindZoomEvent && $$.bindZoomEvent();
 			}
 		} else {
 			// arc

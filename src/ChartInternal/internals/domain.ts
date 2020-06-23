@@ -333,4 +333,25 @@ export default {
 
 		return domain;
 	},
+
+	/**
+	 * Get zoom domain
+	 * @returns {Array} zoom domain
+	 * @private
+	 */
+	getZoomDomain(): [number, number] {
+		const $$ = this;
+		const {config, org} = $$;
+		let [min, max] = org.xDomain;
+
+		if (isDefined(config.zoom_x_min)) {
+			min = getMinMax("min", [min, config.zoom_x_min]);
+		}
+
+		if (isDefined(config.zoom_x_max)) {
+			max = getMinMax("max", [max, config.zoom_x_max]);
+		}
+
+		return [min, max];
+	}
 };

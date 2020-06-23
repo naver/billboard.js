@@ -36,9 +36,6 @@ export default {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const zoomEnabled = config.zoom_enabled;
-
-		$$.redrawEventRect();
-
 		const eventRects = main.select(`.${CLASS.eventRects}`);
 
 		if (zoomEnabled && bind) {

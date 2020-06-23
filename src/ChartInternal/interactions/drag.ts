@@ -7,6 +7,9 @@ import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {getPathBox} from "../../module/util";
 
+/**
+ * Module used for data.selection.draggable option
+ */
 export default {
 	/**
 	 * Called when dragging.
