@@ -172,13 +172,13 @@ export default {
 		// partial duplication of generateGetBarPoints
 		const $$ = this;
 		const {config} = $$;
-		const x = $$.getShapeX(0, areaIndices, !!isSub);
+		const x = $$.getShapeX(0, areaIndices, isSub);
 		const y = $$.getShapeY(!!isSub);
-		const areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub);
+		const areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, isSub);
 		const yScale = $$.getYScaleById.bind($$);
 
 		return function(d, i) {
-			const y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
+			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
 			const offset = areaOffset(d, i) || y0; // offset is for stacked area chart
 			const posX = x(d);
 			let posY = y(d);

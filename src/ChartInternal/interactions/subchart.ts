@@ -122,7 +122,9 @@ export default {
 		$$.appendClip(defs, clipId);
 		$$.initBrush();
 
-		subchart.main = svg.append("g").attr("transform", $$.getTranslate("context"));
+		subchart.main = svg.append("g")
+			.classed(CLASS.subchart, true)
+			.attr("transform", $$.getTranslate("context"));
 
 		const {main} = subchart;
 
@@ -203,7 +205,7 @@ export default {
 				.attr("class", classLines);
 
 			// Area
-			$$.hasType("area") && lineEnter.append("g")
+			$$.hasTypeOf("Area") && lineEnter.append("g")
 				.attr("class", classAreas);
 
 			// -- Brush --//

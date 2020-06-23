@@ -410,17 +410,16 @@ export default {
 		return pointClass;
 	},
 
-	generateGetLinePoints(lineIndices, isSubValue?: boolean):Function { // partial duplication of generateGetBarPoints
+	generateGetLinePoints(lineIndices, isSub?: boolean):Function { // partial duplication of generateGetBarPoints
 		const $$ = this;
 		const {config} = $$;
-		const isSub = !!isSubValue;
 		const x = $$.getShapeX(0, lineIndices, isSub);
 		const y = $$.getShapeY(isSub);
 		const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
 		const yScale = $$.getYScaleById.bind($$);
 
 		return (d, i) => {
-			const y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
+			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
 			const offset = lineOffset(d, i) || y0; // offset is for stacked area chart
 			const posX = x(d);
 			let posY = y(d);

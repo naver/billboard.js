@@ -7,7 +7,8 @@
  */
 export default {
 	/**
-	 * Set subchart options
+	 * Set subchart options.
+	 * - **NOTE:** Not supported for `bubble`, `scatter` and non-Axis based(pie, donut, gauge, radar) types.
 	 * @name subchart
 	 * @memberof Options
 	 * @type {object}

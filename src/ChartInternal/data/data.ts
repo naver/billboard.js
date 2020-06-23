@@ -44,8 +44,11 @@ export default {
 	},
 
 	isGrouped(id) {
-		return this.config.data_groups
-			.map(v => v.indexOf(id) >= 0)[0];
+		const groups = this.config.data_groups;
+
+		return id ?
+			groups.some(v => v.indexOf(id) >= 0 && v.length > 1) :
+			groups.length > 0;
 	},
 
 	getXKey(id) {

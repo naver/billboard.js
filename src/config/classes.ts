@@ -81,6 +81,7 @@ export default {
 	stanfordLines: "bb-stanford-lines",
 	stanfordRegion: "bb-stanford-region",
 	stanfordRegions: "bb-stanford-regions",
+	subchart: "bb-subchart",
 	target: "bb-target",
 	text: "bb-text",
 	texts: "bb-texts",
