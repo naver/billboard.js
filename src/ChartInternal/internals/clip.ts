@@ -59,7 +59,9 @@ export default {
 		const x = isRotated ? -(1 + left) : -(left - 1);
 		const y = -Math.max(15, margin.top);
 		const w = isRotated ? margin.left + 20 : width + 10 + left;
-		const h = isRotated ? (margin.top + height) + 10 : margin.bottom;
+
+		// less than 20 is not enough to show the axis label 'outer' without legend
+		const h = (isRotated ? (margin.top + height) + 10 : margin.bottom) + 20;
 
 		node
 			.attr("x", x)
@@ -77,8 +79,8 @@ export default {
 		const $$ = this;
 		const {config, state: {margin, width, height}} = $$;
 		const isRotated = config.axis_rotated;
-		const isInner = config.axis_y_inner;
 		const left = Math.max(30, margin.left) - (isRotated ? 20 : 0);
+		const isInner = config.axis_y_inner;
 
 		const x = isInner ? -1 : (isRotated ? -(1 + left) : -(left - 1));
 		const y = isRotated ? -20 : -(margin.top - 5);
