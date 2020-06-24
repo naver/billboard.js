@@ -12,7 +12,6 @@ export default {
 		const $$ = this;
 		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
-		const hasGauge = $$.hasType("gauge");
 		let padding = 0;
 		let x;
 		let y;
@@ -29,7 +28,7 @@ export default {
 			y = asHalfPixel(state.margin2.top);
 		} else if (target === "legend") {
 			x = state.margin3.left;
-			y = state.margin3.top + (hasGauge ? 10 : 0);
+			y = state.margin3.top;
 		} else if (target === "x") {
 			x = isRotated ? -padding : 0;
 			y = isRotated ? 0 : state.height + padding;
