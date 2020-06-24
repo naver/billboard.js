@@ -88,6 +88,14 @@ export default {
 	},
 
 	getGaugeLabelHeight(): 20 | 0 {
-		return this.config.gauge_label_show ? 20 : 0;
+		const {config} = this;
+
+		return this.config.gauge_label_show && !config.gauge_fullCircle ? 20 : 0;
+	},
+
+	getPaddingBottomForGauge() {
+		const $$ = this;
+
+		return $$.getGaugeLabelHeight() * ($$.config.gauge_label_show ? 2 : 2.5);
 	}
 };

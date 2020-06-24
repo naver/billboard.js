@@ -321,11 +321,14 @@ export default {
 		}
 
 		// for arc
-		state.arcWidth = state.width - (state.isLegendRight ? currLegend.width + 10 : 0);
-		state.arcHeight = state.height - (state.isLegendRight ? 0 : 10);
+		const hasGauge = $$.hasType("gauge");
+		const isLegendRight = state.legend_show && state.isLegendRight;
 
-		if ($$.hasType("gauge") && !config.gauge_fullCircle) {
-			state.arcHeight += state.height - $$.getGaugeLabelHeight();
+		state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
+		state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
+
+		if (hasGauge && !config.gauge_fullCircle) {
+			state.arcHeight += state.height - $$.getPaddingBottomForGauge();
 		}
 
 		$$.updateRadius && $$.updateRadius();
