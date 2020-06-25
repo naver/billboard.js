@@ -4911,9 +4911,9 @@ expand-tilde@^2.0.0, expand-tilde@^2.0.2:
     homedir-polyfill "^1.0.1"
 
 exports-loader@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/exports-loader/-/exports-loader-1.0.0.tgz#a9ac38a986d852723881b041333761ef1faa2f7e"
-  integrity sha512-vXgkczP7WTV7ztRY++rb7Z/6gPgPrgWId6rlftUGg2XdcJUxd+EkjtS0EuZi7UdB5jwXjiSNFgrpW9RqprRJ/Q==
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/exports-loader/-/exports-loader-1.1.0.tgz#26a16706e4cf533145de24c1419baf33b624fb5c"
+  integrity sha512-zGB2SujiAyO0Rwn4GQ17/HlT8cwmT8abcBeZpr2R3sItJ5sI5Y9BzNzus3H9tH1iWLAoJLi9N3TP54D2+j859Q==
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^2.7.0"
