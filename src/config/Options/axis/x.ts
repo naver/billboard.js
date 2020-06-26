@@ -40,6 +40,13 @@ export default {
 	 * - timeseries
 	 * - category
 	 * - indexed
+	 * - log
+	 *
+	 * **NOTE:**<br>
+	 * - **log** type:
+	 *   - the x values specified by [`data.x`](#.data%25E2%2580%25A4x)(or by any equivalent option), must be exclusively-positive.
+	 *   - x axis min value should be > 0, otherwise will be set `1`.
+	 *
 	 * @name axis․x․type
 	 * @memberof Options
 	 * @type {string}
@@ -47,6 +54,7 @@ export default {
 	 * @see [Demo: indexed](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
 	 * @see [Demo: timeseries](https://naver.github.io/billboard.js/demo/#Chart.TimeseriesChart)
 	 * @see [Demo: category](https://naver.github.io/billboard.js/demo/#Data.CategoryData)
+	 * @see [Demo: log](https://naver.github.io/billboard.js/demo/#Axis.LogScales)
 	 * @example
 	 * axis: {
 	 *   x: {
@@ -54,7 +62,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_type: <"indexed"|"timeseries"|"category"> "indexed",
+	axis_x_type: <"indexed"|"timeseries"|"category"|"log"> "indexed",
 
 	/**
 	 * Set how to treat the timezone of x values.<br>

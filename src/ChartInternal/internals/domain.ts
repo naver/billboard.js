@@ -88,6 +88,7 @@ export default {
 			return [0, 100];
 		}
 
+		const isLog = scale && scale[axisId] && scale[axisId].type === "log";
 		const targetsByAxisId = targets.filter(t => axis.getId(t.id) === axisId);
 		const yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
 
@@ -107,7 +108,6 @@ export default {
 		const yMax = config[`${pfx}_max`];
 		let yDomainMin = $$.getYDomainMin(yTargets);
 		let yDomainMax = $$.getYDomainMax(yTargets);
-
 		const center = config[`${pfx}_center`];
 		let isZeroBased = [TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER, ...TYPE_BY_CATEGORY.Line]
 			.some(v => {
@@ -137,6 +137,7 @@ export default {
 		if (yDomainMin === yDomainMax) {
 			yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0;
 		}
+
 
 		const isAllPositive = yDomainMin >= 0 && yDomainMax >= 0;
 		const isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
@@ -195,7 +196,8 @@ export default {
 			isAllNegative && (padding.top = -yDomainMax);
 		}
 
-		const domain = [yDomainMin - padding.bottom, yDomainMax + padding.top];
+		const domain = isLog ? [yDomainMin, yDomainMax].map(v => (v <= 0 ? 1 : v)) :
+			[yDomainMin - padding.bottom, yDomainMax + padding.top];
 
 		return isInverted ? domain.reverse() : domain;
 	},
@@ -258,31 +260,38 @@ export default {
 
 	getXDomain(targets) {
 		const $$ = this;
-		const isCategorized = $$.axis.isCategorized();
-		const isTimeSeries = $$.axis.isTimeSeries();
+		const isLog = $$.scale.x.type === "log";
 		const xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)];
-		const padding = $$.getXDomainPadding(xDomain);
-		let [firstX, lastX] = xDomain;
 		let min: Date | number = 0;
 		let max: Date | number = 0;
 
-		// show center of x domain if min and max are the same
-		if ((firstX - lastX) === 0 && !isCategorized) {
-			if (isTimeSeries) {
-				firstX = new Date(firstX.getTime() * 0.5);
-				lastX = new Date(lastX.getTime() * 1.5);
-			} else {
-				firstX = firstX === 0 ? 1 : (firstX * 0.5);
-				lastX = lastX === 0 ? -1 : (lastX * 1.5);
+		if (isLog) {
+			min = xDomain[0];
+			max = xDomain[1];
+		} else {
+			const isCategorized = $$.axis.isCategorized();
+			const isTimeSeries = $$.axis.isTimeSeries();
+			const padding = $$.getXDomainPadding(xDomain);
+			let [firstX, lastX] = xDomain;
+
+			// show center of x domain if min and max are the same
+			if ((firstX - lastX) === 0 && !isCategorized) {
+				if (isTimeSeries) {
+					firstX = new Date(firstX.getTime() * 0.5);
+					lastX = new Date(lastX.getTime() * 1.5);
+				} else {
+					firstX = firstX === 0 ? 1 : (firstX * 0.5);
+					lastX = lastX === 0 ? -1 : (lastX * 1.5);
+				}
 			}
-		}
 
-		if (firstX || firstX === 0) {
-			min = isTimeSeries ? new Date(firstX.getTime() - padding.left) : firstX - padding.left;
-		}
+			if (firstX || firstX === 0) {
+				min = isTimeSeries ? new Date(firstX.getTime() - padding.left) : firstX - padding.left;
+			}
 
-		if (lastX || lastX === 0) {
-			max = isTimeSeries ? new Date(lastX.getTime() + padding.right) : lastX + padding.right;
+			if (lastX || lastX === 0) {
+				max = isTimeSeries ? new Date(lastX.getTime() + padding.right) : lastX + padding.right;
+			}
 		}
 
 		return [min, max];

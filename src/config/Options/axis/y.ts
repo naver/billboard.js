@@ -37,12 +37,21 @@ export default {
 	/**
 	 * Set type of y axis.<br><br>
 	 * **Available Values:**
-	 *   - timeseries
-	 *   - indexed
+	 *  - timeseries
+	 *  - indexed
+	 *  - log
+	 *
+	 * **NOTE:**<br>
+	 * - **log** type:
+	 *   - the bound data values must be exclusively-positive.
+	 *   - y axis min value should be > 0, otherwise will be set `1`.
+	 *   - [`data.groups`](#.data%25E2%2580%25A4groups)(stacked data) option aren't supported.
+	 *
 	 * @name axis․y․type
 	 * @memberof Options
 	 * @type {string}
 	 * @default "indexed"
+	 * @see [Demo: log](https://naver.github.io/billboard.js/demo/#Axis.LogScales)
 	 * @example
 	 * axis: {
 	 *   y: {
@@ -50,7 +59,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_type: <"indexed"|"category"|"indexed"|undefined> undefined,
+	axis_y_type: <"indexed"|"category"|"indexed"|"log"|undefined> undefined,
 
 	/**
 	 * Set max value of y axis.

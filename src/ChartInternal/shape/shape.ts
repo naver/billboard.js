@@ -217,7 +217,8 @@ export default {
 	 */
 	getShapeYMin(id: string): number {
 		const $$ = this;
-		const [yMin] = $$.scale[$$.axis.getId(id)].domain();
+		const scale = $$.scale[$$.axis.getId(id)];
+		const [yMin] = scale.domain();
 
 		return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
 	},
