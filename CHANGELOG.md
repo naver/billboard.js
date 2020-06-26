@@ -1,3 +1,10 @@
+# [2.0.0-next.7](https://github.com/naver/billboard.js/compare/2.0.0-next.6...2.0.0-next.7) (2020-06-26)
+
+
+### Bug Fixes
+
+* **gauge:** fixed wrong bottom padding calculation ([0542586](https://github.com/naver/billboard.js/commit/0542586b6ed3098c270982f086e9e503bc714983)), closes [#1441](https://github.com/naver/billboard.js/issues/1441) [#1471](https://github.com/naver/billboard.js/issues/1471)
+
 # [2.0.0-next.6](https://github.com/naver/billboard.js/compare/2.0.0-next.5...2.0.0-next.6) (2020-06-23)
 
 
