@@ -2482,4 +2482,74 @@ describe("AXIS", function() {
 			expect(maxTickWidth).to.be.equal(tickWdith);
 		});
 	});
+
+	describe("Log axis type", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x"  ,
+					columns: [
+						["x", 100, 395, 740, 1500, 3000, 4500],
+						["data1", 210, 1150, 12000, 100000, 1000000],
+						["data2", 100, 100, 100, 100, 100]
+					],
+					axes: {
+						data1: "y",
+						data2: "y2"
+					},
+					types: {
+					  data1: "bar"
+					}
+				  },
+				  axis: {
+					x: {
+						type: "log",
+						min: 50
+					},
+					y: {
+					  type: "log"
+					},
+					y2: {
+						show: true
+					}
+				}				
+			}
+		});
+
+		const checkAxisTickPos = () => {
+			["x", "y", "y2"].forEach(id => {
+				const scale = chart.internal.scale[id];
+
+				chart.internal.$el.axis[id].selectAll(".tick").each(function(d) {
+					expect(scale(d)).to.be.closeTo(
+						util.parseNum(this.getAttribute("transform").replace(/(0,|,0)/, "")), 1
+					);
+				});
+			});
+		};
+
+		it("check ticks scaled correctly", () => {
+			checkAxisTickPos();
+		});
+
+		it("set options: y/y2 axes min/max", () => {
+			args.axis.y.min = 10;
+			args.axis.y.max = 100000000;
+
+			args.axis.y2.min = 30;
+			args.axis.y2.max = 20000;
+		});
+
+		it("check ticks min/max & scales", () => {
+			["y", "y2"].forEach(id => {
+				const ticks = chart.internal.$el.axis[id].selectAll(".tick text").nodes();
+				const {min, max} = args.axis[id];
+
+				expect(+ticks[0].textContent).to.be.equal(min);
+				expect(+ticks[ticks.length - 1].textContent).to.be.equal(max);
+			});
+
+			checkAxisTickPos();
+		});
+	});
 });

@@ -8,8 +8,8 @@ import {
 	axisLeft as d3AxisLeft,
 	axisRight as d3AxisRight
 } from "d3-axis";
-import {scaleLinear as d3ScaleLinear} from "d3-scale";
 import AxisRenderer from "./AxisRenderer";
+import {getScale} from "../internals/scale";
 import CLASS from "../../config/classes";
 import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, notEmpty, parseDate, sortValue} from "../../module/util";
 
@@ -67,13 +67,27 @@ class Axis {
 	}
 
 	public isTimeSeries(id = "x") {
-		const {config} = this.owner;
+		return this.owner.config[`axis_${id}_type`] === "timeseries";
+	}
 
-		return config[`axis_${id}_type`] === "timeseries";
+	public isLog(id = "x") {
+		return this.owner.config[`axis_${id}_type`] === "log";
 	}
 
 	public isTimeSeriesY() {
 		return this.isTimeSeries("y");
+	}
+
+	public getAxisType(id = "x"): string {
+		let type = "linear";
+
+		if (this.isTimeSeries(id)) {
+			type = "time";
+		} else if (this.isLog(id)) {
+			type = "log";
+		}
+
+		return type;
 	}
 
 	init() {
@@ -680,12 +694,11 @@ class Axis {
 		let tickOffset = 0;
 
 		if (!isTimeSeries) {
-			const scale = d3ScaleLinear()
+			const scale = getScale($$.axis.getAxisType("x"), 0, widthWithoutCurrentPaddingLeft - maxOverflow)
 				.domain([
 					left * -1,
 					$$.getXDomainMax($$.data.targets) + 1 + right
-				])
-				.range([0, widthWithoutCurrentPaddingLeft - maxOverflow]);
+				]);
 
 			tickOffset = (Math.ceil((scale(1) - scale(0)) / 2));
 		}

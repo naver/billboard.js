@@ -4,6 +4,7 @@
  */
 import {line as d3Line} from "d3-shape";
 import {mouse as d3Mouse} from "d3-selection";
+import {getScale} from "../internals/scale";
 import CLASS from "../../config/classes";
 import {getRandom, isArray, isDefined, isUndefined, isValue, parseDate} from "../../module/util";
 
@@ -251,6 +252,7 @@ export default {
 		};
 
 		// Generate
+		const axisType = {x: $$.axis.getAxisType("x"), y: $$.axis.getAxisType("y")};
 		let path = "";
 
 		for (let i = 0, data; (data = d[i]); i++) {
@@ -274,8 +276,8 @@ export default {
 				}
 
 				// Draw with region // TODO: Fix for horizotal charts
-				xp = $$.getScale(prevData.x + xOffset, data.x + xOffset, isTimeSeries);
-				yp = $$.getScale(prevData.value, data.value);
+				xp = getScale(axisType.x, prevData.x + xOffset, data.x + xOffset);
+				yp = getScale(axisType.y, prevData.value, data.value);
 
 				const dx = x(data.x) - x(prevData.x);
 				const dy = y(data.value) - y(prevData.value);

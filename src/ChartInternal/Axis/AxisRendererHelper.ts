@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-import {scaleLinear as d3ScaleLinear} from "d3-scale";
+import {getScale} from "../internals/scale";
 import {isDefined, isNumber, isString} from "../../module/util";
 import {d3Selection} from "../../../types/types";
 
@@ -13,7 +13,7 @@ export default class AxisRendererHelper {
 	private scale;
 
 	constructor(owner) {
-		const scale = d3ScaleLinear();
+		const scale = getScale();
 		const {config, params} = owner;
 
 		this.owner = owner;
@@ -88,11 +88,11 @@ export default class AxisRendererHelper {
 
 	generateTicks(scale, isYAxes: boolean): number[] {
 		const {tickStepSize} = this.owner.params;
+		const [start, end] = scale.domain();
 		let ticks: number[] = [];
 
 		// When 'axis[y|y2].tick.stepSize' option is set
 		if (isYAxes && tickStepSize) {
-			const [start, end] = scale.domain();
 			let interval = start;
 
 			while (interval <= end) {
@@ -100,18 +100,32 @@ export default class AxisRendererHelper {
 				interval += tickStepSize;
 			}
 		} else if (scale.ticks) {
-			ticks = scale.ticks(
-				...(this.config.tickArguments || [])
-			).map(v => (
-				// round the tick value if is number
-				(isString(v) && isNumber(v) && !isNaN(v) &&
-					Math.round(v * 10) / 10
-				) || v
-			));
-		} else {
-			const domain = scale.domain();
+			ticks = scale
+				.ticks(...(this.config.tickArguments || []));
 
-			for (let i = Math.ceil(domain[0]); i < domain[1]; i++) {
+			// adjust excessive tick count show
+			if (scale.type === "log") {
+				const t = scale.ticks();
+				const [head, tail] = [t[0], t[t.length - 1]];
+
+				for (let cnt = end.toFixed().length; ticks.length > 15; cnt--) {
+					ticks = scale.ticks(cnt);
+				}
+
+				ticks[0] !== head && ticks.unshift(head);
+				ticks[ticks.length - 1] !== tail && ticks.push(tail);
+			}
+
+			ticks = ticks
+				.map(v => {
+					// round the tick value if is number
+					const r = (isString(v) && isNumber(v) && !isNaN(v) &&
+						Math.round(v * 10) / 10) || v;
+
+					return r;
+				});
+		} else {
+			for (let i = Math.ceil(start); i < end; i++) {
 				ticks.push(i);
 			}
 
@@ -129,6 +143,8 @@ export default class AxisRendererHelper {
 		if (!newScale.domain().length) {
 			newScale.domain(this.scale.domain());
 		}
+
+		newScale.type = this.scale.type;
 
 		return newScale;
 	}

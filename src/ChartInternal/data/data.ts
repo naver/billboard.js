@@ -238,6 +238,7 @@ export default {
 				value = $$.getBubbleZData(value, "y");
 			}
 		}
+
 		return value;
 	},
 

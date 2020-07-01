@@ -4,17 +4,33 @@
  */
 import {
 	scaleTime as d3ScaleTime,
-	scaleLinear as d3ScaleLinear
+	scaleLinear as d3ScaleLinear,
+	scaleLog as d3ScaleLog
 } from "d3-scale";
 import {isString, isValue, parseDate} from "../../module/util";
 
-export default {
-	getScale(min: number, max: number, forTimeseries?: boolean) {
-		return (forTimeseries ?
-			d3ScaleTime() : d3ScaleLinear()
-		).range([min, max]);
-	},
+/**
+ * Get scale
+ * @param {string} [type='linear'] Scale type
+ * @param {number} [min] Min range
+ * @param {number} [max] Max range
+ * @returns {d3.scaleLinear|d3.scaleTime} scale
+ * @private
+ */
+export function getScale(type = "linear", min = 0, max = 1): any {
+	const scale = ({
+		linear: d3ScaleLinear,
+		log: d3ScaleLog,
+		time: d3ScaleTime
+	})[type]();
 
+	scale.type = type;
+	type === "log" && scale.clamp(true);
+
+	return scale.range([min, max]);
+}
+
+export default {
 	/**
 	 * Get x Axis scale function
 	 * @param {number} min Min value
@@ -26,7 +42,7 @@ export default {
 	 */
 	getXScale(min: number, max: number, domain: number[], offset: Function) {
 		const $$ = this;
-		const scale = $$.scale.zoom || $$.getScale(min, max, $$.axis.isTimeSeries());
+		const scale = $$.scale.zoom || getScale($$.axis.getAxisType("x"), min, max);
 
 		return $$.getCustomizedScale(
 			domain ? scale.domain(domain) : scale,
@@ -44,7 +60,7 @@ export default {
 	 */
 	getYScale(min: number, max: number, domain: number[]): Function {
 		const $$ = this;
-		const scale = $$.getScale(min, max, $$.axis.isTimeSeriesY());
+		const scale = getScale($$.axis.getAxisType("y"), min, max);
 
 		domain && scale.domain(domain);
 
