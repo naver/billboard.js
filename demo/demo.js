@@ -849,6 +849,42 @@ var demos = {
 				}
 			}
 		},
+		LogScales: {
+			options: {
+				data: {
+					x: "x"  ,
+					columns: [
+						["x", 100, 395, 740, 1500, 3000, 4500],
+						["data1", 210, 1150, 12000, 100000, 1000000],
+						["data2", 100, 100, 100, 100, 100]
+					],
+					axes: {
+						data1: "y",
+						data2: "y2"
+					},
+					types: {
+					  data1: "bar"
+					}
+				  },
+				  axis: {
+					x: {
+						type: "log",
+						min: 50,
+						max: 6000
+					},
+					y: {
+					  type: "log",
+					  min: 10,
+					  max: 100000000
+					},
+					y2: {
+						show: true,
+						min: 30,
+						max: 20000
+					}
+				}
+			}
+		},
 		MultiAxes: [
 			{
 				options: {

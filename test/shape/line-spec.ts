@@ -730,7 +730,7 @@ describe("SHAPE LINE", () => {
 				"translate(0,40)"
 			];
 
-			tickNodes.each((data, index) => {
+			tickNodes.each((d, index) => {
 				expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
 			});
 		});

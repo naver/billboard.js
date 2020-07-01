@@ -7,21 +7,34 @@ export interface Axis {
 	 * Switch x and y axis position.
 	 */
 	rotated?: boolean;
-	x?: XAxisConfiguration;
-	y?: YAxisConfiguration;
-	y2?: YAxisConfiguration;
+	x?: xAxisConfiguration;
+	y?: yAxisConfiguration;
+	y2?: y2AxisConfiguration;
 }
 
-export interface XAxisConfiguration {
+export interface AxisConfigurationBase {
 	/**
-	 * Show or hide x axis.
+	 * Show or hide axis.
 	 */
 	show?: boolean;
 
 	/**
-	 * Set type of x axis (timeseries, category, indexed)
+	 * Set additional axes for Axis
 	 */
-	type?: string;
+	axes?: AxesConfiguration[];
+
+}
+
+export interface xAxisConfiguration extends AxisConfigurationBase {
+	/**
+	 * Set type of x axis (timeseries, category, indexed, log)
+	 *
+	 * NOTE:
+	 * 	 log type:
+	 *   - the x values specified by `data.x`(or by any equivalent option), must be exclusively-positive.
+	 *   - x axis min value should be > 0, otherwise will be set `1`.
+	 */
+	type?: "timeseries" | "category" | "indexed" | "log";
 
 	/**
 	 * Set how to treat the timezone of x values.
@@ -101,19 +114,9 @@ export interface XAxisConfiguration {
 	 * Set clip-path attribute for x axis element.
 	 */
 	clipPath?: boolean;
-
-	/**
-	 * Set additional axes for Axis
-	 */
-	axes?: AxesConfiguration[];
 }
 
-export interface YAxisConfiguration {
-	/**
-	 * Show or hide y axis.
-	 */
-	show?: boolean;
-
+export interface yAxisConfigurationBase extends AxisConfigurationBase {
 	/**
 	 * Show y axis inside of the chart.
 	 */
@@ -167,17 +170,27 @@ export interface YAxisConfiguration {
 	 * This option set the default value for y axis when there is no data on init.
 	 */
 	default?: number[];
+}
+
+export interface yAxisConfiguration extends AxisConfigurationBase {
+	/**
+	 * Set type of y axis (timeseries, category, indexed, log)
+	 *
+	 * NOTE:
+	 * 	 log type:
+	 *   - the bound data values must be exclusively-positive.
+	 *   - y axis min value should be > 0, otherwise will be set `1`.
+	 *   - `data.groups`(stacked data) option aren't supported.
+	 */
+	type?: "timeseries" | "category" | "indexed" | "log";
 
 	/**
-	 * Set clip-path attribute for x axis element.
+	 * Set clip-path attribute for y axis element.
 	 */
 	clipPath?: boolean;
-
-	/**
-	 * Set additional axes for Axis
-	 */
-	axes?: AxesConfiguration[];
 }
+
+export interface y2AxisConfiguration extends AxisConfigurationBase {}
 
 export interface XTickConfiguration {
 	/**
