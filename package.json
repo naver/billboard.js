@@ -23,7 +23,7 @@
     "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
     "loc": "cloc --by-file src",
-    "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
+    "test": "node --max-old-space-size=3072 ./node_modules/karma/bin/karma start",
     "test:chrome": "npm test -- --chrome",
     "coverage": "npm test -- --coverage",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
