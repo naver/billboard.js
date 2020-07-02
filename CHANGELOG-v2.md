@@ -226,6 +226,20 @@ point: {
    }
    ```
 
+ - Log scale for x/y Axes
+   New log scale for x/y Axes. 
+   - **NOTE:** The values specified for axes, must be:
+     - Exclusively-positive.
+     - Min value should be > 0, otherwise will be set `1`.
+
+   ```js
+    axis: {
+	    x | y: {
+	      type: "log"
+	    }
+	 }
+   ```
+
 # Modularization by its functionality
 
 `1.x` wasn't providing the way to cut the bundle size, and included all shape types codes even  they aren't used.<br>
