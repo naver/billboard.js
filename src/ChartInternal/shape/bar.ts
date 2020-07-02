@@ -81,9 +81,11 @@ export default {
 		const {config, scale} = $$;
 		const maxDataCount = $$.getMaxDataCount();
 		const isGrouped = config.data_groups.length;
-		const tickInterval = (scale.zoom || $$) && !$$.axis.isCategorized() ?
-			$$.xx(scale.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount);
-		let result;
+
+		const tickInterval = scale.zoom && !$$.axis.isCategorized() ?
+			(scale.subX.domain().map(v => scale.zoom(v))
+				.reduce((a, c) => Math.abs(a) + c) / maxDataCount
+			) : axis.tickInterval(maxDataCount);
 
 		const getWidth = (id?: string) => {
 			const width = id ? config.bar_width[id] : config.bar_width;
@@ -95,7 +97,7 @@ export default {
 			return max && w > max ? max : w;
 		};
 
-		result = getWidth();
+		let result = getWidth();
 
 		if (!isGrouped && isObjectType(config.bar_width)) {
 			result = {width: result, total: []};

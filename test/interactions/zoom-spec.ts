@@ -988,5 +988,50 @@ describe("ZOOM", function() {
 				expect(this.getTotalLength()).to.be.equal(len[i]);
 			});
 		});
+
+		it("set options: zoom.entabled.type='drag'", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "bar"
+				},
+				bar: {
+					width: {
+						ratio: 0.8
+					}
+				},
+				zoom: {
+					enabled: true
+				}
+			};
+		});
+
+		it("bar width should scales as zoom scales", done => {
+			const width = [];
+
+			chart.$.bar.bars.each(function() {
+				width.push(this.getBoundingClientRect().width);
+			})
+
+			// when
+			chart.zoom([2,5]);
+
+			setTimeout(() => {
+				let last;
+
+				chart.$.bar.bars.each(function(d, i) {
+					const w = Math.round(this.getBoundingClientRect().width);
+
+					expect(w).to.be.greaterThan(width[i]);
+
+					last && expect(last).to.be.equal(w);
+					last = w;
+				});
+
+				done();
+			}, 300);
+		});
 	});
 });
