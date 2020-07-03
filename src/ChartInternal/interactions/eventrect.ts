@@ -36,9 +36,8 @@ export default {
 		const isMultipleX = $$.isMultipleX();
 		let eventRectUpdate;
 
-		const zoomEnabled = config.zoom_enabled;
 		const eventRects = $$.$el.main.select(`.${CLASS.eventRects}`)
-			.style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? (
+			.style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (
 				config.axis_rotated ? "ns-resize" : "ew-resize"
 			) : null)
 			.classed(CLASS.eventRectsMultiple, isMultipleX)

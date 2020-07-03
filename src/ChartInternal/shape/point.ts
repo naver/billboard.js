@@ -59,6 +59,7 @@ export default {
 		const $$ = this;
 		const {config, data, $el} = $$;
 		const selectionEnabled = config.data_selection_enabled;
+		const isSelectable = config.data_selection_isselectable;
 		const classCircles = $$.classCircles.bind($$);
 
 		if (!config.point_show) {
@@ -91,7 +92,7 @@ export default {
 
 		enterNode.append("g")
 			.attr("class", classCircles)
-			.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
+			.style("cursor", d => (isSelectable && isSelectable(d) ? "pointer" : null));
 
 		// Update date for selected circles
 		selectionEnabled && targets.forEach(t => {

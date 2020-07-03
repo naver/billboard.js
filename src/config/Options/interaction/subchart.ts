@@ -23,6 +23,10 @@ export default {
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
 	 * @example
 	 *  subchart: {
+	 *      show: true,
+	 *      size: {
+	 *          height: 20
+	 *      },
 	 *      axis: {
 	 *      	x: {
 	 *      	  show: true,
@@ -33,10 +37,6 @@ export default {
 	 *      	      }
 	 *      	    }
 	 *      	}
-	 *      },
-	 *      show: true,
-	 *      size: {
-	 *          height: 20
 	 *      },
 	 *      onbrush: function(domain) { ... }
 	 *  }
