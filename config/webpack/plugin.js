@@ -61,7 +61,7 @@ module.exports = (common, env) => {
 		}));
 	}
 
-	return merge.smartStrategy({
+	return merge.customizeObject({
 		entry: "replace",
 		output: "replace",
 		module: "replace"

@@ -2401,9 +2401,8 @@ setTimeout(function() {chart.resize();}, 3000)
 					]
 				},
 				zoom: {
-					enabled: {
-						type: "drag"
-					}
+					enabled: true,
+					type: "drag"
 				}
 			},
 			description: "Drag over chart area"

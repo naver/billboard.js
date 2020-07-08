@@ -36,8 +36,8 @@ module.exports = (common, env) => {
 		config.externals = plugin.externals;
 	}
 
-	return env.PLUGIN ? merge.strategy({
-		entry: "replace",
-		output: "replace"
-	})(common, config) : merge.smart(common, config);
+	return env.PLUGIN ? merge.customizeObject({
+			entry: "replace",
+			output: "replace"
+		})(common, config) : merge.merge(common, config);
 };

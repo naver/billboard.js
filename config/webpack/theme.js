@@ -76,7 +76,7 @@ const config = {
 	]
 };
 
-module.exports = common => merge.smartStrategy({
+module.exports = common => merge.customizeObject({
 	entry: "replace",
 	output: "replace",
 	module: "replace"

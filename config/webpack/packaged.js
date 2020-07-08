@@ -27,5 +27,5 @@ module.exports = common => {
 	// reset base entry
 	common.entry = {};
 
-	return merge.smart(common, config);
+	return merge.merge(common, config);
 };
