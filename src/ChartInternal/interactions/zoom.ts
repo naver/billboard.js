@@ -41,7 +41,7 @@ export default {
 		if (zoomEnabled && bind) {
 			// Do not bind zoom event when subchart is shown
 			!config.subchart_show &&
-				$$.bindZoomOnEventRect(eventRects, zoomEnabled.type);
+				$$.bindZoomOnEventRect(eventRects, config.zoom_type);
 		} else if (bind === false) {
 			$$.api.unzoom();
 
@@ -355,7 +355,7 @@ export default {
 		const {config} = $$;
 		const resetButton = config.zoom_resetButton;
 
-		if (resetButton && config.zoom_enabled.type === "drag") {
+		if (resetButton && config.zoom_type === "drag") {
 			if (!$$.zoom.resetBtn) {
 				$$.zoom.resetBtn = $$.$el.chart.append("div")
 					.classed(CLASS.button, true)

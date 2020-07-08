@@ -24,6 +24,7 @@ import data from "./data/data";
 import dataLoad from "./data/load";
 
 // interactions
+import drag from "./interactions/drag";
 import interaction from "./interactions/interaction";
 
 // internals
@@ -218,7 +219,7 @@ export default class ChartInternal {
 			format.dataTime = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
 			format.axisTime = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
 
-			const isDragZoom = $$.config.zoom_enabled && $$.config.zoom_enabled.type === "drag";
+			const isDragZoom = $$.config.zoom_enabled && $$.config.zoom_type === "drag";
 
 			format.defaultAxisTime = d => {
 				const {x, zoom} = $$.scale;
@@ -666,6 +667,7 @@ extend(ChartInternal.prototype, [
 	classModule,
 	color,
 	domain,
+	drag,
 	interaction,
 	format,
 	legend,

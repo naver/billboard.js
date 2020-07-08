@@ -200,6 +200,37 @@ point: {
 }
 ```
 
+## Interface changes
+
+- `zoom.enabled.type`<br>
+  To simply and align with other interaction options format, moved the `type` field from being member of 'enabled' to member of 'zoom'.
+
+  ```js
+  // v1.x
+  zoom: {
+    enabled: {
+      type: "drag"
+    }
+  }
+
+  // v2
+    zoom: {
+    enabled: true,
+    type: "drag" // if omit, 'wheel' will set by default
+  }
+
+  // There's no need to update if 'wheel' zoom type is used
+  // v1.x
+  zoom: {
+    enabled: true
+  }
+
+  // v2
+  zoom: {
+    enabled: true
+  }
+  ```
+
 # New options
 
 - `point.focus.only`<br>
@@ -226,6 +257,20 @@ point: {
    }
    ```
 
+ - Log scale for x/y Axes
+   New log scale for x/y Axes. 
+   - **NOTE:** The values specified for axes, must be:
+     - Exclusively-positive.
+     - Min value should be > 0, otherwise will be set `1`.
+
+   ```js
+    axis: {
+	    x | y: {
+	      type: "log"
+	    }
+	 }
+   ```
+
 # Modularization by its functionality
 
 `1.x` wasn't providing the way to cut the bundle size, and included all shape types codes even  they aren't used.<br>
@@ -249,7 +294,10 @@ import bb, {
   radar,
   scatter,
   spline,
-  step
+  step,
+
+  // interaction modules
+  selection, subchart, zoom
 }
 
 bb.generate({
@@ -263,7 +311,19 @@ bb.generate({
     types: {
       data1: bar(),
       data1: spline()
+    },
+
+    selection: {
+      enabled: selection() // selection() will return 'true'
     }
+  },
+
+  subchart: {
+    show: subchart()  // subchart() will return 'true'
+  },
+
+  zoom: {
+    enabled: zoom() // zoom() will return 'true'
   }
 });
 ```
@@ -275,25 +335,29 @@ In an internal test, we got from `10 ~ 43%` size (minified with [terser](https:/
 
 > The bundle size will vary depending the bundler and the envrionments that is used.
 
-
-Type | Rollup.js (reduced) | gzipped | Webpack (reduced) | gzipped
+Type | Rollup.js (<sup>*</sup>reduced) | gzipped | Webpack (<sup>*</sup>reduced) | gzipped
 :---: | :---: | :---: | :---: | :---:
-**Full size** | `207kb` | 63kb | `209kb` | 63kb
-area | 182kb `(-12.07%)` | 56kb | 183kb `(-12.44%)` | 56kb
-area-spline | 182kb `(-10.57%)` | 56kb | 183kb `(-12.44%)` | 56kb
-area-step | 182kb `(-12.07%)` | 56kb | 183kb `(-12.44%)` | 56kb
-area-line-range | 182kb `(-12.07%)` | 56kb | 183kb `(-12.44%)` | 56kb
-area-spline-range | 182kb `(-12.07%)` | 56kb | 183kb `(-12.44%)` | 56kb
-bar | 170kb `(-17.87%)` | 52kb | 171kb `(-18.18%)` | 52kb
-bubble | 176kb `(-14.97%)` | 54kb | 177kb `(-15.31%)` | 54kb
-donut | 119kb `(-42.51%)` | 37kb | 139kb `(-33.49%)` | 43kb
-gauge | 119kb `(-42.51%)` | 37kb | 139kb `(-33.49%)` | 43kb
-line | 179kb  `(-13.52%)` | 55kb | 180kb `(-13.87%)` | 55kb
-pie | 119kb `(-42.51%)` | 37kb | 139kb `(-33.49%)` | 43kb
-radar | 134kb `(-35.26%)` | 41kb | 153kb `(-26.79%)` | 47kb
-scatter | 175kb `(-15.45%)` | 53kb | 176kb `(-15.78%)` | 53kb
-spline | 179kb `(-13.52%)` | 55kb | 181kb `(-13.39%)` | 55kb
-step | 179kb `(-13.52%)` | 55kb | 180kb `(-13.87%)` | 55kb
+<sup>**</sup> **Full size**| `208kb` | 63kb | `210kb` | 63kb
+<sup>***</sup> **Full size 2** | `193kb` | 59kb | `196kb` | 60kb
+area | 168kb `(-19.23%)` | 52kb | 170kb `(-19.04%)` | 52kb
+area-spline | 168kb `(-19.23%)` | 52kb | 170kb `(-19.04%)` | 52kb
+area-step | 168kb `(-19.23%)` | 52kb | 170kb `(-19.04%)` | 52kb
+area-line-range | 168kb `(-19.23%)` | 52kb | 170kb `(-19.04%)` | 52kb
+area-spline-range | 168kb `(-19.23%)` | 52kb | 170kb `(-19.04%)` | 52kb
+bar | 156kb `(-25%)` | 48kb | 158kb `(-24.76%)` | 49kb
+bubble | 161kb `(-22.59%)` | 50kb | 164kb `(-21.90%)` | 50kb
+donut | 119kb `(-42.78%)` | 37kb | 140kb `(-33.33%)` | 44kb
+gauge | 119kb `(-42.78%)` | 37kb | 140kb `(-33.33%)` | 44kb
+line | 165kb  `(-20.67%)` | 51kb | 167kb `(-20.47%)` | 52kb
+pie | 119kb `(-42.78%)` | 37kb | 140kb `(-33.33%)` | 44kb
+radar | 134kb `(-35.57%)` | 41kb | 155kb `(-26.19%)` | 48kb
+scatter | 161kb `(-22.59%)` | 50kb | 163kb `(-22.38%)` | 50kb
+spline | 165kb `(-20.67%)` | 51kb | 167kb `(-20.47%)` | 52kb
+step | 165kb `(-20.67%)` | 51kb | 167kb `(-20.47%)` | 52kb
+
+- <sup>*</sup> Reduced percentage based on build size with interaction modules.
+- <sup>**</sup> Build size with interaction (selection, subchart and zoom) modules.
+- <sup>***</sup> Build size w/o interaction (selection, subchart and zoom) modules.
 
 <details>
 	<summary>Expand to see generation option used for the test result</summary>

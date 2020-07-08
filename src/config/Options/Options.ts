@@ -5,9 +5,8 @@
 // common
 import main from "./common/main";
 import data from "./data/data";
-import dataSelection from "./data/selection";
 import color from "./common/color";
-import interaction from "./common/interaction";
+import interaction from "./interaction/interaction";
 import legend from "./common/legend";
 import title from "./common/title";
 import tooltip from "./common/tooltip";
@@ -23,7 +22,7 @@ import {deepClone} from "../../module/util";
 export default class Options {
 	static data = {};
 
-	static setOptions(options) {
+	static setOptions(options: any[]) {
 		this.data = options
 			.reduce((a, c) => ({...a, ...c}), this.data);
 	}
@@ -32,7 +31,6 @@ export default class Options {
 		return deepClone(
 			main,
 			data,
-			dataSelection,
 			color,
 			interaction,
 			legend,

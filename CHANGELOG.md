@@ -1,3 +1,15 @@
+# [2.0.0-next.8](https://github.com/naver/billboard.js/compare/2.0.0-next.7...2.0.0-next.8) (2020-07-02)
+
+
+### Bug Fixes
+
+* **bar:** fix bar width scale on zoom ([59073bd](https://github.com/naver/billboard.js/commit/59073bdc143bb8fa2a2d2891859a9a67e3bdb402)), closes [#1476](https://github.com/naver/billboard.js/issues/1476)
+
+
+### Features
+
+* **axis:** Intent to ship log scale  ([6fdf3e4](https://github.com/naver/billboard.js/commit/6fdf3e47b2bbc6c4201758020b16c491d5c469cf)), closes [#1351](https://github.com/naver/billboard.js/issues/1351)
+
 # [2.0.0-next.7](https://github.com/naver/billboard.js/compare/2.0.0-next.6...2.0.0-next.7) (2020-06-26)
 
 

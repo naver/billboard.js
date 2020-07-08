@@ -4,7 +4,7 @@
  */
 import {zoomIdentity as d3ZoomIdentity, zoomTransform as d3ZoomTransform} from "d3-zoom";
 import CLASS from "../../config/classes";
-import {callFn, extend, getMinMax, isDefined, isObject, isString, parseDate} from "../../module/util";
+import {callFn, extend, getMinMax, isDefined, isObject, parseDate} from "../../module/util";
 
 /**
  * Check if the given domain is within zoom range
@@ -104,14 +104,12 @@ extend(zoom, {
 	enable: function(enabled: boolean | "wheel" | "drag" | any): void {
 		const $$ = this.internal;
 		const {config} = $$;
-		let enableType: any = enabled;
 
-		if (enabled) {
-			enableType = isString(enabled) && /^(drag|wheel)$/.test(enabled) ?
-				{type: enabled} : enabled;
+		if (/^(drag|wheel)$/.test(enabled)) {
+			config.zoom_type = enabled;
 		}
 
-		config.zoom_enabled = enableType;
+		config.zoom_enabled = !!enabled;
 
 		if (!$$.zoom) {
 			$$.initZoom();
