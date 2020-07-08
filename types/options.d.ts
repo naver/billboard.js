@@ -1049,12 +1049,12 @@ export interface ZoomOptions {
 	/**
 	 * Enable zooming.
 	 */
-	enabled?: boolean | {
-		/**
-		 * Set zoom interaction type.
-		 */
-		type?: "scroll" | "drag";
-	};
+	enabled?: boolean;
+
+	/**
+	 * Set zoom interaction type.
+	 */
+	type?: "wheel" | "drag";
 
 	/**
 	 * Enable to rescale after zooming.

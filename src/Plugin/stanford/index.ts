@@ -40,6 +40,9 @@ import {compareEpochs, isEmpty, isFunction, isString, parseDate, pointInRegion} 
  * @augments Plugin
  * @returns {Stanford}
  * @example
+ * // Plugin must be loaded before the use.
+ * <script src="$YOUR_PATH/plugin/billboardjs-plugin-stanford.js"></script>
+ *
  *  var chart = bb.generate({
  *     data: {
  *        columns: [ ... ],
@@ -88,7 +91,7 @@ import {compareEpochs, isEmpty, isFunction, isString, parseDate, pointInRegion} 
  *  });
  * @example
  *	import {bb} from "billboard.js";
- * import Stanford from "billboard.js/dist/billboardjs-plugin-stanford";
+ * import Stanford from "billboard.js/dist/billboardjs-plugin-stanford.esm";
  *
  * bb.generate({
  *     plugins: [

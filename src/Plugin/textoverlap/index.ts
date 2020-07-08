@@ -33,6 +33,9 @@ import Options from "./Options";
  * @augments Plugin
  * @returns {TextOverlap}
  * @example
+ * // Plugin must be loaded before the use.
+ * <script src="$YOUR_PATH/plugin/billboardjs-plugin-textoverlap.js"></script>
+ *
  *  var chart = bb.generate({
  *     data: {
  *     	  columns: [ ... ]
@@ -47,7 +50,7 @@ import Options from "./Options";
  *  });
  * @example
  *	import {bb} from "billboard.js";
- * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap";
+ * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap.esm";
  *
  * bb.generate({
  *     plugins: [
