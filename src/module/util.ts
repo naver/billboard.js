@@ -339,7 +339,7 @@ function deepClone(...objectN) {
 /**
  * Extend target from source object
  * @param {object} target Target object
- * @param {object} source Source object
+ * @param {object|Array} source Source object
  * @returns {object}
  * @private
  */

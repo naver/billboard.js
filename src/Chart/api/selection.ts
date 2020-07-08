@@ -39,7 +39,7 @@ export default {
 	},
 
 	/**
-	 * Set data points to be selected. (`[data.selection.enabled](Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled) option should be set true to use this method)`
+	 * Set data points to be selected. ([`data.selection.enabled`](Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled) option should be set true to use this method)
 	 * @function select
 	 * @instance
 	 * @memberof Chart

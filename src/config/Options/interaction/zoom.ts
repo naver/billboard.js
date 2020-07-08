@@ -13,7 +13,7 @@ export default {
 	 * @type {object}
 	 * @property {object} zoom Zoom object
 	 * @property {boolean} [zoom.enabled=false] Enable zooming.
-	 * @property {string} [zoom.enabled.type='wheel'] Set zoom interaction type.
+	 * @property {string} [zoom.type='wheel'] Set zoom interaction type.
 	 *  - **Available types:**
 	 *    - wheel
 	 *    - drag
@@ -35,9 +35,8 @@ export default {
 	 * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
 	 * @example
 	 *  zoom: {
-	 *      enabled: {
-	 *          type: "drag"
-	 *      },
+	 *      enabled: true,
+	 *      type: "drag",
 	 *      rescale: true,
 	 *      extent: [1, 100]  // enable more zooming
 	 *      x: {
@@ -63,7 +62,8 @@ export default {
 	 *      }
 	 *  }
 	 */
-	zoom_enabled: <{type: "wheel" | "drag"}|boolean|undefined> undefined,
+	zoom_enabled: <boolean> false,
+	zoom_type: <"wheel" | "drag"> "wheel",
 	zoom_extent: <number[]|undefined> undefined,
 	zoom_privileged: false,
 	zoom_rescale: false,

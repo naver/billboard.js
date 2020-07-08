@@ -336,9 +336,8 @@ describe("ZOOM", function() {
 					}
 				},
 				zoom: {
-					enabled: {
-						type: "drag"
-					}
+					enabled: true,
+					type: "drag"
 				}
 			};
 		});
@@ -474,9 +473,8 @@ describe("ZOOM", function() {
 		before(() => {
 			args = {
 				zoom: {
-					enabled: {
-						type: "drag"
-					}
+					enabled: true,
+					type: "drag"
 				},
 				data: {
 					columns: [
@@ -633,11 +631,10 @@ describe("ZOOM", function() {
 					}
 				},
 				zoom: {
-					enabled: {
-						type: "drag"
-					}
+					enabled: true,
+					type: "drag"
 				}
-				};
+			};
 		});
 
 		it("check zoom-in tick format for timeseries", () => {
@@ -676,9 +673,8 @@ describe("ZOOM", function() {
 			},
 				zoom: {
 					rescale: true,
-					enabled: {
-						type: "drag"
-					}
+					enabled: true,
+					type: "drag"
 				}
 			};
 		});
