@@ -120,7 +120,7 @@
     "d3-polygon": "^1.0.6",
     "d3-voronoi": "^1.1.4",
     "docdash": "^1.2.0",
-    "eslint": "^7.3.1",
+    "eslint": "^7.4.0",
     "eslint-config-naver": "^2.1.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.22.0",
@@ -146,7 +146,7 @@
     "node-sass": "^4.14.1",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "regenerator-runtime": "^0.13.5",
-    "sass-loader": "^8.0.2",
+    "sass-loader": "^9.0.2",
     "semantic-release": "^17.1.1",
     "simulant": "^0.2.2",
     "sinon": "^9.0.1",
@@ -159,7 +159,7 @@
     "webpack-cli": "^3.3.12",
     "webpack-common-shake": "^2.1.0",
     "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^4.2.2",
+    "webpack-merge": "^5.0.8",
     "webpackbar": "^4.0.0",
     "write-file-webpack-plugin": "^4.5.1"
   }
