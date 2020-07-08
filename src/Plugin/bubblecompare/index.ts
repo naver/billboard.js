@@ -15,6 +15,9 @@ import Plugin from "../Plugin";
  * @augments Plugin
  * @returns {BubbleCompare}
  * @example
+ * // Plugin must be loaded before the use.
+ * <script src="$YOUR_PATH/plugin/billboardjs-plugin-bubblecompare.js"></script>
+ *
  *  var chart = bb.generate({
  *     data: {
  *        columns: [ ... ],
@@ -30,8 +33,8 @@ import Plugin from "../Plugin";
  *     ]
  *  });
  * @example
- *	import {bb} from "billboard.js";
- * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare";
+ * import {bb} from "billboard.js";
+ * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare.esm";
  *
  * bb.generate({
  *     plugins: [
