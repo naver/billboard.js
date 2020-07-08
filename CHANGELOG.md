@@ -1,3 +1,10 @@
+# [2.0.0-next.9](https://github.com/naver/billboard.js/compare/2.0.0-next.8...2.0.0-next.9) (2020-07-08)
+
+
+### Features
+
+* **interaction:** split selection, subchart & zoom ([ba1e4f2](https://github.com/naver/billboard.js/commit/ba1e4f28ca4312d4cfcf112294d2c7afebd9121b))
+
 # [2.0.0-next.8](https://github.com/naver/billboard.js/compare/2.0.0-next.7...2.0.0-next.8) (2020-07-02)
 
 
