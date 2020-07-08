@@ -13,6 +13,8 @@ export default {
 	 * @type {object}
 	 * @property {object} zoom Zoom object
 	 * @property {boolean} [zoom.enabled=false] Enable zooming.
+	 *  - **NOTE:** for ESM imports, needs to import 'zoom' exports and instantiate it by calling `zoom()`.
+	 *    - `enabled: zoom()`
 	 * @property {string} [zoom.type='wheel'] Set zoom interaction type.
 	 *  - **Available types:**
 	 *    - wheel
@@ -61,6 +63,14 @@ export default {
 	 *          text: "Unzoom"
 	 *      }
 	 *  }
+	 * @example
+	 * // importing ESM
+	 * import bb, {zoom} from "billboard.js";
+	 *
+	 * zoom: {
+	 *      enabled: zoom(),
+	 *      ...
+	 * }
 	 */
 	zoom_enabled: <boolean> false,
 	zoom_type: <"wheel" | "drag"> "wheel",

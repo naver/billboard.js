@@ -9,6 +9,8 @@ export default {
 	/**
 	 * Set data selection enabled<br><br>
 	 * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
+	 *  - **NOTE:** for ESM imports, needs to import 'selection' exports and instantiate it by calling `selection()`.
+	 *    - `enabled: selection()`
 	 * @name data․selection․enabled
 	 * @memberof Options
 	 * @type {boolean}
@@ -18,6 +20,16 @@ export default {
 	 * data: {
 	 *    selection: {
 	 *       enabled: true
+	 *    }
+	 * }
+	 * @example
+	 * // importing ESM
+	 * import bb, {selection} from "billboard.js";
+	 *
+	 * data: {
+	 *    selection: {
+	 *       enabled: selection(),
+	 *       ...
 	 *    }
 	 * }
 	 */

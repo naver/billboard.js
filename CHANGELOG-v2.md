@@ -280,6 +280,7 @@ To improve this, `v2.0` will export each chart types as named binding module fun
 
 ```js
 import bb, {
+  // chart types modules
   area,
   areaLineRange,
   areaSpline,
@@ -298,7 +299,7 @@ import bb, {
 
   // interaction modules
   selection, subchart, zoom
-}
+} from "billboard.js";
 
 bb.generate({
   ...,

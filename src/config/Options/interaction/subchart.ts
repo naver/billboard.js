@@ -14,6 +14,8 @@ export default {
 	 * @type {object}
 	 * @property {object} subchart Subchart object
 	 * @property {boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
+	 *  - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+	 *    - `show: subchart()`
 	 * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
 	 * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
 	 * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
@@ -40,6 +42,14 @@ export default {
 	 *      },
 	 *      onbrush: function(domain) { ... }
 	 *  }
+	 * @example
+	 * // importing ESM
+	 * import bb, {subchart} from "billboard.js";
+	 *
+	 * subchart: {
+	 *      show: subchart(),
+	 *      ...
+	 * }
 	 */
 	subchart_show: false,
 	subchart_size_height: 60,
