@@ -1,4 +1,4 @@
-const merge = require("webpack-merge");
+const {mergeWithCustomize, customizeObject} = require("webpack-merge");
 const webpack = require("webpack");
 const fs = require("fs");
 const path = require("path");
@@ -61,9 +61,11 @@ module.exports = (common, env) => {
 		}));
 	}
 
-	return merge.customizeObject({
-		entry: "replace",
-		output: "replace",
-		module: "replace"
+	return mergeWithCustomize({
+		customizeObject: customizeObject({
+			entry: "replace",
+			output: "replace",
+			module: "replace"
+		})
 	})(common, config);
 };

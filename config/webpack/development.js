@@ -1,4 +1,4 @@
-const merge = require("webpack-merge");
+const {merge, mergeWithCustomize, customizeObject} = require("webpack-merge");
 const WriteFilePlugin = require("write-file-webpack-plugin");
 const plugin = require("./plugin")();
 
@@ -36,8 +36,10 @@ module.exports = (common, env) => {
 		config.externals = plugin.externals;
 	}
 
-	return env.PLUGIN ? merge.customizeObject({
+	return env.PLUGIN ? mergeWithCustomize({
+		customizeObject: customizeObject({
 			entry: "replace",
 			output: "replace"
-		})(common, config) : merge.merge(common, config);
+		})
+	})(common, config) : merge(common, config);
 };
