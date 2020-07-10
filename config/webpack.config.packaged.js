@@ -1,4 +1,4 @@
-const merge = require("webpack-merge");
+const {merge} = require("webpack-merge");
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 const terserConfig = require("./terserConfig");
@@ -27,5 +27,5 @@ module.exports = common => {
 	// reset base entry
 	common.entry = {};
 
-	return merge.smart(common, config);
+	return merge(common, config);
 };

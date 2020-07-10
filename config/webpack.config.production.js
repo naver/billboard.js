@@ -1,4 +1,4 @@
-const merge = require("webpack-merge");
+const {merge} = require("webpack-merge");
 const webpack = require("webpack");
 const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
@@ -69,4 +69,4 @@ const config = {
 	]
 };
 
-module.exports = common => merge.smart(common, config);
+module.exports = common => merge(common, config);
