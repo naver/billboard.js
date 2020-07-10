@@ -159,7 +159,7 @@
     "webpack-cli": "^3.3.12",
     "webpack-common-shake": "^2.1.0",
     "webpack-dev-server": "^3.11.0",
-    "webpack-merge": "^5.0.8",
+    "webpack-merge": "^5.0.9",
     "webpackbar": "^4.0.0",
     "write-file-webpack-plugin": "^4.5.1"
   }
