@@ -293,15 +293,17 @@ $ npm install billboard.js@next</code></pre>
 <script src="./js/scripts.js"></script>
 <script>
 $(function() {
+    var columns = [
+        ["data1", 30, 200, 100, 400, 150, 250],
+        ["data2", 130, 100, 140, 200, 150, 50]
+    ];
+
 	// generate chart
     var chart = bb.generate({
         bindto: "#chart",
         data: {
-	        type: "bar",
-            columns: [
-                ["data1", 30, 200, 100, 400, 150, 250],
-                ["data2", 130, 100, 140, 200, 150, 50]
-            ]
+            type: "bar",
+            columns: columns
         },
         point: {
             r: 8
@@ -319,20 +321,15 @@ $(function() {
 	    }
 
 	    var queue = [
-		    ["line", "data1"],
-		    ["line", "data2"],
-		    ["step", "data1"],
-		    ["area", "data2"],
-		    ["donut"],
-		    ["spline"],
-		    ["pie"],
-		    ["area-spline"],
-		    ["bar"]
+            "area", "step", "area-spline", "scatter", "area-step", "bubble"
 	    ];
 
 	    interval = setInterval(function() {
 		    if (queue.length) {
-			    chart.transform.apply(chart, queue.shift());
+                chart.load({
+                    type: queue.shift(),
+                    columns: columns
+                });
 		    } else {
 			    clearInterval(interval);
 			    interval = null;
