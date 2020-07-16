@@ -17,6 +17,7 @@ export default {
 		const {config, $el: {main}} = $$;
 		const isSelectionEnabled = config.data_selection_enabled;
 		const isSelectionGrouped = config.data_selection_grouped;
+		const isSelectable = config.data_selection_isselectable;
 		const isTooltipGrouped = config.tooltip_grouped;
 		const selectedData = $$.getAllValuesOnIndex(index);
 
@@ -51,7 +52,7 @@ export default {
 				const d = selected.data();
 
 				if (isSelectionEnabled &&
-					(isSelectionGrouped || config.data_selection_isselectable.bind($$.api)(d))
+					(isSelectionGrouped || (isSelectable && isSelectable.bind($$.api)(d)))
 				) {
 					eventRect.style("cursor", "pointer");
 				}

@@ -499,6 +499,7 @@ export default {
 		const $$ = this;
 		const {config, state, $el: {main}} = $$;
 		const hasInteraction = config.interaction_enabled;
+		const isSelectable = hasInteraction && config.data_selection_isselectable;
 
 		let mainArc = main.selectAll(`.${CLASS.arcs}`)
 			.selectAll(`.${CLASS.arc}`)
@@ -512,7 +513,7 @@ export default {
 		mainArc = mainArc.enter().append("path")
 			.attr("class", $$.classArc.bind($$))
 			.style("fill", d => $$.color(d.data))
-			.style("cursor", d => (hasInteraction && config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null))
+			.style("cursor", d => (isSelectable && isSelectable.bind($$.api)(d) ? "pointer" : null))
 			.style("opacity", "0")
 			.each(function(d) {
 				if ($$.isGaugeType(d.data)) {

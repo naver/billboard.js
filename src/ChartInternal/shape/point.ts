@@ -58,8 +58,8 @@ export default {
 	updateTargetForCircle(targetsValue, enterNodeValue): void {
 		const $$ = this;
 		const {config, data, $el} = $$;
-		const selectionEnabled = config.data_selection_enabled;
-		const isSelectable = config.data_selection_isselectable;
+		const selectionEnabled = config.interaction_enabled && config.data_selection_enabled;
+		const isSelectable = selectionEnabled && config.data_selection_isselectable;
 		const classCircles = $$.classCircles.bind($$);
 
 		if (!config.point_show) {

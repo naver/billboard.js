@@ -20,6 +20,8 @@ export default {
 	drag(mouse): void {
 		const $$ = this;
 		const {config, state, $el: {main}} = $$;
+		const isSelectionGrouped = config.data_selection_grouped;
+		const isSelectable = config.interaction_enabled && config.data_selection_isselectable;
 
 		if ($$.hasArcType() ||
 			!config.data_selection_enabled || // do nothing if not selectable
@@ -34,8 +36,8 @@ export default {
 
 		const minX = Math.min(sx, mx);
 		const maxX = Math.max(sx, mx);
-		const minY = config.data_selection_grouped ? state.margin.top : Math.min(sy, my);
-		const maxY = config.data_selection_grouped ? state.height : Math.max(sy, my);
+		const minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my);
+		const maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
 
 		main.select(`.${CLASS.dragarea}`)
 			.attr("x", minX)
@@ -46,7 +48,7 @@ export default {
 		// TODO: binary search when multiple xs
 		main.selectAll(`.${CLASS.shapes}`)
 			.selectAll(`.${CLASS.shape}`)
-			.filter(d => config.data_selection_isselectable.bind($$.api)(d))
+			.filter(d => isSelectable && isSelectable.bind($$.api)(d))
 			.each(function(d, i) {
 				const shape: d3Selection = d3Select(this);
 				const isSelected = shape.classed(CLASS.SELECTED);

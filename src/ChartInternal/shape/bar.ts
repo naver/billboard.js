@@ -22,6 +22,7 @@ export default {
 		const classChartBar = $$.classChartBar.bind($$);
 		const classBars = $$.classBars.bind($$);
 		const classFocus = $$.classFocus.bind($$);
+		const isSelectable = config.interaction_enabled && config.data_selection_isselectable;
 
 		if (!$el.bar) {
 			$$.initBar();
@@ -40,7 +41,7 @@ export default {
 		// Bars for each data
 		mainBarEnter.append("g")
 			.attr("class", classBars)
-			.style("cursor", d => (config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null));
+			.style("cursor", d => (isSelectable && isSelectable.bind($$.api)(d) ? "pointer" : null));
 	},
 
 	updateBar(durationForExit: number): void {
