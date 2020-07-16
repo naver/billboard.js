@@ -9,5 +9,5 @@ export default class TextOverlap extends Plugin {
 	/**
 	 * Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram).
      */
-	constructor(options: TextOverlapOptions)
+	constructor(options: TextOverlapOptions);
 }

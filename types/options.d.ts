@@ -2,10 +2,10 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import { Axis } from "./axis";
-import { ChartTypes, d3Selection, DataItem, GaugeTypes, PrimitiveArray } from "./types";
+import {Axis} from "./axis";
+import {ChartTypes, d3Selection, DataItem, GaugeTypes, PrimitiveArray} from "./types";
 import Stanford from "./plugin/stanford/index";
-import { Chart } from "./chart";
+import {Chart} from "./chart";
 
 export interface ChartOptions {
 	/**
@@ -128,12 +128,12 @@ export interface ChartOptions {
 		 *   - bb-colorize-pattern-red
 		 *   - bb-colorize-pattern-fff
 		 */
-		tiles?: (this: void) => SVGPathElement[];
+		tiles?: () => SVGPathElement[];
 
 		/**
 		 * Set the color value for each data point when mouse/touch onover event occurs.
 		 */
-		onover?: string | { [key: string]: string } | ((this: void, d: DataItem) => string);
+		onover?: string | { [key: string]: string } | ((d: DataItem) => string);
 	};
 
 	interaction?: {
@@ -286,6 +286,13 @@ export interface ChartOptions {
 		headers?: Array<{ [key: string]: string; }>;
 
 		/**
+		 * Set threshold ratio to show/hide labels.
+		 */
+		label?: {
+			threshold?: number;
+		}
+
+		/**
 		 * Set if min or max value will be 0 on bar chart.
 		 */
 		zerobased?: boolean;
@@ -321,7 +328,7 @@ export interface ChartOptions {
 		/**
 		 * Set the max bubble radius value
 		 */
-		maxR?: ((this: void, d: {}) => number) | number;
+		maxR?: ((d: {}) => number) | number;
 
 		/**
 		 * Set if min or max value will be 0 on bubble chart.
@@ -385,7 +392,7 @@ export interface ChartOptions {
 				/**
 				 * Set format function for the level value.
 				 */
-				format?: (this: void, x: string) => string;
+				format?: (x: string) => string;
 
 				/**
 				 * Show or hide level text.
@@ -410,19 +417,19 @@ export interface ChartOptions {
 			show?: boolean;
 
 			/**
-			 * Set threshold to show/hide labels.
+			 * Set threshold ratio to show/hide labels.
 			 */
 			threshold?: number;
 
 			/**
 			 * Set formatter for the label on each pie piece.
 			 */
-			format?(this: void, value: number, ratio: number, id: string): string;
+			format?(value: number, ratio: number, id: string): string;
 
 			/**
 			 * Set ratio of labels position.
 			 */
-			ratio?: ((this: void, d: DataItem, radius: number, h: number) => void) | number
+			ratio?: ((d: DataItem, radius: number, h: number) => void) | number
 		};
 
 		/**
@@ -471,14 +478,14 @@ export interface ChartOptions {
 			show?: boolean;
 
 			/**
-			 * Set threshold to show/hide labels.
+			 * Set threshold ratio to show/hide labels.
 			 */
 			threshold?: number;
 
 			/**
 			 * Set formatter for the label on each donut piece.
 			 */
-			format?(this: void, value: number, ratio: number, id: string): string;
+			format?(value: number, ratio: number, id: string): string;
 		};
 
 		/**
@@ -534,12 +541,17 @@ export interface ChartOptions {
 			/**
 			 * Set formatter for the label on gauge.
 			 */
-			format?(this: void, value: any, ratio: number): string;
+			format?(value: any, ratio: number): string;
 
 			/**
 			 * Set customized min/max label text.
 			 */
-			extents?(this: void, value: number, isMax: boolean): string | number;
+			extents?(value: number, isMax: boolean): string | number;
+
+			/**
+			 * Set threshold ratio to show/hide labels.
+			 */
+			threshold?: number;
 		};
 
 		/**
@@ -628,42 +640,42 @@ export interface ChartOptions {
 	/**
 	 * Set a callback to execute when the chart is initialized.
 	 */
-	oninit?(this: void, ctx: Chart): void;
+	oninit?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute after the chart is initialized
 	 */
-	onafterinit?(this: void, ctx: Chart): void;
+	onafterinit?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute before the chart is initialized
 	 */
-	onbeforeinit?(this: void, ctx: Chart): void;
+	onbeforeinit?(ctx: Chart): void;
 
 	/**
 	 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
 	 */
-	onrendered?(this: void, ctx: Chart): void;
+	onrendered?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute when mouse/touch enters the chart.
 	 */
-	onover?(this: void, ctx: Chart): void;
+	onover?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute when mouse/touch leaves the chart.
 	 */
-	onout?(this: void, ctx: Chart): void;
+	onout?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute when user resizes the screen.
 	 */
-	onresize?(this: void, ctx: Chart): void;
+	onresize?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute when screen resize finished.
 	 */
-	onresized?(this: void, ctx: Chart): void;
+	onresized?(ctx: Chart): void;
 
 	/**
 	 * Set 'clip-path' attribute for chart element.
@@ -726,7 +738,7 @@ export interface ChartOptions {
 		 * Set the position. Default value is 'center'
 		 */
 		position?: "center" | "right" | "left";
-	};
+	}
 }
 
 export interface AreaLinearGradientOptions {
@@ -811,17 +823,17 @@ export interface LegendOptions {
 		/**
 		 * Set click event handler to the legend item.
 		 */
-		onclick?(this: void, id: DataItem): void;
+		onclick?(id: DataItem): void;
 
 		/**
 		 * Set mouseover event handler to the legend item.
 		 */
-		onover?(this: void, id: DataItem): void;
+		onover?(id: DataItem): void;
 
 		/**
 		 * Set mouseout event handler to the legend item.
 		 */
-		onout?(this: void, id: DataItem): void;
+		onout?(id: DataItem): void;
 	};
 
 	/**
@@ -843,7 +855,7 @@ export interface LegendOptions {
 		 *  color {String}: color string
 		 *  data {Array}: data array
 		 */
-		template?: ((this: void, title: string, color: string, data: DataItem[]) => void) | string;
+		template?: ((title: string, color: string, data: DataItem[]) => void) | string;
 	};
 
 	/**
@@ -871,14 +883,14 @@ export interface TooltipOptions {
 		/**
 		 * Set format for the title of tooltip. Specified function receives x of the data point to show.
 		 */
-		title?(this: void, x: any): string;
+		title?(x: any): string;
 
 		/**
 		 * Set format for the name of each data in tooltip.
 		 * Specified function receives name, ratio, id and index of the data point to show.
 		 * ratio will be undefined if the chart is not donut/pie/gauge.
 		 */
-		name?(this: void, name: string, ratio: number, id: string, index: number): string;
+		name?(name: string, ratio: number, id: string, index: number): string;
 
 		/**
 		 * Set format for the value of each data in tooltip.
@@ -886,20 +898,19 @@ export interface TooltipOptions {
 		 * ratio will be undefined if the chart is not donut/pie/gauge.
 		 * If undefined returned, the row of that value will be skipped.
 		 */
-		value?(this: void, value: any, ratio: number, id: string, index: number): string;
+		value?(value: any, ratio: number, id: string, index: number): string;
 	};
 	/**
 	 * Set tooltip values order
 	 * Available Values: desc, asc, any[], function (data1, data2) { ... }, null
 	 */
-	order?: string | any[] | ((this: void, data1: any, data2: any) => number) | null;
+	order?: string | any[] | ((data1: any, data2: any) => number) | null;
 
 	/**
 	 * Set custom position function for the tooltip.
 	 * This option can be used to modify the tooltip position by returning object that has top and left.
 	 */
 	position?: ((
-		this: void,
 		data: any,
 		width: number,
 		height: number,
@@ -912,7 +923,6 @@ export interface TooltipOptions {
 	 * If tooltip.grouped is true, data includes multiple data points.
 	 */
 	contents?: ((
-		this: void,
 		data: any,
 		defaultTitleFormat: string,
 		defaultValueFormat: string,
@@ -966,22 +976,22 @@ export interface TooltipOptions {
 	/**
 	 * Set a callback that will be invoked before the tooltip is shown.
 	 */
-	onshow?(this: void, ctx: Chart, selectedData: DataItem): void;
+	onshow?(ctx: Chart, selectedData: DataItem): void;
 
 	/**
 	 * Set a callback that will be invoked before the tooltip is hidden.
 	 */
-	onhide?(this: void, ctx: Chart, selectedData: DataItem): void;
+	onhide?(ctx: Chart, selectedData: DataItem): void;
 
 	/**
 	 * Set a callback that will be invoked after the tooltip is shown
 	 */
-	onshown?(this: void, ctx: Chart, selectedData: DataItem): void;
+	onshown?(ctx: Chart, selectedData: DataItem): void;
 
 	/**
 	 * Set a callback that will be invoked after the tooltip is hidden.
 	 */
-	onhidden?(this: void, ctx: Chart, selectedData: DataItem): void;
+	onhidden?(ctx: Chart, selectedData: DataItem): void;
 
 	/**
 	 * Set if tooltips on all visible charts with like x points are shown together when one is shown.
@@ -1032,19 +1042,19 @@ export interface SubchartOptions {
 	 * Set callback for brush event.
 	 * Specified function receives the current zoomed x domain.
 	 */
-	onbrush?(this: void, domain: any): void;
+	onbrush?(domain: any): void;
 }
 
 export interface ZoomOptions {
 	/**
 	 * Enable zooming.
 	 */
-	enabled?: boolean | {
-		/**
-		 * Set zoom interaction type.
-		 */
-		type?: "scroll" | "drag";
-	};
+	enabled?: boolean;
+
+	/**
+	 * Set zoom interaction type.
+	 */
+	type?: "wheel" | "drag";
 
 	/**
 	 * Enable to rescale after zooming.
@@ -1073,19 +1083,19 @@ export interface ZoomOptions {
 	 * Set callback that is called when zooming starts.
 	 * Specified function receives the zoom event.
 	 */
-	onzoomstart?(this: void, event: Event): void;
+	onzoomstart?(event: Event): void;
 
 	/**
 	 * Set callback that is called when the chart is zooming.
 	 * Specified function receives the zoomed domain.
 	 */
-	onzoom?(this: void, domain: any): void;
+	onzoom?(domain: any): void;
 
 	/**
 	 * Set callback that is called when zooming ends.
 	 * Specified function receives the zoomed domain.
 	 */
-	onzoomend?(this: void, domain: any): void;
+	onzoomend?(domain: any): void;
 
 	/**
 	 * Set to display zoom reset button for 'drag' type zoom
@@ -1094,7 +1104,7 @@ export interface ZoomOptions {
 		/**
 		 * Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
 		 */
-		onclick?(this: void, button: HTMLElement): void;
+		onclick?(button: HTMLElement): void;
 
 		/**
 		 * Text value for zoom reset button.
@@ -1112,7 +1122,7 @@ export interface PointOptions {
 	/**
 	 * The radius size of each point.
 	 */
-	r?: number | ((this: void, d: DataItem) => number);
+	r?: number | ((d: DataItem) => number);
 
 	focus?: {
 		expand: {
@@ -1126,6 +1136,11 @@ export interface PointOptions {
 			 */
 			r?: number;
 		};
+
+		/**
+		 * Show point only when is focused.
+		 */
+		only?: boolean;
 	};
 
 	select?: {
@@ -1273,7 +1288,7 @@ export interface Data {
 	/**
 	 * Converts data id value
 	 */
-	idConverter?: (this: void, id: string) => string;
+	idConverter?: (id: string) => string;
 
 	/**
 	 * Parse a JSON object for data.
@@ -1408,10 +1423,10 @@ export interface Data {
 	/**
 	 * Define the order of the data.
 	 * This option changes the order of stacking the data and pieces of pie/donut. If null specified, it will be the order the data loaded.
-	 * If function specified, it will be used to sort the data and it will receive the data as argument.
+	 * If function specified, it will be used to sort the data and it will recieve the data as argument.
 	 * Available Values: desc, asc, function (data1, data2) { ... }, null
 	 */
-	order?: string | ((this: void, ...data: string[]) => void) | null;
+	order?: string | ((...data: string[]) => void) | null;
 
 	/**
 	 * Define regions for each data.
@@ -1434,13 +1449,13 @@ export interface Data {
 	 * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc.
 	 * And it must return a string that represents color (e.g. '#00ff00').
 	 */
-	color?(this: void, color: string, d: DataItem): string;
+	color?(color: string, d: DataItem): string;
 
 	/**
 	 * Set color for each data.
 	 */
 	colors?: {
-		[key: string]: string | ((this: void, d: DataItem) => string);
+		[key: string]: string | ((d: DataItem) => string);
 	};
 
 	/**
@@ -1480,10 +1495,10 @@ export interface Data {
 		 * The callback will receive d as an argument and it has some parameters like id, value, index. This callback should return boolean.
 		 * @param d Data object
 		 */
-		isselectable?(this: void, d?: any): boolean;
+		isselectable?(d?: any): boolean;
 	};
 
-	filter?: (this: void, v: Array<{
+	filter?: (v: Array<{
 		id: string;
 		id_org: string;
 		values: Array<{
@@ -1509,43 +1524,43 @@ export interface Data {
 	 * This callback will be called when each data point clicked and will receive d and element as the arguments.
 	 * - d is the data clicked and element is the element clicked. In this callback, this will be the Chart object.
 	 */
-	onclick?(this: void, d: DataItem, element: SVGElement): void;
+	onclick?(d: DataItem, element: SVGElement): void;
 
 	/**
 	 * Set a callback for mouse/touch over event on each data point.
 	 * This callback will be called when mouse cursor or via touch moves onto each data point and will receive d as the argument.
 	 * - d is the data where mouse cursor moves onto. In this callback, this will be the Chart object.
 	 */
-	onover?(this: void, d: DataItem, element?: SVGElement): void;
+	onover?(d: DataItem, element?: SVGElement): void;
 
 	/**
 	 * Set a callback for mouse/touch event on each data point.
 	 * This callback will be called when mouse cursor moves out each data point and will receive d as the argument.
 	 * - d is the data where mouse cursor moves out. In this callback, this will be the Chart object.
 	 */
-	onout?(this: void, d: DataItem, element?: SVGElement): void;
+	onout?(d: DataItem, element?: SVGElement): void;
 
 	/**
 	 * Set a callback for on data selection.
 	 */
-	onselected?(this: void, d: DataItem, element?: SVGElement): void;
+	onselected?(d: DataItem, element?: SVGElement): void;
 
 	/**
 	 * Set a callback for on data un-selection.
 	 */
-	onunselected?(this: void, d: DataItem, element?: SVGElement): void;
+	onunselected?(d: DataItem, element?: SVGElement): void;
 
 	/**
 	 * Set a callback for minimum data
 	 * - NOTE: For 'area-line-range' and 'area-spline-range', mid data will be taken for the comparison
 	 */
-	onmin?(this: void, d: DataItem[]): void;
+	onmin?(d: DataItem[]): void;
 
 	/**
 	 * Set a callback for maximum data
 	 * - NOTE: For 'area-line-range' and 'area-spline-range', mid data will be taken for the comparison
 	 */
-	onmax?(this: void, d: DataItem[]): void;
+	onmax?(d: DataItem[]): void;
 }
 
 export type FormatFunction = (

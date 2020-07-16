@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-export interface Plugin {
+ export interface Plugin {
 	/**
 	 * Version info string for plugin
 	 */

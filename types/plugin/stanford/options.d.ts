@@ -2,11 +2,11 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-export interface StanfordOptions {
+ export interface StanfordOptions {
 	/**
 	 * Set the color of the color scale.
 	 */
-	colors?: (this: void, value: number) => string;
+	colors?: (value: number) => string;
 
 	/**
 	 * Specify the key of epochs values in the data.
@@ -65,7 +65,7 @@ export interface StanfordOptions {
 		/**
 		 * Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function.
 		 */
-		format?: string | ((this: void, x: number) => string);
+		format?: string | ((x: number) => string);
 	};
 }
 
@@ -105,7 +105,7 @@ export interface StanfordRegionOptions {
 	 * This function receives a value and percentage of the number of epochs in this region.
 	 * Return a string to place text in the middle of the region.
 	 */
-	text?: (this: void, value: number, percentage: number) => string;
+	text?: (value: number, percentage: number) => string;
 	/**
 	 * Set a custom css class to this region, use the fill property in css to set a background color.
 	 */

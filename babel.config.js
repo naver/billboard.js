@@ -2,8 +2,9 @@ module.exports = function(api) {
 	api.cache(true);
 
 	const presets = [
+		"@babel/typescript",
 		[
-			"@babel/preset-env", {
+			"@babel/env", {
 				"targets": {
 					"browsers": [
 						"last 2 versions",
@@ -19,8 +20,13 @@ module.exports = function(api) {
 	];
 
 	const plugins = [
-		["@babel/plugin-transform-runtime", {"useESModules": true}],
+		[
+			"@babel/plugin-transform-runtime", {
+				"useESModules": true
+			}
+		],
 		"@babel/plugin-proposal-class-properties",
+		"@babel/proposal-object-rest-spread",
 		"add-module-exports",
 		"transform-inline-consecutive-adds",
 		"transform-merge-sibling-variables",
