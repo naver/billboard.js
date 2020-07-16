@@ -1,3 +1,48 @@
+# [2.0.0](https://github.com/naver/billboard.js/compare/1.12.11...2.0.0) (2020-07-16)
+
+
+### Bug Fixes
+
+* **all:** Fix test cases ([2e1ad79](https://github.com/naver/billboard.js/commit/2e1ad799345353f2a2a6ee26f1338c2e9c3cba9d))
+* **arc:** fix applying data.labels.colors ([#1448](https://github.com/naver/billboard.js/issues/1448)) ([c128fad](https://github.com/naver/billboard.js/commit/c128fad2b62fafcbae54d754b77fe7d04e4cf403)), closes [#1440](https://github.com/naver/billboard.js/issues/1440)
+* **axis:** fix incorrect clip node handling ([a8c6f96](https://github.com/naver/billboard.js/commit/a8c6f961f3b938256013a91304a373fa709c3e81)), closes [#1449](https://github.com/naver/billboard.js/issues/1449)
+* **axis:** make axis clip-path to fit real axis size ([7419f44](https://github.com/naver/billboard.js/commit/7419f44c38037681a886e113b3e70a69b7cc1434)), closes [#1449](https://github.com/naver/billboard.js/issues/1449)
+* **bar:** fix bar width scale on zoom ([59073bd](https://github.com/naver/billboard.js/commit/59073bdc143bb8fa2a2d2891859a9a67e3bdb402)), closes [#1476](https://github.com/naver/billboard.js/issues/1476)
+* **data:** fix for data.labels=false ([b7a0972](https://github.com/naver/billboard.js/commit/b7a09726b5d62a3737685fdc3ae64fde597b8b61)), closes [#1444](https://github.com/naver/billboard.js/issues/1444)
+* **data.selection:** fix selection.isselectable value check ([9d41a04](https://github.com/naver/billboard.js/commit/9d41a04983ff5f205d659158b4d4b5c33ef06af4))
+* **gauge:** fixed wrong bottom padding calculation ([0542586](https://github.com/naver/billboard.js/commit/0542586b6ed3098c270982f086e9e503bc714983)), closes [#1441](https://github.com/naver/billboard.js/issues/1441) [#1471](https://github.com/naver/billboard.js/issues/1471)
+* **legend:** Don't bind event when interaction is false ([4546c00](https://github.com/naver/billboard.js/commit/4546c00391eb2a50711a17ee5c1a2577f1c69140))
+* **point:** Correct focus.only to work in mobile env ([67eea16](https://github.com/naver/billboard.js/commit/67eea16b494b8ea9c96cab01568813147dbff754))
+* **point:** Correct point.focus.only ([1686594](https://github.com/naver/billboard.js/commit/1686594f19bb24185f3829740224b1285512dc49))
+* **point:** update point generation ([da63e39](https://github.com/naver/billboard.js/commit/da63e39e79d50d0b150ddd40db2ee1c13a430edc))
+* **subchar:** correct subchart rendering ([44ed216](https://github.com/naver/billboard.js/commit/44ed2160a722cd8794a586199d65d08d8d8350a9)), closes [#1458](https://github.com/naver/billboard.js/issues/1458)
+
+
+### Code Refactoring
+
+* **all:** v2 updates ([e23998f](https://github.com/naver/billboard.js/commit/e23998f994595c308d440e011124d590cd79b4d1)), closes [#758](https://github.com/naver/billboard.js/issues/758) [#757](https://github.com/naver/billboard.js/issues/757) [#756](https://github.com/naver/billboard.js/issues/756) [#36](https://github.com/naver/billboard.js/issues/36)
+* **module:** implement ESM index ([85caf71](https://github.com/naver/billboard.js/commit/85caf71f25371fb35fffd5a763b533f8e1a7ece0))
+
+
+### Features
+
+* **axis:** Intent to ship log scale  ([6fdf3e4](https://github.com/naver/billboard.js/commit/6fdf3e47b2bbc6c4201758020b16c491d5c469cf)), closes [#1351](https://github.com/naver/billboard.js/issues/1351)
+* **bar:** Intent to ship bar.label.threshold ([72a7b7f](https://github.com/naver/billboard.js/commit/72a7b7fd1220c2364ea7f6db5e0710bbdc984f59)), closes [#1427](https://github.com/naver/billboard.js/issues/1427)
+* **gauge:** Intent to ship gauge.label.threshold ([#1443](https://github.com/naver/billboard.js/issues/1443)) ([9a0807e](https://github.com/naver/billboard.js/commit/9a0807e827de48709334f1c709e0e1ef2a632bb3)), closes [#1439](https://github.com/naver/billboard.js/issues/1439)
+* **interaction:** split selection, subchart & zoom ([ba1e4f2](https://github.com/naver/billboard.js/commit/ba1e4f28ca4312d4cfcf112294d2c7afebd9121b))
+* **point:** Intent to ship point.focus.only ([bb70347](https://github.com/naver/billboard.js/commit/bb7034727d54f4bba2507e998651bde2e1d1f116))
+
+
+### BREAKING CHANGES
+
+* **all:** v2 updates
+* **module:** new index for ESM build
+
+- split Axis releated size from size.ts --> size.axis.ts
+- split common main option from Options.ts --> ./common/main.ts
+- Instead export Axis class, add .getAxisInstance() to make beneficial
+  from tree-shaking
+
 # [2.0.0-next.9](https://github.com/naver/billboard.js/compare/2.0.0-next.8...2.0.0-next.9) (2020-07-08)
 
 
