@@ -7,21 +7,30 @@
  * 
  * @version 2.0.0-nightly-20200716144733
  */
+/*-- Insight Theme --*/
+/*-- Default color pattern --*/
+.bb-color-pattern {
+  background-image: url("#00c73c;#fa7171;#2ad0ff;#7294ce;#e3e448;#cc7e6e;#fb6ccf;#c98dff;#4aea99;#bbbbbb;"); }
+
 /*-- Chart --*/
 .bb svg {
-  font: 10px sans-serif;
-  -webkit-tap-highlight-color: rgba(0, 0, 0, 0); }
+  font-size: 12px;
+  font-family: sans-serif, Arial, "nanumgothic", "Dotum";
+  line-height: 1; }
 
 .bb path, .bb line {
   fill: none;
-  stroke: #000; }
+  stroke: #c4c4c4; }
 
 .bb text, .bb .bb-button {
   -webkit-user-select: none;
   -moz-user-select: none;
-  user-select: none; }
+  -ms-user-select: none;
+  user-select: none;
+  fill: #555;
+  font-size: 11px; }
 
-.bb-legend-item-tile,
+.bb-legend-item-title,
 .bb-xgrid-focus,
 .bb-ygrid-focus,
 .bb-ygrid,
@@ -29,38 +38,33 @@
 .bb-bars path {
   shape-rendering: crispEdges; }
 
-.bb-chart-arc .bb-gauge-value {
-  fill: #000; }
-
-.bb-chart-arc path {
-  stroke: #fff; }
-
-.bb-chart-arc rect {
-  stroke: #fff;
-  stroke-width: 1; }
-
-.bb-chart-arc text {
-  fill: #fff;
-  font-size: 13px; }
-
 /*-- Axis --*/
 .bb-axis {
   shape-rendering: crispEdges; }
 
+.bb-axis-y text, .bb-axis-y2 text {
+  fill: #737373; }
+
+.bb-event-rects {
+  fill-opacity: 1 !important; }
+  .bb-event-rects .bb-event-rect {
+    fill: transparent; }
+  .bb-event-rects .bb-event-rect._active_ {
+    fill: rgba(39, 201, 3, 0.05); }
+
+.tick._active_ text {
+  fill: #00c83c !important; }
+
 /*-- Grid --*/
 .bb-grid line {
-  stroke: #aaa; }
+  stroke: #f1f1f1; }
 
-.bb-grid text {
-  fill: #aaa; }
-
-.bb-xgrid, .bb-ygrid {
-  stroke-dasharray: 3 3; }
+.bb-xgrid-focus line, .bb-ygrid-focus line {
+  stroke: #ddd; }
 
 /*-- Text on Chart --*/
 .bb-text.bb-empty {
-  fill: #808080;
-  font-size: 2em; }
+  fill: #767676; }
 
 /*-- Line --*/
 .bb-line {
@@ -68,8 +72,12 @@
 
 /*-- Point --*/
 .bb-circle._expanded_ {
-  stroke-width: 1px;
-  stroke: white; }
+  fill: #fff !important;
+  stroke-width: 2px;
+  stroke: red; }
+
+rect.bb-circle._expanded_, use.bb-circle._expanded_ {
+  stroke-width: 1px; }
 
 .bb-selected-circle {
   fill: white;
@@ -84,9 +92,8 @@
 /*-- Focus --*/
 .bb-target.bb-focused, .bb-circles.bb-focused {
   opacity: 1; }
-
-.bb-target.bb-focused path.bb-line, .bb-target.bb-focused path.bb-step, .bb-circles.bb-focused path.bb-line, .bb-circles.bb-focused path.bb-step {
-  stroke-width: 2px; }
+  .bb-target.bb-focused path.bb-line, .bb-target.bb-focused path.bb-step, .bb-circles.bb-focused path.bb-line, .bb-circles.bb-focused path.bb-step {
+    stroke-width: 2px; }
 
 .bb-target.bb-defocused, .bb-circles.bb-defocused {
   opacity: 0.3 !important; }
@@ -96,7 +103,9 @@
 /*-- Region --*/
 .bb-region {
   fill: steelblue;
-  fill-opacity: .1; }
+  fill-opacity: 0.1; }
+  .bb-region.selected rect {
+    fill: #27c903; }
 
 /*-- Zoom region --*/
 .bb-zoom-brush {
@@ -104,12 +113,11 @@
 
 /*-- Brush --*/
 .bb-brush .extent {
-  fill-opacity: .1; }
+  fill-opacity: 0.1; }
 
 /*-- Select - Drag --*/
 /*-- Legend --*/
 .bb-legend-item {
-  font-size: 12px;
   user-select: none; }
 
 .bb-legend-item-hidden {
@@ -123,42 +131,61 @@
 
 /*-- Title --*/
 .bb-title {
-  font: 14px sans-serif; }
+  font-size: 14px; }
 
 /*-- Tooltip --*/
 .bb-tooltip-container {
   z-index: 10;
+  font-family: sans-serif, Arial, "nanumgothic", "Dotum";
   user-select: none; }
 
 .bb-tooltip {
-  border-collapse: collapse;
+  border-collapse: separate;
   border-spacing: 0;
-  background-color: #fff;
   empty-cells: show;
-  opacity: 0.9;
-  -webkit-box-shadow: 7px 7px 12px -9px #777777;
-  -moz-box-shadow: 7px 7px 12px -9px #777777;
-  box-shadow: 7px 7px 12px -9px #777777; }
-  .bb-tooltip tr {
-    border: 1px solid #CCC; }
+  border: 1px solid #999;
+  background-color: #fff;
+  text-align: left;
+  font-size: 11px; }
   .bb-tooltip th {
-    background-color: #aaa;
-    font-size: 14px;
-    padding: 2px 5px;
+    font-size: 12px;
+    padding: 4px 8px;
     text-align: left;
-    color: #FFF; }
+    border-bottom: solid 1px #eee; }
   .bb-tooltip td {
-    font-size: 13px;
-    padding: 3px 6px;
-    background-color: #fff;
-    border-left: 1px dotted #999; }
+    padding: 4px 6px;
+    background-color: #fff; }
+    .bb-tooltip td:first-child {
+      padding-left: 8px; }
+    .bb-tooltip td:last-child {
+      padding-right: 8px; }
     .bb-tooltip td > span, .bb-tooltip td > svg {
       display: inline-block;
       width: 10px;
       height: 10px;
-      margin-right: 6px; }
-  .bb-tooltip.value {
-    text-align: right; }
+      margin-right: 6px;
+      border-radius: 5px;
+      vertical-align: middle; }
+    .bb-tooltip td.value {
+      border-left: 1px solid transparent; }
+  .bb-tooltip .bb-tooltip-title {
+    display: inline-block;
+    color: #aaa;
+    line-height: 20px; }
+  .bb-tooltip .bb-tooltip-detail table {
+    border-collapse: collapse;
+    border-spacing: 0; }
+  .bb-tooltip .bb-tooltip-detail .bb-tooltip-name, .bb-tooltip .bb-tooltip-detail .bb-tooltip-value {
+    font-size: 11px;
+    line-height: 13px;
+    padding: 4px 0 3px;
+    color: #444;
+    text-align: left;
+    font-weight: normal; }
+  .bb-tooltip .bb-tooltip-detail .bb-tooltip-value {
+    padding-left: 5px;
+    font-weight: 800;
+    font-size: 12px; }
 
 /*-- Area --*/
 .bb-area {
@@ -176,17 +203,37 @@
 
 .bb-chart-arcs .bb-chart-arcs-background {
   fill: #e0e0e0;
-  stroke: #fff; }
+  stroke: none; }
 
 .bb-chart-arcs .bb-chart-arcs-gauge-unit {
   fill: #000;
   font-size: 16px; }
 
-.bb-chart-arcs .bb-chart-arcs-gauge-max {
+.bb-chart-arcs .bb-chart-arcs-gauge-min, .bb-chart-arcs .bb-chart-arcs-gauge-max {
   fill: #777; }
 
-.bb-chart-arcs .bb-chart-arcs-gauge-min {
-  fill: #777; }
+.bb-chart-arcs .bb-chart-arcs-title {
+  font-size: 16px !important;
+  fill: #000;
+  font-weight: 600; }
+
+.bb-chart-arcs path.empty {
+  fill: #eaeaea;
+  stroke-width: 0; }
+
+.bb-chart-arc .bb-gauge-value {
+  fill: #000; }
+
+.bb-chart-arc path {
+  stroke: #fff; }
+
+.bb-chart-arc rect {
+  stroke: #fff;
+  stroke-width: 1; }
+
+.bb-chart-arc text {
+  fill: #fff;
+  font-size: 13px; }
 
 /*-- Radar --*/
 .bb-chart-radars .bb-levels polygon {
@@ -215,12 +262,9 @@
   top: 10px;
   right: 10px; }
   .bb-button .bb-zoom-reset {
-    font-size: 11px;
     border: solid 1px #ccc;
     background-color: #fff;
     padding: 5px;
     border-radius: 5px;
     cursor: pointer; }
 
-
-/*# sourceMappingURL=billboard.css.map*/
