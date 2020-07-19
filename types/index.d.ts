@@ -6,7 +6,31 @@ import {bb} from "./bb";
 
 export default bb;
 export as namespace bb;
-export {bb} from "./bb";
+export {
+	bb,
+
+	// shapes modules
+	area,
+	areaLineRange,
+	areaSpline,
+	areaSplineRange,
+	areaStep,
+	bar,
+	bubble,
+	donut,
+	gauge,
+	line,
+	pie,
+	radar,
+	scatter,
+	spline,
+	step,
+
+	// interaction modules
+	selection,
+	subchart,
+	zoom
+} from "./bb";
 export * from "./axis";
 export * from "./chart";
 export * from "./options";
