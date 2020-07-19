@@ -7,11 +7,10 @@ import replace from "@rollup/plugin-replace";
 import path from "path";
 import fs from "fs";
 
-const banner = require("../banner.js");
 const version = process.env.VERSION || pkg.version;
 
 function getBanner(isPlugin) {
-	const {plugin, production} = banner;
+	const {plugin, production} = require("../banner.js");
 
 	return `/*!
 * ${(production + (isPlugin ? plugin : "")).replace(/\r\n/gm, "\r\n * ")}
