@@ -141,7 +141,7 @@
     "eslint-config-naver": "^2.1.0",
     "eslint-loader": "^4.0.2",
     "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-jsdoc": "^29.2.0",
+    "eslint-plugin-jsdoc": "^30.0.0",
     "exports-loader": "^1.1.0",
     "hammer-simulator": "0.0.1",
     "husky": "^4.2.5",
