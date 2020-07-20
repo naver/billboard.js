@@ -5,7 +5,7 @@ dist: trusty # needs Ubuntu Trusty
 sudo: false  # no need for virtualization.
 
 before_install:
-  - npm install -g npm@latest
+  - npm install -g npm@latest  
 install:
   - npm config set package-lock false
   - npm install
@@ -45,3 +45,5 @@ jobs:
           repo: naver/billboard.js
           all_branches: true
           condition: $TRAVIS_BRANCH =~ ^latest|next$
+      after_deploy:
+        - bash ./config/deploy.sh
