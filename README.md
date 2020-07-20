@@ -125,6 +125,7 @@ If you want to use 'billboard.js' without installation, load files directly from
 
 - cdnjs: https://cdnjs.com/libraries/billboard.js
 - jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/
+- PageCDN: https://pagecdn.com/lib/billboardjs
 - unpkg: https://unpkg.com/billboard.js/dist/
 
 ## Supported Browsers
