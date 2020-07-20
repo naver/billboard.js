@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>config/Options/data/data.ts - billboard.js API doc</title>
+    
+    <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
+    
+        <meta name="keywords" content="chart, SVG, D3, Data Visualization" />
+        <meta name="keyword" content="chart, SVG, D3, Data Visualization" />
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://naver.github.io/billboard.js/demo/" target="_blank" >Examples</a></h2><h2><a href="https://github.com/naver/billboard.js" target="_blank" >GitHub</a></h2><h3>Namespaces</h3><ul><li><a href="bb.html">bb</a><ul class='members'><li data-type='member'><a href="bb.html#.instance">instance</a></li><li data-type='member'><a href="bb.html#.plugin">plugin</a></li><li data-type='member'><a href="bb.html#.version">version</a></li></ul><ul class='methods'><li data-type='method'><a href="bb.html#.defaults">defaults</a></li><li data-type='method'><a href="bb.html#.generate">generate</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="Chart.html">Chart</a><ul class='members'><li data-type='member'><a href="Chart.html#.$">$</a></li><li data-type='member'><a href="Chart.html#.plugins">plugins</a></li></ul><ul class='methods'><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4labels">axis․labels</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4max">axis․max</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4min">axis․min</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4range">axis․range</a></li><li data-type='method'><a href="Chart.html#categories">categories</a></li><li data-type='method'><a href="Chart.html#category">category</a></li><li data-type='method'><a href="Chart.html#color">color</a></li><li data-type='method'><a href="Chart.html#config">config</a></li><li data-type='method'><a href="Chart.html#data">data</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4axes">data․axes</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4colors">data․colors</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4max">data․max</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4min">data․min</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4names">data․names</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4shown">data․shown</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4values">data․values</a></li><li data-type='method'><a href="Chart.html#defocus">defocus</a></li><li data-type='method'><a href="Chart.html#destroy">destroy</a></li><li data-type='method'><a href="Chart.html#export">export</a></li><li data-type='method'><a href="Chart.html#flow">flow</a></li><li data-type='method'><a href="Chart.html#flush">flush</a></li><li data-type='method'><a href="Chart.html#focus">focus</a></li><li data-type='method'><a href="Chart.html#groups">groups</a></li><li data-type='method'><a href="Chart.html#hide">hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4hide">legend․hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4show">legend․show</a></li><li data-type='method'><a href="Chart.html#load">load</a></li><li data-type='method'><a href="Chart.html#regions">regions</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4add">regions․add</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4remove">regions․remove</a></li><li data-type='method'><a href="Chart.html#resize">resize</a></li><li data-type='method'><a href="Chart.html#revert">revert</a></li><li data-type='method'><a href="Chart.html#select">select</a></li><li data-type='method'><a href="Chart.html#selected">selected</a></li><li data-type='method'><a href="Chart.html#show">show</a></li><li data-type='method'><a href="Chart.html#toggle">toggle</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4hide">tooltip․hide</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4show">tooltip․show</a></li><li data-type='method'><a href="Chart.html#unload">unload</a></li><li data-type='method'><a href="Chart.html#unselect">unselect</a></li><li data-type='method'><a href="Chart.html#unzoom">unzoom</a></li><li data-type='method'><a href="Chart.html#x">x</a></li><li data-type='method'><a href="Chart.html#xgrids">xgrids</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4add">xgrids․add</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4remove">xgrids․remove</a></li><li data-type='method'><a href="Chart.html#xs">xs</a></li><li data-type='method'><a href="Chart.html#ygrids">ygrids</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4add">ygrids․add</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4remove">ygrids․remove</a></li><li data-type='method'><a href="Chart.html#zoom">zoom</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4enable">zoom․enable</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4max">zoom․max</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4min">zoom․min</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4range">zoom․range</a></li></ul></li><li><a href="Options.html">Options</a><ul class='members'><li data-type='member'><a href="Options.html#.area">area</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4rotated">axis․rotated</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4axes">axis․x․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4categories">axis․x․categories</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4clipPath">axis․x․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4extent">axis․x․extent</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4height">axis․x․height</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4label">axis․x․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4localtime">axis․x․localtime</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4max">axis․x․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4min">axis․x․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4padding">axis․x․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4show">axis․x․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4autorotate">axis․x․tick․autorotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4centered">axis․x․tick․centered</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4count">axis․x․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․x․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․x․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4fit">axis․x․tick․fit</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4format">axis․x․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4multiline">axis․x․tick․multiline</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․x․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․x․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4show">axis․x․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․x․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․x․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4tooltip">axis․x․tick․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4values">axis․x․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4width">axis․x․tick․width</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4type">axis․x․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4axes">axis․y2․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4center">axis․y2․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4default">axis․y2․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inner">axis․y2․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inverted">axis․y2․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4label">axis․y2․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4max">axis․y2․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4min">axis․y2․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4padding">axis․y2․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4show">axis․y2․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y2․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y2․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y2․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y2․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y2․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y2․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y2․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y2․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y2․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y2․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y2․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4axes">axis․y․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4center">axis․y․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4clipPath">axis․y․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4default">axis․y․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inner">axis․y․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inverted">axis․y․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4label">axis․y․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4max">axis․y․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4min">axis․y․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4padding">axis․y․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4show">axis․y․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4type">axis․y․type</a></li><li data-type='member'><a href="Options.html#.background">background</a></li><li data-type='member'><a href="Options.html#.bar">bar</a></li><li data-type='member'><a href="Options.html#.bindto">bindto</a></li><li data-type='member'><a href="Options.html#.bubble">bubble</a></li><li data-type='member'><a href="Options.html#.clipPath">clipPath</a></li><li data-type='member'><a href="Options.html#.color">color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4axes">data․axes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4classes">data․classes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4color">data․color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4colors">data․colors</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4columns">data․columns</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4empty%25E2%2580%25A4label%25E2%2580%25A4text">data․empty․label․text</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4filter">data․filter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groups">data․groups</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4headers">data․headers</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4hide">data․hide</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4idConverter">data․idConverter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4json">data․json</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4keys">data․keys</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4labels">data․labels</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4mimeType">data․mimeType</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4names">data․names</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onclick">data․onclick</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmax">data․onmax</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmin">data․onmin</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onout">data․onout</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onover">data․onover</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onselected">data․onselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onunselected">data․onunselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4order">data․order</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4regions">data․regions</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4rows">data․rows</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4draggable">data․selection․draggable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled">data․selection․enabled</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4grouped">data․selection․grouped</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4isselectable">data․selection․isselectable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4multiple">data․selection․multiple</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4stack%25E2%2580%25A4normalize">data․stack․normalize</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4type">data․type</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4types">data․types</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4url">data․url</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4x">data․x</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xFormat">data․xFormat</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xLocaltime">data․xLocaltime</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xs">data․xs</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xSort">data․xSort</a></li><li data-type='member'><a href="Options.html#.donut">donut</a></li><li data-type='member'><a href="Options.html#.gauge">gauge</a></li><li data-type='member'><a href="Options.html#.grid">grid</a></li><li data-type='member'><a href="Options.html#.interaction">interaction</a></li><li data-type='member'><a href="Options.html#.legend">legend</a></li><li data-type='member'><a href="Options.html#.line">line</a></li><li data-type='member'><a href="Options.html#.onafterinit">onafterinit</a></li><li data-type='member'><a href="Options.html#.onbeforeinit">onbeforeinit</a></li><li data-type='member'><a href="Options.html#.oninit">oninit</a></li><li data-type='member'><a href="Options.html#.onout">onout</a></li><li data-type='member'><a href="Options.html#.onover">onover</a></li><li data-type='member'><a href="Options.html#.onrendered">onrendered</a></li><li data-type='member'><a href="Options.html#.onresize">onresize</a></li><li data-type='member'><a href="Options.html#.onresized">onresized</a></li><li data-type='member'><a href="Options.html#.padding">padding</a></li><li data-type='member'><a href="Options.html#.pie">pie</a></li><li data-type='member'><a href="Options.html#.plugins">plugins</a></li><li data-type='member'><a href="Options.html#.point">point</a></li><li data-type='member'><a href="Options.html#.radar">radar</a></li><li data-type='member'><a href="Options.html#.regions">regions</a></li><li data-type='member'><a href="Options.html#.render">render</a></li><li data-type='member'><a href="Options.html#.resize">resize</a></li><li data-type='member'><a href="Options.html#.scatter">scatter</a></li><li data-type='member'><a href="Options.html#.size">size</a></li><li data-type='member'><a href="Options.html#.spline">spline</a></li><li data-type='member'><a href="Options.html#.subchart">subchart</a></li><li data-type='member'><a href="Options.html#.svg">svg</a></li><li data-type='member'><a href="Options.html#.title">title</a></li><li data-type='member'><a href="Options.html#.tooltip">tooltip</a></li><li data-type='member'><a href="Options.html#.transition">transition</a></li><li data-type='member'><a href="Options.html#.zoom">zoom</a></li></ul></li><li><a href="Plugin.html">Plugin</a><ul class='members'><li data-type='member'><a href="Plugin.html#.version">version</a></li></ul></li><li><a href="plugin-bubblecompare.html">plugin-bubblecompare</a><ul class='members'><li data-type='member'><a href="plugin-bubblecompare.html#.expandScale">expandScale</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.maxR">maxR</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.minR">minR</a></li></ul></li><li><a href="plugin-stanford.html">plugin-stanford</a><ul class='members'><li data-type='member'><a href="plugin-stanford.html#.colors">colors</a></li><li data-type='member'><a href="plugin-stanford.html#.epochs">epochs</a></li><li data-type='member'><a href="plugin-stanford.html#.lines">lines</a></li><li data-type='member'><a href="plugin-stanford.html#.padding">padding</a></li><li data-type='member'><a href="plugin-stanford.html#.regions">regions</a></li><li data-type='member'><a href="plugin-stanford.html#.scale">scale</a></li></ul></li><li><a href="plugin-textoverlap.html">plugin-textoverlap</a><ul class='members'><li data-type='member'><a href="plugin-textoverlap.html#.area">area</a></li><li data-type='member'><a href="plugin-textoverlap.html#.extent">extent</a></li><li data-type='member'><a href="plugin-textoverlap.html#.selector">selector</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">config/Options/data/data.ts</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+import {ChartTypes} from "../../../../types/types";
+
+/**
+ * data config options
+ */
+export default {
+	/**
+	 * Converts data id value
+	 * @name data․idConverter
+	 * @memberof Options
+	 * @type {Function}
+	 * @default function(id) { return id; }
+	 * @example
+	 * data: {
+	 *    idConverter: function(id) {
+	 *       // when id is 'data1', converts to be 'data2'
+	 *       // 'data2' should be given as the initial data value
+	 *       if (id === "data1") {
+	 *          return "data2";
+	 *       } else {
+	 *          return id;
+	 *       }
+	 *    }
+	 * }
+	 */
+	data_idConverter: id => id,
+
+	/**
+	 * Set custom data name.
+	 * @name data․names
+	 * @memberof Options
+	 * @type {object}
+	 * @default {}
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataName)
+	 * @example
+	 * data: {
+	 *   names: {
+	 *     data1: "Data Name 1",
+	 *     data2: "Data Name 2"
+	 *   }
+	 * }
+	 */
+	data_names: &lt;{[key: string]: string}> {},
+
+	/**
+	 * Set custom data class.&lt;br>&lt;br>
+	 * If this option is specified, the element g for the data has an additional class that has the prefix 'bb-target-' (eg. bb-target-additional-data1-class).
+	 * @name data․classes
+	 * @memberof Options
+	 * @type {object}
+	 * @default {}
+	 * @example
+	 * data: {
+	 *   classes: {
+	 *     data1: "additional-data1-class",
+	 *     data2: "additional-data2-class"
+	 *   }
+	 * }
+	 */
+	data_classes: &lt;{[key: string]: string}> {},
+
+	/**
+	 * Set chart type at once.&lt;br>&lt;br>
+	 * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.&lt;br>&lt;br>
+	 * **Available Values:**
+	 * - area
+	 * - area-line-range
+	 * - area-spline
+	 * - area-spline-range
+	 * - area-step
+	 * - bar
+	 * - bubble
+	 * - donut
+	 * - gauge
+	 * - line
+	 * - pie
+	 * - radar
+	 * - scatter
+	 * - spline
+	 * - step
+	 * @name data․type
+	 * @memberof Options
+	 * @type {string}
+	 * @default "line"&lt;br>NOTE: When importing shapes by ESM, `line()` should be specified for type.
+	 * @example
+	 * data: {
+	 *    type: "bar"
+	 * }
+	 * @example
+	 * // Generate chart by importing ESM
+	 * // Import types to be used only, where this will make smaller bundle size.
+	 * import bb, {
+	 *   area,
+	 *   areaLineRange,
+	 *   areaSpline,
+	 *   areaSplineRange,
+	 *   areaStep,
+	 *   bar,
+	 *   bubble,
+	 *   donut,
+	 *   gauge,
+	 *   line,
+	 *   pie,
+	 *   radar,
+	 *   scatter,
+	 *   spline,
+	 *   step
+	 * }
+	 *
+	 * bb.generate({
+	 *   ...,
+	 *   data: {
+	 *     type: bar()
+	 *   }
+	 * });
+	 */
+	data_type: &lt;ChartTypes|undefined> undefined,
+
+	/**
+	 * Set chart type for each data.&lt;br>
+	 * This setting overwrites data.type setting.
+	 * - **NOTE:** `radar` type can't be combined with other types.
+	 * @name data․types
+	 * @memberof Options
+	 * @type {object}
+	 * @default {}
+	 * @example
+	 * data: {
+	 *   types: {
+	 *     data1: "bar",
+	 *     data2: "spline"
+	 *   }
+	 * }
+	 * @example
+	 * // Generate chart by importing ESM
+	 * // Import types to be used only, where this will make smaller bundle size.
+	 * import bb, {
+	 *   area,
+	 *   areaLineRange,
+	 *   areaSpline,
+	 *   areaSplineRange,
+	 *   areaStep,
+	 *   bar,
+	 *   bubble,
+	 *   donut,
+	 *   gauge,
+	 *   line,
+	 *   pie,
+	 *   radar,
+	 *   scatter,
+	 *   spline,
+	 *   step
+	 * }
+	 *
+	 * bb.generate({
+	 *   ...,
+	 *   data: {
+	 *     types: {
+	 *       data1: bar(),
+	 *       data1: spline()
+	 *     }
+	 *   }
+	 * });
+	 */
+	data_types: &lt;{[key: string]: ChartTypes}> {},
+
+	/**
+	 *  This option changes the order of stacking data and pieces of pie/donut.
+	 *  - If `null` specified, it will be the order the data loaded.
+	 *  - If function specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)&lt;br>&lt;br>
+	 *
+	 *  **Available Values:**
+	 *  - `desc`: In descending order
+	 *  - `asc`: In ascending order
+	 *  - `null`: It keeps the data load order
+	 *  - `function(data1, data2) { ... }`: Array.sort compareFunction
+	 * @name data․order
+	 * @memberof Options
+	 * @type {string|Function|null}
+	 * @default desc
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataOrder)
+	 * @example
+	 * data: {
+	 *   // in descending order (default)
+	 *   order: "desc"
+	 *
+	 *   // in ascending order
+	 *   order: "asc"
+	 *
+	 *   // keeps data input order
+	 *   order: null
+	 *
+	 *   // specifying sort function
+	 *   order: function(a, b) {
+	 *       // param data passed format
+	 *       {
+	 *          id: "data1", id_org: "data1", values: [
+	 *              {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
+	 *              ...
+	 *          ]
+	 *       }
+	 *   }
+	 * }
+	 */
+	data_order: &lt;"desc"|"asc"|Function|null> "desc",
+
+	/**
+	 * Set groups for the data for stacking.
+	 * @name data․groups
+	 * @memberof Options
+	 * @type {Array}
+	 * @default []
+	 * @example
+	 * data: {
+	 *   groups: [
+	 *     ["data1", "data2"],
+	 *     ["data3"]
+	 *   ]
+	 * }
+	 */
+	data_groups: &lt;string[][]> [],
+
+	/**
+	 * Set color converter function.&lt;br>&lt;br>
+	 * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
+	 * @name data․color
+	 * @memberof Options
+	 * @type {Function}
+	 * @default undefined
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataColor)
+	 * @example
+	 * data: {
+	 *   color: function(color, d) { ... }
+	 * }
+	 */
+	data_color: &lt;Function|undefined> undefined,
+
+	/**
+	 * Set color for each data.
+	 * @name data․colors
+	 * @memberof Options
+	 * @type {object}
+	 * @default {}
+	 * @example
+	 * data: {
+	 *   colors: {
+	 *     data1: "#ff0000",
+	 *     data2: function(d) {
+	 *        return "#000";
+	 *     }
+	 *     ...
+	 *   }
+	 * }
+	 */
+	data_colors: &lt;{[key: string]: string|(() => string);}> {},
+
+	/**
+	 * Set labels options
+	 * @name data․labels
+	 * @memberof Options
+	 * @type {object}
+	 * @property {object} data Data object
+	 * @property {boolean} [data.labels=false] Show or hide labels on each data points
+	 * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+	 * @property {Function} [data.labels.format] Set formatter function for data labels.&lt;br>
+	 * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:&lt;br>
+	 *  - `v` is the value of the data point where the label is shown.
+	 *  - `id` is the id of the data where the label is shown.
+	 *  - `i` is the index of the data point where the label is shown.
+	 *  - `j` is the sub index of the data point where the label is shown.&lt;br>&lt;br>
+	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+	 * @property {string|object} [data.labels.colors] Set label text colors.
+	 * @property {object} [data.labels.position] Set each dataset position, relative the original.
+	 * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
+	 * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
+	 * @memberof Options
+	 * @type {object}
+	 * @default {}
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
+	 * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
+	 * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+	 * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
+	 * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+	 * @example
+	 * data: {
+	 *   labels: true,
+	 *
+	 *   // or set specific options
+	 *   labels: {
+	 *     format: function(v, id, i, j) { ... },
+	 *
+	 *     // it's possible to set for each data
+	 *     format: {
+	 *         data1: function(v, id, i, j) { ... },
+	 *         ...
+	 *     },
+	 *
+	 *     // align text to center of the 'bar' shape (works only for 'bar' type)
+	 *     centered: true,
+	 *
+	 *     // apply for all label texts
+	 *     colors: "red",
+	 *
+	 *     // or set different colors per dataset
+	 *     // for not specified dataset, will have the default color value
+	 *     colors: {
+	 *        data1: "yellow",
+	 *        data3: "green"
+	 *     },
+	 *
+	 *     // set x, y coordinate position
+	 *     position: {
+	 *        x: -10,
+	 *        y: 10
+	 *     },
+	 *
+	 *     // or set x, y coordinate position by each dataset
+	 *     position: {
+	 *        data1: {x: 5, y: 5},
+	 *        data2: {x: 10, y: -20}
+	 *     }
+	 *   }
+	 * }
+	 */
+	data_labels:
+		&lt;boolean | {
+			centered?: boolean;
+			format?: Function;
+			colors?: string|{[key: string]: string};
+			position?: {[key: string]: number}|{[key: string]: {x?: number; y?: number;}}
+		}> {},
+	data_labels_colors: &lt;string|object|undefined> undefined,
+	data_labels_position: {},
+
+	/**
+	 * Hide each data when the chart appears.&lt;br>&lt;br>
+	 * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.
+	 * @name data․hide
+	 * @memberof Options
+	 * @type {boolean|Array}
+	 * @default false
+	 * @example
+	 * data: {
+	 *   // all of data will be hidden
+	 *   hide: true
+	 *
+	 *   // specified data will be hidden
+	 *   hide: ["data1", ...]
+	 * }
+	 */
+	data_hide: &lt;string[]|boolean> false,
+
+	/**
+	 * Filter values to be shown
+	 * The data value is the same as the returned by `.data()`.
+	 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+	 * @name data․filter
+	 * @memberof Options
+	 * @type {Function}
+	 * @default undefined
+	 * @example
+	 * data: {
+	 *   // filter for id value
+	 *   filter: function(v) {
+	 *      // v: [{id: "data1", id_org: "data1", values: [
+	 *      //      {x: 0, value: 130, id: "data2", index: 0}, ...]
+	 *      //    }, ...]
+	 *      return v.id !== "data1";
+	 *   }
+	 */
+	data_filter: &lt;(() => boolean)|undefined> undefined,
+
+	/**
+	 * Set a callback for click event on each data point.&lt;br>&lt;br>
+	 * This callback will be called when each data point clicked and will receive `d` and element as the arguments.
+	 * - `d` is the data clicked and element is the element clicked.
+	 * - `element` is the current interacting svg element.
+	 * - In this callback, `this` will be the Chart object.
+	 * @name data․onclick
+	 * @memberof Options
+	 * @type {Function}
+	 * @default function() {}
+	 * @example
+	 * data: {
+	 *     onclick: function(d, element) {
+	 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+	 *        // element - &lt;circle>
+	 *        ...
+	 *     }
+	 * }
+	 */
+	data_onclick: () => {},
+
+	/**
+	 * Set a callback for mouse/touch over event on each data point.&lt;br>&lt;br>
+	 * This callback will be called when mouse cursor or via touch moves onto each data point and will receive `d` and `element` as the argument.
+	 * - `d` is the data where mouse cursor moves onto.
+	 * - `element` is the current interacting svg element.
+	 * - In this callback, `this` will be the Chart object.
+	 * @name data․onover
+	 * @memberof Options
+	 * @type {Function}
+	 * @default function() {}
+	 * @example
+	 * data: {
+	 *     onover: function(d, element) {
+	 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4}
+	 *        // element - &lt;circle>
+	 *        ...
+	 *     }
+	 * }
+	 */
+	data_onover: () => {},
+
+	/**
+	 * Set a callback for mouse/touch out event on each data point.&lt;br>&lt;br>
+	 * This callback will be called when mouse cursor or via touch moves out each data point and will receive `d` as the argument.
+	 * - `d` is the data where mouse cursor moves out.
+	 * - `element` is the current interacting svg element.
+	 * - In this callback, `this` will be the Chart object.
+	 * @name data․onout
+	 * @memberof Options
+	 * @type {Function}
+	 * @default function() {}
+	 * @example
+	 * data: {
+	 *     onout: function(d, element) {
+	 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4}
+	 *        // element - &lt;circle>
+	 *        ...
+	 *     }
+	 * }
+	 */
+	data_onout: () => {},
+
+	/**
+	 * Set a callback for minimum data
+	 * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
+	 * @name data․onmin
+	 * @memberof Options
+	 * @type {Function}
+	 * @default undefined
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
+	 * @example
+	 *  onmin: function(data) {
+	 *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
+	 *    ...
+	 *  }
+	 */
+	data_onmin: &lt;Function|undefined> undefined,
+
+	/**
+	 * Set a callback for maximum data
+	 * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
+	 * @name data․onmax
+	 * @memberof Options
+	 * @type {Function}
+	 * @default undefined
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
+	 * @example
+	 *  onmax: function(data) {
+	 *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
+	 *    ...
+	 *  }
+	 */
+	data_onmax: &lt;Function|undefined> undefined,
+
+	/**
+	 * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
+	 * @name data․url
+	 * @memberof Options
+	 * @type {string}
+	 * @default undefined
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.LoadData)
+	 * @example
+	 * data: {
+	 *     url: "/data/test.csv"
+	 * }
+	 */
+	data_url: &lt;string|undefined> undefined,
+
+	/**
+	 * XHR header value
+	 * - **NOTE:** Should be used with `data.url` option
+	 * @name data․headers
+	 * @memberof Options
+	 * @type {string}
+	 * @default undefined
+	 * @see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader
+	 * @example
+	 * data: {
+	 *     url: "/data/test.csv",
+	 *     headers: {
+	 *        "Content-Type": "text/xml",
+	 *        ...
+	 *     }
+	 * }
+	 */
+	data_headers: &lt;object|undefined> undefined,
+
+	/**
+	 * Parse a JSON object for data. See also data.keys.
+	 * @name data․json
+	 * @memberof Options
+	 * @type {Array}
+	 * @default undefined
+	 * @see [data․keys](#.data%25E2%2580%25A4keys)
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.JSONData)
+	 * @example
+	 * data: {
+	 *     json: [
+	 *       {name: "www.site1.com", upload: 200, download: 200, total: 400},
+	 *       {name: "www.site2.com", upload: 100, download: 300, total: 400},
+	 *       {name: "www.site3.com", upload: 300, download: 200, total: 500},
+	 *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
+	 *     ],
+	 *     keys: {
+	 *       // x: "name", // it's possible to specify 'x' when category axis
+	 *       value: ["upload", "download"]
+	 *     }
+	 * }
+	 */
+	data_json: &lt;object[]|undefined> undefined,
+
+	/**
+	 * Load data from a multidimensional array, with the first element containing the data names, the following containing related data in that order.
+	 * @name data․rows
+	 * @memberof Options
+	 * @type {Array}
+	 * @default undefined
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.RowOrientedData)
+	 * @example
+	 * data: {
+	 *   rows: [
+	 *     ["A", "B", "C"],
+	 *     [90, 120, 300],
+	 *     [40, 160, 240],
+	 *     [50, 200, 290],
+	 *     [120, 160, 230],
+	 *     [80, 130, 300],
+	 *     [90, 220, 320]
+	 *   ]
+	 * }
+	 *
+	 * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
+	 * // - an array of [high, mid, low] data following the order
+	 * // - or an object with 'high', 'mid' and 'low' key value
+	 * data: {
+	 *   rows: [
+	 *      ["data1", "data2"],
+	 *      [
+	 *        // or {high:150, mid: 140, low: 110}, 120
+	 *        [150, 140, 110], 120
+	 *      ],
+	 *      [[155, 130, 115], 55],
+	 *      [[160, 135, 120], 60]
+	 *   ],
+	 *   types: {
+	 *       data1: "area-line-range",
+	 *       data2: "line"
+	 *   }
+	 * }
+	 *
+	 * // for 'bubble' type, data can contain dimension value:
+	 * // - an array of [y, z] data following the order
+	 * // - or an object with 'y' and 'z' key value
+	 * // 'y' is for y axis coordination and 'z' is the bubble radius value
+	 * data: {
+	 *   rows: [
+	 *      ["data1", "data2"],
+	 *      [
+	 *        // or {y:10, z: 140}, 120
+	 *        [10, 140], 120
+	 *      ],
+	 *      [[100, 30], 55],
+	 *      [[50, 100], 60]
+	 *   ],
+	 *   types: {
+	 *       data1: "bubble",
+	 *       data2: "line"
+	 *   }
+	 * }
+	 */
+	data_rows: &lt;(string|number)[][]|undefined> undefined,
+
+	/**
+	 * Load data from a multidimensional array, with each element containing an array consisting of a datum name and associated data values.
+	 * @name data․columns
+	 * @memberof Options
+	 * @type {Array}
+	 * @default undefined
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.ColumnOrientedData)
+	 * @example
+	 * data: {
+	 *   columns: [
+	 *      ["data1", 30, 20, 50, 40, 60, 50],
+	 *      ["data2", 200, 130, 90, 240, 130, 220],
+	 *      ["data3", 300, 200, 160, 400, 250, 250]
+	 *   ]
+	 * }
+	 *
+	 * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
+	 * // - an array of [high, mid, low] data following the order
+	 * // - or an object with 'high', 'mid' and 'low' key value
+	 * data: {
+	 *   columns: [
+	 *      ["data1",
+	 *          [150, 140, 110],  // or {high:150, mid: 140, low: 110}
+	 *          [150, 140, 110],
+	 *          [150, 140, 110]
+	 *      ]
+	 *   ],
+	 *   type: "area-line-range"
+	 * }
+	 *
+	 * // for 'bubble' type, data can contain dimension value:
+	 * // - an array of [y, z] data following the order
+	 * // - or an object with 'y' and 'z' key value
+	 * // 'y' is for y axis coordination and 'z' is the bubble radius value
+	 * data: {
+	 *   columns: [
+	 *      ["data1",
+	 *          [10, 140],  // or {y:10, z: 140}
+	 *          [100, 30],
+	 *          [50, 100]
+	 *      ]
+	 *   ],
+	 *   type: "bubble"
+	 * }
+	 */
+	data_columns: &lt;(string|number)[][]|undefined> undefined,
+
+	/**
+	 * Used if loading JSON via data.url.
+	 * - **Available Values:**
+	 *   - json
+	 *   - csv
+	 *   - tsv
+	 * @name data․mimeType
+	 * @memberof Options
+	 * @type {string}
+	 * @default csv
+	 * @example
+	 * data: {
+	 *     mimeType: "json"
+	 * }
+	 */
+	data_mimeType: &lt;"csv"|"json"|"tsv"> "csv",
+
+	/**
+	 * Choose which JSON object keys correspond to desired data.
+	 * - **NOTE:** Only for JSON object given as array.
+	 * @name data․keys
+	 * @memberof Options
+	 * @type {string}
+	 * @default undefined
+	 * @example
+	 * data: {
+	 *     json: [
+	 *       {name: "www.site1.com", upload: 200, download: 200, total: 400},
+	 *       {name: "www.site2.com", upload: 100, download: 300, total: 400},
+	 *       {name: "www.site3.com", upload: 300, download: 200, total: 500},
+	 *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
+	 *     ],
+	 *     keys: {
+	 *       // x: "name", // it's possible to specify 'x' when category axis
+	 *       value: ["upload", "download"]
+	 *     }
+	 * }
+	 */
+	data_keys: &lt;{x?: string; value?: string[]}|undefined> undefined,
+
+	/**
+	 * Set text label to be displayed when there's no data to show.
+	 * - ex. Toggling all visible data to not be shown, unloading all current data, etc.
+	 * @name data․empty․label․text
+	 * @memberof Options
+	 * @type {string}
+	 * @default ""
+	 * @example
+	 * data: {
+	 *   empty: {
+	 *     label: {
+	 *       text: "No Data"
+	 *     }
+	 *   }
+	 * }
+	 */
+	data_empty_label_text: ""
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.4</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="../../../css/doc.css">
+    
+</body>
+</html>
