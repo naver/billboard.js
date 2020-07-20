@@ -1,3 +1,10 @@
+## [2.0.1](https://github.com/naver/billboard.js/compare/2.0.0...2.0.1) (2020-07-20)
+
+
+### Bug Fixes
+
+* **types:** add missing named exports ([5dc77b5](https://github.com/naver/billboard.js/commit/5dc77b599b1ff314c87581c123157ff61d1a6950)), closes [#1520](https://github.com/naver/billboard.js/issues/1520)
+
 # [2.0.0](https://github.com/naver/billboard.js/compare/1.12.11...2.0.0) (2020-07-16)
 
 
