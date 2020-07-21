@@ -231,51 +231,73 @@ describe("SHAPE ARC", () => {
 		});
 	});
 
-	it("check for Pie's threshold data label text", done => {
-		const chart = util.generate({
-			data: {
-			  columns: [
-				  ["data1", 10],
-				  ["data2", 30],
-				  ["data3", 60]
-			  ],
-			  type: "pie"
-			},
-			pie: {
-			  label:{
-				  threshold: 0.2
-			  }
-			}
-		  });
-
-		const checkText = () => {
-			chart.$.arc.selectAll("text").each(function(d, i) {
-				expect(this.textContent).to.be.equal(expectedText[i]);
+	describe("Check position & data label text", () => {
+		it("check for Pie's threshold data label text", done => {
+			const chart = util.generate({
+				data: {
+				columns: [
+					["data1", 10],
+					["data2", 30],
+					["data3", 60]
+				],
+				type: "pie"
+				},
+				pie: {
+				label:{
+					threshold: 0.2
+				}
+				}
 			});
-		};
 
-		let expectedText = ["", "30.0%", "60.0%"];
+			const checkText = () => {
+				chart.$.arc.selectAll("text").each(function(d, i) {
+					expect(this.textContent).to.be.equal(expectedText[i]);
+				});
+			};
 
-		checkText();
+			let expectedText = ["", "30.0%", "60.0%"];
 
-		new Promise((resolve, reject) => {
-			// when
-			chart.toggle("data3");
-			expectedText = ["25.0%", "75.0%", ""];
+			checkText();
 
-			setTimeout(() => {
-				checkText();
-				resolve();
-			}, 200);
-		}).then(() => {
-			// when
-			chart.toggle("data3");
-			expectedText = ["", "30.0%", "60.0%"];
+			new Promise((resolve, reject) => {
+				// when
+				chart.toggle("data3");
+				expectedText = ["25.0%", "75.0%", ""];
 
-			setTimeout(() => {
-				checkText();
-				done();
-			}, 200);
+				setTimeout(() => {
+					checkText();
+					resolve();
+				}, 200);
+			}).then(() => {
+				// when
+				chart.toggle("data3");
+				expectedText = ["", "30.0%", "60.0%"];
+
+				setTimeout(() => {
+					checkText();
+					done();
+				}, 200);
+			});
+		});
+
+		it("check if Pie's size adjusts when legend is positioned to right.", () => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1-very very very very very very very very very very long name", 30],
+						["data2", 120]
+					],
+					type: "pie",
+				},
+				legend: {
+					position: "right"
+				}
+			});
+
+			const {arcWidth, arcHeight} = chart.internal.state;
+
+			expect(arcWidth).to.be.closeTo(284, 5);
+			expect(arcHeight).to.be.closeTo(476, 5);
 		});
 	});
 

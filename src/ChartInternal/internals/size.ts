@@ -322,7 +322,7 @@ export default {
 
 		// for arc
 		const hasGauge = $$.hasType("gauge");
-		const isLegendRight = state.legend_show && state.isLegendRight;
+		const isLegendRight = config.legend_show && state.isLegendRight;
 
 		state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
 		state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
