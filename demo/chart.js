@@ -458,8 +458,7 @@ var billboardDemo = {
 			import: [
 				'// base css',
 				'import "billboard.js/dist/theme/insight.css";',
-				'// Packaged build with d3',
-				'import bb from "billboard.js/dist/billboard.pkgd";'
+				'import bb from "billboard.js";',
 			].join("\r\n"),
 			body: bodyCode || [
 				'bb.generate({',

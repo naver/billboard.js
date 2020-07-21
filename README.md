@@ -2,7 +2,8 @@
 
 [![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![semantic-release][badge-semantic-release]][link-semantic-release]
 
-[![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size] [![Known Vulnerabilities][badge-snyk]][link-snyk]
+[![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![Known Vulnerabilities][badge-snyk]][link-snyk] 
+[![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size]
 
 billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
@@ -17,10 +18,13 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on D
 - [Migration guide from C3.js](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F)
 - [Third Party Applications](https://github.com/naver/billboard.js/wiki/Third-party-applications)
 - [Who's using billboard.js](https://github.com/naver/billboard.js/wiki/Who's-using-billboard.js)
+- v2 updates:
+  - [v2 CHANGELOG](https://github.com/naver/billboard.js/wiki/CHANGELOG-v2)
+  - [Migration Guide to v2](https://github.com/naver/billboard.js/wiki/Migration-Guide-to-v2)
 
 ## Playground
 Play with the diverse options generating on the fly!
-- https://naver.github.io/billboard.js/playground/
+- https://naver.github.io/billboard.js/playground/ (obsolete)
 - https://beta.observablehq.com/@idris-maps/billboard-js-playground (by [@idris-maps](https://github.com/idris-maps))
 
 ## Questions?
@@ -163,11 +167,12 @@ or use importing ESM.
 
 ```js
 // 1) import billboard.js
-// as named import
-import {bb} from "billboard.js";
+// as named import with desired shapes and interaction modules
+// https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality
+import {bb, area, bar, zoom} from "billboard.js";
 
 // or as importing default
-import bb from "billboard.js";
+import bb, {area, bar, zoom} from "billboard.js";
 
 // 2) import css if your dev-env supports. If don't, include them via <link>
 import "billboard.js/dist/billboard.css";
@@ -193,10 +198,17 @@ import "billboard.js/dist/theme/insight.css"
 var chart = bb.generate({
     bindto: "#chart",
     data: {
+      // for ESM import usage, import 'line' module and execute it as
+      // type: line(),
       type: "line",
-        columns: [
-            ["data1", 30, 200, 100, 400, 150, 250]
-        ]
+      columns: [
+          ["data1", 30, 200, 100, 400, 150, 250]
+      ]
+    },
+    zoom: {
+      // for ESM import usage, import 'zoom' module and execute it as
+      // enabled: zoom()
+      enabled: true
     }
 });
 
