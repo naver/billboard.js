@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.1-nightly-20200721145030
+ * @version 2.0.1-nightly-20200722145104
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6021,7 +6021,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     }, $$.updateSizeForLegend && $$.updateSizeForLegend(currLegend), state.width = state.current.width - state.margin.left - state.margin.right, state.height = state.current.height - state.margin.top - state.margin.bottom, state.width < 0 && (state.width = 0), state.height < 0 && (state.height = 0), state.width2 = isRotated ? state.margin.left - state.rotatedPadding.left - state.rotatedPadding.right : state.width, state.height2 = isRotated ? state.height : state.current.height - state.margin2.top - state.margin2.bottom, state.width2 < 0 && (state.width2 = 0), state.height2 < 0 && (state.height2 = 0);
     // for arc
     var hasGauge = $$.hasType("gauge"),
-        isLegendRight = state.legend_show && state.isLegendRight;
+        isLegendRight = config.legend_show && state.isLegendRight;
     state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0), state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10), hasGauge && !config.gauge_fullCircle && (state.arcHeight += state.height - $$.getPaddingBottomForGauge()), $$.updateRadius && $$.updateRadius(), state.isLegendRight && hasArc && (state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1), !hasArc && config.axis_x_show && config.axis_x_tick_autorotate && $$.updateXAxisTickClip();
   }
 });
@@ -16776,7 +16776,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.1-nightly-20200721145030",
+  version: "2.0.1-nightly-20200722145104",
 
   /**
    * Generate chart
@@ -16904,7 +16904,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.1-nightly-20200721145030
+ * @version 2.0.1-nightly-20200722145104
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

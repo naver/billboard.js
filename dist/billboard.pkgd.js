@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.1-nightly-20200721145030
+ * @version 2.0.1-nightly-20200722145104
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -12902,12 +12902,21 @@ var runtime = (function (exports) {
     IteratorPrototype = NativeIteratorPrototype;
   }
 
+  function ensureDefaultToStringTag(object, defaultValue) {
+    // https://bugzilla.mozilla.org/show_bug.cgi?id=1644581#c6
+    return toStringTagSymbol in object
+      ? object[toStringTagSymbol]
+      : object[toStringTagSymbol] = defaultValue;
+  }
+
   var Gp = GeneratorFunctionPrototype.prototype =
     Generator.prototype = Object.create(IteratorPrototype);
   GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
   GeneratorFunctionPrototype.constructor = GeneratorFunction;
-  GeneratorFunctionPrototype[toStringTagSymbol] =
-    GeneratorFunction.displayName = "GeneratorFunction";
+  GeneratorFunction.displayName = ensureDefaultToStringTag(
+    GeneratorFunctionPrototype,
+    "GeneratorFunction"
+  );
 
   // Helper for defining the .next, .throw, and .return methods of the
   // Iterator interface in terms of a single ._invoke method.
@@ -12934,9 +12943,7 @@ var runtime = (function (exports) {
       Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
     } else {
       genFun.__proto__ = GeneratorFunctionPrototype;
-      if (!(toStringTagSymbol in genFun)) {
-        genFun[toStringTagSymbol] = "GeneratorFunction";
-      }
+      ensureDefaultToStringTag(genFun, "GeneratorFunction");
     }
     genFun.prototype = Object.create(Gp);
     return genFun;
@@ -13206,7 +13213,7 @@ var runtime = (function (exports) {
   // unified ._invoke helper method.
   defineIteratorMethods(Gp);
 
-  Gp[toStringTagSymbol] = "Generator";
+  ensureDefaultToStringTag(Gp, "Generator");
 
   // A Generator should always return itself as the iterator object when the
   // @@iterator function is called on it. Some browsers' implementations of the
@@ -27621,7 +27628,7 @@ function ascending_sum(series) {
     }, $$.updateSizeForLegend && $$.updateSizeForLegend(currLegend), state.width = state.current.width - state.margin.left - state.margin.right, state.height = state.current.height - state.margin.top - state.margin.bottom, state.width < 0 && (state.width = 0), state.height < 0 && (state.height = 0), state.width2 = isRotated ? state.margin.left - state.rotatedPadding.left - state.rotatedPadding.right : state.width, state.height2 = isRotated ? state.height : state.current.height - state.margin2.top - state.margin2.bottom, state.width2 < 0 && (state.width2 = 0), state.height2 < 0 && (state.height2 = 0);
     // for arc
     var hasGauge = $$.hasType("gauge"),
-        isLegendRight = state.legend_show && state.isLegendRight;
+        isLegendRight = config.legend_show && state.isLegendRight;
     state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0), state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10), hasGauge && !config.gauge_fullCircle && (state.arcHeight += state.height - $$.getPaddingBottomForGauge()), $$.updateRadius && $$.updateRadius(), state.isLegendRight && hasArc && (state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1), !hasArc && config.axis_x_show && config.axis_x_tick_autorotate && $$.updateXAxisTickClip();
   }
 });
@@ -38840,7 +38847,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.1-nightly-20200721145030",
+  version: "2.0.1-nightly-20200722145104",
 
   /**
    * Generate chart
@@ -38968,7 +38975,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.1-nightly-20200721145030
+ * @version 2.0.1-nightly-20200722145104
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
