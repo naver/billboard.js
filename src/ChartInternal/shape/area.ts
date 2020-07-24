@@ -10,9 +10,10 @@ import {getRandom, isFunction} from "../../module/util";
 export default {
 	initArea(mainLine): void {
 		const $$ = this;
+		const {config} = $$;
 
 		mainLine
-			.insert("g", `.${CLASS.circles}`)
+			.insert("g", `.${CLASS[config.area_front ? "circles" : "lines"]}`)
 			.attr("class", $$.classAreas.bind($$));
 	},
 

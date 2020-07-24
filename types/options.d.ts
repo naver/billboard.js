@@ -245,6 +245,11 @@ export interface ChartOptions {
 		above?: boolean;
 
 		/**
+		 * Set area node to be positioned over line node.
+		 */
+		front?: boolean;
+
+		/**
 		 * Set the linear gradient on area.<br><br>
 		 * Or customize by giving below object value:
 		 *  - x {Array}: `x1`, `x2` value
