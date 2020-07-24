@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.1-nightly-20200724013149
+ * @version 2.0.1-nightly-20200724145223
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -13340,9 +13340,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 /* harmony default export */ var shape_area = ({
-  initArea: function initArea(mainLineEnter) {
-    var $$ = this;
-    mainLineEnter.append("g").attr("class", $$.classAreas.bind($$));
+  initArea: function initArea(mainLine) {
+    var $$ = this,
+        config = $$.config;
+    mainLine.insert("g", "." + config_classes[config.area_front ? "circles" : "lines"]).attr("class", $$.classAreas.bind($$));
   },
   updateAreaGradient: function updateAreaGradient() {
     var $$ = this,
@@ -13752,6 +13753,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   updateTargetsForLine: function updateTargetsForLine(t) {
     var $$ = this,
         _$$$$el = $$.$el,
+        area = _$$$$el.area,
         line = _$$$$el.line,
         main = _$$$$el.main,
         classChartLine = $$.classChartLine.bind($$),
@@ -13766,8 +13768,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }),
         mainLineEnter = mainLineUpdate.enter().append("g").attr("class", classChartLine).style("opacity", "0").style("pointer-events", "none");
     // Lines for each data
-    // Areas
-    mainLineEnter.append("g").attr("class", classLines), $$.hasTypeOf("Area") && $$.initArea(mainLineEnter), $$.updateTargetForCircle(targets, mainLineEnter);
+    mainLineEnter.append("g").attr("class", classLines), $$.hasTypeOf("Area") && !area && $$.initArea(mainLineEnter.empty() ? mainLineUpdate : mainLineEnter), $$.updateTargetForCircle(targets, mainLineEnter);
   },
   updateLine: function updateLine(durationForExit) {
     var $$ = this,
@@ -14694,21 +14695,25 @@ var radar_cacheKey = KEY.radarPoints;
    * @memberof Options
    * @type {object}
    * @property {object} area Area object
-   * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
    * @property {boolean} [area.above=false] Set background area above the data chart line.
+   * @property {boolean} [area.front=true] Set area node to be positioned over line node.
    * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
    * Or customize by giving below object value:
    *  - x {Array}: `x1`, `x2` value
    *  - y {Array}: `y1`, `y2` value
    *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+   * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
    * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
    * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
    * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
    * @example
    *  area: {
-   *      zerobased: false,
    *      above: true,
+   *      zerobased: false,
+   *
+   *      // <g class='bb-areas'> will be positioned behind the line <g class='bb-lines'> in stacking order
+   *      front: false,
    *
    *      // will generate follwing linearGradient:
    *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
@@ -14735,9 +14740,10 @@ var radar_cacheKey = KEY.radarPoints;
    *      }
    *  }
    */
-  area_zerobased: !0,
   area_above: !1,
-  area_linearGradient: !1
+  area_front: !0,
+  area_linearGradient: !1,
+  area_zerobased: !0
 });
 // CONCATENATED MODULE: ./src/config/Options/shape/bar.ts
 /**
@@ -16776,7 +16782,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.1-nightly-20200724013149",
+  version: "2.0.1-nightly-20200724145223",
 
   /**
    * Generate chart
@@ -16904,7 +16910,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.1-nightly-20200724013149
+ * @version 2.0.1-nightly-20200724145223
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

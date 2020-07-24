@@ -14923,10 +14923,11 @@ var shapeArc = {
  * billboard.js project is licensed under the MIT license
  */
 var shapeArea = {
-    initArea: function (mainLineEnter) {
+    initArea: function (mainLine) {
         var $$ = this;
-        mainLineEnter
-            .append("g")
+        var config = $$.config;
+        mainLine
+            .insert("g", "." + CLASS[config.area_front ? "circles" : "lines"])
             .attr("class", $$.classAreas.bind($$));
     },
     updateAreaGradient: function () {
@@ -15426,7 +15427,7 @@ var shapeLine = {
     },
     updateTargetsForLine: function (t) {
         var $$ = this;
-        var _a = $$.$el, line = _a.line, main = _a.main;
+        var _a = $$.$el, area = _a.area, line = _a.line, main = _a.main;
         var classChartLine = $$.classChartLine.bind($$);
         var classLines = $$.classLines.bind($$);
         var classFocus = $$.classFocus.bind($$);
@@ -15446,10 +15447,10 @@ var shapeLine = {
         mainLineEnter.append("g")
             .attr("class", classLines);
         // Areas
-        $$.hasTypeOf("Area") && $$.initArea(mainLineEnter);
+        if ($$.hasTypeOf("Area") && !area) {
+            $$.initArea(mainLineEnter.empty() ? mainLineUpdate : mainLineEnter);
+        }
         $$.updateTargetForCircle(targets, mainLineEnter);
-        // MEMO: can not keep same color...
-        // mainLineUpdate.exit().remove();
     },
     updateLine: function (durationForExit) {
         var $$ = this;
@@ -16531,21 +16532,25 @@ var optArea = {
      * @memberof Options
      * @type {object}
      * @property {object} area Area object
-     * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
      * @property {boolean} [area.above=false] Set background area above the data chart line.
+     * @property {boolean} [area.front=true] Set area node to be positioned over line node.
      * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
      * Or customize by giving below object value:
      *  - x {Array}: `x1`, `x2` value
      *  - y {Array}: `y1`, `y2` value
      *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+     * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
      * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
      * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
      * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
      * @example
      *  area: {
-     *      zerobased: false,
      *      above: true,
+     *      zerobased: false,
+     *
+     *      // <g class='bb-areas'> will be positioned behind the line <g class='bb-lines'> in stacking order
+     *      front: false,
      *
      *      // will generate follwing linearGradient:
      *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
@@ -16572,9 +16577,10 @@ var optArea = {
      *      }
      *  }
      */
-    area_zerobased: true,
     area_above: false,
-    area_linearGradient: false
+    area_front: true,
+    area_linearGradient: false,
+    area_zerobased: true
 };
 
 /**
