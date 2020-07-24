@@ -18,7 +18,7 @@ export default {
 
 	updateTargetsForLine(t): void {
 		const $$ = this;
-		const {$el: {line, main}} = $$;
+		const {$el: {area, line, main}} = $$;
 		const classChartLine = $$.classChartLine.bind($$);
 		const classLines = $$.classLines.bind($$);
 		const classFocus = $$.classFocus.bind($$);
@@ -44,12 +44,11 @@ export default {
 			.attr("class", classLines);
 
 		// Areas
-		$$.hasTypeOf("Area") && $$.initArea(mainLineEnter);
+		if ($$.hasTypeOf("Area") && !area) {
+			$$.initArea(mainLineEnter.empty() ? mainLineUpdate : mainLineEnter);
+		}
 
 		$$.updateTargetForCircle(targets, mainLineEnter);
-
-		// MEMO: can not keep same color...
-		// mainLineUpdate.exit().remove();
 	},
 
 	updateLine(durationForExit): void {

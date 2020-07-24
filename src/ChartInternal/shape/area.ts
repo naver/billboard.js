@@ -8,11 +8,12 @@ import CLASS from "../../config/classes";
 import {getRandom, isFunction} from "../../module/util";
 
 export default {
-	initArea(mainLineEnter): void {
+	initArea(mainLine): void {
 		const $$ = this;
+		const {config} = $$;
 
-		mainLineEnter
-			.append("g")
+		mainLine
+			.insert("g", `.${CLASS[config.area_front ? "circles" : "lines"]}`)
 			.attr("class", $$.classAreas.bind($$));
 	},
 
