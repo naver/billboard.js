@@ -1,3 +1,11 @@
+## [2.0.2](https://github.com/naver/billboard.js/compare/2.0.1...2.0.2) (2020-07-24)
+
+
+### Bug Fixes
+
+* **arc:** wrong right padding calculation ([f5a8602](https://github.com/naver/billboard.js/commit/f5a860217667cfa931a8fe4c7f8f41f7ff737d28)), closes [#1545](https://github.com/naver/billboard.js/issues/1545)
+* **area:** Fix dynamic area loading ([9d6e1e0](https://github.com/naver/billboard.js/commit/9d6e1e085e67a9b4d05d28c726eb451c1aa691e1)), closes [#1547](https://github.com/naver/billboard.js/issues/1547)
+
 ## [2.0.1](https://github.com/naver/billboard.js/compare/2.0.0...2.0.1) (2020-07-20)
 
 
