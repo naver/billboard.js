@@ -8,6 +8,7 @@ import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
+import { area } from "../../src/config/resolver/shape";
 
 describe("API load", function() {
 	let chart;
@@ -461,6 +462,67 @@ describe("API load", function() {
 					done();
 				}
 			});
+		});
+	});
+
+	describe("different type loading", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100],
+					]
+				}
+			};
+		});
+
+		it("check 'line' -> 'area' type loading", done => {
+			const {areas} = chart.$.line;
+
+			expect(areas).to.be.null;
+
+			setTimeout(() => {
+				chart.load({
+					columns: [
+						["data1", 100, 200, 300]
+					],
+					type: "area",
+					done: function() {
+						const {areas} = this.$.line;
+
+						expect(areas && !areas.empty()).to.be.true;
+						done();
+					}
+				});
+			}, 500);
+		});
+
+		it("set options data.type='area'", () => {
+			args.data.type = "area";
+		});
+
+		it("check 'area' -> 'area-spline' type loading", done => {
+			const {areas} = chart.$.line;
+
+			expect(areas && !areas.empty()).to.be.true;
+
+			setTimeout(() => {
+				chart.load({
+					columns: [
+						["data1", 100, 200, 300]
+					],
+					type: "area-spline",
+					done: function() {
+						const {areas} = this.$.line;
+
+						expect(areas && !areas.empty()).to.be.true;
+
+						// check for duplicated node appends
+						expect(chart.$.main.selectAll(`.${CLASS.areas}`).size()).to.be.equal(1);
+						done();
+					}
+				});
+			}, 500);
 		});
 	});
 });
