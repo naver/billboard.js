@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.1
+ * @version 2.0.2
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { event, select, mouse, namespaces, selectAll } from 'd3-selection';
@@ -511,8 +511,8 @@ var main = {
      * @type {Function}
      * @default undefined
      * @example
-     * // @param {Chart} ctx - Instance itself
-     * onover: function(ctx) {
+     * onover: function() {
+     *   this; // chart instance itself
      *   ...
      * }
      */
@@ -524,8 +524,8 @@ var main = {
      * @type {Function}
      * @default undefined
      * @example
-     * // @param {Chart} ctx - Instance itself
-     * onout: function(ctx) {
+     * onout: function() {
+     *   this; // chart instance itself
      *   ...
      * }
      */
@@ -537,8 +537,8 @@ var main = {
      * @type {Function}
      * @default undefined
      * @example
-     * // @param {Chart} ctx - Instance itself
-     * onresize: function(ctx) {
+     * onresize: function() {
+     *   this; // chart instance itself
      *   ...
      * }
      */
@@ -550,8 +550,8 @@ var main = {
      * @type {Function}
      * @default undefined
      * @example
-     * // @param {Chart} ctx - Instance itself
-     * onresized: function(ctx) {
+     * onresized: function() {
+     *   this; // chart instance itself
      *   ...
      * }
      */
@@ -563,8 +563,8 @@ var main = {
      * @type {Function}
      * @default undefined
      * @example
-     * // @param {Chart} ctx - Instance itself
-     * onbeforeinit: function(ctx) {
+     * onbeforeinit: function() {
+     *   this; // chart instance itself
      *   ...
      * }
      */
@@ -576,8 +576,8 @@ var main = {
      * @type {Function}
      * @default undefined
      * @example
-     * // @param {Chart} ctx - Instance itself
-     * oninit: function(ctx) {
+     * oninit: function() {
+     *   this; // chart instance itself
      *   ...
      * }
      */
@@ -589,8 +589,8 @@ var main = {
      * @type {Function}
      * @default undefined
      * @example
-     * // @param {Chart} ctx - Instance itself
-     * onafterinit: function(ctx) {
+     * onafterinit: function() {
+     *   this; // chart instance itself
      *   ...
      * }
      */
@@ -602,8 +602,8 @@ var main = {
      * @type {Function}
      * @default undefined
      * @example
-     * // @param {Chart} ctx - Instance itself
-     * onrendered: function(ctx) {
+     * onrendered: function() {
+     *   this; // chart instance itself
      *   ...
      * }
      */
@@ -1791,36 +1791,28 @@ var tooltip = {
      *      },
      *
      *      // fires prior tooltip is shown
-     *      onshow: function(ctx, selectedData) {
-     *      	ctx; // current chart instance
-     *
+     *      onshow: function(selectedData) {
      *      	// current dataset selected
      *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
      *      	selectedData;
      *      },
      *
      *      // fires prior tooltip is hidden
-     *      onhide: function(ctx, selectedData) {
-     *      	ctx; // current chart instance
-     *
+     *      onhide: function(selectedData) {
      *      	// current dataset selected
      *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
      *      	selectedData;
      *      },
      *
      *      // fires after tooltip is shown
-     *      onshown: function(ctx, selectedData) {
-     *      	ctx; // current chart instance
-     *
+     *      onshown: function(selectedData) {
      *      	// current dataset selected
      *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
      *      	selectedData;
      *      },
      *
      *      // fires after tooltip is hidden
-     *      onhidden: function(ctx, selectedData) {
-     *      	ctx; // current chart instance
-     *
+     *      onhidden: function(selectedData) {
      *      	// current dataset selected
      *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
      *      	selectedData;
@@ -18717,7 +18709,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.0.1
+ * @version 2.0.2
  */
 var bb = {
     /**
@@ -18727,7 +18719,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.0.1",
+    version: "2.0.2",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
