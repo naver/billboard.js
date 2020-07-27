@@ -319,7 +319,7 @@ export interface Chart {
 	 *   - done will be called after data loaded, but it's not after rendering.
 	 *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
 	 */
-	load(args: {
+	load(this: Chart, args: {
 		url?: string;
 		json?: [{ [key: string]: string }];
 		rows?: PrimitiveArray[];
@@ -352,7 +352,7 @@ export interface Chart {
 	 *   - If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.
 	 *   - done will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
 	 */
-	unload(targetIds?: TargetIds, done?: () => any): any;
+	unload(this: Chart, targetIds?: TargetIds, done?: () => any): any;
 
 	/**
 	 * Flow data to the chart. By this API, you can append new data points to the chart.
@@ -383,7 +383,7 @@ export interface Chart {
 		to?: any;
 		length?: number;
 		duration?: number;
-		done?(): any;
+		done?(this: Chart): any;
 	}): void;
 
 	/**
@@ -482,7 +482,7 @@ export interface Chart {
 	 * @param mimeType The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
 	 * @param callback The callback to be invoked when export is ready.
 	 */
-	export(mimeType?: string, callback?: (dataUrl: string) => string): string;
+	export(this: Chart, mimeType?: string, callback?: (dataUrl: string) => string): string;
 
 	/**
 	 * Get or set single config option value.
