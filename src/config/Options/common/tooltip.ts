@@ -136,36 +136,28 @@ export default {
 	 *      },
 	 *
 	 *      // fires prior tooltip is shown
-	 *      onshow: function(ctx, selectedData) {
-	 *      	ctx; // current chart instance
-	 *
+	 *      onshow: function(selectedData) {
 	 *      	// current dataset selected
 	 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
 	 *      	selectedData;
 	 *      },
 	 *
 	 *      // fires prior tooltip is hidden
-	 *      onhide: function(ctx, selectedData) {
-	 *      	ctx; // current chart instance
-	 *
+	 *      onhide: function(selectedData) {
 	 *      	// current dataset selected
 	 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
 	 *      	selectedData;
 	 *      },
 	 *
 	 *      // fires after tooltip is shown
-	 *      onshown: function(ctx, selectedData) {
-	 *      	ctx; // current chart instance
-	 *
+	 *      onshown: function(selectedData) {
 	 *      	// current dataset selected
 	 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
 	 *      	selectedData;
 	 *      },
 	 *
 	 *      // fires after tooltip is hidden
-	 *      onhidden: function(ctx, selectedData) {
-	 *      	ctx; // current chart instance
-	 *
+	 *      onhidden: function(selectedData) {
 	 *      	// current dataset selected
 	 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
 	 *      	selectedData;

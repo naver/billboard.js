@@ -1,3 +1,5 @@
+import {Chart} from "./chart";
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -94,6 +96,7 @@ export interface xAxisConfiguration extends AxisConfigurationBase {
 	 */
 	extent?: number[] | string[] | (
 		(
+			this: Chart,
 			domain: Date|string|number[],
 			scale: (value: any) => number
 		) => number[]
@@ -202,8 +205,8 @@ export interface XTickConfiguration {
 	 * A function to format tick value. Format string is also available for timeseries data.
 	 */
 	format?: string
-		| ((x: number | Date) => string | number)
-		| ((index: number, categoryName: string) => string);
+		| ((this: Chart, x: number | Date) => string | number)
+		| ((this: Chart, index: number, categoryName: string) => string);
 
 	/**
 	 * Setting for culling ticks.
@@ -236,7 +239,7 @@ export interface XTickConfiguration {
 	 * If this option is provided, the position of the ticks will be determined based on those values.
 	 * This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
 	 */
-	values?: number[] | string[];
+	values?: number[] | string[] | ((this: Chart) => number[]);
 
 	/**
 	 * Rotate x axis tick text.
@@ -308,7 +311,7 @@ export interface YTickConfiguration {
 	/**
 	 * Set the y values of ticks manually.
 	 */
-	values?: number[];
+	values?: number[] | ((this: Chart) => number[]);
 
 	/**
 	 * Rotate y(or y2) axis tick text.
@@ -328,7 +331,7 @@ export interface YTickConfiguration {
 	 * Set formatter for y axis tick text.
 	 * This option accepts d3.format object as well as a function you define.
 	 */
-	format?(x: number): string;
+	format?(this: Chart, x: number): string;
 
 	/**
 	 * Setting for culling ticks.
@@ -383,7 +386,7 @@ export interface AxesConfiguration {
 		/**
 		 * Set formatter for tick text
 		 */
-		format?: (x: string) => string;
+		format?: (this: Chart, x: string) => string;
 
 		/**
 		 * Set the number of y axis ticks

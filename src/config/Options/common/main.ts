@@ -148,8 +148,8 @@ export default {
 	 * @type {Function}
 	 * @default undefined
 	 * @example
-	 * // @param {Chart} ctx - Instance itself
-	 * onover: function(ctx) {
+	 * onover: function() {
+	 *   this; // chart instance itself
 	 *   ...
 	 * }
 	 */
@@ -162,8 +162,8 @@ export default {
 	 * @type {Function}
 	 * @default undefined
 	 * @example
-	 * // @param {Chart} ctx - Instance itself
-	 * onout: function(ctx) {
+	 * onout: function() {
+	 *   this; // chart instance itself
 	 *   ...
 	 * }
 	 */
@@ -176,8 +176,8 @@ export default {
 	 * @type {Function}
 	 * @default undefined
 	 * @example
-	 * // @param {Chart} ctx - Instance itself
-	 * onresize: function(ctx) {
+	 * onresize: function() {
+	 *   this; // chart instance itself
 	 *   ...
 	 * }
 	 */
@@ -190,8 +190,8 @@ export default {
 	 * @type {Function}
 	 * @default undefined
 	 * @example
-	 * // @param {Chart} ctx - Instance itself
-	 * onresized: function(ctx) {
+	 * onresized: function() {
+	 *   this; // chart instance itself
 	 *   ...
 	 * }
 	 */
@@ -204,8 +204,8 @@ export default {
 	 * @type {Function}
 	 * @default undefined
 	 * @example
-	 * // @param {Chart} ctx - Instance itself
-	 * onbeforeinit: function(ctx) {
+	 * onbeforeinit: function() {
+	 *   this; // chart instance itself
 	 *   ...
 	 * }
 	 */
@@ -218,8 +218,8 @@ export default {
 	 * @type {Function}
 	 * @default undefined
 	 * @example
-	 * // @param {Chart} ctx - Instance itself
-	 * oninit: function(ctx) {
+	 * oninit: function() {
+	 *   this; // chart instance itself
 	 *   ...
 	 * }
 	 */
@@ -232,8 +232,8 @@ export default {
 	 * @type {Function}
 	 * @default undefined
 	 * @example
-	 * // @param {Chart} ctx - Instance itself
-	 * onafterinit: function(ctx) {
+	 * onafterinit: function() {
+	 *   this; // chart instance itself
 	 *   ...
 	 * }
 	 */
@@ -246,8 +246,8 @@ export default {
 	 * @type {Function}
 	 * @default undefined
 	 * @example
-	 * // @param {Chart} ctx - Instance itself
-	 * onrendered: function(ctx) {
+	 * onrendered: function() {
+	 *   this; // chart instance itself
 	 *   ...
 	 * }
 	 */
