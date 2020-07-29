@@ -11812,7 +11812,7 @@ var clip = {
         var left = Math.max(30, margin.left) - (isRotated ? 20 : 0);
         var isInner = config.axis_y_inner;
         var x = isInner ? -1 : (isRotated ? -(1 + left) : -(left - 1));
-        var y = -(isRotated ? -20 : margin.top);
+        var y = -(isRotated ? 20 : margin.top);
         var w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0);
         var h = (isRotated ? margin.bottom : (margin.top + height)) + 10;
         node

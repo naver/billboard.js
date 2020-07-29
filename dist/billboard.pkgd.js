@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.2-nightly-20200727093319
+ * @version 2.0.2-nightly-20200729073030
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -16,7 +16,7 @@
  * - d3-ease ^1.0.6
  * - d3-interpolate ^1.4.0
  * - d3-scale ^2.2.2
- * - d3-selection ^1.4.1
+ * - d3-selection ^1.4.2
  * - d3-shape ^1.3.7
  * - d3-time-format ^2.2.3
  * - d3-transition ^1.3.2
@@ -32200,7 +32200,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         left = Math.max(30, margin.left) - (isRotated ? 20 : 0),
         isInner = config.axis_y_inner,
         x = isInner ? -1 : isRotated ? -(1 + left) : -(left - 1),
-        y = -(isRotated ? -20 : margin.top),
+        y = -(isRotated ? 20 : margin.top),
         w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0),
         h = (isRotated ? margin.bottom : margin.top + height) + 10;
     node.attr("x", x).attr("y", y).attr("width", w).attr("height", h);
@@ -38857,7 +38857,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.2-nightly-20200727093319",
+  version: "2.0.2-nightly-20200729073030",
 
   /**
    * Generate chart
@@ -38985,7 +38985,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.2-nightly-20200727093319
+ * @version 2.0.2-nightly-20200729073030
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
