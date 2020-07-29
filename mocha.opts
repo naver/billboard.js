@@ -1,1 +1,1 @@
---timeout 3500
+--timeout 3500 --parallel
