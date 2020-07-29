@@ -175,7 +175,7 @@ export interface yAxisConfigurationBase extends AxisConfigurationBase {
 	default?: number[];
 }
 
-export interface yAxisConfiguration extends AxisConfigurationBase {
+export interface yAxisConfiguration extends yAxisConfigurationBase {
 	/**
 	 * Set type of y axis (timeseries, category, indexed, log)
 	 *
@@ -193,7 +193,7 @@ export interface yAxisConfiguration extends AxisConfigurationBase {
 	clipPath?: boolean;
 }
 
-export interface y2AxisConfiguration extends AxisConfigurationBase {}
+export interface y2AxisConfiguration extends yAxisConfigurationBase {}
 
 export interface XTickConfiguration {
 	/**
