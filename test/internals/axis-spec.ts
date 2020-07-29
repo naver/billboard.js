@@ -1735,7 +1735,7 @@ describe("AXIS", function() {
 		});
 	});
 
-	describe("axis.x.rotated", () => {
+	describe("axis.rotated", () => {
 		before(() => {
 			args = {
 				data: {
@@ -1770,6 +1770,14 @@ describe("AXIS", function() {
 
 				expect(tick.attr("transform")).to.be.equal("translate(0,"+y+")");
 			});
+		});
+
+		it("y Axis clipPath element's x/y value should be < 0", () => {
+			const {state, $el} = chart.internal;
+			const yAxisClipPathRect = $el.svg.select(`#${state.clip.idYAxis} rect`);
+
+			expect(+yAxisClipPathRect.attr("x")).to.be.below(0);
+			expect(+yAxisClipPathRect.attr("y")).to.be.below(0);
 		});
 	});
 
