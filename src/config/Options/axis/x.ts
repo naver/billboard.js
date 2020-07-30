@@ -37,10 +37,10 @@ export default {
 	/**
 	 * Set type of x axis.<br><br>
 	 * **Available Values:**
-	 * - timeseries
 	 * - category
 	 * - indexed
 	 * - log
+	 * - timeseries
 	 *
 	 * **NOTE:**<br>
 	 * - **log** type:
@@ -62,7 +62,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_type: <"indexed"|"timeseries"|"category"|"log"> "indexed",
+	axis_x_type: <"category"|"indexed"|"log"|"timeseries"> "indexed",
 
 	/**
 	 * Set how to treat the timezone of x values.<br>

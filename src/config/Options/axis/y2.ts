@@ -25,6 +25,33 @@ export default {
 	axis_y2_show: false,
 
 	/**
+	 * Set type of y2 axis.<br><br>
+	 * **Available Values:**
+	 *  - indexed
+	 *  - log
+	 *  - timeseries
+	 *
+	 * **NOTE:**<br>
+	 * - **log** type:
+	 *   - the bound data values must be exclusively-positive.
+	 *   - y2 axis min value should be > 0, otherwise will be set `1`.
+	 *   - [`data.groups`](#.data%25E2%2580%25A4groups)(stacked data) option aren't supported.
+	 *
+	 * @name axis․y2․type
+	 * @memberof Options
+	 * @type {string}
+	 * @default "indexed"
+	 * @see [Demo: log](https://naver.github.io/billboard.js/demo/#Axis.LogScales)
+	 * @example
+	 * axis: {
+	 *   y2: {
+	 *     type: "indexed"
+	 *   }
+	 * }
+	 */
+	axis_y2_type: <"indexed"|"log"|"timeseries"> "indexed",
+
+	/**
 	 * Set max value of y2 axis.
 	 * @name axis․y2․max
 	 * @memberof Options
