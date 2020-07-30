@@ -5584,15 +5584,16 @@ var scale = {
     },
     /**
      * Get y Axis scale function
+     * @param {string} id Axis id: 'y' or 'y2'
      * @param {number} min Min value
      * @param {number} max Max value
      * @param {Array} domain Domain value
      * @returns {Function} Scale function
      * @private
      */
-    getYScale: function (min, max, domain) {
+    getYScale: function (id, min, max, domain) {
         var $$ = this;
-        var scale = getScale($$.axis.getAxisType("y"), min, max);
+        var scale = getScale($$.axis.getAxisType(id), min, max);
         domain && scale.domain(domain);
         return scale;
     },
@@ -5680,13 +5681,13 @@ var scale = {
                 axis.setAxis("subX", scale.subX, config.axis_x_tick_outer, isInit);
             }
             // y Axis
-            scale.y = $$.getYScale(min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default);
-            scale.subY = $$.getYScale(min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default);
+            scale.y = $$.getYScale("y", min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default);
+            scale.subY = $$.getYScale("y", min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default);
             axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit);
             // y2 Axis
             if (config.axis_y2_show) {
-                scale.y2 = $$.getYScale(min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default);
-                scale.subY2 = $$.getYScale(min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default);
+                scale.y2 = $$.getYScale("y2", min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default);
+                scale.subY2 = $$.getYScale("y2", min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default);
                 axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
             }
         }
@@ -12707,10 +12708,10 @@ var x = {
     /**
      * Set type of x axis.<br><br>
      * **Available Values:**
-     * - timeseries
      * - category
      * - indexed
      * - log
+     * - timeseries
      *
      * **NOTE:**<br>
      * - **log** type:
@@ -13332,9 +13333,9 @@ var y = {
     /**
      * Set type of y axis.<br><br>
      * **Available Values:**
-     *  - timeseries
      *  - indexed
      *  - log
+     *  - timeseries
      *
      * **NOTE:**<br>
      * - **log** type:
@@ -13350,11 +13351,11 @@ var y = {
      * @example
      * axis: {
      *   y: {
-     *     type: "timeseries"
+     *     type: "log"
      *   }
      * }
      */
-    axis_y_type: undefined,
+    axis_y_type: "indexed",
     /**
      * Set max value of y axis.
      * - **NOTE:** Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
@@ -13787,6 +13788,32 @@ var y2 = {
      * }
      */
     axis_y2_show: false,
+    /**
+     * Set type of y2 axis.<br><br>
+     * **Available Values:**
+     *  - indexed
+     *  - log
+     *  - timeseries
+     *
+     * **NOTE:**<br>
+     * - **log** type:
+     *   - the bound data values must be exclusively-positive.
+     *   - y2 axis min value should be > 0, otherwise will be set `1`.
+     *   - [`data.groups`](#.data%25E2%2580%25A4groups)(stacked data) option aren't supported.
+     *
+     * @name axis․y2․type
+     * @memberof Options
+     * @type {string}
+     * @default "indexed"
+     * @see [Demo: log](https://naver.github.io/billboard.js/demo/#Axis.LogScales)
+     * @example
+     * axis: {
+     *   y2: {
+     *     type: "indexed"
+     *   }
+     * }
+     */
+    axis_y2_type: "indexed",
     /**
      * Set max value of y2 axis.
      * @name axis․y2․max

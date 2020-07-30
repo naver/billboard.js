@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.2-nightly-20200729073030
+ * @version 2.0.2-nightly-20200730023203
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -25236,15 +25236,16 @@ function getScale(type, min, max) {
 
   /**
    * Get y Axis scale function
+   * @param {string} id Axis id: 'y' or 'y2'
    * @param {number} min Min value
    * @param {number} max Max value
    * @param {Array} domain Domain value
    * @returns {Function} Scale function
    * @private
    */
-  getYScale: function getYScale(min, max, domain) {
+  getYScale: function getYScale(id, min, max, domain) {
     var $$ = this,
-        scale = getScale($$.axis.getAxisType("y"), min, max);
+        scale = getScale($$.axis.getAxisType(id), min, max);
     return domain && scale.domain(domain), scale;
   },
 
@@ -25335,7 +25336,7 @@ function getScale(type, min, max) {
         return axis.x.tickOffset();
       }), scale.subX = $$.getXScale(min.x, max.x, xSubDomain, function (d) {
         return d % 1 ? 0 : axis.subX.tickOffset();
-      }), format.xAxisTick = axis.getXAxisTickFormat(), axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit), config.subchart_show && axis.setAxis("subX", scale.subX, config.axis_x_tick_outer, isInit), scale.y = $$.getYScale(min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default), scale.subY = $$.getYScale(min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default), axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && (scale.y2 = $$.getYScale(min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default), scale.subY2 = $$.getYScale(min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default), axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit));
+      }), format.xAxisTick = axis.getXAxisTickFormat(), axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit), config.subchart_show && axis.setAxis("subX", scale.subX, config.axis_x_tick_outer, isInit), scale.y = $$.getYScale("y", min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default), scale.subY = $$.getYScale("y", min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default), axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && (scale.y2 = $$.getYScale("y2", min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default), scale.subY2 = $$.getYScale("y2", min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default), axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit));
     } else // update for arc
     $$.updateArc && $$.updateArc();
   },
@@ -32915,10 +32916,10 @@ function smoothLines(el, type) {
   /**
    * Set type of x axis.<br><br>
    * **Available Values:**
-   * - timeseries
    * - category
    * - indexed
    * - log
+   * - timeseries
    *
    * **NOTE:**<br>
    * - **log** type:
@@ -33571,9 +33572,9 @@ function smoothLines(el, type) {
   /**
    * Set type of y axis.<br><br>
    * **Available Values:**
-   *  - timeseries
    *  - indexed
    *  - log
+   *  - timeseries
    *
    * **NOTE:**<br>
    * - **log** type:
@@ -33589,11 +33590,11 @@ function smoothLines(el, type) {
    * @example
    * axis: {
    *   y: {
-   *     type: "timeseries"
+   *     type: "log"
    *   }
    * }
    */
-  axis_y_type: undefined,
+  axis_y_type: "indexed",
 
   /**
    * Set max value of y axis.
@@ -34051,6 +34052,33 @@ function smoothLines(el, type) {
    * }
    */
   axis_y2_show: !1,
+
+  /**
+   * Set type of y2 axis.<br><br>
+   * **Available Values:**
+   *  - indexed
+   *  - log
+   *  - timeseries
+   *
+   * **NOTE:**<br>
+   * - **log** type:
+   *   - the bound data values must be exclusively-positive.
+   *   - y2 axis min value should be > 0, otherwise will be set `1`.
+   *   - [`data.groups`](#.data%25E2%2580%25A4groups)(stacked data) option aren't supported.
+   *
+   * @name axis․y2․type
+   * @memberof Options
+   * @type {string}
+   * @default "indexed"
+   * @see [Demo: log](https://naver.github.io/billboard.js/demo/#Axis.LogScales)
+   * @example
+   * axis: {
+   *   y2: {
+   *     type: "indexed"
+   *   }
+   * }
+   */
+  axis_y2_type: "indexed",
 
   /**
    * Set max value of y2 axis.
@@ -38857,7 +38885,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.2-nightly-20200729073030",
+  version: "2.0.2-nightly-20200730023203",
 
   /**
    * Generate chart
@@ -38985,7 +39013,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.2-nightly-20200729073030
+ * @version 2.0.2-nightly-20200730023203
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
