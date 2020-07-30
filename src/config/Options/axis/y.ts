@@ -37,9 +37,9 @@ export default {
 	/**
 	 * Set type of y axis.<br><br>
 	 * **Available Values:**
-	 *  - timeseries
 	 *  - indexed
 	 *  - log
+	 *  - timeseries
 	 *
 	 * **NOTE:**<br>
 	 * - **log** type:
@@ -55,11 +55,11 @@ export default {
 	 * @example
 	 * axis: {
 	 *   y: {
-	 *     type: "timeseries"
+	 *     type: "log"
 	 *   }
 	 * }
 	 */
-	axis_y_type: <"indexed"|"category"|"indexed"|"log"|undefined> undefined,
+	axis_y_type: <"indexed"|"log"|"timeseries"> "indexed",
 
 	/**
 	 * Set max value of y axis.

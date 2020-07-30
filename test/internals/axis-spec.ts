@@ -2518,7 +2518,8 @@ describe("AXIS", function() {
 					  type: "log"
 					},
 					y2: {
-						show: true
+						show: true,
+						type: "log"
 					}
 				}				
 			}
@@ -2558,6 +2559,71 @@ describe("AXIS", function() {
 			});
 
 			checkAxisTickPos();
+		});
+	});
+
+	describe("Axis type combination", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", 100, 395, 740, 1500, 3000],
+						["data1", 210, 1150, 12000, 100000, 1000000],
+						["data2", 100, 100, 100, 100, 100]
+					],
+					axes: {
+						data1: "y",
+						data2: "y2"
+					},
+					types: {
+						data1: "bar"
+					}
+				},
+				bar: {
+					width: {
+						ratio: 0.3
+					}
+				},
+				axis: {
+					x: {
+						type: "indexed"
+					},
+					y: {
+						type: "log",
+						min: 10,
+						max: 100000000
+					},
+					y2: {
+						show: true,
+						type: "indexed",
+						min: 0,
+						max: 200,
+						padding: {
+							top: 0,
+							bottom: 0
+						}
+					}
+				}
+			};
+		});
+
+		it("check for different scale types", () => {
+			const {scale, $el} = chart.internal;
+			const tickValues = {
+				x: [100, 395, 740, 1500, 3000],
+				y: [10, 100, 1000, 10000, 100000, 1000000, 10000000, 100000000],
+				y2: [0, 20, 40, 60, 80, 100, 120, 140, 160, 180, 200]
+			};
+
+			["x", "y", "y2"].forEach(id => {				
+				$el.axis[id].selectAll(".tick").each(function(d, i) {
+					const pos = +this.getAttribute("transform").replace(/([a-z()]|,0|0,)/g, "");
+
+					expect(tickValues[id][i]).to.be.equal(d);
+					expect(Math.round(scale[id](d))).to.be.closeTo(pos, 1);
+				});
+			});
 		});
 	});
 });
