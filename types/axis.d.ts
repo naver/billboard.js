@@ -34,9 +34,9 @@ export interface xAxisConfiguration extends AxisConfigurationBase {
 	 * NOTE:
 	 * 	 log type:
 	 *   - the x values specified by `data.x`(or by any equivalent option), must be exclusively-positive.
-	 *   - x axis min value should be > 0, otherwise will be set `1`.
+	 *   - x axis min value should be >= 0.
 	 */
-	type?: "timeseries" | "category" | "indexed" | "log";
+	type?: "category" | "indexed" | "log" | "timeseries";
 
 	/**
 	 * Set how to treat the timezone of x values.
@@ -182,10 +182,10 @@ export interface yAxisConfiguration extends yAxisConfigurationBase {
 	 * NOTE:
 	 * 	 log type:
 	 *   - the bound data values must be exclusively-positive.
-	 *   - y axis min value should be > 0, otherwise will be set `1`.
+	 *   - y axis min value should be >= 0.
 	 *   - `data.groups`(stacked data) option aren't supported.
 	 */
-	type?: "timeseries" | "category" | "indexed" | "log";
+	type?: "indexed" | "log" | "timeseries";
 
 	/**
 	 * Set clip-path attribute for y axis element.

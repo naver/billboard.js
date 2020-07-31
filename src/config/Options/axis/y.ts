@@ -44,7 +44,7 @@ export default {
 	 * **NOTE:**<br>
 	 * - **log** type:
 	 *   - the bound data values must be exclusively-positive.
-	 *   - y axis min value should be > 0, otherwise will be set `1`.
+	 *   - y axis min value should be >= 0.
 	 *   - [`data.groups`](#.data%25E2%2580%25A4groups)(stacked data) option aren't supported.
 	 *
 	 * @name axis․y․type
