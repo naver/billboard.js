@@ -5,7 +5,8 @@
 import {
 	scaleTime as d3ScaleTime,
 	scaleLinear as d3ScaleLinear,
-	scaleLog as d3ScaleLog
+	scaleLog as d3ScaleLog,
+	scaleSymlog as d3ScaleSymlog
 } from "d3-scale";
 import {isString, isValue, parseDate} from "../../module/util";
 
@@ -20,12 +21,13 @@ import {isString, isValue, parseDate} from "../../module/util";
 export function getScale(type = "linear", min = 0, max = 1): any {
 	const scale = ({
 		linear: d3ScaleLinear,
-		log: d3ScaleLog,
+		log: d3ScaleSymlog,
+		_log: d3ScaleLog,
 		time: d3ScaleTime
 	})[type]();
 
 	scale.type = type;
-	type === "log" && scale.clamp(true);
+	/_?log/.test(type) && scale.clamp(true);
 
 	return scale.range([min, max]);
 }

@@ -2521,7 +2521,7 @@ describe("AXIS", function() {
 						show: true,
 						type: "log"
 					}
-				}				
+				}
 			}
 		});
 
