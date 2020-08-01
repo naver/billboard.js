@@ -12,7 +12,7 @@ import { event, select, mouse, namespaces, selectAll } from 'd3-selection';
 import { brushSelection, brushY, brushX } from 'd3-brush';
 import { csvParseRows, csvParse, tsvParseRows, tsvParse } from 'd3-dsv';
 import { drag as drag$1 } from 'd3-drag';
-import { scaleOrdinal, scaleLinear, scaleLog, scaleTime } from 'd3-scale';
+import { scaleOrdinal, scaleLinear, scaleSymlog, scaleLog, scaleTime } from 'd3-scale';
 import { transition } from 'd3-transition';
 import { curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen, curveCatmullRom, curveCatmullRomClosed, curveCatmullRomOpen, curveMonotoneX, curveMonotoneY, curveNatural, curveLinearClosed, curveLinear, curveStep, curveStepAfter, curveStepBefore, pie as pie$1, arc, area as area$1, line as line$1 } from 'd3-shape';
 import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
@@ -4524,7 +4524,7 @@ var domain = {
             isAllPositive && (padding.bottom = yDomainMin);
             isAllNegative && (padding.top = -yDomainMax);
         }
-        var domain = isLog ? [yDomainMin, yDomainMax].map(function (v) { return (v <= 0 ? 1 : v); }) :
+        var domain = isLog ? [yDomainMin, yDomainMax].map(function (v) { return (v < 0 ? 0 : v); }) :
             [yDomainMin - padding.bottom, yDomainMax + padding.top];
         return isInverted ? domain.reverse() : domain;
     },
@@ -5560,11 +5560,12 @@ function getScale(type, min, max) {
     if (max === void 0) { max = 1; }
     var scale = ({
         linear: scaleLinear,
-        log: scaleLog,
+        log: scaleSymlog,
+        _log: scaleLog,
         time: scaleTime
     })[type]();
     scale.type = type;
-    type === "log" && scale.clamp(true);
+    /_?log/.test(type) && scale.clamp(true);
     return scale.range([min, max]);
 }
 var scale = {
@@ -9896,17 +9897,24 @@ var AxisRendererHelper = /** @class */ (function () {
             }
         }
         else if (scale.ticks) {
-            ticks = scale
-                .ticks.apply(scale, (this.config.tickArguments || []));
+            var tickArguments = this.config.tickArguments;
             // adjust excessive tick count show
-            if (scale.type === "log") {
-                var t = scale.ticks();
-                var _b = [t[0], t[t.length - 1]], head = _b[0], tail = _b[1];
+            if (scale.type === "log" && !tickArguments) {
+                // nicer symlog ticks didn't implemented yet: https://github.com/d3/d3-scale/issues/162
+                // get ticks values from logScale
+                var s = getScale("_log")
+                    .domain([start > 0 ? start : 1, end])
+                    .range(scale.range());
+                ticks = s.ticks();
                 for (var cnt = end.toFixed().length; ticks.length > 15; cnt--) {
-                    ticks = scale.ticks(cnt);
+                    ticks = s.ticks(cnt);
                 }
-                ticks[0] !== head && ticks.unshift(head);
-                ticks[ticks.length - 1] !== tail && ticks.push(tail);
+                ticks.splice(0, 1, start);
+                ticks.splice(ticks.length - 1, 1, end);
+            }
+            else {
+                ticks = scale
+                    .ticks.apply(scale, (this.config.tickArguments || []));
             }
             ticks = ticks
                 .map(function (v) {
@@ -12716,7 +12724,7 @@ var x = {
      * **NOTE:**<br>
      * - **log** type:
      *   - the x values specified by [`data.x`](#.data%25E2%2580%25A4x)(or by any equivalent option), must be exclusively-positive.
-     *   - x axis min value should be > 0, otherwise will be set `1`.
+     *   - x axis min value should be >= 0.
      *
      * @name axis․x․type
      * @memberof Options
@@ -13340,7 +13348,7 @@ var y = {
      * **NOTE:**<br>
      * - **log** type:
      *   - the bound data values must be exclusively-positive.
-     *   - y axis min value should be > 0, otherwise will be set `1`.
+     *   - y axis min value should be >= 0.
      *   - [`data.groups`](#.data%25E2%2580%25A4groups)(stacked data) option aren't supported.
      *
      * @name axis․y․type
@@ -13798,7 +13806,7 @@ var y2 = {
      * **NOTE:**<br>
      * - **log** type:
      *   - the bound data values must be exclusively-positive.
-     *   - y2 axis min value should be > 0, otherwise will be set `1`.
+     *   - y2 axis min value should be >= 0.
      *   - [`data.groups`](#.data%25E2%2580%25A4groups)(stacked data) option aren't supported.
      *
      * @name axis․y2․type

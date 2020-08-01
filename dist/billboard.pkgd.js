@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.2-nightly-20200730145659
+ * @version 2.0.2-nightly-20200801145854
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -24454,7 +24454,7 @@ var TYPE_BY_CATEGORY = {
       padding[v] = axis.getPadding(p, v, padding[v], domainLength);
     }), isZeroBased && (isAllPositive && (padding.bottom = yDomainMin), isAllNegative && (padding.top = -yDomainMax));
     var domain = isLog ? [yDomainMin, yDomainMax].map(function (v) {
-      return v <= 0 ? 1 : v;
+      return v < 0 ? 0 : v;
     }) : [yDomainMin - padding.bottom, yDomainMax + padding.top];
     return isInverted ? domain.reverse() : domain;
   },
@@ -25213,10 +25213,11 @@ function getScale(type, min, max) {
   type === void 0 && (type = "linear"), min === void 0 && (min = 0), max === void 0 && (max = 1);
   var scale = {
     linear: src_linear_linear,
-    log: log,
+    log: symlog,
+    _log: log,
     time: src_time
   }[type]();
-  return scale.type = type, type === "log" && scale.clamp(!0), scale.range([min, max]);
+  return scale.type = type, /_?log/.test(type) && scale.clamp(!0), scale.range([min, max]);
 }
 /* harmony default export */ var internals_scale = ({
   /**
@@ -30877,12 +30878,18 @@ var AxisRendererHelper_AxisRendererHelper = /*#__PURE__*/function () {
 
     // When 'axis[y|y2].tick.stepSize' option is set
     if (isYAxes && tickStepSize) for (var interval = start; interval <= end;) ticks.push(interval), interval += tickStepSize;else if (scale.ticks) {
-      // adjust excessive tick count show
-      if (ticks = scale.ticks.apply(scale, this.config.tickArguments || []), scale.type === "log") {
-        for (var t = scale.ticks(), _ref = [t[0], t[t.length - 1]], head = _ref[0], tail = _ref[1], cnt = end.toFixed().length; ticks.length > 15; cnt--) ticks = scale.ticks(cnt);
+      var tickArguments = this.config.tickArguments; // adjust excessive tick count show
 
-        ticks[0] !== head && ticks.unshift(head), ticks[ticks.length - 1] !== tail && ticks.push(tail);
-      }
+      if (scale.type === "log" && !tickArguments) {
+        // nicer symlog ticks didn't implemented yet: https://github.com/d3/d3-scale/issues/162
+        // get ticks values from logScale
+        var s = getScale("_log").domain([start > 0 ? start : 1, end]).range(scale.range());
+        ticks = s.ticks();
+
+        for (var cnt = end.toFixed().length; ticks.length > 15; cnt--) ticks = s.ticks(cnt);
+
+        ticks.splice(0, 1, start), ticks.splice(ticks.length - 1, 1, end);
+      } else ticks = scale.ticks.apply(scale, this.config.tickArguments || []);
 
       ticks = ticks.map(function (v) {
         // round the tick value if is number
@@ -32924,7 +32931,7 @@ function smoothLines(el, type) {
    * **NOTE:**<br>
    * - **log** type:
    *   - the x values specified by [`data.x`](#.data%25E2%2580%25A4x)(or by any equivalent option), must be exclusively-positive.
-   *   - x axis min value should be > 0, otherwise will be set `1`.
+   *   - x axis min value should be >= 0.
    *
    * @name axis․x․type
    * @memberof Options
@@ -33579,7 +33586,7 @@ function smoothLines(el, type) {
    * **NOTE:**<br>
    * - **log** type:
    *   - the bound data values must be exclusively-positive.
-   *   - y axis min value should be > 0, otherwise will be set `1`.
+   *   - y axis min value should be >= 0.
    *   - [`data.groups`](#.data%25E2%2580%25A4groups)(stacked data) option aren't supported.
    *
    * @name axis․y․type
@@ -34063,7 +34070,7 @@ function smoothLines(el, type) {
    * **NOTE:**<br>
    * - **log** type:
    *   - the bound data values must be exclusively-positive.
-   *   - y2 axis min value should be > 0, otherwise will be set `1`.
+   *   - y2 axis min value should be >= 0.
    *   - [`data.groups`](#.data%25E2%2580%25A4groups)(stacked data) option aren't supported.
    *
    * @name axis․y2․type
@@ -38885,7 +38892,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.2-nightly-20200730145659",
+  version: "2.0.2-nightly-20200801145854",
 
   /**
    * Generate chart
@@ -39013,7 +39020,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.2-nightly-20200730145659
+ * @version 2.0.2-nightly-20200801145854
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
