@@ -45,7 +45,7 @@ export default {
 	 * **NOTE:**<br>
 	 * - **log** type:
 	 *   - the x values specified by [`data.x`](#.data%25E2%2580%25A4x)(or by any equivalent option), must be exclusively-positive.
-	 *   - x axis min value should be > 0, otherwise will be set `1`.
+	 *   - x axis min value should be >= 0.
 	 *
 	 * @name axis․x․type
 	 * @memberof Options
