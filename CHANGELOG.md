@@ -1,3 +1,20 @@
+# [2.1.0-next.1](https://github.com/naver/billboard.js/compare/2.0.1...2.1.0-next.1) (2020-08-04)
+
+
+### Bug Fixes
+
+* **arc:** wrong right padding calculation ([f5a8602](https://github.com/naver/billboard.js/commit/f5a860217667cfa931a8fe4c7f8f41f7ff737d28)), closes [#1545](https://github.com/naver/billboard.js/issues/1545)
+* **area:** Fix dynamic area loading ([9d6e1e0](https://github.com/naver/billboard.js/commit/9d6e1e085e67a9b4d05d28c726eb451c1aa691e1)), closes [#1547](https://github.com/naver/billboard.js/issues/1547)
+* **axis:** fix y axis clip-path coordinates ([bdf7694](https://github.com/naver/billboard.js/commit/bdf769465aaf6c60babd5c91e22186a4c172cc78)), closes [#1572](https://github.com/naver/billboard.js/issues/1572)
+* **types:** Specify context for callbacks ([f3b9f26](https://github.com/naver/billboard.js/commit/f3b9f26d0b218411f5e075c971a0b05f6a9cea0b)), closes [#1551](https://github.com/naver/billboard.js/issues/1551)
+
+
+### Features
+
+* **area:** Intent to ship area.front ([fe315dc](https://github.com/naver/billboard.js/commit/fe315dcbd6b1512712f2161a8a8f8d5b5de60374)), closes [#1543](https://github.com/naver/billboard.js/issues/1543)
+* **axis:** Improve log scale to handle 0 ([ca6cf62](https://github.com/naver/billboard.js/commit/ca6cf62b52cf908a8d63e27816c23bdabe735ef2)), closes [#1578](https://github.com/naver/billboard.js/issues/1578)
+* **axis:** Intent to ship axis.y2.type ([a94c25e](https://github.com/naver/billboard.js/commit/a94c25e33f3b1081b4edc3d49d3aee54d2520651)), closes [#1575](https://github.com/naver/billboard.js/issues/1575)
+
 ## [2.0.2](https://github.com/naver/billboard.js/compare/2.0.1...2.0.2) (2020-07-24)
 
 
