@@ -408,13 +408,6 @@ export interface Chart {
 	selected(targetId?: string): Data;
 
 	/**
-	 * Change the type of the chart.
-	 * @param type Specify the type to be transformed. The types listed in data.type can be used.
-	 * @param targetIds Specify targets to be transformed. If not given, all targets will be the candidate.
-	 */
-	transform(type: string, targetIds?: ArrayOrString): void;
-
-	/**
 	 * Update groups for the targets.
 	 * @param groups This argument needs to be an Array that includes one or more Array that includes target ids to be grouped.
 	 */
