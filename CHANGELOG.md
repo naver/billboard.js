@@ -1,3 +1,11 @@
+## [2.0.3](https://github.com/naver/billboard.js/compare/2.0.2...2.0.3) (2020-08-07)
+
+
+### Bug Fixes
+
+* **axis:** fix y axis clip-path coordinates ([da717b8](https://github.com/naver/billboard.js/commit/da717b8a9572861c94831f868c23c8b059fdcd17)), closes [#1572](https://github.com/naver/billboard.js/issues/1572)
+* **types:** Specify context for callbacks ([574bfea](https://github.com/naver/billboard.js/commit/574bfea2e102fed2030fb2b85590ff92ed40ae23)), closes [#1551](https://github.com/naver/billboard.js/issues/1551)
+
 ## [2.0.2](https://github.com/naver/billboard.js/compare/2.0.1...2.0.2) (2020-07-24)
 
 
