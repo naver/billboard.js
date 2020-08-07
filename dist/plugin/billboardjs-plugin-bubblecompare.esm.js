@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.2
+ * @version 2.0.3
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -33,7 +33,7 @@ var _extendStatics = function extendStatics(d, b) {
   } instanceof Array && function (d, b) {
     d.__proto__ = b;
   } || function (d, b) {
-    for (var p in b) b.hasOwnProperty(p) && (d[p] = b[p]);
+    for (var p in b) Object.prototype.hasOwnProperty.call(b, p) && (d[p] = b[p]);
   }, _extendStatics(d, b);
 };
 
@@ -103,7 +103,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "2.0.2";
+    Plugin.version = "2.0.3";
     return Plugin;
 }());
 
