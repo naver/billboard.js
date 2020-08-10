@@ -3499,9 +3499,9 @@ cliui@^6.0.0:
     wrap-ansi "^6.2.0"
 
 cloc@^2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/cloc/-/cloc-2.5.1.tgz#d62d077f6a5f3f3c22482f47e00c213de1bb899e"
-  integrity sha512-ZHJ592HbnHAshQ7gtnrgeZaVyvou+a+7TM/E/oTZth2c9Mycp4Ymp3/npQ/Qhxgq9ksf8GjTLB9bEyCMTf42BA==
+  version "2.6.0"
+  resolved "https://registry.yarnpkg.com/cloc/-/cloc-2.6.0.tgz#e55d62d87bf2ca302dcfb61625688d59d33ad318"
+  integrity sha512-4AXPnQGEmiaJeAakd03SZaMi8HjHN4vAMdk3edOglpJVOwJoYOEahamWl4MMGy6VUL476DRXXIcrgUyaDLg7kg==
 
 clone-deep@^4.0.1:
   version "4.0.1"
