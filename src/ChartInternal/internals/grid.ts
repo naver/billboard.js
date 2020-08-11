@@ -311,8 +311,8 @@ export default {
 			.text(d => d.text);
 
 		return [
-			(withTransition ? lines.transition() : lines).style("opacity", "1"),
-			(withTransition ? texts.transition() : texts).style("opacity", "1")
+			lines.style("opacity", "1"),
+			texts.style("opacity", "1")
 		];
 	},
 
