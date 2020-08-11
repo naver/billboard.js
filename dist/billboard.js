@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200807150415
+ * @version 2.0.3-nightly-20200811150559
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10711,7 +10711,7 @@ function smoothLines(el, type) {
         texts = gridLines.x.select("text");
     return lines = (withTransition ? lines.transition() : lines).attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? width : xv).attr("y1", isRotated ? xv : 0).attr("y2", isRotated ? xv : height), texts = (withTransition ? texts.transition() : texts).attr("x", getGridTextX(!isRotated, width, height)).attr("y", xv).text(function (d) {
       return d.text;
-    }), [(withTransition ? lines.transition() : lines).style("opacity", "1"), (withTransition ? texts.transition() : texts).style("opacity", "1")];
+    }), [lines.style("opacity", "1"), texts.style("opacity", "1")];
   },
   initFocusGrid: function initFocusGrid() {
     var $$ = this,
@@ -16809,7 +16809,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200807150415",
+  version: "2.0.3-nightly-20200811150559",
 
   /**
    * Generate chart
@@ -16937,7 +16937,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200807150415
+ * @version 2.0.3-nightly-20200811150559
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
