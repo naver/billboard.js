@@ -5059,7 +5059,9 @@ var legend$1 = {
                     }
                     else {
                         api.toggle(id);
-                        !isTouch && $$.isTargetToShow(id) ? api.focus(id) : api.revert();
+                        select(this)
+                            .classed(CLASS.legendItemFocused, false)
+                            .style("opacity", null);
                     }
                 }
                 isTouch && $$.hideTooltip();

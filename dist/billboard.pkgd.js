@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200812150722
+ * @version 2.0.3-nightly-20200813150827
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -19809,11 +19809,12 @@ function brush_brush(dim) {
   }
 
   function emitter(that, args, clean) {
-    return !clean && that.__brush.emitter || new Emitter(that, args);
+    var emit = that.__brush.emitter;
+    return !emit || clean && emit.clean ? new Emitter(that, args, clean) : emit;
   }
 
-  function Emitter(that, args) {
-    this.that = that, this.args = args, this.state = that.__brush, this.active = 0;
+  function Emitter(that, args, clean) {
+    this.that = that, this.args = args, this.state = that.__brush, this.active = 0, this.clean = clean;
   }
 
   function started() {
@@ -24897,7 +24898,7 @@ function getFormat($$, typeValue, v) {
     }).style("visibility", function (id) {
       return $$.isLegendToShow(id) ? "visible" : "hidden";
     }), config.interaction_enabled && (item.style("cursor", "pointer").on("click", function (id) {
-      callFn(config.legend_item_onclick, api, id) || (on_event.altKey ? (api.hide(), api.show(id)) : (api.toggle(id), !isTouch && $$.isTargetToShow(id) ? api.focus(id) : api.revert())), isTouch && $$.hideTooltip();
+      callFn(config.legend_item_onclick, api, id) || (on_event.altKey ? (api.hide(), api.show(id)) : (api.toggle(id), src_select(this).classed(config_classes.legendItemFocused, !1).style("opacity", null))), isTouch && $$.hideTooltip();
     }), !isTouch && item.on("mouseout", function (id) {
       callFn(config.legend_item_onout, api, id) || (src_select(this).classed(config_classes.legendItemFocused, !1), hasGauge && $$.undoMarkOverlapped($$, "." + config_classes.gaugeValue), $$.api.revert());
     }).on("mouseover", function (id) {
@@ -38892,7 +38893,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200812150722",
+  version: "2.0.3-nightly-20200813150827",
 
   /**
    * Generate chart
@@ -39020,7 +39021,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200812150722
+ * @version 2.0.3-nightly-20200813150827
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
