@@ -63,7 +63,7 @@ const generate = args => {
  */
 const fireEvent = (element, name, options: any = {}, chart?: Chart) => {
 	const paddingLeft =
-		(chart && chart.internal.$el.main.node().transform.baseVal.getItem(0).matrix.e) || 0;
+		(chart && chart.$.main.node().transform.baseVal.getItem(0).matrix.e) || 0;
 
 	// adjust clientX/Y value
 	"clientX" in options && (options.clientX += paddingLeft);

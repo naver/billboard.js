@@ -555,4 +555,34 @@ describe("LEGEND", () => {
 			expect(tileColor[3]).to.be.equal("rgb(139, 0, 139)");
 		});
 	});
+
+	describe("legend opacity onclcik", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, -200, 100, 200, 190, 280],
+						["data2", 30, 200, 120, 400, 150, 150]
+					]
+				}
+			};
+		});
+
+		it("check legend item after click", () => {
+			const legend = chart.$.legend.select(`.${CLASS.legendItem}-data2`);
+			const {x, y} = legend.node().getBoundingClientRect();
+			
+			util.fireEvent(legend.node(), "mouseover", {
+				clientX: x,
+				clientY: y
+			}, chart);
+
+			util.fireEvent(legend.node(), "click", {
+				clientX: x,
+				clientY: y
+			}, chart);
+
+			expect(legend.classed(CLASS.legendItemFocused)).to.false;
+		});
+	});
 });
