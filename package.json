@@ -73,7 +73,7 @@
   "readmeFilename": "README.md",
   "dependencies": {
     "d3-axis": "^1.0.12",
-    "d3-brush": "^1.1.5",
+    "d3-brush": "^1.1.6",
     "d3-color": "^1.4.1",
     "d3-drag": "^1.2.5",
     "d3-dsv": "^1.2.0",
