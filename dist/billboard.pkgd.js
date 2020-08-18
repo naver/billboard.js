@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200816151004
+ * @version 2.0.3-nightly-20200818151033
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -24755,7 +24755,8 @@ function getFormat($$, typeValue, v) {
    * @private
    */
   updateLegendItemColor: function updateLegendItemColor(id, color) {
-    this.$el.legend.select("." + config_classes.legendItem + "-" + id + " line").style("stroke", color);
+    var legend = this.$el.legend;
+    legend && legend.select("." + config_classes.legendItem + "-" + id + " line").style("stroke", color);
   },
 
   /**
@@ -38893,7 +38894,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200816151004",
+  version: "2.0.3-nightly-20200818151033",
 
   /**
    * Generate chart
@@ -39021,7 +39022,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200816151004
+ * @version 2.0.3-nightly-20200818151033
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

@@ -4890,8 +4890,11 @@ var legend$1 = {
      * @private
      */
     updateLegendItemColor: function (id, color) {
-        this.$el.legend.select("." + CLASS.legendItem + "-" + id + " line")
-            .style("stroke", color);
+        var legend = this.$el.legend;
+        if (legend) {
+            legend.select("." + CLASS.legendItem + "-" + id + " line")
+                .style("stroke", color);
+        }
     },
     /**
      * Get the width of the legend
