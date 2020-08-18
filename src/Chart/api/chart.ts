@@ -101,7 +101,7 @@ export default {
 			window.removeEventListener("resize", $$.resizeFunction);
 			chart.classed("bb", false).html("");
 
-			// releasing references
+			// releasing own references
 			Object.keys(this).forEach(key => {
 				key === "internal" && Object.keys($$).forEach(k => {
 					$$[k] = null;
@@ -110,6 +110,11 @@ export default {
 				this[key] = null;
 				delete this[key];
 			});
+
+			// release prototype chains
+			for (const key in this) {
+				this[key] = () => {};
+			}
 		}
 
 		return null;
