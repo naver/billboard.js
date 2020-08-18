@@ -199,8 +199,12 @@ export default {
 	 * @private
 	 */
 	updateLegendItemColor(id: string, color: string): void {
-		this.$el.legend.select(`.${CLASS.legendItem}-${id} line`)
-			.style("stroke", color);
+		const {legend} = this.$el;
+
+		if (legend) {
+			legend.select(`.${CLASS.legendItem}-${id} line`)
+				.style("stroke", color);
+		}
 	},
 
 	/**
