@@ -103,6 +103,11 @@ describe("API chart", () => {
 				setTimeout(done, 500);
 			}, 500);
 		});
+
+		it("should not throw error when already destroyed", () => {
+			chart.destroy();
+			chart.destroy();
+		});
 	});
 
 	describe("config()", () => {

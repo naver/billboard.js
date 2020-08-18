@@ -88,9 +88,10 @@ export default {
 	 */
 	destroy(): null {
 		const $$ = this.internal;
-		const {$el: {chart, svg}} = $$;
 
 		if (notEmpty($$)) {
+			const {$el: {chart, svg}} = $$;
+
 			$$.callPluginHook("$willDestroy");
 			$$.charts.splice($$.charts.indexOf(this), 1);
 
