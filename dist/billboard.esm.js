@@ -8065,7 +8065,7 @@ var apiChart = {
             $$.resizeFunction.clear();
             win.removeEventListener("resize", $$.resizeFunction);
             chart.classed("bb", false).html("");
-            // releasing references
+            // releasing own references
             Object.keys(this).forEach(function (key) {
                 key === "internal" && Object.keys($$).forEach(function (k) {
                     $$[k] = null;
@@ -8073,6 +8073,10 @@ var apiChart = {
                 _this[key] = null;
                 delete _this[key];
             });
+            // release prototype chains
+            for (var key in this) {
+                this[key] = function () { };
+            }
         }
         return null;
     },

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200818151033
+ * @version 2.0.3-nightly-20200819151150
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -29064,11 +29064,13 @@ function loadConfig(config) {
         chart = _$$$$el.chart,
         svg = _$$$$el.svg;
 
-    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), svg.select("*").interrupt(), $$.resizeFunction.clear(), win.removeEventListener("resize", $$.resizeFunction), chart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
-      key === "internal" && Object.keys($$).forEach(function (k) {
-        $$[k] = null;
-      }), _this[key] = null, delete _this[key];
-    })), null;
+    if (notEmpty($$)) // release prototype chains
+      for (var _key in $$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), svg.select("*").interrupt(), $$.resizeFunction.clear(), win.removeEventListener("resize", $$.resizeFunction), chart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+        key === "internal" && Object.keys($$).forEach(function (k) {
+          $$[k] = null;
+        }), _this[key] = null, delete _this[key];
+      }), this) this[_key] = function () {};
+    return null;
   },
 
   /**
@@ -38894,7 +38896,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200818151033",
+  version: "2.0.3-nightly-20200819151150",
 
   /**
    * Generate chart
@@ -39022,7 +39024,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200818151033
+ * @version 2.0.3-nightly-20200819151150
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
