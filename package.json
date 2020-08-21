@@ -7,7 +7,6 @@
   "module": "dist/billboard.esm.js",
   "types": "types/index.d.ts",
   "scripts": {
-    "check-types": "tsc",
     "start": "webpack-dev-server --open",
     "start:plugin": "cross-env PLUGIN=true webpack-dev-server --open",
     "build": "npm run build:production && npm run build:packaged && npm run build:theme && npm run build:plugin && npm run build:esm",
@@ -20,8 +19,8 @@
     "build:packaged:analyzer": "cross-env ANALYZER=true npm run build:packaged",
     "build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MIN=true webpack",
     "release": "semantic-release",
-    "type-check": "tsc --noEmit",
     "lint": "eslint src --ext .ts",
+    "lint:types": "dtslint --onlyTestTsNext types",
     "loc": "cloc --by-file src",
     "test": "node --max-old-space-size=3072 ./node_modules/karma/bin/karma start",
     "test:chrome": "npm test -- --chrome",
@@ -37,7 +36,7 @@
   "husky": {
     "hooks": {
       "commit-msg": "commitlint -g ./config/commitlint.config.js -E HUSKY_GIT_PARAMS",
-      "pre-push": "npm run lint"
+      "pre-push": "npm run lint && npm run lint:types"
     }
   },
   "repository": {
@@ -77,7 +76,7 @@
     "d3-color": "^1.4.1",
     "d3-drag": "^1.2.5",
     "d3-dsv": "^1.2.0",
-    "d3-ease": "^1.0.6",
+    "d3-ease": "^1.0.7",
     "d3-interpolate": "^1.4.0",
     "d3-scale": "^2.2.2",
     "d3-selection": "^1.4.2",
@@ -137,6 +136,7 @@
     "d3-polygon": "^1.0.6",
     "d3-voronoi": "^1.1.4",
     "docdash": "^1.2.0",
+    "dtslint": "^3.7.0",
     "eslint": "^7.7.0",
     "eslint-config-naver": "^2.1.0",
     "eslint-loader": "^4.0.2",

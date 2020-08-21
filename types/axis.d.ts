@@ -24,7 +24,6 @@ export interface AxisConfigurationBase {
 	 * Set additional axes for Axis
 	 */
 	axes?: AxesConfiguration[];
-
 }
 
 export interface xAxisConfiguration extends AxisConfigurationBase {
