@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200819151150
+ * @version 2.0.3-nightly-20200821151340
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -13,7 +13,7 @@
  * - d3-color ^1.4.1
  * - d3-drag ^1.2.5
  * - d3-dsv ^1.2.0
- * - d3-ease ^1.0.6
+ * - d3-ease ^1.0.7
  * - d3-interpolate ^1.4.0
  * - d3-scale ^2.2.2
  * - d3-selection ^1.4.2
@@ -19425,7 +19425,7 @@ var polyInOut = function custom(e) {
 var pi = Math.PI,
     halfPi = pi / 2;
 function sinIn(t) {
-  return 1 - Math.cos(t * halfPi);
+  return +t === 1 ? 1 : 1 - Math.cos(t * halfPi);
 }
 function sinOut(t) {
   return Math.sin(t * halfPi);
@@ -19433,15 +19433,21 @@ function sinOut(t) {
 function sinInOut(t) {
   return (1 - Math.cos(pi * t)) / 2;
 }
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/math.js
+// tpmt is two power minus ten times t scaled to [0,1]
+function tpmt(x) {
+  return (Math.pow(2, -10 * x) - .0009765625) * 1.0009775171065494;
+}
 // CONCATENATED MODULE: ./node_modules/d3-ease/src/exp.js
+
 function expIn(t) {
-  return Math.pow(2, 10 * t - 10);
+  return tpmt(1 - +t);
 }
 function expOut(t) {
-  return 1 - Math.pow(2, -10 * t);
+  return 1 - tpmt(t);
 }
 function expInOut(t) {
-  return ((t *= 2) <= 1 ? Math.pow(2, 10 * t - 10) : 2 - Math.pow(2, 10 - 10 * t)) / 2;
+  return ((t *= 2) <= 1 ? tpmt(1 - t) : 2 - tpmt(t - 1)) / 2;
 }
 // CONCATENATED MODULE: ./node_modules/d3-ease/src/circle.js
 function circleIn(t) {
@@ -19477,14 +19483,14 @@ function bounceInOut(t) {
 var overshoot = 1.70158;
 var backIn = function custom(s) {
   function backIn(t) {
-    return t * t * ((s + 1) * t - s);
+    return (t = +t) * t * (s * (t - 1) + t);
   }
 
   return s = +s, backIn.overshoot = custom, backIn;
 }(overshoot);
 var backOut = function custom(s) {
   function backOut(t) {
-    return --t * t * ((s + 1) * t + s) + 1;
+    return --t * t * ((t + 1) * s + t) + 1;
   }
 
   return s = +s, backOut.overshoot = custom, backOut;
@@ -19497,12 +19503,13 @@ var backInOut = function custom(s) {
   return s = +s, backInOut.overshoot = custom, backInOut;
 }(overshoot);
 // CONCATENATED MODULE: ./node_modules/d3-ease/src/elastic.js
+
 var tau = 2 * Math.PI,
     amplitude = 1,
     period = .3;
-var elasticIn = function custom(a, p) {
+var elastic_elasticIn = function custom(a, p) {
   function elasticIn(t) {
-    return a * Math.pow(2, 10 * --t) * Math.sin((s - t) / p);
+    return a * tpmt(- --t) * Math.sin((s - t) / p);
   }
 
   var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
@@ -19512,9 +19519,9 @@ var elasticIn = function custom(a, p) {
     return custom(a, p);
   }, elasticIn;
 }(1, period);
-var elasticOut = function custom(a, p) {
+var elastic_elasticOut = function custom(a, p) {
   function elasticOut(t) {
-    return 1 - a * Math.pow(2, -10 * (t = +t)) * Math.sin((t + s) / p);
+    return 1 - a * tpmt(t = +t) * Math.sin((t + s) / p);
   }
 
   var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
@@ -19524,9 +19531,9 @@ var elasticOut = function custom(a, p) {
     return custom(a, p);
   }, elasticOut;
 }(1, period);
-var elasticInOut = function custom(a, p) {
+var elastic_elasticInOut = function custom(a, p) {
   function elasticInOut(t) {
-    return ((t = t * 2 - 1) < 0 ? a * Math.pow(2, 10 * t) * Math.sin((s - t) / p) : 2 - a * Math.pow(2, -10 * t) * Math.sin((s + t) / p)) / 2;
+    return ((t = t * 2 - 1) < 0 ? a * tpmt(-t) * Math.sin((s - t) / p) : 2 - a * tpmt(t) * Math.sin((s + t) / p)) / 2;
   }
 
   var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
@@ -23237,10 +23244,13 @@ function continuous(transform, untransform) {
   return transformer()(transform, untransform);
 }
 // CONCATENATED MODULE: ./node_modules/d3-format/src/formatDecimal.js
-// Computes the decimal coefficient and exponent of the specified number x with
+/* harmony default export */ var formatDecimal = (function (x) {
+  return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
+}); // Computes the decimal coefficient and exponent of the specified number x with
 // significant digits p, where x is positive and p is in [1, 21] or undefined.
-// For example, formatDecimal(1.23) returns ["123", 0].
-/* harmony default export */ var formatDecimal = (function (x, p) {
+// For example, formatDecimalParts(1.23) returns ["123", 0].
+
+function formatDecimalParts(x, p) {
   if ((i = (x = p ? x.toExponential(p - 1) : x.toExponential()).indexOf("e")) < 0) return null; // NaN, ±Infinity
 
   var i,
@@ -23248,11 +23258,11 @@ function continuous(transform, untransform) {
   // (e.g., 1.2e+3) or the form \de[-+]\d+ (e.g., 1e+3).
 
   return [coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient, +x.slice(i + 1)];
-});
+}
 // CONCATENATED MODULE: ./node_modules/d3-format/src/exponent.js
 
 /* harmony default export */ var src_exponent = (function (x) {
-  return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
+  return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
 });
 // CONCATENATED MODULE: ./node_modules/d3-format/src/formatGroup.js
 /* harmony default export */ var formatGroup = (function (grouping, thousands) {
@@ -23321,24 +23331,25 @@ FormatSpecifier.prototype.toString = function () {
 
 var prefixExponent;
 /* harmony default export */ var formatPrefixAuto = (function (x, p) {
-  var d = formatDecimal(x, p);
+  var d = formatDecimalParts(x, p);
   if (!d) return x + "";
   var coefficient = d[0],
       exponent = d[1],
       i = exponent - (prefixExponent = Math.max(-8, Math.min(8, Math.floor(exponent / 3))) * 3) + 1,
       n = coefficient.length;
-  return i === n ? coefficient : i > n ? coefficient + Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + Array(1 - i).join("0") + formatDecimal(x, Math.max(0, p + i - 1))[0]; // less than 1y!
+  return i === n ? coefficient : i > n ? coefficient + Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0]; // less than 1y!
 });
 // CONCATENATED MODULE: ./node_modules/d3-format/src/formatRounded.js
 
 /* harmony default export */ var formatRounded = (function (x, p) {
-  var d = formatDecimal(x, p);
+  var d = formatDecimalParts(x, p);
   if (!d) return x + "";
   var coefficient = d[0],
       exponent = d[1];
   return exponent < 0 ? "0." + Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + Array(exponent - coefficient.length + 2).join("0");
 });
 // CONCATENATED MODULE: ./node_modules/d3-format/src/formatTypes.js
+
 
 
 /* harmony default export */ var formatTypes = ({
@@ -23351,9 +23362,7 @@ var prefixExponent;
   "c": function c(x) {
     return x + "";
   },
-  "d": function d(x) {
-    return Math.round(x).toString(10);
-  },
+  "d": formatDecimal,
   "e": function e(x, p) {
     return x.toExponential(p);
   },
@@ -38896,7 +38905,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200819151150",
+  version: "2.0.3-nightly-20200821151340",
 
   /**
    * Generate chart
@@ -39024,7 +39033,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200819151150
+ * @version 2.0.3-nightly-20200821151340
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
