@@ -6,8 +6,8 @@ import {Plugin} from "../plugin";
 import {BubblecompareOptions} from "./options";
 
 export default class Bubblecompare extends Plugin {
-    /**
-     * Generate stanford diagram
-     */
-    constructor(options: BubblecompareOptions);
+	/**
+	 * Generate stanford diagram
+	 */
+	constructor(options: BubblecompareOptions);
 }
