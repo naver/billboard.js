@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200821151340
+ * @version 2.0.3-nightly-20200824151603
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5785,7 +5785,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     var isWithin,
         $$ = this,
         shape = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(that);
-    return $$.isTargetToShow(d.id) ? $$.hasValidPointType(that.nodeName) ? isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) : $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0) : that.nodeName === "path" && (isWithin = !shape.classed(config_classes.bar) || $$.isWithinBar(that)) : isWithin = !1, isWithin;
+    return $$.isTargetToShow(d.id) ? $$.hasValidPointType && $$.hasValidPointType(that.nodeName) ? isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) : $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0) : that.nodeName === "path" && (isWithin = !shape.classed(config_classes.bar) || $$.isWithinBar(that)) : isWithin = !1, isWithin;
   },
   getInterpolate: function getInterpolate(d) {
     var $$ = this,
@@ -10236,10 +10236,10 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         config = $$.config,
         state = $$.state,
         main = $$.$el.main;
-    if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) return void (state.cancelClick && (state.cancelClick = !1));
+    if ($$.hasArcType() || state.cancelClick) return void (state.cancelClick && (state.cancelClick = !1));
     var index = d.index;
     main.selectAll("." + config_classes.shape + "-" + index).each(function (d2) {
-      (config.data_selection_grouped || $$.isWithinShape(this, d2)) && ($$.toggleShape(this, d2, index), config.data_onclick.bind($$.api)(d2, this));
+      (config.data_selection_grouped || $$.isWithinShape(this, d2)) && ($$.toggleShape && $$.toggleShape(this, d2, index), config.data_onclick.bind($$.api)(d2, this));
     });
   },
 
@@ -16812,7 +16812,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200821151340",
+  version: "2.0.3-nightly-20200824151603",
 
   /**
    * Generate chart
@@ -16940,7 +16940,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200821151340
+ * @version 2.0.3-nightly-20200824151603
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

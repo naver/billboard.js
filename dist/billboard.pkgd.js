@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200821151340
+ * @version 2.0.3-nightly-20200824151603
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -14051,6 +14051,8 @@ function formatLocale(locale) {
     "d": formatDayOfMonth,
     "e": formatDayOfMonth,
     "f": formatMicroseconds,
+    "g": formatYearISO,
+    "G": formatFullYearISO,
     "H": formatHour24,
     "I": formatHour12,
     "j": formatDayOfYear,
@@ -14095,6 +14097,8 @@ function formatLocale(locale) {
     "d": formatUTCDayOfMonth,
     "e": formatUTCDayOfMonth,
     "f": formatUTCMicroseconds,
+    "g": formatUTCYearISO,
+    "G": formatUTCFullYearISO,
     "H": formatUTCHour24,
     "I": formatUTCHour12,
     "j": formatUTCDayOfYear,
@@ -14145,6 +14149,8 @@ function formatLocale(locale) {
     "d": parseDayOfMonth,
     "e": parseDayOfMonth,
     "f": parseMicroseconds,
+    "g": parseYear,
+    "G": parseFullYear,
     "H": parseHour24,
     "I": parseHour24,
     "j": parseDayOfYear,
@@ -14378,9 +14384,13 @@ function formatWeekNumberSunday(d, p) {
   return pad(sunday.count(src_year(d) - 1, d), p, 2);
 }
 
-function formatWeekNumberISO(d, p) {
+function dISO(d) {
   var day = d.getDay();
-  return d = day >= 4 || day === 0 ? thursday(d) : thursday.ceil(d), pad(thursday.count(src_year(d), d) + (src_year(d).getDay() === 4), p, 2);
+  return day >= 4 || day === 0 ? thursday(d) : thursday.ceil(d);
+}
+
+function formatWeekNumberISO(d, p) {
+  return d = dISO(d), pad(thursday.count(src_year(d), d) + (src_year(d).getDay() === 4), p, 2);
 }
 
 function formatWeekdayNumberSunday(d) {
@@ -14395,8 +14405,17 @@ function locale_formatYear(d, p) {
   return pad(d.getFullYear() % 100, p, 2);
 }
 
+function formatYearISO(d, p) {
+  return d = dISO(d), pad(d.getFullYear() % 100, p, 2);
+}
+
 function formatFullYear(d, p) {
   return pad(d.getFullYear() % 1e4, p, 4);
+}
+
+function formatFullYearISO(d, p) {
+  var day = d.getDay();
+  return d = day >= 4 || day === 0 ? thursday(d) : thursday.ceil(d), pad(d.getFullYear() % 1e4, p, 4);
 }
 
 function formatZone(d) {
@@ -14449,9 +14468,13 @@ function formatUTCWeekNumberSunday(d, p) {
   return pad(utcSunday.count(src_utcYear(d) - 1, d), p, 2);
 }
 
-function formatUTCWeekNumberISO(d, p) {
+function UTCdISO(d) {
   var day = d.getUTCDay();
-  return d = day >= 4 || day === 0 ? utcThursday(d) : utcThursday.ceil(d), pad(utcThursday.count(src_utcYear(d), d) + (src_utcYear(d).getUTCDay() === 4), p, 2);
+  return day >= 4 || day === 0 ? utcThursday(d) : utcThursday.ceil(d);
+}
+
+function formatUTCWeekNumberISO(d, p) {
+  return d = UTCdISO(d), pad(utcThursday.count(src_utcYear(d), d) + (src_utcYear(d).getUTCDay() === 4), p, 2);
 }
 
 function formatUTCWeekdayNumberSunday(d) {
@@ -14466,8 +14489,17 @@ function formatUTCYear(d, p) {
   return pad(d.getUTCFullYear() % 100, p, 2);
 }
 
+function formatUTCYearISO(d, p) {
+  return d = UTCdISO(d), pad(d.getUTCFullYear() % 100, p, 2);
+}
+
 function formatUTCFullYear(d, p) {
   return pad(d.getUTCFullYear() % 1e4, p, 4);
+}
+
+function formatUTCFullYearISO(d, p) {
+  var day = d.getUTCDay();
+  return d = day >= 4 || day === 0 ? utcThursday(d) : utcThursday.ceil(d), pad(d.getUTCFullYear() % 1e4, p, 4);
 }
 
 function formatUTCZone() {
@@ -27414,7 +27446,7 @@ function ascending_sum(series) {
     var isWithin,
         $$ = this,
         shape = src_select(that);
-    return $$.isTargetToShow(d.id) ? $$.hasValidPointType(that.nodeName) ? isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) : $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0) : that.nodeName === "path" && (isWithin = !shape.classed(config_classes.bar) || $$.isWithinBar(that)) : isWithin = !1, isWithin;
+    return $$.isTargetToShow(d.id) ? $$.hasValidPointType && $$.hasValidPointType(that.nodeName) ? isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) : $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0) : that.nodeName === "path" && (isWithin = !shape.classed(config_classes.bar) || $$.isWithinBar(that)) : isWithin = !1, isWithin;
   },
   getInterpolate: function getInterpolate(d) {
     var $$ = this,
@@ -31975,10 +32007,10 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         config = $$.config,
         state = $$.state,
         main = $$.$el.main;
-    if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) return void (state.cancelClick && (state.cancelClick = !1));
+    if ($$.hasArcType() || state.cancelClick) return void (state.cancelClick && (state.cancelClick = !1));
     var index = d.index;
     main.selectAll("." + config_classes.shape + "-" + index).each(function (d2) {
-      (config.data_selection_grouped || $$.isWithinShape(this, d2)) && ($$.toggleShape(this, d2, index), config.data_onclick.bind($$.api)(d2, this));
+      (config.data_selection_grouped || $$.isWithinShape(this, d2)) && ($$.toggleShape && $$.toggleShape(this, d2, index), config.data_onclick.bind($$.api)(d2, this));
     });
   },
 
@@ -38905,7 +38937,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200821151340",
+  version: "2.0.3-nightly-20200824151603",
 
   /**
    * Generate chart
@@ -39033,7 +39065,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200821151340
+ * @version 2.0.3-nightly-20200824151603
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

@@ -5970,7 +5970,7 @@ var shape = {
         if (!$$.isTargetToShow(d.id)) {
             isWithin = false;
         }
-        else if ($$.hasValidPointType(that.nodeName)) {
+        else if ($$.hasValidPointType && $$.hasValidPointType(that.nodeName)) {
             isWithin = $$.isStepType(d) ?
                 $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) :
                 $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);
@@ -11481,7 +11481,7 @@ var eventrect = {
     clickHandlerForSingleX: function (d, ctx) {
         var $$ = ctx;
         var config = $$.config, state = $$.state, main = $$.$el.main;
-        if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
+        if ($$.hasArcType() || state.cancelClick) {
             state.cancelClick && (state.cancelClick = false);
             return;
         }
@@ -11489,7 +11489,7 @@ var eventrect = {
         main.selectAll("." + CLASS.shape + "-" + index)
             .each(function (d2) {
             if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
-                $$.toggleShape(this, d2, index);
+                $$.toggleShape && $$.toggleShape(this, d2, index);
                 config.data_onclick.bind($$.api)(d2, this);
             }
         });
