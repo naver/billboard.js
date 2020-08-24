@@ -22,6 +22,6 @@ updates:
       - dependency-name: "d3-shape"
       - dependency-name: "d3-time-format"
       - dependency-name: "d3-transition"
-      - dependency-name: "d3-zoom":
+      - dependency-name: "d3-zoom"
       - dependency-name: "d3-format"
       - dependency-name: "d3-polygon"
