@@ -3472,27 +3472,26 @@ var data$1 = {
     convertValuesToStep: function (values) {
         var $$ = this;
         var axis = $$.axis, config = $$.config;
-        var isRotated = config.axis_rotated;
         var stepType = config.line_step_type;
         var isCategorized = axis ? axis.isCategorized() : false;
         var converted = isArray(values) ? values.concat() : [values];
-        if (!isRotated && !isCategorized) {
+        if (!(isCategorized || /step\-(after|before)/.test(stepType))) {
             return values;
         }
         // insert & append cloning first/last value to be fully rendered covering on each gap sides
-        var id = converted[0].id;
-        // insert
-        var x = converted[0].x - 1;
-        var value = converted[0].value;
-        isCategorized && converted.unshift({ x: x, value: value, id: id });
-        stepType === "step-after" &&
-            converted.unshift({ x: x - 1, value: value, id: id });
-        // append
-        x = converted.length - 1;
-        value = converted[x].value;
-        isCategorized && converted.push({ x: x, value: value, id: id });
-        stepType === "step-before" &&
-            converted.push({ x: x + 1, value: value, id: id });
+        var head = converted[0];
+        var tail = converted[converted.length - 1];
+        var id = head.id;
+        var x = head.x;
+        // insert head
+        converted.unshift({ x: --x, value: head.value, id: id });
+        isCategorized && stepType === "step-after" &&
+            converted.unshift({ x: --x, value: head.value, id: id });
+        // append tail
+        x = tail.x;
+        converted.push({ x: ++x, value: tail.value, id: id });
+        isCategorized && stepType === "step-before" &&
+            converted.push({ x: ++x, value: tail.value, id: id });
         return converted;
     },
     convertValuesToRange: function (values) {

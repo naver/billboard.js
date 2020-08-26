@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200824151603
+ * @version 2.0.3-nightly-20200826151718
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -21864,31 +21864,30 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
     var $$ = this,
         axis = $$.axis,
         config = $$.config,
-        isRotated = config.axis_rotated,
         stepType = config.line_step_type,
         isCategorized = !!axis && axis.isCategorized(),
         converted = isArray(values) ? values.concat() : [values];
-    if (!isRotated && !isCategorized) return values; // insert & append cloning first/last value to be fully rendered covering on each gap sides
+    if (!(isCategorized || /step\-(after|before)/.test(stepType))) return values; // insert & append cloning first/last value to be fully rendered covering on each gap sides
 
-    var id = converted[0].id,
-        x = converted[0].x - 1,
-        value = converted[0].value; // insert
-
-    return isCategorized && converted.unshift({
-      x: x,
-      value: value,
+    var head = converted[0],
+        tail = converted[converted.length - 1],
+        id = head.id,
+        x = head.x;
+    return converted.unshift({
+      x: --x,
+      value: head.value,
       id: id
-    }), stepType === "step-after" && converted.unshift({
-      x: x - 1,
-      value: value,
+    }), isCategorized && stepType === "step-after" && converted.unshift({
+      x: --x,
+      value: head.value,
       id: id
-    }), x = converted.length - 1, value = converted[x].value, isCategorized && converted.push({
-      x: x,
-      value: value,
+    }), x = tail.x, converted.push({
+      x: ++x,
+      value: tail.value,
       id: id
-    }), stepType === "step-before" && converted.push({
-      x: x + 1,
-      value: value,
+    }), isCategorized && stepType === "step-before" && converted.push({
+      x: ++x,
+      value: tail.value,
       id: id
     }), converted;
   },
@@ -38937,7 +38936,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200824151603",
+  version: "2.0.3-nightly-20200826151718",
 
   /**
    * Generate chart
@@ -39065,7 +39064,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200824151603
+ * @version 2.0.3-nightly-20200826151718
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
