@@ -719,37 +719,33 @@ export default {
 	convertValuesToStep(values) {
 		const $$ = this;
 		const {axis, config} = $$;
-
-		const isRotated = config.axis_rotated;
 		const stepType = config.line_step_type;
 		const isCategorized = axis ? axis.isCategorized() : false;
 
 		const converted = isArray(values) ? values.concat() : [values];
 
-		if (!isRotated && !isCategorized) {
+		if (!(isCategorized || /step\-(after|before)/.test(stepType))) {
 			return values;
 		}
 
 		// insert & append cloning first/last value to be fully rendered covering on each gap sides
-		const id = converted[0].id;
+		const head = converted[0];
+		const tail = converted[converted.length - 1];
+		const {id} = head;
+		let {x} = head;
 
-		// insert
-		let x = converted[0].x - 1;
-		let value = converted[0].value;
+		// insert head
+		converted.unshift({x: --x, value: head.value, id});
 
-		isCategorized && converted.unshift({x, value, id});
+		isCategorized && stepType === "step-after" &&
+			converted.unshift({x: --x, value: head.value, id});
 
-		stepType === "step-after" &&
-			converted.unshift({x: x - 1, value, id});
+		// append tail
+		x = tail.x;
+		converted.push({x: ++x, value: tail.value, id});
 
-		// append
-		x = converted.length - 1;
-		value = converted[x].value;
-
-		isCategorized && converted.push({x, value, id});
-
-		stepType === "step-before" &&
-			converted.push({x: x + 1, value, id});
+		isCategorized && stepType === "step-before" &&
+			converted.push({x: ++x, value: tail.value, id});
 
 		return converted;
 	},
