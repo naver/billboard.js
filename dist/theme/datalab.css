@@ -7,28 +7,29 @@
  * 
  * @version 2.0.3-nightly-20200827151759
  */
-/*-- Insight Theme --*/
+/*-- Datalab Theme --*/
 /*-- Default color pattern --*/
 .bb-color-pattern {
-  background-image: url("#00c73c;#fa7171;#2ad0ff;#7294ce;#e3e448;#cc7e6e;#fb6ccf;#c98dff;#4aea99;#bbbbbb;"); }
+  background-image: url("#2ac4b3;#feaf29;#ff617b;#73a2ef;#b180d0;#3064cf;#d0a45f;#8aaec7;#ef65a2;#8aaec7;"); }
 
 /*-- Chart --*/
 .bb svg {
   font-size: 12px;
-  font-family: sans-serif, Arial, "nanumgothic", "Dotum";
+  font-family: "Sans Pro", Arial, sans-serif, "nanumgothic", "Dotum";
   line-height: 1; }
 
 .bb path, .bb line {
   fill: none;
-  stroke: #c4c4c4; }
+  stroke: #000; }
 
 .bb text, .bb .bb-button {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  -webkit-font-smoothing: antialiased;
   user-select: none;
   fill: #555;
-  font-size: 11px; }
+  font-size: 12px; }
 
 .bb-legend-item-title,
 .bb-xgrid-focus,
@@ -40,7 +41,8 @@
 
 /*-- Axis --*/
 .bb-axis {
-  shape-rendering: crispEdges; }
+  shape-rendering: crispEdges;
+  stroke-width: 0.5px; }
 
 .bb-axis-y text, .bb-axis-y2 text {
   fill: #737373; }
@@ -68,25 +70,24 @@
 
 /*-- Line --*/
 .bb-line {
-  stroke-width: 1px; }
+  stroke-width: 0.7px; }
 
 /*-- Point --*/
-.bb-circle._expanded_ {
-  fill: #fff !important;
-  stroke-width: 2px;
-  stroke: red; }
+.bb-circle {
+  fill: #fff !important; }
 
-rect.bb-circle._expanded_, use.bb-circle._expanded_ {
-  stroke-width: 1px; }
+.bb-circle._expanded_ {
+  stroke-width: 2px; }
 
 .bb-selected-circle {
   fill: white;
   stroke-width: 2px; }
 
 /*-- Bar --*/
-.bb-bar {
-  stroke-width: 0; }
-  .bb-bar._expanded_ {
+path.bb-bar {
+  stroke-width: 1px;
+  stroke: #000; }
+  path.bb-bar._expanded_ {
     fill-opacity: 0.75; }
 
 /*-- Focus --*/
@@ -115,10 +116,14 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
 .bb-brush .extent {
   fill-opacity: 0.1; }
 
-/*-- Select - Drag --*/
 /*-- Legend --*/
 .bb-legend-item {
   user-select: none; }
+  .bb-legend-item line.bb-legend-item-tile {
+    stroke-linecap: round;
+    stroke-width: 8px;
+    transform: translate(7px, 1px);
+    stroke-dasharray: 1 20; }
 
 .bb-legend-item-hidden {
   opacity: 0.15; }
@@ -136,38 +141,43 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
 /*-- Tooltip --*/
 .bb-tooltip-container {
   z-index: 10;
-  font-family: sans-serif, Arial, "nanumgothic", "Dotum";
+  font-family: "Sans Pro", Arial, sans-serif, "nanumgothic", "Dotum";
   user-select: none; }
 
 .bb-tooltip {
   border-collapse: separate;
   border-spacing: 0;
+  border-radius: 2px;
   empty-cells: show;
   border: 1px solid #999;
   background-color: #fff;
   text-align: left;
-  font-size: 11px; }
+  font-size: 11px;
+  -webkit-font-smoothing: antialiased; }
   .bb-tooltip th {
-    font-size: 12px;
-    padding: 4px 8px;
+    font-size: 13px;
+    padding: 2px 8px;
     text-align: left;
-    border-bottom: solid 1px #eee; }
+    border-bottom: solid 2px #ff2d2d;
+    background-color: #0b00b1;
+    color: #fffdfd; }
   .bb-tooltip td {
-    padding: 4px 6px;
-    background-color: #fff; }
+    padding: 4px 6px; }
     .bb-tooltip td:first-child {
       padding-left: 8px; }
     .bb-tooltip td:last-child {
       padding-right: 8px; }
     .bb-tooltip td > span, .bb-tooltip td > svg {
       display: inline-block;
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       margin-right: 6px;
-      border-radius: 5px;
+      border: solid 1px #000;
+      border-radius: 3px;
       vertical-align: middle; }
     .bb-tooltip td.value {
-      border-left: 1px solid transparent; }
+      border-left: 1px solid transparent;
+      text-align: right; }
   .bb-tooltip .bb-tooltip-title {
     display: inline-block;
     color: #aaa;
@@ -207,13 +217,13 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
 
 .bb-chart-arcs .bb-chart-arcs-gauge-unit {
   fill: #000;
-  font-size: 16px; }
+  font-size: 18px; }
 
 .bb-chart-arcs .bb-chart-arcs-gauge-min, .bb-chart-arcs .bb-chart-arcs-gauge-max {
   fill: #777; }
 
 .bb-chart-arcs .bb-chart-arcs-title {
-  font-size: 16px !important;
+  font-size: 18px !important;
   fill: #000;
   font-weight: 600; }
 
@@ -222,10 +232,11 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
   stroke-width: 0; }
 
 .bb-chart-arc .bb-gauge-value {
-  fill: #000; }
+  fill: #3b6969; }
 
 .bb-chart-arc path {
-  stroke: #fff; }
+  stroke: #000;
+  stroke-width: 0.5px; }
 
 .bb-chart-arc rect {
   stroke: #fff;
@@ -233,7 +244,7 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
 
 .bb-chart-arc text {
   fill: #fff;
-  font-size: 13px; }
+  font-size: 14px; }
 
 /*-- Radar --*/
 .bb-chart-radars .bb-levels polygon {
@@ -254,7 +265,7 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
 
 .bb-chart-radars .bb-shapes polygon {
   fill-opacity: .2;
-  stroke-width: 1px; }
+  stroke-width: 0.7px; }
 
 /*-- Button --*/
 .bb-button {
