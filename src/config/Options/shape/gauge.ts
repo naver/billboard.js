@@ -24,6 +24,13 @@ export default {
 	 * @property {number} [gauge.min=0] Set min value of the gauge.
 	 * @property {number} [gauge.max=100] Set max value of the gauge.
 	 * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
+	 * **Limitations:**
+	 * - when 'gauge.fullCircle=false': -1 * Math.PI / 2 <== startingAngle <== Math.PI / 2
+	 * - 'startingAngle >== -1 * Math.PI / 2' defaults to -1 * Math.PI / 2
+	 * - 'startingAngle <== Math.PI / 2' defaults to Math.PI / 2
+	 * - when 'gauge.fullCircle=true':  -2 * Math.PI <== startingAngle <== 2 * Math.PI
+	 * - 'startingAngle >== -2 * Math.PI' defaults to -2 * Math.PI
+	 * - 'startingAngle <== 2 * Math.PI' defaults to 2 * Math.PI
 	 * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100. Negative value will draw the arc counterclockwise!
 	 * **Limitations:**
 	 * - -100 <== arcLength (in percent) <== 100
@@ -77,7 +84,7 @@ export default {
 	 *      units: "%",
 	 *      width: 10,
 	 *      startingAngle: -1 * Math.PI / 2,
-	 *      arcLength: 100, // value range: -100 to 100, < -100 defaults to -100 and > 100 defaults to 100
+	 *      arcLength: 100,
 	 *      arcs: {
 	 *          minWidth: 5
 	 *      }

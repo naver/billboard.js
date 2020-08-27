@@ -115,6 +115,27 @@ export default {
 		}
 	},
 
+	getStartAngle() {
+		const $$ = this;
+		const {config} = $$;
+		const startAngle = config.gauge_startingAngle;
+		const isFullCircle = config.gauge_fullCircle;
+		const defaultStartAngle = -1 * Math.PI / 2;
+		const defaultEndAngle = Math.PI / 2;
+
+		if (!isFullCircle && startAngle <= defaultStartAngle) {
+			return defaultStartAngle;
+		} else if (!isFullCircle && startAngle >= defaultEndAngle) {
+			return defaultEndAngle;
+		} else if (startAngle > Math.PI) {
+			return Math.PI;
+		} else if (startAngle < -1 * Math.PI) {
+			return Math.PI;
+		} else {
+			return startAngle;
+		}
+	},
+
 	updateAngle(dValue) {
 		const $$ = this;
 		const {config, state} = $$;
@@ -126,8 +147,8 @@ export default {
 			return null;
 		}
 
-		const gStart = config.gauge_startingAngle;
-		const radius = config.gauge_fullCircle ? $$.getArcLength() : Math.PI;
+		const gStart = $$.getStartAngle();
+		const radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
 
 		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
 			// to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
@@ -767,7 +788,7 @@ export default {
 
 		if (hasGauge) {
 			const isFullCircle = config.gauge_fullCircle;
-			const startAngle = isFullCircle ? config.gauge_startingAngle : -1 * Math.PI / 2;
+			const startAngle = $$.getStartAngle();
 			const endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
 
 			isFullCircle && text && text.attr("dy", `${hasMultiArcGauge ? 0 : Math.round(state.radius / 14)}`);
