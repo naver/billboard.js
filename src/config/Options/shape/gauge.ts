@@ -24,6 +24,11 @@ export default {
 	 * @property {number} [gauge.min=0] Set min value of the gauge.
 	 * @property {number} [gauge.max=100] Set max value of the gauge.
 	 * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
+	 * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100. Negative value will draw the arc counterclockwise!
+	 * **Limitations:**
+	 * - -100 <== arcLength (in percent) <== 100
+	 * - 'arcLength < -100' defaults to -100
+	 * - 'arcLength > 100' defaults to 100
 	 * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
 	 * @property {string} [gauge.units] Set units of the gauge.
 	 * @property {number} [gauge.width] Set width of gauge chart.
@@ -71,6 +76,8 @@ export default {
 	 *      title: "Title Text",
 	 *      units: "%",
 	 *      width: 10,
+	 *      startingAngle: -1 * Math.PI / 2,
+	 *      arcLength: 100, // value range: -100 to 100, < -100 defaults to -100 and > 100 defaults to 100
 	 *      arcs: {
 	 *          minWidth: 5
 	 *      }
@@ -86,6 +93,7 @@ export default {
 	gauge_max: 100,
 	gauge_type: "single",
 	gauge_startingAngle: -1 * Math.PI / 2,
+	gauge_arcLength: 100,
 	gauge_title: "",
 	gauge_units: <string|undefined> undefined,
 	gauge_width: <number|undefined> undefined,

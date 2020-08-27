@@ -101,6 +101,20 @@ export default {
 		$$.svgArcExpanded = $$.getSvgArcExpanded();
 	},
 
+	getArcLength() {
+		const $$ = this;
+		const {config} = $$;
+		const arcLengthInPercent = config.gauge_arcLength * 3.6;
+
+		if (arcLengthInPercent < -360) {
+			return -2 * Math.PI;
+		} else if (arcLengthInPercent > 360) {
+			return 2 * Math.PI;
+		} else {
+			return (2 * (arcLengthInPercent / 360)) * Math.PI;
+		}
+	},
+
 	updateAngle(dValue) {
 		const $$ = this;
 		const {config, state} = $$;
@@ -112,8 +126,8 @@ export default {
 			return null;
 		}
 
-		const radius = Math.PI * (config.gauge_fullCircle ? 2 : 1);
 		const gStart = config.gauge_startingAngle;
+		const radius = config.gauge_fullCircle ? $$.getArcLength() : Math.PI;
 
 		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
 			// to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
@@ -753,10 +767,10 @@ export default {
 
 		if (hasGauge) {
 			const isFullCircle = config.gauge_fullCircle;
-			const startAngle = -1 * Math.PI / 2;
-			const endAngle = (isFullCircle ? -4 : -1) * startAngle;
+			const startAngle = isFullCircle ? config.gauge_startingAngle : -1 * Math.PI / 2;
+			const endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
 
-			isFullCircle && text && text.attr("dy", `${Math.round(state.radius / 14)}`);
+			isFullCircle && text && text.attr("dy", `${hasMultiArcGauge ? 0 : Math.round(state.radius / 14)}`);
 
 			let backgroundArc = $$.$el.arcs.select(
 				`${hasMultiArcGauge ? "g" : ""}.${CLASS.chartArcsBackground}`

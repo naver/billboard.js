@@ -851,9 +851,10 @@ export default {
 
 					// otherwise, based on the rendered angle value
 				} else {
-					ratio = (d.endAngle - d.startAngle) / (
-						Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2)
-					);
+					const gaugeArcLength = config.gauge_fullCircle ? $$.getArcLength() : Math.PI;
+					const arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
+
+					ratio = (d.endAngle - d.startAngle) / arcLength;
 				}
 			} else if (type === "index") {
 				const dataValues = api.data.values.bind(api);
