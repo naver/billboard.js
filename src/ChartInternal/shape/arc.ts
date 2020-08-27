@@ -650,7 +650,63 @@ export default {
 		// bind arc events
 		hasInteraction && $$.bindArcEvent(mainArc);
 
+		$$.hasType("gauge") && $$.redrawBackgroundArcs();
+
 		$$.redrawArcText(duration);
+	},
+
+	redrawBackgroundArcs() {
+		const $$ = this;
+		const {config, state} = $$;
+		const hasMultiArcGauge = $$.hasMultiArcGauge();
+		const isFullCircle = config.gauge_fullCircle;
+
+		const startAngle = $$.getStartAngle();
+		const endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
+
+		let backgroundArc = $$.$el.arcs.select(
+			`${hasMultiArcGauge ? "g" : ""}.${CLASS.chartArcsBackground}`
+		);
+
+		if (hasMultiArcGauge) {
+			let index = 0;
+
+			backgroundArc = backgroundArc
+				.selectAll(`path.${CLASS.chartArcsBackground}`)
+				.data($$.data.targets);
+
+			backgroundArc.enter()
+				.append("path")
+				.attr("class", (d, i) => `${CLASS.chartArcsBackground} ${CLASS.chartArcsBackground}-${i}`)
+				.merge(backgroundArc)
+				.style("fill", (config.gauge_background) || null)
+				.attr("d", d1 => {
+					if (state.hiddenTargetIds.indexOf(d1.id) >= 0) {
+						return "M 0 0";
+					}
+
+					const d = {
+						data: [{value: config.gauge_max}],
+						startAngle,
+						endAngle,
+						index: index++
+					};
+
+					return $$.getArc(d, true, true);
+				});
+
+			backgroundArc.exit().remove();
+		} else {
+			backgroundArc.attr("d", () => {
+				const d = {
+					data: [{value: config.gauge_max}],
+					startAngle,
+					endAngle
+				};
+
+				return $$.getArc(d, true, true);
+			});
+		}
 	},
 
 	bindArcEvent(arc): void {
@@ -788,54 +844,8 @@ export default {
 
 		if (hasGauge) {
 			const isFullCircle = config.gauge_fullCircle;
-			const startAngle = $$.getStartAngle();
-			const endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
 
 			isFullCircle && text && text.attr("dy", `${hasMultiArcGauge ? 0 : Math.round(state.radius / 14)}`);
-
-			let backgroundArc = $$.$el.arcs.select(
-				`${hasMultiArcGauge ? "g" : ""}.${CLASS.chartArcsBackground}`
-			);
-
-			if (hasMultiArcGauge) {
-				let index = 0;
-
-				backgroundArc = backgroundArc
-					.selectAll(`path.${CLASS.chartArcsBackground}`)
-					.data($$.data.targets);
-
-				backgroundArc.enter()
-					.append("path")
-					.attr("class", (d, i) => `${CLASS.chartArcsBackground} ${CLASS.chartArcsBackground}-${i}`)
-					.style("fill", (config.gauge_background) || null)
-					.merge(backgroundArc)
-					.attr("d", d1 => {
-						if (state.hiddenTargetIds.indexOf(d1.id) >= 0) {
-							return "M 0 0";
-						}
-
-						const d = {
-							data: [{value: config.gauge_max}],
-							startAngle,
-							endAngle,
-							index: index++
-						};
-
-						return $$.getArc(d, true, true);
-					});
-
-				backgroundArc.exit().remove();
-			} else {
-				backgroundArc.attr("d", () => {
-					const d = {
-						data: [{value: config.gauge_max}],
-						startAngle,
-						endAngle
-					};
-
-					return $$.getArc(d, true, true);
-				});
-			}
 
 			arcs.select(`.${CLASS.chartArcsGaugeUnit}`)
 				.attr("dy", ".75em")
