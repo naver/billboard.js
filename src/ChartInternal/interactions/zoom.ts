@@ -73,7 +73,7 @@ export default {
 		};
 
 		// @ts-ignore
-		zoom.updateScaleExtent = function(): zoom {
+		zoom.updateScaleExtent = function() {
 			const ratio = diffDomain($$.scale.x.orgDomain()) / diffDomain($$.getZoomDomain());
 			const extent = this.orgScaleExtent();
 
