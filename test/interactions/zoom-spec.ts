@@ -101,21 +101,21 @@ describe("ZOOM", function() {
 		});
 
 		it("check for data zoom", () => {
-			const main = chart.$.main;
-			const xValue = +main.select(`.${CLASS.eventRect}-2`).attr("x");
+			const {coords} = chart.internal.state.eventReceiver;
+			const xValue = coords[2].x;
 
 			// when
 			chart.zoom([0,3]);  // zoom in
 
-			expect(+main.select(`.${CLASS.eventRect}-2`).attr("x")).to.be.above(xValue);
+			expect(coords[2].x).to.be.above(xValue);
 		});
 
 		it("check for zoom event callbacks", done => {
-			const main = chart.$.main;
-			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
+			const {$el: {eventRect}} = chart.internal;
+			const rect = eventRect.node();
 
 			new Promise((resolve, reject) => {
-				util.fireEvent(eventRect, "mousedown", {
+				util.fireEvent(rect, "mousedown", {
 					clientX: 100,
 					clientY: 150
 				}, chart);
@@ -127,7 +127,7 @@ describe("ZOOM", function() {
 						if (spyOnZoomStart.called) {
 							expect(spyOnZoomStart.args[0][0].type).to.be.equal("mousedown");
 
-							util.fireEvent(eventRect, "mousemove", {
+							util.fireEvent(rect, "mousemove", {
 								clientX: 100,
 								clientY: 150
 							}, chart);
@@ -144,7 +144,7 @@ describe("ZOOM", function() {
 						if (spyOnZoom.called) {
 							expect(spyOnZoom.args[0][0]).to.be.deep.equal([0, 3]);
 
-							util.fireEvent(eventRect, "mouseup", {
+							util.fireEvent(rect, "mouseup", {
 								clientX: 100,
 								clientY: 150
 							}, chart);
@@ -167,13 +167,13 @@ describe("ZOOM", function() {
 		});
 
 		it("check for data zoom", () => {
-			const main = chart.$.main;
-			const xValue = +main.select(`.${CLASS.eventRect}-2`).attr("x");
+			const {coords} = chart.internal.state.eventReceiver;
+			const xValue = coords[2].x;
 
 			// when
 			chart.zoom([0,3]);  // zoom in
 
-			expect(+main.select(`.${CLASS.eventRect}-2`).attr("x")).to.be.above(xValue);
+			expect(coords[2].x).to.be.above(xValue);
 		});
 
 		it("check for x axis resize after zoom", () => {
@@ -257,11 +257,11 @@ describe("ZOOM", function() {
 		});
 
 		it("check with rescale option", () => {
-			const eventRect = chart.$.main.select(`.${CLASS.eventRect}-2`).node();
 			const orgDomain = {
 				x: chart.internal.scale.x.domain(),
 				y: chart.internal.scale.y.domain()
 			};
+			const eventRect = chart.internal.$el.eventRect.node();
 
 			// when zoom in
 			util.fireEvent(eventRect, "wheel", {
@@ -343,13 +343,13 @@ describe("ZOOM", function() {
 		});
 
 		it("check for data zoom", () => {
-			const main = chart.$.main;
-			const xValue = +main.select(`.${CLASS.eventRect}-2`).attr("x");
+			const {coords} = chart.internal.state.eventReceiver;
+			const xValue = coords[2].x;
 
 			// when
 			chart.zoom([0, 3]);  // zoom in
 
-			expect(+main.select(`.${CLASS.eventRect}-2`).attr("x")).to.be.above(xValue);
+			expect(coords[2].x).to.be.above(xValue);
 		});
 
 		it("check for x axis resize after zoom", () => {
@@ -456,13 +456,12 @@ describe("ZOOM", function() {
 		});
 
 		it("check for data.onclick", () => {
-			const main = chart.$.main;
-			const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
+			const {eventRect} = chart.internal.$el;
 			const circle = util.getBBox(chart.$.circles);
 
-			util.fireEvent(rect, "click", {
-				clientX: circle.x,
-				clientY: circle.y
+			util.fireEvent(eventRect.node(), "click", {
+				clientX: circle.x + 7,
+				clientY: circle.y + 10
 			}, chart);
 
 			expect(clickedData).to.not.be.undefined;
@@ -680,10 +679,10 @@ describe("ZOOM", function() {
 		});
 
 		it("check on drag zooming", done => {
-			const internal = chart.internal;
-			const main = chart.$.main;
-			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
-			const zoomedDomain = internal.scale.x.domain();
+			const {$: {main}, internal: {scale, $el}} = chart;
+			const eventRect = $el.eventRect.node();;
+
+			const zoomedDomain = scale.x.domain();
 			const size = {w: 0, h: 0};
 			let brush;
 			let yAxisTickText;
@@ -725,12 +724,12 @@ describe("ZOOM", function() {
 					}, chart);
 
 					// y axis rescaled?
-					const tickText = +chart.$.main.selectAll(`.${CLASS.axisY} .tick tspan`).nodes().pop().textContent;
+					const tickText = +main.selectAll(`.${CLASS.axisY} .tick tspan`).nodes().pop().textContent;
 
 					expect(tickText).to.be.below(yAxisTickText);
 					expect(tickText).to.be.equal(400);
 
-					internal.scale.x.domain().forEach((v, i) => {
+					scale.x.domain().forEach((v, i) => {
 						expect(v).to.be[i ? "below" : "above"](zoomedDomain[i]);
 					});
 
@@ -770,14 +769,16 @@ describe("ZOOM", function() {
 		});
 
 		it("check on wheel zooming", () => {
-			const eventRect = chart.$.main.select(`.${CLASS.eventRect}-40`).node();
+			const {internal: {scale, $el}} = chart;
+			const {eventRect} = $el;
+
 			const orgDomain = {
-				x: chart.internal.scale.x.domain(),
-				y: chart.internal.scale.y.domain()
+				x: scale.x.domain(),
+				y: scale.y.domain()
 			};
 
 			// when zoom in
-			util.fireEvent(eventRect, "wheel", {
+			util.fireEvent(eventRect.node(), "wheel", {
 				deltaX: 0,
 				deltaY: -200,
 				clientX: 159,
@@ -785,7 +786,7 @@ describe("ZOOM", function() {
 			});
 
 			["x", "y"].forEach(id => {
-				const domain = chart.internal.scale[id].domain();
+				const domain = scale[id].domain();
 				const org = orgDomain[id];
 
 				if (id === "x") {
@@ -953,34 +954,34 @@ describe("ZOOM", function() {
 		});
 
 		it("check bar's width during wheel zoom in/out", () => {
-			const eventRect = chart.$.main.select(`.${CLASS.eventRect}-2`).node();
+			const {$: {bar}, internal: {$el: {eventRect}}} = chart;
 			const len = [];
 
-			chart.$.bar.bars.each(function() {
+			bar.bars.each(function() {
 				len.push(this.getTotalLength());
 			});
 
 			// when zoom in
-			util.fireEvent(eventRect, "wheel", {
+			util.fireEvent(eventRect.node(), "wheel", {
 				deltaX: 0,
 				deltaY: -100,
 				clientX: 159,
 				clientY: 137
 			});
 
-			chart.$.bar.bars.each(function(d, i) {
+			bar.bars.each(function(d, i) {
 				expect(this.getTotalLength()).to.be.greaterThan(len[i]);
 			});
 
 			// when zoom out
-			util.fireEvent(eventRect, "wheel", {
+			util.fireEvent(eventRect.node(), "wheel", {
 				deltaX: 0,
 				deltaY: 100,
 				clientX: 159,
 				clientY: 137
 			});
 
-			chart.$.bar.bars.each(function(d, i) {
+			bar.bars.each(function(d, i) {
 				expect(this.getTotalLength()).to.be.equal(len[i]);
 			});
 		});
@@ -1005,9 +1006,10 @@ describe("ZOOM", function() {
 		});
 
 		it("bar width should scales as zoom scales", done => {
+			const {bars} = chart.$.bar;
 			const width = [];
 
-			chart.$.bar.bars.each(function() {
+			bars.each(function() {
 				width.push(this.getBoundingClientRect().width);
 			})
 
@@ -1017,7 +1019,7 @@ describe("ZOOM", function() {
 			setTimeout(() => {
 				let last;
 
-				chart.$.bar.bars.each(function(d, i) {
+				bars.each(function(d, i) {
 					const w = Math.round(this.getBoundingClientRect().width);
 
 					expect(w).to.be.greaterThan(width[i]);

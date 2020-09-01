@@ -163,16 +163,19 @@ describe("API zoom", function() {
 			chart.zoom(target);
 
 			setTimeout(() => {
-				const rectlist = chart.$.main.selectAll(`.${CLASS.eventRect}`)
+				const {scale, state} = chart.internal;
+
+				const rectlist = state.eventReceiver.coords
 					.filter((v, i) => target.indexOf(i) !== -1);
-				const rectSize = rectlist.attr("width");
-				const domain = chart.internal.scale.zoom.domain().map(Math.round);
+
+				const rectSize = rectlist[0].w;
+				const domain = scale.zoom.domain().map(Math.round);
 
 				expect(domain[0]).to.be.equal(target[0]);
 				expect(domain[1] - 1).to.be.equal(target[1]);
 
-				rectlist.each(function(d, i) {
-					const x = +d3Select(this).attr("x");
+				rectlist.forEach(function(v, i) {
+					const {x} = v;
 
 					expect(x * i).to.be.closeTo(rectSize * i, 5);
 				});
@@ -272,14 +275,15 @@ describe("API zoom", function() {
 		});
 
 		it("should be disabled & enabled zoom", () => {
-			const main = chart.$.main;
+			const {main} = chart.$;
+			const {eventReceiver: {coords}} = chart.internal.state;
 			const domain = [1, 2];
 
 			// when disable zoom
 			chart.zoom.enable(false);
 
-			const selector = `.${CLASS.eventRect}-1`;
-			const xValue = +main.select(selector).attr("x");
+			//const selector = `.${CLASS.eventRect}-1`;
+			const xValue = coords[1].x;
 			const tickTransform = [];
 
 			main.selectAll(`.${CLASS.axisX} .tick`).each(function() {
@@ -291,7 +295,7 @@ describe("API zoom", function() {
 				expect(v).to.not.equal(domain[i]);
 			});
 
-			expect(+main.select(selector).attr("x")).to.be.equal(xValue);
+			expect(coords[1].x).to.be.equal(xValue);
 
 			// check x Axis to not be zoomed
 			main.selectAll(`.${CLASS.axisX} .tick`).each(function(i) {
@@ -305,7 +309,7 @@ describe("API zoom", function() {
 				expect(v).to.equal(domain[i]);
 			});
 
-			expect(+main.select(selector).attr("x")).to.below(xValue);
+			expect(coords[1].x).to.below(xValue);
 		});
 	});
 

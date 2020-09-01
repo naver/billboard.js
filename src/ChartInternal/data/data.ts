@@ -5,6 +5,7 @@
 import CLASS from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {
+	findIndex,
 	getUnique,
 	hasValue,
 	isArray,
@@ -606,6 +607,29 @@ export default {
 
 		return (isboolean(dataLabels) && dataLabels) ||
 			(isObjectType(dataLabels) && notEmpty(dataLabels));
+	},
+
+	/**
+	 * Get data index from the event coodinates
+	 * @param {Event} event Event object
+	 * @returns {number}
+	 */
+	getDataIndexFromEvent(event): number {
+		const $$ = this;
+		const {config, state: {inputType, eventReceiver: {coords, rect}}} = $$;
+		const isRotated = config.axis_rotated;
+
+		// get data based on the mouse coords
+		const e = inputType === "touch" ? event.changedTouches[0] : event;
+		const index = findIndex(
+			coords,
+			isRotated ? e.clientY - rect.y : e.clientX - rect.x,
+			0,
+			coords.length - 1,
+			isRotated
+		);
+
+		return index;
 	},
 
 	getDataLabelLength(min, max, key) {

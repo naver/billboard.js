@@ -288,6 +288,7 @@ export default {
 			.clickDistance(4)
 			.on("start", function() {
 				$$.setDragStatus(true);
+				$$.unselectRect();
 
 				if (!zoomRect) {
 					zoomRect = $$.$el.main.append("rect")

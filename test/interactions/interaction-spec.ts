@@ -38,14 +38,12 @@ describe("INTERACTION", () => {
 			});
 
 			it("should have 4 event rects properly", () => {
-				const lefts = [69, 130, 198, 403];
+				const lefts = [38.5, 99.5, 167.5, 372.5];
 				const widths = [61, 68, 205, 197.5];
 
-				chart.$.main.selectAll(`.${CLASS.eventRect}`).each(function (d, i) {
-					const box = d3Select(this).node().getBoundingClientRect();
-
-					expect(box.left).to.be.closeTo(lefts[i], 10);
-					expect(box.width).to.be.closeTo(widths[i], 10);
+				chart.internal.state.eventReceiver.coords.forEach((v, i) => {
+					expect(v.x).to.be.closeTo(lefts[i], 10);
+					expect(v.w).to.be.closeTo(widths[i], 10);
 				});
 			});
 		});
@@ -92,14 +90,12 @@ describe("INTERACTION", () => {
 			});
 
 			it("should have 4 event rects properly", () => {
-				const lefts = [33.5, 185.5, 348, 497.5];
+				const lefts = [3, 155, 317.5, 467];
 				const widths = [152, 162.5, 149.5, 138.5];
 
-				chart.$.main.selectAll(`.${CLASS.eventRect}`).each(function (d, i) {
-					const box = d3Select(this).node().getBoundingClientRect();
-
-					expect(box.left).to.be.closeTo(lefts[i], 10);
-					expect(box.width).to.be.closeTo(widths[i], 10);
+				chart.internal.state.eventReceiver.coords.forEach((v, i) => {
+					expect(v.x).to.be.closeTo(lefts[i], 10);
+					expect(v.w).to.be.closeTo(widths[i], 10);
 				});
 			});
 		});
@@ -155,18 +151,20 @@ describe("INTERACTION", () => {
 				});
 
 				it("check if rect element generated correctly", () => {
-					const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
+					const {coords, data} = chart.internal.state.eventReceiver;
 					let lastX = 0;
 
-					expect(rect.size()).to.be.equal(args.data.json.x.length);
+					expect(coords.length).to.be.equal(args.data.json.x.length);
 
-					rect.each(function(d, i) {
-						const x = +this.getAttribute("x");
+					data.forEach((d, i) => {
+						expect(d.index).to.be.equal(i);
+					});
 
-						expect(+this.getAttribute("x")).to.be.above(lastX);
-						expect(+this.getAttribute("width")).to.be.above(0);
+					coords.forEach(v => {
+						expect(v.x).to.be.above(lastX);
+						expect(v.w).to.be.above(0);
 
-						lastX = x;
+						lastX = v.x;
 					});
 				});
 			});
@@ -196,15 +194,15 @@ describe("INTERACTION", () => {
 				});
 
 				it("check if rect & data points are generated correctly", () => {
-					const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
+					const {coords, data} = chart.internal.state.eventReceiver;
 					const dataLen = chart.data()[0].values.length;
-					const circles = chart.$.circles;
+					const {circles} = chart.$;
 
-					rect.each((d, i) => {
+					data.forEach((d, i) => {
 						expect(d.index).to.be.equal(i);
 					});
 
-					expect(rect.size()).to.be.equal(dataLen);
+					expect(coords.length).to.be.equal(dataLen);
 					expect(circles.size()).to.be.equal(dataLen);
 
 					circles.each(function(d, i) {
@@ -240,18 +238,18 @@ describe("INTERACTION", () => {
 				});
 
 				it("check if rect & data points are generated correctly", () => {
-					const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
+					const {coords, data} = chart.internal.state.eventReceiver;
 					const dataLen = chart.data()[0].values.length;
 					const circles = chart.$.circles;
+
+					data.forEach((d, i) => {
+						expect(d.index).to.be.equal(i);
+					});
 
 					const sampleCircle = circles.filter(d => d.id === "sample");
 					const sample2Circle = circles.filter(d => d.id === "sample2");
 
-					rect.each((d, i) => {
-						expect(d.index).to.be.equal(i);
-					});
-
-					expect(rect.size()).to.be.equal(dataLen);
+					expect(coords.length).to.be.equal(dataLen);
 					expect(sampleCircle.size()).to.be.equal(dataLen);
 
 					sampleCircle.each(function(d, i) {
@@ -270,15 +268,15 @@ describe("INTERACTION", () => {
 					chart.toggle("sample");
 
 					setTimeout(() => {
-						const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
+						const {coords, data} = chart.internal.state.eventReceiver;
 						const dataLen = chart.data()[1].values.length;
 						const circles = chart.$.circles.filter(d => d.id === "sample2");
 
-						rect.each((d, i) => {
+						data.forEach((d, i) => {
 							expect(d.index).to.be.equal(i);
 						});
 
-						expect(rect.size()).to.be.equal(dataLen);
+						expect(coords.length).to.be.equal(dataLen);
 						expect(circles.size()).to.be.equal(dataLen);
 
 						circles.each(function(d, i) {
@@ -350,16 +348,16 @@ describe("INTERACTION", () => {
 							],
 							duration: 500,
 							done: function() {
-								const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
+								const {coords, data} = chart.internal.state.eventReceiver;
 								const circlesData1 = chart.$.main.selectAll(`.${CLASS.circles}-data1 circle`);
 								const circlesData2 = chart.$.main.selectAll(`.${CLASS.circles}-data2 circle`);
 
-								rect.each((d, i) => {
+								data.forEach((d, i) => {
 									expect(d.index).to.be.equal(i);
 								});
 
 								["data1", "data2"].forEach(v => {
-									expect(rect.size()).to.be.equal(chart.data(v)[0].values.length);
+									expect(coords.length).to.be.equal(chart.data(v)[0].values.length);
 								});
 
 								[circlesData1, circlesData2].forEach(v => {
@@ -409,9 +407,11 @@ describe("INTERACTION", () => {
 			it("Callbacks were called correctly with its arguments?", done => {
 				setTimeout(() => {
 					const index = 1;
-					const rect = chart.$.main.select(`.${CLASS.eventRect}-${index}`).node();
+					const rect = chart.internal.$el.eventRect.node();
+					chart.internal.state.eventReceiver.coords[index];
+					//chart.$.main.select(`.${CLASS.eventRect}-${index}`).node();
 
-					util.fireEvent(rect, "mouseover", {
+					util.fireEvent(rect, "mousemove", {
 						clientX: 174,
 						clientY: 200
 					}, chart);
@@ -468,8 +468,8 @@ describe("INTERACTION", () => {
 				setTimeout(() => {
 					const index = 3;
 
-					util.hoverChart(chart, "mousemove", {clientX: 360, clientY: 266}, index);
-					util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100}, index);
+					util.hoverChart(chart, "mousemove", {clientX: 360, clientY: 266});
+					util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100});
 
 					expect(spyOver.calledTwice).to.be.true;
 					expect(spyOut.calledTwice).to.be.true;
@@ -513,10 +513,10 @@ describe("INTERACTION", () => {
 
 			it("check for data click for line", () => {
 				const main = chart.$.main;
-				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
+				const {eventRect} = chart.internal.$el;
 				const circle = util.getBBox(main.select(`.${CLASS.circles}-data1 circle`));
 
-				util.fireEvent(rect, "click", {
+				util.fireEvent(eventRect.node(), "click", {
 					clientX: circle.x,
 					clientY: circle.y
 				}, chart);
@@ -578,10 +578,10 @@ describe("INTERACTION", () => {
 
 			it("check for data click for area", () => {
 				const main = chart.$.main;
-				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
+				const {eventRect} = chart.internal.$el;
 				const circle = util.getBBox(main.select(`.${CLASS.circles}-data1 circle`));
 
-				util.fireEvent(rect, "click", {
+				util.fireEvent(eventRect.node(), "click", {
 					clientX: circle.x,
 					clientY: circle.y
 				}, chart);
@@ -598,10 +598,10 @@ describe("INTERACTION", () => {
 
 			it("check for data click for scatter", () => {
 				const main = chart.$.main;
-				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
+				const {eventRect} = chart.internal.$el;
 				const circle = util.getBBox(main.select(`.${CLASS.circles}-data2 circle`));
 
-				util.fireEvent(rect, "click", {
+				util.fireEvent(eventRect.node(), "click", {
 					clientX: circle.x,
 					clientY: circle.y
 				}, chart);
@@ -618,11 +618,11 @@ describe("INTERACTION", () => {
 
 			it("check for data click for bubble", () => {
 				const main = chart.$.main;
-				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
+				const {eventRect} = chart.internal.$el;
 				const circle = util.getBBox(main.select(`.${CLASS.circles}-data2 circle`));
 				const delta = 50;
 
-				util.fireEvent(rect, "click", {
+				util.fireEvent(eventRect.node(), "click", {
 					clientX: circle.x + delta,
 					clientY: circle.y + delta
 				}, chart);
@@ -639,10 +639,10 @@ describe("INTERACTION", () => {
 
 			it("check for data click for bar", () => {
 				const main = chart.$.main;
-				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
+				const {eventRect} = chart.internal.$el;
 				const path = util.getBBox(main.select(`.${CLASS.bars}-data1 path`));
 
-				util.fireEvent(rect, "click", {
+				util.fireEvent(eventRect.node(), "click", {
 					clientX: path.x,
 					clientY: path.y
 				}, chart);
@@ -718,10 +718,10 @@ describe("INTERACTION", () => {
 
 			it("check for data click for multiple xs", () => {
 				const main = chart.$.main;
-				const rect = main.select(`.${CLASS.eventRects}.${CLASS.eventRectsMultiple} rect`).node();
+				const {eventRect} = chart.internal.$el;
 				const circle = util.getBBox(main.select(`.${CLASS.circles}.${CLASS.circles}-data1 circle`));
 
-				util.fireEvent(rect, "click", {
+				util.fireEvent(eventRect.node(), "click", {
 					clientX: circle.x,
 					clientY: circle.y
 				}, chart);
@@ -844,19 +844,19 @@ describe("INTERACTION", () => {
 
 			it("data point circle should be selected and unselected", () => {
 				const circle: any = d3Select(`.${CLASS.shape}-2`).node();
-				const rect = d3Select(`.${CLASS.eventRect}-2`).node();
+				const {eventRect} = chart.internal.$el;
 
 				const box = circle.getBBox();
 				const clientX = box.x;
 				const clientY = box.y;
 
-				util.fireEvent(rect, "click", {
+				util.fireEvent(eventRect.node(), "click", {
 					clientX, clientY
 				}, chart);
 
 				expect(d3Select(circle).classed(CLASS.SELECTED)).to.be.true;
 
-				util.fireEvent(rect, "click", {
+				util.fireEvent(eventRect.node(), "click", {
 					clientX, clientY
 				}, chart);
 
@@ -1074,14 +1074,22 @@ describe("INTERACTION", () => {
 			spy2.resetHistory();
 		});
 
-		it("should be called callbacks for mouse events", () => {
+		it("should be called callbacks for fireEvent", () => {
 			const main = chart.$.main;
-			const eventRect = main.select(`.${CLASS.eventRect}-1`).node();
+			const eventRect = chart.internal.$el.eventRect.node();
 
-			util.fireEvent(eventRect, "mouseover");
+			util.fireEvent(eventRect, "mousemove", {
+				clientX: 174,
+				clientY: 200
+			}, chart);
+			
 			expect(spy1.calledTwice).to.be.true;
 
-			util.fireEvent(eventRect, "mouseout");
+			util.fireEvent(eventRect, "mouseout", {
+				clientX: 174,
+				clientY: 200
+			}, chart);
+
 			expect(spy2.calledTwice).to.be.true;
 		});
 
