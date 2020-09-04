@@ -240,48 +240,46 @@ export default {
 	tooltipPosition(dataToShow, tWidth: number, tHeight: number, element):
 		{top: number, left: number} {
 		const $$ = this;
-		const {config, scale} = $$;
-		const {width, height, current, isLegendRight, inputType} = $$.state;
+		const {config, scale, state} = $$;
+		const {width, height, current, isLegendRight, inputType} = state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const svgLeft = $$.getSvgLeft(true);
-		let [left, top] = d3Mouse(element);
+		let [x, y] = d3Mouse(element);
 		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(true);
 		const chartLeft = $$.getCurrentPaddingLeft(true);
 		const size = 20;
-
-		top += size;
 
 		// Determine tooltip position
 		if ($$.hasArcType()) {
 			const raw = inputType === "touch" || $$.hasType("radar");
 
 			if (!raw) {
-				top += hasGauge ? height : height / 2;
-				left += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
+				y += hasGauge ? height : height / 2;
+				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
 			}
 		} else {
 			const dataScale = scale.x(dataToShow[0].x);
 
 			if (config.axis_rotated) {
-				top = dataScale + size;
-				left += svgLeft + 100;
+				y = dataScale + size;
+				x += svgLeft + 100;
 				chartRight -= svgLeft;
 			} else {
-				top -= 5;
-				left = svgLeft + chartLeft + size + ($$.zoomScale ? left : dataScale);
+				y -= 5;
+				x = svgLeft + chartLeft + size + ($$.zoomScale ? x : dataScale);
 			}
 		}
 
 		// when tooltip left + tWidth > chart's width
-		if ((left + tWidth + 15) > chartRight) {
-			left -= tWidth + chartLeft;
+		if ((x + tWidth + 15) > chartRight) {
+			x -= tWidth + chartLeft;
 		}
 
-		if (top + tHeight > current.height) {
-			top -= hasGauge ? tHeight * 3 : tHeight + 30;
+		if (y + tHeight > current.height) {
+			y -= hasGauge ? tHeight * 3 : tHeight + 30;
 		}
 
-		const pos = {top, left};
+		const pos = {top: y, left: x};
 
 		// make sure to not be positioned out of viewport
 		Object.keys(pos).forEach(v => {

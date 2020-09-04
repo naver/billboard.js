@@ -90,7 +90,6 @@ const tooltip = {
 			index = args.index;
 		}
 
-		// emulate events to show
 		(inputType === "mouse" ?
 			["mouseover", "mousemove"] : ["touchstart"]
 		).forEach(eventName => {

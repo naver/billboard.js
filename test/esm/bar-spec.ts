@@ -29,11 +29,11 @@ describe("ESM bar", function() {
 	});
 
     it("check data.onclick for bar type", () => {
-        const rect = chart.$.main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
+        const {eventRect} = chart.internal.$el;
         const bar = chart.$.bar.bars.nodes()[0];
         const pos = util.getBBox(bar);
 
-        util.fireEvent(rect, "click", {
+        util.fireEvent(eventRect.node(), "click", {
             clientX: pos.x + 20,
             clientY: pos.y + 50
         }, chart);

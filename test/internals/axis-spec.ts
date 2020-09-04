@@ -1761,14 +1761,12 @@ describe("AXIS", function() {
 		});
 
 		it("should render ticks of rotated axis inside bar position range", () => {
-			const barRects = chart.$.main.select(`.${CLASS.eventRects}`).selectAll(`rect.${CLASS.eventRect}`);
 			const ticks = chart.$.main.select(`.${CLASS.axisX}`).selectAll("g.tick").nodes();
 
-			barRects.each(function(d, idx){
-				const y = d3Select(this).attr("y");
+			chart.internal.state.eventReceiver.coords.forEach((d, idx) => {
 				const tick = d3Select(ticks[idx]);
 
-				expect(tick.attr("transform")).to.be.equal("translate(0,"+y+")");
+				expect(tick.attr("transform")).to.be.equal(`translate(0,${d.y})`);
 			});
 		});
 

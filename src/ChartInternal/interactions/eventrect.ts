@@ -4,12 +4,10 @@
  */
 import {
 	mouse as d3Mouse,
-	select as d3Select,
 	event as d3Event
 } from "d3-selection";
-import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
-import {isboolean} from "../../module/util";
+import {getBoundingRect, isboolean, isFunction} from "../../module/util";
 
 export default {
 	/**
@@ -32,32 +30,41 @@ export default {
 	 */
 	redrawEventRect(): void {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, state, $el} = $$;
 		const isMultipleX = $$.isMultipleX();
-		let eventRectUpdate;
 
-		const eventRects = $$.$el.main.select(`.${CLASS.eventRects}`)
-			.style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (
-				config.axis_rotated ? "ns-resize" : "ew-resize"
-			) : null)
-			.classed(CLASS.eventRectsMultiple, isMultipleX)
-			.classed(CLASS.eventRectsSingle, !isMultipleX);
-
-		// clear old rects
-		eventRects.selectAll(`.${CLASS.eventRect}`).remove();
-
-		// open as public constiable
-		$el.eventRect = eventRects.selectAll(`.${CLASS.eventRect}`);
-
-		if (isMultipleX) {
-			eventRectUpdate = $el.eventRect.data([0]);
-			// update
-			// enter: only one rect will be added
-			// exit: not needed because always only one rect exists
-			eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter())
-				.merge(eventRectUpdate);
+		if ($el.eventRect) {
+			$$.updateEventRect($el.eventRect);
 		} else {
-			// Set data and update $el.eventRect
+			const eventRects = $$.$el.main.select(`.${CLASS.eventRects}`)
+				.style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (
+					config.axis_rotated ? "ns-resize" : "ew-resize"
+				) : null)
+				.classed(CLASS.eventRectsMultiple, isMultipleX)
+				.classed(CLASS.eventRectsSingle, !isMultipleX);
+
+			// append event <rect>
+			let eventRectUpdate = eventRects.selectAll(`.${CLASS.eventRect}`)
+				.data([0])
+				.enter()
+				.append("rect");
+
+			eventRectUpdate = $$.updateEventRect(eventRectUpdate);
+
+			// bind event to <rect> element
+			isMultipleX ?
+				$$.generateEventRectsForMultipleXs(eventRectUpdate) :
+				$$.generateEventRectsForSingleX(eventRectUpdate);
+
+			$el.eventRect = eventRectUpdate;
+
+			if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
+				$$.bindTouchOnEventRect(isMultipleX);
+			}
+		}
+
+		if (!isMultipleX) {
+			// Set data and update eventReceiver.data
 			const xAxisTickValues = $$.getMaxDataCountTarget();
 
 			// update data's index value to be alinged with the x Axis
@@ -65,54 +72,24 @@ export default {
 			$$.updateXs(xAxisTickValues);
 			$$.updatePointClass && $$.updatePointClass(true);
 
-			eventRects.datum(xAxisTickValues);
-
-			$el.eventRect = eventRects.selectAll(`.${CLASS.eventRect}`);
-			eventRectUpdate = $el.eventRect.data(d => d);
-
-			// exit
-			eventRectUpdate.exit().remove();
-
-			// update
-			eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter())
-				.merge(eventRectUpdate);
+			state.eventReceiver.data = xAxisTickValues;
 		}
 
-		$el.eventRect = eventRectUpdate;
-		$$.updateEventRect(eventRectUpdate);
-
-		if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
-			$$.bindTouchOnEventRect(isMultipleX);
-		}
+		$$.updateEventRectData();
 	},
 
 	bindTouchOnEventRect(isMultipleX: boolean): void {
 		const $$ = this;
-		const {config, state, $el: {svg}} = $$;
-
-		const getEventRect = () => {
-			const touch = d3Event.changedTouches[0];
-
-			return d3Select(document.elementFromPoint(touch.clientX, touch.clientY));
-		};
-
-		const getIndex = eventRect => {
-			let index = eventRect && eventRect.attr("class") && eventRect.attr("class")
-				.replace(new RegExp(`(${CLASS.eventRect}-?|s)`, "g"), "") * 1;
-
-			if (isNaN(index) || index === null) {
-				index = -1;
-			}
-
-			return index;
-		};
+		const {config, state, $el: {eventRect, svg}} = $$;
+		const event = d3Event;
 
 		const selectRect = context => {
 			if (isMultipleX) {
 				$$.selectRectForMultipleXs(context);
 			} else {
-				const eventRect = getEventRect();
-				const index = getIndex(eventRect);
+				// const eventRect = getEventRect();
+				// const index = getIndex(eventRect);
+				const index = $$.getDataIndexFromEvent(event);
 
 				$$.callOverOutForTouch(index);
 
@@ -155,7 +132,7 @@ export default {
 		// bind touch events
 		svg
 			.on("touchstart.eventRect touchmove.eventRect", function() {
-				const eventRect = getEventRect();
+				// const eventRect = getEventRect();
 				const event = d3Event;
 
 				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
@@ -172,7 +149,7 @@ export default {
 				}
 			}, true)
 			.on("touchend.eventRect", () => {
-				const eventRect = getEventRect();
+				// const eventRect = getEventRect();
 
 				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
 					if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
@@ -182,16 +159,38 @@ export default {
 			}, true);
 	},
 
+	updateEventRect(eventRect) {
+		const $$ = this;
+		const {width, height, rendered} = $$.state;
+
+		const rect = eventRect
+			.attr("x", 0)
+			.attr("y", 0)
+			.attr("width", width)
+			.attr("height", height);
+
+		// only for init
+		if (!rendered) {
+			rect
+				.attr("class", CLASS.eventRect)
+				.on("click", function() {
+					$$.clickHandlerForMultipleXS.bind(this)($$);
+				});
+		}
+
+		$$.state.eventReceiver.rect = getBoundingRect(rect.node());
+
+		return rect;
+	},
+
 	/**
 	 * Updates the location and size of the eventRect.
-	 * @param {object} eventRectUpdate d3.select(CLASS.eventRects) object.
 	 * @private
 	 */
-	updateEventRect(eventRectUpdate): void {
+	updateEventRectData(): void {
 		const $$ = this;
 		const {config, scale, state} = $$;
 		const xScale = scale.zoom || scale.x;
-		const eventRectData = eventRectUpdate || $$.$el.eventRect.data(); // set update selection if null
 		const isRotated = config.axis_rotated;
 		let x;
 		let y;
@@ -212,16 +211,12 @@ export default {
 				rectW = $$.getEventRectWidth();
 				rectX = d => xScale(d.x) - (rectW / 2);
 			} else {
-				const getPrevNextX = d => {
-					const index = d.index;
+				const getPrevNextX = ({index}) => ({
+					prev: $$.getPrevX(index),
+					next: $$.getNextX(index)
+				});
 
-					return {
-						prev: $$.getPrevX(index),
-						next: $$.getNextX(index)
-					};
-				};
-
-				rectW = d => {
+				rectW = (d): number => {
 					const x = getPrevNextX(d);
 
 					// if there this is a single data point make the eventRect full width (or height)
@@ -240,7 +235,7 @@ export default {
 					return Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
 				};
 
-				rectX = d => {
+				rectX = (d): number => {
 					const x = getPrevNextX(d);
 					const thisX = d.x;
 
@@ -263,11 +258,17 @@ export default {
 			h = isRotated ? rectW : state.height;
 		}
 
-		eventRectData.attr("class", $$.classEvent.bind($$))
-			.attr("x", x)
-			.attr("y", y)
-			.attr("width", w)
-			.attr("height", h);
+		const {eventReceiver} = state;
+		const call: any = (fn, v) => (isFunction(fn) ? fn(v) : fn);
+
+		eventReceiver.data.forEach((d, i) => {
+			eventReceiver.coords[i] = {
+				x: call(x, d),
+				y: call(y, d),
+				w: call(w, d),
+				h: call(h, d)
+			};
+		});
 	},
 
 	selectRectForMultipleXs(context): void {
@@ -349,33 +350,40 @@ export default {
 	generateEventRectsForSingleX(eventRectEnter) {
 		const $$ = this;
 		const {config, state} = $$;
+		const {eventReceiver} = state;
 
-		const rect = eventRectEnter.append("rect")
+		const rect = eventRectEnter
 			.attr("class", $$.classEvent.bind($$))
 			.style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
-			.on("click", function(d) {
+			.on("click", function() {
+				const {currentIdx, data} = eventReceiver;
+				const d = data[
+					currentIdx === -1 ?
+						$$.getDataIndexFromEvent(d3Event) : currentIdx
+				];
+
 				$$.clickHandlerForSingleX.bind(this)(d, $$);
-			})
-			.call($$.getDraggableSelection());
+			});
 
 		if (state.inputType === "mouse") {
+			const getData = () => {
+				const index = d3Event ? $$.getDataIndexFromEvent(d3Event) : eventReceiver.currentIdx;
+
+				return index > -1 ? eventReceiver.data[index] : null;
+			};
+
 			rect
-				.on("mouseover", d => {
+				.on("mousemove", function() {
+					const d = getData();
+
 					// do nothing while dragging/flowing
-					if (state.dragging || state.flowing || $$.hasArcType()) {
+					if (state.dragging || state.flowing || $$.hasArcType() ||
+						!d || (config.tooltip_grouped && d && d.index === eventReceiver.currentIdx)
+					) {
 						return;
 					}
 
-					config.tooltip_grouped && $$.setOverOut(true, d.index);
-				})
-				.on("mousemove", function(d) {
-					// do nothing while dragging/flowing
-					if (state.dragging || state.flowing || $$.hasArcType()) {
-						return;
-					}
-
-					let index = d.index;
-					const eventRect = $$.$el.svg.select(`.${CLASS.eventRect}-${index}`);
+					let {index} = d;
 
 					if ($$.isStepType(d) &&
 						config.line_step_type === "step-after" &&
@@ -384,23 +392,29 @@ export default {
 						index -= 1;
 					}
 
+					if (index !== eventReceiver.currentIdx) {
+						$$.setOverOut(false, eventReceiver.currentIdx);
+						eventReceiver.currentIdx = index;
+					}
+
 					index === -1 ?
-						$$.unselectRect() : $$.selectRectForSingle(this, eventRect, index);
+						$$.unselectRect() : $$.selectRectForSingle(this, rect, index);
 
 					// As of individual data point(or <path>) element can't bind mouseover/out event
 					// to determine current interacting element, so use 'mousemove' event instead.
-					if (!config.tooltip_grouped) {
-						$$.setOverOut(index !== -1, d.index);
-					}
+					$$.setOverOut(index !== -1, index);
 				})
-				.on("mouseout", d => {
+				.on("mouseout", () => {
 					// chart is destroyed
-					if (!config || $$.hasArcType()) {
+					if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
 						return;
 					}
 
 					$$.unselectRect();
-					$$.setOverOut(false, d.index);
+					$$.setOverOut(false, eventReceiver.currentIdx);
+
+					// reset the event current index
+					eventReceiver.currentIdx = -1;
 				});
 		}
 
@@ -432,27 +446,19 @@ export default {
 	 * Create an eventRect,
 	 * Register touch and drag events.
 	 * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
-	 * @returns {object} d3.select(CLASS.eventRects) object.
 	 * @private
 	 */
-	generateEventRectsForMultipleXs(eventRectEnter) {
+	generateEventRectsForMultipleXs(eventRectEnter): void {
 		const $$ = this;
-		const {width, height, inputType} = $$.state;
+		const {inputType} = $$.state;
 
-		const rect = eventRectEnter
-			.append("rect")
-			.attr("x", 0)
-			.attr("y", 0)
-			.attr("width", width)
-			.attr("height", height)
-			.attr("class", CLASS.eventRect)
+		eventRectEnter
 			.on("click", function() {
 				$$.clickHandlerForMultipleXS.bind(this)($$);
-			})
-			.call($$.getDraggableSelection());
+			});
 
 		if (inputType === "mouse") {
-			rect
+			eventRectEnter
 				.on("mouseover mousemove", function() {
 					$$.selectRectForMultipleXs(this);
 				})
@@ -465,8 +471,6 @@ export default {
 					$$.unselectRect();
 				});
 		}
-
-		return rect;
 	},
 
 	clickHandlerForMultipleXS(ctx): void {
