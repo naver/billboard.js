@@ -246,6 +246,12 @@ var State = /** @class */ (function () {
             legendItemWidth: 0,
             legendItemHeight: 0,
             legendHasRendered: false,
+            eventReceiver: {
+                currentIdx: -1,
+                rect: {},
+                data: [],
+                coords: [] // coordination value of previous eventRect
+            },
             axis: {
                 x: {
                     padding: { left: 0, right: 0 },
@@ -2059,7 +2065,11 @@ function getBrushSelection(_a) {
  * @returns {object}
  * @private
  */
-var getBoundingRect = function (node) { return node.rect || (node.rect = node.getBoundingClientRect()); };
+function getBoundingRect(node) {
+    var needEvaluate = !("rect" in node) || ("rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width"));
+    return needEvaluate ?
+        (node.rect = node.getBoundingClientRect()) : node.rect;
+}
 /**
  * Retrun random number
  * @param {boolean} asStr Convert returned value as string
@@ -2070,6 +2080,32 @@ function getRandom(asStr) {
     if (asStr === void 0) { asStr = true; }
     var rand = Math.random();
     return asStr ? String(rand) : rand;
+}
+/**
+ * Find index based on binary search
+ * @param {Array} arr Data array
+ * @param {number} v Target number to find
+ * @param {number} start Start index of data array
+ * @param {number} end End index of data arr
+ * @param {boolean} isRotated Weather is roted axis
+ * @returns {number} Index number
+ */
+function findIndex(arr, v, start, end, isRotated) {
+    if (start > end) {
+        return -1;
+    }
+    var mid = Math.floor((start + end) / 2);
+    var _a = arr[mid], x = _a.x, _b = _a.w, w = _b === void 0 ? 0 : _b;
+    if (isRotated) {
+        x = arr[mid].y;
+        w = arr[mid].h;
+    }
+    if (v >= x && v <= x + w) {
+        return mid;
+    }
+    return v < x ?
+        findIndex(arr, v, start, mid - 1, isRotated) :
+        findIndex(arr, v, mid + 1, end, isRotated);
 }
 /**
  * Check if brush is empty
@@ -3382,6 +3418,20 @@ var data$1 = {
         return (isboolean(dataLabels) && dataLabels) ||
             (isObjectType(dataLabels) && notEmpty(dataLabels));
     },
+    /**
+     * Get data index from the event coodinates
+     * @param {Event} event Event object
+     * @returns {number}
+     */
+    getDataIndexFromEvent: function (event) {
+        var $$ = this;
+        var config = $$.config, _a = $$.state, inputType = _a.inputType, _b = _a.eventReceiver, coords = _b.coords, rect = _b.rect;
+        var isRotated = config.axis_rotated;
+        // get data based on the mouse coords
+        var e = inputType === "touch" ? event.changedTouches[0] : event;
+        var index = findIndex(coords, isRotated ? e.clientY - rect.y : e.clientX - rect.x, 0, coords.length - 1, isRotated);
+        return index;
+    },
     getDataLabelLength: function (min, max, key) {
         var $$ = this;
         var lengths = [0, 0];
@@ -3975,12 +4025,17 @@ var interaction$1 = {
      */
     dispatchEvent: function (type, index, mouse) {
         var $$ = this;
-        var hasRadar = $$.state.hasRadar, _a = $$.$el, main = _a.main, radar = _a.radar;
+        var config = $$.config, _a = $$.state, eventReceiver = _a.eventReceiver, hasRadar = _a.hasRadar, _b = $$.$el, eventRect = _b.eventRect, radar = _b.radar;
         var isMultipleX = $$.isMultipleX();
-        var selector = hasRadar ? "." + CLASS.axis + "-" + index + " text" : "." + (isMultipleX ? CLASS.eventRect : CLASS.eventRect + "-" + index);
-        var eventRect = (hasRadar ? radar.axes : main).select(selector).node();
-        var _b = eventRect.getBoundingClientRect(), width = _b.width, left = _b.left, top = _b.top;
-        var x = left + (mouse ? mouse[0] : 0) + (isMultipleX || $$.config.axis_rotated ? 0 : (width / 2));
+        var element = (hasRadar ? radar.axes.select("." + CLASS.axis + "-" + index + " text") : eventRect).node();
+        var _c = element.getBoundingClientRect(), width = _c.width, left = _c.left, top = _c.top;
+        if (!hasRadar && !isMultipleX) {
+            var coords = eventReceiver.coords[index];
+            width = coords.w;
+            left += coords.x;
+            top += coords.y;
+        }
+        var x = left + (mouse ? mouse[0] : 0) + (isMultipleX || config.axis_rotated ? 0 : (width / 2));
         var y = top + (mouse ? mouse[1] : 0);
         var params = {
             screenX: x,
@@ -3988,7 +4043,7 @@ var interaction$1 = {
             clientX: x,
             clientY: y
         };
-        emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](eventRect, type, params);
+        emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](element, type, params);
     }
 };
 
@@ -4284,15 +4339,10 @@ var color$1 = {
         else if (isFunction(onover)) {
             color = color.bind($$.api);
         }
-        // when is Arc type
-        if (isObject(d)) {
-            main.selectAll("." + CLASS.arc + $$.getTargetSelectorSuffix(d.id))
-                .style("fill", color(d));
-        }
-        else {
-            main.selectAll("." + CLASS.shape + "-" + d)
-                .style("fill", color);
-        }
+        main.selectAll(isObject(d) ?
+            // when is Arc type
+            "." + CLASS.arc + $$.getTargetSelectorSuffix(d.id) :
+            "." + CLASS.shape + "-" + d).style("fill", color);
     }
 };
 
@@ -6932,43 +6982,42 @@ var tooltip$1 = {
      */
     tooltipPosition: function (dataToShow, tWidth, tHeight, element) {
         var $$ = this;
-        var config = $$.config, scale = $$.scale;
-        var _a = $$.state, width = _a.width, height = _a.height, current = _a.current, isLegendRight = _a.isLegendRight, inputType = _a.inputType;
+        var config = $$.config, scale = $$.scale, state = $$.state;
+        var width = state.width, height = state.height, current = state.current, isLegendRight = state.isLegendRight, inputType = state.inputType;
         var hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
         var svgLeft = $$.getSvgLeft(true);
-        var _b = mouse(element), left = _b[0], top = _b[1];
+        var _a = mouse(element), x = _a[0], y = _a[1];
         var chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(true);
         var chartLeft = $$.getCurrentPaddingLeft(true);
         var size = 20;
-        top += size;
         // Determine tooltip position
         if ($$.hasArcType()) {
             var raw = inputType === "touch" || $$.hasType("radar");
             if (!raw) {
-                top += hasGauge ? height : height / 2;
-                left += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
+                y += hasGauge ? height : height / 2;
+                x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
             }
         }
         else {
             var dataScale = scale.x(dataToShow[0].x);
             if (config.axis_rotated) {
-                top = dataScale + size;
-                left += svgLeft + 100;
+                y = dataScale + size;
+                x += svgLeft + 100;
                 chartRight -= svgLeft;
             }
             else {
-                top -= 5;
-                left = svgLeft + chartLeft + size + ($$.zoomScale ? left : dataScale);
+                y -= 5;
+                x = svgLeft + chartLeft + size + ($$.zoomScale ? x : dataScale);
             }
         }
         // when tooltip left + tWidth > chart's width
-        if ((left + tWidth + 15) > chartRight) {
-            left -= tWidth + chartLeft;
+        if ((x + tWidth + 15) > chartRight) {
+            x -= tWidth + chartLeft;
         }
-        if (top + tHeight > current.height) {
-            top -= hasGauge ? tHeight * 3 : tHeight + 30;
+        if (y + tHeight > current.height) {
+            y -= hasGauge ? tHeight * 3 : tHeight + 30;
         }
-        var pos = { top: top, left: left };
+        var pos = { top: y, left: x };
         // make sure to not be positioned out of viewport
         Object.keys(pos).forEach(function (v) {
             if (pos[v] < 0) {
@@ -8932,7 +8981,6 @@ var tooltip$2 = {
         else if (isDefined(args.index)) {
             index = args.index;
         }
-        // emulate events to show
         (inputType === "mouse" ?
             ["mouseover", "mousemove"] : ["touchstart"]).forEach(function (eventName) {
             $$.dispatchEvent(eventName, index, mouse);
@@ -11171,69 +11219,54 @@ var eventrect = {
      */
     redrawEventRect: function () {
         var $$ = this;
-        var config = $$.config, $el = $$.$el;
+        var config = $$.config, state = $$.state, $el = $$.$el;
         var isMultipleX = $$.isMultipleX();
-        var eventRectUpdate;
-        var eventRects = $$.$el.main.select("." + CLASS.eventRects)
-            .style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (config.axis_rotated ? "ns-resize" : "ew-resize") : null)
-            .classed(CLASS.eventRectsMultiple, isMultipleX)
-            .classed(CLASS.eventRectsSingle, !isMultipleX);
-        // clear old rects
-        eventRects.selectAll("." + CLASS.eventRect).remove();
-        // open as public constiable
-        $el.eventRect = eventRects.selectAll("." + CLASS.eventRect);
-        if (isMultipleX) {
-            eventRectUpdate = $el.eventRect.data([0]);
-            // update
-            // enter: only one rect will be added
-            // exit: not needed because always only one rect exists
-            eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter())
-                .merge(eventRectUpdate);
+        if ($el.eventRect) {
+            $$.updateEventRect($el.eventRect);
         }
         else {
-            // Set data and update $el.eventRect
+            var eventRects = $$.$el.main.select("." + CLASS.eventRects)
+                .style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (config.axis_rotated ? "ns-resize" : "ew-resize") : null)
+                .classed(CLASS.eventRectsMultiple, isMultipleX)
+                .classed(CLASS.eventRectsSingle, !isMultipleX);
+            // append event <rect>
+            var eventRectUpdate = eventRects.selectAll("." + CLASS.eventRect)
+                .data([0])
+                .enter()
+                .append("rect");
+            eventRectUpdate = $$.updateEventRect(eventRectUpdate);
+            // bind event to <rect> element
+            isMultipleX ?
+                $$.generateEventRectsForMultipleXs(eventRectUpdate) :
+                $$.generateEventRectsForSingleX(eventRectUpdate);
+            $el.eventRect = eventRectUpdate;
+            if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
+                $$.bindTouchOnEventRect(isMultipleX);
+            }
+        }
+        if (!isMultipleX) {
+            // Set data and update eventReceiver.data
             var xAxisTickValues = $$.getMaxDataCountTarget();
             // update data's index value to be alinged with the x Axis
             $$.updateDataIndexByX(xAxisTickValues);
             $$.updateXs(xAxisTickValues);
             $$.updatePointClass && $$.updatePointClass(true);
-            eventRects.datum(xAxisTickValues);
-            $el.eventRect = eventRects.selectAll("." + CLASS.eventRect);
-            eventRectUpdate = $el.eventRect.data(function (d) { return d; });
-            // exit
-            eventRectUpdate.exit().remove();
-            // update
-            eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter())
-                .merge(eventRectUpdate);
+            state.eventReceiver.data = xAxisTickValues;
         }
-        $el.eventRect = eventRectUpdate;
-        $$.updateEventRect(eventRectUpdate);
-        if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
-            $$.bindTouchOnEventRect(isMultipleX);
-        }
+        $$.updateEventRectData();
     },
     bindTouchOnEventRect: function (isMultipleX) {
         var $$ = this;
-        var config = $$.config, state = $$.state, svg = $$.$el.svg;
-        var getEventRect = function () {
-            var touch = event.changedTouches[0];
-            return select(doc.elementFromPoint(touch.clientX, touch.clientY));
-        };
-        var getIndex = function (eventRect) {
-            var index = eventRect && eventRect.attr("class") && eventRect.attr("class")
-                .replace(new RegExp("(" + CLASS.eventRect + "-?|s)", "g"), "") * 1;
-            if (isNaN(index) || index === null) {
-                index = -1;
-            }
-            return index;
-        };
+        var config = $$.config, state = $$.state, _a = $$.$el, eventRect = _a.eventRect, svg = _a.svg;
+        var event$1 = event;
         var selectRect = function (context) {
             if (isMultipleX) {
                 $$.selectRectForMultipleXs(context);
             }
             else {
-                var eventRect = getEventRect();
-                var index = getIndex(eventRect);
+                // const eventRect = getEventRect();
+                // const index = getIndex(eventRect);
+                var index = $$.getDataIndexFromEvent(event$1);
                 $$.callOverOutForTouch(index);
                 index === -1 ?
                     $$.unselectRect() :
@@ -11270,7 +11303,7 @@ var eventrect = {
         // bind touch events
         svg
             .on("touchstart.eventRect touchmove.eventRect", function () {
-            var eventRect = getEventRect();
+            // const eventRect = getEventRect();
             var event$1 = event;
             if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
                 // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
@@ -11286,7 +11319,7 @@ var eventrect = {
             }
         }, true)
             .on("touchend.eventRect", function () {
-            var eventRect = getEventRect();
+            // const eventRect = getEventRect();
             if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
                 if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
                     state.cancelClick && (state.cancelClick = false);
@@ -11294,16 +11327,33 @@ var eventrect = {
             }
         }, true);
     },
+    updateEventRect: function (eventRect) {
+        var $$ = this;
+        var _a = $$.state, width = _a.width, height = _a.height, rendered = _a.rendered;
+        var rect = eventRect
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", width)
+            .attr("height", height);
+        // only for init
+        if (!rendered) {
+            rect
+                .attr("class", CLASS.eventRect)
+                .on("click", function () {
+                $$.clickHandlerForMultipleXS.bind(this)($$);
+            });
+        }
+        $$.state.eventReceiver.rect = getBoundingRect(rect.node());
+        return rect;
+    },
     /**
      * Updates the location and size of the eventRect.
-     * @param {object} eventRectUpdate d3.select(CLASS.eventRects) object.
      * @private
      */
-    updateEventRect: function (eventRectUpdate) {
+    updateEventRectData: function () {
         var $$ = this;
         var config = $$.config, scale = $$.scale, state = $$.state;
         var xScale = scale.zoom || scale.x;
-        var eventRectData = eventRectUpdate || $$.$el.eventRect.data(); // set update selection if null
         var isRotated = config.axis_rotated;
         var x;
         var y;
@@ -11324,12 +11374,12 @@ var eventrect = {
                 rectX = function (d) { return xScale(d.x) - (rectW_1 / 2); };
             }
             else {
-                var getPrevNextX_1 = function (d) {
-                    var index = d.index;
-                    return {
+                var getPrevNextX_1 = function (_a) {
+                    var index = _a.index;
+                    return ({
                         prev: $$.getPrevX(index),
                         next: $$.getNextX(index)
-                    };
+                    });
                 };
                 rectW_1 = function (d) {
                     var x = getPrevNextX_1(d);
@@ -11363,11 +11413,16 @@ var eventrect = {
             w = isRotated ? state.width : rectW_1;
             h = isRotated ? rectW_1 : state.height;
         }
-        eventRectData.attr("class", $$.classEvent.bind($$))
-            .attr("x", x)
-            .attr("y", y)
-            .attr("width", w)
-            .attr("height", h);
+        var eventReceiver = state.eventReceiver;
+        var call = function (fn, v) { return (isFunction(fn) ? fn(v) : fn); };
+        eventReceiver.data.forEach(function (d, i) {
+            eventReceiver.coords[i] = {
+                x: call(x, d),
+                y: call(y, d),
+                w: call(w, d),
+                h: call(h, d)
+            };
+        });
     },
     selectRectForMultipleXs: function (context) {
         var $$ = this;
@@ -11430,49 +11485,54 @@ var eventrect = {
     generateEventRectsForSingleX: function (eventRectEnter) {
         var $$ = this;
         var config = $$.config, state = $$.state;
-        var rect = eventRectEnter.append("rect")
+        var eventReceiver = state.eventReceiver;
+        var rect = eventRectEnter
             .attr("class", $$.classEvent.bind($$))
             .style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
-            .on("click", function (d) {
+            .on("click", function () {
+            var currentIdx = eventReceiver.currentIdx, data = eventReceiver.data;
+            var d = data[currentIdx === -1 ?
+                $$.getDataIndexFromEvent(event) : currentIdx];
             $$.clickHandlerForSingleX.bind(this)(d, $$);
-        })
-            .call($$.getDraggableSelection());
+        });
         if (state.inputType === "mouse") {
+            var getData_1 = function () {
+                var index = event ? $$.getDataIndexFromEvent(event) : eventReceiver.currentIdx;
+                return index > -1 ? eventReceiver.data[index] : null;
+            };
             rect
-                .on("mouseover", function (d) {
+                .on("mousemove", function () {
+                var d = getData_1();
                 // do nothing while dragging/flowing
-                if (state.dragging || state.flowing || $$.hasArcType()) {
-                    return;
-                }
-                config.tooltip_grouped && $$.setOverOut(true, d.index);
-            })
-                .on("mousemove", function (d) {
-                // do nothing while dragging/flowing
-                if (state.dragging || state.flowing || $$.hasArcType()) {
+                if (state.dragging || state.flowing || $$.hasArcType() ||
+                    !d || (config.tooltip_grouped && d && d.index === eventReceiver.currentIdx)) {
                     return;
                 }
                 var index = d.index;
-                var eventRect = $$.$el.svg.select("." + CLASS.eventRect + "-" + index);
                 if ($$.isStepType(d) &&
                     config.line_step_type === "step-after" &&
                     mouse(this)[0] < $$.scale.x($$.getXValue(d.id, index))) {
                     index -= 1;
                 }
+                if (index !== eventReceiver.currentIdx) {
+                    $$.setOverOut(false, eventReceiver.currentIdx);
+                    eventReceiver.currentIdx = index;
+                }
                 index === -1 ?
-                    $$.unselectRect() : $$.selectRectForSingle(this, eventRect, index);
+                    $$.unselectRect() : $$.selectRectForSingle(this, rect, index);
                 // As of individual data point(or <path>) element can't bind mouseover/out event
                 // to determine current interacting element, so use 'mousemove' event instead.
-                if (!config.tooltip_grouped) {
-                    $$.setOverOut(index !== -1, d.index);
-                }
+                $$.setOverOut(index !== -1, index);
             })
-                .on("mouseout", function (d) {
+                .on("mouseout", function () {
                 // chart is destroyed
-                if (!config || $$.hasArcType()) {
+                if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
                     return;
                 }
                 $$.unselectRect();
-                $$.setOverOut(false, d.index);
+                $$.setOverOut(false, eventReceiver.currentIdx);
+                // reset the event current index
+                eventReceiver.currentIdx = -1;
             });
         }
         return rect;
@@ -11497,25 +11557,17 @@ var eventrect = {
      * Create an eventRect,
      * Register touch and drag events.
      * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
-     * @returns {object} d3.select(CLASS.eventRects) object.
      * @private
      */
     generateEventRectsForMultipleXs: function (eventRectEnter) {
         var $$ = this;
-        var _a = $$.state, width = _a.width, height = _a.height, inputType = _a.inputType;
-        var rect = eventRectEnter
-            .append("rect")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", width)
-            .attr("height", height)
-            .attr("class", CLASS.eventRect)
+        var inputType = $$.state.inputType;
+        eventRectEnter
             .on("click", function () {
             $$.clickHandlerForMultipleXS.bind(this)($$);
-        })
-            .call($$.getDraggableSelection());
+        });
         if (inputType === "mouse") {
-            rect
+            eventRectEnter
                 .on("mouseover mousemove", function () {
                 $$.selectRectForMultipleXs(this);
             })
@@ -11527,7 +11579,6 @@ var eventrect = {
                 $$.unselectRect();
             });
         }
-        return rect;
     },
     clickHandlerForMultipleXS: function (ctx) {
         var $$ = ctx;
@@ -18368,6 +18419,7 @@ var zoom$1 = {
             .clickDistance(4)
             .on("start", function () {
             $$.setDragStatus(true);
+            $$.unselectRect();
             if (!zoomRect) {
                 zoomRect = $$.$el.main.append("rect")
                     .attr("clip-path", state.clip.path)
