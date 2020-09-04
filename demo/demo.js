@@ -3016,7 +3016,9 @@ d3.select(".chart_area")
 					}
 				},
 				point: {
-					show: false
+					focus: {
+						only: true
+					}
 				}
 			},
 			style: [

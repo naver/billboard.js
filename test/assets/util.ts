@@ -7,7 +7,6 @@
 /* global sandbox, window */
 import simulant from "simulant";
 import bb from "../../src/";
-import CLASS from "../../src/config/classes";
 
 /**
  * Create a DOM element
@@ -95,12 +94,10 @@ const simulator = (el, option = {}, callback) => {
  * @param {Object} [pos={clientX: 100, clientY: 100}]
  * @param {Number} [dataIndex=2]
  */
-const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}, dataIndex = 2) => {
-	const eventRect = hoverChart.$.main
-		.select(`.${CLASS.eventRect}-${dataIndex}`)
-		.node();
+const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}) => {
+	const {eventRect} = hoverChart.internal.$el;
 
-	fireEvent(eventRect, eventName, pos, hoverChart);
+	fireEvent(eventRect.node(), eventName, pos, hoverChart);
 };
 
 /**

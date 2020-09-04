@@ -65,6 +65,13 @@ export default class State {
 			legendItemHeight: 0,
 			legendHasRendered: false,
 
+			eventReceiver: {
+				currentIdx: -1, // current event interaction index
+				rect: {}, // event rect's clientBoundingRect
+				data: [], // event data bound of previoous eventRect
+				coords: [] // coordination value of previous eventRect
+			},
+
 			axis: {
 				x: {
 					padding: {left: 0, right: 0},
