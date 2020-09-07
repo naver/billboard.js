@@ -136,7 +136,7 @@
     "d3-polygon": "^1.0.6",
     "d3-voronoi": "^1.1.4",
     "docdash": "^1.2.0",
-    "dtslint": "^3.7.0",
+    "dtslint": "^4.0.0",
     "eslint": "^7.8.0",
     "eslint-config-naver": "^2.1.0",
     "eslint-loader": "^4.0.2",
