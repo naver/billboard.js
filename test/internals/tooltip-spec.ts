@@ -442,8 +442,6 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip order", () => {
-		console.log(JSON.stringify(args))
-
 		it("should sort values in data display order", () => {
 			checkTooltip(chart, [
 				`${CLASS.tooltipName}-data1`,
