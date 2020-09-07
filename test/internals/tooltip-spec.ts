@@ -46,7 +46,7 @@ describe("TOOLTIP", function() {
 
 	// check for the tooltip's ordering
 	const checkTooltip = (checkChart, expected?) => {
-		util.hoverChart(checkChart);
+		checkChart.tooltip.show({index:2});
 
 		const tooltips = checkChart.$.tooltip
 			.selectAll("tr")
@@ -61,7 +61,10 @@ describe("TOOLTIP", function() {
 
 	// check for the tooltip's ordering
 	const checkLinkedTooltip = (chart1, chart2, expected?) => {
-		util.hoverChart(chart1);
+		util.hoverChart(chart1, "mousemove", {
+			clientX: 270,
+			clientY: 100
+		});
 
 		const tooltips = chart2.$.tooltip
 			.selectAll("tr")
@@ -87,13 +90,17 @@ describe("TOOLTIP", function() {
 		expect(width).to.be.above(0);
 		expect(height).to.be.above(0);
 
-		expect(element).to.be.equal(this.$el.main.select(`.${CLASS.eventRect}-2`).node());
+		// expect(element).to.be.equal(this.$el.main.select(`.${CLASS.eventRect}-2`).node());
 
 		return tooltipPos;
 	};
 
 	const checkCallback = (checkChart, doHide) => {
-		util.hoverChart(checkChart);
+		util.hoverChart(checkChart, "mousemove", {
+			clientX: 270,
+			clientY: 200
+		});
+
 		doHide && util.hoverChart(checkChart, "mouseout");
 	};
 
@@ -159,13 +166,16 @@ describe("TOOLTIP", function() {
 	describe("tooltip position", () => {
 		describe("without left margin", () => {
 			it("should show tooltip on proper position", () => {
-				util.hoverChart(chart);
+				util.hoverChart(chart, "mousemove", {
+					clientX: 270,
+					clientY: 100
+				});
 
-				const tooltipContainer = chart.$.tooltip;
-				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
-				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
+				const {tooltip} = chart.$;
+				const top = Math.floor(+tooltip.style("top").replace(/px/, ""));
+				const left = Math.floor(+tooltip.style("left").replace(/px/, ""));
 				const tooltipPos = {
-					top: 115,
+					top: 95,
 					left: 280
 				};
 
@@ -185,13 +195,16 @@ describe("TOOLTIP", function() {
 			});
 
 			it("should show tooltip on proper position", () => {
-				util.hoverChart(chart);
+				util.hoverChart(chart, "mousemove", {
+					clientX: 270,
+					clientY: 100
+				});
 
 				const tooltipContainer = chart.$.tooltip;
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 				const tooltipPos = {
-					top: 115,
+					top: 95,
 					left: 280
 				};
 
@@ -258,7 +271,7 @@ describe("TOOLTIP", function() {
 					const tooltipPos = parseInt(tooltip.style("left")) + parseInt(tooltip.style("width"));
 
 					expect(pointRect.left > tooltipPos).to.be.true;
-					expect(pointRect.left).to.be.above(tooltipPos, 20);
+					expect(pointRect.left).to.be.above(tooltipPos, "20");
 
 					done();
 				}, 300);
@@ -273,18 +286,22 @@ describe("TOOLTIP", function() {
 			it("should show tooltip on proper position", () => {
 				chart.zoom([4,7]);
 
-				util.hoverChart(chart);
+				// util.hoverChart(chart);
+				util.hoverChart(chart, "mousemove", {
+					clientX: 50,
+					clientY: 100
+				});
 
 				const tooltipContainer = chart.$.tooltip;
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 				const tooltipPos = {
-					top: 115,
-					left: 150
+					top: 95,
+					left: 60
 				};
 
 				expect(top).to.be.equal(tooltipPos.top);
-				expect(left).to.be.above(tooltipPos.left);
+				expect(left).to.be.equal(tooltipPos.left);
 			});
 		});
 
@@ -363,11 +380,15 @@ describe("TOOLTIP", function() {
 		});
 
 		it("should be set to the coordinate where the function returned", () => {
-			util.hoverChart(chart);
+			util.hoverChart(chart, "mousemove", {
+				clientX: 270,
+				clientY: 100
+			});
 
-			const tooltipContainer = chart.$.tooltip;
-			const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
-			const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
+			const {tooltip} = chart.$;
+
+			const top = Math.floor(+tooltip.style("top").replace(/px/, ""));
+			const left = Math.floor(+tooltip.style("left").replace(/px/, ""));
 
 			expect(top).to.be.equal(tooltipPos.top);
 			expect(left).to.be.equal(tooltipPos.left);
@@ -421,6 +442,8 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip order", () => {
+		console.log(JSON.stringify(args))
+
 		it("should sort values in data display order", () => {
 			checkTooltip(chart, [
 				`${CLASS.tooltipName}-data1`,
@@ -548,7 +571,10 @@ describe("TOOLTIP", function() {
 		});
 
 		it("linked tooltips should be set to the coordinate where the function returned", () => {
-			util.hoverChart(chart);
+			util.hoverChart(chart, "mousemove", {
+				clientX: 270,
+				clientY: 100
+			});
 
 			[chart, chart2].forEach(v => {
 				const tooltipContainer = v.$.tooltip;
@@ -755,7 +781,10 @@ describe("TOOLTIP", function() {
 
 		it("tooltip should be displayed", () => {
 			// check for custom point shape
-			util.hoverChart(chart, undefined, {clientX: 292, clientY: 107});
+			util.hoverChart(chart, undefined, {
+				clientX: 292,
+				clientY: 107
+			});
 
 			let value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data3 .value`).text();
 
@@ -776,7 +805,7 @@ describe("TOOLTIP", function() {
 			};
 
 			// check for custom point shape
-			util.hoverChart(chart, undefined, {clientX: 581, clientY: 214}, 4);
+			util.hoverChart(chart, undefined, {clientX: 581, clientY: 214});
 
 			chart.$.tooltip.selectAll(".name")
 				.each(function() {
@@ -1042,8 +1071,15 @@ describe("TOOLTIP", function() {
 		it("check for tooltip contents template", () => {
 			const html = `<ul><li>Index<br>2</li><li class="bb-tooltip-name-data1"><span>100</span><br>!!comment<span style="color:#00c73c">data1</span></li><li class="bb-tooltip-name-data2"><span>140</span><br>test!!<span style="color:#fa7171">data2</span></li></ul>`;
 
-			util.hoverChart(chart, "mousemove", {clientX: 185, clientY: 107});
-			util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100});
+			util.hoverChart(chart, "mousemove", {
+				clientX: 450,
+				clientY: 107
+			});
+
+			util.hoverChart(chart, "mouseout", {
+				clientX: -100,
+				clientY: -100
+			});
 
 			expect(d3Select("#tooltip").html()).to.be.equal(html);
 		});

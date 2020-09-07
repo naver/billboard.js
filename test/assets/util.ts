@@ -7,7 +7,6 @@
 /* global sandbox, window */
 import simulant from "simulant";
 import bb from "../../src/";
-import CLASS from "../../src/config/classes";
 
 /**
  * Create a DOM element
@@ -63,7 +62,7 @@ const generate = args => {
  */
 const fireEvent = (element, name, options: any = {}, chart?: Chart) => {
 	const paddingLeft =
-		(chart && chart.internal.$el.main.node().transform.baseVal.getItem(0).matrix.e) || 0;
+		(chart && chart.$.main.node().transform.baseVal.getItem(0).matrix.e) || 0;
 
 	// adjust clientX/Y value
 	"clientX" in options && (options.clientX += paddingLeft);
@@ -95,12 +94,10 @@ const simulator = (el, option = {}, callback) => {
  * @param {Object} [pos={clientX: 100, clientY: 100}]
  * @param {Number} [dataIndex=2]
  */
-const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}, dataIndex = 2) => {
-	const eventRect = hoverChart.$.main
-		.select(`.${CLASS.eventRect}-${dataIndex}`)
-		.node();
+const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}) => {
+	const {eventRect} = hoverChart.internal.$el;
 
-	fireEvent(eventRect, eventName, pos, hoverChart);
+	fireEvent(eventRect.node(), eventName, pos, hoverChart);
 };
 
 /**

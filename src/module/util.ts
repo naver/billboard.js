@@ -21,6 +21,7 @@ export {
 	endall,
 	emulateEvent,
 	extend,
+	findIndex,
 	getBrushSelection,
 	getBoundingRect,
 	getCssRules,
@@ -273,10 +274,17 @@ function getBrushSelection({$el}) {
  * @returns {object}
  * @private
  */
-const getBoundingRect = (node): {
+function getBoundingRect(node): {
 	left: number, top: number, right: number, bottom: number,
 	x: number, y: number, width: number, height: number
-} => node.rect || (node.rect = node.getBoundingClientRect());
+} {
+	const needEvaluate = !("rect" in node) || (
+		"rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width")
+	);
+
+	return needEvaluate ?
+		(node.rect = node.getBoundingClientRect()) : node.rect;
+}
 
 /**
  * Retrun random number
@@ -288,6 +296,37 @@ function getRandom(asStr: boolean = true): number | string {
 	const rand = Math.random();
 
 	return asStr ? String(rand) : rand;
+}
+
+/**
+ * Find index based on binary search
+ * @param {Array} arr Data array
+ * @param {number} v Target number to find
+ * @param {number} start Start index of data array
+ * @param {number} end End index of data arr
+ * @param {boolean} isRotated Weather is roted axis
+ * @returns {number} Index number
+ */
+function findIndex(arr, v: number, start: number, end: number, isRotated: boolean): number {
+	if (start > end) {
+		return -1;
+	}
+
+	const mid = Math.floor((start + end) / 2);
+	let {x, w = 0} = arr[mid];
+
+	if (isRotated) {
+		x = arr[mid].y;
+		w = arr[mid].h;
+	}
+
+	if (v >= x && v <= x + w) {
+		return mid;
+	}
+
+	return v < x ?
+		findIndex(arr, v, start, mid - 1, isRotated) :
+		findIndex(arr, v, mid + 1, end, isRotated);
 }
 
 /**

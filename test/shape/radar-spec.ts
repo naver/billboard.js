@@ -345,7 +345,9 @@ describe("SHAPE RADAR", () => {
 			chart.tooltip.show({x});
 
 			// 'null' data point shoudn't be displayed
-			expect(circles.filter(`.${CLASS.EXPANDED}`).size()).to.be.equal(chart.data().length);			
+			expect(circles.filter(function() {
+				return this.getAttribute("style").indexOf("hidden") === -1;
+			}).size()).to.be.equal(chart.data().length);
 		});
 	});
 });

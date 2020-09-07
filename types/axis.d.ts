@@ -11,7 +11,7 @@ export interface Axis {
 	rotated?: boolean;
 	x?: xAxisConfiguration;
 	y?: yAxisConfiguration;
-	y2?: y2AxisConfiguration;
+	y2?: yAxisConfigurationBase;
 }
 
 export interface AxisConfigurationBase {
@@ -24,7 +24,6 @@ export interface AxisConfigurationBase {
 	 * Set additional axes for Axis
 	 */
 	axes?: AxesConfiguration[];
-
 }
 
 export interface xAxisConfiguration extends AxisConfigurationBase {
@@ -177,23 +176,10 @@ export interface yAxisConfigurationBase extends AxisConfigurationBase {
 
 export interface yAxisConfiguration extends yAxisConfigurationBase {
 	/**
-	 * Set type of y axis (timeseries, category, indexed, log)
-	 *
-	 * NOTE:
-	 * 	 log type:
-	 *   - the bound data values must be exclusively-positive.
-	 *   - y axis min value should be >= 0.
-	 *   - `data.groups`(stacked data) option aren't supported.
-	 */
-	type?: "indexed" | "log" | "timeseries";
-
-	/**
 	 * Set clip-path attribute for y axis element.
 	 */
 	clipPath?: boolean;
 }
-
-export interface y2AxisConfiguration extends yAxisConfigurationBase {}
 
 export interface XTickConfiguration {
 	/**
@@ -300,6 +286,17 @@ export interface XTickConfiguration {
 		 */
 		show?: boolean;
 	};
+
+	/**
+	 * Set axis type (timeseries, category, indexed, log)
+	 *
+	 * NOTE:
+	 * 	 log type:
+	 *   - the bound data values must be exclusively-positive.
+	 *   - axis min value should be >= 0.
+	 *   - `data.groups`(stacked data) option aren't supported.
+	 */
+	type?: "indexed" | "log" | "timeseries";
 }
 
 export interface YTickConfiguration {

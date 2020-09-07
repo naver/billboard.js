@@ -4,7 +4,9 @@
  */
 import {Axis} from "./axis";
 import {ChartTypes, d3Selection, DataItem, GaugeTypes, PrimitiveArray} from "./types";
+import Bubblecompare from "./plugin/bubblecompare/index";
 import Stanford from "./plugin/stanford/index";
+import TextOverlap from "./plugin/textoverlap/index";
 import {Chart} from "./chart";
 
 export interface ChartOptions {
@@ -97,7 +99,7 @@ export interface ChartOptions {
 		 *
 		 * Passing 'null' will not set a color for these elements, which requires the usage of custom CSS-based theming to work.
 		 */
-		pattern?: (string|null)[];
+		pattern?: Array<(string|null)>;
 
 		/**
 		 * color threshold for gauge and tooltip color
@@ -490,7 +492,7 @@ export interface ChartOptions {
 			/**
 			 * Set ratio of labels position.
 			 */
-			ratio? : number | ((this: Chart, d, radius, h) => number)
+			ratio?: number | ((this: Chart, d: DataItem, radius: number, h: number) => number)
 
 			/**
 			 * Set threshold ratio to show/hide labels.
@@ -697,7 +699,7 @@ export interface ChartOptions {
 	/**
 	 * Set plugins
 	 */
-	plugins?: Stanford | any[];
+	plugins?: Array<(Bubblecompare | Stanford | TextOverlap)>;
 
 	/**
 	 * Control the render timing
@@ -748,7 +750,7 @@ export interface ChartOptions {
 		 * Set the position. Default value is 'center'
 		 */
 		position?: "center" | "right" | "left";
-	}
+	};
 }
 
 export interface AreaLinearGradientOptions {
@@ -769,7 +771,7 @@ export interface AreaLinearGradientOptions {
 	 * - setting 'null' for stop-color, will set its original data color
 	 * - setting 'function' for stop-color, will pass data id as argument. It should return color string or null value
 	 */
-	stops?: [number, string | null | ((this: Chart, id: string) => string), number][];
+	stops?: Array<[number, string | null | ((this: Chart, id: string) => string), number]>;
 }
 
 export interface RegionOptions {

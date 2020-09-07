@@ -271,8 +271,8 @@ describe("COLOR", () => {
 
 		// check color.onover
 		const checkColor = (chart, colorOnover) => {
-			const {main} = chart.$;
-			const eventRect = main.select(`.${CLASS.eventRect}-1`).node();
+			const {$: {main}, internal: {$el}} = chart;
+			const eventRect = $el.eventRect.node();
 			const shape = main.selectAll(`.${CLASS.shape}-1`);
 			const originalColor = [];
 
@@ -283,7 +283,10 @@ describe("COLOR", () => {
 				});
 			});
 
-			util.fireEvent(eventRect, "mouseover");
+			util.fireEvent(eventRect, "mousemove", {
+				clientX: 313,
+				clientY: 200
+			}, chart);
 
 			shape.each(function(d) {
 				let color = colorOnover;

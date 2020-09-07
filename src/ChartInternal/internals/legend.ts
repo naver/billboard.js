@@ -199,8 +199,12 @@ export default {
 	 * @private
 	 */
 	updateLegendItemColor(id: string, color: string): void {
-		this.$el.legend.select(`.${CLASS.legendItem}-${id} line`)
-			.style("stroke", color);
+		const {legend} = this.$el;
+
+		if (legend) {
+			legend.select(`.${CLASS.legendItem}-${id} line`)
+				.style("stroke", color);
+		}
 	},
 
 	/**
@@ -393,14 +397,17 @@ export default {
 		if (config.interaction_enabled) {
 			item
 				.style("cursor", "pointer")
-				.on("click", id => {
+				.on("click", function(id) {
 					if (!callFn(config.legend_item_onclick, api, id)) {
 						if (d3Event.altKey) {
 							api.hide();
 							api.show(id);
 						} else {
 							api.toggle(id);
-							!isTouch && $$.isTargetToShow(id) ? api.focus(id) : api.revert();
+
+							d3Select(this)
+								.classed(CLASS.legendItemFocused, false)
+								.style("opacity", null);
 						}
 					}
 

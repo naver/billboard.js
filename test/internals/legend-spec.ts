@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import sinon from "sinon";
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
@@ -475,8 +476,8 @@ describe("LEGEND", () => {
 		});
 	});
 
-	describe('legend item tile coloring with color_treshold', () => {
-		before(function () {
+	describe("legend item tile coloring with color_treshold", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -511,6 +512,32 @@ describe("LEGEND", () => {
 			expect(tileColor[1]).to.be.equal('rgb(246, 198, 0)');
 			expect(tileColor[2]).to.be.equal('rgb(249, 118, 0)');
 			expect(tileColor[3]).to.be.equal('rgb(255, 0, 0)');
+		});
+
+		it("color.threshold should be generated without error when legend.show=false", done => {
+			const spy = sinon.spy();
+
+			util.generate({
+				data: {
+					columns: [["col-0", 2.05]], 
+					type: "gauge"
+				},
+				legend: {
+					show: false
+				},
+				color: {
+					pattern: ["#29BB9D", "#29BB9D", "#E7C248", "#FF9A0C", "#F56075"],
+					threshold: {
+						values: [20, 40, 60, 80, 100]
+					}
+				},
+				onrendered: spy
+			});
+
+			setTimeout(() => {
+				expect(spy.called).to.be.true;
+				done();
+			}, 500);
 		});
 	});
 
@@ -553,6 +580,36 @@ describe("LEGEND", () => {
 			).to.be.true;
 
 			expect(tileColor[3]).to.be.equal("rgb(139, 0, 139)");
+		});
+	});
+
+	describe("legend opacity onclcik", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, -200, 100, 200, 190, 280],
+						["data2", 30, 200, 120, 400, 150, 150]
+					]
+				}
+			};
+		});
+
+		it("check legend item after click", () => {
+			const legend = chart.$.legend.select(`.${CLASS.legendItem}-data2`);
+			const {x, y} = legend.node().getBoundingClientRect();
+			
+			util.fireEvent(legend.node(), "mouseover", {
+				clientX: x,
+				clientY: y
+			}, chart);
+
+			util.fireEvent(legend.node(), "click", {
+				clientX: x,
+				clientY: y
+			}, chart);
+
+			expect(legend.classed(CLASS.legendItemFocused)).to.false;
 		});
 	});
 });

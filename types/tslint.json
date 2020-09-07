@@ -3,6 +3,7 @@
     "rules": {
         "semicolon": true,
         "indent": [true, "tabs", 4],
-        "jsdoc-format": false
+        "jsdoc-format": false,
+        "whitespace": [false, "check-module"]
     }
 }
