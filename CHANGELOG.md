@@ -1,3 +1,24 @@
+# [2.1.0-next.2](https://github.com/naver/billboard.js/compare/2.1.0-next.1...2.1.0-next.2) (2020-09-07)
+
+
+### Bug Fixes
+
+* upgrade d3-brush from 1.1.5 to 1.1.6 ([#1605](https://github.com/naver/billboard.js/issues/1605)) ([624f044](https://github.com/naver/billboard.js/commit/624f044422c889702a8af77589dac15855a5f137))
+* **api:** prevent TypeError when chart already destroyed ([ce42768](https://github.com/naver/billboard.js/commit/ce427689a3c5234284382a3225fa39379862a240)), closes [#1613](https://github.com/naver/billboard.js/issues/1613)
+* upgrade d3-ease from 1.0.6 to 1.0.7 ([#1617](https://github.com/naver/billboard.js/issues/1617)) ([4f78533](https://github.com/naver/billboard.js/commit/4f78533a900d9950f4ba8afac5f4fd269468d579))
+* **bar:** Fix not firing data.onclick ([62e7a10](https://github.com/naver/billboard.js/commit/62e7a10a42d8eb80f5c6653533e8a49db4a7b52b)), closes [#1619](https://github.com/naver/billboard.js/issues/1619) [#1620](https://github.com/naver/billboard.js/issues/1620)
+* **grid:** Fix grid text position update ([056b565](https://github.com/naver/billboard.js/commit/056b565c738dd5f1ce3edf3d4bd78b4942bb5882)), closes [#1592](https://github.com/naver/billboard.js/issues/1592)
+* **legend:** Fix error for color.threshold option ([6e06629](https://github.com/naver/billboard.js/commit/6e06629bf36100404d6f4dae55a84f80e727c1f4)), closes [#1604](https://github.com/naver/billboard.js/issues/1604) [#1611](https://github.com/naver/billboard.js/issues/1611)
+* **legend:** Make legend blurry after click ([319d608](https://github.com/naver/billboard.js/commit/319d6081d32c438fb261e0215774e0d7b24cc8f2)), closes [#1599](https://github.com/naver/billboard.js/issues/1599)
+* **step:** Fix rendering nullish data ([dbe7b9b](https://github.com/naver/billboard.js/commit/dbe7b9b40f9666ba0c11261f1af91f271c794631)), closes [#1637](https://github.com/naver/billboard.js/issues/1637)
+* **types:** Fix donut option types ([1917169](https://github.com/naver/billboard.js/commit/19171699ab1855a3bd19bfdd7188e9b7a257c0ef)), closes [#1615](https://github.com/naver/billboard.js/issues/1615)
+
+
+### Features
+
+* **interaction:** avoid multiple <rect> generation ([97df63a](https://github.com/naver/billboard.js/commit/97df63a38cb1dff5e1b43b1792a4195c2beb9a1f)), closes [#1642](https://github.com/naver/billboard.js/issues/1642)
+* **theme:** Add new 'datalab' theme ([aba20d4](https://github.com/naver/billboard.js/commit/aba20d49407ce688c96e55bceeb80c3f401c291f)), closes [#241](https://github.com/naver/billboard.js/issues/241)
+
 # [2.1.0-next.1](https://github.com/naver/billboard.js/compare/2.0.1...2.1.0-next.1) (2020-08-04)
 
 
