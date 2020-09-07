@@ -3428,7 +3428,7 @@ var data$1 = {
         var config = $$.config, _a = $$.state, inputType = _a.inputType, _b = _a.eventReceiver, coords = _b.coords, rect = _b.rect;
         var isRotated = config.axis_rotated;
         // get data based on the mouse coords
-        var e = inputType === "touch" ? event.changedTouches[0] : event;
+        var e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
         var index = findIndex(coords, isRotated ? e.clientY - rect.y : e.clientX - rect.x, 0, coords.length - 1, isRotated);
         return index;
     },
@@ -11234,7 +11234,7 @@ var eventrect = {
                 .data([0])
                 .enter()
                 .append("rect");
-            eventRectUpdate = $$.updateEventRect(eventRectUpdate);
+            $$.updateEventRect(eventRectUpdate);
             // bind event to <rect> element
             isMultipleX ?
                 $$.generateEventRectsForMultipleXs(eventRectUpdate) :
@@ -11311,7 +11311,7 @@ var eventrect = {
                     return;
                 }
                 preventEvent(event$1);
-                selectRect(this);
+                selectRect(eventRect.node());
             }
             else {
                 $$.unselectRect();
@@ -11329,7 +11329,10 @@ var eventrect = {
     },
     updateEventRect: function (eventRect) {
         var $$ = this;
-        var _a = $$.state, width = _a.width, height = _a.height, rendered = _a.rendered;
+        var _a = $$.state, eventReceiver = _a.eventReceiver, width = _a.width, height = _a.height, rendered = _a.rendered;
+        var updateClientRect = function () {
+            eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
+        };
         var rect = eventRect
             .attr("x", 0)
             .attr("y", 0)
@@ -11342,9 +11345,10 @@ var eventrect = {
                 .on("click", function () {
                 $$.clickHandlerForMultipleXS.bind(this)($$);
             });
+            // to make evaluate after the page elements are settled within page
+            setTimeout(updateClientRect, 0);
         }
-        $$.state.eventReceiver.rect = getBoundingRect(rect.node());
-        return rect;
+        updateClientRect();
     },
     /**
      * Updates the location and size of the eventRect.

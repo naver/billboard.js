@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200904122750
+ * @version 2.0.3-nightly-20200907152256
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -21833,7 +21833,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
         coords = _$$$state$eventReceiv.coords,
         rect = _$$$state$eventReceiv.rect,
         isRotated = config.axis_rotated,
-        e = inputType === "touch" ? event.changedTouches[0] : event,
+        e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event,
         index = findIndex(coords, isRotated ? e.clientY - rect.y : e.clientX - rect.x, 0, coords.length - 1, isRotated);
     return index;
   },
@@ -31898,7 +31898,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
           eventRectUpdate = eventRects.selectAll("." + config_classes.eventRect).data([0]).enter().append("rect"); // append event <rect>
 
       // bind event to <rect> element
-      eventRectUpdate = $$.updateEventRect(eventRectUpdate), isMultipleX ? $$.generateEventRectsForMultipleXs(eventRectUpdate) : $$.generateEventRectsForSingleX(eventRectUpdate), $el.eventRect = eventRectUpdate, $$.state.inputType !== "touch" || $el.svg.on("touchstart.eventRect") || $$.hasArcType() || $$.bindTouchOnEventRect(isMultipleX);
+      $$.updateEventRect(eventRectUpdate), isMultipleX ? $$.generateEventRectsForMultipleXs(eventRectUpdate) : $$.generateEventRectsForSingleX(eventRectUpdate), $el.eventRect = eventRectUpdate, $$.state.inputType !== "touch" || $el.svg.on("touchstart.eventRect") || $$.hasArcType() || $$.bindTouchOnEventRect(isMultipleX);
     }
 
     if (!isMultipleX) {
@@ -31944,7 +31944,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
       if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
         // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
         if (state.dragging || state.flowing || $$.hasArcType() || event.touches.length > 1) return;
-        preventEvent(event), selectRect(this);
+        preventEvent(event), selectRect(eventRect.node());
       } else $$.unselectRect(), $$.callOverOutForTouch();
     }, !0).on("touchend.eventRect", function () {
       !eventRect.empty() && eventRect.classed(config_classes.eventRect) && ($$.hasArcType() || !$$.toggleShape || state.cancelClick) && state.cancelClick && (state.cancelClick = !1);
@@ -31953,13 +31953,18 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
   updateEventRect: function updateEventRect(eventRect) {
     var $$ = this,
         _$$$state = $$.state,
+        eventReceiver = _$$$state.eventReceiver,
         width = _$$$state.width,
         height = _$$$state.height,
         rendered = _$$$state.rendered,
+        updateClientRect = function () {
+      eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
+    },
         rect = eventRect.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height);
-    return rendered || rect.attr("class", config_classes.eventRect).on("click", function () {
+
+    rendered || (rect.attr("class", config_classes.eventRect).on("click", function () {
       $$.clickHandlerForMultipleXS.bind(this)($$);
-    }), $$.state.eventReceiver.rect = getBoundingRect(rect.node()), rect;
+    }), setTimeout(updateClientRect, 0)), updateClientRect();
   },
 
   /**
@@ -39026,7 +39031,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200904122750",
+  version: "2.0.3-nightly-20200907152256",
 
   /**
    * Generate chart
@@ -39154,7 +39159,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200904122750
+ * @version 2.0.3-nightly-20200907152256
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
