@@ -7,7 +7,7 @@ import {
 	event as d3Event
 } from "d3-selection";
 import CLASS from "../../config/classes";
-import {getBoundingRect, isboolean, isFunction} from "../../module/util";
+import {isboolean, isFunction} from "../../module/util";
 
 export default {
 	/**
@@ -44,12 +44,12 @@ export default {
 				.classed(CLASS.eventRectsSingle, !isMultipleX);
 
 			// append event <rect>
-			let eventRectUpdate = eventRects.selectAll(`.${CLASS.eventRect}`)
+			const eventRectUpdate = eventRects.selectAll(`.${CLASS.eventRect}`)
 				.data([0])
 				.enter()
 				.append("rect");
 
-			eventRectUpdate = $$.updateEventRect(eventRectUpdate);
+			$$.updateEventRect(eventRectUpdate);
 
 			// bind event to <rect> element
 			isMultipleX ?
@@ -131,7 +131,7 @@ export default {
 
 		// bind touch events
 		svg
-			.on("touchstart.eventRect touchmove.eventRect", function() {
+			.on("touchstart.eventRect touchmove.eventRect", () => {
 				// const eventRect = getEventRect();
 				const event = d3Event;
 
@@ -142,7 +142,7 @@ export default {
 					}
 
 					preventEvent(event);
-					selectRect(this);
+					selectRect(eventRect.node());
 				} else {
 					$$.unselectRect();
 					$$.callOverOutForTouch();
@@ -159,9 +159,12 @@ export default {
 			}, true);
 	},
 
-	updateEventRect(eventRect) {
+	updateEventRect(eventRect): void {
 		const $$ = this;
-		const {width, height, rendered} = $$.state;
+		const {eventReceiver, width, height, rendered} = $$.state;
+		const updateClientRect = (): void => {
+			eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
+		};
 
 		const rect = eventRect
 			.attr("x", 0)
@@ -176,11 +179,12 @@ export default {
 				.on("click", function() {
 					$$.clickHandlerForMultipleXS.bind(this)($$);
 				});
+
+			// to make evaluate after the page elements are settled within page
+			setTimeout(updateClientRect, 0);
 		}
 
-		$$.state.eventReceiver.rect = getBoundingRect(rect.node());
-
-		return rect;
+		updateClientRect();
 	},
 
 	/**
