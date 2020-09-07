@@ -717,7 +717,6 @@ describe("ZOOM", function() {
 					expect(+brush.attr("height")).to.be.above(size.h);
 					expect(+brush.attr("height")).to.be.equal(30);
 
-					//console.log(size, brush.attr("width"), brush.attr("height"));
 					util.fireEvent(eventRect, "mouseup", {
 						clientX: 100,
 						clientY: 200
