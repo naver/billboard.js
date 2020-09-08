@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200907152256
+ * @version 2.0.3-nightly-20200908152358
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -23331,7 +23331,7 @@ function transformer() {
 function continuous(transform, untransform) {
   return transformer()(transform, untransform);
 }
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatDecimal.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatDecimal.js
 /* harmony default export */ var formatDecimal = (function (x) {
   return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
 }); // Computes the decimal coefficient and exponent of the specified number x with
@@ -23347,12 +23347,12 @@ function formatDecimalParts(x, p) {
 
   return [coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient, +x.slice(i + 1)];
 }
-// CONCATENATED MODULE: ./node_modules/d3-format/src/exponent.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/exponent.js
 
 /* harmony default export */ var src_exponent = (function (x) {
   return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatGroup.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatGroup.js
 /* harmony default export */ var formatGroup = (function (grouping, thousands) {
   return function (value, width) {
     for (var i = value.length, t = [], j = 0, g = grouping[0], length = 0; i > 0 && g > 0 && (length + g + 1 > width && (g = Math.max(1, width - length)), t.push(value.substring(i -= g, i + g)), !((length += g + 1) > width));) g = grouping[j = (j + 1) % grouping.length];
@@ -23360,7 +23360,7 @@ function formatDecimalParts(x, p) {
     return t.reverse().join(thousands);
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatNumerals.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatNumerals.js
 /* harmony default export */ var formatNumerals = (function (numerals) {
   return function (value) {
     return value.replace(/[0-9]/g, function (i) {
@@ -23368,7 +23368,7 @@ function formatDecimalParts(x, p) {
     });
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatSpecifier.js
 // [[fill]align][sign][symbol][0][width][,][.precision][~][type]
 var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 function formatSpecifier(specifier) {
@@ -23396,7 +23396,7 @@ function FormatSpecifier(specifier) {
 FormatSpecifier.prototype.toString = function () {
   return this.fill + this.align + this.sign + this.symbol + (this.zero ? "0" : "") + (this.width === undefined ? "" : Math.max(1, this.width | 0)) + (this.comma ? "," : "") + (this.precision === undefined ? "" : "." + Math.max(0, this.precision | 0)) + (this.trim ? "~" : "") + this.type;
 };
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTrim.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatTrim.js
 // Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
 /* harmony default export */ var formatTrim = (function (s) {
   out: for (var i1, n = s.length, i = 1, i0 = -1; i < n; ++i) switch (s[i]) {
@@ -23415,7 +23415,7 @@ FormatSpecifier.prototype.toString = function () {
 
   return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatPrefixAuto.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatPrefixAuto.js
 
 var prefixExponent;
 /* harmony default export */ var formatPrefixAuto = (function (x, p) {
@@ -23427,7 +23427,7 @@ var prefixExponent;
       n = coefficient.length;
   return i === n ? coefficient : i > n ? coefficient + Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0]; // less than 1y!
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatRounded.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatRounded.js
 
 /* harmony default export */ var formatRounded = (function (x, p) {
   var d = formatDecimalParts(x, p);
@@ -23436,7 +23436,7 @@ var prefixExponent;
       exponent = d[1];
   return exponent < 0 ? "0." + Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + Array(exponent - coefficient.length + 2).join("0");
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTypes.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatTypes.js
 
 
 
@@ -23475,11 +23475,11 @@ var prefixExponent;
     return Math.round(_x).toString(16);
   }
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/identity.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/identity.js
 /* harmony default export */ var d3_format_src_identity = (function (x) {
   return x;
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/locale.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/locale.js
 
 
 
@@ -23585,7 +23585,7 @@ var locale_map = Array.prototype.map,
     }
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/defaultLocale.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/defaultLocale.js
 
 var src_defaultLocale_locale;
 var defaultLocale_format;
@@ -23600,22 +23600,22 @@ defaultLocale_defaultLocale({
 function defaultLocale_defaultLocale(definition) {
   return src_defaultLocale_locale = src_locale(definition), defaultLocale_format = src_defaultLocale_locale.format, formatPrefix = src_defaultLocale_locale.formatPrefix, src_defaultLocale_locale;
 }
-// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionFixed.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/precisionFixed.js
 
 /* harmony default export */ var precisionFixed = (function (step) {
   return Math.max(0, -src_exponent(Math.abs(step)));
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionPrefix.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/precisionPrefix.js
 
 /* harmony default export */ var precisionPrefix = (function (step, value) {
   return Math.max(0, Math.max(-8, Math.min(8, Math.floor(src_exponent(value) / 3))) * 3 - src_exponent(Math.abs(step)));
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionRound.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/precisionRound.js
 
 /* harmony default export */ var precisionRound = (function (step, max) {
   return step = Math.abs(step), max = Math.abs(max) - step, Math.max(0, src_exponent(max) - src_exponent(step)) + 1;
 });
-// CONCATENATED MODULE: ./node_modules/d3-format/src/index.js
+// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/index.js
 
 
 
@@ -39031,7 +39031,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200907152256",
+  version: "2.0.3-nightly-20200908152358",
 
   /**
    * Generate chart
@@ -39159,7 +39159,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200907152256
+ * @version 2.0.3-nightly-20200908152358
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
