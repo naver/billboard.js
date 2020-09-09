@@ -8,7 +8,6 @@ import {expect} from "chai";
 import sinon from "sinon";
 import bb, {bar} from "../../src/index.esm";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
 
 describe("ESM bar", function() {
     let chart;
@@ -39,5 +38,17 @@ describe("ESM bar", function() {
         }, chart);
 
         expect(spy.calledOnce).to.be.true;
+    });
+
+    it("set options: tooltip.grouped=false", () => {
+        args.tooltip = {
+            grouped: false
+        };
+    });
+
+    it("should not throw error", () => {
+        chart.tooltip.show({x: 1});
+
+        expect(true).to.be.ok;
     });
 });

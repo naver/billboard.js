@@ -20,12 +20,14 @@ setup() {
     DEST_REMOTE=upstream
   fi
 
-  # if this is the @next release channel, also deploy docs to in latest folder
   if [[ $CUR_BRANCH == "next" ]]; then
-    DIST_TAG=next
+    # if this is the @next release channel, do not deploy doc & build files to gh-pages
+    exit 1
   else
     DIST_TAG=latest
   fi
+
+  echo $DIST_TAG
 }
 
 build() {
