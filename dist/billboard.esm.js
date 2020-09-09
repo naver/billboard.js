@@ -2089,6 +2089,7 @@ function getRandom(asStr) {
  * @param {number} end End index of data arr
  * @param {boolean} isRotated Weather is roted axis
  * @returns {number} Index number
+ * @private
  */
 function findIndex(arr, v, start, end, isRotated) {
     if (start > end) {
@@ -5289,7 +5290,7 @@ var legend$1 = {
                 if (point === "rectangle") {
                     point = "rect";
                 }
-                return doc.createElementNS(namespaces.svg, $$.hasValidPointType(point) ? point : "use");
+                return doc.createElementNS(namespaces.svg, ("hasValidPointType" in $$) && $$.hasValidPointType(point) ? point : "use");
             })
                 .attr("class", CLASS.legendItemPoint)
                 .style("fill", function (d) { return $$.color(d); })
@@ -6019,7 +6020,7 @@ var shape = {
         if (!$$.isTargetToShow(d.id)) {
             isWithin = false;
         }
-        else if ($$.hasValidPointType && $$.hasValidPointType(that.nodeName)) {
+        else if (("hasValidPointType" in $$) && $$.hasValidPointType(that.nodeName)) {
             isWithin = $$.isStepType(d) ?
                 $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) :
                 $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);
