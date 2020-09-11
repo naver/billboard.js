@@ -617,7 +617,7 @@ export default {
 					point = "rect";
 				}
 
-				return document.createElementNS(d3Namespaces.svg, $$.hasValidPointType(point) ? point : "use");
+				return document.createElementNS(d3Namespaces.svg, ("hasValidPointType" in $$) && $$.hasValidPointType(point) ? point : "use");
 			})
 				.attr("class", CLASS.legendItemPoint)
 				.style("fill", d => $$.color(d))

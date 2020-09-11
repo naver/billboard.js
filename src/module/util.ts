@@ -306,6 +306,7 @@ function getRandom(asStr: boolean = true): number | string {
  * @param {number} end End index of data arr
  * @param {boolean} isRotated Weather is roted axis
  * @returns {number} Index number
+ * @private
  */
 function findIndex(arr, v: number, start: number, end: number, isRotated: boolean): number {
 	if (start > end) {
