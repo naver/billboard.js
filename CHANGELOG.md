@@ -1,3 +1,17 @@
+# [2.1.0-next.3](https://github.com/naver/billboard.js/compare/2.1.0-next.2...2.1.0-next.3) (2020-09-11)
+
+
+### Bug Fixes
+
+* **interaction:** fix for data point click on mobile ([727c26f](https://github.com/naver/billboard.js/commit/727c26f52d92b185cb716ac480e934c1063d99b3)), closes [#1651](https://github.com/naver/billboard.js/issues/1651)
+* **interaction:** fix retrieving event rect position ([6fc449e](https://github.com/naver/billboard.js/commit/6fc449e51a6deb92d7fd5a6f67b200b474a7b65d)), closes [#1670](https://github.com/naver/billboard.js/issues/1670)
+* **shape:** fix possible condition removal by transpiler ([781fb61](https://github.com/naver/billboard.js/commit/781fb61569f40cb466463b064235aa0681cdf58c)), closes [#1663](https://github.com/naver/billboard.js/issues/1663)
+
+
+### Features
+
+* **plugin:** Add JS  Plugin class file ([4a20480](https://github.com/naver/billboard.js/commit/4a204805a16b59797ba249bdf6c145a9f194d1da)), closes [#1665](https://github.com/naver/billboard.js/issues/1665)
+
 # [2.1.0-next.2](https://github.com/naver/billboard.js/compare/2.1.0-next.1...2.1.0-next.2) (2020-09-07)
 
 
