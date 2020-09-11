@@ -623,7 +623,7 @@ export default {
 		const e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
 		const index = findIndex(
 			coords,
-			isRotated ? e.clientY - rect.y : e.clientX - rect.x,
+			isRotated ? e.clientY - rect.top : e.clientX - rect.left,
 			0,
 			coords.length - 1,
 			isRotated
