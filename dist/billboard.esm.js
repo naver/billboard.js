@@ -3430,7 +3430,7 @@ var data$1 = {
         var isRotated = config.axis_rotated;
         // get data based on the mouse coords
         var e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
-        var index = findIndex(coords, isRotated ? e.clientY - rect.y : e.clientX - rect.x, 0, coords.length - 1, isRotated);
+        var index = findIndex(coords, isRotated ? e.clientY - rect.top : e.clientX - rect.left, 0, coords.length - 1, isRotated);
         return index;
     },
     getDataLabelLength: function (min, max, key) {

@@ -194,14 +194,25 @@ function loadConfig(config) {
     });
 }
 
+function _defineProperty(obj, key, value) {
+  return key in obj ? Object.defineProperty(obj, key, {
+    value: value,
+    enumerable: !0,
+    configurable: !0,
+    writable: !0
+  }) : obj[key] = value, obj;
+}
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 /**
  * Base class to generate billboard.js plugin
  * @class Plugin
  */
+
 /**
  * Version info string for plugin
  * @name version
@@ -211,50 +222,62 @@ function loadConfig(config) {
  * @example
  *   bb.plugin.stanford.version;  // ex) 1.9.0
  */
-var Plugin = /** @class */ (function () {
-    /**
-     * Constructor
-     * @param {Any} options config option object
-     * @private
-     */
-    function Plugin(options) {
-        if (options === void 0) { options = {}; }
-        this.options = options;
-    }
-    /**
-     * Lifecycle hook for 'beforeInit' phase.
-     * @private
-     */
-    Plugin.prototype.$beforeInit = function () { };
-    /**
-     * Lifecycle hook for 'init' phase.
-     * @private
-     */
-    Plugin.prototype.$init = function () { };
-    /**
-     * Lifecycle hook for 'afterInit' phase.
-     * @private
-     */
-    Plugin.prototype.$afterInit = function () { };
-    /**
-     * Lifecycle hook for 'redraw' phase.
-     * @private
-     */
-    Plugin.prototype.$redraw = function () { };
-    /**
-     * Lifecycle hook for 'willDestroy' phase.
-     * @private
-     */
-    Plugin.prototype.$willDestroy = function () {
-        var _this = this;
-        Object.keys(this).forEach(function (key) {
-            _this[key] = null;
-            delete _this[key];
-        });
-    };
-    Plugin.version = "2.0.3";
-    return Plugin;
-}());
+var Plugin = /*#__PURE__*/function () {
+  /**
+   * Version info string for plugin
+   * @name version
+   * @static
+   * @memberof Plugin
+   * @type {String}
+   * @example
+   *   bb.plugin.stanford.version;  // ex) 1.9.0
+   */
+
+  /**
+   * Constructor
+   * @param {Any} options config option object
+   * @private
+   */
+  function Plugin(options) {
+    options === void 0 && (options = {}), this.$$, this.options = options;
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+
+
+  var _proto = Plugin.prototype;
+  return _proto.$beforeInit = function $beforeInit() {}
+  /**
+   * Lifecycle hook for 'init' phase.
+   * @private
+   */
+  , _proto.$init = function $init() {}
+  /**
+   * Lifecycle hook for 'afterInit' phase.
+   * @private
+   */
+  , _proto.$afterInit = function $afterInit() {}
+  /**
+   * Lifecycle hook for 'redraw' phase.
+   * @private
+   */
+  , _proto.$redraw = function $redraw() {}
+  /**
+   * Lifecycle hook for 'willDestroy' phase.
+   * @private
+   */
+  , _proto.$willDestroy = function $willDestroy() {
+    var _this = this;
+
+    Object.keys(this).forEach(function (key) {
+      _this[key] = null, delete _this[key];
+    });
+  }, Plugin;
+}();
+
+_defineProperty(Plugin, "version", "#2.0.3#");
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.

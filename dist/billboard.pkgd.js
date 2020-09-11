@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200909152342
+ * @version 2.0.3-nightly-20200911152600
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -21835,7 +21835,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
         rect = _$$$state$eventReceiv.rect,
         isRotated = config.axis_rotated,
         e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event,
-        index = findIndex(coords, isRotated ? e.clientY - rect.y : e.clientX - rect.x, 0, coords.length - 1, isRotated);
+        index = findIndex(coords, isRotated ? e.clientY - rect.top : e.clientX - rect.left, 0, coords.length - 1, isRotated);
     return index;
   },
   getDataLabelLength: function getDataLabelLength(min, max, key) {
@@ -39032,7 +39032,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200909152342",
+  version: "2.0.3-nightly-20200911152600",
 
   /**
    * Generate chart
@@ -39160,7 +39160,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200909152342
+ * @version 2.0.3-nightly-20200911152600
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

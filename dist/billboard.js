@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200909152342
+ * @version 2.0.3-nightly-20200911152600
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3742,7 +3742,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         rect = _$$$state$eventReceiv.rect,
         isRotated = config.axis_rotated,
         e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event,
-        index = findIndex(coords, isRotated ? e.clientY - rect.y : e.clientX - rect.x, 0, coords.length - 1, isRotated);
+        index = findIndex(coords, isRotated ? e.clientY - rect.top : e.clientX - rect.left, 0, coords.length - 1, isRotated);
     return index;
   },
   getDataLabelLength: function getDataLabelLength(min, max, key) {
@@ -16907,7 +16907,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200909152342",
+  version: "2.0.3-nightly-20200911152600",
 
   /**
    * Generate chart
@@ -17035,7 +17035,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200909152342
+ * @version 2.0.3-nightly-20200911152600
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
