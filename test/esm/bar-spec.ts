@@ -7,7 +7,9 @@
 import {expect} from "chai";
 import sinon from "sinon";
 import bb, {bar} from "../../src/index.esm";
-import util from "../assets/util";
+
+// for ESM test, import helper rather than util
+import {getBBox, fireEvent} from "../assets/helper";
 
 describe("ESM bar", function() {
     let chart;
@@ -30,9 +32,9 @@ describe("ESM bar", function() {
     it("check data.onclick for bar type", () => {
         const {eventRect} = chart.internal.$el;
         const bar = chart.$.bar.bars.nodes()[0];
-        const pos = util.getBBox(bar);
+        const pos = getBBox(bar);
 
-        util.fireEvent(eventRect.node(), "click", {
+        fireEvent(eventRect.node(), "click", {
             clientX: pos.x + 20,
             clientY: pos.y + 50
         }, chart);
