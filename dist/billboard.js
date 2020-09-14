@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200911152600
+ * @version 2.0.3-nightly-20200914152701
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4142,7 +4142,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
       return $$.isWithinShape(this, d);
     }).call(function (selected) {
       var d = selected.data();
-      isSelectionEnabled && (isSelectionGrouped || isSelectable && isSelectable.bind($$.api)(d)) && eventRect.style("cursor", "pointer"), isTooltipGrouped || ($$.showTooltip(d, context), $$.showGridFocus && $$.showGridFocus(d), $$.unexpandCircles(), selected.each(function (d) {
+      isSelectionEnabled && (isSelectionGrouped || isSelectable && isSelectable.bind($$.api)(d)) && eventRect.style("cursor", "pointer"), isTooltipGrouped || ($$.showTooltip(d, context), $$.showGridFocus && $$.showGridFocus(d), $$.unexpandCircles && $$.unexpandCircles(), selected.each(function (d) {
         return $$.expandCirclesBars(index, d.id);
       }));
     });
@@ -16907,7 +16907,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200911152600",
+  version: "2.0.3-nightly-20200914152701",
 
   /**
    * Generate chart
@@ -17035,7 +17035,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200911152600
+ * @version 2.0.3-nightly-20200914152701
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

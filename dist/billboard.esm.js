@@ -3920,7 +3920,7 @@ var interaction$1 = {
             if (!isTooltipGrouped) {
                 $$.showTooltip(d, context);
                 $$.showGridFocus && $$.showGridFocus(d);
-                $$.unexpandCircles();
+                $$.unexpandCircles && $$.unexpandCircles();
                 selected.each(function (d) { return $$.expandCirclesBars(index, d.id); });
             }
         });
