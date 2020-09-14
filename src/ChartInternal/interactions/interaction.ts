@@ -60,8 +60,8 @@ export default {
 				if (!isTooltipGrouped) {
 					$$.showTooltip(d, context);
 					$$.showGridFocus && $$.showGridFocus(d);
+					$$.unexpandCircles && $$.unexpandCircles();
 
-					$$.unexpandCircles();
 					selected.each(d => $$.expandCirclesBars(index, d.id));
 				}
 			});
