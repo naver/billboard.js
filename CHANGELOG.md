@@ -1,3 +1,11 @@
+# [2.1.0-next.4](https://github.com/naver/billboard.js/compare/2.1.0-next.3...2.1.0-next.4) (2020-09-16)
+
+
+### Bug Fixes
+
+* **bar:** fix on bar tooglip grouped false ([4bd69be](https://github.com/naver/billboard.js/commit/4bd69be8a3ae06c3cb056577f5300b54f5794ebf)), closes [/github.com/naver/billboard.js/issues/1663#issuecomment-690991679](https://github.com//github.com/naver/billboard.js/issues/1663/issues/issuecomment-690991679)
+* **interaction:** bind touch event only for rect element ([12da3e4](https://github.com/naver/billboard.js/commit/12da3e46535128ddefa1d217e74863e8ad2c7687)), closes [#1650](https://github.com/naver/billboard.js/issues/1650)
+
 # [2.1.0-next.3](https://github.com/naver/billboard.js/compare/2.1.0-next.2...2.1.0-next.3) (2020-09-11)
 
 
