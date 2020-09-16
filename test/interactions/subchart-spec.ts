@@ -404,4 +404,47 @@ describe("SUBCHART", () => {
 			]);
 		});
 	});
+
+	describe("subchart with touch inputType", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				},
+				subchart: {
+					show: true
+				}
+			};
+		});
+
+		it("calling .flush(), should be resetted zoomming state", () => {
+			const {main, tooltip, subchart} = chart.internal.$el;
+
+			// set subchart visible state
+			const selection = subchart.main.select(".selection")
+				.attr("width", "100")
+				.attr("height", "60")
+				.style("display", null);
+			
+			chart.tooltip.show({x:2});
+
+			// when
+			chart.flush();
+
+			// tooltip, subchart selection & focus grid should be resetted
+			expect(selection.style("display")).to.to.equal("none");
+			expect(selection.attr("width")).to.be.null;
+			expect(selection.attr("height")).to.be.null;
+
+			expect(tooltip.style("display")).to.be.equal("none");
+			expect(main.selectAll(`line.${CLASS.xgridFocus}`).style("visibility")).to.be.equal("hidden");
+		});
+	});
 });

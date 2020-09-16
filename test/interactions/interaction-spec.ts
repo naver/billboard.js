@@ -904,7 +904,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("showed each data points tooltip?", done => {
-				util.simulator(chart.internal.$el.svg.node(), {
+				util.simulator(chart.internal.$el.eventRect.node(), {
 					pos: [250,150],
 					deltaX: -200,
 					deltaY: 0,
@@ -926,7 +926,7 @@ describe("INTERACTION", () => {
 					expect(+this.innerHTML).to.be.equal(args.data.columns[i][2]);
 				});
 
-				util.simulator(chart.internal.$el.svg.node(), {
+				util.simulator(chart.internal.$el.eventRect.node(), {
 					pos: [250,150],
 					deltaX: -200,
 					deltaY: 0,
@@ -945,7 +945,7 @@ describe("INTERACTION", () => {
 				let left;
 
 				new Promise(resolve => {
-					util.simulator(chart.$.svg.node(), {
+					util.simulator(chart.internal.$el.eventRect.node(), {
 						pos: [250,150],
 						deltaX: -200,
 						deltaY: 0,
@@ -1008,7 +1008,7 @@ describe("INTERACTION", () => {
 		it("x focus grid position & visibility should be maintained after resize", done => {
 			new Promise(resolve => {
 				// when
-				util.simulator(chart.$.svg.node(), {
+				util.simulator(chart.internal.$el.eventRect.node(), {
 					pos: [250,150],
 					deltaX: -200,
 					deltaY: 0,
@@ -1098,9 +1098,11 @@ describe("INTERACTION", () => {
 		});
 
 		it("should be called callbacks for touch events", done => {
-			chart.internal.callOverOutForTouch.last = null;
+			const {internal: {$el, callOverOutForTouch}} = chart;
 
-			util.simulator(chart.$.svg.node(), {
+			callOverOutForTouch.last = null;
+
+			util.simulator($el.eventRect.node(), {
 				pos: [250,150],
 				deltaX: -100,
 				deltaY: 0,

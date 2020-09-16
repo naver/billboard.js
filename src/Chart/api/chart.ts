@@ -36,6 +36,7 @@ export default {
 
 	/**
 	 * Force to redraw.
+	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
 	 * @function flush
 	 * @instance
 	 * @memberof Chart
@@ -72,6 +73,12 @@ export default {
 				withTransition: false,
 				withTransitionForTransform: false,
 			});
+
+			// reset subchart selection & selection state
+			if (!state.resizing && $$.brush) {
+				$$.brush.getSelection().call($$.brush.move);
+				$$.unselectRect();
+			}
 		} else {
 			$$.initToRender(true);
 		}

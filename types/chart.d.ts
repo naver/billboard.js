@@ -458,6 +458,7 @@ export interface Chart {
 
 	/**
 	 * Force to redraw.
+	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
 	 * @param soft For soft redraw.
 	 */
 	flush(soft?: boolean): void;

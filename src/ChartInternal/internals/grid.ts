@@ -423,9 +423,9 @@ export default {
 
 	hideGridFocus(): void {
 		const $$ = this;
-		const {state: {inputType}, $el: {main}} = $$;
+		const {state: {inputType, resizing}, $el: {main}} = $$;
 
-		if (inputType === "mouse") {
+		if (inputType === "mouse" || !resizing) {
 			main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
 				.style("visibility", "hidden");
 
