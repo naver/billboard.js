@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200915152751
+ * @version 2.1.0-next.4-nightly-20200916153334
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -7462,6 +7462,7 @@ function loadConfig(config) {
 
   /**
    * Force to redraw.
+   * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
    * @function flush
    * @instance
    * @memberof Chart
@@ -7484,7 +7485,7 @@ function loadConfig(config) {
       withLegend: !0,
       withTransition: !1,
       withTransitionForTransform: !1
-    })) : $$.initToRender(!0);
+    }), !state.resizing && $$.brush && ($$.brush.getSelection().call($$.brush.move), $$.unselectRect())) : $$.initToRender(!0);
   },
 
   /**
@@ -10156,6 +10157,9 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         $$.callOverOutForTouch(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
       }
     },
+        unselectRect = function () {
+      $$.unselectRect(), $$.callOverOutForTouch();
+    },
         preventDefault = config.interaction_inputType_touch.preventDefault,
         isPrevented = isboolean(preventDefault) && preventDefault || !1,
         preventThreshold = !isNaN(preventDefault) && preventDefault || null,
@@ -10167,18 +10171,20 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
     };
 
     // bind touch events
-    svg.on("touchstart.eventRect touchmove.eventRect", function () {
-      // const eventRect = getEventRect();
+    eventRect.on("touchstart.eventRect touchmove.eventRect", function () {
       var event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"];
 
       if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
         // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
         if (state.dragging || state.flowing || $$.hasArcType() || event.touches.length > 1) return;
         preventEvent(event), selectRect(eventRect.node());
-      } else $$.unselectRect(), $$.callOverOutForTouch();
+      } else unselectRect();
     }, !0).on("touchend.eventRect", function () {
       !eventRect.empty() && eventRect.classed(config_classes.eventRect) && ($$.hasArcType() || !$$.toggleShape || state.cancelClick) && state.cancelClick && (state.cancelClick = !1);
-    }, !0);
+    }, !0), svg.on("touchstart", function () {
+      var target = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].target;
+      target && target !== eventRect.node() && unselectRect();
+    });
   },
   updateEventRect: function updateEventRect(eventRect) {
     var $$ = this,
@@ -10870,17 +10876,19 @@ function smoothLines(el, type) {
   },
   hideGridFocus: function hideGridFocus() {
     var $$ = this,
-        inputType = $$.state.inputType,
+        _$$$state4 = $$.state,
+        inputType = _$$$state4.inputType,
+        resizing = _$$$state4.resizing,
         main = $$.$el.main;
-    inputType === "mouse" && (main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus).style("visibility", "hidden"), $$.hideCircleFocus && $$.hideCircleFocus());
+    inputType !== "mouse" && resizing || (main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus).style("visibility", "hidden"), $$.hideCircleFocus && $$.hideCircleFocus());
   },
   updateGridFocus: function updateGridFocus() {
     var $$ = this,
-        _$$$state4 = $$.state,
-        inputType = _$$$state4.inputType,
-        width = _$$$state4.width,
-        height = _$$$state4.height,
-        resizing = _$$$state4.resizing,
+        _$$$state5 = $$.state,
+        inputType = _$$$state5.inputType,
+        width = _$$$state5.width,
+        height = _$$$state5.height,
+        resizing = _$$$state5.resizing,
         grid = $$.$el.grid,
         xgridFocus = grid.main.select("line." + config_classes.xgridFocus);
     if (inputType === "touch") xgridFocus.empty() ? resizing && $$.showCircleFocus() : $$.showGridFocus();else {
@@ -16907,7 +16915,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200915152751",
+  version: "2.1.0-next.4-nightly-20200916153334",
 
   /**
    * Generate chart
@@ -17035,7 +17043,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200915152751
+ * @version 2.1.0-next.4-nightly-20200916153334
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

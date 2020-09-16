@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3
+ * @version 2.1.0-next.4
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { event, select, mouse, namespaces, selectAll } from 'd3-selection';
@@ -8054,6 +8054,7 @@ var apiChart = {
     },
     /**
      * Force to redraw.
+     * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
      * @function flush
      * @instance
      * @memberof Chart
@@ -8088,6 +8089,11 @@ var apiChart = {
                 withTransition: false,
                 withTransitionForTransform: false
             });
+            // reset subchart selection & selection state
+            if (!state.resizing && $$.brush) {
+                $$.brush.getSelection().call($$.brush.move);
+                $$.unselectRect();
+            }
         }
         else {
             $$.initToRender(true);
@@ -11274,6 +11280,10 @@ var eventrect = {
                     $$.selectRectForSingle(context, eventRect, index);
             }
         };
+        var unselectRect = function () {
+            $$.unselectRect();
+            $$.callOverOutForTouch();
+        };
         // call event.preventDefault()
         // according 'interaction.inputType.touch.preventDefault' option
         var preventDefault = config.interaction_inputType_touch.preventDefault;
@@ -11302,9 +11312,8 @@ var eventrect = {
             }
         };
         // bind touch events
-        svg
+        eventRect
             .on("touchstart.eventRect touchmove.eventRect", function () {
-            // const eventRect = getEventRect();
             var event$1 = event;
             if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
                 // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
@@ -11315,18 +11324,22 @@ var eventrect = {
                 selectRect(eventRect.node());
             }
             else {
-                $$.unselectRect();
-                $$.callOverOutForTouch();
+                unselectRect();
             }
         }, true)
             .on("touchend.eventRect", function () {
-            // const eventRect = getEventRect();
             if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
                 if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
                     state.cancelClick && (state.cancelClick = false);
                 }
             }
         }, true);
+        svg.on("touchstart", function () {
+            var target = event.target;
+            if (target && target !== eventRect.node()) {
+                unselectRect();
+            }
+        });
     },
     updateEventRect: function (eventRect) {
         var $$ = this;
@@ -12272,8 +12285,8 @@ var grid = {
     },
     hideGridFocus: function () {
         var $$ = this;
-        var inputType = $$.state.inputType, main = $$.$el.main;
-        if (inputType === "mouse") {
+        var _a = $$.state, inputType = _a.inputType, resizing = _a.resizing, main = $$.$el.main;
+        if (inputType === "mouse" || !resizing) {
             main.selectAll("line." + CLASS.xgridFocus + ", line." + CLASS.ygridFocus)
                 .style("visibility", "hidden");
             $$.hideCircleFocus && $$.hideCircleFocus();
@@ -18809,7 +18822,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.0.3
+ * @version 2.1.0-next.4
  */
 var bb = {
     /**
@@ -18819,7 +18832,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.0.3",
+    version: "2.1.0-next.4",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
