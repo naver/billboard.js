@@ -99,6 +99,11 @@ export default {
 			}
 		};
 
+		const unselectRect = () => {
+			$$.unselectRect();
+			$$.callOverOutForTouch();
+		};
+
 		// call event.preventDefault()
 		// according 'interaction.inputType.touch.preventDefault' option
 		const preventDefault = config.interaction_inputType_touch.preventDefault;
@@ -130,9 +135,8 @@ export default {
 		};
 
 		// bind touch events
-		svg
+		eventRect
 			.on("touchstart.eventRect touchmove.eventRect", () => {
-				// const eventRect = getEventRect();
 				const event = d3Event;
 
 				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
@@ -144,19 +148,24 @@ export default {
 					preventEvent(event);
 					selectRect(eventRect.node());
 				} else {
-					$$.unselectRect();
-					$$.callOverOutForTouch();
+					unselectRect();
 				}
 			}, true)
 			.on("touchend.eventRect", () => {
-				// const eventRect = getEventRect();
-
 				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
 					if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
 						state.cancelClick && (state.cancelClick = false);
 					}
 				}
 			}, true);
+
+		svg.on("touchstart", () => {
+			const {target} = d3Event;
+
+			if (target && target !== eventRect.node()) {
+				unselectRect();
+			}
+		});
 	},
 
 	updateEventRect(eventRect): void {
