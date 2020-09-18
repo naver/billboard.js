@@ -11343,26 +11343,28 @@ var eventrect = {
     },
     updateEventRect: function (eventRect) {
         var $$ = this;
-        var _a = $$.state, eventReceiver = _a.eventReceiver, width = _a.width, height = _a.height, rendered = _a.rendered;
-        var updateClientRect = function () {
-            eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
-        };
-        var rect = eventRect
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", width)
-            .attr("height", height);
-        // only for init
-        if (!rendered) {
-            rect
-                .attr("class", CLASS.eventRect)
-                .on("click", function () {
-                $$.clickHandlerForMultipleXS.bind(this)($$);
-            });
-            // to make evaluate after the page elements are settled within page
-            setTimeout(updateClientRect, 0);
+        var _a = $$.state, eventReceiver = _a.eventReceiver, width = _a.width, height = _a.height, rendered = _a.rendered, resizing = _a.resizing;
+        if (!rendered || resizing) {
+            var updateClientRect = function () {
+                eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
+            };
+            var rect = eventRect
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", width)
+                .attr("height", height);
+            // only for init
+            if (!rendered) {
+                rect
+                    .attr("class", CLASS.eventRect)
+                    .on("click", function () {
+                    $$.clickHandlerForMultipleXS.bind(this)($$);
+                });
+                // to make evaluate after the page elements are settled within page
+                setTimeout(updateClientRect, 0);
+            }
+            updateClientRect();
         }
-        updateClientRect();
     },
     /**
      * Updates the location and size of the eventRect.

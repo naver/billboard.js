@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200917083419
+ * @version 2.0.3-nightly-20200918152825
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -31964,14 +31964,18 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         width = _$$$state.width,
         height = _$$$state.height,
         rendered = _$$$state.rendered,
-        updateClientRect = function () {
-      eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
-    },
-        rect = eventRect.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height);
+        resizing = _$$$state.resizing;
 
-    rendered || (rect.attr("class", config_classes.eventRect).on("click", function () {
-      $$.clickHandlerForMultipleXS.bind(this)($$);
-    }), setTimeout(updateClientRect, 0)), updateClientRect();
+    if (!rendered || resizing) {
+      var updateClientRect = function () {
+        eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
+      },
+          rect = eventRect.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height);
+
+      rendered || (rect.attr("class", config_classes.eventRect).on("click", function () {
+        $$.clickHandlerForMultipleXS.bind(this)($$);
+      }), setTimeout(updateClientRect, 0)), updateClientRect();
+    }
   },
 
   /**
@@ -39040,7 +39044,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200917083419",
+  version: "2.0.3-nightly-20200918152825",
 
   /**
    * Generate chart
@@ -39168,7 +39172,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200917083419
+ * @version 2.0.3-nightly-20200918152825
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
