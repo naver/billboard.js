@@ -170,30 +170,33 @@ export default {
 
 	updateEventRect(eventRect): void {
 		const $$ = this;
-		const {eventReceiver, width, height, rendered} = $$.state;
-		const updateClientRect = (): void => {
-			eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
-		};
+		const {eventReceiver, width, height, rendered, resizing} = $$.state;
 
-		const rect = eventRect
-			.attr("x", 0)
-			.attr("y", 0)
-			.attr("width", width)
-			.attr("height", height);
+		if (!rendered || resizing) {
+			const updateClientRect = (): void => {
+				eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
+			};
 
-		// only for init
-		if (!rendered) {
-			rect
-				.attr("class", CLASS.eventRect)
-				.on("click", function() {
-					$$.clickHandlerForMultipleXS.bind(this)($$);
-				});
+			const rect = eventRect
+				.attr("x", 0)
+				.attr("y", 0)
+				.attr("width", width)
+				.attr("height", height);
 
-			// to make evaluate after the page elements are settled within page
-			setTimeout(updateClientRect, 0);
+			// only for init
+			if (!rendered) {
+				rect
+					.attr("class", CLASS.eventRect)
+					.on("click", function() {
+						$$.clickHandlerForMultipleXS.bind(this)($$);
+					});
+
+				// to make evaluate after the page elements are settled within page
+				setTimeout(updateClientRect, 0);
+			}
+
+			updateClientRect();
 		}
-
-		updateClientRect();
 	},
 
 	/**
