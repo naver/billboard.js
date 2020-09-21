@@ -34,19 +34,9 @@ $text-font-size: 11px;
     }
 }
 
-.bb-legend-item-title,
-.bb-xgrid-focus,
-.bb-ygrid-focus,
-.bb-ygrid,
-.bb-event-rect,
-.bb-bars path {
-    shape-rendering: crispEdges;
-}
-
 /*-- Axis --*/
 .bb-axis {
-    shape-rendering: crispEdges;
-    stroke-width: 0.5px;
+    stroke-width: $line-stroke-widdth;
 }
 
 .bb-axis-y text, .bb-axis-y2 text {
