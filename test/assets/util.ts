@@ -7,6 +7,7 @@
 /* global sandbox, window */
 import bb from "../../src/";
 import {
+	doDrag,
 	fireEvent,
 	getBBox,
 	hexToRgb,
@@ -62,6 +63,7 @@ const generate = args => {
 };
 
 export default {
+	doDrag,
 	fireEvent,
 	generate,
 	getBBox,

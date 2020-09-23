@@ -209,5 +209,9 @@ export default {
 		};
 
 		emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](element, type, params);
+	},
+
+	setDragStatus(isDragging: boolean): void {
+		this.state.dragging = isDragging;
 	}
 };

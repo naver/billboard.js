@@ -31,7 +31,7 @@ export default {
 			return;
 		}
 
-		const [sx, sy] = state.dragStart;
+		const [sx, sy] = state.dragStart || [0, 0];
 		const [mx, my] = mouse;
 
 		const minX = Math.min(sx, mx);
@@ -129,9 +129,5 @@ export default {
 			.classed(CLASS.INCLUDED, false);
 
 		$$.setDragStatus(false);
-	},
-
-	setDragStatus(isDragging: boolean): void {
-		this.state.dragging = isDragging;
 	}
 };
