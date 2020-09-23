@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200921153046
+ * @version 2.0.3-nightly-20200923154024
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -22108,104 +22108,6 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
     }), $$.updateTypesElements()) : void done();
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/interactions/drag.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-
-
-/**
- * Module used for data.selection.draggable option
- */
-
-/* harmony default export */ var interactions_drag = ({
-  /**
-   * Called when dragging.
-   * Data points can be selected.
-   * @private
-   * @param {object} mouse Object
-   */
-  drag: function drag(mouse) {
-    var $$ = this,
-        config = $$.config,
-        state = $$.state,
-        main = $$.$el.main,
-        isSelectionGrouped = config.data_selection_grouped,
-        isSelectable = config.interaction_enabled && config.data_selection_isselectable;
-
-    if (!$$.hasArcType() && config.data_selection_enabled && ( // do nothing if not selectable
-    !config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple // skip when single selection because drag is used for multiple selection
-    ) {
-        var _state$dragStart = state.dragStart,
-            sx = _state$dragStart[0],
-            sy = _state$dragStart[1],
-            mx = mouse[0],
-            my = mouse[1],
-            minX = Math.min(sx, mx),
-            maxX = Math.max(sx, mx),
-            minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my),
-            maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
-        main.select("." + config_classes.dragarea).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY), main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).filter(function (d) {
-          return isSelectable && isSelectable.bind($$.api)(d);
-        }).each(function (d, i) {
-          var toggle,
-              shape = src_select(this),
-              isSelected = shape.classed(config_classes.SELECTED),
-              isIncluded = shape.classed(config_classes.INCLUDED),
-              isWithin = !1;
-
-          if (shape.classed(config_classes.circle)) {
-            var x = +shape.attr("cx") * 1,
-                y = +shape.attr("cy") * 1;
-            toggle = $$.togglePoint, isWithin = minX < x && x < maxX && minY < y && y < maxY;
-          } else if (shape.classed(config_classes.bar)) {
-            var _getPathBox = getPathBox(this),
-                _x = _getPathBox.x,
-                y = _getPathBox.y,
-                width = _getPathBox.width,
-                height = _getPathBox.height;
-
-            toggle = $$.togglePath, isWithin = !(maxX < _x || _x + width < minX) && !(maxY < y || y + height < minY);
-          } else // line/area selection not supported yet
-            return; // @ts-ignore
-
-
-          isWithin ^ isIncluded && (shape.classed(config_classes.INCLUDED, !isIncluded), shape.classed(config_classes.SELECTED, !isSelected), toggle.call($$, !isSelected, shape, d, i));
-        });
-      }
-  },
-
-  /**
-   * Called when the drag starts.
-   * Adds and Shows the drag area.
-   * @private
-   * @param {object} mouse Object
-   */
-  dragstart: function dragstart(mouse) {
-    var $$ = this,
-        config = $$.config,
-        state = $$.state,
-        main = $$.$el.main;
-    $$.hasArcType() || !config.data_selection_enabled || (state.dragStart = mouse, main.select("." + config_classes.chart).append("rect").attr("class", config_classes.dragarea).style("opacity", "0.1"), $$.setDragStatus(!0));
-  },
-
-  /**
-   * Called when the drag finishes.
-   * Removes the drag area.
-   * @private
-   */
-  dragend: function dragend() {
-    var $$ = this,
-        config = $$.config,
-        main = $$.$el.main;
-    $$.hasArcType() || !config.data_selection_enabled || (main.select("." + config_classes.dragarea).transition().duration(100).style("opacity", "0").remove(), main.selectAll("." + config_classes.shape).classed(config_classes.INCLUDED, !1), $$.setDragStatus(!1));
-  },
-  setDragStatus: function setDragStatus(isDragging) {
-    this.state.dragging = isDragging;
-  }
-});
 // CONCATENATED MODULE: ./src/ChartInternal/interactions/interaction.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -22348,6 +22250,9 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
       clientX: x,
       clientY: y
     });
+  },
+  setDragStatus: function setDragStatus(isDragging) {
+    this.state.dragging = isDragging;
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/internals/class.ts
@@ -28726,7 +28631,6 @@ function getTextPos(pos, width) {
 
  // interactions
 
-
  // internals
 
 
@@ -29064,7 +28968,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
 
 
 util_extend(ChartInternal_ChartInternal.prototype, [// common
-convert, ChartInternal_data_data, load, category, internals_class, internals_color, internals_domain, interactions_drag, interactions_interaction, internals_format, internals_legend, internals_redraw, internals_scale, shape_shape, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type]);
+convert, ChartInternal_data_data, load, category, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_redraw, internals_scale, shape_shape, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type]);
 // CONCATENATED MODULE: ./src/config/config.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -31900,7 +31804,8 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
           eventRectUpdate = eventRects.selectAll("." + config_classes.eventRect).data([0]).enter().append("rect"); // append event <rect>
 
       // bind event to <rect> element
-      $$.updateEventRect(eventRectUpdate), isMultipleX ? $$.generateEventRectsForMultipleXs(eventRectUpdate) : $$.generateEventRectsForSingleX(eventRectUpdate), $el.eventRect = eventRectUpdate, $$.state.inputType !== "touch" || $el.svg.on("touchstart.eventRect") || $$.hasArcType() || $$.bindTouchOnEventRect(isMultipleX);
+      // bind draggable selection
+      $$.updateEventRect(eventRectUpdate), isMultipleX ? $$.generateEventRectsForMultipleXs(eventRectUpdate) : $$.generateEventRectsForSingleX(eventRectUpdate), eventRectUpdate.call($$.getDraggableSelection()), $el.eventRect = eventRectUpdate, $$.state.inputType !== "touch" || $el.svg.on("touchstart.eventRect") || $$.hasArcType() || $$.bindTouchOnEventRect(isMultipleX);
     }
 
     if (!isMultipleX) {
@@ -35955,7 +35860,7 @@ var getTransitionName = function () {
     return circle.each(function (d) {
       var result = fn.bind(this)(d);
       result = (withTransition || !rendered ? result.transition(t) : result).style("opacity", opacityStyleFn), mainCircles.push(result);
-    }), [mainCircles, selectedCircles.attr(posAttr + "x", cx).attr(posAttr + "y", cy)];
+    }), [mainCircles, (withTransition ? selectedCircles.transition() : selectedCircles).attr(posAttr + "x", cx).attr(posAttr + "y", cy)];
   },
 
   /**
@@ -38065,7 +37970,109 @@ util_extend(zoom_zoom, {
     }
   }
 });
+// CONCATENATED MODULE: ./src/ChartInternal/interactions/drag.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+/**
+ * Module used for data.selection.draggable option
+ */
+
+/* harmony default export */ var interactions_drag = ({
+  /**
+   * Called when dragging.
+   * Data points can be selected.
+   * @private
+   * @param {object} mouse Object
+   */
+  drag: function drag(mouse) {
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        main = $$.$el.main,
+        isSelectionGrouped = config.data_selection_grouped,
+        isSelectable = config.interaction_enabled && config.data_selection_isselectable;
+
+    if (!$$.hasArcType() && config.data_selection_enabled && ( // do nothing if not selectable
+    !config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple // skip when single selection because drag is used for multiple selection
+    ) {
+        var _ref = state.dragStart || [0, 0],
+            sx = _ref[0],
+            sy = _ref[1],
+            mx = mouse[0],
+            my = mouse[1],
+            minX = Math.min(sx, mx),
+            maxX = Math.max(sx, mx),
+            minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my),
+            maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
+
+        main.select("." + config_classes.dragarea).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY), main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).filter(function (d) {
+          return isSelectable && isSelectable.bind($$.api)(d);
+        }).each(function (d, i) {
+          var toggle,
+              shape = src_select(this),
+              isSelected = shape.classed(config_classes.SELECTED),
+              isIncluded = shape.classed(config_classes.INCLUDED),
+              isWithin = !1;
+
+          if (shape.classed(config_classes.circle)) {
+            var x = +shape.attr("cx") * 1,
+                y = +shape.attr("cy") * 1;
+            toggle = $$.togglePoint, isWithin = minX < x && x < maxX && minY < y && y < maxY;
+          } else if (shape.classed(config_classes.bar)) {
+            var _getPathBox = getPathBox(this),
+                _x = _getPathBox.x,
+                y = _getPathBox.y,
+                width = _getPathBox.width,
+                height = _getPathBox.height;
+
+            toggle = $$.togglePath, isWithin = !(maxX < _x || _x + width < minX) && !(maxY < y || y + height < minY);
+          } else // line/area selection not supported yet
+            return; // @ts-ignore
+
+
+          isWithin ^ isIncluded && (shape.classed(config_classes.INCLUDED, !isIncluded), shape.classed(config_classes.SELECTED, !isSelected), toggle.call($$, !isSelected, shape, d, i));
+        });
+      }
+  },
+
+  /**
+   * Called when the drag starts.
+   * Adds and Shows the drag area.
+   * @private
+   * @param {object} mouse Object
+   */
+  dragstart: function dragstart(mouse) {
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        main = $$.$el.main;
+    $$.hasArcType() || !config.data_selection_enabled || (state.dragStart = mouse, main.select("." + config_classes.chart).append("rect").attr("class", config_classes.dragarea).style("opacity", "0.1"), $$.setDragStatus(!0));
+  },
+
+  /**
+   * Called when the drag finishes.
+   * Removes the drag area.
+   * @private
+   */
+  dragend: function dragend() {
+    var $$ = this,
+        config = $$.config,
+        main = $$.$el.main;
+    $$.hasArcType() || !config.data_selection_enabled || (main.select("." + config_classes.dragarea).transition().duration(100).style("opacity", "0").remove(), main.selectAll("." + config_classes.shape).classed(config_classes.INCLUDED, !1), $$.setDragStatus(!1));
+  }
+});
 // CONCATENATED MODULE: ./src/ChartInternal/internals/selection.ts
+
+
+function selection_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function selection_objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? selection_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : selection_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -38074,7 +38081,8 @@ util_extend(zoom_zoom, {
 
 
 
-/* harmony default export */ var internals_selection = ({
+
+/* harmony default export */ var internals_selection = (selection_objectSpread(selection_objectSpread({}, interactions_drag), {}, {
   /**
    * Select a point
    * @param {object} target Target point
@@ -38207,7 +38215,7 @@ util_extend(zoom_zoom, {
       toggledShape && toggledShape.node() === shape.node() || (shape.classed(config_classes.SELECTED, !isSelected), toggle(!isSelected, shape, d, i));
     }
   }
-});
+}));
 // CONCATENATED MODULE: ./src/ChartInternal/interactions/subchart.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -39044,7 +39052,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200921153046",
+  version: "2.0.3-nightly-20200923154024",
 
   /**
    * Generate chart
@@ -39172,7 +39180,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200921153046
+ * @version 2.0.3-nightly-20200923154024
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

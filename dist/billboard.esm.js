@@ -3765,121 +3765,6 @@ var dataLoad = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/**
- * Module used for data.selection.draggable option
- */
-var drag = {
-    /**
-     * Called when dragging.
-     * Data points can be selected.
-     * @private
-     * @param {object} mouse Object
-     */
-    drag: function (mouse) {
-        var $$ = this;
-        var config = $$.config, state = $$.state, main = $$.$el.main;
-        var isSelectionGrouped = config.data_selection_grouped;
-        var isSelectable = config.interaction_enabled && config.data_selection_isselectable;
-        if ($$.hasArcType() ||
-            !config.data_selection_enabled || // do nothing if not selectable
-            (config.zoom_enabled && !$$.zoom.altDomain) || // skip if zoomable because of conflict drag behavior
-            !config.data_selection_multiple // skip when single selection because drag is used for multiple selection
-        ) {
-            return;
-        }
-        var _a = state.dragStart, sx = _a[0], sy = _a[1];
-        var mx = mouse[0], my = mouse[1];
-        var minX = Math.min(sx, mx);
-        var maxX = Math.max(sx, mx);
-        var minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my);
-        var maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
-        main.select("." + CLASS.dragarea)
-            .attr("x", minX)
-            .attr("y", minY)
-            .attr("width", maxX - minX)
-            .attr("height", maxY - minY);
-        // TODO: binary search when multiple xs
-        main.selectAll("." + CLASS.shapes)
-            .selectAll("." + CLASS.shape)
-            .filter(function (d) { return isSelectable && isSelectable.bind($$.api)(d); })
-            .each(function (d, i) {
-            var shape = select(this);
-            var isSelected = shape.classed(CLASS.SELECTED);
-            var isIncluded = shape.classed(CLASS.INCLUDED);
-            var isWithin = false;
-            var toggle;
-            if (shape.classed(CLASS.circle)) {
-                var x = +shape.attr("cx") * 1;
-                var y = +shape.attr("cy") * 1;
-                toggle = $$.togglePoint;
-                isWithin = minX < x && x < maxX && minY < y && y < maxY;
-            }
-            else if (shape.classed(CLASS.bar)) {
-                var _a = getPathBox(this), x = _a.x, y = _a.y, width = _a.width, height = _a.height;
-                toggle = $$.togglePath;
-                isWithin = !(maxX < x || x + width < minX) && !(maxY < y || y + height < minY);
-            }
-            else {
-                // line/area selection not supported yet
-                return;
-            }
-            // @ts-ignore
-            if (isWithin ^ isIncluded) {
-                shape.classed(CLASS.INCLUDED, !isIncluded);
-                // TODO: included/unincluded callback here
-                shape.classed(CLASS.SELECTED, !isSelected);
-                toggle.call($$, !isSelected, shape, d, i);
-            }
-        });
-    },
-    /**
-     * Called when the drag starts.
-     * Adds and Shows the drag area.
-     * @private
-     * @param {object} mouse Object
-     */
-    dragstart: function (mouse) {
-        var $$ = this;
-        var config = $$.config, state = $$.state, main = $$.$el.main;
-        if ($$.hasArcType() || !config.data_selection_enabled) {
-            return;
-        }
-        state.dragStart = mouse;
-        main.select("." + CLASS.chart)
-            .append("rect")
-            .attr("class", CLASS.dragarea)
-            .style("opacity", "0.1");
-        $$.setDragStatus(true);
-    },
-    /**
-     * Called when the drag finishes.
-     * Removes the drag area.
-     * @private
-     */
-    dragend: function () {
-        var $$ = this;
-        var config = $$.config, main = $$.$el.main;
-        if ($$.hasArcType() || !config.data_selection_enabled) { // do nothing if not selectable
-            return;
-        }
-        main.select("." + CLASS.dragarea)
-            .transition()
-            .duration(100)
-            .style("opacity", "0")
-            .remove();
-        main.selectAll("." + CLASS.shape)
-            .classed(CLASS.INCLUDED, false);
-        $$.setDragStatus(false);
-    },
-    setDragStatus: function (isDragging) {
-        this.state.dragging = isDragging;
-    }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 var interaction$1 = {
     selectRectForSingle: function (context, eventRect, index) {
         var $$ = this;
@@ -4045,6 +3930,9 @@ var interaction$1 = {
             clientY: y
         };
         emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](element, type, params);
+    },
+    setDragStatus: function (isDragging) {
+        this.state.dragging = isDragging;
     }
 };
 
@@ -7972,7 +7860,6 @@ extend(ChartInternal.prototype, [
     classModule,
     color$1,
     domain,
-    drag,
     interaction$1,
     format,
     legend$1,
@@ -11246,6 +11133,8 @@ var eventrect = {
             isMultipleX ?
                 $$.generateEventRectsForMultipleXs(eventRectUpdate) :
                 $$.generateEventRectsForSingleX(eventRectUpdate);
+            // bind draggable selection
+            eventRectUpdate.call($$.getDraggableSelection());
             $el.eventRect = eventRectUpdate;
             if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
                 $$.bindTouchOnEventRect(isMultipleX);
@@ -15879,7 +15768,7 @@ var shapePoint = {
         });
         return [
             mainCircles,
-            selectedCircles
+            (withTransition ? selectedCircles.transition() : selectedCircles)
                 .attr(posAttr + "x", cx)
                 .attr(posAttr + "y", cy)
         ];
@@ -17678,7 +17567,115 @@ var apiZoom = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-var selection = {
+/**
+ * Module used for data.selection.draggable option
+ */
+var drag = {
+    /**
+     * Called when dragging.
+     * Data points can be selected.
+     * @private
+     * @param {object} mouse Object
+     */
+    drag: function (mouse) {
+        var $$ = this;
+        var config = $$.config, state = $$.state, main = $$.$el.main;
+        var isSelectionGrouped = config.data_selection_grouped;
+        var isSelectable = config.interaction_enabled && config.data_selection_isselectable;
+        if ($$.hasArcType() ||
+            !config.data_selection_enabled || // do nothing if not selectable
+            (config.zoom_enabled && !$$.zoom.altDomain) || // skip if zoomable because of conflict drag behavior
+            !config.data_selection_multiple // skip when single selection because drag is used for multiple selection
+        ) {
+            return;
+        }
+        var _a = state.dragStart || [0, 0], sx = _a[0], sy = _a[1];
+        var mx = mouse[0], my = mouse[1];
+        var minX = Math.min(sx, mx);
+        var maxX = Math.max(sx, mx);
+        var minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my);
+        var maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
+        main.select("." + CLASS.dragarea)
+            .attr("x", minX)
+            .attr("y", minY)
+            .attr("width", maxX - minX)
+            .attr("height", maxY - minY);
+        // TODO: binary search when multiple xs
+        main.selectAll("." + CLASS.shapes)
+            .selectAll("." + CLASS.shape)
+            .filter(function (d) { return isSelectable && isSelectable.bind($$.api)(d); })
+            .each(function (d, i) {
+            var shape = select(this);
+            var isSelected = shape.classed(CLASS.SELECTED);
+            var isIncluded = shape.classed(CLASS.INCLUDED);
+            var isWithin = false;
+            var toggle;
+            if (shape.classed(CLASS.circle)) {
+                var x = +shape.attr("cx") * 1;
+                var y = +shape.attr("cy") * 1;
+                toggle = $$.togglePoint;
+                isWithin = minX < x && x < maxX && minY < y && y < maxY;
+            }
+            else if (shape.classed(CLASS.bar)) {
+                var _a = getPathBox(this), x = _a.x, y = _a.y, width = _a.width, height = _a.height;
+                toggle = $$.togglePath;
+                isWithin = !(maxX < x || x + width < minX) && !(maxY < y || y + height < minY);
+            }
+            else {
+                // line/area selection not supported yet
+                return;
+            }
+            // @ts-ignore
+            if (isWithin ^ isIncluded) {
+                shape.classed(CLASS.INCLUDED, !isIncluded);
+                // TODO: included/unincluded callback here
+                shape.classed(CLASS.SELECTED, !isSelected);
+                toggle.call($$, !isSelected, shape, d, i);
+            }
+        });
+    },
+    /**
+     * Called when the drag starts.
+     * Adds and Shows the drag area.
+     * @private
+     * @param {object} mouse Object
+     */
+    dragstart: function (mouse) {
+        var $$ = this;
+        var config = $$.config, state = $$.state, main = $$.$el.main;
+        if ($$.hasArcType() || !config.data_selection_enabled) {
+            return;
+        }
+        state.dragStart = mouse;
+        main.select("." + CLASS.chart)
+            .append("rect")
+            .attr("class", CLASS.dragarea)
+            .style("opacity", "0.1");
+        $$.setDragStatus(true);
+    },
+    /**
+     * Called when the drag finishes.
+     * Removes the drag area.
+     * @private
+     */
+    dragend: function () {
+        var $$ = this;
+        var config = $$.config, main = $$.$el.main;
+        if ($$.hasArcType() || !config.data_selection_enabled) { // do nothing if not selectable
+            return;
+        }
+        main.select("." + CLASS.dragarea)
+            .transition()
+            .duration(100)
+            .style("opacity", "0")
+            .remove();
+        main.selectAll("." + CLASS.shape)
+            .classed(CLASS.INCLUDED, false);
+        $$.setDragStatus(false);
+    }
+};
+
+var selection = _assign(_assign({}, drag), { 
     /**
      * Select a point
      * @param {object} target Target point
@@ -17830,8 +17827,7 @@ var selection = {
                 toggle(!isSelected, shape, d, i);
             }
         }
-    }
-};
+    } });
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
