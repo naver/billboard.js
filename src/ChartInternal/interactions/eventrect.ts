@@ -56,6 +56,9 @@ export default {
 				$$.generateEventRectsForMultipleXs(eventRectUpdate) :
 				$$.generateEventRectsForSingleX(eventRectUpdate);
 
+			// bind draggable selection
+			eventRectUpdate.call($$.getDraggableSelection());
+
 			$el.eventRect = eventRectUpdate;
 
 			if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {

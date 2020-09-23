@@ -149,7 +149,6 @@ export default {
 
 		const t: any = getRandom();
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
-
 		const mainCircles: any[] = [];
 
 		circle.each(function(d) {
@@ -163,7 +162,7 @@ export default {
 
 		return [
 			mainCircles,
-			selectedCircles
+			(withTransition ? selectedCircles.transition() : selectedCircles)
 				.attr(`${posAttr}x`, cx)
 				.attr(`${posAttr}y`, cy)
 		];
