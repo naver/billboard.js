@@ -24,7 +24,6 @@ import data from "./data/data";
 import dataLoad from "./data/load";
 
 // interactions
-import drag from "./interactions/drag";
 import interaction from "./interactions/interaction";
 
 // internals
@@ -667,7 +666,6 @@ extend(ChartInternal.prototype, [
 	classModule,
 	color,
 	domain,
-	drag,
 	interaction,
 	format,
 	legend,
