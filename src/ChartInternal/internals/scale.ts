@@ -5,7 +5,8 @@
 import {
 	scaleTime as d3ScaleTime,
 	scaleLinear as d3ScaleLinear,
-	scaleLog as d3ScaleLog
+	scaleLog as d3ScaleLog,
+	scaleSymlog as d3ScaleSymlog
 } from "d3-scale";
 import {isString, isValue, parseDate} from "../../module/util";
 
@@ -20,12 +21,13 @@ import {isString, isValue, parseDate} from "../../module/util";
 export function getScale(type = "linear", min = 0, max = 1): any {
 	const scale = ({
 		linear: d3ScaleLinear,
-		log: d3ScaleLog,
+		log: d3ScaleSymlog,
+		_log: d3ScaleLog,
 		time: d3ScaleTime
 	})[type]();
 
 	scale.type = type;
-	type === "log" && scale.clamp(true);
+	/_?log/.test(type) && scale.clamp(true);
 
 	return scale.range([min, max]);
 }
@@ -52,15 +54,16 @@ export default {
 
 	/**
 	 * Get y Axis scale function
+	 * @param {string} id Axis id: 'y' or 'y2'
 	 * @param {number} min Min value
 	 * @param {number} max Max value
 	 * @param {Array} domain Domain value
 	 * @returns {Function} Scale function
 	 * @private
 	 */
-	getYScale(min: number, max: number, domain: number[]): Function {
+	getYScale(id: "y" | "y2", min: number, max: number, domain: number[]): Function {
 		const $$ = this;
-		const scale = getScale($$.axis.getAxisType("y"), min, max);
+		const scale = getScale($$.axis.getAxisType(id), min, max);
 
 		domain && scale.domain(domain);
 
@@ -172,17 +175,17 @@ export default {
 			}
 
 			// y Axis
-			scale.y = $$.getYScale(min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default);
+			scale.y = $$.getYScale("y", min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default);
 			scale.subY = $$.getYScale(
-				min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default);
+				"y", min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default);
 
 			axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit);
 
 			// y2 Axis
 			if (config.axis_y2_show) {
-				scale.y2 = $$.getYScale(min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default);
-				scale.subY2 = $$.getYScale(min.subY, max.subY,
-					scale.subY2 ? scale.subY2.domain() : config.axis_y2_default);
+				scale.y2 = $$.getYScale("y2", min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default);
+				scale.subY2 = $$.getYScale(
+					"y2", min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default);
 
 				axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
 			}

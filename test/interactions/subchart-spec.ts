@@ -16,15 +16,6 @@ describe("SUBCHART", () => {
 		chart = util.generate(args);
 	});
 
-	// do mouse drag selection
-	const doDrag = (from = {clientX: 100, clientY: 100}, to = {clientX: 200, clientY: 200}) => {
-		const overlay = chart.$.svg.select(".overlay").node();
-
-		util.fireEvent(overlay, "mousedown", from, chart);
-		util.fireEvent(overlay, "mousemove", to, chart);
-		util.fireEvent(overlay, "mouseup", from, chart);
-	};
-
 	describe("generate subchart", () => {
 		before(() => {
 			args = {
@@ -162,7 +153,7 @@ describe("SUBCHART", () => {
 			const baseWidth = 100;
 
 			// mouse drag selection on subchart
-			doDrag();
+			util.doDrag(chart.$.svg.select(".overlay").node(), undefined, undefined, chart);
 
 			expect(+selection.attr("width")).to.be.equal(baseWidth);
 
@@ -220,7 +211,7 @@ describe("SUBCHART", () => {
 			const selection = chart.$.svg.select(".selection");
 
 			// mouse drag selection on subchart
-			doDrag( {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300});
+			util.doDrag(chart.$.svg.select(".overlay").node(), {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300}, chart);
 
 			// selection shouldn't over pass
 			expect(Math.floor(selection.attr("width"))).to.be.equal(args.axis.x.extent[1]);
@@ -237,7 +228,7 @@ describe("SUBCHART", () => {
 				.reduce((a, c) => Math.abs(a - c));
 
 			// mouse drag selection on subchart
-			doDrag( {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300});
+			util.doDrag(chart.$.svg.select(".overlay").node(), {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300}, chart);
 
 			// selection shouldn't over pass
 			expect(+selection.attr("width")).to.be.closeTo(range, 10);
@@ -251,7 +242,7 @@ describe("SUBCHART", () => {
 			const selection = chart.$.svg.select(".selection");
 
 			// mouse drag selection on subchart
-			doDrag( {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300});
+			util.doDrag(chart.$.svg.select(".overlay").node(), {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300}, chart);
 
 			// selection shouldn't over pass
 			expect(Math.floor(selection.attr("width"))).to.be.equal(args.axis.x.extent()[1]);
@@ -402,6 +393,49 @@ describe("SUBCHART", () => {
 				'M6,48.2L124,47.663636363636364L241,47.12727272727273L358,48.2L475,46.054545454545455L593,46.590909090909086L593,38.65272727272727L475,40.690909090909095L358,45.518181818181816L241,42.836363636363636L124,43.372727272727275L6,43.909090909090914Z',
 				'M 6 256.81818181818187'
 			]);
+		});
+	});
+
+	describe("subchart with touch inputType", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				},
+				subchart: {
+					show: true
+				}
+			};
+		});
+
+		it("calling .flush(), should be resetted zoomming state", () => {
+			const {main, tooltip, subchart} = chart.internal.$el;
+
+			// set subchart visible state
+			const selection = subchart.main.select(".selection")
+				.attr("width", "100")
+				.attr("height", "60")
+				.style("display", null);
+			
+			chart.tooltip.show({x:2});
+
+			// when
+			chart.flush();
+
+			// tooltip, subchart selection & focus grid should be resetted
+			expect(selection.style("display")).to.to.equal("none");
+			expect(selection.attr("width")).to.be.null;
+			expect(selection.attr("height")).to.be.null;
+
+			expect(tooltip.style("display")).to.be.equal("none");
+			expect(main.selectAll(`line.${CLASS.xgridFocus}`).style("visibility")).to.be.equal("hidden");
 		});
 	});
 });

@@ -155,6 +155,7 @@ export default {
 		return d => {
 			const y = yScale(d.id, isSub);
 			let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
+
 			let x0 = 0;
 			let y0 = 0;
 			let path;

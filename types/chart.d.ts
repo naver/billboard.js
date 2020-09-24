@@ -408,13 +408,6 @@ export interface Chart {
 	selected(targetId?: string): Data;
 
 	/**
-	 * Change the type of the chart.
-	 * @param type Specify the type to be transformed. The types listed in data.type can be used.
-	 * @param targetIds Specify targets to be transformed. If not given, all targets will be the candidate.
-	 */
-	transform(type: string, targetIds?: ArrayOrString): void;
-
-	/**
 	 * Update groups for the targets.
 	 * @param groups This argument needs to be an Array that includes one or more Array that includes target ids to be grouped.
 	 */
@@ -465,6 +458,7 @@ export interface Chart {
 
 	/**
 	 * Force to redraw.
+	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
 	 * @param soft For soft redraw.
 	 */
 	flush(soft?: boolean): void;
@@ -490,7 +484,7 @@ export interface Chart {
 	 * @param value The value accepted for indicated option.
 	 * @param redraw Set to redraw with the new option changes. (NOTE: Doesn't guarantee work in all circumstances. It can be applied for limited options only)
 	 */
-	config(optionName: string, value?: any, redraw?: boolean): void;
+	config(optionName: string, value?: any, redraw?: boolean): any;
 }
 
 export interface GridOperations {

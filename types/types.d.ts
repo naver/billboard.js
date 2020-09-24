@@ -30,11 +30,11 @@ export interface TargetIds {
 	ids: string[] | string;
 }
 
-export type DataRow = {
+export interface DataRow {
 	id: string;
 	id_org: string; // eslint-disable-line camelcase
-	values: DataItem[]
-};
+	values: DataItem[];
+}
 
 export interface DataItem {
 	id: string;
@@ -45,7 +45,7 @@ export interface DataItem {
 	ratio?: number;
 }
 
-export type DataArray = Array<DataRow>;
+export type DataArray = DataRow[];
 
 export interface RegionsType {
 	[key: string]: {

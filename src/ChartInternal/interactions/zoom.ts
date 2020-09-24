@@ -73,7 +73,7 @@ export default {
 		};
 
 		// @ts-ignore
-		zoom.updateScaleExtent = function(): zoom {
+		zoom.updateScaleExtent = function() {
 			const ratio = diffDomain($$.scale.x.orgDomain()) / diffDomain($$.getZoomDomain());
 			const extent = this.orgScaleExtent();
 
@@ -288,6 +288,7 @@ export default {
 			.clickDistance(4)
 			.on("start", function() {
 				$$.setDragStatus(true);
+				$$.unselectRect();
 
 				if (!zoomRect) {
 					zoomRect = $$.$el.main.append("rect")

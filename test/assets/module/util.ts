@@ -20,6 +20,7 @@ export const {
 	endall,
 	emulateEvent,
 	extend,
+	findIndex,
 	getBrushSelection,
 	getBoundingRect,
 	getCssRules,

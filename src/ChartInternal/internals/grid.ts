@@ -311,8 +311,8 @@ export default {
 			.text(d => d.text);
 
 		return [
-			(withTransition ? lines.transition() : lines).style("opacity", "1"),
-			(withTransition ? texts.transition() : texts).style("opacity", "1")
+			lines.style("opacity", "1"),
+			texts.style("opacity", "1")
 		];
 	},
 
@@ -423,9 +423,9 @@ export default {
 
 	hideGridFocus(): void {
 		const $$ = this;
-		const {state: {inputType}, $el: {main}} = $$;
+		const {state: {inputType, resizing}, $el: {main}} = $$;
 
-		if (inputType === "mouse") {
+		if (inputType === "mouse" || !resizing) {
 			main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
 				.style("visibility", "hidden");
 

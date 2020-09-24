@@ -60,8 +60,8 @@ export default {
 				if (!isTooltipGrouped) {
 					$$.showTooltip(d, context);
 					$$.showGridFocus && $$.showGridFocus(d);
+					$$.unexpandCircles && $$.unexpandCircles();
 
-					$$.unexpandCircles();
 					selected.each(d => $$.expandCirclesBars(index, d.id));
 				}
 			});
@@ -98,7 +98,6 @@ export default {
 				callback(d, main.select(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`).node());
 			} else if (!config.tooltip_grouped) {
 				let last = $$.cache.get(KEY.setOverOut) || [];
-
 
 				const shape = main.selectAll(`.${CLASS.shape}-${d}`)
 					.filter(function(d) {
@@ -184,14 +183,22 @@ export default {
 	 */
 	dispatchEvent(type: string, index: number, mouse): void {
 		const $$ = this;
-		const {state: {hasRadar}, $el: {main, radar}} = $$;
+		const {config, state: {eventReceiver, hasRadar}, $el: {eventRect, radar}} = $$;
 		const isMultipleX = $$.isMultipleX();
-		const selector = hasRadar ? `.${CLASS.axis}-${index} text` : `.${isMultipleX ? CLASS.eventRect : `${CLASS.eventRect}-${index}`}`;
-		const eventRect = (hasRadar ? radar.axes : main).select(selector).node();
+		const element = (hasRadar ? radar.axes.select(`.${CLASS.axis}-${index} text`) : eventRect).node();
 
-		const {width, left, top} = eventRect.getBoundingClientRect();
+		let {width, left, top} = element.getBoundingClientRect();
+
+		if (!hasRadar && !isMultipleX) {
+			const coords = eventReceiver.coords[index];
+
+			width = coords.w;
+			left += coords.x;
+			top += coords.y;
+		}
+
 		const x = left + (mouse ? mouse[0] : 0) + (
-			isMultipleX || $$.config.axis_rotated ? 0 : (width / 2)
+			isMultipleX || config.axis_rotated ? 0 : (width / 2)
 		);
 		const y = top + (mouse ? mouse[1] : 0);
 		const params = {
@@ -201,6 +208,10 @@ export default {
 			clientY: y
 		};
 
-		emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](eventRect, type, params);
+		emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](element, type, params);
+	},
+
+	setDragStatus(isDragging: boolean): void {
+		this.state.dragging = isDragging;
 	}
 };

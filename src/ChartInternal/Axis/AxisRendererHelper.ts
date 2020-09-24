@@ -100,20 +100,27 @@ export default class AxisRendererHelper {
 				interval += tickStepSize;
 			}
 		} else if (scale.ticks) {
-			ticks = scale
-				.ticks(...(this.config.tickArguments || []));
+			const {tickArguments} = this.config;
 
 			// adjust excessive tick count show
-			if (scale.type === "log") {
-				const t = scale.ticks();
-				const [head, tail] = [t[0], t[t.length - 1]];
+			if (scale.type === "log" && !tickArguments) {
+				// nicer symlog ticks didn't implemented yet: https://github.com/d3/d3-scale/issues/162
+				// get ticks values from logScale
+				const s = getScale("_log")
+					.domain([start > 0 ? start : 1, end])
+					.range(scale.range());
+
+				ticks = s.ticks();
 
 				for (let cnt = end.toFixed().length; ticks.length > 15; cnt--) {
-					ticks = scale.ticks(cnt);
+					ticks = s.ticks(cnt);
 				}
 
-				ticks[0] !== head && ticks.unshift(head);
-				ticks[ticks.length - 1] !== tail && ticks.push(tail);
+				ticks.splice(0, 1, start);
+				ticks.splice(ticks.length - 1, 1, end);
+			} else {
+				ticks = scale
+					.ticks(...(this.config.tickArguments || []));
 			}
 
 			ticks = ticks

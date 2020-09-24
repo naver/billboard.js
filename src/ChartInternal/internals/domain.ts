@@ -196,7 +196,7 @@ export default {
 			isAllNegative && (padding.top = -yDomainMax);
 		}
 
-		const domain = isLog ? [yDomainMin, yDomainMax].map(v => (v <= 0 ? 1 : v)) :
+		const domain = isLog ? [yDomainMin, yDomainMax].map(v => (v < 0 ? 0 : v)) :
 			[yDomainMin - padding.bottom, yDomainMax + padding.top];
 
 		return isInverted ? domain.reverse() : domain;

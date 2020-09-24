@@ -36,8 +36,7 @@ describe("API tooltip", () => {
 
 	describe("for non multiple x", () => {
 		it("should show/hide tooltip using 'index' option", () => {
-			const internal = chart.internal;
-			const {config} = internal;
+			const {config} = chart.internal;
 			const {tooltip} = chart.$;
 			const x = 1;
 

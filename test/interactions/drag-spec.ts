@@ -10,33 +10,34 @@ import util from "../assets/util";
 
 describe("DRAG", function() {
 	let chart;
+	let args: any = {
+		data: {
+			selection: {
+				enabled: true,
+				draggable: true
+			},
+			columns: [
+				["data1", 30, 200, 100, 170, 150, 250],
+				["data2", 130, 100, 140, 35, 110, 50]
+			],
+			types: {
+				data1: "line",
+				data2: "area-spline"
+			},
+			colors: {
+				data1: "red",
+				data2: "green"
+			}
+		}
+	};
+
+	beforeEach(() => {
+		chart = util.generate(args);
+	});
 
 	describe("default extent", () => {
-		before(() => {
-			chart = util.generate({
-				data: {
-					selection: {
-						enabled: true,
-						draggable: true
-					},
-					columns: [
-						["data1", 30, 200, 100, 170, 150, 250],
-						["data2", 130, 100, 140, 35, 110, 50]
-					],
-					types: {
-						data1: "line",
-						data2: "area-spline"
-					},
-					colors: {
-						data1: "red",
-						data2: "green"
-					}
-				}
-			});
-		});
-
 		it("should set dragStart xy coordinates", () => {
-			const internal = chart.internal;
+			const {internal} = chart;
 			const xy = [95.5, 83.5];
 
 			// when
@@ -49,26 +50,20 @@ describe("DRAG", function() {
 		});
 
 		it("should set drag area and points to be selected", () => {
-			const internal = chart.internal;
-			const main = chart.$.main;
+			const {internal} = chart;
+			const {main} = chart.$;
 
 			// when
 			internal.drag([186.5, 320.5]);
 
 			// circles are selected?
 			expect(main.selectAll(`.${CLASS.selectedCircles}`).size()).to.be.equal(2);
-			expect(main.selectAll(`.${CLASS.INCLUDED}`).size()).to.be.equal(2);
-
-			// check for selection rect
-			const dragAreaRect = util.getBBox(main.select(`.${CLASS.dragarea}`));
-
-			expect(dragAreaRect.width).to.be.above(0);
-			expect(dragAreaRect.height).to.be.above(0);
+			expect(main.selectAll(`.${CLASS.INCLUDED}`).size()).to.be.equal(3);
 		});
 
 		it("selected points should be unselected and drag area should be removed", done => {
-			const internal = chart.internal;
-			const main = chart.$.main;
+			const {internal} = chart;
+			const {main} = chart.$;
 
 			// when
 			internal.dragend();
@@ -82,6 +77,44 @@ describe("DRAG", function() {
 				// dragging flag to be set false
 				expect(internal.state.dragging).to.be.false;
 
+				done();
+			}, 500);
+		});
+	});
+
+	describe("selection.draggable", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 170, 150, 250],
+						["data2", 130, 100, 140, 35, 110, 50]
+					],
+					selection: {
+					  enabled: true,
+					  draggable: true
+					}
+				  }
+			};
+		});
+
+		it("should select data points by dragging event", done => {
+			const {internal: {$el}} = chart;
+
+			chart.$.svg.select(".overlay").node()
+
+			util.doDrag($el.eventRect.node(), {
+				clientX: 34.5,
+				clientY: 20
+			}, {
+				clientX: 380,
+				clientY: 340,
+			});
+
+			setTimeout(() => {
+				const selectedCircle = $el.chart.selectAll(`.${CLASS.selectedCircles}`);
+
+				expect(selectedCircle.size()).to.be.equal(2);
 				done();
 			}, 500);
 		});

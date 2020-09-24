@@ -82,7 +82,13 @@ describe("API chart", () => {
 			chart.destroy();
 
 			expect(d3Select("#chart svg").empty()).to.be.true;
-			expect(Object.keys(chart).length).to.be.equal(0);
+			
+			// all methods should be ressetted
+			Object.keys(chart).forEach(key => {
+				expect(chart[key]()).to.be.undefined;
+				expect(/^function()/.test(chart[key].toString())).to.be.true;
+			});
+
 			expect(bb.instance.indexOf(chart) === -1).to.be.true;
 		});
 
@@ -102,6 +108,11 @@ describe("API chart", () => {
 				chart.destroy();
 				setTimeout(done, 500);
 			}, 500);
+		});
+
+		it("should not throw error when already destroyed", () => {
+			chart.destroy();
+			chart.destroy();
 		});
 	});
 

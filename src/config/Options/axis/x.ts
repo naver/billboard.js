@@ -37,15 +37,15 @@ export default {
 	/**
 	 * Set type of x axis.<br><br>
 	 * **Available Values:**
-	 * - timeseries
 	 * - category
 	 * - indexed
 	 * - log
+	 * - timeseries
 	 *
 	 * **NOTE:**<br>
 	 * - **log** type:
 	 *   - the x values specified by [`data.x`](#.data%25E2%2580%25A4x)(or by any equivalent option), must be exclusively-positive.
-	 *   - x axis min value should be > 0, otherwise will be set `1`.
+	 *   - x axis min value should be >= 0.
 	 *
 	 * @name axis․x․type
 	 * @memberof Options
@@ -62,7 +62,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_type: <"indexed"|"timeseries"|"category"|"log"> "indexed",
+	axis_x_type: <"category"|"indexed"|"log"|"timeseries"> "indexed",
 
 	/**
 	 * Set how to treat the timezone of x values.<br>

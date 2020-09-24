@@ -33,23 +33,23 @@ export const bb: {
 };
 
 // shape modules
-export const area: () => "area";
-export const areaLineRange: () => "area-line-range";
-export const areaSpline: () => "area-spline";
-export const areaSplineRange: () => "area-spline-range";
-export const areaStep: () => "area-step";
-export const bar: () => "bar";
-export const bubble: () => "bubble";
-export const donut: () => "donut";
-export const gauge: () => "gauge";
-export const line: () => "line";
-export const pie: () => "pie";
-export const radar: () => "radar";
-export const scatter: () => "scatter";
-export const spline: () => "spline";
-export const step: () => "step";
+export function area(): "area";
+export function areaLineRange(): "area-line-range";
+export function areaSpline(): "area-spline";
+export function areaSplineRange(): "area-spline-range";
+export function areaStep(): "area-step";
+export function bar(): "bar";
+export function bubble(): "bubble";
+export function donut(): "donut";
+export function gauge(): "gauge";
+export function line(): "line";
+export function pie(): "pie";
+export function radar(): "radar";
+export function scatter(): "scatter";
+export function spline(): "spline";
+export function step(): "step";
 
 // interaction modules
-export const selection: () => true;
-export const subchart: () => true;
-export const zoom: () => true;
+export function selection(): true;
+export function subchart(): true;
+export function zoom(): true;

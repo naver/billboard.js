@@ -238,7 +238,7 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("circle visibility", () => {
-			const {circles} = chart.$;
+			const {$: {circles}, internal: {scale}} = chart;
 			const pos = {};
 			let x = 3;
 
@@ -250,13 +250,13 @@ describe("SHAPE POINT", () => {
 
 			// when
 			chart.tooltip.show({x});
-			const cx = chart.internal.scale.x(x);
+			const cx = scale.x(x);
 
 			circles.each(function(d) {
 				const p = pos[d.id];
 				
 				expect(+this.getAttribute("cx")).to.be.above(p[0]);
-				expect(+this.getAttribute("cy")).to.be.above(p[1]);
+				expect(+this.getAttribute("cy")).to.be.above(p[1]);d
 				expect(d.x).to.be.equal(x);
 				expect(+this.getAttribute("cx")).to.be.equal(cx);
 			});
@@ -266,7 +266,9 @@ describe("SHAPE POINT", () => {
 			chart.tooltip.show({x});
 
 			// 'null' data point shoudn't be displayed
-			expect(circles.filter(`.${CLASS.EXPANDED}`).size()).to.be.equal(1);
+			expect(circles.filter(function() {
+				return this.getAttribute("style").indexOf("hidden") === -1;
+			}).size()).to.be.equal(1);
 		});
 
 		it("visibility with data toggle", done => {

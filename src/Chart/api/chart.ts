@@ -36,6 +36,7 @@ export default {
 
 	/**
 	 * Force to redraw.
+	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
 	 * @function flush
 	 * @instance
 	 * @memberof Chart
@@ -72,6 +73,12 @@ export default {
 				withTransition: false,
 				withTransitionForTransform: false,
 			});
+
+			// reset subchart selection & selection state
+			if (!state.resizing && $$.brush) {
+				$$.brush.getSelection().call($$.brush.move);
+				$$.unselectRect();
+			}
 		} else {
 			$$.initToRender(true);
 		}
@@ -101,7 +108,7 @@ export default {
 			window.removeEventListener("resize", $$.resizeFunction);
 			chart.classed("bb", false).html("");
 
-			// releasing references
+			// releasing own references
 			Object.keys(this).forEach(key => {
 				key === "internal" && Object.keys($$).forEach(k => {
 					$$[k] = null;
@@ -110,6 +117,11 @@ export default {
 				this[key] = null;
 				delete this[key];
 			});
+
+			// release prototype chains
+			for (const key in this) {
+				this[key] = () => {};
+			}
 		}
 
 		return null;

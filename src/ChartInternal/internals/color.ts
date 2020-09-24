@@ -179,13 +179,11 @@ export default {
 			color = color.bind($$.api);
 		}
 
-		// when is Arc type
-		if (isObject(d)) {
-			main.selectAll(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`)
-				.style("fill", color(d));
-		} else {
-			main.selectAll(`.${CLASS.shape}-${d}`)
-				.style("fill", color);
-		}
+		main.selectAll(
+			isObject(d) ?
+				// when is Arc type
+				`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}` :
+				`.${CLASS.shape}-${d}`
+		).style("fill", color);
 	}
 };

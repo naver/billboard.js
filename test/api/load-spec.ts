@@ -450,12 +450,10 @@ describe("API load", function() {
 				done: () => {
 					let lastX = 0;
 
-					chart.$.main.selectAll(`.${CLASS.eventRects} rect`).each(function(v, i) {
-						const x = +this.getAttribute("x");
+					chart.internal.state.eventReceiver.data.forEach(function(v, i) {
+						const {x} = v;
 
-						expect(x).to.be.above(lastX);
-						expect(this.classList.contains(`${CLASS.eventRect}-${i}`)).to.be.true;
-
+						i > 0 && expect(x).to.be.above(lastX);
 						lastX = x;
 					});
 
