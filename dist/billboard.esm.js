@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3
+ * @version 2.1.1
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { event, select, mouse, namespaces, selectAll } from 'd3-selection';
@@ -11202,6 +11202,7 @@ var eventrect = {
         };
         // bind touch events
         eventRect
+            .on("touchstart", function () { return $$.updateEventRect(); })
             .on("touchstart.eventRect touchmove.eventRect", function () {
             var event$1 = event;
             if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
@@ -11232,11 +11233,12 @@ var eventrect = {
     },
     updateEventRect: function (eventRect) {
         var $$ = this;
-        var _a = $$.state, eventReceiver = _a.eventReceiver, width = _a.width, height = _a.height, rendered = _a.rendered, resizing = _a.resizing;
+        var state = $$.state, $el = $$.$el;
+        var eventReceiver = state.eventReceiver, width = state.width, height = state.height, rendered = state.rendered, resizing = state.resizing;
+        var updateClientRect = function () {
+            eventReceiver && (eventReceiver.rect = (eventRect || $el.eventRect).node().getBoundingClientRect());
+        };
         if (!rendered || resizing) {
-            var updateClientRect = function () {
-                eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
-            };
             var rect = eventRect
                 .attr("x", 0)
                 .attr("y", 0)
@@ -11244,16 +11246,10 @@ var eventrect = {
                 .attr("height", height);
             // only for init
             if (!rendered) {
-                rect
-                    .attr("class", CLASS.eventRect)
-                    .on("click", function () {
-                    $$.clickHandlerForMultipleXS.bind(this)($$);
-                });
-                // to make evaluate after the page elements are settled within page
-                setTimeout(updateClientRect, 0);
+                rect.attr("class", CLASS.eventRect);
             }
-            updateClientRect();
         }
+        updateClientRect();
     },
     /**
      * Updates the location and size of the eventRect.
@@ -11410,6 +11406,7 @@ var eventrect = {
                 return index > -1 ? eventReceiver.data[index] : null;
             };
             rect
+                .on("mouseover", function () { return $$.updateEventRect(); })
                 .on("mousemove", function () {
                 var d = getData_1();
                 // do nothing while dragging/flowing
@@ -18820,7 +18817,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.0.3
+ * @version 2.1.1
  */
 var bb = {
     /**
@@ -18830,7 +18827,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.0.3",
+    version: "2.1.1",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

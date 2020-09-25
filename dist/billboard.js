@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.0.3-nightly-20200923154024
+ * @version 2.1.1-nightly-20200925154023
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10076,7 +10076,9 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
     };
 
     // bind touch events
-    eventRect.on("touchstart.eventRect touchmove.eventRect", function () {
+    eventRect.on("touchstart", function () {
+      return $$.updateEventRect();
+    }).on("touchstart.eventRect touchmove.eventRect", function () {
       var event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"];
 
       if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
@@ -10093,23 +10095,24 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
   },
   updateEventRect: function updateEventRect(eventRect) {
     var $$ = this,
-        _$$$state = $$.state,
-        eventReceiver = _$$$state.eventReceiver,
-        width = _$$$state.width,
-        height = _$$$state.height,
-        rendered = _$$$state.rendered,
-        resizing = _$$$state.resizing;
+        state = $$.state,
+        $el = $$.$el,
+        _state = state,
+        eventReceiver = _state.eventReceiver,
+        width = _state.width,
+        height = _state.height,
+        rendered = _state.rendered,
+        resizing = _state.resizing;
 
     if (!rendered || resizing) {
-      var updateClientRect = function () {
-        eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
-      },
-          rect = eventRect.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height);
+      var rect = eventRect.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height); // only for init
 
-      rendered || (rect.attr("class", config_classes.eventRect).on("click", function () {
-        $$.clickHandlerForMultipleXS.bind(this)($$);
-      }), setTimeout(updateClientRect, 0)), updateClientRect();
+      rendered || rect.attr("class", config_classes.eventRect);
     }
+
+    (function updateClientRect() {
+      eventReceiver && (eventReceiver.rect = (eventRect || $el.eventRect).node().getBoundingClientRect());
+    })();
   },
 
   /**
@@ -10229,7 +10232,9 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         return index > -1 ? eventReceiver.data[index] : null;
       };
 
-      rect.on("mousemove", function () {
+      rect.on("mouseover", function () {
+        return $$.updateEventRect();
+      }).on("mousemove", function () {
         var d = getData(); // do nothing while dragging/flowing
 
         if (!(state.dragging || state.flowing || $$.hasArcType() || !d || config.tooltip_grouped && d && d.index === eventReceiver.currentIdx)) {
@@ -16927,7 +16932,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.0.3-nightly-20200923154024",
+  version: "2.1.1-nightly-20200925154023",
 
   /**
    * Generate chart
@@ -17055,7 +17060,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.0.3-nightly-20200923154024
+ * @version 2.1.1-nightly-20200925154023
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
