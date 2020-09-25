@@ -1,3 +1,10 @@
+## [2.1.1](https://github.com/naver/billboard.js/compare/2.1.0...2.1.1) (2020-09-25)
+
+
+### Bug Fixes
+
+* **interaction:** Fix wrong tooltip event coordinate ([b892515](https://github.com/naver/billboard.js/commit/b8925159f115d8c99cf6e79017a8e37088b9f140)), closes [#1695](https://github.com/naver/billboard.js/issues/1695) [#1642](https://github.com/naver/billboard.js/issues/1642)
+
 # [2.1.0](https://github.com/naver/billboard.js/compare/2.0.3...2.1.0) (2020-09-25)
 
 
