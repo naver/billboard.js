@@ -1142,4 +1142,48 @@ describe("TOOLTIP", function() {
 			});
 		});
 	});
+
+	describe("tooltip display: after dynamic dimension update", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["Male", -83, -143, -100, -120, -150, -85],
+						["Female", 130, 100, 140, 175, 150, 50]
+					],
+					type: "bar",
+					groups: [
+						["Male", "Female"]
+					],
+				},
+				axis: {
+					rotated: true
+				}
+			}
+		});
+
+		it("Rotated Axis: should tooltip show correctly", () => {
+			// when
+			chart.$.chart.style("margin-top", "100px");
+			chart.tooltip.show({index:1});
+
+			expect(chart.$.tooltip.select("th").text()).to.be.equal("0");
+
+			chart.$.chart.style("margin-top", null);
+		});
+
+		it("set options: axis.rotated=false", () => {
+			args.axis.rotated = false;
+		});
+
+		it("Non-rotated Axis: should tooltip show correctly", () => {
+			// when
+			chart.$.chart.style("margin-left", "100px");
+			chart.tooltip.show({index:1});
+
+			expect(chart.$.tooltip.select("th").text()).to.be.equal("1");
+
+			chart.$.chart.style("margin-left", null);
+		});
+	});
 });
