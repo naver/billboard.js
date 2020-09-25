@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fallback/1.1.8/fallback.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fallback/1.1.9/fallback.min.js"></script>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -95,14 +95,15 @@
         <form id="theme">
             Theme: <select class="classic">
                 <option value="">default</option>
+                <option value="datalab">datalab</option>
                 <option value="insight">insight</option>
                 <option value="graph">graph</option>
             </select>
         </form>
-
         <p id="launch" title="To open as new window, hold the 'Alt(Win)/option(Mac)' key while clicking.">
             Launch code editor <button class="js">JS</button> <button class="ts">TS</button>
         </p>
+
         <ul class="sidebar-nav"></ul>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -180,14 +181,14 @@
 	} else {
 		fallback.ready(function() {
             fallback.load({
-                plugins_bubblecompare: path.map(function(p) {
-                    return p + "plugin/billboardjs-plugin-bubblecompare.js"
-                }),
                 plugins_stanford: path.map(function(p) {
                     return p + "plugin/billboardjs-plugin-stanford.js"
                 }),
                 plugins_textoverlap: path.map(function(p) {
                     return p + "plugin/billboardjs-plugin-textoverlap.js"
+                }),
+                plugins_bubblecompare: path.map(function(p) {
+                    return p + "plugin/billboardjs-plugin-bubblecompare.js"
                 })
             });
 
