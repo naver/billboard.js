@@ -139,6 +139,7 @@ export default {
 
 		// bind touch events
 		eventRect
+			.on("touchstart", () => $$.updateEventRect())
 			.on("touchstart.eventRect touchmove.eventRect", () => {
 				const event = d3Event;
 
@@ -171,15 +172,18 @@ export default {
 		});
 	},
 
-	updateEventRect(eventRect): void {
+	updateEventRect(eventRect?): void {
 		const $$ = this;
-		const {eventReceiver, width, height, rendered, resizing} = $$.state;
+		const {state, $el} = $$;
+		const {eventReceiver, width, height, rendered, resizing} = state;
+
+		const updateClientRect = (): void => {
+			eventReceiver && (
+				eventReceiver.rect = (eventRect || $el.eventRect).node().getBoundingClientRect()
+			);
+		};
 
 		if (!rendered || resizing) {
-			const updateClientRect = (): void => {
-				eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
-			};
-
 			const rect = eventRect
 				.attr("x", 0)
 				.attr("y", 0)
@@ -188,18 +192,11 @@ export default {
 
 			// only for init
 			if (!rendered) {
-				rect
-					.attr("class", CLASS.eventRect)
-					.on("click", function() {
-						$$.clickHandlerForMultipleXS.bind(this)($$);
-					});
-
-				// to make evaluate after the page elements are settled within page
-				setTimeout(updateClientRect, 0);
+				rect.attr("class", CLASS.eventRect);
 			}
-
-			updateClientRect();
 		}
+
+		updateClientRect();
 	},
 
 	/**
@@ -392,6 +389,7 @@ export default {
 			};
 
 			rect
+				.on("mouseover", () => $$.updateEventRect())
 				.on("mousemove", function() {
 					const d = getData();
 

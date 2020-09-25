@@ -874,7 +874,6 @@ var demos = {
 					},
 					y: {
 					  type: "log",
-					  min: 10,
 					  max: 100000000
 					},
 					y2: {
