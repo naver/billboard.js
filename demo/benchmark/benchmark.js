@@ -2,12 +2,20 @@ window.bench = {
     chart: null,
     timer: null,
     billboard: null,
+    target: ["1.12.11", "2.0.0", "latest"],
     $el: {
+        version: document.getElementById("version"),
         type: document.getElementById("type"),
         matrix1: document.getElementById("matrix1"),
         matrix2: document.getElementById("matrix2"),
         transition: document.getElementById("transition")
     },
+    init() {
+       // append targeted version list
+       this.target.forEach(v => {
+         this.$el.version.add(new Option(v, v));
+       });
+    },  
     getRandom(min = 100, max = 1000) {
         return Math.random() * (max - min) + min;
     },
@@ -35,12 +43,18 @@ window.bench = {
         const version = document.getElementById("version").value;
 
         this.billboard && document.head.removeChild(this.billboard);
-		this.billboard = document.createElement("script");
-		
-		this.billboard.src = version === "local-latest" ? 
-			"../../dist/billboard.js":
-			`https://cdn.jsdelivr.net/npm/billboard.js@${version}/dist/billboard.js`;
-
+        this.billboard = document.createElement("script");
+        this.billboard.src = `https://cdn.jsdelivr.net/npm/billboard.js${version === "latest" ? "" : `@${version}`}/dist/billboard.js`;
+        this.billboard.onload = () => {
+          const el = this.$el.version;
+          const lastOption = el.options[el.options.length - 1];
+          
+          if (lastOption.text === "latest") {
+            lastOption.value = bb.version;
+            lastOption.text = bb.version;
+          }
+        }
+      
         document.head.appendChild(this.billboard);
     },
     generate: function(type) {
@@ -85,5 +99,7 @@ window.bench = {
     stop: function() {
         this.play = false;
         clearInterval(this.timer);
-    }
+    }  
 };
+
+window.bench.init();

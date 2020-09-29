@@ -18,6 +18,7 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on D
 - [Migration guide from C3.js](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F)
 - [Third Party Applications](https://github.com/naver/billboard.js/wiki/Third-party-applications)
 - [Who's using billboard.js](https://github.com/naver/billboard.js/wiki/Who's-using-billboard.js)
+- [Benchmark](https://naver.github.io/billboard.js/demo/benchmark/)
 - v2 updates:
   - [v2 CHANGELOG](https://github.com/naver/billboard.js/wiki/CHANGELOG-v2)
   - [Migration Guide to v2](https://github.com/naver/billboard.js/wiki/Migration-Guide-to-v2)
@@ -76,6 +77,12 @@ You can download the compressed files for production
 
 ### Themes
 > If you want apply themes, simply load one of the theme css file provided instead of the default css file.
+> - [Screenshot Preview](https://github.com/naver/billboard.js/wiki/Themes)
+
+#### datalab
+- https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.css
+- https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.min.css
+
 
 #### insight
 - https://naver.github.io/billboard.js/release/latest/dist/theme/insight.css
