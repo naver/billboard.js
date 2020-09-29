@@ -1,0 +1,5 @@
+h1 {margin: 10px 0}
+p {margin:5px 0}
+input, button, select {font-size:16px;}
+button{border:solid 1px #ccc;}
+button:nth-child(3) {background-color: red;color:#fff}
