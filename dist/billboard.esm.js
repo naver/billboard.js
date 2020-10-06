@@ -290,6 +290,7 @@ var State = /** @class */ (function () {
             transiting: false,
             resizing: false,
             toggling: false,
+            zooming: false,
             hasNegativeValue: false,
             hasPositiveValue: true,
             orgAreaOpacity: "0.2",
@@ -15728,18 +15729,15 @@ var shapePoint = {
         var config = $$.config, state = $$.state, $el = $$.$el;
         var focusOnly = config.point_focus_only;
         if (config.point_show && !state.toggling) {
-            var currIndex_1 = focusOnly && $el.circle ?
-                $el.circle.data()[0].index : 0;
             var circles = $el.main.selectAll("." + CLASS.circles)
                 .selectAll("." + CLASS.circle)
                 .data(function (d) { return (($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
                 $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
-                (focusOnly ? [d.values[currIndex_1]] : d.values) : []); });
+                (focusOnly ? [d.values[0]] : d.values) : []); });
             circles.exit().remove();
-            var fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
             circles.enter()
-                .filter(function (d) { return d; })
-                .append(fn);
+                .filter(Boolean)
+                .append($$.point("create", this, $$.pointR.bind($$), $$.color));
             $el.circle = $el.main.selectAll("." + CLASS.circles + " ." + CLASS.circle)
                 .style("stroke", $$.color)
                 .style("opacity", $$.initialOpacityForCircle.bind($$));
@@ -17394,6 +17392,8 @@ var zoom = function (domainValue) {
     var resultDomain;
     if (config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
         var isTimeSeries = $$.axis.isTimeSeries();
+        // hide any possible tooltip show before the zoom
+        $$.api.tooltip.hide();
         if (isTimeSeries) {
             var fn_1 = parseDate.bind($$);
             domain = domain.map(function (x) { return fn_1(x); });
@@ -18301,6 +18301,7 @@ var zoom$1 = {
             return;
         }
         $$.zoom.startEvent = event$1;
+        $$.state.zooming = true;
         callFn($$.config.zoom_onzoomstart, $$.api, event$1);
     },
     /**
@@ -18358,6 +18359,7 @@ var zoom$1 = {
         }
         $$.redrawEventRect();
         $$.updateZoom();
+        $$.state.zooming = false;
         callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain());
     },
     /**

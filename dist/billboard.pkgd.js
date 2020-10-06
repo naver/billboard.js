@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.1-nightly-20200929154117
+ * @version 2.1.1-nightly-20201006155647
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -15751,6 +15751,7 @@ var State = function () {
     // resize event called
     toggling: !1,
     // legend toggle
+    zooming: !1,
     hasNegativeValue: !1,
     hasPositiveValue: !0,
     orgAreaOpacity: "0.2",
@@ -35838,15 +35839,10 @@ var getTransitionName = function () {
         focusOnly = config.point_focus_only;
 
     if (config.point_show && !state.toggling) {
-      var currIndex = focusOnly && $el.circle ? $el.circle.data()[0].index : 0,
-          circles = $el.main.selectAll("." + config_classes.circles).selectAll("." + config_classes.circle).data(function (d) {
-        return $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[currIndex]] : d.values : [];
+      var circles = $el.main.selectAll("." + config_classes.circles).selectAll("." + config_classes.circle).data(function (d) {
+        return $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[0]] : d.values : [];
       });
-      circles.exit().remove();
-      var fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
-      circles.enter().filter(function (d) {
-        return d;
-      }).append(fn), $el.circle = $el.main.selectAll("." + config_classes.circles + " ." + config_classes.circle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$));
+      circles.exit().remove(), circles.enter().filter(Boolean).append($$.point("create", this, $$.pointR.bind($$), $$.color)), $el.circle = $el.main.selectAll("." + config_classes.circles + " ." + config_classes.circle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$));
     }
   },
   redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
@@ -37830,9 +37826,9 @@ var zoom_zoom = function (domainValue) {
       domain = domainValue;
 
   if (config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
-    var isTimeSeries = $$.axis.isTimeSeries();
+    var isTimeSeries = $$.axis.isTimeSeries(); // hide any possible tooltip show before the zoom
 
-    if (isTimeSeries) {
+    if ($$.api.tooltip.hide(), isTimeSeries) {
       var fn = parseDate.bind($$);
       domain = domain.map(function (x) {
         return fn(x);
@@ -38569,7 +38565,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   onZoomStart: function onZoomStart() {
     var $$ = this,
         event = on_event.sourceEvent;
-    event && ($$.zoom.startEvent = event, callFn($$.config.zoom_onzoomstart, $$.api, event));
+    event && ($$.zoom.startEvent = event, $$.state.zooming = !0, callFn($$.config.zoom_onzoomstart, $$.api, event));
   },
 
   /**
@@ -38612,7 +38608,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         event = on_event && on_event.sourceEvent;
     startEvent && startEvent.type.indexOf("touch") > -1 && (startEvent = startEvent.changedTouches[0], event = event.changedTouches[0]);
     // if click, do nothing. otherwise, click interaction will be canceled.
-    !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain()));
+    !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), $$.state.zooming = !1, callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain()));
   },
 
   /**
@@ -39057,7 +39053,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.1.1-nightly-20200929154117",
+  version: "2.1.1-nightly-20201006155647",
 
   /**
    * Generate chart
@@ -39185,7 +39181,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.1.1-nightly-20200929154117
+ * @version 2.1.1-nightly-20201006155647
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
