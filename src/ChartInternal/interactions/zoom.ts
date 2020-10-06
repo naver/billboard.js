@@ -128,6 +128,7 @@ export default {
 		}
 
 		$$.zoom.startEvent = event;
+		$$.state.zooming = true;
 		callFn($$.config.zoom_onzoomstart, $$.api, event);
 	},
 
@@ -201,6 +202,7 @@ export default {
 		$$.redrawEventRect();
 		$$.updateZoom();
 
+		$$.state.zooming = false;
 		callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain());
 	},
 

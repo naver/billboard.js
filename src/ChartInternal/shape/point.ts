@@ -110,24 +110,19 @@ export default {
 		const focusOnly = config.point_focus_only;
 
 		if (config.point_show && !state.toggling) {
-			const currIndex = focusOnly && $el.circle ?
-				$el.circle.data()[0].index : 0;
-
 			const circles = $el.main.selectAll(`.${CLASS.circles}`)
 				.selectAll(`.${CLASS.circle}`)
 				.data(d => (
 					($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
 						$$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
-						(focusOnly ? [d.values[currIndex]] : d.values) : []
+						(focusOnly ? [d.values[0]] : d.values) : []
 				));
 
 			circles.exit().remove();
 
-			const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
-
 			circles.enter()
-				.filter(d => d)
-				.append(fn);
+				.filter(Boolean)
+				.append($$.point("create", this, $$.pointR.bind($$), $$.color));
 
 			$el.circle = $el.main.selectAll(`.${CLASS.circles} .${CLASS.circle}`)
 				.style("stroke", $$.color)
