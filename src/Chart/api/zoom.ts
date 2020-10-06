@@ -47,6 +47,9 @@ const zoom = function(domainValue?: number[]): number[] {
 	if (config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
 		const isTimeSeries = $$.axis.isTimeSeries();
 
+		// hide any possible tooltip show before the zoom
+		$$.api.tooltip.hide();
+
 		if (isTimeSeries) {
 			const fn = parseDate.bind($$);
 
