@@ -45,14 +45,16 @@ window.bench = {
         this.billboard && document.head.removeChild(this.billboard);
         this.billboard = document.createElement("script");
         this.billboard.src = `https://cdn.jsdelivr.net/npm/billboard.js${version === "latest" ? "" : `@${version}`}/dist/billboard.js`;
+
         this.billboard.onload = () => {
-          const el = this.$el.version;
-          const lastOption = el.options[el.options.length - 1];
-          
-          if (lastOption.text === "latest") {
-            lastOption.value = bb.version;
-            lastOption.text = bb.version;
-          }
+            const {options} = this.$el.version;
+            const lastOption = options[options.length - 1];
+            const {version} = bb;
+
+            if (lastOption.value === "latest" && ![].slice.call(options).some(v => v.value === version)) {
+                lastOption.value = version;
+                lastOption.text = version;
+            }
         }
       
         document.head.appendChild(this.billboard);
