@@ -34,7 +34,7 @@
 
     <script src="https://unpkg.com/@stackblitz/sdk/bundles/sdk.umd.js"></script>
     <script>
-        var path = ["../dist/", "../release/latest/dist/"];
+        var path = ["../dist/", "../../gh-pages/release/latest/dist/"];
 
         !function() {
             var cssFileName = localStorage.cssThemeName;
@@ -146,7 +146,7 @@
                         <pre><code class="html"></code></pre>
                         <p>
                             &bull; Try it out by editing below code or click right sided buttons.<br>
-                            &nbsp; <sup>*</sup>for ESM imports usage, checkout <a href="https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality" target="_new" style="text-decoration:underline;">this link</a>.
+                            &nbsp; <sup>*</sup>for ESM imports usage example, checkout <a href="https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality" target="_new" style="text-decoration:underline;">this link</a>.
                         </p>
                         <div class="js">
                             <button class="button clipboard">Copy to Clipboard</button>
@@ -169,41 +169,30 @@
 <script src="./demo.js"></script>
 <script src="./chart.js"></script>
 <script>
-!function() {
-	if (/Android [2-4]/.test(navigator.userAgent)) {
-		var interval = setInterval(function () {
-			if (bb && bb.generate) {
-				billboardDemo.init();
-				clearInterval(interval);
-			}
+fallback.ready(function(e) {
+    // load plugin
+    fallback.load({
+        plugins_stanford: path.map(function(p) {
+            return p + "plugin/billboardjs-plugin-stanford.js"
+        }),
+        plugins_textoverlap: path.map(function(p) {
+            return p + "plugin/billboardjs-plugin-textoverlap.js"
+        }),
+        plugins_bubblecompare: path.map(function(p) {
+            return p + "plugin/billboardjs-plugin-bubblecompare.js"
+        })
+    });
 
-		}, 1000);
-	} else {
-		fallback.ready(function() {
-            fallback.load({
-                plugins_stanford: path.map(function(p) {
-                    return p + "plugin/billboardjs-plugin-stanford.js"
-                }),
-                plugins_textoverlap: path.map(function(p) {
-                    return p + "plugin/billboardjs-plugin-textoverlap.js"
-                }),
-                plugins_bubblecompare: path.map(function(p) {
-                    return p + "plugin/billboardjs-plugin-bubblecompare.js"
-                })
-            });
-
-            fallback.ready(function() {
-                billboardDemo.init();
-            });
-		});
-	}
-}();
+    fallback.ready(function() {
+        billboardDemo.init();
+    });
+});
 
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
 })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-ga('create', 'UA-141911582-1', 'auto');
+ga('create', 'UA-100680234-1', 'auto');
 ga('send', 'pageview');
 </script>
 </body>
