@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.1-nightly-20201010154302
+ * @version 2.1.2-nightly-20201012155214
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -28273,7 +28273,7 @@ function getTextPos(pos, width) {
       return d && isValue($$.getBaseValue(d));
     });
 
-    if (dataToShow.length !== 0 && config.tooltip_show) {
+    if (tooltip && dataToShow.length !== 0 && config.tooltip_show) {
       var datum = tooltip.datum(),
           _ref = datum || {},
           _ref$width = _ref.width,
@@ -28343,7 +28343,7 @@ function getTextPos(pos, width) {
         config = $$.config,
         tooltip = $$.$el.tooltip;
 
-    if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+    if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
       var selectedData = JSON.parse(tooltip.datum().current);
       // hide tooltip
       callFn(config.tooltip_onhide, api, selectedData), tooltip.style("display", "none").style("visibility", "hidden") // for IE9
@@ -29023,7 +29023,7 @@ function loadConfig(config) {
     var $$ = this.internal,
         config = $$.config,
         state = $$.state;
-    state.rendered && (config.size_width = size ? size.width : null, config.size_height = size ? size.height : null, this.flush(!1, !0), $$.resizeFunction());
+    state.rendered && (config.size_width = size ? size.width : null, config.size_height = size ? size.height : null, state.resizing = !0, this.flush(!1, !0), $$.resizeFunction());
   },
 
   /**
@@ -39053,7 +39053,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.1.1-nightly-20201010154302",
+  version: "2.1.2-nightly-20201012155214",
 
   /**
    * Generate chart
@@ -39181,7 +39181,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.1.1-nightly-20201010154302
+ * @version 2.1.2-nightly-20201012155214
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

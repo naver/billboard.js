@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.1
+ * @version 2.1.2
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { event, select, mouse, namespaces, selectAll } from 'd3-selection';
@@ -6928,7 +6928,7 @@ var tooltip$1 = {
         var bindto = config.tooltip_contents.bindto;
         var forArc = $$.hasArcType(null, ["radar"]);
         var dataToShow = selectedData.filter(function (d) { return d && isValue($$.getBaseValue(d)); });
-        if (dataToShow.length === 0 || !config.tooltip_show) {
+        if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
             return;
         }
         var datum = tooltip.datum();
@@ -6998,7 +6998,7 @@ var tooltip$1 = {
     hideTooltip: function (force) {
         var $$ = this;
         var api = $$.api, config = $$.config, tooltip = $$.$el.tooltip;
-        if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+        if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
             var selectedData = JSON.parse(tooltip.datum().current);
             callFn(config.tooltip_onhide, api, selectedData);
             // hide tooltip
@@ -7936,6 +7936,7 @@ var apiChart = {
         if (state.rendered) {
             config.size_width = size ? size.width : null;
             config.size_height = size ? size.height : null;
+            state.resizing = true;
             this.flush(false, true);
             $$.resizeFunction();
         }
@@ -18819,7 +18820,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.1.1
+ * @version 2.1.2
  */
 var bb = {
     /**
@@ -18829,7 +18830,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.1.1",
+    version: "2.1.2",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
