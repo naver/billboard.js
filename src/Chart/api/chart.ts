@@ -29,6 +29,8 @@ export default {
 			config.size_width = size ? size.width : null;
 			config.size_height = size ? size.height : null;
 
+			state.resizing = true;
+
 			this.flush(false, true);
 			$$.resizeFunction();
 		}
