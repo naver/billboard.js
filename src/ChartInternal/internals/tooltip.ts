@@ -304,7 +304,7 @@ export default {
 		const forArc = $$.hasArcType(null, ["radar"]);
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 
-		if (dataToShow.length === 0 || !config.tooltip_show) {
+		if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
 			return;
 		}
 
@@ -391,7 +391,7 @@ export default {
 		const $$ = this;
 		const {api, config, $el: {tooltip}} = $$;
 
-		if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+		if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
 			const selectedData = JSON.parse(tooltip.datum().current);
 
 			callFn(config.tooltip_onhide, api, selectedData);
