@@ -1,3 +1,12 @@
+## [2.1.2](https://github.com/naver/billboard.js/compare/2.1.1...2.1.2) (2020-10-12)
+
+
+### Bug Fixes
+
+* **api:** fix resizing event element ([6c12241](https://github.com/naver/billboard.js/commit/6c1224106a3087ce6b55b756ab0051b993bd3488)), closes [#1695](https://github.com/naver/billboard.js/issues/1695)
+* **tooltip:** fix error throwing for tootip.show=false ([5164346](https://github.com/naver/billboard.js/commit/5164346c15abdc895ff917113367ee9c094ec7cc)), closes [#1715](https://github.com/naver/billboard.js/issues/1715)
+* **zoom:** fix to work on point.focus.only ([af1dbd7](https://github.com/naver/billboard.js/commit/af1dbd7acbc687095e5712edb2fedbee0ffddce1)), closes [#1703](https://github.com/naver/billboard.js/issues/1703)
+
 ## [2.1.1](https://github.com/naver/billboard.js/compare/2.1.0...2.1.1) (2020-09-25)
 
 
