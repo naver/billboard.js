@@ -184,4 +184,28 @@ describe("API tooltip", () => {
 			expect(+chart.$.tooltip.select(".value").text()).to.be.equal(value);
 		});
 	});
+
+	describe("when tooltip.show=false option is set", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [['rating', 70]],
+					type: "gauge"
+				},
+				tooltip: {
+					show: false
+				}
+			};
+		});
+
+		it("Call of .tooltip.hide() shouldn't throw error", () => {
+			try {
+				chart.tooltip.hide();
+				expect(true).to.be.ok;
+			} catch(e) {
+				// if called, means error was thrown
+				expect(true).to.be.false;
+			}
+		});
+	});
 });
