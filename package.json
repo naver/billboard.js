@@ -177,7 +177,7 @@
 		"webpack": "^4.44.2",
 		"webpack-bundle-analyzer": "^3.9.0",
 		"webpack-clean": "^1.2.5",
-		"webpack-cli": "^3.3.12",
+		"webpack-cli": "^4.0.0",
 		"webpack-common-shake": "^2.1.0",
 		"webpack-dev-server": "^3.11.0",
 		"webpack-merge": "^5.2.0",
