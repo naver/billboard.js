@@ -446,7 +446,8 @@ export default {
 
 		return function(method, context, ...args) {
 			return function(d) {
-				const id: string = d.id || (d.data && d.data.id) || d;
+				const id: string = $$.getTargetSelectorSuffix(d.id || (d.data && d.data.id) || d);
+
 				const element = d3Select(this);
 
 				ids.indexOf(id) < 0 && ids.push(id);

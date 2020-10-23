@@ -84,15 +84,12 @@ export default {
 	bindTouchOnEventRect(isMultipleX: boolean): void {
 		const $$ = this;
 		const {config, state, $el: {eventRect, svg}} = $$;
-		const event = d3Event;
 
 		const selectRect = context => {
 			if (isMultipleX) {
 				$$.selectRectForMultipleXs(context);
 			} else {
-				// const eventRect = getEventRect();
-				// const index = getIndex(eventRect);
-				const index = $$.getDataIndexFromEvent(event);
+				const index = $$.getDataIndexFromEvent(d3Event);
 
 				$$.callOverOutForTouch(index);
 
@@ -442,7 +439,7 @@ export default {
 		const $$ = ctx;
 		const {config, state, $el: {main}} = $$;
 
-		if ($$.hasArcType() || state.cancelClick) {
+		if (!d || $$.hasArcType() || state.cancelClick) {
 			state.cancelClick && (state.cancelClick = false);
 
 			return;

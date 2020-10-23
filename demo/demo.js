@@ -1699,6 +1699,7 @@ setTimeout(function() {chart.resize();}, 3000)
 						chart = bb.generate({
 							bindto: "#JSONData",
 							data: {
+								type: "line",
 								json: [
 									{name: "www.site1.com", upload: 200, download: 200, total: 400},
 									{name: "www.site2.com", upload: 100, download: 300, total: 400},
@@ -1734,11 +1735,11 @@ setTimeout(function() {chart.resize();}, 3000)
 				];
 			}
 		},
-		"DataFromURL":
-		{
+		"DataFromURL": {
 			options: {
 				data: {
-					url: "./data/test.csv"
+					url: "./data/test.csv",
+					type: "line"
 				}
 			},
 			func: function(chart) {
@@ -2081,6 +2082,7 @@ setTimeout(function() {chart.resize();}, 3000)
 							["data1", 30, -200, -100, 400, 150, 250],
 							["data2", -50, 150, -150, 150, -50, -150],
 						],
+						type: "line",
 						labels: {
 							colors: {
 								data1: "fuchsia",
@@ -3768,7 +3770,8 @@ d3.select(".chart_area")
 				data: {
 					columns: [
 						["sample", 30, 200, 0, 400, 0, 250]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					y: {
