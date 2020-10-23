@@ -1,3 +1,11 @@
+## [2.1.3](https://github.com/naver/billboard.js/compare/2.1.2...2.1.3) (2020-10-23)
+
+
+### Bug Fixes
+
+* **event:** Fix handling for single x Axis data ([84eaa6b](https://github.com/naver/billboard.js/commit/84eaa6bd4a2fe3c8c8f064cf3fd6d4be475508e7)), closes [#1737](https://github.com/naver/billboard.js/issues/1737)
+* **point:** fix error when data has spaced name ([6ff9aec](https://github.com/naver/billboard.js/commit/6ff9aec01d831c8fe2449da6b87121281829f209)), closes [#1739](https://github.com/naver/billboard.js/issues/1739)
+
 ## [2.1.2](https://github.com/naver/billboard.js/compare/2.1.1...2.1.2) (2020-10-12)
 
 
