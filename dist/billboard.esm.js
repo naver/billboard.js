@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.2
+ * @version 2.1.3
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { event, select, mouse, namespaces, selectAll } from 'd3-selection';
@@ -11156,15 +11156,12 @@ var eventrect = {
     bindTouchOnEventRect: function (isMultipleX) {
         var $$ = this;
         var config = $$.config, state = $$.state, _a = $$.$el, eventRect = _a.eventRect, svg = _a.svg;
-        var event$1 = event;
         var selectRect = function (context) {
             if (isMultipleX) {
                 $$.selectRectForMultipleXs(context);
             }
             else {
-                // const eventRect = getEventRect();
-                // const index = getIndex(eventRect);
-                var index = $$.getDataIndexFromEvent(event$1);
+                var index = $$.getDataIndexFromEvent(event);
                 $$.callOverOutForTouch(index);
                 index === -1 ?
                     $$.unselectRect() :
@@ -11448,7 +11445,7 @@ var eventrect = {
     clickHandlerForSingleX: function (d, ctx) {
         var $$ = ctx;
         var config = $$.config, state = $$.state, main = $$.$el.main;
-        if ($$.hasArcType() || state.cancelClick) {
+        if (!d || $$.hasArcType() || state.cancelClick) {
             state.cancelClick && (state.cancelClick = false);
             return;
         }
@@ -16000,7 +15997,7 @@ var shapePoint = {
                 args[_i - 2] = arguments[_i];
             }
             return function (d) {
-                var id = d.id || (d.data && d.data.id) || d;
+                var id = $$.getTargetSelectorSuffix(d.id || (d.data && d.data.id) || d);
                 var element = select(this);
                 ids.indexOf(id) < 0 && ids.push(id);
                 var point = pattern[ids.indexOf(id) % pattern.length];
@@ -18820,7 +18817,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.1.2
+ * @version 2.1.3
  */
 var bb = {
     /**
@@ -18830,7 +18827,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.1.2",
+    version: "2.1.3",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
