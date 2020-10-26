@@ -131,7 +131,7 @@
 		"core-js": "^3.6.5",
 		"coveralls": "^3.1.0",
 		"cross-env": "^7.0.2",
-		"css-loader": "^4.3.0",
+		"css-loader": "^5.0.0",
 		"d3-format": "^2.0.0",
 		"d3-polygon": "^2.0.0",
 		"d3-voronoi": "^1.1.4",
