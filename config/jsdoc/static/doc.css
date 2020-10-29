@@ -23,7 +23,7 @@ nav h2:nth-of-type(1) {
     margin-top: 70px;
 }
 
-nav a:hover, nav a:active {
+nav ul a:hover, nav ul a:active {
     color: #fff;
     background-color: #16a085;
 }
