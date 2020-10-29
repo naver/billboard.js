@@ -26,7 +26,10 @@
 		"monospaceLinks": false,
 		"default": {
 			"outputSourceFiles": true,
-			"includeDate": false
+			"includeDate": false,
+			"staticFiles": {
+				"include": ["config/jsdoc/"]
+			}
 		}
 	},
 	"docdash": {
@@ -45,7 +48,8 @@
 		"typedefs": true,
 		"private": false,
 		"scripts": [
-			"../../../css/doc.css"
+			"static/doc.css",
+			"static/analytics.js"
 		],
 		"menu":{
 			"Examples": {
