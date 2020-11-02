@@ -161,7 +161,7 @@
 		"lite-fixture": "^1.0.2",
 		"mini-css-extract-plugin": "^1.2.1",
 		"mocha": "^8.2.0",
-		"node-sass": "^4.14.1",
+		"node-sass": "^5.0.0",
 		"optimize-css-assets-webpack-plugin": "^5.0.4",
 		"regenerator-runtime": "^0.13.7",
 		"rollup": "^2.32.1",
