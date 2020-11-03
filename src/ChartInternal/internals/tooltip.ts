@@ -419,15 +419,16 @@ export default {
 		if (config.tooltip_linked && charts.length > 1) {
 			const linkedName = config.tooltip_linked_name;
 
-			charts.forEach(c => {
-				if (c !== $$.api) {
+			charts
+				.filter(v => v !== $$.api)
+				.forEach(c => {
 					const {config, $el} = c.internal;
 					const isLinked = config.tooltip_linked;
 					const name = config.tooltip_linked_name;
 					const isInDom = document.body.contains($el.chart.node());
 
 					if (isLinked && linkedName === name && isInDom) {
-						const data = c.internal.$el.tooltip.data()[0];
+						const data = $el.tooltip.data()[0];
 						const isNotSameIndex = index !== (data && data.index);
 
 						// prevent throwing error for non-paired linked indexes
@@ -439,8 +440,7 @@ export default {
 							}
 						} catch (e) {}
 					}
-				}
-			});
+				});
 		}
 	}
 };
