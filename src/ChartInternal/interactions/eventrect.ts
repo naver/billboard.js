@@ -173,15 +173,16 @@ export default {
 		const $$ = this;
 		const {state, $el} = $$;
 		const {eventReceiver, width, height, rendered, resizing} = state;
+		const rectElement = eventRect || $el.eventRect;
 
 		const updateClientRect = (): void => {
 			eventReceiver && (
-				eventReceiver.rect = (eventRect || $el.eventRect).node().getBoundingClientRect()
+				eventReceiver.rect = rectElement.node().getBoundingClientRect()
 			);
 		};
 
 		if (!rendered || resizing) {
-			const rect = eventRect
+			rectElement
 				.attr("x", 0)
 				.attr("y", 0)
 				.attr("width", width)
@@ -189,7 +190,7 @@ export default {
 
 			// only for init
 			if (!rendered) {
-				rect.attr("class", CLASS.eventRect);
+				rectElement.attr("class", CLASS.eventRect);
 			}
 		}
 
