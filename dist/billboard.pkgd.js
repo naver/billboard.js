@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.3-nightly-20201029170117
+ * @version 2.1.3-nightly-20201103165043
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -28364,26 +28364,26 @@ function getTextPos(pos, width) {
 
     if (config.tooltip_linked && charts.length > 1) {
       var linkedName = config.tooltip_linked_name;
-      charts.forEach(function (c) {
-        if (c !== $$.api) {
-          var _c$internal = c.internal,
-              _config = _c$internal.config,
-              $el = _c$internal.$el,
-              isLinked = _config.tooltip_linked,
-              name = _config.tooltip_linked_name,
-              isInDom = browser_doc.body.contains($el.chart.node());
+      charts.filter(function (v) {
+        return v !== $$.api;
+      }).forEach(function (c) {
+        var _c$internal = c.internal,
+            config = _c$internal.config,
+            $el = _c$internal.$el,
+            isLinked = config.tooltip_linked,
+            name = config.tooltip_linked_name,
+            isInDom = browser_doc.body.contains($el.chart.node());
 
-          if (isLinked && linkedName === name && isInDom) {
-            var data = c.internal.$el.tooltip.data()[0],
-                isNotSameIndex = index !== (data && data.index);
+        if (isLinked && linkedName === name && isInDom) {
+          var data = $el.tooltip.data()[0],
+              isNotSameIndex = index !== (data && data.index);
 
-            // prevent throwing error for non-paired linked indexes
-            try {
-              show && isNotSameIndex ? c.tooltip.show({
-                index: index
-              }) : !show && c.tooltip.hide();
-            } catch (e) {}
-          }
+          // prevent throwing error for non-paired linked indexes
+          try {
+            show && isNotSameIndex ? c.tooltip.show({
+              index: index
+            }) : !show && c.tooltip.hide();
+          } catch (e) {}
         }
       });
     }
@@ -29932,9 +29932,21 @@ var tooltip_tooltip = {
    * @memberof Chart
    */
   hide: function hide() {
-    var $$ = this.internal; // reset last touch point index
+    var $$ = this.internal,
+        inputType = $$.state.inputType,
+        tooltip = $$.$el.tooltip,
+        data = tooltip && tooltip.datum();
 
-    $$.inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
+    if (data) {
+      var index = JSON.parse(data.current)[0].index; // make to finalize, possible pending event flow set from '.tooltip.show()' call
+
+      (inputType === "mouse" ? ["mouseout"] : ["touchend"]).forEach(function (eventName) {
+        $$.dispatchEvent(eventName, index);
+      });
+    } // reset last touch point index
+
+
+    inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
   }
 };
 /* harmony default export */ var api_tooltip = ({
@@ -31872,17 +31884,11 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         width = _state.width,
         height = _state.height,
         rendered = _state.rendered,
-        resizing = _state.resizing;
-
-    if (!rendered || resizing) {
-      var rect = eventRect.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height); // only for init
-
-      rendered || rect.attr("class", config_classes.eventRect);
-    }
-
-    (function updateClientRect() {
-      eventReceiver && (eventReceiver.rect = (eventRect || $el.eventRect).node().getBoundingClientRect());
-    })();
+        resizing = _state.resizing,
+        rectElement = eventRect || $el.eventRect;
+    (!rendered || resizing) && (rectElement.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height), !rendered && rectElement.attr("class", config_classes.eventRect)), function updateClientRect() {
+      eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
+    }();
   },
 
   /**
@@ -39051,7 +39057,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.1.3-nightly-20201029170117",
+  version: "2.1.3-nightly-20201103165043",
 
   /**
    * Generate chart
@@ -39179,7 +39185,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.1.3-nightly-20201029170117
+ * @version 2.1.3-nightly-20201103165043
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

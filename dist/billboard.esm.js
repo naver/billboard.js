@@ -7020,26 +7020,26 @@ var tooltip$1 = {
         var charts = $$.charts, config = $$.config;
         if (config.tooltip_linked && charts.length > 1) {
             var linkedName_1 = config.tooltip_linked_name;
-            charts.forEach(function (c) {
-                if (c !== $$.api) {
-                    var _a = c.internal, config_1 = _a.config, $el = _a.$el;
-                    var isLinked = config_1.tooltip_linked;
-                    var name_2 = config_1.tooltip_linked_name;
-                    var isInDom = doc.body.contains($el.chart.node());
-                    if (isLinked && linkedName_1 === name_2 && isInDom) {
-                        var data = c.internal.$el.tooltip.data()[0];
-                        var isNotSameIndex = index !== (data && data.index);
-                        // prevent throwing error for non-paired linked indexes
-                        try {
-                            if (show && isNotSameIndex) {
-                                c.tooltip.show({ index: index });
-                            }
-                            else if (!show) {
-                                c.tooltip.hide();
-                            }
+            charts
+                .filter(function (v) { return v !== $$.api; })
+                .forEach(function (c) {
+                var _a = c.internal, config = _a.config, $el = _a.$el;
+                var isLinked = config.tooltip_linked;
+                var name = config.tooltip_linked_name;
+                var isInDom = doc.body.contains($el.chart.node());
+                if (isLinked && linkedName_1 === name && isInDom) {
+                    var data = $el.tooltip.data()[0];
+                    var isNotSameIndex = index !== (data && data.index);
+                    // prevent throwing error for non-paired linked indexes
+                    try {
+                        if (show && isNotSameIndex) {
+                            c.tooltip.show({ index: index });
                         }
-                        catch (e) { }
+                        else if (!show) {
+                            c.tooltip.hide();
+                        }
                     }
+                    catch (e) { }
                 }
             });
         }
@@ -8890,8 +8890,18 @@ var tooltip$2 = {
      */
     hide: function () {
         var $$ = this.internal;
+        var inputType = $$.state.inputType, tooltip = $$.$el.tooltip;
+        var data = tooltip && tooltip.datum();
+        if (data) {
+            var index_1 = JSON.parse(data.current)[0].index;
+            // make to finalize, possible pending event flow set from '.tooltip.show()' call
+            (inputType === "mouse" ?
+                ["mouseout"] : ["touchend"]).forEach(function (eventName) {
+                $$.dispatchEvent(eventName, index_1);
+            });
+        }
         // reset last touch point index
-        $$.inputType === "touch" && $$.callOverOutForTouch();
+        inputType === "touch" && $$.callOverOutForTouch();
         $$.hideTooltip(true);
         $$.hideGridFocus();
         $$.unexpandCircles();
@@ -11234,18 +11244,19 @@ var eventrect = {
         var $$ = this;
         var state = $$.state, $el = $$.$el;
         var eventReceiver = state.eventReceiver, width = state.width, height = state.height, rendered = state.rendered, resizing = state.resizing;
+        var rectElement = eventRect || $el.eventRect;
         var updateClientRect = function () {
-            eventReceiver && (eventReceiver.rect = (eventRect || $el.eventRect).node().getBoundingClientRect());
+            eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
         };
         if (!rendered || resizing) {
-            var rect = eventRect
+            rectElement
                 .attr("x", 0)
                 .attr("y", 0)
                 .attr("width", width)
                 .attr("height", height);
             // only for init
             if (!rendered) {
-                rect.attr("class", CLASS.eventRect);
+                rectElement.attr("class", CLASS.eventRect);
             }
         }
         updateClientRect();

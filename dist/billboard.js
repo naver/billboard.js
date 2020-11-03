@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.3-nightly-20201029170117
+ * @version 2.1.3-nightly-20201103165043
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -113,12 +113,9 @@ module.exports = __webpack_require__(15);
 
 /***/ }),
 /* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports) {
 
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
-
+throw new Error("Module build failed (from ./node_modules/mini-css-extract-plugin/dist/loader.js):\nModuleBuildError: Module build failed (from ./node_modules/sass-loader/dist/cjs.js):\nError: Node Sass version 5.0.0 is incompatible with ^4.0.0.\n    at getSassImplementation (/home/travis/build/naver/billboard.js/node_modules/sass-loader/dist/utils.js:84:13)\n    at Object.loader (/home/travis/build/naver/billboard.js/node_modules/sass-loader/dist/index.js:34:59)\n    at runLoaders (/home/travis/build/naver/billboard.js/node_modules/webpack/lib/NormalModule.js:316:20)\n    at /home/travis/build/naver/billboard.js/node_modules/loader-runner/lib/LoaderRunner.js:367:11\n    at /home/travis/build/naver/billboard.js/node_modules/loader-runner/lib/LoaderRunner.js:233:18\n    at runSyncOrAsync (/home/travis/build/naver/billboard.js/node_modules/loader-runner/lib/LoaderRunner.js:143:3)\n    at iterateNormalLoaders (/home/travis/build/naver/billboard.js/node_modules/loader-runner/lib/LoaderRunner.js:232:2)\n    at Array.<anonymous> (/home/travis/build/naver/billboard.js/node_modules/loader-runner/lib/LoaderRunner.js:205:4)\n    at Storage.finished (/home/travis/build/naver/billboard.js/node_modules/enhanced-resolve/lib/CachedInputFileSystem.js:55:16)\n    at provider (/home/travis/build/naver/billboard.js/node_modules/enhanced-resolve/lib/CachedInputFileSystem.js:91:9)\n    at /home/travis/build/naver/billboard.js/node_modules/graceful-fs/graceful-fs.js:123:16\n    at FSReqWrap.readFileAfterClose [as oncomplete] (internal/fs/read_file_context.js:53:3)");
 
 /***/ }),
 /* 2 */
@@ -6706,26 +6703,26 @@ function getTextPos(pos, width) {
 
     if (config.tooltip_linked && charts.length > 1) {
       var linkedName = config.tooltip_linked_name;
-      charts.forEach(function (c) {
-        if (c !== $$.api) {
-          var _c$internal = c.internal,
-              _config = _c$internal.config,
-              $el = _c$internal.$el,
-              isLinked = _config.tooltip_linked,
-              name = _config.tooltip_linked_name,
-              isInDom = browser_doc.body.contains($el.chart.node());
+      charts.filter(function (v) {
+        return v !== $$.api;
+      }).forEach(function (c) {
+        var _c$internal = c.internal,
+            config = _c$internal.config,
+            $el = _c$internal.$el,
+            isLinked = config.tooltip_linked,
+            name = config.tooltip_linked_name,
+            isInDom = browser_doc.body.contains($el.chart.node());
 
-          if (isLinked && linkedName === name && isInDom) {
-            var data = c.internal.$el.tooltip.data()[0],
-                isNotSameIndex = index !== (data && data.index);
+        if (isLinked && linkedName === name && isInDom) {
+          var data = $el.tooltip.data()[0],
+              isNotSameIndex = index !== (data && data.index);
 
-            // prevent throwing error for non-paired linked indexes
-            try {
-              show && isNotSameIndex ? c.tooltip.show({
-                index: index
-              }) : !show && c.tooltip.hide();
-            } catch (e) {}
-          }
+          // prevent throwing error for non-paired linked indexes
+          try {
+            show && isNotSameIndex ? c.tooltip.show({
+              index: index
+            }) : !show && c.tooltip.hide();
+          } catch (e) {}
         }
       });
     }
@@ -8274,9 +8271,21 @@ var tooltip_tooltip = {
    * @memberof Chart
    */
   hide: function hide() {
-    var $$ = this.internal; // reset last touch point index
+    var $$ = this.internal,
+        inputType = $$.state.inputType,
+        tooltip = $$.$el.tooltip,
+        data = tooltip && tooltip.datum();
 
-    $$.inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
+    if (data) {
+      var index = JSON.parse(data.current)[0].index; // make to finalize, possible pending event flow set from '.tooltip.show()' call
+
+      (inputType === "mouse" ? ["mouseout"] : ["touchend"]).forEach(function (eventName) {
+        $$.dispatchEvent(eventName, index);
+      });
+    } // reset last touch point index
+
+
+    inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
   }
 };
 /* harmony default export */ var api_tooltip = ({
@@ -10104,17 +10113,11 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         width = _state.width,
         height = _state.height,
         rendered = _state.rendered,
-        resizing = _state.resizing;
-
-    if (!rendered || resizing) {
-      var rect = eventRect.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height); // only for init
-
-      rendered || rect.attr("class", config_classes.eventRect);
-    }
-
-    (function updateClientRect() {
-      eventReceiver && (eventReceiver.rect = (eventRect || $el.eventRect).node().getBoundingClientRect());
-    })();
+        resizing = _state.resizing,
+        rectElement = eventRect || $el.eventRect;
+    (!rendered || resizing) && (rectElement.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height), !rendered && rectElement.attr("class", config_classes.eventRect)), function updateClientRect() {
+      eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
+    }();
   },
 
   /**
@@ -16929,7 +16932,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.1.3-nightly-20201029170117",
+  version: "2.1.3-nightly-20201103165043",
 
   /**
    * Generate chart
@@ -17057,7 +17060,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.1.3-nightly-20201029170117
+ * @version 2.1.3-nightly-20201103165043
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
