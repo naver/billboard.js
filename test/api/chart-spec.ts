@@ -91,6 +91,15 @@ describe("API chart", () => {
 
 			expect(+eventRect.attr("height")).to.be.above(height);
 		});
+
+		it("updating event rect during resize state", () => {
+			// force resizing state
+			chart.internal.state.resizing = true;
+
+			expect(
+				chart.internal.updateEventRect()
+			).to.not.throw;
+		});
 	});
 
 	describe("destroy()", () => {
