@@ -105,9 +105,22 @@ const tooltip = {
 	 */
 	hide: function(): void {
 		const $$ = this.internal;
+		const {state: {inputType}, $el: {tooltip}} = $$;
+		const data = tooltip && tooltip.datum();
+
+		if (data) {
+			const {index} = JSON.parse(data.current)[0];
+
+			// make to finalize, possible pending event flow set from '.tooltip.show()' call
+			(inputType === "mouse" ?
+				["mouseout"] : ["touchend"]
+			).forEach(eventName => {
+				$$.dispatchEvent(eventName, index);
+			});
+		}
 
 		// reset last touch point index
-		$$.inputType === "touch" && $$.callOverOutForTouch();
+		inputType === "touch" && $$.callOverOutForTouch();
 
 		$$.hideTooltip(true);
 		$$.hideGridFocus();

@@ -82,6 +82,16 @@ describe("API tooltip", () => {
 
 			expect(tooltip.style("display")).to.be.equal("none");
 		});
+
+		it("tooltip should be shown for same index after: show() -> hide() -> show()", () => {
+			const index = 3;
+
+			chart.tooltip.show({index});
+			chart.tooltip.hide();
+			chart.tooltip.show({index});
+
+			expect(chart.$.tooltip.style("display")).to.be.equal("block");
+		});
 	});
 
 	describe("for multiple x", () => {
