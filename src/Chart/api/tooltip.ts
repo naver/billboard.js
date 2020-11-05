@@ -111,8 +111,9 @@ const tooltip = {
 
 		$$.hideTooltip(true);
 		$$.hideGridFocus();
-		$$.unexpandCircles();
-		$$.unexpandBars();
+
+		$$.unexpandCircles && $$.unexpandCircles();
+		$$.unexpandBars && $$.unexpandBars();
 	}
 };
 

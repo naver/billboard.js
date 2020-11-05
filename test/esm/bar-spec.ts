@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import sinon from "sinon";
-import bb, {bar} from "../../src/index.esm";
+import bb, {bar, zoom} from "../../src/index.esm";
 
 // for ESM test, import helper rather than util
 import {getBBox, fireEvent} from "../assets/helper";
@@ -62,5 +62,15 @@ describe("ESM bar", function() {
         }
 
         expect(true).to.be.true;
+    });
+
+    it("set options zoom.enabled=true", () => {
+        args.zoom = {
+            enabled: zoom()
+        };
+    });
+
+    it("shouldn't throw error during zoom", () => {
+        expect(chart.zoom([0,1])).to.not.throw;
     });
 });
