@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.3-nightly-20201103165043
+ * @version 2.1.3-nightly-20201105164516
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -29946,7 +29946,7 @@ var tooltip_tooltip = {
     } // reset last touch point index
 
 
-    inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
+    inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles && $$.unexpandCircles(), $$.unexpandBars && $$.unexpandBars();
   }
 };
 /* harmony default export */ var api_tooltip = ({
@@ -31939,7 +31939,8 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
       return isFunction(fn) ? fn(v) : fn;
     };
 
-    eventReceiver.data.forEach(function (d, i) {
+    // reset for possible remains coords data before the data loading
+    eventReceiver.coords.splice(eventReceiver.data.length), eventReceiver.data.forEach(function (d, i) {
       eventReceiver.coords[i] = {
         x: call(x, d),
         y: call(y, d),
@@ -39057,7 +39058,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.1.3-nightly-20201103165043",
+  version: "2.1.3-nightly-20201105164516",
 
   /**
    * Generate chart
@@ -39185,7 +39186,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.1.3-nightly-20201103165043
+ * @version 2.1.3-nightly-20201105164516
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

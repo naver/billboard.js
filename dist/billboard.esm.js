@@ -8904,8 +8904,8 @@ var tooltip$2 = {
         inputType === "touch" && $$.callOverOutForTouch();
         $$.hideTooltip(true);
         $$.hideGridFocus();
-        $$.unexpandCircles();
-        $$.unexpandBars();
+        $$.unexpandCircles && $$.unexpandCircles();
+        $$.unexpandBars && $$.unexpandBars();
     }
 };
 var apiTooltip = { tooltip: tooltip$2 };
@@ -11330,6 +11330,8 @@ var eventrect = {
         }
         var eventReceiver = state.eventReceiver;
         var call = function (fn, v) { return (isFunction(fn) ? fn(v) : fn); };
+        // reset for possible remains coords data before the data loading
+        eventReceiver.coords.splice(eventReceiver.data.length);
         eventReceiver.data.forEach(function (d, i) {
             eventReceiver.coords[i] = {
                 x: call(x, d),
