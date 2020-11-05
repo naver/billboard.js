@@ -275,6 +275,9 @@ export default {
 		const {eventReceiver} = state;
 		const call: any = (fn, v) => (isFunction(fn) ? fn(v) : fn);
 
+		// reset for possible remains coords data before the data loading
+		eventReceiver.coords.splice(eventReceiver.data.length);
+
 		eventReceiver.data.forEach((d, i) => {
 			eventReceiver.coords[i] = {
 				x: call(x, d),
