@@ -566,12 +566,35 @@ describe("SHAPE GAUGE", () => {
                 size: {
                     height: 180
                 }
-                });
+			});
                 
             const svgRect = chart.$.svg.node().getBoundingClientRect();
             const legendRect = chart.$.svg.select(".bb-legend").node().getBoundingClientRect();
             
             expect(legendRect.bottom).to.be.below(svgRect.bottom - 5);
+        });
+	});
+	
+	describe("Max text value", () => {
+        it("max ", () => {
+			const args = {
+                data: {
+					columns: [
+						["data", 500]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					min: 0,
+					max: 100
+				}
+            };
+            const chart = util.generate(args);
+			const maxValue = +chart.$.main.select(`.${CLASS.chartArcsGaugeMax}`).text();
+            
+			expect(args.gauge.max).to.be.below(maxValue);
+			expect(maxValue).to.be.equal(args.data.columns[0][1]);
+			expect(chart.config("gauge.max")).to.be.equal(maxValue);
         });
     });
 });

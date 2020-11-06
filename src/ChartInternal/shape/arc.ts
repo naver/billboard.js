@@ -101,12 +101,6 @@ export default {
 		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
 			// to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
 			const totalSum = $$.getTotalDataSum(state.rendered);
-
-			// if gauge_max less than totalSum, make totalSum to max value
-			if (totalSum > config.gauge_max) {
-				config.gauge_max = totalSum;
-			}
-
 			const gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
 
 			pie = pie
@@ -132,13 +126,6 @@ export default {
 		}
 
 		if (d.data && $$.hasMultiArcGauge()) {
-			const maxValue = $$.getMinMaxData().max[0].value;
-
-			// if gauge_max less than maxValue, make maxValue to max value
-			if (maxValue > config.gauge_max) {
-				config.gauge_max = maxValue;
-			}
-
 			const gMin = config.gauge_min;
 			const gMax = config.gauge_max;
 			const gTic = radius / (gMax - gMin);
@@ -525,7 +512,10 @@ export default {
 			})
 			.merge(mainArc);
 
-		$$.hasMultiArcGauge() && $$.redrawMultiArcGauge();
+		if ($$.hasType("gauge")) {
+			$$.updateGaugeMax();
+			$$.hasMultiArcGauge() && $$.redrawMultiArcGauge();
+		}
 
 		mainArc
 			.attr("transform", d => (!$$.isGaugeType(d.data) && withTransform ? "scale(0)" : ""))
