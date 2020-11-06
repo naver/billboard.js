@@ -7,20 +7,6 @@
  */
 export default {
 	/**
-	 * Specify the key of x values in the data.<br><br>
-	 * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
-	 * @name data․x
-	 * @memberof Options
-	 * @type {string}
-	 * @default undefined
-	 * @example
-	 * data: {
-	 *   x: "date"
-	 * }
-	 */
-	data_x: <string|undefined> undefined,
-
-	/**
 	 * Specify the keys of the x values for each data.<br><br>
 	 * This option can be used if we want to show the data that has different x values.
 	 * @name data․xs
