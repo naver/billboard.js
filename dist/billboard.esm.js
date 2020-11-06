@@ -713,6 +713,19 @@ var main = {
  */
 var data = {
     /**
+     * Specify the key of x values in the data.<br><br>
+     * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
+     * @name data․x
+     * @memberof Options
+     * @type {string}
+     * @default undefined
+     * @example
+     * data: {
+     *   x: "date"
+     * }
+     */
+    data_x: undefined,
+    /**
      * Converts data id value
      * @name data․idConverter
      * @memberof Options
@@ -12514,19 +12527,6 @@ var sizeAxis = {
  */
 var optDataAxis = {
     /**
-     * Specify the key of x values in the data.<br><br>
-     * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
-     * @name data․x
-     * @memberof Options
-     * @type {string}
-     * @default undefined
-     * @example
-     * data: {
-     *   x: "date"
-     * }
-     */
-    data_x: undefined,
-    /**
      * Specify the keys of the x values for each data.<br><br>
      * This option can be used if we want to show the data that has different x values.
      * @name data․xs
@@ -14363,10 +14363,6 @@ var shapeArc = {
         if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
             // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
             var totalSum = $$.getTotalDataSum(state.rendered);
-            // if gauge_max less than totalSum, make totalSum to max value
-            if (totalSum > config.gauge_max) {
-                config.gauge_max = totalSum;
-            }
             var gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
             pie = pie
                 .startAngle(gStart)
@@ -14387,11 +14383,6 @@ var shapeArc = {
             d.endAngle = d.startAngle;
         }
         if (d.data && $$.hasMultiArcGauge()) {
-            var maxValue = $$.getMinMaxData().max[0].value;
-            // if gauge_max less than maxValue, make maxValue to max value
-            if (maxValue > config.gauge_max) {
-                config.gauge_max = maxValue;
-            }
             var gMin = config.gauge_min;
             var gMax = config.gauge_max;
             var gTic = radius / (gMax - gMin);
@@ -14700,7 +14691,10 @@ var shapeArc = {
             this._current = d;
         })
             .merge(mainArc);
-        $$.hasMultiArcGauge() && $$.redrawMultiArcGauge();
+        if ($$.hasType("gauge")) {
+            $$.updateGaugeMax();
+            $$.hasMultiArcGauge() && $$.redrawMultiArcGauge();
+        }
         mainArc
             .attr("transform", function (d) { return (!$$.isGaugeType(d.data) && withTransform ? "scale(0)" : ""); })
             .style("opacity", function (d) {
@@ -15294,6 +15288,18 @@ var shapeGauge = {
                 appendText(CLASS.chartArcsGaugeMin);
                 !config.gauge_fullCircle && appendText(CLASS.chartArcsGaugeMax);
             }
+        }
+    },
+    updateGaugeMax: function () {
+        var $$ = this;
+        var config = $$.config, state = $$.state;
+        var hasMultiGauge = $$.hasMultiArcGauge();
+        // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
+        var max = hasMultiGauge ?
+            $$.getMinMaxData().max[0].value : $$.getTotalDataSum(state.rendered);
+        // if gauge_max less than max, make max to max value
+        if (max > config.gauge_max) {
+            config.gauge_max = max;
         }
     },
     redrawMultiArcGauge: function () {
