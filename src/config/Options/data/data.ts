@@ -9,6 +9,20 @@ import {ChartTypes} from "../../../../types/types";
  */
 export default {
 	/**
+	 * Specify the key of x values in the data.<br><br>
+	 * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
+	 * @name data․x
+	 * @memberof Options
+	 * @type {string}
+	 * @default undefined
+	 * @example
+	 * data: {
+	 *   x: "date"
+	 * }
+	 */
+	data_x: <string|undefined> undefined,
+
+	/**
 	 * Converts data id value
 	 * @name data․idConverter
 	 * @memberof Options
