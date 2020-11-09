@@ -106,7 +106,7 @@
 		"@semantic-release/npm": "^7.0.6",
 		"@semantic-release/release-notes-generator": "^9.0.1",
 		"@types/chai": "^4.2.14",
-		"@types/d3": "^5.16.3",
+		"@types/d3": "^6.0.0",
 		"@types/mocha": "^8.0.3",
 		"@types/sinon": "^9.0.8",
 		"@typescript-eslint/eslint-plugin": "^4.6.0",
