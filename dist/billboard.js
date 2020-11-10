@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.3-nightly-20201106163828
+ * @version 2.1.3-nightly-20201110093159
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -113,9 +113,12 @@ module.exports = __webpack_require__(15);
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-throw new Error("Module build failed (from ./node_modules/mini-css-extract-plugin/dist/loader.js):\nModuleBuildError: Module build failed (from ./node_modules/sass-loader/dist/cjs.js):\nError: Node Sass version 5.0.0 is incompatible with ^4.0.0.\n    at getSassImplementation (/home/travis/build/naver/billboard.js/node_modules/sass-loader/dist/utils.js:84:13)\n    at Object.loader (/home/travis/build/naver/billboard.js/node_modules/sass-loader/dist/index.js:34:59)\n    at runLoaders (/home/travis/build/naver/billboard.js/node_modules/webpack/lib/NormalModule.js:316:20)\n    at /home/travis/build/naver/billboard.js/node_modules/loader-runner/lib/LoaderRunner.js:367:11\n    at /home/travis/build/naver/billboard.js/node_modules/loader-runner/lib/LoaderRunner.js:233:18\n    at runSyncOrAsync (/home/travis/build/naver/billboard.js/node_modules/loader-runner/lib/LoaderRunner.js:143:3)\n    at iterateNormalLoaders (/home/travis/build/naver/billboard.js/node_modules/loader-runner/lib/LoaderRunner.js:232:2)\n    at Array.<anonymous> (/home/travis/build/naver/billboard.js/node_modules/loader-runner/lib/LoaderRunner.js:205:4)\n    at Storage.finished (/home/travis/build/naver/billboard.js/node_modules/enhanced-resolve/lib/CachedInputFileSystem.js:55:16)\n    at provider (/home/travis/build/naver/billboard.js/node_modules/enhanced-resolve/lib/CachedInputFileSystem.js:91:9)\n    at /home/travis/build/naver/billboard.js/node_modules/graceful-fs/graceful-fs.js:123:16\n    at FSReqWrap.readFileAfterClose [as oncomplete] (internal/fs/read_file_context.js:53:3)");
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+// extracted by mini-css-extract-plugin
+
 
 /***/ }),
 /* 2 */
@@ -8104,8 +8107,9 @@ function showHide(show, targetIdsValue, options) {
   $$.state.toggling = !0, $$[(show ? "remove" : "add") + "HiddenTargetIds"](targetIds);
   var targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds)),
       opacity = show ? "1" : "0";
-  targets.transition().style("opacity", opacity, "important").call(endall, function () {
-    targets.style("opacity", null).style("opacity", opacity);
+  show && targets.style("display", null), targets.transition().style("opacity", opacity, "important").call(endall, function () {
+    // https://github.com/naver/billboard.js/issues/1758
+    show || targets.style("display", "none"), targets.style("opacity", opacity);
   }), options.withLegend && $$[(show ? "show" : "hide") + "Legend"](targetIds), $$.redraw({
     withUpdateOrgXDomain: !0,
     withUpdateXDomain: !0,
@@ -16936,7 +16940,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.1.3-nightly-20201106163828",
+  version: "2.1.3-nightly-20201110093159",
 
   /**
    * Generate chart
@@ -17064,7 +17068,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.1.3-nightly-20201106163828
+ * @version 2.1.3-nightly-20201110093159
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**

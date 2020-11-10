@@ -8708,10 +8708,13 @@ function showHide(show, targetIdsValue, options) {
     $$[(show ? "remove" : "add") + "HiddenTargetIds"](targetIds);
     var targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
     var opacity = show ? "1" : "0";
+    show && targets.style("display", null);
     targets.transition()
         .style("opacity", opacity, "important")
         .call(endall, function () {
-        targets.style("opacity", null).style("opacity", opacity);
+        // https://github.com/naver/billboard.js/issues/1758
+        !show && targets.style("display", "none");
+        targets.style("opacity", opacity);
     });
     options.withLegend && $$[(show ? "show" : "hide") + "Legend"](targetIds);
     $$.redraw({
