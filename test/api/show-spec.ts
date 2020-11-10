@@ -79,6 +79,27 @@ describe("API show", () => {
 				done();
 			}, 500);
 		});
+
+		// https://github.com/naver/billboard.js/issues/1758
+		it("hidden target display should be 'none' when is hidden", done => {
+			before(() => {
+				args.data.type = "bar";
+			});
+
+			after(() => {
+				args.data.type = "line";
+			});
+
+			// when
+			chart.hide("data1");
+
+			setTimeout(() => {
+				expect(
+					chart.$.main.select(`.${CLASS.target}-data1`).style("display")
+				).to.be.equal("none");
+				done();
+			}, 500);
+		})
 	});
 
 	describe("show()", () => {
