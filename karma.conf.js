@@ -6,7 +6,7 @@ const fileExtensions = /(\.[jt]s)$/;
 
 module.exports = function(config) {
 	const karmaConfig = {
-		frameworks: ["mocha", "chai", "sinon"],
+		frameworks: ["mocha", "chai", "sinon", "webpack"],
 		files: [
 			"./node_modules/lite-fixture/index.js",
 			"./node_modules/hammer-simulator/index.js",
@@ -41,7 +41,7 @@ module.exports = function(config) {
 						test: /(\.[jt]s)$/,
 						loader: "babel-loader",
 						exclude: {
-							test: /node_modules/,
+							and: [/node_modules/],
 							not: [/(d3\-.*)$/]
 						}
 					}
@@ -116,7 +116,7 @@ module.exports = function(config) {
 			exclude: /(node_modules|test)/,
 			use: {
 				loader: "istanbul-instrumenter-loader",
-				query: {
+				options: {
 					esModules: true
 				}
 			}

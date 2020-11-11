@@ -17,6 +17,14 @@ import {
 	simulator
 } from "./helper";
 
+//-------
+import * as shape from "../../src/config/resolver/shape";
+import * as interaction from "../../src/config/resolver/interaction";
+
+Object.keys(shape).forEach(v => shape[v]());
+Object.keys(interaction).forEach(v => interaction[v]());
+//-------
+
 /**
  * Create a DOM element
  * @param {String} idValue id value
