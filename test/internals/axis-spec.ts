@@ -1128,7 +1128,8 @@ describe("AXIS", function() {
 								centered: false,
 								culling: false,
 								multiline: false
-							}
+							},
+							clipPath: false
 						}
 					}
 				};
@@ -1172,13 +1173,13 @@ describe("AXIS", function() {
 						expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
 					});
 
-				compare(15, 45.525421142578125, 56.82012354874871, 109.4987923936019)
+				compare(15, 45, 56, 71)
 			});
 
-			it("should resize when all data hidden", () => {
+			it("should not resize x axis when all data hidden", () => {
 				chart.hide("data1");
 
-				compare(args.axis.x.tick.rotate, 6, 57, 110);
+				compare(args.axis.x.tick.rotate, 6, 57, 71);
 
 				chart.show("data1");
 			});
@@ -1218,15 +1219,15 @@ describe("AXIS", function() {
 				});
 
 				it("should be above 0 if rotated", () => {
-					compareOverflow(109.4987923936019);
+					compareOverflow(71);
 				});
 
 				it("update config", () => {
 					args.axis.x.padding = {right: 2};
 				});
 
-				it("should be defaultPadding + tickOffset if padding right is set", () => {
-					compareOverflow(defaultPadding + 33);
+				it("should be defaultPadding if padding right is set", () => {
+					compareOverflow(defaultPadding);
 				});
 
 				it("update config", () => {
@@ -1234,15 +1235,15 @@ describe("AXIS", function() {
 				});
 
 				it("should be above defaultPadding if padding left is set", () => {
-					compareOverflow( 109.38116563068422);
+					compareOverflow( 80);
 				});
 
 				it("update config", () => {
 					args.axis.x.padding = {left: 2, right: 2};
 				});
 
-				it("should be above defaultPadding if padding is set", () => {
-					compareOverflow(37);
+				it("should be equal to defaultPadding if padding is set", () => {
+					compareOverflow(defaultPadding);
 				});
 			});
 
@@ -1282,6 +1283,7 @@ describe("AXIS", function() {
 								count: 5,
 								format: "%Y-%m-%d %H:%M:%S",
 							},
+							clipPath: false
 						}
 					}
 				};
@@ -1319,7 +1321,7 @@ describe("AXIS", function() {
 				compare(15, 45.145263671875, 56.439983076254386, 108.67536019184263)
 			});
 
-			it("should resize when all data hidden", () => {
+			it("should not resize x axis when all data hidden", () => {
 				chart.hide("Temperature");
 
 				compare(args.axis.x.tick.rotate, 6, 57, 108);

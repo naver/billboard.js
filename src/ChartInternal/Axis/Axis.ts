@@ -576,13 +576,21 @@ class Axis {
 			const scale = $$.scale[id].copy().domain($$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id));
 			const domain = scale.domain();
 
-			// do not compute if domain is same
-			if ((domain[0] === domain[1] && domain.every(v => v > 0)) ||
-				(isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1])
-			) {
+			const isDomainSame = domain[0] === domain[1] && domain.every(v => v > 0);
+			const isCurrentMaxTickDomainSame = isArray(currentTickMax.domain) &&
+				currentTickMax.domain[0] === currentTickMax.domain[1] &&
+				currentTickMax.domain.every(v => v > 0);
+
+			// do not compute if domain or currentMaxTickDomain is same
+			if (isDomainSame || isCurrentMaxTickDomainSame) {
 				return currentTickMax.size;
 			} else {
 				currentTickMax.domain = domain;
+			}
+
+			// reset old max state value to prevent from new data loading
+			if (!isYAxis) {
+				currentTickMax.ticks.splice(0);
 			}
 
 			const axis = this.getAxis(id, scale, false, false, true);
@@ -618,7 +626,7 @@ class Axis {
 
 					maxWidth = Math.max(maxWidth, currentTextWidth);
 					// cache tick text width for getXAxisTickTextY2Overflow()
-					if (id === "x") {
+					if (!isYAxis) {
 						currentTickMax.ticks[i] = currentTextWidth;
 					}
 				});
@@ -691,9 +699,13 @@ class Axis {
 			maxOverflow = Math.max(maxOverflow, overflow);
 		}
 
+		const filteredTargets = $$.filterTargetsToShow($$.data.targets);
 		let tickOffset = 0;
 
-		if (!isTimeSeries) {
+		if (
+			!isTimeSeries &&
+			config.axis_x_tick_count <= filteredTargets.length && filteredTargets[0].values.length
+		) {
 			const scale = getScale($$.axis.getAxisType("x"), 0, widthWithoutCurrentPaddingLeft - maxOverflow)
 				.domain([
 					left * -1,
@@ -729,10 +741,15 @@ class Axis {
 			const timeDiff = lastX - firstX;
 
 			const range = timeDiff + padding.left + padding.right;
-			const relativeTickWidth = (timeDiff / tickCount) / range;
+			let left = 0;
+			let right = 0;
 
-			const left = padding.left / range / relativeTickWidth || 0;
-			const right = padding.right / range / relativeTickWidth || 0;
+			if (tickCount && range) {
+				const relativeTickWidth = (timeDiff / tickCount) / range;
+
+				left = padding.left / range / relativeTickWidth;
+				right = padding.right / range / relativeTickWidth;
+			}
 
 			padding = {left, right};
 		}

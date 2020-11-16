@@ -251,6 +251,10 @@ export default {
 			height: legend ? $$.getLegendHeight() : 0
 		};
 
+		if (!hasArc && config.axis_x_show && config.axis_x_tick_autorotate) {
+			$$.updateXAxisTickClip();
+		}
+
 		const legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height;
 		const xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x");
 
@@ -335,10 +339,6 @@ export default {
 
 		if (state.isLegendRight && hasArc) {
 			state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
-		}
-
-		if (!hasArc && config.axis_x_show && config.axis_x_tick_autorotate) {
-			$$.updateXAxisTickClip();
 		}
 	}
 };
