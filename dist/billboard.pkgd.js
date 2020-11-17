@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.4-nightly-20201111170212
+ * @version 2.1.4-nightly-20201117170637
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -16676,7 +16676,8 @@ var Store = /*#__PURE__*/function () {
    * @property {boolean} [data.labels=false] Show or hide labels on each data points
    * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
    * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
-   * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
+   * The formatter function receives 4 arguments such as v, id, i, j and it **must return a string**(`\n` character will be used as line break) that will be shown as the label.<br><br>
+   * The arguments are:<br>
    *  - `v` is the value of the data point where the label is shown.
    *  - `id` is the id of the data where the label is shown.
    *  - `i` is the index of the data point where the label is shown.
@@ -16692,6 +16693,7 @@ var Store = /*#__PURE__*/function () {
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
    * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
    * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+   * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
    * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
    * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
    * @example
@@ -16700,7 +16702,11 @@ var Store = /*#__PURE__*/function () {
    *
    *   // or set specific options
    *   labels: {
-   *     format: function(v, id, i, j) { ... },
+   *     format: function(v, id, i, j) {
+   *         ...
+   *         // to multiline, return with '\n' character
+   *         return "Line1\nLine2";
+   *     },
    *
    *     // it's possible to set for each data
    *     format: {
@@ -27942,9 +27948,11 @@ function ascending_sum(series) {
       return $$.isRadarType(d) ? d.values : dataFn(d);
     }), $el.text.exit().transition().duration(durationForExit).style("fill-opacity", "0").remove(), $el.text = $el.text.enter().append("text").merge($$.$el.text).attr("class", classText).attr("text-anchor", function (d) {
       return config.axis_rotated ? d.value < 0 ? "end" : "start" : "middle";
-    }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", "0").text(function (d, i, j) {
-      var value = $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value;
-      return $$.dataLabelFormat(d.id)(value, d.id, i, j);
+    }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", "0").call(function (selection) {
+      selection.each(function (d, i, j) {
+        var value = $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value;
+        value = $$.dataLabelFormat(d.id)(value, d.id, i, j), isNumber(value) ? this.textContent = value : setTextValue(src_select(this), value);
+      });
     });
   },
   updateTextColor: function updateTextColor(d) {
@@ -27975,13 +27983,17 @@ function ascending_sum(series) {
         opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
     // need to return 'true' as of being pushed to the redraw list
     // ref: getRedrawList()
-    return $$.$el.text.each(function (d, i) {
-      var _this = this,
-          text = src_select(this);
+    return $$.$el.text.each(function () {
+      var text = src_select(this); // do not apply transition for newly added text elements
 
-      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", x.bind(this)(d, i)).attr("y", function (d) {
-        return y.bind(_this)(d, i);
-      }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
+      (withTransition && text.attr("x") ? text.transition(t) : text).call(function (selection) {
+        selection.each(function (d, i) {
+          src_select(this).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
+          var posX = x.bind(this)(d, i),
+              posY = y.bind(this)(d, i);
+          this.children.length ? this.setAttribute("transform", "translate(" + posX + " " + posY + ")") : (this.setAttribute("x", posX), this.setAttribute("y", posY));
+        });
+      });
     }), !0;
   },
 
@@ -37073,7 +37085,7 @@ var radar_cacheKey = KEY.radarPoints;
    * @property {number} [donut.expand.rate=0.98] Set expand rate.
    * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
    * @property {number} [donut.width] Set width of donut chart.
-   * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
+   * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character for line break.
    * @property {number} [donut.padAngle=0] Set padding between data.
    * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
    * @example
@@ -37159,7 +37171,7 @@ var radar_cacheKey = KEY.radarPoints;
    * @property {number} [gauge.min=0] Set min value of the gauge.
    * @property {number} [gauge.max=100] Set max value of the gauge.
    * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
-   * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
+   * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
    * @property {string} [gauge.units] Set units of the gauge.
    * @property {number} [gauge.width] Set width of gauge chart.
    * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
@@ -39289,7 +39301,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.1.4-nightly-20201111170212",
+  version: "2.1.4-nightly-20201117170637",
 
   /**
    * Generate chart
@@ -39417,7 +39429,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.1.4-nightly-20201111170212
+ * @version 2.1.4-nightly-20201117170637
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
