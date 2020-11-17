@@ -576,10 +576,13 @@ class Axis {
 			const scale = $$.scale[id].copy().domain($$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id));
 			const domain = scale.domain();
 
-			// do not compute if domain is same
-			if ((domain[0] === domain[1] && domain.every(v => v > 0)) ||
-				(isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1])
-			) {
+			const isDomainSame = domain[0] === domain[1] && domain.every(v => v > 0);
+			const isCurrentMaxTickDomainSame = isArray(currentTickMax.domain) &&
+				currentTickMax.domain[0] === currentTickMax.domain[1] &&
+				currentTickMax.domain.every(v => v > 0);
+
+			// do not compute if domain or currentMaxTickDomain is same
+			if (isDomainSame || isCurrentMaxTickDomainSame) {
 				return currentTickMax.size;
 			} else {
 				currentTickMax.domain = domain;
