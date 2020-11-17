@@ -281,7 +281,8 @@ export default {
 	 * @property {boolean} [data.labels=false] Show or hide labels on each data points
 	 * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
 	 * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
-	 * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
+	 * The formatter function receives 4 arguments such as v, id, i, j and it **must return a string**(`\n` character will be used as line break) that will be shown as the label.<br><br>
+	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
 	 *  - `id` is the id of the data where the label is shown.
 	 *  - `i` is the index of the data point where the label is shown.
@@ -297,6 +298,7 @@ export default {
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
 	 * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
 	 * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+	 * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
 	 * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
 	 * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
 	 * @example
@@ -305,7 +307,11 @@ export default {
 	 *
 	 *   // or set specific options
 	 *   labels: {
-	 *     format: function(v, id, i, j) { ... },
+	 *     format: function(v, id, i, j) {
+	 *         ...
+	 *         // to multiline, return with '\n' character
+	 *         return "Line1\nLine2";
+	 *     },
 	 *
 	 *     // it's possible to set for each data
 	 *     format: {

@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import {KEY} from "../../module/Cache";
 import CLASS from "../../config/classes";
-import {capitalize, getBoundingRect, getRandom, isNumber, isObject, isString, getTranslation} from "../../module/util";
+import {capitalize, getBoundingRect, getRandom, isNumber, isObject, isString, getTranslation, setTextValue} from "../../module/util";
 import {AxisType} from "../../../types/types";
 
 
@@ -82,10 +82,18 @@ export default {
 			.attr("text-anchor", d => (config.axis_rotated ? (d.value < 0 ? "end" : "start") : "middle"))
 			.style("fill", $$.updateTextColor.bind($$))
 			.style("fill-opacity", "0")
-			.text((d, i, j) => {
-				const value = $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value;
+			.call(selection => {
+				selection.each(function(d, i, j) {
+					let value = $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value;
 
-				return $$.dataLabelFormat(d.id)(value, d.id, i, j);
+					value = $$.dataLabelFormat(d.id)(value, d.id, i, j);
+
+					if (isNumber(value)) {
+						this.textContent = value;
+					} else {
+						setTextValue(d3Select(this), value);
+					}
+				});
 			});
 	},
 
@@ -121,15 +129,29 @@ export default {
 		const t: any = getRandom();
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
-		$$.$el.text.each(function(d, i: number) {
+		$$.$el.text.each(function() {
 			const text = d3Select(this);
 
 			// do not apply transition for newly added text elements
 			(withTransition && text.attr("x") ? text.transition(t) : text)
-				.attr("x", x.bind(this)(d, i))
-				.attr("y", d => y.bind(this)(d, i))
-				.style("fill", $$.updateTextColor.bind($$))
-				.style("fill-opacity", opacityForText);
+				.call(selection => {
+					selection.each(function(d, i) {
+						d3Select(this)
+							.style("fill", $$.updateTextColor.bind($$))
+							.style("fill-opacity", opacityForText);
+
+						const posX = x.bind(this)(d, i);
+						const posY = y.bind(this)(d, i);
+
+						// when is multiline
+						if (this.children.length) {
+							this.setAttribute("transform", `translate(${posX} ${posY})`);
+						} else {
+							this.setAttribute("x", posX);
+							this.setAttribute("y", posY);
+						}
+					});
+				});
 		});
 
 		// need to return 'true' as of being pushed to the redraw list
