@@ -2108,9 +2108,7 @@ setTimeout(function() {chart.resize();}, 3000)
 					labels: {
 						// format: function(v, id, i, j) { return "Default Format"; },
 						format: {
-							data1: function(x) {
-						     return d3.format('$')(x);
-							}
+							data1: function(x) { return d3.format('$')(x); }
 							// data1: function(v, id, i, j) { return "Format for data1"; },
 						}
 					}
@@ -2118,6 +2116,23 @@ setTimeout(function() {chart.resize();}, 3000)
 				grid: {
 					y: {
 						lines: [{value: 0}]
+					}
+				}
+			}
+		},
+		DataLabelMultiline: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30,400, -200, -100,  150, 250],
+					],
+					type: "line",
+					labels: {
+						format: (v, id ,i, j) => {
+						  return v > 0 ?
+							"Ipsum is\nsimply dummy text" :
+							"Lorem Ipsum is simply dummy text";
+						  }
 					}
 				}
 			}

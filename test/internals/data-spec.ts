@@ -1999,4 +1999,43 @@ describe("DATA", () => {
 			expect(emptyLabelText.empty()).to.be.true;
 		});
 	});
+
+	describe("Multilined data.label text", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["x1", 30,400, -200, -100,  150, 250],
+					],
+					type: "line",
+					labels: {
+						format: (v, id ,i, j) => {
+							return v > 0 ?
+								"Ipsum is\nsimply dummy text" :
+								"Lorem Ipsum is simply dummy text";
+						}
+					}
+				}
+			}
+		});
+
+		it("label texts should be multilined correctly.", () => {
+			chart.$.text.texts.each(function(d) {
+				if (d.value > 0) {
+					expect(this.children.length).to.be.equal(2);
+
+					expect(this.getAttribute("transform")).to.not.be.null;
+					expect(this.getAttribute("x")).to.be.null;
+					expect(this.getAttribute("y")).to.be.null;
+				} else {
+					expect(this.children.length).to.be.equal(0);
+
+					expect(this.getAttribute("transform")).to.be.null;
+					expect(this.getAttribute("x")).to.not.be.null;
+					expect(this.getAttribute("y")).to.not.be.null;
+				}
+				
+			});
+		});
+	});
 });

@@ -20,7 +20,7 @@ export default {
 	 * @property {number} [donut.expand.rate=0.98] Set expand rate.
 	 * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
 	 * @property {number} [donut.width] Set width of donut chart.
-	 * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
+	 * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character for line break.
 	 * @property {number} [donut.padAngle=0] Set padding between data.
 	 * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
 	 * @example
