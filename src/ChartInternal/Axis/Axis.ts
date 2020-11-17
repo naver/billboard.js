@@ -585,6 +585,10 @@ class Axis {
 				currentTickMax.domain = domain;
 			}
 
+			if (!isYAxis) {
+				currentTickMax.ticks = [];
+			}
+
 			const axis = this.getAxis(id, scale, false, false, true);
 			const tickCount = config[`axis_${id}_tick_count`];
 			const tickValues = config[`axis_${id}_tick_values`];
@@ -618,7 +622,7 @@ class Axis {
 
 					maxWidth = Math.max(maxWidth, currentTextWidth);
 					// cache tick text width for getXAxisTickTextY2Overflow()
-					if (id === "x") {
+					if (!isYAxis) {
 						currentTickMax.ticks[i] = currentTextWidth;
 					}
 				});
@@ -693,7 +697,7 @@ class Axis {
 
 		let tickOffset = 0;
 
-		if (!isTimeSeries) {
+		if (!isTimeSeries && maxOverflow) {
 			const scale = getScale($$.axis.getAxisType("x"), 0, widthWithoutCurrentPaddingLeft - maxOverflow)
 				.domain([
 					left * -1,
@@ -729,10 +733,15 @@ class Axis {
 			const timeDiff = lastX - firstX;
 
 			const range = timeDiff + padding.left + padding.right;
-			const relativeTickWidth = (timeDiff / tickCount) / range;
+			let left = 0;
+			let right = 0;
 
-			const left = padding.left / range / relativeTickWidth || 0;
-			const right = padding.right / range / relativeTickWidth || 0;
+			if (tickCount && range) {
+				const relativeTickWidth = (timeDiff / tickCount) / range;
+
+				left = padding.left / range / relativeTickWidth;
+				right = padding.right / range / relativeTickWidth;
+			}
 
 			padding = {left, right};
 		}

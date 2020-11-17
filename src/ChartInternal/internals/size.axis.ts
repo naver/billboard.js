@@ -99,10 +99,20 @@ export default {
 			const isCategorized = axis.isCategorized();
 			const isTimeSeries = axis.isTimeSeries();
 			const allowedXAxisTypes = isCategorized || isTimeSeries;
-			let tickCount = 0;
 
 			if (config.axis_x_tick_fit && allowedXAxisTypes) {
-				tickCount = state.current.maxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1);
+				const currentXTicksLength = state.current.maxTickWidths.x.ticks.length;
+				let tickCount = 0;
+
+				if (config.axis_x_tick_count) {
+					if (config.axis_x_tick_count > currentXTicksLength) {
+						tickCount = currentXTicksLength;
+					} else {
+						tickCount = config.axis_x_tick_count;
+					}
+				} else if (currentXTicksLength) {
+					tickCount = currentXTicksLength;
+				}
 
 				if (tickCount !== state.axis.x.tickCount) {
 					state.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
@@ -140,7 +150,7 @@ export default {
 			axis.x.padding.left + axis.x.padding.right;
 
 		const maxTickWidth = $$.axis.getMaxTickWidth("x");
-		const tickLength = (xAxisLength / tickCountWithPadding) || 0;
+		const tickLength = tickCountWithPadding ? xAxisLength / tickCountWithPadding : 0;
 
 		return maxTickWidth > tickLength;
 	}
