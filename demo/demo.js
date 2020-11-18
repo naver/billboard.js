@@ -633,20 +633,60 @@ var demos = {
 				];
 			}
 		},
-		StepChart: {
-			options: {
-				data: {
-					columns: [
-						["data1", 300, 350, 300, 0, 0, 100],
-						["data2", 130, 100, 140, 200, 150, 50]
-					],
-					types: {
-						data1: "step",
-						data2: 'area-step'
+		StepChart: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 20, 240, 100],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						types: {
+							data1: "step",
+							data2: 'area-step'
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 20, 240, 100],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						types: {
+							data1: "step",
+							data2: 'area-step'
+						}
+					},
+					line: {
+						step: {
+							type: "step-before"
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 20, 240, 100],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						types: {
+							data1: "step",
+							data2: 'area-step'
+						}
+					},
+					line: {
+						step: {
+							type: "step-after"
+						}
 					}
 				}
 			}
-		},
+		],
 		TimeseriesChart: {
 			options: {
 				data: {
