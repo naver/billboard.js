@@ -242,6 +242,7 @@ export interface XTickConfiguration {
 	 *   - axis.x.tick.multiline=false
 	 *   - axis.x.tick.culling=false
 	 *   - axis.x.tick.fit=true
+	 * - **NOTE:** axis.x.tick.clippath=true is necessary for calculating the overflow padding between the end of x axis and the width of the SVG
 	 */
 	autorotate?: boolean;
 
