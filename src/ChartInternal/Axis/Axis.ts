@@ -698,9 +698,13 @@ class Axis {
 			maxOverflow = Math.max(maxOverflow, overflow);
 		}
 
+		const filteredTargets = $$.filterTargetsToShow($$.data.targets);
 		let tickOffset = 0;
 
-		if (!isTimeSeries && maxOverflow) {
+		if (
+			!isTimeSeries &&
+			config.axis_x_tick_count <= filteredTargets.length && filteredTargets[0].values.length
+		) {
 			const scale = getScale($$.axis.getAxisType("x"), 0, widthWithoutCurrentPaddingLeft - maxOverflow)
 				.domain([
 					left * -1,
