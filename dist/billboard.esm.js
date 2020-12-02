@@ -6182,6 +6182,9 @@ var size = {
             width: legend ? $$.getLegendWidth() : 0,
             height: legend ? $$.getLegendHeight() : 0
         };
+        if (!hasArc && config.axis_x_show && config.axis_x_tick_autorotate) {
+            $$.updateXAxisTickClip();
+        }
         var legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height;
         var xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x");
         var subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ?
@@ -6249,9 +6252,6 @@ var size = {
         $$.updateRadius && $$.updateRadius();
         if (state.isLegendRight && hasArc) {
             state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
-        }
-        if (!hasArc && config.axis_x_show && config.axis_x_tick_autorotate) {
-            $$.updateXAxisTickClip();
         }
     }
 };
@@ -10819,17 +10819,24 @@ var Axis = /** @class */ (function () {
             return currentTickMax.size;
         }
         if (svg) {
-            var isYAxis = /^y2?$/.test(id);
+            var isYAxis_1 = /^y2?$/.test(id);
             var targetsToShow = $$.filterTargetsToShow($$.data.targets);
-            var scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id));
+            var scale = $$.scale[id].copy().domain($$["get" + (isYAxis_1 ? "Y" : "X") + "Domain"](targetsToShow, id));
             var domain = scale.domain();
-            // do not compute if domain is same
-            if ((domain[0] === domain[1] && domain.every(function (v) { return v > 0; })) ||
-                (isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1])) {
+            var isDomainSame = domain[0] === domain[1] && domain.every(function (v) { return v > 0; });
+            var isCurrentMaxTickDomainSame = isArray(currentTickMax.domain) &&
+                currentTickMax.domain[0] === currentTickMax.domain[1] &&
+                currentTickMax.domain.every(function (v) { return v > 0; });
+            // do not compute if domain or currentMaxTickDomain is same
+            if (isDomainSame || isCurrentMaxTickDomainSame) {
                 return currentTickMax.size;
             }
             else {
                 currentTickMax.domain = domain;
+            }
+            // reset old max state value to prevent from new data loading
+            if (!isYAxis_1) {
+                currentTickMax.ticks.splice(0);
             }
             var axis = this.getAxis(id, scale, false, false, true);
             var tickCount = config["axis_" + id + "_tick_count"];
@@ -10839,9 +10846,9 @@ var Axis = /** @class */ (function () {
             // Do not generate if 'tick values' option is given
             // https://github.com/naver/billboard.js/issues/1251
             if (!tickValues && tickCount) {
-                axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries()));
+                axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis_1 ? this.isTimeSeriesY() : this.isTimeSeries()));
             }
-            !isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
+            !isYAxis_1 && this.updateXAxisTickValues(targetsToShow, axis);
             var dummy = chart.append("svg")
                 .style("visibility", "hidden")
                 .style("position", "fixed")
@@ -10853,7 +10860,7 @@ var Axis = /** @class */ (function () {
                 var currentTextWidth = this.getBoundingClientRect().width;
                 maxWidth = Math.max(maxWidth, currentTextWidth);
                 // cache tick text width for getXAxisTickTextY2Overflow()
-                if (id === "x") {
+                if (!isYAxis_1) {
                     currentTickMax.ticks[i] = currentTextWidth;
                 }
             });
@@ -10907,8 +10914,10 @@ var Axis = /** @class */ (function () {
             var overflow = rotatedTickTextWidth - (tickLength / 2) - remainingTickWidth;
             maxOverflow = Math.max(maxOverflow, overflow);
         }
+        var filteredTargets = $$.filterTargetsToShow($$.data.targets);
         var tickOffset = 0;
-        if (!isTimeSeries) {
+        if (!isTimeSeries &&
+            config.axis_x_tick_count <= filteredTargets.length && filteredTargets[0].values.length) {
             var scale = getScale($$.axis.getAxisType("x"), 0, widthWithoutCurrentPaddingLeft - maxOverflow)
                 .domain([
                 left * -1,
@@ -10939,9 +10948,13 @@ var Axis = /** @class */ (function () {
             var lastX = +$$.getXDomainMax($$.data.targets);
             var timeDiff = lastX - firstX;
             var range = timeDiff + padding.left + padding.right;
-            var relativeTickWidth = (timeDiff / tickCount) / range;
-            var left = padding.left / range / relativeTickWidth || 0;
-            var right = padding.right / range / relativeTickWidth || 0;
+            var left = 0;
+            var right = 0;
+            if (tickCount && range) {
+                var relativeTickWidth = (timeDiff / tickCount) / range;
+                left = padding.left / range / relativeTickWidth;
+                right = padding.right / range / relativeTickWidth;
+            }
             padding = { left: left, right: right };
         }
         return padding;
@@ -11558,7 +11571,7 @@ var eventrect = {
                 .selectAll("." + CLASS.shape + "-" + closest.index)
                 .each(function () {
                 if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
-                    $$.toggleShape(this, closest, closest.index);
+                    $$.toggleShape && $$.toggleShape(this, closest, closest.index);
                     config.data_onclick.bind($$.api)(closest, this);
                 }
             });
@@ -12506,12 +12519,17 @@ var sizeAxis = {
         var axis = $$.axis, config = $$.config, state = $$.state, $el = $$.$el;
         var rotate = config["axis_" + id + "_tick_rotate"];
         if (id === "x") {
-            var isCategorized = axis.isCategorized();
-            var isTimeSeries = axis.isTimeSeries();
-            var allowedXAxisTypes = isCategorized || isTimeSeries;
-            var tickCount = 0;
+            var allowedXAxisTypes = axis.isCategorized() || axis.isTimeSeries();
             if (config.axis_x_tick_fit && allowedXAxisTypes) {
-                tickCount = state.current.maxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1);
+                var xTickCount = config.axis_x_tick_count;
+                var currentXTicksLength = state.current.maxTickWidths.x.ticks.length;
+                var tickCount = 0;
+                if (xTickCount) {
+                    tickCount = xTickCount > currentXTicksLength ? currentXTicksLength : xTickCount;
+                }
+                else if (currentXTicksLength) {
+                    tickCount = currentXTicksLength;
+                }
                 if (tickCount !== state.axis.x.tickCount) {
                     state.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
                 }
@@ -12542,7 +12560,7 @@ var sizeAxis = {
         var tickCountWithPadding = axis.x.tickCount +
             axis.x.padding.left + axis.x.padding.right;
         var maxTickWidth = $$.axis.getMaxTickWidth("x");
-        var tickLength = (xAxisLength / tickCountWithPadding) || 0;
+        var tickLength = tickCountWithPadding ? xAxisLength / tickCountWithPadding : 0;
         return maxTickWidth > tickLength;
     }
 };
@@ -12984,6 +13002,7 @@ var x = {
      *   - axis.x.tick.multiline=false
      *   - axis.x.tick.culling=false
      *   - axis.x.tick.fit=true
+     * - **NOTE:** axis.x.tick.clippath=false is necessary for calculating the overflow padding between the end of x axis and the width of the SVG
      * @name axis․x․tick․autorotate
      * @memberof Options
      * @type {boolean}
@@ -12998,7 +13017,8 @@ var x = {
      *       multiline: false,
      *       culling: false,
      *       fit: true
-     *     }
+     *     },
+     *     clipPath: false
      *   }
      * }
      */
