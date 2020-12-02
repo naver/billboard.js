@@ -513,7 +513,7 @@ export default {
 				.selectAll(`.${CLASS.shape}-${closest.index}`)
 				.each(function() {
 					if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
-						$$.toggleShape(this, closest, closest.index);
+						$$.toggleShape && $$.toggleShape(this, closest, closest.index);
 						config.data_onclick.bind($$.api)(closest, this);
 					}
 				});
