@@ -1239,17 +1239,20 @@ var demos = {
 								autorotate: true,
 								rotate: 15,
 								culling: false
-							}
+							},
+							clipPath: false
 						}
 					}
 				},
 				func: function(chart) {
 					chart.timer = [
-setTimeout(function() {
-	chart.resize({width: window.innerWidth * 0.4});
-}, 1000),
+						setTimeout(function() {
+							chart.resize({width: window.innerWidth * 0.4});
+						}, 1000),
 
-setTimeout(function() {chart.resize();}, 3000)
+						setTimeout(function() {
+							chart.resize();
+						}, 3000)
 					];
 				}
 			},
@@ -1294,6 +1297,7 @@ setTimeout(function() {chart.resize();}, 3000)
 					},
 					axis: {
 						x: {
+							type: "timeseries",
 							tick: {
 								fit: true,
 								multiline: false,
@@ -1303,16 +1307,19 @@ setTimeout(function() {chart.resize();}, 3000)
 								count: 8,
 								format: "%m-%d-%Y %H:%M:%S"
 							},
-							type: "timeseries"
+							clipPath: false
 						}
 					}
 				},
 				func: function(chart) {
 					chart.timer = [
-setTimeout(function() {
-	chart.resize({width: window.innerWidth * 0.4});
-}, 1000),
-setTimeout(function() {chart.resize();}, 3000)
+						setTimeout(function() {
+							chart.resize({width: window.innerWidth * 0.4});
+						}, 1000),
+						
+						setTimeout(function() {
+							chart.resize();
+						}, 3000)
 					];
 				}
 			}

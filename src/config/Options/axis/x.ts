@@ -312,6 +312,7 @@ export default {
 	 *   - axis.x.tick.multiline=false
 	 *   - axis.x.tick.culling=false
 	 *   - axis.x.tick.fit=true
+	 * - **NOTE:** axis.x.tick.clippath=false is necessary for calculating the overflow padding between the end of x axis and the width of the SVG
 	 * @name axis․x․tick․autorotate
 	 * @memberof Options
 	 * @type {boolean}
@@ -326,7 +327,8 @@ export default {
 	 *       multiline: false,
 	 *       culling: false,
 	 *       fit: true
-	 *     }
+	 *     },
+	 *     clipPath: false
 	 *   }
 	 * }
 	 */
