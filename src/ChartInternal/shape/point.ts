@@ -110,24 +110,19 @@ export default {
 		const focusOnly = config.point_focus_only;
 
 		if (config.point_show && !state.toggling) {
-			const currIndex = focusOnly && $el.circle ?
-				$el.circle.data()[0].index : 0;
-
 			const circles = $el.main.selectAll(`.${CLASS.circles}`)
 				.selectAll(`.${CLASS.circle}`)
 				.data(d => (
 					($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
 						$$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
-						(focusOnly ? [d.values[currIndex]] : d.values) : []
+						(focusOnly ? [d.values[0]] : d.values) : []
 				));
 
 			circles.exit().remove();
 
-			const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
-
 			circles.enter()
-				.filter(d => d)
-				.append(fn);
+				.filter(Boolean)
+				.append($$.point("create", this, $$.pointR.bind($$), $$.color));
 
 			$el.circle = $el.main.selectAll(`.${CLASS.circles} .${CLASS.circle}`)
 				.style("stroke", $$.color)
@@ -149,7 +144,6 @@ export default {
 
 		const t: any = getRandom();
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
-
 		const mainCircles: any[] = [];
 
 		circle.each(function(d) {
@@ -163,7 +157,7 @@ export default {
 
 		return [
 			mainCircles,
-			selectedCircles
+			(withTransition ? selectedCircles.transition() : selectedCircles)
 				.attr(`${posAttr}x`, cx)
 				.attr(`${posAttr}y`, cy)
 		];
@@ -452,7 +446,8 @@ export default {
 
 		return function(method, context, ...args) {
 			return function(d) {
-				const id: string = d.id || (d.data && d.data.id) || d;
+				const id: string = $$.getTargetSelectorSuffix(d.id || (d.data && d.data.id) || d);
+
 				const element = d3Select(this);
 
 				ids.indexOf(id) < 0 && ids.push(id);

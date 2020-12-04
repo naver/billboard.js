@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import sinon from "sinon";
-import bb, {bar} from "../../src/index.esm";
+import bb, {bar, zoom} from "../../src/index.esm";
 
 // for ESM test, import helper rather than util
 import {getBBox, fireEvent} from "../assets/helper";
@@ -17,8 +17,8 @@ describe("ESM bar", function() {
     const args: any = {
         data: {
             columns: [
-                ["data1", 300, 350, 300, 0, 100],
-                ["data2", 130, 100, 140, 200, 150]
+                ["data1", 30, 350, 300, 0, 100],
+                ["data2", 200, 100, 140, 200, 150]
             ],
             type: bar(),
             onclick: spy
@@ -35,8 +35,8 @@ describe("ESM bar", function() {
         const pos = getBBox(bar);
 
         fireEvent(eventRect.node(), "click", {
-            clientX: pos.x + 20,
-            clientY: pos.y + 50
+            clientX: pos.x + 10,
+            clientY: pos.y
         }, chart);
 
         expect(spy.calledOnce).to.be.true;
@@ -52,5 +52,25 @@ describe("ESM bar", function() {
         chart.tooltip.show({x: 1});
 
         expect(true).to.be.ok;
+    });
+
+    it("check data.onclick for bar type", () => {
+        try {
+            chart.internal.clickHandlerForSingleX(undefined, chart.internal);
+        } catch(e) {
+            expect(false).to.be.true;
+        }
+
+        expect(true).to.be.true;
+    });
+
+    it("set options zoom.enabled=true", () => {
+        args.zoom = {
+            enabled: zoom()
+        };
+    });
+
+    it("shouldn't throw error during zoom", () => {
+        expect(chart.zoom([0,1])).to.not.throw;
     });
 });

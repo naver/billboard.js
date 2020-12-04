@@ -75,6 +75,31 @@ describe("API chart", () => {
 			expect(chart.internal.getCurrentWidth()).to.be.equal(newSize.width);
 			expect(chart.internal.getCurrentHeight()).to.be.equal(newSize.height);
 		});
+
+		it("set options resize.auto=false", () => {
+			args.resize = {
+				auto: false
+			}
+		});
+
+		it("event <rect> element should resize", () => {
+			const {eventRect} = chart.internal.$el;
+			const height = +eventRect.attr("height");
+
+			// when
+			chart.resize({height:600});
+
+			expect(+eventRect.attr("height")).to.be.above(height);
+		});
+
+		it("updating event rect during resize state", () => {
+			// force resizing state
+			chart.internal.state.resizing = true;
+
+			expect(
+				chart.internal.updateEventRect()
+			).to.not.throw;
+		});
 	});
 
 	describe("destroy()", () => {

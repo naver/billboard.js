@@ -56,6 +56,9 @@ export default {
 				$$.generateEventRectsForMultipleXs(eventRectUpdate) :
 				$$.generateEventRectsForSingleX(eventRectUpdate);
 
+			// bind draggable selection
+			eventRectUpdate.call($$.getDraggableSelection());
+
 			$el.eventRect = eventRectUpdate;
 
 			if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
@@ -81,15 +84,12 @@ export default {
 	bindTouchOnEventRect(isMultipleX: boolean): void {
 		const $$ = this;
 		const {config, state, $el: {eventRect, svg}} = $$;
-		const event = d3Event;
 
 		const selectRect = context => {
 			if (isMultipleX) {
 				$$.selectRectForMultipleXs(context);
 			} else {
-				// const eventRect = getEventRect();
-				// const index = getIndex(eventRect);
-				const index = $$.getDataIndexFromEvent(event);
+				const index = $$.getDataIndexFromEvent(d3Event);
 
 				$$.callOverOutForTouch(index);
 
@@ -136,6 +136,7 @@ export default {
 
 		// bind touch events
 		eventRect
+			.on("touchstart", () => $$.updateEventRect())
 			.on("touchstart.eventRect touchmove.eventRect", () => {
 				const event = d3Event;
 
@@ -168,29 +169,29 @@ export default {
 		});
 	},
 
-	updateEventRect(eventRect): void {
+	updateEventRect(eventRect?): void {
 		const $$ = this;
-		const {eventReceiver, width, height, rendered} = $$.state;
+		const {state, $el} = $$;
+		const {eventReceiver, width, height, rendered, resizing} = state;
+		const rectElement = eventRect || $el.eventRect;
+
 		const updateClientRect = (): void => {
-			eventReceiver && (eventReceiver.rect = eventRect.node().getBoundingClientRect());
+			eventReceiver && (
+				eventReceiver.rect = rectElement.node().getBoundingClientRect()
+			);
 		};
 
-		const rect = eventRect
-			.attr("x", 0)
-			.attr("y", 0)
-			.attr("width", width)
-			.attr("height", height);
+		if (!rendered || resizing) {
+			rectElement
+				.attr("x", 0)
+				.attr("y", 0)
+				.attr("width", width)
+				.attr("height", height);
 
-		// only for init
-		if (!rendered) {
-			rect
-				.attr("class", CLASS.eventRect)
-				.on("click", function() {
-					$$.clickHandlerForMultipleXS.bind(this)($$);
-				});
-
-			// to make evaluate after the page elements are settled within page
-			setTimeout(updateClientRect, 0);
+			// only for init
+			if (!rendered) {
+				rectElement.attr("class", CLASS.eventRect);
+			}
 		}
 
 		updateClientRect();
@@ -273,6 +274,9 @@ export default {
 
 		const {eventReceiver} = state;
 		const call: any = (fn, v) => (isFunction(fn) ? fn(v) : fn);
+
+		// reset for possible remains coords data before the data loading
+		eventReceiver.coords.splice(eventReceiver.data.length);
 
 		eventReceiver.data.forEach((d, i) => {
 			eventReceiver.coords[i] = {
@@ -386,6 +390,7 @@ export default {
 			};
 
 			rect
+				.on("mouseover", () => $$.updateEventRect())
 				.on("mousemove", function() {
 					const d = getData();
 
@@ -438,7 +443,7 @@ export default {
 		const $$ = ctx;
 		const {config, state, $el: {main}} = $$;
 
-		if ($$.hasArcType() || state.cancelClick) {
+		if (!d || $$.hasArcType() || state.cancelClick) {
 			state.cancelClick && (state.cancelClick = false);
 
 			return;
@@ -508,7 +513,7 @@ export default {
 				.selectAll(`.${CLASS.shape}-${closest.index}`)
 				.each(function() {
 					if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
-						$$.toggleShape(this, closest, closest.index);
+						$$.toggleShape && $$.toggleShape(this, closest, closest.index);
 						config.data_onclick.bind($$.api)(closest, this);
 					}
 				});

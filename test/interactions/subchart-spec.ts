@@ -16,15 +16,6 @@ describe("SUBCHART", () => {
 		chart = util.generate(args);
 	});
 
-	// do mouse drag selection
-	const doDrag = (from = {clientX: 100, clientY: 100}, to = {clientX: 200, clientY: 200}) => {
-		const overlay = chart.$.svg.select(".overlay").node();
-
-		util.fireEvent(overlay, "mousedown", from, chart);
-		util.fireEvent(overlay, "mousemove", to, chart);
-		util.fireEvent(overlay, "mouseup", from, chart);
-	};
-
 	describe("generate subchart", () => {
 		before(() => {
 			args = {
@@ -162,7 +153,7 @@ describe("SUBCHART", () => {
 			const baseWidth = 100;
 
 			// mouse drag selection on subchart
-			doDrag();
+			util.doDrag(chart.$.svg.select(".overlay").node(), undefined, undefined, chart);
 
 			expect(+selection.attr("width")).to.be.equal(baseWidth);
 
@@ -220,7 +211,7 @@ describe("SUBCHART", () => {
 			const selection = chart.$.svg.select(".selection");
 
 			// mouse drag selection on subchart
-			doDrag( {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300});
+			util.doDrag(chart.$.svg.select(".overlay").node(), {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300}, chart);
 
 			// selection shouldn't over pass
 			expect(Math.floor(selection.attr("width"))).to.be.equal(args.axis.x.extent[1]);
@@ -237,7 +228,7 @@ describe("SUBCHART", () => {
 				.reduce((a, c) => Math.abs(a - c));
 
 			// mouse drag selection on subchart
-			doDrag( {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300});
+			util.doDrag(chart.$.svg.select(".overlay").node(), {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300}, chart);
 
 			// selection shouldn't over pass
 			expect(+selection.attr("width")).to.be.closeTo(range, 10);
@@ -251,7 +242,7 @@ describe("SUBCHART", () => {
 			const selection = chart.$.svg.select(".selection");
 
 			// mouse drag selection on subchart
-			doDrag( {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300});
+			util.doDrag(chart.$.svg.select(".overlay").node(), {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300}, chart);
 
 			// selection shouldn't over pass
 			expect(Math.floor(selection.attr("width"))).to.be.equal(args.axis.x.extent()[1]);

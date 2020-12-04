@@ -4,10 +4,13 @@
  */
 import {select as d3Select} from "d3-selection";
 import {rgb as d3Rgb} from "d3-color";
+import drag from "../interactions/drag";
 import CLASS from "../../config/classes";
 import {callFn} from "../../module/util";
 
 export default {
+	...drag,
+
 	/**
 	 * Select a point
 	 * @param {object} target Target point

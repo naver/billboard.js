@@ -341,7 +341,8 @@ var demos = {
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
-					]
+					],
+					type: "line"
 				}
 			},
 			func: function(chart) {
@@ -377,6 +378,7 @@ var demos = {
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
 					],
+					type: "line",
 					regions: {
 						data1: [
 							{start: 1, end: 2, style: {dasharray: "6 2"}},
@@ -399,7 +401,8 @@ var demos = {
 						["x2", 30, 50, 75, 100, 120],
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 20, 180, 240, 100, 190]
-					]
+					],
+					type: "line"
 				}
 			}
 		},
@@ -534,7 +537,8 @@ var demos = {
 						["x", 30, 50, 100, 230, 300, 310],
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 130, 300, 200, 300, 250, 450]
-					]
+					],
+					type: "line"
 				}
 			},
 			func: function(chart) {
@@ -629,20 +633,60 @@ var demos = {
 				];
 			}
 		},
-		StepChart: {
-			options: {
-				data: {
-					columns: [
-						["data1", 300, 350, 300, 0, 0, 100],
-						["data2", 130, 100, 140, 200, 150, 50]
-					],
-					types: {
-						data1: "step",
-						data2: 'area-step'
+		StepChart: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 20, 240, 100],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						types: {
+							data1: "step",
+							data2: 'area-step'
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 20, 240, 100],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						types: {
+							data1: "step",
+							data2: 'area-step'
+						}
+					},
+					line: {
+						step: {
+							type: "step-before"
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 20, 240, 100],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						types: {
+							data1: "step",
+							data2: 'area-step'
+						}
+					},
+					line: {
+						step: {
+							type: "step-after"
+						}
 					}
 				}
 			}
-		},
+		],
 		TimeseriesChart: {
 			options: {
 				data: {
@@ -653,7 +697,8 @@ var demos = {
 						// ["x", "20130101", "20130102", "20130103", "20130104", "20130105", "20130106"],
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 130, 340, 200, 500, 250, 350]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -685,6 +730,7 @@ var demos = {
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
 					],
+					type: "line",
 					axes: {
 						data1: "y",
 						data2: "y2"
@@ -704,6 +750,7 @@ var demos = {
 						["sample", 30, 200, 100, 400, 150, 250],
 						["sample2", 130, 300, 200, 500, 250, 350]
 					],
+					type: "line",
 					axes: {
 						sample2: "y2"
 					}
@@ -729,6 +776,7 @@ var demos = {
 						["sample1", 30, 200, 100, 400, 150, 250],
 						["sample2", 430, 300, 500, 400, 650, 250]
 					],
+					type: "line",
 					axes: {
 						sample1: "y",
 						sample2: "y2"
@@ -780,7 +828,8 @@ var demos = {
 				data: {
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250, 50, 100, 250]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -838,7 +887,8 @@ var demos = {
 					columns: [
 						["x", 495, 940, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12000, 13500, 15000],
 						["data", 47.911, 47.915, 48.437, 49.117, 49.583, 50.28, 51.712, 53.103, 54.456, 55.955, 56.752, 56.851]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -863,7 +913,8 @@ var demos = {
 						data2: "y2"
 					},
 					types: {
-					  data1: "bar"
+					  data1: "bar",
+					  data2: "line"
 					}
 				  },
 				  axis: {
@@ -874,7 +925,6 @@ var demos = {
 					},
 					y: {
 					  type: "log",
-					  min: 10,
 					  max: 100000000
 					},
 					y2: {
@@ -893,7 +943,8 @@ var demos = {
 						columns: [
 							["data1", 30, 200, 100, 400, 150],
 							["data2", 50, 20, 10, 40, 15]
-						]
+						],
+						type: "line"
 					},
 					axis: {
 						//rotated: true,
@@ -962,14 +1013,15 @@ var demos = {
 		MultiAxesDomain: {
 			options: {
 				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150],
+						["data2", 50, 20, 10, 40, 15]
+					],
+					type: "line",
 					axes: {
 						data1: "y",
 						data2: "y2"
 					},
-					columns: [
-						["data1", 30, 200, 100, 400, 150],
-						["data2", 50, 20, 10, 40, 15]
-					]
 				},
 				clipPath: false,
 				axis: {
@@ -1011,6 +1063,7 @@ var demos = {
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
 					],
+					type: "line",
 					axes: {
 						data1: "y",
 						data2: "y2"
@@ -1034,6 +1087,7 @@ var demos = {
 						["data1", 40, 30, 30, 40, 250],
 						["data2", 130, 100, 140, 200, 150]
 					],
+					type: "line",
 					axes: {
 						data2: "y2"
 					}
@@ -1058,7 +1112,8 @@ var demos = {
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					y: {
@@ -1079,6 +1134,7 @@ var demos = {
 					],
 					types: {
 						data1: "bar",
+						data2: "line"
 					}
 				},
 				axis: {
@@ -1183,17 +1239,20 @@ var demos = {
 								autorotate: true,
 								rotate: 15,
 								culling: false
-							}
+							},
+							clipPath: false
 						}
 					}
 				},
 				func: function(chart) {
 					chart.timer = [
-setTimeout(function() {
-	chart.resize({width: window.innerWidth * 0.4});
-}, 1000),
+						setTimeout(function() {
+							chart.resize({width: window.innerWidth * 0.4});
+						}, 1000),
 
-setTimeout(function() {chart.resize();}, 3000)
+						setTimeout(function() {
+							chart.resize();
+						}, 3000)
 					];
 				}
 			},
@@ -1238,6 +1297,7 @@ setTimeout(function() {chart.resize();}, 3000)
 					},
 					axis: {
 						x: {
+							type: "timeseries",
 							tick: {
 								fit: true,
 								multiline: false,
@@ -1247,16 +1307,19 @@ setTimeout(function() {chart.resize();}, 3000)
 								count: 8,
 								format: "%m-%d-%Y %H:%M:%S"
 							},
-							type: "timeseries"
+							clipPath: false
 						}
 					}
 				},
 				func: function(chart) {
 					chart.timer = [
-setTimeout(function() {
-	chart.resize({width: window.innerWidth * 0.4});
-}, 1000),
-setTimeout(function() {chart.resize();}, 3000)
+						setTimeout(function() {
+							chart.resize({width: window.innerWidth * 0.4});
+						}, 1000),
+						
+						setTimeout(function() {
+							chart.resize();
+						}, 3000)
 					];
 				}
 			}
@@ -1268,7 +1331,8 @@ setTimeout(function() {chart.resize();}, 3000)
 					columns: [
 						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
 						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -1286,7 +1350,8 @@ setTimeout(function() {chart.resize();}, 3000)
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -1309,7 +1374,8 @@ setTimeout(function() {chart.resize();}, 3000)
 					columns: [
 						["x", '2013-10-31', '2013-12-31', '2014-01-31', '2014-02-28'],
 						["sample", 30, 100, 400, 150]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -1329,7 +1395,8 @@ setTimeout(function() {chart.resize();}, 3000)
 					columns: [
 						["x", '2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01', '2015-01-01'],
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -1352,7 +1419,8 @@ setTimeout(function() {chart.resize();}, 3000)
 					columns: [
 						["x", "First Q\n2018", "Second\nQ 2018", "3Q\nYear\n2018", "Forth\nQuarter\n2018"],
 						["data", 30, 100, 400, 150]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -1518,7 +1586,7 @@ setTimeout(function() {chart.resize();}, 3000)
 					}
 				},
 				zoom: {
-					enabled: true,
+					enabled: "zoom()",
 					type: "drag"
 				},
 				tooltip: {
@@ -1542,7 +1610,8 @@ setTimeout(function() {chart.resize();}, 3000)
 					columns: [
 						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
 						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -1564,7 +1633,8 @@ setTimeout(function() {chart.resize();}, 3000)
 						["x", "2010", "2011", "2012", "2013", "2014", "2015"],
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 130, 340, 200, 500, 250, 350]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -1590,7 +1660,8 @@ setTimeout(function() {chart.resize();}, 3000)
 						data2: "y2"
 					},
 					types: {
-						data1: "bar"
+						data1: "bar",
+						data2: "line"
 					}
 				},
 				axis: {
@@ -1615,7 +1686,8 @@ setTimeout(function() {chart.resize();}, 3000)
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 2500]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					y: {
@@ -1636,7 +1708,8 @@ setTimeout(function() {chart.resize();}, 3000)
 						["data1", 30, 20, 50, 40, 60, 50],
 						["data2", 200, 130, 90, 240, 130, 220],
 						["data3", 300, 200, 160, 400, 250, 250]
-					]
+					],
+					type: "line"
 				}
 			}
 		},
@@ -1651,7 +1724,8 @@ setTimeout(function() {chart.resize();}, 3000)
 						[120, 160, 230],
 						[80, 130, 300],
 						[90, 220, 320]
-					]
+					],
+					type: "line"
 				}
 			}
 		},
@@ -1662,7 +1736,8 @@ setTimeout(function() {chart.resize();}, 3000)
 						data1: [30, 20, 50, 40, 60, 50],
 						data2: [200, 130, 90, 240, 130, 220],
 						data3: [300, 200, 160, 400, 250, 250]
-					}
+					},
+					type: "line"
 				}
 			},
 			func: function(chart) {
@@ -1671,6 +1746,7 @@ setTimeout(function() {chart.resize();}, 3000)
 						chart = bb.generate({
 							bindto: "#JSONData",
 							data: {
+								type: "line",
 								json: [
 									{name: "www.site1.com", upload: 200, download: 200, total: 400},
 									{name: "www.site2.com", upload: 100, download: 300, total: 400},
@@ -1706,11 +1782,11 @@ setTimeout(function() {chart.resize();}, 3000)
 				];
 			}
 		},
-		"DataFromURL":
-		{
+		"DataFromURL": {
 			options: {
 				data: {
-					url: "./data/test.csv"
+					url: "./data/test.csv",
+					type: "line"
 				}
 			},
 			func: function(chart) {
@@ -1906,6 +1982,7 @@ setTimeout(function() {chart.resize();}, 3000)
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
 					],
+					type: "line",
 					names: {
 						data1: 'Name 1',
 						data2: 'Name 2'
@@ -2052,6 +2129,7 @@ setTimeout(function() {chart.resize();}, 3000)
 							["data1", 30, -200, -100, 400, 150, 250],
 							["data2", -50, 150, -150, 150, -50, -150],
 						],
+						type: "line",
 						labels: {
 							colors: {
 								data1: "fuchsia",
@@ -2077,9 +2155,7 @@ setTimeout(function() {chart.resize();}, 3000)
 					labels: {
 						// format: function(v, id, i, j) { return "Default Format"; },
 						format: {
-							data1: function(x) {
-						     return d3.format('$')(x);
-							}
+							data1: function(x) { return d3.format('$')(x); }
 							// data1: function(v, id, i, j) { return "Format for data1"; },
 						}
 					}
@@ -2091,6 +2167,23 @@ setTimeout(function() {chart.resize();}, 3000)
 				}
 			}
 		},
+		DataLabelMultiline: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30,400, -200, -100,  150, 250],
+					],
+					type: "line",
+					labels: {
+						format: (v, id ,i, j) => {
+						  return v > 0 ?
+							"Ipsum is\nsimply dummy text" :
+							"Lorem Ipsum is simply dummy text";
+						  }
+					}
+				}
+			}
+		},
 		DataLabelPosition: [
 			{
 				options: {
@@ -2098,6 +2191,7 @@ setTimeout(function() {chart.resize();}, 3000)
 						columns: [
 							["data1", 30, -200, -100, 400, 150, 250]
 						],
+						type: "line",
 						labels: {
 							position: {
 								x: -25,
@@ -2146,8 +2240,9 @@ setTimeout(function() {chart.resize();}, 3000)
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 230, 280, 320, 218, 250, 150]
 					],
+					type: "line",
 					selection: {
-						enabled: true,
+						enabled: "selection()",
 						draggable: true
 					}
 				}
@@ -2207,6 +2302,7 @@ setTimeout(function() {chart.resize();}, 3000)
 						["data1", 30, -200, 100, 200, 190, 280],
 						["data2", 30, 200, 120, 400, 150, 150]
 					],
+					type: "line",
 					onmin: function(data) {
 						data.forEach(function(v) {
 							// select data points
@@ -2237,6 +2333,7 @@ setTimeout(function() {chart.resize();}, 3000)
 							["data1", 300, 350, 300, 120, 220, 250],
 							["data2", 130, 100, 140, 200, 150, 50]
 						],
+						type: "line",
 						axes: {
 							data1: "y",
 							data2: "y2"
@@ -2288,7 +2385,8 @@ setTimeout(function() {chart.resize();}, 3000)
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250, 120, 200]
-					]
+					],
+					type: "line"
 				},
 				grid: {
 					x: {
@@ -2305,7 +2403,8 @@ setTimeout(function() {chart.resize();}, 3000)
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				grid: {
 					x: {
@@ -2325,6 +2424,7 @@ setTimeout(function() {chart.resize();}, 3000)
 						["sample", 30, 200, 100, 400, 150, 250],
 						["sample2", 1300, 1200, 1100, 1400, 1500, 1250]
 					],
+					type: "line",
 					axes: {
 						sample2: "y2"
 					}
@@ -2373,10 +2473,11 @@ setTimeout(function() {chart.resize();}, 3000)
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				subchart: {
-					show: true
+					show: "subchart()"
 				}
 			},
 			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)"
@@ -2386,10 +2487,11 @@ setTimeout(function() {chart.resize();}, 3000)
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 150, 250, 150, 200, 170, 240, 100, 150, 250, 150, 200, 170, 240, 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 350, 220, 250, 300, 270, 140, 150, 90, 150, 50, 120, 70, 40]
-					]
+					],
+					type: "line"
 				},
 				zoom: {
-					enabled: true
+					enabled: "zoom()"
 				}
 			},
 			description: "For zoom, move mouse wheel(desktop) or pinch(mobile) over chart area.<br>When is zoomed, navigate with dragging it."
@@ -2399,10 +2501,11 @@ setTimeout(function() {chart.resize();}, 3000)
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 150, 250, 150, 200, 170, 240, 100, 150, 250, 150, 200, 170, 240, 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 350, 220, 250, 300, 270, 140, 150, 90, 150, 50, 120, 70, 40]
-					]
+					],
+					type: "line"
 				},
 				zoom: {
-					enabled: true,
+					enabled: "zoom()",
 					type: "drag"
 				}
 			},
@@ -2416,7 +2519,8 @@ setTimeout(function() {chart.resize();}, 3000)
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				legend: {
 					show: false
@@ -2429,7 +2533,8 @@ setTimeout(function() {chart.resize();}, 3000)
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
-					]
+					],
+					type: "line"
 				},
 				legend: {
 					position: "right"
@@ -2546,7 +2651,8 @@ d3.select(".chart_area")
 						["data2", 130, 100, 200, 100, 250, 150],
 						["data3", 60, 190, 320, 520, 20, 300],
 						["data4", 80, 20, 250, 320, 180, 50]
-					]
+					],
+					type: "line"
 				},
 				point: {
 					pattern: [
@@ -2723,6 +2829,7 @@ d3.select(".chart_area")
 						["data4", 30, 35, 20, 38, 19, 28, 5.6, 8, 5.5, 22],
 						["data5", 13, 10, 10, 20, 8, 5, 20, 13, 18.5, 9.8]
 					],
+					type: "line",
 					labels: true
 				},
 				_plugins: [{
@@ -2786,7 +2893,8 @@ d3.select(".chart_area")
 					columns: [
 						["data1", 100, 200, 1000, 900, 500],
 						["data2", 20, 40, 500, 300, 200]
-					]
+					],
+					type: "line"
 				},
 				point: {
 					type: "rectangle"
@@ -2799,7 +2907,8 @@ d3.select(".chart_area")
 					columns: [
 						["data1", 100, 200, 1000, 900, 500],
 						["data2", 20, 40, 500, 300, 200]
-					]
+					],
+					type: "line"
 				},
 				point: {
 					pattern: [
@@ -2814,7 +2923,8 @@ d3.select(".chart_area")
 					columns: [
 						["data1", 100, 400, 1000, 900, 500],
 						["data2", 20, 40, 500, 300, 200]
-					]
+					],
+					type: "line"
 				},
 				point: {
 					pattern: [
@@ -2829,7 +2939,8 @@ d3.select(".chart_area")
 					columns: [
 						["data1", 100, 400, 1000, 900, 500],
 						["data2", 20, 40, 500, 300, 200]
-					]
+					],
+					type: "line"
 				},
 				point: {
 					pattern: [
@@ -2844,7 +2955,8 @@ d3.select(".chart_area")
 					columns: [
 						["data1", 30, 200, 100, 400, -150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
-					]
+					],
+					type: "line"
 				},
 				point: {
 					pattern: [
@@ -2859,7 +2971,8 @@ d3.select(".chart_area")
 					columns: [
 						["data1", 100, 400, 1000, 900, 500],
 						["data2", 20, 40, 500, 300, 200]
-					]
+					],
+					type: "line"
 				},
 				point: {
 					pattern: [
@@ -2881,7 +2994,8 @@ d3.select(".chart_area")
 						["data3", 80, 350, 800, 450, 500],
 						["data4", 150, 240, 300, 700, 300],
 						["data5", 280, 720, 160, 210, 115]
-					]
+					],
+					type: "line"
 				},
 				point: {
 					pattern: [
@@ -2900,7 +3014,8 @@ d3.select(".chart_area")
 				data: {
 					columns: [
 						["data1", 30,  31.8,  33,  33.8,  34.4,  34.8,  35,  35,  34.6,  34.4,  34.2,  33.8,  33.4,  33.4,  33.6,  33.6,  33.8,  34,  34.2,  34,  34,  34,  34,  34,  34,  33.6,  33,  32.4,  31.8,  31.2,  30.8,  30.8,  31,  31.2,  31.4,  31.8,  32,  32,  32.2,  32.4,  32.4,  32.2,  32,  31.6,  31.2,  31,  31,  31.4,  31.8,  32.2,  32.6,  33,  33,  32.8,  32.6,  32.4,  32.2,  31.8,  31.6,  31.4,  31.2,  31,  31,  31.2,  31.4,  31.6,  31.8,  32,  32,  32,  32.2,  32.2,  32.4,  32.4,  32.4,  32.2,  32.2,  32,  32,  32,  32,  32,  32,  32,  32,  32,  32,  32.2,  32.4,  32.4,  32.4,  32.4,  32.2,  32,  32,  32,  32.2,  32.2,  32.2,  32,  31.8,  31.4,  31.2,  31,  31,  31.2,  31.4,  31.2,  31,  31,  30.8,  31,  31.6,  32.2,  32.6,  33,  32.8,  32.4,  32,  32,  31.8,  31.8,  31.8,  31.6,  31,  30.8,  30.8,  31,  31.6,  32.4,  33,  33.4,  33.8,  34,  34,  34,  33.8,  33.6,  33.4,  33.2,  33,  33,  33,  32.8,  32.6,  32.4,  32.2,  32,  32,  31.8,  31.6,  31.4,  31.2,  30.8,  30.6,  30.4,  30.2,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  29.8,  29.6,  29.6,  29.6,  29.6,  29.8,  30,  30,  30,  30,  30,  30,  29.8,  29.6,  29.4,  29.2,  29.2,  29.4,  29.6,  29.8,  30,  30.2,  30.4,  30.6,  30.8,  31,  31,  31,  31,  30.8,  30.6,  30.4,  30,  29.6,  29.4,  29.2,  29,  28.8,  28.8,  28.8,  28.8,  28.8,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29.2,  29.2,  29.2,  29.4,  29.6,  29.6,  29.8,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30.2,  30.6,  31.2,  32,  33,  34,  34.8,  35.4,  35.8,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36,  36.2,  36.4,  36.6,  37,  37.4,  37.6,  37.8,  37.8,  37.6,  37.4,  37.2,  36.8,  36.8,  36.6,  36.4,  36.2,  36.2,  35.8,  35.6,  35.4,  35.2,  35,  35,  35,  35.2,  35.4,  35.6,  35.8,  36,  36,  36,  36,  36.2,  36.2,  36,  35.6,  35,  34,  33,  32.2,  31.6,  31.2,  31,  31,  31,  31,  31,  31,  31,  31.2,  31.2,  31.2,  31.2,  31.2,  31,  31,  31.2,  31.4,  31.6,  31.6,  31.6,  31.4,  31.2,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  30.8,  30.6,  30.4,  30.4,  30.4,  30.6,  30.8,  31,  31,  30.8,  30.6,  30.6,  30.6,  30.6,  30.8,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  30.8,  30.6,  30.4,  30.2,  30.2,  30.4,  30.6,  30.6,  30.8,  30.6,  30.4,  30.2,  30.2,  30,  30,  30.2,  30.4,  30.4,  30.6,  30.8,  30.6,  30.6,  30.8,  30.8,  30.8,  31,  31,  30.8,  30.8,  30.8,  30.8,  30.8,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31,  30.8,  30.8,  30.6,  30.6,  30.6,  30.8,  30.8,  30.8,  30.6,  30.4,  30.4,  30.2,  30.2,  30.4,  30.6,  30.4,  30.4,  30.4,  30.4,  30.4,  30.6,  30.8,  31,  31,  31,  30.8,  30.8,  30.8,  30.8,  30.8,  31,  31,  30.8,  30.6,  30.4,  30,  29.4,  29,  28.6,  28.2,  28,  28,  28,  28,  28,  28,  28,  28,  28.2,  28.4,  28.6,  28.8,  29,  29,  29,  28.8,  28.6,  28.4,  28.2,  28,  28,  28.2,  28.4,  28.6,  28.8,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  28.8,  28.6,  28.4,  28.2,  28,  28,  28.2,  28.4,  28.6,  28.8,  29,  29,  29,  28.8,  28.6,  28.4,  28.2,  28,  28.2,  28.4,  28.6,  28.8,  29,  28.8,  28.8,  28.6,  28.6,  28.8,  29.6,  30.4,  31.6,  33,  34.4,  35.4,  36.2,  36.8,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37,  37.2,  37.4,  37.6,  37.8,  38,  38.2,  38.2,  38,  38,  38,  37.8,  37.8,  38,  38,  38,  38,  38,  38,  38,  38,  38.2,  38.4,  38.6,  38.8,  39,  39,  39,  39,  39,  39,  39,  39,  39,  39,  39.2,  39.4,  39.6,  39.8,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  40,  39.8,  39.6,  39.4,  39,  38.6,  38.2,  37.8,  37.4,  37.2,  37,  36.8,  36.6,  36.4,  36.2,  35.8,  35.6,  35.4,  35.2,  35,  35,  35,  35,  35,  34.8,  34.6,  34.4,  34.2,  34,  34,  34,  34,  34,  33.8,  33.6,  33.4,  33.2,  33,  33,  33,  33,  32.8,  32.6,  32.2,  32,  31.6,  31.4,  31.2,  31.4,  31.4,  31.6,  32,  32.4,  32.6,  32.8,  32.8,  32,  31,  29.6,  28.2,  26.8,  26,  25.8,  26,  26.6,  27.4,  28.2,  28.6,  29,  29,  29,  29.2,  29.2,  29.4,  29.6,  29.8,  29.8,  29.8,  29.8,  29.8,  29.8,  29.8,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30.2,  30.4,  30.6,  30.8,  31,  31,  31,  31,  31,  31,  31,  31,  31.2,  31.2,  31.2,  31.2,  31.4,  31.2,  31.4,  31.6,  31.8,  31.8,  32,  32,  32,  32,  32.2,  32.4,  32.4,  32.4,  32.6,  32.6,  32.6,  32.8,  33,  33,  33,  33,  33,  33.2,  33.4,  33.6,  33.8,  34,  34,  34,  34,  34,  34,  34,  34,  34,  34,  34,  34,  34,  34,  34,  34,  34,  34,  33.8,  33.6,  33.4,  33,  32.6,  32.4,  32.2,  32,  32,  32,  32,  32,  32,  31.8,  31.6,  31.4,  31.2,  30.8,  30.6,  30.4,  30.2,  29.8,  29.6,  29.4,  29.2,  29,  29,  29,  29,  29,  29,  29,  29.2,  29.4,  29.6,  29.8,  30,  30,  30,  30,  30,  30,  30,  29.8,  29.6,  29.4,  29.2,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  29,  28.8,  28.6,  28.4,  28.2,  28,  28,  28,  28,  28,  28,  28,  28,  28,  28,  28,  28,  28.2,  28.4,  28.6,  28.8,  29,  29,  29,  29.2,  29.4,  29.6,  29.8,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  30,  29.8,  29.8,  29.6,  29.4,  29.4,  29.6,  29.6,  29.8,  30,  30,  30.2,  30.4,  30.6,  30.8,  31,  31,  31,  31,  31,  31,  31,  31,  31,  31.2,  31.4,  31.6,  31.8,  32,  32.2,  32.4,  32.6,  32.8,  33.2,  33.4,  33.6,  33.8,  34,  34,  34,  34,  34.2,  34.4,  34.6,  34.8,  35,  35,  35,  35.2,  35.4,  35.6,  35.8,  36,  36,  36,  36,  36,  35.8]
-					]
+					],
+					type: "line"
 				},
 				point: {
 					focus : {
@@ -2928,6 +3043,7 @@ d3.select(".chart_area")
 						["data1", 30, 200, 100, 400, 150, 250, 400],
 						["data2", 830, 1200, 1100, 1400, 1150, 1250, 1500]
 					],
+					type: "line",
 					axes: {
 						data2: "y2"
 					}
@@ -2957,7 +3073,8 @@ d3.select(".chart_area")
 					columns: [
 						["date", '2014-01-01', '2014-01-10', '2014-01-20', '2014-01-30', '2014-02-01'],
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -3034,7 +3151,8 @@ d3.select(".chart_area")
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
-					]
+					],
+					type: "line"
 				},
 				tooltip: {
 					show: false
@@ -3048,7 +3166,8 @@ d3.select(".chart_area")
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25],
 						["data3", 500, 320, 210, 340, 215, 125]
-					]
+					],
+					type: "line"
 				},
 				tooltip: {
 					grouped: false // Default true
@@ -3062,6 +3181,7 @@ d3.select(".chart_area")
 						["data1", 30000, 20000, 10000, 40000, 15000, 250000],
 						["data2", 100, 200, 100, 40, 150, 250]
 					],
+					type: "line",
 					axes: {
 						data2: "y2"
 					}
@@ -3101,12 +3221,12 @@ d3.select(".chart_area")
 		TooltipOrder: {
 			options: {
 				data: {
-					type: "bar",
 					columns: [
 						["data1", 120, 200, 300, 100, 150, 250],
 						["data2", 50, 29, 17, 40, 15, 25],
 						["data3", 100, 320, 210, 340, 215, 125]
 					],
+					type: "bar",
 					groups: [
 						["data1", "data2", "data3"]
 					],
@@ -3124,7 +3244,8 @@ d3.select(".chart_area")
 						["data1", 120, 200, 300, 100, 150, 250],
 						["data2", 250, 129, 217, 240, 315, 225],
 						["data3", 100, 320, 210, 340, 215, 125]
-					]
+					],
+					type: "line"
 				},
 				tooltip: {
 					init: {
@@ -3158,6 +3279,7 @@ d3.select(".chart_area")
 							["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
 							["data", 20, 30, 10, 10, 30, 40],
 						],
+						type: "line"
 					},
 					axis: {
 						x: {
@@ -3180,6 +3302,7 @@ d3.select(".chart_area")
 							["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
 							["data", 10, 50, 100, 50, 50, 50],
 						],
+						type: "line"
 					},
 					axis: {
 						x: {
@@ -3346,6 +3469,7 @@ d3.select(".chart_area")
 							["data1", 430, 200, 100, 400, 350, 250, 400],
 							["data2", 830, 1200, 1100, 1400, 1150, 1250, 1500]
 						],
+						type: "line"
 					},
 					background: {
 						class: "myBgClass",
@@ -3364,7 +3488,8 @@ d3.select(".chart_area")
 							["data2", 150, 120, 200, 330, 215, 325]
 						],
 						types: {
-							data1: "bar"
+							data1: "bar",
+							data2: "line"
 						}
 					},
 					background: {
@@ -3387,7 +3512,8 @@ d3.select(".chart_area")
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				}
 			}
 		},
@@ -3398,7 +3524,8 @@ d3.select(".chart_area")
 						columns: [
 							["data1", 300, 350, 300, 0, 0, 0],
 							["data2", 130, 100, 140, 200, 150, 50]
-						]
+						],
+						type: "line"
 					}
 				},
 				style: [
@@ -3440,7 +3567,8 @@ d3.select(".chart_area")
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250000000000]
-					]
+					],
+					type: "line"
 				}
 			}
 		},
@@ -3501,7 +3629,8 @@ d3.select(".chart_area")
 						["data4", 250, 320, 210, 240, 215, 225],
 						["data5", 430, 500, 400, 280, 290, 350],
 						["data6", 100, 120, 310, 340, 415, 225]
-					]
+					],
+					type: "line"
 				},
 				color: {
 					pattern: ['#1f77b4', '#aec7e8', '#ff7f0e', '#ffbb78', '#2ca02c', '#98df8a', '#d62728', '#ff9896', '#9467bd', '#c5b0d5', '#8c564b', '#c49c94', '#e377c2', '#f7b6d2', '#7f7f7f', '#c7c7c7', '#bcbd22', '#dbdb8d', '#17becf', '#9edae5']
@@ -3649,7 +3778,8 @@ d3.select(".chart_area")
 		DurationOfTransition: {
 			options: {
 				data: {
-					url: './data/test.csv'
+					url: './data/test.csv',
+					type: "line"
 				},
 				transition: {
 					duration: 100
@@ -3702,7 +3832,8 @@ d3.select(".chart_area")
 				data: {
 					columns: [
 						["sample", 30, 200, 0, 400, 0, 250]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					y: {
@@ -3937,7 +4068,8 @@ d3.select(".chart_area")
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
-					]
+					],
+					type: "line"
 				},
 				point: {
 					show: false
@@ -3953,6 +4085,7 @@ d3.select(".chart_area")
 						["data3", 170, 250, 210, 190, 175, 225],
 						["data4", 283, 170, 275, 143, 220, 255]
 					],
+					type: "line",
 					types: {
 						data2: "scatter"
 					}
@@ -4229,6 +4362,7 @@ d3.select(".chart_area")
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
 					],
+					type: "line",
 					axes: {
 						data1: "y",
 						data2: "y2"
@@ -4263,6 +4397,7 @@ d3.select(".chart_area")
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
 					],
+					type: "line",
 					axes: {
 						data1: "y",
 						data2: "y2"
@@ -4358,6 +4493,7 @@ d3.select(".chart_area")
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
 					],
+					type: "line",
 					names: {
 						data1: 'Name 1',
 						data2: 'Name 2'
@@ -4381,7 +4517,8 @@ d3.select(".chart_area")
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				}
 			},
 			func: function(chart) {
@@ -4414,7 +4551,8 @@ d3.select(".chart_area")
 						["data1", 230, 300, 330],
 						["data2", 190, 230, 200],
 						["data3", 90, 130, 180]
-					]
+					],
+					type: "line"
 				},
 				axis: {
 					x: {
@@ -4482,7 +4620,8 @@ d3.select(".chart_area")
 				data: {
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				regions: [
 					{
@@ -4530,7 +4669,8 @@ d3.select(".chart_area")
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
-					]
+					],
+					type: "line"
 				}
 			},
 			func: function(chart) {
@@ -4575,7 +4715,8 @@ d3.select(".chart_area")
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				}
 			},
 			func: function(chart) {
@@ -4618,7 +4759,8 @@ d3.select(".chart_area")
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					type: "line"
 				},
 				regions: [
 					{start: 0, end: 1},
@@ -4635,7 +4777,8 @@ d3.select(".chart_area")
 				data: {
 					columns: [
 						["data1", 100, 200, 1000, 900, 500]
-					]
+					],
+					type: "line"
 				},
 				grid: {
 					x: {
@@ -4661,7 +4804,8 @@ d3.select(".chart_area")
 					columns: [
 						["data1", 100, 200, 1000, 900, 500],
 						["data2", 20, 40, 500, 300, 200]
-					]
+					],
+					type: "line"
 				},
 				line: {
 					classes: [

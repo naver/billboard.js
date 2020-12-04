@@ -523,4 +523,27 @@ describe("API load", function() {
 			}, 500);
 		});
 	});
+
+	describe("should handle correct event rect lengths", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 130, 100, 140, 200, 150]
+					]
+				}
+			};
+		});
+
+		it("should updating correct event rect length when loaded new data are lesser", done => {
+			chart.load({
+				columns: [["data1", 100, 200]],
+				unload: true,
+				done: function() {
+					expect(this.internal.state.eventReceiver.coords.length).to.be.equal(2);
+					done();
+				}
+			});
+		});
+	});
 });

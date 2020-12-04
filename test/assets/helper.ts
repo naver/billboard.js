@@ -8,6 +8,7 @@
 import simulant from "simulant";
 
 export {
+	doDrag,
 	fireEvent,
 	getBBox,
 	hexToRgb,
@@ -62,6 +63,13 @@ const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, cl
 	const {eventRect} = hoverChart.internal.$el;
 
 	fireEvent(eventRect.node(), eventName, pos, hoverChart);
+};
+
+// do mouse drag selection
+const doDrag = (el, from = {clientX: 100, clientY: 100}, to = {clientX: 200, clientY: 200}, chart?) => {
+	fireEvent(el, "mousedown", from, chart);
+	fireEvent(el, "mousemove", to, chart);
+	fireEvent(el, "mouseup", from, chart);
 };
 
 /**

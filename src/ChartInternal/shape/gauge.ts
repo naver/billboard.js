@@ -30,6 +30,21 @@ export default {
 		}
 	},
 
+	updateGaugeMax(): void {
+		const $$ = this;
+		const {config, state} = $$;
+		const hasMultiGauge = $$.hasMultiArcGauge();
+
+		// to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
+		const max = hasMultiGauge ?
+			$$.getMinMaxData().max[0].value : $$.getTotalDataSum(state.rendered);
+
+		// if gauge_max less than max, make max to max value
+		if (max > config.gauge_max) {
+			config.gauge_max = max;
+		}
+	},
+
 	redrawMultiArcGauge(): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
@@ -77,7 +92,6 @@ export default {
 					.style("stroke-dasharray", `0, ${lineLength + lineThickness}, 0`);
 			});
 	},
-
 
 	textForGaugeMinMax(value: number, isMax?: boolean): number | string {
 		const $$ = this;

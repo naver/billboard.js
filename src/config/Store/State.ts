@@ -115,6 +115,7 @@ export default class State {
 			transiting: false,
 			resizing: false, // resize event called
 			toggling: false, // legend toggle
+			zooming: false,
 			hasNegativeValue: false,
 			hasPositiveValue: true,
 

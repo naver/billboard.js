@@ -22,10 +22,14 @@ function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 	const targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
 	const opacity = show ? "1" : "0";
 
+	show && targets.style("display", null);
+
 	targets.transition()
 		.style("opacity", opacity, "important")
 		.call(endall, () => {
-			targets.style("opacity", null).style("opacity", opacity);
+			// https://github.com/naver/billboard.js/issues/1758
+			!show && targets.style("display", "none");
+			targets.style("opacity", opacity);
 		});
 
 	options.withLegend && $$[`${show ? "show" : "hide"}Legend`](targetIds);

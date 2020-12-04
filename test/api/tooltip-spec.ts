@@ -82,6 +82,16 @@ describe("API tooltip", () => {
 
 			expect(tooltip.style("display")).to.be.equal("none");
 		});
+
+		it("tooltip should be shown for same index after: show() -> hide() -> show()", () => {
+			const index = 3;
+
+			chart.tooltip.show({index});
+			chart.tooltip.hide();
+			chart.tooltip.show({index});
+
+			expect(chart.$.tooltip.style("display")).to.be.equal("block");
+		});
 	});
 
 	describe("for multiple x", () => {
@@ -182,6 +192,30 @@ describe("API tooltip", () => {
 			expect(spy1.called).to.be.true;
 			expect(spy2.called).to.be.true;
 			expect(+chart.$.tooltip.select(".value").text()).to.be.equal(value);
+		});
+	});
+
+	describe("when tooltip.show=false option is set", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [['rating', 70]],
+					type: "gauge"
+				},
+				tooltip: {
+					show: false
+				}
+			};
+		});
+
+		it("Call of .tooltip.hide() shouldn't throw error", () => {
+			try {
+				chart.tooltip.hide();
+				expect(true).to.be.ok;
+			} catch(e) {
+				// if called, means error was thrown
+				expect(true).to.be.false;
+			}
 		});
 	});
 });
