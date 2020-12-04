@@ -1,3 +1,16 @@
+# [2.2.0-next.1](https://github.com/naver/billboard.js/compare/2.1.4...2.2.0-next.1) (2020-12-04)
+
+
+### Bug Fixes
+
+* **axis:** rotated horizontal xAxisHeight is calculated correctly after loading new data ([ef2754f](https://github.com/naver/billboard.js/commit/ef2754fb71e7597fa1f0c6c61fc4e4bf281904fb)), closes [#1786](https://github.com/naver/billboard.js/issues/1786) [#1787](https://github.com/naver/billboard.js/issues/1787)
+* **eventRect:** fix data.onclick work for scatter/bubble ([109c87d](https://github.com/naver/billboard.js/commit/109c87dc09dc1daa274ade5bf2806ad3716d3135)), closes [#1795](https://github.com/naver/billboard.js/issues/1795)
+
+
+### Features
+
+* **data:** Intent to ship data.label multiline ([8903aa6](https://github.com/naver/billboard.js/commit/8903aa69796e4af9227c2172cf088d0253abee41)), closes [#1784](https://github.com/naver/billboard.js/issues/1784)
+
 ## [2.1.4](https://github.com/naver/billboard.js/compare/2.1.3...2.1.4) (2020-11-11)
 
 
