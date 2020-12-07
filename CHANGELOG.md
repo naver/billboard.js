@@ -1,3 +1,16 @@
+## [2.1.4](https://github.com/naver/billboard.js/compare/2.1.3...2.1.4) (2020-11-11)
+
+
+### Bug Fixes
+
+* **api:** fix tooltip showing when lesser data loaded ([74320cf](https://github.com/naver/billboard.js/commit/74320cfd0aaa1d181d23b1ea971a7573d2d11c56)), closes [#1761](https://github.com/naver/billboard.js/issues/1761)
+* **event:** fix referencing event element ([38568c1](https://github.com/naver/billboard.js/commit/38568c18d729f52a7dc913a523763cd4e74f6d91)), closes [#1752](https://github.com/naver/billboard.js/issues/1752)
+* **gauge:** fix to be consistent max label value ([0c2006f](https://github.com/naver/billboard.js/commit/0c2006fdf156a4372da399f2d1d3448bf9874f91)), closes [#1759](https://github.com/naver/billboard.js/issues/1759)
+* **radar:** fix labels showing on esm usage ([d56ff52](https://github.com/naver/billboard.js/commit/d56ff52512d80450e314f28cf2c930d0d815ee04)), closes [#1765](https://github.com/naver/billboard.js/issues/1765)
+* **shape:** shape not showing on ie11 ([d1366d1](https://github.com/naver/billboard.js/commit/d1366d17869770859666691fca6153fd675dea83)), closes [#1758](https://github.com/naver/billboard.js/issues/1758)
+* **tooltip:** fix to reset pending events from .show() ([ce8210c](https://github.com/naver/billboard.js/commit/ce8210c201c9a5ee7abdefabc1fc9d84a0876be9)), closes [#1753](https://github.com/naver/billboard.js/issues/1753)
+* **zoom:** fix throwing TypeError during zoom  ([f2787fa](https://github.com/naver/billboard.js/commit/f2787fa9b951b322801d38aab51e3313c57e2d8f)), closes [#1760](https://github.com/naver/billboard.js/issues/1760)
+
 ## [2.1.3](https://github.com/naver/billboard.js/compare/2.1.2...2.1.3) (2020-10-23)
 
 

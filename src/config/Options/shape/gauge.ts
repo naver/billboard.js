@@ -23,7 +23,7 @@ export default {
 	 * @property {number} [gauge.min=0] Set min value of the gauge.
 	 * @property {number} [gauge.max=100] Set max value of the gauge.
 	 * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
-	 * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
+	 * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
 	 * @property {string} [gauge.units] Set units of the gauge.
 	 * @property {number} [gauge.width] Set width of gauge chart.
 	 * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>

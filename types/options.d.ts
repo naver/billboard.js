@@ -1402,7 +1402,13 @@ export interface Data {
 		colors?: string | { [key: string]: string };
 
 		/**
-		 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (e.g. d3.format('$'))
+		 * The formatter function receives 4 arguments such as v, id, i, j and it **must return a string**(`\n` character will be used as line break) that will be shown as the label.<br><br>
+		 * The arguments are:<br>
+		 *  - `v` is the value of the data point where the label is shown.
+		 *  - `id` is the id of the data where the label is shown.
+		 *  - `i` is the index of the data point where the label is shown.
+		 *  - `j` is the sub index of the data point where the label is shown.<br><br>
+		 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
 		 */
 		format?: FormatFunction | { [key: string]: FormatFunction };
 

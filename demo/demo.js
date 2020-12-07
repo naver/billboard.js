@@ -633,20 +633,60 @@ var demos = {
 				];
 			}
 		},
-		StepChart: {
-			options: {
-				data: {
-					columns: [
-						["data1", 300, 350, 300, 0, 0, 100],
-						["data2", 130, 100, 140, 200, 150, 50]
-					],
-					types: {
-						data1: "step",
-						data2: 'area-step'
+		StepChart: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 20, 240, 100],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						types: {
+							data1: "step",
+							data2: 'area-step'
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 20, 240, 100],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						types: {
+							data1: "step",
+							data2: 'area-step'
+						}
+					},
+					line: {
+						step: {
+							type: "step-before"
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 20, 240, 100],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						types: {
+							data1: "step",
+							data2: 'area-step'
+						}
+					},
+					line: {
+						step: {
+							type: "step-after"
+						}
 					}
 				}
 			}
-		},
+		],
 		TimeseriesChart: {
 			options: {
 				data: {
@@ -1199,17 +1239,20 @@ var demos = {
 								autorotate: true,
 								rotate: 15,
 								culling: false
-							}
+							},
+							clipPath: false
 						}
 					}
 				},
 				func: function(chart) {
 					chart.timer = [
-setTimeout(function() {
-	chart.resize({width: window.innerWidth * 0.4});
-}, 1000),
+						setTimeout(function() {
+							chart.resize({width: window.innerWidth * 0.4});
+						}, 1000),
 
-setTimeout(function() {chart.resize();}, 3000)
+						setTimeout(function() {
+							chart.resize();
+						}, 3000)
 					];
 				}
 			},
@@ -1254,6 +1297,7 @@ setTimeout(function() {chart.resize();}, 3000)
 					},
 					axis: {
 						x: {
+							type: "timeseries",
 							tick: {
 								fit: true,
 								multiline: false,
@@ -1263,16 +1307,19 @@ setTimeout(function() {chart.resize();}, 3000)
 								count: 8,
 								format: "%m-%d-%Y %H:%M:%S"
 							},
-							type: "timeseries"
+							clipPath: false
 						}
 					}
 				},
 				func: function(chart) {
 					chart.timer = [
-setTimeout(function() {
-	chart.resize({width: window.innerWidth * 0.4});
-}, 1000),
-setTimeout(function() {chart.resize();}, 3000)
+						setTimeout(function() {
+							chart.resize({width: window.innerWidth * 0.4});
+						}, 1000),
+						
+						setTimeout(function() {
+							chart.resize();
+						}, 3000)
 					];
 				}
 			}
@@ -2108,9 +2155,7 @@ setTimeout(function() {chart.resize();}, 3000)
 					labels: {
 						// format: function(v, id, i, j) { return "Default Format"; },
 						format: {
-							data1: function(x) {
-						     return d3.format('$')(x);
-							}
+							data1: function(x) { return d3.format('$')(x); }
 							// data1: function(v, id, i, j) { return "Format for data1"; },
 						}
 					}
@@ -2118,6 +2163,23 @@ setTimeout(function() {chart.resize();}, 3000)
 				grid: {
 					y: {
 						lines: [{value: 0}]
+					}
+				}
+			}
+		},
+		DataLabelMultiline: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30,400, -200, -100,  150, 250],
+					],
+					type: "line",
+					labels: {
+						format: (v, id ,i, j) => {
+						  return v > 0 ?
+							"Ipsum is\nsimply dummy text" :
+							"Lorem Ipsum is simply dummy text";
+						  }
 					}
 				}
 			}
