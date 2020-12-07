@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.4-nightly-20201202175936
+ * @version 2.1.4-nightly-20201207102735
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2209,9 +2209,11 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
 var win = function () {
   var def = function (o) {
     return typeof o !== "undefined" && o;
-  };
+  }; // Prioritize referencing Node.js global first to prevent refence error
+  // https://github.com/naver/billboard.js/issues/1778
 
-  return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
+
+  return def(global) || def(globalThis) || def(self) || def(window) || Function("return this")();
 }(),
     browser_doc = win && win.document;
 /* eslint-enable no-new-func, no-undef */
@@ -16971,7 +16973,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.1.4-nightly-20201202175936",
+  version: "2.1.4-nightly-20201207102735",
 
   /**
    * Generate chart
@@ -17099,7 +17101,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.1.4-nightly-20201202175936
+ * @version 2.1.4-nightly-20201207102735
  */
 // CONCATENATED MODULE: ./src/index.ts
 /**
