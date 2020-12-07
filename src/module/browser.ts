@@ -12,7 +12,9 @@ export {win as window, doc as document};
 const win = (() => {
 	const def = o => typeof o !== "undefined" && o;
 
-	return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
+	// Prioritize referencing Node.js global first to prevent refence error
+	// https://github.com/naver/billboard.js/issues/1778
+	return def(global) || def(globalThis) || def(self) || def(window) || Function("return this")();
 })();
 /* eslint-enable no-new-func, no-undef */
 
