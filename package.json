@@ -19,7 +19,7 @@
 		"build:packaged:analyzer": "cross-env ANALYZER=true npm run build:packaged",
 		"build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MIN=true webpack",
 		"release": "semantic-release",
-		"lint": "eslint src --ext .ts",
+		"lint": "npm run lint:types && eslint src --ext .ts",
 		"lint:types": "dtslint --onlyTestTsNext types",
 		"loc": "cloc --by-file src",
 		"test": "node --max-old-space-size=3072 ./node_modules/karma/bin/karma start",
