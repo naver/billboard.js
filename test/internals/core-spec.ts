@@ -185,7 +185,7 @@ describe("CORE", function() {
 	});
 
 	describe("bindto", () => {
-		describe("selector", () => {
+		it("selector", () => {
 			before(() => {
 				d3Select("#chart").html("");
 				args.bindto = "#chart";
@@ -198,7 +198,7 @@ describe("CORE", function() {
 			});
 		});
 
-		describe("d3Selection object", () => {
+		it("d3Selection object", () => {
 			before(() => {
 				d3Select("#chart").html("");
 				args.bindto = d3Select("#chart");
@@ -211,7 +211,7 @@ describe("CORE", function() {
 			});
 		});
 
-		describe("null", () => {
+		it("null", () => {
 			before(() => {
 				d3Select("#chart").html("");
 				args.bindto = "#chart-dummy";
@@ -224,7 +224,7 @@ describe("CORE", function() {
 			});
 		});
 
-		describe("empty string", () => {
+		it("empty string", () => {
 			before(() => {
 				d3Select("#chart").html("");
 				args.bindto = "#chart-dummy";
