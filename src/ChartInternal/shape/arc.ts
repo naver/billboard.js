@@ -742,6 +742,7 @@ export default {
 				backgroundArc.enter()
 					.append("path")
 					.attr("class", (d, i) => `${CLASS.chartArcsBackground} ${CLASS.chartArcsBackground}-${i}`)
+					.style("fill", (config.gauge_background) || null)
 					.merge(backgroundArc)
 					.attr("d", d1 => {
 						if (state.hiddenTargetIds.indexOf(d1.id) >= 0) {

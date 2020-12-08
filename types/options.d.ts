@@ -538,6 +538,11 @@ export interface ChartOptions {
 
 	gauge?: {
 		/**
+		 * Set background color. (The `.bb-chart-arcs-background` element)
+		 */
+		background?: string;
+
+		/**
 		 * Whether this should be displayed
 		 * as a full circle instead of a
 		 * half circle.
