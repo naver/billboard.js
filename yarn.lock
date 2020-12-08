@@ -1849,28 +1849,6 @@
   integrity sha512-9gspzc6UqLQHd7lXQS7oWs+hrYggspv/rk6zzEMhCbYwPE/sF7oxo7GAjkS35Tdlt7wguIG+ViWCPtVZHz/ybQ==
   dependencies:
     "@typescript-eslint/types" "4.9.1"
-    "@typescript-eslint/visitor-keys" "4.8.2"
-    debug "^4.1.1"
-    globby "^11.0.1"
-    is-glob "^4.0.1"
-    lodash "^4.17.15"
-    semver "^7.3.2"
-    tsutils "^3.17.1"
-
-"@typescript-eslint/visitor-keys@4.7.0":
-  version "4.7.0"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/visitor-keys/-/visitor-keys-4.7.0.tgz#6783824f22acfc49e754970ed21b88ac03b80e6f"
-  integrity sha512-aDJDWuCRsf1lXOtignlfiPODkzSxxop7D0rZ91L6ZuMlcMCSh0YyK+gAfo5zN/ih6WxMwhoXgJWC3cWQdaKC+A==
-  dependencies:
-    "@typescript-eslint/types" "4.7.0"
-    eslint-visitor-keys "^2.0.0"
-
-"@typescript-eslint/visitor-keys@4.8.2":
-  version "4.8.2"
-  resolved "https://registry.yarnpkg.com/@typescript-eslint/visitor-keys/-/visitor-keys-4.8.2.tgz#62cd3fbbbf65f8eccfbe6f159eb1b84a243a3f77"
-  integrity sha512-Vg+/SJTMZJEKKGHW7YC21QxgKJrSbxoYYd3MEUGtW7zuytHuEcksewq0DUmo4eh/CTNrVJGSdIY9AtRb6riWFw==
-  dependencies:
-    "@typescript-eslint/types" "4.8.2"
     eslint-visitor-keys "^2.0.0"
 
 "@ungap/promise-all-settled@1.1.2":
@@ -4128,7 +4106,7 @@ cross-spawn@^5.0.1:
     shebang-command "^1.2.0"
     which "^1.2.9"
 
-cross-spawn@^6.0.0, cross-spawn@^6.0.5:
+cross-spawn@^6.0.5:
   version "6.0.5"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-6.0.5.tgz#4a5ec7c64dfae22c3a14124dbacdee846d80cbc4"
   integrity sha512-eTVLrBSt7fjbDygz805pMnstIs2VTBNkRm0qxZd+M7A5XDdxVRWO5MxGBXZhjY4cqLYLdtrGqRf8mBPmzwSpWQ==
@@ -4581,14 +4559,7 @@ debug@4.2.0:
   dependencies:
     ms "2.1.2"
 
-debug@^3.1.0, debug@^3.1.1, debug@^3.2.5:
-  version "3.2.7"
-  resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.7.tgz#72580b7e9145fb39b6676f9c5e5fb100b934179a"
-  integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
-  dependencies:
-    ms "^2.1.1"
-
-debug@^3.2.6:
+debug@^3.1.0, debug@^3.1.1, debug@^3.2.6:
   version "3.2.7"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.7.tgz#72580b7e9145fb39b6676f9c5e5fb100b934179a"
   integrity sha512-CFjzYYAi4ThfiQvizrFQevTTXHtnCqWfe7x1AhgEscTz6ZbLbfoLRLPugTQyBth6f8ZERVUSyWHFD/7Wu4t1XQ==
@@ -5011,9 +4982,9 @@ ee-first@1.1.1:
   integrity sha1-WQxhFWsK4vTwJVcyoViyZrxWsh0=
 
 electron-to-chromium@^1.3.612:
-  version "1.3.617"
-  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.617.tgz#4192fa4db846c6ad51fffe3a06e71727e9699a74"
-  integrity sha512-yHXyI0fHnU0oLxdu21otLYpW3qwkbo8EBTpqeS9w14fwNjFy65SG6unrS3Gg+wX1JKWlAFCcNt13fG0nsCo/1A==
+  version "1.3.618"
+  resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.3.618.tgz#33b65cc7cc8d7ce2b438a36afb50efb9bfa99d3a"
+  integrity sha512-D1U1Ij3stBQIIJObhg4zdE0X9znJsztNYzvoEehzuEKSgwP2xeOau+TLOP1Gp0wTf/2ffAYn0ntZwNAGsLCIOA==
 
 elliptic@^6.5.3:
   version "6.5.3"
@@ -5630,19 +5601,6 @@ execa@^0.7.0:
   dependencies:
     cross-spawn "^5.0.1"
     get-stream "^3.0.0"
-    is-stream "^1.1.0"
-    npm-run-path "^2.0.0"
-    p-finally "^1.0.0"
-    signal-exit "^3.0.0"
-    strip-eof "^1.0.0"
-
-execa@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/execa/-/execa-1.0.0.tgz#c6236a5bb4df6d6f15e88e7f017798216749ddd8"
-  integrity sha512-adbxcyWV46qiHyvSp50TKt05tB4tK3HcmF7/nxfAdhnox83seTDbwnaqKO4sXRy7roHAIFqJP/Rw/AuEbX61LA==
-  dependencies:
-    cross-spawn "^6.0.0"
-    get-stream "^4.0.0"
     is-stream "^1.1.0"
     npm-run-path "^2.0.0"
     p-finally "^1.0.0"
@@ -6927,13 +6885,6 @@ import-local@^3.0.2:
     pkg-dir "^4.2.0"
     resolve-cwd "^3.0.0"
 
-import-local@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/import-local/-/import-local-3.0.2.tgz#a8cfd0431d1de4a2199703d003e3e62364fa6db6"
-  integrity sha512-vjL3+w0oulAVZ0hBHnxa/Nm5TAurf9YLQJDhqRZyqb+VKGOB6LU8t9H1Nr5CIo16vh9XfJTOoHwU0B71S557gA==
-  dependencies:
-    pkg-dir "^4.2.0"
-    resolve-cwd "^3.0.0"
 imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
@@ -8427,11 +8378,6 @@ log4js@^6.2.1:
     flatted "^2.0.1"
     rfdc "^1.1.4"
     streamroller "^2.2.4"
-
-loglevel@^1.6.8:
-  version "1.7.1"
-  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.7.1.tgz#005fde2f5e6e47068f935ff28573e125ef72f197"
-  integrity sha512-Hesni4s5UkWkwCGJMQGAh71PaLUmKFM60dHvq0zi/vDhhrzuk+4GgNbTXJ12YYQJn6ZKBDNIjYcuQGKudvqrIw==
 
 longest@^1.0.1:
   version "1.0.1"
@@ -13817,12 +13763,7 @@ write@1.0.3:
   dependencies:
     mkdirp "^0.5.1"
 
-ws@^7.1.2, ws@^7.3.1:
-  version "7.4.1"
-  resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.1.tgz#a333be02696bd0e54cea0434e21dcc8a9ac294bb"
-  integrity sha512-pTsP8UAfhy3sk1lSk/O/s4tjD0CRwvMnzvwr4OKGX7ZvqZtUyx4KIJB5JWbkykPoc55tixMGgTNoh3k4FkNGFQ==
-
-ws@^7.4.0:
+ws@^7.1.2, ws@^7.3.1, ws@^7.4.0:
   version "7.4.1"
   resolved "https://registry.yarnpkg.com/ws/-/ws-7.4.1.tgz#a333be02696bd0e54cea0434e21dcc8a9ac294bb"
   integrity sha512-pTsP8UAfhy3sk1lSk/O/s4tjD0CRwvMnzvwr4OKGX7ZvqZtUyx4KIJB5JWbkykPoc55tixMGgTNoh3k4FkNGFQ==
