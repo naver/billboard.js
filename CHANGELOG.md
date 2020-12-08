@@ -1,3 +1,15 @@
+# [2.2.0-next.2](https://github.com/naver/billboard.js/compare/2.2.0-next.1...2.2.0-next.2) (2020-12-08)
+
+
+### Bug Fixes
+
+* **browser:** fix referencing global order ([8f84cb3](https://github.com/naver/billboard.js/commit/8f84cb326b6c6b0dc341ae65b9cdcdae53e7e9b0)), closes [#1778](https://github.com/naver/billboard.js/issues/1778)
+
+
+### Features
+
+* **gauge:** Intent to ship gauge.background ([632c600](https://github.com/naver/billboard.js/commit/632c600a65c831760a03c355c21b56d66c929cbf)), closes [#1804](https://github.com/naver/billboard.js/issues/1804)
+
 # [2.2.0-next.1](https://github.com/naver/billboard.js/compare/2.1.4...2.2.0-next.1) (2020-12-04)
 
 
