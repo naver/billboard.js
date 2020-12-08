@@ -67,8 +67,8 @@ const config = {
 	stats: "minimal",
 	mode: "none",
 	devServer: {
-		// https://github.com/webpack/webpack-dev-server/issues/1604
-		disableHostCheck: true
+		// https://github.com/webpack/webpack-dev-server/releases/tag/v4.0.0-beta.0
+		firewall: false
 	}
 };
 
