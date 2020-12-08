@@ -12,6 +12,7 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} gauge Gauge object
+	 * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
 	 * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
 	 * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
 	 * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
@@ -33,6 +34,7 @@ export default {
 	 * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
 	 * @example
 	 *  gauge: {
+	 *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
 	 *      fullCircle: false,
 	 *      label: {
 	 *          show: false,
@@ -74,6 +76,7 @@ export default {
 	 *      }
 	 *  }
 	 */
+	gauge_background: "",
 	gauge_fullCircle: false,
 	gauge_label_show: true,
 	gauge_label_format: <(() => string)|undefined> undefined,
