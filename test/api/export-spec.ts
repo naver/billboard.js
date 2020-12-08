@@ -25,6 +25,7 @@ describe("API export", () => {
 		chart = util.generate(args);
 	});
 
+
 	it("should invoke a callback when ready", done => {
 		function exportCallback(dataUrl) {
 			expect(dataUrl).to.not.be.equal("");
@@ -62,7 +63,7 @@ describe("API export", () => {
 			},
 			point: {
 				pattern: [
-				"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
+					"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 				]
 			},
 			axis: {
@@ -87,7 +88,7 @@ describe("API export", () => {
 				show: false
 			}
 		};
-	})
+	});
 
 	it("should export custom points properly", done => {
 		const expectedDataURL = [

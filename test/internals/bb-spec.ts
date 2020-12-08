@@ -60,7 +60,7 @@ describe("Interface & initialization", () => {
 			expect(chart.$.chart.classed("bb")).to.be.true;
 			expect(internal.$el.svg.node().tagName).to.be.equal("svg");
 			expect(convertInputType(true, false)).to.be.equal(internal.state.inputType);
-			expect(chart).to.be.equal(bb.instance[0]);
+			expect(chart).to.be.equal(bb.instance[bb.instance.length - 1]);
 		});
 
 		it("should return version string", () => {
@@ -129,7 +129,7 @@ describe("Interface & initialization", () => {
 		});
 
 		after(() => {
-			document.body.removeAttribute("style");
+			//document.body.removeAttribute("style");
 		});
 
 		it("should resize correctly in flex container", function(done) {
@@ -138,7 +138,14 @@ describe("Interface & initialization", () => {
 			this.timeout(5000);
 
 			// set flex container
-			document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
+			const div = document.createElement("div");
+
+			div.style.display = "flex";
+			div.innerHTML = `<div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div>`;
+
+			document.body.appendChild(div);
+
+			//document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
 
 			const chart = util.generate({
 				bindto: "#flex-container",
@@ -159,7 +166,9 @@ describe("Interface & initialization", () => {
 
 			setTimeout(() => {
 				expect(+chart.internal.$el.svg.attr("width")).to.be.equal(chartWidth - diff);
-				document.body.innerHTML = innerHTML;
+
+				div.parentNode.removeChild(div);
+				//document.body.innerHTML = innerHTML;
 
 				done();
 			}, 200);

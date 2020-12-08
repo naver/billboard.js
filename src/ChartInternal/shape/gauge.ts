@@ -18,8 +18,11 @@ export default {
 		};
 
 		if ($$.hasType("gauge")) {
-			arcs.append($$.hasMultiArcGauge() ? "g" : "path")
-				.attr("class", CLASS.chartArcsBackground);
+			const hasMulti = $$.hasMultiArcGauge();
+
+			arcs.append(hasMulti ? "g" : "path")
+				.attr("class", CLASS.chartArcsBackground)
+				.style("fill", (!hasMulti && config.gauge_background) || null);
 
 			config.gauge_units && appendText(CLASS.chartArcsGaugeUnit);
 

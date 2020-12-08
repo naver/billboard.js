@@ -5,7 +5,7 @@ const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const WebpackCleanPlugin = require("webpack-clean");
 const banner = require("../banner");
-const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const srcPath = "./src/scss/theme/";
@@ -45,6 +45,21 @@ const config = {
 		],
 	},
 	devtool: false,
+	optimization: {
+		minimize: true,
+		minimizer: [
+			new CssMinimizerPlugin({
+				test: /\.min\.css$/i,
+				minimizerOptions: {
+					preset: [
+						"default", {
+							discardComments: true
+						}
+					]
+				}
+			})
+		]
+	},
 	plugins: [
 		// clean before build
 		new CleanWebpackPlugin({
@@ -60,14 +75,6 @@ const config = {
 		}),
 		new MiniCssExtractPlugin({
 			filename: "[name].css"
-		}),
-		new OptimizeCssAssetsPlugin({
-			assetNameRegExp: /\.min\.css$/,
-			cssProcessorOptions: {
-				discardComments: {
-					removeAll: true
-				}
-			},
 		}),
 		new webpack.BannerPlugin({
 			banner: banner.production,
