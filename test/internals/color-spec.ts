@@ -11,6 +11,7 @@ import {
 import {expect} from "chai";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import {KEY as CACHE_KEY} from "../../src/module/Cache";
 import {isFunction, isObject, isString} from "../../src/module/util";
 
 describe("COLOR", () => {
@@ -50,11 +51,11 @@ describe("COLOR", () => {
 		});
 
 		after(() => {
-			styleSheet.innerHTML = "";
-			document.head.removeChild(styleSheet);
+			styleSheet.parentNode.removeChild(styleSheet);
+			document.body[CACHE_KEY.colorPattern] = null;
 		});
 
-		it("should get and parse from the stylesheet", () => {
+		it("should get and parse from the stylesheet", () => {			
 			const pttrn = chart.internal.getColorFromCss();
 
 			expect(pttrn).to.deep.equal(pattern);
@@ -69,10 +70,6 @@ describe("COLOR", () => {
 					expect(this.style.fill).to.be.equal(util.hexToRgb(pattern[i]));
 				});
 		});
-
-		it("", () => {
-			styleSheet.innerHTML = ""
-		})
 	});
 
 	describe("tiles", () => {

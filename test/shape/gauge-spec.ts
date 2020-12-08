@@ -23,7 +23,8 @@ describe("SHAPE GAUGE", () => {
 				gauge: {
 					width: 10,
 					max: 10,
-					expand: true
+					expand: true,
+					background: "red"
 				},
 				data: {
 					columns: [
@@ -37,6 +38,11 @@ describe("SHAPE GAUGE", () => {
 			const data = chartArc.select(`${selector.arc}-data`)
 					.select(`${selector.shapes}-data`)
 					.select(`${selector.shape}-data`);
+
+			// check guage's background color
+			expect(
+				chart.$.arc.select(`path.${CLASS.chartArcsBackground}`).style("fill")
+			).to.be.equal(chart.internal.config.gauge_background);
 
 			setTimeout(() => {
 				expect(data.attr("d"))
@@ -383,6 +389,7 @@ describe("SHAPE GAUGE", () => {
 				}
 			},
 			gauge: {
+				background: "",
 				type: "multi",
 				label: {
 					format: function(value) {
@@ -552,6 +559,20 @@ describe("SHAPE GAUGE", () => {
 				color && expect(this.style.fill).to.be.equal(color);
 			});
 		});
+
+		it("set options gauge.background='red'", () => {
+			args.gauge.background = "red";
+		});
+
+		it("check gauge's background color", () => {
+			const arc = chart.$.arc;
+			const backgroundColor = chart.internal.config.gauge_background;
+			const gaugeBackground = arc.selectAll(`path.${CLASS.chartArcsBackground}`);
+
+			gaugeBackground.each(function(d, i) {
+				expect(this.style.fill).to.be.equal(backgroundColor);
+			});
+		})
     });
     
     describe("Positioning", () => {

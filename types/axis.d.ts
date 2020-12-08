@@ -361,7 +361,12 @@ export interface YTickConfiguration {
 		position?: {
 			x?: number;
 			y?: number;
-		}
+		};
+
+		/**
+		 * Show or hide axis tick text.
+		 */
+		show?: boolean;
 	};
 }
 

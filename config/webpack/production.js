@@ -5,7 +5,7 @@ const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const TerserPlugin = require("terser-webpack-plugin");
 const terserConfig = require("../terserConfig");
 const banner = require("../banner");
-const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const config = {
@@ -43,7 +43,19 @@ const config = {
 	optimization: {
 		usedExports: true,
 		minimize: true,
-		minimizer: [new TerserPlugin(terserConfig)]
+		minimizer: [
+			new TerserPlugin(terserConfig),
+			new CssMinimizerPlugin({
+				test: /\.min\.css$/i,
+				minimizerOptions: {
+					preset: [
+						"default", {
+							discardComments: true
+						}
+					]
+				}
+			})
+		]
 	},
 	plugins: [
 		new CleanWebpackPlugin({
@@ -53,14 +65,6 @@ const config = {
 		}),
 		new MiniCssExtractPlugin({
 			filename: "[name].css"
-		}),
-		new OptimizeCssAssetsPlugin({
-			assetNameRegExp: /\.min\.css$/,
-			cssProcessorOptions: {
-				discardComments: {
-					removeAll: true
-				}
-			},
 		}),
 		new webpack.BannerPlugin({
 			banner: banner.production,
