@@ -5,8 +5,15 @@ const plugin = require("./plugin")();
 const config = {
 	devtool: "inline-source-map",
 	devServer: {
-		publicPath: "/dist/",
-		stats: "minimal"
+		static: [
+			{
+				serveIndex: true,
+				watch: true
+			}
+		],
+		dev: {
+			publicPath: "/dist"
+		}	
 	},
 	module: {
 		rules: [
