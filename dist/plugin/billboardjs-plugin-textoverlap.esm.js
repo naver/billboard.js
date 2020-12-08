@@ -196,15 +196,6 @@ function loadConfig(config) {
     });
 }
 
-function _defineProperty(obj, key, value) {
-  return key in obj ? Object.defineProperty(obj, key, {
-    value: value,
-    enumerable: !0,
-    configurable: !0,
-    writable: !0
-  }) : obj[key] = value, obj;
-}
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -279,7 +270,7 @@ var Plugin = /*#__PURE__*/function () {
   }, Plugin;
 }();
 
-_defineProperty(Plugin, "version", "#2.1.4#");
+Plugin.version = "#2.1.4#";
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.

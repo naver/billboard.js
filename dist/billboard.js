@@ -1,263 +1,79 @@
 /*!
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
- * 
+ *
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
- * 
- * @version 2.1.4-nightly-20201207102735
+ *
+ * @version 2.1.4-nightly-20201208172529
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-time-format"), require("d3-selection"), require("d3-brush"), require("d3-dsv"), require("d3-drag"), require("d3-scale"), require("d3-transition"), require("d3-shape"), require("d3-axis"), require("d3-ease"), require("d3-interpolate"), require("d3-zoom"), require("d3-color"));
+		module.exports = factory(require("d3-axis"), require("d3-brush"), require("d3-color"), require("d3-drag"), require("d3-dsv"), require("d3-ease"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom"));
 	else if(typeof define === 'function' && define.amd)
-		define(["d3-time-format", "d3-selection", "d3-brush", "d3-dsv", "d3-drag", "d3-scale", "d3-transition", "d3-shape", "d3-axis", "d3-ease", "d3-interpolate", "d3-zoom", "d3-color"], factory);
+		define(["d3-axis", "d3-brush", "d3-color", "d3-drag", "d3-dsv", "d3-ease", "d3-interpolate", "d3-scale", "d3-selection", "d3-shape", "d3-time-format", "d3-transition", "d3-zoom"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-brush"), require("d3-dsv"), require("d3-drag"), require("d3-scale"), require("d3-transition"), require("d3-shape"), require("d3-axis"), require("d3-ease"), require("d3-interpolate"), require("d3-zoom"), require("d3-color")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
+		var a = typeof exports === 'object' ? factory(require("d3-axis"), require("d3-brush"), require("d3-color"), require("d3-drag"), require("d3-dsv"), require("d3-ease"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__14__) {
-return /******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
-/******/
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
-/******/
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId]) {
-/******/ 			return installedModules[moduleId].exports;
-/******/ 		}
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			i: moduleId,
-/******/ 			l: false,
-/******/ 			exports: {}
-/******/ 		};
-/******/
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/
-/******/ 		// Flag the module as loaded
-/******/ 		module.l = true;
-/******/
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
-/******/
-/******/
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
-/******/
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
-/******/
-/******/ 	// define getter function for harmony exports
-/******/ 	__webpack_require__.d = function(exports, name, getter) {
-/******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
-/******/ 		}
-/******/ 	};
-/******/
-/******/ 	// define __esModule on exports
-/******/ 	__webpack_require__.r = function(exports) {
-/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
-/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
-/******/ 		}
-/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
-/******/ 	};
-/******/
-/******/ 	// create a fake namespace object
-/******/ 	// mode & 1: value is a module id, require it
-/******/ 	// mode & 2: merge all properties of value into the ns
-/******/ 	// mode & 4: return value when already ns object
-/******/ 	// mode & 8|1: behave like require
-/******/ 	__webpack_require__.t = function(value, mode) {
-/******/ 		if(mode & 1) value = __webpack_require__(value);
-/******/ 		if(mode & 8) return value;
-/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
-/******/ 		var ns = Object.create(null);
-/******/ 		__webpack_require__.r(ns);
-/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
-/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
-/******/ 		return ns;
-/******/ 	};
-/******/
-/******/ 	// getDefaultExport function for compatibility with non-harmony modules
-/******/ 	__webpack_require__.n = function(module) {
-/******/ 		var getter = module && module.__esModule ?
-/******/ 			function getDefault() { return module['default']; } :
-/******/ 			function getModuleExports() { return module; };
-/******/ 		__webpack_require__.d(getter, 'a', getter);
-/******/ 		return getter;
-/******/ 	};
-/******/
-/******/ 	// Object.prototype.hasOwnProperty.call
-/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
-/******/
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
-/******/
-/******/
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 0);
-/******/ })
-/************************************************************************/
-/******/ ([
+})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__14__) {
+return /******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (() => {
 
-__webpack_require__(1);
-module.exports = __webpack_require__(15);
-
-
-/***/ }),
-/* 1 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
 // extracted by mini-css-extract-plugin
 
 
 /***/ }),
-/* 2 */
-/***/ (function(module, exports) {
+/* 1 */
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
-
-/***/ }),
-/* 4 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__4__;
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__5__;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__6__;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__7__;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__13__;
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
-
-/***/ }),
-/* 15 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
-__webpack_require__.d(__webpack_exports__, "default", function() { return /* reexport */ bb; });
-__webpack_require__.d(__webpack_exports__, "bb", function() { return /* reexport */ bb; });
+__webpack_require__.d(__webpack_exports__, {
+  "bb": () => /* reexport */ bb,
+  "default": () => /* reexport */ bb
+});
 
 // NAMESPACE OBJECT: ./src/config/resolver/shape.ts
 var resolver_shape_namespaceObject = {};
 __webpack_require__.r(resolver_shape_namespaceObject);
-__webpack_require__.d(resolver_shape_namespaceObject, "area", function() { return _area; });
-__webpack_require__.d(resolver_shape_namespaceObject, "areaLineRange", function() { return areaLineRange; });
-__webpack_require__.d(resolver_shape_namespaceObject, "areaSpline", function() { return areaSpline; });
-__webpack_require__.d(resolver_shape_namespaceObject, "areaSplineRange", function() { return areaSplineRange; });
-__webpack_require__.d(resolver_shape_namespaceObject, "areaStep", function() { return areaStep; });
-__webpack_require__.d(resolver_shape_namespaceObject, "bar", function() { return resolver_shape_bar; });
-__webpack_require__.d(resolver_shape_namespaceObject, "bubble", function() { return resolver_shape_bubble; });
-__webpack_require__.d(resolver_shape_namespaceObject, "donut", function() { return shape_donut; });
-__webpack_require__.d(resolver_shape_namespaceObject, "gauge", function() { return resolver_shape_gauge; });
-__webpack_require__.d(resolver_shape_namespaceObject, "line", function() { return resolver_shape_line; });
-__webpack_require__.d(resolver_shape_namespaceObject, "pie", function() { return shape_pie; });
-__webpack_require__.d(resolver_shape_namespaceObject, "radar", function() { return resolver_shape_radar; });
-__webpack_require__.d(resolver_shape_namespaceObject, "scatter", function() { return shape_scatter; });
-__webpack_require__.d(resolver_shape_namespaceObject, "spline", function() { return shape_spline; });
-__webpack_require__.d(resolver_shape_namespaceObject, "step", function() { return shape_step; });
+__webpack_require__.d(resolver_shape_namespaceObject, {
+  "area": () => _area,
+  "areaLineRange": () => areaLineRange,
+  "areaSpline": () => areaSpline,
+  "areaSplineRange": () => areaSplineRange,
+  "areaStep": () => areaStep,
+  "bar": () => resolver_shape_bar,
+  "bubble": () => resolver_shape_bubble,
+  "donut": () => shape_donut,
+  "gauge": () => resolver_shape_gauge,
+  "line": () => resolver_shape_line,
+  "pie": () => shape_pie,
+  "radar": () => resolver_shape_radar,
+  "scatter": () => shape_scatter,
+  "spline": () => shape_spline,
+  "step": () => step
+});
 
 // NAMESPACE OBJECT: ./src/config/resolver/interaction.ts
 var resolver_interaction_namespaceObject = {};
 __webpack_require__.r(resolver_interaction_namespaceObject);
-__webpack_require__.d(resolver_interaction_namespaceObject, "selection", function() { return _selectionModule; });
-__webpack_require__.d(resolver_interaction_namespaceObject, "subchart", function() { return subchartModule; });
-__webpack_require__.d(resolver_interaction_namespaceObject, "zoom", function() { return zoomModule; });
+__webpack_require__.d(resolver_interaction_namespaceObject, {
+  "selection": () => _selectionModule,
+  "subchart": () => subchartModule,
+  "zoom": () => zoomModule
+});
 
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
 // EXTERNAL MODULE: external {"commonjs":"d3-time-format","commonjs2":"d3-time-format","amd":"d3-time-format","root":"d3"}
-var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(2);
-
+var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(4);
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(3);
-
-// CONCATENATED MODULE: ./src/config/classes.ts
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(2);
+;// CONCATENATED MODULE: ./src/config/classes.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -267,7 +83,7 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
  * CSS class names definition
  * @private
  */
-/* harmony default export */ var config_classes = ({
+/* harmony default export */ const config_classes = ({
   arc: "bb-arc",
   arcLabelLine: "bb-arc-label-line",
   arcs: "bb-arcs",
@@ -366,7 +182,7 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
   INCLUDED: "_included_",
   TextOverlapping: "text-overlapping"
 });
-// CONCATENATED MODULE: ./src/config/Store/Element.ts
+;// CONCATENATED MODULE: ./src/config/Store/Element.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -443,7 +259,7 @@ var Element = function () {
 };
 
 
-// CONCATENATED MODULE: ./src/config/Store/State.ts
+;// CONCATENATED MODULE: ./src/config/Store/State.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -596,7 +412,7 @@ var State = function () {
 };
 
 
-// CONCATENATED MODULE: ./src/config/Store/Store.ts
+;// CONCATENATED MODULE: ./src/config/Store/Store.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -604,7 +420,7 @@ var State = function () {
 
  // mapping
 
-var Store_classes = {
+var classes = {
   element: Element,
   state: State
 };
@@ -619,8 +435,8 @@ var Store = /*#__PURE__*/function () {
   function Store() {
     var _this = this;
 
-    Object.keys(Store_classes).forEach(function (v) {
-      _this[v] = new Store_classes[v]();
+    Object.keys(classes).forEach(function (v) {
+      _this[v] = new classes[v]();
     });
   }
 
@@ -631,7 +447,22 @@ var Store = /*#__PURE__*/function () {
 }();
 
 
-// CONCATENATED MODULE: ./src/config/Options/common/main.ts
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+;// CONCATENATED MODULE: ./src/config/Options/common/main.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -640,7 +471,7 @@ var Store = /*#__PURE__*/function () {
 /**
  * main config options
  */
-/* harmony default export */ var common_main = ({
+/* harmony default export */ const main = ({
   /**
    * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
    * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
@@ -983,7 +814,7 @@ var Store = /*#__PURE__*/function () {
    */
   regions: []
 });
-// CONCATENATED MODULE: ./src/config/Options/data/data.ts
+;// CONCATENATED MODULE: ./src/config/Options/data/data.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -992,7 +823,7 @@ var Store = /*#__PURE__*/function () {
 /**
  * data config options
  */
-/* harmony default export */ var data_data = ({
+/* harmony default export */ const data = ({
   /**
    * Specify the key of x values in the data.<br><br>
    * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
@@ -1693,7 +1524,7 @@ var Store = /*#__PURE__*/function () {
    */
   data_empty_label_text: ""
 });
-// CONCATENATED MODULE: ./src/config/Options/common/color.ts
+;// CONCATENATED MODULE: ./src/config/Options/common/color.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -1702,7 +1533,7 @@ var Store = /*#__PURE__*/function () {
 /**
  * color config options
  */
-/* harmony default export */ var common_color = ({
+/* harmony default export */ const color = ({
   /**
    * Set color of the data values
    * @name color
@@ -1782,7 +1613,7 @@ var Store = /*#__PURE__*/function () {
   color_threshold: {},
   color_onover: undefined
 });
-// CONCATENATED MODULE: ./src/config/Options/interaction/interaction.ts
+;// CONCATENATED MODULE: ./src/config/Options/interaction/interaction.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -1791,7 +1622,7 @@ var Store = /*#__PURE__*/function () {
 /**
  * interaction config options
  */
-/* harmony default export */ var interaction = ({
+/* harmony default export */ const interaction = ({
   /**
    * Interaction options
    * @name interaction
@@ -1829,7 +1660,7 @@ var Store = /*#__PURE__*/function () {
   interaction_inputType_mouse: !0,
   interaction_inputType_touch: {}
 });
-// CONCATENATED MODULE: ./src/config/Options/common/legend.ts
+;// CONCATENATED MODULE: ./src/config/Options/common/legend.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -1838,7 +1669,7 @@ var Store = /*#__PURE__*/function () {
 /**
  * legend config options
  */
-/* harmony default export */ var common_legend = ({
+/* harmony default export */ const legend = ({
   /**
    * Legend options
    * @name legend
@@ -1942,7 +1773,7 @@ var Store = /*#__PURE__*/function () {
   legend_item_tile_height: 10,
   legend_usePoint: !1
 });
-// CONCATENATED MODULE: ./src/config/Options/common/title.ts
+;// CONCATENATED MODULE: ./src/config/Options/common/title.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -1951,7 +1782,7 @@ var Store = /*#__PURE__*/function () {
 /**
  * title config options
  */
-/* harmony default export */ var common_title = ({
+/* harmony default export */ const title = ({
   /**
    * Set title options
    * @name title
@@ -1990,7 +1821,7 @@ var Store = /*#__PURE__*/function () {
   },
   title_position: "center"
 });
-// CONCATENATED MODULE: ./src/config/Options/common/tooltip.ts
+;// CONCATENATED MODULE: ./src/config/Options/common/tooltip.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -1999,7 +1830,7 @@ var Store = /*#__PURE__*/function () {
 /**
  * tooltip config options
  */
-/* harmony default export */ var common_tooltip = ({
+/* harmony default export */ const tooltip = ({
   /**
    * Tooltip options
    * @name tooltip
@@ -2190,9 +2021,8 @@ var Store = /*#__PURE__*/function () {
   tooltip_order: null
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(4);
-
-// CONCATENATED MODULE: ./src/module/browser.ts
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
+;// CONCATENATED MODULE: ./src/module/browser.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -2217,7 +2047,7 @@ var win = function () {
 }(),
     browser_doc = win && win.document;
 /* eslint-enable no-new-func, no-undef */
-// CONCATENATED MODULE: ./src/module/util.ts
+;// CONCATENATED MODULE: ./src/module/util.ts
 
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -2451,9 +2281,9 @@ function getPathBox(path) {
 function getBrushSelection(_ref) {
   var selection,
       $el = _ref.$el,
-      event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"],
+      event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event,
       main = $el.subchart.main || $el.main;
-  return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + config_classes.brush).node()) && (selection = Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection)), selection;
+  return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + config_classes.brush).node()) && (selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection)), selection;
 }
 /**
  * Get boundingClientRect.
@@ -2682,7 +2512,7 @@ function mergeObj(target) {
  */
 
 
-function util_sortValue(data, isAsc) {
+function sortValue(data, isAsc) {
   isAsc === void 0 && (isAsc = !0);
   var fn;
   return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
@@ -2708,7 +2538,7 @@ function getMinMax(type, data) {
   var res = data.filter(function (v) {
     return notEmpty(v);
   });
-  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, res) : res[0] instanceof Date && (res = util_sortValue(res, type === "min")[0]) : res = undefined, res;
+  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, res) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
 }
 /**
  * Get range
@@ -2844,7 +2674,7 @@ function convertInputType(mouse, touch) {
   var hasMouse = !(!mouse || isMobile) && "onmouseover" in win;
   return hasMouse && "mouse" || isMobile && "touch" || null;
 }
-// CONCATENATED MODULE: ./src/config/Options/Options.ts
+;// CONCATENATED MODULE: ./src/config/Options/Options.ts
 
 
 function Options_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -2871,9 +2701,9 @@ function Options_objectSpread(target) { for (var source, i = 1; i < arguments.le
  * @see {@link bb.generate} to use these options on generating the chart
  */
 
-var Options_Options = /*#__PURE__*/function () {
+var Options = /*#__PURE__*/function () {
   function Options() {
-    return deepClone(common_main, data_data, common_color, interaction, common_legend, common_title, common_tooltip, Options.data);
+    return deepClone(main, data, color, interaction, legend, title, tooltip, Options.data);
   }
 
   return Options.setOptions = function setOptions(options) {
@@ -2883,12 +2713,9 @@ var Options_Options = /*#__PURE__*/function () {
   }, Options;
 }();
 
-_defineProperty(Options_Options, "data", {});
+Options.data = {};
 
-
-// CONCATENATED MODULE: ./src/module/Cache.ts
-
-
+;// CONCATENATED MODULE: ./src/module/Cache.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -2913,9 +2740,9 @@ var KEY = {
   textRect: "textRect"
 };
 
-var Cache_Cache = /*#__PURE__*/function () {
+var Cache = /*#__PURE__*/function () {
   function Cache() {
-    _defineProperty(this, "cache", {});
+    this.cache = {};
   }
 
   var _proto = Cache.prototype;
@@ -2993,7 +2820,7 @@ var Cache_Cache = /*#__PURE__*/function () {
 }();
 
 
-// CONCATENATED MODULE: ./src/module/generator.ts
+;// CONCATENATED MODULE: ./src/module/generator.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -3064,8 +2891,7 @@ function generateWait() {
 }
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
 var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(5);
-
-// CONCATENATED MODULE: ./src/ChartInternal/data/convert.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/data/convert.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -3078,7 +2904,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
  * @private
  */
 
-/* harmony default export */ var convert = ({
+/* harmony default export */ const convert = ({
   /**
    * Convert data according its type
    * @param {object} args data object
@@ -3135,14 +2961,14 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   },
   convertCsvToData: function convertCsvToData(xsv) {
     return this.convertCsvTsvToData({
-      rows: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_["csvParseRows"],
-      parse: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_["csvParse"]
+      rows: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.csvParseRows,
+      parse: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.csvParse
     }, xsv);
   },
   convertTsvToData: function convertTsvToData(tsv) {
     return this.convertCsvTsvToData({
-      rows: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_["tsvParseRows"],
-      parse: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_["tsvParse"]
+      rows: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.tsvParseRows,
+      parse: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.tsvParse
     }, tsv);
   },
   convertJsonToData: function convertJsonToData(json, keysParam) {
@@ -3278,7 +3104,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     }), targets;
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/data/data.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/data/data.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -3286,7 +3112,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 
 
-/* harmony default export */ var ChartInternal_data_data = ({
+/* harmony default export */ const data_data = ({
   isX: function isX(key) {
     var $$ = this,
         config = $$.config,
@@ -3582,7 +3408,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
       return a.concat(b);
     }).map(function (v) {
       return v.x;
-    }), target = util_sortValue(getUnique(target)).map(function (x, index) {
+    }), target = sortValue(getUnique(target)).map(function (x, index) {
       return {
         x: x,
         index: index
@@ -3629,7 +3455,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
       return new Date(+x);
     }) : xs.map(function (x) {
       return +x;
-    })), util_sortValue(xs);
+    })), sortValue(xs);
   },
   addHiddenTargetIds: function addHiddenTargetIds(targetIds) {
     this.state.hiddenTargetIds = this.state.hiddenTargetIds.concat(targetIds);
@@ -3982,14 +3808,14 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/data/load.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/data/load.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-/* harmony default export */ var load = ({
+/* harmony default export */ const load = ({
   load: function load(rawTargets, args) {
     var $$ = this,
         targets = rawTargets;
@@ -4042,9 +3868,8 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-drag","commonjs2":"d3-drag","amd":"d3-drag","root":"d3"}
-var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(6);
-
-// CONCATENATED MODULE: ./src/ChartInternal/interactions/interaction.ts
+var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(7);
+;// CONCATENATED MODULE: ./src/ChartInternal/interactions/interaction.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -4054,7 +3879,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 
 
 
-/* harmony default export */ var interactions_interaction = ({
+/* harmony default export */ const interactions_interaction = ({
   selectRectForSingle: function selectRectForSingle(context, eventRect, index) {
     var $$ = this,
         config = $$.config,
@@ -4065,7 +3890,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         isTooltipGrouped = config.tooltip_grouped,
         selectedData = $$.getAllValuesOnIndex(index);
     isTooltipGrouped && ($$.showTooltip(selectedData, context), $$.showGridFocus && $$.showGridFocus(selectedData), !isSelectionEnabled || isSelectionGrouped) || main.selectAll("." + config_classes.shape + "-" + index).each(function () {
-      Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.EXPANDED, !0), isSelectionEnabled && eventRect.style("cursor", isSelectionGrouped ? "pointer" : null), isTooltipGrouped || ($$.hideGridFocus && $$.hideGridFocus(), $$.hideTooltip(), !isSelectionGrouped && $$.expandCirclesBars(index));
+      (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.EXPANDED, !0), isSelectionEnabled && eventRect.style("cursor", isSelectionGrouped ? "pointer" : null), isTooltipGrouped || ($$.hideGridFocus && $$.hideGridFocus(), $$.hideTooltip(), !isSelectionGrouped && $$.expandCirclesBars(index));
     }).filter(function (d) {
       return $$.isWithinShape(this, d);
     }).call(function (selected) {
@@ -4112,7 +3937,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
             return v !== _this;
           })) && (callback(d, this), last.push(this));
         }), last.length > 0 && shape.empty() && (callback = config.data_onout.bind($$.api), last.forEach(function (v) {
-          return callback(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(v).datum(), v);
+          return callback((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(v).datum(), v);
         }), last = []), $$.cache.add(KEY.setOverOut, last);
       } else isOver && (config.point_focus_only && hasRadar ? $$.showCircleFocus($$.getAllValuesOnIndex(d, !0)) : $$.expandCirclesBars(d, null, !0)), $$.isMultipleX() || main.selectAll("." + config_classes.shape + "-" + d).each(function (d) {
         callback(d, this);
@@ -4139,12 +3964,12 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   getDraggableSelection: function getDraggableSelection() {
     var $$ = this,
         config = $$.config;
-    return config.interaction_enabled && config.data_selection_draggable && $$.drag ? Object(external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_["drag"])().on("drag", function () {
+    return config.interaction_enabled && config.data_selection_draggable && $$.drag ? (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().on("drag", function () {
       // @ts-ignore
-      $$.drag(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(this));
+      $$.drag((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this));
     }).on("start", function () {
       // @ts-ignore
-      $$.dragstart(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(this));
+      $$.dragstart((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this));
     }).on("end", function () {
       $$.dragend();
     }) : function () {};
@@ -4191,13 +4016,13 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     this.state.dragging = isDragging;
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/class.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/class.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ var internals_class = ({
+/* harmony default export */ const internals_class = ({
   generateClass: function generateClass(prefix, targetId) {
     return " " + prefix + " " + (prefix + this.getTargetSelectorSuffix(targetId));
   },
@@ -4315,12 +4140,12 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     }) : null;
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/category.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/category.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* harmony default export */ var category = ({
+/* harmony default export */ const category = ({
   /**
    * Category Name
    * @param {number} i Index number
@@ -4333,9 +4158,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(7);
-
-// CONCATENATED MODULE: ./src/ChartInternal/internals/color.ts
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(6);
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/color.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -4357,7 +4181,7 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
  */
 
 var colorizePattern = function (pattern, color, id) {
-  var node = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(pattern.cloneNode(!0));
+  var node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(pattern.cloneNode(!0));
   return node.attr("id", id).insert("rect", ":first-child").attr("width", node.attr("width")).attr("height", node.attr("height")).style("fill", color), {
     id: id,
     node: node.node()
@@ -4367,7 +4191,7 @@ var colorizePattern = function (pattern, color, id) {
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
 
 
-/* harmony default export */ var internals_color = ({
+/* harmony default export */ const internals_color = ({
   /**
    * Get color pattern from CSS file
    * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
@@ -4396,7 +4220,7 @@ var colorizePattern = function (pattern, color, id) {
         colors = config.data_colors,
         callback = config.data_color,
         ids = [],
-        pattern = notEmpty(config.color_pattern) ? config.color_pattern : Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleOrdinal"])($$.getColorFromCss() || schemeCategory10).range(),
+        pattern = notEmpty(config.color_pattern) ? config.color_pattern : (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleOrdinal)($$.getColorFromCss() || schemeCategory10).range(),
         originalColorPattern = pattern;
 
     if (isFunction(config.color_tiles)) {
@@ -4462,7 +4286,7 @@ var colorizePattern = function (pattern, color, id) {
     "." + config_classes.arc + $$.getTargetSelectorSuffix(d.id) : "." + config_classes.shape + "-" + d).style("fill", color);
   }
 });
-// CONCATENATED MODULE: ./src/config/const.ts
+;// CONCATENATED MODULE: ./src/config/const.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -4502,14 +4326,14 @@ var TYPE_BY_CATEGORY = {
   Step: [TYPE.STEP, TYPE.AREA_STEP],
   Spline: [TYPE.SPLINE, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE]
 };
-// CONCATENATED MODULE: ./src/ChartInternal/internals/domain.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/domain.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-/* harmony default export */ var internals_domain = ({
+/* harmony default export */ const domain = ({
   getYDomainMinMax: function getYDomainMinMax(targets, type) {
     var $$ = this,
         axis = $$.axis,
@@ -4693,7 +4517,7 @@ var TYPE_BY_CATEGORY = {
         subX = _$$$scale.subX,
         zoomEnabled = config.zoom_enabled;
 
-    if (withUpdateOrgXDomain && (x.domain(domain || util_sortValue($$.getXDomain(targets))), org.xDomain = x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), subX.domain(x.domain()), $$.brush && $$.brush.scale(subX)), withUpdateXDomain) {
+    if (withUpdateOrgXDomain && (x.domain(domain || sortValue($$.getXDomain(targets))), org.xDomain = x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), subX.domain(x.domain()), $$.brush && $$.brush.scale(subX)), withUpdateXDomain) {
       var domainValue = domain || !$$.brush || brushEmpty($$) ? org.xDomain : getBrushSelection($$).map(subX.invert);
       x.domain(domainValue), zoomEnabled && $$.zoom.updateScaleExtent();
     } // Trim domain when too big by zoom mousemove event
@@ -4723,7 +4547,7 @@ var TYPE_BY_CATEGORY = {
     return isDefined(config.zoom_x_min) && (min = getMinMax("min", [min, config.zoom_x_min])), isDefined(config.zoom_x_max) && (max = getMinMax("max", [max, config.zoom_x_max])), [min, max];
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/format.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/format.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -4745,7 +4569,7 @@ function getFormat($$, typeValue, v) {
   return format(v);
 }
 
-/* harmony default export */ var internals_format = ({
+/* harmony default export */ const format = ({
   getYFormat: function getYFormat(forArc) {
     var $$ = this,
         yFormat = $$.yFormat,
@@ -4780,7 +4604,7 @@ function getFormat($$, typeValue, v) {
     }), format.bind($$.api);
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/legend.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/legend.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -4790,7 +4614,7 @@ function getFormat($$, typeValue, v) {
 
 
 
-/* harmony default export */ var internals_legend = ({
+/* harmony default export */ const internals_legend = ({
   /**
    * Initialize the legend.
    * @private
@@ -4836,7 +4660,7 @@ function getFormat($$, typeValue, v) {
     var $$ = this,
         config = $$.config,
         $el = $$.$el,
-        wrapper = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(config.legend_contents_bindto),
+        wrapper = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(config.legend_contents_bindto),
         template = config.legend_contents_template;
 
     if (!wrapper.empty()) {
@@ -4998,7 +4822,7 @@ function getFormat($$, typeValue, v) {
     legend && legend.selectAll("." + config_classes.legendItem).filter(function (id) {
       return targetIdz.indexOf(id) >= 0;
     }).classed(config_classes.legendItemFocused, focus).transition().duration(100).style("opacity", function () {
-      return (focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend).call($$, Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this));
+      return (focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend).call($$, (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this));
     });
   },
 
@@ -5010,7 +4834,7 @@ function getFormat($$, typeValue, v) {
     var $$ = this,
         legend = $$.$el.legend;
     legend && legend.selectAll("." + config_classes.legendItem).classed(config_classes.legendItemFocused, !1).transition().duration(100).style("opacity", function () {
-      return $$.opacityForLegend(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this));
+      return $$.opacityForLegend((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this));
     });
   },
 
@@ -5024,7 +4848,7 @@ function getFormat($$, typeValue, v) {
         config = $$.config,
         $el = $$.$el;
     config.legend_show || (config.legend_show = !0, $el.legend ? $el.legend.style("visibility", "visible") : $$.initLegend(), !$$.state.legendHasRendered && $$.updateLegend()), $$.removeHiddenLegendIds(targetIds), $el.legend.selectAll($$.selectorLegends(targetIds)).style("visibility", "visible").transition().style("opacity", function () {
-      return $$.opacityForLegend(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this));
+      return $$.opacityForLegend((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this));
     });
   },
 
@@ -5068,17 +4892,17 @@ function getFormat($$, typeValue, v) {
         isTouch = state.inputType === "touch",
         hasGauge = $$.hasType("gauge");
     item.attr("class", function (id) {
-      var node = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+      var node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           itemClass = !node.empty() && node.attr("class") || "";
       return itemClass + $$.generateClass(config_classes.legendItem, id);
     }).style("visibility", function (id) {
       return $$.isLegendToShow(id) ? "visible" : "hidden";
     }), config.interaction_enabled && (item.style("cursor", "pointer").on("click", function (id) {
-      callFn(config.legend_item_onclick, api, id) || (external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].altKey ? (api.hide(), api.show(id)) : (api.toggle(id), Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.legendItemFocused, !1).style("opacity", null))), isTouch && $$.hideTooltip();
+      callFn(config.legend_item_onclick, api, id) || (external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.altKey ? (api.hide(), api.show(id)) : (api.toggle(id), (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused, !1).style("opacity", null))), isTouch && $$.hideTooltip();
     }), !isTouch && item.on("mouseout", function (id) {
-      callFn(config.legend_item_onout, api, id) || (Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.legendItemFocused, !1), hasGauge && $$.undoMarkOverlapped($$, "." + config_classes.gaugeValue), $$.api.revert());
+      callFn(config.legend_item_onout, api, id) || ((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused, !1), hasGauge && $$.undoMarkOverlapped($$, "." + config_classes.gaugeValue), $$.api.revert());
     }).on("mouseover", function (id) {
-      callFn(config.legend_item_onover, api, id) || (Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.legendItemFocused, !0), hasGauge && $$.markOverlapped(id, $$, "." + config_classes.gaugeValue), !state.transiting && $$.isTargetToShow(id) && api.focus(id));
+      callFn(config.legend_item_onover, api, id) || ((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused, !0), hasGauge && $$.markOverlapped(id, $$, "." + config_classes.gaugeValue), !state.transiting && $$.isTargetToShow(id) && api.focus(id));
     }));
   },
 
@@ -5187,7 +5011,7 @@ function getFormat($$, typeValue, v) {
         var pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
         ids.indexOf(d) === -1 && ids.push(d);
         var point = pattern[ids.indexOf(d) % pattern.length];
-        return point === "rectangle" && (point = "rect"), browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg, "hasValidPointType" in $$ && $$.hasValidPointType(point) ? point : "use");
+        return point === "rectangle" && (point = "rect"), browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg, "hasValidPointType" in $$ && $$.hasValidPointType(point) ? point : "use");
       }).attr("class", config_classes.legendItemPoint).style("fill", function (d) {
         return $$.color(d);
       }).style("pointer-events", "none").attr("href", function (data, idx, selection) {
@@ -5234,7 +5058,7 @@ function getFormat($$, typeValue, v) {
           width = _size, height = _size, yOffset = 3;
         }
 
-        Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).attr(x, function (d) {
+        (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).attr(x, function (d) {
           return x1ForLegendTile(d) + xOffset;
         }).attr(y, function (d) {
           return yForLegendTile(d) - yOffset;
@@ -5253,8 +5077,7 @@ function getFormat($$, typeValue, v) {
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-transition","commonjs2":"d3-transition","amd":"d3-transition","root":"d3"}
 var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_ = __webpack_require__(8);
-
-// CONCATENATED MODULE: ./src/ChartInternal/internals/redraw.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/redraw.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5263,7 +5086,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 
 
 
-/* harmony default export */ var internals_redraw = ({
+/* harmony default export */ const redraw = ({
   redraw: function redraw(options, transitionsValue) {
     options === void 0 && (options = {});
     var $$ = this,
@@ -5316,7 +5139,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
         // Wait for end of transitions for callback
         var waitForDraw = generateWait(); // transition should be derived from one transition
 
-        Object(external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_["transition"])().duration(duration).each(function () {
+        (0,external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_.transition)().duration(duration).each(function () {
           redrawList.reduce(function (acc, t1) {
             return acc.concat(t1);
           }, []).forEach(function (t) {
@@ -5373,7 +5196,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     });
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/scale.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/scale.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5392,14 +5215,14 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 function getScale(type, min, max) {
   type === void 0 && (type = "linear"), min === void 0 && (min = 0), max === void 0 && (max = 1);
   var scale = {
-    linear: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLinear"],
-    log: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleSymlog"],
-    _log: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLog"],
-    time: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleTime"]
+    linear: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleLinear,
+    log: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSymlog,
+    _log: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleLog,
+    time: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleTime
   }[type]();
   return scale.type = type, /_?log/.test(type) && scale.clamp(!0), scale.range([min, max]);
 }
-/* harmony default export */ var internals_scale = ({
+/* harmony default export */ const scale = ({
   /**
    * Get x Axis scale function
    * @param {number} min Min value
@@ -5559,8 +5382,7 @@ function getScale(type, min, max) {
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-shape","commonjs2":"d3-shape","amd":"d3-shape","root":"d3"}
 var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(9);
-
-// CONCATENATED MODULE: ./src/ChartInternal/shape/shape.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/shape.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5569,7 +5391,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
 
 
-/* harmony default export */ var shape_shape = ({
+/* harmony default export */ const shape = ({
   /**
    * Get the shape draw function
    * @returns {object}
@@ -5773,31 +5595,31 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
   isWithinShape: function isWithinShape(that, d) {
     var isWithin,
         $$ = this,
-        shape = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(that);
+        shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(that);
     return $$.isTargetToShow(d.id) ? "hasValidPointType" in $$ && $$.hasValidPointType(that.nodeName) ? isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) : $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0) : that.nodeName === "path" && (isWithin = !shape.classed(config_classes.bar) || $$.isWithinBar(that)) : isWithin = !1, isWithin;
   },
   getInterpolate: function getInterpolate(d) {
     var $$ = this,
         interpolation = $$.getInterpolateType(d);
     return {
-      "basis": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveBasis"],
-      "basis-closed": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveBasisClosed"],
-      "basis-open": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveBasisOpen"],
-      "bundle": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveBundle"],
-      "cardinal": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveCardinal"],
-      "cardinal-closed": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveCardinalClosed"],
-      "cardinal-open": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveCardinalOpen"],
-      "catmull-rom": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveCatmullRom"],
-      "catmull-rom-closed": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveCatmullRomClosed"],
-      "catmull-rom-open": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveCatmullRomOpen"],
-      "monotone-x": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveMonotoneX"],
-      "monotone-y": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveMonotoneY"],
-      "natural": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveNatural"],
-      "linear-closed": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveLinearClosed"],
-      "linear": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveLinear"],
-      "step": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveStep"],
-      "step-after": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveStepAfter"],
-      "step-before": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["curveStepBefore"]
+      "basis": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveBasis,
+      "basis-closed": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveBasisClosed,
+      "basis-open": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveBasisOpen,
+      "bundle": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveBundle,
+      "cardinal": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveCardinal,
+      "cardinal-closed": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveCardinalClosed,
+      "cardinal-open": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveCardinalOpen,
+      "catmull-rom": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveCatmullRom,
+      "catmull-rom-closed": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveCatmullRomClosed,
+      "catmull-rom-open": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveCatmullRomOpen,
+      "monotone-x": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveMonotoneX,
+      "monotone-y": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveMonotoneY,
+      "natural": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveNatural,
+      "linear-closed": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveLinearClosed,
+      "linear": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveLinear,
+      "step": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveStep,
+      "step-after": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveStepAfter,
+      "step-before": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveStepBefore
     }[interpolation];
   },
   getInterpolateType: function getInterpolateType(d) {
@@ -5808,7 +5630,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     return $$.isSplineType(d) ? interpolation : $$.isStepType(d) ? config.line_step_type : "linear";
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/size.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/size.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5816,7 +5638,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
 
 
-/* harmony default export */ var internals_size = ({
+/* harmony default export */ const size = ({
   /**
    * Update container size
    * @private
@@ -6010,7 +5832,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0), state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10), hasGauge && !config.gauge_fullCircle && (state.arcHeight += state.height - $$.getPaddingBottomForGauge()), $$.updateRadius && $$.updateRadius(), state.isLegendRight && hasArc && (state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1);
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/text.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/text.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6019,7 +5841,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
 
 
-/* harmony default export */ var internals_text = ({
+/* harmony default export */ const internals_text = ({
   opacityForText: function opacityForText(d) {
     var $$ = this;
     return $$.isBarType(d) && !$$.meetsLabelThreshold(Math.abs($$.getRatio("bar", d)), "bar") ? "0" : $$.hasDataLabel ? "1" : "0";
@@ -6069,7 +5891,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", "0").call(function (selection) {
       selection.each(function (d, i, j) {
         var value = $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value;
-        value = $$.dataLabelFormat(d.id)(value, d.id, i, j), isNumber(value) ? this.textContent = value : setTextValue(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this), value);
+        value = $$.dataLabelFormat(d.id)(value, d.id, i, j), isNumber(value) ? this.textContent = value : setTextValue((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this), value);
       });
     });
   },
@@ -6102,11 +5924,11 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     // need to return 'true' as of being pushed to the redraw list
     // ref: getRedrawList()
     return $$.$el.text.each(function () {
-      var text = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this); // do not apply transition for newly added text elements
+      var text = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this); // do not apply transition for newly added text elements
 
       (withTransition && text.attr("x") ? text.transition(t) : text).call(function (selection) {
         selection.each(function (d, i) {
-          Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
+          (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
           var posX = x.bind(this)(d, i),
               posY = y.bind(this)(d, i);
           this.children.length ? this.setAttribute("transform", "translate(" + posX + " " + posY + ")") : (this.setAttribute("x", posX), this.setAttribute("y", posY));
@@ -6129,7 +5951,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     var text = base.textContent,
         cacheKey = KEY.textRect + "-" + text.replace(/\W/g, "_"),
         rect = $$.cache.get(cacheKey);
-    return rect || ($$.$el.svg.append("text").style("visibility", "hidden").style("font", Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(base).style("font")).classed(className, !0).text(text).call(function (v) {
+    return rect || ($$.$el.svg.append("text").style("visibility", "hidden").style("font", (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(base).style("font")).classed(className, !0).text(text).call(function (v) {
       rect = getBoundingRect(v.node());
     }).remove(), $$.cache.add(cacheKey, rect)), rect;
   },
@@ -6273,7 +6095,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
     textNode.node() && filteredTextNodes.each(function () {
       var coordinate = getTranslation(this),
-          filteredTextNode = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+          filteredTextNode = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ? textNode : filteredTextNode,
           overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) < Math.ceil(nodeForWidth.node().getComputedTextLength()),
           overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) < parseInt(textNode.style("font-size"), 10);
@@ -6290,7 +6112,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    */
   undoMarkOverlapped: function undoMarkOverlapped($$, selector) {
     $$.$el.arcs.selectAll(selector).each(function () {
-      Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["selectAll"])([this, this.previousSibling]).classed(config_classes.TextOverlapping, !1);
+      (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.selectAll)([this, this.previousSibling]).classed(config_classes.TextOverlapping, !1);
     });
   },
 
@@ -6309,7 +6131,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     return ratio >= threshold;
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/title.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/title.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6331,7 +6153,7 @@ function getTextPos(pos, width) {
   return position = pos.indexOf("center") > -1 ? isNum ? width / 2 : "middle" : pos.indexOf("right") > -1 ? isNum ? width : "end" : isNum ? 0 : "start", position;
 }
 
-/* harmony default export */ var internals_title = ({
+/* harmony default export */ const internals_title = ({
   /**
    * Initializes the title
    * @private
@@ -6399,7 +6221,7 @@ function getTextPos(pos, width) {
     return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/tooltip.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/tooltip.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6408,7 +6230,7 @@ function getTextPos(pos, width) {
 
 
 
-/* harmony default export */ var internals_tooltip = ({
+/* harmony default export */ const internals_tooltip = ({
   /**
    * Initializes the tooltip
    * @private
@@ -6420,7 +6242,7 @@ function getTextPos(pos, width) {
         bindto = config.tooltip_contents.bindto;
 
     // Show tooltip if needed
-    if ($el.tooltip = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto), $el.tooltip.empty() && ($el.tooltip = $el.chart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none")), config.tooltip_init_show) {
+    if ($el.tooltip = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(bindto), $el.tooltip.empty() && ($el.tooltip = $el.chart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none")), config.tooltip_init_show) {
       if ($$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
         var i,
             val,
@@ -6599,7 +6421,7 @@ function getTextPos(pos, width) {
         inputType = _state.inputType,
         hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle,
         svgLeft = $$.getSvgLeft(!0),
-        _d3Mouse = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(element),
+        _d3Mouse = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(element),
         x = _d3Mouse[0],
         y = _d3Mouse[1],
         chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(!0),
@@ -6760,14 +6582,14 @@ function getTextPos(pos, width) {
     }
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/transform.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/transform.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-/* harmony default export */ var internals_transform = ({
+/* harmony default export */ const transform = ({
   getTranslate: function getTranslate(target, index) {
     index === void 0 && (index = 0);
     var x,
@@ -6801,14 +6623,14 @@ function getTextPos(pos, width) {
     $$.transformMain(withTransition, transitions), hasAxis && config.subchart_show && $$.transformContext(withTransition, transitions), $el.legend && $$.transformLegend(withTransition);
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/type.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/type.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-/* harmony default export */ var internals_type = ({
+/* harmony default export */ const type = ({
   setTargetType: function setTargetType(targetIds, type) {
     var $$ = this,
         config = $$.config,
@@ -6981,9 +6803,7 @@ function getTextPos(pos, width) {
     return ["basis", "basis-closed", "basis-open", "bundle", "cardinal", "cardinal-closed", "cardinal-open", "catmull-rom", "catmull-rom-closed", "catmull-rom-open", "linear", "linear-closed", "monotone-x", "monotone-y", "natural"].indexOf(type) >= 0;
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/ChartInternal.ts
-
-
+;// CONCATENATED MODULE: ./src/ChartInternal/ChartInternal.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -7029,7 +6849,7 @@ function getTextPos(pos, width) {
  * @private
  */
 
-var ChartInternal_ChartInternal = /*#__PURE__*/function () {
+var ChartInternal = /*#__PURE__*/function () {
   // API interface
   // config object
   // cache instance
@@ -7044,10 +6864,10 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
   // formatter function
   // format function
   function ChartInternal(api) {
-    _defineProperty(this, "api", void 0), _defineProperty(this, "config", void 0), _defineProperty(this, "cache", void 0), _defineProperty(this, "$el", void 0), _defineProperty(this, "state", void 0), _defineProperty(this, "charts", void 0), _defineProperty(this, "data", {
+    this.api = void 0, this.config = void 0, this.cache = void 0, this.$el = void 0, this.state = void 0, this.charts = void 0, this.data = {
       xs: {},
       targets: []
-    }), _defineProperty(this, "axis", void 0), _defineProperty(this, "scale", {
+    }, this.axis = void 0, this.scale = {
       x: null,
       y: null,
       y2: null,
@@ -7055,10 +6875,10 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
       subY: null,
       subY2: null,
       zoom: null
-    }), _defineProperty(this, "org", {
+    }, this.org = {
       xScale: null,
       xDomain: null
-    }), _defineProperty(this, "color", void 0), _defineProperty(this, "patterns", void 0), _defineProperty(this, "levelColor", void 0), _defineProperty(this, "point", void 0), _defineProperty(this, "brush", void 0), _defineProperty(this, "format", {
+    }, this.color = void 0, this.patterns = void 0, this.levelColor = void 0, this.point = void 0, this.brush = void 0, this.format = {
       extraLineClasses: null,
       xAxisTick: null,
       dataTime: null,
@@ -7067,9 +6887,9 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
       // defaultAxisTimeFormat
       axisTime: null // axisTimeFormat
 
-    });
+    };
     var $$ = this;
-    $$.api = api, $$.config = new Options_Options(), $$.cache = new Cache_Cache();
+    $$.api = api, $$.config = new Options(), $$.cache = new Cache();
     var store = new Store();
     $$.$el = store.getStore("element"), $$.state = store.getStore("state");
   }
@@ -7091,7 +6911,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
       element: config.bindto,
       classname: "bb"
     };
-    isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $el.chart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element || []), $el.chart.empty() && ($el.chart = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser_doc.body.appendChild(browser_doc.createElement("div")))), $el.chart.html("").classed(bindto.classname, !0), $$.initToRender();
+    isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $el.chart = isFunction(bindto.element.node) ? config.bindto.element : (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(bindto.element || []), $el.chart.empty() && ($el.chart = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(browser_doc.body.appendChild(browser_doc.createElement("div")))), $el.chart.html("").classed(bindto.classname, !0), $$.initToRender();
   }
   /**
    * Initialize the rendering process
@@ -7127,7 +6947,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         isRotated = config.axis_rotated;
 
     if (state.datetimeId = "bb-" + +new Date(), $$.color = $$.generateColor(), $$.levelColor = $$.generateLevelColor(), $$.hasPointType() && ($$.point = $$.generatePoint()), state.hasAxis) {
-      $$.initClip(), format.extraLineClasses = $$.generateExtraLineClass(), format.dataTime = config.data_xLocaltime ? external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["timeParse"] : external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["utcParse"], format.axisTime = config.axis_x_localtime ? external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["timeFormat"] : external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["utcFormat"];
+      $$.initClip(), format.extraLineClasses = $$.generateExtraLineClass(), format.dataTime = config.data_xLocaltime ? external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_.timeParse : external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_.utcParse, format.axisTime = config.axis_x_localtime ? external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_.timeFormat : external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_.utcFormat;
       var isDragZoom = $$.config.zoom_enabled && $$.config.zoom_type === "drag";
 
       format.defaultAxisTime = function (d) {
@@ -7159,7 +6979,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         subY = scale.subY,
         subY2 = scale.subY2; // Set domains for each scale
 
-    if (x && (x.domain(util_sortValue($$.getXDomain($$.data.targets))), subX.domain(x.domain()), org.xDomain = x.domain()), y && (y.domain($$.getYDomain($$.data.targets, "y")), subY.domain(y.domain())), y2 && (y2.domain($$.getYDomain($$.data.targets, "y2")), subY2 && subY2.domain(y2.domain())), $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block"), hasInteraction && state.inputType) {
+    if (x && (x.domain(sortValue($$.getXDomain($$.data.targets))), subX.domain(x.domain()), org.xDomain = x.domain()), y && (y.domain($$.getYDomain($$.data.targets, "y")), subY.domain(y.domain())), y2 && (y2.domain($$.getYDomain($$.data.targets, "y2")), subY2 && subY2.domain(y2.domain())), $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block"), hasInteraction && state.inputType) {
       var isTouch = state.inputType === "touch";
       $el.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
         return callFn(config.onover, $$.api);
@@ -7339,9 +7159,9 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
 }();
 
 
-extend(ChartInternal_ChartInternal.prototype, [// common
-convert, ChartInternal_data_data, load, category, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_redraw, internals_scale, shape_shape, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type]);
-// CONCATENATED MODULE: ./src/config/config.ts
+extend(ChartInternal.prototype, [// common
+convert, data_data, load, category, internals_class, internals_color, domain, interactions_interaction, format, internals_legend, redraw, scale, shape, size, internals_text, internals_title, internals_tooltip, transform, type]);
+;// CONCATENATED MODULE: ./src/config/config.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -7367,14 +7187,14 @@ function loadConfig(config) {
     target = config, keys = key.split("_"), read = find(), isDefined(read) && (thisConfig[key] = read);
   });
 }
-// CONCATENATED MODULE: ./src/Chart/api/chart.ts
+;// CONCATENATED MODULE: ./src/Chart/api/chart.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-/* harmony default export */ var api_chart = ({
+/* harmony default export */ const chart = ({
   /**
    * Resize the chart.
    * @function resize
@@ -7478,12 +7298,12 @@ function loadConfig(config) {
     return key in config && (isDefined(value) ? (config[key] = value, res = value, redraw && this.flush()) : res = config[key]), res;
   }
 });
-// CONCATENATED MODULE: ./src/Chart/api/color.ts
+;// CONCATENATED MODULE: ./src/Chart/api/color.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* harmony default export */ var api_color = ({
+/* harmony default export */ const api_color = ({
   /**
    * Get the color
    * @function color
@@ -7498,7 +7318,7 @@ function loadConfig(config) {
     return this.internal.color(id); // more patterns
   }
 });
-// CONCATENATED MODULE: ./src/Chart/api/data.ts
+;// CONCATENATED MODULE: ./src/Chart/api/data.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -7691,10 +7511,10 @@ extend(api_data_data, {
     return this.internal.getMinMaxData().max;
   }
 });
-/* harmony default export */ var api_data = ({
+/* harmony default export */ const api_data = ({
   data: api_data_data
 });
-// CONCATENATED MODULE: ./src/Chart/api/export.ts
+;// CONCATENATED MODULE: ./src/Chart/api/export.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -7732,19 +7552,19 @@ function nodeToSvgDataUrl(node, size) {
   }).map(function (r) {
     return r.cssText;
   });
-  clone.setAttribute("xmlns", external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].xhtml);
+  clone.setAttribute("xmlns", external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.xhtml);
   var nodeXml = serializer.serializeToString(clone),
       style = browser_doc.createElement("style"); // escape css for XML
 
   style.appendChild(browser_doc.createTextNode(cssText.join("\n")));
   var styleXml = serializer.serializeToString(style),
-      dataStr = ("<svg xmlns=\"" + external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg + "\" width=\"" + size.width + "\" height=\"" + size.height + "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t" + styleXml + "\n\t\t\t\t" + nodeXml.replace(/(url\()[^#]+/g, "$1") + "\n\t\t\t</foreignObject></svg>").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
+      dataStr = ("<svg xmlns=\"" + external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg + "\" width=\"" + size.width + "\" height=\"" + size.height + "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t" + styleXml + "\n\t\t\t\t" + nodeXml.replace(/(url\()[^#]+/g, "$1") + "\n\t\t\t</foreignObject></svg>").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
   // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
 
   return "data:image/svg+xml;base64," + b64EncodeUnicode(dataStr);
 }
 
-/* harmony default export */ var api_export = ({
+/* harmony default export */ const api_export = ({
   /**
    * Export chart as an image.
    * - **NOTE:**
@@ -7796,14 +7616,14 @@ function nodeToSvgDataUrl(node, size) {
     return svgDataUrl;
   }
 });
-// CONCATENATED MODULE: ./src/Chart/api/focus.ts
+;// CONCATENATED MODULE: ./src/Chart/api/focus.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-/* harmony default export */ var api_focus = ({
+/* harmony default export */ const api_focus = ({
   /**
    * This API highlights specified targets and fade out the others.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
@@ -7884,11 +7704,11 @@ function nodeToSvgDataUrl(node, size) {
         candidates = $el.svg.selectAll($$.selectorTargets(targetIds));
     // should be for all targets
     candidates.classed(config_classes.focused, !1).classed(config_classes.defocused, !1), $$.hasArcType() && $$.unexpandArc(targetIds), config.legend_show && ($$.showLegend(targetIds.filter($$.isLegendToShow.bind($$))), $el.legend.selectAll($$.selectorLegends(targetIds)).filter(function () {
-      return Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.legendItemFocused);
+      return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused);
     }).classed(config_classes.legendItemFocused, !1)), state.focusedTargetIds = [], state.defocusedTargetIds = [];
   }
 });
-// CONCATENATED MODULE: ./src/Chart/api/legend.ts
+;// CONCATENATED MODULE: ./src/Chart/api/legend.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -7951,16 +7771,16 @@ var legend_legend = {
     });
   }
 };
-/* harmony default export */ var api_legend = ({
+/* harmony default export */ const api_legend = ({
   legend: legend_legend
 });
-// CONCATENATED MODULE: ./src/Chart/api/load.ts
+;// CONCATENATED MODULE: ./src/Chart/api/load.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ var api_load = ({
+/* harmony default export */ const api_load = ({
   /**
    * Load data to the chart.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
@@ -8102,7 +7922,7 @@ var legend_legend = {
     });
   }
 });
-// CONCATENATED MODULE: ./src/Chart/api/show.ts
+;// CONCATENATED MODULE: ./src/Chart/api/show.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8132,7 +7952,7 @@ function showHide(show, targetIdsValue, options) {
   }), $$.state.toggling = !1;
 }
 
-/* harmony default export */ var api_show = ({
+/* harmony default export */ const show = ({
   /**
    * Show data series on chart
    * @function show
@@ -8217,7 +8037,7 @@ function showHide(show, targetIdsValue, options) {
     }, 0);
   }
 });
-// CONCATENATED MODULE: ./src/Chart/api/tooltip.ts
+;// CONCATENATED MODULE: ./src/Chart/api/tooltip.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8321,12 +8141,10 @@ var tooltip_tooltip = {
     inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles && $$.unexpandCircles(), $$.unexpandBars && $$.unexpandBars();
   }
 };
-/* harmony default export */ var api_tooltip = ({
+/* harmony default export */ const api_tooltip = ({
   tooltip: tooltip_tooltip
 });
-// CONCATENATED MODULE: ./src/Chart/Chart.ts
-
-
+;// CONCATENATED MODULE: ./src/Chart/Chart.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8404,9 +8222,9 @@ var tooltip_tooltip = {
  *  chart.plugins; // [Stanford, PluginA] - instance array
  */
 
-var Chart_Chart = function Chart(options) {
-  _defineProperty(this, "plugins", []), _defineProperty(this, "internal", void 0);
-  var $$ = new ChartInternal_ChartInternal(this);
+var Chart = function Chart(options) {
+  this.plugins = [], this.internal = void 0;
+  var $$ = new ChartInternal(this);
   // bind to namespaced APIs
   this.internal = $$, function bindThis(fn, target, argThis) {
     Object.keys(fn).forEach(function (key) {
@@ -8420,8 +8238,8 @@ var Chart_Chart = function Chart(options) {
 
 
 
-extend(Chart_Chart.prototype, [api_chart, api_color, api_data, api_export, api_focus, api_legend, api_load, api_show, api_tooltip]);
-// CONCATENATED MODULE: ./src/Chart/api/axis.ts
+extend(Chart.prototype, [chart, api_color, api_data, api_export, api_focus, api_legend, api_load, show, api_tooltip]);
+;// CONCATENATED MODULE: ./src/Chart/api/axis.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8467,7 +8285,7 @@ function axis_getMinMax($$, type) {
  */
 
 
-var axis_axis = {
+var axis = {
   /**
    * Get and set axis labels.
    * @function axis․labels
@@ -8567,15 +8385,15 @@ var axis_axis = {
     return undefined;
   }
 };
-/* harmony default export */ var api_axis = ({
-  axis: axis_axis
+/* harmony default export */ const api_axis = ({
+  axis: axis
 });
-// CONCATENATED MODULE: ./src/Chart/api/category.ts
+;// CONCATENATED MODULE: ./src/Chart/api/category.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* harmony default export */ var api_category = ({
+/* harmony default export */ const api_category = ({
   /**
    * Set specified category name on category axis.
    * @function category
@@ -8611,7 +8429,7 @@ var axis_axis = {
     return arguments.length ? (config.axis_x_categories = _categories, $$.redraw(), config.axis_x_categories) : config.axis_x_categories;
   }
 });
-// CONCATENATED MODULE: ./src/Chart/api/grid.x.ts
+;// CONCATENATED MODULE: ./src/Chart/api/grid.x.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8688,10 +8506,10 @@ extend(xgrids, {
     this.internal.removeGridLines(params, !0);
   }
 });
-/* harmony default export */ var grid_x = ({
+/* harmony default export */ const grid_x = ({
   xgrids: xgrids
 });
-// CONCATENATED MODULE: ./src/Chart/api/grid.y.ts
+;// CONCATENATED MODULE: ./src/Chart/api/grid.y.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8770,16 +8588,16 @@ extend(ygrids, {
     this.internal.removeGridLines(params, !1);
   }
 });
-/* harmony default export */ var grid_y = ({
+/* harmony default export */ const grid_y = ({
   ygrids: ygrids
 });
-// CONCATENATED MODULE: ./src/Chart/api/group.ts
+;// CONCATENATED MODULE: ./src/Chart/api/group.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ var group = ({
+/* harmony default export */ const group = ({
   /**
    * Update groups for the targets.
    * @function groups
@@ -8799,7 +8617,7 @@ extend(ygrids, {
     return isUndefined(_groups) ? config.data_groups : (config.data_groups = _groups, $$.redraw(), config.data_groups);
   }
 });
-// CONCATENATED MODULE: ./src/Chart/api/regions.ts
+;// CONCATENATED MODULE: ./src/Chart/api/regions.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8821,13 +8639,13 @@ extend(ygrids, {
  *    {axis: "y", end: 50, class: "regionY"}
  * ]);
  */
-function regions_regions(regions) {
+function regions(regions) {
   var $$ = this.internal,
       config = $$.config;
   return regions ? (config.regions = regions, $$.redrawWithoutRescale(), regions) : config.regions;
 }
 
-extend(regions_regions, {
+extend(regions, {
   /**
    * Add new region.<br><br>
    * This API adds new region instead of replacing like regions.
@@ -8890,16 +8708,16 @@ extend(regions_regions, {
     }), config.regions = regions) : config.regions = [], regions;
   }
 });
-/* harmony default export */ var api_regions = ({
-  regions: regions_regions
+/* harmony default export */ const api_regions = ({
+  regions: regions
 });
-// CONCATENATED MODULE: ./src/Chart/api/x.ts
+;// CONCATENATED MODULE: ./src/Chart/api/x.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ var api_x = ({
+/* harmony default export */ const x = ({
   /**
    * Get and set x values for the chart.
    * @function x
@@ -8950,13 +8768,13 @@ extend(regions_regions, {
     })), $$.data.xs;
   }
 });
-// CONCATENATED MODULE: ./src/Chart/api/flow.ts
+;// CONCATENATED MODULE: ./src/Chart/api/flow.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ var api_flow = ({
+/* harmony default export */ const flow = ({
   /**
    * Flow data to the chart.<br><br>
    * By this API, you can append new data points to the chart.
@@ -9079,10 +8897,7 @@ extend(regions_regions, {
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(10);
-
-// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRendererHelper.ts
-
-
+;// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRendererHelper.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -9091,9 +8906,9 @@ var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack
 
 
 
-var AxisRendererHelper_AxisRendererHelper = /*#__PURE__*/function () {
+var AxisRendererHelper = /*#__PURE__*/function () {
   function AxisRendererHelper(owner) {
-    _defineProperty(this, "owner", void 0), _defineProperty(this, "config", void 0), _defineProperty(this, "scale", void 0);
+    this.owner = void 0, this.config = void 0, this.scale = void 0;
     var scale = getScale(),
         config = owner.config,
         params = owner.params;
@@ -9203,9 +9018,7 @@ var AxisRendererHelper_AxisRendererHelper = /*#__PURE__*/function () {
 }();
 
 
-// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRenderer.ts
-
-
+;// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRenderer.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -9215,9 +9028,9 @@ var AxisRendererHelper_AxisRendererHelper = /*#__PURE__*/function () {
 
 
 
-var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
+var AxisRenderer = /*#__PURE__*/function () {
   function AxisRenderer(params) {
-    params === void 0 && (params = {}), _defineProperty(this, "helper", void 0), _defineProperty(this, "config", void 0), _defineProperty(this, "params", void 0), _defineProperty(this, "g", void 0);
+    params === void 0 && (params = {}), this.helper = void 0, this.config = void 0, this.params = void 0, this.g = void 0;
     var config = {
       innerTickSize: 6,
       outerTickSize: params.outerTick ? 6 : 0,
@@ -9234,7 +9047,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
       transition: null,
       noTransition: params.noTransition
     };
-    config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding, this.config = config, this.params = params, this.helper = new AxisRendererHelper_AxisRendererHelper(this);
+    config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding, this.config = config, this.params = params, this.helper = new AxisRendererHelper(this);
   }
   /**
    * Create axis element
@@ -9277,7 +9090,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
     }; // // get the axis' tick position configuration
 
     g.each(function () {
-      var g = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+      var g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           scale0 = this.__chart__ || scale,
           scale1 = helper.copyScale();
       $g = g, this.__chart__ = scale1, config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
@@ -9295,7 +9108,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
             tickExit = tick.exit().remove(); // update selection
 
         tick = tickEnter.merge(tick), tickShow.tick && tickEnter.append("line"), tickShow.text && tickEnter.append("text");
-        var sizeFor1Char = AxisRendererHelper_AxisRendererHelper.getSizeFor1Char(tick),
+        var sizeFor1Char = AxisRendererHelper.getSizeFor1Char(tick),
             counts = [],
             tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
           var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
@@ -9473,9 +9286,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
 }();
 
 
-// CONCATENATED MODULE: ./src/ChartInternal/Axis/Axis.ts
-
-
+;// CONCATENATED MODULE: ./src/ChartInternal/Axis/Axis.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -9485,24 +9296,24 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
 
 
 
-/* harmony default export */ var Axis_Axis = ({
+/* harmony default export */ const Axis = ({
   getAxisInstance: function getAxisInstance() {
-    return this.axis || new Axis_Axis_Axis(this);
+    return this.axis || new Axis_Axis(this);
   }
 });
 
-var Axis_Axis_Axis = /*#__PURE__*/function () {
+var Axis_Axis = /*#__PURE__*/function () {
   function Axis(owner) {
-    _defineProperty(this, "owner", void 0), _defineProperty(this, "x", void 0), _defineProperty(this, "subX", void 0), _defineProperty(this, "y", void 0), _defineProperty(this, "y2", void 0), _defineProperty(this, "axesList", {}), _defineProperty(this, "tick", {
+    this.owner = void 0, this.x = void 0, this.subX = void 0, this.y = void 0, this.y2 = void 0, this.axesList = {}, this.tick = {
       x: null,
       y: null,
       y2: null
-    }), _defineProperty(this, "xs", []), _defineProperty(this, "orient", {
+    }, this.xs = [], this.orient = {
       x: "bottom",
       y: "left",
       y2: "right",
       subX: "bottom"
-    }), this.owner = owner, this.setOrient();
+    }, this.owner = owner, this.setOrient();
   }
 
   var _proto = Axis.prototype;
@@ -9582,7 +9393,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         axes = [],
         axesConfig = config["axis_" + id + "_axes"],
         isRotated = config.axis_rotated;
-    id === "x" ? d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisLeft"] : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisBottom"] : id === "y" ? d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisBottom"] : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisLeft"] : id === "y2" && (d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisTop"] : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisRight"]), axesConfig.length && axesConfig.forEach(function (v) {
+    id === "x" ? d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisLeft : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisBottom : id === "y" ? d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisBottom : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisLeft : id === "y2" && (d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisTop : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisRight), axesConfig.length && axesConfig.forEach(function (v) {
       var tick = v.tick || {},
           scale = $$.scale[id].copy();
       v.domain && scale.domain(v.domain), axes.push(d3Axis(scale).ticks(tick.count).tickFormat(isFunction(tick.format) ? tick.format.bind($$.api) : function (x) {
@@ -9660,7 +9471,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
       orgXScale: $$.scale.x
     });
     isX || (axisParams.tickStepSize = config["axis_" + type + "_tick_stepSize"]);
-    var axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.scale.zoom || scale).orient(orient);
+    var axis = new AxisRenderer(axisParams).scale(isX && $$.scale.zoom || scale).orient(orient);
 
     if (isX && this.isTimeSeries() && tickValues && !isFunction(tickValues)) {
       var _fn = parseDate.bind($$);
@@ -10031,7 +9842,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
       if (axis && toCull) {
         var intervalForCulling,
             tickText = axis.selectAll(".tick text"),
-            tickValues = util_sortValue(tickText.data()),
+            tickValues = sortValue(tickText.data()),
             tickSize = tickValues.length,
             cullingMax = config["axis_" + id + "_tick_culling_max"];
 
@@ -10055,7 +9866,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
     });
   }, Axis;
 }();
-// CONCATENATED MODULE: ./src/ChartInternal/interactions/eventrect.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/interactions/eventrect.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10063,7 +9874,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
 
 
 
-/* harmony default export */ var eventrect = ({
+/* harmony default export */ const eventrect = ({
   /**
    * Initialize the area that detects the event.
    * Add a container for the zone that detects the event.
@@ -10112,7 +9923,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         svg = _$$$$el.svg,
         selectRect = function (context) {
       if (isMultipleX) $$.selectRectForMultipleXs(context);else {
-        var index = $$.getDataIndexFromEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"]);
+        var index = $$.getDataIndexFromEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event);
         $$.callOverOutForTouch(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
       }
     },
@@ -10133,7 +9944,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
     eventRect.on("touchstart", function () {
       return $$.updateEventRect();
     }).on("touchstart.eventRect touchmove.eventRect", function () {
-      var event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"];
+      var event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event;
 
       if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
         // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
@@ -10143,7 +9954,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
     }, !0).on("touchend.eventRect", function () {
       !eventRect.empty() && eventRect.classed(config_classes.eventRect) && ($$.hasArcType() || !$$.toggleShape || state.cancelClick) && state.cancelClick && (state.cancelClick = !1);
     }, !0), svg.on("touchstart", function () {
-      var target = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].target;
+      var target = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.target;
       target && target !== eventRect.node() && unselectRect();
     });
   },
@@ -10229,7 +10040,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
 
     // do nothing when dragging
     if (!(state.dragging || $$.hasArcType(targetsToShow))) {
-      var mouse = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(context),
+      var mouse = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(context),
           closest = $$.findClosestFromTargets(targetsToShow, mouse);
       if (state.mouseover && (!closest || closest.id !== state.mouseover.id) && (config.data_onout.call($$.api, state.mouseover), state.mouseover = undefined), !closest) return void $$.unselectRect();
       var sameXData = $$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped ? [closest] : $$.filterByX(targetsToShow, closest.x),
@@ -10271,13 +10082,13 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
       var _eventReceiver = eventReceiver,
           currentIdx = _eventReceiver.currentIdx,
           data = _eventReceiver.data,
-          d = data[currentIdx === -1 ? $$.getDataIndexFromEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"]) : currentIdx];
+          d = data[currentIdx === -1 ? $$.getDataIndexFromEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event) : currentIdx];
       $$.clickHandlerForSingleX.bind(this)(d, $$);
     });
 
     if (state.inputType === "mouse") {
       var getData = function () {
-        var index = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"] ? $$.getDataIndexFromEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"]) : eventReceiver.currentIdx;
+        var index = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event ? $$.getDataIndexFromEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event) : eventReceiver.currentIdx;
         return index > -1 ? eventReceiver.data[index] : null;
       };
 
@@ -10288,7 +10099,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
 
         if (!(state.dragging || state.flowing || $$.hasArcType() || !d || config.tooltip_grouped && d && d.index === eventReceiver.currentIdx)) {
           var index = d.index;
-          $$.isStepType(d) && config.line_step_type === "step-after" && Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(this)[0] < $$.scale.x($$.getXValue(d.id, index)) && (index -= 1), index !== eventReceiver.currentIdx && ($$.setOverOut(!1, eventReceiver.currentIdx), eventReceiver.currentIdx = index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, rect, index), $$.setOverOut(index !== -1, index);
+          $$.isStepType(d) && config.line_step_type === "step-after" && (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this)[0] < $$.scale.x($$.getXValue(d.id, index)) && (index -= 1), index !== eventReceiver.currentIdx && ($$.setOverOut(!1, eventReceiver.currentIdx), eventReceiver.currentIdx = index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, rect, index), $$.setOverOut(index !== -1, index);
         }
       }).on("mouseout", function () {
         // chart is destroyed
@@ -10335,7 +10146,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
         targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
     if (!$$.hasArcType(targetsToShow)) {
-      var mouse = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(this),
+      var mouse = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this),
           closest = $$.findClosestFromTargets(targetsToShow, mouse);
       !closest || ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) && $$.$el.main.selectAll("." + config_classes.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll("." + config_classes.shape + "-" + closest.index).each(function () {
         (config.data_selection_grouped || $$.isWithinShape(this, closest)) && ($$.toggleShape && $$.toggleShape(this, closest, closest.index), config.data_onclick.bind($$.api)(closest, this));
@@ -10346,8 +10157,7 @@ var Axis_Axis_Axis = /*#__PURE__*/function () {
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-ease","commonjs2":"d3-ease","amd":"d3-ease","root":"d3"}
 var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(11);
-
-// CONCATENATED MODULE: ./src/ChartInternal/interactions/flow.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/interactions/flow.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10357,7 +10167,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
 
 
 
-/* harmony default export */ var interactions_flow = ({
+/* harmony default export */ const interactions_flow = ({
   /**
    * Generate flow
    * @param {object} args option object
@@ -10403,7 +10213,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
         orgDataCount = _flow.orgDataCount,
         transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength),
         wait = generateWait(),
-        gt = Object(external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_["transition"])().ease(external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_["easeLinear"]).duration(duration);
+        gt = (0,external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_.transition)().ease(external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_.easeLinear).duration(duration);
     wait.add(Object.keys(elements).map(function (v) {
       var n = elements[v];
       return n = v === "axis.x" ? n.transition(gt).call(function (g) {
@@ -10487,13 +10297,13 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
     return "translate(" + translateX + ",0) scale(" + scaleX + ",1)";
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/clip.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/clip.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ var internals_clip = ({
+/* harmony default export */ const clip = ({
   initClip: function initClip() {
     var $$ = this,
         clip = $$.state.clip;
@@ -10590,7 +10400,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
     svg && svg.select("#" + clip.idXAxisTickTexts + " rect").attr("width", current.maxTickWidths.x.clipPath).attr("height", 30);
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/grid.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/grid.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10630,14 +10440,14 @@ function getGridTextX(isX, width, height) {
 
 function smoothLines(el, type) {
   type === "grid" && el.each(function () {
-    var g = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this);
+    var g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
     ["x1", "x2", "y1", "y2"].forEach(function (v) {
       return g.attr(v, Math.ceil(+g.attr(v)));
     });
   });
 }
 
-/* harmony default export */ var internals_grid = ({
+/* harmony default export */ const grid = ({
   hasGrid: function hasGrid() {
     var config = this.config;
     return ["x", "y"].some(function (v) {
@@ -10653,7 +10463,7 @@ function smoothLines(el, type) {
         config = $$.config,
         clip = $$.state.clip,
         $el = $$.$el;
-    (config.grid_x_lines.length || config.grid_y_lines.length) && ($el.gridLines.main = $el.main.insert("g", "." + config_classes.chart + (config.grid_lines_front ? " + *" : "")).attr("clip-path", clip.pathGrid).attr("class", config_classes.grid + " " + config_classes.gridLines), $el.gridLines.main.append("g").attr("class", config_classes.xgridLines), $el.gridLines.main.append("g").attr("class", config_classes.ygridLines), $el.gridLines.x = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["selectAll"])([]));
+    (config.grid_x_lines.length || config.grid_y_lines.length) && ($el.gridLines.main = $el.main.insert("g", "." + config_classes.chart + (config.grid_lines_front ? " + *" : "")).attr("clip-path", clip.pathGrid).attr("class", config_classes.grid + " " + config_classes.gridLines), $el.gridLines.main.append("g").attr("class", config_classes.xgridLines), $el.gridLines.main.append("g").attr("class", config_classes.ygridLines), $el.gridLines.x = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.selectAll)([]));
   },
   updateXGrid: function updateXGrid(withoutUpdate) {
     var $$ = this,
@@ -10681,7 +10491,7 @@ function smoothLines(el, type) {
       "y1": 0,
       "y2": state.height
     }, grid.x = main.select("." + config_classes.xgrids).selectAll("." + config_classes.xgrid).data(xgridData), grid.x.exit().remove(), grid.x = grid.x.enter().append("line").attr("class", config_classes.xgrid).merge(grid.x), withoutUpdate || grid.x.each(function () {
-      var grid = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this);
+      var grid = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
       Object.keys(state.xgridAttr).forEach(function (id) {
         grid.attr(id, state.xgridAttr[id]).style("opacity", function () {
           return grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ? "0" : "1";
@@ -10814,7 +10624,7 @@ function smoothLines(el, type) {
           xx = $$.xx.bind($$);
       focusEl.style("visibility", "visible").data(dataToShow.concat(dataToShow)).each(function (d) {
         var xy,
-            el = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+            el = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
             pos = {
           x: xx(d),
           y: $$.getYScaleById(d.id)(d.value)
@@ -10902,7 +10712,7 @@ function smoothLines(el, type) {
     });
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/region.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/region.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10911,7 +10721,7 @@ function smoothLines(el, type) {
 
 
 
-/* harmony default export */ var region = ({
+/* harmony default export */ const region = ({
   initRegion: function initRegion() {
     var $$ = this,
         $el = $$.$el;
@@ -10932,7 +10742,7 @@ function smoothLines(el, type) {
     return regions = (withTransition ? regions.transition() : regions).attr("x", $$.regionX.bind($$)).attr("y", $$.regionY.bind($$)).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$)), [(withTransition ? regions.transition() : regions).style("fill-opacity", function (d) {
       return isValue(d.opacity) ? d.opacity : "0.1";
     }).on("end", function () {
-      Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this.parentNode).selectAll("rect:not([x])").remove();
+      (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode).selectAll("rect:not([x])").remove();
     })];
   },
   getRegionXY: function getRegionXY(type, d) {
@@ -10975,12 +10785,12 @@ function smoothLines(el, type) {
     return !d.axis || d.axis === "x";
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/size.axis.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/size.axis.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* harmony default export */ var size_axis = ({
+/* harmony default export */ const size_axis = ({
   /**
    * Get Axis size according its position
    * @param {string} id Axis id value - x, y or y2
@@ -11072,7 +10882,7 @@ function smoothLines(el, type) {
     return maxTickWidth > tickLength;
   }
 });
-// CONCATENATED MODULE: ./src/config/Options/data/axis.ts
+;// CONCATENATED MODULE: ./src/config/Options/data/axis.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11081,7 +10891,7 @@ function smoothLines(el, type) {
 /**
  * Axis based chart data config options
  */
-/* harmony default export */ var data_axis = ({
+/* harmony default export */ const data_axis = ({
   /**
    * Specify the keys of the x values for each data.<br><br>
    * This option can be used if we want to show the data that has different x values.
@@ -11217,7 +11027,7 @@ function smoothLines(el, type) {
    */
   data_stack_normalize: !1
 });
-// CONCATENATED MODULE: ./src/config/Options/axis/x.ts
+;// CONCATENATED MODULE: ./src/config/Options/axis/x.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11226,7 +11036,7 @@ function smoothLines(el, type) {
 /**
  * x Axis config options
  */
-/* harmony default export */ var axis_x = ({
+/* harmony default export */ const axis_x = ({
   /**
    * Set clip-path attribute for x axis element
    * @name axis․x․clipPath
@@ -11875,7 +11685,7 @@ function smoothLines(el, type) {
    */
   axis_x_axes: []
 });
-// CONCATENATED MODULE: ./src/config/Options/axis/y.ts
+;// CONCATENATED MODULE: ./src/config/Options/axis/y.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11884,7 +11694,7 @@ function smoothLines(el, type) {
 /**
  * y Axis  config options
  */
-/* harmony default export */ var axis_y = ({
+/* harmony default export */ const y = ({
   /**
    * Set clip-path attribute for y axis element
    * - **NOTE**: `clip-path` attribute for y Axis is set only when `axis.y.inner` option is true.
@@ -12369,7 +12179,7 @@ function smoothLines(el, type) {
    */
   axis_y_axes: []
 });
-// CONCATENATED MODULE: ./src/config/Options/axis/y2.ts
+;// CONCATENATED MODULE: ./src/config/Options/axis/y2.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12378,7 +12188,7 @@ function smoothLines(el, type) {
 /**
  * y2 Axis  config options
  */
-/* harmony default export */ var axis_y2 = ({
+/* harmony default export */ const y2 = ({
   /**
    * Show or hide y2 axis.
    * - **NOTE**:
@@ -12823,7 +12633,7 @@ function smoothLines(el, type) {
    */
   axis_y2_axes: []
 });
-// CONCATENATED MODULE: ./src/config/Options/axis/axis.ts
+;// CONCATENATED MODULE: ./src/config/Options/axis/axis.ts
 
 
 function axis_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -12841,7 +12651,7 @@ function axis_objectSpread(target) { for (var source, i = 1; i < arguments.lengt
  * y Axis  config options
  */
 
-/* harmony default export */ var Options_axis_axis = (axis_objectSpread(axis_objectSpread(axis_objectSpread({
+/* harmony default export */ const axis_axis = (axis_objectSpread(axis_objectSpread(axis_objectSpread({
   /**
    * Switch x and y axis position.
    * @name axis․rotated
@@ -12854,8 +12664,8 @@ function axis_objectSpread(target) { for (var source, i = 1; i < arguments.lengt
    * }
    */
   axis_rotated: !1
-}, axis_x), axis_y), axis_y2));
-// CONCATENATED MODULE: ./src/config/Options/common/grid.ts
+}, axis_x), y), y2));
+;// CONCATENATED MODULE: ./src/config/Options/common/grid.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12864,7 +12674,7 @@ function axis_objectSpread(target) { for (var source, i = 1; i < arguments.lengt
 /**
  * grid config options
  */
-/* harmony default export */ var common_grid = ({
+/* harmony default export */ const common_grid = ({
   /**
    * Set related options
    * @name grid
@@ -12935,7 +12745,7 @@ function axis_objectSpread(target) { for (var source, i = 1; i < arguments.lengt
   grid_front: !1,
   grid_lines_front: !0
 });
-// CONCATENATED MODULE: ./src/config/resolver/axis.ts
+;// CONCATENATED MODULE: ./src/config/resolver/axis.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12965,13 +12775,12 @@ function axis_objectSpread(target) { for (var source, i = 1; i < arguments.lengt
 
 
 
-var axis_api = [api_axis, api_category, grid_x, grid_y, api_flow, group, api_regions, api_x];
-var internal = [Axis_Axis, internals_clip, eventrect, interactions_flow, internals_grid, region, size_axis];
-var axis_options = [data_axis, Options_axis_axis, common_grid];
+var api = [api_axis, api_category, grid_x, grid_y, flow, group, api_regions, x];
+var internal = [Axis, clip, eventrect, interactions_flow, grid, region, size_axis];
+var options = [data_axis, axis_axis, common_grid];
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
 var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(12);
-
-// CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12982,7 +12791,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-/* harmony default export */ var shape_arc = ({
+/* harmony default export */ const arc = ({
   initPie: function initPie() {
     var $$ = this,
         config = $$.config,
@@ -12993,7 +12802,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         sortValue = $$.isOrderAsc() || $$.isOrderDesc() ? function (a, b) {
       return $$.isOrderAsc() ? a - b : b - a;
     } : null;
-    $$.pie = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["pie"])().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).sortValues(sortValue).value(function (d) {
+    $$.pie = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.pie)().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).sortValues(sortValue).value(function (d) {
       return d.values.reduce(function (a, b) {
         return a + b.value;
       }, 0);
@@ -13056,7 +12865,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         ir = $$.getInnerRadius(),
         singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
         hasMultiArcGauge = $$.hasMultiArcGauge(),
-        arc = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["arc"])().outerRadius(function (d) {
+        arc = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.arc)().outerRadius(function (d) {
       return hasMultiArcGauge ? state.radius - singleArcWidth * d.index : state.radius;
     }).innerRadius(function (d) {
       return hasMultiArcGauge ? state.radius - singleArcWidth * (d.index + 1) : isNumber(ir) ? ir : 0;
@@ -13082,7 +12891,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
         hasMultiArcGauge = $$.hasMultiArcGauge(),
         expandWidth = Math.min(state.radiusExpanded * newRate - state.radius, singleArcWidth * .8 - (1 - newRate) * 100),
-        arc = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["arc"])().outerRadius(function (d) {
+        arc = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.arc)().outerRadius(function (d) {
       return hasMultiArcGauge ? state.radius - singleArcWidth * d.index + expandWidth : state.radiusExpanded * newRate;
     }).innerRadius(function (d) {
       return hasMultiArcGauge ? state.radius - singleArcWidth * (d.index + 1) : state.innerRadius;
@@ -13130,7 +12939,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     var $$ = this,
         hasGauge = $$.hasType("gauge");
     $$.shouldShowArcLabel() && selection.style("fill", $$.updateTextColor.bind($$)).each(function (d) {
-      var node = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+      var node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           updated = $$.updateAngle(d),
           ratio = $$.getRatio("arc", updated),
           isUnderThreshold = $$.meetsLabelThreshold(ratio, $$.hasType("donut") && "donut" || $$.hasType("gauge") && "gauge" || $$.hasType("pie") && "pie");
@@ -13160,7 +12969,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       if ($$.shouldExpand(d.data.id)) {
         var expandDuration = $$.getExpandConfig(d.data.id, "duration"),
             svgArcExpandedSub = $$.getSvgArcExpanded($$.getExpandConfig(d.data.id, "rate"));
-        Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).selectAll("path").transition().duration(expandDuration).attr("d", $$.svgArcExpanded).transition().duration(expandDuration * 2).attr("d", svgArcExpandedSub);
+        (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).selectAll("path").transition().duration(expandDuration).attr("d", $$.svgArcExpanded).transition().duration(expandDuration * 2).attr("d", svgArcExpandedSub);
       }
     });
   },
@@ -13277,7 +13086,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         return "M 0 0";
       };
       isNaN(this._current.startAngle) && (this._current.startAngle = 0), isNaN(this._current.endAngle) && (this._current.endAngle = this._current.startAngle);
-      var interpolate = Object(external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_["interpolate"])(this._current, updated);
+      var interpolate = (0,external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_.interpolate)(this._current, updated);
       return this._current = interpolate(0), function (t) {
         var interpolated = interpolate(t);
         // data.id will be updated by interporator
@@ -13289,7 +13098,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }) // Where gauge reading color would receive customization.
     .style("opacity", "1").call(endall, function () {
       if ($$.levelColor) {
-        var path = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+        var path = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
             d = path.datum();
         $$.updateLegendItemColor(d.data.id, path.style("fill"));
       }
@@ -13341,8 +13150,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       $$.showTooltip([arcData], this);
     }), isTouch && $$.hasArcType() && !$$.radars) {
       var getEventArc = function () {
-        var touch = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].changedTouches[0],
-            eventArc = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
+        var touch = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.changedTouches[0],
+            eventArc = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
         return eventArc;
       },
           handler = function () {
@@ -13388,7 +13197,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         var index = 0;
         backgroundArc = backgroundArc.selectAll("path." + config_classes.chartArcsBackground).data($$.data.targets), backgroundArc.enter().append("path").attr("class", function (d, i) {
           return config_classes.chartArcsBackground + " " + config_classes.chartArcsBackground + "-" + i;
-        }).merge(backgroundArc).attr("d", function (d1) {
+        }).style("fill", config.gauge_background || null).merge(backgroundArc).attr("d", function (d1) {
           if (state.hiddenTargetIds.indexOf(d1.id) >= 0) return "M 0 0";
           var d = {
             data: [{
@@ -13415,7 +13224,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/shape/area.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/area.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -13424,7 +13233,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-/* harmony default export */ var shape_area = ({
+/* harmony default export */ const shape_area = ({
   initArea: function initArea(mainLine) {
     var $$ = this,
         config = $$.config;
@@ -13465,7 +13274,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         state = $$.state,
         $el = $$.$el;
     config.area_linearGradient && $$.updateAreaGradient(), $el.area = $el.main.selectAll("." + config_classes.areas).selectAll("." + config_classes.area).data($$.lineData.bind($$)), $el.area.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $el.area = $el.area.enter().append("path").attr("class", $$.classArea.bind($$)).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function () {
-      return state.orgAreaOpacity = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).style("opacity"), "0";
+      return state.orgAreaOpacity = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).style("opacity"), "0";
     }).merge($el.area), $el.area.style("opacity", state.orgAreaOpacity);
   },
   redrawArea: function redrawArea(drawArea, withTransition) {
@@ -13507,7 +13316,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
           y0 = 0;
 
       if ($$.isAreaType(d)) {
-        var area = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["area"])();
+        var area = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.area)();
         area = isRotated ? area.y(xValue).x0(value0).x1(value1) : area.x(xValue) // @ts-ignore
         .y0(config.area_above ? 0 : value0).y1(value1), lineConnectNull || (area = area.defined(function (d) {
           return $$.getBaseValue(d) !== null;
@@ -13537,7 +13346,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     };
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/shape/bar.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/bar.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -13545,7 +13354,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-/* harmony default export */ var shape_bar = ({
+/* harmony default export */ const bar = ({
   initBar: function initBar() {
     var $el = this.$el;
     $el.bar = $el.main.select("." + config_classes.chart) // should positioned at the beginning of the shape node to not overlap others
@@ -13678,7 +13487,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     };
   },
   isWithinBar: function isWithinBar(that) {
-    var mouse = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(that),
+    var mouse = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(that),
         list = getRectSegList(that),
         _list = list,
         seg0 = _list[0],
@@ -13693,7 +13502,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     return x - offset < mouse[0] && mouse[0] < x + width + offset && y - offset < mouse[1] && mouse[1] < y + height + offset;
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/shape/gauge.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/gauge.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -13701,7 +13510,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-/* harmony default export */ var gauge = ({
+/* harmony default export */ const gauge = ({
   initGauge: function initGauge() {
     var $$ = this,
         config = $$.config,
@@ -13710,7 +13519,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       arcs.append("text").attr("class", className).style("text-anchor", "middle").style("pointer-events", "none");
     };
 
-    $$.hasType("gauge") && (arcs.append($$.hasMultiArcGauge() ? "g" : "path").attr("class", config_classes.chartArcsBackground), config.gauge_units && appendText(config_classes.chartArcsGaugeUnit), config.gauge_label_show && (appendText(config_classes.chartArcsGaugeMin), !config.gauge_fullCircle && appendText(config_classes.chartArcsGaugeMax)));
+    if ($$.hasType("gauge")) {
+      var hasMulti = $$.hasMultiArcGauge();
+      arcs.append(hasMulti ? "g" : "path").attr("class", config_classes.chartArcsBackground).style("fill", !hasMulti && config.gauge_background || null), config.gauge_units && appendText(config_classes.chartArcsGaugeUnit), config.gauge_label_show && (appendText(config_classes.chartArcsGaugeMin), !config.gauge_fullCircle && appendText(config_classes.chartArcsGaugeMax));
+    }
   },
   updateGaugeMax: function updateGaugeMax() {
     var $$ = this,
@@ -13748,7 +13560,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         lineLength = state.radiusExpanded - state.radius + innerLineLength, x = Math.cos(linePositioningAngle) * arcInnerRadius, y = Math.sin(linePositioningAngle) * arcInnerRadius, transform = "rotate(" + lineAngle * 180 / Math.PI + ", " + x + ", " + y + ")";
       }
 
-      Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).attr("x", x).attr("y", y).attr("width", lineLength).attr("height", lineThickness).attr("transform", transform).style("stroke-dasharray", "0, " + (lineLength + lineThickness) + ", 0");
+      (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).attr("x", x).attr("y", y).attr("width", lineLength).attr("height", lineThickness).attr("transform", transform).style("stroke-dasharray", "0, " + (lineLength + lineThickness) + ", 0");
     });
   },
   textForGaugeMinMax: function textForGaugeMinMax(value, isMax) {
@@ -13766,14 +13578,14 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     return $$.getGaugeLabelHeight() * ($$.config.gauge_label_show ? 2 : 2.5);
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/shape/bubble.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/bubble.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-/* harmony default export */ var bubble = ({
+/* harmony default export */ const bubble = ({
   /**
    * Initializer
    * @private
@@ -13828,7 +13640,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/shape/line.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/line.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -13838,7 +13650,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-/* harmony default export */ var shape_line = ({
+/* harmony default export */ const line = ({
   initLine: function initLine() {
     var $el = this.$el;
     $el.line = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartLines);
@@ -13915,7 +13727,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         yValue = function (d, i) {
       return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)($$.getBaseValue(d));
     },
-        line = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["line"])();
+        line = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.line)();
 
     line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue), lineConnectNull || (line = line.defined(function (d) {
       return $$.getBaseValue(d) !== null;
@@ -14032,14 +13844,14 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     return path;
   },
   isWithinStep: function isWithinStep(that, y) {
-    return Math.abs(y - Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(that)[1]) < 30;
+    return Math.abs(y - (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(that)[1]) < 30;
   },
   shouldDrawPointsForLine: function shouldDrawPointsForLine(d) {
     var linePoint = this.config.line_point;
     return linePoint === !0 || isArray(linePoint) && linePoint.indexOf(d.id) !== -1;
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/shape/point.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/point.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -14053,7 +13865,7 @@ var getTransitionName = function () {
   return getRandom();
 };
 
-/* harmony default export */ var shape_point = ({
+/* harmony default export */ const point = ({
   hasValidPointType: function hasValidPointType(type) {
     return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
   },
@@ -14169,7 +13981,7 @@ var getTransitionName = function () {
         var data = d.filter(function (v) {
           return v.id === t.id;
         });
-        return !!data.length && Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).datum(data[0]);
+        return !!data.length && (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).datum(data[0]);
       })), circle.attr("class", this.updatePointClass.bind(this)).style("opacity", "1").each(function (d) {
         var id = d.id,
             index = d.index,
@@ -14215,7 +14027,7 @@ var getTransitionName = function () {
         scale = r(circles) / $$.config.point_r,
         ratio = 1 - scale;
     $$.isCirclePoint() ? circles.attr("r", r) : circles.each(function () {
-      var point = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this);
+      var point = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
       if (this.tagName === "circle") point.attr("r", r);else {
         var _this$getBBox = this.getBBox(),
             width = _this$getBBox.width,
@@ -14231,7 +14043,7 @@ var getTransitionName = function () {
     var $$ = this,
         r = $$.pointR.bind($$),
         circles = $$.getCircles(i).filter(function () {
-      return Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.EXPANDED);
+      return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.EXPANDED);
     }).classed(config_classes.EXPANDED, !1);
     circles.attr("r", r), $$.isCirclePoint() || circles.attr("transform", "scale(" + r(circles) / $$.config.point_r + ")");
   },
@@ -14254,8 +14066,8 @@ var getTransitionName = function () {
     return isFunction(selectR) ? selectR(d) : selectR || $$.pointR(d) * 4;
   },
   isWithinCircle: function isWithinCircle(node, r) {
-    var mouse = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(node),
-        element = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(node),
+    var mouse = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(node),
+        element = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(node),
         prefix = this.isCirclePoint(node) ? "c" : "",
         cx = +element.attr(prefix + "x"),
         cy = +element.attr(prefix + "y");
@@ -14278,10 +14090,10 @@ var getTransitionName = function () {
     },
         doc = new DOMParser().parseFromString(point, "image/svg+xml"),
         node = doc.documentElement,
-        clone = browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg, node.nodeName.toLowerCase());
+        clone = browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg, node.nodeName.toLowerCase());
 
     if (clone.id = id, clone.style.fill = "inherit", clone.style.stroke = "inherit", copyAttr(node, clone), node.childNodes && node.childNodes.length) {
-      var parent = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(clone);
+      var parent = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(clone);
       "innerHTML" in clone ? parent.html(node.innerHTML) : toArray(node.childNodes).forEach(function (v) {
         copyAttr(v, parent.append(v.tagName).node());
       });
@@ -14332,7 +14144,7 @@ var getTransitionName = function () {
 
       return function (d) {
         var id = $$.getTargetSelectorSuffix(d.id || d.data && d.data.id || d),
-            element = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this);
+            element = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
         ids.indexOf(id) < 0 && ids.push(id);
         var point = pattern[ids.indexOf(id) % pattern.length];
         if ($$.hasValidPointType(point)) point = $$[point];else if (!$$.hasValidPointDrawMethods(point)) {
@@ -14413,7 +14225,7 @@ var getTransitionName = function () {
     }
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/shape/radar.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/radar.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -14442,8 +14254,8 @@ function getPosition(isClockwise, type, edge, pos, range, ratio) {
 } // cache key
 
 
-var radar_cacheKey = KEY.radarPoints;
-/* harmony default export */ var shape_radar = ({
+var cacheKey = KEY.radarPoints;
+/* harmony default export */ const radar = ({
   initRadar: function initRadar() {
     var $$ = this,
         config = $$.config,
@@ -14493,7 +14305,7 @@ var radar_cacheKey = KEY.radarPoints;
         _$$$getRadarSize2 = $$.getRadarSize(),
         width = _$$$getRadarSize2[0],
         height = _$$$getRadarSize2[1],
-        points = $$.cache.get(radar_cacheKey) || {},
+        points = $$.cache.get(cacheKey) || {},
         size = points._size;
 
     size && (size.width === width || size.height === height) || (targets.forEach(function (d) {
@@ -14503,7 +14315,7 @@ var radar_cacheKey = KEY.radarPoints;
     }), points._size = {
       width: width,
       height: height
-    }, $$.cache.add(radar_cacheKey, points));
+    }, $$.cache.add(cacheKey, points));
   },
   redrawRadar: function redrawRadar(durationForExit) {
     var $$ = this,
@@ -14514,7 +14326,7 @@ var radar_cacheKey = KEY.radarPoints;
     translate && (radar.attr("transform", translate), main.select("." + config_classes.chartTexts).attr("transform", translate), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape(durationForExit));
   },
   generateGetRadarPoints: function generateGetRadarPoints() {
-    var points = this.cache.get(radar_cacheKey);
+    var points = this.cache.get(cacheKey);
     return function (d, i) {
       var point = points[d.id][i];
       return [point, point, point, point];
@@ -14593,7 +14405,7 @@ var radar_cacheKey = KEY.radarPoints;
           y = _config$radar_axis_te3 === void 0 ? 0 : _config$radar_axis_te3;
       axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
         selection.each(function (d) {
-          setTextValue(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this), d + "", [-.6, 1.2]);
+          setTextValue((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this), d + "", [-.6, 1.2]);
         });
       }).datum(function (d, i) {
         return {
@@ -14623,10 +14435,10 @@ var radar_cacheKey = KEY.radarPoints;
     if (config.interaction_enabled) {
       var isMouse = inputType === "mouse",
           getIndex = function () {
-        var target = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].target; // in case of multilined axis text
+        var target = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.target; // in case of multilined axis text
 
         /tspan/i.test(target.tagName) && (target = target.parentNode);
-        var d = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(target).datum();
+        var d = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(target).datum();
         return d && Object.keys(d).length === 1 ? d.index : undefined;
       },
           hide = function () {
@@ -14649,7 +14461,7 @@ var radar_cacheKey = KEY.radarPoints;
         targets = $$.data.targets.filter(function (d) {
       return $$.isRadarType(d);
     }),
-        points = $$.cache.get(radar_cacheKey),
+        points = $$.cache.get(cacheKey),
         areas = $$.$el.radar.shapes.selectAll("polygon").data(targets),
         areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
     areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).style("fill", $$.color).style("stroke", $$.color).attr("points", function (d) {
@@ -14664,7 +14476,7 @@ var radar_cacheKey = KEY.radarPoints;
    * @private
    */
   radarCircleX: function radarCircleX(d) {
-    return this.cache.get(radar_cacheKey)[d.id][d.index][0];
+    return this.cache.get(cacheKey)[d.id][d.index][0];
   },
 
   /**
@@ -14674,10 +14486,10 @@ var radar_cacheKey = KEY.radarPoints;
    * @private
    */
   radarCircleY: function radarCircleY(d) {
-    return this.cache.get(radar_cacheKey)[d.id][d.index][1];
+    return this.cache.get(cacheKey)[d.id][d.index][1];
   }
 });
-// CONCATENATED MODULE: ./src/config/Options/common/point.ts
+;// CONCATENATED MODULE: ./src/config/Options/common/point.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -14686,7 +14498,7 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * point config options
  */
-/* harmony default export */ var common_point = ({
+/* harmony default export */ const common_point = ({
   /**
    * Set point options
    * @name point
@@ -14767,7 +14579,7 @@ var radar_cacheKey = KEY.radarPoints;
   point_select_r: undefined,
   point_type: "circle"
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/area.ts
+;// CONCATENATED MODULE: ./src/config/Options/shape/area.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -14776,7 +14588,7 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * area config options
  */
-/* harmony default export */ var Options_shape_area = ({
+/* harmony default export */ const Options_shape_area = ({
   /**
    * Set area options
    * @name area
@@ -14833,7 +14645,7 @@ var radar_cacheKey = KEY.radarPoints;
   area_linearGradient: !1,
   area_zerobased: !0
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/bar.ts
+;// CONCATENATED MODULE: ./src/config/Options/shape/bar.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -14842,7 +14654,7 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * bar config options
  */
-/* harmony default export */ var Options_shape_bar = ({
+/* harmony default export */ const shape_bar = ({
   /**
    * Set bar options
    * @name bar
@@ -14919,7 +14731,7 @@ var radar_cacheKey = KEY.radarPoints;
   bar_width_max: undefined,
   bar_zerobased: !0
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/bubble.ts
+;// CONCATENATED MODULE: ./src/config/Options/shape/bubble.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -14928,7 +14740,7 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * bubble config options
  */
-/* harmony default export */ var shape_bubble = ({
+/* harmony default export */ const shape_bubble = ({
   /**
    * Set bubble options
    * @name bubble
@@ -14955,7 +14767,7 @@ var radar_cacheKey = KEY.radarPoints;
   bubble_maxR: 35,
   bubble_zerobased: !1
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/line.ts
+;// CONCATENATED MODULE: ./src/config/Options/shape/line.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -14964,7 +14776,7 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * line config options
  */
-/* harmony default export */ var Options_shape_line = ({
+/* harmony default export */ const shape_line = ({
   /**
    * Set line options
    * @name line
@@ -15009,7 +14821,7 @@ var radar_cacheKey = KEY.radarPoints;
   line_classes: undefined,
   line_point: !0
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/scatter.ts
+;// CONCATENATED MODULE: ./src/config/Options/shape/scatter.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15018,7 +14830,7 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * scatter config options
  */
-/* harmony default export */ var scatter = ({
+/* harmony default export */ const scatter = ({
   /**
    * Set scatter options
    * @name scatter
@@ -15046,7 +14858,7 @@ var radar_cacheKey = KEY.radarPoints;
    */
   scatter_zerobased: !1
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/spline.ts
+;// CONCATENATED MODULE: ./src/config/Options/shape/spline.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15055,7 +14867,7 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * x Axis config options
  */
-/* harmony default export */ var spline = ({
+/* harmony default export */ const spline = ({
   /**
    * Set spline options
    * - **Available interpolation type values:**
@@ -15093,7 +14905,7 @@ var radar_cacheKey = KEY.radarPoints;
    */
   spline_interpolation_type: "cardinal"
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/donut.ts
+;// CONCATENATED MODULE: ./src/config/Options/shape/donut.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15102,7 +14914,7 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * donut config options
  */
-/* harmony default export */ var donut = ({
+/* harmony default export */ const donut = ({
   /**
    * Set donut options
    * @name donut
@@ -15176,7 +14988,7 @@ var radar_cacheKey = KEY.radarPoints;
   donut_padAngle: 0,
   donut_startingAngle: 0
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/gauge.ts
+;// CONCATENATED MODULE: ./src/config/Options/shape/gauge.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15185,13 +14997,14 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * gauge config options
  */
-/* harmony default export */ var shape_gauge = ({
+/* harmony default export */ const shape_gauge = ({
   /**
    * Set gauge options
    * @name gauge
    * @memberof Options
    * @type {object}
    * @property {object} gauge Gauge object
+   * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
    * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
    * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
    * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
@@ -15213,6 +15026,7 @@ var radar_cacheKey = KEY.radarPoints;
    * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
    * @example
    *  gauge: {
+   *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
    *      fullCircle: false,
    *      label: {
    *          show: false,
@@ -15254,6 +15068,7 @@ var radar_cacheKey = KEY.radarPoints;
    *      }
    *  }
    */
+  gauge_background: "",
   gauge_fullCircle: !1,
   gauge_label_show: !0,
   gauge_label_format: undefined,
@@ -15271,7 +15086,7 @@ var radar_cacheKey = KEY.radarPoints;
   gauge_expand_rate: .98,
   gauge_expand_duration: 50
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/pie.ts
+;// CONCATENATED MODULE: ./src/config/Options/shape/pie.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15280,7 +15095,7 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * x Axis config options
  */
-/* harmony default export */ var pie = ({
+/* harmony default export */ const pie = ({
   /**
    * Set pie options
    * @name pie
@@ -15359,7 +15174,7 @@ var radar_cacheKey = KEY.radarPoints;
   pie_padding: 0,
   pie_startingAngle: 0
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/radar.ts
+;// CONCATENATED MODULE: ./src/config/Options/shape/radar.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15368,7 +15183,7 @@ var radar_cacheKey = KEY.radarPoints;
 /**
  * x Axis config options
  */
-/* harmony default export */ var Options_shape_radar = ({
+/* harmony default export */ const shape_radar = ({
   /**
    * Set radar options
    * - **NOTE:**
@@ -15438,7 +15253,7 @@ var radar_cacheKey = KEY.radarPoints;
   radar_size_ratio: .87,
   radar_direction_clockwise: !1
 });
-// CONCATENATED MODULE: ./src/config/resolver/shape.ts
+;// CONCATENATED MODULE: ./src/config/resolver/shape.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15481,7 +15296,7 @@ var radar_cacheKey = KEY.radarPoints;
  */
 
 function extendAxis(module, option) {
-  extend(ChartInternal_ChartInternal.prototype, internal.concat(module)), extend(Chart_Chart.prototype, axis_api), Options_Options.setOptions(axis_options.concat(option || []));
+  extend(ChartInternal.prototype, internal.concat(module)), extend(Chart.prototype, api), Options.setOptions(options.concat(option || []));
 }
 /**
  * Extend Line type modules
@@ -15492,7 +15307,7 @@ function extendAxis(module, option) {
 
 
 function extendLine(module, option) {
-  extendAxis([shape_point, shape_line].concat(module || [])), Options_Options.setOptions([common_point, Options_shape_line].concat(option || []));
+  extendAxis([point, line].concat(module || [])), Options.setOptions([common_point, shape_line].concat(option || []));
 }
 /**
  * Extend Arc type modules
@@ -15503,7 +15318,7 @@ function extendLine(module, option) {
 
 
 function extendArc(module, option) {
-  extend(ChartInternal_ChartInternal.prototype, [shape_arc].concat(module || [])), Options_Options.setOptions(option);
+  extend(ChartInternal.prototype, [arc].concat(module || [])), Options.setOptions(option);
 } // Area types
 
 
@@ -15542,8 +15357,8 @@ var _area = function area() {
     return TYPE.SPLINE;
   })();
 },
-    shape_step = function () {
-  return extendLine(), (shape_step = function () {
+    step = function () {
+  return extendLine(), (step = function () {
     return TYPE.STEP;
   })();
 },
@@ -15563,26 +15378,26 @@ var _area = function area() {
   })();
 },
     resolver_shape_radar = function () {
-  return extendArc([shape_point, shape_radar], [common_point, Options_shape_radar]), (resolver_shape_radar = function () {
+  return extendArc([point, radar], [common_point, shape_radar]), (resolver_shape_radar = function () {
     return TYPE.RADAR;
   })();
 },
     resolver_shape_bar = function () {
-  return extendAxis([shape_bar], Options_shape_bar), (resolver_shape_bar = function () {
+  return extendAxis([bar], shape_bar), (resolver_shape_bar = function () {
     return TYPE.BAR;
   })();
 },
     resolver_shape_bubble = function () {
-  return extendAxis([shape_point, bubble], [shape_bubble, common_point]), (resolver_shape_bubble = function () {
+  return extendAxis([point, bubble], [shape_bubble, common_point]), (resolver_shape_bubble = function () {
     return TYPE.BUBBLE;
   })();
 },
     shape_scatter = function () {
-  return extendAxis([shape_point], [common_point, scatter]), (shape_scatter = function () {
+  return extendAxis([point], [common_point, scatter]), (shape_scatter = function () {
     return TYPE.SCATTER;
   })();
 };
-// CONCATENATED MODULE: ./src/Chart/api/selection.ts
+;// CONCATENATED MODULE: ./src/Chart/api/selection.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15590,7 +15405,7 @@ var _area = function area() {
 
 
 
-/* harmony default export */ var api_selection = ({
+/* harmony default export */ const selection = ({
   /**
    * Get selected data points.<br><br>
    * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
@@ -15611,7 +15426,7 @@ var _area = function area() {
     var $$ = this.internal,
         dataPoint = [];
     return $$.$el.main.selectAll("." + (config_classes.shapes + $$.getTargetSelectorSuffix(targetId))).selectAll("." + config_classes.shape).filter(function () {
-      return Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.SELECTED);
+      return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.SELECTED);
     }).each(function (d) {
       return dataPoint.push(d);
     }), dataPoint;
@@ -15646,7 +15461,7 @@ var _area = function area() {
         config = $$.config,
         $el = $$.$el;
     config.data_selection_enabled && $el.main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).each(function (d, i) {
-      var shape = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+      var shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           id = d.data ? d.data.id : d.id,
           toggle = $$.getToggle(this, d).bind($$),
           isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0,
@@ -15679,7 +15494,7 @@ var _area = function area() {
         config = $$.config,
         $el = $$.$el;
     config.data_selection_enabled && $el.main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).each(function (d, i) {
-      var shape = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+      var shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           id = d.data ? d.data.id : d.id,
           toggle = $$.getToggle(this, d).bind($$),
           isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0,
@@ -15691,9 +15506,8 @@ var _area = function area() {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
-var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(13);
-
-// CONCATENATED MODULE: ./src/Chart/api/zoom.ts
+var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(14);
+;// CONCATENATED MODULE: ./src/Chart/api/zoom.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15735,7 +15549,7 @@ function withinRange(domain, range) {
  */
 
 
-var zoom_zoom = function (domainValue) {
+var zoom = function (domainValue) {
   var resultDomain,
       $$ = this.internal,
       config = $$.config,
@@ -15767,7 +15581,7 @@ var zoom_zoom = function (domainValue) {
   return resultDomain;
 };
 
-extend(zoom_zoom, {
+extend(zoom, {
   /**
    * Enable and disable zooming.
    * @function zoom․enable
@@ -15860,8 +15674,8 @@ extend(zoom_zoom, {
     };
   }
 });
-/* harmony default export */ var api_zoom = ({
-  zoom: zoom_zoom,
+/* harmony default export */ const api_zoom = ({
+  zoom: zoom,
 
   /**
    * Unzoom zoomed area
@@ -15876,10 +15690,10 @@ extend(zoom_zoom, {
         config = $$.config;
 
     if ($$.scale.zoom) {
-      config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_["zoomIdentity"]), $$.updateZoom(!0), $$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none");
+      config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity), $$.updateZoom(!0), $$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none");
       // reset transform
       var eventRects = $$.$el.main.select("." + config_classes.eventRects);
-      Object(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_["zoomTransform"])(eventRects.node()) !== external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_["zoomIdentity"] && $$.zoom.transform(eventRects, external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_["zoomIdentity"]), $$.redraw({
+      (0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomTransform)(eventRects.node()) !== external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity && $$.zoom.transform(eventRects, external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity), $$.redraw({
         withTransition: !0,
         withUpdateXDomain: !0,
         withUpdateOrgXDomain: !0,
@@ -15889,9 +15703,8 @@ extend(zoom_zoom, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(14);
-
-// CONCATENATED MODULE: ./src/ChartInternal/interactions/drag.ts
+var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(13);
+;// CONCATENATED MODULE: ./src/ChartInternal/interactions/drag.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15903,7 +15716,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
  * Module used for data.selection.draggable option
  */
 
-/* harmony default export */ var interactions_drag = ({
+/* harmony default export */ const drag = ({
   /**
    * Called when dragging.
    * Data points can be selected.
@@ -15935,7 +15748,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
           return isSelectable && isSelectable.bind($$.api)(d);
         }).each(function (d, i) {
           var toggle,
-              shape = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+              shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
               isSelected = shape.classed(config_classes.SELECTED),
               isIncluded = shape.classed(config_classes.INCLUDED),
               isWithin = !1;
@@ -15987,7 +15800,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
     $$.hasArcType() || !config.data_selection_enabled || (main.select("." + config_classes.dragarea).transition().duration(100).style("opacity", "0").remove(), main.selectAll("." + config_classes.shape).classed(config_classes.INCLUDED, !1), $$.setDragStatus(!1));
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/internals/selection.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/selection.ts
 
 
 function selection_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -16003,7 +15816,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
 
 
-/* harmony default export */ var internals_selection = (selection_objectSpread(selection_objectSpread({}, interactions_drag), {}, {
+/* harmony default export */ const internals_selection = (selection_objectSpread(selection_objectSpread({}, drag), {}, {
   /**
    * Select a point
    * @param {object} target Target point
@@ -16065,7 +15878,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
     var $$ = this,
         config = $$.config;
     callFn(config.data_onselected, $$.api, d, target.node()), config.interaction_brighten && target.transition().duration(100).style("fill", function () {
-      return Object(external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_["rgb"])($$.color(d)).brighter(.75);
+      return (0,external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_.rgb)($$.color(d)).brighter(.75);
     });
   },
 
@@ -16120,7 +15933,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         $$ = this,
         config = $$.config,
         main = $$.$el.main,
-        shape = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(that),
+        shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(that),
         isSelected = shape.classed(config_classes.SELECTED),
         toggle = $$.getToggle(that, d).bind($$);
 
@@ -16128,7 +15941,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       if (!config.data_selection_multiple) {
         var selector = "." + config_classes.shapes;
         config.data_selection_grouped && (selector += $$.getTargetSelectorSuffix(d.id)), main.selectAll(selector).selectAll("." + config_classes.shape).each(function (d, i) {
-          var shape = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this);
+          var shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
           shape.classed(config_classes.SELECTED) && (toggledShape = shape, toggle(!1, shape.classed(config_classes.SELECTED, !1), d, i));
         });
       }
@@ -16137,7 +15950,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
     }
   }
 }));
-// CONCATENATED MODULE: ./src/ChartInternal/interactions/subchart.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/interactions/subchart.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -16146,7 +15959,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
 
 
-/* harmony default export */ var interactions_subchart = ({
+/* harmony default export */ const subchart = ({
   /**
    * Initialize the brush.
    * @private
@@ -16157,7 +15970,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         scale = $$.scale,
         subchart = $$.$el.subchart,
         isRotated = config.axis_rotated;
-    $$.brush = isRotated ? Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushY"])() : Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushX"])();
+    $$.brush = isRotated ? (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushY)() : (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushX)();
 
     // set "brush" event
     var lastDomain,
@@ -16185,7 +15998,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       timeout && clearTimeout(timeout), timeout = setTimeout(function () {
         var selection = _this.getSelection();
 
-        lastDomain && Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection.node()) && _this.move(selection, lastDomain.map(scale.subX.orgScale()));
+        lastDomain && (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection.node()) && _this.move(selection, lastDomain.map(scale.subX.orgScale()));
       }, 0);
     }, $$.brush.update = function () {
       var extent = this.extent()();
@@ -16203,7 +16016,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       })), isRotated && extent[1].reverse(), this.extent(extent), this.update();
     }, $$.brush.getSelection = function () {
       return (// @ts-ignore
-        subchart.main ? subchart.main.select("." + config_classes.brush) : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])([])
+        subchart.main ? subchart.main.select("." + config_classes.brush) : (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)([])
       );
     };
   },
@@ -16320,7 +16133,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
     var $$ = this,
         subchart = $$.$el.subchart;
     subchart.area = subchart.main.selectAll("." + config_classes.areas).selectAll("." + config_classes.area).data($$.lineData.bind($$)), subchart.area.exit().transition().duration(durationForExit).style("opacity", "0").remove(), subchart.area = subchart.area.enter().append("path").attr("class", $$.classArea.bind($$)).style("fill", $$.color).style("opacity", function () {
-      return $$.state.orgAreaOpacity = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).style("opacity"), "0";
+      return $$.state.orgAreaOpacity = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).style("opacity"), "0";
     }).merge(subchart.area).style("opacity", "0");
   },
 
@@ -16347,7 +16160,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
     var $$ = this,
         config = $$.config,
         main = $$.$el.subchart.main;
-    main.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"] && external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].type === "zoom" && $$.brush.update(), withSubchart && (!brushEmpty($$) && $$.brush.update(), Object.keys(shape.type).forEach(function (v) {
+    main.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event && external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.type === "zoom" && $$.brush.update(), withSubchart && (!brushEmpty($$) && $$.brush.update(), Object.keys(shape.type).forEach(function (v) {
       var name = capitalize(v),
           draw = $$["generateDraw" + name](shape.indices[v], !0);
       $$["update" + name + "ForSubchart"](duration), $$["redraw" + name + "ForSubchart"](draw, duration, duration);
@@ -16405,7 +16218,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
     return extent;
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/interactions/zoom.ts
+;// CONCATENATED MODULE: ./src/ChartInternal/interactions/zoom.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -16416,7 +16229,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
 
 
-/* harmony default export */ var interactions_zoom = ({
+/* harmony default export */ const interactions_zoom = ({
   /**
    * Initialize zoom.
    * @private
@@ -16450,7 +16263,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         config = $$.config,
         org = $$.org,
         scale = $$.scale,
-        zoom = Object(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_["zoom"])().duration(0).on("start", $$.onZoomStart.bind($$)).on("zoom", $$.onZoom.bind($$)).on("end", $$.onZoomEnd.bind($$));
+        zoom = (0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoom)().duration(0).on("start", $$.onZoomStart.bind($$)).on("zoom", $$.onZoom.bind($$)).on("end", $$.onZoomEnd.bind($$));
     // get zoom extent
     // @ts-ignore
     // @ts-ignore
@@ -16484,7 +16297,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    */
   onZoomStart: function onZoomStart() {
     var $$ = this,
-        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].sourceEvent;
+        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.sourceEvent;
     event && ($$.zoom.startEvent = event, $$.state.zooming = !0, callFn($$.config.zoom_onzoomstart, $$.api, event));
   },
 
@@ -16497,7 +16310,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         config = $$.config,
         scale = $$.scale,
         org = $$.org,
-        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"],
+        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event,
         sourceEvent = event.sourceEvent;
 
     if (config.zoom_enabled && event.sourceEvent && $$.filterTargetsToShow($$.data.targets).length !== 0 && (scale.zoom || !(sourceEvent.type.indexOf("touch") > -1) || sourceEvent.touches.length !== 1)) {
@@ -16525,7 +16338,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         config = $$.config,
         scale = $$.scale,
         startEvent = $$.zoom.startEvent,
-        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"] && external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].sourceEvent;
+        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event && external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.sourceEvent;
     startEvent && startEvent.type.indexOf("touch") > -1 && (startEvent = startEvent.changedTouches[0], event = event.changedTouches[0]);
     // if click, do nothing. otherwise, click interaction will be canceled.
     !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), $$.state.zooming = !1, callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain()));
@@ -16596,12 +16409,12 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       attr: isRotated ? "height" : "width",
       index: isRotated ? 1 : 0
     };
-    $$.zoomBehaviour = Object(external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_["drag"])().clickDistance(4).on("start", function () {
+    $$.zoomBehaviour = (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().clickDistance(4).on("start", function () {
       // @ts-ignore
-      $$.setDragStatus(!0), $$.unselectRect(), zoomRect || (zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", config_classes.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height)), start = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(this)[prop.index], end = start, zoomRect.attr(prop.axis, start).attr(prop.attr, 0), $$.onZoomStart();
+      $$.setDragStatus(!0), $$.unselectRect(), zoomRect || (zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", config_classes.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height)), start = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this)[prop.index], end = start, zoomRect.attr(prop.axis, start).attr(prop.attr, 0), $$.onZoomStart();
     }).on("drag", function () {
       // @ts-ignore
-      end = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(this)[prop.index], zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
+      end = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this)[prop.index], zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
     }).on("end", function () {
       var _ref,
           scale = $$.scale.zoom || $$.scale.x;
@@ -16609,13 +16422,13 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       if ($$.setDragStatus(!1), zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end) $$.api.zoom([start, end].map(function (v) {
         return scale.invert(v);
       })), $$.onZoomEnd();else if ($$.isMultipleX()) $$.clickHandlerForMultipleXS.bind(this)($$);else {
-        var _event3 = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].sourceEvent || external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"],
+        var _event3 = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.sourceEvent || external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event,
             _ref2 = "clientX" in _event3 ? [_event3.clientX, _event3.clientY] : [_event3.x, _event3.y],
             x = _ref2[0],
             y = _ref2[1],
             target = browser_doc.elementFromPoint(x, y);
 
-        $$.clickHandlerForSingleX.bind(target)(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(target).datum(), $$);
+        $$.clickHandlerForSingleX.bind(target)((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(target).datum(), $$);
       }
     });
   },
@@ -16628,7 +16441,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
     }).classed(config_classes.buttonZoomReset, !0).text(resetButton.text || "Reset Zoom"));
   }
 });
-// CONCATENATED MODULE: ./src/config/Options/data/selection.ts
+;// CONCATENATED MODULE: ./src/config/Options/data/selection.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -16637,7 +16450,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 /**
  * data.selection config options
  */
-/* harmony default export */ var data_selection = ({
+/* harmony default export */ const data_selection = ({
   /**
    * Set data selection enabled<br><br>
    * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
@@ -16768,7 +16581,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    */
   data_onunselected: function data_onunselected() {}
 });
-// CONCATENATED MODULE: ./src/config/Options/interaction/subchart.ts
+;// CONCATENATED MODULE: ./src/config/Options/interaction/subchart.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -16777,7 +16590,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 /**
  * x Axis config options
  */
-/* harmony default export */ var interaction_subchart = ({
+/* harmony default export */ const interaction_subchart = ({
   /**
    * Set subchart options.
    * - **NOTE:** Not supported for `bubble`, `scatter` and non-Axis based(pie, donut, gauge, radar) types.
@@ -16830,7 +16643,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   subchart_axis_x_tick_text_show: !0,
   subchart_onbrush: function subchart_onbrush() {}
 });
-// CONCATENATED MODULE: ./src/config/Options/interaction/zoom.ts
+;// CONCATENATED MODULE: ./src/config/Options/interaction/zoom.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -16839,7 +16652,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 /**
  * zoom config options
  */
-/* harmony default export */ var interaction_zoom = ({
+/* harmony default export */ const interaction_zoom = ({
   /**
    * Set zoom options
    * @name zoom
@@ -16918,7 +16731,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   zoom_x_min: undefined,
   zoom_x_max: undefined
 });
-// CONCATENATED MODULE: ./src/config/resolver/interaction.ts
+;// CONCATENATED MODULE: ./src/config/resolver/interaction.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -16941,21 +16754,21 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
 
 var _selectionModule = function selectionModule() {
-  return extend(ChartInternal_ChartInternal.prototype, internals_selection), extend(Chart_Chart.prototype, api_selection), Options_Options.setOptions([data_selection]), (_selectionModule = function selectionModule() {
+  return extend(ChartInternal.prototype, internals_selection), extend(Chart.prototype, selection), Options.setOptions([data_selection]), (_selectionModule = function selectionModule() {
     return !0;
   })();
 },
     subchartModule = function () {
-  return extend(ChartInternal_ChartInternal.prototype, interactions_subchart), Options_Options.setOptions([interaction_subchart]), (subchartModule = function () {
+  return extend(ChartInternal.prototype, subchart), Options.setOptions([interaction_subchart]), (subchartModule = function () {
     return !0;
   })();
 },
     zoomModule = function () {
-  return extend(ChartInternal_ChartInternal.prototype, interactions_zoom), extend(Chart_Chart.prototype, api_zoom), Options_Options.setOptions([interaction_zoom]), (zoomModule = function () {
+  return extend(ChartInternal.prototype, interactions_zoom), extend(Chart.prototype, api_zoom), Options.setOptions([interaction_zoom]), (zoomModule = function () {
     return !0;
   })();
 };
-// CONCATENATED MODULE: ./src/core.ts
+;// CONCATENATED MODULE: ./src/core.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
@@ -16973,7 +16786,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.1.4-nightly-20201207102735",
+  version: "2.1.4",
 
   /**
    * Generate chart
@@ -17046,7 +16859,7 @@ var _defaults = {},
    */
   generate: function generate(config) {
     var options = mergeObj({}, _defaults, config),
-        inst = new Chart_Chart(options);
+        inst = new Chart(options);
     return inst.internal.charts = this.instance, this.instance.push(inst), inst;
   },
 
@@ -17101,9 +16914,9 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.1.4-nightly-20201207102735
+ * @version 2.1.4
  */
-// CONCATENATED MODULE: ./src/index.ts
+;// CONCATENATED MODULE: ./src/index.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
@@ -17118,7 +16931,146 @@ Object.keys(resolver_shape_namespaceObject).forEach(function (v) {
 });
 
 
+/***/ }),
+/* 2 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
+
+/***/ }),
+/* 3 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
+
+/***/ }),
+/* 4 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__4__;
+
+/***/ }),
+/* 5 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__5__;
+
+/***/ }),
+/* 6 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__6__;
+
+/***/ }),
+/* 7 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__7__;
+
+/***/ }),
+/* 8 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
+
+/***/ }),
+/* 9 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
+
+/***/ }),
+/* 10 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
+
+/***/ }),
+/* 11 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
+
+/***/ }),
+/* 12 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
+
+/***/ }),
+/* 13 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__13__;
+
+/***/ }),
+/* 14 */
+/***/ ((module) => {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
+
 /***/ })
-/******/ ]);
+/******/ 	]);
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		if(__webpack_module_cache__[moduleId]) {
+/******/ 			return __webpack_module_cache__[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	// startup
+/******/ 	// Load entry module and return exports
+/******/ 	__webpack_require__(0);
+/******/ 	return __webpack_require__(1);
+/******/ })()
+;
 });
 //# sourceMappingURL=billboard.js.map
