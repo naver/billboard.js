@@ -171,10 +171,17 @@ var CLASS = {
  * billboard.js project is licensed under the MIT license
  */
 var win = (function () {
-    var def = function (o) { return typeof o !== "undefined" && o; };
+    var def = function (o) { return typeof o === "object" && o !== null && o.Object === Object && o; };
     // Prioritize referencing Node.js global first to prevent refence error
     // https://github.com/naver/billboard.js/issues/1778
-    return def(global) || def(globalThis) || def(self) || def(window) || Function("return this")();
+    var freeGlobal = def(global);
+    try {
+        if (!freeGlobal) {
+            freeGlobal = def(globalThis) || def(self) || def(window);
+        }
+    }
+    catch (e) { }
+    return freeGlobal || Function("return this")();
 })();
 /* eslint-enable no-new-func, no-undef */
 var doc = win && win.document;

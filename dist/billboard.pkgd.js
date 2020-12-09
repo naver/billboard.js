@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20201208172529
+ * @version 2.1.4-nightly-20201209173600
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -19373,12 +19373,17 @@ function brush_brush(dim) {
 
 var win = function () {
   var def = function (o) {
-    return typeof o !== "undefined" && o;
-  }; // Prioritize referencing Node.js global first to prevent refence error
+    return typeof o === "object" && o !== null && o.Object === Object && o;
+  },
+      freeGlobal = def(global); // Prioritize referencing Node.js global first to prevent refence error
   // https://github.com/naver/billboard.js/issues/1778
 
 
-  return def(global) || def(globalThis) || def(self) || def(window) || Function("return this")();
+  try {
+    freeGlobal || (freeGlobal = def(globalThis) || def(self) || def(window));
+  } catch (e) {}
+
+  return freeGlobal || Function("return this")();
 }(),
     browser_doc = win && win.document;
 /* eslint-enable no-new-func, no-undef */
