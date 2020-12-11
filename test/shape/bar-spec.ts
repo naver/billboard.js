@@ -478,6 +478,29 @@ describe("SHAPE BAR", () => {
 				});
 			});
 		});
+
+		it("set options: data names with 'width' and 'total'", () => {
+			args = {
+				data: {
+					type: "bar",
+					columns: [
+					  ["width", 50],
+					  ["total", 100]
+					]
+				  },
+				  bar: {
+					width: {
+						max: 71
+					}
+				}
+			}
+		});
+
+		it("should render correctly for data key names for 'width' and 'total'", () => {
+			chart.$.bar.bars.each(function() {
+				expect(this.getBoundingClientRect().width).to.be.equal(args.bar.width.max);
+			})
+		});
 	});
 
 	describe("bar position", () => {
