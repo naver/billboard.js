@@ -5816,7 +5816,7 @@ var shape = {
         var currScale = isSub ? scale.subX : (scale.zoom || scale.x);
         var barPadding = config.bar_padding;
         var sum = function (p, c) { return p + c; };
-        var halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
+        var halfWidth = isObjectType(offset) && (offset._$total.length ? offset._$total.reduce(sum) / 2 : 0);
         return function (d) {
             var ind = $$.getIndices(indices, d.id);
             var index = d.id in ind ? ind[d.id] : 0;
@@ -5825,12 +5825,12 @@ var shape = {
             if (notEmpty(d.x)) {
                 var xPos = currScale(d.x);
                 if (halfWidth) {
-                    x = xPos - (offset[d.id] || offset.width) +
-                        offset.total.slice(0, index + 1).reduce(sum) -
+                    x = xPos - (offset[d.id] || offset._$width) +
+                        offset._$total.slice(0, index + 1).reduce(sum) -
                         halfWidth;
                 }
                 else {
-                    x = xPos - (isNumber(offset) ? offset : offset.width) * (targetsNum / 2 - index);
+                    x = xPos - (isNumber(offset) ? offset : offset._$width) * (targetsNum / 2 - index);
                 }
             }
             // adjust x position for bar.padding optionq
@@ -15213,11 +15213,11 @@ var shapeBar = {
         };
         var result = getWidth();
         if (!isGrouped && isObjectType(config.bar_width)) {
-            result = { width: result, total: [] };
+            result = { _$width: result, _$total: [] };
             $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
                 if (config.bar_width[v.id]) {
                     result[v.id] = getWidth(v.id);
-                    result.total.push(result[v.id] || result.width);
+                    result._$total.push(result[v.id] || result._$width);
                 }
             });
         }
@@ -15289,7 +15289,7 @@ var shapeBar = {
         return function (d, i) {
             var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
             var offset = barOffset(d, i) || y0; // offset is for stacked bar chart
-            var width = isNumber(barW) ? barW : barW[d.id] || barW.width;
+            var width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
             var posX = barX(d);
             var posY = barY(d);
             // fix posY not to overflow opposite quadrant

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20201209173600
+ * @version 2.1.4-nightly-20201211180830
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -25935,7 +25935,7 @@ function stepAfter(context) {
         sum = function (p, c) {
       return p + c;
     },
-        halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
+        halfWidth = isObjectType(offset) && (offset._$total.length ? offset._$total.reduce(sum) / 2 : 0);
 
     return function (d) {
       var ind = $$.getIndices(indices, d.id),
@@ -25945,7 +25945,7 @@ function stepAfter(context) {
 
       if (notEmpty(d.x)) {
         var xPos = currScale(d.x);
-        x = halfWidth ? xPos - (offset[d.id] || offset.width) + offset.total.slice(0, index + 1).reduce(sum) - halfWidth : xPos - (isNumber(offset) ? offset : offset.width) * (targetsNum / 2 - index);
+        x = halfWidth ? xPos - (offset[d.id] || offset._$width) + offset._$total.slice(0, index + 1).reduce(sum) - halfWidth : xPos - (isNumber(offset) ? offset : offset._$width) * (targetsNum / 2 - index);
       } // adjust x position for bar.padding optionq
 
 
@@ -34409,10 +34409,10 @@ function point_y(p) {
         result = getWidth();
 
     return !isGrouped && isObjectType(config.bar_width) && (result = {
-      width: result,
-      total: []
+      _$width: result,
+      _$total: []
     }, $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
-      config.bar_width[v.id] && (result[v.id] = getWidth(v.id), result.total.push(result[v.id] || result.width));
+      config.bar_width[v.id] && (result[v.id] = getWidth(v.id), result._$total.push(result[v.id] || result._$width));
     })), result;
   },
   getBars: function getBars(i, id) {
@@ -34477,7 +34477,7 @@ function point_y(p) {
     return function (d, i) {
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
           offset = barOffset(d, i) || y0,
-          width = isNumber(barW) ? barW : barW[d.id] || barW.width,
+          width = isNumber(barW) ? barW : barW[d.id] || barW._$width,
           posX = barX(d),
           posY = barY(d);
       // 4 points that make a bar
