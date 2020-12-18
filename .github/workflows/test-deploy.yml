@@ -61,8 +61,8 @@ jobs:
         id: publish
         run: npm run release
         # https://docs.github.com/en/free-pro-team@latest/actions/reference/context-and-expression-syntax-for-github-actions
-        if: contains("refs/heads/next refs/heads/latest", github.ref)
+        if: contains('refs/heads/next refs/heads/latest', github.ref)
       
       - name: deploy
         run: bash ./config/deploy.sh
-        if: steps.publish.outputs.branch == "latest" && steps.publish.outputs.conclusion == "success"
+        if: steps.publish.outputs.branch == 'latest' && steps.publish.outputs.conclusion == 'success'
