@@ -33,7 +33,7 @@ jobs:
       run: npm run lint
 
     - name: Run Test
-      run: npm coverage
+      run: npm run coverage
 
     - name: Coveralls Parallel
       uses: coverallsapp/github-action@master
