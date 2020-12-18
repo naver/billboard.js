@@ -1,7 +1,5 @@
-name: CI
-
+name: Test/Deploy
 on: [push, pull_request]
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -27,7 +25,9 @@ jobs:
           ${{ runner.OS }}-
 
     - name: Install dependencies
-      run: npm config set package-lock false && npm install
+      run: |
+        npm config set package-lock false
+        npm install
 
     - name: Lint
       run: npm run lint
@@ -42,7 +42,7 @@ jobs:
         flag-name: run-${{ matrix.node-version }}
         parallel: true
         
-  finish:
+  send_coverage:
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -53,3 +53,16 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true
         
+  release:
+    needs: send_coverage
+    runs-on: ubuntu-latest
+    steps:
+      - name: publish
+        id: publish
+        run: npm run release
+        # https://docs.github.com/en/free-pro-team@latest/actions/reference/context-and-expression-syntax-for-github-actions
+        if: contains('refs/heads/next refs/heads/latest', github.ref)
+      
+      - name: deploy
+        run: bash ./config/deploy.sh
+        if: steps.publish.outputs.branch == 'latest' && steps.publish.outputs.conclusion == 'success'
