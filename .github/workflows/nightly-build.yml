@@ -12,7 +12,5 @@ jobs:
     steps:
       - name: deploy
         run: bash ./config/deploy-nightly.sh
-        if: github.ref == 'refs/heads/nightly'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-         
