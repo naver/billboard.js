@@ -414,7 +414,7 @@ describe("API zoom", function() {
 						expect(this.getTotalLength()).to.be.greaterThan(len[i]);
 					});
 
-					resolve();
+					resolve(undefined);
 				}, 300);
 			}).then(() => {
 				// when

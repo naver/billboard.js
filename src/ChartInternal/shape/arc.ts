@@ -13,7 +13,7 @@ import {
 import {interpolate as d3Interpolate} from "d3-interpolate";
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
-import {callFn, endall, isFunction, isNumber, isUndefined, setTextValue} from "../../module/util";
+import {callFn, endall, isFunction, isNumber, isObject, isUndefined, setTextValue} from "../../module/util";
 import {d3Selection} from "../../../types/types";
 
 export default {
@@ -41,40 +41,57 @@ export default {
 	updateRadius(): void {
 		const $$ = this;
 		const {config, state} = $$;
-		const radius = config.pie_innerRadius;
 		const padding = config.pie_padding;
 		const w = config.gauge_width || config.donut_width;
 		const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
 			config.gauge_arcs_minWidth;
 
+		// determine radius
 		state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * (
-			$$.hasMultiArcGauge() ? 0.85 : 1);
+			$$.hasMultiArcGauge() ? 0.85 : 1
+		);
+
 		state.radius = state.radiusExpanded * 0.95;
 		state.innerRadiusRatio = w ? (state.radius - w) / state.radius : 0.6;
+
 		state.gaugeArcWidth = w || (
 			gaugeArcWidth <= state.radius - state.innerRadius ?
 				state.radius - state.innerRadius :
 				(gaugeArcWidth <= state.radius ? gaugeArcWidth : state.radius)
 		);
 
-		const innerRadius = radius || (
+		const innerRadius = config.pie_innerRadius || (
 			padding ? padding * (state.innerRadiusRatio + 0.1) : 0
 		);
 
-		// NOTE: innerRadius can be an object by user setting, only for 'pie' type
+		// NOTE: inner/outerRadius can be an object by user setting, only for 'pie' type
+		state.outerRadius = config.pie_outerRadius;
 		state.innerRadius = $$.hasType("donut") || $$.hasType("gauge") ?
 			state.radius * state.innerRadiusRatio : innerRadius;
 	},
 
-	getInnerRadius(d): number {
+	/**
+	 * Get pie's inner & outer radius value
+	 * @param {object|undefined} d Data object
+	 * @returns {object}
+	 * @private
+	 */
+	getRadius(d): {innerRadius: number, outerRadius: number} {
 		const $$ = this;
-		let {innerRadius} = $$.state;
+		const data = d && d.data;
+		let {innerRadius, outerRadius} = $$.state;
 
-		if (!isNumber(innerRadius) && d) {
-			innerRadius = innerRadius[d.data.id] || 0;
+		if (!isNumber(innerRadius) && data) {
+			innerRadius = innerRadius[data.id] || 0;
 		}
 
-		return innerRadius;
+		if (isObject(outerRadius) && data && data.id in outerRadius) {
+			outerRadius = outerRadius[data.id];
+		} else if (!isNumber(outerRadius)) {
+			outerRadius = $$.state.radius;
+		}
+
+		return {innerRadius, outerRadius};
 	},
 
 	updateArc(): void {
@@ -141,25 +158,27 @@ export default {
 	getSvgArc(): Function {
 		const $$ = this;
 		const {state} = $$;
-		const ir = $$.getInnerRadius();
 		const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
 
-		let arc = d3Arc()
-			.outerRadius((d: any) => (
-				hasMultiArcGauge ? (state.radius - singleArcWidth * d.index) : state.radius))
-			.innerRadius((d: any) => (hasMultiArcGauge ?
-				state.radius - singleArcWidth * (d.index + 1) :
-				isNumber(ir) ? ir : 0));
+		const arc = d3Arc()
+			.innerRadius((d: any) => {
+				const {innerRadius} = $$.getRadius(d);
+
+				return hasMultiArcGauge ?
+					state.radius - singleArcWidth * (d.index + 1) :
+					isNumber(innerRadius) ? innerRadius : 0;
+			})
+			.outerRadius((d: any) => {
+				const {outerRadius} = $$.getRadius(d);
+
+				return hasMultiArcGauge ? (state.radius - singleArcWidth * d.index) : outerRadius;
+			});
 
 		const newArc = function(d, withoutUpdate) {
 			let path: string | null = "M 0 0";
 
 			if (d.value || d.data) {
-				if (!isNumber(ir)) {
-					arc = arc.innerRadius($$.getInnerRadius(d));
-				}
-
 				const updated = !withoutUpdate && $$.updateAngle(d);
 
 				if (withoutUpdate) {
@@ -189,23 +208,33 @@ export default {
 		);
 
 		const arc = d3Arc()
-			.outerRadius((d: any) => (hasMultiArcGauge ?
-				state.radius - singleArcWidth * d.index + expandWidth :
-				state.radiusExpanded * newRate)
-			)
-			.innerRadius((d: any) => (hasMultiArcGauge ?
-				state.radius - singleArcWidth * (d.index + 1) : state.innerRadius));
+			.innerRadius((d: any) => (
+				hasMultiArcGauge ?
+					state.radius - singleArcWidth * (d.index + 1) : $$.getRadius(d).innerRadius
+			))
+			.outerRadius((d: any) => {
+				let radius: number;
+
+				if (hasMultiArcGauge) {
+					radius = state.radius - singleArcWidth * d.index + expandWidth;
+				} else {
+					const {outerRadius} = $$.getRadius(d);
+					let {radiusExpanded} = state;
+
+					if (state.radius !== outerRadius) {
+						radiusExpanded -= Math.abs(state.radius - outerRadius);
+					}
+
+					radius = radiusExpanded * newRate;
+				}
+
+				return radius;
+			});
 
 		return function(d) {
 			const updated = $$.updateAngle(d);
 
-			if (updated) {
-				return (
-					hasMultiArcGauge ? arc : arc.innerRadius($$.getInnerRadius(d))
-				)(updated);
-			} else {
-				return "M 0 0";
-			}
+			return updated ? arc(updated) : "M 0 0";
 		};
 	},
 
@@ -215,7 +244,7 @@ export default {
 
 	transformForArcLabel(d): string {
 		const $$ = this;
-		const {config, state: {radius, radiusExpanded}} = $$;
+		const {config, state: {radiusExpanded}} = $$;
 
 		const updated = $$.updateAngle(d);
 		let translate = "";
@@ -229,6 +258,7 @@ export default {
 
 				translate = `translate(${x},${y})`;
 			} else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
+				const {outerRadius} = $$.getRadius(d);
 				const c = this.svgArc.centroid(updated);
 				const x = isNaN(c[0]) ? 0 : c[0];
 				const y = isNaN(c[1]) ? 0 : c[1];
@@ -238,10 +268,10 @@ export default {
 					($$.hasType("pie") && config.pie_label_ratio);
 
 				if (ratio) {
-					ratio = isFunction(ratio) ? ratio.bind($$.api)(d, radius, h) : ratio;
+					ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
 				} else {
-					ratio = radius && (
-						h ? (36 / radius > 0.375 ? 1.175 - 36 / radius : 0.8) * radius / h : 0
+					ratio = outerRadius && (
+						h ? (36 / outerRadius > 0.375 ? 1.175 - 36 / outerRadius : 0.8) * outerRadius / h : 0
 					);
 				}
 

@@ -4193,6 +4193,42 @@ d3.select(".chart_area")
 				}
 			},
 		],
+		OuterRadius: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 50],
+							["data3", 20]
+						],
+						type: "pie"
+					},
+					pie: {
+						innerRadius: 10,
+						outerRadius: 100
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 50],
+							["data3", 20]
+						],
+						type: "pie"
+					},
+					pie: {
+						outerRadius: {
+							data1: 110,
+							data2: 80
+						}
+					}
+				}
+			},
+		],
 		PadAngle: {
 			options: {
 				data: {
