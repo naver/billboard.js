@@ -1,0 +1,38 @@
+name: Release
+on:
+  push:
+    branches:
+      - latest
+      - next
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+
+# https://github.com/semantic-release/semantic-release/blob/master/docs/recipes/github-actions.md
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - name: Install dependencies
+        run: npm ci
+      - name: Publish
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        id: publish
+        run: npm run release
+        if: ${{ github.event.workflow_run.conclusion == 'success' }}
+        # https://docs.github.com/en/free-pro-team@latest/actions/reference/context-and-expression-syntax-for-github-actions
+        # if: contains('refs/heads/next refs/heads/latest', github.ref)      
+      - name: deploy
+        run: bash ./config/deploy.sh
+        if: steps.publish.outputs.branch == 'latest' && steps.publish.outputs.conclusion == 'success'

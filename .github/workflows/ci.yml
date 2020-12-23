@@ -1,5 +1,6 @@
-name: Test/Deploy
+name: CI
 on: [push, pull_request]
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -52,17 +53,3 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         parallel-finished: true
-        
-  release:
-    needs: send_coverage
-    runs-on: ubuntu-latest
-    steps:
-      - name: publish
-        id: publish
-        run: npm run release
-        # https://docs.github.com/en/free-pro-team@latest/actions/reference/context-and-expression-syntax-for-github-actions
-        if: contains('refs/heads/next refs/heads/latest', github.ref)
-      
-      - name: deploy
-        run: bash ./config/deploy.sh
-        if: steps.publish.outputs.branch == 'latest' && steps.publish.outputs.conclusion == 'success'
