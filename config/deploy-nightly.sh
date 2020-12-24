@@ -12,7 +12,7 @@ setup_git() {
     git remote rm origin
 
     # Add new "origin" with access token in the git URL for authentication
-    git remote add origin https://netil:${GH_TOKEN}@github.com/naver/billboard.js.git > /dev/null 2>&1
+    git remote add origin https://netil:$2@github.com/naver/billboard.js.git > /dev/null 2>&1
 
     git fetch origin
     git checkout nightly
