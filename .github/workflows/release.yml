@@ -21,12 +21,17 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+    - name: Install dependencies
+      run: |
+        npm config set package-lock false
+        npm install
+
       - name: Publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         id: publish
-        run: npx semantic-release
+        run: npm run release
         if: ${{ github.event.workflow_run.conclusion == 'success' }}
         # https://docs.github.com/en/free-pro-team@latest/actions/reference/context-and-expression-syntax-for-github-actions
         # if: contains('refs/heads/next refs/heads/latest', github.ref)      
