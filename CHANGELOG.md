@@ -1,3 +1,16 @@
+# [2.2.0-next.3](https://github.com/naver/billboard.js/compare/2.2.0-next.2...2.2.0-next.3) (2020-12-24)
+
+
+### Bug Fixes
+
+* **bar:** fix bar width rendering for 'total' data key ([eacaecb](https://github.com/naver/billboard.js/commit/eacaecb855e156b6107fe1564da5c6a941ba4b65)), closes [#1818](https://github.com/naver/billboard.js/issues/1818)
+* **browser:** fix retrieving global ([3474ac0](https://github.com/naver/billboard.js/commit/3474ac06ecf7676312b35a18e3f985816339e029)), closes [#1826](https://github.com/naver/billboard.js/issues/1826)
+
+
+### Features
+
+* **pie:** Intent to ship pie.outerRadius ([ca67418](https://github.com/naver/billboard.js/commit/ca67418bfb0b14f8650a8934c953f2a343e06da7)), closes [#1825](https://github.com/naver/billboard.js/issues/1825)
+
 # [2.2.0-next.2](https://github.com/naver/billboard.js/compare/2.2.0-next.1...2.2.0-next.2) (2020-12-08)
 
 
