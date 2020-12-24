@@ -21,10 +21,10 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-    - name: Install dependencies
-      run: |
-        npm config set package-lock false
-        npm install
+      - name: Install dependencies
+        run: |
+          npm config set package-lock false
+          npm install
 
       - name: Publish
         env:
