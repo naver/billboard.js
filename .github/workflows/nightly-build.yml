@@ -8,9 +8,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x]
 
     steps:
-      - name: deploy
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: |
+          npm config set package-lock false
+          npm install
+
+      - name: Deploy
         run: bash ./config/deploy-nightly.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
