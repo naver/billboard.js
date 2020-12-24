@@ -1,8 +1,11 @@
 name: Release
 on:
+  push:
+    branches:
+    - latest
+    - next
   workflow_run:
     workflows: ["CI"]
-    branches: [latest, next]
     types:
       - completed
 
@@ -10,16 +13,17 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
 
     steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 12
 
       - name: Install dependencies
         run: |
@@ -37,5 +41,6 @@ jobs:
         # if: contains('refs/heads/next refs/heads/latest', github.ref)      
 
       - name: Deploy
+        shell: bash
         run: bash ./config/deploy.sh
         if: steps.publish.outputs.branch == 'latest' && steps.publish.outputs.conclusion == 'success'

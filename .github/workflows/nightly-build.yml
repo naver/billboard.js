@@ -26,6 +26,7 @@ jobs:
           npm install
 
       - name: Deploy
+        shell: bash
         run: bash ./config/deploy-nightly.sh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
