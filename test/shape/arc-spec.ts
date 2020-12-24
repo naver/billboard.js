@@ -213,21 +213,91 @@ describe("SHAPE ARC", () => {
 				}
 			});
 
-			const expected = {
+			const expectedPath = {
 				data1: "M-8.110822788676742e-14,211.85A211.85,211.85,0,0,1,-201.48132297712823,-65.46525025833276L-47.55282581475767,-15.450849718747406A50,50,0,0,0,-1.9142843494634746e-14,50Z",
 				data2: "M1.2972071219968338e-14,-211.85A211.85,211.85,0,1,1,-8.110822788676742e-14,211.85L-3.06285495914156e-14,80A80,80,0,1,0,4.898587196589413e-15,-80Z",
 				data3: "M-201.48132297712823,-65.46525025833276A211.85,211.85,0,0,1,1.4924438455356651e-13,-211.85L0,0Z"
 			};
-
+			
 			expect(chart.internal.state.innerRadius).to.be.deep.equal(innerRadius);
 
 			setTimeout(() => {
 				chart.$.arc.selectAll("path").each(function(d) {
-					expect(this.getAttribute("d")).to.be.equal(expected[d.data.id]);
+					expect(this.getAttribute("d")).to.be.equal(expectedPath[d.data.id]);
+				});
+				done();
+			}, 500);
+		});
+
+		it("check for outerRadius", done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50],
+						["data3", 20]
+					],
+					type: "pie"
+				},
+				pie: {
+					outerRadius: 100
+				}
+			});
+
+			setTimeout(() => {
+				const rect = chart.$.arc.node().getBoundingClientRect();
+
+				expect(rect.width).to.be.below(337);
+				expect(rect.height).to.be.below(249);
+				expect(rect.width).to.be.equal(rect.height);
+
+				expect(chart.internal.state.outerRadius).to.be.equal(chart.config("pie.outerRadius"));
+
+				done();
+			}, 300);
+		});
+
+		it("check for variant outerRadius", done => {
+			const outerRadius = {
+				data1: 120,
+				data2: 80
+			};
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50],
+						["data3", 20]
+					],
+					type: "pie"
+				},
+				pie: {
+					outerRadius
+				}
+			});
+
+			const expectedPath = {
+				data1: "M-4.594282438712339e-14,120A120,120,0,0,1,-114.1267819554184,-37.08203932499377L0,0Z",
+				data2: "M4.898587196589413e-15,-80A80,80,0,1,1,-3.06285495914156e-14,80L0,0Z",
+				data3: "M-201.48132297712823,-65.46525025833276A211.85,211.85,0,0,1,1.4924438455356651e-13,-211.85L0,0Z"
+			};
+			const expectedTextPos = {
+				data1: "translate(-77.665631459995,56.42738422007736)",
+				data2: "translate(58.00000000000001,1.2878587085651817e-14)",
+				data3: "translate(-99.61784455852826,-137.1122002066662)"
+			};
+
+			setTimeout(() => {
+				chart.$.arc.selectAll("path").each(function(d) {
+					expect(this.getAttribute("d")).to.be.equal(expectedPath[d.data.id]);
+				});
+
+				chart.$.text.texts.each(function(d) {
+					expect(this.getAttribute("transform")).to.be.equal(expectedTextPos[d.data.id]);
 				});
 
 				done();
-			}, 500);
+			}, 300);
 		});
 	});
 
@@ -235,17 +305,17 @@ describe("SHAPE ARC", () => {
 		it("check for Pie's threshold data label text", done => {
 			const chart = util.generate({
 				data: {
-				columns: [
-					["data1", 10],
-					["data2", 30],
-					["data3", 60]
-				],
-				type: "pie"
+					columns: [
+						["data1", 10],
+						["data2", 30],
+						["data3", 60]
+					],
+					type: "pie"
 				},
 				pie: {
-				label:{
-					threshold: 0.2
-				}
+					label:{
+						threshold: 0.2
+					}
 				}
 			});
 
@@ -266,7 +336,7 @@ describe("SHAPE ARC", () => {
 
 				setTimeout(() => {
 					checkText();
-					resolve();
+					resolve(undefined);
 				}, 200);
 			}).then(() => {
 				// when
@@ -614,7 +684,7 @@ describe("SHAPE ARC", () => {
 					// when
 					chart.focus("data1");
 
-					resolve();
+					resolve(undefined);
 				}, 300);
 			}).then(() => {
 				setTimeout(() => {

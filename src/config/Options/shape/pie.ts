@@ -20,10 +20,14 @@ export default {
 	 * @property {number} [pie.expand.rate=0.98] Set expand rate.
 	 * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
 	 * @property {number|object} [pie.innerRadius=0] Sets the inner radius of pie arc.
+	 * @property {number|object|undefined} [pie.outerRadius=undefined] Sets the outer radius of pie arc.
 	 * @property {number} [pie.padAngle=0] Set padding between data.
 	 * @property {number} [pie.padding=0] Sets the gap between pie arcs.
-	 * @property {object} donut Donut object
-	 * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
+	 * @property {number} [pie.startingAngle=0] Set starting angle where data draws.
+	 * @see [Demo: expand.rate](https://naver.github.io/billboard.js/demo/#PieChartOptions.ExpandRate)
+	 * @see [Demo: innerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.InnerRadius)
+	 * @see [Demo: outerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.OuterRadius)
+	 * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#PieChartOptions.StartingAngle)
 	 * @example
 	 *  pie: {
 	 *      label: {
@@ -65,6 +69,14 @@ export default {
 	 *      innerRadius: {
 	 *      	data1: 10,
 	 *      	data2: 0
+	 *      },
+	 *
+	 *      outerRadius: 100,
+	 *
+	 *      // set different outerRadius for each data
+	 *      outerRadius: {
+	 *      	data1: 50,
+	 *      	data2: 100
 	 *      }
 	 *
 	 *      padAngle: 0.1,
@@ -80,6 +92,7 @@ export default {
 	pie_expand_rate: 0.98,
 	pie_expand_duration: 50,
 	pie_innerRadius: <number|{[key: string]: number}> 0,
+	pie_outerRadius: <number|{[key: string]: number}|undefined> undefined,
 	pie_padAngle: 0,
 	pie_padding: 0,
 	pie_startingAngle: 0

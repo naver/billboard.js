@@ -36,7 +36,7 @@
 	"husky": {
 		"hooks": {
 			"commit-msg": "commitlint -g ./config/commitlint.config.js -E HUSKY_GIT_PARAMS",
-			"pre-push": "npm run lint && npm run lint:types"
+			"pre-push": "npm run lint"
 		}
 	},
 	"repository": {

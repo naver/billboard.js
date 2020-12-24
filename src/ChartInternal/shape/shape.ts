@@ -159,7 +159,9 @@ export default {
 		const currScale = isSub ? scale.subX : (scale.zoom || scale.x);
 		const barPadding = config.bar_padding;
 		const sum = (p, c) => p + c;
-		const halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
+		const halfWidth = isObjectType(offset) && (
+			offset._$total.length ? offset._$total.reduce(sum) / 2 : 0
+		);
 
 		return d => {
 			const ind = $$.getIndices(indices, d.id);
@@ -171,11 +173,11 @@ export default {
 				const xPos = currScale(d.x);
 
 				if (halfWidth) {
-					x = xPos - (offset[d.id] || offset.width) +
-						offset.total.slice(0, index + 1).reduce(sum) -
+					x = xPos - (offset[d.id] || offset._$width) +
+						offset._$total.slice(0, index + 1).reduce(sum) -
 						halfWidth;
 				} else {
-					x = xPos - (isNumber(offset) ? offset : offset.width) * (targetsNum / 2 - index);
+					x = xPos - (isNumber(offset) ? offset : offset._$width) * (targetsNum / 2 - index);
 				}
 			}
 

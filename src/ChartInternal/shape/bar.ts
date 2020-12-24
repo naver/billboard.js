@@ -101,12 +101,12 @@ export default {
 		let result = getWidth();
 
 		if (!isGrouped && isObjectType(config.bar_width)) {
-			result = {width: result, total: []};
+			result = {_$width: result, _$total: []};
 
 			$$.filterTargetsToShow($$.data.targets).forEach(v => {
 				if (config.bar_width[v.id]) {
 					result[v.id] = getWidth(v.id);
-					result.total.push(result[v.id] || result.width);
+					result._$total.push(result[v.id] || result._$width);
 				}
 			});
 		}
@@ -201,7 +201,7 @@ export default {
 		return (d, i) => {
 			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
 			const offset = barOffset(d, i) || y0; // offset is for stacked bar chart
-			const width = isNumber(barW) ? barW : barW[d.id] || barW.width;
+			const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
 			const posX = barX(d);
 			let posY = barY(d);
 
