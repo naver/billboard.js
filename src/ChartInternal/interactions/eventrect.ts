@@ -370,7 +370,6 @@ export default {
 		const {eventReceiver} = state;
 
 		const rect = eventRectEnter
-			.attr("class", $$.classEvent.bind($$))
 			.style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
 			.on("click", function() {
 				const {currentIdx, data} = eventReceiver;
