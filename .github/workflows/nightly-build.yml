@@ -9,6 +9,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v2
       - name: Setup Git
         shell: bash
         run: bash ./config/deploy-nightly.sh setup ${{ secrets.GITHUB_TOKEN }}
