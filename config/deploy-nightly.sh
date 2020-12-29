@@ -7,18 +7,10 @@ VERSION="$(node -pe "require('./package.json').version")-nightly-`date '+%Y%m%d%
 setup_git() {
     git config --global user.email "alberto.park@gmail.com"
     git config --global user.name "netil"
-
-    # Remove existing "origin"
-    git remote rm origin
-
-    # Add new "origin" with access token in the git URL for authentication
-    git remote add origin https://netil:$2@github.com/naver/billboard.js.git > /dev/null 2>&1
-
-    git fetch origin
-    git checkout nightly
-
     git config --global merge.ours.driver true
-    git merge --strategy-option theirs origin/master
+
+    git checkout -t origin/nightly
+    git merge --strategy-option theirs master
 }
 
 build_nightly() {
