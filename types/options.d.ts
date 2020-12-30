@@ -462,6 +462,13 @@ export interface ChartOptions {
 		};
 
 		/**
+		 * Sets the outer radius of pie arc.
+		 */
+		outerRadius?: number | {
+			[key: string]: number
+		};
+
+		/**
 		 * Set padding between data.
 		 */
 		padAngle?: number;

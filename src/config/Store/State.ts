@@ -129,7 +129,8 @@ export default class State {
 
 			// value for Arc
 			radius: 0,
-			innerRadius: 0,
+			innerRadius: <{[key: string]: number}|number> 0,
+			outerRadius: <{[key: string]: number}|number|undefined> undefined,
 			innerRadiusRatio: 0,
 			gaugeArcWidth: 0,
 			radiusExpanded: 0,

@@ -85,10 +85,6 @@ export default {
 		return `${this.generateClass(CLASS.region, i)} ${"class" in d ? d.class : ""}`;
 	},
 
-	classEvent(d) {
-		return this.generateClass(CLASS.eventRect, d.index);
-	},
-
 	classTarget(id: string): string {
 		const additionalClassSuffix = this.config.data_classes[id];
 		let additionalClass = "";
