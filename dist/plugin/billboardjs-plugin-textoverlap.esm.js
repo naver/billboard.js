@@ -60,17 +60,10 @@ function __spreadArrays() {
  * billboard.js project is licensed under the MIT license
  */
 var win = (function () {
-    var def = function (o) { return typeof o === "object" && o !== null && o.Object === Object && o; };
-    // Prioritize referencing Node.js global first to prevent refence error
-    // https://github.com/naver/billboard.js/issues/1778
-    var freeGlobal = def(global);
-    try {
-        if (!freeGlobal) {
-            freeGlobal = def(globalThis) || def(self) || def(window);
-        }
-    }
-    catch (e) { }
-    return freeGlobal || Function("return this")();
+    var root = (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
+        (typeof global === "object" && global !== null && global.Object === Object && global) ||
+        (typeof self === "object" && self !== null && self.Object === Object && self);
+    return root || Function("return this")();
 })();
 /* eslint-enable no-new-func, no-undef */
 var doc = win && win.document;

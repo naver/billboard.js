@@ -302,6 +302,7 @@ var State = /** @class */ (function () {
             // value for Arc
             radius: 0,
             innerRadius: 0,
+            outerRadius: undefined,
             innerRadiusRatio: 0,
             gaugeArcWidth: 0,
             radiusExpanded: 0,
@@ -1882,17 +1883,10 @@ var tooltip = {
  * billboard.js project is licensed under the MIT license
  */
 var win = (function () {
-    var def = function (o) { return typeof o === "object" && o !== null && o.Object === Object && o; };
-    // Prioritize referencing Node.js global first to prevent refence error
-    // https://github.com/naver/billboard.js/issues/1778
-    var freeGlobal = def(global);
-    try {
-        if (!freeGlobal) {
-            freeGlobal = def(globalThis) || def(self) || def(window);
-        }
-    }
-    catch (e) { }
-    return freeGlobal || Function("return this")();
+    var root = (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
+        (typeof global === "object" && global !== null && global.Object === Object && global) ||
+        (typeof self === "object" && self !== null && self.Object === Object && self);
+    return root || Function("return this")();
 })();
 /* eslint-enable no-new-func, no-undef */
 var doc = win && win.document;
@@ -4029,9 +4023,6 @@ var classModule = {
     },
     classRegion: function (d, i) {
         return this.generateClass(CLASS.region, i) + " " + ("class" in d ? d["class"] : "");
-    },
-    classEvent: function (d) {
-        return this.generateClass(CLASS.eventRect, d.index);
     },
     classTarget: function (id) {
         var additionalClassSuffix = this.config.data_classes[id];
@@ -11468,7 +11459,6 @@ var eventrect = {
         var config = $$.config, state = $$.state;
         var eventReceiver = state.eventReceiver;
         var rect = eventRectEnter
-            .attr("class", $$.classEvent.bind($$))
             .style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
             .on("click", function () {
             var currentIdx = eventReceiver.currentIdx, data = eventReceiver.data;
@@ -14378,29 +14368,43 @@ var shapeArc = {
     updateRadius: function () {
         var $$ = this;
         var config = $$.config, state = $$.state;
-        var radius = config.pie_innerRadius;
         var padding = config.pie_padding;
         var w = config.gauge_width || config.donut_width;
         var gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
             config.gauge_arcs_minWidth;
+        // determine radius
         state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() ? 0.85 : 1);
         state.radius = state.radiusExpanded * 0.95;
         state.innerRadiusRatio = w ? (state.radius - w) / state.radius : 0.6;
         state.gaugeArcWidth = w || (gaugeArcWidth <= state.radius - state.innerRadius ?
             state.radius - state.innerRadius :
             (gaugeArcWidth <= state.radius ? gaugeArcWidth : state.radius));
-        var innerRadius = radius || (padding ? padding * (state.innerRadiusRatio + 0.1) : 0);
-        // NOTE: innerRadius can be an object by user setting, only for 'pie' type
+        var innerRadius = config.pie_innerRadius || (padding ? padding * (state.innerRadiusRatio + 0.1) : 0);
+        // NOTE: inner/outerRadius can be an object by user setting, only for 'pie' type
+        state.outerRadius = config.pie_outerRadius;
         state.innerRadius = $$.hasType("donut") || $$.hasType("gauge") ?
             state.radius * state.innerRadiusRatio : innerRadius;
     },
-    getInnerRadius: function (d) {
+    /**
+     * Get pie's inner & outer radius value
+     * @param {object|undefined} d Data object
+     * @returns {object}
+     * @private
+     */
+    getRadius: function (d) {
         var $$ = this;
-        var innerRadius = $$.state.innerRadius;
-        if (!isNumber(innerRadius) && d) {
-            innerRadius = innerRadius[d.data.id] || 0;
+        var data = d && d.data;
+        var _a = $$.state, innerRadius = _a.innerRadius, outerRadius = _a.outerRadius;
+        if (!isNumber(innerRadius) && data) {
+            innerRadius = innerRadius[data.id] || 0;
         }
-        return innerRadius;
+        if (isObject(outerRadius) && data && data.id in outerRadius) {
+            outerRadius = outerRadius[data.id];
+        }
+        else if (!isNumber(outerRadius)) {
+            outerRadius = $$.state.radius;
+        }
+        return { innerRadius: innerRadius, outerRadius: outerRadius };
     },
     updateArc: function () {
         var $$ = this;
@@ -14453,20 +14457,22 @@ var shapeArc = {
     getSvgArc: function () {
         var $$ = this;
         var state = $$.state;
-        var ir = $$.getInnerRadius();
         var singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
         var hasMultiArcGauge = $$.hasMultiArcGauge();
         var arc$1 = arc()
-            .outerRadius(function (d) { return (hasMultiArcGauge ? (state.radius - singleArcWidth * d.index) : state.radius); })
-            .innerRadius(function (d) { return (hasMultiArcGauge ?
-            state.radius - singleArcWidth * (d.index + 1) :
-            isNumber(ir) ? ir : 0); });
+            .innerRadius(function (d) {
+            var innerRadius = $$.getRadius(d).innerRadius;
+            return hasMultiArcGauge ?
+                state.radius - singleArcWidth * (d.index + 1) :
+                isNumber(innerRadius) ? innerRadius : 0;
+        })
+            .outerRadius(function (d) {
+            var outerRadius = $$.getRadius(d).outerRadius;
+            return hasMultiArcGauge ? (state.radius - singleArcWidth * d.index) : outerRadius;
+        });
         var newArc = function (d, withoutUpdate) {
             var path = "M 0 0";
             if (d.value || d.data) {
-                if (!isNumber(ir)) {
-                    arc$1 = arc$1.innerRadius($$.getInnerRadius(d));
-                }
                 var updated = !withoutUpdate && $$.updateAngle(d);
                 if (withoutUpdate) {
                     path = arc$1(d);
@@ -14489,19 +14495,26 @@ var shapeArc = {
         var hasMultiArcGauge = $$.hasMultiArcGauge();
         var expandWidth = Math.min(state.radiusExpanded * newRate - state.radius, singleArcWidth * 0.8 - (1 - newRate) * 100);
         var arc$1 = arc()
-            .outerRadius(function (d) { return (hasMultiArcGauge ?
-            state.radius - singleArcWidth * d.index + expandWidth :
-            state.radiusExpanded * newRate); })
             .innerRadius(function (d) { return (hasMultiArcGauge ?
-            state.radius - singleArcWidth * (d.index + 1) : state.innerRadius); });
-        return function (d) {
-            var updated = $$.updateAngle(d);
-            if (updated) {
-                return (hasMultiArcGauge ? arc$1 : arc$1.innerRadius($$.getInnerRadius(d)))(updated);
+            state.radius - singleArcWidth * (d.index + 1) : $$.getRadius(d).innerRadius); })
+            .outerRadius(function (d) {
+            var radius;
+            if (hasMultiArcGauge) {
+                radius = state.radius - singleArcWidth * d.index + expandWidth;
             }
             else {
-                return "M 0 0";
+                var outerRadius = $$.getRadius(d).outerRadius;
+                var radiusExpanded = state.radiusExpanded;
+                if (state.radius !== outerRadius) {
+                    radiusExpanded -= Math.abs(state.radius - outerRadius);
+                }
+                radius = radiusExpanded * newRate;
             }
+            return radius;
+        });
+        return function (d) {
+            var updated = $$.updateAngle(d);
+            return updated ? arc$1(updated) : "M 0 0";
         };
     },
     getArc: function (d, withoutUpdate, force) {
@@ -14509,7 +14522,7 @@ var shapeArc = {
     },
     transformForArcLabel: function (d) {
         var $$ = this;
-        var config = $$.config, _a = $$.state, radius = _a.radius, radiusExpanded = _a.radiusExpanded;
+        var config = $$.config, radiusExpanded = $$.state.radiusExpanded;
         var updated = $$.updateAngle(d);
         var translate = "";
         if (updated) {
@@ -14520,6 +14533,7 @@ var shapeArc = {
                 translate = "translate(" + x + "," + y + ")";
             }
             else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
+                var outerRadius = $$.getRadius(d).outerRadius;
                 var c = this.svgArc.centroid(updated);
                 var x = isNaN(c[0]) ? 0 : c[0];
                 var y = isNaN(c[1]) ? 0 : c[1];
@@ -14527,10 +14541,10 @@ var shapeArc = {
                 var ratio = ($$.hasType("donut") && config.donut_label_ratio) ||
                     ($$.hasType("pie") && config.pie_label_ratio);
                 if (ratio) {
-                    ratio = isFunction(ratio) ? ratio.bind($$.api)(d, radius, h) : ratio;
+                    ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
                 }
                 else {
-                    ratio = radius && (h ? (36 / radius > 0.375 ? 1.175 - 36 / radius : 0.8) * radius / h : 0);
+                    ratio = outerRadius && (h ? (36 / outerRadius > 0.375 ? 1.175 - 36 / outerRadius : 0.8) * outerRadius / h : 0);
                 }
                 translate = "translate(" + x * ratio + "," + y * ratio + ")";
             }
@@ -17107,10 +17121,14 @@ var optPie = {
      * @property {number} [pie.expand.rate=0.98] Set expand rate.
      * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
      * @property {number|object} [pie.innerRadius=0] Sets the inner radius of pie arc.
+     * @property {number|object|undefined} [pie.outerRadius=undefined] Sets the outer radius of pie arc.
      * @property {number} [pie.padAngle=0] Set padding between data.
      * @property {number} [pie.padding=0] Sets the gap between pie arcs.
-     * @property {object} donut Donut object
-     * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
+     * @property {number} [pie.startingAngle=0] Set starting angle where data draws.
+     * @see [Demo: expand.rate](https://naver.github.io/billboard.js/demo/#PieChartOptions.ExpandRate)
+     * @see [Demo: innerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.InnerRadius)
+     * @see [Demo: outerRadius](https://naver.github.io/billboard.js/demo/#PieChartOptions.OuterRadius)
+     * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#PieChartOptions.StartingAngle)
      * @example
      *  pie: {
      *      label: {
@@ -17152,6 +17170,14 @@ var optPie = {
      *      innerRadius: {
      *      	data1: 10,
      *      	data2: 0
+     *      },
+     *
+     *      outerRadius: 100,
+     *
+     *      // set different outerRadius for each data
+     *      outerRadius: {
+     *      	data1: 50,
+     *      	data2: 100
      *      }
      *
      *      padAngle: 0.1,
@@ -17167,6 +17193,7 @@ var optPie = {
     pie_expand_rate: 0.98,
     pie_expand_duration: 50,
     pie_innerRadius: 0,
+    pie_outerRadius: undefined,
     pie_padAngle: 0,
     pie_padding: 0,
     pie_startingAngle: 0
