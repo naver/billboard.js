@@ -32,7 +32,7 @@ const config = {
 
 		callback();
 	},
-	devtool: "cheap-module-source-map",
+	devtool: false,
 	resolve: {
 		extensions: [".ts", ".js"]
 	},

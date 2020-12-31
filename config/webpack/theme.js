@@ -44,7 +44,6 @@ const config = {
 			}
 		],
 	},
-	devtool: false,
 	optimization: {
 		minimize: true,
 		minimizer: [
