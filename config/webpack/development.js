@@ -3,7 +3,6 @@ const WriteFilePlugin = require("write-file-webpack-plugin");
 const plugin = require("./plugin")({});
 
 const config = {
-	devtool: "inline-source-map",
 	devServer: {
 		static: [
 			{
@@ -13,8 +12,9 @@ const config = {
 		],
 		dev: {
 			publicPath: "/dist"
-		}	
+		}
 	},
+	devtool: "cheap-module-source-map",
 	module: {
 		rules: [
 			{

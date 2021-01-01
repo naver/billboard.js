@@ -9,7 +9,6 @@ const config = {
 		"billboard.pkgd": ["core-js/stable", "regenerator-runtime/runtime", "./src/index.ts"],
 		"billboard.pkgd.min": ["core-js/stable", "./src/index.ts"]
 	},
-	devtool: false,
 	optimization: {
 		usedExports: true,
 		minimize: true,

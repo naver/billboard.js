@@ -34,7 +34,6 @@ const config = {
 		umdNamedDefine: true,
 		globalObject: "this"
 	},
-	devtool: "inline-source-map",
 	plugins: [
 		new webpack.BannerPlugin({
 			banner: banner.production + banner.plugin,
