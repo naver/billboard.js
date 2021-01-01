@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20201230031313
+ * @version 2.1.4-nightly-20210101015135
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -17104,4 +17104,3 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
 /******/ })()
 ;
 });
-//# sourceMappingURL=billboard.js.map
