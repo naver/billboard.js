@@ -4111,6 +4111,67 @@ d3.select(".chart_area")
 				];
 			}
 		},
+		GaugeArcLength: {
+			options: {
+				data: {
+					columns: [
+						["data0", 25],
+						["data1", 50],
+						["data2", 75],
+						["data3", 100],
+					],
+					type: "gauge"
+				},
+				gauge: {
+					type: "single",
+					max: 100,
+					min: 0, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+					fullCircle: true,
+					arcLength: 100
+				},
+				size: {
+					height: 300
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.config("gauge.arcLength", 75, false);
+						chart.flush(true);
+					}, 2000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", 50, false);
+						chart.flush(true);
+					}, 4000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", 25, false);
+						chart.flush(true);
+					}, 6000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", -25, false);
+						chart.flush(true);
+					}, 8000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", -50, false);
+						chart.flush(true);
+					}, 10000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", -75, false);
+						chart.flush(true);
+					}, 12000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", -100, false);
+						chart.flush(true);
+					}, 14000)
+				];
+			}
+		},
 	},
 	LineChartOptions: {
 		HidePoints: {
