@@ -4060,6 +4060,57 @@ d3.select(".chart_area")
 				];
 			}
 		},
+		GaugeStartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data0", 25],
+						["data1", 50],
+						["data2", 75],
+						["data3", 100],
+					],
+					type: "gauge"
+				},
+				gauge: {
+					type: "multi",
+					max: 100,
+					min: 0, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+					arcs: {
+						minWidth: 5
+					},
+					fullCircle: false,
+					startingAngle: -1 * Math.PI / 2
+				},
+				size: {
+					height: 300
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.config("gauge.startingAngle", -1, false);
+
+						chart.flush(true);
+					}, 2000),
+
+					setTimeout(function() {
+						chart.config("gauge.startingAngle", 1, false);
+						chart.flush(true);
+					}, 4000),
+
+					setTimeout(function() {
+						chart.config("gauge.startingAngle", -0.5 * Math.PI, false);
+						chart.config("gauge.fullCircle", true, false);
+						chart.flush(true);
+					}, 6000),
+
+					setTimeout(function() {
+						chart.config("gauge.startingAngle", 0 * Math.PI, false);
+						chart.flush(true);
+					}, 8000)
+				];
+			}
+		},
 	},
 	LineChartOptions: {
 		HidePoints: {
