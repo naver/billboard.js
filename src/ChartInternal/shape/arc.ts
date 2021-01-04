@@ -97,6 +97,7 @@ export default {
 	updateArc(): void {
 		const $$ = this;
 
+		$$.updateRadius();
 		$$.svgArc = $$.getSvgArc();
 		$$.svgArcExpanded = $$.getSvgArcExpanded();
 	},
