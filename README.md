@@ -2,7 +2,7 @@
 
 [![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![semantic-release][badge-semantic-release]][link-semantic-release]
 
-[![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![Known Vulnerabilities][badge-snyk]][link-snyk] 
+![CI Status][badge-ci-status] [![Coverage Status][badge-coverage]][link-coverage] [![Known Vulnerabilities][badge-snyk]][link-snyk] 
 [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size]
 
 billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
@@ -323,7 +323,7 @@ THE SOFTWARE.
 <!-- badges -->
 [badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
 [badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
-[badge-build-status]: https://travis-ci.org/naver/billboard.js.svg?branch=master
+[badge-ci-status]: https://github.com/naver/billboard.js/workflows/CI/badge.svg
 [badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
 [badge-snyk]: https://snyk.io/test/github/naver/billboard.js/badge.svg?targetFile=package.json
 [badge-gzip-size]: https://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
@@ -335,7 +335,6 @@ THE SOFTWARE.
 [link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
 [link-jsDelivr]: https://www.jsdelivr.com/package/npm/billboard.js
 [link-version]: https://www.npmjs.com/package/billboard.js
-[link-build-status]: https://travis-ci.org/naver/billboard.js
 [link-coverage]: https://coveralls.io/github/naver/billboard.js
 [link-snyk]: https://snyk.io/test/github/naver/billboard.js?targetFile=package.json
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
