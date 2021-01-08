@@ -928,5 +928,17 @@ export default {
 			(isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
 			(isArray(d.value) && d.value.length === 2)
 		);
+	},
+
+	/**
+	 * Get data object by id
+	 * @param {string} id data id
+	 * @returns {object}
+	 * @private
+	 */
+	getDataById(id: string) {
+		const d = this.cache.get(id) || this.api.data(id);
+
+		return isArray(d) ? d[0] : d;
 	}
 };
