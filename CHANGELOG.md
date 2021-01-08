@@ -1,3 +1,16 @@
+# [2.2.0-next.4](https://github.com/naver/billboard.js/compare/2.2.0-next.3...2.2.0-next.4) (2021-01-08)
+
+
+### Bug Fixes
+
+* **color:** fix color callback mismatch ([86ef214](https://github.com/naver/billboard.js/commit/86ef214a2daf22fb7e4058644776c9d1101e7350)), closes [#1847](https://github.com/naver/billboard.js/issues/1847)
+* **types:** fix .load() data type ([7108e7b](https://github.com/naver/billboard.js/commit/7108e7b0e391c41067aae850ce547376096be12c)), closes [#1848](https://github.com/naver/billboard.js/issues/1848)
+
+
+### Features
+
+* **gauge:** added support for drawing gauge from 'startingAngle' to 'arcLength' ([25954ad](https://github.com/naver/billboard.js/commit/25954ad5d4db2e4207cc5614e9e3b477e537a184)), closes [#1633](https://github.com/naver/billboard.js/issues/1633) [#1803](https://github.com/naver/billboard.js/issues/1803) [#1849](https://github.com/naver/billboard.js/issues/1849)
+
 # [2.2.0-next.3](https://github.com/naver/billboard.js/compare/2.2.0-next.2...2.2.0-next.3) (2020-12-24)
 
 
