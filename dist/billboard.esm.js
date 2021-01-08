@@ -368,6 +368,8 @@ var _assign = function __assign() {
     return t;
   }, _assign.apply(this, arguments);
 };
+/** @deprecated */
+
 function __spreadArrays() {
   for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
 
