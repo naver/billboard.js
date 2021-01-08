@@ -24,6 +24,23 @@ export default {
 	 * @property {number} [gauge.min=0] Set min value of the gauge.
 	 * @property {number} [gauge.max=100] Set max value of the gauge.
 	 * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
+	 *
+	 * **Limitations:**
+	 * - when `gauge.fullCircle=false`:
+	 *   - -1 * Math.PI / 2 <= startingAngle <= Math.PI / 2
+	 *   - `startingAngle >= -1 * Math.PI / 2` defaults to `-1 * Math.PI / 2`
+	 *   - `startingAngle <= Math.PI / 2` defaults to `Math.PI / 2`
+	 * - when `gauge.fullCircle=true`:
+	 *   - -2 * Math.PI <= startingAngle <= 2 * Math.PI
+	 *   - `startingAngle >= -2 * Math.PI` defaults to `-2 * Math.PI`
+	 *   - `startingAngle <= 2 * Math.PI` defaults to `2 * Math.PI`
+	 * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100.<br>
+	 * Negative value will draw the arc **counterclockwise**.
+	 *
+	 * **Limitations:**
+	 * - -100 <= arcLength (in percent) <= 100
+	 * - 'arcLength < -100' defaults to -100
+	 * - 'arcLength > 100' defaults to 100
 	 * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
 	 * @property {string} [gauge.units] Set units of the gauge.
 	 * @property {number} [gauge.width] Set width of gauge chart.
@@ -32,6 +49,8 @@ export default {
 	 * - single
 	 * - multi
 	 * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+	 * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
+	 * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
 	 * @example
 	 *  gauge: {
 	 *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
@@ -71,6 +90,8 @@ export default {
 	 *      title: "Title Text",
 	 *      units: "%",
 	 *      width: 10,
+	 *      startingAngle: -1 * Math.PI / 2,
+	 *      arcLength: 100,
 	 *      arcs: {
 	 *          minWidth: 5
 	 *      }
@@ -86,6 +107,7 @@ export default {
 	gauge_max: 100,
 	gauge_type: "single",
 	gauge_startingAngle: -1 * Math.PI / 2,
+	gauge_arcLength: 100,
 	gauge_title: "",
 	gauge_units: <string|undefined> undefined,
 	gauge_width: <number|undefined> undefined,

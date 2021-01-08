@@ -633,7 +633,13 @@ export interface ChartOptions {
 		 */
 		arcs?: {
 			minWidth: number;
-		}
+		};
+
+		/**
+		 * Set the length of the arc to be drawn in percent from -100 to 100.
+		 * Negative value will draw the arc **counterclockwise**.
+		 */
+		arcLength?: number;
 	};
 
 	spline?: {

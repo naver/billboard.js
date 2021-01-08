@@ -97,8 +97,43 @@ export default {
 	updateArc(): void {
 		const $$ = this;
 
+		$$.updateRadius();
 		$$.svgArc = $$.getSvgArc();
 		$$.svgArcExpanded = $$.getSvgArcExpanded();
+	},
+
+	getArcLength(): number {
+		const $$ = this;
+		const {config} = $$;
+		const arcLengthInPercent = config.gauge_arcLength * 3.6;
+		let len = (2 * (arcLengthInPercent / 360));
+
+		if (arcLengthInPercent < -360) {
+			len = -2;
+		} else if (arcLengthInPercent > 360) {
+			len = 2;
+		}
+
+		return len * Math.PI;
+	},
+
+	getStartAngle(): number {
+		const $$ = this;
+		const {config} = $$;
+		const isFullCircle = config.gauge_fullCircle;
+		const defaultStartAngle = -1 * Math.PI / 2;
+		const defaultEndAngle = Math.PI / 2;
+		let startAngle = config.gauge_startingAngle;
+
+		if (!isFullCircle && startAngle <= defaultStartAngle) {
+			startAngle = defaultStartAngle;
+		} else if (!isFullCircle && startAngle >= defaultEndAngle) {
+			startAngle = defaultEndAngle;
+		} else if (startAngle > Math.PI || startAngle < -1 * Math.PI) {
+			startAngle = Math.PI;
+		}
+
+		return startAngle;
 	},
 
 	updateAngle(dValue) {
@@ -112,8 +147,8 @@ export default {
 			return null;
 		}
 
-		const radius = Math.PI * (config.gauge_fullCircle ? 2 : 1);
-		const gStart = config.gauge_startingAngle;
+		const gStart = $$.getStartAngle();
+		const radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
 
 		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
 			// to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
@@ -615,7 +650,63 @@ export default {
 		// bind arc events
 		hasInteraction && $$.bindArcEvent(mainArc);
 
+		$$.hasType("gauge") && $$.redrawBackgroundArcs();
+
 		$$.redrawArcText(duration);
+	},
+
+	redrawBackgroundArcs() {
+		const $$ = this;
+		const {config, state} = $$;
+		const hasMultiArcGauge = $$.hasMultiArcGauge();
+		const isFullCircle = config.gauge_fullCircle;
+
+		const startAngle = $$.getStartAngle();
+		const endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
+
+		let backgroundArc = $$.$el.arcs.select(
+			`${hasMultiArcGauge ? "g" : ""}.${CLASS.chartArcsBackground}`
+		);
+
+		if (hasMultiArcGauge) {
+			let index = 0;
+
+			backgroundArc = backgroundArc
+				.selectAll(`path.${CLASS.chartArcsBackground}`)
+				.data($$.data.targets);
+
+			backgroundArc.enter()
+				.append("path")
+				.attr("class", (d, i) => `${CLASS.chartArcsBackground} ${CLASS.chartArcsBackground}-${i}`)
+				.merge(backgroundArc)
+				.style("fill", (config.gauge_background) || null)
+				.attr("d", ({id}) => {
+					if (state.hiddenTargetIds.indexOf(id) >= 0) {
+						return "M 0 0";
+					}
+
+					const d = {
+						data: [{value: config.gauge_max}],
+						startAngle,
+						endAngle,
+						index: index++
+					};
+
+					return $$.getArc(d, true, true);
+				});
+
+			backgroundArc.exit().remove();
+		} else {
+			backgroundArc.attr("d", () => {
+				const d = {
+					data: [{value: config.gauge_max}],
+					startAngle,
+					endAngle
+				};
+
+				return $$.getArc(d, true, true);
+			});
+		}
 	},
 
 	bindArcEvent(arc): void {
@@ -753,54 +844,8 @@ export default {
 
 		if (hasGauge) {
 			const isFullCircle = config.gauge_fullCircle;
-			const startAngle = -1 * Math.PI / 2;
-			const endAngle = (isFullCircle ? -4 : -1) * startAngle;
 
-			isFullCircle && text && text.attr("dy", `${Math.round(state.radius / 14)}`);
-
-			let backgroundArc = $$.$el.arcs.select(
-				`${hasMultiArcGauge ? "g" : ""}.${CLASS.chartArcsBackground}`
-			);
-
-			if (hasMultiArcGauge) {
-				let index = 0;
-
-				backgroundArc = backgroundArc
-					.selectAll(`path.${CLASS.chartArcsBackground}`)
-					.data($$.data.targets);
-
-				backgroundArc.enter()
-					.append("path")
-					.attr("class", (d, i) => `${CLASS.chartArcsBackground} ${CLASS.chartArcsBackground}-${i}`)
-					.style("fill", (config.gauge_background) || null)
-					.merge(backgroundArc)
-					.attr("d", d1 => {
-						if (state.hiddenTargetIds.indexOf(d1.id) >= 0) {
-							return "M 0 0";
-						}
-
-						const d = {
-							data: [{value: config.gauge_max}],
-							startAngle,
-							endAngle,
-							index: index++
-						};
-
-						return $$.getArc(d, true, true);
-					});
-
-				backgroundArc.exit().remove();
-			} else {
-				backgroundArc.attr("d", () => {
-					const d = {
-						data: [{value: config.gauge_max}],
-						startAngle,
-						endAngle
-					};
-
-					return $$.getArc(d, true, true);
-				});
-			}
+			isFullCircle && text && text.attr("dy", `${hasMultiArcGauge ? 0 : Math.round(state.radius / 14)}`);
 
 			arcs.select(`.${CLASS.chartArcsGaugeUnit}`)
 				.attr("dy", ".75em")
