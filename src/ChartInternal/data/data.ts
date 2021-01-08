@@ -851,9 +851,10 @@ export default {
 
 					// otherwise, based on the rendered angle value
 				} else {
-					ratio = (d.endAngle - d.startAngle) / (
-						Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2)
-					);
+					const gaugeArcLength = config.gauge_fullCircle ? $$.getArcLength() : $$.getStartAngle() * -2;
+					const arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
+
+					ratio = (d.endAngle - d.startAngle) / arcLength;
 				}
 			} else if (type === "index") {
 				const dataValues = api.data.values.bind(api);
@@ -927,5 +928,17 @@ export default {
 			(isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
 			(isArray(d.value) && d.value.length === 2)
 		);
+	},
+
+	/**
+	 * Get data object by id
+	 * @param {string} id data id
+	 * @returns {object}
+	 * @private
+	 */
+	getDataById(id: string) {
+		const d = this.cache.get(id) || this.api.data(id);
+
+		return isArray(d) ? d[0] : d;
 	}
 };

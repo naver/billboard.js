@@ -8,17 +8,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [12.x]
-
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Git
+        shell: bash
+        run: bash ./config/deploy-nightly.sh setup ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 12
 
       - name: Install dependencies
         run: |
@@ -27,6 +28,5 @@ jobs:
 
       - name: Deploy
         shell: bash
-        run: bash ./config/deploy-nightly.sh
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash ./config/deploy-nightly.sh build
+

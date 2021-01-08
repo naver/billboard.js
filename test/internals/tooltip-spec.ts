@@ -1186,4 +1186,34 @@ describe("TOOLTIP", function() {
 			chart.$.chart.style("margin-left", null);
 		});
 	});
+
+	describe("Tooltip color", () => {
+		const c = {data1: "yellow", data2: "green"};
+
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50]
+					],
+					color: (color, d) => c[d.id] || color
+				}
+			};
+		});
+
+		it("should apply correct color values", () => {			
+			chart.$.circles.each(function(d) {
+				expect(this.style.fill).to.be.equal(c[d.id]);
+			});
+
+			// when
+			chart.tooltip.show({index:0});
+
+
+			["data1", "data2"].forEach(v => {
+				expect(chart.$.tooltip.selectAll(`.${CLASS.tooltipName}-${v} .name span`).style("background-color")).to.be.equal(c[v]);
+			});
+		});
+	});
 });

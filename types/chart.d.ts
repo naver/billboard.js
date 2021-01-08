@@ -324,12 +324,12 @@ export interface Chart {
 		json?: [{ [key: string]: string }];
 		rows?: PrimitiveArray[];
 		columns?: PrimitiveArray[];
-		data?: DataArray;
+		data?: Array<{ [key: string]: number }>;
 		names?: { [key: string]: string };
 		xs?: { [key: string]: string };
 		classes?: { [key: string]: string };
 		categories?: string[];
-		axes?: { [key: string]: string };
+		axes?: { [key: string]: string | string[] };
 		colors?: { [key: string]: string };
 		headers?: { [key: string]: string };
 		keys?: { [key: string]: string };

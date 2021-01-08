@@ -54,7 +54,6 @@ describe("SHAPE GAUGE", () => {
 			}, 500);
 		});
 
-
 		it("gauge max value should be equal to totalSum if gauge max < totalSum", () => {
 			const chart = util.generate({
 				gauge: {
@@ -108,7 +107,6 @@ describe("SHAPE GAUGE", () => {
 				done();
 			}, 500);
 		});
-
 
 		it("should show custom gauge labels", () => {
 			const chart = util.generate({
@@ -198,9 +196,48 @@ describe("SHAPE GAUGE", () => {
 				// check background height
 				expect(util.getBBox(chartArc.select(`.${CLASS.chartArcsBackground}`)).height).to.be.above(300);
 
+				// check for background arcPath length (in this case full circle)
+				const path = 'M-211.85,-2.5944142439936676e-14A211.85,211.85,0,1,1,211.85,2.5944142439936676e-14A211.85,211.85,0,1,1,-211.85,-2.5944142439936676e-14M-201.85,2.4719495640789325e-14A201.85,201.85,0,1,0,201.85,-2.4719495640789325e-14A201.85,201.85,0,1,0,-201.85,2.4719495640789325e-14Z'
+				expect(chartArc.select('path.bb-chart-arcs-background').attr('d')).to.be.equal(path);
+
 				// with fullCircle option, only min text is showed
 				expect(min.empty()).to.be.false;
 				expect(max.empty()).to.be.true;
+
+				done();
+			}, 100);
+		});
+
+		it("check for arcLength option", done => {
+			const chart = util.generate({
+				gauge: {
+					width: 10,
+					max: 10,
+					expand: true,
+					fullCircle: true,
+					arcLength: 75
+				},
+				data: {
+					columns: [
+						["data", 10]
+					],
+					type: "gauge"
+				}
+			});
+
+			setTimeout(() => {
+				const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+
+				// check background height
+				expect(util.getBBox(chartArc.select(`.${CLASS.chartArcsBackground}`)).height).to.be.above(300);
+
+				// check for background arcPath length (in this case 3 quarter)
+				const backgroundArcPath = 'M-211.85,-2.5944142439936676e-14A211.85,211.85,0,1,1,1.2972071219968338e-14,211.85L1.2359747820394662e-14,201.85A201.85,201.85,0,1,0,-201.85,-2.4719495640789325e-14Z'
+				expect(chartArc.select('path.bb-chart-arcs-background').attr('d')).to.be.equal(backgroundArcPath);
+
+				// check for arcPath length (in this case 3 quarter)
+				const arcPath = 'M-211.85,-2.5944142439936676e-14A211.85,211.85,0,1,1,1.2972071219968338e-14,211.85L1.2359747820394662e-14,201.85A201.85,201.85,0,1,0,-201.85,-2.4719495640789325e-14Z'
+				expect(chartArc.select(`path.${CLASS.arc + '-' + chart.internal.data.targets[0].id}`).attr('d')).to.be.equal(arcPath);
 
 				done();
 			}, 100);
@@ -333,10 +370,10 @@ describe("SHAPE GAUGE", () => {
 
 			const arc = chart.$.arc;
 
-			// gauge backgound shouldn't be aligned with the 'startingAngle' option
+			// gauge backgound should be aligned with the 'startingAngle' option
 			expect(
 				getBoundingRect(arc.select(`.${CLASS.chartArcsBackground}`).node()).width
-			).to.be.above(500);
+			).to.be.equal(0);
 
 			expect(
 				arc.select(`.${CLASS.arc}-data`).datum().startAngle
@@ -395,7 +432,10 @@ describe("SHAPE GAUGE", () => {
 					format: function(value) {
 						return `${value}%`;
 					}
-				}
+				},
+				fullCircle: false,
+				arcLength: 360,
+				startingAngle: -1 * Math.PI / 2
 			},
 			color: {
 				pattern: ["rgb(255,0,0)", "rgb(249,118,0)", "rgb(246,198,0)", "rgb(96,176,68)"],
@@ -573,6 +613,133 @@ describe("SHAPE GAUGE", () => {
 				expect(this.style.fill).to.be.equal(backgroundColor);
 			});
 		})
+
+		it("set gauge.startingAngle and new columns", () => {
+			args.data.columns = [
+				["padded1", 100],
+				["padded2", 90],
+				["padded3", 50],
+				["padded4", 20]
+			];
+			args.gauge.startingAngle = -1;
+			expect(args.data.columns[1][1]).to.be.equal(90);
+			expect(args.gauge.startingAngle).to.be.equal(-1);
+		});
+
+		it("should mirror the starting angle", done => {
+			setTimeout(() => {
+				const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+
+				// check for background arcPath length (in this case 3 quarter)
+				const expectedBackgroundArcPaths = [
+					'M-217.43610247436044,-139.6141158363273A258.4,258.4,0,0,1,217.43610247436044,-139.61411583632727L195.6924922269244,-125.65270425269455A232.55999999999997,232.55999999999997,0,0,0,-195.6924922269244,-125.65270425269458Z',
+					'M-195.6924922269244,-125.65270425269458A232.55999999999997,232.55999999999997,0,0,1,195.6924922269244,-125.65270425269455L173.94888197948833,-111.69129266906181A206.71999999999997,206.71999999999997,0,0,0,-173.94888197948833,-111.69129266906184Z',
+					'M-173.94888197948833,-111.69129266906184A206.71999999999997,206.71999999999997,0,0,1,173.94888197948833,-111.69129266906181L152.20527173205232,-97.7298810854291A180.88,180.88,0,0,0,-152.20527173205232,-97.72988108542911Z',
+					'M-152.20527173205232,-97.72988108542911A180.88,180.88,0,0,1,152.20527173205232,-97.7298810854291L130.46166148461626,-83.76846950179637A155.04,155.04,0,0,0,-130.46166148461626,-83.76846950179639Z',
+					]
+				const backgroundArcPaths = chartArc.selectAll(`path.${CLASS.chartArcsBackground}`);
+				backgroundArcPaths.each((data, index, elements)=> {
+					expect(elements[index].getAttribute('d')).to.be.equal(expectedBackgroundArcPaths[index])
+				})
+
+				// check for arcPath length (in this case 3 quarter)
+				const expectedArcPaths = [
+					'M-217.43610247436044,-139.6141158363273A258.4,258.4,0,0,1,217.43610247436044,-139.61411583632727L195.6924922269244,-125.65270425269455A232.55999999999997,232.55999999999997,0,0,0,-195.6924922269244,-125.65270425269458Z',
+					'M-195.6924922269244,-125.65270425269458A232.55999999999997,232.55999999999997,0,0,1,166.828332499593,-162.02611232577675L148.29185111074932,-144.023210956246A206.71999999999997,206.71999999999997,0,0,0,-173.94888197948833,-111.69129266906184Z',
+					'M-173.94888197948833,-111.69129266906184A206.71999999999997,206.71999999999997,0,0,1,1.265794931598704e-14,-206.71999999999997L1.1075705651488663e-14,-180.88A180.88,180.88,0,0,0,-152.20527173205232,-97.72988108542911Z',
+					'M-152.20527173205232,-97.72988108542911A180.88,180.88,0,0,1,-102.13253058769399,-149.2867060248626L-87.54216907516629,-127.96003373559653A155.04,155.04,0,0,0,-130.46166148461626,-83.76846950179639Z',
+				]
+				const arcPaths = chartArc.selectAll(`path.${CLASS.arc}`);
+				arcPaths.each((data, index, elements)=> {
+					expect(elements[index].getAttribute('d')).to.be.equal(expectedArcPaths[index])
+				})
+
+				done();
+			}, 100);
+		});
+
+		it("set gauge.fullCircle", () => {
+			args.gauge.fullCircle = true;
+			args.gauge.startingAngle = -1 * Math.PI / 2;
+			expect(args.gauge.startingAngle).to.be.equal(-1 * Math.PI / 2);
+			expect(args.gauge.fullCircle).to.be.true;
+		});
+
+		it("check for fullCircle option", done => {
+			setTimeout(() => {
+				const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+				const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
+				const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`);
+
+				// check for background arcPath length (in this case full circle)
+				const expectedBackgroundArcPaths = [
+					'M-180.07249999999996,-2.2052521073946173e-14A180.07249999999996,180.07249999999996,0,1,1,180.07249999999996,2.2052521073946173e-14A180.07249999999996,180.07249999999996,0,1,1,-180.07249999999996,-2.2052521073946173e-14M-162.06524999999996,1.9847268966551554e-14A162.06524999999996,162.06524999999996,0,1,0,162.06524999999996,-1.9847268966551554e-14A162.06524999999996,162.06524999999996,0,1,0,-162.06524999999996,1.9847268966551554e-14Z',
+					'M-162.06524999999996,-1.9847268966551554e-14A162.06524999999996,162.06524999999996,0,1,1,162.06524999999996,1.9847268966551554e-14A162.06524999999996,162.06524999999996,0,1,1,-162.06524999999996,-1.9847268966551554e-14M-144.05799999999996,1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,1,0,144.05799999999996,-1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,1,0,-144.05799999999996,1.7642016859156936e-14Z',
+					'M-144.05799999999996,-1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,1,1,144.05799999999996,1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,1,1,-144.05799999999996,-1.7642016859156936e-14M-126.05074999999998,1.543676475176232e-14A126.05074999999998,126.05074999999998,0,1,0,126.05074999999998,-1.543676475176232e-14A126.05074999999998,126.05074999999998,0,1,0,-126.05074999999998,1.543676475176232e-14Z',
+					'M-126.05074999999998,-1.543676475176232e-14A126.05074999999998,126.05074999999998,0,1,1,126.05074999999998,1.543676475176232e-14A126.05074999999998,126.05074999999998,0,1,1,-126.05074999999998,-1.543676475176232e-14M-108.04349999999998,1.3231512644367703e-14A108.04349999999998,108.04349999999998,0,1,0,108.04349999999998,-1.3231512644367703e-14A108.04349999999998,108.04349999999998,0,1,0,-108.04349999999998,1.3231512644367703e-14Z'
+				]
+				const backgroundArcPaths = chartArc.selectAll(`path.${CLASS.chartArcsBackground}`);
+				backgroundArcPaths.each((data, index, elements)=> {
+					expect(elements[index].getAttribute('d')).to.be.equal(expectedBackgroundArcPaths[index])
+				})
+
+				// check for arcPath length (in this case full circle)
+				const expectedArcPaths = [
+					'M-180.07249999999996,-2.2052521073946173e-14A180.07249999999996,180.07249999999996,0,1,1,180.07249999999996,2.2052521073946173e-14A180.07249999999996,180.07249999999996,0,1,1,-180.07249999999996,-2.2052521073946173e-14M-162.06524999999996,-1.2409558866675413e-13A162.06524999999996,162.06524999999996,0,1,0,162.06524999999996,1.2409558866675413e-13A162.06524999999996,162.06524999999996,0,1,0,-162.06524999999996,-1.2409558866675413e-13Z',
+					'M-162.06524999999996,-1.9847268966551554e-14A162.06524999999996,162.06524999999996,0,1,1,-131.1135414476245,95.25956385909261L-116.54537017566622,84.67516787474898A144.05799999999996,144.05799999999996,0,1,0,-144.05799999999996,-1.7642016859156936e-14Z',
+					'M-144.05799999999996,-1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,1,1,144.05799999999996,6.39746033925803e-14L126.05074999999998,5.597777796850777e-14A126.05074999999998,126.05074999999998,0,1,0,-126.05074999999998,-1.543676475176232e-14Z',
+					'M-126.05074999999998,-1.543676475176232e-14A126.05074999999998,126.05074999999998,0,0,1,-38.95182390370789,-119.88138717139132L-33.38727763174962,-102.75547471833542A108.04349999999998,108.04349999999998,0,0,0,-108.04349999999998,-1.3231512644367703e-14Z'
+				]
+				const arcPaths = chartArc.selectAll(`path.${CLASS.arc}`);
+				arcPaths.each((data, index, elements)=> {
+					expect(elements[index].getAttribute('d')).to.be.equal(expectedArcPaths[index])
+				})
+
+				// with fullCircle option, only min text is showed
+				expect(min.empty()).to.be.false;
+				expect(max.empty()).to.be.true;
+
+				done();
+			}, 100);
+		});
+
+		it("set gauge.arcLength", () => {
+			args.gauge.arcLength = 75;
+			expect(args.gauge.arcLength).to.be.equal(75);
+		});
+
+		it("check for arcLength option", done => {
+			setTimeout(() => {
+				const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+
+				// check for background arcPath length (in this case 3 quarter)
+				const expectedBackgroundArcPaths = [
+					'M-180.07249999999996,-2.2052521073946173e-14A180.07249999999996,180.07249999999996,0,1,1,1.1026260536973086e-14,180.07249999999996L9.923634483275777e-15,162.06524999999996A162.06524999999996,162.06524999999996,0,1,0,-162.06524999999996,-1.9847268966551554e-14Z',
+					'M-162.06524999999996,-1.9847268966551554e-14A162.06524999999996,162.06524999999996,0,1,1,9.923634483275777e-15,162.06524999999996L8.821008429578468e-15,144.05799999999996A144.05799999999996,144.05799999999996,0,1,0,-144.05799999999996,-1.7642016859156936e-14Z',
+					'M-144.05799999999996,-1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,1,1,8.821008429578468e-15,144.05799999999996L7.71838237588116e-15,126.05074999999998A126.05074999999998,126.05074999999998,0,1,0,-126.05074999999998,-1.543676475176232e-14Z',
+					'M-126.05074999999998,-1.543676475176232e-14A126.05074999999998,126.05074999999998,0,1,1,7.71838237588116e-15,126.05074999999998L6.615756322183852e-15,108.04349999999998A108.04349999999998,108.04349999999998,0,1,0,-108.04349999999998,-1.3231512644367703e-14Z'
+				]
+				const backgroundArcPaths = chartArc.selectAll(`path.${CLASS.chartArcsBackground}`);
+				backgroundArcPaths.each((data, index, elements)=> {
+					expect(elements[index].getAttribute('d')).to.be.equal(expectedBackgroundArcPaths[index])
+				})
+
+				// check for arcPath length (in this case 3 quarter)
+				const expectedArcPaths = [
+					'M-180.07249999999996,-2.2052521073946173e-14A180.07249999999996,180.07249999999996,0,1,1,1.1026260536973086e-14,180.07249999999996L9.923634483275777e-15,162.06524999999996A162.06524999999996,162.06524999999996,0,1,0,-162.06524999999996,-1.9847268966551554e-14Z',
+					'M-162.06524999999996,-1.9847268966551554e-14A162.06524999999996,162.06524999999996,0,1,1,73.57608383791458,144.40119509421885L65.40096341147962,128.35661786152787A144.05799999999996,144.05799999999996,0,1,0,-144.05799999999996,-1.7642016859156936e-14Z',
+					'M-144.05799999999996,-1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,0,1,101.86438868417164,-101.86438868417163L89.1313400986502,-89.13134009865018A126.05074999999998,126.05074999999998,0,0,0,-126.05074999999998,-1.543676475176232e-14Z',
+					'M-126.05074999999998,-1.543676475176232e-14A126.05074999999998,126.05074999999998,0,0,1,-74.09077189040543,-101.97719890370789L-63.5063759060618,-87.40902763174962A108.04349999999998,108.04349999999998,0,0,0,-108.04349999999998,-1.3231512644367703e-14Z'
+				]
+				const arcPaths = chartArc.selectAll(`path.${CLASS.arc}`);
+				arcPaths.each((data, index, elements)=> {
+					expect(elements[index].getAttribute('d')).to.be.equal(expectedArcPaths[index])
+				})
+
+				done();
+			}, 100);
+		});
+
     });
     
     describe("Positioning", () => {

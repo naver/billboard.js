@@ -485,7 +485,8 @@ describe("LEGEND", () => {
 						["padded2", 90],
 						["padded3", 50],
 						["padded4", 20]
-					]
+					],
+					type: "gauge",
 				},
 				color: {
 					pattern: ["#FF0000", "#F97600", "#F6C600", "#60B044"],
@@ -493,10 +494,9 @@ describe("LEGEND", () => {
 						values: [30, 80, 95]
 					}
 				},
-				type: "gauge",
 				gauge: {
 					type: "multi"
-				},
+				}
 			};
 		});
 
