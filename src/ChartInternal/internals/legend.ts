@@ -600,6 +600,14 @@ export default {
 			.attr("x", isLegendRightOrInset ? xForLegendRect : pos)
 			.attr("y", isLegendRightOrInset ? pos : yForLegendRect);
 
+		const getColor = id => {
+			const data = $$.getDataById(id);
+
+			return $$.levelColor ?
+				$$.levelColor(data.values[0].value) :
+				$$.color(data);
+		};
+
 		const usePoint = config.legend_usePoint;
 
 		if (usePoint) {
@@ -620,7 +628,7 @@ export default {
 				return document.createElementNS(d3Namespaces.svg, ("hasValidPointType" in $$) && $$.hasValidPointType(point) ? point : "use");
 			})
 				.attr("class", CLASS.legendItemPoint)
-				.style("fill", d => $$.color(d))
+				.style("fill", getColor)
 				.style("pointer-events", "none")
 				.attr("href", (data, idx, selection) => {
 					const node = selection[idx];
@@ -631,7 +639,7 @@ export default {
 		} else {
 			l.append("line")
 				.attr("class", CLASS.legendItemTile)
-				.style("stroke", $$.color)
+				.style("stroke", getColor)
 				.style("pointer-events", "none")
 				.attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
 				.attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
@@ -668,7 +676,6 @@ export default {
 			.attr("height", id => heights[id])
 			.attr("x", xForLegendRect)
 			.attr("y", yForLegendRect);
-
 
 		if (usePoint) {
 			const tiles = legend.selectAll(`.${CLASS.legendItemPoint}`)
@@ -714,7 +721,7 @@ export default {
 				.data(targetIdz);
 
 			(withTransition ? tiles.transition() : tiles)
-				.style("stroke", $$.levelColor ? id => $$.levelColor($$.cache.get(id).values[0].value) : $$.color)
+				.style("stroke", getColor)
 				.attr("x1", x1ForLegendTile)
 				.attr("y1", yForLegendTile)
 				.attr("x2", x2ForLegendTile)
