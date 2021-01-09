@@ -1,3 +1,10 @@
+# [2.2.0-next.5](https://github.com/naver/billboard.js/compare/2.2.0-next.4...2.2.0-next.5) (2021-01-09)
+
+
+### Bug Fixes
+
+* **arc:** fix setting color value ([fad9e86](https://github.com/naver/billboard.js/commit/fad9e86fa172cb14a2cc6f2fb8418e72a5932192)), closes [#1857](https://github.com/naver/billboard.js/issues/1857) [#1847](https://github.com/naver/billboard.js/issues/1847)
+
 # [2.2.0-next.4](https://github.com/naver/billboard.js/compare/2.2.0-next.3...2.2.0-next.4) (2021-01-08)
 
 
