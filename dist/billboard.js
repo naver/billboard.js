@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20210108015847
+ * @version 2.1.4-nightly-20210109015820
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3749,7 +3749,14 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         state = $$.state,
         api = $$.api,
         ratio = 0;
-    if (d && api.data.shown().length) if (ratio = d.ratio || d.value, type === "arc") ratio = $$.pie.padAngle()() ? d.value / $$.getTotalDataSum(!0) : (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));else if (type === "index") {
+    if (d && api.data.shown().length) if (ratio = d.ratio || d.value, type === "arc") {
+        // if has padAngle set, calculate rate based on value
+        if ($$.pie.padAngle()()) ratio = d.value / $$.getTotalDataSum(!0);else {
+          var gaugeArcLength = config.gauge_fullCircle ? $$.getArcLength() : $$.getStartAngle() * -2,
+              arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
+          ratio = (d.endAngle - d.startAngle) / arcLength;
+        }
+    } else if (type === "index") {
       var dataValues = api.data.values.bind(api),
           total = this.getTotalPerIndex();
 
@@ -3802,6 +3809,17 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   isBubbleZType: function isBubbleZType(d) {
     var $$ = this;
     return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
+  },
+
+  /**
+   * Get data object by id
+   * @param {string} id data id
+   * @returns {object}
+   * @private
+   */
+  getDataById: function getDataById(id) {
+    var d = this.cache.get(id) || this.api.data(id);
+    return isArray(d) ? d[0] : d;
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/data/load.ts
@@ -4996,7 +5014,12 @@ function getFormat($$, typeValue, v) {
     }).each(function (id, i) {
       updatePositions(this, id, i);
     }).style("pointer-events", "none").attr("x", isLegendRightOrInset ? xForLegendText : pos).attr("y", isLegendRightOrInset ? pos : yForLegendText), l.append("rect").attr("class", config_classes.legendItemEvent).style("fill-opacity", "0").attr("x", isLegendRightOrInset ? xForLegendRect : pos).attr("y", isLegendRightOrInset ? pos : yForLegendRect);
-    var usePoint = config.legend_usePoint;
+
+    var getColor = function (id) {
+      var data = $$.getDataById(id);
+      return $$.levelColor ? $$.levelColor(data.values[0].value) : $$.color(data);
+    },
+        usePoint = config.legend_usePoint;
 
     if (usePoint) {
       var ids = [];
@@ -5005,14 +5028,12 @@ function getFormat($$, typeValue, v) {
         ids.indexOf(d) === -1 && ids.push(d);
         var point = pattern[ids.indexOf(d) % pattern.length];
         return point === "rectangle" && (point = "rect"), browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg, "hasValidPointType" in $$ && $$.hasValidPointType(point) ? point : "use");
-      }).attr("class", config_classes.legendItemPoint).style("fill", function (d) {
-        return $$.color(d);
-      }).style("pointer-events", "none").attr("href", function (data, idx, selection) {
+      }).attr("class", config_classes.legendItemPoint).style("fill", getColor).style("pointer-events", "none").attr("href", function (data, idx, selection) {
         var node = selection[idx],
             nodeName = node.nodeName.toLowerCase();
         return nodeName === "use" ? "#" + state.datetimeId + "-point-" + data : undefined;
       });
-    } else l.append("line").attr("class", config_classes.legendItemTile).style("stroke", $$.color).style("pointer-events", "none").attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height); // Set background for inset legend
+    } else l.append("line").attr("class", config_classes.legendItemTile).style("stroke", getColor).style("pointer-events", "none").attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height); // Set background for inset legend
 
 
     background = legend.select("." + config_classes.legendBackground + " rect"), state.isLegendInset && maxWidth > 0 && background.size() === 0 && (background = legend.insert("g", "." + config_classes.legendItem).attr("class", config_classes.legendBackground).append("rect"));
@@ -5060,9 +5081,7 @@ function getFormat($$, typeValue, v) {
     } else {
       var _tiles = legend.selectAll("line." + config_classes.legendItemTile).data(targetIdz);
 
-      (withTransition ? _tiles.transition() : _tiles).style("stroke", $$.levelColor ? function (id) {
-        return $$.levelColor($$.cache.get(id).values[0].value);
-      } : $$.color).attr("x1", x1ForLegendTile).attr("y1", yForLegendTile).attr("x2", x2ForLegendTile).attr("y2", yForLegendTile);
+      (withTransition ? _tiles.transition() : _tiles).style("stroke", getColor).attr("x1", x1ForLegendTile).attr("y1", yForLegendTile).attr("x2", x2ForLegendTile).attr("y2", yForLegendTile);
     }
 
     background && (withTransition ? background.transition() : background).attr("height", $$.getLegendHeight() - 12).attr("width", maxWidth * (step + 1) + 10), $$.updateLegendItemWidth(maxWidth), $$.updateLegendItemHeight(maxHeight), $$.updateLegendStep(step);
@@ -12833,7 +12852,23 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   },
   updateArc: function updateArc() {
     var $$ = this;
-    $$.svgArc = $$.getSvgArc(), $$.svgArcExpanded = $$.getSvgArcExpanded();
+    $$.updateRadius(), $$.svgArc = $$.getSvgArc(), $$.svgArcExpanded = $$.getSvgArcExpanded();
+  },
+  getArcLength: function getArcLength() {
+    var $$ = this,
+        config = $$.config,
+        arcLengthInPercent = config.gauge_arcLength * 3.6,
+        len = 2 * (arcLengthInPercent / 360);
+    return arcLengthInPercent < -360 ? len = -2 : arcLengthInPercent > 360 && (len = 2), len * Math.PI;
+  },
+  getStartAngle: function getStartAngle() {
+    var $$ = this,
+        config = $$.config,
+        isFullCircle = config.gauge_fullCircle,
+        defaultStartAngle = -1 * Math.PI / 2,
+        defaultEndAngle = Math.PI / 2,
+        startAngle = config.gauge_startingAngle;
+    return !isFullCircle && startAngle <= defaultStartAngle ? startAngle = defaultStartAngle : !isFullCircle && startAngle >= defaultEndAngle ? startAngle = defaultEndAngle : (startAngle > Math.PI || startAngle < -1 * Math.PI) && (startAngle = Math.PI), startAngle;
   },
   updateAngle: function updateAngle(dValue) {
     var $$ = this,
@@ -12843,8 +12878,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         d = dValue,
         found = !1;
     if (!config) return null;
-    var radius = Math.PI * (config.gauge_fullCircle ? 2 : 1),
-        gStart = config.gauge_startingAngle;
+    var gStart = $$.getStartAngle(),
+        radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
 
     if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
       // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
@@ -13122,7 +13157,45 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       }
 
       state.transiting = !1, callFn(config.onrendered, $$.api);
-    }), hasInteraction && $$.bindArcEvent(mainArc), $$.redrawArcText(duration);
+    }), hasInteraction && $$.bindArcEvent(mainArc), $$.hasType("gauge") && $$.redrawBackgroundArcs(), $$.redrawArcText(duration);
+  },
+  redrawBackgroundArcs: function redrawBackgroundArcs() {
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        hasMultiArcGauge = $$.hasMultiArcGauge(),
+        isFullCircle = config.gauge_fullCircle,
+        startAngle = $$.getStartAngle(),
+        endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1,
+        backgroundArc = $$.$el.arcs.select((hasMultiArcGauge ? "g" : "") + "." + config_classes.chartArcsBackground);
+
+    if (hasMultiArcGauge) {
+      var index = 0;
+      backgroundArc = backgroundArc.selectAll("path." + config_classes.chartArcsBackground).data($$.data.targets), backgroundArc.enter().append("path").attr("class", function (d, i) {
+        return config_classes.chartArcsBackground + " " + config_classes.chartArcsBackground + "-" + i;
+      }).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", function (_ref2) {
+        var id = _ref2.id;
+        if (state.hiddenTargetIds.indexOf(id) >= 0) return "M 0 0";
+        var d = {
+          data: [{
+            value: config.gauge_max
+          }],
+          startAngle: startAngle,
+          endAngle: endAngle,
+          index: index++
+        };
+        return $$.getArc(d, !0, !0);
+      }), backgroundArc.exit().remove();
+    } else backgroundArc.attr("d", function () {
+      var d = {
+        data: [{
+          value: config.gauge_max
+        }],
+        startAngle: startAngle,
+        endAngle: endAngle
+      };
+      return $$.getArc(d, !0, !0);
+    });
   },
   bindArcEvent: function bindArcEvent(arc) {
     // eslint-disable-next-line
@@ -13205,40 +13278,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }).transition().duration(duration).style("opacity", function (d) {
       return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
     }), hasMultiArcGauge && text.attr("dy", "-.1em")), main.select("." + config_classes.chartArcsTitle).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
-      var isFullCircle = config.gauge_fullCircle,
-          startAngle = -1 * Math.PI / 2,
-          endAngle = (isFullCircle ? -4 : -1) * startAngle;
-      isFullCircle && text && text.attr("dy", "" + Math.round(state.radius / 14));
-      var backgroundArc = $$.$el.arcs.select((hasMultiArcGauge ? "g" : "") + "." + config_classes.chartArcsBackground);
-
-      if (hasMultiArcGauge) {
-        var index = 0;
-        backgroundArc = backgroundArc.selectAll("path." + config_classes.chartArcsBackground).data($$.data.targets), backgroundArc.enter().append("path").attr("class", function (d, i) {
-          return config_classes.chartArcsBackground + " " + config_classes.chartArcsBackground + "-" + i;
-        }).style("fill", config.gauge_background || null).merge(backgroundArc).attr("d", function (d1) {
-          if (state.hiddenTargetIds.indexOf(d1.id) >= 0) return "M 0 0";
-          var d = {
-            data: [{
-              value: config.gauge_max
-            }],
-            startAngle: startAngle,
-            endAngle: endAngle,
-            index: index++
-          };
-          return $$.getArc(d, !0, !0);
-        }), backgroundArc.exit().remove();
-      } else backgroundArc.attr("d", function () {
-        var d = {
-          data: [{
-            value: config.gauge_max
-          }],
-          startAngle: startAngle,
-          endAngle: endAngle
-        };
-        return $$.getArc(d, !0, !0);
-      });
-
-      arcs.select("." + config_classes.chartArcsGaugeUnit).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && (arcs.select("." + config_classes.chartArcsGaugeMin).attr("dx", -1 * (state.innerRadius + (state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !isFullCircle && arcs.select("." + config_classes.chartArcsGaugeMax).attr("dx", state.innerRadius + (state.radius - state.innerRadius) / 2 + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
+      var isFullCircle = config.gauge_fullCircle;
+      isFullCircle && text && text.attr("dy", "" + (hasMultiArcGauge ? 0 : Math.round(state.radius / 14))), arcs.select("." + config_classes.chartArcsGaugeUnit).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && (arcs.select("." + config_classes.chartArcsGaugeMin).attr("dx", -1 * (state.innerRadius + (state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !isFullCircle && arcs.select("." + config_classes.chartArcsGaugeMax).attr("dx", state.innerRadius + (state.radius - state.innerRadius) / 2 + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
     }
   }
 });
@@ -15034,6 +15075,23 @@ var cacheKey = KEY.radarPoints;
    * @property {number} [gauge.min=0] Set min value of the gauge.
    * @property {number} [gauge.max=100] Set max value of the gauge.
    * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
+   *
+   * **Limitations:**
+   * - when `gauge.fullCircle=false`:
+   *   - -1 * Math.PI / 2 <= startingAngle <= Math.PI / 2
+   *   - `startingAngle >= -1 * Math.PI / 2` defaults to `-1 * Math.PI / 2`
+   *   - `startingAngle <= Math.PI / 2` defaults to `Math.PI / 2`
+   * - when `gauge.fullCircle=true`:
+   *   - -2 * Math.PI <= startingAngle <= 2 * Math.PI
+   *   - `startingAngle >= -2 * Math.PI` defaults to `-2 * Math.PI`
+   *   - `startingAngle <= 2 * Math.PI` defaults to `2 * Math.PI`
+   * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100.<br>
+   * Negative value will draw the arc **counterclockwise**.
+   *
+   * **Limitations:**
+   * - -100 <= arcLength (in percent) <= 100
+   * - 'arcLength < -100' defaults to -100
+   * - 'arcLength > 100' defaults to 100
    * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
    * @property {string} [gauge.units] Set units of the gauge.
    * @property {number} [gauge.width] Set width of gauge chart.
@@ -15042,6 +15100,8 @@ var cacheKey = KEY.radarPoints;
    * - single
    * - multi
    * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+   * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
+   * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
    * @example
    *  gauge: {
    *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
@@ -15081,6 +15141,8 @@ var cacheKey = KEY.radarPoints;
    *      title: "Title Text",
    *      units: "%",
    *      width: 10,
+   *      startingAngle: -1 * Math.PI / 2,
+   *      arcLength: 100,
    *      arcs: {
    *          minWidth: 5
    *      }
@@ -15096,6 +15158,7 @@ var cacheKey = KEY.radarPoints;
   gauge_max: 100,
   gauge_type: "single",
   gauge_startingAngle: -1 * Math.PI / 2,
+  gauge_arcLength: 100,
   gauge_title: "",
   gauge_units: undefined,
   gauge_width: undefined,

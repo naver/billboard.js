@@ -3631,7 +3631,9 @@ var data$1 = {
                     // otherwise, based on the rendered angle value
                 }
                 else {
-                    ratio = (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));
+                    var gaugeArcLength = config.gauge_fullCircle ? $$.getArcLength() : $$.getStartAngle() * -2;
+                    var arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
+                    ratio = (d.endAngle - d.startAngle) / arcLength;
                 }
             }
             else if (type === "index") {
@@ -3691,6 +3693,16 @@ var data$1 = {
         var $$ = this;
         return $$.isBubbleType(d) && ((isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
             (isArray(d.value) && d.value.length === 2));
+    },
+    /**
+     * Get data object by id
+     * @param {string} id data id
+     * @returns {object}
+     * @private
+     */
+    getDataById: function (id) {
+        var d = this.cache.get(id) || this.api.data(id);
+        return isArray(d) ? d[0] : d;
     }
 };
 
@@ -5189,6 +5201,12 @@ var legend$1 = {
             .style("fill-opacity", "0")
             .attr("x", isLegendRightOrInset ? xForLegendRect : pos)
             .attr("y", isLegendRightOrInset ? pos : yForLegendRect);
+        var getColor = function (id) {
+            var data = $$.getDataById(id);
+            return $$.levelColor ?
+                $$.levelColor(data.values[0].value) :
+                $$.color(data);
+        };
         var usePoint = config.legend_usePoint;
         if (usePoint) {
             var ids_2 = [];
@@ -5203,7 +5221,7 @@ var legend$1 = {
                 return doc.createElementNS(namespaces.svg, ("hasValidPointType" in $$) && $$.hasValidPointType(point) ? point : "use");
             })
                 .attr("class", CLASS.legendItemPoint)
-                .style("fill", function (d) { return $$.color(d); })
+                .style("fill", getColor)
                 .style("pointer-events", "none")
                 .attr("href", function (data, idx, selection) {
                 var node = selection[idx];
@@ -5214,7 +5232,7 @@ var legend$1 = {
         else {
             l.append("line")
                 .attr("class", CLASS.legendItemTile)
-                .style("stroke", $$.color)
+                .style("stroke", getColor)
                 .style("pointer-events", "none")
                 .attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
                 .attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
@@ -5285,7 +5303,7 @@ var legend$1 = {
             var tiles = legend.selectAll("line." + CLASS.legendItemTile)
                 .data(targetIdz);
             (withTransition ? tiles.transition() : tiles)
-                .style("stroke", $$.levelColor ? function (id) { return $$.levelColor($$.cache.get(id).values[0].value); } : $$.color)
+                .style("stroke", getColor)
                 .attr("x1", x1ForLegendTile)
                 .attr("y1", yForLegendTile)
                 .attr("x2", x2ForLegendTile)
@@ -14410,8 +14428,40 @@ var shapeArc = {
     },
     updateArc: function () {
         var $$ = this;
+        $$.updateRadius();
         $$.svgArc = $$.getSvgArc();
         $$.svgArcExpanded = $$.getSvgArcExpanded();
+    },
+    getArcLength: function () {
+        var $$ = this;
+        var config = $$.config;
+        var arcLengthInPercent = config.gauge_arcLength * 3.6;
+        var len = (2 * (arcLengthInPercent / 360));
+        if (arcLengthInPercent < -360) {
+            len = -2;
+        }
+        else if (arcLengthInPercent > 360) {
+            len = 2;
+        }
+        return len * Math.PI;
+    },
+    getStartAngle: function () {
+        var $$ = this;
+        var config = $$.config;
+        var isFullCircle = config.gauge_fullCircle;
+        var defaultStartAngle = -1 * Math.PI / 2;
+        var defaultEndAngle = Math.PI / 2;
+        var startAngle = config.gauge_startingAngle;
+        if (!isFullCircle && startAngle <= defaultStartAngle) {
+            startAngle = defaultStartAngle;
+        }
+        else if (!isFullCircle && startAngle >= defaultEndAngle) {
+            startAngle = defaultEndAngle;
+        }
+        else if (startAngle > Math.PI || startAngle < -1 * Math.PI) {
+            startAngle = Math.PI;
+        }
+        return startAngle;
     },
     updateAngle: function (dValue) {
         var $$ = this;
@@ -14422,8 +14472,8 @@ var shapeArc = {
         if (!config) {
             return null;
         }
-        var radius = Math.PI * (config.gauge_fullCircle ? 2 : 1);
-        var gStart = config.gauge_startingAngle;
+        var gStart = $$.getStartAngle();
+        var radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
         if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
             // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
             var totalSum = $$.getTotalDataSum(state.rendered);
@@ -14824,7 +14874,52 @@ var shapeArc = {
         });
         // bind arc events
         hasInteraction && $$.bindArcEvent(mainArc);
+        $$.hasType("gauge") && $$.redrawBackgroundArcs();
         $$.redrawArcText(duration);
+    },
+    redrawBackgroundArcs: function () {
+        var $$ = this;
+        var config = $$.config, state = $$.state;
+        var hasMultiArcGauge = $$.hasMultiArcGauge();
+        var isFullCircle = config.gauge_fullCircle;
+        var startAngle = $$.getStartAngle();
+        var endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
+        var backgroundArc = $$.$el.arcs.select((hasMultiArcGauge ? "g" : "") + "." + CLASS.chartArcsBackground);
+        if (hasMultiArcGauge) {
+            var index_1 = 0;
+            backgroundArc = backgroundArc
+                .selectAll("path." + CLASS.chartArcsBackground)
+                .data($$.data.targets);
+            backgroundArc.enter()
+                .append("path")
+                .attr("class", function (d, i) { return CLASS.chartArcsBackground + " " + CLASS.chartArcsBackground + "-" + i; })
+                .merge(backgroundArc)
+                .style("fill", (config.gauge_background) || null)
+                .attr("d", function (_a) {
+                var id = _a.id;
+                if (state.hiddenTargetIds.indexOf(id) >= 0) {
+                    return "M 0 0";
+                }
+                var d = {
+                    data: [{ value: config.gauge_max }],
+                    startAngle: startAngle,
+                    endAngle: endAngle,
+                    index: index_1++
+                };
+                return $$.getArc(d, true, true);
+            });
+            backgroundArc.exit().remove();
+        }
+        else {
+            backgroundArc.attr("d", function () {
+                var d = {
+                    data: [{ value: config.gauge_max }],
+                    startAngle: startAngle,
+                    endAngle: endAngle
+                };
+                return $$.getArc(d, true, true);
+            });
+        }
     },
     bindArcEvent: function (arc) {
         var $$ = this;
@@ -14935,44 +15030,7 @@ var shapeArc = {
             .style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0");
         if (hasGauge) {
             var isFullCircle = config.gauge_fullCircle;
-            var startAngle_1 = -1 * Math.PI / 2;
-            var endAngle_1 = (isFullCircle ? -4 : -1) * startAngle_1;
-            isFullCircle && text && text.attr("dy", "" + Math.round(state.radius / 14));
-            var backgroundArc = $$.$el.arcs.select((hasMultiArcGauge ? "g" : "") + "." + CLASS.chartArcsBackground);
-            if (hasMultiArcGauge) {
-                var index_1 = 0;
-                backgroundArc = backgroundArc
-                    .selectAll("path." + CLASS.chartArcsBackground)
-                    .data($$.data.targets);
-                backgroundArc.enter()
-                    .append("path")
-                    .attr("class", function (d, i) { return CLASS.chartArcsBackground + " " + CLASS.chartArcsBackground + "-" + i; })
-                    .style("fill", (config.gauge_background) || null)
-                    .merge(backgroundArc)
-                    .attr("d", function (d1) {
-                    if (state.hiddenTargetIds.indexOf(d1.id) >= 0) {
-                        return "M 0 0";
-                    }
-                    var d = {
-                        data: [{ value: config.gauge_max }],
-                        startAngle: startAngle_1,
-                        endAngle: endAngle_1,
-                        index: index_1++
-                    };
-                    return $$.getArc(d, true, true);
-                });
-                backgroundArc.exit().remove();
-            }
-            else {
-                backgroundArc.attr("d", function () {
-                    var d = {
-                        data: [{ value: config.gauge_max }],
-                        startAngle: startAngle_1,
-                        endAngle: endAngle_1
-                    };
-                    return $$.getArc(d, true, true);
-                });
-            }
+            isFullCircle && text && text.attr("dy", "" + (hasMultiArcGauge ? 0 : Math.round(state.radius / 14)));
             arcs.select("." + CLASS.chartArcsGaugeUnit)
                 .attr("dy", ".75em")
                 .text(config.gauge_label_show ? config.gauge_units : "");
@@ -17030,6 +17088,23 @@ var optGauge = {
      * @property {number} [gauge.min=0] Set min value of the gauge.
      * @property {number} [gauge.max=100] Set max value of the gauge.
      * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
+     *
+     * **Limitations:**
+     * - when `gauge.fullCircle=false`:
+     *   - -1 * Math.PI / 2 <= startingAngle <= Math.PI / 2
+     *   - `startingAngle >= -1 * Math.PI / 2` defaults to `-1 * Math.PI / 2`
+     *   - `startingAngle <= Math.PI / 2` defaults to `Math.PI / 2`
+     * - when `gauge.fullCircle=true`:
+     *   - -2 * Math.PI <= startingAngle <= 2 * Math.PI
+     *   - `startingAngle >= -2 * Math.PI` defaults to `-2 * Math.PI`
+     *   - `startingAngle <= 2 * Math.PI` defaults to `2 * Math.PI`
+     * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100.<br>
+     * Negative value will draw the arc **counterclockwise**.
+     *
+     * **Limitations:**
+     * - -100 <= arcLength (in percent) <= 100
+     * - 'arcLength < -100' defaults to -100
+     * - 'arcLength > 100' defaults to 100
      * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
      * @property {string} [gauge.units] Set units of the gauge.
      * @property {number} [gauge.width] Set width of gauge chart.
@@ -17038,6 +17113,8 @@ var optGauge = {
      * - single
      * - multi
      * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+     * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
+     * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
      * @example
      *  gauge: {
      *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
@@ -17077,6 +17154,8 @@ var optGauge = {
      *      title: "Title Text",
      *      units: "%",
      *      width: 10,
+     *      startingAngle: -1 * Math.PI / 2,
+     *      arcLength: 100,
      *      arcs: {
      *          minWidth: 5
      *      }
@@ -17092,6 +17171,7 @@ var optGauge = {
     gauge_max: 100,
     gauge_type: "single",
     gauge_startingAngle: -1 * Math.PI / 2,
+    gauge_arcLength: 100,
     gauge_title: "",
     gauge_units: undefined,
     gauge_width: undefined,
