@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20210109015820
+ * @version 2.1.4-nightly-20210110020312
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -34081,7 +34081,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       };
     }).attr("transform", withTransform ? "scale(1)" : "").style("fill", function (d) {
       var color;
-      return $$.levelColor ? (color = $$.levelColor(d.data.values[0].value), config.data_colors[d.data.id] = color) : color = $$.color(d.data.id), color;
+      return $$.levelColor ? (color = $$.levelColor(d.data.values[0].value), config.data_colors[d.data.id] = color) : color = $$.color(d.data), color;
     }) // Where gauge reading color would receive customization.
     .style("opacity", "1").call(endall, function () {
       if ($$.levelColor) {

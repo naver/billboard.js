@@ -14857,7 +14857,7 @@ var shapeArc = {
                 config.data_colors[d.data.id] = color;
             }
             else {
-                color = $$.color(d.data.id);
+                color = $$.color(d.data);
             }
             return color;
         })
