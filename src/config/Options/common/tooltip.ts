@@ -44,7 +44,7 @@ export default {
 	 *    - 'key' name is used as substitution within template as '{=KEY}'
 	 *    - The value array length should match with the data length
 	 * @property {boolean} [tooltip.init.show=false] Show tooltip at the initialization.
-	 * @property {number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
+	 * @property {number} [tooltip.init.x=0] Set x Axis index(or index for Arc(donut, gauge, pie) types) to be shown at the initialization.
 	 * @property {object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
 	 * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
 	 * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
@@ -128,7 +128,7 @@ export default {
 	 *      // show at the initialization
 	 *      init: {
 	 *          show: true,
-	 *          x: 2,
+	 *          x: 2, // x Axis index(or index for Arc(donut, gauge, pie) types)
 	 *          position: {
 	 *              top: "150px",
 	 *              left: "250px"

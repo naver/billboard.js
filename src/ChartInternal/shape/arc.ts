@@ -319,7 +319,7 @@ export default {
 
 	convertToArcData(d): object {
 		return this.addName({
-			id: d.data.id,
+			id: d.data ? d.data.id : d.id,
 			value: d.value,
 			ratio: this.getRatio("arc", d),
 			index: d.index,
