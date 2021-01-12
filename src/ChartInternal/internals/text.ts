@@ -129,19 +129,19 @@ export default {
 		const t: any = getRandom();
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
-		$$.$el.text.each(function() {
+		$$.$el.text.each(function(d, index: number) {
 			const text = d3Select(this);
 
 			// do not apply transition for newly added text elements
 			(withTransition && text.attr("x") ? text.transition(t) : text)
 				.call(selection => {
-					selection.each(function(d, i) {
+					selection.each(function(d) {
 						d3Select(this)
 							.style("fill", $$.updateTextColor.bind($$))
 							.style("fill-opacity", opacityForText);
 
-						const posX = x.bind(this)(d, i);
-						const posY = y.bind(this)(d, i);
+						const posX = x.bind(this)(d, index);
+						const posY = y.bind(this)(d, index);
 
 						// when is multiline
 						if (this.children.length) {
