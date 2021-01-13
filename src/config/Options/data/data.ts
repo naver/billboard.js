@@ -210,7 +210,7 @@ export default {
 	 *   // keeps data input order
 	 *   order: null
 	 *
-	 *   // specifying sort function (Axis based types)
+	 *   // specifying sort function
 	 *   order: function(a, b) {
 	 *       // param data passed format
 	 *       // {
@@ -229,18 +229,6 @@ export default {
 	 *
 	 *       // descending order
 	 *       // return bSum - aSum;
-	 *   }
-	 *
-	 *   // specifying sort function (Arc types)
-	 *   order: function(a, b) {
-	 *       // param data passed are number value.
-	 *       // so, do direct comparison using param values.
-	 *
-	 *       // ascending order
-	 *       return a - b;
-	 *
-	 *       // descending order
-	 *       // return b - a;
 	 *   }
 	 * }
 	 */
