@@ -34,7 +34,7 @@ export default {
 		const isMultipleX = $$.isMultipleX();
 
 		if ($el.eventRect) {
-			$$.updateEventRect($el.eventRect);
+			$$.updateEventRect($el.eventRect, true);
 		} else {
 			const eventRects = $$.$el.main.select(`.${CLASS.eventRects}`)
 				.style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (
@@ -169,7 +169,13 @@ export default {
 		});
 	},
 
-	updateEventRect(eventRect?): void {
+	/**
+	 * Update event rect size
+	 * @param {d3Selection} eventRect Event <rect> element
+	 * @param {boolean} force Force to update
+	 * @private
+	 */
+	updateEventRect(eventRect?, force = false): void {
 		const $$ = this;
 		const {state, $el} = $$;
 		const {eventReceiver, width, height, rendered, resizing} = state;
@@ -181,7 +187,7 @@ export default {
 			);
 		};
 
-		if (!rendered || resizing) {
+		if (!rendered || resizing || force) {
 			rectElement
 				.attr("x", 0)
 				.attr("y", 0)
