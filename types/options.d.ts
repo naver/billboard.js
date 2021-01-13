@@ -1467,7 +1467,7 @@ export interface Data {
 	 * - Available Values: desc, asc, function (data1, data2) { ... }, null
 	 * **NOTE**: order function, only works for Axis based types & Arc types, except `Radar` type.
 	 */
-	order?: "asc" | "desc" | ((this: Chart, a: IData | number, b: IData | number) => number) | null;
+	order?: "asc" | "desc" | ((this: Chart, a: IData, b: IData) => number) | null;
 
 	/**
 	 * Define regions for each data.
