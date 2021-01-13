@@ -27,8 +27,11 @@ export default {
 			$$.hasType("pie") && padding ? padding * 0.01 :
 				config[`${dataType}_padAngle`]
 		) || 0;
-		const sortValue: any = $$.isOrderAsc() || $$.isOrderDesc() ?
-			(a, b) => ($$.isOrderAsc() ? a - b : b - a) : null;
+
+		const sortValue = $$.isOrderAsc() || $$.isOrderDesc() ?
+			(a, b) => ($$.isOrderAsc() ? a - b : b - a) : (
+				isFunction(config.data_order) ? config.data_order : null
+			);
 
 		$$.pie = d3Pie()
 			.startAngle(startingAngle)
