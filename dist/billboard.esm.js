@@ -1728,7 +1728,7 @@ var tooltip = {
      *    - 'key' name is used as substitution within template as '{=KEY}'
      *    - The value array length should match with the data length
      * @property {boolean} [tooltip.init.show=false] Show tooltip at the initialization.
-     * @property {number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
+     * @property {number} [tooltip.init.x=0] Set x Axis index(or index for Arc(donut, gauge, pie) types) to be shown at the initialization.
      * @property {object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
      * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
      * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
@@ -1812,7 +1812,7 @@ var tooltip = {
      *      // show at the initialization
      *      init: {
      *          show: true,
-     *          x: 2,
+     *          x: 2, // x Axis index(or index for Arc(donut, gauge, pie) types)
      *          position: {
      *              top: "150px",
      *              left: "250px"
@@ -3948,11 +3948,11 @@ var interaction$1 = {
      */
     dispatchEvent: function (type, index, mouse) {
         var $$ = this;
-        var config = $$.config, _a = $$.state, eventReceiver = _a.eventReceiver, hasRadar = _a.hasRadar, _b = $$.$el, eventRect = _b.eventRect, radar = _b.radar;
+        var config = $$.config, _a = $$.state, eventReceiver = _a.eventReceiver, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar, _b = $$.$el, eventRect = _b.eventRect, arcs = _b.arcs, radar = _b.radar;
         var isMultipleX = $$.isMultipleX();
-        var element = (hasRadar ? radar.axes.select("." + CLASS.axis + "-" + index + " text") : eventRect).node();
+        var element = (hasRadar ? radar.axes.select("." + CLASS.axis + "-" + index + " text") : (eventRect || arcs.selectAll("." + CLASS.target + " path").filter(function (d, i) { return i === index; }))).node();
         var _c = element.getBoundingClientRect(), width = _c.width, left = _c.left, top = _c.top;
-        if (!hasRadar && !isMultipleX) {
+        if (hasAxis && !hasRadar && !isMultipleX) {
             var coords = eventReceiver.coords[index];
             width = coords.w;
             left += coords.x;
@@ -6377,17 +6377,17 @@ var text = {
         var $$ = this;
         var t = getRandom();
         var opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
-        $$.$el.text.each(function () {
+        $$.$el.text.each(function (d, index) {
             var text = select(this);
             // do not apply transition for newly added text elements
             (withTransition && text.attr("x") ? text.transition(t) : text)
                 .call(function (selection) {
-                selection.each(function (d, i) {
+                selection.each(function (d) {
                     select(this)
                         .style("fill", $$.updateTextColor.bind($$))
                         .style("fill-opacity", opacityForText);
-                    var posX = x.bind(this)(d, i);
-                    var posY = y.bind(this)(d, i);
+                    var posX = x.bind(this)(d, index);
+                    var posY = y.bind(this)(d, index);
                     // when is multiline
                     if (this.children.length) {
                         this.setAttribute("transform", "translate(" + posX + " " + posY + ")");
@@ -6757,8 +6757,7 @@ var tooltip$1 = {
     initTooltip: function () {
         var $$ = this;
         var config = $$.config, $el = $$.$el;
-        var bindto = config.tooltip_contents.bindto;
-        $el.tooltip = select(bindto);
+        $el.tooltip = select(config.tooltip_contents.bindto);
         if ($el.tooltip.empty()) {
             $el.tooltip = $el.chart
                 .style("position", "relative")
@@ -6768,9 +6767,15 @@ var tooltip$1 = {
                 .style("pointer-events", "none")
                 .style("display", "none");
         }
+        $$.bindTooltipResizePos();
+    },
+    initShowTooltip: function () {
+        var $$ = this;
+        var config = $$.config, $el = $$.$el, _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar;
         // Show tooltip if needed
         if (config.tooltip_init_show) {
-            if ($$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
+            var isArc_1 = !(hasAxis && hasRadar);
+            if ($$.axis && $$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
                 var targets = $$.data.targets[0];
                 var i = void 0;
                 var val = void 0;
@@ -6782,14 +6787,20 @@ var tooltip$1 = {
                 }
                 config.tooltip_init_x = i;
             }
-            $el.tooltip.html($$.getTooltipHTML($$.data.targets.map(function (d) { return $$.addName(d.values[config.tooltip_init_x]); }), $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color));
-            if (!bindto) {
+            var data = $$.data.targets.map(function (d) {
+                var x = isArc_1 ? 0 : config.tooltip_init_x;
+                return $$.addName(d.values[x]);
+            });
+            if (isArc_1) {
+                data = [data[config.tooltip_init_x]];
+            }
+            $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color));
+            if (!config.tooltip_contents.bindto) {
                 $el.tooltip.style("top", config.tooltip_init_position.top)
                     .style("left", config.tooltip_init_position.left)
                     .style("display", "block");
             }
         }
-        $$.bindTooltipResizePos();
     },
     /**
      * Get the tooltip HTML string
@@ -6817,7 +6828,7 @@ var tooltip$1 = {
      */
     getTooltipContent: function (d, defaultTitleFormat, defaultValueFormat, color) {
         var $$ = this;
-        var api = $$.api, config = $$.config;
+        var api = $$.api, config = $$.config, state = $$.state;
         var _a = ["title", "name", "value"].map(function (v) {
             var fn = config["tooltip_format_" + v];
             return isFunction(fn) ? fn.bind(api) : fn;
@@ -6870,11 +6881,15 @@ var tooltip$1 = {
                 return "continue";
             }
             if (isUndefined(text)) {
-                var title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
+                var title = (state.hasAxis || state.hasRadar) &&
+                    sanitise(titleFormat ? titleFormat(row.x) : row.x);
                 text = tplProcess(tpl[0], {
                     CLASS_TOOLTIP: CLASS.tooltip,
                     TITLE: isValue(title) ? (tplStr ? title : "<tr><th colspan=\"2\">" + title + "</th></tr>") : ""
                 });
+            }
+            if (!row.ratio && $$.$el.arcs) {
+                row.ratio = $$.getRatio("arc", $$.$el.arcs.select("path." + CLASS.arc + "-" + row.id).data()[0]);
             }
             param = [row.ratio, row.id, row.index, d];
             value = sanitise(valueFormat.apply(void 0, __spreadArrays([getRowValue(row)], param)));
@@ -7723,6 +7738,7 @@ var ChartInternal = /** @class */ (function () {
             callFn(config.data_onmin, $$.api, minMax.min);
             callFn(config.data_onmax, $$.api, minMax.max);
         }
+        config.tooltip_show && $$.initShowTooltip();
         state.rendered = true;
     };
     ChartInternal.prototype.initChartElements = function () {
@@ -8876,6 +8892,7 @@ var tooltip$2 = {
      *
      * @example
      *  // show the 2nd x Axis coordinate tooltip
+     *  // for Arc(gauge, donut & pie) and radar type, approch showing tooltip by using "index" number.
      *  chart.tooltip.show({
      *    index: 1
      *  });
@@ -14605,7 +14622,7 @@ var shapeArc = {
     },
     convertToArcData: function (d) {
         return this.addName({
-            id: d.data.id,
+            id: d.data ? d.data.id : d.id,
             value: d.value,
             ratio: this.getRatio("arc", d),
             index: d.index

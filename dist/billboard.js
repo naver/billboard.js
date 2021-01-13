@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20210110020312
+ * @version 2.1.4-nightly-20210113020952
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1870,7 +1870,7 @@ function _defineProperty(obj, key, value) {
    *    - 'key' name is used as substitution within template as '{=KEY}'
    *    - The value array length should match with the data length
    * @property {boolean} [tooltip.init.show=false] Show tooltip at the initialization.
-   * @property {number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
+   * @property {number} [tooltip.init.x=0] Set x Axis index(or index for Arc(donut, gauge, pie) types) to be shown at the initialization.
    * @property {object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
    * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
    * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
@@ -1954,7 +1954,7 @@ function _defineProperty(obj, key, value) {
    *      // show at the initialization
    *      init: {
    *          show: true,
-   *          x: 2,
+   *          x: 2, // x Axis index(or index for Arc(donut, gauge, pie) types)
    *          position: {
    *              top: "150px",
    *              left: "250px"
@@ -4001,18 +4001,22 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         config = $$.config,
         _$$$state = $$.state,
         eventReceiver = _$$$state.eventReceiver,
+        hasAxis = _$$$state.hasAxis,
         hasRadar = _$$$state.hasRadar,
         _$$$$el2 = $$.$el,
         eventRect = _$$$$el2.eventRect,
+        arcs = _$$$$el2.arcs,
         radar = _$$$$el2.radar,
         isMultipleX = $$.isMultipleX(),
-        element = (hasRadar ? radar.axes.select("." + config_classes.axis + "-" + index + " text") : eventRect).node(),
+        element = (hasRadar ? radar.axes.select("." + config_classes.axis + "-" + index + " text") : eventRect || arcs.selectAll("." + config_classes.target + " path").filter(function (d, i) {
+      return i === index;
+    })).node(),
         _element$getBoundingC = element.getBoundingClientRect(),
         width = _element$getBoundingC.width,
         left = _element$getBoundingC.left,
         top = _element$getBoundingC.top;
 
-    if (!hasRadar && !isMultipleX) {
+    if (hasAxis && !hasRadar && !isMultipleX) {
       var coords = eventReceiver.coords[index];
       width = coords.w, left += coords.x, top += coords.y;
     }
@@ -5935,14 +5939,14 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
     // need to return 'true' as of being pushed to the redraw list
     // ref: getRedrawList()
-    return $$.$el.text.each(function () {
+    return $$.$el.text.each(function (d, index) {
       var text = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this); // do not apply transition for newly added text elements
 
       (withTransition && text.attr("x") ? text.transition(t) : text).call(function (selection) {
-        selection.each(function (d, i) {
+        selection.each(function (d) {
           (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
-          var posX = x.bind(this)(d, i),
-              posY = y.bind(this)(d, i);
+          var posX = x.bind(this)(d, index),
+              posY = y.bind(this)(d, index);
           this.children.length ? this.setAttribute("transform", "translate(" + posX + " " + posY + ")") : (this.setAttribute("x", posX), this.setAttribute("y", posY));
         });
       });
@@ -6250,27 +6254,37 @@ function getTextPos(pos, width) {
   initTooltip: function initTooltip() {
     var $$ = this,
         config = $$.config,
+        $el = $$.$el;
+    $el.tooltip = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(config.tooltip_contents.bindto), $el.tooltip.empty() && ($el.tooltip = $el.chart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none")), $$.bindTooltipResizePos();
+  },
+  initShowTooltip: function initShowTooltip() {
+    var $$ = this,
+        config = $$.config,
         $el = $$.$el,
-        bindto = config.tooltip_contents.bindto;
+        _$$$state = $$.state,
+        hasAxis = _$$$state.hasAxis,
+        hasRadar = _$$$state.hasRadar;
 
     // Show tooltip if needed
-    if ($el.tooltip = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(bindto), $el.tooltip.empty() && ($el.tooltip = $el.chart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none")), config.tooltip_init_show) {
-      if ($$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
+    if (config.tooltip_init_show) {
+      var isArc = !(hasAxis && hasRadar);
+
+      if ($$.axis && $$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
         var i,
             val,
             targets = $$.data.targets[0];
 
-        for (config.tooltip_init_x = parseDate.call($$, config.tooltip_init_x), i = 0; (val = targets.values[i]) && val.x - config.tooltip_init_x !== 0; i++);
+        for (config.tooltip_init_x = parseDate.call($$, config.tooltip_init_x), i = 0; (val = targets.values[i]) && !(val.x - config.tooltip_init_x === 0); i++);
 
         config.tooltip_init_x = i;
       }
 
-      $el.tooltip.html($$.getTooltipHTML($$.data.targets.map(function (d) {
-        return $$.addName(d.values[config.tooltip_init_x]);
-      }), $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), bindto || $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", "block");
+      var data = $$.data.targets.map(function (d) {
+        var x = isArc ? 0 : config.tooltip_init_x;
+        return $$.addName(d.values[x]);
+      });
+      isArc && (data = [data[config.tooltip_init_x]]), $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), config.tooltip_contents.bindto || $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", "block");
     }
-
-    $$.bindTooltipResizePos();
   },
 
   /**
@@ -6299,6 +6313,7 @@ function getTextPos(pos, width) {
     var $$ = this,
         api = $$.api,
         config = $$.config,
+        state = $$.state,
         _map = ["title", "name", "value"].map(function (v) {
       var fn = config["tooltip_format_" + v];
       return isFunction(fn) ? fn.bind(api) : fn;
@@ -6354,14 +6369,14 @@ function getTextPos(pos, width) {
 
     for (i = 0; i < len; i++) if (row = d[i], row && (getRowValue(row) || getRowValue(row) === 0)) {
       if (isUndefined(text)) {
-        var title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
+        var title = (state.hasAxis || state.hasRadar) && sanitise(titleFormat ? titleFormat(row.x) : row.x);
         text = tplProcess(tpl[0], {
           CLASS_TOOLTIP: config_classes.tooltip,
           TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">" + title + "</th></tr>" : ""
         });
       }
 
-      if (param = [row.ratio, row.id, row.index, d], value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(param))), $$.isAreaRangeType(row)) {
+      if (!row.ratio && $$.$el.arcs && (row.ratio = $$.getRatio("arc", $$.$el.arcs.select("path." + config_classes.arc + "-" + row.id).data()[0])), param = [row.ratio, row.id, row.index, d], value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(param))), $$.isAreaRangeType(row)) {
         var _map2 = ["high", "low"].map(function (v) {
           return sanitise(valueFormat.apply(void 0, [$$.getAreaRangeData(row, v)].concat(param)));
         }),
@@ -7027,7 +7042,7 @@ var ChartInternal = /*#__PURE__*/function () {
       callFn(config.data_onmin, $$.api, minMax.min), callFn(config.data_onmax, $$.api, minMax.max);
     }
 
-    state.rendered = !0;
+    config.tooltip_show && $$.initShowTooltip(), state.rendered = !0;
   }, _proto.initChartElements = function initChartElements() {
     var $$ = this,
         _$$$state = $$.state,
@@ -8077,6 +8092,7 @@ var tooltip_tooltip = {
    *
    * @example
    *  // show the 2nd x Axis coordinate tooltip
+   *  // for Arc(gauge, donut & pie) and radar type, approch showing tooltip by using "index" number.
    *  chart.tooltip.show({
    *    index: 1
    *  });
@@ -12982,7 +12998,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   },
   convertToArcData: function convertToArcData(d) {
     return this.addName({
-      id: d.data.id,
+      id: d.data ? d.data.id : d.id,
       value: d.value,
       ratio: this.getRatio("arc", d),
       index: d.index
