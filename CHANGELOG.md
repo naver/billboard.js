@@ -1,3 +1,13 @@
+# [2.2.0-next.6](https://github.com/naver/billboard.js/compare/2.2.0-next.5...2.2.0-next.6) (2021-01-13)
+
+
+### Bug Fixes
+
+* **data:** fix data.order to work for arc types ([3a716a0](https://github.com/naver/billboard.js/commit/3a716a0984364291fd0b7dd90edb268721faf7d0)), closes [#1863](https://github.com/naver/billboard.js/issues/1863)
+* **eventrect:** fix resizing event rect element after .load() ([12bf547](https://github.com/naver/billboard.js/commit/12bf547c131e69333f02337e2492a4ebb10b87b9)), closes [#1864](https://github.com/naver/billboard.js/issues/1864)
+* **radar:** fix data label text position ([c69d674](https://github.com/naver/billboard.js/commit/c69d674e5ff9d7d3c0e0678fab74c5275bbe92af)), closes [#1871](https://github.com/naver/billboard.js/issues/1871)
+* **tooltip:** fix arc's tooltip interaction ([a8586a3](https://github.com/naver/billboard.js/commit/a8586a3ec2234a11d1b531b1a22908b275d57a08)), closes [#1859](https://github.com/naver/billboard.js/issues/1859)
+
 # [2.2.0-next.5](https://github.com/naver/billboard.js/compare/2.2.0-next.4...2.2.0-next.5) (2021-01-09)
 
 
