@@ -18,9 +18,8 @@ export default {
 	initTooltip() {
 		const $$ = this;
 		const {config, $el} = $$;
-		const {bindto} = config.tooltip_contents;
 
-		$el.tooltip = d3Select(bindto);
+		$el.tooltip = d3Select(config.tooltip_contents.bindto);
 
 		if ($el.tooltip.empty()) {
 			$el.tooltip = $el.chart
@@ -32,9 +31,18 @@ export default {
 				.style("display", "none");
 		}
 
+		$$.bindTooltipResizePos();
+	},
+
+	initShowTooltip() {
+		const $$ = this;
+		const {config, $el, state: {hasAxis, hasRadar}} = $$;
+
 		// Show tooltip if needed
 		if (config.tooltip_init_show) {
-			if ($$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
+			const isArc = !(hasAxis && hasRadar);
+
+			if ($$.axis && $$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
 				const targets = $$.data.targets[0];
 				let i;
 				let val;
@@ -50,21 +58,29 @@ export default {
 				config.tooltip_init_x = i;
 			}
 
+			let data = $$.data.targets.map(d => {
+				const x = isArc ? 0 : config.tooltip_init_x;
+
+				return $$.addName(d.values[x]);
+			});
+
+			if (isArc) {
+				data = [data[config.tooltip_init_x]];
+			}
+
 			$el.tooltip.html($$.getTooltipHTML(
-				$$.data.targets.map(d => $$.addName(d.values[config.tooltip_init_x])),
-				$$.axis.getXAxisTickFormat(),
+				data,
+				$$.axis && $$.axis.getXAxisTickFormat(),
 				$$.getYFormat($$.hasArcType(null, ["radar"])),
 				$$.color
 			));
 
-			if (!bindto) {
+			if (!config.tooltip_contents.bindto) {
 				$el.tooltip.style("top", config.tooltip_init_position.top)
 					.style("left", config.tooltip_init_position.left)
 					.style("display", "block");
 			}
 		}
-
-		$$.bindTooltipResizePos();
 	},
 
 	/**
@@ -92,7 +108,7 @@ export default {
 	 */
 	getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color): string {
 		const $$ = this;
-		const {api, config} = $$;
+		const {api, config, state} = $$;
 
 		let [titleFormat, nameFormat, valueFormat] = ["title", "name", "value"].map(v => {
 			const fn = config[`tooltip_format_${v}`];
@@ -159,7 +175,8 @@ export default {
 			}
 
 			if (isUndefined(text)) {
-				const title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
+				const title = (state.hasAxis || state.hasRadar) &&
+					sanitise(titleFormat ? titleFormat(row.x) : row.x);
 
 				text = tplProcess(tpl[0], {
 					CLASS_TOOLTIP: CLASS.tooltip,
@@ -167,6 +184,10 @@ export default {
 						tplStr ? title : `<tr><th colspan="2">${title}</th></tr>`
 					) : ""
 				});
+			}
+
+			if (!row.ratio && $$.$el.arcs) {
+				row.ratio = $$.getRatio("arc", $$.$el.arcs.select(`path.${CLASS.arc}-${row.id}`).data()[0]);
 			}
 
 			param = [row.ratio, row.id, row.index, d];

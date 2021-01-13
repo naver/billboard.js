@@ -218,4 +218,50 @@ describe("API tooltip", () => {
 			}
 		});
 	});
+
+	describe("tooltip.show() for arc types", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 100],
+						["data2", 90],
+						["data3", 50],
+						["data4", 20]
+					],
+					type: "pie",
+				}
+			};
+		});
+
+		it("should show tooltip correctly", done => {
+			setTimeout(() => {
+				const {tooltip} = chart.$;
+
+				// when
+				chart.tooltip.show({index:2});
+
+				expect(tooltip.select(".name").text()).to.be.equal("data3");
+				expect(tooltip.select(".value").text()).to.be.equal("19.2%");
+
+				done();
+			}, 500);
+		});
+
+		it("set options tooltip.init", () => {
+			args.tooltip = {
+				init: {
+					show: true,
+					x: 1
+				}
+			};
+		});
+
+		it("should show tooltip at initialization", () => {
+			const {tooltip} = chart.$;
+
+			expect(tooltip.select(".name").text()).to.be.equal("data2");
+			expect(tooltip.select(".value").text()).to.be.equal("34.6%");
+		});
+	});
 });
