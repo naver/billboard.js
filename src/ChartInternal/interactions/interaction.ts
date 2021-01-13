@@ -183,13 +183,17 @@ export default {
 	 */
 	dispatchEvent(type: string, index: number, mouse): void {
 		const $$ = this;
-		const {config, state: {eventReceiver, hasRadar}, $el: {eventRect, radar}} = $$;
+		const {config, state: {eventReceiver, hasAxis, hasRadar}, $el: {eventRect, arcs, radar}} = $$;
 		const isMultipleX = $$.isMultipleX();
-		const element = (hasRadar ? radar.axes.select(`.${CLASS.axis}-${index} text`) : eventRect).node();
+		const element = (
+			hasRadar ? radar.axes.select(`.${CLASS.axis}-${index} text`) : (
+				eventRect || arcs.selectAll(`.${CLASS.target} path`).filter((d, i) => i === index)
+			)
+		).node();
 
 		let {width, left, top} = element.getBoundingClientRect();
 
-		if (!hasRadar && !isMultipleX) {
+		if (hasAxis && !hasRadar && !isMultipleX) {
 			const coords = eventReceiver.coords[index];
 
 			width = coords.w;

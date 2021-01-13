@@ -288,6 +288,126 @@ describe("DATA", () => {
 				expect(v).to.be.equal(targetIds[i]);
 			});
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 130],
+						["data2", 30],
+						["data3", 100],
+					],
+					type: "bar",
+					groups: [
+						["data1", "data2", "data3"]
+					],
+					order: function(a, b) {
+						const reducer = (p, c) => p + Math.abs(c.value);
+						const aSum = a.values.reduce(reducer, 0);
+						const bSum = b.values.reduce(reducer, 0);
+				
+						return aSum - bSum;
+					}
+				  }
+			};
+		});
+
+		it("check for ascending", () => {
+			const data = [];
+
+			chart.$.bar.bars.each(function(d) {
+				data.push([d.id, this.getBoundingClientRect().y]);
+			});
+
+			data.sort((a, b) => a[1] - b[1]);
+
+			expect(
+				data.every((v, i, array) => {
+					if (i === 0) {
+						return true;
+					}
+
+					return v[1] > array[i - 1][1];
+				})
+			).to.be.true;
+		});
+
+		it("set options data.order", () => {
+			args.data.order = function(a, b) {
+				const reducer = (p, c) => p + Math.abs(c.value);
+				const aSum = a.values.reduce(reducer, 0);
+				const bSum = b.values.reduce(reducer, 0);
+		
+				return bSum - aSum;
+			};
+		});
+
+		it("check for descending", () => {
+			const data = [];
+
+			chart.$.bar.bars.each(function(d) {
+				data.push([d.id, this.getBoundingClientRect().y]);
+			});
+
+			data.sort((a, b) => b[1] - a[1]);
+
+			expect(
+				data.every((v, i, array) => {
+					if (i === 0) {
+						return true;
+					}
+
+					return v[1] < array[i - 1][1];
+				})
+			).to.be.true;
+		});
+
+		it("set options data.order", () => {
+			args.data.type = "pie";
+			args.data.order = (a, b) => a - b;
+		});
+
+		it("check for ascending", () => {
+			const data = [];
+
+			chart.$.arc.selectAll(`g.${CLASS.shapes}`).each(function(d, i) {
+				data.push([d.data.id, d.startAngle]);
+			});
+
+			data.sort((a, b) => a[1] - b[1]);
+			expect(
+				data.every((v, i, array) => {
+					if (i === 0) {
+						return true;
+					}
+
+					return v[1] > array[i - 1][1];
+				})
+			).to.be.true;
+		});
+
+		it("set options data.order", () => {
+			args.data.order = (a, b) => b - a;
+		});
+
+		it("check for descending", () => {
+			const data = [];
+
+			chart.$.arc.selectAll(`g.${CLASS.shapes}`).each(function(d, i) {
+				data.push([d.data.id, d.startAngle]);
+			});
+
+			data.sort((a, b) => b[1] - a[1]);
+			expect(
+				data.every((v, i, array) => {
+					if (i === 0) {
+						return true;
+					}
+
+					return v[1] < array[i - 1][1];
+				})
+			).to.be.true;
+		});
 	});
 
 	describe("data.xs", () => {

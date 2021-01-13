@@ -25,6 +25,7 @@ const tooltip = {
 	 *
 	 * @example
 	 *  // show the 2nd x Axis coordinate tooltip
+	 *  // for Arc(gauge, donut & pie) and radar type, approch showing tooltip by using "index" number.
 	 *  chart.tooltip.show({
 	 *    index: 1
 	 *  });

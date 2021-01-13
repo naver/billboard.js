@@ -433,6 +433,7 @@ export default class ChartInternal {
 			callFn(config.data_onmax, $$.api, minMax.max);
 		}
 
+		config.tooltip_show && $$.initShowTooltip();
 		state.rendered = true;
 	}
 

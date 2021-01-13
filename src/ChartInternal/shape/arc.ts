@@ -15,6 +15,7 @@ import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
 import {callFn, endall, isFunction, isNumber, isObject, isUndefined, setTextValue} from "../../module/util";
 import {d3Selection} from "../../../types/types";
+import {IData} from "../data/IData";
 
 export default {
 	initPie(): void {
@@ -27,15 +28,13 @@ export default {
 			$$.hasType("pie") && padding ? padding * 0.01 :
 				config[`${dataType}_padAngle`]
 		) || 0;
-		const sortValue: any = $$.isOrderAsc() || $$.isOrderDesc() ?
-			(a, b) => ($$.isOrderAsc() ? a - b : b - a) : null;
 
 		$$.pie = d3Pie()
 			.startAngle(startingAngle)
 			.endAngle(startingAngle + (2 * Math.PI))
 			.padAngle(padAngle)
-			.sortValues(sortValue)
-			.value((d: any) => d.values.reduce((a, b) => a + b.value, 0));
+			.value((d: IData | any) => d.values.reduce((a, b) => a + b.value, 0))
+			.sort($$.getSortCompareFn.bind($$)(true));
 	},
 
 	updateRadius(): void {
@@ -319,7 +318,7 @@ export default {
 
 	convertToArcData(d): object {
 		return this.addName({
-			id: d.data.id,
+			id: d.data ? d.data.id : d.id,
 			value: d.value,
 			ratio: this.getRatio("arc", d),
 			index: d.index,
@@ -479,7 +478,7 @@ export default {
 		return type ? $$.config[`${type}_title`] : "";
 	},
 
-	updateTargetsForArc(targets): void {
+	updateTargetsForArc(targets: IData): void {
 		const $$ = this;
 		const {$el} = $$;
 		const hasGauge = $$.hasType("gauge");
