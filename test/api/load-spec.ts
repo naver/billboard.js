@@ -461,6 +461,59 @@ describe("API load", function() {
 				}
 			});
 		});
+
+		it("set options", () => {
+			args = {
+				axis: {
+					x: {
+					  categories: [
+						"xxxx PREFIX: column1",
+						"xxxxxx PREFIX: column2",
+						"x PREFIX: column3",
+						"xx PREFIX: column4",
+						"PREFIX: column5"
+					  ],
+					  tick: {
+						rotate: 15,
+						autorotate: true,
+						multiline: false,
+						culling: false,
+						fit: true
+					  },
+					  clipPath: false,
+					  type: "category"
+					},
+					y2: {
+					  show: true
+					}
+				},
+				data: {
+					columns: [
+						["series", 33200000, 24000000, 4280000, 16000, -155000]
+					],
+					type: "line"
+				}
+			}	
+		});
+
+		it("event rect size should update after .load() is called", done => {
+			// when
+			chart.load({
+				columns: [
+					["data1", 130, 120, 150, 140, 160, 150],
+					["data4", 30, 20, 50, 40, 60, 50]
+				],
+				unload: true,
+				done: function() {
+					const {internal: {$el, state}} = this;
+
+					expect(+$el.eventRect.attr("width")).to.be.equal(state.width);
+					expect(+$el.eventRect.attr("height")).to.be.equal(state.height);
+
+					done();
+				}
+			});
+		});
 	});
 
 	describe("different type loading", () => {

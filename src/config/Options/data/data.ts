@@ -192,6 +192,8 @@ export default {
 	 *  - `asc`: In ascending order
 	 *  - `null`: It keeps the data load order
 	 *  - `function(data1, data2) { ... }`: Array.sort compareFunction
+	 *
+	 *  **NOTE**: order function, only works for Axis based types & Arc types, except `Radar` type.
 	 * @name data․order
 	 * @memberof Options
 	 * @type {string|Function|null}
@@ -211,12 +213,22 @@ export default {
 	 *   // specifying sort function
 	 *   order: function(a, b) {
 	 *       // param data passed format
-	 *       {
-	 *          id: "data1", id_org: "data1", values: [
-	 *              {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
-	 *              ...
-	 *          ]
-	 *       }
+	 *       // {
+	 *       //   id: "data1", id_org: "data1", values: [
+	 *       //      {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
+	 *       //       ...
+	 *       //   ]
+	 *       // }
+	 *
+	 *       const reducer = (p, c) => p + Math.abs(c.value);
+	 *       const aSum = a.values.reduce(reducer, 0);
+	 *       const bSum = b.values.reduce(reducer, 0);
+	 *
+	 *       // ascending order
+	 *       return aSum - bSum;
+	 *
+	 *       // descending order
+	 *       // return bSum - aSum;
 	 *   }
 	 * }
 	 */

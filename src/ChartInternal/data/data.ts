@@ -23,6 +23,7 @@ import {
 	parseDate,
 	sortValue
 } from "../../module/util";
+import {IData} from "./IData";
 
 export default {
 	isX(key) {
@@ -564,26 +565,44 @@ export default {
 	 * @returns {Array}
 	 * @private
 	 */
-	orderTargets(targetsValue) {
+	orderTargets(targetsValue: IData[]): IData[] {
+		const $$ = this;
+		const targets = [...targetsValue];
+		const fn = $$.getSortCompareFn();
+
+		fn && targets.sort(fn);
+
+		return targets;
+	},
+
+	/**
+	 * Get data.order compare function
+	 * @param {boolean} isArc Is for Arc type sort or not
+	 * @returns {Function} compare function
+	 * @private
+	 */
+	getSortCompareFn(isArc = false): Function | null {
 		const $$ = this;
 		const {config} = $$;
-		const targets = [...targetsValue];
 		const orderAsc = $$.isOrderAsc();
 		const orderDesc = $$.isOrderDesc();
+		let fn;
 
 		if (orderAsc || orderDesc) {
-			targets.sort((t1, t2) => {
+			fn = (t1, t2) => {
 				const reducer = (p, c) => p + Math.abs(c.value);
 				const t1Sum = t1.values.reduce(reducer, 0);
 				const t2Sum = t2.values.reduce(reducer, 0);
 
-				return orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
-			});
+				return isArc ?
+					(orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
+					(orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum);
+			};
 		} else if (isFunction(config.data_order)) {
-			targets.sort(config.data_order.bind($$.api));
-		} // TODO: accept name array for order
+			fn = config.data_order.bind($$.api);
+		}
 
-		return targets;
+		return fn || null;
 	},
 
 	filterByX(targets, x) {

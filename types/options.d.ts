@@ -8,6 +8,7 @@ import Bubblecompare from "./plugin/bubblecompare/index";
 import Stanford from "./plugin/stanford/index";
 import TextOverlap from "./plugin/textoverlap/index";
 import {Chart} from "./chart";
+import {IData} from "../src/ChartInternal/data/IData";
 
 export interface ChartOptions {
 	/**
@@ -1462,9 +1463,11 @@ export interface Data {
 	 * Define the order of the data.
 	 * This option changes the order of stacking the data and pieces of pie/donut. If null specified, it will be the order the data loaded.
 	 * If function specified, it will be used to sort the data and it will recieve the data as argument.
-	 * Available Values: desc, asc, function (data1, data2) { ... }, null
+	 *
+	 * - Available Values: desc, asc, function (data1, data2) { ... }, null
+	 * **NOTE**: order function, only works for Axis based types & Arc types, except `Radar` type.
 	 */
-	order?: string | ((this: Chart, ...data: string[]) => void) | null;
+	order?: "asc" | "desc" | ((this: Chart, a: IData, b: IData) => number) | null;
 
 	/**
 	 * Define regions for each data.
