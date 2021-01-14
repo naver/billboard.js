@@ -13,7 +13,7 @@ import {callFn, extend, getMinMax, isDefined, isObject, parseDate} from "../../m
  * @returns {boolean}
  * @private
  */
-function withinRange(domain: number[], range: number[]): boolean {
+function withinRange(domain: (number | string)[], range: number[]): boolean {
 	const [min, max] = range;
 
 	return domain.every((v, i) => (
@@ -38,45 +38,43 @@ function withinRange(domain: number[], range: number[]): boolean {
  *  // Get the current zoomed domain
  *  chart.zoom();
  */
-const zoom = function(domainValue?: number[]): number[] {
+const zoom = function(domainValue?: (number | string)[]): (Date | number)[] {
 	const $$ = this.internal;
 	const {config, scale} = $$;
 	let domain = domainValue;
 	let resultDomain;
 
-	if (config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
-		const isTimeSeries = $$.axis.isTimeSeries();
-
-		// hide any possible tooltip show before the zoom
-		$$.api.tooltip.hide();
-
-		if (isTimeSeries) {
-			const fn = parseDate.bind($$);
-
-			domain = domain.map(x => fn(x));
+	if (config.zoom_enabled && domain) {
+		if ($$.axis.isTimeSeries()) {
+			domain = domain.map(x => parseDate.bind($$)(x));
 		}
 
-		if (config.subchart_show) {
-			const xScale = scale.zoom || scale.x;
+		if (withinRange(domain, $$.getZoomDomain())) {
+			// hide any possible tooltip show before the zoom
+			$$.api.tooltip.hide();
 
-			$$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]);
-			resultDomain = domain;
-		} else {
-			scale.x.domain(domain);
-			scale.zoom = scale.x;
-			$$.axis.x.scale(scale.zoom);
+			if (config.subchart_show) {
+				const xScale = scale.zoom || scale.x;
 
-			resultDomain = scale.zoom.orgDomain();
+				$$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]);
+				resultDomain = domain;
+			} else {
+				scale.x.domain(domain);
+				scale.zoom = scale.x;
+				$$.axis.x.scale(scale.zoom);
+
+				resultDomain = scale.zoom.orgDomain();
+			}
+
+			$$.redraw({
+				withTransition: true,
+				withY: config.zoom_rescale,
+				withDimension: false
+			});
+
+			$$.setZoomResetButton();
+			callFn(config.zoom_onzoom, $$.api, resultDomain);
 		}
-
-		$$.redraw({
-			withTransition: true,
-			withY: config.zoom_rescale,
-			withDimension: false
-		});
-
-		$$.setZoomResetButton();
-		callFn(config.zoom_onzoom, $$.api, resultDomain);
 	} else {
 		resultDomain = scale.zoom ?
 			scale.zoom.domain() : scale.x.orgDomain();
