@@ -893,6 +893,8 @@ var data = {
      *  - `asc`: In ascending order
      *  - `null`: It keeps the data load order
      *  - `function(data1, data2) { ... }`: Array.sort compareFunction
+     *
+     *  **NOTE**: order function, only works for Axis based types & Arc types, except `Radar` type.
      * @name data․order
      * @memberof Options
      * @type {string|Function|null}
@@ -912,12 +914,22 @@ var data = {
      *   // specifying sort function
      *   order: function(a, b) {
      *       // param data passed format
-     *       {
-     *          id: "data1", id_org: "data1", values: [
-     *              {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
-     *              ...
-     *          ]
-     *       }
+     *       // {
+     *       //   id: "data1", id_org: "data1", values: [
+     *       //      {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
+     *       //       ...
+     *       //   ]
+     *       // }
+     *
+     *       const reducer = (p, c) => p + Math.abs(c.value);
+     *       const aSum = a.values.reduce(reducer, 0);
+     *       const bSum = b.values.reduce(reducer, 0);
+     *
+     *       // ascending order
+     *       return aSum - bSum;
+     *
+     *       // descending order
+     *       // return bSum - aSum;
      *   }
      * }
      */
@@ -3408,22 +3420,38 @@ var data$1 = {
      */
     orderTargets: function (targetsValue) {
         var $$ = this;
-        var config = $$.config;
         var targets = __spreadArrays(targetsValue);
+        var fn = $$.getSortCompareFn();
+        fn && targets.sort(fn);
+        return targets;
+    },
+    /**
+     * Get data.order compare function
+     * @param {boolean} isArc Is for Arc type sort or not
+     * @returns {Function} compare function
+     * @private
+     */
+    getSortCompareFn: function (isArc) {
+        if (isArc === void 0) { isArc = false; }
+        var $$ = this;
+        var config = $$.config;
         var orderAsc = $$.isOrderAsc();
         var orderDesc = $$.isOrderDesc();
+        var fn;
         if (orderAsc || orderDesc) {
-            targets.sort(function (t1, t2) {
+            fn = function (t1, t2) {
                 var reducer = function (p, c) { return p + Math.abs(c.value); };
                 var t1Sum = t1.values.reduce(reducer, 0);
                 var t2Sum = t2.values.reduce(reducer, 0);
-                return orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
-            });
+                return isArc ?
+                    (orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
+                    (orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum);
+            };
         }
         else if (isFunction(config.data_order)) {
-            targets.sort(config.data_order.bind($$.api));
-        } // TODO: accept name array for order
-        return targets;
+            fn = config.data_order.bind($$.api);
+        }
+        return fn || null;
     },
     filterByX: function (targets, x) {
         return mergeArray(targets.map(function (t) { return t.values; })).filter(function (v) { return v.x - x === 0; });
@@ -6389,7 +6417,7 @@ var text = {
                     var posX = x.bind(this)(d, index);
                     var posY = y.bind(this)(d, index);
                     // when is multiline
-                    if (this.children.length) {
+                    if (this.childElementCount) {
                         this.setAttribute("transform", "translate(" + posX + " " + posY + ")");
                     }
                     else {
@@ -11220,7 +11248,7 @@ var eventrect = {
         var config = $$.config, state = $$.state, $el = $$.$el;
         var isMultipleX = $$.isMultipleX();
         if ($el.eventRect) {
-            $$.updateEventRect($el.eventRect);
+            $$.updateEventRect($el.eventRect, true);
         }
         else {
             var eventRects = $$.$el.main.select("." + CLASS.eventRects)
@@ -11332,7 +11360,14 @@ var eventrect = {
             }
         });
     },
-    updateEventRect: function (eventRect) {
+    /**
+     * Update event rect size
+     * @param {d3Selection} eventRect Event <rect> element
+     * @param {boolean} force Force to update
+     * @private
+     */
+    updateEventRect: function (eventRect, force) {
+        if (force === void 0) { force = false; }
         var $$ = this;
         var state = $$.state, $el = $$.$el;
         var eventReceiver = state.eventReceiver, width = state.width, height = state.height, rendered = state.rendered, resizing = state.resizing;
@@ -11340,7 +11375,7 @@ var eventrect = {
         var updateClientRect = function () {
             eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
         };
-        if (!rendered || resizing) {
+        if (!rendered || resizing || force) {
             rectElement
                 .attr("x", 0)
                 .attr("y", 0)
@@ -14393,14 +14428,12 @@ var shapeArc = {
         var startingAngle = config[dataType + "_startingAngle"] || 0;
         var padAngle = ($$.hasType("pie") && padding ? padding * 0.01 :
             config[dataType + "_padAngle"]) || 0;
-        var sortValue = $$.isOrderAsc() || $$.isOrderDesc() ?
-            function (a, b) { return ($$.isOrderAsc() ? a - b : b - a); } : null;
         $$.pie = pie$1()
             .startAngle(startingAngle)
             .endAngle(startingAngle + (2 * Math.PI))
             .padAngle(padAngle)
-            .sortValues(sortValue)
-            .value(function (d) { return d.values.reduce(function (a, b) { return a + b.value; }, 0); });
+            .value(function (d) { return d.values.reduce(function (a, b) { return a + b.value; }, 0); })
+            .sort($$.getSortCompareFn.bind($$)(true));
     },
     updateRadius: function () {
         var $$ = this;
@@ -17322,7 +17355,7 @@ var optRadar = {
      * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
      * @property {number} [radar.level.depth=3] Set the level depth.
      * @property {boolean} [radar.level.show=true] Show or hide level.
-     * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
+     * @property {Function} [radar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
      * @property {boolean} [radar.level.text.show=true] Show or hide level text.
      * @property {number} [radar.size.ratio=0.87] Set size ratio.
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)

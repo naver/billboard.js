@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20210113020952
+ * @version 2.1.4-nightly-20210114021810
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1011,6 +1011,8 @@ function _defineProperty(obj, key, value) {
    *  - `asc`: In ascending order
    *  - `null`: It keeps the data load order
    *  - `function(data1, data2) { ... }`: Array.sort compareFunction
+   *
+   *  **NOTE**: order function, only works for Axis based types & Arc types, except `Radar` type.
    * @name data․order
    * @memberof Options
    * @type {string|Function|null}
@@ -1030,12 +1032,22 @@ function _defineProperty(obj, key, value) {
    *   // specifying sort function
    *   order: function(a, b) {
    *       // param data passed format
-   *       {
-   *          id: "data1", id_org: "data1", values: [
-   *              {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
-   *              ...
-   *          ]
-   *       }
+   *       // {
+   *       //   id: "data1", id_org: "data1", values: [
+   *       //      {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
+   *       //       ...
+   *       //   ]
+   *       // }
+   *
+   *       const reducer = (p, c) => p + Math.abs(c.value);
+   *       const aSum = a.values.reduce(reducer, 0);
+   *       const bSum = b.values.reduce(reducer, 0);
+   *
+   *       // ascending order
+   *       return aSum - bSum;
+   *
+   *       // descending order
+   *       // return bSum - aSum;
    *   }
    * }
    */
@@ -3530,20 +3542,33 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    */
   orderTargets: function orderTargets(targetsValue) {
     var $$ = this,
-        config = $$.config,
         targets = [].concat(targetsValue),
+        fn = $$.getSortCompareFn();
+    return fn && targets.sort(fn), targets;
+  },
+
+  /**
+   * Get data.order compare function
+   * @param {boolean} isArc Is for Arc type sort or not
+   * @returns {Function} compare function
+   * @private
+   */
+  getSortCompareFn: function getSortCompareFn(isArc) {
+    isArc === void 0 && (isArc = !1);
+    var fn,
+        $$ = this,
+        config = $$.config,
         orderAsc = $$.isOrderAsc(),
         orderDesc = $$.isOrderDesc();
-    // TODO: accept name array for order
-    return orderAsc || orderDesc ? targets.sort(function (t1, t2) {
+    return orderAsc || orderDesc ? fn = function (t1, t2) {
       var reducer = function (p, c) {
         return p + Math.abs(c.value);
       },
           t1Sum = t1.values.reduce(reducer, 0),
           t2Sum = t2.values.reduce(reducer, 0);
 
-      return orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
-    }) : isFunction(config.data_order) && targets.sort(config.data_order.bind($$.api)), targets;
+      return isArc ? orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum : orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
+    } : isFunction(config.data_order) && (fn = config.data_order.bind($$.api)), fn || null;
   },
   filterByX: function filterByX(targets, x) {
     return mergeArray(targets.map(function (t) {
@@ -5947,7 +5972,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
           (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
           var posX = x.bind(this)(d, index),
               posY = y.bind(this)(d, index);
-          this.children.length ? this.setAttribute("transform", "translate(" + posX + " " + posY + ")") : (this.setAttribute("x", posX), this.setAttribute("y", posY));
+          this.childElementCount ? this.setAttribute("transform", "translate(" + posX + " " + posY + ")") : (this.setAttribute("x", posX), this.setAttribute("y", posY));
         });
       });
     }), !0;
@@ -9923,7 +9948,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         state = $$.state,
         $el = $$.$el,
         isMultipleX = $$.isMultipleX();
-    if ($el.eventRect) $$.updateEventRect($el.eventRect);else {
+    if ($el.eventRect) $$.updateEventRect($el.eventRect, !0);else {
       var eventRects = $$.$el.main.select("." + config_classes.eventRects).style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX),
           eventRectUpdate = eventRects.selectAll("." + config_classes.eventRect).data([0]).enter().append("rect"); // append event <rect>
 
@@ -9986,7 +10011,15 @@ var Axis_Axis = /*#__PURE__*/function () {
       target && target !== eventRect.node() && unselectRect();
     });
   },
-  updateEventRect: function updateEventRect(eventRect) {
+
+  /**
+   * Update event rect size
+   * @param {d3Selection} eventRect Event <rect> element
+   * @param {boolean} force Force to update
+   * @private
+   */
+  updateEventRect: function updateEventRect(eventRect, force) {
+    force === void 0 && (force = !1);
     var $$ = this,
         state = $$.state,
         $el = $$.$el,
@@ -9997,7 +10030,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         rendered = _state.rendered,
         resizing = _state.resizing,
         rectElement = eventRect || $el.eventRect;
-    (!rendered || resizing) && (rectElement.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height), !rendered && rectElement.attr("class", config_classes.eventRect)), function updateClientRect() {
+    (!rendered || resizing || force) && (rectElement.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height), !rendered && rectElement.attr("class", config_classes.eventRect)), function updateClientRect() {
       eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
     }();
   },
@@ -12826,15 +12859,12 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         dataType = config.data_type,
         padding = config.pie_padding,
         startingAngle = config[dataType + "_startingAngle"] || 0,
-        padAngle = ($$.hasType("pie") && padding ? padding * .01 : config[dataType + "_padAngle"]) || 0,
-        sortValue = $$.isOrderAsc() || $$.isOrderDesc() ? function (a, b) {
-      return $$.isOrderAsc() ? a - b : b - a;
-    } : null;
-    $$.pie = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.pie)().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).sortValues(sortValue).value(function (d) {
+        padAngle = ($$.hasType("pie") && padding ? padding * .01 : config[dataType + "_padAngle"]) || 0;
+    $$.pie = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.pie)().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).value(function (d) {
       return d.values.reduce(function (a, b) {
         return a + b.value;
       }, 0);
-    });
+    }).sort($$.getSortCompareFn.bind($$)(!0));
   },
   updateRadius: function updateRadius() {
     var $$ = this,
@@ -15310,7 +15340,7 @@ var cacheKey = KEY.radarPoints;
    * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
    * @property {number} [radar.level.depth=3] Set the level depth.
    * @property {boolean} [radar.level.show=true] Show or hide level.
-   * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
+   * @property {Function} [radar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
    * @property {boolean} [radar.level.text.show=true] Show or hide level text.
    * @property {number} [radar.size.ratio=0.87] Set size ratio.
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)
