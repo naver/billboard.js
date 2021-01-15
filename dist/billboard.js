@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20210114021810
+ * @version 2.1.4-nightly-20210115021433
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8348,6 +8348,7 @@ var axis = {
    * @param {string} [labels.x] x Axis string
    * @param {string} [labels.y] y Axis string
    * @param {string} [labels.y2] y2 Axis string
+   * @returns {object|undefined} axis labels text object
    * @example
    * // Update axis' label
    * chart.axis.labels({
@@ -8355,12 +8356,23 @@ var axis = {
    *   y: "New Y Axis Label",
    *   y2: "New Y2 Axis Label"
    * });
+   *
+   * chart.axis.labels();
+   * // --> {
+   * //  x: "New X Axis Label",
+   * //  y: "New Y Axis Label",
+   * //  y2: "New Y2 Axis Label"
+   * // }
    */
   labels: function labels(_labels) {
-    var $$ = this.internal;
-    arguments.length && (Object.keys(_labels).forEach(function (axisId) {
+    var labelText,
+        $$ = this.internal;
+    return _labels && (Object.keys(_labels).forEach(function (axisId) {
       $$.axis.setLabelText(axisId, _labels[axisId]);
-    }), $$.axis.updateLabels());
+    }), $$.axis.updateLabels()), ["x", "y", "y2"].forEach(function (v) {
+      var text = $$.axis.getLabelText(v);
+      text && (!labelText && (labelText = {}), labelText[v] = text);
+    }), labelText;
   },
 
   /**
@@ -15695,18 +15707,10 @@ var zoom = function (domainValue) {
       config = $$.config,
       scale = $$.scale,
       domain = domainValue;
-
-  if (config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
-    var isTimeSeries = $$.axis.isTimeSeries(); // hide any possible tooltip show before the zoom
-
-    if ($$.api.tooltip.hide(), isTimeSeries) {
-      var fn = parseDate.bind($$);
-      domain = domain.map(function (x) {
-        return fn(x);
-      });
-    }
-
-    if (config.subchart_show) {
+  if (!(config.zoom_enabled && domain)) resultDomain = scale.zoom ? scale.zoom.domain() : scale.x.orgDomain();else if ($$.axis.isTimeSeries() && (domain = domain.map(function (x) {
+    return parseDate.bind($$)(x);
+  })), withinRange(domain, $$.getZoomDomain())) {
+    if ($$.api.tooltip.hide(), config.subchart_show) {
       var xScale = scale.zoom || scale.x;
       $$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]), resultDomain = domain;
     } else scale.x.domain(domain), scale.zoom = scale.x, $$.axis.x.scale(scale.zoom), resultDomain = scale.zoom.orgDomain();
@@ -15716,8 +15720,7 @@ var zoom = function (domainValue) {
       withY: config.zoom_rescale,
       withDimension: !1
     }), $$.setZoomResetButton(), callFn(config.zoom_onzoom, $$.api, resultDomain);
-  } else resultDomain = scale.zoom ? scale.zoom.domain() : scale.x.orgDomain();
-
+  }
   return resultDomain;
 };
 

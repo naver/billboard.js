@@ -9179,6 +9179,7 @@ var axis = {
      * @param {string} [labels.x] x Axis string
      * @param {string} [labels.y] y Axis string
      * @param {string} [labels.y2] y2 Axis string
+     * @returns {object|undefined} axis labels text object
      * @example
      * // Update axis' label
      * chart.axis.labels({
@@ -9186,15 +9187,31 @@ var axis = {
      *   y: "New Y Axis Label",
      *   y2: "New Y2 Axis Label"
      * });
+     *
+     * chart.axis.labels();
+     * // --> {
+     * //  x: "New X Axis Label",
+     * //  y: "New Y Axis Label",
+     * //  y2: "New Y2 Axis Label"
+     * // }
      */
     labels: function (labels) {
         var $$ = this.internal;
-        if (arguments.length) {
+        var labelText;
+        if (labels) {
             Object.keys(labels).forEach(function (axisId) {
                 $$.axis.setLabelText(axisId, labels[axisId]);
             });
             $$.axis.updateLabels();
         }
+        ["x", "y", "y2"].forEach(function (v) {
+            var text = $$.axis.getLabelText(v);
+            if (text) {
+                !labelText && (labelText = {});
+                labelText[v] = text;
+            }
+        });
+        return labelText;
     },
     /**
      * Get and set axis min value.
@@ -17630,32 +17647,32 @@ var zoom = function (domainValue) {
     var config = $$.config, scale = $$.scale;
     var domain = domainValue;
     var resultDomain;
-    if (config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
-        var isTimeSeries = $$.axis.isTimeSeries();
-        // hide any possible tooltip show before the zoom
-        $$.api.tooltip.hide();
-        if (isTimeSeries) {
-            var fn_1 = parseDate.bind($$);
-            domain = domain.map(function (x) { return fn_1(x); });
+    if (config.zoom_enabled && domain) {
+        if ($$.axis.isTimeSeries()) {
+            domain = domain.map(function (x) { return parseDate.bind($$)(x); });
         }
-        if (config.subchart_show) {
-            var xScale = scale.zoom || scale.x;
-            $$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]);
-            resultDomain = domain;
+        if (withinRange(domain, $$.getZoomDomain())) {
+            // hide any possible tooltip show before the zoom
+            $$.api.tooltip.hide();
+            if (config.subchart_show) {
+                var xScale = scale.zoom || scale.x;
+                $$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]);
+                resultDomain = domain;
+            }
+            else {
+                scale.x.domain(domain);
+                scale.zoom = scale.x;
+                $$.axis.x.scale(scale.zoom);
+                resultDomain = scale.zoom.orgDomain();
+            }
+            $$.redraw({
+                withTransition: true,
+                withY: config.zoom_rescale,
+                withDimension: false
+            });
+            $$.setZoomResetButton();
+            callFn(config.zoom_onzoom, $$.api, resultDomain);
         }
-        else {
-            scale.x.domain(domain);
-            scale.zoom = scale.x;
-            $$.axis.x.scale(scale.zoom);
-            resultDomain = scale.zoom.orgDomain();
-        }
-        $$.redraw({
-            withTransition: true,
-            withY: config.zoom_rescale,
-            withDimension: false
-        });
-        $$.setZoomResetButton();
-        callFn(config.zoom_onzoom, $$.api, resultDomain);
     }
     else {
         resultDomain = scale.zoom ?
