@@ -65,6 +65,7 @@ const axis = {
 	 * @param {string} [labels.x] x Axis string
 	 * @param {string} [labels.y] y Axis string
 	 * @param {string} [labels.y2] y2 Axis string
+	 * @returns {object|undefined} axis labels text object
 	 * @example
 	 * // Update axis' label
 	 * chart.axis.labels({
@@ -72,17 +73,36 @@ const axis = {
 	 *   y: "New Y Axis Label",
 	 *   y2: "New Y2 Axis Label"
 	 * });
+	 *
+	 * chart.axis.labels();
+	 * // --> {
+	 * //  x: "New X Axis Label",
+	 * //  y: "New Y Axis Label",
+	 * //  y2: "New Y2 Axis Label"
+	 * // }
 	 */
-	labels: function(labels: {x?: string, y?: string, y2?: string}): void {
+	labels: function<T>(labels?: {x?: string, y?: string, y2?: string}): T | undefined {
 		const $$ = this.internal;
+		let labelText;
 
-		if (arguments.length) {
+		if (labels) {
 			Object.keys(labels).forEach(axisId => {
 				$$.axis.setLabelText(axisId, labels[axisId]);
 			});
 
 			$$.axis.updateLabels();
 		}
+
+		["x", "y", "y2"].forEach(v => {
+			const text = $$.axis.getLabelText(v);
+
+			if (text) {
+				!labelText && (labelText = {});
+				labelText[v] = text;
+			}
+		});
+
+		return <T>labelText;
 	},
 
 	/**
