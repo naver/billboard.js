@@ -11642,9 +11642,9 @@ selfsigned@^1.10.8:
     node-forge "^0.10.0"
 
 semantic-release@^17.3.1:
-  version "17.3.1"
-  resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-17.3.1.tgz#8904ef1ca8e704394de0e204b284f6c252284da4"
-  integrity sha512-NSdxvnBTklrRBYRexVUx44Hri9sTu9b8x+1HfWDGIWemDTFQfWOTbT1N3oy5l8WcZHodhRvtyI7gm50SfAa3Fg==
+  version "17.3.3"
+  resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-17.3.3.tgz#8f3d2909e9570d9053ef195c138d8d15d7fe5815"
+  integrity sha512-StUBghTuh98O0XpDWj5aRLmZwY9zV6gGgbXnw5faon3Br1fRk8r2VSaYozfQTx8o5C8Mtem+a0KWEiTTd4Iylw==
   dependencies:
     "@semantic-release/commit-analyzer" "^8.0.0"
     "@semantic-release/error" "^2.2.0"
