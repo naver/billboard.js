@@ -4,13 +4,12 @@
  */
 import {
 	namespaces as d3Namespaces,
-	mouse as d3Mouse,
 	select as d3Select
 } from "d3-selection";
 import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {document} from "../../module/browser";
-import {getBoundingRect, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
+import {getBoundingRect, getPointer, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
 
 const getTransitionName = () => getRandom();
 
@@ -325,7 +324,7 @@ export default {
 	},
 
 	isWithinCircle(node, r?: number): boolean {
-		const mouse = d3Mouse(node);
+		const mouse = getPointer(this.state.event, node);
 		const element = d3Select(node);
 		const prefix = this.isCirclePoint(node) ? "c" : "";
 		let cx = +element.attr(`${prefix}x`);

@@ -120,12 +120,12 @@ describe("ZOOM", function() {
 					clientY: 150
 				}, chart);
 
-				resolve();
+				resolve(true);
 			}).then(() => {
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
 						if (spyOnZoomStart.called) {
-							expect(spyOnZoomStart.args[0][0].type).to.be.equal("mousedown");
+							expect(spyOnZoomStart.args[0][0].type).to.be.equal("start");
 
 							util.fireEvent(rect, "mousemove", {
 								clientX: 100,
@@ -555,7 +555,7 @@ describe("ZOOM", function() {
 					clientY: 150
 				}, chart);
 
-				resolve();
+				resolve(true);
 			}).then(() => {
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
@@ -564,7 +564,7 @@ describe("ZOOM", function() {
 							clientY: 150
 						}, chart);
 
-						resolve();
+						resolve(true);
 					}, 500);
 				});
 			}).then(() => {
@@ -699,7 +699,7 @@ describe("ZOOM", function() {
 				size.w = +brush.attr("width");
 				size.h = +brush.attr("height");
 
-				resolve();
+				resolve(true);
 			}).then(() => {
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
@@ -708,7 +708,7 @@ describe("ZOOM", function() {
 							clientY: 130
 						}, chart);
 
-						resolve();
+						resolve(true);
 					}, 500);
 				});
 			}).then(() => {

@@ -3,10 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 import {line as d3Line} from "d3-shape";
-import {mouse as d3Mouse} from "d3-selection";
 import {getScale} from "../internals/scale";
 import CLASS from "../../config/classes";
-import {getRandom, isArray, isDefined, isUndefined, isValue, parseDate} from "../../module/util";
+import {getPointer, getRandom, isArray, isDefined, isUndefined, isValue, parseDate} from "../../module/util";
 
 export default {
 	initLine(): void {
@@ -301,7 +300,7 @@ export default {
 	},
 
 	isWithinStep(that, y: number): boolean {
-		return Math.abs(y - d3Mouse(that)[1]) < 30;
+		return Math.abs(y - getPointer(this.state.event, that)[1]) < 30;
 	},
 
 	shouldDrawPointsForLine(d): boolean {
