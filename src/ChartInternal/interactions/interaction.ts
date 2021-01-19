@@ -2,14 +2,11 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	mouse as d3Mouse,
-	select as d3Select
-} from "d3-selection";
+import {select as d3Select} from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
 import CLASS from "../../config/classes";
 import {KEY} from "../../module/Cache";
-import {emulateEvent, isNumber, isObject} from "../../module/util";
+import {emulateEvent, getPointer, isNumber, isObject} from "../../module/util";
 
 export default {
 	selectRectForSingle(context, eventRect, index: number): void {
@@ -159,19 +156,22 @@ export default {
 	 */
 	getDraggableSelection(): Function {
 		const $$ = this;
-		const {config} = $$;
+		const {config, state} = $$;
 
 		return config.interaction_enabled && config.data_selection_draggable && $$.drag ?
 			d3Drag()
-				.on("drag", function() {
-					// @ts-ignore
-					$$.drag(d3Mouse(this));
+				.on("drag", function(event) {
+					state.event = event;
+					$$.drag(getPointer(event, this));
 				})
-				.on("start", function() {
-					// @ts-ignore
-					$$.dragstart(d3Mouse(this));
+				.on("start", function(event) {
+					state.event = event;
+					$$.dragstart(getPointer(event, this));
 				})
-				.on("end", () => { $$.dragend(); }) : () => {};
+				.on("end", event => {
+					state.event = event;
+					$$.dragend();
+				}) : () => {};
 	},
 
 	/**

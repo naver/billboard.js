@@ -13,7 +13,7 @@ import {getBBox, fireEvent} from "../assets/helper";
 
 describe("ESM bar", function() {
     let chart;
-    const spy = sinon.spy();
+    const spy = sinon.spy(function() { console.log("clicked!!!")});
     const args: any = {
         data: {
             columns: [
@@ -38,8 +38,8 @@ describe("ESM bar", function() {
             clientX: pos.x + 10,
             clientY: pos.y
         }, chart);
-
-        expect(spy.calledOnce).to.be.true;
+        
+        expect(spy.calledOnce).to.be.true;        
     });
 
     it("set options: tooltip.grouped=false", () => {

@@ -2,9 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {mouse as d3Mouse} from "d3-selection";
 import CLASS from "../../config/classes";
-import {getRandom, getRectSegList, isNumber, isObjectType, isValue} from "../../module/util";
+import {getPointer, getRandom, getRectSegList, isNumber, isObjectType, isValue} from "../../module/util";
 
 export default {
 	initBar(): void {
@@ -225,7 +224,7 @@ export default {
 	},
 
 	isWithinBar(that): boolean {
-		const mouse = d3Mouse(that);
+		const mouse = getPointer(this.state.event, that);
 		const list = getRectSegList(that);
 		const [seg0, seg1] = list;
 		const x = Math.min(seg0.x, seg1.x);
@@ -237,9 +236,11 @@ export default {
 		const sy = y + height + offset;
 		const ey = y - offset;
 
-		return sx < mouse[0] &&
+		const isWithin = sx < mouse[0] &&
 			mouse[0] < ex &&
 			ey < mouse[1] &&
 			mouse[1] < sy;
+
+		return isWithin;
 	}
 };
