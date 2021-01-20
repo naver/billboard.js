@@ -1,3 +1,18 @@
+# [2.2.0-next.7](https://github.com/naver/billboard.js/compare/2.2.0-next.6...2.2.0-next.7) (2021-01-20)
+
+
+### Bug Fixes
+
+* **api:** fix incorrect legend text positioning ([f1ede3f](https://github.com/naver/billboard.js/commit/f1ede3f48b4802b0a1b7ec11776fae20fce18840)), closes [#1888](https://github.com/naver/billboard.js/issues/1888)
+* **api:** fix zoom for timesries axis ([0421a50](https://github.com/naver/billboard.js/commit/0421a50ca306738fa76a56fe9694c65141ea54fe)), closes [#1868](https://github.com/naver/billboard.js/issues/1868)
+* **point:** fix usePoint defs id value ([6df4653](https://github.com/naver/billboard.js/commit/6df465310e9862704a5a423cc2526c0312c1a29e)), closes [#1887](https://github.com/naver/billboard.js/issues/1887)
+* **text:** data labels are working in Internet Explorer again ([865224e](https://github.com/naver/billboard.js/commit/865224e77f02b0542e8d0acf3d2bfef219cf7702)), closes [#1877](https://github.com/naver/billboard.js/issues/1877)
+
+
+### Features
+
+* **api:** make return values for axis.labels() ([efa5174](https://github.com/naver/billboard.js/commit/efa517417ec2900cb00a94adced61ee743449db4)), closes [#1865](https://github.com/naver/billboard.js/issues/1865)
+
 # [2.2.0-next.6](https://github.com/naver/billboard.js/compare/2.2.0-next.5...2.2.0-next.6) (2021-01-13)
 
 
