@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20210115021433
+ * @version 2.1.4-nightly-20210120021757
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -375,6 +375,8 @@ var State = function () {
       pathGrid: ""
     },
     // status
+    event: null,
+    // event object
     dragStart: null,
     dragging: !1,
     flowing: !1,
@@ -2278,18 +2280,30 @@ function getPathBox(path) {
   };
 }
 /**
+ * Get event's current position coordinates
+ * @param {object} event Event object
+ * @param {SVGElement|HTMLElement} element Target element
+ * @returns {Array} [x, y] Coordinates x, y array
+ */
+
+
+function getPointer(event, element) {
+  var touches = event && (event.touches || event.sourceEvent && event.sourceEvent.touches),
+      pointer = event ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches ? touches[0] : event, element) : [0, 0];
+  return pointer;
+}
+/**
  * Return brush selection array
- * @param {object} {} Selection object
- * @param {object} {}.$el Selection object
+ * @param {object} ctx Current instance
  * @returns {d3.brushSelection}
  * @private
  */
 
 
-function getBrushSelection(_ref) {
+function getBrushSelection(ctx) {
   var selection,
-      $el = _ref.$el,
-      event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event,
+      event = ctx.event,
+      $el = ctx.$el,
       main = $el.subchart.main || $el.main;
   return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + config_classes.brush).node()) && (selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection)), selection;
 }
@@ -4002,15 +4016,14 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    */
   getDraggableSelection: function getDraggableSelection() {
     var $$ = this,
-        config = $$.config;
-    return config.interaction_enabled && config.data_selection_draggable && $$.drag ? (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().on("drag", function () {
-      // @ts-ignore
-      $$.drag((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this));
-    }).on("start", function () {
-      // @ts-ignore
-      $$.dragstart((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this));
-    }).on("end", function () {
-      $$.dragend();
+        config = $$.config,
+        state = $$.state;
+    return config.interaction_enabled && config.data_selection_draggable && $$.drag ? (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().on("drag", function (event) {
+      state.event = event, $$.drag(getPointer(event, this));
+    }).on("start", function (event) {
+      state.event = event, $$.dragstart(getPointer(event, this));
+    }).on("end", function (event) {
+      state.event = event, $$.dragend();
     }) : function () {};
   },
 
@@ -4937,11 +4950,11 @@ function getFormat($$, typeValue, v) {
       return itemClass + $$.generateClass(config_classes.legendItem, id);
     }).style("visibility", function (id) {
       return $$.isLegendToShow(id) ? "visible" : "hidden";
-    }), config.interaction_enabled && (item.style("cursor", "pointer").on("click", function (id) {
-      callFn(config.legend_item_onclick, api, id) || (external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.altKey ? (api.hide(), api.show(id)) : (api.toggle(id), (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused, !1).style("opacity", null))), isTouch && $$.hideTooltip();
-    }), !isTouch && item.on("mouseout", function (id) {
+    }), config.interaction_enabled && (item.style("cursor", "pointer").on("click", function (event, id) {
+      callFn(config.legend_item_onclick, api, id) || (event.altKey ? (api.hide(), api.show(id)) : (api.toggle(id), (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused, !1).style("opacity", null))), isTouch && $$.hideTooltip();
+    }), !isTouch && item.on("mouseout", function (event, id) {
       callFn(config.legend_item_onout, api, id) || ((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused, !1), hasGauge && $$.undoMarkOverlapped($$, "." + config_classes.gaugeValue), $$.api.revert());
-    }).on("mouseover", function (id) {
+    }).on("mouseover", function (event, id) {
       callFn(config.legend_item_onover, api, id) || ((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused, !0), hasGauge && $$.markOverlapped(id, $$, "." + config_classes.gaugeValue), !state.transiting && $$.isTargetToShow(id) && api.focus(id));
     }));
   },
@@ -6471,14 +6484,15 @@ function getTextPos(pos, width) {
         current = _state.current,
         isLegendRight = _state.isLegendRight,
         inputType = _state.inputType,
+        event = _state.event,
         hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle,
         svgLeft = $$.getSvgLeft(!0),
-        _d3Mouse = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(element),
-        x = _d3Mouse[0],
-        y = _d3Mouse[1],
         chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(!0),
         chartLeft = $$.getCurrentPaddingLeft(!0),
-        size = 20;
+        size = 20,
+        _getPointer = getPointer(event, element),
+        x = _getPointer[0],
+        y = _getPointer[1];
 
     // Determine tooltip position
     if ($$.hasArcType()) {
@@ -9162,7 +9176,8 @@ var AxisRenderer = /*#__PURE__*/function () {
       // update selection - data join
       var path = g.selectAll(".domain").data([0]); // enter + update selection
 
-      if (path.enter().append("path").attr("class", "domain").merge(helper.transitionise(path)).attr("d", function () {
+      if (path.enter().append("path").attr("class", "domain") // https://observablehq.com/@d3/d3-selection-2-0
+      .merge(helper.transitionise(path).selection()).attr("d", function () {
         var outerTickSized = config.outerTickSize * sign;
         return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
       }), tickShow.tick || tickShow.text) {
@@ -9938,7 +9953,6 @@ var Axis_Axis = /*#__PURE__*/function () {
  */
 
 
-
 /* harmony default export */ const eventrect = ({
   /**
    * Initialize the area that detects the event.
@@ -9988,7 +10002,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         svg = _$$$$el.svg,
         selectRect = function (context) {
       if (isMultipleX) $$.selectRectForMultipleXs(context);else {
-        var index = $$.getDataIndexFromEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event);
+        var index = $$.getDataIndexFromEvent(state.event);
         $$.callOverOutForTouch(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
       }
     },
@@ -10006,20 +10020,19 @@ var Axis_Axis = /*#__PURE__*/function () {
     };
 
     // bind touch events
-    eventRect.on("touchstart", function () {
-      return $$.updateEventRect();
-    }).on("touchstart.eventRect touchmove.eventRect", function () {
-      var event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event;
-
-      if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
+    eventRect.on("touchstart", function (event) {
+      state.event = event, $$.updateEventRect();
+    }).on("touchstart.eventRect touchmove.eventRect", function (event) {
+      if (state.event = event, !eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
         // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
         if (state.dragging || state.flowing || $$.hasArcType() || event.touches.length > 1) return;
         preventEvent(event), selectRect(eventRect.node());
       } else unselectRect();
-    }, !0).on("touchend.eventRect", function () {
-      !eventRect.empty() && eventRect.classed(config_classes.eventRect) && ($$.hasArcType() || !$$.toggleShape || state.cancelClick) && state.cancelClick && (state.cancelClick = !1);
-    }, !0), svg.on("touchstart", function () {
-      var target = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.target;
+    }, !0).on("touchend.eventRect", function (event) {
+      state.event = event, !eventRect.empty() && eventRect.classed(config_classes.eventRect) && ($$.hasArcType() || !$$.toggleShape || state.cancelClick) && state.cancelClick && (state.cancelClick = !1);
+    }, !0), svg.on("touchstart", function (event) {
+      state.event = event;
+      var target = event.target;
       target && target !== eventRect.node() && unselectRect();
     });
   },
@@ -10113,7 +10126,7 @@ var Axis_Axis = /*#__PURE__*/function () {
 
     // do nothing when dragging
     if (!(state.dragging || $$.hasArcType(targetsToShow))) {
-      var mouse = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(context),
+      var mouse = getPointer(state.event, context),
           closest = $$.findClosestFromTargets(targetsToShow, mouse);
       if (state.mouseover && (!closest || closest.id !== state.mouseover.id) && (config.data_onout.call($$.api, state.mouseover), state.mouseover = undefined), !closest) return void $$.unselectRect();
       var sameXData = $$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped ? [closest] : $$.filterByX(targetsToShow, closest.x),
@@ -10151,30 +10164,33 @@ var Axis_Axis = /*#__PURE__*/function () {
         config = $$.config,
         state = $$.state,
         eventReceiver = state.eventReceiver,
-        rect = eventRectEnter.style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null).on("click", function () {
+        rect = eventRectEnter.style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null).on("click", function (event) {
+      state.event = event;
       var _eventReceiver = eventReceiver,
           currentIdx = _eventReceiver.currentIdx,
           data = _eventReceiver.data,
-          d = data[currentIdx === -1 ? $$.getDataIndexFromEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event) : currentIdx];
+          d = data[currentIdx === -1 ? $$.getDataIndexFromEvent(event) : currentIdx];
       $$.clickHandlerForSingleX.bind(this)(d, $$);
     });
 
     if (state.inputType === "mouse") {
-      var getData = function () {
-        var index = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event ? $$.getDataIndexFromEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event) : eventReceiver.currentIdx;
+      var getData = function (event) {
+        var index = event ? $$.getDataIndexFromEvent(event) : eventReceiver.currentIdx;
         return index > -1 ? eventReceiver.data[index] : null;
       };
 
-      rect.on("mouseover", function () {
-        return $$.updateEventRect();
-      }).on("mousemove", function () {
-        var d = getData(); // do nothing while dragging/flowing
+      rect.on("mouseover", function (event) {
+        state.event = event, $$.updateEventRect();
+      }).on("mousemove", function (event) {
+        var d = getData(event);
 
-        if (!(state.dragging || state.flowing || $$.hasArcType() || !d || config.tooltip_grouped && d && d.index === eventReceiver.currentIdx)) {
+        // do nothing while dragging/flowing
+        if (state.event = event, !(state.dragging || state.flowing || $$.hasArcType() || !d || config.tooltip_grouped && d && d.index === eventReceiver.currentIdx)) {
           var index = d.index;
-          $$.isStepType(d) && config.line_step_type === "step-after" && (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this)[0] < $$.scale.x($$.getXValue(d.id, index)) && (index -= 1), index !== eventReceiver.currentIdx && ($$.setOverOut(!1, eventReceiver.currentIdx), eventReceiver.currentIdx = index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, rect, index), $$.setOverOut(index !== -1, index);
+          $$.isStepType(d) && config.line_step_type === "step-after" && getPointer(event, this)[0] < $$.scale.x($$.getXValue(d.id, index)) && (index -= 1), index !== eventReceiver.currentIdx && ($$.setOverOut(!1, eventReceiver.currentIdx), eventReceiver.currentIdx = index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, rect, index), $$.setOverOut(index !== -1, index);
         }
-      }).on("mouseout", function () {
+      }).on("mouseout", function (event) {
+        state.event = event;
         // chart is destroyed
         !config || $$.hasArcType() || eventReceiver.currentIdx === -1 || ( // reset the event current index
         $$.unselectRect(), $$.setOverOut(!1, eventReceiver.currentIdx), eventReceiver.currentIdx = -1);
@@ -10203,12 +10219,13 @@ var Axis_Axis = /*#__PURE__*/function () {
    */
   generateEventRectsForMultipleXs: function generateEventRectsForMultipleXs(eventRectEnter) {
     var $$ = this,
-        inputType = $$.state.inputType;
-    eventRectEnter.on("click", function () {
-      $$.clickHandlerForMultipleXS.bind(this)($$);
-    }), inputType === "mouse" && eventRectEnter.on("mouseover mousemove", function () {
-      $$.selectRectForMultipleXs(this);
-    }).on("mouseout", function () {
+        state = $$.state;
+    eventRectEnter.on("click", function (event) {
+      state.event = event, $$.clickHandlerForMultipleXS.bind(this)($$);
+    }), state.inputType === "mouse" && eventRectEnter.on("mouseover mousemove", function (event) {
+      state.event = event, $$.selectRectForMultipleXs(this);
+    }).on("mouseout", function (event) {
+      state.event = event;
       // chart is destroyed
       !$$.config || $$.hasArcType() || $$.unselectRect();
     });
@@ -10216,10 +10233,11 @@ var Axis_Axis = /*#__PURE__*/function () {
   clickHandlerForMultipleXS: function clickHandlerForMultipleXS(ctx) {
     var $$ = ctx,
         config = $$.config,
+        state = $$.state,
         targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
     if (!$$.hasArcType(targetsToShow)) {
-      var mouse = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this),
+      var mouse = getPointer(state.event, this),
           closest = $$.findClosestFromTargets(targetsToShow, mouse);
       !closest || ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) && $$.$el.main.selectAll("." + config_classes.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll("." + config_classes.shape + "-" + closest.index).each(function () {
         (config.data_selection_grouped || $$.isWithinShape(this, closest)) && ($$.toggleShape && $$.toggleShape(this, closest, closest.index), config.data_onclick.bind($$.api)(closest, this));
@@ -10235,7 +10253,6 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
 
 
 
@@ -10275,7 +10292,8 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * @private
    */
   setFlowList: function setFlowList(elements, args) {
-    var $$ = this,
+    var n,
+        $$ = this,
         flow = args.flow,
         targets = args.targets,
         _flow = flow,
@@ -10285,14 +10303,12 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
         flowLength = _flow.length,
         orgDataCount = _flow.orgDataCount,
         transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength),
-        wait = generateWait(),
-        gt = (0,external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_.transition)().ease(external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_.easeLinear).duration(duration);
+        wait = generateWait();
     wait.add(Object.keys(elements).map(function (v) {
-      var n = elements[v];
-      return n = v === "axis.x" ? n.transition(gt).call(function (g) {
-        return $$.axis.x.setTransition(gt).create(g);
-      }) : v === "region.list" ? n.filter($$.isRegionOnX).transition(gt).attr("transform", transform) : n.transition(gt).attr("transform", transform), n;
-    })), gt.call(wait, function () {
+      return n = elements[v].transition().ease(external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_.easeLinear).duration(duration), n = v === "axis.x" ? n.call(function (g) {
+        $$.axis.x.setTransition(g).create(g);
+      }) : v === "region.list" ? n.filter($$.isRegionOnX).attr("transform", transform) : n.attr("transform", transform), n;
+    })), n.call(wait, function () {
       $$.cleanUpFlow(elements, args);
     });
   },
@@ -13274,48 +13290,49 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         isMouse = state.inputType === "mouse";
 
     // touch events
-    if (arc.on("click", function (d, i) {
+    if (arc.on("click", function (event, d, i) {
       var arcData,
           updated = $$.updateAngle(d);
       updated && (arcData = $$.convertToArcData(updated), $$.toggleShape && $$.toggleShape(this, arcData, i), config.data_onclick.bind($$.api)(arcData, this));
-    }), isMouse && arc.on("mouseover", function (d) {
+    }), isMouse && arc.on("mouseover", function (event, d) {
       if (!state.transiting) // skip while transiting
         {
+          state.event = event;
           var updated = $$.updateAngle(d),
               arcData = updated ? $$.convertToArcData(updated) : null,
               id = arcData && arcData.id || undefined;
           selectArc(this, arcData, id), $$.setOverOut(!0, arcData);
         }
-    }).on("mouseout", function (d) {
+    }).on("mouseout", function (event, d) {
       if (!state.transiting) // skip while transiting
         {
+          state.event = event;
           var updated = $$.updateAngle(d),
               arcData = updated ? $$.convertToArcData(updated) : null;
           unselectArc(), $$.setOverOut(!1, arcData);
         }
-    }).on("mousemove", function (d) {
+    }).on("mousemove", function (event, d) {
       var updated = $$.updateAngle(d),
           arcData = updated ? $$.convertToArcData(updated) : null;
-      $$.showTooltip([arcData], this);
+      state.event = event, $$.showTooltip([arcData], this);
     }), isTouch && $$.hasArcType() && !$$.radars) {
-      var getEventArc = function () {
-        var touch = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.changedTouches[0],
+      var getEventArc = function (event) {
+        var touch = event.changedTouches[0],
             eventArc = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
         return eventArc;
-      },
-          handler = function () {
+      };
+
+      $$.$el.svg.on("touchstart touchmove", function (event) {
         if (!state.transiting) // skip while transiting
           {
-            var eventArc = getEventArc(),
+            var eventArc = getEventArc(event),
                 datum = eventArc.datum(),
                 updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
                 arcData = updated ? $$.convertToArcData(updated) : null,
                 id = arcData && arcData.id || undefined;
             $$.callOverOutForTouch(arcData), isUndefined(id) ? unselectArc() : selectArc(this, arcData, id);
           }
-      };
-
-      $$.$el.svg.on("touchstart", handler).on("touchmove", handler);
+      });
     }
   },
   redrawArcText: function redrawArcText(duration) {
@@ -13470,7 +13487,6 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
  */
 
 
-
 /* harmony default export */ const bar = ({
   initBar: function initBar() {
     var $el = this.$el;
@@ -13604,7 +13620,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     };
   },
   isWithinBar: function isWithinBar(that) {
-    var mouse = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(that),
+    var mouse = getPointer(this.state.event, that),
         list = getRectSegList(that),
         _list = list,
         seg0 = _list[0],
@@ -13614,9 +13630,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         offset = this.config.bar_sensitivity,
         _that$getBBox = that.getBBox(),
         width = _that$getBBox.width,
-        height = _that$getBBox.height;
+        height = _that$getBBox.height,
+        isWithin = x - offset < mouse[0] && mouse[0] < x + width + offset && y - offset < mouse[1] && mouse[1] < y + height + offset;
 
-    return x - offset < mouse[0] && mouse[0] < x + width + offset && y - offset < mouse[1] && mouse[1] < y + height + offset;
+    return isWithin;
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/gauge.ts
@@ -13762,7 +13779,6 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
 
 
 
@@ -13961,7 +13977,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     return path;
   },
   isWithinStep: function isWithinStep(that, y) {
-    return Math.abs(y - (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(that)[1]) < 30;
+    return Math.abs(y - getPointer(this.state.event, that)[1]) < 30;
   },
   shouldDrawPointsForLine: function shouldDrawPointsForLine(d) {
     var linePoint = this.config.line_point;
@@ -14183,7 +14199,7 @@ var getTransitionName = function () {
     return isFunction(selectR) ? selectR(d) : selectR || $$.pointR(d) * 4;
   },
   isWithinCircle: function isWithinCircle(node, r) {
-    var mouse = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(node),
+    var mouse = getPointer(this.state.event, node),
         element = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(node),
         prefix = this.isCirclePoint(node) ? "c" : "",
         cx = +element.attr(prefix + "x"),
@@ -14265,7 +14281,7 @@ var getTransitionName = function () {
         ids.indexOf(id) < 0 && ids.push(id);
         var point = pattern[ids.indexOf(id) % pattern.length];
         if ($$.hasValidPointType(point)) point = $$[point];else if (!$$.hasValidPointDrawMethods(point)) {
-          var pointId = datetimeId + "-point-" + id,
+          var pointId = datetimeId + "-point" + id,
               pointFromDefs = $$.pointFromDefs(pointId);
           if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), method === "create") return $$.custom.create.bind(context).apply(void 0, [element, pointId].concat(args));
           if (method === "update") return $$.custom.update.bind(context).apply(void 0, [element].concat(args));
@@ -14541,33 +14557,35 @@ var cacheKey = KEY.radarPoints;
   bindEvent: function bindEvent() {
     var $$ = this,
         config = $$.config,
-        _$$$state2 = $$.state,
-        inputType = _$$$state2.inputType,
-        transiting = _$$$state2.transiting,
+        state = $$.state,
         _$$$$el2 = $$.$el,
         radar = _$$$$el2.radar,
         svg = _$$$$el2.svg,
-        focusOnly = config.point_focus_only;
+        focusOnly = config.point_focus_only,
+        _state = state,
+        inputType = _state.inputType,
+        transiting = _state.transiting;
 
     if (config.interaction_enabled) {
       var isMouse = inputType === "mouse",
-          getIndex = function () {
-        var target = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.target; // in case of multilined axis text
+          getIndex = function (event) {
+        var target = event.target; // in case of multilined axis text
 
         /tspan/i.test(target.tagName) && (target = target.parentNode);
         var d = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(target).datum();
         return d && Object.keys(d).length === 1 ? d.index : undefined;
       },
-          hide = function () {
-        var index = getIndex(),
+          hide = function (event) {
+        var index = getIndex(event),
             noIndex = isUndefined(index);
         (isMouse || noIndex) && ($$.hideTooltip(), focusOnly ? $$.hideCircleFocus() : $$.unexpandCircles(), isMouse ? $$.setOverOut(!1, index) : noIndex && $$.callOverOutForTouch());
       };
 
-      radar.axes.selectAll("text").on(isMouse ? "mouseover " : "touchstart", function () {
+      radar.axes.selectAll("text").on(isMouse ? "mouseover " : "touchstart", function (event) {
         if (!transiting) // skip while transiting
           {
-            var index = getIndex();
+            state.event = event;
+            var index = getIndex(event);
             $$.selectRectForSingle(svg.node(), null, index), isMouse ? $$.setOverOut(!0, index) : $$.callOverOutForTouch(index);
           }
       }).on("mouseout", isMouse ? hide : null), isMouse || svg.on("touchstart", hide);
@@ -16302,8 +16320,9 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   redrawSubchart: function redrawSubchart(withSubchart, duration, shape) {
     var $$ = this,
         config = $$.config,
-        main = $$.$el.subchart.main;
-    main.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event && external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.type === "zoom" && $$.brush.update(), withSubchart && (!brushEmpty($$) && $$.brush.update(), Object.keys(shape.type).forEach(function (v) {
+        main = $$.$el.subchart.main,
+        state = $$.state;
+    main.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (state.event && state.event.type === "zoom" && $$.brush.update(), withSubchart && (!brushEmpty($$) && $$.brush.update(), Object.keys(shape.type).forEach(function (v) {
       var name = capitalize(v),
           draw = $$["generateDraw" + name](shape.indices[v], !0);
       $$["update" + name + "ForSubchart"](duration), $$["redraw" + name + "ForSubchart"](draw, duration, duration);
@@ -16436,24 +16455,25 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
   /**
    * 'start' event listener
+   * @param {object} event Event object
    * @private
    */
-  onZoomStart: function onZoomStart() {
+  onZoomStart: function onZoomStart(event) {
     var $$ = this,
-        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.sourceEvent;
-    event && ($$.zoom.startEvent = event, $$.state.zooming = !0, callFn($$.config.zoom_onzoomstart, $$.api, event));
+        sourceEvent = event.sourceEvent;
+    sourceEvent && ($$.zoom.startEvent = sourceEvent, $$.state.zooming = !0, callFn($$.config.zoom_onzoomstart, $$.api, event));
   },
 
   /**
    * 'zoom' event listener
+   * @param {object} event Event object
    * @private
    */
-  onZoom: function onZoom() {
+  onZoom: function onZoom(event) {
     var $$ = this,
         config = $$.config,
         scale = $$.scale,
         org = $$.org,
-        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event,
         sourceEvent = event.sourceEvent;
 
     if (config.zoom_enabled && event.sourceEvent && $$.filterTargetsToShow($$.data.targets).length !== 0 && (scale.zoom || !(sourceEvent.type.indexOf("touch") > -1) || sourceEvent.touches.length !== 1)) {
@@ -16474,17 +16494,18 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
   /**
    * 'end' event listener
+   * @param {object} event Event object
    * @private
    */
-  onZoomEnd: function onZoomEnd() {
+  onZoomEnd: function onZoomEnd(event) {
     var $$ = this,
         config = $$.config,
         scale = $$.scale,
         startEvent = $$.zoom.startEvent,
-        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event && external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.sourceEvent;
-    startEvent && startEvent.type.indexOf("touch") > -1 && (startEvent = startEvent.changedTouches[0], event = event.changedTouches[0]);
+        e = event && event.sourceEvent;
+    startEvent && startEvent.type.indexOf("touch") > -1 && (startEvent = startEvent.changedTouches[0], e = e.changedTouches[0]);
     // if click, do nothing. otherwise, click interaction will be canceled.
-    !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), $$.state.zooming = !1, callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain()));
+    !startEvent || e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY || ($$.redrawEventRect(), $$.updateZoom(), $$.state.zooming = !1, callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain()));
   },
 
   /**
@@ -16552,23 +16573,20 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       attr: isRotated ? "height" : "width",
       index: isRotated ? 1 : 0
     };
-    $$.zoomBehaviour = (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().clickDistance(4).on("start", function () {
-      // @ts-ignore
-      $$.setDragStatus(!0), $$.unselectRect(), zoomRect || (zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", config_classes.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height)), start = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this)[prop.index], end = start, zoomRect.attr(prop.axis, start).attr(prop.attr, 0), $$.onZoomStart();
-    }).on("drag", function () {
-      // @ts-ignore
-      end = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.mouse)(this)[prop.index], zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
-    }).on("end", function () {
+    $$.zoomBehaviour = (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().clickDistance(4).on("start", function (event) {
+      state.event = event, $$.setDragStatus(!0), $$.unselectRect(), zoomRect || (zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", config_classes.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height)), start = getPointer(event, this)[prop.index], end = start, zoomRect.attr(prop.axis, start).attr(prop.attr, 0), $$.onZoomStart(event);
+    }).on("drag", function (event) {
+      end = getPointer(event, this)[prop.index], zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
+    }).on("end", function (event) {
       var _ref,
           scale = $$.scale.zoom || $$.scale.x;
 
-      if ($$.setDragStatus(!1), zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end) $$.api.zoom([start, end].map(function (v) {
+      if (state.event = event, $$.setDragStatus(!1), zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end) $$.api.zoom([start, end].map(function (v) {
         return scale.invert(v);
-      })), $$.onZoomEnd();else if ($$.isMultipleX()) $$.clickHandlerForMultipleXS.bind(this)($$);else {
-        var _event3 = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event.sourceEvent || external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event,
-            _ref2 = "clientX" in _event3 ? [_event3.clientX, _event3.clientY] : [_event3.x, _event3.y],
-            x = _ref2[0],
-            y = _ref2[1],
+      })), $$.onZoomEnd(event);else if ($$.isMultipleX()) $$.clickHandlerForMultipleXS.bind(this)($$);else {
+        var _getPointer = getPointer(event),
+            x = _getPointer[0],
+            y = _getPointer[1],
             target = browser_doc.elementFromPoint(x, y);
 
         $$.clickHandlerForSingleX.bind(target)((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(target).datum(), $$);

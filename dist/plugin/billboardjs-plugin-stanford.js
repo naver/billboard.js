@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20210115021433
+ * @version 2.1.4-nightly-20210120021757
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -429,18 +429,30 @@ function getPathBox(path) {
   };
 }
 /**
+ * Get event's current position coordinates
+ * @param {object} event Event object
+ * @param {SVGElement|HTMLElement} element Target element
+ * @returns {Array} [x, y] Coordinates x, y array
+ */
+
+
+function getPointer(event, element) {
+  var touches = event && (event.touches || event.sourceEvent && event.sourceEvent.touches),
+      pointer = event ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches ? touches[0] : event, element) : [0, 0];
+  return pointer;
+}
+/**
  * Return brush selection array
- * @param {object} {} Selection object
- * @param {object} {}.$el Selection object
+ * @param {object} ctx Current instance
  * @returns {d3.brushSelection}
  * @private
  */
 
 
-function getBrushSelection(_ref) {
+function getBrushSelection(ctx) {
   var selection,
-      $el = _ref.$el,
-      event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.event,
+      event = ctx.event,
+      $el = ctx.$el,
       main = $el.subchart.main || $el.main;
   return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + classes.brush).node()) && (selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection)), selection;
 }
