@@ -2,16 +2,12 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	mouse as d3Mouse,
-	event as d3Event,
-	select as d3Select
-} from "d3-selection";
+import {select as d3Select} from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
 import {zoom as d3Zoom} from "d3-zoom";
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
-import {callFn, diffDomain, getMinMax, isDefined, isFunction} from "../../module/util";
+import {callFn, diffDomain, getMinMax, getPointer, isDefined, isFunction} from "../../module/util";
 
 export default {
 	/**
@@ -117,29 +113,30 @@ export default {
 
 	/**
 	 * 'start' event listener
+	 * @param {object} event Event object
 	 * @private
 	 */
-	onZoomStart(): void {
+	onZoomStart(event): void {
 		const $$ = this;
-		const event = d3Event.sourceEvent;
+		const {sourceEvent} = event;
 
-		if (!event) {
+		if (!sourceEvent) {
 			return;
 		}
 
-		$$.zoom.startEvent = event;
+		$$.zoom.startEvent = sourceEvent;
 		$$.state.zooming = true;
 		callFn($$.config.zoom_onzoomstart, $$.api, event);
 	},
 
 	/**
 	 * 'zoom' event listener
+	 * @param {object} event Event object
 	 * @private
 	 */
-	onZoom(): void {
+	onZoom(event): void {
 		const $$ = this;
 		const {config, scale, org} = $$;
-		const event = d3Event;
 		const {sourceEvent} = event;
 
 		if (
@@ -179,22 +176,23 @@ export default {
 
 	/**
 	 * 'end' event listener
+	 * @param {object} event Event object
 	 * @private
 	 */
-	onZoomEnd(): void {
+	onZoomEnd(event): void {
 		const $$ = this;
 		const {config, scale} = $$;
 		let {startEvent} = $$.zoom;
-		let event = d3Event && d3Event.sourceEvent;
+		let e = event && event.sourceEvent;
 
 		if ((startEvent && startEvent.type.indexOf("touch") > -1)) {
 			startEvent = startEvent.changedTouches[0];
-			event = event.changedTouches[0];
+			e = e.changedTouches[0];
 		}
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
 		if (!startEvent ||
-			(event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY)
+			(e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)
 		) {
 			return;
 		}
@@ -288,7 +286,8 @@ export default {
 
 		$$.zoomBehaviour = d3Drag()
 			.clickDistance(4)
-			.on("start", function() {
+			.on("start", function(event) {
+				state.event = event;
 				$$.setDragStatus(true);
 				$$.unselectRect();
 
@@ -300,27 +299,26 @@ export default {
 						.attr("height", isRotated ? 0 : state.height);
 				}
 
-				// @ts-ignore
-				start = d3Mouse(this)[prop.index];
+				start = getPointer(event, this)[prop.index];
 				end = start;
 
 				zoomRect
 					.attr(prop.axis, start)
 					.attr(prop.attr, 0);
 
-				$$.onZoomStart();
+				$$.onZoomStart(event);
 			})
-			.on("drag", function() {
-				// @ts-ignore
-				end = d3Mouse(this)[prop.index];
+			.on("drag", function(event) {
+				end = getPointer(event, this)[prop.index];
 
 				zoomRect
 					.attr(prop.axis, Math.min(start, end))
 					.attr(prop.attr, Math.abs(end - start));
 			})
-			.on("end", function() {
+			.on("end", function(event) {
 				const scale = $$.scale.zoom || $$.scale.x;
 
+				state.event = event;
 				$$.setDragStatus(false);
 
 				zoomRect
@@ -338,13 +336,12 @@ export default {
 
 				if (start !== end) {
 					$$.api.zoom([start, end].map(v => scale.invert(v)));
-					$$.onZoomEnd();
+					$$.onZoomEnd(event);
 				} else {
 					if ($$.isMultipleX()) {
 						$$.clickHandlerForMultipleXS.bind(this)($$);
 					} else {
-						const event = d3Event.sourceEvent || d3Event;
-						const [x, y] = "clientX" in event ? [event.clientX, event.clientY] : [event.x, event.y];
+						const [x, y] = getPointer(event);
 						const target = document.elementFromPoint(x, y);
 
 						$$.clickHandlerForSingleX.bind(target)(d3Select(target).datum(), $$);

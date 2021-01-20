@@ -8,6 +8,7 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import State from "../../src/config/Store/State";
 
 describe("SHAPE BAR", () => {
 	let chart;
@@ -158,7 +159,9 @@ describe("SHAPE BAR", () => {
 			it("should not be within bar", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.not.be.ok;
 						done();
 					});
@@ -172,7 +175,9 @@ describe("SHAPE BAR", () => {
 			it("should be within bar", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
 					});
@@ -186,7 +191,9 @@ describe("SHAPE BAR", () => {
 			it("should not be within bar of negative value", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.not.be.ok;
 						done();
 					});
@@ -200,7 +207,9 @@ describe("SHAPE BAR", () => {
 			it("should be within bar of negative value", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
 					});
@@ -220,7 +229,9 @@ describe("SHAPE BAR", () => {
 			it("should not be within bar", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.not.be.ok;
 						done();
 					});
@@ -234,7 +245,9 @@ describe("SHAPE BAR", () => {
 			it("should be within bar", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
 					});
@@ -248,7 +261,9 @@ describe("SHAPE BAR", () => {
 			it("should be within bar of negative value", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
 					});

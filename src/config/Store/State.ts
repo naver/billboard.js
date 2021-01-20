@@ -106,6 +106,7 @@ export default class State {
 			},
 
 			// status
+			event: null, // event object
 			dragStart: null,
 			dragging: false,
 			flowing: false,

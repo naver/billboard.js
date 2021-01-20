@@ -2632,13 +2632,13 @@ d3.select(".chart_area")
 		d3.select(this)
 			.style('background-color', chart.color(id));
 	})
-	.on("mouseover", function(id) {
+	.on("mouseover", function(event, id) {
 		chart.focus(id);
 	})
-	.on("mouseout", function(id) {
+	.on("mouseout", function(event, id) {
 		chart.revert();
 	})
-	.on("click", function(id) {
+	.on("click", function(event, id) {
 		chart.toggle(id);
 	});
 			}

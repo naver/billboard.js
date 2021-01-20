@@ -2,13 +2,10 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	select as d3Select,
-	mouse as d3Mouse
-} from "d3-selection";
+import {select as d3Select} from "d3-selection";
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
-import {isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
+import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
 
 export default {
 	/**
@@ -262,13 +259,13 @@ export default {
 		{top: number, left: number} {
 		const $$ = this;
 		const {config, scale, state} = $$;
-		const {width, height, current, isLegendRight, inputType} = state;
+		const {width, height, current, isLegendRight, inputType, event} = state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const svgLeft = $$.getSvgLeft(true);
-		let [x, y] = d3Mouse(element);
 		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(true);
 		const chartLeft = $$.getCurrentPaddingLeft(true);
 		const size = 20;
+		let [x, y] = getPointer(event, element);
 
 		// Determine tooltip position
 		if ($$.hasArcType()) {

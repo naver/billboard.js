@@ -37,18 +37,25 @@ describe("API flow", () => {
 				["data2", 100, 300],
 				["data3", 200, 120]
 			],
-			done: () => {
-				const lineSize = chart.internal.$el.main.selectAll(`.${CLASS.chartLines} > g`).size();
+			done: function () {
+				const lineSize = this.internal.$el.main.selectAll(`.${CLASS.chartLines} > g`).size();
 
-				expect(lineSize).to.be.equal(chart.data().length);
+				expect(lineSize).to.be.equal(this.data().length);
 				done();
 			}
 		});
 	});
 
 	it("should flow correctly with options", done => {
-		const spy = sinon.spy();
-		const duration = 1000;
+		const spy = sinon.spy(function() {
+			chart.internal.$el.main.selectAll(`.${CLASS.axisX} .tick tspan`).each(function(d, i) {
+				expect(this.textContent).to.be.equal(tickText[i]);
+				expect(d.splitted).to.be.equal(tickText[i]);
+			});
+
+			expect(spy.called).to.be.true;
+			done();
+		});
 		const tickText = ["01/25", "02/11", "02/21", "03/11", "03/21"];
 
 		chart.flow({
@@ -57,22 +64,12 @@ describe("API flow", () => {
 				["data1", 500, 200]
 			],
 			length: 2,
-			duration,
+			duration: 1000,
 			done: spy
 		});
-
-		setTimeout(() => {
-			chart.internal.$el.main.selectAll(`.${CLASS.axisX} .tick tspan`).each(function(d, i) {
-				expect(this.textContent).to.be.equal(tickText[i]);
-				expect(d.splitted).to.be.equal(tickText[i]);
-			});
-
-			expect(spy.called).to.be.ok;
-			done();
-		}, duration);
 	});
 
-	it("check when is not visible", done => {
+	it("check when is not visible", () => {
 		const spy = sinon.spy();
 
 		window.$$TEST$$.isTabVisible = false;
@@ -85,17 +82,14 @@ describe("API flow", () => {
 			done: spy
 		});
 
-		setTimeout(() => {
-			const lastTickText = chart.$.main.selectAll(".bb-axis-x .tick tspan").nodes().pop().innerHTML;
+		const lastTickText = chart.$.main.selectAll(`.${CLASS.axisX} .tick tspan`)
+			.nodes().pop().innerHTML;
 
-			// when tab is not visible, it shouldn't be executed
-			expect(spy.called).to.be.false;
-			expect(lastTickText).to.be.equal("03/21");
+		// when tab is not visible, it shouldn't be executed
+		expect(spy.called).to.be.false;
+		expect(lastTickText).to.be.equal("03/21");
 
-			// restore
-			delete window.$$TEST$$.isTabVisible;
-
-			done();
-		}, 500);
+		// restore
+		delete window.$$TEST$$.isTabVisible;
 	})
 });
