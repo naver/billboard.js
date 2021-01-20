@@ -140,23 +140,39 @@ describe("API data", function() {
 		});
 
 		it("should return data.names specified as API", () => {
-			const results = chart.data.names({
-				data: "New Data Name 1",
-				data2: "New Data Name 2"
+			const legendText = {
+				data: "New New Data Name Value 1",
+				data2: "New New Data Name Value 2",
+			};
+			const pos = {};
+			const updatedPos = {};
+
+			chart.$.legend.selectAll("g").each(function(id) {
+				pos[id] = [
+					+this.querySelector("text").getAttribute("x"),
+					+this.querySelector("rect").getAttribute("x")
+				];
 			});
 
-			expect(results.data).to.be.equal("New Data Name 1");
-			expect(results.data2).to.be.equal("New Data Name 2");
-		});
+			// when
+			const results = chart.data.names(legendText);
 
-		it("should set data.names specified as API", () => {
-			const svg = chart.$.svg;
+			chart.$.legend.selectAll("g").each(function(id) {
+				const text = this.querySelector("text");
 
-			expect(svg.select(`.${CLASS.legendItem}-data text`).text())
-				.to.be.equal("New Data Name 1");
+				expect(results[id]).to.be.equal(text.textContent);
 
-			expect(svg.select(`.${CLASS.legendItem}-data2 text`).text())
-				.to.be.equal("New Data Name 2");
+				updatedPos[id] = [
+					+text.getAttribute("x"),
+					+this.querySelector("rect").getAttribute("x")
+				];
+			});
+
+			expect(results).to.be.deep.equal(legendText);
+
+			Object.keys(updatedPos).forEach(id => {
+				expect(updatedPos[id].every((v, i) => v >= pos[id][i])).to.be.true;
+			});
 		});
 	});
 
