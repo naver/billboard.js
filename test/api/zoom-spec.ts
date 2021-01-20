@@ -5,7 +5,6 @@
 /* eslint-disable */
 import {expect} from "chai";
 import sinon from "sinon";
-import {select as d3Select} from "d3-selection";
 import {parseDate} from "../../src/module/util";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
@@ -428,6 +427,47 @@ describe("API zoom", function() {
 					done();
 				}, 300);
 			});
+		});
+	});
+
+	describe("zoom for timeseries axis type", () => {
+		before(() => {
+			chart = util.generate({
+				data: {
+					rows: [
+						["x", "A"],
+						["2021-01-01", 1],
+						["2021-01-02", 2],
+						["2021-01-03", 4]
+					],
+					x: "x",
+					xFormat: "%Y-%m-%d",
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries"
+					}
+				},
+				zoom: {
+					enabled: true
+				}
+			});
+		});
+
+		it("should zoomed", done => {
+			const range = ["2021-01-01", "2021-01-02"];
+
+			// when
+			const domain = chart.zoom(range);
+
+			setTimeout(() => {
+				domain.forEach((v, i) => {
+					expect(v).to.be.deep.equal(parseDate.call(chart.internal, range[i]));
+				});
+
+				done();
+			}, 500);
 		});
 	});
 });

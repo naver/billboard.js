@@ -144,7 +144,7 @@ export default {
 						const posY = y.bind(this)(d, index);
 
 						// when is multiline
-						if (this.children.length) {
+						if (this.childElementCount) {
 							this.setAttribute("transform", `translate(${posX} ${posY})`);
 						} else {
 							this.setAttribute("x", posX);

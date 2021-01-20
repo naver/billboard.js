@@ -461,15 +461,20 @@ describe("LEGEND", () => {
 		});
 
 		it("should render custom points in legend", () => {
-			const nodes = chart.internal.$el.svg.selectAll(`.${CLASS.legendItem} .${CLASS.legendItemPoint}`);
+			const {$el} = chart.internal;
+			const nodes = $el.svg.selectAll(`.${CLASS.legendItem} .${CLASS.legendItemPoint}`);
+			const pointTagName = ["circle", "rect", "use", "circle"];
 
-			nodes.each((data, idx, selection) => {
+			nodes.each(function(data, idx, selection) {
 				const node = selection[idx];
 				const nodeName = node.nodeName.toLowerCase();
-				const expected = (idx === 0 || idx === 3) ?
-				  "circle" : (idx === 1) ? "rect" : (idx === 2) ? "use" : "";
 
-				expect(nodeName).to.be.equal(expected);
+				// check if referenced defs node exists
+				if (pointTagName[idx] === "use") {					
+					expect($el.defs.select(this.getAttribute("href")).size()).to.be.equal(1);
+				}
+
+				expect(nodeName).to.be.equal(pointTagName[idx]);
 			});
 
 			expect(nodes.size()).to.be.equal(chart.data().length);

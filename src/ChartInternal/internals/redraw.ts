@@ -12,8 +12,10 @@ export default {
 		const $$ = this;
 		const {config, state, $el} = $$;
 		const {main} = $el;
-		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
+		state.redrawing = true;
+
+		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 		const initializing = options.initializing;
 		const flow = options.flow;
 		const wth = $$.getWithOption(options);
@@ -139,6 +141,8 @@ export default {
 		// callback function after redraw ends
 		const afterRedraw = flow || config.onrendered ? () => {
 			flowFn && flowFn();
+
+			state.redrawing = false;
 			callFn(config.onrendered, $$.api);
 		} : null;
 

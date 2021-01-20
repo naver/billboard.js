@@ -7,6 +7,7 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import axis from "../../src/Chart/api/axis";
 
 describe("API axis", function() {
 	const chart = util.generate({
@@ -22,7 +23,6 @@ describe("API axis", function() {
 		},
 		axis: {
 			y: {
-				label: "Y Axis Label",
 				padding: {
 					bottom: 0
 				}
@@ -38,9 +38,12 @@ describe("API axis", function() {
 
 	describe("axis.labels()", () => {
 		it("should update y axis label", done => {
-			chart.axis.labels({
+			const axisLabel = {
 				y: "New Y Axis Label"
-			});
+			};
+
+			// when
+			const labels = chart.axis.labels(axisLabel);
 
 			setTimeout(() => {
 				const label = main.select(`.${CLASS.axisYLabel}`);
@@ -49,11 +52,17 @@ describe("API axis", function() {
 				expect(label.attr("dx")).to.be.equal("-0.5em");
 				expect(label.attr("dy")).to.be.equal("1.2em");
 
+				expect(labels).to.be.deep.equal({
+					y: axisLabel.y,
+					y2: "Y2 Axis Label"
+				});
+
 				done();
 			}, 500);
 		});
 
 		it("should update y axis label", done => {
+			// when
 			chart.axis.labels({
 				y2: "New Y2 Axis Label"
 			});
@@ -67,6 +76,13 @@ describe("API axis", function() {
 
 				done();
 			}, 500);
+		});
+
+		it("should return axis labels", () => {
+			expect(chart.axis.labels()).to.be.deep.equal({
+				y: 'New Y Axis Label',
+				y2: 'New Y2 Axis Label'
+			});
 		});
 	});
 

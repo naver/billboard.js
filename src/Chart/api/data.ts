@@ -3,7 +3,6 @@
  * billboard.js project is licensed under the MIT license
  */
 import {DataItem} from "../../../types/types";
-import {KEY} from "../../module/Cache";
 import {extend, isUndefined, isArray} from "../../module/util";
 
 type dataParam = {x: number, value: number, id: string, index: number}[];
@@ -114,9 +113,6 @@ extend(data, {
 	 */
 	names: function(names?: Array<{ [key: string]: string; }>): {[key: string]: string} {
 		const $$ = this.internal;
-
-		// reset existing legend item dimension cache data
-		$$.cache.remove(KEY.legendItemTextBox);
 
 		return $$.updateDataAttributes("names", names);
 	},
