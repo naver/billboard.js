@@ -289,6 +289,7 @@ var State = /** @class */ (function () {
             mouseover: false,
             rendered: false,
             transiting: false,
+            redrawing: false,
             resizing: false,
             toggling: false,
             zooming: false,
@@ -5035,12 +5036,12 @@ var legend$1 = {
      */
     getLegendItemTextBox: function (id, textElement) {
         var $$ = this;
-        var cache = $$.cache;
+        var cache = $$.cache, state = $$.state;
         var data;
         // do not prefix w/'$', to not be resetted cache in .load() call
         var cacheKey = KEY.legendItemTextBox;
         if (id) {
-            data = cache.get(cacheKey) || {};
+            data = (!state.redrawing && cache.get(cacheKey)) || {};
             if (!data[id]) {
                 data[id] = $$.getTextRect(textElement, CLASS.legendItem);
                 cache.add(cacheKey, data);
@@ -5374,6 +5375,7 @@ var redraw = {
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
         var main = $el.main;
+        state.redrawing = true;
         var targetsToShow = $$.filterTargetsToShow($$.data.targets);
         var initializing = options.initializing;
         var flow = options.flow;
@@ -5478,6 +5480,7 @@ var redraw = {
         // callback function after redraw ends
         var afterRedraw = flow || config.onrendered ? function () {
             flowFn && flowFn();
+            state.redrawing = false;
             callFn(config.onrendered, $$.api);
         } : null;
         if (afterRedraw) {
@@ -8297,8 +8300,6 @@ extend(data$2, {
      */
     names: function (names) {
         var $$ = this.internal;
-        // reset existing legend item dimension cache data
-        $$.cache.remove(KEY.legendItemTextBox);
         return $$.updateDataAttributes("names", names);
     },
     /**

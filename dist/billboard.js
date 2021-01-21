@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20210120021757
+ * @version 2.1.4-nightly-20210121021913
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -384,6 +384,8 @@ var State = function () {
     mouseover: !1,
     rendered: !1,
     transiting: !1,
+    redrawing: !1,
+    // if redraw() is on process
     resizing: !1,
     // resize event called
     toggling: !1,
@@ -4928,8 +4930,9 @@ function getFormat($$, typeValue, v) {
     var data,
         $$ = this,
         cache = $$.cache,
+        state = $$.state,
         cacheKey = KEY.legendItemTextBox;
-    return id && (data = cache.get(cacheKey) || {}, !data[id] && (data[id] = $$.getTextRect(textElement, config_classes.legendItem), cache.add(cacheKey, data)), data = data[id]), data;
+    return id && (data = !state.redrawing && cache.get(cacheKey) || {}, !data[id] && (data[id] = $$.getTextRect(textElement, config_classes.legendItem), cache.add(cacheKey, data)), data = data[id]), data;
   },
 
   /**
@@ -5147,8 +5150,9 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
         config = $$.config,
         state = $$.state,
         $el = $$.$el,
-        main = $el.main,
-        targetsToShow = $$.filterTargetsToShow($$.data.targets),
+        main = $el.main;
+    state.redrawing = !0;
+    var targetsToShow = $$.filterTargetsToShow($$.data.targets),
         initializing = options.initializing,
         flow = options.flow,
         wth = $$.getWithOption(options),
@@ -5186,7 +5190,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
         isTransition = (duration || flowFn) && isTabVisible(),
         redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition),
         afterRedraw = flow || config.onrendered ? function () {
-      flowFn && flowFn(), callFn(config.onrendered, $$.api);
+      flowFn && flowFn(), state.redrawing = !1, callFn(config.onrendered, $$.api);
     } : null;
     if (afterRedraw) // Only use transition when current tab is visible.
       if (isTransition && redrawList.length) {
@@ -7391,7 +7395,6 @@ function loadConfig(config) {
  */
 
 
-
 /**
  * Get data loaded in the chart.
  * @function data
@@ -7497,9 +7500,8 @@ extend(api_data_data, {
    *});
    */
   names: function names(_names) {
-    var $$ = this.internal; // reset existing legend item dimension cache data
-
-    return $$.cache.remove(KEY.legendItemTextBox), $$.updateDataAttributes("names", _names);
+    var $$ = this.internal;
+    return $$.updateDataAttributes("names", _names);
   },
 
   /**
