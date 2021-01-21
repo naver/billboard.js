@@ -114,6 +114,7 @@ export default class State {
 			mouseover: false,
 			rendered: false,
 			transiting: false,
+			redrawing: false, // if redraw() is on process
 			resizing: false, // resize event called
 			toggling: false, // legend toggle
 			zooming: false,

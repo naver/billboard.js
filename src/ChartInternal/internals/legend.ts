@@ -353,14 +353,14 @@ export default {
 	 */
 	getLegendItemTextBox(id?: string, textElement?) {
 		const $$ = this;
-		const {cache} = $$;
+		const {cache, state} = $$;
 		let data;
 
 		// do not prefix w/'$', to not be resetted cache in .load() call
 		const cacheKey = KEY.legendItemTextBox;
 
 		if (id) {
-			data = cache.get(cacheKey) || {};
+			data = (!state.redrawing && cache.get(cacheKey)) || {};
 
 			if (!data[id]) {
 				data[id] = $$.getTextRect(textElement, CLASS.legendItem);
@@ -478,6 +478,7 @@ export default {
 			const reset = index === 0;
 			const isLast = index === targetIdz.length - 1;
 			const box = $$.getLegendItemTextBox(id, textElement);
+
 			const itemWidth = box.width + tileWidth +
 				(isLast && !isLegendRightOrInset ? 0 : paddingRight) + config.legend_padding;
 			const itemHeight = box.height + paddingTop;
