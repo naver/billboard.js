@@ -612,7 +612,7 @@ describe("DATA", () => {
 		});
 	});
 
-	describe("data.label", () => {
+	describe("data.labels", () => {
 		describe("on line chart", () => {
 			before(() => {
 				args = {
@@ -1804,6 +1804,39 @@ describe("DATA", () => {
 						expectedPos[1] + confPos[d.id].y
 					]);
 				});
+			});
+		});
+
+		describe("labels.colors callback", () => {
+			let ctx = [];
+
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 100, 150, 300],
+							["data2", 130, 210, 140],
+							["data3", 220, 150, 50]
+						],
+						labels: {
+							colors: function(color, d) {
+								ctx.push(this);
+								return d.value > 200 ? "cyan" : color;
+							}
+						}
+					}
+				}
+			});
+
+			it("callback called correctly?", () => {
+				chart.$.text.texts.each(function(d) {
+					if (d.value > 200) {
+						expect(this.style.fill).to.be.equal("cyan");
+					}
+				});
+
+				// check the data.labels.colors callback context
+				expect(ctx.every(v => v === chart)).to.be.true;
 			});
 		});
 	});
