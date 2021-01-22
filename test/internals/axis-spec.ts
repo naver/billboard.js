@@ -2562,6 +2562,30 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("Axis interval", () => {
+		before(() => {
+			args = {
+				data: {
+					type: "bar",
+					x: 'delay_h',
+					columns: [
+						["delay_h", 3, 7, 19, 23, 27, 31, 43, 95],
+						["%_prev", 0.10119911436525857, 0.12312515071135761, 0.13627814192077514, 0.16357498301071968, 0.21011026590963894, 0.14735734484950785, 0.10892868886599294, 0],
+						["%_last", 0.1931098539221481, 0.30997213543865576, 0.31714937093641815, 0.08642235919952715, 0.06869036561682006, 0, 0, 0.005615131301190577]
+					]
+				}
+			};
+		});
+
+		it("check the tick interval to be calculated based on the scale & ticks value", () => {
+			// tick's inteval shouldn't be based on the assumption of ticks having same interval
+			expect(chart.internal.axis.x.tickInterval()).to.be.equal(22);
+
+			// bar widht's value should be set based on the scaled tick interval
+			expect(chart.$.bar.bars.node().getBoundingClientRect().width).to.be.closeTo(6, 1);
+		});
+	});
+
 	describe("Axis type combination", () => {
 		before(() => {
 			args = {
