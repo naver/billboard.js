@@ -1176,6 +1176,11 @@ export interface PointOptions {
 		only?: boolean;
 	};
 
+	/**
+	 * Set point opacity value.
+	 */
+	opacity?: number | null;
+
 	select?: {
 		/**
 		 * The radius size of each point on selected.
