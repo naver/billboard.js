@@ -359,4 +359,42 @@ describe("SHAPE POINT", () => {
 			});
 		});
 	});
+
+	describe("point.opacity", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300],
+						["data2", 130, 100, 140],
+						["data3", 200, 150, 50]
+					],
+					types: {
+					  data1: "bubble",
+					  data2: "scatter",
+					  data3: "line"
+					}
+				  },
+				  point: {
+					  opacity: null
+				  }
+			};
+		});
+
+		it("inline opacity css prop shouldn't be set", () => {
+			chart.$.circles.each(function() {
+				expect(this.style.cssText.indexOf("opacity")).to.be.equal(-1);
+			});
+		});
+
+		it("set option point.opacity=0.75", () => {
+			args.point.opacity = 0.75;
+		});
+
+		it("check for point opacity value", () => {
+			chart.$.circles.each(function() {
+				expect(+this.style.opacity).to.be.equal(args.point.opacity);
+			});
+		});
+	});
 });
