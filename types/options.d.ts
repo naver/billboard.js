@@ -1423,7 +1423,9 @@ export interface Data {
 		/**
 		 * Set label text colors.
 		 */
-		colors?: string | { [key: string]: string };
+		colors?: string |
+			{ [key: string]: string } |
+			((this: Chart, color: string, d: DataItem) => string);
 
 		/**
 		 * The formatter function receives 4 arguments such as v, id, i, j and it **must return a string**(`\n` character will be used as line break) that will be shown as the label.<br><br>

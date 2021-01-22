@@ -300,7 +300,7 @@ export default {
 	 *  - `i` is the index of the data point where the label is shown.
 	 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-	 * @property {string|object} [data.labels.colors] Set label text colors.
+	 * @property {string|object|Function} [data.labels.colors] Set label text colors.
 	 * @property {object} [data.labels.position] Set each dataset position, relative the original.
 	 * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
 	 * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
@@ -337,11 +337,19 @@ export default {
 	 *     // apply for all label texts
 	 *     colors: "red",
 	 *
-	 *     // or set different colors per dataset
+	 *     // set different colors per dataset
 	 *     // for not specified dataset, will have the default color value
 	 *     colors: {
 	 *        data1: "yellow",
 	 *        data3: "green"
+	 *     },
+	 *
+	 *     // call back for label text color
+	 *     colors: function(color, d) {
+	 *         // color: the default data label color string
+	 *         // data: ex) {x: 0, value: 200, id: "data3", index: 0}
+	 *         ....
+	 *         return d.value > 200 ? "cyan" : color;
 	 *     },
 	 *
 	 *     // set x, y coordinate position
@@ -365,7 +373,7 @@ export default {
 			colors?: string|{[key: string]: string};
 			position?: {[key: string]: number}|{[key: string]: {x?: number; y?: number;}}
 		}> {},
-	data_labels_colors: <string|object|undefined> undefined,
+	data_labels_colors: <string|object|Function|undefined> undefined,
 	data_labels_position: {},
 
 	/**
