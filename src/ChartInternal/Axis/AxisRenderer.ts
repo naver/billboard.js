@@ -458,6 +458,17 @@ export default class AxisRenderer {
 				.getTotalLength() - this.config.outerTickSize * 2;
 
 			interval = length / (size || this.g.selectAll("line").size());
+
+			// get the interval by its values
+			const intervalByValue = this.config.tickValues
+				.map((v, i, arr) => {
+					const next = i + 1;
+
+					return next < arr.length ?
+						this.helper.scale(arr[next]) - this.helper.scale(v) : null;
+				}).filter(Boolean);
+
+			interval = Math.min(...intervalByValue, interval);
 		}
 
 		return interval === Infinity ? 0 : interval;
@@ -487,7 +498,7 @@ export default class AxisRenderer {
 		return this;
 	}
 
-	tickValues(x): AxisRenderer {
+	tickValues(x?): AxisRenderer | (number|Date|string)[] {
 		const {config} = this;
 
 		if (isFunction(x)) {
