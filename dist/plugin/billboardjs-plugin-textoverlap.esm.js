@@ -119,7 +119,7 @@ function mergeObj(target) {
     return mergeObj.apply(void 0, __spreadArrays([target], objectN));
 }
 // emulate event
-var emulateEvent = {
+({
     mouse: (function () {
         var getParams = function () { return ({
             bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
@@ -162,7 +162,7 @@ var emulateEvent = {
             changedTouches: [touchObj]
         }));
     }
-};
+});
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.

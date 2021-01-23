@@ -255,7 +255,7 @@ var getRange = function (start, end, step) {
     return res;
 };
 // emulate event
-var emulateEvent = {
+({
     mouse: (function () {
         var getParams = function () { return ({
             bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
@@ -298,7 +298,7 @@ var emulateEvent = {
             changedTouches: [touchObj]
         }));
     }
-};
+});
 /**
  * Get parsed date value
  * (It must be called in 'ChartInternal' context)

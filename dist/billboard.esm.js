@@ -999,7 +999,7 @@ var data = {
      *  - `i` is the index of the data point where the label is shown.
      *  - `j` is the sub index of the data point where the label is shown.<br><br>
      * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-     * @property {string|object} [data.labels.colors] Set label text colors.
+     * @property {string|object|Function} [data.labels.colors] Set label text colors.
      * @property {object} [data.labels.position] Set each dataset position, relative the original.
      * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
      * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
@@ -1036,11 +1036,19 @@ var data = {
      *     // apply for all label texts
      *     colors: "red",
      *
-     *     // or set different colors per dataset
+     *     // set different colors per dataset
      *     // for not specified dataset, will have the default color value
      *     colors: {
      *        data1: "yellow",
      *        data3: "green"
+     *     },
+     *
+     *     // call back for label text color
+     *     colors: function(color, d) {
+     *         // color: the default data label color string
+     *         // data: ex) {x: 0, value: 200, id: "data3", index: 0}
+     *         ....
+     *         return d.value > 200 ? "cyan" : color;
      *     },
      *
      *     // set x, y coordinate position
@@ -6400,6 +6408,7 @@ var text = {
     updateTextColor: function (d) {
         var $$ = this;
         var labelColors = $$.config.data_labels_colors;
+        var defaultColor = $$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d);
         var color;
         if (isString(labelColors)) {
             color = labelColors;
@@ -6408,7 +6417,10 @@ var text = {
             var id = (d.data || d).id;
             color = labelColors[id];
         }
-        return color || ($$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d));
+        else if (isFunction(labelColors)) {
+            color = labelColors.bind($$.api)(defaultColor, d);
+        }
+        return color || defaultColor;
     },
     /**
      * Redraw chartText
@@ -10061,11 +10073,6 @@ var AxisRendererHelper = /** @class */ (function () {
     return AxisRendererHelper;
 }());
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
 var AxisRenderer = /** @class */ (function () {
     function AxisRenderer(params) {
         if (params === void 0) { params = {}; }
@@ -10412,6 +10419,7 @@ var AxisRenderer = /** @class */ (function () {
      * @returns {number}
      */
     AxisRenderer.prototype.tickInterval = function (size) {
+        var _this = this;
         var interval;
         if (this.params.isCategory) {
             interval = this.config.tickOffset * 2;
@@ -10421,6 +10429,14 @@ var AxisRenderer = /** @class */ (function () {
                 .node()
                 .getTotalLength() - this.config.outerTickSize * 2;
             interval = length_1 / (size || this.g.selectAll("line").size());
+            // get the interval by its values
+            var intervalByValue = this.config.tickValues
+                .map(function (v, i, arr) {
+                var next = i + 1;
+                return next < arr.length ?
+                    _this.helper.scale(arr[next]) - _this.helper.scale(v) : null;
+            }).filter(Boolean);
+            interval = Math.min.apply(Math, __spreadArrays(intervalByValue, [interval]));
         }
         return interval === Infinity ? 0 : interval;
     };
@@ -15917,16 +15933,24 @@ var shapePoint = {
             isFunction(pointType.create) && isFunction(pointType.update);
     },
     initialOpacityForCircle: function (d) {
-        var withoutFadeIn = this.state.withoutFadeIn;
-        return this.getBaseValue(d) !== null &&
-            withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+        var _a = this, config = _a.config, withoutFadeIn = _a.state.withoutFadeIn;
+        var opacity = config.point_opacity;
+        if (isUndefined(opacity)) {
+            opacity = this.getBaseValue(d) !== null &&
+                withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+        }
+        return opacity;
     },
     opacityForCircle: function (d) {
         var config = this.config;
-        var opacity = config.point_show && !config.point_focus_only ? "1" : "0";
-        return isValue(this.getBaseValue(d)) ?
-            (this.isBubbleType(d) || this.isScatterType(d) ?
-                "0.5" : opacity) : "0";
+        var opacity = config.point_opacity;
+        if (isUndefined(opacity)) {
+            opacity = config.point_show && !config.point_focus_only ? "1" : "0";
+            opacity = isValue(this.getBaseValue(d)) ?
+                (this.isBubbleType(d) || this.isScatterType(d) ?
+                    "0.5" : opacity) : "0";
+        }
+        return opacity;
     },
     initCircle: function () {
         var $$ = this;
@@ -16696,6 +16720,10 @@ var optPoint = {
      * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
      *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
      * @property {boolean} [point.focus.only=false] Show point only when is focused.
+     * @property {number|null} [point.opacity=undefined] Set point opacity value.
+     * - **NOTE:**
+     *	- `null` will make to not set inline 'opacity' css prop.
+     *	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
      * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
      * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
      * @property {string} [point.type="circle"] The type of point to be drawn
@@ -16735,6 +16763,13 @@ var optPoint = {
      *          },
      *          only: true
      *      },
+     *
+     *      // do not set inline 'opacity' css prop setting
+     *      opacity: null,
+     *
+     *      // set every data point's opacity value
+     *      opacity: 0.7,
+     *
      *      select: {
      *          r: 3
      *      },
@@ -16759,6 +16794,7 @@ var optPoint = {
     point_focus_expand_enabled: true,
     point_focus_expand_r: undefined,
     point_focus_only: false,
+    point_opacity: undefined,
     point_pattern: [],
     point_select_r: undefined,
     point_type: "circle"

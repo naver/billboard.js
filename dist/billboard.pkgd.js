@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20210122021806
+ * @version 2.1.4-nightly-20210123021631
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -16517,7 +16517,7 @@ function _defineProperty(obj, key, value) {
    *  - `i` is the index of the data point where the label is shown.
    *  - `j` is the sub index of the data point where the label is shown.<br><br>
    * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-   * @property {string|object} [data.labels.colors] Set label text colors.
+   * @property {string|object|Function} [data.labels.colors] Set label text colors.
    * @property {object} [data.labels.position] Set each dataset position, relative the original.
    * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
    * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
@@ -16554,11 +16554,19 @@ function _defineProperty(obj, key, value) {
    *     // apply for all label texts
    *     colors: "red",
    *
-   *     // or set different colors per dataset
+   *     // set different colors per dataset
    *     // for not specified dataset, will have the default color value
    *     colors: {
    *        data1: "yellow",
    *        data3: "green"
+   *     },
+   *
+   *     // call back for label text color
+   *     colors: function(color, d) {
+   *         // color: the default data label color string
+   *         // data: ex) {x: 0, value: 200, id: "data3", index: 0}
+   *         ....
+   *         return d.value > 200 ? "cyan" : color;
    *     },
    *
    *     // set x, y coordinate position
@@ -25832,14 +25840,15 @@ function stepAfter(context) {
   updateTextColor: function updateTextColor(d) {
     var color,
         $$ = this,
-        labelColors = $$.config.data_labels_colors;
+        labelColors = $$.config.data_labels_colors,
+        defaultColor = $$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d);
     if (isString(labelColors)) color = labelColors;else if (isObject(labelColors)) {
       var _ref = d.data || d,
           id = _ref.id;
 
       color = labelColors[id];
-    }
-    return color || ($$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d));
+    } else isFunction(labelColors) && (color = labelColors.bind($$.api)(defaultColor, d));
+    return color || defaultColor;
   },
 
   /**
@@ -29323,10 +29332,18 @@ var AxisRenderer = /*#__PURE__*/function () {
    * @returns {number}
    */
   , _proto.tickInterval = function tickInterval(size) {
-    var interval;
+    var interval,
+        _this = this;
+
     if (this.params.isCategory) interval = this.config.tickOffset * 2;else {
       var length = this.g.select("path.domain").node().getTotalLength() - this.config.outerTickSize * 2;
       interval = length / (size || this.g.selectAll("line").size());
+      // get the interval by its values
+      var intervalByValue = this.config.tickValues.map(function (v, i, arr) {
+        var next = i + 1;
+        return next < arr.length ? _this.helper.scale(arr[next]) - _this.helper.scale(v) : null;
+      }).filter(Boolean);
+      interval = Math.min.apply(Math, intervalByValue.concat([interval]));
     }
     return interval === Infinity ? 0 : interval;
   }, _proto.ticks = function ticks() {
@@ -29337,11 +29354,11 @@ var AxisRenderer = /*#__PURE__*/function () {
     var config = this.config;
     return arguments.length ? (config.tickCulling = culling, this) : config.tickCulling;
   }, _proto.tickValues = function tickValues(x) {
-    var _this = this,
+    var _this2 = this,
         config = this.config;
 
     if (isFunction(x)) config.tickValues = function () {
-      return x(_this.helper.scale.domain());
+      return x(_this2.helper.scale.domain());
     };else {
       if (!arguments.length) return config.tickValues;
       config.tickValues = x;
@@ -34439,13 +34456,15 @@ var getTransitionName = function () {
     return isObjectType(pointType) && isFunction(pointType.create) && isFunction(pointType.update);
   },
   initialOpacityForCircle: function initialOpacityForCircle(d) {
-    var withoutFadeIn = this.state.withoutFadeIn;
-    return this.getBaseValue(d) !== null && withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+    var config = this.config,
+        withoutFadeIn = this.state.withoutFadeIn,
+        opacity = config.point_opacity;
+    return isUndefined(opacity) && (opacity = this.getBaseValue(d) !== null && withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0"), opacity;
   },
   opacityForCircle: function opacityForCircle(d) {
     var config = this.config,
-        opacity = config.point_show && !config.point_focus_only ? "1" : "0";
-    return isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
+        opacity = config.point_opacity;
+    return isUndefined(opacity) && (opacity = config.point_show && !config.point_focus_only ? "1" : "0", opacity = isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0"), opacity;
   },
   initCircle: function initCircle() {
     var $$ = this,
@@ -35079,6 +35098,10 @@ var cacheKey = KEY.radarPoints;
    * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
    *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
    * @property {boolean} [point.focus.only=false] Show point only when is focused.
+   * @property {number|null} [point.opacity=undefined] Set point opacity value.
+   * - **NOTE:**
+   *	- `null` will make to not set inline 'opacity' css prop.
+   *	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
    * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
    * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
    * @property {string} [point.type="circle"] The type of point to be drawn
@@ -35118,6 +35141,13 @@ var cacheKey = KEY.radarPoints;
    *          },
    *          only: true
    *      },
+   *
+   *      // do not set inline 'opacity' css prop setting
+   *      opacity: null,
+   *
+   *      // set every data point's opacity value
+   *      opacity: 0.7,
+   *
    *      select: {
    *          r: 3
    *      },
@@ -35142,6 +35172,7 @@ var cacheKey = KEY.radarPoints;
   point_focus_expand_enabled: !0,
   point_focus_expand_r: undefined,
   point_focus_only: !1,
+  point_opacity: undefined,
   point_pattern: [],
   point_select_r: undefined,
   point_type: "circle"
