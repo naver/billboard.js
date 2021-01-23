@@ -957,7 +957,7 @@ describe("ZOOM", function() {
 			const len = [];
 
 			bar.bars.each(function() {
-				len.push(this.getTotalLength());
+				len.push(this.getBoundingClientRect().width);
 			});
 
 			// when zoom in
@@ -969,7 +969,7 @@ describe("ZOOM", function() {
 			});
 
 			bar.bars.each(function(d, i) {
-				expect(this.getTotalLength()).to.be.greaterThan(len[i]);
+				expect(this.getBoundingClientRect().width).to.be.greaterThan(len[i]);
 			});
 
 			// when zoom out
@@ -981,7 +981,7 @@ describe("ZOOM", function() {
 			});
 
 			bar.bars.each(function(d, i) {
-				expect(this.getTotalLength()).to.be.equal(len[i]);
+				expect(this.getBoundingClientRect().width).to.be.closeTo(len[i], 1);
 			});
 		});
 

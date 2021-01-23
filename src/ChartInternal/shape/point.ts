@@ -25,20 +25,31 @@ export default {
 			isFunction(pointType.create) && isFunction(pointType.update);
 	},
 
-	initialOpacityForCircle(d): "1" | "0" {
-		const {withoutFadeIn} = this.state;
+	initialOpacityForCircle(d): string | number | null {
+		const {config, state: {withoutFadeIn}} = this;
+		let opacity = config.point_opacity;
 
-		return this.getBaseValue(d) !== null &&
-			withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+		if (isUndefined(opacity)) {
+			opacity = this.getBaseValue(d) !== null &&
+				withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+		}
+
+		return opacity;
 	},
 
-	opacityForCircle(d): "0.5" | "1" | "0" {
+	opacityForCircle(d): string | number | null {
 		const {config} = this;
-		const opacity = config.point_show && !config.point_focus_only ? "1" : "0";
+		let opacity = config.point_opacity;
 
-		return isValue(this.getBaseValue(d)) ?
-			(this.isBubbleType(d) || this.isScatterType(d) ?
-				"0.5" : opacity) : "0";
+		if (isUndefined(opacity)) {
+			opacity = config.point_show && !config.point_focus_only ? "1" : "0";
+
+			opacity = isValue(this.getBaseValue(d)) ?
+				(this.isBubbleType(d) || this.isScatterType(d) ?
+					"0.5" : opacity) : "0";
+		}
+
+		return opacity;
 	},
 
 	initCircle(): void {

@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import {KEY} from "../../module/Cache";
 import CLASS from "../../config/classes";
-import {capitalize, getBoundingRect, getRandom, isNumber, isObject, isString, getTranslation, setTextValue} from "../../module/util";
+import {capitalize, getBoundingRect, getRandom, isFunction, isNumber, isObject, isString, getTranslation, setTextValue} from "../../module/util";
 import {AxisType} from "../../../types/types";
 
 
@@ -100,6 +100,7 @@ export default {
 	updateTextColor(d): null | object | string {
 		const $$ = this;
 		const labelColors = $$.config.data_labels_colors;
+		const defaultColor = $$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d);
 		let color;
 
 		if (isString(labelColors)) {
@@ -108,11 +109,11 @@ export default {
 			const {id} = d.data || d;
 
 			color = labelColors[id];
+		} else if (isFunction(labelColors)) {
+			color = labelColors.bind($$.api)(defaultColor, d);
 		}
 
-		return color || (
-			$$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d)
-		);
+		return color || defaultColor;
 	},
 
 	/**

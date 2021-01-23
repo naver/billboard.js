@@ -2138,6 +2138,21 @@ var demos = {
 						}
 					}
 				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100, 150, 300],
+							["data2", 130, 210, 140],
+							["data3", 220, 150, 50]
+						],
+						type: "bar",
+						labels: {
+							colors: function(color, d) { return d.value > 200 ? "cyan" : color; }
+						}
+					}
+				}
 			}
 		],
 		DataLabelFormat: {
