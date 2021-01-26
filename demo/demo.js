@@ -1239,17 +1239,20 @@ var demos = {
 								autorotate: true,
 								rotate: 15,
 								culling: false
-							}
+							},
+							clipPath: false
 						}
 					}
 				},
 				func: function(chart) {
 					chart.timer = [
-setTimeout(function() {
-	chart.resize({width: window.innerWidth * 0.4});
-}, 1000),
+						setTimeout(function() {
+							chart.resize({width: window.innerWidth * 0.4});
+						}, 1000),
 
-setTimeout(function() {chart.resize();}, 3000)
+						setTimeout(function() {
+							chart.resize();
+						}, 3000)
 					];
 				}
 			},
@@ -1294,6 +1297,7 @@ setTimeout(function() {chart.resize();}, 3000)
 					},
 					axis: {
 						x: {
+							type: "timeseries",
 							tick: {
 								fit: true,
 								multiline: false,
@@ -1303,16 +1307,19 @@ setTimeout(function() {chart.resize();}, 3000)
 								count: 8,
 								format: "%m-%d-%Y %H:%M:%S"
 							},
-							type: "timeseries"
+							clipPath: false
 						}
 					}
 				},
 				func: function(chart) {
 					chart.timer = [
-setTimeout(function() {
-	chart.resize({width: window.innerWidth * 0.4});
-}, 1000),
-setTimeout(function() {chart.resize();}, 3000)
+						setTimeout(function() {
+							chart.resize({width: window.innerWidth * 0.4});
+						}, 1000),
+						
+						setTimeout(function() {
+							chart.resize();
+						}, 3000)
 					];
 				}
 			}
@@ -2131,6 +2138,21 @@ setTimeout(function() {chart.resize();}, 3000)
 						}
 					}
 				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100, 150, 300],
+							["data2", 130, 210, 140],
+							["data3", 220, 150, 50]
+						],
+						type: "bar",
+						labels: {
+							colors: function(color, d) { return d.value > 200 ? "cyan" : color; }
+						}
+					}
+				}
 			}
 		],
 		DataLabelFormat: {
@@ -2148,9 +2170,7 @@ setTimeout(function() {chart.resize();}, 3000)
 					labels: {
 						// format: function(v, id, i, j) { return "Default Format"; },
 						format: {
-							data1: function(x) {
-						     return d3.format('$')(x);
-							}
+							data1: function(x) { return d3.format('$')(x); }
 							// data1: function(v, id, i, j) { return "Format for data1"; },
 						}
 					}
@@ -2158,6 +2178,23 @@ setTimeout(function() {chart.resize();}, 3000)
 				grid: {
 					y: {
 						lines: [{value: 0}]
+					}
+				}
+			}
+		},
+		DataLabelMultiline: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30,400, -200, -100,  150, 250],
+					],
+					type: "line",
+					labels: {
+						format: (v, id ,i, j) => {
+						  return v > 0 ?
+							"Ipsum is\nsimply dummy text" :
+							"Lorem Ipsum is simply dummy text";
+						  }
 					}
 				}
 			}
@@ -4038,6 +4075,118 @@ d3.select(".chart_area")
 				];
 			}
 		},
+		GaugeStartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data0", 25],
+						["data1", 50],
+						["data2", 75],
+						["data3", 100],
+					],
+					type: "gauge"
+				},
+				gauge: {
+					type: "multi",
+					max: 100,
+					min: 0, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+					arcs: {
+						minWidth: 5
+					},
+					fullCircle: false,
+					startingAngle: -1 * Math.PI / 2
+				},
+				size: {
+					height: 300
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.config("gauge.startingAngle", -1, false);
+
+						chart.flush(true);
+					}, 2000),
+
+					setTimeout(function() {
+						chart.config("gauge.startingAngle", 1, false);
+						chart.flush(true);
+					}, 4000),
+
+					setTimeout(function() {
+						chart.config("gauge.startingAngle", -0.5 * Math.PI, false);
+						chart.config("gauge.fullCircle", true, false);
+						chart.flush(true);
+					}, 6000),
+
+					setTimeout(function() {
+						chart.config("gauge.startingAngle", 0 * Math.PI, false);
+						chart.flush(true);
+					}, 8000)
+				];
+			}
+		},
+		GaugeArcLength: {
+			options: {
+				data: {
+					columns: [
+						["data0", 25],
+						["data1", 50],
+						["data2", 75],
+						["data3", 100],
+					],
+					type: "gauge"
+				},
+				gauge: {
+					type: "single",
+					max: 100,
+					min: 0, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+					fullCircle: true,
+					arcLength: 100
+				},
+				size: {
+					height: 300
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.config("gauge.arcLength", 75, false);
+						chart.flush(true);
+					}, 2000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", 50, false);
+						chart.flush(true);
+					}, 4000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", 25, false);
+						chart.flush(true);
+					}, 6000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", -25, false);
+						chart.flush(true);
+					}, 8000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", -50, false);
+						chart.flush(true);
+					}, 10000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", -75, false);
+						chart.flush(true);
+					}, 12000),
+
+					setTimeout(function() {
+						chart.config("gauge.arcLength", -100, false);
+						chart.flush(true);
+					}, 14000)
+				];
+			}
+		},
 	},
 	LineChartOptions: {
 		HidePoints: {
@@ -4166,6 +4315,42 @@ d3.select(".chart_area")
 							data1: 50,
 							data2: 80,
 							data3: 0
+						}
+					}
+				}
+			},
+		],
+		OuterRadius: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 50],
+							["data3", 20]
+						],
+						type: "pie"
+					},
+					pie: {
+						innerRadius: 10,
+						outerRadius: 100
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 50],
+							["data3", 20]
+						],
+						type: "pie"
+					},
+					pie: {
+						outerRadius: {
+							data1: 110,
+							data2: 80
 						}
 					}
 				}
