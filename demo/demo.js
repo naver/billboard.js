@@ -2190,11 +2190,7 @@ var demos = {
 					],
 					type: "line",
 					labels: {
-						format: (v, id ,i, j) => {
-						  return v > 0 ?
-							"Ipsum is\nsimply dummy text" :
-							"Lorem Ipsum is simply dummy text";
-						  }
+						format: function(v, id ,i, j) { return v > 0 ? "Ipsum is\nsimply dummy text" : "Lorem Ipsum is simply dummy text"; }
 					}
 				}
 			}
