@@ -81,9 +81,9 @@ jobs:
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         id: publish
         run: npm run release
-        # https://docs.github.com/en/free-pro-team@latest/actions/reference/context-and-expression-syntax-for-github-actions
 
       - name: Deploy
         shell: bash
         run: bash ./config/deploy.sh
-        if: steps.publish.outputs.branch == 'latest' && steps.publish.outputs.conclusion == 'success'
+        # https://docs.github.com/en/free-pro-team@latest/actions/reference/context-and-expression-syntax-for-github-actions
+        if: github.ref == 'refs/heads/latest' && steps.publish.conclusion == 'success'
