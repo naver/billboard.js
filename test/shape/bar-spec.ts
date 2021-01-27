@@ -707,4 +707,53 @@ describe("SHAPE BAR", () => {
 			}, 350);
 		});
 	});
+
+	describe("bar width on zoom", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "bar"
+				},
+				zoom: {
+					enabled: true
+				}
+			};
+		});
+
+		it("should maintain width size after toggle", done => {
+			const zoomBarWidth = [];
+
+			// when
+			chart.zoom([1, 3]);
+
+			new Promise((resolve, reject) => {
+				setTimeout(() => {
+					chart.$.bar.bars.each(function() {
+						zoomBarWidth.push(parseInt(this.getBoundingClientRect().width));
+					});
+
+					resolve(true);
+				}, 300);
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					chart.hide();
+					setTimeout(resolve, 300);
+				});
+			}).then((msg) => {
+				return new Promise((resolve, reject) => {
+					chart.show();
+					setTimeout(resolve, 300);
+				});
+			}).then(() => {
+				chart.$.bar.bars.each(function(d, i) {
+					expect(parseInt(this.getBoundingClientRect().width)).to.be.equal(zoomBarWidth[i]);
+				});
+
+				done();
+			});
+		});
+	});
 });
