@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.1.4-nightly-20210123021631
+ * @version 2.2.0-nightly-20210127013010
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -13545,10 +13545,11 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   getBarW: function getBarW(axis, barTargetsNum) {
     var $$ = this,
         config = $$.config,
+        org = $$.org,
         scale = $$.scale,
         maxDataCount = $$.getMaxDataCount(),
         isGrouped = config.data_groups.length,
-        tickInterval = scale.zoom && !$$.axis.isCategorized() ? scale.subX.domain().map(function (v) {
+        tickInterval = scale.zoom && !$$.axis.isCategorized() ? org.xDomain.map(function (v) {
       return scale.zoom(v);
     }).reduce(function (a, c) {
       return Math.abs(a) + c;
@@ -16980,7 +16981,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.1.4",
+  version: "2.2.0",
 
   /**
    * Generate chart
@@ -17108,7 +17109,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.1.4
+ * @version 2.2.0
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

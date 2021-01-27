@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.1.4
+ * @version 2.2.0
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -15388,11 +15388,11 @@ var shapeBar = {
     },
     getBarW: function (axis, barTargetsNum) {
         var $$ = this;
-        var config = $$.config, scale = $$.scale;
+        var config = $$.config, org = $$.org, scale = $$.scale;
         var maxDataCount = $$.getMaxDataCount();
         var isGrouped = config.data_groups.length;
         var tickInterval = scale.zoom && !$$.axis.isCategorized() ?
-            (scale.subX.domain().map(function (v) { return scale.zoom(v); })
+            (org.xDomain.map(function (v) { return scale.zoom(v); })
                 .reduce(function (a, c) { return Math.abs(a) + c; }) / maxDataCount) : axis.tickInterval(maxDataCount);
         var getWidth = function (id) {
             var width = id ? config.bar_width[id] : config.bar_width;
@@ -19150,7 +19150,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.1.4
+ * @version 2.2.0
  */
 var bb = {
     /**
@@ -19160,7 +19160,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.1.4",
+    version: "2.2.0",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
