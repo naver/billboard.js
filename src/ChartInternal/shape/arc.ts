@@ -847,7 +847,7 @@ export default {
 			isFullCircle && text && text.attr("dy", `${hasMultiArcGauge ? 0 : Math.round(state.radius / 14)}`);
 
 			arcs.select(`.${CLASS.chartArcsGaugeUnit}`)
-				.attr("dy", ".75em")
+				.attr("dy", config.gauge_fullCircle ? "1.5em" : ".75em")
 				.text(config.gauge_label_show ? config.gauge_units : "");
 
 			if (config.gauge_label_show) {
