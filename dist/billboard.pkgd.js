@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.0-nightly-20210127013010
+ * @version 2.2.0-nightly-20210129013128
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -35619,12 +35619,12 @@ var cacheKey = KEY.radarPoints;
    * **Limitations:**
    * - when `gauge.fullCircle=false`:
    *   - -1 * Math.PI / 2 <= startingAngle <= Math.PI / 2
-   *   - `startingAngle >= -1 * Math.PI / 2` defaults to `-1 * Math.PI / 2`
-   *   - `startingAngle <= Math.PI / 2` defaults to `Math.PI / 2`
+   *   - `startingAngle <= -1 * Math.PI / 2` defaults to `-1 * Math.PI / 2`
+   *   - `startingAngle >= Math.PI / 2` defaults to `Math.PI / 2`
    * - when `gauge.fullCircle=true`:
-   *   - -2 * Math.PI <= startingAngle <= 2 * Math.PI
-   *   - `startingAngle >= -2 * Math.PI` defaults to `-2 * Math.PI`
-   *   - `startingAngle <= 2 * Math.PI` defaults to `2 * Math.PI`
+   *   - -1 * Math.PI < startingAngle < Math.PI
+   *   - `startingAngle < -1 * Math.PI` defaults to `Math.PI`
+   *   - `startingAngle >  Math.PI` defaults to `Math.PI`
    * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100.<br>
    * Negative value will draw the arc **counterclockwise**.
    *
