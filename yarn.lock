@@ -7925,9 +7925,9 @@ karma-sourcemap-loader@^0.3.8:
     graceful-fs "^4.1.2"
 
 karma-webpack@^5.0.0-alpha.5:
-  version "5.0.0-alpha.5"
-  resolved "https://registry.yarnpkg.com/karma-webpack/-/karma-webpack-5.0.0-alpha.5.tgz#8776906b8c9bef44c24f2ce35061002298d7bc55"
-  integrity sha512-K+JmYbljzIK4tos98Wg1Z1unn1ymU0IF7o0U5CAAQzAORxzqI74YpjjrOp+7mfmR+2wfZxEogk3t0AKLa37EMw==
+  version "5.0.0-alpha.6"
+  resolved "https://registry.yarnpkg.com/karma-webpack/-/karma-webpack-5.0.0-alpha.6.tgz#9bce5008b2a9a42a07dd9acbc8a7a72ed5c64986"
+  integrity sha512-XgU3sHtXgRAnteMw0UNGjixzmOxxDv/Z7SwSS4D6jyaeNIDMZSMbwjfqikTej3md4nFZ9v117pjgzKpQwflxyw==
   dependencies:
     glob "^7.1.3"
     minimatch "^3.0.4"
