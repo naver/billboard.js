@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.0-nightly-20210129013128
+ * @version 2.2.1-nightly-20210202012922
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -19,16 +19,16 @@
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["bubblecompare"] = factory(root["d3"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE__1__) {
-return /******/ (() => { // webpackBootstrap
+return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
 /* 0 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "default": () => /* binding */ BubbleCompare
+  "default": function() { return /* binding */ BubbleCompare; }
 });
 
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
@@ -112,7 +112,7 @@ var Plugin = /*#__PURE__*/function () {
   }, Plugin;
 }();
 
-Plugin.version = "2.2.0";
+Plugin.version = "2.2.1";
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
 
@@ -224,7 +224,7 @@ BubbleCompare.version = "0.0.1";
 
 /***/ }),
 /* 1 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 
@@ -256,21 +256,21 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
+/******/ 	!function() {
 /******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 		__webpack_require__.d = function(exports, definition) {
 /******/ 			for(var key in definition) {
 /******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
 /******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 				}
 /******/ 			}
 /******/ 		};
-/******/ 	})();
+/******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
-/******/ 	})();
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
 /******/ 	
 /************************************************************************/
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled

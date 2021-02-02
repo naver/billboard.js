@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.0-nightly-20210129013128
+ * @version 2.2.1-nightly-20210202012922
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -17,56 +17,56 @@
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
 })(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__14__) {
-return /******/ (() => { // webpackBootstrap
+return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
 /* 0 */
-/***/ (() => {
+/***/ (function() {
 
 // extracted by mini-css-extract-plugin
 
 
 /***/ }),
 /* 1 */
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+/***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 // ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "bb": () => /* reexport */ bb,
-  "default": () => /* reexport */ bb
+  "bb": function() { return /* reexport */ bb; },
+  "default": function() { return /* reexport */ bb; }
 });
 
 // NAMESPACE OBJECT: ./src/config/resolver/shape.ts
 var resolver_shape_namespaceObject = {};
 __webpack_require__.r(resolver_shape_namespaceObject);
 __webpack_require__.d(resolver_shape_namespaceObject, {
-  "area": () => _area,
-  "areaLineRange": () => areaLineRange,
-  "areaSpline": () => areaSpline,
-  "areaSplineRange": () => areaSplineRange,
-  "areaStep": () => areaStep,
-  "bar": () => resolver_shape_bar,
-  "bubble": () => resolver_shape_bubble,
-  "donut": () => shape_donut,
-  "gauge": () => resolver_shape_gauge,
-  "line": () => resolver_shape_line,
-  "pie": () => shape_pie,
-  "radar": () => resolver_shape_radar,
-  "scatter": () => shape_scatter,
-  "spline": () => shape_spline,
-  "step": () => step
+  "area": function() { return _area; },
+  "areaLineRange": function() { return areaLineRange; },
+  "areaSpline": function() { return areaSpline; },
+  "areaSplineRange": function() { return areaSplineRange; },
+  "areaStep": function() { return areaStep; },
+  "bar": function() { return resolver_shape_bar; },
+  "bubble": function() { return resolver_shape_bubble; },
+  "donut": function() { return shape_donut; },
+  "gauge": function() { return resolver_shape_gauge; },
+  "line": function() { return resolver_shape_line; },
+  "pie": function() { return shape_pie; },
+  "radar": function() { return resolver_shape_radar; },
+  "scatter": function() { return shape_scatter; },
+  "spline": function() { return shape_spline; },
+  "step": function() { return step; }
 });
 
 // NAMESPACE OBJECT: ./src/config/resolver/interaction.ts
 var resolver_interaction_namespaceObject = {};
 __webpack_require__.r(resolver_interaction_namespaceObject);
 __webpack_require__.d(resolver_interaction_namespaceObject, {
-  "selection": () => _selectionModule,
-  "subchart": () => subchartModule,
-  "zoom": () => zoomModule
+  "selection": function() { return _selectionModule; },
+  "subchart": function() { return subchartModule; },
+  "zoom": function() { return zoomModule; }
 });
 
 // EXTERNAL MODULE: external {"commonjs":"d3-time-format","commonjs2":"d3-time-format","amd":"d3-time-format","root":"d3"}
@@ -83,7 +83,7 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
  * CSS class names definition
  * @private
  */
-/* harmony default export */ const config_classes = ({
+/* harmony default export */ var config_classes = ({
   arc: "bb-arc",
   arcLabelLine: "bb-arc-label-line",
   arcs: "bb-arcs",
@@ -476,7 +476,7 @@ function _defineProperty(obj, key, value) {
 /**
  * main config options
  */
-/* harmony default export */ const main = ({
+/* harmony default export */ var main = ({
   /**
    * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
    * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
@@ -828,7 +828,7 @@ function _defineProperty(obj, key, value) {
 /**
  * data config options
  */
-/* harmony default export */ const data = ({
+/* harmony default export */ var data = ({
   /**
    * Specify the key of x values in the data.<br><br>
    * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
@@ -1558,7 +1558,7 @@ function _defineProperty(obj, key, value) {
 /**
  * color config options
  */
-/* harmony default export */ const color = ({
+/* harmony default export */ var color = ({
   /**
    * Set color of the data values
    * @name color
@@ -1647,7 +1647,7 @@ function _defineProperty(obj, key, value) {
 /**
  * interaction config options
  */
-/* harmony default export */ const interaction = ({
+/* harmony default export */ var interaction = ({
   /**
    * Interaction options
    * @name interaction
@@ -1694,7 +1694,7 @@ function _defineProperty(obj, key, value) {
 /**
  * legend config options
  */
-/* harmony default export */ const legend = ({
+/* harmony default export */ var legend = ({
   /**
    * Legend options
    * @name legend
@@ -1807,7 +1807,7 @@ function _defineProperty(obj, key, value) {
 /**
  * title config options
  */
-/* harmony default export */ const title = ({
+/* harmony default export */ var title = ({
   /**
    * Set title options
    * @name title
@@ -1855,7 +1855,7 @@ function _defineProperty(obj, key, value) {
 /**
  * tooltip config options
  */
-/* harmony default export */ const tooltip = ({
+/* harmony default export */ var tooltip = ({
   /**
    * Tooltip options
    * @name tooltip
@@ -2936,7 +2936,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
  * @private
  */
 
-/* harmony default export */ const convert = ({
+/* harmony default export */ var convert = ({
   /**
    * Convert data according its type
    * @param {object} args data object
@@ -3144,7 +3144,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 
 
-/* harmony default export */ const data_data = ({
+/* harmony default export */ var data_data = ({
   isX: function isX(key) {
     var $$ = this,
         config = $$.config,
@@ -3878,7 +3878,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
  */
 
 
-/* harmony default export */ const load = ({
+/* harmony default export */ var load = ({
   load: function load(rawTargets, args) {
     var $$ = this,
         targets = rawTargets;
@@ -3942,7 +3942,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 
 
 
-/* harmony default export */ const interactions_interaction = ({
+/* harmony default export */ var interactions_interaction = ({
   selectRectForSingle: function selectRectForSingle(context, eventRect, index) {
     var $$ = this,
         config = $$.config,
@@ -4088,7 +4088,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ const internals_class = ({
+/* harmony default export */ var internals_class = ({
   generateClass: function generateClass(prefix, targetId) {
     return " " + prefix + " " + (prefix + this.getTargetSelectorSuffix(targetId));
   },
@@ -4208,7 +4208,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* harmony default export */ const category = ({
+/* harmony default export */ var category = ({
   /**
    * Category Name
    * @param {number} i Index number
@@ -4254,7 +4254,7 @@ var colorizePattern = function (pattern, color, id) {
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
 
 
-/* harmony default export */ const internals_color = ({
+/* harmony default export */ var internals_color = ({
   /**
    * Get color pattern from CSS file
    * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
@@ -4396,7 +4396,7 @@ var TYPE_BY_CATEGORY = {
  */
 
 
-/* harmony default export */ const domain = ({
+/* harmony default export */ var domain = ({
   getYDomainMinMax: function getYDomainMinMax(targets, type) {
     var $$ = this,
         axis = $$.axis,
@@ -4632,7 +4632,7 @@ function getFormat($$, typeValue, v) {
   return format(v);
 }
 
-/* harmony default export */ const format = ({
+/* harmony default export */ var format = ({
   getYFormat: function getYFormat(forArc) {
     var $$ = this,
         yFormat = $$.yFormat,
@@ -4677,7 +4677,7 @@ function getFormat($$, typeValue, v) {
 
 
 
-/* harmony default export */ const internals_legend = ({
+/* harmony default export */ var internals_legend = ({
   /**
    * Initialize the legend.
    * @private
@@ -5151,7 +5151,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 
 
 
-/* harmony default export */ const redraw = ({
+/* harmony default export */ var redraw = ({
   redraw: function redraw(options, transitionsValue) {
     options === void 0 && (options = {});
     var $$ = this,
@@ -5288,7 +5288,7 @@ function getScale(type, min, max) {
   }[type]();
   return scale.type = type, /_?log/.test(type) && scale.clamp(!0), scale.range([min, max]);
 }
-/* harmony default export */ const scale = ({
+/* harmony default export */ var scale = ({
   /**
    * Get x Axis scale function
    * @param {number} min Min value
@@ -5457,7 +5457,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
 
 
-/* harmony default export */ const shape = ({
+/* harmony default export */ var shape = ({
   /**
    * Get the shape draw function
    * @returns {object}
@@ -5704,7 +5704,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
 
 
-/* harmony default export */ const size = ({
+/* harmony default export */ var size = ({
   /**
    * Update container size
    * @private
@@ -5907,7 +5907,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
 
 
-/* harmony default export */ const internals_text = ({
+/* harmony default export */ var internals_text = ({
   opacityForText: function opacityForText(d) {
     var $$ = this;
     return $$.isBarType(d) && !$$.meetsLabelThreshold(Math.abs($$.getRatio("bar", d)), "bar") ? "0" : $$.hasDataLabel ? "1" : "0";
@@ -6220,7 +6220,7 @@ function getTextPos(pos, width) {
   return position = pos.indexOf("center") > -1 ? isNum ? width / 2 : "middle" : pos.indexOf("right") > -1 ? isNum ? width : "end" : isNum ? 0 : "start", position;
 }
 
-/* harmony default export */ const internals_title = ({
+/* harmony default export */ var internals_title = ({
   /**
    * Initializes the title
    * @private
@@ -6297,7 +6297,7 @@ function getTextPos(pos, width) {
 
 
 
-/* harmony default export */ const internals_tooltip = ({
+/* harmony default export */ var internals_tooltip = ({
   /**
    * Initializes the tooltip
    * @private
@@ -6668,7 +6668,7 @@ function getTextPos(pos, width) {
  */
 
 
-/* harmony default export */ const transform = ({
+/* harmony default export */ var transform = ({
   getTranslate: function getTranslate(target, index) {
     index === void 0 && (index = 0);
     var x,
@@ -6709,7 +6709,7 @@ function getTextPos(pos, width) {
  */
 
 
-/* harmony default export */ const type = ({
+/* harmony default export */ var type = ({
   setTargetType: function setTargetType(targetIds, type) {
     var $$ = this,
         config = $$.config,
@@ -7273,7 +7273,7 @@ function loadConfig(config) {
  */
 
 
-/* harmony default export */ const chart = ({
+/* harmony default export */ var chart = ({
   /**
    * Resize the chart.
    * @function resize
@@ -7382,7 +7382,7 @@ function loadConfig(config) {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* harmony default export */ const api_color = ({
+/* harmony default export */ var api_color = ({
   /**
    * Get the color
    * @function color
@@ -7588,7 +7588,7 @@ extend(api_data_data, {
     return this.internal.getMinMaxData().max;
   }
 });
-/* harmony default export */ const api_data = ({
+/* harmony default export */ var api_data = ({
   data: api_data_data
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/export.ts
@@ -7641,7 +7641,7 @@ function nodeToSvgDataUrl(node, size) {
   return "data:image/svg+xml;base64," + b64EncodeUnicode(dataStr);
 }
 
-/* harmony default export */ const api_export = ({
+/* harmony default export */ var api_export = ({
   /**
    * Export chart as an image.
    * - **NOTE:**
@@ -7700,7 +7700,7 @@ function nodeToSvgDataUrl(node, size) {
  */
 
 
-/* harmony default export */ const api_focus = ({
+/* harmony default export */ var api_focus = ({
   /**
    * This API highlights specified targets and fade out the others.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
@@ -7848,7 +7848,7 @@ var legend_legend = {
     });
   }
 };
-/* harmony default export */ const api_legend = ({
+/* harmony default export */ var api_legend = ({
   legend: legend_legend
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/load.ts
@@ -7857,7 +7857,7 @@ var legend_legend = {
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ const api_load = ({
+/* harmony default export */ var api_load = ({
   /**
    * Load data to the chart.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
@@ -8029,7 +8029,7 @@ function showHide(show, targetIdsValue, options) {
   }), $$.state.toggling = !1;
 }
 
-/* harmony default export */ const show = ({
+/* harmony default export */ var show = ({
   /**
    * Show data series on chart
    * @function show
@@ -8219,7 +8219,7 @@ var tooltip_tooltip = {
     inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles && $$.unexpandCircles(), $$.unexpandBars && $$.unexpandBars();
   }
 };
-/* harmony default export */ const api_tooltip = ({
+/* harmony default export */ var api_tooltip = ({
   tooltip: tooltip_tooltip
 });
 ;// CONCATENATED MODULE: ./src/Chart/Chart.ts
@@ -8475,7 +8475,7 @@ var axis = {
     return undefined;
   }
 };
-/* harmony default export */ const api_axis = ({
+/* harmony default export */ var api_axis = ({
   axis: axis
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/category.ts
@@ -8483,7 +8483,7 @@ var axis = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* harmony default export */ const api_category = ({
+/* harmony default export */ var api_category = ({
   /**
    * Set specified category name on category axis.
    * @function category
@@ -8596,7 +8596,7 @@ extend(xgrids, {
     this.internal.removeGridLines(params, !0);
   }
 });
-/* harmony default export */ const grid_x = ({
+/* harmony default export */ var grid_x = ({
   xgrids: xgrids
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/grid.y.ts
@@ -8678,7 +8678,7 @@ extend(ygrids, {
     this.internal.removeGridLines(params, !1);
   }
 });
-/* harmony default export */ const grid_y = ({
+/* harmony default export */ var grid_y = ({
   ygrids: ygrids
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/group.ts
@@ -8687,7 +8687,7 @@ extend(ygrids, {
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ const group = ({
+/* harmony default export */ var group = ({
   /**
    * Update groups for the targets.
    * @function groups
@@ -8798,7 +8798,7 @@ extend(regions, {
     }), config.regions = regions) : config.regions = [], regions;
   }
 });
-/* harmony default export */ const api_regions = ({
+/* harmony default export */ var api_regions = ({
   regions: regions
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/x.ts
@@ -8807,7 +8807,7 @@ extend(regions, {
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ const x = ({
+/* harmony default export */ var x = ({
   /**
    * Get and set x values for the chart.
    * @function x
@@ -8864,7 +8864,7 @@ extend(regions, {
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ const flow = ({
+/* harmony default export */ var flow = ({
   /**
    * Flow data to the chart.<br><br>
    * By this API, you can append new data points to the chart.
@@ -9395,7 +9395,7 @@ var AxisRenderer = /*#__PURE__*/function () {
 
 
 
-/* harmony default export */ const Axis = ({
+/* harmony default export */ var Axis = ({
   getAxisInstance: function getAxisInstance() {
     return this.axis || new Axis_Axis(this);
   }
@@ -9972,7 +9972,7 @@ var Axis_Axis = /*#__PURE__*/function () {
  */
 
 
-/* harmony default export */ const eventrect = ({
+/* harmony default export */ var eventrect = ({
   /**
    * Initialize the area that detects the event.
    * Add a container for the zone that detects the event.
@@ -10276,7 +10276,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
 
 
 
-/* harmony default export */ const interactions_flow = ({
+/* harmony default export */ var interactions_flow = ({
   /**
    * Generate flow
    * @param {object} args option object
@@ -10411,7 +10411,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ const clip = ({
+/* harmony default export */ var clip = ({
   initClip: function initClip() {
     var $$ = this,
         clip = $$.state.clip;
@@ -10555,7 +10555,7 @@ function smoothLines(el, type) {
   });
 }
 
-/* harmony default export */ const grid = ({
+/* harmony default export */ var grid = ({
   hasGrid: function hasGrid() {
     var config = this.config;
     return ["x", "y"].some(function (v) {
@@ -10829,7 +10829,7 @@ function smoothLines(el, type) {
 
 
 
-/* harmony default export */ const region = ({
+/* harmony default export */ var region = ({
   initRegion: function initRegion() {
     var $$ = this,
         $el = $$.$el;
@@ -10898,7 +10898,7 @@ function smoothLines(el, type) {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* harmony default export */ const size_axis = ({
+/* harmony default export */ var size_axis = ({
   /**
    * Get Axis size according its position
    * @param {string} id Axis id value - x, y or y2
@@ -10999,7 +10999,7 @@ function smoothLines(el, type) {
 /**
  * Axis based chart data config options
  */
-/* harmony default export */ const data_axis = ({
+/* harmony default export */ var data_axis = ({
   /**
    * Specify the keys of the x values for each data.<br><br>
    * This option can be used if we want to show the data that has different x values.
@@ -11144,7 +11144,7 @@ function smoothLines(el, type) {
 /**
  * x Axis config options
  */
-/* harmony default export */ const axis_x = ({
+/* harmony default export */ var axis_x = ({
   /**
    * Set clip-path attribute for x axis element
    * @name axis․x․clipPath
@@ -11802,7 +11802,7 @@ function smoothLines(el, type) {
 /**
  * y Axis  config options
  */
-/* harmony default export */ const y = ({
+/* harmony default export */ var y = ({
   /**
    * Set clip-path attribute for y axis element
    * - **NOTE**: `clip-path` attribute for y Axis is set only when `axis.y.inner` option is true.
@@ -12296,7 +12296,7 @@ function smoothLines(el, type) {
 /**
  * y2 Axis  config options
  */
-/* harmony default export */ const y2 = ({
+/* harmony default export */ var y2 = ({
   /**
    * Show or hide y2 axis.
    * - **NOTE**:
@@ -12759,7 +12759,7 @@ function axis_objectSpread(target) { for (var source, i = 1; i < arguments.lengt
  * y Axis  config options
  */
 
-/* harmony default export */ const axis_axis = (axis_objectSpread(axis_objectSpread(axis_objectSpread({
+/* harmony default export */ var axis_axis = (axis_objectSpread(axis_objectSpread(axis_objectSpread({
   /**
    * Switch x and y axis position.
    * @name axis․rotated
@@ -12782,7 +12782,7 @@ function axis_objectSpread(target) { for (var source, i = 1; i < arguments.lengt
 /**
  * grid config options
  */
-/* harmony default export */ const common_grid = ({
+/* harmony default export */ var common_grid = ({
   /**
    * Set related options
    * @name grid
@@ -12899,7 +12899,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-/* harmony default export */ const arc = ({
+/* harmony default export */ var arc = ({
   initPie: function initPie() {
     var $$ = this,
         config = $$.config,
@@ -13373,7 +13373,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
     }), hasMultiArcGauge && text.attr("dy", "-.1em")), main.select("." + config_classes.chartArcsTitle).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
       var isFullCircle = config.gauge_fullCircle;
-      isFullCircle && text && text.attr("dy", "" + (hasMultiArcGauge ? 0 : Math.round(state.radius / 14))), arcs.select("." + config_classes.chartArcsGaugeUnit).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && (arcs.select("." + config_classes.chartArcsGaugeMin).attr("dx", -1 * (state.innerRadius + (state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !isFullCircle && arcs.select("." + config_classes.chartArcsGaugeMax).attr("dx", state.innerRadius + (state.radius - state.innerRadius) / 2 + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
+      isFullCircle && text && text.attr("dy", "" + (hasMultiArcGauge ? 0 : Math.round(state.radius / 14))), config.gauge_label_show && (arcs.select("." + config_classes.chartArcsGaugeUnit).attr("dy", (isFullCircle ? 1.5 : .75) + "em").text(config.gauge_units), arcs.select("." + config_classes.chartArcsGaugeMin).attr("dx", -1 * (state.innerRadius + (state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !isFullCircle && arcs.select("." + config_classes.chartArcsGaugeMax).attr("dx", state.innerRadius + (state.radius - state.innerRadius) / 2 + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
     }
   }
 });
@@ -13386,7 +13386,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-/* harmony default export */ const shape_area = ({
+/* harmony default export */ var shape_area = ({
   initArea: function initArea(mainLine) {
     var $$ = this,
         config = $$.config;
@@ -13506,7 +13506,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
  */
 
 
-/* harmony default export */ const bar = ({
+/* harmony default export */ var bar = ({
   initBar: function initBar() {
     var $el = this.$el;
     $el.bar = $el.main.select("." + config_classes.chart) // should positioned at the beginning of the shape node to not overlap others
@@ -13664,7 +13664,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-/* harmony default export */ const gauge = ({
+/* harmony default export */ var gauge = ({
   initGauge: function initGauge() {
     var $$ = this,
         config = $$.config,
@@ -13739,7 +13739,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
  */
 
 
-/* harmony default export */ const bubble = ({
+/* harmony default export */ var bubble = ({
   /**
    * Initializer
    * @private
@@ -13803,7 +13803,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-/* harmony default export */ const line = ({
+/* harmony default export */ var line = ({
   initLine: function initLine() {
     var $el = this.$el;
     $el.line = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartLines);
@@ -14018,7 +14018,7 @@ var getTransitionName = function () {
   return getRandom();
 };
 
-/* harmony default export */ const point = ({
+/* harmony default export */ var point = ({
   hasValidPointType: function hasValidPointType(type) {
     return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
   },
@@ -14410,7 +14410,7 @@ function getPosition(isClockwise, type, edge, pos, range, ratio) {
 
 
 var cacheKey = KEY.radarPoints;
-/* harmony default export */ const radar = ({
+/* harmony default export */ var radar = ({
   initRadar: function initRadar() {
     var $$ = this,
         config = $$.config,
@@ -14655,7 +14655,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * point config options
  */
-/* harmony default export */ const common_point = ({
+/* harmony default export */ var common_point = ({
   /**
    * Set point options
    * @name point
@@ -14757,7 +14757,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * area config options
  */
-/* harmony default export */ const Options_shape_area = ({
+/* harmony default export */ var Options_shape_area = ({
   /**
    * Set area options
    * @name area
@@ -14823,7 +14823,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * bar config options
  */
-/* harmony default export */ const shape_bar = ({
+/* harmony default export */ var shape_bar = ({
   /**
    * Set bar options
    * @name bar
@@ -14909,7 +14909,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * bubble config options
  */
-/* harmony default export */ const shape_bubble = ({
+/* harmony default export */ var shape_bubble = ({
   /**
    * Set bubble options
    * @name bubble
@@ -14945,7 +14945,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * line config options
  */
-/* harmony default export */ const shape_line = ({
+/* harmony default export */ var shape_line = ({
   /**
    * Set line options
    * @name line
@@ -14999,7 +14999,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * scatter config options
  */
-/* harmony default export */ const scatter = ({
+/* harmony default export */ var scatter = ({
   /**
    * Set scatter options
    * @name scatter
@@ -15036,7 +15036,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * x Axis config options
  */
-/* harmony default export */ const spline = ({
+/* harmony default export */ var spline = ({
   /**
    * Set spline options
    * - **Available interpolation type values:**
@@ -15083,7 +15083,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * donut config options
  */
-/* harmony default export */ const donut = ({
+/* harmony default export */ var donut = ({
   /**
    * Set donut options
    * @name donut
@@ -15166,7 +15166,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * gauge config options
  */
-/* harmony default export */ const shape_gauge = ({
+/* harmony default export */ var shape_gauge = ({
   /**
    * Set gauge options
    * @name gauge
@@ -15286,7 +15286,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * x Axis config options
  */
-/* harmony default export */ const pie = ({
+/* harmony default export */ var pie = ({
   /**
    * Set pie options
    * @name pie
@@ -15387,7 +15387,7 @@ var cacheKey = KEY.radarPoints;
 /**
  * x Axis config options
  */
-/* harmony default export */ const shape_radar = ({
+/* harmony default export */ var shape_radar = ({
   /**
    * Set radar options
    * - **NOTE:**
@@ -15609,7 +15609,7 @@ var _area = function area() {
 
 
 
-/* harmony default export */ const selection = ({
+/* harmony default export */ var selection = ({
   /**
    * Get selected data points.<br><br>
    * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
@@ -15869,7 +15869,7 @@ extend(zoom, {
     };
   }
 });
-/* harmony default export */ const api_zoom = ({
+/* harmony default export */ var api_zoom = ({
   zoom: zoom,
 
   /**
@@ -15911,7 +15911,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
  * Module used for data.selection.draggable option
  */
 
-/* harmony default export */ const drag = ({
+/* harmony default export */ var drag = ({
   /**
    * Called when dragging.
    * Data points can be selected.
@@ -16011,7 +16011,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
 
 
-/* harmony default export */ const internals_selection = (selection_objectSpread(selection_objectSpread({}, drag), {}, {
+/* harmony default export */ var internals_selection = (selection_objectSpread(selection_objectSpread({}, drag), {}, {
   /**
    * Select a point
    * @param {object} target Target point
@@ -16154,7 +16154,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
 
 
-/* harmony default export */ const subchart = ({
+/* harmony default export */ var subchart = ({
   /**
    * Initialize the brush.
    * @private
@@ -16425,7 +16425,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
 
 
-/* harmony default export */ const interactions_zoom = ({
+/* harmony default export */ var interactions_zoom = ({
   /**
    * Initialize zoom.
    * @private
@@ -16645,7 +16645,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 /**
  * data.selection config options
  */
-/* harmony default export */ const data_selection = ({
+/* harmony default export */ var data_selection = ({
   /**
    * Set data selection enabled<br><br>
    * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
@@ -16785,7 +16785,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 /**
  * x Axis config options
  */
-/* harmony default export */ const interaction_subchart = ({
+/* harmony default export */ var interaction_subchart = ({
   /**
    * Set subchart options.
    * - **NOTE:** Not supported for `bubble`, `scatter` and non-Axis based(pie, donut, gauge, radar) types.
@@ -16847,7 +16847,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 /**
  * zoom config options
  */
-/* harmony default export */ const interaction_zoom = ({
+/* harmony default export */ var interaction_zoom = ({
   /**
    * Set zoom options
    * @name zoom
@@ -16981,7 +16981,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.2.0",
+  version: "2.2.1",
 
   /**
    * Generate chart
@@ -17109,7 +17109,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.2.0
+ * @version 2.2.1
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
@@ -17128,79 +17128,79 @@ Object.keys(resolver_shape_namespaceObject).forEach(function (v) {
 
 /***/ }),
 /* 2 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
 
 /***/ }),
 /* 3 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
 
 /***/ }),
 /* 4 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__4__;
 
 /***/ }),
 /* 5 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__5__;
 
 /***/ }),
 /* 6 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__6__;
 
 /***/ }),
 /* 7 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__7__;
 
 /***/ }),
 /* 8 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
 
 /***/ }),
 /* 9 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 
 /***/ }),
 /* 10 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
 
 /***/ }),
 /* 11 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
 
 /***/ }),
 /* 12 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
 
 /***/ }),
 /* 13 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__13__;
 
 /***/ }),
 /* 14 */
-/***/ ((module) => {
+/***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
 
@@ -17232,32 +17232,32 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
 /******/ 	
 /************************************************************************/
 /******/ 	/* webpack/runtime/define property getters */
-/******/ 	(() => {
+/******/ 	!function() {
 /******/ 		// define getter functions for harmony exports
-/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 		__webpack_require__.d = function(exports, definition) {
 /******/ 			for(var key in definition) {
 /******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
 /******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
 /******/ 				}
 /******/ 			}
 /******/ 		};
-/******/ 	})();
+/******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
-/******/ 	(() => {
-/******/ 		__webpack_require__.o = (obj, prop) => Object.prototype.hasOwnProperty.call(obj, prop)
-/******/ 	})();
+/******/ 	!function() {
+/******/ 		__webpack_require__.o = function(obj, prop) { return Object.prototype.hasOwnProperty.call(obj, prop); }
+/******/ 	}();
 /******/ 	
 /******/ 	/* webpack/runtime/make namespace object */
-/******/ 	(() => {
+/******/ 	!function() {
 /******/ 		// define __esModule on exports
-/******/ 		__webpack_require__.r = (exports) => {
+/******/ 		__webpack_require__.r = function(exports) {
 /******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
 /******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
 /******/ 			}
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
-/******/ 	})();
+/******/ 	}();
 /******/ 	
 /************************************************************************/
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled

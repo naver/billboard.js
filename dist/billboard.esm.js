@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.2.0
+ * @version 2.2.1
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -15148,10 +15148,10 @@ var shapeArc = {
         if (hasGauge) {
             var isFullCircle = config.gauge_fullCircle;
             isFullCircle && text && text.attr("dy", "" + (hasMultiArcGauge ? 0 : Math.round(state.radius / 14)));
-            arcs.select("." + CLASS.chartArcsGaugeUnit)
-                .attr("dy", ".75em")
-                .text(config.gauge_label_show ? config.gauge_units : "");
             if (config.gauge_label_show) {
+                arcs.select("." + CLASS.chartArcsGaugeUnit)
+                    .attr("dy", (isFullCircle ? 1.5 : 0.75) + "em")
+                    .text(config.gauge_units);
                 arcs.select("." + CLASS.chartArcsGaugeMin)
                     .attr("dx", -1 * (state.innerRadius + ((state.radius - state.innerRadius) / (isFullCircle ? 1 : 2))) + "px")
                     .attr("dy", "1.2em")
@@ -19150,7 +19150,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.2.0
+ * @version 2.2.1
  */
 var bb = {
     /**
@@ -19160,7 +19160,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.2.0",
+    version: "2.2.1",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
