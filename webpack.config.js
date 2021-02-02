@@ -36,6 +36,8 @@ const config = {
 	resolve: {
 		extensions: [".ts", ".js"]
 	},
+	// https://webpack.js.org/migrate/5/#need-to-support-an-older-browser-like-ie-11
+	target: ["web", "es5"],
 	module: {
 		rules: [
 			{

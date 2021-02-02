@@ -763,8 +763,8 @@ describe("SHAPE GAUGE", () => {
         });
 	});
 	
-	describe("Max text value", () => {
-        it("max ", () => {
+	describe("Text value & positioning", () => {
+        it("check max text value ", () => {
 			const args = {
                 data: {
 					columns: [
@@ -783,6 +783,27 @@ describe("SHAPE GAUGE", () => {
 			expect(args.gauge.max).to.be.below(maxValue);
 			expect(maxValue).to.be.equal(args.data.columns[0][1]);
 			expect(chart.config("gauge.max")).to.be.equal(maxValue);
-        });
+		});
+		
+		it("unit text position shouldn't be overlapped with value", () => {
+			const args = {
+				data: {
+					columns: [
+						["data", 91.4]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					fullCircle: true,
+					units: "units"
+				}
+            };
+			const chart = util.generate(args);
+			
+			const valueRect = chart.$.text.texts.node().getBoundingClientRect();
+			const unitRect = chart.$.main.select(`.${CLASS.chartArcsGaugeUnit}`).node().getBoundingClientRect();
+
+			expect(unitRect.y).to.be.greaterThan(valueRect.y + valueRect.height);
+		});
     });
 });

@@ -1,3 +1,11 @@
+## [2.2.1](https://github.com/naver/billboard.js/compare/2.2.0...2.2.1) (2021-02-01)
+
+
+### Bug Fixes
+
+* **build:** suport for legacy browser ([594d18e](https://github.com/naver/billboard.js/commit/594d18e4aa201c4ba5b33b22640c0ab035992503)), closes [/webpack.js.org/migrate/5/#need-to-support-an-older-browser-like-ie-11](https://github.com//webpack.js.org/migrate/5//issues/need-to-support-an-older-browser-like-ie-11) [#1913](https://github.com/naver/billboard.js/issues/1913)
+* **gauge:** units position if fullCircle ([62cd79e](https://github.com/naver/billboard.js/commit/62cd79edd10c5628351bec026288c48e3f822856)), closes [#1914](https://github.com/naver/billboard.js/issues/1914)
+
 # [2.2.0](https://github.com/naver/billboard.js/compare/2.1.4...2.2.0) (2021-01-26)
 
 
