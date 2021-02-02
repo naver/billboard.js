@@ -12,7 +12,8 @@ const config = {
 		],
 		dev: {
 			publicPath: "/dist"
-		}
+		},
+		host: "127.0.0.1"
 	},
 	devtool: "cheap-module-source-map",
 	module: {
