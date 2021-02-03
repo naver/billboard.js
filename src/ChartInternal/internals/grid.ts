@@ -64,7 +64,7 @@ export default {
 		const $$ = this;
 
 		$$.hasGrid() && $$.initGridLines();
-		$$.config.interaction_enabled && $$.initFocusGrid();
+		$$.initFocusGrid();
 	},
 
 	initGridLines(): void {
@@ -334,7 +334,7 @@ export default {
 		config.grid_y_show &&
 			grid.append("g").attr("class", CLASS.ygrids);
 
-		if (config.grid_focus_show) {
+		if (config.interaction_enabled && config.grid_focus_show) {
 			grid.append("g")
 				.attr("class", CLASS.xgridFocus)
 				.append("line")
