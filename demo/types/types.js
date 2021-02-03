@@ -20,9 +20,11 @@ const Types = {
         "gauge-stack-data",
         "grouped-bar",
         "pie-inner-radius",
+        "pie-outer-radius",
         "combination",
         "multi-axes",
-        "gauge-multi"
+        "gauge-multi",
+        "gauge-arc-length"
     ],
     getRandom(min = 100, max = 1000) {
         return Math.random() * (max - min) + min;
@@ -95,6 +97,7 @@ const Types = {
             },
             pie: {
                 innerRadius: {},
+                outerRadius: {},
                 label: {}
             },
             radar: {
@@ -162,6 +165,15 @@ const Types = {
                     data1: 20,
                     data2: 0
                 };
+
+            } else if (type === "pie-outer-radius") {
+                type = "pie";
+                options.pie.label.show = false;
+                options.pie.outerRadius = {
+                    data0: 50,
+                    data1: 65,
+                    data2: 35
+                };
                 
             } else if (type === "combination") {
                 options.data.types = {
@@ -189,14 +201,37 @@ const Types = {
             } else if (type === "gauge-multi") {
                 type = "gauge";
 
-                options.gauge.type = "multi";
-                options.gauge.title = "Multi";
                 options.data.columns = [
                     ["data0", 25],
                     ["data1", 50],
                     ["data2", 75]
                 ];
-                options.gauge.label.show = true;
+
+                options.gauge = {
+                    type: "multi",
+                    title: "Multi",
+                    label: {
+                        show: true
+                    }
+                };
+
+            } else if (type === "gauge-arc-length") {
+                type = "gauge";
+
+                options.size = { height: 170};
+                options.padding = {
+                    top: 15, bottom: 0, left: 0, right: 0
+                };
+
+                options.data.labels = false;
+                options.gauge = {
+                    type: "multi",
+                    fullCircle: true,
+                    arcLength: 75,
+                    label: {
+                        show: false
+                    }
+                };
             }
 
             options.data.type = type;
