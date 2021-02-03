@@ -818,7 +818,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("Focus grid line and event rect shouldn't be generated", () => {
-				expect(chart.$.grid.main).to.be.null;
+				expect(chart.$.grid.main.select(`.${CLASS.xgridFocus}`).empty()).to.be.true;
 				expect(chart.$.main.select(`.${CLASS.eventRects}`).empty()).to.be.true;
 			});
 
