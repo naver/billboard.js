@@ -531,6 +531,37 @@ describe("GRID", function() {
 		});
 	});
 
+	describe("Grid x/y", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250, 120, 200]
+					],
+					type: "line"
+				},
+				grid: {
+					x: {
+					  show: true
+					},
+					y: {
+					  show: true
+					}
+				},
+				interaction: {
+					enabled: false
+				}
+			};
+		});
+
+		it("should generate grid lines when interaction is disabled", () => {
+			const {grid} = chart.$;
+
+			expect(grid.x.size()).to.be.equal(chart.data.values("sample").length);
+			expect(grid.y.size()).to.be.equal(9);
+		});
+	});
+
 	describe("Focus grid lines", () => {
 		before(() => {
 			args = {
@@ -796,7 +827,7 @@ describe("GRID", function() {
 					clientY: 150
 				}, chart);
 
-				resolve();
+				resolve(true);
 			}).then(() => {
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
@@ -805,7 +836,7 @@ describe("GRID", function() {
 							clientY: 150
 						}, chart);
 
-						resolve();
+						resolve(true);
 					}, 500);
 				});  
 			}).then(() => {
