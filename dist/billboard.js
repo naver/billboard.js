@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.1-nightly-20210203012144
+ * @version 2.2.1-nightly-20210204011456
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10564,7 +10564,7 @@ function smoothLines(el, type) {
   },
   initGrid: function initGrid() {
     var $$ = this;
-    $$.hasGrid() && $$.initGridLines(), $$.config.interaction_enabled && $$.initFocusGrid();
+    $$.hasGrid() && $$.initGridLines(), $$.initFocusGrid();
   },
   initGridLines: function initGridLines() {
     var $$ = this,
@@ -10706,7 +10706,7 @@ function smoothLines(el, type) {
         isFront = config.grid_front,
         className = "." + config_classes[isFront && $el.gridLines.main ? "gridLines" : "chart"] + (isFront ? " + *" : ""),
         grid = $el.main.insert("g", className).attr("clip-path", clip.pathGrid).attr("class", config_classes.grid);
-    $el.grid.main = grid, config.grid_x_show && grid.append("g").attr("class", config_classes.xgrids), config.grid_y_show && grid.append("g").attr("class", config_classes.ygrids), config.grid_focus_show && (grid.append("g").attr("class", config_classes.xgridFocus).append("line").attr("class", config_classes.xgridFocus), config.grid_focus_y && !config.tooltip_grouped && grid.append("g").attr("class", config_classes.ygridFocus).append("line").attr("class", config_classes.ygridFocus));
+    $el.grid.main = grid, config.grid_x_show && grid.append("g").attr("class", config_classes.xgrids), config.grid_y_show && grid.append("g").attr("class", config_classes.ygrids), config.interaction_enabled && config.grid_focus_show && (grid.append("g").attr("class", config_classes.xgridFocus).append("line").attr("class", config_classes.xgridFocus), config.grid_focus_y && !config.tooltip_grouped && grid.append("g").attr("class", config_classes.ygridFocus).append("line").attr("class", config_classes.ygridFocus));
   },
 
   /**

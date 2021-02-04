@@ -12091,7 +12091,7 @@ var grid = {
     initGrid: function () {
         var $$ = this;
         $$.hasGrid() && $$.initGridLines();
-        $$.config.interaction_enabled && $$.initFocusGrid();
+        $$.initFocusGrid();
     },
     initGridLines: function () {
         var $$ = this;
@@ -12298,7 +12298,7 @@ var grid = {
             grid.append("g").attr("class", CLASS.xgrids);
         config.grid_y_show &&
             grid.append("g").attr("class", CLASS.ygrids);
-        if (config.grid_focus_show) {
+        if (config.interaction_enabled && config.grid_focus_show) {
             grid.append("g")
                 .attr("class", CLASS.xgridFocus)
                 .append("line")
