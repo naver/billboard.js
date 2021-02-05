@@ -1,3 +1,11 @@
+## [2.2.2](https://github.com/naver/billboard.js/compare/2.2.1...2.2.2) (2021-02-05)
+
+
+### Bug Fixes
+
+* **grid:** fix rendering when interaction is disabled ([d194a83](https://github.com/naver/billboard.js/commit/d194a836893cedb7e3402379abd88fd078c31fe9)), closes [#1924](https://github.com/naver/billboard.js/issues/1924)
+* **shape:** retrieve raw x scale value ([38ac0a7](https://github.com/naver/billboard.js/commit/38ac0a7262df60824de04917275ee5080422055e)), closes [#1927](https://github.com/naver/billboard.js/issues/1927)
+
 ## [2.2.1](https://github.com/naver/billboard.js/compare/2.2.0...2.2.1) (2021-02-01)
 
 
