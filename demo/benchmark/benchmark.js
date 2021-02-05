@@ -6,8 +6,8 @@ window.bench = {
     $el: {
         version: document.getElementById("version"),
         type: document.getElementById("type"),
-        matrix1: document.getElementById("matrix1"),
-        matrix2: document.getElementById("matrix2"),
+        dataSeries: document.getElementById("data-series"),
+        dataSize: document.getElementById("data-size"),
         transition: document.getElementById("transition")
     },
     init() {
@@ -21,12 +21,12 @@ window.bench = {
     },
     getData() {
         const data = [];
-        const matrix = [this.$el.matrix1.value, this.$el.matrix2.value];
+        const matrix = [this.$el.dataSeries.value, this.$el.dataSize.value];
     
-        for (let i = 0; i < matrix[1]; i++) {
+        for (let i = 0; i < matrix[0]; i++) {
             const d = [];
     
-            for (let j = 0; j < matrix[0]; j++) {
+            for (let j = 0; j < matrix[1]; j++) {
                 if (j === 0) {
                     d.push(`data${i}`);
                 } else {
@@ -60,6 +60,12 @@ window.bench = {
         document.head.appendChild(this.billboard);
     },
     generate: function(type) {
+        if (!window.bb) {
+            alert("Select the desired version fisrt.");
+            this.$el.version.focus();
+            return;
+        }
+
         this.chart = bb.generate({
             data: {
                 columns: this.getData(),
@@ -70,10 +76,22 @@ window.bench = {
             },
             legend: {
               show: false
+            },
+            point: {
+                focus: {
+                    only: true
+                },
+            },
+            axis: {
+                x: {
+                    tick: {
+                        show: false
+                    }
+                }
             }
         });
 
-        this[type]();
+        type && this[type]();
     },
     load: function() {
         const ctx = this;
