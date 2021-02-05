@@ -214,12 +214,14 @@ export default {
 
 			posY -= (y0 - offset);
 
+			const startPosX = posX + width;
+
 			// 4 points that make a bar
 			return [
 				[posX, offset],
 				[posX, posY],
-				[posX + width, posY],
-				[posX + width, offset]
+				[startPosX, posY],
+				[startPosX, offset]
 			];
 		};
 	},
