@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.1-nightly-20210204011456
+ * @version 2.2.2-nightly-20210206011415
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5569,7 +5569,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
           x = 0;
 
       if (notEmpty(d.x)) {
-        var xPos = currScale(d.x);
+        var xPos = currScale(d.x, !0);
         x = halfWidth ? xPos - (offset[d.id] || offset._$width) + offset._$total.slice(0, index + 1).reduce(sum) - halfWidth : xPos - (isNumber(offset) ? offset : offset._$width) * (targetsNum / 2 - index);
       } // adjust x position for bar.padding optionq
 
@@ -13635,8 +13635,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
           width = isNumber(barW) ? barW : barW[d.id] || barW._$width,
           posX = barX(d),
           posY = barY(d);
-      // 4 points that make a bar
-      return config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0), posY -= y0 - offset, [[posX, offset], [posX, posY], [posX + width, posY], [posX + width, offset]];
+      config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0), posY -= y0 - offset;
+      var startPosX = posX + width; // 4 points that make a bar
+
+      return [[posX, offset], [posX, posY], [startPosX, posY], [startPosX, offset]];
     };
   },
   isWithinBar: function isWithinBar(that) {
@@ -16981,7 +16983,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.2.1",
+  version: "2.2.2",
 
   /**
    * Generate chart
@@ -17109,7 +17111,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.2.1
+ * @version 2.2.2
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

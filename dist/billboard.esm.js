@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.2.1
+ * @version 2.2.2
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -5888,7 +5888,7 @@ var shape = {
             var targetsNum = (ind.__max__ || 0) + 1;
             var x = 0;
             if (notEmpty(d.x)) {
-                var xPos = currScale(d.x);
+                var xPos = currScale(d.x, true);
                 if (halfWidth) {
                     x = xPos - (offset[d.id] || offset._$width) +
                         offset._$total.slice(0, index + 1).reduce(sum) -
@@ -15488,12 +15488,13 @@ var shapeBar = {
                 posY = y0;
             }
             posY -= (y0 - offset);
+            var startPosX = posX + width;
             // 4 points that make a bar
             return [
                 [posX, offset],
                 [posX, posY],
-                [posX + width, posY],
-                [posX + width, offset]
+                [startPosX, posY],
+                [startPosX, offset]
             ];
         };
     },
@@ -19150,7 +19151,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.2.1
+ * @version 2.2.2
  */
 var bb = {
     /**
@@ -19160,7 +19161,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.2.1",
+    version: "2.2.2",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
