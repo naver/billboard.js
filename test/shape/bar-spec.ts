@@ -8,6 +8,7 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import State from "../../src/config/Store/State";
 
 describe("SHAPE BAR", () => {
 	let chart;
@@ -158,7 +159,9 @@ describe("SHAPE BAR", () => {
 			it("should not be within bar", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.not.be.ok;
 						done();
 					});
@@ -172,7 +175,9 @@ describe("SHAPE BAR", () => {
 			it("should be within bar", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
 					});
@@ -186,7 +191,9 @@ describe("SHAPE BAR", () => {
 			it("should not be within bar of negative value", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.not.be.ok;
 						done();
 					});
@@ -200,7 +207,9 @@ describe("SHAPE BAR", () => {
 			it("should be within bar of negative value", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
 					});
@@ -220,7 +229,9 @@ describe("SHAPE BAR", () => {
 			it("should not be within bar", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.not.be.ok;
 						done();
 					});
@@ -234,7 +245,9 @@ describe("SHAPE BAR", () => {
 			it("should be within bar", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
 					});
@@ -248,7 +261,9 @@ describe("SHAPE BAR", () => {
 			it("should be within bar of negative value", done => {
 				const internal = chart.internal;
 				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
-					.on("click", function() {
+					.on("click", function(event) {
+						internal.state.event = event;
+
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
 					});
@@ -320,15 +335,15 @@ describe("SHAPE BAR", () => {
 			};
 		});
 
-		it("Bars should be positined correctly", () => {
+		it("Bars should be positioned correctly", () => {
 			const expectedPath = [
-				"M147.03333333333333,426V39.63636363636365 H166.96666666666667 V426z",
-				"M80.06666666666666,426V232.8181818181818 H100 V426z",
-				"M180.06666666666666,426V232.8181818181818 H200 V426z",
-				"M479.06666666666666,426V232.8181818181818 H499 V426z",
-				"M100,426V39.63636363636365 H119.93333333333334 V426z",
-				"M200,426V39.63636363636365 H219.93333333333334 V426z",
-				"M499,426V39.63636363636365 H518.9333333333334 V426z"
+				"M154.46904761904761,426V39.63636363636365 H158.76904761904763 V426z",
+				"M95.36666666666666,426V232.8181818181818 H99.66666666666666 V426z",
+				"M195.0333333333333,426V232.8181818181818 H199.33333333333331 V426z",
+				"M494.03333333333336,426V232.8181818181818 H498.33333333333337 V426z",
+				"M99.66666666666666,426V39.63636363636365 H103.96666666666665 V426z",
+				"M199.33333333333331,426V39.63636363636365 H203.63333333333333 V426z",
+				"M498.33333333333337,426V39.63636363636365 H502.6333333333334 V426z"
 			];
 
 			chart.$.bar.bars.each(function() {
@@ -344,13 +359,13 @@ describe("SHAPE BAR", () => {
 
 		it("Grouped bars should be positined correctly", () => {
 			const expectedPath = [
-				"M137.06666666666666,426V168.4242424242424 H176.93333333333334 V426z",
-				"M80.06666666666666,426V297.21212121212125 H119.93333333333334 V426z",
-				"M180.06666666666666,426V297.21212121212125 H219.93333333333334 V426z",
-				"M479.06666666666666,426V297.21212121212125 H518.9333333333334 V426z",
-				"M80.06666666666666,297.21212121212125V39.636363636363654 H119.93333333333334 V297.21212121212125z",
-				"M180.06666666666666,297.21212121212125V39.636363636363654 H219.93333333333334 V297.21212121212125z",
-				"M479.06666666666666,297.21212121212125V39.636363636363654 H518.9333333333334 V297.21212121212125z"
+				"M152.3190476190476,426V168.4242424242424 H160.9190476190476 V426z",
+				"M95.36666666666666,426V297.21212121212125 H103.96666666666665 V426z",
+				"M195.0333333333333,426V297.21212121212125 H203.6333333333333 V426z",
+				"M494.03333333333336,426V297.21212121212125 H502.6333333333334 V426z",
+				"M95.36666666666666,297.21212121212125V39.636363636363654 H103.96666666666665 V297.21212121212125z",
+				"M195.0333333333333,297.21212121212125V39.636363636363654 H203.6333333333333 V297.21212121212125z",
+				"M494.03333333333336,297.21212121212125V39.636363636363654 H502.6333333333334 V297.21212121212125z"
 			];
 
 			chart.$.bar.bars.each(function() {
@@ -424,8 +439,8 @@ describe("SHAPE BAR", () => {
 
 		it("check the rotated axis bar radius", () => {
 			checkRadius([
-				"M131.11111111111111,161.5 H39.166666666666664 a10,10 1 0 0 -10,10 V166.5 a10,10 1 0 0 10,10 H131.11111111111111z",
-				"M131.11111111111111,179.5 H285 a10,10 0 0 1 10,10 V184.5 a10,10 0 0 1 -10,10 H131.11111111111111z"
+				"M131.11111111111111,161.16666666666669H39.166666666666664 a10,10 1 0 0 -10,10V166.16666666666669 a10,10 1 0 0 10,10H131.11111111111111z",
+				"M131.11111111111111,179.16666666666669H285 a10,10 0 0 1 10,10V184.16666666666669 a10,10 0 0 1 -10,10H131.11111111111111z"
 			]);
 		});
 
@@ -526,8 +541,8 @@ describe("SHAPE BAR", () => {
 
 		it("check for the correct bar width & position", () => {
 			const expectedPath = [
-				"M75.25,426V39.63636363636365 H224.75 V426z",
-				"M374.25,426V221.5747955747956 H523.75 V426z"
+				"M74.75,426V39.63636363636365 H224.25 V426z",
+				"M373.75,426V221.5747955747956 H523.25 V426z"
 			];
 
 			chart.$.bar.bars.each(function(d, i) {
@@ -579,6 +594,42 @@ describe("SHAPE BAR", () => {
 		it("check bar path node position: rotated Axis", () => {
 			checkBarPathPos("x");
 		});
+
+		it("set options", () => {
+			args = {
+				size: {width: 82},
+			  data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150, 30, 50, 60, 81]
+				],
+				type: "bar"
+			  },
+			  bar: {
+				width: {
+				  ratio: 0.85
+				}
+			  }
+			};
+		});
+
+		it("bar's x position interval should be same", () => {
+			const interval = [];
+			let lastX = 0;
+
+			chart.$.bar.bars.each(function(d, i) {
+				const x = this.getBoundingClientRect().x;
+
+				if (i > 0) {
+					interval.push(Math.ceil(x - lastX));
+				}
+
+				lastX = x;
+			});
+
+			expect(
+				interval.every((v, i, arr) => (i > 0 ? arr[i - 1] === v : true))
+			).to.be.true;
+		})
 	});
 
 	describe("bar sensitivity", () => {
@@ -690,6 +741,55 @@ describe("SHAPE BAR", () => {
 				checkLabel([-30, -230]);
 				done();
 			}, 350);
+		});
+	});
+
+	describe("bar width on zoom", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "bar"
+				},
+				zoom: {
+					enabled: true
+				}
+			};
+		});
+
+		it("should maintain width size after toggle", done => {
+			const zoomBarWidth = [];
+
+			// when
+			chart.zoom([1, 3]);
+
+			new Promise((resolve, reject) => {
+				setTimeout(() => {
+					chart.$.bar.bars.each(function() {
+						zoomBarWidth.push(parseInt(this.getBoundingClientRect().width));
+					});
+
+					resolve(true);
+				}, 300);
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					chart.hide();
+					setTimeout(resolve, 300);
+				});
+			}).then((msg) => {
+				return new Promise((resolve, reject) => {
+					chart.show();
+					setTimeout(resolve, 300);
+				});
+			}).then(() => {
+				chart.$.bar.bars.each(function(d, i) {
+					expect(parseInt(this.getBoundingClientRect().width)).to.be.equal(zoomBarWidth[i]);
+				});
+
+				done();
+			});
 		});
 	});
 });

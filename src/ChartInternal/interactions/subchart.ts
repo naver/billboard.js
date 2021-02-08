@@ -2,10 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	select as d3Select,
-	event as d3Event
-} from "d3-selection";
+import {select as d3Select} from "d3-selection";
 import {
 	brushX as d3BrushX,
 	brushY as d3BrushY,
@@ -360,14 +357,14 @@ export default {
 	 */
 	redrawSubchart(withSubchart: boolean, duration: number, shape): void {
 		const $$ = this;
-		const {config, $el: {subchart: {main}}} = $$;
+		const {config, $el: {subchart: {main}}, state} = $$;
 
 		main.style("visibility", config.subchart_show ? "visible" : "hidden");
 
 		// subchart
 		if (config.subchart_show) {
 			// reflect main chart to extent on subchart if zoomed
-			if (d3Event && d3Event.type === "zoom") {
+			if (state.event && state.event.type === "zoom") {
 				$$.brush.update();
 			}
 

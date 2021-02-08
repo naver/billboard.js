@@ -170,7 +170,7 @@ export default {
 			let x = 0;
 
 			if (notEmpty(d.x)) {
-				const xPos = currScale(d.x);
+				const xPos = currScale(d.x, true);
 
 				if (halfWidth) {
 					x = xPos - (offset[d.id] || offset._$width) +

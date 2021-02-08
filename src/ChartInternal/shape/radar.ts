@@ -2,10 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	select as d3Select,
-	event as d3Event
-} from "d3-selection";
+import {select as d3Select} from "d3-selection";
 import {KEY} from "../../module/Cache";
 import CLASS from "../../config/classes";
 import {getMinMax, getRange, isDefined, isEmpty, isNumber, isUndefined, setTextValue, toArray} from "../../module/util";
@@ -298,13 +295,14 @@ export default {
 
 	bindEvent(): void {
 		const $$ = this;
-		const {config, state: {inputType, transiting}, $el: {radar, svg}} = $$;
+		const {config, state, $el: {radar, svg}} = $$;
 		const focusOnly = config.point_focus_only;
+		const {inputType, transiting} = state;
 
 		if (config.interaction_enabled) {
 			const isMouse = inputType === "mouse";
-			const getIndex = () => {
-				let target = d3Event.target;
+			const getIndex = event => {
+				let target = event.target;
 
 				// in case of multilined axis text
 				if (/tspan/i.test(target.tagName)) {
@@ -315,8 +313,8 @@ export default {
 
 				return d && Object.keys(d).length === 1 ? d.index : undefined;
 			};
-			const hide = () => {
-				const index = getIndex();
+			const hide = event => {
+				const index = getIndex(event);
 				const noIndex = isUndefined(index);
 
 				if (isMouse || noIndex) {
@@ -335,12 +333,13 @@ export default {
 			};
 
 			radar.axes.selectAll("text")
-				.on(isMouse ? "mouseover " : "touchstart", () => {
+				.on(isMouse ? "mouseover " : "touchstart", event => {
 					if (transiting) { // skip while transiting
 						return;
 					}
 
-					const index = getIndex();
+					state.event = event;
+					const index = getIndex(event);
 
 					$$.selectRectForSingle(svg.node(), null, index);
 					isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);

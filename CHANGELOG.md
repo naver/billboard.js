@@ -1,85 +1,53 @@
-# [2.2.0-next.7](https://github.com/naver/billboard.js/compare/2.2.0-next.6...2.2.0-next.7) (2021-01-20)
+## [2.2.2](https://github.com/naver/billboard.js/compare/2.2.1...2.2.2) (2021-02-05)
+
+
+### Bug Fixes
+
+* **grid:** fix rendering when interaction is disabled ([d194a83](https://github.com/naver/billboard.js/commit/d194a836893cedb7e3402379abd88fd078c31fe9)), closes [#1924](https://github.com/naver/billboard.js/issues/1924)
+* **shape:** retrieve raw x scale value ([38ac0a7](https://github.com/naver/billboard.js/commit/38ac0a7262df60824de04917275ee5080422055e)), closes [#1927](https://github.com/naver/billboard.js/issues/1927)
+
+## [2.2.1](https://github.com/naver/billboard.js/compare/2.2.0...2.2.1) (2021-02-01)
+
+
+### Bug Fixes
+
+* **build:** suport for legacy browser ([594d18e](https://github.com/naver/billboard.js/commit/594d18e4aa201c4ba5b33b22640c0ab035992503)), closes [/webpack.js.org/migrate/5/#need-to-support-an-older-browser-like-ie-11](https://github.com//webpack.js.org/migrate/5//issues/need-to-support-an-older-browser-like-ie-11) [#1913](https://github.com/naver/billboard.js/issues/1913)
+* **gauge:** units position if fullCircle ([62cd79e](https://github.com/naver/billboard.js/commit/62cd79edd10c5628351bec026288c48e3f822856)), closes [#1914](https://github.com/naver/billboard.js/issues/1914)
+
+# [2.2.0](https://github.com/naver/billboard.js/compare/2.1.4...2.2.0) (2021-01-26)
 
 
 ### Bug Fixes
 
 * **api:** fix incorrect legend text positioning ([f1ede3f](https://github.com/naver/billboard.js/commit/f1ede3f48b4802b0a1b7ec11776fae20fce18840)), closes [#1888](https://github.com/naver/billboard.js/issues/1888)
 * **api:** fix zoom for timesries axis ([0421a50](https://github.com/naver/billboard.js/commit/0421a50ca306738fa76a56fe9694c65141ea54fe)), closes [#1868](https://github.com/naver/billboard.js/issues/1868)
-* **point:** fix usePoint defs id value ([6df4653](https://github.com/naver/billboard.js/commit/6df465310e9862704a5a423cc2526c0312c1a29e)), closes [#1887](https://github.com/naver/billboard.js/issues/1887)
-* **text:** data labels are working in Internet Explorer again ([865224e](https://github.com/naver/billboard.js/commit/865224e77f02b0542e8d0acf3d2bfef219cf7702)), closes [#1877](https://github.com/naver/billboard.js/issues/1877)
-
-
-### Features
-
-* **api:** make return values for axis.labels() ([efa5174](https://github.com/naver/billboard.js/commit/efa517417ec2900cb00a94adced61ee743449db4)), closes [#1865](https://github.com/naver/billboard.js/issues/1865)
-
-# [2.2.0-next.6](https://github.com/naver/billboard.js/compare/2.2.0-next.5...2.2.0-next.6) (2021-01-13)
-
-
-### Bug Fixes
-
+* **arc:** fix setting color value ([fad9e86](https://github.com/naver/billboard.js/commit/fad9e86fa172cb14a2cc6f2fb8418e72a5932192)), closes [#1857](https://github.com/naver/billboard.js/issues/1857) [#1847](https://github.com/naver/billboard.js/issues/1847)
+* **axis:** fix incorrect tick interval calculation ([1a96f3e](https://github.com/naver/billboard.js/commit/1a96f3e6a2a98cea3faf163851a1cbf46a295b72)), closes [#1896](https://github.com/naver/billboard.js/issues/1896)
+* **axis:** rotated horizontal xAxisHeight is calculated correctly after loading new data ([ef2754f](https://github.com/naver/billboard.js/commit/ef2754fb71e7597fa1f0c6c61fc4e4bf281904fb)), closes [#1786](https://github.com/naver/billboard.js/issues/1786) [#1787](https://github.com/naver/billboard.js/issues/1787)
+* **bar:** fix bar width on zoom ([25e987a](https://github.com/naver/billboard.js/commit/25e987aae1ca9ee704f39109a3586e4f49d0f5c7)), closes [#1907](https://github.com/naver/billboard.js/issues/1907)
+* **bar:** fix bar width rendering for 'total' data key ([eacaecb](https://github.com/naver/billboard.js/commit/eacaecb855e156b6107fe1564da5c6a941ba4b65)), closes [#1818](https://github.com/naver/billboard.js/issues/1818)
+* **browser:** fix referencing global order ([8f84cb3](https://github.com/naver/billboard.js/commit/8f84cb326b6c6b0dc341ae65b9cdcdae53e7e9b0)), closes [#1778](https://github.com/naver/billboard.js/issues/1778)
+* **browser:** fix retrieving global ([3474ac0](https://github.com/naver/billboard.js/commit/3474ac06ecf7676312b35a18e3f985816339e029)), closes [#1826](https://github.com/naver/billboard.js/issues/1826)
+* **color:** fix color callback mismatch ([86ef214](https://github.com/naver/billboard.js/commit/86ef214a2daf22fb7e4058644776c9d1101e7350)), closes [#1847](https://github.com/naver/billboard.js/issues/1847)
 * **data:** fix data.order to work for arc types ([3a716a0](https://github.com/naver/billboard.js/commit/3a716a0984364291fd0b7dd90edb268721faf7d0)), closes [#1863](https://github.com/naver/billboard.js/issues/1863)
 * **eventrect:** fix resizing event rect element after .load() ([12bf547](https://github.com/naver/billboard.js/commit/12bf547c131e69333f02337e2492a4ebb10b87b9)), closes [#1864](https://github.com/naver/billboard.js/issues/1864)
+* **eventRect:** fix data.onclick work for scatter/bubble ([109c87d](https://github.com/naver/billboard.js/commit/109c87dc09dc1daa274ade5bf2806ad3716d3135)), closes [#1795](https://github.com/naver/billboard.js/issues/1795)
+* **point:** fix usePoint defs id value ([6df4653](https://github.com/naver/billboard.js/commit/6df465310e9862704a5a423cc2526c0312c1a29e)), closes [#1887](https://github.com/naver/billboard.js/issues/1887)
 * **radar:** fix data label text position ([c69d674](https://github.com/naver/billboard.js/commit/c69d674e5ff9d7d3c0e0678fab74c5275bbe92af)), closes [#1871](https://github.com/naver/billboard.js/issues/1871)
+* **text:** data labels are working in Internet Explorer again ([865224e](https://github.com/naver/billboard.js/commit/865224e77f02b0542e8d0acf3d2bfef219cf7702)), closes [#1877](https://github.com/naver/billboard.js/issues/1877)
 * **tooltip:** fix arc's tooltip interaction ([a8586a3](https://github.com/naver/billboard.js/commit/a8586a3ec2234a11d1b531b1a22908b275d57a08)), closes [#1859](https://github.com/naver/billboard.js/issues/1859)
-
-# [2.2.0-next.5](https://github.com/naver/billboard.js/compare/2.2.0-next.4...2.2.0-next.5) (2021-01-09)
-
-
-### Bug Fixes
-
-* **arc:** fix setting color value ([fad9e86](https://github.com/naver/billboard.js/commit/fad9e86fa172cb14a2cc6f2fb8418e72a5932192)), closes [#1857](https://github.com/naver/billboard.js/issues/1857) [#1847](https://github.com/naver/billboard.js/issues/1847)
-
-# [2.2.0-next.4](https://github.com/naver/billboard.js/compare/2.2.0-next.3...2.2.0-next.4) (2021-01-08)
-
-
-### Bug Fixes
-
-* **color:** fix color callback mismatch ([86ef214](https://github.com/naver/billboard.js/commit/86ef214a2daf22fb7e4058644776c9d1101e7350)), closes [#1847](https://github.com/naver/billboard.js/issues/1847)
 * **types:** fix .load() data type ([7108e7b](https://github.com/naver/billboard.js/commit/7108e7b0e391c41067aae850ce547376096be12c)), closes [#1848](https://github.com/naver/billboard.js/issues/1848)
 
 
 ### Features
 
-* **gauge:** added support for drawing gauge from 'startingAngle' to 'arcLength' ([25954ad](https://github.com/naver/billboard.js/commit/25954ad5d4db2e4207cc5614e9e3b477e537a184)), closes [#1633](https://github.com/naver/billboard.js/issues/1633) [#1803](https://github.com/naver/billboard.js/issues/1803) [#1849](https://github.com/naver/billboard.js/issues/1849)
-
-# [2.2.0-next.3](https://github.com/naver/billboard.js/compare/2.2.0-next.2...2.2.0-next.3) (2020-12-24)
-
-
-### Bug Fixes
-
-* **bar:** fix bar width rendering for 'total' data key ([eacaecb](https://github.com/naver/billboard.js/commit/eacaecb855e156b6107fe1564da5c6a941ba4b65)), closes [#1818](https://github.com/naver/billboard.js/issues/1818)
-* **browser:** fix retrieving global ([3474ac0](https://github.com/naver/billboard.js/commit/3474ac06ecf7676312b35a18e3f985816339e029)), closes [#1826](https://github.com/naver/billboard.js/issues/1826)
-
-
-### Features
-
-* **pie:** Intent to ship pie.outerRadius ([ca67418](https://github.com/naver/billboard.js/commit/ca67418bfb0b14f8650a8934c953f2a343e06da7)), closes [#1825](https://github.com/naver/billboard.js/issues/1825)
-
-# [2.2.0-next.2](https://github.com/naver/billboard.js/compare/2.2.0-next.1...2.2.0-next.2) (2020-12-08)
-
-
-### Bug Fixes
-
-* **browser:** fix referencing global order ([8f84cb3](https://github.com/naver/billboard.js/commit/8f84cb326b6c6b0dc341ae65b9cdcdae53e7e9b0)), closes [#1778](https://github.com/naver/billboard.js/issues/1778)
-
-
-### Features
-
-* **gauge:** Intent to ship gauge.background ([632c600](https://github.com/naver/billboard.js/commit/632c600a65c831760a03c355c21b56d66c929cbf)), closes [#1804](https://github.com/naver/billboard.js/issues/1804)
-
-# [2.2.0-next.1](https://github.com/naver/billboard.js/compare/2.1.4...2.2.0-next.1) (2020-12-04)
-
-
-### Bug Fixes
-
-* **axis:** rotated horizontal xAxisHeight is calculated correctly after loading new data ([ef2754f](https://github.com/naver/billboard.js/commit/ef2754fb71e7597fa1f0c6c61fc4e4bf281904fb)), closes [#1786](https://github.com/naver/billboard.js/issues/1786) [#1787](https://github.com/naver/billboard.js/issues/1787)
-* **eventRect:** fix data.onclick work for scatter/bubble ([109c87d](https://github.com/naver/billboard.js/commit/109c87dc09dc1daa274ade5bf2806ad3716d3135)), closes [#1795](https://github.com/naver/billboard.js/issues/1795)
-
-
-### Features
-
+* **api:** make return values for axis.labels() ([efa5174](https://github.com/naver/billboard.js/commit/efa517417ec2900cb00a94adced61ee743449db4)), closes [#1865](https://github.com/naver/billboard.js/issues/1865)
 * **data:** Intent to ship data.label multiline ([8903aa6](https://github.com/naver/billboard.js/commit/8903aa69796e4af9227c2172cf088d0253abee41)), closes [#1784](https://github.com/naver/billboard.js/issues/1784)
+* **data.labels.colors:** Add callback support ([ac1affa](https://github.com/naver/billboard.js/commit/ac1affa0ebb2de238591be4e295563203afcd258)), closes [#1845](https://github.com/naver/billboard.js/issues/1845)
+* **gauge:** added support for drawing gauge from 'startingAngle' to 'arcLength' ([25954ad](https://github.com/naver/billboard.js/commit/25954ad5d4db2e4207cc5614e9e3b477e537a184)), closes [#1633](https://github.com/naver/billboard.js/issues/1633) [#1803](https://github.com/naver/billboard.js/issues/1803) [#1849](https://github.com/naver/billboard.js/issues/1849)
+* **gauge:** Intent to ship gauge.background ([632c600](https://github.com/naver/billboard.js/commit/632c600a65c831760a03c355c21b56d66c929cbf)), closes [#1804](https://github.com/naver/billboard.js/issues/1804)
+* **pie:** Intent to ship pie.outerRadius ([ca67418](https://github.com/naver/billboard.js/commit/ca67418bfb0b14f8650a8934c953f2a343e06da7)), closes [#1825](https://github.com/naver/billboard.js/issues/1825)
+* **point:** Intent to ship point.opacity ([fc5ad35](https://github.com/naver/billboard.js/commit/fc5ad35d5a18b1eb3ddb1f96639c5c5746e807ad)), closes [#1867](https://github.com/naver/billboard.js/issues/1867)
 
 ## [2.1.4](https://github.com/naver/billboard.js/compare/2.1.3...2.1.4) (2020-11-11)
 

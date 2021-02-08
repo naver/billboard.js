@@ -14,7 +14,7 @@ setup() {
   DEST_FOLDER=release
 
   # destination remote name
-  if [[ $TRAVIS == "true" ]]; then
+  if [[ $1 == "CI" ]]; then
     DEST_REMOTE=origin
   else
     DEST_REMOTE=upstream

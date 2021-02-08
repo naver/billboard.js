@@ -5,6 +5,10 @@ const isWin = require("os").platform() === "win32";
 const fileExtensions = /(\.[jt]s)$/;
 
 module.exports = function(config) {
+	const {TEST_TYPE: type = false} = process.env;
+	const isCoverage = type === "coverage";
+	const isChrome = type === "chrome";
+
 	const karmaConfig = {
 		frameworks: ["mocha", "chai", "sinon", "webpack"],
 		files: [
@@ -77,7 +81,7 @@ module.exports = function(config) {
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
 			"./src/scss/billboard.scss": ["scss"],
-			"./test/**/*-spec.ts": config.coverage ? ["webpack"] : ["webpack", "sourcemap"],
+			"./test/**/*-spec.ts": isCoverage ? ["webpack"] : ["webpack", "sourcemap"],
 		},
 
 		scssPreprocessor: {
@@ -101,9 +105,9 @@ module.exports = function(config) {
 		browserNoActivityTimeout: 50000
 	};
 
-	karmaConfig.browsers.push(config.chrome ? "Chrome" : "ChromeHeadless");
+	karmaConfig.browsers.push(isChrome ? "Chrome" : "ChromeHeadless");
 
-	if (config.coverage) {
+	if (isCoverage) {
 		karmaConfig.reporters.push("coverage-istanbul");
 
 		karmaConfig.coverageIstanbulReporter = {

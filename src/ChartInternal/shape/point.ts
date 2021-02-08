@@ -4,13 +4,12 @@
  */
 import {
 	namespaces as d3Namespaces,
-	mouse as d3Mouse,
 	select as d3Select
 } from "d3-selection";
 import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {document} from "../../module/browser";
-import {getBoundingRect, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
+import {getBoundingRect, getPointer, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
 
 const getTransitionName = () => getRandom();
 
@@ -26,20 +25,31 @@ export default {
 			isFunction(pointType.create) && isFunction(pointType.update);
 	},
 
-	initialOpacityForCircle(d): "1" | "0" {
-		const {withoutFadeIn} = this.state;
+	initialOpacityForCircle(d): string | number | null {
+		const {config, state: {withoutFadeIn}} = this;
+		let opacity = config.point_opacity;
 
-		return this.getBaseValue(d) !== null &&
-			withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+		if (isUndefined(opacity)) {
+			opacity = this.getBaseValue(d) !== null &&
+				withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+		}
+
+		return opacity;
 	},
 
-	opacityForCircle(d): "0.5" | "1" | "0" {
+	opacityForCircle(d): string | number | null {
 		const {config} = this;
-		const opacity = config.point_show && !config.point_focus_only ? "1" : "0";
+		let opacity = config.point_opacity;
 
-		return isValue(this.getBaseValue(d)) ?
-			(this.isBubbleType(d) || this.isScatterType(d) ?
-				"0.5" : opacity) : "0";
+		if (isUndefined(opacity)) {
+			opacity = config.point_show && !config.point_focus_only ? "1" : "0";
+
+			opacity = isValue(this.getBaseValue(d)) ?
+				(this.isBubbleType(d) || this.isScatterType(d) ?
+					"0.5" : opacity) : "0";
+		}
+
+		return opacity;
 	},
 
 	initCircle(): void {
@@ -325,7 +335,7 @@ export default {
 	},
 
 	isWithinCircle(node, r?: number): boolean {
-		const mouse = d3Mouse(node);
+		const mouse = getPointer(this.state.event, node);
 		const element = d3Select(node);
 		const prefix = this.isCirclePoint(node) ? "c" : "";
 		let cx = +element.attr(`${prefix}x`);

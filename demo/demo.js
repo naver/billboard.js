@@ -2138,6 +2138,21 @@ var demos = {
 						}
 					}
 				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100, 150, 300],
+							["data2", 130, 210, 140],
+							["data3", 220, 150, 50]
+						],
+						type: "bar",
+						labels: {
+							colors: function(color, d) { return d.value > 200 ? "cyan" : color; }
+						}
+					}
+				}
 			}
 		],
 		DataLabelFormat: {
@@ -2175,11 +2190,7 @@ var demos = {
 					],
 					type: "line",
 					labels: {
-						format: (v, id ,i, j) => {
-						  return v > 0 ?
-							"Ipsum is\nsimply dummy text" :
-							"Lorem Ipsum is simply dummy text";
-						  }
+						format: function(v, id ,i, j) { return v > 0 ? "Ipsum is\nsimply dummy text" : "Lorem Ipsum is simply dummy text"; }
 					}
 				}
 			}
@@ -2632,13 +2643,13 @@ d3.select(".chart_area")
 		d3.select(this)
 			.style('background-color', chart.color(id));
 	})
-	.on("mouseover", function(id) {
+	.on("mouseover", function(event, id) {
 		chart.focus(id);
 	})
-	.on("mouseout", function(id) {
+	.on("mouseout", function(event, id) {
 		chart.revert();
 	})
-	.on("click", function(id) {
+	.on("click", function(event, id) {
 		chart.toggle(id);
 	});
 			}
