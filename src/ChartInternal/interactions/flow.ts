@@ -3,7 +3,6 @@
  * billboard.js project is licensed under the MIT license
  */
 import {easeLinear as d3EaseLinear} from "d3-ease";
-import {transition as d3Transition} from "d3-transition";
 import {generateWait} from "../../module/generator";
 import {diffDomain} from "../../module/util";
 import CLASS from "../../config/classes";
@@ -75,27 +74,29 @@ export default {
 
 		const transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
 		const wait = generateWait();
-		const gt = d3Transition().ease(d3EaseLinear)
-			.duration(duration);
+		let n;
 
 		wait.add(Object.keys(elements).map(v => {
-			let n = elements[v];
+			n = elements[v]
+				.transition()
+				.ease(d3EaseLinear)
+				.duration(duration);
 
 			if (v === "axis.x") {
-				n = n.transition(gt)
-					.call(g => $$.axis.x.setTransition(gt).create(g));
+				n = n.call(g => {
+					$$.axis.x.setTransition(g).create(g);
+				});
 			} else if (v === "region.list") {
 				n = n.filter($$.isRegionOnX)
-					.transition(gt)
 					.attr("transform", transform);
 			} else {
-				n = n.transition(gt).attr("transform", transform);
+				n = n.attr("transform", transform);
 			}
 
 			return n;
 		}));
 
-		gt.call(wait, () => {
+		n.call(wait, () => {
 			$$.cleanUpFlow(elements, args);
 		});
 	},
