@@ -1,3 +1,19 @@
+# [3.0.0-next.1](https://github.com/naver/billboard.js/compare/2.2.2...3.0.0-next.1) (2021-02-08)
+
+
+### Features
+
+* **all:** update for d3 v6 ([2752e55](https://github.com/naver/billboard.js/commit/2752e5541dc2e6d9d54acd1a936756a745e30002)), closes [#1641](https://github.com/naver/billboard.js/issues/1641)
+
+
+### BREAKING CHANGES
+
+* **all:** - Update to work on d3 v6
+- Added getPoint() to get event's position coordinate
+
+https://github.com/d3/d3/blob/master/CHANGES.md
+https://observablehq.com/d/f91cccf0cad5e9cb
+
 ## [2.2.2](https://github.com/naver/billboard.js/compare/2.2.1...2.2.2) (2021-02-05)
 
 
