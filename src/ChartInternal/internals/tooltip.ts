@@ -266,7 +266,7 @@ export default {
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const svgLeft = $$.getSvgLeft(true);
 		let [x, y] = d3Mouse(element);
-		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(true);
+		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
 		const chartLeft = $$.getCurrentPaddingLeft(true);
 		const size = 20;
 
