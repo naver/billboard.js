@@ -198,7 +198,6 @@ describe("COLOR", () => {
 					const id = v.id;
 					const isLine = internal.isTypeOf(id, ["line", "spline", "step"]) || !internal.config.data_types[id];
 					const stroke = internal.$el.main.select(`.${CLASS.shapes}-${id} path`).style("fill");
-
 					// @ts-ignore
 					expect(rx.test(stroke)).to.be[!isLine];
 				})
