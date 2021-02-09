@@ -39,8 +39,9 @@ export default {
 	 */
 	updateTargetsForText(targets): void {
 		const $$ = this;
-		const classChartText = $$.classChartText.bind($$);
-		const classTexts = $$.classTexts.bind($$);
+		const classChartText = $$.getChartClass("Text");
+		const classTexts = $$.getClass("texts", "id");
+
 		const classFocus = $$.classFocus.bind($$);
 		const mainTextUpdate = $$.$el.main.select(`.${CLASS.chartTexts}`).selectAll(`.${CLASS.chartText}`)
 			.data(targets)
@@ -64,7 +65,7 @@ export default {
 		const $$ = this;
 		const {config, $el} = $$;
 		const dataFn = $$.labelishData.bind($$);
-		const classText = $$.classText.bind($$);
+		const classText = $$.getClass("text", "index");
 
 		$el.text = $el.main.selectAll(`.${CLASS.texts}`).selectAll(`.${CLASS.text}`)
 			.data(d => ($$.isRadarType(d) ? d.values : dataFn(d)));

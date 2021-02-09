@@ -19,8 +19,8 @@ export default {
 	updateTargetsForBar(targets): void {
 		const $$ = this;
 		const {config, $el} = $$;
-		const classChartBar = $$.classChartBar.bind($$);
-		const classBars = $$.classBars.bind($$);
+		const classChartBar = $$.getChartClass("Bar");
+		const classBars = $$.getClass("bars", true);
 		const classFocus = $$.classFocus.bind($$);
 		const isSelectable = config.interaction_enabled && config.data_selection_isselectable;
 
@@ -48,7 +48,7 @@ export default {
 		const $$ = this;
 		const {$el} = $$;
 		const barData = $$.barData.bind($$);
-		const classBar = $$.classBar.bind($$);
+		const classBar = $$.getClass("bar", true);
 		const initialOpacity = $$.initialOpacity.bind($$);
 
 		$el.bar = $el.main.selectAll(`.${CLASS.bars}`).selectAll(`.${CLASS.bar}`)

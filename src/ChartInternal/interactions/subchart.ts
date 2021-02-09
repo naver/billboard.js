@@ -168,11 +168,11 @@ export default {
 	updateTargetsForSubchart(targets): void {
 		const $$ = this;
 		const {config, state, $el: {subchart: {main}}} = $$;
-		const classChartBar = $$.classChartBar.bind($$);
-		const classBars = $$.classBars.bind($$);
-		const classChartLine = $$.classChartLine.bind($$);
-		const classLines = $$.classLines.bind($$);
-		const classAreas = $$.classAreas.bind($$);
+		const classChartBar = $$.getChartClass("Bar");
+		const classBars = $$.getClass("bars", true);
+		const classChartLine = $$.getChartClass("Line");
+		const classLines = $$.getClass("lines", true);
+		const classAreas = $$.getClass("areas", true);
 
 		if (config.subchart_show) {
 			// -- Bar --//
@@ -236,7 +236,7 @@ export default {
 		subchart.bar = subchart.bar
 			.enter()
 			.append("path")
-			.attr("class", $$.classBar.bind($$))
+			.attr("class", $$.getClass("bar", true))
 			.style("stroke", "none")
 			.style("fill", $$.color)
 			.merge(subchart.bar)
@@ -281,7 +281,7 @@ export default {
 		subchart.line = subchart.line
 			.enter()
 			.append("path")
-			.attr("class", $$.classLine.bind($$))
+			.attr("class", $$.getClass("line", true))
 			.style("stroke", $$.color)
 			.merge(subchart.line)
 			.style("opacity", $$.initialOpacity.bind($$));
@@ -325,7 +325,7 @@ export default {
 		subchart.area = subchart.area
 			.enter()
 			.append("path")
-			.attr("class", $$.classArea.bind($$))
+			.attr("class", $$.getClass("area", true))
 			.style("fill", $$.color)
 			.style("opacity", function() {
 				$$.state.orgAreaOpacity = d3Select(this).style("opacity");

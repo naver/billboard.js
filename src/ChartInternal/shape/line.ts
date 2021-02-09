@@ -19,8 +19,8 @@ export default {
 	updateTargetsForLine(t): void {
 		const $$ = this;
 		const {$el: {area, line, main}} = $$;
-		const classChartLine = $$.classChartLine.bind($$);
-		const classLines = $$.classLines.bind($$);
+		const classChartLine = $$.getChartClass("Line");
+		const classLines = $$.getClass("lines", true);
 		const classFocus = $$.classFocus.bind($$);
 
 		if (!line) {
@@ -67,7 +67,7 @@ export default {
 
 		$el.line = $el.line.enter()
 			.append("path")
-			.attr("class", d => `${$$.classLine.bind($$)(d)} ${extraLineClasses(d) || ""}`)
+			.attr("class", d => `${$$.getClass("line", true)(d)} ${extraLineClasses(d) || ""}`)
 			.style("stroke", $$.color)
 			.merge($el.line)
 			.style("opacity", $$.initialOpacity.bind($$))

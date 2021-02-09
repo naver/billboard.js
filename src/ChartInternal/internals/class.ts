@@ -9,20 +9,36 @@ export default {
 		return ` ${prefix} ${prefix + this.getTargetSelectorSuffix(targetId)}`;
 	},
 
-	classText(d): string {
-		return this.generateClass(CLASS.text, d.index);
+	/**
+	 * Get class string
+	 * @param {string} type Shape type
+	 * @param {boolean} withShape Get with shape prefix
+	 * @returns {string} Class string
+	 * @private
+	 */
+	getClass(type: string, withShape: boolean): Function {
+		const isPlural = /s$/.test(type);
+		const useIdKey = /^(area|arc|line)s?$/.test(type);
+		const key = isPlural ? "id" : "index";
+
+		return (d): string => {
+			const data = d.data || d;
+			const result = (
+				withShape ? this.generateClass(CLASS[isPlural ? "shapes" : "shape"], data[key]) : ""
+			) + this.generateClass(CLASS[type], data[useIdKey ? "id" : key]);
+
+			return result;
+		};
 	},
 
-	classTexts(d): string {
-		return this.generateClass(CLASS.texts, d.id);
-	},
-
-	classShape(d): string {
-		return this.generateClass(CLASS.shape, d.index);
-	},
-
-	classShapes(d): string {
-		return this.generateClass(CLASS.shapes, d.id);
+	/**
+	 * Get chart class string
+	 * @param {string} type Shape type
+	 * @returns {string} Class string
+	 * @private
+	 */
+	getChartClass(type: string) {
+		return (d): string => CLASS[`chart${type}`] + this.classTarget((d.data ? d.data : d).id);
 	},
 
 	generateExtraLineClass(): Function {
@@ -39,46 +55,6 @@ export default {
 
 			return classes[ids.indexOf(id) % classes.length];
 		};
-	},
-
-	classLine(d): string {
-		return this.classShape(d) + this.generateClass(CLASS.line, d.id);
-	},
-
-	classLines(d): string {
-		return this.classShapes(d) + this.generateClass(CLASS.lines, d.id);
-	},
-
-	classCircle(d): string {
-		return this.classShape(d) + this.generateClass(CLASS.circle, d.index);
-	},
-
-	classCircles(d): string {
-		return this.classShapes(d) + this.generateClass(CLASS.circles, d.id);
-	},
-
-	classBar(d): string {
-		return this.classShape(d) + this.generateClass(CLASS.bar, d.index);
-	},
-
-	classBars(d): string {
-		return this.classShapes(d) + this.generateClass(CLASS.bars, d.id);
-	},
-
-	classArc(d): string {
-		return this.classShape(d.data) + this.generateClass(CLASS.arc, d.data.id);
-	},
-
-	classArcs(d): string {
-		return this.classShapes(d.data) + this.generateClass(CLASS.arcs, d.data.id);
-	},
-
-	classArea(d): string {
-		return this.classShape(d) + this.generateClass(CLASS.area, d.id);
-	},
-
-	classAreas(d): string {
-		return this.classShapes(d) + this.generateClass(CLASS.areas, d.id);
 	},
 
 	classRegion(d, i: number): string {
@@ -106,26 +82,6 @@ export default {
 
 	classDefocused(d): string {
 		return ` ${this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? CLASS.defocused : ""}`;
-	},
-
-	classChartText(d): string {
-		return CLASS.chartText + this.classTarget(d.id);
-	},
-
-	classChartLine(d): string {
-		return CLASS.chartLine + this.classTarget(d.id);
-	},
-
-	classChartBar(d): string {
-		return CLASS.chartBar + this.classTarget(d.id);
-	},
-
-	classChartArc(d): string {
-		return CLASS.chartArc + this.classTarget(d.data.id);
-	},
-
-	classChartRadar(d): string {
-		return CLASS.chartRadar + this.classTarget(d.id);
 	},
 
 	getTargetSelectorSuffix(targetId?: string | number): string {
