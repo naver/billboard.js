@@ -362,7 +362,7 @@ export default {
 			.data(targets);
 
 		const areasEnter = areas.enter().append("g")
-			.attr("class", $$.classChartRadar.bind($$));
+			.attr("class", $$.getChartClass("Radar"));
 
 		areas.exit().transition()
 			.duration(durationForExit)

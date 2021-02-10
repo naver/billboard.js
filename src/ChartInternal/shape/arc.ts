@@ -479,8 +479,8 @@ export default {
 		const $$ = this;
 		const {$el} = $$;
 		const hasGauge = $$.hasType("gauge");
-		const classChartArc = $$.classChartArc.bind($$);
-		const classArcs = $$.classArcs.bind($$);
+		const classChartArc = $$.getChartClass("Arc");
+		const classArcs = $$.getClass("arcs", true);
 		const classFocus = $$.classFocus.bind($$);
 		const chartArcs = $el.main.select(`.${CLASS.chartArcs}`);
 
@@ -559,7 +559,7 @@ export default {
 			.remove();
 
 		mainArc = mainArc.enter().append("path")
-			.attr("class", $$.classArc.bind($$))
+			.attr("class", $$.getClass("arc", true))
 			.style("fill", d => $$.color(d.data))
 			.style("cursor", d => (isSelectable && isSelectable.bind($$.api)(d) ? "pointer" : null))
 			.style("opacity", "0")
