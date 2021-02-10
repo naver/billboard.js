@@ -70,7 +70,7 @@ export default {
 		const {config, data, $el} = $$;
 		const selectionEnabled = config.interaction_enabled && config.data_selection_enabled;
 		const isSelectable = selectionEnabled && config.data_selection_isselectable;
-		const classCircles = $$.classCircles.bind($$);
+		const classCircles = $$.getClass("circles", true);
 
 		if (!config.point_show) {
 			return;
@@ -402,14 +402,14 @@ export default {
 		if (isObject(d) || circle) {
 			pointClass = d === true ?
 				circle.each(function(d) {
-					let className = $$.classCircle.bind($$)(d);
+					let className = $$.getClass("circle", true)(d);
 
 					if (this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1) {
 						className += ` ${CLASS.EXPANDED}`;
 					}
 
 					this.setAttribute("class", className);
-				}) : $$.classCircle(d);
+				}) : $$.getClass("circle", true)(d);
 		}
 
 		return pointClass;

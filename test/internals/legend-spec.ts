@@ -140,6 +140,31 @@ describe("LEGEND", () => {
 
 			expect(box.height).to.be.equal(48);
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "A", "B", "C", "D", "E", "F"],
+						["col1", 7, 8, 5, 4, 8, 9],
+						["col2", 10, 6, 9, 1, 6, 8]
+					],
+					type: "radar", // for ESM specify as: radar()
+					labels: true,
+				},
+				legend: {
+					position: "inset",
+					inset: {
+						anchor: "bottom-right"
+					}
+				}
+			}
+		});
+
+		it("shouldn't throw error for radar type", () => {
+			expect(chart.$.legend.selectAll("g").empty()).to.be.false;
+		});
 	});
 
 	describe("should update args to have only one series", () => {

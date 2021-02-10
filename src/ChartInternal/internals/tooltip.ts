@@ -262,7 +262,7 @@ export default {
 		const {width, height, current, isLegendRight, inputType, event} = state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const svgLeft = $$.getSvgLeft(true);
-		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(true);
+		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
 		const chartLeft = $$.getCurrentPaddingLeft(true);
 		const size = 20;
 		let [x, y] = getPointer(event, element);

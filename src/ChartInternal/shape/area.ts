@@ -14,7 +14,7 @@ export default {
 
 		mainLine
 			.insert("g", `.${CLASS[config.area_front ? "circles" : "lines"]}`)
-			.attr("class", $$.classAreas.bind($$));
+			.attr("class", $$.getClass("areas", true));
 	},
 
 	updateAreaGradient(): void {
@@ -75,7 +75,7 @@ export default {
 			.remove();
 
 		$el.area = $el.area.enter().append("path")
-			.attr("class", $$.classArea.bind($$))
+			.attr("class", $$.getClass("area", true))
 			.style("fill", $$.updateAreaColor.bind($$))
 			.style("opacity", function() {
 				state.orgAreaOpacity = d3Select(this).style("opacity");
