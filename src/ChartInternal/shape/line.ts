@@ -44,8 +44,8 @@ export default {
 			.attr("class", classLines);
 
 		// Areas
-		if ($$.hasTypeOf("Area") && !area) {
-			$$.initArea(mainLineEnter.empty() ? mainLineUpdate : mainLineEnter);
+		if ($$.hasTypeOf("Area")) {
+			$$.initArea(!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter);
 		}
 
 		$$.updateTargetForCircle(targets, mainLineEnter);
