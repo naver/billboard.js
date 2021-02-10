@@ -24,7 +24,7 @@ import {
 } from "d3-shape";
 import {select as d3Select} from "d3-selection";
 import CLASS from "../../config/classes";
-import {getUnique, isObjectType, isNumber, isUndefined, notEmpty} from "../../module/util";
+import {capitalize, getUnique, isObjectType, isNumber, isUndefined, notEmpty} from "../../module/util";
 
 export default {
 	/**
@@ -59,12 +59,15 @@ export default {
 			}
 		}
 
-		if ($$.hasType("bar")) {
-			const indices = $$.getShapeIndices($$.isBarType);
+		["bar", "candlestick"].forEach(v => {
+			if ($$.hasType(v)) {
+				const capitalized = capitalize(v);
+				const indices = $$.getShapeIndices($$[`is${capitalized}Type`]);
 
-			shape.indices.bar = indices;
-			shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(indices) : undefined;
-		}
+				shape.indices[v] = indices;
+				shape.type[v] = $$[`generateDraw${capitalized}`] ? $$[`generateDraw${capitalized}`](indices) : undefined;
+			}
+		});
 
 		if (!$$.hasArcType() || hasRadar) {
 			// generate circle x/y functions depending on updated params

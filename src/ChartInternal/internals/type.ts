@@ -164,6 +164,10 @@ export default {
 		return this.isTypeOf(d, "bubble");
 	},
 
+	isCandlestickType(d): boolean {
+		return this.isTypeOf(d, "candlestick");
+	},
+
 	isScatterType(d): boolean {
 		return this.isTypeOf(d, "scatter");
 	},

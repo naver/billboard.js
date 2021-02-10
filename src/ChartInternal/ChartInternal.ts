@@ -16,7 +16,7 @@ import Options from "../config/Options/Options";
 import {document, window} from "../module/browser";
 import Cache from "../module/Cache";
 import {generateResize} from "../module/generator";
-import {extend, notEmpty, convertInputType, getOption, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
+import {capitalize, extend, notEmpty, convertInputType, getOption, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
 
 // data
 import dataConvert from "./data/convert";
@@ -446,6 +446,7 @@ export default class ChartInternal {
 			$$.hasType("bar") && types.push("Bar");
 			$$.hasType("bubble") && types.push("Bubble");
 			$$.hasTypeOf("Line") && types.push("Line");
+			$$.hasType("candlestick") && types.push("Candlestick");
 		} else {
 			if (!hasRadar) {
 				types.push("Arc", "Pie");
@@ -534,8 +535,13 @@ export default class ChartInternal {
 		$$.updateTargetsForText(targets);
 
 		if (hasAxis) {
-			$$.hasType("bar") && $$.updateTargetsForBar(targets); // Bar
-			$$.hasTypeOf("Line") && $$.updateTargetsForLine(targets); // Line
+			["bar", "candlestick", "line"].forEach(v => {
+				const capitalized = capitalize(v);
+
+				if ((v === "line" && $$.hasTypeOf(capitalized)) || $$.hasType(v)) {
+					$$[`updateTargetsFor${capitalized}`](targets);
+				}
+			});
 
 			// Sub Chart
 			$$.updateTargetsForSubchart &&

@@ -5,7 +5,7 @@
 import {transition as d3Transition} from "d3-transition";
 import CLASS from "../../config/classes";
 import {generateWait} from "../../module/generator";
-import {callFn, getOption, isTabVisible, notEmpty} from "../../module/util";
+import {callFn, capitalize, getOption, isTabVisible, notEmpty} from "../../module/util";
 
 export default {
 	redraw(options: any = {}, transitionsValue?): void {
@@ -178,8 +178,6 @@ export default {
 		const list: Function[] = [];
 
 		if (hasAxis) {
-			const {area, bar, line} = shape.type;
-
 			if (config.grid_x_lines.length || config.grid_y_lines.length) {
 				list.push($$.redrawGrid(isTransition));
 			}
@@ -188,9 +186,15 @@ export default {
 				list.push($$.redrawRegion(isTransition));
 			}
 
-			$$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition));
-			$$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
-			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
+			Object.keys(shape.type).forEach(v => {
+				const capitalized = capitalize(v);
+				const shapeType = shape.type[v];
+
+				if ((/^(area|line)$/.test(v) && $$.hasTypeOf(capitalized)) || $$.hasType(v)) {
+					list.push($$[`redraw${capitalized}`](shapeType, isTransition));
+				}
+			});
+
 			!flow && grid.main && list.push($$.updateGridFocus());
 		}
 

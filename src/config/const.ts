@@ -14,6 +14,7 @@ export const TYPE = {
 	AREA_STEP: "area-step",
 	BAR: "bar",
 	BUBBLE: "bubble",
+	CANDLESTICK: "candlestick",
 	DONUT: "donut",
 	GAUGE: "gauge",
 	LINE: "line",
