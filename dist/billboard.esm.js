@@ -4033,17 +4033,33 @@ var classModule = {
     generateClass: function (prefix, targetId) {
         return " " + prefix + " " + (prefix + this.getTargetSelectorSuffix(targetId));
     },
-    classText: function (d) {
-        return this.generateClass(CLASS.text, d.index);
+    /**
+     * Get class string
+     * @param {string} type Shape type
+     * @param {boolean} withShape Get with shape prefix
+     * @returns {string} Class string
+     * @private
+     */
+    getClass: function (type, withShape) {
+        var _this = this;
+        var isPlural = /s$/.test(type);
+        var useIdKey = /^(area|arc|line)s?$/.test(type);
+        var key = isPlural ? "id" : "index";
+        return function (d) {
+            var data = d.data || d;
+            var result = (withShape ? _this.generateClass(CLASS[isPlural ? "shapes" : "shape"], data[key]) : "") + _this.generateClass(CLASS[type], data[useIdKey ? "id" : key]);
+            return result;
+        };
     },
-    classTexts: function (d) {
-        return this.generateClass(CLASS.texts, d.id);
-    },
-    classShape: function (d) {
-        return this.generateClass(CLASS.shape, d.index);
-    },
-    classShapes: function (d) {
-        return this.generateClass(CLASS.shapes, d.id);
+    /**
+     * Get chart class string
+     * @param {string} type Shape type
+     * @returns {string} Class string
+     * @private
+     */
+    getChartClass: function (type) {
+        var _this = this;
+        return function (d) { return CLASS["chart" + type] + _this.classTarget((d.data ? d.data : d).id); };
     },
     generateExtraLineClass: function () {
         var $$ = this;
@@ -4056,36 +4072,6 @@ var classModule = {
             }
             return classes[ids.indexOf(id) % classes.length];
         };
-    },
-    classLine: function (d) {
-        return this.classShape(d) + this.generateClass(CLASS.line, d.id);
-    },
-    classLines: function (d) {
-        return this.classShapes(d) + this.generateClass(CLASS.lines, d.id);
-    },
-    classCircle: function (d) {
-        return this.classShape(d) + this.generateClass(CLASS.circle, d.index);
-    },
-    classCircles: function (d) {
-        return this.classShapes(d) + this.generateClass(CLASS.circles, d.id);
-    },
-    classBar: function (d) {
-        return this.classShape(d) + this.generateClass(CLASS.bar, d.index);
-    },
-    classBars: function (d) {
-        return this.classShapes(d) + this.generateClass(CLASS.bars, d.id);
-    },
-    classArc: function (d) {
-        return this.classShape(d.data) + this.generateClass(CLASS.arc, d.data.id);
-    },
-    classArcs: function (d) {
-        return this.classShapes(d.data) + this.generateClass(CLASS.arcs, d.data.id);
-    },
-    classArea: function (d) {
-        return this.classShape(d) + this.generateClass(CLASS.area, d.id);
-    },
-    classAreas: function (d) {
-        return this.classShapes(d) + this.generateClass(CLASS.areas, d.id);
     },
     classRegion: function (d, i) {
         return this.generateClass(CLASS.region, i) + " " + ("class" in d ? d["class"] : "");
@@ -4106,21 +4092,6 @@ var classModule = {
     },
     classDefocused: function (d) {
         return " " + (this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? CLASS.defocused : "");
-    },
-    classChartText: function (d) {
-        return CLASS.chartText + this.classTarget(d.id);
-    },
-    classChartLine: function (d) {
-        return CLASS.chartLine + this.classTarget(d.id);
-    },
-    classChartBar: function (d) {
-        return CLASS.chartBar + this.classTarget(d.id);
-    },
-    classChartArc: function (d) {
-        return CLASS.chartArc + this.classTarget(d.data.id);
-    },
-    classChartRadar: function (d) {
-        return CLASS.chartRadar + this.classTarget(d.id);
     },
     getTargetSelectorSuffix: function (targetId) {
         return targetId || targetId === 0 ?
@@ -6355,8 +6326,8 @@ var text = {
      */
     updateTargetsForText: function (targets) {
         var $$ = this;
-        var classChartText = $$.classChartText.bind($$);
-        var classTexts = $$.classTexts.bind($$);
+        var classChartText = $$.getChartClass("Text");
+        var classTexts = $$.getClass("texts", "id");
         var classFocus = $$.classFocus.bind($$);
         var mainTextUpdate = $$.$el.main.select("." + CLASS.chartTexts).selectAll("." + CLASS.chartText)
             .data(targets)
@@ -6377,7 +6348,7 @@ var text = {
         var $$ = this;
         var config = $$.config, $el = $$.$el;
         var dataFn = $$.labelishData.bind($$);
-        var classText = $$.classText.bind($$);
+        var classText = $$.getClass("text", "index");
         $el.text = $el.main.selectAll("." + CLASS.texts).selectAll("." + CLASS.text)
             .data(function (d) { return ($$.isRadarType(d) ? d.values : dataFn(d)); });
         $el.text.exit()
@@ -14855,8 +14826,8 @@ var shapeArc = {
         var $$ = this;
         var $el = $$.$el;
         var hasGauge = $$.hasType("gauge");
-        var classChartArc = $$.classChartArc.bind($$);
-        var classArcs = $$.classArcs.bind($$);
+        var classChartArc = $$.getChartClass("Arc");
+        var classArcs = $$.getClass("arcs", true);
         var classFocus = $$.classFocus.bind($$);
         var chartArcs = $el.main.select("." + CLASS.chartArcs);
         var mainPieUpdate = chartArcs
@@ -14919,7 +14890,7 @@ var shapeArc = {
             .style("opacity", "0")
             .remove();
         mainArc = mainArc.enter().append("path")
-            .attr("class", $$.classArc.bind($$))
+            .attr("class", $$.getClass("arc", true))
             .style("fill", function (d) { return $$.color(d.data); })
             .style("cursor", function (d) { return (isSelectable && isSelectable.bind($$.api)(d) ? "pointer" : null); })
             .style("opacity", "0")
@@ -15176,7 +15147,7 @@ var shapeArea = {
         var config = $$.config;
         mainLine
             .insert("g", "." + CLASS[config.area_front ? "circles" : "lines"])
-            .attr("class", $$.classAreas.bind($$));
+            .attr("class", $$.getClass("areas", true));
     },
     updateAreaGradient: function () {
         var $$ = this;
@@ -15220,7 +15191,7 @@ var shapeArea = {
             .style("opacity", "0")
             .remove();
         $el.area = $el.area.enter().append("path")
-            .attr("class", $$.classArea.bind($$))
+            .attr("class", $$.getClass("area", true))
             .style("fill", $$.updateAreaColor.bind($$))
             .style("opacity", function () {
             state.orgAreaOpacity = select(this).style("opacity");
@@ -15339,8 +15310,8 @@ var shapeBar = {
     updateTargetsForBar: function (targets) {
         var $$ = this;
         var config = $$.config, $el = $$.$el;
-        var classChartBar = $$.classChartBar.bind($$);
-        var classBars = $$.classBars.bind($$);
+        var classChartBar = $$.getChartClass("Bar");
+        var classBars = $$.getClass("bars", true);
         var classFocus = $$.classFocus.bind($$);
         var isSelectable = config.interaction_enabled && config.data_selection_isselectable;
         if (!$el.bar) {
@@ -15363,7 +15334,7 @@ var shapeBar = {
         var $$ = this;
         var $el = $$.$el;
         var barData = $$.barData.bind($$);
-        var classBar = $$.classBar.bind($$);
+        var classBar = $$.getClass("bar", true);
         var initialOpacity = $$.initialOpacity.bind($$);
         $el.bar = $el.main.selectAll("." + CLASS.bars).selectAll("." + CLASS.bar)
             .data(barData);
@@ -15692,8 +15663,8 @@ var shapeLine = {
     updateTargetsForLine: function (t) {
         var $$ = this;
         var _a = $$.$el, area = _a.area, line = _a.line, main = _a.main;
-        var classChartLine = $$.classChartLine.bind($$);
-        var classLines = $$.classLines.bind($$);
+        var classChartLine = $$.getChartClass("Line");
+        var classLines = $$.getClass("lines", true);
         var classFocus = $$.classFocus.bind($$);
         if (!line) {
             $$.initLine();
@@ -15729,7 +15700,7 @@ var shapeLine = {
             .remove();
         $el.line = $el.line.enter()
             .append("path")
-            .attr("class", function (d) { return $$.classLine.bind($$)(d) + " " + (extraLineClasses(d) || ""); })
+            .attr("class", function (d) { return $$.getClass("line", true)(d) + " " + (extraLineClasses(d) || ""); })
             .style("stroke", $$.color)
             .merge($el.line)
             .style("opacity", $$.initialOpacity.bind($$))
@@ -15969,7 +15940,7 @@ var shapePoint = {
         var config = $$.config, data = $$.data, $el = $$.$el;
         var selectionEnabled = config.interaction_enabled && config.data_selection_enabled;
         var isSelectable = selectionEnabled && config.data_selection_isselectable;
-        var classCircles = $$.classCircles.bind($$);
+        var classCircles = $$.getClass("circles", true);
         if (!config.point_show) {
             return;
         }
@@ -16232,12 +16203,12 @@ var shapePoint = {
         if (isObject(d) || circle) {
             pointClass = d === true ?
                 circle.each(function (d) {
-                    var className = $$.classCircle.bind($$)(d);
+                    var className = $$.getClass("circle", true)(d);
                     if (this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1) {
                         className += " " + CLASS.EXPANDED;
                     }
                     this.setAttribute("class", className);
-                }) : $$.classCircle(d);
+                }) : $$.getClass("circle", true)(d);
         }
         return pointClass;
     },
@@ -16668,7 +16639,7 @@ var shapeRadar = {
             .selectAll("polygon")
             .data(targets);
         var areasEnter = areas.enter().append("g")
-            .attr("class", $$.classChartRadar.bind($$));
+            .attr("class", $$.getChartClass("Radar"));
         areas.exit().transition()
             .duration(durationForExit)
             .remove();
@@ -18287,11 +18258,11 @@ var subchart = {
     updateTargetsForSubchart: function (targets) {
         var $$ = this;
         var config = $$.config, state = $$.state, main = $$.$el.subchart.main;
-        var classChartBar = $$.classChartBar.bind($$);
-        var classBars = $$.classBars.bind($$);
-        var classChartLine = $$.classChartLine.bind($$);
-        var classLines = $$.classLines.bind($$);
-        var classAreas = $$.classAreas.bind($$);
+        var classChartBar = $$.getChartClass("Bar");
+        var classBars = $$.getClass("bars", true);
+        var classChartLine = $$.getChartClass("Line");
+        var classLines = $$.getClass("lines", true);
+        var classAreas = $$.getClass("areas", true);
         if (config.subchart_show) {
             // -- Bar --//
             var barUpdate = main.select("." + CLASS.chartBars)
@@ -18345,7 +18316,7 @@ var subchart = {
         subchart.bar = subchart.bar
             .enter()
             .append("path")
-            .attr("class", $$.classBar.bind($$))
+            .attr("class", $$.getClass("bar", true))
             .style("stroke", "none")
             .style("fill", $$.color)
             .merge(subchart.bar)
@@ -18384,7 +18355,7 @@ var subchart = {
         subchart.line = subchart.line
             .enter()
             .append("path")
-            .attr("class", $$.classLine.bind($$))
+            .attr("class", $$.getClass("line", true))
             .style("stroke", $$.color)
             .merge(subchart.line)
             .style("opacity", $$.initialOpacity.bind($$));
@@ -18422,7 +18393,7 @@ var subchart = {
         subchart.area = subchart.area
             .enter()
             .append("path")
-            .attr("class", $$.classArea.bind($$))
+            .attr("class", $$.getClass("area", true))
             .style("fill", $$.color)
             .style("opacity", function () {
             $$.state.orgAreaOpacity = select(this).style("opacity");

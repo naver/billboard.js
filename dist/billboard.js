@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.2-nightly-20210209011516
+ * @version 2.2.2-nightly-20210210011424
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4092,17 +4092,40 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   generateClass: function generateClass(prefix, targetId) {
     return " " + prefix + " " + (prefix + this.getTargetSelectorSuffix(targetId));
   },
-  classText: function classText(d) {
-    return this.generateClass(config_classes.text, d.index);
+
+  /**
+   * Get class string
+   * @param {string} type Shape type
+   * @param {boolean} withShape Get with shape prefix
+   * @returns {string} Class string
+   * @private
+   */
+  getClass: function getClass(type, withShape) {
+    var _this = this,
+        isPlural = /s$/.test(type),
+        useIdKey = /^(area|arc|line)s?$/.test(type),
+        key = isPlural ? "id" : "index";
+
+    return function (d) {
+      var data = d.data || d,
+          result = (withShape ? _this.generateClass(config_classes[isPlural ? "shapes" : "shape"], data[key]) : "") + _this.generateClass(config_classes[type], data[useIdKey ? "id" : key]);
+
+      return result;
+    };
   },
-  classTexts: function classTexts(d) {
-    return this.generateClass(config_classes.texts, d.id);
-  },
-  classShape: function classShape(d) {
-    return this.generateClass(config_classes.shape, d.index);
-  },
-  classShapes: function classShapes(d) {
-    return this.generateClass(config_classes.shapes, d.id);
+
+  /**
+   * Get chart class string
+   * @param {string} type Shape type
+   * @returns {string} Class string
+   * @private
+   */
+  getChartClass: function getChartClass(type) {
+    var _this2 = this;
+
+    return function (d) {
+      return config_classes["chart" + type] + _this2.classTarget((d.data ? d.data : d).id);
+    };
   },
   generateExtraLineClass: function generateExtraLineClass() {
     var $$ = this,
@@ -4112,36 +4135,6 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
       var id = d.id || d.data && d.data.id || d;
       return ids.indexOf(id) < 0 && ids.push(id), classes[ids.indexOf(id) % classes.length];
     };
-  },
-  classLine: function classLine(d) {
-    return this.classShape(d) + this.generateClass(config_classes.line, d.id);
-  },
-  classLines: function classLines(d) {
-    return this.classShapes(d) + this.generateClass(config_classes.lines, d.id);
-  },
-  classCircle: function classCircle(d) {
-    return this.classShape(d) + this.generateClass(config_classes.circle, d.index);
-  },
-  classCircles: function classCircles(d) {
-    return this.classShapes(d) + this.generateClass(config_classes.circles, d.id);
-  },
-  classBar: function classBar(d) {
-    return this.classShape(d) + this.generateClass(config_classes.bar, d.index);
-  },
-  classBars: function classBars(d) {
-    return this.classShapes(d) + this.generateClass(config_classes.bars, d.id);
-  },
-  classArc: function classArc(d) {
-    return this.classShape(d.data) + this.generateClass(config_classes.arc, d.data.id);
-  },
-  classArcs: function classArcs(d) {
-    return this.classShapes(d.data) + this.generateClass(config_classes.arcs, d.data.id);
-  },
-  classArea: function classArea(d) {
-    return this.classShape(d) + this.generateClass(config_classes.area, d.id);
-  },
-  classAreas: function classAreas(d) {
-    return this.classShapes(d) + this.generateClass(config_classes.areas, d.id);
   },
   classRegion: function classRegion(d, i) {
     return this.generateClass(config_classes.region, i) + " " + ("class" in d ? d.class : "");
@@ -4160,21 +4153,6 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   classDefocused: function classDefocused(d) {
     return " " + (this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? config_classes.defocused : "");
   },
-  classChartText: function classChartText(d) {
-    return config_classes.chartText + this.classTarget(d.id);
-  },
-  classChartLine: function classChartLine(d) {
-    return config_classes.chartLine + this.classTarget(d.id);
-  },
-  classChartBar: function classChartBar(d) {
-    return config_classes.chartBar + this.classTarget(d.id);
-  },
-  classChartArc: function classChartArc(d) {
-    return config_classes.chartArc + this.classTarget(d.data.id);
-  },
-  classChartRadar: function classChartRadar(d) {
-    return config_classes.chartRadar + this.classTarget(d.id);
-  },
   getTargetSelectorSuffix: function getTargetSelectorSuffix(targetId) {
     return targetId || targetId === 0 ? ("-" + targetId).replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-") : "";
   },
@@ -4185,21 +4163,21 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     return pfx + "." + (config_classes.target + target) + ", " + pfx + "." + (config_classes.circles + target);
   },
   selectorTargets: function selectorTargets(idsValue, prefix) {
-    var _this = this,
+    var _this3 = this,
         ids = idsValue || [];
 
     return ids.length ? ids.map(function (id) {
-      return _this.selectorTarget(id, prefix);
+      return _this3.selectorTarget(id, prefix);
     }) : null;
   },
   selectorLegend: function selectorLegend(id) {
     return "." + (config_classes.legendItem + this.getTargetSelectorSuffix(id));
   },
   selectorLegends: function selectorLegends(ids) {
-    var _this2 = this;
+    var _this4 = this;
 
     return ids && ids.length ? ids.map(function (id) {
-      return _this2.selectorLegend(id);
+      return _this4.selectorLegend(id);
     }) : null;
   }
 });
@@ -5929,8 +5907,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    */
   updateTargetsForText: function updateTargetsForText(targets) {
     var $$ = this,
-        classChartText = $$.classChartText.bind($$),
-        classTexts = $$.classTexts.bind($$),
+        classChartText = $$.getChartClass("Text"),
+        classTexts = $$.getClass("texts", "id"),
         classFocus = $$.classFocus.bind($$),
         mainTextUpdate = $$.$el.main.select("." + config_classes.chartTexts).selectAll("." + config_classes.chartText).data(targets).attr("class", function (d) {
       return classChartText(d) + classFocus(d);
@@ -5949,7 +5927,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         config = $$.config,
         $el = $$.$el,
         dataFn = $$.labelishData.bind($$),
-        classText = $$.classText.bind($$);
+        classText = $$.getClass("text", "index");
     $el.text = $el.main.selectAll("." + config_classes.texts).selectAll("." + config_classes.text).data(function (d) {
       return $$.isRadarType(d) ? d.values : dataFn(d);
     }), $el.text.exit().transition().duration(durationForExit).style("fill-opacity", "0").remove(), $el.text = $el.text.enter().append("text").merge($$.$el.text).attr("class", classText).attr("text-anchor", function (d) {
@@ -13175,8 +13153,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     var $$ = this,
         $el = $$.$el,
         hasGauge = $$.hasType("gauge"),
-        classChartArc = $$.classChartArc.bind($$),
-        classArcs = $$.classArcs.bind($$),
+        classChartArc = $$.getChartClass("Arc"),
+        classArcs = $$.getClass("arcs", !0),
         classFocus = $$.classFocus.bind($$),
         chartArcs = $el.main.select("." + config_classes.chartArcs),
         mainPieUpdate = chartArcs.selectAll("." + config_classes.chartArc).data($$.pie(targets)).attr("class", function (d) {
@@ -13214,7 +13192,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         isSelectable = hasInteraction && config.data_selection_isselectable,
         mainArc = main.selectAll("." + config_classes.arcs).selectAll("." + config_classes.arc).data($$.arcData.bind($$));
     // bind arc events
-    mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove(), mainArc = mainArc.enter().append("path").attr("class", $$.classArc.bind($$)).style("fill", function (d) {
+    mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove(), mainArc = mainArc.enter().append("path").attr("class", $$.getClass("arc", !0)).style("fill", function (d) {
       return $$.color(d.data);
     }).style("cursor", function (d) {
       return isSelectable && isSelectable.bind($$.api)(d) ? "pointer" : null;
@@ -13390,7 +13368,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   initArea: function initArea(mainLine) {
     var $$ = this,
         config = $$.config;
-    mainLine.insert("g", "." + config_classes[config.area_front ? "circles" : "lines"]).attr("class", $$.classAreas.bind($$));
+    mainLine.insert("g", "." + config_classes[config.area_front ? "circles" : "lines"]).attr("class", $$.getClass("areas", !0));
   },
   updateAreaGradient: function updateAreaGradient() {
     var $$ = this,
@@ -13426,7 +13404,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         config = $$.config,
         state = $$.state,
         $el = $$.$el;
-    config.area_linearGradient && $$.updateAreaGradient(), $el.area = $el.main.selectAll("." + config_classes.areas).selectAll("." + config_classes.area).data($$.lineData.bind($$)), $el.area.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $el.area = $el.area.enter().append("path").attr("class", $$.classArea.bind($$)).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function () {
+    config.area_linearGradient && $$.updateAreaGradient(), $el.area = $el.main.selectAll("." + config_classes.areas).selectAll("." + config_classes.area).data($$.lineData.bind($$)), $el.area.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $el.area = $el.area.enter().append("path").attr("class", $$.getClass("area", !0)).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function () {
       return state.orgAreaOpacity = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).style("opacity"), "0";
     }).merge($el.area), $el.area.style("opacity", state.orgAreaOpacity);
   },
@@ -13516,8 +13494,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     var $$ = this,
         config = $$.config,
         $el = $$.$el,
-        classChartBar = $$.classChartBar.bind($$),
-        classBars = $$.classBars.bind($$),
+        classChartBar = $$.getChartClass("Bar"),
+        classBars = $$.getClass("bars", !0),
         classFocus = $$.classFocus.bind($$),
         isSelectable = config.interaction_enabled && config.data_selection_isselectable;
     $el.bar || $$.initBar();
@@ -13534,7 +13512,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     var $$ = this,
         $el = $$.$el,
         barData = $$.barData.bind($$),
-        classBar = $$.classBar.bind($$),
+        classBar = $$.getClass("bar", !0),
         initialOpacity = $$.initialOpacity.bind($$);
     $el.bar = $el.main.selectAll("." + config_classes.bars).selectAll("." + config_classes.bar).data(barData), $el.bar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $el.bar = $el.bar.enter().append("path").attr("class", classBar).style("fill", $$.color).merge($el.bar).style("opacity", initialOpacity);
   },
@@ -13816,8 +13794,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         area = _$$$$el.area,
         line = _$$$$el.line,
         main = _$$$$el.main,
-        classChartLine = $$.classChartLine.bind($$),
-        classLines = $$.classLines.bind($$),
+        classChartLine = $$.getChartClass("Line"),
+        classLines = $$.getClass("lines", !0),
         classFocus = $$.classFocus.bind($$);
     line || $$.initLine();
     var targets = t.filter(function (d) {
@@ -13835,7 +13813,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         extraLineClasses = $$.format.extraLineClasses,
         $el = $$.$el;
     $el.line = $el.main.selectAll("." + config_classes.lines).selectAll("." + config_classes.line).data($$.lineData.bind($$)), $el.line.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $el.line = $el.line.enter().append("path").attr("class", function (d) {
-      return $$.classLine.bind($$)(d) + " " + (extraLineClasses(d) || "");
+      return $$.getClass("line", !0)(d) + " " + (extraLineClasses(d) || "");
     }).style("stroke", $$.color).merge($el.line).style("opacity", $$.initialOpacity.bind($$)).style("shape-rendering", function (d) {
       return $$.isStepType(d) ? "crispEdges" : "";
     }).attr("transform", null);
@@ -14052,7 +14030,7 @@ var getTransitionName = function () {
         $el = $$.$el,
         selectionEnabled = config.interaction_enabled && config.data_selection_enabled,
         isSelectable = selectionEnabled && config.data_selection_isselectable,
-        classCircles = $$.classCircles.bind($$);
+        classCircles = $$.getClass("circles", !0);
 
     if (config.point_show) {
       $el.circle || $$.initCircle();
@@ -14266,9 +14244,9 @@ var getTransitionName = function () {
         circle = $$.$el.circle,
         pointClass = !1;
     return (isObject(d) || circle) && (pointClass = d === !0 ? circle.each(function (d) {
-      var className = $$.classCircle.bind($$)(d);
+      var className = $$.getClass("circle", !0)(d);
       this.getAttribute("class").indexOf(config_classes.EXPANDED) > -1 && (className += " " + config_classes.EXPANDED), this.setAttribute("class", className);
-    }) : $$.classCircle(d)), pointClass;
+    }) : $$.getClass("circle", !0)(d)), pointClass;
   },
   generateGetLinePoints: function generateGetLinePoints(lineIndices, isSub) {
     // partial duplication of generateGetBarPoints
@@ -14622,7 +14600,7 @@ var cacheKey = KEY.radarPoints;
     }),
         points = $$.cache.get(cacheKey),
         areas = $$.$el.radar.shapes.selectAll("polygon").data(targets),
-        areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
+        areasEnter = areas.enter().append("g").attr("class", $$.getChartClass("Radar"));
     areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).style("fill", $$.color).style("stroke", $$.color).attr("points", function (d) {
       return points[d.id].join(" ");
     }), $$.updateTargetForCircle(targets, areasEnter);
@@ -16254,11 +16232,11 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         config = $$.config,
         state = $$.state,
         main = $$.$el.subchart.main,
-        classChartBar = $$.classChartBar.bind($$),
-        classBars = $$.classBars.bind($$),
-        classChartLine = $$.classChartLine.bind($$),
-        classLines = $$.classLines.bind($$),
-        classAreas = $$.classAreas.bind($$);
+        classChartBar = $$.getChartClass("Bar"),
+        classBars = $$.getClass("bars", !0),
+        classChartLine = $$.getChartClass("Line"),
+        classLines = $$.getClass("lines", !0),
+        classAreas = $$.getClass("areas", !0);
 
     if (config.subchart_show) {
       // -- Bar --//
@@ -16283,7 +16261,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   updateBarForSubchart: function updateBarForSubchart(durationForExit) {
     var $$ = this,
         subchart = $$.$el.subchart;
-    subchart.bar = subchart.main.selectAll("." + config_classes.bars).selectAll("." + config_classes.bar).data($$.barData.bind($$)), subchart.bar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), subchart.bar = subchart.bar.enter().append("path").attr("class", $$.classBar.bind($$)).style("stroke", "none").style("fill", $$.color).merge(subchart.bar).style("opacity", $$.initialOpacity.bind($$));
+    subchart.bar = subchart.main.selectAll("." + config_classes.bars).selectAll("." + config_classes.bar).data($$.barData.bind($$)), subchart.bar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), subchart.bar = subchart.bar.enter().append("path").attr("class", $$.getClass("bar", !0)).style("stroke", "none").style("fill", $$.color).merge(subchart.bar).style("opacity", $$.initialOpacity.bind($$));
   },
 
   /**
@@ -16306,7 +16284,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   updateLineForSubchart: function updateLineForSubchart(durationForExit) {
     var $$ = this,
         subchart = $$.$el.subchart;
-    subchart.line = subchart.main.selectAll("." + config_classes.lines).selectAll("." + config_classes.line).data($$.lineData.bind($$)), subchart.line.exit().transition().duration(durationForExit).style("opacity", "0").remove(), subchart.line = subchart.line.enter().append("path").attr("class", $$.classLine.bind($$)).style("stroke", $$.color).merge(subchart.line).style("opacity", $$.initialOpacity.bind($$));
+    subchart.line = subchart.main.selectAll("." + config_classes.lines).selectAll("." + config_classes.line).data($$.lineData.bind($$)), subchart.line.exit().transition().duration(durationForExit).style("opacity", "0").remove(), subchart.line = subchart.line.enter().append("path").attr("class", $$.getClass("line", !0)).style("stroke", $$.color).merge(subchart.line).style("opacity", $$.initialOpacity.bind($$));
   },
 
   /**
@@ -16329,7 +16307,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   updateAreaForSubchart: function updateAreaForSubchart(durationForExit) {
     var $$ = this,
         subchart = $$.$el.subchart;
-    subchart.area = subchart.main.selectAll("." + config_classes.areas).selectAll("." + config_classes.area).data($$.lineData.bind($$)), subchart.area.exit().transition().duration(durationForExit).style("opacity", "0").remove(), subchart.area = subchart.area.enter().append("path").attr("class", $$.classArea.bind($$)).style("fill", $$.color).style("opacity", function () {
+    subchart.area = subchart.main.selectAll("." + config_classes.areas).selectAll("." + config_classes.area).data($$.lineData.bind($$)), subchart.area.exit().transition().duration(durationForExit).style("opacity", "0").remove(), subchart.area = subchart.area.enter().append("path").attr("class", $$.getClass("area", !0)).style("fill", $$.color).style("opacity", function () {
       return $$.state.orgAreaOpacity = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).style("opacity"), "0";
     }).merge(subchart.area).style("opacity", "0");
   },
