@@ -88,15 +88,15 @@ export default {
 		return padding + (axisWidth * axesLen);
 	},
 
-	getCurrentPaddingRight(withoutTickTextOverflow = false): number {
+	getCurrentPaddingRight(withXAxisTickTextOverflow = false): number {
 		const $$ = this;
 		const {config, state: {hasAxis}} = $$;
 		const defaultPadding = 10;
 		const legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
 		const axesLen = hasAxis ? config.axis_y2_axes.length : 0;
 		const axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0;
-		const xAxisTickTextOverflow = withoutTickTextOverflow ?
-			0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
+		const xAxisTickTextOverflow = withXAxisTickTextOverflow ?
+			$$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
 		let padding;
 
 		if (isValue(config.padding_right)) {
@@ -266,12 +266,12 @@ export default {
 		// for main
 		state.margin = !hasArc && isRotated ? {
 			top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
-			right: hasArc ? 0 : $$.getCurrentPaddingRight(),
+			right: hasArc ? 0 : $$.getCurrentPaddingRight(true),
 			bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
 			left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
 		} : {
 			top: 4 + $$.getCurrentPaddingTop(), // for top tick text
-			right: hasArc ? 0 : $$.getCurrentPaddingRight(),
+			right: hasArc ? 0 : $$.getCurrentPaddingRight(true),
 			bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
 			left: hasArc ? 0 : $$.getCurrentPaddingLeft()
 		};
