@@ -6089,16 +6089,16 @@ var size = {
         }
         return padding + (axisWidth * axesLen);
     },
-    getCurrentPaddingRight: function (withoutTickTextOverflow) {
-        if (withoutTickTextOverflow === void 0) { withoutTickTextOverflow = false; }
+    getCurrentPaddingRight: function (withXAxisTickTextOverflow) {
+        if (withXAxisTickTextOverflow === void 0) { withXAxisTickTextOverflow = false; }
         var $$ = this;
         var config = $$.config, hasAxis = $$.state.hasAxis;
         var defaultPadding = 10;
         var legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
         var axesLen = hasAxis ? config.axis_y2_axes.length : 0;
         var axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0;
-        var xAxisTickTextOverflow = withoutTickTextOverflow ?
-            0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
+        var xAxisTickTextOverflow = withXAxisTickTextOverflow ?
+            $$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
         var padding;
         if (isValue(config.padding_right)) {
             padding = config.padding_right + 1; // 1 is needed not to hide tick line
@@ -6239,12 +6239,12 @@ var size = {
         // for main
         state.margin = !hasArc && isRotated ? {
             top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
-            right: hasArc ? 0 : $$.getCurrentPaddingRight(),
+            right: hasArc ? 0 : $$.getCurrentPaddingRight(true),
             bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
             left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
         } : {
             top: 4 + $$.getCurrentPaddingTop(),
-            right: hasArc ? 0 : $$.getCurrentPaddingRight(),
+            right: hasArc ? 0 : $$.getCurrentPaddingRight(true),
             bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
             left: hasArc ? 0 : $$.getCurrentPaddingLeft()
         };
@@ -6979,10 +6979,11 @@ var tooltip$1 = {
         var width = state.width, height = state.height, current = state.current, isLegendRight = state.isLegendRight, inputType = state.inputType, event = state.event;
         var hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
         var svgLeft = $$.getSvgLeft(true);
-        var chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(true);
+        var _a = d3Mouse(element), x = _a[0], y = _a[1];
+        var chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
         var chartLeft = $$.getCurrentPaddingLeft(true);
         var size = 20;
-        var _a = getPointer(event, element), x = _a[0], y = _a[1];
+        var _b = getPointer(event, element), x = _b[0], y = _b[1];
         // Determine tooltip position
         if ($$.hasArcType()) {
             var raw = inputType === "touch" || $$.hasType("radar");
@@ -12664,7 +12665,7 @@ var sizeAxis = {
         var $$ = this;
         var _a = $$.state, axis = _a.axis, current = _a.current;
         var xAxisLength = current.width -
-            $$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight(true);
+            $$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight();
         var tickCountWithPadding = axis.x.tickCount +
             axis.x.padding.left + axis.x.padding.right;
         var maxTickWidth = $$.axis.getMaxTickWidth("x");
@@ -15682,8 +15683,8 @@ var shapeLine = {
         mainLineEnter.append("g")
             .attr("class", classLines);
         // Areas
-        if ($$.hasTypeOf("Area") && !area) {
-            $$.initArea(mainLineEnter.empty() ? mainLineUpdate : mainLineEnter);
+        if ($$.hasTypeOf("Area")) {
+            $$.initArea(!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter);
         }
         $$.updateTargetForCircle(targets, mainLineEnter);
     },

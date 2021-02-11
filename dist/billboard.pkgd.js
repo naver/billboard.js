@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.2-nightly-20210210011424
+ * @version 2.2.2-nightly-20210211011517
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -25601,8 +25601,8 @@ function stepAfter(context) {
         axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
     return padding = isValue(config.padding_left) ? config.padding_left : hasAxis && isRotated ? config.axis_x_show ? Math.max(ceil10(axisWidth), 40) : 1 : hasAxis && (!config.axis_y_show || config.axis_y_inner) ? $$.axis.getAxisLabelPosition("y").isOuter ? 30 : 1 : ceil10(axisWidth), padding + axisWidth * axesLen;
   },
-  getCurrentPaddingRight: function getCurrentPaddingRight(withoutTickTextOverflow) {
-    withoutTickTextOverflow === void 0 && (withoutTickTextOverflow = !1);
+  getCurrentPaddingRight: function getCurrentPaddingRight(withXAxisTickTextOverflow) {
+    withXAxisTickTextOverflow === void 0 && (withXAxisTickTextOverflow = !1);
     var padding,
         $$ = this,
         config = $$.config,
@@ -25611,7 +25611,7 @@ function stepAfter(context) {
         legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
         axesLen = hasAxis ? config.axis_y2_axes.length : 0,
         axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0,
-        xAxisTickTextOverflow = withoutTickTextOverflow ? 0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
+        xAxisTickTextOverflow = withXAxisTickTextOverflow ? $$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
     return padding = isValue(config.padding_right) ? config.padding_right + 1 : $$.axis && config.axis_rotated ? defaultPadding + legendWidthOnRight : $$.axis && (!config.axis_y2_show || config.axis_y2_inner) ? Math.max(2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0), xAxisTickTextOverflow) : Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow), padding + axisWidth * axesLen;
   },
 
@@ -25715,13 +25715,13 @@ function stepAfter(context) {
         subchartHeight = config.subchart_show && !hasArc ? config.subchart_size_height + subchartXAxisHeight : 0;
     state.margin = !hasArc && isRotated ? {
       top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
-      right: hasArc ? 0 : $$.getCurrentPaddingRight(),
+      right: hasArc ? 0 : $$.getCurrentPaddingRight(!0),
       bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
       left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
     } : {
       top: 4 + $$.getCurrentPaddingTop(),
       // for top tick text
-      right: hasArc ? 0 : $$.getCurrentPaddingRight(),
+      right: hasArc ? 0 : $$.getCurrentPaddingRight(!0),
       bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
       left: hasArc ? 0 : $$.getCurrentPaddingLeft()
     }, state.margin2 = isRotated ? {
@@ -26142,379 +26142,9 @@ function getTextPos(pos, width) {
     return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
   }
 });
-;// CONCATENATED MODULE: ./src/ChartInternal/internals/tooltip.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-
-
-
-/* harmony default export */ var internals_tooltip = ({
-  /**
-   * Initializes the tooltip
-   * @private
-   */
-  initTooltip: function initTooltip() {
-    var $$ = this,
-        config = $$.config,
-        $el = $$.$el;
-    $el.tooltip = src_select(config.tooltip_contents.bindto), $el.tooltip.empty() && ($el.tooltip = $el.chart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none")), $$.bindTooltipResizePos();
-  },
-  initShowTooltip: function initShowTooltip() {
-    var $$ = this,
-        config = $$.config,
-        $el = $$.$el,
-        _$$$state = $$.state,
-        hasAxis = _$$$state.hasAxis,
-        hasRadar = _$$$state.hasRadar;
-
-    // Show tooltip if needed
-    if (config.tooltip_init_show) {
-      var isArc = !(hasAxis && hasRadar);
-
-      if ($$.axis && $$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
-        var i,
-            val,
-            targets = $$.data.targets[0];
-
-        for (config.tooltip_init_x = parseDate.call($$, config.tooltip_init_x), i = 0; (val = targets.values[i]) && !(val.x - config.tooltip_init_x === 0); i++);
-
-        config.tooltip_init_x = i;
-      }
-
-      var data = $$.data.targets.map(function (d) {
-        var x = isArc ? 0 : config.tooltip_init_x;
-        return $$.addName(d.values[x]);
-      });
-      isArc && (data = [data[config.tooltip_init_x]]), $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), config.tooltip_contents.bindto || $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", "block");
-    }
-  },
-
-  /**
-   * Get the tooltip HTML string
-   * @param  {Array} args Arguments
-   * @returns {string} Formatted HTML string
-   * @private
-   */
-  getTooltipHTML: function getTooltipHTML() {
-    var $$ = this,
-        api = $$.api,
-        config = $$.config;
-    return isFunction(config.tooltip_contents) ? config.tooltip_contents.bind(api).apply(void 0, arguments) : $$.getTooltipContent.apply($$, arguments);
-  },
-
-  /**
-   * Returns the tooltip content(HTML string)
-   * @param {object} d data
-   * @param {Function} defaultTitleFormat Default title format
-   * @param {Function} defaultValueFormat Default format for each data value in the tooltip.
-   * @param {Function} color Color function
-   * @returns {string} html
-   * @private
-   */
-  getTooltipContent: function getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
-    var $$ = this,
-        api = $$.api,
-        config = $$.config,
-        state = $$.state,
-        _map = ["title", "name", "value"].map(function (v) {
-      var fn = config["tooltip_format_" + v];
-      return isFunction(fn) ? fn.bind(api) : fn;
-    }),
-        titleFormat = _map[0],
-        nameFormat = _map[1],
-        valueFormat = _map[2];
-
-    titleFormat = titleFormat || defaultTitleFormat, nameFormat = nameFormat || function (name) {
-      return name;
-    }, valueFormat = valueFormat || ($$.isStackNormalized() ? function (v, ratio) {
-      return (ratio * 100).toFixed(2) + "%";
-    } : defaultValueFormat);
-
-    var order = config.tooltip_order,
-        getRowValue = function (row) {
-      return $$.axis && $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row);
-    },
-        getBgColor = $$.levelColor ? function (row) {
-      return $$.levelColor(row.value);
-    } : function (row) {
-      return color(row);
-    },
-        contents = config.tooltip_contents,
-        tplStr = contents.template,
-        targetIds = $$.mapToTargetIds();
-
-    if (order === null && config.data_groups.length) {
-      // for stacked data, order should aligned with the visually displayed data
-      var ids = $$.orderTargets($$.data.targets).map(function (i2) {
-        return i2.id;
-      }).reverse();
-      d.sort(function (a, b) {
-        var v1 = a ? a.value : null,
-            v2 = b ? b.value : null;
-        return v1 > 0 && v2 > 0 && (v1 = a.id ? ids.indexOf(a.id) : null, v2 = b.id ? ids.indexOf(b.id) : null), v1 - v2;
-      });
-    } else if (/^(asc|desc)$/.test(order)) {
-      d.sort(function (a, b) {
-        var v1 = a ? getRowValue(a) : null,
-            v2 = b ? getRowValue(b) : null;
-        return order === "asc" ? v1 - v2 : v2 - v1;
-      });
-    } else isFunction(order) && d.sort(order.bind(api));
-
-    var text,
-        row,
-        param,
-        value,
-        i,
-        tpl = $$.getTooltipContentTemplate(tplStr),
-        len = d.length;
-
-    for (i = 0; i < len; i++) if (row = d[i], row && (getRowValue(row) || getRowValue(row) === 0)) {
-      if (isUndefined(text)) {
-        var title = (state.hasAxis || state.hasRadar) && sanitise(titleFormat ? titleFormat(row.x) : row.x);
-        text = tplProcess(tpl[0], {
-          CLASS_TOOLTIP: config_classes.tooltip,
-          TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">" + title + "</th></tr>" : ""
-        });
-      }
-
-      if (!row.ratio && $$.$el.arcs && (row.ratio = $$.getRatio("arc", $$.$el.arcs.select("path." + config_classes.arc + "-" + row.id).data()[0])), param = [row.ratio, row.id, row.index, d], value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(param))), $$.isAreaRangeType(row)) {
-        var _map2 = ["high", "low"].map(function (v) {
-          return sanitise(valueFormat.apply(void 0, [$$.getAreaRangeData(row, v)].concat(param)));
-        }),
-            high = _map2[0],
-            low = _map2[1];
-
-        value = "<b>Mid:</b> " + value + " <b>High:</b> " + high + " <b>Low:</b> " + low;
-      }
-
-      if (value !== undefined) {
-        var _ret = function () {
-          // Skip elements when their name is set to null
-          if (row.name === null) return "continue";
-          var name = sanitise(nameFormat.apply(void 0, [row.name].concat(param))),
-              color = getBgColor(row),
-              contentValue = {
-            CLASS_TOOLTIP_NAME: config_classes.tooltipName + $$.getTargetSelectorSuffix(row.id),
-            COLOR: tplStr || !$$.patterns ? color : "<svg><rect style=\"fill:" + color + "\" width=\"10\" height=\"10\"></rect></svg>",
-            NAME: name,
-            VALUE: value
-          };
-
-          if (tplStr && isObject(contents.text)) {
-            var index = targetIds.indexOf(row.id);
-            Object.keys(contents.text).forEach(function (key) {
-              contentValue[key] = contents.text[key][index];
-            });
-          }
-
-          text += tplProcess(tpl[1], contentValue);
-        }();
-
-        if (_ret === "continue") continue;
-      }
-    }
-
-    return text + "</table>";
-  },
-
-  /**
-   * Get the content template string
-   * @param {string} tplStr Tempalte string
-   * @returns {Array} Template string
-   * @private
-   */
-  getTooltipContentTemplate: function getTooltipContentTemplate(tplStr) {
-    return (tplStr || "<table class=\"{=CLASS_TOOLTIP}\"><tbody>\n\t\t\t\t{=TITLE}\n\t\t\t\t{{<tr class=\"{=CLASS_TOOLTIP_NAME}\">\n\t\t\t\t\t<td class=\"name\">" + (this.patterns ? "{=COLOR}" : "<span style=\"background-color:{=COLOR}\"></span>") + "{=NAME}</td>\n\t\t\t\t\t<td class=\"value\">{=VALUE}</td>\n\t\t\t\t</tr>}}\n\t\t\t</tbody></table>").replace(/(\r?\n|\t)/g, "").split(/{{(.*)}}/);
-  },
-
-  /**
-   * Returns the position of the tooltip
-   * @param {object} dataToShow data
-   * @param {string} tWidth Width value of tooltip element
-   * @param {string} tHeight Height value of tooltip element
-   * @param {HTMLElement} element Tooltip element
-   * @returns {object} top, left value
-   * @private
-   */
-  tooltipPosition: function tooltipPosition(dataToShow, tWidth, tHeight, element) {
-    var $$ = this,
-        config = $$.config,
-        scale = $$.scale,
-        state = $$.state,
-        _state = state,
-        width = _state.width,
-        height = _state.height,
-        current = _state.current,
-        isLegendRight = _state.isLegendRight,
-        inputType = _state.inputType,
-        event = _state.event,
-        hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle,
-        svgLeft = $$.getSvgLeft(!0),
-        chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(!0),
-        chartLeft = $$.getCurrentPaddingLeft(!0),
-        size = 20,
-        _getPointer = getPointer(event, element),
-        x = _getPointer[0],
-        y = _getPointer[1];
-
-    // Determine tooltip position
-    if ($$.hasArcType()) {
-      var raw = inputType === "touch" || $$.hasType("radar");
-      raw || (y += hasGauge ? height : height / 2, x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2);
-    } else {
-      var dataScale = scale.x(dataToShow[0].x);
-      config.axis_rotated ? (y = dataScale + size, x += svgLeft + 100, chartRight -= svgLeft) : (y -= 5, x = svgLeft + chartLeft + size + ($$.zoomScale ? x : dataScale));
-    } // when tooltip left + tWidth > chart's width
-
-
-    x + tWidth + 15 > chartRight && (x -= tWidth + chartLeft), y + tHeight > current.height && (y -= hasGauge ? tHeight * 3 : tHeight + 30);
-    var pos = {
-      top: y,
-      left: x
-    }; // make sure to not be positioned out of viewport
-
-    return Object.keys(pos).forEach(function (v) {
-      pos[v] < 0 && (pos[v] = 0);
-    }), pos;
-  },
-
-  /**
-   * Show the tooltip
-   * @param {object} selectedData Data object
-   * @param {HTMLElement} element Tooltip element
-   * @private
-   */
-  showTooltip: function showTooltip(selectedData, element) {
-    var $$ = this,
-        config = $$.config,
-        state = $$.state,
-        tooltip = $$.$el.tooltip,
-        bindto = config.tooltip_contents.bindto,
-        forArc = $$.hasArcType(null, ["radar"]),
-        dataToShow = selectedData.filter(function (d) {
-      return d && isValue($$.getBaseValue(d));
-    });
-
-    if (tooltip && dataToShow.length !== 0 && config.tooltip_show) {
-      var datum = tooltip.datum(),
-          _ref = datum || {},
-          _ref$width = _ref.width,
-          width = _ref$width === void 0 ? 0 : _ref$width,
-          _ref$height = _ref.height,
-          height = _ref$height === void 0 ? 0 : _ref$height,
-          dataStr = JSON.stringify(selectedData);
-
-      if (!datum || datum.current !== dataStr) {
-        var index = selectedData.concat().sort()[0].index;
-        callFn(config.tooltip_onshow, $$.api, selectedData), tooltip.html($$.getTooltipHTML(selectedData, // data
-        $$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
-        $$.getYFormat(forArc), // defaultValueFormat
-        $$.color // color
-        )).style("display", null).style("visibility", null) // for IE9
-        .datum(datum = {
-          index: index,
-          current: dataStr,
-          width: width = tooltip.property("offsetWidth"),
-          height: height = tooltip.property("offsetHeight")
-        }), callFn(config.tooltip_onshown, $$.api, selectedData), $$._handleLinkedCharts(!0, index);
-      }
-
-      if (!bindto) {
-        var fnPos = config.tooltip_position || $$.tooltipPosition,
-            pos = fnPos.call(this, dataToShow, width, height, element); // Get tooltip dimensions
-
-        ["top", "left"].forEach(function (v) {
-          var value = pos[v];
-          tooltip.style(v, value + "px"), v !== "left" || datum.xPosInPercent || (datum.xPosInPercent = value / state.current.width * 100);
-        });
-      }
-    }
-  },
-
-  /**
-   * Adjust tooltip position on resize event
-   * @private
-   */
-  bindTooltipResizePos: function bindTooltipResizePos() {
-    var $$ = this,
-        resizeFunction = $$.resizeFunction,
-        state = $$.state,
-        tooltip = $$.$el.tooltip;
-    resizeFunction.add(function () {
-      if (tooltip.style("display") === "block") {
-        var current = state.current,
-            _tooltip$datum = tooltip.datum(),
-            width = _tooltip$datum.width,
-            xPosInPercent = _tooltip$datum.xPosInPercent,
-            _value = current.width / 100 * xPosInPercent,
-            diff = current.width - (_value + width);
-
-        diff < 0 && (_value += diff), tooltip.style("left", _value + "px");
-      }
-    });
-  },
-
-  /**
-   * Hide the tooltip
-   * @param {boolean} force Force to hide
-   * @private
-   */
-  hideTooltip: function hideTooltip(force) {
-    var $$ = this,
-        api = $$.api,
-        config = $$.config,
-        tooltip = $$.$el.tooltip;
-
-    if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
-      var selectedData = JSON.parse(tooltip.datum().current);
-      // hide tooltip
-      callFn(config.tooltip_onhide, api, selectedData), tooltip.style("display", "none").style("visibility", "hidden") // for IE9
-      .datum(null), callFn(config.tooltip_onhidden, api, selectedData);
-    }
-  },
-
-  /**
-   * Toggle display for linked chart instances
-   * @param {boolean} show true: show, false: hide
-   * @param {number} index x Axis index
-   * @private
-   */
-  _handleLinkedCharts: function _handleLinkedCharts(show, index) {
-    var $$ = this,
-        charts = $$.charts,
-        config = $$.config;
-
-    if (config.tooltip_linked && charts.length > 1) {
-      var linkedName = config.tooltip_linked_name;
-      charts.filter(function (v) {
-        return v !== $$.api;
-      }).forEach(function (c) {
-        var _c$internal = c.internal,
-            config = _c$internal.config,
-            $el = _c$internal.$el,
-            isLinked = config.tooltip_linked,
-            name = config.tooltip_linked_name,
-            isInDom = browser_doc.body.contains($el.chart.node());
-
-        if (isLinked && linkedName === name && isInDom) {
-          var data = $el.tooltip.data()[0],
-              isNotSameIndex = index !== (data && data.index);
-
-          // prevent throwing error for non-paired linked indexes
-          try {
-            show && isNotSameIndex ? c.tooltip.show({
-              index: index
-            }) : !show && c.tooltip.hide();
-          } catch (e) {}
-        }
-      });
-    }
-  }
-});
+// EXTERNAL MODULE: ./src/ChartInternal/internals/tooltip.ts
+var internals_tooltip = __webpack_require__(385);
+var tooltip_default = /*#__PURE__*/__webpack_require__.n(internals_tooltip);
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/transform.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -27093,7 +26723,7 @@ var ChartInternal = /*#__PURE__*/function () {
 
 
 util_extend(ChartInternal.prototype, [// common
-convert, ChartInternal_data_data, load, category, internals_class, internals_color, domain, interactions_interaction, format, internals_legend, redraw, scale, shape, internals_size, internals_text, internals_title, internals_tooltip, transform, internals_type]);
+convert, ChartInternal_data_data, load, category, internals_class, internals_color, domain, interactions_interaction, format, internals_legend, redraw, scale, shape, internals_size, internals_text, internals_title, (tooltip_default()), transform, internals_type]);
 ;// CONCATENATED MODULE: ./src/config/config.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -30948,7 +30578,7 @@ function smoothLines(el, type) {
         _$$$state = $$.state,
         axis = _$$$state.axis,
         current = _$$$state.current,
-        xAxisLength = current.width - $$.getCurrentPaddingLeft(!1) - $$.getCurrentPaddingRight(!0),
+        xAxisLength = current.width - $$.getCurrentPaddingLeft(!1) - $$.getCurrentPaddingRight(),
         tickCountWithPadding = axis.x.tickCount + axis.x.padding.left + axis.x.padding.right,
         maxTickWidth = $$.axis.getMaxTickWidth("x"),
         tickLength = tickCountWithPadding ? xAxisLength / tickCountWithPadding : 0;
@@ -34236,7 +33866,7 @@ function point_y(p) {
     }),
         mainLineEnter = mainLineUpdate.enter().append("g").attr("class", classChartLine).style("opacity", "0").style("pointer-events", "none");
     // Lines for each data
-    mainLineEnter.append("g").attr("class", classLines), $$.hasTypeOf("Area") && !area && $$.initArea(mainLineEnter.empty() ? mainLineUpdate : mainLineEnter), $$.updateTargetForCircle(targets, mainLineEnter);
+    mainLineEnter.append("g").attr("class", classLines), $$.hasTypeOf("Area") && $$.initArea(!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter), $$.updateTargetForCircle(targets, mainLineEnter);
   },
   updateLine: function updateLine(durationForExit) {
     var $$ = this,
@@ -38016,6 +37646,12 @@ Object.keys(resolver_shape_namespaceObject).forEach(function (v) {
 
 module.exports = __webpack_require__(382);
 
+
+/***/ }),
+/* 385 */
+/***/ (function() {
+
+throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /home/runner/work/billboard.js/billboard.js/src/ChartInternal/internals/tooltip.ts: Identifier 'x' has already been declared (269:7)\n\n  267 | \t\tconst chartLeft = $$.getCurrentPaddingLeft(true);\n  268 | \t\tconst size = 20;\n> 269 | \t\tlet [x, y] = getPointer(event, element);\n      | \t\t     ^\n  270 |\n  271 | \t\t// Determine tooltip position\n  272 | \t\tif ($$.hasArcType()) {\n    at Object._raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:776:17)\n    at Object.raiseWithData (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:769:17)\n    at Object.raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:737:17)\n    at TypeScriptScopeHandler.checkRedeclarationInScope (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:4955:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:4921:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:5031:11)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:9672:24)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7248:15)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:9699:18)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7248:15)");
 
 /***/ })
 /******/ 	]);
