@@ -1,0 +1,13 @@
+.bb .bb-button, .bb text {
+    font-size: 11px;
+}
+
+.hide {
+    display: none;
+}
+
+#display_flex {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

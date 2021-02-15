@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import { Data } from "./options";
-import { ArrayOrString, d3Selection, DataArray, DataItem, PrimitiveArray, TargetIds } from "./types";
+import {Data} from "./options";
+import {ArrayOrString, d3Selection, DataArray, DataItem, PrimitiveArray, TargetIds} from "./types";
 
 export interface Chart {
 	$: {
@@ -319,17 +319,17 @@ export interface Chart {
 	 *   - done will be called after data loaded, but it's not after rendering.
 	 *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
 	 */
-	load(args: {
+	load(this: Chart, args: {
 		url?: string;
 		json?: [{ [key: string]: string }];
 		rows?: PrimitiveArray[];
 		columns?: PrimitiveArray[];
-		data?: DataArray;
+		data?: Array<{ [key: string]: number }>;
 		names?: { [key: string]: string };
 		xs?: { [key: string]: string };
 		classes?: { [key: string]: string };
 		categories?: string[];
-		axes?: { [key: string]: string };
+		axes?: { [key: string]: string | string[] };
 		colors?: { [key: string]: string };
 		headers?: { [key: string]: string };
 		keys?: { [key: string]: string };
@@ -337,7 +337,7 @@ export interface Chart {
 		type?: string;
 		types?: { [key: string]: string };
 		unload?: boolean | ArrayOrString;
-		done?: (this: void) => any;
+		done?: () => any;
 	}): void;
 
 	/**
@@ -352,7 +352,7 @@ export interface Chart {
 	 *   - If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.
 	 *   - done will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
 	 */
-	unload(targetIds?: TargetIds, done?: (this: void) => any): any;
+	unload(this: Chart, targetIds?: TargetIds, done?: () => any): any;
 
 	/**
 	 * Flow data to the chart. By this API, you can append new data points to the chart.
@@ -383,7 +383,7 @@ export interface Chart {
 		to?: any;
 		length?: number;
 		duration?: number;
-		done?(this: void): any;
+		done?(this: Chart): any;
 	}): void;
 
 	/**
@@ -406,13 +406,6 @@ export interface Chart {
 	 * @param targetId You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
 	 */
 	selected(targetId?: string): Data;
-
-	/**
-	 * Change the type of the chart.
-	 * @param type Specify the type to be transformed. The types listed in data.type can be used.
-	 * @param targetIds Specify targets to be transformed. If not given, all targets will be the candidate.
-	 */
-	transform(type: string, targetIds?: ArrayOrString): void;
 
 	/**
 	 * Update groups for the targets.
@@ -446,7 +439,7 @@ export interface Chart {
 
 	/**
 	 * Get and set x values for the chart.
-	 * @param xs If x is given, x values of every target will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
+	 * @param x If x is given, x values of every target will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
 	 */
 	xs(xs?: {
 		[key: string]: PrimitiveArray;
@@ -465,6 +458,7 @@ export interface Chart {
 
 	/**
 	 * Force to redraw.
+	 * - **NOTE:** When zoom/subchart is used, the zoomed state will be resetted.
 	 * @param soft For soft redraw.
 	 */
 	flush(soft?: boolean): void;
@@ -482,7 +476,7 @@ export interface Chart {
 	 * @param mimeType The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
 	 * @param callback The callback to be invoked when export is ready.
 	 */
-	export(mimeType?: string, callback?: (this: void, dataUrl: string) => string): string;
+	export(this: Chart, mimeType?: string, callback?: (dataUrl: string) => string): string;
 
 	/**
 	 * Get or set single config option value.
@@ -490,7 +484,7 @@ export interface Chart {
 	 * @param value The value accepted for indicated option.
 	 * @param redraw Set to redraw with the new option changes. (NOTE: Doesn't guarantee work in all circumstances. It can be applied for limited options only)
 	 */
-	config<T = void>(optionName: string, value?: any, redraw?: boolean): T;
+  config<T = void>(optionName: string, value?: any, redraw?: boolean): T;
 }
 
 export interface GridOperations {

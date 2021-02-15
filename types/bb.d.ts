@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import { Chart } from "./chart";
-import { ChartOptions } from "./options";
+import {Chart} from "./chart";
+import {ChartOptions} from "./options";
 
 export const bb: {
 	/**
@@ -31,3 +31,25 @@ export const bb: {
 	 */
 	instance: Chart[];
 };
+
+// shape modules
+export function area(): "area";
+export function areaLineRange(): "area-line-range";
+export function areaSpline(): "area-spline";
+export function areaSplineRange(): "area-spline-range";
+export function areaStep(): "area-step";
+export function bar(): "bar";
+export function bubble(): "bubble";
+export function donut(): "donut";
+export function gauge(): "gauge";
+export function line(): "line";
+export function pie(): "pie";
+export function radar(): "radar";
+export function scatter(): "scatter";
+export function spline(): "spline";
+export function step(): "step";
+
+// interaction modules
+export function selection(): true;
+export function subchart(): true;
+export function zoom(): true;

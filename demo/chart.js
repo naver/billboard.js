@@ -176,11 +176,14 @@ var billboardDemo = {
 		var inst = bb.instance;
 		var typeData = demos[type][key];
 		var isArray = typeData && typeData.constructor === Array;
+		var camelize = function(s) {
+			return s.replace(/-./g, function(x) { return x.toUpperCase()[1] });
+		}
 		var self = this;
 
 		inst.length && inst.forEach(function (c) {
 			var timer = c.timer;
-			var el = c.element;
+			var el = c.$.chart;
 
 			try {
 				timer && timer.forEach(function (v) {
@@ -194,7 +197,8 @@ var billboardDemo = {
 
 		var code = {
 			markup: [],
-			data: []
+			data: [],
+			esm: []
 		};
 
 		key = type +"."+ key;
@@ -204,11 +208,24 @@ var billboardDemo = {
 			self._addChartInstance(t, key, i + 1, code);
 		}) : this._addChartInstance(typeData, key, undefined, code);
 
-		this.$html.innerHTML = "";
-		this.$code.innerHTML = "";
+		this.$html.innerHTML = code.markup.join("");
 
-		code.markup.forEach(function(t) { self.$html.innerHTML += t; });
-		code.data.forEach(function(t) { self.$code.innerHTML += t; });
+		// UMD
+		code.data = code.data.join("")
+			.replace(/"(area|area-line-range|area-spline|area-spline-range|area-step|bar|bubble|donut|gauge|line|pie|radar|scatter|spline|step|selection|subchart|zoom)(\(\))?",?/g, function(match, p1, p2, p3, offset, string) {
+				var module = camelize(p1);
+		
+				code.esm.indexOf(module) === -1 &&
+					code.esm.push(module);
+
+				return (
+					/(selection|subchart|zoom)/.test(module) ? "true" : '"'+ p1 +'"'
+				) + ", // for ESM specify as: " + module +"()";
+			});
+
+		this.$code.innerHTML = '// for ESM environment, need to import modules as:\r\n' +
+'// import bb, {'+ code.esm.join(", ") +'} from "billboard.js"\r\n\r\n' +
+code.data;
 
 		this.$code.scrollTop = 0;
 
@@ -458,8 +475,7 @@ var billboardDemo = {
 			import: [
 				'// base css',
 				'import "billboard.js/dist/theme/insight.css";',
-				'// Packaged build with d3',
-				'import bb from "billboard.js/dist/billboard.pkgd";'
+				'import bb from "billboard.js";',
 			].join("\r\n"),
 			body: bodyCode || [
 				'bb.generate({',

@@ -1,0 +1,32 @@
+name: Nightly Build
+
+on:
+  # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
+  schedule:
+  - cron: "30 0 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup Git
+        shell: bash
+        run: bash ./config/deploy-nightly.sh setup ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install dependencies
+        run: |
+          npm config set package-lock false
+          npm install
+
+      - name: Deploy
+        shell: bash
+        run: bash ./config/deploy-nightly.sh build
+
