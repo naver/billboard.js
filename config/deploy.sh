@@ -14,18 +14,22 @@ setup() {
   DEST_FOLDER=release
 
   # destination remote name
-  if [[ $TRAVIS == "true" ]]; then
+  if [[ $1 == "CI" ]]; then
     DEST_REMOTE=origin
   else
     DEST_REMOTE=upstream
   fi
 
-  # if this is the @next release channel, also deploy docs to in latest folder
-  if [[ $CUR_BRANCH == "next" ]]; then
-    DIST_TAG=next
+  # if this is the @next release channel, do not deploy doc & build files to gh-pages
+  if [[ $VERSION == *"next"* ]]; then
+    exit 1
+    # DIST_TAG=next
   else
     DIST_TAG=latest
   fi
+
+  echo $VERSION
+  echo $DIST_TAG
 }
 
 build() {

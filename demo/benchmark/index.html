@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Benchmark</title>
+  <link rel="stylesheet" href="./benchmark.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/billboard.js/dist/billboard.min.css">
+  <script src="https://d3js.org/d3.v5.min.js"></script>
+</head>
+<body>
+  <h1>Benchmark</h1>
+  1) billboard.js
+  <select id="version" onchange="bench.loadBillboard()">
+	<option>select version</option>
+  </select>
+  <p>
+	2) Data matrix: 
+	<span>Data Series:</span> <input id="data-series" type="number" value="5" min="1"> x 
+	<span>Data Size:</span> <input id="data-size" type="number" value="50" min="1">
+  </p>
+  <p>
+	3) Transition: <select id="transition">
+	  <option value="0">0</option>
+	  <option value="350">350</option>
+	</select>
+	
+  </p>
+  <p>
+	4) Type: <select id="type">
+		<option value="area">area</option>
+		<option value="area-spline">area-spline</option>
+		<option value="area-step">area-step</option>
+		<option value="bar">bar</option>
+		<option value="bubble">bubble</option>
+		<option value="donut">donut</option>
+		<option value="gauge">gauge</option>
+		<option value="line">line</option>
+		<option value="pie">pie</option>
+		<option value="radar">radar</option>
+		<option value="scatter">scatter</option>
+		<option value="spline">spline</option>
+		<option value="step">step</option>
+	</select>
+  </p>
+  <p>
+	5) Run! - 
+	<button onclick="bench.generate()">Generate only</button> 
+	<button onclick="bench.generate('load')">Load Start</button> 
+	<button onclick="bench.generate('resize')">Resize Start</button> 
+	<button onclick="bench.stop()">STOP</button>
+  </p>
+
+  <div id="chart"></div>  
+  <script src="./benchmark.js"></script>
+</body>
+</html>

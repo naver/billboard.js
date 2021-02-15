@@ -1,7 +1,6 @@
 const pkg = require("./package.json");
 const path = require("path");
 const webpack = require("webpack");
-const StringReplacePlugin = require("string-replace-webpack-plugin");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const WebpackBar = require("webpackbar");
 
@@ -9,17 +8,18 @@ const config = {
 	entry: {
 		billboard: [
 			"./src/scss/billboard.scss",
-			"./src/core.js"
+			"./src/index.ts"
 		]
 	},
 	output: {
 		path: path.resolve(__dirname, "dist"),
+		chunkFilename: "[name].bundle.js",
 		filename: "[name].js",
 		libraryTarget: "umd",
 		umdNamedDefine: true,
 		globalObject: "this"
 	},
-	externals: (context, request, callback) => {
+	externals: ({context, request}, callback) => {
 		// every 'd3-*' import, will be externally required as their name except root as 'd3'
 		if (/^d3-/.test(request)) {
 			return callback(null, {
@@ -32,32 +32,29 @@ const config = {
 
 		callback();
 	},
-	devtool: "cheap-module-source-map",
+	devtool: false,
+	resolve: {
+		extensions: [".ts", ".js"]
+	},
+	// https://webpack.js.org/migrate/5/#need-to-support-an-older-browser-like-ie-11
+	target: ["web", "es5"],
 	module: {
 		rules: [
 			{
-				test: /(\.js)$/,
+				test: /(\.[jt]s)$/,
+				loader: "babel-loader",
 				exclude: {
-					test: /node_modules/,
+					and: [/node_modules/],
 					not: [/(d3\-.*)$/]
-				},
-				use: {
-					loader: "babel-loader",
-					options: {
-						presets: ["@babel/preset-env"]
-					}
-				},
+				}
 			},
 			{
-				test: /(\.js)$/,
-				loader: StringReplacePlugin.replace({
-					replacements: [
-						{
-							pattern: /#__VERSION__#/ig,
-							replacement: () => pkg.version
-						}
-					]
-				})
+				test: /(\.[jt]s)$/,
+				loader: "string-replace-loader",
+				options: {
+					search: /__VERSION__/ig,
+					replace: pkg.version
+				}
 			}
 		]
 	},
@@ -65,7 +62,6 @@ const config = {
 		usedExports: true
 	},
 	plugins: [
-		new StringReplacePlugin(),
 		new webpack.optimize.ModuleConcatenationPlugin(),
 		new WebpackBar()
 	],
@@ -73,8 +69,8 @@ const config = {
 	stats: "minimal",
 	mode: "none",
 	devServer: {
-		// https://github.com/webpack/webpack-dev-server/issues/1604
-		disableHostCheck: true
+		// https://github.com/webpack/webpack-dev-server/releases/tag/v4.0.0-beta.0
+		firewall: false
 	}
 };
 
@@ -100,5 +96,5 @@ module.exports = () => {
 
 	mode === "packaged" && delete config.externals;
 
-	return require(`./config/webpack.config.${mode}.js`)(config, env);
+	return require(`./config/webpack/${mode}.js`)(config, env);
 };

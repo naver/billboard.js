@@ -2,7 +2,8 @@
 
 [![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![semantic-release][badge-semantic-release]][link-semantic-release]
 
-[![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size] [![Known Vulnerabilities][badge-snyk]][link-snyk]
+![CI Status][badge-ci-status] [![Coverage Status][badge-coverage]][link-coverage] [![Known Vulnerabilities][badge-snyk]][link-snyk] 
+[![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size]
 
 billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
@@ -17,10 +18,14 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on D
 - [Migration guide from C3.js](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F)
 - [Third Party Applications](https://github.com/naver/billboard.js/wiki/Third-party-applications)
 - [Who's using billboard.js](https://github.com/naver/billboard.js/wiki/Who's-using-billboard.js)
+- [Benchmark](https://naver.github.io/billboard.js/demo/benchmark/)
+- v2 updates:
+  - [v2 CHANGELOG](https://github.com/naver/billboard.js/wiki/CHANGELOG-v2)
+  - [Migration Guide to v2](https://github.com/naver/billboard.js/wiki/Migration-Guide-to-v2)
 
 ## Playground
 Play with the diverse options generating on the fly!
-- https://naver.github.io/billboard.js/playground/
+- https://naver.github.io/billboard.js/playground/ (obsolete)
 - https://beta.observablehq.com/@idris-maps/billboard-js-playground (by [@idris-maps](https://github.com/idris-maps))
 
 ## Questions?
@@ -29,7 +34,7 @@ If you have any questions, checkout the previous posts or create a new one at:
 - [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
 
 ## Supported chart types
-![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=5)
+<img src="https://naver.github.io/billboard.js/img/chart-types.png?v=8" width=800>
 
 ## Download and Installation
 
@@ -72,6 +77,12 @@ You can download the compressed files for production
 
 ### Themes
 > If you want apply themes, simply load one of the theme css file provided instead of the default css file.
+> - [Screenshot Preview](https://github.com/naver/billboard.js/wiki/Themes)
+
+#### datalab
+- https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.css
+- https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.min.css
+
 
 #### insight
 - https://naver.github.io/billboard.js/release/latest/dist/theme/insight.css
@@ -125,6 +136,7 @@ If you want to use 'billboard.js' without installation, load files directly from
 
 - cdnjs: https://cdnjs.com/libraries/billboard.js
 - jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/
+- PageCDN: https://pagecdn.com/lib/billboardjs
 - unpkg: https://unpkg.com/billboard.js/dist/
 
 ## Supported Browsers
@@ -162,11 +174,12 @@ or use importing ESM.
 
 ```js
 // 1) import billboard.js
-// as named import
-import {bb} from "billboard.js";
+// as named import with desired shapes and interaction modules
+// https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality
+import {bb, area, bar, zoom} from "billboard.js";
 
 // or as importing default
-import bb from "billboard.js";
+import bb, {area, bar, zoom} from "billboard.js";
 
 // 2) import css if your dev-env supports. If don't, include them via <link>
 import "billboard.js/dist/billboard.css";
@@ -192,10 +205,17 @@ import "billboard.js/dist/theme/insight.css"
 var chart = bb.generate({
     bindto: "#chart",
     data: {
+      // for ESM import usage, import 'line' module and execute it as
+      // type: line(),
       type: "line",
-        columns: [
-            ["data1", 30, 200, 100, 400, 150, 250]
-        ]
+      columns: [
+          ["data1", 30, 200, 100, 400, 150, 250]
+      ]
+    },
+    zoom: {
+      // for ESM import usage, import 'zoom' module and execute it as
+      // enabled: zoom()
+      enabled: true
     }
 });
 
@@ -303,7 +323,7 @@ THE SOFTWARE.
 <!-- badges -->
 [badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
 [badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
-[badge-build-status]: https://travis-ci.org/naver/billboard.js.svg?branch=master
+[badge-ci-status]: https://github.com/naver/billboard.js/workflows/CI/badge.svg
 [badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
 [badge-snyk]: https://snyk.io/test/github/naver/billboard.js/badge.svg?targetFile=package.json
 [badge-gzip-size]: https://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
@@ -315,7 +335,6 @@ THE SOFTWARE.
 [link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
 [link-jsDelivr]: https://www.jsdelivr.com/package/npm/billboard.js
 [link-version]: https://www.npmjs.com/package/billboard.js
-[link-build-status]: https://travis-ci.org/naver/billboard.js
 [link-coverage]: https://coveralls.io/github/naver/billboard.js
 [link-snyk]: https://snyk.io/test/github/naver/billboard.js?targetFile=package.json
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js

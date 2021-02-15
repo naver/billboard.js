@@ -118,7 +118,7 @@ rect.bb-circle, use.bb-circle {
 }
 
 /*-- Focus --*/
-.bb-target {
+.bb-target, .bb-circles {
     &.bb-focused {
         opacity: 1;
 

@@ -1,3 +1,5 @@
+import {Chart} from "./chart";
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -7,21 +9,33 @@ export interface Axis {
 	 * Switch x and y axis position.
 	 */
 	rotated?: boolean;
-	x?: XAxisConfiguration;
-	y?: YAxisConfiguration;
-	y2?: YAxisConfiguration;
+	x?: xAxisConfiguration;
+	y?: yAxisConfiguration;
+	y2?: yAxisConfigurationBase;
 }
 
-export interface XAxisConfiguration {
+export interface AxisConfigurationBase {
 	/**
-	 * Show or hide x axis.
+	 * Show or hide axis.
 	 */
 	show?: boolean;
 
 	/**
-	 * Set type of x axis (timeseries, category, indexed)
+	 * Set additional axes for Axis
 	 */
-	type?: string;
+	axes?: AxesConfiguration[];
+}
+
+export interface xAxisConfiguration extends AxisConfigurationBase {
+	/**
+	 * Set type of x axis (timeseries, category, indexed, log)
+	 *
+	 * NOTE:
+	 * 	 log type:
+	 *   - the x values specified by `data.x`(or by any equivalent option), must be exclusively-positive.
+	 *   - x axis min value should be >= 0.
+	 */
+	type?: "category" | "indexed" | "log" | "timeseries";
 
 	/**
 	 * Set how to treat the timezone of x values.
@@ -81,7 +95,7 @@ export interface XAxisConfiguration {
 	 */
 	extent?: number[] | string[] | (
 		(
-			this: void,
+			this: Chart,
 			domain: Date|string|number[],
 			scale: (value: any) => number
 		) => number[]
@@ -102,19 +116,9 @@ export interface XAxisConfiguration {
 	 * Set clip-path attribute for x axis element.
 	 */
 	clipPath?: boolean;
-
-	/**
-	 * Set additional axes for Axis
-	 */
-	axes?: AxesConfiguration[];
 }
 
-export interface YAxisConfiguration {
-	/**
-	 * Show or hide y axis.
-	 */
-	show?: boolean;
-
+export interface yAxisConfigurationBase extends AxisConfigurationBase {
 	/**
 	 * Show y axis inside of the chart.
 	 */
@@ -168,16 +172,13 @@ export interface YAxisConfiguration {
 	 * This option set the default value for y axis when there is no data on init.
 	 */
 	default?: number[];
+}
 
+export interface yAxisConfiguration extends yAxisConfigurationBase {
 	/**
-	 * Set clip-path attribute for x axis element.
+	 * Set clip-path attribute for y axis element.
 	 */
 	clipPath?: boolean;
-
-	/**
-	 * Set additional axes for Axis
-	 */
-	axes?: AxesConfiguration[];
 }
 
 export interface XTickConfiguration {
@@ -190,8 +191,8 @@ export interface XTickConfiguration {
 	 * A function to format tick value. Format string is also available for timeseries data.
 	 */
 	format?: string
-		| ((this: void, x: number | Date) => string | number)
-		| ((this: void, index: number, categoryName: string) => string);
+		| ((this: Chart, x: number | Date) => string | number)
+		| ((this: Chart, index: number, categoryName: string) => string);
 
 	/**
 	 * Setting for culling ticks.
@@ -224,7 +225,7 @@ export interface XTickConfiguration {
 	 * If this option is provided, the position of the ticks will be determined based on those values.
 	 * This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
 	 */
-	values?: number[] | string[];
+	values?: number[] | string[] | ((this: Chart) => number[]);
 
 	/**
 	 * Rotate x axis tick text.
@@ -241,6 +242,7 @@ export interface XTickConfiguration {
 	 *   - axis.x.tick.multiline=false
 	 *   - axis.x.tick.culling=false
 	 *   - axis.x.tick.fit=true
+	 * - **NOTE:** axis.x.tick.clippath=false is necessary for calculating the overflow padding between the end of x axis and the width of the SVG
 	 */
 	autorotate?: boolean;
 
@@ -285,6 +287,17 @@ export interface XTickConfiguration {
 		 */
 		show?: boolean;
 	};
+
+	/**
+	 * Set axis type (timeseries, category, indexed, log)
+	 *
+	 * NOTE:
+	 * 	 log type:
+	 *   - the bound data values must be exclusively-positive.
+	 *   - axis min value should be >= 0.
+	 *   - `data.groups`(stacked data) option aren't supported.
+	 */
+	type?: "indexed" | "log" | "timeseries";
 }
 
 export interface YTickConfiguration {
@@ -296,7 +309,7 @@ export interface YTickConfiguration {
 	/**
 	 * Set the y values of ticks manually.
 	 */
-	values?: number[];
+	values?: number[] | ((this: Chart) => number[]);
 
 	/**
 	 * Rotate y(or y2) axis tick text.
@@ -316,7 +329,7 @@ export interface YTickConfiguration {
 	 * Set formatter for y axis tick text.
 	 * This option accepts d3.format object as well as a function you define.
 	 */
-	format?(this: void, x: number): string;
+	format?(this: Chart, x: number): string;
 
 	/**
 	 * Setting for culling ticks.
@@ -348,7 +361,12 @@ export interface YTickConfiguration {
 		position?: {
 			x?: number;
 			y?: number;
-		}
+		};
+
+		/**
+		 * Show or hide axis tick text.
+		 */
+		show?: boolean;
 	};
 }
 
@@ -371,7 +389,7 @@ export interface AxesConfiguration {
 		/**
 		 * Set formatter for tick text
 		 */
-		format?: (this: void, x: string) => string;
+		format?: (this: Chart, x: string) => string;
 
 		/**
 		 * Set the number of y axis ticks
