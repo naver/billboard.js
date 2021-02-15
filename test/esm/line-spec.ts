@@ -1,0 +1,33 @@
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/* eslint-disable */
+/* global describe, beforeEach, it, expect */
+import {expect} from "chai";
+import bb, {line, zoom} from "../../src/index.esm";
+
+describe("ESM line", function() {
+    let chart;
+
+    const args: any = {
+        data: {
+            columns: [
+                ["data1", 30, 350, 300, 0, 100],
+                ["data2", 200, 100, 140, 200, 150]
+            ],
+            type: line()
+        },
+        zoom: {
+            enabled: zoom()
+        }
+    };
+    
+	beforeEach(() => {
+		chart = bb.generate(args);
+	});
+
+    it("shouldn't throw error during zoom", () => {
+        expect(chart.zoom([0,1])).to.not.throw;
+    });
+});

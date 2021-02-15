@@ -1,0 +1,33 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:wght@300&display=swap');
+
+:root {
+	--border-color: #969696;
+}
+
+body {
+	padding: 10px;
+}
+
+h1 {margin: 10px 0}
+
+.bb {
+	height: 160px;
+	border-right: dotted 1px var(--border-color);
+	border-bottom: dotted 1px var(--border-color);
+}
+
+.title {
+	font-family: 'Raleway', sans-serif;
+	font-size: 15px;
+	margin: 10px 0 0 10px;
+	text-transform: capitalize;
+	position: absolute;
+	color: var(--border-color);
+}
+
+#wrapper {
+	border-top: dotted 1px var(--border-color);
+	border-left: dotted 1px var(--border-color);
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}

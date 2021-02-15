@@ -22,27 +22,30 @@ export type ChartTypes = "area"
 	| "scatter"
 	| "spline"
 	| "step";
-export type GaugeTypes = "single"
-	| "multi";
+
+export type GaugeTypes = "single" | "multi";
+export type AxisType = "x" | "y" | "y2";
 
 export interface TargetIds {
 	ids: string[] | string;
 }
 
-export type DataArray = Array<{
+export interface DataRow {
 	id: string;
-	id_org: string;
-	values: DataItem[]
-}>;
+	id_org: string; // eslint-disable-line camelcase
+	values: DataItem[];
+}
 
 export interface DataItem {
 	id: string;
-	index: number;
-	value: number;
 	x: number;
+	value: number;
+	index?: number;
 	name?: string;
 	ratio?: number;
 }
+
+export type DataArray = DataRow[];
 
 export interface RegionsType {
 	[key: string]: {

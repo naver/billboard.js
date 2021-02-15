@@ -1,0 +1,4 @@
+.releaserc.json merge=ours
+.travis.yml merge=ours
+CHANGELOG.md merge=ours
+README.md merge=ours

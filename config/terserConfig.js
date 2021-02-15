@@ -3,16 +3,16 @@ module.exports = {
 	terserOptions: { // https://github.com/terser/terser#minify-options
 		ecma: 5,
 		ie8: false,
+		compress: { // https://github.com/terser/terser#compress-options
+			dead_code: true,
+			unused: true
+		},
 		output: {
 			beautify: false,
 			comments: /^\/*!/,
 		},
-		warnings: false,
-		dead_code: true,
-		unused: true
+		warnings: false
 	},
 	extractComments: false,
-	cache: true,
-	parallel: true,
-	sourceMap: true
+	parallel: true
 };

@@ -1,0 +1,11 @@
+h1 {margin: 10px 0}
+p {margin:5px 0}
+input, button, select {font-size:16px;}
+button{
+    border:solid 1px #ccc;font-size: 1.1em;
+    padding: 3px 8px;
+    border-radius: 10px;
+}
+button:last-child {background-color: red;color:#fff}
+input[type=number] {width: 70px;}
+span {font-size: 12px;}
