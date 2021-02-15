@@ -11,7 +11,7 @@ exec("npm run jsdoc:cmd", () => {
 	fs.readFile(file, "utf8", (err, data) => {
 		if (err) throw err;
 
-		const result = data.replace(/#__VERSION__#/g, pkg.version);
+		const result = data.replace(/__VERSION__/g, pkg.version);
 
 		fs.writeFile(file, result, "utf8", err => {
 			if (err) throw err;
