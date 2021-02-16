@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.2-nightly-20210211011517
+ * @version 2.2.2-nightly-20210216011643
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -17578,7 +17578,7 @@ function yesdrag(view, noclick) {
   }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-color/src/define.js
-/* harmony default export */ function define(constructor, factory, prototype) {
+/* harmony default export */ function src_define(constructor, factory, prototype) {
   constructor.prototype = factory.prototype = prototype, prototype.constructor = constructor;
 }
 function extend(parent, definition) {
@@ -17757,7 +17757,7 @@ var reI = "\\s*([+-]?\\d+)\\s*",
   yellow: 0xffff00,
   yellowgreen: 0x9acd32
 };
-define(Color, color_color, {
+src_define(Color, color_color, {
   copy: function copy(channels) {
     return Object.assign(new this.constructor(), this, channels);
   },
@@ -17818,7 +17818,7 @@ function color_rgb(r, g, b, opacity) {
 function Rgb(r, g, b, opacity) {
   this.r = +r, this.g = +g, this.b = +b, this.opacity = +opacity;
 }
-define(Rgb, color_rgb, extend(Color, {
+src_define(Rgb, color_rgb, extend(Color, {
   brighter: function brighter(k) {
     return k = k == null ? _brighter : Math.pow(_brighter, k), new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
   },
@@ -17878,7 +17878,7 @@ function Hsl(h, s, l, opacity) {
   this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
 }
 
-define(Hsl, hsl, extend(Color, {
+src_define(Hsl, hsl, extend(Color, {
   brighter: function brighter(k) {
     return k = k == null ? _brighter : Math.pow(_brighter, k), new Hsl(this.h, this.s, this.l * k, this.opacity);
   },
@@ -37651,7 +37651,7 @@ module.exports = __webpack_require__(382);
 /* 385 */
 /***/ (function() {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /home/runner/work/billboard.js/billboard.js/src/ChartInternal/internals/tooltip.ts: Identifier 'x' has already been declared (269:7)\n\n  267 | \t\tconst chartLeft = $$.getCurrentPaddingLeft(true);\n  268 | \t\tconst size = 20;\n> 269 | \t\tlet [x, y] = getPointer(event, element);\n      | \t\t     ^\n  270 |\n  271 | \t\t// Determine tooltip position\n  272 | \t\tif ($$.hasArcType()) {\n    at Object._raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:776:17)\n    at Object.raiseWithData (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:769:17)\n    at Object.raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:737:17)\n    at TypeScriptScopeHandler.checkRedeclarationInScope (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:4955:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:4921:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:5031:11)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:9672:24)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7248:15)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:9699:18)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7248:15)");
+throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /home/runner/work/billboard.js/billboard.js/src/ChartInternal/internals/tooltip.ts: Identifier 'x' has already been declared (269:7)\n\n  267 | \t\tconst chartLeft = $$.getCurrentPaddingLeft(true);\n  268 | \t\tconst size = 20;\n> 269 | \t\tlet [x, y] = getPointer(event, element);\n      | \t\t     ^\n  270 |\n  271 | \t\t// Determine tooltip position\n  272 | \t\tif ($$.hasArcType()) {\n    at Object._raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:776:17)\n    at Object.raiseWithData (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:769:17)\n    at Object.raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:737:17)\n    at TypeScriptScopeHandler.checkRedeclarationInScope (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:1392:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:1358:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:5081:11)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:9742:24)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7298:15)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:9769:18)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7298:15)");
 
 /***/ })
 /******/ 	]);
@@ -37721,12 +37721,15 @@ throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index
 /******/ 	}();
 /******/ 	
 /************************************************************************/
-/******/ 	// module exports must be returned from runtime so entry inlining is disabled
+/******/ 	
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
+/******/ 	// This entry module is referenced by other modules so it can't be inlined
 /******/ 	__webpack_require__(0);
 /******/ 	__webpack_require__(382);
-/******/ 	return __webpack_require__(383);
+/******/ 	var __webpack_exports__ = __webpack_require__(383);
+/******/ 	
+/******/ 	return __webpack_exports__;
 /******/ })()
 ;
 });
