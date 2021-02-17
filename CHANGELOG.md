@@ -1,3 +1,11 @@
+## [2.2.3](https://github.com/naver/billboard.js/compare/2.2.2...2.2.3) (2021-02-16)
+
+
+### Bug Fixes
+
+* **api:** fix loading area-line-range ([fe46492](https://github.com/naver/billboard.js/commit/fe4649249fb3fed67df26e08b7142a7614c05ac3)), closes [#1938](https://github.com/naver/billboard.js/issues/1938)
+* **legend:** legend.inset.anchor is working again ([b5ba930](https://github.com/naver/billboard.js/commit/b5ba9307c0ee734dad032b795952a9f444137a6d)), closes [#1935](https://github.com/naver/billboard.js/issues/1935) [#1936](https://github.com/naver/billboard.js/issues/1936)
+
 ## [2.2.2](https://github.com/naver/billboard.js/compare/2.2.1...2.2.2) (2021-02-05)
 
 

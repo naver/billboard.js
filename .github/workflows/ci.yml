@@ -84,6 +84,6 @@ jobs:
 
       - name: Deploy
         shell: bash
-        run: bash ./config/deploy.sh CI
+        run: bash ./config/deploy.sh
         # https://docs.github.com/en/free-pro-team@latest/actions/reference/context-and-expression-syntax-for-github-actions
         if: github.ref == 'refs/heads/latest' && steps.publish.conclusion == 'success'
