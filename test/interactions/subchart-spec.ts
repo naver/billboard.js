@@ -438,4 +438,42 @@ describe("SUBCHART", () => {
 			expect(main.selectAll(`line.${CLASS.xgridFocus}`).style("visibility")).to.be.equal("hidden");
 		});
 	});
+
+	describe("x Axis tick shouldn't be transitioning", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				subchart: {
+					show: true
+				}
+			};
+		});
+
+		it("transition config should be set to true", () => {
+			const {config} = chart.internal.axis.x;
+			const transition = [config.withoutTransition, config.noTransition];
+
+			expect(transition.every(v => v)).to.be.true;
+		});
+
+		it("transition config should be set to true after .load() API is called", done => {
+			chart.load({
+				columns: [
+					["data3", 130, 120, 150, 140, 160, 150],
+					["data4", 30, 20, 50, 40, 60, 50]
+				],
+				done: function() {
+					const {config} = this.internal.axis.x;
+					const transition = [config.withoutTransition, config.noTransition];
+		
+					expect(transition.every(v => v)).to.be.true;
+					done();
+				}
+			});
+		})
+	});
 });

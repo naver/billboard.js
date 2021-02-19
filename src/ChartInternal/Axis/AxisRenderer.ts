@@ -382,7 +382,7 @@ export default class AxisRenderer {
 		return split(splitted, String(tickText));
 	}
 
-	scale(x): AxisRenderer {
+	scale(x?): AxisRenderer {
 		if (!arguments.length) {
 			return this.helper.scale;
 		}
