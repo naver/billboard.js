@@ -642,4 +642,46 @@ describe("LEGEND", () => {
 			expect(legend.classed(CLASS.legendItemFocused)).to.false;
 		});
 	});
+
+	describe("legend transition", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				subchart: {
+					show: true
+				},
+				transition: {
+					duration: 0
+				}
+			};
+		});
+
+		it("legend shouldn't be transitioned", done => {
+			chart.load({
+				columns: [
+					["data1", 130, 120, 150, 140, 160, 150],
+					["data4", 30, 20, 50, 40, 60, 50]
+				],
+				//unload: ["data1", "data2"]
+			});
+
+			let cnt = 0
+			const pos = [];
+			const interval = setInterval(() => {
+				if (cnt >= 5) {
+					clearInterval(interval);
+					expect(pos.every(v => v === pos[0])).to.be.true;
+
+					done();
+				}
+
+				pos.push(chart.$.legend.select("text").attr("x"));
+				cnt++;
+			}, 50);
+		});
+	});
 });
