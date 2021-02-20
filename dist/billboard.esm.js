@@ -5349,7 +5349,7 @@ var legend$1 = {
  * billboard.js project is licensed under the MIT license
  */
 var redraw = {
-    redraw: function (options, transitionsValue) {
+    redraw: function (options) {
         if (options === void 0) { options = {}; }
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
@@ -5362,10 +5362,11 @@ var redraw = {
         var duration = wth.Transition ? config.transition_duration : 0;
         var durationForExit = wth.TransitionForExit ? duration : 0;
         var durationForAxis = wth.TransitionForAxis ? duration : 0;
-        var transitions = transitionsValue || ($$.axis && $$.axis.generateTransitions(durationForAxis));
+        var transitions = $$.axis && $$.axis.generateTransitions(durationForAxis);
         $$.updateSizes(initializing);
         // update legend and transform each g
         if (wth.Legend && config.legend_show) {
+            options.withTransition = !!duration;
             $$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
         }
         else if (wth.Dimension) {
@@ -10453,6 +10454,10 @@ var AxisRenderer = /** @class */ (function () {
     return AxisRenderer;
 }());
 
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 var axis$1 = {
     getAxisInstance: function () {
         return this.axis || new Axis(this);
@@ -10632,19 +10637,21 @@ var Axis = /** @class */ (function () {
      * Set Axis & tick values
      * called from: updateScales()
      * @param {string} id Axis id string
-     * @param {Array} args Arguments
+     * @param {d3Scale} scale Scale
+     * @param {boolean} outerTick If show outer tick
+     * @param {boolean} noTransition If with no transition
      * @private
      */
-    Axis.prototype.setAxis = function (id) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
+    Axis.prototype.setAxis = function (id, scale, outerTick, noTransition) {
+        var $$ = this.owner;
         if (id !== "subX") {
             this.tick[id] = this.getTickValues(id);
         }
         // @ts-ignore
-        this[id] = this.getAxis.apply(this, __spreadArrays([id], args));
+        this[id] = this.getAxis(id, scale, outerTick, 
+        // do not transit x Axis on zoom
+        // https://github.com/naver/billboard.js/issues/1949
+        id === "x" && ($$.scale.zoom || $$.config.subchart_show) ? true : noTransition);
     };
     // called from : getMaxTickWidth()
     Axis.prototype.getAxis = function (id, scale, outerTick, noTransition, noTickTextRotate) {
@@ -11132,8 +11139,8 @@ var Axis = /** @class */ (function () {
             var axis = _this[id];
             var $axis = $el.axis[id];
             if (axis && $axis) {
-                if (!isInit) {
-                    axis.config.withoutTransition = !config.transition_duration;
+                if (!isInit && !config.transition_duration) {
+                    axis.config.withoutTransition = true;
                 }
                 $axis.style("opacity", opacity);
                 axis.create(transitions["axis" + capitalize(id)]);
