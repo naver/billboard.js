@@ -8,7 +8,7 @@ import {generateWait} from "../../module/generator";
 import {callFn, getOption, isTabVisible, notEmpty} from "../../module/util";
 
 export default {
-	redraw(options: any = {}, transitionsValue?): void {
+	redraw(options: any = {}): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
 		const {main} = $el;
@@ -22,20 +22,20 @@ export default {
 		const duration = wth.Transition ? config.transition_duration : 0;
 		const durationForExit = wth.TransitionForExit ? duration : 0;
 		const durationForAxis = wth.TransitionForAxis ? duration : 0;
-		const transitions = transitionsValue || ($$.axis && $$.axis.generateTransitions(durationForAxis));
+		const transitions = $$.axis && $$.axis.generateTransitions(durationForAxis);
 
 		$$.updateSizes(initializing);
 
 		// update legend and transform each g
 
 		if (wth.Legend && config.legend_show) {
+			options.withTransition = !!duration;
 			$$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
 		} else if (wth.Dimension) {
 			// need to update dimension (e.g. axis.y.tick.values) because y tick values should change
 			// no need to update axis in it because they will be updated in redraw()
 			$$.updateDimension(true);
 		}
-
 		// update circleY based on updated parameters
 		if (!$$.hasArcType() || state.hasRadar) {
 			$$.updateCircleY && $$.updateCircleY();
