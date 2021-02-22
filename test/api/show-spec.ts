@@ -73,7 +73,7 @@ describe("API show", () => {
 				chart.$.svg
 					.selectAll(`.${CLASS.legendItemHidden}`)
 					.each(function() {
-						expect(+d3Select(this).style("opacity")).to.be.equal(0);
+						expect(+d3Select(this).style("opacity")).to.be.closeTo(0.15, 0.15);
 					});
 
 				done();
@@ -99,6 +99,17 @@ describe("API show", () => {
 				).to.be.equal("none");
 				done();
 			}, 500);
+		});
+
+		it("legend items should be hidden", () => {
+			const {legend} = chart.$;
+			const item = legend.select(`.${CLASS.legendItem}-data1`).style("opacity", 1);
+	
+			// when
+			chart.hide();
+
+			expect(item.style("opacity")).to.be.equal("0.15");
+			expect(item.classed(CLASS.legendItemHidden)).to.be.true;
 		})
 	});
 
@@ -173,7 +184,7 @@ describe("API show", () => {
 				expect(+legend.size()).to.be.equal(0);
 
 				internal.$el.svg.selectAll(`.${CLASS.legendItem}`).each(function() {
-					expect(+d3Select(this).style("opacity")).to.be.equal(0);
+					expect(this.style.opacity).to.be.equal("");
 				});
 
 				done();
