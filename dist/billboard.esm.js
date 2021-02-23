@@ -4777,7 +4777,13 @@ var legend$1 = {
         }
         // toggle legend state
         $el.legend.selectAll("." + CLASS.legendItem)
-            .classed(CLASS.legendItemHidden, function (id) { return !$$.isTargetToShow(id); });
+            .classed(CLASS.legendItemHidden, function (id) {
+            var hide = !$$.isTargetToShow(id);
+            if (hide) {
+                this.style.opacity = null;
+            }
+            return hide;
+        });
         // Update size and scale
         $$.updateScales(false, !scale.zoom);
         $$.updateSvgSize();
