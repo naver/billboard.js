@@ -69,7 +69,15 @@ export default {
 
 		// toggle legend state
 		$el.legend.selectAll(`.${CLASS.legendItem}`)
-			.classed(CLASS.legendItemHidden, id => !$$.isTargetToShow(id));
+			.classed(CLASS.legendItemHidden, function(id) {
+				const hide = !$$.isTargetToShow(id);
+
+				if (hide) {
+					this.style.opacity = null;
+				}
+
+				return hide;
+			});
 
 		// Update size and scale
 		$$.updateScales(false, !scale.zoom);
