@@ -237,16 +237,28 @@ class Axis {
 	 * Set Axis & tick values
 	 * called from: updateScales()
 	 * @param {string} id Axis id string
-	 * @param {Array} args Arguments
+	 * @param {d3Scale} scale Scale
+	 * @param {boolean} outerTick If show outer tick
+	 * @param {boolean} noTransition If with no transition
 	 * @private
 	 */
-	setAxis(id, ...args): void {
+	setAxis(id, scale, outerTick, noTransition): void {
+		const $$ = this.owner;
+
 		if (id !== "subX") {
 			this.tick[id] = this.getTickValues(id);
 		}
 
 		// @ts-ignore
-		this[id] = this.getAxis(id, ...args);
+		this[id] = this.getAxis(
+			id,
+			scale,
+			outerTick,
+
+			// do not transit x Axis on zoom
+			// https://github.com/naver/billboard.js/issues/1949
+			id === "x" && ($$.scale.zoom || $$.config.subchart_show) ? true : noTransition
+		);
 	}
 
 	// called from : getMaxTickWidth()
@@ -255,7 +267,6 @@ class Axis {
 		const {config} = $$;
 		const isX = /^(x|subX)$/.test(id);
 		const type = isX ? "x" : id;
-
 		const isCategory = isX && this.isCategorized();
 		const orient = this.orient[id];
 		const tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
@@ -757,7 +768,6 @@ class Axis {
 		return padding;
 	}
 
-
 	updateLabels(withTransition) {
 		const $$ = this.owner;
 		const {main} = $$.$el;
@@ -869,8 +879,8 @@ class Axis {
 			const $axis = $el.axis[id];
 
 			if (axis && $axis) {
-				if (!isInit) {
-					axis.config.withoutTransition = !config.transition_duration;
+				if (!isInit && !config.transition_duration) {
+					axis.config.withoutTransition = true;
 				}
 
 				$axis.style("opacity", opacity);

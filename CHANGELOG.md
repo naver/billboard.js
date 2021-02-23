@@ -11,8 +11,14 @@
 * **all:** - Update to work on d3 v6
 - Added getPoint() to get event's position coordinate
 
-https://github.com/d3/d3/blob/master/CHANGES.md
-https://observablehq.com/d/f91cccf0cad5e9cb
+
+## [2.2.3](https://github.com/naver/billboard.js/compare/2.2.2...2.2.3) (2021-02-16)
+
+
+### Bug Fixes
+
+* **api:** fix loading area-line-range ([fe46492](https://github.com/naver/billboard.js/commit/fe4649249fb3fed67df26e08b7142a7614c05ac3)), closes [#1938](https://github.com/naver/billboard.js/issues/1938)
+* **legend:** legend.inset.anchor is working again ([b5ba930](https://github.com/naver/billboard.js/commit/b5ba9307c0ee734dad032b795952a9f444137a6d)), closes [#1935](https://github.com/naver/billboard.js/issues/1935) [#1936](https://github.com/naver/billboard.js/issues/1936)
 
 ## [2.2.2](https://github.com/naver/billboard.js/compare/2.2.1...2.2.2) (2021-02-05)
 
