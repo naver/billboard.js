@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.3-nightly-20210223011747
+ * @version 2.2.3-nightly-20210303012006
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -119,7 +119,7 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ Stanford; }
 });
 
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/assertThisInitialized/index.mjs
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -127,9 +127,7 @@ function _assertThisInitialized(self) {
 
   return self;
 }
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
-
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/setPrototypeOf/index.mjs
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
 function _setPrototypeOf(o, p) {
   _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
     o.__proto__ = p;
@@ -138,15 +136,13 @@ function _setPrototypeOf(o, p) {
 
   return _setPrototypeOf(o, p);
 }
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/inheritsLoose/index.mjs
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
 
 function _inheritsLoose(subClass, superClass) {
   subClass.prototype = Object.create(superClass.prototype);
   subClass.prototype.constructor = subClass;
   _setPrototypeOf(subClass, superClass);
 }
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
-
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
 var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(3);
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
@@ -262,7 +258,7 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
   INCLUDED: "_included_",
   TextOverlapping: "text-overlapping"
 });
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/defineProperty/index.mjs
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -277,8 +273,6 @@ function _defineProperty(obj, key, value) {
 
   return obj;
 }
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}

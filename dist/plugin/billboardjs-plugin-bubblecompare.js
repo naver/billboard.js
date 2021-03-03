@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.3-nightly-20210223011747
+ * @version 2.2.3-nightly-20210303012006
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -82,7 +82,7 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ BubbleCompare; }
 });
 
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/assertThisInitialized/index.mjs
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -90,9 +90,7 @@ function _assertThisInitialized(self) {
 
   return self;
 }
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
-
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/setPrototypeOf/index.mjs
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
 function _setPrototypeOf(o, p) {
   _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
     o.__proto__ = p;
@@ -101,15 +99,13 @@ function _setPrototypeOf(o, p) {
 
   return _setPrototypeOf(o, p);
 }
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/inheritsLoose/index.mjs
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
 
 function _inheritsLoose(subClass, superClass) {
   subClass.prototype = Object.create(superClass.prototype);
   subClass.prototype.constructor = subClass;
   _setPrototypeOf(subClass, superClass);
 }
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
-
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts

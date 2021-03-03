@@ -370,14 +370,10 @@ var _assign = function __assign() {
     return t;
   }, _assign.apply(this, arguments);
 };
-/** @deprecated */
+function __spreadArray(to, from) {
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
 
-function __spreadArrays() {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
-
-  return r;
+  return to;
 }
 
 /**
@@ -716,7 +712,7 @@ var main = {
 /**
  * data config options
  */
-var data = {
+var data$2 = {
     /**
      * Specify the key of x values in the data.<br><br>
      * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
@@ -1418,7 +1414,7 @@ var data = {
 /**
  * color config options
  */
-var color = {
+var color$1 = {
     /**
      * Set color of the data values
      * @name color
@@ -1506,7 +1502,7 @@ var color = {
 /**
  * interaction config options
  */
-var interaction = {
+var interaction$1 = {
     /**
      * Interaction options
      * @name interaction
@@ -1552,7 +1548,7 @@ var interaction = {
 /**
  * legend config options
  */
-var legend = {
+var legend$2 = {
     /**
      * Legend options
      * @name legend
@@ -1664,7 +1660,7 @@ var legend = {
 /**
  * title config options
  */
-var title = {
+var title$1 = {
     /**
      * Set title options
      * @name title
@@ -1711,7 +1707,7 @@ var title = {
 /**
  * tooltip config options
  */
-var tooltip = {
+var tooltip$2 = {
     /**
      * Tooltip options
      * @name tooltip
@@ -2000,7 +1996,7 @@ function endall(transition, cb) {
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
-        !--n && cb.apply.apply(cb, __spreadArrays([this], args));
+        !--n && cb.apply.apply(cb, __spreadArray([this], args));
     });
 }
 /**
@@ -2324,7 +2320,7 @@ function mergeObj(target) {
             }
         });
     }
-    return mergeObj.apply(void 0, __spreadArrays([target], objectN));
+    return mergeObj.apply(void 0, __spreadArray([target], objectN));
 }
 /**
  * Sort value
@@ -2356,7 +2352,7 @@ function sortValue(data, isAsc) {
  * @returns {number|Date|undefined}
  * @private
  */
-function getMinMax(type, data) {
+function getMinMax$1(type, data) {
     var res = data.filter(function (v) { return notEmpty(v); });
     if (res.length) {
         if (isNumber(res[0])) {
@@ -2510,7 +2506,7 @@ function convertInputType(mouse, touch) {
  */
 var Options = /** @class */ (function () {
     function Options() {
-        return deepClone(main, data, color, interaction, legend, title, tooltip, Options.data);
+        return deepClone(main, data$2, color$1, interaction$1, legend$2, title$1, tooltip$2, Options.data);
     }
     Options.setOptions = function (options) {
         this.data = options
@@ -3193,8 +3189,8 @@ var data$1 = {
         (data || this.data.targets.map(function (t) { return t.values; }))
             .forEach(function (v, i) {
             var value = v.map(getBaseValue).filter(isNumber);
-            min = Math.min.apply(Math, __spreadArrays([i ? min : Infinity], value));
-            max = Math.max.apply(Math, __spreadArrays([i ? max : -Infinity], value));
+            min = Math.min.apply(Math, __spreadArray([i ? min : Infinity], value));
+            max = Math.max.apply(Math, __spreadArray([i ? max : -Infinity], value));
         });
         return { min: min, max: max };
     },
@@ -3441,7 +3437,7 @@ var data$1 = {
      */
     orderTargets: function (targetsValue) {
         var $$ = this;
-        var targets = __spreadArrays(targetsValue);
+        var targets = __spreadArray([], targetsValue);
         var fn = $$.getSortCompareFn();
         fn && targets.sort(fn);
         return targets;
@@ -3851,7 +3847,7 @@ var dataLoad = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-var interaction$1 = {
+var interaction = {
     selectRectForSingle: function (context, eventRect, index) {
         var $$ = this;
         var config = $$.config, main = $$.$el.main;
@@ -4165,7 +4161,7 @@ var colorizePattern = function (pattern, color, id) {
 // Replacement of d3.schemeCategory10.
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
 var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
-var color$1 = {
+var color = {
     /**
      * Get color pattern from CSS file
      * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
@@ -4406,7 +4402,7 @@ var domain = {
                 idsInGroup = out_idsInGroup_1;
             }
         }
-        return getMinMax(type, Object.keys(ys).map(function (key) { return getMinMax(type, ys[key]); }));
+        return getMinMax$1(type, Object.keys(ys).map(function (key) { return getMinMax$1(type, ys[key]); }));
     },
     getYDomainMin: function (targets) {
         return this.getYDomainMinMax(targets, "min");
@@ -4452,7 +4448,7 @@ var domain = {
         var yDomainMin = $$.getYDomainMin(yTargets);
         var yDomainMax = $$.getYDomainMax(yTargets);
         var center = config[pfx + "_center"];
-        var isZeroBased = __spreadArrays([TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER], TYPE_BY_CATEGORY.Line).some(function (v) {
+        var isZeroBased = __spreadArray([TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER], TYPE_BY_CATEGORY.Line).some(function (v) {
             var type = v.indexOf("area") > -1 ? "area" : v;
             return $$.hasType(v, yTargets) && config[type + "_zerobased"];
         });
@@ -4526,7 +4522,7 @@ var domain = {
     getXDomainMinMax: function (targets, type) {
         var $$ = this;
         var configValue = $$.config["axis_x_" + type];
-        var dataValue = getMinMax(type, targets.map(function (t) { return getMinMax(type, t.values.map(function (v) { return v.x; })); }));
+        var dataValue = getMinMax$1(type, targets.map(function (t) { return getMinMax$1(type, t.values.map(function (v) { return v.x; })); }));
         var value = isObject(configValue) ? configValue.value : configValue;
         value = isDefined(value) && $$.axis.isTimeSeries() ? parseDate(value) : value;
         if (isObject(configValue) && configValue.fit && ((type === "min" && value < dataValue) || (type === "max" && value > dataValue))) {
@@ -4648,10 +4644,10 @@ var domain = {
         var config = $$.config, org = $$.org;
         var _a = org.xDomain, min = _a[0], max = _a[1];
         if (isDefined(config.zoom_x_min)) {
-            min = getMinMax("min", [min, config.zoom_x_min]);
+            min = getMinMax$1("min", [min, config.zoom_x_min]);
         }
         if (isDefined(config.zoom_x_max)) {
-            max = getMinMax("max", [max, config.zoom_x_max]);
+            max = getMinMax$1("max", [max, config.zoom_x_max]);
         }
         return [min, max];
     }
@@ -6705,7 +6701,7 @@ function getTextPos(pos, width) {
     }
     return position;
 }
-var title$1 = {
+var title = {
     /**
      * Initializes the title
      * @private
@@ -6928,9 +6924,9 @@ var tooltip$1 = {
                 row.ratio = $$.getRatio("arc", $$.$el.arcs.select("path." + CLASS.arc + "-" + row.id).data()[0]);
             }
             param = [row.ratio, row.id, row.index, d];
-            value = sanitise(valueFormat.apply(void 0, __spreadArrays([getRowValue(row)], param)));
+            value = sanitise(valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param)));
             if ($$.isAreaRangeType(row)) {
-                var _a = ["high", "low"].map(function (v) { return sanitise(valueFormat.apply(void 0, __spreadArrays([$$.getAreaRangeData(row, v)], param))); }), high = _a[0], low = _a[1];
+                var _b = ["high", "low"].map(function (v) { return sanitise(valueFormat.apply(void 0, __spreadArray([$$.getAreaRangeData(row, v)], param))); }), high = _b[0], low = _b[1];
                 value = "<b>Mid:</b> " + value + " <b>High:</b> " + high + " <b>Low:</b> " + low;
             }
             if (value !== undefined) {
@@ -6938,7 +6934,7 @@ var tooltip$1 = {
                 if (row.name === null) {
                     return "continue";
                 }
-                var name_1 = sanitise(nameFormat.apply(void 0, __spreadArrays([row.name], param)));
+                var name_1 = sanitise(nameFormat.apply(void 0, __spreadArray([row.name], param)));
                 var color_1 = getBgColor(row);
                 var contentValue_1 = {
                     CLASS_TOOLTIP_NAME: CLASS.tooltipName + $$.getTargetSelectorSuffix(row.id),
@@ -7971,9 +7967,9 @@ extend(ChartInternal.prototype, [
     dataLoad,
     category,
     classModule,
-    color$1,
+    color,
     domain,
-    interaction$1,
+    interaction,
     format,
     legend$1,
     redraw,
@@ -7981,7 +7977,7 @@ extend(ChartInternal.prototype, [
     shape,
     size,
     text,
-    title$1,
+    title,
     tooltip$1,
     transform,
     type
@@ -8213,7 +8209,7 @@ var apiColor = {
  * // Get all data
  * chart.data();
  */
-function data$2(targetIds) {
+function data(targetIds) {
     var targets = this.internal.data.targets;
     if (!isUndefined(targetIds)) {
         var ids_1 = isArray(targetIds) ? targetIds : [targetIds];
@@ -8221,7 +8217,7 @@ function data$2(targetIds) {
     }
     return targets;
 }
-extend(data$2, {
+extend(data, {
     /**
      * Get data shown in the chart.
      * @function data․shown
@@ -8365,7 +8361,7 @@ extend(data$2, {
         return this.internal.getMinMaxData().max;
     }
 });
-var apiData = { data: data$2 };
+var apiData = { data: data };
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -8571,7 +8567,7 @@ var apiFocus = {
  * Define legend
  * @ignore
  */
-var legend$2 = {
+var legend = {
     /**
      * Show legend for each target.
      * @function legend․show
@@ -8621,7 +8617,7 @@ var legend$2 = {
         $$.updateAndRedraw({ withLegend: true });
     }
 };
-var apiLegend = { legend: legend$2 };
+var apiLegend = { legend: legend };
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -8910,7 +8906,7 @@ var apiShow = {
  * Define tooltip
  * @ignore
  */
-var tooltip$2 = {
+var tooltip = {
     /**
      * Show tooltip
      * @function tooltip․show
@@ -9022,7 +9018,7 @@ var tooltip$2 = {
         $$.unexpandBars && $$.unexpandBars();
     }
 };
-var apiTooltip = { tooltip: tooltip$2 };
+var apiTooltip = { tooltip: tooltip };
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -9164,7 +9160,7 @@ function setMinMax($$, type, value) {
  * @returns {{x, y, y2}}
  * @private
  */
-function getMinMax$1($$, type) {
+function getMinMax($$, type) {
     var config = $$.config;
     return {
         x: config["axis_x_" + type],
@@ -9176,7 +9172,7 @@ function getMinMax$1($$, type) {
  * Define axis
  * @ignore
  */
-var axis = {
+var axis$1 = {
     /**
      * Get and set axis labels.
      * @function axis․labels
@@ -9241,7 +9237,7 @@ var axis = {
         var $$ = this.internal;
         return isValue(min) ?
             setMinMax($$, "min", min) :
-            getMinMax$1($$, "min");
+            getMinMax($$, "min");
     },
     /**
      * Get and set axis max value.
@@ -9264,7 +9260,7 @@ var axis = {
         var $$ = this.internal;
         return arguments.length ?
             setMinMax($$, "max", max) :
-            getMinMax$1($$, "max");
+            getMinMax($$, "max");
     },
     /**
      * Get and set axis min and max value.
@@ -9303,7 +9299,7 @@ var axis = {
         return undefined;
     }
 };
-var apiAxis = { axis: axis };
+var apiAxis = { axis: axis$1 };
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -10415,7 +10411,7 @@ var AxisRenderer = /** @class */ (function () {
                 return next < arr.length ?
                     _this.helper.scale(arr[next]) - _this.helper.scale(v) : null;
             }).filter(Boolean);
-            interval = Math.min.apply(Math, __spreadArrays(intervalByValue, [interval]));
+            interval = Math.min.apply(Math, __spreadArray(__spreadArray([], intervalByValue), [interval]));
         }
         return interval === Infinity ? 0 : interval;
     };
@@ -10464,7 +10460,7 @@ var AxisRenderer = /** @class */ (function () {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-var axis$1 = {
+var axis = {
     getAxisInstance: function () {
         return this.axis || new Axis(this);
     }
@@ -14452,7 +14448,7 @@ var api = [
     apiX
 ];
 var internal = [
-    axis$1,
+    axis,
     clip,
     eventrect,
     flow,
@@ -15627,7 +15623,7 @@ var shapeBubble = {
         var cacheKey = KEY.bubbleBaseLength;
         var baseLength = $$.cache.get(cacheKey);
         if (!baseLength) {
-            $$.cache.add(cacheKey, baseLength = getMinMax("min", [width, height]));
+            $$.cache.add(cacheKey, baseLength = getMinMax$1("min", [width, height]));
         }
         return baseLength;
     },
@@ -15646,7 +15642,7 @@ var shapeBubble = {
         else if (!isNumber(maxR)) {
             maxR = ($$.getBaseLength() / ($$.getMaxDataCount() * 2)) + 12;
         }
-        var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) { return ($$.isBubbleZType(d) ?
+        var max = getMinMax$1("max", $$.getMinMaxData().max.map(function (d) { return ($$.isBubbleZType(d) ?
             $$.getBubbleZData(d.value, "y") : (isObject(d.value) ? d.value.mid : d.value)); }));
         var maxArea = maxR * maxR * Math.PI;
         var area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
@@ -16277,13 +16273,13 @@ var shapePoint = {
                         $$.insertPointInfoDefs(point, pointId);
                     }
                     if (method === "create") {
-                        return $$.custom.create.bind(context).apply(void 0, __spreadArrays([element, pointId], args));
+                        return $$.custom.create.bind(context).apply(void 0, __spreadArray([element, pointId], args));
                     }
                     else if (method === "update") {
-                        return $$.custom.update.bind(context).apply(void 0, __spreadArrays([element], args));
+                        return $$.custom.update.bind(context).apply(void 0, __spreadArray([element], args));
                     }
                 }
-                return point[method].bind(context).apply(void 0, __spreadArrays([element], args));
+                return point[method].bind(context).apply(void 0, __spreadArray([element], args));
             };
         };
     },
@@ -16426,7 +16422,7 @@ var shapeRadar = {
         var $$ = this;
         var config = $$.config;
         if (isEmpty(config.axis_x_categories)) {
-            config.axis_x_categories = getRange(0, getMinMax("max", targets.map(function (v) { return v.values.length; })));
+            config.axis_x_categories = getRange(0, getMinMax$1("max", targets.map(function (v) { return v.values.length; })));
         }
         $$.generateRadarPoints();
     },
@@ -17701,7 +17697,7 @@ function withinRange(domain, range) {
  *  // Get the current zoomed domain
  *  chart.zoom();
  */
-var zoom = function (domainValue) {
+var zoom$1 = function (domainValue) {
     var $$ = this.internal;
     var config = $$.config, scale = $$.scale;
     var domain = domainValue;
@@ -17739,7 +17735,7 @@ var zoom = function (domainValue) {
     }
     return resultDomain;
 };
-extend(zoom, {
+extend(zoom$1, {
     /**
      * Enable and disable zooming.
      * @function zoom․enable
@@ -17789,7 +17785,7 @@ extend(zoom, {
         var $$ = this.internal;
         var config = $$.config, xDomain = $$.org.xDomain;
         if (max === 0 || max) {
-            config.zoom_x_max = getMinMax("max", [xDomain[1], max]);
+            config.zoom_x_max = getMinMax$1("max", [xDomain[1], max]);
         }
         return config.zoom_x_max;
     },
@@ -17808,7 +17804,7 @@ extend(zoom, {
         var $$ = this.internal;
         var config = $$.config, xDomain = $$.org.xDomain;
         if (min === 0 || min) {
-            config.zoom_x_min = getMinMax("min", [xDomain[0], min]);
+            config.zoom_x_min = getMinMax$1("min", [xDomain[0], min]);
         }
         return config.zoom_x_min;
     },
@@ -17843,7 +17839,7 @@ extend(zoom, {
     }
 });
 var apiZoom = {
-    zoom: zoom,
+    zoom: zoom$1,
     /**
      * Unzoom zoomed area
      * @function unzoom
@@ -18524,7 +18520,7 @@ var subchart = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-var zoom$1 = {
+var zoom = {
     /**
      * Initialize zoom.
      * @private
@@ -18690,10 +18686,10 @@ var zoom$1 = {
         var config = $$.config, org = $$.org;
         var _a = org.xDomain, min = _a[0], max = _a[1];
         if (isDefined(config.zoom_x_min)) {
-            min = getMinMax("min", [min, config.zoom_x_min]);
+            min = getMinMax$1("min", [min, config.zoom_x_min]);
         }
         if (isDefined(config.zoom_x_max)) {
-            max = getMinMax("max", [max, config.zoom_x_max]);
+            max = getMinMax$1("max", [max, config.zoom_x_max]);
         }
         return [min, max];
     },
@@ -19123,7 +19119,7 @@ var subchartModule = function () {
     return (subchartModule = function () { return true; })();
 };
 var zoomModule = function () {
-    extend(ChartInternal.prototype, zoom$1);
+    extend(ChartInternal.prototype, zoom);
     extend(Chart.prototype, apiZoom);
     Options.setOptions([optZoom]);
     return (zoomModule = function () { return true; })();

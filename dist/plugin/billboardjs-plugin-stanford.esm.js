@@ -51,14 +51,10 @@ function __extends(d, b) {
   if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + (b + "") + " is not a constructor or null");
   _extendStatics(d, b), d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
-/** @deprecated */
+function __spreadArray(to, from) {
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
 
-function __spreadArrays() {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
-
-  return r;
+  return to;
 }
 
 /**
@@ -69,7 +65,7 @@ function __spreadArrays() {
  * CSS class names definition
  * @private
  */
-var CLASS = {
+var CLASS$1 = {
     arc: "bb-arc",
     arcLabelLine: "bb-arc-label-line",
     arcs: "bb-arcs",
@@ -235,7 +231,7 @@ function mergeObj(target) {
             }
         });
     }
-    return mergeObj.apply(void 0, __spreadArrays([target], objectN));
+    return mergeObj.apply(void 0, __spreadArray([target], objectN));
 }
 /**
  * Get range
@@ -590,7 +586,7 @@ var Options = /** @class */ (function () {
  * CSS class names definition
  * @private
  */
-var CLASS$1 = {
+var CLASS = {
     colorScale: "bb-colorscale",
     stanfordElements: "bb-stanford-elements",
     stanfordLine: "bb-stanford-line",
@@ -705,9 +701,9 @@ var Elements = /** @class */ (function () {
         // MEMO: Avoid blocking eventRect
         var elements = owner.$$.$el.main.select(".bb-chart")
             .append("g")
-            .attr("class", CLASS$1.stanfordElements);
-        elements.append("g").attr("class", CLASS$1.stanfordLines);
-        elements.append("g").attr("class", CLASS$1.stanfordRegions);
+            .attr("class", CLASS.stanfordElements);
+        elements.append("g").attr("class", CLASS.stanfordLines);
+        elements.append("g").attr("class", CLASS.stanfordRegions);
     }
     Elements.prototype.updateStanfordLines = function (duration) {
         var $$ = this.owner.$$;
@@ -716,9 +712,9 @@ var Elements = /** @class */ (function () {
         var xvCustom = this.xvCustom.bind($$);
         var yvCustom = this.yvCustom.bind($$);
         // Stanford-Lines
-        var stanfordLine = main.select("." + CLASS$1.stanfordLines)
+        var stanfordLine = main.select("." + CLASS.stanfordLines)
             .style("shape-rendering", "geometricprecision")
-            .selectAll("." + CLASS$1.stanfordLine)
+            .selectAll("." + CLASS.stanfordLine)
             .data(this.owner.config.lines);
         // exit
         stanfordLine.exit().transition()
@@ -731,7 +727,7 @@ var Elements = /** @class */ (function () {
             .style("opacity", "0");
         stanfordLineEnter
             .merge(stanfordLine)
-            .attr("class", function (d) { return CLASS$1.stanfordLine + (d["class"] ? " " + d["class"] : ""); })
+            .attr("class", function (d) { return CLASS.stanfordLine + (d["class"] ? " " + d["class"] : ""); })
             .select("line")
             .transition()
             .duration(duration)
@@ -750,8 +746,8 @@ var Elements = /** @class */ (function () {
         var yvCustom = this.yvCustom.bind($$);
         var countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
         // Stanford-Regions
-        var stanfordRegion = main.select("." + CLASS$1.stanfordRegions)
-            .selectAll("." + CLASS$1.stanfordRegion)
+        var stanfordRegion = main.select("." + CLASS.stanfordRegions)
+            .selectAll("." + CLASS.stanfordRegion)
             .data(this.owner.config.regions);
         // exit
         stanfordRegion.exit().transition()
@@ -768,7 +764,7 @@ var Elements = /** @class */ (function () {
         stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
         // update
         stanfordRegion
-            .attr("class", function (d) { return CLASS$1.stanfordRegion + (d["class"] ? " " + d["class"] : ""); })
+            .attr("class", function (d) { return CLASS.stanfordRegion + (d["class"] ? " " + d["class"] : ""); })
             .select("polygon")
             .transition()
             .duration(duration)
@@ -850,7 +846,7 @@ var ColorScale = /** @class */ (function () {
         this.colorScale = $$.$el.svg.append("g")
             .attr("width", 50)
             .attr("height", height)
-            .attr("class", CLASS$1.colorScale);
+            .attr("class", CLASS.colorScale);
         this.colorScale.append("g")
             .attr("transform", "translate(0, " + config.padding_top + ")")
             .selectAll("bars")
@@ -1084,9 +1080,9 @@ var Stanford = /** @class */ (function (_super) {
         var config = this.$$.config;
         if (isEmpty(config.tooltip_contents)) {
             config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
-                var html = "<table class=\"" + CLASS.tooltip + "\"><tbody>";
+                var html = "<table class=\"" + CLASS$1.tooltip + "\"><tbody>";
                 d.forEach(function (v) {
-                    html += "<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(config.data_x) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.x) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(v.id) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.value) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"" + CLASS.tooltipName + "-" + v.id + "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:" + color(v) + "\"></span>" + defaultTitleFormat("Epochs") + "</td>\n\t\t\t\t\t\t\t<td class=\"value\">" + defaultValueFormat(v.epochs) + "</td>\n\t\t\t\t\t\t</tr>";
+                    html += "<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(config.data_x) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.x) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(v.id) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.value) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"" + CLASS$1.tooltipName + "-" + v.id + "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:" + color(v) + "\"></span>" + defaultTitleFormat("Epochs") + "</td>\n\t\t\t\t\t\t\t<td class=\"value\">" + defaultValueFormat(v.epochs) + "</td>\n\t\t\t\t\t\t</tr>";
                 });
                 return html + "</tbody></table>";
             };

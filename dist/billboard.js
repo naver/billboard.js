@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.3-nightly-20210223011747
+ * @version 2.2.3-nightly-20210303012006
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -80,7 +80,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 /* 10 */
 /***/ (function() {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /home/runner/work/billboard.js/billboard.js/src/ChartInternal/internals/tooltip.ts: Identifier 'x' has already been declared (269:7)\n\n  267 | \t\tconst chartLeft = $$.getCurrentPaddingLeft(true);\n  268 | \t\tconst size = 20;\n> 269 | \t\tlet [x, y] = getPointer(event, element);\n      | \t\t     ^\n  270 |\n  271 | \t\t// Determine tooltip position\n  272 | \t\tif ($$.hasArcType()) {\n    at Object._raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:776:17)\n    at Object.raiseWithData (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:769:17)\n    at Object.raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:737:17)\n    at TypeScriptScopeHandler.checkRedeclarationInScope (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:1437:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:1403:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:5246:11)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:10186:24)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7482:15)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:10213:18)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7482:15)");
+throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /home/runner/work/billboard.js/billboard.js/src/ChartInternal/internals/tooltip.ts: Identifier 'x' has already been declared (269:7)\n\n  267 | \t\tconst chartLeft = $$.getCurrentPaddingLeft(true);\n  268 | \t\tconst size = 20;\n> 269 | \t\tlet [x, y] = getPointer(event, element);\n      | \t\t     ^\n  270 |\n  271 | \t\t// Determine tooltip position\n  272 | \t\tif ($$.hasArcType()) {\n    at Object._raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:776:17)\n    at Object.raiseWithData (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:769:17)\n    at Object.raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:737:17)\n    at TypeScriptScopeHandler.checkRedeclarationInScope (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:1453:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:1419:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:5259:11)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:10193:24)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7495:15)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:10217:18)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7495:15)");
 
 /***/ }),
 /* 11 */
@@ -617,7 +617,7 @@ var Store = /*#__PURE__*/function () {
 }();
 
 
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/defineProperty/index.mjs
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -632,8 +632,6 @@ function _defineProperty(obj, key, value) {
 
   return obj;
 }
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-
 ;// CONCATENATED MODULE: ./src/config/Options/common/main.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.

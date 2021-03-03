@@ -48,14 +48,10 @@ function __extends(d, b) {
   if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + (b + "") + " is not a constructor or null");
   _extendStatics(d, b), d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
-/** @deprecated */
+function __spreadArray(to, from) {
+  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
 
-function __spreadArrays() {
-  for (var s = 0, i = 0, il = arguments.length; i < il; i++) s += arguments[i].length;
-
-  for (var r = Array(s), k = 0, i = 0; i < il; i++) for (var a = arguments[i], j = 0, jl = a.length; j < jl; j++, k++) r[k] = a[j];
-
-  return r;
+  return to;
 }
 
 /**
@@ -116,7 +112,7 @@ function mergeObj(target) {
             }
         });
     }
-    return mergeObj.apply(void 0, __spreadArrays([target], objectN));
+    return mergeObj.apply(void 0, __spreadArray([target], objectN));
 }
 // emulate event
 ({
