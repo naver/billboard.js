@@ -215,7 +215,7 @@ export interface ChartOptions {
 		 * 'step', 'step-before' and 'step-after' can be used.
 		 */
 		step?: {
-			type: "step" | "step-before" | "step-after";
+			type?: "step" | "step-before" | "step-after";
 		};
 
 		/**
@@ -382,7 +382,7 @@ export interface ChartOptions {
 			/**
 			 * Set the direction to be drawn.
 			 */
-			clockwise: boolean;
+			clockwise?: boolean;
 		};
 
 		level?: {
@@ -633,7 +633,7 @@ export interface ChartOptions {
 		 * Set minimal width of gauge arcs until the innerRadius disappears.
 		 */
 		arcs?: {
-			minWidth: number;
+			minWidth?: number;
 		};
 
 		/**
@@ -1158,7 +1158,7 @@ export interface PointOptions {
 	r?: number | ((this: Chart, d: DataItem) => number);
 
 	focus?: {
-		expand: {
+		expand?: {
 			/**
 			 * Whether to expand each point on focus.
 			 */
