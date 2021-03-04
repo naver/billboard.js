@@ -73,19 +73,19 @@ export interface StanfordLineOptions {
 	/**
 	 * Starting position of the line on the x axis
 	 */
-	x1: number;
+	x1?: number;
 	/**
 	 * Starting position of the line on the y axis
 	 */
-	y1: number;
+	y1?: number;
 	/**
 	 * Ending position of the line on the x axis
 	 */
-	x2: number;
+	x2?: number;
 	/**
 	 * Ending position of the line on the x axis
 	 */
-	y2: number;
+	y2?: number;
 	/**
 	 * Set a custom css class to this line.
 	 */
@@ -96,7 +96,7 @@ export interface StanfordRegionOptions {
 	/**
 	 * Accepts a group of objects that has x and y.
 	 */
-	points: StanfordPointOptions[];
+	points?: StanfordPointOptions[];
 	/**
 	 * Sets the opacity of the region as value between 0 and 1. Default: 0.2
 	 */
@@ -113,13 +113,13 @@ export interface StanfordRegionOptions {
 }
 
 export interface StanfordPointOptions {
-	x: number;
-	y: number;
+	x?: number;
+	y?: number;
 }
 
 export interface StanfordTextOptions {
-	x: number;
-	y: number;
-	content: string;
+	x?: number;
+	y?: number;
+	content?: string;
 	class?: string;
 }
