@@ -93,6 +93,8 @@ export default {
 	tooltip: "bb-tooltip",
 	tooltipContainer: "bb-tooltip-container",
 	tooltipName: "bb-tooltip-name",
+	valueDown: "bb-value-down",
+	valueUp: "bb-value-up",
 	xgrid: "bb-xgrid",
 	xgridFocus: "bb-xgrid-focus",
 	xgridLine: "bb-xgrid-line",

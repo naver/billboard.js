@@ -31,6 +31,7 @@ import optPoint from "../Options/common/point";
 import optArea from "../Options/shape/area";
 import optBar from "../Options/shape/bar";
 import optBubble from "../Options/shape/bubble";
+import optCandlestick from "../Options/shape/candlestick";
 import optLine from "../Options/shape/line";
 import optScatter from "../Options/shape/scatter";
 import optSpline from "../Options/shape/spline";
@@ -130,7 +131,7 @@ let bubble = (): string => (
 	extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), (bubble = () => TYPE.BUBBLE)()
 );
 let candlestick = (): string => (
-	extendAxis([shapeCandlestick], []), (candlestick = () => TYPE.CANDLESTICK)()
+	extendAxis([shapeCandlestick], [optCandlestick]), (candlestick = () => TYPE.CANDLESTICK)()
 );
 let scatter = (): string => (
 	extendAxis([shapePoint], [optPoint, optScatter]), (scatter = () => TYPE.SCATTER)()

@@ -114,19 +114,20 @@ export default {
 		});
 	},
 
-	updateCircle(): void {
+	updateCircle(isSub = false): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
 		const focusOnly = config.point_focus_only;
+		const $root = isSub ? $el.subchart : $el;
 
 		if (config.point_show && !state.toggling) {
-			const circles = $el.main.selectAll(`.${CLASS.circles}`)
+			const circles = $root.main.selectAll(`.${CLASS.circles}`)
 				.selectAll(`.${CLASS.circle}`)
 				.data(d => (
 					($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
 						$$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
-						(focusOnly ? [d.values[0]] : d.values) : []
-				));
+						(focusOnly ? [d.values[0]] : d.values) : [])
+				);
 
 			circles.exit().remove();
 
@@ -134,16 +135,17 @@ export default {
 				.filter(Boolean)
 				.append($$.point("create", this, $$.pointR.bind($$), $$.color));
 
-			$el.circle = $el.main.selectAll(`.${CLASS.circles} .${CLASS.circle}`)
+			$root.circle = $root.main.selectAll(`.${CLASS.circles} .${CLASS.circle}`)
 				.style("stroke", $$.color)
 				.style("opacity", $$.initialOpacityForCircle.bind($$));
 		}
 	},
 
-	redrawCircle(cx: Function, cy: Function, withTransition: boolean, flow) {
+	redrawCircle(cx: Function, cy: Function, withTransition: boolean, flow, isSub = false) {
 		const $$ = this;
-		const {state: {rendered}, $el: {circle, main}} = $$;
-		const selectedCircles = main.selectAll(`.${CLASS.selectedCircle}`);
+		const {state: {rendered}, $el} = $$;
+		const $root = isSub ? $el.subchart : $el;
+		const selectedCircles = $root.main.selectAll(`.${CLASS.selectedCircle}`);
 
 		if (!$$.config.point_show) {
 			return [];
@@ -156,7 +158,7 @@ export default {
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
 		const mainCircles: any[] = [];
 
-		circle.each(function(d) {
+		$root.circle.each(function(d) {
 			let result: d3Selection | any = fn.bind(this)(d);
 
 			result = ((withTransition || !rendered) ? result.transition(t) : result)
@@ -235,16 +237,16 @@ export default {
 		return this.xx(d);
 	},
 
-	updateCircleY(): void {
+	updateCircleY(isSub = false): Function {
 		const $$ = this;
-		const getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), false);
+		const getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), isSub);
 
-		$$.circleY = (d, i) => {
+		return (d, i) => {
 			const id = d.id;
 
 			return $$.isGrouped(id) ?
 				getPoints(d, i)[0][1] :
-				$$.getYScaleById(id)($$.getBaseValue(d));
+				$$.getYScaleById(id, isSub)($$.getBaseValue(d));
 		};
 	},
 

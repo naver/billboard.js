@@ -39,6 +39,7 @@ export default class Element {
 
 			arcs: null,
 			bar: null, // mainBar,
+			candlestick: null,
 			line: null, // mainLine,
 			area: null, // mainArea,
 			circle: null, // mainCircle,

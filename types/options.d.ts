@@ -215,7 +215,7 @@ export interface ChartOptions {
 		 * 'step', 'step-before' and 'step-after' can be used.
 		 */
 		step?: {
-			type: "step" | "step-before" | "step-after";
+			type?: "step" | "step-before" | "step-after";
 		};
 
 		/**
@@ -344,6 +344,43 @@ export interface ChartOptions {
 		zerobased?: boolean;
 	};
 
+	candlestick?: {
+		/**
+		 * Change the width of bar chart. If ratio is specified, change the width of bar chart by ratio.
+		 */
+		width?: number | {
+			/**
+			 * Set the width of each bar by ratio
+			 */
+			ratio: number;
+
+			/**
+			 * Set max width of each bar
+			 */
+			max?: number;
+		} | {
+			/**
+			 * Set the width option for specific dataset
+			 */
+			[key: string]: {
+				ratio: number;
+				max: number;
+			}
+		};
+
+		color?: {
+			/**
+			 * Change down value color.
+			 */
+			down: string | {
+				/**
+				 * Change down value color for indicated dataset only.
+				 */
+				[key: string]: string;
+			}
+		}
+	};
+
 	radar?: {
 		axis?: {
 			/**
@@ -382,7 +419,7 @@ export interface ChartOptions {
 			/**
 			 * Set the direction to be drawn.
 			 */
-			clockwise: boolean;
+			clockwise?: boolean;
 		};
 
 		level?: {
@@ -633,7 +670,7 @@ export interface ChartOptions {
 		 * Set minimal width of gauge arcs until the innerRadius disappears.
 		 */
 		arcs?: {
-			minWidth: number;
+			minWidth?: number;
 		};
 
 		/**
@@ -1158,7 +1195,7 @@ export interface PointOptions {
 	r?: number | ((this: Chart, d: DataItem) => number);
 
 	focus?: {
-		expand: {
+		expand?: {
 			/**
 			 * Whether to expand each point on focus.
 			 */
@@ -1396,7 +1433,7 @@ export interface Data {
 	/**
 	 * Set chart type at once.
 	 * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.
-	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, bar, bubble, donut, gauge, line, pie, radar, scatter, spline, step
+	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, bar, bubble, candlestick, donut, gauge, line, pie, radar, scatter, spline, step
 	 */
 	type?: ChartTypes;
 
