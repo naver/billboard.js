@@ -1,3 +1,19 @@
+# [3.0.0-next.2](https://github.com/naver/billboard.js/compare/3.0.0-next.1...3.0.0-next.2) (2021-03-05)
+
+
+### Bug Fixes
+
+* **api:** fix loading area-line-range ([fe46492](https://github.com/naver/billboard.js/commit/fe4649249fb3fed67df26e08b7142a7614c05ac3)), closes [#1938](https://github.com/naver/billboard.js/issues/1938)
+* **legend:** fix hiding via .hide() ([c489a77](https://github.com/naver/billboard.js/commit/c489a7769d526d1e32e540589f6111f1cc875a5f)), closes [#1950](https://github.com/naver/billboard.js/issues/1950)
+* **legend:** legend.inset.anchor is working again ([b5ba930](https://github.com/naver/billboard.js/commit/b5ba9307c0ee734dad032b795952a9f444137a6d)), closes [#1935](https://github.com/naver/billboard.js/issues/1935) [#1936](https://github.com/naver/billboard.js/issues/1936)
+* **zoom:** fix x Axis tick transition during zoom ([3f08b11](https://github.com/naver/billboard.js/commit/3f08b11a0041b08ef70b194d5d855c65da430efa)), closes [#1949](https://github.com/naver/billboard.js/issues/1949)
+
+
+### Features
+
+* **candlestick:** Intent to ship candlestick ([8d37bd8](https://github.com/naver/billboard.js/commit/8d37bd896827ac080f0585036efe1240038b2b92)), closes [#76](https://github.com/naver/billboard.js/issues/76) [#1167](https://github.com/naver/billboard.js/issues/1167)
+* **candlestick:** Intent to ship candlestick type ([42307cb](https://github.com/naver/billboard.js/commit/42307cbabd80a9bd23cef7ac1ccc982787803921))
+
 # [3.0.0-next.1](https://github.com/naver/billboard.js/compare/2.2.2...3.0.0-next.1) (2021-02-08)
 
 
