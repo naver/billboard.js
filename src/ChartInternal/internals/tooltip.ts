@@ -192,10 +192,16 @@ export default {
 
 			if ($$.isAreaRangeType(row)) {
 				const [high, low] = ["high", "low"].map(v => sanitise(
-					valueFormat($$.getAreaRangeData(row, v), ...param)
+					valueFormat($$.getRangedData(row, v), ...param)
 				));
 
 				value = `<b>Mid:</b> ${value} <b>High:</b> ${high} <b>Low:</b> ${low}`;
+			} else if ($$.isCandlestickType(row)) {
+				const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"].map(v => sanitise(
+					valueFormat($$.getRangedData(row, v, "candlestick"), ...param)
+				));
+
+				value = `<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${volume ? ` <b>Volume:</b> ${volume}` : ""}`;
 			}
 
 			if (value !== undefined) {

@@ -24,7 +24,8 @@ const plugins = [
     }),
     typescript(),
     replace({
-        "__VERSION__": version
+        "__VERSION__": version,
+        preventAssignment: true
     })
 ];
 const external = id => /^d3-/.test(id);

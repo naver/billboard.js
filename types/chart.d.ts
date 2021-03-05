@@ -59,6 +59,11 @@ export interface Chart {
 			bars: d3Selection;
 		};
 
+		/**
+		 * Candlestick elements
+		 */
+		candlestick: d3Selection;
+
 		line: {
 			/**
 			 * Line elements

@@ -38,7 +38,7 @@ export default {
 		}
 		// update circleY based on updated parameters
 		if (!$$.hasArcType() || state.hasRadar) {
-			$$.updateCircleY && $$.updateCircleY();
+			$$.updateCircleY && ($$.circleY = $$.updateCircleY());
 		}
 
 		// update axis
@@ -59,17 +59,14 @@ export default {
 			// rect for regions
 			config.regions.length && $$.updateRegion(duration);
 
-			// bars
-			$$.hasType("bar") && $$.updateBar(durationForExit);
+			["bar", "candlestick", "line", "area"].forEach(v => {
+				const name = capitalize(v);
 
-			// lines, areas and circles
-			if ($$.hasTypeOf("Line")) {
-				$$.updateLine(durationForExit);
-			}
+				if ((/^(line|area)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
+					$$[`update${name}`](durationForExit);
+				}
+			});
 
-			if ($$.hasTypeOf("Area")) {
-				$$.updateArea(durationForExit);
-			}
 
 			// circles for select
 			$el.text && main.selectAll(`.${CLASS.selectedCircles}`)
@@ -187,11 +184,11 @@ export default {
 			}
 
 			Object.keys(shape.type).forEach(v => {
-				const capitalized = capitalize(v);
-				const shapeType = shape.type[v];
+				const name = capitalize(v);
+				const drawFn = shape.type[v];
 
-				if ((/^(area|line)$/.test(v) && $$.hasTypeOf(capitalized)) || $$.hasType(v)) {
-					list.push($$[`redraw${capitalized}`](shapeType, isTransition));
+				if ((/^(area|line)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
+					list.push($$[`redraw${name}`](drawFn, isTransition));
 				}
 			});
 

@@ -90,11 +90,14 @@ export default {
 	 * @returns {boolean}
 	 * @private
 	 */
-	hasTypeOf(type, targets, exclude = []): boolean {
-		return !TYPE_BY_CATEGORY[type]
-			// @ts-ignore
-			.filter(v => exclude.indexOf(v) === -1)
-			.every(v => !this.hasType(v, targets));
+	hasTypeOf(type, targets, exclude: string[] = []): boolean {
+		if (type in TYPE_BY_CATEGORY) {
+			return !TYPE_BY_CATEGORY[type]
+				.filter((v: string) => exclude.indexOf(v) === -1)
+				.every((v: string) => !this.hasType(v, targets));
+		}
+
+		return false;
 	},
 
 	/**
@@ -221,10 +224,6 @@ export default {
 		return this.isArcType(d.data) ? [d] : [];
 	},
 
-	barData(d) {
-		return this.isBarType(d) ? d.values : [];
-	},
-
 	/**
 	 * Get data adapt for data label showing
 	 * @param {object} d Data object
@@ -236,6 +235,7 @@ export default {
 			this.isLineType(d) ||
 			this.isScatterType(d) ||
 			this.isBubbleType(d) ||
+			this.isCandlestickType(d) ||
 			this.isRadarType(d) ? d.values : [];
 	},
 

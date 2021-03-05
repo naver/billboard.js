@@ -255,9 +255,9 @@ class Axis {
 			scale,
 			outerTick,
 
-			// do not transit x Axis on zoom
+			// do not transit x Axis on zoom and resizing
 			// https://github.com/naver/billboard.js/issues/1949
-			id === "x" && ($$.scale.zoom || $$.config.subchart_show) ? true : noTransition
+			id === "x" && ($$.scale.zoom || $$.config.subchart_show || $$.state.resizing) ? true : noTransition
 		);
 	}
 

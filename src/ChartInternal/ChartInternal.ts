@@ -443,10 +443,13 @@ export default class ChartInternal {
 		const types: string[] = [];
 
 		if (hasAxis) {
-			$$.hasType("bar") && types.push("Bar");
-			$$.hasType("bubble") && types.push("Bubble");
-			$$.hasTypeOf("Line") && types.push("Line");
-			$$.hasType("candlestick") && types.push("Candlestick");
+			["bar", "bubble", "candlestick", "line"].forEach(v => {
+				const name = capitalize(v);
+
+				if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
+					types.push(name);
+				}
+			});
 		} else {
 			if (!hasRadar) {
 				types.push("Arc", "Pie");
@@ -473,6 +476,7 @@ export default class ChartInternal {
 			arcs: arc,
 			circle: circles,
 			bar: bars,
+			candlestick,
 			line: lines,
 			area: areas,
 			text: texts
@@ -490,6 +494,7 @@ export default class ChartInternal {
 			arc,
 			circles,
 			bar: {bars},
+			candlestick,
 			line: {lines, areas},
 			text: {texts}
 		};
@@ -536,10 +541,12 @@ export default class ChartInternal {
 
 		if (hasAxis) {
 			["bar", "candlestick", "line"].forEach(v => {
-				const capitalized = capitalize(v);
+				const name = capitalize(v);
 
-				if ((v === "line" && $$.hasTypeOf(capitalized)) || $$.hasType(v)) {
-					$$[`updateTargetsFor${capitalized}`](targets);
+				if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
+					$$[`updateTargetsFor${name}`](
+						targets.filter($$[`is${name}Type`].bind($$))
+					);
 				}
 			});
 
@@ -550,8 +557,8 @@ export default class ChartInternal {
 			// Arc & Radar
 			$$.hasArcType(targets) && (
 				hasRadar ?
-					$$.updateTargetsForRadar(targets) :
-					$$.updateTargetsForArc(targets)
+					$$.updateTargetsForRadar(targets.filter($$.isRadarType.bind($$))) :
+					$$.updateTargetsForArc(targets.filter($$.isArcType.bind($$)))
 			);
 		}
 
