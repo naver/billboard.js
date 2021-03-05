@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.3-nightly-20210304012027
+ * @version 2.2.3-nightly-20210305012152
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
