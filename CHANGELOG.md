@@ -1,3 +1,10 @@
+## [2.2.5](https://github.com/naver/billboard.js/compare/2.2.4...2.2.5) (2021-03-05)
+
+
+### Bug Fixes
+
+* **axis:** remove x axis transition during resize ([a938681](https://github.com/naver/billboard.js/commit/a9386819449774a4ef4b3fb31466b6ea669dbbb4)), closes [#1949](https://github.com/naver/billboard.js/issues/1949)
+
 ## [2.2.4](https://github.com/naver/billboard.js/compare/2.2.3...2.2.4) (2021-03-04)
 
 
