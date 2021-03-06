@@ -53,14 +53,13 @@ build() {
 }
 
 push() {
-	#git config --global user.email "alberto.park@gmail.com"
-	#git config --global user.name "Jae Sung Park"
-
-	# Remove existing remote
-	# git remote rm ${DEST_REMOTE}
-
 	# Add new remote with access token in the git URL for authentication
-	#git remote add ${DEST_REMOTE} https://netil:${GH_TOKEN}@github.com/naver/billboard.js.git > /dev/null 2>&1
+	if [[ "$CI" == "true" ]]; then
+		git config --global user.email "alberto.park@gmail.com"
+		git config --global user.name "Jae Sung Park"
+
+		git remote set-url ${DEST_REMOTE} https://netil:${GH_TOKEN}@github.com/naver/billboard.js.git > /dev/null 2>&1
+	fi
 
 	# push to github pages
 	npx gh-pages --dist $DIST_FOLDER --dest $DEST_FOLDER --add --remote $DEST_REMOTE --message $COMMIT_MESSAGE
