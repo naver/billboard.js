@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.3-nightly-20210305012152
+ * @version 2.2.5-nightly-20210306012036
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -29090,9 +29090,9 @@ var Axis_Axis = /*#__PURE__*/function () {
    */
   , _proto.setAxis = function setAxis(id, scale, outerTick, noTransition) {
     var $$ = this.owner;
-    id !== "subX" && (this.tick[id] = this.getTickValues(id)), this[id] = this.getAxis(id, scale, outerTick, // do not transit x Axis on zoom
+    id !== "subX" && (this.tick[id] = this.getTickValues(id)), this[id] = this.getAxis(id, scale, outerTick, // do not transit x Axis on zoom and resizing
     // https://github.com/naver/billboard.js/issues/1949
-    !!(id === "x" && ($$.scale.zoom || $$.config.subchart_show)) || noTransition);
+    !!(id === "x" && ($$.scale.zoom || $$.config.subchart_show || $$.state.resizing)) || noTransition);
   } // called from : getMaxTickWidth()
   , _proto.getAxis = function getAxis(id, scale, outerTick, noTransition, noTickTextRotate) {
     var tickFormat,
@@ -37454,7 +37454,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.2.3",
+  version: "2.2.5",
 
   /**
    * Generate chart
@@ -37582,7 +37582,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.2.3
+ * @version 2.2.5
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

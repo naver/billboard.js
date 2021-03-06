@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.2.3
+ * @version 2.2.5
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -10651,9 +10651,9 @@ var Axis = /** @class */ (function () {
         }
         // @ts-ignore
         this[id] = this.getAxis(id, scale, outerTick, 
-        // do not transit x Axis on zoom
+        // do not transit x Axis on zoom and resizing
         // https://github.com/naver/billboard.js/issues/1949
-        id === "x" && ($$.scale.zoom || $$.config.subchart_show) ? true : noTransition);
+        id === "x" && ($$.scale.zoom || $$.config.subchart_show || $$.state.resizing) ? true : noTransition);
     };
     // called from : getMaxTickWidth()
     Axis.prototype.getAxis = function (id, scale, outerTick, noTransition, noTickTextRotate) {
@@ -19132,7 +19132,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.2.3
+ * @version 2.2.5
  */
 var bb = {
     /**
@@ -19142,7 +19142,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.2.3",
+    version: "2.2.5",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

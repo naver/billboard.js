@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.2.3
+ * @version 2.2.5
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -120,7 +120,7 @@ var Plugin = /*#__PURE__*/function () {
   }, Plugin;
 }();
 
-Plugin.version = "#2.2.3#";
+Plugin.version = "#2.2.5#";
 
 /**
  * Bubble compare diagram plugin.<br>
