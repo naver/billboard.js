@@ -1,3 +1,10 @@
+## [2.2.6](https://github.com/naver/billboard.js/compare/2.2.5...2.2.6) (2021-03-11)
+
+
+### Bug Fixes
+
+* **tooltip:** fix linked tooltip recursive call ([b6af8ec](https://github.com/naver/billboard.js/commit/b6af8ec4be0e5677f5d6ce7555c986920e47c2b5)), closes [#1979](https://github.com/naver/billboard.js/issues/1979)
+
 ## [2.2.5](https://github.com/naver/billboard.js/compare/2.2.4...2.2.5) (2021-03-05)
 
 
