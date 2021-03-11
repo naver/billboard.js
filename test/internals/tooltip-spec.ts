@@ -538,17 +538,17 @@ describe("TOOLTIP", function() {
 
 		it("set options tooltip.linked=false", () => {
 			args.tooltip.linked = false;
-			args2.tooltip.order = spy2;
+			args2.tooltip.onshow = spy2;
 		});
 
 		it("second chart tooltip shouldn't be called", () => {
 			util.hoverChart(chart);
 
-			expect(args2.tooltip.order.called).to.be.false;
+			expect(args2.tooltip.onshow.called).to.be.false;
 		});
 
 		it("set options tooltip.linked=false", () => {
-			args.tooltip.order = spy1;
+			args.tooltip.onshow = spy1;
 			args2.tooltip.linked = args.tooltip.linked = {name: "some"};
 
 			chart2 = util.generate(args2);
@@ -557,8 +557,8 @@ describe("TOOLTIP", function() {
 		it("both charts should be called", () => {
 			util.hoverChart(chart2);
 
-			expect(args.tooltip.order.called).to.be.true;
-			expect(args2.tooltip.order.called).to.be.true;
+			expect(args.tooltip.onshow.called).to.be.false;
+			expect(args2.tooltip.onshow.called).to.be.true;
 		});
 	});
 
@@ -574,13 +574,20 @@ describe("TOOLTIP", function() {
 				clientY: 100
 			});
 
-			[chart, chart2].forEach(v => {
-				const tooltipContainer = v.$.tooltip;
-				const top = parseInt(tooltipContainer.style("top"));
-				const left = parseInt(tooltipContainer.style("left"));
+			[chart, chart2].forEach((v, i) => {
+				const {tooltip} = v.$;
+				const top = parseInt(tooltip.style("top"));
+				const left = parseInt(tooltip.style("left"));
 
-				expect(top).to.be.equal(tooltipPos.top);
-				expect(left).to.be.equal(tooltipPos.left);
+				if (i === 0) {
+					expect(top).to.be.equal(tooltipPos.top);
+					expect(left).to.be.equal(tooltipPos.left);
+
+				// chart2 instance event shouldn't be called, due to the event.isTrusted is false
+				} else {
+					expect(isNaN(top)).to.be.true;
+					expect(isNaN(left)).to.be.true;
+				}
 			});
 		});
 	});

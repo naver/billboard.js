@@ -53,20 +53,16 @@ build() {
 }
 
 push() {
-	#git config --global user.email "alberto.park@gmail.com"
-	#git config --global user.name "Jae Sung Park"
-
-	# Remove existing remote
-	git remote rm ${DEST_REMOTE}
-
 	# Add new remote with access token in the git URL for authentication
-	#git remote add ${DEST_REMOTE} https://netil:${GH_TOKEN}@github.com/naver/billboard.js.git > /dev/null 2>&1
+	if [[ "$CI" == "true" ]]; then
+		git config --global user.email "alberto.park@gmail.com"
+		git config --global user.name "Jae Sung Park"
+
+		git remote set-url ${DEST_REMOTE} https://netil:${GH_TOKEN}@github.com/naver/billboard.js.git > /dev/null 2>&1
+	fi
 
 	# push to github pages
-	# Use fixed gh-pages version, due to the bug from the latest 2.1.0
-	# https://travis-ci.org/naver/billboard.js/jobs/568700732#L1172
-	# https://github.com/tschaub/gh-pages/issues/308
-	npx gh-pages@2.0.1 --dist $DIST_FOLDER --dest $DEST_FOLDER --add --remote $DEST_REMOTE --message $COMMIT_MESSAGE --silent
+	npx gh-pages --dist $DIST_FOLDER --dest $DEST_FOLDER --add --remote $DEST_REMOTE --message $COMMIT_MESSAGE
 }
 
 setup

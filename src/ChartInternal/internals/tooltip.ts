@@ -2,7 +2,15 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+<<<<<<< HEAD
 import {select as d3Select} from "d3-selection";
+=======
+import {
+	select as d3Select,
+	mouse as d3Mouse,
+	event as d3Event
+} from "d3-selection";
+>>>>>>> master
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
 import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
@@ -438,13 +446,15 @@ export default {
 	 */
 	_handleLinkedCharts(show: boolean, index: number): void {
 		const $$ = this;
-		const {charts, config} = $$;
+		const {charts, config, state: {event}} = $$;
 
-		if (config.tooltip_linked && charts.length > 1) {
+		// Prevent propagation among instances if isn't instantiated from the user's event
+		// https://github.com/naver/billboard.js/issues/1979
+		if (event && event.isTrusted && config.tooltip_linked && charts.length > 1) {
 			const linkedName = config.tooltip_linked_name;
 
 			charts
-				.filter(v => v !== $$.api)
+				.filter(c => c !== $$.api)
 				.forEach(c => {
 					const {config, $el} = c.internal;
 					const isLinked = config.tooltip_linked;
@@ -455,13 +465,10 @@ export default {
 						const data = $el.tooltip.data()[0];
 						const isNotSameIndex = index !== (data && data.index);
 
-						// prevent throwing error for non-paired linked indexes
 						try {
-							if (show && isNotSameIndex) {
-								c.tooltip.show({index});
-							} else if (!show) {
-								c.tooltip.hide();
-							}
+							c.tooltip[
+								show && isNotSameIndex ? "show" : "hide"
+							]({index});
 						} catch (e) {}
 					}
 				});
