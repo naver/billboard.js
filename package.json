@@ -164,7 +164,7 @@
 		"mocha": "^8.3.1",
 		"node-sass": "^5.0.0",
 		"regenerator-runtime": "^0.13.7",
-		"rollup": "^2.40.0",
+		"rollup": "^2.41.0",
 		"sass-loader": "^11.0.1",
 		"semantic-release": "^17.4.1",
 		"simulant": "^0.2.2",
