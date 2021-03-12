@@ -5,10 +5,10 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.2.5
+ * @version 2.2.6
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
-import { pointer, select, namespaces, selectAll } from 'd3-selection';
+import { pointer, select, namespaces, selectAll, mouse, event } from 'd3-selection';
 import { brushSelection, brushY, brushX } from 'd3-brush';
 import { csvParseRows, csvParse, tsvParseRows, tsvParse } from 'd3-dsv';
 import { drag as drag$1 } from 'd3-drag';
@@ -6982,7 +6982,7 @@ var tooltip$1 = {
         var width = state.width, height = state.height, current = state.current, isLegendRight = state.isLegendRight, inputType = state.inputType, event = state.event;
         var hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
         var svgLeft = $$.getSvgLeft(true);
-        var _a = d3Mouse(element), x = _a[0], y = _a[1];
+        var _a = mouse(element), x = _a[0], y = _a[1];
         var chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
         var chartLeft = $$.getCurrentPaddingLeft(true);
         var size = 20;
@@ -7125,10 +7125,12 @@ var tooltip$1 = {
     _handleLinkedCharts: function (show, index) {
         var $$ = this;
         var charts = $$.charts, config = $$.config;
-        if (config.tooltip_linked && charts.length > 1) {
+        // Prevent propagation among instances if isn't instantiated from the user's event
+        // https://github.com/naver/billboard.js/issues/1979
+        if (event && event.isTrusted && config.tooltip_linked && charts.length > 1) {
             var linkedName_1 = config.tooltip_linked_name;
             charts
-                .filter(function (v) { return v !== $$.api; })
+                .filter(function (c) { return c !== $$.api; })
                 .forEach(function (c) {
                 var _a = c.internal, config = _a.config, $el = _a.$el;
                 var isLinked = config.tooltip_linked;
@@ -7137,14 +7139,8 @@ var tooltip$1 = {
                 if (isLinked && linkedName_1 === name && isInDom) {
                     var data = $el.tooltip.data()[0];
                     var isNotSameIndex = index !== (data && data.index);
-                    // prevent throwing error for non-paired linked indexes
                     try {
-                        if (show && isNotSameIndex) {
-                            c.tooltip.show({ index: index });
-                        }
-                        else if (!show) {
-                            c.tooltip.hide();
-                        }
+                        c.tooltip[show && isNotSameIndex ? "show" : "hide"]({ index: index });
                     }
                     catch (e) { }
                 }
@@ -19132,7 +19128,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.2.5
+ * @version 2.2.6
  */
 var bb = {
     /**
@@ -19142,7 +19138,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.2.5",
+    version: "2.2.6",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

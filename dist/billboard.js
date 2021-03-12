@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.5-nightly-20210311012246
+ * @version 2.2.6-nightly-20210312012345
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -80,7 +80,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 /* 10 */
 /***/ (function() {
 
-throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /home/runner/work/billboard.js/billboard.js/src/ChartInternal/internals/tooltip.ts: Identifier 'x' has already been declared (269:7)\n\n  267 | \t\tconst chartLeft = $$.getCurrentPaddingLeft(true);\n  268 | \t\tconst size = 20;\n> 269 | \t\tlet [x, y] = getPointer(event, element);\n      | \t\t     ^\n  270 |\n  271 | \t\t// Determine tooltip position\n  272 | \t\tif ($$.hasArcType()) {\n    at Object._raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:776:17)\n    at Object.raiseWithData (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:769:17)\n    at Object.raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:737:17)\n    at TypeScriptScopeHandler.checkRedeclarationInScope (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:1453:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:1419:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:5259:11)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:10211:24)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7496:15)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:10235:18)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7496:15)");
+throw new Error("Module build failed (from ./node_modules/babel-loader/lib/index.js):\nSyntaxError: /home/runner/work/billboard.js/billboard.js/src/ChartInternal/internals/tooltip.ts: Identifier 'x' has already been declared (273:7)\n\n  271 | \t\tconst chartLeft = $$.getCurrentPaddingLeft(true);\n  272 | \t\tconst size = 20;\n> 273 | \t\tlet [x, y] = getPointer(event, element);\n      | \t\t     ^\n  274 |\n  275 | \t\t// Determine tooltip position\n  276 | \t\tif ($$.hasArcType()) {\n    at Object._raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:776:17)\n    at Object.raiseWithData (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:769:17)\n    at Object.raise (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:737:17)\n    at TypeScriptScopeHandler.checkRedeclarationInScope (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:1453:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:1419:12)\n    at TypeScriptScopeHandler.declareName (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:5259:11)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:10211:24)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7496:15)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:10235:18)\n    at Object.checkLVal (/home/runner/work/billboard.js/billboard.js/node_modules/@babel/parser/lib/index.js:7496:15)");
 
 /***/ }),
 /* 11 */
@@ -16758,7 +16758,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "2.2.5",
+  version: "2.2.6",
 
   /**
    * Generate chart
@@ -16886,7 +16886,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 2.2.5
+ * @version 2.2.6
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
