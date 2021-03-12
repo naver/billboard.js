@@ -2,15 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-<<<<<<< HEAD
 import {select as d3Select} from "d3-selection";
-=======
-import {
-	select as d3Select,
-	mouse as d3Mouse,
-	event as d3Event
-} from "d3-selection";
->>>>>>> master
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
 import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
