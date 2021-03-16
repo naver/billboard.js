@@ -4524,7 +4524,7 @@ var domain = {
         var configValue = $$.config["axis_x_" + type];
         var dataValue = getMinMax$1(type, targets.map(function (t) { return getMinMax$1(type, t.values.map(function (v) { return v.x; })); }));
         var value = isObject(configValue) ? configValue.value : configValue;
-        value = isDefined(value) && $$.axis.isTimeSeries() ? parseDate(value) : value;
+        value = isDefined(value) && $$.axis.isTimeSeries() ? parseDate.bind(this)(value) : value;
         if (isObject(configValue) && configValue.fit && ((type === "min" && value < dataValue) || (type === "max" && value > dataValue))) {
             value = undefined;
         }
