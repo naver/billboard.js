@@ -5,7 +5,7 @@
 import CLASS from "../../config/classes";
 import {getOption, extend} from "../../module/util";
 
-type regionsParam = {axis?: string, class?: string, start?: number, end?: number}[];
+type RegionsParam = {axis?: string, class?: string, start?: number, end?: number}[];
 
 /**
  * Update regions.
@@ -21,7 +21,7 @@ type regionsParam = {axis?: string, class?: string, start?: number, end?: number
  *    {axis: "y", end: 50, class: "regionY"}
  * ]);
  */
-function regions(regions: regionsParam): regionsParam {
+function regions(regions: RegionsParam): RegionsParam {
 	const $$ = this.internal;
 	const {config} = $$;
 
@@ -56,7 +56,7 @@ extend(regions, {
 	 *    {axis: "y", end: 50, class: "regionY"}
 	 *]);
 	 */
-	add: function(regions: regionsParam): regionsParam {
+	add: function(regions: RegionsParam): RegionsParam {
 		const $$ = this.internal;
 		const {config} = $$;
 
@@ -89,7 +89,7 @@ extend(regions, {
 	 * // all of regions will be removed.
 	 * chart.regions.remove();
 	 */
-	remove: function(optionsValue: regionsParam): regionsParam {
+	remove: function(optionsValue: RegionsParam): RegionsParam {
 		const $$ = this.internal;
 		const {config} = $$;
 

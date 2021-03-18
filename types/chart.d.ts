@@ -478,10 +478,19 @@ export interface Chart {
 	 * - NOTE:
 	 *   - IE11 and below not work properly due to the lack of the feature(foreignObject) support
 	 *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
-	 * @param mimeType The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
+	 * @param option Export options
+	 * @param [option.mimeType="image/png"] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
+	 * @param [option.width={currentWidth}] width
+	 * @param [option.height={currentHeigth}] height
+	 * @param [option.preserveAspectRatio=true] Preserve aspect ratio on given size
 	 * @param callback The callback to be invoked when export is ready.
 	 */
-	export(this: Chart, mimeType?: string, callback?: (dataUrl: string) => string): string;
+	export(this: Chart, option?: {
+		width?: number;
+		height?: number;
+		mimeType: string;
+		preserveAspectRatio: boolean;
+	}, callback?: (dataUrl: string) => string): string;
 
 	/**
 	 * Get or set single config option value.

@@ -4799,9 +4799,13 @@ d3.select(".chart_area")
 			options: {
 				data: {
 					columns: [
-						["sample", 30, 200, 100, 400, 150, 250]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
 					],
-					type: "line"
+					types: {
+						data1: "bar",
+						data2: "area"
+					}
 				}
 			},
 			func: function(chart) {
@@ -4814,7 +4818,17 @@ d3.select(".chart_area")
 							.insertAdjacentElement("afterend", exported);
 
 						// Call after the chart finished rendering
-						chart.export("image/png", function(dataUrl) {
+						// (1) Default option
+						chart.export(null, function(dataUrl) {
+							// append an image element
+							var img = document.createElement("img");
+
+							img.src = dataUrl;
+							exported.appendChild(img);
+						});
+
+						// (2) Specify exported image size
+						chart.export({width: 500, height:100, preserveAspectRatio: false}, function(dataUrl) {
 							// append an image element
 							var img = document.createElement("img");
 
