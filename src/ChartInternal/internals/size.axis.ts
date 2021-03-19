@@ -66,7 +66,7 @@ export default {
 		) {
 			h = 30 +
 				$$.axis.getMaxTickWidth(id) *
-				Math.cos(Math.PI * (90 - rotate) / 180);
+				Math.cos(Math.PI * (90 - Math.abs(rotate)) / 180);
 
 			if (!config.axis_x_tick_multiline && current.height) {
 				if (h > current.height / 2) {
