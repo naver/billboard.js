@@ -1,3 +1,19 @@
+# [3.0.0-next.3](https://github.com/naver/billboard.js/compare/3.0.0-next.2...3.0.0-next.3) (2021-03-19)
+
+
+### Bug Fixes
+
+* **axis:** fix axis.x.max error throw ([de06361](https://github.com/naver/billboard.js/commit/de063614b96ac938631aa11a9a7059ec53a4bc59)), closes [#1981](https://github.com/naver/billboard.js/issues/1981)
+* **axis:** fix axis.x.tick.tooltip on rotated axis ([eed2f86](https://github.com/naver/billboard.js/commit/eed2f86ace926f65d69ee55c46b88a5b9b6c15c0)), closes [#1990](https://github.com/naver/billboard.js/issues/1990)
+* **axis:** remove x axis transition during resize ([a938681](https://github.com/naver/billboard.js/commit/a9386819449774a4ef4b3fb31466b6ea669dbbb4)), closes [#1949](https://github.com/naver/billboard.js/issues/1949)
+* **tooltip:** fix linked tooltip recursive call ([b6af8ec](https://github.com/naver/billboard.js/commit/b6af8ec4be0e5677f5d6ce7555c986920e47c2b5)), closes [#1979](https://github.com/naver/billboard.js/issues/1979)
+* **zoom:** fix zoom on latest chrome ([37edc9b](https://github.com/naver/billboard.js/commit/37edc9b55d55ecf5f67f104927499cae05eca3fa)), closes [/github.com/d3/d3-zoom/issues/231#issuecomment-802305692](https://github.com//github.com/d3/d3-zoom/issues/231/issues/issuecomment-802305692) [#1992](https://github.com/naver/billboard.js/issues/1992)
+
+
+### Features
+
+* **api:** Enhance .export() option to specify size ([3c2de80](https://github.com/naver/billboard.js/commit/3c2de807ffd2f82d8fa7d2ff1dbf4901be873405)), closes [#815](https://github.com/naver/billboard.js/issues/815) [#1969](https://github.com/naver/billboard.js/issues/1969)
+
 # [3.0.0-next.2](https://github.com/naver/billboard.js/compare/3.0.0-next.1...3.0.0-next.2) (2021-03-05)
 
 
