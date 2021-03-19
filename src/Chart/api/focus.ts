@@ -5,7 +5,7 @@
 import {select as d3Select} from "d3-selection";
 import CLASS from "../../config/classes";
 
-type focusParam = string | string[];
+type FocusParam = string | string[];
 
 export default {
 	/**
@@ -25,7 +25,7 @@ export default {
 	 * // all targets will be highlighted
 	 * chart.focus();
 	 */
-	focus(targetIdsValue?: focusParam): void {
+	focus(targetIdsValue?: FocusParam): void {
 		const $$ = this.internal;
 		const {state} = $$;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
@@ -68,7 +68,7 @@ export default {
 	 * // all targets will be faded out.
 	 * chart.defocus();
 	 */
-	defocus(targetIdsValue?: focusParam): void {
+	defocus(targetIdsValue?: FocusParam): void {
 		const $$ = this.internal;
 		const {state} = $$;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
@@ -108,7 +108,7 @@ export default {
 	 * // all targets will be reverted.
 	 * chart.revert();
 	 */
-	revert(targetIdsValue?: focusParam): void {
+	revert(targetIdsValue?: FocusParam): void {
 		const $$ = this.internal;
 		const {config, state, $el} = $$;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);

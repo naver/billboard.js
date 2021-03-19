@@ -208,7 +208,7 @@ export default {
 		const dataValue = getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
 		let value = isObject(configValue) ? configValue.value : configValue;
 
-		value = isDefined(value) && $$.axis.isTimeSeries() ? parseDate(value) : value;
+		value = isDefined(value) && $$.axis.isTimeSeries() ? parseDate.bind(this)(value) : value;
 
 		if (isObject(configValue) && configValue.fit && (
 			(type === "min" && value < dataValue) || (type === "max" && value > dataValue)
