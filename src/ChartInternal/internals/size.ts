@@ -180,14 +180,8 @@ export default {
 		const $$ = this;
 		const {config, state: {hasAxis}, $el} = $$;
 
-		if (hasAxis && !withoutAxis) {
-			if ($$.axis.x && config.axis_rotated) {
-				$$.axis.x.create($el.axis.x);
-				$$.axis.subX && $$.axis.subX.create($el.axis.subX);
-			} else {
-				$$.axis.y && $$.axis.y.create($el.axis.y);
-				$$.axis.y2 && $$.axis.y2.create($el.axis.y2);
-			}
+		if (hasAxis && !withoutAxis && $$.axis.x && config.axis_rotated) {
+			$$.axis.subX && $$.axis.subX.create($el.axis.subX);
 		}
 
 		// pass 'withoutAxis' param to not animate at the init rendering
