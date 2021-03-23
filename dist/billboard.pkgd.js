@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.6-nightly-20210316012228
+ * @version 2.2.6-nightly-20210323012608
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -30492,7 +30492,7 @@ function smoothLines(el, type) {
     if (id === "y2" && !config.axis_y2_show) return rotatedPadding.top;
     var rotate = $$.getAxisTickRotate(id); // Calculate x/y axis height when tick rotated
 
-    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - rotate) / 180), !config.axis_x_tick_multiline && current.height && h > current.height / 2 && (h = current.height / 2)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
+    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - Math.abs(rotate)) / 180), !config.axis_x_tick_multiline && current.height && h > current.height / 2 && (h = current.height / 2)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
   },
   getEventRectWidth: function getEventRectWidth() {
     return Math.max(0, this.axis.x.tickInterval());
