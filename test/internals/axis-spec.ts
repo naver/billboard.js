@@ -1029,7 +1029,7 @@ describe("AXIS", function() {
 	});
 
 	describe("axis.x.tick.rotate", () => {
-		describe("not rotated", () => {
+		describe("rotation > 0", () => {
 			before(() => {
 				args = {
 					data: {
@@ -1060,6 +1060,51 @@ describe("AXIS", function() {
 					expect(text.attr("transform")).to.be.equal("rotate(60)");
 					expect(text.attr("y")).to.be.equal("1.5");
 					expect(tspan.attr("dx")).to.be.equal("6.928203230275509");
+				});
+			});
+
+			it("should have automatically calculated x axis height", () => {
+				const internal = chart.internal;
+				const box = internal.$el.main.select(`.${CLASS.axisX}`).node().getBoundingClientRect();
+				const height = internal.getHorizontalAxisHeight("x");
+
+				expect(box.height).to.be.above(50);
+				expect(height).to.be.above(68);
+				expect(height).to.be.below(80);
+			});
+		});
+
+		describe("rotation < 0", () => {
+			before(() => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", "category 1", "category 2", "category 3", "category 4", "category 5", "category 6"],
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 20, 10, 40, 15, 25]
+						]
+					},
+					axis: {
+						x: {
+							type: "category",
+							tick: {
+								rotate: -60
+							}
+						}
+					}
+				};
+			});
+
+			it("should rotate tick texts", () => {
+				chart.$.main.selectAll(`.${CLASS.axisX} g.tick`).each(function() {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					expect(text.attr("transform")).to.be.equal("rotate(-60)");
+					expect(text.attr("y")).to.be.equal("1.5");
+					expect(tspan.attr("dx")).to.be.equal("-6.928203230275509");
 				});
 			});
 
