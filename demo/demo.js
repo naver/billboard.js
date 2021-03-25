@@ -4818,22 +4818,35 @@ d3.select(".chart_area")
 							.insertAdjacentElement("afterend", exported);
 
 						// Call after the chart finished rendering
-						// (1) Default option
+						// (1&rpar; Default option
 						chart.export(null, function(dataUrl) {
 							// append an image element
-							var img = document.createElement("img");
+							var img = document.getElementById("exported");
+							
+							if (!img) {
+								img = document.createElement("img");
+
+								img.id = "exported";
+								exported.appendChild(img);
+							}
 
 							img.src = dataUrl;
-							exported.appendChild(img);
 						});
 
-						// (2) Specify exported image size
+						// (2&rpar; Specify exported image size
 						chart.export({width: 500, height:100, preserveAspectRatio: false}, function(dataUrl) {
 							// append an image element
-							var img = document.createElement("img");
+							// append an image element
+							var img = document.getElementById("exported2");
+							
+							if (!img) {
+								img = document.createElement("img");
+
+								img.id = "exported2";
+								exported.appendChild(img);
+							}
 
 							img.src = dataUrl;
-							exported.appendChild(img);
 						});
 					}, 500)
 				]
