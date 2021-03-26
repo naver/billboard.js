@@ -1,3 +1,12 @@
+## [3.0.1](https://github.com/naver/billboard.js/compare/3.0.0...3.0.1) (2021-03-26)
+
+
+### Bug Fixes
+
+* **axis:** calculate x axis height correctly for negative tick rotation settings ([fe42e64](https://github.com/naver/billboard.js/commit/fe42e64ca2bab7532cd2933fe4da5925d37e384c)), closes [#1994](https://github.com/naver/billboard.js/issues/1994) [#1995](https://github.com/naver/billboard.js/issues/1995)
+* **candlestick:** fix exporting candlestick module ([1a9b75b](https://github.com/naver/billboard.js/commit/1a9b75b1cd183d86aabc9d0a17bb83e4bad12225)), closes [#2007](https://github.com/naver/billboard.js/issues/2007)
+* **deploy:** fix deploying gh-pages ([baec455](https://github.com/naver/billboard.js/commit/baec4551df4ad74bd7cfda2f6bc19f12bc6ac47b))
+
 # [3.0.0](https://github.com/naver/billboard.js/compare/2.2.6...3.0.0) (2021-03-26)
 
 
