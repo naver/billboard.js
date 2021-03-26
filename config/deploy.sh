@@ -58,7 +58,7 @@ push() {
 		git config --global user.email "alberto.park@gmail.com"
 		git config --global user.name "Jae Sung Park"
 
-		git remote set-url ${DEST_REMOTE} https://netil:${GH_TOKEN}@github.com/naver/billboard.js.git > /dev/null 2>&1
+		git remote set-url ${DEST_REMOTE} https://netil:${1}@github.com/naver/billboard.js.git > /dev/null 2>&1
 	fi
 
 	# push to github pages

@@ -83,9 +83,7 @@ jobs:
         run: npm run release
 
       - name: Deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
-        run: bash ./config/deploy.sh
+        run: bash ./config/deploy.sh ${{ secrets.GITHUB_TOKEN }}
         # https://docs.github.com/en/free-pro-team@latest/actions/reference/context-and-expression-syntax-for-github-actions
         if: github.ref == 'refs/heads/latest' && steps.publish.conclusion == 'success'
