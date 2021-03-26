@@ -148,11 +148,12 @@ If you want to use 'billboard.js' without installation, load files directly from
 |9+|Latest|Latest|Latest|8+|4+|
 
 
-## Dependency
+## Dependency by version
 
-|[D3](https://d3js.org/) (required)|
-| --- |
-| 4+ |
+[D3.js](https://d3js.org/) (required)| billboard.js
+ :---: | :---:
+ 4.x ~ 5.x | 1.x ~ 2.x
+ 6.x+ | 3.x+
 
 Load billboard.js after D3.js.
 
