@@ -250,6 +250,26 @@ export interface Chart {
 		range(range?: { min?: number, max?: number }): { min: number, max: number }
 	};
 
+	subchart: {
+		/**
+		 * Hide generated subchart
+		 * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+		 */
+		hide(): void;
+
+		/**
+		 * Show subchart
+		 * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+		 */
+		show(): void
+
+		/**
+		 * Hide generated subchart
+		 * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+		 */
+		toggle(): void;
+	};
+
 	tooltip: {
 		/**
 		 * Hide tooltip
