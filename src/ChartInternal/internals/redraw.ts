@@ -5,7 +5,7 @@
 import {transition as d3Transition} from "d3-transition";
 import CLASS from "../../config/classes";
 import {generateWait} from "../../module/generator";
-import {callFn, getOption, isTabVisible, notEmpty} from "../../module/util";
+import {callFn, capitalize, getOption, isTabVisible, notEmpty} from "../../module/util";
 
 export default {
 	redraw(options: any = {}): void {
@@ -38,7 +38,7 @@ export default {
 		}
 		// update circleY based on updated parameters
 		if (!$$.hasArcType() || state.hasRadar) {
-			$$.updateCircleY && $$.updateCircleY();
+			$$.updateCircleY && ($$.circleY = $$.updateCircleY());
 		}
 
 		// update axis
@@ -59,17 +59,14 @@ export default {
 			// rect for regions
 			config.regions.length && $$.updateRegion(duration);
 
-			// bars
-			$$.hasType("bar") && $$.updateBar(durationForExit);
+			["bar", "candlestick", "line", "area"].forEach(v => {
+				const name = capitalize(v);
 
-			// lines, areas and circles
-			if ($$.hasTypeOf("Line")) {
-				$$.updateLine(durationForExit);
-			}
+				if ((/^(line|area)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
+					$$[`update${name}`](durationForExit);
+				}
+			});
 
-			if ($$.hasTypeOf("Area")) {
-				$$.updateArea(durationForExit);
-			}
 
 			// circles for select
 			$el.text && main.selectAll(`.${CLASS.selectedCircles}`)
@@ -178,8 +175,6 @@ export default {
 		const list: Function[] = [];
 
 		if (hasAxis) {
-			const {area, bar, line} = shape.type;
-
 			if (config.grid_x_lines.length || config.grid_y_lines.length) {
 				list.push($$.redrawGrid(isTransition));
 			}
@@ -188,9 +183,15 @@ export default {
 				list.push($$.redrawRegion(isTransition));
 			}
 
-			$$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition));
-			$$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
-			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
+			Object.keys(shape.type).forEach(v => {
+				const name = capitalize(v);
+				const drawFn = shape.type[v];
+
+				if ((/^(area|line)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
+					list.push($$[`redraw${name}`](drawFn, isTransition));
+				}
+			});
+
 			!flow && grid.main && list.push($$.updateGridFocus());
 		}
 

@@ -833,7 +833,7 @@ describe("AXIS", function() {
 							done();
 						}
 					});
-				})
+				});
 			});
 
 			describe("rotated", () => {
@@ -1026,6 +1026,56 @@ describe("AXIS", function() {
 				});
 			});
 		});
+	});
+
+	describe("axis.x.tick.tooltip", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+					  [
+						"x",
+						"John",
+						"Aron",
+						"David",
+						"Chris",
+						"Tyler",
+						"Mike",
+						"0",
+						"1",
+						"2",
+						"3",
+						"4",
+						"5",
+						"6",
+						"7",
+						"8",
+						"9",
+						"10"
+					  ],
+					  ["data1", 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+					],
+					type: "bar"
+				},
+				axis: {
+					rotated: true,
+					x: {
+						type: "category",
+						tick: {
+						tooltip: true
+						}
+					}
+				}
+			}
+		});
+
+		it("<title> elements should be generated", () => {
+			chart.internal.$el.axis.x.selectAll(".tick")
+				.each(function() {
+					expect(this.querySelector("title")).to.not.be.null;
+				});
+		})
 	});
 
 	describe("axis.x.tick.rotate", () => {

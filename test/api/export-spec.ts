@@ -33,7 +33,7 @@ describe("API export", () => {
 		}
 
 		expect(/^data:image\/svg\+xml;base64,.+/.test(chart.export())).to.be.true;
-		chart.export("image/png", exportCallback);
+		chart.export(null, exportCallback);
 	});
 
 	it("should export chart as image/png", done => {
@@ -47,8 +47,41 @@ describe("API export", () => {
 			done();
 		}
 
-		chart.export("image/png", exportCallback);
+		chart.export({mimeType: "image/png"}, exportCallback);
 	});
+
+	it("should export in different size", done => {
+  	    const expectedDataURL = [
+			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAJYCAYAAADxHswlAAAgAElEQVR4XuzdCZhlVX3v/e9/",
+			"AAAABJRU5ErkJggg=="
+		];
+
+		setTimeout(() => {
+			chart.export({
+				width: 1000, height: 600
+			}, data => {
+				expect(
+					expectedDataURL.every(v => data.indexOf(v) >= 0)
+				).to.be.true;
+
+				done();
+			});
+		}, 500);
+	});
+
+	it("should export in different aspectRatio", done => {
+		const expectedDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAEsCAYAAACG+vy+AAAgAElEQVR4Xu19CZRcVbX2t8+t";
+
+	  	setTimeout(() => {
+			chart.export({
+				width: 200, height: 300, preserveAspectRatio: false
+			}, data => {
+				expect(data.indexOf(expectedDataURL) >= 0).to.be.true;
+
+				done();
+			});
+	  	}, 500);
+  });
 
 	it("set options", () => {
 		args = {
@@ -97,7 +130,7 @@ describe("API export", () => {
 		];
 
 		setTimeout(() => {
-			chart.export("image/png", data => {
+			chart.export(null, data => {
 				expect(expectedDataURL.indexOf(data) >= 0).to.be.true;
 				done();
 			});

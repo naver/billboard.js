@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-import {event as d3Event} from "d3-selection";
+import {pointer as d3Pointer} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
 import {d3Selection} from "../../types/types";
 import {document, window} from "./browser";
@@ -28,6 +28,7 @@ export {
 	getMinMax,
 	getOption,
 	getPathBox,
+	getPointer,
 	getRandom,
 	getRange,
 	getRectSegList,
@@ -245,14 +246,28 @@ function getPathBox(
 }
 
 /**
+ * Get event's current position coordinates
+ * @param {object} event Event object
+ * @param {SVGElement|HTMLElement} element Target element
+ * @returns {Array} [x, y] Coordinates x, y array
+ */
+function getPointer(event, element?: Element): number[] {
+	const touches = event && (event.touches || (event.sourceEvent && event.sourceEvent.touches));
+	const pointer = event ?
+		d3Pointer(touches ? touches[0] : event, element) :
+		[0, 0];
+
+	return pointer;
+}
+
+/**
  * Return brush selection array
- * @param {object} {} Selection object
- * @param {object} {}.$el Selection object
+ * @param {object} ctx Current instance
  * @returns {d3.brushSelection}
  * @private
  */
-function getBrushSelection({$el}) {
-	const event = d3Event;
+function getBrushSelection(ctx) {
+	const {event, $el} = ctx;
 	const main = $el.subchart.main || $el.main;
 	let selection;
 

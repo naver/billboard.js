@@ -3,10 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 import {line as d3Line} from "d3-shape";
-import {mouse as d3Mouse} from "d3-selection";
 import {getScale} from "../internals/scale";
 import CLASS from "../../config/classes";
-import {getRandom, isArray, isDefined, isUndefined, isValue, parseDate} from "../../module/util";
+import {getPointer, getRandom, isArray, isDefined, isUndefined, isValue, parseDate} from "../../module/util";
 
 export default {
 	initLine(): void {
@@ -51,36 +50,50 @@ export default {
 		$$.updateTargetForCircle(targets, mainLineEnter);
 	},
 
-	updateLine(durationForExit): void {
+	/**
+	 * Generate/Update elements
+	 * @param {number} durationForExit Transition duration for exit elements
+	 * @param {boolean} isSub Subchart draw
+	 * @private
+	 */
+	updateLine(durationForExit: number, isSub = false): void {
 		const $$ = this;
 		const {format: {extraLineClasses}, $el} = $$;
+		const $root = isSub ? $el.subchart : $el;
 
-		$el.line = $el.main
+		const line = $root.main
 			.selectAll(`.${CLASS.lines}`)
 			.selectAll(`.${CLASS.line}`)
 			.data($$.lineData.bind($$));
 
-		$el.line.exit().transition()
+		line.exit().transition()
 			.duration(durationForExit)
 			.style("opacity", "0")
 			.remove();
 
-		$el.line = $el.line.enter()
+		$root.line = line.enter()
 			.append("path")
 			.attr("class", d => `${$$.getClass("line", true)(d)} ${extraLineClasses(d) || ""}`)
 			.style("stroke", $$.color)
-			.merge($el.line)
+			.merge(line)
 			.style("opacity", $$.initialOpacity.bind($$))
 			.style("shape-rendering", d => ($$.isStepType(d) ? "crispEdges" : ""))
 			.attr("transform", null);
 	},
 
-	redrawLine(drawLine, withTransition?: boolean) {
-		const {line} = this.$el;
+	/**
+	 * Redraw function
+	 * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+	 * @param {boolean} withTransition With or without transition
+	 * @param {boolean} isSub Subchart draw
+	 * @returns {Array}
+	 */
+	redrawLine(drawFn, withTransition?: boolean, isSub = false) {
+		const {line} = (isSub ? this.$el.subchart : this.$el);
 
 		return [
 			(withTransition ? line.transition(getRandom()) : line)
-				.attr("d", drawLine)
+				.attr("d", drawFn)
 				.style("stroke", this.color)
 				.style("opacity", "1")
 		];
@@ -301,7 +314,7 @@ export default {
 	},
 
 	isWithinStep(that, y: number): boolean {
-		return Math.abs(y - d3Mouse(that)[1]) < 30;
+		return Math.abs(y - getPointer(this.state.event, that)[1]) < 30;
 	},
 
 	shouldDrawPointsForLine(d): boolean {

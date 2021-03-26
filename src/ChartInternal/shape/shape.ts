@@ -24,7 +24,7 @@ import {
 } from "d3-shape";
 import {select as d3Select} from "d3-selection";
 import CLASS from "../../config/classes";
-import {getUnique, isObjectType, isNumber, isUndefined, notEmpty} from "../../module/util";
+import {capitalize, getUnique, isObjectType, isNumber, isUndefined, notEmpty} from "../../module/util";
 
 export default {
 	/**
@@ -44,27 +44,19 @@ export default {
 		const {hasRadar} = $$.state;
 		const shape = {type: <SHAPE> {}, indices: <SHAPE> {}, pos: {}};
 
-		// setup drawer - MEMO: these must be called after axis updated
-		if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
-			const indices = $$.getShapeIndices($$.isLineType);
+		["bar", "candlestick", "line", "area"].forEach(v => {
+			const name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
 
-			shape.indices.line = indices;
-			shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, false) : undefined;
+			if ($$.hasType(v) || $$.hasTypeOf(name) || (
+				v === "line" && ($$.hasType("bubble") || $$.hasType("scatter"))
+			)) {
+				const indices = $$.getShapeIndices($$[`is${name}Type`]);
+				const drawFn = $$[`generateDraw${name}`];
 
-			if ($$.hasTypeOf("Area")) {
-				const indices = $$.getShapeIndices($$.isAreaType);
-
-				shape.indices.area = indices;
-				shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(indices, false) : undefined;
+				shape.indices[v] = indices;
+				shape.type[v] = drawFn ? drawFn.bind($$)(indices, false) : undefined;
 			}
-		}
-
-		if ($$.hasType("bar")) {
-			const indices = $$.getShapeIndices($$.isBarType);
-
-			shape.indices.bar = indices;
-			shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(indices) : undefined;
-		}
+		});
 
 		if (!$$.hasArcType() || hasRadar) {
 			// generate circle x/y functions depending on updated params
@@ -82,7 +74,7 @@ export default {
 		return shape;
 	},
 
-	getShapeIndices(typeFilter) {
+	getShapeIndices(typeFilter): {[key: string]: number} {
 		const $$ = this;
 		const {config} = $$;
 		const xs = config.data_xs;
@@ -203,9 +195,15 @@ export default {
 		const isStackNormalized = $$.isStackNormalized();
 
 		return d => {
-			const value = isStackNormalized ? $$.getRatio("index", d, true) : (
-				$$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value
-			);
+			let {value} = d;
+
+			if (isNumber(d)) {
+				value = d;
+			} else if (isStackNormalized) {
+				value = $$.getRatio("index", d, true);
+			} else if ($$.isBubbleZType(d)) {
+				value = $$.getBubbleZData(d.value, "y");
+			}
 
 			return $$.getYScaleById(d.id, isSub)(value);
 		};
@@ -299,6 +297,44 @@ export default {
 
 			return offset;
 		};
+	},
+
+	getBarW(type, axis, targetsNum: number): number {
+		const $$ = this;
+		const {config, org, scale} = $$;
+		const maxDataCount = $$.getMaxDataCount();
+		const isGrouped = type === "bar" && config.data_groups.length;
+		const configName = `${type}_width`;
+
+		const tickInterval = scale.zoom && !$$.axis.isCategorized() ?
+			(org.xDomain.map(v => scale.zoom(v))
+				.reduce((a, c) => Math.abs(a) + c) / maxDataCount
+			) : axis.tickInterval(maxDataCount);
+
+		const getWidth = (id?: string) => {
+			const width = id ? config[configName][id] : config[configName];
+			const ratio = id ? width.ratio : config[`${configName}_ratio`];
+			const max = id ? width.max : config[`${configName}_max`];
+			const w = isNumber(width) ?
+				width : targetsNum ? (tickInterval * ratio) / targetsNum : 0;
+
+			return max && w > max ? max : w;
+		};
+
+		let result = getWidth();
+
+		if (!isGrouped && isObjectType(config[configName])) {
+			result = {_$width: result, _$total: []};
+
+			$$.filterTargetsToShow($$.data.targets).forEach(v => {
+				if (config[configName][v.id]) {
+					result[v.id] = getWidth(v.id);
+					result._$total.push(result[v.id] || result._$width);
+				}
+			});
+		}
+
+		return result;
 	},
 
 	isWithinShape(that, d): boolean {

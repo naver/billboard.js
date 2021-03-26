@@ -4,7 +4,6 @@
  */
 import {
 	select as d3Select,
-	event as d3Event,
 	namespaces as d3Namespaces
 } from "d3-selection";
 import {document} from "../../module/browser";
@@ -405,9 +404,9 @@ export default {
 		if (config.interaction_enabled) {
 			item
 				.style("cursor", "pointer")
-				.on("click", function(id) {
+				.on("click", function(event, id) {
 					if (!callFn(config.legend_item_onclick, api, id)) {
-						if (d3Event.altKey) {
+						if (event.altKey) {
 							api.hide();
 							api.show(id);
 						} else {
@@ -423,7 +422,7 @@ export default {
 				});
 
 			!isTouch && item
-				.on("mouseout", function(id) {
+				.on("mouseout", function(event, id) {
 					if (!callFn(config.legend_item_onout, api, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, false);
 
@@ -434,7 +433,7 @@ export default {
 						$$.api.revert();
 					}
 				})
-				.on("mouseover", function(id) {
+				.on("mouseover", function(event, id) {
 					if (!callFn(config.legend_item_onover, api, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, true);
 

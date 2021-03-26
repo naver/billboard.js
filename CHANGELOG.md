@@ -1,3 +1,44 @@
+# [3.0.0](https://github.com/naver/billboard.js/compare/2.2.6...3.0.0) (2021-03-26)
+
+
+### Bug Fixes
+
+* **axis:** fix axis.x.max error throw ([de06361](https://github.com/naver/billboard.js/commit/de063614b96ac938631aa11a9a7059ec53a4bc59)), closes [#1981](https://github.com/naver/billboard.js/issues/1981)
+* **axis:** fix axis.x.tick.tooltip on rotated axis ([eed2f86](https://github.com/naver/billboard.js/commit/eed2f86ace926f65d69ee55c46b88a5b9b6c15c0)), closes [#1990](https://github.com/naver/billboard.js/issues/1990)
+* **subchart:** fix duplicated node generation on data load ([d9a5d9a](https://github.com/naver/billboard.js/commit/d9a5d9a7f89e87f48b0bc5654ba097f6d7aa52c2)), closes [#2003](https://github.com/naver/billboard.js/issues/2003)
+* **zoom:** fix zoom on latest chrome ([37edc9b](https://github.com/naver/billboard.js/commit/37edc9b55d55ecf5f67f104927499cae05eca3fa)), closes [/github.com/d3/d3-zoom/issues/231#issuecomment-802305692](https://github.com//github.com/d3/d3-zoom/issues/231/issues/issuecomment-802305692) [#1992](https://github.com/naver/billboard.js/issues/1992)
+
+
+### Features
+
+* **all:** update for d3 v6 ([2752e55](https://github.com/naver/billboard.js/commit/2752e5541dc2e6d9d54acd1a936756a745e30002)), closes [#1641](https://github.com/naver/billboard.js/issues/1641)
+* **api:** Enhance .export() option to specify size ([3c2de80](https://github.com/naver/billboard.js/commit/3c2de807ffd2f82d8fa7d2ff1dbf4901be873405)), closes [#815](https://github.com/naver/billboard.js/issues/815) [#1969](https://github.com/naver/billboard.js/issues/1969)
+* **api:** Intent to ship subchart APIs ([5572dc9](https://github.com/naver/billboard.js/commit/5572dc937ba44af2c6ae0e68cb60d8f72bd017ec)), closes [#1993](https://github.com/naver/billboard.js/issues/1993)
+* **candlestick:** Intent to ship candlestick ([8d37bd8](https://github.com/naver/billboard.js/commit/8d37bd896827ac080f0585036efe1240038b2b92)), closes [#76](https://github.com/naver/billboard.js/issues/76) [#1167](https://github.com/naver/billboard.js/issues/1167)
+* **candlestick:** Intent to ship candlestick type ([42307cb](https://github.com/naver/billboard.js/commit/42307cbabd80a9bd23cef7ac1ccc982787803921))
+
+
+### BREAKING CHANGES
+
+* **all:** - Update to work on d3 v6
+- Added getPoint() to get event's position coordinate
+
+https://github.com/d3/d3/blob/master/CHANGES.md
+https://observablehq.com/d/f91cccf0cad5e9cb
+
+# [3.0.0-next.1](https://github.com/naver/billboard.js/compare/2.2.2...3.0.0-next.1) (2021-02-08)
+
+
+### Features
+
+* **all:** update for d3 v6 ([2752e55](https://github.com/naver/billboard.js/commit/2752e5541dc2e6d9d54acd1a936756a745e30002)), closes [#1641](https://github.com/naver/billboard.js/issues/1641)
+
+
+### BREAKING CHANGES
+
+* **all:** - Update to work on d3 v6
+- Added getPoint() to get event's position coordinate
+
 ## [2.2.6](https://github.com/naver/billboard.js/compare/2.2.5...2.2.6) (2021-03-11)
 
 
@@ -19,6 +60,7 @@
 
 * **legend:** fix hiding via .hide() ([c489a77](https://github.com/naver/billboard.js/commit/c489a7769d526d1e32e540589f6111f1cc875a5f)), closes [#1950](https://github.com/naver/billboard.js/issues/1950)
 * **zoom:** fix x Axis tick transition during zoom ([3f08b11](https://github.com/naver/billboard.js/commit/3f08b11a0041b08ef70b194d5d855c65da430efa)), closes [#1949](https://github.com/naver/billboard.js/issues/1949)
+>>>>>>> master
 
 ## [2.2.3](https://github.com/naver/billboard.js/compare/2.2.2...2.2.3) (2021-02-16)
 

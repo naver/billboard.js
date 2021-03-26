@@ -9,6 +9,7 @@ import {extend} from "../../module/util";
 
 // Chart
 import apiSelection from "../../Chart/api/selection";
+import apiSubchart from "../../Chart/api/subchart";
 import apiZoom from "../../Chart/api/zoom";
 
 // ChartInternal
@@ -37,6 +38,7 @@ let selectionModule = (): boolean => {
 
 let subchartModule = (): boolean => {
 	extend(ChartInternal.prototype, subchart);
+	extend(Chart.prototype, apiSubchart);
 	Options.setOptions([optSubchart]);
 
 	return (subchartModule = () => true)();

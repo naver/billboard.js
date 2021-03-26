@@ -47,6 +47,7 @@ import apiTooltip from "./api/tooltip";
  * @property {d3.selection} $.circles Data point circle elements
  * @property {object} $.bar Bar element object
  * @property {d3.selection} $.bar.bars Bar elements
+ * @property {d3.selection} $.candlestick Candlestick elements
  * @property {object} $.line Line element object
  * @property {d3.selection} $.line.lines Line elements
  * @property {d3.selection} $.line.areas Areas elements

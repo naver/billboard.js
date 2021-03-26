@@ -2,10 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	select as d3Select,
-	event as d3Event
-} from "d3-selection";
+import {select as d3Select} from "d3-selection";
 import {
 	arc as d3Arc,
 	pie as d3Pie
@@ -734,7 +731,7 @@ export default {
 		}
 
 		arc
-			.on("click", function(d, i) {
+			.on("click", function(event, d, i) {
 				const updated = $$.updateAngle(d);
 				let arcData;
 
@@ -749,11 +746,12 @@ export default {
 		// mouse events
 		if (isMouse) {
 			arc
-				.on("mouseover", function(d) {
+				.on("mouseover", function(event, d) {
 					if (state.transiting) { // skip while transiting
 						return;
 					}
 
+					state.event = event;
 					const updated = $$.updateAngle(d);
 					const arcData = updated ? $$.convertToArcData(updated) : null;
 					const id = (arcData && arcData.id) || undefined;
@@ -761,54 +759,53 @@ export default {
 					selectArc(this, arcData, id);
 					$$.setOverOut(true, arcData);
 				})
-				.on("mouseout", d => {
+				.on("mouseout", (event, d) => {
 					if (state.transiting) { // skip while transiting
 						return;
 					}
 
+					state.event = event;
 					const updated = $$.updateAngle(d);
 					const arcData = updated ? $$.convertToArcData(updated) : null;
 
 					unselectArc();
 					$$.setOverOut(false, arcData);
 				})
-				.on("mousemove", function(d) {
+				.on("mousemove", function(event, d) {
 					const updated = $$.updateAngle(d);
 					const arcData = updated ? $$.convertToArcData(updated) : null;
 
+					state.event = event;
 					$$.showTooltip([arcData], this);
 				});
 		}
 
 		// touch events
 		if (isTouch && $$.hasArcType() && !$$.radars) {
-			const getEventArc = () => {
-				const touch = d3Event.changedTouches[0];
+			const getEventArc = event => {
+				const touch = event.changedTouches[0];
 				const eventArc = d3Select(document.elementFromPoint(touch.clientX, touch.clientY));
 
 				return eventArc;
 			};
 
-			const handler = function() {
-				if (state.transiting) { // skip while transiting
-					return;
-				}
-
-				const eventArc = getEventArc();
-				const datum: any = eventArc.datum();
-				const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
-				const arcData = updated ? $$.convertToArcData(updated) : null;
-				const id = (arcData && arcData.id) || undefined;
-
-				$$.callOverOutForTouch(arcData);
-
-				isUndefined(id) ?
-					unselectArc() : selectArc(this, arcData, id);
-			};
-
 			$$.$el.svg
-				.on("touchstart", handler)
-				.on("touchmove", handler);
+				.on("touchstart touchmove", function(event) {
+					if (state.transiting) { // skip while transiting
+						return;
+					}
+
+					const eventArc = getEventArc(event);
+					const datum: any = eventArc.datum();
+					const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
+					const arcData = updated ? $$.convertToArcData(updated) : null;
+					const id = (arcData && arcData.id) || undefined;
+
+					$$.callOverOutForTouch(arcData);
+
+					isUndefined(id) ?
+						unselectArc() : selectArc(this, arcData, id);
+				});
 		}
 	},
 

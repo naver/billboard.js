@@ -27,7 +27,7 @@ export default {
 				withShape ? this.generateClass(CLASS[isPlural ? "shapes" : "shape"], data[key]) : ""
 			) + this.generateClass(CLASS[type], data[useIdKey ? "id" : key]);
 
-			return result;
+			return result.trim();
 		};
 	},
 

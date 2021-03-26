@@ -2,12 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	mouse as d3Mouse,
-	event as d3Event
-} from "d3-selection";
 import CLASS from "../../config/classes";
-import {isboolean, isFunction} from "../../module/util";
+import {isboolean, getPointer, isFunction} from "../../module/util";
 
 export default {
 	/**
@@ -89,7 +85,7 @@ export default {
 			if (isMultipleX) {
 				$$.selectRectForMultipleXs(context);
 			} else {
-				const index = $$.getDataIndexFromEvent(d3Event);
+				const index = $$.getDataIndexFromEvent(state.event);
 
 				$$.callOverOutForTouch(index);
 
@@ -136,9 +132,12 @@ export default {
 
 		// bind touch events
 		eventRect
-			.on("touchstart", () => $$.updateEventRect())
-			.on("touchstart.eventRect touchmove.eventRect", () => {
-				const event = d3Event;
+			.on("touchstart", event => {
+				state.event = event;
+				$$.updateEventRect();
+			})
+			.on("touchstart.eventRect touchmove.eventRect", event => {
+				state.event = event;
 
 				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
 					// if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
@@ -152,7 +151,9 @@ export default {
 					unselectRect();
 				}
 			}, true)
-			.on("touchend.eventRect", () => {
+			.on("touchend.eventRect", event => {
+				state.event = event;
+
 				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
 					if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
 						state.cancelClick && (state.cancelClick = false);
@@ -160,8 +161,10 @@ export default {
 				}
 			}, true);
 
-		svg.on("touchstart", () => {
-			const {target} = d3Event;
+		svg.on("touchstart", event => {
+			state.event = event;
+
+			const {target} = event;
 
 			if (target && target !== eventRect.node()) {
 				unselectRect();
@@ -304,7 +307,7 @@ export default {
 			return;
 		}
 
-		const mouse = d3Mouse(context);
+		const mouse = getPointer(state.event, context);
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
 
 		if (state.mouseover && (!closest || closest.id !== state.mouseover.id)) {
@@ -377,27 +380,34 @@ export default {
 
 		const rect = eventRectEnter
 			.style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
-			.on("click", function() {
+			.on("click", function(event) {
+				state.event = event;
+
 				const {currentIdx, data} = eventReceiver;
 				const d = data[
 					currentIdx === -1 ?
-						$$.getDataIndexFromEvent(d3Event) : currentIdx
+						$$.getDataIndexFromEvent(event) : currentIdx
 				];
 
 				$$.clickHandlerForSingleX.bind(this)(d, $$);
 			});
 
 		if (state.inputType === "mouse") {
-			const getData = () => {
-				const index = d3Event ? $$.getDataIndexFromEvent(d3Event) : eventReceiver.currentIdx;
+			const getData = event => {
+				const index = event ? $$.getDataIndexFromEvent(event) : eventReceiver.currentIdx;
 
 				return index > -1 ? eventReceiver.data[index] : null;
 			};
 
 			rect
-				.on("mouseover", () => $$.updateEventRect())
-				.on("mousemove", function() {
-					const d = getData();
+				.on("mouseover", event => {
+					state.event = event;
+					$$.updateEventRect();
+				})
+				.on("mousemove", function(event) {
+					const d = getData(event);
+
+					state.event = event;
 
 					// do nothing while dragging/flowing
 					if (state.dragging || state.flowing || $$.hasArcType() ||
@@ -410,7 +420,7 @@ export default {
 
 					if ($$.isStepType(d) &&
 						config.line_step_type === "step-after" &&
-						d3Mouse(this)[0] < $$.scale.x($$.getXValue(d.id, index))
+						getPointer(event, this)[0] < $$.scale.x($$.getXValue(d.id, index))
 					) {
 						index -= 1;
 					}
@@ -427,7 +437,9 @@ export default {
 					// to determine current interacting element, so use 'mousemove' event instead.
 					$$.setOverOut(index !== -1, index);
 				})
-				.on("mouseout", () => {
+				.on("mouseout", event => {
+					state.event = event;
+
 					// chart is destroyed
 					if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
 						return;
@@ -473,19 +485,23 @@ export default {
 	 */
 	generateEventRectsForMultipleXs(eventRectEnter): void {
 		const $$ = this;
-		const {inputType} = $$.state;
+		const {state} = $$;
 
 		eventRectEnter
-			.on("click", function() {
+			.on("click", function(event) {
+				state.event = event;
 				$$.clickHandlerForMultipleXS.bind(this)($$);
 			});
 
-		if (inputType === "mouse") {
+		if (state.inputType === "mouse") {
 			eventRectEnter
-				.on("mouseover mousemove", function() {
+				.on("mouseover mousemove", function(event) {
+					state.event = event;
 					$$.selectRectForMultipleXs(this);
 				})
-				.on("mouseout", () => {
+				.on("mouseout", event => {
+					state.event = event;
+
 					// chart is destroyed
 					if (!$$.config || $$.hasArcType()) {
 						return;
@@ -498,14 +514,14 @@ export default {
 
 	clickHandlerForMultipleXS(ctx): void {
 		const $$ = ctx;
-		const {config} = $$;
+		const {config, state} = $$;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
 		if ($$.hasArcType(targetsToShow)) {
 			return;
 		}
 
-		const mouse = d3Mouse(this);
+		const mouse = getPointer(state.event, this);
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
 
 		if (!closest) {

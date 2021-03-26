@@ -27,6 +27,7 @@ export const {
 	getMinMax,
 	getOption,
 	getPathBox,
+	getPointer,
 	getRandom,
 	getRange,
 	getRectSegList,

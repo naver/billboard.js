@@ -16,7 +16,7 @@ import Options from "../config/Options/Options";
 import {document, window} from "../module/browser";
 import Cache from "../module/Cache";
 import {generateResize} from "../module/generator";
-import {extend, notEmpty, convertInputType, getOption, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
+import {capitalize, extend, notEmpty, convertInputType, getOption, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
 
 // data
 import dataConvert from "./data/convert";
@@ -443,9 +443,13 @@ export default class ChartInternal {
 		const types: string[] = [];
 
 		if (hasAxis) {
-			$$.hasType("bar") && types.push("Bar");
-			$$.hasType("bubble") && types.push("Bubble");
-			$$.hasTypeOf("Line") && types.push("Line");
+			["bar", "bubble", "candlestick", "line"].forEach(v => {
+				const name = capitalize(v);
+
+				if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
+					types.push(name);
+				}
+			});
 		} else {
 			if (!hasRadar) {
 				types.push("Arc", "Pie");
@@ -472,6 +476,7 @@ export default class ChartInternal {
 			arcs: arc,
 			circle: circles,
 			bar: bars,
+			candlestick,
 			line: lines,
 			area: areas,
 			text: texts
@@ -489,6 +494,7 @@ export default class ChartInternal {
 			arc,
 			circles,
 			bar: {bars},
+			candlestick,
 			line: {lines, areas},
 			text: {texts}
 		};
@@ -534,8 +540,15 @@ export default class ChartInternal {
 		$$.updateTargetsForText(targets);
 
 		if (hasAxis) {
-			$$.hasType("bar") && $$.updateTargetsForBar(targets); // Bar
-			$$.hasTypeOf("Line") && $$.updateTargetsForLine(targets); // Line
+			["bar", "candlestick", "line"].forEach(v => {
+				const name = capitalize(v);
+
+				if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
+					$$[`updateTargetsFor${name}`](
+						targets.filter($$[`is${name}Type`].bind($$))
+					);
+				}
+			});
 
 			// Sub Chart
 			$$.updateTargetsForSubchart &&
@@ -544,8 +557,8 @@ export default class ChartInternal {
 			// Arc & Radar
 			$$.hasArcType(targets) && (
 				hasRadar ?
-					$$.updateTargetsForRadar(targets) :
-					$$.updateTargetsForArc(targets)
+					$$.updateTargetsForRadar(targets.filter($$.isRadarType.bind($$))) :
+					$$.updateTargetsForArc(targets.filter($$.isArcType.bind($$)))
 			);
 		}
 

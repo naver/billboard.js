@@ -88,6 +88,7 @@ export default {
 	 * - area-step
 	 * - bar
 	 * - bubble
+	 * - candlestick
 	 * - donut
 	 * - gauge
 	 * - line
@@ -115,6 +116,7 @@ export default {
 	 *   areaStep,
 	 *   bar,
 	 *   bubble,
+	 *   candlestick,
 	 *   donut,
 	 *   gauge,
 	 *   line,
@@ -160,6 +162,7 @@ export default {
 	 *   areaStep,
 	 *   bar,
 	 *   bubble,
+	 *   candlestick,
 	 *   donut,
 	 *   gauge,
 	 *   line,
@@ -624,6 +627,25 @@ export default {
 	 *       data2: "line"
 	 *   }
 	 * }
+	 *
+	 * // for 'canlestick' type, data should contain:
+	 * // - an array of [open, high, low, close, volume(optional)] data following the order
+	 * // - or an object with 'open', 'high', 'low', 'close' and 'value'(optional) key value
+	 * data: {
+	 *   rows: [
+	 *      ["data1", "data2"],
+	 *		[
+	 *			// open, high, low, close, volume (optional)
+	 *			{open: 1300, high: 1369, low: 1200, close: 1339, volume: 100},
+	 *			[1000, 1100, 850, 870]
+	 *		],
+	 *		[
+	 *			{open: 1348, high: 1371, low: 1271, close: 1320},
+	 *			[870, 1250, 830, 1200, 50]
+	 *		]
+	 *   ],
+	 *   type: "candlestick"
+	 * }
 	 */
 	data_rows: <(string|number)[][]|undefined> undefined,
 
@@ -670,6 +692,19 @@ export default {
 	 *      ]
 	 *   ],
 	 *   type: "bubble"
+	 * }
+	 *
+	 * // for 'canlestick' type, data should contain:
+	 * // - an array of [open, high, low, close, volume(optional)] data following the order
+	 * // - or an object with 'open', 'high', 'low', 'close' and 'value'(optional) key value
+	 * data: {
+	 *   columns: [
+	 *      ["data1",
+	 *          [1000, 1100, 850, 870, 100],  // or {open:1000, high: 1100, low: 870, volume: 100}
+	 *          [870, 1250, 830, 1200]  // 'volume' can be omitted
+	 *      ]
+	 *   ],
+	 *   type: "candlestick"
 	 * }
 	 */
 	data_columns: <(string|number)[][]|undefined> undefined,

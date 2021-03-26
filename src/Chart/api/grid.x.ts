@@ -4,7 +4,7 @@
  */
 import {extend} from "../../module/util";
 
-type gridsParam = {value?: number, class?: string, text?: string}[];
+type GridsParam = {value?: number, class?: string, text?: string}[];
 
 /**
  * Update x grid lines.
@@ -21,7 +21,7 @@ type gridsParam = {value?: number, class?: string, text?: string}[];
  * ]);
  * // --> Returns: [{value: 1, text: "Label 1"}, {value: 4, text: "Label 4"}]
  */
-function xgrids(grids: gridsParam): gridsParam {
+function xgrids(grids: GridsParam): GridsParam {
 	const $$ = this.internal;
 	const {config} = $$;
 
@@ -56,7 +56,7 @@ extend(xgrids, {
 	 *   {value: 4, text: "Label 4"}
 	 * ]);
 	 */
-	add: function(grids: gridsParam): gridsParam {
+	add: function(grids: GridsParam): GridsParam {
 		return this.xgrids(
 			this.internal.config.grid_x_lines
 				.concat(grids || [])
@@ -82,7 +82,7 @@ extend(xgrids, {
 	 * // all of x grid lines will be removed
 	 * chart.xgrids.remove();
 	 */
-	remove: function(params?: gridsParam): void { // TODO: multiple
+	remove: function(params?: GridsParam): void { // TODO: multiple
 		this.internal.removeGridLines(params, true);
 	}
 });
