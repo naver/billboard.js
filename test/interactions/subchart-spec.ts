@@ -476,4 +476,56 @@ describe("SUBCHART", () => {
 			});
 		})
 	});
+
+
+	describe("dynamic data load via .load() API", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				subchart: {
+					show: true
+				}
+			};
+		});
+
+		it("shouldn't generate duplicated nodes #1", done => {
+			// when
+			chart.load({
+				columns: [
+					["data1", 30, 20, 50, 40, 60, 50],
+					["data2", 130, 120, 150, 140, 160, 150],
+				],
+				done: function() {
+					expect(
+						this.internal.$el.subchart.main.selectAll(`.${CLASS.line}-data1`).size()
+					).to.be.equal(1);
+				}
+			});
+		});
+
+		it("shouldn't generate duplicated nodes #2", done => {
+			// when
+			chart.load({
+				columns: [
+					["data2", 130, 120, 150, 140, 160, 150],
+				],
+				unload: ["data1"],
+				done: function() {
+					const {main} = this.internal.$el.subchart;
+
+					expect(
+						main.selectAll(`.${CLASS.line}-data1`).empty()
+					).to.be.true;
+
+					expect(
+						main.selectAll(`.${CLASS.line}-data2`).size()
+					).to.be.equal(1);
+				}
+			});
+		});
+	});
 });

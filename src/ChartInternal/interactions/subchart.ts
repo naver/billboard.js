@@ -195,20 +195,17 @@ export default {
 					} else {
 						const shapeUpdate = shapeChart
 							.selectAll(`.${CLASS[`chart${name}`]}`)
-							.data(targets.filter($$[`is${name}Type`].bind($$)))
-							.attr("class", chartClass);
-
-						shapeUpdate.exit().remove();
+							.attr("class", chartClass)
+							.data(targets.filter($$[`is${name}Type`].bind($$)));
 
 						const shapeEnter = shapeUpdate.enter()
 							.append("g")
 							.style("opacity", "0")
 							.attr("class", chartClass)
-							.merge(shapeUpdate);
-
-						// Bars for each data
-						shapeEnter.append("g")
+							.append("g")
 							.attr("class", shapeClass);
+
+						shapeUpdate.exit().remove();
 
 						// Area
 						v === "line" && $$.hasTypeOf("Area") &&
