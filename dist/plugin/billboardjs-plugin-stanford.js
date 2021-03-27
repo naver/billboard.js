@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 2.2.6-nightly-20210324012722
+ * @version 3.0.1-nightly-20210327004649
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -178,6 +178,8 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
   brush: "bb-brush",
   button: "bb-button",
   buttonZoomReset: "bb-zoom-reset",
+  candlestick: "bb-candlestick",
+  candlesticks: "bb-candlesticks",
   chart: "bb-chart",
   chartArc: "bb-chart-arc",
   chartArcs: "bb-chart-arcs",
@@ -189,6 +191,8 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
   chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
   chartBar: "bb-chart-bar",
   chartBars: "bb-chart-bars",
+  chartCandlestick: "bb-chart-candlestick",
+  chartCandlesticks: "bb-chart-candlesticks",
   chartCircles: "bb-chart-circles",
   chartLine: "bb-chart-line",
   chartLines: "bb-chart-lines",
@@ -243,6 +247,8 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
   tooltip: "bb-tooltip",
   tooltipContainer: "bb-tooltip-container",
   tooltipName: "bb-tooltip-name",
+  valueDown: "bb-value-down",
+  valueUp: "bb-value-up",
   xgrid: "bb-xgrid",
   xgridFocus: "bb-xgrid-focus",
   xgridLine: "bb-xgrid-line",
@@ -1028,7 +1034,7 @@ var Plugin = /*#__PURE__*/function () {
   }, Plugin;
 }();
 
-Plugin.version = "2.2.6";
+Plugin.version = "3.0.1";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**

@@ -5,10 +5,10 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 2.2.6
+ * @version 3.0.1
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
-import { pointer, select, namespaces, selectAll, mouse, event } from 'd3-selection';
+import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { brushSelection, brushY, brushX } from 'd3-brush';
 import { csvParseRows, csvParse, tsvParseRows, tsvParse } from 'd3-dsv';
 import { drag as drag$1 } from 'd3-drag';
@@ -47,6 +47,8 @@ var CLASS = {
     brush: "bb-brush",
     button: "bb-button",
     buttonZoomReset: "bb-zoom-reset",
+    candlestick: "bb-candlestick",
+    candlesticks: "bb-candlesticks",
     chart: "bb-chart",
     chartArc: "bb-chart-arc",
     chartArcs: "bb-chart-arcs",
@@ -58,6 +60,8 @@ var CLASS = {
     chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
     chartBar: "bb-chart-bar",
     chartBars: "bb-chart-bars",
+    chartCandlestick: "bb-chart-candlestick",
+    chartCandlesticks: "bb-chart-candlesticks",
     chartCircles: "bb-chart-circles",
     chartLine: "bb-chart-line",
     chartLines: "bb-chart-lines",
@@ -112,6 +116,8 @@ var CLASS = {
     tooltip: "bb-tooltip",
     tooltipContainer: "bb-tooltip-container",
     tooltipName: "bb-tooltip-name",
+    valueDown: "bb-value-down",
+    valueUp: "bb-value-up",
     xgrid: "bb-xgrid",
     xgridFocus: "bb-xgrid-focus",
     xgridLine: "bb-xgrid-line",
@@ -159,6 +165,7 @@ var Element = /** @class */ (function () {
             },
             arcs: null,
             bar: null,
+            candlestick: null,
             line: null,
             area: null,
             circle: null,
@@ -789,6 +796,7 @@ var data$2 = {
      * - area-step
      * - bar
      * - bubble
+     * - candlestick
      * - donut
      * - gauge
      * - line
@@ -816,6 +824,7 @@ var data$2 = {
      *   areaStep,
      *   bar,
      *   bubble,
+     *   candlestick,
      *   donut,
      *   gauge,
      *   line,
@@ -860,6 +869,7 @@ var data$2 = {
      *   areaStep,
      *   bar,
      *   bubble,
+     *   candlestick,
      *   donut,
      *   gauge,
      *   line,
@@ -1302,6 +1312,25 @@ var data$2 = {
      *       data2: "line"
      *   }
      * }
+     *
+     * // for 'canlestick' type, data should contain:
+     * // - an array of [open, high, low, close, volume(optional)] data following the order
+     * // - or an object with 'open', 'high', 'low', 'close' and 'value'(optional) key value
+     * data: {
+     *   rows: [
+     *      ["data1", "data2"],
+     *		[
+     *			// open, high, low, close, volume (optional)
+     *			{open: 1300, high: 1369, low: 1200, close: 1339, volume: 100},
+     *			[1000, 1100, 850, 870]
+     *		],
+     *		[
+     *			{open: 1348, high: 1371, low: 1271, close: 1320},
+     *			[870, 1250, 830, 1200, 50]
+     *		]
+     *   ],
+     *   type: "candlestick"
+     * }
      */
     data_rows: undefined,
     /**
@@ -1347,6 +1376,19 @@ var data$2 = {
      *      ]
      *   ],
      *   type: "bubble"
+     * }
+     *
+     * // for 'canlestick' type, data should contain:
+     * // - an array of [open, high, low, close, volume(optional)] data following the order
+     * // - or an object with 'open', 'high', 'low', 'close' and 'value'(optional) key value
+     * data: {
+     *   columns: [
+     *      ["data1",
+     *          [1000, 1100, 850, 870, 100],  // or {open:1000, high: 1100, low: 870, volume: 100}
+     *          [870, 1250, 830, 1200]  // 'volume' can be omitted
+     *      ]
+     *   ],
+     *   type: "candlestick"
      * }
      */
     data_columns: undefined,
@@ -3168,7 +3210,7 @@ var data$1 = {
         // will take the 'mid' as the base value
         if (value && hasAxis) {
             if ($$.isAreaRangeType(data)) {
-                value = $$.getAreaRangeData(data, "mid");
+                value = $$.getRangedData(data, "mid");
             }
             else if ($$.isBubbleZType(data)) {
                 value = $$.getBubbleZData(value, "y");
@@ -3372,8 +3414,14 @@ var data$1 = {
             .map(function (v) { return (isString(v) ? v : +v); }) : null;
         targets.forEach(function (t) {
             var data = [];
-            t.values.forEach(function (v) {
+            t.values
+                .filter(function (v) { return isValue(v.value); })
+                .forEach(function (v) {
                 var value = v.value;
+                // exclude 'volume' value to correct mis domain calculation
+                if ($$.isCandlestickType(v)) {
+                    value = isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close];
+                }
                 if (isArray(value)) {
                     data.push.apply(data, value);
                 }
@@ -3646,13 +3694,22 @@ var data$1 = {
         $$.redraw({ withLegend: true });
         return current;
     },
-    getAreaRangeData: function (d, type) {
-        var value = d.value;
+    getRangedData: function (d, key, type) {
+        if (key === void 0) { key = ""; }
+        if (type === void 0) { type = "areaRange"; }
+        var value = d === null || d === void 0 ? void 0 : d.value;
         if (isArray(value)) {
-            var index = ["high", "mid", "low"].indexOf(type);
-            return index === -1 ? null : value[index];
+            // @ts-ignore
+            var index = {
+                areaRange: ["high", "mid", "low"],
+                candlestick: ["open", "high", "low", "close", "volume"]
+            }[type].indexOf(key);
+            return index >= 0 && value ? value[index] : undefined;
         }
-        return value[type];
+        else if (value) {
+            return value[key];
+        }
+        return value;
     },
     /**
      * Get ratio value
@@ -4044,7 +4101,7 @@ var classModule = {
         return function (d) {
             var data = d.data || d;
             var result = (withShape ? _this.generateClass(CLASS[isPlural ? "shapes" : "shape"], data[key]) : "") + _this.generateClass(CLASS[type], data[useIdKey ? "id" : key]);
-            return result;
+            return result.trim();
         };
     },
     /**
@@ -4304,6 +4361,7 @@ var TYPE = {
     AREA_STEP: "area-step",
     BAR: "bar",
     BUBBLE: "bubble",
+    CANDLESTICK: "candlestick",
     DONUT: "donut",
     GAUGE: "gauge",
     LINE: "line",
@@ -5378,7 +5436,7 @@ var redraw = {
         }
         // update circleY based on updated parameters
         if (!$$.hasArcType() || state.hasRadar) {
-            $$.updateCircleY && $$.updateCircleY();
+            $$.updateCircleY && ($$.circleY = $$.updateCircleY());
         }
         // update axis
         if (state.hasAxis) {
@@ -5394,15 +5452,12 @@ var redraw = {
             $$.hasGrid() && $$.updateGrid(duration);
             // rect for regions
             config.regions.length && $$.updateRegion(duration);
-            // bars
-            $$.hasType("bar") && $$.updateBar(durationForExit);
-            // lines, areas and circles
-            if ($$.hasTypeOf("Line")) {
-                $$.updateLine(durationForExit);
-            }
-            if ($$.hasTypeOf("Area")) {
-                $$.updateArea(durationForExit);
-            }
+            ["bar", "candlestick", "line", "area"].forEach(function (v) {
+                var name = capitalize(v);
+                if ((/^(line|area)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
+                    $$["update" + name](durationForExit);
+                }
+            });
             // circles for select
             $el.text && main.selectAll("." + CLASS.selectedCircles)
                 .filter($$.isBarType.bind($$))
@@ -5494,16 +5549,19 @@ var redraw = {
         var _b = shape.pos, cx = _b.cx, cy = _b.cy, xForText = _b.xForText, yForText = _b.yForText;
         var list = [];
         if (hasAxis) {
-            var _c = shape.type, area = _c.area, bar = _c.bar, line = _c.line;
             if (config.grid_x_lines.length || config.grid_y_lines.length) {
                 list.push($$.redrawGrid(isTransition));
             }
             if (config.regions.length) {
                 list.push($$.redrawRegion(isTransition));
             }
-            $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition));
-            $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
-            $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
+            Object.keys(shape.type).forEach(function (v) {
+                var name = capitalize(v);
+                var drawFn = shape.type[v];
+                if ((/^(area|line)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
+                    list.push($$["redraw" + name](drawFn, isTransition));
+                }
+            });
             !flow && grid.main && list.push($$.updateGridFocus());
         }
         if (!$$.hasArcType() || hasRadar) {
@@ -5759,22 +5817,15 @@ var shape = {
         var isRotated = $$.config.axis_rotated;
         var hasRadar = $$.state.hasRadar;
         var shape = { type: {}, indices: {}, pos: {} };
-        // setup drawer - MEMO: these must be called after axis updated
-        if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
-            var indices = $$.getShapeIndices($$.isLineType);
-            shape.indices.line = indices;
-            shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, false) : undefined;
-            if ($$.hasTypeOf("Area")) {
-                var indices_1 = $$.getShapeIndices($$.isAreaType);
-                shape.indices.area = indices_1;
-                shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(indices_1, false) : undefined;
+        ["bar", "candlestick", "line", "area"].forEach(function (v) {
+            var name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
+            if ($$.hasType(v) || $$.hasTypeOf(name) || (v === "line" && ($$.hasType("bubble") || $$.hasType("scatter")))) {
+                var indices = $$.getShapeIndices($$["is" + name + "Type"]);
+                var drawFn = $$["generateDraw" + name];
+                shape.indices[v] = indices;
+                shape.type[v] = drawFn ? drawFn.bind($$)(indices, false) : undefined;
             }
-        }
-        if ($$.hasType("bar")) {
-            var indices = $$.getShapeIndices($$.isBarType);
-            shape.indices.bar = indices;
-            shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(indices) : undefined;
-        }
+        });
         if (!$$.hasArcType() || hasRadar) {
             // generate circle x/y functions depending on updated params
             var cx = hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX);
@@ -5891,7 +5942,16 @@ var shape = {
         var $$ = this;
         var isStackNormalized = $$.isStackNormalized();
         return function (d) {
-            var value = isStackNormalized ? $$.getRatio("index", d, true) : ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value);
+            var value = d.value;
+            if (isNumber(d)) {
+                value = d;
+            }
+            else if (isStackNormalized) {
+                value = $$.getRatio("index", d, true);
+            }
+            else if ($$.isBubbleZType(d)) {
+                value = $$.getBubbleZData(d.value, "y");
+            }
             return $$.getYScaleById(d.id, isSub)(value);
         };
     },
@@ -5968,6 +6028,35 @@ var shape = {
             });
             return offset;
         };
+    },
+    getBarW: function (type, axis, targetsNum) {
+        var $$ = this;
+        var config = $$.config, org = $$.org, scale = $$.scale;
+        var maxDataCount = $$.getMaxDataCount();
+        var isGrouped = type === "bar" && config.data_groups.length;
+        var configName = type + "_width";
+        var tickInterval = scale.zoom && !$$.axis.isCategorized() ?
+            (org.xDomain.map(function (v) { return scale.zoom(v); })
+                .reduce(function (a, c) { return Math.abs(a) + c; }) / maxDataCount) : axis.tickInterval(maxDataCount);
+        var getWidth = function (id) {
+            var width = id ? config[configName][id] : config[configName];
+            var ratio = id ? width.ratio : config[configName + "_ratio"];
+            var max = id ? width.max : config[configName + "_max"];
+            var w = isNumber(width) ?
+                width : targetsNum ? (tickInterval * ratio) / targetsNum : 0;
+            return max && w > max ? max : w;
+        };
+        var result = getWidth();
+        if (!isGrouped && isObjectType(config[configName])) {
+            result = { _$width: result, _$total: [] };
+            $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
+                if (config[configName][v.id]) {
+                    result[v.id] = getWidth(v.id);
+                    result._$total.push(result[v.id] || result._$width);
+                }
+            });
+        }
+        return result;
     },
     isWithinShape: function (that, d) {
         var $$ = this;
@@ -6171,15 +6260,8 @@ var size = {
     updateDimension: function (withoutAxis) {
         var $$ = this;
         var config = $$.config, hasAxis = $$.state.hasAxis, $el = $$.$el;
-        if (hasAxis && !withoutAxis) {
-            if ($$.axis.x && config.axis_rotated) {
-                $$.axis.x.create($el.axis.x);
-                $$.axis.subX && $$.axis.subX.create($el.axis.subX);
-            }
-            else {
-                $$.axis.y && $$.axis.y.create($el.axis.y);
-                $$.axis.y2 && $$.axis.y2.create($el.axis.y2);
-            }
+        if (hasAxis && !withoutAxis && $$.axis.x && config.axis_rotated) {
+            $$.axis.subX && $$.axis.subX.create($el.axis.subX);
         }
         // pass 'withoutAxis' param to not animate at the init rendering
         $$.updateScales(withoutAxis);
@@ -6350,38 +6432,55 @@ var text = {
     updateText: function (durationForExit) {
         var $$ = this;
         var config = $$.config, $el = $$.$el;
-        var dataFn = $$.labelishData.bind($$);
         var classText = $$.getClass("text", "index");
-        $el.text = $el.main.selectAll("." + CLASS.texts).selectAll("." + CLASS.text)
-            .data(function (d) { return ($$.isRadarType(d) ? d.values : dataFn(d)); });
-        $el.text.exit()
+        var text = $el.main.selectAll("." + CLASS.texts)
+            .selectAll("." + CLASS.text)
+            .data($$.labelishData.bind($$));
+        text.exit()
             .transition()
             .duration(durationForExit)
             .style("fill-opacity", "0")
             .remove();
-        $el.text = $el.text.enter()
+        $el.text = text.enter()
             .append("text")
-            .merge($$.$el.text)
+            .merge(text)
             .attr("class", classText)
-            .attr("text-anchor", function (d) { return (config.axis_rotated ? (d.value < 0 ? "end" : "start") : "middle"); })
+            .attr("text-anchor", function (d) {
+            // when value is negative or
+            var isEndAnchor = d.value < 0;
+            if ($$.isCandlestickType(d)) {
+                var data = $$.getCandlestickData(d);
+                isEndAnchor = data && !data._isUp;
+            }
+            return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
+        })
             .style("fill", $$.updateTextColor.bind($$))
             .style("fill-opacity", "0")
-            .call(function (selection) {
-            selection.each(function (d, i, j) {
-                var value = $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value;
-                value = $$.dataLabelFormat(d.id)(value, d.id, i, j);
-                if (isNumber(value)) {
-                    this.textContent = value;
+            .each(function (d, i, j) {
+            var node = select(this);
+            var value = d.value;
+            if ($$.isBubbleZType(d)) {
+                value = $$.getBubbleZData(value, "z");
+            }
+            else if ($$.isCandlestickType(d)) {
+                var data = $$.getCandlestickData(d);
+                if (data) {
+                    value = data.close;
                 }
-                else {
-                    setTextValue(select(this), value);
-                }
-            });
+            }
+            value = $$.dataLabelFormat(d.id)(value, d.id, i, j);
+            if (isNumber(value)) {
+                this.textContent = value;
+            }
+            else {
+                setTextValue(node, value);
+            }
         });
     },
     updateTextColor: function (d) {
         var $$ = this;
-        var labelColors = $$.config.data_labels_colors;
+        var config = $$.config;
+        var labelColors = config.data_labels_colors;
         var defaultColor = $$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d);
         var color;
         if (isString(labelColors)) {
@@ -6393,6 +6492,13 @@ var text = {
         }
         else if (isFunction(labelColors)) {
             color = labelColors.bind($$.api)(defaultColor, d);
+        }
+        if ($$.isCandlestickType(d) && !isFunction(labelColors)) {
+            var value = $$.getCandlestickData(d);
+            if (value && !value._isUp) {
+                var downColor = config.candlestick_color_down;
+                color = isObject(downColor) ? downColor[d.id] : downColor;
+            }
         }
         return color || defaultColor;
     },
@@ -6407,29 +6513,23 @@ var text = {
      */
     redrawText: function (x, y, forFlow, withTransition) {
         var $$ = this;
-        var t = getRandom();
-        var opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
-        $$.$el.text.each(function (d, index) {
-            var text = select(this);
+        var t = getRandom(true);
+        $$.$el.text
+            .style("fill", $$.updateTextColor.bind($$))
+            .style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
+            .each(function (d, i) {
             // do not apply transition for newly added text elements
-            (withTransition && text.attr("x") ? text.transition(t) : text)
-                .call(function (selection) {
-                selection.each(function (d) {
-                    select(this)
-                        .style("fill", $$.updateTextColor.bind($$))
-                        .style("fill-opacity", opacityForText);
-                    var posX = x.bind(this)(d, index);
-                    var posY = y.bind(this)(d, index);
-                    // when is multiline
-                    if (this.childElementCount) {
-                        this.setAttribute("transform", "translate(" + posX + " " + posY + ")");
-                    }
-                    else {
-                        this.setAttribute("x", posX);
-                        this.setAttribute("y", posY);
-                    }
-                });
-            });
+            var node = withTransition && this.getAttribute("x") ?
+                select(this).transition(t) : select(this);
+            var posX = x.bind(this)(d, i);
+            var posY = y.bind(this)(d, i);
+            // when is multiline
+            if (this.childElementCount) {
+                node.attr("transform", "translate(" + posX + " " + posY + ")");
+            }
+            else {
+                node.attr("x", posX).attr("y", posY);
+            }
         });
         // need to return 'true' as of being pushed to the redraw list
         // ref: getRedrawList()
@@ -6484,6 +6584,7 @@ var text = {
         return function (d, i) {
             var type = ($$.isAreaType(d) && "area") ||
                 ($$.isBarType(d) && "bar") ||
+                ($$.isCandlestickType(d) && "candlestick") ||
                 ($$.isRadarType(d) && "radar") || "line";
             return getter.call($$, points[type](d, i), d, this);
         };
@@ -6541,14 +6642,24 @@ var text = {
         var $$ = this;
         var config = $$.config, state = $$.state;
         var isRotated = config.axis_rotated;
-        var xPos;
-        var padding;
-        if (isRotated) {
-            padding = $$.isBarType(d) ? 4 : 6;
-            xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1);
+        var xPos = points[0][0];
+        if ($$.hasType("candlestick")) {
+            if (isRotated) {
+                xPos = $$.getCandlestickData(d)._isUp ?
+                    points[2][2] + 4 : points[2][1] - 4;
+            }
+            else {
+                xPos += (points[1][0] - xPos) / 2;
+            }
         }
         else {
-            xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : points[0][0];
+            if (isRotated) {
+                var padding = $$.isBarType(d) ? 4 : 6;
+                xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1);
+            }
+            else {
+                xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
+            }
         }
         // show labels regardless of the domain if value is null
         if (d.value === null) {
@@ -6579,28 +6690,43 @@ var text = {
         var isRotated = config.axis_rotated;
         var r = config.point_r;
         var rect = getBoundingRect(textElement);
+        var value = d.value;
         var baseY = 3;
         var yPos;
-        if (isRotated) {
-            yPos = (points[0][0] + points[2][0] + rect.height * 0.6) / 2;
-        }
-        else {
-            yPos = points[2][1];
-            if (isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d))) {
-                baseY += config.point_r / 2.3;
-            }
-            if (d.value < 0 || (d.value === 0 && !state.hasPositiveValue && state.hasNegativeValue)) {
-                yPos += rect.height + ($$.isBarType(d) ? -baseY : baseY);
+        if ($$.isCandlestickType(d)) {
+            value = $$.getCandlestickData(d);
+            if (isRotated) {
+                yPos = points[0][0];
+                yPos += ((points[1][0] - yPos) / 2) + baseY;
             }
             else {
-                var diff = -baseY * 2;
-                if ($$.isBarType(d)) {
-                    diff = -baseY;
+                yPos = value && value._isUp ?
+                    points[2][2] - baseY :
+                    points[2][1] + (baseY * 4);
+            }
+        }
+        else {
+            if (isRotated) {
+                yPos = (points[0][0] + points[2][0] + rect.height * 0.6) / 2;
+            }
+            else {
+                yPos = points[2][1];
+                if (isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d))) {
+                    baseY += config.point_r / 2.3;
                 }
-                else if ($$.isBubbleType(d)) {
-                    diff = baseY;
+                if (value < 0 || (value === 0 && !state.hasPositiveValue && state.hasNegativeValue)) {
+                    yPos += rect.height + ($$.isBarType(d) ? -baseY : baseY);
                 }
-                yPos += diff;
+                else {
+                    var diff = -baseY * 2;
+                    if ($$.isBarType(d)) {
+                        diff = -baseY;
+                    }
+                    else if ($$.isBubbleType(d)) {
+                        diff = baseY;
+                    }
+                    yPos += diff;
+                }
             }
         }
         // show labels regardless of the domain if value is null
@@ -6926,8 +7052,12 @@ var tooltip$1 = {
             param = [row.ratio, row.id, row.index, d];
             value = sanitise(valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param)));
             if ($$.isAreaRangeType(row)) {
-                var _b = ["high", "low"].map(function (v) { return sanitise(valueFormat.apply(void 0, __spreadArray([$$.getAreaRangeData(row, v)], param))); }), high = _b[0], low = _b[1];
+                var _b = ["high", "low"].map(function (v) { return sanitise(valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v)], param))); }), high = _b[0], low = _b[1];
                 value = "<b>Mid:</b> " + value + " <b>High:</b> " + high + " <b>Low:</b> " + low;
+            }
+            else if ($$.isCandlestickType(row)) {
+                var _c = ["open", "high", "low", "close", "volume"].map(function (v) { return sanitise(valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v, "candlestick")], param))); }), open_1 = _c[0], high = _c[1], low = _c[2], close_1 = _c[3], volume = _c[4];
+                value = "<b>Open:</b> " + open_1 + " <b>High:</b> " + high + " <b>Low:</b> " + low + " <b>Close:</b> " + close_1 + (volume ? " <b>Volume:</b> " + volume : "");
             }
             if (value !== undefined) {
                 // Skip elements when their name is set to null
@@ -6982,11 +7112,10 @@ var tooltip$1 = {
         var width = state.width, height = state.height, current = state.current, isLegendRight = state.isLegendRight, inputType = state.inputType, event = state.event;
         var hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
         var svgLeft = $$.getSvgLeft(true);
-        var _a = mouse(element), x = _a[0], y = _a[1];
         var chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
         var chartLeft = $$.getCurrentPaddingLeft(true);
         var size = 20;
-        var _b = getPointer(event, element), x = _b[0], y = _b[1];
+        var _a = getPointer(event, element), x = _a[0], y = _a[1];
         // Determine tooltip position
         if ($$.hasArcType()) {
             var raw = inputType === "touch" || $$.hasType("radar");
@@ -7124,7 +7253,7 @@ var tooltip$1 = {
      */
     _handleLinkedCharts: function (show, index) {
         var $$ = this;
-        var charts = $$.charts, config = $$.config;
+        var charts = $$.charts, config = $$.config, event = $$.state.event;
         // Prevent propagation among instances if isn't instantiated from the user's event
         // https://github.com/naver/billboard.js/issues/1979
         if (event && event.isTrusted && config.tooltip_linked && charts.length > 1) {
@@ -7341,10 +7470,12 @@ var type = {
     hasTypeOf: function (type, targets, exclude) {
         var _this = this;
         if (exclude === void 0) { exclude = []; }
-        return !TYPE_BY_CATEGORY[type]
-            // @ts-ignore
-            .filter(function (v) { return exclude.indexOf(v) === -1; })
-            .every(function (v) { return !_this.hasType(v, targets); });
+        if (type in TYPE_BY_CATEGORY) {
+            return !TYPE_BY_CATEGORY[type]
+                .filter(function (v) { return exclude.indexOf(v) === -1; })
+                .every(function (v) { return !_this.hasType(v, targets); });
+        }
+        return false;
     },
     /**
      * Check if given data is certain chart type
@@ -7399,6 +7530,9 @@ var type = {
     isBubbleType: function (d) {
         return this.isTypeOf(d, "bubble");
     },
+    isCandlestickType: function (d) {
+        return this.isTypeOf(d, "candlestick");
+    },
     isScatterType: function (d) {
         return this.isTypeOf(d, "scatter");
     },
@@ -7440,9 +7574,6 @@ var type = {
     arcData: function (d) {
         return this.isArcType(d.data) ? [d] : [];
     },
-    barData: function (d) {
-        return this.isBarType(d) ? d.values : [];
-    },
     /**
      * Get data adapt for data label showing
      * @param {object} d Data object
@@ -7454,6 +7585,7 @@ var type = {
             this.isLineType(d) ||
             this.isScatterType(d) ||
             this.isBubbleType(d) ||
+            this.isCandlestickType(d) ||
             this.isRadarType(d) ? d.values : [];
     },
     barLineBubbleData: function (d) {
@@ -7775,9 +7907,12 @@ var ChartInternal = /** @class */ (function () {
         var _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar;
         var types = [];
         if (hasAxis) {
-            $$.hasType("bar") && types.push("Bar");
-            $$.hasType("bubble") && types.push("Bubble");
-            $$.hasTypeOf("Line") && types.push("Line");
+            ["bar", "bubble", "candlestick", "line"].forEach(function (v) {
+                var name = capitalize(v);
+                if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
+                    types.push(name);
+                }
+            });
         }
         else {
             if (!hasRadar) {
@@ -7797,7 +7932,7 @@ var ChartInternal = /** @class */ (function () {
     };
     ChartInternal.prototype.setChartElements = function () {
         var $$ = this;
-        var _a = $$.$el, chart = _a.chart, svg = _a.svg, defs = _a.defs, main = _a.main, tooltip = _a.tooltip, legend = _a.legend, title = _a.title, grid = _a.grid, arc = _a.arcs, circles = _a.circle, bars = _a.bar, lines = _a.line, areas = _a.area, texts = _a.text;
+        var _a = $$.$el, chart = _a.chart, svg = _a.svg, defs = _a.defs, main = _a.main, tooltip = _a.tooltip, legend = _a.legend, title = _a.title, grid = _a.grid, arc = _a.arcs, circles = _a.circle, bars = _a.bar, candlestick = _a.candlestick, lines = _a.line, areas = _a.area, texts = _a.text;
         $$.api.$ = {
             chart: chart,
             svg: svg,
@@ -7810,6 +7945,7 @@ var ChartInternal = /** @class */ (function () {
             arc: arc,
             circles: circles,
             bar: { bars: bars },
+            candlestick: candlestick,
             line: { lines: lines, areas: areas },
             text: { texts: texts }
         };
@@ -7849,8 +7985,12 @@ var ChartInternal = /** @class */ (function () {
         // Text
         $$.updateTargetsForText(targets);
         if (hasAxis) {
-            $$.hasType("bar") && $$.updateTargetsForBar(targets); // Bar
-            $$.hasTypeOf("Line") && $$.updateTargetsForLine(targets); // Line
+            ["bar", "candlestick", "line"].forEach(function (v) {
+                var name = capitalize(v);
+                if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
+                    $$["updateTargetsFor" + name](targets.filter($$["is" + name + "Type"].bind($$)));
+                }
+            });
             // Sub Chart
             $$.updateTargetsForSubchart &&
                 $$.updateTargetsForSubchart(targets);
@@ -7858,8 +7998,8 @@ var ChartInternal = /** @class */ (function () {
         else {
             // Arc & Radar
             $$.hasArcType(targets) && (hasRadar ?
-                $$.updateTargetsForRadar(targets) :
-                $$.updateTargetsForArc(targets));
+                $$.updateTargetsForRadar(targets.filter($$.isRadarType.bind($$))) :
+                $$.updateTargetsForArc(targets.filter($$.isArcType.bind($$))));
         }
         // circle
         if ($$.hasType("bubble") || $$.hasType("scatter")) {
@@ -8375,11 +8515,13 @@ var b64EncodeUnicode = function (str) { return btoa(encodeURIComponent(str)
 /**
  * Convert svg node to data url
  * @param {HTMLElement} node target node
- * @param {object} size object containing {width, height}
+ * @param {object} option object containing {width, height, preserveAspectRatio}
+ * @param {object} orgSize object containing {width, height}
  * @returns {string}
  * @private
  */
-function nodeToSvgDataUrl(node, size) {
+function nodeToSvgDataUrl(node, option, orgSize) {
+    var _a = option || orgSize, width = _a.width, height = _a.height;
     var serializer = new XMLSerializer();
     var clone = node.cloneNode(true);
     var cssText = getCssRules(toArray(doc.styleSheets))
@@ -8393,7 +8535,7 @@ function nodeToSvgDataUrl(node, size) {
     var styleXml = serializer.serializeToString(style);
     // foreignObject not supported in IE11 and below
     // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
-    var dataStr = ("<svg xmlns=\"" + namespaces.svg + "\" width=\"" + size.width + "\" height=\"" + size.height + "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t" + styleXml + "\n\t\t\t\t" + nodeXml.replace(/(url\()[^#]+/g, "$1") + "\n\t\t\t</foreignObject></svg>")
+    var dataStr = ("<svg xmlns=\"" + namespaces.svg + "\" width=\"" + width + "\" height=\"" + height + "\" \n\t\tviewBox=\"0 0 " + orgSize.width + " " + orgSize.height + "\" \n\t\tpreserveAspectRatio=\"" + (option && option.preserveAspectRatio === false ? "none" : "xMinYMid meet") + "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t" + styleXml + "\n\t\t\t\t" + nodeXml.replace(/(url\()[^#]+/g, "$1") + "\n\t\t\t</foreignObject></svg>")
         .replace("/\n/g", "%0A");
     return "data:image/svg+xml;base64," + b64EncodeUnicode(dataStr);
 }
@@ -8406,7 +8548,11 @@ var apiExport = {
      * @function export
      * @instance
      * @memberof Chart
-     * @param {string} [mimeType=image/png] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
+     * @param {object} option Export option
+     * @param {string} [option.mimeType="image/png"] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
+     * @param {number} [option.width={currentWidth}] width
+     * @param {number} [option.height={currentHeigth}] height
+     * @param {boolean} [option.preserveAspectRatio=true] Preserve aspect ratio on given size
      * @param {Function} [callback] The callback to be invoked when export is ready.
      * @returns {string} dataURI
      * @example
@@ -8414,7 +8560,7 @@ var apiExport = {
      *  // --> "data:image/svg+xml;base64,PHN..."
      *
      *  // Initialize the download automatically
-     *  chart.export("image/png", dataUrl => {
+     *  chart.export({mimeType: "image/png"}, dataUrl => {
      *     const link = document.createElement("a");
      *
      *     link.download = `${Date.now()}.png`;
@@ -8423,23 +8569,40 @@ var apiExport = {
      *
      *     document.body.appendChild(link);
      *  });
+     *
+     *  // Resize the exported image
+     *  chart.export(
+     *    {
+     *      width: 800,
+     *      height: 600,
+     *      preserveAspectRatio: false,
+     *      mimeType: "image/png"
+     *    },
+     *    dataUrl => { ... }
+     *  );
      */
-    "export": function (mimeType, callback) {
+    "export": function (option, callback) {
         var _this = this;
         var $$ = this.internal;
         var state = $$.state, chart = $$.$el.chart;
         var _a = state.current, width = _a.width, height = _a.height;
-        var svgDataUrl = nodeToSvgDataUrl(chart.node(), { width: width, height: height });
+        var opt = mergeObj({
+            width: width,
+            height: height,
+            preserveAspectRatio: true,
+            mimeType: "image/png"
+        }, option);
+        var svgDataUrl = nodeToSvgDataUrl(chart.node(), opt, { width: width, height: height });
         if (callback && isFunction(callback)) {
             var img_1 = new Image();
             img_1.crossOrigin = "Anonymous";
             img_1.onload = function () {
                 var canvas = doc.createElement("canvas");
                 var ctx = canvas.getContext("2d");
-                canvas.width = width;
-                canvas.height = height;
+                canvas.width = opt.width || width;
+                canvas.height = opt.height || height;
                 ctx.drawImage(img_1, 0, 0);
-                callback.bind(_this)(canvas.toDataURL(mimeType));
+                callback.bind(_this)(canvas.toDataURL(opt.mimeType));
             };
             img_1.src = svgDataUrl;
         }
@@ -9051,6 +9214,7 @@ var apiTooltip = { tooltip: tooltip };
  * @property {d3.selection} $.circles Data point circle elements
  * @property {object} $.bar Bar element object
  * @property {d3.selection} $.bar.bars Bar elements
+ * @property {d3.selection} $.candlestick Candlestick elements
  * @property {object} $.line Line element object
  * @property {d3.selection} $.line.lines Line elements
  * @property {d3.selection} $.line.areas Areas elements
@@ -15185,34 +15349,50 @@ var shapeArea = {
             "url(#" + $$.state.datetimeId + "-areaGradient" + $$.getTargetSelectorSuffix(d.id) + ")" :
             $$.color(d);
     },
-    updateArea: function (durationForExit) {
+    /**
+     * Generate/Update elements
+     * @param {number} durationForExit Transition duration for exit elements
+     * @param {boolean} isSub Subchart draw
+     * @private
+     */
+    updateArea: function (durationForExit, isSub) {
+        if (isSub === void 0) { isSub = false; }
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
+        var $root = isSub ? $el.subchart : $el;
         config.area_linearGradient && $$.updateAreaGradient();
-        $el.area = $el.main.selectAll("." + CLASS.areas)
+        var area = $root.main.selectAll("." + CLASS.areas)
             .selectAll("." + CLASS.area)
             .data($$.lineData.bind($$));
-        $el.area.exit().transition()
+        area.exit().transition()
             .duration(durationForExit)
             .style("opacity", "0")
             .remove();
-        $el.area = $el.area.enter().append("path")
+        $root.area = area.enter().append("path")
             .attr("class", $$.getClass("area", true))
             .style("fill", $$.updateAreaColor.bind($$))
             .style("opacity", function () {
             state.orgAreaOpacity = select(this).style("opacity");
             return "0";
         })
-            .merge($el.area);
-        $el.area
-            .style("opacity", state.orgAreaOpacity);
+            .merge(area);
+        area.style("opacity", state.orgAreaOpacity);
     },
-    redrawArea: function (drawArea, withTransition) {
+    /**
+     * Redraw function
+     * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+     * @param {boolean} withTransition With or without transition
+     * @param {boolean} isSub Subchart draw
+     * @returns {Array}
+     */
+    redrawArea: function (drawFn, withTransition, isSub) {
+        if (isSub === void 0) { isSub = false; }
         var $$ = this;
+        var area = (isSub ? this.$el.subchart : this.$el).area;
         var orgAreaOpacity = $$.state.orgAreaOpacity;
         return [
-            (withTransition ? $$.$el.area.transition(getRandom()) : $$.$el.area)
-                .attr("d", drawArea)
+            (withTransition ? area.transition(getRandom()) : area)
+                .attr("d", drawFn)
                 .style("fill", $$.updateAreaColor.bind($$))
                 .style("opacity", function (d) { return String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity); })
         ];
@@ -15235,11 +15415,11 @@ var shapeArea = {
         var value0 = function (d, i) { return ($$.isGrouped(d.id) ?
             getPoints(d, i)[0][1] :
             yScale(d.id, isSub)($$.isAreaRangeType(d) ?
-                $$.getAreaRangeData(d, "high") : $$.getShapeYMin(d.id))); };
+                $$.getRangedData(d, "high") : $$.getShapeYMin(d.id))); };
         var value1 = function (d, i) { return ($$.isGrouped(d.id) ?
             getPoints(d, i)[1][1] :
             yScale(d.id, isSub)($$.isAreaRangeType(d) ?
-                $$.getAreaRangeData(d, "low") : d.value)); };
+                $$.getRangedData(d, "low") : d.value)); };
         return function (d) {
             var values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
             var x0 = 0;
@@ -15336,60 +15516,47 @@ var shapeBar = {
             .attr("class", classBars)
             .style("cursor", function (d) { return (isSelectable && isSelectable.bind($$.api)(d) ? "pointer" : null); });
     },
-    updateBar: function (durationForExit) {
+    /**
+     * Generate/Update elements
+     * @param {number} durationForExit Transition duration for exit elements
+     * @param {boolean} isSub Subchart draw
+     * @private
+     */
+    updateBar: function (durationForExit, isSub) {
+        if (isSub === void 0) { isSub = false; }
         var $$ = this;
-        var $el = $$.$el;
-        var barData = $$.barData.bind($$);
+        var $root = isSub ? $$.$el.subchart : $$.$el;
         var classBar = $$.getClass("bar", true);
         var initialOpacity = $$.initialOpacity.bind($$);
-        $el.bar = $el.main.selectAll("." + CLASS.bars).selectAll("." + CLASS.bar)
-            .data(barData);
-        $el.bar.exit().transition()
+        var bar = $root.main.selectAll("." + CLASS.bars)
+            .selectAll("." + CLASS.bar)
+            .data($$.labelishData.bind($$));
+        bar.exit().transition()
             .duration(durationForExit)
             .style("opacity", "0")
             .remove();
-        $el.bar = $el.bar.enter().append("path")
+        $root.bar = bar.enter().append("path")
             .attr("class", classBar)
             .style("fill", $$.color)
-            .merge($el.bar)
+            .merge(bar)
             .style("opacity", initialOpacity);
     },
-    redrawBar: function (drawBar, withTransition) {
-        var bar = this.$el.bar;
+    /**
+     * Redraw function
+     * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+     * @param {boolean} withTransition With or without transition
+     * @param {boolean} isSub Subchart draw
+     * @returns {Array}
+     */
+    redrawBar: function (drawFn, withTransition, isSub) {
+        if (isSub === void 0) { isSub = false; }
+        var bar = (isSub ? this.$el.subchart : this.$el).bar;
         return [
             (withTransition ? bar.transition(getRandom()) : bar)
-                .attr("d", drawBar)
+                .attr("d", drawFn)
                 .style("fill", this.color)
                 .style("opacity", "1")
         ];
-    },
-    getBarW: function (axis, barTargetsNum) {
-        var $$ = this;
-        var config = $$.config, org = $$.org, scale = $$.scale;
-        var maxDataCount = $$.getMaxDataCount();
-        var isGrouped = config.data_groups.length;
-        var tickInterval = scale.zoom && !$$.axis.isCategorized() ?
-            (org.xDomain.map(function (v) { return scale.zoom(v); })
-                .reduce(function (a, c) { return Math.abs(a) + c; }) / maxDataCount) : axis.tickInterval(maxDataCount);
-        var getWidth = function (id) {
-            var width = id ? config.bar_width[id] : config.bar_width;
-            var ratio = id ? width.ratio : config.bar_width_ratio;
-            var max = id ? width.max : config.bar_width_max;
-            var w = isNumber(width) ?
-                width : barTargetsNum ? (tickInterval * ratio) / barTargetsNum : 0;
-            return max && w > max ? max : w;
-        };
-        var result = getWidth();
-        if (!isGrouped && isObjectType(config.bar_width)) {
-            result = { _$width: result, _$total: [] };
-            $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
-                if (config.bar_width[v.id]) {
-                    result[v.id] = getWidth(v.id);
-                    result._$total.push(result[v.id] || result._$width);
-                }
-            });
-        }
-        return result;
     },
     getBars: function (i, id) {
         var $$ = this;
@@ -15449,7 +15616,7 @@ var shapeBar = {
         var config = $$.config;
         var axis = isSub ? $$.axis.subX : $$.axis.x;
         var barTargetsNum = $$.getIndicesMax(barIndices) + 1;
-        var barW = $$.getBarW(axis, barTargetsNum);
+        var barW = $$.getBarW("bar", axis, barTargetsNum);
         var barX = $$.getShapeX(barW, barIndices, !!isSub);
         var barY = $$.getShapeY(!!isSub);
         var barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
@@ -15492,6 +15659,221 @@ var shapeBar = {
             ey < mouse[1] &&
             mouse[1] < sy;
         return isWithin;
+    }
+};
+
+var shapeCandlestick = {
+    initCandlestick: function () {
+        var $el = this.$el;
+        $el.candlestick = $el.main.select("." + CLASS.chart)
+            // should positioned at the beginning of the shape node to not overlap others
+            .append("g")
+            .attr("class", CLASS.chartCandlesticks);
+    },
+    /**
+     * Update targets by its data
+     * called from: ChartInternal.updateTargets()
+     * @param {Array} targets Filtered target by type
+     * @private
+     */
+    updateTargetsForCandlestick: function (targets) {
+        var $$ = this;
+        var $el = $$.$el;
+        var classChart = $$.getChartClass("Candlestick");
+        var classFocus = $$.classFocus.bind($$);
+        if (!$el.candlestick) {
+            $$.initCandlestick();
+        }
+        var mainUpdate = $$.$el.main.select("." + CLASS.chartCandlesticks)
+            .selectAll("." + CLASS.chartCandlestick)
+            .data(targets)
+            .attr("class", function (d) { return classChart(d) + classFocus(d); });
+        mainUpdate.enter().append("g")
+            .attr("class", classChart)
+            .style("pointer-events", "none");
+    },
+    /**
+     * Generate/Update elements
+     * @param {number} durationForExit Transition duration for exit elements
+     * @param {boolean} isSub Subchart draw
+     * @private
+     */
+    updateCandlestick: function (durationForExit, isSub) {
+        if (isSub === void 0) { isSub = false; }
+        var $$ = this;
+        var $el = $$.$el;
+        var $root = isSub ? $el.subchart : $el;
+        var classSetter = $$.getClass("candlestick", true);
+        var initialOpacity = $$.initialOpacity.bind($$);
+        var candlestick = $root.main.selectAll("." + CLASS.chartCandlestick)
+            .selectAll("." + CLASS.candlestick)
+            .data($$.labelishData.bind($$));
+        candlestick.exit().transition()
+            .duration(durationForExit)
+            .style("opacity", "0")
+            .remove();
+        var candlestickEnter = candlestick.enter()
+            .filter(function (d) { return d.value; })
+            .append("g")
+            .attr("class", classSetter);
+        candlestickEnter.append("line");
+        candlestickEnter.append("path");
+        if (!$root.candlestick) {
+            $root.candlestick = {};
+        }
+        $root.candlestick = candlestick.merge(candlestickEnter)
+            .style("opacity", initialOpacity);
+    },
+    /**
+     * Get draw function
+     * @param {object} indices Indice data
+     * @param {boolean} isSub Subchart draw
+     * @returns {Function}
+     * @private
+     */
+    generateDrawCandlestick: function (indices, isSub) {
+        var $$ = this;
+        var config = $$.config;
+        var getPoints = $$.generateGetCandlestickPoints(indices, isSub);
+        var isRotated = config.axis_rotated;
+        var downColor = config.candlestick_color_down;
+        return function (d, i, g) {
+            var points = getPoints(d, i);
+            var value = $$.getCandlestickData(d);
+            var isUp = value === null || value === void 0 ? void 0 : value._isUp;
+            // switch points if axis is rotated, not applicable for sub chart
+            var indexX = +isRotated;
+            var indexY = +!indexX;
+            if (g.classed) {
+                g.classed(CLASS[isUp ? "valueUp" : "valueDown"], true);
+            }
+            var path = isRotated ?
+                "H" + points[1][1] + " V" + points[1][0] + " H" + points[0][1] :
+                "V" + points[1][1] + " H" + points[1][0] + " V" + points[0][1];
+            g.select("path")
+                .attr("d", "M" + points[0][indexX] + "," + points[0][indexY] + path + "z")
+                .style("fill", function (d) {
+                var color = isUp ? $$.color(d) : (isObject(downColor) ? downColor[d.id] : downColor);
+                return color || $$.color(d);
+            });
+            // set line position
+            var line = g.select("line");
+            var pos = isRotated ? {
+                x1: points[2][1],
+                x2: points[2][2],
+                y1: points[2][0],
+                y2: points[2][0]
+            } : {
+                x1: points[2][0],
+                x2: points[2][0],
+                y1: points[2][1],
+                y2: points[2][2]
+            };
+            for (var x in pos) {
+                line.attr(x, pos[x]);
+            }
+        };
+    },
+    /**
+     * Generate shape drawing points
+     * @param {object} indices Indice data
+     * @param {boolean} isSub Subchart draw
+     * @returns {Function}
+     */
+    generateGetCandlestickPoints: function (indices, isSub) {
+        if (isSub === void 0) { isSub = false; }
+        var $$ = this;
+        var config = $$.config;
+        var axis = isSub ? $$.axis.subX : $$.axis.x;
+        var targetsNum = $$.getIndicesMax(indices) + 1;
+        var barW = $$.getBarW("candlestick", axis, targetsNum);
+        var x = $$.getShapeX(barW, indices, !!isSub);
+        var y = $$.getShapeY(!!isSub);
+        var shapeOffset = $$.getShapeOffset($$.isBarType, indices, !!isSub);
+        var yScale = $$.getYScaleById.bind($$);
+        return function (d, i) {
+            var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+            var offset = shapeOffset(d, i) || y0; // offset is for stacked bar chart
+            var width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
+            var value = $$.getCandlestickData(d);
+            var points;
+            if (value) {
+                var posX = {
+                    start: x(d),
+                    end: 0
+                };
+                posX.end = posX.start + width;
+                var posY = {
+                    start: y(value.open),
+                    end: y(value.close)
+                };
+                var posLine = {
+                    x: posX.start + (width / 2),
+                    high: y(value.high),
+                    low: y(value.low)
+                };
+                // fix posY not to overflow opposite quadrant
+                if (config.axis_rotated && ((d.value > 0 && posY.start < y0) || (d.value < 0 && y0 < posY.start))) {
+                    posY.start = y0;
+                }
+                posY.start -= (y0 - offset);
+                points = [
+                    [posX.start, posY.start],
+                    [posX.end, posY.end],
+                    [posLine.x, posLine.low, posLine.high]
+                ];
+            }
+            else {
+                points = [[0, 0], [0, 0], [0, 0, 0]];
+            }
+            return points;
+        };
+    },
+    /**
+     * Redraw function
+     * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+     * @param {boolean} withTransition With or without transition
+     * @param {boolean} isSub Subchart draw
+     * @returns {Array}
+     */
+    redrawCandlestick: function (drawFn, withTransition, isSub) {
+        if (isSub === void 0) { isSub = false; }
+        var candlestick = (isSub ? this.$el.subchart : this.$el).candlestick;
+        var rand = getRandom(true);
+        return [
+            candlestick
+                .each(function (d, i) {
+                var g = withTransition ?
+                    select(this).transition(rand) : select(this);
+                drawFn(d, i, g);
+            })
+                .style("opacity", "1")
+        ];
+    },
+    /**
+     * Get candlestick data as object
+     * @param {object} param Data object
+     * @param {Array|object} param.value Data value
+     * @returns {object|null} Converted data object
+     * @private
+     */
+    getCandlestickData: function (_a) {
+        var value = _a.value;
+        var d;
+        if (isArray(value)) {
+            var open_1 = value[0], high = value[1], low = value[2], close_1 = value[3], _b = value[4], volume = _b === void 0 ? false : _b;
+            d = { open: open_1, high: high, low: low, close: close_1 };
+            if (volume !== false) {
+                d.volume = volume;
+            }
+        }
+        else if (isObject(value)) {
+            d = _assign({}, value);
+        }
+        if (d) {
+            d._isUp = d.close >= d.open;
+        }
+        return d || null;
     }
 };
 
@@ -15693,31 +16075,47 @@ var shapeLine = {
         }
         $$.updateTargetForCircle(targets, mainLineEnter);
     },
-    updateLine: function (durationForExit) {
+    /**
+     * Generate/Update elements
+     * @param {number} durationForExit Transition duration for exit elements
+     * @param {boolean} isSub Subchart draw
+     * @private
+     */
+    updateLine: function (durationForExit, isSub) {
+        if (isSub === void 0) { isSub = false; }
         var $$ = this;
         var extraLineClasses = $$.format.extraLineClasses, $el = $$.$el;
-        $el.line = $el.main
+        var $root = isSub ? $el.subchart : $el;
+        var line = $root.main
             .selectAll("." + CLASS.lines)
             .selectAll("." + CLASS.line)
             .data($$.lineData.bind($$));
-        $el.line.exit().transition()
+        line.exit().transition()
             .duration(durationForExit)
             .style("opacity", "0")
             .remove();
-        $el.line = $el.line.enter()
+        $root.line = line.enter()
             .append("path")
             .attr("class", function (d) { return $$.getClass("line", true)(d) + " " + (extraLineClasses(d) || ""); })
             .style("stroke", $$.color)
-            .merge($el.line)
+            .merge(line)
             .style("opacity", $$.initialOpacity.bind($$))
             .style("shape-rendering", function (d) { return ($$.isStepType(d) ? "crispEdges" : ""); })
             .attr("transform", null);
     },
-    redrawLine: function (drawLine, withTransition) {
-        var line = this.$el.line;
+    /**
+     * Redraw function
+     * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+     * @param {boolean} withTransition With or without transition
+     * @param {boolean} isSub Subchart draw
+     * @returns {Array}
+     */
+    redrawLine: function (drawFn, withTransition, isSub) {
+        if (isSub === void 0) { isSub = false; }
+        var line = (isSub ? this.$el.subchart : this.$el).line;
         return [
             (withTransition ? line.transition(getRandom()) : line)
-                .attr("d", drawLine)
+                .attr("d", drawFn)
                 .style("stroke", this.color)
                 .style("opacity", "1")
         ];
@@ -15980,12 +16378,14 @@ var shapePoint = {
             });
         });
     },
-    updateCircle: function () {
+    updateCircle: function (isSub) {
+        if (isSub === void 0) { isSub = false; }
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
         var focusOnly = config.point_focus_only;
+        var $root = isSub ? $el.subchart : $el;
         if (config.point_show && !state.toggling) {
-            var circles = $el.main.selectAll("." + CLASS.circles)
+            var circles = $root.main.selectAll("." + CLASS.circles)
                 .selectAll("." + CLASS.circle)
                 .data(function (d) { return (($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
                 $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
@@ -15994,15 +16394,17 @@ var shapePoint = {
             circles.enter()
                 .filter(Boolean)
                 .append($$.point("create", this, $$.pointR.bind($$), $$.color));
-            $el.circle = $el.main.selectAll("." + CLASS.circles + " ." + CLASS.circle)
+            $root.circle = $root.main.selectAll("." + CLASS.circles + " ." + CLASS.circle)
                 .style("stroke", $$.color)
                 .style("opacity", $$.initialOpacityForCircle.bind($$));
         }
     },
-    redrawCircle: function (cx, cy, withTransition, flow) {
+    redrawCircle: function (cx, cy, withTransition, flow, isSub) {
+        if (isSub === void 0) { isSub = false; }
         var $$ = this;
-        var rendered = $$.state.rendered, _a = $$.$el, circle = _a.circle, main = _a.main;
-        var selectedCircles = main.selectAll("." + CLASS.selectedCircle);
+        var rendered = $$.state.rendered, $el = $$.$el;
+        var $root = isSub ? $el.subchart : $el;
+        var selectedCircles = $root.main.selectAll("." + CLASS.selectedCircle);
         if (!$$.config.point_show) {
             return [];
         }
@@ -16011,7 +16413,7 @@ var shapePoint = {
         var t = getRandom();
         var opacityStyleFn = $$.opacityForCircle.bind($$);
         var mainCircles = [];
-        circle.each(function (d) {
+        $root.circle.each(function (d) {
             var result = fn.bind(this)(d);
             result = ((withTransition || !rendered) ? result.transition(t) : result)
                 .style("opacity", opacityStyleFn);
@@ -16076,14 +16478,15 @@ var shapePoint = {
     circleX: function (d) {
         return this.xx(d);
     },
-    updateCircleY: function () {
+    updateCircleY: function (isSub) {
+        if (isSub === void 0) { isSub = false; }
         var $$ = this;
-        var getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), false);
-        $$.circleY = function (d, i) {
+        var getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), isSub);
+        return function (d, i) {
             var id = d.id;
             return $$.isGrouped(id) ?
                 getPoints(d, i)[0][1] :
-                $$.getYScaleById(id)($$.getBaseValue(d));
+                $$.getYScaleById(id, isSub)($$.getBaseValue(d));
         };
     },
     getCircles: function (i, id) {
@@ -16968,6 +17371,67 @@ var optBubble = {
  * billboard.js project is licensed under the MIT license
  */
 /**
+ * candlestick config options
+ */
+var optCandlestick = {
+    /**
+     * Set candlestick options
+     * @name candlestick
+     * @memberof Options
+     * @type {object}
+     * @property {object} candlestick Candlestick object
+     * @property {number} [candlestick.width] Change the width.
+     * @property {number} [candlestick.width.ratio=0.6] Change the width by ratio.
+     * @property {number} [candlestick.width.max] The maximum width value for ratio.
+     * @property {number} [candlestick.width.dataname] Change the width for indicated dataset only.
+     * @property {number} [candlestick.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
+     * @property {number} [candlestick.width.dataname.max] The maximum width value for ratio.
+     * @property {object} [candlestick.color] Color setting.
+     * @property {string|object} [candlestick.color.down] Change down(bearish) value color.
+     * @property {string} [candlestick.color.down.dataname] Change down value color for indicated dataset only.
+     *
+     * @see [Demo](https://naver.github.io/billboard.js/demo/##Chart.CandlestickChart)
+     * @example
+     *  candlestick: {
+     *      width: 10,
+     *
+     *      // or
+     *      width: {
+     *         	ratio: 0.2,
+     *         	max: 20
+     *      },
+     *
+     *      // or specify width per dataset
+     *      width: {
+     *         	data1: 20,
+     *         	data2: {
+     *         	    ratio: 0.2,
+     *         		max: 20
+     *         	}
+     *      },
+     *      color: {
+     *  	  	// spcify bearish color
+     *  	  	down: "red",
+     *
+     *  	  	// or specify color per dataset
+     *  	  	down: {
+     *  	  		data1: "red",
+     *  	  		data2: "blue",
+     *  	  	}
+     *      }
+     *  }
+     */
+    candlestick_width: undefined,
+    candlestick_width_ratio: 0.6,
+    candlestick_width_max: undefined,
+    candlestick_color_down: "red"
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
  * line config options
  */
 var optLine = {
@@ -17528,6 +17992,7 @@ var radar = function () { return (extendArc([shapePoint, shapeRadar], [optPoint,
 // Axis based types
 var bar = function () { return (extendAxis([shapeBar], optBar), (bar = function () { return TYPE.BAR; })()); };
 var bubble = function () { return (extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), (bubble = function () { return TYPE.BUBBLE; })()); };
+var candlestick = function () { return (extendAxis([shapeCandlestick], [optCandlestick]), (candlestick = function () { return TYPE.CANDLESTICK; })()); };
 var scatter = function () { return (extendAxis([shapePoint], [optPoint, optScatter]), (scatter = function () { return TYPE.SCATTER; })()); };
 
 /**
@@ -17658,6 +18123,91 @@ var apiSelection = {
                 toggle(false, shape.classed(CLASS.SELECTED, false), d, i);
             }
         });
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var apiSubchart = {
+    subchart: {
+        /**
+         * Show subchart
+         * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+         * @function subchart․show
+         * @instance
+         * @memberof Chart
+         * @example
+         * // for ESM imports, needs to import 'subchart' and must be instantiated first to enable subchart's API.
+         * import {subchart} from "billboard.js";
+         *
+         * const chart = bb.generate({
+         *   ...
+         *   subchart: {
+         *     // need to be instantiated by calling 'subchart()'
+         *     enabled: subchart()
+         *
+         *     // in case don't want subchart to be shown at initialization, instantiate with '!subchart()'
+         *     enabled: !subchart()
+         *     }
+         * });
+         *
+         * chart.subchart.show();
+         */
+        show: function () {
+            var $$ = this.internal;
+            var subchart = $$.$el.subchart, config = $$.config;
+            var show = config.subchart_show;
+            if (!show) {
+                config.subchart_show = !show;
+                !subchart.main && $$.initSubchart();
+                var $target = subchart.main.selectAll("." + CLASS.target);
+                // need to cover when new data has been loaded
+                if ($$.data.targets.length !== $target.size()) {
+                    $$.updateSizes();
+                    $$.updateTargetsForSubchart($$.data.targets);
+                    $target = subchart.main.selectAll("." + CLASS.target);
+                }
+                $target.style("opacity", "1");
+                subchart.main.style("display", null);
+                this.flush();
+            }
+        },
+        /**
+         * Hide generated subchart
+         * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+         * @function subchart․hide
+         * @instance
+         * @memberof Chart
+         * @example
+         *  chart.subchart.hide();
+         */
+        hide: function () {
+            var $$ = this.internal;
+            var subchart = $$.$el.subchart, config = $$.config;
+            if (config.subchart_show && subchart.main.style("display") !== "none") {
+                config.subchart_show = false;
+                subchart.main.style("display", "none");
+                this.flush();
+            }
+        },
+        /**
+         * Toggle the visiblity of subchart
+         * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+         * @function subchart․toggle
+         * @instance
+         * @memberof Chart
+         * @example
+         * // When subchart is hidden, will be shown
+         * // When subchart is shown, will be hidden
+         * chart.subchart.toggle();
+         */
+        toggle: function () {
+            var $$ = this.internal;
+            var config = $$.config;
+            this.subchart[config.subchart_show ? "hide" : "show"]();
+        }
     }
 };
 
@@ -18235,14 +18785,19 @@ var subchart = {
         main.append("g")
             .attr("clip-path", clipPath)
             .attr("class", CLASS.chart);
-        // Define g for bar chart area
-        $$.hasType("bar") && main.select("." + CLASS.chart)
-            .append("g")
-            .attr("class", CLASS.chartBars);
-        // Define g for line chart area
-        main.select("." + CLASS.chart)
-            .append("g")
-            .attr("class", CLASS.chartLines);
+        // Define g for chart types area
+        ["bar", "line", "bubble", "candlestick", "scatter"].forEach(function (v) {
+            var type = capitalize(/^(bubble|scatter)$/.test(v) ? "circle" : v);
+            if ($$.hasType(v) || $$.hasTypeOf(type)) {
+                var chart = main.select("." + CLASS.chart);
+                var chartClassName = CLASS["chart" + type + "s"];
+                if (chart.select("." + chartClassName).empty()) {
+                    chart
+                        .append("g")
+                        .attr("class", chartClassName);
+                }
+            }
+        });
         // Add extent rect for Brush
         main.append("g")
             .attr("clip-path", clipPath)
@@ -18264,163 +18819,45 @@ var subchart = {
     updateTargetsForSubchart: function (targets) {
         var $$ = this;
         var config = $$.config, state = $$.state, main = $$.$el.subchart.main;
-        var classChartBar = $$.getChartClass("Bar");
-        var classBars = $$.getClass("bars", true);
-        var classChartLine = $$.getChartClass("Line");
-        var classLines = $$.getClass("lines", true);
-        var classAreas = $$.getClass("areas", true);
         if (config.subchart_show) {
-            // -- Bar --//
-            var barUpdate = main.select("." + CLASS.chartBars)
-                .selectAll("." + CLASS.chartBar)
-                .data(targets)
-                .attr("class", classChartBar);
-            var barEnter = barUpdate.enter()
-                .append("g")
-                .style("opacity", "0")
-                .attr("class", classChartBar)
-                .merge(barUpdate);
-            // Bars for each data
-            barEnter.append("g")
-                .attr("class", classBars);
-            // -- Line --//
-            var lineUpdate = main.select("." + CLASS.chartLines)
-                .selectAll("." + CLASS.chartLine)
-                .data(targets)
-                .attr("class", classChartLine);
-            var lineEnter = lineUpdate.enter().append("g")
-                .style("opacity", "0")
-                .attr("class", classChartLine)
-                .merge(lineUpdate);
-            // Lines for each data
-            lineEnter.append("g")
-                .attr("class", classLines);
-            // Area
-            $$.hasTypeOf("Area") && lineEnter.append("g")
-                .attr("class", classAreas);
+            ["bar", "line", "bubble", "candlestick", "scatter"]
+                .filter(function (v) { return $$.hasType(v) || $$.hasTypeOf(capitalize(v)); })
+                .forEach(function (v) {
+                var isPointType = /^(bubble|scatter)$/.test(v);
+                var name = capitalize(isPointType ? "circle" : v);
+                var chartClass = $$.getChartClass(name, true);
+                var shapeClass = $$.getClass(isPointType ? "circles" : v + "s", true);
+                var shapeChart = main.select("." + CLASS["chart" + (name + "s")]);
+                if (isPointType) {
+                    var circle = shapeChart
+                        .selectAll("." + CLASS.circles)
+                        .data(targets.filter($$["is" + capitalize(v) + "Type"].bind($$)))
+                        .attr("class", shapeClass);
+                    circle.exit().remove();
+                    circle.enter().append("g")
+                        .attr("class", shapeClass);
+                }
+                else {
+                    var shapeUpdate = shapeChart
+                        .selectAll("." + CLASS["chart" + name])
+                        .attr("class", chartClass)
+                        .data(targets.filter($$["is" + name + "Type"].bind($$)));
+                    var shapeEnter = shapeUpdate.enter()
+                        .append("g")
+                        .style("opacity", "0")
+                        .attr("class", chartClass)
+                        .append("g")
+                        .attr("class", shapeClass);
+                    shapeUpdate.exit().remove();
+                    // Area
+                    v === "line" && $$.hasTypeOf("Area") &&
+                        shapeEnter.append("g").attr("class", $$.getClass("areas", true));
+                }
+            });
             // -- Brush --//
             main.selectAll("." + CLASS.brush + " rect")
                 .attr(config.axis_rotated ? "width" : "height", config.axis_rotated ? state.width2 : state.height2);
         }
-    },
-    /**
-     * Update the bar of the sub chart
-     * @param {object} durationForExit Transition duration
-     * @private
-     */
-    updateBarForSubchart: function (durationForExit) {
-        var $$ = this;
-        var subchart = $$.$el.subchart;
-        subchart.bar = subchart.main.selectAll("." + CLASS.bars).selectAll("." + CLASS.bar)
-            .data($$.barData.bind($$));
-        subchart.bar
-            .exit()
-            .transition()
-            .duration(durationForExit)
-            .style("opacity", "0")
-            .remove();
-        subchart.bar = subchart.bar
-            .enter()
-            .append("path")
-            .attr("class", $$.getClass("bar", true))
-            .style("stroke", "none")
-            .style("fill", $$.color)
-            .merge(subchart.bar)
-            .style("opacity", $$.initialOpacity.bind($$));
-    },
-    /**
-     * Redraw the bar of the subchart
-     * @param {string} drawBarOnSub path in subchart line
-     * @param {boolean} withTransition whether or not to transition
-     * @param {number} duration transition duration
-     * @private
-     */
-    redrawBarForSubchart: function (drawBarOnSub, withTransition, duration) {
-        var bar = this.$el.subchart.bar;
-        (withTransition ? bar.transition(getRandom()).duration(duration) : bar)
-            .attr("d", drawBarOnSub)
-            .style("opacity", "1");
-    },
-    /**
-     * Update the line of the sub chart
-     * @param {number} durationForExit Fade-out transition duration
-     * @private
-     */
-    updateLineForSubchart: function (durationForExit) {
-        var $$ = this;
-        var subchart = $$.$el.subchart;
-        subchart.line = subchart.main.selectAll("." + CLASS.lines)
-            .selectAll("." + CLASS.line)
-            .data($$.lineData.bind($$));
-        subchart.line
-            .exit()
-            .transition()
-            .duration(durationForExit)
-            .style("opacity", "0")
-            .remove();
-        subchart.line = subchart.line
-            .enter()
-            .append("path")
-            .attr("class", $$.getClass("line", true))
-            .style("stroke", $$.color)
-            .merge(subchart.line)
-            .style("opacity", $$.initialOpacity.bind($$));
-    },
-    /**
-     * Redraw the line of the subchart
-     * @private
-     * @param {string} drawLineOnSub path in subchart line
-     * @param {boolean} withTransition whether or not to transition
-     * @param {number} duration transition duration
-     */
-    redrawLineForSubchart: function (drawLineOnSub, withTransition, duration) {
-        var line = this.$el.subchart.line;
-        (withTransition ? line.transition(getRandom()).duration(duration) : line)
-            .attr("d", drawLineOnSub)
-            .style("opacity", "1");
-    },
-    /**
-     * Update the area of the sub chart
-     * @param {number} durationForExit Fade-out transition duration
-     * @private
-     */
-    updateAreaForSubchart: function (durationForExit) {
-        var $$ = this;
-        var subchart = $$.$el.subchart;
-        subchart.area = subchart.main.selectAll("." + CLASS.areas)
-            .selectAll("." + CLASS.area)
-            .data($$.lineData.bind($$));
-        subchart.area
-            .exit()
-            .transition()
-            .duration(durationForExit)
-            .style("opacity", "0")
-            .remove();
-        subchart.area = subchart.area
-            .enter()
-            .append("path")
-            .attr("class", $$.getClass("area", true))
-            .style("fill", $$.color)
-            .style("opacity", function () {
-            $$.state.orgAreaOpacity = select(this).style("opacity");
-            return "0";
-        })
-            .merge(subchart.area)
-            .style("opacity", "0");
-    },
-    /**
-     * Redraw the area of the subchart
-     * @private
-     * @param {string} drawAreaOnSub path in subchart line
-     * @param {boolean} withTransition whether or not to transition
-     * @param {number} duration transition duration
-     */
-    redrawAreaForSubchart: function (drawAreaOnSub, withTransition, duration) {
-        var area = this.$el.subchart.area;
-        (withTransition ? area.transition(getRandom()).duration(duration) : area)
-            .attr("d", drawAreaOnSub)
-            .style("fill", this.color)
-            .style("opacity", this.state.orgAreaOpacity);
     },
     /**
      * Redraw subchart.
@@ -18432,6 +18869,7 @@ var subchart = {
     redrawSubchart: function (withSubchart, duration, shape) {
         var $$ = this;
         var config = $$.config, main = $$.$el.subchart.main, state = $$.state;
+        var withTransition = !!duration;
         main.style("visibility", config.subchart_show ? "visible" : "hidden");
         // subchart
         if (config.subchart_show) {
@@ -18445,10 +18883,17 @@ var subchart = {
                 !brushEmpty($$) && $$.brush.update();
                 Object.keys(shape.type).forEach(function (v) {
                     var name = capitalize(v);
-                    var draw = $$["generateDraw" + name](shape.indices[v], true);
-                    $$["update" + name + "ForSubchart"](duration);
-                    $$["redraw" + name + "ForSubchart"](draw, duration, duration);
+                    var drawFn = $$["generateDraw" + name](shape.indices[v], true);
+                    // call shape's update & redraw method
+                    $$["update" + name](duration, true);
+                    $$["redraw" + name](drawFn, withTransition, true);
                 });
+                if ($$.hasType("bubble") || $$.hasType("scatter")) {
+                    var cx = shape.pos.cx;
+                    var cy = $$.updateCircleY(true);
+                    $$.updateCircle(true);
+                    $$.redrawCircle(cx, cy, withTransition, undefined, true);
+                }
             }
         }
     },
@@ -18720,6 +19165,9 @@ var zoom = {
     bindZoomOnEventRect: function (eventRects, type) {
         var $$ = this;
         var behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
+        // Since Chrome 89, wheel zoom not works properly
+        // Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
+        $$.$el.svg.on("wheel", function () { });
         eventRects
             .call(behaviour)
             .on("dblclick.zoom", null);
@@ -19111,6 +19559,7 @@ var selectionModule = function () {
 };
 var subchartModule = function () {
     extend(ChartInternal.prototype, subchart);
+    extend(Chart.prototype, apiSubchart);
     Options.setOptions([optSubchart]);
     return (subchartModule = function () { return true; })();
 };
@@ -19128,7 +19577,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 2.2.6
+ * @version 3.0.1
  */
 var bb = {
     /**
@@ -19138,7 +19587,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "2.2.6",
+    version: "3.0.1",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -19267,4 +19716,4 @@ var bb = {
 };
 
 export default bb;
-export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, donut, gauge, line, pie, radar, scatter, selectionModule as selection, spline, step, subchartModule as subchart, zoomModule as zoom };
+export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, candlestick, donut, gauge, line, pie, radar, scatter, selectionModule as selection, spline, step, subchartModule as subchart, zoomModule as zoom };
