@@ -250,6 +250,7 @@ function getPathBox(
  * @param {object} event Event object
  * @param {SVGElement|HTMLElement} element Target element
  * @returns {Array} [x, y] Coordinates x, y array
+ * @private
  */
 function getPointer(event, element?: Element): number[] {
 	const touches = event && (event.touches || (event.sourceEvent && event.sourceEvent.touches));
