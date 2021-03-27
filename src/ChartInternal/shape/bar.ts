@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import CLASS from "../../config/classes";
-import {getPointer, getRandom, getRectSegList, isNumber, isObjectType, isValue} from "../../module/util";
+import {getPointer, getRandom, getRectSegList, isNumber, isValue} from "../../module/util";
 
 export default {
 	initBar(): void {
@@ -43,74 +43,50 @@ export default {
 			.style("cursor", d => (isSelectable && isSelectable.bind($$.api)(d) ? "pointer" : null));
 	},
 
-	updateBar(durationForExit: number): void {
+	/**
+	 * Generate/Update elements
+	 * @param {number} durationForExit Transition duration for exit elements
+	 * @param {boolean} isSub Subchart draw
+	 * @private
+	 */
+	updateBar(durationForExit: number, isSub = false): void {
 		const $$ = this;
-		const {$el} = $$;
-		const barData = $$.barData.bind($$);
+		const $root = isSub ? $$.$el.subchart : $$.$el;
 		const classBar = $$.getClass("bar", true);
 		const initialOpacity = $$.initialOpacity.bind($$);
 
-		$el.bar = $el.main.selectAll(`.${CLASS.bars}`).selectAll(`.${CLASS.bar}`)
-			.data(barData);
+		const bar = $root.main.selectAll(`.${CLASS.bars}`)
+			.selectAll(`.${CLASS.bar}`)
+			.data($$.labelishData.bind($$));
 
-		$el.bar.exit().transition()
+		bar.exit().transition()
 			.duration(durationForExit)
 			.style("opacity", "0")
 			.remove();
 
-		$el.bar = $el.bar.enter().append("path")
+		$root.bar = bar.enter().append("path")
 			.attr("class", classBar)
 			.style("fill", $$.color)
-			.merge($el.bar)
+			.merge(bar)
 			.style("opacity", initialOpacity);
 	},
 
-	redrawBar(drawBar, withTransition?: boolean) {
-		const {bar} = this.$el;
+	/**
+	 * Redraw function
+	 * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+	 * @param {boolean} withTransition With or without transition
+	 * @param {boolean} isSub Subchart draw
+	 * @returns {Array}
+	 */
+	redrawBar(drawFn, withTransition?: boolean, isSub = false) {
+		const {bar} = (isSub ? this.$el.subchart : this.$el);
 
 		return [
 			(withTransition ? bar.transition(getRandom()) : bar)
-				.attr("d", drawBar)
+				.attr("d", drawFn)
 				.style("fill", this.color)
 				.style("opacity", "1")
 		];
-	},
-
-	getBarW(axis, barTargetsNum: number): number {
-		const $$ = this;
-		const {config, org, scale} = $$;
-		const maxDataCount = $$.getMaxDataCount();
-		const isGrouped = config.data_groups.length;
-
-		const tickInterval = scale.zoom && !$$.axis.isCategorized() ?
-			(org.xDomain.map(v => scale.zoom(v))
-				.reduce((a, c) => Math.abs(a) + c) / maxDataCount
-			) : axis.tickInterval(maxDataCount);
-
-		const getWidth = (id?: string) => {
-			const width = id ? config.bar_width[id] : config.bar_width;
-			const ratio = id ? width.ratio : config.bar_width_ratio;
-			const max = id ? width.max : config.bar_width_max;
-			const w = isNumber(width) ?
-				width : barTargetsNum ? (tickInterval * ratio) / barTargetsNum : 0;
-
-			return max && w > max ? max : w;
-		};
-
-		let result = getWidth();
-
-		if (!isGrouped && isObjectType(config.bar_width)) {
-			result = {_$width: result, _$total: []};
-
-			$$.filterTargetsToShow($$.data.targets).forEach(v => {
-				if (config.bar_width[v.id]) {
-					result[v.id] = getWidth(v.id);
-					result._$total.push(result[v.id] || result._$width);
-				}
-			});
-		}
-
-		return result;
 	},
 
 	getBars(i: number, id: string) {
@@ -191,7 +167,7 @@ export default {
 
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
 		const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
-		const barW = $$.getBarW(axis, barTargetsNum);
+		const barW = $$.getBarW("bar", axis, barTargetsNum);
 		const barX = $$.getShapeX(barW, barIndices, !!isSub);
 		const barY = $$.getShapeY(!!isSub);
 		const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);

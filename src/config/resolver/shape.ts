@@ -19,6 +19,7 @@ import {
 import shapeArc from "../../ChartInternal/shape/arc";
 import shapeArea from "../../ChartInternal/shape/area";
 import shapeBar from "../../ChartInternal/shape/bar";
+import shapeCandlestick from "../../ChartInternal/shape/candlestick";
 import shapeGauge from "../../ChartInternal/shape/gauge";
 import shapeBubble from "../../ChartInternal/shape/bubble";
 import shapeLine from "../../ChartInternal/shape/line";
@@ -30,6 +31,7 @@ import optPoint from "../Options/common/point";
 import optArea from "../Options/shape/area";
 import optBar from "../Options/shape/bar";
 import optBubble from "../Options/shape/bubble";
+import optCandlestick from "../Options/shape/candlestick";
 import optLine from "../Options/shape/line";
 import optScatter from "../Options/shape/scatter";
 import optSpline from "../Options/shape/spline";
@@ -48,6 +50,7 @@ export {
 	areaStep,
 	bar,
 	bubble,
+	candlestick,
 	donut,
 	gauge,
 	line,
@@ -126,6 +129,9 @@ let radar = (): string => (
 let bar = (): string => (extendAxis([shapeBar], optBar), (bar = () => TYPE.BAR)());
 let bubble = (): string => (
 	extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), (bubble = () => TYPE.BUBBLE)()
+);
+let candlestick = (): string => (
+	extendAxis([shapeCandlestick], [optCandlestick]), (candlestick = () => TYPE.CANDLESTICK)()
 );
 let scatter = (): string => (
 	extendAxis([shapePoint], [optPoint, optScatter]), (scatter = () => TYPE.SCATTER)()

@@ -59,41 +59,55 @@ export default {
 			$$.color(d);
 	},
 
-	updateArea(durationForExit: number): void {
+	/**
+	 * Generate/Update elements
+	 * @param {number} durationForExit Transition duration for exit elements
+	 * @param {boolean} isSub Subchart draw
+	 * @private
+	 */
+	updateArea(durationForExit: number, isSub = false): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
+		const $root = isSub ? $el.subchart : $el;
 
 		config.area_linearGradient && $$.updateAreaGradient();
 
-		$el.area = $el.main.selectAll(`.${CLASS.areas}`)
+		const area = $root.main.selectAll(`.${CLASS.areas}`)
 			.selectAll(`.${CLASS.area}`)
 			.data($$.lineData.bind($$));
 
-		$el.area.exit().transition()
+		area.exit().transition()
 			.duration(durationForExit)
 			.style("opacity", "0")
 			.remove();
 
-		$el.area = $el.area.enter().append("path")
+		$root.area = area.enter().append("path")
 			.attr("class", $$.getClass("area", true))
 			.style("fill", $$.updateAreaColor.bind($$))
 			.style("opacity", function() {
 				state.orgAreaOpacity = d3Select(this).style("opacity");
 				return "0";
 			})
-			.merge($el.area);
+			.merge(area);
 
-		$el.area
-			.style("opacity", state.orgAreaOpacity);
+		area.style("opacity", state.orgAreaOpacity);
 	},
 
-	redrawArea(drawArea, withTransition?: boolean) {
+	/**
+	 * Redraw function
+	 * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+	 * @param {boolean} withTransition With or without transition
+	 * @param {boolean} isSub Subchart draw
+	 * @returns {Array}
+	 */
+	redrawArea(drawFn, withTransition?: boolean, isSub = false) {
 		const $$ = this;
+		const {area} = (isSub ? this.$el.subchart : this.$el);
 		const {orgAreaOpacity} = $$.state;
 
 		return [
-			(withTransition ? $$.$el.area.transition(getRandom()) : $$.$el.area)
-				.attr("d", drawArea)
+			(withTransition ? area.transition(getRandom()) : area)
+				.attr("d", drawFn)
 				.style("fill", $$.updateAreaColor.bind($$))
 				.style("opacity", d => String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity))
 		];
@@ -120,13 +134,13 @@ export default {
 			getPoints(d, i)[0][1] :
 			yScale(d.id, isSub)(
 				$$.isAreaRangeType(d) ?
-					$$.getAreaRangeData(d, "high") : $$.getShapeYMin(d.id)
+					$$.getRangedData(d, "high") : $$.getShapeYMin(d.id)
 			));
 		const value1 = (d, i) => ($$.isGrouped(d.id) ?
 			getPoints(d, i)[1][1] :
 			yScale(d.id, isSub)(
 				$$.isAreaRangeType(d) ?
-					$$.getAreaRangeData(d, "low") : d.value
+					$$.getRangedData(d, "low") : d.value
 			));
 
 		return d => {

@@ -5,7 +5,7 @@
 import {DataItem} from "../../../types/types";
 import {extend, isUndefined, isArray} from "../../module/util";
 
-type dataParam = {x: number, value: number, id: string, index: number}[];
+type DataParam = {x: number, value: number, id: string, index: number}[];
 
 /**
  * Get data loaded in the chart.
@@ -173,7 +173,7 @@ extend(data, {
 	 * chart.data.min();
 	 * // --> [{x: 0, value: 30, id: "data1", index: 0}, ...]
 	 */
-	min: function(): dataParam {
+	min: function(): DataParam {
 		return this.internal.getMinMaxData().min;
 	},
 
@@ -188,7 +188,7 @@ extend(data, {
 	 * chart.data.max();
 	 * // --> [{x: 3, value: 400, id: "data1", index: 3}, ...]
 	 */
-	max: function(): dataParam {
+	max: function(): DataParam {
 		return this.internal.getMinMaxData().max;
 	}
 });

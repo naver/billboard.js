@@ -26,6 +26,15 @@ describe("ESM build", function() {
         ]
     ];
 
+    const candlestickData = [
+        ["data1",
+            [1327, 1369, 1289, 1348],
+            [1348, 1371, 1314, 1320],
+            [1320, 1412, 1314, 1394],
+            [1394, 1458, 1393, 1453]
+        ]
+    ];
+
     let args: any = {
         data: {
             columns: data
@@ -40,14 +49,22 @@ describe("ESM build", function() {
 
                 // initialize type
                 args.data.type = bb[v]();
-                
+
                 if (/(area|line|step)/.test(v)) {
-                    args.data.columns = /Range/.test(v) ? rangeData: data;
+                    args.data.columns = data;
+
+                    if (/Range/.test(v)) {
+                        args.data.columns = rangeData;
+                    }
 
                     chart = bb.bb.generate(args);
                     path = chart.$.line.lines.attr("d");
 
                 } else {
+                    if (v === "candlestick") {
+                        args.data.columns = candlestickData;
+                    }
+
                     chart = bb.bb.generate(args);
 
                     if (v === "bar") {
@@ -62,6 +79,12 @@ describe("ESM build", function() {
                         const dataLength: any = data.reduce((a: any, r: any) => a.length + r.length);
 
                         expect(chart.$.circles.nodes().length).to.be.equal(dataLength - 2);
+
+                    } else if (v === "candlestick") {
+                        chart.$.candlestick.each(function() {
+                            expect(this.querySelector("path")).to.not.be.null;
+                            expect(this.querySelector("line")).to.not.be.null;
+                        });
 
                     } else {
                         // donut, gauge, pie

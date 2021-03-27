@@ -4,7 +4,17 @@
  */
 import {namespaces as d3Namespaces} from "d3-selection";
 import {document} from "../../module/browser";
-import {isFunction, toArray, getCssRules} from "../../module/util";
+import {isFunction, toArray, getCssRules, mergeObj} from "../../module/util";
+
+type Size = {
+	width: number;
+	height: number;
+};
+
+type ExportOption = Size & {
+	mimeType: string;
+	preserveAspectRatio: boolean;
+}
 
 /**
  * Encode to base64
@@ -21,11 +31,13 @@ const b64EncodeUnicode = (str: string): string => btoa(
 /**
  * Convert svg node to data url
  * @param {HTMLElement} node target node
- * @param {object} size object containing {width, height}
+ * @param {object} option object containing {width, height, preserveAspectRatio}
+ * @param {object} orgSize object containing {width, height}
  * @returns {string}
  * @private
  */
-function nodeToSvgDataUrl(node, size) {
+function nodeToSvgDataUrl(node, option: ExportOption, orgSize: Size) {
+	const {width, height} = option || orgSize;
 	const serializer = new XMLSerializer();
 	const clone = node.cloneNode(true);
 	const cssText = getCssRules(toArray(document.styleSheets))
@@ -45,7 +57,9 @@ function nodeToSvgDataUrl(node, size) {
 
 	// foreignObject not supported in IE11 and below
 	// https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
-	const dataStr = `<svg xmlns="${d3Namespaces.svg}" width="${size.width}" height="${size.height}">
+	const dataStr = `<svg xmlns="${d3Namespaces.svg}" width="${width}" height="${height}" 
+		viewBox="0 0 ${orgSize.width} ${orgSize.height}" 
+		preserveAspectRatio="${option && option.preserveAspectRatio === false ? "none" : "xMinYMid meet"}">
 			<foreignObject width="100%" height="100%">
 				${styleXml}
 				${nodeXml.replace(/(url\()[^#]+/g, "$1")}
@@ -64,7 +78,11 @@ export default {
 	 * @function export
 	 * @instance
 	 * @memberof Chart
-	 * @param {string} [mimeType=image/png] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
+	 * @param {object} option Export option
+	 * @param {string} [option.mimeType="image/png"] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
+	 * @param {number} [option.width={currentWidth}] width
+	 * @param {number} [option.height={currentHeigth}] height
+	 * @param {boolean} [option.preserveAspectRatio=true] Preserve aspect ratio on given size
 	 * @param {Function} [callback] The callback to be invoked when export is ready.
 	 * @returns {string} dataURI
 	 * @example
@@ -72,7 +90,7 @@ export default {
 	 *  // --> "data:image/svg+xml;base64,PHN..."
 	 *
 	 *  // Initialize the download automatically
-	 *  chart.export("image/png", dataUrl => {
+	 *  chart.export({mimeType: "image/png"}, dataUrl => {
 	 *     const link = document.createElement("a");
 	 *
 	 *     link.download = `${Date.now()}.png`;
@@ -81,12 +99,30 @@ export default {
 	 *
 	 *     document.body.appendChild(link);
 	 *  });
+	 *
+	 *  // Resize the exported image
+	 *  chart.export(
+	 *    {
+	 *      width: 800,
+	 *      height: 600,
+	 *      preserveAspectRatio: false,
+	 *      mimeType: "image/png"
+	 *    },
+	 *    dataUrl => { ... }
+	 *  );
 	 */
-	export(mimeType?: string, callback?: (dataUrl: string) => void): string {
+	export(option?: ExportOption, callback?: (dataUrl: string) => void): string {
 		const $$ = this.internal;
 		const {state, $el: {chart}} = $$;
 		const {width, height} = state.current;
-		const svgDataUrl = nodeToSvgDataUrl(chart.node(), {width, height});
+		const opt = mergeObj({
+			width,
+			height,
+			preserveAspectRatio: true,
+			mimeType: "image/png"
+		}, option) as ExportOption;
+
+		const svgDataUrl = nodeToSvgDataUrl(chart.node(), opt, {width, height});
 
 		if (callback && isFunction(callback)) {
 			const img = new Image();
@@ -96,11 +132,11 @@ export default {
 				const canvas = document.createElement("canvas");
 				const ctx = canvas.getContext("2d");
 
-				canvas.width = width;
-				canvas.height = height;
+				canvas.width = opt.width || width;
+				canvas.height = opt.height || height;
 				ctx.drawImage(img, 0, 0);
 
-				callback.bind(this)(canvas.toDataURL(mimeType));
+				callback.bind(this)(canvas.toDataURL(opt.mimeType));
 			};
 
 			img.src = svgDataUrl;

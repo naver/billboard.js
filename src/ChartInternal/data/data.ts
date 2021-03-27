@@ -4,6 +4,7 @@
  */
 import CLASS from "../../config/classes";
 import {KEY} from "../../module/Cache";
+import {IData} from "./IData";
 import {
 	findIndex,
 	getUnique,
@@ -23,7 +24,6 @@ import {
 	parseDate,
 	sortValue
 } from "../../module/util";
-import {IData} from "./IData";
 
 export default {
 	isX(key) {
@@ -235,7 +235,7 @@ export default {
 		// will take the 'mid' as the base value
 		if (value && hasAxis) {
 			if ($$.isAreaRangeType(data)) {
-				value = $$.getAreaRangeData(data, "mid");
+				value = $$.getRangedData(data, "mid");
 			} else if ($$.isBubbleZType(data)) {
 				value = $$.getBubbleZData(value, "y");
 			}
@@ -491,23 +491,30 @@ export default {
 		targets.forEach(t => {
 			const data: any[] = [];
 
-			t.values.forEach(v => {
-				const value = v.value;
+			t.values
+				.filter(v => isValue(v.value))
+				.forEach(v => {
+					let {value} = v;
 
-				if (isArray(value)) {
-					data.push(...value);
-				} else if (isObject(value) && "high" in value) {
-					data.push(...Object.values(value));
-				} else if ($$.isBubbleZType(v)) {
-					data.push(hasAxis && $$.getBubbleZData(value, "y"));
-				} else {
-					if (isMultipleX) {
-						data[$$.getIndexByX(v.x, xs)] = value;
-					} else {
-						data.push(value);
+					// exclude 'volume' value to correct mis domain calculation
+					if ($$.isCandlestickType(v)) {
+						value = isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close];
 					}
-				}
-			});
+
+					if (isArray(value)) {
+						data.push(...value);
+					} else if (isObject(value) && "high" in value) {
+						data.push(...Object.values(value));
+					} else if ($$.isBubbleZType(v)) {
+						data.push(hasAxis && $$.getBubbleZData(value, "y"));
+					} else {
+						if (isMultipleX) {
+							data[$$.getIndexByX(v.x, xs)] = value;
+						} else {
+							data.push(value);
+						}
+					}
+				});
 
 			ys[t.id] = data;
 		});
@@ -834,16 +841,22 @@ export default {
 		return current;
 	},
 
-	getAreaRangeData(d, type) {
-		const value = d.value;
+	getRangedData(d, key = "", type = "areaRange"): number | undefined {
+		const value = d?.value;
 
 		if (isArray(value)) {
-			const index = ["high", "mid", "low"].indexOf(type);
+			// @ts-ignore
+			const index = {
+				areaRange: ["high", "mid", "low"],
+				candlestick: ["open", "high", "low", "close", "volume"]
+			}[type].indexOf(key);
 
-			return index === -1 ? null : value[index];
+			return index >= 0 && value ? value[index] : undefined;
+		} else if (value) {
+			return value[key];
 		}
 
-		return value[type];
+		return value;
 	},
 
 	/**

@@ -40,6 +40,7 @@ export function areaSplineRange(): "area-spline-range";
 export function areaStep(): "area-step";
 export function bar(): "bar";
 export function bubble(): "bubble";
+export function candlestick(): "candlestick";
 export function donut(): "donut";
 export function gauge(): "gauge";
 export function line(): "line";

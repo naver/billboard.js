@@ -9,7 +9,7 @@ import {
 	brushSelection as d3BrushSelection
 } from "d3-brush";
 import CLASS from "../../config/classes";
-import {brushEmpty, capitalize, isArray, isFunction, getRandom, parseDate} from "../../module/util";
+import {brushEmpty, capitalize, isArray, isFunction, parseDate} from "../../module/util";
 
 export default {
 	/**
@@ -132,15 +132,21 @@ export default {
 			.attr("clip-path", clipPath)
 			.attr("class", CLASS.chart);
 
-		// Define g for bar chart area
-		$$.hasType("bar") && main.select(`.${CLASS.chart}`)
-			.append("g")
-			.attr("class", CLASS.chartBars);
+		// Define g for chart types area
+		["bar", "line", "bubble", "candlestick", "scatter"].forEach(v => {
+			const type = capitalize(/^(bubble|scatter)$/.test(v) ? "circle" : v);
 
-		// Define g for line chart area
-		main.select(`.${CLASS.chart}`)
-			.append("g")
-			.attr("class", CLASS.chartLines);
+			if ($$.hasType(v) || $$.hasTypeOf(type)) {
+				const chart = main.select(`.${CLASS.chart}`);
+				const chartClassName = CLASS[`chart${type}s`];
+
+				if (chart.select(`.${chartClassName}`).empty()) {
+					chart
+						.append("g")
+						.attr("class", chartClassName);
+				}
+			}
+		});
 
 		// Add extent rect for Brush
 		main.append("g")
@@ -165,187 +171,52 @@ export default {
 	updateTargetsForSubchart(targets): void {
 		const $$ = this;
 		const {config, state, $el: {subchart: {main}}} = $$;
-		const classChartBar = $$.getChartClass("Bar");
-		const classBars = $$.getClass("bars", true);
-		const classChartLine = $$.getChartClass("Line");
-		const classLines = $$.getClass("lines", true);
-		const classAreas = $$.getClass("areas", true);
 
 		if (config.subchart_show) {
-			// -- Bar --//
-			const barUpdate = main.select(`.${CLASS.chartBars}`)
-				.selectAll(`.${CLASS.chartBar}`)
-				.data(targets)
-				.attr("class", classChartBar);
-			const barEnter = barUpdate.enter()
-				.append("g")
-				.style("opacity", "0")
-				.attr("class", classChartBar)
-				.merge(barUpdate);
+			["bar", "line", "bubble", "candlestick", "scatter"]
+				.filter(v => $$.hasType(v) || $$.hasTypeOf(capitalize(v)))
+				.forEach(v => {
+					const isPointType = /^(bubble|scatter)$/.test(v);
+					const name = capitalize(isPointType ? "circle" : v);
+					const chartClass = $$.getChartClass(name, true);
+					const shapeClass = $$.getClass(isPointType ? "circles" : `${v}s`, true);
 
-			// Bars for each data
-			barEnter.append("g")
-				.attr("class", classBars);
+					const shapeChart = main.select(`.${CLASS[`chart${`${name}s`}`]}`);
 
-			// -- Line --//
-			const lineUpdate = main.select(`.${CLASS.chartLines}`)
-				.selectAll(`.${CLASS.chartLine}`)
-				.data(targets)
-				.attr("class", classChartLine);
-			const lineEnter = lineUpdate.enter().append("g")
-				.style("opacity", "0")
-				.attr("class", classChartLine)
-				.merge(lineUpdate);
+					if (isPointType) {
+						const circle = shapeChart
+							.selectAll(`.${CLASS.circles}`)
+							.data(targets.filter($$[`is${capitalize(v)}Type`].bind($$)))
+							.attr("class", shapeClass);
 
-			// Lines for each data
-			lineEnter.append("g")
-				.attr("class", classLines);
+						circle.exit().remove();
+						circle.enter().append("g")
+							.attr("class", shapeClass);
+					} else {
+						const shapeUpdate = shapeChart
+							.selectAll(`.${CLASS[`chart${name}`]}`)
+							.attr("class", chartClass)
+							.data(targets.filter($$[`is${name}Type`].bind($$)));
 
-			// Area
-			$$.hasTypeOf("Area") && lineEnter.append("g")
-				.attr("class", classAreas);
+						const shapeEnter = shapeUpdate.enter()
+							.append("g")
+							.style("opacity", "0")
+							.attr("class", chartClass)
+							.append("g")
+							.attr("class", shapeClass);
+
+						shapeUpdate.exit().remove();
+
+						// Area
+						v === "line" && $$.hasTypeOf("Area") &&
+							shapeEnter.append("g").attr("class", $$.getClass("areas", true));
+					}
+				});
 
 			// -- Brush --//
 			main.selectAll(`.${CLASS.brush} rect`)
 				.attr(config.axis_rotated ? "width" : "height", config.axis_rotated ? state.width2 : state.height2);
 		}
-	},
-
-	/**
-	 * Update the bar of the sub chart
-	 * @param {object} durationForExit Transition duration
-	 * @private
-	 */
-	updateBarForSubchart(durationForExit): void {
-		const $$ = this;
-		const {$el: {subchart}} = $$;
-
-		subchart.bar = subchart.main.selectAll(`.${CLASS.bars}`).selectAll(`.${CLASS.bar}`)
-			.data($$.barData.bind($$));
-
-		subchart.bar
-			.exit()
-			.transition()
-			.duration(durationForExit)
-			.style("opacity", "0")
-			.remove();
-
-		subchart.bar = subchart.bar
-			.enter()
-			.append("path")
-			.attr("class", $$.getClass("bar", true))
-			.style("stroke", "none")
-			.style("fill", $$.color)
-			.merge(subchart.bar)
-			.style("opacity", $$.initialOpacity.bind($$));
-	},
-
-	/**
-	 * Redraw the bar of the subchart
-	 * @param {string} drawBarOnSub path in subchart line
-	 * @param {boolean} withTransition whether or not to transition
-	 * @param {number} duration transition duration
-	 * @private
-	 */
-	redrawBarForSubchart(drawBarOnSub: string, withTransition: boolean, duration: number): void {
-		const {bar} = this.$el.subchart;
-
-		(withTransition ? bar.transition(getRandom()).duration(duration) : bar)
-			.attr("d", drawBarOnSub)
-			.style("opacity", "1");
-	},
-
-	/**
-	 * Update the line of the sub chart
-	 * @param {number} durationForExit Fade-out transition duration
-	 * @private
-	 */
-	updateLineForSubchart(durationForExit): void {
-		const $$ = this;
-		const {$el: {subchart}} = $$;
-
-		subchart.line = subchart.main.selectAll(`.${CLASS.lines}`)
-			.selectAll(`.${CLASS.line}`)
-			.data($$.lineData.bind($$));
-
-		subchart.line
-			.exit()
-			.transition()
-			.duration(durationForExit)
-			.style("opacity", "0")
-			.remove();
-
-		subchart.line = subchart.line
-			.enter()
-			.append("path")
-			.attr("class", $$.getClass("line", true))
-			.style("stroke", $$.color)
-			.merge(subchart.line)
-			.style("opacity", $$.initialOpacity.bind($$));
-	},
-
-	/**
-	 * Redraw the line of the subchart
-	 * @private
-	 * @param {string} drawLineOnSub path in subchart line
-	 * @param {boolean} withTransition whether or not to transition
-	 * @param {number} duration transition duration
-	 */
-	redrawLineForSubchart(drawLineOnSub: string, withTransition: boolean, duration: number): void {
-		const {line} = this.$el.subchart;
-
-		(withTransition ? line.transition(getRandom()).duration(duration) : line)
-			.attr("d", drawLineOnSub)
-			.style("opacity", "1");
-	},
-
-	/**
-	 * Update the area of the sub chart
-	 * @param {number} durationForExit Fade-out transition duration
-	 * @private
-	 */
-	updateAreaForSubchart(durationForExit): void {
-		const $$ = this;
-		const {$el: {subchart}} = $$;
-
-		subchart.area = subchart.main.selectAll(`.${CLASS.areas}`)
-			.selectAll(`.${CLASS.area}`)
-			.data($$.lineData.bind($$));
-
-		subchart.area
-			.exit()
-			.transition()
-			.duration(durationForExit)
-			.style("opacity", "0")
-			.remove();
-
-		subchart.area = subchart.area
-			.enter()
-			.append("path")
-			.attr("class", $$.getClass("area", true))
-			.style("fill", $$.color)
-			.style("opacity", function() {
-				$$.state.orgAreaOpacity = d3Select(this).style("opacity");
-				return "0";
-			})
-			.merge(subchart.area)
-			.style("opacity", "0");
-	},
-
-	/**
-	 * Redraw the area of the subchart
-	 * @private
-	 * @param {string} drawAreaOnSub path in subchart line
-	 * @param {boolean} withTransition whether or not to transition
-	 * @param {number} duration transition duration
-	 */
-	redrawAreaForSubchart(drawAreaOnSub: string, withTransition: boolean, duration: number): void {
-		const {area} = this.$el.subchart;
-
-		(withTransition ? area.transition(getRandom()).duration(duration) : area)
-			.attr("d", drawAreaOnSub)
-			.style("fill", this.color)
-			.style("opacity", this.state.orgAreaOpacity);
 	},
 
 	/**
@@ -358,6 +229,7 @@ export default {
 	redrawSubchart(withSubchart: boolean, duration: number, shape): void {
 		const $$ = this;
 		const {config, $el: {subchart: {main}}, state} = $$;
+		const withTransition = !!duration;
 
 		main.style("visibility", config.subchart_show ? "visible" : "hidden");
 
@@ -375,11 +247,20 @@ export default {
 
 				Object.keys(shape.type).forEach(v => {
 					const name = capitalize(v);
-					const draw = $$[`generateDraw${name}`](shape.indices[v], true);
+					const drawFn = $$[`generateDraw${name}`](shape.indices[v], true);
 
-					$$[`update${name}ForSubchart`](duration);
-					$$[`redraw${name}ForSubchart`](draw, duration, duration);
+					// call shape's update & redraw method
+					$$[`update${name}`](duration, true);
+					$$[`redraw${name}`](drawFn, withTransition, true);
 				});
+
+				if ($$.hasType("bubble") || $$.hasType("scatter")) {
+					const {cx} = shape.pos;
+					const cy = $$.updateCircleY(true);
+
+					$$.updateCircle(true);
+					$$.redrawCircle(cx, cy, withTransition, undefined, true);
+				}
 			}
 		}
 	},

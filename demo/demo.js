@@ -190,6 +190,130 @@ var demos = {
 				}
 			}
 		},
+		CandlestickChart: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 
+								// open, high, low, close, volume (optional)
+								[1327,1369,1289,1348],
+								[1348,1371,1314,1320],
+								[1320,1412,1314,1394],
+								[1394,1458,1393,1453],
+								[1453,1501,1448,1500],
+								[1500,1510,1492,1496],
+								[1496,1496,1448,1448],
+								[1448,1490,1433,1490],
+								[1490,1544,1490,1537],
+								[1537,1563,1534,1544],
+								[1544,1550,1511,1525],
+								[1525,1609,1517,1604],
+								[1604,1614,1585,1592],
+								[1592,1632,1586,1620],
+								[1620,1633,1609,1622],
+								[1622,1697,1620,1687],
+								[1687,1691,1624,1648],
+								[1648,1689,1640,1671],
+								[1671,1702,1671,1695],
+								[1695,1727,1689,1724],
+								[1724,1733,1691,1696],
+								[1696,1733,1696,1731],
+								[1731,1756,1716,1748],
+								[1748,1769,1734,1762],
+								[1762,1792,1752,1778],
+								[1778,1783,1763,1769],
+								[1769,1791,1740,1755],
+								[1755,1755,1711,1725],
+								[1725,1739,1683,1701],
+								[1701,1731,1694,1730],
+								[1730,1739,1703,1715],
+								[1715,1745,1710,1731],
+								[1731,1732,1643,1643],
+								[1643,1662,1608,1615],
+								[1615,1667,1615,1665],
+								[1665,1689,1663,1671],
+								[1671,1671,1587,1588],
+								[1588,1599,1521,1533],
+								[1533,1554,1476,1490],
+								[1490,1494,1432,1443]
+							]
+						],
+						type: "candlestick",
+						colors: {
+							data1: "green"
+						},
+						labels: true
+					},
+					candlestick: {
+						color: {
+							down: "red"
+						},
+						width: {
+							ratio: 0.5
+						}
+					},
+					axis: {
+						x: {
+							padding: {
+								left: 1,
+								right: 1
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "2021-02-20", "2021-02-21"],
+							["data1", 
+								// open, high, low, close, volume (optional)
+								{open: 1300, high: 1369, low: 1200, close: 1339, volume: 100},
+								{open: 1348, high: 1371, low: 1271, close: 1320},
+							],
+							["data2",
+								[1000, 1100, 850, 870],
+								[870, 1250, 830, 1200, 50]
+							],
+							["data3", 1234, 1111]
+						],
+						types: {
+							data1: "candlestick",
+							data2: "candlestick",
+							data3: "step"
+						},
+						labels: true
+					},
+					candlestick: {
+						width: {
+							data1: 30,
+							data2: 70
+						},
+						color: {
+							down: {
+								data1: "red",
+								data2: "cyan"
+							}
+						}
+					},
+					axis: {
+						x: {
+							type: "timeseries",
+							tick: {
+								format: "%Y-%m-%d"
+							},
+							padding: {
+								left: 1000*60*60*12,
+								right: 1000*60*60*12
+							}
+						}
+					}
+				}
+			}
+		],
 		CombinationChart: {
 			options: {
 				data: {
@@ -4675,9 +4799,13 @@ d3.select(".chart_area")
 			options: {
 				data: {
 					columns: [
-						["sample", 30, 200, 100, 400, 150, 250]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
 					],
-					type: "line"
+					types: {
+						data1: "bar",
+						data2: "area"
+					}
 				}
 			},
 			func: function(chart) {
@@ -4690,12 +4818,35 @@ d3.select(".chart_area")
 							.insertAdjacentElement("afterend", exported);
 
 						// Call after the chart finished rendering
-						chart.export("image/png", function(dataUrl) {
+						// (1&rpar; Default option
+						chart.export(null, function(dataUrl) {
 							// append an image element
-							var img = document.createElement("img");
+							var img = document.getElementById("exported");
+							
+							if (!img) {
+								img = document.createElement("img");
+
+								img.id = "exported";
+								exported.appendChild(img);
+							}
 
 							img.src = dataUrl;
-							exported.appendChild(img);
+						});
+
+						// (2&rpar; Specify exported image size
+						chart.export({width: 500, height:100, preserveAspectRatio: false}, function(dataUrl) {
+							// append an image element
+							// append an image element
+							var img = document.getElementById("exported2");
+							
+							if (!img) {
+								img = document.createElement("img");
+
+								img.id = "exported2";
+								exported.appendChild(img);
+							}
+
+							img.src = dataUrl;
 						});
 					}, 500)
 				]

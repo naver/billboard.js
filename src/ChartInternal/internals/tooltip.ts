@@ -2,11 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	select as d3Select,
-	mouse as d3Mouse,
-	event as d3Event
-} from "d3-selection";
+import {select as d3Select} from "d3-selection";
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
 import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
@@ -196,10 +192,16 @@ export default {
 
 			if ($$.isAreaRangeType(row)) {
 				const [high, low] = ["high", "low"].map(v => sanitise(
-					valueFormat($$.getAreaRangeData(row, v), ...param)
+					valueFormat($$.getRangedData(row, v), ...param)
 				));
 
 				value = `<b>Mid:</b> ${value} <b>High:</b> ${high} <b>Low:</b> ${low}`;
+			} else if ($$.isCandlestickType(row)) {
+				const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"].map(v => sanitise(
+					valueFormat($$.getRangedData(row, v, "candlestick"), ...param)
+				));
+
+				value = `<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${volume ? ` <b>Volume:</b> ${volume}` : ""}`;
 			}
 
 			if (value !== undefined) {
@@ -266,7 +268,6 @@ export default {
 		const {width, height, current, isLegendRight, inputType, event} = state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const svgLeft = $$.getSvgLeft(true);
-		let [x, y] = d3Mouse(element);
 		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
 		const chartLeft = $$.getCurrentPaddingLeft(true);
 		const size = 20;
@@ -437,11 +438,11 @@ export default {
 	 */
 	_handleLinkedCharts(show: boolean, index: number): void {
 		const $$ = this;
-		const {charts, config} = $$;
+		const {charts, config, state: {event}} = $$;
 
 		// Prevent propagation among instances if isn't instantiated from the user's event
 		// https://github.com/naver/billboard.js/issues/1979
-		if (d3Event && d3Event.isTrusted && config.tooltip_linked && charts.length > 1) {
+		if (event && event.isTrusted && config.tooltip_linked && charts.length > 1) {
 			const linkedName = config.tooltip_linked_name;
 
 			charts

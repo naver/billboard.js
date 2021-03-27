@@ -64,43 +64,64 @@ export default {
 	updateText(durationForExit): void {
 		const $$ = this;
 		const {config, $el} = $$;
-		const dataFn = $$.labelishData.bind($$);
 		const classText = $$.getClass("text", "index");
 
-		$el.text = $el.main.selectAll(`.${CLASS.texts}`).selectAll(`.${CLASS.text}`)
-			.data(d => ($$.isRadarType(d) ? d.values : dataFn(d)));
+		const text = $el.main.selectAll(`.${CLASS.texts}`)
+			.selectAll(`.${CLASS.text}`)
+			.data($$.labelishData.bind($$));
 
-		$el.text.exit()
+		text.exit()
 			.transition()
 			.duration(durationForExit)
 			.style("fill-opacity", "0")
 			.remove();
 
-		$el.text = $el.text.enter()
+		$el.text = text.enter()
 			.append("text")
-			.merge($$.$el.text)
+			.merge(text)
 			.attr("class", classText)
-			.attr("text-anchor", d => (config.axis_rotated ? (d.value < 0 ? "end" : "start") : "middle"))
+			.attr("text-anchor", d => {
+				// when value is negative or
+				let isEndAnchor = d.value < 0;
+
+				if ($$.isCandlestickType(d)) {
+					const data = $$.getCandlestickData(d);
+
+					isEndAnchor = data && !data._isUp;
+				}
+
+				return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
+			})
 			.style("fill", $$.updateTextColor.bind($$))
 			.style("fill-opacity", "0")
-			.call(selection => {
-				selection.each(function(d, i, j) {
-					let value = $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value;
+			.each(function(d, i, j) {
+				const node = d3Select(this);
+				let {value} = d;
 
-					value = $$.dataLabelFormat(d.id)(value, d.id, i, j);
+				if ($$.isBubbleZType(d)) {
+					value = $$.getBubbleZData(value, "z");
+				} else if ($$.isCandlestickType(d)) {
+					const data = $$.getCandlestickData(d);
 
-					if (isNumber(value)) {
-						this.textContent = value;
-					} else {
-						setTextValue(d3Select(this), value);
+					if (data) {
+						value = data.close;
 					}
-				});
+				}
+
+				value = $$.dataLabelFormat(d.id)(value, d.id, i, j);
+
+				if (isNumber(value)) {
+					this.textContent = value;
+				} else {
+					setTextValue(node, value);
+				}
 			});
 	},
 
 	updateTextColor(d): null | object | string {
 		const $$ = this;
-		const labelColors = $$.config.data_labels_colors;
+		const {config} = $$;
+		const labelColors = config.data_labels_colors;
 		const defaultColor = $$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d);
 		let color;
 
@@ -112,6 +133,16 @@ export default {
 			color = labelColors[id];
 		} else if (isFunction(labelColors)) {
 			color = labelColors.bind($$.api)(defaultColor, d);
+		}
+
+		if ($$.isCandlestickType(d) && !isFunction(labelColors)) {
+			const value = $$.getCandlestickData(d);
+
+			if (value && !value._isUp) {
+				const downColor = config.candlestick_color_down;
+
+				color = isObject(downColor) ? downColor[d.id] : downColor;
+			}
 		}
 
 		return color || defaultColor;
@@ -126,35 +157,28 @@ export default {
 	 * @returns {Array}
 	 * @private
 	 */
-	redrawText(x, y, forFlow?: boolean, withTransition?: boolean): boolean {
+	redrawText(x, y, forFlow?: boolean, withTransition?: boolean): true {
 		const $$ = this;
-		const t: any = getRandom();
-		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
+		const t = <string>getRandom(true);
 
-		$$.$el.text.each(function(d, index: number) {
-			const text = d3Select(this);
+		$$.$el.text
+			.style("fill", $$.updateTextColor.bind($$))
+			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
+			.each(function(d, i) {
+				// do not apply transition for newly added text elements
+				const node = withTransition && this.getAttribute("x") ?
+					d3Select(this).transition(t) : d3Select(this);
 
-			// do not apply transition for newly added text elements
-			(withTransition && text.attr("x") ? text.transition(t) : text)
-				.call(selection => {
-					selection.each(function(d) {
-						d3Select(this)
-							.style("fill", $$.updateTextColor.bind($$))
-							.style("fill-opacity", opacityForText);
+				const posX = x.bind(this)(d, i);
+				const posY = y.bind(this)(d, i);
 
-						const posX = x.bind(this)(d, index);
-						const posY = y.bind(this)(d, index);
-
-						// when is multiline
-						if (this.childElementCount) {
-							this.setAttribute("transform", `translate(${posX} ${posY})`);
-						} else {
-							this.setAttribute("x", posX);
-							this.setAttribute("y", posY);
-						}
-					});
-				});
-		});
+				// when is multiline
+				if (this.childElementCount) {
+					node.attr("transform", `translate(${posX} ${posY})`);
+				} else {
+					node.attr("x", posX).attr("y", posY);
+				}
+			});
 
 		// need to return 'true' as of being pushed to the redraw list
 		// ref: getRedrawList()
@@ -219,6 +243,7 @@ export default {
 		return function(d, i) {
 			const type = ($$.isAreaType(d) && "area") ||
 				($$.isBarType(d) && "bar") ||
+				($$.isCandlestickType(d) && "candlestick") ||
 				($$.isRadarType(d) && "radar") || "line";
 
 			return getter.call($$, points[type](d, i), d, this);
@@ -289,15 +314,26 @@ export default {
 		const $$ = this;
 		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
-		let xPos;
-		let padding;
+		let xPos = points[0][0];
 
-		if (isRotated) {
-			padding = $$.isBarType(d) ? 4 : 6;
-			xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1);
+
+		if ($$.hasType("candlestick")) {
+			if (isRotated) {
+				xPos = $$.getCandlestickData(d)._isUp ?
+					points[2][2] + 4 : points[2][1] - 4;
+			} else {
+				xPos += (points[1][0] - xPos) / 2;
+			}
 		} else {
-			xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : points[0][0];
+			if (isRotated) {
+				const padding = $$.isBarType(d) ? 4 : 6;
+
+				xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1);
+			} else {
+				xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
+			}
 		}
+
 		// show labels regardless of the domain if value is null
 		if (d.value === null) {
 			if (xPos > state.width) {
@@ -330,30 +366,44 @@ export default {
 		const isRotated = config.axis_rotated;
 		const r = config.point_r;
 		const rect = getBoundingRect(textElement);
+		let {value} = d;
 		let baseY = 3;
 		let yPos;
 
-		if (isRotated) {
-			yPos = (points[0][0] + points[2][0] + rect.height * 0.6) / 2;
-		} else {
-			yPos = points[2][1];
+		if ($$.isCandlestickType(d)) {
+			value = $$.getCandlestickData(d);
 
-			if (isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d))) {
-				baseY += config.point_r / 2.3;
-			}
-
-			if (d.value < 0 || (d.value === 0 && !state.hasPositiveValue && state.hasNegativeValue)) {
-				yPos += rect.height + ($$.isBarType(d) ? -baseY : baseY);
+			if (isRotated) {
+				yPos = points[0][0];
+				yPos += ((points[1][0] - yPos) / 2) + baseY;
 			} else {
-				let diff = -baseY * 2;
+				yPos = value && value._isUp ?
+					points[2][2] - baseY :
+					points[2][1] + (baseY * 4);
+			}
+		} else {
+			if (isRotated) {
+				yPos = (points[0][0] + points[2][0] + rect.height * 0.6) / 2;
+			} else {
+				yPos = points[2][1];
 
-				if ($$.isBarType(d)) {
-					diff = -baseY;
-				} else if ($$.isBubbleType(d)) {
-					diff = baseY;
+				if (isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d))) {
+					baseY += config.point_r / 2.3;
 				}
 
-				yPos += diff;
+				if (value < 0 || (value === 0 && !state.hasPositiveValue && state.hasNegativeValue)) {
+					yPos += rect.height + ($$.isBarType(d) ? -baseY : baseY);
+				} else {
+					let diff = -baseY * 2;
+
+					if ($$.isBarType(d)) {
+						diff = -baseY;
+					} else if ($$.isBubbleType(d)) {
+						diff = baseY;
+					}
+
+					yPos += diff;
+				}
 			}
 		}
 
