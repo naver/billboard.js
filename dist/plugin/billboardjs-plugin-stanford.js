@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.1-nightly-20210327004649
+ * @version 3.0.1-nightly-20210328004649
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -531,6 +531,7 @@ function getPathBox(path) {
  * @param {object} event Event object
  * @param {SVGElement|HTMLElement} element Target element
  * @returns {Array} [x, y] Coordinates x, y array
+ * @private
  */
 
 

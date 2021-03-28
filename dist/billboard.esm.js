@@ -2126,6 +2126,7 @@ function getPathBox(path) {
  * @param {object} event Event object
  * @param {SVGElement|HTMLElement} element Target element
  * @returns {Array} [x, y] Coordinates x, y array
+ * @private
  */
 function getPointer(event, element) {
     var touches = event && (event.touches || (event.sourceEvent && event.sourceEvent.touches));
