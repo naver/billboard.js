@@ -159,8 +159,8 @@ Load billboard.js after D3.js.
 
 ```html
 <!-- 1) Load D3.js and billboard.js separately -->
-    <!-- Load D3 -->
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <!-- Load D3: -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
 
     <!-- Load billboard.js with base(or theme) style -->
     <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
