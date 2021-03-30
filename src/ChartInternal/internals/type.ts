@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isString, isArray} from "../../module/util";
+import {isArray, isNumber, isString} from "../../module/util";
 import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
 
 export default {
@@ -236,7 +236,7 @@ export default {
 			this.isScatterType(d) ||
 			this.isBubbleType(d) ||
 			this.isCandlestickType(d) ||
-			this.isRadarType(d) ? d.values : [];
+			this.isRadarType(d) ? d.values.filter(v => isNumber(v.value) || Boolean(v.value)) : [];
 	},
 
 	barLineBubbleData(d) {
