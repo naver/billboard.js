@@ -7,7 +7,7 @@
 	"module": "dist/billboard.esm.js",
 	"types": "types/index.d.ts",
 	"scripts": {
-		"start": "webpack-dev-server --open",
+		"start": "webpack serve --open",
 		"start:plugin": "cross-env PLUGIN=true webpack-dev-server --open",
 		"build": "npm run build:production && npm run build:packaged && npm run build:theme && npm run build:plugin && npm run build:esm",
 		"build:esm": "rollup -c ./config/rollup/esm.js",
@@ -27,18 +27,13 @@
 		"coverage": "cross-env TEST_TYPE=coverage npm test",
 		"coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
 		"jsdoc": "node ./config/jsdoc.js",
-		"jsdoc:cmd": "jsdoc -c jsdoc.json"
+		"jsdoc:cmd": "jsdoc -c jsdoc.json",
+		"prepare": "husky install"
 	},
 	"sideEffects": [
 		"dist/**/*.css",
 		"src/**/*.js"
 	],
-	"husky": {
-		"hooks": {
-			"commit-msg": "commitlint -g ./config/commitlint.config.js -E HUSKY_GIT_PARAMS",
-			"pre-push": "npm run lint"
-		}
-	},
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/naver/billboard.js"
@@ -145,7 +140,7 @@
 		"eslint-plugin-jsdoc": "^32.3.0",
 		"exports-loader": "^2.0.0",
 		"hammer-simulator": "0.0.1",
-		"husky": "^4.3.8",
+		"husky": "^6.0.0",
 		"istanbul-instrumenter-loader": "^3.0.1",
 		"istanbul-lib-instrument": "^4.0.3",
 		"jsdoc": "^3.6.6",
@@ -179,7 +174,7 @@
 		"webpack-clean": "^1.2.5",
 		"webpack-cli": "^4.5.0",
 		"webpack-common-shake": "^2.1.0",
-		"webpack-dev-server": "^4.0.0-beta.0",
+		"webpack-dev-server": "^4.0.0-beta.1",
 		"webpack-merge": "^5.7.3",
 		"webpackbar": "^5.0.0-3",
 		"write-file-webpack-plugin": "^4.5.1"
