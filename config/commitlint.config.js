@@ -17,6 +17,7 @@ module.exports = {
 				"chore",
 				"skip"
 			]
-		]
+		],
+		"footer-max-line-length": [0]
 	}
 };
