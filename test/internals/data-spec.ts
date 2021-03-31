@@ -24,7 +24,7 @@ describe("DATA", () => {
 			delta = {x: delta, y: delta};
 		}
 
-		return function(d, i) {
+		return function(d, i) {			
 			const node = d3Select(this);
 
 			expect(+node.attr(`${prefix}x`)).to.be.closeTo(x[i], delta.x);
@@ -90,7 +90,7 @@ describe("DATA", () => {
 
 		it("should draw correctly", () => {
 			const expectedCx = {443: [98, 294, 490], 995: [98, 294, 490]};
-			const expectedCy = {443: [194, 351, 36], 995: [391, 430, 351]};
+			const expectedCy = {443: [194, 351, 36], 995: [391, 0, 351]};
 			const main = chart.$.main;
 
 			main.selectAll(`.${CLASS.circles}-443 .${CLASS.circle}`)
@@ -153,10 +153,10 @@ describe("DATA", () => {
 			const expectedCx = [98, 294, 490];
 			const expectedCy = {
 				443: [181, 326, 36],
-				995: [362, 398, 326],
+				995: [362, 0, 326],
 				112: [354, 347, 340],
 				223: [391, 383, 376],
-				334: [376, 398, 362],
+				334: [376, 0, 362],
 				556: [326, 253, 181],
 				"778.889": [347, 376, 340]
 			};
