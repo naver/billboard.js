@@ -1,3 +1,10 @@
+## [3.0.2](https://github.com/naver/billboard.js/compare/3.0.1...3.0.2) (2021-03-31)
+
+
+### Bug Fixes
+
+* **type:** filter nullish data ([857bbca](https://github.com/naver/billboard.js/commit/857bbca08dff854782fc604a820882e326a6288b)), closes [#2020](https://github.com/naver/billboard.js/issues/2020)
+
 ## [3.0.1](https://github.com/naver/billboard.js/compare/3.0.0...3.0.1) (2021-03-26)
 
 
