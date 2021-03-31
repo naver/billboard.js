@@ -56,9 +56,9 @@ push() {
 	# Add new remote with access token in the git URL for authentication
 	if [[ "$CI" == "true" ]]; then
 		git config --global user.email "alberto.park@gmail.com"
-		git config --global user.name "Jae Sung Park"
+		git config --global user.name "netil"
 
-		git remote set-url ${DEST_REMOTE} https://netil:${1}@github.com/naver/billboard.js.git > /dev/null 2>&1
+		# git remote set-url ${DEST_REMOTE} https://netil:${GITHUB_TOKEN}@github.com/naver/billboard.js.git > /dev/null 2>&1
 	fi
 
 	# push to github pages
