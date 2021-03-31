@@ -7587,7 +7587,7 @@ var type = {
             this.isScatterType(d) ||
             this.isBubbleType(d) ||
             this.isCandlestickType(d) ||
-            this.isRadarType(d) ? d.values : [];
+            this.isRadarType(d) ? d.values.filter(function (v) { return isNumber(v.value) || Boolean(v.value); }) : [];
     },
     barLineBubbleData: function (d) {
         return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ?
