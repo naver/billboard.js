@@ -2,7 +2,7 @@ window.bench = {
     chart: null,
     timer: null,
     billboard: null,
-    target: ["1.12.11", "2.0.0", "latest"],
+    target: ["1.12.11", "2.0.0", "3.0.0", "latest"],
     $el: {
         version: document.getElementById("version"),
         type: document.getElementById("type"),
@@ -44,7 +44,7 @@ window.bench = {
 
         this.billboard && document.head.removeChild(this.billboard);
         this.billboard = document.createElement("script");
-        this.billboard.src = `https://cdn.jsdelivr.net/npm/billboard.js${version === "latest" ? "" : `@${version}`}/dist/billboard.js`;
+        this.billboard.src = `https://cdn.jsdelivr.net/npm/billboard.js${version === "latest" ? "" : `@${version}`}/dist/billboard.pkgd.min.js`;
 
         this.billboard.onload = () => {
             const {options} = this.$el.version;
