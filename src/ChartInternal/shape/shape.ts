@@ -24,7 +24,7 @@ import {
 } from "d3-shape";
 import {select as d3Select} from "d3-selection";
 import CLASS from "../../config/classes";
-import {capitalize, getUnique, isObjectType, isNumber, isUndefined, notEmpty} from "../../module/util";
+import {capitalize, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
 
 export default {
 	/**
@@ -335,6 +335,24 @@ export default {
 		}
 
 		return result;
+	},
+
+	/**
+	 * Get shape element
+	 * @param {string} shapeName Shape string
+	 * @param {number} i Index number
+	 * @param {string} id Data series id
+	 * @returns {d3Selection}
+	 * @private
+	 */
+	getShapeByIndex(shapeName: string, i: number, id?: string) {
+		const $$ = this;
+		const {main} = $$.$el;
+		const suffix = (isValue(i) ? `-${i}` : ``);
+
+		return (id ? main
+			.selectAll(`.${CLASS[`${shapeName}s`]}${$$.getTargetSelectorSuffix(id)}`) : main)
+			.selectAll(`.${CLASS[shapeName]}${suffix}`);
 	},
 
 	isWithinShape(that, d): boolean {

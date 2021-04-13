@@ -110,11 +110,20 @@ rect.bb-circle, use.bb-circle {
 
 /*-- Bar --*/
 .bb-bar {
-    stroke-width: 0;
+	stroke-width: 0;
 
-    &._expanded_ {
-        fill-opacity: 0.75;
-    }
+	&._expanded_ {
+		fill-opacity: 0.75;
+	}
+}
+
+/*-- Candlestick --*/
+.bb-candlestick {
+	stroke-width: 1px;
+
+	&._expanded_ {
+		fill-opacity: 0.75;
+	}
 }
 
 /*-- Focus --*/

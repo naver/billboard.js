@@ -330,7 +330,7 @@ export default {
 		$$.showTooltip(selectedData, context);
 
 		// expand points
-		$$.expandCirclesBars(closest.index, closest.id, true);
+		$$.setExpand(closest.index, closest.id, true);
 
 		// Show xgrid focus line
 		$$.showGridFocus(selectedData);
@@ -352,7 +352,7 @@ export default {
 	 */
 	unselectRect(): void {
 		const $$ = this;
-		const {config, $el: {bar, circle, tooltip}} = $$;
+		const {config, $el: {circle, tooltip}} = $$;
 
 		$$.$el.svg.select(`.${CLASS.eventRect}`).style("cursor", null);
 		$$.hideGridFocus();
@@ -363,7 +363,7 @@ export default {
 		}
 
 		circle && !config.point_focus_only && $$.unexpandCircles();
-		bar && $$.unexpandBars();
+		$$.expandBarTypeShapes(false);
 	},
 
 	/**

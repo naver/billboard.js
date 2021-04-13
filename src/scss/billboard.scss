@@ -108,6 +108,15 @@
 	}
 }
 
+/*-- Candlestick --*/
+.bb-candlestick {
+	stroke-width: 1px;
+
+	&._expanded_ {
+		fill-opacity: 0.75;
+	}
+}
+
 /*-- Focus --*/
 .bb-target, .bb-circles {
 	&.bb-focused {
