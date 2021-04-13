@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import CLASS from "../../config/classes";
-import {getPointer, getRandom, getRectSegList, isNumber, isValue} from "../../module/util";
+import {getPointer, getRandom, getRectSegList, isNumber} from "../../module/util";
 
 export default {
 	initBar(): void {
@@ -87,27 +87,6 @@ export default {
 				.style("fill", this.color)
 				.style("opacity", "1")
 		];
-	},
-
-	getBars(i: number, id: string) {
-		const $$ = this;
-		const {main} = $$.$el;
-		const suffix = (isValue(i) ? `-${i}` : ``);
-
-		return (id ? main
-			.selectAll(`.${CLASS.bars}${$$.getTargetSelectorSuffix(id)}`) : main)
-			.selectAll(`.${CLASS.bar}${suffix}`);
-	},
-
-	expandBars(i: number, id: string, reset: boolean): void {
-		const $$ = this;
-
-		reset && $$.unexpandBars();
-		$$.getBars(i, id).classed(CLASS.EXPANDED, true);
-	},
-
-	unexpandBars(i: number): void {
-		this.getBars(i).classed(CLASS.EXPANDED, false);
 	},
 
 	generateDrawBar(barIndices, isSub?: boolean): Function {
