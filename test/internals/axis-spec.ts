@@ -2469,6 +2469,46 @@ describe("AXIS", function() {
 			expect(tickValues.every(v => v % 1 === 0)).to.be.true;
 			expect(translateX).to.be.closeTo(30.5, 1);
 		});
+
+		it("should work with axis.x.padding=10 option", done => {
+			const option = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2020-01-01", "2020-01-02", "2020-01-03", "2020-01-04", "2020-01-05", "2020-01-06"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 340, 200, 500, 250, 350]
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+						format: "%Y-%m-%d"
+						},
+						padding: 100
+					}
+				},
+				subchart: {
+					show: true,
+					init: {
+						range: [
+							+new Date("2020-01-02 00:00:00"),
+							+new Date("2020-01-03 00:00:00")
+						]
+					}
+				},
+				onafterinit: function() {		
+					// reaching at this point, means no issue happened
+					expect(true).to.be.ok;
+
+					done();
+				}
+			};
+
+			util.generate(option);			
+		});
 	});
 
 	describe("axis min/max", () => {
