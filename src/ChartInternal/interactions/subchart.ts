@@ -242,6 +242,8 @@ export default {
 
 			// update subchart elements if needed
 			if (withSubchart) {
+				const initRange = config.subchart_init_range;
+
 				// extent rect
 				!brushEmpty($$) && $$.brush.update();
 
@@ -261,6 +263,12 @@ export default {
 					$$.updateCircle(true);
 					$$.redrawCircle(cx, cy, withTransition, undefined, true);
 				}
+
+				!state.rendered && initRange && $$.brush.move(
+					$$.brush.getSelection(),
+					initRange.map($$.scale.x)
+				);
+				// .call($$.brush.move, initRange.map($$.scale.x));
 			}
 		}
 	},

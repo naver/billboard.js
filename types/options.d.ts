@@ -1108,6 +1108,13 @@ export interface SubchartOptions {
 		};
 	};
 
+	init?: {
+		/**
+		 * Set initial selection domain range.
+		 */
+		range?: [number, number];
+	};
+
 	/**
 	 * Set callback for brush event.
 	 * Specified function receives the current zoomed x domain.
