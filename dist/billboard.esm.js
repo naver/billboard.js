@@ -3930,7 +3930,7 @@ var interaction = {
             if (!isTooltipGrouped) {
                 $$.hideGridFocus && $$.hideGridFocus();
                 $$.hideTooltip();
-                !isSelectionGrouped && $$.expandCirclesBars(index);
+                !isSelectionGrouped && $$.setExpand(index);
             }
         })
             .filter(function (d) {
@@ -3946,16 +3946,42 @@ var interaction = {
                 $$.showTooltip(d, context);
                 $$.showGridFocus && $$.showGridFocus(d);
                 $$.unexpandCircles && $$.unexpandCircles();
-                selected.each(function (d) { return $$.expandCirclesBars(index, d.id); });
+                selected.each(function (d) { return $$.setExpand(index, d.id); });
             }
         });
     },
-    expandCirclesBars: function (index, id, reset) {
+    /**
+     * Expand data shape/point
+     * @param {number} index Index number
+     * @param {string} id Data id
+     * @param {boolean} reset Reset expand state
+     * @private
+     */
+    setExpand: function (index, id, reset) {
         var $$ = this;
-        var config = $$.config, _a = $$.$el, bar = _a.bar, circle = _a.circle;
+        var config = $$.config, circle = $$.$el.circle;
         circle && config.point_focus_expand_enabled &&
             $$.expandCircles(index, id, reset);
-        bar && $$.expandBars(index, id, reset);
+        // bar, candlestick
+        $$.expandBarTypeShapes(true, index, id, reset);
+    },
+    /**
+     * Expand/Unexpand bar type shapes
+     * @param {boolean} expand Expand or unexpand
+     * @param {number} i Shape index
+     * @param {string} id Data id
+     * @param {boolean} reset Reset expand style
+     * @private
+     */
+    expandBarTypeShapes: function (expand, i, id, reset) {
+        if (expand === void 0) { expand = true; }
+        var $$ = this;
+        ["bar", "candlestick"]
+            .filter(function (v) { return $$.$el[v]; })
+            .forEach(function (v) {
+            reset && $$.$el[v].classed(CLASS.EXPANDED, false);
+            $$.getShapeByIndex(v, i, id).classed(CLASS.EXPANDED, expand);
+        });
     },
     /**
      * Handle data.onover/out callback options
@@ -3999,7 +4025,7 @@ var interaction = {
                 if (isOver) {
                     config.point_focus_only && hasRadar ?
                         $$.showCircleFocus($$.getAllValuesOnIndex(d, true)) :
-                        $$.expandCirclesBars(d, null, true);
+                        $$.setExpand(d, null, true);
                 }
                 !$$.isMultipleX() && main.selectAll("." + CLASS.shape + "-" + d)
                     .each(function (d) {
@@ -6058,6 +6084,22 @@ var shape = {
             });
         }
         return result;
+    },
+    /**
+     * Get shape element
+     * @param {string} shapeName Shape string
+     * @param {number} i Index number
+     * @param {string} id Data series id
+     * @returns {d3Selection}
+     * @private
+     */
+    getShapeByIndex: function (shapeName, i, id) {
+        var $$ = this;
+        var main = $$.$el.main;
+        var suffix = (isValue(i) ? "-" + i : "");
+        return (id ? main
+            .selectAll("." + CLASS[shapeName + "s"] + $$.getTargetSelectorSuffix(id)) : main)
+            .selectAll("." + CLASS[shapeName] + suffix);
     },
     isWithinShape: function (that, d) {
         var $$ = this;
@@ -9175,7 +9217,7 @@ var tooltip = {
         $$.hideTooltip(true);
         $$.hideGridFocus();
         $$.unexpandCircles && $$.unexpandCircles();
-        $$.unexpandBars && $$.unexpandBars();
+        $$.expandBarTypeShapes(false);
     }
 };
 var apiTooltip = { tooltip: tooltip };
@@ -11688,7 +11730,7 @@ var eventrect = {
         var selectedData = sameXData.map(function (d) { return $$.addName(d); });
         $$.showTooltip(selectedData, context);
         // expand points
-        $$.expandCirclesBars(closest.index, closest.id, true);
+        $$.setExpand(closest.index, closest.id, true);
         // Show xgrid focus line
         $$.showGridFocus(selectedData);
         // Show cursor as pointer if point is close to mouse position
@@ -11706,7 +11748,7 @@ var eventrect = {
      */
     unselectRect: function () {
         var $$ = this;
-        var config = $$.config, _a = $$.$el, bar = _a.bar, circle = _a.circle, tooltip = _a.tooltip;
+        var config = $$.config, _a = $$.$el, circle = _a.circle, tooltip = _a.tooltip;
         $$.$el.svg.select("." + CLASS.eventRect).style("cursor", null);
         $$.hideGridFocus();
         if (tooltip) {
@@ -11714,7 +11756,7 @@ var eventrect = {
             $$._handleLinkedCharts(false);
         }
         circle && !config.point_focus_only && $$.unexpandCircles();
-        bar && $$.unexpandBars();
+        $$.expandBarTypeShapes(false);
     },
     /**
      * Create eventRect for each data on the x-axis.
@@ -15558,22 +15600,6 @@ var shapeBar = {
                 .style("fill", this.color)
                 .style("opacity", "1")
         ];
-    },
-    getBars: function (i, id) {
-        var $$ = this;
-        var main = $$.$el.main;
-        var suffix = (isValue(i) ? "-" + i : "");
-        return (id ? main
-            .selectAll("." + CLASS.bars + $$.getTargetSelectorSuffix(id)) : main)
-            .selectAll("." + CLASS.bar + suffix);
-    },
-    expandBars: function (i, id, reset) {
-        var $$ = this;
-        reset && $$.unexpandBars();
-        $$.getBars(i, id).classed(CLASS.EXPANDED, true);
-    },
-    unexpandBars: function (i) {
-        this.getBars(i).classed(CLASS.EXPANDED, false);
     },
     generateDrawBar: function (barIndices, isSub) {
         var $$ = this;

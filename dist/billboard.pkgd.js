@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.2-nightly-20210409004647
+ * @version 3.0.2-nightly-20210414004645
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -13866,10 +13866,12 @@ function newInterval(floori, offseti, count, field) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/duration.js
 var durationSecond = 1e3;
-var durationMinute = 6e4;
-var durationHour = 36e5;
-var durationDay = 864e5;
-var durationWeek = 6048e5;
+var durationMinute = 60000;
+var durationHour = 3600000;
+var durationDay = 86400000;
+var durationWeek = 604800000;
+var durationMonth = 2592000000;
+var durationYear = 31536000000;
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcWeek.js
 
 
@@ -21954,23 +21956,48 @@ function drag_defaultTouchable() {
         isTooltipGrouped = config.tooltip_grouped,
         selectedData = $$.getAllValuesOnIndex(index);
     isTooltipGrouped && ($$.showTooltip(selectedData, context), $$.showGridFocus && $$.showGridFocus(selectedData), !isSelectionEnabled || isSelectionGrouped) || main.selectAll("." + config_classes.shape + "-" + index).each(function () {
-      src_select(this).classed(config_classes.EXPANDED, !0), isSelectionEnabled && eventRect.style("cursor", isSelectionGrouped ? "pointer" : null), isTooltipGrouped || ($$.hideGridFocus && $$.hideGridFocus(), $$.hideTooltip(), !isSelectionGrouped && $$.expandCirclesBars(index));
+      src_select(this).classed(config_classes.EXPANDED, !0), isSelectionEnabled && eventRect.style("cursor", isSelectionGrouped ? "pointer" : null), isTooltipGrouped || ($$.hideGridFocus && $$.hideGridFocus(), $$.hideTooltip(), !isSelectionGrouped && $$.setExpand(index));
     }).filter(function (d) {
       return $$.isWithinShape(this, d);
     }).call(function (selected) {
       var d = selected.data();
       isSelectionEnabled && (isSelectionGrouped || isSelectable && isSelectable.bind($$.api)(d)) && eventRect.style("cursor", "pointer"), isTooltipGrouped || ($$.showTooltip(d, context), $$.showGridFocus && $$.showGridFocus(d), $$.unexpandCircles && $$.unexpandCircles(), selected.each(function (d) {
-        return $$.expandCirclesBars(index, d.id);
+        return $$.setExpand(index, d.id);
       }));
     });
   },
-  expandCirclesBars: function expandCirclesBars(index, id, reset) {
+
+  /**
+   * Expand data shape/point
+   * @param {number} index Index number
+   * @param {string} id Data id
+   * @param {boolean} reset Reset expand state
+   * @private
+   */
+  setExpand: function setExpand(index, id, reset) {
     var $$ = this,
         config = $$.config,
-        _$$$$el = $$.$el,
-        bar = _$$$$el.bar,
-        circle = _$$$$el.circle;
-    circle && config.point_focus_expand_enabled && $$.expandCircles(index, id, reset), bar && $$.expandBars(index, id, reset);
+        circle = $$.$el.circle;
+    // bar, candlestick
+    circle && config.point_focus_expand_enabled && $$.expandCircles(index, id, reset), $$.expandBarTypeShapes(!0, index, id, reset);
+  },
+
+  /**
+   * Expand/Unexpand bar type shapes
+   * @param {boolean} expand Expand or unexpand
+   * @param {number} i Shape index
+   * @param {string} id Data id
+   * @param {boolean} reset Reset expand style
+   * @private
+   */
+  expandBarTypeShapes: function expandBarTypeShapes(expand, i, id, reset) {
+    expand === void 0 && (expand = !0);
+    var $$ = this;
+    ["bar", "candlestick"].filter(function (v) {
+      return $$.$el[v];
+    }).forEach(function (v) {
+      reset && $$.$el[v].classed(config_classes.EXPANDED, !1), $$.getShapeByIndex(v, i, id).classed(config_classes.EXPANDED, expand);
+    });
   },
 
   /**
@@ -22003,7 +22030,7 @@ function drag_defaultTouchable() {
         }), last.length > 0 && shape.empty() && (callback = config.data_onout.bind($$.api), last.forEach(function (v) {
           return callback(src_select(v).datum(), v);
         }), last = []), $$.cache.add(KEY.setOverOut, last);
-      } else isOver && (config.point_focus_only && hasRadar ? $$.showCircleFocus($$.getAllValuesOnIndex(d, !0)) : $$.expandCirclesBars(d, null, !0)), $$.isMultipleX() || main.selectAll("." + config_classes.shape + "-" + d).each(function (d) {
+      } else isOver && (config.point_focus_only && hasRadar ? $$.showCircleFocus($$.getAllValuesOnIndex(d, !0)) : $$.setExpand(d, null, !0)), $$.isMultipleX() || main.selectAll("." + config_classes.shape + "-" + d).each(function (d) {
         callback(d, this);
       });
     }
@@ -22052,10 +22079,10 @@ function drag_defaultTouchable() {
         eventReceiver = _$$$state.eventReceiver,
         hasAxis = _$$$state.hasAxis,
         hasRadar = _$$$state.hasRadar,
-        _$$$$el2 = $$.$el,
-        eventRect = _$$$$el2.eventRect,
-        arcs = _$$$$el2.arcs,
-        radar = _$$$$el2.radar,
+        _$$$$el = $$.$el,
+        eventRect = _$$$$el.eventRect,
+        arcs = _$$$$el.arcs,
+        radar = _$$$$el.radar,
         isMultipleX = $$.isMultipleX(),
         element = (hasRadar ? radar.axes.select("." + config_classes.axis + "-" + index + " text") : eventRect || arcs.selectAll("." + config_classes.target + " path").filter(function (d, i) {
       return i === index;
@@ -24194,8 +24221,8 @@ var time_durationSecond = 1e3,
     time_durationHour = 3600000,
     time_durationDay = 86400000,
     time_durationWeek = 604800000,
-    durationMonth = 2592000000,
-    durationYear = 31536000000;
+    time_durationMonth = 2592000000,
+    time_durationYear = 31536000000;
 
 function time_date(t) {
   return new Date(t);
@@ -24220,7 +24247,7 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
           i = bisector(function (i) {
         return i[2];
       }).right(tickIntervals, target);
-      return i === tickIntervals.length ? (step = tickStep(start / durationYear, stop / durationYear, interval), interval = year) : i ? (i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i], step = i[1], interval = i[0]) : (step = Math.max(tickStep(start, stop, interval), 1), interval = millisecond), interval.every(step);
+      return i === tickIntervals.length ? (step = tickStep(start / time_durationYear, stop / time_durationYear, interval), interval = year) : i ? (i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i], step = i[1], interval = i[0]) : (step = Math.max(tickStep(start, stop, interval), 1), interval = millisecond), interval.every(step);
     }
 
     return interval;
@@ -24237,7 +24264,7 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
       formatWeek = format("%b %d"),
       formatMonth = format("%B"),
       formatYear = format("%Y"),
-      tickIntervals = [[second, 1, time_durationSecond], [second, 5, 5000], [second, 15, 15000], [second, 30, 30000], [minute, 1, time_durationMinute], [minute, 5, 300000], [minute, 15, 900000], [minute, 30, 1800000], [hour, 1, time_durationHour], [hour, 3, 10800000], [hour, 6, 21600000], [hour, 12, 43200000], [day, 1, time_durationDay], [day, 2, 172800000], [week, 1, time_durationWeek], [month, 1, durationMonth], [month, 3, 7776000000], [year, 1, durationYear]];
+      tickIntervals = [[second, 1, time_durationSecond], [second, 5, 5000], [second, 15, 15000], [second, 30, 30000], [minute, 1, time_durationMinute], [minute, 5, 300000], [minute, 15, 900000], [minute, 30, 1800000], [hour, 1, time_durationHour], [hour, 3, 10800000], [hour, 6, 21600000], [hour, 12, 43200000], [day, 1, time_durationDay], [day, 2, 172800000], [week, 1, time_durationWeek], [month, 1, time_durationMonth], [month, 3, 7776000000], [year, 1, time_durationYear]];
   return scale.invert = function (y) {
     return new Date(invert(y));
   }, scale.domain = function (_) {
@@ -25587,6 +25614,21 @@ function stepAfter(context) {
     }, $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
       config[configName][v.id] && (result[v.id] = getWidth(v.id), result._$total.push(result[v.id] || result._$width));
     })), result;
+  },
+
+  /**
+   * Get shape element
+   * @param {string} shapeName Shape string
+   * @param {number} i Index number
+   * @param {string} id Data series id
+   * @returns {d3Selection}
+   * @private
+   */
+  getShapeByIndex: function getShapeByIndex(shapeName, i, id) {
+    var $$ = this,
+        main = $$.$el.main,
+        suffix = isValue(i) ? "-" + i : "";
+    return (id ? main.selectAll("." + config_classes[shapeName + "s"] + $$.getTargetSelectorSuffix(id)) : main).selectAll("." + config_classes[shapeName] + suffix);
   },
   isWithinShape: function isWithinShape(that, d) {
     var isWithin,
@@ -28218,7 +28260,7 @@ var tooltip_tooltip = {
     } // reset last touch point index
 
 
-    inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles && $$.unexpandCircles(), $$.unexpandBars && $$.unexpandBars();
+    inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles && $$.unexpandCircles(), $$.expandBarTypeShapes(!1);
   }
 };
 /* harmony default export */ var api_tooltip = ({
@@ -30267,7 +30309,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         return $$.addName(d);
       }); // show tooltip when cursor is close to some point
 
-      $$.showTooltip(selectedData, context), $$.expandCirclesBars(closest.index, closest.id, !0), $$.showGridFocus(selectedData), ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) && ($$.$el.svg.select("." + config_classes.eventRect).style("cursor", "pointer"), !state.mouseover && (config.data_onover.call($$.api, closest), state.mouseover = closest));
+      $$.showTooltip(selectedData, context), $$.setExpand(closest.index, closest.id, !0), $$.showGridFocus(selectedData), ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) && ($$.$el.svg.select("." + config_classes.eventRect).style("cursor", "pointer"), !state.mouseover && (config.data_onover.call($$.api, closest), state.mouseover = closest));
     }
   },
 
@@ -30279,10 +30321,9 @@ var Axis_Axis = /*#__PURE__*/function () {
     var $$ = this,
         config = $$.config,
         _$$$$el2 = $$.$el,
-        bar = _$$$$el2.bar,
         circle = _$$$$el2.circle,
         tooltip = _$$$$el2.tooltip;
-    $$.$el.svg.select("." + config_classes.eventRect).style("cursor", null), $$.hideGridFocus(), tooltip && ($$.hideTooltip(), $$._handleLinkedCharts(!1)), circle && !config.point_focus_only && $$.unexpandCircles(), bar && $$.unexpandBars();
+    $$.$el.svg.select("." + config_classes.eventRect).style("cursor", null), $$.hideGridFocus(), tooltip && ($$.hideTooltip(), $$._handleLinkedCharts(!1)), circle && !config.point_focus_only && $$.unexpandCircles(), $$.expandBarTypeShapes(!1);
   },
 
   /**
@@ -34144,19 +34185,6 @@ function point_y(p) {
         bar = _ref.bar;
 
     return [(withTransition ? bar.transition(getRandom()) : bar).attr("d", drawFn).style("fill", this.color).style("opacity", "1")];
-  },
-  getBars: function getBars(i, id) {
-    var $$ = this,
-        main = $$.$el.main,
-        suffix = isValue(i) ? "-" + i : "";
-    return (id ? main.selectAll("." + config_classes.bars + $$.getTargetSelectorSuffix(id)) : main).selectAll("." + config_classes.bar + suffix);
-  },
-  expandBars: function expandBars(i, id, reset) {
-    var $$ = this;
-    reset && $$.unexpandBars(), $$.getBars(i, id).classed(config_classes.EXPANDED, !0);
-  },
-  unexpandBars: function unexpandBars(i) {
-    this.getBars(i).classed(config_classes.EXPANDED, !1);
   },
   generateDrawBar: function generateDrawBar(barIndices, isSub) {
     var $$ = this,
