@@ -39,7 +39,7 @@ export default {
 					$$.hideGridFocus && $$.hideGridFocus();
 					$$.hideTooltip();
 
-					!isSelectionGrouped && $$.expandCirclesBars(index);
+					!isSelectionGrouped && $$.setExpand(index);
 				}
 			})
 			.filter(function(d) {
@@ -59,19 +59,46 @@ export default {
 					$$.showGridFocus && $$.showGridFocus(d);
 					$$.unexpandCircles && $$.unexpandCircles();
 
-					selected.each(d => $$.expandCirclesBars(index, d.id));
+					selected.each(d => $$.setExpand(index, d.id));
 				}
 			});
 	},
 
-	expandCirclesBars(index: number, id: string, reset: boolean): void {
+	/**
+	 * Expand data shape/point
+	 * @param {number} index Index number
+	 * @param {string} id Data id
+	 * @param {boolean} reset Reset expand state
+	 * @private
+	 */
+	setExpand(index: number, id?: string, reset?: boolean): void {
 		const $$ = this;
-		const {config, $el: {bar, circle}} = $$;
+		const {config, $el: {circle}} = $$;
 
 		circle && config.point_focus_expand_enabled &&
 			$$.expandCircles(index, id, reset);
 
-		bar && $$.expandBars(index, id, reset);
+		// bar, candlestick
+		$$.expandBarTypeShapes(true, index, id, reset);
+	},
+
+	/**
+	 * Expand/Unexpand bar type shapes
+	 * @param {boolean} expand Expand or unexpand
+	 * @param {number} i Shape index
+	 * @param {string} id Data id
+	 * @param {boolean} reset Reset expand style
+	 * @private
+	 */
+	expandBarTypeShapes(expand = true, i?: number, id?: string, reset?: boolean): void {
+		const $$ = this;
+
+		["bar", "candlestick"]
+			.filter(v => $$.$el[v])
+			.forEach(v => {
+				reset && $$.$el[v].classed(CLASS.EXPANDED, false);
+				$$.getShapeByIndex(v, i, id).classed(CLASS.EXPANDED, expand);
+			});
 	},
 
 	/**
@@ -121,7 +148,7 @@ export default {
 				if (isOver) {
 					config.point_focus_only && hasRadar ?
 						$$.showCircleFocus($$.getAllValuesOnIndex(d, true)) :
-						$$.expandCirclesBars(d, null, true);
+						$$.setExpand(d, null, true);
 				}
 
 				!$$.isMultipleX() && main.selectAll(`.${CLASS.shape}-${d}`)
