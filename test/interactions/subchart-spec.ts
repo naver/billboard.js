@@ -131,7 +131,7 @@ describe("SUBCHART", () => {
 
 			expect(subchart.empty()).to.be.true;
 			expect(chart.internal.clipSubchart).to.be.undefined;
-		})
+		});
 	});
 
 	describe("subchart selection", () => {
@@ -143,7 +143,10 @@ describe("SUBCHART", () => {
 					]
 				},
 				subchart: {
-					show: true
+					show: true,
+					init: {
+						range: [2, 3]
+					}
 				}
 			};
 		});
@@ -168,6 +171,12 @@ describe("SUBCHART", () => {
 			}, 300);
 		};
 
+		it("check initial subchart range selection", () => {
+			const currRange = chart.internal.scale.x.domain().map(Math.round);
+
+			expect(currRange).to.be.deep.equal(args.subchart.init.range);
+		});
+
 		it("should be select subchart area", checkSelection);
 
 		it("set options axis.x.type='category'", () => {
@@ -180,6 +189,7 @@ describe("SUBCHART", () => {
 		});
 
 		it("should be select subchart area for category type x axis", checkSelection);
+
 	});
 
 	describe("the extent", () => {
@@ -528,4 +538,8 @@ describe("SUBCHART", () => {
 			});
 		});
 	});
+
+	describe("", () => {
+		it
+	})
 });
