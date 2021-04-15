@@ -737,29 +737,20 @@ class Axis {
 	 */
 	getXAxisPadding(tickCount) {
 		const $$ = this.owner;
-		let padding = $$.config.axis_x_padding;
-
-		if (isEmpty(padding)) {
-			padding = {left: 0, right: 0};
-		} else {
-			padding.left = padding.left || 0;
-			padding.right = padding.right || 0;
-		}
+		let {left = 0, right = 0} = $$.config.axis_x_padding;
+		let padding = {left, right};
 
 		if ($$.axis.isTimeSeries()) {
 			const firstX = +$$.getXDomainMin($$.data.targets);
 			const lastX = +$$.getXDomainMax($$.data.targets);
 			const timeDiff = lastX - firstX;
-
-			const range = timeDiff + padding.left + padding.right;
-			let left = 0;
-			let right = 0;
+			const range = timeDiff + left + right;
 
 			if (tickCount && range) {
 				const relativeTickWidth = (timeDiff / tickCount) / range;
 
-				left = padding.left / range / relativeTickWidth;
-				right = padding.right / range / relativeTickWidth;
+				left = left / range / relativeTickWidth;
+				right = right / range / relativeTickWidth;
 			}
 
 			padding = {left, right};
