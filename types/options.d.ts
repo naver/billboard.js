@@ -285,7 +285,7 @@ export interface ChartOptions {
 			/**
 			 * Set the width option for specific dataset
 			 */
-			[key: string]: {
+			[key: string]: number | {
 				ratio: number;
 				max: number;
 			}
@@ -362,7 +362,7 @@ export interface ChartOptions {
 			/**
 			 * Set the width option for specific dataset
 			 */
-			[key: string]: {
+			[key: string]: number | {
 				ratio: number;
 				max: number;
 			}
