@@ -11234,25 +11234,17 @@ var Axis = /** @class */ (function () {
      */
     Axis.prototype.getXAxisPadding = function (tickCount) {
         var $$ = this.owner;
-        var padding = $$.config.axis_x_padding;
-        if (isEmpty(padding)) {
-            padding = { left: 0, right: 0 };
-        }
-        else {
-            padding.left = padding.left || 0;
-            padding.right = padding.right || 0;
-        }
+        var _a = $$.config.axis_x_padding, _b = _a.left, left = _b === void 0 ? 0 : _b, _c = _a.right, right = _c === void 0 ? 0 : _c;
+        var padding = { left: left, right: right };
         if ($$.axis.isTimeSeries()) {
             var firstX = +$$.getXDomainMin($$.data.targets);
             var lastX = +$$.getXDomainMax($$.data.targets);
             var timeDiff = lastX - firstX;
-            var range = timeDiff + padding.left + padding.right;
-            var left = 0;
-            var right = 0;
+            var range = timeDiff + left + right;
             if (tickCount && range) {
                 var relativeTickWidth = (timeDiff / tickCount) / range;
-                left = padding.left / range / relativeTickWidth;
-                right = padding.right / range / relativeTickWidth;
+                left = left / range / relativeTickWidth;
+                right = right / range / relativeTickWidth;
             }
             padding = { left: left, right: right };
         }
@@ -18254,20 +18246,20 @@ function withinRange(domain, range) {
     return domain.every(function (v, i) { return (i === 0 ? (v >= min) : (v <= max)); });
 }
 /**
- * Zoom by giving x domain.
+ * Zoom by giving x domain range.
  * - **NOTE:**
- *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
+ *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain range. To get the initial state, [.unzoom()](#unzoom) should be called.
  *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
  * @function zoom
  * @instance
  * @memberof Chart
- * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
+ * @param {Array} domainValue If domain range is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
  * @returns {Array} domain value in array
  * @example
- *  // Zoom to specified domain
+ *  // Zoom to specified domain range
  *  chart.zoom([10, 20]);
  *
- *  // Get the current zoomed domain
+ *  // Get the current zoomed domain range
  *  chart.zoom();
  */
 var zoom$1 = function (domainValue) {
@@ -18906,6 +18898,7 @@ var subchart = {
             }
             // update subchart elements if needed
             if (withSubchart) {
+                var initRange = config.subchart_init_range;
                 // extent rect
                 !brushEmpty($$) && $$.brush.update();
                 Object.keys(shape.type).forEach(function (v) {
@@ -18921,6 +18914,8 @@ var subchart = {
                     $$.updateCircle(true);
                     $$.redrawCircle(cx, cy, withTransition, undefined, true);
                 }
+                !state.rendered && initRange && $$.brush.move($$.brush.getSelection(), initRange.map($$.scale.x));
+                // .call($$.brush.move, initRange.map($$.scale.x));
             }
         }
     },
@@ -19447,6 +19442,7 @@ var optSubchart = {
      * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
      * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
      * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
+     * @property {Array} [subchart.init.range] Set initial selection domain range.
      * @property {number} [subchart.size.height] Change the height of the subchart.
      * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
      *  Specified function receives the current zoomed x domain.
@@ -19456,6 +19452,10 @@ var optSubchart = {
      *      show: true,
      *      size: {
      *          height: 20
+     *      },
+     *      init: {
+     *          // specify initial range domain selection
+     *          range: [1, 2]
      *      },
      *      axis: {
      *      	x: {
@@ -19484,6 +19484,7 @@ var optSubchart = {
     subchart_axis_x_show: true,
     subchart_axis_x_tick_show: true,
     subchart_axis_x_tick_text_show: true,
+    subchart_init_range: undefined,
     subchart_onbrush: function () { }
 };
 

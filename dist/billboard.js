@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.2-nightly-20210414004645
+ * @version 3.0.2-nightly-20210415004643
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10064,27 +10064,30 @@ var Axis_Axis = /*#__PURE__*/function () {
    */
   , _proto.getXAxisPadding = function getXAxisPadding(tickCount) {
     var $$ = this.owner,
-        padding = $$.config.axis_x_padding;
+        _$$$config$axis_x_pad = $$.config.axis_x_padding,
+        _$$$config$axis_x_pad2 = _$$$config$axis_x_pad.left,
+        left = _$$$config$axis_x_pad2 === void 0 ? 0 : _$$$config$axis_x_pad2,
+        _$$$config$axis_x_pad3 = _$$$config$axis_x_pad.right,
+        right = _$$$config$axis_x_pad3 === void 0 ? 0 : _$$$config$axis_x_pad3,
+        padding = {
+      left: left,
+      right: right
+    };
 
-    if (isEmpty(padding) ? padding = {
-      left: 0,
-      right: 0
-    } : (padding.left = padding.left || 0, padding.right = padding.right || 0), $$.axis.isTimeSeries()) {
+    if ($$.axis.isTimeSeries()) {
       var firstX = +$$.getXDomainMin($$.data.targets),
           lastX = +$$.getXDomainMax($$.data.targets),
           timeDiff = lastX - firstX,
-          range = timeDiff + padding.left + padding.right,
-          left = 0,
-          _right = 0;
+          range = timeDiff + left + right;
 
       if (tickCount && range) {
         var relativeTickWidth = timeDiff / tickCount / range;
-        left = padding.left / range / relativeTickWidth, _right = padding.right / range / relativeTickWidth;
+        left = left / range / relativeTickWidth, right = right / range / relativeTickWidth;
       }
 
       padding = {
         left: left,
-        right: _right
+        right: right
       };
     }
 
@@ -16402,20 +16405,20 @@ function withinRange(domain, range) {
   });
 }
 /**
- * Zoom by giving x domain.
+ * Zoom by giving x domain range.
  * - **NOTE:**
- *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
+ *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain range. To get the initial state, [.unzoom()](#unzoom) should be called.
  *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
  * @function zoom
  * @instance
  * @memberof Chart
- * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
+ * @param {Array} domainValue If domain range is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
  * @returns {Array} domain value in array
  * @example
- *  // Zoom to specified domain
+ *  // Zoom to specified domain range
  *  chart.zoom([10, 20]);
  *
- *  // Get the current zoomed domain
+ *  // Get the current zoomed domain range
  *  chart.zoom();
  */
 
@@ -16963,15 +16966,21 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         withTransition = !!duration;
 
     // subchart
-    if (main.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (state.event && state.event.type === "zoom" && $$.brush.update(), withSubchart && (brushEmpty($$) || $$.brush.update(), Object.keys(shape.type).forEach(function (v) {
-      var name = capitalize(v),
-          drawFn = $$["generateDraw" + name](shape.indices[v], !0);
-      $$["update" + name](duration, !0), $$["redraw" + name](drawFn, withTransition, !0);
-    }), $$.hasType("bubble") || $$.hasType("scatter")))) // update subchart elements if needed
+    if (main.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (state.event && state.event.type === "zoom" && $$.brush.update(), withSubchart)) // update subchart elements if needed
       {
-        var cx = shape.pos.cx,
-            cy = $$.updateCircleY(!0);
-        $$.updateCircle(!0), $$.redrawCircle(cx, cy, withTransition, undefined, !0);
+        var _initRange = config.subchart_init_range; // extent rect
+
+        if (brushEmpty($$) || $$.brush.update(), Object.keys(shape.type).forEach(function (v) {
+          var name = capitalize(v),
+              drawFn = $$["generateDraw" + name](shape.indices[v], !0);
+          $$["update" + name](duration, !0), $$["redraw" + name](drawFn, withTransition, !0);
+        }), $$.hasType("bubble") || $$.hasType("scatter")) {
+          var cx = shape.pos.cx,
+              cy = $$.updateCircleY(!0);
+          $$.updateCircle(!0), $$.redrawCircle(cx, cy, withTransition, undefined, !0);
+        }
+
+        !state.rendered && _initRange && $$.brush.move($$.brush.getSelection(), _initRange.map($$.scale.x));
       }
   },
 
@@ -17413,6 +17422,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
    * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
    * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
+   * @property {Array} [subchart.init.range] Set initial selection domain range.
    * @property {number} [subchart.size.height] Change the height of the subchart.
    * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
    *  Specified function receives the current zoomed x domain.
@@ -17422,6 +17432,10 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    *      show: true,
    *      size: {
    *          height: 20
+   *      },
+   *      init: {
+   *          // specify initial range domain selection
+   *          range: [1, 2]
    *      },
    *      axis: {
    *      	x: {
@@ -17450,6 +17464,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   subchart_axis_x_show: !0,
   subchart_axis_x_tick_show: !0,
   subchart_axis_x_tick_text_show: !0,
+  subchart_init_range: undefined,
   subchart_onbrush: function subchart_onbrush() {}
 });
 ;// CONCATENATED MODULE: ./src/config/Options/interaction/zoom.ts
