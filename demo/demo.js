@@ -2612,7 +2612,8 @@ var demos = {
 					type: "line"
 				},
 				subchart: {
-					show: "subchart()"
+					show: "subchart()",
+					showHandle: true
 				}
 			},
 			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)"
