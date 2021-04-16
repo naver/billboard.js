@@ -2509,6 +2509,59 @@ describe("AXIS", function() {
 
 			util.generate(option);			
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", 1, 2, 3, 4, 5],
+						["data1", 30, 200, 100, 400, 150],
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "category",
+						tick: {
+							rotate: 5
+						},
+						padding: 10
+					}
+				}
+			}
+		});
+
+		it("check if axis.x.padding correctly set when is given as number value.", () => {
+			const {state} = chart.internal;
+			const padding = args.axis.x.padding;
+
+			expect(state.axis.x.padding).to.be.deep.equal({left: padding, right: padding});
+		});
+
+		it("set options axis.x.padding={left: 5}", () => {
+			args.axis.x.padding = {left: 5};
+		});
+
+		it("check if axis.x.padding correctly set when is given as 'left' key only.", () => {
+			const {state} = chart.internal;
+			const padding = args.axis.x.padding;
+			
+			padding.right = 0;
+
+			expect(state.axis.x.padding).to.be.deep.equal(padding);
+		});
+
+		it("set options axis.x.padding={left: 15, right: 5}", () => {
+			args.axis.x.padding = {left: 15, right: 5};
+		});
+
+		it("check if axis.x.padding correctly set when is given as object type.", () => {
+			const {state} = chart.internal;
+			const padding = args.axis.x.padding;
+
+			expect(state.axis.x.padding).to.be.deep.equal(padding);
+		});
 	});
 
 	describe("axis min/max", () => {
