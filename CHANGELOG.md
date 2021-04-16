@@ -1,3 +1,14 @@
+## [3.0.3](https://github.com/naver/billboard.js/compare/3.0.2...3.0.3) (2021-04-16)
+
+
+### Bug Fixes
+
+* **axis:** Fix axis.x.padding value setting ([a8ec411](https://github.com/naver/billboard.js/commit/a8ec411f893458925428e1b09ec5d4f13e28c863)), closes [#2038](https://github.com/naver/billboard.js/issues/2038)
+* **axis:** fix handling x padding value ([0a42768](https://github.com/naver/billboard.js/commit/0a427682dc18eee44d20e8953c993c9ee2475913)), closes [#2038](https://github.com/naver/billboard.js/issues/2038)
+* **candlestick:** fix to set expand state ([1e6a10d](https://github.com/naver/billboard.js/commit/1e6a10d553f7d39bd77fb787cafb928ec739a304)), closes [#2036](https://github.com/naver/billboard.js/issues/2036)
+* **types:** fix missing candlestick export ([ab778b2](https://github.com/naver/billboard.js/commit/ab778b2aa9ded18f495b4b96b6f17a4c296bed48)), closes [#2007](https://github.com/naver/billboard.js/issues/2007)
+* **types:** updated bar/candlestick options types ([0a48fd6](https://github.com/naver/billboard.js/commit/0a48fd61d06a9d078f806f5e508836f701e9d5af)), closes [#2043](https://github.com/naver/billboard.js/issues/2043)
+
 ## [3.0.2](https://github.com/naver/billboard.js/compare/3.0.1...3.0.2) (2021-03-31)
 
 
