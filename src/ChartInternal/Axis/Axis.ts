@@ -735,10 +735,11 @@ class Axis {
 	 * @returns {object} Padding object values with 'left' & 'right' key
 	 * @private
 	 */
-	getXAxisPadding(tickCount) {
+	getXAxisPadding(tickCount: number): {left: number, right: number} {
 		const $$ = this.owner;
-		let {left = 0, right = 0} = $$.config.axis_x_padding;
-		let padding = {left, right};
+		const padding = $$.config.axis_x_padding;
+		let {left = 0, right = 0} = isNumber(padding) ?
+			{left: padding, right: padding} : padding;
 
 		if ($$.axis.isTimeSeries()) {
 			const firstX = +$$.getXDomainMin($$.data.targets);
@@ -752,11 +753,9 @@ class Axis {
 				left = left / range / relativeTickWidth;
 				right = right / range / relativeTickWidth;
 			}
-
-			padding = {left, right};
 		}
 
-		return padding;
+		return {left, right};
 	}
 
 	updateLabels(withTransition) {
