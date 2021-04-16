@@ -539,7 +539,59 @@ describe("SUBCHART", () => {
 		});
 	});
 
-	describe("", () => {
-		it
-	})
+	describe("subchart handle", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: true,
+					init: {
+						range: [0,0.5]
+					},
+					showHandle: true
+				}
+			}
+		});
+
+		it("check the handlebar visiblity", () => {
+			const handlebar = chart.internal.brush.getSelection()
+				.selectAll(".handle--custom")
+				.each((d, i) => {
+					expect(d.type).to.be.equal(["w", "e"][i]);
+				});
+
+			const currDomain = chart.internal.scale.x.domain();
+
+			// when
+			util.doDrag(handlebar.node(), undefined, {clientX: 400, clientY: 100}, chart);
+
+			expect(chart.internal.scale.x.domain()).to.be.not.deep.equal(currDomain);
+		});
+
+		it("set options axis.rotated=true", () => {
+			args.axis = {
+				rotated: true
+			};
+		});
+
+		it("check the handlebar visiblity for rotated axis", () => {
+			const handlebar = chart.internal.brush.getSelection()
+				.selectAll(".handle--custom")
+				.each((d, i) => {
+					expect(d.type).to.be.equal(["n", "s"][i]);
+				});
+
+			const currDomain = chart.internal.scale.x.domain();
+
+			// when
+			util.doDrag(handlebar.node(), undefined, {clientX: 100, clientY: 0}, chart);
+
+			expect(chart.internal.scale.x.domain()).to.be.not.deep.equal(currDomain);
+		});
+	});
 });
