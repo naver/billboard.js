@@ -1080,6 +1080,12 @@ export interface SubchartOptions {
 	 * Show sub chart on the bottom of the chart.
 	 */
 	show?: boolean;
+
+	/**
+	 * Show sub chart's handle.
+	 */
+	showHandle?: boolean;
+
 	size?: {
 		/**
 		 * Change the height of the subchart.
