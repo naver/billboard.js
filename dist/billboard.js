@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.2-nightly-20210415004643
+ * @version 3.0.3-nightly-20210417004637
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10064,15 +10064,15 @@ var Axis_Axis = /*#__PURE__*/function () {
    */
   , _proto.getXAxisPadding = function getXAxisPadding(tickCount) {
     var $$ = this.owner,
-        _$$$config$axis_x_pad = $$.config.axis_x_padding,
-        _$$$config$axis_x_pad2 = _$$$config$axis_x_pad.left,
-        left = _$$$config$axis_x_pad2 === void 0 ? 0 : _$$$config$axis_x_pad2,
-        _$$$config$axis_x_pad3 = _$$$config$axis_x_pad.right,
-        right = _$$$config$axis_x_pad3 === void 0 ? 0 : _$$$config$axis_x_pad3,
-        padding = {
-      left: left,
-      right: right
-    };
+        padding = $$.config.axis_x_padding,
+        _ref = isNumber(padding) ? {
+      left: padding,
+      right: padding
+    } : padding,
+        _ref$left = _ref.left,
+        left = _ref$left === void 0 ? 0 : _ref$left,
+        _ref$right = _ref.right,
+        right = _ref$right === void 0 ? 0 : _ref$right;
 
     if ($$.axis.isTimeSeries()) {
       var firstX = +$$.getXDomainMin($$.data.targets),
@@ -10084,14 +10084,12 @@ var Axis_Axis = /*#__PURE__*/function () {
         var relativeTickWidth = timeDiff / tickCount / range;
         left = left / range / relativeTickWidth, right = right / range / relativeTickWidth;
       }
-
-      padding = {
-        left: left,
-        right: right
-      };
     }
 
-    return padding;
+    return {
+      left: left,
+      right: right
+    };
   }, _proto.updateLabels = function updateLabels(withTransition) {
     var _this3 = this,
         $$ = this.owner,
@@ -16830,33 +16828,34 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * @private
    */
   initBrush: function initBrush() {
-    var $$ = this,
+    var lastDomain,
+        timeout,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         subchart = $$.$el.subchart,
         isRotated = config.axis_rotated;
-    $$.brush = isRotated ? (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushY)() : (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushX)();
+    $$.brush = (isRotated ? (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushY)() : (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushX)()).handleSize(5);
 
-    // set "brush" event
-    var lastDomain,
-        timeout,
-        brushHandler = function () {
-      $$.redrawForBrush();
-    },
-        getBrushSize = function () {
+    var getBrushSize = function () {
       var brush = $$.$el.svg.select("." + config_classes.brush + " .overlay"),
           brushSize = {
         width: 0,
         height: 0
       };
       return brush.size() && (brushSize.width = +brush.attr("width"), brushSize.height = +brush.attr("height")), brushSize[isRotated ? "width" : "height"];
-    };
+    }; // bind brush event
+
 
     // set the brush extent
-    $$.brush.on("start", function () {
-      $$.state.inputType === "touch" && $$.hideTooltip(), brushHandler();
-    }).on("brush", brushHandler).on("end", function () {
-      lastDomain = scale.x.orgDomain();
+    $$.brush.on("start brush end", function (event) {
+      var selection = event.selection,
+          target = event.target,
+          type = event.type;
+      type === "start" && $$.state.inputType === "touch" && $$.hideTooltip(), /(start|brush)/.test(type) && $$.redrawForBrush(), type === "end" && (lastDomain = scale.x.orgDomain()), (target == null ? void 0 : target.handle) && (selection === null ? $$.brush.handle.attr("display", "none") : $$.brush.handle.attr("display", null).attr("transform", function (d, i) {
+        var pos = isRotated ? [33, selection[i] - (i === 0 ? 30 : 24)] : [selection[i], 3];
+        return "translate(" + pos + ")";
+      }));
     }), $$.brush.updateResize = function () {
       var _this = this;
 
@@ -16916,8 +16915,37 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
               chartClassName = config_classes["chart" + type + "s"];
           chart.select("." + chartClassName).empty() && chart.append("g").attr("class", chartClassName);
         }
-      }), main.append("g").attr("clip-path", clipPath).attr("class", config_classes.brush).call($$.brush), axis.subX = main.append("g").attr("class", config_classes.axisX).attr("transform", $$.getTranslate("subX")).attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
+      });
+      // Add extent rect for Brush
+      var brush = main.append("g").attr("clip-path", clipPath).attr("class", config_classes.brush).call($$.brush);
+      config.subchart_showHandle && $$.addBrushHandle(brush), axis.subX = main.append("g").attr("class", config_classes.axisX).attr("transform", $$.getTranslate("subX")).attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
     }
+  },
+
+  /**
+   * Add brush handle
+   * Enabled when: subchart.showHandle=true
+   * @param {d3Selection} brush Brush selection
+   * @private
+   */
+  addBrushHandle: function addBrushHandle(brush) {
+    var $$ = this,
+        config = $$.config,
+        isRotated = config.axis_rotated,
+        initRange = config.subchart_init_range,
+        customHandleClass = "handle--custom",
+        path = isRotated ? ["M 5.2491724,29.749209 a 6,6 0 0 0 -5.50000003,-6.5 H -5.7508276 a 6,6 0 0 0 -6.0000004,6.5 z m -5.00000003,-2 H -6.7508276 m 6.99999997,-2 H -6.7508276Z", "M 5.2491724,23.249172 a 6,-6 0 0 1 -5.50000003,6.5 H -5.7508276 a 6,-6 0 0 1 -6.0000004,-6.5 z m -5.00000003,2 H -6.7508276 m 6.99999997,2 H -6.7508276Z"] : ["M 0 18 A 6 6 0 0 0 -6.5 23.5 V 29 A 6 6 0 0 0 0 35 Z M -2 23 V 30 M -4 23 V 30Z", "M 0 18 A 6 6 0 0 1 6.5 23.5 V 29 A 6 6 0 0 1 0 35 Z M 2 23 V 30 M 4 23 V 30Z"];
+    $$.brush.handle = brush.selectAll("." + customHandleClass).data(isRotated ? [{
+      type: "n"
+    }, {
+      type: "s"
+    }] : [{
+      type: "w"
+    }, {
+      type: "e"
+    }]).enter().append("path").attr("class", customHandleClass).attr("cursor", (isRotated ? "ns" : "ew") + "-resize").attr("d", function (d) {
+      return path[+/[se]/.test(d.type)];
+    }).attr("display", initRange ? null : "none");
   },
 
   /**
@@ -17419,6 +17447,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * @property {boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
    *  - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
    *    - `show: subchart()`
+   * @property {boolean} [subchart.showHandle=false] Show sub chart's handle.
    * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
    * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
    * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
@@ -17430,6 +17459,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * @example
    *  subchart: {
    *      show: true,
+   *      showHandle: true,
    *      size: {
    *          height: 20
    *      },
@@ -17460,6 +17490,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * }
    */
   subchart_show: !1,
+  subchart_showHandle: !1,
   subchart_size_height: 60,
   subchart_axis_x_show: !0,
   subchart_axis_x_tick_show: !0,
@@ -17611,7 +17642,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.0.2",
+  version: "3.0.3",
 
   /**
    * Generate chart
@@ -17739,7 +17770,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.0.2
+ * @version 3.0.3
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

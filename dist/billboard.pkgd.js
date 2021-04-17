@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.2-nightly-20210415004643
+ * @version 3.0.3-nightly-20210417004637
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -24133,61 +24133,6 @@ function log() {
     return copy(scale, log()).base(scale.base());
   }, initRange.apply(scale, arguments), scale;
 }
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/month.js
-
-var month = newInterval(function (date) {
-  date.setDate(1), date.setHours(0, 0, 0, 0);
-}, function (date, step) {
-  date.setMonth(date.getMonth() + step);
-}, function (start, end) {
-  return end.getMonth() - start.getMonth() + (end.getFullYear() - start.getFullYear()) * 12;
-}, function (date) {
-  return date.getMonth();
-});
-/* harmony default export */ var src_month = (month);
-var months = month.range;
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/hour.js
-
-
-var hour = newInterval(function (date) {
-  date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond - date.getMinutes() * durationMinute);
-}, function (date, step) {
-  date.setTime(+date + step * durationHour);
-}, function (start, end) {
-  return (end - start) / durationHour;
-}, function (date) {
-  return date.getHours();
-});
-/* harmony default export */ var src_hour = (hour);
-var hours = hour.range;
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/minute.js
-
-
-var minute = newInterval(function (date) {
-  date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond);
-}, function (date, step) {
-  date.setTime(+date + step * durationMinute);
-}, function (start, end) {
-  return (end - start) / durationMinute;
-}, function (date) {
-  return date.getMinutes();
-});
-/* harmony default export */ var src_minute = (minute);
-var minutes = minute.range;
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/second.js
-
-
-var second = newInterval(function (date) {
-  date.setTime(date - date.getMilliseconds());
-}, function (date, step) {
-  date.setTime(+date + step * durationSecond);
-}, function (start, end) {
-  return (end - start) / durationSecond;
-}, function (date) {
-  return date.getUTCSeconds();
-});
-/* harmony default export */ var src_second = (second);
-var seconds = second.range;
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/millisecond.js
 
 var millisecond = newInterval(function () {// noop
@@ -24209,20 +24154,164 @@ millisecond.every = function (k) {
 
 /* harmony default export */ var src_millisecond = (millisecond);
 var milliseconds = millisecond.range;
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/second.js
+
+
+var second = newInterval(function (date) {
+  date.setTime(date - date.getMilliseconds());
+}, function (date, step) {
+  date.setTime(+date + step * durationSecond);
+}, function (start, end) {
+  return (end - start) / durationSecond;
+}, function (date) {
+  return date.getUTCSeconds();
+});
+/* harmony default export */ var src_second = (second);
+var seconds = second.range;
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/minute.js
+
+
+var minute = newInterval(function (date) {
+  date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond);
+}, function (date, step) {
+  date.setTime(+date + step * durationMinute);
+}, function (start, end) {
+  return (end - start) / durationMinute;
+}, function (date) {
+  return date.getMinutes();
+});
+/* harmony default export */ var src_minute = (minute);
+var minutes = minute.range;
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/hour.js
+
+
+var hour = newInterval(function (date) {
+  date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond - date.getMinutes() * durationMinute);
+}, function (date, step) {
+  date.setTime(+date + step * durationHour);
+}, function (start, end) {
+  return (end - start) / durationHour;
+}, function (date) {
+  return date.getHours();
+});
+/* harmony default export */ var src_hour = (hour);
+var hours = hour.range;
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/month.js
+
+var month = newInterval(function (date) {
+  date.setDate(1), date.setHours(0, 0, 0, 0);
+}, function (date, step) {
+  date.setMonth(date.getMonth() + step);
+}, function (start, end) {
+  return end.getMonth() - start.getMonth() + (end.getFullYear() - start.getFullYear()) * 12;
+}, function (date) {
+  return date.getMonth();
+});
+/* harmony default export */ var src_month = (month);
+var months = month.range;
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcMinute.js
+
+
+var utcMinute = newInterval(function (date) {
+  date.setUTCSeconds(0, 0);
+}, function (date, step) {
+  date.setTime(+date + step * durationMinute);
+}, function (start, end) {
+  return (end - start) / durationMinute;
+}, function (date) {
+  return date.getUTCMinutes();
+});
+/* harmony default export */ var src_utcMinute = (utcMinute);
+var utcMinutes = utcMinute.range;
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcHour.js
+
+
+var utcHour = newInterval(function (date) {
+  date.setUTCMinutes(0, 0, 0);
+}, function (date, step) {
+  date.setTime(+date + step * durationHour);
+}, function (start, end) {
+  return (end - start) / durationHour;
+}, function (date) {
+  return date.getUTCHours();
+});
+/* harmony default export */ var src_utcHour = (utcHour);
+var utcHours = utcHour.range;
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcMonth.js
+
+var utcMonth = newInterval(function (date) {
+  date.setUTCDate(1), date.setUTCHours(0, 0, 0, 0);
+}, function (date, step) {
+  date.setUTCMonth(date.getUTCMonth() + step);
+}, function (start, end) {
+  return end.getUTCMonth() - start.getUTCMonth() + (end.getUTCFullYear() - start.getUTCFullYear()) * 12;
+}, function (date) {
+  return date.getUTCMonth();
+});
+/* harmony default export */ var src_utcMonth = (utcMonth);
+var utcMonths = utcMonth.range;
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/ticks.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function ticker(year, month, week, day, hour, minute) {
+  function ticks(start, stop, count) {
+    var _ref,
+        reverse = stop < start;
+
+    reverse && (_ref = [stop, start], start = _ref[0], stop = _ref[1], _ref);
+    var interval = count && typeof count.range === "function" ? count : tickInterval(start, stop, count),
+        ticks = interval ? interval.range(start, +stop + 1) : [];
+    // inclusive stop
+    return reverse ? ticks.reverse() : ticks;
+  }
+
+  function tickInterval(start, stop, count) {
+    var target = Math.abs(stop - start) / count,
+        i = bisector(function (_ref2) {
+      var step = _ref2[2];
+      return step;
+    }).right(tickIntervals, target);
+    if (i === tickIntervals.length) return year.every(tickStep(start / durationYear, stop / durationYear, count));
+    if (i === 0) return src_millisecond.every(Math.max(tickStep(start, stop, count), 1));
+    var _tickIntervals = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i],
+        t = _tickIntervals[0],
+        step = _tickIntervals[1];
+    return t.every(step);
+  }
+
+  var tickIntervals = [[src_second, 1, durationSecond], [src_second, 5, 5 * durationSecond], [src_second, 15, 15 * durationSecond], [src_second, 30, 30 * durationSecond], [minute, 1, durationMinute], [minute, 5, 5 * durationMinute], [minute, 15, 15 * durationMinute], [minute, 30, 30 * durationMinute], [hour, 1, durationHour], [hour, 3, 3 * durationHour], [hour, 6, 6 * durationHour], [hour, 12, 12 * durationHour], [day, 1, durationDay], [day, 2, 2 * durationDay], [week, 1, durationWeek], [month, 1, durationMonth], [month, 3, 3 * durationMonth], [year, 1, durationYear]];
+  return [ticks, tickInterval];
+}
+
+var _ticker = ticker(src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute),
+    utcTicks = _ticker[0],
+    utcTickInterval = _ticker[1],
+    _ticker2 = ticker(src_year, src_month, sunday, src_day, src_hour, src_minute),
+    timeTicks = _ticker2[0],
+    timeTickInterval = _ticker2[1];
+
+
 ;// CONCATENATED MODULE: ./node_modules/d3-scale/src/time.js
 
 
 
 
 
-
-var time_durationSecond = 1e3,
-    time_durationMinute = 60000,
-    time_durationHour = 3600000,
-    time_durationDay = 86400000,
-    time_durationWeek = 604800000,
-    time_durationMonth = 2592000000,
-    time_durationYear = 31536000000;
 
 function time_date(t) {
   return new Date(t);
@@ -24232,25 +24321,9 @@ function time_number(t) {
   return t instanceof Date ? +t : +new Date(+t);
 }
 
-function calendar(year, month, week, day, hour, minute, second, millisecond, format) {
+function calendar(ticks, tickInterval, year, month, week, day, hour, minute, second, format) {
   function tickFormat(date) {
     return (second(date) < date ? formatMillisecond : minute(date) < date ? formatSecond : hour(date) < date ? formatMinute : day(date) < date ? formatHour : month(date) < date ? week(date) < date ? formatDay : formatWeek : year(date) < date ? formatMonth : formatYear)(date);
-  }
-
-  function tickInterval(interval, start, stop) {
-    // If a desired tick count is specified, pick a reasonable tick interval
-    // based on the extent of the domain and a rough estimate of tick size.
-    // Otherwise, assume interval is already a time interval and use it.
-    if (interval == null && (interval = 10), typeof interval === "number") {
-      var step,
-          target = Math.abs(stop - start) / interval,
-          i = bisector(function (i) {
-        return i[2];
-      }).right(tickIntervals, target);
-      return i === tickIntervals.length ? (step = tickStep(start / time_durationYear, stop / time_durationYear, interval), interval = year) : i ? (i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i], step = i[1], interval = i[0]) : (step = Math.max(tickStep(start, stop, interval), 1), interval = millisecond), interval.every(step);
-    }
-
-    return interval;
   }
 
   var scale = continuous(),
@@ -24263,31 +24336,25 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
       formatDay = format("%a %d"),
       formatWeek = format("%b %d"),
       formatMonth = format("%B"),
-      formatYear = format("%Y"),
-      tickIntervals = [[second, 1, time_durationSecond], [second, 5, 5000], [second, 15, 15000], [second, 30, 30000], [minute, 1, time_durationMinute], [minute, 5, 300000], [minute, 15, 900000], [minute, 30, 1800000], [hour, 1, time_durationHour], [hour, 3, 10800000], [hour, 6, 21600000], [hour, 12, 43200000], [day, 1, time_durationDay], [day, 2, 172800000], [week, 1, time_durationWeek], [month, 1, time_durationMonth], [month, 3, 7776000000], [year, 1, time_durationYear]];
+      formatYear = format("%Y");
   return scale.invert = function (y) {
     return new Date(invert(y));
   }, scale.domain = function (_) {
     return arguments.length ? domain(Array.from(_, time_number)) : domain().map(time_date);
   }, scale.ticks = function (interval) {
-    var t,
-        d = domain(),
-        t0 = d[0],
-        t1 = d[d.length - 1],
-        r = t1 < t0;
-    // inclusive stop
-    return r && (t = t0, t0 = t1, t1 = t), t = tickInterval(interval, t0, t1), t = t ? t.range(t0, t1 + 1) : [], r ? t.reverse() : t;
+    var d = domain();
+    return ticks(d[0], d[d.length - 1], interval == null ? 10 : interval);
   }, scale.tickFormat = function (count, specifier) {
     return specifier == null ? tickFormat : format(specifier);
   }, scale.nice = function (interval) {
     var d = domain();
-    return (interval = tickInterval(interval, d[0], d[d.length - 1])) ? domain(nice(d, interval)) : scale;
+    return interval && typeof interval.range === "function" || (interval = tickInterval(d[0], d[d.length - 1], interval == null ? 10 : interval)), interval ? domain(nice(d, interval)) : scale;
   }, scale.copy = function () {
-    return copy(scale, calendar(year, month, week, day, hour, minute, second, millisecond, format));
+    return copy(scale, calendar(ticks, tickInterval, year, month, week, day, hour, minute, second, format));
   }, scale;
 }
 function time() {
-  return initRange.apply(calendar(src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, src_millisecond, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
+  return initRange.apply(calendar(timeTicks, timeTickInterval, src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
 }
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/scale.ts
 /**
@@ -29928,15 +29995,15 @@ var Axis_Axis = /*#__PURE__*/function () {
    */
   , _proto.getXAxisPadding = function getXAxisPadding(tickCount) {
     var $$ = this.owner,
-        _$$$config$axis_x_pad = $$.config.axis_x_padding,
-        _$$$config$axis_x_pad2 = _$$$config$axis_x_pad.left,
-        left = _$$$config$axis_x_pad2 === void 0 ? 0 : _$$$config$axis_x_pad2,
-        _$$$config$axis_x_pad3 = _$$$config$axis_x_pad.right,
-        right = _$$$config$axis_x_pad3 === void 0 ? 0 : _$$$config$axis_x_pad3,
-        padding = {
-      left: left,
-      right: right
-    };
+        padding = $$.config.axis_x_padding,
+        _ref = isNumber(padding) ? {
+      left: padding,
+      right: padding
+    } : padding,
+        _ref$left = _ref.left,
+        left = _ref$left === void 0 ? 0 : _ref$left,
+        _ref$right = _ref.right,
+        right = _ref$right === void 0 ? 0 : _ref$right;
 
     if ($$.axis.isTimeSeries()) {
       var firstX = +$$.getXDomainMin($$.data.targets),
@@ -29948,14 +30015,12 @@ var Axis_Axis = /*#__PURE__*/function () {
         var relativeTickWidth = timeDiff / tickCount / range;
         left = left / range / relativeTickWidth, right = right / range / relativeTickWidth;
       }
-
-      padding = {
-        left: left,
-        right: right
-      };
     }
 
-    return padding;
+    return {
+      left: left,
+      right: right
+    };
   }, _proto.updateLabels = function updateLabels(withTransition) {
     var _this3 = this,
         $$ = this.owner,
@@ -37613,33 +37678,34 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * @private
    */
   initBrush: function initBrush() {
-    var $$ = this,
+    var lastDomain,
+        timeout,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         subchart = $$.$el.subchart,
         isRotated = config.axis_rotated;
-    $$.brush = isRotated ? brushY() : brushX();
+    $$.brush = (isRotated ? brushY() : brushX()).handleSize(5);
 
-    // set "brush" event
-    var lastDomain,
-        timeout,
-        brushHandler = function () {
-      $$.redrawForBrush();
-    },
-        getBrushSize = function () {
+    var getBrushSize = function () {
       var brush = $$.$el.svg.select("." + config_classes.brush + " .overlay"),
           brushSize = {
         width: 0,
         height: 0
       };
       return brush.size() && (brushSize.width = +brush.attr("width"), brushSize.height = +brush.attr("height")), brushSize[isRotated ? "width" : "height"];
-    };
+    }; // bind brush event
+
 
     // set the brush extent
-    $$.brush.on("start", function () {
-      $$.state.inputType === "touch" && $$.hideTooltip(), brushHandler();
-    }).on("brush", brushHandler).on("end", function () {
-      lastDomain = scale.x.orgDomain();
+    $$.brush.on("start brush end", function (event) {
+      var selection = event.selection,
+          target = event.target,
+          type = event.type;
+      type === "start" && $$.state.inputType === "touch" && $$.hideTooltip(), /(start|brush)/.test(type) && $$.redrawForBrush(), type === "end" && (lastDomain = scale.x.orgDomain()), (target == null ? void 0 : target.handle) && (selection === null ? $$.brush.handle.attr("display", "none") : $$.brush.handle.attr("display", null).attr("transform", function (d, i) {
+        var pos = isRotated ? [33, selection[i] - (i === 0 ? 30 : 24)] : [selection[i], 3];
+        return "translate(" + pos + ")";
+      }));
     }), $$.brush.updateResize = function () {
       var _this = this;
 
@@ -37699,8 +37765,37 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
               chartClassName = config_classes["chart" + type + "s"];
           chart.select("." + chartClassName).empty() && chart.append("g").attr("class", chartClassName);
         }
-      }), main.append("g").attr("clip-path", clipPath).attr("class", config_classes.brush).call($$.brush), axis.subX = main.append("g").attr("class", config_classes.axisX).attr("transform", $$.getTranslate("subX")).attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
+      });
+      // Add extent rect for Brush
+      var brush = main.append("g").attr("clip-path", clipPath).attr("class", config_classes.brush).call($$.brush);
+      config.subchart_showHandle && $$.addBrushHandle(brush), axis.subX = main.append("g").attr("class", config_classes.axisX).attr("transform", $$.getTranslate("subX")).attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
     }
+  },
+
+  /**
+   * Add brush handle
+   * Enabled when: subchart.showHandle=true
+   * @param {d3Selection} brush Brush selection
+   * @private
+   */
+  addBrushHandle: function addBrushHandle(brush) {
+    var $$ = this,
+        config = $$.config,
+        isRotated = config.axis_rotated,
+        initRange = config.subchart_init_range,
+        customHandleClass = "handle--custom",
+        path = isRotated ? ["M 5.2491724,29.749209 a 6,6 0 0 0 -5.50000003,-6.5 H -5.7508276 a 6,6 0 0 0 -6.0000004,6.5 z m -5.00000003,-2 H -6.7508276 m 6.99999997,-2 H -6.7508276Z", "M 5.2491724,23.249172 a 6,-6 0 0 1 -5.50000003,6.5 H -5.7508276 a 6,-6 0 0 1 -6.0000004,-6.5 z m -5.00000003,2 H -6.7508276 m 6.99999997,2 H -6.7508276Z"] : ["M 0 18 A 6 6 0 0 0 -6.5 23.5 V 29 A 6 6 0 0 0 0 35 Z M -2 23 V 30 M -4 23 V 30Z", "M 0 18 A 6 6 0 0 1 6.5 23.5 V 29 A 6 6 0 0 1 0 35 Z M 2 23 V 30 M 4 23 V 30Z"];
+    $$.brush.handle = brush.selectAll("." + customHandleClass).data(isRotated ? [{
+      type: "n"
+    }, {
+      type: "s"
+    }] : [{
+      type: "w"
+    }, {
+      type: "e"
+    }]).enter().append("path").attr("class", customHandleClass).attr("cursor", (isRotated ? "ns" : "ew") + "-resize").attr("d", function (d) {
+      return path[+/[se]/.test(d.type)];
+    }).attr("display", initRange ? null : "none");
   },
 
   /**
@@ -38202,6 +38297,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * @property {boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
    *  - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
    *    - `show: subchart()`
+   * @property {boolean} [subchart.showHandle=false] Show sub chart's handle.
    * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
    * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
    * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
@@ -38213,6 +38309,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * @example
    *  subchart: {
    *      show: true,
+   *      showHandle: true,
    *      size: {
    *          height: 20
    *      },
@@ -38243,6 +38340,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * }
    */
   subchart_show: !1,
+  subchart_showHandle: !1,
   subchart_size_height: 60,
   subchart_axis_x_show: !0,
   subchart_axis_x_tick_show: !0,
@@ -38394,7 +38492,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.0.2",
+  version: "3.0.3",
 
   /**
    * Generate chart
@@ -38522,7 +38620,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.0.2
+ * @version 3.0.3
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
