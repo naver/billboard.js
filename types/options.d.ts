@@ -285,7 +285,7 @@ export interface ChartOptions {
 			/**
 			 * Set the width option for specific dataset
 			 */
-			[key: string]: {
+			[key: string]: number | {
 				ratio: number;
 				max: number;
 			}
@@ -362,7 +362,7 @@ export interface ChartOptions {
 			/**
 			 * Set the width option for specific dataset
 			 */
-			[key: string]: {
+			[key: string]: number | {
 				ratio: number;
 				max: number;
 			}
@@ -1080,6 +1080,12 @@ export interface SubchartOptions {
 	 * Show sub chart on the bottom of the chart.
 	 */
 	show?: boolean;
+
+	/**
+	 * Show sub chart's handle.
+	 */
+	showHandle?: boolean;
+
 	size?: {
 		/**
 		 * Change the height of the subchart.

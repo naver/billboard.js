@@ -16,6 +16,7 @@ export default {
 	 * @property {boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
 	 *  - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
 	 *    - `show: subchart()`
+	 * @property {boolean} [subchart.showHandle=false] Show sub chart's handle.
 	 * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
 	 * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
 	 * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
@@ -27,6 +28,7 @@ export default {
 	 * @example
 	 *  subchart: {
 	 *      show: true,
+	 *      showHandle: true,
 	 *      size: {
 	 *          height: 20
 	 *      },
@@ -57,6 +59,7 @@ export default {
 	 * }
 	 */
 	subchart_show: false,
+	subchart_showHandle: false,
 	subchart_size_height: 60,
 	subchart_axis_x_show: true,
 	subchart_axis_x_tick_show: true,

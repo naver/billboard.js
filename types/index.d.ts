@@ -17,6 +17,7 @@ export {
 	areaStep,
 	bar,
 	bubble,
+	candlestick,
 	donut,
 	gauge,
 	line,
