@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210417004637
+ * @version 3.0.3-nightly-20210420004644
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -1036,6 +1036,7 @@ var shared = __webpack_require__(24);
 var sharedKey = __webpack_require__(27);
 var hiddenKeys = __webpack_require__(31);
 
+var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
 var WeakMap = global.WeakMap;
 var set, get, has;
 
@@ -1058,6 +1059,7 @@ if (NATIVE_WEAK_MAP) {
   var wmhas = store.has;
   var wmset = store.set;
   set = function (it, metadata) {
+    if (wmhas.call(store, it)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
     metadata.facade = it;
     wmset.call(store, it, metadata);
     return metadata;
@@ -1072,6 +1074,7 @@ if (NATIVE_WEAK_MAP) {
   var STATE = sharedKey('state');
   hiddenKeys[STATE] = true;
   set = function (it, metadata) {
+    if (objectHas(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
     metadata.facade = it;
     createNonEnumerableProperty(it, STATE, metadata);
     return metadata;
@@ -1129,7 +1132,7 @@ var store = __webpack_require__(24);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.10.1',
+  version: '3.10.2',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 });
@@ -8282,7 +8285,7 @@ var UPDATES_LAST_INDEX_WRONG = (function () {
 var UNSUPPORTED_Y = stickyHelpers.UNSUPPORTED_Y || stickyHelpers.BROKEN_CARET;
 
 // nonparticipating capturing group, copied from es5-shim's String#split patch.
-// eslint-disable-next-line regexp/no-assertion-capturing-group, regexp/no-empty-group -- required for testing
+// eslint-disable-next-line regexp/no-assertion-capturing-group, regexp/no-empty-group, regexp/no-lazy-ends -- testing
 var NPCG_INCLUDED = /()??/.exec('')[1] !== undefined;
 
 var PATCH = UPDATES_LAST_INDEX_WRONG || NPCG_INCLUDED || UNSUPPORTED_Y;
@@ -12217,7 +12220,7 @@ var getOrigin = function () {
   var scheme = url.scheme;
   var port = url.port;
   if (scheme == 'blob') try {
-    return new URL(scheme.path[0]).origin;
+    return new URLConstructor(scheme.path[0]).origin;
   } catch (error) {
     return 'null';
   }
