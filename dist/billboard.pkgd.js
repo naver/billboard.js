@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210420004644
+ * @version 3.0.3-nightly-20210421004645
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -15,7 +15,7 @@
  * - d3-dsv ^2.0.0
  * - d3-ease ^2.0.0
  * - d3-interpolate ^2.0.1
- * - d3-scale ^3.2.3
+ * - d3-scale ^3.3.0
  * - d3-selection ^2.0.0
  * - d3-shape ^2.0.0
  * - d3-time-format ^3.0.0
@@ -14887,7 +14887,7 @@ function ascending(a, b) {
   return null;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/size.js
-function _createForOfIteratorHelperLoose(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { it && (o = it); var i = 0; return function () { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } return it = o[Symbol.iterator](), it.next.bind(it); }
+function _createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { it && (o = it); var i = 0; return function () { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
 function _unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(o) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? _arrayLikeToArray(o, minLen) : void 0; } }
 
@@ -19192,7 +19192,7 @@ function noevent_nopropagation(event) {
   event.preventDefault(), event.stopImmediatePropagation();
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
-function brush_createForOfIteratorHelperLoose(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = brush_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { it && (o = it); var i = 0; return function () { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } return it = o[Symbol.iterator](), it.next.bind(it); }
+function brush_createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = brush_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { it && (o = it); var i = 0; return function () { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
 function brush_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return brush_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(o) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? brush_arrayLikeToArray(o, minLen) : void 0; } }
 
@@ -22266,7 +22266,7 @@ function initInterpolator(domain, interpolator) {
   return this;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-scale/src/ordinal.js
-function ordinal_createForOfIteratorHelperLoose(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = ordinal_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { it && (o = it); var i = 0; return function () { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } return it = o[Symbol.iterator](), it.next.bind(it); }
+function ordinal_createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = ordinal_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { it && (o = it); var i = 0; return function () { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
 function ordinal_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return ordinal_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(o) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? ordinal_arrayLikeToArray(o, minLen) : void 0; } }
 
@@ -23441,7 +23441,7 @@ function ascendingComparator(f) {
 
 var number_marked = /*#__PURE__*/regenerator_default().mark(numbers);
 
-function number_createForOfIteratorHelperLoose(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = number_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { it && (o = it); var i = 0; return function () { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } return it = o[Symbol.iterator](), it.next.bind(it); }
+function number_createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = number_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { it && (o = it); var i = 0; return function () { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
 function number_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return number_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(o) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? number_arrayLikeToArray(o, minLen) : void 0; } }
 
