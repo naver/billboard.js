@@ -1046,22 +1046,22 @@ export interface TooltipOptions {
 	/**
 	 * Set a callback that will be invoked before the tooltip is shown.
 	 */
-	onshow?(this: Chart, selectedData: DataItem): void;
+	onshow?(this: Chart, selectedData: DataItem[]): void;
 
 	/**
 	 * Set a callback that will be invoked after the tooltip is shown
 	 */
-	onshown?(this: Chart, selectedData: DataItem): void;
+	onshown?(this: Chart, selectedData: DataItem[]): void;
 
 	/**
 	 * Set a callback that will be invoked before the tooltip is hidden.
 	 */
-	onhide?(this: Chart, selectedData: DataItem): void;
+	onhide?(this: Chart, selectedData: DataItem[]): void;
 
 	/**
 	 * Set a callback that will be invoked after the tooltip is hidden.
 	 */
-	onhidden?(this: Chart, selectedData: DataItem): void;
+	onhidden?(this: Chart, selectedData: DataItem[]): void;
 
 	/**
 	 * Set if tooltips on all visible charts with like x points are shown together when one is shown.
