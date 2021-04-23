@@ -19,9 +19,15 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on [
 - [Third Party Applications](https://github.com/naver/billboard.js/wiki/Third-party-applications)
 - [Who's using billboard.js](https://github.com/naver/billboard.js/wiki/Who's-using-billboard.js)
 - [Benchmark](https://naver.github.io/billboard.js/demo/benchmark/)
+- Technicals:
+  - [How to bundle for legacy browsers?](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F)
+  - [How to generate chart image in Node.js environment?](https://github.com/naver/billboard.js/wiki/How-to-generate-chart-image-in-Node.js-environment%3F)
+  - find out more at [Wiki](https://github.com/naver/billboard.js/wiki) page.
 - v2 updates:
   - [v2 CHANGELOG](https://github.com/naver/billboard.js/wiki/CHANGELOG-v2)
   - [Migration Guide to v2](https://github.com/naver/billboard.js/wiki/Migration-Guide-to-v2)
+- v3 updates:
+  - [billboard.js 3.0 release: D3.js v6 support & new candlestick type!](https://netil.medium.com/billboard-js-3-0-release-d3-js-v6-support-new-candlestick-type-9bd74af6a753)
 
 ## Playground
 Play with the diverse options generating on the fly!
