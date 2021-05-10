@@ -157,7 +157,7 @@
 		"lite-fixture": "^1.0.2",
 		"mini-css-extract-plugin": "^1.6.0",
 		"mocha": "^8.3.2",
-		"node-sass": "^5.0.0",
+		"node-sass": "^6.0.0",
 		"regenerator-runtime": "^0.13.7",
 		"rollup": "^2.46.0",
 		"sass-loader": "^11.0.1",
