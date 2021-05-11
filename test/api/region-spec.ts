@@ -288,6 +288,10 @@ describe("API region", function() {
 			// when
 			chart.regions.add(regions);
 
+			// regions should be positioned behind the chart elements
+			// https://github.com/naver/billboard.js/issues/2067
+			expect(chart.$.main.select(":first-child").classed(CLASS.regions)).to.be.true;
+
 			expect(chart.regions()).to.deep.equal(regions);
 
 			// when

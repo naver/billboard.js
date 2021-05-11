@@ -17,7 +17,8 @@ const config = {
 		filename: "[name].js",
 		libraryTarget: "umd",
 		umdNamedDefine: true,
-		globalObject: "this"
+		globalObject: "this",
+		publicPath: "/dist"
 	},
 	externals: ({context, request}, callback) => {
 		// every 'd3-*' import, will be externally required as their name except root as 'd3'
