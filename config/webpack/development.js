@@ -5,8 +5,8 @@ const path = require("path");
 
 const config = {
 	devServer: {
-		dev: {
-			publicPath: "/dist"
+		client: {
+			path: "/dist"
 		},
 		static: {
 			directory: path.join(__dirname, "../../"),
