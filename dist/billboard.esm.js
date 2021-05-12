@@ -12644,20 +12644,21 @@ var region = {
     initRegion: function () {
         var $$ = this;
         var $el = $$.$el;
-        $el.region.main = $el.main.append("g")
+        $el.region.main = $el.main
+            .insert("g", ":first-child")
             .attr("clip-path", $$.state.clip.path)
             .attr("class", CLASS.regions);
     },
     updateRegion: function (duration) {
         var $$ = this;
-        var config = $$.config, $el = $$.$el;
-        if (!$el.region.main) {
+        var config = $$.config, region = $$.$el.region;
+        if (!region.main) {
             $$.initRegion();
         }
         // hide if arc type
-        $el.region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+        region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
         // select <g> element
-        var list = $el.main.select("." + CLASS.regions)
+        var list = region.main
             .selectAll("." + CLASS.region)
             .data(config.regions);
         list.exit()
@@ -12672,7 +12673,7 @@ var region = {
         list
             .append("rect")
             .style("fill-opacity", "0");
-        $el.region.list = list;
+        region.list = list;
     },
     redrawRegion: function (withTransition) {
         var $$ = this;

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210511004623
+ * @version 3.0.3-nightly-20210512004653
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -31093,16 +31093,16 @@ function smoothLines(el, type) {
   initRegion: function initRegion() {
     var $$ = this,
         $el = $$.$el;
-    $el.region.main = $el.main.append("g").attr("clip-path", $$.state.clip.path).attr("class", config_classes.regions);
+    $el.region.main = $el.main.insert("g", ":first-child").attr("clip-path", $$.state.clip.path).attr("class", config_classes.regions);
   },
   updateRegion: function updateRegion(duration) {
     var $$ = this,
         config = $$.config,
-        $el = $$.$el;
-    $el.region.main || $$.initRegion(), $el.region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+        region = $$.$el.region;
+    region.main || $$.initRegion(), region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
     // select <g> element
-    var list = $el.main.select("." + config_classes.regions).selectAll("." + config_classes.region).data(config.regions);
-    list.exit().transition().duration(duration).style("opacity", "0").remove(), list = list.enter().append("g").merge(list).attr("class", $$.classRegion.bind($$)), list.append("rect").style("fill-opacity", "0"), $el.region.list = list;
+    var list = region.main.selectAll("." + config_classes.region).data(config.regions);
+    list.exit().transition().duration(duration).style("opacity", "0").remove(), list = list.enter().append("g").merge(list).attr("class", $$.classRegion.bind($$)), list.append("rect").style("fill-opacity", "0"), region.list = list;
   },
   redrawRegion: function redrawRegion(withTransition) {
     var $$ = this,
