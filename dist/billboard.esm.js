@@ -6258,8 +6258,8 @@ var size = {
     getParentRectValue: function (key) {
         var offsetName = "offset" + capitalize(key);
         var parent = this.$el.chart.node();
-        var v;
-        while (!v && parent && parent.tagName !== "BODY") {
+        var v = 0;
+        while (v < 30 && parent && parent.tagName !== "BODY") {
             try {
                 v = parent.getBoundingClientRect()[key];
             }
@@ -6272,12 +6272,10 @@ var size = {
             }
             parent = parent.parentNode;
         }
-        if (key === "width") {
-            // Sometimes element's width value is incorrect(ex. flex container)
-            // In this case, use body's offsetWidth instead.
-            var bodyWidth = doc.body.offsetWidth;
-            v > bodyWidth && (v = bodyWidth);
-        }
+        // Sometimes element's dimension value is incorrect(ex. flex container)
+        // In this case, use body's offset instead.
+        var bodySize = doc.body[offsetName];
+        v > bodySize && (v = bodySize);
         return v;
     },
     getParentWidth: function () {
@@ -6285,7 +6283,13 @@ var size = {
     },
     getParentHeight: function () {
         var h = this.$el.chart.style("height");
-        return h.indexOf("px") > 0 ? parseInt(h, 10) : 0;
+        var height = 0;
+        if (h) {
+            height = /px$/.test(h) ?
+                parseInt(h, 10) :
+                this.getParentRectValue("height");
+        }
+        return height;
     },
     getSvgLeft: function (withoutRecompute) {
         var $$ = this;

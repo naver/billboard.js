@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210512004653
+ * @version 3.0.3-nightly-20210516004643
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -25848,7 +25848,7 @@ function stepAfter(context) {
    * @private
    */
   getParentRectValue: function getParentRectValue(key) {
-    for (var v, offsetName = "offset" + capitalize(key), parent = this.$el.chart.node(); !v && parent && parent.tagName !== "BODY";) {
+    for (var offsetName = "offset" + capitalize(key), parent = this.$el.chart.node(), v = 0; v < 30 && parent && parent.tagName !== "BODY";) {
       try {
         v = parent.getBoundingClientRect()[key];
       } catch (e) {
@@ -25856,23 +25856,20 @@ function stepAfter(context) {
       }
 
       parent = parent.parentNode;
-    }
+    } // Sometimes element's dimension value is incorrect(ex. flex container)
+    // In this case, use body's offset instead.
 
-    if (key === "width") {
-      // Sometimes element's width value is incorrect(ex. flex container)
-      // In this case, use body's offsetWidth instead.
-      var bodyWidth = browser_doc.body.offsetWidth;
-      v > bodyWidth && (v = bodyWidth);
-    }
 
-    return v;
+    var bodySize = browser_doc.body[offsetName];
+    return v > bodySize && (v = bodySize), v;
   },
   getParentWidth: function getParentWidth() {
     return this.getParentRectValue("width");
   },
   getParentHeight: function getParentHeight() {
-    var h = this.$el.chart.style("height");
-    return h.indexOf("px") > 0 ? parseInt(h, 10) : 0;
+    var h = this.$el.chart.style("height"),
+        height = 0;
+    return h && (height = /px$/.test(h) ? parseInt(h, 10) : this.getParentRectValue("height")), height;
   },
   getSvgLeft: function getSvgLeft(withoutRecompute) {
     var $$ = this,
