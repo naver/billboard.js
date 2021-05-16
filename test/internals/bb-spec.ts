@@ -229,6 +229,23 @@ describe("Interface & initialization", () => {
 				done();
 			}, 200);
 		});
+
+		it("should set correct height value", () => {
+			const height = 450;
+			container.innerHTML = `<div style="height:${height}px;width:500px"><div id="chartHeight" style="height:100%"></div></div>`;
+
+			chart = util.generate({
+				bindto: "#chartHeight",
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400],
+						["data2", 500, 800, 500, 2000]
+					]
+				}
+			});
+
+			expect(chart.$.chart.node().getBoundingClientRect().height).to.be.equal(height);
+		});
 	});
 
 	describe("set defaults options", () => {
