@@ -321,7 +321,7 @@ describe("SHAPE POINT", () => {
 					chart.tooltip.show({x});
 
 					circles.each(function(d) {
-						expect(+this.style.opacity).to.be.equal(1);
+						expect(this.style.opacity).to.be.equal("");
 						expect(d.x).to.be.equal(x);
 						expect(+this.getAttribute("cx")).to.be.equal(cx);
 					});

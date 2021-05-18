@@ -407,7 +407,7 @@ export default {
 			.attr("d", $$.svgArc);
 
 		svg.selectAll(`${CLASS.arc}`)
-			.style("opacity", "1");
+			.style("opacity", null);
 	},
 
 	/**
@@ -581,7 +581,7 @@ export default {
 		mainArc
 			.attr("transform", d => (!$$.isGaugeType(d.data) && withTransform ? "scale(0)" : ""))
 			.style("opacity", function(d) {
-				return d === this._current ? "0" : "1";
+				return d === this._current ? "0" : null;
 			})
 			.each(() => {
 				state.transiting = true;
@@ -630,7 +630,7 @@ export default {
 				return color;
 			})
 			// Where gauge reading color would receive customization.
-			.style("opacity", "1")
+			.style("opacity", null)
 			.call(endall, function() {
 				if ($$.levelColor) {
 					const path = d3Select(this);
@@ -830,13 +830,13 @@ export default {
 				))
 				.transition()
 				.duration(duration)
-				.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0"));
+				.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0"));
 
 			hasMultiArcGauge && text.attr("dy", "-.1em");
 		}
 
 		main.select(`.${CLASS.chartArcsTitle}`)
-			.style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0");
+			.style("opacity", $$.hasType("donut") || hasGauge ? null : "0");
 
 		if (hasGauge) {
 			const isFullCircle = config.gauge_fullCircle;

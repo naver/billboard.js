@@ -121,8 +121,7 @@ export default class AxisRenderer {
 				const tickEnter = tick
 					.enter()
 					.insert("g", ".domain")
-					.attr("class", "tick")
-					.style("opacity", "1");
+					.attr("class", "tick");
 
 				// MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
 				const tickExit = tick.exit().remove();
@@ -216,7 +215,7 @@ export default class AxisRenderer {
 				}
 
 				tickTransform(tickEnter, scale0);
-				tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
+				tickTransform(helper.transitionise(tick).style("opacity", null), scale1);
 			}
 		});
 

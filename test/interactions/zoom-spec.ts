@@ -917,7 +917,7 @@ describe("ZOOM", function() {
 			chart.zoom([4,5]);
 
 			const tickTexts = chart.$.main.selectAll(`.${CLASS.axisY} .tick text`)
-				.filter(function() { return this.style.display === "block"});
+				.filter(function() { return this.style.display === ""});
 
 			expect(tickTexts.size()).to.be.equal(args.axis.y.tick.culling.max);
 		});

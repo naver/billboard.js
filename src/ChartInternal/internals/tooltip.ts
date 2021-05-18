@@ -75,7 +75,7 @@ export default {
 			if (!config.tooltip_contents.bindto) {
 				$el.tooltip.style("top", config.tooltip_init_position.top)
 					.style("left", config.tooltip_init_position.left)
-					.style("display", "block");
+					.style("display", null);
 			}
 		}
 	},

@@ -95,7 +95,7 @@ export default {
 			(withTransition ? line.transition(getRandom()) : line)
 				.attr("d", drawFn)
 				.style("stroke", this.color)
-				.style("opacity", "1")
+				.style("opacity", null)
 		];
 	},
 

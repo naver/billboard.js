@@ -233,7 +233,7 @@ export default {
 
 					drawFn(d, i, g);
 				})
-				.style("opacity", "1")
+				.style("opacity", null)
 		];
 	},
 

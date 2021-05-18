@@ -101,7 +101,7 @@ describe("SHAPE LINE", () => {
 
 			setTimeout(() => {
 				target.each(function(d, i) {
-					expect(this.style.opacity).to.be.equal(d.index === 1 ? "0" : "1");
+					expect(this.style.opacity).to.be.equal(d.index === 1 ? "0" : "");
 				});
 
 				done();
