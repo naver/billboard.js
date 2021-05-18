@@ -13,12 +13,12 @@ import {AxisType} from "../../../types/types";
 
 
 export default {
-	opacityForText(d): "1" | "0" {
+	opacityForText(d): null | "0" {
 		const $$ = this;
 
 		return $$.isBarType(d) && !$$.meetsLabelThreshold(
 			Math.abs($$.getRatio("bar", d),), "bar"
-		) ? "0" : ($$.hasDataLabel ? "1" : "0");
+		) ? "0" : ($$.hasDataLabel ? null : "0");
 	},
 
 	/**

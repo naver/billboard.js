@@ -85,7 +85,7 @@ export default {
 			(withTransition ? bar.transition(getRandom()) : bar)
 				.attr("d", drawFn)
 				.style("fill", this.color)
-				.style("opacity", "1")
+				.style("opacity", null)
 		];
 	},
 

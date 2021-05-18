@@ -27,7 +27,7 @@ export default {
 		}
 
 		// hide if arc type
-		region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+		region.main.style("visibility", $$.hasArcType() ? "hidden" : null);
 		// select <g> element
 
 		let list = region.main
@@ -64,7 +64,7 @@ export default {
 
 		return [
 			(withTransition ? regions.transition() : regions)
-				.style("fill-opacity", d => (isValue(d.opacity) ? d.opacity : "0.1"))
+				.style("fill-opacity", d => (isValue(d.opacity) ? d.opacity : null))
 				.on("end", function() {
 					// remove unnecessary rect after transition
 					d3Select(this.parentNode)

@@ -2419,7 +2419,7 @@ describe("AXIS", function() {
 			["subX", "x", "y", "y2"].forEach(v => {
 				const data = chart.internal.$el.axis[v]
 					.selectAll(".tick text").filter(function() {
-						return this.style.display === "block";
+						return this.style.display === "";
 					}).data();
 
 				expect(data).to.be.deep.equal(expected[v === "subX" ? "x" : v]);

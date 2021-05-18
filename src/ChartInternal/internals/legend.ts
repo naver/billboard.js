@@ -245,16 +245,6 @@ export default {
 	},
 
 	/**
-	 * Get the opacity of the legend
-	 * @param {d3.selection} legendItem Legend item node
-	 * @returns {string|null} opacity
-	 * @private
-	 */
-	opacityForLegend(legendItem): string | null {
-		return legendItem.classed(CLASS.legendItemHidden) ? null : "1";
-	},
-
-	/**
 	 * Get the opacity of the legend that is unfocused
 	 * @param {d3.selection} legendItem Legend item node
 	 * @returns {string|null} opacity
@@ -281,8 +271,8 @@ export default {
 			.transition()
 			.duration(100)
 			.style("opacity", function() {
-				return (focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend)
-					.call($$, d3Select(this));
+				return focus ? null :
+					$$.opacityForUnfocusedLegend.call($$, d3Select(this));
 			});
 	},
 
@@ -298,9 +288,7 @@ export default {
 			.classed(CLASS.legendItemFocused, false)
 			.transition()
 			.duration(100)
-			.style("opacity", function() {
-				return $$.opacityForLegend(d3Select(this));
-			});
+			.style("opacity", null);
 	},
 
 	/**
@@ -316,7 +304,7 @@ export default {
 			config.legend_show = true;
 
 			$el.legend ?
-				$el.legend.style("visibility", "visible") :
+				$el.legend.style("visibility", null) :
 				$$.initLegend();
 
 			!$$.state.legendHasRendered && $$.updateLegend();
@@ -325,11 +313,9 @@ export default {
 		$$.removeHiddenLegendIds(targetIds);
 
 		$el.legend.selectAll($$.selectorLegends(targetIds))
-			.style("visibility", "visible")
+			.style("visibility", null)
 			.transition()
-			.style("opacity", function() {
-				return $$.opacityForLegend(d3Select(this));
-			});
+			.style("opacity", null);
 	},
 
 	/**
@@ -399,7 +385,7 @@ export default {
 
 				return itemClass + $$.generateClass(CLASS.legendItem, id);
 			})
-			.style("visibility", id => ($$.isLegendToShow(id) ? "visible" : "hidden"));
+			.style("visibility", id => ($$.isLegendToShow(id) ? null : "hidden"));
 
 		if (config.interaction_enabled) {
 			item
@@ -413,8 +399,7 @@ export default {
 							api.toggle(id);
 
 							d3Select(this)
-								.classed(CLASS.legendItemFocused, false)
-								.style("opacity", null);
+								.classed(CLASS.legendItemFocused, false);
 						}
 					}
 

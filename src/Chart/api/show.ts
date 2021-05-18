@@ -20,7 +20,7 @@ function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 	$$[`${show ? "remove" : "add"}HiddenTargetIds`](targetIds);
 
 	const targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
-	const opacity = show ? "1" : "0";
+	const opacity = show ? null : "0";
 
 	show && targets.style("display", null);
 

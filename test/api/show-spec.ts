@@ -149,7 +149,7 @@ describe("API show", () => {
 
 			setTimeout(() => {
 				main.selectAll(`.${CLASS.chartLine}`).each(function() {
-					expect(+this.style.opacity).to.be.equal(1);
+					expect(this.style.opacity).to.be.equal("");
 				});
 
 				legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
@@ -157,7 +157,7 @@ describe("API show", () => {
 				expect(+legend.size()).to.be.equal(0);
 
 				legend.each(function() {
-					expect(+d3Select(this).style("opacity")).to.be.equal(1);
+					expect(d3Select(this).style("opacity")).to.be.equal("");
 				});
 
 				done();
@@ -176,7 +176,7 @@ describe("API show", () => {
 
 			setTimeout(() => {
 				main.selectAll(`.${CLASS.chartLine}`).each(function() {
-					expect(+this.style.opacity).to.be.equal(1);
+					expect(this.style.opacity).to.be.equal("");
 				});
 
 				const legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
@@ -220,7 +220,7 @@ describe("API show", () => {
 
 			setTimeout(() => {
 				main.selectAll(`.${CLASS.chartLine}`).each(function() {
-					expect(+this.style.opacity).to.be.equal(1);
+					expect(this.style.opacity).to.be.equal("");
 				});
 
 				legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
@@ -228,7 +228,7 @@ describe("API show", () => {
 				expect(+legend.size()).to.be.equal(0);
 
 				legend.each(function() {
-					expect(+d3Select(this).style("opacity")).to.be.equal(1);
+					expect(d3Select(this).style("opacity")).to.be.equal("");
 				});
 
 				done();

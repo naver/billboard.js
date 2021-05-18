@@ -116,7 +116,7 @@ class Axis {
 					return res;
 				})
 				.attr("transform", $$.getTranslate(v))
-				.style("visibility", config[`axis_${v}_show`] ? "visible" : "hidden");
+				.style("visibility", config[`axis_${v}_show`] ? null : "hidden");
 
 			axis[v].append("text")
 				.attr("class", classLabel)
@@ -219,7 +219,7 @@ class Axis {
 				if (g.empty()) {
 					g = main.append("g")
 						.attr("class", className)
-						.style("visibility", config[`axis_${id}_show`] ? "visible" : "hidden")
+						.style("visibility", config[`axis_${id}_show`] ? null : "hidden")
 						.call(v);
 				} else {
 					axesConfig[i].domain && scale.domain(axesConfig[i].domain);
@@ -862,7 +862,7 @@ class Axis {
 	redraw(transitions, isHidden, isInit) {
 		const $$ = this.owner;
 		const {config, $el} = $$;
-		const opacity = isHidden ? "0" : "1";
+		const opacity = isHidden ? "0" : null;
 
 		["x", "y", "y2", "subX"].forEach(id => {
 			const axis = this[id];
@@ -989,10 +989,10 @@ class Axis {
 					}
 
 					tickText.each(function(d) {
-						this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
+						this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : null;
 					});
 				} else {
-					tickText.style("display", "block");
+					tickText.style("display", null);
 				}
 
 				// set/unset x_axis_tick_clippath
