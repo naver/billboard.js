@@ -5001,15 +5001,6 @@ var legend$1 = {
             current.height : Math.max(20, legendItemHeight) * (legendStep + 1)) : 0;
     },
     /**
-     * Get the opacity of the legend
-     * @param {d3.selection} legendItem Legend item node
-     * @returns {string|null} opacity
-     * @private
-     */
-    opacityForLegend: function (legendItem) {
-        return legendItem.classed(CLASS.legendItemHidden) ? null : "1";
-    },
-    /**
      * Get the opacity of the legend that is unfocused
      * @param {d3.selection} legendItem Legend item node
      * @returns {string|null} opacity
@@ -5034,8 +5025,8 @@ var legend$1 = {
             .transition()
             .duration(100)
             .style("opacity", function () {
-            return (focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend)
-                .call($$, select(this));
+            return focus ? null :
+                $$.opacityForUnfocusedLegend.call($$, select(this));
         });
     },
     /**
@@ -5049,9 +5040,7 @@ var legend$1 = {
             .classed(CLASS.legendItemFocused, false)
             .transition()
             .duration(100)
-            .style("opacity", function () {
-            return $$.opacityForLegend(select(this));
-        });
+            .style("opacity", null);
     },
     /**
      * Shows the legend
@@ -5064,17 +5053,15 @@ var legend$1 = {
         if (!config.legend_show) {
             config.legend_show = true;
             $el.legend ?
-                $el.legend.style("visibility", "visible") :
+                $el.legend.style("visibility", null) :
                 $$.initLegend();
             !$$.state.legendHasRendered && $$.updateLegend();
         }
         $$.removeHiddenLegendIds(targetIds);
         $el.legend.selectAll($$.selectorLegends(targetIds))
-            .style("visibility", "visible")
+            .style("visibility", null)
             .transition()
-            .style("opacity", function () {
-            return $$.opacityForLegend(select(this));
-        });
+            .style("opacity", null);
     },
     /**
      * Hide the legend
@@ -5132,7 +5119,7 @@ var legend$1 = {
             var itemClass = (!node.empty() && node.attr("class")) || "";
             return itemClass + $$.generateClass(CLASS.legendItem, id);
         })
-            .style("visibility", function (id) { return ($$.isLegendToShow(id) ? "visible" : "hidden"); });
+            .style("visibility", function (id) { return ($$.isLegendToShow(id) ? null : "hidden"); });
         if (config.interaction_enabled) {
             item
                 .style("cursor", "pointer")
@@ -5145,8 +5132,7 @@ var legend$1 = {
                     else {
                         api.toggle(id);
                         select(this)
-                            .classed(CLASS.legendItemFocused, false)
-                            .style("opacity", null);
+                            .classed(CLASS.legendItemFocused, false);
                     }
                 }
                 isTouch && $$.hideTooltip();
@@ -6440,7 +6426,7 @@ var size = {
 var text = {
     opacityForText: function (d) {
         var $$ = this;
-        return $$.isBarType(d) && !$$.meetsLabelThreshold(Math.abs($$.getRatio("bar", d)), "bar") ? "0" : ($$.hasDataLabel ? "1" : "0");
+        return $$.isBarType(d) && !$$.meetsLabelThreshold(Math.abs($$.getRatio("bar", d)), "bar") ? "0" : ($$.hasDataLabel ? null : "0");
     },
     /**
      * Initializes the text
@@ -7003,7 +6989,7 @@ var tooltip$1 = {
             if (!config.tooltip_contents.bindto) {
                 $el.tooltip.style("top", config.tooltip_init_position.top)
                     .style("left", config.tooltip_init_position.left)
-                    .style("display", "block");
+                    .style("display", null);
             }
         }
     },
@@ -8066,7 +8052,7 @@ var ChartInternal = /** @class */ (function () {
             .filter(function (d) { return $$.isTargetToShow(d.id); })
             .transition()
             .duration(config.transition_duration)
-            .style("opacity", "1");
+            .style("opacity", null);
     };
     ChartInternal.prototype.getWithOption = function (options) {
         var withOptions = {
@@ -8097,7 +8083,7 @@ var ChartInternal = /** @class */ (function () {
         var $$ = this;
         var withoutFadeIn = $$.state.withoutFadeIn;
         return $$.getBaseValue(d) !== null &&
-            withoutFadeIn[d.id] ? "1" : "0";
+            withoutFadeIn[d.id] ? null : "0";
     };
     ChartInternal.prototype.bindResize = function () {
         var $$ = this;
@@ -9006,7 +8992,7 @@ function showHide(show, targetIdsValue, options) {
     $$.state.toggling = true;
     $$[(show ? "remove" : "add") + "HiddenTargetIds"](targetIds);
     var targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
-    var opacity = show ? "1" : "0";
+    var opacity = show ? null : "0";
     show && targets.style("display", null);
     targets.transition()
         .style("opacity", opacity, "important")
@@ -10345,8 +10331,7 @@ var AxisRenderer = /** @class */ (function () {
                 var tickEnter = tick
                     .enter()
                     .insert("g", ".domain")
-                    .attr("class", "tick")
-                    .style("opacity", "1");
+                    .attr("class", "tick");
                 // MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
                 var tickExit = tick.exit().remove();
                 // enter + update selection
@@ -10417,7 +10402,7 @@ var AxisRenderer = /** @class */ (function () {
                     tickTransform(tickExit, scale1);
                 }
                 tickTransform(tickEnter, scale0);
-                tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
+                tickTransform(helper.transitionise(tick).style("opacity", null), scale1);
             }
         });
         this.g = $g;
@@ -10748,7 +10733,7 @@ var Axis = /** @class */ (function () {
                 return res;
             })
                 .attr("transform", $$.getTranslate(v))
-                .style("visibility", config["axis_" + v + "_show"] ? "visible" : "hidden");
+                .style("visibility", config["axis_" + v + "_show"] ? null : "hidden");
             axis[v].append("text")
                 .attr("class", classLabel)
                 .attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated])
@@ -10830,7 +10815,7 @@ var Axis = /** @class */ (function () {
                 if (g.empty()) {
                     g = main.append("g")
                         .attr("class", className)
-                        .style("visibility", config["axis_" + id + "_show"] ? "visible" : "hidden")
+                        .style("visibility", config["axis_" + id + "_show"] ? null : "hidden")
                         .call(v);
                 }
                 else {
@@ -11335,7 +11320,7 @@ var Axis = /** @class */ (function () {
         var _this = this;
         var $$ = this.owner;
         var config = $$.config, $el = $$.$el;
-        var opacity = isHidden ? "0" : "1";
+        var opacity = isHidden ? "0" : null;
         ["x", "y", "y2", "subX"].forEach(function (id) {
             var axis = _this[id];
             var $axis = $el.axis[id];
@@ -11434,11 +11419,11 @@ var Axis = /** @class */ (function () {
                         }
                     }
                     tickText.each(function (d) {
-                        this.style.display = tickValues_1.indexOf(d) % intervalForCulling_1 ? "none" : "block";
+                        this.style.display = tickValues_1.indexOf(d) % intervalForCulling_1 ? "none" : null;
                     });
                 }
                 else {
-                    tickText.style("display", "block");
+                    tickText.style("display", null);
                 }
                 // set/unset x_axis_tick_clippath
                 if (type === "x") {
@@ -12317,7 +12302,7 @@ var grid = {
                 Object.keys(state.xgridAttr).forEach(function (id) {
                     grid.attr(id, state.xgridAttr[id])
                         .style("opacity", function () { return (grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ?
-                        "0" : "1"); });
+                        "0" : null); });
                 });
             });
         }
@@ -12348,7 +12333,7 @@ var grid = {
         var _a = $$.$el, grid = _a.grid, gridLines = _a.gridLines;
         !gridLines.main && $$.initGridLines();
         // hide if arc type
-        grid.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+        grid.main.style("visibility", $$.hasArcType() ? "hidden" : null);
         $$.hideGridFocus();
         $$.updateXGridLines(duration);
         $$.updateYGridLines(duration);
@@ -12389,7 +12374,7 @@ var grid = {
             .duration(duration)
             .text(function (d) { return d.text; })
             .transition()
-            .style("opacity", "1");
+            .style("opacity", null);
         gridLines.x = xLines;
     },
     /**
@@ -12431,7 +12416,7 @@ var grid = {
             .attr("y1", isRotated ? 0 : yv)
             .attr("y2", isRotated ? height : yv)
             .transition()
-            .style("opacity", "1");
+            .style("opacity", null);
         ygridLines.select("text")
             .attr("text-anchor", getGridTextAnchor)
             .attr("dx", getGridTextDx)
@@ -12442,7 +12427,7 @@ var grid = {
             .attr("y", yv)
             .text(function (d) { return d.text; })
             .transition()
-            .style("opacity", "1");
+            .style("opacity", null);
         $el.gridLines.y = ygridLines;
     },
     redrawGrid: function (withTransition) {
@@ -12461,8 +12446,8 @@ var grid = {
             .attr("y", xv)
             .text(function (d) { return d.text; });
         return [
-            lines.style("opacity", "1"),
-            texts.style("opacity", "1")
+            lines.style("opacity", null),
+            texts.style("opacity", null)
         ];
     },
     initFocusGrid: function () {
@@ -12510,7 +12495,7 @@ var grid = {
         var isEdge = config.grid_focus_edge && !config.tooltip_grouped;
         var xx = $$.xx.bind($$);
         focusEl
-            .style("visibility", "visible")
+            .style("visibility", null)
             .data(dataToShow.concat(dataToShow))
             .each(function (d) {
             var el = select(this);
@@ -12660,7 +12645,7 @@ var region = {
             $$.initRegion();
         }
         // hide if arc type
-        region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+        region.main.style("visibility", $$.hasArcType() ? "hidden" : null);
         // select <g> element
         var list = region.main
             .selectAll("." + CLASS.region)
@@ -12689,7 +12674,7 @@ var region = {
             .attr("height", $$.regionHeight.bind($$));
         return [
             (withTransition ? regions.transition() : regions)
-                .style("fill-opacity", function (d) { return (isValue(d.opacity) ? d.opacity : "0.1"); })
+                .style("fill-opacity", function (d) { return (isValue(d.opacity) ? d.opacity : null); })
                 .on("end", function () {
                 // remove unnecessary rect after transition
                 select(this.parentNode)
@@ -14974,7 +14959,7 @@ var shapeArc = {
             .duration(function (d) { return $$.getExpandConfig(d.data.id, "duration"); })
             .attr("d", $$.svgArc);
         svg.selectAll("" + CLASS.arc)
-            .style("opacity", "1");
+            .style("opacity", null);
     },
     /**
      * Get expand config value
@@ -15119,7 +15104,7 @@ var shapeArc = {
         mainArc
             .attr("transform", function (d) { return (!$$.isGaugeType(d.data) && withTransform ? "scale(0)" : ""); })
             .style("opacity", function (d) {
-            return d === this._current ? "0" : "1";
+            return d === this._current ? "0" : null;
         })
             .each(function () {
             state.transiting = true;
@@ -15159,7 +15144,7 @@ var shapeArc = {
             return color;
         })
             // Where gauge reading color would receive customization.
-            .style("opacity", "1")
+            .style("opacity", null)
             .call(endall, function () {
             if ($$.levelColor) {
                 var path = select(this);
@@ -15321,11 +15306,11 @@ var shapeArc = {
                 Math.round(state.radius / 5) + "px" : null); })
                 .transition()
                 .duration(duration)
-                .style("opacity", function (d) { return ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0"); });
+                .style("opacity", function (d) { return ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0"); });
             hasMultiArcGauge && text.attr("dy", "-.1em");
         }
         main.select("." + CLASS.chartArcsTitle)
-            .style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0");
+            .style("opacity", $$.hasType("donut") || hasGauge ? null : "0");
         if (hasGauge) {
             var isFullCircle = config.gauge_fullCircle;
             isFullCircle && text && text.attr("dy", "" + (hasMultiArcGauge ? 0 : Math.round(state.radius / 14)));
@@ -15595,7 +15580,7 @@ var shapeBar = {
             (withTransition ? bar.transition(getRandom()) : bar)
                 .attr("d", drawFn)
                 .style("fill", this.color)
-                .style("opacity", "1")
+                .style("opacity", null)
         ];
     },
     generateDrawBar: function (barIndices, isSub) {
@@ -15871,7 +15856,7 @@ var shapeCandlestick = {
                     select(this).transition(rand) : select(this);
                 drawFn(d, i, g);
             })
-                .style("opacity", "1")
+                .style("opacity", null)
         ];
     },
     /**
@@ -15952,7 +15937,7 @@ var shapeGauge = {
             .merge(arcLabelLines);
         mainArcLabelLine
             .style("fill", function (d) { return ($$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data)); })
-            .style("display", config.gauge_label_show ? "" : "none")
+            .style("display", config.gauge_label_show ? null : "none")
             .each(function (d) {
             var lineLength = 0;
             var lineThickness = 2;
@@ -16141,7 +16126,7 @@ var shapeLine = {
             (withTransition ? line.transition(getRandom()) : line)
                 .attr("d", drawFn)
                 .style("stroke", this.color)
-                .style("opacity", "1")
+                .style("opacity", null)
         ];
     },
     /**
@@ -16345,7 +16330,7 @@ var shapePoint = {
         var config = this.config;
         var opacity = config.point_opacity;
         if (isUndefined(opacity)) {
-            opacity = config.point_show && !config.point_focus_only ? "1" : "0";
+            opacity = config.point_show && !config.point_focus_only ? null : "0";
             opacity = isValue(this.getBaseValue(d)) ?
                 (this.isBubbleType(d) || this.isScatterType(d) ?
                     "0.5" : opacity) : "0";
@@ -16474,7 +16459,7 @@ var shapePoint = {
             }
             circle
                 .attr("class", this.updatePointClass.bind(this))
-                .style("opacity", "1")
+                .style("opacity", null)
                 .each(function (d) {
                 var id = d.id, index = d.index, value = d.value;
                 var visibility = "hidden";
@@ -18193,7 +18178,7 @@ var apiSubchart = {
                     $$.updateTargetsForSubchart($$.data.targets);
                     $target = subchart.main.selectAll("." + CLASS.target);
                 }
-                $target.style("opacity", "1");
+                $target.style("opacity", null);
                 subchart.main.style("display", null);
                 this.flush();
             }
@@ -18808,7 +18793,7 @@ var subchart = {
         if (!hasAxis) {
             return;
         }
-        var visibility = config.subchart_show ? "visible" : "hidden";
+        var visibility = config.subchart_show ? null : "hidden";
         var clipId = clip.id + "-subchart";
         var clipPath = $$.getClipPath(clipId);
         clip.idSubchart = clipId;
@@ -18940,7 +18925,7 @@ var subchart = {
         var $$ = this;
         var config = $$.config, main = $$.$el.subchart.main, state = $$.state;
         var withTransition = !!duration;
-        main.style("visibility", config.subchart_show ? "visible" : "hidden");
+        main.style("visibility", config.subchart_show ? null : "hidden");
         // subchart
         if (config.subchart_show) {
             // reflect main chart to extent on subchart if zoomed

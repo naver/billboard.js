@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210516004643
+ * @version 3.0.3-nightly-20210519004634
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1332,7 +1332,7 @@ var Elements = /*#__PURE__*/function () {
       return isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
     }).attr("y2", function (d) {
       return isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2");
-    }).transition().style("opacity", "1");
+    }).transition().style("opacity", null);
   }, _proto.updateStanfordRegions = function updateStanfordRegions(duration) {
     var $$ = this.owner.$$,
         config = $$.config,
@@ -1367,7 +1367,7 @@ var Elements = /*#__PURE__*/function () {
       }
 
       return "";
-    }).attr("text-anchor", "middle").attr("dominant-baseline", "middle").transition().style("opacity", "1");
+    }).attr("text-anchor", "middle").attr("dominant-baseline", "middle").transition().style("opacity", null);
   }, _proto.updateStanfordElements = function updateStanfordElements(duration) {
     duration === void 0 && (duration = 0), this.updateStanfordLines(duration), this.updateStanfordRegions(duration);
   }, _proto.xvCustom = function xvCustom(d, xyValue) {

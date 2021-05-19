@@ -742,7 +742,7 @@ var Elements = /** @class */ (function () {
             .attr("y1", function (d) { return (isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1")); })
             .attr("y2", function (d) { return (isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")); })
             .transition()
-            .style("opacity", "1");
+            .style("opacity", null);
     };
     Elements.prototype.updateStanfordRegions = function (duration) {
         var $$ = this.owner.$$;
@@ -795,7 +795,7 @@ var Elements = /** @class */ (function () {
             .attr("text-anchor", "middle")
             .attr("dominant-baseline", "middle")
             .transition()
-            .style("opacity", "1");
+            .style("opacity", null);
     };
     Elements.prototype.updateStanfordElements = function (duration) {
         if (duration === void 0) { duration = 0; }

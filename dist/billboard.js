@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210516004643
+ * @version 3.0.3-nightly-20210519004634
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5044,16 +5044,6 @@ function getFormat($$, typeValue, v) {
   },
 
   /**
-   * Get the opacity of the legend
-   * @param {d3.selection} legendItem Legend item node
-   * @returns {string|null} opacity
-   * @private
-   */
-  opacityForLegend: function opacityForLegend(legendItem) {
-    return legendItem.classed(config_classes.legendItemHidden) ? null : "1";
-  },
-
-  /**
    * Get the opacity of the legend that is unfocused
    * @param {d3.selection} legendItem Legend item node
    * @returns {string|null} opacity
@@ -5076,7 +5066,7 @@ function getFormat($$, typeValue, v) {
     legend && legend.selectAll("." + config_classes.legendItem).filter(function (id) {
       return targetIdz.indexOf(id) >= 0;
     }).classed(config_classes.legendItemFocused, focus).transition().duration(100).style("opacity", function () {
-      return (focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend).call($$, (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this));
+      return focus ? null : $$.opacityForUnfocusedLegend.call($$, (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this));
     });
   },
 
@@ -5087,9 +5077,7 @@ function getFormat($$, typeValue, v) {
   revertLegend: function revertLegend() {
     var $$ = this,
         legend = $$.$el.legend;
-    legend && legend.selectAll("." + config_classes.legendItem).classed(config_classes.legendItemFocused, !1).transition().duration(100).style("opacity", function () {
-      return $$.opacityForLegend((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this));
-    });
+    legend && legend.selectAll("." + config_classes.legendItem).classed(config_classes.legendItemFocused, !1).transition().duration(100).style("opacity", null);
   },
 
   /**
@@ -5101,9 +5089,7 @@ function getFormat($$, typeValue, v) {
     var $$ = this,
         config = $$.config,
         $el = $$.$el;
-    config.legend_show || (config.legend_show = !0, $el.legend ? $el.legend.style("visibility", "visible") : $$.initLegend(), !$$.state.legendHasRendered && $$.updateLegend()), $$.removeHiddenLegendIds(targetIds), $el.legend.selectAll($$.selectorLegends(targetIds)).style("visibility", "visible").transition().style("opacity", function () {
-      return $$.opacityForLegend((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this));
-    });
+    config.legend_show || (config.legend_show = !0, $el.legend ? $el.legend.style("visibility", null) : $$.initLegend(), !$$.state.legendHasRendered && $$.updateLegend()), $$.removeHiddenLegendIds(targetIds), $el.legend.selectAll($$.selectorLegends(targetIds)).style("visibility", null).transition().style("opacity", null);
   },
 
   /**
@@ -5151,9 +5137,9 @@ function getFormat($$, typeValue, v) {
           itemClass = !node.empty() && node.attr("class") || "";
       return itemClass + $$.generateClass(config_classes.legendItem, id);
     }).style("visibility", function (id) {
-      return $$.isLegendToShow(id) ? "visible" : "hidden";
+      return $$.isLegendToShow(id) ? null : "hidden";
     }), config.interaction_enabled && (item.style("cursor", "pointer").on("click", function (event, id) {
-      callFn(config.legend_item_onclick, api, id) || (event.altKey ? (api.hide(), api.show(id)) : (api.toggle(id), (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused, !1).style("opacity", null))), isTouch && $$.hideTooltip();
+      callFn(config.legend_item_onclick, api, id) || (event.altKey ? (api.hide(), api.show(id)) : (api.toggle(id), (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused, !1))), isTouch && $$.hideTooltip();
     }), !isTouch && item.on("mouseout", function (event, id) {
       callFn(config.legend_item_onout, api, id) || ((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.legendItemFocused, !1), hasGauge && $$.undoMarkOverlapped($$, "." + config_classes.gaugeValue), $$.api.revert());
     }).on("mouseover", function (event, id) {
@@ -6131,7 +6117,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 /* harmony default export */ var internals_text = ({
   opacityForText: function opacityForText(d) {
     var $$ = this;
-    return $$.isBarType(d) && !$$.meetsLabelThreshold(Math.abs($$.getRatio("bar", d)), "bar") ? "0" : $$.hasDataLabel ? "1" : "0";
+    return $$.isBarType(d) && !$$.meetsLabelThreshold(Math.abs($$.getRatio("bar", d)), "bar") ? "0" : $$.hasDataLabel ? null : "0";
   },
 
   /**
@@ -6573,7 +6559,7 @@ function getTextPos(pos, width) {
         var x = isArc ? 0 : config.tooltip_init_x;
         return $$.addName(d.values[x]);
       });
-      isArc && (data = [data[config.tooltip_init_x]]), $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), config.tooltip_contents.bindto || $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", "block");
+      isArc && (data = [data[config.tooltip_init_x]]), $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), config.tooltip_contents.bindto || $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", null);
     }
   },
 
@@ -7442,7 +7428,7 @@ var ChartInternal = /*#__PURE__*/function () {
         svg = $$.$el.svg;
     svg.selectAll("." + config_classes.target).filter(function (d) {
       return $$.isTargetToShow(d.id);
-    }).transition().duration(config.transition_duration).style("opacity", "1");
+    }).transition().duration(config.transition_duration).style("opacity", null);
   }, _proto.getWithOption = function getWithOption(options) {
     var withOptions = {
       Y: !0,
@@ -7466,7 +7452,7 @@ var ChartInternal = /*#__PURE__*/function () {
   }, _proto.initialOpacity = function initialOpacity(d) {
     var $$ = this,
         withoutFadeIn = $$.state.withoutFadeIn;
-    return $$.getBaseValue(d) !== null && withoutFadeIn[d.id] ? "1" : "0";
+    return $$.getBaseValue(d) !== null && withoutFadeIn[d.id] ? null : "0";
   }, _proto.bindResize = function bindResize() {
     var $$ = this,
         config = $$.config,
@@ -8305,7 +8291,7 @@ function showHide(show, targetIdsValue, options) {
       targetIds = $$.mapToTargetIds(targetIdsValue);
   $$.state.toggling = !0, $$[(show ? "remove" : "add") + "HiddenTargetIds"](targetIds);
   var targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds)),
-      opacity = show ? "1" : "0";
+      opacity = show ? null : "0";
   show && targets.style("display", null), targets.transition().style("opacity", opacity, "important").call(endall, function () {
     // https://github.com/naver/billboard.js/issues/1758
     show || targets.style("display", "none"), targets.style("opacity", opacity);
@@ -9483,7 +9469,7 @@ var AxisRenderer = /*#__PURE__*/function () {
         // count of tick data in array
         var ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight),
             tick = g.selectAll(".tick").data(ticks, scale1),
-            tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
+            tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick"),
             tickExit = tick.exit().remove(); // update selection
 
         tick = tickEnter.merge(tick), tickShow.tick && tickEnter.append("line"), tickShow.text && tickEnter.append("text");
@@ -9526,7 +9512,7 @@ var AxisRenderer = /*#__PURE__*/function () {
           }, scale1 = scale0;
         } else scale0.bandwidth ? scale0 = scale1 : tickTransform(tickExit, scale1);
 
-        tickTransform(tickEnter, scale0), tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
+        tickTransform(tickEnter, scale0), tickTransform(helper.transitionise(tick).style("opacity", null), scale1);
       }
     }), this.g = $g;
   }
@@ -9745,7 +9731,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       axis[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
         var res = null;
         return v === "x" ? res = clip.pathXAxis : v === "y" && (res = clip.pathYAxis), res;
-      }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_" + v + "_show"] ? "visible" : "hidden"), axis[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", function () {
+      }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_" + v + "_show"] ? null : "hidden"), axis[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", function () {
         return _this.textAnchorForAxisLabel(v);
       }), _this.generateAxes(v);
     });
@@ -9812,7 +9798,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         }) || v.scale().range(range);
         var className = _this2.getAxisClassName(id) + "-" + (i + 1),
             g = main.select("." + className.replace(/\s/, "."));
-        g.empty() ? g = main.append("g").attr("class", className).style("visibility", config["axis_" + id + "_show"] ? "visible" : "hidden").call(v) : (axesConfig[i].domain && scale.domain(axesConfig[i].domain), _this2.x.helper.transitionise(g).call(v.scale(scale))), g.attr("transform", $$.getTranslate(id, i + 1));
+        g.empty() ? g = main.append("g").attr("class", className).style("visibility", config["axis_" + id + "_show"] ? null : "hidden").call(v) : (axesConfig[i].domain && scale.domain(axesConfig[i].domain), _this2.x.helper.transitionise(g).call(v.scale(scale))), g.attr("transform", $$.getTranslate(id, i + 1));
       });
     });
   }
@@ -10168,7 +10154,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         $$ = this.owner,
         config = $$.config,
         $el = $$.$el,
-        opacity = isHidden ? "0" : "1";
+        opacity = isHidden ? "0" : null;
 
     ["x", "y", "y2", "subX"].forEach(function (id) {
       var axis = _this4[id],
@@ -10242,9 +10228,9 @@ var Axis_Axis = /*#__PURE__*/function () {
           }
 
           tickText.each(function (d) {
-            this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
+            this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : null;
           });
-        } else tickText.style("display", "block"); // set/unset x_axis_tick_clippath
+        } else tickText.style("display", null); // set/unset x_axis_tick_clippath
 
 
         if (type === "x") {
@@ -10891,7 +10877,7 @@ function smoothLines(el, type) {
       var grid = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
       Object.keys(state.xgridAttr).forEach(function (id) {
         grid.attr(id, state.xgridAttr[id]).style("opacity", function () {
-          return grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ? "0" : "1";
+          return grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ? "0" : null;
         });
       });
     });
@@ -10917,7 +10903,7 @@ function smoothLines(el, type) {
         grid = _$$$$el3.grid,
         gridLines = _$$$$el3.gridLines;
     // hide if arc type
-    gridLines.main || $$.initGridLines(), grid.main.style("visibility", $$.hasArcType() ? "hidden" : "visible"), $$.hideGridFocus(), $$.updateXGridLines(duration), $$.updateYGridLines(duration);
+    gridLines.main || $$.initGridLines(), grid.main.style("visibility", $$.hasArcType() ? "hidden" : null), $$.hideGridFocus(), $$.updateXGridLines(duration), $$.updateYGridLines(duration);
   },
 
   /**
@@ -10942,7 +10928,7 @@ function smoothLines(el, type) {
       return (config_classes.xgridLine + " " + (d.class || "")).trim();
     }).select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx).transition().duration(duration).text(function (d) {
       return d.text;
-    }).transition().style("opacity", "1"), gridLines.x = xLines;
+    }).transition().style("opacity", null), gridLines.x = xLines;
   },
 
   /**
@@ -10969,9 +10955,9 @@ function smoothLines(el, type) {
     var yv = $$.yv.bind($$);
     ygridLines.attr("class", function (d) {
       return (config_classes.ygridLine + " " + (d.class || "")).trim();
-    }).select("line").transition().duration(duration).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? height : yv).transition().style("opacity", "1"), ygridLines.select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx).transition().duration(duration).attr("dy", -5).attr("x", getGridTextX(isRotated, width, height)).attr("y", yv).text(function (d) {
+    }).select("line").transition().duration(duration).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? height : yv).transition().style("opacity", null), ygridLines.select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx).transition().duration(duration).attr("dy", -5).attr("x", getGridTextX(isRotated, width, height)).attr("y", yv).text(function (d) {
       return d.text;
-    }).transition().style("opacity", "1"), $el.gridLines.y = ygridLines;
+    }).transition().style("opacity", null), $el.gridLines.y = ygridLines;
   },
   redrawGrid: function redrawGrid(withTransition) {
     var $$ = this,
@@ -10985,7 +10971,7 @@ function smoothLines(el, type) {
         texts = gridLines.x.select("text");
     return lines = (withTransition ? lines.transition() : lines).attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? width : xv).attr("y1", isRotated ? xv : 0).attr("y2", isRotated ? xv : height), texts = (withTransition ? texts.transition() : texts).attr("x", getGridTextX(!isRotated, width, height)).attr("y", xv).text(function (d) {
       return d.text;
-    }), [lines.style("opacity", "1"), texts.style("opacity", "1")];
+    }), [lines.style("opacity", null), texts.style("opacity", null)];
   },
   initFocusGrid: function initFocusGrid() {
     var $$ = this,
@@ -11019,7 +11005,7 @@ function smoothLines(el, type) {
     if (!(!config.tooltip_show || dataToShow.length === 0 || $$.hasType("bubble") || $$.hasArcType())) {
       var isEdge = config.grid_focus_edge && !config.tooltip_grouped,
           xx = $$.xx.bind($$);
-      focusEl.style("visibility", "visible").data(dataToShow.concat(dataToShow)).each(function (d) {
+      focusEl.style("visibility", null).data(dataToShow.concat(dataToShow)).each(function (d) {
         var xy,
             el = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
             pos = {
@@ -11128,7 +11114,7 @@ function smoothLines(el, type) {
     var $$ = this,
         config = $$.config,
         region = $$.$el.region;
-    region.main || $$.initRegion(), region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+    region.main || $$.initRegion(), region.main.style("visibility", $$.hasArcType() ? "hidden" : null);
     // select <g> element
     var list = region.main.selectAll("." + config_classes.region).data(config.regions);
     list.exit().transition().duration(duration).style("opacity", "0").remove(), list = list.enter().append("g").merge(list).attr("class", $$.classRegion.bind($$)), list.append("rect").style("fill-opacity", "0"), region.list = list;
@@ -11137,7 +11123,7 @@ function smoothLines(el, type) {
     var $$ = this,
         regions = $$.$el.region.list.select("rect");
     return regions = (withTransition ? regions.transition() : regions).attr("x", $$.regionX.bind($$)).attr("y", $$.regionY.bind($$)).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$)), [(withTransition ? regions.transition() : regions).style("fill-opacity", function (d) {
-      return isValue(d.opacity) ? d.opacity : "0.1";
+      return isValue(d.opacity) ? d.opacity : null;
     }).on("end", function () {
       (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode).selectAll("rect:not([x])").remove();
     })];
@@ -13417,7 +13403,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       var newTargetIds = $$.mapToTargetIds(targetIds);
       svg.selectAll($$.selectorTargets(newTargetIds, "." + config_classes.chartArc)).selectAll("path").transition().duration(function (d) {
         return $$.getExpandConfig(d.data.id, "duration");
-      }).attr("d", $$.svgArc), svg.selectAll("" + config_classes.arc).style("opacity", "1");
+      }).attr("d", $$.svgArc), svg.selectAll("" + config_classes.arc).style("opacity", null);
     }
   },
 
@@ -13512,7 +13498,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }).merge(mainArc), $$.hasType("gauge") && ($$.updateGaugeMax(), $$.hasMultiArcGauge() && $$.redrawMultiArcGauge()), mainArc.attr("transform", function (d) {
       return !$$.isGaugeType(d.data) && withTransform ? "scale(0)" : "";
     }).style("opacity", function (d) {
-      return d === this._current ? "0" : "1";
+      return d === this._current ? "0" : null;
     }).each(function () {
       state.transiting = !0;
     }).transition().duration(duration).attrTween("d", function (d) {
@@ -13531,7 +13517,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       var color;
       return $$.levelColor ? (color = $$.levelColor(d.data.values[0].value), config.data_colors[d.data.id] = color) : color = $$.color(d.data), color;
     }) // Where gauge reading color would receive customization.
-    .style("opacity", "1").call(endall, function () {
+    .style("opacity", null).call(endall, function () {
       if ($$.levelColor) {
         var path = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
             d = path.datum();
@@ -13659,8 +13645,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
       return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? Math.round(state.radius / 5) + "px" : null;
     }).transition().duration(duration).style("opacity", function (d) {
-      return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
-    }), hasMultiArcGauge && text.attr("dy", "-.1em")), main.select("." + config_classes.chartArcsTitle).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
+      return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0";
+    }), hasMultiArcGauge && text.attr("dy", "-.1em")), main.select("." + config_classes.chartArcsTitle).style("opacity", $$.hasType("donut") || hasGauge ? null : "0"), hasGauge) {
       var isFullCircle = config.gauge_fullCircle;
       isFullCircle && text && text.attr("dy", "" + (hasMultiArcGauge ? 0 : Math.round(state.radius / 14))), config.gauge_label_show && (arcs.select("." + config_classes.chartArcsGaugeUnit).attr("dy", (isFullCircle ? 1.5 : .75) + "em").text(config.gauge_units), arcs.select("." + config_classes.chartArcsGaugeMin).attr("dx", -1 * (state.innerRadius + (state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !isFullCircle && arcs.select("." + config_classes.chartArcsGaugeMax).attr("dx", state.innerRadius + (state.radius - state.innerRadius) / 2 + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
     }
@@ -13873,7 +13859,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     var _ref = isSub ? this.$el.subchart : this.$el,
         bar = _ref.bar;
 
-    return [(withTransition ? bar.transition(getRandom()) : bar).attr("d", drawFn).style("fill", this.color).style("opacity", "1")];
+    return [(withTransition ? bar.transition(getRandom()) : bar).attr("d", drawFn).style("fill", this.color).style("opacity", null)];
   },
   generateDrawBar: function generateDrawBar(barIndices, isSub) {
     var $$ = this,
@@ -14117,7 +14103,7 @@ function candlestick_objectSpread(target) { for (var source, i = 1; i < argument
     return [candlestick.each(function (d, i) {
       var g = withTransition ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).transition(rand) : (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
       drawFn(d, i, g);
-    }).style("opacity", "1")];
+    }).style("opacity", null)];
   },
 
   /**
@@ -14191,7 +14177,7 @@ function candlestick_objectSpread(target) { for (var source, i = 1; i < argument
     }).merge(arcLabelLines);
     mainArcLabelLine.style("fill", function (d) {
       return $$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data);
-    }).style("display", config.gauge_label_show ? "" : "none").each(function (d) {
+    }).style("display", config.gauge_label_show ? null : "none").each(function (d) {
       var lineLength = 0,
           lineThickness = 2,
           x = 0,
@@ -14355,7 +14341,7 @@ function candlestick_objectSpread(target) { for (var source, i = 1; i < argument
     var _ref = isSub ? this.$el.subchart : this.$el,
         line = _ref.line;
 
-    return [(withTransition ? line.transition(getRandom()) : line).attr("d", drawFn).style("stroke", this.color).style("opacity", "1")];
+    return [(withTransition ? line.transition(getRandom()) : line).attr("d", drawFn).style("stroke", this.color).style("opacity", null)];
   },
 
   /**
@@ -14550,7 +14536,7 @@ var getTransitionName = function () {
   opacityForCircle: function opacityForCircle(d) {
     var config = this.config,
         opacity = config.point_opacity;
-    return isUndefined(opacity) && (opacity = config.point_show && !config.point_focus_only ? "1" : "0", opacity = isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0"), opacity;
+    return isUndefined(opacity) && (opacity = config.point_show && !config.point_focus_only ? null : "0", opacity = isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0"), opacity;
   },
   initCircle: function initCircle() {
     var $$ = this,
@@ -14654,7 +14640,7 @@ var getTransitionName = function () {
           return v.id === t.id;
         });
         return !!data.length && (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).datum(data[0]);
-      })), circle.attr("class", this.updatePointClass.bind(this)).style("opacity", "1").each(function (d) {
+      })), circle.attr("class", this.updatePointClass.bind(this)).style("opacity", null).each(function (d) {
         var id = d.id,
             index = d.index,
             value = d.value,
@@ -16336,7 +16322,7 @@ var _area = function area() {
         config.subchart_show = !show, subchart.main || $$.initSubchart();
         var $target = subchart.main.selectAll("." + config_classes.target); // need to cover when new data has been loaded
 
-        $$.data.targets.length !== $target.size() && ($$.updateSizes(), $$.updateTargetsForSubchart($$.data.targets), $target = subchart.main.selectAll("." + config_classes.target)), $target.style("opacity", "1"), subchart.main.style("display", null), this.flush();
+        $$.data.targets.length !== $target.size() && ($$.updateSizes(), $$.updateTargetsForSubchart($$.data.targets), $target = subchart.main.selectAll("." + config_classes.target)), $target.style("opacity", null), subchart.main.style("display", null), this.flush();
       }
     },
 
@@ -16899,7 +16885,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         axis = _$$$$el.axis;
 
     if (hasAxis) {
-      var visibility = config.subchart_show ? "visible" : "hidden",
+      var visibility = config.subchart_show ? null : "hidden",
           clipId = clip.id + "-subchart",
           clipPath = $$.getClipPath(clipId);
       clip.idSubchart = clipId, $$.appendClip(defs, clipId), $$.initBrush(), subchart.main = svg.append("g").classed(config_classes.subchart, !0).attr("transform", $$.getTranslate("context"));
@@ -16991,7 +16977,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         withTransition = !!duration;
 
     // subchart
-    if (main.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (state.event && state.event.type === "zoom" && $$.brush.update(), withSubchart)) // update subchart elements if needed
+    if (main.style("visibility", config.subchart_show ? null : "hidden"), config.subchart_show && (state.event && state.event.type === "zoom" && $$.brush.update(), withSubchart)) // update subchart elements if needed
       {
         var _initRange = config.subchart_init_range; // extent rect
 
