@@ -125,7 +125,7 @@ export default {
 					grid.attr(id, state.xgridAttr[id])
 						.style("opacity", () => (
 							grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ?
-								"0" : "1"
+								"0" : null
 						));
 				});
 			});
@@ -166,7 +166,7 @@ export default {
 		!gridLines.main && $$.initGridLines();
 
 		// hide if arc type
-		grid.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+		grid.main.style("visibility", $$.hasArcType() ? "hidden" : null);
 
 		$$.hideGridFocus();
 		$$.updateXGridLines(duration);
@@ -217,7 +217,7 @@ export default {
 			.duration(duration)
 			.text(d => d.text)
 			.transition()
-			.style("opacity", "1");
+			.style("opacity", null);
 
 		gridLines.x = xLines;
 	},
@@ -270,7 +270,7 @@ export default {
 			.attr("y1", isRotated ? 0 : yv)
 			.attr("y2", isRotated ? height : yv)
 			.transition()
-			.style("opacity", "1");
+			.style("opacity", null);
 
 		ygridLines.select("text")
 			.attr("text-anchor", getGridTextAnchor)
@@ -282,7 +282,7 @@ export default {
 			.attr("y", yv)
 			.text(d => d.text)
 			.transition()
-			.style("opacity", "1");
+			.style("opacity", null);
 
 		$el.gridLines.y = ygridLines;
 	},
@@ -311,8 +311,8 @@ export default {
 			.text(d => d.text);
 
 		return [
-			lines.style("opacity", "1"),
-			texts.style("opacity", "1")
+			lines.style("opacity", null),
+			texts.style("opacity", null)
 		];
 	},
 
@@ -372,7 +372,7 @@ export default {
 		const xx = $$.xx.bind($$);
 
 		focusEl
-			.style("visibility", "visible")
+			.style("visibility", null)
 			.data(dataToShow.concat(dataToShow))
 			.each(function(d) {
 				const el = d3Select(this);

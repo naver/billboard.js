@@ -38,18 +38,18 @@ describe("API legend", () => {
 		setTimeout(() => {
 			chart.internal.$el.svg.selectAll(`.${CLASS.legendItem}`).each(function() {
 
-				expect(+this.style.opacity).to.be.equal(1);
+				expect(this.style.opacity).to.be.equal("");
 			});
 
 			done();
-		}, 500)
+		}, 300)
 	});
 
 	it("it should hide 'data1' legend", () => {
 		chart.legend.hide("data1");
 
 		chart.internal.$el.svg.selectAll(`.${CLASS.legendItem}`).each(function(v) {
-			expect(+this.style.opacity).to.be.equal(v === "data1" ? 0 : 1);
+			expect(this.style.opacity).to.be.equal(v === "data1" ? "0" : "");
 		});
 	});
 
@@ -59,10 +59,10 @@ describe("API legend", () => {
 
 		setTimeout(() => {
 			chart.internal.$el.svg.selectAll(`.${CLASS.legendItem}`).each(function(v) {
-				expect(+this.style.opacity).to.be.equal(1);
+				expect(this.style.opacity).to.be.equal("");
 			});
 
 			done();
-		}, 500);
+		}, 300);
 	});
 });

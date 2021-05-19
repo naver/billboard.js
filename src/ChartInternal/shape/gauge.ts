@@ -64,7 +64,7 @@ export default {
 
 		mainArcLabelLine
 			.style("fill", d => ($$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data)))
-			.style("display", config.gauge_label_show ? "" : "none")
+			.style("display", config.gauge_label_show ? null : "none")
 			.each(function(d) {
 				let lineLength = 0;
 				const lineThickness = 2;

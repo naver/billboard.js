@@ -196,7 +196,7 @@ describe("Interface & initialization", () => {
 			setTimeout(() => {
 				expect(+chart.internal.$el.svg.attr("height")).to.be.equal(chartHeight);
 				done();
-			}, 200);
+			}, 500);
 		});
 
 		it("should be resizing all generated chart elements", function(done) {

@@ -131,7 +131,7 @@ export default {
 			return;
 		}
 
-		const visibility = config.subchart_show ? "visible" : "hidden";
+		const visibility = config.subchart_show ? null : "hidden";
 		const clipId = `${clip.id}-subchart`;
 		const clipPath = $$.getClipPath(clipId);
 
@@ -289,7 +289,7 @@ export default {
 		const {config, $el: {subchart: {main}}, state} = $$;
 		const withTransition = !!duration;
 
-		main.style("visibility", config.subchart_show ? "visible" : "hidden");
+		main.style("visibility", config.subchart_show ? null : "hidden");
 
 		// subchart
 		if (config.subchart_show) {

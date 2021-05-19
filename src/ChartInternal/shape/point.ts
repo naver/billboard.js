@@ -42,7 +42,7 @@ export default {
 		let opacity = config.point_opacity;
 
 		if (isUndefined(opacity)) {
-			opacity = config.point_show && !config.point_focus_only ? "1" : "0";
+			opacity = config.point_show && !config.point_focus_only ? null : "0";
 
 			opacity = isValue(this.getBaseValue(d)) ?
 				(this.isBubbleType(d) || this.isScatterType(d) ?
@@ -203,7 +203,7 @@ export default {
 
 			circle
 				.attr("class", this.updatePointClass.bind(this))
-				.style("opacity", "1")
+				.style("opacity", null)
 				.each(function(d) {
 					const {id, index, value} = d;
 					let visibility = "hidden";
