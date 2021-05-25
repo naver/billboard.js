@@ -492,12 +492,12 @@ export default {
 			const data: any[] = [];
 
 			t.values
-				.filter(v => isValue(v.value))
+				.filter(({value}) => isValue(value) || value === null)
 				.forEach(v => {
 					let {value} = v;
 
 					// exclude 'volume' value to correct mis domain calculation
-					if ($$.isCandlestickType(v)) {
+					if (value !== null && $$.isCandlestickType(v)) {
 						value = isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close];
 					}
 
