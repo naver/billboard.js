@@ -2666,6 +2666,37 @@ describe("AXIS", function() {
 
 			expect(bb.generate(args)).to.not.throw;
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "1180", "980", "915"],
+						["1180", 74.07, null, null],
+						["980", null, 43.75, null],
+						["915", null, null, 42.47]
+					],
+					type: "bar",
+					groups: [
+						["1180", "980", "915"]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("y Axis max value should be scaled properly", () => {
+			const {internal} = chart;
+			const {max} = internal.getMinMaxValue();
+
+			expect(internal.scale.y.domain()[1]).to.be.closeTo(max, 10);
+			expect(+internal.$el.axis.y.select(".tick:nth-child(10) tspan").text()).to.be.closeTo(max, 10);
+		});
 	});
 
 	describe("x Axis tick width size", () => {
