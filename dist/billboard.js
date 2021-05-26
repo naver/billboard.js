@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210525004642
+ * @version 3.0.3-nightly-20210526004700
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3693,12 +3693,13 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     }) : null;
     return targets.forEach(function (t) {
       var data = [];
-      t.values.filter(function (v) {
-        return isValue(v.value);
+      t.values.filter(function (_ref) {
+        var value = _ref.value;
+        return isValue(value) || value === null;
       }).forEach(function (v) {
         var value = v.value; // exclude 'volume' value to correct mis domain calculation
 
-        $$.isCandlestickType(v) && (value = isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close]), isArray(value) ? data.push.apply(data, value) : isObject(value) && "high" in value ? data.push.apply(data, Object.values(value)) : $$.isBubbleZType(v) ? data.push(hasAxis && $$.getBubbleZData(value, "y")) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
+        value !== null && $$.isCandlestickType(v) && (value = isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close]), isArray(value) ? data.push.apply(data, value) : isObject(value) && "high" in value ? data.push.apply(data, Object.values(value)) : $$.isBubbleZType(v) ? data.push(hasAxis && $$.getBubbleZData(value, "y")) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
       }), ys[t.id] = data;
     }), ys;
   },

@@ -3416,11 +3416,14 @@ var data$1 = {
         targets.forEach(function (t) {
             var data = [];
             t.values
-                .filter(function (v) { return isValue(v.value); })
+                .filter(function (_a) {
+                var value = _a.value;
+                return isValue(value) || value === null;
+            })
                 .forEach(function (v) {
                 var value = v.value;
                 // exclude 'volume' value to correct mis domain calculation
-                if ($$.isCandlestickType(v)) {
+                if (value !== null && $$.isCandlestickType(v)) {
                     value = isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close];
                 }
                 if (isArray(value)) {
