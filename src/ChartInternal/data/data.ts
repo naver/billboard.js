@@ -4,7 +4,7 @@
  */
 import CLASS from "../../config/classes";
 import {KEY} from "../../module/Cache";
-import {IData} from "./IData";
+import {IData, IDataRow} from "./IData";
 import {
 	findIndex,
 	getUnique,
@@ -708,7 +708,7 @@ export default {
 		return sames;
 	},
 
-	findClosestFromTargets(targets, pos) {
+	findClosestFromTargets(targets, pos): IDataRow | undefined {
 		const $$ = this;
 		const candidates = targets.map(target => $$.findClosest(target.values, pos)); // map to array of closest points of each target
 
@@ -716,7 +716,7 @@ export default {
 		return $$.findClosest(candidates, pos);
 	},
 
-	findClosest(values, pos) {
+	findClosest(values, pos): IDataRow | undefined {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const data = values.filter(v => v && isValue(v.value));
