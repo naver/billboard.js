@@ -191,9 +191,10 @@ export default {
 		}
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
-		if (!startEvent ||
-			(e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)
-		) {
+		if (config.zoom_type === "drag" && (
+			!startEvent ||
+				(e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)
+		)) {
 			return;
 		}
 

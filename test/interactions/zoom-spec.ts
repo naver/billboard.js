@@ -273,21 +273,21 @@ describe("ZOOM", function() {
 
 			["x", "y"].forEach(id => {
 				const domain = orgDomain[id];
-
+				
 				expect(
 					chart.internal.scale[id].domain()
-						.every((v, i) => i > 0 ? v < domain[i] : v > domain[i])
-				).to.be.true;
-			});
-
-			// when zoom out
-			util.fireEvent(eventRect, "wheel", {
-				deltaX: 0,
-				deltaY: 100,
-				clientX: 159,
-				clientY: 137
-			});
-
+					.every((v, i) => i > 0 ? v < domain[i] : v > domain[i])
+					).to.be.true;
+				});
+				
+				// when zoom out
+				util.fireEvent(eventRect, "wheel", {
+					deltaX: 0,
+					deltaY: 100,
+					clientX: 159,
+					clientY: 137
+				});
+				
 			["x", "y"].forEach(id => {
 				const domain = orgDomain[id];
 
@@ -313,6 +313,34 @@ describe("ZOOM", function() {
 
 				done();
 			}, 300);
+		});
+
+		it("should eventReceiver size to be updated", done => {
+			const {internal: {$el, state: {eventReceiver}}} = chart;
+			const eventRect = $el.eventRect.node();
+			const {w} = eventReceiver.coords[1];
+
+			// tooltip position
+			chart.tooltip.show({x:2});
+			const tooltipLeft = parseInt(chart.$.tooltip.style("left"), 10);
+			chart.tooltip.hide();
+
+			// when zoom in
+			util.fireEvent(eventRect, "wheel", {
+				deltaX: 0,
+				deltaY: -100,
+				clientX: 159,
+				clientY: 137
+			});
+
+			setTimeout(() => {
+				expect(eventReceiver.coords[1].w).to.be.greaterThan(w);
+
+				chart.tooltip.show({x:2});
+				expect(parseInt(chart.$.tooltip.style("left"), 10)).to.be.below(tooltipLeft);
+
+				done();
+			}, 500);
 		})
 	});
 
@@ -780,7 +808,7 @@ describe("ZOOM", function() {
 			util.fireEvent(eventRect.node(), "wheel", {
 				deltaX: 0,
 				deltaY: -200,
-				clientX: 159,
+				clientX: 259,
 				clientY: 137
 			});
 
