@@ -290,7 +290,7 @@ export default {
 				chartRight -= svgLeft;
 			} else {
 				y -= 5;
-				x = svgLeft + chartLeft + size + ($$.zoomScale ? x : dataScale);
+				x = svgLeft + chartLeft + size + ($$.scale.zoom ? x : dataScale);
 			}
 		}
 
