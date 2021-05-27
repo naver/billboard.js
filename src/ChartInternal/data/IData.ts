@@ -7,6 +7,7 @@ export interface IDataRow {
     value: number;
     id: string;
     index: number;
+    name?: string;
 }
 
 export interface IData {
