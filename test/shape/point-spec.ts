@@ -130,6 +130,18 @@ describe("SHAPE POINT", () => {
 				expect(scale).to.be.equal(1.75);
 			});
 		});
+
+		it("set option: nullish data", () => {
+			args.data.columns = [
+				["data1", 6, 4, null]
+			];
+
+			args.point.pattern = ['<circle cx="4" cy="4" r="4" />'];
+		});
+
+		it("custom point's position for null data shoudn't be set as NaN", () => {
+			expect(chart.$.circles.filter(":last-child").attr("y")).to.not.equal("NaN");
+		});
 	});
 
 	describe("point transition", () => {
