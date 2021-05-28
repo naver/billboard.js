@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210526004700
+ * @version 3.0.3-nightly-20210528004707
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -26606,7 +26606,7 @@ function getTextPos(pos, width) {
       raw || (y += hasGauge ? height : height / 2, x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2);
     } else {
       var dataScale = scale.x(dataToShow[0].x);
-      config.axis_rotated ? (y = dataScale + size, x += svgLeft + 100, chartRight -= svgLeft) : (y -= 5, x = svgLeft + chartLeft + size + ($$.zoomScale ? x : dataScale));
+      config.axis_rotated ? (y = dataScale + size, x += svgLeft + 100, chartRight -= svgLeft) : (y -= 5, x = svgLeft + chartLeft + size + ($$.scale.zoom ? x : dataScale));
     } // when tooltip left + tWidth > chart's width
 
 
@@ -37941,8 +37941,6 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
 
 
-
-
 /* harmony default export */ var interactions_zoom = ({
   /**
    * Initialize zoom.
@@ -38057,7 +38055,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         e = event && event.sourceEvent;
     startEvent && startEvent.type.indexOf("touch") > -1 && (startEvent = startEvent.changedTouches[0], e = e.changedTouches[0]);
     // if click, do nothing. otherwise, click interaction will be canceled.
-    !startEvent || e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY || ($$.redrawEventRect(), $$.updateZoom(), $$.state.zooming = !1, callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain()));
+    config.zoom_type === "drag" && (!startEvent || e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY) || ($$.redrawEventRect(), $$.updateZoom(), $$.state.zooming = !1, callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain()));
   },
 
   /**
@@ -38135,16 +38133,9 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       var _ref,
           scale = $$.scale.zoom || $$.scale.x;
 
-      if (state.event = event, $$.setDragStatus(!1), zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end) $$.api.zoom([start, end].map(function (v) {
+      state.event = event, $$.setDragStatus(!1), zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end && ($$.api.zoom([start, end].map(function (v) {
         return scale.invert(v);
-      })), $$.onZoomEnd(event);else if ($$.isMultipleX()) $$.clickHandlerForMultipleXS.bind(this)($$);else {
-        var _getPointer = getPointer(event),
-            x = _getPointer[0],
-            y = _getPointer[1],
-            target = browser_doc.elementFromPoint(x, y);
-
-        $$.clickHandlerForSingleX.bind(target)(src_select(target).datum(), $$);
-      }
+      })), $$.onZoomEnd(event));
     });
   },
   setZoomResetButton: function setZoomResetButton() {

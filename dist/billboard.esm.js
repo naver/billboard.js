@@ -7169,7 +7169,7 @@ var tooltip$1 = {
             }
             else {
                 y -= 5;
-                x = svgLeft + chartLeft + size + ($$.zoomScale ? x : dataScale);
+                x = svgLeft + chartLeft + size + ($$.scale.zoom ? x : dataScale);
             }
         }
         // when tooltip left + tWidth > chart's width
@@ -19168,8 +19168,8 @@ var zoom = {
             e = e.changedTouches[0];
         }
         // if click, do nothing. otherwise, click interaction will be canceled.
-        if (!startEvent ||
-            (e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)) {
+        if (config.zoom_type === "drag" && (!startEvent ||
+            (e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY))) {
             return;
         }
         $$.redrawEventRect();
@@ -19292,16 +19292,6 @@ var zoom = {
             if (start !== end) {
                 $$.api.zoom([start, end].map(function (v) { return scale.invert(v); }));
                 $$.onZoomEnd(event);
-            }
-            else {
-                if ($$.isMultipleX()) {
-                    $$.clickHandlerForMultipleXS.bind(this)($$);
-                }
-                else {
-                    var _b = getPointer(event), x = _b[0], y = _b[1];
-                    var target = doc.elementFromPoint(x, y);
-                    $$.clickHandlerForSingleX.bind(target)(select(target).datum(), $$);
-                }
             }
         });
     },
