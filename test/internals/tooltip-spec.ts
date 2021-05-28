@@ -297,7 +297,7 @@ describe("TOOLTIP", function() {
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 				const tooltipPos = {
 					top: 95,
-					left: 60
+					left: 110
 				};
 
 				expect(top).to.be.equal(tooltipPos.top);
