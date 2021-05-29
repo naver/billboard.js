@@ -500,8 +500,8 @@ export default {
 			withTransition, flow, selectedCircles) {
 			const {width, height} = element.node().getBBox();
 
-			const xPosFn2 = d => xPosFn(d) - width / 2;
-			const yPosFn2 = d => yPosFn(d) - height / 2;
+			const xPosFn2 = d => (isValue(d.value) ? xPosFn(d) - width / 2 : 0);
+			const yPosFn2 = d => (isValue(d.value) ? yPosFn(d) - height / 2 : 0);
 			let mainCircles = element;
 
 			if (withTransition) {
