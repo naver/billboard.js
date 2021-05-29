@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210528004707
+ * @version 3.0.3-nightly-20210529004705
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.0.0
@@ -35236,7 +35236,7 @@ var getTransitionName = function () {
           width = _element$node$getBBox.width,
           height = _element$node$getBBox.height,
           xPosFn2 = function (d) {
-        return xPosFn(d) - width / 2;
+        return isValue(d.value) ? xPosFn(d) - width / 2 : 0;
       },
           mainCircles = element;
 
@@ -35246,7 +35246,7 @@ var getTransitionName = function () {
       }
 
       return mainCircles.attr("x", xPosFn2).attr("y", function yPosFn2(d) {
-        return yPosFn(d) - height / 2;
+        return isValue(d.value) ? yPosFn(d) - height / 2 : 0;
       }).style("fill", fillStyleFn);
     }
   },

@@ -16704,8 +16704,8 @@ var shapePoint = {
         },
         update: function (element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
             var _a = element.node().getBBox(), width = _a.width, height = _a.height;
-            var xPosFn2 = function (d) { return xPosFn(d) - width / 2; };
-            var yPosFn2 = function (d) { return yPosFn(d) - height / 2; };
+            var xPosFn2 = function (d) { return (isValue(d.value) ? xPosFn(d) - width / 2 : 0); };
+            var yPosFn2 = function (d) { return (isValue(d.value) ? yPosFn(d) - height / 2 : 0); };
             var mainCircles = element;
             if (withTransition) {
                 var transitionName = getTransitionName();
