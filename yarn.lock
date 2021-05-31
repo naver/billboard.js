@@ -11535,9 +11535,9 @@ streamroller@^2.2.4:
     fs-extra "^8.1.0"
 
 string-replace-loader@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/string-replace-loader/-/string-replace-loader-3.0.1.tgz#a899de524a4dfaa296e4be73f1667de150bed8d2"
-  integrity sha512-G6UD9HX1XaKXnWpKgNHPVc/pYYLtP8+UWfORY5n3GTLSUNUo2hU2ABBnC9B3hg7ATWVSIGTisiP8zGq1DlvTbg==
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/string-replace-loader/-/string-replace-loader-3.0.2.tgz#810539ef88e8eec93ccafcc6ce141213d81f27ed"
+  integrity sha512-MY2VpW7p2V4yLBybj6BcFhmJGU1GjXSDfSz4NrK9BiLK3ttyKXO/WIyOD4UP/b77QUVPG+AKZ7vvpTCNYRAgWg==
   dependencies:
     loader-utils "^2.0.0"
     schema-utils "^3.0.0"
