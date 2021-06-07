@@ -15,3 +15,12 @@ export interface IData {
     id_org: string;
     values: IDataRow[];
 }
+
+export interface IArcData {
+    data: IData;
+    index: number;
+    padAngle: number;
+    startAngle: number;
+    endAngle: number;
+    value: number;
+}

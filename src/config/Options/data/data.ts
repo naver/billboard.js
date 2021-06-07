@@ -303,6 +303,7 @@ export default {
 	 *  - `i` is the index of the data point where the label is shown.
 	 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+	 * @property {string|object} [data.labels.backgroundColor] Set label text background colors.
 	 * @property {string|object|Function} [data.labels.colors] Set label text colors.
 	 * @property {object} [data.labels.position] Set each dataset position, relative the original.
 	 * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
@@ -336,6 +337,15 @@ export default {
 	 *
 	 *     // align text to center of the 'bar' shape (works only for 'bar' type)
 	 *     centered: true,
+	 *
+	 *     // apply backgound color for label texts
+	 *     backgroundColors: "red",
+	 *
+	 *     // set differenct backround colors per dataset
+	 *     backgroundColors: {
+	 *          data1: "green",
+	 *          data2: "yellow"
+	 *     }
 	 *
 	 *     // apply for all label texts
 	 *     colors: "red",
@@ -376,6 +386,7 @@ export default {
 			colors?: string|{[key: string]: string};
 			position?: {[key: string]: number}|{[key: string]: {x?: number; y?: number;}}
 		}> {},
+	data_labels_backgroundColors: <string|{[key: string]: string}|undefined> undefined,
 	data_labels_colors: <string|object|Function|undefined> undefined,
 	data_labels_position: {},
 

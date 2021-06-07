@@ -1927,7 +1927,7 @@ var demos = {
 				];
 			}
 		},
-		"DataFromURL": {
+		DataFromURL: {
 			options: {
 				data: {
 					url: "./data/test.csv",
@@ -2262,6 +2262,7 @@ var demos = {
 						],
 						type: "bar",
 						labels: {
+							backgroundColors: "yellow",
 							colors: "red"
 						}
 					}
@@ -2276,6 +2277,9 @@ var demos = {
 						],
 						type: "line",
 						labels: {
+							backgroundColors: {
+								data1: "rgba(0, 0, 0, 0.2)"
+							},
 							colors: {
 								data1: "fuchsia",
 								data2: "blue"
