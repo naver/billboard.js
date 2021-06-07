@@ -1471,6 +1471,11 @@ export interface Data {
 		centered?: boolean;
 
 		/**
+		 * Set label text background colors.
+		 */
+		backgroundColors?: string | { [key: string]: string };
+
+		/**
 		 * Set label text colors.
 		 */
 		colors?: string |

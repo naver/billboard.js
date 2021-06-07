@@ -1839,6 +1839,74 @@ describe("DATA", () => {
 				expect(ctx.every(v => v === chart)).to.be.true;
 			});
 		});
+
+		describe("labels.backgroundColors", () => {
+			let ctx = [];
+
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100],
+							["data2", 430, 300, 500]
+						],
+						labels: {
+							backgroundColors: "red"
+						},
+						type: "line"
+					}
+				}
+			});
+
+			const checkFilter = () => {
+				const {$el} = chart.internal;
+				const filter = $el.defs.select("filter[id*='labels-bg']");
+				const filterId = filter.attr("id");
+
+				expect(
+					filter.select("feFlood").attr("flood-color")
+				).to.be.equal(args.data.labels.backgroundColors);
+
+				$el.text.each(function(d) {
+					expect(this.getAttribute("filter").indexOf(filterId) > -1).to.be.ok;
+				});
+			};
+
+			it("should set filter definition and text nodes for line type", () => {
+				checkFilter();
+			});
+
+			it("set options data.type='pie'", () => {
+				args.data.type = "pie";
+			});
+
+			it("should set filter definition and text nodes for pie type", () => {
+				checkFilter();
+			});
+
+			it("set options data.type='pie'", () => {
+				args.data.type = "line";
+				args.data.labels.backgroundColors = {
+					data1: "red"
+				};
+			});
+
+			it("should set filter definition and text nodes for line type", () => {
+				const {$el} = chart.internal;
+				const filter = $el.defs.select("filter[id*='labels-bg-data1']");
+				const filterId = filter.attr("id");
+
+				expect(filter.size()).to.be.equal(1);
+
+				$el.text.each(function(d) {
+					if (d.id === "data1") {
+						expect(this.getAttribute("filter").indexOf(filterId) > -1).to.be.ok;
+					} else {
+						expect(this.getAttribute("filter")).to.be.null;
+					}
+				});
+			});
+		});
 	});
 
 	describe("inner functions", () => {
