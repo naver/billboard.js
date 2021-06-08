@@ -1005,6 +1005,7 @@ var data$2 = {
      *  - `i` is the index of the data point where the label is shown.
      *  - `j` is the sub index of the data point where the label is shown.<br><br>
      * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+     * @property {string|object} [data.labels.backgroundColor] Set label text background colors.
      * @property {string|object|Function} [data.labels.colors] Set label text colors.
      * @property {object} [data.labels.position] Set each dataset position, relative the original.
      * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
@@ -1039,6 +1040,15 @@ var data$2 = {
      *     // align text to center of the 'bar' shape (works only for 'bar' type)
      *     centered: true,
      *
+     *     // apply backgound color for label texts
+     *     backgroundColors: "red",
+     *
+     *     // set differenct backround colors per dataset
+     *     backgroundColors: {
+     *          data1: "green",
+     *          data2: "yellow"
+     *     }
+     *
      *     // apply for all label texts
      *     colors: "red",
      *
@@ -1072,6 +1082,7 @@ var data$2 = {
      * }
      */
     data_labels: {},
+    data_labels_backgroundColors: undefined,
     data_labels_colors: undefined,
     data_labels_position: {},
     /**
@@ -4345,6 +4356,34 @@ var color = {
         } : null;
     },
     /**
+     * Append data backgound color filter definition
+     * @private
+     */
+    generateDataLabelBackgroundColorFilter: function () {
+        var $$ = this;
+        var $el = $$.$el, config = $$.config, state = $$.state;
+        var backgroundColors = config.data_labels_backgroundColors;
+        if (backgroundColors) {
+            var ids = [];
+            if (isString(backgroundColors)) {
+                ids.push("");
+            }
+            else if (isObject(backgroundColors)) {
+                ids = Object.keys(backgroundColors);
+            }
+            ids.forEach(function (v) {
+                var id = state.datetimeId + "-labels-bg-" + v;
+                $el.defs.append("filter")
+                    .attr("x", "0")
+                    .attr("y", "0")
+                    .attr("width", "1")
+                    .attr("height", "1")
+                    .attr("id", id)
+                    .html("<feFlood flood-color=\"" + (v === "" ? backgroundColors : backgroundColors[v]) + "\" /><feComposite in=\"SourceGraphic\"/>");
+            });
+        }
+    },
+    /**
      * Set the data over color.
      * When is out, will restate in its previous color value
      * @param {boolean} isOver true: set overed color, false: restore
@@ -6467,7 +6506,7 @@ var text = {
      */
     updateText: function (durationForExit) {
         var $$ = this;
-        var config = $$.config, $el = $$.$el;
+        var $el = $$.$el, config = $$.config;
         var classText = $$.getClass("text", "index");
         var text = $el.main.selectAll("." + CLASS.texts)
             .selectAll("." + CLASS.text)
@@ -6539,6 +6578,26 @@ var text = {
         return color || defaultColor;
     },
     /**
+     * Update data label text background color
+     * @param {object} d Data object
+     * @returns {string|null}
+     * @private
+     */
+    updateTextBacgroundColor: function (d) {
+        var $$ = this;
+        var $el = $$.$el, config = $$.config;
+        var backgroundColor = config.data_labels_backgroundColors;
+        var color = "";
+        if (isString(backgroundColor) || isObject(backgroundColor)) {
+            var id = isString(backgroundColor) ? "" : ("id" in d ? d.id : d.data.id);
+            var filter = $el.defs.select(["filter[id*='labels-bg-", "']"].join(id));
+            if (filter.size()) {
+                color = "url(#" + filter.attr("id") + ")";
+            }
+        }
+        return color || null;
+    },
+    /**
      * Redraw chartText
      * @param {Function} x Positioning function for x
      * @param {Function} y Positioning function for y
@@ -6552,6 +6611,7 @@ var text = {
         var t = getRandom(true);
         $$.$el.text
             .style("fill", $$.updateTextColor.bind($$))
+            .attr("filter", $$.updateTextBacgroundColor.bind($$))
             .style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
             .each(function (d, i) {
             // do not apply transition for newly added text elements
@@ -7861,13 +7921,15 @@ var ChartInternal = /** @class */ (function () {
         config.svg_classname && $el.svg.attr("class", config.svg_classname);
         // Define defs
         var hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
-        if (hasAxis || hasColorPatterns) {
+        if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors) {
             $el.defs = $el.svg.append("defs");
             if (hasAxis) {
                 ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
                     $$.appendClip($el.defs, state.clip[v]);
                 });
             }
+            // Append data backgound color filter definition
+            $$.generateDataLabelBackgroundColorFilter();
             // set color patterns
             if (hasColorPatterns) {
                 $$.patterns.forEach(function (p) { return $el.defs.append(function () { return p.node; }); });
@@ -14902,6 +14964,7 @@ var shapeArc = {
         if ($$.shouldShowArcLabel()) {
             selection
                 .style("fill", $$.updateTextColor.bind($$))
+                .attr("filter", $$.updateTextBacgroundColor.bind($$))
                 .each(function (d) {
                 var node = select(this);
                 var updated = $$.updateAngle(d);

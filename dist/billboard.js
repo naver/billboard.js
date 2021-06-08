@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210601005153
+ * @version 3.0.3-nightly-20210608004726
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1268,6 +1268,7 @@ function _defineProperty(obj, key, value) {
    *  - `i` is the index of the data point where the label is shown.
    *  - `j` is the sub index of the data point where the label is shown.<br><br>
    * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+   * @property {string|object} [data.labels.backgroundColor] Set label text background colors.
    * @property {string|object|Function} [data.labels.colors] Set label text colors.
    * @property {object} [data.labels.position] Set each dataset position, relative the original.
    * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
@@ -1302,6 +1303,15 @@ function _defineProperty(obj, key, value) {
    *     // align text to center of the 'bar' shape (works only for 'bar' type)
    *     centered: true,
    *
+   *     // apply backgound color for label texts
+   *     backgroundColors: "red",
+   *
+   *     // set differenct backround colors per dataset
+   *     backgroundColors: {
+   *          data1: "green",
+   *          data2: "yellow"
+   *     }
+   *
    *     // apply for all label texts
    *     colors: "red",
    *
@@ -1335,6 +1345,7 @@ function _defineProperty(obj, key, value) {
    * }
    */
   data_labels: {},
+  data_labels_backgroundColors: undefined,
   data_labels_colors: undefined,
   data_labels_position: {},
 
@@ -4518,6 +4529,26 @@ var colorizePattern = function (pattern, color, id) {
   },
 
   /**
+   * Append data backgound color filter definition
+   * @private
+   */
+  generateDataLabelBackgroundColorFilter: function generateDataLabelBackgroundColorFilter() {
+    var $$ = this,
+        $el = $$.$el,
+        config = $$.config,
+        state = $$.state,
+        backgroundColors = config.data_labels_backgroundColors;
+
+    if (backgroundColors) {
+      var ids = [];
+      isString(backgroundColors) ? ids.push("") : isObject(backgroundColors) && (ids = Object.keys(backgroundColors)), ids.forEach(function (v) {
+        var id = state.datetimeId + "-labels-bg-" + v;
+        $el.defs.append("filter").attr("x", "0").attr("y", "0").attr("width", "1").attr("height", "1").attr("id", id).html("<feFlood flood-color=\"" + (v === "" ? backgroundColors : backgroundColors[v]) + "\" /><feComposite in=\"SourceGraphic\"/>");
+      });
+    }
+  },
+
+  /**
    * Set the data over color.
    * When is out, will restate in its previous color value
    * @param {boolean} isOver true: set overed color, false: restore
@@ -6154,8 +6185,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    */
   updateText: function updateText(durationForExit) {
     var $$ = this,
-        config = $$.config,
         $el = $$.$el,
+        config = $$.config,
         classText = $$.getClass("text", "index"),
         text = $el.main.selectAll("." + config_classes.texts).selectAll("." + config_classes.text).data($$.labelishData.bind($$));
     text.exit().transition().duration(durationForExit).style("fill-opacity", "0").remove(), $el.text = text.enter().append("text").merge(text).attr("class", classText).attr("text-anchor", function (d) {
@@ -6204,6 +6235,28 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
   },
 
   /**
+   * Update data label text background color
+   * @param {object} d Data object
+   * @returns {string|null}
+   * @private
+   */
+  updateTextBacgroundColor: function updateTextBacgroundColor(d) {
+    var $$ = this,
+        $el = $$.$el,
+        config = $$.config,
+        backgroundColor = config.data_labels_backgroundColors,
+        color = "";
+
+    if (isString(backgroundColor) || isObject(backgroundColor)) {
+      var id = isString(backgroundColor) ? "" : "id" in d ? d.id : d.data.id,
+          filter = $el.defs.select(["filter[id*='labels-bg-", "']"].join(id));
+      filter.size() && (color = "url(#" + filter.attr("id") + ")");
+    }
+
+    return color || null;
+  },
+
+  /**
    * Redraw chartText
    * @param {Function} x Positioning function for x
    * @param {Function} y Positioning function for y
@@ -6217,7 +6270,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         t = getRandom(!0);
     // need to return 'true' as of being pushed to the redraw list
     // ref: getRedrawList()
-    return $$.$el.text.style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
+    return $$.$el.text.style("fill", $$.updateTextColor.bind($$)).attr("filter", $$.updateTextBacgroundColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
       // do not apply transition for newly added text elements
       var node = withTransition && this.getAttribute("x") ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).transition(t) : (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           posX = x.bind(this)(d, i),
@@ -7310,9 +7363,9 @@ var ChartInternal = /*#__PURE__*/function () {
     config.svg_classname && $el.svg.attr("class", config.svg_classname);
     // Define defs
     var hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
-    (hasAxis || hasColorPatterns) && ($el.defs = $el.svg.append("defs"), hasAxis && ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
+    (hasAxis || hasColorPatterns || config.data_labels_backgroundColors) && ($el.defs = $el.svg.append("defs"), hasAxis && ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
       $$.appendClip($el.defs, state.clip[v]);
-    }), hasColorPatterns && $$.patterns.forEach(function (p) {
+    }), $$.generateDataLabelBackgroundColorFilter(), hasColorPatterns && $$.patterns.forEach(function (p) {
       return $el.defs.append(function () {
         return p.node;
       });
@@ -13360,7 +13413,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   textForArcLabel: function textForArcLabel(selection) {
     var $$ = this,
         hasGauge = $$.hasType("gauge");
-    $$.shouldShowArcLabel() && selection.style("fill", $$.updateTextColor.bind($$)).each(function (d) {
+    $$.shouldShowArcLabel() && selection.style("fill", $$.updateTextColor.bind($$)).attr("filter", $$.updateTextBacgroundColor.bind($$)).each(function (d) {
       var node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           updated = $$.updateAngle(d),
           ratio = $$.getRatio("arc", updated),
