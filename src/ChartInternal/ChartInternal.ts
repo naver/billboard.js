@@ -333,7 +333,7 @@ export default class ChartInternal {
 		// Define defs
 		const hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
 
-		if (hasAxis || hasColorPatterns) {
+		if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors) {
 			$el.defs = $el.svg.append("defs");
 
 			if (hasAxis) {
@@ -341,6 +341,9 @@ export default class ChartInternal {
 					$$.appendClip($el.defs, state.clip[v]);
 				});
 			}
+
+			// Append data backgound color filter definition
+			$$.generateDataLabelBackgroundColorFilter();
 
 			// set color patterns
 			if (hasColorPatterns) {
