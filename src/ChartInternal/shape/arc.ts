@@ -147,9 +147,12 @@ export default {
 		const radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
 
 		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
+			const {gauge_min: min, gauge_max: max} = config;
+
 			// to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
 			const totalSum = $$.getTotalDataSum(state.rendered);
-			const gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
+			// https://github.com/naver/billboard.js/issues/2123
+			const gEnd = radius * ((totalSum - min) / (max - min));
 
 			pie = pie
 				.startAngle(gStart)
