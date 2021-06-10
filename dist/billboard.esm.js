@@ -14822,9 +14822,11 @@ var shapeArc = {
         var gStart = $$.getStartAngle();
         var radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
         if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
+            var min = config.gauge_min, max = config.gauge_max;
             // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
             var totalSum = $$.getTotalDataSum(state.rendered);
-            var gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
+            // https://github.com/naver/billboard.js/issues/2123
+            var gEnd = radius * ((totalSum - min) / (max - min));
             pie = pie
                 .startAngle(gStart)
                 .endAngle(gEnd + gStart);
@@ -15986,8 +15988,8 @@ var shapeGauge = {
         var max = hasMultiGauge ?
             $$.getMinMaxData().max[0].value : $$.getTotalDataSum(state.rendered);
         // if gauge_max less than max, make max to max value
-        if (max > config.gauge_max) {
-            config.gauge_max = max;
+        if (max + config.gauge_min * (config.gauge_min > 0 ? -1 : 1) > config.gauge_max) {
+            config.gauge_max = max - config.gauge_min;
         }
     },
     redrawMultiArcGauge: function () {

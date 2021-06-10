@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210608004726
+ * @version 3.0.3-nightly-20210610004641
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -13304,10 +13304,12 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
 
     if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
-      // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
-      var totalSum = $$.getTotalDataSum(state.rendered),
-          gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
-      pie = pie.startAngle(gStart).endAngle(gEnd + gStart);
+      var _config = config,
+          min = _config.gauge_min,
+          max = _config.gauge_max,
+          totalSum = $$.getTotalDataSum(state.rendered); // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
+
+      pie = pie.startAngle(gStart).endAngle(radius * ((totalSum - min) / (max - min)) + gStart);
     }
 
     if (pie($$.filterTargetsToShow()).forEach(function (t, i) {
@@ -14217,7 +14219,7 @@ function candlestick_objectSpread(target) { for (var source, i = 1; i < argument
         state = $$.state,
         hasMultiGauge = $$.hasMultiArcGauge(),
         max = hasMultiGauge ? $$.getMinMaxData().max[0].value : $$.getTotalDataSum(state.rendered);
-    max > config.gauge_max && (config.gauge_max = max);
+    max + config.gauge_min * (config.gauge_min > 0 ? -1 : 1) > config.gauge_max && (config.gauge_max = max - config.gauge_min);
   },
   redrawMultiArcGauge: function redrawMultiArcGauge() {
     var $$ = this,
