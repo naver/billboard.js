@@ -8,7 +8,8 @@ import sinon from "sinon";
 import bb from "../../src";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
-import {convertInputType} from "../../src/module/util";
+import Chart from "../../src/Chart/Chart";
+import {convertInputType, extend} from "../../src/module/util";
 
 describe("Interface & initialization", () => {
 	let chart;
@@ -112,6 +113,29 @@ describe("Interface & initialization", () => {
 			});
 
 			expect(chart.$.chart.classed(bindtoClassName)).to.be.true;
+		});
+
+		it("should bind correctly with nullish properties", () => {
+			const options = {
+				data: {
+					columns: [["data1", 0]]
+				}
+			};
+	
+			class Extended extends Chart {
+				nullProperty;
+				voidProperty;
+			}
+	
+			extend(Chart.prototype, {
+				nullProperty: null,
+				voidProperty: undefined
+			});
+	
+			const extendedInstance = new Chart(options);
+
+			expect((extendedInstance as Extended).nullProperty).to.be.null;
+			expect((extendedInstance as Extended).voidProperty).to.be.undefined;
 		});
 	});
 

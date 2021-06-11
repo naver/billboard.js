@@ -47,3 +47,4 @@ Marc Faber <faber@genodata.de>
 Donald Pipowitch <pipo@senaeh.de>
 Sung Oh Park <sung-oh.park@navercorp.com>
 Adrian Schmutzler <dev@schmutzler.it>
+Aziz Gazanchiyan <ZIZ@KMDPoland.pl>
