@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210611004624
+ * @version 3.0.3-nightly-20210612004627
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -36531,7 +36531,11 @@ var cacheKey = KEY.radarPoints;
    * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
    * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
    * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
-   * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
+   * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
+   * Will pass following arguments to the given function:
+   * - value {number}: absolute value
+   * - ratio {number}: value's ratio
+   * - id {string}: data's id value
    * @property {Function} [gauge.label.extents] Set customized min/max label text.
    * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
    * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
@@ -36573,7 +36577,7 @@ var cacheKey = KEY.radarPoints;
    *      fullCircle: false,
    *      label: {
    *          show: false,
-   *          format: function(value, ratio) {
+   *          format: function(value, ratio, id) {
    *              return value;
    *
    *              // to multiline, return with '\n' character

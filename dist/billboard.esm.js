@@ -377,10 +377,9 @@ var _assign = function __assign() {
     return t;
   }, _assign.apply(this, arguments);
 };
-function __spreadArray(to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
-
-  return to;
+function __spreadArray(to, from, pack) {
+  if (pack || arguments.length === 2) for (var ar, i = 0, l = from.length; i < l; i++) (ar || !(i in from)) && (!ar && (ar = Array.prototype.slice.call(from, 0, i)), ar[i] = from[i]);
+  return to.concat(ar || from);
 }
 
 /**
@@ -17738,7 +17737,11 @@ var optGauge = {
      * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
      * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
      * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
-     * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
+     * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
+     * Will pass following arguments to the given function:
+     * - value {number}: absolute value
+     * - ratio {number}: value's ratio
+     * - id {string}: data's id value
      * @property {Function} [gauge.label.extents] Set customized min/max label text.
      * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
      * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
@@ -17780,7 +17783,7 @@ var optGauge = {
      *      fullCircle: false,
      *      label: {
      *          show: false,
-     *          format: function(value, ratio) {
+     *          format: function(value, ratio, id) {
      *              return value;
      *
      *              // to multiline, return with '\n' character

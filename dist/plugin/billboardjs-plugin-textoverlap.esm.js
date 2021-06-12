@@ -48,10 +48,9 @@ function __extends(d, b) {
   if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + (b + "") + " is not a constructor or null");
   _extendStatics(d, b), d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
-function __spreadArray(to, from) {
-  for (var i = 0, il = from.length, j = to.length; i < il; i++, j++) to[j] = from[i];
-
-  return to;
+function __spreadArray(to, from, pack) {
+  if (pack || arguments.length === 2) for (var ar, i = 0, l = from.length; i < l; i++) (ar || !(i in from)) && (!ar && (ar = Array.prototype.slice.call(from, 0, i)), ar[i] = from[i]);
+  return to.concat(ar || from);
 }
 
 /**
