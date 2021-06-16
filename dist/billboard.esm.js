@@ -9349,12 +9349,16 @@ var Chart = /** @class */ (function () {
             Object.keys(fn).forEach(function (key) {
                 var isFunc = isFunction(fn[key]);
                 var isChild = target !== argThis;
-                var hasChild = Object.keys(fn[key]).length > 0;
+                var isNotNil = notEmpty(fn[key]);
+                var hasChild = isNotNil && Object.keys(fn[key]).length > 0;
                 if (isFunc && ((!isChild && hasChild) || isChild)) {
                     target[key] = fn[key].bind(argThis);
                 }
-                else if (!isFunc) {
+                else if (isNotNil && !isFunc) {
                     target[key] = {};
+                }
+                else {
+                    target[key] = fn[key];
                 }
                 hasChild && bindThis(fn[key], target[key], argThis);
             });

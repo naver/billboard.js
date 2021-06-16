@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210612004627
+ * @version 3.0.3-nightly-20210616004627
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8636,8 +8636,9 @@ var Chart = function Chart(options) {
     Object.keys(fn).forEach(function (key) {
       var isFunc = isFunction(fn[key]),
           isChild = target !== argThis,
-          hasChild = Object.keys(fn[key]).length > 0;
-      isFunc && (!isChild && hasChild || isChild) ? target[key] = fn[key].bind(argThis) : !isFunc && (target[key] = {}), hasChild && bindThis(fn[key], target[key], argThis);
+          isNotNil = notEmpty(fn[key]),
+          hasChild = isNotNil && Object.keys(fn[key]).length > 0;
+      target[key] = isFunc && (!isChild && hasChild || isChild) ? fn[key].bind(argThis) : isNotNil && !isFunc ? {} : fn[key], hasChild && bindThis(fn[key], target[key], argThis);
     });
   }(Chart.prototype, this, this), loadConfig.call($$, options), $$.beforeInit(), $$.init();
 }; // extend common APIs as part of Chart class
