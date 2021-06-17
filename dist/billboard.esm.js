@@ -2128,7 +2128,10 @@ function getPathBox(path) {
     var x = items[0].x;
     var y = Math.min(items[0].y, items[1].y);
     return {
-        x: x, y: y, width: width, height: height
+        x: x,
+        y: y,
+        width: width,
+        height: height
     };
 }
 /**
@@ -18644,7 +18647,7 @@ var selection = _assign(_assign({}, drag), {
             .transition()
             .duration(100)
             .attr("r", r);
-    },
+    }, 
     /**
      * Unelect a point
      * @param {object} target Target point
@@ -18663,7 +18666,7 @@ var selection = _assign(_assign({}, drag), {
             .duration(100)
             .attr("r", 0)
             .remove();
-    },
+    }, 
     /**
      * Toggles the selection of points
      * @param {boolean} selected whether or not to select.
@@ -18675,7 +18678,7 @@ var selection = _assign(_assign({}, drag), {
     togglePoint: function (selected, target, d, i) {
         var method = (selected ? "" : "un") + "selectPoint";
         this[method](target, d, i);
-    },
+    }, 
     /**
      * Select a path
      * @param {object} target Target path
@@ -18690,7 +18693,7 @@ var selection = _assign(_assign({}, drag), {
             target.transition().duration(100)
                 .style("fill", function () { return rgb($$.color(d)).brighter(0.75); });
         }
-    },
+    }, 
     /**
      * Unelect a path
      * @private
@@ -18705,7 +18708,7 @@ var selection = _assign(_assign({}, drag), {
             target.transition().duration(100)
                 .style("fill", function () { return $$.color(d); });
         }
-    },
+    }, 
     /**
      * Toggles the selection of lines
      * @param {boolean} selected whether or not to select.
@@ -18716,7 +18719,7 @@ var selection = _assign(_assign({}, drag), {
      */
     togglePath: function (selected, target, d, i) {
         this[(selected ? "" : "un") + "selectPath"](target, d, i);
-    },
+    }, 
     /**
      * Returns the toggle method of the target
      * @param {object} that shape
@@ -18730,7 +18733,7 @@ var selection = _assign(_assign({}, drag), {
             $$.togglePath : ($$.isStepType(d) ?
             function () { } : // circle is hidden in step chart, so treat as within the click area
             $$.togglePoint);
-    },
+    }, 
     /**
      * Toggles the selection of shapes
      * @param {object} that shape

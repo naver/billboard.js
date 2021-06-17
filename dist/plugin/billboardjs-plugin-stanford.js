@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210616004627
+ * @version 3.0.3-nightly-20210617004607
  * @requires billboard.js
  * @summary billboard.js plugin
  */
