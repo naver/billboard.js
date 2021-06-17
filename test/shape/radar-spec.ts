@@ -37,7 +37,7 @@ describe("SHAPE RADAR", () => {
 			const rect = chart.$.main.select(`.${CLASS.chartRadars}`).node().getBoundingClientRect();
 			const left = (chart.$.chart.node().getBoundingClientRect().width - rect.width) / 2;
 
-			expect(left).to.be.closeTo(rect.x, 3);
+			expect(left).to.be.closeTo(rect.x, 5);
 		});
 
 		it("data points should positioned next to radar polygon element", () => {
@@ -52,7 +52,7 @@ describe("SHAPE RADAR", () => {
 				expect(radar.select(".bb-shapes polygon").attr("points")).to.be.equal(expectedPoints);
 
 				done();
-			}, 200)
+			}, 300)
 		});
 
 		it("Should render level, axes and data edges", () => {
