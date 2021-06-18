@@ -2999,6 +2999,10 @@ var dataConvert = {
             var isCategory = isCustomX && isCategorized;
             var hasCategory = isCategory && data.map(function (v) { return v.x; })
                 .every(function (v) { return config.axis_x_categories.indexOf(v) > -1; });
+            // when .load() with 'append' option is used for indexed axis
+            var isDataAppend = data.__append__;
+            var xIndex = xKey === null && isDataAppend ?
+                $$.api.data.values(id).length : 0;
             return {
                 id: convertedId,
                 id_org: id,
@@ -3010,7 +3014,7 @@ var dataConvert = {
                         +value : (isArray(value) || isObject(value) ? value : null);
                     // use x as categories if custom x and categorized
                     if ((isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX)) {
-                        if (!hasCategory && index === 0 && i === 0) {
+                        if (!hasCategory && index === 0 && i === 0 && !isDataAppend) {
                             config.axis_x_categories = [];
                         }
                         x = config.axis_x_categories.indexOf(rawX);
@@ -3020,7 +3024,7 @@ var dataConvert = {
                         }
                     }
                     else {
-                        x = $$.generateTargetX(rawX, id, i);
+                        x = $$.generateTargetX(rawX, id, xIndex + i);
                     }
                     // mark as x = undefined if value is undefined and filter to remove after mapped
                     if (isUndefined(value) || $$.data.xs[id].length <= i) {
@@ -3832,6 +3836,7 @@ var data$1 = {
 var dataLoad = {
     load: function (rawTargets, args) {
         var $$ = this;
+        var append = args.append;
         var targets = rawTargets;
         if (targets) {
             // filter loading targets if needed
@@ -3849,7 +3854,8 @@ var dataLoad = {
             $$.data.targets.forEach(function (d) {
                 for (var i = 0; i < targets.length; i++) {
                     if (d.id === targets[i].id) {
-                        d.values = targets[i].values;
+                        d.values = append ?
+                            d.values.concat(targets[i].values) : targets[i].values;
                         targets.splice(i, 1);
                         break;
                     }
@@ -3878,6 +3884,7 @@ var dataLoad = {
         // reset internally cached data
         $$.cache.reset();
         var data = args.data || $$.convertData(args, function (d) { return $$.load($$.convertDataToTargets(d), args); });
+        args.append && (data.__append__ = true);
         data && $$.load($$.convertDataToTargets(data), args);
     },
     unload: function (rawTargetIds, customDoneCb) {
@@ -8900,6 +8907,7 @@ var apiLoad = {
      *    | --- | --- |
      *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
      *    | data | Data objects to be loaded. Checkout the example. |
+     *    | append | Load data appending it to the current dataseries.<br>If the existing chart has`x` value, should provide with corresponding `x` value for newly loaded data.  |
      *    | names | Same as data.names() |
      *    | xs | Same as data.xs option  |
      *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
@@ -8923,6 +8931,48 @@ var apiLoad = {
      *    unload: ["data2", "data3"],
      *    url: "...",
      *    done: function() { ... }
+     * });
+     * @example
+     * const chart = bb.generate({
+     *   data: {
+     *     columns: [
+     *       ["data1", 20, 30, 40]
+     *     ]
+     *   }
+     * });
+     *
+     * chart.load({
+     *    columns: [
+     *        // with 'append' option, the 'data1' will have `[20,30,40,50,60]`.
+     *        ["data1", 50, 60]
+     *    ]
+     *    append: true
+     * });
+     * @example
+     * const chart = bb.generate({
+     *   data: {
+     *     x: "x",
+     *     xFormat: "%Y-%m-%dT%H:%M:%S",
+     *     columns: [
+     *       ["x", "2021-01-03T03:00:00", "2021-01-04T12:00:00", "2021-01-05T21:00:00"],
+     *       ["data1", 36, 30, 24]
+     *     ]
+     *   },
+     *   axis: {
+     *     x: {
+     *       type: "timeseries"
+     *     }
+     *   }
+     * };
+     *
+     * chart.load({
+     *   columns: [
+     *     // when existing chart has `x` value, should provide correponding 'x' value.
+     *     // with 'append' option, the 'data1' will have `[36,30,24,37]`.
+     *     ["x", "2021-02-01T08:00:00"],
+     *     ["data1", 37]
+     *   ],
+     *   append: true
      * });
      * @example
      * // myAPI.json

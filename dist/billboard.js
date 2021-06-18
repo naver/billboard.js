@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210617004607
+ * @version 3.0.3-nightly-20210618004652
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3289,7 +3289,9 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         return v.x;
       }).every(function (v) {
         return config.axis_x_categories.indexOf(v) > -1;
-      });
+      }),
+          isDataAppend = data.__append__,
+          xIndex = xKey === null && isDataAppend ? $$.api.data.values(id).length : 0;
       return {
         id: convertedId,
         id_org: id,
@@ -3297,7 +3299,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
           var x,
               rawX = d[xKey],
               value = d[id];
-          return value = value === null || isNaN(value) || isObject(value) ? isArray(value) || isObject(value) ? value : null : +value, (isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(value) || $$.data.xs[id].length <= i) && (x = undefined), {
+          return value = value === null || isNaN(value) || isObject(value) ? isArray(value) || isObject(value) ? value : null : +value, (isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && !isDataAppend && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, xIndex + i), (isUndefined(value) || $$.data.xs[id].length <= i) && (x = undefined), {
             x: x,
             value: value,
             id: convertedId
@@ -4079,6 +4081,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 /* harmony default export */ var load = ({
   load: function load(rawTargets, args) {
     var $$ = this,
+        append = args.append,
         targets = rawTargets;
     // Set targets
     // Redraw with new targets
@@ -4088,7 +4091,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
       $$.setTargetType(t.id, type);
     }), $$.data.targets.forEach(function (d) {
       for (var i = 0; i < targets.length; i++) if (d.id === targets[i].id) {
-        d.values = targets[i].values, targets.splice(i, 1);
+        d.values = append ? d.values.concat(targets[i].values) : targets[i].values, targets.splice(i, 1);
         break;
       }
     }), $$.data.targets = $$.data.targets.concat(targets)), $$.updateTargets($$.data.targets), $$.redraw({
@@ -4105,7 +4108,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
       var data = args.data || $$.convertData(args, function (d) {
         return $$.load($$.convertDataToTargets(d), args);
       });
-      data && $$.load($$.convertDataToTargets(data), args);
+      args.append && (data.__append__ = !0), data && $$.load($$.convertDataToTargets(data), args);
     } // reset internally cached data
 
   },
@@ -8202,6 +8205,7 @@ var legend_legend = {
    *    | --- | --- |
    *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
    *    | data | Data objects to be loaded. Checkout the example. |
+   *    | append | Load data appending it to the current dataseries.<br>If the existing chart has`x` value, should provide with corresponding `x` value for newly loaded data.  |
    *    | names | Same as data.names() |
    *    | xs | Same as data.xs option  |
    *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
@@ -8225,6 +8229,48 @@ var legend_legend = {
    *    unload: ["data2", "data3"],
    *    url: "...",
    *    done: function() { ... }
+   * });
+   * @example
+   * const chart = bb.generate({
+   *   data: {
+   *     columns: [
+   *       ["data1", 20, 30, 40]
+   *     ]
+   *   }
+   * });
+   *
+   * chart.load({
+   *    columns: [
+   *        // with 'append' option, the 'data1' will have `[20,30,40,50,60]`.
+   *        ["data1", 50, 60]
+   *    ]
+   *    append: true
+   * });
+   * @example
+   * const chart = bb.generate({
+   *   data: {
+   *     x: "x",
+   *     xFormat: "%Y-%m-%dT%H:%M:%S",
+   *     columns: [
+   *       ["x", "2021-01-03T03:00:00", "2021-01-04T12:00:00", "2021-01-05T21:00:00"],
+   *       ["data1", 36, 30, 24]
+   *     ]
+   *   },
+   *   axis: {
+   *     x: {
+   *       type: "timeseries"
+   *     }
+   *   }
+   * };
+   *
+   * chart.load({
+   *   columns: [
+   *     // when existing chart has `x` value, should provide correponding 'x' value.
+   *     // with 'append' option, the 'data1' will have `[36,30,24,37]`.
+   *     ["x", "2021-02-01T08:00:00"],
+   *     ["data1", 37]
+   *   ],
+   *   append: true
    * });
    * @example
    * // myAPI.json
