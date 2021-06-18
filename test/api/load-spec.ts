@@ -648,4 +648,141 @@ describe("API load", function() {
 			});
 		});
 	});
+
+	describe("Append data loading", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["x", '2021-01-03T03:00:00', '2021-01-04T12:00:00', '2021-01-05T21:00:00'],
+						["data1", 36, 30, 24]
+					],
+					x: "x",
+					xFormat: "%Y-%m-%dT%H:%M:%S",
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries"
+					}
+				}
+			};
+		});
+
+
+		it("timeseries: check if data has been appended", done => {
+			const value = 37;
+
+			chart.load({
+				columns: [
+					["x", "2021-02-01T08:00:00"],
+					["data1", value]
+				],
+				append: true,
+				done: function() {
+					const oldData = args.data.columns[1].slice(1);
+					const newData = this.data.values("data1");
+
+					expect(newData.length).to.be.equal(oldData.length + 1);
+					expect(newData).to.deep.equal(oldData.concat(value));
+					done();
+				}
+			});
+		});
+
+		it("set options", () => {
+			args.data.columns[0] = ["x", "a", "b", "c"];
+			args.axis.x.type = "category";
+		});
+
+		it("category: check if data has been appended", done => {
+			const category = "dd";
+			const value = 37;
+
+			chart.load({
+				columns: [
+					["x", category],
+					["data1", value]
+				],
+				append: true,
+				done: function() {
+					const oldData = args.data.columns[1].slice(1);
+					const newData = this.data.values("data1");
+
+					expect(this.categories()).to.deep.equal(args.data.columns[0].slice(1).concat(category));
+					expect(newData.length).to.be.equal(oldData.length + 1);
+					expect(newData).to.deep.equal(oldData.concat(value));
+					done();
+				}
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 36, 30, 24]
+					],
+					type: "line"
+				}
+			};
+		});
+
+		it("indexed: check if data has been appended", done => {
+			const value = 37;
+
+			chart.load({
+				columns: [
+					["data1", value]
+				],
+				append: true,
+				done: function() {
+					const oldData = args.data.columns[0].slice(1);
+					const newData = this.data.values("data1");
+
+					expect(newData.length).to.be.equal(oldData.length + 1);
+					expect(newData).to.deep.equal(oldData.concat(value));
+					expect(
+						this.internal.$el.axis.x.selectAll(".tick text").nodes().map(v => +v.textContent)
+					).to.deep.equal([0,1,2,3]);
+
+					done();
+				}
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					rows: [
+						["data1"],
+						[90],
+						[40],
+					],
+					type: "line"
+				}
+			}
+		});
+
+		it("row data: check if data has been appended", done => {
+			const value = 37;
+			const oldData = chart.data.values("data1");
+
+			chart.load({
+				rows: [
+					["data1"],
+					[value]
+				],
+				append: true,
+				done: function() {
+					const newData = this.data.values("data1");
+
+				 	expect(newData.length).to.be.equal(oldData.length + 1);
+					expect(newData).to.deep.equal(oldData.concat(value));
+
+					done();
+				}
+			});
+		});
+	});
 });
