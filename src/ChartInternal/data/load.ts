@@ -78,7 +78,7 @@ export default {
 
 	unload(rawTargetIds, customDoneCb): void {
 		const $$ = this;
-		const {state, $el} = $$;
+		const {config, state, $el} = $$;
 		let done = customDoneCb;
 		let targetIds = rawTargetIds;
 
@@ -98,9 +98,9 @@ export default {
 			return;
 		}
 
-		$el.svg.selectAll(targetIds.map(id => $$.selectorTarget(id)))
-			.transition()
-			.style("opacity", "0")
+		const targets = $el.svg.selectAll(targetIds.map(id => $$.selectorTarget(id)));
+
+		(config.transition_duration ? targets.transition().style("opacity", "0") : targets)
 			.remove()
 			.call(endall, done);
 

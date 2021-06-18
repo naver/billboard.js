@@ -144,11 +144,19 @@ function callFn(fn, ...args): boolean {
 function endall(transition, cb: Function): void {
 	let n = 0;
 
-	transition
-		.each(() => ++n)
-		.on("end", function(...args) {
-			!--n && cb.apply(this, ...args);
-		});
+	const end = function(...args) {
+		!--n && cb.apply(this, ...args);
+	};
+
+	// if is transition selection
+	if ("duration" in transition) {
+		transition
+			.each(() => ++n)
+			.on("end", end);
+	} else {
+		++n;
+		transition.call(end);
+	}
 }
 
 /**
