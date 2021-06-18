@@ -61,7 +61,7 @@ export default {
 	 *    columns: [
 	 *        // with 'append' option, the 'data1' will have `[20,30,40,50,60]`.
 	 *        ["data1", 50, 60]
-	 *    ]
+	 *    ],
 	 *    append: true
 	 * });
 	 * @example
