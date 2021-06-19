@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {window} from "../../module/browser";
 import {isString, isArray} from "../../module/util";
 
 export default {
@@ -160,9 +161,11 @@ export default {
 		// unload if needed
 		if ("unload" in args && args.unload !== false) {
 			// TODO: do not unload if target will load (included in url/rows/columns)
-			$$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () =>
-				$$.loadFromArgs(args)
-			);
+			$$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () => {
+				// to mitigate improper rendering for multiple consecutive calls
+				// https://github.com/naver/billboard.js/issues/2121
+				window.requestIdleCallback(() => $$.loadFromArgs(args));
+			});
 		} else {
 			$$.loadFromArgs(args);
 		}
