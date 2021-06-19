@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210618004652
+ * @version 3.0.3-nightly-20210619004614
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -418,14 +418,16 @@ function callFn(fn) {
 
 
 function endall(transition, cb) {
-  var n = 0;
-  transition.each(function () {
-    return ++n;
-  }).on("end", function () {
+  var n = 0,
+      end = function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
 
     --n || cb.apply.apply(cb, [this].concat(args));
-  });
+  };
+
+  "duration" in transition ? transition.each(function () {
+    return ++n;
+  }).on("end", end) : (++n, transition.call(end));
 }
 /**
  * Replace tag sign to html entity

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210618004652
+ * @version 3.0.3-nightly-20210619004614
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2369,14 +2369,16 @@ function callFn(fn) {
 
 
 function endall(transition, cb) {
-  var n = 0;
-  transition.each(function () {
-    return ++n;
-  }).on("end", function () {
+  var n = 0,
+      end = function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
 
     --n || cb.apply.apply(cb, [this].concat(args));
-  });
+  };
+
+  "duration" in transition ? transition.each(function () {
+    return ++n;
+  }).on("end", end) : (++n, transition.call(end));
 }
 /**
  * Replace tag sign to html entity
@@ -4114,21 +4116,23 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   },
   unload: function unload(rawTargetIds, customDoneCb) {
     var $$ = this,
+        config = $$.config,
         state = $$.state,
         $el = $$.$el,
         done = customDoneCb,
         targetIds = rawTargetIds;
     // If no target, call done and return
-    return $$.cache.reset(), done || (done = function () {}), targetIds = targetIds.filter(function (id) {
+    if ($$.cache.reset(), done || (done = function () {}), targetIds = targetIds.filter(function (id) {
       return $$.hasTarget($$.data.targets, id);
-    }), targetIds && targetIds.length !== 0 ? void ( // Update current state chart type and elements list after redraw
-    $el.svg.selectAll(targetIds.map(function (id) {
+    }), !targetIds || targetIds.length === 0) return void done();
+    var targets = $el.svg.selectAll(targetIds.map(function (id) {
       return $$.selectorTarget(id);
-    })).transition().style("opacity", "0").remove().call(endall, done), targetIds.forEach(function (id) {
+    }));
+    (config.transition_duration ? targets.transition().style("opacity", "0") : targets).remove().call(endall, done), targetIds.forEach(function (id) {
       state.withoutFadeIn[id] = !1, $el.legend && $el.legend.selectAll("." + config_classes.legendItem + $$.getTargetSelectorSuffix(id)).remove(), $$.data.targets = $$.data.targets.filter(function (t) {
         return t.id !== id;
       });
-    }), $$.updateTypesElements()) : void done();
+    }), $$.updateTypesElements();
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-drag","commonjs2":"d3-drag","amd":"d3-drag","root":"d3"}
@@ -8187,6 +8191,7 @@ var legend_legend = {
  * billboard.js project is licensed under the MIT license
  */
 
+
 /* harmony default export */ var api_load = ({
   /**
    * Load data to the chart.<br><br>
@@ -8325,7 +8330,11 @@ var legend_legend = {
     }), "colors" in args && Object.keys(args.colors).forEach(function (id) {
       config.data_colors[id] = args.colors[id];
     }), "unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds(args.unload === !0 ? null : args.unload), function () {
-      return $$.loadFromArgs(args);
+      // to mitigate improper rendering for multiple consecutive calls
+      // https://github.com/naver/billboard.js/issues/2121
+      win.requestIdleCallback(function () {
+        return $$.loadFromArgs(args);
+      });
     }) : $$.loadFromArgs(args);
   },
 

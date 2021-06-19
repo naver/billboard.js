@@ -2041,15 +2041,23 @@ function callFn(fn) {
  */
 function endall(transition, cb) {
     var n = 0;
-    transition
-        .each(function () { return ++n; })
-        .on("end", function () {
+    var end = function () {
         var args = [];
         for (var _i = 0; _i < arguments.length; _i++) {
             args[_i] = arguments[_i];
         }
         !--n && cb.apply.apply(cb, __spreadArray([this], args));
-    });
+    };
+    // if is transition selection
+    if ("duration" in transition) {
+        transition
+            .each(function () { return ++n; })
+            .on("end", end);
+    }
+    else {
+        ++n;
+        transition.call(end);
+    }
 }
 /**
  * Replace tag sign to html entity
@@ -3889,7 +3897,7 @@ var dataLoad = {
     },
     unload: function (rawTargetIds, customDoneCb) {
         var $$ = this;
-        var state = $$.state, $el = $$.$el;
+        var config = $$.config, state = $$.state, $el = $$.$el;
         var done = customDoneCb;
         var targetIds = rawTargetIds;
         // reset internally cached data
@@ -3904,9 +3912,8 @@ var dataLoad = {
             done();
             return;
         }
-        $el.svg.selectAll(targetIds.map(function (id) { return $$.selectorTarget(id); }))
-            .transition()
-            .style("opacity", "0")
+        var targets = $el.svg.selectAll(targetIds.map(function (id) { return $$.selectorTarget(id); }));
+        (config.transition_duration ? targets.transition().style("opacity", "0") : targets)
             .remove()
             .call(endall, done);
         targetIds.forEach(function (id) {
@@ -9039,7 +9046,9 @@ var apiLoad = {
         if ("unload" in args && args.unload !== false) {
             // TODO: do not unload if target will load (included in url/rows/columns)
             $$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), function () {
-                return $$.loadFromArgs(args);
+                // to mitigate improper rendering for multiple consecutive calls
+                // https://github.com/naver/billboard.js/issues/2121
+                win.requestIdleCallback(function () { return $$.loadFromArgs(args); });
             });
         }
         else {
