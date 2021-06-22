@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210619004614
+ * @version 3.0.3-nightly-20210622004633
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8248,7 +8248,7 @@ var legend_legend = {
    *    columns: [
    *        // with 'append' option, the 'data1' will have `[20,30,40,50,60]`.
    *        ["data1", 50, 60]
-   *    ]
+   *    ],
    *    append: true
    * });
    * @example
