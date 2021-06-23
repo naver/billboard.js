@@ -246,7 +246,13 @@ describe("ZOOM", function() {
 				},
 				grid: {
 					x: {
-						show: true
+						show: true,
+						lines: [{ value: 3, text: "123" }]
+					},
+					y: {
+						lines: [
+							{value: 100, text: "Label on 100"},
+						]
 					}
 				},
 				zoom: {
@@ -262,6 +268,8 @@ describe("ZOOM", function() {
 				y: chart.internal.scale.y.domain()
 			};
 			const eventRect = chart.internal.$el.eventRect.node();
+			const xGridLine = chart.$.main.select(`.${CLASS.xgridLine} line`);
+			const xPos = {x1: +xGridLine.attr("x1"), x2: +xGridLine.attr("x2")};
 
 			// when zoom in
 			util.fireEvent(eventRect, "wheel", {
@@ -273,21 +281,27 @@ describe("ZOOM", function() {
 
 			["x", "y"].forEach(id => {
 				const domain = orgDomain[id];
-				
+
+				// x Grid line also should zoom-in
+				if (id === "x") {
+					expect(+xGridLine.attr("x1")).to.be.greaterThan(xPos.x1);
+					expect(+xGridLine.attr("x2")).to.be.greaterThan(xPos.x2);
+				}
+
 				expect(
 					chart.internal.scale[id].domain()
 					.every((v, i) => i > 0 ? v < domain[i] : v > domain[i])
 					).to.be.true;
-				});
-				
-				// when zoom out
-				util.fireEvent(eventRect, "wheel", {
-					deltaX: 0,
-					deltaY: 100,
-					clientX: 159,
-					clientY: 137
-				});
-				
+			});
+
+			// when zoom out
+			util.fireEvent(eventRect, "wheel", {
+				deltaX: 0,
+				deltaY: 100,
+				clientX: 159,
+				clientY: 137
+			});
+
 			["x", "y"].forEach(id => {
 				const domain = orgDomain[id];
 
