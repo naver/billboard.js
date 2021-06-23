@@ -24,3 +24,9 @@ export interface IArcData {
     endAngle: number;
     value: number;
 }
+
+export interface IGridData {
+    axis?: string;
+	text: string;
+	value: number;
+}
