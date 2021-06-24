@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {endall} from "../../module/util";
+import {callFn, endall} from "../../module/util";
 
 /**
  * Show/Hide data series
@@ -14,6 +14,9 @@ import {endall} from "../../module/util";
 function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 	const $$ = this.internal;
 	const targetIds = $$.mapToTargetIds(targetIdsValue);
+	const hiddenIds = $$.state.hiddenTargetIds
+		.map(v => targetIds.indexOf(v) > -1 && v)
+		.filter(Boolean);
 
 	$$.state.toggling = true;
 
@@ -22,13 +25,20 @@ function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 	const targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
 	const opacity = show ? null : "0";
 
-	show && targets.style("display", null);
+	if (show && hiddenIds.length) {
+		targets.style("display", null);
+		callFn($$.config.data_onshown, this, hiddenIds);
+	}
 
 	targets.transition()
 		.style("opacity", opacity, "important")
 		.call(endall, () => {
 			// https://github.com/naver/billboard.js/issues/1758
-			!show && targets.style("display", "none");
+			if (!show && hiddenIds.length === 0) {
+				targets.style("display", "none");
+				callFn($$.config.data_onhidden, this, targetIds);
+			}
+
 			targets.style("opacity", opacity);
 		});
 

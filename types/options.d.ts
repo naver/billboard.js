@@ -1665,6 +1665,18 @@ export interface Data {
 	 * - NOTE: For 'area-line-range' and 'area-spline-range', mid data will be taken for the comparison
 	 */
 	onmax?(this: Chart, d: DataItem[]): void;
+
+	/**
+	 * Set a callback for when data is shown.
+	 * The callback will receive shown data ids in array.
+	 */
+	onshown?(): void;
+
+	/**
+	 * Set a callback for when data is hidden.
+	 * The callback will receive hidden data ids in array.
+	 */
+	onhidden?(): void;
 }
 
 export type FormatFunction = (
