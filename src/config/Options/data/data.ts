@@ -492,6 +492,40 @@ export default {
 	data_onout: () => {},
 
 	/**
+	 * Set a callback for when data is shown.<br>
+	 * The callback will receive shown data ids in array.
+	 * @name data․onshown
+	 * @memberof Options
+	 * @type {Function}
+	 * @default undefined
+	 * @example
+	 *  data: {
+	 *    onshown: function(ids) {
+	 *      // ids - ["data1", "data2", ...]
+	 *      ...
+	 *    }
+	 *  }
+	 */
+	data_onshown: <Function|undefined> undefined,
+
+	/**
+	 * Set a callback for when data is hidden.<br>
+	 * The callback will receive hidden data ids in array.
+	 * @name data․onhidden
+	 * @memberof Options
+	 * @type {Function}
+	 * @default undefined
+	 * @example
+	 *  data: {
+	 *    onhidden: function(ids) {
+	 *      // ids - ["data1", "data2", ...]
+	 *      ...
+	 *    }
+	 *  }
+	 */
+	data_onhidden: <Function|undefined> undefined,
+
+	/**
 	 * Set a callback for minimum data
 	 * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
 	 * @name data․onmin
