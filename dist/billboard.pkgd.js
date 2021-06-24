@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210622004633
+ * @version 3.0.3-nightly-20210624004603
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -1154,7 +1154,7 @@ var store = __webpack_require__(25);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.15.0',
+  version: '3.15.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 });
@@ -8507,17 +8507,16 @@ if (isForced('RegExp', BASE_FORCED)) {
     var patternIsRegExp = isRegExp(pattern);
     var flagsAreUndefined = flags === undefined;
     var groups = [];
-    var rawPattern, rawFlags, dotAll, sticky, handled, result, state;
+    var rawPattern = pattern;
+    var rawFlags, dotAll, sticky, handled, result, state;
 
-    if (!thisIsRegExp && patternIsRegExp && pattern.constructor === RegExpWrapper && flagsAreUndefined) {
+    if (!thisIsRegExp && patternIsRegExp && flagsAreUndefined && pattern.constructor === RegExpWrapper) {
       return pattern;
     }
 
-    if (CORRECT_NEW) {
-      if (patternIsRegExp && !flagsAreUndefined) pattern = pattern.source;
-    } else if (pattern instanceof RegExpWrapper) {
-      if (flagsAreUndefined) flags = getFlags.call(pattern);
+    if (patternIsRegExp || pattern instanceof RegExpWrapper) {
       pattern = pattern.source;
+      if (flagsAreUndefined) flags = 'flags' in rawPattern ? rawPattern.flags : getFlags.call(rawPattern);
     }
 
     pattern = pattern === undefined ? '' : String(pattern);
@@ -8542,11 +8541,7 @@ if (isForced('RegExp', BASE_FORCED)) {
       groups = handled[1];
     }
 
-    result = inheritIfRequired(
-      CORRECT_NEW ? new NativeRegExp(pattern, flags) : NativeRegExp(pattern, flags),
-      thisIsRegExp ? this : RegExpPrototype,
-      RegExpWrapper
-    );
+    result = inheritIfRequired(NativeRegExp(pattern, flags), thisIsRegExp ? this : RegExpPrototype, RegExpWrapper);
 
     if (dotAll || sticky || groups.length) {
       state = enforceInternalState(result);
@@ -25096,6 +25091,7 @@ function time() {
  */
 
 
+
 /**
  * Get scale
  * @param {string} [type='linear'] Scale type
@@ -25104,7 +25100,6 @@ function time() {
  * @returns {d3.scaleLinear|d3.scaleTime} scale
  * @private
  */
-
 function getScale(type, min, max) {
   type === void 0 && (type = "linear"), min === void 0 && (min = 0), max === void 0 && (max = 1);
   var scale = {
@@ -25257,15 +25252,18 @@ function getScale(type, min, max) {
     var $$ = this,
         axis = $$.axis,
         config = $$.config,
-        x = $$.scale.x,
+        _$$$scale2 = $$.scale,
+        x = _$$$scale2.x,
+        zoom = _$$$scale2.zoom,
+        fn = config.zoom_enabled && zoom ? zoom : x,
         value = $$.getBaseValue(d);
-    return axis.isTimeSeries() ? value = parseDate.call($$, value) : axis.isCategorized() && isString(value) && (value = config.axis_x_categories.indexOf(value)), Math.ceil(x(value));
+    return axis.isTimeSeries() ? value = parseDate.call($$, value) : axis.isCategorized() && isString(value) && (value = config.axis_x_categories.indexOf(value)), Math.ceil(fn(value));
   },
   yv: function yv(d) {
     var $$ = this,
-        _$$$scale2 = $$.scale,
-        y = _$$$scale2.y,
-        y2 = _$$$scale2.y2,
+        _$$$scale3 = $$.scale,
+        y = _$$$scale3.y,
+        y2 = _$$$scale3.y2,
         yScale = d.axis && d.axis === "y2" ? y2 : y;
     return Math.ceil(yScale($$.getBaseValue(d)));
   },

@@ -5846,13 +5846,13 @@ var scale = {
     xx: function (d) {
         var $$ = this;
         var config = $$.config, _a = $$.scale, x = _a.x, zoom = _a.zoom;
-        var fn = config.zoom_enabled && zoom ?
-            zoom : x;
+        var fn = config.zoom_enabled && zoom ? zoom : x;
         return d ? fn(isValue(d.x) ? d.x : d) : null;
     },
     xv: function (d) {
         var $$ = this;
-        var axis = $$.axis, config = $$.config, x = $$.scale.x;
+        var axis = $$.axis, config = $$.config, _a = $$.scale, x = _a.x, zoom = _a.zoom;
+        var fn = config.zoom_enabled && zoom ? zoom : x;
         var value = $$.getBaseValue(d);
         if (axis.isTimeSeries()) {
             value = parseDate.call($$, value);
@@ -5860,7 +5860,7 @@ var scale = {
         else if (axis.isCategorized() && isString(value)) {
             value = config.axis_x_categories.indexOf(value);
         }
-        return Math.ceil(x(value));
+        return Math.ceil(fn(value));
     },
     yv: function (d) {
         var $$ = this;
@@ -12406,7 +12406,7 @@ var grid = {
         var isRotated = config.axis_rotated;
         var xgridData = $$.generateGridData(config.grid_x_type, scale.x);
         var tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0;
-        var pos = function (d) { return ((scale.zoom || scale.x)(d) + (tickOffset * (isRotated ? -1 : 1))); };
+        var pos = function (d) { return (scale.zoom || scale.x)(d) + (tickOffset * (isRotated ? -1 : 1)); };
         state.xgridAttr = isRotated ? {
             "x1": 0,
             "x2": state.width,
