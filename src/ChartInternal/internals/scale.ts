@@ -9,6 +9,8 @@ import {
 	scaleSymlog as d3ScaleSymlog
 } from "d3-scale";
 import {isString, isValue, parseDate} from "../../module/util";
+import {IDataRow, IGridData} from "../data/IData";
+
 
 /**
  * Get scale
@@ -201,18 +203,18 @@ export default {
 	 * @returns {number|null}
 	 * @private
 	 */
-	xx(d): number | null {
+	xx(d: IDataRow): number | null {
 		const $$ = this;
 		const {config, scale: {x, zoom}} = $$;
-		const fn = config.zoom_enabled && zoom ?
-			zoom : x;
+		const fn = config.zoom_enabled && zoom ? zoom : x;
 
 		return d ? fn(isValue(d.x) ? d.x : d) : null;
 	},
 
-	xv(d): number {
+	xv(d: IGridData): number {
 		const $$ = this;
-		const {axis, config, scale: {x}} = $$;
+		const {axis, config, scale: {x, zoom}} = $$;
+		const fn = config.zoom_enabled && zoom ? zoom : x;
 		let value = $$.getBaseValue(d);
 
 		if (axis.isTimeSeries()) {
@@ -221,10 +223,10 @@ export default {
 			value = config.axis_x_categories.indexOf(value);
 		}
 
-		return Math.ceil(x(value));
+		return Math.ceil(fn(value));
 	},
 
-	yv(d): number {
+	yv(d: IGridData): number {
 		const $$ = this;
 		const {scale: {y, y2}} = $$;
 		const yScale = d.axis && d.axis === "y2" ? y2 : y;
@@ -232,7 +234,7 @@ export default {
 		return Math.ceil(yScale($$.getBaseValue(d)));
 	},
 
-	subxx(d): number | null {
+	subxx(d: IDataRow): number | null {
 		return d ? this.scale.subX(d.x) : null;
 	}
 };

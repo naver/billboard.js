@@ -89,10 +89,9 @@ export default {
 		const isRotated = config.axis_rotated;
 		const xgridData = $$.generateGridData(config.grid_x_type, scale.x);
 		const tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0;
-		const pos = d => (
-			(scale.zoom || scale.x)(d) + (
-				tickOffset * (isRotated ? -1 : 1)
-			));
+		const pos = d => (scale.zoom || scale.x)(d) + (
+			tickOffset * (isRotated ? -1 : 1)
+		);
 
 		state.xgridAttr = isRotated ? {
 			"x1": 0,
