@@ -1927,7 +1927,7 @@ var demos = {
 				];
 			}
 		},
-		"DataFromURL": {
+		DataFromURL: {
 			options: {
 				data: {
 					url: "./data/test.csv",
@@ -2262,6 +2262,7 @@ var demos = {
 						],
 						type: "bar",
 						labels: {
+							backgroundColors: "yellow",
 							colors: "red"
 						}
 					}
@@ -2276,6 +2277,9 @@ var demos = {
 						],
 						type: "line",
 						labels: {
+							backgroundColors: {
+								data1: "rgba(0, 0, 0, 0.2)"
+							},
 							colors: {
 								data1: "fuchsia",
 								data2: "blue"
@@ -2633,7 +2637,8 @@ var demos = {
 					type: "line"
 				},
 				subchart: {
-					show: "subchart()"
+					show: "subchart()",
+					showHandle: true
 				}
 			},
 			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)"
