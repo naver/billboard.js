@@ -1,3 +1,29 @@
+# [3.1.0](https://github.com/naver/billboard.js/compare/3.0.3...3.1.0) (2021-06-25)
+
+
+### Bug Fixes
+
+* **Chart:** Handle nullish properties from API extendings safely ([6cbf64a](https://github.com/naver/billboard.js/commit/6cbf64a72c2f4d15a006c629c00f8c230d5b522a)), closes [#2132](https://github.com/naver/billboard.js/issues/2132) [#2134](https://github.com/naver/billboard.js/issues/2134)
+* **data:** Fix duplicated data.onclick call  ([b4c5dc2](https://github.com/naver/billboard.js/commit/b4c5dc288dab0638d399865120572c854758b782)), closes [#2104](https://github.com/naver/billboard.js/issues/2104)
+* **data:** Fix nullish data filtering for grouped data ([af19370](https://github.com/naver/billboard.js/commit/af1937054c7659158b4bf893db53b7aebfcc1bc0)), closes [#2096](https://github.com/naver/billboard.js/issues/2096)
+* **gauge:** Fix incorrect rendering when gauge.min is given ([31fc981](https://github.com/naver/billboard.js/commit/31fc98187989aee9eb0f4f4a22f70222636a668a)), closes [#2123](https://github.com/naver/billboard.js/issues/2123)
+* **point:** Fix custom point for nullish data ([8c198f2](https://github.com/naver/billboard.js/commit/8c198f27e3314a14b3494a1d5d43bd6804d42af9)), closes [#2107](https://github.com/naver/billboard.js/issues/2107)
+* **region:** fix region append position ([2b50443](https://github.com/naver/billboard.js/commit/2b50443d6fccdd74d7ceea2b8a40dab9ea10b6b5)), closes [#2067](https://github.com/naver/billboard.js/issues/2067)
+* **size:** enhance applying height value ([0664a60](https://github.com/naver/billboard.js/commit/0664a60a4ce3ee1ce99966ca0166e7eb2368b2cd)), closes [#2086](https://github.com/naver/billboard.js/issues/2086)
+* **tooltip:** Correct the type of selectedData ([05b694d](https://github.com/naver/billboard.js/commit/05b694d51dbbad4dc66ed4cf773c4f0beabfa72c)), closes [#2056](https://github.com/naver/billboard.js/issues/2056) [#2058](https://github.com/naver/billboard.js/issues/2058)
+* **zoom:** Fix incorrect tooltip position ([689bfdf](https://github.com/naver/billboard.js/commit/689bfdf217923f241e9f5a53dbf03603c0d05562)), closes [#2095](https://github.com/naver/billboard.js/issues/2095)
+* **zoom,grid:** fix grid line pos during zoom ([e84a4f1](https://github.com/naver/billboard.js/commit/e84a4f1a326d595c67cfe344d6ae453307496d8b)), closes [#2156](https://github.com/naver/billboard.js/issues/2156)
+
+
+### Features
+
+* **all:** contain inline css prop setting ([fde6a89](https://github.com/naver/billboard.js/commit/fde6a897bec6c7dab8726e3ab3bcbefe4186ba36)), closes [#2076](https://github.com/naver/billboard.js/issues/2076)
+* **api:** Intent to ship append load ([8076795](https://github.com/naver/billboard.js/commit/80767955cedd1eb4c468b0e2ff4496f4ac45df36)), closes [#2140](https://github.com/naver/billboard.js/issues/2140)
+* **data:** Intent to ship data.onshown/onhidden ([af98eb7](https://github.com/naver/billboard.js/commit/af98eb7b988d5fb976a135ec34237c7e78bdb165)), closes [#2146](https://github.com/naver/billboard.js/issues/2146)
+* **data.labels:** Intent to ship data.labels.backgroundColors ([e0b2fed](https://github.com/naver/billboard.js/commit/e0b2fedaa3d320e9679081ef24f21a4990049ade)), closes [#1954](https://github.com/naver/billboard.js/issues/1954)
+* **subchart:** Intent to ship subchart.init.range option ([967bf1b](https://github.com/naver/billboard.js/commit/967bf1b488551f78e3478d81ebc9054dc192592f)), closes [#2037](https://github.com/naver/billboard.js/issues/2037)
+* **subchart:** Intent to ship subchart.showHandle ([219bff3](https://github.com/naver/billboard.js/commit/219bff3f2971a718deea32e65cf27fc971115da6)), closes [#2044](https://github.com/naver/billboard.js/issues/2044)
+
 ## [3.0.3](https://github.com/naver/billboard.js/compare/3.0.2...3.0.3) (2021-04-16)
 
 
