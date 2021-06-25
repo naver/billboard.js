@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.0.3-nightly-20210624004603
+ * @version 3.0.3-nightly-20210625004549
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -17353,6 +17353,40 @@ function _defineProperty(obj, key, value) {
   data_onout: function data_onout() {},
 
   /**
+   * Set a callback for when data is shown.<br>
+   * The callback will receive shown data ids in array.
+   * @name data․onshown
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   *  data: {
+   *    onshown: function(ids) {
+   *      // ids - ["data1", "data2", ...]
+   *      ...
+   *    }
+   *  }
+   */
+  data_onshown: undefined,
+
+  /**
+   * Set a callback for when data is hidden.<br>
+   * The callback will receive hidden data ids in array.
+   * @name data․onhidden
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   *  data: {
+   *    onhidden: function(ids) {
+   *      // ids - ["data1", "data2", ...]
+   *      ...
+   *    }
+   *  }
+   */
+  data_onhidden: undefined,
+
+  /**
    * Set a callback for minimum data
    * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
    * @name data․onmin
@@ -21904,21 +21938,46 @@ var tsvFormatValue = tsv.formatValue;
       return +x;
     })), sortValue(xs);
   },
+
+  /**
+   * Add to the state target Ids
+   * @param {string} type State's prop name
+   * @param {Array|string} targetIds Target ids array
+   * @private
+   */
+  addTargetIds: function addTargetIds(type, targetIds) {
+    var state = this.state,
+        ids = isArray(targetIds) ? targetIds : [targetIds];
+    ids.forEach(function (v) {
+      state[type].indexOf(v) < 0 && state[type].push(v);
+    });
+  },
+
+  /**
+   * Remove from the state target Ids
+   * @param {string} type State's prop name
+   * @param {Array|string} targetIds Target ids array
+   * @private
+   */
+  removeTargetIds: function removeTargetIds(type, targetIds) {
+    var state = this.state,
+        ids = isArray(targetIds) ? targetIds : [targetIds];
+    ids.forEach(function (v) {
+      var index = state[type].indexOf(v);
+      index >= 0 && state[type].splice(index, 1);
+    });
+  },
   addHiddenTargetIds: function addHiddenTargetIds(targetIds) {
-    this.state.hiddenTargetIds = this.state.hiddenTargetIds.concat(targetIds);
+    this.addTargetIds("hiddenTargetIds", targetIds);
   },
   removeHiddenTargetIds: function removeHiddenTargetIds(targetIds) {
-    this.state.hiddenTargetIds = this.state.hiddenTargetIds.filter(function (id) {
-      return targetIds.indexOf(id) < 0;
-    });
+    this.removeTargetIds("hiddenTargetIds", targetIds);
   },
   addHiddenLegendIds: function addHiddenLegendIds(targetIds) {
-    this.state.hiddenLegendIds = this.state.hiddenLegendIds.concat(targetIds);
+    this.addTargetIds("hiddenLegendIds", targetIds);
   },
   removeHiddenLegendIds: function removeHiddenLegendIds(targetIds) {
-    this.state.hiddenLegendIds = this.state.hiddenLegendIds.filter(function (id) {
-      return targetIds.indexOf(id) < 0;
-    });
+    this.removeTargetIds("hiddenLegendIds", targetIds);
   },
   getValuesAsIdKeyed: function getValuesAsIdKeyed(targets) {
     var $$ = this,
@@ -28923,14 +28982,18 @@ var legend_legend = {
  */
 
 function showHide(show, targetIdsValue, options) {
-  var $$ = this.internal,
-      targetIds = $$.mapToTargetIds(targetIdsValue);
+  var _this = this,
+      $$ = this.internal,
+      targetIds = $$.mapToTargetIds(targetIdsValue),
+      hiddenIds = $$.state.hiddenTargetIds.map(function (v) {
+    return targetIds.indexOf(v) > -1 && v;
+  }).filter(Boolean);
+
   $$.state.toggling = !0, $$[(show ? "remove" : "add") + "HiddenTargetIds"](targetIds);
   var targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds)),
       opacity = show ? null : "0";
-  show && targets.style("display", null), targets.transition().style("opacity", opacity, "important").call(endall, function () {
-    // https://github.com/naver/billboard.js/issues/1758
-    show || targets.style("display", "none"), targets.style("opacity", opacity);
+  show && hiddenIds.length && (targets.style("display", null), callFn($$.config.data_onshown, this, hiddenIds)), targets.transition().style("opacity", opacity, "important").call(endall, function () {
+    show || hiddenIds.length !== 0 || (targets.style("display", "none"), callFn($$.config.data_onhidden, _this, targetIds)), targets.style("opacity", opacity);
   }), options.withLegend && $$[(show ? "show" : "hide") + "Legend"](targetIds), $$.redraw({
     withUpdateOrgXDomain: !0,
     withUpdateXDomain: !0,
@@ -29005,7 +29068,7 @@ function showHide(show, targetIdsValue, options) {
    * chart.toggle(["data1", "data3"]);
    */
   toggle: function toggle(targetIds, options) {
-    var _this = this;
+    var _this2 = this;
 
     options === void 0 && (options = {});
     var $$ = this.internal,
@@ -29019,7 +29082,7 @@ function showHide(show, targetIdsValue, options) {
     $$.mapToTargetIds(targetIds).forEach(function (id) {
       return targets[$$.isTargetToShow(id) ? "hide" : "show"].push(id);
     }), targets.show.length && this.show(targets.show, options), targets.hide.length && setTimeout(function () {
-      return _this.hide(targets.hide, options);
+      return _this2.hide(targets.hide, options);
     }, 0);
   }
 });

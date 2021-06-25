@@ -1181,6 +1181,38 @@ var data$2 = {
      */
     data_onout: function () { },
     /**
+     * Set a callback for when data is shown.<br>
+     * The callback will receive shown data ids in array.
+     * @name data․onshown
+     * @memberof Options
+     * @type {Function}
+     * @default undefined
+     * @example
+     *  data: {
+     *    onshown: function(ids) {
+     *      // ids - ["data1", "data2", ...]
+     *      ...
+     *    }
+     *  }
+     */
+    data_onshown: undefined,
+    /**
+     * Set a callback for when data is hidden.<br>
+     * The callback will receive hidden data ids in array.
+     * @name data․onhidden
+     * @memberof Options
+     * @type {Function}
+     * @default undefined
+     * @example
+     *  data: {
+     *    onhidden: function(ids) {
+     *      // ids - ["data1", "data2", ...]
+     *      ...
+     *    }
+     *  }
+     */
+    data_onhidden: undefined,
+    /**
      * Set a callback for minimum data
      * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
      * @name data․onmin
@@ -3419,17 +3451,45 @@ var data$1 = {
         }
         return sortValue(xs);
     },
+    /**
+     * Add to the state target Ids
+     * @param {string} type State's prop name
+     * @param {Array|string} targetIds Target ids array
+     * @private
+     */
+    addTargetIds: function (type, targetIds) {
+        var state = this.state;
+        var ids = (isArray(targetIds) ? targetIds : [targetIds]);
+        ids.forEach(function (v) {
+            state[type].indexOf(v) < 0 &&
+                state[type].push(v);
+        });
+    },
+    /**
+     * Remove from the state target Ids
+     * @param {string} type State's prop name
+     * @param {Array|string} targetIds Target ids array
+     * @private
+     */
+    removeTargetIds: function (type, targetIds) {
+        var state = this.state;
+        var ids = (isArray(targetIds) ? targetIds : [targetIds]);
+        ids.forEach(function (v) {
+            var index = state[type].indexOf(v);
+            index >= 0 && state[type].splice(index, 1);
+        });
+    },
     addHiddenTargetIds: function (targetIds) {
-        this.state.hiddenTargetIds = this.state.hiddenTargetIds.concat(targetIds);
+        this.addTargetIds("hiddenTargetIds", targetIds);
     },
     removeHiddenTargetIds: function (targetIds) {
-        this.state.hiddenTargetIds = this.state.hiddenTargetIds.filter(function (id) { return targetIds.indexOf(id) < 0; });
+        this.removeTargetIds("hiddenTargetIds", targetIds);
     },
     addHiddenLegendIds: function (targetIds) {
-        this.state.hiddenLegendIds = this.state.hiddenLegendIds.concat(targetIds);
+        this.addTargetIds("hiddenLegendIds", targetIds);
     },
     removeHiddenLegendIds: function (targetIds) {
-        this.state.hiddenLegendIds = this.state.hiddenLegendIds.filter(function (id) { return targetIds.indexOf(id) < 0; });
+        this.removeTargetIds("hiddenLegendIds", targetIds);
     },
     getValuesAsIdKeyed: function (targets) {
         var $$ = this;
@@ -9113,18 +9173,28 @@ var apiLoad = {
  * @private
  */
 function showHide(show, targetIdsValue, options) {
+    var _this = this;
     var $$ = this.internal;
     var targetIds = $$.mapToTargetIds(targetIdsValue);
+    var hiddenIds = $$.state.hiddenTargetIds
+        .map(function (v) { return targetIds.indexOf(v) > -1 && v; })
+        .filter(Boolean);
     $$.state.toggling = true;
     $$[(show ? "remove" : "add") + "HiddenTargetIds"](targetIds);
     var targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
     var opacity = show ? null : "0";
-    show && targets.style("display", null);
+    if (show && hiddenIds.length) {
+        targets.style("display", null);
+        callFn($$.config.data_onshown, this, hiddenIds);
+    }
     targets.transition()
         .style("opacity", opacity, "important")
         .call(endall, function () {
         // https://github.com/naver/billboard.js/issues/1758
-        !show && targets.style("display", "none");
+        if (!show && hiddenIds.length === 0) {
+            targets.style("display", "none");
+            callFn($$.config.data_onhidden, _this, targetIds);
+        }
         targets.style("opacity", opacity);
     });
     options.withLegend && $$[(show ? "show" : "hide") + "Legend"](targetIds);
