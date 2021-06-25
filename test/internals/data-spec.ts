@@ -7,6 +7,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
+import sinon from "sinon";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import {isNumber} from "../../src/module/util";
@@ -2256,6 +2257,124 @@ describe("DATA", () => {
 					expect(this.getAttribute("y")).to.not.be.null;
 				}
 				
+			});
+		});
+	});
+
+	describe("data.onshown/onhidden", () => {
+		const spyShown = sinon.spy();
+		const spyHidden = sinon.spy();
+
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 0, 0, 0],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "line",
+					onshown: spyShown,
+					onhidden: spyHidden
+				}
+			};
+		});
+
+		afterEach(() => {
+			spyHidden.resetHistory();
+			spyShown.resetHistory();
+		});
+
+		it("check on continuous .hide()/.show() APIs.", done => {
+			new Promise((resolve, reject) => {
+				// hide
+				chart.hide();
+
+				setTimeout(() => {
+					expect(spyHidden.calledOnce).to.be.true;
+					expect(spyHidden.args[0][0]).to.deep.equal(chart.data().map(v => v.id));
+
+					resolve(true);
+				}, 300);
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					// when is called already hidden, do not call onhidden callback
+					chart.hide();
+
+					setTimeout(() => {
+						expect(spyHidden.callCount).to.be.equal(1);
+	
+						resolve(true);
+					}, 300);
+				});
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					// show
+					chart.show();
+					
+					setTimeout(() => {
+						expect(spyShown.calledOnce).to.be.true;
+						expect(spyShown.args[0][0]).to.deep.equal(chart.data().map(v => v.id));
+
+						resolve(true);
+					}, 300);
+				});
+			}).then(() => {
+				// when is called already shown, do not call onshown callback
+				chart.show();
+
+				setTimeout(() => {
+					expect(spyShown.callCount).to.be.equal(1);
+
+					done();
+				}, 300);
+			});
+		});
+
+		it("check on continuous .hide()/.show() APIs giving specific data id.", done => {
+			const id = "data1";
+
+			new Promise((resolve, reject) => {
+				// hide
+				chart.hide(id);
+
+				setTimeout(() => {
+					expect(spyHidden.calledOnce).to.be.true;
+					expect(spyHidden.args[0][0]).to.deep.equal([id]);
+
+					resolve(true);
+				}, 300);
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					// when is called already hidden, do not call onhidden callback
+					chart.hide(id);
+
+					setTimeout(() => {
+						expect(spyHidden.callCount).to.be.equal(1);
+	
+						resolve(true);
+					}, 300);
+				});
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					// show
+					chart.show();
+					
+					setTimeout(() => {
+						expect(spyShown.calledOnce).to.be.true;
+						expect(spyShown.args[0][0]).to.deep.equal([id]);
+
+						resolve(true);
+					}, 300);
+				});
+			}).then(() => {
+				// when is called already shown, do not call onshown callback
+				chart.show();
+
+				setTimeout(() => {
+					expect(spyShown.callCount).to.be.equal(1);
+
+					done();
+				}, 300);
 			});
 		});
 	});
