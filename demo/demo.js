@@ -1004,25 +1004,46 @@ var demos = {
 				}
 			}
 		},
-		IndexedAxis: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", 495, 940, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12000, 13500, 15000],
-						["data", 47.911, 47.915, 48.437, 49.117, 49.583, 50.28, 51.712, 53.103, 54.456, 55.955, 56.752, 56.851]
-					],
-					type: "line"
-				},
-				axis: {
-					x: {
-						tick: {
-							culling: false
+		IndexedAxis: [
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", 495, 940, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12000, 13500, 15000],
+							["data", 47.911, 47.915, 48.437, 49.117, 49.583, 50.28, 51.712, 53.103, 54.456, 55.955, 56.752, 56.851]
+						],
+						type: "line"
+					},
+					axis: {
+						x: {
+							tick: {
+								culling: false
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", 0.1, 0.3, 0.6, 0.9, 10],
+							["data1", 4, 1, 6, 8, 10]
+						  ],
+						  type:"line"
+					  },
+					  axis: {
+						x: {
+							tick: {
+								values: [0, 2.5, 5, 7.5, 10]
+							}
 						}
 					}
 				}
 			}
-		},
+		],
 		LogScales: {
 			options: {
 				data: {
@@ -1906,7 +1927,7 @@ var demos = {
 				];
 			}
 		},
-		"DataFromURL": {
+		DataFromURL: {
 			options: {
 				data: {
 					url: "./data/test.csv",
@@ -2241,6 +2262,7 @@ var demos = {
 						],
 						type: "bar",
 						labels: {
+							backgroundColors: "yellow",
 							colors: "red"
 						}
 					}
@@ -2255,6 +2277,9 @@ var demos = {
 						],
 						type: "line",
 						labels: {
+							backgroundColors: {
+								data1: "rgba(0, 0, 0, 0.2)"
+							},
 							colors: {
 								data1: "fuchsia",
 								data2: "blue"
@@ -2612,7 +2637,8 @@ var demos = {
 					type: "line"
 				},
 				subchart: {
-					show: "subchart()"
+					show: "subchart()",
+					showHandle: true
 				}
 			},
 			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)"

@@ -705,7 +705,7 @@ describe("SHAPE BAR", () => {
 			const hiddenIds = chart.internal.state.hiddenTargetIds;
 
 			const res = chart.$.text.texts.filter(function(d) {
-				return hiddenIds.indexOf(d.id) === -1 && this.style.fillOpacity === "1";
+				return hiddenIds.indexOf(d.id) === -1 && this.style.fillOpacity === "";
 			}).nodes().map(n => +n.textContent);
 
 			expect(res).to.be.deep.equal(expected);

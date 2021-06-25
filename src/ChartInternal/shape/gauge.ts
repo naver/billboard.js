@@ -43,8 +43,8 @@ export default {
 			$$.getMinMaxData().max[0].value : $$.getTotalDataSum(state.rendered);
 
 		// if gauge_max less than max, make max to max value
-		if (max > config.gauge_max) {
-			config.gauge_max = max;
+		if (max + config.gauge_min * (config.gauge_min > 0 ? -1 : 1) > config.gauge_max) {
+			config.gauge_max = max - config.gauge_min;
 		}
 	},
 
@@ -64,7 +64,7 @@ export default {
 
 		mainArcLabelLine
 			.style("fill", d => ($$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data)))
-			.style("display", config.gauge_label_show ? "" : "none")
+			.style("display", config.gauge_label_show ? null : "none")
 			.each(function(d) {
 				let lineLength = 0;
 				const lineThickness = 2;

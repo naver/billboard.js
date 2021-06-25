@@ -2,10 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {select as d3Select} from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
 import {zoom as d3Zoom} from "d3-zoom";
-import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
 import {callFn, diffDomain, getMinMax, getPointer, isDefined, isFunction} from "../../module/util";
 
@@ -191,9 +189,10 @@ export default {
 		}
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
-		if (!startEvent ||
-			(e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)
-		) {
+		if (config.zoom_type === "drag" && (
+			!startEvent ||
+				(e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)
+		)) {
 			return;
 		}
 
@@ -319,7 +318,7 @@ export default {
 					.attr(prop.axis, Math.min(start, end))
 					.attr(prop.attr, Math.abs(end - start));
 			})
-			.on("end", function(event) {
+			.on("end", event => {
 				const scale = $$.scale.zoom || $$.scale.x;
 
 				state.event = event;
@@ -341,15 +340,6 @@ export default {
 				if (start !== end) {
 					$$.api.zoom([start, end].map(v => scale.invert(v)));
 					$$.onZoomEnd(event);
-				} else {
-					if ($$.isMultipleX()) {
-						$$.clickHandlerForMultipleXS.bind(this)($$);
-					} else {
-						const [x, y] = getPointer(event);
-						const target = document.elementFromPoint(x, y);
-
-						$$.clickHandlerForSingleX.bind(target)(d3Select(target).datum(), $$);
-					}
 				}
 			});
 	},

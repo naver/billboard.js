@@ -63,7 +63,7 @@ export default class Elements {
 			.attr("y1", d => (isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1")))
 			.attr("y2", d => (isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")))
 			.transition()
-			.style("opacity", "1");
+			.style("opacity", null);
 	}
 
 	updateStanfordRegions(duration: number): void {
@@ -127,7 +127,7 @@ export default class Elements {
 			.attr("text-anchor", "middle")
 			.attr("dominant-baseline", "middle")
 			.transition()
-			.style("opacity", "1");
+			.style("opacity", null);
 	}
 
 	updateStanfordElements(duration = 0): void {

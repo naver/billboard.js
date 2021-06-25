@@ -7,6 +7,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
+import sinon from "sinon";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import {isNumber} from "../../src/module/util";
@@ -1839,6 +1840,74 @@ describe("DATA", () => {
 				expect(ctx.every(v => v === chart)).to.be.true;
 			});
 		});
+
+		describe("labels.backgroundColors", () => {
+			let ctx = [];
+
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100],
+							["data2", 430, 300, 500]
+						],
+						labels: {
+							backgroundColors: "red"
+						},
+						type: "line"
+					}
+				}
+			});
+
+			const checkFilter = () => {
+				const {$el} = chart.internal;
+				const filter = $el.defs.select("filter[id*='labels-bg']");
+				const filterId = filter.attr("id");
+
+				expect(
+					filter.select("feFlood").attr("flood-color")
+				).to.be.equal(args.data.labels.backgroundColors);
+
+				$el.text.each(function(d) {
+					expect(this.getAttribute("filter").indexOf(filterId) > -1).to.be.ok;
+				});
+			};
+
+			it("should set filter definition and text nodes for line type", () => {
+				checkFilter();
+			});
+
+			it("set options data.type='pie'", () => {
+				args.data.type = "pie";
+			});
+
+			it("should set filter definition and text nodes for pie type", () => {
+				checkFilter();
+			});
+
+			it("set options data.type='pie'", () => {
+				args.data.type = "line";
+				args.data.labels.backgroundColors = {
+					data1: "red"
+				};
+			});
+
+			it("should set filter definition and text nodes for line type", () => {
+				const {$el} = chart.internal;
+				const filter = $el.defs.select("filter[id*='labels-bg-data1']");
+				const filterId = filter.attr("id");
+
+				expect(filter.size()).to.be.equal(1);
+
+				$el.text.each(function(d) {
+					if (d.id === "data1") {
+						expect(this.getAttribute("filter").indexOf(filterId) > -1).to.be.ok;
+					} else {
+						expect(this.getAttribute("filter")).to.be.null;
+					}
+				});
+			});
+		});
 	});
 
 	describe("inner functions", () => {
@@ -2188,6 +2257,124 @@ describe("DATA", () => {
 					expect(this.getAttribute("y")).to.not.be.null;
 				}
 				
+			});
+		});
+	});
+
+	describe("data.onshown/onhidden", () => {
+		const spyShown = sinon.spy();
+		const spyHidden = sinon.spy();
+
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 0, 0, 0],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "line",
+					onshown: spyShown,
+					onhidden: spyHidden
+				}
+			};
+		});
+
+		afterEach(() => {
+			spyHidden.resetHistory();
+			spyShown.resetHistory();
+		});
+
+		it("check on continuous .hide()/.show() APIs.", done => {
+			new Promise((resolve, reject) => {
+				// hide
+				chart.hide();
+
+				setTimeout(() => {
+					expect(spyHidden.calledOnce).to.be.true;
+					expect(spyHidden.args[0][0]).to.deep.equal(chart.data().map(v => v.id));
+
+					resolve(true);
+				}, 300);
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					// when is called already hidden, do not call onhidden callback
+					chart.hide();
+
+					setTimeout(() => {
+						expect(spyHidden.callCount).to.be.equal(1);
+	
+						resolve(true);
+					}, 300);
+				});
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					// show
+					chart.show();
+					
+					setTimeout(() => {
+						expect(spyShown.calledOnce).to.be.true;
+						expect(spyShown.args[0][0]).to.deep.equal(chart.data().map(v => v.id));
+
+						resolve(true);
+					}, 300);
+				});
+			}).then(() => {
+				// when is called already shown, do not call onshown callback
+				chart.show();
+
+				setTimeout(() => {
+					expect(spyShown.callCount).to.be.equal(1);
+
+					done();
+				}, 300);
+			});
+		});
+
+		it("check on continuous .hide()/.show() APIs giving specific data id.", done => {
+			const id = "data1";
+
+			new Promise((resolve, reject) => {
+				// hide
+				chart.hide(id);
+
+				setTimeout(() => {
+					expect(spyHidden.calledOnce).to.be.true;
+					expect(spyHidden.args[0][0]).to.deep.equal([id]);
+
+					resolve(true);
+				}, 300);
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					// when is called already hidden, do not call onhidden callback
+					chart.hide(id);
+
+					setTimeout(() => {
+						expect(spyHidden.callCount).to.be.equal(1);
+	
+						resolve(true);
+					}, 300);
+				});
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					// show
+					chart.show();
+					
+					setTimeout(() => {
+						expect(spyShown.calledOnce).to.be.true;
+						expect(spyShown.args[0][0]).to.deep.equal([id]);
+
+						resolve(true);
+					}, 300);
+				});
+			}).then(() => {
+				// when is called already shown, do not call onshown callback
+				chart.show();
+
+				setTimeout(() => {
+					expect(spyShown.callCount).to.be.equal(1);
+
+					done();
+				}, 300);
 			});
 		});
 	});

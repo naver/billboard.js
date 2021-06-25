@@ -147,9 +147,12 @@ export default {
 		const radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
 
 		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
+			const {gauge_min: min, gauge_max: max} = config;
+
 			// to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
 			const totalSum = $$.getTotalDataSum(state.rendered);
-			const gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
+			// https://github.com/naver/billboard.js/issues/2123
+			const gEnd = radius * ((totalSum - min) / (max - min));
 
 			pie = pie
 				.startAngle(gStart)
@@ -329,6 +332,7 @@ export default {
 		if ($$.shouldShowArcLabel()) {
 			selection
 				.style("fill", $$.updateTextColor.bind($$))
+				.attr("filter", $$.updateTextBacgroundColor.bind($$))
 				.each(function(d) {
 					const node = d3Select(this);
 					const updated = $$.updateAngle(d);
@@ -407,7 +411,7 @@ export default {
 			.attr("d", $$.svgArc);
 
 		svg.selectAll(`${CLASS.arc}`)
-			.style("opacity", "1");
+			.style("opacity", null);
 	},
 
 	/**
@@ -581,7 +585,7 @@ export default {
 		mainArc
 			.attr("transform", d => (!$$.isGaugeType(d.data) && withTransform ? "scale(0)" : ""))
 			.style("opacity", function(d) {
-				return d === this._current ? "0" : "1";
+				return d === this._current ? "0" : null;
 			})
 			.each(() => {
 				state.transiting = true;
@@ -630,7 +634,7 @@ export default {
 				return color;
 			})
 			// Where gauge reading color would receive customization.
-			.style("opacity", "1")
+			.style("opacity", null)
 			.call(endall, function() {
 				if ($$.levelColor) {
 					const path = d3Select(this);
@@ -830,13 +834,13 @@ export default {
 				))
 				.transition()
 				.duration(duration)
-				.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0"));
+				.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0"));
 
 			hasMultiArcGauge && text.attr("dy", "-.1em");
 		}
 
 		main.select(`.${CLASS.chartArcsTitle}`)
-			.style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0");
+			.style("opacity", $$.hasType("donut") || hasGauge ? null : "0");
 
 		if (hasGauge) {
 			const isFullCircle = config.gauge_fullCircle;

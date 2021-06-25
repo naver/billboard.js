@@ -52,8 +52,12 @@ describe("API export", () => {
 
 	it("should export in different size", done => {
   	    const expectedDataURL = [
-			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAJYCAYAAADxHswlAAAgAElEQVR4XuzdCZhlVX3v/e9/",
-			"AAAABJRU5ErkJggg=="
+			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAJYCAYAAADxHswlAAAgAElEQVR4XuzdCZhlVX3v",
+			"AAAABJRU5ErkJggg==",
+
+			// for window test
+			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAJYCAYAAADxHswlAAAgAElEQVR4Xuzde5xkZX3v",
+			"AAAAAElFTkSuQmCC"
 		];
 
 		setTimeout(() => {
@@ -61,8 +65,8 @@ describe("API export", () => {
 				width: 1000, height: 600
 			}, data => {
 				expect(
-					expectedDataURL.every(v => data.indexOf(v) >= 0)
-				).to.be.true;
+				 	expectedDataURL.map(v => data.indexOf(v) >= 0).filter(Boolean).length
+				).to.be.equal(2);
 
 				done();
 			});
@@ -70,13 +74,18 @@ describe("API export", () => {
 	});
 
 	it("should export in different aspectRatio", done => {
-		const expectedDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAEsCAYAAACG+vy+AAAgAElEQVR4Xu19CZRcVbX2t8+t";
+		const expectedDataURL = [
+			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAEsCAYAAACG+vy+AAAgAElEQVR4Xu19CZRcVbX2t8+t",
+			"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMgAAAEsCAYAAACG+vy+AAAgAElEQVR4Xu19CZhcVZX/79xXn"
+		];
 
 	  	setTimeout(() => {
 			chart.export({
 				width: 200, height: 300, preserveAspectRatio: false
 			}, data => {
-				expect(data.indexOf(expectedDataURL) >= 0).to.be.true;
+				expect(
+					expectedDataURL.map(v => data.indexOf(v) >= 0).filter(Boolean).length
+			    ).to.be.equal(1);
 
 				done();
 			});

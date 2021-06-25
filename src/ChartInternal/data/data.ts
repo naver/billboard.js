@@ -4,7 +4,7 @@
  */
 import CLASS from "../../config/classes";
 import {KEY} from "../../module/Cache";
-import {IData} from "./IData";
+import {IData, IDataRow} from "./IData";
 import {
 	findIndex,
 	getUnique,
@@ -464,20 +464,53 @@ export default {
 		return sortValue(xs);
 	},
 
-	addHiddenTargetIds(targetIds): void {
-		this.state.hiddenTargetIds = this.state.hiddenTargetIds.concat(targetIds);
+	/**
+	 * Add to the state target Ids
+	 * @param {string} type State's prop name
+	 * @param {Array|string} targetIds Target ids array
+	 * @private
+	 */
+	addTargetIds(type: string, targetIds: string[] | string): void {
+		const {state} = this;
+		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as [];
+
+		ids.forEach(v => {
+			state[type].indexOf(v) < 0 &&
+				state[type].push(v);
+		});
 	},
 
-	removeHiddenTargetIds(targetIds): void {
-		this.state.hiddenTargetIds = this.state.hiddenTargetIds.filter(id => targetIds.indexOf(id) < 0);
+	/**
+	 * Remove from the state target Ids
+	 * @param {string} type State's prop name
+	 * @param {Array|string} targetIds Target ids array
+	 * @private
+	 */
+	removeTargetIds(type: string, targetIds: string[] | string): void {
+		const {state} = this;
+		const ids = (isArray(targetIds) ? targetIds : [targetIds]) as [];
+
+		ids.forEach(v => {
+			const index = state[type].indexOf(v);
+
+			index >= 0 && state[type].splice(index, 1);
+		});
 	},
 
-	addHiddenLegendIds(targetIds): void {
-		this.state.hiddenLegendIds = this.state.hiddenLegendIds.concat(targetIds);
+	addHiddenTargetIds(targetIds: string[]): void {
+		this.addTargetIds("hiddenTargetIds", targetIds);
 	},
 
-	removeHiddenLegendIds(targetIds): void {
-		this.state.hiddenLegendIds = this.state.hiddenLegendIds.filter(id => targetIds.indexOf(id) < 0);
+	removeHiddenTargetIds(targetIds: string[]): void {
+		this.removeTargetIds("hiddenTargetIds", targetIds);
+	},
+
+	addHiddenLegendIds(targetIds: string[]): void {
+		this.addTargetIds("hiddenLegendIds", targetIds);
+	},
+
+	removeHiddenLegendIds(targetIds: string[]): void {
+		this.removeTargetIds("hiddenLegendIds", targetIds);
 	},
 
 	getValuesAsIdKeyed(targets) {
@@ -492,12 +525,12 @@ export default {
 			const data: any[] = [];
 
 			t.values
-				.filter(v => isValue(v.value))
+				.filter(({value}) => isValue(value) || value === null)
 				.forEach(v => {
 					let {value} = v;
 
 					// exclude 'volume' value to correct mis domain calculation
-					if ($$.isCandlestickType(v)) {
+					if (value !== null && $$.isCandlestickType(v)) {
 						value = isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close];
 					}
 
@@ -708,7 +741,7 @@ export default {
 		return sames;
 	},
 
-	findClosestFromTargets(targets, pos) {
+	findClosestFromTargets(targets, pos): IDataRow | undefined {
 		const $$ = this;
 		const candidates = targets.map(target => $$.findClosest(target.values, pos)); // map to array of closest points of each target
 
@@ -716,7 +749,7 @@ export default {
 		return $$.findClosest(candidates, pos);
 	},
 
-	findClosest(values, pos) {
+	findClosest(values, pos): IDataRow | undefined {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const data = values.filter(v => v && isValue(v.value));

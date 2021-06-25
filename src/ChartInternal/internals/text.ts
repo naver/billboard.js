@@ -9,16 +9,16 @@ import {
 import {KEY} from "../../module/Cache";
 import CLASS from "../../config/classes";
 import {capitalize, getBoundingRect, getRandom, isFunction, isNumber, isObject, isString, getTranslation, setTextValue} from "../../module/util";
+import {IDataRow, IArcData} from "../data/IData";
 import {AxisType} from "../../../types/types";
 
-
 export default {
-	opacityForText(d): "1" | "0" {
+	opacityForText(d): null | "0" {
 		const $$ = this;
 
 		return $$.isBarType(d) && !$$.meetsLabelThreshold(
 			Math.abs($$.getRatio("bar", d),), "bar"
-		) ? "0" : ($$.hasDataLabel ? "1" : "0");
+		) ? "0" : ($$.hasDataLabel ? null : "0");
 	},
 
 	/**
@@ -63,7 +63,7 @@ export default {
 	 */
 	updateText(durationForExit): void {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {$el, config} = $$;
 		const classText = $$.getClass("text", "index");
 
 		const text = $el.main.selectAll(`.${CLASS.texts}`)
@@ -149,6 +149,30 @@ export default {
 	},
 
 	/**
+	 * Update data label text background color
+	 * @param {object} d Data object
+	 * @returns {string|null}
+	 * @private
+	 */
+	updateTextBacgroundColor(d: IDataRow | IArcData): string | null {
+		const $$ = this;
+		const {$el, config} = $$;
+		const backgroundColor = config.data_labels_backgroundColors;
+		let color: string = "";
+
+		if (isString(backgroundColor) || isObject(backgroundColor)) {
+			const id = isString(backgroundColor) ? "" : ("id" in d ? d.id : d.data.id);
+			const filter = $el.defs.select(["filter[id*='labels-bg-", "']"].join(id));
+
+			if (filter.size()) {
+				color = `url(#${filter.attr("id")})`;
+			}
+		}
+
+		return color || null;
+	},
+
+	/**
 	 * Redraw chartText
 	 * @param {Function} x Positioning function for x
 	 * @param {Function} y Positioning function for y
@@ -163,6 +187,7 @@ export default {
 
 		$$.$el.text
 			.style("fill", $$.updateTextColor.bind($$))
+			.attr("filter", $$.updateTextBacgroundColor.bind($$))
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
 			.each(function(d, i) {
 				// do not apply transition for newly added text elements

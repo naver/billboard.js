@@ -729,6 +729,41 @@ describe("INTERACTION", () => {
 				expect(clicked).to.be.true;
 				expect(data.value).to.be.equal(30);
 			});
+
+			it("set option", () => {
+				args = {
+					data: {
+						xs: {
+							data1: "x1",
+							data2: "x2"
+						},
+						columns: [
+							["x1", 1, 2, 3, 4, 5],
+							["x2", 1, 2, 4, 5, 6],
+							["data1", 4, 1, 6, 8, 10],
+							["data2", 5, 2, 6, 7, 8]
+						],
+						type: "line", // for ESM specify as: line()
+						onclick: sinon.spy()
+					},
+					zoom: {
+						enabled: true,
+						type: "drag",
+					}
+				}
+			});
+
+			it("onclick callback should be called once", () => {
+				const {eventRect} = chart.internal.$el;
+				const circle = util.getBBox(chart.$.circles.node());
+
+				util.fireEvent(eventRect.node(), "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(args.data.onclick.calledOnce).to.be.true;
+			});
 		});
 
 		describe("check for event binding", () => {

@@ -22,20 +22,20 @@ function withinRange(domain: (number | string)[], range: number[]): boolean {
 }
 
 /**
- * Zoom by giving x domain.
+ * Zoom by giving x domain range.
  * - **NOTE:**
- *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
+ *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain range. To get the initial state, [.unzoom()](#unzoom) should be called.
  *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
  * @function zoom
  * @instance
  * @memberof Chart
- * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
+ * @param {Array} domainValue If domain range is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
  * @returns {Array} domain value in array
  * @example
- *  // Zoom to specified domain
+ *  // Zoom to specified domain range
  *  chart.zoom([10, 20]);
  *
- *  // Get the current zoomed domain
+ *  // Get the current zoomed domain range
  *  chart.zoom();
  */
 const zoom = function(domainValue?: (number | string)[]): (Date | number)[] {

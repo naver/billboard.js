@@ -161,7 +161,7 @@ describe("SHAPE AREA", () => {
 
 			// null data points, shouldn't be showing
 			chart.$.circles.filter(d => d.id === dataName).each(function(d, i) {
-				expect(+this.style.opacity).to.be.equal(i > 1 ? 1 : 0);
+				expect(this.style.opacity).to.be.equal(i > 1 ? '' : "0");
 			})
 		};
 

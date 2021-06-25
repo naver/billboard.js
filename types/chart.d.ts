@@ -345,6 +345,7 @@ export interface Chart {
 	 *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
 	 */
 	load(this: Chart, args: {
+		append?: boolean;
 		url?: string;
 		json?: [{ [key: string]: string }];
 		rows?: PrimitiveArray[];

@@ -48,7 +48,7 @@ export default {
 					$target = subchart.main.selectAll(`.${CLASS.target}`);
 				}
 
-				$target.style("opacity", "1");
+				$target.style("opacity", null);
 				subchart.main.style("display", null);
 
 				this.flush();

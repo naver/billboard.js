@@ -53,6 +53,9 @@
         "jsdoc/require-returns-description": 0,
         "jsdoc/no-undefined-types": 0,
         "jsdoc/valid-types": 0,
-        "jsdoc/check-values": 0
+        "jsdoc/check-values": 0,
+        "jsdoc/no-multi-asterisks": 0,
+        "jsdoc/tag-lines": 0
+
     }
 }

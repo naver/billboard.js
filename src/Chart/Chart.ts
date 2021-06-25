@@ -4,7 +4,7 @@
  */
 import ChartInternal from "../ChartInternal/ChartInternal";
 import {loadConfig} from "../config/config";
-import {extend, isFunction} from "../module/util";
+import {extend, isFunction, notEmpty} from "../module/util";
 
 import apiChart from "./api/chart";
 import apiColor from "./api/color";
@@ -89,12 +89,15 @@ export default class Chart {
 			Object.keys(fn).forEach(key => {
 				const isFunc = isFunction(fn[key]);
 				const isChild = target !== argThis;
-				const hasChild = Object.keys(fn[key]).length > 0;
+				const isNotNil = notEmpty(fn[key]);
+				const hasChild = isNotNil && Object.keys(fn[key]).length > 0;
 
 				if (isFunc && ((!isChild && hasChild) || isChild)) {
 					target[key] = fn[key].bind(argThis);
-				} else if (!isFunc) {
+				} else if (isNotNil && !isFunc) {
 					target[key] = {};
+				} else {
+					target[key] = fn[key];
 				}
 
 				hasChild && bindThis(fn[key], target[key], argThis);

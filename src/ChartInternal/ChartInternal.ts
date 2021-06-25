@@ -333,7 +333,7 @@ export default class ChartInternal {
 		// Define defs
 		const hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
 
-		if (hasAxis || hasColorPatterns) {
+		if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors) {
 			$el.defs = $el.svg.append("defs");
 
 			if (hasAxis) {
@@ -341,6 +341,9 @@ export default class ChartInternal {
 					$$.appendClip($el.defs, state.clip[v]);
 				});
 			}
+
+			// Append data backgound color filter definition
+			$$.generateDataLabelBackgroundColorFilter();
 
 			// set color patterns
 			if (hasColorPatterns) {
@@ -583,7 +586,7 @@ export default class ChartInternal {
 			.filter(d => $$.isTargetToShow(d.id))
 			.transition()
 			.duration(config.transition_duration)
-			.style("opacity", "1");
+			.style("opacity", null);
 	}
 
 	getWithOption(options) {
@@ -616,12 +619,12 @@ export default class ChartInternal {
 		return withOptions;
 	}
 
-	initialOpacity(d): "1" | "0" {
+	initialOpacity(d): null | "0" {
 		const $$ = <any> this;
 		const {withoutFadeIn} = $$.state;
 
 		return $$.getBaseValue(d) !== null &&
-			withoutFadeIn[d.id] ? "1" : "0";
+			withoutFadeIn[d.id] ? null : "0";
 	}
 
 	bindResize(): void {

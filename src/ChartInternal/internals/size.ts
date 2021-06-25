@@ -124,9 +124,9 @@ export default {
 	getParentRectValue(key): number {
 		const offsetName = `offset${capitalize(key)}`;
 		let parent = this.$el.chart.node();
-		let v;
+		let v = 0;
 
-		while (!v && parent && parent.tagName !== "BODY") {
+		while (v < 30 && parent && parent.tagName !== "BODY") {
 			try {
 				v = parent.getBoundingClientRect()[key];
 			} catch (e) {
@@ -140,13 +140,11 @@ export default {
 			parent = parent.parentNode;
 		}
 
-		if (key === "width") {
-			// Sometimes element's width value is incorrect(ex. flex container)
-			// In this case, use body's offsetWidth instead.
-			const bodyWidth = document.body.offsetWidth;
+		// Sometimes element's dimension value is incorrect(ex. flex container)
+		// In this case, use body's offset instead.
+		const bodySize = document.body[offsetName];
 
-			v > bodyWidth && (v = bodyWidth);
-		}
+		v > bodySize && (v = bodySize);
 
 		return v;
 	},
@@ -156,9 +154,16 @@ export default {
 	},
 
 	getParentHeight(): number {
-		const h = this.$el.chart.style("height");
+		const h: string = this.$el.chart.style("height");
+		let height = 0;
 
-		return h.indexOf("px") > 0 ? parseInt(h, 10) : 0;
+		if (h) {
+			height = /px$/.test(h) ?
+				parseInt(h, 10) :
+				this.getParentRectValue("height");
+		}
+
+		return height;
 	},
 
 	getSvgLeft(withoutRecompute?: boolean): number {

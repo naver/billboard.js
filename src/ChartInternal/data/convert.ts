@@ -307,6 +307,11 @@ export default {
 			const hasCategory = isCategory && data.map(v => v.x)
 				.every(v => config.axis_x_categories.indexOf(v) > -1);
 
+			// when .load() with 'append' option is used for indexed axis
+			const isDataAppend = data.__append__;
+			const xIndex = xKey === null && isDataAppend ?
+				$$.api.data.values(id).length : 0;
+
 			return {
 				id: convertedId,
 				id_org: id,
@@ -320,7 +325,7 @@ export default {
 
 					// use x as categories if custom x and categorized
 					if ((isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX)) {
-						if (!hasCategory && index === 0 && i === 0) {
+						if (!hasCategory && index === 0 && i === 0 && !isDataAppend) {
 							config.axis_x_categories = [];
 						}
 
@@ -331,7 +336,7 @@ export default {
 							config.axis_x_categories.push(rawX);
 						}
 					} else {
-						x = $$.generateTargetX(rawX, id, i);
+						x = $$.generateTargetX(rawX, id, xIndex + i);
 					}
 
 					// mark as x = undefined if value is undefined and filter to remove after mapped

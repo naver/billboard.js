@@ -131,7 +131,7 @@ describe("SUBCHART", () => {
 
 			expect(subchart.empty()).to.be.true;
 			expect(chart.internal.clipSubchart).to.be.undefined;
-		})
+		});
 	});
 
 	describe("subchart selection", () => {
@@ -143,7 +143,10 @@ describe("SUBCHART", () => {
 					]
 				},
 				subchart: {
-					show: true
+					show: true,
+					init: {
+						range: [2, 3]
+					}
 				}
 			};
 		});
@@ -168,6 +171,12 @@ describe("SUBCHART", () => {
 			}, 300);
 		};
 
+		it("check initial subchart range selection", () => {
+			const currRange = chart.internal.scale.x.domain().map(Math.round);
+
+			expect(currRange).to.be.deep.equal(args.subchart.init.range);
+		});
+
 		it("should be select subchart area", checkSelection);
 
 		it("set options axis.x.type='category'", () => {
@@ -180,6 +189,7 @@ describe("SUBCHART", () => {
 		});
 
 		it("should be select subchart area for category type x axis", checkSelection);
+
 	});
 
 	describe("the extent", () => {
@@ -526,6 +536,62 @@ describe("SUBCHART", () => {
 					).to.be.equal(1);
 				}
 			});
+		});
+	});
+
+	describe("subchart handle", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: true,
+					init: {
+						range: [0,0.5]
+					},
+					showHandle: true
+				}
+			}
+		});
+
+		it("check the handlebar visiblity", () => {
+			const handlebar = chart.internal.brush.getSelection()
+				.selectAll(".handle--custom")
+				.each((d, i) => {
+					expect(d.type).to.be.equal(["w", "e"][i]);
+				});
+
+			const currDomain = chart.internal.scale.x.domain();
+
+			// when
+			util.doDrag(handlebar.node(), undefined, {clientX: 400, clientY: 100}, chart);
+
+			expect(chart.internal.scale.x.domain()).to.be.not.deep.equal(currDomain);
+		});
+
+		it("set options axis.rotated=true", () => {
+			args.axis = {
+				rotated: true
+			};
+		});
+
+		it("check the handlebar visiblity for rotated axis", () => {
+			const handlebar = chart.internal.brush.getSelection()
+				.selectAll(".handle--custom")
+				.each((d, i) => {
+					expect(d.type).to.be.equal(["n", "s"][i]);
+				});
+
+			const currDomain = chart.internal.scale.x.domain();
+
+			// when
+			util.doDrag(handlebar.node(), undefined, {clientX: 100, clientY: 0}, chart);
+
+			expect(chart.internal.scale.x.domain()).to.be.not.deep.equal(currDomain);
 		});
 	});
 });
