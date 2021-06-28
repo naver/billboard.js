@@ -1848,7 +1848,7 @@ describe("DATA", () => {
 				args = {
 					data: {
 						columns: [
-							["data1", 30, 200, 100],
+							["data 1 2 3", 30, 200, 100],
 							["data2", 430, 300, 500]
 						],
 						labels: {
@@ -1888,19 +1888,19 @@ describe("DATA", () => {
 			it("set options data.type='pie'", () => {
 				args.data.type = "line";
 				args.data.labels.backgroundColors = {
-					data1: "red"
+					"data 1": "red"
 				};
 			});
 
 			it("should set filter definition and text nodes for line type", () => {
 				const {$el} = chart.internal;
-				const filter = $el.defs.select("filter[id*='labels-bg-data1']");
+				const filter = $el.defs.select("filter[id*='labels-bg-data-1']");
 				const filterId = filter.attr("id");
 
 				expect(filter.size()).to.be.equal(1);
 
 				$el.text.each(function(d) {
-					if (d.id === "data1") {
+					if (d.id === "data-1") {
 						expect(this.getAttribute("filter").indexOf(filterId) > -1).to.be.ok;
 					} else {
 						expect(this.getAttribute("filter")).to.be.null;
