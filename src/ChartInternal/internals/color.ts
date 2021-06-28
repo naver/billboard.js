@@ -177,7 +177,7 @@ export default {
 			}
 
 			ids.forEach(v => {
-				const id = `${state.datetimeId}-labels-bg-${v}`;
+				const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}`;
 
 				$el.defs.append("filter")
 					.attr("x", "0")

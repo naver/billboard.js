@@ -161,8 +161,8 @@ export default {
 		let color: string = "";
 
 		if (isString(backgroundColor) || isObject(backgroundColor)) {
-			const id = isString(backgroundColor) ? "" : ("id" in d ? d.id : d.data.id);
-			const filter = $el.defs.select(["filter[id*='labels-bg-", "']"].join(id));
+			const id = isString(backgroundColor) ? "" : $$.getTargetSelectorSuffix(("id" in d ? d.id : d.data.id));
+			const filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
 
 			if (filter.size()) {
 				color = `url(#${filter.attr("id")})`;
