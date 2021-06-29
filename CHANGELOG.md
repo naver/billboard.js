@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/naver/billboard.js/compare/3.1.0...3.1.1) (2021-06-28)
+
+
+### Bug Fixes
+
+* **data:** Handle spaced data name for label bg color ([4ffb654](https://github.com/naver/billboard.js/commit/4ffb654698b271f2cf64eb088985eb9af4c50a6b)), closes [#2160](https://github.com/naver/billboard.js/issues/2160)
+
 # [3.1.0](https://github.com/naver/billboard.js/compare/3.0.3...3.1.0) (2021-06-25)
 
 
