@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.1.0
+ * @version 3.1.1
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4448,7 +4448,7 @@ var color = {
                 ids = Object.keys(backgroundColors);
             }
             ids.forEach(function (v) {
-                var id = state.datetimeId + "-labels-bg-" + v;
+                var id = state.datetimeId + "-labels-bg" + $$.getTargetSelectorSuffix(v);
                 $el.defs.append("filter")
                     .attr("x", "0")
                     .attr("y", "0")
@@ -6665,8 +6665,8 @@ var text = {
         var backgroundColor = config.data_labels_backgroundColors;
         var color = "";
         if (isString(backgroundColor) || isObject(backgroundColor)) {
-            var id = isString(backgroundColor) ? "" : ("id" in d ? d.id : d.data.id);
-            var filter = $el.defs.select(["filter[id*='labels-bg-", "']"].join(id));
+            var id = isString(backgroundColor) ? "" : $$.getTargetSelectorSuffix(("id" in d ? d.id : d.data.id));
+            var filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
             if (filter.size()) {
                 color = "url(#" + filter.attr("id") + ")";
             }
@@ -19840,7 +19840,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.1.0
+ * @version 3.1.1
  */
 var bb = {
     /**
@@ -19850,7 +19850,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.1.0",
+    version: "3.1.1",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

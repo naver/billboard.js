@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.0-nightly-20210626004530
+ * @version 3.1.1-nightly-20210629004507
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -23207,7 +23207,7 @@ var colorizePattern = function (pattern, color, id) {
     if (backgroundColors) {
       var ids = [];
       isString(backgroundColors) ? ids.push("") : isObject(backgroundColors) && (ids = Object.keys(backgroundColors)), ids.forEach(function (v) {
-        var id = state.datetimeId + "-labels-bg-" + v;
+        var id = state.datetimeId + "-labels-bg" + $$.getTargetSelectorSuffix(v);
         $el.defs.append("filter").attr("x", "0").attr("y", "0").attr("width", "1").attr("height", "1").attr("id", id).html("<feFlood flood-color=\"" + (v === "" ? backgroundColors : backgroundColors[v]) + "\" /><feComposite in=\"SourceGraphic\"/>");
       });
     }
@@ -26841,8 +26841,8 @@ function stepAfter(context) {
         color = "";
 
     if (isString(backgroundColor) || isObject(backgroundColor)) {
-      var id = isString(backgroundColor) ? "" : "id" in d ? d.id : d.data.id,
-          filter = $el.defs.select(["filter[id*='labels-bg-", "']"].join(id));
+      var id = isString(backgroundColor) ? "" : $$.getTargetSelectorSuffix("id" in d ? d.id : d.data.id),
+          filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
       filter.size() && (color = "url(#" + filter.attr("id") + ")");
     }
 
@@ -39350,7 +39350,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.1.0",
+  version: "3.1.1",
 
   /**
    * Generate chart
@@ -39478,7 +39478,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.1.0
+ * @version 3.1.1
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
