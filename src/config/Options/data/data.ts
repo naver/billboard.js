@@ -303,7 +303,7 @@ export default {
 	 *  - `i` is the index of the data point where the label is shown.
 	 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-	 * @property {string|object} [data.labels.backgroundColor] Set label text background colors.
+	 * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
 	 * @property {string|object|Function} [data.labels.colors] Set label text colors.
 	 * @property {object} [data.labels.position] Set each dataset position, relative the original.
 	 * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
