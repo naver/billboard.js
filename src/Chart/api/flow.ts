@@ -67,7 +67,7 @@ export default {
 			data = $$.convertData(args);
 		}
 
-		if (!data || !isTabVisible()) {
+		if ($$.state.redrawing || !data || !isTabVisible()) {
 			return;
 		}
 

@@ -508,6 +508,21 @@ describe("ZOOM", function() {
 
 			expect(clickedData).to.not.be.undefined;
 		});
+
+		it("shouldn't throw error on '.flow() -> .zoom()' flow calls", done => {
+			// when flow
+			chart.flow({
+				columns: [
+					["data1", 37]
+				],
+				length: 0,
+				duration: 0,
+				done: function() {
+					expect(this.zoom([1,2])).to.not.throw;
+					done();
+				}
+			});
+		})
 	});
 
 	describe("zoom on regions", () => {
