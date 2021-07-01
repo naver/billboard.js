@@ -100,7 +100,7 @@ export default class AxisRenderer {
 			path.enter().append("path")
 				.attr("class", "domain")
 				// https://observablehq.com/@d3/d3-selection-2-0
-				.merge(helper.transitionise(path).selection())
+				.merge(path as d3Selection)
 				.attr("d", () => {
 					const outerTickSized = config.outerTickSize * sign;
 

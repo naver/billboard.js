@@ -136,12 +136,12 @@ export default {
 		const redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition);
 
 		// callback function after redraw ends
-		const afterRedraw = flow || config.onrendered ? () => {
+		const afterRedraw = () => {
 			flowFn && flowFn();
 
 			state.redrawing = false;
 			callFn(config.onrendered, $$.api);
-		} : null;
+		};
 
 		if (afterRedraw) {
 			// Only use transition when current tab is visible.
