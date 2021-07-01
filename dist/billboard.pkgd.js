@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.1-nightly-20210630004535
+ * @version 3.1.1-nightly-20210701004529
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -17171,7 +17171,7 @@ function _defineProperty(obj, key, value) {
    *  - `i` is the index of the data point where the label is shown.
    *  - `j` is the sub index of the data point where the label is shown.<br><br>
    * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-   * @property {string|object} [data.labels.backgroundColor] Set label text background colors.
+   * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
    * @property {string|object|Function} [data.labels.colors] Set label text colors.
    * @property {object} [data.labels.position] Set each dataset position, relative the original.
    * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
@@ -24063,6 +24063,7 @@ function getFormat($$, typeValue, v) {
         state = $$.state,
         shape = $$.getDrawShape();
     state.hasAxis && config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
+
     // generate flow
     var flowFn = flow && $$.generateFlow({
       targets: targets,
@@ -24073,9 +24074,10 @@ function getFormat($$, typeValue, v) {
     }),
         isTransition = (duration || flowFn) && isTabVisible(),
         redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition),
-        afterRedraw = flow || config.onrendered ? function () {
+        afterRedraw = function () {
       flowFn && flowFn(), state.redrawing = !1, callFn(config.onrendered, $$.api);
-    } : null;
+    };
+
     if (afterRedraw) // Only use transition when current tab is visible.
       if (isTransition && redrawList.length) {
         // Wait for end of transitions for callback
@@ -29898,7 +29900,7 @@ util_extend(regions, {
         length = 0,
         tail = 0;
 
-    if ((args.json || args.rows || args.columns) && (data = $$.convertData(args)), data && isTabVisible()) {
+    if ((args.json || args.rows || args.columns) && (data = $$.convertData(args)), !$$.state.redrawing && data && isTabVisible()) {
       var notfoundIds = [],
           orgDataCount = $$.getMaxDataCount(),
           targets = $$.convertDataToTargets(data, !0),
@@ -30184,8 +30186,14 @@ var AxisRendererHelper = /*#__PURE__*/function () {
 
     return isDefined(formatted) ? formatted : "";
   }, _proto.transitionise = function transitionise(selection) {
-    var config = this.config;
-    return config.withoutTransition ? selection.interrupt() : selection.transition(config.transition);
+    var config = this.config,
+        transitionSelection = config.withoutTransition ? selection.interrupt() : selection.transition();
+    if (config.transition) // prevent for 'transition not found' case
+      // https://github.com/naver/billboard.js/issues/2140
+      try {
+        transitionSelection = selection.transition(config.transition);
+      } catch (e) {}
+    return transitionSelection;
   }, AxisRendererHelper;
 }();
 
@@ -30270,7 +30278,7 @@ var AxisRenderer = /*#__PURE__*/function () {
       var path = g.selectAll(".domain").data([0]); // enter + update selection
 
       if (path.enter().append("path").attr("class", "domain") // https://observablehq.com/@d3/d3-selection-2-0
-      .merge(helper.transitionise(path).selection()).attr("d", function () {
+      .merge(path).attr("d", function () {
         var outerTickSized = config.outerTickSize * sign;
         return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
       }), tickShow.tick || tickShow.text) {

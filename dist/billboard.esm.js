@@ -1004,7 +1004,7 @@ var data$2 = {
      *  - `i` is the index of the data point where the label is shown.
      *  - `j` is the sub index of the data point where the label is shown.<br><br>
      * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-     * @property {string|object} [data.labels.backgroundColor] Set label text background colors.
+     * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
      * @property {string|object|Function} [data.labels.colors] Set label text colors.
      * @property {object} [data.labels.position] Set each dataset position, relative the original.
      * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
@@ -5646,11 +5646,11 @@ var redraw = {
         // redraw list
         var redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition);
         // callback function after redraw ends
-        var afterRedraw = flow || config.onrendered ? function () {
+        var afterRedraw = function () {
             flowFn && flowFn();
             state.redrawing = false;
             callFn(config.onrendered, $$.api);
-        } : null;
+        };
         if (afterRedraw) {
             // Only use transition when current tab is visible.
             if (isTransition && redrawList.length) {
@@ -10178,7 +10178,7 @@ var apiFlow = {
         if (args.json || args.rows || args.columns) {
             data = $$.convertData(args);
         }
-        if (!data || !isTabVisible()) {
+        if ($$.state.redrawing || !data || !isTabVisible()) {
             return;
         }
         var notfoundIds = [];
@@ -10435,8 +10435,17 @@ var AxisRendererHelper = /** @class */ (function () {
     };
     AxisRendererHelper.prototype.transitionise = function (selection) {
         var config = this.config;
-        return config.withoutTransition ?
-            selection.interrupt() : selection.transition(config.transition);
+        var transitionSelection = config.withoutTransition ?
+            selection.interrupt() : selection.transition();
+        if (config.transition) {
+            // prevent for 'transition not found' case
+            // https://github.com/naver/billboard.js/issues/2140
+            try {
+                transitionSelection = selection.transition(config.transition);
+            }
+            catch (e) { }
+        }
+        return transitionSelection;
     };
     return AxisRendererHelper;
 }());
@@ -10514,7 +10523,7 @@ var AxisRenderer = /** @class */ (function () {
             path.enter().append("path")
                 .attr("class", "domain")
                 // https://observablehq.com/@d3/d3-selection-2-0
-                .merge(helper.transitionise(path).selection())
+                .merge(path)
                 .attr("d", function () {
                 var outerTickSized = config.outerTickSize * sign;
                 return isTopBottom ?
