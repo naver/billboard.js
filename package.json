@@ -140,7 +140,7 @@
 		"eslint-plugin-jsdoc": "^35.4.1",
 		"exports-loader": "^3.0.0",
 		"hammer-simulator": "0.0.1",
-		"husky": "^6.0.0",
+		"husky": "^7.0.0",
 		"istanbul-instrumenter-loader": "^3.0.1",
 		"istanbul-lib-instrument": "^4.0.3",
 		"jsdoc": "^3.6.7",
