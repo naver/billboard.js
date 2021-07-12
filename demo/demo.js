@@ -3045,6 +3045,39 @@ d3.select(".chart_area")
 					bubblecompare: {minR: 11, maxR: 74, expandScale: 1.1}
 				}]
 			}
+		},
+		TableView: {
+			description: "Generates table view for bound dataset.<br>Must load or import plugin before the use.",
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"],
+						["data1", 1230, 2380, 1200, 1238, 1500, 2500, 2540, 1265, 550, 240],
+						["data2", 500, 120, 100, 200, 840, 935, 825, 1123, 385, 980],
+						["data3", 1223, 153, 850, 300, 250, 3120, 1205, 840, 999, 1280],
+						["data4", 1130, 2135, 1020, 1138, 2119, 1228, 3256, 138, 2355, 220],
+						["data5", 1223, 2310, 1210, 2220, 1238, 1205, 2120, 2113, 1185, 1098]
+					],
+					types: {
+						data3: "area",
+						data4: "step",
+						data5: "bar"
+					}
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				},
+				_plugins: [{
+					tableview: {
+						title: "My Yearly Data List",
+						categoryTitle: "Year",
+						style: true
+					}
+				}]
+			}
 		}
 	},
 	Point: {
