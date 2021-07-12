@@ -1,3 +1,10 @@
+## [3.1.2](https://github.com/naver/billboard.js/compare/3.1.1...3.1.2) (2021-07-12)
+
+
+### Bug Fixes
+
+* **module:** fix module compatibility ([#2182](https://github.com/naver/billboard.js/issues/2182)) ([3785a19](https://github.com/naver/billboard.js/commit/3785a19e158c04238c43b11ef93e454fc249941d)), closes [#2181](https://github.com/naver/billboard.js/issues/2181)
+
 ## [3.1.1](https://github.com/naver/billboard.js/compare/3.1.0...3.1.1) (2021-06-28)
 
 
