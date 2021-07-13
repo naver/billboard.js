@@ -5,22 +5,22 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.1-nightly-20210706004506
+ * @version 3.1.2-nightly-20210713004514
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
- * - d3-axis ^3.0.0
- * - d3-brush ^3.0.0
- * - d3-color ^3.0.1
- * - d3-drag ^3.0.0
- * - d3-dsv ^3.0.1
- * - d3-ease ^3.0.1
- * - d3-interpolate ^3.0.1
- * - d3-scale ^4.0.0
- * - d3-selection ^3.0.0
- * - d3-shape ^3.0.1
- * - d3-time-format ^4.0.0
- * - d3-transition ^3.0.1
- * - d3-zoom ^3.0.0
+ * - d3-axis ^2.1.0
+ * - d3-brush ^2.1.0
+ * - d3-color ^2.0.0
+ * - d3-drag ^2.0.0
+ * - d3-dsv ^2.0.0
+ * - d3-ease ^2.0.0
+ * - d3-interpolate ^2.0.1
+ * - d3-scale ^3.3.0
+ * - d3-selection ^2.0.0
+ * - d3-shape ^2.1.0
+ * - d3-time-format ^3.0.0
+ * - d3-transition ^2.0.0
+ * - d3-zoom ^2.0.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -15259,14 +15259,9 @@ function none() {}
   return new Selection(subgroups, this._parents);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/array.js
-// Given something array like (or null), returns something that is strictly an
-// array. This is used to ensure that array-like objects passed to d3.selectAll
-// or selection.selectAll are converted into proper arrays when creating a
-// selection; we don’t ever want to create a selection backed by a live
-// HTMLCollection or NodeList. However, note that selection.selectAll will use a
-// static NodeList as a group, since it safely derived from querySelectorAll.
-function array(x) {
-  return x == null ? [] : Array.isArray(x) ? x : Array.from(x);
+/* harmony default export */ function array(x) {
+  return typeof x === "object" && "length" in x ? x // Array, TypedArray, NodeList, array-like
+  : Array.from(x); // Map, Set, iterable, string, or anything else
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selectorAll.js
 function empty() {
@@ -15285,7 +15280,8 @@ function empty() {
 
 function arrayAll(select) {
   return function () {
-    return array(select.apply(this, arguments));
+    var group = select.apply(this, arguments);
+    return group == null ? [] : array(group);
   };
 }
 
@@ -15329,7 +15325,7 @@ function childFirst() {
 var filter = Array.prototype.filter;
 
 function children() {
-  return Array.from(this.children);
+  return this.children;
 }
 
 function childrenFilter(match) {
@@ -15390,6 +15386,7 @@ EnterNode.prototype = {
 
 
 
+
 function bindIndex(parent, group, enter, update, exit, data) {
   // Put any non-null nodes that fit into update.
   // Put any null nodes into enter.
@@ -15436,7 +15433,7 @@ function datum(node) {
     var parent = parents[j],
         group = groups[j],
         groupLength = group.length,
-        data = arraylike(value.call(parent, parent && parent.__data__, j, parents)),
+        data = array(value.call(parent, parent && parent.__data__, j, parents)),
         dataLength = data.length,
         enterGroup = enter[j] = Array(dataLength),
         updateGroup = update[j] = Array(dataLength),
@@ -15454,16 +15451,6 @@ function datum(node) {
   }
 
   return update = new Selection(update, parents), update._enter = enter, update._exit = exit, update;
-} // Given some data, this returns an array-like view of it: an object that
-// exposes a length property and allows numeric indexing. Note that unlike
-// selectAll, this isn’t worried about “live” collections because the resulting
-// array will only be used briefly while data is being bound. (It is possible to
-// cause the data to change while iterating by using a key function, but please
-// don’t; we’d rather avoid a gratuitous copy.)
-
-function arraylike(data) {
-  return typeof data === "object" && "length" in data ? data // Array, TypedArray, NodeList, array-like
-  : Array.from(data); // Map, Set, iterable, string, or anything else
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/exit.js
 
@@ -15476,12 +15463,14 @@ function arraylike(data) {
   var enter = this.enter(),
       update = this,
       exit = this.exit();
-  return typeof onenter === "function" ? (enter = onenter(enter), enter && (enter = enter.selection())) : enter = enter.append(onenter + ""), onupdate != null && (update = onupdate(update), update && (update = update.selection())), onexit == null ? exit.remove() : onexit(exit), enter && update ? enter.merge(update).order() : update;
+  return enter = typeof onenter === "function" ? onenter(enter) : enter.append(onenter + ""), onupdate != null && (update = onupdate(update)), onexit == null ? exit.remove() : onexit(exit), enter && update ? enter.merge(update).order() : update;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/merge.js
 
-/* harmony default export */ function merge(context) {
-  for (var selection = context.selection ? context.selection() : context, groups0 = this._groups, groups1 = selection._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = Array(m0), j = 0; j < m; ++j) for (var node, group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = Array(n), i = 0; i < n; ++i) (node = group0[i] || group1[i]) && (merge[i] = node);
+/* harmony default export */ function merge(selection) {
+  if (!(selection instanceof Selection)) throw new Error("invalid merge");
+
+  for (var groups0 = this._groups, groups1 = selection._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = Array(m0), j = 0; j < m; ++j) for (var node, group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = Array(n), i = 0; i < n; ++i) (node = group0[i] || group1[i]) && (merge[i] = node);
 
   for (; j < m0; ++j) merges[j] = groups0[j];
 
@@ -15971,14 +15960,15 @@ function dispatchFunction(type, params) {
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
 var regenerator = __webpack_require__(396);
+var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/iterator.js
 
 
-var _marked = /*#__PURE__*/regenerator.mark(_callee);
+var _marked = /*#__PURE__*/regenerator_default().mark(_callee);
 
 function _callee() {
   var groups, j, m, node, group, i, n;
-  return regenerator.wrap(function (_context) {
+  return regenerator_default().wrap(function (_context) {
     for (;;) switch (_context.prev = _context.next) {
       case 0:
         groups = this._groups, j = 0, m = groups.length;
@@ -18287,15 +18277,6 @@ function set(type, name, callback) {
 
 /* harmony default export */ var src_dispatch = (dispatch_dispatch);
 ;// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
-// These are typically used in conjunction with noevent to ensure that we can
-// preventDefault on the event.
-var nonpassive = {
-  passive: !1
-};
-var nonpassivecapture = {
-  capture: !0,
-  passive: !1
-};
 function nopropagation(event) {
   event.stopImmediatePropagation();
 }
@@ -18307,13 +18288,13 @@ function nopropagation(event) {
 
 /* harmony default export */ function nodrag(view) {
   var root = view.document.documentElement,
-      selection = src_select(view).on("dragstart.drag", noevent, nonpassivecapture);
-  "onselectstart" in root ? selection.on("selectstart.drag", noevent, nonpassivecapture) : (root.__noselect = root.style.MozUserSelect, root.style.MozUserSelect = "none");
+      selection = src_select(view).on("dragstart.drag", noevent, !0);
+  "onselectstart" in root ? selection.on("selectstart.drag", noevent, !0) : (root.__noselect = root.style.MozUserSelect, root.style.MozUserSelect = "none");
 }
 function yesdrag(view, noclick) {
   var root = view.document.documentElement,
       selection = src_select(view).on("dragstart.drag", null);
-  noclick && (selection.on("click.drag", noevent, nonpassivecapture), setTimeout(function () {
+  noclick && (selection.on("click.drag", noevent, !0), setTimeout(function () {
     selection.on("click.drag", null);
   }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
 }
@@ -18928,7 +18909,7 @@ function timerFlush() {
   now(), ++timer_frame;
 
   for ( // Pretend we’ve set an alarm, if we haven’t already.
-  var e, t = taskHead; t;) (e = clockNow - t._time) >= 0 && t._call.call(undefined, e), t = t._next;
+  var e, t = taskHead; t;) (e = clockNow - t._time) >= 0 && t._call.call(null, e), t = t._next;
 
   --timer_frame;
 }
@@ -19753,8 +19734,6 @@ Transition.prototype = transition_transition.prototype = (_transition$prototype 
   constructor: Transition,
   select: transition_select,
   selectAll: transition_selectAll,
-  selectChild: selection_prototype.selectChild,
-  selectChildren: selection_prototype.selectChildren,
   filter: transition_filter,
   merge: transition_merge,
   selection: transition_selection,
@@ -19822,6 +19801,17 @@ function inherit(node, id) {
 
 
 src_selection.prototype.interrupt = selection_interrupt, src_selection.prototype.transition = selection_transition;
+;// CONCATENATED MODULE: ./node_modules/d3-transition/src/active.js
+
+
+var active_root = [null];
+/* harmony default export */ function active(node, name) {
+  var schedule,
+      i,
+      schedules = node.__transition;
+  if (schedules) for (i in name = name == null ? null : name + "", schedules) if ((schedule = schedules[i]).state > SCHEDULED && schedule.name === name) return new Transition([[node]], active_root, name, +i);
+  return null;
+}
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/index.js
 
 
@@ -20153,13 +20143,13 @@ function brush_brush(dim) {
 
         case 18:
           {
-            mode === MODE_HANDLE && (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER, move(event));
+            mode === MODE_HANDLE && (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER, move());
             break;
           }
 
         case 32:
           {
-            (mode === MODE_HANDLE || mode === MODE_CENTER) && (signX < 0 ? e0 = e1 - dx : signX > 0 && (w0 = w1 - dx), signY < 0 ? s0 = s1 - dy : signY > 0 && (n0 = n1 - dy), mode = MODE_SPACE, overlay.attr("cursor", cursors.selection), move(event));
+            (mode === MODE_HANDLE || mode === MODE_CENTER) && (signX < 0 ? e0 = e1 - dx : signX > 0 && (w0 = w1 - dx), signY < 0 ? s0 = s1 - dy : signY > 0 && (n0 = n1 - dy), mode = MODE_SPACE, overlay.attr("cursor", cursors.selection), move());
             break;
           }
 
@@ -20174,19 +20164,19 @@ function brush_brush(dim) {
       switch (event.keyCode) {
         case 16:
           {
-            shifting && (lockX = lockY = shifting = !1, move(event));
+            shifting && (lockX = lockY = shifting = !1, move());
             break;
           }
 
         case 18:
           {
-            mode === MODE_CENTER && (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE, move(event));
+            mode === MODE_CENTER && (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE, move());
             break;
           }
 
         case 32:
           {
-            mode === MODE_SPACE && (event.altKey ? (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER) : (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE), overlay.attr("cursor", cursors[type]), move(event));
+            mode === MODE_SPACE && (event.altKey ? (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER) : (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE), overlay.attr("cursor", cursors[type]), move());
             break;
           }
 
@@ -20228,18 +20218,18 @@ function brush_brush(dim) {
         var i = t.identifier;
         return t = src_pointer(t, that), t.point0 = t.slice(), t.identifier = i, t;
       });
-      interrupt(that);
-      var emit = emitter(that, arguments, !0).beforestart();
 
       if (type === "overlay") {
         selection && (moving = !0);
         var pts = [points[0], points[1] || points[0]];
-        state.selection = selection = [[w0 = dim === Y ? W : min(pts[0][0], pts[1][0]), n0 = dim === X ? N : min(pts[0][1], pts[1][1])], [e0 = dim === Y ? E : max(pts[0][0], pts[1][0]), s0 = dim === X ? S : max(pts[0][1], pts[1][1])]], points.length > 1 && move(event);
+        state.selection = selection = [[w0 = dim === Y ? W : min(pts[0][0], pts[1][0]), n0 = dim === X ? N : min(pts[0][1], pts[1][1])], [e0 = dim === Y ? E : max(pts[0][0], pts[1][0]), s0 = dim === X ? S : max(pts[0][1], pts[1][1])]], points.length > 1 && move();
       } else w0 = selection[0][0], n0 = selection[0][1], e0 = selection[1][0], s0 = selection[1][1];
 
       w1 = w0, n1 = n0, e1 = e0, s1 = s0;
       var group = src_select(that).attr("pointer-events", "none"),
           overlay = group.selectAll(".overlay").attr("cursor", cursors[type]);
+      interrupt(that);
+      var emit = emitter(that, arguments, !0).beforestart();
       if (event.touches) emit.moved = moved, emit.ended = ended;else {
         var view = src_select(event.view).on("mousemove.brush", moved, !0).on("mouseup.brush", ended, !0);
         keys && view.on("keydown.brush", keydowned, !0).on("keyup.brush", keyupped, !0), nodrag(event.view);
@@ -20270,7 +20260,7 @@ function brush_brush(dim) {
       keys = !0,
       listeners = src_dispatch("start", "brush", "end"),
       handleSize = 6;
-  return brush.move = function (group, selection, event) {
+  return brush.move = function (group, selection) {
     group.tween ? group.on("start.brush", function (event) {
       emitter(this, arguments).beforestart().start(event);
     }).on("interrupt.brush end.brush", function (event) {
@@ -20293,10 +20283,10 @@ function brush_brush(dim) {
           state = that.__brush,
           selection1 = dim.input(typeof selection === "function" ? selection.apply(that, args) : selection, state.extent),
           emit = emitter(that, args).beforestart();
-      interrupt(that), state.selection = selection1 === null ? null : selection1, redraw.call(that), emit.start(event).brush(event).end(event);
+      interrupt(that), state.selection = selection1 === null ? null : selection1, redraw.call(that), emit.start().brush().end();
     });
-  }, brush.clear = function (group, event) {
-    brush.move(group, null, event);
+  }, brush.clear = function (group) {
+    brush.move(group, null);
   }, Emitter.prototype = {
     beforestart: function beforestart() {
       return ++this.active === 1 && (this.state.emitter = this, this.starting = !0), this;
@@ -22526,13 +22516,13 @@ function drag_defaultTouchable() {
 
 /* harmony default export */ function drag() {
   function drag(selection) {
-    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved, nonpassive).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
   }
 
   function mousedowned(event, d) {
     if (!touchending && filter.call(this, event, d)) {
       var gesture = beforestart(this, container.call(this, event, d), event, d, "mouse");
-      gesture && (src_select(event.view).on("mousemove.drag", mousemoved, nonpassivecapture).on("mouseup.drag", mouseupped, nonpassivecapture), nodrag(event.view), nopropagation(event), mousemoving = !1, mousedownx = event.clientX, mousedowny = event.clientY, gesture("start", event));
+      gesture && (src_select(event.view).on("mousemove.drag", mousemoved, !0).on("mouseup.drag", mouseupped, !0), nodrag(event.view), nopropagation(event), mousemoving = !1, mousedownx = event.clientX, mousedowny = event.clientY, gesture("start", event));
     }
   }
 
@@ -22610,7 +22600,7 @@ function drag_defaultTouchable() {
 
         case "end":
           delete gestures[identifier], --active;
-        // falls through
+        // nobreak
 
         case "drag":
           p = src_pointer(touch || event, container), n = active;
@@ -22949,69 +22939,6 @@ function drag_defaultTouchable() {
     return categories && i < categories.length ? categories[i] : i;
   }
 });
-;// CONCATENATED MODULE: ./node_modules/internmap/src/index.js
-class InternMap extends Map {
-  constructor(entries, key = keyof) {
-    super();
-    Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
-    if (entries != null) for (const [key, value] of entries) this.set(key, value);
-  }
-  get(key) {
-    return super.get(intern_get(this, key));
-  }
-  has(key) {
-    return super.has(intern_get(this, key));
-  }
-  set(key, value) {
-    return super.set(intern_set(this, key), value);
-  }
-  delete(key) {
-    return super.delete(intern_delete(this, key));
-  }
-}
-
-class InternSet extends Set {
-  constructor(values, key = keyof) {
-    super();
-    Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
-    if (values != null) for (const value of values) this.add(value);
-  }
-  has(value) {
-    return super.has(intern_get(this, value));
-  }
-  add(value) {
-    return super.add(intern_set(this, value));
-  }
-  delete(value) {
-    return super.delete(intern_delete(this, value));
-  }
-}
-
-function intern_get({_intern, _key}, value) {
-  const key = _key(value);
-  return _intern.has(key) ? _intern.get(key) : value;
-}
-
-function intern_set({_intern, _key}, value) {
-  const key = _key(value);
-  if (_intern.has(key)) return _intern.get(key);
-  _intern.set(key, value);
-  return value;
-}
-
-function intern_delete({_intern, _key}, value) {
-  const key = _key(value);
-  if (_intern.has(key)) {
-    value = _intern.get(value);
-    _intern.delete(key);
-  }
-  return value;
-}
-
-function keyof(value) {
-  return value !== null && typeof value === "object" ? value.valueOf() : value;
-}
-
 ;// CONCATENATED MODULE: ./node_modules/d3-scale/src/init.js
 function initRange(domain, range) {
   switch (arguments.length) {
@@ -23056,29 +22983,33 @@ function ordinal_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o =
 function ordinal_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 
 
-
 var implicit = Symbol("implicit");
 function ordinal() {
   function scale(d) {
-    var i = index.get(d);
+    var key = d + "",
+        i = index.get(key);
 
-    if (i === undefined) {
+    if (!i) {
       if (unknown !== implicit) return unknown;
-      index.set(d, i = domain.push(d) - 1);
+      index.set(key, i = domain.push(d));
     }
 
-    return range[i % range.length];
+    return range[(i - 1) % range.length];
   }
 
-  var index = new InternMap(),
+  var index = new Map(),
       domain = [],
       range = [],
       unknown = implicit;
   return scale.domain = function (_) {
     if (!arguments.length) return domain.slice();
-    domain = [], index = new InternMap();
+    domain = [], index = new Map();
 
-    for (var _step, value, _iterator = ordinal_createForOfIteratorHelperLoose(_); !(_step = _iterator()).done;) value = _step.value, index.has(value) || index.set(value, domain.push(value) - 1);
+    for (var _step, _iterator = ordinal_createForOfIteratorHelperLoose(_); !(_step = _iterator()).done;) {
+      var value = _step.value,
+          key = value + "";
+      index.has(key) || index.set(key, domain.push(value));
+    }
 
     return scale;
   }, scale.range = function (_) {
@@ -24178,7 +24109,7 @@ function tickStep(start, stop, count) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
 /* harmony default export */ function src_ascending(a, b) {
-  return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
 
@@ -24226,7 +24157,7 @@ function ascendingComparator(f) {
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
 
 
-var number_marked = /*#__PURE__*/regenerator.mark(numbers);
+var number_marked = /*#__PURE__*/regenerator_default().mark(numbers);
 
 function number_createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = number_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { it && (o = it); var i = 0; return function () { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
@@ -24240,7 +24171,7 @@ function number_arrayLikeToArray(arr, len) { (len == null || len > arr.length) &
 function numbers(values, valueof) {
   var _step, value, _iterator, index, _step2, _iterator2, _value;
 
-  return regenerator.wrap(function (_context) {
+  return regenerator_default().wrap(function (_context) {
     for (;;) switch (_context.prev = _context.next) {
       case 0:
         if (valueof !== undefined) {
@@ -24415,7 +24346,7 @@ function transformer() {
 function continuous() {
   return transformer()(continuous_identity, continuous_identity);
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatSpecifier.js
 // [[fill]align][sign][symbol][0][width][,][.precision][~][type]
 var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 function formatSpecifier(specifier) {
@@ -24443,7 +24374,7 @@ function FormatSpecifier(specifier) {
 FormatSpecifier.prototype.toString = function () {
   return this.fill + this.align + this.sign + this.symbol + (this.zero ? "0" : "") + (this.width === undefined ? "" : Math.max(1, this.width | 0)) + (this.comma ? "," : "") + (this.precision === undefined ? "" : "." + Math.max(0, this.precision | 0)) + (this.trim ? "~" : "") + this.type;
 };
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatDecimal.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatDecimal.js
 /* harmony default export */ function formatDecimal(x) {
   return Math.abs(x = Math.round(x)) >= 1e21 ? x.toLocaleString("en").replace(/,/g, "") : x.toString(10);
 } // Computes the decimal coefficient and exponent of the specified number x with
@@ -24459,17 +24390,17 @@ function formatDecimalParts(x, p) {
 
   return [coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient, +x.slice(i + 1)];
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/exponent.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/exponent.js
 
 /* harmony default export */ function exponent(x) {
   return x = formatDecimalParts(Math.abs(x)), x ? x[1] : NaN;
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionPrefix.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/precisionPrefix.js
 
 /* harmony default export */ function precisionPrefix(step, value) {
   return Math.max(0, Math.max(-8, Math.min(8, Math.floor(exponent(value) / 3))) * 3 - exponent(Math.abs(step)));
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatGroup.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatGroup.js
 /* harmony default export */ function formatGroup(grouping, thousands) {
   return function (value, width) {
     for (var i = value.length, t = [], j = 0, g = grouping[0], length = 0; i > 0 && g > 0 && (length + g + 1 > width && (g = Math.max(1, width - length)), t.push(value.substring(i -= g, i + g)), !((length += g + 1) > width));) g = grouping[j = (j + 1) % grouping.length];
@@ -24477,7 +24408,7 @@ function formatDecimalParts(x, p) {
     return t.reverse().join(thousands);
   };
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatNumerals.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatNumerals.js
 /* harmony default export */ function formatNumerals(numerals) {
   return function (value) {
     return value.replace(/[0-9]/g, function (i) {
@@ -24485,7 +24416,7 @@ function formatDecimalParts(x, p) {
     });
   };
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTrim.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatTrim.js
 // Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
 /* harmony default export */ function formatTrim(s) {
   out: for (var i1, n = s.length, i = 1, i0 = -1; i < n; ++i) switch (s[i]) {
@@ -24504,7 +24435,7 @@ function formatDecimalParts(x, p) {
 
   return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatPrefixAuto.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatPrefixAuto.js
 
 var prefixExponent;
 /* harmony default export */ function formatPrefixAuto(x, p) {
@@ -24516,7 +24447,7 @@ var prefixExponent;
       n = coefficient.length;
   return i === n ? coefficient : i > n ? coefficient + Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + Array(1 - i).join("0") + formatDecimalParts(x, Math.max(0, p + i - 1))[0]; // less than 1y!
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatRounded.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatRounded.js
 
 /* harmony default export */ function formatRounded(x, p) {
   var d = formatDecimalParts(x, p);
@@ -24525,7 +24456,7 @@ var prefixExponent;
       exponent = d[1];
   return exponent < 0 ? "0." + Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + Array(exponent - coefficient.length + 2).join("0");
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTypes.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatTypes.js
 
 
 
@@ -24564,11 +24495,11 @@ var prefixExponent;
     return Math.round(_x).toString(16);
   }
 });
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/identity.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/identity.js
 /* harmony default export */ function src_identity(x) {
   return x;
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/locale.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/locale.js
 
 
 
@@ -24674,7 +24605,7 @@ var map = Array.prototype.map,
     }
   };
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/defaultLocale.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/defaultLocale.js
 
 var defaultLocale_locale;
 var defaultLocale_format;
@@ -24687,12 +24618,12 @@ defaultLocale_defaultLocale({
 function defaultLocale_defaultLocale(definition) {
   return defaultLocale_locale = src_locale(definition), defaultLocale_format = defaultLocale_locale.format, formatPrefix = defaultLocale_locale.formatPrefix, defaultLocale_locale;
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionRound.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/precisionRound.js
 
 /* harmony default export */ function precisionRound(step, max) {
   return step = Math.abs(step), max = Math.abs(max) - step, Math.max(0, exponent(max) - exponent(step)) + 1;
 }
-;// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionFixed.js
+;// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/precisionFixed.js
 
 /* harmony default export */ function precisionFixed(step) {
   return Math.max(0, -exponent(Math.abs(step)));
@@ -25357,7 +25288,7 @@ Basis.prototype = {
       case 3:
         _point(this, this._x1, this._y1);
 
-      // falls through
+      // proceed
 
       case 2:
         this._context.lineTo(this._x1, this._y1);
@@ -25378,7 +25309,7 @@ Basis.prototype = {
 
       case 2:
         this._point = 3, this._context.lineTo((5 * this._x0 + this._x1) / 6, (5 * this._y0 + this._y1) / 6);
-      // falls through
+      // proceed
 
       default:
         _point(this, x, y);
@@ -25492,7 +25423,7 @@ BasisOpen.prototype = {
 
       case 3:
         this._point = 4;
-      // falls through
+      // proceed
 
       default:
         _point(this, x, y);
@@ -25581,7 +25512,7 @@ Cardinal.prototype = {
 
       case 2:
         this._point = 3;
-      // falls through
+      // proceed
 
       default:
         cardinal_point(this, x, y);
@@ -25698,7 +25629,7 @@ CardinalOpen.prototype = {
 
       case 3:
         this._point = 4;
-      // falls through
+      // proceed
 
       default:
         cardinal_point(this, x, y);
@@ -25807,7 +25738,7 @@ CatmullRom.prototype = {
 
       case 2:
         this._point = 3;
-      // falls through
+      // proceed
 
       default:
         catmullRom_point(this, x, y);
@@ -25942,7 +25873,7 @@ CatmullRomOpen.prototype = {
 
       case 3:
         this._point = 4;
-      // falls through
+      // proceed
 
       default:
         catmullRom_point(this, x, y);
@@ -26184,7 +26115,7 @@ Linear.prototype = {
 
       case 1:
         this._point = 2;
-      // falls through
+      // proceed
 
       default:
         this._context.lineTo(x, y);
@@ -26221,7 +26152,7 @@ Step.prototype = {
 
       case 1:
         this._point = 2;
-      // falls through
+      // proceed
 
       default:
         {
@@ -26731,7 +26662,7 @@ function stepAfter(context) {
 
 
 /* harmony default export */ function src_selectAll(selector) {
-  return typeof selector === "string" ? new Selection([document.querySelectorAll(selector)], [document.documentElement]) : new Selection([array(selector)], root);
+  return typeof selector === "string" ? new Selection([document.querySelectorAll(selector)], [document.documentElement]) : new Selection([selector == null ? [] : array(selector)], root);
 }
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/text.ts
 /**
@@ -29962,11 +29893,14 @@ util_extend(regions, {
     }
   }
 });
+;// CONCATENATED MODULE: ./node_modules/d3-axis/src/array.js
+var slice = Array.prototype.slice;
 ;// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ function d3_axis_src_identity(x) {
   return x;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-axis/src/axis.js
+
 
 var axis_top = 1,
     right = 2,
@@ -30039,11 +29973,11 @@ function axis_axis(orient, scale) {
   return axis.scale = function (_) {
     return arguments.length ? (scale = _, axis) : scale;
   }, axis.ticks = function () {
-    return tickArguments = Array.from(arguments), axis;
+    return tickArguments = slice.call(arguments), axis;
   }, axis.tickArguments = function (_) {
-    return arguments.length ? (tickArguments = _ == null ? [] : Array.from(_), axis) : tickArguments.slice();
+    return arguments.length ? (tickArguments = _ == null ? [] : slice.call(_), axis) : tickArguments.slice();
   }, axis.tickValues = function (_) {
-    return arguments.length ? (tickValues = _ == null ? null : Array.from(_), axis) : tickValues && tickValues.slice();
+    return arguments.length ? (tickValues = _ == null ? null : slice.call(_), axis) : tickValues && tickValues.slice();
   }, axis.tickFormat = function (_) {
     return arguments.length ? (tickFormat = _, axis) : tickFormat;
   }, axis.tickSize = function (_) {
@@ -33980,7 +33914,7 @@ var api = [api_axis, api_category, grid_x, grid_y, flow, group, api_regions, x];
 var internal = [Axis, clip, eventrect, interactions_flow, grid, region, size_axis];
 var options = [data_axis, Options_axis_axis, common_grid];
 ;// CONCATENATED MODULE: ./node_modules/d3-shape/src/array.js
-var slice = Array.prototype.slice;
+var array_slice = Array.prototype.slice;
 /* harmony default export */ function d3_shape_src_array(x) {
   return typeof x === "object" && "length" in x ? x // Array, TypedArray, NodeList, array-like
   : Array.from(x); // Map, Set, iterable, string, or anything else
@@ -37819,9 +37753,7 @@ function defaultConstrain(transform, extent, translateExtent) {
 
 /* harmony default export */ function d3_zoom_src_zoom() {
   function zoom(selection) {
-    selection.property("__zoom", defaultTransform).on("wheel.zoom", wheeled, {
-      passive: !1
-    }).on("mousedown.zoom", mousedowned).on("dblclick.zoom", dblclicked).filter(touchable).on("touchstart.zoom", touchstarted).on("touchmove.zoom", touchmoved).on("touchend.zoom touchcancel.zoom", touchended).style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+    selection.property("__zoom", defaultTransform).on("wheel.zoom", wheeled).on("mousedown.zoom", mousedowned).on("dblclick.zoom", dblclicked).filter(touchable).on("touchstart.zoom", touchstarted).on("touchmove.zoom", touchmoved).on("touchend.zoom touchcancel.zoom", touchended).style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
   }
 
   function scale(transform, k) {
@@ -37915,10 +37847,10 @@ function defaultConstrain(transform, extent, translateExtent) {
     for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) args[_key2 - 1] = arguments[_key2];
 
     if (!touchending && filter.apply(this, arguments)) {
-      var currentTarget = event.currentTarget,
-          g = gesture(this, args, !0).event(event),
+      var g = gesture(this, args, !0).event(event),
           v = src_select(event.view).on("mousemove.zoom", mousemoved, !0).on("mouseup.zoom", mouseupped, !0),
           p = src_pointer(event, currentTarget),
+          currentTarget = event.currentTarget,
           x0 = event.clientX,
           y0 = event.clientY;
       nodrag(event.view), src_noevent_nopropagation(event), g.mouse = [p, this.__zoom.invert(p)], interrupt(this), g.start();
@@ -39359,7 +39291,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.1.1",
+  version: "3.1.2",
 
   /**
    * Generate chart
@@ -39487,7 +39419,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.1.1
+ * @version 3.1.2
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
@@ -39539,6 +39471,18 @@ module.exports = __webpack_require__(394);
 /******/ 	}
 /******/ 	
 /************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	!function() {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = function(module) {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				function() { return module['default']; } :
+/******/ 				function() { return module; };
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	}();
+/******/ 	
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	!function() {
 /******/ 		// define getter functions for harmony exports
