@@ -30,9 +30,7 @@ const config = {
 		filename: `billboardjs-plugin-[name].js`,
 		library: ["bb", "plugin", "[name]"],
 		libraryExport: "default",
-		libraryTarget: "umd",
-		umdNamedDefine: true,
-		globalObject: "this"
+		publicPath: "/dist/plugin"
 	},
 	plugins: [
 		new webpack.BannerPlugin({
