@@ -58,13 +58,11 @@ module.exports = (common, env) => {
 		}));
 	}
 
-	const res = mergeWithCustomize({
+	return mergeWithCustomize({
 		customizeObject: customizeObject({
 			entry: "replace",
 			output: "merge",
 			module: "replace"
 		})
 	})(common, config);
-console.log(res);
-	return res;
 };
