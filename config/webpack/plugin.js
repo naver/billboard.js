@@ -30,9 +30,7 @@ const config = {
 		filename: `billboardjs-plugin-[name].js`,
 		library: ["bb", "plugin", "[name]"],
 		libraryExport: "default",
-		libraryTarget: "umd",
-		umdNamedDefine: true,
-		globalObject: "this"
+		publicPath: "/dist/plugin"
 	},
 	plugins: [
 		new webpack.BannerPlugin({
@@ -63,7 +61,7 @@ module.exports = (common, env) => {
 	return mergeWithCustomize({
 		customizeObject: customizeObject({
 			entry: "replace",
-			output: "replace",
+			output: "merge",
 			module: "replace"
 		})
 	})(common, config);
