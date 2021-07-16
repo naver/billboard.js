@@ -11,51 +11,33 @@
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-voronoi"), require("d3-polygon"), require("d3-selection"), require("d3-brush"));
+		module.exports = factory(require("d3-selection"), require("d3-brush"));
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-voronoi", "d3-polygon", "d3-selection", "d3-brush"], factory);
+		define("bb", ["d3-selection", "d3-brush"], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-voronoi"), require("d3-polygon"), require("d3-selection"), require("d3-brush"));
+		exports["bb"] = factory(require("d3-selection"), require("d3-brush"));
 	else
-		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["textoverlap"] = factory(root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__6__) {
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["tableview"] = factory(root["d3"], root["d3"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__6__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
-/******/ 	var __webpack_modules__ = ([
-/* 0 */,
-/* 1 */
-/***/ (function(module) {
+/******/ 	var __webpack_modules__ = ({
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
-
-/***/ }),
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */
+/***/ 6:
 /***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__6__;
 
 /***/ }),
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */
+
+/***/ 1:
 /***/ (function(module) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
-
-/***/ }),
-/* 12 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 
 /***/ })
-/******/ 	]);
+
+/******/ 	});
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
@@ -106,9 +88,24 @@ var __webpack_exports__ = {};
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "default": function() { return /* binding */ TextOverlap; }
+  "default": function() { return /* binding */ TableView; }
 });
 
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
 function _assertThisInitialized(self) {
   if (self === void 0) {
@@ -133,27 +130,200 @@ function _inheritsLoose(subClass, superClass) {
   subClass.prototype.constructor = subClass;
   _setPrototypeOf(subClass, superClass);
 }
-// EXTERNAL MODULE: external {"commonjs":"d3-voronoi","commonjs2":"d3-voronoi","amd":"d3-voronoi","root":"d3"}
-var external_commonjs_d3_voronoi_commonjs2_d3_voronoi_amd_d3_voronoi_root_d3_ = __webpack_require__(11);
-// EXTERNAL MODULE: external {"commonjs":"d3-polygon","commonjs2":"d3-polygon","amd":"d3-polygon","root":"d3"}
-var external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_ = __webpack_require__(12);
+;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Base class to generate billboard.js plugin
+ * @class Plugin
+ */
+
+/**
+ * Version info string for plugin
+ * @name version
+ * @static
+ * @memberof Plugin
+ * @type {string}
+ * @example
+ *   bb.plugin.stanford.version;  // ex) 1.9.0
+ */
+var Plugin = /*#__PURE__*/function () {
+  /**
+   * Constructor
+   * @param {Any} options config option object
+   * @private
+   */
+  function Plugin(options) {
+    options === void 0 && (options = {}), this.$$ = void 0, this.options = void 0, this.options = options;
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+
+
+  var _proto = Plugin.prototype;
+  return _proto.$beforeInit = function $beforeInit() {}
+  /**
+   * Lifecycle hook for 'init' phase.
+   * @private
+   */
+  , _proto.$init = function $init() {}
+  /**
+   * Lifecycle hook for 'afterInit' phase.
+   * @private
+   */
+  , _proto.$afterInit = function $afterInit() {}
+  /**
+   * Lifecycle hook for 'redraw' phase.
+   * @private
+   */
+  , _proto.$redraw = function $redraw() {}
+  /**
+   * Lifecycle hook for 'willDestroy' phase.
+   * @private
+   */
+  , _proto.$willDestroy = function $willDestroy() {
+    var _this = this;
+
+    Object.keys(this).forEach(function (key) {
+      _this[key] = null, delete _this[key];
+    });
+  }, Plugin;
+}();
+
+Plugin.version = "3.1.2";
+
+;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
+/**
+ * Copyright (c) 2021 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * TableView plugin option class
+ * @class TableviewOptions
+ * @param {Options} options TableView plugin options
+ * @augments Plugin
+ * @returns {TableviewOptions}
+ * @private
+ */
+var Options = function () {
+  return {
+    /**
+     * Set tableview holder selector.
+     * - **NOTE:** If not set, will append new holder element dynamically right after chart element.
+     * @name selector
+     * @memberof plugin-tableview
+     * @type {string}
+     * @default undefined
+     * @example
+     *   selector: "#table-holder"
+     */
+    selector: undefined,
+
+    /**
+     * Set category title text
+     * @name categoryTitle
+     * @memberof plugin-tableview
+     * @type {string}
+     * @default "Category"
+     * @example
+     *   categoryTitle: "#table-holder"
+     */
+    categoryTitle: "Category",
+
+    /**
+     * Set category text format function.
+     * @name categoryFormat
+     * @memberof plugin-tableview
+     * @type {Function}
+     * @returns {string}
+     * @default function(v) { // will return formatted value according x Axis type }}
+     * @example
+     *   categoryFormat: "#table-holder"
+     */
+    categoryFormat: function categoryFormat(v) {
+      var category = v;
+      return this.$$.axis.isCategorized() ? category = this.$$.categoryName(v) : this.$$.axis.isTimeSeries() && (category = v.toLocaleDateString()), category;
+    },
+
+    /**
+     * Set tableview holder class name.
+     * @name class
+     * @memberof plugin-tableview
+     * @type {string}
+     * @default undefined
+     * @example
+     *   class: "table-class-name"
+     */
+    class: undefined,
+
+    /**
+     * Set to apply default style(`.bb-tableview`) to tableview element.
+     * @name style
+     * @memberof plugin-tableview
+     * @type {boolean}
+     * @default true
+     * @example
+     *   style: false
+     */
+    style: !0,
+
+    /**
+     * Set tableview title text.
+     * - **NOTE:** If set [title.text](https://naver.github.io/billboard.js/release/latest/doc/Options.html#.title), will be used when this option value is empty.
+     * @name title
+     * @memberof plugin-tableview
+     * @type {string}
+     * @default undefined
+     * @example
+     *   title: "Table Title Text"
+     */
+    title: undefined,
+
+    /**
+     * Update tableview from data visibility update(ex. legend toggle).
+     * @name updateOnToggle
+     * @memberof plugin-tableview
+     * @type {boolean}
+     * @default true
+     * @example
+     *   legendToggleUpdate: false
+     */
+    updateOnToggle: !0
+  };
+};
+
+
+;// CONCATENATED MODULE: ./src/Plugin/tableview/const.ts
+/**
+ * Copyright (c) 2021 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Constants values for plugin option
+ * @ignore
+ */
+var defaultStyle = {
+  id: "__tableview-style__",
+  class: "bb-tableview",
+  rule: ".bb-tableview {\n\t\tborder-collapse:collapse;\n\t\tborder-spacing:0;\n\t\tbackground:#fff;\n\t\tmin-width:100%;\n\t\tmargin-top:10px;\n\t\tfont-family:sans-serif;\n\t\tfont-size:.9em;\n\t}\n\t.bb-tableview tr:hover {\n\t\tbackground:#eef7ff;\n\t}\n\t.bb-tableview thead tr {\n\t\tbackground:#f8f8f8;\n\t}\n\t.bb-tableview caption,.bb-tableview td,.bb-tableview th {\n\t\ttext-align: center;\n\t\tborder:1px solid silver;\n\t\tpadding:.5em;\n\t}\n\t.bb-tableview caption {\n\t\tfont-size:1.1em;\n\t\tfont-weight:700;\n\t\tmargin-bottom: -1px;\n\t}"
+},
+    tpl = {
+  body: "<caption>{=title}</caption>\n\t\t<thead><tr>{=thead}</tr></thead>\n\t\t<tbody>{=tbody}</tbody>",
+  thead: "<th scope=\"col\">{=title}</th>",
+  tbodyHeader: "<th scope=\"row\">{=value}</th>",
+  tbody: "<td>{=value}</td>"
+}; // template
+
+
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(6);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
@@ -959,132 +1129,17 @@ function loadConfig(config) {
     target = config, keys = key.split("_"), read = find(), isDefined(read) && (thisConfig[key] = read);
   });
 }
-;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
+;// CONCATENATED MODULE: ./src/Plugin/tableview/index.ts
+
+
+
+
+function tableview_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function tableview_objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? tableview_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : tableview_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
 
 /**
- * Base class to generate billboard.js plugin
- * @class Plugin
- */
-
-/**
- * Version info string for plugin
- * @name version
- * @static
- * @memberof Plugin
- * @type {string}
- * @example
- *   bb.plugin.stanford.version;  // ex) 1.9.0
- */
-var Plugin = /*#__PURE__*/function () {
-  /**
-   * Constructor
-   * @param {Any} options config option object
-   * @private
-   */
-  function Plugin(options) {
-    options === void 0 && (options = {}), this.$$ = void 0, this.options = void 0, this.options = options;
-  }
-  /**
-   * Lifecycle hook for 'beforeInit' phase.
-   * @private
-   */
-
-
-  var _proto = Plugin.prototype;
-  return _proto.$beforeInit = function $beforeInit() {}
-  /**
-   * Lifecycle hook for 'init' phase.
-   * @private
-   */
-  , _proto.$init = function $init() {}
-  /**
-   * Lifecycle hook for 'afterInit' phase.
-   * @private
-   */
-  , _proto.$afterInit = function $afterInit() {}
-  /**
-   * Lifecycle hook for 'redraw' phase.
-   * @private
-   */
-  , _proto.$redraw = function $redraw() {}
-  /**
-   * Lifecycle hook for 'willDestroy' phase.
-   * @private
-   */
-  , _proto.$willDestroy = function $willDestroy() {
-    var _this = this;
-
-    Object.keys(this).forEach(function (key) {
-      _this[key] = null, delete _this[key];
-    });
-  }, Plugin;
-}();
-
-Plugin.version = "3.1.2";
-
-;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * TextOverlap plugin option class
- * @class TextOverlapOptions
- * @param {Options} options TextOverlap plugin options
- * @augments Plugin
- * @returns {TextOverlapOptions}
- * @private
- */
-var Options = function () {
-  return {
-    /**
-     * Set selector string for target text nodes
-     * @name selector
-     * @memberof plugin-textoverlap
-     * @type {string}
-     * @default ".bb-texts text"
-     * @example
-     *  // selector for data label text nodes
-     * selector: ".bb-texts text"
-     */
-    selector: ".bb-texts text",
-
-    /**
-     * Set extent of label overlap prevention
-     * @name extent
-     * @memberof plugin-textoverlap
-     * @type {number}
-     * @default 1
-     * @example
-     * 	extent: 1
-     */
-    extent: 1,
-
-    /**
-     * Set minimum area needed to show a data label
-     * @name area
-     * @memberof plugin-textoverlap
-     * @type {number}
-     * @default 0
-     * @example
-     * 	area: 0
-     */
-    area: 0
-  };
-};
-
-
-;// CONCATENATED MODULE: ./src/Plugin/textoverlap/index.ts
-
-
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
+ * Copyright (c) 2021 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -1092,120 +1147,139 @@ var Options = function () {
 
 
 
-
 /**
- * TextOverlap plugin<br>
- * Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram).
+ * Table view plugin.<br>
+ * Generates table view for bound dataset.
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
  *   - Non required modules from billboard.js core, need to be installed separately.
- * - **Required modules:**
- *   - [d3-selection](https://github.com/d3/d3-selection)
- *   - [d3-polygon](https://github.com/d3/d3-polygon)
- *   - [d3-voronoi](https://github.com/d3/d3-voronoi)
- * @class plugin-textoverlap
- * @requires d3-selection
- * @requires d3-polygon
- * @requires d3-voronoi
- * @param {object} options TextOverlap plugin options
+ * @class plugin-tableview
+ * @param {object} options table view plugin options
  * @augments Plugin
- * @returns {TextOverlap}
+ * @returns {TableView}
  * @example
  * // Plugin must be loaded before the use.
- * <script src="$YOUR_PATH/plugin/billboardjs-plugin-textoverlap.js"></script>
+ * <script src="$YOUR_PATH/plugin/billboardjs-plugin-tableview.js"></script>
  *
  *  var chart = bb.generate({
- *     data: {
- *     	  columns: [ ... ]
- *     }
  *     ...
  *     plugins: [
- *        new bb.plugin.textoverlap({
- *          selector: ".bb-texts text",
- *          extent: 8,
- *          area: 3
+ *        new bb.plugin.tableview({
+ *          selector: "#my-table-view",
+ *          categoryTitle: "Category",
+ *          categoryFormat: function(v) {
+ *              // do some transformation
+ *              ...
+ *              return v;
+ *          },
+ *          class: "my-class-name",
+ *          style: true,
+ *          title: "My Data List",
+ *          updateOnToggle: false
+ *        }),
  *     ]
  *  });
  * @example
- *	import {bb} from "billboard.js";
- * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap.esm";
+ * import {bb} from "billboard.js";
+ * import TableView from "billboard.js/dist/billboardjs-plugin-tableview.esm";
  *
  * bb.generate({
+ *     ...
  *     plugins: [
- *        new TextOverlap({ ... })
+ *        new TableView({ ... })
  *     ]
  * })
  */
 
-var TextOverlap = /*#__PURE__*/function (_Plugin) {
-  function TextOverlap(options) {
+var TableView = /*#__PURE__*/function (_Plugin) {
+  function TableView(options) {
     var _this;
 
-    return _this = _Plugin.call(this, options) || this, _this.config = void 0, _this.config = new Options(), _assertThisInitialized(_this) || _assertThisInitialized(_this);
+    return _this = _Plugin.call(this, options) || this, _this.config = void 0, _this.element = void 0, _this.config = new Options(), _assertThisInitialized(_this) || _assertThisInitialized(_this);
   }
 
-  _inheritsLoose(TextOverlap, _Plugin);
+  _inheritsLoose(TableView, _Plugin);
 
-  var _proto = TextOverlap.prototype;
-  return _proto.$init = function $init() {
+  var _proto = TableView.prototype;
+  return _proto.$beforeInit = function $beforeInit() {
     loadConfig.call(this, this.options);
-  }, _proto.$redraw = function $redraw() {
-    var text = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.selectAll)(this.config.selector);
-    text.empty() || this.preventLabelOverlap(text);
+  }, _proto.$init = function $init() {
+    var _element$classList,
+        _this$config = this.config,
+        className = _this$config.class,
+        selector = _this$config.selector,
+        style = _this$config.style,
+        element = document.querySelector(selector || "." + (className || defaultStyle.class));
+
+    if (!element) {
+      var chart = this.$$.$el.chart.node();
+      element = document.createElement("table"), chart.parentNode.insertBefore(element, chart.nextSibling);
+    }
+
+    if (element.tagName !== "TABLE") {
+      var table = document.createElement("table");
+      element.appendChild(table), element = table;
+    } // append default css style
+
+
+    if (style && !document.getElementById(defaultStyle.id)) {
+      var s = document.createElement("style");
+      s.id = defaultStyle.id, s.innerHTML = defaultStyle.rule, (document.head || document.getElementsByTagName("head")[0]).appendChild(s);
+    }
+
+    (_element$classList = element.classList).add.apply(_element$classList, [style && defaultStyle.class, className].filter(Boolean)), this.element = element;
   }
   /**
-   * Generates the voronoi layout for data labels
-   * @param {object} data Indices values
-   * @returns {object} Voronoi layout points and corresponding Data points
+   * Generate table
    * @private
    */
-  , _proto.generateVoronoi = function generateVoronoi(data) {
-    var $$ = this.$$,
-        scale = $$.scale,
-        _map = ["x", "y"].map(function (v) {
-      return scale[v].domain();
+  , _proto.generateTable = function generateTable() {
+    var _this2 = this,
+        $$ = this.$$,
+        config = this.config,
+        element = this.element,
+        dataToShow = $$.filterTargetsToShow($$.data.targets),
+        thead = tplProcess(tpl.thead, {
+      title: dataToShow.length ? this.config.categoryTitle : ""
     }),
-        min = _map[0],
-        max = _map[1],
-        _ref = [max[0], min[1]];
+        tbody = "",
+        rows = [];
 
-    return min[1] = _ref[0], max[0] = _ref[1], (0,external_commonjs_d3_voronoi_commonjs2_d3_voronoi_amd_d3_voronoi_root_d3_.voronoi)().extent([min, max]).polygons(data);
-  }
-  /**
-   * Set text label's position to preventg overlap.
-   * @param {d3Selection} text target text selection
-   * @private
-   */
-  , _proto.preventLabelOverlap = function preventLabelOverlap(text) {
-    var _this$config = this.config,
-        extent = _this$config.extent,
-        area = _this$config.area,
-        cells = this.generateVoronoi(text.data().map(function (v) {
-      return [v.x, v.value];
-    })),
-        i = 0;
-    text.each(function () {
-      var cell = cells[i++];
-
-      if (cell && this) {
-        var _cell$data = cell.data,
-            x = _cell$data[0],
-            y = _cell$data[1],
-            _d3PolygonCentroid = (0,external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_.polygonCentroid)(cell),
-            cx = _d3PolygonCentroid[0],
-            cy = _d3PolygonCentroid[1],
-            angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2),
-            xTranslate = extent * (angle === 0 ? 1 : -1),
-            yTranslate = angle === -1 ? -extent : extent + 5,
-            txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
-
-        (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this) // @ts-ignore
-        .attr("display", (0,external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_.polygonArea)(cell) < area ? "none" : null).attr("text-anchor", txtAnchor).attr("dy", "0." + (angle === 1 ? 71 : 35) + "em").attr("transform", "translate(" + xTranslate + ", " + yTranslate + ")");
-      }
+    dataToShow.forEach(function (v) {
+      thead += tplProcess(tpl.thead, {
+        title: v.id
+      }), v.values.forEach(function (d, i) {
+        rows[i] || (rows[i] = [d.x]), rows[i].push(d.value);
+      });
+    }), rows.forEach(function (v) {
+      tbody += "<tr>" + v.map(function (d, i) {
+        return tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
+          value: i === 0 ? config.categoryFormat.bind(_this2)(d) : isNumber(d) ? d.toLocaleString() : ""
+        });
+      }).join("") + "</tr>";
     });
-  }, TextOverlap;
+    var r = tplProcess(tpl.body, tableview_objectSpread(tableview_objectSpread({}, config), {}, {
+      title: config.title || $$.config.title_text || "",
+      thead: thead,
+      tbody: tbody
+    })).replace(/<[^>]+><\/[^>]+>/g, "");
+    element.innerHTML = r;
+  }, _proto.$redraw = function $redraw() {
+    var state = this.$$.state,
+        doNotUpdate = state.resizing || !this.config.updateOnToggle && state.toggling;
+    doNotUpdate || this.generateTable();
+  }, _proto.$willDestroy = function $willDestroy() {
+    // remove default css style when left one chart instance
+    if (this.element.parentNode.removeChild(this.element), this.$$.charts.length === 1) {
+      var _s$parentNode,
+          s = document.getElementById(defaultStyle.id);
+
+      s == null || (_s$parentNode = s.parentNode) == null ? void 0 : _s$parentNode.removeChild(s);
+    }
+  }, TableView;
 }(Plugin);
 
+TableView.version = "0.0.1";
 
 }();
 __webpack_exports__ = __webpack_exports__.default;
