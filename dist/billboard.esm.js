@@ -10435,9 +10435,11 @@ var AxisRendererHelper = /** @class */ (function () {
     };
     AxisRendererHelper.prototype.transitionise = function (selection) {
         var config = this.config;
-        var transitionSelection = config.withoutTransition ?
-            selection.interrupt() : selection.transition();
-        if (config.transition) {
+        var transitionSelection = selection;
+        if (config.withoutTransition) {
+            transitionSelection = selection.interrupt();
+        }
+        else if (config.transition || !this.owner.params.noTransition) {
             // prevent for 'transition not found' case
             // https://github.com/naver/billboard.js/issues/2140
             try {

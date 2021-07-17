@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.2-nightly-20210716004504
+ * @version 3.1.2-nightly-20210717004505
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.1.0
@@ -30121,8 +30121,8 @@ var AxisRendererHelper = /*#__PURE__*/function () {
     return isDefined(formatted) ? formatted : "";
   }, _proto.transitionise = function transitionise(selection) {
     var config = this.config,
-        transitionSelection = config.withoutTransition ? selection.interrupt() : selection.transition();
-    if (config.transition) // prevent for 'transition not found' case
+        transitionSelection = selection;
+    if (config.withoutTransition) transitionSelection = selection.interrupt();else if (config.transition || !this.owner.params.noTransition) // prevent for 'transition not found' case
       // https://github.com/naver/billboard.js/issues/2140
       try {
         transitionSelection = selection.transition(config.transition);
