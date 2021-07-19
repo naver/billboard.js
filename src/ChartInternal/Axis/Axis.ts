@@ -82,7 +82,7 @@ class Axis {
 		let type = "linear";
 
 		if (this.isTimeSeries(id)) {
-			type = "time";
+			type = this.owner.config.axis_x_localtime ? "time" : "utc";
 		} else if (this.isLog(id)) {
 			type = "log";
 		}

@@ -2894,4 +2894,49 @@ describe("AXIS", function() {
 			});
 		});
 	});
+
+	describe("Axis x type localtime", () => {
+		before(() => {
+			args = {
+				data: {
+					x: 'x',
+					columns: [
+						['x', 1356998400000, 1357084800000, 1357171200000, 1357257600000, 1357344000000, 1357430400000],
+						['data1', 30, 200, 100, 400, 150],
+						['data2', 130, 340, 200, 500, 250, 350]
+					],
+					type: "line"
+				  },
+				  axis: {
+					  y: {
+						  show: false
+					  },
+					x: {
+						localtime: false,
+						type: "timeseries",
+						tick: {
+							fit: false
+						}
+					}
+				}
+			};
+		});
+
+		it("check if datetime treated as UTC", () => {
+			const res = [];
+			const expected = [
+				['12 AM', '12 PM', '12 AM', '12 PM', '12 AM', '12 PM', '12 AM', '12 PM', '12 AM', '12 PM', '12 AM'],
+				['2013', '12 PM', 'Jan 02', '12 PM', 'Jan 03', '12 PM', 'Jan 04', '12 PM', 'Jan 05', '12 PM', 'Jan 06']
+			];
+			
+			expect(chart.internal.scale.x.type).to.be.equal("utc");
+
+			chart.internal.$el.axis.x.selectAll(".tick text tspan")
+				.each(function() {
+					res.push(this.innerHTML);
+				});
+
+ 			expect(res.every((v, i) => v === expected[0][i]) || res.every((v, i) => v === expected[1][i])).to.be.true;
+		});
+	});
 });
