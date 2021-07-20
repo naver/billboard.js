@@ -4,6 +4,7 @@
  */
 import {
 	scaleTime as d3ScaleTime,
+	scaleUtc as d3ScaleUtc,
 	scaleLinear as d3ScaleLinear,
 	scaleLog as d3ScaleLog,
 	scaleSymlog as d3ScaleSymlog
@@ -25,7 +26,8 @@ export function getScale(type = "linear", min = 0, max = 1): any {
 		linear: d3ScaleLinear,
 		log: d3ScaleSymlog,
 		_log: d3ScaleLog,
-		time: d3ScaleTime
+		time: d3ScaleTime,
+		utc: d3ScaleUtc
 	})[type]();
 
 	scale.type = type;
