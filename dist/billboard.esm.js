@@ -12,7 +12,7 @@ import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { brushSelection, brushY, brushX } from 'd3-brush';
 import { csvParseRows, csvParse, tsvParseRows, tsvParse } from 'd3-dsv';
 import { drag as drag$1 } from 'd3-drag';
-import { scaleOrdinal, scaleLinear, scaleSymlog, scaleLog, scaleTime } from 'd3-scale';
+import { scaleOrdinal, scaleLinear, scaleSymlog, scaleLog, scaleTime, scaleUtc } from 'd3-scale';
 import { transition } from 'd3-transition';
 import { curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen, curveCatmullRom, curveCatmullRomClosed, curveCatmullRomOpen, curveMonotoneX, curveMonotoneY, curveNatural, curveLinearClosed, curveLinear, curveStep, curveStepAfter, curveStepBefore, pie as pie$1, arc, area as area$1, line as line$1 } from 'd3-shape';
 import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
@@ -5762,7 +5762,8 @@ function getScale(type, min, max) {
         linear: scaleLinear,
         log: scaleSymlog,
         _log: scaleLog,
-        time: scaleTime
+        time: scaleTime,
+        utc: scaleUtc
     })[type]();
     scale.type = type;
     /_?log/.test(type) && scale.clamp(true);
@@ -10914,7 +10915,7 @@ var Axis = /** @class */ (function () {
         if (id === void 0) { id = "x"; }
         var type = "linear";
         if (this.isTimeSeries(id)) {
-            type = "time";
+            type = this.owner.config.axis_x_localtime ? "time" : "utc";
         }
         else if (this.isLog(id)) {
             type = "log";

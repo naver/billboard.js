@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.2-nightly-20210717004505
+ * @version 3.1.2-nightly-20210720004531
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.1.0
@@ -25077,6 +25077,14 @@ function calendar(ticks, tickInterval, year, month, week, day, hour, minute, sec
 function time() {
   return initRange.apply(calendar(timeTicks, timeTickInterval, src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
 }
+;// CONCATENATED MODULE: ./node_modules/d3-scale/src/utcTime.js
+
+
+
+
+function utcTime() {
+  return initRange.apply(calendar(utcTicks, utcTickInterval, src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute, src_second, utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
+}
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/scale.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -25099,7 +25107,8 @@ function getScale(type, min, max) {
     linear: linear_linear,
     log: symlog,
     _log: log,
-    time: time
+    time: time,
+    utc: utcTime
   }[type]();
   return scale.type = type, /_?log/.test(type) && scale.clamp(!0), scale.range([min, max]);
 }
@@ -30462,7 +30471,7 @@ var Axis_Axis = /*#__PURE__*/function () {
   }, _proto.getAxisType = function getAxisType(id) {
     id === void 0 && (id = "x");
     var type = "linear";
-    return this.isTimeSeries(id) ? type = "time" : this.isLog(id) && (type = "log"), type;
+    return this.isTimeSeries(id) ? type = this.owner.config.axis_x_localtime ? "time" : "utc" : this.isLog(id) && (type = "log"), type;
   }, _proto.init = function init() {
     var _this = this,
         $$ = this.owner,

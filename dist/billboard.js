@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.2-nightly-20210717004505
+ * @version 3.1.2-nightly-20210720004531
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5559,7 +5559,8 @@ function getScale(type, min, max) {
     linear: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleLinear,
     log: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSymlog,
     _log: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleLog,
-    time: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleTime
+    time: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleTime,
+    utc: external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleUtc
   }[type]();
   return scale.type = type, /_?log/.test(type) && scale.clamp(!0), scale.range([min, max]);
 }
@@ -9896,7 +9897,7 @@ var Axis_Axis = /*#__PURE__*/function () {
   }, _proto.getAxisType = function getAxisType(id) {
     id === void 0 && (id = "x");
     var type = "linear";
-    return this.isTimeSeries(id) ? type = "time" : this.isLog(id) && (type = "log"), type;
+    return this.isTimeSeries(id) ? type = this.owner.config.axis_x_localtime ? "time" : "utc" : this.isLog(id) && (type = "log"), type;
   }, _proto.init = function init() {
     var _this = this,
         $$ = this.owner,
