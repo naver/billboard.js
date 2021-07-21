@@ -891,17 +891,17 @@ export interface LegendOptions {
 		/**
 		 * Set click event handler to the legend item.
 		 */
-		onclick?(this: Chart, id: DataItem): void;
+		onclick?(this: Chart, id: string): void;
 
 		/**
 		 * Set mouseover event handler to the legend item.
 		 */
-		onover?(this: Chart, id: DataItem): void;
+		onover?(this: Chart, id: string): void;
 
 		/**
 		 * Set mouseout event handler to the legend item.
 		 */
-		onout?(this: Chart, id: DataItem): void;
+		onout?(this: Chart, id: string): void;
 	};
 
 	/**
