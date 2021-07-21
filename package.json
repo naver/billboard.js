@@ -67,18 +67,18 @@
 	"readmeFilename": "README.md",
 	"dependencies": {
 		"d3-axis": "^2.1.0",
-		"d3-brush": "^2.1.0",
-		"d3-color": "^2.0.0",
+		"d3-brush": "^3.0.0",
+		"d3-color": "^3.0.0",
 		"d3-drag": "^2.0.0",
 		"d3-dsv": "^2.0.0",
 		"d3-ease": "^2.0.0",
-		"d3-interpolate": "^2.0.1",
-		"d3-scale": "^3.3.0",
+		"d3-interpolate": "^3.0.0",
+		"d3-scale": "^4.0.0",
 		"d3-selection": "^2.0.0",
 		"d3-shape": "^2.1.0",
 		"d3-time-format": "^3.0.0",
-		"d3-transition": "^2.0.0",
-		"d3-zoom": "^2.0.0"
+		"d3-transition": "^3.0.0",
+		"d3-zoom": "^3.0.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.14.8",
