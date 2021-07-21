@@ -85,8 +85,9 @@ export default {
 	},
 
 	getTargetSelectorSuffix(targetId?: string | number): string {
-		return targetId || targetId === 0 ?
-			`-${targetId}`.replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-") : "";
+		const targetStr = targetId || targetId === 0 ? `-${targetId}` : "";
+
+		return targetStr.replace(/([\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\])/g, "-");
 	},
 
 	selectorTarget(id: string, prefix?: string): string {

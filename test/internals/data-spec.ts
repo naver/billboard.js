@@ -270,10 +270,6 @@ describe("DATA", () => {
 			};
 		});
 
-		it("should return false in isOrderAsc and isOrderDesc functions", () => {
-			expect(chart.internal.isOrderAsc() || chart.internal.isOrderDesc()).to.be.equal(false);
-		});
-
 		it("set options data.order=desc", () => {
 			args.data.order = "desc";
 		});
