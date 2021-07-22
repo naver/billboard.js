@@ -1739,6 +1739,13 @@ describe("AXIS", function() {
 				expect(ticks.size()).to.be.equal(10);
 			});
 
+			it("set option data.type='bar'", () => {
+				args.data.type = "bar";
+			});
+
+			it("bar type with tick.fit=false, shouldn't throw error", () => {
+				expect(true).to.be.ok;
+			});
 		});
 	});
 
