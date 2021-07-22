@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.2-nightly-20210720004531
+ * @version 3.1.2-nightly-20210722004525
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.1.0
@@ -15618,8 +15618,7 @@ function attrFunctionNS(fullname, value) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/window.js
 /* harmony default export */ function src_window(node) {
-  return node.ownerDocument && node.ownerDocument.defaultView || // node is a Node
-  node.document && node // node is a Window
+  return node.ownerDocument && node.ownerDocument.defaultView || node.document && node // node is a Window
   || node.defaultView; // node is a Document
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/style.js
@@ -18830,9 +18829,7 @@ function one(b) {
   // Coerce inputs to strings.
 
   // Interpolate pairs of numbers in a & b.
-  for (a += "", b += ""; (am = reA.exec(a)) && (bm = reB.exec(b));) (bs = bm.index) > bi && (bs = b.slice(bi, bs), s[i] ? s[i] += bs : // coalesce with previous string
-  s[++i] = bs), (am = am[0]) === (bm = bm[0]) ? s[i] ? s[i] += bm : // coalesce with previous string
-  s[++i] = bm : (s[++i] = null, q.push({
+  for (a += "", b += ""; (am = reA.exec(a)) && (bm = reB.exec(b));) (bs = bm.index) > bi && (bs = b.slice(bi, bs), s[i] ? s[i] += bs : s[++i] = bs), (am = am[0]) === (bm = bm[0]) ? s[i] ? s[i] += bm : s[++i] = bm : (s[++i] = null, q.push({
     i: i,
     x: number(am, bm)
   })), bi = reB.lastIndex; // Add remains of b.
@@ -18840,8 +18837,7 @@ function one(b) {
 
   // Special optimization for only a single match.
   // Otherwise, interpolate each of the numbers and rejoin the string.
-  return bi < b.length && (bs = b.slice(bi), s[i] ? s[i] += bs : // coalesce with previous string
-  s[++i] = bs), s.length < 2 ? q[0] ? one(q[0].x) : zero(b) : (b = q.length, function (t) {
+  return bi < b.length && (bs = b.slice(bi), s[i] ? s[i] += bs : s[++i] = bs), s.length < 2 ? q[0] ? one(q[0].x) : zero(b) : (b = q.length, function (t) {
     for (var o, i = 0; i < b; ++i) s[(o = q[i]).i] = o.x(t);
 
     return s.join("");
@@ -22015,17 +22011,6 @@ var tsvFormatValue = tsv.formatValue;
       return v > 0;
     });
   },
-  _checkOrder: function _checkOrder(type) {
-    var config = this.config,
-        order = config.data_order;
-    return isString(order) && order.toLowerCase() === type;
-  },
-  isOrderDesc: function isOrderDesc() {
-    return this._checkOrder("desc");
-  },
-  isOrderAsc: function isOrderAsc() {
-    return this._checkOrder("asc");
-  },
 
   /**
    * Sort targets data
@@ -22051,17 +22036,23 @@ var tsvFormatValue = tsv.formatValue;
     var fn,
         $$ = this,
         config = $$.config,
-        orderAsc = $$.isOrderAsc(),
-        orderDesc = $$.isOrderDesc();
-    return orderAsc || orderDesc ? fn = function (t1, t2) {
+        order = config.data_order,
+        orderAsc = /asc/i.test(order),
+        orderDesc = /desc/i.test(order);
+
+    if (orderAsc || orderDesc) {
       var reducer = function (p, c) {
         return p + Math.abs(c.value);
-      },
-          t1Sum = t1.values.reduce(reducer, 0),
-          t2Sum = t2.values.reduce(reducer, 0);
+      };
 
-      return isArc ? orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum : orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
-    } : isFunction(config.data_order) && (fn = config.data_order.bind($$.api)), fn || null;
+      fn = function (t1, t2) {
+        var t1Sum = t1.values.reduce(reducer, 0),
+            t2Sum = t2.values.reduce(reducer, 0);
+        return isArc ? orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum : orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
+      };
+    } else isFunction(order) && (fn = order.bind($$.api));
+
+    return fn || null;
   },
   filterByX: function filterByX(targets, x) {
     return mergeArray(targets.map(function (t) {
@@ -22895,7 +22886,8 @@ function drag_defaultTouchable() {
     return " " + (this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? config_classes.defocused : "");
   },
   getTargetSelectorSuffix: function getTargetSelectorSuffix(targetId) {
-    return targetId || targetId === 0 ? ("-" + targetId).replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-") : "";
+    var targetStr = targetId || targetId === 0 ? "-" + targetId : "";
+    return targetStr.replace(/([\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\])/g, "-");
   },
   selectorTarget: function selectorTarget(id, prefix) {
     var pfx = prefix || "",
@@ -23452,20 +23444,22 @@ function getFormat($$, typeValue, v) {
 }
 
 /* harmony default export */ var format = ({
-  getYFormat: function getYFormat(forArc) {
-    var $$ = this,
-        yFormat = $$.yFormat,
-        y2Format = $$.y2Format;
-    return forArc && !$$.hasType("gauge") && (yFormat = $$.defaultArcValueFormat, y2Format = $$.defaultArcValueFormat), function (v, ratio, id) {
-      var format = $$.axis && $$.axis.getId(id) === "y2" ? y2Format : yFormat;
-      return format.call($$, v, ratio);
-    };
-  },
   yFormat: function yFormat(v) {
     return getFormat(this, "y", v);
   },
   y2Format: function y2Format(v) {
     return getFormat(this, "y2", v);
+  },
+
+  /**
+   * Get default value format function
+   * @returns {Function} formatter function
+   * @private
+   */
+  getDefaultValueFormat: function getDefaultValueFormat() {
+    var $$ = this,
+        hasArc = $$.hasArcType();
+    return hasArc && !$$.hasType("gauge") ? $$.defaultArcValueFormat : $$.defaultValueFormat;
   },
   defaultValueFormat: function defaultValueFormat(v) {
     return isValue(v) ? +v : "";
@@ -26370,18 +26364,26 @@ function stepAfter(context) {
         indexMapByTargetId = _$$$getShapeOffsetDat.indexMapByTargetId;
 
     return function (d, idx) {
-      var ind = $$.getIndices(indices, d.id),
-          scale = $$.getYScaleById(d.id, isSub),
-          y0 = scale($$.getShapeYMin(d.id)),
-          dataXAsNumber = +d.x,
+      var id = d.id,
+          value = d.value,
+          x = d.x,
+          ind = $$.getIndices(indices, id),
+          scale = $$.getYScaleById(id, isSub),
+          y0 = scale($$.getShapeYMin(id)),
+          dataXAsNumber = +x,
           offset = y0;
       return shapeOffsetTargets.filter(function (t) {
-        return t.id !== d.id;
+        return t.id !== id;
       }).forEach(function (t) {
-        if (ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-          var row = t.rowValues[idx]; // check if the x values line up
+        var tid = t.id,
+            rowValueMapByXValue = t.rowValueMapByXValue,
+            rowValues = t.rowValues,
+            tvalues = t.values;
 
-          row && +row.x === dataXAsNumber || (row = t.rowValueMapByXValue[dataXAsNumber]), row && row.value * d.value >= 0 && (offset += scale(t.values[dataXAsNumber]) - y0);
+        if (ind[tid] === ind[id] && indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+          var row = rowValues[idx]; // check if the x values line up
+
+          row && +row.x === dataXAsNumber || (row = rowValueMapByXValue[dataXAsNumber]), row && row.value * value >= 0 && isNumber(tvalues[dataXAsNumber]) && (offset += scale(tvalues[dataXAsNumber]) - y0);
         }
       }), offset;
     };
@@ -27149,7 +27151,7 @@ function getTextPos(pos, width) {
         var x = isArc ? 0 : config.tooltip_init_x;
         return $$.addName(d.values[x]);
       });
-      isArc && (data = [data[config.tooltip_init_x]]), $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), config.tooltip_contents.bindto || $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", null);
+      isArc && (data = [data[config.tooltip_init_x]]), $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getDefaultValueFormat(), $$.color)), config.tooltip_contents.bindto || $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", null);
     }
   },
 
@@ -27366,7 +27368,6 @@ function getTextPos(pos, width) {
         state = $$.state,
         tooltip = $$.$el.tooltip,
         bindto = config.tooltip_contents.bindto,
-        forArc = $$.hasArcType(null, ["radar"]),
         dataToShow = selectedData.filter(function (d) {
       return d && isValue($$.getBaseValue(d));
     });
@@ -27384,7 +27385,7 @@ function getTextPos(pos, width) {
         var index = selectedData.concat().sort()[0].index;
         callFn(config.tooltip_onshow, $$.api, selectedData), tooltip.html($$.getTooltipHTML(selectedData, // data
         $$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
-        $$.getYFormat(forArc), // defaultValueFormat
+        $$.getDefaultValueFormat(), // defaultValueFormat
         $$.color // color
         )).style("display", null).style("visibility", null) // for IE9
         .datum(datum = {
@@ -34051,21 +34052,21 @@ Path.prototype = path.prototype = {
 
     if (this._x1 === null) this._ += "M" + (this._x1 = x1) + "," + (this._y1 = y1); // Or, is (x1,y1) coincident with (x0,y0)? Do nothing.
     else if (!(l01_2 > path_epsilon)) ; // Or, are (x0,y0), (x1,y1) and (x2,y2) collinear?
-      // Equivalently, is (x1,y1) coincident with (x2,y2)?
-      // Or, is the radius zero? Line to (x1,y1).
-      else if (!(Math.abs(y01 * x21 - y21 * x01) > path_epsilon) || !r) this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1); // Otherwise, draw an arc!
-        else {
-            var x20 = x2 - x0,
-                y20 = y2 - y0,
-                l21_2 = x21 * x21 + y21 * y21,
-                l21 = Math.sqrt(l21_2),
-                l01 = Math.sqrt(l01_2),
-                l = r * Math.tan((path_pi - Math.acos((l21_2 + l01_2 - (x20 * x20 + y20 * y20)) / (2 * l21 * l01))) / 2),
-                t01 = l / l01,
-                t21 = l / l21; // If the start tangent is not coincident with (x0,y0), line to.
+    // Equivalently, is (x1,y1) coincident with (x2,y2)?
+    // Or, is the radius zero? Line to (x1,y1).
+    else if (!(Math.abs(y01 * x21 - y21 * x01) > path_epsilon) || !r) this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1); // Otherwise, draw an arc!
+    else {
+      var x20 = x2 - x0,
+          y20 = y2 - y0,
+          l21_2 = x21 * x21 + y21 * y21,
+          l21 = Math.sqrt(l21_2),
+          l01 = Math.sqrt(l01_2),
+          l = r * Math.tan((path_pi - Math.acos((l21_2 + l01_2 - (x20 * x20 + y20 * y20)) / (2 * l21 * l01))) / 2),
+          t01 = l / l01,
+          t21 = l / l21; // If the start tangent is not coincident with (x0,y0), line to.
 
-            Math.abs(t01 - 1) > path_epsilon && (this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01)), this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
-          }
+      Math.abs(t01 - 1) > path_epsilon && (this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01)), this._ += "A" + r + "," + r + ",0,0," + +(y01 * x20 > x01 * y20) + "," + (this._x1 = x1 + t21 * x21) + "," + (this._y1 = y1 + t21 * y21);
+    }
   },
   arc: function arc(x, y, r, a0, a1, ccw) {
     x = +x, y = +y, r = +r, ccw = !!ccw;
@@ -34177,55 +34178,53 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     // Is it a point?
     if (context || (context = buffer = src_path()), r1 < r0 && (r = r1, r1 = r0, r0 = r), !(r1 > epsilon)) context.moveTo(0, 0); // Or is it a circle or annulus?
     else if (da > tau - epsilon) context.moveTo(r1 * cos(a0), r1 * sin(a0)), context.arc(0, 0, r1, a0, a1, !cw), r0 > epsilon && (context.moveTo(r0 * cos(a1), r0 * sin(a1)), context.arc(0, 0, r0, a1, a0, cw)); // Or is it a circular or annular sector?
-      else {
-          var t0,
-              t1,
-              a01 = a0,
-              a11 = a1,
-              a00 = a0,
-              a10 = a1,
-              da0 = da,
-              da1 = da,
-              ap = padAngle.apply(this, arguments) / 2,
-              rp = ap > epsilon && (padRadius ? +padRadius.apply(this, arguments) : sqrt(r0 * r0 + r1 * r1)),
-              rc = math_min(math_abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments)),
-              rc0 = rc,
-              rc1 = rc; // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
+    else {
+      var t0,
+          t1,
+          a01 = a0,
+          a11 = a1,
+          a00 = a0,
+          a10 = a1,
+          da0 = da,
+          da1 = da,
+          ap = padAngle.apply(this, arguments) / 2,
+          rp = ap > epsilon && (padRadius ? +padRadius.apply(this, arguments) : sqrt(r0 * r0 + r1 * r1)),
+          rc = math_min(math_abs(r1 - r0) / 2, +cornerRadius.apply(this, arguments)),
+          rc0 = rc,
+          rc1 = rc; // Apply padding? Note that since r1 ≥ r0, da1 ≥ da0.
 
-          if (rp > epsilon) {
-            var p0 = asin(rp / r0 * sin(ap)),
-                p1 = asin(rp / r1 * sin(ap));
-            (da0 -= p0 * 2) > epsilon ? (p0 *= cw ? 1 : -1, a00 += p0, a10 -= p0) : (da0 = 0, a00 = a10 = (a0 + a1) / 2), (da1 -= p1 * 2) > epsilon ? (p1 *= cw ? 1 : -1, a01 += p1, a11 -= p1) : (da1 = 0, a01 = a11 = (a0 + a1) / 2);
-          }
+      if (rp > epsilon) {
+        var p0 = asin(rp / r0 * sin(ap)),
+            p1 = asin(rp / r1 * sin(ap));
+        (da0 -= p0 * 2) > epsilon ? (p0 *= cw ? 1 : -1, a00 += p0, a10 -= p0) : (da0 = 0, a00 = a10 = (a0 + a1) / 2), (da1 -= p1 * 2) > epsilon ? (p1 *= cw ? 1 : -1, a01 += p1, a11 -= p1) : (da1 = 0, a01 = a11 = (a0 + a1) / 2);
+      }
 
-          var x01 = r1 * cos(a01),
-              y01 = r1 * sin(a01),
-              x10 = r0 * cos(a10),
-              y10 = r0 * sin(a10); // Apply rounded corners?
+      var x01 = r1 * cos(a01),
+          y01 = r1 * sin(a01),
+          x10 = r0 * cos(a10),
+          y10 = r0 * sin(a10); // Apply rounded corners?
 
-          if (rc > epsilon) {
-            var oc,
-                x11 = r1 * cos(a11),
-                y11 = r1 * sin(a11),
-                x00 = r0 * cos(a00),
-                y00 = r0 * sin(a00); // Restrict the corner radius according to the sector angle.
+      if (rc > epsilon) {
+        var oc,
+            x11 = r1 * cos(a11),
+            y11 = r1 * sin(a11),
+            x00 = r0 * cos(a00),
+            y00 = r0 * sin(a00); // Restrict the corner radius according to the sector angle.
 
-            if (da < pi && (oc = intersect(x01, y01, x00, y00, x11, y11, x10, y10))) {
-              var ax = x01 - oc[0],
-                  ay = y01 - oc[1],
-                  bx = x11 - oc[0],
-                  by = y11 - oc[1],
-                  kc = 1 / sin(acos((ax * bx + ay * by) / (sqrt(ax * ax + ay * ay) * sqrt(bx * bx + by * by))) / 2),
-                  lc = sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
-              rc0 = math_min(rc, (r0 - lc) / (kc - 1)), rc1 = math_min(rc, (r1 - lc) / (kc + 1));
-            }
-          } // Is the sector collapsed to a line?
-
-
-          da1 > epsilon ? rc1 > epsilon ? (t0 = cornerTangents(x00, y00, x01, y01, r1, rc1, cw), t1 = cornerTangents(x11, y11, x10, y10, r1, rc1, cw), context.moveTo(t0.cx + t0.x01, t0.cy + t0.y01), rc1 < rc ? context.arc(t0.cx, t0.cy, rc1, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !cw) : (context.arc(t0.cx, t0.cy, rc1, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !cw), context.arc(0, 0, r1, atan2(t0.cy + t0.y11, t0.cx + t0.x11), atan2(t1.cy + t1.y11, t1.cx + t1.x11), !cw), context.arc(t1.cx, t1.cy, rc1, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !cw))) : ( // Or is the outer ring just a circular arc?
-          context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw)) : context.moveTo(x01, y01), r0 > epsilon && da0 > epsilon ? rc0 > epsilon ? (t0 = cornerTangents(x10, y10, x11, y11, r0, -rc0, cw), t1 = cornerTangents(x01, y01, x00, y00, r0, -rc0, cw), context.lineTo(t0.cx + t0.x01, t0.cy + t0.y01), rc0 < rc ? context.arc(t0.cx, t0.cy, rc0, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !cw) : (context.arc(t0.cx, t0.cy, rc0, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !cw), context.arc(0, 0, r0, atan2(t0.cy + t0.y11, t0.cx + t0.x11), atan2(t1.cy + t1.y11, t1.cx + t1.x11), cw), context.arc(t1.cx, t1.cy, rc0, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !cw))) : // Or is the inner ring just a circular arc?
-          context.arc(0, 0, r0, a10, a00, cw) : context.lineTo(x10, y10);
+        if (da < pi && (oc = intersect(x01, y01, x00, y00, x11, y11, x10, y10))) {
+          var ax = x01 - oc[0],
+              ay = y01 - oc[1],
+              bx = x11 - oc[0],
+              by = y11 - oc[1],
+              kc = 1 / sin(acos((ax * bx + ay * by) / (sqrt(ax * ax + ay * ay) * sqrt(bx * bx + by * by))) / 2),
+              lc = sqrt(oc[0] * oc[0] + oc[1] * oc[1]);
+          rc0 = math_min(rc, (r0 - lc) / (kc - 1)), rc1 = math_min(rc, (r1 - lc) / (kc + 1));
         }
+      } // Is the sector collapsed to a line?
+
+
+      da1 > epsilon ? rc1 > epsilon ? (t0 = cornerTangents(x00, y00, x01, y01, r1, rc1, cw), t1 = cornerTangents(x11, y11, x10, y10, r1, rc1, cw), context.moveTo(t0.cx + t0.x01, t0.cy + t0.y01), rc1 < rc ? context.arc(t0.cx, t0.cy, rc1, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !cw) : (context.arc(t0.cx, t0.cy, rc1, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !cw), context.arc(0, 0, r1, atan2(t0.cy + t0.y11, t0.cx + t0.x11), atan2(t1.cy + t1.y11, t1.cx + t1.x11), !cw), context.arc(t1.cx, t1.cy, rc1, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !cw))) : (context.moveTo(x01, y01), context.arc(0, 0, r1, a01, a11, !cw)) : context.moveTo(x01, y01), r0 > epsilon && da0 > epsilon ? rc0 > epsilon ? (t0 = cornerTangents(x10, y10, x11, y11, r0, -rc0, cw), t1 = cornerTangents(x01, y01, x00, y00, r0, -rc0, cw), context.lineTo(t0.cx + t0.x01, t0.cy + t0.y01), rc0 < rc ? context.arc(t0.cx, t0.cy, rc0, atan2(t0.y01, t0.x01), atan2(t1.y01, t1.x01), !cw) : (context.arc(t0.cx, t0.cy, rc0, atan2(t0.y01, t0.x01), atan2(t0.y11, t0.x11), !cw), context.arc(0, 0, r0, atan2(t0.cy + t0.y11, t0.cx + t0.x11), atan2(t1.cy + t1.y11, t1.cx + t1.x11), cw), context.arc(t1.cx, t1.cy, rc0, atan2(t1.y11, t1.x11), atan2(t1.y01, t1.x01), !cw))) : context.arc(0, 0, r0, a10, a00, cw) : context.lineTo(x10, y10);
+    }
     return (context.closePath(), buffer) ? (context = null, buffer + "" || null) : void 0;
   }
 
@@ -35026,7 +35025,12 @@ function point_y(p) {
         classFocus = $$.classFocus.bind($$),
         isSelectable = config.interaction_enabled && config.data_selection_isselectable;
     $el.bar || $$.initBar();
-    var mainBarUpdate = $$.$el.main.select("." + config_classes.chartBars).selectAll("." + config_classes.chartBar).data(targets).attr("class", function (d) {
+    var mainBarUpdate = $$.$el.main.select("." + config_classes.chartBars).selectAll("." + config_classes.chartBar).data( // remove
+    targets.filter(function (v) {
+      return !v.values.every(function (d) {
+        return !isNumber(d.value);
+      });
+    })).attr("class", function (d) {
       return classChartBar(d) + classFocus(d);
     }),
         mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", "none");
@@ -35065,7 +35069,9 @@ function point_y(p) {
     var _ref = isSub ? this.$el.subchart : this.$el,
         bar = _ref.bar;
 
-    return [(withTransition ? bar.transition(getRandom()) : bar).attr("d", drawFn).style("fill", this.color).style("opacity", null)];
+    return [(withTransition ? bar.transition(getRandom()) : bar).attr("d", function (d) {
+      return d.value && drawFn(d);
+    }).style("fill", this.color).style("opacity", null)];
   },
   generateDrawBar: function generateDrawBar(barIndices, isSub) {
     var $$ = this,
@@ -37605,18 +37611,18 @@ function tanh(x) {
       return [ux0 + t * dx, uy0 + t * dy, w0 * Math.exp(rho * t * S)];
     }; // General case.
     else {
-        var d1 = Math.sqrt(d2),
-            b0 = (w1 * w1 - w0 * w0 + rho4 * d2) / (2 * w0 * rho2 * d1),
-            b1 = (w1 * w1 - w0 * w0 - rho4 * d2) / (2 * w1 * rho2 * d1),
-            r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
-            r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
-        S = (r1 - r0) / rho, i = function (t) {
-          var s = t * S,
-              coshr0 = cosh(r0),
-              u = w0 / (rho2 * d1) * (coshr0 * tanh(rho * s + r0) - sinh(r0));
-          return [ux0 + u * dx, uy0 + u * dy, w0 * coshr0 / cosh(rho * s + r0)];
-        };
-      }
+      var d1 = Math.sqrt(d2),
+          b0 = (w1 * w1 - w0 * w0 + rho4 * d2) / (2 * w0 * rho2 * d1),
+          b1 = (w1 * w1 - w0 * w0 - rho4 * d2) / (2 * w1 * rho2 * d1),
+          r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
+          r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
+      S = (r1 - r0) / rho, i = function (t) {
+        var s = t * S,
+            coshr0 = cosh(r0),
+            u = w0 / (rho2 * d1) * (coshr0 * tanh(rho * s + r0) - sinh(r0));
+        return [ux0 + u * dx, uy0 + u * dy, w0 * coshr0 / cosh(rho * s + r0)];
+      };
+    }
     return i.duration = S * 1e3 * rho / Math.SQRT2, i;
   }
 
@@ -37797,10 +37803,10 @@ function defaultConstrain(transform, extent, translateExtent) {
       return function (t) {
         if (t === 1) t = b; // Avoid rounding error on end.
         else {
-            var l = i(t),
-                k = w / l[2];
-            t = new Transform(k, p[0] - l[0] * k, p[1] - l[1] * k);
-          }
+          var l = i(t),
+              k = w / l[2];
+          t = new Transform(k, p[0] - l[0] * k, p[1] - l[1] * k);
+        }
         g.zoom(null, t);
       };
     });
@@ -37830,10 +37836,10 @@ function defaultConstrain(transform, extent, translateExtent) {
 
       if (g.wheel) (g.mouse[0][0] !== p[0] || g.mouse[0][1] !== p[1]) && (g.mouse[1] = t.invert(g.mouse[0] = p)), clearTimeout(g.wheel); // If this wheel event won’t trigger a transform change, ignore it.
       else {
-          if (t.k === k) return; // Otherwise, capture the mouse point and location at the start.
+        if (t.k === k) return; // Otherwise, capture the mouse point and location at the start.
 
-          g.mouse = [p, t.invert(p)], interrupt(this), g.start();
-        }
+        g.mouse = [p, t.invert(p)], interrupt(this), g.start();
+      }
       d3_zoom_src_noevent(event), g.wheel = setTimeout(wheelidled, 150), g.zoom("mouse", constrain(translate(scale(t, k), g.mouse[0], g.mouse[1]), g.extent, translateExtent));
     }
   }
@@ -38261,47 +38267,46 @@ util_extend(zoom, {
         isSelectionGrouped = config.data_selection_grouped,
         isSelectable = config.interaction_enabled && config.data_selection_isselectable;
 
-    if (!$$.hasArcType() && config.data_selection_enabled && ( // do nothing if not selectable
-    !config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple // skip when single selection because drag is used for multiple selection
+    if (!$$.hasArcType() && config.data_selection_enabled && (!config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple // skip when single selection because drag is used for multiple selection
     ) {
-        var _ref = state.dragStart || [0, 0],
-            sx = _ref[0],
-            sy = _ref[1],
-            mx = mouse[0],
-            my = mouse[1],
-            minX = Math.min(sx, mx),
-            maxX = Math.max(sx, mx),
-            minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my),
-            maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
+      var _ref = state.dragStart || [0, 0],
+          sx = _ref[0],
+          sy = _ref[1],
+          mx = mouse[0],
+          my = mouse[1],
+          minX = Math.min(sx, mx),
+          maxX = Math.max(sx, mx),
+          minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my),
+          maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
 
-        main.select("." + config_classes.dragarea).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY), main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).filter(function (d) {
-          return isSelectable && isSelectable.bind($$.api)(d);
-        }).each(function (d, i) {
-          var toggle,
-              shape = src_select(this),
-              isSelected = shape.classed(config_classes.SELECTED),
-              isIncluded = shape.classed(config_classes.INCLUDED),
-              isWithin = !1;
+      main.select("." + config_classes.dragarea).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY), main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).filter(function (d) {
+        return isSelectable && isSelectable.bind($$.api)(d);
+      }).each(function (d, i) {
+        var toggle,
+            shape = src_select(this),
+            isSelected = shape.classed(config_classes.SELECTED),
+            isIncluded = shape.classed(config_classes.INCLUDED),
+            isWithin = !1;
 
-          if (shape.classed(config_classes.circle)) {
-            var x = +shape.attr("cx") * 1,
-                y = +shape.attr("cy") * 1;
-            toggle = $$.togglePoint, isWithin = minX < x && x < maxX && minY < y && y < maxY;
-          } else if (shape.classed(config_classes.bar)) {
-            var _getPathBox = getPathBox(this),
-                _x = _getPathBox.x,
-                y = _getPathBox.y,
-                width = _getPathBox.width,
-                height = _getPathBox.height;
+        if (shape.classed(config_classes.circle)) {
+          var x = +shape.attr("cx") * 1,
+              y = +shape.attr("cy") * 1;
+          toggle = $$.togglePoint, isWithin = minX < x && x < maxX && minY < y && y < maxY;
+        } else if (shape.classed(config_classes.bar)) {
+          var _getPathBox = getPathBox(this),
+              _x = _getPathBox.x,
+              y = _getPathBox.y,
+              width = _getPathBox.width,
+              height = _getPathBox.height;
 
-            toggle = $$.togglePath, isWithin = !(maxX < _x || _x + width < minX) && !(maxY < y || y + height < minY);
-          } else // line/area selection not supported yet
-            return; // @ts-ignore
+          toggle = $$.togglePath, isWithin = !(maxX < _x || _x + width < minX) && !(maxY < y || y + height < minY);
+        } else // line/area selection not supported yet
+          return; // @ts-ignore
 
 
-          isWithin ^ isIncluded && (shape.classed(config_classes.INCLUDED, !isIncluded), shape.classed(config_classes.SELECTED, !isSelected), toggle.call($$, !isSelected, shape, d, i));
-        });
-      }
+        isWithin ^ isIncluded && (shape.classed(config_classes.INCLUDED, !isIncluded), shape.classed(config_classes.SELECTED, !isSelected), toggle.call($$, !isSelected, shape, d, i));
+      });
+    }
   },
 
   /**

@@ -3555,17 +3555,6 @@ var data$1 = {
     hasPositiveValueInTargets: function (targets) {
         return this.checkValueInTargets(targets, function (v) { return v > 0; });
     },
-    _checkOrder: function (type) {
-        var config = this.config;
-        var order = config.data_order;
-        return isString(order) && order.toLowerCase() === type;
-    },
-    isOrderDesc: function () {
-        return this._checkOrder("desc");
-    },
-    isOrderAsc: function () {
-        return this._checkOrder("asc");
-    },
     /**
      * Sort targets data
      * @param {Array} targetsValue Target value
@@ -3589,21 +3578,22 @@ var data$1 = {
         if (isArc === void 0) { isArc = false; }
         var $$ = this;
         var config = $$.config;
-        var orderAsc = $$.isOrderAsc();
-        var orderDesc = $$.isOrderDesc();
+        var order = config.data_order;
+        var orderAsc = /asc/i.test(order);
+        var orderDesc = /desc/i.test(order);
         var fn;
         if (orderAsc || orderDesc) {
+            var reducer_1 = function (p, c) { return p + Math.abs(c.value); };
             fn = function (t1, t2) {
-                var reducer = function (p, c) { return p + Math.abs(c.value); };
-                var t1Sum = t1.values.reduce(reducer, 0);
-                var t2Sum = t2.values.reduce(reducer, 0);
+                var t1Sum = t1.values.reduce(reducer_1, 0);
+                var t2Sum = t2.values.reduce(reducer_1, 0);
                 return isArc ?
                     (orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
                     (orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum);
             };
         }
-        else if (isFunction(config.data_order)) {
-            fn = config.data_order.bind($$.api);
+        else if (isFunction(order)) {
+            fn = order.bind($$.api);
         }
         return fn || null;
     },
@@ -4264,8 +4254,8 @@ var classModule = {
         return " " + (this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? CLASS.defocused : "");
     },
     getTargetSelectorSuffix: function (targetId) {
-        return targetId || targetId === 0 ?
-            ("-" + targetId).replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-") : "";
+        var targetStr = targetId || targetId === 0 ? "-" + targetId : "";
+        return targetStr.replace(/([\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\])/g, "-");
     },
     selectorTarget: function (id, prefix) {
         var pfx = prefix || "";
@@ -4876,24 +4866,23 @@ function getFormat($$, typeValue, v) {
     return format(v);
 }
 var format = {
-    getYFormat: function (forArc) {
-        var $$ = this;
-        var yFormat = $$.yFormat, y2Format = $$.y2Format;
-        if (forArc && !$$.hasType("gauge")) {
-            yFormat = $$.defaultArcValueFormat;
-            y2Format = $$.defaultArcValueFormat;
-        }
-        return function (v, ratio, id) {
-            var format = $$.axis && $$.axis.getId(id) === "y2" ?
-                y2Format : yFormat;
-            return format.call($$, v, ratio);
-        };
-    },
     yFormat: function (v) {
         return getFormat(this, "y", v);
     },
     y2Format: function (v) {
         return getFormat(this, "y2", v);
+    },
+    /**
+     * Get default value format function
+     * @returns {Function} formatter function
+     * @private
+     */
+    getDefaultValueFormat: function () {
+        var $$ = this;
+        var hasArc = $$.hasArcType();
+        return hasArc && !$$.hasType("gauge") ?
+            $$.defaultArcValueFormat :
+            $$.defaultValueFormat;
     },
     defaultValueFormat: function (v) {
         return isValue(v) ? +v : "";
@@ -6139,22 +6128,24 @@ var shape = {
         var $$ = this;
         var _a = $$.getShapeOffsetData(typeFilter), shapeOffsetTargets = _a.shapeOffsetTargets, indexMapByTargetId = _a.indexMapByTargetId;
         return function (d, idx) {
-            var ind = $$.getIndices(indices, d.id);
-            var scale = $$.getYScaleById(d.id, isSub);
-            var y0 = scale($$.getShapeYMin(d.id));
-            var dataXAsNumber = Number(d.x);
+            var id = d.id, value = d.value, x = d.x;
+            var ind = $$.getIndices(indices, id);
+            var scale = $$.getYScaleById(id, isSub);
+            var y0 = scale($$.getShapeYMin(id));
+            var dataXAsNumber = Number(x);
             var offset = y0;
             shapeOffsetTargets
-                .filter(function (t) { return t.id !== d.id; })
+                .filter(function (t) { return t.id !== id; })
                 .forEach(function (t) {
-                if (ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-                    var row = t.rowValues[idx];
+                var tid = t.id, rowValueMapByXValue = t.rowValueMapByXValue, rowValues = t.rowValues, tvalues = t.values;
+                if (ind[tid] === ind[id] && indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+                    var row = rowValues[idx];
                     // check if the x values line up
                     if (!row || Number(row.x) !== dataXAsNumber) {
-                        row = t.rowValueMapByXValue[dataXAsNumber];
+                        row = rowValueMapByXValue[dataXAsNumber];
                     }
-                    if (row && row.value * d.value >= 0) {
-                        offset += scale(t.values[dataXAsNumber]) - y0;
+                    if (row && row.value * value >= 0 && isNumber(tvalues[dataXAsNumber])) {
+                        offset += scale(tvalues[dataXAsNumber]) - y0;
                     }
                 }
             });
@@ -7125,7 +7116,7 @@ var tooltip$1 = {
             if (isArc_1) {
                 data = [data[config.tooltip_init_x]];
             }
-            $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color));
+            $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getDefaultValueFormat(), $$.color));
             if (!config.tooltip_contents.bindto) {
                 $el.tooltip.style("top", config.tooltip_init_position.top)
                     .style("left", config.tooltip_init_position.left)
@@ -7335,7 +7326,6 @@ var tooltip$1 = {
         var $$ = this;
         var config = $$.config, state = $$.state, tooltip = $$.$el.tooltip;
         var bindto = config.tooltip_contents.bindto;
-        var forArc = $$.hasArcType(null, ["radar"]);
         var dataToShow = selectedData.filter(function (d) { return d && isValue($$.getBaseValue(d)); });
         if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
             return;
@@ -7350,7 +7340,7 @@ var tooltip$1 = {
             tooltip
                 .html($$.getTooltipHTML(selectedData, // data
             $$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
-            $$.getYFormat(forArc), // defaultValueFormat
+            $$.getDefaultValueFormat(), // defaultValueFormat
             $$.color // color
             ))
                 .style("display", null)
@@ -15745,7 +15735,9 @@ var shapeBar = {
         }
         var mainBarUpdate = $$.$el.main.select("." + CLASS.chartBars)
             .selectAll("." + CLASS.chartBar)
-            .data(targets)
+            .data(
+        // remove
+        targets.filter(function (v) { return !v.values.every(function (d) { return !isNumber(d.value); }); }))
             .attr("class", function (d) { return classChartBar(d) + classFocus(d); });
         var mainBarEnter = mainBarUpdate.enter().append("g")
             .attr("class", classChartBar)
@@ -15793,7 +15785,7 @@ var shapeBar = {
         var bar = (isSub ? this.$el.subchart : this.$el).bar;
         return [
             (withTransition ? bar.transition(getRandom()) : bar)
-                .attr("d", drawFn)
+                .attr("d", function (d) { return d.value && drawFn(d); })
                 .style("fill", this.color)
                 .style("opacity", null)
         ];

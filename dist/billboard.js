@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.2-nightly-20210720004531
+ * @version 3.1.2-nightly-20210722004525
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3802,17 +3802,6 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
       return v > 0;
     });
   },
-  _checkOrder: function _checkOrder(type) {
-    var config = this.config,
-        order = config.data_order;
-    return isString(order) && order.toLowerCase() === type;
-  },
-  isOrderDesc: function isOrderDesc() {
-    return this._checkOrder("desc");
-  },
-  isOrderAsc: function isOrderAsc() {
-    return this._checkOrder("asc");
-  },
 
   /**
    * Sort targets data
@@ -3838,17 +3827,23 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     var fn,
         $$ = this,
         config = $$.config,
-        orderAsc = $$.isOrderAsc(),
-        orderDesc = $$.isOrderDesc();
-    return orderAsc || orderDesc ? fn = function (t1, t2) {
+        order = config.data_order,
+        orderAsc = /asc/i.test(order),
+        orderDesc = /desc/i.test(order);
+
+    if (orderAsc || orderDesc) {
       var reducer = function (p, c) {
         return p + Math.abs(c.value);
-      },
-          t1Sum = t1.values.reduce(reducer, 0),
-          t2Sum = t2.values.reduce(reducer, 0);
+      };
 
-      return isArc ? orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum : orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
-    } : isFunction(config.data_order) && (fn = config.data_order.bind($$.api)), fn || null;
+      fn = function (t1, t2) {
+        var t1Sum = t1.values.reduce(reducer, 0),
+            t2Sum = t2.values.reduce(reducer, 0);
+        return isArc ? orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum : orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
+      };
+    } else isFunction(order) && (fn = order.bind($$.api));
+
+    return fn || null;
   },
   filterByX: function filterByX(targets, x) {
     return mergeArray(targets.map(function (t) {
@@ -4443,7 +4438,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     return " " + (this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? config_classes.defocused : "");
   },
   getTargetSelectorSuffix: function getTargetSelectorSuffix(targetId) {
-    return targetId || targetId === 0 ? ("-" + targetId).replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-") : "";
+    var targetStr = targetId || targetId === 0 ? "-" + targetId : "";
+    return targetStr.replace(/([\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\])/g, "-");
   },
   selectorTarget: function selectorTarget(id, prefix) {
     var pfx = prefix || "",
@@ -4921,20 +4917,22 @@ function getFormat($$, typeValue, v) {
 }
 
 /* harmony default export */ var format = ({
-  getYFormat: function getYFormat(forArc) {
-    var $$ = this,
-        yFormat = $$.yFormat,
-        y2Format = $$.y2Format;
-    return forArc && !$$.hasType("gauge") && (yFormat = $$.defaultArcValueFormat, y2Format = $$.defaultArcValueFormat), function (v, ratio, id) {
-      var format = $$.axis && $$.axis.getId(id) === "y2" ? y2Format : yFormat;
-      return format.call($$, v, ratio);
-    };
-  },
   yFormat: function yFormat(v) {
     return getFormat(this, "y", v);
   },
   y2Format: function y2Format(v) {
     return getFormat(this, "y2", v);
+  },
+
+  /**
+   * Get default value format function
+   * @returns {Function} formatter function
+   * @private
+   */
+  getDefaultValueFormat: function getDefaultValueFormat() {
+    var $$ = this,
+        hasArc = $$.hasArcType();
+    return hasArc && !$$.hasType("gauge") ? $$.defaultArcValueFormat : $$.defaultValueFormat;
   },
   defaultValueFormat: function defaultValueFormat(v) {
     return isValue(v) ? +v : "";
@@ -5912,18 +5910,26 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         indexMapByTargetId = _$$$getShapeOffsetDat.indexMapByTargetId;
 
     return function (d, idx) {
-      var ind = $$.getIndices(indices, d.id),
-          scale = $$.getYScaleById(d.id, isSub),
-          y0 = scale($$.getShapeYMin(d.id)),
-          dataXAsNumber = +d.x,
+      var id = d.id,
+          value = d.value,
+          x = d.x,
+          ind = $$.getIndices(indices, id),
+          scale = $$.getYScaleById(id, isSub),
+          y0 = scale($$.getShapeYMin(id)),
+          dataXAsNumber = +x,
           offset = y0;
       return shapeOffsetTargets.filter(function (t) {
-        return t.id !== d.id;
+        return t.id !== id;
       }).forEach(function (t) {
-        if (ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-          var row = t.rowValues[idx]; // check if the x values line up
+        var tid = t.id,
+            rowValueMapByXValue = t.rowValueMapByXValue,
+            rowValues = t.rowValues,
+            tvalues = t.values;
 
-          row && +row.x === dataXAsNumber || (row = t.rowValueMapByXValue[dataXAsNumber]), row && row.value * d.value >= 0 && (offset += scale(t.values[dataXAsNumber]) - y0);
+        if (ind[tid] === ind[id] && indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+          var row = rowValues[idx]; // check if the x values line up
+
+          row && +row.x === dataXAsNumber || (row = rowValueMapByXValue[dataXAsNumber]), row && row.value * value >= 0 && isNumber(tvalues[dataXAsNumber]) && (offset += scale(tvalues[dataXAsNumber]) - y0);
         }
       }), offset;
     };
@@ -6685,7 +6691,7 @@ function getTextPos(pos, width) {
         var x = isArc ? 0 : config.tooltip_init_x;
         return $$.addName(d.values[x]);
       });
-      isArc && (data = [data[config.tooltip_init_x]]), $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), config.tooltip_contents.bindto || $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", null);
+      isArc && (data = [data[config.tooltip_init_x]]), $el.tooltip.html($$.getTooltipHTML(data, $$.axis && $$.axis.getXAxisTickFormat(), $$.getDefaultValueFormat(), $$.color)), config.tooltip_contents.bindto || $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", null);
     }
   },
 
@@ -6902,7 +6908,6 @@ function getTextPos(pos, width) {
         state = $$.state,
         tooltip = $$.$el.tooltip,
         bindto = config.tooltip_contents.bindto,
-        forArc = $$.hasArcType(null, ["radar"]),
         dataToShow = selectedData.filter(function (d) {
       return d && isValue($$.getBaseValue(d));
     });
@@ -6920,7 +6925,7 @@ function getTextPos(pos, width) {
         var index = selectedData.concat().sort()[0].index;
         callFn(config.tooltip_onshow, $$.api, selectedData), tooltip.html($$.getTooltipHTML(selectedData, // data
         $$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
-        $$.getYFormat(forArc), // defaultValueFormat
+        $$.getDefaultValueFormat(), // defaultValueFormat
         $$.color // color
         )).style("display", null).style("visibility", null) // for IE9
         .datum(datum = {
@@ -14007,7 +14012,12 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         classFocus = $$.classFocus.bind($$),
         isSelectable = config.interaction_enabled && config.data_selection_isselectable;
     $el.bar || $$.initBar();
-    var mainBarUpdate = $$.$el.main.select("." + config_classes.chartBars).selectAll("." + config_classes.chartBar).data(targets).attr("class", function (d) {
+    var mainBarUpdate = $$.$el.main.select("." + config_classes.chartBars).selectAll("." + config_classes.chartBar).data( // remove
+    targets.filter(function (v) {
+      return !v.values.every(function (d) {
+        return !isNumber(d.value);
+      });
+    })).attr("class", function (d) {
       return classChartBar(d) + classFocus(d);
     }),
         mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", "none");
@@ -14046,7 +14056,9 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     var _ref = isSub ? this.$el.subchart : this.$el,
         bar = _ref.bar;
 
-    return [(withTransition ? bar.transition(getRandom()) : bar).attr("d", drawFn).style("fill", this.color).style("opacity", null)];
+    return [(withTransition ? bar.transition(getRandom()) : bar).attr("d", function (d) {
+      return d.value && drawFn(d);
+    }).style("fill", this.color).style("opacity", null)];
   },
   generateDrawBar: function generateDrawBar(barIndices, isSub) {
     var $$ = this,
@@ -16768,47 +16780,46 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
         isSelectionGrouped = config.data_selection_grouped,
         isSelectable = config.interaction_enabled && config.data_selection_isselectable;
 
-    if (!$$.hasArcType() && config.data_selection_enabled && ( // do nothing if not selectable
-    !config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple // skip when single selection because drag is used for multiple selection
+    if (!$$.hasArcType() && config.data_selection_enabled && (!config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple // skip when single selection because drag is used for multiple selection
     ) {
-        var _ref = state.dragStart || [0, 0],
-            sx = _ref[0],
-            sy = _ref[1],
-            mx = mouse[0],
-            my = mouse[1],
-            minX = Math.min(sx, mx),
-            maxX = Math.max(sx, mx),
-            minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my),
-            maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
+      var _ref = state.dragStart || [0, 0],
+          sx = _ref[0],
+          sy = _ref[1],
+          mx = mouse[0],
+          my = mouse[1],
+          minX = Math.min(sx, mx),
+          maxX = Math.max(sx, mx),
+          minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my),
+          maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
 
-        main.select("." + config_classes.dragarea).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY), main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).filter(function (d) {
-          return isSelectable && isSelectable.bind($$.api)(d);
-        }).each(function (d, i) {
-          var toggle,
-              shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
-              isSelected = shape.classed(config_classes.SELECTED),
-              isIncluded = shape.classed(config_classes.INCLUDED),
-              isWithin = !1;
+      main.select("." + config_classes.dragarea).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY), main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).filter(function (d) {
+        return isSelectable && isSelectable.bind($$.api)(d);
+      }).each(function (d, i) {
+        var toggle,
+            shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
+            isSelected = shape.classed(config_classes.SELECTED),
+            isIncluded = shape.classed(config_classes.INCLUDED),
+            isWithin = !1;
 
-          if (shape.classed(config_classes.circle)) {
-            var x = +shape.attr("cx") * 1,
-                y = +shape.attr("cy") * 1;
-            toggle = $$.togglePoint, isWithin = minX < x && x < maxX && minY < y && y < maxY;
-          } else if (shape.classed(config_classes.bar)) {
-            var _getPathBox = getPathBox(this),
-                _x = _getPathBox.x,
-                y = _getPathBox.y,
-                width = _getPathBox.width,
-                height = _getPathBox.height;
+        if (shape.classed(config_classes.circle)) {
+          var x = +shape.attr("cx") * 1,
+              y = +shape.attr("cy") * 1;
+          toggle = $$.togglePoint, isWithin = minX < x && x < maxX && minY < y && y < maxY;
+        } else if (shape.classed(config_classes.bar)) {
+          var _getPathBox = getPathBox(this),
+              _x = _getPathBox.x,
+              y = _getPathBox.y,
+              width = _getPathBox.width,
+              height = _getPathBox.height;
 
-            toggle = $$.togglePath, isWithin = !(maxX < _x || _x + width < minX) && !(maxY < y || y + height < minY);
-          } else // line/area selection not supported yet
-            return; // @ts-ignore
+          toggle = $$.togglePath, isWithin = !(maxX < _x || _x + width < minX) && !(maxY < y || y + height < minY);
+        } else // line/area selection not supported yet
+          return; // @ts-ignore
 
 
-          isWithin ^ isIncluded && (shape.classed(config_classes.INCLUDED, !isIncluded), shape.classed(config_classes.SELECTED, !isSelected), toggle.call($$, !isSelected, shape, d, i));
-        });
-      }
+        isWithin ^ isIncluded && (shape.classed(config_classes.INCLUDED, !isIncluded), shape.classed(config_classes.SELECTED, !isSelected), toggle.call($$, !isSelected, shape, d, i));
+      });
+    }
   },
 
   /**
