@@ -68,7 +68,7 @@ export default {
 			$el.tooltip.html($$.getTooltipHTML(
 				data,
 				$$.axis && $$.axis.getXAxisTickFormat(),
-				$$.getYFormat($$.hasArcType(null, ["radar"])),
+				$$.getDefaultValueFormat(),
 				$$.color
 			));
 
@@ -325,7 +325,6 @@ export default {
 		const $$ = this;
 		const {config, state, $el: {tooltip}} = $$;
 		const {bindto} = config.tooltip_contents;
-		const forArc = $$.hasArcType(null, ["radar"]);
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 
 		if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
@@ -346,7 +345,7 @@ export default {
 				.html($$.getTooltipHTML(
 					selectedData, // data
 					$$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
-					$$.getYFormat(forArc), // defaultValueFormat
+					$$.getDefaultValueFormat(), // defaultValueFormat
 					$$.color // color
 				))
 				.style("display", null)

@@ -797,8 +797,8 @@ describe("TOOLTIP", function() {
 
 			// check for circle point shape
 			util.hoverChart(chart, undefined, {clientX: 292, clientY: 34});
-			
-			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).text();
+
+			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).html();
 
 			expect(value).to.be.equal(1000);
 		});

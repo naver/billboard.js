@@ -29,7 +29,12 @@ export default {
 
 		const mainBarUpdate = $$.$el.main.select(`.${CLASS.chartBars}`)
 			.selectAll(`.${CLASS.chartBar}`)
-			.data(targets)
+			.data(
+				// remove
+				targets.filter(
+					v => !v.values.every(d => !isNumber(d.value))
+				)
+			)
 			.attr("class", d => classChartBar(d) + classFocus(d));
 
 		const mainBarEnter = mainBarUpdate.enter().append("g")
@@ -83,7 +88,7 @@ export default {
 
 		return [
 			(withTransition ? bar.transition(getRandom()) : bar)
-				.attr("d", drawFn)
+				.attr("d", d => d.value && drawFn(d))
 				.style("fill", this.color)
 				.style("opacity", null)
 		];
@@ -143,7 +148,6 @@ export default {
 	generateGetBarPoints(barIndices, isSub?: boolean): Function {
 		const $$ = this;
 		const {config} = $$;
-
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
 		const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
 		const barW = $$.getBarW("bar", axis, barTargetsNum);

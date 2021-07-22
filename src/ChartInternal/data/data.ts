@@ -584,21 +584,6 @@ export default {
 		return this.checkValueInTargets(targets, v => v > 0);
 	},
 
-	_checkOrder(type: string): boolean {
-		const {config} = this;
-		const order = config.data_order;
-
-		return isString(order) && order.toLowerCase() === type;
-	},
-
-	isOrderDesc(): boolean {
-		return this._checkOrder("desc");
-	},
-
-	isOrderAsc(): boolean {
-		return this._checkOrder("asc");
-	},
-
 	/**
 	 * Sort targets data
 	 * @param {Array} targetsValue Target value
@@ -624,13 +609,15 @@ export default {
 	getSortCompareFn(isArc = false): Function | null {
 		const $$ = this;
 		const {config} = $$;
-		const orderAsc = $$.isOrderAsc();
-		const orderDesc = $$.isOrderDesc();
+		const order = config.data_order;
+		const orderAsc = /asc/i.test(order);
+		const orderDesc = /desc/i.test(order);
 		let fn;
 
 		if (orderAsc || orderDesc) {
+			const reducer = (p, c) => p + Math.abs(c.value);
+
 			fn = (t1, t2) => {
-				const reducer = (p, c) => p + Math.abs(c.value);
 				const t1Sum = t1.values.reduce(reducer, 0);
 				const t2Sum = t2.values.reduce(reducer, 0);
 
@@ -638,8 +625,8 @@ export default {
 					(orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
 					(orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum);
 			};
-		} else if (isFunction(config.data_order)) {
-			fn = config.data_order.bind($$.api);
+		} else if (isFunction(order)) {
+			fn = order.bind($$.api);
 		}
 
 		return fn || null;
