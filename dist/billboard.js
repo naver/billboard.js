@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.2-nightly-20210722004525
+ * @version 3.1.2-nightly-20210723004541
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -9812,16 +9812,20 @@ var AxisRenderer = /*#__PURE__*/function () {
    */
   , _proto.tickInterval = function tickInterval(size) {
     var interval,
-        _this = this;
+        _this = this,
+        _this$config2 = this.config,
+        outerTickSize = _this$config2.outerTickSize,
+        tickOffset = _this$config2.tickOffset,
+        tickValues = _this$config2.tickValues;
 
-    if (this.params.isCategory) interval = this.config.tickOffset * 2;else {
-      var length = this.g.select("path.domain").node().getTotalLength() - this.config.outerTickSize * 2;
+    if (this.params.isCategory) interval = tickOffset * 2;else {
+      var length = this.g.select("path.domain").node().getTotalLength() - outerTickSize * 2;
       interval = length / (size || this.g.selectAll("line").size());
       // get the interval by its values
-      var intervalByValue = this.config.tickValues.map(function (v, i, arr) {
+      var intervalByValue = tickValues ? tickValues.map(function (v, i, arr) {
         var next = i + 1;
         return next < arr.length ? _this.helper.scale(arr[next]) - _this.helper.scale(v) : null;
-      }).filter(Boolean);
+      }).filter(Boolean) : [];
       interval = Math.min.apply(Math, intervalByValue.concat([interval]));
     }
     return interval === Infinity ? 0 : interval;

@@ -10789,22 +10789,23 @@ var AxisRenderer = /** @class */ (function () {
      */
     AxisRenderer.prototype.tickInterval = function (size) {
         var _this = this;
+        var _a = this.config, outerTickSize = _a.outerTickSize, tickOffset = _a.tickOffset, tickValues = _a.tickValues;
         var interval;
         if (this.params.isCategory) {
-            interval = this.config.tickOffset * 2;
+            interval = tickOffset * 2;
         }
         else {
             var length_1 = this.g.select("path.domain")
                 .node()
-                .getTotalLength() - this.config.outerTickSize * 2;
+                .getTotalLength() - outerTickSize * 2;
             interval = length_1 / (size || this.g.selectAll("line").size());
             // get the interval by its values
-            var intervalByValue = this.config.tickValues
+            var intervalByValue = tickValues ? tickValues
                 .map(function (v, i, arr) {
                 var next = i + 1;
                 return next < arr.length ?
                     _this.helper.scale(arr[next]) - _this.helper.scale(v) : null;
-            }).filter(Boolean);
+            }).filter(Boolean) : [];
             interval = Math.min.apply(Math, __spreadArray(__spreadArray([], intervalByValue), [interval]));
         }
         return interval === Infinity ? 0 : interval;
