@@ -80,4 +80,40 @@ describe("API subchart", () => {
 			});
 		});
 	});
+
+	describe("usage with other combination", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: true,
+					showHandle: true
+				},
+				transition: {
+					duration: 0
+				}
+			};
+		});
+
+		it("Zoom reset button should be hidden during subchart interaction", () => {
+			
+			// when
+			chart.zoom.enable("drag");
+			chart.zoom([1,2]);
+			
+			const {resetBtn} = chart.internal.zoom;
+
+			expect(resetBtn.style("display")).to.be.equal("inline");
+			
+			// when
+			chart.subchart.toggle();
+
+			expect(resetBtn.style("display")).to.be.equal("none");
+		});
+	});
 });

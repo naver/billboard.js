@@ -63,6 +63,9 @@ export default {
 				$$.axis && $$.axis.setOrient();
 			}
 
+			// hide possible reset zoom button
+			// https://github.com/naver/billboard.js/issues/2201
+			$$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none");
 			$$.scale.zoom = null;
 
 			soft ? $$.redraw({
