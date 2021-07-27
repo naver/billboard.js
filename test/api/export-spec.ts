@@ -66,7 +66,6 @@ describe("API export", () => {
 			chart.export({
 				width: 1000, height: 600
 			}, data => {
-				console.log(data);
 				expect(
 				 	expectedDataURL.map(v => data.indexOf(v) >= 0).filter(Boolean).length
 				).to.be.equal(2);
