@@ -935,6 +935,9 @@ describe("SHAPE BAR", () => {
 				},
 				zoom: {
 					enabled: true
+				},
+				transition: {
+					duration: 0
 				}
 			};
 		});
@@ -952,20 +955,24 @@ describe("SHAPE BAR", () => {
 					});
 
 					resolve(true);
-				}, 300);
+				}, 350);
 			}).then(() => {
 				return new Promise((resolve, reject) => {
 					chart.hide();
-					setTimeout(resolve, 300);
+
+					setTimeout(resolve, 350);
 				});
 			}).then((msg) => {
 				return new Promise((resolve, reject) => {
 					chart.show();
-					setTimeout(resolve, 300);
+
+					setTimeout(resolve, 350);
 				});
 			}).then(() => {
 				chart.$.bar.bars.each(function(d, i) {
-					expect(parseInt(this.getBoundingClientRect().width)).to.be.equal(zoomBarWidth[i]);
+					const w = parseInt(this.getBoundingClientRect().width);
+
+					expect(w).to.be.equal(zoomBarWidth[i]);
 				});
 
 				done();

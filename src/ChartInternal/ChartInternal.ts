@@ -10,6 +10,7 @@ import {
 	utcFormat as d3UtcFormat
 } from "d3-time-format";
 import {select as d3Select} from "d3-selection";
+import {d3Selection} from "../../types/types";
 import CLASS from "../config/classes";
 import Store from "../config/Store/Store";
 import Options from "../config/Options/Options";
@@ -470,6 +471,23 @@ export default class ChartInternal {
 		});
 
 		notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
+	}
+
+	/**
+	 * Get selection based on transition config
+	 * @param {d3Selection} selection Target selection
+	 * @param {string} name Transition name
+	 * @returns {d3Selection}
+	 * @private
+	 */
+	$T(selection: d3Selection, name: string): d3Selection {
+		const duration = this.config.transition_duration;
+
+		return (
+			duration ?
+				selection.transition(name).duration(duration) :
+				selection
+			) as d3Selection;
 	}
 
 	setChartElements(): void {

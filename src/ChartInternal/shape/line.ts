@@ -177,7 +177,7 @@ export default {
 				const regions = config.data_regions[d.id];
 
 				if (regions) {
-					path = $$.lineWithRegions(values, x, y, regions);
+					path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
 				} else {
 					if ($$.isStepType(d)) {
 						values = $$.convertValuesToStep(values);
