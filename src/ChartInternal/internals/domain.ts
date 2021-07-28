@@ -348,7 +348,7 @@ export default {
 	 * @returns {Array} zoom domain
 	 * @private
 	 */
-	getZoomDomain(): [number, number] {
+	getZoomDomain(): [number|Date, number|Date] {
 		const $$ = this;
 		const {config, org} = $$;
 		let [min, max] = org.xDomain;

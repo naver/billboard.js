@@ -3,22 +3,22 @@
  * billboard.js project is licensed under the MIT license
  */
 import {zoomIdentity as d3ZoomIdentity, zoomTransform as d3ZoomTransform} from "d3-zoom";
-import CLASS from "../../config/classes";
 import {callFn, extend, getMinMax, isDefined, isObject, parseDate} from "../../module/util";
 
 /**
  * Check if the given domain is within zoom range
- * @param {Array} domain domain value
- * @param {Array} range zoom range value
+ * @param {Array} domain Target domain value
+ * @param {Array} current Current zoom domain value
+ * @param {Array} range Zoom range value
  * @returns {boolean}
  * @private
  */
-function withinRange(domain: (number | string)[], range: number[]): boolean {
+function withinRange(domain: (number|Date)[], current, range: number[]): boolean {
 	const [min, max] = range;
 
 	return domain.every((v, i) => (
 		i === 0 ? (v >= min) : (v <= max)
-	));
+	)) && !(domain[0] === current[0] && domain[1] === current[1]);
 }
 
 /**
@@ -38,49 +38,59 @@ function withinRange(domain: (number | string)[], range: number[]): boolean {
  *  // Get the current zoomed domain range
  *  chart.zoom();
  */
-const zoom = function(domainValue?: (number | string)[]): (Date | number)[] {
+const zoom = function(domainValue?: (number|Date)[]): (number|Date)[]|undefined {
 	const $$ = this.internal;
-	const {config, scale} = $$;
+	const {$el, config, org, scale} = $$;
+	const isRotated = config.axis_rotated;
+	const isCategorized = $$.axis.isCategorized();
 	let domain = domainValue;
-	let resultDomain;
 
 	if (config.zoom_enabled && domain) {
 		if ($$.axis.isTimeSeries()) {
 			domain = domain.map(x => parseDate.bind($$)(x));
 		}
 
-		if (withinRange(domain, $$.getZoomDomain())) {
+		if (withinRange(domain, $$.getZoomDomain(true), $$.getZoomDomain())) {
+			if (isCategorized) {
+				domain = domain.map((v, i) => Number(v) + (i === 0 ? 0 : 1));
+			}
+
 			// hide any possible tooltip show before the zoom
 			$$.api.tooltip.hide();
 
 			if (config.subchart_show) {
-				const xScale = scale.zoom || scale.x;
+				const x = scale.zoom || scale.x;
 
-				$$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]);
-				resultDomain = domain;
+				$$.brush.getSelection().call($$.brush.move, [x(domain[0]), x(domain[1])]);
+				// resultDomain = domain;
 			} else {
-				scale.x.domain(domain);
-				scale.zoom = scale.x;
-				$$.axis.x.scale(scale.zoom);
+				// in case of 'config.zoom_rescale=true', use org.xScale
+				const x = isCategorized ? scale.x.orgScale() : (org.xScale || scale.x);
 
-				resultDomain = scale.zoom.orgDomain();
+				// Get transform from given domain value
+				// https://github.com/d3/d3-zoom/issues/57#issuecomment-246434951
+				const translate = [-x(domain[0]), 0];
+				const transform = d3ZoomIdentity
+					.scale(x.range()[1] / (
+						x(domain[1]) - x(domain[0])
+					))
+					.translate(
+						...(isRotated ? translate.reverse() : translate) as [number, number]
+					);
+
+				$$.$T($el.eventRect)
+					.call($$.zoom.transform, transform);
 			}
 
-			$$.redraw({
-				withTransition: true,
-				withY: config.zoom_rescale,
-				withDimension: false
-			});
-
 			$$.setZoomResetButton();
-			callFn(config.zoom_onzoom, $$.api, resultDomain);
+			callFn(config.zoom_onzoom, $$.api, domain);
 		}
 	} else {
-		resultDomain = scale.zoom ?
+		domain = scale.zoom ?
 			scale.zoom.domain() : scale.x.orgDomain();
 	}
 
-	return resultDomain;
+	return domain;
 };
 
 extend(zoom, {
@@ -213,7 +223,7 @@ export default {
 	 */
 	unzoom(): void {
 		const $$ = this.internal;
-		const {config} = $$;
+		const {config, $el: {eventRect}} = $$;
 
 		if ($$.scale.zoom) {
 			config.subchart_show ?
@@ -224,18 +234,9 @@ export default {
 			$$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none");
 
 			// reset transform
-			const eventRects = $$.$el.main.select(`.${CLASS.eventRects}`);
-
-			if (d3ZoomTransform(eventRects.node()) !== d3ZoomIdentity) {
-				$$.zoom.transform(eventRects, d3ZoomIdentity);
+			if (d3ZoomTransform(eventRect.node()) !== d3ZoomIdentity) {
+				$$.zoom.transform($$.$T(eventRect), d3ZoomIdentity);
 			}
-
-			$$.redraw({
-				withTransition: true,
-				withUpdateXDomain: true,
-				withUpdateOrgXDomain: true,
-				withY: config.zoom_rescale
-			});
 		}
 	}
 };
