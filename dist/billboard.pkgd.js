@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.2-nightly-20210723004541
+ * @version 3.1.2-nightly-20210728004607
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^2.1.0
@@ -27943,6 +27943,17 @@ var ChartInternal = /*#__PURE__*/function () {
     }) : (!hasRadar && types.push("Arc", "Pie"), $$.hasType("gauge") ? types.push("Gauge") : hasRadar && types.push("Radar")), types.forEach(function (v) {
       $$["init" + v]();
     }), notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
+  }
+  /**
+   * Get selection based on transition config
+   * @param {d3Selection} selection Target selection
+   * @param {string} name Transition name
+   * @returns {d3Selection}
+   * @private
+   */
+  , _proto.$T = function $T(selection, name) {
+    var duration = this.config.transition_duration;
+    return duration ? selection.transition(name).duration(duration) : selection;
   }, _proto.setChartElements = function setChartElements() {
     var $$ = this,
         _$$$$el = $$.$el,
@@ -28154,9 +28165,11 @@ function loadConfig(config) {
    * chart.flush(true);
    */
   flush: function flush(soft) {
-    var $$ = this.internal,
+    var _$$$zoom,
+        $$ = this.internal,
         state = $$.state;
-    state.rendered ? (state.resizing ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), $$.scale.zoom = null, soft ? $$.redraw({
+
+    state.rendered ? (state.resizing ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), (_$$$zoom = $$.zoom) != null && _$$$zoom.resetBtn && $$.zoom.resetBtn.style("display", "none"), $$.scale.zoom = null, soft ? $$.redraw({
       withTransform: !0,
       withUpdateXDomain: !0,
       withUpdateOrgXDomain: !0,
@@ -35618,7 +35631,7 @@ function candlestick_objectSpread(target) { for (var source, i = 1; i < argument
 
       if ($$.isLineType(d)) {
         var regions = config.data_regions[d.id];
-        regions ? path = $$.lineWithRegions(values, x, y, regions) : ($$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = line.curve($$.getCurve(d))(values));
+        regions ? path = $$.lineWithRegions(values, scale.zoom || x, y, regions) : ($$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = line.curve($$.getCurve(d))(values));
       } else values[0] && (x0 = x(values[0].x), y0 = y(values[0].value)), path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
 
       return path || "M 0 0";
@@ -38071,21 +38084,21 @@ function defaultConstrain(transform, extent, translateExtent) {
  */
 
 
-
 /**
  * Check if the given domain is within zoom range
- * @param {Array} domain domain value
- * @param {Array} range zoom range value
+ * @param {Array} domain Target domain value
+ * @param {Array} current Current zoom domain value
+ * @param {Array} range Zoom range value
  * @returns {boolean}
  * @private
  */
 
-function withinRange(domain, range) {
+function withinRange(domain, current, range) {
   var min = range[0],
       max = range[1];
   return domain.every(function (v, i) {
     return i === 0 ? v >= min : v <= max;
-  });
+  }) && (domain[0] !== current[0] || domain[1] !== current[1]);
 }
 /**
  * Zoom by giving x domain range.
@@ -38107,26 +38120,34 @@ function withinRange(domain, range) {
 
 
 var zoom = function (domainValue) {
-  var resultDomain,
-      $$ = this.internal,
+  var $$ = this.internal,
+      $el = $$.$el,
       config = $$.config,
+      org = $$.org,
       scale = $$.scale,
+      isRotated = config.axis_rotated,
+      isCategorized = $$.axis.isCategorized(),
       domain = domainValue;
-  if (!(config.zoom_enabled && domain)) resultDomain = scale.zoom ? scale.zoom.domain() : scale.x.orgDomain();else if ($$.axis.isTimeSeries() && (domain = domain.map(function (x) {
+  if (!(config.zoom_enabled && domain)) domain = scale.zoom ? scale.zoom.domain() : scale.x.orgDomain();else if ($$.axis.isTimeSeries() && (domain = domain.map(function (x) {
     return parseDate.bind($$)(x);
-  })), withinRange(domain, $$.getZoomDomain())) {
-    if ($$.api.tooltip.hide(), config.subchart_show) {
-      var xScale = scale.zoom || scale.x;
-      $$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]), resultDomain = domain;
-    } else scale.x.domain(domain), scale.zoom = scale.x, $$.axis.x.scale(scale.zoom), resultDomain = scale.zoom.orgDomain();
+  })), withinRange(domain, $$.getZoomDomain(!0), $$.getZoomDomain())) {
+    if (isCategorized && (domain = domain.map(function (v, i) {
+      return +v + (i === 0 ? 0 : 1);
+    })), $$.api.tooltip.hide(), config.subchart_show) {
+      var x = scale.zoom || scale.x;
+      $$.brush.getSelection().call($$.brush.move, [x(domain[0]), x(domain[1])]);
+    } else {
+      var _d3ZoomIdentity$scale,
+          _x = isCategorized ? scale.x.orgScale() : org.xScale || scale.x,
+          translate = [-_x(domain[0]), 0],
+          transform = (_d3ZoomIdentity$scale = transform_identity.scale(_x.range()[1] / (_x(domain[1]) - _x(domain[0])))).translate.apply(_d3ZoomIdentity$scale, isRotated ? translate.reverse() : translate);
 
-    $$.redraw({
-      withTransition: !0,
-      withY: config.zoom_rescale,
-      withDimension: !1
-    }), $$.setZoomResetButton(), callFn(config.zoom_onzoom, $$.api, resultDomain);
+      $$.$T($el.eventRect).call($$.zoom.transform, transform);
+    }
+
+    $$.setZoomResetButton(), callFn(config.zoom_onzoom, $$.api, domain);
   }
-  return resultDomain;
+  return domain;
 };
 
 util_extend(zoom, {
@@ -38235,19 +38256,9 @@ util_extend(zoom, {
    */
   unzoom: function unzoom() {
     var $$ = this.internal,
-        config = $$.config;
-
-    if ($$.scale.zoom) {
-      config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(transform_identity), $$.updateZoom(!0), $$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none");
-      // reset transform
-      var eventRects = $$.$el.main.select("." + config_classes.eventRects);
-      transform_transform(eventRects.node()) !== transform_identity && $$.zoom.transform(eventRects, transform_identity), $$.redraw({
-        withTransition: !0,
-        withUpdateXDomain: !0,
-        withUpdateOrgXDomain: !0,
-        withY: config.zoom_rescale
-      });
-    }
+        config = $$.config,
+        eventRect = $$.$el.eventRect;
+    $$.scale.zoom && (config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(transform_identity), $$.updateZoom(!0), $$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none"), transform_transform(eventRect.node()) !== transform_identity && $$.zoom.transform($$.$T(eventRect), transform_identity));
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/interactions/drag.ts
@@ -38773,10 +38784,9 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
     bind === void 0 && (bind = !0);
     var $$ = this,
         config = $$.config,
-        main = $$.$el.main,
-        zoomEnabled = config.zoom_enabled,
-        eventRects = main.select("." + config_classes.eventRects);
-    zoomEnabled && bind ? !config.subchart_show && $$.bindZoomOnEventRect(eventRects, config.zoom_type) : bind === !1 && ($$.api.unzoom(), eventRects.on(".zoom", null).on(".drag", null));
+        eventRect = $$.$el.eventRect,
+        zoomEnabled = config.zoom_enabled;
+    zoomEnabled && bind ? !config.subchart_show && $$.bindZoomOnEventRect(eventRect, config.zoom_type) : bind === !1 && ($$.api.unzoom(), eventRect.on(".zoom", null).on(".drag", null));
   },
 
   /**
@@ -38799,6 +38809,13 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
      * @private
      */
     // @ts-ignore
+
+    /**
+     * Get zoom domain
+     * @returns {Array} zoom domain
+     * @private
+     */
+    // @ts-ignore
     zoom.orgScaleExtent = function () {
       var extent = config.zoom_extent || [1, 10];
       return [extent[0], Math.max($$.getMaxDataCount() / extent[1], extent[1])];
@@ -38812,7 +38829,11 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       var newScale = transform[config.axis_rotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x),
           domain = $$.trimXDomain(newScale.domain()),
           rescale = config.zoom_rescale;
-      newScale.domain(domain, org.xDomain), scale.zoom = $$.getCustomizedScale(newScale), $$.axis.x.scale(scale.zoom), rescale && (!org.xScale && (org.xScale = scale.x.copy()), scale.x.domain(domain));
+      newScale.domain(domain, org.xDomain), $$.state.xTickOffset || ($$.state.xTickOffset = $$.axis.x.tickOffset()), scale.zoom = $$.getCustomizedScale(newScale), $$.axis.x.scale(scale.zoom), rescale && (!org.xScale && (org.xScale = scale.x.copy()), scale.x.domain(domain));
+    }, zoom.getDomain = function () {
+      var domain = scale[scale.zoom ? "zoom" : "subX"].domain(),
+          isCategorized = $$.axis.isCategorized();
+      return isCategorized && (domain[1] -= 2), domain;
     }, $$.zoom = zoom;
   },
 
@@ -38833,25 +38854,29 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * @private
    */
   onZoom: function onZoom(event) {
-    var $$ = this,
+    var _sourceEvent,
+        _sourceEvent2,
+        _sourceEvent3,
+        _sourceEvent4,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         org = $$.org,
         sourceEvent = event.sourceEvent;
 
-    if (config.zoom_enabled && event.sourceEvent && $$.filterTargetsToShow($$.data.targets).length !== 0 && (scale.zoom || !(sourceEvent.type.indexOf("touch") > -1) || sourceEvent.touches.length !== 1)) {
-      var isMousemove = sourceEvent.type === "mousemove",
-          isZoomOut = sourceEvent.wheelDelta < 0,
+    if (config.zoom_enabled && $$.filterTargetsToShow($$.data.targets).length !== 0 && (scale.zoom || !(((_sourceEvent = sourceEvent) == null ? void 0 : _sourceEvent.type.indexOf("touch")) > -1) || ((_sourceEvent2 = sourceEvent) == null ? void 0 : _sourceEvent2.touches.length) !== 1)) {
+      var isMousemove = ((_sourceEvent3 = sourceEvent) == null ? void 0 : _sourceEvent3.type) === "mousemove",
+          isZoomOut = ((_sourceEvent4 = sourceEvent) == null ? void 0 : _sourceEvent4.wheelDelta) < 0,
           transform = event.transform;
       !isMousemove && isZoomOut && scale.x.domain().every(function (v, i) {
         return v !== org.xDomain[i];
-      }) && scale.x.domain(org.xDomain), $$.zoom.updateTransformScale(transform), $$.axis.isCategorized() && scale.x.orgDomain()[0] === org.xDomain[0] && scale.x.domain([org.xDomain[0] - 1e-10, scale.x.orgDomain()[1]]), $$.redraw({
+      }) && scale.x.domain(org.xDomain), $$.zoom.updateTransformScale(transform), $$.redraw({
         withTransition: !1,
         withY: config.zoom_rescale,
         withSubchart: !1,
         withEventRect: !1,
         withDimension: !1
-      }), $$.state.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, scale.zoom.domain());
+      }), $$.state.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
     }
   },
 
@@ -38863,27 +38888,11 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   onZoomEnd: function onZoomEnd(event) {
     var $$ = this,
         config = $$.config,
-        scale = $$.scale,
         startEvent = $$.zoom.startEvent,
-        e = event && event.sourceEvent;
+        e = event == null ? void 0 : event.sourceEvent;
     startEvent && startEvent.type.indexOf("touch") > -1 && (startEvent = startEvent.changedTouches[0], e = e.changedTouches[0]);
     // if click, do nothing. otherwise, click interaction will be canceled.
-    config.zoom_type === "drag" && (!startEvent || e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY) || ($$.redrawEventRect(), $$.updateZoom(), $$.state.zooming = !1, callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain()));
-  },
-
-  /**
-   * Get zoom domain
-   * @returns {Array} zoom domain
-   * @private
-   */
-  getZoomDomain: function getZoomDomain() {
-    var $$ = this,
-        config = $$.config,
-        org = $$.org,
-        _org$xDomain = org.xDomain,
-        min = _org$xDomain[0],
-        max = _org$xDomain[1];
-    return isDefined(config.zoom_x_min) && (min = getMinMax("min", [min, config.zoom_x_min])), isDefined(config.zoom_x_max) && (max = getMinMax("max", [max, config.zoom_x_max])), [min, max];
+    config.zoom_type === "drag" && e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY || ($$.redrawEventRect(), $$.updateZoom(), $$.state.zooming = !1, callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain()));
   },
 
   /**
@@ -38909,16 +38918,16 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
   /**
    * Attach zoom event on <rect>
-   * @param {d3.selection} eventRects evemt <rect> element
+   * @param {d3.selection} eventRect evemt <rect> element
    * @param {string} type zoom type
    * @private
    */
-  bindZoomOnEventRect: function bindZoomOnEventRect(eventRects, type) {
+  bindZoomOnEventRect: function bindZoomOnEventRect(eventRect, type) {
     var $$ = this,
         behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
     // Since Chrome 89, wheel zoom not works properly
     // Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
-    $$.$el.svg.on("wheel", function () {}), eventRects.call(behaviour).on("dblclick.zoom", null);
+    $$.$el.svg.on("wheel", function () {}), eventRect.call(behaviour).on("dblclick.zoom", null);
   },
 
   /**

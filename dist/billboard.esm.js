@@ -8095,6 +8095,19 @@ var ChartInternal = /** @class */ (function () {
         });
         notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
     };
+    /**
+     * Get selection based on transition config
+     * @param {d3Selection} selection Target selection
+     * @param {string} name Transition name
+     * @returns {d3Selection}
+     * @private
+     */
+    ChartInternal.prototype.$T = function (selection, name) {
+        var duration = this.config.transition_duration;
+        return (duration ?
+            selection.transition(name).duration(duration) :
+            selection);
+    };
     ChartInternal.prototype.setChartElements = function () {
         var $$ = this;
         var _a = $$.$el, chart = _a.chart, svg = _a.svg, defs = _a.defs, main = _a.main, tooltip = _a.tooltip, legend = _a.legend, title = _a.title, grid = _a.grid, arc = _a.arcs, circles = _a.circle, bars = _a.bar, candlestick = _a.candlestick, lines = _a.line, areas = _a.area, texts = _a.text;
@@ -8364,6 +8377,7 @@ var apiChart = {
      * chart.flush(true);
      */
     flush: function (soft) {
+        var _a;
         var $$ = this.internal;
         var state = $$.state;
         if (state.rendered) {
@@ -8376,6 +8390,9 @@ var apiChart = {
                 // re-update config info
                 $$.axis && $$.axis.setOrient();
             }
+            // hide possible reset zoom button
+            // https://github.com/naver/billboard.js/issues/2201
+            ((_a = $$.zoom) === null || _a === void 0 ? void 0 : _a.resetBtn) && $$.zoom.resetBtn.style("display", "none");
             $$.scale.zoom = null;
             soft ? $$.redraw({
                 withTransform: true,
@@ -16394,7 +16411,7 @@ var shapeLine = {
             if ($$.isLineType(d)) {
                 var regions = config.data_regions[d.id];
                 if (regions) {
-                    path = $$.lineWithRegions(values, x, y, regions);
+                    path = $$.lineWithRegions(values, scale.zoom || x, y, regions);
                 }
                 else {
                     if ($$.isStepType(d)) {
@@ -18438,14 +18455,15 @@ var apiSubchart = {
  */
 /**
  * Check if the given domain is within zoom range
- * @param {Array} domain domain value
- * @param {Array} range zoom range value
+ * @param {Array} domain Target domain value
+ * @param {Array} current Current zoom domain value
+ * @param {Array} range Zoom range value
  * @returns {boolean}
  * @private
  */
-function withinRange(domain, range) {
+function withinRange(domain, current, range) {
     var min = range[0], max = range[1];
-    return domain.every(function (v, i) { return (i === 0 ? (v >= min) : (v <= max)); });
+    return domain.every(function (v, i) { return (i === 0 ? (v >= min) : (v <= max)); }) && !(domain[0] === current[0] && domain[1] === current[1]);
 }
 /**
  * Zoom by giving x domain range.
@@ -18465,42 +18483,48 @@ function withinRange(domain, range) {
  *  chart.zoom();
  */
 var zoom$1 = function (domainValue) {
+    var _a;
     var $$ = this.internal;
-    var config = $$.config, scale = $$.scale;
+    var $el = $$.$el, config = $$.config, org = $$.org, scale = $$.scale;
+    var isRotated = config.axis_rotated;
+    var isCategorized = $$.axis.isCategorized();
     var domain = domainValue;
-    var resultDomain;
     if (config.zoom_enabled && domain) {
         if ($$.axis.isTimeSeries()) {
             domain = domain.map(function (x) { return parseDate.bind($$)(x); });
         }
-        if (withinRange(domain, $$.getZoomDomain())) {
+        if (withinRange(domain, $$.getZoomDomain(true), $$.getZoomDomain())) {
+            if (isCategorized) {
+                domain = domain.map(function (v, i) { return Number(v) + (i === 0 ? 0 : 1); });
+            }
             // hide any possible tooltip show before the zoom
             $$.api.tooltip.hide();
             if (config.subchart_show) {
-                var xScale = scale.zoom || scale.x;
-                $$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]);
-                resultDomain = domain;
+                var x = scale.zoom || scale.x;
+                $$.brush.getSelection().call($$.brush.move, [x(domain[0]), x(domain[1])]);
+                // resultDomain = domain;
             }
             else {
-                scale.x.domain(domain);
-                scale.zoom = scale.x;
-                $$.axis.x.scale(scale.zoom);
-                resultDomain = scale.zoom.orgDomain();
+                // in case of 'config.zoom_rescale=true', use org.xScale
+                var x = isCategorized ? scale.x.orgScale() : (org.xScale || scale.x);
+                // Get transform from given domain value
+                // https://github.com/d3/d3-zoom/issues/57#issuecomment-246434951
+                var translate = [-x(domain[0]), 0];
+                var transform = (_a = zoomIdentity
+                    .scale(x.range()[1] / (x(domain[1]) - x(domain[0]))))
+                    .translate.apply(_a, (isRotated ? translate.reverse() : translate));
+                $$.$T($el.eventRect)
+                    .call($$.zoom.transform, transform);
             }
-            $$.redraw({
-                withTransition: true,
-                withY: config.zoom_rescale,
-                withDimension: false
-            });
             $$.setZoomResetButton();
-            callFn(config.zoom_onzoom, $$.api, resultDomain);
+            callFn(config.zoom_onzoom, $$.api, domain);
         }
     }
     else {
-        resultDomain = scale.zoom ?
+        domain = scale.zoom ?
             scale.zoom.domain() : scale.x.orgDomain();
     }
-    return resultDomain;
+    return domain;
 };
 extend(zoom$1, {
     /**
@@ -18617,7 +18641,7 @@ var apiZoom = {
      */
     unzoom: function () {
         var $$ = this.internal;
-        var config = $$.config;
+        var config = $$.config, eventRect = $$.$el.eventRect;
         if ($$.scale.zoom) {
             config.subchart_show ?
                 $$.brush.getSelection().call($$.brush.move, null) :
@@ -18625,16 +18649,9 @@ var apiZoom = {
             $$.updateZoom(true);
             $$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none");
             // reset transform
-            var eventRects = $$.$el.main.select("." + CLASS.eventRects);
-            if (zoomTransform(eventRects.node()) !== zoomIdentity) {
-                $$.zoom.transform(eventRects, zoomIdentity);
+            if (zoomTransform(eventRect.node()) !== zoomIdentity) {
+                $$.zoom.transform($$.$T(eventRect), zoomIdentity);
             }
-            $$.redraw({
-                withTransition: true,
-                withUpdateXDomain: true,
-                withUpdateOrgXDomain: true,
-                withY: config.zoom_rescale
-            });
         }
     }
 };
@@ -19249,17 +19266,16 @@ var zoom = {
     bindZoomEvent: function (bind) {
         if (bind === void 0) { bind = true; }
         var $$ = this;
-        var config = $$.config, main = $$.$el.main;
+        var config = $$.config, eventRect = $$.$el.eventRect;
         var zoomEnabled = config.zoom_enabled;
-        var eventRects = main.select("." + CLASS.eventRects);
         if (zoomEnabled && bind) {
             // Do not bind zoom event when subchart is shown
             !config.subchart_show &&
-                $$.bindZoomOnEventRect(eventRects, config.zoom_type);
+                $$.bindZoomOnEventRect(eventRect, config.zoom_type);
         }
         else if (bind === false) {
             $$.api.unzoom();
-            eventRects
+            eventRect
                 .on(".zoom", null)
                 .on(".drag", null);
         }
@@ -19302,6 +19318,9 @@ var zoom = {
             var domain = $$.trimXDomain(newScale.domain());
             var rescale = config.zoom_rescale;
             newScale.domain(domain, org.xDomain);
+            if (!$$.state.xTickOffset) {
+                $$.state.xTickOffset = $$.axis.x.tickOffset();
+            }
             scale.zoom = $$.getCustomizedScale(newScale);
             $$.axis.x.scale(scale.zoom);
             if (rescale) {
@@ -19309,6 +19328,20 @@ var zoom = {
                 !org.xScale && (org.xScale = scale.x.copy());
                 scale.x.domain(domain);
             }
+        };
+        /**
+         * Get zoom domain
+         * @returns {Array} zoom domain
+         * @private
+         */
+        // @ts-ignore
+        zoom.getDomain = function () {
+            var domain = scale[scale.zoom ? "zoom" : "subX"].domain();
+            var isCategorized = $$.axis.isCategorized();
+            if (isCategorized) {
+                domain[1] -= 2;
+            }
+            return domain;
         };
         $$.zoom = zoom;
     },
@@ -19337,21 +19370,17 @@ var zoom = {
         var config = $$.config, scale = $$.scale, org = $$.org;
         var sourceEvent = event.sourceEvent;
         if (!config.zoom_enabled ||
-            !event.sourceEvent ||
             $$.filterTargetsToShow($$.data.targets).length === 0 ||
-            (!scale.zoom && sourceEvent.type.indexOf("touch") > -1 && sourceEvent.touches.length === 1)) {
+            (!scale.zoom && (sourceEvent === null || sourceEvent === void 0 ? void 0 : sourceEvent.type.indexOf("touch")) > -1 && (sourceEvent === null || sourceEvent === void 0 ? void 0 : sourceEvent.touches.length) === 1)) {
             return;
         }
-        var isMousemove = sourceEvent.type === "mousemove";
-        var isZoomOut = sourceEvent.wheelDelta < 0;
+        var isMousemove = (sourceEvent === null || sourceEvent === void 0 ? void 0 : sourceEvent.type) === "mousemove";
+        var isZoomOut = (sourceEvent === null || sourceEvent === void 0 ? void 0 : sourceEvent.wheelDelta) < 0;
         var transform = event.transform;
         if (!isMousemove && isZoomOut && scale.x.domain().every(function (v, i) { return v !== org.xDomain[i]; })) {
             scale.x.domain(org.xDomain);
         }
         $$.zoom.updateTransformScale(transform);
-        if ($$.axis.isCategorized() && scale.x.orgDomain()[0] === org.xDomain[0]) {
-            scale.x.domain([org.xDomain[0] - 1e-10, scale.x.orgDomain()[1]]);
-        }
         $$.redraw({
             withTransition: false,
             withY: config.zoom_rescale,
@@ -19360,7 +19389,7 @@ var zoom = {
             withDimension: false
         });
         $$.state.cancelClick = isMousemove;
-        callFn(config.zoom_onzoom, $$.api, scale.zoom.domain());
+        callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
     },
     /**
      * 'end' event listener
@@ -19369,39 +19398,21 @@ var zoom = {
      */
     onZoomEnd: function (event) {
         var $$ = this;
-        var config = $$.config, scale = $$.scale;
+        var config = $$.config;
         var startEvent = $$.zoom.startEvent;
-        var e = event && event.sourceEvent;
+        var e = event === null || event === void 0 ? void 0 : event.sourceEvent;
         if ((startEvent && startEvent.type.indexOf("touch") > -1)) {
             startEvent = startEvent.changedTouches[0];
             e = e.changedTouches[0];
         }
         // if click, do nothing. otherwise, click interaction will be canceled.
-        if (config.zoom_type === "drag" && (!startEvent ||
-            (e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY))) {
+        if (config.zoom_type === "drag" && (e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)) {
             return;
         }
         $$.redrawEventRect();
         $$.updateZoom();
         $$.state.zooming = false;
-        callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain());
-    },
-    /**
-     * Get zoom domain
-     * @returns {Array} zoom domain
-     * @private
-     */
-    getZoomDomain: function () {
-        var $$ = this;
-        var config = $$.config, org = $$.org;
-        var _a = org.xDomain, min = _a[0], max = _a[1];
-        if (isDefined(config.zoom_x_min)) {
-            min = getMinMax$1("min", [min, config.zoom_x_min]);
-        }
-        if (isDefined(config.zoom_x_max)) {
-            max = getMinMax$1("max", [max, config.zoom_x_max]);
-        }
-        return [min, max];
+        callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain());
     },
     /**
      * Update zoom
@@ -19427,17 +19438,17 @@ var zoom = {
     },
     /**
      * Attach zoom event on <rect>
-     * @param {d3.selection} eventRects evemt <rect> element
+     * @param {d3.selection} eventRect evemt <rect> element
      * @param {string} type zoom type
      * @private
      */
-    bindZoomOnEventRect: function (eventRects, type) {
+    bindZoomOnEventRect: function (eventRect, type) {
         var $$ = this;
         var behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
         // Since Chrome 89, wheel zoom not works properly
         // Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
         $$.$el.svg.on("wheel", function () { });
-        eventRects
+        eventRect
             .call(behaviour)
             .on("dblclick.zoom", null);
     },
