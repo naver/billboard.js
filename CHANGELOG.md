@@ -1,3 +1,16 @@
+## [3.1.3](https://github.com/naver/billboard.js/compare/3.1.2...3.1.3) (2021-07-28)
+
+
+### Bug Fixes
+
+* **api:** fix subchart APIs usage with zoom reset button ([982f6ee](https://github.com/naver/billboard.js/commit/982f6eed95eff3d8e68db29bb6678d9f04c91d67)), closes [#2201](https://github.com/naver/billboard.js/issues/2201)
+* **axis:** fix bar type tick.fit=false throwing error ([083f5c7](https://github.com/naver/billboard.js/commit/083f5c79d9d3ea3f71dd9642ed5c7684b7f916fc)), closes [#2210](https://github.com/naver/billboard.js/issues/2210)
+* **axis:** fix handling x axis localtime ([1d2ce8f](https://github.com/naver/billboard.js/commit/1d2ce8f3a420a580890db40361682cea5f3823a0)), closes [#2186](https://github.com/naver/billboard.js/issues/2186)
+* **Axis:** fix transition on flow ([a656fe5](https://github.com/naver/billboard.js/commit/a656fe59a0cb344aeb24bdfaee29c19128855e27)), closes [#2189](https://github.com/naver/billboard.js/issues/2189)
+* **shape:** fix incorrect shape offset ([d2be8c0](https://github.com/naver/billboard.js/commit/d2be8c0fda2f0ded76ebe92dc5453ca35377e862)), closes [#2187](https://github.com/naver/billboard.js/issues/2187)
+* **types:** fix wrong legend.item callbacks args types ([1196bbf](https://github.com/naver/billboard.js/commit/1196bbff5c0b5a41e467e60bebdf2b6f17d82db0)), closes [#2203](https://github.com/naver/billboard.js/issues/2203)
+* **zoom:** fix inconsistent zoom on .zoom() -> wheel ([4eee2d8](https://github.com/naver/billboard.js/commit/4eee2d820dcea67c4bcc052f26a2e050b0bb1eb5)), closes [#2194](https://github.com/naver/billboard.js/issues/2194)
+
 ## [3.1.2](https://github.com/naver/billboard.js/compare/3.1.1...3.1.2) (2021-07-12)
 
 
