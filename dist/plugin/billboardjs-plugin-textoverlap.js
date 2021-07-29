@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.2-nightly-20210728004607
+ * @version 3.1.3-nightly-20210729004500
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1024,7 +1024,7 @@ var Plugin = /*#__PURE__*/function () {
   }, Plugin;
 }();
 
-Plugin.version = "3.1.2";
+Plugin.version = "3.1.3";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**

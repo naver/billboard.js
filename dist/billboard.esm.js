@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.1.2
+ * @version 3.1.3
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -19856,7 +19856,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.1.2
+ * @version 3.1.3
  */
 var bb = {
     /**
@@ -19866,7 +19866,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.1.2",
+    version: "3.1.3",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -19994,5 +19994,4 @@ var bb = {
     plugin: {}
 };
 
-export default bb;
-export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, candlestick, donut, gauge, line, pie, radar, scatter, selectionModule as selection, spline, step, subchartModule as subchart, zoomModule as zoom };
+export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, candlestick, bb as default, donut, gauge, line, pie, radar, scatter, selectionModule as selection, spline, step, subchartModule as subchart, zoomModule as zoom };
