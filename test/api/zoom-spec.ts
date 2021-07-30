@@ -446,11 +446,11 @@ describe("API zoom", function() {
 			}).then(() => {
 				setTimeout(() => {
 					chart.$.bar.bars.each(function(d, i) {
-						expect(this.getTotalLength()).to.be.closeTo(len[i], 1.5);
+						expect(this.getTotalLength()).to.be.closeTo(len[i], 2.5);
 					});
 
 					done();
-				}, 350);
+				}, 500);
 			});
 		});
 	});

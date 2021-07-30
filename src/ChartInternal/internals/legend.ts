@@ -166,9 +166,9 @@ export default {
 	 */
 	transformLegend(withTransition): void {
 		const $$ = this;
-		const {legend} = $$.$el;
+		const {$el: {legend}, $T} = $$;
 
-		(withTransition ? legend.transition() : legend)
+		$T(legend, withTransition)
 			.attr("transform", $$.getTranslate("legend"));
 	},
 
@@ -262,14 +262,12 @@ export default {
 	 */
 	toggleFocusLegend(targetIds: string[], focus: boolean): void {
 		const $$ = this;
-		const {legend} = $$.$el;
+		const {$el: {legend}, $T} = $$;
 		const targetIdz = $$.mapToTargetIds(targetIds);
 
-		legend && legend.selectAll(`.${CLASS.legendItem}`)
+		legend && $T(legend.selectAll(`.${CLASS.legendItem}`)
 			.filter(id => targetIdz.indexOf(id) >= 0)
-			.classed(CLASS.legendItemFocused, focus)
-			.transition()
-			.duration(100)
+			.classed(CLASS.legendItemFocused, focus))
 			.style("opacity", function() {
 				return focus ? null :
 					$$.opacityForUnfocusedLegend.call($$, d3Select(this));
@@ -282,12 +280,10 @@ export default {
 	 */
 	revertLegend(): void {
 		const $$ = this;
-		const {legend} = $$.$el;
+		const {$el: {legend}, $T} = $$;
 
-		legend && legend.selectAll(`.${CLASS.legendItem}`)
-			.classed(CLASS.legendItemFocused, false)
-			.transition()
-			.duration(100)
+		legend && $T(legend.selectAll(`.${CLASS.legendItem}`)
+			.classed(CLASS.legendItemFocused, false))
 			.style("opacity", null);
 	},
 
@@ -298,7 +294,7 @@ export default {
 	 */
 	showLegend(targetIds: string[]): void {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, $el, $T} = $$;
 
 		if (!config.legend_show) {
 			config.legend_show = true;
@@ -312,10 +308,10 @@ export default {
 
 		$$.removeHiddenLegendIds(targetIds);
 
-		$el.legend.selectAll($$.selectorLegends(targetIds))
-			.style("visibility", null)
-			.transition()
-			.style("opacity", null);
+		$T(
+			$el.legend.selectAll($$.selectorLegends(targetIds))
+				.style("visibility", null)
+		).style("opacity", null);
 	},
 
 	/**
@@ -442,7 +438,7 @@ export default {
 	 */
 	updateLegendElement(targetIds: string[], options): void {
 		const $$ = this;
-		const {config, state, $el: {legend}} = $$;
+		const {config, state, $el: {legend}, $T} = $$;
 		const paddingTop = 4;
 		const paddingRight = 10;
 		const posMin = 10;
@@ -657,14 +653,14 @@ export default {
 				updatePositions(this, id, i);
 			});
 
-		(withTransition ? texts.transition() : texts)
+		$T(texts, withTransition)
 			.attr("x", xForLegendText)
 			.attr("y", yForLegendText);
 
 		const rects = legend.selectAll(`rect.${CLASS.legendItemEvent}`)
 			.data(targetIdz);
 
-		(withTransition ? rects.transition() : rects)
+		$T(rects, withTransition)
 			.attr("width", id => widths[id])
 			.attr("height", id => heights[id])
 			.attr("x", xForLegendRect)
@@ -674,7 +670,7 @@ export default {
 			const tiles = legend.selectAll(`.${CLASS.legendItemPoint}`)
 				.data(targetIdz);
 
-			(withTransition ? tiles.transition() : tiles)
+			$T(tiles, withTransition)
 				.each(function() {
 					const nodeName = this.nodeName.toLowerCase();
 					const pointR = config.point_r;
@@ -713,7 +709,7 @@ export default {
 			const tiles = legend.selectAll(`line.${CLASS.legendItemTile}`)
 				.data(targetIdz);
 
-			(withTransition ? tiles.transition() : tiles)
+			$T(tiles, withTransition)
 				.style("stroke", getColor)
 				.attr("x1", x1ForLegendTile)
 				.attr("y1", yForLegendTile)
@@ -722,7 +718,7 @@ export default {
 		}
 
 		if (background) {
-			(withTransition ? background.transition() : background)
+			$T(background, withTransition)
 				.attr("height", $$.getLegendHeight() - 12)
 				.attr("width", maxWidth * (step + 1) + 10);
 		}

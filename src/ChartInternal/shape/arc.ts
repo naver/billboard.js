@@ -557,7 +557,8 @@ export default {
 			.selectAll(`.${CLASS.arc}`)
 			.data($$.arcData.bind($$));
 
-		mainArc.exit().transition()
+		mainArc.exit()
+			.transition()
 			.duration(durationForExit)
 			.style("opacity", "0")
 			.remove();

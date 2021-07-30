@@ -78,7 +78,7 @@ const zoom = function(domainValue?: (number|Date)[]): (number|Date)[]|undefined 
 						...(isRotated ? translate.reverse() : translate) as [number, number]
 					);
 
-				$$.$T($el.eventRect)
+				$el.eventRect
 					.call($$.zoom.transform, transform);
 			}
 
@@ -223,7 +223,7 @@ export default {
 	 */
 	unzoom(): void {
 		const $$ = this.internal;
-		const {config, $el: {eventRect}} = $$;
+		const {config, $el: {eventRect}, $T} = $$;
 
 		if ($$.scale.zoom) {
 			config.subchart_show ?
@@ -235,7 +235,7 @@ export default {
 
 			// reset transform
 			if (d3ZoomTransform(eventRect.node()) !== d3ZoomIdentity) {
-				$$.zoom.transform($$.$T(eventRect), d3ZoomIdentity);
+				$$.zoom.transform($T(eventRect), d3ZoomIdentity);
 			}
 		}
 	}
