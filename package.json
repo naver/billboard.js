@@ -4,7 +4,7 @@
 	"description": "Re-usable easy interface JavaScript chart library, based on D3 v4+",
 	"homepage": "https://naver.github.io/billboard.js/",
 	"main": "dist/billboard.js",
-	"module": "dist/billboard.esm.js",
+	"module": "dist/esm/billboard.js",
 	"types": "types/index.d.ts",
 	"scripts": {
 		"start": "webpack serve --open",
