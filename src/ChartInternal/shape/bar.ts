@@ -50,13 +50,14 @@ export default {
 
 	/**
 	 * Generate/Update elements
-	 * @param {number} durationForExit Transition duration for exit elements
+	 * @param {boolean} withTransition Transition for exit elements
 	 * @param {boolean} isSub Subchart draw
 	 * @private
 	 */
-	updateBar(durationForExit: number, isSub = false): void {
+	updateBar(withTransition: boolean, isSub = false): void {
 		const $$ = this;
-		const $root = isSub ? $$.$el.subchart : $$.$el;
+		const {$el, $T} = $$;
+		const $root = isSub ? $el.subchart : $el;
 		const classBar = $$.getClass("bar", true);
 		const initialOpacity = $$.initialOpacity.bind($$);
 
@@ -64,8 +65,7 @@ export default {
 			.selectAll(`.${CLASS.bar}`)
 			.data($$.labelishData.bind($$));
 
-		bar.exit().transition()
-			.duration(durationForExit)
+		$T(bar.exit(), withTransition)
 			.style("opacity", "0")
 			.remove();
 
@@ -84,10 +84,11 @@ export default {
 	 * @returns {Array}
 	 */
 	redrawBar(drawFn, withTransition?: boolean, isSub = false) {
-		const {bar} = (isSub ? this.$el.subchart : this.$el);
+		const $$ = this;
+		const {bar} = (isSub ? $$.$el.subchart : $$.$el);
 
 		return [
-			(withTransition ? bar.transition(getRandom()) : bar)
+			$$.$T(bar, withTransition, getRandom())
 				.attr("d", d => d.value && drawFn(d))
 				.style("fill", this.color)
 				.style("opacity", null)

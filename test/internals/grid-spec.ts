@@ -368,15 +368,19 @@ describe("GRID", function() {
 				expect(chart.$.main.selectAll(`.${CLASS.xgrid}-lines .${CLASS.xgrid}-line`).size()).to.be.equal(3);
 			});
 
-			it("should locate grid lines properly", () => {
+			it("should locate grid lines properly", done => {
 				const lines = chart.$.main.selectAll(`.${CLASS.xgrid}-lines .${CLASS.xgrid}-line`);
 				const expectedX1s = [202, 397, 593];
 
-				lines.each(function (d, i) {
-					const x1 = Number(d3Select(this).select("line").attr("x1"));
+				setTimeout(() => {
+					lines.each(function (d, i) {
+						const x1 = Number(d3Select(this).select("line").attr("x1"));
 
-					expect(x1).to.be.closeTo(expectedX1s[i], 1);
-				});
+						expect(x1).to.be.closeTo(expectedX1s[i], 1);
+					});
+
+					done();
+				}, 300);
 			});
 
 			it("should locate grid texts properly", () => {
@@ -414,7 +418,7 @@ describe("GRID", function() {
 								{value: 3, text: "Label 3"},
 							]
 						}
-					},
+					}
 				};
 			});
 
@@ -422,15 +426,18 @@ describe("GRID", function() {
 				expect(chart.$.main.selectAll(`.${CLASS.xgrid}-lines .${CLASS.xgrid}-line`).size()).to.be.equal(3);
 			});
 
-			it("should locate grid lines properly", () => {
+			it("should locate grid lines properly", done => {
 				const lines = chart.$.main.selectAll(`.${CLASS.xgrid}-lines .${CLASS.xgrid}-line`);
 				const expectedY1s = [144, 283, 421];
 
-				lines.each(function(d, i) {
-					const y1 = +d3Select(this).select("line").attr("y1");
+				setTimeout(() => {
+					lines.each(function(d, i) {
+						const y1 = +d3Select(this).select("line").attr("y1");
 
-					expect(y1).to.be.closeTo(expectedY1s[i], 1);
-				});
+						expect(y1).to.be.equal(expectedY1s[i]);
+					});
+					done();
+				}, 500);
 			});
 
 			it("should locate grid texts properly", () => {
@@ -471,19 +478,23 @@ describe("GRID", function() {
 				};
 			});
 
-			it("should show x grid lines", () => {
+			it("should show x grid lines", done => {
 				const lines = chart.$.main.select(`.${CLASS.xgrid}-lines .${CLASS.xgrid}-line`);
 				const expectedX1 = 593;
 				const expectedText = ["Label 3"];
 
-				lines.each(function(id, i) {
-					const line = d3Select(this);
-					const l = line.select("line");
-					const t = line.select("text");
+				setTimeout(() => {
+					lines.each(function(id, i) {
+						const line = d3Select(this);
+						const l = line.select("line");
+						const t = line.select("text");
 
-					expect(+l.attr("x1")).to.be.closeTo(expectedX1, 1);
-					expect(t.text()).to.be.equal(expectedText[i]);
-				});
+						expect(+l.attr("x1")).to.be.closeTo(expectedX1, 1);
+						expect(t.text()).to.be.equal(expectedText[i]);
+					});
+					
+					done();
+				}, 300);
 			});
 
 		});
@@ -514,19 +525,23 @@ describe("GRID", function() {
 				};
 			});
 
-			it("should show x grid lines", () => {
+			it("should show x grid lines", done => {
 				const lines = chart.$.main.selectAll(`.${CLASS.xgrid}-lines .${CLASS.xgrid}-line`);
 				const expectedX1 = [524, 75];
 				const expectedText = ["Label 3", "Label a"];
 
-				lines.each(function(id, i) {
-					const line = d3Select(this);
-					const l = line.select("line");
-					const t = line.select("text");
+				setTimeout(() => {
+					lines.each(function(id, i) {
+						const line = d3Select(this);
+						const l = line.select("line");
+						const t = line.select("text");
 
-					expect(+l.attr("x1")).to.be.closeTo(expectedX1[i], 1);
-					expect(t.text()).to.be.equal(expectedText[i]);
-				});
+						expect(+l.attr("x1")).to.be.closeTo(expectedX1[i], 1);
+						expect(t.text()).to.be.equal(expectedText[i]);
+					});
+
+					done();
+				}, 300);
 			});
 		});
 	});

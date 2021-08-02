@@ -113,15 +113,13 @@ export default {
 	 */
 	dragend(): void {
 		const $$ = this;
-		const {config, $el: {main}} = $$;
+		const {config, $el: {main}, $T} = $$;
 
 		if ($$.hasArcType() || !config.data_selection_enabled) { // do nothing if not selectable
 			return;
 		}
 
-		main.select(`.${CLASS.dragarea}`)
-			.transition()
-			.duration(100)
+		$T(main.select(`.${CLASS.dragarea}`))
 			.style("opacity", "0")
 			.remove();
 
