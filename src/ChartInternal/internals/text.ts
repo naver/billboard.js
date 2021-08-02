@@ -61,18 +61,16 @@ export default {
 	 * @param {number} durationForExit Fade-out transition duration
 	 * @private
 	 */
-	updateText(durationForExit): void {
+	updateText(): void {
 		const $$ = this;
-		const {$el, config} = $$;
+		const {$el, $T, config} = $$;
 		const classText = $$.getClass("text", "index");
 
 		const text = $el.main.selectAll(`.${CLASS.texts}`)
 			.selectAll(`.${CLASS.text}`)
 			.data($$.labelishData.bind($$));
 
-		text.exit()
-			.transition()
-			.duration(durationForExit)
+		$T(text.exit())
 			.style("fill-opacity", "0")
 			.remove();
 

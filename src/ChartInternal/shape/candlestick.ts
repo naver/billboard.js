@@ -52,13 +52,13 @@ export default {
 
 	/**
 	 * Generate/Update elements
-	 * @param {number} durationForExit Transition duration for exit elements
+	 * @param {boolean} withTransition Transition for exit elements
 	 * @param {boolean} isSub Subchart draw
 	 * @private
 	 */
-	updateCandlestick(durationForExit: number, isSub = false): void {
+	updateCandlestick(withTransition: boolean, isSub = false): void {
 		const $$ = this;
-		const {$el} = $$;
+		const {$el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
 		const classSetter = $$.getClass("candlestick", true);
 		const initialOpacity = $$.initialOpacity.bind($$);
@@ -67,8 +67,7 @@ export default {
 			.selectAll(`.${CLASS.candlestick}`)
 			.data($$.labelishData.bind($$));
 
-		candlestick.exit().transition()
-			.duration(durationForExit)
+		$T(candlestick.exit(), withTransition)
 			.style("opacity", "0")
 			.remove();
 
@@ -222,14 +221,15 @@ export default {
 	 * @returns {Array}
 	 */
 	redrawCandlestick(drawFn, withTransition?: boolean, isSub = false) {
-		const {candlestick} = (isSub ? this.$el.subchart : this.$el);
+		const $$ = this;
+		const {$el, $T} = $$;
+		const {candlestick} = (isSub ? $el.subchart : $el);
 		const rand = getRandom(true);
 
 		return [
 			candlestick
 				.each(function(d, i) {
-					const g = withTransition ?
-						d3Select(this).transition(rand as string) : d3Select(this);
+					const g = $T(d3Select(this), withTransition, rand);
 
 					drawFn(d, i, g);
 				})

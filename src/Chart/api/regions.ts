@@ -91,15 +91,14 @@ extend(regions, {
 	 */
 	remove: function(optionsValue: RegionsParam): RegionsParam {
 		const $$ = this.internal;
-		const {config} = $$;
+		const {config, $T} = $$;
 
 		const options = optionsValue || {};
-		const duration = getOption(options, "duration", config.transition_duration);
 		const classes = getOption(options, "classes", [CLASS.region]);
 		let regions = $$.$el.main.select(`.${CLASS.regions}`)
 			.selectAll(classes.map(c => `.${c}`));
 
-		(duration ? regions.transition().duration(duration) : regions)
+		$T(regions)
 			.style("opacity", "0")
 			.remove();
 

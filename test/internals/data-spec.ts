@@ -2291,6 +2291,7 @@ describe("DATA", () => {
 
 					resolve(true);
 				}, 300);
+				
 			}).then(() => {
 				return new Promise((resolve, reject) => {
 					// when is called already hidden, do not call onhidden callback
@@ -2323,7 +2324,7 @@ describe("DATA", () => {
 
 					done();
 				}, 300);
-			});
+			 });
 		});
 
 		it("check on continuous .hide()/.show() APIs giving specific data id.", done => {

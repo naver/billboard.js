@@ -118,7 +118,7 @@ export default {
 		}
 	},
 
-	redrawRadar(durationForExit: number): void {
+	redrawRadar(): void {
 		const $$ = this;
 		const {radar, main} = $$.$el;
 		const translate = $$.getTranslate("radar");
@@ -131,7 +131,7 @@ export default {
 			$$.generateRadarPoints();
 			$$.updateRadarLevel();
 			$$.updateRadarAxes();
-			$$.updateRadarShape(durationForExit);
+			$$.updateRadarShape();
 		}
 	},
 
@@ -352,7 +352,7 @@ export default {
 		}
 	},
 
-	updateRadarShape(durationForExit): void {
+	updateRadarShape(): void {
 		const $$ = this;
 		const targets = $$.data.targets.filter(d => $$.isRadarType(d));
 		const points = $$.cache.get(cacheKey);
@@ -364,8 +364,7 @@ export default {
 		const areasEnter = areas.enter().append("g")
 			.attr("class", $$.getChartClass("Radar"));
 
-		areas.exit().transition()
-			.duration(durationForExit)
+		$$.$T(areas.exit())
 			.remove();
 
 		areasEnter
