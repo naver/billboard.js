@@ -476,26 +476,34 @@ export default class ChartInternal {
 
 	/**
 	 * Get selection based on transition config
-	 * @param {d3Selection} selection Target selection
+	 * @param {SVGElement|d3Selection} selection Target selection
 	 * @param {boolean} force Force transition
 	 * @param {string} name Transition name
 	 * @returns {d3Selection}
 	 * @private
 	 */
-	$T(selection: d3Selection, force?: boolean, name?: string): d3Selection {
+	$T(selection: SVGElement | d3Selection, force?: boolean, name?: string): d3Selection {
 		const {config, state} = this;
 		const duration = config.transition_duration;
 		let t = selection;
 
 		if (t) {
+			// in case of non d3 selection, wrap with d3 selection
+			if ("tagName" in t) {
+				t = d3Select(t);
+			}
+
 			// do not transit on:
 			// - wheel zoom (state.zooming = true)
 			// - initialization
 			// - resizing
-			t = (!state.zooming && state.rendered && !state.resizing &&
-				((force !== false && duration) || force) ?
-				t.transition(name).duration(duration) : t
-			) as d3Selection;
+			const transit = !state.zooming &&
+				state.rendered && !state.resizing &&
+				(
+					(force !== false && duration) || force
+				);
+
+			t = (transit ? t.transition(name).duration(duration) : t) as d3Selection;
 		}
 
 		return t;

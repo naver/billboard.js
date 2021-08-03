@@ -224,8 +224,7 @@ class Axis {
 				} else {
 					axesConfig[i].domain && scale.domain(axesConfig[i].domain);
 
-					this.x.helper.transitionise(g)
-						.call(v.scale(scale));
+					$$.$T(g).call(v.scale(scale));
 				}
 
 				g.attr("transform", $$.getTranslate(id, i + 1));
@@ -289,7 +288,8 @@ class Axis {
 			noTransition,
 			config,
 			id,
-			tickTextRotate
+			tickTextRotate,
+			owner: $$
 		}, isX && {
 			isCategory,
 			tickMultiline: config.axis_x_tick_multiline,
@@ -760,7 +760,7 @@ class Axis {
 
 	updateLabels(withTransition) {
 		const $$ = this.owner;
-		const {main} = $$.$el;
+		const {$el: {main}, $T} = $$;
 
 		const labels = {
 			x: main.select(`.${CLASS.axisX} .${CLASS.axisXLabel}`),
@@ -773,7 +773,7 @@ class Axis {
 				const node = labels[v];
 
 				// @check $$.$T(node, withTransition)
-				(withTransition ? node.transition() : node)
+				$T(node, withTransition)
 					.attr("x", () => this.xForAxisLabel(v))
 					.attr("dx", () => this.dxForAxisLabel(v))
 					.attr("dy", () => this.dyForAxisLabel(v))
@@ -842,20 +842,12 @@ class Axis {
 		return tickValues;
 	}
 
-	generateTransitions(duration) {
+	generateTransitions(withTransition) {
 		const $$ = this.owner;
-		const axis = $$.$el.axis;
+		const {$el: {axis}, $T} = $$;
 
 		const [axisX, axisY, axisY2, axisSubX] = ["x", "y", "y2", "subX"]
-			.map(v => {
-				let ax = axis[v];
-
-				if (ax && duration) {
-					ax = ax.transition().duration(duration);
-				}
-
-				return ax;
-			});
+			.map(v => $T(axis[v], withTransition));
 
 		return {axisX, axisY, axisY2, axisSubX};
 	}
