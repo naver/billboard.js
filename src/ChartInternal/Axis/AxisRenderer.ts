@@ -214,8 +214,14 @@ export default class AxisRenderer {
 					tickTransform(tickExit, scale1);
 				}
 
+				// when .flow(), it should follow flow's transition config
+				// otherwise make to use ChartInternals.$T()
+				tick = params.owner.state.flowing ?
+					helper.transitionise(tick) :
+					params.owner.$T(tick);
+
 				tickTransform(tickEnter, scale0);
-				tickTransform(helper.transitionise(tick).style("opacity", null), scale1);
+				tickTransform(tick.style("opacity", null), scale1);
 			}
 		});
 
