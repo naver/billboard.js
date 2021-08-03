@@ -58,7 +58,6 @@ export default {
 
 	/**
 	 * Update text
-	 * @param {number} durationForExit Fade-out transition duration
 	 * @private
 	 */
 	updateText(): void {
