@@ -61,13 +61,13 @@ export default {
 
 	/**
 	 * Generate/Update elements
-	 * @param {number} durationForExit Transition duration for exit elements
+	 * @param {boolean} withTransition Transition for exit elements
 	 * @param {boolean} isSub Subchart draw
 	 * @private
 	 */
-	updateArea(durationForExit: number, isSub = false): void {
+	updateArea(withTransition: boolean, isSub = false): void {
 		const $$ = this;
-		const {config, state, $el} = $$;
+		const {config, state, $el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
 
 		config.area_linearGradient && $$.updateAreaGradient();
@@ -76,8 +76,7 @@ export default {
 			.selectAll(`.${CLASS.area}`)
 			.data($$.lineData.bind($$));
 
-		area.exit().transition()
-			.duration(durationForExit)
+		$T(area.exit(), withTransition)
 			.style("opacity", "0")
 			.remove();
 
@@ -106,7 +105,7 @@ export default {
 		const {orgAreaOpacity} = $$.state;
 
 		return [
-			(withTransition ? area.transition(getRandom()) : area)
+			$$.$T(area, withTransition, getRandom())
 				.attr("d", drawFn)
 				.style("fill", $$.updateAreaColor.bind($$))
 				.style("opacity", d => String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity))

@@ -38,7 +38,7 @@ const bbPlugins = fs.readdirSync(path.resolve(__dirname, "../../src/Plugin/"), {
 .map(({name}) => ({
     input: `src/Plugin/${name}/index.ts`,
     output: {
-        file: `dist/plugin/billboardjs-plugin-${name}.esm.js`,
+        file: `dist/esm/plugin/billboardjs-plugin-${name}.js`,
         format: "es",
         banner: getBanner(true)
     },
@@ -50,7 +50,7 @@ export default [
     {
         input: "src/index.esm.ts",
         output: {
-            file: "dist/billboard.esm.js",
+            file: "dist/esm/billboard.js",
             format: "es",
             banner: getBanner()
         },

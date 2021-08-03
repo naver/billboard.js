@@ -772,6 +772,7 @@ class Axis {
 			.forEach(v => {
 				const node = labels[v];
 
+				// @check $$.$T(node, withTransition)
 				(withTransition ? node.transition() : node)
 					.attr("x", () => this.xForAxisLabel(v))
 					.attr("dx", () => this.dxForAxisLabel(v))

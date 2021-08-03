@@ -18,9 +18,9 @@ export default {
 			.attr("class", CLASS.regions);
 	},
 
-	updateRegion(duration: number): void {
+	updateRegion(): void {
 		const $$ = this;
-		const {config, $el: {region}} = $$;
+		const {config, $el: {region}, $T} = $$;
 
 		if (!region.main) {
 			$$.initRegion();
@@ -34,9 +34,7 @@ export default {
 			.selectAll(`.${CLASS.region}`)
 			.data(config.regions);
 
-		list.exit()
-			.transition()
-			.duration(duration)
+		$T(list.exit())
 			.style("opacity", "0")
 			.remove();
 
@@ -54,16 +52,17 @@ export default {
 
 	redrawRegion(withTransition) {
 		const $$ = this;
-		let regions = $$.$el.region.list.select("rect");
+		const {$el: {region}, $T} = $$;
+		let regions = region.list.select("rect");
 
-		regions = (withTransition ? regions.transition() : regions)
+		regions = $T(regions, withTransition)
 			.attr("x", $$.regionX.bind($$))
 			.attr("y", $$.regionY.bind($$))
 			.attr("width", $$.regionWidth.bind($$))
 			.attr("height", $$.regionHeight.bind($$));
 
 		return [
-			(withTransition ? regions.transition() : regions)
+			regions
 				.style("fill-opacity", d => (isValue(d.opacity) ? d.opacity : null))
 				.on("end", function() {
 					// remove unnecessary rect after transition

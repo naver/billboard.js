@@ -266,7 +266,7 @@ export default {
 	 *    duration: 500
 	 * }
 	 */
-	transition_duration: 350,
+	transition_duration: 250,
 
 	/**
 	 * Set plugins

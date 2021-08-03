@@ -112,6 +112,7 @@ export default class ChartInternal {
 
 		$$.$el = store.getStore("element");
 		$$.state = store.getStore("state");
+		$$.$T = $$.$T.bind($$);
 	}
 
 	beforeInit(): void {
@@ -476,18 +477,28 @@ export default class ChartInternal {
 	/**
 	 * Get selection based on transition config
 	 * @param {d3Selection} selection Target selection
+	 * @param {boolean} force Force transition
 	 * @param {string} name Transition name
 	 * @returns {d3Selection}
 	 * @private
 	 */
-	$T(selection: d3Selection, name: string): d3Selection {
-		const duration = this.config.transition_duration;
+	$T(selection: d3Selection, force?: boolean, name?: string): d3Selection {
+		const {config, state} = this;
+		const duration = config.transition_duration;
+		let t = selection;
 
-		return (
-			duration ?
-				selection.transition(name).duration(duration) :
-				selection
+		if (t) {
+			// do not transit on:
+			// - wheel zoom (state.zooming = true)
+			// - initialization
+			// - resizing
+			t = (!state.zooming && state.rendered && !state.resizing &&
+				((force !== false && duration) || force) ?
+				t.transition(name).duration(duration) : t
 			) as d3Selection;
+		}
+
+		return t;
 	}
 
 	setChartElements(): void {
@@ -598,13 +609,11 @@ export default class ChartInternal {
 	 */
 	showTargets(): void {
 		const $$ = <any> this;
-		const {config, $el: {svg}} = $$;
+		const {$el: {svg}, $T} = $$;
 
-		svg.selectAll(`.${CLASS.target}`)
+		$T(svg.selectAll(`.${CLASS.target}`)
 			.filter(d => $$.isTargetToShow(d.id))
-			.transition()
-			.duration(config.transition_duration)
-			.style("opacity", null);
+		).style("opacity", null);
 	}
 
 	getWithOption(options) {

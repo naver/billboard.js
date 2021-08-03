@@ -52,13 +52,13 @@ export default {
 
 	/**
 	 * Generate/Update elements
-	 * @param {number} durationForExit Transition duration for exit elements
+	 * @param {boolean} withTransition Transition for exit elements
 	 * @param {boolean} isSub Subchart draw
 	 * @private
 	 */
-	updateLine(durationForExit: number, isSub = false): void {
+	updateLine(withTransition: boolean, isSub = false): void {
 		const $$ = this;
-		const {format: {extraLineClasses}, $el} = $$;
+		const {format: {extraLineClasses}, $el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
 
 		const line = $root.main
@@ -66,8 +66,7 @@ export default {
 			.selectAll(`.${CLASS.line}`)
 			.data($$.lineData.bind($$));
 
-		line.exit().transition()
-			.duration(durationForExit)
+		$T(line.exit(), withTransition)
 			.style("opacity", "0")
 			.remove();
 
@@ -89,10 +88,12 @@ export default {
 	 * @returns {Array}
 	 */
 	redrawLine(drawFn, withTransition?: boolean, isSub = false) {
-		const {line} = (isSub ? this.$el.subchart : this.$el);
+		const $$ = this;
+		const {$el, $T} = $$;
+		const {line} = (isSub ? $el.subchart : $el);
 
 		return [
-			(withTransition ? line.transition(getRandom()) : line)
+			$T(line, withTransition, getRandom())
 				.attr("d", drawFn)
 				.style("stroke", this.color)
 				.style("opacity", null)
