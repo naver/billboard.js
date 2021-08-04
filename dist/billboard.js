@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.3-nightly-20210803004538
+ * @version 3.1.3-nightly-20210804004536
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6263,7 +6263,6 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
   /**
    * Update text
-   * @param {number} durationForExit Fade-out transition duration
    * @private
    */
   updateText: function updateText() {
@@ -6351,12 +6350,13 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    */
   redrawText: function redrawText(x, y, forFlow, withTransition) {
     var $$ = this,
+        $T = $$.$T,
         t = getRandom(!0);
     // need to return 'true' as of being pushed to the redraw list
     // ref: getRedrawList()
     return $$.$el.text.style("fill", $$.updateTextColor.bind($$)).attr("filter", $$.updateTextBacgroundColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
       // do not apply transition for newly added text elements
-      var node = withTransition && this.getAttribute("x") ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).transition(t) : (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
+      var node = $T(this, !!(withTransition && this.getAttribute("x")), t),
           posX = x.bind(this)(d, i),
           posY = y.bind(this)(d, i);
       this.childElementCount ? node.attr("transform", "translate(" + posX + " " + posY + ")") : node.attr("x", posX).attr("y", posY);
@@ -7349,9 +7349,35 @@ var ChartInternal = /*#__PURE__*/function () {
     var store = new Store();
     $$.$el = store.getStore("element"), $$.state = store.getStore("state"), $$.$T = $$.$T.bind($$);
   }
+  /**
+   * Get the selection based on transition config
+   * @param {SVGElement|d3Selection} selection Target selection
+   * @param {boolean} force Force transition
+   * @param {string} name Transition name
+   * @returns {d3Selection}
+   * @private
+   */
+
 
   var _proto = ChartInternal.prototype;
-  return _proto.beforeInit = function beforeInit() {
+  return _proto.$T = function $T(selection, force, name) {
+    var config = this.config,
+        state = this.state,
+        duration = config.transition_duration,
+        t = selection;
+
+    if (t) {
+      "tagName" in t && (t = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(t));
+      // do not transit on:
+      // - wheel zoom (state.zooming = true)
+      // - initialization
+      // - resizing
+      var transit = (force !== !1 && duration || force) && !state.zooming && !state.resizing && state.rendered;
+      t = transit ? t.transition(name).duration(duration) : t;
+    }
+
+    return t;
+  }, _proto.beforeInit = function beforeInit() {
     var $$ = this;
     $$.callPluginHook("$beforeInit"), callFn($$.config.onbeforeinit, $$.api);
   }, _proto.afterInit = function afterInit() {
@@ -7472,7 +7498,12 @@ var ChartInternal = /*#__PURE__*/function () {
     }
 
     config.tooltip_show && $$.initShowTooltip(), state.rendered = !0;
-  }, _proto.initChartElements = function initChartElements() {
+  }
+  /**
+   * Initialize chart elements
+   * @private
+   */
+  , _proto.initChartElements = function initChartElements() {
     var $$ = this,
         _$$$state = $$.state,
         hasAxis = _$$$state.hasAxis,
@@ -7486,20 +7517,10 @@ var ChartInternal = /*#__PURE__*/function () {
     }), notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
   }
   /**
-   * Get selection based on transition config
-   * @param {d3Selection} selection Target selection
-   * @param {boolean} force Force transition
-   * @param {string} name Transition name
-   * @returns {d3Selection}
+   * Set chart elements
    * @private
    */
-  , _proto.$T = function $T(selection, force, name) {
-    var config = this.config,
-        state = this.state,
-        duration = config.transition_duration,
-        t = selection;
-    return t && (t = !state.zooming && state.rendered && !state.resizing && (force !== !1 && duration || force) ? t.transition(name).duration(duration) : t), t;
-  }, _proto.setChartElements = function setChartElements() {
+  , _proto.setChartElements = function setChartElements() {
     var $$ = this,
         _$$$$el = $$.$el,
         chart = _$$$$el.chart,
@@ -9724,9 +9745,11 @@ var AxisRenderer = /*#__PURE__*/function () {
           scale0 = function (d) {
             return x(d) + dx;
           }, scale1 = scale0;
-        } else scale0.bandwidth ? scale0 = scale1 : tickTransform(tickExit, scale1);
+        } else scale0.bandwidth ? scale0 = scale1 : tickTransform(tickExit, scale1); // when .flow(), it should follow flow's transition config
+        // otherwise make to use ChartInternals.$T()
 
-        tickTransform(tickEnter, scale0), tickTransform(helper.transitionise(tick).style("opacity", null), scale1);
+
+        tick = params.owner.state.flowing ? helper.transitionise(tick) : params.owner.$T(tick), tickTransform(tickEnter, scale0), tickTransform(tick.style("opacity", null), scale1);
       }
     }), this.g = $g;
   }
@@ -10016,7 +10039,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         }) || v.scale().range(range);
         var className = _this2.getAxisClassName(id) + "-" + (i + 1),
             g = main.select("." + className.replace(/\s/, "."));
-        g.empty() ? g = main.append("g").attr("class", className).style("visibility", config["axis_" + id + "_show"] ? null : "hidden").call(v) : (axesConfig[i].domain && scale.domain(axesConfig[i].domain), _this2.x.helper.transitionise(g).call(v.scale(scale))), g.attr("transform", $$.getTranslate(id, i + 1));
+        g.empty() ? g = main.append("g").attr("class", className).style("visibility", config["axis_" + id + "_show"] ? null : "hidden").call(v) : (axesConfig[i].domain && scale.domain(axesConfig[i].domain), $$.$T(g).call(v.scale(scale))), g.attr("transform", $$.getTranslate(id, i + 1));
       });
     });
   }
@@ -10054,7 +10077,8 @@ var Axis_Axis = /*#__PURE__*/function () {
       noTransition: noTransition,
       config: config,
       id: id,
-      tickTextRotate: tickTextRotate
+      tickTextRotate: tickTextRotate,
+      owner: $$
     }, isX && {
       isCategory: isCategory,
       tickMultiline: config.axis_x_tick_multiline,
@@ -10295,6 +10319,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     var _this3 = this,
         $$ = this.owner,
         main = $$.$el.main,
+        $T = $$.$T,
         labels = {
       x: main.select("." + config_classes.axisX + " ." + config_classes.axisXLabel),
       y: main.select("." + config_classes.axisY + " ." + config_classes.axisYLabel),
@@ -10306,7 +10331,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     }).forEach(function (v) {
       var node = labels[v]; // @check $$.$T(node, withTransition)
 
-      (withTransition ? node.transition() : node).attr("x", function () {
+      $T(node, withTransition).attr("x", function () {
         return _this3.xForAxisLabel(v);
       }).attr("dx", function () {
         return _this3.dxForAxisLabel(v);
@@ -10350,12 +10375,12 @@ var Axis_Axis = /*#__PURE__*/function () {
     return forTimeSeries || (tickValues = tickValues.sort(function (a, b) {
       return a - b;
     })), tickValues;
-  }, _proto.generateTransitions = function generateTransitions(duration) {
+  }, _proto.generateTransitions = function generateTransitions(withTransition) {
     var $$ = this.owner,
         axis = $$.$el.axis,
+        $T = $$.$T,
         _map = ["x", "y", "y2", "subX"].map(function (v) {
-      var ax = axis[v];
-      return ax && duration && (ax = ax.transition().duration(duration)), ax;
+      return $T(axis[v], withTransition);
     }),
         axisX = _map[0],
         axisY = _map[1],

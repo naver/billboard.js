@@ -6564,7 +6564,6 @@ var text = {
     },
     /**
      * Update text
-     * @param {number} durationForExit Fade-out transition duration
      * @private
      */
     updateText: function () {
@@ -6669,6 +6668,7 @@ var text = {
      */
     redrawText: function (x, y, forFlow, withTransition) {
         var $$ = this;
+        var $T = $$.$T;
         var t = getRandom(true);
         $$.$el.text
             .style("fill", $$.updateTextColor.bind($$))
@@ -6676,8 +6676,7 @@ var text = {
             .style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
             .each(function (d, i) {
             // do not apply transition for newly added text elements
-            var node = withTransition && this.getAttribute("x") ?
-                select(this).transition(t) : select(this);
+            var node = $T(this, !!(withTransition && this.getAttribute("x")), t);
             var posX = x.bind(this)(d, i);
             var posY = y.bind(this)(d, i);
             // when is multiline
@@ -7800,6 +7799,35 @@ var ChartInternal = /** @class */ (function () {
         $$.state = store.getStore("state");
         $$.$T = $$.$T.bind($$);
     }
+    /**
+     * Get the selection based on transition config
+     * @param {SVGElement|d3Selection} selection Target selection
+     * @param {boolean} force Force transition
+     * @param {string} name Transition name
+     * @returns {d3Selection}
+     * @private
+     */
+    ChartInternal.prototype.$T = function (selection, force, name) {
+        var _a = this, config = _a.config, state = _a.state;
+        var duration = config.transition_duration;
+        var t = selection;
+        if (t) {
+            // in case of non d3 selection, wrap with d3 selection
+            if ("tagName" in t) {
+                t = select(t);
+            }
+            // do not transit on:
+            // - wheel zoom (state.zooming = true)
+            // - initialization
+            // - resizing
+            var transit = ((force !== false && duration) || force) &&
+                !state.zooming &&
+                !state.resizing &&
+                state.rendered;
+            t = (transit ? t.transition(name).duration(duration) : t);
+        }
+        return t;
+    };
     ChartInternal.prototype.beforeInit = function () {
         var $$ = this;
         $$.callPluginHook("$beforeInit");
@@ -8040,6 +8068,10 @@ var ChartInternal = /** @class */ (function () {
         config.tooltip_show && $$.initShowTooltip();
         state.rendered = true;
     };
+    /**
+     * Initialize chart elements
+     * @private
+     */
     ChartInternal.prototype.initChartElements = function () {
         var $$ = this;
         var _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar;
@@ -8069,28 +8101,9 @@ var ChartInternal = /** @class */ (function () {
         notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
     };
     /**
-     * Get selection based on transition config
-     * @param {d3Selection} selection Target selection
-     * @param {boolean} force Force transition
-     * @param {string} name Transition name
-     * @returns {d3Selection}
+     * Set chart elements
      * @private
      */
-    ChartInternal.prototype.$T = function (selection, force, name) {
-        var _a = this, config = _a.config, state = _a.state;
-        var duration = config.transition_duration;
-        var t = selection;
-        if (t) {
-            // do not transit on:
-            // - wheel zoom (state.zooming = true)
-            // - initialization
-            // - resizing
-            t = (!state.zooming && state.rendered && !state.resizing &&
-                ((force !== false && duration) || force) ?
-                t.transition(name).duration(duration) : t);
-        }
-        return t;
-    };
     ChartInternal.prototype.setChartElements = function () {
         var $$ = this;
         var _a = $$.$el, chart = _a.chart, svg = _a.svg, defs = _a.defs, main = _a.main, tooltip = _a.tooltip, legend = _a.legend, title = _a.title, grid = _a.grid, arc = _a.arcs, circles = _a.circle, bars = _a.bar, candlestick = _a.candlestick, lines = _a.line, areas = _a.area, texts = _a.text;
@@ -10599,8 +10612,13 @@ var AxisRenderer = /** @class */ (function () {
                 else {
                     tickTransform(tickExit, scale1);
                 }
+                // when .flow(), it should follow flow's transition config
+                // otherwise make to use ChartInternals.$T()
+                tick = params.owner.state.flowing ?
+                    helper.transitionise(tick) :
+                    params.owner.$T(tick);
                 tickTransform(tickEnter, scale0);
-                tickTransform(helper.transitionise(tick).style("opacity", null), scale1);
+                tickTransform(tick.style("opacity", null), scale1);
             }
         });
         this.g = $g;
@@ -11019,8 +11037,7 @@ var Axis = /** @class */ (function () {
                 }
                 else {
                     axesConfig[i].domain && scale.domain(axesConfig[i].domain);
-                    _this.x.helper.transitionise(g)
-                        .call(v.scale(scale));
+                    $$.$T(g).call(v.scale(scale));
                 }
                 g.attr("transform", $$.getTranslate(id, i + 1));
             });
@@ -11071,7 +11088,8 @@ var Axis = /** @class */ (function () {
             noTransition: noTransition,
             config: config,
             id: id,
-            tickTextRotate: tickTextRotate
+            tickTextRotate: tickTextRotate,
+            owner: $$
         }, isX && {
             isCategory: isCategory,
             tickMultiline: config.axis_x_tick_multiline,
@@ -11441,7 +11459,7 @@ var Axis = /** @class */ (function () {
     Axis.prototype.updateLabels = function (withTransition) {
         var _this = this;
         var $$ = this.owner;
-        var main = $$.$el.main;
+        var main = $$.$el.main, $T = $$.$T;
         var labels = {
             x: main.select("." + CLASS.axisX + " ." + CLASS.axisXLabel),
             y: main.select("." + CLASS.axisY + " ." + CLASS.axisYLabel),
@@ -11451,7 +11469,7 @@ var Axis = /** @class */ (function () {
             .forEach(function (v) {
             var node = labels[v];
             // @check $$.$T(node, withTransition)
-            (withTransition ? node.transition() : node)
+            $T(node, withTransition)
                 .attr("x", function () { return _this.xForAxisLabel(v); })
                 .attr("dx", function () { return _this.dxForAxisLabel(v); })
                 .attr("dy", function () { return _this.dyForAxisLabel(v); })
@@ -11503,17 +11521,11 @@ var Axis = /** @class */ (function () {
         }
         return tickValues;
     };
-    Axis.prototype.generateTransitions = function (duration) {
+    Axis.prototype.generateTransitions = function (withTransition) {
         var $$ = this.owner;
-        var axis = $$.$el.axis;
+        var axis = $$.$el.axis, $T = $$.$T;
         var _a = ["x", "y", "y2", "subX"]
-            .map(function (v) {
-            var ax = axis[v];
-            if (ax && duration) {
-                ax = ax.transition().duration(duration);
-            }
-            return ax;
-        }), axisX = _a[0], axisY = _a[1], axisY2 = _a[2], axisSubX = _a[3];
+            .map(function (v) { return $T(axis[v], withTransition); }), axisX = _a[0], axisY = _a[1], axisY2 = _a[2], axisSubX = _a[3];
         return { axisX: axisX, axisY: axisY, axisY2: axisY2, axisSubX: axisSubX };
     };
     Axis.prototype.redraw = function (transitions, isHidden, isInit) {
