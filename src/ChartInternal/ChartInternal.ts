@@ -112,7 +112,42 @@ export default class ChartInternal {
 
 		$$.$el = store.getStore("element");
 		$$.state = store.getStore("state");
+
 		$$.$T = $$.$T.bind($$);
+	}
+
+	/**
+	 * Get the selection based on transition config
+	 * @param {SVGElement|d3Selection} selection Target selection
+	 * @param {boolean} force Force transition
+	 * @param {string} name Transition name
+	 * @returns {d3Selection}
+	 * @private
+	 */
+	$T(selection: SVGElement | d3Selection, force?: boolean, name?: string): d3Selection {
+		const {config, state} = this;
+		const duration = config.transition_duration;
+		let t = selection;
+
+		if (t) {
+			// in case of non d3 selection, wrap with d3 selection
+			if ("tagName" in t) {
+				t = d3Select(t);
+			}
+
+			// do not transit on:
+			// - wheel zoom (state.zooming = true)
+			// - initialization
+			// - resizing
+			const transit = ((force !== false && duration) || force) &&
+				!state.zooming &&
+				!state.resizing &&
+				state.rendered;
+
+			t = (transit ? t.transition(name).duration(duration) : t) as d3Selection;
+		}
+
+		return t;
 	}
 
 	beforeInit(): void {
@@ -442,6 +477,10 @@ export default class ChartInternal {
 		state.rendered = true;
 	}
 
+	/**
+	 * Initialize chart elements
+	 * @private
+	 */
 	initChartElements(): void {
 		const $$ = <any> this;
 		const {hasAxis, hasRadar} = $$.state;
@@ -475,32 +514,9 @@ export default class ChartInternal {
 	}
 
 	/**
-	 * Get selection based on transition config
-	 * @param {d3Selection} selection Target selection
-	 * @param {boolean} force Force transition
-	 * @param {string} name Transition name
-	 * @returns {d3Selection}
+	 * Set chart elements
 	 * @private
 	 */
-	$T(selection: d3Selection, force?: boolean, name?: string): d3Selection {
-		const {config, state} = this;
-		const duration = config.transition_duration;
-		let t = selection;
-
-		if (t) {
-			// do not transit on:
-			// - wheel zoom (state.zooming = true)
-			// - initialization
-			// - resizing
-			t = (!state.zooming && state.rendered && !state.resizing &&
-				((force !== false && duration) || force) ?
-				t.transition(name).duration(duration) : t
-			) as d3Selection;
-		}
-
-		return t;
-	}
-
 	setChartElements(): void {
 		const $$ = this;
 		const {$el: {

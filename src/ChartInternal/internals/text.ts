@@ -58,7 +58,6 @@ export default {
 
 	/**
 	 * Update text
-	 * @param {number} durationForExit Fade-out transition duration
 	 * @private
 	 */
 	updateText(): void {
@@ -181,6 +180,7 @@ export default {
 	 */
 	redrawText(x, y, forFlow?: boolean, withTransition?: boolean): true {
 		const $$ = this;
+		const {$T} = $$;
 		const t = <string>getRandom(true);
 
 		$$.$el.text
@@ -189,8 +189,7 @@ export default {
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
 			.each(function(d, i) {
 				// do not apply transition for newly added text elements
-				const node = withTransition && this.getAttribute("x") ?
-					d3Select(this).transition(t) : d3Select(this);
+				const node = $T(this, !!(withTransition && this.getAttribute("x")), t);
 
 				const posX = x.bind(this)(d, i);
 				const posY = y.bind(this)(d, i);
