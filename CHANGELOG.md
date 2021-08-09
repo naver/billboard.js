@@ -1,3 +1,11 @@
+# [3.2.0-next.1](https://github.com/naver/billboard.js/compare/3.1.3...3.2.0-next.1) (2021-08-09)
+
+
+### Features
+
+* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
+* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
+
 ## [3.1.3](https://github.com/naver/billboard.js/compare/3.1.2...3.1.3) (2021-07-28)
 
 
