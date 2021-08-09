@@ -1,3 +1,4 @@
+/* eslint-disable */
 // @ts-nocheck
 const webpack = require("webpack");
 const isWin = require("os").platform() === "win32";
@@ -57,12 +58,12 @@ module.exports = function(config) {
 			},
 			plugins: isWin ? [
 				new webpack.NormalModuleReplacementPlugin(
-					/module\/util/i, resource => {
+					/module\/util/i, function(resource) {
 						resource.request = resource.request.replace("module/util", "../test/assets/module/util");
 					}
 				),
 				new webpack.NormalModuleReplacementPlugin(
-					/fake/i, resource => {
+					/fake/i, function(resource) {
 						if (/test\\assets\\module/i.test(resource.context)) {
 							resource.request = "../../../src/module/util";
 						}
