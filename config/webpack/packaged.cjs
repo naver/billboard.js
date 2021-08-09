@@ -1,12 +1,13 @@
 const {merge} = require("webpack-merge");
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
-const terserConfig = require("../terserConfig");
-const banner = require("../banner");
+const terserConfig = require("../terserConfig.cjs");
+const banner = require("../banner.cjs");
+
 
 const config = {
 	entry: {
-		"billboard.pkgd": ["core-js/stable", "regenerator-runtime/runtime", "./src/index.ts"],
+		"billboard.pkgd": ["core-js/stable", "./src/index.ts"],
 		"billboard.pkgd.min": ["core-js/stable", "./src/index.ts"]
 	},
 	optimization: {

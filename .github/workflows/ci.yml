@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [11.x, 12.x, 14.x]
+        node-version: [12.x, 14.x, 16.x]
 
     steps:
     - uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
     - name: Install dependencies
       run: |
         npm config set package-lock false
-        npm install
+        npm install --save --legacy-peer-deps
 
     - name: Lint
       run: npm run lint
