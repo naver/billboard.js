@@ -1,4 +1,4 @@
-import {readdirSync} from "fs";
+import {readdirSync, existsSync} from "fs";
 import babel from '@rollup/plugin-babel';
 import typescript from "@rollup/plugin-typescript";
 import resolve from "@rollup/plugin-node-resolve";
@@ -35,22 +35,26 @@ const plugins = [
     })
 ];
 const external = id => /^d3-/.test(id);
+let pluginPath = resolvePath("../../src/Plugin/");
 
-// billboard.js plugin setting
-const bbPlugins = readdirSync(resolvePath("../../src/Plugin/"), {
-	withFileTypes: true
-})
-.filter(dirent => dirent.isDirectory())
-.map(({name}) => ({
-    input: `src/Plugin/${name}/index.ts`,
-    output: {
-        file: `${distPath}/plugin/billboardjs-plugin-${name}.js`,
-        format: "es",
-        banner: getBannerStr(true)
-    },
-    plugins,
-    external
-}));
+if (!existsSync(pluginPath)) {
+    pluginPath = resolvePath("../src/Plugin/");
+}
+
+const bbPlugins = readdirSync(pluginPath, {
+        withFileTypes: true
+    })
+    .filter(dirent => dirent.isDirectory())
+    .map(({name}) => ({
+        input: `src/Plugin/${name}/index.ts`,
+        output: {
+            file: `${distPath}/plugin/billboardjs-plugin-${name}.js`,
+            format: "es",
+            banner: getBannerStr(true)
+        },
+        plugins,
+        external
+    }));
 
 export default [
     {
