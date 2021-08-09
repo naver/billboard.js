@@ -68,12 +68,10 @@ module.exports = (common, env) => {
 		}));
 	}
 
-	const r = mergeWithCustomize({
+	return mergeWithCustomize({
 		customizeObject: customizeObject({
 			entry: "replace",
 			output: "replace"
 		})
 	})(common, config);
-
-	return r;
 };

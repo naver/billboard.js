@@ -3,7 +3,8 @@ import {fileURLToPath} from "url";
 import {execSync} from "child_process";
 import {readFileSync, writeFileSync} from "fs";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 /**
  * Get banner object
