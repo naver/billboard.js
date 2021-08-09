@@ -42,7 +42,7 @@ export default {
 		let opacity = config.point_opacity;
 
 		if (isUndefined(opacity)) {
-			opacity = config.point_show && !config.point_focus_only ? "1" : "0";
+			opacity = config.point_show && !config.point_focus_only ? null : "0";
 
 			opacity = isValue(this.getBaseValue(d)) ?
 				(this.isBubbleType(d) || this.isScatterType(d) ?
@@ -143,7 +143,7 @@ export default {
 
 	redrawCircle(cx: Function, cy: Function, withTransition: boolean, flow, isSub = false) {
 		const $$ = this;
-		const {state: {rendered}, $el} = $$;
+		const {state: {rendered}, $el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
 		const selectedCircles = $root.main.selectAll(`.${CLASS.selectedCircle}`);
 
@@ -161,7 +161,7 @@ export default {
 		$root.circle.each(function(d) {
 			let result: d3Selection | any = fn.bind(this)(d);
 
-			result = ((withTransition || !rendered) ? result.transition(t) : result)
+			result = $T(result, withTransition || !rendered, t)
 				.style("opacity", opacityStyleFn);
 
 			mainCircles.push(result);
@@ -169,7 +169,7 @@ export default {
 
 		return [
 			mainCircles,
-			(withTransition ? selectedCircles.transition() : selectedCircles)
+			$T(selectedCircles, withTransition)
 				.attr(`${posAttr}x`, cx)
 				.attr(`${posAttr}y`, cy)
 		];
@@ -203,7 +203,7 @@ export default {
 
 			circle
 				.attr("class", this.updatePointClass.bind(this))
-				.style("opacity", "1")
+				.style("opacity", null)
 				.each(function(d) {
 					const {id, index, value} = d;
 					let visibility = "hidden";
@@ -498,19 +498,18 @@ export default {
 
 		update(element, xPosFn, yPosFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
+			const $$ = this;
 			const {width, height} = element.node().getBBox();
 
-			const xPosFn2 = d => xPosFn(d) - width / 2;
-			const yPosFn2 = d => yPosFn(d) - height / 2;
+			const xPosFn2 = d => (isValue(d.value) ? xPosFn(d) - width / 2 : 0);
+			const yPosFn2 = d => (isValue(d.value) ? yPosFn(d) - height / 2 : 0);
 			let mainCircles = element;
 
 			if (withTransition) {
-				const transitionName = getTransitionName();
-
 				flow && mainCircles.attr("x", xPosFn2);
 
-				mainCircles = mainCircles.transition(transitionName);
-				selectedCircles && selectedCircles.transition(getTransitionName());
+				mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
+				selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
 			}
 
 			return mainCircles
@@ -541,15 +540,13 @@ export default {
 			}
 
 			if (withTransition) {
-				const transitionName = getTransitionName();
-
 				flow && mainCircles.attr("cx", xPosFn);
 
 				if (mainCircles.attr("cx")) {
-					mainCircles = mainCircles.transition(transitionName);
+					mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
 				}
 
-				selectedCircles && selectedCircles.transition(getTransitionName());
+				selectedCircles && $$.$T(mainCircles, withTransition, getTransitionName());
 			}
 
 			return mainCircles
@@ -582,12 +579,10 @@ export default {
 			let mainCircles = element;
 
 			if (withTransition) {
-				const transitionName = getTransitionName();
-
 				flow && mainCircles.attr("x", rectXPosFn);
 
-				mainCircles = mainCircles.transition(transitionName);
-				selectedCircles && selectedCircles.transition(getTransitionName());
+				mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
+				selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
 			}
 
 			return mainCircles

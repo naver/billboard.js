@@ -5,7 +5,7 @@
 ![CI Status][badge-ci-status] [![Coverage Status][badge-coverage]][link-coverage] [![Known Vulnerabilities][badge-snyk]][link-snyk] 
 [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size]
 
-billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
+billboard.js is a re-usable, easy interface JavaScript chart library, based on [D3.js](https://d3js.org/).
 > The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
 > - [Why we decided to start billboard.js?](https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F)
 
@@ -19,9 +19,15 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on D
 - [Third Party Applications](https://github.com/naver/billboard.js/wiki/Third-party-applications)
 - [Who's using billboard.js](https://github.com/naver/billboard.js/wiki/Who's-using-billboard.js)
 - [Benchmark](https://naver.github.io/billboard.js/demo/benchmark/)
+- Technicals:
+  - [How to bundle for legacy browsers?](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F)
+  - [How to generate chart image in Node.js environment?](https://github.com/naver/billboard.js/wiki/How-to-generate-chart-image-in-Node.js-environment%3F)
+  - find out more at [Wiki](https://github.com/naver/billboard.js/wiki) page.
 - v2 updates:
   - [v2 CHANGELOG](https://github.com/naver/billboard.js/wiki/CHANGELOG-v2)
   - [Migration Guide to v2](https://github.com/naver/billboard.js/wiki/Migration-Guide-to-v2)
+- v3 updates:
+  - [billboard.js 3.0 release: D3.js v6 support & new candlestick type!](https://netil.medium.com/billboard-js-3-0-release-d3-js-v6-support-new-candlestick-type-9bd74af6a753)
 
 ## Playground
 Play with the diverse options generating on the fly!
@@ -34,7 +40,7 @@ If you have any questions, checkout the previous posts or create a new one at:
 - [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
 
 ## Supported chart types
-<img src="https://naver.github.io/billboard.js/img/chart-types.png?v=8" width=800>
+<img src="https://naver.github.io/billboard.js/img/chart-types.png?v=9" width=800>
 
 ## Download and Installation
 
@@ -148,18 +154,19 @@ If you want to use 'billboard.js' without installation, load files directly from
 |9+|Latest|Latest|Latest|8+|4+|
 
 
-## Dependency
+## Dependency by version
 
-|[D3](https://d3js.org/) (required)|
-| --- |
-| 4+ |
+[D3.js](https://d3js.org/) (required)| billboard.js
+ :---: | :---:
+ 4.x ~ 5.x | 1.x ~ 2.x
+ 6.x+ | 3.x+
 
 Load billboard.js after D3.js.
 
 ```html
 <!-- 1) Load D3.js and billboard.js separately -->
-    <!-- Load D3 -->
-    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <!-- Load D3: -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
 
     <!-- Load billboard.js with base(or theme) style -->
     <link rel="stylesheet" href="$YOUR_PATH/billboard.css">

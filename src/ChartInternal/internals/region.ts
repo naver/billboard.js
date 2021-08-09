@@ -12,30 +12,29 @@ export default {
 		const $$ = this;
 		const {$el} = $$;
 
-		$el.region.main = $el.main.append("g")
+		$el.region.main = $el.main
+			.insert("g", ":first-child")
 			.attr("clip-path", $$.state.clip.path)
 			.attr("class", CLASS.regions);
 	},
 
-	updateRegion(duration: number): void {
+	updateRegion(): void {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, $el: {region}, $T} = $$;
 
-		if (!$el.region.main) {
+		if (!region.main) {
 			$$.initRegion();
 		}
 
 		// hide if arc type
-		$el.region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
-
+		region.main.style("visibility", $$.hasArcType() ? "hidden" : null);
 		// select <g> element
-		let list = $el.main.select(`.${CLASS.regions}`)
+
+		let list = region.main
 			.selectAll(`.${CLASS.region}`)
 			.data(config.regions);
 
-		list.exit()
-			.transition()
-			.duration(duration)
+		$T(list.exit())
 			.style("opacity", "0")
 			.remove();
 
@@ -48,22 +47,23 @@ export default {
 			.append("rect")
 			.style("fill-opacity", "0");
 
-		$el.region.list = list;
+		region.list = list;
 	},
 
 	redrawRegion(withTransition) {
 		const $$ = this;
-		let regions = $$.$el.region.list.select("rect");
+		const {$el: {region}, $T} = $$;
+		let regions = region.list.select("rect");
 
-		regions = (withTransition ? regions.transition() : regions)
+		regions = $T(regions, withTransition)
 			.attr("x", $$.regionX.bind($$))
 			.attr("y", $$.regionY.bind($$))
 			.attr("width", $$.regionWidth.bind($$))
 			.attr("height", $$.regionHeight.bind($$));
 
 		return [
-			(withTransition ? regions.transition() : regions)
-				.style("fill-opacity", d => (isValue(d.opacity) ? d.opacity : "0.1"))
+			regions
+				.style("fill-opacity", d => (isValue(d.opacity) ? d.opacity : null))
 				.on("end", function() {
 					// remove unnecessary rect after transition
 					d3Select(this.parentNode)

@@ -2,12 +2,11 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {select as d3Select} from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
 import {zoom as d3Zoom} from "d3-zoom";
-import {document} from "../../module/browser";
+import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
-import {callFn, diffDomain, getMinMax, getPointer, isDefined, isFunction} from "../../module/util";
+import {callFn, diffDomain, getPointer, isFunction} from "../../module/util";
 
 export default {
 	/**
@@ -30,18 +29,17 @@ export default {
 	 */
 	bindZoomEvent(bind = true): void {
 		const $$ = this;
-		const {config, $el: {main}} = $$;
+		const {config, $el: {eventRect}} = $$;
 		const zoomEnabled = config.zoom_enabled;
-		const eventRects = main.select(`.${CLASS.eventRects}`);
 
 		if (zoomEnabled && bind) {
 			// Do not bind zoom event when subchart is shown
 			!config.subchart_show &&
-				$$.bindZoomOnEventRect(eventRects, config.zoom_type);
+				$$.bindZoomOnEventRect(eventRect, config.zoom_type);
 		} else if (bind === false) {
 			$$.api.unzoom();
 
-			eventRects
+			eventRect
 				.on(".zoom", null)
 				.on(".drag", null);
 		}
@@ -98,6 +96,10 @@ export default {
 
 			newScale.domain(domain, org.xDomain);
 
+			if (!$$.state.xTickOffset) {
+				$$.state.xTickOffset = $$.axis.x.tickOffset();
+			}
+
 			scale.zoom = $$.getCustomizedScale(newScale);
 			$$.axis.x.scale(scale.zoom);
 
@@ -108,6 +110,22 @@ export default {
 			}
 		};
 
+		/**
+		 * Get zoom domain
+		 * @returns {Array} zoom domain
+		 * @private
+		 */
+		// @ts-ignore
+		zoom.getDomain = (): number|Date[] => {
+			const domain = scale[scale.zoom ? "zoom" : "subX"].domain();
+			const isCategorized = $$.axis.isCategorized();
+
+			if (isCategorized) {
+				domain[1] -= 2;
+			}
+
+			return domain;
+		};
 		$$.zoom = zoom;
 	},
 
@@ -141,15 +159,14 @@ export default {
 
 		if (
 			!config.zoom_enabled ||
-			!event.sourceEvent ||
 			$$.filterTargetsToShow($$.data.targets).length === 0 ||
-			(!scale.zoom && sourceEvent.type.indexOf("touch") > -1 && sourceEvent.touches.length === 1)
+			(!scale.zoom && sourceEvent?.type.indexOf("touch") > -1 && sourceEvent?.touches.length === 1)
 		) {
 			return;
 		}
 
-		const isMousemove = sourceEvent.type === "mousemove";
-		const isZoomOut = sourceEvent.wheelDelta < 0;
+		const isMousemove = sourceEvent?.type === "mousemove";
+		const isZoomOut = sourceEvent?.wheelDelta < 0;
 		const {transform} = event;
 
 		if (!isMousemove && isZoomOut && scale.x.domain().every((v, i) => v !== org.xDomain[i])) {
@@ -158,9 +175,6 @@ export default {
 
 		$$.zoom.updateTransformScale(transform);
 
-		if ($$.axis.isCategorized() && scale.x.orgDomain()[0] === org.xDomain[0]) {
-			scale.x.domain([org.xDomain[0] - 1e-10, scale.x.orgDomain()[1]]);
-		}
 
 		$$.redraw({
 			withTransition: false,
@@ -171,7 +185,7 @@ export default {
 		});
 
 		$$.state.cancelClick = isMousemove;
-		callFn(config.zoom_onzoom, $$.api, scale.zoom.domain());
+		callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
 	},
 
 	/**
@@ -181,9 +195,9 @@ export default {
 	 */
 	onZoomEnd(event): void {
 		const $$ = this;
-		const {config, scale} = $$;
+		const {config} = $$;
 		let {startEvent} = $$.zoom;
-		let e = event && event.sourceEvent;
+		let e = event?.sourceEvent;
 
 		if ((startEvent && startEvent.type.indexOf("touch") > -1)) {
 			startEvent = startEvent.changedTouches[0];
@@ -191,9 +205,9 @@ export default {
 		}
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
-		if (!startEvent ||
-			(e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)
-		) {
+		if (config.zoom_type === "drag" && (
+			e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY
+		)) {
 			return;
 		}
 
@@ -201,28 +215,7 @@ export default {
 		$$.updateZoom();
 
 		$$.state.zooming = false;
-		callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain());
-	},
-
-	/**
-	 * Get zoom domain
-	 * @returns {Array} zoom domain
-	 * @private
-	 */
-	getZoomDomain(): [number, number] {
-		const $$ = this;
-		const {config, org} = $$;
-		let [min, max] = org.xDomain;
-
-		if (isDefined(config.zoom_x_min)) {
-			min = getMinMax("min", [min, config.zoom_x_min]);
-		}
-
-		if (isDefined(config.zoom_x_max)) {
-			max = getMinMax("max", [max, config.zoom_x_max]);
-		}
-
-		return [min, max];
+		callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain());
 	},
 
 	/**
@@ -253,11 +246,11 @@ export default {
 
 	/**
 	 * Attach zoom event on <rect>
-	 * @param {d3.selection} eventRects evemt <rect> element
+	 * @param {d3.selection} eventRect evemt <rect> element
 	 * @param {string} type zoom type
 	 * @private
 	 */
-	bindZoomOnEventRect(eventRects, type: "drag" | "wheel"): void {
+	bindZoomOnEventRect(eventRect: d3Selection, type: "drag" | "wheel"): void {
 		const $$ = this;
 		const behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
 
@@ -265,7 +258,7 @@ export default {
 		// Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
 		$$.$el.svg.on("wheel", () => {});
 
-		eventRects
+		eventRect
 			.call(behaviour)
 			.on("dblclick.zoom", null);
 	},
@@ -319,7 +312,7 @@ export default {
 					.attr(prop.axis, Math.min(start, end))
 					.attr(prop.attr, Math.abs(end - start));
 			})
-			.on("end", function(event) {
+			.on("end", event => {
 				const scale = $$.scale.zoom || $$.scale.x;
 
 				state.event = event;
@@ -341,15 +334,6 @@ export default {
 				if (start !== end) {
 					$$.api.zoom([start, end].map(v => scale.invert(v)));
 					$$.onZoomEnd(event);
-				} else {
-					if ($$.isMultipleX()) {
-						$$.clickHandlerForMultipleXS.bind(this)($$);
-					} else {
-						const [x, y] = getPointer(event);
-						const target = document.elementFromPoint(x, y);
-
-						$$.clickHandlerForSingleX.bind(target)(d3Select(target).datum(), $$);
-					}
 				}
 			});
 	},

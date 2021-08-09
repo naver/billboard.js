@@ -250,6 +250,26 @@ export interface Chart {
 		range(range?: { min?: number, max?: number }): { min: number, max: number }
 	};
 
+	subchart: {
+		/**
+		 * Hide generated subchart
+		 * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+		 */
+		hide(): void;
+
+		/**
+		 * Show subchart
+		 * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+		 */
+		show(): void
+
+		/**
+		 * Hide generated subchart
+		 * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+		 */
+		toggle(): void;
+	};
+
 	tooltip: {
 		/**
 		 * Hide tooltip
@@ -325,6 +345,7 @@ export interface Chart {
 	 *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
 	 */
 	load(this: Chart, args: {
+		append?: boolean;
 		url?: string;
 		json?: [{ [key: string]: string }];
 		rows?: PrimitiveArray[];

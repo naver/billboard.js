@@ -23,23 +23,6 @@ function getFormat($$, typeValue: AxisType, v: number): number | string {
 }
 
 export default {
-	getYFormat(forArc: boolean): Function {
-		const $$ = this;
-		let {yFormat, y2Format} = $$;
-
-		if (forArc && !$$.hasType("gauge")) {
-			yFormat = $$.defaultArcValueFormat;
-			y2Format = $$.defaultArcValueFormat;
-		}
-
-		return function(v, ratio, id) {
-			const format = $$.axis && $$.axis.getId(id) === "y2" ?
-				y2Format : yFormat;
-
-			return format.call($$, v, ratio);
-		};
-	},
-
 	yFormat(v: number): number | string {
 		return getFormat(this, "y", v);
 	},
@@ -48,7 +31,21 @@ export default {
 		return getFormat(this, "y2", v);
 	},
 
-	defaultValueFormat(v): number | string {
+	/**
+	 * Get default value format function
+	 * @returns {Function} formatter function
+	 * @private
+	 */
+	getDefaultValueFormat(): Function {
+		const $$ = this;
+		const hasArc = $$.hasArcType();
+
+		return hasArc && !$$.hasType("gauge") ?
+			$$.defaultArcValueFormat :
+			$$.defaultValueFormat;
+	},
+
+	defaultValueFormat(v): number|string {
 		return isValue(v) ? +v : "";
 	},
 

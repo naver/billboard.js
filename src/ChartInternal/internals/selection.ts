@@ -20,7 +20,7 @@ export default {
 	 */
 	selectPoint(target, d, i: number): void {
 		const $$ = this;
-		const {config, $el: {main}} = $$;
+		const {config, $el: {main}, $T} = $$;
 		const isRotated = config.axis_rotated;
 		const cx = (isRotated ? $$.circleY : $$.circleX).bind($$);
 		const cy = (isRotated ? $$.circleX : $$.circleY).bind($$);
@@ -29,7 +29,7 @@ export default {
 		callFn(config.data_onselected, $$.api, d, target.node());
 
 		// add selected-circle on low layer g
-		main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
+		$T(main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
 			.selectAll(`.${CLASS.selectedCircle}-${i}`)
 			.data([d])
 			.enter()
@@ -39,9 +39,7 @@ export default {
 			.attr("cy", cy)
 			.attr("stroke", $$.color)
 			.attr("r", d2 => $$.pointSelectR(d2) * 1.4)
-			.transition()
-			.duration(100)
-			.attr("r", r);
+		).attr("r", r);
 	},
 
 	/**
@@ -53,15 +51,14 @@ export default {
 	 */
 	unselectPoint(target, d, i: number): void {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, $el: {main}, $T} = $$;
 
 		callFn(config.data_onunselected, $$.api, d, target.node());
 
 		// remove selected-circle from low layer g
-		$el.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
+		$T(main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
 			.selectAll(`.${CLASS.selectedCircle}-${i}`)
-			.transition()
-			.duration(100)
+		)
 			.attr("r", 0)
 			.remove();
 	},
@@ -88,12 +85,12 @@ export default {
 	 */
 	selectPath(target, d): void {
 		const $$ = this;
-		const {config} = $$;
+		const {config, $T} = $$;
 
 		callFn(config.data_onselected, $$.api, d, target.node());
 
 		if (config.interaction_brighten) {
-			target.transition().duration(100)
+			$T(target)
 				.style("fill", () => d3Rgb($$.color(d)).brighter(0.75));
 		}
 	},
@@ -106,12 +103,12 @@ export default {
 	 */
 	unselectPath(target, d): void {
 		const $$ = this;
-		const {config} = $$;
+		const {config, $T} = $$;
 
 		callFn(config.data_onunselected, $$.api, d, target.node());
 
 		if (config.interaction_brighten) {
-			target.transition().duration(100)
+			$T(target)
 				.style("fill", () => $$.color(d));
 		}
 	},

@@ -10,6 +10,7 @@ import {
 	utcFormat as d3UtcFormat
 } from "d3-time-format";
 import {select as d3Select} from "d3-selection";
+import {d3Selection} from "../../types/types";
 import CLASS from "../config/classes";
 import Store from "../config/Store/Store";
 import Options from "../config/Options/Options";
@@ -111,6 +112,42 @@ export default class ChartInternal {
 
 		$$.$el = store.getStore("element");
 		$$.state = store.getStore("state");
+
+		$$.$T = $$.$T.bind($$);
+	}
+
+	/**
+	 * Get the selection based on transition config
+	 * @param {SVGElement|d3Selection} selection Target selection
+	 * @param {boolean} force Force transition
+	 * @param {string} name Transition name
+	 * @returns {d3Selection}
+	 * @private
+	 */
+	$T(selection: SVGElement | d3Selection, force?: boolean, name?: string): d3Selection {
+		const {config, state} = this;
+		const duration = config.transition_duration;
+		let t = selection;
+
+		if (t) {
+			// in case of non d3 selection, wrap with d3 selection
+			if ("tagName" in t) {
+				t = d3Select(t);
+			}
+
+			// do not transit on:
+			// - wheel zoom (state.zooming = true)
+			// - initialization
+			// - resizing
+			const transit = ((force !== false && duration) || force) &&
+				!state.zooming &&
+				!state.resizing &&
+				state.rendered;
+
+			t = (transit ? t.transition(name).duration(duration) : t) as d3Selection;
+		}
+
+		return t;
 	}
 
 	beforeInit(): void {
@@ -333,7 +370,7 @@ export default class ChartInternal {
 		// Define defs
 		const hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
 
-		if (hasAxis || hasColorPatterns) {
+		if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors) {
 			$el.defs = $el.svg.append("defs");
 
 			if (hasAxis) {
@@ -341,6 +378,9 @@ export default class ChartInternal {
 					$$.appendClip($el.defs, state.clip[v]);
 				});
 			}
+
+			// Append data backgound color filter definition
+			$$.generateDataLabelBackgroundColorFilter();
 
 			// set color patterns
 			if (hasColorPatterns) {
@@ -437,6 +477,10 @@ export default class ChartInternal {
 		state.rendered = true;
 	}
 
+	/**
+	 * Initialize chart elements
+	 * @private
+	 */
 	initChartElements(): void {
 		const $$ = <any> this;
 		const {hasAxis, hasRadar} = $$.state;
@@ -469,6 +513,10 @@ export default class ChartInternal {
 		notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
 	}
 
+	/**
+	 * Set chart elements
+	 * @private
+	 */
 	setChartElements(): void {
 		const $$ = this;
 		const {$el: {
@@ -577,13 +625,11 @@ export default class ChartInternal {
 	 */
 	showTargets(): void {
 		const $$ = <any> this;
-		const {config, $el: {svg}} = $$;
+		const {$el: {svg}, $T} = $$;
 
-		svg.selectAll(`.${CLASS.target}`)
+		$T(svg.selectAll(`.${CLASS.target}`)
 			.filter(d => $$.isTargetToShow(d.id))
-			.transition()
-			.duration(config.transition_duration)
-			.style("opacity", "1");
+		).style("opacity", null);
 	}
 
 	getWithOption(options) {
@@ -616,12 +662,12 @@ export default class ChartInternal {
 		return withOptions;
 	}
 
-	initialOpacity(d): "1" | "0" {
+	initialOpacity(d): null | "0" {
 		const $$ = <any> this;
 		const {withoutFadeIn} = $$.state;
 
 		return $$.getBaseValue(d) !== null &&
-			withoutFadeIn[d.id] ? "1" : "0";
+			withoutFadeIn[d.id] ? null : "0";
 	}
 
 	bindResize(): void {

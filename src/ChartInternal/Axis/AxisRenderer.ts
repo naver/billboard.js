@@ -9,10 +9,10 @@ import Helper from "./AxisRendererHelper";
 import {isArray, toArray, isFunction, isString, isNumber} from "../../module/util";
 
 export default class AxisRenderer {
-	helper;
-	config;
-	params;
-	g;
+	private helper;
+	private config;
+	private params;
+	private g;
 
 	constructor(params: any = {}) {
 		const config = {
@@ -100,7 +100,7 @@ export default class AxisRenderer {
 			path.enter().append("path")
 				.attr("class", "domain")
 				// https://observablehq.com/@d3/d3-selection-2-0
-				.merge(helper.transitionise(path).selection())
+				.merge(path as d3Selection)
 				.attr("d", () => {
 					const outerTickSized = config.outerTickSize * sign;
 
@@ -121,8 +121,7 @@ export default class AxisRenderer {
 				const tickEnter = tick
 					.enter()
 					.insert("g", ".domain")
-					.attr("class", "tick")
-					.style("opacity", "1");
+					.attr("class", "tick");
 
 				// MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
 				const tickExit = tick.exit().remove();
@@ -215,8 +214,14 @@ export default class AxisRenderer {
 					tickTransform(tickExit, scale1);
 				}
 
+				// when .flow(), it should follow flow's transition config
+				// otherwise make to use ChartInternals.$T()
+				tick = params.owner.state.flowing ?
+					helper.transitionise(tick) :
+					params.owner.$T(tick);
+
 				tickTransform(tickEnter, scale0);
-				tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
+				tickTransform(tick.style("opacity", null), scale1);
 			}
 		});
 
@@ -449,25 +454,26 @@ export default class AxisRenderer {
 	 * @returns {number}
 	 */
 	tickInterval(size: number): number {
+		const {outerTickSize, tickOffset, tickValues} = this.config;
 		let interval;
 
 		if (this.params.isCategory) {
-			interval = this.config.tickOffset * 2;
+			interval = tickOffset * 2;
 		} else {
 			const length = this.g.select("path.domain")
 				.node()
-				.getTotalLength() - this.config.outerTickSize * 2;
+				.getTotalLength() - outerTickSize * 2;
 
 			interval = length / (size || this.g.selectAll("line").size());
 
 			// get the interval by its values
-			const intervalByValue = this.config.tickValues
+			const intervalByValue = tickValues ? tickValues
 				.map((v, i, arr) => {
 					const next = i + 1;
 
 					return next < arr.length ?
 						this.helper.scale(arr[next]) - this.helper.scale(v) : null;
-				}).filter(Boolean);
+				}).filter(Boolean) : [];
 
 			interval = Math.min(...intervalByValue, interval);
 		}

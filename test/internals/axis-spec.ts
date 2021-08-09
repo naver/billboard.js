@@ -1079,7 +1079,7 @@ describe("AXIS", function() {
 	});
 
 	describe("axis.x.tick.rotate", () => {
-		describe("not rotated", () => {
+		describe("rotation > 0", () => {
 			before(() => {
 				args = {
 					data: {
@@ -1110,6 +1110,51 @@ describe("AXIS", function() {
 					expect(text.attr("transform")).to.be.equal("rotate(60)");
 					expect(text.attr("y")).to.be.equal("1.5");
 					expect(tspan.attr("dx")).to.be.equal("6.928203230275509");
+				});
+			});
+
+			it("should have automatically calculated x axis height", () => {
+				const internal = chart.internal;
+				const box = internal.$el.main.select(`.${CLASS.axisX}`).node().getBoundingClientRect();
+				const height = internal.getHorizontalAxisHeight("x");
+
+				expect(box.height).to.be.above(50);
+				expect(height).to.be.above(68);
+				expect(height).to.be.below(80);
+			});
+		});
+
+		describe("rotation < 0", () => {
+			before(() => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", "category 1", "category 2", "category 3", "category 4", "category 5", "category 6"],
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 20, 10, 40, 15, 25]
+						]
+					},
+					axis: {
+						x: {
+							type: "category",
+							tick: {
+								rotate: -60
+							}
+						}
+					}
+				};
+			});
+
+			it("should rotate tick texts", () => {
+				chart.$.main.selectAll(`.${CLASS.axisX} g.tick`).each(function() {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					expect(text.attr("transform")).to.be.equal("rotate(-60)");
+					expect(text.attr("y")).to.be.equal("1.5");
+					expect(tspan.attr("dx")).to.be.equal("-6.928203230275509");
 				});
 			});
 
@@ -1694,6 +1739,13 @@ describe("AXIS", function() {
 				expect(ticks.size()).to.be.equal(10);
 			});
 
+			it("set option data.type='bar'", () => {
+				args.data.type = "bar";
+			});
+
+			it("bar type with tick.fit=false, shouldn't throw error", () => {
+				expect(true).to.be.ok;
+			});
 		});
 	});
 
@@ -2374,7 +2426,7 @@ describe("AXIS", function() {
 			["subX", "x", "y", "y2"].forEach(v => {
 				const data = chart.internal.$el.axis[v]
 					.selectAll(".tick text").filter(function() {
-						return this.style.display === "block";
+						return this.style.display === "";
 					}).data();
 
 				expect(data).to.be.deep.equal(expected[v === "subX" ? "x" : v]);
@@ -2423,6 +2475,99 @@ describe("AXIS", function() {
 
 			expect(tickValues.every(v => v % 1 === 0)).to.be.true;
 			expect(translateX).to.be.closeTo(30.5, 1);
+		});
+
+		it("should work with axis.x.padding=10 option", done => {
+			const option = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2020-01-01", "2020-01-02", "2020-01-03", "2020-01-04", "2020-01-05", "2020-01-06"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 340, 200, 500, 250, 350]
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+						format: "%Y-%m-%d"
+						},
+						padding: 100
+					}
+				},
+				subchart: {
+					show: true,
+					init: {
+						range: [
+							+new Date("2020-01-02 00:00:00"),
+							+new Date("2020-01-03 00:00:00")
+						]
+					}
+				},
+				onafterinit: function() {		
+					// reaching at this point, means no issue happened
+					expect(true).to.be.ok;
+
+					done();
+				}
+			};
+
+			util.generate(option);			
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", 1, 2, 3, 4, 5],
+						["data1", 30, 200, 100, 400, 150],
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "category",
+						tick: {
+							rotate: 5
+						},
+						padding: 10
+					}
+				}
+			}
+		});
+
+		it("check if axis.x.padding correctly set when is given as number value.", () => {
+			const {state} = chart.internal;
+			const padding = args.axis.x.padding;
+
+			expect(state.axis.x.padding).to.be.deep.equal({left: padding, right: padding});
+		});
+
+		it("set options axis.x.padding={left: 5}", () => {
+			args.axis.x.padding = {left: 5};
+		});
+
+		it("check if axis.x.padding correctly set when is given as 'left' key only.", () => {
+			const {state} = chart.internal;
+			const padding = args.axis.x.padding;
+			
+			padding.right = 0;
+
+			expect(state.axis.x.padding).to.be.deep.equal(padding);
+		});
+
+		it("set options axis.x.padding={left: 15, right: 5}", () => {
+			args.axis.x.padding = {left: 15, right: 5};
+		});
+
+		it("check if axis.x.padding correctly set when is given as object type.", () => {
+			const {state} = chart.internal;
+			const padding = args.axis.x.padding;
+
+			expect(state.axis.x.padding).to.be.deep.equal(padding);
 		});
 	});
 
@@ -2527,6 +2672,37 @@ describe("AXIS", function() {
 			};
 
 			expect(bb.generate(args)).to.not.throw;
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "1180", "980", "915"],
+						["1180", 74.07, null, null],
+						["980", null, 43.75, null],
+						["915", null, null, 42.47]
+					],
+					type: "bar",
+					groups: [
+						["1180", "980", "915"]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("y Axis max value should be scaled properly", () => {
+			const {internal} = chart;
+			const {max} = internal.getMinMaxValue();
+
+			expect(internal.scale.y.domain()[1]).to.be.closeTo(max, 10);
+			expect(+internal.$el.axis.y.select(".tick:nth-child(10) tspan").text()).to.be.closeTo(max, 10);
 		});
 	});
 
@@ -2723,6 +2899,51 @@ describe("AXIS", function() {
 					expect(Math.round(scale[id](d))).to.be.closeTo(pos, 1);
 				});
 			});
+		});
+	});
+
+	describe("Axis x type localtime", () => {
+		before(() => {
+			args = {
+				data: {
+					x: 'x',
+					columns: [
+						['x', 1356998400000, 1357084800000, 1357171200000, 1357257600000, 1357344000000, 1357430400000],
+						['data1', 30, 200, 100, 400, 150],
+						['data2', 130, 340, 200, 500, 250, 350]
+					],
+					type: "line"
+				  },
+				  axis: {
+					  y: {
+						  show: false
+					  },
+					x: {
+						localtime: false,
+						type: "timeseries",
+						tick: {
+							fit: false
+						}
+					}
+				}
+			};
+		});
+
+		it("check if datetime treated as UTC", () => {
+			const res = [];
+			const expected = [
+				['12 AM', '12 PM', '12 AM', '12 PM', '12 AM', '12 PM', '12 AM', '12 PM', '12 AM', '12 PM', '12 AM'],
+				['2013', '12 PM', 'Jan 02', '12 PM', 'Jan 03', '12 PM', 'Jan 04', '12 PM', 'Jan 05', '12 PM', 'Jan 06']
+			];
+			
+			expect(chart.internal.scale.x.type).to.be.equal("utc");
+
+			chart.internal.$el.axis.x.selectAll(".tick text tspan")
+				.each(function() {
+					res.push(this.innerHTML);
+				});
+
+ 			expect(res.every((v, i) => v === expected[0][i]) || res.every((v, i) => v === expected[1][i])).to.be.true;
 		});
 	});
 });

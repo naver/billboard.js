@@ -109,6 +109,28 @@ describe("SHAPE CANDLESTICK", () => {
 				expect(+this.querySelector("path").getBoundingClientRect().width).to.be.equal(args.candlestick.width);
 			});
 		});
+
+		it("check for the expand & unexpand of shape", () => {
+			const index = 1;
+
+			// when
+			chart.tooltip.show({index});
+
+			chart.$.candlestick.each(function(d, i) {
+				const hasExpandedClass = this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1;
+
+				expect(hasExpandedClass).to.be[i === index ? "true" : "false"];
+			});
+
+			// when
+			chart.tooltip.hide();
+
+			chart.$.candlestick.each(function() {
+				const hasExpandedClass = this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1;
+
+				expect(hasExpandedClass).to.be.false;
+			});
+		});
 	});
 
 	describe("candlestick + combination", () => {

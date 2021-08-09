@@ -54,16 +54,16 @@ export default {
 				.style("display", targetsToShow.length ? "none" : null);
 
 			// grid
-			$$.hasGrid() && $$.updateGrid(duration);
+			$$.hasGrid() && $$.updateGrid();
 
 			// rect for regions
-			config.regions.length && $$.updateRegion(duration);
+			config.regions.length && $$.updateRegion();
 
 			["bar", "candlestick", "line", "area"].forEach(v => {
 				const name = capitalize(v);
 
 				if ((/^(line|area)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
-					$$[`update${name}`](durationForExit);
+					$$[`update${name}`](wth.TransitionForExit);
 				}
 			});
 
@@ -84,7 +84,7 @@ export default {
 			$el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
 
 			// radar
-			$el.radar && $$.redrawRadar(durationForExit);
+			$el.radar && $$.redrawRadar();
 		}
 
 		// @TODO: Axis & Radar type
@@ -93,7 +93,7 @@ export default {
 		}
 
 		// text
-		$$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText(durationForExit);
+		$$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText();
 
 		// title
 		$$.redrawTitle && $$.redrawTitle();
@@ -136,12 +136,12 @@ export default {
 		const redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition);
 
 		// callback function after redraw ends
-		const afterRedraw = flow || config.onrendered ? () => {
+		const afterRedraw = () => {
 			flowFn && flowFn();
 
 			state.redrawing = false;
 			callFn(config.onrendered, $$.api);
-		} : null;
+		};
 
 		if (afterRedraw) {
 			// Only use transition when current tab is visible.

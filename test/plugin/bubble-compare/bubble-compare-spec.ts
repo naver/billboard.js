@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 /* eslint-disable */
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";

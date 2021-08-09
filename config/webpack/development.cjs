@@ -1,19 +1,19 @@
 const {merge, mergeWithCustomize, customizeObject} = require("webpack-merge");
 const WriteFilePlugin = require("write-file-webpack-plugin");
-const plugin = require("./plugin")({});
+const plugin = require("./plugin.cjs")({});
+const path = require("path");
 
 const config = {
 	devServer: {
-		static: [
-			{
-				serveIndex: true,
-				watch: true
-			}
-		],
-		dev: {
-			publicPath: "/dist"
+		static: {
+			directory: path.join(__dirname, "../../"),
+			serveIndex: true,
+			watch: true,
 		},
-		host: "127.0.0.1"
+		compress: true,
+		hot: true,
+		host: "127.0.0.1",
+		liveReload: true
 	},
 	devtool: "cheap-module-source-map",
 	module: {

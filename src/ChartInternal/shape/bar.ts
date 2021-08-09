@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import CLASS from "../../config/classes";
-import {getPointer, getRandom, getRectSegList, isNumber, isValue} from "../../module/util";
+import {getPointer, getRandom, getRectSegList, isNumber} from "../../module/util";
 
 export default {
 	initBar(): void {
@@ -29,7 +29,12 @@ export default {
 
 		const mainBarUpdate = $$.$el.main.select(`.${CLASS.chartBars}`)
 			.selectAll(`.${CLASS.chartBar}`)
-			.data(targets)
+			.data(
+				// remove
+				targets.filter(
+					v => !v.values.every(d => !isNumber(d.value))
+				)
+			)
 			.attr("class", d => classChartBar(d) + classFocus(d));
 
 		const mainBarEnter = mainBarUpdate.enter().append("g")
@@ -45,13 +50,14 @@ export default {
 
 	/**
 	 * Generate/Update elements
-	 * @param {number} durationForExit Transition duration for exit elements
+	 * @param {boolean} withTransition Transition for exit elements
 	 * @param {boolean} isSub Subchart draw
 	 * @private
 	 */
-	updateBar(durationForExit: number, isSub = false): void {
+	updateBar(withTransition: boolean, isSub = false): void {
 		const $$ = this;
-		const $root = isSub ? $$.$el.subchart : $$.$el;
+		const {$el, $T} = $$;
+		const $root = isSub ? $el.subchart : $el;
 		const classBar = $$.getClass("bar", true);
 		const initialOpacity = $$.initialOpacity.bind($$);
 
@@ -59,8 +65,7 @@ export default {
 			.selectAll(`.${CLASS.bar}`)
 			.data($$.labelishData.bind($$));
 
-		bar.exit().transition()
-			.duration(durationForExit)
+		$T(bar.exit(), withTransition)
 			.style("opacity", "0")
 			.remove();
 
@@ -79,35 +84,15 @@ export default {
 	 * @returns {Array}
 	 */
 	redrawBar(drawFn, withTransition?: boolean, isSub = false) {
-		const {bar} = (isSub ? this.$el.subchart : this.$el);
+		const $$ = this;
+		const {bar} = (isSub ? $$.$el.subchart : $$.$el);
 
 		return [
-			(withTransition ? bar.transition(getRandom()) : bar)
-				.attr("d", drawFn)
+			$$.$T(bar, withTransition, getRandom())
+				.attr("d", d => d.value && drawFn(d))
 				.style("fill", this.color)
-				.style("opacity", "1")
+				.style("opacity", null)
 		];
-	},
-
-	getBars(i: number, id: string) {
-		const $$ = this;
-		const {main} = $$.$el;
-		const suffix = (isValue(i) ? `-${i}` : ``);
-
-		return (id ? main
-			.selectAll(`.${CLASS.bars}${$$.getTargetSelectorSuffix(id)}`) : main)
-			.selectAll(`.${CLASS.bar}${suffix}`);
-	},
-
-	expandBars(i: number, id: string, reset: boolean): void {
-		const $$ = this;
-
-		reset && $$.unexpandBars();
-		$$.getBars(i, id).classed(CLASS.EXPANDED, true);
-	},
-
-	unexpandBars(i: number): void {
-		this.getBars(i).classed(CLASS.EXPANDED, false);
 	},
 
 	generateDrawBar(barIndices, isSub?: boolean): Function {
@@ -164,7 +149,6 @@ export default {
 	generateGetBarPoints(barIndices, isSub?: boolean): Function {
 		const $$ = this;
 		const {config} = $$;
-
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
 		const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
 		const barW = $$.getBarW("bar", axis, barTargetsNum);

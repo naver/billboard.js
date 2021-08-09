@@ -1004,25 +1004,46 @@ var demos = {
 				}
 			}
 		},
-		IndexedAxis: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", 495, 940, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12000, 13500, 15000],
-						["data", 47.911, 47.915, 48.437, 49.117, 49.583, 50.28, 51.712, 53.103, 54.456, 55.955, 56.752, 56.851]
-					],
-					type: "line"
-				},
-				axis: {
-					x: {
-						tick: {
-							culling: false
+		IndexedAxis: [
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", 495, 940, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12000, 13500, 15000],
+							["data", 47.911, 47.915, 48.437, 49.117, 49.583, 50.28, 51.712, 53.103, 54.456, 55.955, 56.752, 56.851]
+						],
+						type: "line"
+					},
+					axis: {
+						x: {
+							tick: {
+								culling: false
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", 0.1, 0.3, 0.6, 0.9, 10],
+							["data1", 4, 1, 6, 8, 10]
+						  ],
+						  type:"line"
+					  },
+					  axis: {
+						x: {
+							tick: {
+								values: [0, 2.5, 5, 7.5, 10]
+							}
 						}
 					}
 				}
 			}
-		},
+		],
 		LogScales: {
 			options: {
 				data: {
@@ -1906,7 +1927,7 @@ var demos = {
 				];
 			}
 		},
-		"DataFromURL": {
+		DataFromURL: {
 			options: {
 				data: {
 					url: "./data/test.csv",
@@ -2241,6 +2262,7 @@ var demos = {
 						],
 						type: "bar",
 						labels: {
+							backgroundColors: "yellow",
 							colors: "red"
 						}
 					}
@@ -2255,6 +2277,9 @@ var demos = {
 						],
 						type: "line",
 						labels: {
+							backgroundColors: {
+								data1: "rgba(0, 0, 0, 0.2)"
+							},
 							colors: {
 								data1: "fuchsia",
 								data2: "blue"
@@ -2612,7 +2637,8 @@ var demos = {
 					type: "line"
 				},
 				subchart: {
-					show: "subchart()"
+					show: "subchart()",
+					showHandle: true
 				}
 			},
 			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)"
@@ -3017,6 +3043,39 @@ d3.select(".chart_area")
 				},
 				_plugins: [{
 					bubblecompare: {minR: 11, maxR: 74, expandScale: 1.1}
+				}]
+			}
+		},
+		TableView: {
+			description: "Generates table view for bound dataset.<br>Must load or import plugin before the use.",
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"],
+						["data1", 1230, 2380, 1200, 1238, 1500, 2500, 2540, 1265, 550, 240],
+						["data2", 500, 120, 100, 200, 840, 935, 825, 1123, 385, 980],
+						["data3", 1223, 153, 850, 300, 250, 3120, 1205, 840, 999, 1280],
+						["data4", 1130, 2135, 1020, 1138, 2119, 1228, 3256, 138, 2355, 220],
+						["data5", 1223, 2310, 1210, 2220, 1238, 1205, 2120, 2113, 1185, 1098]
+					],
+					types: {
+						data3: "area",
+						data4: "step",
+						data5: "bar"
+					}
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				},
+				_plugins: [{
+					tableview: {
+						title: "My Yearly Data List",
+						categoryTitle: "Year",
+						style: true
+					}
 				}]
 			}
 		}
@@ -4818,22 +4877,35 @@ d3.select(".chart_area")
 							.insertAdjacentElement("afterend", exported);
 
 						// Call after the chart finished rendering
-						// (1) Default option
+						// (1&rpar; Default option
 						chart.export(null, function(dataUrl) {
 							// append an image element
-							var img = document.createElement("img");
+							var img = document.getElementById("exported");
+							
+							if (!img) {
+								img = document.createElement("img");
+
+								img.id = "exported";
+								exported.appendChild(img);
+							}
 
 							img.src = dataUrl;
-							exported.appendChild(img);
 						});
 
-						// (2) Specify exported image size
+						// (2&rpar; Specify exported image size
 						chart.export({width: 500, height:100, preserveAspectRatio: false}, function(dataUrl) {
 							// append an image element
-							var img = document.createElement("img");
+							// append an image element
+							var img = document.getElementById("exported2");
+							
+							if (!img) {
+								img = document.createElement("img");
+
+								img.id = "exported2";
+								exported.appendChild(img);
+							}
 
 							img.src = dataUrl;
-							exported.appendChild(img);
 						});
 					}, 500)
 				]

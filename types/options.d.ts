@@ -285,7 +285,7 @@ export interface ChartOptions {
 			/**
 			 * Set the width option for specific dataset
 			 */
-			[key: string]: {
+			[key: string]: number | {
 				ratio: number;
 				max: number;
 			}
@@ -362,7 +362,7 @@ export interface ChartOptions {
 			/**
 			 * Set the width option for specific dataset
 			 */
-			[key: string]: {
+			[key: string]: number | {
 				ratio: number;
 				max: number;
 			}
@@ -891,17 +891,17 @@ export interface LegendOptions {
 		/**
 		 * Set click event handler to the legend item.
 		 */
-		onclick?(this: Chart, id: DataItem): void;
+		onclick?(this: Chart, id: string): void;
 
 		/**
 		 * Set mouseover event handler to the legend item.
 		 */
-		onover?(this: Chart, id: DataItem): void;
+		onover?(this: Chart, id: string): void;
 
 		/**
 		 * Set mouseout event handler to the legend item.
 		 */
-		onout?(this: Chart, id: DataItem): void;
+		onout?(this: Chart, id: string): void;
 	};
 
 	/**
@@ -1046,22 +1046,22 @@ export interface TooltipOptions {
 	/**
 	 * Set a callback that will be invoked before the tooltip is shown.
 	 */
-	onshow?(this: Chart, selectedData: DataItem): void;
+	onshow?(this: Chart, selectedData: DataItem[]): void;
 
 	/**
 	 * Set a callback that will be invoked after the tooltip is shown
 	 */
-	onshown?(this: Chart, selectedData: DataItem): void;
+	onshown?(this: Chart, selectedData: DataItem[]): void;
 
 	/**
 	 * Set a callback that will be invoked before the tooltip is hidden.
 	 */
-	onhide?(this: Chart, selectedData: DataItem): void;
+	onhide?(this: Chart, selectedData: DataItem[]): void;
 
 	/**
 	 * Set a callback that will be invoked after the tooltip is hidden.
 	 */
-	onhidden?(this: Chart, selectedData: DataItem): void;
+	onhidden?(this: Chart, selectedData: DataItem[]): void;
 
 	/**
 	 * Set if tooltips on all visible charts with like x points are shown together when one is shown.
@@ -1080,6 +1080,12 @@ export interface SubchartOptions {
 	 * Show sub chart on the bottom of the chart.
 	 */
 	show?: boolean;
+
+	/**
+	 * Show sub chart's handle.
+	 */
+	showHandle?: boolean;
+
 	size?: {
 		/**
 		 * Change the height of the subchart.
@@ -1106,6 +1112,13 @@ export interface SubchartOptions {
 				};
 			};
 		};
+	};
+
+	init?: {
+		/**
+		 * Set initial selection domain range.
+		 */
+		range?: [number, number];
 	};
 
 	/**
@@ -1458,6 +1471,11 @@ export interface Data {
 		centered?: boolean;
 
 		/**
+		 * Set label text background colors.
+		 */
+		backgroundColors?: string | { [key: string]: string };
+
+		/**
 		 * Set label text colors.
 		 */
 		colors?: string |
@@ -1647,6 +1665,18 @@ export interface Data {
 	 * - NOTE: For 'area-line-range' and 'area-spline-range', mid data will be taken for the comparison
 	 */
 	onmax?(this: Chart, d: DataItem[]): void;
+
+	/**
+	 * Set a callback for when data is shown.
+	 * The callback will receive shown data ids in array.
+	 */
+	onshown?(): void;
+
+	/**
+	 * Set a callback for when data is hidden.
+	 * The callback will receive hidden data ids in array.
+	 */
+	onhidden?(): void;
 }
 
 export type FormatFunction = (

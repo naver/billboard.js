@@ -27,34 +27,45 @@ describe("API zoom", function() {
 				zoom: {
 					enabled: true,
 					onzoom: spy
+				},
+				transition: {
+					duration: 0
 				}
 			});
 		});
 
-		it("should be zoomed properly", () => {
+		it("should be zoomed properly", done => {
 			const target = [3, 5];
 
 			chart.zoom(target);
 
-			const domain = chart.internal.scale.zoom.domain().map(Math.round);
+			setTimeout(() => {
+				const domain = chart.internal.scale.zoom.domain().map(Math.round);
 
-			expect(domain[0]).to.be.equal(target[0]);
-			expect(domain[1]).to.be.equal(target[1]);
+				expect(domain[0]).to.be.equal(target[0]);
+				expect(domain[1]).to.be.equal(target[1]);
 
-			// onzoom callback has been called?
-			expect(spy.called).to.be.true;
-			expect(spy.args[0][0]).to.be.deep.equal(target);
+				// onzoom callback has been called?
+				expect(spy.called).to.be.true;
+				expect(spy.args[0][0].map(Math.round)).to.be.deep.equal(target);
+
+				done();
+			}, 350);
 		});
 
-		it("should be zoomed properly again", () => {
+		it("should be zoomed properly again", done => {
 			const target = [1, 4];
 
 			chart.zoom(target);
 
-			const domain = chart.internal.scale.zoom.domain().map(Math.round);
+			setTimeout(() => {
+				const domain = chart.internal.scale.zoom.domain().map(Math.round);
 
-			expect(domain[0]).to.be.equal(target[0]);
-			expect(domain[1]).to.be.equal(target[1]);
+				expect(domain[0]).to.be.equal(target[0]);
+				expect(domain[1]).to.be.equal(target[1]);
+
+				done();
+			}, 350);
 		});
 
 		it("should be zoomed and showing focus grid properly when target contained minus value", () => {
@@ -152,6 +163,9 @@ describe("API zoom", function() {
 				},
 				zoom: {
 					enabled: true
+				},
+				transition: {
+					duration: 0
 				}
 			});
 		});
@@ -162,16 +176,16 @@ describe("API zoom", function() {
 			chart.zoom(target);
 
 			setTimeout(() => {
-				const {scale, state} = chart.internal;
+				const {internal} = chart;
+				const {state, zoom} = internal;
 
 				const rectlist = state.eventReceiver.coords
 					.filter((v, i) => target.indexOf(i) !== -1);
 
 				const rectSize = rectlist[0].w;
-				const domain = scale.zoom.domain().map(Math.round);
+				const domain = internal.zoom.getDomain();
 
-				expect(domain[0]).to.be.equal(target[0]);
-				expect(domain[1] - 1).to.be.equal(target[1]);
+				expect(domain).to.deep.equal(target);
 
 				rectlist.forEach(function(v, i) {
 					const {x} = v;
@@ -180,7 +194,7 @@ describe("API zoom", function() {
 				});
 
 				done();
-			}, 1000);
+			}, 350);
 		});
 	});
 
@@ -235,11 +249,14 @@ describe("API zoom", function() {
 				},
 				zoom: {
 					enabled: true
+				},
+				transition: {
+					duration: 0
 				}
 			});
 		});
 
-		it("should be unzoomed properly", () => {
+		it("should be unzoomed properly", done => {
 			const internal = chart.internal;
 			const target = [1, 4];
 			const original = internal.scale.x.domain();
@@ -254,10 +271,14 @@ describe("API zoom", function() {
 
 			chart.unzoom();
 
-			domain = chart.internal.scale.x.domain();
+			setTimeout(() => {
+				domain = chart.internal.scale.x.domain();
 
-			expect(domain[0]).to.be.equal(original[0]);
-			expect(domain[1]).to.be.equal(original[1]);
+				expect(domain[0]).to.be.equal(original[0]);
+				expect(domain[1]).to.be.equal(original[1]);
+
+				done();
+			}, 350);
 		});
 	});
 
@@ -270,6 +291,9 @@ describe("API zoom", function() {
 			},
 			zoom: {
 				enabled: true
+			},
+			transition: {
+				duration: 0
 			}
 		});
 
@@ -414,18 +438,19 @@ describe("API zoom", function() {
 					});
 
 					resolve(undefined);
-				}, 300);
+				}, 350);
 			}).then(() => {
 				// when
 				chart.unzoom();
+				
 			}).then(() => {
 				setTimeout(() => {
 					chart.$.bar.bars.each(function(d, i) {
-						expect(this.getTotalLength()).to.be.equal(len[i]);
+						expect(this.getTotalLength()).to.be.closeTo(len[i], 2.5);
 					});
 
 					done();
-				}, 300);
+				}, 500);
 			});
 		});
 	});

@@ -82,7 +82,7 @@ class Axis {
 		let type = "linear";
 
 		if (this.isTimeSeries(id)) {
-			type = "time";
+			type = this.owner.config.axis_x_localtime ? "time" : "utc";
 		} else if (this.isLog(id)) {
 			type = "log";
 		}
@@ -116,7 +116,7 @@ class Axis {
 					return res;
 				})
 				.attr("transform", $$.getTranslate(v))
-				.style("visibility", config[`axis_${v}_show`] ? "visible" : "hidden");
+				.style("visibility", config[`axis_${v}_show`] ? null : "hidden");
 
 			axis[v].append("text")
 				.attr("class", classLabel)
@@ -219,13 +219,12 @@ class Axis {
 				if (g.empty()) {
 					g = main.append("g")
 						.attr("class", className)
-						.style("visibility", config[`axis_${id}_show`] ? "visible" : "hidden")
+						.style("visibility", config[`axis_${id}_show`] ? null : "hidden")
 						.call(v);
 				} else {
 					axesConfig[i].domain && scale.domain(axesConfig[i].domain);
 
-					this.x.helper.transitionise(g)
-						.call(v.scale(scale));
+					$$.$T(g).call(v.scale(scale));
 				}
 
 				g.attr("transform", $$.getTranslate(id, i + 1));
@@ -289,7 +288,8 @@ class Axis {
 			noTransition,
 			config,
 			id,
-			tickTextRotate
+			tickTextRotate,
+			owner: $$
 		}, isX && {
 			isCategory,
 			tickMultiline: config.axis_x_tick_multiline,
@@ -735,42 +735,32 @@ class Axis {
 	 * @returns {object} Padding object values with 'left' & 'right' key
 	 * @private
 	 */
-	getXAxisPadding(tickCount) {
+	getXAxisPadding(tickCount: number): {left: number, right: number} {
 		const $$ = this.owner;
-		let padding = $$.config.axis_x_padding;
-
-		if (isEmpty(padding)) {
-			padding = {left: 0, right: 0};
-		} else {
-			padding.left = padding.left || 0;
-			padding.right = padding.right || 0;
-		}
+		const padding = $$.config.axis_x_padding;
+		let {left = 0, right = 0} = isNumber(padding) ?
+			{left: padding, right: padding} : padding;
 
 		if ($$.axis.isTimeSeries()) {
 			const firstX = +$$.getXDomainMin($$.data.targets);
 			const lastX = +$$.getXDomainMax($$.data.targets);
 			const timeDiff = lastX - firstX;
-
-			const range = timeDiff + padding.left + padding.right;
-			let left = 0;
-			let right = 0;
+			const range = timeDiff + left + right;
 
 			if (tickCount && range) {
 				const relativeTickWidth = (timeDiff / tickCount) / range;
 
-				left = padding.left / range / relativeTickWidth;
-				right = padding.right / range / relativeTickWidth;
+				left = left / range / relativeTickWidth;
+				right = right / range / relativeTickWidth;
 			}
-
-			padding = {left, right};
 		}
 
-		return padding;
+		return {left, right};
 	}
 
 	updateLabels(withTransition) {
 		const $$ = this.owner;
-		const {main} = $$.$el;
+		const {$el: {main}, $T} = $$;
 
 		const labels = {
 			x: main.select(`.${CLASS.axisX} .${CLASS.axisXLabel}`),
@@ -782,7 +772,8 @@ class Axis {
 			.forEach(v => {
 				const node = labels[v];
 
-				(withTransition ? node.transition() : node)
+				// @check $$.$T(node, withTransition)
+				$T(node, withTransition)
 					.attr("x", () => this.xForAxisLabel(v))
 					.attr("dx", () => this.dxForAxisLabel(v))
 					.attr("dy", () => this.dyForAxisLabel(v))
@@ -851,20 +842,12 @@ class Axis {
 		return tickValues;
 	}
 
-	generateTransitions(duration) {
+	generateTransitions(withTransition) {
 		const $$ = this.owner;
-		const axis = $$.$el.axis;
+		const {$el: {axis}, $T} = $$;
 
 		const [axisX, axisY, axisY2, axisSubX] = ["x", "y", "y2", "subX"]
-			.map(v => {
-				let ax = axis[v];
-
-				if (ax && duration) {
-					ax = ax.transition().duration(duration);
-				}
-
-				return ax;
-			});
+			.map(v => $T(axis[v], withTransition));
 
 		return {axisX, axisY, axisY2, axisSubX};
 	}
@@ -872,7 +855,7 @@ class Axis {
 	redraw(transitions, isHidden, isInit) {
 		const $$ = this.owner;
 		const {config, $el} = $$;
-		const opacity = isHidden ? "0" : "1";
+		const opacity = isHidden ? "0" : null;
 
 		["x", "y", "y2", "subX"].forEach(id => {
 			const axis = this[id];
@@ -999,10 +982,10 @@ class Axis {
 					}
 
 					tickText.each(function(d) {
-						this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
+						this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : null;
 					});
 				} else {
-					tickText.style("display", "block");
+					tickText.style("display", null);
 				}
 
 				// set/unset x_axis_tick_clippath

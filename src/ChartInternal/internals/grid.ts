@@ -89,10 +89,9 @@ export default {
 		const isRotated = config.axis_rotated;
 		const xgridData = $$.generateGridData(config.grid_x_type, scale.x);
 		const tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0;
-		const pos = d => (
-			(scale.zoom || scale.x)(d) + (
-				tickOffset * (isRotated ? -1 : 1)
-			));
+		const pos = d => (scale.zoom || scale.x)(d) + (
+			tickOffset * (isRotated ? -1 : 1)
+		);
 
 		state.xgridAttr = isRotated ? {
 			"x1": 0,
@@ -125,7 +124,7 @@ export default {
 					grid.attr(id, state.xgridAttr[id])
 						.style("opacity", () => (
 							grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ?
-								"0" : "1"
+								"0" : null
 						));
 				});
 			});
@@ -159,28 +158,27 @@ export default {
 		smoothLines(grid.y, "grid");
 	},
 
-	updateGrid(duration) {
+	updateGrid() {
 		const $$ = this;
 		const {$el: {grid, gridLines}} = $$;
 
 		!gridLines.main && $$.initGridLines();
 
 		// hide if arc type
-		grid.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+		grid.main.style("visibility", $$.hasArcType() ? "hidden" : null);
 
 		$$.hideGridFocus();
-		$$.updateXGridLines(duration);
-		$$.updateYGridLines(duration);
+		$$.updateXGridLines();
+		$$.updateYGridLines();
 	},
 
 	/**
 	 * Update X Grid lines
-	 * @param {number} duration Dration value
 	 * @private
 	 */
-	updateXGridLines(duration: number): void {
+	updateXGridLines(): void {
 		const $$ = this;
-		const {config, $el: {gridLines, main}} = $$;
+		const {config, $el: {gridLines, main}, $T} = $$;
 		const isRotated = config.axis_rotated;
 
 		config.grid_x_show && $$.updateXGrid();
@@ -190,8 +188,7 @@ export default {
 			.data(config.grid_x_lines);
 
 		// exit
-		xLines.exit().transition()
-			.duration(duration)
+		$T(xLines.exit())
 			.style("opacity", "0")
 			.remove();
 
@@ -208,28 +205,25 @@ export default {
 
 		xLines = xgridLine.merge(xLines);
 
-		xLines
+		$T(xLines
 			.attr("class", d => `${CLASS.xgridLine} ${d.class || ""}`.trim())
 			.select("text")
 			.attr("text-anchor", getGridTextAnchor)
 			.attr("dx", getGridTextDx)
-			.transition()
-			.duration(duration)
+		)
 			.text(d => d.text)
-			.transition()
-			.style("opacity", "1");
+			.style("opacity", null);
 
 		gridLines.x = xLines;
 	},
 
 	/**
 	 * Update Y Grid lines
-	 * @param {number} duration Duration value
 	 * @private
 	 */
-	updateYGridLines(duration: number): void {
+	updateYGridLines(): void {
 		const $$ = this;
-		const {config, state: {width, height}, $el} = $$;
+		const {config, state: {width, height}, $el, $T} = $$;
 		const isRotated = config.axis_rotated;
 
 		config.grid_y_show && $$.updateYGrid();
@@ -239,9 +233,7 @@ export default {
 			.data(config.grid_y_lines);
 
 		// exit
-		ygridLines.exit()
-			.transition()
-			.duration(duration)
+		$T(ygridLines.exit())
 			.style("opacity", "0")
 			.remove();
 
@@ -260,29 +252,23 @@ export default {
 		// update
 		const yv = $$.yv.bind($$);
 
-		ygridLines
+		$T(ygridLines
 			.attr("class", d => `${CLASS.ygridLine} ${d.class || ""}`.trim())
-			.select("line")
-			.transition()
-			.duration(duration)
+			.select("line"))
 			.attr("x1", isRotated ? yv : 0)
 			.attr("x2", isRotated ? yv : width)
 			.attr("y1", isRotated ? 0 : yv)
 			.attr("y2", isRotated ? height : yv)
-			.transition()
-			.style("opacity", "1");
+			.style("opacity", null);
 
-		ygridLines.select("text")
+		$T(ygridLines.select("text")
 			.attr("text-anchor", getGridTextAnchor)
-			.attr("dx", getGridTextDx)
-			.transition()
-			.duration(duration)
+			.attr("dx", getGridTextDx))
 			.attr("dy", -5)
 			.attr("x", getGridTextX(isRotated, width, height))
 			.attr("y", yv)
 			.text(d => d.text)
-			.transition()
-			.style("opacity", "1");
+			.style("opacity", null);
 
 		$el.gridLines.y = ygridLines;
 	},
@@ -292,27 +278,28 @@ export default {
 		const {
 			config: {axis_rotated: isRotated},
 			state: {width, height},
-			$el: {gridLines}
+			$el: {gridLines},
+			$T
 		} = $$;
 		const xv = $$.xv.bind($$);
 
 		let lines = gridLines.x.select("line");
 		let texts = gridLines.x.select("text");
 
-		lines = (withTransition ? lines.transition() : lines)
+		lines = $T(lines, withTransition)
 			.attr("x1", isRotated ? 0 : xv)
 			.attr("x2", isRotated ? width : xv)
 			.attr("y1", isRotated ? xv : 0)
 			.attr("y2", isRotated ? xv : height);
 
-		texts = (withTransition ? texts.transition() : texts)
+		texts = $T(texts, withTransition)
 			.attr("x", getGridTextX(!isRotated, width, height))
 			.attr("y", xv)
 			.text(d => d.text);
 
 		return [
-			lines.style("opacity", "1"),
-			texts.style("opacity", "1")
+			lines.style("opacity", null),
+			texts.style("opacity", null)
 		];
 	},
 
@@ -372,7 +359,7 @@ export default {
 		const xx = $$.xx.bind($$);
 
 		focusEl
-			.style("visibility", "visible")
+			.style("visibility", null)
 			.data(dataToShow.concat(dataToShow))
 			.each(function(d) {
 				const el = d3Select(this);
@@ -501,17 +488,15 @@ export default {
 
 	removeGridLines(params, forX?: boolean): void {
 		const $$ = this;
-		const {config} = $$;
+		const {config, $T} = $$;
 		const toRemove = $$.getGridFilterToRemove(params);
 		const toShow = line => !toRemove(line);
 		const classLines = forX ? CLASS.xgridLines : CLASS.ygridLines;
 		const classLine = forX ? CLASS.xgridLine : CLASS.ygridLine;
 
-		$$.$el.main.select(`.${classLines}`)
+		$T($$.$el.main.select(`.${classLines}`)
 			.selectAll(`.${classLine}`)
-			.filter(toRemove)
-			.transition()
-			.duration(config.transition_duration)
+			.filter(toRemove))
 			.style("opacity", "0")
 			.remove();
 

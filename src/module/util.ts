@@ -144,11 +144,19 @@ function callFn(fn, ...args): boolean {
 function endall(transition, cb: Function): void {
 	let n = 0;
 
-	transition
-		.each(() => ++n)
-		.on("end", function(...args) {
-			!--n && cb.apply(this, ...args);
-		});
+	const end = function(...args) {
+		!--n && cb.apply(this, ...args);
+	};
+
+	// if is transition selection
+	if ("duration" in transition) {
+		transition
+			.each(() => ++n)
+			.on("end", end);
+	} else {
+		++n;
+		transition.call(end);
+	}
 }
 
 /**
@@ -250,6 +258,7 @@ function getPathBox(
  * @param {object} event Event object
  * @param {SVGElement|HTMLElement} element Target element
  * @returns {Array} [x, y] Coordinates x, y array
+ * @private
  */
 function getPointer(event, element?: Element): number[] {
 	const touches = event && (event.touches || (event.sourceEvent && event.sourceEvent.touches));

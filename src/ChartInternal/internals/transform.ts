@@ -56,42 +56,22 @@ export default {
 
 	transformMain(withTransition: boolean, transitions): void {
 		const $$ = this;
-		const {main} = $$.$el;
-		let xAxis;
-		let yAxis;
-		let y2Axis;
+		const {$el: {main}, $T} = $$;
 
-		if (transitions && transitions.axisX) {
-			xAxis = transitions.axisX;
-		} else {
-			xAxis = main.select(`.${CLASS.axisX}`);
+		const xAxis = transitions && transitions.axisX ?
+			transitions.axisX :
+			$T(main.select(`.${CLASS.axisX}`), withTransition);
 
-			if (withTransition) {
-				xAxis = xAxis.transition();
-			}
-		}
+		const yAxis = transitions && transitions.axisY ?
+			transitions.axisY :
+			$T(main.select(`.${CLASS.axisY}`), withTransition);
 
-		if (transitions && transitions.axisY) {
-			yAxis = transitions.axisY;
-		} else {
-			yAxis = main.select(`.${CLASS.axisY}`);
 
-			if (withTransition) {
-				yAxis = yAxis.transition();
-			}
-		}
+		const y2Axis = transitions && transitions.axisY2 ?
+			transitions.axisY2 :
+			$T(main.select(`.${CLASS.axisY2}`), withTransition);
 
-		if (transitions && transitions.axisY2) {
-			y2Axis = transitions.axisY2;
-		} else {
-			y2Axis = main.select(`.${CLASS.axisY2}`);
-
-			if (withTransition) {
-				y2Axis = y2Axis.transition();
-			}
-		}
-
-		(withTransition ? main.transition() : main)
+		$T(main, withTransition)
 			.attr("transform", $$.getTranslate("main"));
 
 		xAxis.attr("transform", $$.getTranslate("x"));

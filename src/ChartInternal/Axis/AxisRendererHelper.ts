@@ -170,8 +170,18 @@ export default class AxisRendererHelper {
 
 	transitionise(selection): d3Selection {
 		const {config} = this;
+		let transitionSelection = selection;
 
-		return config.withoutTransition ?
-			selection.interrupt() : selection.transition(config.transition);
+		if (config.withoutTransition) {
+			transitionSelection = selection.interrupt();
+		} else if (config.transition || !this.owner.params.noTransition) {
+			// prevent for 'transition not found' case
+			// https://github.com/naver/billboard.js/issues/2140
+			try {
+				transitionSelection = selection.transition(config.transition);
+			} catch (e) {}
+		}
+
+		return transitionSelection;
 	}
 }

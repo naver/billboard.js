@@ -6,30 +6,30 @@ const Types = {
         "area-spline-range",
         "area-step",
         "bar",
+        "grouped-bar",
         "bubble",
-        "donut",
-        "gauge",
         "line",
-        "pie",
-        "radar",
         "scatter",
         "spline",
         "step",
-
-        "normalized",
+        "candlestick",
+        "radar",
+        "gauge",
+        "gauge-multi",
         "gauge-stack-data",
-        "grouped-bar",
+        "donut",
+        "pie",
         "pie-inner-radius",
         "pie-outer-radius",
+        "normalized",
         "combination",
         "multi-axes",
-        "gauge-multi",
-        "gauge-arc-length"
+        "gauge-arc-length",
     ],
     getRandom(min = 100, max = 1000) {
         return Math.random() * (max - min) + min;
     },
-    getData(isRange) {
+    getData(type) {
         const data = [];
         const matrix = [7, 3];
     
@@ -40,11 +40,21 @@ const Types = {
                 if (j === 0) {
                     d.push(`data${i}`);
                 } else {
-                    const val = this.getRandom();
+                    let data = this.getRandom();
+
+                    if (/range/.test(type)) {
+                        data = [data + this.getRandom(100, 150), data, data - this.getRandom(100, 150)]
+                    } else if (type === "candlestick") {
+                        // [open, high, low, close]
+                        data = [
+                            data, // open
+                            data + this.getRandom(50, 350), // high
+                            data - this.getRandom(50, 150), // low
+                            data + this.getRandom(50, 150)  // close
+                        ]
+                    }
                     
-                    d.push(
-                        isRange ? [val + this.getRandom(100, 150), val, val - this.getRandom(100, 150)] : val
-                    );
+                    d.push(data);
                 }
             }
     
@@ -133,7 +143,7 @@ const Types = {
             let type = v;
 
             options.bindto = `#chart-${i}`;
-            options.data.columns = this.getData(/range/.test(v));
+            options.data.columns = this.getData(v);
             
             if (type === "normalized") {
                 type = "bar";
@@ -149,6 +159,8 @@ const Types = {
 
             } else if (type === "radar") {
                 options.padding.top = 5;
+
+            } else if (type === "candlestick") {
             
             } else if (type === "gauge-stack-data") {
                 type = "gauge";

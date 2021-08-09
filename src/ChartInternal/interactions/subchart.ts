@@ -20,14 +20,14 @@ export default {
 		const $$ = this;
 		const {config, scale, $el: {subchart}} = $$;
 		const isRotated = config.axis_rotated;
+		let lastDomain;
+		let timeout;
 
 		// set the brush
-		$$.brush = isRotated ? d3BrushY() : d3BrushX();
+		$$.brush = (
+			isRotated ? d3BrushY() : d3BrushX()
+		).handleSize(5);
 
-		// set "brush" event
-		const brushHandler = () => {
-			$$.redrawForBrush();
-		};
 		const getBrushSize = () => {
 			const brush = $$.$el.svg.select(`.${CLASS.brush} .overlay`);
 			const brushSize = {width: 0, height: 0};
@@ -40,18 +40,38 @@ export default {
 			return brushSize[isRotated ? "width" : "height"];
 		};
 
-		let lastDomain;
-		let timeout;
+		// bind brush event
+		$$.brush.on("start brush end", event => {
+			const {selection, target, type} = event;
 
-		$$.brush
-			.on("start", () => {
+			if (type === "start") {
 				$$.state.inputType === "touch" && $$.hideTooltip();
-				brushHandler();
-			})
-			.on("brush", brushHandler)
-			.on("end", () => {
+			}
+
+			if (/(start|brush)/.test(type)) {
+				$$.redrawForBrush();
+			}
+
+			if (type === "end") {
 				lastDomain = scale.x.orgDomain();
-			});
+			}
+
+			// handle brush's handle position & visibility
+			if (target?.handle) {
+				if (selection === null) {
+					$$.brush.handle.attr("display", "none");
+				} else {
+					$$.brush.handle.attr("display", null)
+						.attr("transform", (d, i) => {
+							const pos = isRotated ?
+								[33, selection[i] - (i === 0 ? 30 : 24)] : [selection[i], 3];
+
+							return `translate(${pos})`;
+						});
+				}
+			}
+		});
+
 
 		$$.brush.updateResize = function() {
 			timeout && clearTimeout(timeout);
@@ -111,7 +131,7 @@ export default {
 			return;
 		}
 
-		const visibility = config.subchart_show ? "visible" : "hidden";
+		const visibility = config.subchart_show ? null : "hidden";
 		const clipId = `${clip.id}-subchart`;
 		const clipPath = $$.getClipPath(clipId);
 
@@ -149,10 +169,12 @@ export default {
 		});
 
 		// Add extent rect for Brush
-		main.append("g")
+		const brush = main.append("g")
 			.attr("clip-path", clipPath)
 			.attr("class", CLASS.brush)
 			.call($$.brush);
+
+		config.subchart_showHandle && $$.addBrushHandle(brush);
 
 		// ATTENTION: This must be called AFTER chart added
 		// Add Axis
@@ -161,6 +183,42 @@ export default {
 			.attr("transform", $$.getTranslate("subX"))
 			.attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis)
 			.style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
+	},
+
+	/**
+	 * Add brush handle
+	 * Enabled when: subchart.showHandle=true
+	 * @param {d3Selection} brush Brush selection
+	 * @private
+	 */
+	addBrushHandle(brush): void {
+		const $$ = this;
+		const {config} = $$;
+		const isRotated = config.axis_rotated;
+		const initRange = config.subchart_init_range;
+		const customHandleClass = "handle--custom";
+
+		// brush handle shape's path
+		const path = isRotated ? [
+			"M 5.2491724,29.749209 a 6,6 0 0 0 -5.50000003,-6.5 H -5.7508276 a 6,6 0 0 0 -6.0000004,6.5 z m -5.00000003,-2 H -6.7508276 m 6.99999997,-2 H -6.7508276Z",
+			"M 5.2491724,23.249172 a 6,-6 0 0 1 -5.50000003,6.5 H -5.7508276 a 6,-6 0 0 1 -6.0000004,-6.5 z m -5.00000003,2 H -6.7508276 m 6.99999997,2 H -6.7508276Z"
+		] : [
+			"M 0 18 A 6 6 0 0 0 -6.5 23.5 V 29 A 6 6 0 0 0 0 35 Z M -2 23 V 30 M -4 23 V 30Z",
+			"M 0 18 A 6 6 0 0 1 6.5 23.5 V 29 A 6 6 0 0 1 0 35 Z M 2 23 V 30 M 4 23 V 30Z"
+		];
+
+
+		$$.brush.handle = brush.selectAll(`.${customHandleClass}`)
+			.data(isRotated ?
+				[{type: "n"}, {type: "s"}] :
+				[{type: "w"}, {type: "e"}]
+			)
+			.enter()
+			.append("path")
+			.attr("class", customHandleClass)
+			.attr("cursor", `${isRotated ? "ns" : "ew"}-resize`)
+			.attr("d", d => path[+/[se]/.test(d.type)])
+			.attr("display", initRange ? null : "none");
 	},
 
 	/**
@@ -195,20 +253,17 @@ export default {
 					} else {
 						const shapeUpdate = shapeChart
 							.selectAll(`.${CLASS[`chart${name}`]}`)
-							.data(targets.filter($$[`is${name}Type`].bind($$)))
-							.attr("class", chartClass);
-
-						shapeUpdate.exit().remove();
+							.attr("class", chartClass)
+							.data(targets.filter($$[`is${name}Type`].bind($$)));
 
 						const shapeEnter = shapeUpdate.enter()
 							.append("g")
 							.style("opacity", "0")
 							.attr("class", chartClass)
-							.merge(shapeUpdate);
-
-						// Bars for each data
-						shapeEnter.append("g")
+							.append("g")
 							.attr("class", shapeClass);
+
+						shapeUpdate.exit().remove();
 
 						// Area
 						v === "line" && $$.hasTypeOf("Area") &&
@@ -234,7 +289,7 @@ export default {
 		const {config, $el: {subchart: {main}}, state} = $$;
 		const withTransition = !!duration;
 
-		main.style("visibility", config.subchart_show ? "visible" : "hidden");
+		main.style("visibility", config.subchart_show ? null : "hidden");
 
 		// subchart
 		if (config.subchart_show) {
@@ -245,6 +300,8 @@ export default {
 
 			// update subchart elements if needed
 			if (withSubchart) {
+				const initRange = config.subchart_init_range;
+
 				// extent rect
 				!brushEmpty($$) && $$.brush.update();
 
@@ -253,7 +310,7 @@ export default {
 					const drawFn = $$[`generateDraw${name}`](shape.indices[v], true);
 
 					// call shape's update & redraw method
-					$$[`update${name}`](duration, true);
+					$$[`update${name}`](withTransition, true);
 					$$[`redraw${name}`](drawFn, withTransition, true);
 				});
 
@@ -264,6 +321,11 @@ export default {
 					$$.updateCircle(true);
 					$$.redrawCircle(cx, cy, withTransition, undefined, true);
 				}
+
+				!state.rendered && initRange && $$.brush.move(
+					$$.brush.getSelection(),
+					initRange.map($$.scale.x)
+				);
 			}
 		}
 	},
@@ -295,20 +357,13 @@ export default {
 	 */
 	transformContext(withTransition, transitions): void {
 		const $$ = this;
-		const {main} = $$.$el.subchart;
-		let subXAxis;
+		const {$el: {subchart}, $T} = $$;
 
-		if (transitions && transitions.axisSubX) {
-			subXAxis = transitions.axisSubX;
-		} else {
-			subXAxis = main.select(`.${CLASS.axisX}`);
+		const subXAxis = transitions && transitions.axisSubX ?
+			transitions.axisSubX :
+			$T(subchart.main.select(`.${CLASS.axisX}`), withTransition);
 
-			if (withTransition) {
-				subXAxis = subXAxis.transition();
-			}
-		}
-
-		main.attr("transform", $$.getTranslate("context"));
+		subchart.main.attr("transform", $$.getTranslate("context"));
 		subXAxis.attr("transform", $$.getTranslate("subX"));
 	},
 

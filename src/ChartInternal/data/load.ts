@@ -8,6 +8,7 @@ import {endall} from "../../module/util";
 export default {
 	load(rawTargets, args): void {
 		const $$ = this;
+		const {append} = args;
 		let targets = rawTargets;
 
 		if (targets) {
@@ -29,7 +30,9 @@ export default {
 			$$.data.targets.forEach(d => {
 				for (let i = 0; i < targets.length; i++) {
 					if (d.id === targets[i].id) {
-						d.values = targets[i].values;
+						d.values = append ?
+							d.values.concat(targets[i].values) : targets[i].values;
+
 						targets.splice(i, 1);
 						break;
 					}
@@ -68,12 +71,14 @@ export default {
 
 		const data = args.data || $$.convertData(args, d => $$.load($$.convertDataToTargets(d), args));
 
+		args.append && (data.__append__ = true);
+
 		data && $$.load($$.convertDataToTargets(data), args);
 	},
 
 	unload(rawTargetIds, customDoneCb): void {
 		const $$ = this;
-		const {state, $el} = $$;
+		const {state, $el, $T} = $$;
 		let done = customDoneCb;
 		let targetIds = rawTargetIds;
 
@@ -93,8 +98,9 @@ export default {
 			return;
 		}
 
-		$el.svg.selectAll(targetIds.map(id => $$.selectorTarget(id)))
-			.transition()
+		const targets = $el.svg.selectAll(targetIds.map(id => $$.selectorTarget(id)));
+
+		$T(targets)
 			.style("opacity", "0")
 			.remove()
 			.call(endall, done);

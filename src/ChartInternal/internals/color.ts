@@ -159,6 +159,38 @@ export default {
 	},
 
 	/**
+	 * Append data backgound color filter definition
+	 * @private
+	 */
+	generateDataLabelBackgroundColorFilter(): void {
+		const $$ = this;
+		const {$el, config, state} = $$;
+		const backgroundColors = config.data_labels_backgroundColors;
+
+		if (backgroundColors) {
+			let ids: string[] = [];
+
+			if (isString(backgroundColors)) {
+				ids.push("");
+			} else if (isObject(backgroundColors)) {
+				ids = Object.keys(backgroundColors);
+			}
+
+			ids.forEach(v => {
+				const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}`;
+
+				$el.defs.append("filter")
+					.attr("x", "0")
+					.attr("y", "0")
+					.attr("width", "1")
+					.attr("height", "1")
+					.attr("id", id)
+					.html(`<feFlood flood-color="${v === "" ? backgroundColors : backgroundColors[v]}" /><feComposite in="SourceGraphic"/>`);
+			});
+		}
+	},
+
+	/**
 	 * Set the data over color.
 	 * When is out, will restate in its previous color value
 	 * @param {boolean} isOver true: set overed color, false: restore

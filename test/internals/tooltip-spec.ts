@@ -283,25 +283,28 @@ describe("TOOLTIP", function() {
 				args.zoom = {enabled: true};
 			});
 
-			it("should show tooltip on proper position", () => {
+			it("should show tooltip on proper position", done => {
 				chart.zoom([4,7]);
 
-				// util.hoverChart(chart);
-				util.hoverChart(chart, "mousemove", {
-					clientX: 50,
-					clientY: 100
-				});
+				setTimeout(() => {
+					util.hoverChart(chart, "mousemove", {
+						clientX: 50,
+						clientY: 100
+					});
 
-				const tooltipContainer = chart.$.tooltip;
-				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
-				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
-				const tooltipPos = {
-					top: 95,
-					left: 60
-				};
+					const tooltipContainer = chart.$.tooltip;
+					const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
+					const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
+					const tooltipPos = {
+						top: 95,
+						left: 110
+					};
+	
+					expect(top).to.be.equal(tooltipPos.top);
+					expect(left).to.be.equal(tooltipPos.left);
 
-				expect(top).to.be.equal(tooltipPos.top);
-				expect(left).to.be.equal(tooltipPos.left);
+					done();
+				}, 350);
 			});
 		});
 
@@ -797,8 +800,8 @@ describe("TOOLTIP", function() {
 
 			// check for circle point shape
 			util.hoverChart(chart, undefined, {clientX: 292, clientY: 34});
-			
-			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).text();
+
+			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).html();
 
 			expect(value).to.be.equal(1000);
 		});

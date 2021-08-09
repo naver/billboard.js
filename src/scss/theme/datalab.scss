@@ -100,13 +100,21 @@ $text-font-size: 11px;
 }
 
 /*-- Bar --*/
-path.bb-bar {
-    stroke-width: 1px;
-    stroke: #000;
+.bb-bar {
+	stroke-width: 1px;
 
-    &._expanded_ {
-        fill-opacity: 0.75;
-    }
+	&._expanded_ {
+		fill-opacity: 0.75;
+	}
+}
+
+/*-- Candlestick --*/
+.bb-candlestick {
+	stroke-width: 1px;
+
+	&._expanded_ {
+		fill-opacity: 0.75;
+	}
 }
 
 /*-- Focus --*/

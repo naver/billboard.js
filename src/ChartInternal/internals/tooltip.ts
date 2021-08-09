@@ -68,14 +68,14 @@ export default {
 			$el.tooltip.html($$.getTooltipHTML(
 				data,
 				$$.axis && $$.axis.getXAxisTickFormat(),
-				$$.getYFormat($$.hasArcType(null, ["radar"])),
+				$$.getDefaultValueFormat(),
 				$$.color
 			));
 
 			if (!config.tooltip_contents.bindto) {
 				$el.tooltip.style("top", config.tooltip_init_position.top)
 					.style("left", config.tooltip_init_position.left)
-					.style("display", "block");
+					.style("display", null);
 			}
 		}
 	},
@@ -290,7 +290,7 @@ export default {
 				chartRight -= svgLeft;
 			} else {
 				y -= 5;
-				x = svgLeft + chartLeft + size + ($$.zoomScale ? x : dataScale);
+				x = svgLeft + chartLeft + size + ($$.scale.zoom ? x : dataScale);
 			}
 		}
 
@@ -325,7 +325,6 @@ export default {
 		const $$ = this;
 		const {config, state, $el: {tooltip}} = $$;
 		const {bindto} = config.tooltip_contents;
-		const forArc = $$.hasArcType(null, ["radar"]);
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 
 		if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
@@ -346,7 +345,7 @@ export default {
 				.html($$.getTooltipHTML(
 					selectedData, // data
 					$$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
-					$$.getYFormat(forArc), // defaultValueFormat
+					$$.getDefaultValueFormat(), // defaultValueFormat
 					$$.color // color
 				))
 				.style("display", null)

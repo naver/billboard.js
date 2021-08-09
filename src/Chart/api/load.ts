@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {window} from "../../module/browser";
 import {isString, isArray} from "../../module/util";
 
 export default {
@@ -22,6 +23,7 @@ export default {
 	 *    | --- | --- |
 	 *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
 	 *    | data | Data objects to be loaded. Checkout the example. |
+	 *    | append | Load data appending it to the current dataseries.<br>If the existing chart has`x` value, should provide with corresponding `x` value for newly loaded data.  |
 	 *    | names | Same as data.names() |
 	 *    | xs | Same as data.xs option  |
 	 *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
@@ -45,6 +47,48 @@ export default {
 	 *    unload: ["data2", "data3"],
 	 *    url: "...",
 	 *    done: function() { ... }
+	 * });
+	 * @example
+	 * const chart = bb.generate({
+	 *   data: {
+	 *     columns: [
+	 *       ["data1", 20, 30, 40]
+	 *     ]
+	 *   }
+	 * });
+	 *
+	 * chart.load({
+	 *    columns: [
+	 *        // with 'append' option, the 'data1' will have `[20,30,40,50,60]`.
+	 *        ["data1", 50, 60]
+	 *    ],
+	 *    append: true
+	 * });
+	 * @example
+	 * const chart = bb.generate({
+	 *   data: {
+	 *     x: "x",
+	 *     xFormat: "%Y-%m-%dT%H:%M:%S",
+	 *     columns: [
+	 *       ["x", "2021-01-03T03:00:00", "2021-01-04T12:00:00", "2021-01-05T21:00:00"],
+	 *       ["data1", 36, 30, 24]
+	 *     ]
+	 *   },
+	 *   axis: {
+	 *     x: {
+	 *       type: "timeseries"
+	 *     }
+	 *   }
+	 * };
+	 *
+	 * chart.load({
+	 *   columns: [
+	 *     // when existing chart has `x` value, should provide correponding 'x' value.
+	 *     // with 'append' option, the 'data1' will have `[36,30,24,37]`.
+	 *     ["x", "2021-02-01T08:00:00"],
+	 *     ["data1", 37]
+	 *   ],
+	 *   append: true
 	 * });
 	 * @example
 	 * // myAPI.json
@@ -117,9 +161,11 @@ export default {
 		// unload if needed
 		if ("unload" in args && args.unload !== false) {
 			// TODO: do not unload if target will load (included in url/rows/columns)
-			$$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () =>
-				$$.loadFromArgs(args)
-			);
+			$$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () => {
+				// to mitigate improper rendering for multiple consecutive calls
+				// https://github.com/naver/billboard.js/issues/2121
+				window.requestIdleCallback(() => $$.loadFromArgs(args));
+			});
 		} else {
 			$$.loadFromArgs(args);
 		}

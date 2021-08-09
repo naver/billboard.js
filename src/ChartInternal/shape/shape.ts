@@ -24,7 +24,7 @@ import {
 } from "d3-shape";
 import {select as d3Select} from "d3-selection";
 import CLASS from "../../config/classes";
-import {capitalize, getUnique, isObjectType, isNumber, isUndefined, notEmpty} from "../../module/util";
+import {capitalize, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
 
 export default {
 	/**
@@ -271,26 +271,29 @@ export default {
 		const {shapeOffsetTargets, indexMapByTargetId} = $$.getShapeOffsetData(typeFilter);
 
 		return (d, idx) => {
-			const ind = $$.getIndices(indices, d.id);
-			const scale = $$.getYScaleById(d.id, isSub);
-			const y0 = scale($$.getShapeYMin(d.id));
+			const {id, value, x} = d;
+			const ind = $$.getIndices(indices, id);
+			const scale = $$.getYScaleById(id, isSub);
+			const y0 = scale($$.getShapeYMin(id));
 
-			const dataXAsNumber = Number(d.x);
+			const dataXAsNumber = Number(x);
 			let offset = y0;
 
 			shapeOffsetTargets
-				.filter(t => t.id !== d.id)
+				.filter(t => t.id !== id)
 				.forEach(t => {
-					if (ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-						let row = t.rowValues[idx];
+					const {id: tid, rowValueMapByXValue, rowValues, values: tvalues} = t;
+
+					if (ind[tid] === ind[id] && indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+						let row = rowValues[idx];
 
 						// check if the x values line up
 						if (!row || Number(row.x) !== dataXAsNumber) {
-							row = t.rowValueMapByXValue[dataXAsNumber];
+							row = rowValueMapByXValue[dataXAsNumber];
 						}
 
-						if (row && row.value * d.value >= 0) {
-							offset += scale(t.values[dataXAsNumber]) - y0;
+						if (row && row.value * value >= 0 && isNumber(tvalues[dataXAsNumber])) {
+							offset += scale(tvalues[dataXAsNumber]) - y0;
 						}
 					}
 				});
@@ -335,6 +338,24 @@ export default {
 		}
 
 		return result;
+	},
+
+	/**
+	 * Get shape element
+	 * @param {string} shapeName Shape string
+	 * @param {number} i Index number
+	 * @param {string} id Data series id
+	 * @returns {d3Selection}
+	 * @private
+	 */
+	getShapeByIndex(shapeName: string, i: number, id?: string) {
+		const $$ = this;
+		const {main} = $$.$el;
+		const suffix = (isValue(i) ? `-${i}` : ``);
+
+		return (id ? main
+			.selectAll(`.${CLASS[`${shapeName}s`]}${$$.getTargetSelectorSuffix(id)}`) : main)
+			.selectAll(`.${CLASS[shapeName]}${suffix}`);
 	},
 
 	isWithinShape(that, d): boolean {
