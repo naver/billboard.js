@@ -4,12 +4,25 @@
 	"description": "Re-usable easy interface JavaScript chart library, based on D3 v4+",
 	"homepage": "https://naver.github.io/billboard.js/",
 	"main": "dist/billboard.js",
-	"module": "dist/esm/billboard.js",
+	"module": "dist-esm/billboard.js",
 	"types": "types/index.d.ts",
+	"type": "module",
+    "exports": {
+        ".": {
+            "import": "./dist-esm/billboard.js",
+            "require": "./dist/billboard.pkgd.js"
+        },
+        "./dist/plugin/*": {
+            "import": "./dist-esm/plugin/*.js",
+            "require": "./dist/plugin/pkgd/*.js"
+        },
+		"./dist/*": "./dist/*"
+    },
 	"scripts": {
 		"start": "webpack serve --open",
 		"start:plugin": "cross-env PLUGIN=true webpack-dev-server --open",
-		"build": "npm run build:production && npm run build:packaged && npm run build:theme && npm run build:plugin && npm run build:esm",
+		"build": "npm run build:production && npm run build:packaged && npm run build:theme && npm run build:plugin && npm run build:esm && npm run build:cjs",
+		"build:cjs": "node ./config/cjs.js",
 		"build:esm": "rollup -c ./config/rollup/esm.js",
 		"build:production": "cross-env NODE_ENV=production webpack",
 		"build:packaged": "cross-env NODE_ENV=packaged webpack",
@@ -17,7 +30,8 @@
 		"build:theme": "cross-env NODE_ENV=theme webpack",
 		"build:production:analyzer": "cross-env ANALYZER=true npm run build:production",
 		"build:packaged:analyzer": "cross-env ANALYZER=true npm run build:packaged",
-		"build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MIN=true webpack",
+		"build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MODE=min webpack &&  cross-env NODE_ENV=plugin MODE=pkgd webpack",
+		"_build:plugin": "cross-env NODE_ENV=plugin MODE=pkgd webpack",
 		"release": "semantic-release",
 		"lint": "npm run lint:types && eslint src --ext .ts",
 		"lint:types": "dtslint --onlyTestTsNext types",
@@ -49,6 +63,7 @@
 	],
 	"files": [
 		"dist",
+		"dist-esm",
 		"src",
 		"types",
 		"CONTRIBUTING.md"
@@ -66,19 +81,19 @@
 	"license": "MIT",
 	"readmeFilename": "README.md",
 	"dependencies": {
-		"d3-axis": "^2.1.0",
-		"d3-brush": "^2.1.0",
-		"d3-color": "^2.0.0",
-		"d3-drag": "^2.0.0",
-		"d3-dsv": "^2.0.0",
-		"d3-ease": "^2.0.0",
-		"d3-interpolate": "^2.0.1",
-		"d3-scale": "^3.3.0",
-		"d3-selection": "^2.0.0",
-		"d3-shape": "^2.1.0",
-		"d3-time-format": "^3.0.0",
-		"d3-transition": "^2.0.0",
-		"d3-zoom": "^2.0.0"
+		"d3-axis": "^3.0.0",
+		"d3-brush": "^3.0.0",
+		"d3-color": "^3.0.1",
+		"d3-drag": "^3.0.0",
+		"d3-dsv": "^3.0.1",
+		"d3-ease": "^3.0.1",
+		"d3-interpolate": "^3.0.1",
+		"d3-scale": "^4.0.0",
+		"d3-selection": "^3.0.0",
+		"d3-shape": "^3.0.1",
+		"d3-time-format": "^4.0.0",
+		"d3-transition": "^3.0.1",
+		"d3-zoom": "^3.0.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.14.8",
@@ -160,6 +175,7 @@
 		"node-sass": "^6.0.1",
 		"regenerator-runtime": "^0.13.7",
 		"rollup": "^2.55.1",
+		"rollup-plugin-delete": "^2.0.0",
 		"sass-loader": "^12.1.0",
 		"semantic-release": "^17.4.4",
 		"simulant": "^0.2.2",

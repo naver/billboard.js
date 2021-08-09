@@ -1,3 +1,4 @@
+/* eslint-disable */
 const pkg = require("./package.json");
 const path = require("path");
 const webpack = require("webpack");
@@ -93,5 +94,5 @@ module.exports = () => {
 
 	mode === "packaged" && delete config.externals;
 
-	return require(`./config/webpack/${mode}.js`)(config, env);
+	return require(`./config/webpack/${mode}.cjs`)(config, env);
 };

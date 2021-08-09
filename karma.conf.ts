@@ -1,3 +1,4 @@
+// @ts-nocheck
 const webpack = require("webpack");
 const isWin = require("os").platform() === "win32";
 
@@ -56,12 +57,12 @@ module.exports = function(config) {
 			},
 			plugins: isWin ? [
 				new webpack.NormalModuleReplacementPlugin(
-					/module\/util/i, function(resource) {
+					/module\/util/i, resource => {
 						resource.request = resource.request.replace("module/util", "../test/assets/module/util");
 					}
 				),
 				new webpack.NormalModuleReplacementPlugin(
-					/fake/i, function(resource) {
+					/fake/i, resource => {
 						if (/test\\assets\\module/i.test(resource.context)) {
 							resource.request = "../../../src/module/util";
 						}
