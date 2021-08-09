@@ -4,8 +4,8 @@ const fs = require("fs");
 const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const TerserPlugin = require("terser-webpack-plugin");
-const terserConfig = require("../terserConfig");
-const banner = require("../banner");
+const terserConfig = require("../terserConfig.cjs");
+const banner = require("../banner.cjs");
 
 const srcPath = "./src/Plugin/";
 const distPath = path.resolve(__dirname, "../../dist/plugin/");
@@ -39,11 +39,13 @@ const config = {
 			banner: banner.production + banner.plugin,
 			entryOnly: true
 		})
-	]
+	],
 };
 
 module.exports = (common, env) => {
-	if (env && env.MIN) {
+	const MODE = env?.MODE;
+
+	if (env && MODE === "min") {
 		config.output.filename = config.output.filename.replace(".js", ".min.js");
 
 		config.optimization = {
@@ -51,6 +53,14 @@ module.exports = (common, env) => {
 			minimize: true,
 			minimizer: [new TerserPlugin(terserConfig)]
 		};
+	} else if (env && MODE === "pkgd") {
+		delete common.externals;
+
+		config.output.path = `${distPath}/pkgd`;
+
+		for (const key in config.entry) {
+			config.entry[key] = ["core-js/stable", config.entry[key]];
+		}
 	} else {
 		config.plugins.push(new CleanWebpackPlugin({
 			cleanOnceBeforeBuildPatterns: [distPath],
@@ -60,11 +70,12 @@ module.exports = (common, env) => {
 		}));
 	}
 
-	return mergeWithCustomize({
+	const r = mergeWithCustomize({
 		customizeObject: customizeObject({
 			entry: "replace",
-			output: "replace",
-			module: "replace"
+			output: "replace"
 		})
 	})(common, config);
+
+	return r;
 };

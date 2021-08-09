@@ -3,8 +3,8 @@ const webpack = require("webpack");
 const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const TerserPlugin = require("terser-webpack-plugin");
-const terserConfig = require("../terserConfig");
-const banner = require("../banner");
+const terserConfig = require("../terserConfig.cjs");
+const banner = require("../banner.cjs");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
