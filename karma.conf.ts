@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 const webpack = require("webpack");
 const isWin = require("os").platform() === "win32";
 

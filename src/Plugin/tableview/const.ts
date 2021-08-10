@@ -6,6 +6,11 @@
  * Constants values for plugin option
  * @ignore
  */
+export {
+	defaultStyle,
+	tpl
+};
+
 const defaultStyle = {
 	id: "__tableview-style__",
 	class: "bb-tableview",
@@ -44,9 +49,4 @@ const tpl = {
 	thead: `<th scope="col">{=title}</th>`,
 	tbodyHeader: `<th scope="row">{=value}</th>`,
 	tbody: `<td>{=value}</td>`
-};
-
-export {
-	defaultStyle,
-	tpl
 };
