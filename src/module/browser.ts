@@ -18,4 +18,9 @@ const win = (() => {
 })();
 /* eslint-enable no-new-func, no-undef */
 
+// fallback for non-supported environments
+win.requestIdleCallback = win.requestIdleCallback || (cb => setTimeout(cb, 1));
+win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
+
 const doc = win && win.document;
+
