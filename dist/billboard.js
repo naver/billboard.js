@@ -2286,9 +2286,17 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
 var win = function () {
   var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
   return root || Function("return this")();
-}(),
-    browser_doc = win && win.document;
+}();
 /* eslint-enable no-new-func, no-undef */
+// fallback for non-supported environments
+
+
+win.requestIdleCallback = win.requestIdleCallback || function (cb) {
+  return setTimeout(cb, 1);
+}, win.cancelIdleCallback = win.cancelIdleCallback || function (id) {
+  return clearTimeout(id);
+};
+var browser_doc = win && win.document;
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 

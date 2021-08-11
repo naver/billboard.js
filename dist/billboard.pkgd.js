@@ -19816,9 +19816,17 @@ function brush_brush(dim) {
 var win = function () {
   var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
   return root || Function("return this")();
-}(),
-    browser_doc = win && win.document;
+}();
 /* eslint-enable no-new-func, no-undef */
+// fallback for non-supported environments
+
+
+win.requestIdleCallback = win.requestIdleCallback || function (cb) {
+  return setTimeout(cb, 1);
+}, win.cancelIdleCallback = win.cancelIdleCallback || function (id) {
+  return clearTimeout(id);
+};
+var browser_doc = win && win.document;
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 
