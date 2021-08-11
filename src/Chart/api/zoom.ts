@@ -223,7 +223,7 @@ export default {
 	 */
 	unzoom(): void {
 		const $$ = this.internal;
-		const {config, $el: {eventRect}, $T} = $$;
+		const {config, $el: {eventRect, zoomResetBtn}, $T} = $$;
 
 		if ($$.scale.zoom) {
 			config.subchart_show ?
@@ -231,7 +231,7 @@ export default {
 				$$.zoom.updateTransformScale(d3ZoomIdentity);
 
 			$$.updateZoom(true);
-			$$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none");
+			zoomResetBtn?.style("display", "none");
 
 			// reset transform
 			if (d3ZoomTransform(eventRect.node()) !== d3ZoomIdentity) {

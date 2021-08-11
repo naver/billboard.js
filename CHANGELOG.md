@@ -1,10 +1,10 @@
-# [3.2.0-next.1](https://github.com/naver/billboard.js/compare/3.1.3...3.2.0-next.1) (2021-08-09)
+## [3.1.4](https://github.com/naver/billboard.js/compare/3.1.3...3.1.4) (2021-08-11)
 
 
-### Features
+### Bug Fixes
 
-* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
-* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
+* **api:** unbind drag zoom owhen subchart is shown ([f1a34c6](https://github.com/naver/billboard.js/commit/f1a34c6cd46ac7bfdf35e11f33deebbba6193be8)), closes [#2201](https://github.com/naver/billboard.js/issues/2201)
+* **browser:** add requestIdleCallback fallback ([ec6d120](https://github.com/naver/billboard.js/commit/ec6d120e54b20ec2c1e6356e227b737a8566a6c5)), closes [#2247](https://github.com/naver/billboard.js/issues/2247)
 
 ## [3.1.3](https://github.com/naver/billboard.js/compare/3.1.2...3.1.3) (2021-07-28)
 

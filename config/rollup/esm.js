@@ -1,4 +1,4 @@
-import {readdirSync, existsSync} from "fs";
+import {readdirSync} from "fs";
 import babel from '@rollup/plugin-babel';
 import typescript from "@rollup/plugin-typescript";
 import resolve from "@rollup/plugin-node-resolve";
@@ -37,11 +37,7 @@ const plugins = [
 const external = id => /^d3-/.test(id);
 let pluginPath = resolvePath("../../src/Plugin/");
 
-if (!existsSync(pluginPath)) {
-    pluginPath = resolvePath("../src/Plugin/");
-}
-
-const bbPlugins = readdirSync(pluginPath, {
+const bbPlugins = readdirSync(resolvePath("../../src/Plugin/"), {
         withFileTypes: true
     })
     .filter(dirent => dirent.isDirectory())

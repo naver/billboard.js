@@ -1,7 +1,7 @@
 import {dirname, resolve} from "path";
 import {fileURLToPath} from "url";
 import {execSync} from "child_process";
-import {readFileSync, writeFileSync} from "fs";
+import {existsSync, readFileSync, writeFileSync} from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -18,9 +18,17 @@ function getBanner() {
 /**
  * Resolve path
  * @param {string} path Path to resolve
+ * @param {boolean} checkExists Check if dir exists
  */
-function resolvePath(path) {
-    return resolve(__dirname, path);
+ function resolvePath(path, checkExists = true) {
+    let resolved = resolve(__dirname, path);
+
+    // if not exists, try to resolve 1 level down
+    if (checkExists && !existsSync(resolved)) {
+        resolved = resolve(__dirname, path.replace(/^\.\.\//, ""));
+    }
+
+    return resolved;
 }
 
 /**

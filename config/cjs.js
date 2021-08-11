@@ -7,6 +7,6 @@ const content = {
 	"type": "commonjs"
 };
 
-writeJson(resolvePath("../dist/package.json"), content, e => {
+writeJson(resolvePath("../dist/package.json", false), content, e => {
 	console.error(e);
 });
