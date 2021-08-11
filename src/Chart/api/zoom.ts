@@ -223,7 +223,7 @@ export default {
 	 */
 	unzoom(): void {
 		const $$ = this.internal;
-		const {config, $el: {eventRect}, $T} = $$;
+		const {config, $el: {eventRect, zoomResetBtn}, $T} = $$;
 
 		if ($$.scale.zoom) {
 			config.subchart_show ?
