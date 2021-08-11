@@ -59,7 +59,8 @@ export default class Element {
 				main: null, // region
 				list: null // mainRegion
 			},
-			eventRect: null
+			eventRect: null,
+			zoomResetBtn: null // drag zoom reset button
 		};
 
 		return element;

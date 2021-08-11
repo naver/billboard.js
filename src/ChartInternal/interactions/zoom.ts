@@ -4,7 +4,6 @@
  */
 import {drag as d3Drag} from "d3-drag";
 import {zoom as d3Zoom} from "d3-zoom";
-import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {callFn, diffDomain, getPointer, isFunction} from "../../module/util";
 
@@ -29,20 +28,32 @@ export default {
 	 */
 	bindZoomEvent(bind = true): void {
 		const $$ = this;
-		const {config, $el: {eventRect}} = $$;
+		const {config} = $$;
 		const zoomEnabled = config.zoom_enabled;
 
 		if (zoomEnabled && bind) {
 			// Do not bind zoom event when subchart is shown
 			!config.subchart_show &&
-				$$.bindZoomOnEventRect(eventRect, config.zoom_type);
+				$$.bindZoomOnEventRect();
 		} else if (bind === false) {
 			$$.api.unzoom();
-
-			eventRect
-				.on(".zoom", null)
-				.on(".drag", null);
+			$$.unbindZoomEvent();
 		}
+	},
+
+	/**
+	 * Unbind zoom events
+	 * @private
+	 */
+	unbindZoomEvent(): void {
+		const $$ = this;
+		const {$el: {eventRect, zoomResetBtn}} = $$;
+
+		eventRect
+			.on(".zoom", null)
+			.on(".drag", null);
+
+		zoomResetBtn?.style("display", "none");
 	},
 
 	/**
@@ -246,13 +257,12 @@ export default {
 
 	/**
 	 * Attach zoom event on <rect>
-	 * @param {d3.selection} eventRect evemt <rect> element
-	 * @param {string} type zoom type
 	 * @private
 	 */
-	bindZoomOnEventRect(eventRect: d3Selection, type: "drag" | "wheel"): void {
+	bindZoomOnEventRect(): void {
 		const $$ = this;
-		const behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
+		const {config, $el: {eventRect}} = $$;
+		const behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
 
 		// Since Chrome 89, wheel zoom not works properly
 		// Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
@@ -340,12 +350,12 @@ export default {
 
 	setZoomResetButton(): void {
 		const $$ = this;
-		const {config} = $$;
+		const {config, $el} = $$;
 		const resetButton = config.zoom_resetButton;
 
 		if (resetButton && config.zoom_type === "drag") {
-			if (!$$.zoom.resetBtn) {
-				$$.zoom.resetBtn = $$.$el.chart.append("div")
+			if (!$el.zoomResetBtn) {
+				$el.zoomResetBtn = $$.$el.chart.append("div")
 					.classed(CLASS.button, true)
 					.append("span")
 					.on("click", function() {
@@ -355,7 +365,7 @@ export default {
 					.classed(CLASS.buttonZoomReset, true)
 					.text(resetButton.text || "Reset Zoom");
 			} else {
-				$$.zoom.resetBtn.style("display", null);
+				$el.zoomResetBtn.style("display", null);
 			}
 		}
 	}
