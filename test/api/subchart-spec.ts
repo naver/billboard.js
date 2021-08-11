@@ -3,8 +3,10 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import sinon from "sinon";
 import {expect} from "chai";
 import util from "../assets/util";
+import {fireEvent} from "../assets/helper";
 
 describe("API subchart", () => {
 	let chart;
@@ -82,6 +84,8 @@ describe("API subchart", () => {
 	});
 
 	describe("usage with other combination", () => {
+		const spy = sinon.spy();
+
 		before(() => {
 			args = {
 				data: {
@@ -96,24 +100,40 @@ describe("API subchart", () => {
 				},
 				transition: {
 					duration: 0
+				},
+				zoom: {
+					onzoomstart: spy
 				}
 			};
 		});
 
 		it("Zoom reset button should be hidden during subchart interaction", () => {
+			let {eventRect} = chart.internal.$el;
+			
+			eventRect = eventRect.node();
+
+			const rect = eventRect.getBoundingClientRect();
 
 			// when
 			chart.zoom.enable("drag");
 			chart.zoom([1,2]);
 
-			const {resetBtn} = chart.internal.zoom;
+			const {zoomResetBtn} = chart.internal.$el;
 
-			expect(resetBtn.style("display")).to.be.equal("inline");
+			expect(zoomResetBtn.style("display")).to.be.equal("inline");
 
 			// when
 			chart.subchart.toggle();
 
-			expect(resetBtn.style("display")).to.be.equal("none");
+			expect(zoomResetBtn.style("display")).to.be.equal("none");
+
+			// when
+			fireEvent(eventRect, "click", {
+				clientX: rect.x + 10,
+				clientY: rect.y
+			}, chart);
+
+			expect(spy.calledOnce).to.be.false;
 		});
 	});
 });
