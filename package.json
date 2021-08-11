@@ -169,7 +169,7 @@
 		"terser-webpack-plugin": "^5.1.4",
 		"tslib": "^2.3.0",
 		"typescript": "^4.3.5",
-		"webpack": "^5.45.1",
+		"webpack": "5.48.0",
 		"webpack-bundle-analyzer": "^4.4.2",
 		"webpack-clean": "^1.2.5",
 		"webpack-cli": "^4.7.2",
