@@ -51,7 +51,7 @@ export default {
 	 */
 	flush(soft?: boolean): void {
 		const $$ = this.internal;
-		const {state} = $$;
+		const {state, $el: {zoomResetBtn}} = $$;
 
 		if (state.rendered) {
 			// reset possible zoom scale when is called from resize event
@@ -65,7 +65,7 @@ export default {
 
 			// hide possible reset zoom button
 			// https://github.com/naver/billboard.js/issues/2201
-			$$.zoom?.resetBtn && $$.zoom.resetBtn.style("display", "none");
+			zoomResetBtn?.style("display", "none");
 			$$.scale.zoom = null;
 
 			soft ? $$.redraw({

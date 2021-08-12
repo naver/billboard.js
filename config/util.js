@@ -18,12 +18,13 @@ function getBanner() {
 /**
  * Resolve path
  * @param {string} path Path to resolve
+ * @param {boolean} checkExists Check if dir exists
  */
- function resolvePath(path) {
+ function resolvePath(path, checkExists = true) {
     let resolved = resolve(__dirname, path);
 
     // if not exists, try to resolve 1 level down
-    if (!existsSync(resolved)) {
+    if (checkExists && !existsSync(resolved)) {
         resolved = resolve(__dirname, path.replace(/^\.\.\//, ""));
     }
 

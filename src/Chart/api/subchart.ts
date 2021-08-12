@@ -35,6 +35,9 @@ export default {
 			const show = config.subchart_show;
 
 			if (!show) {
+				// unbind zoom event bound to chart rect area
+				$$.unbindZoomEvent();
+
 				config.subchart_show = !show;
 				!subchart.main && $$.initSubchart();
 

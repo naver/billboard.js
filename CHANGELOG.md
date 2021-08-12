@@ -1,3 +1,11 @@
+## [3.1.4](https://github.com/naver/billboard.js/compare/3.1.3...3.1.4) (2021-08-11)
+
+
+### Bug Fixes
+
+* **api:** unbind drag zoom owhen subchart is shown ([f1a34c6](https://github.com/naver/billboard.js/commit/f1a34c6cd46ac7bfdf35e11f33deebbba6193be8)), closes [#2201](https://github.com/naver/billboard.js/issues/2201)
+* **browser:** add requestIdleCallback fallback ([ec6d120](https://github.com/naver/billboard.js/commit/ec6d120e54b20ec2c1e6356e227b737a8566a6c5)), closes [#2247](https://github.com/naver/billboard.js/issues/2247)
+
 ## [3.1.3](https://github.com/naver/billboard.js/compare/3.1.2...3.1.3) (2021-07-28)
 
 
