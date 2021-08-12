@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.3
+ * @version 3.1.4
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -396,7 +396,9 @@ var Element = function () {
       list: null // mainRegion
 
     },
-    eventRect: null
+    eventRect: null,
+    zoomResetBtn: null // drag zoom reset button
+
   };
 };
 
@@ -7739,11 +7741,12 @@ function loadConfig(config) {
    * chart.flush(true);
    */
   flush: function flush(soft) {
-    var _$$$zoom,
+    var _zoomResetBtn,
         $$ = this.internal,
-        state = $$.state;
+        state = $$.state,
+        zoomResetBtn = $$.$el.zoomResetBtn;
 
-    state.rendered ? (state.resizing ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), (_$$$zoom = $$.zoom) != null && _$$$zoom.resetBtn && $$.zoom.resetBtn.style("display", "none"), $$.scale.zoom = null, soft ? $$.redraw({
+    state.rendered ? (state.resizing ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), (_zoomResetBtn = zoomResetBtn) != null && _zoomResetBtn.style("display", "none"), $$.scale.zoom = null, soft ? $$.redraw({
       withTransform: !0,
       withUpdateXDomain: !0,
       withUpdateOrgXDomain: !0,
@@ -16587,7 +16590,7 @@ var _area = function area() {
           show = config.subchart_show;
 
       if (!show) {
-        config.subchart_show = !show, subchart.main || $$.initSubchart();
+        $$.unbindZoomEvent(), config.subchart_show = !show, subchart.main || $$.initSubchart();
         var $target = subchart.main.selectAll("." + config_classes.target); // need to cover when new data has been loaded
 
         $$.data.targets.length !== $target.size() && ($$.updateSizes(), $$.updateTargetsForSubchart($$.data.targets), $target = subchart.main.selectAll("." + config_classes.target)), $target.style("opacity", null), subchart.main.style("display", null), this.flush();
@@ -16808,11 +16811,15 @@ extend(zoom, {
    *  chart.unzoom();
    */
   unzoom: function unzoom() {
-    var $$ = this.internal,
+    var _zoomResetBtn,
+        $$ = this.internal,
         config = $$.config,
-        eventRect = $$.$el.eventRect,
+        _$$$$el = $$.$el,
+        eventRect = _$$$$el.eventRect,
+        zoomResetBtn = _$$$$el.zoomResetBtn,
         $T = $$.$T;
-    $$.scale.zoom && (config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity), $$.updateZoom(!0), $$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none"), (0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomTransform)(eventRect.node()) !== external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity && $$.zoom.transform($T(eventRect), external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity));
+
+    $$.scale.zoom && (config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity), $$.updateZoom(!0), (_zoomResetBtn = zoomResetBtn) != null && _zoomResetBtn.style("display", "none"), (0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomTransform)(eventRect.node()) !== external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity && $$.zoom.transform($T(eventRect), external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity));
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
@@ -17346,9 +17353,22 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
     bind === void 0 && (bind = !0);
     var $$ = this,
         config = $$.config,
-        eventRect = $$.$el.eventRect,
         zoomEnabled = config.zoom_enabled;
-    zoomEnabled && bind ? !config.subchart_show && $$.bindZoomOnEventRect(eventRect, config.zoom_type) : bind === !1 && ($$.api.unzoom(), eventRect.on(".zoom", null).on(".drag", null));
+    zoomEnabled && bind ? !config.subchart_show && $$.bindZoomOnEventRect() : bind === !1 && ($$.api.unzoom(), $$.unbindZoomEvent());
+  },
+
+  /**
+   * Unbind zoom events
+   * @private
+   */
+  unbindZoomEvent: function unbindZoomEvent() {
+    var _zoomResetBtn,
+        $$ = this,
+        _$$$$el = $$.$el,
+        eventRect = _$$$$el.eventRect,
+        zoomResetBtn = _$$$$el.zoomResetBtn;
+
+    eventRect.on(".zoom", null).on(".drag", null), (_zoomResetBtn = zoomResetBtn) == null ? void 0 : _zoomResetBtn.style("display", "none");
   },
 
   /**
@@ -17480,13 +17500,13 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
 
   /**
    * Attach zoom event on <rect>
-   * @param {d3.selection} eventRect evemt <rect> element
-   * @param {string} type zoom type
    * @private
    */
-  bindZoomOnEventRect: function bindZoomOnEventRect(eventRect, type) {
+  bindZoomOnEventRect: function bindZoomOnEventRect() {
     var $$ = this,
-        behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
+        config = $$.config,
+        eventRect = $$.$el.eventRect,
+        behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
     // Since Chrome 89, wheel zoom not works properly
     // Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
     $$.$el.svg.on("wheel", function () {}), eventRect.call(behaviour).on("dblclick.zoom", null);
@@ -17525,8 +17545,9 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   setZoomResetButton: function setZoomResetButton() {
     var $$ = this,
         config = $$.config,
+        $el = $$.$el,
         resetButton = config.zoom_resetButton;
-    resetButton && config.zoom_type === "drag" && ($$.zoom.resetBtn ? $$.zoom.resetBtn.style("display", null) : $$.zoom.resetBtn = $$.$el.chart.append("div").classed(config_classes.button, !0).append("span").on("click", function () {
+    resetButton && config.zoom_type === "drag" && ($el.zoomResetBtn ? $el.zoomResetBtn.style("display", null) : $el.zoomResetBtn = $$.$el.chart.append("div").classed(config_classes.button, !0).append("span").on("click", function () {
       isFunction(resetButton.onclick) && resetButton.onclick.bind($$.api)(this), $$.api.unzoom();
     }).classed(config_classes.buttonZoomReset, !0).text(resetButton.text || "Reset Zoom"));
   }
@@ -17886,7 +17907,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.1.3",
+  version: "3.1.4",
 
   /**
    * Generate chart
@@ -18014,7 +18035,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.1.3
+ * @version 3.1.4
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
