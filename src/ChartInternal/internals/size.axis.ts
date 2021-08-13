@@ -110,7 +110,12 @@ export default {
 				}
 
 				if (tickCount !== state.axis.x.tickCount) {
-					state.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
+					const {targets} = $$.data;
+
+					state.axis.x.padding = $$.getXDomainPadding([
+						$$.getXDomainMinMax(targets, "min"),
+						$$.getXDomainMinMax(targets, "max")
+					], tickCount);
 				}
 
 				state.axis.x.tickCount = tickCount;
