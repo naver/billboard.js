@@ -1,3 +1,19 @@
+# [3.2.0-next.2](https://github.com/naver/billboard.js/compare/3.2.0-next.1...3.2.0-next.2) (2021-08-13)
+
+
+### Bug Fixes
+
+* **api:** unbind drag zoom owhen subchart is shown ([f1a34c6](https://github.com/naver/billboard.js/commit/f1a34c6cd46ac7bfdf35e11f33deebbba6193be8)), closes [#2201](https://github.com/naver/billboard.js/issues/2201)
+* **bar:** fix data label to be shown for 0 values ([f3634ee](https://github.com/naver/billboard.js/commit/f3634eed2288d4a4d3961b8a714e742db6b97276)), closes [#2251](https://github.com/naver/billboard.js/issues/2251)
+* **browser:** add requestIdleCallback fallback ([ec6d120](https://github.com/naver/billboard.js/commit/ec6d120e54b20ec2c1e6356e227b737a8566a6c5)), closes [#2247](https://github.com/naver/billboard.js/issues/2247)
+
+
+### Features
+
+* **axis:** Enhance padding to accept px value ([769ec8f](https://github.com/naver/billboard.js/commit/769ec8f5082cfd7c6f9197fb46da6e535e9f2273)), closes [#2246](https://github.com/naver/billboard.js/issues/2246)
+* **module:** Support dual CJS/ESM package ([ddd8977](https://github.com/naver/billboard.js/commit/ddd89776563055ea3fbe70d977e266a299d9b45c)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
+* **plugin:** Intent to ship TableView plugin ([6f07e94](https://github.com/naver/billboard.js/commit/6f07e94c86a39e08274a0ed82bf0d25f5b65925c)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
+
 ## [3.1.4](https://github.com/naver/billboard.js/compare/3.1.3...3.1.4) (2021-08-11)
 
 
