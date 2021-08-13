@@ -89,7 +89,7 @@ export default {
 
 		return [
 			$$.$T(bar, withTransition, getRandom())
-				.attr("d", d => d.value && drawFn(d))
+				.attr("d", d => isNumber(d.value) && drawFn(d))
 				.style("fill", this.color)
 				.style("opacity", null)
 		];
