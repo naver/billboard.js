@@ -17,7 +17,7 @@ export default {
 		const $$ = this;
 
 		return $$.isBarType(d) && !$$.meetsLabelThreshold(
-			Math.abs($$.getRatio("bar", d),), "bar"
+			Math.abs($$.getRatio("bar", d)), "bar"
 		) ? "0" : ($$.hasDataLabel ? null : "0");
 	},
 
