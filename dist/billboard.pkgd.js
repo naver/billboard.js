@@ -15785,6 +15785,7 @@ var Element = function () {
  */
 var State = function () {
   return {
+    // chart drawn area dimension, excluding axes
     width: 0,
     width2: 0,
     height: 0,
@@ -15813,6 +15814,7 @@ var State = function () {
     hasAxis: !1,
     hasRadar: !1,
     current: {
+      // chart whole dimension
       width: 0,
       height: 0,
       dataMax: 0,
@@ -21744,6 +21746,7 @@ var tsvFormatValue = tsv.formatValue;
    * @private
    */
   getRatio: function getRatio(type, d, asPercent) {
+    asPercent === void 0 && (asPercent = !1);
     var $$ = this,
         config = $$.config,
         state = $$.state,
@@ -21777,7 +21780,7 @@ var tsvFormatValue = tsv.formatValue;
           max = yScale.domain().reduce(function (a, c) {
         return c - a;
       });
-      ratio = Math.abs(d.value) / max;
+      ratio = max === 0 ? 0 : Math.abs(d.value) / max;
     }
     return asPercent && ratio ? ratio * 100 : ratio;
   },
@@ -22788,12 +22791,6 @@ var TYPE_BY_CATEGORY = {
       return getMinMax(type, ys[key]);
     }));
   },
-  getYDomainMin: function getYDomainMin(targets) {
-    return this.getYDomainMinMax(targets, "min");
-  },
-  getYDomainMax: function getYDomainMax(targets) {
-    return this.getYDomainMinMax(targets, "max");
-  },
 
   /**
    * Check if hidden targets bound to the given axis id
@@ -22825,16 +22822,16 @@ var TYPE_BY_CATEGORY = {
       $$.getYDomain(targets, "y2", xDomain);
     var yMin = config[pfx + "_min"],
         yMax = config[pfx + "_max"],
-        yDomainMin = $$.getYDomainMin(yTargets),
-        yDomainMax = $$.getYDomainMax(yTargets),
         center = config[pfx + "_center"],
+        isInverted = config[pfx + "_inverted"],
+        showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
+        showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated,
+        yDomainMin = $$.getYDomainMinMax(yTargets, "min"),
+        yDomainMax = $$.getYDomainMinMax(yTargets, "max"),
         isZeroBased = [TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER].concat(TYPE_BY_CATEGORY.Line).some(function (v) {
       var type = v.indexOf("area") > -1 ? "area" : v;
       return $$.hasType(v, yTargets) && config[type + "_zerobased"];
-    }),
-        isInverted = config[pfx + "_inverted"],
-        showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
-        showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
+    });
     yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
     var isAllPositive = yDomainMin >= 0 && yDomainMax >= 0,
         isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
@@ -22862,7 +22859,7 @@ var TYPE_BY_CATEGORY = {
     } else if (showVerticalDataLabel) {
       var lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height");
       ["bottom", "top"].forEach(function (v, i) {
-        padding[v] += axis.convertPixelsToAxisPadding(lengths[i], domainLength);
+        padding[v] += $$.convertPixelToScale("y", lengths[i], domainLength);
       });
     } // if padding is set, the domain will be updated relative the current domain value
     // ex) $$.height=300, padding.top=150, domainLength=4  --> domain=6
@@ -22888,43 +22885,83 @@ var TYPE_BY_CATEGORY = {
         value = isObject(configValue) ? configValue.value : configValue;
     return value = isDefined(value) && $$.axis.isTimeSeries() ? parseDate.bind(this)(value) : value, isObject(configValue) && configValue.fit && (type === "min" && value < dataValue || type === "max" && value > dataValue) && (value = undefined), isDefined(value) ? value : dataValue;
   },
-  getXDomainMin: function getXDomainMin(targets) {
-    return this.getXDomainMinMax(targets, "min");
-  },
-  getXDomainMax: function getXDomainMax(targets) {
-    return this.getXDomainMinMax(targets, "max");
-  },
-  getXDomainPadding: function getXDomainPadding(domain) {
-    var maxDataCount,
-        padding,
+
+  /**
+   * Get x Axis padding
+   * @param {Array} domain x Axis domain
+   * @param {number} tickCount Tick count
+   * @returns {object} Padding object values with 'left' & 'right' key
+   * @private
+   */
+  getXDomainPadding: function getXDomainPadding(domain, tickCount) {
+    var defaultValue,
         $$ = this,
         axis = $$.axis,
         config = $$.config,
-        diff = domain[1] - domain[0],
-        xPadding = config.axis_x_padding;
-    axis.isCategorized() ? padding = 0 : $$.hasType("bar") ? (maxDataCount = $$.getMaxDataCount(), padding = maxDataCount > 1 ? diff / (maxDataCount - 1) / 2 : .5) : padding = diff * .01;
-    var left = padding,
-        right = padding;
-    return isObject(xPadding) && notEmpty(xPadding) ? (left = isValue(xPadding.left) ? xPadding.left : padding, right = isValue(xPadding.right) ? xPadding.right : padding) : isNumber(config.axis_x_padding) && (left = xPadding, right = xPadding), {
+        padding = config.axis_x_padding,
+        isTimeSeriesTickCount = axis.isTimeSeries() && tickCount,
+        diff = diffDomain(domain);
+    // determine default padding value
+    if (axis.isCategorized() || isTimeSeriesTickCount) defaultValue = 0;else if ($$.hasType("bar")) {
+      var maxDataCount = $$.getMaxDataCount();
+      defaultValue = maxDataCount > 1 ? diff / (maxDataCount - 1) / 2 : .5;
+    } else defaultValue = diff * .01;
+
+    var _ref = isNumber(padding) ? {
+      left: padding,
+      right: padding
+    } : padding,
+        _ref$left = _ref.left,
+        left = _ref$left === void 0 ? defaultValue : _ref$left,
+        _ref$right = _ref.right,
+        right = _ref$right === void 0 ? defaultValue : _ref$right; // when the unit is pixel, convert pixels to axis scale value
+
+
+    if (padding.unit === "px") {
+      var domainLength = Math.abs(diff + diff * .2);
+      left = axis.getPadding(padding, "left", defaultValue, domainLength), right = axis.getPadding(padding, "right", defaultValue, domainLength);
+    } else {
+      var range = diff + left + right;
+
+      if (isTimeSeriesTickCount && range) {
+        var relativeTickWidth = diff / tickCount / range;
+        left = left / range / relativeTickWidth, right = right / range / relativeTickWidth;
+      }
+    }
+
+    return {
       left: left,
       right: right
     };
   },
+
+  /**
+   * Get x Axis domain
+   * @param {Array} targets targets
+   * @returns {Array} x Axis domain
+   * @private
+   */
   getXDomain: function getXDomain(targets) {
     var $$ = this,
-        isLog = $$.scale.x.type === "log",
-        xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)],
-        min = 0,
-        max = 0;
-    if (isLog) min = xDomain[0], max = xDomain[1];else {
-      var isCategorized = $$.axis.isCategorized(),
-          isTimeSeries = $$.axis.isTimeSeries(),
-          padding = $$.getXDomainPadding(xDomain),
-          _xDomain = xDomain,
-          firstX = _xDomain[0],
-          lastX = _xDomain[1];
+        axis = $$.axis,
+        x = $$.scale.x,
+        domain = [$$.getXDomainMinMax(targets, "min"), $$.getXDomainMinMax(targets, "max")],
+        _domain = domain,
+        _domain$ = _domain[0],
+        min = _domain$ === void 0 ? 0 : _domain$,
+        _domain$2 = _domain[1],
+        max = _domain$2 === void 0 ? 0 : _domain$2;
+
+    if (x.type !== "log") {
+      var isCategorized = axis.isCategorized(),
+          isTimeSeries = axis.isTimeSeries(),
+          padding = $$.getXDomainPadding(domain),
+          _domain2 = domain,
+          firstX = _domain2[0],
+          lastX = _domain2[1];
       firstX - lastX !== 0 || isCategorized || (isTimeSeries ? (firstX = new Date(firstX.getTime() * .5), lastX = new Date(lastX.getTime() * 1.5)) : (firstX = firstX === 0 ? 1 : firstX * .5, lastX = lastX === 0 ? -1 : lastX * 1.5)), (firstX || firstX === 0) && (min = isTimeSeries ? new Date(firstX.getTime() - padding.left) : firstX - padding.left), (lastX || lastX === 0) && (max = isTimeSeries ? new Date(lastX.getTime() + padding.right) : lastX + padding.right);
     }
+
     return [min, max];
   },
   updateXDomain: function updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
@@ -22964,6 +23001,23 @@ var TYPE_BY_CATEGORY = {
         min = _org$xDomain[0],
         max = _org$xDomain[1];
     return isDefined(config.zoom_x_min) && (min = getMinMax("min", [min, config.zoom_x_min])), isDefined(config.zoom_x_max) && (max = getMinMax("max", [max, config.zoom_x_max])), [min, max];
+  },
+
+  /**
+   * Converts pixels to axis' scale values
+   * @param {string} type Axis type
+   * @param {number} pixels Pixels
+   * @param {number} domainLength Domain length
+   * @returns {number}
+   * @private
+   */
+  convertPixelToScale: function convertPixelToScale(type, pixels, domainLength) {
+    var length,
+        $$ = this,
+        config = $$.config,
+        state = $$.state,
+        isRotated = config.axis_rotated;
+    return length = type === "x" ? isRotated ? "height" : "width" : isRotated ? "width" : "height", domainLength * (pixels / state[length]);
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/format.ts
@@ -30393,41 +30447,6 @@ var Axis_Axis = /*#__PURE__*/function () {
     }
 
     return maxOverflow + tickOffset;
-  }
-  /**
-   * Get x Axis padding
-   * @param {number} tickCount Tick count
-   * @returns {object} Padding object values with 'left' & 'right' key
-   * @private
-   */
-  , _proto.getXAxisPadding = function getXAxisPadding(tickCount) {
-    var $$ = this.owner,
-        padding = $$.config.axis_x_padding,
-        _ref = isNumber(padding) ? {
-      left: padding,
-      right: padding
-    } : padding,
-        _ref$left = _ref.left,
-        left = _ref$left === void 0 ? 0 : _ref$left,
-        _ref$right = _ref.right,
-        right = _ref$right === void 0 ? 0 : _ref$right;
-
-    if ($$.axis.isTimeSeries()) {
-      var firstX = +$$.getXDomainMin($$.data.targets),
-          lastX = +$$.getXDomainMax($$.data.targets),
-          timeDiff = lastX - firstX,
-          range = timeDiff + left + right;
-
-      if (tickCount && range) {
-        var relativeTickWidth = timeDiff / tickCount / range;
-        left = left / range / relativeTickWidth, right = right / range / relativeTickWidth;
-      }
-    }
-
-    return {
-      left: left,
-      right: right
-    };
   }, _proto.updateLabels = function updateLabels(withTransition) {
     var _this3 = this,
         $$ = this.owner,
@@ -30454,17 +30473,19 @@ var Axis_Axis = /*#__PURE__*/function () {
         return _this3.getLabelText(v);
       });
     });
-  }, _proto.getPadding = function getPadding(padding, key, defaultValue, domainLength) {
+  }
+  /**
+   * Get axis padding value
+   * @param {number|object} padding Padding object
+   * @param {string} key Key string of padding
+   * @param {Date|number} defaultValue Default value
+   * @param {number} domainLength Domain length
+   * @returns {number} Padding value in scale
+   * @private
+   */
+  , _proto.getPadding = function getPadding(padding, key, defaultValue, domainLength) {
     var p = isNumber(padding) ? padding : padding[key];
-    return isValue(p) ? this.convertPixelsToAxisPadding(p, domainLength) : defaultValue;
-  }, _proto.convertPixelsToAxisPadding = function convertPixelsToAxisPadding(pixels, domainLength) {
-    var $$ = this.owner,
-        config = $$.config,
-        _$$$state2 = $$.state,
-        width = _$$$state2.width,
-        height = _$$$state2.height,
-        length = config.axis_rotated ? width : height;
-    return domainLength * (pixels / length);
+    return isValue(p) ? this.owner.convertPixelToScale(/(bottom|top)/.test(key) ? "y" : "x", p, domainLength) : defaultValue;
   }, _proto.generateTickValues = function generateTickValues(values, tickCount, forTimeSeries) {
     var tickValues = values;
 
@@ -30562,9 +30583,9 @@ var Axis_Axis = /*#__PURE__*/function () {
   , _proto.setCulling = function setCulling() {
     var $$ = this.owner,
         config = $$.config,
-        _$$$state3 = $$.state,
-        clip = _$$$state3.clip,
-        current = _$$$state3.current,
+        _$$$state2 = $$.state,
+        clip = _$$$state2.clip,
+        current = _$$$state2.current,
         $el = $$.$el;
     ["subX", "x", "y", "y2"].forEach(function (type) {
       var axis = $el.axis[type],
@@ -31603,7 +31624,13 @@ function smoothLines(el, type) {
         var xTickCount = config.axis_x_tick_count,
             currentXTicksLength = state.current.maxTickWidths.x.ticks.length,
             tickCount = 0;
-        xTickCount ? tickCount = xTickCount > currentXTicksLength ? currentXTicksLength : xTickCount : currentXTicksLength && (tickCount = currentXTicksLength), tickCount !== state.axis.x.tickCount && (state.axis.x.padding = $$.axis.getXAxisPadding(tickCount)), state.axis.x.tickCount = tickCount;
+
+        if (xTickCount ? tickCount = xTickCount > currentXTicksLength ? currentXTicksLength : xTickCount : currentXTicksLength && (tickCount = currentXTicksLength), tickCount !== state.axis.x.tickCount) {
+          var targets = $$.data.targets;
+          state.axis.x.padding = $$.getXDomainPadding([$$.getXDomainMinMax(targets, "min"), $$.getXDomainMinMax(targets, "max")], tickCount);
+        }
+
+        state.axis.x.tickCount = tickCount;
       }
 
       $el.svg && config.axis_x_tick_fit && !config.axis_x_tick_multiline && !config.axis_x_tick_culling && config.axis_x_tick_autorotate && allowedXAxisTypes && (rotate = $$.needToRotateXAxisTickTexts() ? config.axis_x_tick_rotate : 0);
@@ -32274,12 +32301,15 @@ function smoothLines(el, type) {
    * Set padding for x axis.<br><br>
    * If this option is set, the range of x axis will increase/decrease according to the values.
    * If no padding is needed in the rage of x axis, 0 should be set.
+   * By default, left/right padding are set depending on x axis type or chart types.
    * - **NOTE:**
-   *   The padding values aren't based on pixels. It differs according axis types<br>
-   *   - **category:** The unit of tick value
-   *     ex. the given value `1`, is same as the width of 1 tick width
-   *   - **timeseries:** Numeric time value
-   *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
+   *   - The meaning of padding values, differs according axis types:<br>
+   *     - **category/indexed:** The unit of tick value
+   *       ex. the given value `1`, is same as the width of 1 tick width
+   *     - **timeseries:** Numeric time value
+   *       ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
+   *   - If want values to be treated as pixels, specify `unit:"px"`.
+   *     - The pixel value will be convered based on the scale values. Hence can not reflect accurate padding result.
    * @name axis․x․padding
    * @memberof Options
    * @type {object|number}
@@ -32298,7 +32328,14 @@ function smoothLines(el, type) {
    *     },
    *
    *     // or set both values at once.
-   *     padding: 10
+   *     padding: 10,
+   *
+   *     // or set padding values as pixel unit.
+   *     padding: {
+   *       left: 100,
+   *       right: 50,
+   *       unit: "px"
+   *     },
    *   }
    * }
    */
@@ -34676,7 +34713,7 @@ function point_y(p) {
         bar = _ref.bar;
 
     return [$$.$T(bar, withTransition, getRandom()).attr("d", function (d) {
-      return d.value && drawFn(d);
+      return isNumber(d.value) && drawFn(d);
     }).style("fill", this.color).style("opacity", null)];
   },
   generateDrawBar: function generateDrawBar(barIndices, isSub) {
