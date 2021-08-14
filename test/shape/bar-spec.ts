@@ -696,6 +696,31 @@ describe("SHAPE BAR", () => {
 				expect(this.getBoundingClientRect().width).to.be.equal(args.bar.width.max);
 			})
 		});
+
+		it("set options: bar.label.threshold=0 & all data values with 0(zero)", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 0, 0],
+						["data2", 0, 0]
+					],
+					type: "bar",
+					labels: true
+				},
+				bar: {
+					label: {
+						threshold: 0
+					}
+				}
+			};
+		});
+
+		it("check the label visibility when all data values are 0(zero)", () => {
+			chart.$.text.texts.each(function() {
+				expect(this.textContent).to.be.equal("0");
+				expect(this.style.opacity).to.be.equal("");
+			});
+		});
 	});
 
 	describe("bar position", () => {

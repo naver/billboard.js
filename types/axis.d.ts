@@ -80,6 +80,7 @@ export interface xAxisConfiguration extends AxisConfigurationBase {
 	padding?: {
 		left?: number;
 		right?: number;
+		unit?: string;
 	} | number;
 
 	/**

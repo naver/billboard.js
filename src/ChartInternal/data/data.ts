@@ -887,7 +887,7 @@ export default {
 	 * @returns {number} Ratio value
 	 * @private
 	 */
-	getRatio(type, d, asPercent) {
+	getRatio(type: string, d, asPercent = false): number {
 		const $$ = this;
 		const {config, state} = $$;
 		const api = $$.api;
@@ -935,7 +935,8 @@ export default {
 				const yScale = $$.getYScaleById.bind($$)(d.id);
 				const max = yScale.domain().reduce((a, c) => c - a);
 
-				ratio = Math.abs(d.value) / max;
+				// when all data are 0, return 0
+				ratio = max === 0 ? 0 : Math.abs(d.value) / max;
 			}
 		}
 

@@ -494,12 +494,15 @@ export default {
 	 * Set padding for x axis.<br><br>
 	 * If this option is set, the range of x axis will increase/decrease according to the values.
 	 * If no padding is needed in the rage of x axis, 0 should be set.
+	 * By default, left/right padding are set depending on x axis type or chart types.
 	 * - **NOTE:**
-	 *   The padding values aren't based on pixels. It differs according axis types<br>
-	 *   - **category:** The unit of tick value
-	 *     ex. the given value `1`, is same as the width of 1 tick width
-	 *   - **timeseries:** Numeric time value
-	 *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
+	 *   - The meaning of padding values, differs according axis types:<br>
+	 *     - **category/indexed:** The unit of tick value
+	 *       ex. the given value `1`, is same as the width of 1 tick width
+	 *     - **timeseries:** Numeric time value
+	 *       ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
+	 *   - If want values to be treated as pixels, specify `unit:"px"`.
+	 *     - The pixel value will be convered based on the scale values. Hence can not reflect accurate padding result.
 	 * @name axis․x․padding
 	 * @memberof Options
 	 * @type {object|number}
@@ -518,7 +521,14 @@ export default {
 	 *     },
 	 *
 	 *     // or set both values at once.
-	 *     padding: 10
+	 *     padding: 10,
+	 *
+	 *     // or set padding values as pixel unit.
+	 *     padding: {
+	 *       left: 100,
+	 *       right: 50,
+	 *       unit: "px"
+	 *     },
 	 *   }
 	 * }
 	 */
