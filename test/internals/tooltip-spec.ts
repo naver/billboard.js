@@ -83,6 +83,8 @@ describe("TOOLTIP", function() {
 	};
 
 	const tooltipPosition = function(data, width, height, element) {
+		expect(this).to.be.equal(chart);
+
 		expect(data.length).to.be.equal(args.data.columns.length - 1);
 		expect(data[0].index).to.be.equal(2);
 		expect(data[0].value).to.be.equal(100);
@@ -375,7 +377,7 @@ describe("TOOLTIP", function() {
 		});
 	});
 
-	describe("tooltip positionFunction", () => {
+	describe("tooltip.position callback function", () => {
 		before(() => {
 			args.tooltip = {
 				position: tooltipPosition
