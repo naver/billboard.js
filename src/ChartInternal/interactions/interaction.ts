@@ -244,5 +244,20 @@ export default {
 
 	setDragStatus(isDragging: boolean): void {
 		this.state.dragging = isDragging;
+	},
+
+	/**
+	 * Unbind zoom events
+	 * @private
+	 */
+	unbindZoomEvent(): void {
+		const $$ = this;
+		const {$el: {eventRect, zoomResetBtn}} = $$;
+
+		eventRect
+			.on(".zoom", null)
+			.on(".drag", null);
+
+		zoomResetBtn?.style("display", "none");
 	}
 };
