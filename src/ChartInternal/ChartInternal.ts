@@ -114,6 +114,43 @@ export default class ChartInternal {
 		$$.state = store.getStore("state");
 	}
 
+	/**
+	 * Get the selection based on transition config
+	 * @param {SVGElement|d3Selection} selection Target selection
+	 * @param {boolean} force Force transition
+	 * @param {string} name Transition name
+	 * @returns {d3Selection}
+	 * @private
+	 */
+	$T(selection: SVGElement | d3Selection, force?: boolean, name?: string): d3Selection {
+		const {config, state} = this;
+		const duration = config.transition_duration;
+		const subchart = config.subchart_show;
+		let t = selection;
+
+		if (t) {
+			// in case of non d3 selection, wrap with d3 selection
+			if ("tagName" in t) {
+				t = d3Select(t);
+			}
+
+			// do not transit on:
+			// - wheel zoom (state.zooming = true)
+			// - when has no subchart
+			// - initialization
+			// - resizing
+			const transit = ((force !== false && duration) || force) &&
+				(!state.zooming || state.dragging) &&
+				!state.resizing &&
+				state.rendered &&
+				!subchart;
+
+			t = (transit ? t.transition(name).duration(duration) : t) as d3Selection;
+		}
+
+		return t;
+	}
+
 	beforeInit(): void {
 		const $$ = this;
 
@@ -473,23 +510,6 @@ export default class ChartInternal {
 		notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
 	}
 
-	/**
-	 * Get selection based on transition config
-	 * @param {d3Selection} selection Target selection
-	 * @param {string} name Transition name
-	 * @returns {d3Selection}
-	 * @private
-	 */
-	$T(selection: d3Selection, name: string): d3Selection {
-		const duration = this.config.transition_duration;
-
-		return (
-			duration ?
-				selection.transition(name).duration(duration) :
-				selection
-			) as d3Selection;
-	}
-
 	setChartElements(): void {
 		const $$ = this;
 		const {$el: {
@@ -609,19 +629,19 @@ export default class ChartInternal {
 
 	getWithOption(options) {
 		const withOptions = {
-			Y: true,
-			Subchart: true,
-			Transition: true,
-			EventRect: true,
 			Dimension: true,
-			TrimXDomain: true,
+			EventRect: true,
+			Legend: false,
+			Subchart: true,
 			Transform: false,
+			Transition: true,
+			TrimXDomain: true,
+			UpdateXAxis: "UpdateXDomain",
 			UpdateXDomain: false,
 			UpdateOrgXDomain: false,
-			Legend: false,
-			UpdateXAxis: "UpdateXDomain",
 			TransitionForExit: "Transition",
-			TransitionForAxis: "Transition"
+			TransitionForAxis: "Transition",
+			Y: true
 		};
 
 		Object.keys(withOptions).forEach(key => {

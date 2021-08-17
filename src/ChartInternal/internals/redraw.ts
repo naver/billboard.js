@@ -36,6 +36,7 @@ export default {
 			// no need to update axis in it because they will be updated in redraw()
 			$$.updateDimension(true);
 		}
+
 		// update circleY based on updated parameters
 		if (!$$.hasArcType() || state.hasRadar) {
 			$$.updateCircleY && ($$.circleY = $$.updateCircleY());

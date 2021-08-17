@@ -72,10 +72,11 @@ describe("ZOOM", function() {
 	});
 
 	describe("zoom event", () => {
-		let zoomDomain;
 		const spyOnZoomStart = sinon.spy();
 		const spyOnZoom = sinon.spy(domain => (zoomDomain = domain));
 		const spyOnZoomEnd = sinon.spy(domain => (zoomDomain = domain));
+		let zoomDomain;
+		let eventOrder = [];
 
 		before(() => {
 			args = {
@@ -230,6 +231,65 @@ describe("ZOOM", function() {
 
 			chart.unzoom(); // zoom set to initial
 			expect(subX.domain()).to.be.deep.equal(x.orgDomain()); // subX value not updated on zoom in
+		});
+
+		it("set options: zoom.type='drag'", () => {
+			args.zoom = {
+				enabled: true,
+				type: "drag",
+				onzoomstart: () => {
+					eventOrder.push("start");
+				},
+				onzoom: () => {
+					eventOrder.push("zoom");
+				},
+				onzoomend: () => {
+					eventOrder.push("end");
+				}
+			};
+		});
+
+		it("check on zoom event triggering during drag zooming", done => {
+			const {$: {main}, internal: {scale, $el}} = chart;
+			const eventRect = $el.eventRect.node();;
+
+		
+			new Promise((resolve, reject) => {
+				util.fireEvent(eventRect, "mousedown", {
+					clientX: 50,
+					clientY: 100
+				}, chart);
+
+				resolve(true);
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					setTimeout(() => {
+						util.fireEvent(eventRect, "mousemove", {
+							clientX: 150,
+							clientY: 100
+						}, chart);
+
+						resolve(true);
+					}, 500);
+				});
+			}).then(() => {
+				setTimeout(() => {
+					util.fireEvent(eventRect, "mouseup", {
+						clientX: 150,
+						clientY: 100
+					}, chart);
+	
+					expect(eventOrder).to.be.deep.equal(["start", "zoom", "end"]);
+
+					// when
+					chart.unzoom();
+
+					// the call of .unzoom() shouldn't be triggering zooming event
+					expect(eventOrder).to.be.deep.equal(["start", "zoom", "end"]);
+
+					done();
+				}, 500);
+			});
 		});
 	});
 
@@ -761,7 +821,7 @@ describe("ZOOM", function() {
 			new Promise((resolve, reject) => {
 				util.fireEvent(eventRect, "mousedown", {
 					clientX: 100,
-					clientY: 100
+					clientY: 79
 				}, chart);
 
 				brush = main.select(`.${CLASS.zoomBrush}`);
@@ -776,35 +836,35 @@ describe("ZOOM", function() {
 					setTimeout(() => {
 						util.fireEvent(eventRect, "mousemove", {
 							clientX: 100,
-							clientY: 130
+							clientY: 79 + 30
 						}, chart);
 
 						resolve(true);
 					}, 500);
 				});
 			}).then(() => {
+				expect(+brush.attr("width")).to.be.equal(size.w);
+				expect(+brush.attr("height")).to.be.above(size.h);
+				expect(+brush.attr("height")).to.be.equal(30);
+
+				util.fireEvent(eventRect, "mouseup", {
+					clientX: 100,
+					clientY: 79 + 30
+				}, chart);
+
 				setTimeout(() => {
-					expect(+brush.attr("width")).to.be.equal(size.w);
-					expect(+brush.attr("height")).to.be.above(size.h);
-					expect(+brush.attr("height")).to.be.equal(30);
-
-					util.fireEvent(eventRect, "mouseup", {
-						clientX: 100,
-						clientY: 200
-					}, chart);
-
 					// y axis rescaled?
-					// const tickText = +main.selectAll(`.${CLASS.axisY} .tick tspan`).nodes().pop().textContent;
+					const tickText = +main.selectAll(`.${CLASS.axisY} .tick tspan`).nodes().pop().textContent;
 
-					// expect(tickText).to.be.below(yAxisTickText);
-					// expect(tickText).to.be.equal(400);
+					expect(tickText).to.be.below(yAxisTickText);
+					expect(tickText).to.be.equal(90);
 
-					// scale.x.domain().forEach((v, i) => {
-					// 	expect(v).to.be[i ? "below" : "above"](zoomedDomain[i]);
-					// });
+					scale.x.domain().forEach((v, i) => {
+						expect(v).to.be[i ? "below" : "above"](zoomedDomain[i]);
+					});
 
 					done();
-				}, 500);
+				}, 300);
 			});
 		});
 

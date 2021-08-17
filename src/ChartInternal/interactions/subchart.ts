@@ -72,7 +72,6 @@ export default {
 			}
 		});
 
-
 		$$.brush.updateResize = function() {
 			timeout && clearTimeout(timeout);
 			timeout = setTimeout(() => {
