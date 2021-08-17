@@ -1,14 +1,11 @@
-# [3.2.0-next.2](https://github.com/naver/billboard.js/compare/3.2.0-next.1...3.2.0-next.2) (2021-08-13)
+## [3.1.5](https://github.com/naver/billboard.js/compare/3.1.4...3.1.5) (2021-08-17)
 
 
 ### Bug Fixes
 
-* **bar:** fix data label to be shown for 0 values ([f3634ee](https://github.com/naver/billboard.js/commit/f3634eed2288d4a4d3961b8a714e742db6b97276)), closes [#2251](https://github.com/naver/billboard.js/issues/2251)
-
-
-### Features
-
-* **axis:** Enhance padding to accept px value ([769ec8f](https://github.com/naver/billboard.js/commit/769ec8f5082cfd7c6f9197fb46da6e535e9f2273)), closes [#2246](https://github.com/naver/billboard.js/issues/2246)
+* **subchart:** fix subchart esm import failure ([9eede10](https://github.com/naver/billboard.js/commit/9eede10d3af605432009a22ff49cc9724266642d)), closes [#2255](https://github.com/naver/billboard.js/issues/2255)
+* **tooltip:** fix tooltip.position call context ([37278e2](https://github.com/naver/billboard.js/commit/37278e29b56580e19471658dbd619974fede9291)), closes [#2265](https://github.com/naver/billboard.js/issues/2265)
+* **zoom:** fix zoom event triggering for drag type ([f2a049e](https://github.com/naver/billboard.js/commit/f2a049eedffd7dd477f3dab854c1957477fe96c9)), closes [#2254](https://github.com/naver/billboard.js/issues/2254)
 
 ## [3.1.4](https://github.com/naver/billboard.js/compare/3.1.3...3.1.4) (2021-08-11)
 

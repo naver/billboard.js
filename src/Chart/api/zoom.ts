@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {zoomIdentity as d3ZoomIdentity, zoomTransform as d3ZoomTransform} from "d3-zoom";
-import {callFn, extend, getMinMax, isDefined, isObject, parseDate} from "../../module/util";
+import {extend, getMinMax, isDefined, isObject, parseDate} from "../../module/util";
 
 /**
  * Check if the given domain is within zoom range
@@ -83,7 +83,6 @@ const zoom = function(domainValue?: (number|Date)[]): (number|Date)[]|undefined 
 			}
 
 			$$.setZoomResetButton();
-			callFn(config.zoom_onzoom, $$.api, domain);
 		}
 	} else {
 		domain = scale.zoom ?
@@ -215,6 +214,7 @@ export default {
 
 	/**
 	 * Unzoom zoomed area
+	 * - **NOTE:** Calling .unzoom() will not trigger zoom events.
 	 * @function unzoom
 	 * @instance
 	 * @memberof Chart
@@ -223,7 +223,7 @@ export default {
 	 */
 	unzoom(): void {
 		const $$ = this.internal;
-		const {config, $el: {eventRect, zoomResetBtn}, $T} = $$;
+		const {config, $el: {eventRect, zoomResetBtn}} = $$;
 
 		if ($$.scale.zoom) {
 			config.subchart_show ?
@@ -235,7 +235,7 @@ export default {
 
 			// reset transform
 			if (d3ZoomTransform(eventRect.node()) !== d3ZoomIdentity) {
-				$$.zoom.transform($T(eventRect), d3ZoomIdentity);
+				$$.zoom.transform(eventRect, d3ZoomIdentity);
 			}
 		}
 	}

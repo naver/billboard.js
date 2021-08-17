@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {drag as d3Drag} from "d3-drag";
-import {zoom as d3Zoom} from "d3-zoom";
+import {zoomIdentity as d3ZoomIdentity, zoom as d3Zoom} from "d3-zoom";
 import CLASS from "../../config/classes";
 import {callFn, diffDomain, getPointer, isFunction} from "../../module/util";
 
@@ -39,21 +39,6 @@ export default {
 			$$.api.unzoom();
 			$$.unbindZoomEvent();
 		}
-	},
-
-	/**
-	 * Unbind zoom events
-	 * @private
-	 */
-	unbindZoomEvent(): void {
-		const $$ = this;
-		const {$el: {eventRect, zoomResetBtn}} = $$;
-
-		eventRect
-			.on(".zoom", null)
-			.on(".drag", null);
-
-		zoomResetBtn?.style("display", "none");
 	},
 
 	/**
@@ -149,13 +134,11 @@ export default {
 		const $$ = this;
 		const {sourceEvent} = event;
 
-		if (!sourceEvent) {
-			return;
+		if (sourceEvent) {
+			$$.zoom.startEvent = sourceEvent;
+			$$.state.zooming = true;
+			callFn($$.config.zoom_onzoomstart, $$.api, event);
 		}
-
-		$$.zoom.startEvent = sourceEvent;
-		$$.state.zooming = true;
-		callFn($$.config.zoom_onzoomstart, $$.api, event);
 	},
 
 	/**
@@ -165,8 +148,9 @@ export default {
 	 */
 	onZoom(event): void {
 		const $$ = this;
-		const {config, scale, org} = $$;
+		const {config, scale, state, org} = $$;
 		const {sourceEvent} = event;
+		const isUnZoom = event?.transform === d3ZoomIdentity;
 
 		if (
 			!config.zoom_enabled ||
@@ -186,9 +170,16 @@ export default {
 
 		$$.zoom.updateTransformScale(transform);
 
+		// do zoom transiton when:
+		// - zoom type 'drag'
+		// - when .unzoom() is called (event.transform === d3ZoomIdentity)
+		const doTransition = config.transition_duration > 0 &&
+			!config.subchart_show && (
+			state.dragging || isUnZoom
+		);
 
 		$$.redraw({
-			withTransition: false,
+			withTransition: doTransition,
 			withY: config.zoom_rescale,
 			withSubchart: false,
 			withEventRect: false,
@@ -196,7 +187,9 @@ export default {
 		});
 
 		$$.state.cancelClick = isMousemove;
-		callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
+
+		// do not call event cb when is .unzoom() is called
+		!isUnZoom && callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
 	},
 
 	/**
@@ -206,9 +199,10 @@ export default {
 	 */
 	onZoomEnd(event): void {
 		const $$ = this;
-		const {config} = $$;
+		const {config, state} = $$;
 		let {startEvent} = $$.zoom;
 		let e = event?.sourceEvent;
+		const isUnZoom = event?.transform === d3ZoomIdentity;
 
 		if ((startEvent && startEvent.type.indexOf("touch") > -1)) {
 			startEvent = startEvent.changedTouches[0];
@@ -225,8 +219,10 @@ export default {
 		$$.redrawEventRect();
 		$$.updateZoom();
 
-		$$.state.zooming = false;
-		callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain());
+		state.zooming = false;
+
+		// do not call event cb when is .unzoom() is called
+		!isUnZoom && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain());
 	},
 
 	/**
@@ -326,7 +322,6 @@ export default {
 				const scale = $$.scale.zoom || $$.scale.x;
 
 				state.event = event;
-				$$.setDragStatus(false);
 
 				zoomRect
 					.attr(prop.axis, 0)
@@ -343,8 +338,9 @@ export default {
 
 				if (start !== end) {
 					$$.api.zoom([start, end].map(v => scale.invert(v)));
-					$$.onZoomEnd(event);
 				}
+
+				$$.setDragStatus(false);
 			});
 	},
 
