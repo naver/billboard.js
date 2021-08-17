@@ -362,10 +362,10 @@ export default {
 		}
 
 		if (!bindto) {
-			const fnPos = config.tooltip_position || $$.tooltipPosition;
+			const fnPos = config.tooltip_position?.bind($$.api) || $$.tooltipPosition.bind($$);
 
 			// Get tooltip dimensions
-			const pos = fnPos.call(this, dataToShow, width, height, element);
+			const pos = fnPos(dataToShow, width, height, element);
 
 			["top", "left"].forEach(v => {
 				const value = pos[v];
