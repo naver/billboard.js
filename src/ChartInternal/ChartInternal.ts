@@ -127,6 +127,7 @@ export default class ChartInternal {
 	$T(selection: SVGElement | d3Selection, force?: boolean, name?: string): d3Selection {
 		const {config, state} = this;
 		const duration = config.transition_duration;
+		const subchart = config.subchart_show;
 		let t = selection;
 
 		if (t) {
@@ -137,12 +138,14 @@ export default class ChartInternal {
 
 			// do not transit on:
 			// - wheel zoom (state.zooming = true)
+			// - when has no subchart
 			// - initialization
 			// - resizing
 			const transit = ((force !== false && duration) || force) &&
-				!state.zooming &&
+				(!state.zooming || state.dragging) &&
 				!state.resizing &&
-				state.rendered;
+				state.rendered &&
+				!subchart;
 
 			t = (transit ? t.transition(name).duration(duration) : t) as d3Selection;
 		}
@@ -634,19 +637,19 @@ export default class ChartInternal {
 
 	getWithOption(options) {
 		const withOptions = {
-			Y: true,
-			Subchart: true,
-			Transition: true,
-			EventRect: true,
 			Dimension: true,
-			TrimXDomain: true,
+			EventRect: true,
+			Legend: false,
+			Subchart: true,
 			Transform: false,
+			Transition: true,
+			TrimXDomain: true,
+			UpdateXAxis: "UpdateXDomain",
 			UpdateXDomain: false,
 			UpdateOrgXDomain: false,
-			Legend: false,
-			UpdateXAxis: "UpdateXDomain",
 			TransitionForExit: "Transition",
-			TransitionForAxis: "Transition"
+			TransitionForAxis: "Transition",
+			Y: true
 		};
 
 		Object.keys(withOptions).forEach(key => {
