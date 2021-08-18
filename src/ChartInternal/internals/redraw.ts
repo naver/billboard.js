@@ -131,10 +131,10 @@ export default {
 			shape,
 			xv: $$.xv.bind($$)
 		});
-		const isTransition = (duration || flowFn) && isTabVisible();
+		const withTransition = (duration || flowFn) && isTabVisible();
 
 		// redraw list
-		const redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition);
+		const redrawList = $$.getRedrawList(shape, flow, flowFn, withTransition);
 
 		// callback function after redraw ends
 		const afterRedraw = () => {
@@ -146,7 +146,7 @@ export default {
 
 		if (afterRedraw) {
 			// Only use transition when current tab is visible.
-			if (isTransition && redrawList.length) {
+			if (withTransition && redrawList.length) {
 				// Wait for end of transitions for callback
 				const waitForDraw = generateWait();
 
@@ -169,7 +169,7 @@ export default {
 		});
 	},
 
-	getRedrawList(shape, flow, flowFn, isTransition: boolean): Function[] {
+	getRedrawList(shape, flow, flowFn, withTransition: boolean): Function[] {
 		const $$ = <any> this;
 		const {config, state: {hasAxis, hasRadar}, $el: {grid}} = $$;
 		const {cx, cy, xForText, yForText} = shape.pos;
@@ -177,11 +177,11 @@ export default {
 
 		if (hasAxis) {
 			if (config.grid_x_lines.length || config.grid_y_lines.length) {
-				list.push($$.redrawGrid(isTransition));
+				list.push($$.redrawGrid(withTransition));
 			}
 
 			if (config.regions.length) {
-				list.push($$.redrawRegion(isTransition));
+				list.push($$.redrawRegion(withTransition));
 			}
 
 			Object.keys(shape.type).forEach(v => {
@@ -189,7 +189,7 @@ export default {
 				const drawFn = shape.type[v];
 
 				if ((/^(area|line)$/.test(v) && $$.hasTypeOf(name)) || $$.hasType(v)) {
-					list.push($$[`redraw${name}`](drawFn, isTransition));
+					list.push($$[`redraw${name}`](drawFn, withTransition));
 				}
 			});
 
@@ -198,11 +198,11 @@ export default {
 
 		if (!$$.hasArcType() || hasRadar) {
 			notEmpty(config.data_labels) && config.data_labels !== false &&
-				list.push($$.redrawText(xForText, yForText, flow, isTransition));
+				list.push($$.redrawText(xForText, yForText, flow, withTransition));
 		}
 
 		if (($$.hasPointType() || hasRadar) && !config.point_focus_only) {
-			$$.redrawCircle && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+			$$.redrawCircle && list.push($$.redrawCircle(cx, cy, withTransition, flowFn));
 		}
 
 		return list;

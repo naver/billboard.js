@@ -160,6 +160,10 @@ export default {
 			return;
 		}
 
+		if (event.sourceEvent) {
+			state.zooming = true;
+		}
+
 		const isMousemove = sourceEvent?.type === "mousemove";
 		const isZoomOut = sourceEvent?.wheelDelta < 0;
 		const {transform} = event;
@@ -175,7 +179,7 @@ export default {
 		// - when .unzoom() is called (event.transform === d3ZoomIdentity)
 		const doTransition = config.transition_duration > 0 &&
 			!config.subchart_show && (
-			state.dragging || isUnZoom
+			state.dragging || isUnZoom || !event.sourceEvent
 		);
 
 		$$.redraw({
