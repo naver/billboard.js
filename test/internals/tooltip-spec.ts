@@ -384,6 +384,10 @@ describe("TOOLTIP", function() {
 			};
 		});
 
+		after(() => {
+			delete args.tooltip.position;
+		});
+
 		it("should be set to the coordinate where the function returned", () => {
 			util.hoverChart(chart, "mousemove", {
 				clientX: 270,
@@ -423,9 +427,15 @@ describe("TOOLTIP", function() {
 		});
 
 		it("set option tooltip.position", () => {
-			args.tooltip.position = () => ({
-				top: 50, left: 300
-			});
+			args.tooltip.position = function(data, width, height, element, pos) {
+				expect(pos.x).to.be.equal(99.5);
+				expect(pos.y).to.be.equal(100.5);
+				expect(pos.xAxis).to.be.equal(this.internal.scale.x(data[0].x));
+
+				return {
+					top: 50, left: 300
+				};
+			};
 		});
 
 		it("tooltip repositioning: when the chart width is increasing", done => {
@@ -441,6 +451,7 @@ describe("TOOLTIP", function() {
 
 			setTimeout(() => {
 				expect(parseInt(tooltip.style("left"))).to.be.above(left);
+
 				done();
 			}, 200);
 		});
