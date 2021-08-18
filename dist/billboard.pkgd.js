@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.4
+ * @version 3.1.5
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -1005,7 +1005,7 @@ var store = __webpack_require__(26);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.16.1',
+  version: '3.16.2',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 });
@@ -1623,17 +1623,15 @@ var NullProtoObjectViaIFrame = function () {
   var iframe = documentCreateElement('iframe');
   var JS = 'java' + SCRIPT + ':';
   var iframeDocument;
-  if (iframe.style) {
-    iframe.style.display = 'none';
-    html.appendChild(iframe);
-    // https://github.com/zloirock/core-js/issues/475
-    iframe.src = String(JS);
-    iframeDocument = iframe.contentWindow.document;
-    iframeDocument.open();
-    iframeDocument.write(scriptTag('document.F=Object'));
-    iframeDocument.close();
-    return iframeDocument.F;
-  }
+  iframe.style.display = 'none';
+  html.appendChild(iframe);
+  // https://github.com/zloirock/core-js/issues/475
+  iframe.src = String(JS);
+  iframeDocument = iframe.contentWindow.document;
+  iframeDocument.open();
+  iframeDocument.write(scriptTag('document.F=Object'));
+  iframeDocument.close();
+  return iframeDocument.F;
 };
 
 // Check for document.domain and active x support
@@ -1646,10 +1644,11 @@ var NullProtoObject = function () {
   try {
     activeXDocument = new ActiveXObject('htmlfile');
   } catch (error) { /* ignore */ }
-  NullProtoObject = document.domain && activeXDocument ?
-    NullProtoObjectViaActiveX(activeXDocument) : // old IE
-    NullProtoObjectViaIFrame() ||
-    NullProtoObjectViaActiveX(activeXDocument); // WSH
+  NullProtoObject = typeof document != 'undefined'
+    ? document.domain && activeXDocument
+      ? NullProtoObjectViaActiveX(activeXDocument) // old IE
+      : NullProtoObjectViaIFrame()
+    : NullProtoObjectViaActiveX(activeXDocument); // WSH
   var length = enumBugKeys.length;
   while (length--) delete NullProtoObject[PROTOTYPE][enumBugKeys[length]];
   return NullProtoObject();
@@ -7826,7 +7825,7 @@ module.exports = {
 
 var userAgent = __webpack_require__(21);
 
-module.exports = /(?:iphone|ipod|ipad).*applewebkit/i.test(userAgent);
+module.exports = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent);
 
 
 /***/ }),
@@ -7925,7 +7924,7 @@ module.exports = queueMicrotask || function (fn) {
 var userAgent = __webpack_require__(21);
 var global = __webpack_require__(3);
 
-module.exports = /iphone|ipod|ipad/i.test(userAgent) && global.Pebble !== undefined;
+module.exports = /ipad|iphone|ipod/i.test(userAgent) && global.Pebble !== undefined;
 
 
 /***/ }),
@@ -8777,21 +8776,20 @@ module.exports = function () {
 /***/ (function(__unused_webpack_module, exports, __webpack_require__) {
 
 var fails = __webpack_require__(6);
+var global = __webpack_require__(3);
 
-// babel-minify transpiles RegExp('a', 'y') -> /a/y and it causes SyntaxError,
-var RE = function (s, f) {
-  return RegExp(s, f);
-};
+// babel-minify and Closure Compiler transpiles RegExp('a', 'y') -> /a/y and it causes SyntaxError
+var $RegExp = global.RegExp;
 
 exports.UNSUPPORTED_Y = fails(function () {
-  var re = RE('a', 'y');
+  var re = $RegExp('a', 'y');
   re.lastIndex = 2;
   return re.exec('abcd') != null;
 });
 
 exports.BROKEN_CARET = fails(function () {
   // https://bugzilla.mozilla.org/show_bug.cgi?id=773687
-  var re = RE('^r', 'gy');
+  var re = $RegExp('^r', 'gy');
   re.lastIndex = 2;
   return re.exec('str') != null;
 });
@@ -8802,10 +8800,13 @@ exports.BROKEN_CARET = fails(function () {
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var fails = __webpack_require__(6);
+var global = __webpack_require__(3);
+
+// babel-minify and Closure Compiler transpiles RegExp('.', 's') -> /./s and it causes SyntaxError
+var $RegExp = global.RegExp;
 
 module.exports = fails(function () {
-  // babel-minify transpiles RegExp('.', 's') -> /./s and it causes SyntaxError
-  var re = RegExp('.', (typeof '').charAt(0));
+  var re = $RegExp('.', 's');
   return !(re.dotAll && re.exec('\n') && re.flags === 's');
 });
 
@@ -8815,10 +8816,13 @@ module.exports = fails(function () {
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var fails = __webpack_require__(6);
+var global = __webpack_require__(3);
+
+// babel-minify and Closure Compiler transpiles RegExp('(?<a>b)', 'g') -> /(?<a>b)/g and it causes SyntaxError
+var $RegExp = global.RegExp;
 
 module.exports = fails(function () {
-  // babel-minify transpiles RegExp('.', 'g') -> /./g and it causes SyntaxError
-  var re = RegExp('(?<a>b)', (typeof '').charAt(5));
+  var re = $RegExp('(?<a>b)', 'g');
   return re.exec('b').groups.a !== 'b' ||
     'b'.replace(re, '$<a>c') !== 'bc';
 });
@@ -8874,7 +8878,7 @@ $({ target: 'RegExp', proto: true, forced: /./.exec !== exec }, {
 
 "use strict";
 
-/* eslint-disable regexp/no-assertion-capturing-group, regexp/no-empty-group, regexp/no-lazy-ends -- testing */
+/* eslint-disable regexp/no-empty-capturing-group, regexp/no-empty-group, regexp/no-lazy-ends -- testing */
 /* eslint-disable regexp/no-useless-quantifier -- testing */
 var toString = __webpack_require__(54);
 var regexpFlags = __webpack_require__(288);
@@ -9778,6 +9782,7 @@ var REPLACE_SUPPORTS_NAMED_GROUPS = !fails(function () {
     result.groups = { a: '7' };
     return result;
   };
+  // eslint-disable-next-line regexp/no-useless-dollar-replacements -- false positive
   return ''.replace(re, '$<a>') !== '7';
 });
 
@@ -10071,7 +10076,7 @@ fixRegExpWellKnownSymbolLogic('split', function (SPLIT, nativeSplit, maybeCallNa
     'test'.split(/(?:)/, -1).length != 4 ||
     'ab'.split(/(?:ab)*/).length != 2 ||
     '.'.split(/(.?)(.?)/).length != 4 ||
-    // eslint-disable-next-line regexp/no-assertion-capturing-group, regexp/no-empty-group -- required for testing
+    // eslint-disable-next-line regexp/no-empty-capturing-group, regexp/no-empty-group -- required for testing
     '.'.split(/()()/).length > 1 ||
     ''.split(/.?/).length
   ) {
@@ -22301,6 +22306,20 @@ function drag_defaultTouchable() {
   },
   setDragStatus: function setDragStatus(isDragging) {
     this.state.dragging = isDragging;
+  },
+
+  /**
+   * Unbind zoom events
+   * @private
+   */
+  unbindZoomEvent: function unbindZoomEvent() {
+    var _zoomResetBtn,
+        $$ = this,
+        _$$$$el2 = $$.$el,
+        eventRect = _$$$$el2.eventRect,
+        zoomResetBtn = _$$$$el2.zoomResetBtn;
+
+    eventRect.on(".zoom", null).on(".drag", null), (_zoomResetBtn = zoomResetBtn) == null ? void 0 : _zoomResetBtn.style("display", "none");
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/class.ts
@@ -23668,7 +23687,7 @@ function getFormat($$, typeValue, v) {
 var e10 = Math.sqrt(50),
     e5 = Math.sqrt(10),
     e2 = Math.sqrt(2);
-/* harmony default export */ function ticks(start, stop, count) {
+function ticks(start, stop, count) {
   var reverse,
       n,
       ticks,
@@ -23706,50 +23725,55 @@ function tickStep(start, stop, count) {
   return error >= e10 ? step1 *= 10 : error >= e5 ? step1 *= 5 : error >= e2 && (step1 *= 2), stop < start ? -step1 : step1;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
-/* harmony default export */ function src_ascending(a, b) {
+function ascending_ascending(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
 
-/* harmony default export */ function bisector(f) {
+function bisector(f) {
   function left(a, x, lo, hi) {
-    for (lo == null && (lo = 0), hi == null && (hi = a.length); lo < hi;) {
-      var mid = lo + hi >>> 1;
-      compare(a[mid], x) < 0 ? lo = mid + 1 : hi = mid;
+    if (lo === void 0 && (lo = 0), hi === void 0 && (hi = a.length), lo < hi) {
+      if (compare1(x, x) !== 0) return hi;
+
+      do {
+        var mid = lo + hi >>> 1;
+        compare2(a[mid], x) < 0 ? lo = mid + 1 : hi = mid;
+      } while (lo < hi);
     }
 
     return lo;
   }
 
   function right(a, x, lo, hi) {
-    for (lo == null && (lo = 0), hi == null && (hi = a.length); lo < hi;) {
-      var mid = lo + hi >>> 1;
-      compare(a[mid], x) > 0 ? hi = mid : lo = mid + 1;
+    if (lo === void 0 && (lo = 0), hi === void 0 && (hi = a.length), lo < hi) {
+      if (compare1(x, x) !== 0) return hi;
+
+      do {
+        var mid = lo + hi >>> 1;
+        compare2(a[mid], x) <= 0 ? lo = mid + 1 : hi = mid;
+      } while (lo < hi);
     }
 
     return lo;
   }
 
   function center(a, x, lo, hi) {
-    lo == null && (lo = 0), hi == null && (hi = a.length);
+    lo === void 0 && (lo = 0), hi === void 0 && (hi = a.length);
     var i = left(a, x, lo, hi - 1);
     return i > lo && delta(a[i - 1], x) > -delta(a[i], x) ? i - 1 : i;
   }
 
   var delta = f,
-      compare = f;
+      compare1 = f,
+      compare2 = f;
   return f.length === 1 && (delta = function (d, x) {
     return f(d) - x;
-  }, compare = ascendingComparator(f)), {
+  }, compare1 = ascending_ascending, compare2 = function (d, x) {
+    return ascending_ascending(f(d), x);
+  }), {
     left: left,
     center: center,
     right: right
-  };
-}
-
-function ascendingComparator(f) {
-  return function (d, x) {
-    return src_ascending(f(d), x);
   };
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
@@ -23763,7 +23787,7 @@ function number_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o ==
 
 function number_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 
-/* harmony default export */ function src_number(x) {
+function number_number(x) {
   return x === null ? NaN : +x;
 }
 function numbers(values, valueof) {
@@ -23830,10 +23854,10 @@ function numbers(values, valueof) {
 
 
 
-var ascendingBisect = bisector(src_ascending);
+var ascendingBisect = bisector(ascending_ascending);
 var bisectRight = ascendingBisect.right;
 var bisectLeft = ascendingBisect.left;
-var bisectCenter = bisector(src_number).center;
+var bisectCenter = bisector(number_number).center;
 /* harmony default export */ var bisect = (bisectRight);
 ;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/round.js
 /* harmony default export */ function round(a, b) {
@@ -23848,7 +23872,7 @@ function constants(x) {
   };
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-scale/src/number.js
-function number_number(x) {
+function src_number_number(x) {
   return +x;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-scale/src/continuous.js
@@ -23926,7 +23950,7 @@ function transformer() {
   return scale.invert = function (y) {
     return clamp(untransform((input || (input = piecewise(range, domain.map(transform), number)))(y)));
   }, scale.domain = function (_) {
-    return arguments.length ? (domain = Array.from(_, number_number), rescale()) : domain.slice();
+    return arguments.length ? (domain = Array.from(_, src_number_number), rescale()) : domain.slice();
   }, scale.range = function (_) {
     return arguments.length ? (range = Array.from(_), rescale()) : range.slice();
   }, scale.rangeRound = function (_) {
@@ -27002,8 +27026,9 @@ function getTextPos(pos, width) {
       }
 
       if (!bindto) {
-        var fnPos = config.tooltip_position || $$.tooltipPosition,
-            pos = fnPos.call(this, dataToShow, width, height, element); // Get tooltip dimensions
+        var _config$tooltip_posit,
+            fnPos = ((_config$tooltip_posit = config.tooltip_position) == null ? void 0 : _config$tooltip_posit.bind($$.api)) || $$.tooltipPosition.bind($$),
+            pos = fnPos(dataToShow, width, height, element);
 
         ["top", "left"].forEach(function (v) {
           var value = pos[v];
@@ -27423,15 +27448,17 @@ var ChartInternal = /*#__PURE__*/function () {
     var config = this.config,
         state = this.state,
         duration = config.transition_duration,
+        subchart = config.subchart_show,
         t = selection;
 
     if (t) {
       "tagName" in t && (t = src_select(t));
       // do not transit on:
       // - wheel zoom (state.zooming = true)
+      // - when has no subchart
       // - initialization
       // - resizing
-      var transit = (force !== !1 && duration || force) && !state.zooming && !state.resizing && state.rendered;
+      var transit = (force !== !1 && duration || force) && (!state.zooming || state.dragging) && !state.resizing && state.rendered && !subchart;
       t = transit ? t.transition(name).duration(duration) : t;
     }
 
@@ -27664,19 +27691,19 @@ var ChartInternal = /*#__PURE__*/function () {
     })).style("opacity", null);
   }, _proto.getWithOption = function getWithOption(options) {
     var withOptions = {
-      Y: !0,
-      Subchart: !0,
-      Transition: !0,
-      EventRect: !0,
       Dimension: !0,
-      TrimXDomain: !0,
+      EventRect: !0,
+      Legend: !1,
+      Subchart: !0,
       Transform: !1,
+      Transition: !0,
+      TrimXDomain: !0,
+      UpdateXAxis: "UpdateXDomain",
       UpdateXDomain: !1,
       UpdateOrgXDomain: !1,
-      Legend: !1,
-      UpdateXAxis: "UpdateXDomain",
       TransitionForExit: "Transition",
-      TransitionForAxis: "Transition"
+      TransitionForAxis: "Transition",
+      Y: !0
     };
     return Object.keys(withOptions).forEach(function (key) {
       var defVal = withOptions[key];
@@ -37761,7 +37788,7 @@ var zoom = function (domainValue) {
       $el.eventRect.call($$.zoom.transform, transform);
     }
 
-    $$.setZoomResetButton(), callFn(config.zoom_onzoom, $$.api, domain);
+    $$.setZoomResetButton();
   }
   return domain;
 };
@@ -37864,6 +37891,7 @@ util_extend(zoom, {
 
   /**
    * Unzoom zoomed area
+   * - **NOTE:** Calling .unzoom() will not trigger zoom events.
    * @function unzoom
    * @instance
    * @memberof Chart
@@ -37876,10 +37904,9 @@ util_extend(zoom, {
         config = $$.config,
         _$$$$el = $$.$el,
         eventRect = _$$$$el.eventRect,
-        zoomResetBtn = _$$$$el.zoomResetBtn,
-        $T = $$.$T;
+        zoomResetBtn = _$$$$el.zoomResetBtn;
 
-    $$.scale.zoom && (config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(transform_identity), $$.updateZoom(!0), (_zoomResetBtn = zoomResetBtn) != null && _zoomResetBtn.style("display", "none"), transform_transform(eventRect.node()) !== transform_identity && $$.zoom.transform($T(eventRect), transform_identity));
+    $$.scale.zoom && (config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(transform_identity), $$.updateZoom(!0), (_zoomResetBtn = zoomResetBtn) != null && _zoomResetBtn.style("display", "none"), transform_transform(eventRect.node()) !== transform_identity && $$.zoom.transform(eventRect, transform_identity));
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/interactions/drag.ts
@@ -38416,20 +38443,6 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   },
 
   /**
-   * Unbind zoom events
-   * @private
-   */
-  unbindZoomEvent: function unbindZoomEvent() {
-    var _zoomResetBtn,
-        $$ = this,
-        _$$$$el = $$.$el,
-        eventRect = _$$$$el.eventRect,
-        zoomResetBtn = _$$$$el.zoomResetBtn;
-
-    eventRect.on(".zoom", null).on(".drag", null), (_zoomResetBtn = zoomResetBtn) == null ? void 0 : _zoomResetBtn.style("display", "none");
-  },
-
-  /**
    * Generate zoom
    * @private
    */
@@ -38501,8 +38514,10 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         $$ = this,
         config = $$.config,
         scale = $$.scale,
+        state = $$.state,
         org = $$.org,
-        sourceEvent = event.sourceEvent;
+        sourceEvent = event.sourceEvent,
+        isUnZoom = (event == null ? void 0 : event.transform) === transform_identity;
 
     if (config.zoom_enabled && $$.filterTargetsToShow($$.data.targets).length !== 0 && (scale.zoom || !(((_sourceEvent = sourceEvent) == null ? void 0 : _sourceEvent.type.indexOf("touch")) > -1) || ((_sourceEvent2 = sourceEvent) == null ? void 0 : _sourceEvent2.touches.length) !== 1)) {
       var isMousemove = ((_sourceEvent3 = sourceEvent) == null ? void 0 : _sourceEvent3.type) === "mousemove",
@@ -38510,13 +38525,18 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
           transform = event.transform;
       !isMousemove && isZoomOut && scale.x.domain().every(function (v, i) {
         return v !== org.xDomain[i];
-      }) && scale.x.domain(org.xDomain), $$.zoom.updateTransformScale(transform), $$.redraw({
-        withTransition: !1,
+      }) && scale.x.domain(org.xDomain), $$.zoom.updateTransformScale(transform);
+      // do zoom transiton when:
+      // - zoom type 'drag'
+      // - when .unzoom() is called (event.transform === d3ZoomIdentity)
+      var doTransition = config.transition_duration > 0 && !config.subchart_show && (state.dragging || isUnZoom);
+      $$.redraw({
+        withTransition: doTransition,
         withY: config.zoom_rescale,
         withSubchart: !1,
         withEventRect: !1,
         withDimension: !1
-      }), $$.state.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
+      }), $$.state.cancelClick = isMousemove, isUnZoom || callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
     }
   },
 
@@ -38528,11 +38548,14 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   onZoomEnd: function onZoomEnd(event) {
     var $$ = this,
         config = $$.config,
+        state = $$.state,
         startEvent = $$.zoom.startEvent,
-        e = event == null ? void 0 : event.sourceEvent;
+        e = event == null ? void 0 : event.sourceEvent,
+        isUnZoom = (event == null ? void 0 : event.transform) === transform_identity;
     startEvent && startEvent.type.indexOf("touch") > -1 && (startEvent = startEvent.changedTouches[0], e = e.changedTouches[0]);
     // if click, do nothing. otherwise, click interaction will be canceled.
-    config.zoom_type === "drag" && e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY || ($$.redrawEventRect(), $$.updateZoom(), $$.state.zooming = !1, callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain()));
+    config.zoom_type === "drag" && e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY || ( // do not call event cb when is .unzoom() is called
+    $$.redrawEventRect(), $$.updateZoom(), state.zooming = !1, !isUnZoom && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain()));
   },
 
   /**
@@ -38595,9 +38618,9 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       var _ref,
           scale = $$.scale.zoom || $$.scale.x;
 
-      state.event = event, $$.setDragStatus(!1), zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end && ($$.api.zoom([start, end].map(function (v) {
+      state.event = event, zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end && $$.api.zoom([start, end].map(function (v) {
         return scale.invert(v);
-      })), $$.onZoomEnd(event));
+      })), $$.setDragStatus(!1);
     });
   },
   setZoomResetButton: function setZoomResetButton() {
@@ -38965,7 +38988,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.1.4",
+  version: "3.1.5",
 
   /**
    * Generate chart
@@ -39093,7 +39116,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.1.4
+ * @version 3.1.5
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.4
+ * @version 3.1.5
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4377,6 +4377,20 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   },
   setDragStatus: function setDragStatus(isDragging) {
     this.state.dragging = isDragging;
+  },
+
+  /**
+   * Unbind zoom events
+   * @private
+   */
+  unbindZoomEvent: function unbindZoomEvent() {
+    var _zoomResetBtn,
+        $$ = this,
+        _$$$$el2 = $$.$el,
+        eventRect = _$$$$el2.eventRect,
+        zoomResetBtn = _$$$$el2.zoomResetBtn;
+
+    eventRect.on(".zoom", null).on(".drag", null), (_zoomResetBtn = zoomResetBtn) == null ? void 0 : _zoomResetBtn.style("display", "none");
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/class.ts
@@ -7007,8 +7021,9 @@ function getTextPos(pos, width) {
       }
 
       if (!bindto) {
-        var fnPos = config.tooltip_position || $$.tooltipPosition,
-            pos = fnPos.call(this, dataToShow, width, height, element); // Get tooltip dimensions
+        var _config$tooltip_posit,
+            fnPos = ((_config$tooltip_posit = config.tooltip_position) == null ? void 0 : _config$tooltip_posit.bind($$.api)) || $$.tooltipPosition.bind($$),
+            pos = fnPos(dataToShow, width, height, element);
 
         ["top", "left"].forEach(function (v) {
           var value = pos[v];
@@ -7428,15 +7443,17 @@ var ChartInternal = /*#__PURE__*/function () {
     var config = this.config,
         state = this.state,
         duration = config.transition_duration,
+        subchart = config.subchart_show,
         t = selection;
 
     if (t) {
       "tagName" in t && (t = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(t));
       // do not transit on:
       // - wheel zoom (state.zooming = true)
+      // - when has no subchart
       // - initialization
       // - resizing
-      var transit = (force !== !1 && duration || force) && !state.zooming && !state.resizing && state.rendered;
+      var transit = (force !== !1 && duration || force) && (!state.zooming || state.dragging) && !state.resizing && state.rendered && !subchart;
       t = transit ? t.transition(name).duration(duration) : t;
     }
 
@@ -7669,19 +7686,19 @@ var ChartInternal = /*#__PURE__*/function () {
     })).style("opacity", null);
   }, _proto.getWithOption = function getWithOption(options) {
     var withOptions = {
-      Y: !0,
-      Subchart: !0,
-      Transition: !0,
-      EventRect: !0,
       Dimension: !0,
-      TrimXDomain: !0,
+      EventRect: !0,
+      Legend: !1,
+      Subchart: !0,
       Transform: !1,
+      Transition: !0,
+      TrimXDomain: !0,
+      UpdateXAxis: "UpdateXDomain",
       UpdateXDomain: !1,
       UpdateOrgXDomain: !1,
-      Legend: !1,
-      UpdateXAxis: "UpdateXDomain",
       TransitionForExit: "Transition",
-      TransitionForAxis: "Transition"
+      TransitionForAxis: "Transition",
+      Y: !0
     };
     return Object.keys(withOptions).forEach(function (key) {
       var defVal = withOptions[key];
@@ -16738,7 +16755,7 @@ var zoom = function (domainValue) {
       $el.eventRect.call($$.zoom.transform, transform);
     }
 
-    $$.setZoomResetButton(), callFn(config.zoom_onzoom, $$.api, domain);
+    $$.setZoomResetButton();
   }
   return domain;
 };
@@ -16841,6 +16858,7 @@ extend(zoom, {
 
   /**
    * Unzoom zoomed area
+   * - **NOTE:** Calling .unzoom() will not trigger zoom events.
    * @function unzoom
    * @instance
    * @memberof Chart
@@ -16853,10 +16871,9 @@ extend(zoom, {
         config = $$.config,
         _$$$$el = $$.$el,
         eventRect = _$$$$el.eventRect,
-        zoomResetBtn = _$$$$el.zoomResetBtn,
-        $T = $$.$T;
+        zoomResetBtn = _$$$$el.zoomResetBtn;
 
-    $$.scale.zoom && (config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity), $$.updateZoom(!0), (_zoomResetBtn = zoomResetBtn) != null && _zoomResetBtn.style("display", "none"), (0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomTransform)(eventRect.node()) !== external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity && $$.zoom.transform($T(eventRect), external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity));
+    $$.scale.zoom && (config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity), $$.updateZoom(!0), (_zoomResetBtn = zoomResetBtn) != null && _zoomResetBtn.style("display", "none"), (0,external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomTransform)(eventRect.node()) !== external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity && $$.zoom.transform(eventRect, external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity));
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
@@ -17395,20 +17412,6 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   },
 
   /**
-   * Unbind zoom events
-   * @private
-   */
-  unbindZoomEvent: function unbindZoomEvent() {
-    var _zoomResetBtn,
-        $$ = this,
-        _$$$$el = $$.$el,
-        eventRect = _$$$$el.eventRect,
-        zoomResetBtn = _$$$$el.zoomResetBtn;
-
-    eventRect.on(".zoom", null).on(".drag", null), (_zoomResetBtn = zoomResetBtn) == null ? void 0 : _zoomResetBtn.style("display", "none");
-  },
-
-  /**
    * Generate zoom
    * @private
    */
@@ -17480,8 +17483,10 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         $$ = this,
         config = $$.config,
         scale = $$.scale,
+        state = $$.state,
         org = $$.org,
-        sourceEvent = event.sourceEvent;
+        sourceEvent = event.sourceEvent,
+        isUnZoom = (event == null ? void 0 : event.transform) === external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity;
 
     if (config.zoom_enabled && $$.filterTargetsToShow($$.data.targets).length !== 0 && (scale.zoom || !(((_sourceEvent = sourceEvent) == null ? void 0 : _sourceEvent.type.indexOf("touch")) > -1) || ((_sourceEvent2 = sourceEvent) == null ? void 0 : _sourceEvent2.touches.length) !== 1)) {
       var isMousemove = ((_sourceEvent3 = sourceEvent) == null ? void 0 : _sourceEvent3.type) === "mousemove",
@@ -17489,13 +17494,18 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
           transform = event.transform;
       !isMousemove && isZoomOut && scale.x.domain().every(function (v, i) {
         return v !== org.xDomain[i];
-      }) && scale.x.domain(org.xDomain), $$.zoom.updateTransformScale(transform), $$.redraw({
-        withTransition: !1,
+      }) && scale.x.domain(org.xDomain), $$.zoom.updateTransformScale(transform);
+      // do zoom transiton when:
+      // - zoom type 'drag'
+      // - when .unzoom() is called (event.transform === d3ZoomIdentity)
+      var doTransition = config.transition_duration > 0 && !config.subchart_show && (state.dragging || isUnZoom);
+      $$.redraw({
+        withTransition: doTransition,
         withY: config.zoom_rescale,
         withSubchart: !1,
         withEventRect: !1,
         withDimension: !1
-      }), $$.state.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
+      }), $$.state.cancelClick = isMousemove, isUnZoom || callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
     }
   },
 
@@ -17507,11 +17517,14 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   onZoomEnd: function onZoomEnd(event) {
     var $$ = this,
         config = $$.config,
+        state = $$.state,
         startEvent = $$.zoom.startEvent,
-        e = event == null ? void 0 : event.sourceEvent;
+        e = event == null ? void 0 : event.sourceEvent,
+        isUnZoom = (event == null ? void 0 : event.transform) === external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity;
     startEvent && startEvent.type.indexOf("touch") > -1 && (startEvent = startEvent.changedTouches[0], e = e.changedTouches[0]);
     // if click, do nothing. otherwise, click interaction will be canceled.
-    config.zoom_type === "drag" && e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY || ($$.redrawEventRect(), $$.updateZoom(), $$.state.zooming = !1, callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain()));
+    config.zoom_type === "drag" && e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY || ( // do not call event cb when is .unzoom() is called
+    $$.redrawEventRect(), $$.updateZoom(), state.zooming = !1, !isUnZoom && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain()));
   },
 
   /**
@@ -17574,9 +17587,9 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       var _ref,
           scale = $$.scale.zoom || $$.scale.x;
 
-      state.event = event, $$.setDragStatus(!1), zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end && ($$.api.zoom([start, end].map(function (v) {
+      state.event = event, zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end && $$.api.zoom([start, end].map(function (v) {
         return scale.invert(v);
-      })), $$.onZoomEnd(event));
+      })), $$.setDragStatus(!1);
     });
   },
   setZoomResetButton: function setZoomResetButton() {
@@ -17944,7 +17957,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.1.4",
+  version: "3.1.5",
 
   /**
    * Generate chart
@@ -18072,7 +18085,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.1.4
+ * @version 3.1.5
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
