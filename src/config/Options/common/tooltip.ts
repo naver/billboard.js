@@ -27,6 +27,12 @@ export default {
 	 *  If undefined returned, the row of that value will be skipped.
 	 * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
 	 *  This option can be used to modify the tooltip position by returning object that has top and left.
+	 *  - Will pass following arguments to the given function:
+	 *   - `data {Array}`: Current selected data array object.
+	 *   - `width {number}`: Width of tooltip.
+	 *   - `height {number}`: Height of tooltip.
+	 *   - `element {SVGElement}`: Tooltip event bound element
+	 *   - `pos {object}`: Current position of the tooltip.
 	 * @property {Function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
 	 *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
 	 * @property {string|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
@@ -73,7 +79,16 @@ export default {
 	 *          name: function(name, ratio, id, index) { return name; },
 	 *          value: function(value, ratio, id, index) { return ratio; }
 	 *      },
-	 *      position: function(data, width, height, element) {
+	 *      position: function(data, width, height, element, pos) {
+	 *          // data: [{x, index, id, name, value}, ...]
+	 *          // width: Tooltip width
+	 *          // height: Tooltip height
+	 *          // element: Tooltip event bound element
+	 *          // pos: {
+	 *          //   x: Current mouse event x position,
+	 *          //   y: Current mouse event y position,
+	 *          //   xAxis: Current x Axis position (the value is given for axis based chart type only)
+	 *          // }
 	 *          return {top: 0, left: 0}
 	 *      },
 	 *
