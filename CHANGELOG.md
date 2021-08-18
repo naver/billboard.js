@@ -1,13 +1,6 @@
 # [3.2.0-next.3](https://github.com/naver/billboard.js/compare/3.2.0-next.2...3.2.0-next.3) (2021-08-18)
 
 
-### Bug Fixes
-
-* **subchart:** fix subchart esm import failure ([ba6c2b5](https://github.com/naver/billboard.js/commit/ba6c2b522982c0a4a2f21b606e3c543aef83c970)), closes [#2255](https://github.com/naver/billboard.js/issues/2255)
-* **tooltip:** fix tooltip.position call context ([b78a48d](https://github.com/naver/billboard.js/commit/b78a48d5f535078e88c0c6f47b25d6c85d94df8f)), closes [#2265](https://github.com/naver/billboard.js/issues/2265)
-* **zoom:** fix zoom event triggering for drag type ([0a0f039](https://github.com/naver/billboard.js/commit/0a0f0399678c8cfb2c23897a62fdcb9814c7db84)), closes [#2254](https://github.com/naver/billboard.js/issues/2254)
-
-
 ### Features
 
 * **tooltip:** Enhance tooltip.position passing curr pos ([ec783e9](https://github.com/naver/billboard.js/commit/ec783e943b9235377e07a8e06108881e7da0a698)), closes [#2267](https://github.com/naver/billboard.js/issues/2267)
