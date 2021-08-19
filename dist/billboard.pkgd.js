@@ -17476,6 +17476,12 @@ function _defineProperty(obj, key, value) {
    *  If undefined returned, the row of that value will be skipped.
    * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
    *  This option can be used to modify the tooltip position by returning object that has top and left.
+   *  - Will pass following arguments to the given function:
+   *   - `data {Array}`: Current selected data array object.
+   *   - `width {number}`: Width of tooltip.
+   *   - `height {number}`: Height of tooltip.
+   *   - `element {SVGElement}`: Tooltip event bound element
+   *   - `pos {object}`: Current position of the tooltip.
    * @property {Function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
    *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
    * @property {string|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
@@ -17522,7 +17528,16 @@ function _defineProperty(obj, key, value) {
    *          name: function(name, ratio, id, index) { return name; },
    *          value: function(value, ratio, id, index) { return ratio; }
    *      },
-   *      position: function(data, width, height, element) {
+   *      position: function(data, width, height, element, pos) {
+   *          // data: [{x, index, id, name, value}, ...]
+   *          // width: Tooltip width
+   *          // height: Tooltip height
+   *          // element: Tooltip event bound element
+   *          // pos: {
+   *          //   x: Current mouse event x position,
+   *          //   y: Current mouse event y position,
+   *          //   xAxis: Current x Axis position (the value is given for axis based chart type only)
+   *          // }
    *          return {top: 0, left: 0}
    *      },
    *
@@ -23620,14 +23635,14 @@ function getFormat($$, typeValue, v) {
       shape: shape,
       xv: $$.xv.bind($$)
     }),
-        isTransition = (duration || flowFn) && isTabVisible(),
-        redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition),
+        withTransition = (duration || flowFn) && isTabVisible(),
+        redrawList = $$.getRedrawList(shape, flow, flowFn, withTransition),
         afterRedraw = function () {
       flowFn && flowFn(), state.redrawing = !1, callFn(config.onrendered, $$.api);
     };
 
     if (afterRedraw) // Only use transition when current tab is visible.
-      if (isTransition && redrawList.length) {
+      if (withTransition && redrawList.length) {
         // Wait for end of transitions for callback
         var waitForDraw = generateWait(); // transition should be derived from one transition
 
@@ -23644,7 +23659,7 @@ function getFormat($$, typeValue, v) {
       state.withoutFadeIn[id] = !0;
     });
   },
-  getRedrawList: function getRedrawList(shape, flow, flowFn, isTransition) {
+  getRedrawList: function getRedrawList(shape, flow, flowFn, withTransition) {
     var $$ = this,
         config = $$.config,
         _$$$state = $$.state,
@@ -23657,11 +23672,11 @@ function getFormat($$, typeValue, v) {
         xForText = _shape$pos.xForText,
         yForText = _shape$pos.yForText,
         list = [];
-    return hasAxis && ((config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), Object.keys(shape.type).forEach(function (v) {
+    return hasAxis && ((config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(withTransition)), config.regions.length && list.push($$.redrawRegion(withTransition)), Object.keys(shape.type).forEach(function (v) {
       var name = capitalize(v),
           drawFn = shape.type[v];
-      (/^(area|line)$/.test(v) && $$.hasTypeOf(name) || $$.hasType(v)) && list.push($$["redraw" + name](drawFn, isTransition));
-    }), !flow && grid.main && list.push($$.updateGridFocus())), (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && config.data_labels !== !1 && list.push($$.redrawText(xForText, yForText, flow, isTransition)), ($$.hasPointType() || hasRadar) && !config.point_focus_only && $$.redrawCircle && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
+      (/^(area|line)$/.test(v) && $$.hasTypeOf(name) || $$.hasType(v)) && list.push($$["redraw" + name](drawFn, withTransition));
+    }), !flow && grid.main && list.push($$.updateGridFocus())), (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && config.data_labels !== !1 && list.push($$.redrawText(xForText, yForText, flow, withTransition)), ($$.hasPointType() || hasRadar) && !config.point_focus_only && $$.redrawCircle && list.push($$.redrawCircle(cx, cy, withTransition, flowFn)), list;
   },
   updateAndRedraw: function updateAndRedraw(options) {
     options === void 0 && (options = {});
@@ -26988,12 +27003,13 @@ function getTextPos(pos, width) {
   /**
    * Show the tooltip
    * @param {object} selectedData Data object
-   * @param {HTMLElement} element Tooltip element
+   * @param {SVGElement} eventRect Event <rect> element
    * @private
    */
-  showTooltip: function showTooltip(selectedData, element) {
+  showTooltip: function showTooltip(selectedData, eventRect) {
     var $$ = this,
         config = $$.config,
+        scale = $$.scale,
         state = $$.state,
         tooltip = $$.$el.tooltip,
         bindto = config.tooltip_contents.bindto,
@@ -27027,9 +27043,20 @@ function getTextPos(pos, width) {
 
       if (!bindto) {
         var _config$tooltip_posit,
+            _selectedData$filter,
             fnPos = ((_config$tooltip_posit = config.tooltip_position) == null ? void 0 : _config$tooltip_posit.bind($$.api)) || $$.tooltipPosition.bind($$),
-            pos = fnPos(dataToShow, width, height, element);
+            _getPointer2 = getPointer(state.event, eventRect),
+            x = _getPointer2[0],
+            y = _getPointer2[1],
+            currPos = {
+          x: x,
+          y: y
+        },
+            data = (_selectedData$filter = selectedData.filter(Boolean)) == null ? void 0 : _selectedData$filter.shift();
 
+        scale.x && data && "x" in data && (currPos.xAxis = scale.x(data.x));
+        // Get tooltip dimensions
+        var pos = fnPos(dataToShow, width, height, eventRect, currPos);
         ["top", "left"].forEach(function (v) {
           var value = pos[v];
           tooltip.style(v, value + "px"), v !== "left" || datum.xPosInPercent || (datum.xPosInPercent = value / state.current.width * 100);
@@ -38520,6 +38547,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
         isUnZoom = (event == null ? void 0 : event.transform) === transform_identity;
 
     if (config.zoom_enabled && $$.filterTargetsToShow($$.data.targets).length !== 0 && (scale.zoom || !(((_sourceEvent = sourceEvent) == null ? void 0 : _sourceEvent.type.indexOf("touch")) > -1) || ((_sourceEvent2 = sourceEvent) == null ? void 0 : _sourceEvent2.touches.length) !== 1)) {
+      event.sourceEvent && (state.zooming = !0);
       var isMousemove = ((_sourceEvent3 = sourceEvent) == null ? void 0 : _sourceEvent3.type) === "mousemove",
           isZoomOut = ((_sourceEvent4 = sourceEvent) == null ? void 0 : _sourceEvent4.wheelDelta) < 0,
           transform = event.transform;
@@ -38529,7 +38557,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
       // do zoom transiton when:
       // - zoom type 'drag'
       // - when .unzoom() is called (event.transform === d3ZoomIdentity)
-      var doTransition = config.transition_duration > 0 && !config.subchart_show && (state.dragging || isUnZoom);
+      var doTransition = config.transition_duration > 0 && !config.subchart_show && (state.dragging || isUnZoom || !event.sourceEvent);
       $$.redraw({
         withTransition: doTransition,
         withY: config.zoom_rescale,
