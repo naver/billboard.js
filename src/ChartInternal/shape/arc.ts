@@ -743,7 +743,7 @@ export default {
 				if (updated) {
 					arcData = $$.convertToArcData(updated);
 
-					$$.toggleShape && $$.toggleShape(this, arcData, i);
+					$$.toggleShape?.(this, arcData, i);
 					config.data_onclick.bind($$.api)(arcData, this);
 				}
 			});

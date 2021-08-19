@@ -195,7 +195,7 @@ export default {
 			}
 		} else {
 			// update for arc
-			$$.updateArc && $$.updateArc();
+			$$.updateArc?.();
 		}
 	},
 

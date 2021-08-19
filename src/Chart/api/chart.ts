@@ -57,10 +57,10 @@ export default {
 			// reset possible zoom scale when is called from resize event
 			// eslint-disable-next-line prefer-rest-params
 			if (state.resizing) { // arguments[1] is given when is called from resize
-				$$.brush && $$.brush.updateResize();
+				$$.brush?.updateResize();
 			} else {
 				// re-update config info
-				$$.axis && $$.axis.setOrient();
+				$$.axis?.setOrient();
 			}
 
 			// hide possible reset zoom button

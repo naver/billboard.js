@@ -69,7 +69,7 @@ export default {
 			// update data's index value to be alinged with the x Axis
 			$$.updateDataIndexByX(xAxisTickValues);
 			$$.updateXs(xAxisTickValues);
-			$$.updatePointClass && $$.updatePointClass(true);
+			$$.updatePointClass?.(true);
 
 			state.eventReceiver.data = xAxisTickValues;
 		}
@@ -471,7 +471,7 @@ export default {
 		main.selectAll(`.${CLASS.shape}-${index}`)
 			.each(function(d2) {
 				if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
-					$$.toggleShape && $$.toggleShape(this, d2, index);
+					$$.toggleShape?.(this, d2, index);
 					config.data_onclick.bind($$.api)(d2, this);
 				}
 			});
@@ -534,7 +534,7 @@ export default {
 				.selectAll(`.${CLASS.shape}-${closest.index}`)
 				.each(function() {
 					if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
-						$$.toggleShape && $$.toggleShape(this, closest, closest.index);
+						$$.toggleShape?.(this, closest, closest.index);
 						config.data_onclick.bind($$.api)(closest, this);
 					}
 				});

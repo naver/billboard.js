@@ -40,7 +40,7 @@ export default {
 		if (config.tooltip_init_show) {
 			const isArc = !(hasAxis && hasRadar);
 
-			if ($$.axis && $$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
+			if ($$.axis?.isTimeSeries() && isString(config.tooltip_init_x)) {
 				const targets = $$.data.targets[0];
 				let i;
 				let val;
@@ -68,7 +68,7 @@ export default {
 
 			$el.tooltip.html($$.getTooltipHTML(
 				data,
-				$$.axis && $$.axis.getXAxisTickFormat(),
+				$$.axis?.getXAxisTickFormat(),
 				$$.getDefaultValueFormat(),
 				$$.color
 			));
