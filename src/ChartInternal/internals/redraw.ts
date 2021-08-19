@@ -22,7 +22,7 @@ export default {
 		const duration = wth.Transition ? config.transition_duration : 0;
 		const durationForExit = wth.TransitionForExit ? duration : 0;
 		const durationForAxis = wth.TransitionForAxis ? duration : 0;
-		const transitions = $$.axis && $$.axis.generateTransitions(durationForAxis);
+		const transitions = $$.axis?.generateTransitions(durationForAxis);
 
 		$$.updateSizes(initializing);
 
@@ -78,7 +78,7 @@ export default {
 			// event rects will redrawn when flow called
 			if (config.interaction_enabled && !flow && wth.EventRect) {
 				$$.redrawEventRect();
-				$$.bindZoomEvent && $$.bindZoomEvent();
+				$$.bindZoomEvent?.();
 			}
 		} else {
 			// arc
@@ -97,7 +97,7 @@ export default {
 		$$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText();
 
 		// title
-		$$.redrawTitle && $$.redrawTitle();
+		$$.redrawTitle?.();
 
 		initializing && $$.updateTypesElements();
 

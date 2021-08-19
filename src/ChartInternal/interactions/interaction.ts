@@ -20,7 +20,7 @@ export default {
 
 		if (isTooltipGrouped) {
 			$$.showTooltip(selectedData, context);
-			$$.showGridFocus && $$.showGridFocus(selectedData);
+			$$.showGridFocus?.(selectedData);
 
 			if (!isSelectionEnabled || isSelectionGrouped) {
 				return;
@@ -36,7 +36,7 @@ export default {
 				}
 
 				if (!isTooltipGrouped) {
-					$$.hideGridFocus && $$.hideGridFocus();
+					$$.hideGridFocus?.();
 					$$.hideTooltip();
 
 					!isSelectionGrouped && $$.setExpand(index);
@@ -56,8 +56,8 @@ export default {
 
 				if (!isTooltipGrouped) {
 					$$.showTooltip(d, context);
-					$$.showGridFocus && $$.showGridFocus(d);
-					$$.unexpandCircles && $$.unexpandCircles();
+					$$.showGridFocus?.(d);
+					$$.unexpandCircles?.();
 
 					selected.each(d => $$.setExpand(index, d.id));
 				}

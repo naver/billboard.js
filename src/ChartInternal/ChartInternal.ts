@@ -436,13 +436,13 @@ export default class ChartInternal {
 
 		if (hasAxis) {
 			// Cover whole with rects for events
-			hasInteraction && $$.initEventRect && $$.initEventRect();
+			hasInteraction && $$.initEventRect?.();
 
 			// Grids
 			$$.initGrid();
 
 			// Add Axis here, when clipPath is 'true'
-			config.clipPath && $$.axis && $$.axis.init();
+			config.clipPath && $$.axis?.init();
 		}
 
 		$$.initChartElements();
@@ -615,7 +615,7 @@ export default class ChartInternal {
 
 		// circle
 		if ($$.hasType("bubble") || $$.hasType("scatter")) {
-			$$.updateTargetForCircle && $$.updateTargetForCircle();
+			$$.updateTargetForCircle?.();
 		}
 
 		// Fade-in each chart

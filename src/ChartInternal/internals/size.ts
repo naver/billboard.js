@@ -186,7 +186,7 @@ export default {
 		const {config, state: {hasAxis}, $el} = $$;
 
 		if (hasAxis && !withoutAxis && $$.axis.x && config.axis_rotated) {
-			$$.axis.subX && $$.axis.subX.create($el.axis.subX);
+			$$.axis.subX?.create($el.axis.subX);
 		}
 
 		// pass 'withoutAxis' param to not animate at the init rendering
@@ -296,7 +296,7 @@ export default {
 			left: 0
 		};
 
-		$$.updateSizeForLegend && $$.updateSizeForLegend(currLegend);
+		$$.updateSizeForLegend?.(currLegend);
 
 		state.width = state.current.width - state.margin.left - state.margin.right;
 		state.height = state.current.height - state.margin.top - state.margin.bottom;
@@ -334,7 +334,7 @@ export default {
 			state.arcHeight += state.height - $$.getPaddingBottomForGauge();
 		}
 
-		$$.updateRadius && $$.updateRadius();
+		$$.updateRadius?.();
 
 		if (state.isLegendRight && hasArc) {
 			state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;

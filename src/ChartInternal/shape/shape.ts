@@ -365,7 +365,7 @@ export default {
 
 		if (!$$.isTargetToShow(d.id)) {
 			isWithin = false;
-		} else if (("hasValidPointType" in $$) && $$.hasValidPointType(that.nodeName)) {
+		} else if ($$.hasValidPointType?.(that.nodeName)) {
 			isWithin = $$.isStepType(d) ?
 				$$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) :
 				$$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);
