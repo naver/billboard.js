@@ -104,7 +104,7 @@ export default {
 		}
 
 		return function(d) {
-			const id: string = d.id || (d.data && d.data.id) || d;
+			const id: string = d.id || d.data?.id || d;
 			const isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !config.data_types[id];
 			let color;
 

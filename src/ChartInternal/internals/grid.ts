@@ -455,8 +455,7 @@ export default {
 
 		if (type === "year") {
 			const xDomain = $$.getXDomain();
-			const firstYear = xDomain[0].getFullYear();
-			const lastYear = xDomain[1].getFullYear();
+			const [firstYear, lastYear] = xDomain.map(v => v.getFullYear());
 
 			for (let i = firstYear; i <= lastYear; i++) {
 				gridData.push(new Date(`${i}-01-01 00:00:00`));

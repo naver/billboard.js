@@ -48,7 +48,7 @@ export default {
 		// TODO: binary search when multiple xs
 		main.selectAll(`.${CLASS.shapes}`)
 			.selectAll(`.${CLASS.shape}`)
-			.filter(d => isSelectable && isSelectable.bind($$.api)(d))
+			.filter(d => isSelectable?.bind($$.api)(d))
 			.each(function(d, i) {
 				const shape: d3Selection = d3Select(this);
 				const isSelected = shape.classed(CLASS.SELECTED);

@@ -80,7 +80,7 @@ export default {
 		// @ts-ignore
 		zoom.updateTransformScale = (transform: object): void => {
 			// in case of resize, update range of orgXScale
-			org.xScale && org.xScale.range(scale.x.range());
+			org.xScale?.range(scale.x.range());
 
 			// rescale from the original scale
 			const newScale = transform[
@@ -208,7 +208,7 @@ export default {
 		let e = event?.sourceEvent;
 		const isUnZoom = event?.transform === d3ZoomIdentity;
 
-		if ((startEvent && startEvent.type.indexOf("touch") > -1)) {
+		if (startEvent?.type.indexOf("touch") > -1) {
 			startEvent = startEvent.changedTouches[0];
 			e = e.changedTouches[0];
 		}

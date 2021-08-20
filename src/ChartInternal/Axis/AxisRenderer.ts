@@ -278,7 +278,7 @@ export default class AxisRenderer {
 
 			orient === "top" && value.reverse();
 
-			return !r ? "middle" : (r > 0 ? value[0] : value[1]);
+			return !r ? "middle" : value[r > 0 ? 0 : 1];
 		};
 		const textTransform = r => (r ? `rotate(${r})` : null);
 		const yForText = r => {

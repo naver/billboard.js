@@ -164,7 +164,7 @@ export default {
 
 			// update scales
 			// x Axis
-			const xDomain = updateXDomain && scale.x && scale.x.orgDomain();
+			const xDomain = updateXDomain && scale.x?.orgDomain();
 			const xSubDomain = updateXDomain && org.xDomain;
 
 			scale.x = $$.getXScale(min.x, max.x, xDomain, () => axis.x.tickOffset());

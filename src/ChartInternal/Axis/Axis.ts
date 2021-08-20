@@ -366,7 +366,7 @@ class Axis {
 			axis.tickValues(values);
 		} else if (this.x) {
 			this.x.tickValues(values);
-			this.subX && this.subX.tickValues(values);
+			this.subX?.tickValues(values);
 		}
 
 		return values;
@@ -880,7 +880,7 @@ class Axis {
 			}
 		} else if (this.x) {
 			this.x.tickValues([]);
-			this.subX && this.subX.tickValues([]);
+			this.subX?.tickValues([]);
 		}
 
 		if (config.zoom_rescale && !flow) {
@@ -924,8 +924,8 @@ class Axis {
 
 		// Update sub domain
 		if (wth.Y) {
-			scale.subY && scale.subY.domain($$.getYDomain(targetsToShow, "y"));
-			scale.subY2 && scale.subY2.domain($$.getYDomain(targetsToShow, "y2"));
+			scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
+			scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
 		}
 	}
 

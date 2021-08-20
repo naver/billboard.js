@@ -45,7 +45,7 @@ export default {
 		// Bars for each data
 		mainBarEnter.append("g")
 			.attr("class", classBars)
-			.style("cursor", d => (isSelectable && isSelectable.bind($$.api)(d) ? "pointer" : null));
+			.style("cursor", d => (isSelectable?.bind($$.api)(d) ? "pointer" : null));
 	},
 
 	/**
