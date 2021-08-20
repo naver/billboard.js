@@ -317,7 +317,7 @@ export default {
 			zoomEnabled && $$.zoom.updateScaleExtent();
 
 			subX.domain(x.domain());
-			$$.brush && $$.brush.scale(subX);
+			$$.brush?.scale(subX);
 		}
 
 		if (withUpdateXDomain) {

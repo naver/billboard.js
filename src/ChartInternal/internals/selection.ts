@@ -3,7 +3,6 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import {rgb as d3Rgb} from "d3-color";
 import drag from "../interactions/drag";
 import CLASS from "../../config/classes";
 import {callFn} from "../../module/util";
@@ -85,13 +84,12 @@ export default {
 	 */
 	selectPath(target, d): void {
 		const $$ = this;
-		const {config, $T} = $$;
+		const {config} = $$;
 
 		callFn(config.data_onselected, $$.api, d, target.node());
 
 		if (config.interaction_brighten) {
-			$T(target)
-				.style("fill", () => d3Rgb($$.color(d)).brighter(0.75));
+			target.style("filter", "brightness(1.25)");
 		}
 	},
 
@@ -103,13 +101,12 @@ export default {
 	 */
 	unselectPath(target, d): void {
 		const $$ = this;
-		const {config, $T} = $$;
+		const {config} = $$;
 
 		callFn(config.data_onunselected, $$.api, d, target.node());
 
 		if (config.interaction_brighten) {
-			$T(target)
-				.style("fill", () => $$.color(d));
+			target.style("filter", null);
 		}
 	},
 
