@@ -84,7 +84,7 @@ export default {
 				if ($$.isCandlestickType(d)) {
 					const data = $$.getCandlestickData(d);
 
-					isEndAnchor = data && !data._isUp;
+					isEndAnchor = !data?._isUp;
 				}
 
 				return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
@@ -135,7 +135,7 @@ export default {
 		if ($$.isCandlestickType(d) && !isFunction(labelColors)) {
 			const value = $$.getCandlestickData(d);
 
-			if (value && !value._isUp) {
+			if (!value?._isUp) {
 				const downColor = config.candlestick_color_down;
 
 				color = isObject(downColor) ? downColor[d.id] : downColor;

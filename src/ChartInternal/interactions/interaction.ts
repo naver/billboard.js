@@ -49,7 +49,7 @@ export default {
 				const d = selected.data();
 
 				if (isSelectionEnabled &&
-					(isSelectionGrouped || (isSelectable && isSelectable.bind($$.api)(d)))
+					(isSelectionGrouped || isSelectable?.bind($$.api)(d))
 				) {
 					eventRect.style("cursor", "pointer");
 				}

@@ -91,7 +91,7 @@ const isArray = (arr: any): boolean => Array.isArray(arr);
  * @returns {boolean}
  * @private
  */
-const isObject = (obj: any): boolean => obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
+const isObject = (obj: any): boolean => obj && !obj?.nodeType && isObjectType(obj) && !isArray(obj);
 
 /**
  * Get specified key value from object

@@ -46,7 +46,7 @@ export default {
 						node = node[name[1]];
 					}
 
-					if (node && node.size()) {
+					if (node?.size()) {
 						elements[v] = node;
 					}
 				});
@@ -225,7 +225,7 @@ export default {
 					translateX = diffDomain(domain) / 2;
 				}
 			}
-		} else if (orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x)) {
+		} else if (orgDataCount === 1 || flowStart?.x === flowEnd?.x) {
 			translateX = x(orgDomain[0]) - x(domain[0]);
 		} else {
 			translateX = $$.axis.isTimeSeries() ?

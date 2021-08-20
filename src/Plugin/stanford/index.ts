@@ -148,8 +148,8 @@ export default class Stanford extends Plugin {
 	}
 
 	$redraw(duration?: number): void {
-		this.colorScale && this.colorScale.drawColorScale();
-		this.elements && this.elements.updateStanfordElements(duration);
+		this.colorScale?.drawColorScale();
+		this.elements?.updateStanfordElements(duration);
 	}
 
 

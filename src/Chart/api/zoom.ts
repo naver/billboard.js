@@ -18,7 +18,7 @@ function withinRange(domain: (number|Date)[], current, range: number[]): boolean
 
 	return domain.every((v, i) => (
 		i === 0 ? (v >= min) : (v <= max)
-	)) && !(domain[0] === current[0] && domain[1] === current[1]);
+	) && !(domain.every((v, i) => v === current[i])));
 }
 
 /**
@@ -61,7 +61,7 @@ const zoom = function(domainValue?: (number|Date)[]): (number|Date)[]|undefined 
 			if (config.subchart_show) {
 				const x = scale.zoom || scale.x;
 
-				$$.brush.getSelection().call($$.brush.move, [x(domain[0]), x(domain[1])]);
+				$$.brush.getSelection().call($$.brush.move, domain.map(x));
 				// resultDomain = domain;
 			} else {
 				// in case of 'config.zoom_rescale=true', use org.xScale
