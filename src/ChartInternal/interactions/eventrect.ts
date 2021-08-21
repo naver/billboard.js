@@ -241,19 +241,16 @@ export default {
 
 				rectW = (d): number => {
 					const x = getPrevNextX(d);
+					const xDomain = xScale.domain();
 
 					// if there this is a single data point make the eventRect full width (or height)
 					if (x.prev === null && x.next === null) {
 						return isRotated ? state.height : state.width;
 					}
 
-					if (x.prev === null) {
-						x.prev = xScale.domain()[0];
-					}
-
-					if (x.next === null) {
-						x.next = xScale.domain()[1];
-					}
+					Object.keys(x).forEach((key, i) => {
+						x[key] = x[key] ?? xDomain[i];
+					});
 
 					return Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
 				};

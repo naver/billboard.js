@@ -155,7 +155,7 @@ export default {
 	config(name: string, value?: any, redraw?: boolean): any {
 		const $$ = this.internal;
 		const {config} = $$;
-		const key = name && name.replace(/\./g, "_");
+		const key = name?.replace(/\./g, "_");
 		let res;
 
 		if (key in config) {

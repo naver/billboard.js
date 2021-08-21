@@ -20,7 +20,7 @@ export default {
 			// set type if args.types || args.type specified
 			if (args.type || args.types) {
 				targets.forEach(t => {
-					const type = (args.types && args.types[t.id]) || args.type;
+					const type = args.types?.[t.id] || args.type;
 
 					$$.setTargetType(t.id, type);
 				});
@@ -55,7 +55,7 @@ export default {
 		// Update current state chart type and elements list after redraw
 		$$.updateTypesElements();
 
-		args.done && args.done.call($$.api);
+		args.done?.call($$.api);
 	},
 
 	loadFromArgs(args): void {

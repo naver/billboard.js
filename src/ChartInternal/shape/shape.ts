@@ -292,7 +292,7 @@ export default {
 							row = rowValueMapByXValue[dataXAsNumber];
 						}
 
-						if (row && row.value * value >= 0 && isNumber(tvalues[dataXAsNumber])) {
+						if (row?.value * value >= 0 && isNumber(tvalues[dataXAsNumber])) {
 							offset += scale(tvalues[dataXAsNumber]) - y0;
 						}
 					}

@@ -58,16 +58,16 @@ export default {
 		const $$ = this;
 		const {$el: {main}, $T} = $$;
 
-		const xAxis = transitions && transitions.axisX ?
+		const xAxis = transitions?.axisX ?
 			transitions.axisX :
 			$T(main.select(`.${CLASS.axisX}`), withTransition);
 
-		const yAxis = transitions && transitions.axisY ?
+		const yAxis = transitions?.axisY ?
 			transitions.axisY :
 			$T(main.select(`.${CLASS.axisY}`), withTransition);
 
 
-		const y2Axis = transitions && transitions.axisY2 ?
+		const y2Axis = transitions?.axisY2 ?
 			transitions.axisY2 :
 			$T(main.select(`.${CLASS.axisY2}`), withTransition);
 

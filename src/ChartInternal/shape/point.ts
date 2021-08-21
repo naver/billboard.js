@@ -102,7 +102,7 @@ export default {
 
 		enterNode.append("g")
 			.attr("class", classCircles)
-			.style("cursor", d => (isSelectable && isSelectable(d) ? "pointer" : null));
+			.style("cursor", d => (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null));
 
 		// Update date for selected circles
 		selectionEnabled && targets.forEach(t => {
@@ -377,7 +377,7 @@ export default {
 
 		copyAttr(node, clone);
 
-		if (node.childNodes && node.childNodes.length) {
+		if (node.childNodes?.length) {
 			const parent = d3Select(clone);
 
 			if ("innerHTML" in clone) {
@@ -458,7 +458,7 @@ export default {
 
 		return function(method, context, ...args) {
 			return function(d) {
-				const id: string = $$.getTargetSelectorSuffix(d.id || (d.data && d.data.id) || d);
+				const id: string = $$.getTargetSelectorSuffix(d.id || d.data?.id || d);
 				const element = d3Select(this);
 
 				ids.indexOf(id) < 0 && ids.push(id);

@@ -107,7 +107,7 @@ const tooltip = {
 	hide: function(): void {
 		const $$ = this.internal;
 		const {state: {inputType}, $el: {tooltip}} = $$;
-		const data = tooltip && tooltip.datum();
+		const data = tooltip?.datum();
 
 		if (data) {
 			const {index} = JSON.parse(data.current)[0];
