@@ -48,3 +48,4 @@ Donald Pipowitch <pipo@senaeh.de>
 Sung Oh Park <sung-oh.park@navercorp.com>
 Adrian Schmutzler <dev@schmutzler.it>
 Aziz Gazanchiyan <ZIZ@KMDPoland.pl>
+Eben Collins <collinseben@gmail.com>

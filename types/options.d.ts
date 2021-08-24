@@ -1106,6 +1106,12 @@ export interface SubchartOptions {
 			show?: boolean;
 			tick?: {
 				/**
+				 * Use custom format for x axis ticks - see 'axis.x.tick.format' option for details.
+				 */
+				format?: string
+					| ((this: Chart, x: number | Date) => string | number)
+					| ((this: Chart, index: number, categoryName: string) => string);
+				/**
 				 * Show or hide x axis tick line.
 				 */
 				show?: boolean;
