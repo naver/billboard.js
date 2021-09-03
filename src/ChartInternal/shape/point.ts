@@ -250,18 +250,6 @@ export default {
 		};
 	},
 
-	// getCircles(i: number, id: string) {
-	// 	const $$ = this;
-	// 	const suffix = (isValue(i) ? `-${i}` : ``);
-
-	// 	if (!$$.$el.circle.empty()) {
-	// 		return $$.$el.circle.filter(d => d.id === (id || d.id) && (isValue(i) ? d.index === i : true));
-	// 	}
-
-	// 	return (id ? $$.$el.main.selectAll(`.${CLASS.circles}${$$.getTargetSelectorSuffix(id)}`) : $$.$el.main)
-	// 		.selectAll(`.${CLASS.circle}${suffix}`);
-	// },
-
 	expandCircles(i: number, id: string, reset?: boolean): void {
 		const $$ = this;
 		const r = $$.pointExpandedR.bind($$);
