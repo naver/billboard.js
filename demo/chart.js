@@ -395,14 +395,24 @@ code.data;
 
 			this.$chartArea.appendChild($el);
 
-			if (/^(legend|tooltip)Template/.test(key)) {
+			if (/^(legend|tooltip)Template/.test(key) || /(sparkline)/.test(key)) {
+				const name = RegExp.$1;
+				let attrName = "id";
+
 				template = document.createElement("div");
-				template.id = this.getLowerFirstCase(RegExp.$1);
+
+				if (key === "sparkline") {
+					attrName = "className";
+				}
+
+				template[attrName] = this.getLowerFirstCase(RegExp.$1);
 				template.style.textAlign = "center";
 
 				this.$chartArea.appendChild(template);
-				template = "&lt;div id=\""+ template.id +"\">&lt;/div>";
-			} else if (typeKey[0] === "Plugins") {
+				template = "&lt;div "+ attrName.replace(/name/i, "") +"=\""+ template[attrName] +"\">&lt;/div>";
+			}
+			
+			if (typeKey[0] === "Plugins") {
 				type.options._plugins.forEach(function(v) {
 					plugins = Object.keys(v).map(function(p) {
 						return new bb.plugin[p](v[p]);
