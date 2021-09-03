@@ -71,7 +71,7 @@ module.exports = (common, env) => {
 	return mergeWithCustomize({
 		customizeObject: customizeObject({
 			entry: "replace",
-			output: "replace"
+			output: "append"
 		})
 	})(common, config);
 };

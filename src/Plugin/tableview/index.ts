@@ -42,7 +42,7 @@ import {isNumber, tplProcess} from "../../module/util";
  *  });
  * @example
  * import {bb} from "billboard.js";
- * import TableView from "billboard.js/dist/billboardjs-plugin-tableview.esm";
+ * import TableView from "billboard.js/dist/billboardjs-plugin-tableview";
  *
  * bb.generate({
  *     ...

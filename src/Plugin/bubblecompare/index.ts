@@ -34,7 +34,7 @@ import Plugin from "../Plugin";
  *  });
  * @example
  * import {bb} from "billboard.js";
- * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare.esm";
+ * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare";
  *
  * bb.generate({
  *     plugins: [
