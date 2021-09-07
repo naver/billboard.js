@@ -413,14 +413,7 @@ export default {
 						return;
 					}
 
-					let {index} = d;
-
-					if ($$.isStepType(d) &&
-						config.line_step_type === "step-after" &&
-						getPointer(event, this)[0] < $$.scale.x($$.getXValue(d.id, index))
-					) {
-						index -= 1;
-					}
+					const {index} = d;
 
 					if (index !== eventReceiver.currentIdx) {
 						$$.setOverOut(false, eventReceiver.currentIdx);
