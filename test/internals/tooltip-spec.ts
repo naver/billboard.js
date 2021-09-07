@@ -310,6 +310,107 @@ describe("TOOLTIP", function() {
 			});
 		});
 
+		describe("step-after tooltip position", () => {
+			const orgArgs = args;
+			const posX = [];
+
+			before(() => {				
+				args = {
+					data: {
+						columns: [
+							['data1', 30, 200, 100, 400, 150, 250],
+							['data2', 130, 340, 200, 500, 250, 350]
+						],
+						type: 'step'
+					},
+					line: {
+						step: {
+							type: 'step-after'
+						}
+					}
+				}
+			});
+
+			const chkTooltipPosX = () => {
+				// do hover
+				util.hoverChart(chart, "mousemove", {clientX: 70, clientY: 311});
+
+				posX.push(
+					chart.$.tooltip.node().getBoundingClientRect().x
+				);
+			}
+
+			it("check tooltip x position: indexed type", () => {
+				chkTooltipPosX();
+			});
+
+			it("set options", () => {
+				args = {
+					data: {
+						x: 'x',
+						columns: [
+							[
+								'x',
+								'2013-01-01',
+								'2013-01-02',
+								'2013-01-03',
+								'2013-01-04',
+								'2013-01-05',
+								'2013-01-06'
+							],
+							['data1', 30, 200, 100, 400, 150, 250],
+							['data2', 130, 340, 200, 500, 250, 350]
+						],
+						type: 'step'
+				  },
+				  line: {
+					step: {
+					  type: 'step-after'
+					}
+				  },
+				  axis: {
+					x: {
+					  type: 'timeseries',
+					  tick: {
+						format: '%Y-%m-%d'
+					  }
+					}
+				  }
+				}
+			});
+
+			it("check tooltip x position: timeseries type", () => {
+				chkTooltipPosX();
+			});
+
+			it("set options", () => {
+				args = {
+					data: {
+						columns: [
+						  ['data1', 30, 200, 100, 400, 150, 250],
+						  ['data2', 130, 340, 200, 500, 250, 350]
+						],
+						types: {
+						  data1: 'step',
+						  data2: 'step'
+						}
+					  },
+					  line: {
+						step: {
+						  type: 'step-after'
+						}
+					}
+				};
+			});
+
+			it("check tooltip x position", () => {
+				// check tooltip x position: indexed type, specifying data.types
+				chkTooltipPosX();
+
+				expect(posX.every((v, i, arr) => arr[0] === v)).to.be.true;
+			})
+		});
+
 		describe("Narrow width container's tooltip position", () => {
 			const orgArgs = args;
 
