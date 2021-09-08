@@ -253,6 +253,38 @@ describe("AXIS", function() {
 			check("y", args.axis.y.tick.stepSize);
 			check("y2", args.axis.y2.tick.stepSize);
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2021-08-01", "2021-08-02", "2021-08-03", "2021-08-04", "2021-08-05", "2021-08-06", "2021-08-07", "2021-08-08", "2021-08-09", "2021-08-10"],
+						["Data", 8.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 16.0, 0.0]
+					],
+					type: "line",
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%d/%m"
+						}
+					},
+					y: {
+						tick: { 
+							stepSize: 1
+						}
+					}
+				}
+			};
+		});
+
+		it("y Axis tick value should be rounded", () => {
+			chart.internal.$el.axis.y.selectAll(".tick").each(function() {
+				expect(this.textContent % 1).to.be.equal(0);
+			});
+		});
 	});
 
 	describe("axis label", () => {
