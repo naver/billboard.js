@@ -9,12 +9,19 @@ import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
 describe("API grid", function() {
-	let chart = util.generate({
-		data: {
-			columns: [
-				["data1", 30, 200, 100, 400, 150, 250]
-			]
-		}
+	let chart;
+
+	before(() => {
+		return new Promise((resolve) => {
+				chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				onrendered: resolve
+			});
+		});
 	});
 
 	describe("ygrids.add() / ygrids.remove()", () => {

@@ -14,6 +14,7 @@ export const {
 	brushEmpty,
 	callFn,
 	capitalize,
+	camelize,
 	ceil10,
 	deepClone,
 	diffDomain,

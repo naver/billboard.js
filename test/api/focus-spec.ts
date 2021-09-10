@@ -9,15 +9,9 @@ import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
 describe("API focus", function() {
-	const chart = util.generate({
-		data: {
-			columns: [
-				["data1", 30, 200, 100, 400],
-				["data2", 500, 800, 500, 2000],
-				["data3", 5000, 2000, 500, 4000]
-			]
-		}
-	});
+	let chart;
+	let legend;
+	let main;
 
 	// focus class name
 	const focused = CLASS.focused;
@@ -27,36 +21,51 @@ describe("API focus", function() {
 	// get fixed number
 	const getFixed = (val, len = 1) => +(+val).toFixed(len);
 
-	describe("focus()", () => {
-		it("should focus all targets", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
+	before(() => {
+		return new Promise((resolve) => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400],
+						["data2", 500, 800, 500, 2000],
+						["data3", 5000, 2000, 500, 4000]
+					]
+				},
+				transition: {
+					duration: 0
+				},
+				onrendered: function() {
+					legend = this.$.legend;
+					main = this.$.main;
 
+					resolve(true);
+				}
+			});
+		});
+	});
+
+	describe("focus()", () => {
+		it("should focus all targets", () => {
 			chart.focus();
 
-			setTimeout(() => {
-				const targets = main.select(".bb-chart-line.bb-target");
-				const legendItems = legend.select(".bb-legend-item");
+			const targets = main.select(".bb-chart-line.bb-target");
+			const legendItems = legend.select(".bb-legend-item");
 
-				targets.each(function() {
-					const line = d3Select(this);
+			targets.each(function() {
+				const line = d3Select(this);
 
-					expect(line.classed(focused)).to.be.ok;
-				});
+				expect(line.classed(focused)).to.be.ok;
+			});
 
-				legendItems.each(function() {
-					const item = d3Select(this);
+			legendItems.each(function() {
+				const item = d3Select(this);
 
-					expect(item.classed(itemFocused)).to.be.ok;
-				});
-
-				done();
-			}, 300);
+				expect(item.classed(itemFocused)).to.be.ok;
+			});
 		});
 
 		it("should focus one target", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
+			const {legend, main} = chart.$;
 			const targets = {
 				data1: main.select(".bb-chart-line.bb-target.bb-target-data1"),
 				data2: main.select(".bb-chart-line.bb-target.bb-target-data2"),
@@ -85,8 +94,6 @@ describe("API focus", function() {
 		});
 
 		it("should focus multiple targets", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
 			const targets = {
 				data1: main.select(".bb-chart-line.bb-target.bb-target-data1"),
 				data2: main.select(".bb-chart-line.bb-target.bb-target-data2"),
@@ -118,8 +125,6 @@ describe("API focus", function() {
 
 	describe("defocus()", () => {
 		it("should defocus all targets", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
 			const targets = main.selectAll(".bb-chart-line.bb-target");
 			const legendItems = legend.selectAll(".bb-legend-item");
 
@@ -145,45 +150,39 @@ describe("API focus", function() {
 		});
 
 
-		it("should defocus one target", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
+		it("should defocus one target", () => {
 			const targets = main.selectAll(`.${CLASS.chartLine}.${CLASS.target}`);
 			const legendItems = legend.selectAll(`.${CLASS.legendItem}`);
 
 			chart.focus();
 			chart.defocus("data2");
 
-			setTimeout(() => {
-				targets.each(function() {
-					const target = d3Select(this);
+			targets.each(function() {
+				const target = d3Select(this);
 
-					if (target.attr("class").indexOf("data2") > -1) {
-						expect(target.classed(defocused)).to.be.ok;
-					} else {
-						expect(target.classed(defocused)).to.not.be.ok;
-					}
-				});
+				if (target.attr("class").indexOf("data2") > -1) {
+					expect(target.classed(defocused)).to.be.ok;
+				} else {
+					expect(target.classed(defocused)).to.not.be.ok;
+				}
+			});
 
-				legendItems.each(function() {
-					const legend = d3Select(this);
+			legendItems.each(function() {
+				const el = d3Select(this);
+				const opacity = el.style("opacity");
+				const isFocused = el.classed(itemFocused);
 
-					if (legend.attr("class").indexOf("data2") > -1) {
-						expect(legend.classed(itemFocused)).to.not.be.ok;
-						expect(getFixed(legend.style("opacity"))).to.be.equal(0.3);
-					} else {
-						expect(legend.classed(itemFocused)).to.be.ok;
-						expect(legend.style("opacity")).to.be.equal("");
-					}
-				});
-
-				done();
-			}, 300);
+				if (el.attr("class").indexOf("data2") > -1) {
+					expect(isFocused).to.not.be.ok;
+					expect(getFixed(opacity)).to.be.equal(0.3);
+				} else {
+					expect(isFocused).to.be.ok;
+					expect(opacity === "1" || opacity === "").to.be.ok;
+				}
+			});
 		});
 
 		it("should defocus multiple targets", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
 			const targets = main.selectAll(`.${CLASS.chartLine}.${CLASS.target}`);
 			const legendItems = legend.selectAll(`.${CLASS.legendItem}`);
 
@@ -203,13 +202,14 @@ describe("API focus", function() {
 
 				legendItems.each(function() {
 					const legend = d3Select(this);
+					const opacity = legend.style("opacity");
 
 					if (legend.attr("class").indexOf("data3") > -1) {
 						expect(legend.classed(itemFocused)).to.be.ok;
-						expect(legend.style("opacity")).to.be.equal("");
+						expect(opacity === "1" || opacity === "").to.be.ok;
 					} else {
 						expect(legend.classed(itemFocused)).to.not.be.ok;
-						expect(+legend.style("opacity")).to.be.equal(0.3);
+						expect(+opacity).to.be.equal(0.3);
 					}
 				});
 
@@ -218,9 +218,6 @@ describe("API focus", function() {
 		});
 
 		it("should defocus multiple targets after focused", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
-
 			chart.focus();
 
 			setTimeout(() => {
@@ -249,7 +246,11 @@ describe("API focus", function() {
 
 					expect(getFixed(legendItems.data1.style("opacity"))).to.be.equal(0.3);
 					expect(getFixed(legendItems.data2.style("opacity"))).to.be.equal(0.3);
-					expect(legendItems.data3.style("opacity")).to.be.equal("");
+
+					expect(
+						legendItems.data3.style("opacity") == "1" ||
+						legendItems.data3.style("opacity") == ""
+					).to.be.ok;
 
 					done();
 				}, 300);
@@ -260,9 +261,6 @@ describe("API focus", function() {
 
 	describe("revert()", () => {
 		it("should revert all targets after focus", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
-
 			chart.focus();
 
 			setTimeout(() => {
@@ -280,9 +278,10 @@ describe("API focus", function() {
 
 					legendItems.each(function () {
 						const item = d3Select(this);
+						const opacity = item.style("opacity");
 
 						expect(item.classed(itemFocused)).to.not.be.ok;
-						expect(item.style("opacity")).to.be.equal("");
+						expect(opacity === "1" || opacity === "").to.be.ok;
 					});
 
 					done();
@@ -291,9 +290,6 @@ describe("API focus", function() {
 		});
 
 		it("should revert all targets after defocus", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
-
 			chart.defocus();
 
 			setTimeout(() => {
@@ -311,9 +307,10 @@ describe("API focus", function() {
 
 					legendItems.each(function () {
 						const item = d3Select(this);
+						const opacity = item.style("opacity");
 
 						expect(item.classed(itemFocused)).to.not.be.ok;
-						expect(item.style("opacity")).to.be.equal("");
+						expect(opacity === "1" || opacity === "").to.be.ok;
 					});
 
 					done();
@@ -322,9 +319,6 @@ describe("API focus", function() {
 		});
 
 		it("should revert one target after focus", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
-
 			chart.focus();
 
 			setTimeout(() => {
@@ -348,9 +342,20 @@ describe("API focus", function() {
 					expect(targets.data2.classed(focused)).to.not.be.ok;
 					expect(targets.data3.classed(focused)).to.be.ok;
 
-					expect(legendItems.data1.style("opacity")).to.be.equal("");
-					expect(legendItems.data2.style("opacity")).to.be.equal("");
-					expect(legendItems.data3.style("opacity")).to.be.equal("");
+					expect(
+						legendItems.data1.style("opacity") == "1" ||
+						legendItems.data1.style("opacity") == ""
+					).to.be.ok;
+
+					expect(
+						legendItems.data2.style("opacity") == "1" ||
+						legendItems.data2.style("opacity") == ""
+					).to.be.ok;
+
+					expect(
+						legendItems.data3.style("opacity") == "1" ||
+						legendItems.data3.style("opacity") == ""
+					).to.be.ok;
 
 					expect(legendItems.data1.classed(itemFocused)).to.be.ok;
 					expect(legendItems.data2.classed(itemFocused)).to.not.be.ok;
@@ -362,9 +367,6 @@ describe("API focus", function() {
 		});
 
 		it("should revert one target after defocus", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
-
 			chart.defocus();
 
 			setTimeout(() => {
@@ -389,7 +391,10 @@ describe("API focus", function() {
 					expect(targets.data3.classed(defocused)).to.be.ok;
 
 					expect(getFixed(legendItems.data1.style("opacity"))).to.be.equal(0.3);
-					expect(legendItems.data2.style("opacity")).to.be.equal("");
+					expect(
+						legendItems.data2.style("opacity") === "1" ||
+						legendItems.data2.style("opacity") === ""
+					).to.be.ok;
 					expect(getFixed(legendItems.data3.style("opacity"))).to.be.equal(0.3);
 
 					expect(legendItems.data1.classed(itemFocused)).to.not.be.ok;
@@ -402,8 +407,7 @@ describe("API focus", function() {
 		});
 
 		it("should focus multiple targets after focus", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
+			const {legend, main} = chart.$;
 
 			chart.focus();
 
@@ -428,9 +432,20 @@ describe("API focus", function() {
 					expect(targets.data2.classed(focused)).to.not.be.ok;
 					expect(targets.data3.classed(focused)).to.be.ok;
 
-					expect(legendItems.data1.style("opacity")).to.be.equal("");
-					expect(legendItems.data2.style("opacity")).to.be.equal("");
-					expect(legendItems.data3.style("opacity")).to.be.equal("");
+					expect(
+						legendItems.data1.style("opacity") == "1" ||
+						legendItems.data1.style("opacity") == ""
+					).to.be.ok;
+
+					expect(
+						legendItems.data2.style("opacity") == "1" ||
+						legendItems.data2.style("opacity") == ""
+					).to.be.ok;
+
+					expect(
+						legendItems.data3.style("opacity") == "1" ||
+						legendItems.data3.style("opacity") == ""
+					).to.be.ok;
 
 					expect(legendItems.data1.classed(itemFocused)).to.not.be.ok;
 					expect(legendItems.data2.classed(itemFocused)).to.not.be.ok;
@@ -442,9 +457,6 @@ describe("API focus", function() {
 		});
 
 		it("should focus multiple targets after defocus", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
-
 			chart.defocus();
 
 			setTimeout(() => {
@@ -468,8 +480,16 @@ describe("API focus", function() {
 					expect(targets.data2.classed(defocused)).to.not.be.ok;
 					expect(targets.data3.classed(defocused)).to.be.ok;
 
-					expect(legendItems.data1.style("opacity")).to.be.equal("");
-					expect(legendItems.data2.style("opacity")).to.be.equal("");
+					expect(
+						legendItems.data1.style("opacity") == "1" ||
+						legendItems.data1.style("opacity") == ""
+					).to.be.ok;
+
+					expect(
+						legendItems.data2.style("opacity") == "1" ||
+						legendItems.data2.style("opacity") == ""
+					).to.be.ok;
+
 					expect(getFixed(legendItems.data3.style("opacity"))).to.be.equal(0.3);
 
 					expect(legendItems.data1.classed(itemFocused)).to.not.be.ok;
@@ -484,23 +504,30 @@ describe("API focus", function() {
 	});
 
 	describe("when legend.show=false", () => {
-		const chart = util.generate({
-			data: {
-				columns: [
-					["data1", 30, 200, 100, 400],
-					["data2", 500, 800, 500, 2000],
-					["data3", 5000, 2000, 500, 4000]
-				]
-			},
-			legend: {
-				show: false
-			}
+		before(() => {
+			return new Promise((resolve) => {
+				chart = util.generate({
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400],
+							["data2", 500, 800, 500, 2000],
+							["data3", 5000, 2000, 500, 4000]
+						]
+					},
+					legend: {
+						show: false
+					},
+					onrendered: function() {
+						legend = this.$.legend;
+						main = this.$.main;
+	
+						resolve(true);
+					}
+				});
+			});
 		});
 
 		it("should focus all targets without showing legend", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
-
 			chart.focus();
 
 			setTimeout(() => {
@@ -519,9 +546,6 @@ describe("API focus", function() {
 		});
 
 		it("should defocus all targets without showing legend", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
-
 			chart.defocus();
 
 			setTimeout(() => {
@@ -540,9 +564,6 @@ describe("API focus", function() {
 		});
 
 		it("should revert all targets after focus", done => {
-			const main = chart.$.main;
-			const legend = chart.$.legend;
-
 			chart.focus();
 
 			setTimeout(() => {

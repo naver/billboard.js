@@ -6,29 +6,37 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import sinon from "sinon";
-import {select as d3Select} from "d3-selection";
 import {selectAll as d3SelectAll} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
-import {getBoundingRect} from "../../src/module/util";
 
 describe("SHAPE ARC", () => {
+	let chart;
 	const selector = {
 		arc: `.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}`,
 		shapes: `g.${CLASS.shapes}.${CLASS.arcs}.${CLASS.arcs}`,
 		shape: `path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}`
 	};
 
+	after(() => {
+		util.destroyAll();
+	});
+
 	describe("show pie chart", () => {
-		const chart = util.generate({
-			data: {
-				columns: [
-					["data1", 30],
-					["data2", 150],
-					["data3", 120]
-				],
-				type: "pie"
-			}
+		before(() => {
+			return new Promise((resolve) => {
+				chart = util.generate({
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 150],
+							["data3", 120]
+						],
+						type: "pie"
+					},
+					onrendered: resolve
+				});
+			});
 		});
 
 		it("should have correct classes", () => {
@@ -104,15 +112,20 @@ describe("SHAPE ARC", () => {
 	});
 
 	describe("Check attribute", () => {
-		const chart = util.generate({
-			data: {
-				columns: [
-					["data1", null],
-					["data2", null],
-					["data3", null]
-				],
-				type: "pie"
-			}
+		before(() => {
+			return new Promise((resolve) => {
+				chart = util.generate({
+					data: {
+						columns: [
+							["data1", null],
+							["data2", null],
+							["data3", null]
+						],
+						type: "pie"
+					},
+					onrendered: resolve
+				});
+			});
 		});
 
 		it("should have correct d attribute", () => {

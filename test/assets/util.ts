@@ -29,7 +29,7 @@ Object.keys(interaction).forEach(v => interaction[v]());
  * Create a DOM element
  * @param {String} idValue id value
  */
-const initDom = idValue => {
+function initDom(idValue) {
 	const id = idValue && idValue.replace && idValue.replace("#", "");
 
 	if (!document.getElementById(id)) {
@@ -46,7 +46,7 @@ const initDom = idValue => {
  * @param {Object} args chart options
  * @return {bb} billboard.js instance
  */
-const generate = args => {
+function generate(args) {
 	let chart;
 	let inputType = "mouse";
 
@@ -70,7 +70,12 @@ const generate = args => {
 	return chart;
 };
 
+function destroyAll() {
+	bb.instance.forEach(v => v.destroy());
+}
+
 export default {
+	destroyAll,
 	doDrag,
 	fireEvent,
 	generate,
