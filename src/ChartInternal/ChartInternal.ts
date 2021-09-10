@@ -11,6 +11,8 @@ import {
 } from "d3-time-format";
 import {select as d3Select} from "d3-selection";
 import {d3Selection} from "../../types/types";
+import {checkModuleImport} from "../module/error";
+
 import CLASS from "../config/classes";
 import Store from "../config/Store/Store";
 import Options from "../config/Options/Options";
@@ -174,6 +176,8 @@ export default class ChartInternal {
 	init(): void {
 		const $$ = <any> this;
 		const {config, state, $el} = $$;
+
+		checkModuleImport($$);
 
 		state.hasAxis = !$$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");

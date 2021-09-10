@@ -8,32 +8,38 @@ import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
 describe("API data", function() {
+	let chart;
 	const data = [
 		["data", 30, 30, 100, 400, 150, 250],
 		["data2", 5000, 2000, 1000, 4000, 1500, 2500]
 	];
 
-	const chart = util.generate({
-		data: {
-			columns: data,
-			names: {
-				data: "Data Name 1",
-				data2: "Data Name 2"
-			},
-			colors: {
-				data: "#FF0000",
-				data2: "#00FF00"
-			},
-			axes: {
-				data: "y",
-				data2: "y2"
-			}
-		},
-		axis: {
-			y2: {
-				show: true
-			}
-		}
+	before(() => {
+		return new Promise((resolve) => {
+			chart = util.generate({				
+				data: {
+					columns: data,
+					names: {
+						data: "Data Name 1",
+						data2: "Data Name 2"
+					},
+					colors: {
+						data: "#FF0000",
+						data2: "#00FF00"
+					},
+					axes: {
+						data: "y",
+						data2: "y2"
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				onrendered: resolve
+			});
+		});
 	});
 
 	function toHex(value) {

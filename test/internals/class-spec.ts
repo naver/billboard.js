@@ -7,14 +7,21 @@ import {expect} from "chai";
 import util from "../assets/util";
 
 describe("CLASS", function() {
-	const chart = util.generate({
-		data: {
-			columns: [
-				["data1", 30, 200, 100, 400, 150, 250],
-				["data2 prefix", 50, 20, 10, 40, 15, 25],
-				["data3 мужчины", 150, 120, 110, 140, 115, 125]
-			]
-		}
+	let chart;
+
+	before(() => {
+		return new Promise((resolve) => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2 prefix", 50, 20, 10, 40, 15, 25],
+						["data3 мужчины", 150, 120, 110, 140, 115, 125]
+					]
+				},
+				onrendered: resolve
+			});
+		});
 	});
 
 	describe("internal.getTargetSelectorSuffix", () => {
