@@ -427,7 +427,7 @@ export default {
 
 		if (inputType === "touch") {
 			if (xgridFocus.empty()) {
-				resizing && $$.showCircleFocus();
+				resizing && $$.showCircleFocus?.();
 			} else {
 				$$.showGridFocus();
 			}

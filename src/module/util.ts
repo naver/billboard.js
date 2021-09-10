@@ -437,7 +437,7 @@ const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.sl
 /**
  * Camelize from kebob style string
  * @param {string} str Kebob string
- * @returns camelized string
+ * @returns {string} camelized string
  */
 function camelize(str: string): string {
 	return str.split("-")
