@@ -250,21 +250,13 @@ export default {
 		};
 	},
 
-	getCircles(i: number, id: string) {
-		const $$ = this;
-		const suffix = (isValue(i) ? `-${i}` : ``);
-
-		return (id ? $$.$el.main.selectAll(`.${CLASS.circles}${$$.getTargetSelectorSuffix(id)}`) : $$.$el.main)
-			.selectAll(`.${CLASS.circle}${suffix}`);
-	},
-
 	expandCircles(i: number, id: string, reset?: boolean): void {
 		const $$ = this;
 		const r = $$.pointExpandedR.bind($$);
 
 		reset && $$.unexpandCircles();
 
-		const circles = $$.getCircles(i, id).classed(CLASS.EXPANDED, true);
+		const circles = $$.getShapeByIndex("circle", i, id).classed(CLASS.EXPANDED, true);
 		const scale = r(circles) / $$.config.point_r;
 		const ratio = 1 - scale;
 
@@ -292,7 +284,7 @@ export default {
 		const $$ = this;
 		const r = $$.pointR.bind($$);
 
-		const circles = $$.getCircles(i)
+		const circles = $$.getShapeByIndex("circle", i)
 			.filter(function() {
 				return d3Select(this).classed(CLASS.EXPANDED);
 			})

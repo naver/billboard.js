@@ -10,31 +10,41 @@ import CLASS from "../../src/config/classes";
 import axis from "../../src/Chart/api/axis";
 
 describe("API axis", function() {
-	const chart = util.generate({
-		data: {
-			columns: [
-				["data1", 30, 200, 100],
-				["data2", 50, 20, 10]
-			],
-			axes: {
-				data1: "y",
-				data2: "y2"
-			}
-		},
-		axis: {
-			y: {
-				padding: {
-					bottom: 0
-				}
-			},
-			y2: {
-				show: true,
-				label: "Y2 Axis Label"
-			}
-		}
-	});
-	const {main} = chart.internal.$el;
+	let chart;
+	let main;
 	const rx = /translate\((\d+),.*/;
+
+	before(() => {
+		return new Promise((resolve) => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100],
+						["data2", 50, 20, 10]
+					],
+					axes: {
+						data1: "y",
+						data2: "y2"
+					}
+				},
+				axis: {
+					y: {
+						padding: {
+							bottom: 0
+						}
+					},
+					y2: {
+						show: true,
+						label: "Y2 Axis Label"
+					}
+				},
+				onrendered: function() {
+					main = this.internal.$el.main;
+					resolve(true);
+				}
+			});
+		});
+	});
 
 	describe("axis.labels()", () => {
 		it("should update y axis label", done => {

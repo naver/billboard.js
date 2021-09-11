@@ -34,9 +34,10 @@ const plugins = [
         preventAssignment: true
     })
 ];
+
 const external = id => /^d3-/.test(id);
 
-const bbPlugins = readdirSync(resolvePath("../../src/Plugin/"), {
+const bbPlugins = readdirSync(resolvePath("../src/Plugin/"), {
         withFileTypes: true
     })
     .filter(dirent => dirent.isDirectory())

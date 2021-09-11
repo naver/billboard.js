@@ -91,7 +91,7 @@ import {compareEpochs, isEmpty, isFunction, isString, parseDate, pointInRegion} 
  *  });
  * @example
  *	import {bb} from "billboard.js";
- * import Stanford from "billboard.js/dist/billboardjs-plugin-stanford.esm";
+ * import Stanford from "billboard.js/dist/billboardjs-plugin-stanford";
  *
  * bb.generate({
  *     plugins: [

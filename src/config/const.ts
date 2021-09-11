@@ -26,6 +26,29 @@ export const TYPE = {
 };
 
 /**
+ * Chart type module and its method from ChartInternal class, needed to be initialized.
+ * @private
+ */
+export const TYPE_METHOD_NEEDED = {
+	AREA: "initArea",
+	AREA_LINE_RANGE: "initArea",
+	AREA_SPLINE: "initArea",
+	AREA_SPLINE_RANGE: "initArea",
+	AREA_STEP: "initArea",
+	BAR: "initBar",
+	BUBBLE: "initCircle",
+	CANDLESTICK: "initCandlestick",
+	DONUT: "initArc",
+	GAUGE: "initArc",
+	LINE: "initLine",
+	PIE: "initArc",
+	RADAR: "initCircle",
+	SCATTER: "initCircle",
+	SPLINE: "initLine",
+	STEP: "initLine"
+};
+
+/**
  * chart types by category
  * @private
  */

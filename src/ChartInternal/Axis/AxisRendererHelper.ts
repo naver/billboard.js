@@ -93,7 +93,7 @@ export default class AxisRendererHelper {
 
 		// When 'axis[y|y2].tick.stepSize' option is set
 		if (isYAxes && tickStepSize) {
-			let interval = start;
+			let interval = Math.round(start);
 
 			while (interval <= end) {
 				ticks.push(interval);

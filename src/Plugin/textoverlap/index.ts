@@ -50,7 +50,7 @@ import Options from "./Options";
  *  });
  * @example
  *	import {bb} from "billboard.js";
- * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap.esm";
+ * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap";
  *
  * bb.generate({
  *     plugins: [

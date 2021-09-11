@@ -199,6 +199,21 @@ describe("Interface & initialization", () => {
 		});
 
 		it("height shouldn't be increased on resize event", function(done) {
+			before(() => {
+				return new Promise((resolve) => {
+					chart = util.generate({
+						bindto: "#chartResize",
+						data: {
+							columns: [
+								["data1", 30, 200, 100, 400],
+								["data2", 500, 800, 500, 2000]
+							]
+						},
+						onrendered: resolve
+					});
+				});
+			});
+
 			this.timeout(5000);
 
 			container.innerHTML = '<div id="chartResize"></div>';
