@@ -202,6 +202,115 @@ __webpack_require__.d(resolver_interaction_namespaceObject, {
 var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(4);
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(2);
+;// CONCATENATED MODULE: ./src/module/browser.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Window object
+ * @private
+ */
+
+/* eslint-disable no-new-func, no-undef */
+
+
+var win = function () {
+  var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
+  return root || Function("return this")();
+}();
+/* eslint-enable no-new-func, no-undef */
+// fallback for non-supported environments
+
+
+win.requestIdleCallback = win.requestIdleCallback || function (cb) {
+  return setTimeout(cb, 1);
+}, win.cancelIdleCallback = win.cancelIdleCallback || function (id) {
+  return clearTimeout(id);
+};
+var browser_doc = win == null ? void 0 : win.document;
+;// CONCATENATED MODULE: ./src/config/const.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Chart type constant
+ * @private
+ */
+var TYPE = {
+  AREA: "area",
+  AREA_LINE_RANGE: "area-line-range",
+  AREA_SPLINE: "area-spline",
+  AREA_SPLINE_RANGE: "area-spline-range",
+  AREA_STEP: "area-step",
+  BAR: "bar",
+  BUBBLE: "bubble",
+  CANDLESTICK: "candlestick",
+  DONUT: "donut",
+  GAUGE: "gauge",
+  LINE: "line",
+  PIE: "pie",
+  RADAR: "radar",
+  SCATTER: "scatter",
+  SPLINE: "spline",
+  STEP: "step"
+};
+/**
+ * Chart type module and its method from ChartInternal class, needed to be initialized.
+ * @private
+ */
+
+var TYPE_METHOD_NEEDED = {
+  AREA: "initArea",
+  AREA_LINE_RANGE: "initArea",
+  AREA_SPLINE: "initArea",
+  AREA_SPLINE_RANGE: "initArea",
+  AREA_STEP: "initArea",
+  BAR: "initBar",
+  BUBBLE: "initCircle",
+  CANDLESTICK: "initCandlestick",
+  DONUT: "initArc",
+  GAUGE: "initArc",
+  LINE: "initLine",
+  PIE: "initArc",
+  RADAR: "initCircle",
+  SCATTER: "initCircle",
+  SPLINE: "initLine",
+  STEP: "initLine"
+};
+/**
+ * chart types by category
+ * @private
+ */
+
+var TYPE_BY_CATEGORY = {
+  Area: [TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.AREA_STEP],
+  AreaRange: [TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE],
+  Arc: [TYPE.PIE, TYPE.DONUT, TYPE.GAUGE, TYPE.RADAR],
+  Line: [TYPE.LINE, TYPE.SPLINE, TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.STEP, TYPE.AREA_STEP],
+  Step: [TYPE.STEP, TYPE.AREA_STEP],
+  Spline: [TYPE.SPLINE, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE]
+};
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
 ;// CONCATENATED MODULE: ./src/config/classes.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -317,6 +426,709 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
   INCLUDED: "_included_",
   TextOverlapping: "text-overlapping"
 });
+;// CONCATENATED MODULE: ./src/module/util.ts
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+
+
+
+
+
+
+var isValue = function (v) {
+  return v || v === 0;
+},
+    isFunction = function (v) {
+  return typeof v === "function";
+},
+    isString = function (v) {
+  return typeof v === "string";
+},
+    isNumber = function (v) {
+  return typeof v === "number";
+},
+    isUndefined = function (v) {
+  return typeof v === "undefined";
+},
+    isDefined = function (v) {
+  return typeof v !== "undefined";
+},
+    isboolean = function (v) {
+  return typeof v === "boolean";
+},
+    ceil10 = function (v) {
+  return Math.ceil(v / 10) * 10;
+},
+    asHalfPixel = function (n) {
+  return Math.ceil(n) + .5;
+},
+    diffDomain = function (d) {
+  return d[1] - d[0];
+},
+    isObjectType = function (v) {
+  return typeof v === "object";
+},
+    isEmpty = function (o) {
+  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
+},
+    notEmpty = function (o) {
+  return !isEmpty(o);
+},
+    isArray = function (arr) {
+  return Array.isArray(arr);
+},
+    isObject = function (obj) {
+  return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
+};
+
+/**
+ * Get specified key value from object
+ * If default value is given, will return if given key value not found
+ * @param {object} options Source object
+ * @param {string} key Key value
+ * @param {*} defaultValue Default value
+ * @returns {*}
+ * @private
+ */
+function getOption(options, key, defaultValue) {
+  return isDefined(options[key]) ? options[key] : defaultValue;
+}
+/**
+ * Check if value exist in the given object
+ * @param {object} dict Target object to be checked
+ * @param {*} value Value to be checked
+ * @returns {boolean}
+ * @private
+ */
+
+
+function hasValue(dict, value) {
+  var found = !1;
+  return Object.keys(dict).forEach(function (key) {
+    return dict[key] === value && (found = !0);
+  }), found;
+}
+/**
+ * Call function with arguments
+ * @param {Function} fn Function to be called
+ * @param {*} args Arguments
+ * @returns {boolean} true: fn is function, false: fn is not function
+ * @private
+ */
+
+
+function callFn(fn) {
+  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
+
+  return isFn && fn.call.apply(fn, args), isFn;
+}
+/**
+ * Call function after all transitions ends
+ * @param {d3.transition} transition Transition
+ * @param {Fucntion} cb Callback function
+ * @private
+ */
+
+
+function endall(transition, cb) {
+  var n = 0,
+      end = function () {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
+
+    --n || cb.apply.apply(cb, [this].concat(args));
+  };
+
+  "duration" in transition ? transition.each(function () {
+    return ++n;
+  }).on("end", end) : (++n, transition.call(end));
+}
+/**
+ * Replace tag sign to html entity
+ * @param {string} str Target string value
+ * @returns {string}
+ * @private
+ */
+
+
+function sanitise(str) {
+  return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
+}
+/**
+ * Set text value. If there's multiline add nodes.
+ * @param {d3Selection} node Text node
+ * @param {string} text Text value string
+ * @param {Array} dy dy value for multilined text
+ * @param {boolean} toMiddle To be alingned vertically middle
+ * @private
+ */
+
+
+function setTextValue(node, text, dy, toMiddle) {
+  if (dy === void 0 && (dy = [-1, 1]), toMiddle === void 0 && (toMiddle = !1), node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
+    var diff = [node.text(), text].map(function (v) {
+      return v.replace(/[\s\n]/g, "");
+    });
+
+    if (diff[0] !== diff[1]) {
+      var multiline = text.split("\n"),
+          len = toMiddle ? multiline.length - 1 : 1;
+      node.html(""), multiline.forEach(function (v, i) {
+        node.append("tspan").attr("x", 0).attr("dy", (i === 0 ? dy[0] * len : dy[1]) + "em").text(v);
+      });
+    }
+  }
+}
+/**
+ * Substitution of SVGPathSeg API polyfill
+ * @param {SVGGraphicsElement} path Target svg element
+ * @returns {Array}
+ * @private
+ */
+
+
+function getRectSegList(path) {
+  /*
+   * seg1 ---------- seg2
+   *   |               |
+   *   |               |
+   *   |               |
+   * seg0 ---------- seg3
+   * */
+  var _path$getBBox = path.getBBox(),
+      x = _path$getBBox.x,
+      y = _path$getBBox.y,
+      width = _path$getBBox.width,
+      height = _path$getBBox.height;
+
+  return [{
+    x: x,
+    y: y + height
+  }, // seg0
+  {
+    x: x,
+    y: y
+  }, // seg1
+  {
+    x: x + width,
+    y: y
+  }, // seg2
+  {
+    x: x + width,
+    y: y + height
+  } // seg3
+  ];
+}
+/**
+ * Get svg bounding path box dimension
+ * @param {SVGGraphicsElement} path Target svg element
+ * @returns {object}
+ * @private
+ */
+
+
+function getPathBox(path) {
+  var _path$getBoundingClie = path.getBoundingClientRect(),
+      width = _path$getBoundingClie.width,
+      height = _path$getBoundingClie.height,
+      items = getRectSegList(path),
+      x = items[0].x,
+      y = Math.min(items[0].y, items[1].y);
+
+  return {
+    x: x,
+    y: y,
+    width: width,
+    height: height
+  };
+}
+/**
+ * Get event's current position coordinates
+ * @param {object} event Event object
+ * @param {SVGElement|HTMLElement} element Target element
+ * @returns {Array} [x, y] Coordinates x, y array
+ * @private
+ */
+
+
+function getPointer(event, element) {
+  var touches = event && (event.touches || event.sourceEvent && event.sourceEvent.touches),
+      pointer = event ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches ? touches[0] : event, element) : [0, 0];
+  return pointer;
+}
+/**
+ * Return brush selection array
+ * @param {object} ctx Current instance
+ * @returns {d3.brushSelection}
+ * @private
+ */
+
+
+function getBrushSelection(ctx) {
+  var selection,
+      event = ctx.event,
+      $el = ctx.$el,
+      main = $el.subchart.main || $el.main;
+  return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + config_classes.brush).node()) && (selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection)), selection;
+}
+/**
+ * Get boundingClientRect.
+ * Cache the evaluated value once it was called.
+ * @param {HTMLElement} node Target element
+ * @returns {object}
+ * @private
+ */
+
+
+function getBoundingRect(node) {
+  var needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
+  return needEvaluate ? node.rect = node.getBoundingClientRect() : node.rect;
+}
+/**
+ * Retrun random number
+ * @param {boolean} asStr Convert returned value as string
+ * @returns {number|string}
+ * @private
+ */
+
+
+function getRandom(asStr) {
+  asStr === void 0 && (asStr = !0);
+  var rand = Math.random();
+  return asStr ? rand + "" : rand;
+}
+/**
+ * Find index based on binary search
+ * @param {Array} arr Data array
+ * @param {number} v Target number to find
+ * @param {number} start Start index of data array
+ * @param {number} end End index of data arr
+ * @param {boolean} isRotated Weather is roted axis
+ * @returns {number} Index number
+ * @private
+ */
+
+
+function findIndex(arr, v, start, end, isRotated) {
+  if (start > end) return -1;
+  var mid = Math.floor((start + end) / 2),
+      _arr$mid = arr[mid],
+      x = _arr$mid.x,
+      _arr$mid$w = _arr$mid.w,
+      w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
+  return isRotated && (x = arr[mid].y, w = arr[mid].h), v >= x && v <= x + w ? mid : v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
+}
+/**
+ * Check if brush is empty
+ * @param {object} ctx Bursh context
+ * @returns {boolean}
+ * @private
+ */
+
+
+function brushEmpty(ctx) {
+  var selection = getBrushSelection(ctx);
+  return !selection || selection[0] === selection[1];
+}
+/**
+ * Deep copy object
+ * @param {object} objectN Source object
+ * @returns {object} Cloned object
+ * @private
+ */
+
+
+function deepClone() {
+  for (var clone = function (_clone) {
+    function clone() {
+      return _clone.apply(this, arguments);
+    }
+
+    return clone.toString = function () {
+      return _clone.toString();
+    }, clone;
+  }(function (v) {
+    if (isObject(v) && v.constructor) {
+      var r = new v.constructor();
+
+      for (var k in v) r[k] = clone(v[k]);
+
+      return r;
+    }
+
+    return v;
+  }), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) objectN[_key3] = arguments[_key3];
+
+  return objectN.map(function (v) {
+    return clone(v);
+  }).reduce(function (a, c) {
+    return _objectSpread(_objectSpread({}, a), c);
+  });
+}
+/**
+ * Extend target from source object
+ * @param {object} target Target object
+ * @param {object|Array} source Source object
+ * @returns {object}
+ * @private
+ */
+
+
+function extend(target, source) {
+  // exclude name with only numbers
+  for (var p in target === void 0 && (target = {}), isArray(source) && source.forEach(function (v) {
+    return extend(target, v);
+  }), source) /^\d+$/.test(p) || p in target || (target[p] = source[p]);
+
+  return target;
+}
+/**
+ * Return first letter capitalized
+ * @param {string} str Target string
+ * @returns {string} capitalized string
+ * @private
+ */
+
+
+var capitalize = function (str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+/**
+ * Camelize from kebob style string
+ * @param {string} str Kebob string
+ * @returns {string} camelized string
+ */
+
+
+function camelize(str) {
+  return str.split("-").map(function (v, i) {
+    return i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase();
+  }).join("");
+}
+/**
+ * Convert to array
+ * @param {object} v Target to be converted
+ * @returns {Array}
+ * @private
+ */
+
+
+var toArray = function (v) {
+  return [].slice.call(v);
+};
+/**
+ * Get css rules for specified stylesheets
+ * @param {Array} styleSheets The stylesheets to get the rules from
+ * @returns {Array}
+ * @private
+ */
+
+
+function getCssRules(styleSheets) {
+  var rules = [];
+  return styleSheets.forEach(function (sheet) {
+    try {
+      sheet.cssRules && sheet.cssRules.length && (rules = rules.concat(toArray(sheet.cssRules)));
+    } catch (e) {
+      console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
+    }
+  }), rules;
+}
+/**
+ * Gets the SVGMatrix of an SVGGElement
+ * @param {SVGElement} node Node element
+ * @returns {SVGMatrix} matrix
+ * @private
+ */
+
+
+function getTranslation(node) {
+  var transform = node ? node.transform : null,
+      baseVal = transform && transform.baseVal;
+  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
+    a: 0,
+    b: 0,
+    c: 0,
+    d: 0,
+    e: 0,
+    f: 0
+  };
+}
+/**
+ * Get unique value from array
+ * @param {Array} data Source data
+ * @returns {Array} Unique array value
+ * @private
+ */
+
+
+function getUnique(data) {
+  var isDate = data[0] instanceof Date,
+      d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
+    return self.indexOf(v) === i;
+  });
+  return isDate ? d.map(function (v) {
+    return new Date(v);
+  }) : d;
+}
+/**
+ * Merge array
+ * @param {Array} arr Source array
+ * @returns {Array}
+ * @private
+ */
+
+
+function mergeArray(arr) {
+  return arr && arr.length ? arr.reduce(function (p, c) {
+    return p.concat(c);
+  }) : [];
+}
+/**
+ * Merge object returning new object
+ * @param {object} target Target object
+ * @param {object} objectN Source object
+ * @returns {object} merged target object
+ * @private
+ */
+
+
+function mergeObj(target) {
+  for (var _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) objectN[_key4 - 1] = arguments[_key4];
+
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
+  var source = objectN.shift();
+  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
+    var value = source[key];
+    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
+  }), mergeObj.apply(void 0, [target].concat(objectN));
+}
+/**
+ * Sort value
+ * @param {Array} data value to be sorted
+ * @param {boolean} isAsc true: asc, false: desc
+ * @returns {number|string|Date} sorted date
+ * @private
+ */
+
+
+function sortValue(data, isAsc) {
+  isAsc === void 0 && (isAsc = !0);
+  var fn;
+  return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
+    return a - b;
+  } : function (a, b) {
+    return b - a;
+  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
+    return a - b;
+  } : !isAsc && (fn = function (a, b) {
+    return a > b && -1 || a < b && 1 || a === b && 0;
+  }), data.concat().sort(fn);
+}
+/**
+ * Get min/max value
+ * @param {string} type 'min' or 'max'
+ * @param {Array} data Array data value
+ * @returns {number|Date|undefined}
+ * @private
+ */
+
+
+function getMinMax(type, data) {
+  var res = data.filter(function (v) {
+    return notEmpty(v);
+  });
+  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, res) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
+}
+/**
+ * Get range
+ * @param {number} start Start number
+ * @param {number} end End number
+ * @param {number} step Step number
+ * @returns {Array}
+ * @private
+ */
+
+
+var getRange = function (start, end, step) {
+  step === void 0 && (step = 1);
+  var res = [],
+      n = Math.max(0, Math.ceil((end - start) / step)) | 0;
+
+  for (var i = start; i < n; i++) res.push(start + i * step);
+
+  return res;
+},
+    emulateEvent = {
+  mouse: function () {
+    var getParams = function () {
+      return {
+        bubbles: !1,
+        cancelable: !1,
+        screenX: 0,
+        screenY: 0,
+        clientX: 0,
+        clientY: 0
+      };
+    };
+
+    try {
+      return new MouseEvent("t"), function (el, eventType, params) {
+        params === void 0 && (params = getParams()), el.dispatchEvent(new MouseEvent(eventType, params));
+      };
+    } catch (e) {
+      // Polyfills DOM4 MouseEvent
+      return function (el, eventType, params) {
+        params === void 0 && (params = getParams());
+        var mouseEvent = browser_doc.createEvent("MouseEvent"); // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+
+        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
+        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
+      };
+    }
+  }(),
+  touch: function touch(el, eventType, params) {
+    var touchObj = new Touch(mergeObj({
+      identifier: Date.now(),
+      target: el,
+      radiusX: 2.5,
+      radiusY: 2.5,
+      rotationAngle: 10,
+      force: .5
+    }, params));
+    el.dispatchEvent(new TouchEvent(eventType, {
+      cancelable: !0,
+      bubbles: !0,
+      shiftKey: !0,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj]
+    }));
+  }
+}; // emulate event
+
+
+/**
+ * Process the template  & return bound string
+ * @param {string} tpl Template string
+ * @param {object} data Data value to be replaced
+ * @returns {string}
+ * @private
+ */
+function tplProcess(tpl, data) {
+  var res = tpl;
+
+  for (var x in data) res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
+
+  return res;
+}
+/**
+ * Get parsed date value
+ * (It must be called in 'ChartInternal' context)
+ * @param {Date|string|number} date Value of date to be parsed
+ * @returns {Date}
+ * @private
+ */
+
+
+function parseDate(date) {
+  var parsedDate;
+  if (date instanceof Date) parsedDate = date;else if (isString(date)) {
+    var config = this.config,
+        format = this.format;
+    parsedDate = format.dataTime(config.data_xFormat)(date);
+  } else isNumber(date) && !isNaN(date) && (parsedDate = new Date(+date));
+  return (!parsedDate || isNaN(+parsedDate)) && console && console.error && console.error("Failed to parse x '" + date + "' to Date object"), parsedDate;
+}
+/**
+ * Return if the current doc is visible or not
+ * @returns {boolean}
+ * @private
+ */
+
+
+function isTabVisible() {
+  return !browser_doc.hidden;
+}
+/**
+ * Get the current input type
+ * @param {boolean} mouse Config value: interaction.inputType.mouse
+ * @param {boolean} touch Config value: interaction.inputType.touch
+ * @returns {string} "mouse" | "touch" | null
+ * @private
+ */
+
+
+function convertInputType(mouse, touch) {
+  var isMobile = !1; // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+
+  if (/Mobi/.test(win.navigator.userAgent) && touch) {
+    // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
+    var hasTouchPoints = win.navigator && "maxTouchPoints" in win.navigator && win.navigator.maxTouchPoints > 0,
+        hasTouch = "ontouchmove" in win || win.DocumentTouch && browser_doc instanceof win.DocumentTouch; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+    // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+
+    isMobile = hasTouchPoints || hasTouch;
+  }
+
+  var hasMouse = !(!mouse || isMobile) && "onmouseover" in win;
+  return hasMouse && "mouse" || isMobile && "touch" || null;
+}
+;// CONCATENATED MODULE: ./src/module/error.ts
+
+
+
+/**
+ * Copyright (c) 2021 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/* eslint no-console: "off" */
+
+
+/**
+ * Check chart type module imports.
+ * @param {ChartInternal} ctx Context
+ * @private
+ */
+
+function checkModuleImport(ctx) {
+  var $$ = ctx,
+      config = $$.config,
+      type = "";
+  if (isEmpty(config.data_type || config.data_types) && !$$[TYPE_METHOD_NEEDED.LINE]) type = "line";else for (var x in TYPE_METHOD_NEEDED) {
+    var t = TYPE[x];
+
+    if ($$.hasType(t) && !$$[TYPE_METHOD_NEEDED[x]]) {
+      type = t;
+      break;
+    }
+  }
+  type && logError("Please, make sure if %c" + camelize(type), "module has been imported and specified correctly.");
+}
+/**
+ * Log error and throw error
+ * @param {string} head Message header
+ * @param {string} tail Message tail
+ * @private
+ */
+
+
+function logError(head, tail) {
+  var _window$console,
+      prefix = "[billboard.js]",
+      hasConsole = (_window$console = win.console) == null ? void 0 : _window$console.error;
+
+  throw hasConsole && (console.error("\u274C " + prefix + " " + head, "background:red;color:white;display:block;font-size:15px", tail), console.info("%cℹ️", "font-size:15px", "https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality")), Error(prefix + " " + head.replace(/\%c([a-z-]+)/i, "'$1' ") + " " + tail);
+}
 ;// CONCATENATED MODULE: ./src/config/Store/Element.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -592,21 +1404,6 @@ var Store = /*#__PURE__*/function () {
 }();
 
 
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
 ;// CONCATENATED MODULE: ./src/config/Options/common/main.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -2280,678 +3077,6 @@ function _defineProperty(obj, key, value) {
   tooltip_onhidden: function tooltip_onhidden() {},
   tooltip_order: null
 });
-// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
-;// CONCATENATED MODULE: ./src/module/browser.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Window object
- * @private
- */
-
-/* eslint-disable no-new-func, no-undef */
-
-
-var win = function () {
-  var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
-  return root || Function("return this")();
-}();
-/* eslint-enable no-new-func, no-undef */
-// fallback for non-supported environments
-
-
-win.requestIdleCallback = win.requestIdleCallback || function (cb) {
-  return setTimeout(cb, 1);
-}, win.cancelIdleCallback = win.cancelIdleCallback || function (id) {
-  return clearTimeout(id);
-};
-var browser_doc = win == null ? void 0 : win.document;
-;// CONCATENATED MODULE: ./src/module/util.ts
-
-
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
-
-
-
-
-
-
-var isValue = function (v) {
-  return v || v === 0;
-},
-    isFunction = function (v) {
-  return typeof v === "function";
-},
-    isString = function (v) {
-  return typeof v === "string";
-},
-    isNumber = function (v) {
-  return typeof v === "number";
-},
-    isUndefined = function (v) {
-  return typeof v === "undefined";
-},
-    isDefined = function (v) {
-  return typeof v !== "undefined";
-},
-    isboolean = function (v) {
-  return typeof v === "boolean";
-},
-    ceil10 = function (v) {
-  return Math.ceil(v / 10) * 10;
-},
-    asHalfPixel = function (n) {
-  return Math.ceil(n) + .5;
-},
-    diffDomain = function (d) {
-  return d[1] - d[0];
-},
-    isObjectType = function (v) {
-  return typeof v === "object";
-},
-    isEmpty = function (o) {
-  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
-},
-    notEmpty = function (o) {
-  return !isEmpty(o);
-},
-    isArray = function (arr) {
-  return Array.isArray(arr);
-},
-    isObject = function (obj) {
-  return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
-};
-
-/**
- * Get specified key value from object
- * If default value is given, will return if given key value not found
- * @param {object} options Source object
- * @param {string} key Key value
- * @param {*} defaultValue Default value
- * @returns {*}
- * @private
- */
-function getOption(options, key, defaultValue) {
-  return isDefined(options[key]) ? options[key] : defaultValue;
-}
-/**
- * Check if value exist in the given object
- * @param {object} dict Target object to be checked
- * @param {*} value Value to be checked
- * @returns {boolean}
- * @private
- */
-
-
-function hasValue(dict, value) {
-  var found = !1;
-  return Object.keys(dict).forEach(function (key) {
-    return dict[key] === value && (found = !0);
-  }), found;
-}
-/**
- * Call function with arguments
- * @param {Function} fn Function to be called
- * @param {*} args Arguments
- * @returns {boolean} true: fn is function, false: fn is not function
- * @private
- */
-
-
-function callFn(fn) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
-
-  return isFn && fn.call.apply(fn, args), isFn;
-}
-/**
- * Call function after all transitions ends
- * @param {d3.transition} transition Transition
- * @param {Fucntion} cb Callback function
- * @private
- */
-
-
-function endall(transition, cb) {
-  var n = 0,
-      end = function () {
-    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
-
-    --n || cb.apply.apply(cb, [this].concat(args));
-  };
-
-  "duration" in transition ? transition.each(function () {
-    return ++n;
-  }).on("end", end) : (++n, transition.call(end));
-}
-/**
- * Replace tag sign to html entity
- * @param {string} str Target string value
- * @returns {string}
- * @private
- */
-
-
-function sanitise(str) {
-  return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
-}
-/**
- * Set text value. If there's multiline add nodes.
- * @param {d3Selection} node Text node
- * @param {string} text Text value string
- * @param {Array} dy dy value for multilined text
- * @param {boolean} toMiddle To be alingned vertically middle
- * @private
- */
-
-
-function setTextValue(node, text, dy, toMiddle) {
-  if (dy === void 0 && (dy = [-1, 1]), toMiddle === void 0 && (toMiddle = !1), node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
-    var diff = [node.text(), text].map(function (v) {
-      return v.replace(/[\s\n]/g, "");
-    });
-
-    if (diff[0] !== diff[1]) {
-      var multiline = text.split("\n"),
-          len = toMiddle ? multiline.length - 1 : 1;
-      node.html(""), multiline.forEach(function (v, i) {
-        node.append("tspan").attr("x", 0).attr("dy", (i === 0 ? dy[0] * len : dy[1]) + "em").text(v);
-      });
-    }
-  }
-}
-/**
- * Substitution of SVGPathSeg API polyfill
- * @param {SVGGraphicsElement} path Target svg element
- * @returns {Array}
- * @private
- */
-
-
-function getRectSegList(path) {
-  /*
-   * seg1 ---------- seg2
-   *   |               |
-   *   |               |
-   *   |               |
-   * seg0 ---------- seg3
-   * */
-  var _path$getBBox = path.getBBox(),
-      x = _path$getBBox.x,
-      y = _path$getBBox.y,
-      width = _path$getBBox.width,
-      height = _path$getBBox.height;
-
-  return [{
-    x: x,
-    y: y + height
-  }, // seg0
-  {
-    x: x,
-    y: y
-  }, // seg1
-  {
-    x: x + width,
-    y: y
-  }, // seg2
-  {
-    x: x + width,
-    y: y + height
-  } // seg3
-  ];
-}
-/**
- * Get svg bounding path box dimension
- * @param {SVGGraphicsElement} path Target svg element
- * @returns {object}
- * @private
- */
-
-
-function getPathBox(path) {
-  var _path$getBoundingClie = path.getBoundingClientRect(),
-      width = _path$getBoundingClie.width,
-      height = _path$getBoundingClie.height,
-      items = getRectSegList(path),
-      x = items[0].x,
-      y = Math.min(items[0].y, items[1].y);
-
-  return {
-    x: x,
-    y: y,
-    width: width,
-    height: height
-  };
-}
-/**
- * Get event's current position coordinates
- * @param {object} event Event object
- * @param {SVGElement|HTMLElement} element Target element
- * @returns {Array} [x, y] Coordinates x, y array
- * @private
- */
-
-
-function getPointer(event, element) {
-  var touches = event && (event.touches || event.sourceEvent && event.sourceEvent.touches),
-      pointer = event ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches ? touches[0] : event, element) : [0, 0];
-  return pointer;
-}
-/**
- * Return brush selection array
- * @param {object} ctx Current instance
- * @returns {d3.brushSelection}
- * @private
- */
-
-
-function getBrushSelection(ctx) {
-  var selection,
-      event = ctx.event,
-      $el = ctx.$el,
-      main = $el.subchart.main || $el.main;
-  return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + config_classes.brush).node()) && (selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection)), selection;
-}
-/**
- * Get boundingClientRect.
- * Cache the evaluated value once it was called.
- * @param {HTMLElement} node Target element
- * @returns {object}
- * @private
- */
-
-
-function getBoundingRect(node) {
-  var needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
-  return needEvaluate ? node.rect = node.getBoundingClientRect() : node.rect;
-}
-/**
- * Retrun random number
- * @param {boolean} asStr Convert returned value as string
- * @returns {number|string}
- * @private
- */
-
-
-function getRandom(asStr) {
-  asStr === void 0 && (asStr = !0);
-  var rand = Math.random();
-  return asStr ? rand + "" : rand;
-}
-/**
- * Find index based on binary search
- * @param {Array} arr Data array
- * @param {number} v Target number to find
- * @param {number} start Start index of data array
- * @param {number} end End index of data arr
- * @param {boolean} isRotated Weather is roted axis
- * @returns {number} Index number
- * @private
- */
-
-
-function findIndex(arr, v, start, end, isRotated) {
-  if (start > end) return -1;
-  var mid = Math.floor((start + end) / 2),
-      _arr$mid = arr[mid],
-      x = _arr$mid.x,
-      _arr$mid$w = _arr$mid.w,
-      w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
-  return isRotated && (x = arr[mid].y, w = arr[mid].h), v >= x && v <= x + w ? mid : v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
-}
-/**
- * Check if brush is empty
- * @param {object} ctx Bursh context
- * @returns {boolean}
- * @private
- */
-
-
-function brushEmpty(ctx) {
-  var selection = getBrushSelection(ctx);
-  return !selection || selection[0] === selection[1];
-}
-/**
- * Deep copy object
- * @param {object} objectN Source object
- * @returns {object} Cloned object
- * @private
- */
-
-
-function deepClone() {
-  for (var clone = function (_clone) {
-    function clone() {
-      return _clone.apply(this, arguments);
-    }
-
-    return clone.toString = function () {
-      return _clone.toString();
-    }, clone;
-  }(function (v) {
-    if (isObject(v) && v.constructor) {
-      var r = new v.constructor();
-
-      for (var k in v) r[k] = clone(v[k]);
-
-      return r;
-    }
-
-    return v;
-  }), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) objectN[_key3] = arguments[_key3];
-
-  return objectN.map(function (v) {
-    return clone(v);
-  }).reduce(function (a, c) {
-    return _objectSpread(_objectSpread({}, a), c);
-  });
-}
-/**
- * Extend target from source object
- * @param {object} target Target object
- * @param {object|Array} source Source object
- * @returns {object}
- * @private
- */
-
-
-function extend(target, source) {
-  // exclude name with only numbers
-  for (var p in target === void 0 && (target = {}), isArray(source) && source.forEach(function (v) {
-    return extend(target, v);
-  }), source) /^\d+$/.test(p) || p in target || (target[p] = source[p]);
-
-  return target;
-}
-/**
- * Return first letter capitalized
- * @param {string} str Target string
- * @returns {string} capitalized string
- * @private
- */
-
-
-var capitalize = function (str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-},
-    toArray = function (v) {
-  return [].slice.call(v);
-};
-/**
- * Convert to array
- * @param {object} v Target to be converted
- * @returns {Array}
- * @private
- */
-
-
-/**
- * Get css rules for specified stylesheets
- * @param {Array} styleSheets The stylesheets to get the rules from
- * @returns {Array}
- * @private
- */
-function getCssRules(styleSheets) {
-  var rules = [];
-  return styleSheets.forEach(function (sheet) {
-    try {
-      sheet.cssRules && sheet.cssRules.length && (rules = rules.concat(toArray(sheet.cssRules)));
-    } catch (e) {
-      console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
-    }
-  }), rules;
-}
-/**
- * Gets the SVGMatrix of an SVGGElement
- * @param {SVGElement} node Node element
- * @returns {SVGMatrix} matrix
- * @private
- */
-
-
-var getTranslation = function (node) {
-  var transform = node ? node.transform : null,
-      baseVal = transform && transform.baseVal;
-  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
-    a: 0,
-    b: 0,
-    c: 0,
-    d: 0,
-    e: 0,
-    f: 0
-  };
-};
-/**
- * Get unique value from array
- * @param {Array} data Source data
- * @returns {Array} Unique array value
- * @private
- */
-
-
-function getUnique(data) {
-  var isDate = data[0] instanceof Date,
-      d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
-    return self.indexOf(v) === i;
-  });
-  return isDate ? d.map(function (v) {
-    return new Date(v);
-  }) : d;
-}
-/**
- * Merge array
- * @param {Array} arr Source array
- * @returns {Array}
- * @private
- */
-
-
-function mergeArray(arr) {
-  return arr && arr.length ? arr.reduce(function (p, c) {
-    return p.concat(c);
-  }) : [];
-}
-/**
- * Merge object returning new object
- * @param {object} target Target object
- * @param {object} objectN Source object
- * @returns {object} merged target object
- * @private
- */
-
-
-function mergeObj(target) {
-  for (var _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) objectN[_key4 - 1] = arguments[_key4];
-
-  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
-  var source = objectN.shift();
-  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
-    var value = source[key];
-    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
-  }), mergeObj.apply(void 0, [target].concat(objectN));
-}
-/**
- * Sort value
- * @param {Array} data value to be sorted
- * @param {boolean} isAsc true: asc, false: desc
- * @returns {number|string|Date} sorted date
- * @private
- */
-
-
-function sortValue(data, isAsc) {
-  isAsc === void 0 && (isAsc = !0);
-  var fn;
-  return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
-    return a - b;
-  } : function (a, b) {
-    return b - a;
-  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
-    return a - b;
-  } : !isAsc && (fn = function (a, b) {
-    return a > b && -1 || a < b && 1 || a === b && 0;
-  }), data.concat().sort(fn);
-}
-/**
- * Get min/max value
- * @param {string} type 'min' or 'max'
- * @param {Array} data Array data value
- * @returns {number|Date|undefined}
- * @private
- */
-
-
-function getMinMax(type, data) {
-  var res = data.filter(function (v) {
-    return notEmpty(v);
-  });
-  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, res) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
-}
-/**
- * Get range
- * @param {number} start Start number
- * @param {number} end End number
- * @param {number} step Step number
- * @returns {Array}
- * @private
- */
-
-
-var getRange = function (start, end, step) {
-  step === void 0 && (step = 1);
-  var res = [],
-      n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-
-  for (var i = start; i < n; i++) res.push(start + i * step);
-
-  return res;
-},
-    emulateEvent = {
-  mouse: function () {
-    var getParams = function () {
-      return {
-        bubbles: !1,
-        cancelable: !1,
-        screenX: 0,
-        screenY: 0,
-        clientX: 0,
-        clientY: 0
-      };
-    };
-
-    try {
-      return new MouseEvent("t"), function (el, eventType, params) {
-        params === void 0 && (params = getParams()), el.dispatchEvent(new MouseEvent(eventType, params));
-      };
-    } catch (e) {
-      // Polyfills DOM4 MouseEvent
-      return function (el, eventType, params) {
-        params === void 0 && (params = getParams());
-        var mouseEvent = browser_doc.createEvent("MouseEvent"); // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
-
-        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
-        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
-      };
-    }
-  }(),
-  touch: function touch(el, eventType, params) {
-    var touchObj = new Touch(mergeObj({
-      identifier: Date.now(),
-      target: el,
-      radiusX: 2.5,
-      radiusY: 2.5,
-      rotationAngle: 10,
-      force: .5
-    }, params));
-    el.dispatchEvent(new TouchEvent(eventType, {
-      cancelable: !0,
-      bubbles: !0,
-      shiftKey: !0,
-      touches: [touchObj],
-      targetTouches: [],
-      changedTouches: [touchObj]
-    }));
-  }
-}; // emulate event
-
-
-/**
- * Process the template  & return bound string
- * @param {string} tpl Template string
- * @param {object} data Data value to be replaced
- * @returns {string}
- * @private
- */
-function tplProcess(tpl, data) {
-  var res = tpl;
-
-  for (var x in data) res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
-
-  return res;
-}
-/**
- * Get parsed date value
- * (It must be called in 'ChartInternal' context)
- * @param {Date|string|number} date Value of date to be parsed
- * @returns {Date}
- * @private
- */
-
-
-function parseDate(date) {
-  var parsedDate;
-  if (date instanceof Date) parsedDate = date;else if (isString(date)) {
-    var config = this.config,
-        format = this.format;
-    parsedDate = format.dataTime(config.data_xFormat)(date);
-  } else isNumber(date) && !isNaN(date) && (parsedDate = new Date(+date));
-  return (!parsedDate || isNaN(+parsedDate)) && console && console.error && console.error("Failed to parse x '" + date + "' to Date object"), parsedDate;
-}
-/**
- * Return if the current doc is visible or not
- * @returns {boolean}
- * @private
- */
-
-
-function isTabVisible() {
-  return !browser_doc.hidden;
-}
-/**
- * Get the current input type
- * @param {boolean} mouse Config value: interaction.inputType.mouse
- * @param {boolean} touch Config value: interaction.inputType.touch
- * @returns {string} "mouse" | "touch" | null
- * @private
- */
-
-
-function convertInputType(mouse, touch) {
-  var isMobile = !1; // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
-
-  if (/Mobi/.test(win.navigator.userAgent) && touch) {
-    // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-    var hasTouchPoints = win.navigator && "maxTouchPoints" in win.navigator && win.navigator.maxTouchPoints > 0,
-        hasTouch = "ontouchmove" in win || win.DocumentTouch && browser_doc instanceof win.DocumentTouch; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
-    // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-
-    isMobile = hasTouchPoints || hasTouch;
-  }
-
-  var hasMouse = !(!mouse || isMobile) && "onmouseover" in win;
-  return hasMouse && "mouse" || isMobile && "touch" || null;
-}
 ;// CONCATENATED MODULE: ./src/config/Options/Options.ts
 
 
@@ -4684,47 +4809,6 @@ var colorizePattern = function (pattern, color, id) {
     "." + config_classes.arc + $$.getTargetSelectorSuffix(d.id) : "." + config_classes.shape + "-" + d).style("fill", color);
   }
 });
-;// CONCATENATED MODULE: ./src/config/const.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Chart type constant
- * @private
- */
-var TYPE = {
-  AREA: "area",
-  AREA_LINE_RANGE: "area-line-range",
-  AREA_SPLINE: "area-spline",
-  AREA_SPLINE_RANGE: "area-spline-range",
-  AREA_STEP: "area-step",
-  BAR: "bar",
-  BUBBLE: "bubble",
-  CANDLESTICK: "candlestick",
-  DONUT: "donut",
-  GAUGE: "gauge",
-  LINE: "line",
-  PIE: "pie",
-  RADAR: "radar",
-  SCATTER: "scatter",
-  SPLINE: "spline",
-  STEP: "step"
-};
-/**
- * chart types by category
- * @private
- */
-
-var TYPE_BY_CATEGORY = {
-  Area: [TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.AREA_STEP],
-  AreaRange: [TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE],
-  Arc: [TYPE.PIE, TYPE.DONUT, TYPE.GAUGE, TYPE.RADAR],
-  Line: [TYPE.LINE, TYPE.SPLINE, TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.STEP, TYPE.AREA_STEP],
-  Step: [TYPE.STEP, TYPE.AREA_STEP],
-  Spline: [TYPE.SPLINE, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE]
-};
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/domain.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -5945,7 +6029,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         halfWidth = isObjectType(offset) && (offset._$total.length ? offset._$total.reduce(sum) / 2 : 0);
 
     return function (d) {
-      var ind = $$.getIndices(indices, d.id),
+      var ind = $$.getIndices(indices, d.id, "getShapeX"),
           index = d.id in ind ? ind[d.id] : 0,
           targetsNum = (ind.__max__ || 0) + 1,
           x = 0;
@@ -6089,9 +6173,14 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    */
   getShapeByIndex: function getShapeByIndex(shapeName, i, id) {
     var $$ = this,
-        main = $$.$el.main,
-        suffix = isValue(i) ? "-" + i : "";
-    return (id ? main.selectAll("." + config_classes[shapeName + "s"] + $$.getTargetSelectorSuffix(id)) : main).selectAll("." + config_classes[shapeName] + suffix);
+        $el = $$.$el,
+        suffix = isValue(i) ? "-" + i : "",
+        shape = $el[shapeName];
+    return shape = shape && !shape.empty() ? shape.filter(function (d) {
+      return !id || d.id === id;
+    }).filter(function (d) {
+      return !isValue(i) || d.index === i;
+    }) : (id ? $el.main.selectAll("." + config_classes[shapeName + "s"] + $$.getTargetSelectorSuffix(id)) : $el.main).selectAll("." + config_classes[shapeName] + suffix), shape;
   },
   isWithinShape: function isWithinShape(that, d) {
     var isWithin,
@@ -7403,6 +7492,7 @@ function getTextPos(pos, width) {
 
 
 
+
  // data
 
 
@@ -7520,7 +7610,7 @@ var ChartInternal = /*#__PURE__*/function () {
         config = $$.config,
         state = $$.state,
         $el = $$.$el;
-    state.hasAxis = !$$.hasArcType(), state.hasRadar = !state.hasAxis && $$.hasType("radar"), $$.initParams();
+    checkModuleImport($$), state.hasAxis = !$$.hasArcType(), state.hasRadar = !state.hasAxis && $$.hasType("radar"), $$.initParams();
     var bindto = {
       element: config.bindto,
       classname: "bb"
@@ -9705,7 +9795,7 @@ var AxisRendererHelper = /*#__PURE__*/function () {
         ticks = [];
 
     // When 'axis[y|y2].tick.stepSize' option is set
-    if (isYAxes && tickStepSize) for (var interval = start; interval <= end;) ticks.push(interval), interval += tickStepSize;else if (scale.ticks) {
+    if (isYAxes && tickStepSize) for (var interval = Math.round(start); interval <= end;) ticks.push(interval), interval += tickStepSize;else if (scale.ticks) {
       var tickArguments = this.config.tickArguments; // adjust excessive tick count show
 
       if (scale.type === "log" && !tickArguments) {
@@ -10839,7 +10929,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         // do nothing while dragging/flowing
         if (state.event = event, !(state.dragging || state.flowing || $$.hasArcType() || !d || config.tooltip_grouped && d && d.index === eventReceiver.currentIdx)) {
           var index = d.index;
-          $$.isStepType(d) && config.line_step_type === "step-after" && getPointer(event, this)[0] < $$.scale.x($$.getXValue(d.id, index)) && (index -= 1), index !== eventReceiver.currentIdx && ($$.setOverOut(!1, eventReceiver.currentIdx), eventReceiver.currentIdx = index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, rect, index), $$.setOverOut(index !== -1, index);
+          index !== eventReceiver.currentIdx && ($$.setOverOut(!1, eventReceiver.currentIdx), eventReceiver.currentIdx = index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, rect, index), $$.setOverOut(index !== -1, index);
         }
       }).on("mouseout", function (event) {
         state.event = event;
@@ -11411,7 +11501,7 @@ function smoothLines(el, type) {
         resizing = _$$$state5.resizing,
         grid = $$.$el.grid,
         xgridFocus = grid.main.select("line." + config_classes.xgridFocus);
-    if (inputType === "touch") xgridFocus.empty() ? resizing && $$.showCircleFocus() : $$.showGridFocus();else {
+    if (inputType === "touch") xgridFocus.empty() ? resizing && ($$.showCircleFocus == null ? void 0 : $$.showCircleFocus()) : $$.showGridFocus();else {
       var _isRotated = $$.config.axis_rotated;
       xgridFocus.attr("x1", _isRotated ? 0 : -10).attr("x2", _isRotated ? width : -10).attr("y1", _isRotated ? -10 : 0).attr("y2", _isRotated ? -10 : height);
     } // need to return 'true' as of being pushed to the redraw list
@@ -14236,7 +14326,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     mainBarEnter.append("g").attr("class", classBars).style("cursor", function (d) {
       var _isSelectable;
 
-      return (_isSelectable = isSelectable) != null && _isSelectable.bind($$.api)(d) ? "pointer" : null;
+      return (_isSelectable = isSelectable) != null && _isSelectable.bind != null && _isSelectable.bind($$.api)(d) ? "pointer" : null;
     });
   },
 
@@ -15096,16 +15186,11 @@ var getTransitionName = function () {
       return $$.isGrouped(id) ? getPoints(d, i)[0][1] : $$.getYScaleById(id, isSub)($$.getBaseValue(d));
     };
   },
-  getCircles: function getCircles(i, id) {
-    var $$ = this,
-        suffix = isValue(i) ? "-" + i : "";
-    return (id ? $$.$el.main.selectAll("." + config_classes.circles + $$.getTargetSelectorSuffix(id)) : $$.$el.main).selectAll("." + config_classes.circle + suffix);
-  },
   expandCircles: function expandCircles(i, id, reset) {
     var $$ = this,
         r = $$.pointExpandedR.bind($$);
     reset && $$.unexpandCircles();
-    var circles = $$.getCircles(i, id).classed(config_classes.EXPANDED, !0),
+    var circles = $$.getShapeByIndex("circle", i, id).classed(config_classes.EXPANDED, !0),
         scale = r(circles) / $$.config.point_r,
         ratio = 1 - scale;
     $$.isCirclePoint() ? circles.attr("r", r) : circles.each(function () {
@@ -15124,7 +15209,7 @@ var getTransitionName = function () {
   unexpandCircles: function unexpandCircles(i) {
     var $$ = this,
         r = $$.pointR.bind($$),
-        circles = $$.getCircles(i).filter(function () {
+        circles = $$.getShapeByIndex("circle", i).filter(function () {
       return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed(config_classes.EXPANDED);
     }).classed(config_classes.EXPANDED, !1);
     circles.attr("r", r), $$.isCirclePoint() || circles.attr("transform", "scale(" + r(circles) / $$.config.point_r + ")");
