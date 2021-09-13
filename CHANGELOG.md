@@ -1,3 +1,20 @@
+# [3.2.0-next.4](https://github.com/naver/billboard.js/compare/3.2.0-next.3...3.2.0-next.4) (2021-09-13)
+
+
+### Bug Fixes
+
+* **axis:** fix y axis stepSize value ([18f6f27](https://github.com/naver/billboard.js/commit/18f6f270fc76da83e30f283b4d9d81f143e38a32)), closes [#2294](https://github.com/naver/billboard.js/issues/2294)
+* **event:** make consistent tooltip position on step-after ([5d3a5ed](https://github.com/naver/billboard.js/commit/5d3a5ed37bf290eea97fe572cb905b8e7f99ba6b)), closes [#2287](https://github.com/naver/billboard.js/issues/2287)
+* **grid:** pPrevent error throw  ([8fcf61c](https://github.com/naver/billboard.js/commit/8fcf61cd80a18f28f1a2b2a0a8f46e418034190a)), closes [#2310](https://github.com/naver/billboard.js/issues/2310)
+* **types:** fix data.onshown/hidden types ([3721c4c](https://github.com/naver/billboard.js/commit/3721c4cd34fd4607b6063f2da838a0957d6a211a)), closes [#2270](https://github.com/naver/billboard.js/issues/2270) [#2275](https://github.com/naver/billboard.js/issues/2275)
+
+
+### Features
+
+* **error:** Enhance error logging for ESM import ([4b5119c](https://github.com/naver/billboard.js/commit/4b5119c606f998c7854e82e9bf5c43242c3f75e3)), closes [#2311](https://github.com/naver/billboard.js/issues/2311)
+* **plugin:** Intent to ship sparkline ([091284e](https://github.com/naver/billboard.js/commit/091284e7c510f9ae798a3b9ede4b9ca9a604fb5b)), closes [#2285](https://github.com/naver/billboard.js/issues/2285)
+* **Subchart:** add subchart x axis tick format option ([da2f3ff](https://github.com/naver/billboard.js/commit/da2f3ff99ea27ac5339e81feca659b7ce1f0a6b9)), closes [#2314](https://github.com/naver/billboard.js/issues/2314)
+
 # [3.2.0-next.3](https://github.com/naver/billboard.js/compare/3.2.0-next.2...3.2.0-next.3) (2021-08-18)
 
 
