@@ -24,7 +24,7 @@ export default {
 		const $$ = this;
 
 		if ($$.axis) {
-			const position = $$.axis && $$.axis.getLabelPositionById(id);
+			const position = $$.axis?.getLabelPositionById(id);
 
 			return $$.axis.getMaxTickWidth(id, withoutRecompute) +
 				(position.isInner ? 20 : 40);

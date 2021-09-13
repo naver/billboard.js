@@ -53,7 +53,7 @@ export function generateWait() {
 			let done = 0;
 
 			for (let i = 0, t; (t = transitionsToWait[i]); i++) {
-				if (t === true || (t.empty && t.empty())) {
+				if (t === true || t.empty?.()) {
 					done++;
 					continue;
 				}
@@ -68,7 +68,7 @@ export function generateWait() {
 			timer && clearTimeout(timer);
 
 			if (done === transitionsToWait.length) {
-				callback && callback();
+				callback?.();
 			} else {
 				timer = setTimeout(loop, 50);
 			}

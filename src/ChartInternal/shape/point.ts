@@ -102,7 +102,7 @@ export default {
 
 		enterNode.append("g")
 			.attr("class", classCircles)
-			.style("cursor", d => (isSelectable && isSelectable(d) ? "pointer" : null));
+			.style("cursor", d => (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null));
 
 		// Update date for selected circles
 		selectionEnabled && targets.forEach(t => {
@@ -250,21 +250,13 @@ export default {
 		};
 	},
 
-	getCircles(i: number, id: string) {
-		const $$ = this;
-		const suffix = (isValue(i) ? `-${i}` : ``);
-
-		return (id ? $$.$el.main.selectAll(`.${CLASS.circles}${$$.getTargetSelectorSuffix(id)}`) : $$.$el.main)
-			.selectAll(`.${CLASS.circle}${suffix}`);
-	},
-
 	expandCircles(i: number, id: string, reset?: boolean): void {
 		const $$ = this;
 		const r = $$.pointExpandedR.bind($$);
 
 		reset && $$.unexpandCircles();
 
-		const circles = $$.getCircles(i, id).classed(CLASS.EXPANDED, true);
+		const circles = $$.getShapeByIndex("circle", i, id).classed(CLASS.EXPANDED, true);
 		const scale = r(circles) / $$.config.point_r;
 		const ratio = 1 - scale;
 
@@ -292,7 +284,7 @@ export default {
 		const $$ = this;
 		const r = $$.pointR.bind($$);
 
-		const circles = $$.getCircles(i)
+		const circles = $$.getShapeByIndex("circle", i)
 			.filter(function() {
 				return d3Select(this).classed(CLASS.EXPANDED);
 			})
@@ -377,7 +369,7 @@ export default {
 
 		copyAttr(node, clone);
 
-		if (node.childNodes && node.childNodes.length) {
+		if (node.childNodes?.length) {
 			const parent = d3Select(clone);
 
 			if ("innerHTML" in clone) {
@@ -458,7 +450,7 @@ export default {
 
 		return function(method, context, ...args) {
 			return function(d) {
-				const id: string = $$.getTargetSelectorSuffix(d.id || (d.data && d.data.id) || d);
+				const id: string = $$.getTargetSelectorSuffix(d.id || d.data?.id || d);
 				const element = d3Select(this);
 
 				ids.indexOf(id) < 0 && ids.push(id);

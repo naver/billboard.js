@@ -69,7 +69,7 @@ export default {
 			// update data's index value to be alinged with the x Axis
 			$$.updateDataIndexByX(xAxisTickValues);
 			$$.updateXs(xAxisTickValues);
-			$$.updatePointClass && $$.updatePointClass(true);
+			$$.updatePointClass?.(true);
 
 			state.eventReceiver.data = xAxisTickValues;
 		}
@@ -241,19 +241,16 @@ export default {
 
 				rectW = (d): number => {
 					const x = getPrevNextX(d);
+					const xDomain = xScale.domain();
 
 					// if there this is a single data point make the eventRect full width (or height)
 					if (x.prev === null && x.next === null) {
 						return isRotated ? state.height : state.width;
 					}
 
-					if (x.prev === null) {
-						x.prev = xScale.domain()[0];
-					}
-
-					if (x.next === null) {
-						x.next = xScale.domain()[1];
-					}
+					Object.keys(x).forEach((key, i) => {
+						x[key] = x[key] ?? xDomain[i];
+					});
 
 					return Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
 				};
@@ -416,14 +413,7 @@ export default {
 						return;
 					}
 
-					let {index} = d;
-
-					if ($$.isStepType(d) &&
-						config.line_step_type === "step-after" &&
-						getPointer(event, this)[0] < $$.scale.x($$.getXValue(d.id, index))
-					) {
-						index -= 1;
-					}
+					const {index} = d;
 
 					if (index !== eventReceiver.currentIdx) {
 						$$.setOverOut(false, eventReceiver.currentIdx);
@@ -471,7 +461,7 @@ export default {
 		main.selectAll(`.${CLASS.shape}-${index}`)
 			.each(function(d2) {
 				if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
-					$$.toggleShape && $$.toggleShape(this, d2, index);
+					$$.toggleShape?.(this, d2, index);
 					config.data_onclick.bind($$.api)(d2, this);
 				}
 			});
@@ -534,7 +524,7 @@ export default {
 				.selectAll(`.${CLASS.shape}-${closest.index}`)
 				.each(function() {
 					if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
-						$$.toggleShape && $$.toggleShape(this, closest, closest.index);
+						$$.toggleShape?.(this, closest, closest.index);
 						config.data_onclick.bind($$.api)(closest, this);
 					}
 				});

@@ -272,7 +272,7 @@ class Axis {
 		let tickFormat;
 
 		if (isX) {
-			tickFormat = $$.format.xAxisTick;
+			tickFormat = (id === "subX") ? $$.format.subXAxisTick : $$.format.xAxisTick;
 		} else {
 			const fn = config[`axis_${id}_tick_format`];
 
@@ -366,7 +366,7 @@ class Axis {
 			axis.tickValues(values);
 		} else if (this.x) {
 			this.x.tickValues(values);
-			this.subX && this.subX.tickValues(values);
+			this.subX?.tickValues(values);
 		}
 
 		return values;
@@ -384,10 +384,13 @@ class Axis {
 		return axis;
 	}
 
-	getXAxisTickFormat(): Function {
+	getXAxisTickFormat(forSubchart? : boolean): Function {
 		const $$ = this.owner;
 		const {config, format} = $$;
-		const tickFormat = config.axis_x_tick_format;
+		// enable different tick format for x and subX - subX format defaults to x format if not defined
+		const tickFormat = forSubchart ?
+			config.subchart_axis_x_tick_format || config.axis_x_tick_format :
+			config.axis_x_tick_format;
 		const isTimeSeries = this.isTimeSeries();
 		const isCategorized = this.isCategorized();
 		let currFormat;
@@ -880,7 +883,7 @@ class Axis {
 			}
 		} else if (this.x) {
 			this.x.tickValues([]);
-			this.subX && this.subX.tickValues([]);
+			this.subX?.tickValues([]);
 		}
 
 		if (config.zoom_rescale && !flow) {
@@ -924,8 +927,8 @@ class Axis {
 
 		// Update sub domain
 		if (wth.Y) {
-			scale.subY && scale.subY.domain($$.getYDomain(targetsToShow, "y"));
-			scale.subY2 && scale.subY2.domain($$.getYDomain(targetsToShow, "y2"));
+			scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
+			scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
 		}
 	}
 

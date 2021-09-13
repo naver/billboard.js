@@ -405,7 +405,7 @@ export default {
 			});
 
 		smoothLines(focusEl, "grid");
-		$$.showCircleFocus && $$.showCircleFocus(data);
+		$$.showCircleFocus?.(data);
 	},
 
 	hideGridFocus(): void {
@@ -416,7 +416,7 @@ export default {
 			main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
 				.style("visibility", "hidden");
 
-			$$.hideCircleFocus && $$.hideCircleFocus();
+			$$.hideCircleFocus?.();
 		}
 	},
 
@@ -427,7 +427,7 @@ export default {
 
 		if (inputType === "touch") {
 			if (xgridFocus.empty()) {
-				resizing && $$.showCircleFocus();
+				resizing && $$.showCircleFocus?.();
 			} else {
 				$$.showGridFocus();
 			}
@@ -455,8 +455,7 @@ export default {
 
 		if (type === "year") {
 			const xDomain = $$.getXDomain();
-			const firstYear = xDomain[0].getFullYear();
-			const lastYear = xDomain[1].getFullYear();
+			const [firstYear, lastYear] = xDomain.map(v => v.getFullYear());
 
 			for (let i = firstYear; i <= lastYear; i++) {
 				gridData.push(new Date(`${i}-01-01 00:00:00`));

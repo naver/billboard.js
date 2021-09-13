@@ -161,7 +161,7 @@ describe("API flow", () => {
 				if (translateX < 0) {
 					moved.push(Math.abs(translateX));
 				}				
-			}, 100);
+			}, 50);
 		});
 	});
 });

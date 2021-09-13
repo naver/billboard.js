@@ -81,7 +81,7 @@ export default {
 			return [0, 100];
 		}
 
-		const isLog = scale && scale[axisId] && scale[axisId].type === "log";
+		const isLog = scale?.[axisId] && scale[axisId].type === "log";
 		const targetsByAxisId = targets.filter(t => axis.getId(t.id) === axisId);
 		const yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
 
@@ -317,7 +317,7 @@ export default {
 			zoomEnabled && $$.zoom.updateScaleExtent();
 
 			subX.domain(x.domain());
-			$$.brush && $$.brush.scale(subX);
+			$$.brush?.scale(subX);
 		}
 
 		if (withUpdateXDomain) {

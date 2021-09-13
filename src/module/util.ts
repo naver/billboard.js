@@ -14,6 +14,7 @@ export {
 	brushEmpty,
 	callFn,
 	capitalize,
+	camelize,
 	ceil10,
 	convertInputType,
 	deepClone,
@@ -91,7 +92,7 @@ const isArray = (arr: any): boolean => Array.isArray(arr);
  * @returns {boolean}
  * @private
  */
-const isObject = (obj: any): boolean => obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
+const isObject = (obj: any): boolean => obj && !obj?.nodeType && isObjectType(obj) && !isArray(obj);
 
 /**
  * Get specified key value from object
@@ -432,6 +433,20 @@ function extend(target = {}, source): object {
  */
 const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
+
+/**
+ * Camelize from kebob style string
+ * @param {string} str Kebob string
+ * @returns {string} camelized string
+ */
+function camelize(str: string): string {
+	return str.split("-")
+		.map((v, i) => (
+			i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()
+		))
+		.join("");
+}
+
 /**
  * Convert to array
  * @param {object} v Target to be converted
@@ -468,14 +483,14 @@ function getCssRules(styleSheets: any[]) {
  * @returns {SVGMatrix} matrix
  * @private
  */
-const getTranslation = node => {
+function getTranslation(node) {
 	const transform = node ? node.transform : null;
 	const baseVal = transform && transform.baseVal;
 
 	return baseVal && baseVal.numberOfItems ?
 		baseVal.getItem(0).matrix :
 		{a: 0, b: 0, c: 0, d: 0, e: 0, f: 0};
-};
+}
 
 /**
  * Get unique value from array

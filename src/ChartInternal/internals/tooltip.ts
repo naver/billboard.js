@@ -40,7 +40,7 @@ export default {
 		if (config.tooltip_init_show) {
 			const isArc = !(hasAxis && hasRadar);
 
-			if ($$.axis && $$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
+			if ($$.axis?.isTimeSeries() && isString(config.tooltip_init_x)) {
 				const targets = $$.data.targets[0];
 				let i;
 				let val;
@@ -68,7 +68,7 @@ export default {
 
 			$el.tooltip.html($$.getTooltipHTML(
 				data,
-				$$.axis && $$.axis.getXAxisTickFormat(),
+				$$.axis?.getXAxisTickFormat(),
 				$$.getDefaultValueFormat(),
 				$$.color
 			));
@@ -449,7 +449,7 @@ export default {
 
 		// Prevent propagation among instances if isn't instantiated from the user's event
 		// https://github.com/naver/billboard.js/issues/1979
-		if (event && event.isTrusted && config.tooltip_linked && charts.length > 1) {
+		if (event?.isTrusted && config.tooltip_linked && charts.length > 1) {
 			const linkedName = config.tooltip_linked_name;
 
 			charts
@@ -462,7 +462,7 @@ export default {
 
 					if (isLinked && linkedName === name && isInDom) {
 						const data = $el.tooltip.data()[0];
-						const isNotSameIndex = index !== (data && data.index);
+						const isNotSameIndex = index !== data?.index;
 
 						try {
 							c.tooltip[

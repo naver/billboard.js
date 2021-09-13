@@ -74,7 +74,7 @@ export default {
 	 */
 	getRadius(d): {innerRadius: number, outerRadius: number} {
 		const $$ = this;
-		const data = d && d.data;
+		const data = d?.data;
 		let {innerRadius, outerRadius} = $$.state;
 
 		if (!isNumber(innerRadius) && data) {
@@ -294,8 +294,7 @@ export default {
 			} else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
 				const {outerRadius} = $$.getRadius(d);
 				const c = this.svgArc.centroid(updated);
-				const x = isNaN(c[0]) ? 0 : c[0];
-				const y = isNaN(c[1]) ? 0 : c[1];
+				const [x, y] = c.map(v => (isNaN(v) ? 0 : v));
 				const h = Math.sqrt(x * x + y * y);
 
 				let ratio = ($$.hasType("donut") && config.donut_label_ratio) ||
@@ -566,7 +565,7 @@ export default {
 		mainArc = mainArc.enter().append("path")
 			.attr("class", $$.getClass("arc", true))
 			.style("fill", d => $$.color(d.data))
-			.style("cursor", d => (isSelectable && isSelectable.bind($$.api)(d) ? "pointer" : null))
+			.style("cursor", d => (isSelectable?.bind($$.api)(d) ? "pointer" : null))
 			.style("opacity", "0")
 			.each(function(d) {
 				if ($$.isGaugeType(d.data)) {
@@ -727,7 +726,7 @@ export default {
 
 		// eslint-disable-next-line
 		function unselectArc(arcData?) {
-			const id = (arcData && arcData.id) || undefined;
+			const id = arcData?.id || undefined;
 
 			$$.unexpandArc(id);
 			$$.api.revert();
@@ -743,7 +742,7 @@ export default {
 				if (updated) {
 					arcData = $$.convertToArcData(updated);
 
-					$$.toggleShape && $$.toggleShape(this, arcData, i);
+					$$.toggleShape?.(this, arcData, i);
 					config.data_onclick.bind($$.api)(arcData, this);
 				}
 			});
@@ -759,7 +758,7 @@ export default {
 					state.event = event;
 					const updated = $$.updateAngle(d);
 					const arcData = updated ? $$.convertToArcData(updated) : null;
-					const id = (arcData && arcData.id) || undefined;
+					const id = arcData?.id || undefined;
 
 					selectArc(this, arcData, id);
 					$$.setOverOut(true, arcData);
@@ -802,9 +801,9 @@ export default {
 
 					const eventArc = getEventArc(event);
 					const datum: any = eventArc.datum();
-					const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
+					const updated = (datum?.data && datum.data.id) ? $$.updateAngle(datum) : null;
 					const arcData = updated ? $$.convertToArcData(updated) : null;
-					const id = (arcData && arcData.id) || undefined;
+					const id = arcData?.id || undefined;
 
 					$$.callOverOutForTouch(arcData);
 
@@ -846,7 +845,7 @@ export default {
 		if (hasGauge) {
 			const isFullCircle = config.gauge_fullCircle;
 
-			isFullCircle && text && text.attr("dy", `${hasMultiArcGauge ? 0 : Math.round(state.radius / 14)}`);
+			isFullCircle && text?.attr("dy", `${hasMultiArcGauge ? 0 : Math.round(state.radius / 14)}`);
 
 			if (config.gauge_label_show) {
 				arcs.select(`.${CLASS.chartArcsGaugeUnit}`)

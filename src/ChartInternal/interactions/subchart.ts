@@ -86,7 +86,7 @@ export default {
 			const extent = this.extent()();
 
 			if (extent[1].filter(v => isNaN(v)).length === 0) {
-				subchart.main && subchart.main.select(`.${CLASS.brush}`).call(this);
+				subchart.main?.select(`.${CLASS.brush}`).call(this);
 			}
 
 			return this;
@@ -293,7 +293,7 @@ export default {
 		// subchart
 		if (config.subchart_show) {
 			// reflect main chart to extent on subchart if zoomed
-			if (state.event && state.event.type === "zoom") {
+			if (state.event?.type === "zoom") {
 				$$.brush.update();
 			}
 
@@ -358,7 +358,7 @@ export default {
 		const $$ = this;
 		const {$el: {subchart}, $T} = $$;
 
-		const subXAxis = transitions && transitions.axisSubX ?
+		const subXAxis = transitions?.axisSubX ?
 			transitions.axisSubX :
 			$T(subchart.main.select(`.${CLASS.axisX}`), withTransition);
 

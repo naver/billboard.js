@@ -59,7 +59,7 @@ function nodeToSvgDataUrl(node, option: ExportOption, orgSize: Size) {
 	// https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
 	const dataStr = `<svg xmlns="${d3Namespaces.svg}" width="${width}" height="${height}" 
 		viewBox="0 0 ${orgSize.width} ${orgSize.height}" 
-		preserveAspectRatio="${option && option.preserveAspectRatio === false ? "none" : "xMinYMid meet"}">
+		preserveAspectRatio="${option?.preserveAspectRatio === false ? "none" : "xMinYMid meet"}">
 			<foreignObject width="100%" height="100%">
 				${styleXml}
 				${nodeXml.replace(/(url\()[^#]+/g, "$1")}

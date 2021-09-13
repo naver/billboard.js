@@ -4,7 +4,6 @@
  */
 /* eslint-disable */
 import {expect} from "chai";
-import {rgb as d3Rgb} from "d3-color";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -140,7 +139,7 @@ describe("API select", () => {
 					expect(v.index).to.be.equal(indice[i]);
 
 					// check for the selected color
-					expect(this.style.fill).to.be.equal(d3Rgb(color).brighter(0.75).toString());
+					expect(this.style.filter).to.be.equal("brightness(1.25)");
 				});
 
 				done();

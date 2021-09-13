@@ -79,7 +79,7 @@ extend(data, {
 		if (targetIds) {
 			const targets = this.data(targetIds);
 
-			if (targets && isArray(targets)) {
+			if (isArray(targets)) {
 				values = [];
 
 				targets.forEach(v => {

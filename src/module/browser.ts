@@ -22,5 +22,5 @@ const win = (() => {
 win.requestIdleCallback = win.requestIdleCallback || (cb => setTimeout(cb, 1));
 win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
 
-const doc = win && win.document;
+const doc = win?.document;
 
