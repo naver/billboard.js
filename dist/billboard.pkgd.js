@@ -25118,7 +25118,7 @@ function getScale(type, min, max) {
         return axis.x.tickOffset();
       }), scale.subX = $$.getXScale(min.x, max.x, xSubDomain, function (d) {
         return d % 1 ? 0 : axis.subX.tickOffset();
-      }), format.xAxisTick = axis.getXAxisTickFormat(), axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit), config.subchart_show && axis.setAxis("subX", scale.subX, config.axis_x_tick_outer, isInit), scale.y = $$.getYScale("y", min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default), scale.subY = $$.getYScale("y", min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default), axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && (scale.y2 = $$.getYScale("y2", min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default), scale.subY2 = $$.getYScale("y2", min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default), axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit));
+      }), format.xAxisTick = axis.getXAxisTickFormat(), format.subXAxisTick = axis.getXAxisTickFormat(!0), axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit), config.subchart_show && axis.setAxis("subX", scale.subX, config.axis_x_tick_outer, isInit), scale.y = $$.getYScale("y", min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default), scale.subY = $$.getYScale("y", min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default), axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && (scale.y2 = $$.getYScale("y2", min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default), scale.subY2 = $$.getYScale("y2", min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default), axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit));
     } else // update for arc
     $$.updateArc == null ? void 0 : $$.updateArc();
   },
@@ -30557,7 +30557,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         isCategory = isX && this.isCategorized(),
         orient = this.orient[id],
         tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
-    if (isX) tickFormat = $$.format.xAxisTick;else {
+    if (isX) tickFormat = id === "subX" ? $$.format.subXAxisTick : $$.format.xAxisTick;else {
       var fn = config["axis_" + id + "_tick_format"];
       isFunction(fn) && (tickFormat = fn.bind($$.api));
     }
@@ -30608,12 +30608,12 @@ var Axis_Axis = /*#__PURE__*/function () {
         scale = _this$owner2.scale,
         axis = config.data_axes[id];
     return axis && scale[axis] || (axis = "y"), axis;
-  }, _proto.getXAxisTickFormat = function getXAxisTickFormat() {
+  }, _proto.getXAxisTickFormat = function getXAxisTickFormat(forSubchart) {
     var currFormat,
         $$ = this.owner,
         config = $$.config,
         format = $$.format,
-        tickFormat = config.axis_x_tick_format,
+        tickFormat = forSubchart ? config.subchart_axis_x_tick_format || config.axis_x_tick_format : config.axis_x_tick_format,
         isTimeSeries = this.isTimeSeries(),
         isCategorized = this.isCategorized();
     return tickFormat ? isFunction(tickFormat) ? currFormat = tickFormat.bind($$.api) : isTimeSeries && (currFormat = function (date) {
@@ -39131,6 +39131,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    * @property {boolean} [subchart.showHandle=false] Show sub chart's handle.
    * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
    * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
+   * @property {Function|string} [subchart.axis.x.tick.format] Use custom format for x axis ticks - see [axis.x.tick.format](#.axis․x․tick․format) for details.
    * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
    * @property {Array} [subchart.init.range] Set initial selection domain range.
    * @property {number} [subchart.size.height] Change the height of the subchart.
@@ -39153,6 +39154,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
    *      	  show: true,
    *      	    tick: {
    *      	      show: true,
+   *      	      format: (x) => d3Format(".1f")(x)
    *      	      text: {
    *      	        show: false
    *      	      }
@@ -39175,6 +39177,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
   subchart_size_height: 60,
   subchart_axis_x_show: !0,
   subchart_axis_x_tick_show: !0,
+  subchart_axis_x_tick_format: undefined,
   subchart_axis_x_tick_text_show: !0,
   subchart_init_range: undefined,
   subchart_onbrush: function subchart_onbrush() {}
