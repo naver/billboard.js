@@ -272,7 +272,7 @@ class Axis {
 		let tickFormat;
 
 		if (isX) {
-			tickFormat = $$.format.xAxisTick;
+			tickFormat = (id === "subX") ? $$.format.subXAxisTick : $$.format.xAxisTick;
 		} else {
 			const fn = config[`axis_${id}_tick_format`];
 
@@ -384,10 +384,13 @@ class Axis {
 		return axis;
 	}
 
-	getXAxisTickFormat(): Function {
+	getXAxisTickFormat(forSubchart? : boolean): Function {
 		const $$ = this.owner;
 		const {config, format} = $$;
-		const tickFormat = config.axis_x_tick_format;
+		// enable different tick format for x and subX - subX format defaults to x format if not defined
+		const tickFormat = forSubchart ?
+			config.subchart_axis_x_tick_format || config.axis_x_tick_format :
+			config.axis_x_tick_format;
 		const isTimeSeries = this.isTimeSeries();
 		const isCategorized = this.isCategorized();
 		let currFormat;

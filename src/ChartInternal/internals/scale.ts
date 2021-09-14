@@ -171,6 +171,7 @@ export default {
 			scale.subX = $$.getXScale(min.x, max.x, xSubDomain, d => (d % 1 ? 0 : axis.subX.tickOffset()));
 
 			format.xAxisTick = axis.getXAxisTickFormat();
+			format.subXAxisTick = axis.getXAxisTickFormat(true);
 
 			axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit);
 
