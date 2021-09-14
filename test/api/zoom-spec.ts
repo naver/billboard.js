@@ -495,4 +495,70 @@ describe("API zoom", function() {
 			}, 500);
 		});
 	});
+
+	describe("zoom events", () => {
+		const onzoomstartSpy = sinon.spy();
+		const onzoomSpy = sinon.spy();
+		const onzoomendSpy = sinon.spy();
+		let args = {
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150, 250],
+					["data2", 50, 20, 10, 40, 15, 25],
+					["data3", 150, 120, 110, 140, 115, 125]
+				]
+			},
+			transition: {
+				duration: 0
+			},
+			zoom: {
+				enabled: true,
+				type: "whee",
+				onstart: onzoomstartSpy,
+				onzoom: onzoomSpy,
+				onzoomend: onzoomendSpy
+			}
+		}
+
+		beforeEach(() => {
+			chart = util.generate(args);
+
+			onzoomstartSpy.resetHistory();
+			onzoomSpy.resetHistory();
+			onzoomendSpy.resetHistory();
+		});
+
+		// check zoom event triggers
+		function chkZoomEvents() {
+			// when
+			chart.zoom([1, 2]);
+
+			// only 'onzoom' event should be called.
+			expect(onzoomstartSpy.called).to.be.false;
+			expect(onzoomSpy.calledOnce).to.be.true;
+			expect(onzoomendSpy.called).to.be.false;
+			
+			onzoomstartSpy.resetHistory();
+			onzoomSpy.resetHistory();
+			onzoomendSpy.resetHistory();
+
+			// when
+			chart.unzoom();
+
+			// on unzoom, no event should be called.
+			expect([onzoomstartSpy.called, onzoomSpy.called, onzoomendSpy.called].every(v => v === false)).to.be.true;
+		}
+
+		it("wheel type: check for zoom events trigger", ()=> {
+			chkZoomEvents();
+		});
+
+		it("set options: zoom.type='drag'", () => {
+			args.zoom.type = "drag";
+		});
+
+		it("drag type: check for zoom events trigger", ()=> {
+			chkZoomEvents();
+		});
+	});
 });
