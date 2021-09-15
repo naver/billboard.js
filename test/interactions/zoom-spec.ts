@@ -131,7 +131,7 @@ describe("ZOOM", function() {
 							expect(spyOnZoomStart.args[0][0].type).to.be.equal("start");
 
 							util.fireEvent(rect, "mousemove", {
-								clientX: 100,
+								clientX: 120,
 								clientY: 150
 							}, chart);
 
@@ -148,7 +148,7 @@ describe("ZOOM", function() {
 							expect(spyOnZoom.args[0][0].map(Math.round)).to.be.deep.equal([0, 3]);
 
 							util.fireEvent(rect, "mouseup", {
-								clientX: 100,
+								clientX: 120,
 								clientY: 150
 							}, chart);
 
