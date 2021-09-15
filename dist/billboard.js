@@ -17706,7 +17706,7 @@ function selection_objectSpread(target) { for (var source, i = 1; i < arguments.
     ((_startEvent = startEvent) == null ? void 0 : _startEvent.type.indexOf("touch")) > -1 && (startEvent = startEvent.changedTouches[0], e = e.changedTouches[0]);
     // if click, do nothing. otherwise, click interaction will be canceled.
     config.zoom_type === "drag" && e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY || ( // do not call event cb when is .unzoom() is called
-    $$.redrawEventRect(), $$.updateZoom(), state.zooming = !1, !isUnZoom && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain()));
+    $$.redrawEventRect(), $$.updateZoom(), state.zooming = !1, !isUnZoom && (e || state.dragging) && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain()));
   },
 
   /**
