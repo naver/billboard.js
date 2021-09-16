@@ -11,25 +11,25 @@ export interface Plugin {
 	/**
 	 * Lifecycle hook for 'beforeInit' phase.
 	 */
-	$beforeInit?: () => void;
+	$beforeInit?: (this: Plugin) => void;
 
 	/**
 	 * Lifecycle hook for 'init' phase.
 	 */
-	$init?: () => void;
+	$init?: (this: Plugin) => void;
 
 	/**
 	 * Lifecycle hook for 'afterInit' phase.
 	 */
-	$afterInit?: () => void;
+	$afterInit?: (this: Plugin) => void;
 
 	/**
 	 * Lifecycle hook for 'redraw' phase.
 	 */
-	$redraw?: () => void;
+	$redraw?: (this: Plugin) => void;
 
 	/**
 	 * Lifecycle hook for 'willDestroy' phase.
 	 */
-	$willDestroy?: () => void;
+	$willDestroy?: (this: Plugin) => void;
 }
