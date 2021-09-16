@@ -9,5 +9,5 @@ export default class TabieView extends Plugin {
 	/**
 	 * Generate stanford diagram
 	 */
-	constructor(options: TabieViewOptions);
+	constructor(options?: TabieViewOptions);
 }

@@ -14,19 +14,20 @@ export default class Options {
 	constructor() {
 		return {
 			/**
-			 * Set selector string for target text nodes
+			 * Selector string for target text nodes within chart element.
+			 * - **NOTE:** If no value is given, defaults to data label text elements.
 			 * @name selector
 			 * @memberof plugin-textoverlap
 			 * @type {string}
-			 * @default ".bb-texts text"
+			 * @default undefined
 			 * @example
 			 *  // selector for data label text nodes
 			 * selector: ".bb-texts text"
 			 */
-			selector: ".bb-texts text",
+			selector: undefined,
 
 			/**
-			 * Set extent of label overlap prevention
+			 * Extent of label overlap prevention.
 			 * @name extent
 			 * @memberof plugin-textoverlap
 			 * @type {number}
@@ -37,7 +38,7 @@ export default class Options {
 			extent: 1,
 
 			/**
-			 * Set minimum area needed to show a data label
+			 * Minimum area needed to show a data label.
 			 * @name area
 			 * @memberof plugin-textoverlap
 			 * @type {number}

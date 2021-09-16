@@ -52,7 +52,6 @@ import {isNumber, tplProcess} from "../../module/util";
  * })
  */
 export default class TableView extends Plugin {
-	static version = `0.0.1`;
 	private config;
 	private element;
 
