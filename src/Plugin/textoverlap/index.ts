@@ -35,13 +35,14 @@ import Options from "./Options";
  *  var chart = bb.generate({
  *     data: {
  *     	  columns: [ ... ]
- *     }
+ *     },
  *     ...
  *     plugins: [
  *        new bb.plugin.textoverlap({
  *          selector: ".bb-texts text",
  *          extent: 8,
  *          area: 3
+ *        })
  *     ]
  *  });
  * @example
