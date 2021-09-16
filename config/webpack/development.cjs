@@ -47,7 +47,7 @@ module.exports = (common, env) => {
 	return env.PLUGIN ? mergeWithCustomize({
 		customizeObject: customizeObject({
 			entry: "replace",
-			output: "replace"
+			output: "append"
 		})
 	})(common, config) : merge(common, config);
 };

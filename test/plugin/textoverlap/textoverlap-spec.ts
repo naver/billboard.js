@@ -4,34 +4,29 @@
  */
 /* eslint-disable */
 import {expect} from "chai";
-import {select as d3Select} from "d3-selection";
 import util from "../../assets/util";
-import CLASS from "../../../src/config/classes";
 import TextOverlap from "../../../src/Plugin/textoverlap";
 
 describe("PLUGIN: TEXTOVERLAP", () => {
 	let chart;
 	let args = {
-        padding: {
-            left: 50
-        },
         data: {
             columns: [
-                ["data1", 1030, 2200, 2100],
-                ["data2", 1150, 2010, 1200],
-                ["data3", -1150, -2010, -1200],
-                ["data4", -1030, -2200, -2100]
+                ["data1", 3, 3, 10.1],
+                ["data2", 2.5, 3.2, 10],
+                ["data3", 2, 3.5, 10.2]
             ],
             type: "line",
-            labels: true,
-            groups: [
-                ["data1", "data2"],
-                ["data3", "data4"]
-            ]
+            labels: true
         },
         plugins: [
-            new TextOverlap({})
-        ]
+            new TextOverlap()
+        ],
+        axis: {
+            y: {
+                show: false
+            }
+        }
     };
 
 	beforeEach(() => {
@@ -39,25 +34,22 @@ describe("PLUGIN: TEXTOVERLAP", () => {
 	});
 
     it("should move data labels into correct position", () => {
-        const expectedTextDy = {
-            data1: ["0.35em", "0.71em", "0.71em"],
-            data2: ["0.35em", "0.35em", "0.71em"],
-            data3: ["0.71em", "0.71em", "0.35em"],
-            data4: ["0.71em", "0.35em", "0.35em"]
-        };
-        const expectedTextTransform = {
-            data1: ["translate(-1, -1)", "translate(-1, 6)", "translate(-1, 6)"],
-            data2: ["translate(-1, -1)", "translate(-1, -1)", "translate(-1, 6)"],
-            data3: ["translate(-1, 6)", "translate(-1, 6)", "translate(-1, -1)"],
-            data4: ["translate(-1, 6)", "translate(-1, -1)", "translate(-1, -1)"]
-        };
+        const {texts} = chart.$.text;
 
-        Object.keys(expectedTextDy).forEach(key => {
-            chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-                const text = d3Select(this);
+        chart.data().forEach((v, i) => {
+            let x;
+            let y;
 
-                expect(text.attr("dy")).to.be.equal(expectedTextDy[key][i]);
-                expect(text.attr("transform")).to.be.equal(expectedTextTransform[key][i]);
+            texts.filter(`.bb-text-${i}`).each(function(d, j) {
+                if (x === undefined) {
+                    x = +this.getAttribute("x");
+                    y = +this.getAttribute("y");
+                } else {
+                    expect(+this.getAttribute("x")).to.be.closeTo(x, 1);
+                    expect(+this.getAttribute("y")).to.be.closeTo(y, 50);;
+                }
+
+                expect(/translate\(-?1, (-1|6)\)/.test(this.getAttribute("transform"))).to.be.true;
             });
         });
     });
@@ -65,32 +57,24 @@ describe("PLUGIN: TEXTOVERLAP", () => {
     it("set options extent & area options", () => {
         args.plugins = [
             new TextOverlap({
-                extent: 8,
-                area: 3
+                extent: 5,
+                area: 0.35
             })
         ];
     });
 
     it("should move data labels into correct position with specified extent and area", () => {
-        const expectedTextDy = {
-            data1: ["0.35em", "0.71em", "0.71em"],
-            data2: ["0.35em", "0.35em", "0.71em"],
-            data3: ["0.71em", "0.71em", "0.35em"],
-            data4: ["0.71em", "0.35em", "0.35em"]
-        };
-        const expectedTextTransform = {
-            data1: ["translate(-8, -8)", "translate(-8, 13)", "translate(-8, 13)"],
-            data2: ["translate(-8, -8)", "translate(-8, -8)", "translate(-8, 13)"],
-            data3: ["translate(-8, 13)", "translate(-8, 13)", "translate(-8, -8)"],
-            data4: ["translate(-8, 13)", "translate(-8, -8)", "translate(-8, -8)"]
-        };
+        const expected = [
+            {data1: "", data2: "none", data3: ""},
+            {data1: "", data2: "", data3: ""},
+            {data1: "none", data2: "none", data3: ""}
+        ];
 
-        Object.keys(expectedTextDy).forEach(key => {
-            chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-                const text = d3Select(this);
+        const {texts} = chart.$.text;
 
-                expect(text.attr("dy")).to.be.equal(expectedTextDy[key][i]);
-                expect(text.attr("transform")).to.be.equal(expectedTextTransform[key][i]);
+        chart.data().forEach((v, i) => {
+            texts.filter(`.bb-text-${i}`).each(function(d) {
+                expect(this.style.display).to.be.equal(expected[d.index][d.id]);
             });
         });
     });
