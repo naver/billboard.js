@@ -1,3 +1,12 @@
+# [3.2.0-next.5](https://github.com/naver/billboard.js/compare/3.2.0-next.4...3.2.0-next.5) (2021-09-17)
+
+
+### Bug Fixes
+
+* **plugin:** fix textoverlap plugin ([5e486b5](https://github.com/naver/billboard.js/commit/5e486b57107573b2c0fc4282ff7c3ba91aa96e73)), closes [#1144](https://github.com/naver/billboard.js/issues/1144)
+* **types:** Fix wrong type definition ([5f7779b](https://github.com/naver/billboard.js/commit/5f7779bdb1913951e197a25a8aa766b946c591f8)), closes [#2316](https://github.com/naver/billboard.js/issues/2316)
+* **zoom:** Fix zoomend call on .zoom()  ([9515565](https://github.com/naver/billboard.js/commit/9515565ada0fc4a0fa8f6b75698463d324f26353)), closes [#2217](https://github.com/naver/billboard.js/issues/2217) [#2254](https://github.com/naver/billboard.js/issues/2254)
+
 # [3.2.0-next.4](https://github.com/naver/billboard.js/compare/3.2.0-next.3...3.2.0-next.4) (2021-09-13)
 
 
