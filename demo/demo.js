@@ -2993,11 +2993,20 @@ d3.select(".chart_area")
 					type: "line",
 					labels: true
 				},
+				axis: {
+					x: {
+						padding: {
+							left: 25,
+							right: 25,
+							unit: "px"
+						}
+					}
+				},
 				_plugins: [{
 					textoverlap: {
 						selector: ".bb-texts text",
 						extent: 8,
-						area : 3
+						area : 0
 					}
 				}]
 			}

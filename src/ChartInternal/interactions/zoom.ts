@@ -226,7 +226,7 @@ export default {
 		state.zooming = false;
 
 		// do not call event cb when is .unzoom() is called
-		!isUnZoom && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain());
+		!isUnZoom && (e || state.dragging) && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain());
 	},
 
 	/**

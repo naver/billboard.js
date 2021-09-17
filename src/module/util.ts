@@ -436,11 +436,13 @@ const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.sl
 
 /**
  * Camelize from kebob style string
- * @param {string} str Kebob string
+ * @param {string} str Target string
+ * @param {string} separator Separator string
  * @returns {string} camelized string
+ * @private
  */
-function camelize(str: string): string {
-	return str.split("-")
+function camelize(str: string, separator = "-"): string {
+	return str.split(separator)
 		.map((v, i) => (
 			i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()
 		))
