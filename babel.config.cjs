@@ -38,7 +38,6 @@ module.exports = function(api) {
 		"minify-dead-code-elimination",
 		"minify-guarded-expressions",
 		"minify-numeric-literals",
-		"minify-simplify",
 		"minify-type-constructors"
 	];
 
