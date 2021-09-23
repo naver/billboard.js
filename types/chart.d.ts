@@ -223,7 +223,7 @@ export interface Chart {
 		 * Zoom by giving x domain.
 		 * @param domain If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
 		 */
-		(domain?: Array<Date|number>): Array<Date|number>;
+		(domain?: Array<Date|number|string>): Array<Date|number>;
 
 		/**
 		 * Enable and disable zooming.
