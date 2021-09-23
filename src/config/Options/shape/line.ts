@@ -20,6 +20,8 @@ export default {
 	 * - step
 	 * - step-before
 	 * - step-after
+	 * @property {boolean} [line.step.tooltipMatch=false] Set to true for step-before and step-after types to have cursor/tooltip match to hovered step's point instead of nearest point.<br>
+	 * Note that [data.type](#.data․type) must be set to `step`.
 	 * @property {boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
 	 * @property {boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
 	 * @example
@@ -30,7 +32,8 @@ export default {
 	 *          "line-class2"
 	 *      ],
 	 *      step: {
-	 *          type: "step-after"
+	 *          type: "step-after",
+	 *          tooltipMatch: true
 	 *      },
 	 *
 	 *      // hide all data points ('point.show=false' also has similar effect)
@@ -46,6 +49,7 @@ export default {
 	 */
 	line_connectNull: false,
 	line_step_type: <"step"|"step-before"|"step-after"> "step",
+	line_step_tooltipMatch: false,
 	line_zerobased: false,
 	line_classes: <string[]|undefined> undefined,
 	line_point: <string[]|boolean> true

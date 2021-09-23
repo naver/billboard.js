@@ -406,14 +406,34 @@ export default {
 
 					state.event = event;
 
-					// do nothing while dragging/flowing
-					if (state.dragging || state.flowing || $$.hasArcType() ||
-						!d || (config.tooltip_grouped && d && d.index === eventReceiver.currentIdx)
-					) {
+					if (!d) {
 						return;
 					}
 
-					const {index} = d;
+					let {index} = d;
+
+					if ($$.isStepType(d)) {
+						const scale = $$.scale.zoom || $$.scale.x;
+
+						if (config.line_step_type === "step-after" &&
+							config.line_step_tooltipMatch &&
+							scale.invert(getPointer(event, this)[0]) < $$.axis.xs[index]
+						) {
+							index -= 1;
+						} else if (config.line_step_type === "step-before" &&
+							config.line_step_tooltipMatch &&
+							scale.invert(getPointer(event, this)[0]) > $$.axis.xs[index]
+						) {
+							index += 1;
+						}
+					}
+
+					// do nothing while dragging/flowing
+					if (state.dragging || state.flowing || $$.hasArcType() ||
+						(config.tooltip_grouped && d && index === eventReceiver.currentIdx)
+					) {
+						return;
+					}
 
 					if (index !== eventReceiver.currentIdx) {
 						$$.setOverOut(false, eventReceiver.currentIdx);
