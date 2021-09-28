@@ -10819,6 +10819,13 @@ var legend_legend = {
    *         value: ["upload", "download"]
    *     }
    * });
+   * @example
+   * chart.load({
+   *   json: {
+   *       data1:[30, 20, 50, 40, 60, 50],
+   *       data2:[200, 130, 90, 240, 130, 220],
+   *   }
+   * });
    */
   load: function load(args) {
     var $$ = this.internal,
@@ -14098,13 +14105,32 @@ var Axis_Axis = /*#__PURE__*/function () {
         $$.updateEventRect();
       }).on("mousemove", function (event) {
         var d = getData(event);
-        state.event = event; // do nothing while dragging/flowing
+        state.event = event;
 
-        if (state.dragging || state.flowing || $$.hasArcType() || !d || config.tooltip_grouped && d && d.index === eventReceiver.currentIdx) {
+        if (!d) {
           return;
         }
 
-        var index = d.index;
+        var index = d.index,
+            stepType = config.line_step_type;
+
+        // tooltip position match for step-before & step-after
+        if (config.line_step_tooltipMatch && $$.hasType("step") && /^step\-(before|after)$/.test(stepType)) {
+          var scale = $$.scale.zoom || $$.scale.x,
+              xs = $$.axis.xs[index],
+              inverted = scale.invert(getPointer(event, this)[0]);
+
+          if (stepType === "step-after" && inverted < xs) {
+            index -= 1;
+          } else if (stepType === "step-before" && inverted > xs) {
+            index += 1;
+          }
+        } // do nothing while dragging/flowing
+
+
+        if (state.dragging || state.flowing || $$.hasArcType() || config.tooltip_grouped && index === eventReceiver.currentIdx) {
+          return;
+        }
 
         if (index !== eventReceiver.currentIdx) {
           $$.setOverOut(!1, eventReceiver.currentIdx);
@@ -20131,6 +20157,7 @@ var cacheKey = KEY.radarPoints;
    * - step
    * - step-before
    * - step-after
+   * @property {boolean} [line.step.tooltipMatch=false] Set to `true` for `step-before` and `step-after` types to have cursor/tooltip match to hovered step's point instead of nearest point.
    * @property {boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
    * @property {boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
    * @example
@@ -20141,7 +20168,10 @@ var cacheKey = KEY.radarPoints;
    *          "line-class2"
    *      ],
    *      step: {
-   *          type: "step-after"
+   *          type: "step-after",
+   *
+   *          // to have cursor/tooltip match to hovered step's point instead of nearest point.
+   *          tooltipMatch: true
    *      },
    *
    *      // hide all data points ('point.show=false' also has similar effect)
@@ -20157,6 +20187,7 @@ var cacheKey = KEY.radarPoints;
    */
   line_connectNull: !1,
   line_step_type: "step",
+  line_step_tooltipMatch: !1,
   line_zerobased: !1,
   line_classes: undefined,
   line_point: !0
@@ -21060,6 +21091,9 @@ function withinRange(domain, current, range) {
  *  // Zoom to specified domain range
  *  chart.zoom([10, 20]);
  *
+ *  // For timeseries, the domain value can be string, but the format should match with the 'data.xFormat' option.
+ *  chart.zoom(["2021-02-03", "2021-02-08"]);
+ *
  *  // Get the current zoomed domain range
  *  chart.zoom();
  */
@@ -21068,15 +21102,16 @@ function withinRange(domain, current, range) {
 var zoom = function (domainValue) {
   var $$ = this.internal,
       $el = $$.$el,
+      axis = $$.axis,
       config = $$.config,
       org = $$.org,
       scale = $$.scale,
       isRotated = config.axis_rotated,
-      isCategorized = $$.axis.isCategorized(),
+      isCategorized = axis.isCategorized(),
       domain = domainValue;
 
   if (config.zoom_enabled && domain) {
-    if ($$.axis.isTimeSeries()) {
+    if (axis.isTimeSeries()) {
       domain = domain.map(function (x) {
         return parseDate.bind($$)(x);
       });
