@@ -223,7 +223,7 @@ export interface Chart {
 		 * Zoom by giving x domain.
 		 * @param domain If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
 		 */
-		(domain?: Array<Date|number>): Array<Date|number>;
+		(domain?: Array<Date|number|string>): Array<Date|number>;
 
 		/**
 		 * Enable and disable zooming.
@@ -347,7 +347,7 @@ export interface Chart {
 	load(this: Chart, args: {
 		append?: boolean;
 		url?: string;
-		json?: [{ [key: string]: string }];
+		json?: [{ [key: string]: string | number }] | {[key: string]: string[] | number[]};
 		rows?: PrimitiveArray[];
 		columns?: PrimitiveArray[];
 		data?: Array<{ [key: string]: number }>;

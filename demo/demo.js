@@ -760,6 +760,9 @@ var demos = {
 		StepChart: [
 			{
 				options: {
+					title: {
+						text: "default",
+					},
 					data: {
 						columns: [
 							["data1", 300, 350, 300, 20, 240, 100],
@@ -774,6 +777,9 @@ var demos = {
 			},
 			{
 				options: {
+					title: {
+						text: "step-before",
+					},
 					data: {
 						columns: [
 							["data1", 300, 350, 300, 20, 240, 100],
@@ -786,13 +792,17 @@ var demos = {
 					},
 					line: {
 						step: {
-							type: "step-before"
+							type: "step-before",
+							tooltipMatch: true,
 						}
 					}
 				}
 			},
 			{
 				options: {
+					title: {
+						text: "step-after",
+					},
 					data: {
 						columns: [
 							["data1", 300, 350, 300, 20, 240, 100],
@@ -805,7 +815,8 @@ var demos = {
 					},
 					line: {
 						step: {
-							type: "step-after"
+							type: "step-after",
+							tooltipMatch: true
 						}
 					}
 				}
