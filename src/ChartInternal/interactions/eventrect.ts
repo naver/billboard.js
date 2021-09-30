@@ -406,14 +406,32 @@ export default {
 
 					state.event = event;
 
-					// do nothing while dragging/flowing
-					if (state.dragging || state.flowing || $$.hasArcType() ||
-						!d || (config.tooltip_grouped && d && d.index === eventReceiver.currentIdx)
-					) {
+					if (!d) {
 						return;
 					}
 
-					const {index} = d;
+					let {index} = d;
+					const stepType = config.line_step_type;
+
+					// tooltip position match for step-before & step-after
+					if (config.line_step_tooltipMatch && $$.hasType("step") && /^step\-(before|after)$/.test(stepType)) {
+						const scale = $$.scale.zoom || $$.scale.x;
+						const xs = $$.axis.xs[index];
+						const inverted = scale.invert(getPointer(event, this)[0]);
+
+						if (stepType === "step-after" && inverted < xs) {
+							index -= 1;
+						} else if (stepType === "step-before" && inverted > xs) {
+							index += 1;
+						}
+					}
+
+					// do nothing while dragging/flowing
+					if (state.dragging || state.flowing || $$.hasArcType() ||
+						(config.tooltip_grouped && index === eventReceiver.currentIdx)
+					) {
+						return;
+					}
 
 					if (index !== eventReceiver.currentIdx) {
 						$$.setOverOut(false, eventReceiver.currentIdx);
