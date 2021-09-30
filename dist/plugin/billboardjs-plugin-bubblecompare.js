@@ -5,7 +5,11 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
+<<<<<<< Updated upstream
  * @version 3.1.3-nightly-20210804004536
+=======
+ * @version 3.1.5-nightly-20210930111735
+>>>>>>> Stashed changes
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -174,7 +178,11 @@ var Plugin = /*#__PURE__*/function () {
   }, Plugin;
 }();
 
+<<<<<<< Updated upstream
 Plugin.version = "3.1.3";
+=======
+Plugin.version = "3.1.5-nightly-20210930111735";
+>>>>>>> Stashed changes
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
 

@@ -5,13 +5,13 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.1.3
+ * @version 3.1.5-nightly-20210930111735
  * @requires billboard.js
  * @summary billboard.js plugin
 */
-import { voronoi } from 'd3-voronoi';
+import { Delaunay } from 'd3-delaunay';
 import { polygonCentroid, polygonArea } from 'd3-polygon';
-import { selectAll, select } from 'd3-selection';
+import 'd3-selection';
 import 'd3-brush';
 
 /*! *****************************************************************************
@@ -31,26 +31,38 @@ PERFORMANCE OF THIS SOFTWARE.
 
 /* global Reflect, Promise */
 var _extendStatics = function extendStatics(d, b) {
-  return _extendStatics = Object.setPrototypeOf || {
+  _extendStatics = Object.setPrototypeOf || {
     __proto__: []
   } instanceof Array && function (d, b) {
     d.__proto__ = b;
   } || function (d, b) {
-    for (var p in b) Object.prototype.hasOwnProperty.call(b, p) && (d[p] = b[p]);
-  }, _extendStatics(d, b);
+    for (var p in b) {
+      if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+    }
+  };
+
+  return _extendStatics(d, b);
 };
 
 function __extends(d, b) {
+  if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + (b + "") + " is not a constructor or null");
+
+  _extendStatics(d, b);
+
   function __() {
     this.constructor = d;
   }
 
-  if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + (b + "") + " is not a constructor or null");
-  _extendStatics(d, b), d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 function __spreadArray(to, from, pack) {
-  if (pack || arguments.length === 2) for (var ar, i = 0, l = from.length; i < l; i++) (ar || !(i in from)) && (!ar && (ar = Array.prototype.slice.call(from, 0, i)), ar[i] = from[i]);
-  return to.concat(ar || from);
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
 }
 
 /**
@@ -64,7 +76,10 @@ var win = (function () {
     return root || Function("return this")();
 })();
 /* eslint-enable no-new-func, no-undef */
-var doc = win && win.document;
+// fallback for non-supported environments
+win.requestIdleCallback = win.requestIdleCallback || (function (cb) { return setTimeout(cb, 1); });
+win.cancelIdleCallback = win.cancelIdleCallback || (function (id) { return clearTimeout(id); });
+var doc = win === null || win === void 0 ? void 0 : win.document;
 
 var isDefined = function (v) { return typeof v !== "undefined"; };
 var isObjectType = function (v) { return typeof v === "object"; };
@@ -81,7 +96,7 @@ var isArray = function (arr) { return Array.isArray(arr); };
  * @returns {boolean}
  * @private
  */
-var isObject = function (obj) { return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj); };
+var isObject = function (obj) { return obj && !(obj === null || obj === void 0 ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
 /**
  * Merge object returning new object
  * @param {object} target Target object
@@ -111,7 +126,7 @@ function mergeObj(target) {
             }
         });
     }
-    return mergeObj.apply(void 0, __spreadArray([target], objectN));
+    return mergeObj.apply(void 0, __spreadArray([target], objectN, false));
 }
 // emulate event
 ({
@@ -230,7 +245,12 @@ var Plugin = /*#__PURE__*/function () {
    * @private
    */
   function Plugin(options) {
-    options === void 0 && (options = {}), this.$$, this.options = options;
+    if (options === void 0) {
+      options = {};
+    }
+
+    this.$$;
+    this.options = options;
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -239,36 +259,48 @@ var Plugin = /*#__PURE__*/function () {
 
 
   var _proto = Plugin.prototype;
-  return _proto.$beforeInit = function $beforeInit() {}
+
+  _proto.$beforeInit = function $beforeInit() {}
   /**
    * Lifecycle hook for 'init' phase.
    * @private
    */
-  , _proto.$init = function $init() {}
+  ;
+
+  _proto.$init = function $init() {}
   /**
    * Lifecycle hook for 'afterInit' phase.
    * @private
    */
-  , _proto.$afterInit = function $afterInit() {}
+  ;
+
+  _proto.$afterInit = function $afterInit() {}
   /**
    * Lifecycle hook for 'redraw' phase.
    * @private
    */
-  , _proto.$redraw = function $redraw() {}
+  ;
+
+  _proto.$redraw = function $redraw() {}
   /**
    * Lifecycle hook for 'willDestroy' phase.
    * @private
    */
-  , _proto.$willDestroy = function $willDestroy() {
+  ;
+
+  _proto.$willDestroy = function $willDestroy() {
     var _this = this;
 
     Object.keys(this).forEach(function (key) {
-      _this[key] = null, delete _this[key];
+      _this[key] = null;
+      delete _this[key];
     });
-  }, Plugin;
+  };
+
+  return Plugin;
 }();
 
-Plugin.version = "#3.1.3#";
+Plugin.version = "#3.1.5-nightly-20210930111735#";
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -286,18 +318,19 @@ var Options = /** @class */ (function () {
     function Options() {
         return {
             /**
-             * Set selector string for target text nodes
+             * Selector string for target text nodes within chart element.
+             * - **NOTE:** If no value is given, defaults to data label text elements.
              * @name selector
              * @memberof plugin-textoverlap
              * @type {string}
-             * @default ".bb-texts text"
+             * @default undefined
              * @example
              *  // selector for data label text nodes
              * selector: ".bb-texts text"
              */
-            selector: ".bb-texts text",
+            selector: undefined,
             /**
-             * Set extent of label overlap prevention
+             * Extent of label overlap prevention.
              * @name extent
              * @memberof plugin-textoverlap
              * @type {number}
@@ -307,7 +340,7 @@ var Options = /** @class */ (function () {
              */
             extent: 1,
             /**
-             * Set minimum area needed to show a data label
+             * Minimum area needed to show a data label.
              * @name area
              * @memberof plugin-textoverlap
              * @type {number}
@@ -327,14 +360,13 @@ var Options = /** @class */ (function () {
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
  *   - Non required modules from billboard.js core, need to be installed separately.
+ *   - Appropriate and works for axis based chart.
  * - **Required modules:**
- *   - [d3-selection](https://github.com/d3/d3-selection)
  *   - [d3-polygon](https://github.com/d3/d3-polygon)
- *   - [d3-voronoi](https://github.com/d3/d3-voronoi)
+ *   - [d3-delaunay](https://github.com/d3/d3-delaunay)
  * @class plugin-textoverlap
- * @requires d3-selection
  * @requires d3-polygon
- * @requires d3-voronoi
+ * @requires d3-delaunay
  * @param {object} options TextOverlap plugin options
  * @augments Plugin
  * @returns {TextOverlap}
@@ -345,18 +377,19 @@ var Options = /** @class */ (function () {
  *  var chart = bb.generate({
  *     data: {
  *     	  columns: [ ... ]
- *     }
+ *     },
  *     ...
  *     plugins: [
  *        new bb.plugin.textoverlap({
  *          selector: ".bb-texts text",
  *          extent: 8,
  *          area: 3
+ *        })
  *     ]
  *  });
  * @example
  *	import {bb} from "billboard.js";
- * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap.esm";
+ * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap";
  *
  * bb.generate({
  *     plugins: [
@@ -375,24 +408,25 @@ var TextOverlap = /** @class */ (function (_super) {
         loadConfig.call(this, this.options);
     };
     TextOverlap.prototype.$redraw = function () {
-        var text = selectAll(this.config.selector);
+        var _a = this, $el = _a.$$.$el, selector = _a.config.selector;
+        var text = selector ? $el.main.selectAll(selector) : $el.text;
         !text.empty() && this.preventLabelOverlap(text);
     };
     /**
      * Generates the voronoi layout for data labels
-     * @param {object} data Indices values
+     * @param {Array} points Indices values
      * @returns {object} Voronoi layout points and corresponding Data points
      * @private
      */
-    TextOverlap.prototype.generateVoronoi = function (data) {
+    TextOverlap.prototype.generateVoronoi = function (points) {
         var _a;
         var $$ = this.$$;
         var scale = $$.scale;
         var _b = ["x", "y"].map(function (v) { return scale[v].domain(); }), min = _b[0], max = _b[1];
         _a = [max[0], min[1]], min[1] = _a[0], max[0] = _a[1];
-        return voronoi()
-            .extent([min, max])
-            .polygons(data);
+        return Delaunay
+            .from(points)
+            .voronoi(__spreadArray(__spreadArray([], min, true), max, true)); // bounds = [xmin, ymin, xmax, ymax], default value: [0, 0, 960, 500]
     };
     /**
      * Set text label's position to preventg overlap.
@@ -401,25 +435,28 @@ var TextOverlap = /** @class */ (function (_super) {
      */
     TextOverlap.prototype.preventLabelOverlap = function (text) {
         var _a = this.config, extent = _a.extent, area = _a.area;
-        var cells = this.generateVoronoi(text.data().map(function (v) { return [v.x, v.value]; }));
+        var points = text.data().map(function (v) { return [v.index, v.value]; });
+        var voronoi = this.generateVoronoi(points);
         var i = 0;
         text.each(function () {
-            var cell = cells[i++];
+            var cell = voronoi.cellPolygon(i);
             if (cell && this) {
-                var _a = cell.data, x = _a[0], y = _a[1];
+                var _a = points[i], x = _a[0], y = _a[1];
+                // @ts-ignore wrong type definiton for d3PolygonCentroid
                 var _b = polygonCentroid(cell), cx = _b[0], cy = _b[1];
+                // @ts-ignore wrong type definiton for d3PolygonArea
+                var polygonArea$1 = Math.abs(polygonArea(cell));
                 var angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
                 var xTranslate = extent * (angle === 0 ? 1 : -1);
                 var yTranslate = angle === -1 ? -extent : extent + 5;
                 var txtAnchor = Math.abs(angle) === 1 ?
                     "middle" : (angle === 0 ? "start" : "end");
-                select(this)
-                    // @ts-ignore
-                    .attr("display", polygonArea(cell) < area ? "none" : null)
-                    .attr("text-anchor", txtAnchor)
-                    .attr("dy", "0." + (angle === 1 ? 71 : 35) + "em")
-                    .attr("transform", "translate(" + xTranslate + ", " + yTranslate + ")");
+                this.style.display = polygonArea$1 < area ? "none" : "";
+                this.setAttribute("text-anchor", txtAnchor);
+                this.setAttribute("dy", "0." + (angle === 1 ? 71 : 35) + "em");
+                this.setAttribute("transform", "translate(" + xTranslate + ", " + yTranslate + ")");
             }
+            i++;
         });
     };
     return TextOverlap;

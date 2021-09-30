@@ -5,24 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
-<<<<<<< Updated upstream
- * @version 3.1.3-nightly-20210804004536
-=======
  * @version 3.1.5-nightly-20210930111735
->>>>>>> Stashed changes
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-voronoi"), require("d3-polygon"), require("d3-selection"), require("d3-brush"));
+		module.exports = factory(require("d3-selection"), require("d3-brush"));
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-voronoi", "d3-polygon", "d3-selection", "d3-brush"], factory);
+		define("bb", ["d3-selection", "d3-brush"], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-voronoi"), require("d3-polygon"), require("d3-selection"), require("d3-brush"));
+		exports["bb"] = factory(require("d3-selection"), require("d3-brush"));
 	else
-		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["textoverlap"] = factory(root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__6__) {
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["sparkline"] = factory(root["d3"], root["d3"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__3__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -34,29 +30,10 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 
 /***/ }),
 /* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */
+/* 3 */
 /***/ (function(module) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__6__;
-
-/***/ }),
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
-
-/***/ }),
-/* 12 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
 
 /***/ })
 /******/ 	]);
@@ -110,7 +87,7 @@ var __webpack_exports__ = {};
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "default": function() { return /* binding */ TextOverlap; }
+  "default": function() { return /* binding */ Sparkline; }
 });
 
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
@@ -137,49 +114,6 @@ function _inheritsLoose(subClass, superClass) {
   subClass.prototype.constructor = subClass;
   _setPrototypeOf(subClass, superClass);
 }
-// EXTERNAL MODULE: external {"commonjs":"d3-voronoi","commonjs2":"d3-voronoi","amd":"d3-voronoi","root":"d3"}
-var external_commonjs_d3_voronoi_commonjs2_d3_voronoi_amd_d3_voronoi_root_d3_ = __webpack_require__(11);
-// EXTERNAL MODULE: external {"commonjs":"d3-polygon","commonjs2":"d3-polygon","amd":"d3-polygon","root":"d3"}
-var external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_ = __webpack_require__(12);
-// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(6);
-;// CONCATENATED MODULE: ./src/module/browser.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Window object
- * @private
- */
-
-/* eslint-disable no-new-func, no-undef */
-
-
-var win = function () {
-  var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
-  return root || Function("return this")();
-}(),
-    doc = win && win.document;
-/* eslint-enable no-new-func, no-undef */
 ;// CONCATENATED MODULE: ./src/config/classes.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -295,12 +229,178 @@ var win = function () {
   INCLUDED: "_included_",
   TextOverlapping: "text-overlapping"
 });
+;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Base class to generate billboard.js plugin
+ * @class Plugin
+ */
+
+/**
+ * Version info string for plugin
+ * @name version
+ * @static
+ * @memberof Plugin
+ * @type {string}
+ * @example
+ *   bb.plugin.stanford.version;  // ex) 1.9.0
+ */
+var Plugin = /*#__PURE__*/function () {
+  /**
+   * Constructor
+   * @param {Any} options config option object
+   * @private
+   */
+  function Plugin(options) {
+    if (options === void 0) {
+      options = {};
+    }
+
+    this.$$ = void 0;
+    this.options = void 0;
+    this.options = options;
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+
+
+  var _proto = Plugin.prototype;
+
+  _proto.$beforeInit = function $beforeInit() {}
+  /**
+   * Lifecycle hook for 'init' phase.
+   * @private
+   */
+  ;
+
+  _proto.$init = function $init() {}
+  /**
+   * Lifecycle hook for 'afterInit' phase.
+   * @private
+   */
+  ;
+
+  _proto.$afterInit = function $afterInit() {}
+  /**
+   * Lifecycle hook for 'redraw' phase.
+   * @private
+   */
+  ;
+
+  _proto.$redraw = function $redraw() {}
+  /**
+   * Lifecycle hook for 'willDestroy' phase.
+   * @private
+   */
+  ;
+
+  _proto.$willDestroy = function $willDestroy() {
+    var _this = this;
+
+    Object.keys(this).forEach(function (key) {
+      _this[key] = null;
+      delete _this[key];
+    });
+  };
+
+  return Plugin;
+}();
+
+Plugin.version = "3.1.5-nightly-20210930111735";
+
+;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
+/**
+ * Copyright (c) 2021 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Sparkline plugin option class
+ * @class SparklineOptions
+ * @param {Options} options Sparkline plugin options
+ * @augments Plugin
+ * @returns {TableviewOptions}
+ * @private
+ */
+var Options = function () {
+  return {
+    /**
+     * Specify sparkline charts holder selector.
+     * - **NOTE:** The amount of holder should match with the amount of data. If has less, will append necessaray amount nodes as sibling of main chart.
+     * @name selector
+     * @memberof plugin-sparkline
+     * @type {string}
+     * @default undefined
+     * @example
+     *   selector: ".sparkline"
+     */
+    selector: undefined
+  };
+};
+
+
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
+// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
+;// CONCATENATED MODULE: ./src/module/browser.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Window object
+ * @private
+ */
+
+/* eslint-disable no-new-func, no-undef */
+
+
+var win = function () {
+  var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
+  return root || Function("return this")();
+}();
+/* eslint-enable no-new-func, no-undef */
+// fallback for non-supported environments
+
+
+win.requestIdleCallback = win.requestIdleCallback || function (cb) {
+  return setTimeout(cb, 1);
+};
+
+win.cancelIdleCallback = win.cancelIdleCallback || function (id) {
+  return clearTimeout(id);
+};
+
+var doc = win == null ? void 0 : win.document;
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
+function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -356,7 +456,7 @@ var isValue = function (v) {
   return Array.isArray(arr);
 },
     isObject = function (obj) {
-  return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
+  return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
 };
 
 /**
@@ -382,9 +482,10 @@ function getOption(options, key, defaultValue) {
 
 function hasValue(dict, value) {
   var found = !1;
-  return Object.keys(dict).forEach(function (key) {
+  Object.keys(dict).forEach(function (key) {
     return dict[key] === value && (found = !0);
-  }), found;
+  });
+  return found;
 }
 /**
  * Call function with arguments
@@ -396,9 +497,12 @@ function hasValue(dict, value) {
 
 
 function callFn(fn) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
+  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    args[_key - 1] = arguments[_key];
+  }
 
-  return isFn && fn.call.apply(fn, args), isFn;
+  isFn && fn.call.apply(fn, args);
+  return isFn;
 }
 /**
  * Call function after all transitions ends
@@ -411,14 +515,22 @@ function callFn(fn) {
 function endall(transition, cb) {
   var n = 0,
       end = function () {
-    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
 
     --n || cb.apply.apply(cb, [this].concat(args));
   };
 
-  "duration" in transition ? transition.each(function () {
-    return ++n;
-  }).on("end", end) : (++n, transition.call(end));
+  // if is transition selection
+  if ("duration" in transition) {
+    transition.each(function () {
+      return ++n;
+    }).on("end", end);
+  } else {
+    ++n;
+    transition.call(end);
+  }
 }
 /**
  * Replace tag sign to html entity
@@ -442,7 +554,21 @@ function sanitise(str) {
 
 
 function setTextValue(node, text, dy, toMiddle) {
-  if (dy === void 0 && (dy = [-1, 1]), toMiddle === void 0 && (toMiddle = !1), node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
+  if (dy === void 0) {
+    dy = [-1, 1];
+  }
+
+  if (toMiddle === void 0) {
+    toMiddle = !1;
+  }
+
+  if (!node || !isString(text)) {
+    return;
+  }
+
+  if (text.indexOf("\n") === -1) {
+    node.text(text);
+  } else {
     var diff = [node.text(), text].map(function (v) {
       return v.replace(/[\s\n]/g, "");
     });
@@ -450,7 +576,9 @@ function setTextValue(node, text, dy, toMiddle) {
     if (diff[0] !== diff[1]) {
       var multiline = text.split("\n"),
           len = toMiddle ? multiline.length - 1 : 1;
-      node.html(""), multiline.forEach(function (v, i) {
+      // reset possible text
+      node.html("");
+      multiline.forEach(function (v, i) {
         node.append("tspan").attr("x", 0).attr("dy", (i === 0 ? dy[0] * len : dy[1]) + "em").text(v);
       });
     }
@@ -542,11 +670,19 @@ function getPointer(event, element) {
 
 
 function getBrushSelection(ctx) {
-  var selection,
-      event = ctx.event,
+  var event = ctx.event,
       $el = ctx.$el,
-      main = $el.subchart.main || $el.main;
-  return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + classes.brush).node()) && (selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection)), selection;
+      main = $el.subchart.main || $el.main,
+      selection;
+
+  // check from event
+  if (event && event.type === "brush") {
+    selection = event.selection; // check from brush area selection
+  } else if (main && (selection = main.select("." + classes.brush).node())) {
+    selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection);
+  }
+
+  return selection;
 }
 /**
  * Get boundingClientRect.
@@ -570,7 +706,10 @@ function getBoundingRect(node) {
 
 
 function getRandom(asStr) {
-  asStr === void 0 && (asStr = !0);
+  if (asStr === void 0) {
+    asStr = !0;
+  }
+
   var rand = Math.random();
   return asStr ? rand + "" : rand;
 }
@@ -587,13 +726,26 @@ function getRandom(asStr) {
 
 
 function findIndex(arr, v, start, end, isRotated) {
-  if (start > end) return -1;
+  if (start > end) {
+    return -1;
+  }
+
   var mid = Math.floor((start + end) / 2),
       _arr$mid = arr[mid],
       x = _arr$mid.x,
       _arr$mid$w = _arr$mid.w,
       w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
-  return isRotated && (x = arr[mid].y, w = arr[mid].h), v >= x && v <= x + w ? mid : v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
+
+  if (isRotated) {
+    x = arr[mid].y;
+    w = arr[mid].h;
+  }
+
+  if (v >= x && v <= x + w) {
+    return mid;
+  }
+
+  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
 }
 /**
  * Check if brush is empty
@@ -605,7 +757,15 @@ function findIndex(arr, v, start, end, isRotated) {
 
 function brushEmpty(ctx) {
   var selection = getBrushSelection(ctx);
-  return !selection || selection[0] === selection[1];
+
+  if (selection) {
+    // brush selected area
+    // two-dimensional: [[x0, y0], [x1, y1]]
+    // one-dimensional: [x0, x1] or [y0, y1]
+    return selection[0] === selection[1];
+  }
+
+  return !0;
 }
 /**
  * Deep copy object
@@ -616,25 +776,21 @@ function brushEmpty(ctx) {
 
 
 function deepClone() {
-  for (var clone = function (_clone) {
-    function clone() {
-      return _clone.apply(this, arguments);
-    }
-
-    return clone.toString = function () {
-      return _clone.toString();
-    }, clone;
-  }(function (v) {
+  for (var clone = function (v) {
     if (isObject(v) && v.constructor) {
       var r = new v.constructor();
 
-      for (var k in v) r[k] = clone(v[k]);
+      for (var k in v) {
+        r[k] = clone(v[k]);
+      }
 
       return r;
     }
 
     return v;
-  }), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) objectN[_key3] = arguments[_key3];
+  }, _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    objectN[_key3] = arguments[_key3];
+  }
 
   return objectN.map(function (v) {
     return clone(v);
@@ -652,10 +808,24 @@ function deepClone() {
 
 
 function extend(target, source) {
-  // exclude name with only numbers
-  for (var p in target === void 0 && (target = {}), isArray(source) && source.forEach(function (v) {
-    return extend(target, v);
-  }), source) /^\d+$/.test(p) || p in target || (target[p] = source[p]);
+  if (target === void 0) {
+    target = {};
+  }
+
+  if (isArray(source)) {
+    source.forEach(function (v) {
+      return extend(target, v);
+    });
+  } // exclude name with only numbers
+
+
+  for (var p in source) {
+    if (/^\d+$/.test(p) || p in target) {
+      continue;
+    }
+
+    target[p] = source[p];
+  }
 
   return target;
 }
@@ -669,10 +839,25 @@ function extend(target, source) {
 
 var capitalize = function (str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
-},
-    toArray = function (v) {
-  return [].slice.call(v);
 };
+/**
+ * Camelize from kebob style string
+ * @param {string} str Target string
+ * @param {string} separator Separator string
+ * @returns {string} camelized string
+ * @private
+ */
+
+
+function camelize(str, separator) {
+  if (separator === void 0) {
+    separator = "-";
+  }
+
+  return str.split(separator).map(function (v, i) {
+    return i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase();
+  }).join("");
+}
 /**
  * Convert to array
  * @param {object} v Target to be converted
@@ -681,21 +866,29 @@ var capitalize = function (str) {
  */
 
 
+var toArray = function (v) {
+  return [].slice.call(v);
+};
 /**
  * Get css rules for specified stylesheets
  * @param {Array} styleSheets The stylesheets to get the rules from
  * @returns {Array}
  * @private
  */
+
+
 function getCssRules(styleSheets) {
   var rules = [];
-  return styleSheets.forEach(function (sheet) {
+  styleSheets.forEach(function (sheet) {
     try {
-      sheet.cssRules && sheet.cssRules.length && (rules = rules.concat(toArray(sheet.cssRules)));
+      if (sheet.cssRules && sheet.cssRules.length) {
+        rules = rules.concat(toArray(sheet.cssRules));
+      }
     } catch (e) {
       console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
     }
-  }), rules;
+  });
+  return rules;
 }
 /**
  * Gets the SVGMatrix of an SVGGElement
@@ -705,7 +898,7 @@ function getCssRules(styleSheets) {
  */
 
 
-var getTranslation = function (node) {
+function getTranslation(node) {
   var transform = node ? node.transform : null,
       baseVal = transform && transform.baseVal;
   return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
@@ -716,7 +909,7 @@ var getTranslation = function (node) {
     e: 0,
     f: 0
   };
-};
+}
 /**
  * Get unique value from array
  * @param {Array} data Source data
@@ -757,14 +950,30 @@ function mergeArray(arr) {
 
 
 function mergeObj(target) {
-  for (var _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) objectN[_key4 - 1] = arguments[_key4];
+  for (var _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+    objectN[_key4 - 1] = arguments[_key4];
+  }
 
-  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) {
+    return target;
+  }
+
   var source = objectN.shift();
-  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
-    var value = source[key];
-    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
-  }), mergeObj.apply(void 0, [target].concat(objectN));
+
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach(function (key) {
+      var value = source[key];
+
+      if (isObject(value)) {
+        target[key] || (target[key] = {});
+        target[key] = mergeObj(target[key], value);
+      } else {
+        target[key] = isArray(value) ? value.concat() : value;
+      }
+    });
+  }
+
+  return mergeObj.apply(void 0, [target].concat(objectN));
 }
 /**
  * Sort value
@@ -776,17 +985,31 @@ function mergeObj(target) {
 
 
 function sortValue(data, isAsc) {
-  isAsc === void 0 && (isAsc = !0);
+  if (isAsc === void 0) {
+    isAsc = !0;
+  }
+
   var fn;
-  return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
-    return a - b;
-  } : function (a, b) {
-    return b - a;
-  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
-    return a - b;
-  } : !isAsc && (fn = function (a, b) {
-    return a > b && -1 || a < b && 1 || a === b && 0;
-  }), data.concat().sort(fn);
+
+  if (data[0] instanceof Date) {
+    fn = isAsc ? function (a, b) {
+      return a - b;
+    } : function (a, b) {
+      return b - a;
+    };
+  } else {
+    if (isAsc && !data.every(isNaN)) {
+      fn = function (a, b) {
+        return a - b;
+      };
+    } else if (!isAsc) {
+      fn = function (a, b) {
+        return a > b && -1 || a < b && 1 || a === b && 0;
+      };
+    }
+  }
+
+  return data.concat().sort(fn);
 }
 /**
  * Get min/max value
@@ -801,7 +1024,18 @@ function getMinMax(type, data) {
   var res = data.filter(function (v) {
     return notEmpty(v);
   });
-  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, res) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
+
+  if (res.length) {
+    if (isNumber(res[0])) {
+      res = Math[type].apply(Math, res);
+    } else if (res[0] instanceof Date) {
+      res = sortValue(res, type === "min")[0];
+    }
+  } else {
+    res = undefined;
+  }
+
+  return res;
 }
 /**
  * Get range
@@ -814,11 +1048,16 @@ function getMinMax(type, data) {
 
 
 var getRange = function (start, end, step) {
-  step === void 0 && (step = 1);
+  if (step === void 0) {
+    step = 1;
+  }
+
   var res = [],
       n = Math.max(0, Math.ceil((end - start) / step)) | 0;
 
-  for (var i = start; i < n; i++) res.push(start + i * step);
+  for (var i = start; i < n; i++) {
+    res.push(start + i * step);
+  }
 
   return res;
 },
@@ -836,17 +1075,27 @@ var getRange = function (start, end, step) {
     };
 
     try {
-      return new MouseEvent("t"), function (el, eventType, params) {
-        params === void 0 && (params = getParams()), el.dispatchEvent(new MouseEvent(eventType, params));
+      // eslint-disable-next-line no-new
+      new MouseEvent("t");
+      return function (el, eventType, params) {
+        if (params === void 0) {
+          params = getParams();
+        }
+
+        el.dispatchEvent(new MouseEvent(eventType, params));
       };
     } catch (e) {
       // Polyfills DOM4 MouseEvent
       return function (el, eventType, params) {
-        params === void 0 && (params = getParams());
+        if (params === void 0) {
+          params = getParams();
+        }
+
         var mouseEvent = doc.createEvent("MouseEvent"); // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
 
         mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
-        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
+        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null);
+        el.dispatchEvent(mouseEvent);
       };
     }
   }(),
@@ -881,7 +1130,9 @@ var getRange = function (start, end, step) {
 function tplProcess(tpl, data) {
   var res = tpl;
 
-  for (var x in data) res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
+  for (var x in data) {
+    res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
+  }
 
   return res;
 }
@@ -896,12 +1147,22 @@ function tplProcess(tpl, data) {
 
 function parseDate(date) {
   var parsedDate;
-  if (date instanceof Date) parsedDate = date;else if (isString(date)) {
+
+  if (date instanceof Date) {
+    parsedDate = date;
+  } else if (isString(date)) {
     var config = this.config,
         format = this.format;
     parsedDate = format.dataTime(config.data_xFormat)(date);
-  } else isNumber(date) && !isNaN(date) && (parsedDate = new Date(+date));
-  return (!parsedDate || isNaN(+parsedDate)) && console && console.error && console.error("Failed to parse x '" + date + "' to Date object"), parsedDate;
+  } else if (isNumber(date) && !isNaN(date)) {
+    parsedDate = new Date(+date);
+  }
+
+  if (!parsedDate || isNaN(+parsedDate)) {
+    console && console.error && console.error("Failed to parse x '" + date + "' to Date object");
+  }
+
+  return parsedDate;
 }
 /**
  * Return if the current doc is visible or not
@@ -934,7 +1195,7 @@ function convertInputType(mouse, touch) {
     isMobile = hasTouchPoints || hasTouch;
   }
 
-  var hasMouse = !(!mouse || isMobile) && "onmouseover" in win;
+  var hasMouse = mouse && !isMobile ? "onmouseover" in win : !1;
   return hasMouse && "mouse" || isMobile && "touch" || null;
 }
 ;// CONCATENATED MODULE: ./src/config/config.ts
@@ -950,273 +1211,313 @@ function convertInputType(mouse, touch) {
  * @private
  */
 function loadConfig(config) {
-  var target,
+  var thisConfig = this.config,
+      target,
       keys,
       read,
-      thisConfig = this.config,
       find = function () {
     var key = keys.shift();
-    return key && target && isObjectType(target) && key in target ? (target = target[key], find()) : key ? undefined : target;
+
+    if (key && target && isObjectType(target) && key in target) {
+      target = target[key];
+      return find();
+    } else if (!key) {
+      return target;
+    }
+
+    return undefined;
   };
 
   Object.keys(thisConfig).forEach(function (key) {
-    target = config, keys = key.split("_"), read = find(), isDefined(read) && (thisConfig[key] = read);
+    target = config;
+    keys = key.split("_");
+    read = find();
+
+    if (isDefined(read)) {
+      thisConfig[key] = read;
+    }
   });
 }
-;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Base class to generate billboard.js plugin
- * @class Plugin
- */
-
-/**
- * Version info string for plugin
- * @name version
- * @static
- * @memberof Plugin
- * @type {string}
- * @example
- *   bb.plugin.stanford.version;  // ex) 1.9.0
- */
-var Plugin = /*#__PURE__*/function () {
-  /**
-   * Constructor
-   * @param {Any} options config option object
-   * @private
-   */
-  function Plugin(options) {
-    options === void 0 && (options = {}), this.$$ = void 0, this.options = void 0, this.options = options;
-  }
-  /**
-   * Lifecycle hook for 'beforeInit' phase.
-   * @private
-   */
-
-
-  var _proto = Plugin.prototype;
-  return _proto.$beforeInit = function $beforeInit() {}
-  /**
-   * Lifecycle hook for 'init' phase.
-   * @private
-   */
-  , _proto.$init = function $init() {}
-  /**
-   * Lifecycle hook for 'afterInit' phase.
-   * @private
-   */
-  , _proto.$afterInit = function $afterInit() {}
-  /**
-   * Lifecycle hook for 'redraw' phase.
-   * @private
-   */
-  , _proto.$redraw = function $redraw() {}
-  /**
-   * Lifecycle hook for 'willDestroy' phase.
-   * @private
-   */
-  , _proto.$willDestroy = function $willDestroy() {
-    var _this = this;
-
-    Object.keys(this).forEach(function (key) {
-      _this[key] = null, delete _this[key];
-    });
-  }, Plugin;
-}();
-
-<<<<<<< Updated upstream
-Plugin.version = "3.1.3";
-=======
-Plugin.version = "3.1.5-nightly-20210930111735";
->>>>>>> Stashed changes
-
-;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * TextOverlap plugin option class
- * @class TextOverlapOptions
- * @param {Options} options TextOverlap plugin options
- * @augments Plugin
- * @returns {TextOverlapOptions}
- * @private
- */
-var Options = function () {
-  return {
-    /**
-     * Set selector string for target text nodes
-     * @name selector
-     * @memberof plugin-textoverlap
-     * @type {string}
-     * @default ".bb-texts text"
-     * @example
-     *  // selector for data label text nodes
-     * selector: ".bb-texts text"
-     */
-    selector: ".bb-texts text",
-
-    /**
-     * Set extent of label overlap prevention
-     * @name extent
-     * @memberof plugin-textoverlap
-     * @type {number}
-     * @default 1
-     * @example
-     * 	extent: 1
-     */
-    extent: 1,
-
-    /**
-     * Set minimum area needed to show a data label
-     * @name area
-     * @memberof plugin-textoverlap
-     * @type {number}
-     * @default 0
-     * @example
-     * 	area: 0
-     */
-    area: 0
-  };
-};
-
-
-;// CONCATENATED MODULE: ./src/Plugin/textoverlap/index.ts
+;// CONCATENATED MODULE: ./src/Plugin/sparkline/index.ts
 
 
 
 /**
- * Copyright (c) 2017 ~ present NAVER Corp.
+ * Copyright (c) 2021 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
 
 
-
-
 /**
- * TextOverlap plugin<br>
- * Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram).
+ * Sparkline plugin.<br>
+ * Generates sparkline charts
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
  *   - Non required modules from billboard.js core, need to be installed separately.
- * - **Required modules:**
- *   - [d3-selection](https://github.com/d3/d3-selection)
- *   - [d3-polygon](https://github.com/d3/d3-polygon)
- *   - [d3-voronoi](https://github.com/d3/d3-voronoi)
- * @class plugin-textoverlap
- * @requires d3-selection
- * @requires d3-polygon
- * @requires d3-voronoi
- * @param {object} options TextOverlap plugin options
+ *
+ * - **Bear in mind:**
+ * - Use this plugin to visualize multiple tiny chart only and chart APIs won't work properly.
+ * - Sparkline chart size will be based on the main chart element size. To control spakrline charts, is highly recommended to set `size` option.
+ * - Bubble, scatter and Arc(pie, donut, ratdar) types aren't supported.
+ * - Some options will be stricted to be:
+ *   - `resize.auto = false`
+ *   - `axis.x.show = false`
+ *   - `axis.y.show = false`
+ *   - `axis.y.padding = 10`
+ *   - `legend.show = false`
+ *
+ * @class plugin-sparkline
+ * @param {object} options sparkline plugin options
  * @augments Plugin
- * @returns {TextOverlap}
+ * @returns {Sparkline}
  * @example
  * // Plugin must be loaded before the use.
- * <script src="$YOUR_PATH/plugin/billboardjs-plugin-textoverlap.js"></script>
+ * <script src="$YOUR_PATH/plugin/billboardjs-plugin-sparkline.js"></script>
  *
  *  var chart = bb.generate({
- *     data: {
- *     	  columns: [ ... ]
- *     }
  *     ...
  *     plugins: [
- *        new bb.plugin.textoverlap({
- *          selector: ".bb-texts text",
- *          extent: 8,
- *          area: 3
+ *        	new bb.plugin.sparkline({
+ *        	  selector: ".sparkline"
+ *        	}),
  *     ]
  *  });
  * @example
- *	import {bb} from "billboard.js";
- * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap.esm";
+ * import {bb} from "billboard.js";
+ * import Sparkline from "billboard.js/dist/billboardjs-plugin-sparkline";
  *
  * bb.generate({
+ *     ...
  *     plugins: [
- *        new TextOverlap({ ... })
+ *        new Sparkline({ ... })
  *     ]
  * })
  */
 
-var TextOverlap = /*#__PURE__*/function (_Plugin) {
-  function TextOverlap(options) {
-    var _this;
+var Sparkline = /*#__PURE__*/function (_Plugin) {
+  _inheritsLoose(Sparkline, _Plugin);
 
-    return _this = _Plugin.call(this, options) || this, _this.config = void 0, _this.config = new Options(), _assertThisInitialized(_this) || _assertThisInitialized(_this);
+  function Sparkline(options) {
+    var _this = _Plugin.call(this, options) || this;
+
+    _this.config = void 0;
+    _this.element = void 0;
+    _this.config = new Options();
+    return _assertThisInitialized(_this) || _assertThisInitialized(_this);
   }
 
-  _inheritsLoose(TextOverlap, _Plugin);
+  var _proto = Sparkline.prototype;
 
-  var _proto = TextOverlap.prototype;
-  return _proto.$init = function $init() {
+  _proto.$beforeInit = function $beforeInit() {
     loadConfig.call(this, this.options);
-  }, _proto.$redraw = function $redraw() {
-    var text = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.selectAll)(this.config.selector);
-    text.empty() || this.preventLabelOverlap(text);
-  }
-  /**
-   * Generates the voronoi layout for data labels
-   * @param {object} data Indices values
-   * @returns {object} Voronoi layout points and corresponding Data points
-   * @private
-   */
-  , _proto.generateVoronoi = function generateVoronoi(data) {
+    this.validate();
+    this.element = [].slice.call(document.querySelectorAll(this.config.selector)); // override internal methods
+
+    this.overrideInternals(); // override options
+
+    this.overrideOptions(); // bind event handlers's context
+
+    this.overHandler = this.overHandler.bind(this);
+    this.moveHandler = this.moveHandler.bind(this);
+    this.outHandler = this.outHandler.bind(this);
+  };
+
+  _proto.validate = function validate() {
     var $$ = this.$$,
-        scale = $$.scale,
-        _map = ["x", "y"].map(function (v) {
-      return scale[v].domain();
-    }),
-        min = _map[0],
-        max = _map[1],
-        _ref = [max[0], min[1]];
+        config = this.config,
+        msg = "";
 
-    return min[1] = _ref[0], max[0] = _ref[1], (0,external_commonjs_d3_voronoi_commonjs2_d3_voronoi_amd_d3_voronoi_root_d3_.voronoi)().extent([min, max]).polygons(data);
+    if (!config.selector || !document.querySelector(config.selector)) {
+      msg = "No holder elements found from given selector option.";
+    }
+
+    if ($$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType($$.data.targets)) {
+      msg = "Contains non supported chart types.";
+    }
+
+    if (msg) {
+      throw new Error("[Sparkline plugin] " + msg);
+    }
+  };
+
+  _proto.overrideInternals = function overrideInternals() {
+    var $$ = this.$$,
+        getBarW = $$.getBarW,
+        getIndices = $$.getIndices;
+
+    // override internal methods to positioning bars
+    $$.getIndices = function (indices, id, caller) {
+      return caller === "getShapeX" ? {} : getIndices.call(this, indices, id);
+    };
+
+    $$.getBarW = function (type, axis) {
+      return getBarW.call(this, type, axis, 1);
+    };
+  };
+
+  _proto.overrideOptions = function overrideOptions() {
+    var config = this.$$.config;
+    config.legend_show = !1;
+    config.resize_auto = !1;
+    config.axis_x_show = !1;
+    config.axis_x_padding = {
+      left: 15,
+      right: 15,
+      unit: "px"
+    };
+    config.axis_y_show = !1;
+    config.axis_y_padding = 5;
+
+    if (!config.tooltip_position) {
+      config.tooltip_position = function (data, width, height) {
+        var event = this.internal.state.event,
+            top = event.pageY - height * 1.35,
+            left = event.pageX - width / 2;
+
+        if (top < 0) {
+          top = 0;
+        }
+
+        if (left < 0) {
+          left = 0;
+        }
+
+        return {
+          top: top,
+          left: left
+        };
+      };
+    }
+  };
+
+  _proto.$init = function $init() {
+    var $$ = this.$$,
+        $el = $$.$el;
+    // make disable-ish main chart element
+    $el.chart.style("width", "0").style("height", "0").style("pointer-events", "none");
+    document.body.appendChild($el.tooltip.node());
+  };
+
+  _proto.$afterInit = function $afterInit() {
+    var $$ = this.$$;
+    $$.$el.svg.attr("style", null).style("width", "0").style("height", "0");
+    this.bindEvents(!0);
   }
   /**
-   * Set text label's position to preventg overlap.
-   * @param {d3Selection} text target text selection
+   * Bind tooltip event handlers for each sparkline elements.
+   * @param {boolean} bind or unbind
    * @private
    */
-  , _proto.preventLabelOverlap = function preventLabelOverlap(text) {
-    var _this$config = this.config,
-        extent = _this$config.extent,
-        area = _this$config.area,
-        cells = this.generateVoronoi(text.data().map(function (v) {
-      return [v.x, v.value];
-    })),
-        i = 0;
-    text.each(function () {
-      var cell = cells[i++];
+  ;
 
-      if (cell && this) {
-        var _cell$data = cell.data,
-            x = _cell$data[0],
-            y = _cell$data[1],
-            _d3PolygonCentroid = (0,external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_.polygonCentroid)(cell),
-            cx = _d3PolygonCentroid[0],
-            cy = _d3PolygonCentroid[1],
-            angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2),
-            xTranslate = extent * (angle === 0 ? 1 : -1),
-            yTranslate = angle === -1 ? -extent : extent + 5,
-            txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
+  _proto.bindEvents = function bindEvents(bind) {
+    var _this2 = this;
 
-        (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this) // @ts-ignore
-        .attr("display", (0,external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_.polygonArea)(cell) < area ? "none" : null).attr("text-anchor", txtAnchor).attr("dy", "0." + (angle === 1 ? 71 : 35) + "em").attr("transform", "translate(" + xTranslate + ", " + yTranslate + ")");
+    if (bind === void 0) {
+      bind = !0;
+    }
+
+    if (this.$$.config.interaction_enabled) {
+      var method = (bind ? "add" : "remove") + "EventListener";
+      this.element.forEach(function (el) {
+        var svg = el.querySelector("svg");
+        svg[method]("mouseover", _this2.overHandler);
+        svg[method]("mousemove", _this2.moveHandler);
+        svg[method]("mouseout", _this2.outHandler);
+      });
+    }
+  };
+
+  _proto.overHandler = function overHandler(e) {
+    var $$ = this.$$,
+        eventReceiver = $$.state.eventReceiver;
+    eventReceiver.rect = e.target.getBoundingClientRect();
+  };
+
+  _proto.moveHandler = function moveHandler(e) {
+    var _$$$api$data,
+        _data,
+        _data$values,
+        $$ = this.$$,
+        index = $$.getDataIndexFromEvent(e),
+        data = (_$$$api$data = $$.api.data(e.target.__id)) == null ? void 0 : _$$$api$data[0],
+        d = (_data = data) == null ? void 0 : (_data$values = _data.values) == null ? void 0 : _data$values[index];
+
+    if (d && !d.name) {
+      d.name = d.id;
+    }
+
+    $$.state.event = e;
+    $$.setExpand(index, data.id, !0);
+    $$.showTooltip([d], e.target);
+  };
+
+  _proto.outHandler = function outHandler(e) {
+    var $$ = this.$$;
+    $$.state.event = e;
+    $$.unexpandCircles();
+    $$.hideTooltip();
+  };
+
+  _proto.$redraw = function $redraw() {
+    var _$el$chart$html$match,
+        $$ = this.$$,
+        $el = $$.$el,
+        el = this.element,
+        data = $$.api.data(),
+        svgWrapper = (_$el$chart$html$match = $el.chart.html().match(/<svg[^>]*>/)) == null ? void 0 : _$el$chart$html$match[0];
+
+    // append sparkline holder if is less than the data length
+    if (el.length < data.length) {
+      var chart = $el.chart.node();
+
+      for (var i = data.length - el.length; i > 0; i--) {
+        chart.parentNode.insertBefore(el[0].cloneNode(), chart.nextSibling);
       }
+
+      this.element = document.querySelectorAll(this.config.selector);
+      el = this.element;
+    }
+
+    data.map(function (v) {
+      return v.id;
+    }).forEach(function (id, i) {
+      var selector = "." + classes.target + "-" + id,
+          shape = $el.main.selectAll(selector),
+          svg = el[i].querySelector("svg");
+
+      if (!svg) {
+        el[i].innerHTML = svgWrapper + "</svg>";
+        svg = el[i].querySelector("svg");
+        svg.__id = id;
+      }
+
+      if (!svg.querySelector(selector)) {
+        shape.style("opacity", null);
+      }
+
+      shape.style("fill", "none").style("opacity", null);
+      svg.innerHTML = "";
+      svg.appendChild(shape.node());
     });
-  }, TextOverlap;
+  };
+
+  _proto.$willDestroy = function $willDestroy() {
+    this.bindEvents(!1);
+    this.element.forEach(function (el) {
+      el.innerHTML = "";
+    });
+  };
+
+  return Sparkline;
 }(Plugin);
 
+Sparkline.version = "0.0.1";
 
 }();
-__webpack_exports__ = __webpack_exports__.default;
+__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;

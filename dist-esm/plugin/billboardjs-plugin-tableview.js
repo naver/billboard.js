@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.1.3
+ * @version 3.1.5-nightly-20210930111735
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -29,34 +29,54 @@ PERFORMANCE OF THIS SOFTWARE.
 
 /* global Reflect, Promise */
 var _extendStatics = function extendStatics(d, b) {
-  return _extendStatics = Object.setPrototypeOf || {
+  _extendStatics = Object.setPrototypeOf || {
     __proto__: []
   } instanceof Array && function (d, b) {
     d.__proto__ = b;
   } || function (d, b) {
-    for (var p in b) Object.prototype.hasOwnProperty.call(b, p) && (d[p] = b[p]);
-  }, _extendStatics(d, b);
+    for (var p in b) {
+      if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+    }
+  };
+
+  return _extendStatics(d, b);
 };
 
 function __extends(d, b) {
+  if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + (b + "") + " is not a constructor or null");
+
+  _extendStatics(d, b);
+
   function __() {
     this.constructor = d;
   }
 
-  if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + (b + "") + " is not a constructor or null");
-  _extendStatics(d, b), d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 
 var _assign = function __assign() {
-  return _assign = Object.assign || function (t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) for (var p in s = arguments[i], s) Object.prototype.hasOwnProperty.call(s, p) && (t[p] = s[p]);
+  _assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
 
     return t;
-  }, _assign.apply(this, arguments);
+  };
+
+  return _assign.apply(this, arguments);
 };
 function __spreadArray(to, from, pack) {
-  if (pack || arguments.length === 2) for (var ar, i = 0, l = from.length; i < l; i++) (ar || !(i in from)) && (!ar && (ar = Array.prototype.slice.call(from, 0, i)), ar[i] = from[i]);
-  return to.concat(ar || from);
+  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+    if (ar || !(i in from)) {
+      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+      ar[i] = from[i];
+    }
+  }
+  return to.concat(ar || Array.prototype.slice.call(from));
 }
 
 /**
@@ -95,7 +115,12 @@ var Plugin = /*#__PURE__*/function () {
    * @private
    */
   function Plugin(options) {
-    options === void 0 && (options = {}), this.$$, this.options = options;
+    if (options === void 0) {
+      options = {};
+    }
+
+    this.$$;
+    this.options = options;
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -104,36 +129,48 @@ var Plugin = /*#__PURE__*/function () {
 
 
   var _proto = Plugin.prototype;
-  return _proto.$beforeInit = function $beforeInit() {}
+
+  _proto.$beforeInit = function $beforeInit() {}
   /**
    * Lifecycle hook for 'init' phase.
    * @private
    */
-  , _proto.$init = function $init() {}
+  ;
+
+  _proto.$init = function $init() {}
   /**
    * Lifecycle hook for 'afterInit' phase.
    * @private
    */
-  , _proto.$afterInit = function $afterInit() {}
+  ;
+
+  _proto.$afterInit = function $afterInit() {}
   /**
    * Lifecycle hook for 'redraw' phase.
    * @private
    */
-  , _proto.$redraw = function $redraw() {}
+  ;
+
+  _proto.$redraw = function $redraw() {}
   /**
    * Lifecycle hook for 'willDestroy' phase.
    * @private
    */
-  , _proto.$willDestroy = function $willDestroy() {
+  ;
+
+  _proto.$willDestroy = function $willDestroy() {
     var _this = this;
 
     Object.keys(this).forEach(function (key) {
-      _this[key] = null, delete _this[key];
+      _this[key] = null;
+      delete _this[key];
     });
-  }, Plugin;
+  };
+
+  return Plugin;
 }();
 
-Plugin.version = "#3.1.3#";
+Plugin.version = "#3.1.5-nightly-20210930111735#";
 
 /**
  * Copyright (c) 2021 ~ present NAVER Corp.
@@ -241,10 +278,6 @@ var Options = /** @class */ (function () {
  * Copyright (c) 2021 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/**
- * Constants values for plugin option
- * @ignore
- */
 var defaultStyle = {
     id: "__tableview-style__",
     "class": "bb-tableview",
@@ -269,7 +302,10 @@ var win = (function () {
     return root || Function("return this")();
 })();
 /* eslint-enable no-new-func, no-undef */
-var doc = win && win.document;
+// fallback for non-supported environments
+win.requestIdleCallback = win.requestIdleCallback || (function (cb) { return setTimeout(cb, 1); });
+win.cancelIdleCallback = win.cancelIdleCallback || (function (id) { return clearTimeout(id); });
+var doc = win === null || win === void 0 ? void 0 : win.document;
 
 var isNumber = function (v) { return typeof v === "number"; };
 var isDefined = function (v) { return typeof v !== "undefined"; };
@@ -287,7 +323,7 @@ var isArray = function (arr) { return Array.isArray(arr); };
  * @returns {boolean}
  * @private
  */
-var isObject = function (obj) { return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj); };
+var isObject = function (obj) { return obj && !(obj === null || obj === void 0 ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
 /**
  * Merge object returning new object
  * @param {object} target Target object
@@ -317,7 +353,7 @@ function mergeObj(target) {
             }
         });
     }
-    return mergeObj.apply(void 0, __spreadArray([target], objectN));
+    return mergeObj.apply(void 0, __spreadArray([target], objectN, false));
 }
 // emulate event
 ({
@@ -448,7 +484,7 @@ function loadConfig(config) {
  *  });
  * @example
  * import {bb} from "billboard.js";
- * import TableView from "billboard.js/dist/billboardjs-plugin-tableview.esm";
+ * import TableView from "billboard.js/dist/billboardjs-plugin-tableview";
  *
  * bb.generate({
  *     ...
@@ -540,7 +576,6 @@ var TableView = /** @class */ (function (_super) {
             (_a = s === null || s === void 0 ? void 0 : s.parentNode) === null || _a === void 0 ? void 0 : _a.removeChild(s);
         }
     };
-    TableView.version = "0.0.1";
     return TableView;
 }(Plugin));
 

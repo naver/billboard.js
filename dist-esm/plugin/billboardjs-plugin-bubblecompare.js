@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.1.3
+ * @version 3.1.5-nightly-20210930111735
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -28,22 +28,29 @@ PERFORMANCE OF THIS SOFTWARE.
 
 /* global Reflect, Promise */
 var _extendStatics = function extendStatics(d, b) {
-  return _extendStatics = Object.setPrototypeOf || {
+  _extendStatics = Object.setPrototypeOf || {
     __proto__: []
   } instanceof Array && function (d, b) {
     d.__proto__ = b;
   } || function (d, b) {
-    for (var p in b) Object.prototype.hasOwnProperty.call(b, p) && (d[p] = b[p]);
-  }, _extendStatics(d, b);
+    for (var p in b) {
+      if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
+    }
+  };
+
+  return _extendStatics(d, b);
 };
 
 function __extends(d, b) {
+  if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + (b + "") + " is not a constructor or null");
+
+  _extendStatics(d, b);
+
   function __() {
     this.constructor = d;
   }
 
-  if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + (b + "") + " is not a constructor or null");
-  _extendStatics(d, b), d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+  d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 
 /**
@@ -82,7 +89,12 @@ var Plugin = /*#__PURE__*/function () {
    * @private
    */
   function Plugin(options) {
-    options === void 0 && (options = {}), this.$$, this.options = options;
+    if (options === void 0) {
+      options = {};
+    }
+
+    this.$$;
+    this.options = options;
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -91,36 +103,48 @@ var Plugin = /*#__PURE__*/function () {
 
 
   var _proto = Plugin.prototype;
-  return _proto.$beforeInit = function $beforeInit() {}
+
+  _proto.$beforeInit = function $beforeInit() {}
   /**
    * Lifecycle hook for 'init' phase.
    * @private
    */
-  , _proto.$init = function $init() {}
+  ;
+
+  _proto.$init = function $init() {}
   /**
    * Lifecycle hook for 'afterInit' phase.
    * @private
    */
-  , _proto.$afterInit = function $afterInit() {}
+  ;
+
+  _proto.$afterInit = function $afterInit() {}
   /**
    * Lifecycle hook for 'redraw' phase.
    * @private
    */
-  , _proto.$redraw = function $redraw() {}
+  ;
+
+  _proto.$redraw = function $redraw() {}
   /**
    * Lifecycle hook for 'willDestroy' phase.
    * @private
    */
-  , _proto.$willDestroy = function $willDestroy() {
+  ;
+
+  _proto.$willDestroy = function $willDestroy() {
     var _this = this;
 
     Object.keys(this).forEach(function (key) {
-      _this[key] = null, delete _this[key];
+      _this[key] = null;
+      delete _this[key];
     });
-  }, Plugin;
+  };
+
+  return Plugin;
 }();
 
-Plugin.version = "#3.1.3#";
+Plugin.version = "#3.1.5-nightly-20210930111735#";
 
 /**
  * Bubble compare diagram plugin.<br>
@@ -155,7 +179,7 @@ Plugin.version = "#3.1.3#";
  *  });
  * @example
  * import {bb} from "billboard.js";
- * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare.esm";
+ * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare";
  *
  * bb.generate({
  *     plugins: [
