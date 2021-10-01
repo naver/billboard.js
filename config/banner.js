@@ -10,7 +10,7 @@ const banner = {
 		`${pkg.name}, JavaScript chart library`,
 		pkg.homepage,
 		"",
-		`@version ${pkg.version}`
+		`@version ${process.env?.VERSION || pkg.version}`
 	].join("\r\n"),
 	packaged: [
 		"",

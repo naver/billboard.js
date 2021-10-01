@@ -84,10 +84,6 @@ module.exports = () => {
 		new BundleAnalyzerPlugin()
 	);
 
-	if (env.NIGHTLY) {
-		pkg.version = env.NIGHTLY;
-	}
-
 	if (env.VERSION) {
 		pkg.version = env.VERSION;
 	}
