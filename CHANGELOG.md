@@ -1,3 +1,16 @@
+# [3.2.0-next.6](https://github.com/naver/billboard.js/compare/3.2.0-next.5...3.2.0-next.6) (2021-10-01)
+
+
+### Bug Fixes
+
+* **types:** Allow string dates for zoom() domain ([9cae479](https://github.com/naver/billboard.js/commit/9cae479ef107d2d24c1ae2fb373ecee4789c2ee8)), closes [#2316](https://github.com/naver/billboard.js/issues/2316) [#2333](https://github.com/naver/billboard.js/issues/2333)
+* **types:** Fix type definition for load().json ([25ebb78](https://github.com/naver/billboard.js/commit/25ebb78f8e18c09dd3e52c4e46a6fabc81c151c5)), closes [#2334](https://github.com/naver/billboard.js/issues/2334)
+
+
+### Features
+
+* **event:** add option for step-before/step-after charts for tooltip to match step behavior ([5f664ba](https://github.com/naver/billboard.js/commit/5f664ba378320941e8f8e9b5703e0d03676dd287)), closes [#2332](https://github.com/naver/billboard.js/issues/2332)
+
 # [3.2.0-next.5](https://github.com/naver/billboard.js/compare/3.2.0-next.4...3.2.0-next.5) (2021-09-17)
 
 
