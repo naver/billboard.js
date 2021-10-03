@@ -5,11 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
-<<<<<<< Updated upstream
- * @version 3.1.3-nightly-20210804004536
-=======
- * @version 3.1.5-nightly-20210930111735
->>>>>>> Stashed changes
+ * @version 3.1.5-nightly-20211003004613
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -140,7 +136,13 @@ var Plugin = /*#__PURE__*/function () {
    * @private
    */
   function Plugin(options) {
-    options === void 0 && (options = {}), this.$$ = void 0, this.options = void 0, this.options = options;
+    if (options === void 0) {
+      options = {};
+    }
+
+    this.$$ = void 0;
+    this.options = void 0;
+    this.options = options;
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -149,40 +151,48 @@ var Plugin = /*#__PURE__*/function () {
 
 
   var _proto = Plugin.prototype;
-  return _proto.$beforeInit = function $beforeInit() {}
+
+  _proto.$beforeInit = function $beforeInit() {}
   /**
    * Lifecycle hook for 'init' phase.
    * @private
    */
-  , _proto.$init = function $init() {}
+  ;
+
+  _proto.$init = function $init() {}
   /**
    * Lifecycle hook for 'afterInit' phase.
    * @private
    */
-  , _proto.$afterInit = function $afterInit() {}
+  ;
+
+  _proto.$afterInit = function $afterInit() {}
   /**
    * Lifecycle hook for 'redraw' phase.
    * @private
    */
-  , _proto.$redraw = function $redraw() {}
+  ;
+
+  _proto.$redraw = function $redraw() {}
   /**
    * Lifecycle hook for 'willDestroy' phase.
    * @private
    */
-  , _proto.$willDestroy = function $willDestroy() {
+  ;
+
+  _proto.$willDestroy = function $willDestroy() {
     var _this = this;
 
     Object.keys(this).forEach(function (key) {
-      _this[key] = null, delete _this[key];
+      _this[key] = null;
+      delete _this[key];
     });
-  }, Plugin;
+  };
+
+  return Plugin;
 }();
 
-<<<<<<< Updated upstream
-Plugin.version = "3.1.3";
-=======
-Plugin.version = "3.1.5-nightly-20210930111735";
->>>>>>> Stashed changes
+Plugin.version = "3.1.5";
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
 
@@ -222,7 +232,7 @@ Plugin.version = "3.1.5-nightly-20210930111735";
  *  });
  * @example
  * import {bb} from "billboard.js";
- * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare.esm";
+ * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare";
  *
  * bb.generate({
  *     plugins: [
@@ -232,28 +242,42 @@ Plugin.version = "3.1.5-nightly-20210930111735";
  */
 
 var BubbleCompare = /*#__PURE__*/function (_Plugin) {
-  function BubbleCompare(options) {
-    var _this;
-
-    return _this = _Plugin.call(this, options) || this, _this.$$ = void 0, _assertThisInitialized(_this) || _assertThisInitialized(_this);
-  }
-
   _inheritsLoose(BubbleCompare, _Plugin);
 
+  function BubbleCompare(options) {
+    var _this = _Plugin.call(this, options) || this;
+
+    _this.$$ = void 0;
+    return _assertThisInitialized(_this) || _assertThisInitialized(_this);
+  }
+
   var _proto = BubbleCompare.prototype;
-  return _proto.$init = function $init() {
+
+  _proto.$init = function $init() {
     var $$ = this.$$;
-    $$.findClosest = this.findClosest.bind(this), $$.getBubbleR = this.getBubbleR.bind(this), $$.pointExpandedR = this.pointExpandedR.bind(this);
-  }, _proto.pointExpandedR = function pointExpandedR(d) {
+    $$.findClosest = this.findClosest.bind(this);
+    $$.getBubbleR = this.getBubbleR.bind(this);
+    $$.pointExpandedR = this.pointExpandedR.bind(this);
+  };
+
+  _proto.pointExpandedR = function pointExpandedR(d) {
     var baseR = this.getBubbleR(d),
         _this$options$expandS = this.options.expandScale,
         expandScale = _this$options$expandS === void 0 ? 1 : _this$options$expandS;
-    return BubbleCompare.raiseFocusedBubbleLayer(d), this.changeCursorPoint(), baseR * expandScale;
-  }, BubbleCompare.raiseFocusedBubbleLayer = function raiseFocusedBubbleLayer(d) {
+    BubbleCompare.raiseFocusedBubbleLayer(d);
+    this.changeCursorPoint();
+    return baseR * expandScale;
+  };
+
+  BubbleCompare.raiseFocusedBubbleLayer = function raiseFocusedBubbleLayer(d) {
     d.raise && (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(d.node().parentNode.parentNode).raise();
-  }, _proto.changeCursorPoint = function changeCursorPoint() {
+  };
+
+  _proto.changeCursorPoint = function changeCursorPoint() {
     this.$$.$el.svg.select(".bb-event-rect").style("cursor", "pointer");
-  }, _proto.findClosest = function findClosest(values, pos) {
+  };
+
+  _proto.findClosest = function findClosest(values, pos) {
     var _this2 = this,
         $$ = this.$$;
 
@@ -263,7 +287,9 @@ var BubbleCompare = /*#__PURE__*/function (_Plugin) {
       var d = $$.dist(cur, pos);
       return d < _this2.getBubbleR(cur) ? cur : acc;
     }, 0);
-  }, _proto.getBubbleR = function getBubbleR(d) {
+  };
+
+  _proto.getBubbleR = function getBubbleR(d) {
     var _this3 = this,
         _this$options = this.options,
         minR = _this$options.minR,
@@ -284,15 +310,19 @@ var BubbleCompare = /*#__PURE__*/function (_Plugin) {
         size = min > 0 && max === min ? 0 : curVal / max;
 
     return Math.abs(size) * (maxR - minR) + minR;
-  }, _proto.getZData = function getZData(d) {
+  };
+
+  _proto.getZData = function getZData(d) {
     return this.$$.isBubbleZType(d) ? this.$$.getBubbleZData(d.value, "z") : d.value;
-  }, BubbleCompare;
+  };
+
+  return BubbleCompare;
 }(Plugin);
 
 BubbleCompare.version = "0.0.1";
 
 }();
-__webpack_exports__ = __webpack_exports__.default;
+__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;

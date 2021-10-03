@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.1.5-nightly-20210930111735
+ * @version 3.1.5-nightly-20211003004613
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -19585,6 +19585,7 @@ var zoom = {
      * @private
      */
     onZoomEnd: function (event) {
+        var _a;
         var $$ = this;
         var config = $$.config, state = $$.state;
         var startEvent = $$.zoom.startEvent;
@@ -19592,7 +19593,7 @@ var zoom = {
         var isUnZoom = (event === null || event === void 0 ? void 0 : event.transform) === zoomIdentity;
         if ((startEvent === null || startEvent === void 0 ? void 0 : startEvent.type.indexOf("touch")) > -1) {
             startEvent = startEvent.changedTouches[0];
-            e = e.changedTouches[0];
+            e = (_a = e === null || e === void 0 ? void 0 : e.changedTouches) === null || _a === void 0 ? void 0 : _a[0];
         }
         // if click, do nothing. otherwise, click interaction will be canceled.
         if (config.zoom_type === "drag" && (e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)) {
@@ -20047,7 +20048,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.1.5-nightly-20210930111735
+ * @version 3.1.5-nightly-20211003004613
  */
 var bb = {
     /**
@@ -20057,7 +20058,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.1.5-nightly-20210930111735",
+    version: "3.1.5-nightly-20211003004613",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

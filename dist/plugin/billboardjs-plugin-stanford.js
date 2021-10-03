@@ -5,11 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
-<<<<<<< Updated upstream
- * @version 3.1.3-nightly-20210804004536
-=======
- * @version 3.1.5-nightly-20210930111735
->>>>>>> Stashed changes
+ * @version 3.1.5-nightly-20211003004613
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -22,7 +18,7 @@
 		exports["bb"] = factory(require("d3-interpolate"), require("d3-color"), require("d3-scale"), require("d3-selection"), require("d3-brush"), require("d3-axis"), require("d3-format"));
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -40,12 +36,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
 
 /***/ }),
-/* 4 */
-/***/ (function(module) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__4__;
-
-/***/ }),
+/* 4 */,
 /* 5 */
 /***/ (function(module) {
 
@@ -68,6 +59,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__7__;
 /***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
+
+/***/ }),
+/* 9 */
+/***/ (function(module) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 
 /***/ })
 /******/ 	]);
@@ -149,11 +146,11 @@ function _inheritsLoose(subClass, superClass) {
   _setPrototypeOf(subClass, superClass);
 }
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(3);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(5);
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(4);
+var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(6);
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(5);
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(7);
 ;// CONCATENATED MODULE: ./src/config/classes.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -287,7 +284,7 @@ function _defineProperty(obj, key, value) {
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(6);
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -305,15 +302,26 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
 var win = function () {
   var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
   return root || Function("return this")();
-}(),
-    doc = win && win.document;
+}();
 /* eslint-enable no-new-func, no-undef */
+// fallback for non-supported environments
+
+
+win.requestIdleCallback = win.requestIdleCallback || function (cb) {
+  return setTimeout(cb, 1);
+};
+
+win.cancelIdleCallback = win.cancelIdleCallback || function (id) {
+  return clearTimeout(id);
+};
+
+var doc = win == null ? void 0 : win.document;
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
+function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -369,7 +377,7 @@ var isValue = function (v) {
   return Array.isArray(arr);
 },
     isObject = function (obj) {
-  return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
+  return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
 };
 
 /**
@@ -395,9 +403,10 @@ function getOption(options, key, defaultValue) {
 
 function hasValue(dict, value) {
   var found = !1;
-  return Object.keys(dict).forEach(function (key) {
+  Object.keys(dict).forEach(function (key) {
     return dict[key] === value && (found = !0);
-  }), found;
+  });
+  return found;
 }
 /**
  * Call function with arguments
@@ -409,9 +418,12 @@ function hasValue(dict, value) {
 
 
 function callFn(fn) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
+  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    args[_key - 1] = arguments[_key];
+  }
 
-  return isFn && fn.call.apply(fn, args), isFn;
+  isFn && fn.call.apply(fn, args);
+  return isFn;
 }
 /**
  * Call function after all transitions ends
@@ -424,14 +436,22 @@ function callFn(fn) {
 function endall(transition, cb) {
   var n = 0,
       end = function () {
-    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
 
     --n || cb.apply.apply(cb, [this].concat(args));
   };
 
-  "duration" in transition ? transition.each(function () {
-    return ++n;
-  }).on("end", end) : (++n, transition.call(end));
+  // if is transition selection
+  if ("duration" in transition) {
+    transition.each(function () {
+      return ++n;
+    }).on("end", end);
+  } else {
+    ++n;
+    transition.call(end);
+  }
 }
 /**
  * Replace tag sign to html entity
@@ -455,7 +475,21 @@ function sanitise(str) {
 
 
 function setTextValue(node, text, dy, toMiddle) {
-  if (dy === void 0 && (dy = [-1, 1]), toMiddle === void 0 && (toMiddle = !1), node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
+  if (dy === void 0) {
+    dy = [-1, 1];
+  }
+
+  if (toMiddle === void 0) {
+    toMiddle = !1;
+  }
+
+  if (!node || !isString(text)) {
+    return;
+  }
+
+  if (text.indexOf("\n") === -1) {
+    node.text(text);
+  } else {
     var diff = [node.text(), text].map(function (v) {
       return v.replace(/[\s\n]/g, "");
     });
@@ -463,7 +497,9 @@ function setTextValue(node, text, dy, toMiddle) {
     if (diff[0] !== diff[1]) {
       var multiline = text.split("\n"),
           len = toMiddle ? multiline.length - 1 : 1;
-      node.html(""), multiline.forEach(function (v, i) {
+      // reset possible text
+      node.html("");
+      multiline.forEach(function (v, i) {
         node.append("tspan").attr("x", 0).attr("dy", (i === 0 ? dy[0] * len : dy[1]) + "em").text(v);
       });
     }
@@ -555,11 +591,19 @@ function getPointer(event, element) {
 
 
 function getBrushSelection(ctx) {
-  var selection,
-      event = ctx.event,
+  var event = ctx.event,
       $el = ctx.$el,
-      main = $el.subchart.main || $el.main;
-  return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + classes.brush).node()) && (selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection)), selection;
+      main = $el.subchart.main || $el.main,
+      selection;
+
+  // check from event
+  if (event && event.type === "brush") {
+    selection = event.selection; // check from brush area selection
+  } else if (main && (selection = main.select("." + classes.brush).node())) {
+    selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection);
+  }
+
+  return selection;
 }
 /**
  * Get boundingClientRect.
@@ -583,7 +627,10 @@ function getBoundingRect(node) {
 
 
 function getRandom(asStr) {
-  asStr === void 0 && (asStr = !0);
+  if (asStr === void 0) {
+    asStr = !0;
+  }
+
   var rand = Math.random();
   return asStr ? rand + "" : rand;
 }
@@ -600,13 +647,26 @@ function getRandom(asStr) {
 
 
 function findIndex(arr, v, start, end, isRotated) {
-  if (start > end) return -1;
+  if (start > end) {
+    return -1;
+  }
+
   var mid = Math.floor((start + end) / 2),
       _arr$mid = arr[mid],
       x = _arr$mid.x,
       _arr$mid$w = _arr$mid.w,
       w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
-  return isRotated && (x = arr[mid].y, w = arr[mid].h), v >= x && v <= x + w ? mid : v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
+
+  if (isRotated) {
+    x = arr[mid].y;
+    w = arr[mid].h;
+  }
+
+  if (v >= x && v <= x + w) {
+    return mid;
+  }
+
+  return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
 }
 /**
  * Check if brush is empty
@@ -618,7 +678,15 @@ function findIndex(arr, v, start, end, isRotated) {
 
 function brushEmpty(ctx) {
   var selection = getBrushSelection(ctx);
-  return !selection || selection[0] === selection[1];
+
+  if (selection) {
+    // brush selected area
+    // two-dimensional: [[x0, y0], [x1, y1]]
+    // one-dimensional: [x0, x1] or [y0, y1]
+    return selection[0] === selection[1];
+  }
+
+  return !0;
 }
 /**
  * Deep copy object
@@ -629,25 +697,21 @@ function brushEmpty(ctx) {
 
 
 function deepClone() {
-  for (var clone = function (_clone) {
-    function clone() {
-      return _clone.apply(this, arguments);
-    }
-
-    return clone.toString = function () {
-      return _clone.toString();
-    }, clone;
-  }(function (v) {
+  for (var clone = function (v) {
     if (isObject(v) && v.constructor) {
       var r = new v.constructor();
 
-      for (var k in v) r[k] = clone(v[k]);
+      for (var k in v) {
+        r[k] = clone(v[k]);
+      }
 
       return r;
     }
 
     return v;
-  }), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) objectN[_key3] = arguments[_key3];
+  }, _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+    objectN[_key3] = arguments[_key3];
+  }
 
   return objectN.map(function (v) {
     return clone(v);
@@ -665,10 +729,24 @@ function deepClone() {
 
 
 function extend(target, source) {
-  // exclude name with only numbers
-  for (var p in target === void 0 && (target = {}), isArray(source) && source.forEach(function (v) {
-    return extend(target, v);
-  }), source) /^\d+$/.test(p) || p in target || (target[p] = source[p]);
+  if (target === void 0) {
+    target = {};
+  }
+
+  if (isArray(source)) {
+    source.forEach(function (v) {
+      return extend(target, v);
+    });
+  } // exclude name with only numbers
+
+
+  for (var p in source) {
+    if (/^\d+$/.test(p) || p in target) {
+      continue;
+    }
+
+    target[p] = source[p];
+  }
 
   return target;
 }
@@ -682,10 +760,25 @@ function extend(target, source) {
 
 var capitalize = function (str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
-},
-    toArray = function (v) {
-  return [].slice.call(v);
 };
+/**
+ * Camelize from kebob style string
+ * @param {string} str Target string
+ * @param {string} separator Separator string
+ * @returns {string} camelized string
+ * @private
+ */
+
+
+function camelize(str, separator) {
+  if (separator === void 0) {
+    separator = "-";
+  }
+
+  return str.split(separator).map(function (v, i) {
+    return i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase();
+  }).join("");
+}
 /**
  * Convert to array
  * @param {object} v Target to be converted
@@ -694,21 +787,29 @@ var capitalize = function (str) {
  */
 
 
+var toArray = function (v) {
+  return [].slice.call(v);
+};
 /**
  * Get css rules for specified stylesheets
  * @param {Array} styleSheets The stylesheets to get the rules from
  * @returns {Array}
  * @private
  */
+
+
 function getCssRules(styleSheets) {
   var rules = [];
-  return styleSheets.forEach(function (sheet) {
+  styleSheets.forEach(function (sheet) {
     try {
-      sheet.cssRules && sheet.cssRules.length && (rules = rules.concat(toArray(sheet.cssRules)));
+      if (sheet.cssRules && sheet.cssRules.length) {
+        rules = rules.concat(toArray(sheet.cssRules));
+      }
     } catch (e) {
       console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
     }
-  }), rules;
+  });
+  return rules;
 }
 /**
  * Gets the SVGMatrix of an SVGGElement
@@ -718,7 +819,7 @@ function getCssRules(styleSheets) {
  */
 
 
-var getTranslation = function (node) {
+function getTranslation(node) {
   var transform = node ? node.transform : null,
       baseVal = transform && transform.baseVal;
   return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
@@ -729,7 +830,7 @@ var getTranslation = function (node) {
     e: 0,
     f: 0
   };
-};
+}
 /**
  * Get unique value from array
  * @param {Array} data Source data
@@ -770,14 +871,30 @@ function mergeArray(arr) {
 
 
 function mergeObj(target) {
-  for (var _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) objectN[_key4 - 1] = arguments[_key4];
+  for (var _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+    objectN[_key4 - 1] = arguments[_key4];
+  }
 
-  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) {
+    return target;
+  }
+
   var source = objectN.shift();
-  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
-    var value = source[key];
-    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
-  }), mergeObj.apply(void 0, [target].concat(objectN));
+
+  if (isObject(target) && isObject(source)) {
+    Object.keys(source).forEach(function (key) {
+      var value = source[key];
+
+      if (isObject(value)) {
+        target[key] || (target[key] = {});
+        target[key] = mergeObj(target[key], value);
+      } else {
+        target[key] = isArray(value) ? value.concat() : value;
+      }
+    });
+  }
+
+  return mergeObj.apply(void 0, [target].concat(objectN));
 }
 /**
  * Sort value
@@ -789,17 +906,31 @@ function mergeObj(target) {
 
 
 function sortValue(data, isAsc) {
-  isAsc === void 0 && (isAsc = !0);
+  if (isAsc === void 0) {
+    isAsc = !0;
+  }
+
   var fn;
-  return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
-    return a - b;
-  } : function (a, b) {
-    return b - a;
-  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
-    return a - b;
-  } : !isAsc && (fn = function (a, b) {
-    return a > b && -1 || a < b && 1 || a === b && 0;
-  }), data.concat().sort(fn);
+
+  if (data[0] instanceof Date) {
+    fn = isAsc ? function (a, b) {
+      return a - b;
+    } : function (a, b) {
+      return b - a;
+    };
+  } else {
+    if (isAsc && !data.every(isNaN)) {
+      fn = function (a, b) {
+        return a - b;
+      };
+    } else if (!isAsc) {
+      fn = function (a, b) {
+        return a > b && -1 || a < b && 1 || a === b && 0;
+      };
+    }
+  }
+
+  return data.concat().sort(fn);
 }
 /**
  * Get min/max value
@@ -814,7 +945,18 @@ function getMinMax(type, data) {
   var res = data.filter(function (v) {
     return notEmpty(v);
   });
-  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, res) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
+
+  if (res.length) {
+    if (isNumber(res[0])) {
+      res = Math[type].apply(Math, res);
+    } else if (res[0] instanceof Date) {
+      res = sortValue(res, type === "min")[0];
+    }
+  } else {
+    res = undefined;
+  }
+
+  return res;
 }
 /**
  * Get range
@@ -827,11 +969,16 @@ function getMinMax(type, data) {
 
 
 var getRange = function (start, end, step) {
-  step === void 0 && (step = 1);
+  if (step === void 0) {
+    step = 1;
+  }
+
   var res = [],
       n = Math.max(0, Math.ceil((end - start) / step)) | 0;
 
-  for (var i = start; i < n; i++) res.push(start + i * step);
+  for (var i = start; i < n; i++) {
+    res.push(start + i * step);
+  }
 
   return res;
 },
@@ -849,17 +996,27 @@ var getRange = function (start, end, step) {
     };
 
     try {
-      return new MouseEvent("t"), function (el, eventType, params) {
-        params === void 0 && (params = getParams()), el.dispatchEvent(new MouseEvent(eventType, params));
+      // eslint-disable-next-line no-new
+      new MouseEvent("t");
+      return function (el, eventType, params) {
+        if (params === void 0) {
+          params = getParams();
+        }
+
+        el.dispatchEvent(new MouseEvent(eventType, params));
       };
     } catch (e) {
       // Polyfills DOM4 MouseEvent
       return function (el, eventType, params) {
-        params === void 0 && (params = getParams());
+        if (params === void 0) {
+          params = getParams();
+        }
+
         var mouseEvent = doc.createEvent("MouseEvent"); // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
 
         mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
-        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
+        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null);
+        el.dispatchEvent(mouseEvent);
       };
     }
   }(),
@@ -894,7 +1051,9 @@ var getRange = function (start, end, step) {
 function tplProcess(tpl, data) {
   var res = tpl;
 
-  for (var x in data) res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
+  for (var x in data) {
+    res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
+  }
 
   return res;
 }
@@ -909,12 +1068,22 @@ function tplProcess(tpl, data) {
 
 function parseDate(date) {
   var parsedDate;
-  if (date instanceof Date) parsedDate = date;else if (isString(date)) {
+
+  if (date instanceof Date) {
+    parsedDate = date;
+  } else if (isString(date)) {
     var config = this.config,
         format = this.format;
     parsedDate = format.dataTime(config.data_xFormat)(date);
-  } else isNumber(date) && !isNaN(date) && (parsedDate = new Date(+date));
-  return (!parsedDate || isNaN(+parsedDate)) && console && console.error && console.error("Failed to parse x '" + date + "' to Date object"), parsedDate;
+  } else if (isNumber(date) && !isNaN(date)) {
+    parsedDate = new Date(+date);
+  }
+
+  if (!parsedDate || isNaN(+parsedDate)) {
+    console && console.error && console.error("Failed to parse x '" + date + "' to Date object");
+  }
+
+  return parsedDate;
 }
 /**
  * Return if the current doc is visible or not
@@ -947,7 +1116,7 @@ function convertInputType(mouse, touch) {
     isMobile = hasTouchPoints || hasTouch;
   }
 
-  var hasMouse = !(!mouse || isMobile) && "onmouseover" in win;
+  var hasMouse = mouse && !isMobile ? "onmouseover" in win : !1;
   return hasMouse && "mouse" || isMobile && "touch" || null;
 }
 ;// CONCATENATED MODULE: ./src/config/config.ts
@@ -963,17 +1132,31 @@ function convertInputType(mouse, touch) {
  * @private
  */
 function loadConfig(config) {
-  var target,
+  var thisConfig = this.config,
+      target,
       keys,
       read,
-      thisConfig = this.config,
       find = function () {
     var key = keys.shift();
-    return key && target && isObjectType(target) && key in target ? (target = target[key], find()) : key ? undefined : target;
+
+    if (key && target && isObjectType(target) && key in target) {
+      target = target[key];
+      return find();
+    } else if (!key) {
+      return target;
+    }
+
+    return undefined;
   };
 
   Object.keys(thisConfig).forEach(function (key) {
-    target = config, keys = key.split("_"), read = find(), isDefined(read) && (thisConfig[key] = read);
+    target = config;
+    keys = key.split("_");
+    read = find();
+
+    if (isDefined(read)) {
+      thisConfig[key] = read;
+    }
   });
 }
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
@@ -1003,7 +1186,13 @@ var Plugin = /*#__PURE__*/function () {
    * @private
    */
   function Plugin(options) {
-    options === void 0 && (options = {}), this.$$ = void 0, this.options = void 0, this.options = options;
+    if (options === void 0) {
+      options = {};
+    }
+
+    this.$$ = void 0;
+    this.options = void 0;
+    this.options = options;
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -1012,40 +1201,48 @@ var Plugin = /*#__PURE__*/function () {
 
 
   var _proto = Plugin.prototype;
-  return _proto.$beforeInit = function $beforeInit() {}
+
+  _proto.$beforeInit = function $beforeInit() {}
   /**
    * Lifecycle hook for 'init' phase.
    * @private
    */
-  , _proto.$init = function $init() {}
+  ;
+
+  _proto.$init = function $init() {}
   /**
    * Lifecycle hook for 'afterInit' phase.
    * @private
    */
-  , _proto.$afterInit = function $afterInit() {}
+  ;
+
+  _proto.$afterInit = function $afterInit() {}
   /**
    * Lifecycle hook for 'redraw' phase.
    * @private
    */
-  , _proto.$redraw = function $redraw() {}
+  ;
+
+  _proto.$redraw = function $redraw() {}
   /**
    * Lifecycle hook for 'willDestroy' phase.
    * @private
    */
-  , _proto.$willDestroy = function $willDestroy() {
+  ;
+
+  _proto.$willDestroy = function $willDestroy() {
     var _this = this;
 
     Object.keys(this).forEach(function (key) {
-      _this[key] = null, delete _this[key];
+      _this[key] = null;
+      delete _this[key];
     });
-  }, Plugin;
+  };
+
+  return Plugin;
 }();
 
-<<<<<<< Updated upstream
-Plugin.version = "3.1.3";
-=======
-Plugin.version = "3.1.5-nightly-20210930111735";
->>>>>>> Stashed changes
+Plugin.version = "3.1.5";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
@@ -1244,7 +1441,10 @@ function pointInRegion(point, region) {
         yi = region[i].y,
         xj = region[j].x,
         yj = region[j].y;
-    yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi && (inside = !inside);
+
+    if (yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi) {
+      inside = !inside;
+    }
   }
 
   return inside;
@@ -1259,7 +1459,15 @@ function pointInRegion(point, region) {
 
 
 function compareEpochs(a, b) {
-  return a.epochs < b.epochs ? -1 : a.epochs > b.epochs ? 1 : 0;
+  if (a.epochs < b.epochs) {
+    return -1;
+  }
+
+  if (a.epochs > b.epochs) {
+    return 1;
+  }
+
+  return 0;
 }
 /**
  * Get region area
@@ -1271,9 +1479,19 @@ function compareEpochs(a, b) {
 
 function getRegionArea(points) {
   // thanks to: https://stackoverflow.com/questions/16282330/find-centerpoint-of-polygon-in-javascript
-  for (var point1, point2, area = 0, i = 0, l = points.length, j = l - 1; i < l; j = i, i++) point1 = points[i], point2 = points[j], area += point1.x * point2.y, area -= point1.y * point2.x;
+  var area = 0,
+      point1,
+      point2;
 
-  return area /= 2, area;
+  for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+    point1 = points[i];
+    point2 = points[j];
+    area += point1.x * point2.y;
+    area -= point1.y * point2.x;
+  }
+
+  area /= 2;
+  return area;
 }
 /**
  * Get centroid
@@ -1284,13 +1502,21 @@ function getRegionArea(points) {
 
 
 function getCentroid(points) {
-  for (var f, area = getRegionArea(points), x = 0, y = 0, i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
-    var _point = points[i],
-        _point2 = points[j];
-    f = _point.x * _point2.y - _point2.x * _point.y, x += (_point.x + _point2.x) * f, y += (_point.y + _point2.y) * f;
+  var area = getRegionArea(points),
+      x = 0,
+      y = 0,
+      f;
+
+  for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+    var point1 = points[i],
+        point2 = points[j];
+    f = point1.x * point2.y - point2.x * point1.y;
+    x += (point1.x + point2.x) * f;
+    y += (point1.y + point2.y) * f;
   }
 
-  return f = area * 6, {
+  f = area * 6;
+  return {
     x: x / f,
     y: y / f
   };
@@ -1314,14 +1540,17 @@ function getCentroid(points) {
 
 var Elements = /*#__PURE__*/function () {
   function Elements(owner) {
-    this.owner = void 0, this.owner = owner;
-    // MEMO: Avoid blocking eventRect
+    this.owner = void 0;
+    this.owner = owner; // MEMO: Avoid blocking eventRect
+
     var elements = owner.$$.$el.main.select(".bb-chart").append("g").attr("class", stanford_classes.stanfordElements);
-    elements.append("g").attr("class", stanford_classes.stanfordLines), elements.append("g").attr("class", stanford_classes.stanfordRegions);
+    elements.append("g").attr("class", stanford_classes.stanfordLines);
+    elements.append("g").attr("class", stanford_classes.stanfordRegions);
   }
 
   var _proto = Elements.prototype;
-  return _proto.updateStanfordLines = function updateStanfordLines(duration) {
+
+  _proto.updateStanfordLines = function updateStanfordLines(duration) {
     var $$ = this.owner.$$,
         config = $$.config,
         main = $$.$el.main,
@@ -1329,10 +1558,12 @@ var Elements = /*#__PURE__*/function () {
         xvCustom = this.xvCustom.bind($$),
         yvCustom = this.yvCustom.bind($$),
         stanfordLine = main.select("." + stanford_classes.stanfordLines).style("shape-rendering", "geometricprecision").selectAll("." + stanford_classes.stanfordLine).data(this.owner.config.lines);
-    stanfordLine.exit().transition().duration(duration).style("opacity", "0").remove();
-    // enter
+    // exit
+    stanfordLine.exit().transition().duration(duration).style("opacity", "0").remove(); // enter
+
     var stanfordLineEnter = stanfordLine.enter().append("g");
-    stanfordLineEnter.append("line").style("opacity", "0"), stanfordLineEnter.merge(stanfordLine).attr("class", function (d) {
+    stanfordLineEnter.append("line").style("opacity", "0");
+    stanfordLineEnter.merge(stanfordLine).attr("class", function (d) {
       return stanford_classes.stanfordLine + (d.class ? " " + d.class : "");
     }).select("line").transition().duration(duration).attr("x1", function (d) {
       return isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
@@ -1343,7 +1574,9 @@ var Elements = /*#__PURE__*/function () {
     }).attr("y2", function (d) {
       return isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2");
     }).transition().style("opacity", null);
-  }, _proto.updateStanfordRegions = function updateStanfordRegions(duration) {
+  };
+
+  _proto.updateStanfordRegions = function updateStanfordRegions(duration) {
     var $$ = this.owner.$$,
         config = $$.config,
         main = $$.$el.main,
@@ -1352,10 +1585,15 @@ var Elements = /*#__PURE__*/function () {
         yvCustom = this.yvCustom.bind($$),
         countPointsInRegion = this.owner.countEpochsInRegion.bind($$),
         stanfordRegion = main.select("." + stanford_classes.stanfordRegions).selectAll("." + stanford_classes.stanfordRegion).data(this.owner.config.regions);
-    stanfordRegion.exit().transition().duration(duration).style("opacity", "0").remove();
-    // enter
+    // exit
+    stanfordRegion.exit().transition().duration(duration).style("opacity", "0").remove(); // enter
+
     var stanfordRegionEnter = stanfordRegion.enter().append("g");
-    stanfordRegionEnter.append("polygon").style("opacity", "0"), stanfordRegionEnter.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", "0"), stanfordRegion = stanfordRegionEnter.merge(stanfordRegion), stanfordRegion.attr("class", function (d) {
+    stanfordRegionEnter.append("polygon").style("opacity", "0");
+    stanfordRegionEnter.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", "0");
+    stanfordRegion = stanfordRegionEnter.merge(stanfordRegion); // update
+
+    stanfordRegion.attr("class", function (d) {
       return stanford_classes.stanfordRegion + (d.class ? " " + d.class : "");
     }).select("polygon").transition().duration(duration).attr("points", function (d) {
       return d.points.map(function (value) {
@@ -1363,7 +1601,8 @@ var Elements = /*#__PURE__*/function () {
       }).join(" ");
     }).transition().style("opacity", function (d) {
       return (d.opacity ? d.opacity : .2) + "";
-    }), stanfordRegion.select("text").transition().duration(duration).attr("x", function (d) {
+    });
+    stanfordRegion.select("text").transition().duration(duration).attr("x", function (d) {
       return isRotated ? yvCustom(getCentroid(d.points), "y") : xvCustom(getCentroid(d.points), "x");
     }).attr("y", function (d) {
       return isRotated ? xvCustom(getCentroid(d.points), "x") : yvCustom(getCentroid(d.points), "y");
@@ -1378,27 +1617,47 @@ var Elements = /*#__PURE__*/function () {
 
       return "";
     }).attr("text-anchor", "middle").attr("dominant-baseline", "middle").transition().style("opacity", null);
-  }, _proto.updateStanfordElements = function updateStanfordElements(duration) {
-    duration === void 0 && (duration = 0), this.updateStanfordLines(duration), this.updateStanfordRegions(duration);
-  }, _proto.xvCustom = function xvCustom(d, xyValue) {
+  };
+
+  _proto.updateStanfordElements = function updateStanfordElements(duration) {
+    if (duration === void 0) {
+      duration = 0;
+    }
+
+    this.updateStanfordLines(duration);
+    this.updateStanfordRegions(duration);
+  };
+
+  _proto.xvCustom = function xvCustom(d, xyValue) {
     var $$ = this,
         axis = $$.axis,
         config = $$.config,
         value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-    return axis.isTimeSeries() ? value = parseDate.call($$, value) : axis.isCategorized() && isString(value) && (value = config.axis_x_categories.indexOf(d.value)), Math.ceil($$.scale.x(value));
-  }, _proto.yvCustom = function yvCustom(d, xyValue) {
+
+    if (axis.isTimeSeries()) {
+      value = parseDate.call($$, value);
+    } else if (axis.isCategorized() && isString(value)) {
+      value = config.axis_x_categories.indexOf(d.value);
+    }
+
+    return Math.ceil($$.scale.x(value));
+  };
+
+  _proto.yvCustom = function yvCustom(d, xyValue) {
     var $$ = this,
         yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y,
         value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     return Math.ceil(yScale(value));
-  }, Elements;
+  };
+
+  return Elements;
 }();
 
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(7);
+var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);
 // EXTERNAL MODULE: external {"commonjs":"d3-format","commonjs2":"d3-format","amd":"d3-format","root":"d3"}
-var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(8);
+var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(9);
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/ColorScale.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -1418,11 +1677,14 @@ var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __w
 
 var ColorScale = /*#__PURE__*/function () {
   function ColorScale(owner) {
-    this.owner = void 0, this.colorScale = void 0, this.owner = owner;
+    this.owner = void 0;
+    this.colorScale = void 0;
+    this.owner = owner;
   }
 
   var _proto = ColorScale.prototype;
-  return _proto.drawColorScale = function drawColorScale() {
+
+  _proto.drawColorScale = function drawColorScale() {
     var _this$owner = this.owner,
         $$ = _this$owner.$$,
         config = _this$owner.config,
@@ -1432,30 +1694,55 @@ var ColorScale = /*#__PURE__*/function () {
         barHeight = 5,
         points = getRange(config.padding_bottom, height, barHeight),
         inverseScale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSequential)(target.colors).domain([points[points.length - 1], points[0]]);
-    this.colorScale && this.colorScale.remove(), this.colorScale = $$.$el.svg.append("g").attr("width", 50).attr("height", height).attr("class", stanford_classes.colorScale), this.colorScale.append("g").attr("transform", "translate(0, " + config.padding_top + ")").selectAll("bars").data(points).enter().append("rect").attr("y", function (d, i) {
+
+    if (this.colorScale) {
+      this.colorScale.remove();
+    }
+
+    this.colorScale = $$.$el.svg.append("g").attr("width", 50).attr("height", height).attr("class", stanford_classes.colorScale);
+    this.colorScale.append("g").attr("transform", "translate(0, " + config.padding_top + ")").selectAll("bars").data(points).enter().append("rect").attr("y", function (d, i) {
       return i * barHeight;
     }).attr("x", 0).attr("width", barWidth).attr("height", barHeight).attr("fill", function (d) {
       return inverseScale(d);
-    });
-    // Legend Axis
+    }); // Legend Axis
+
     var axisScale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleLog)().domain([target.minEpochs, target.maxEpochs]).range([points[0] + config.padding_top + points[points.length - 1] + barHeight - 1, points[0] + config.padding_top]),
         legendAxis = (0,external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisRight)(axisScale),
         scaleFormat = config.scale_format;
-    scaleFormat === "pow10" ? legendAxis.tickValues([1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7]) : isFunction(scaleFormat) ? legendAxis.tickFormat(scaleFormat) : legendAxis.tickFormat((0,external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_.format)("d"));
-    // Draw Axis
+
+    if (scaleFormat === "pow10") {
+      legendAxis.tickValues([1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7]);
+    } else if (isFunction(scaleFormat)) {
+      legendAxis.tickFormat(scaleFormat);
+    } else {
+      legendAxis.tickFormat((0,external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_.format)("d"));
+    } // Draw Axis
+
+
     var axis = this.colorScale.append("g").attr("class", "legend axis").attr("transform", "translate(" + barWidth + ",0)").call(legendAxis);
-    scaleFormat === "pow10" && axis.selectAll(".tick text").text(null).filter(function (d) {
-      return d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1;
-    }) // Power of Ten
-    .text(10).append("tspan").attr("dy", "-.7em") // https://bl.ocks.org/mbostock/6738229
-    .text(function (d) {
-      return Math.round(Math.log(d) / Math.LN10);
-    }), this.colorScale.attr("transform", "translate(" + ($$.state.current.width - this.xForColorScale()) + ", 0)");
-  }, _proto.xForColorScale = function xForColorScale() {
+
+    if (scaleFormat === "pow10") {
+      axis.selectAll(".tick text").text(null).filter(function (d) {
+        return d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1;
+      }) // Power of Ten
+      .text(10).append("tspan").attr("dy", "-.7em") // https://bl.ocks.org/mbostock/6738229
+      .text(function (d) {
+        return Math.round(Math.log(d) / Math.LN10);
+      });
+    }
+
+    this.colorScale.attr("transform", "translate(" + ($$.state.current.width - this.xForColorScale()) + ", 0)");
+  };
+
+  _proto.xForColorScale = function xForColorScale() {
     return this.owner.config.padding_right + this.colorScale.node().getBBox().width;
-  }, _proto.getColorScalePadding = function getColorScalePadding() {
+  };
+
+  _proto.getColorScalePadding = function getColorScalePadding() {
     return this.xForColorScale() + this.owner.config.padding_left + 20;
-  }, ColorScale;
+  };
+
+  return ColorScale;
 }();
 
 
@@ -1555,7 +1842,7 @@ var ColorScale = /*#__PURE__*/function () {
  *  });
  * @example
  *	import {bb} from "billboard.js";
- * import Stanford from "billboard.js/dist/billboardjs-plugin-stanford.esm";
+ * import Stanford from "billboard.js/dist/billboardjs-plugin-stanford";
  *
  * bb.generate({
  *     plugins: [
@@ -1565,97 +1852,169 @@ var ColorScale = /*#__PURE__*/function () {
  */
 
 var Stanford = /*#__PURE__*/function (_Plugin) {
-  function Stanford(options) {
-    var _this;
-
-    return _this = _Plugin.call(this, options) || this, _this.config = void 0, _this.colorScale = void 0, _this.elements = void 0, _this.config = new Options(), _assertThisInitialized(_this) || _assertThisInitialized(_this);
-  }
-
   _inheritsLoose(Stanford, _Plugin);
 
+  function Stanford(options) {
+    var _this = _Plugin.call(this, options) || this;
+
+    _this.config = void 0;
+    _this.colorScale = void 0;
+    _this.elements = void 0;
+    _this.config = new Options();
+    return _assertThisInitialized(_this) || _assertThisInitialized(_this);
+  }
+
   var _proto = Stanford.prototype;
-  return _proto.$beforeInit = function $beforeInit() {
+
+  _proto.$beforeInit = function $beforeInit() {
     var _this2 = this,
         $$ = this.$$;
 
-    $$.config.data_xSort = !1, $$.isMultipleX = function () {
+    // override on config values & methods
+    $$.config.data_xSort = !1;
+
+    $$.isMultipleX = function () {
       return !0;
-    }, $$.showGridFocus = function () {}, $$.labelishData = function (d) {
+    };
+
+    $$.showGridFocus = function () {};
+
+    $$.labelishData = function (d) {
       return d.values;
-    }, $$.opacityForCircle = function () {
+    };
+
+    $$.opacityForCircle = function () {
       return 1;
     };
+
     var getCurrentPaddingRight = $$.getCurrentPaddingRight.bind($$);
 
     $$.getCurrentPaddingRight = function () {
       return getCurrentPaddingRight() + (_this2.colorScale ? _this2.colorScale.getColorScalePadding() : 0);
     };
-  }, _proto.$init = function $init() {
+  };
+
+  _proto.$init = function $init() {
     var $$ = this.$$;
-    loadConfig.call(this, this.options), $$.color = this.getStanfordPointColor.bind($$), this.colorScale = new ColorScale(this), this.elements = new Elements(this), this.convertData(), this.initStanfordData(), this.setStanfordTooltip(), this.colorScale.drawColorScale(), this.$redraw();
-  }, _proto.$redraw = function $redraw(duration) {
-    this.colorScale && this.colorScale.drawColorScale(), this.elements && this.elements.updateStanfordElements(duration);
-  }, _proto.getOptions = function getOptions() {
+    loadConfig.call(this, this.options);
+    $$.color = this.getStanfordPointColor.bind($$);
+    this.colorScale = new ColorScale(this);
+    this.elements = new Elements(this);
+    this.convertData();
+    this.initStanfordData();
+    this.setStanfordTooltip();
+    this.colorScale.drawColorScale();
+    this.$redraw();
+  };
+
+  _proto.$redraw = function $redraw(duration) {
+    var _this$colorScale, _this$elements;
+
+    (_this$colorScale = this.colorScale) == null ? void 0 : _this$colorScale.drawColorScale();
+    (_this$elements = this.elements) == null ? void 0 : _this$elements.updateStanfordElements(duration);
+  };
+
+  _proto.getOptions = function getOptions() {
     return new Options();
-  }, _proto.convertData = function convertData() {
+  };
+
+  _proto.convertData = function convertData() {
     var data = this.$$.data.targets,
         epochs = this.options.epochs;
     data.forEach(function (d) {
       d.values.forEach(function (v, i) {
         v.epochs = epochs[i];
-      }), d.minEpochs = undefined, d.maxEpochs = undefined, d.colors = undefined, d.colorscale = undefined;
+      });
+      d.minEpochs = undefined;
+      d.maxEpochs = undefined;
+      d.colors = undefined;
+      d.colorscale = undefined;
     });
-  }, _proto.xvCustom = function xvCustom(d, xyValue) {
+  };
+
+  _proto.xvCustom = function xvCustom(d, xyValue) {
     var $$ = this,
         axis = $$.axis,
         config = $$.config,
         value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-    return axis.isTimeSeries() ? value = parseDate.call($$, value) : axis.isCategorized() && isString(value) && (value = config.axis_x_categories.indexOf(d.value)), Math.ceil($$.scale.x(value));
-  }, _proto.yvCustom = function yvCustom(d, xyValue) {
+
+    if (axis.isTimeSeries()) {
+      value = parseDate.call($$, value);
+    } else if (axis.isCategorized() && isString(value)) {
+      value = config.axis_x_categories.indexOf(d.value);
+    }
+
+    return Math.ceil($$.scale.x(value));
+  };
+
+  _proto.yvCustom = function yvCustom(d, xyValue) {
     var $$ = this,
         scale = $$.scale,
         yScale = d.axis && d.axis === "y2" ? scale.y2 : scale.y,
         value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     return Math.ceil(yScale(value));
-  }, _proto.initStanfordData = function initStanfordData() {
+  };
+
+  _proto.initStanfordData = function initStanfordData() {
     var config = this.config,
         target = this.$$.data.targets[0];
-    target.values.sort(compareEpochs);
-    // Get array of epochs
+    // TODO STANFORD see if (data.js -> orderTargets)+ can be used instead
+    // Make larger values appear on top
+    target.values.sort(compareEpochs); // Get array of epochs
+
     var epochs = target.values.map(function (a) {
       return a.epochs;
     });
-    target.minEpochs = isNaN(config.scale_min) ? Math.min.apply(Math, epochs) : config.scale_min, target.maxEpochs = isNaN(config.scale_max) ? Math.max.apply(Math, epochs) : config.scale_max, target.colors = isFunction(config.colors) ? config.colors : (0,external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_.interpolateHslLong)((0,external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_.hsl)(250, 1, .5), (0,external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_.hsl)(0, 1, .5)), target.colorscale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSequentialLog)(target.colors).domain([target.minEpochs, target.maxEpochs]);
-  }, _proto.getStanfordPointColor = function getStanfordPointColor(d) {
+    target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : Math.min.apply(Math, epochs);
+    target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max.apply(Math, epochs);
+    target.colors = isFunction(config.colors) ? config.colors : (0,external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_.interpolateHslLong)((0,external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_.hsl)(250, 1, .5), (0,external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_.hsl)(0, 1, .5));
+    target.colorscale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSequentialLog)(target.colors).domain([target.minEpochs, target.maxEpochs]);
+  };
+
+  _proto.getStanfordPointColor = function getStanfordPointColor(d) {
     var target = this.data.targets[0];
     return target.colorscale(d.epochs);
-  }, _proto.setStanfordTooltip = function setStanfordTooltip() {
+  };
+
+  _proto.setStanfordTooltip = function setStanfordTooltip() {
     var config = this.$$.config;
-    isEmpty(config.tooltip_contents) && (config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
-      var html = "<table class=\"" + classes.tooltip + "\"><tbody>";
-      return d.forEach(function (v) {
-        html += "<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(config.data_x) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.x) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(v.id) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.value) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"" + classes.tooltipName + "-" + v.id + "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:" + color(v) + "\"></span>" + defaultTitleFormat("Epochs") + "</td>\n\t\t\t\t\t\t\t<td class=\"value\">" + defaultValueFormat(v.epochs) + "</td>\n\t\t\t\t\t\t</tr>";
-      }), html + "</tbody></table>";
-    });
-  }, _proto.countEpochsInRegion = function countEpochsInRegion(region) {
+
+    if (isEmpty(config.tooltip_contents)) {
+      config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
+        var html = "<table class=\"" + classes.tooltip + "\"><tbody>";
+        d.forEach(function (v) {
+          html += "<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(config.data_x) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.x) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(v.id) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.value) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"" + classes.tooltipName + "-" + v.id + "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:" + color(v) + "\"></span>" + defaultTitleFormat("Epochs") + "</td>\n\t\t\t\t\t\t\t<td class=\"value\">" + defaultValueFormat(v.epochs) + "</td>\n\t\t\t\t\t\t</tr>";
+        });
+        return html + "</tbody></table>";
+      };
+    }
+  };
+
+  _proto.countEpochsInRegion = function countEpochsInRegion(region) {
     var $$ = this,
         target = $$.data.targets[0],
         total = target.values.reduce(function (accumulator, currentValue) {
       return accumulator + +currentValue.epochs;
     }, 0),
         value = target.values.reduce(function (accumulator, currentValue) {
-      return pointInRegion(currentValue, region) ? accumulator + +currentValue.epochs : accumulator;
+      if (pointInRegion(currentValue, region)) {
+        return accumulator + +currentValue.epochs;
+      }
+
+      return accumulator;
     }, 0);
     return {
       value: value,
-      percentage: value === 0 ? 0 : +(value / total * 100).toFixed(1)
+      percentage: value !== 0 ? +(value / total * 100).toFixed(1) : 0
     };
-  }, Stanford;
+  };
+
+  return Stanford;
 }(Plugin);
 
 
 }();
-__webpack_exports__ = __webpack_exports__.default;
+__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()
 ;
