@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.5-nightly-20211003004613
+ * @version 3.1.5-nightly-20211005004543
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -26355,7 +26355,7 @@ function bisector(f) {
       compare1 = f,
       compare2 = f;
 
-  if (f.length === 1) {
+  if (f.length !== 2) {
     delta = function (d, x) {
       return f(d) - x;
     };

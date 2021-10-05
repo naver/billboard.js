@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.5-nightly-20211003004613
+ * @version 3.1.5-nightly-20211005004543
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -15727,7 +15727,7 @@ function bisector(f) {
       compare1 = f,
       compare2 = f;
 
-  if (f.length === 1) {
+  if (f.length !== 2) {
     delta = function (d, x) {
       return f(d) - x;
     };
