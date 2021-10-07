@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.1.5-nightly-20211005004543
+ * @version 3.1.5-nightly-20211007004601
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -17598,7 +17598,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }).style("cursor", function (d) {
       var _isSelectable;
 
-      return (_isSelectable = isSelectable) != null && _isSelectable.bind($$.api)(d) ? "pointer" : null;
+      return (_isSelectable = isSelectable) != null && _isSelectable.bind != null && _isSelectable.bind($$.api)(d) ? "pointer" : null;
     }).style("opacity", "0").each(function (d) {
       if ($$.isGaugeType(d.data)) {
         d.startAngle = config.gauge_startingAngle;
@@ -21325,7 +21325,8 @@ extend(zoom, {
         isSelectionGrouped = config.data_selection_grouped,
         isSelectable = config.interaction_enabled && config.data_selection_isselectable;
 
-    if ($$.hasArcType() || !config.data_selection_enabled || config.zoom_enabled && !$$.zoom.altDomain || // skip if zoomable because of conflict drag behavior
+    if ($$.hasArcType() || !config.data_selection_enabled || // do nothing if not selectable
+    config.zoom_enabled && !$$.zoom.altDomain || // skip if zoomable because of conflict drag behavior
     !config.data_selection_multiple // skip when single selection because drag is used for multiple selection
     ) {
       return;

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.1.5-nightly-20211005004543
+ * @version 3.1.5-nightly-20211007004601
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -15499,7 +15499,7 @@ var shapeArc = {
         mainArc = mainArc.enter().append("path")
             .attr("class", $$.getClass("arc", true))
             .style("fill", function (d) { return $$.color(d.data); })
-            .style("cursor", function (d) { return ((isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind($$.api)(d)) ? "pointer" : null); })
+            .style("cursor", function (d) { var _a; return (((_a = isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind) === null || _a === void 0 ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null); })
             .style("opacity", "0")
             .each(function (d) {
             if ($$.isGaugeType(d.data)) {
@@ -20048,7 +20048,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.1.5-nightly-20211005004543
+ * @version 3.1.5-nightly-20211007004601
  */
 var bb = {
     /**
@@ -20058,7 +20058,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.1.5-nightly-20211005004543",
+    version: "3.1.5-nightly-20211007004601",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
