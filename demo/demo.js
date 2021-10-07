@@ -760,6 +760,9 @@ var demos = {
 		StepChart: [
 			{
 				options: {
+					title: {
+						text: "default",
+					},
 					data: {
 						columns: [
 							["data1", 300, 350, 300, 20, 240, 100],
@@ -774,6 +777,9 @@ var demos = {
 			},
 			{
 				options: {
+					title: {
+						text: "step-before",
+					},
 					data: {
 						columns: [
 							["data1", 300, 350, 300, 20, 240, 100],
@@ -786,13 +792,17 @@ var demos = {
 					},
 					line: {
 						step: {
-							type: "step-before"
+							type: "step-before",
+							tooltipMatch: true,
 						}
 					}
 				}
 			},
 			{
 				options: {
+					title: {
+						text: "step-after",
+					},
 					data: {
 						columns: [
 							["data1", 300, 350, 300, 20, 240, 100],
@@ -805,7 +815,8 @@ var demos = {
 					},
 					line: {
 						step: {
-							type: "step-after"
+							type: "step-after",
+							tooltipMatch: true
 						}
 					}
 				}
@@ -2993,11 +3004,20 @@ d3.select(".chart_area")
 					type: "line",
 					labels: true
 				},
+				axis: {
+					x: {
+						padding: {
+							left: 25,
+							right: 25,
+							unit: "px"
+						}
+					}
+				},
 				_plugins: [{
 					textoverlap: {
 						selector: ".bb-texts text",
 						extent: 8,
-						area : 3
+						area : 0
 					}
 				}]
 			}
@@ -3043,6 +3063,109 @@ d3.select(".chart_area")
 				},
 				_plugins: [{
 					bubblecompare: {minR: 11, maxR: 74, expandScale: 1.1}
+				}]
+			}
+		},
+		TableView: {
+			description: "Generates table view for bound dataset.<br>Must load or import plugin before the use.",
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020", "2021"],
+						["data1", 1230, 2380, 1200, 1238, 1500, 2500, 2540, 1265, 550, 240],
+						["data2", 500, 120, 100, 200, 840, 935, 825, 1123, 385, 980],
+						["data3", 1223, 153, 850, 300, 250, 3120, 1205, 840, 999, 1280],
+						["data4", 1130, 2135, 1020, 1138, 2119, 1228, 3256, 138, 2355, 220],
+						["data5", 1223, 2310, 1210, 2220, 1238, 1205, 2120, 2113, 1185, 1098]
+					],
+					types: {
+						data3: "area",
+						data4: "step",
+						data5: "bar"
+					}
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				},
+				_plugins: [{
+					tableview: {
+						title: "My Yearly Data List",
+						categoryTitle: "Year",
+						style: true
+					}
+				}]
+			}
+		},
+		Sparkline: {
+			description: "Generates multiple tiny charts from single instance.<br>Must load or import plugin before the use.",
+			options: {
+				size: {
+					width: 150,
+					height: 50
+				},
+				data: {
+					columns: [
+						["data1", 130, 200, 150, 140, 160, 150],
+						["data2", 200, 130, 90, 240, 130, 220],
+						["data3", 300, 200, 160, 400, 250, 250],
+						["data4", 300, 200, 160, 400, 250, 250],
+						["data5", 30, 120, 250, 340, 160, 50],
+						["data6", 290, 270, 220, 250, 260, 120],
+						["data7", 283, 170, 275, 143, 220, 255],
+						["data8", 130, 220, 350, 340, 260, 150],
+						["data9", 330, 220, 150, 240, 360, 250],
+						["data10", 300, 200, 160, 400, 250, 250],
+						["data11", 230, 320, 510, 140, 160, 150],
+						["data12", 200, 130, 90, 240, 130, 220],
+						["data13", 300, 200, 160, 400, 250, 250],
+						["data14", 230, 230, 390, 200, 290, 220],
+						["data15", 130, 120, 150, 140, 160, 150],
+						["data16", 290, 270, 220, 250, 160, 120],
+						["data17", 283, 170, 275, 143, 220, 255],
+						["data18", 130, 220, 150, 240, 360, 250],
+						["data19", 350, 230, 390, 222, 321, 123],
+						["data20", 300, 200, 160, 400, 250, 250],
+						["data21", 330, 320, 350, 240, 260, 250],
+						["data22", 200, 130, 90, 240, 130, 220],
+						["data23", 300, 200, 160, 400, 250, 250],
+						["data24", 321, 231, 129, 297, 333, 220],
+						["data25", 230, 320, 250, 340, 260, 350],
+						["data26", 290, 170, 210, 150, 160, 220],
+						["data27", 283, 170, 275, 143, 220, 255],
+						["data28", 330, 320, 350, 340, 360, 350],
+						["data29", 50, 330, 90, 340, 130, 320],
+						["data30", 300, 200, 160, 400, 250, 250],
+					],
+					type: "area",
+					types: {
+						data1: "area",
+						data2: "area",
+						data4: "area-spline",
+						data5: "step",
+						data8: "area-step",
+						data9: "spline",
+						data10: "bar",
+						data12: "spline",
+						data15: "bar",
+						data20: "area-spline",
+						data21: "area",
+						data22: "area",
+						data23: "bar",
+						data24: "area-spline",
+						data25: "step",
+						data27: "area-step",
+						data28: "area-step",
+						data29: "spline",
+						data30: "bar",
+					}
+				},
+				_plugins: [{
+					sparkline: {
+						selector: ".sparkline"
+					}
 				}]
 			}
 		}

@@ -57,3 +57,17 @@ pre code {
   font-size: 13px;
   color: gray;
 }
+
+.sparkline {  
+  border: solid 1px #eee;
+  width: 150px;
+  height: 50px;
+  float: left;
+}
+
+.chart_area::after {
+  display: block;
+  float: none;
+  clear: left;
+  content: "";
+}
