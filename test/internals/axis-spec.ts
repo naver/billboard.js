@@ -12,6 +12,7 @@ import {getBoundingRect} from "../../src/module/util";
 import bb from "../../src";
 import CLASS from "../../src/config/classes";
 import AxisRendererHelper from "../../src/ChartInternal/Axis/AxisRendererHelper";
+import { stratify } from "d3";
 //import getSizeFor1Char from "exports-loader?getSizeFor1Char!../../src/axis/bb.axis";
 
 describe("AXIS", function() {
@@ -251,6 +252,38 @@ describe("AXIS", function() {
 
 			check("y", args.axis.y.tick.stepSize);
 			check("y2", args.axis.y2.tick.stepSize);
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2021-08-01", "2021-08-02", "2021-08-03", "2021-08-04", "2021-08-05", "2021-08-06", "2021-08-07", "2021-08-08", "2021-08-09", "2021-08-10"],
+						["Data", 8.0, 0.0, 15.0, 0.0, 0.0, 0.0, 0.0, 0.0, 16.0, 0.0]
+					],
+					type: "line",
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%d/%m"
+						}
+					},
+					y: {
+						tick: { 
+							stepSize: 1
+						}
+					}
+				}
+			};
+		});
+
+		it("y Axis tick value should be rounded", () => {
+			chart.internal.$el.axis.y.selectAll(".tick").each(function() {
+				expect(this.textContent % 1).to.be.equal(0);
+			});
 		});
 	});
 
@@ -2703,6 +2736,80 @@ describe("AXIS", function() {
 
 			expect(internal.scale.y.domain()[1]).to.be.closeTo(max, 10);
 			expect(+internal.$el.axis.y.select(".tick:nth-child(10) tspan").text()).to.be.closeTo(max, 10);
+		});
+	});
+
+	describe("x Axis padding: unit='px'", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						['data1', 80, 250, 200, 200, 250, 150],
+						['data2', 170, 350, 240, 200, 250, 150]
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						padding: {
+							left: 100,
+							right: 80,
+							unit: "px"
+						}
+					}
+				}
+			}
+		});
+
+		const chkPadding = () => {
+			const lines = chart.$.line.lines.node();
+			let rect = lines.getBoundingClientRect();
+			let expected = {left: 129.5, right: 568.5};
+
+			expect(rect.left).to.be.closeTo(expected.left, 1);
+			expect(rect.right).to.be.closeTo(expected.right, 1);
+
+			// when
+			chart.resize({width: 300});
+
+			
+			rect = lines.getBoundingClientRect();
+			expected = {left: 106.5, right: 246.5};
+
+			expect(rect.left).to.be.closeTo(expected.left, 1);
+			expect(rect.right).to.be.closeTo(expected.right, 1);
+		};
+
+		it("should apply pixel value paddings", () => {
+			chkPadding();
+		});
+
+		it("set options axis.x.type='timeseries'", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2021-01-01", "2021-01-02", "2021-01-03", "2021-01-04", "2021-01-05", "2021-01-06"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 340, 200, 500, 250, 350]
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						padding: {
+							left: 100,
+							right: 80,
+							unit: "px"
+						}
+					}
+				}
+			}
+		});
+
+		it("should apply pixel value paddings for axis.x.type='timeseies'", () => {
+			chkPadding();
 		});
 	});
 

@@ -18,7 +18,7 @@ function withinRange(domain: (number|Date)[], current, range: number[]): boolean
 
 	return domain.every((v, i) => (
 		i === 0 ? (v >= min) : (v <= max)
-	)) && !(domain[0] === current[0] && domain[1] === current[1]);
+	) && !(domain.every((v, i) => v === current[i])));
 }
 
 /**
@@ -35,22 +35,25 @@ function withinRange(domain: (number|Date)[], current, range: number[]): boolean
  *  // Zoom to specified domain range
  *  chart.zoom([10, 20]);
  *
+ *  // For timeseries, the domain value can be string, but the format should match with the 'data.xFormat' option.
+ *  chart.zoom(["2021-02-03", "2021-02-08"]);
+ *
  *  // Get the current zoomed domain range
  *  chart.zoom();
  */
-const zoom = function(domainValue?: (number|Date)[]): (number|Date)[]|undefined {
+const zoom = function(domainValue?: (Date|number|string)[]): (Date|number)[]|undefined {
 	const $$ = this.internal;
-	const {$el, config, org, scale} = $$;
+	const {$el, axis, config, org, scale} = $$;
 	const isRotated = config.axis_rotated;
-	const isCategorized = $$.axis.isCategorized();
+	const isCategorized = axis.isCategorized();
 	let domain = domainValue;
 
 	if (config.zoom_enabled && domain) {
-		if ($$.axis.isTimeSeries()) {
+		if (axis.isTimeSeries()) {
 			domain = domain.map(x => parseDate.bind($$)(x));
 		}
 
-		if (withinRange(domain, $$.getZoomDomain(true), $$.getZoomDomain())) {
+		if (withinRange(domain as (number|Date)[], $$.getZoomDomain(true), $$.getZoomDomain())) {
 			if (isCategorized) {
 				domain = domain.map((v, i) => Number(v) + (i === 0 ? 0 : 1));
 			}
@@ -61,7 +64,7 @@ const zoom = function(domainValue?: (number|Date)[]): (number|Date)[]|undefined 
 			if (config.subchart_show) {
 				const x = scale.zoom || scale.x;
 
-				$$.brush.getSelection().call($$.brush.move, [x(domain[0]), x(domain[1])]);
+				$$.brush.getSelection().call($$.brush.move, domain.map(x));
 				// resultDomain = domain;
 			} else {
 				// in case of 'config.zoom_rescale=true', use org.xScale
@@ -78,7 +81,7 @@ const zoom = function(domainValue?: (number|Date)[]): (number|Date)[]|undefined 
 						...(isRotated ? translate.reverse() : translate) as [number, number]
 					);
 
-				$$.$T($el.eventRect)
+				$el.eventRect
 					.call($$.zoom.transform, transform);
 			}
 
@@ -89,7 +92,7 @@ const zoom = function(domainValue?: (number|Date)[]): (number|Date)[]|undefined 
 			scale.zoom.domain() : scale.x.orgDomain();
 	}
 
-	return domain;
+	return domain as (Date|number)[];
 };
 
 extend(zoom, {

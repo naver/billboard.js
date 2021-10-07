@@ -1,16 +1,18 @@
-import pkg from '../../package.json';
+import {readdirSync} from "fs";
 import babel from '@rollup/plugin-babel';
 import typescript from "@rollup/plugin-typescript";
 import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
+import del from "rollup-plugin-delete";
+import {getBanner, readJson, resolvePath} from "../util.js";
 
-import path from "path";
-import fs from "fs";
+const pkg = readJson("package.json");
+const distPath = "dist-esm";
 
-const {plugin, production} = require("../banner.js");
+const {plugin, production} = getBanner();
 const version = process.env.VERSION || pkg.version;
 
-function getBanner(isPlugin) {
+function getBannerStr(isPlugin) {
    
 	return `/*!
 * ${(production.replace(/(@version ).*$/, `$1${version}`) + (isPlugin ? plugin : "")).replace(/\r\n/gm, "\r\n * ")}
@@ -18,6 +20,10 @@ function getBanner(isPlugin) {
 }
 
 const plugins = [
+    del({
+        targets: `${distPath}/*`,
+        runOnce: true
+    }),
     resolve(),
     babel({
         babelHelpers: "runtime"
@@ -28,31 +34,31 @@ const plugins = [
         preventAssignment: true
     })
 ];
+
 const external = id => /^d3-/.test(id);
 
-// billboard.js plugin setting
-const bbPlugins = fs.readdirSync(path.resolve(__dirname, "../../src/Plugin/"), {
-	withFileTypes: true
-})
-.filter(dirent => dirent.isDirectory())
-.map(({name}) => ({
-    input: `src/Plugin/${name}/index.ts`,
-    output: {
-        file: `dist/plugin/billboardjs-plugin-${name}.esm.js`,
-        format: "es",
-        banner: getBanner(true)
-    },
-    plugins,
-    external
-}));
+const bbPlugins = readdirSync(resolvePath("../src/Plugin/"), {
+        withFileTypes: true
+    })
+    .filter(dirent => dirent.isDirectory())
+    .map(({name}) => ({
+        input: `src/Plugin/${name}/index.ts`,
+        output: {
+            file: `${distPath}/plugin/billboardjs-plugin-${name}.js`,
+            format: "es",
+            banner: getBannerStr(true)
+        },
+        plugins,
+        external
+    }));
 
 export default [
     {
         input: "src/index.esm.ts",
         output: {
-            file: "dist/billboard.esm.js",
+            file: `${distPath}/billboard.js`,
             format: "es",
-            banner: getBanner()
+            banner: getBannerStr()
         },
         plugins,
         external

@@ -14,16 +14,16 @@ setup_git() {
 }
 
 build_nightly() {
-    ./node_modules/.bin/cross-env NIGHTLY=$VERSION npm run build:production
-    ./node_modules/.bin/cross-env NIGHTLY=$VERSION npm run build:packaged
-    ./node_modules/.bin/cross-env NIGHTLY=$VERSION npm run build:theme
-    ./node_modules/.bin/cross-env NIGHTLY=$VERSION npm run build:plugin
-    ./node_modules/.bin/cross-env NIGHTLY=$VERSION npm run build:esm
+    ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:production
+    ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:packaged
+    ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:theme
+    ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:plugin
+    ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:esm
 }
 
 build_and_commit() {
     build_nightly
-    git add ./dist
+    git add ./dist*
     git commit -a -m "skip: $VERSION build [skip ci]"
 }
 

@@ -48,7 +48,7 @@ export default {
 		// TODO: binary search when multiple xs
 		main.selectAll(`.${CLASS.shapes}`)
 			.selectAll(`.${CLASS.shape}`)
-			.filter(d => isSelectable && isSelectable.bind($$.api)(d))
+			.filter(d => isSelectable?.bind($$.api)(d))
 			.each(function(d, i) {
 				const shape: d3Selection = d3Select(this);
 				const isSelected = shape.classed(CLASS.SELECTED);
@@ -113,15 +113,13 @@ export default {
 	 */
 	dragend(): void {
 		const $$ = this;
-		const {config, $el: {main}} = $$;
+		const {config, $el: {main}, $T} = $$;
 
 		if ($$.hasArcType() || !config.data_selection_enabled) { // do nothing if not selectable
 			return;
 		}
 
-		main.select(`.${CLASS.dragarea}`)
-			.transition()
-			.duration(100)
+		$T(main.select(`.${CLASS.dragarea}`))
 			.style("opacity", "0")
 			.remove();
 

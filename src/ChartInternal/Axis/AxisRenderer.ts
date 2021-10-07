@@ -214,8 +214,14 @@ export default class AxisRenderer {
 					tickTransform(tickExit, scale1);
 				}
 
+				// when .flow(), it should follow flow's transition config
+				// otherwise make to use ChartInternals.$T()
+				tick = params.owner.state.flowing ?
+					helper.transitionise(tick) :
+					params.owner.$T(tick);
+
 				tickTransform(tickEnter, scale0);
-				tickTransform(helper.transitionise(tick).style("opacity", null), scale1);
+				tickTransform(tick.style("opacity", null), scale1);
 			}
 		});
 
@@ -272,7 +278,7 @@ export default class AxisRenderer {
 
 			orient === "top" && value.reverse();
 
-			return !r ? "middle" : (r > 0 ? value[0] : value[1]);
+			return !r ? "middle" : value[r > 0 ? 0 : 1];
 		};
 		const textTransform = r => (r ? `rotate(${r})` : null);
 		const yForText = r => {

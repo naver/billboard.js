@@ -2,15 +2,12 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {voronoi as d3Voronoi} from "d3-voronoi";
+import {d3Selection} from "billboard.js/types/types";
+import {Delaunay as d3Delaunay} from "d3-delaunay";
 import {
 	polygonCentroid as d3PolygonCentroid,
 	polygonArea as d3PolygonArea
 } from "d3-polygon";
-import {
-	select as d3Select,
-	selectAll as d3SelectAll
-} from "d3-selection";
 import {loadConfig} from "../../config/config";
 import Plugin from "../Plugin";
 import Options from "./Options";
@@ -21,14 +18,13 @@ import Options from "./Options";
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
  *   - Non required modules from billboard.js core, need to be installed separately.
+ *   - Appropriate and works for axis based chart.
  * - **Required modules:**
- *   - [d3-selection](https://github.com/d3/d3-selection)
  *   - [d3-polygon](https://github.com/d3/d3-polygon)
- *   - [d3-voronoi](https://github.com/d3/d3-voronoi)
+ *   - [d3-delaunay](https://github.com/d3/d3-delaunay)
  * @class plugin-textoverlap
- * @requires d3-selection
  * @requires d3-polygon
- * @requires d3-voronoi
+ * @requires d3-delaunay
  * @param {object} options TextOverlap plugin options
  * @augments Plugin
  * @returns {TextOverlap}
@@ -39,18 +35,19 @@ import Options from "./Options";
  *  var chart = bb.generate({
  *     data: {
  *     	  columns: [ ... ]
- *     }
+ *     },
  *     ...
  *     plugins: [
  *        new bb.plugin.textoverlap({
  *          selector: ".bb-texts text",
  *          extent: 8,
  *          area: 3
+ *        })
  *     ]
  *  });
  * @example
  *	import {bb} from "billboard.js";
- * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap.esm";
+ * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap";
  *
  * bb.generate({
  *     plugins: [
@@ -61,7 +58,7 @@ import Options from "./Options";
 export default class TextOverlap extends Plugin {
 	private config;
 
-	constructor(options) {
+	constructor(options?: Options) {
 		super(options);
 		this.config = new Options();
 
@@ -73,27 +70,28 @@ export default class TextOverlap extends Plugin {
 	}
 
 	$redraw(): void {
-		const text = d3SelectAll(this.config.selector);
+		const {$$: {$el}, config: {selector}} = this;
+		const text = selector ? $el.main.selectAll(selector) : $el.text;
 
 		!text.empty() && this.preventLabelOverlap(text);
 	}
 
 	/**
 	 * Generates the voronoi layout for data labels
-	 * @param {object} data Indices values
+	 * @param {Array} points Indices values
 	 * @returns {object} Voronoi layout points and corresponding Data points
 	 * @private
 	 */
-	generateVoronoi(data) {
+	generateVoronoi(points: [number, number][]) {
 		const {$$} = this;
 		const {scale} = $$;
 		const [min, max] = ["x", "y"].map(v => scale[v].domain());
 
 		[min[1], max[0]] = [max[0], min[1]];
 
-		return d3Voronoi()
-			.extent([min, max])
-			.polygons(data);
+		return d3Delaunay
+			.from(points)
+			.voronoi([...min, ...max]); // bounds = [xmin, ymin, xmax, ymax], default value: [0, 0, 960, 500]
 	}
 
 	/**
@@ -101,32 +99,37 @@ export default class TextOverlap extends Plugin {
 	 * @param {d3Selection} text target text selection
 	 * @private
 	 */
-	preventLabelOverlap(text): void {
+	preventLabelOverlap(text: d3Selection): void {
 		const {extent, area} = this.config;
-		const cells = this.generateVoronoi(text.data().map(v => [v.x, v.value]));
+		const points = text.data().map(v => [v.index, v.value]) as [number, number][];
+		const voronoi = this.generateVoronoi(points);
 		let i = 0;
 
 		text.each(function() {
-			const cell = cells[i++];
+			const cell = voronoi.cellPolygon(i);
 
 			if (cell && this) {
-				const [x, y] = cell.data;
+				const [x, y] = points[i];
+				// @ts-ignore wrong type definiton for d3PolygonCentroid
 				const [cx, cy] = d3PolygonCentroid(cell);
-				const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
 
+				// @ts-ignore wrong type definiton for d3PolygonArea
+				const polygonArea = Math.abs(d3PolygonArea(cell));
+
+				const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
 				const xTranslate = extent * (angle === 0 ? 1 : -1);
 				const yTranslate = angle === -1 ? -extent : extent + 5;
 
 				const txtAnchor = Math.abs(angle) === 1 ?
 					"middle" : (angle === 0 ? "start" : "end");
 
-				d3Select(this)
-					// @ts-ignore
-					.attr("display", d3PolygonArea(cell) < area ? "none" : null)
-					.attr("text-anchor", txtAnchor)
-					.attr("dy", `0.${angle === 1 ? 71 : 35}em`)
-					.attr("transform", `translate(${xTranslate}, ${yTranslate})`);
+				this.style.display = polygonArea < area ? "none" : "";
+				this.setAttribute("text-anchor", txtAnchor);
+				this.setAttribute("dy", `0.${angle === 1 ? 71 : 35}em`);
+				this.setAttribute("transform", `translate(${xTranslate}, ${yTranslate})`);
 			}
+
+			i++;
 		});
 	}
 }

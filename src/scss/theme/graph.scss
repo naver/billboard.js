@@ -72,6 +72,8 @@ $axis-color: #8c8c8c;
 
 /*-- Grid --*/
 .bb-grid {
+    pointer-events: none;
+
     line {
         stroke: #f1f1f1;
     }

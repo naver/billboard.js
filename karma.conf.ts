@@ -1,3 +1,5 @@
+/* eslint-disable */
+// @ts-nocheck
 const webpack = require("webpack");
 const isWin = require("os").platform() === "win32";
 
@@ -33,12 +35,13 @@ module.exports = function(config) {
 		},
 
 		webpack: {
-			devtool: "inline-source-map",
+			devtool: "cheap-module-source-map",
 			mode: "development",
 			stats: "none",
 			resolve: {
 				extensions: [".ts", ".js"]
 			},
+			target: ["web", "es5"],
 			module: {
 				rules: [
 					{

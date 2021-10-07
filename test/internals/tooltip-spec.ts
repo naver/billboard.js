@@ -310,6 +310,206 @@ describe("TOOLTIP", function() {
 			});
 		});
 
+		describe("step-after tooltip position", () => {
+			const orgArgs = args;
+			const posX = [];
+
+			before(() => {				
+				args = {
+					data: {
+						columns: [
+							['data1', 30, 200, 100, 400, 150, 250],
+							['data2', 130, 340, 200, 500, 250, 350]
+						],
+						type: 'step'
+					},
+					line: {
+						step: {
+							type: 'step-after'
+						}
+					}
+				}
+			});
+
+			const chkTooltipPosX = () => {
+				// do hover
+				util.hoverChart(chart, "mousemove", {clientX: 70, clientY: 311});
+
+				posX.push(
+					chart.$.tooltip.node().getBoundingClientRect().x
+				);
+			}
+
+			it("check tooltip x position: indexed type", () => {
+				chkTooltipPosX();
+			});
+
+			it("set options", () => {
+				args = {
+					data: {
+						x: 'x',
+						columns: [
+							[
+								'x',
+								'2013-01-01',
+								'2013-01-02',
+								'2013-01-03',
+								'2013-01-04',
+								'2013-01-05',
+								'2013-01-06'
+							],
+							['data1', 30, 200, 100, 400, 150, 250],
+							['data2', 130, 340, 200, 500, 250, 350]
+						],
+						type: 'step'
+				  },
+				  line: {
+					step: {
+					  type: 'step-after'
+					}
+				  },
+				  axis: {
+					x: {
+					  type: 'timeseries',
+					  tick: {
+						format: '%Y-%m-%d'
+					  }
+					}
+				  }
+				}
+			});
+
+			it("check tooltip x position: timeseries type", () => {
+				chkTooltipPosX();
+			});
+
+			it("set options", () => {
+				args = {
+					data: {
+						columns: [
+						  ['data1', 30, 200, 100, 400, 150, 250],
+						  ['data2', 130, 340, 200, 500, 250, 350]
+						],
+						types: {
+						  data1: 'step',
+						  data2: 'step'
+						}
+					  },
+					  line: {
+						step: {
+						  type: 'step-after'
+						}
+					}
+				};
+			});
+
+			it("check tooltip x position", () => {
+				// check tooltip x position: indexed type, specifying data.types
+				chkTooltipPosX();
+
+				expect(posX.every((v, i, arr) => arr[0] === v)).to.be.true;
+			})
+		});
+
+		describe('tooltip index with step types and tooltipMatch', function () {
+			// x axis ticks getBoundingClientRect x are at [43.4375, 336.4375, 630.4375]
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							['data1', 30, 40, 20],
+						],
+						type: 'step',
+					},
+					line: {
+						step: {
+							type: 'step',
+							tooltipMatch: true,
+						}
+					}
+				}
+			});
+
+			it("should have tooltip to nearest", () => {
+				util.hoverChart(chart, "mousemove", {clientX: 150, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(0);
+
+				util.hoverChart(chart, "mousemove", {clientX: 200, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+
+				util.hoverChart(chart, "mousemove", {clientX: 425, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+
+				util.hoverChart(chart, "mousemove", {clientX: 500, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(2);
+			})
+
+			it("set step type to step before", () => {
+				args.line.step.type = 'step-before';
+			});
+
+			it("should have tooltip to right", () => {
+				util.hoverChart(chart, "mousemove", {clientX: 150, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+
+				util.hoverChart(chart, "mousemove", {clientX: 200, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+
+				util.hoverChart(chart, "mousemove", {clientX: 450, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(2);
+
+				util.hoverChart(chart, "mousemove", {clientX: 500, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(2);
+			});
+
+			it("set step type to default", () => {
+				args.line.step.type = 'step-after';
+			});
+
+			const checkStepAfter = () => {
+				util.hoverChart(chart, "mousemove", {clientX: 150, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(0);
+
+				util.hoverChart(chart, "mousemove", {clientX: 200, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(0);
+
+				util.hoverChart(chart, "mousemove", {clientX: 450, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+
+				util.hoverChart(chart, "mousemove", {clientX: 500, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+			}
+
+			it("should have tooltip to left", () => {
+				checkStepAfter();
+			});
+
+			it("set timeseries", () => {
+				args.axis = {
+					x: {
+						type: "timeseries",
+					}
+				}
+				args.data.x = "x";
+				args.data.columns = args.data.columns.concat([
+					["x", "2021-01-01", "2021-01-02", "2021-01-03"],
+				]);
+			});
+
+			it("should work with timeseries", () => {
+				checkStepAfter();
+			});
+
+			it("should change when enter from right", () => {
+				util.hoverChart(chart, "mousemove", {clientX: 350, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+
+				util.hoverChart(chart, "mousemove", {clientX: 250, clientY: 300});
+				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(0);
+			});
+
+		});
+
 		describe("Narrow width container's tooltip position", () => {
 			const orgArgs = args;
 
@@ -384,6 +584,10 @@ describe("TOOLTIP", function() {
 			};
 		});
 
+		after(() => {
+			delete args.tooltip.position;
+		});
+
 		it("should be set to the coordinate where the function returned", () => {
 			util.hoverChart(chart, "mousemove", {
 				clientX: 270,
@@ -423,9 +627,15 @@ describe("TOOLTIP", function() {
 		});
 
 		it("set option tooltip.position", () => {
-			args.tooltip.position = () => ({
-				top: 50, left: 300
-			});
+			args.tooltip.position = function(data, width, height, element, pos) {
+				expect(pos.x).to.be.equal(99.5);
+				expect(pos.y).to.be.equal(100.5);
+				expect(pos.xAxis).to.be.equal(this.internal.scale.x(data[0].x));
+
+				return {
+					top: 50, left: 300
+				};
+			};
 		});
 
 		it("tooltip repositioning: when the chart width is increasing", done => {
@@ -441,6 +651,7 @@ describe("TOOLTIP", function() {
 
 			setTimeout(() => {
 				expect(parseInt(tooltip.style("left"))).to.be.above(left);
+
 				done();
 			}, 200);
 		});

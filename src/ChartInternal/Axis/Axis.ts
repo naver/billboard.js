@@ -224,8 +224,7 @@ class Axis {
 				} else {
 					axesConfig[i].domain && scale.domain(axesConfig[i].domain);
 
-					this.x.helper.transitionise(g)
-						.call(v.scale(scale));
+					$$.$T(g).call(v.scale(scale));
 				}
 
 				g.attr("transform", $$.getTranslate(id, i + 1));
@@ -273,7 +272,7 @@ class Axis {
 		let tickFormat;
 
 		if (isX) {
-			tickFormat = $$.format.xAxisTick;
+			tickFormat = (id === "subX") ? $$.format.subXAxisTick : $$.format.xAxisTick;
 		} else {
 			const fn = config[`axis_${id}_tick_format`];
 
@@ -289,7 +288,8 @@ class Axis {
 			noTransition,
 			config,
 			id,
-			tickTextRotate
+			tickTextRotate,
+			owner: $$
 		}, isX && {
 			isCategory,
 			tickMultiline: config.axis_x_tick_multiline,
@@ -366,7 +366,7 @@ class Axis {
 			axis.tickValues(values);
 		} else if (this.x) {
 			this.x.tickValues(values);
-			this.subX && this.subX.tickValues(values);
+			this.subX?.tickValues(values);
 		}
 
 		return values;
@@ -384,10 +384,13 @@ class Axis {
 		return axis;
 	}
 
-	getXAxisTickFormat(): Function {
+	getXAxisTickFormat(forSubchart? : boolean): Function {
 		const $$ = this.owner;
 		const {config, format} = $$;
-		const tickFormat = config.axis_x_tick_format;
+		// enable different tick format for x and subX - subX format defaults to x format if not defined
+		const tickFormat = forSubchart ?
+			config.subchart_axis_x_tick_format || config.axis_x_tick_format :
+			config.axis_x_tick_format;
 		const isTimeSeries = this.isTimeSeries();
 		const isCategorized = this.isCategorized();
 		let currFormat;
@@ -584,7 +587,9 @@ class Axis {
 		if (svg) {
 			const isYAxis = /^y2?$/.test(id);
 			const targetsToShow = $$.filterTargetsToShow($$.data.targets);
-			const scale = $$.scale[id].copy().domain($$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id));
+			const scale = $$.scale[id].copy().domain(
+				$$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id)
+			);
 			const domain = scale.domain();
 
 			const isDomainSame = domain[0] === domain[1] && domain.every(v => v > 0);
@@ -729,38 +734,9 @@ class Axis {
 		return maxOverflow + tickOffset;
 	}
 
-	/**
-	 * Get x Axis padding
-	 * @param {number} tickCount Tick count
-	 * @returns {object} Padding object values with 'left' & 'right' key
-	 * @private
-	 */
-	getXAxisPadding(tickCount: number): {left: number, right: number} {
-		const $$ = this.owner;
-		const padding = $$.config.axis_x_padding;
-		let {left = 0, right = 0} = isNumber(padding) ?
-			{left: padding, right: padding} : padding;
-
-		if ($$.axis.isTimeSeries()) {
-			const firstX = +$$.getXDomainMin($$.data.targets);
-			const lastX = +$$.getXDomainMax($$.data.targets);
-			const timeDiff = lastX - firstX;
-			const range = timeDiff + left + right;
-
-			if (tickCount && range) {
-				const relativeTickWidth = (timeDiff / tickCount) / range;
-
-				left = left / range / relativeTickWidth;
-				right = right / range / relativeTickWidth;
-			}
-		}
-
-		return {left, right};
-	}
-
 	updateLabels(withTransition) {
 		const $$ = this.owner;
-		const {main} = $$.$el;
+		const {$el: {main}, $T} = $$;
 
 		const labels = {
 			x: main.select(`.${CLASS.axisX} .${CLASS.axisXLabel}`),
@@ -772,7 +748,8 @@ class Axis {
 			.forEach(v => {
 				const node = labels[v];
 
-				(withTransition ? node.transition() : node)
+				// @check $$.$T(node, withTransition)
+				$T(node, withTransition)
 					.attr("x", () => this.xForAxisLabel(v))
 					.attr("dx", () => this.dxForAxisLabel(v))
 					.attr("dy", () => this.dyForAxisLabel(v))
@@ -780,22 +757,27 @@ class Axis {
 			});
 	}
 
-	getPadding(padding, key, defaultValue, domainLength) {
+	/**
+	 * Get axis padding value
+	 * @param {number|object} padding Padding object
+	 * @param {string} key Key string of padding
+	 * @param {Date|number} defaultValue Default value
+	 * @param {number} domainLength Domain length
+	 * @returns {number} Padding value in scale
+	 * @private
+	 */
+	getPadding(padding: number | {[key: string]: number},
+		key: string, defaultValue: number, domainLength: number): number {
 		const p = isNumber(padding) ? padding : padding[key];
 
 		if (!isValue(p)) {
 			return defaultValue;
 		}
 
-		return this.convertPixelsToAxisPadding(p, domainLength);
-	}
-
-	convertPixelsToAxisPadding(pixels, domainLength) {
-		const $$ = this.owner;
-		const {config, state: {width, height}} = $$;
-		const length = config.axis_rotated ? width : height;
-
-		return domainLength * (pixels / length);
+		return this.owner.convertPixelToScale(
+			/(bottom|top)/.test(key) ? "y" : "x",
+			p, domainLength
+		);
 	}
 
 	generateTickValues(values, tickCount, forTimeSeries) {
@@ -841,20 +823,12 @@ class Axis {
 		return tickValues;
 	}
 
-	generateTransitions(duration) {
+	generateTransitions(withTransition) {
 		const $$ = this.owner;
-		const axis = $$.$el.axis;
+		const {$el: {axis}, $T} = $$;
 
 		const [axisX, axisY, axisY2, axisSubX] = ["x", "y", "y2", "subX"]
-			.map(v => {
-				let ax = axis[v];
-
-				if (ax && duration) {
-					ax = ax.transition().duration(duration);
-				}
-
-				return ax;
-			});
+			.map(v => $T(axis[v], withTransition));
 
 		return {axisX, axisY, axisY2, axisSubX};
 	}
@@ -909,7 +883,7 @@ class Axis {
 			}
 		} else if (this.x) {
 			this.x.tickValues([]);
-			this.subX && this.subX.tickValues([]);
+			this.subX?.tickValues([]);
 		}
 
 		if (config.zoom_rescale && !flow) {
@@ -953,8 +927,8 @@ class Axis {
 
 		// Update sub domain
 		if (wth.Y) {
-			scale.subY && scale.subY.domain($$.getYDomain(targetsToShow, "y"));
-			scale.subY2 && scale.subY2.domain($$.getYDomain(targetsToShow, "y2"));
+			scale.subY?.domain($$.getYDomain(targetsToShow, "y"));
+			scale.subY2?.domain($$.getYDomain(targetsToShow, "y2"));
 		}
 	}
 

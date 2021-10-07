@@ -47,7 +47,7 @@ export default {
 		const ids: string[] = [];
 
 		return function(d) {
-			const id: string = d.id || (d.data && d.data.id) || d;
+			const id: string = d.id || d.data?.id || d;
 
 			if (ids.indexOf(id) < 0) {
 				ids.push(id);
@@ -110,7 +110,7 @@ export default {
 	},
 
 	selectorLegends(ids): string[] | null {
-		return ids && ids.length ?
+		return ids?.length ?
 			ids.map(id => this.selectorLegend(id)) : null;
 	},
 };

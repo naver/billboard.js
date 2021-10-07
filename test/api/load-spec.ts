@@ -803,36 +803,36 @@ describe("API load", function() {
 		});
 
 		it("should be rendered properly", done => {
-			setTimeout(function () {
-			  chart.load({
-				columns: [["data1", 230, 190, 300, 500, 300, 400]],
-				unload: true
-			  });
-			}, 1000);
-			
-			setTimeout(function () {
-			  chart.load({
-				columns: [["data3", 130, 150, 200, 300, 200, 100]],
-				unload: true
-			  });
-			}, 1100);			
-			
-			setTimeout(function () {
-			  chart.load({
-				columns: [["data4", 100, 110, 120, 130, 140, 150]],
-				unload: true,
-				done: function() {
-					const {axis} = this.internal.$el;
-					const {lines} = this.$.line;
+			new Promise((resolve, reject) => {
+				chart.load({
+					columns: [["data1", 230, 190, 300, 500, 300, 400]],
+					unload: true,
+					done: resolve
+				});
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					chart.load({
+						columns: [["data3", 130, 150, 200, 300, 200, 100]],
+						unload: true,
+						done: resolve
+					});
+				});
+			}).then(() => {
+				chart.load({
+					columns: [["data4", 100, 110, 120, 130, 140, 150]],
+					unload: true,
+					done: function() {
+						const {axis} = this.internal.$el;
+						const {lines} = this.$.line;
+	
+						expect(lines.size()).to.be.equal(1);
+						expect(+axis.y.selectAll(".tick:last-of-type text").text()).to.be.equal(155);
+						expect(lines.attr("d")).to.be.equal("M6,390.5833333333333L124,319.75L241,248.91666666666663L358,178.08333333333331L475,107.25L593,36.41666666666668");
 
-					expect(lines.size()).to.be.equal(1);
-					expect(+axis.y.selectAll(".tick:last-of-type text").text()).to.be.equal(155);
-					expect(lines.attr("d")).to.be.equal("M6,390.5833333333333L124,319.75L241,248.91666666666663L358,178.08333333333331L475,107.25L593,36.41666666666668");
-					done();
-				}
-			  });
-			}, 1200);
-
+						done();
+					}
+				});
+			});
 		});
 	});
 });

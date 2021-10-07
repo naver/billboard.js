@@ -11,6 +11,8 @@ import {
 } from "d3-time-format";
 import {select as d3Select} from "d3-selection";
 import {d3Selection} from "../../types/types";
+import {checkModuleImport} from "../module/error";
+
 import CLASS from "../config/classes";
 import Store from "../config/Store/Store";
 import Options from "../config/Options/Options";
@@ -112,6 +114,8 @@ export default class ChartInternal {
 
 		$$.$el = store.getStore("element");
 		$$.state = store.getStore("state");
+
+		$$.$T = $$.$T.bind($$);
 	}
 
 	/**
@@ -172,6 +176,8 @@ export default class ChartInternal {
 	init(): void {
 		const $$ = <any> this;
 		const {config, state, $el} = $$;
+
+		checkModuleImport($$);
 
 		state.hasAxis = !$$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");
@@ -434,13 +440,13 @@ export default class ChartInternal {
 
 		if (hasAxis) {
 			// Cover whole with rects for events
-			hasInteraction && $$.initEventRect && $$.initEventRect();
+			hasInteraction && $$.initEventRect?.();
 
 			// Grids
 			$$.initGrid();
 
 			// Add Axis here, when clipPath is 'true'
-			config.clipPath && $$.axis && $$.axis.init();
+			config.clipPath && $$.axis?.init();
 		}
 
 		$$.initChartElements();
@@ -478,6 +484,10 @@ export default class ChartInternal {
 		state.rendered = true;
 	}
 
+	/**
+	 * Initialize chart elements
+	 * @private
+	 */
 	initChartElements(): void {
 		const $$ = <any> this;
 		const {hasAxis, hasRadar} = $$.state;
@@ -510,6 +520,10 @@ export default class ChartInternal {
 		notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
 	}
 
+	/**
+	 * Set chart elements
+	 * @private
+	 */
 	setChartElements(): void {
 		const $$ = this;
 		const {$el: {
@@ -605,7 +619,7 @@ export default class ChartInternal {
 
 		// circle
 		if ($$.hasType("bubble") || $$.hasType("scatter")) {
-			$$.updateTargetForCircle && $$.updateTargetForCircle();
+			$$.updateTargetForCircle?.();
 		}
 
 		// Fade-in each chart
@@ -618,13 +632,11 @@ export default class ChartInternal {
 	 */
 	showTargets(): void {
 		const $$ = <any> this;
-		const {config, $el: {svg}} = $$;
+		const {$el: {svg}, $T} = $$;
 
-		svg.selectAll(`.${CLASS.target}`)
+		$T(svg.selectAll(`.${CLASS.target}`)
 			.filter(d => $$.isTargetToShow(d.id))
-			.transition()
-			.duration(config.transition_duration)
-			.style("opacity", null);
+		).style("opacity", null);
 	}
 
 	getWithOption(options) {

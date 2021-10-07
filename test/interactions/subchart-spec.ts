@@ -134,6 +134,74 @@ describe("SUBCHART", () => {
 		});
 	});
 
+	describe("subchart x axis tick format", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2020-01-01", "2020-01-02", "2020-01-03", "2020-01-04", "2020-01-05", "2020-01-06"],
+						["data1", 30, 200, 100, 400, 150, 250],
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%m-%d"
+						},
+						padding: 100
+					}
+				},
+				subchart: {
+					show: true,
+					axis: {
+						x: {
+							tick: {}
+						}
+					}
+				}
+			}
+		});
+
+		let expected = {
+			x: ["01-01", "01-02", "01-03", "01-04", "01-05", "01-06"],
+			subX: ["01-01", "01-02", "01-03", "01-04", "01-05", "01-06"]
+		};
+
+		const checkTickValues = () => {
+			["subX", "x"].forEach(v => {
+				chart.internal.$el.axis[v]
+					.selectAll(".tick text").each(function (d, j) {
+					expect(this.textContent).to.be.equal(expected[v][j]);
+				});
+			});
+		};
+
+		it("should format subX ticks with x format", () => {
+			checkTickValues();
+		});
+
+		it("set subchart x axis tick format date", () => {
+			args.subchart.axis.x.tick.format = "%Y-%m-%d";
+		});
+
+		it("should format subX ticks with subX date format", () => {
+			expected.subX = ["2020-01-01", "2020-01-02", "2020-01-03", "2020-01-04", "2020-01-05", "2020-01-06"];
+			checkTickValues();
+		});
+
+		it("set subchart x axis tick format function", () => {
+			args.subchart.axis.x.tick.format = (x) => x.getDate();
+		});
+
+		it("should format subX ticks with subX function", () => {
+			expected.subX = ["1", "2", "3", "4", "5", "6"];
+			checkTickValues();
+		});
+	});
+
 	describe("subchart selection", () => {
 		before(() => {
 			args = {

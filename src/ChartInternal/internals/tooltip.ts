@@ -5,6 +5,7 @@
 import {select as d3Select} from "d3-selection";
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
+import {IDataRow} from "../data/IData";
 import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
 
 export default {
@@ -12,7 +13,7 @@ export default {
 	 * Initializes the tooltip
 	 * @private
 	 */
-	initTooltip() {
+	initTooltip(): void {
 		const $$ = this;
 		const {config, $el} = $$;
 
@@ -31,7 +32,7 @@ export default {
 		$$.bindTooltipResizePos();
 	},
 
-	initShowTooltip() {
+	initShowTooltip(): void {
 		const $$ = this;
 		const {config, $el, state: {hasAxis, hasRadar}} = $$;
 
@@ -39,7 +40,7 @@ export default {
 		if (config.tooltip_init_show) {
 			const isArc = !(hasAxis && hasRadar);
 
-			if ($$.axis && $$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
+			if ($$.axis?.isTimeSeries() && isString(config.tooltip_init_x)) {
 				const targets = $$.data.targets[0];
 				let i;
 				let val;
@@ -67,7 +68,7 @@ export default {
 
 			$el.tooltip.html($$.getTooltipHTML(
 				data,
-				$$.axis && $$.axis.getXAxisTickFormat(),
+				$$.axis?.getXAxisTickFormat(),
 				$$.getDefaultValueFormat(),
 				$$.color
 			));
@@ -240,7 +241,7 @@ export default {
 	 * @returns {Array} Template string
 	 * @private
 	 */
-	getTooltipContentTemplate(tplStr): string[] {
+	getTooltipContentTemplate(tplStr?: string): string[] {
 		return (tplStr || `<table class="{=CLASS_TOOLTIP}"><tbody>
 				{=TITLE}
 				{{<tr class="{=CLASS_TOOLTIP_NAME}">
@@ -318,12 +319,12 @@ export default {
 	/**
 	 * Show the tooltip
 	 * @param {object} selectedData Data object
-	 * @param {HTMLElement} element Tooltip element
+	 * @param {SVGElement} eventRect Event <rect> element
 	 * @private
 	 */
-	showTooltip(selectedData, element): void {
+	showTooltip(selectedData: IDataRow[], eventRect: SVGElement): void {
 		const $$ = this;
-		const {config, state, $el: {tooltip}} = $$;
+		const {config, scale, state, $el: {tooltip}} = $$;
 		const {bindto} = config.tooltip_contents;
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 
@@ -363,9 +364,16 @@ export default {
 
 		if (!bindto) {
 			const fnPos = config.tooltip_position?.bind($$.api) || $$.tooltipPosition.bind($$);
+			const [x, y] = getPointer(state.event, eventRect); // get mouse event position
+			const currPos: any = {x, y};
+			const data = selectedData.filter(Boolean)?.shift();
+
+			if (scale.x && data && "x" in data) {
+				currPos.xAxis = scale.x(data.x);
+			}
 
 			// Get tooltip dimensions
-			const pos = fnPos(dataToShow, width, height, element);
+			const pos = fnPos(dataToShow, width, height, eventRect, currPos);
 
 			["top", "left"].forEach(v => {
 				const value = pos[v];
@@ -441,7 +449,7 @@ export default {
 
 		// Prevent propagation among instances if isn't instantiated from the user's event
 		// https://github.com/naver/billboard.js/issues/1979
-		if (event && event.isTrusted && config.tooltip_linked && charts.length > 1) {
+		if (event?.isTrusted && config.tooltip_linked && charts.length > 1) {
 			const linkedName = config.tooltip_linked_name;
 
 			charts
@@ -454,7 +462,7 @@ export default {
 
 					if (isLinked && linkedName === name && isInDom) {
 						const data = $el.tooltip.data()[0];
-						const isNotSameIndex = index !== (data && data.index);
+						const isNotSameIndex = index !== data?.index;
 
 						try {
 							c.tooltip[

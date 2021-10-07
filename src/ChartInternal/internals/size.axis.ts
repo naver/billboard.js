@@ -24,7 +24,7 @@ export default {
 		const $$ = this;
 
 		if ($$.axis) {
-			const position = $$.axis && $$.axis.getLabelPositionById(id);
+			const position = $$.axis?.getLabelPositionById(id);
 
 			return $$.axis.getMaxTickWidth(id, withoutRecompute) +
 				(position.isInner ? 20 : 40);
@@ -110,7 +110,12 @@ export default {
 				}
 
 				if (tickCount !== state.axis.x.tickCount) {
-					state.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
+					const {targets} = $$.data;
+
+					state.axis.x.padding = $$.getXDomainPadding([
+						$$.getXDomainMinMax(targets, "min"),
+						$$.getXDomainMinMax(targets, "max")
+					], tickCount);
 				}
 
 				state.axis.x.tickCount = tickCount;

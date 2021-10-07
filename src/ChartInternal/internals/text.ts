@@ -17,7 +17,7 @@ export default {
 		const $$ = this;
 
 		return $$.isBarType(d) && !$$.meetsLabelThreshold(
-			Math.abs($$.getRatio("bar", d),), "bar"
+			Math.abs($$.getRatio("bar", d)), "bar"
 		) ? "0" : ($$.hasDataLabel ? null : "0");
 	},
 
@@ -58,21 +58,18 @@ export default {
 
 	/**
 	 * Update text
-	 * @param {number} durationForExit Fade-out transition duration
 	 * @private
 	 */
-	updateText(durationForExit): void {
+	updateText(): void {
 		const $$ = this;
-		const {$el, config} = $$;
+		const {$el, $T, config} = $$;
 		const classText = $$.getClass("text", "index");
 
 		const text = $el.main.selectAll(`.${CLASS.texts}`)
 			.selectAll(`.${CLASS.text}`)
 			.data($$.labelishData.bind($$));
 
-		text.exit()
-			.transition()
-			.duration(durationForExit)
+		$T(text.exit())
 			.style("fill-opacity", "0")
 			.remove();
 
@@ -87,7 +84,7 @@ export default {
 				if ($$.isCandlestickType(d)) {
 					const data = $$.getCandlestickData(d);
 
-					isEndAnchor = data && !data._isUp;
+					isEndAnchor = !data?._isUp;
 				}
 
 				return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
@@ -138,7 +135,7 @@ export default {
 		if ($$.isCandlestickType(d) && !isFunction(labelColors)) {
 			const value = $$.getCandlestickData(d);
 
-			if (value && !value._isUp) {
+			if (!value?._isUp) {
 				const downColor = config.candlestick_color_down;
 
 				color = isObject(downColor) ? downColor[d.id] : downColor;
@@ -183,6 +180,7 @@ export default {
 	 */
 	redrawText(x, y, forFlow?: boolean, withTransition?: boolean): true {
 		const $$ = this;
+		const {$T} = $$;
 		const t = <string>getRandom(true);
 
 		$$.$el.text
@@ -191,8 +189,7 @@ export default {
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
 			.each(function(d, i) {
 				// do not apply transition for newly added text elements
-				const node = withTransition && this.getAttribute("x") ?
-					d3Select(this).transition(t) : d3Select(this);
+				const node = $T(this, !!(withTransition && this.getAttribute("x")), t);
 
 				const posX = x.bind(this)(d, i);
 				const posY = y.bind(this)(d, i);

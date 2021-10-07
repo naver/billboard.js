@@ -189,13 +189,13 @@ export default {
 	generateTargetX(rawX, id: string, index: number) {
 		const $$ = this;
 		const {axis} = $$;
-		let x = axis && axis.isCategorized() ? index : (rawX || index);
+		let x = axis?.isCategorized() ? index : (rawX || index);
 
-		if (axis && axis.isTimeSeries()) {
+		if (axis?.isTimeSeries()) {
 			const fn = parseDate.bind($$);
 
 			x = rawX ? fn(rawX) : fn($$.getXValue(id, index));
-		} else if (axis && axis.isCustomX() && !axis.isCategorized()) {
+		} else if (axis?.isCustomX() && !axis?.isCategorized()) {
 			x = isValue(rawX) ? +rawX : $$.getXValue(id, index);
 		}
 
@@ -453,12 +453,12 @@ export default {
 		const {axis} = $$;
 		let xs: any[] = [];
 
-		if (targets && targets.length) {
+		if (targets?.length) {
 			xs = getUnique(
 				mergeArray(targets.map(t => t.values.map(v => +v.x)))
 			);
 
-			xs = axis && axis.isTimeSeries() ? xs.map(x => new Date(+x)) : xs.map(x => +x);
+			xs = axis?.isTimeSeries() ? xs.map(x => new Date(+x)) : xs.map(Number);
 		}
 
 		return sortValue(xs);
@@ -887,7 +887,7 @@ export default {
 	 * @returns {number} Ratio value
 	 * @private
 	 */
-	getRatio(type, d, asPercent) {
+	getRatio(type: string, d, asPercent = false): number {
 		const $$ = this;
 		const {config, state} = $$;
 		const api = $$.api;
@@ -935,7 +935,8 @@ export default {
 				const yScale = $$.getYScaleById.bind($$)(d.id);
 				const max = yScale.domain().reduce((a, c) => c - a);
 
-				ratio = Math.abs(d.value) / max;
+				// when all data are 0, return 0
+				ratio = max === 0 ? 0 : Math.abs(d.value) / max;
 			}
 		}
 
@@ -991,6 +992,6 @@ export default {
 	getDataById(id: string) {
 		const d = this.cache.get(id) || this.api.data(id);
 
-		return isArray(d) ? d[0] : d;
+		return d?.[0] ?? d;
 	}
 };

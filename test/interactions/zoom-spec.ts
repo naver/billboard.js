@@ -131,7 +131,7 @@ describe("ZOOM", function() {
 							expect(spyOnZoomStart.args[0][0].type).to.be.equal("start");
 
 							util.fireEvent(rect, "mousemove", {
-								clientX: 100,
+								clientX: 120,
 								clientY: 150
 							}, chart);
 
@@ -148,7 +148,7 @@ describe("ZOOM", function() {
 							expect(spyOnZoom.args[0][0].map(Math.round)).to.be.deep.equal([0, 3]);
 
 							util.fireEvent(rect, "mouseup", {
-								clientX: 100,
+								clientX: 120,
 								clientY: 150
 							}, chart);
 
@@ -449,6 +449,17 @@ describe("ZOOM", function() {
 			};
 		});
 
+		it("check event props on zoomEnd to not throw error.", () => {
+			const {internal} = chart;
+
+			internal.zoom.startEvent = {
+				type: "touch",
+				changedTouches: [1]
+			};
+
+			expect(internal.onZoomEnd()).to.not.throw;
+		});
+
 		it("check for data zoom", done => {
 			const {eventReceiver} = chart.internal.state;
 			const xValue = eventReceiver.coords[2].x;
@@ -590,7 +601,7 @@ describe("ZOOM", function() {
 					done();
 				}
 			});
-		})
+		});
 	});
 
 	describe("zoom on regions", () => {
@@ -821,7 +832,7 @@ describe("ZOOM", function() {
 			new Promise((resolve, reject) => {
 				util.fireEvent(eventRect, "mousedown", {
 					clientX: 100,
-					clientY: 79
+					clientY: 100
 				}, chart);
 
 				brush = main.select(`.${CLASS.zoomBrush}`);
@@ -836,35 +847,35 @@ describe("ZOOM", function() {
 					setTimeout(() => {
 						util.fireEvent(eventRect, "mousemove", {
 							clientX: 100,
-							clientY: 79 + 30
+							clientY: 130
 						}, chart);
 
 						resolve(true);
 					}, 500);
 				});
 			}).then(() => {
-				expect(+brush.attr("width")).to.be.equal(size.w);
-				expect(+brush.attr("height")).to.be.above(size.h);
-				expect(+brush.attr("height")).to.be.equal(30);
-
-				util.fireEvent(eventRect, "mouseup", {
-					clientX: 100,
-					clientY: 79 + 30
-				}, chart);
-
 				setTimeout(() => {
+					expect(+brush.attr("width")).to.be.equal(size.w);
+					expect(+brush.attr("height")).to.be.above(size.h);
+					expect(+brush.attr("height")).to.be.equal(30);
+
+					util.fireEvent(eventRect, "mouseup", {
+						clientX: 100,
+						clientY: 200
+					}, chart);
+
 					// y axis rescaled?
 					const tickText = +main.selectAll(`.${CLASS.axisY} .tick tspan`).nodes().pop().textContent;
 
 					expect(tickText).to.be.below(yAxisTickText);
-					expect(tickText).to.be.equal(90);
+					expect(tickText).to.be.equal(400);
 
 					scale.x.domain().forEach((v, i) => {
 						expect(v).to.be[i ? "below" : "above"](zoomedDomain[i]);
 					});
 
 					done();
-				}, 300);
+				}, 500);
 			});
 		});
 

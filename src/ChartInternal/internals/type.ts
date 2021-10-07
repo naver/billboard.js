@@ -59,9 +59,9 @@ export default {
 		const targets = targetsValue || $$.data.targets;
 		let has = false;
 
-		if (!checkFromData && current.types.length && current.types.indexOf(type) > -1) {
+		if (!checkFromData && current.types?.indexOf(type) > -1) {
 			has = true;
-		} else if (targets && targets.length) {
+		} else if (targets?.length) {
 			targets.forEach(target => {
 				const t = types[target.id];
 
@@ -204,7 +204,7 @@ export default {
 		const pattern = config.point_pattern;
 		let isCircle = false;
 
-		if (node && node.tagName === "circle") {
+		if (node?.tagName === "circle") {
 			isCircle = true;
 		} else {
 			isCircle = config.point_type === "circle" &&

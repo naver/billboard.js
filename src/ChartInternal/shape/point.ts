@@ -102,7 +102,7 @@ export default {
 
 		enterNode.append("g")
 			.attr("class", classCircles)
-			.style("cursor", d => (isSelectable && isSelectable(d) ? "pointer" : null));
+			.style("cursor", d => (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null));
 
 		// Update date for selected circles
 		selectionEnabled && targets.forEach(t => {
@@ -143,7 +143,7 @@ export default {
 
 	redrawCircle(cx: Function, cy: Function, withTransition: boolean, flow, isSub = false) {
 		const $$ = this;
-		const {state: {rendered}, $el} = $$;
+		const {state: {rendered}, $el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
 		const selectedCircles = $root.main.selectAll(`.${CLASS.selectedCircle}`);
 
@@ -161,7 +161,7 @@ export default {
 		$root.circle.each(function(d) {
 			let result: d3Selection | any = fn.bind(this)(d);
 
-			result = ((withTransition || !rendered) ? result.transition(t) : result)
+			result = $T(result, withTransition || !rendered, t)
 				.style("opacity", opacityStyleFn);
 
 			mainCircles.push(result);
@@ -169,7 +169,7 @@ export default {
 
 		return [
 			mainCircles,
-			(withTransition ? selectedCircles.transition() : selectedCircles)
+			$T(selectedCircles, withTransition)
 				.attr(`${posAttr}x`, cx)
 				.attr(`${posAttr}y`, cy)
 		];
@@ -250,21 +250,13 @@ export default {
 		};
 	},
 
-	getCircles(i: number, id: string) {
-		const $$ = this;
-		const suffix = (isValue(i) ? `-${i}` : ``);
-
-		return (id ? $$.$el.main.selectAll(`.${CLASS.circles}${$$.getTargetSelectorSuffix(id)}`) : $$.$el.main)
-			.selectAll(`.${CLASS.circle}${suffix}`);
-	},
-
 	expandCircles(i: number, id: string, reset?: boolean): void {
 		const $$ = this;
 		const r = $$.pointExpandedR.bind($$);
 
 		reset && $$.unexpandCircles();
 
-		const circles = $$.getCircles(i, id).classed(CLASS.EXPANDED, true);
+		const circles = $$.getShapeByIndex("circle", i, id).classed(CLASS.EXPANDED, true);
 		const scale = r(circles) / $$.config.point_r;
 		const ratio = 1 - scale;
 
@@ -292,7 +284,7 @@ export default {
 		const $$ = this;
 		const r = $$.pointR.bind($$);
 
-		const circles = $$.getCircles(i)
+		const circles = $$.getShapeByIndex("circle", i)
 			.filter(function() {
 				return d3Select(this).classed(CLASS.EXPANDED);
 			})
@@ -377,7 +369,7 @@ export default {
 
 		copyAttr(node, clone);
 
-		if (node.childNodes && node.childNodes.length) {
+		if (node.childNodes?.length) {
 			const parent = d3Select(clone);
 
 			if ("innerHTML" in clone) {
@@ -458,7 +450,7 @@ export default {
 
 		return function(method, context, ...args) {
 			return function(d) {
-				const id: string = $$.getTargetSelectorSuffix(d.id || (d.data && d.data.id) || d);
+				const id: string = $$.getTargetSelectorSuffix(d.id || d.data?.id || d);
 				const element = d3Select(this);
 
 				ids.indexOf(id) < 0 && ids.push(id);
@@ -498,6 +490,7 @@ export default {
 
 		update(element, xPosFn, yPosFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
+			const $$ = this;
 			const {width, height} = element.node().getBBox();
 
 			const xPosFn2 = d => (isValue(d.value) ? xPosFn(d) - width / 2 : 0);
@@ -505,12 +498,10 @@ export default {
 			let mainCircles = element;
 
 			if (withTransition) {
-				const transitionName = getTransitionName();
-
 				flow && mainCircles.attr("x", xPosFn2);
 
-				mainCircles = mainCircles.transition(transitionName);
-				selectedCircles && selectedCircles.transition(getTransitionName());
+				mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
+				selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
 			}
 
 			return mainCircles
@@ -541,15 +532,13 @@ export default {
 			}
 
 			if (withTransition) {
-				const transitionName = getTransitionName();
-
 				flow && mainCircles.attr("cx", xPosFn);
 
 				if (mainCircles.attr("cx")) {
-					mainCircles = mainCircles.transition(transitionName);
+					mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
 				}
 
-				selectedCircles && selectedCircles.transition(getTransitionName());
+				selectedCircles && $$.$T(mainCircles, withTransition, getTransitionName());
 			}
 
 			return mainCircles
@@ -582,12 +571,10 @@ export default {
 			let mainCircles = element;
 
 			if (withTransition) {
-				const transitionName = getTransitionName();
-
 				flow && mainCircles.attr("x", rectXPosFn);
 
-				mainCircles = mainCircles.transition(transitionName);
-				selectedCircles && selectedCircles.transition(getTransitionName());
+				mainCircles = $$.$T(mainCircles, withTransition, getTransitionName());
+				selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
 			}
 
 			return mainCircles

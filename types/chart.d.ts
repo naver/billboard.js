@@ -223,7 +223,7 @@ export interface Chart {
 		 * Zoom by giving x domain.
 		 * @param domain If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
 		 */
-		(domain?: number[]): number[];
+		(domain?: Array<Date|number|string>): Array<Date|number>;
 
 		/**
 		 * Enable and disable zooming.
@@ -347,7 +347,7 @@ export interface Chart {
 	load(this: Chart, args: {
 		append?: boolean;
 		url?: string;
-		json?: [{ [key: string]: string }];
+		json?: [{ [key: string]: string | number }] | {[key: string]: string[] | number[]};
 		rows?: PrimitiveArray[];
 		columns?: PrimitiveArray[];
 		data?: Array<{ [key: string]: number }>;
@@ -363,7 +363,7 @@ export interface Chart {
 		type?: string;
 		types?: { [key: string]: string };
 		unload?: boolean | ArrayOrString;
-		done?: () => any;
+		done?: (this: Chart) => void;
 	}): void;
 
 	/**
@@ -378,7 +378,7 @@ export interface Chart {
 	 *   - If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.
 	 *   - done will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
 	 */
-	unload(this: Chart, targetIds?: TargetIds, done?: () => any): any;
+	unload(this: Chart, targetIds?: TargetIds, done?: (this: Chart) => void): void;
 
 	/**
 	 * Flow data to the chart. By this API, you can append new data points to the chart.
@@ -409,7 +409,7 @@ export interface Chart {
 		to?: any;
 		length?: number;
 		duration?: number;
-		done?(this: Chart): any;
+		done?(this: Chart): void;
 	}): void;
 
 	/**
@@ -509,9 +509,9 @@ export interface Chart {
 	export(this: Chart, option?: {
 		width?: number;
 		height?: number;
-		mimeType: string;
-		preserveAspectRatio: boolean;
-	}, callback?: (dataUrl: string) => string): string;
+		mimeType?: string;
+		preserveAspectRatio?: boolean;
+	}, callback?: (this: Chart, dataUrl: string) => void): string;
 
 	/**
 	 * Get or set single config option value.

@@ -983,7 +983,12 @@ export interface TooltipOptions {
 		data: any,
 		width: number,
 		height: number,
-		element: any
+		element: any,
+		pos: {
+			x: number;
+			y: number;
+			xAxis?: number;
+		}
 	) => { top: number; left: number });
 
 	/**
@@ -1100,6 +1105,12 @@ export interface SubchartOptions {
 			 */
 			show?: boolean;
 			tick?: {
+				/**
+				 * Use custom format for x axis ticks - see 'axis.x.tick.format' option for details.
+				 */
+				format?: string
+					| ((this: Chart, x: number | Date) => string | number)
+					| ((this: Chart, index: number, categoryName: string) => string);
 				/**
 				 * Show or hide x axis tick line.
 				 */
@@ -1670,13 +1681,13 @@ export interface Data {
 	 * Set a callback for when data is shown.
 	 * The callback will receive shown data ids in array.
 	 */
-	onshown?(): void;
+	onshown?(this: Chart, ids: string[]): void;
 
 	/**
 	 * Set a callback for when data is hidden.
 	 * The callback will receive hidden data ids in array.
 	 */
-	onhidden?(): void;
+	onhidden?(this: Chart, ids: string[]): void;
 }
 
 export type FormatFunction = (

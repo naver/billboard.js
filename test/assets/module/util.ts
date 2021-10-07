@@ -4,16 +4,17 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-import {window} from "../../../src/module/browser";
+import {window} from "../../src/module/browser";
 
 // fake module replaced during test build to '/src/module/util.ts' by webpack.NormalModuleReplacementPlugin
-import * as orgUtil from "./fake";
+import * as orgUtil from "../../test/assets/module/fake";
 
 export const {
 	asHalfPixel,
 	brushEmpty,
 	callFn,
 	capitalize,
+	camelize,
 	ceil10,
 	deepClone,
 	diffDomain,

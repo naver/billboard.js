@@ -24,11 +24,11 @@ module.exports = function(api) {
 			"@babel/plugin-transform-runtime", {
 				"useESModules": true
 			}
-		],
-		["@babel/plugin-proposal-class-properties", {
+		], [
+			"@babel/plugin-proposal-class-properties", {
 				"loose": true
-			}]
-		,
+			}
+		],
 		"@babel/proposal-object-rest-spread",
 		"add-module-exports",
 		"transform-inline-consecutive-adds",
@@ -38,7 +38,6 @@ module.exports = function(api) {
 		"minify-dead-code-elimination",
 		"minify-guarded-expressions",
 		"minify-numeric-literals",
-		"minify-simplify",
 		"minify-type-constructors"
 	];
 

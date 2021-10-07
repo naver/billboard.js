@@ -86,7 +86,7 @@ export default {
 			const extent = this.extent()();
 
 			if (extent[1].filter(v => isNaN(v)).length === 0) {
-				subchart.main && subchart.main.select(`.${CLASS.brush}`).call(this);
+				subchart.main?.select(`.${CLASS.brush}`).call(this);
 			}
 
 			return this;
@@ -293,7 +293,7 @@ export default {
 		// subchart
 		if (config.subchart_show) {
 			// reflect main chart to extent on subchart if zoomed
-			if (state.event && state.event.type === "zoom") {
+			if (state.event?.type === "zoom") {
 				$$.brush.update();
 			}
 
@@ -309,7 +309,7 @@ export default {
 					const drawFn = $$[`generateDraw${name}`](shape.indices[v], true);
 
 					// call shape's update & redraw method
-					$$[`update${name}`](duration, true);
+					$$[`update${name}`](withTransition, true);
 					$$[`redraw${name}`](drawFn, withTransition, true);
 				});
 
@@ -356,20 +356,13 @@ export default {
 	 */
 	transformContext(withTransition, transitions): void {
 		const $$ = this;
-		const {main} = $$.$el.subchart;
-		let subXAxis;
+		const {$el: {subchart}, $T} = $$;
 
-		if (transitions && transitions.axisSubX) {
-			subXAxis = transitions.axisSubX;
-		} else {
-			subXAxis = main.select(`.${CLASS.axisX}`);
+		const subXAxis = transitions?.axisSubX ?
+			transitions.axisSubX :
+			$T(subchart.main.select(`.${CLASS.axisX}`), withTransition);
 
-			if (withTransition) {
-				subXAxis = subXAxis.transition();
-			}
-		}
-
-		main.attr("transform", $$.getTranslate("context"));
+		subchart.main.attr("transform", $$.getTranslate("context"));
 		subXAxis.attr("transform", $$.getTranslate("subX"));
 	},
 

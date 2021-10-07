@@ -1,6 +1,6 @@
 const {merge, mergeWithCustomize, customizeObject} = require("webpack-merge");
 const WriteFilePlugin = require("write-file-webpack-plugin");
-const plugin = require("./plugin")({});
+const plugin = require("./plugin.cjs")({});
 const path = require("path");
 
 const config = {
@@ -47,7 +47,7 @@ module.exports = (common, env) => {
 	return env.PLUGIN ? mergeWithCustomize({
 		customizeObject: customizeObject({
 			entry: "replace",
-			output: "replace"
+			output: "append"
 		})
 	})(common, config) : merge(common, config);
 };

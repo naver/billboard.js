@@ -30,7 +30,7 @@ function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 		callFn($$.config.data_onshown, this, hiddenIds);
 	}
 
-	targets.transition()
+	$$.$T(targets)
 		.style("opacity", opacity, "important")
 		.call(endall, () => {
 			// https://github.com/naver/billboard.js/issues/1758

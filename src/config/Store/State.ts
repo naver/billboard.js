@@ -11,6 +11,7 @@
 export default class State {
 	constructor() {
 		return {
+			// chart drawn area dimension, excluding axes
 			width: 0,
 			width2: 0,
 			height: 0,
@@ -41,6 +42,7 @@ export default class State {
 			hasRadar: false,
 
 			current: {
+				// chart whole dimension
 				width: 0,
 				height: 0,
 				dataMax: 0,

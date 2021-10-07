@@ -80,7 +80,7 @@ export default {
 		// @ts-ignore
 		zoom.updateTransformScale = (transform: object): void => {
 			// in case of resize, update range of orgXScale
-			org.xScale && org.xScale.range(scale.x.range());
+			org.xScale?.range(scale.x.range());
 
 			// rescale from the original scale
 			const newScale = transform[
@@ -160,6 +160,10 @@ export default {
 			return;
 		}
 
+		if (event.sourceEvent) {
+			state.zooming = true;
+		}
+
 		const isMousemove = sourceEvent?.type === "mousemove";
 		const isZoomOut = sourceEvent?.wheelDelta < 0;
 		const {transform} = event;
@@ -175,7 +179,7 @@ export default {
 		// - when .unzoom() is called (event.transform === d3ZoomIdentity)
 		const doTransition = config.transition_duration > 0 &&
 			!config.subchart_show && (
-			state.dragging || isUnZoom
+			state.dragging || isUnZoom || !event.sourceEvent
 		);
 
 		$$.redraw({
@@ -204,9 +208,9 @@ export default {
 		let e = event?.sourceEvent;
 		const isUnZoom = event?.transform === d3ZoomIdentity;
 
-		if ((startEvent && startEvent.type.indexOf("touch") > -1)) {
+		if (startEvent?.type.indexOf("touch") > -1) {
 			startEvent = startEvent.changedTouches[0];
-			e = e.changedTouches[0];
+			e = e?.changedTouches?.[0];
 		}
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
@@ -222,7 +226,7 @@ export default {
 		state.zooming = false;
 
 		// do not call event cb when is .unzoom() is called
-		!isUnZoom && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain());
+		!isUnZoom && (e || state.dragging) && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain());
 	},
 
 	/**

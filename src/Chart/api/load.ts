@@ -127,6 +127,13 @@ export default {
 	 *         value: ["upload", "download"]
 	 *     }
 	 * });
+	 * @example
+	 * chart.load({
+	 *   json: {
+	 *       data1:[30, 20, 50, 40, 60, 50],
+	 *       data2:[200, 130, 90, 240, 130, 220],
+	 *   }
+	 * });
 	 */
 	load(args): void {
 		const $$ = this.internal;

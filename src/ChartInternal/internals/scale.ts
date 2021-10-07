@@ -164,13 +164,14 @@ export default {
 
 			// update scales
 			// x Axis
-			const xDomain = updateXDomain && scale.x && scale.x.orgDomain();
+			const xDomain = updateXDomain && scale.x?.orgDomain();
 			const xSubDomain = updateXDomain && org.xDomain;
 
 			scale.x = $$.getXScale(min.x, max.x, xDomain, () => axis.x.tickOffset());
 			scale.subX = $$.getXScale(min.x, max.x, xSubDomain, d => (d % 1 ? 0 : axis.subX.tickOffset()));
 
 			format.xAxisTick = axis.getXAxisTickFormat();
+			format.subXAxisTick = axis.getXAxisTickFormat(true);
 
 			axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit);
 
@@ -195,7 +196,7 @@ export default {
 			}
 		} else {
 			// update for arc
-			$$.updateArc && $$.updateArc();
+			$$.updateArc?.();
 		}
 	},
 

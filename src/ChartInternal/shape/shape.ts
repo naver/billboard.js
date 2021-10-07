@@ -23,6 +23,7 @@ import {
 	curveStep as d3CurveStep
 } from "d3-shape";
 import {select as d3Select} from "d3-selection";
+import {d3Selection} from "types/types";
 import CLASS from "../../config/classes";
 import {capitalize, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
 
@@ -156,7 +157,7 @@ export default {
 		);
 
 		return d => {
-			const ind = $$.getIndices(indices, d.id);
+			const ind = $$.getIndices(indices, d.id, "getShapeX");
 			const index = d.id in ind ? ind[d.id] : 0;
 			const targetsNum = (ind.__max__ || 0) + 1;
 			let x = 0;
@@ -292,7 +293,7 @@ export default {
 							row = rowValueMapByXValue[dataXAsNumber];
 						}
 
-						if (row && row.value * value >= 0 && isNumber(tvalues[dataXAsNumber])) {
+						if (row?.value * value >= 0 && isNumber(tvalues[dataXAsNumber])) {
 							offset += scale(tvalues[dataXAsNumber]) - y0;
 						}
 					}
@@ -348,14 +349,24 @@ export default {
 	 * @returns {d3Selection}
 	 * @private
 	 */
-	getShapeByIndex(shapeName: string, i: number, id?: string) {
+	getShapeByIndex(shapeName: string, i: number, id?: string): d3Selection {
 		const $$ = this;
-		const {main} = $$.$el;
+		const {$el} = $$;
 		const suffix = (isValue(i) ? `-${i}` : ``);
+		let shape = $el[shapeName];
 
-		return (id ? main
-			.selectAll(`.${CLASS[`${shapeName}s`]}${$$.getTargetSelectorSuffix(id)}`) : main)
-			.selectAll(`.${CLASS[shapeName]}${suffix}`);
+		// filter from shape reference if has
+		if (shape && !shape.empty()) {
+			shape = shape
+				.filter(d => (id ? d.id === id : true))
+				.filter(d => (isValue(i) ? d.index === i : true));
+		} else {
+			shape = (id ? $el.main
+				.selectAll(`.${CLASS[`${shapeName}s`]}${$$.getTargetSelectorSuffix(id)}`) : $el.main)
+				.selectAll(`.${CLASS[shapeName]}${suffix}`);
+		}
+
+		return shape;
 	},
 
 	isWithinShape(that, d): boolean {
@@ -365,7 +376,7 @@ export default {
 
 		if (!$$.isTargetToShow(d.id)) {
 			isWithin = false;
-		} else if (("hasValidPointType" in $$) && $$.hasValidPointType(that.nodeName)) {
+		} else if ($$.hasValidPointType?.(that.nodeName)) {
 			isWithin = $$.isStepType(d) ?
 				$$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) :
 				$$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);

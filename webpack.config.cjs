@@ -1,3 +1,4 @@
+/* eslint-disable */
 const pkg = require("./package.json");
 const path = require("path");
 const webpack = require("webpack");
@@ -83,15 +84,11 @@ module.exports = () => {
 		new BundleAnalyzerPlugin()
 	);
 
-	if (env.NIGHTLY) {
-		pkg.version = env.NIGHTLY;
-	}
-
 	if (env.VERSION) {
 		pkg.version = env.VERSION;
 	}
 
 	mode === "packaged" && delete config.externals;
 
-	return require(`./config/webpack/${mode}.js`)(config, env);
+	return require(`./config/webpack/${mode}.cjs`)(config, env);
 };

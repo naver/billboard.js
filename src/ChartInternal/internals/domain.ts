@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
+import {IData} from "../data/IData";
 import {brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain, parseDate, sortValue} from "../../module/util";
 
 export default {
@@ -58,14 +59,6 @@ export default {
 		return getMinMax(type, Object.keys(ys).map(key => getMinMax(type, ys[key])));
 	},
 
-	getYDomainMin(targets): number {
-		return this.getYDomainMinMax(targets, "min");
-	},
-
-	getYDomainMax(targets): number {
-		return this.getYDomainMinMax(targets, "max");
-	},
-
 	/**
 	 * Check if hidden targets bound to the given axis id
 	 * @param {string} id ID to be checked
@@ -88,7 +81,7 @@ export default {
 			return [0, 100];
 		}
 
-		const isLog = scale && scale[axisId] && scale[axisId].type === "log";
+		const isLog = scale?.[axisId] && scale[axisId].type === "log";
 		const targetsByAxisId = targets.filter(t => axis.getId(t.id) === axisId);
 		const yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
 
@@ -106,19 +99,20 @@ export default {
 
 		const yMin = config[`${pfx}_min`];
 		const yMax = config[`${pfx}_max`];
-		let yDomainMin = $$.getYDomainMin(yTargets);
-		let yDomainMax = $$.getYDomainMax(yTargets);
 		const center = config[`${pfx}_center`];
+		const isInverted = config[`${pfx}_inverted`];
+		const showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated;
+		const showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
+
+		let yDomainMin = $$.getYDomainMinMax(yTargets, "min");
+		let yDomainMax = $$.getYDomainMinMax(yTargets, "max");
+
 		let isZeroBased = [TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER, ...TYPE_BY_CATEGORY.Line]
 			.some(v => {
 				const type = v.indexOf("area") > -1 ? "area" : v;
 
 				return $$.hasType(v, yTargets) && config[`${type}_zerobased`];
 			});
-
-		const isInverted = config[`${pfx}_inverted`];
-		const showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated;
-		const showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
 
 		// MEMO: avoid inverting domain unexpectedly
 		yDomainMin = isValue(yMin) ? yMin :
@@ -137,7 +131,6 @@ export default {
 		if (yDomainMin === yDomainMax) {
 			yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0;
 		}
-
 
 		const isAllPositive = yDomainMin >= 0 && yDomainMax >= 0;
 		const isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
@@ -176,7 +169,7 @@ export default {
 			const lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height");
 
 			["bottom", "top"].forEach((v, i) => {
-				padding[v] += axis.convertPixelsToAxisPadding(lengths[i], domainLength);
+				padding[v] += $$.convertPixelToScale("y", lengths[i], domainLength);
 			});
 		}
 
@@ -208,7 +201,7 @@ export default {
 		const dataValue = getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
 		let value = isObject(configValue) ? configValue.value : configValue;
 
-		value = isDefined(value) && $$.axis.isTimeSeries() ? parseDate.bind(this)(value) : value;
+		value = isDefined(value) && $$.axis?.isTimeSeries() ? parseDate.bind(this)(value) : value;
 
 		if (isObject(configValue) && configValue.fit && (
 			(type === "min" && value < dataValue) || (type === "max" && value > dataValue)
@@ -219,60 +212,75 @@ export default {
 		return isDefined(value) ? value : dataValue;
 	},
 
-	getXDomainMin(targets) {
-		return this.getXDomainMinMax(targets, "min");
-	},
-
-	getXDomainMax(targets) {
-		return this.getXDomainMinMax(targets, "max");
-	},
-
-	getXDomainPadding(domain) {
+	/**
+	 * Get x Axis padding
+	 * @param {Array} domain x Axis domain
+	 * @param {number} tickCount Tick count
+	 * @returns {object} Padding object values with 'left' & 'right' key
+	 * @private
+	 */
+	getXDomainPadding(domain, tickCount: number): {left: number, right: number} {
 		const $$ = this;
 		const {axis, config} = $$;
-		const diff = domain[1] - domain[0];
-		const xPadding = config.axis_x_padding;
-		let maxDataCount;
-		let padding;
+		const padding = config.axis_x_padding;
+		const isTimeSeriesTickCount = axis.isTimeSeries() && tickCount;
+		const diff = diffDomain(domain);
+		let defaultValue;
 
-		if (axis.isCategorized()) {
-			padding = 0;
+		// determine default padding value
+		if (axis.isCategorized() || isTimeSeriesTickCount) {
+			defaultValue = 0;
 		} else if ($$.hasType("bar")) {
-			maxDataCount = $$.getMaxDataCount();
-			padding = maxDataCount > 1 ? (diff / (maxDataCount - 1)) / 2 : 0.5;
+			const maxDataCount = $$.getMaxDataCount();
+
+			defaultValue = maxDataCount > 1 ? (diff / (maxDataCount - 1)) / 2 : 0.5;
 		} else {
-			padding = diff * 0.01;
+			defaultValue = diff * 0.01;
 		}
 
-		let left = padding;
-		let right = padding;
+		let {left = defaultValue, right = defaultValue} = isNumber(padding) ?
+			{left: padding, right: padding} : padding;
 
-		if (isObject(xPadding) && notEmpty(xPadding)) {
-			left = isValue(xPadding.left) ? xPadding.left : padding;
-			right = isValue(xPadding.right) ? xPadding.right : padding;
-		} else if (isNumber(config.axis_x_padding)) {
-			left = xPadding;
-			right = xPadding;
+		// when the unit is pixel, convert pixels to axis scale value
+		if (padding.unit === "px") {
+			const domainLength = Math.abs(diff + (diff * 0.2));
+
+			left = axis.getPadding(padding, "left", defaultValue, domainLength);
+			right = axis.getPadding(padding, "right", defaultValue, domainLength);
+		} else {
+			const range = diff + left + right;
+
+			if (isTimeSeriesTickCount && range) {
+				const relativeTickWidth = (diff / tickCount) / range;
+
+				left = left / range / relativeTickWidth;
+				right = right / range / relativeTickWidth;
+			}
 		}
 
 		return {left, right};
 	},
 
-	getXDomain(targets) {
+	/**
+	 * Get x Axis domain
+	 * @param {Array} targets targets
+	 * @returns {Array} x Axis domain
+	 * @private
+	 */
+	getXDomain(targets?: IData[]): (Date|number)[] {
 		const $$ = this;
-		const isLog = $$.scale.x.type === "log";
-		const xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)];
-		let min: Date | number = 0;
-		let max: Date | number = 0;
+		const {axis, scale: {x}} = $$;
+		const domain = [
+			$$.getXDomainMinMax(targets, "min"),
+			$$.getXDomainMinMax(targets, "max")
+		];
+		let [min = 0, max = 0] = domain;
 
-		if (isLog) {
-			min = xDomain[0];
-			max = xDomain[1];
-		} else {
-			const isCategorized = $$.axis.isCategorized();
-			const isTimeSeries = $$.axis.isTimeSeries();
-			const padding = $$.getXDomainPadding(xDomain);
-			let [firstX, lastX] = xDomain;
+		if (x.type !== "log") {
+			const isCategorized = axis.isCategorized();
+			const isTimeSeries = axis.isTimeSeries();
+			const padding = $$.getXDomainPadding(domain);
+			let [firstX, lastX] = domain;
 
 			// show center of x domain if min and max are the same
 			if ((firstX - lastX) === 0 && !isCategorized) {
@@ -309,7 +317,7 @@ export default {
 			zoomEnabled && $$.zoom.updateScaleExtent();
 
 			subX.domain(x.domain());
-			$$.brush && $$.brush.scale(subX);
+			$$.brush?.scale(subX);
 		}
 
 		if (withUpdateXDomain) {
@@ -362,5 +370,28 @@ export default {
 		}
 
 		return [min, max];
+	},
+
+	/**
+	 * Converts pixels to axis' scale values
+	 * @param {string} type Axis type
+	 * @param {number} pixels Pixels
+	 * @param {number} domainLength Domain length
+	 * @returns {number}
+	 * @private
+	 */
+	convertPixelToScale(type: "x"|"y", pixels: number, domainLength: number): number {
+		const $$ = this;
+		const {config, state} = $$;
+		const isRotated = config.axis_rotated;
+		let length;
+
+		if (type === "x") {
+			length = isRotated ? "height" : "width";
+		} else {
+			length = isRotated ? "width" : "height";
+		}
+
+		return domainLength * (pixels / state[length]);
 	}
 };
