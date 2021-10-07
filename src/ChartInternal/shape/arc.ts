@@ -565,7 +565,7 @@ export default {
 		mainArc = mainArc.enter().append("path")
 			.attr("class", $$.getClass("arc", true))
 			.style("fill", d => $$.color(d.data))
-			.style("cursor", d => (isSelectable?.bind($$.api)(d) ? "pointer" : null))
+			.style("cursor", d => (isSelectable?.bind?.($$.api)(d) ? "pointer" : null))
 			.style("opacity", "0")
 			.each(function(d) {
 				if ($$.isGaugeType(d.data)) {
