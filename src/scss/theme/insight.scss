@@ -67,6 +67,8 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
 
 /*-- Grid --*/
 .bb-grid {
+    pointer-events: none;
+
     line {
         stroke: #f1f1f1;
     }

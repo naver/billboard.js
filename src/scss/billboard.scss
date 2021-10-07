@@ -62,6 +62,8 @@
 
 /*-- Grid --*/
 .bb-grid {
+	pointer-events: none;
+
 	line {
 		stroke: #aaa;
 	}
