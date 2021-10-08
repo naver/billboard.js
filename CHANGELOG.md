@@ -1,3 +1,37 @@
+# [3.2.0](https://github.com/naver/billboard.js/compare/3.1.5...3.2.0) (2021-10-07)
+
+
+### Bug Fixes
+
+* **axis:** fix y axis stepSize value ([18f6f27](https://github.com/naver/billboard.js/commit/18f6f270fc76da83e30f283b4d9d81f143e38a32)), closes [#2294](https://github.com/naver/billboard.js/issues/2294)
+* **bar:** fix data label to be shown for 0 values ([f3634ee](https://github.com/naver/billboard.js/commit/f3634eed2288d4a4d3961b8a714e742db6b97276)), closes [#2251](https://github.com/naver/billboard.js/issues/2251)
+* **event:** make consistent tooltip position on step-after ([5d3a5ed](https://github.com/naver/billboard.js/commit/5d3a5ed37bf290eea97fe572cb905b8e7f99ba6b)), closes [#2287](https://github.com/naver/billboard.js/issues/2287)
+* **gauge:** fix error when interaction=false ([cc4a5e7](https://github.com/naver/billboard.js/commit/cc4a5e71099cd6915b11ee413dcba422a7f1a988)), closes [#2351](https://github.com/naver/billboard.js/issues/2351)
+* **grid:** Make grid elements pass through pointer events ([4db1bcd](https://github.com/naver/billboard.js/commit/4db1bcd6a7017976c6a9ce682b645da4dee13c2f)), closes [#2355](https://github.com/naver/billboard.js/issues/2355)
+* **grid:** pPrevent error throw  ([8fcf61c](https://github.com/naver/billboard.js/commit/8fcf61cd80a18f28f1a2b2a0a8f46e418034190a)), closes [#2310](https://github.com/naver/billboard.js/issues/2310)
+* **plugin:** fix textoverlap plugin ([5e486b5](https://github.com/naver/billboard.js/commit/5e486b57107573b2c0fc4282ff7c3ba91aa96e73)), closes [#1144](https://github.com/naver/billboard.js/issues/1144)
+* **subchart:** fix subchart esm import failure ([ba6c2b5](https://github.com/naver/billboard.js/commit/ba6c2b522982c0a4a2f21b606e3c543aef83c970)), closes [#2255](https://github.com/naver/billboard.js/issues/2255)
+* **tooltip:** fix tooltip.position call context ([b78a48d](https://github.com/naver/billboard.js/commit/b78a48d5f535078e88c0c6f47b25d6c85d94df8f)), closes [#2265](https://github.com/naver/billboard.js/issues/2265)
+* **types:** Allow string dates for zoom() domain ([9cae479](https://github.com/naver/billboard.js/commit/9cae479ef107d2d24c1ae2fb373ecee4789c2ee8)), closes [#2316](https://github.com/naver/billboard.js/issues/2316) [#2333](https://github.com/naver/billboard.js/issues/2333)
+* **types:** fix data.onshown/hidden types ([3721c4c](https://github.com/naver/billboard.js/commit/3721c4cd34fd4607b6063f2da838a0957d6a211a)), closes [#2270](https://github.com/naver/billboard.js/issues/2270) [#2275](https://github.com/naver/billboard.js/issues/2275)
+* **types:** Fix type definition for load().json ([25ebb78](https://github.com/naver/billboard.js/commit/25ebb78f8e18c09dd3e52c4e46a6fabc81c151c5)), closes [#2334](https://github.com/naver/billboard.js/issues/2334)
+* **types:** Fix wrong type definition ([5f7779b](https://github.com/naver/billboard.js/commit/5f7779bdb1913951e197a25a8aa766b946c591f8)), closes [#2316](https://github.com/naver/billboard.js/issues/2316)
+* **zoom:** Fix error throw on drag zoom interaction ([f1dcb27](https://github.com/naver/billboard.js/commit/f1dcb278f5fdee4d2e36cfda48b62c44e545fec1)), closes [#2343](https://github.com/naver/billboard.js/issues/2343)
+* **zoom:** fix zoom event triggering for drag type ([0a0f039](https://github.com/naver/billboard.js/commit/0a0f0399678c8cfb2c23897a62fdcb9814c7db84)), closes [#2254](https://github.com/naver/billboard.js/issues/2254)
+* **zoom:** Fix zoomend call on .zoom()  ([9515565](https://github.com/naver/billboard.js/commit/9515565ada0fc4a0fa8f6b75698463d324f26353)), closes [#2217](https://github.com/naver/billboard.js/issues/2217) [#2254](https://github.com/naver/billboard.js/issues/2254)
+
+
+### Features
+
+* **axis:** Enhance padding to accept px value ([769ec8f](https://github.com/naver/billboard.js/commit/769ec8f5082cfd7c6f9197fb46da6e535e9f2273)), closes [#2246](https://github.com/naver/billboard.js/issues/2246)
+* **error:** Enhance error logging for ESM import ([4b5119c](https://github.com/naver/billboard.js/commit/4b5119c606f998c7854e82e9bf5c43242c3f75e3)), closes [#2311](https://github.com/naver/billboard.js/issues/2311)
+* **event:** add option for step-before/step-after charts for tooltip to match step behavior ([5f664ba](https://github.com/naver/billboard.js/commit/5f664ba378320941e8f8e9b5703e0d03676dd287)), closes [#2332](https://github.com/naver/billboard.js/issues/2332)
+* **module:** Support dual CJS/ESM package ([ddd8977](https://github.com/naver/billboard.js/commit/ddd89776563055ea3fbe70d977e266a299d9b45c)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
+* **plugin:** Intent to ship sparkline ([091284e](https://github.com/naver/billboard.js/commit/091284e7c510f9ae798a3b9ede4b9ca9a604fb5b)), closes [#2285](https://github.com/naver/billboard.js/issues/2285)
+* **plugin:** Intent to ship TableView plugin ([6f07e94](https://github.com/naver/billboard.js/commit/6f07e94c86a39e08274a0ed82bf0d25f5b65925c)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
+* **Subchart:** add subchart x axis tick format option ([da2f3ff](https://github.com/naver/billboard.js/commit/da2f3ff99ea27ac5339e81feca659b7ce1f0a6b9)), closes [#2314](https://github.com/naver/billboard.js/issues/2314)
+* **tooltip:** Enhance tooltip.position passing curr pos ([ec783e9](https://github.com/naver/billboard.js/commit/ec783e943b9235377e07a8e06108881e7da0a698)), closes [#2267](https://github.com/naver/billboard.js/issues/2267)
+
 ## [3.1.5](https://github.com/naver/billboard.js/compare/3.1.4...3.1.5) (2021-08-17)
 
 
