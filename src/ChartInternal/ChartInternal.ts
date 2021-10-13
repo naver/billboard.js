@@ -79,7 +79,7 @@ export default class ChartInternal {
 		subY: null,
 		subY2: null,
 		zoom: null
-	}
+	};
 
 	// original values
 	public org = {
