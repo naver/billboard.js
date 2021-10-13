@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.0-nightly-20211008004535
+ * @version 3.2.0-nightly-20211013004531
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -1071,7 +1071,7 @@ var store = __webpack_require__(30);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.18.2',
+  version: '3.18.3',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 });
@@ -2366,6 +2366,7 @@ defineWellKnownSymbol('unscopables');
 var $ = __webpack_require__(2);
 var getPrototypeOf = __webpack_require__(92);
 var setPrototypeOf = __webpack_require__(94);
+var copyConstructorProperties = __webpack_require__(47);
 var create = __webpack_require__(63);
 var createNonEnumerableProperty = __webpack_require__(37);
 var createPropertyDescriptor = __webpack_require__(8);
@@ -2389,10 +2390,13 @@ var $AggregateError = function AggregateError(errors, message /* , options */) {
   return that;
 };
 
+if (setPrototypeOf) setPrototypeOf($AggregateError, Error);
+else copyConstructorProperties($AggregateError, Error);
+
 $AggregateError.prototype = create(Error.prototype, {
-  constructor: createPropertyDescriptor(5, $AggregateError),
-  message: createPropertyDescriptor(5, ''),
-  name: createPropertyDescriptor(5, 'AggregateError')
+  constructor: createPropertyDescriptor(1, $AggregateError),
+  message: createPropertyDescriptor(1, ''),
+  name: createPropertyDescriptor(1, 'AggregateError')
 });
 
 // `AggregateError` constructor
@@ -2497,7 +2501,7 @@ var createNonEnumerableProperty = __webpack_require__(37);
 // https://tc39.es/proposal-error-cause/#sec-errorobjects-install-error-cause
 module.exports = function (O, options) {
   if (isObject(options) && 'cause' in options) {
-    createNonEnumerableProperty(O, 'cause', O.cause);
+    createNonEnumerableProperty(O, 'cause', options.cause);
   }
 };
 
@@ -6706,7 +6710,7 @@ var whitespaces = __webpack_require__(219);
 var $parseInt = global.parseInt;
 var Symbol = global.Symbol;
 var ITERATOR = Symbol && Symbol.iterator;
-var hex = /^[+-]?0[Xx]/;
+var hex = /^[+-]?0x/i;
 var FORCED = $parseInt(whitespaces + '08') !== 8 || $parseInt(whitespaces + '0x16') !== 22
   // MS Edge 18- broken with boxed symbols
   || (ITERATOR && !fails(function () { $parseInt(Object(ITERATOR)); }));
@@ -12678,14 +12682,14 @@ var INVALID_SCHEME = 'Invalid scheme';
 var INVALID_HOST = 'Invalid host';
 var INVALID_PORT = 'Invalid port';
 
-var ALPHA = /[A-Za-z]/;
+var ALPHA = /[a-z]/i;
 // eslint-disable-next-line regexp/no-obscure-range -- safe
-var ALPHANUMERIC = /[\d+-.A-Za-z]/;
+var ALPHANUMERIC = /[\d+-.a-z]/i;
 var DIGIT = /\d/;
 var HEX_START = /^0x/i;
 var OCT = /^[0-7]+$/;
 var DEC = /^\d+$/;
-var HEX = /^[\dA-Fa-f]+$/;
+var HEX = /^[\da-f]+$/i;
 /* eslint-disable regexp/no-control-character -- safe */
 var FORBIDDEN_HOST_CODE_POINT = /[\0\t\n\r #%/:<>?@[\\\]^|]/;
 var FORBIDDEN_HOST_CODE_POINT_EXCLUDING_PERCENT = /[\0\t\n\r #/:<>?@[\\\]^|]/;
