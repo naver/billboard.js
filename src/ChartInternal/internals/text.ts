@@ -91,7 +91,7 @@ export default {
 			})
 			.style("fill", $$.updateTextColor.bind($$))
 			.style("fill-opacity", "0")
-			.each(function(d, i, j) {
+			.each(function(d, i, texts) {
 				const node = d3Select(this);
 				let {value} = d;
 
@@ -105,7 +105,7 @@ export default {
 					}
 				}
 
-				value = $$.dataLabelFormat(d.id)(value, d.id, i, j);
+				value = $$.dataLabelFormat(d.id)(value, d.id, i, texts);
 
 				if (isNumber(value)) {
 					this.textContent = value;
