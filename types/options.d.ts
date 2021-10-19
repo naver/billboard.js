@@ -1498,8 +1498,8 @@ export interface Data {
 		 * The arguments are:<br>
 		 *  - `v` is the value of the data point where the label is shown.
 		 *  - `id` is the id of the data where the label is shown.
-		 *  - `i` is the index of the data point where the label is shown.
-		 *  - `j` is the sub index of the data point where the label is shown.<br><br>
+		 *  - `i` is the index of the data series point where the label is shown.
+		 *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
 		 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
 		 */
 		format?: FormatFunction | { [key: string]: FormatFunction };
@@ -1695,5 +1695,5 @@ export type FormatFunction = (
 	v: any,
 	id: string,
 	i: number,
-	j: number
+	texts: SVGTextElement[]
 ) => void;
