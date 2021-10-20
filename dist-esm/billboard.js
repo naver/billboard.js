@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.0-nightly-20211013004531
+ * @version 3.2.0-nightly-20211020004540
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1776,8 +1776,8 @@ var data$2 = {
      * The arguments are:<br>
      *  - `v` is the value of the data point where the label is shown.
      *  - `id` is the id of the data where the label is shown.
-     *  - `i` is the index of the data point where the label is shown.
-     *  - `j` is the sub index of the data point where the label is shown.<br><br>
+     *  - `i` is the index of the data series point where the label is shown.
+     *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
      * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
      * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
      * @property {string|object|Function} [data.labels.colors] Set label text colors.
@@ -1807,7 +1807,7 @@ var data$2 = {
      *
      *     // it's possible to set for each data
      *     format: {
-     *         data1: function(v, id, i, j) { ... },
+     *         data1: function(v, id, i, texts) { ... },
      *         ...
      *     },
      *
@@ -6768,7 +6768,7 @@ var text = {
         })
             .style("fill", $$.updateTextColor.bind($$))
             .style("fill-opacity", "0")
-            .each(function (d, i, j) {
+            .each(function (d, i, texts) {
             var node = select(this);
             var value = d.value;
             if ($$.isBubbleZType(d)) {
@@ -6780,7 +6780,7 @@ var text = {
                     value = data.close;
                 }
             }
-            value = $$.dataLabelFormat(d.id)(value, d.id, i, j);
+            value = $$.dataLabelFormat(d.id)(value, d.id, i, texts);
             if (isNumber(value)) {
                 this.textContent = value;
             }
@@ -20048,7 +20048,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.0-nightly-20211013004531
+ * @version 3.2.0-nightly-20211020004540
  */
 var bb = {
     /**
@@ -20058,7 +20058,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.0-nightly-20211013004531",
+    version: "3.2.0-nightly-20211020004540",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
