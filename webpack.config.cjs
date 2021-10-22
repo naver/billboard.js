@@ -47,7 +47,7 @@ const config = {
 				loader: "babel-loader",
 				exclude: {
 					and: [/node_modules/],
-					not: [/(d3\-.*)$/]
+					not: [/(d3\-.*)$/, /internmap/]
 				}
 			},
 			{
