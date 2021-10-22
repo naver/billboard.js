@@ -19,41 +19,39 @@ export default {
 		if (dataGroups.length > 0) {
 			const hasValue = $$[`has${isMin ? "Negative" : "Positive"}ValueInTargets`](targets);
 
-			for (let j = 0, idsInGroup; (idsInGroup = dataGroups[j]); j++) {
+			dataGroups.forEach(groupIds => {
 				// Determine baseId
-				idsInGroup = idsInGroup.filter(v => ids.indexOf(v) >= 0);
+				const idsInGroup = groupIds
+					.filter(v => ids.indexOf(v) >= 0);
 
-				if (idsInGroup.length === 0) {
-					continue;
-				}
+				if (idsInGroup.length) {
+					const baseId = idsInGroup[0];
+					const baseAxisId = axis.getId(baseId);
 
-				const baseId = idsInGroup[0];
-				const baseAxisId = axis.getId(baseId);
-
-				// Initialize base value. Set to 0 if not match with the condition
-				if (hasValue && ys[baseId]) {
-					ys[baseId] = ys[baseId].map(v => (
-						(isMin ? v < 0 : v > 0) ? v : 0
-					));
-				}
-
-				for (let k = 1, id; (id = idsInGroup[k]); k++) {
-					if (!ys[id]) {
-						continue;
+					// Initialize base value. Set to 0 if not match with the condition
+					if (hasValue && ys[baseId]) {
+						ys[baseId] = ys[baseId]
+							.map(v => ((isMin ? v < 0 : v > 0) ? v : 0));
 					}
 
-					const axisId = axis.getId(id);
+					idsInGroup
+						.filter((v, i) => i > 0)
+						.forEach(id => {
+							if (ys[id]) {
+								const axisId = axis.getId(id);
 
-					ys[id].forEach((v, i) => {
-						const val = +v;
-						const meetCondition = isMin ? val > 0 : val < 0;
+								ys[id].forEach((v, i) => {
+									const val = +v;
+									const meetCondition = isMin ? val > 0 : val < 0;
 
-						if (axisId === baseAxisId && !(hasValue && meetCondition)) {
-							ys[baseId][i] += val;
-						}
-					});
+									if (axisId === baseAxisId && !(hasValue && meetCondition)) {
+										ys[baseId][i] += val;
+									}
+								});
+							}
+						});
 				}
-			}
+			});
 		}
 
 		return getMinMax(type, Object.keys(ys).map(key => getMinMax(type, ys[key])));
