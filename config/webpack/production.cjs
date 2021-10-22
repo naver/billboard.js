@@ -7,6 +7,7 @@ const terserConfig = require("../terserConfig.cjs");
 const banner = require("../banner.cjs");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const ESLintPlugin = require("eslint-webpack-plugin");
 
 const config = {
 	entry: {
@@ -17,19 +18,6 @@ const config = {
 	},
 	module: {
 		rules: [
-			{
-				test: /\.js$/,
-				include: path.resolve(process.cwd(), "src"),
-				exclude: /(node_modules)/,
-				enforce: "pre",
-				use: {
-					loader: "eslint-loader",
-					options: {
-						failOnError: true,
-						formatter: require("eslint/lib/cli-engine/formatters/stylish")
-					}
-				},
-			},
 			{
 				test: /\.scss$/,
 				use: [
@@ -69,6 +57,10 @@ const config = {
 		new webpack.BannerPlugin({
 			banner: banner.production,
 			entryOnly: true
+		}),
+		new ESLintPlugin({
+			failOnError: true,
+			formatter: "stylish"
 		})
 	]
 };
