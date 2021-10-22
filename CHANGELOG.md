@@ -1,3 +1,10 @@
+## [3.2.1](https://github.com/naver/billboard.js/compare/3.2.0...3.2.1) (2021-10-22)
+
+
+### Bug Fixes
+
+* **build:** fix packaged build for ie ([5ebcd80](https://github.com/naver/billboard.js/commit/5ebcd80d6a9e378bffa7d583d38fd90c29e2837d)), closes [#2375](https://github.com/naver/billboard.js/issues/2375)
+
 # [3.2.0](https://github.com/naver/billboard.js/compare/3.1.5...3.2.0) (2021-10-07)
 
 
