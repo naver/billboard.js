@@ -412,7 +412,7 @@ export default {
 		return target;
 	},
 
-	mapToIds(targets) {
+	mapToIds(targets): string[] {
 		return targets.map(d => d.id);
 	},
 
