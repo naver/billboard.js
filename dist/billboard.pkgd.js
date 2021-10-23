@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.0-nightly-20211020004540
+ * @version 3.2.1-nightly-20211023004559
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -24581,69 +24581,260 @@ function drag_defaultTouchable() {
     return i < (categories == null ? void 0 : categories.length) ? categories[i] : i;
   }
 });
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
+
+function _inheritsLoose(subClass, superClass) {
+  subClass.prototype = Object.create(superClass.prototype);
+  subClass.prototype.constructor = subClass;
+  _setPrototypeOf(subClass, superClass);
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/getPrototypeOf.js
+function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+    return o.__proto__ || Object.getPrototypeOf(o);
+  };
+  return _getPrototypeOf(o);
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/isNativeFunction.js
+function _isNativeFunction(fn) {
+  return Function.toString.call(fn).indexOf("[native code]") !== -1;
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/isNativeReflectConstruct.js
+function _isNativeReflectConstruct() {
+  if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+  if (Reflect.construct.sham) return false;
+  if (typeof Proxy === "function") return true;
+
+  try {
+    Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {}));
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/construct.js
+
+
+function _construct(Parent, args, Class) {
+  if (_isNativeReflectConstruct()) {
+    _construct = Reflect.construct;
+  } else {
+    _construct = function _construct(Parent, args, Class) {
+      var a = [null];
+      a.push.apply(a, args);
+      var Constructor = Function.bind.apply(Parent, a);
+      var instance = new Constructor();
+      if (Class) _setPrototypeOf(instance, Class.prototype);
+      return instance;
+    };
+  }
+
+  return _construct.apply(null, arguments);
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/wrapNativeSuper.js
+
+
+
+
+function _wrapNativeSuper(Class) {
+  var _cache = typeof Map === "function" ? new Map() : undefined;
+
+  _wrapNativeSuper = function _wrapNativeSuper(Class) {
+    if (Class === null || !_isNativeFunction(Class)) return Class;
+
+    if (typeof Class !== "function") {
+      throw new TypeError("Super expression must either be null or a function");
+    }
+
+    if (typeof _cache !== "undefined") {
+      if (_cache.has(Class)) return _cache.get(Class);
+
+      _cache.set(Class, Wrapper);
+    }
+
+    function Wrapper() {
+      return _construct(Class, arguments, _getPrototypeOf(this).constructor);
+    }
+
+    Wrapper.prototype = Object.create(Class.prototype, {
+      constructor: {
+        value: Wrapper,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+    return _setPrototypeOf(Wrapper, Class);
+  };
+
+  return _wrapNativeSuper(Class);
+}
 ;// CONCATENATED MODULE: ./node_modules/internmap/src/index.js
-class InternMap extends Map {
-  constructor(entries, key = keyof) {
-    super();
-    Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
-    if (entries != null) for (const [key, value] of entries) this.set(key, value);
-  }
-  get(key) {
-    return super.get(intern_get(this, key));
-  }
-  has(key) {
-    return super.has(intern_get(this, key));
-  }
-  set(key, value) {
-    return super.set(intern_set(this, key), value);
-  }
-  delete(key) {
-    return super.delete(intern_delete(this, key));
-  }
-}
 
-class InternSet extends Set {
-  constructor(values, key = keyof) {
-    super();
-    Object.defineProperties(this, {_intern: {value: new Map()}, _key: {value: key}});
-    if (values != null) for (const value of values) this.add(value);
-  }
-  has(value) {
-    return super.has(intern_get(this, value));
-  }
-  add(value) {
-    return super.add(intern_set(this, value));
-  }
-  delete(value) {
-    return super.delete(intern_delete(this, value));
-  }
-}
 
-function intern_get({_intern, _key}, value) {
-  const key = _key(value);
+
+
+function src_createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = src_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function src_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return src_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return src_arrayLikeToArray(o, minLen); }
+
+function src_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+var InternMap = /*#__PURE__*/function (_Map) {
+  _inheritsLoose(InternMap, _Map);
+
+  function InternMap(entries, key) {
+    var _this;
+
+    if (key === void 0) {
+      key = keyof;
+    }
+
+    _this = _Map.call(this) || this;
+    Object.defineProperties(_assertThisInitialized(_this), {
+      _intern: {
+        value: new Map()
+      },
+      _key: {
+        value: key
+      }
+    });
+
+    if (entries != null) {
+      for (var _iterator = src_createForOfIteratorHelperLoose(entries), _step; !(_step = _iterator()).done;) {
+        var _step$value = _step.value,
+            _key2 = _step$value[0],
+            value = _step$value[1];
+
+        _this.set(_key2, value);
+      }
+    }
+
+    return _this;
+  }
+
+  var _proto = InternMap.prototype;
+
+  _proto.get = function get(key) {
+    return _Map.prototype.get.call(this, intern_get(this, key));
+  };
+
+  _proto.has = function has(key) {
+    return _Map.prototype.has.call(this, intern_get(this, key));
+  };
+
+  _proto.set = function set(key, value) {
+    return _Map.prototype.set.call(this, intern_set(this, key), value);
+  };
+
+  _proto.delete = function _delete(key) {
+    return _Map.prototype.delete.call(this, intern_delete(this, key));
+  };
+
+  return InternMap;
+}( /*#__PURE__*/_wrapNativeSuper(Map));
+var InternSet = /*#__PURE__*/function (_Set) {
+  _inheritsLoose(InternSet, _Set);
+
+  function InternSet(values, key) {
+    var _this2;
+
+    if (key === void 0) {
+      key = keyof;
+    }
+
+    _this2 = _Set.call(this) || this;
+    Object.defineProperties(_assertThisInitialized(_this2), {
+      _intern: {
+        value: new Map()
+      },
+      _key: {
+        value: key
+      }
+    });
+
+    if (values != null) {
+      for (var _iterator2 = src_createForOfIteratorHelperLoose(values), _step2, value; !(_step2 = _iterator2()).done;) {
+        value = _step2.value;
+
+        _this2.add(value);
+      }
+    }
+
+    return _this2;
+  }
+
+  var _proto2 = InternSet.prototype;
+
+  _proto2.has = function has(value) {
+    return _Set.prototype.has.call(this, intern_get(this, value));
+  };
+
+  _proto2.add = function add(value) {
+    return _Set.prototype.add.call(this, intern_set(this, value));
+  };
+
+  _proto2.delete = function _delete(value) {
+    return _Set.prototype.delete.call(this, intern_delete(this, value));
+  };
+
+  return InternSet;
+}( /*#__PURE__*/_wrapNativeSuper(Set));
+
+function intern_get(_ref, value) {
+  var _intern = _ref._intern,
+      _key = _ref._key,
+      key = _key(value);
+
   return _intern.has(key) ? _intern.get(key) : value;
 }
 
-function intern_set({_intern, _key}, value) {
-  const key = _key(value);
+function intern_set(_ref2, value) {
+  var _intern = _ref2._intern,
+      _key = _ref2._key,
+      key = _key(value);
+
   if (_intern.has(key)) return _intern.get(key);
+
   _intern.set(key, value);
+
   return value;
 }
 
-function intern_delete({_intern, _key}, value) {
-  const key = _key(value);
+function intern_delete(_ref3, value) {
+  var _intern = _ref3._intern,
+      _key = _ref3._key,
+      key = _key(value);
+
   if (_intern.has(key)) {
     value = _intern.get(key);
+
     _intern.delete(key);
   }
+
   return value;
 }
 
 function keyof(value) {
   return value !== null && typeof value === "object" ? value.valueOf() : value;
 }
-
 ;// CONCATENATED MODULE: ./node_modules/d3-scale/src/init.js
 function initRange(domain, range) {
   switch (arguments.length) {
@@ -24945,48 +25136,41 @@ var colorizePattern = function (pattern, color, id) {
         ys = $$.getValuesAsIdKeyed(targets);
 
     if (dataGroups.length > 0) {
-      (function () {
-        var hasValue = $$["has" + (isMin ? "Negative" : "Positive") + "ValueInTargets"](targets);
+      var hasValue = $$["has" + (isMin ? "Negative" : "Positive") + "ValueInTargets"](targets);
+      dataGroups.forEach(function (groupIds) {
+        // Determine baseId
+        var idsInGroup = groupIds.filter(function (v) {
+          return ids.indexOf(v) >= 0;
+        });
 
-        for (var _loop = function (j, _idsInGroup) {
-          // Determine baseId
-          _idsInGroup = _idsInGroup.filter(v => ids.indexOf(v) >= 0);
+        if (idsInGroup.length) {
+          var baseId = idsInGroup[0],
+              baseAxisId = axis.getId(baseId);
 
-          if (_idsInGroup.length === 0) {
-            idsInGroup = _idsInGroup;
-            return "continue";
-          }
-
-          var baseId = _idsInGroup[0];
-          var baseAxisId = axis.getId(baseId); // Initialize base value. Set to 0 if not match with the condition
-
+          // Initialize base value. Set to 0 if not match with the condition
           if (hasValue && ys[baseId]) {
-            ys[baseId] = ys[baseId].map(v => (isMin ? v < 0 : v > 0) ? v : 0);
-          }
-
-          for (let k = 1, id; id = _idsInGroup[k]; k++) {
-            if (!ys[id]) {
-              continue;
-            }
-
-            const axisId = axis.getId(id);
-            ys[id].forEach((v, i) => {
-              const val = +v;
-              const meetCondition = isMin ? val > 0 : val < 0;
-
-              if (axisId === baseAxisId && !(hasValue && meetCondition)) {
-                ys[baseId][i] += val;
-              }
+            ys[baseId] = ys[baseId].map(function (v) {
+              return (isMin ? v < 0 : v > 0) ? v : 0;
             });
           }
 
-          idsInGroup = _idsInGroup;
-        }, j = 0, idsInGroup; idsInGroup = dataGroups[j]; j++) {
-          var _ret = _loop(j, idsInGroup);
+          idsInGroup.filter(function (v, i) {
+            return i > 0;
+          }).forEach(function (id) {
+            if (ys[id]) {
+              var axisId = axis.getId(id);
+              ys[id].forEach(function (v, i) {
+                var val = +v,
+                    meetCondition = isMin ? val > 0 : val < 0;
 
-          if (_ret === "continue") continue;
+                if (axisId === baseAxisId && !(hasValue && meetCondition)) {
+                  ys[baseId][i] += val;
+                }
+              });
+            }
+          });
         }
-      })();
+      });
     }
 
     return getMinMax(type, Object.keys(ys).map(function (key) {
@@ -45871,7 +46055,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.2.0",
+  version: "3.2.1",
 
   /**
    * Generate chart
@@ -46005,7 +46189,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.2.0
+ * @version 3.2.1
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

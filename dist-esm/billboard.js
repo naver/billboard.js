@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.0-nightly-20211020004540
+ * @version 3.2.1-nightly-20211023004559
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4692,41 +4692,34 @@ var domain = {
         var ys = $$.getValuesAsIdKeyed(targets);
         if (dataGroups.length > 0) {
             var hasValue_1 = $$["has" + (isMin ? "Negative" : "Positive") + "ValueInTargets"](targets);
-            var _loop_1 = function (j, idsInGroup) {
+            dataGroups.forEach(function (groupIds) {
                 // Determine baseId
-                idsInGroup = idsInGroup.filter(function (v) { return ids.indexOf(v) >= 0; });
-                if (idsInGroup.length === 0) {
-                    return out_idsInGroup_1 = idsInGroup, "continue";
-                }
-                var baseId = idsInGroup[0];
-                var baseAxisId = axis.getId(baseId);
-                // Initialize base value. Set to 0 if not match with the condition
-                if (hasValue_1 && ys[baseId]) {
-                    ys[baseId] = ys[baseId].map(function (v) { return ((isMin ? v < 0 : v > 0) ? v : 0); });
-                }
-                var _loop_2 = function (k, id) {
-                    if (!ys[id]) {
-                        return "continue";
+                var idsInGroup = groupIds
+                    .filter(function (v) { return ids.indexOf(v) >= 0; });
+                if (idsInGroup.length) {
+                    var baseId_1 = idsInGroup[0];
+                    var baseAxisId_1 = axis.getId(baseId_1);
+                    // Initialize base value. Set to 0 if not match with the condition
+                    if (hasValue_1 && ys[baseId_1]) {
+                        ys[baseId_1] = ys[baseId_1]
+                            .map(function (v) { return ((isMin ? v < 0 : v > 0) ? v : 0); });
                     }
-                    var axisId = axis.getId(id);
-                    ys[id].forEach(function (v, i) {
-                        var val = +v;
-                        var meetCondition = isMin ? val > 0 : val < 0;
-                        if (axisId === baseAxisId && !(hasValue_1 && meetCondition)) {
-                            ys[baseId][i] += val;
+                    idsInGroup
+                        .filter(function (v, i) { return i > 0; })
+                        .forEach(function (id) {
+                        if (ys[id]) {
+                            var axisId_1 = axis.getId(id);
+                            ys[id].forEach(function (v, i) {
+                                var val = +v;
+                                var meetCondition = isMin ? val > 0 : val < 0;
+                                if (axisId_1 === baseAxisId_1 && !(hasValue_1 && meetCondition)) {
+                                    ys[baseId_1][i] += val;
+                                }
+                            });
                         }
                     });
-                };
-                for (var k = 1, id = void 0; (id = idsInGroup[k]); k++) {
-                    _loop_2(k, id);
                 }
-                out_idsInGroup_1 = idsInGroup;
-            };
-            var out_idsInGroup_1;
-            for (var j = 0, idsInGroup = void 0; (idsInGroup = dataGroups[j]); j++) {
-                _loop_1(j, idsInGroup);
-                idsInGroup = out_idsInGroup_1;
-            }
+            });
         }
         return getMinMax$1(type, Object.keys(ys).map(function (key) { return getMinMax$1(type, ys[key]); }));
     },
@@ -20048,7 +20041,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.0-nightly-20211020004540
+ * @version 3.2.1-nightly-20211023004559
  */
 var bb = {
     /**
@@ -20058,7 +20051,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.0-nightly-20211020004540",
+    version: "3.2.1-nightly-20211023004559",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

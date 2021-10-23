@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.0-nightly-20211008004535
+ * @version 3.2.1-nightly-20211023004559
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2224,8 +2224,8 @@ var Store = /*#__PURE__*/function () {
    * The arguments are:<br>
    *  - `v` is the value of the data point where the label is shown.
    *  - `id` is the id of the data where the label is shown.
-   *  - `i` is the index of the data point where the label is shown.
-   *  - `j` is the sub index of the data point where the label is shown.<br><br>
+   *  - `i` is the index of the data series point where the label is shown.
+   *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
    * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
    * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
    * @property {string|object|Function} [data.labels.colors] Set label text colors.
@@ -2255,7 +2255,7 @@ var Store = /*#__PURE__*/function () {
    *
    *     // it's possible to set for each data
    *     format: {
-   *         data1: function(v, id, i, j) { ... },
+   *         data1: function(v, id, i, texts) { ... },
    *         ...
    *     },
    *
@@ -5542,48 +5542,41 @@ var colorizePattern = function (pattern, color, id) {
         ys = $$.getValuesAsIdKeyed(targets);
 
     if (dataGroups.length > 0) {
-      (function () {
-        var hasValue = $$["has" + (isMin ? "Negative" : "Positive") + "ValueInTargets"](targets);
+      var hasValue = $$["has" + (isMin ? "Negative" : "Positive") + "ValueInTargets"](targets);
+      dataGroups.forEach(function (groupIds) {
+        // Determine baseId
+        var idsInGroup = groupIds.filter(function (v) {
+          return ids.indexOf(v) >= 0;
+        });
 
-        for (var _loop = function (j, _idsInGroup) {
-          // Determine baseId
-          _idsInGroup = _idsInGroup.filter(v => ids.indexOf(v) >= 0);
+        if (idsInGroup.length) {
+          var baseId = idsInGroup[0],
+              baseAxisId = axis.getId(baseId);
 
-          if (_idsInGroup.length === 0) {
-            idsInGroup = _idsInGroup;
-            return "continue";
-          }
-
-          var baseId = _idsInGroup[0];
-          var baseAxisId = axis.getId(baseId); // Initialize base value. Set to 0 if not match with the condition
-
+          // Initialize base value. Set to 0 if not match with the condition
           if (hasValue && ys[baseId]) {
-            ys[baseId] = ys[baseId].map(v => (isMin ? v < 0 : v > 0) ? v : 0);
-          }
-
-          for (let k = 1, id; id = _idsInGroup[k]; k++) {
-            if (!ys[id]) {
-              continue;
-            }
-
-            const axisId = axis.getId(id);
-            ys[id].forEach((v, i) => {
-              const val = +v;
-              const meetCondition = isMin ? val > 0 : val < 0;
-
-              if (axisId === baseAxisId && !(hasValue && meetCondition)) {
-                ys[baseId][i] += val;
-              }
+            ys[baseId] = ys[baseId].map(function (v) {
+              return (isMin ? v < 0 : v > 0) ? v : 0;
             });
           }
 
-          idsInGroup = _idsInGroup;
-        }, j = 0, idsInGroup; idsInGroup = dataGroups[j]; j++) {
-          var _ret = _loop(j, idsInGroup);
+          idsInGroup.filter(function (v, i) {
+            return i > 0;
+          }).forEach(function (id) {
+            if (ys[id]) {
+              var axisId = axis.getId(id);
+              ys[id].forEach(function (v, i) {
+                var val = +v,
+                    meetCondition = isMin ? val > 0 : val < 0;
 
-          if (_ret === "continue") continue;
+                if (axisId === baseAxisId && !(hasValue && meetCondition)) {
+                  ys[baseId][i] += val;
+                }
+              });
+            }
+          });
         }
-      })();
+      });
     }
 
     return getMinMax(type, Object.keys(ys).map(function (key) {
@@ -7931,7 +7924,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       }
 
       return config.axis_rotated ? isEndAnchor ? "end" : "start" : "middle";
-    }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", "0").each(function (d, i, j) {
+    }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", "0").each(function (d, i, texts) {
       var node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           value = d.value;
 
@@ -7945,7 +7938,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         }
       }
 
-      value = $$.dataLabelFormat(d.id)(value, d.id, i, j);
+      value = $$.dataLabelFormat(d.id)(value, d.id, i, texts);
 
       if (isNumber(value)) {
         this.textContent = value;
@@ -22653,7 +22646,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.2.0",
+  version: "3.2.1",
 
   /**
    * Generate chart
@@ -22787,7 +22780,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.2.0
+ * @version 3.2.1
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
