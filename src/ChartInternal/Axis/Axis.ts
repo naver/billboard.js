@@ -631,8 +631,8 @@ class Axis {
 			const dummy = chart.append("svg")
 				.style("visibility", "hidden")
 				.style("position", "fixed")
-				.style("top", "0px")
-				.style("left", "0px");
+				.style("top", "0")
+				.style("left", "0");
 
 			axis.create(dummy);
 

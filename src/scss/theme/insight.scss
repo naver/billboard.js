@@ -47,7 +47,6 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
 .bb-axis-y text, .bb-axis-y2 text {
     fill: #737373;
 }
-.bb-axis-y2 .tick {}
 
 .bb-event-rects {
     fill-opacity: 1 !important;
@@ -283,7 +282,7 @@ rect.bb-circle, use.bb-circle {
     font-size: 1.3em;
 }
 
-.bb-chart-arcs-gauge-title {
+text.bb-chart-arcs-gauge-title {
     dominant-baseline: middle;
     font-size: 2.7em;
 }
