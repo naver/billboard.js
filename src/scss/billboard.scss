@@ -51,15 +51,6 @@
 	shape-rendering: crispEdges;
 }
 
-.bb-axis-x .tick {}
-.bb-axis-x-label {}
-
-.bb-axis-y .tick {}
-.bb-axis-y-label {}
-
-.bb-axis-y2 .tick {}
-.bb-axis-y2-label {}
-
 /*-- Grid --*/
 .bb-grid {
 	pointer-events: none;
@@ -155,9 +146,6 @@
 	fill-opacity: .1;
 }
 
-/*-- Select - Drag --*/
-.bb-dragarea {}
-
 /*-- Legend --*/
 .bb-legend-item {
 	font-size: 12px;
@@ -239,7 +227,7 @@
 	font-size: 1.3em;
 }
 
-.bb-chart-arcs-gauge-title {
+text.bb-chart-arcs-gauge-title {
 	dominant-baseline: middle;
 	font-size: 2.7em;
 }

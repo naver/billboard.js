@@ -536,11 +536,7 @@ export default {
 				.attr("class", CLASS[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"])
 				.style("text-anchor", "middle");
 
-			if (hasGauge) {
-				text
-					.attr("dy", "-0.3em")
-					.style("font-size", "27px");
-			}
+			hasGauge && text.attr("dy", "-0.3em");
 
 			setTextValue(text, title, hasGauge ? undefined : [-0.6, 1.35], true);
 		}
