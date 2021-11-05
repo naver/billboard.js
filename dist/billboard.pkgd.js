@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.1-nightly-20211103004603
+ * @version 3.2.1-nightly-20211105004520
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -36135,7 +36135,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       }
 
       isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
-      var dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
+      var dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0").style("left", "0");
       axis.create(dummy);
       dummy.selectAll("text").each(function (d, i) {
         var currentTextWidth = this.getBoundingClientRect().width;
@@ -40756,11 +40756,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 
     if (title) {
       var text = $$.$el.arcs.append("text").attr("class", config_classes[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"]).style("text-anchor", "middle");
-
-      if (hasGauge) {
-        text.attr("dy", "-0.3em").style("font-size", "27px");
-      }
-
+      hasGauge && text.attr("dy", "-0.3em");
       setTextValue(text, title, hasGauge ? undefined : [-.6, 1.35], !0);
     }
   },

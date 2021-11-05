@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.1-nightly-20211103004603
+ * @version 3.2.1-nightly-20211105004520
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -11554,8 +11554,8 @@ var Axis = /** @class */ (function () {
             var dummy = chart.append("svg")
                 .style("visibility", "hidden")
                 .style("position", "fixed")
-                .style("top", "0px")
-                .style("left", "0px");
+                .style("top", "0")
+                .style("left", "0");
             axis.create(dummy);
             dummy.selectAll("text")
                 .each(function (d, i) {
@@ -15468,11 +15468,7 @@ var shapeArc = {
             var text = $$.$el.arcs.append("text")
                 .attr("class", CLASS[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"])
                 .style("text-anchor", "middle");
-            if (hasGauge) {
-                text
-                    .attr("dy", "-0.3em")
-                    .style("font-size", "27px");
-            }
+            hasGauge && text.attr("dy", "-0.3em");
             setTextValue(text, title, hasGauge ? undefined : [-0.6, 1.35], true);
         }
     },
@@ -20041,7 +20037,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.1-nightly-20211103004603
+ * @version 3.2.1-nightly-20211105004520
  */
 var bb = {
     /**
@@ -20051,7 +20047,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.1-nightly-20211103004603",
+    version: "3.2.1-nightly-20211105004520",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
