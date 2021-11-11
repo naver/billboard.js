@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
-import {toArray, getBoundingRect, getCssRules, getPathBox, getUnique, isArray, isNumber, sortValue} from "../../src/module/util";
+import {toArray, getBoundingRect, getCssRules, getPathBox, getPointer, getUnique, isArray, isNumber, sortValue} from "../../src/module/util";
 
 describe("UTIL", function() {
 	describe("toArray", () => {
@@ -81,6 +81,43 @@ describe("UTIL", function() {
 			for (let x in pathBox) {
 				expect(isNumber(pathBox[x])).to.be.true;
 			}
+		});
+	});
+
+	describe("getPointer", () => {
+		it("should return numeric coordinate value", () => {			
+			const touchObj = new Touch({
+				identifier: Date.now(),
+				target: document.body,
+				radiusX: 2.5,
+				radiusY: 2.5,
+				rotationAngle: 10,
+				force: 0.5,
+				clientX: 100,
+				clientY: 100
+			});
+
+			const touchEvent = new TouchEvent("touchstart", {
+				cancelable: true,
+				bubbles: true,
+				touches: [touchObj],
+				targetTouches: [],
+				changedTouches: [touchObj],
+				shiftKey: true,
+			  });
+
+			expect(getPointer(touchEvent, document.body)).to.be.deep.equal([100, 100]);
+
+			// when has no touches object
+			const touchEvent2 = new TouchEvent("touchstart", {
+				cancelable: true,
+				bubbles: true,
+				targetTouches: [],
+				changedTouches: [touchObj],
+				shiftKey: true,
+			  });
+
+			expect(getPointer(touchEvent2, document.body)).to.be.deep.equal([0, 0]);
 		});
 	});
 
