@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.1-nightly-20211111004548
+ * @version 3.2.1-nightly-20211112004534
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -21064,9 +21064,13 @@ function getPathBox(path) {
 
 
 function getPointer(event, element) {
-  var touches = event && (event.touches || event.sourceEvent && event.sourceEvent.touches),
-      pointer = event ? src_pointer(touches ? touches[0] : event, element) : [0, 0];
-  return pointer;
+  var _ref,
+      touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
+      pointer = src_pointer(touches || event, element);
+
+  return pointer.map(function (v) {
+    return isNaN(v) ? 0 : v;
+  });
 }
 /**
  * Return brush selection array
