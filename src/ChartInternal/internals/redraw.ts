@@ -16,8 +16,7 @@ export default {
 		state.redrawing = true;
 
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
-		const initializing = options.initializing;
-		const flow = options.flow;
+		const {flow, initializing} = options;
 		const wth = $$.getWithOption(options);
 		const duration = wth.Transition ? config.transition_duration : 0;
 		const durationForExit = wth.TransitionForExit ? duration : 0;
@@ -247,6 +246,7 @@ export default {
 	redrawWithoutRescale() {
 		this.redraw({
 			withY: false,
+			withLegend: true,
 			withSubchart: false,
 			withEventRect: false,
 			withTransitionForAxis: false

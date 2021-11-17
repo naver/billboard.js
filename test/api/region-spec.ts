@@ -113,7 +113,10 @@ describe("API region", function() {
 						end: 100,
 						class: "green",
 					}
-				]
+				],
+				zoom: {
+					enabled: true
+				}
 			}
 		});
 
@@ -181,6 +184,39 @@ describe("API region", function() {
 
 				done();
 			}, 500);
+		});
+
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+					  ["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "line"
+				},
+				zoom: {
+					enabled: true
+				},
+				transition: {
+					duration: 0
+				}
+			};
+		});
+
+		it("region should be added when is zoomed.", () => {
+			const zoomDomain = [1, 3];
+
+			// when
+			chart.zoom(zoomDomain);
+			chart.regions([{ axis: 'x', start: 2, end: 3 }]);
+
+			expect(chart.zoom().map(Math.round)).to.eql(zoomDomain);
+			
+			const rect = chart.internal.$el.region.list.select("rect").node().getBoundingClientRect();
+
+			expect(rect.width).to.be.equal(300);
+			expect(rect.height).to.be.equal(426);
 		});
 	});
 
