@@ -723,6 +723,40 @@ describe("SHAPE BAR", () => {
 		});
 	});
 
+	describe("bar radius", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data", 0, 30],
+					],
+					type: "bar"
+				},
+				clipPath: false,
+				bar: {
+					radius: {
+						ratio: 0.2
+					}
+				}
+			}
+		});
+
+		// https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#arcs
+		it("for zero value, Arc 'a' path command shouldn't be added ", () => {
+			expect(chart.$.bar.bars.attr("d").indexOf("a") === -1).to.be.true;
+		});
+
+		it("set options", () => {
+			args.data.columns[0][0] = 2;
+		});
+
+		it("clip-path attribute should be added, to avoid wrong rendering for small values", () => {
+			const chartBars = chart.$.main.select(`.${CLASS.chartBars}`).node();
+
+			expect(chartBars.getAttribute("clip-path")).to.be.ok;
+		})
+	});
+
 	describe("bar position", () => {
 		before(() => {
 			args = {

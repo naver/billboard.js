@@ -7,12 +7,20 @@ import {getPointer, getRandom, getRectSegList, isNumber} from "../../module/util
 
 export default {
 	initBar(): void {
-		const {$el} = this;
+		const {$el, config, state: {clip}} = this;
 
 		$el.bar = $el.main.select(`.${CLASS.chart}`)
 			// should positioned at the beginning of the shape node to not overlap others
 			.insert("g", ":first-child")
 			.attr("class", CLASS.chartBars);
+
+		// set clip-path attribute when condition meet
+		// https://github.com/naver/billboard.js/issues/2421
+		if (config.clipPath === false && (
+			config.bar_radius || config.bar_radius_ratio
+		)) {
+			$el.bar.attr("clip-path", clip.pathXAxis.replace(/#[^)]*/, `#${clip.id}`));
+		}
 	},
 
 	updateTargetsForBar(targets): void {
@@ -122,7 +130,7 @@ export default {
 			const pathRadius = ["", ""];
 			let radius = 0;
 
-			if (getRadius && !isGrouped) {
+			if (d.value !== 0 && getRadius && !isGrouped) {
 				const index = isRotated ? indexY : indexX;
 				const barW = points[2][index] - points[0][index];
 
