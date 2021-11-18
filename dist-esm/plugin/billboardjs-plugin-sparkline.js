@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.1-nightly-20211117004534
+ * @version 3.2.1-nightly-20211118004548
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -268,7 +268,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "#3.2.1-nightly-20211117004534#";
+Plugin.version = "#3.2.1-nightly-20211118004548#";
 
 /**
  * Copyright (c) 2021 ~ present NAVER Corp.
@@ -520,7 +520,7 @@ var Sparkline = /** @class */ (function (_super) {
             msg = "Contains non supported chart types.";
         }
         if (msg) {
-            throw new Error("[Sparkline plugin] " + msg);
+            throw new Error("[Sparkline plugin] ".concat(msg));
         }
     };
     Sparkline.prototype.overrideInternals = function () {
@@ -587,7 +587,7 @@ var Sparkline = /** @class */ (function (_super) {
         var _this = this;
         if (bind === void 0) { bind = true; }
         if (this.$$.config.interaction_enabled) {
-            var method_1 = (bind ? "add" : "remove") + "EventListener";
+            var method_1 = "".concat(bind ? "add" : "remove", "EventListener");
             this.element
                 .forEach(function (el) {
                 var svg = el.querySelector("svg");
@@ -639,11 +639,11 @@ var Sparkline = /** @class */ (function (_super) {
         }
         data.map(function (v) { return v.id; })
             .forEach(function (id, i) {
-            var selector = "." + CLASS.target + "-" + id;
+            var selector = ".".concat(CLASS.target, "-").concat(id);
             var shape = $el.main.selectAll(selector);
             var svg = el[i].querySelector("svg");
             if (!svg) {
-                el[i].innerHTML = svgWrapper + "</svg>";
+                el[i].innerHTML = "".concat(svgWrapper, "</svg>");
                 svg = el[i].querySelector("svg");
                 svg.__id = id;
             }

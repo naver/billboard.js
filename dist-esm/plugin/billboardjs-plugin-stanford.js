@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.1-nightly-20211117004534
+ * @version 3.2.1-nightly-20211118004548
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -336,7 +336,7 @@ function parseDate(date) {
     }
     if (!parsedDate || isNaN(+parsedDate)) {
         console && console.error &&
-            console.error("Failed to parse x '" + date + "' to Date object");
+            console.error("Failed to parse x '".concat(date, "' to Date object"));
     }
     return parsedDate;
 }
@@ -467,7 +467,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "#3.2.1-nightly-20211117004534#";
+Plugin.version = "#3.2.1-nightly-20211118004548#";
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -749,9 +749,9 @@ var Elements = /** @class */ (function () {
         var xvCustom = this.xvCustom.bind($$);
         var yvCustom = this.yvCustom.bind($$);
         // Stanford-Lines
-        var stanfordLine = main.select("." + CLASS.stanfordLines)
+        var stanfordLine = main.select(".".concat(CLASS.stanfordLines))
             .style("shape-rendering", "geometricprecision")
-            .selectAll("." + CLASS.stanfordLine)
+            .selectAll(".".concat(CLASS.stanfordLine))
             .data(this.owner.config.lines);
         // exit
         stanfordLine.exit().transition()
@@ -764,7 +764,7 @@ var Elements = /** @class */ (function () {
             .style("opacity", "0");
         stanfordLineEnter
             .merge(stanfordLine)
-            .attr("class", function (d) { return CLASS.stanfordLine + (d["class"] ? " " + d["class"] : ""); })
+            .attr("class", function (d) { return CLASS.stanfordLine + (d["class"] ? " ".concat(d["class"]) : ""); })
             .select("line")
             .transition()
             .duration(duration)
@@ -783,8 +783,8 @@ var Elements = /** @class */ (function () {
         var yvCustom = this.yvCustom.bind($$);
         var countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
         // Stanford-Regions
-        var stanfordRegion = main.select("." + CLASS.stanfordRegions)
-            .selectAll("." + CLASS.stanfordRegion)
+        var stanfordRegion = main.select(".".concat(CLASS.stanfordRegions))
+            .selectAll(".".concat(CLASS.stanfordRegion))
             .data(this.owner.config.regions);
         // exit
         stanfordRegion.exit().transition()
@@ -801,7 +801,7 @@ var Elements = /** @class */ (function () {
         stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
         // update
         stanfordRegion
-            .attr("class", function (d) { return CLASS.stanfordRegion + (d["class"] ? " " + d["class"] : ""); })
+            .attr("class", function (d) { return CLASS.stanfordRegion + (d["class"] ? " ".concat(d["class"]) : ""); })
             .select("polygon")
             .transition()
             .duration(duration)
@@ -885,7 +885,7 @@ var ColorScale = /** @class */ (function () {
             .attr("height", height)
             .attr("class", CLASS.colorScale);
         this.colorScale.append("g")
-            .attr("transform", "translate(0, " + config.padding_top + ")")
+            .attr("transform", "translate(0, ".concat(config.padding_top, ")"))
             .selectAll("bars")
             .data(points)
             .enter()
@@ -916,7 +916,7 @@ var ColorScale = /** @class */ (function () {
         // Draw Axis
         var axis = this.colorScale.append("g")
             .attr("class", "legend axis")
-            .attr("transform", "translate(" + barWidth + ",0)")
+            .attr("transform", "translate(".concat(barWidth, ",0)"))
             .call(legendAxis);
         if (scaleFormat === "pow10") {
             axis.selectAll(".tick text")
@@ -927,7 +927,7 @@ var ColorScale = /** @class */ (function () {
                 .attr("dy", "-.7em") // https://bl.ocks.org/mbostock/6738229
                 .text(function (d) { return Math.round(Math.log(d) / Math.LN10); });
         }
-        this.colorScale.attr("transform", "translate(" + ($$.state.current.width - this.xForColorScale()) + ", 0)");
+        this.colorScale.attr("transform", "translate(".concat($$.state.current.width - this.xForColorScale(), ", 0)"));
     };
     ColorScale.prototype.xForColorScale = function () {
         return this.owner.config.padding_right +
@@ -1118,11 +1118,11 @@ var Stanford = /** @class */ (function (_super) {
         var config = this.$$.config;
         if (isEmpty(config.tooltip_contents)) {
             config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
-                var html = "<table class=\"" + CLASS$1.tooltip + "\"><tbody>";
+                var html = "<table class=\"".concat(CLASS$1.tooltip, "\"><tbody>");
                 d.forEach(function (v) {
-                    html += "<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(config.data_x) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.x) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(v.id) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.value) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"" + CLASS$1.tooltipName + "-" + v.id + "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:" + color(v) + "\"></span>" + defaultTitleFormat("Epochs") + "</td>\n\t\t\t\t\t\t\t<td class=\"value\">" + defaultValueFormat(v.epochs) + "</td>\n\t\t\t\t\t\t</tr>";
+                    html += "<tr>\n\t\t\t\t\t\t\t<th>".concat(defaultTitleFormat(config.data_x), "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(v.x), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>").concat(defaultTitleFormat(v.id), "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(v.value), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"").concat(CLASS$1.tooltipName, "-").concat(v.id, "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:").concat(color(v), "\"></span>").concat(defaultTitleFormat("Epochs"), "</td>\n\t\t\t\t\t\t\t<td class=\"value\">").concat(defaultValueFormat(v.epochs), "</td>\n\t\t\t\t\t\t</tr>");
                 });
-                return html + "</tbody></table>";
+                return "".concat(html, "</tbody></table>");
             };
         }
     };

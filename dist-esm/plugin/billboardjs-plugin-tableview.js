@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.1-nightly-20211117004534
+ * @version 3.2.1-nightly-20211118004548
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -170,7 +170,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "#3.2.1-nightly-20211117004534#";
+Plugin.version = "#3.2.1-nightly-20211118004548#";
 
 /**
  * Copyright (c) 2021 ~ present NAVER Corp.
@@ -410,7 +410,7 @@ function mergeObj(target) {
 function tplProcess(tpl, data) {
     var res = tpl;
     for (var x in data) {
-        res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
+        res = res.replace(new RegExp("{=".concat(x, "}"), "g"), data[x]);
     }
     return res;
 }
@@ -506,7 +506,7 @@ var TableView = /** @class */ (function (_super) {
     TableView.prototype.$init = function () {
         var _a;
         var _b = this.config, className = _b["class"], selector = _b.selector, style = _b.style;
-        var element = document.querySelector(selector || "." + (className || defaultStyle["class"]));
+        var element = document.querySelector(selector || ".".concat(className || defaultStyle["class"]));
         if (!element) {
             var chart = this.$$.$el.chart.node();
             element = document.createElement("table");
@@ -552,11 +552,11 @@ var TableView = /** @class */ (function (_super) {
             });
         });
         rows.forEach(function (v) {
-            tbody += "<tr>" + v.map(function (d, i) { return tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
+            tbody += "<tr>".concat(v.map(function (d, i) { return tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
                 value: i === 0 ?
                     config.categoryFormat.bind(_this)(d) :
                     (isNumber(d) ? d.toLocaleString() : "")
-            }); }).join("") + "</tr>";
+            }); }).join(""), "</tr>");
         });
         var rx = /<[^>]+><\/[^>]+>/g;
         var r = tplProcess(tpl.body, _assign(_assign({}, config), { title: config.title || $$.config.title_text || "", thead: thead, tbody: tbody })).replace(rx, "");

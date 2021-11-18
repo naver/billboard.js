@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.1-nightly-20211117004534
+ * @version 3.2.1-nightly-20211118004548
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -300,7 +300,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "#3.2.1-nightly-20211117004534#";
+Plugin.version = "#3.2.1-nightly-20211118004548#";
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -453,8 +453,8 @@ var TextOverlap = /** @class */ (function (_super) {
                     "middle" : (angle === 0 ? "start" : "end");
                 this.style.display = polygonArea$1 < area ? "none" : "";
                 this.setAttribute("text-anchor", txtAnchor);
-                this.setAttribute("dy", "0." + (angle === 1 ? 71 : 35) + "em");
-                this.setAttribute("transform", "translate(" + xTranslate + ", " + yTranslate + ")");
+                this.setAttribute("dy", "0.".concat(angle === 1 ? 71 : 35, "em"));
+                this.setAttribute("transform", "translate(".concat(xTranslate, ", ").concat(yTranslate, ")"));
             }
             i++;
         });

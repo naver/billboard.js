@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.1-nightly-20211117004534
+ * @version 3.2.1-nightly-20211118004548
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -26867,8 +26867,9 @@ function getFormat($$, typeValue, v) {
         main = $el.main;
     state.redrawing = !0;
     var targetsToShow = $$.filterTargetsToShow($$.data.targets),
-        initializing = options.initializing,
-        flow = options.flow,
+        _options = options,
+        flow = _options.flow,
+        initializing = _options.initializing,
         wth = $$.getWithOption(options),
         duration = wth.Transition ? config.transition_duration : 0,
         durationForExit = wth.TransitionForExit ? duration : 0,
@@ -27074,6 +27075,7 @@ function getFormat($$, typeValue, v) {
   redrawWithoutRescale: function redrawWithoutRescale() {
     this.redraw({
       withY: !1,
+      withLegend: !0,
       withSubchart: !1,
       withEventRect: !1,
       withTransitionForAxis: !1
