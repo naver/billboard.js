@@ -622,8 +622,9 @@ export default {
 				.attr("href", (data, idx, selection) => {
 					const node = selection[idx];
 					const nodeName = node.nodeName.toLowerCase();
+					const id = $$.getTargetSelectorSuffix(data);
 
-					return nodeName === "use" ? `#${state.datetimeId}-point-${data}` : undefined;
+					return nodeName === "use" ? `#${state.datetimeId}-point${id}` : undefined;
 				});
 		} else {
 			l.append("line")
