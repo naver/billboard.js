@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.1-nightly-20211118004548
+ * @version 3.2.1-nightly-20211119004543
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -15912,11 +15912,16 @@ var shapeArea = {
  */
 var shapeBar = {
     initBar: function () {
-        var $el = this.$el;
+        var _a = this, $el = _a.$el, config = _a.config, clip = _a.state.clip;
         $el.bar = $el.main.select(".".concat(CLASS.chart))
             // should positioned at the beginning of the shape node to not overlap others
             .insert("g", ":first-child")
             .attr("class", CLASS.chartBars);
+        // set clip-path attribute when condition meet
+        // https://github.com/naver/billboard.js/issues/2421
+        if (config.clipPath === false && (config.bar_radius || config.bar_radius_ratio)) {
+            $el.bar.attr("clip-path", clip.pathXAxis.replace(/#[^)]*/, "#".concat(clip.id)));
+        }
     },
     updateTargetsForBar: function (targets) {
         var $$ = this;
@@ -16006,7 +16011,7 @@ var shapeBar = {
             var isNegative = d.value < 0;
             var pathRadius = ["", ""];
             var radius = 0;
-            if (getRadius && !isGrouped) {
+            if (d.value !== 0 && getRadius && !isGrouped) {
                 var index = isRotated ? indexY : indexX;
                 var barW = points[2][index] - points[0][index];
                 radius = getRadius(barW);
@@ -20036,7 +20041,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.1-nightly-20211118004548
+ * @version 3.2.1-nightly-20211119004543
  */
 var bb = {
     /**
@@ -20046,7 +20051,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.1-nightly-20211118004548",
+    version: "3.2.1-nightly-20211119004543",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

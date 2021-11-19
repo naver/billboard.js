@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.1-nightly-20211118004548
+ * @version 3.2.1-nightly-20211119004543
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -41396,9 +41396,16 @@ function point_y(p) {
 
 /* harmony default export */ var bar = ({
   initBar: function initBar() {
-    var $el = this.$el;
+    var $el = this.$el,
+        config = this.config,
+        clip = this.state.clip;
     $el.bar = $el.main.select("." + config_classes.chart) // should positioned at the beginning of the shape node to not overlap others
-    .insert("g", ":first-child").attr("class", config_classes.chartBars);
+    .insert("g", ":first-child").attr("class", config_classes.chartBars); // set clip-path attribute when condition meet
+    // https://github.com/naver/billboard.js/issues/2421
+
+    if (config.clipPath === !1 && (config.bar_radius || config.bar_radius_ratio)) {
+      $el.bar.attr("clip-path", clip.pathXAxis.replace(/#[^)]*/, "#" + clip.id));
+    }
   },
   updateTargetsForBar: function updateTargetsForBar(targets) {
     var $$ = this,
@@ -41494,7 +41501,7 @@ function point_y(p) {
           pathRadius = ["", ""],
           radius = 0; // switch points if axis is rotated, not applicable for sub chart
 
-      if (getRadius && !isGrouped) {
+      if (d.value !== 0 && getRadius && !isGrouped) {
         var index = isRotated ? indexY : indexX,
             barW = points[2][index] - points[0][index];
         radius = getRadius(barW);
