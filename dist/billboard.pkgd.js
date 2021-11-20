@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.1-nightly-20211119004543
+ * @version 3.2.2-nightly-20211120004539
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -26765,8 +26765,9 @@ function getFormat($$, typeValue, v) {
         return browser_doc.createElementNS(namespaces.svg, "hasValidPointType" in $$ && $$.hasValidPointType(point) ? point : "use");
       }).attr("class", config_classes.legendItemPoint).style("fill", getColor).style("pointer-events", "none").attr("href", function (data, idx, selection) {
         var node = selection[idx],
-            nodeName = node.nodeName.toLowerCase();
-        return nodeName === "use" ? "#" + state.datetimeId + "-point-" + data : undefined;
+            nodeName = node.nodeName.toLowerCase(),
+            id = $$.getTargetSelectorSuffix(data);
+        return nodeName === "use" ? "#" + state.datetimeId + "-point" + id : undefined;
       });
     } else {
       l.append("line").attr("class", config_classes.legendItemTile).style("stroke", getColor).style("pointer-events", "none").attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height);
@@ -46642,7 +46643,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.2.1",
+  version: "3.2.2",
 
   /**
    * Generate chart
@@ -46776,7 +46777,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.2.1
+ * @version 3.2.2
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
