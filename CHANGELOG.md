@@ -1,3 +1,13 @@
+## [3.2.2](https://github.com/naver/billboard.js/compare/3.2.1...3.2.2) (2021-11-19)
+
+
+### Bug Fixes
+
+* **api:** Fix zoom reset for  regions(), grids() api call ([679ce73](https://github.com/naver/billboard.js/commit/679ce7366d96dae7b2d16e2d2bbc8565d20b36c7)), closes [#2411](https://github.com/naver/billboard.js/issues/2411)
+* **bar:** fix bar radius rendering with clipPath=false option ([80bf491](https://github.com/naver/billboard.js/commit/80bf4911661b44ccdb48685eefc16ecff960b85d)), closes [#2421](https://github.com/naver/billboard.js/issues/2421)
+* **legend:** Fix usePoint option work for spaced data name ([275c1cc](https://github.com/naver/billboard.js/commit/275c1ccfd47ba0ba359659d3a818833aef7f9512)), closes [#2425](https://github.com/naver/billboard.js/issues/2425)
+* **types:** fix candlestick data type ([ccac60d](https://github.com/naver/billboard.js/commit/ccac60d1f3f15383ae758d7feaf81c2a7fa1554f)), closes [#2422](https://github.com/naver/billboard.js/issues/2422)
+
 ## [3.2.1](https://github.com/naver/billboard.js/compare/3.2.0...3.2.1) (2021-10-22)
 
 
