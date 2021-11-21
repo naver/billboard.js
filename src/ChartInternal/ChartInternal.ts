@@ -181,6 +181,7 @@ export default class ChartInternal {
 
 		state.hasAxis = !$$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");
+		state.hasPolar = !state.hasAxis && $$.hasType("polar");
 
 		$$.initParams();
 
@@ -490,7 +491,7 @@ export default class ChartInternal {
 	 */
 	initChartElements(): void {
 		const $$ = <any> this;
-		const {hasAxis, hasRadar} = $$.state;
+		const {hasAxis, hasRadar, hasPolar} = $$.state;
 		const types: string[] = [];
 
 		if (hasAxis) {
@@ -502,7 +503,7 @@ export default class ChartInternal {
 				}
 			});
 		} else {
-			if (!hasRadar) {
+			if (!hasRadar && !hasPolar) {
 				types.push("Arc", "Pie");
 			}
 
@@ -510,6 +511,8 @@ export default class ChartInternal {
 				types.push("Gauge");
 			} else if (hasRadar) {
 				types.push("Radar");
+			} else if (hasPolar) {
+				types.push("Polar");
 			}
 		}
 
@@ -589,7 +592,7 @@ export default class ChartInternal {
 	 */
 	updateTargets(targets): void {
 		const $$ = <any> this;
-		const {hasAxis, hasRadar} = $$.state;
+		const {hasAxis, hasRadar, hasPolar} = $$.state;
 
 		// Text
 		$$.updateTargetsForText(targets);
@@ -609,11 +612,13 @@ export default class ChartInternal {
 			$$.updateTargetsForSubchart &&
 				$$.updateTargetsForSubchart(targets);
 		} else {
-			// Arc & Radar
+			// Arc & Radar & Polar
 			$$.hasArcType(targets) && (
 				hasRadar ?
 					$$.updateTargetsForRadar(targets.filter($$.isRadarType.bind($$))) :
-					$$.updateTargetsForArc(targets.filter($$.isArcType.bind($$)))
+					hasPolar ?
+						$$.updateTargetsForPolarArc(targets.filter($$.isPolarType.bind($$))) :
+						$$.updateTargetsForArc(targets.filter($$.isArcType.bind($$)))
 			);
 		}
 

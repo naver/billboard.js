@@ -16,6 +16,7 @@ export {
 	gauge,
 	line,
 	pie,
+	polar,
 	radar,
 	scatter,
 	spline,

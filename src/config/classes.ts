@@ -42,6 +42,8 @@ export default {
 	chartCircles: "bb-chart-circles",
 	chartLine: "bb-chart-line",
 	chartLines: "bb-chart-lines",
+	chartPolarArcs: "bb-chart-polararcs",
+	chartPolars: "bb-chart-polars",
 	chartRadar: "bb-chart-radar",
 	chartRadars: "bb-chart-radars",
 	chartText: "bb-chart-text",

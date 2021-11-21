@@ -599,6 +599,24 @@ var demos = {
 				]
 			}
 		},
+		PolarChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+					labels: true
+				},
+				polar: {
+					level:{
+						depth: 4,
+					},
+				}
+			}
+		},
 		RadarChart: {
 			options: {
 				data: {

@@ -286,6 +286,27 @@ text.bb-chart-arcs-gauge-title {
 	}
 }
 
+/*-- Polar --*/
+.bb-chart-polars {
+	.bb-levels {
+		circle {
+			fill: none;
+			stroke: #848282;
+			stroke-width: .5px;
+		}
+
+		text {
+			fill: #848282;
+		}
+	}
+
+	.bb-shapes {
+		path {
+			stroke-width: 1px;
+		}
+	}
+}
+
 /*-- Button --*/
 .bb-button {
 	position: absolute;
