@@ -85,6 +85,9 @@ export default {
 
 			// radar
 			$el.radar && $$.redrawRadar();
+
+			// polar
+			$el.polar && $$.redrawPolar();
 		}
 
 		// @TODO: Axis & Radar type

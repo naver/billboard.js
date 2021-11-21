@@ -13,6 +13,7 @@ const Types = {
         "spline",
         "step",
         "candlestick",
+        "polar",
         "radar",
         "gauge",
         "gauge-multi",
