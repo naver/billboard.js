@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import CLASS from "../../config/classes";
-import {getPointer, getRandom, getRectSegList, isNumber} from "../../module/util";
+import {getRandom, isNumber} from "../../module/util";
 
 export default {
 	initBar(): void {
@@ -191,26 +191,5 @@ export default {
 				[startPosX, offset]
 			];
 		};
-	},
-
-	isWithinBar(that): boolean {
-		const mouse = getPointer(this.state.event, that);
-		const list = getRectSegList(that);
-		const [seg0, seg1] = list;
-		const x = Math.min(seg0.x, seg1.x);
-		const y = Math.min(seg0.y, seg1.y);
-		const offset = this.config.bar_sensitivity;
-		const {width, height} = that.getBBox();
-		const sx = x - offset;
-		const ex = x + width + offset;
-		const sy = y + height + offset;
-		const ey = y - offset;
-
-		const isWithin = sx < mouse[0] &&
-			mouse[0] < ex &&
-			ey < mouse[1] &&
-			mouse[1] < sy;
-
-		return isWithin;
 	}
 };
