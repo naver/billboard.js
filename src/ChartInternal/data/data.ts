@@ -743,20 +743,23 @@ export default {
 		let minDist = config.point_sensitivity;
 		let closest;
 
-		// find mouseovering bar
+		// find mouseovering bar/candlestick
+		// https://github.com/naver/billboard.js/issues/2434
 		data
-			.filter(v => $$.isBarType(v.id))
+			.filter(v => $$.isBarType(v.id) || $$.isCandlestickType(v.id))
 			.forEach(v => {
-				const shape = main.select(`.${CLASS.bars}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.bar}-${v.index}`).node();
+				const selector = $$.isBarType(v.id) ?
+					`.${CLASS.chartBar}.${CLASS.target}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.bar}-${v.index}` :
+					`.${CLASS.chartCandlestick}.${CLASS.target}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.candlestick}-${v.index} path`;
 
-				if (!closest && $$.isWithinBar(shape)) {
+				if (!closest && $$.isWithinBar(main.select(selector).node())) {
 					closest = v;
 				}
 			});
 
-		// find closest point from non-bar
+		// find closest point from non-bar/candlestick
 		data
-			.filter(v => !$$.isBarType(v.id))
+			.filter(v => !$$.isBarType(v.id) && !$$.isCandlestickType(v.id))
 			.forEach(v => {
 				const d = $$.dist(v, pos);
 
