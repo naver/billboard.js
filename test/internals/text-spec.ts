@@ -1362,14 +1362,14 @@ describe("TEXT", () => {
 
 			it("texts should correctly positioned", () => {
 				const expectedPos = [
-					[147, 82.19707125915232],
-					[231, 121.59348252036713],
-					[315, 49.58554192018151],
-					[441, 146.42435804888112]
+					[147, 82],
+					[231, 122],
+					[315, 50],
+					[441, 146]
 				];
 
                 chart.$.text.texts.each(function() {
-					const pos = [+this.getAttribute("x"), +this.getAttribute("y")];
+					const pos = [+this.getAttribute("x"), Math.round(+this.getAttribute("y"))];
 
 					expect(pos).to.be.deep.equal(expectedPos.shift());
                 })
