@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20211124004544
+ * @version 3.2.2-nightly-20211126004527
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -24121,19 +24121,20 @@ var tsvFormatValue = tsv.formatValue;
     }),
         minDist = config.point_sensitivity,
         closest;
-    // find mouseovering bar
+    // find mouseovering bar/candlestick
+    // https://github.com/naver/billboard.js/issues/2434
     data.filter(function (v) {
-      return $$.isBarType(v.id);
+      return $$.isBarType(v.id) || $$.isCandlestickType(v.id);
     }).forEach(function (v) {
-      var shape = main.select("." + config_classes.bars + $$.getTargetSelectorSuffix(v.id) + " ." + config_classes.bar + "-" + v.index).node();
+      var selector = $$.isBarType(v.id) ? "." + config_classes.chartBar + "." + config_classes.target + $$.getTargetSelectorSuffix(v.id) + " ." + config_classes.bar + "-" + v.index : "." + config_classes.chartCandlestick + "." + config_classes.target + $$.getTargetSelectorSuffix(v.id) + " ." + config_classes.candlestick + "-" + v.index + " path";
 
-      if (!closest && $$.isWithinBar(shape)) {
+      if (!closest && $$.isWithinBar(main.select(selector).node())) {
         closest = v;
       }
-    }); // find closest point from non-bar
+    }); // find closest point from non-bar/candlestick
 
     data.filter(function (v) {
-      return !$$.isBarType(v.id);
+      return !$$.isBarType(v.id) && !$$.isCandlestickType(v.id);
     }).forEach(function (v) {
       var d = $$.dist(v, pos);
 
@@ -30138,6 +30139,22 @@ function stepAfter(context) {
         type = config.spline_interpolation_type,
         interpolation = $$.isInterpolationType(type) ? type : "cardinal";
     return $$.isSplineType(d) ? interpolation : $$.isStepType(d) ? config.line_step_type : "linear";
+  },
+  isWithinBar: function isWithinBar(that) {
+    var mouse = getPointer(this.state.event, that),
+        list = getRectSegList(that),
+        _list = list,
+        seg0 = _list[0],
+        seg1 = _list[1],
+        x = Math.min(seg0.x, seg1.x),
+        y = Math.min(seg0.y, seg1.y),
+        offset = this.config.bar_sensitivity,
+        _that$getBBox = that.getBBox(),
+        width = _that$getBBox.width,
+        height = _that$getBBox.height,
+        isWithin = x - offset < mouse[0] && mouse[0] < x + width + offset && y - offset < mouse[1] && mouse[1] < y + height + offset;
+
+    return isWithin;
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/size.ts
@@ -41545,22 +41562,6 @@ function point_y(p) {
 
       return [[posX, offset], [posX, posY], [startPosX, posY], [startPosX, offset]];
     };
-  },
-  isWithinBar: function isWithinBar(that) {
-    var mouse = getPointer(this.state.event, that),
-        list = getRectSegList(that),
-        _list = list,
-        seg0 = _list[0],
-        seg1 = _list[1],
-        x = Math.min(seg0.x, seg1.x),
-        y = Math.min(seg0.y, seg1.y),
-        offset = this.config.bar_sensitivity,
-        _that$getBBox = that.getBBox(),
-        width = _that$getBBox.width,
-        height = _that$getBBox.height,
-        isWithin = x - offset < mouse[0] && mouse[0] < x + width + offset && y - offset < mouse[1] && mouse[1] < y + height + offset;
-
-    return isWithin;
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/candlestick.ts

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.2-nightly-20211124004544
+ * @version 3.2.2-nightly-20211126004527
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3859,18 +3859,21 @@ var data$1 = {
         var data = values.filter(function (v) { return v && isValue(v.value); });
         var minDist = config.point_sensitivity;
         var closest;
-        // find mouseovering bar
+        // find mouseovering bar/candlestick
+        // https://github.com/naver/billboard.js/issues/2434
         data
-            .filter(function (v) { return $$.isBarType(v.id); })
+            .filter(function (v) { return $$.isBarType(v.id) || $$.isCandlestickType(v.id); })
             .forEach(function (v) {
-            var shape = main.select(".".concat(CLASS.bars).concat($$.getTargetSelectorSuffix(v.id), " .").concat(CLASS.bar, "-").concat(v.index)).node();
-            if (!closest && $$.isWithinBar(shape)) {
+            var selector = $$.isBarType(v.id) ?
+                ".".concat(CLASS.chartBar, ".").concat(CLASS.target).concat($$.getTargetSelectorSuffix(v.id), " .").concat(CLASS.bar, "-").concat(v.index) :
+                ".".concat(CLASS.chartCandlestick, ".").concat(CLASS.target).concat($$.getTargetSelectorSuffix(v.id), " .").concat(CLASS.candlestick, "-").concat(v.index, " path");
+            if (!closest && $$.isWithinBar(main.select(selector).node())) {
                 closest = v;
             }
         });
-        // find closest point from non-bar
+        // find closest point from non-bar/candlestick
         data
-            .filter(function (v) { return !$$.isBarType(v.id); })
+            .filter(function (v) { return !$$.isBarType(v.id) && !$$.isCandlestickType(v.id); })
             .forEach(function (v) {
             var d = $$.dist(v, pos);
             if (d < minDist) {
@@ -6409,6 +6412,24 @@ var shape = {
         return $$.isSplineType(d) ?
             interpolation : ($$.isStepType(d) ?
             config.line_step_type : "linear");
+    },
+    isWithinBar: function (that) {
+        var mouse = getPointer(this.state.event, that);
+        var list = getRectSegList(that);
+        var seg0 = list[0], seg1 = list[1];
+        var x = Math.min(seg0.x, seg1.x);
+        var y = Math.min(seg0.y, seg1.y);
+        var offset = this.config.bar_sensitivity;
+        var _a = that.getBBox(), width = _a.width, height = _a.height;
+        var sx = x - offset;
+        var ex = x + width + offset;
+        var sy = y + height + offset;
+        var ey = y - offset;
+        var isWithin = sx < mouse[0] &&
+            mouse[0] < ex &&
+            ey < mouse[1] &&
+            mouse[1] < sy;
+        return isWithin;
     }
 };
 
@@ -16059,24 +16080,6 @@ var shapeBar = {
                 [startPosX, offset]
             ];
         };
-    },
-    isWithinBar: function (that) {
-        var mouse = getPointer(this.state.event, that);
-        var list = getRectSegList(that);
-        var seg0 = list[0], seg1 = list[1];
-        var x = Math.min(seg0.x, seg1.x);
-        var y = Math.min(seg0.y, seg1.y);
-        var offset = this.config.bar_sensitivity;
-        var _a = that.getBBox(), width = _a.width, height = _a.height;
-        var sx = x - offset;
-        var ex = x + width + offset;
-        var sy = y + height + offset;
-        var ey = y - offset;
-        var isWithin = sx < mouse[0] &&
-            mouse[0] < ex &&
-            ey < mouse[1] &&
-            mouse[1] < sy;
-        return isWithin;
     }
 };
 
@@ -20042,7 +20045,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.2-nightly-20211124004544
+ * @version 3.2.2-nightly-20211126004527
  */
 var bb = {
     /**
@@ -20052,7 +20055,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.2-nightly-20211124004544",
+    version: "3.2.2-nightly-20211126004527",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
