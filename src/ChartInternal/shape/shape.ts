@@ -23,9 +23,9 @@ import {
 	curveStep as d3CurveStep
 } from "d3-shape";
 import {select as d3Select} from "d3-selection";
-import {d3Selection} from "types/types";
+import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
-import {capitalize, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
+import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
 
 export default {
 	/**
@@ -424,5 +424,26 @@ export default {
 				$$.isStepType(d) ?
 					config.line_step_type : "linear"
 			);
+	},
+
+	isWithinBar(that): boolean {
+		const mouse = getPointer(this.state.event, that);
+		const list = getRectSegList(that);
+		const [seg0, seg1] = list;
+		const x = Math.min(seg0.x, seg1.x);
+		const y = Math.min(seg0.y, seg1.y);
+		const offset = this.config.bar_sensitivity;
+		const {width, height} = that.getBBox();
+		const sx = x - offset;
+		const ex = x + width + offset;
+		const sy = y + height + offset;
+		const ey = y - offset;
+
+		const isWithin = sx < mouse[0] &&
+			mouse[0] < ex &&
+			ey < mouse[1] &&
+			mouse[1] < sy;
+
+		return isWithin;
 	}
 };
