@@ -1369,9 +1369,10 @@ describe("TEXT", () => {
 				];
 
                 chart.$.text.texts.each(function() {
-					const pos = [+this.getAttribute("x"), Math.round(+this.getAttribute("y"))];
+					const expected = expectedPos.shift();
 
-					expect(pos).to.be.deep.equal(expectedPos.shift());
+					expect(+this.getAttribute("x")).to.be.closeTo(expected[0], 1);
+					expect(+this.getAttribute("y")).to.be.closeTo(expected[1], 2);
                 })
 			});
 		});
