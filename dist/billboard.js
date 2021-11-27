@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20211126004527
+ * @version 3.2.2-nightly-20211127004530
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8164,9 +8164,11 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         isRotated = config.axis_rotated,
         xPos = points[0][0];
 
-    if ($$.hasType("candlestick")) {
+    if ($$.isCandlestickType(d)) {
       if (isRotated) {
-        xPos = $$.getCandlestickData(d)._isUp ? points[2][2] + 4 : points[2][1] - 4;
+        var _$$$getCandlestickDat;
+
+        xPos = (_$$$getCandlestickDat = $$.getCandlestickData(d)) != null && _$$$getCandlestickDat._isUp ? points[2][2] + 4 : points[2][1] - 4;
       } else {
         xPos += (points[1][0] - xPos) / 2;
       }

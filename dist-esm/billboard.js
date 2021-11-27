@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.2-nightly-20211126004527
+ * @version 3.2.2-nightly-20211127004530
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -6986,13 +6986,14 @@ var text = {
      * @private
      */
     getXForText: function (points, d, textElement) {
+        var _a;
         var $$ = this;
         var config = $$.config, state = $$.state;
         var isRotated = config.axis_rotated;
         var xPos = points[0][0];
-        if ($$.hasType("candlestick")) {
+        if ($$.isCandlestickType(d)) {
             if (isRotated) {
-                xPos = $$.getCandlestickData(d)._isUp ?
+                xPos = ((_a = $$.getCandlestickData(d)) === null || _a === void 0 ? void 0 : _a._isUp) ?
                     points[2][2] + 4 : points[2][1] - 4;
             }
             else {
@@ -20045,7 +20046,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.2-nightly-20211126004527
+ * @version 3.2.2-nightly-20211127004530
  */
 var bb = {
     /**
@@ -20055,7 +20056,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.2-nightly-20211126004527",
+    version: "3.2.2-nightly-20211127004530",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

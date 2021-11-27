@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20211126004527
+ * @version 3.2.2-nightly-20211127004530
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -30754,9 +30754,11 @@ function stepAfter(context) {
         isRotated = config.axis_rotated,
         xPos = points[0][0];
 
-    if ($$.hasType("candlestick")) {
+    if ($$.isCandlestickType(d)) {
       if (isRotated) {
-        xPos = $$.getCandlestickData(d)._isUp ? points[2][2] + 4 : points[2][1] - 4;
+        var _$$$getCandlestickDat;
+
+        xPos = (_$$$getCandlestickDat = $$.getCandlestickData(d)) != null && _$$$getCandlestickDat._isUp ? points[2][2] + 4 : points[2][1] - 4;
       } else {
         xPos += (points[1][0] - xPos) / 2;
       }
