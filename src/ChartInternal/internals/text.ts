@@ -339,9 +339,9 @@ export default {
 		let xPos = points[0][0];
 
 
-		if ($$.hasType("candlestick")) {
+		if ($$.isCandlestickType(d)) {
 			if (isRotated) {
-				xPos = $$.getCandlestickData(d)._isUp ?
+				xPos = $$.getCandlestickData(d)?._isUp ?
 					points[2][2] + 4 : points[2][1] - 4;
 			} else {
 				xPos += (points[1][0] - xPos) / 2;
