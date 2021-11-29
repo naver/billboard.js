@@ -1059,6 +1059,24 @@ describe("SHAPE BAR", () => {
 			});
 		});
 
+		it("should render bars with reversed ranges", () => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", [200, 100], [300, 200]]
+					],
+					type: "bar"
+				}
+			});
+			const expectedPath = [
+				"M59.8,297.21212121212125V168.4242424242424 H239.2 V297.21212121212125z",
+				"M358.8,168.4242424242424V39.63636363636365 H538.2 V168.4242424242424z"
+			];
+			chart.$.bar.bars.each(function(d, i) {
+				expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
+			});
+		});
+
 		it("should render bars with multiple columns", () => {
 			chart = util.generate({
 				data: {
