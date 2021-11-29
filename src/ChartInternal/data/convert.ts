@@ -23,7 +23,7 @@ export default {
 	 * @returns {object}
 	 * @private
 	 */
-	convertData(args, callback: Function): object {
+	convertData(args, callback: Function): any[] | false {
 		let data;
 
 		if (args.bindto) {

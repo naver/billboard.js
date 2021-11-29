@@ -203,6 +203,10 @@ export default {
 				));
 
 				value = `<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${volume ? ` <b>Volume:</b> ${volume}` : ""}`;
+			} else if ($$.isBarRangeType(row)) {
+				const [start, end] = row.value;
+
+				value = `${valueFormat(start)} ~ ${valueFormat(end)}`;
 			}
 
 			if (value !== undefined) {
