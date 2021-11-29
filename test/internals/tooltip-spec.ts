@@ -1444,18 +1444,31 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip: bar type within a range", () => {
-		before(() => {
-			args = {
+
+		it("should display start ~ end", () => {
+			chart = util.generate({
 				data: {
 					columns: [
 						["data1", [1300, 1339]],
 					],
 					type: "bar",
 				}
-			};
+			});
+			util.hoverChart(chart, "mousemove", {clientX: 180, clientY: 130});
+
+			expect(chart.$.tooltip.select(".value").html())
+				.to.be.equal("1300 ~ 1339");
 		});
 
-		it("should display start ~ end", () => {
+		it("should display start ~ end for a reversed range", () => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", [1339, 1300]],
+					],
+					type: "bar",
+				}
+			});
 			util.hoverChart(chart, "mousemove", {clientX: 180, clientY: 130});
 
 			expect(chart.$.tooltip.select(".value").html())

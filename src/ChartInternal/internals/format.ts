@@ -49,7 +49,7 @@ export default {
 		// TODO We could extract this if block
 		// as defaultRangeValueFormat like thing.
 		if (isRange(v)) {
-			return `${v[0]} ~ ${v[1]}`;
+			return `${Math.min(...v)} ~ ${Math.max(...v)}`;
 		}
 		return isValue(v) ? +v : "";
 	},
