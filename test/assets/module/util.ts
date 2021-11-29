@@ -41,6 +41,8 @@ export const {
 	isEmpty,
 	isFunction,
 	isNumber,
+	isNumberArray,
+	isRange,
 	isObject,
 	isObjectType,
 	isString,

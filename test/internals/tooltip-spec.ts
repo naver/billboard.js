@@ -1442,4 +1442,24 @@ describe("TOOLTIP", function() {
 				.to.be.equal(`<b>Open:</b> 1300 <b>High:</b> 1369 <b>Low:</b> 1200 <b>Close:</b> 1339 <b>Volume:</b> 100`);
 		});
 	});
+
+	describe("tooltip: bar type within a range", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", [1300, 1339]],
+					],
+					type: "bar",
+				}
+			};
+		});
+
+		it("should display start ~ end", () => {
+			util.hoverChart(chart, "mousemove", {clientX: 180, clientY: 130});
+
+			expect(chart.$.tooltip.select(".value").html())
+				.to.be.equal("1300 ~ 1339");
+		});
+	});
 });

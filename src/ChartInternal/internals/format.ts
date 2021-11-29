@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isValue, isFunction, isObjectType} from "../../module/util";
+import {isValue, isFunction, isObjectType, isRange} from "../../module/util";
 import {AxisType} from "../../../types/types";
 
 /**
@@ -46,6 +46,11 @@ export default {
 	},
 
 	defaultValueFormat(v): number|string {
+		// TODO We could extract this if block
+		// as defaultRangeValueFormat like thing.
+		if (isRange(v)) {
+			return `${v[0]} ~ ${v[1]}`;
+		}
 		return isValue(v) ? +v : "";
 	},
 

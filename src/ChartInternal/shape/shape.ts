@@ -25,7 +25,7 @@ import {
 import {select as d3Select} from "d3-selection";
 import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
-import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
+import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty, isRange} from "../../module/util";
 
 export default {
 	/**
@@ -204,6 +204,8 @@ export default {
 				value = $$.getRatio("index", d, true);
 			} else if ($$.isBubbleZType(d)) {
 				value = $$.getBubbleZData(d.value, "y");
+			} else if (isRange(value)) {
+				value = Math.max(...value);
 			}
 
 			return $$.getYScaleById(d.id, isSub)(value);
@@ -275,6 +277,11 @@ export default {
 			const {id, value, x} = d;
 			const ind = $$.getIndices(indices, id);
 			const scale = $$.getYScaleById(id, isSub);
+
+			if (isRange(value)) {
+				return scale(Math.min(...value));
+			}
+
 			const y0 = scale($$.getShapeYMin(id));
 
 			const dataXAsNumber = Number(x);
