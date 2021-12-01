@@ -1459,20 +1459,5 @@ describe("TOOLTIP", function() {
 			expect(chart.$.tooltip.select(".value").html())
 				.to.be.equal("1300 ~ 1339");
 		});
-
-		it("should display start ~ end for a reversed range", () => {
-			chart = util.generate({
-				data: {
-					columns: [
-						["data1", [1339, 1300]],
-					],
-					type: "bar",
-				}
-			});
-			util.hoverChart(chart, "mousemove", {clientX: 180, clientY: 130});
-
-			expect(chart.$.tooltip.select(".value").html())
-				.to.be.equal("1300 ~ 1339");
-		});
 	});
 });
