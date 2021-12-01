@@ -25,7 +25,7 @@ import {
 import {select as d3Select} from "d3-selection";
 import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
-import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty, isRange} from "../../module/util";
+import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
 
 export default {
 	/**
@@ -204,8 +204,9 @@ export default {
 				value = $$.getRatio("index", d, true);
 			} else if ($$.isBubbleZType(d)) {
 				value = $$.getBubbleZData(d.value, "y");
-			} else if (isRange(value)) {
-				value = Math.max(...value);
+			} else if ($$.isBarRangeType(d)) {
+				// TODO might need range.getMax() like method
+				value = value[1];
 			}
 
 			return $$.getYScaleById(d.id, isSub)(value);
@@ -278,8 +279,9 @@ export default {
 			const ind = $$.getIndices(indices, id);
 			const scale = $$.getYScaleById(id, isSub);
 
-			if (isRange(value)) {
-				return scale(Math.min(...value));
+			if ($$.isBarRangeType(d)) {
+				// TODO use range.getMin()
+				return scale(value[0]);
 			}
 
 			const y0 = scale($$.getShapeYMin(id));

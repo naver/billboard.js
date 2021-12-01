@@ -42,7 +42,6 @@ export const {
 	isFunction,
 	isNumber,
 	isNumberArray,
-	isRange,
 	isObject,
 	isObjectType,
 	isString,

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import CLASS from "../../config/classes";
-import {getRandom, isNumber, isRange} from "../../module/util";
+import {getRandom, isNumber} from "../../module/util";
 
 export default {
 	initBar(): void {
@@ -40,7 +40,7 @@ export default {
 			.data(
 				// remove
 				targets.filter(
-					v => v.values.some(d => (isNumber(d.value) || isRange(d.value)))
+					v => v.values.some(d => (isNumber(d.value) || $$.isBarRangeType(d)))
 				)
 			)
 			.attr("class", d => classChartBar(d) + classFocus(d));
@@ -97,7 +97,7 @@ export default {
 
 		return [
 			$$.$T(bar, withTransition, getRandom())
-				.attr("d", d => ((isNumber(d.value) || isRange(d.value)) ? drawFn(d) : ""))
+				.attr("d", d => ((isNumber(d.value) || $$.isBarRangeType(d)) ? drawFn(d) : ""))
 				.style("fill", this.color)
 				.style("opacity", null)
 		];
@@ -179,7 +179,7 @@ export default {
 				posY = y0;
 			}
 
-			if (!isRange(d.value)) {
+			if (!$$.isBarRangeType(d)) {
 				posY -= (y0 - offset);
 			}
 

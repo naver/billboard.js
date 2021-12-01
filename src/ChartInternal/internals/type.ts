@@ -159,6 +159,12 @@ export default {
 		return this.isTypeOf(d, TYPE_BY_CATEGORY.AreaRange);
 	},
 
+	isBarRangeType(d): boolean {
+		const {value} = d;
+
+		return isArray(value) && value.length === 2 && value.every(v => isNumber(v));
+	},
+
 	isBarType(d): boolean {
 		return this.isTypeOf(d, "bar");
 	},

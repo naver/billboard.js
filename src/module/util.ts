@@ -42,10 +42,8 @@ export {
 	isEmpty,
 	isFunction,
 	isNumber,
-	isNumberArray,
 	isObject,
 	isObjectType,
-	isRange,
 	isString,
 	isTabVisible,
 	isUndefined,
@@ -65,8 +63,6 @@ const isValue = (v: any): boolean => v || v === 0;
 const isFunction = (v: any): boolean => typeof v === "function";
 const isString = (v: any): boolean => typeof v === "string";
 const isNumber = (v: any): boolean => typeof v === "number";
-const isNumberArray = (arr: any): boolean => isArray(arr) && arr.every(v => isNumber(v));
-const isRange = (arr: any): boolean => isNumberArray(arr) && arr.length === 2;
 const isUndefined = (v: any): boolean => typeof v === "undefined";
 const isDefined = (v: any): boolean => typeof v !== "undefined";
 const isboolean = (v: any): boolean => typeof v === "boolean";
