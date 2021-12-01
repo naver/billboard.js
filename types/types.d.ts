@@ -43,7 +43,7 @@ export interface DataRow {
 export interface DataItem {
 	id: string;
 	x: number;
-	value: number;
+	value: number | number[];
 	index?: number;
 	name?: string;
 	ratio?: number;

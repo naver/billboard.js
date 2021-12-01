@@ -2,8 +2,9 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {DataRow} from "../../../types/types";
 import CLASS from "../../config/classes";
-import {getRandom, isNumber} from "../../module/util";
+import {getRandom, isArray, isNumber} from "../../module/util";
 
 export default {
 	initBar(): void {
@@ -23,7 +24,7 @@ export default {
 		}
 	},
 
-	updateTargetsForBar(targets): void {
+	updateTargetsForBar(targets: DataRow[]): void {
 		const $$ = this;
 		const {config, $el} = $$;
 		const classChartBar = $$.getChartClass("Bar");
@@ -34,6 +35,8 @@ export default {
 		if (!$el.bar) {
 			$$.initBar();
 		}
+
+		this.assertBarRange(targets);
 
 		const mainBarUpdate = $$.$el.main.select(`.${CLASS.chartBars}`)
 			.selectAll(`.${CLASS.chartBar}`)
@@ -54,6 +57,26 @@ export default {
 		mainBarEnter.append("g")
 			.attr("class", classBars)
 			.style("cursor", d => (isSelectable?.bind?.($$.api)(d) ? "pointer" : null));
+	},
+
+	assertBarRange(targets: DataRow[]): void | never {
+		targets.forEach(({values}) => {
+			values.forEach(({value}) => {
+				if (isArray(value)) {
+					if (value.length !== 2) {
+						throw new Error(
+							"The length of values of the range type bar should be 2. " +
+							`(eg [start, end]). The given data is [${value.join(", ")}].`
+						);
+					} else if (value[0] >= value[1]) {
+						throw new Error(
+							"The end value of the range type bar should be greater " +
+							`than the start value. The given data is [${value.join(", ")}].`
+						);
+					}
+				}
+			});
+		});
 	},
 
 	/**
