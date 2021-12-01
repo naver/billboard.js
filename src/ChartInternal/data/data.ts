@@ -82,7 +82,7 @@ export default {
 	 * @returns {number} index number
 	 * @private
 	 */
-	getIndexByX(x, basedX: (string|Date)[]): number {
+	getIndexByX(x: Date|number|string, basedX: (Date|number|string)[]): number {
 		const $$ = this;
 
 		return basedX ?
