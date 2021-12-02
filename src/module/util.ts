@@ -125,14 +125,15 @@ function hasValue(dict: object, value: any): boolean {
 /**
  * Call function with arguments
  * @param {Function} fn Function to be called
- * @param {*} args Arguments
+ * @param {*} thisArg "this" value for fn
+ * @param {*} args Arguments for fn
  * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
-function callFn(fn, ...args): boolean {
+function callFn(fn: unknown, thisArg: any, ...args: any[]): boolean {
 	const isFn = isFunction(fn);
 
-	isFn && fn.call(null, ...args);
+	isFn && fn.call(thisArg, ...args);
 	return isFn;
 }
 
