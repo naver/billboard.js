@@ -6,6 +6,8 @@ import {DataRow} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {getRandom, isArray, isNumber} from "../../module/util";
 
+type BarTypeDataRow = DataRow<number | number[]>;
+
 export default {
 	initBar(): void {
 		const {$el, config, state: {clip}} = this;
@@ -24,7 +26,7 @@ export default {
 		}
 	},
 
-	updateTargetsForBar(targets: DataRow[]): void {
+	updateTargetsForBar(targets: BarTypeDataRow[]): void {
 		const $$ = this;
 		const {config, $el} = $$;
 		const classChartBar = $$.getChartClass("Bar");
@@ -59,7 +61,7 @@ export default {
 			.style("cursor", d => (isSelectable?.bind?.($$.api)(d) ? "pointer" : null));
 	},
 
-	assertBarRange(targets: DataRow[]): void | never {
+	assertBarRange(targets: BarTypeDataRow[]): void | never {
 		targets.forEach(({values}) => {
 			values.forEach(({value}) => {
 				if (isArray(value)) {

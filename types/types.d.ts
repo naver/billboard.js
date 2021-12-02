@@ -34,16 +34,16 @@ export interface TargetIds {
 	ids: string[] | string;
 }
 
-export interface DataRow {
+export interface DataRow<T=number> {
 	id: string;
 	id_org: string; // eslint-disable-line camelcase
-	values: DataItem[];
+	values: DataItem<T>[];
 }
 
-export interface DataItem {
+export interface DataItem<T=number> {
 	id: string;
 	x: number;
-	value: number | number[];
+	value: T;
 	index?: number;
 	name?: string;
 	ratio?: number;
