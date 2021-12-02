@@ -205,7 +205,7 @@ export default {
 			} else if ($$.isBubbleZType(d)) {
 				value = $$.getBubbleZData(d.value, "y");
 			} else if ($$.isBarRangeType(d)) {
-				// TODO might need range.getMax() like method
+				// TODO use range.getEnd() like method
 				value = value[1];
 			}
 
@@ -280,7 +280,7 @@ export default {
 			const scale = $$.getYScaleById(id, isSub);
 
 			if ($$.isBarRangeType(d)) {
-				// TODO use range.getMin()
+				// TODO use range.getStart()
 				return scale(value[0]);
 			}
 
