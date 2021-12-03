@@ -37,7 +37,7 @@ export interface TargetIds {
 export interface DataRow<T=number> {
 	id: string;
 	id_org: string; // eslint-disable-line camelcase
-	values: DataItem<T>[];
+	values: Array<DataItem<T>>;
 }
 
 export interface DataItem<T=number> {
