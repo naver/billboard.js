@@ -634,6 +634,18 @@ export default {
 	 *   ]
 	 * }
 	 *
+	 * // for 'bar' type, data can contain:
+	 * // - an array of [start, end] data following the order
+	 * data: {
+	 *   rows: [
+	 *      ["data1", "data2"],
+	 *      [[100, 150], 120],
+	 *      [[200, 300], 55],
+	 *      [[-400, 500], 60]
+	 *   ],
+	 *   type: "bar"
+	 * }
+	 *
 	 * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
 	 * // - an array of [high, mid, low] data following the order
 	 * // - or an object with 'high', 'mid' and 'low' key value
@@ -708,6 +720,16 @@ export default {
 	 *      ["data2", 200, 130, 90, 240, 130, 220],
 	 *      ["data3", 300, 200, 160, 400, 250, 250]
 	 *   ]
+	 * }
+	 *
+	 * // for 'bar' type, data can contain:
+	 * // - an array of [start, end] data following the order
+	 * data: {
+	 *   columns: [
+	 *     ["data1", -100, 50, [100, 200], [200, 300]],
+	 *     ["data2", -200, 300, [-100, 100], [-50, -30]],
+	 *   ],
+	 *   type: "bar"
 	 * }
 	 *
 	 * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
