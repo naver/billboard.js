@@ -204,6 +204,9 @@ export default {
 				value = $$.getRatio("index", d, true);
 			} else if ($$.isBubbleZType(d)) {
 				value = $$.getBubbleZData(d.value, "y");
+			} else if ($$.isBarRangeType(d)) {
+				// TODO use range.getEnd() like method
+				value = value[1];
 			}
 
 			return $$.getYScaleById(d.id, isSub)(value);
@@ -275,6 +278,12 @@ export default {
 			const {id, value, x} = d;
 			const ind = $$.getIndices(indices, id);
 			const scale = $$.getYScaleById(id, isSub);
+
+			if ($$.isBarRangeType(d)) {
+				// TODO use range.getStart()
+				return scale(value[0]);
+			}
+
 			const y0 = scale($$.getShapeYMin(id));
 
 			const dataXAsNumber = Number(x);

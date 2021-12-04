@@ -2,8 +2,11 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {DataRow} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {getRandom, isNumber} from "../../module/util";
+
+type BarTypeDataRow = DataRow<number | number[]>;
 
 export default {
 	initBar(): void {
@@ -23,7 +26,7 @@ export default {
 		}
 	},
 
-	updateTargetsForBar(targets): void {
+	updateTargetsForBar(targets: BarTypeDataRow[]): void {
 		const $$ = this;
 		const {config, $el} = $$;
 		const classChartBar = $$.getChartClass("Bar");
@@ -40,7 +43,7 @@ export default {
 			.data(
 				// remove
 				targets.filter(
-					v => !v.values.every(d => !isNumber(d.value))
+					v => v.values.some(d => (isNumber(d.value) || $$.isBarRangeType(d)))
 				)
 			)
 			.attr("class", d => classChartBar(d) + classFocus(d));
@@ -97,7 +100,7 @@ export default {
 
 		return [
 			$$.$T(bar, withTransition, getRandom())
-				.attr("d", d => isNumber(d.value) && drawFn(d))
+				.attr("d", d => (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d))
 				.style("fill", this.color)
 				.style("opacity", null)
 		];
@@ -179,7 +182,9 @@ export default {
 				posY = y0;
 			}
 
-			posY -= (y0 - offset);
+			if (!$$.isBarRangeType(d)) {
+				posY -= (y0 - offset);
+			}
 
 			const startPosX = posX + width;
 

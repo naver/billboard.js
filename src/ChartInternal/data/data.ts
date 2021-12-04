@@ -82,7 +82,7 @@ export default {
 	 * @returns {number} index number
 	 * @private
 	 */
-	getIndexByX(x, basedX: (string|Date)[]): number {
+	getIndexByX(x: Date|number|string, basedX: (Date|number|string)[]): number {
 		const $$ = this;
 
 		return basedX ?
@@ -984,6 +984,19 @@ export default {
 			(isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
 			(isArray(d.value) && d.value.length === 2)
 		);
+	},
+
+	/**
+	 * Determine if bar has ranged data
+	 * @param {Array} d data value
+	 * @returns {boolean}
+	 * @private
+	 */
+	isBarRangeType(d): boolean {
+		const $$ = this;
+		const {value} = d;
+
+		return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(v => isNumber(v));
 	},
 
 	/**
