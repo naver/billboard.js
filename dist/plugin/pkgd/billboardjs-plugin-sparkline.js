@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20211201004548
+ * @version 3.2.2-nightly-20211204004548
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -19856,18 +19856,19 @@ function hasValue(dict, value) {
 /**
  * Call function with arguments
  * @param {Function} fn Function to be called
- * @param {*} args Arguments
+ * @param {*} thisArg "this" value for fn
+ * @param {*} args Arguments for fn
  * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
 
 
-function callFn(fn) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    args[_key - 1] = arguments[_key];
+function callFn(fn, thisArg) {
+  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    args[_key - 2] = arguments[_key];
   }
 
-  isFn && fn.call.apply(fn, args);
+  isFn && fn.call.apply(fn, [thisArg].concat(args));
   return isFn;
 }
 /**

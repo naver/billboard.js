@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20211201004548
+ * @version 3.2.2-nightly-20211204004548
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -524,18 +524,19 @@ function hasValue(dict, value) {
 /**
  * Call function with arguments
  * @param {Function} fn Function to be called
- * @param {*} args Arguments
+ * @param {*} thisArg "this" value for fn
+ * @param {*} args Arguments for fn
  * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
 
 
-function callFn(fn) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-    args[_key - 1] = arguments[_key];
+function callFn(fn, thisArg) {
+  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+    args[_key - 2] = arguments[_key];
   }
 
-  isFn && fn.call.apply(fn, args);
+  isFn && fn.call.apply(fn, [thisArg].concat(args));
   return isFn;
 }
 /**
@@ -2556,6 +2557,18 @@ var Store = /*#__PURE__*/function () {
    *   ]
    * }
    *
+   * // for 'bar' type, data can contain:
+   * // - an array of [start, end] data following the order
+   * data: {
+   *   rows: [
+   *      ["data1", "data2"],
+   *      [[100, 150], 120],
+   *      [[200, 300], 55],
+   *      [[-400, 500], 60]
+   *   ],
+   *   type: "bar"
+   * }
+   *
    * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
    * // - an array of [high, mid, low] data following the order
    * // - or an object with 'high', 'mid' and 'low' key value
@@ -2630,6 +2643,16 @@ var Store = /*#__PURE__*/function () {
    *      ["data2", 200, 130, 90, 240, 130, 220],
    *      ["data3", 300, 200, 160, 400, 250, 250]
    *   ]
+   * }
+   *
+   * // for 'bar' type, data can contain:
+   * // - an array of [start, end] data following the order
+   * data: {
+   *   columns: [
+   *     ["data1", -100, 50, [100, 200], [200, 300]],
+   *     ["data2", -200, 300, [-100, 100], [-50, -30]],
+   *   ],
+   *   type: "bar"
    * }
    *
    * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
@@ -4820,6 +4843,20 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   isBubbleZType: function isBubbleZType(d) {
     var $$ = this;
     return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
+  },
+
+  /**
+   * Determine if bar has ranged data
+   * @param {Array} d data value
+   * @returns {boolean}
+   * @private
+   */
+  isBarRangeType: function isBarRangeType(d) {
+    var $$ = this,
+        value = d.value;
+    return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(function (v) {
+      return isNumber(v);
+    });
   },
 
   /**
@@ -7342,6 +7379,9 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         value = $$.getRatio("index", d, !0);
       } else if ($$.isBubbleZType(d)) {
         value = $$.getBubbleZData(d.value, "y");
+      } else if ($$.isBarRangeType(d)) {
+        // TODO use range.getEnd() like method
+        value = value[1];
       }
 
       return $$.getYScaleById(d.id, isSub)(value);
@@ -7415,8 +7455,14 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
           value = d.value,
           x = d.x,
           ind = $$.getIndices(indices, id),
-          scale = $$.getYScaleById(id, isSub),
-          y0 = scale($$.getShapeYMin(id)),
+          scale = $$.getYScaleById(id, isSub);
+
+      if ($$.isBarRangeType(d)) {
+        // TODO use range.getStart()
+        return scale(value[0]);
+      }
+
+      var y0 = scale($$.getShapeYMin(id)),
           dataXAsNumber = +x,
           offset = y0;
       shapeOffsetTargets.filter(function (t) {
@@ -8660,6 +8706,11 @@ function getTextPos(pos, width) {
             volume = _map3[4];
 
         value = "<b>Open:</b> " + open + " <b>High:</b> " + _high + " <b>Low:</b> " + _low + " <b>Close:</b> " + close + (volume ? " <b>Volume:</b> " + volume : "");
+      } else if ($$.isBarRangeType(row)) {
+        var _row$value = row.value,
+            start = _row$value[0],
+            end = _row$value[1];
+        value = valueFormat(start) + " ~ " + valueFormat(end);
       }
 
       if (value !== undefined) {
@@ -18082,8 +18133,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
     var mainBarUpdate = $$.$el.main.select("." + config_classes.chartBars).selectAll("." + config_classes.chartBar).data( // remove
     targets.filter(function (v) {
-      return !v.values.every(function (d) {
-        return !isNumber(d.value);
+      return v.values.some(function (d) {
+        return isNumber(d.value) || $$.isBarRangeType(d);
       });
     })).attr("class", function (d) {
       return classChartBar(d) + classFocus(d);
@@ -18136,7 +18187,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         bar = _ref.bar;
 
     return [$$.$T(bar, withTransition, getRandom()).attr("d", function (d) {
-      return isNumber(d.value) && drawFn(d);
+      return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d);
     }).style("fill", this.color).style("opacity", null)];
   },
   generateDrawBar: function generateDrawBar(barIndices, isSub) {
@@ -18199,7 +18250,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         posY = y0;
       }
 
-      posY -= y0 - offset;
+      if (!$$.isBarRangeType(d)) {
+        posY -= y0 - offset;
+      }
+
       var startPosX = posX + width; // 4 points that make a bar
 
       return [[posX, offset], [posX, posY], [startPosX, posY], [startPosX, offset]];

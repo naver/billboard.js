@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.2-nightly-20211201004548
+ * @version 3.2.2-nightly-20211204004548
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -338,17 +338,18 @@ function hasValue(dict, value) {
 /**
  * Call function with arguments
  * @param {Function} fn Function to be called
- * @param {*} args Arguments
+ * @param {*} thisArg "this" value for fn
+ * @param {*} args Arguments for fn
  * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
-function callFn(fn) {
+function callFn(fn, thisArg) {
     var args = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        args[_i - 1] = arguments[_i];
+    for (var _i = 2; _i < arguments.length; _i++) {
+        args[_i - 2] = arguments[_i];
     }
     var isFn = isFunction(fn);
-    isFn && fn.call.apply(fn, args);
+    isFn && fn.call.apply(fn, __spreadArray([thisArg], args, false));
     return isFn;
 }
 /**
@@ -2090,6 +2091,18 @@ var data$2 = {
      *   ]
      * }
      *
+     * // for 'bar' type, data can contain:
+     * // - an array of [start, end] data following the order
+     * data: {
+     *   rows: [
+     *      ["data1", "data2"],
+     *      [[100, 150], 120],
+     *      [[200, 300], 55],
+     *      [[-400, 500], 60]
+     *   ],
+     *   type: "bar"
+     * }
+     *
      * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
      * // - an array of [high, mid, low] data following the order
      * // - or an object with 'high', 'mid' and 'low' key value
@@ -2163,6 +2176,16 @@ var data$2 = {
      *      ["data2", 200, 130, 90, 240, 130, 220],
      *      ["data3", 300, 200, 160, 400, 250, 250]
      *   ]
+     * }
+     *
+     * // for 'bar' type, data can contain:
+     * // - an array of [start, end] data following the order
+     * data: {
+     *   columns: [
+     *     ["data1", -100, 50, [100, 200], [200, 300]],
+     *     ["data2", -200, 300, [-100, 100], [-50, -30]],
+     *   ],
+     *   type: "bar"
      * }
      *
      * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
@@ -4057,6 +4080,17 @@ var data$1 = {
         var $$ = this;
         return $$.isBubbleType(d) && ((isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
             (isArray(d.value) && d.value.length === 2));
+    },
+    /**
+     * Determine if bar has ranged data
+     * @param {Array} d data value
+     * @returns {boolean}
+     * @private
+     */
+    isBarRangeType: function (d) {
+        var $$ = this;
+        var value = d.value;
+        return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(function (v) { return isNumber(v); });
     },
     /**
      * Get data object by id
@@ -6228,6 +6262,10 @@ var shape = {
             else if ($$.isBubbleZType(d)) {
                 value = $$.getBubbleZData(d.value, "y");
             }
+            else if ($$.isBarRangeType(d)) {
+                // TODO use range.getEnd() like method
+                value = value[1];
+            }
             return $$.getYScaleById(d.id, isSub)(value);
         };
     },
@@ -6286,6 +6324,10 @@ var shape = {
             var id = d.id, value = d.value, x = d.x;
             var ind = $$.getIndices(indices, id);
             var scale = $$.getYScaleById(id, isSub);
+            if ($$.isBarRangeType(d)) {
+                // TODO use range.getStart()
+                return scale(value[0]);
+            }
             var y0 = scale($$.getShapeYMin(id));
             var dataXAsNumber = Number(x);
             var offset = y0;
@@ -7407,6 +7449,10 @@ var tooltip$1 = {
             else if ($$.isCandlestickType(row)) {
                 var _c = ["open", "high", "low", "close", "volume"].map(function (v) { return sanitise(valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v, "candlestick")], param, false))); }), open_1 = _c[0], high = _c[1], low = _c[2], close_1 = _c[3], volume = _c[4];
                 value = "<b>Open:</b> ".concat(open_1, " <b>High:</b> ").concat(high, " <b>Low:</b> ").concat(low, " <b>Close:</b> ").concat(close_1).concat(volume ? " <b>Volume:</b> ".concat(volume) : "");
+            }
+            else if ($$.isBarRangeType(row)) {
+                var _d = row.value, start = _d[0], end = _d[1];
+                value = "".concat(valueFormat(start), " ~ ").concat(valueFormat(end));
             }
             if (value !== undefined) {
                 // Skip elements when their name is set to null
@@ -15929,10 +15975,6 @@ var shapeArea = {
     }
 };
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 var shapeBar = {
     initBar: function () {
         var _a = this, $el = _a.$el, config = _a.config, clip = _a.state.clip;
@@ -15960,7 +16002,7 @@ var shapeBar = {
             .selectAll(".".concat(CLASS.chartBar))
             .data(
         // remove
-        targets.filter(function (v) { return !v.values.every(function (d) { return !isNumber(d.value); }); }))
+        targets.filter(function (v) { return v.values.some(function (d) { return (isNumber(d.value) || $$.isBarRangeType(d)); }); }))
             .attr("class", function (d) { return classChartBar(d) + classFocus(d); });
         var mainBarEnter = mainBarUpdate.enter().append("g")
             .attr("class", classChartBar)
@@ -16009,7 +16051,7 @@ var shapeBar = {
         var bar = (isSub ? $$.$el.subchart : $$.$el).bar;
         return [
             $$.$T(bar, withTransition, getRandom())
-                .attr("d", function (d) { return isNumber(d.value) && drawFn(d); })
+                .attr("d", function (d) { return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d); })
                 .style("fill", this.color)
                 .style("opacity", null)
         ];
@@ -16071,7 +16113,9 @@ var shapeBar = {
             if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
                 posY = y0;
             }
-            posY -= (y0 - offset);
+            if (!$$.isBarRangeType(d)) {
+                posY -= (y0 - offset);
+            }
             var startPosX = posX + width;
             // 4 points that make a bar
             return [
@@ -20046,7 +20090,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.2-nightly-20211201004548
+ * @version 3.2.2-nightly-20211204004548
  */
 var bb = {
     /**
@@ -20056,7 +20100,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.2-nightly-20211201004548",
+    version: "3.2.2-nightly-20211204004548",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
