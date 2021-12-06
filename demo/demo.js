@@ -614,6 +614,9 @@ var demos = {
 					level:{
 						depth: 4,
 					},
+					size:{
+						max: 200,
+					}
 				}
 			}
 		},

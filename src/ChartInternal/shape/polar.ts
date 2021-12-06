@@ -7,6 +7,7 @@ export default {
 		const $$ = this;
 		const {config, state: {current}, $el} = $$;
 		const depth = config.polar_level_depth;
+		const ceilDataMax = Math.ceil($$.getMinMaxData().max[0].value / depth) * depth;
 
 		$el.polar = $el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartPolars);
@@ -20,8 +21,7 @@ export default {
 			.attr("class", CLASS.chartPolarArcs);
 
 		// Let every data is less or equal to dataMax and each level has integer value
-		current.dataMax = Math.ceil($$.getMinMaxData().max[0].value / depth) * depth;
-
+		current.dataMax = config.polar_size_max || ceilDataMax;
 		// Let each value be 1, thus every arc has same central angle
 		// To match central angle with specific data, change "1" to specific function.
 		$$.polarPie = d3Pie().value(1);
