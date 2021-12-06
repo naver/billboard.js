@@ -15,13 +15,18 @@ export default {
 	 * @type {object}
 	 * @property {object} polar Polar object
 	 * @property {number} [polar.level.depth=3] Set the level depth.
+	 * @property {number} [polar.size.max=undefined] Set the chart size. Same as setting the max value of the polar chart. If not given, it'll take the max value from the given data.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
 	 * @example
 	 *  polar: {
 	 * 		level: {
 	 * 			depth: 3
+	 * 		},
+	 * 		size: {
+	 * 			max: 200
 	 * 		}
 	 *  }
 	 */
 	polar_level_depth: 3,
+	polar_size_max: <number|undefined> undefined,
 };
