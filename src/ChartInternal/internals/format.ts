@@ -39,10 +39,13 @@ export default {
 	getDefaultValueFormat(): Function {
 		const $$ = this;
 		const hasArc = $$.hasArcType();
+		const {hasPolar} = $$.state;
 
-		return hasArc && !$$.hasType("gauge") ?
-			$$.defaultArcValueFormat :
-			$$.defaultValueFormat;
+		return hasPolar ?
+			$$.defaultPolarValueFormat :
+			hasArc && !$$.hasType("gauge") ?
+				$$.defaultArcValueFormat :
+				$$.defaultValueFormat;
 	},
 
 	defaultValueFormat(v): number|string {
@@ -51,6 +54,10 @@ export default {
 
 	defaultArcValueFormat(v, ratio): string {
 		return `${(ratio * 100).toFixed(1)}%`;
+	},
+
+	defaultPolarValueFormat(v): string {
+		return `${v}`;
 	},
 
 	dataLabelFormat(targetId: string): Function {

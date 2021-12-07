@@ -302,7 +302,9 @@ text.bb-chart-arcs-gauge-title {
 
 	.bb-shapes {
 		path {
-			stroke-width: 1px;
+			fill-opacity: .6;
+			stroke-width: .5px;
+			stroke-opacity: .5;
 		}
 	}
 }

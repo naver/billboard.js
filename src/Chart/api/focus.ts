@@ -79,7 +79,7 @@ export default {
 		candidates.classed(CLASS.focused, false).classed(CLASS.defocused, true);
 
 		if ($$.hasArcType()) {
-			$$.unexpandArc(targetIds);
+			state.hasPolar ? $$.unexpandPolar(targetIds) : $$.unexpandArc(targetIds);
 
 			$$.hasType("gauge") &&
 				$$.undoMarkOverlapped($$, `.${CLASS.gaugeValue}`);
@@ -115,7 +115,10 @@ export default {
 		const candidates = $el.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
 
 		candidates.classed(CLASS.focused, false).classed(CLASS.defocused, false);
-		$$.hasArcType() && $$.unexpandArc(targetIds);
+
+		if ($$.hasArcType()) {
+			state.hasPolar ? $$.unexpandPolar(targetIds) : $$.unexpandArc(targetIds);
+		}
 
 		if (config.legend_show) {
 			$$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
