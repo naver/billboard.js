@@ -1,3 +1,4 @@
+import {select as d3Select} from "d3-selection";
 import {arc as d3Arc, pie as d3Pie} from "d3-shape";
 import CLASS from "../../config/classes";
 import {getRange} from "../../module/util";
@@ -70,8 +71,10 @@ export default {
 
 	redrawPolar(): void {
 		const $$ = this;
+		const {config} = $$;
 		const {polar} = $$.$el;
 		const translate = $$.getTranslate("polar");
+		const hasInteraction = config.interaction_enabled;
 
 		if (translate) {
 			polar.attr("transform", translate);
@@ -92,6 +95,8 @@ export default {
 			.each(function(d) { this._current = d; })
 			.merge(mainArc)
 			.attr("d", d => $$.getPolarArc(d));
+
+		hasInteraction && $$.bindPolarEvent(mainArc);
 	},
 
 
@@ -129,5 +134,121 @@ export default {
 			.text(d => state.current.dataMax / levelData.length * (d + 1));
 
 		levelEnter.merge(level);
+	},
+
+	bindPolarEvent(polar): void {
+		const $$ = this;
+		const {state} = $$;
+		const isMouse = state.inputType === "mouse";
+
+		// eslint-disable-next-line
+		function selectPolar(_this, polarData, id) {
+			// transitions
+			$$.expandPolar(id);
+			$$.api.focus(id);
+			$$.showTooltip([polarData], _this);
+		}
+
+		// eslint-disable-next-line
+		function unselectPolar(polarData?) {
+			const id = polarData?.id || undefined;
+
+			$$.unexpandPolar(id);
+			$$.api.revert();
+			$$.hideTooltip();
+		}
+
+		// mouse events
+		if (isMouse) {
+			polar
+				.on("mouseover", function(event, d) {
+					if (state.transiting) { // skip while transiting
+						return;
+					}
+
+					state.event = event;
+					const id = d.data.id;
+					const polarData = $$.convertToPolarData(d);
+
+					selectPolar(this, polarData, id);
+					$$.setOverOut(true, polarData);
+				})
+				.on("mouseout", (event, d) => {
+					if (state.transiting) { // skip while transiting
+						return;
+					}
+					unselectPolar();
+					state.event = event;
+					const polarData = $$.convertToPolarData(d);
+
+					$$.setOverOut(false, polarData);
+				})
+				.on("mousemove", function(event, d) {
+					state.event = event;
+					const polarData = $$.convertToPolarData(d);
+
+					$$.showTooltip([polarData], this);
+				});
+		}
+	},
+
+	convertToPolarData(d): object {
+		return this.addName({
+			id: d.data ? d.data.id : d.id,
+			value: d.data.values[0].value,
+			// ratio: d.data.values[0].value,
+			index: d.index,
+		});
+	},
+
+	expandPolar(targetIds: string[]): void {
+		const $$ = this;
+		const {state: {transiting}, $el} = $$;
+
+		// MEMO: avoid to cancel transition
+		if (transiting) {
+			const interval = setInterval(() => {
+				if (!transiting) {
+					clearInterval(interval);
+
+					$el.legend.selectAll(`.${CLASS.legendItemFocused}`).size() > 0 &&
+						$$.expandArc(targetIds);
+				}
+			}, 10);
+
+			return;
+		}
+
+		const newTargetIds = $$.mapToTargetIds(targetIds);
+
+		$el.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
+			.each(function(d) {
+				if (!$$.shouldExpand(d.data.id)) {
+					return;
+				}
+
+				const expandDuration = $$.getExpandConfig(d.data.id, "duration");
+				const svgArcExpandedSub = $$.getSvgArcExpanded($$.getExpandConfig(d.data.id, "rate"));
+
+				d3Select(this).selectAll("path")
+					.transition()
+					.duration(expandDuration)
+					.attr("d", $$.svgArcExpanded)
+					.transition()
+					.duration(expandDuration * 2)
+					.attr("d", svgArcExpandedSub);
+			});
+	},
+
+	unexpandPolar(): void {
+		const $$ = this;
+		const {state: {transiting}, $el: {svg}} = $$;
+
+		if (transiting) {
+			return;
+		}
+
+		svg.selectAll(`${CLASS.arc}`)
+			.style("opacity", null);
 	},
 };
