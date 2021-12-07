@@ -608,7 +608,6 @@ var demos = {
 						["data3", 75]
 					],
 					type: "polar",
-					labels: true
 				},
 				polar: {
 					level:{
@@ -4963,6 +4962,46 @@ d3.select(".chart_area")
 				radar: {
 					size: {
 						ratio: 0.75
+					}
+				}
+			}
+		}
+	},
+	PolarChartOptions: {
+		PolarLevel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+				},
+				polar: {
+					level: {
+						depth: 4,
+						show: false,
+						text: {
+							format: function(x) { return x + "%"; }
+						}
+					},
+				}
+			}
+		},
+		PolarSize: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+				},
+				polar: {
+					size: {
+						max: 150
 					}
 				}
 			}
