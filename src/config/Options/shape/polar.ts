@@ -8,8 +8,6 @@
 export default {
 	/**
 	 * Set polar options
-	 * - **NOTE:**
-	 *  > When x tick text contains `\n`, it's used as line break.
 	 * @name polar
 	 * @memberof Options
 	 * @type {object}
@@ -20,10 +18,12 @@ export default {
 	 * @property {boolean} [polar.level.text.show=true] Show or hide level text.
 	 * @property {number} [polar.size.max=undefined] Set the chart size. Same as setting the max value of the polar chart. If not given, it'll take the max value from the given data.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
+	 * @see [Demo: polar level](https://naver.github.io/billboard.js/demo/#PolarChartOptions.PolarLevel)
+	 * @see [Demo: polar size](https://naver.github.io/billboard.js/demo/#PolarChartOptions.PolarSize)
 	 * @example
 	 *  polar: {
-	 * 		level: {
-	 * 			depth: 3,
+	 *      level: {
+	 *          depth: 3,
 	 *          show: true,
 	 *          text: {
 	 *              format: function(x) {
@@ -31,10 +31,10 @@ export default {
 	 *              },
 	 *              show: true
 	 *          }
-	 * 		},
-	 * 		size: {
-	 * 			max: 200
-	 * 		}
+	 *      },
+	 *      size: {
+	 *          max: 200
+	 *      }
 	 *  }
 	 */
 	polar_level_depth: 3,
