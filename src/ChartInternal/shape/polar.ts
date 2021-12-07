@@ -51,13 +51,14 @@ export default {
 		const {config, state: {current}} = $$;
 		const [width, height] = $$.getPolarSize();
 		const radius = Math.min(width, height);
+		const dataMax = current.dataMax;
 
 		// TODO: remove magic number
-		const innerRadius = config.polar_padding * 0.4;
+		const innerRadius = config.polar_padding * 0.75;
 
 		return d3Arc()
-			.innerRadius(innerRadius)
-			.outerRadius((d: any) => d.data.values.reduce((a, b) => a + b.value, 0) / current.dataMax * radius)(d) || "M 0 0";
+			.innerRadius((d: any) => innerRadius * d.data.values.reduce((a, b) => a + b.value, 0) / dataMax)
+			.outerRadius((d: any) => d.data.values.reduce((a, b) => a + b.value, 0) / dataMax * radius)(d) || "M 0 0";
 	},
 
 	updateTargetsForPolarArc(targets): void {
