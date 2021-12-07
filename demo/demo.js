@@ -603,7 +603,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						["data1", 30],
+						["data1", 60],
 						["data2", 120],
 						["data3", 75]
 					],
@@ -4883,7 +4883,7 @@ d3.select(".chart_area")
 			options: {
 				data: {
 					columns: [
-						["data1", 30],
+						["data1", 60],
 						["data2", 120],
 						["data3", 75]
 					],
@@ -4904,7 +4904,7 @@ d3.select(".chart_area")
 			options: {
 				data: {
 					columns: [
-						["data1", 30],
+						["data1", 60],
 						["data2", 120],
 						["data3", 75]
 					],
@@ -4916,7 +4916,52 @@ d3.select(".chart_area")
 					}
 				}
 			}
-		}
+		},
+		Padding: {
+			options: {
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+				},
+				polar: {
+					padding: 5
+				}
+			}
+		},
+		PadAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+				},
+				polar: {
+					padAngle: 0.1
+				}
+			}
+		},
+		StartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+				},
+				polar: {
+					startingAngle: 1
+				}
+			}
+		},
 	},
 	API: {
 		AxisLabel: {
