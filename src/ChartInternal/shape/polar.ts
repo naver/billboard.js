@@ -111,6 +111,7 @@ export default {
 
 		const radius = Math.min(width, height);
 		const levelRatio = levelData.map(l => radius * ((l + 1) / depth));
+		const levelTextFormat = (config.polar_level_text_format || function() {}).bind($$.api);
 
 		const level = polarLevels
 			.selectAll(`.${CLASS.level}`)
@@ -119,19 +120,22 @@ export default {
 		level.exit().remove();
 
 		const levelEnter = level.enter().append("g")
-			.attr("class", (d, i) => `${CLASS.level} ${CLASS.level}-${i}`);
+			.attr("class", (_d, i) => `${CLASS.level} ${CLASS.level}-${i}`);
 
 		// cx, cy, translate: Set center as origin (0,0) so that it can share same center with arcs
 		levelEnter.append("circle")
+			.style("visibility", config.polar_level_show ? null : "hidden")
 			.attr("cx", 0)
 			.attr("cy", 0)
 			.attr("r", d => levelRatio[d]);
 
-		levelEnter.append("text")
-			.style("text-anchor", "middle")
-			.attr("dy", "0.5rem")
-			.attr("transform", d => `translate(0, ${-levelRatio[d]})`)
-			.text(d => state.current.dataMax / levelData.length * (d + 1));
+		if (config.polar_level_text_show) {
+			levelEnter.append("text")
+				.style("text-anchor", "middle")
+				.attr("dy", "0.5rem")
+				.attr("transform", d => `translate(0, ${-levelRatio[d]})`)
+				.text(d => levelTextFormat(state.current.dataMax / levelData.length * (d + 1)));
+		}
 
 		levelEnter.merge(level);
 	},
