@@ -97,6 +97,7 @@ export default {
 			.selectAll(`.${CLASS.arcs}`)
 			.selectAll(`.${CLASS.arc}`)
 			.data($$.arcData.bind($$));
+
 		mainArc.exit().remove();
 
 		mainArc = mainArc.enter().append("path")
