@@ -22,8 +22,11 @@ export default {
 	 * @property {number} [polar.startingAngle=0] Set starting angle where data draws.
 	 * @property {number} [polar.size.ratio=0.87] Set size ratio.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
+	 * @see [Demo: pad angle](https://naver.github.io/billboard.js/demo/#PolarChartOptions.PadAngle)
+	 * @see [Demo: padding](https://naver.github.io/billboard.js/demo/#PolarChartOptions.Padding)
 	 * @see [Demo: polar level](https://naver.github.io/billboard.js/demo/#PolarChartOptions.PolarLevel)
 	 * @see [Demo: polar size](https://naver.github.io/billboard.js/demo/#PolarChartOptions.PolarSize)
+	 * @see [Demo: starting angle](https://naver.github.io/billboard.js/demo/#PolarChartOptions.StartingAngle)
 	 * @example
 	 *  polar: {
 	 *      level: {
