@@ -4892,6 +4892,7 @@ d3.select(".chart_area")
 				polar: {
 					level: {
 						depth: 4,
+						max: 150,
 						show: false,
 						text: {
 							format: function(x) { return x + "%"; }
@@ -4912,7 +4913,7 @@ d3.select(".chart_area")
 				},
 				polar: {
 					size: {
-						max: 150
+						ratio: 0.7
 					}
 				}
 			}
