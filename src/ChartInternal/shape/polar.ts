@@ -90,11 +90,8 @@ export default {
 		const translate = $$.getTranslate("polar");
 		const hasInteraction = config.interaction_enabled;
 
-		if (translate) {
-			polar.attr("transform", translate);
-
-			$$.updatePolarLevel();
-		}
+		polar.attr("transform", translate);
+		$$.updatePolarLevel();
 
 		let mainArc = polar.arcs
 			.selectAll(`.${CLASS.arcs}`)
@@ -112,7 +109,6 @@ export default {
 
 		hasInteraction && $$.bindPolarEvent(mainArc);
 	},
-
 
 	updatePolarLevel(): void {
 		const $$ = this;
@@ -137,7 +133,11 @@ export default {
 			.attr("class", (_d, i) => `${CLASS.level} ${CLASS.level}-${i}`);
 
 		// cx, cy, translate: Set center as origin (0,0) so that it can share same center with arcs
-		levelEnter.append("circle")
+		levelEnter.append("circle");
+
+		levelEnter
+			.merge(level)
+			.selectAll("circle")
 			.style("visibility", config.polar_level_show ? null : "hidden")
 			.attr("cx", 0)
 			.attr("cy", 0)
@@ -146,13 +146,13 @@ export default {
 		if (config.polar_level_text_show) {
 			levelEnter.append("text")
 				.style("text-anchor", "middle")
-				.attr("dy", "0.5rem")
-				.attr("transform", d => `translate(0, ${-levelRatio[d]})`)
 				.text(d => levelTextFormat(state.current.dataMax / levelData.length * (d + 1)));
-		}
 
-		levelEnter
-			.merge(level);
+			levelEnter
+				.merge(level)
+				.selectAll("text")
+				.attr("dy", d => -levelRatio[d] + 5);
+		}
 	},
 
 	bindPolarEvent(polar): void {
