@@ -754,7 +754,64 @@ describe("SHAPE BAR", () => {
 			const chartBars = chart.$.main.select(`.${CLASS.chartBars}`).node();
 
 			expect(chartBars.getAttribute("clip-path")).to.be.ok;
-		})
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", -80, 200],
+						["data2", -130, 50],
+						["data3", 80, 100],
+						["data4", 120, 100],
+						["data5", 120, -100],
+						["data6", -120, 150]
+					],
+					type: "bar",
+					groups: [
+						["data1", "data2", "data3"],
+						["data4", "data5"],
+					],
+					order: "desc"
+				},
+				bar: {
+					radius: {
+						ratio: 0.4
+					}
+				}
+			};
+		});
+
+		it("should apply bar radius for stacking bars", () => {
+			let radiusCount = 0;
+			const expected = [
+				[
+					{id: "data1", value: -80},
+					{id: "data3", value: 80},
+					{id: "data5", value: 120},
+					{id: "data6", value: -120}
+				],
+				[
+					{id: "data1", value: 200},
+					{id: "data4", value: 100},
+					{id: "data5", value: -100},
+					{id: "data6", value: 150}
+				]
+			];
+
+			chart.$.bar.bars.each(function(d) {
+				const hasRadius = this.getAttribute("d").indexOf("a") > -1;
+
+				if (hasRadius) {
+					const found = expected[d.index].some(v => v.id === d.id && v.value === d.value);
+
+					expect(found).to.be.true;
+					radiusCount++;
+				}
+			});
+
+			expect(radiusCount).to.be.equal(8);
+		});
 	});
 
 	describe("bar position", () => {
@@ -1040,7 +1097,6 @@ describe("SHAPE BAR", () => {
 	});
 
 	describe("bar within a range", () => {
-
 		it("should render bars with a single column", () => {
 			chart = util.generate({
 				data: {
