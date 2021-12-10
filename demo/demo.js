@@ -3757,24 +3757,61 @@ d3.select(".chart_area")
 				}
 			}
 		},
-		BarRadius: {
-			options: {
-				data: {
-					columns: [
-						["data1", 80, 250, -200, 200, 250, 150],
-						["data2", 170, -350, 240, 200, -250, 150],
-						["data3", -120, 100, 240, -300, 350, 350],
-						["data4", 180, 130, 340, 200, 250, -250]
-					],
-					type: "bar"
-				},
-				bar: {
-					radius: {
-						ratio: 0.5
+		BarRadius: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 80, 250, -200, 200, 250, 150],
+							["data2", 170, -350, 240, 200, -250, 150],
+							["data3", -120, 100, 240, -300, 350, 350],
+							["data4", 180, 130, 340, 200, 250, -250]
+						],
+						type: "bar"
+					},
+					bar: {
+						radius: {
+							ratio: 0.5
+						}
 					}
 				}
-			}
-		},
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "2021-01-01", "2021-01-02"],
+							["data1", -80, 200],
+							["data2", -130, 50],
+							["data3", 80, 100],
+							["data4", 120, 100],
+							["data5", 120, -100],
+							["data6", -120, 150]
+						],
+						type: "bar",
+						groups: [
+							["data1", "data2", "data3"],
+							["data4", "data5"],
+						],
+						order: "desc"
+					},
+					axis: {
+						x: {
+							type: "timeseries",
+							tick: {
+								format: "%Y-%m-%d"
+							}
+						}
+					},
+					bar: {
+						radius: {
+							ratio: 0.2
+						}
+					}
+				}
+			},
+		],
 		BarWidth: {
 			options: {
 				data: {

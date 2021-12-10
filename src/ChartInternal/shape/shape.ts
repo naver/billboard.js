@@ -294,6 +294,7 @@ export default {
 				.forEach(t => {
 					const {id: tid, rowValueMapByXValue, rowValues, values: tvalues} = t;
 
+					// for same stacked group (ind[tid] === ind[id])
 					if (ind[tid] === ind[id] && indexMapByTargetId[tid] < indexMapByTargetId[id]) {
 						let row = rowValues[idx];
 
