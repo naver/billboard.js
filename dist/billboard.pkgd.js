@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20211204004548
+ * @version 3.2.2-nightly-20211211004539
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -17,7 +17,7 @@
  * - d3-scale ^4.0.2
  * - d3-selection ^3.0.0
  * - d3-shape ^3.0.1
- * - d3-time-format ^4.0.0
+ * - d3-time-format ^4.1.0
  * - d3-transition ^3.0.1
  * - d3-zoom ^3.0.0
  */
@@ -1161,7 +1161,7 @@ var store = __webpack_require__(33);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.19.2',
+  version: '3.19.3',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 });
@@ -3802,9 +3802,9 @@ var Iterators = __webpack_require__(107);
 
 var returnThis = function () { return this; };
 
-module.exports = function (IteratorConstructor, NAME, next) {
+module.exports = function (IteratorConstructor, NAME, next, ENUMERABLE_NEXT) {
   var TO_STRING_TAG = NAME + ' Iterator';
-  IteratorConstructor.prototype = create(IteratorPrototype, { next: createPropertyDescriptor(1, next) });
+  IteratorConstructor.prototype = create(IteratorPrototype, { next: createPropertyDescriptor(+!ENUMERABLE_NEXT, next) });
   setToStringTag(IteratorConstructor, TO_STRING_TAG, false, true);
   Iterators[TO_STRING_TAG] = returnThis;
   return IteratorConstructor;
@@ -8077,7 +8077,7 @@ var V8_VERSION = __webpack_require__(24);
 var SPECIES = wellKnownSymbol('species');
 var PROMISE = 'Promise';
 
-var getInternalState = InternalStateModule.get;
+var getInternalState = InternalStateModule.getterFor(PROMISE);
 var setInternalState = InternalStateModule.set;
 var getInternalPromiseState = InternalStateModule.getterFor(PROMISE);
 var NativePromisePrototype = NativePromise && NativePromise.prototype;
@@ -14638,7 +14638,7 @@ var URLSearchParamsIterator = createIteratorConstructor(function Iterator(params
   if (!step.done) {
     step.value = kind === 'keys' ? entry.key : kind === 'values' ? entry.value : [entry.key, entry.value];
   } return step;
-});
+}, true);
 
 var URLSearchParamsState = function (init) {
   this.entries = [];
@@ -24076,6 +24076,7 @@ var tsvFormatValue = tsv.formatValue;
 
   /**
    * Sort targets data
+   * Note: For stacked bar, will sort from the total sum of data series, not for each stacked bar
    * @param {Array} targetsValue Target value
    * @returns {Array}
    * @private
@@ -24112,8 +24113,8 @@ var tsvFormatValue = tsv.formatValue;
       };
 
       fn = function (t1, t2) {
-        var t1Sum = t1.values.reduce(reducer, 0),
-            t2Sum = t2.values.reduce(reducer, 0);
+        var t1Sum = "values" in t1 ? t1.values.reduce(reducer, 0) : t1.value,
+            t2Sum = "values" in t2 ? t2.values.reduce(reducer, 0) : t2.value;
         return isArc ? orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum : orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
       };
     } else if (isFunction(order)) {
@@ -30138,7 +30139,7 @@ function stepAfter(context) {
         var tid = t.id,
             rowValueMapByXValue = t.rowValueMapByXValue,
             rowValues = t.rowValues,
-            tvalues = t.values;
+            tvalues = t.values; // for same stacked group (ind[tid] === ind[id])
 
         if (ind[tid] === ind[id] && indexMapByTargetId[tid] < indexMapByTargetId[id]) {
           var _row,
@@ -41615,7 +41616,7 @@ function point_y(p) {
 
   /**
    * Redraw function
-   * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+   * @param {Function} drawFn Retuned function from .getDrawShape() => .generateDrawBar()
    * @param {boolean} withTransition With or without transition
    * @param {boolean} isSub Subchart draw
    * @returns {Array}
@@ -41633,12 +41634,32 @@ function point_y(p) {
       return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d);
     }).style("fill", this.color).style("opacity", null)];
   },
+
+  /**
+   * Generate draw function
+   * @param {object} barIndices data order within x axis.
+   * barIndices ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
+   *
+   * When gropus given as:
+   *  groups: [
+   *		["data1", "data2"],
+   *		["data3", "data4"]
+   *	],
+   *
+   * Will be rendered as:
+   * 		data1 data3   data1 data3
+   *		data2 data4   data2 data4
+   *		-------------------------
+   *			 0             1
+   * @param {boolean} isSub If is for subchart
+   * @returns {Function}
+   * @private
+   */
   generateDrawBar: function generateDrawBar(barIndices, isSub) {
     var $$ = this,
         config = $$.config,
         getPoints = $$.generateGetBarPoints(barIndices, isSub),
         isRotated = config.axis_rotated,
-        isGrouped = config.data_groups.length,
         barRadius = config.bar_radius,
         barRadiusRatio = config.bar_radius_ratio,
         getRadius = isNumber(barRadius) && barRadius > 0 ? function () {
@@ -41653,9 +41674,10 @@ function point_y(p) {
           indexY = +!indexX,
           isNegative = d.value < 0,
           pathRadius = ["", ""],
-          radius = 0; // switch points if axis is rotated, not applicable for sub chart
+          radius = 0,
+          isRadiusData = $$.isGrouped(d.id) ? $$.isStackingRadiusData(d) : !1; // switch points if axis is rotated, not applicable for sub chart
 
-      if (d.value !== 0 && getRadius && !isGrouped) {
+      if (d.value !== 0 && getRadius && (!$$.isGrouped(d.id) || isRadiusData)) {
         var index = isRotated ? indexY : indexX,
             barW = points[2][index] - points[0][index];
         radius = getRadius(barW);
@@ -41671,6 +41693,43 @@ function point_y(p) {
       return "M" + points[0][indexX] + "," + points[0][indexY] + path + "z";
     };
   },
+
+  /**
+   * Determine if given stacking bar data is radius type
+   * @param {Object} d Data row
+   * @returns {boolean}
+   */
+  isStackingRadiusData: function isStackingRadiusData(d) {
+    var $$ = this,
+        config = $$.config,
+        data = $$.data,
+        id = d.id,
+        index = d.index,
+        value = d.value,
+        keys = config.data_groups.find(function (v) {
+      return v.indexOf(id) > -1;
+    }),
+        sortedList = $$.orderTargets($$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))).filter(function (v) {
+      return keys.indexOf(v.id) > -1;
+    }),
+        sortedIds = sortedList.map(function (v) {
+      return v.values.filter(function (v2) {
+        return v2.index === index && (value > 0 ? v2.value > 0 : v2.value < 0);
+      })[0];
+    }).filter(Boolean).map(function (v) {
+      return v.id;
+    });
+    // If the given id stays in the last position, then radius should be applied.
+    return value !== 0 && sortedIds.indexOf(id) === sortedIds.length - 1;
+  },
+
+  /**
+   * Generate bar coordinate points data
+   * @param {object} barIndices Data order within x axis.
+   * @param {boolean} isSub If is for subchart
+   * @returns {Array} Array of coordinate points
+   * @private
+   */
   generateGetBarPoints: function generateGetBarPoints(barIndices, isSub) {
     var $$ = this,
         config = $$.config,
@@ -43471,7 +43530,6 @@ var cacheKey = KEY.radarPoints;
    * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
    * @property {number} [bar.padding=0] The padding pixel value between each bar.
    * @property {number} [bar.radius] Set the radius of bar edge in pixel.
-   * - **NOTE:** Works only for non-stacked bar
    * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
    * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
    * @property {number} [bar.width] Change the width of bar chart.
@@ -43492,7 +43550,7 @@ var cacheKey = KEY.radarPoints;
    *  bar: {
    *      padding: 1,
    *
-   *      // the 'radius' option can be used only for non-stacking bars
+   *      // bar radius
    *      radius: 10,
    *      // or
    *      radius: {

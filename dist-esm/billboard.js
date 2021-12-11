@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.2-nightly-20211204004548
+ * @version 3.2.2-nightly-20211211004539
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3758,6 +3758,7 @@ var data$1 = {
     },
     /**
      * Sort targets data
+     * Note: For stacked bar, will sort from the total sum of data series, not for each stacked bar
      * @param {Array} targetsValue Target value
      * @returns {Array}
      * @private
@@ -3786,8 +3787,8 @@ var data$1 = {
         if (orderAsc || orderDesc) {
             var reducer_1 = function (p, c) { return p + Math.abs(c.value); };
             fn = function (t1, t2) {
-                var t1Sum = t1.values.reduce(reducer_1, 0);
-                var t2Sum = t2.values.reduce(reducer_1, 0);
+                var t1Sum = "values" in t1 ? t1.values.reduce(reducer_1, 0) : t1.value;
+                var t2Sum = "values" in t2 ? t2.values.reduce(reducer_1, 0) : t2.value;
                 return isArc ?
                     (orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
                     (orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum);
@@ -6335,6 +6336,7 @@ var shape = {
                 .filter(function (t) { return t.id !== id; })
                 .forEach(function (t) {
                 var tid = t.id, rowValueMapByXValue = t.rowValueMapByXValue, rowValues = t.rowValues, tvalues = t.values;
+                // for same stacked group (ind[tid] === ind[id])
                 if (ind[tid] === ind[id] && indexMapByTargetId[tid] < indexMapByTargetId[id]) {
                     var row = rowValues[idx];
                     // check if the x values line up
@@ -16040,7 +16042,7 @@ var shapeBar = {
     },
     /**
      * Redraw function
-     * @param {Function} drawFn Retuned functino from .generateDrawCandlestick()
+     * @param {Function} drawFn Retuned function from .getDrawShape() => .generateDrawBar()
      * @param {boolean} withTransition With or without transition
      * @param {boolean} isSub Subchart draw
      * @returns {Array}
@@ -16056,12 +16058,31 @@ var shapeBar = {
                 .style("opacity", null)
         ];
     },
+    /**
+     * Generate draw function
+     * @param {object} barIndices data order within x axis.
+     * barIndices ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
+     *
+     * When gropus given as:
+     *  groups: [
+     *		["data1", "data2"],
+     *		["data3", "data4"]
+     *	],
+     *
+     * Will be rendered as:
+     * 		data1 data3   data1 data3
+     *		data2 data4   data2 data4
+     *		-------------------------
+     *			 0             1
+     * @param {boolean} isSub If is for subchart
+     * @returns {Function}
+     * @private
+     */
     generateDrawBar: function (barIndices, isSub) {
         var $$ = this;
         var config = $$.config;
         var getPoints = $$.generateGetBarPoints(barIndices, isSub);
         var isRotated = config.axis_rotated;
-        var isGrouped = config.data_groups.length;
         var barRadius = config.bar_radius;
         var barRadiusRatio = config.bar_radius_ratio;
         // get the bar radius
@@ -16076,7 +16097,8 @@ var shapeBar = {
             var isNegative = d.value < 0;
             var pathRadius = ["", ""];
             var radius = 0;
-            if (d.value !== 0 && getRadius && !isGrouped) {
+            var isRadiusData = $$.isGrouped(d.id) ? $$.isStackingRadiusData(d) : false;
+            if ((d.value !== 0 && getRadius) && (!$$.isGrouped(d.id) || isRadiusData)) {
                 var index = isRotated ? indexY : indexX;
                 var barW = points[2][index] - points[0][index];
                 radius = getRadius(barW);
@@ -16093,6 +16115,34 @@ var shapeBar = {
             return "M".concat(points[0][indexX], ",").concat(points[0][indexY]).concat(path, "z");
         };
     },
+    /**
+     * Determine if given stacking bar data is radius type
+     * @param {Object} d Data row
+     * @returns {boolean}
+     */
+    isStackingRadiusData: function (d) {
+        var $$ = this;
+        var config = $$.config, data = $$.data;
+        var id = d.id, index = d.index, value = d.value;
+        // Find same grouped ids
+        var keys = config.data_groups.find(function (v) { return v.indexOf(id) > -1; });
+        // Get sorted list
+        var sortedList = $$.orderTargets($$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))).filter(function (v) { return keys.indexOf(v.id) > -1; });
+        // Get sorted Ids. Filter positive or negative values Ids from given value
+        var sortedIds = sortedList
+            .map(function (v) { return v.values.filter(function (v2) { return v2.index === index && (value > 0 ? v2.value > 0 : v2.value < 0); })[0]; })
+            .filter(Boolean)
+            .map(function (v) { return v.id; });
+        // If the given id stays in the last position, then radius should be applied.
+        return value !== 0 && (sortedIds.indexOf(id) === sortedIds.length - 1);
+    },
+    /**
+     * Generate bar coordinate points data
+     * @param {object} barIndices Data order within x axis.
+     * @param {boolean} isSub If is for subchart
+     * @returns {Array} Array of coordinate points
+     * @private
+     */
     generateGetBarPoints: function (barIndices, isSub) {
         var $$ = this;
         var config = $$.config;
@@ -17723,7 +17773,6 @@ var optBar = {
      * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
      * @property {number} [bar.padding=0] The padding pixel value between each bar.
      * @property {number} [bar.radius] Set the radius of bar edge in pixel.
-     * - **NOTE:** Works only for non-stacked bar
      * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
      * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
      * @property {number} [bar.width] Change the width of bar chart.
@@ -17744,7 +17793,7 @@ var optBar = {
      *  bar: {
      *      padding: 1,
      *
-     *      // the 'radius' option can be used only for non-stacking bars
+     *      // bar radius
      *      radius: 10,
      *      // or
      *      radius: {
@@ -20090,7 +20139,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.2-nightly-20211204004548
+ * @version 3.2.2-nightly-20211211004539
  */
 var bb = {
     /**
@@ -20100,7 +20149,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.2-nightly-20211204004548",
+    version: "3.2.2-nightly-20211211004539",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
