@@ -586,6 +586,7 @@ export default {
 
 	/**
 	 * Sort targets data
+	 * Note: For stacked bar, will sort from the total sum of data series, not for each stacked bar
 	 * @param {Array} targetsValue Target value
 	 * @returns {Array}
 	 * @private
@@ -617,9 +618,9 @@ export default {
 		if (orderAsc || orderDesc) {
 			const reducer = (p, c) => p + Math.abs(c.value);
 
-			fn = (t1, t2) => {
-				const t1Sum = t1.values.reduce(reducer, 0);
-				const t2Sum = t2.values.reduce(reducer, 0);
+			fn = (t1: IData | IDataRow, t2: IData | IDataRow) => {
+				const t1Sum = "values" in t1 ? t1.values.reduce(reducer, 0) : t1.value;
+				const t2Sum = "values" in t2 ? t2.values.reduce(reducer, 0) : t2.value;
 
 				return isArc ?
 					(orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
