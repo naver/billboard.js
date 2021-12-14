@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.2-nightly-20211211004539
+ * @version 3.2.2-nightly-20211214004624
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -13719,8 +13719,8 @@ var x = {
     axis_x_tick_text_position: { x: 0, y: 0 },
     /**
      * Fit x axis ticks.
-     * - **true**: ticks will be positioned nicely to have same intervals.
-     * - **false**: ticks will be positioned according to x value of the data points.
+     * - **true**: ticks will be shown according to x value of the data points.
+     * - **false**: ticks will be shown as to have same intervals.
      * @name axis․x․tick․fit
      * @memberof Options
      * @type {boolean}
@@ -20139,7 +20139,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.2-nightly-20211211004539
+ * @version 3.2.2-nightly-20211214004624
  */
 var bb = {
     /**
@@ -20149,7 +20149,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.2-nightly-20211211004539",
+    version: "3.2.2-nightly-20211214004624",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
