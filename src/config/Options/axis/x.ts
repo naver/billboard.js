@@ -262,8 +262,8 @@ export default {
 
 	/**
 	 * Fit x axis ticks.
-	 * - **true**: ticks will be positioned nicely to have same intervals.
-	 * - **false**: ticks will be positioned according to x value of the data points.
+	 * - **true**: ticks will be shown according to x value of the data points.
+	 * - **false**: ticks will be shown as to have same intervals.
 	 * @name axis․x․tick․fit
 	 * @memberof Options
 	 * @type {boolean}
