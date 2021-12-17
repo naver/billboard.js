@@ -4,7 +4,7 @@
  */
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
-import {isValue, ceil10, capitalize} from "../../module/util";
+import {isValue, ceil10, capitalize, isNumber, isEmpty} from "../../module/util";
 
 export default {
 	/**
@@ -233,6 +233,35 @@ export default {
 	},
 
 	/**
+	 * Get resetted padding values when 'padding=false' option is set
+	 * https://github.com/naver/billboard.js/issues/2367
+	 * @param {number|object} v Padding values to be resetted
+	 * @returns {number|object} Padding value
+	 * @private
+	 */
+	getResettedPadding<T = number | {[key: string]: string;}>(v: T): T {
+		const $$ = this;
+		const {config} = $$;
+		const isNum = isNumber(v);
+		let p = isNum ? 0 : {};
+
+		if (config.padding === false) {
+			!isNum && Object.keys(v).forEach(key => {
+				// when data.lables=true, do not reset top padding
+				p[key] = (
+					!isEmpty(config.data_labels) &&
+					config.data_labels !== false &&
+					key === "top"
+				) ? v[key] : 0;
+			});
+		} else {
+			p = v;
+		}
+
+		return p as T;
+	},
+
+	/**
 	 * Update size values
 	 * @param {boolean} isInit If is called at initialization
 	 * @private
@@ -274,6 +303,8 @@ export default {
 			bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
 			left: hasArc ? 0 : $$.getCurrentPaddingLeft()
 		};
+
+		state.margin = $$.getResettedPadding(state.margin);
 
 		// for subchart
 		state.margin2 = isRotated ? {

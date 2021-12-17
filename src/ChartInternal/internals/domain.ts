@@ -145,7 +145,7 @@ export default {
 		}
 
 		const domainLength = Math.abs(yDomainMax - yDomainMin);
-		const padding = {top: domainLength * 0.1, bottom: domainLength * 0.1};
+		let padding = {top: domainLength * 0.1, bottom: domainLength * 0.1};
 
 		if (isDefined(center)) {
 			const yDomainAbs = Math.max(Math.abs(yDomainMin), Math.abs(yDomainMax));
@@ -170,6 +170,8 @@ export default {
 				padding[v] += $$.convertPixelToScale("y", lengths[i], domainLength);
 			});
 		}
+
+		padding = $$.getResettedPadding(padding);
 
 		// if padding is set, the domain will be updated relative the current domain value
 		// ex) $$.height=300, padding.top=150, domainLength=4  --> domain=6
@@ -233,7 +235,7 @@ export default {
 
 			defaultValue = maxDataCount > 1 ? (diff / (maxDataCount - 1)) / 2 : 0.5;
 		} else {
-			defaultValue = diff * 0.01;
+			defaultValue = $$.getResettedPadding(diff * 0.01);
 		}
 
 		let {left = defaultValue, right = defaultValue} = isNumber(padding) ?

@@ -64,7 +64,14 @@ export interface ChartOptions {
 		height?: number;
 	};
 
-	padding?: {
+	/**
+	 * Set padding of chart, and accepts object or boolean type.
+	 * - `Object`: Specify each side's padding.
+	 * - `false`: Remove padding completely and make shape to fully occupy the container element.
+	 *   - In this case, axes and subchart will be hidden.
+	 *   - To adjust some padding from this state, use `axis.[x|y].padding` option.
+	 */
+	padding?: boolean | {
 		/**
 		 * The padding on the top of the chart.
 		 */
