@@ -118,6 +118,7 @@ export default {
 	 * @property {number} [padding.right] padding on the right of chart
 	 * @property {number} [padding.bottom] padding on the bottom of chart
 	 * @property {number} [padding.left] padding on the left of chart
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Padding)
 	 * @example
 	 * // remove padding completely.
 	 * padding: false,
