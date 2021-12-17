@@ -1,3 +1,20 @@
+# [3.3.0-next.1](https://github.com/naver/billboard.js/compare/3.2.2...3.3.0-next.1) (2021-12-17)
+
+
+### Bug Fixes
+
+* **text:** Fix text position with candlestick type combination ([f84ab3e](https://github.com/naver/billboard.js/commit/f84ab3e9c60dd17b233992fea927e79b6e4b4530)), closes [#2436](https://github.com/naver/billboard.js/issues/2436)
+* **tooltip:** fix candlestick tooltip display with xs option ([0278067](https://github.com/naver/billboard.js/commit/027806717a62d7ca55131e1bd2f96ece66675f18)), closes [#2434](https://github.com/naver/billboard.js/issues/2434)
+
+
+### Features
+
+* **bar:** add non zero based bar chart ([3588abe](https://github.com/naver/billboard.js/commit/3588abe3e83ec34704bd9a07c1181259e8520c2f)), closes [#2408](https://github.com/naver/billboard.js/issues/2408) [#2438](https://github.com/naver/billboard.js/issues/2438)
+* **bar:** Implement stacking bar radius ([8f14d1a](https://github.com/naver/billboard.js/commit/8f14d1a40ca39dc47f1c320a59158811c5898596)), closes [#2428](https://github.com/naver/billboard.js/issues/2428)
+* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
+* **option:** Enhance padding to be removed completely ([2052a19](https://github.com/naver/billboard.js/commit/2052a19af7fae25688a182e1d5244e523ed1f3cc)), closes [#2367](https://github.com/naver/billboard.js/issues/2367)
+* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
+
 ## [3.2.2](https://github.com/naver/billboard.js/compare/3.2.1...3.2.2) (2021-11-19)
 
 
