@@ -82,7 +82,7 @@ export default {
 	 * @returns {number} index number
 	 * @private
 	 */
-	getIndexByX(x, basedX: (string|Date)[]): number {
+	getIndexByX(x: Date|number|string, basedX: (Date|number|string)[]): number {
 		const $$ = this;
 
 		return basedX ?
@@ -412,7 +412,7 @@ export default {
 		return target;
 	},
 
-	mapToIds(targets) {
+	mapToIds(targets): string[] {
 		return targets.map(d => d.id);
 	},
 
@@ -586,6 +586,7 @@ export default {
 
 	/**
 	 * Sort targets data
+	 * Note: For stacked bar, will sort from the total sum of data series, not for each stacked bar
 	 * @param {Array} targetsValue Target value
 	 * @returns {Array}
 	 * @private
@@ -617,9 +618,9 @@ export default {
 		if (orderAsc || orderDesc) {
 			const reducer = (p, c) => p + Math.abs(c.value);
 
-			fn = (t1, t2) => {
-				const t1Sum = t1.values.reduce(reducer, 0);
-				const t2Sum = t2.values.reduce(reducer, 0);
+			fn = (t1: IData | IDataRow, t2: IData | IDataRow) => {
+				const t1Sum = "values" in t1 ? t1.values.reduce(reducer, 0) : t1.value;
+				const t2Sum = "values" in t2 ? t2.values.reduce(reducer, 0) : t2.value;
 
 				return isArc ?
 					(orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
@@ -743,20 +744,23 @@ export default {
 		let minDist = config.point_sensitivity;
 		let closest;
 
-		// find mouseovering bar
+		// find mouseovering bar/candlestick
+		// https://github.com/naver/billboard.js/issues/2434
 		data
-			.filter(v => $$.isBarType(v.id))
+			.filter(v => $$.isBarType(v.id) || $$.isCandlestickType(v.id))
 			.forEach(v => {
-				const shape = main.select(`.${CLASS.bars}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.bar}-${v.index}`).node();
+				const selector = $$.isBarType(v.id) ?
+					`.${CLASS.chartBar}.${CLASS.target}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.bar}-${v.index}` :
+					`.${CLASS.chartCandlestick}.${CLASS.target}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.candlestick}-${v.index} path`;
 
-				if (!closest && $$.isWithinBar(shape)) {
+				if (!closest && $$.isWithinBar(main.select(selector).node())) {
 					closest = v;
 				}
 			});
 
-		// find closest point from non-bar
+		// find closest point from non-bar/candlestick
 		data
-			.filter(v => !$$.isBarType(v.id))
+			.filter(v => !$$.isBarType(v.id) && !$$.isCandlestickType(v.id))
 			.forEach(v => {
 				const d = $$.dist(v, pos);
 
@@ -981,6 +985,19 @@ export default {
 			(isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
 			(isArray(d.value) && d.value.length === 2)
 		);
+	},
+
+	/**
+	 * Determine if bar has ranged data
+	 * @param {Array} d data value
+	 * @returns {boolean}
+	 * @private
+	 */
+	isBarRangeType(d): boolean {
+		const $$ = this;
+		const {value} = d;
+
+		return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(v => isNumber(v));
 	},
 
 	/**

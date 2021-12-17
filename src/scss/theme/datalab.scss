@@ -42,7 +42,6 @@ $text-font-size: 11px;
 .bb-axis-y text, .bb-axis-y2 text {
     fill: #737373;
 }
-.bb-axis-y2 .tick {}
 
 .bb-event-rects {
     fill-opacity: 1 !important;
@@ -62,6 +61,8 @@ $text-font-size: 11px;
 
 /*-- Grid --*/
 .bb-grid {
+    pointer-events: none;
+
     line {
         stroke: #f1f1f1;
     }
@@ -210,10 +211,6 @@ $text-font-size: 11px;
         font-size: 13px;
         padding: 2px 8px;
         text-align:left;
-        // border-bottom: solid 2px red;
-        // background-color: #000;
-        // color: #fff;
-
         border-bottom: solid 2px #ff2d2d;
         background-color: #0b00b1;
         color: #fffdfd;
@@ -221,7 +218,6 @@ $text-font-size: 11px;
 
     td {
         padding: 4px 6px;
-        // background-color:#fff;
 
         &:first-child {
             padding-left: 8px;
@@ -288,7 +284,7 @@ $text-font-size: 11px;
     font-size: 1.3em;
 }
 
-.bb-chart-arcs-gauge-title {
+text.bb-chart-arcs-gauge-title {
     dominant-baseline: middle;
     font-size: 2.7em;
 }

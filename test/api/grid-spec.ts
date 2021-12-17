@@ -164,6 +164,40 @@ describe("API grid", function() {
 		});
 	});
 
+	describe("Add xgrids() when is zoomed", () => {
+		before(() => {
+			chart = util.generate({
+				data: {
+					columns: [
+					  ["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "line"
+				},
+				zoom: {
+					enabled: true
+				},
+				transition: {
+					duration: 0
+				}
+			});
+		});
+
+		it("grid should be added when is zoomed without zoom reset.", () => {
+			const zoomDomain = [1, 3];
+
+			// when
+			chart.zoom(zoomDomain);
+			chart.xgrids([{value: 2, text: "Label 2"}]);
+
+			expect(chart.zoom().map(Math.round)).to.eql(zoomDomain);
+			
+			const line = chart.internal.$el.gridLines.x.select("line");
+
+			expect(+line.attr("x1")).to.be.equal(298);
+			expect(+line.attr("y2")).to.be.equal(426);
+		});
+	});
+
 	describe("ygrids()", () => {
 		before(() => {
 			chart = util.generate({

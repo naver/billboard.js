@@ -723,6 +723,97 @@ describe("SHAPE BAR", () => {
 		});
 	});
 
+	describe("bar radius", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data", 0, 30],
+					],
+					type: "bar"
+				},
+				clipPath: false,
+				bar: {
+					radius: {
+						ratio: 0.2
+					}
+				}
+			}
+		});
+
+		// https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#arcs
+		it("for zero value, Arc 'a' path command shouldn't be added ", () => {
+			expect(chart.$.bar.bars.attr("d").indexOf("a") === -1).to.be.true;
+		});
+
+		it("set options", () => {
+			args.data.columns[0][0] = 2;
+		});
+
+		it("clip-path attribute should be added, to avoid wrong rendering for small values", () => {
+			const chartBars = chart.$.main.select(`.${CLASS.chartBars}`).node();
+
+			expect(chartBars.getAttribute("clip-path")).to.be.ok;
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", -80, 200],
+						["data2", -130, 50],
+						["data3", 80, 100],
+						["data4", 120, 100],
+						["data5", 120, -100],
+						["data6", -120, 150]
+					],
+					type: "bar",
+					groups: [
+						["data1", "data2", "data3"],
+						["data4", "data5"],
+					],
+					order: "desc"
+				},
+				bar: {
+					radius: {
+						ratio: 0.4
+					}
+				}
+			};
+		});
+
+		it("should apply bar radius for stacking bars", () => {
+			let radiusCount = 0;
+			const expected = [
+				[
+					{id: "data1", value: -80},
+					{id: "data3", value: 80},
+					{id: "data5", value: 120},
+					{id: "data6", value: -120}
+				],
+				[
+					{id: "data1", value: 200},
+					{id: "data4", value: 100},
+					{id: "data5", value: -100},
+					{id: "data6", value: 150}
+				]
+			];
+
+			chart.$.bar.bars.each(function(d) {
+				const hasRadius = this.getAttribute("d").indexOf("a") > -1;
+
+				if (hasRadius) {
+					const found = expected[d.index].some(v => v.id === d.id && v.value === d.value);
+
+					expect(found).to.be.true;
+					radiusCount++;
+				}
+			});
+
+			expect(radiusCount).to.be.equal(8);
+		});
+	});
+
 	describe("bar position", () => {
 		before(() => {
 			args = {
@@ -834,7 +925,7 @@ describe("SHAPE BAR", () => {
 			expect(
 				interval.every((v, i, arr) => (i > 0 ? arr[i - 1] === v : true))
 			).to.be.true;
-		})
+		});
 	});
 
 	describe("bar sensitivity", () => {
@@ -1001,6 +1092,138 @@ describe("SHAPE BAR", () => {
 				});
 
 				done();
+			});
+		});
+	});
+
+	describe("bar within a range", () => {
+		it("should render bars with a single column", () => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", [100, 200], [200, 300]]
+					],
+					type: "bar"
+				}
+			});
+			const expectedPath = [
+				"M59.8,297.21212121212125V168.4242424242424 H239.2 V297.21212121212125z",
+				"M358.8,168.4242424242424V39.63636363636365 H538.2 V168.4242424242424z"
+			];
+			chart.$.bar.bars.each(function(d, i) {
+				expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
+			});
+		});
+
+		// it("should throw an error with an array value when it's numbers of elements greater than 2", () => {
+		// 	const generateChart = () => {
+		// 		chart = util.generate({
+		// 			data: {
+		// 				columns: [
+		// 					["data1", [100, 200, 300]]
+		// 				],
+		// 				type: "bar"
+		// 			}
+		// 		});
+		// 	};
+		// 	expect(generateChart).to.throw();
+		// });
+
+		// it("should throw an error with reversed ranges", () => {
+		// 	const generateChart = () => {
+		// 		chart = util.generate({
+		// 			data: {
+		// 				columns: [
+		// 					["data1", [200, 100]]
+		// 				],
+		// 				type: "bar"
+		// 			}
+		// 		});
+		// 	};
+		// 	expect(generateChart).to.throw();
+		// });
+
+		it("should render bars with multiple columns", () => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", [100, 200], [200, 300]],
+						["data2", [-100, 100], [-50, -30]],
+					],
+					type: "bar"
+				}
+			});
+			const expectedPathMap = {
+				data1: [
+					"M58.8,213.5V124.95833333333331 H147 V213.5z",
+					"M352.8,124.95833333333331V36.41666666666668 H441 V124.95833333333331z"
+				],
+				data2: [
+					"M147,390.5833333333333V213.5 H235.2 V390.5833333333333z",
+					"M441,346.3125V328.6041666666667 H529.2 V346.3125z"
+				],
+			};
+			chart.$.bar.bars.each(function(d, i) {
+				expect(this.getAttribute("d")).to.be.equal(expectedPathMap[d.id][i]);
+			});
+		});
+
+		it("should render bars with single values and ranges together", () => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 100, 200, [100, 200], [200, 300]],
+						["data2", -100, -50, [-100, 100], [-50, -30]],
+					],
+					type: "bar"
+				}
+			});
+			const expectedPathMap = {
+				data1: [
+					"M29.4,302.04166666666663V213.5 H73.5 V302.04166666666663z",
+					"M176.4,302.04166666666663V124.95833333333331 H220.5 V302.04166666666663z",
+					"M323.4,213.5V124.95833333333331 H367.5 V213.5z",
+					"M470.4,124.95833333333331V36.41666666666668 H514.5 V124.95833333333331z",
+				],
+				data2: [
+					"M73.5,302.04166666666663V390.5833333333333 H117.6 V302.04166666666663z",
+					"M220.5,302.04166666666663V346.3125 H264.6 V302.04166666666663z",
+					"M367.5,390.5833333333333V213.5 H411.6 V390.5833333333333z",
+					"M514.5,346.3125V328.6041666666667 H558.6 V346.3125z",
+				],
+			};
+			chart.$.bar.bars.each(function(d, i) {
+				expect(this.getAttribute("d")).to.be.equal(expectedPathMap[d.id][i]);
+			});
+		});
+
+		it("should render grouped bars", () => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 100, 200, [100, 200], [200, 300]],
+						["data2", -100, -50, [-100, 50], [-50, -30]],
+					],
+          type: "bar",
+          groups: [["data1", "data2"]],
+				}
+			});
+			const expectedPathMap = {
+				data1: [
+					"M29.4,302.04166666666663V213.5 H117.6 V302.04166666666663z",
+					"M176.4,302.04166666666663V124.95833333333331 H264.6 V302.04166666666663z",
+					"M323.4,213.5V124.95833333333331 H411.59999999999997 V213.5z",
+					"M470.4,124.95833333333331V36.41666666666668 H558.6 V124.95833333333331z",
+				],
+				data2: [
+					"M29.4,302.04166666666663V390.5833333333333 H117.6 V302.04166666666663z",
+					"M176.4,302.04166666666663V346.3125 H264.6 V302.04166666666663z",
+					"M323.4,390.5833333333333V257.77083333333337 H411.59999999999997 V390.5833333333333z",
+					"M470.4,346.3125V328.6041666666667 H558.6 V346.3125z",
+				],
+			};
+			chart.$.bar.bars.each(function(d, i) {
+				expect(this.getAttribute("d")).to.be.equal(expectedPathMap[d.id][i]);
 			});
 		});
 	});

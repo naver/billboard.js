@@ -364,6 +364,13 @@ describe("GRID", function() {
 				};
 			});
 
+			it("grid elements shouldn't receive any pointer events", () => {
+				const {$el: {grid, gridLines}} = chart.internal;
+
+				expect(grid.main.style("pointer-events")).to.be.equal("none");
+				expect(gridLines.main.style("pointer-events")).to.be.equal("none");
+			})
+
 			it("should show 3 grid lines", () => {
 				expect(chart.$.main.selectAll(`.${CLASS.xgrid}-lines .${CLASS.xgrid}-line`).size()).to.be.equal(3);
 			});

@@ -146,10 +146,11 @@ export default {
 
 		if (hasAxis) {
 			const isRotated = config.axis_rotated;
+			const resettedPadding = $$.getResettedPadding(1);
 
 			// update edges
 			const min = {
-				x: isRotated ? 1 : 0,
+				x: isRotated ? resettedPadding : 0,
 				y: isRotated ? 0 : height,
 				subX: isRotated ? 1 : 0,
 				subY: isRotated ? 0 : height2
@@ -157,7 +158,7 @@ export default {
 
 			const max = {
 				x: isRotated ? height : width,
-				y: isRotated ? width : 1,
+				y: isRotated ? width : resettedPadding,
 				subX: isRotated ? height : width,
 				subY: isRotated ? width2 : 1
 			};

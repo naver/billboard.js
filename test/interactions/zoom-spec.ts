@@ -449,6 +449,17 @@ describe("ZOOM", function() {
 			};
 		});
 
+		it("check event props on zoomEnd to not throw error.", () => {
+			const {internal} = chart;
+
+			internal.zoom.startEvent = {
+				type: "touch",
+				changedTouches: [1]
+			};
+
+			expect(internal.onZoomEnd()).to.not.throw;
+		});
+
 		it("check for data zoom", done => {
 			const {eventReceiver} = chart.internal.state;
 			const xValue = eventReceiver.coords[2].x;
@@ -590,7 +601,7 @@ describe("ZOOM", function() {
 					done();
 				}
 			});
-		})
+		});
 	});
 
 	describe("zoom on regions", () => {

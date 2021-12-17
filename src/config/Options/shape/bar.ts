@@ -15,7 +15,6 @@ export default {
 	 * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
 	 * @property {number} [bar.padding=0] The padding pixel value between each bar.
 	 * @property {number} [bar.radius] Set the radius of bar edge in pixel.
-	 * - **NOTE:** Works only for non-stacked bar
 	 * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
 	 * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
 	 * @property {number} [bar.width] Change the width of bar chart.
@@ -36,7 +35,7 @@ export default {
 	 *  bar: {
 	 *      padding: 1,
 	 *
-	 *      // the 'radius' option can be used only for non-stacking bars
+	 *      // bar radius
 	 *      radius: 10,
 	 *      // or
 	 *      radius: {

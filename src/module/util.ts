@@ -60,23 +60,23 @@ export {
 };
 
 const isValue = (v: any): boolean => v || v === 0;
-const isFunction = (v: any): boolean => typeof v === "function";
-const isString = (v: any): boolean => typeof v === "string";
-const isNumber = (v: any): boolean => typeof v === "number";
-const isUndefined = (v: any): boolean => typeof v === "undefined";
-const isDefined = (v: any): boolean => typeof v !== "undefined";
-const isboolean = (v: any): boolean => typeof v === "boolean";
-const ceil10 = (v: any): number => Math.ceil(v / 10) * 10;
-const asHalfPixel = (n: any): number => Math.ceil(n) + 0.5;
+const isFunction = (v: unknown): v is ((...args: any[]) => any) => typeof v === "function";
+const isString = (v: unknown): v is string => typeof v === "string";
+const isNumber = (v: unknown): v is number => typeof v === "number";
+const isUndefined = (v: unknown): v is undefined => typeof v === "undefined";
+const isDefined = (v: unknown): boolean => typeof v !== "undefined";
+const isboolean = (v: unknown): boolean => typeof v === "boolean";
+const ceil10 = (v: number): number => Math.ceil(v / 10) * 10;
+const asHalfPixel = (n: number): number => Math.ceil(n) + 0.5;
 const diffDomain = (d: number[]): number => d[1] - d[0];
-const isObjectType = (v: any): boolean => typeof v === "object";
-const isEmpty = (o: any): boolean => (
+const isObjectType = (v: unknown): v is Record<string | number, any> => typeof v === "object";
+const isEmpty = (o: unknown): boolean => (
 	isUndefined(o) || o === null ||
 	(isString(o) && o.length === 0) ||
 	(isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0) ||
 	(isNumber(o) && isNaN(o))
 );
-const notEmpty = (o: any): boolean => !isEmpty(o);
+const notEmpty = (o: unknown): boolean => !isEmpty(o);
 
 /**
  * Check if is array
@@ -84,7 +84,7 @@ const notEmpty = (o: any): boolean => !isEmpty(o);
  * @returns {boolean}
  * @private
  */
-const isArray = (arr: any): boolean => Array.isArray(arr);
+const isArray = (arr: any): arr is any[] => Array.isArray(arr);
 
 /**
  * Check if is object
@@ -125,14 +125,15 @@ function hasValue(dict: object, value: any): boolean {
 /**
  * Call function with arguments
  * @param {Function} fn Function to be called
- * @param {*} args Arguments
+ * @param {*} thisArg "this" value for fn
+ * @param {*} args Arguments for fn
  * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
-function callFn(fn, ...args): boolean {
+function callFn(fn: unknown, thisArg: any, ...args: any[]): boolean {
 	const isFn = isFunction(fn);
 
-	isFn && fn.call(...args);
+	isFn && fn.call(thisArg, ...args);
 	return isFn;
 }
 
@@ -262,12 +263,10 @@ function getPathBox(
  * @private
  */
 function getPointer(event, element?: Element): number[] {
-	const touches = event && (event.touches || (event.sourceEvent && event.sourceEvent.touches));
-	const pointer = event ?
-		d3Pointer(touches ? touches[0] : event, element) :
-		[0, 0];
+	const touches = event && (event.touches || (event.sourceEvent && event.sourceEvent.touches))?.[0];
+	const pointer = d3Pointer(touches || event, element);
 
-	return pointer;
+	return pointer.map(v => (isNaN(v) ? 0 : v));
 }
 
 /**

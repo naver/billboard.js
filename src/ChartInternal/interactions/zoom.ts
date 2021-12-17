@@ -210,7 +210,7 @@ export default {
 
 		if (startEvent?.type.indexOf("touch") > -1) {
 			startEvent = startEvent.changedTouches[0];
-			e = e.changedTouches[0];
+			e = e?.changedTouches?.[0];
 		}
 
 		// if click, do nothing. otherwise, click interaction will be canceled.

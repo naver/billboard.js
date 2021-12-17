@@ -114,7 +114,7 @@ export default class TableView extends Plugin {
 			title: dataToShow.length ? this.config.categoryTitle : ""
 		});
 		let tbody = "";
-		const rows: number|string[][] = [];
+		const rows: (number|string)[][] = [];
 
 		dataToShow.forEach(v => {
 			thead += tplProcess(tpl.thead, {title: v.id});

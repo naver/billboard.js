@@ -2,9 +2,12 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Selection} from "d3-selection"; /* tslint:disable-line */
+import {Selection} from "d3-selection";
 
-export type PrimitiveArray = Array<string | boolean | number | Date | null>;
+export type PrimitiveArray = Array<
+	string | boolean | number | Date | null |
+	{[key: string]: number} | number[]
+>;
 export type ArrayOrString = string[] | string;
 export type d3Selection = Selection<any, any, any, any>;
 export type ChartTypes = "area"
@@ -31,16 +34,16 @@ export interface TargetIds {
 	ids: string[] | string;
 }
 
-export interface DataRow {
+export interface DataRow<T=number> {
 	id: string;
 	id_org: string; // eslint-disable-line camelcase
-	values: DataItem[];
+	values: Array<DataItem<T>>;
 }
 
-export interface DataItem {
+export interface DataItem<T=number> {
 	id: string;
 	x: number;
-	value: number;
+	value: T;
 	index?: number;
 	name?: string;
 	ratio?: number;

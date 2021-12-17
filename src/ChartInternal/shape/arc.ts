@@ -536,11 +536,7 @@ export default {
 				.attr("class", CLASS[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"])
 				.style("text-anchor", "middle");
 
-			if (hasGauge) {
-				text
-					.attr("dy", "-0.3em")
-					.style("font-size", "27px");
-			}
+			hasGauge && text.attr("dy", "-0.3em");
 
 			setTextValue(text, title, hasGauge ? undefined : [-0.6, 1.35], true);
 		}
@@ -565,7 +561,7 @@ export default {
 		mainArc = mainArc.enter().append("path")
 			.attr("class", $$.getClass("arc", true))
 			.style("fill", d => $$.color(d.data))
-			.style("cursor", d => (isSelectable?.bind($$.api)(d) ? "pointer" : null))
+			.style("cursor", d => (isSelectable?.bind?.($$.api)(d) ? "pointer" : null))
 			.style("opacity", "0")
 			.each(function(d) {
 				if ($$.isGaugeType(d.data)) {

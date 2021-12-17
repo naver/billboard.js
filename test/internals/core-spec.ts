@@ -304,7 +304,7 @@ describe("CORE", function() {
 			expect(main.attr("clip-path")).to.not.be.null;
 		});
 
-		it("set option axis.y2.show=true", () => {
+		it("set option: axis.y2.show=true", () => {
 			args.axis = {
 				y2: {
 					show: true
@@ -319,7 +319,7 @@ describe("CORE", function() {
 			expect(next).to.be.null;
 		});
 
-		it("set option clipPath=false", () => {
+		it("set option: clipPath=false", () => {
 			args.clipPath = false;
 		});
 
@@ -334,6 +334,82 @@ describe("CORE", function() {
 
 			// chart element should positioned after axis element
 			expect(d3Select(previous).classed(CLASS.grid)).to.be.true;
+		});
+	});
+
+	describe("padding", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [["data", 130, 100, 140, 35, 110, 50]],
+					type: "area"
+				},
+				axis: {},
+				legend: {
+					show: false
+				},
+				size: {
+					width: 300,
+					height: 150
+				},
+				padding: false
+			};
+		});
+
+		it("Area shape should have same size as the container's size.", () => {
+			const {width, height} = chart.$.line.areas.node().getBoundingClientRect();
+
+			expect(width).to.be.equal(args.size.width);
+			expect(height).to.be.equal(args.size.height);
+		});
+
+		it("Event <rect> element should have same size as the container's size.", () => {
+			const {width, height} = chart.internal.$el.eventRect.node().getBoundingClientRect();
+
+			expect(width).to.be.equal(args.size.width);
+			expect(height).to.be.equal(args.size.height);
+		});
+
+		it("Axes and subchart options should be disabled.", () => {
+			expect(chart.config("axis.x.show")).to.be.false;
+			expect(chart.config("axis.y.show")).to.be.false;
+			expect(chart.config("axis.y2.show")).to.be.false;
+			expect(chart.config("subchart.show")).to.be.false;
+		});
+
+		it("set option: axis.rotated = true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("Area shape should have same size as the container's size for rotated axis.", () => {
+			const {width, height} = chart.$.line.areas.node().getBoundingClientRect();
+
+			expect(width).to.be.equal(args.size.width);
+			expect(height).to.be.equal(args.size.height);
+		});
+
+		it("set option: data.labels = true", () => {
+			delete args.axis.rotated;
+			args.data.labels = true;
+		});
+
+		it("Area shape's height should be smaller as data label text shows.", () => {
+			const {width, height} = chart.$.line.areas.node().getBoundingClientRect();
+
+			expect(width).to.be.equal(args.size.width);
+			expect(height).to.be.below(args.size.height);
+		});
+
+		it("set option: data.type='bar'", () => {
+			delete args.data.labels;
+			args.data.type = "bar";
+		});
+
+		it("Event <rect> element should have same size as the container's size for 'bar' type.", () => {
+			const {width, height} = chart.internal.$el.eventRect.node().getBoundingClientRect();
+
+			expect(width).to.be.equal(args.size.width);
+			expect(height).to.be.equal(args.size.height);
 		});
 	});
 });

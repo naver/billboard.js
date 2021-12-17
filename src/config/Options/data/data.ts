@@ -300,8 +300,8 @@ export default {
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
 	 *  - `id` is the id of the data where the label is shown.
-	 *  - `i` is the index of the data point where the label is shown.
-	 *  - `j` is the sub index of the data point where the label is shown.<br><br>
+	 *  - `i` is the index of the data series point where the label is shown.
+	 *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
 	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
 	 * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
 	 * @property {string|object|Function} [data.labels.colors] Set label text colors.
@@ -331,7 +331,7 @@ export default {
 	 *
 	 *     // it's possible to set for each data
 	 *     format: {
-	 *         data1: function(v, id, i, j) { ... },
+	 *         data1: function(v, id, i, texts) { ... },
 	 *         ...
 	 *     },
 	 *
@@ -634,6 +634,18 @@ export default {
 	 *   ]
 	 * }
 	 *
+	 * // for 'bar' type, data can contain:
+	 * // - an array of [start, end] data following the order
+	 * data: {
+	 *   rows: [
+	 *      ["data1", "data2"],
+	 *      [[100, 150], 120],
+	 *      [[200, 300], 55],
+	 *      [[-400, 500], 60]
+	 *   ],
+	 *   type: "bar"
+	 * }
+	 *
 	 * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
 	 * // - an array of [high, mid, low] data following the order
 	 * // - or an object with 'high', 'mid' and 'low' key value
@@ -708,6 +720,16 @@ export default {
 	 *      ["data2", 200, 130, 90, 240, 130, 220],
 	 *      ["data3", 300, 200, 160, 400, 250, 250]
 	 *   ]
+	 * }
+	 *
+	 * // for 'bar' type, data can contain:
+	 * // - an array of [start, end] data following the order
+	 * data: {
+	 *   columns: [
+	 *     ["data1", -100, 50, [100, 200], [200, 300]],
+	 *     ["data2", -200, 300, [-100, 100], [-50, -30]],
+	 *   ],
+	 *   type: "bar"
 	 * }
 	 *
 	 * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:

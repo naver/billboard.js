@@ -827,4 +827,26 @@ describe("SHAPE GAUGE", () => {
 			expect(unitRect.y).to.be.greaterThan(valueRect.y + valueRect.height);
 		});
     });
+
+	describe("Interaction disabled", () => {
+        it("shoul generate correctly", () => {
+			try {
+				util.generate({
+					data: {
+						columns: [
+							["data", 91.4]
+						],
+						type: "gauge"
+					},
+					interaction: {
+					enabled: false
+					}
+				});
+
+				expect(true).to.be.true;
+			} catch (e) {
+				expect(false).to.be.true;
+			}
+		});
+	});
 });

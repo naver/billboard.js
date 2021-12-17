@@ -1409,4 +1409,55 @@ describe("TOOLTIP", function() {
 			chart.$.chart.style("margin-left", null);
 		});
 	});
+
+	describe("tooltip: candlestick type with xs option", () => {
+		before(() => {
+			args = {
+				data: {
+					xs: {
+						data1: "x"
+					},
+					columns: [
+						["x", "2021-02-20"],
+						["data1", { open: 1300, high: 1369, low: 1200, close: 1339, volume: 100 }]
+					],
+					type: "candlestick",
+					labels: true,
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+						format: "%Y-%m-%d",
+						}
+					}
+				}
+			};
+		});
+
+		it("should display tooltip", () => {
+			util.hoverChart(chart, "mousemove", {clientX: 180, clientY: 130});
+
+			expect(chart.$.tooltip.select(".value").html())
+				.to.be.equal(`<b>Open:</b> 1300 <b>High:</b> 1369 <b>Low:</b> 1200 <b>Close:</b> 1339 <b>Volume:</b> 100`);
+		});
+	});
+
+	describe("tooltip: bar type within a range", () => {
+
+		it("should display start ~ end", () => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", [1300, 1339]],
+					],
+					type: "bar",
+				}
+			});
+			util.hoverChart(chart, "mousemove", {clientX: 180, clientY: 130});
+
+			expect(chart.$.tooltip.select(".value").html())
+				.to.be.equal("1300 ~ 1339");
+		});
+	});
 });

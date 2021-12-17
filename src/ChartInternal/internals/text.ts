@@ -91,7 +91,7 @@ export default {
 			})
 			.style("fill", $$.updateTextColor.bind($$))
 			.style("fill-opacity", "0")
-			.each(function(d, i, j) {
+			.each(function(d, i, texts) {
 				const node = d3Select(this);
 				let {value} = d;
 
@@ -105,7 +105,7 @@ export default {
 					}
 				}
 
-				value = $$.dataLabelFormat(d.id)(value, d.id, i, j);
+				value = $$.dataLabelFormat(d.id)(value, d.id, i, texts);
 
 				if (isNumber(value)) {
 					this.textContent = value;
@@ -339,9 +339,9 @@ export default {
 		let xPos = points[0][0];
 
 
-		if ($$.hasType("candlestick")) {
+		if ($$.isCandlestickType(d)) {
 			if (isRotated) {
-				xPos = $$.getCandlestickData(d)._isUp ?
+				xPos = $$.getCandlestickData(d)?._isUp ?
 					points[2][2] + 4 : points[2][1] - 4;
 			} else {
 				xPos += (points[1][0] - xPos) / 2;

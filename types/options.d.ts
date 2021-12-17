@@ -64,7 +64,14 @@ export interface ChartOptions {
 		height?: number;
 	};
 
-	padding?: {
+	/**
+	 * Set padding of chart, and accepts object or boolean type.
+	 * - `Object`: Specify each side's padding.
+	 * - `false`: Remove padding completely and make shape to fully occupy the container element.
+	 *   - In this case, axes and subchart will be hidden.
+	 *   - To adjust some padding from this state, use `axis.[x|y].padding` option.
+	 */
+	padding?: boolean | {
 		/**
 		 * The padding on the top of the chart.
 		 */
@@ -1498,8 +1505,8 @@ export interface Data {
 		 * The arguments are:<br>
 		 *  - `v` is the value of the data point where the label is shown.
 		 *  - `id` is the id of the data where the label is shown.
-		 *  - `i` is the index of the data point where the label is shown.
-		 *  - `j` is the sub index of the data point where the label is shown.<br><br>
+		 *  - `i` is the index of the data series point where the label is shown.
+		 *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
 		 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
 		 */
 		format?: FormatFunction | { [key: string]: FormatFunction };
@@ -1695,5 +1702,5 @@ export type FormatFunction = (
 	v: any,
 	id: string,
 	i: number,
-	j: number
+	texts: SVGTextElement[]
 ) => void;
