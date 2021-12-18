@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.2-nightly-20211215004531
+ * @version 3.2.2-nightly-20211218004557
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1263,12 +1263,21 @@ var main = {
      * @name padding
      * @memberof Options
      * @type {object}
-     * @property {object} [padding] padding object
+     * @property {object|boolean} [padding=true] Set padding of chart, and accepts object or boolean type.
+     * - `Object`: Specify each side's padding.
+     * - `false`: Remove padding completely and make shape to fully occupy the container element.
+     *   - In this case, axes and subchart will be hidden.
+     *   - To adjust some padding from this state, use `axis.[x|y].padding` option.
      * @property {number} [padding.top] padding on the top of chart
      * @property {number} [padding.right] padding on the right of chart
      * @property {number} [padding.bottom] padding on the bottom of chart
      * @property {number} [padding.left] padding on the left of chart
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Padding)
      * @example
+     * // remove padding completely.
+     * padding: false,
+     *
+     * // or specify padding value for each side
      * padding: {
      *   top: 20,
      *   right: 20,
@@ -1276,6 +1285,7 @@ var main = {
      *   left: 20
      * }
      */
+    padding: true,
     padding_left: undefined,
     padding_right: undefined,
     padding_top: undefined,
@@ -4852,6 +4862,7 @@ var domain = {
                 padding[v] += $$.convertPixelToScale("y", lengths_1[i], domainLength);
             });
         }
+        padding = $$.getResettedPadding(padding);
         // if padding is set, the domain will be updated relative the current domain value
         // ex) $$.height=300, padding.top=150, domainLength=4  --> domain=6
         var p = config["".concat(pfx, "_padding")];
@@ -4904,7 +4915,7 @@ var domain = {
             defaultValue = maxDataCount > 1 ? (diff / (maxDataCount - 1)) / 2 : 0.5;
         }
         else {
-            defaultValue = diff * 0.01;
+            defaultValue = $$.getResettedPadding(diff * 0.01);
         }
         var _a = isNumber(padding) ?
             { left: padding, right: padding } : padding, _b = _a.left, left = _b === void 0 ? defaultValue : _b, _c = _a.right, right = _c === void 0 ? defaultValue : _c;
@@ -6036,16 +6047,17 @@ var scale = {
         var axis = $$.axis, config = $$.config, format = $$.format, org = $$.org, scale = $$.scale, _c = $$.state, width = _c.width, height = _c.height, width2 = _c.width2, height2 = _c.height2, hasAxis = _c.hasAxis;
         if (hasAxis) {
             var isRotated = config.axis_rotated;
+            var resettedPadding = $$.getResettedPadding(1);
             // update edges
             var min = {
-                x: isRotated ? 1 : 0,
+                x: isRotated ? resettedPadding : 0,
                 y: isRotated ? 0 : height,
                 subX: isRotated ? 1 : 0,
                 subY: isRotated ? 0 : height2
             };
             var max = {
                 x: isRotated ? height : width,
-                y: isRotated ? width : 1,
+                y: isRotated ? width : resettedPadding,
                 subX: isRotated ? height : width,
                 subY: isRotated ? width2 : 1
             };
@@ -6670,6 +6682,31 @@ var size = {
         }
     },
     /**
+     * Get resetted padding values when 'padding=false' option is set
+     * https://github.com/naver/billboard.js/issues/2367
+     * @param {number|object} v Padding values to be resetted
+     * @returns {number|object} Padding value
+     * @private
+     */
+    getResettedPadding: function (v) {
+        var $$ = this;
+        var config = $$.config;
+        var isNum = isNumber(v);
+        var p = isNum ? 0 : {};
+        if (config.padding === false) {
+            !isNum && Object.keys(v).forEach(function (key) {
+                // when data.lables=true, do not reset top padding
+                p[key] = (!isEmpty(config.data_labels) &&
+                    config.data_labels !== false &&
+                    key === "top") ? v[key] : 0;
+            });
+        }
+        else {
+            p = v;
+        }
+        return p;
+    },
+    /**
      * Update size values
      * @param {boolean} isInit If is called at initialization
      * @private
@@ -6706,6 +6743,7 @@ var size = {
             bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
             left: hasArc ? 0 : $$.getCurrentPaddingLeft()
         };
+        state.margin = $$.getResettedPadding(state.margin);
         // for subchart
         state.margin2 = isRotated ? {
             top: state.margin.top,
@@ -8098,6 +8136,13 @@ var ChartInternal = /** @class */ (function () {
         checkModuleImport($$);
         state.hasAxis = !$$.hasArcType();
         state.hasRadar = !state.hasAxis && $$.hasType("radar");
+        // when 'padding=false' is set, disable axes and subchart. Because they are useless.
+        if (config.padding === false) {
+            config.axis_x_show = false;
+            config.axis_y_show = false;
+            config.axis_y2_show = false;
+            config.subchart_show = false;
+        }
         $$.initParams();
         var bindto = {
             element: config.bindto,
@@ -8181,7 +8226,8 @@ var ChartInternal = /** @class */ (function () {
             config.legend_inset_anchor === "top-right";
         state.isLegendLeft = config.legend_inset_anchor === "top-left" ||
             config.legend_inset_anchor === "bottom-left";
-        state.rotatedPaddingRight = isRotated && !config.axis_x_show ? 0 : 30;
+        state.rotatedPadding.top = $$.getResettedPadding(state.rotatedPadding.top);
+        state.rotatedPadding.right = isRotated && !config.axis_x_show ? 0 : 30;
         state.inputType = convertInputType(config.interaction_inputType_mouse, config.interaction_inputType_touch);
     };
     ChartInternal.prototype.initWithData = function (data) {
@@ -20139,7 +20185,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.2-nightly-20211215004531
+ * @version 3.2.2-nightly-20211218004557
  */
 var bb = {
     /**
@@ -20149,7 +20195,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.2-nightly-20211215004531",
+    version: "3.2.2-nightly-20211218004557",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

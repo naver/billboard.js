@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20211215004531
+ * @version 3.2.2-nightly-20211218004557
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1686,12 +1686,21 @@ var Store = /*#__PURE__*/function () {
    * @name padding
    * @memberof Options
    * @type {object}
-   * @property {object} [padding] padding object
+   * @property {object|boolean} [padding=true] Set padding of chart, and accepts object or boolean type.
+   * - `Object`: Specify each side's padding.
+   * - `false`: Remove padding completely and make shape to fully occupy the container element.
+   *   - In this case, axes and subchart will be hidden.
+   *   - To adjust some padding from this state, use `axis.[x|y].padding` option.
    * @property {number} [padding.top] padding on the top of chart
    * @property {number} [padding.right] padding on the right of chart
    * @property {number} [padding.bottom] padding on the bottom of chart
    * @property {number} [padding.left] padding on the left of chart
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Padding)
    * @example
+   * // remove padding completely.
+   * padding: false,
+   *
+   * // or specify padding value for each side
    * padding: {
    *   top: 20,
    *   right: 20,
@@ -1699,6 +1708,7 @@ var Store = /*#__PURE__*/function () {
    *   left: 20
    * }
    */
+  padding: !0,
   padding_left: undefined,
   padding_right: undefined,
   padding_top: undefined,
@@ -5738,9 +5748,10 @@ var colorizePattern = function (pattern, color, id) {
       ["bottom", "top"].forEach(function (v, i) {
         padding[v] += $$.convertPixelToScale("y", lengths[i], domainLength);
       });
-    } // if padding is set, the domain will be updated relative the current domain value
-    // ex) $$.height=300, padding.top=150, domainLength=4  --> domain=6
+    }
 
+    padding = $$.getResettedPadding(padding); // if padding is set, the domain will be updated relative the current domain value
+    // ex) $$.height=300, padding.top=150, domainLength=4  --> domain=6
 
     var p = config[pfx + "_padding"];
 
@@ -5804,7 +5815,7 @@ var colorizePattern = function (pattern, color, id) {
       var maxDataCount = $$.getMaxDataCount();
       defaultValue = maxDataCount > 1 ? diff / (maxDataCount - 1) / 2 : .5;
     } else {
-      defaultValue = diff * .01;
+      defaultValue = $$.getResettedPadding(diff * .01);
     }
 
     var _ref = isNumber(padding) ? {
@@ -7116,15 +7127,16 @@ function getScale(type, min, max) {
     if (hasAxis) {
       var _scale$x,
           isRotated = config.axis_rotated,
+          resettedPadding = $$.getResettedPadding(1),
           min = {
-        x: isRotated ? 1 : 0,
+        x: isRotated ? resettedPadding : 0,
         y: isRotated ? 0 : height,
         subX: isRotated ? 1 : 0,
         subY: isRotated ? 0 : height2
       },
           max = {
         x: isRotated ? height : width,
-        y: isRotated ? width : 1,
+        y: isRotated ? width : resettedPadding,
         subX: isRotated ? height : width,
         subY: isRotated ? width2 : 1
       },
@@ -7835,6 +7847,31 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
   },
 
   /**
+   * Get resetted padding values when 'padding=false' option is set
+   * https://github.com/naver/billboard.js/issues/2367
+   * @param {number|object} v Padding values to be resetted
+   * @returns {number|object} Padding value
+   * @private
+   */
+  getResettedPadding: function getResettedPadding(v) {
+    var $$ = this,
+        config = $$.config,
+        isNum = isNumber(v),
+        p = isNum ? 0 : {};
+
+    if (config.padding === !1) {
+      isNum || Object.keys(v).forEach(function (key) {
+        // when data.lables=true, do not reset top padding
+        p[key] = !isEmpty(config.data_labels) && config.data_labels !== !1 && key === "top" ? v[key] : 0;
+      });
+    } else {
+      p = v;
+    }
+
+    return p;
+  },
+
+  /**
    * Update size values
    * @param {boolean} isInit If is called at initialization
    * @private
@@ -7872,7 +7909,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       right: hasArc ? 0 : $$.getCurrentPaddingRight(!0),
       bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
       left: hasArc ? 0 : $$.getCurrentPaddingLeft()
-    }; // for subchart
+    };
+    state.margin = $$.getResettedPadding(state.margin); // for subchart
 
     state.margin2 = isRotated ? {
       top: state.margin.top,
@@ -9478,7 +9516,15 @@ var ChartInternal = /*#__PURE__*/function () {
         $el = $$.$el;
     checkModuleImport($$);
     state.hasAxis = !$$.hasArcType();
-    state.hasRadar = !state.hasAxis && $$.hasType("radar");
+    state.hasRadar = !state.hasAxis && $$.hasType("radar"); // when 'padding=false' is set, disable axes and subchart. Because they are useless.
+
+    if (config.padding === !1) {
+      config.axis_x_show = !1;
+      config.axis_y_show = !1;
+      config.axis_y2_show = !1;
+      config.subchart_show = !1;
+    }
+
     $$.initParams();
     var bindto = {
       element: config.bindto,
@@ -9574,7 +9620,8 @@ var ChartInternal = /*#__PURE__*/function () {
     state.isLegendInset = config.legend_position === "inset";
     state.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right";
     state.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left";
-    state.rotatedPaddingRight = isRotated && !config.axis_x_show ? 0 : 30;
+    state.rotatedPadding.top = $$.getResettedPadding(state.rotatedPadding.top);
+    state.rotatedPadding.right = isRotated && !config.axis_x_show ? 0 : 30;
     state.inputType = convertInputType(config.interaction_inputType_mouse, config.interaction_inputType_touch);
   };
 
