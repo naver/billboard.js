@@ -109,12 +109,21 @@ export default {
 	 * @name padding
 	 * @memberof Options
 	 * @type {object}
-	 * @property {object} [padding] padding object
+	 * @property {object|boolean} [padding=true] Set padding of chart, and accepts object or boolean type.
+	 * - `Object`: Specify each side's padding.
+	 * - `false`: Remove padding completely and make shape to fully occupy the container element.
+	 *   - In this case, axes and subchart will be hidden.
+	 *   - To adjust some padding from this state, use `axis.[x|y].padding` option.
 	 * @property {number} [padding.top] padding on the top of chart
 	 * @property {number} [padding.right] padding on the right of chart
 	 * @property {number} [padding.bottom] padding on the bottom of chart
 	 * @property {number} [padding.left] padding on the left of chart
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Padding)
 	 * @example
+	 * // remove padding completely.
+	 * padding: false,
+	 *
+	 * // or specify padding value for each side
 	 * padding: {
 	 *   top: 20,
 	 *   right: 20,
@@ -122,6 +131,7 @@ export default {
 	 *   left: 20
 	 * }
 	 */
+	padding: true,
 	padding_left: <number|undefined> undefined,
 	padding_right: <number|undefined> undefined,
 	padding_top: <number|undefined> undefined,

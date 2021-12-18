@@ -182,6 +182,14 @@ export default class ChartInternal {
 		state.hasAxis = !$$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");
 
+		// when 'padding=false' is set, disable axes and subchart. Because they are useless.
+		if (config.padding === false) {
+			config.axis_x_show = false;
+			config.axis_y_show = false;
+			config.axis_y2_show = false;
+			config.subchart_show = false;
+		}
+
 		$$.initParams();
 
 		const bindto = {
@@ -290,7 +298,8 @@ export default class ChartInternal {
 		state.isLegendLeft = config.legend_inset_anchor === "top-left" ||
 			config.legend_inset_anchor === "bottom-left";
 
-		state.rotatedPaddingRight = isRotated && !config.axis_x_show ? 0 : 30;
+		state.rotatedPadding.top = $$.getResettedPadding(state.rotatedPadding.top);
+		state.rotatedPadding.right = isRotated && !config.axis_x_show ? 0 : 30;
 
 		state.inputType = convertInputType(
 			config.interaction_inputType_mouse,

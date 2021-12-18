@@ -3949,22 +3949,38 @@ d3.select(".chart_area")
 				}
 			}
 		],
-		Padding: {
-			options: {
-				padding: {
-					top: 40,
-					right: 100,
-					bottom: 40,
-					left: 100,
-				},
-				data: {
-					columns: [
-						["sample", 30, 200, 100, 400, 150, 250000000000]
-					],
-					type: "line"
+		Padding: [			
+			{
+				options: {
+					data: {
+						columns: [
+							["data", 130, 100, 140, 35, 110, 50]
+						],
+						type: "area"
+					},
+					legend: {
+					  show: false
+					},
+					padding: false
+				}
+			},
+			{
+				options: {
+					padding: {
+						top: 40,
+						right: 100,
+						bottom: 40,
+						left: 100,
+					},
+					data: {
+						columns: [
+							["sample", 30, 200, 100, 400, 150, 250000000000]
+						],
+						type: "line"
+					}
 				}
 			}
-		},
+		],
 		ColorOnover: [
 			{
 				options: {
