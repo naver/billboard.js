@@ -43,6 +43,7 @@ export const TYPE_METHOD_NEEDED = {
 	GAUGE: "initArc",
 	LINE: "initLine",
 	PIE: "initArc",
+	POLAR: "initPolar",
 	RADAR: "initCircle",
 	SCATTER: "initCircle",
 	SPLINE: "initLine",
