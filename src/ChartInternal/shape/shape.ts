@@ -75,6 +75,19 @@ export default {
 		return shape;
 	},
 
+	/**
+	 * Get shape's indices according it's position
+	 *
+	 * From the below example, indices will be:
+	 * ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
+	 *
+	 *	data1 data3   data1 data3
+	 *	data2 data4   data2 data4
+	 *	-------------------------
+	 *		 0             1
+	 * @param {Function} typeFilter Chart type filter function
+	 * @returns {object} Indices object with its position
+	 */
 	getShapeIndices(typeFilter): {[key: string]: number} {
 		const $$ = this;
 		const {config} = $$;
