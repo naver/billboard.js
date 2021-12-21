@@ -469,7 +469,7 @@ export interface ChartOptions {
 			depth?: number;
 
 			/**
-			 * Set the chart size.
+			 * Set the largest level value
 			 */
 			max?: number|undefined;
 
