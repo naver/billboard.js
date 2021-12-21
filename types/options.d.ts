@@ -461,6 +461,59 @@ export interface ChartOptions {
 		}
 	};
 
+	polar?: {
+		level?: {
+			/**
+			 * Set the level depth.
+			 */
+			depth?: number;
+
+			/**
+			 * Set the chart size.
+			 */
+			max?: number|undefined;
+
+			/**
+			 * Set the chart size.
+			 */
+			show?: boolean;
+
+			text?: {
+				/**
+				 * Set format function for the level value.
+				 */
+				format?: (this: Chart, x: string) => string;
+
+				/**
+				 * Show or hide level text.
+				 */
+				show?: boolean;
+			};
+		}
+
+		size?: {
+			/**
+			 * Set size ratio.
+			 */
+			ratio?: number;
+		}
+
+		/**
+		 * Set padding between data.
+		 */
+		padAngle?: number;
+
+		 /**
+		  * Sets the gap between pie arcs.
+		  */
+		padding?: number;
+ 
+		 /**
+		  * Set starting angle where data draws.
+		  */
+		startingAngle?: number;
+	}
+
 	pie?: {
 		label?: {
 			/**
