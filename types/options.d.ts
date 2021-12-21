@@ -507,12 +507,12 @@ export interface ChartOptions {
 		  * Sets the gap between pie arcs.
 		  */
 		padding?: number;
- 
+
 		 /**
 		  * Set starting angle where data draws.
 		  */
 		startingAngle?: number;
-	}
+	};
 
 	pie?: {
 		label?: {
