@@ -30,3 +30,12 @@ export interface IGridData {
 	text: string;
 	value: number;
 }
+
+export interface IDataIndice {
+    [key: string]: number;
+    __max__: number;
+}
+
+export type TIndices = {} | {
+    [key:string]: IDataIndice
+};

@@ -723,6 +723,38 @@ describe("SHAPE BAR", () => {
 		});
 	});
 
+	describe("bar indices", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 4, null, 4],
+						["data2", null, 3, null],
+						["data3", 1, 4, 4]
+					],
+					type: "bar"
+				},
+				bar: {
+					indices: {
+						removeNull: true
+					}
+				}
+			}
+		});
+
+		it("should redefined bar indices removing nullish values.", () => {
+			const {$: {bar}, internal} = chart;
+
+			bar.bars.each(d => {
+				const indices = internal.getIndices(null, d);
+
+				expect(indices.__max__).to.be.equal(1);
+				expect(indices.data3).to.be.equal(1);
+				expect(indices["data1" in indices ? "data1" : "data2"]).to.be.equal(0);
+			});
+		});
+	});
+
 	describe("bar radius", () => {
 		before(() => {
 			args = {

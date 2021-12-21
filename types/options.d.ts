@@ -276,6 +276,41 @@ export interface ChartOptions {
 
 	bar?: {
 		/**
+		 * Set threshold ratio to show/hide labels.
+		 */
+		label?: {
+			threshold?: number;
+		}
+
+		/**
+		 * Remove nullish data on bar indices positions.
+		 */
+		indices?: {
+			removeNull?: boolean;
+		}
+
+		/**
+		 * The padding pixel value between each bar.
+		 */
+		padding?: number;
+
+		/**
+		 * Set the radius of bar edge in pixel.
+		 * - NOTE: Only for non-stacking bars.
+		 */
+		radius?: number | {
+			/**
+			 * Set the radius ratio of bar edge in relative the bar's width.
+			 */
+			ratio?: number;
+		};
+
+		/**
+		 * The senstivity offset value for interaction boundary.
+		 */
+		sensitivity?: number;
+
+		/**
 		 * Change the width of bar chart. If ratio is specified, change the width of bar chart by ratio.
 		 */
 		width?: number | {
@@ -298,45 +333,10 @@ export interface ChartOptions {
 			}
 		};
 
-		headers?: Array<{ [key: string]: string; }>;
-
-		/**
-		 * Set threshold ratio to show/hide labels.
-		 */
-		label?: {
-			threshold?: number;
-		}
-
 		/**
 		 * Set if min or max value will be 0 on bar chart.
 		 */
 		zerobased?: boolean;
-
-		/**
-		 * Set space between bars in bar charts
-		 */
-		space?: number;
-
-		/**
-		 * The padding pixel value between each bar.
-		 */
-		padding?: number;
-
-		/**
-		 * Set the radius of bar edge in pixel.
-		 * - NOTE: Only for non-stacking bars.
-		 */
-		radius?: number | {
-			/**
-			 * Set the radius ratio of bar edge in relative the bar's width.
-			 */
-			ratio?: number;
-		};
-
-		/**
-		 * The senstivity offset value for interaction boundary.
-		 */
-		sensitivity?: number;
 	};
 
 	bubble?: {
