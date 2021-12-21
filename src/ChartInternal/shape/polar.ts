@@ -47,7 +47,7 @@ export default {
 		const {config} = $$;
 		const [width, height] = $$.getPolarSize();
 		const radius = config.polar_size_ratio * Math.min(width, height);
-		const ceilDataMax = $$.getMinMaxData().max[0].value
+		const ceilDataMax = $$.getMinMaxData().max[0].value;
 		const dataMax = config.polar_level_max || ceilDataMax;
 
 		// TODO: remove magic number
@@ -112,7 +112,7 @@ export default {
 		const [width, height] = $$.getPolarSize();
 
 		const depth = config.polar_level_depth;
-		const ceilDataMax = $$.getMinMaxData().max[0].value
+		const ceilDataMax = $$.getMinMaxData().max[0].value;
 		const dataMax = config.polar_level_max || ceilDataMax;
 
 		const polarLevels = polar.levels;
