@@ -154,7 +154,7 @@ export default {
 			.map(t => $$.addName($$.getValueOnIndex(t.values, index)));
 
 		if (filterNull) {
-			value = value.filter(v => isValue(v.value));
+			value = value.filter(v => v && "value" in v && isValue(v.value));
 		}
 
 		return value;
