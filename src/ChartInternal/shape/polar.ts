@@ -13,8 +13,8 @@ export default {
 		const padAngle = (
 			padding ? padding * 0.01 : config.polar_padAngle
 		) || 0;
-		const depth = config.polar_level_depth;
-		const ceilDataMax = Math.ceil($$.getMinMaxData().max[0].value / depth) * depth;
+		
+		
 
 		$el.polar = $el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartPolars);
@@ -28,7 +28,7 @@ export default {
 			.attr("class", CLASS.chartPolarArcs);
 
 		// Let every data is less or equal to dataMax and each level has integer value
-		current.dataMax = config.polar_level_max || ceilDataMax;
+		
 		// Let each value be 1, thus every arc has same central angle
 		// To match central angle with specific data, change "1" to specific function.
 		$$.polarPie = d3Pie()
@@ -51,7 +51,9 @@ export default {
 		const {config, state: {current}} = $$;
 		const [width, height] = $$.getPolarSize();
 		const radius = config.polar_size_ratio * Math.min(width, height);
-		const dataMax = current.dataMax;
+		const depth = config.polar_level_depth;
+		const ceilDataMax = Math.ceil($$.getMinMaxData().max[0].value / depth) * depth;
+		const dataMax = config.polar_level_max || ceilDataMax;
 
 		// TODO: remove magic number
 		const innerRadius = config.polar_size_ratio * config.polar_padding * 0.75;
@@ -114,7 +116,10 @@ export default {
 		const $$ = this;
 		const {config, state, $el: {polar}} = $$;
 		const [width, height] = $$.getPolarSize();
+
 		const depth = config.polar_level_depth;
+		const ceilDataMax = Math.ceil($$.getMinMaxData().max[0].value / depth) * depth;
+		const dataMax = config.polar_level_max || ceilDataMax;
 
 		const polarLevels = polar.levels;
 		const levelData = getRange(0, depth);
@@ -145,13 +150,13 @@ export default {
 
 		if (config.polar_level_text_show) {
 			levelEnter.append("text")
-				.style("text-anchor", "middle")
-				.text(d => levelTextFormat(state.current.dataMax / levelData.length * (d + 1)));
+				.style("text-anchor", "middle");
 
 			levelEnter
 				.merge(level)
 				.selectAll("text")
-				.attr("dy", d => -levelRatio[d] + 5);
+				.attr("dy", d => -levelRatio[d] + 5)
+				.text(d => levelTextFormat(dataMax / levelData.length * (d + 1)));
 		}
 	},
 
