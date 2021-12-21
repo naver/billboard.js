@@ -6,15 +6,13 @@ import {getRange} from "../../module/util";
 export default {
 	initPolar(): void {
 		const $$ = this;
-		const {config, state: {current}, $el} = $$;
+		const {config, $el} = $$;
 		const startingAngle = config.polar_startingAngle || 0;
 		// TODO: remove magic number
 		const padding = config.polar_padding;
 		const padAngle = (
 			padding ? padding * 0.01 : config.polar_padAngle
 		) || 0;
-		
-		
 
 		$el.polar = $el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartPolars);
@@ -27,8 +25,6 @@ export default {
 		$el.polar.arcs = $el.polar.append("g")
 			.attr("class", CLASS.chartPolarArcs);
 
-		// Let every data is less or equal to dataMax and each level has integer value
-		
 		// Let each value be 1, thus every arc has same central angle
 		// To match central angle with specific data, change "1" to specific function.
 		$$.polarPie = d3Pie()
@@ -48,7 +44,7 @@ export default {
 
 	getPolarArc(d): string {
 		const $$ = this;
-		const {config, state: {current}} = $$;
+		const config = $$;
 		const [width, height] = $$.getPolarSize();
 		const radius = config.polar_size_ratio * Math.min(width, height);
 		const depth = config.polar_level_depth;
@@ -114,7 +110,7 @@ export default {
 
 	updatePolarLevel(): void {
 		const $$ = this;
-		const {config, state, $el: {polar}} = $$;
+		const {config, $el: {polar}} = $$;
 		const [width, height] = $$.getPolarSize();
 
 		const depth = config.polar_level_depth;
