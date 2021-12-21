@@ -47,8 +47,7 @@ export default {
 		const {config} = $$;
 		const [width, height] = $$.getPolarSize();
 		const radius = config.polar_size_ratio * Math.min(width, height);
-		const depth = config.polar_level_depth;
-		const ceilDataMax = Math.ceil($$.getMinMaxData().max[0].value / depth) * depth;
+		const ceilDataMax = $$.getMinMaxData().max[0].value
 		const dataMax = config.polar_level_max || ceilDataMax;
 
 		// TODO: remove magic number
@@ -99,10 +98,9 @@ export default {
 		mainArc.exit().remove();
 
 		mainArc = mainArc.enter().append("path")
+			.merge(mainArc)
 			.attr("class", $$.getClass("arc", true))
 			.style("fill", d => $$.color(d.data))
-			.each(function(d) { this._current = d; })
-			.merge(mainArc)
 			.attr("d", d => $$.getPolarArc(d));
 
 		hasInteraction && $$.bindPolarEvent(mainArc);
@@ -114,7 +112,7 @@ export default {
 		const [width, height] = $$.getPolarSize();
 
 		const depth = config.polar_level_depth;
-		const ceilDataMax = Math.ceil($$.getMinMaxData().max[0].value / depth) * depth;
+		const ceilDataMax = $$.getMinMaxData().max[0].value
 		const dataMax = config.polar_level_max || ceilDataMax;
 
 		const polarLevels = polar.levels;
