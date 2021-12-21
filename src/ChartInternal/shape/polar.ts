@@ -44,7 +44,7 @@ export default {
 
 	getPolarArc(d): string {
 		const $$ = this;
-		const config = $$;
+		const {config} = $$;
 		const [width, height] = $$.getPolarSize();
 		const radius = config.polar_size_ratio * Math.min(width, height);
 		const depth = config.polar_level_depth;
