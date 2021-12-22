@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20211218004557
+ * @version 3.2.2-nightly-20211222004601
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1353,8 +1353,8 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
         getIndices = $$.getIndices;
 
     // override internal methods to positioning bars
-    $$.getIndices = function (indices, id, caller) {
-      return caller === "getShapeX" ? {} : getIndices.call(this, indices, id);
+    $$.getIndices = function (indices, d, caller) {
+      return caller === "getShapeX" ? {} : getIndices.call(this, indices, d);
     };
 
     $$.getBarW = function (type, axis) {

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20211218004557
+ * @version 3.2.2-nightly-20211222004601
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4024,7 +4024,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
     if (filterNull) {
       value = value.filter(function (v) {
-        return isValue(v.value);
+        return v && "value" in v && isValue(v.value);
       });
     }
 
@@ -7269,6 +7269,20 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
     return shape;
   },
+
+  /**
+   * Get shape's indices according it's position
+   *
+   * From the below example, indices will be:
+   * ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
+   *
+   *	data1 data3   data1 data3
+   *	data2 data4   data2 data4
+   *	-------------------------
+   *		 0             1
+   * @param {Function} typeFilter Chart type filter function
+   * @returns {object} Indices object with its position
+   */
   getShapeIndices: function getShapeIndices(typeFilter) {
     var $$ = this,
         config = $$.config,
@@ -7314,12 +7328,30 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
   /**
    * Get indices value based on data ID value
    * @param {object} indices Indices object
-   * @param {string} id Data id value
+   * @param {object} d Data row
+   * @param {string} caller Caller function name (Used only for 'sparkline' plugin)
    * @returns {object} Indices object
    * @private
    */
-  getIndices: function getIndices(indices, id) {
-    var xs = this.config.data_xs;
+  getIndices: function getIndices(indices, d) {
+    // eslint-disable-line
+    var $$ = this,
+        _$$$config = $$.config,
+        xs = _$$$config.data_xs,
+        removeNull = _$$$config.bar_indices_removeNull,
+        id = d.id,
+        index = d.index;
+
+    if ($$.isBarType(id) && removeNull) {
+      var ind = {}; // redefine bar indices order
+
+      $$.getAllValuesOnIndex(index, !0).forEach(function (v, i) {
+        ind[v.id] = i;
+        ind.__max__ = i;
+      });
+      return ind;
+    }
+
     return notEmpty(xs) ? indices[xs[id]] : indices;
   },
 
@@ -7349,7 +7381,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         halfWidth = isObjectType(offset) && (offset._$total.length ? offset._$total.reduce(sum) / 2 : 0);
 
     return function (d) {
-      var ind = $$.getIndices(indices, d.id, "getShapeX"),
+      var ind = $$.getIndices(indices, d, "getShapeX"),
           index = d.id in ind ? ind[d.id] : 0,
           targetsNum = (ind.__max__ || 0) + 1,
           x = 0;
@@ -7467,7 +7499,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       var id = d.id,
           value = d.value,
           x = d.x,
-          ind = $$.getIndices(indices, id),
+          ind = $$.getIndices(indices, d),
           scale = $$.getYScaleById(id, isSub);
 
       if ($$.isBarRangeType(d)) {
@@ -18279,9 +18311,11 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
           isNegative = d.value < 0,
           pathRadius = ["", ""],
           radius = 0,
-          isRadiusData = $$.isGrouped(d.id) ? $$.isStackingRadiusData(d) : !1; // switch points if axis is rotated, not applicable for sub chart
+          isGrouped = $$.isGrouped(d.id),
+          hasRadius = d.value !== 0 && getRadius,
+          isRadiusData = hasRadius && isGrouped ? $$.isStackingRadiusData(d) : !1; // switch points if axis is rotated, not applicable for sub chart
 
-      if (d.value !== 0 && getRadius && (!$$.isGrouped(d.id) || isRadiusData)) {
+      if (hasRadius && (!isGrouped || isRadiusData)) {
         var index = isRotated ? indexY : indexX,
             barW = points[2][index] - points[0][index];
         radius = getRadius(barW);
@@ -20131,6 +20165,7 @@ var cacheKey = KEY.radarPoints;
    * @memberof Options
    * @type {object}
    * @property {object} bar Bar object
+   * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
    * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
    * @property {number} [bar.padding=0] The padding pixel value between each bar.
    * @property {number} [bar.radius] Set the radius of bar edge in pixel.
@@ -20146,12 +20181,18 @@ var cacheKey = KEY.radarPoints;
    * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
    * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
    * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+   * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
    * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
    * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
    * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
    * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
    * @example
    *  bar: {
+   *      // remove nullish data on bar indices postions
+   *      indices: {
+   *          removeNull: true
+   *      },
+   *
    *      padding: 1,
    *
    *      // bar radius
@@ -20191,6 +20232,7 @@ var cacheKey = KEY.radarPoints;
    *  }
    */
   bar_label_threshold: 0,
+  bar_indices_removeNull: !1,
   bar_padding: 0,
   bar_radius: undefined,
   bar_radius_ratio: undefined,

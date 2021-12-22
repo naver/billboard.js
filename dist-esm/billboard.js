@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.2-nightly-20211218004557
+ * @version 3.2.2-nightly-20211222004601
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3416,7 +3416,7 @@ var data$1 = {
         var value = $$.filterTargetsToShow($$.data.targets)
             .map(function (t) { return $$.addName($$.getValueOnIndex(t.values, index)); });
         if (filterNull) {
-            value = value.filter(function (v) { return isValue(v.value); });
+            value = value.filter(function (v) { return v && "value" in v && isValue(v.value); });
         }
         return value;
     },
@@ -6162,6 +6162,19 @@ var shape = {
         }
         return shape;
     },
+    /**
+     * Get shape's indices according it's position
+     *
+     * From the below example, indices will be:
+     * ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
+     *
+     *	data1 data3   data1 data3
+     *	data2 data4   data2 data4
+     *	-------------------------
+     *		 0             1
+     * @param {Function} typeFilter Chart type filter function
+     * @returns {object} Indices object with its position
+     */
     getShapeIndices: function (typeFilter) {
         var $$ = this;
         var config = $$.config;
@@ -6201,12 +6214,25 @@ var shape = {
     /**
      * Get indices value based on data ID value
      * @param {object} indices Indices object
-     * @param {string} id Data id value
+     * @param {object} d Data row
+     * @param {string} caller Caller function name (Used only for 'sparkline' plugin)
      * @returns {object} Indices object
      * @private
      */
-    getIndices: function (indices, id) {
-        var xs = this.config.data_xs;
+    getIndices: function (indices, d, caller) {
+        var $$ = this;
+        var _a = $$.config, xs = _a.data_xs, removeNull = _a.bar_indices_removeNull;
+        var id = d.id, index = d.index;
+        if ($$.isBarType(id) && removeNull) {
+            var ind_1 = {};
+            // redefine bar indices order
+            $$.getAllValuesOnIndex(index, true)
+                .forEach(function (v, i) {
+                ind_1[v.id] = i;
+                ind_1.__max__ = i;
+            });
+            return ind_1;
+        }
         return notEmpty(xs) ?
             indices[xs[id]] : indices;
     },
@@ -6231,7 +6257,7 @@ var shape = {
         var sum = function (p, c) { return p + c; };
         var halfWidth = isObjectType(offset) && (offset._$total.length ? offset._$total.reduce(sum) / 2 : 0);
         return function (d) {
-            var ind = $$.getIndices(indices, d.id, "getShapeX");
+            var ind = $$.getIndices(indices, d, "getShapeX");
             var index = d.id in ind ? ind[d.id] : 0;
             var targetsNum = (ind.__max__ || 0) + 1;
             var x = 0;
@@ -6335,7 +6361,7 @@ var shape = {
         var _a = $$.getShapeOffsetData(typeFilter), shapeOffsetTargets = _a.shapeOffsetTargets, indexMapByTargetId = _a.indexMapByTargetId;
         return function (d, idx) {
             var id = d.id, value = d.value, x = d.x;
-            var ind = $$.getIndices(indices, id);
+            var ind = $$.getIndices(indices, d);
             var scale = $$.getYScaleById(id, isSub);
             if ($$.isBarRangeType(d)) {
                 // TODO use range.getStart()
@@ -16143,8 +16169,10 @@ var shapeBar = {
             var isNegative = d.value < 0;
             var pathRadius = ["", ""];
             var radius = 0;
-            var isRadiusData = $$.isGrouped(d.id) ? $$.isStackingRadiusData(d) : false;
-            if ((d.value !== 0 && getRadius) && (!$$.isGrouped(d.id) || isRadiusData)) {
+            var isGrouped = $$.isGrouped(d.id);
+            var hasRadius = d.value !== 0 && getRadius;
+            var isRadiusData = hasRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
+            if (hasRadius && (!isGrouped || isRadiusData)) {
                 var index = isRotated ? indexY : indexX;
                 var barW = points[2][index] - points[0][index];
                 radius = getRadius(barW);
@@ -17816,6 +17844,7 @@ var optBar = {
      * @memberof Options
      * @type {object}
      * @property {object} bar Bar object
+     * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
      * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
      * @property {number} [bar.padding=0] The padding pixel value between each bar.
      * @property {number} [bar.radius] Set the radius of bar edge in pixel.
@@ -17831,12 +17860,18 @@ var optBar = {
      * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
      * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
      * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+     * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
      * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
      * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
      * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
      * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
      * @example
      *  bar: {
+     *      // remove nullish data on bar indices postions
+     *      indices: {
+     *          removeNull: true
+     *      },
+     *
      *      padding: 1,
      *
      *      // bar radius
@@ -17876,6 +17911,7 @@ var optBar = {
      *  }
      */
     bar_label_threshold: 0,
+    bar_indices_removeNull: false,
     bar_padding: 0,
     bar_radius: undefined,
     bar_radius_ratio: undefined,
@@ -20185,7 +20221,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.2-nightly-20211218004557
+ * @version 3.2.2-nightly-20211222004601
  */
 var bb = {
     /**
@@ -20195,7 +20231,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.2-nightly-20211218004557",
+    version: "3.2.2-nightly-20211222004601",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
