@@ -58,26 +58,8 @@ export default {
 			.outerRadius((d: any) => d.data.values.reduce((a, b) => a + b.value, 0) / dataMax * radius)(d) || "M 0 0";
 	},
 
-	updateTargetsForPolarArc(targets): void {
-		const $$ = this;
-		const {$el} = $$;
-
-		const classChartArc = $$.getChartClass("Arc");
-		const classArcs = $$.getClass("arcs", true);
-		const classFocus = $$.classFocus.bind($$);
-		const chartArcs = $el.polar.arcs;
-
-		const mainPieUpdate = chartArcs
-			.selectAll(`.${CLASS.chartArc}`)
-			.data($$.polarPie(targets))
-			.attr("class", d => classChartArc(d) + classFocus(d.data));
-
-		const mainPieEnter = mainPieUpdate.enter().append("g")
-			.attr("class", classChartArc);
-
-		mainPieEnter.append("g")
-			.attr("class", classArcs)
-			.merge(mainPieUpdate);
+	updateTargetsForPolarArc(_targets): void {
+		// stay empty
 	},
 
 	redrawPolar(): void {
@@ -85,20 +67,26 @@ export default {
 		const {config} = $$;
 		const {polar} = $$.$el;
 		const translate = $$.getTranslate("polar");
+		const classChartArc = $$.getChartClass("Arc");
 		const hasInteraction = config.interaction_enabled;
 
 		polar.attr("transform", translate);
 		$$.updatePolarLevel();
 
 		let mainArc = polar.arcs
-			.selectAll(`.${CLASS.arcs}`)
-			.selectAll(`.${CLASS.arc}`)
-			.data($$.arcData.bind($$));
+			.selectAll(`.${CLASS.chartArc}`)
+			.data($$.polarPie($$.filterTargetsToShow()));
 
 		mainArc.exit().remove();
 
-		mainArc = mainArc.enter().append("path")
+		const mainArcEnter = mainArc.enter().append("g")
+			.attr("class", classChartArc);
+
+		mainArcEnter.append("path");
+
+		mainArc = mainArcEnter
 			.merge(mainArc)
+			.selectAll("path")
 			.attr("class", $$.getClass("arc", true))
 			.style("fill", d => $$.color(d.data))
 			.attr("d", d => $$.getPolarArc(d));
