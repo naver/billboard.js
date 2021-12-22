@@ -6,7 +6,13 @@ import {getRange} from "../../module/util";
 export default {
 	initPolar(): void {
 		const $$ = this;
-		const $el = $$;
+		const {config, $el} = $$;
+		const startingAngle = config.polar_startingAngle || 0;
+		// TODO: remove magic number
+		const padding = config.polar_padding;
+		const padAngle = (
+			padding ? padding * 0.01 : config.polar_padAngle
+		) || 0;
 
 		$el.polar = $el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartPolars);
@@ -77,9 +83,7 @@ export default {
 			.padAngle(padAngle);
 
 		// remove all `g` tag from previous polar chart
-		polar.arcs.selectAll("g").data([])
-			.exit()
-			.remove();
+		polar.arcs.selectAll("g").data([]).exit().remove();
 
 		let mainArc = polar.arcs
 			.selectAll("g")
