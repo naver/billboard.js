@@ -3741,6 +3741,42 @@ d3.select(".chart_area")
 		]
 	},
 	BarChartOptions: {
+		BarIndices: [
+			{
+				options: {
+					data: {
+						columns: [
+							['data1', 4, null, 4],
+							['data2', null, 3, null],
+							['data3', 1, 4, 4]
+						],
+						type: "bar"
+					},
+					bar: {
+						indices: {
+							removeNull: true
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							['data1', 4, null, 4],
+							['data2', null, 3, null],
+							['data3', 1, 4, 4]
+						],
+						type: "bar"
+					},
+					bar: {
+						indices: {
+							removeNull: false
+						}
+					}
+				}
+			},
+		],
 		BarPadding: {
 			options: {
 				data: {

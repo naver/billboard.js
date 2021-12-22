@@ -12,6 +12,7 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} bar Bar object
+	 * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
 	 * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
 	 * @property {number} [bar.padding=0] The padding pixel value between each bar.
 	 * @property {number} [bar.radius] Set the radius of bar edge in pixel.
@@ -27,12 +28,18 @@ export default {
 	 * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
 	 * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
 	 * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+	 * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
 	 * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
 	 * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
 	 * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
 	 * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
 	 * @example
 	 *  bar: {
+	 *      // remove nullish data on bar indices postions
+	 *      indices: {
+	 *          removeNull: true
+	 *      },
+	 *
 	 *      padding: 1,
 	 *
 	 *      // bar radius
@@ -72,6 +79,7 @@ export default {
 	 *  }
 	 */
 	bar_label_threshold: 0,
+	bar_indices_removeNull: false,
 	bar_padding: 0,
 	bar_radius: <number|{ratio: number}|undefined> undefined,
 	bar_radius_ratio: <number|undefined> undefined,

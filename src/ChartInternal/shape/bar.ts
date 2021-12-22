@@ -153,9 +153,11 @@ export default {
 			const pathRadius = ["", ""];
 			let radius = 0;
 
-			const isRadiusData = $$.isGrouped(d.id) ? $$.isStackingRadiusData(d) : false;
+			const isGrouped = $$.isGrouped(d.id);
+			const hasRadius = d.value !== 0 && getRadius;
+			const isRadiusData = hasRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
 
-			if ((d.value !== 0 && getRadius) && (!$$.isGrouped(d.id) || isRadiusData)) {
+			if (hasRadius && (!isGrouped || isRadiusData)) {
 				const index = isRotated ? indexY : indexX;
 				const barW = points[2][index] - points[0][index];
 

@@ -26,6 +26,7 @@ import {select as d3Select} from "d3-selection";
 import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
+import {IDataRow, IDataIndice, TIndices} from "../data/IData";
 
 export default {
 	/**
@@ -75,12 +76,25 @@ export default {
 		return shape;
 	},
 
-	getShapeIndices(typeFilter): {[key: string]: number} {
+	/**
+	 * Get shape's indices according it's position
+	 *
+	 * From the below example, indices will be:
+	 * ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
+	 *
+	 *	data1 data3   data1 data3
+	 *	data2 data4   data2 data4
+	 *	-------------------------
+	 *		 0             1
+	 * @param {Function} typeFilter Chart type filter function
+	 * @returns {object} Indices object with its position
+	 */
+	getShapeIndices(typeFilter): TIndices {
 		const $$ = this;
 		const {config} = $$;
 		const xs = config.data_xs;
 		const hasXs = notEmpty(xs);
-		const indices = {};
+		const indices: TIndices = {};
 		let i: any = hasXs ? {} : 0;
 
 		if (hasXs) {
@@ -121,12 +135,28 @@ export default {
 	/**
 	 * Get indices value based on data ID value
 	 * @param {object} indices Indices object
-	 * @param {string} id Data id value
+	 * @param {object} d Data row
+	 * @param {string} caller Caller function name (Used only for 'sparkline' plugin)
 	 * @returns {object} Indices object
 	 * @private
 	 */
-	getIndices(indices, id: string) {
-		const xs = this.config.data_xs;
+	getIndices(indices: TIndices, d: IDataRow, caller?: string): IDataIndice { // eslint-disable-line
+		const $$ = this;
+		const {data_xs: xs, bar_indices_removeNull: removeNull} = $$.config;
+		const {id, index} = d;
+
+		if ($$.isBarType(id) && removeNull) {
+			const ind = {} as IDataIndice;
+
+			// redefine bar indices order
+			$$.getAllValuesOnIndex(index, true)
+				.forEach((v, i) => {
+					ind[v.id] = i;
+					ind.__max__ = i;
+				});
+
+			return ind;
+		}
 
 		return notEmpty(xs) ?
 			indices[xs[id]] : indices;
@@ -138,12 +168,12 @@ export default {
 	 * @returns {number} Max number
 	 * @private
 	 */
-	getIndicesMax(indices): number {
+	getIndicesMax(indices: TIndices | IDataIndice): number {
 		return notEmpty(this.config.data_xs) ?
 			// if is multiple xs, return total sum of xs' __max__ value
 			Object.keys(indices)
 				.map(v => indices[v].__max__ || 0)
-				.reduce((acc, curr) => acc + curr) : indices.__max__;
+				.reduce((acc, curr) => acc + curr) : (indices as IDataIndice).__max__;
 	},
 
 	getShapeX(offset, indices, isSub?: boolean): (d) => number {
@@ -157,7 +187,7 @@ export default {
 		);
 
 		return d => {
-			const ind = $$.getIndices(indices, d.id, "getShapeX");
+			const ind = $$.getIndices(indices, d, "getShapeX");
 			const index = d.id in ind ? ind[d.id] : 0;
 			const targetsNum = (ind.__max__ || 0) + 1;
 			let x = 0;
@@ -276,7 +306,7 @@ export default {
 
 		return (d, idx) => {
 			const {id, value, x} = d;
-			const ind = $$.getIndices(indices, id);
+			const ind = $$.getIndices(indices, d);
 			const scale = $$.getYScaleById(id, isSub);
 
 			if ($$.isBarRangeType(d)) {
