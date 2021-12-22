@@ -28,9 +28,6 @@ export default {
 		// Let each value be 1, thus every arc has same central angle
 		// To match central angle with specific data, change "1" to specific function.
 		$$.polarPie = d3Pie()
-			.startAngle(startingAngle)
-			.endAngle(startingAngle + (2 * Math.PI))
-			.padAngle(padAngle)
 			.value(1);
 	},
 
@@ -58,7 +55,7 @@ export default {
 			.outerRadius((d: any) => d.data.values.reduce((a, b) => a + b.value, 0) / dataMax * radius)(d) || "M 0 0";
 	},
 
-	updateTargetsForPolarArc(_targets): void {
+	updateTargetsForPolarArc(): void {
 		// stay empty
 	},
 
@@ -69,15 +66,27 @@ export default {
 		const translate = $$.getTranslate("polar");
 		const classChartArc = $$.getChartClass("Arc");
 		const hasInteraction = config.interaction_enabled;
+		const startingAngle = config.polar_startingAngle || 0;
+		const padding = config.polar_padding;
+		const padAngle = (
+			padding ? padding * 0.01 : config.polar_padAngle
+		) || 0;
 
 		polar.attr("transform", translate);
 		$$.updatePolarLevel();
 
-		let mainArc = polar.arcs
-			.selectAll(`.${CLASS.chartArc}`)
-			.data($$.polarPie($$.filterTargetsToShow()));
+		let polarPie = $$.polarPie;
 
-		mainArc.exit().remove();
+		polarPie = polarPie
+			.startAngle(startingAngle)
+			.endAngle(startingAngle + (2 * Math.PI))
+			.padAngle(padAngle);
+
+		polar.arcs.selectAll("g").data([]).exit().remove();
+
+		let mainArc = polar.arcs
+			.selectAll("g")
+			.data(polarPie($$.filterTargetsToShow()));
 
 		const mainArcEnter = mainArc.enter().append("g")
 			.attr("class", classChartArc);
@@ -85,11 +94,12 @@ export default {
 		mainArcEnter.append("path");
 
 		mainArc = mainArcEnter
-			.merge(mainArc)
 			.selectAll("path")
 			.attr("class", $$.getClass("arc", true))
 			.style("fill", d => $$.color(d.data))
 			.attr("d", d => $$.getPolarArc(d));
+
+		mainArc.exit().remove();
 
 		hasInteraction && $$.bindPolarEvent(mainArc);
 	},
