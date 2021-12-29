@@ -8,6 +8,7 @@ import {
 	axisLeft as d3AxisLeft,
 	axisRight as d3AxisRight
 } from "d3-axis";
+import {select as d3Select} from "d3-selection";
 import AxisRenderer from "./AxisRenderer";
 import {getScale} from "../internals/scale";
 import CLASS from "../../config/classes";
@@ -948,8 +949,8 @@ class Axis {
 			const toCull = config[`axis_${id}_tick_culling`];
 
 			if (axis && toCull) {
-				const tickText = axis.selectAll(".tick text");
-				const tickValues = sortValue(tickText.data());
+				const tickNodes = axis.selectAll(".tick");
+				const tickValues = sortValue(tickNodes.data());
 				const tickSize = tickValues.length;
 				const cullingMax = config[`axis_${id}_tick_culling_max`];
 				let intervalForCulling;
@@ -962,11 +963,16 @@ class Axis {
 						}
 					}
 
-					tickText.each(function(d) {
-						this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : null;
+					tickNodes.each(function(d) {
+						const display = tickValues.indexOf(d) % intervalForCulling ? "none" : "";
+
+						config.axis_x_tick_culling_hideTickLines ?
+							d3Select(this).style("display", display) :
+							d3Select(this).select("text")
+								.style("display", display);
 					});
 				} else {
-					tickText.style("display", null);
+					tickNodes.style("display", null);
 				}
 
 				// set/unset x_axis_tick_clippath

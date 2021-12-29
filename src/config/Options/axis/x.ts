@@ -144,7 +144,7 @@ export default {
 
 	/**
 	 * Setting for culling ticks.<br><br>
-	 * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+	 * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines by default. If false is set, all of ticks will be shown.<br><br>
 	 * We can change the number of ticks to be shown by axis.x.tick.culling.max.
 	 * @name axis․x․tick․culling
 	 * @memberof Options
@@ -181,6 +181,25 @@ export default {
 	 * }
 	 */
 	axis_x_tick_culling_max: 10,
+
+	/**
+	 * Hide tick lines along with tick text.
+	 * @name axis․x․tick․culling․max
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default false
+	 * @example
+	 * axis: {
+	 *   x: {
+	 *     tick: {
+	 *       culling: {
+	 *           hideTickLines: true,
+	 *       }
+	 *     }
+	 *   }
+	 * }
+	 */
+	axis_x_tick_culling_hideTickLines: false,
 
 	/**
 	 * The number of x axis ticks to show.<br><br>

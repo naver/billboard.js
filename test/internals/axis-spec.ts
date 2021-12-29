@@ -2477,6 +2477,20 @@ describe("AXIS", function() {
 		it("check tick values are culled when axis is rotated", () => {
 			checkTickValues();
 		});
+
+		it("set options axis.x.culling.hideTickLines", () => {
+			args.axis.x.tick.culling.hideTickLines = true;
+		});
+		it("check that tick lines are hidden", () => {
+			const ticks = chart.internal.$el.axis.x.selectAll('.tick');
+			const styleQuery = 'g[style="display: none;"]';
+			const totalTicks = ticks.size();
+			const hiddenTicks = ticks.filter(styleQuery).size();
+			const shownTicks = ticks.filter(`:not(${styleQuery})`).size();
+			expect(shownTicks).above(1);
+			expect(shownTicks).lessThanOrEqual(args.axis.x.tick.culling.max)
+			expect(hiddenTicks).lessThan(totalTicks);
+		});
 	});
 	
 	describe("Axes tick padding", () => {
