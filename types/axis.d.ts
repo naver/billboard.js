@@ -197,14 +197,21 @@ export interface XTickConfiguration {
 
 	/**
 	 * Setting for culling ticks.
-	 * If true is set, the ticks will be culled, then only limitted tick text will be shown.
-	 * This option does not hide the tick lines. If false is set, all of ticks will be shown.
+	 * - `true`: the ticks will be culled, then only limited tick text will be shown.
+	 *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.x.tick.culling.lines=false`.
+	 * - `false`: all of ticks will be shown.
+	 * The number of ticks to be shown can be chaned by `axis.x.tick.culling.max`.
 	 */
 	culling?: boolean | {
 		/**
 		 * The number of tick texts will be adjusted to less than this value.
 		 */
 		max?: number;
+
+		/**
+		 * Control visibility of tick lines within culling option, along with tick text.
+		 */
+		lines?: boolean;
 	};
 
 	/**
@@ -334,14 +341,21 @@ export interface YTickConfiguration {
 
 	/**
 	 * Setting for culling ticks.
-	 * If true is set, the ticks will be culled, then only limitted tick text will be shown.
-	 * This option does not hide the tick lines. If false is set, all of ticks will be shown.
+	 * - `true`: the ticks will be culled, then only limited tick text will be shown.
+	 *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.[y|y2].tick.culling.lines=false`.
+	 * - `false`: all of ticks will be shown.
+	 * The number of ticks to be shown can be chaned by `axis.[y|y2].tick.culling.max`.
 	 */
 	culling?: boolean | {
 		/**
 		 * The number of tick texts will be adjusted to less than this value.
 		 */
 		max?: number;
+
+		/**
+		 * Control visibility of tick lines within culling option, along with tick text.
+		 */
+		lines?: boolean;
 	};
 
 	/**

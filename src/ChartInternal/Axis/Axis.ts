@@ -945,13 +945,16 @@ class Axis {
 
 			// subchart x axis should be aligned with x axis culling
 			const id = type === "subX" ? "x" : type;
-			const toCull = config[`axis_${id}_tick_culling`];
+
+			const cullingOptionPrefix = `axis_${id}_tick_culling`;
+			const toCull = config[cullingOptionPrefix];
 
 			if (axis && toCull) {
-				const tickText = axis.selectAll(".tick text");
-				const tickValues = sortValue(tickText.data());
+				const tickNodes = axis.selectAll(".tick");
+				const tickValues = sortValue(tickNodes.data());
 				const tickSize = tickValues.length;
-				const cullingMax = config[`axis_${id}_tick_culling_max`];
+				const cullingMax = config[`${cullingOptionPrefix}_max`];
+				const lines = config[`${cullingOptionPrefix}_lines`];
 				let intervalForCulling;
 
 				if (tickSize) {
@@ -962,11 +965,14 @@ class Axis {
 						}
 					}
 
-					tickText.each(function(d) {
-						this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : null;
+					tickNodes.each(function(d) {
+						if (tickValues.indexOf(d) % intervalForCulling) {
+							(lines ? this.querySelector("text") : this)
+								.style.display = "none";
+						}
 					});
 				} else {
-					tickText.style("display", null);
+					tickNodes.style("display", null);
 				}
 
 				// set/unset x_axis_tick_clippath
