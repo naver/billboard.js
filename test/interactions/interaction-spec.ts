@@ -9,6 +9,7 @@ import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import bb from "../../src";
 
 describe("INTERACTION", () => {
 	let chart;
@@ -763,6 +764,59 @@ describe("INTERACTION", () => {
 				}, chart);
 
 				expect(args.data.onclick.calledOnce).to.be.true;
+			});
+		});
+
+		describe("check for data.onclick on touch", () => {
+			let clicked = false;
+			let data;
+
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 10],
+							["data2", 20]
+						],
+						onclick: d => {
+							clicked = true;
+							data = d;
+						},
+						type: "pie"
+					},
+					interaction: {
+						inputType: {
+							touch: true
+						}
+					}
+				};
+			});
+
+			it("should be called data.oncick", done => {
+				new Promise((resolve, reject) => {
+					args.onrendered = resolve;
+
+					chart = util.generate(args);
+				}).then(() => {
+					const path = chart.$.arc.select("path.bb-arc-data2").node();
+
+					// when
+					util.fireEvent(path, "click", {
+						clientX: 400,
+						clientY: 500
+					}, chart);
+
+					expect(clicked).to.be.true;
+					expect(data).to.be.deep.equal({
+						id: 'data2',
+						value: 20,
+						ratio: 0.6666666666666666,
+						index: 1,
+						name: 'data2'
+					});
+
+					done();
+				});
 			});
 		});
 

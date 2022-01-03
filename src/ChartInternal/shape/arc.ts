@@ -795,6 +795,8 @@ export default {
 						return;
 					}
 
+					state.event = event;
+
 					const eventArc = getEventArc(event);
 					const datum: any = eventArc.datum();
 					const updated = (datum?.data && datum.data.id) ? $$.updateAngle(datum) : null;
