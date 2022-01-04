@@ -173,9 +173,11 @@ export default {
 	axis_y2_tick_format: <Function|undefined> undefined,
 
 	/**
-	 * Setting for culling ticks.<br><br>
-	 * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
-	 * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+	 * Setting for culling ticks.
+	 * - `true`: the ticks will be culled, then only limited tick text will be shown.<br>
+	 *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.y2.tick.culling.lines=false`.
+	 * - `false`: all of ticks will be shown.<br><br>
+	 * The number of ticks to be shown can be chaned by `axis.y2.tick.culling.max`.
 	 * @name axis․y2․tick․culling
 	 * @memberof Options
 	 * @type {boolean}
@@ -209,6 +211,25 @@ export default {
 	 * }
 	 */
 	axis_y2_tick_culling_max: 5,
+
+	/**
+	 * Control visibility of tick lines within culling option, along with tick text.
+	 * @name axis․y2․tick․culling․lines
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default true
+	 * @example
+	 * axis: {
+	 *   y2: {
+	 *     tick: {
+	 *       culling: {
+	 *           lines: false,
+	 *       }
+	 *     }
+	 *   }
+	 * }
+	 */
+	axis_y2_tick_culling_lines: true,
 
 	/**
 	 * Show or hide y2 axis outer tick.

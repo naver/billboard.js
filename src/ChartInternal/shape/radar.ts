@@ -314,6 +314,8 @@ export default {
 				return d && Object.keys(d).length === 1 ? d.index : undefined;
 			};
 			const hide = event => {
+				state.event = event;
+
 				const index = getIndex(event);
 				const noIndex = isUndefined(index);
 

@@ -50,3 +50,4 @@ Adrian Schmutzler <dev@schmutzler.it>
 Aziz Gazanchiyan <ZIZ@KMDPoland.pl>
 Eben Collins <collinseben@gmail.com>
 Shim Heungwoon <ajaxlab7@gmail.com>
+Marcos Gomez Castillo <marcos.gomez.castillo@tecsisa.com>
