@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20211231004548
+ * @version 3.2.2-nightly-20220104004606
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -13848,13 +13848,15 @@ var Axis_Axis = /*#__PURE__*/function () {
     ["subX", "x", "y", "y2"].forEach(function (type) {
       var axis = $el.axis[type],
           id = type === "subX" ? "x" : type,
-          toCull = config["axis_" + id + "_tick_culling"]; // subchart x axis should be aligned with x axis culling
+          cullingOptionPrefix = "axis_" + id + "_tick_culling",
+          toCull = config[cullingOptionPrefix]; // subchart x axis should be aligned with x axis culling
 
       if (axis && toCull) {
-        var tickText = axis.selectAll(".tick text"),
-            tickValues = sortValue(tickText.data()),
+        var tickNodes = axis.selectAll(".tick"),
+            tickValues = sortValue(tickNodes.data()),
             tickSize = tickValues.length,
-            cullingMax = config["axis_" + id + "_tick_culling_max"],
+            cullingMax = config[cullingOptionPrefix + "_max"],
+            lines = config[cullingOptionPrefix + "_lines"],
             intervalForCulling;
 
         if (tickSize) {
@@ -13865,11 +13867,13 @@ var Axis_Axis = /*#__PURE__*/function () {
             }
           }
 
-          tickText.each(function (d) {
-            this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : null;
+          tickNodes.each(function (d) {
+            if (tickValues.indexOf(d) % intervalForCulling) {
+              (lines ? this.querySelector("text") : this).style.display = "none";
+            }
           });
         } else {
-          tickText.style("display", null);
+          tickNodes.style("display", null);
         } // set/unset x_axis_tick_clippath
 
 
@@ -15680,15 +15684,16 @@ function smoothLines(el, type) {
   axis_x_tick_format: undefined,
 
   /**
-   * Setting for culling ticks.<br><br>
-   * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
-   * We can change the number of ticks to be shown by axis.x.tick.culling.max.
+   * Setting for culling ticks.
+   * - `true`: the ticks will be culled, then only limited tick text will be shown.<br>
+   *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.x.tick.culling.lines=false`.
+   * - `false`: all of ticks will be shown.<br><br>
+   * The number of ticks to be shown can be chaned by `axis.x.tick.culling.max`.
    * @name axis․x․tick․culling
    * @memberof Options
    * @type {boolean}
    * @default
-   * - true for indexed axis and timeseries axis
-   * - false for category axis
+   * `true` for indexed axis and timeseries axis, `false` for category axis
    * @example
    * axis: {
    *   x: {
@@ -15718,6 +15723,25 @@ function smoothLines(el, type) {
    * }
    */
   axis_x_tick_culling_max: 10,
+
+  /**
+   * Control visibility of tick lines within culling option, along with tick text.
+   * @name axis․x․tick․culling․lines
+   * @memberof Options
+   * @type {boolean}
+   * @default true
+   * @example
+   * axis: {
+   *   x: {
+   *     tick: {
+   *       culling: {
+   *           lines: false,
+   *       }
+   *     }
+   *   }
+   * }
+   */
+  axis_x_tick_culling_lines: !0,
 
   /**
    * The number of x axis ticks to show.<br><br>
@@ -16392,9 +16416,11 @@ function smoothLines(el, type) {
   axis_y_tick_format: undefined,
 
   /**
-   * Setting for culling ticks.<br><br>
-   * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
-   * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+   * Setting for culling ticks.
+   * - `true`: the ticks will be culled, then only limited tick text will be shown.<br>
+   *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.y.tick.culling.lines=false`.
+   * - `false`: all of ticks will be shown.<br><br>
+   * The number of ticks to be shown can be chaned by `axis.y.tick.culling.max`.
    * @name axis․y․tick․culling
    * @memberof Options
    * @type {boolean}
@@ -16428,6 +16454,25 @@ function smoothLines(el, type) {
    * }
    */
   axis_y_tick_culling_max: 5,
+
+  /**
+   * Control visibility of tick lines within culling option, along with tick text.
+   * @name axis․y․tick․culling․lines
+   * @memberof Options
+   * @type {boolean}
+   * @default true
+   * @example
+   * axis: {
+   *   y: {
+   *     tick: {
+   *       culling: {
+   *           lines: false,
+   *       }
+   *     }
+   *   }
+   * }
+   */
+  axis_y_tick_culling_lines: !0,
 
   /**
    * Show y axis outer tick.
@@ -16872,9 +16917,11 @@ function smoothLines(el, type) {
   axis_y2_tick_format: undefined,
 
   /**
-   * Setting for culling ticks.<br><br>
-   * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
-   * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+   * Setting for culling ticks.
+   * - `true`: the ticks will be culled, then only limited tick text will be shown.<br>
+   *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.y2.tick.culling.lines=false`.
+   * - `false`: all of ticks will be shown.<br><br>
+   * The number of ticks to be shown can be chaned by `axis.y2.tick.culling.max`.
    * @name axis․y2․tick․culling
    * @memberof Options
    * @type {boolean}
@@ -16908,6 +16955,25 @@ function smoothLines(el, type) {
    * }
    */
   axis_y2_tick_culling_max: 5,
+
+  /**
+   * Control visibility of tick lines within culling option, along with tick text.
+   * @name axis․y2․tick․culling․lines
+   * @memberof Options
+   * @type {boolean}
+   * @default true
+   * @example
+   * axis: {
+   *   y2: {
+   *     tick: {
+   *       culling: {
+   *           lines: false,
+   *       }
+   *     }
+   *   }
+   * }
+   */
+  axis_y2_tick_culling_lines: !0,
 
   /**
    * Show or hide y2 axis outer tick.
@@ -17950,6 +18016,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
           return;
         }
 
+        state.event = event;
         var eventArc = getEventArc(event),
             datum = eventArc.datum(),
             updated = (_datum = datum) != null && _datum.data && datum.data.id ? $$.updateAngle(datum) : null,
@@ -19914,6 +19981,7 @@ var cacheKey = KEY.radarPoints;
         return d && Object.keys(d).length === 1 ? d.index : undefined;
       },
           hide = function (event) {
+        state.event = event;
         var index = getIndex(event),
             noIndex = isUndefined(index);
 
