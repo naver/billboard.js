@@ -2,7 +2,7 @@ const {merge} = require("webpack-merge");
 const webpack = require("webpack");
 const TerserPlugin = require("terser-webpack-plugin");
 const terserConfig = require("../terserConfig.cjs");
-const banner = require("../banner.cjs");
+const banner = require("../template/banner.cjs");
 
 
 const config = {

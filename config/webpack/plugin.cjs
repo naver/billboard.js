@@ -5,29 +5,28 @@ const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const TerserPlugin = require("terser-webpack-plugin");
 const terserConfig = require("../terserConfig.cjs");
-const banner = require("../banner.cjs");
+const banner = require("../template/banner.cjs");
 
 const srcPath = "./src/Plugin/";
 const distPath = path.resolve(__dirname, "../../dist/plugin/");
+const prefix = require("../const.json").pluginPrefix;
 
 // construct entry point
 const entry = {};
 
 fs.readdirSync(path.resolve(__dirname, `../../${srcPath}`), {
 	withFileTypes: true
-}).forEach(dirent => {
-	if (dirent.isDirectory()) {
-		const name = dirent.name;
-
+})
+	.filter(dirent => dirent.isDirectory())
+	.forEach(({name}) => {
 		entry[name] = `${srcPath}${name}/index.ts`;
-	}
-});
+	});
 
 const config = {
 	entry,
 	output: {
 		path: distPath,
-		filename: `billboardjs-plugin-[name].js`,
+		filename: `${prefix}-[name].js`,
 		library: ["bb", "plugin", "[name]"],
 		libraryExport: "default",
 		publicPath: "/dist/plugin"

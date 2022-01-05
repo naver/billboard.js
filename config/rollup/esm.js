@@ -7,6 +7,7 @@ import del from "rollup-plugin-delete";
 import {getBanner, readJson, resolvePath} from "../util.js";
 
 const pkg = readJson("package.json");
+const prefix = readJson("./const.json").pluginPrefix;
 const distPath = "dist-esm";
 
 const {plugin, production} = getBanner();
@@ -44,7 +45,7 @@ const bbPlugins = readdirSync(resolvePath("../src/Plugin/"), {
     .map(({name}) => ({
         input: `src/Plugin/${name}/index.ts`,
         output: {
-            file: `${distPath}/plugin/billboardjs-plugin-${name}.js`,
+            file: `${distPath}/plugin/${prefix}-${name}.js`,
             format: "es",
             banner: getBannerStr(true)
         },
