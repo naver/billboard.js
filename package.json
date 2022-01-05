@@ -13,15 +13,15 @@
 			"require": "./dist/billboard.pkgd.js"
 		},
 		"./dist/plugin/*": {
-			"import": "./dist-esm/plugin/*.js",
-			"require": "./dist/plugin/pkgd/*.js"
+			"import": "./dist-esm/plugin/**/*",
+			"require": "./dist/plugin/pkgd/**/*"
 		},
 		"./dist/*": "./dist/*"
 	},
 	"scripts": {
 		"start": "webpack serve --open",
 		"start:plugin": "cross-env PLUGIN=true webpack-dev-server --open",
-		"build": "npm run build:production && npm run build:packaged && npm run build:theme && npm run build:plugin && npm run build:esm && npm run build:cjs",
+		"build": "npm run build:production && npm run build:packaged && npm run build:theme && npm run build:plugin && npm run build:esm && npm run build:cjs && npm run build:plugin:types",
 		"build:cjs": "node ./config/cjs.js",
 		"build:esm": "rollup -c ./config/rollup/esm.js",
 		"build:production": "cross-env NODE_ENV=production webpack",
@@ -30,7 +30,8 @@
 		"build:theme": "cross-env NODE_ENV=theme webpack",
 		"build:production:analyzer": "cross-env ANALYZER=true npm run build:production",
 		"build:packaged:analyzer": "cross-env ANALYZER=true npm run build:packaged",
-		"build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MODE=min webpack &&  cross-env NODE_ENV=plugin MODE=pkgd webpack",
+		"build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MODE=min webpack && cross-env NODE_ENV=plugin MODE=pkgd webpack",
+		"build:plugin:types": "node ./config/type.d-plugin.js",
 		"release": "semantic-release",
 		"lint": "npm run lint:types && eslint src --ext .ts",
 		"lint:types": "dtslint --onlyTestTsNext types",

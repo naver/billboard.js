@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const WebpackCleanPlugin = require("webpack-clean");
-const banner = require("../banner.cjs");
+const banner = require("../template/banner.cjs");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 

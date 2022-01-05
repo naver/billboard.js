@@ -1,4 +1,4 @@
-import {readJson} from "./util.js";
+import {readJson} from "../util.js";
 
 const pkg = readJson("package.json");
 

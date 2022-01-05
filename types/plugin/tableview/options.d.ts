@@ -1,4 +1,4 @@
-export interface TabieViewOptions {
+export interface TableViewOptions {
 	/**
 	 * Set tableview holder selector.
 	 * - **NOTE:** If not set, will append new holder element dynamically.
