@@ -11,7 +11,7 @@ const __dirname = dirname(__filename);
  */
 function getBanner() {
     return JSON.parse(
-        execSync(`node ${resolvePath("./banner.js")}`, {encoding: "utf-8"})
+        execSync(`node ${resolvePath("./template/banner.js")}`, {encoding: "utf-8"})
     );
 }
 
@@ -34,26 +34,40 @@ function getBanner() {
 /**
  * Read json from the root of the project.
  * @param {string} path Path from the root
+ * @param {boolean} isJson If the value is JSON
  */
-function readJson(path) {
-    return JSON.parse(readFileSync(resolvePath(`../${path}`), "utf8"));
+function readFile(path, isJson = false) {
+    const res = readFileSync(resolvePath(`../${path}`), "utf8");
+
+    return isJson ? JSON.parse(res) : res;
 }
 
 /**
  * Write json to file
  * @param {string} target Path from the root
- * @param {object} json JSON object
+ * @param {object} value Value to write
+ * @param {boolean} isJson If the value is JSON
  */
-function writeJson(target, json) {
-    writeFileSync(target, JSON.stringify(json), e => {
+function writeFile(target, value, isJson = false) {
+    writeFileSync(target, isJson ? JSON.stringify(value) : value, {flag: "w"}, e => {
         console.error(e);
     });
+}
+
+function readJson(path) {
+    return readFile(path, true);
+}
+
+function writeJson(target, value) {
+    return writeFile(target, value, true);
 }
 
 export {
   __dirname,
   getBanner,
+  readFile,
   readJson,
   resolvePath,
+  writeFile,
   writeJson
 };
