@@ -13,8 +13,8 @@
 			"require": "./dist/billboard.pkgd.js"
 		},
 		"./dist/plugin/*": {
-			"import": "./dist-esm/plugin/**/*",
-			"require": "./dist/plugin/pkgd/**/*"
+			"import": "./dist-esm/plugin/*.js",
+			"require": "./dist/plugin/pkgd/*.js"
 		},
 		"./dist/*": "./dist/*"
 	},
