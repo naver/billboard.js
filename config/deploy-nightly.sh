@@ -19,6 +19,7 @@ build_nightly() {
     ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:theme
     ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:plugin
     ./node_modules/.bin/cross-env VERSION=$VERSION npm run build:esm
+    npm run build:plugin:types
 }
 
 build_and_commit() {
