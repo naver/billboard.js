@@ -105,8 +105,8 @@ export default class Sparkline extends Plugin {
 		const {getBarW, getIndices} = $$;
 
 		// override internal methods to positioning bars
-		$$.getIndices = function(indices, id, caller) {
-			return caller === "getShapeX" ? {} : getIndices.call(this, indices, id);
+		$$.getIndices = function(indices, d, caller) {
+			return caller === "getShapeX" ? {} : getIndices.call(this, indices, d);
 		};
 
 		$$.getBarW = function(type, axis) {

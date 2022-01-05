@@ -143,15 +143,16 @@ export default {
 	axis_x_tick_format: <Function|string|undefined> undefined,
 
 	/**
-	 * Setting for culling ticks.<br><br>
-	 * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
-	 * We can change the number of ticks to be shown by axis.x.tick.culling.max.
+	 * Setting for culling ticks.
+	 * - `true`: the ticks will be culled, then only limited tick text will be shown.<br>
+	 *   This option does not hide the tick lines by default, if want to hide tick lines, set `axis.x.tick.culling.lines=false`.
+	 * - `false`: all of ticks will be shown.<br><br>
+	 * The number of ticks to be shown can be chaned by `axis.x.tick.culling.max`.
 	 * @name axis․x․tick․culling
 	 * @memberof Options
 	 * @type {boolean}
 	 * @default
-	 * - true for indexed axis and timeseries axis
-	 * - false for category axis
+	 * `true` for indexed axis and timeseries axis, `false` for category axis
 	 * @example
 	 * axis: {
 	 *   x: {
@@ -181,6 +182,25 @@ export default {
 	 * }
 	 */
 	axis_x_tick_culling_max: 10,
+
+	/**
+	 * Control visibility of tick lines within culling option, along with tick text.
+	 * @name axis․x․tick․culling․lines
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default true
+	 * @example
+	 * axis: {
+	 *   x: {
+	 *     tick: {
+	 *       culling: {
+	 *           lines: false,
+	 *       }
+	 *     }
+	 *   }
+	 * }
+	 */
+	axis_x_tick_culling_lines: true,
 
 	/**
 	 * The number of x axis ticks to show.<br><br>
