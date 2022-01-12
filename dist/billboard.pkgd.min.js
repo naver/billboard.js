@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20220106004657
+ * @version 3.2.2-nightly-20220112004611
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -16,7 +16,7 @@
  * - d3-interpolate ^3.0.1
  * - d3-scale ^4.0.2
  * - d3-selection ^3.0.0
- * - d3-shape ^3.0.1
+ * - d3-shape ^3.1.0
  * - d3-time-format ^4.1.0
  * - d3-transition ^3.0.1
  * - d3-zoom ^3.0.0
