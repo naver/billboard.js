@@ -254,10 +254,42 @@ export default {
 		const $$ = this;
 		const {$el: {eventRect, zoomResetBtn}} = $$;
 
-		eventRect
-			.on(".zoom", null)
-			.on(".drag", null);
+		eventRect?.on(".zoom wheel.zoom .drag", null);
 
-		zoomResetBtn?.style("display", "none");
+		zoomResetBtn?.on("click", null)
+			.style("display", "none");
+	},
+
+	/**
+	 * Unbind all attached events
+	 * @private
+	 */
+	unbindAllEvents():	void {
+		const $$ = this;
+		const {$el: {arcs, eventRect, legend, region, svg}, brush} = $$;
+		const list = [
+			"wheel",
+			"click",
+			"mouseover",
+			"mousemove",
+			"mouseout",
+			"touchstart",
+			"touchmove",
+			"touchend",
+			"touchstart.eventRect",
+			"touchmove.eventRect",
+			"touchend.eventRect",
+			".brush",
+			".drag",
+			".zoom",
+			"wheel.zoom",
+			"dblclick.zoom"
+		].join(" ");
+
+		// detach all possible event types
+		[svg, eventRect, region?.list, brush?.getSelection(), arcs?.selectAll("path"), legend?.selectAll("g")]
+			.forEach(v => v?.on(list, null));
+
+		$$.unbindZoomEvent?.();
 	}
 };

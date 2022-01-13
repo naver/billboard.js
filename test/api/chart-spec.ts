@@ -115,6 +115,12 @@ describe("API chart", () => {
 			});
 
 			expect(bb.instance.indexOf(chart) === -1).to.be.true;
+
+			const el = document.getElementById("chart");
+
+			// should revert removing className and styles
+			expect(el.classList.contains("bb")).to.be.false;
+			expect(el.style.position).to.be.equal("");
 		});
 
 		it("should be destroyed without throwing error", done => {
@@ -137,6 +143,20 @@ describe("API chart", () => {
 
 		it("should not throw error when already destroyed", () => {
 			chart.destroy();
+			chart.destroy();
+		});
+
+		it("events should be unbound on destroy", () => {
+			const {internal} = chart;
+			const {$el: {eventRect}} = internal;
+
+			// all bound events are removed
+			chart.internal.unbindAllEvents();
+
+			["mouseover", "mousemove", "mouseout"].forEach(event => {
+				expect(eventRect.on(event)).to.be.undefined;
+			});
+
 			chart.destroy();
 		});
 	});
