@@ -210,7 +210,9 @@ export default class ChartInternal {
 			$el.chart = d3Select(document.body.appendChild(document.createElement("div")));
 		}
 
-		$el.chart.html("").classed(bindto.classname, true);
+		$el.chart.html("")
+			.classed(bindto.classname, true)
+			.style("position", "relative");
 
 		$$.initToRender();
 	}
