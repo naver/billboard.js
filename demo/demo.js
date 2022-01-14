@@ -84,35 +84,65 @@ var demos = {
 				];
 			}
 		},
-		BarChart: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 130, 100, 140, 200, 150, 50]
-					],
-					type: "bar"
-				},
-				bar: {
-					width: {
-						ratio: 0.5 // this makes bar width 50% of length between ticks
+		BarChart: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						type: "bar"
+					},
+					bar: {
+						width: {
+							ratio: 0.5 // this makes bar width 50% of length between ticks
+						}
+						// or
+						//width: 100 // this makes bar width 100px
 					}
-					// or
-					//width: 100 // this makes bar width 100px
+				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() {
+							chart.load({
+								columns: [
+									["data3", 130, -150, 200, 300, -200, 100]
+								]
+							});
+						}, 1000)
+					];
 				}
 			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.load({
-							columns: [
-								["data3", 130, -150, 200, 300, -200, 100]
-							]
-						});
-					}, 1000)
-				];
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", -100, 100, 200, [-100, 0], [0, 100], [100, 200]],
+							["data2", 100, 300, 500, [0, 100], [100, 300], [200, 500]],
+						],
+						type: "bar"
+					},
+					bar: {
+						width: {
+							ratio: 0.5
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() {
+							chart.load({
+								columns: [
+									["data3", 200, 500, 800, [100, 200], [300, 500], [500, 800]],
+								],
+								type: "bar"
+							});
+						}, 1000)
+					];
+				}
 			}
-		},
+		],
 		BubbleChart: {
 			options: {
 				data: {
@@ -195,7 +225,7 @@ var demos = {
 				options: {
 					data: {
 						columns: [
-							["data1", 
+							["data1",
 								// open, high, low, close, volume (optional)
 								[1327,1369,1289,1348],
 								[1348,1371,1314,1320],
@@ -269,7 +299,7 @@ var demos = {
 						x: "x",
 						columns: [
 							["x", "2021-02-20", "2021-02-21"],
-							["data1", 
+							["data1",
 								// open, high, low, close, volume (optional)
 								{open: 1300, high: 1369, low: 1200, close: 1339, volume: 100},
 								{open: 1348, high: 1371, low: 1271, close: 1320},
@@ -720,43 +750,85 @@ var demos = {
 				}
 			}
 		},
-		StackedBarChart: {
-			options: {
-				data: {
-					columns: [
-						["data1", -30, 200, 200, 400, -150, 250],
-						["data2", 130, 100, -100, 200, -150, 50],
-						["data3", -230, 200, 200, -300, 250, 250]
-					],
-					type: "bar",
-					groups: [
-						["data1", "data2"]
-					]
-				},
-				grid: {
-					y: {
-						lines: [{value: 0}]
+		StackedBarChart: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", -30, 200, 200, 400, -150, 250],
+							["data2", 130, 100, -100, 200, -150, 50],
+							["data3", -230, 200, 200, -300, 250, 250]
+						],
+						type: "bar",
+						groups: [
+							["data1", "data2"]
+						]
+					},
+					grid: {
+						y: {
+							lines: [{value: 0}]
+						}
 					}
+				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() {
+							chart.groups([["data1", "data2", "data3"]])
+						}, 1000),
+
+						setTimeout(function() {
+							chart.load({
+								columns: [["data4", 100, -50, 150, 200, -300, -100]]
+							});
+						}, 1500),
+
+						setTimeout(function() {
+							chart.groups([["data1", "data2", "data3", "data4"]])
+						}, 2000)
+					];
 				}
 			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.groups([["data1", "data2", "data3"]])
-					}, 1000),
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", -100, 100, 200, [-100, 0], [0, 100], [100, 200]],
+							["data2", 100, 300, 500, [0, 100], [100, 300], [200, 500]],
+							["data3", 200, 500, 800, [100, 200], [300, 500], [500, 800]],
+						],
+						type: "bar"
+					},
+					grid: {
+						y: {
+							lines: [{value: 0}]
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() {
+							chart.groups([["data1", "data2"]])
+						}, 1000),
 
-					setTimeout(function() {
-						chart.load({
-							columns: [["data4", 100, -50, 150, 200, -300, -100]]
-						});
-					}, 1500),
+						setTimeout(function() {
+							chart.groups([["data1", "data2", "data3"]])
+						}, 1500),
 
-					setTimeout(function() {
-						chart.groups([["data1", "data2", "data3", "data4"]])
-					}, 2000)
-				];
+						setTimeout(function() {
+							chart.load({
+								columns: [
+									["data4", 500, 900, 1500, [400, 500], [700, 900], [1000, 1500]]
+								],
+							});
+						}, 2000),
+
+						setTimeout(function() {
+							chart.groups([["data1", "data2", "data3", "data4"]])
+						}, 2500),
+					];
+				}
 			}
-		},
+		],
 		StepChart: [
 			{
 				options: {
@@ -1472,7 +1544,7 @@ var demos = {
 						setTimeout(function() {
 							chart.resize({width: window.innerWidth * 0.4});
 						}, 1000),
-						
+
 						setTimeout(function() {
 							chart.resize();
 						}, 3000)
@@ -3669,6 +3741,42 @@ d3.select(".chart_area")
 		]
 	},
 	BarChartOptions: {
+		BarIndices: [
+			{
+				options: {
+					data: {
+						columns: [
+							['data1', 4, null, 4],
+							['data2', null, 3, null],
+							['data3', 1, 4, 4]
+						],
+						type: "bar"
+					},
+					bar: {
+						indices: {
+							removeNull: true
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							['data1', 4, null, 4],
+							['data2', null, 3, null],
+							['data3', 1, 4, 4]
+						],
+						type: "bar"
+					},
+					bar: {
+						indices: {
+							removeNull: false
+						}
+					}
+				}
+			},
+		],
 		BarPadding: {
 			options: {
 				data: {
@@ -3685,24 +3793,61 @@ d3.select(".chart_area")
 				}
 			}
 		},
-		BarRadius: {
-			options: {
-				data: {
-					columns: [
-						["data1", 80, 250, -200, 200, 250, 150],
-						["data2", 170, -350, 240, 200, -250, 150],
-						["data3", -120, 100, 240, -300, 350, 350],
-						["data4", 180, 130, 340, 200, 250, -250]
-					],
-					type: "bar"
-				},
-				bar: {
-					radius: {
-						ratio: 0.5
+		BarRadius: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 80, 250, -200, 200, 250, 150],
+							["data2", 170, -350, 240, 200, -250, 150],
+							["data3", -120, 100, 240, -300, 350, 350],
+							["data4", 180, 130, 340, 200, 250, -250]
+						],
+						type: "bar"
+					},
+					bar: {
+						radius: {
+							ratio: 0.5
+						}
 					}
 				}
-			}
-		},
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "2021-01-01", "2021-01-02"],
+							["data1", -80, 200],
+							["data2", -130, 50],
+							["data3", 80, 100],
+							["data4", 120, 100],
+							["data5", 120, -100],
+							["data6", -120, 150]
+						],
+						type: "bar",
+						groups: [
+							["data1", "data2", "data3"],
+							["data4", "data5"],
+						],
+						order: "desc"
+					},
+					axis: {
+						x: {
+							type: "timeseries",
+							tick: {
+								format: "%Y-%m-%d"
+							}
+						}
+					},
+					bar: {
+						radius: {
+							ratio: 0.2
+						}
+					}
+				}
+			},
+		],
 		BarWidth: {
 			options: {
 				data: {
@@ -3840,22 +3985,38 @@ d3.select(".chart_area")
 				}
 			}
 		],
-		Padding: {
-			options: {
-				padding: {
-					top: 40,
-					right: 100,
-					bottom: 40,
-					left: 100,
-				},
-				data: {
-					columns: [
-						["sample", 30, 200, 100, 400, 150, 250000000000]
-					],
-					type: "line"
+		Padding: [			
+			{
+				options: {
+					data: {
+						columns: [
+							["data", 130, 100, 140, 35, 110, 50]
+						],
+						type: "area"
+					},
+					legend: {
+					  show: false
+					},
+					padding: false
+				}
+			},
+			{
+				options: {
+					padding: {
+						top: 40,
+						right: 100,
+						bottom: 40,
+						left: 100,
+					},
+					data: {
+						columns: [
+							["sample", 30, 200, 100, 400, 150, 250000000000]
+						],
+						type: "line"
+					}
 				}
 			}
-		},
+		],
 		ColorOnover: [
 			{
 				options: {
@@ -4971,7 +5132,7 @@ d3.select(".chart_area")
 						chart.export(null, function(dataUrl) {
 							// append an image element
 							var img = document.getElementById("exported");
-							
+
 							if (!img) {
 								img = document.createElement("img");
 
@@ -4987,7 +5148,7 @@ d3.select(".chart_area")
 							// append an image element
 							// append an image element
 							var img = document.getElementById("exported2");
-							
+
 							if (!img) {
 								img = document.createElement("img");
 
