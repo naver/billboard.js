@@ -21,7 +21,6 @@ export default {
 
 		if ($el.tooltip.empty()) {
 			$el.tooltip = $el.chart
-				.style("position", "relative")
 				.append("div")
 				.attr("class", CLASS.tooltipContainer)
 				.style("position", "absolute")

@@ -106,12 +106,18 @@ export default {
 			$$.callPluginHook("$willDestroy");
 			$$.charts.splice($$.charts.indexOf(this), 1);
 
+			// detach events
+			$$.unbindAllEvents();
+
 			// clear timers && pending transition
 			svg.select("*").interrupt();
 			$$.resizeFunction.clear();
 
 			window.removeEventListener("resize", $$.resizeFunction);
-			chart.classed("bb", false).html("");
+			chart.classed("bb", false)
+				.style("position", null)
+				.selectChildren()
+				.remove();
 
 			// releasing own references
 			Object.keys(this).forEach(key => {
