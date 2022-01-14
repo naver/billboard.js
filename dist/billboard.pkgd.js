@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.2.2-nightly-20220113004559
+ * @version 3.2.2-nightly-20220114004606
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -26351,14 +26351,40 @@ function drag_defaultTouchable() {
    * @private
    */
   unbindZoomEvent: function unbindZoomEvent() {
-    var _zoomResetBtn,
+    var _eventRect,
+        _zoomResetBtn,
         $$ = this,
         _$$$$el2 = $$.$el,
         eventRect = _$$$$el2.eventRect,
         zoomResetBtn = _$$$$el2.zoomResetBtn;
 
-    eventRect.on(".zoom", null).on(".drag", null);
-    (_zoomResetBtn = zoomResetBtn) == null ? void 0 : _zoomResetBtn.style("display", "none");
+    (_eventRect = eventRect) == null ? void 0 : _eventRect.on(".zoom wheel.zoom .drag", null);
+    (_zoomResetBtn = zoomResetBtn) == null ? void 0 : _zoomResetBtn.on("click", null).style("display", "none");
+  },
+
+  /**
+   * Unbind all attached events
+   * @private
+   */
+  unbindAllEvents: function unbindAllEvents() {
+    var _region,
+        _brush,
+        _arcs,
+        _legend,
+        $$ = this,
+        _$$$$el3 = $$.$el,
+        arcs = _$$$$el3.arcs,
+        eventRect = _$$$$el3.eventRect,
+        legend = _$$$$el3.legend,
+        region = _$$$$el3.region,
+        svg = _$$$$el3.svg,
+        brush = $$.brush;
+
+    // detach all possible event types
+    [svg, eventRect, (_region = region) == null ? void 0 : _region.list, (_brush = brush) == null ? void 0 : _brush.getSelection(), (_arcs = arcs) == null ? void 0 : _arcs.selectAll("path"), (_legend = legend) == null ? void 0 : _legend.selectAll("g")].forEach(function (v) {
+      return v == null ? void 0 : v.on("wheel click mouseover mousemove mouseout touchstart touchmove touchend touchstart.eventRect touchmove.eventRect touchend.eventRect .brush .drag .zoom wheel.zoom dblclick.zoom", null);
+    });
+    $$.unbindZoomEvent == null ? void 0 : $$.unbindZoomEvent();
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/class.ts
@@ -32460,7 +32486,7 @@ function getTextPos(pos, width) {
     $el.tooltip = src_select(config.tooltip_contents.bindto);
 
     if ($el.tooltip.empty()) {
-      $el.tooltip = $el.chart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none");
+      $el.tooltip = $el.chart.append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none");
     }
 
     $$.bindTooltipResizePos();
@@ -33442,7 +33468,7 @@ var ChartInternal = /*#__PURE__*/function () {
       $el.chart = src_select(browser_doc.body.appendChild(browser_doc.createElement("div")));
     }
 
-    $el.chart.html("").classed(bindto.classname, !0);
+    $el.chart.html("").classed(bindto.classname, !0).style("position", "relative");
     $$.initToRender();
   }
   /**
@@ -34100,12 +34126,14 @@ function loadConfig(config) {
 
     if (notEmpty($$)) {
       $$.callPluginHook("$willDestroy");
-      $$.charts.splice($$.charts.indexOf(this), 1); // clear timers && pending transition
+      $$.charts.splice($$.charts.indexOf(this), 1); // detach events
+
+      $$.unbindAllEvents(); // clear timers && pending transition
 
       svg.select("*").interrupt();
       $$.resizeFunction.clear();
       win.removeEventListener("resize", $$.resizeFunction);
-      chart.classed("bb", !1).html(""); // releasing own references
+      chart.classed("bb", !1).style("position", null).selectChildren().remove(); // releasing own references
 
       Object.keys(this).forEach(function (key) {
         key === "internal" && Object.keys($$).forEach(function (k) {

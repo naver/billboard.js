@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.2.2-nightly-20220113004559
+ * @version 3.2.2-nightly-20220114004606
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4425,10 +4425,39 @@ var interaction = {
     unbindZoomEvent: function () {
         var $$ = this;
         var _a = $$.$el, eventRect = _a.eventRect, zoomResetBtn = _a.zoomResetBtn;
-        eventRect
-            .on(".zoom", null)
-            .on(".drag", null);
-        zoomResetBtn === null || zoomResetBtn === void 0 ? void 0 : zoomResetBtn.style("display", "none");
+        eventRect === null || eventRect === void 0 ? void 0 : eventRect.on(".zoom wheel.zoom .drag", null);
+        zoomResetBtn === null || zoomResetBtn === void 0 ? void 0 : zoomResetBtn.on("click", null).style("display", "none");
+    },
+    /**
+     * Unbind all attached events
+     * @private
+     */
+    unbindAllEvents: function () {
+        var _a;
+        var $$ = this;
+        var _b = $$.$el, arcs = _b.arcs, eventRect = _b.eventRect, legend = _b.legend, region = _b.region, svg = _b.svg, brush = $$.brush;
+        var list = [
+            "wheel",
+            "click",
+            "mouseover",
+            "mousemove",
+            "mouseout",
+            "touchstart",
+            "touchmove",
+            "touchend",
+            "touchstart.eventRect",
+            "touchmove.eventRect",
+            "touchend.eventRect",
+            ".brush",
+            ".drag",
+            ".zoom",
+            "wheel.zoom",
+            "dblclick.zoom"
+        ].join(" ");
+        // detach all possible event types
+        [svg, eventRect, region === null || region === void 0 ? void 0 : region.list, brush === null || brush === void 0 ? void 0 : brush.getSelection(), arcs === null || arcs === void 0 ? void 0 : arcs.selectAll("path"), legend === null || legend === void 0 ? void 0 : legend.selectAll("g")]
+            .forEach(function (v) { return v === null || v === void 0 ? void 0 : v.on(list, null); });
+        (_a = $$.unbindZoomEvent) === null || _a === void 0 ? void 0 : _a.call($$);
     }
 };
 
@@ -7374,7 +7403,6 @@ var tooltip$1 = {
         $el.tooltip = select(config.tooltip_contents.bindto);
         if ($el.tooltip.empty()) {
             $el.tooltip = $el.chart
-                .style("position", "relative")
                 .append("div")
                 .attr("class", CLASS.tooltipContainer)
                 .style("position", "absolute")
@@ -8184,7 +8212,9 @@ var ChartInternal = /** @class */ (function () {
         if ($el.chart.empty()) {
             $el.chart = select(doc.body.appendChild(doc.createElement("div")));
         }
-        $el.chart.html("").classed(bindto.classname, true);
+        $el.chart.html("")
+            .classed(bindto.classname, true)
+            .style("position", "relative");
         $$.initToRender();
     };
     /**
@@ -8750,11 +8780,16 @@ var apiChart = {
         if (notEmpty($$)) {
             $$.callPluginHook("$willDestroy");
             $$.charts.splice($$.charts.indexOf(this), 1);
+            // detach events
+            $$.unbindAllEvents();
             // clear timers && pending transition
             svg.select("*").interrupt();
             $$.resizeFunction.clear();
             win.removeEventListener("resize", $$.resizeFunction);
-            chart.classed("bb", false).html("");
+            chart.classed("bb", false)
+                .style("position", null)
+                .selectChildren()
+                .remove();
             // releasing own references
             Object.keys(this).forEach(function (key) {
                 key === "internal" && Object.keys($$).forEach(function (k) {
@@ -20287,7 +20322,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.2.2-nightly-20220113004559
+ * @version 3.2.2-nightly-20220114004606
  */
 var bb = {
     /**
@@ -20297,7 +20332,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.2.2-nightly-20220113004559",
+    version: "3.2.2-nightly-20220114004606",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
