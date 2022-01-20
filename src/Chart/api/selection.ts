@@ -4,7 +4,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import {isDefined} from "../../module/util";
-import CLASS from "../../config/classes";
+import {$AREA, $LINE, $SELECT, $SHAPE} from "../../config/classes";
 import {DataItem} from "../../../types/types";
 
 export default {
@@ -28,10 +28,10 @@ export default {
 		const $$ = this.internal;
 		const dataPoint: DataItem[] = [];
 
-		$$.$el.main.selectAll(`.${CLASS.shapes + $$.getTargetSelectorSuffix(targetId)}`)
-			.selectAll(`.${CLASS.shape}`)
+		$$.$el.main.selectAll(`.${$SHAPE.shapes + $$.getTargetSelectorSuffix(targetId)}`)
+			.selectAll(`.${$SHAPE.shape}`)
 			.filter(function() {
-				return d3Select(this).classed(CLASS.SELECTED);
+				return d3Select(this).classed($SELECT.SELECTED);
 			})
 			.each(d => dataPoint.push(d));
 
@@ -70,27 +70,27 @@ export default {
 			return;
 		}
 
-		$el.main.selectAll(`.${CLASS.shapes}`)
-			.selectAll(`.${CLASS.shape}`)
+		$el.main.selectAll(`.${$SHAPE.shapes}`)
+			.selectAll(`.${$SHAPE.shape}`)
 			.each(function(d, i) {
 				const shape = d3Select(this);
 				const id = d.data ? d.data.id : d.id;
 				const toggle = $$.getToggle(this, d).bind($$);
 				const isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0;
 				const isTargetIndex = !indices || indices.indexOf(i) >= 0;
-				const isSelected = shape.classed(CLASS.SELECTED);
+				const isSelected = shape.classed($SELECT.SELECTED);
 
 				// line/area selection not supported yet
-				if (shape.classed(CLASS.line) || shape.classed(CLASS.area)) {
+				if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
 					return;
 				}
 
 				if (isTargetId && isTargetIndex) {
 					if (config.data_selection_isselectable.bind($$.api)(d) && !isSelected) {
-						toggle(true, shape.classed(CLASS.SELECTED, true), d, i);
+						toggle(true, shape.classed($SELECT.SELECTED, true), d, i);
 					}
 				} else if (isDefined(resetOther) && resetOther && isSelected) {
-					toggle(false, shape.classed(CLASS.SELECTED, false), d, i);
+					toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
 				}
 			});
 	},
@@ -120,18 +120,18 @@ export default {
 			return;
 		}
 
-		$el.main.selectAll(`.${CLASS.shapes}`)
-			.selectAll(`.${CLASS.shape}`)
+		$el.main.selectAll(`.${$SHAPE.shapes}`)
+			.selectAll(`.${$SHAPE.shape}`)
 			.each(function(d, i) {
 				const shape = d3Select(this);
 				const id = d.data ? d.data.id : d.id;
 				const toggle = $$.getToggle(this, d).bind($$);
 				const isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0;
 				const isTargetIndex = !indices || indices.indexOf(i) >= 0;
-				const isSelected = shape.classed(CLASS.SELECTED);
+				const isSelected = shape.classed($SELECT.SELECTED);
 
 				// line/area selection not supported yet
-				if (shape.classed(CLASS.line) || shape.classed(CLASS.area)) {
+				if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
 					return;
 				}
 
@@ -140,7 +140,7 @@ export default {
 					config.data_selection_isselectable.bind($$.api)(d) &&
 					isSelected
 				) {
-					toggle(false, shape.classed(CLASS.SELECTED, false), d, i);
+					toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
 				}
 			});
 	}

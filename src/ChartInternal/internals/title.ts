@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {isNumber, setTextValue} from "../../module/util";
-import CLASS from "../../config/classes";
+import {$TEXT} from "../../config/classes";
 
 /**
  * Get the text position
@@ -42,7 +42,7 @@ export default {
 			const text = $el.title
 				.append("text")
 				.style("text-anchor", getTextPos(config.title_position))
-				.attr("class", CLASS.title);
+				.attr("class", $TEXT.title);
 
 			setTextValue(text, config.title_text, [0.3, 1.5]);
 		}
@@ -76,7 +76,7 @@ export default {
 		const $$ = this;
 		const {config, state: {current}} = $$;
 		const position = config.title_position || "left";
-		const textRectWidth = $$.getTextRect($$.$el.title, CLASS.title).width;
+		const textRectWidth = $$.getTextRect($$.$el.title, $TEXT.title).width;
 		let x;
 
 		if (/(right|center)/.test(position)) {
@@ -103,7 +103,7 @@ export default {
 		const $$ = this;
 
 		return ($$.config.title_padding.top || 0) +
-			$$.getTextRect($$.$el.title, CLASS.title).height;
+			$$.getTextRect($$.$el.title, $TEXT.title).height;
 	},
 
 	/**

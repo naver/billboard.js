@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import CLASS from "../../config/classes";
+import {$COMMON, $EVENT, $SHAPE} from "../../config/classes";
 import {isboolean, getPointer, isFunction} from "../../module/util";
 
 export default {
@@ -14,9 +14,9 @@ export default {
 	initEventRect(): void {
 		const $$ = this;
 
-		$$.$el.main.select(`.${CLASS.chart}`)
+		$$.$el.main.select(`.${$COMMON.chart}`)
 			.append("g")
-			.attr("class", CLASS.eventRects)
+			.attr("class", $EVENT.eventRects)
 			.style("fill-opacity", "0");
 	},
 
@@ -32,15 +32,15 @@ export default {
 		if ($el.eventRect) {
 			$$.updateEventRect($el.eventRect, true);
 		} else {
-			const eventRects = $$.$el.main.select(`.${CLASS.eventRects}`)
+			const eventRects = $$.$el.main.select(`.${$EVENT.eventRects}`)
 				.style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (
 					config.axis_rotated ? "ns-resize" : "ew-resize"
 				) : null)
-				.classed(CLASS.eventRectsMultiple, isMultipleX)
-				.classed(CLASS.eventRectsSingle, !isMultipleX);
+				.classed($EVENT.eventRectsMultiple, isMultipleX)
+				.classed($EVENT.eventRectsSingle, !isMultipleX);
 
 			// append event <rect>
-			const eventRectUpdate = eventRects.selectAll(`.${CLASS.eventRect}`)
+			const eventRectUpdate = eventRects.selectAll(`.${$EVENT.eventRect}`)
 				.data([0])
 				.enter()
 				.append("rect");
@@ -139,7 +139,7 @@ export default {
 			.on("touchstart.eventRect touchmove.eventRect", event => {
 				state.event = event;
 
-				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
+				if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
 					// if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
 					if (state.dragging || state.flowing || $$.hasArcType() || event.touches.length > 1) {
 						return;
@@ -154,7 +154,7 @@ export default {
 			.on("touchend.eventRect", event => {
 				state.event = event;
 
-				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
+				if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
 					if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
 						state.cancelClick && (state.cancelClick = false);
 					}
@@ -199,7 +199,7 @@ export default {
 
 			// only for init
 			if (!rendered) {
-				rectElement.attr("class", CLASS.eventRect);
+				rectElement.attr("class", $EVENT.eventRect);
 			}
 		}
 
@@ -334,7 +334,7 @@ export default {
 
 		// Show cursor as pointer if point is close to mouse position
 		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-			$$.$el.svg.select(`.${CLASS.eventRect}`).style("cursor", "pointer");
+			$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", "pointer");
 
 			if (!state.mouseover) {
 				config.data_onover.call($$.api, closest);
@@ -351,7 +351,7 @@ export default {
 		const $$ = this;
 		const {config, $el: {circle, tooltip}} = $$;
 
-		$$.$el.svg.select(`.${CLASS.eventRect}`).style("cursor", null);
+		$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
 		$$.hideGridFocus();
 
 		if (tooltip) {
@@ -366,8 +366,8 @@ export default {
 	/**
 	 * Create eventRect for each data on the x-axis.
 	 * Register touch and drag events.
-	 * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
-	 * @returns {object} d3.select(CLASS.eventRects) object.
+	 * @param {object} eventRectEnter d3.select($EVENT.eventRects) object.
+	 * @returns {object} d3.select($EVENT.eventRects) object.
 	 * @private
 	 */
 	generateEventRectsForSingleX(eventRectEnter) {
@@ -476,7 +476,7 @@ export default {
 
 		const {index} = d;
 
-		main.selectAll(`.${CLASS.shape}-${index}`)
+		main.selectAll(`.${$SHAPE.shape}-${index}`)
 			.each(function(d2) {
 				if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
 					$$.toggleShape?.(this, d2, index);
@@ -488,7 +488,7 @@ export default {
 	/**
 	 * Create an eventRect,
 	 * Register touch and drag events.
-	 * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
+	 * @param {object} eventRectEnter d3.select($EVENT.eventRects) object.
 	 * @private
 	 */
 	generateEventRectsForMultipleXs(eventRectEnter): void {
@@ -538,8 +538,8 @@ export default {
 
 		// select if selection enabled
 		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-			$$.$el.main.selectAll(`.${CLASS.shapes}${$$.getTargetSelectorSuffix(closest.id)}`)
-				.selectAll(`.${CLASS.shape}-${closest.index}`)
+			$$.$el.main.selectAll(`.${$SHAPE.shapes}${$$.getTargetSelectorSuffix(closest.id)}`)
+				.selectAll(`.${$SHAPE.shape}-${closest.index}`)
 				.each(function() {
 					if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
 						$$.toggleShape?.(this, closest, closest.index);

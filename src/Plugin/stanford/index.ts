@@ -6,7 +6,7 @@
 import {interpolateHslLong as d3InterpolateHslLong} from "d3-interpolate";
 import {hsl as d3Hsl} from "d3-color";
 import {scaleSequentialLog as d3ScaleSequentialLog} from "d3-scale";
-import CLASS from "../../config/classes";
+import {$TOOLTIP} from "../../config/classes";
 import {loadConfig} from "../../config/config";
 import Plugin from "../Plugin";
 import Options from "./Options";
@@ -228,7 +228,7 @@ export default class Stanford extends Plugin {
 
 		if (isEmpty(config.tooltip_contents)) {
 			config.tooltip_contents = function(d, defaultTitleFormat, defaultValueFormat, color) {
-				let html = `<table class="${CLASS.tooltip}"><tbody>`;
+				let html = `<table class="${$TOOLTIP.tooltip}"><tbody>`;
 
 				d.forEach(v => {
 					html += `<tr>
@@ -239,7 +239,7 @@ export default class Stanford extends Plugin {
 							<th>${defaultTitleFormat(v.id)}</th>
 							<th class="value">${defaultValueFormat(v.value)}</th>
 						</tr>
-						<tr class="${CLASS.tooltipName}-${v.id}">
+						<tr class="${$TOOLTIP.tooltipName}-${v.id}">
 							<td class="name"><span style="background-color:${color(v)}"></span>${defaultTitleFormat("Epochs")}</td>
 							<td class="value">${defaultValueFormat(v.epochs)}</td>
 						</tr>`;

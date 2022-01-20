@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import CLASS from "../../config/classes";
+import {$ARC, $AXIS} from "../../config/classes";
 import {asHalfPixel} from "../../module/util";
 
 type TranslateParam = "main" | "context" | "legend" | "x" | "y" | "y2" | "subX" | "arc" | "radar";
@@ -60,16 +60,16 @@ export default {
 
 		const xAxis = transitions?.axisX ?
 			transitions.axisX :
-			$T(main.select(`.${CLASS.axisX}`), withTransition);
+			$T(main.select(`.${$AXIS.axisX}`), withTransition);
 
 		const yAxis = transitions?.axisY ?
 			transitions.axisY :
-			$T(main.select(`.${CLASS.axisY}`), withTransition);
+			$T(main.select(`.${$AXIS.axisY}`), withTransition);
 
 
 		const y2Axis = transitions?.axisY2 ?
 			transitions.axisY2 :
-			$T(main.select(`.${CLASS.axisY2}`), withTransition);
+			$T(main.select(`.${$AXIS.axisY2}`), withTransition);
 
 		$T(main, withTransition)
 			.attr("transform", $$.getTranslate("main"));
@@ -78,7 +78,7 @@ export default {
 		yAxis.attr("transform", $$.getTranslate("y"));
 		y2Axis.attr("transform", $$.getTranslate("y2"));
 
-		main.select(`.${CLASS.chartArcs}`)
+		main.select(`.${$ARC.chartArcs}`)
 			.attr("transform", $$.getTranslate("arc"));
 	},
 

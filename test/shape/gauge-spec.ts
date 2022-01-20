@@ -6,15 +6,15 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
-import CLASS from "../../src/config/classes";
+import {$ARC, $COMMON, $GAUGE, $SHAPE} from "../../src/config/classes";
 import util from "../assets/util";
 import {getBoundingRect} from "../../src/module/util";
 
 describe("SHAPE GAUGE", () => {
 	const selector = {
-		arc: `.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}`,
-		shapes: `g.${CLASS.shapes}.${CLASS.arcs}.${CLASS.arcs}`,
-		shape: `path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}`
+		arc: `.${$ARC.chartArc}.${$COMMON.target}.${$COMMON.target}`,
+		shapes: `g.${$SHAPE.shapes}.${$ARC.arcs}.${$ARC.arcs}`,
+		shape: `path.${$SHAPE.shape}.${$ARC.arc}.${$ARC.arc}`
 	};
 
     describe("show gauge", () => {
@@ -34,21 +34,21 @@ describe("SHAPE GAUGE", () => {
 				}
 			});
 
-			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
 			const data = chartArc.select(`${selector.arc}-data`)
 					.select(`${selector.shapes}-data`)
 					.select(`${selector.shape}-data`);
 
 			// check guage's background color
 			expect(
-				chart.$.arc.select(`path.${CLASS.chartArcsBackground}`).style("fill")
+				chart.$.arc.select(`path.${$ARC.chartArcsBackground}`).style("fill")
 			).to.be.equal(chart.internal.config.gauge_background);
 
 			setTimeout(() => {
 				expect(data.attr("d"))
 					.to.be.equal("M-304,-3.7229262694079536e-14A304,304,0,0,1,245.94116628998404,-178.68671669691184L237.85099634623455,-172.8088641739871A294,294,0,0,0,-294,-3.6004615894932184e-14Z");
 
-				expect(chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.equal("-.1em");
+				expect(chartArc.select(`.${$GAUGE.gaugeValue}`).attr("dy")).to.be.equal("-.1em");
 
 				done();
 			}, 500);
@@ -94,7 +94,7 @@ describe("SHAPE GAUGE", () => {
 				}
 			});
 
-			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
 			const data = chartArc.select(`${selector.arc}-data`)
 					.select(`${selector.shapes}-data`)
 					.select(`${selector.shape}-data`);
@@ -157,14 +157,14 @@ describe("SHAPE GAUGE", () => {
 			});
 
 			const chartArc = chart.$.arc;
-			const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
-			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`);
+			const min = chartArc.select(`.${$GAUGE.chartArcsGaugeMin}`);
+			const max = chartArc.select(`.${$GAUGE.chartArcsGaugeMax}`);
 
 			expect(min.text()).to.equal("Min: 0%");
 			expect(max.text()).to.equal("Max: 100%");
 
 			// gauge text should be multilined
-			expect(chartArc.selectAll(`.${CLASS.target}-data tspan`).size()).to.be.equal(3);
+			expect(chartArc.selectAll(`.${$COMMON.target}-data tspan`).size()).to.be.equal(3);
 		});
 
 		it("should not show gauge labels", () => {
@@ -182,9 +182,9 @@ describe("SHAPE GAUGE", () => {
 				}
 			});
 
-			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
-			const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
-			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`)
+			const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
+			const min = chartArc.select(`.${$GAUGE.chartArcsGaugeMin}`);
+			const max = chartArc.select(`.${$GAUGE.chartArcsGaugeMax}`)
 
 			expect(min.empty()).to.be.true;
 			expect(max.empty()).to.be.true;
@@ -207,15 +207,15 @@ describe("SHAPE GAUGE", () => {
 			});
 
 			setTimeout(() => {
-				const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
-				const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
-				const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`);
+				const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
+				const min = chartArc.select(`.${$GAUGE.chartArcsGaugeMin}`);
+				const max = chartArc.select(`.${$GAUGE.chartArcsGaugeMax}`);
 
 				// check if gauge value text is centered
-				expect(+chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.above(0);
+				expect(+chartArc.select(`.${$GAUGE.gaugeValue}`).attr("dy")).to.be.above(0);
 
 				// check background height
-				expect(util.getBBox(chartArc.select(`.${CLASS.chartArcsBackground}`)).height).to.be.above(300);
+				expect(util.getBBox(chartArc.select(`.${$ARC.chartArcsBackground}`)).height).to.be.above(300);
 
 				// check for background arcPath length (in this case full circle)
 				const path = 'M-211.85,-2.5944142439936676e-14A211.85,211.85,0,1,1,211.85,2.5944142439936676e-14A211.85,211.85,0,1,1,-211.85,-2.5944142439936676e-14M-201.85,2.4719495640789325e-14A201.85,201.85,0,1,0,201.85,-2.4719495640789325e-14A201.85,201.85,0,1,0,-201.85,2.4719495640789325e-14Z'
@@ -247,10 +247,10 @@ describe("SHAPE GAUGE", () => {
 			});
 
 			setTimeout(() => {
-				const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+				const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
 
 				// check background height
-				expect(util.getBBox(chartArc.select(`.${CLASS.chartArcsBackground}`)).height).to.be.above(300);
+				expect(util.getBBox(chartArc.select(`.${$ARC.chartArcsBackground}`)).height).to.be.above(300);
 
 				// check for background arcPath length (in this case 3 quarter)
 				const backgroundArcPath = 'M-211.85,-2.5944142439936676e-14A211.85,211.85,0,1,1,1.2972071219968338e-14,211.85L1.2359747820394662e-14,201.85A201.85,201.85,0,1,0,-201.85,-2.4719495640789325e-14Z'
@@ -258,7 +258,7 @@ describe("SHAPE GAUGE", () => {
 
 				// check for arcPath length (in this case 3 quarter)
 				const arcPath = 'M-211.85,-2.5944142439936676e-14A211.85,211.85,0,1,1,1.2972071219968338e-14,211.85L1.2359747820394662e-14,201.85A201.85,201.85,0,1,0,-201.85,-2.4719495640789325e-14Z'
-				expect(chartArc.select(`path.${CLASS.arc + '-' + chart.internal.data.targets[0].id}`).attr('d')).to.be.equal(arcPath);
+				expect(chartArc.select(`path.${$ARC.arc + '-' + chart.internal.data.targets[0].id}`).attr('d')).to.be.equal(arcPath);
 
 				done();
 			}, 100);
@@ -295,7 +295,7 @@ describe("SHAPE GAUGE", () => {
 		  	];
 
 			setTimeout(() => {
-				chart.$.arc.selectAll(`.${CLASS.target} path`).each(function(d, i) {
+				chart.$.arc.selectAll(`.${$COMMON.target} path`).each(function(d, i) {
 					expect(this.getAttribute("d")).to.be.equal(expected[i]);
 				});
 
@@ -333,9 +333,9 @@ describe("SHAPE GAUGE", () => {
 			setTimeout(() => {
 				const data = chart.data();
 
-				expect(chart.$.arc.select(`.${CLASS.chartArcsGaugeTitle}`).text()).to.be.equal(args.gauge.title);
+				expect(chart.$.arc.select(`.${$GAUGE.chartArcsGaugeTitle}`).text()).to.be.equal(args.gauge.title);
 
-				chart.$.arc.selectAll(`.${CLASS.target} path`).each(function(d, i) {
+				chart.$.arc.selectAll(`.${$COMMON.target} path`).each(function(d, i) {
 					expect(d.value).to.be.equal(data[i].values[0].value);
 					expect(this.getAttribute("d")).to.be.equal(expected[i]);
 				});
@@ -368,7 +368,7 @@ describe("SHAPE GAUGE", () => {
 			];
 
 			setTimeout(() => {
-				chart.$.arc.selectAll(`.${CLASS.target} path`).each(function(d, i) {
+				chart.$.arc.selectAll(`.${$COMMON.target} path`).each(function(d, i) {
 					expect(this.getAttribute("d")).to.be.equal(expected[i]);
 				});
 				
@@ -393,11 +393,11 @@ describe("SHAPE GAUGE", () => {
 
 			// gauge backgound should be aligned with the 'startingAngle' option
 			expect(
-				getBoundingRect(arc.select(`.${CLASS.chartArcsBackground}`).node()).width
+				getBoundingRect(arc.select(`.${$ARC.chartArcsBackground}`).node()).width
 			).to.be.equal(0);
 
 			expect(
-				arc.select(`.${CLASS.arc}-data`).datum().startAngle
+				arc.select(`.${$ARC.arc}-data`).datum().startAngle
 			).to.be.equal(
 				chart.config("gauge.startingAngle")
 			);
@@ -484,17 +484,17 @@ describe("SHAPE GAUGE", () => {
 
 		it("each data_column should have one arc", () => {
 			const arc = chart.$.arc;
-			const chartArcs = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arc}`);
+			const chartArcs = arc.selectAll(`.${$ARC.chartArc} .${$ARC.arc}`);
 
 			chartArcs.each(function(d, i) {
-				expect(d3Select(this).classed(`${CLASS.shape} ${CLASS.arc} ${CLASS.arc}-${args.data.columns[i][0]}`)).to.be.true;
+				expect(d3Select(this).classed(`${$SHAPE.shape} ${$ARC.arc} ${$ARC.arc}-${args.data.columns[i][0]}`)).to.be.true;
 			});
 		});
 
 		it("each arc should have the color from color_pattern if color_treshold is given ", done => {
 			setTimeout(() => {
 				const arc = chart.$.arc;
-				const chartArcs = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arc}`);
+				const chartArcs = arc.selectAll(`.${$ARC.chartArc} .${$ARC.arc}`);
 
 				chartArcs.each(function(d, i) {
 					expect(d3Select(this).style("fill")).to.be.equal(arcColor[i]);
@@ -506,16 +506,16 @@ describe("SHAPE GAUGE", () => {
 
 		it("each data_column should have one background", () => {
 			const arc = chart.$.arc;
-			const chartArcBackgrounds = arc.selectAll(`.${CLASS.chartArcs} path.${CLASS.chartArcsBackground}`);
+			const chartArcBackgrounds = arc.selectAll(`.${$ARC.chartArcs} path.${$ARC.chartArcsBackground}`);
 
 			chartArcBackgrounds.each(function(d, i) {
-				expect(d3Select(this).classed(`${CLASS.chartArcsBackground}-${i}`)).to.be.true;
+				expect(d3Select(this).classed(`${$ARC.chartArcsBackground}-${i}`)).to.be.true;
 			});
 		});
 
 		it("each background should have the same color", () => {
 			const arc = chart.$.arc;
-			const chartArcBackgrounds = arc.selectAll(`.${CLASS.chartArcs} path.${CLASS.chartArcsBackground}`);
+			const chartArcBackgrounds = arc.selectAll(`.${$ARC.chartArcs} path.${$ARC.chartArcsBackground}`);
 
 			chartArcBackgrounds.each(function(d, i) {
 				expect(d3Select(this).style("fill")).to.be.equal("rgb(224, 224, 224)");
@@ -525,7 +525,7 @@ describe("SHAPE GAUGE", () => {
 		it("each data_column should have a label", done => {
 			setTimeout(() => {
 				const arc = chart.$.arc;
-				const gaugeValues = arc.selectAll(`${selector.arc} text.${CLASS.gaugeValue}`);
+				const gaugeValues = arc.selectAll(`${selector.arc} text.${$GAUGE.gaugeValue}`);
 
 				gaugeValues.each(function(d, i) {
 					expect(d3Select(this).text()).to.be.equal(`${args.data.columns[i][1]}%`);
@@ -537,7 +537,7 @@ describe("SHAPE GAUGE", () => {
 
 		it("each label should have the same color", () => {
 			const arc = chart.$.arc;
-			const gaugeValues = arc.selectAll(`${selector.arc} text.${CLASS.gaugeValue}`);
+			const gaugeValues = arc.selectAll(`${selector.arc} text.${$GAUGE.gaugeValue}`);
 
 			gaugeValues.each(function(d, i) {
 				expect(d3Select(this).style("fill")).to.be.equal("rgb(0, 0, 0)");
@@ -546,16 +546,16 @@ describe("SHAPE GAUGE", () => {
 
 		it("each data_column should have a labelline", () => {
 			const arc = chart.$.arc;
-			const arcLabelLines = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arcLabelLine}`);
+			const arcLabelLines = arc.selectAll(`.${$ARC.chartArc} .${$ARC.arcLabelLine}`);
 
 			arcLabelLines.each(function(d, i) {
-				expect(d3Select(this).classed(`${CLASS.arcLabelLine} ${CLASS.target} ${CLASS.target}-${args.data.columns[i][0]}`)).to.be.true;
+				expect(d3Select(this).classed(`${$ARC.arcLabelLine} ${$COMMON.target} ${$COMMON.target}-${args.data.columns[i][0]}`)).to.be.true;
 			});
 		});
 
 		it("each labelline should have the color from color_pattern if color_treshold is given", () => {
 			const arc = chart.$.arc;
-			const arcLabelLines = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arcLabelLine}`);
+			const arcLabelLines = arc.selectAll(`.${$ARC.chartArc} .${$ARC.arcLabelLine}`);
 
 			arcLabelLines.each(function(d, i) {
 				expect(d3Select(this).style("fill")).to.be.equal(arcColor[i]);
@@ -578,7 +578,7 @@ describe("SHAPE GAUGE", () => {
 
 			chart.focus("padded3");
 
-			const gaugeValues = arc.selectAll(`${selector.arc} text.${CLASS.gaugeValue}`);
+			const gaugeValues = arc.selectAll(`${selector.arc} text.${$GAUGE.gaugeValue}`);
 			const gaugeValuesNodes = gaugeValues.nodes();
 
 			expect(gaugeValuesNodes[0].className.baseVal).to.be.equal("bb-gauge-value");
@@ -628,7 +628,7 @@ describe("SHAPE GAUGE", () => {
 		it("check gauge's background color", () => {
 			const arc = chart.$.arc;
 			const backgroundColor = chart.internal.config.gauge_background;
-			const gaugeBackground = arc.selectAll(`path.${CLASS.chartArcsBackground}`);
+			const gaugeBackground = arc.selectAll(`path.${$ARC.chartArcsBackground}`);
 
 			gaugeBackground.each(function(d, i) {
 				expect(this.style.fill).to.be.equal(backgroundColor);
@@ -649,7 +649,7 @@ describe("SHAPE GAUGE", () => {
 
 		it("should mirror the starting angle", done => {
 			setTimeout(() => {
-				const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+				const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
 
 				// check for background arcPath length (in this case 3 quarter)
 				const expectedBackgroundArcPaths = [
@@ -658,7 +658,7 @@ describe("SHAPE GAUGE", () => {
 					'M-173.94888197948833,-111.69129266906184A206.71999999999997,206.71999999999997,0,0,1,173.94888197948833,-111.69129266906181L152.20527173205232,-97.7298810854291A180.88,180.88,0,0,0,-152.20527173205232,-97.72988108542911Z',
 					'M-152.20527173205232,-97.72988108542911A180.88,180.88,0,0,1,152.20527173205232,-97.7298810854291L130.46166148461626,-83.76846950179637A155.04,155.04,0,0,0,-130.46166148461626,-83.76846950179639Z',
 					]
-				const backgroundArcPaths = chartArc.selectAll(`path.${CLASS.chartArcsBackground}`);
+				const backgroundArcPaths = chartArc.selectAll(`path.${$ARC.chartArcsBackground}`);
 				backgroundArcPaths.each((data, index, elements)=> {
 					expect(elements[index].getAttribute('d')).to.be.equal(expectedBackgroundArcPaths[index])
 				})
@@ -670,7 +670,7 @@ describe("SHAPE GAUGE", () => {
 					'M-173.94888197948833,-111.69129266906184A206.71999999999997,206.71999999999997,0,0,1,1.265794931598704e-14,-206.71999999999997L1.1075705651488663e-14,-180.88A180.88,180.88,0,0,0,-152.20527173205232,-97.72988108542911Z',
 					'M-152.20527173205232,-97.72988108542911A180.88,180.88,0,0,1,-102.13253058769399,-149.2867060248626L-87.54216907516629,-127.96003373559653A155.04,155.04,0,0,0,-130.46166148461626,-83.76846950179639Z',
 				]
-				const arcPaths = chartArc.selectAll(`path.${CLASS.arc}`);
+				const arcPaths = chartArc.selectAll(`path.${$ARC.arc}`);
 				arcPaths.each((data, index, elements)=> {
 					expect(elements[index].getAttribute('d')).to.be.equal(expectedArcPaths[index])
 				})
@@ -688,9 +688,9 @@ describe("SHAPE GAUGE", () => {
 
 		it("check for fullCircle option", done => {
 			setTimeout(() => {
-				const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
-				const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
-				const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`);
+				const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
+				const min = chartArc.select(`.${$GAUGE.chartArcsGaugeMin}`);
+				const max = chartArc.select(`.${$GAUGE.chartArcsGaugeMax}`);
 
 				// check for background arcPath length (in this case full circle)
 				const expectedBackgroundArcPaths = [
@@ -699,7 +699,7 @@ describe("SHAPE GAUGE", () => {
 					'M-144.05799999999996,-1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,1,1,144.05799999999996,1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,1,1,-144.05799999999996,-1.7642016859156936e-14M-126.05074999999998,1.543676475176232e-14A126.05074999999998,126.05074999999998,0,1,0,126.05074999999998,-1.543676475176232e-14A126.05074999999998,126.05074999999998,0,1,0,-126.05074999999998,1.543676475176232e-14Z',
 					'M-126.05074999999998,-1.543676475176232e-14A126.05074999999998,126.05074999999998,0,1,1,126.05074999999998,1.543676475176232e-14A126.05074999999998,126.05074999999998,0,1,1,-126.05074999999998,-1.543676475176232e-14M-108.04349999999998,1.3231512644367703e-14A108.04349999999998,108.04349999999998,0,1,0,108.04349999999998,-1.3231512644367703e-14A108.04349999999998,108.04349999999998,0,1,0,-108.04349999999998,1.3231512644367703e-14Z'
 				]
-				const backgroundArcPaths = chartArc.selectAll(`path.${CLASS.chartArcsBackground}`);
+				const backgroundArcPaths = chartArc.selectAll(`path.${$ARC.chartArcsBackground}`);
 				backgroundArcPaths.each((data, index, elements)=> {
 					expect(elements[index].getAttribute('d')).to.be.equal(expectedBackgroundArcPaths[index])
 				})
@@ -711,7 +711,7 @@ describe("SHAPE GAUGE", () => {
 					'M-144.05799999999996,-1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,1,1,144.05799999999996,6.39746033925803e-14L126.05074999999998,5.597777796850777e-14A126.05074999999998,126.05074999999998,0,1,0,-126.05074999999998,-1.543676475176232e-14Z',
 					'M-126.05074999999998,-1.543676475176232e-14A126.05074999999998,126.05074999999998,0,0,1,-38.95182390370789,-119.88138717139132L-33.38727763174962,-102.75547471833542A108.04349999999998,108.04349999999998,0,0,0,-108.04349999999998,-1.3231512644367703e-14Z'
 				]
-				const arcPaths = chartArc.selectAll(`path.${CLASS.arc}`);
+				const arcPaths = chartArc.selectAll(`path.${$ARC.arc}`);
 				arcPaths.each((data, index, elements)=> {
 					expect(elements[index].getAttribute('d')).to.be.equal(expectedArcPaths[index])
 				})
@@ -731,7 +731,7 @@ describe("SHAPE GAUGE", () => {
 
 		it("check for arcLength option", done => {
 			setTimeout(() => {
-				const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+				const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
 
 				// check for background arcPath length (in this case 3 quarter)
 				const expectedBackgroundArcPaths = [
@@ -740,7 +740,7 @@ describe("SHAPE GAUGE", () => {
 					'M-144.05799999999996,-1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,1,1,8.821008429578468e-15,144.05799999999996L7.71838237588116e-15,126.05074999999998A126.05074999999998,126.05074999999998,0,1,0,-126.05074999999998,-1.543676475176232e-14Z',
 					'M-126.05074999999998,-1.543676475176232e-14A126.05074999999998,126.05074999999998,0,1,1,7.71838237588116e-15,126.05074999999998L6.615756322183852e-15,108.04349999999998A108.04349999999998,108.04349999999998,0,1,0,-108.04349999999998,-1.3231512644367703e-14Z'
 				]
-				const backgroundArcPaths = chartArc.selectAll(`path.${CLASS.chartArcsBackground}`);
+				const backgroundArcPaths = chartArc.selectAll(`path.${$ARC.chartArcsBackground}`);
 				backgroundArcPaths.each((data, index, elements)=> {
 					expect(elements[index].getAttribute('d')).to.be.equal(expectedBackgroundArcPaths[index])
 				})
@@ -752,7 +752,7 @@ describe("SHAPE GAUGE", () => {
 					'M-144.05799999999996,-1.7642016859156936e-14A144.05799999999996,144.05799999999996,0,0,1,101.86438868417164,-101.86438868417163L89.1313400986502,-89.13134009865018A126.05074999999998,126.05074999999998,0,0,0,-126.05074999999998,-1.543676475176232e-14Z',
 					'M-126.05074999999998,-1.543676475176232e-14A126.05074999999998,126.05074999999998,0,0,1,-74.09077189040543,-101.97719890370789L-63.5063759060618,-87.40902763174962A108.04349999999998,108.04349999999998,0,0,0,-108.04349999999998,-1.3231512644367703e-14Z'
 				]
-				const arcPaths = chartArc.selectAll(`path.${CLASS.arc}`);
+				const arcPaths = chartArc.selectAll(`path.${$ARC.arc}`);
 				arcPaths.each((data, index, elements)=> {
 					expect(elements[index].getAttribute('d')).to.be.equal(expectedArcPaths[index])
 				})
@@ -799,7 +799,7 @@ describe("SHAPE GAUGE", () => {
 				}
             };
             const chart = util.generate(args);
-			const maxValue = +chart.$.main.select(`.${CLASS.chartArcsGaugeMax}`).text();
+			const maxValue = +chart.$.main.select(`.${$GAUGE.chartArcsGaugeMax}`).text();
             
 			expect(args.gauge.max).to.be.below(maxValue);
 			expect(maxValue).to.be.equal(args.data.columns[0][1]);
@@ -822,7 +822,7 @@ describe("SHAPE GAUGE", () => {
 			const chart = util.generate(args);
 			
 			const valueRect = chart.$.text.texts.node().getBoundingClientRect();
-			const unitRect = chart.$.main.select(`.${CLASS.chartArcsGaugeUnit}`).node().getBoundingClientRect();
+			const unitRect = chart.$.main.select(`.${$GAUGE.chartArcsGaugeUnit}`).node().getBoundingClientRect();
 
 			expect(unitRect.y).to.be.greaterThan(valueRect.y + valueRect.height);
 		});

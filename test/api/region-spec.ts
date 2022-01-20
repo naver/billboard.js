@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$REGION} from "../../src/config/classes";
 
 describe("API region", function() {
 	let chart;
@@ -63,7 +63,7 @@ describe("API region", function() {
 			chart.regions(expectedRegions);
 
 			setTimeout(() => {
-				regions = main.selectAll(`.${CLASS.region}`);
+				regions = main.selectAll(`.${$REGION.region}`);
 
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
@@ -162,7 +162,7 @@ describe("API region", function() {
 			chart.regions(expectedRegions);
 
 			setTimeout(() => {
-				regions = main.selectAll(`.${CLASS.region}`);
+				regions = main.selectAll(`.${$REGION.region}`);
 
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
@@ -268,7 +268,7 @@ describe("API region", function() {
 			chart.regions(expectedRegions);
 
 			setTimeout(() => {
-				regions = main.selectAll(`.${CLASS.region}`);
+				regions = main.selectAll(`.${$REGION.region}`);
 
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
@@ -326,7 +326,7 @@ describe("API region", function() {
 
 			// regions should be positioned behind the chart elements
 			// https://github.com/naver/billboard.js/issues/2067
-			expect(chart.$.main.select(":first-child").classed(CLASS.regions)).to.be.true;
+			expect(chart.$.main.select(":first-child").classed($REGION.regions)).to.be.true;
 
 			expect(chart.regions()).to.deep.equal(regions);
 

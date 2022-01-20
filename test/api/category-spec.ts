@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AXIS} from "../../src/config/classes";
 
 describe("API category", () => {
 	let chart;
@@ -44,7 +44,7 @@ describe("API category", () => {
 		const name = ["aa","bb","cc", "dd", "ee"];
 		chart.categories(name);
 
-		chart.$.main.selectAll(`.${CLASS.axisX} tspan`).each(function(d, i) {
+		chart.$.main.selectAll(`.${$AXIS.axisX} tspan`).each(function(d, i) {
 			expect(d3Select(this).text()).to.be.equal(name[i]);
 		});
 	});
@@ -62,7 +62,7 @@ describe("API category", () => {
 		});
 
 		// check if <tspan> element value has changed
-		chart.$.main.selectAll(`.${CLASS.axisX} tspan`).each(function(d, i) {
+		chart.$.main.selectAll(`.${$AXIS.axisX} tspan`).each(function(d, i) {
 			expect(d3Select(this).text()).to.be.equal(name[i]);
 		});
 	});

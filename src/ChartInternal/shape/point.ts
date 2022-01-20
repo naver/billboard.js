@@ -7,7 +7,7 @@ import {
 	select as d3Select
 } from "d3-selection";
 import {d3Selection} from "../../../types/types";
-import CLASS from "../../config/classes";
+import {$CIRCLE, $COMMON, $SELECT} from "../../config/classes";
 import {document} from "../../module/browser";
 import {getBoundingRect, getPointer, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
 
@@ -58,10 +58,10 @@ export default {
 
 		$$.point = $$.generatePoint();
 
-		if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select(`.${CLASS.chartCircles}`).empty()) {
-			main.select(`.${CLASS.chart}`)
+		if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select(`.${$CIRCLE.chartCircles}`).empty()) {
+			main.select(`.${$COMMON.chart}`)
 				.append("g")
-				.attr("class", CLASS.chartCircles);
+				.attr("class", $CIRCLE.chartCircles);
 		}
 	},
 
@@ -86,9 +86,9 @@ export default {
 			targets = (data.targets)
 				.filter(d => this.isScatterType(d) || this.isBubbleType(d));
 
-			const mainCircle = $el.main.select(`.${CLASS.chartCircles}`)
+			const mainCircle = $el.main.select(`.${$CIRCLE.chartCircles}`)
 				.style("pointer-events", "none")
-				.selectAll(`.${CLASS.circles}`)
+				.selectAll(`.${$CIRCLE.circles}`)
 				.data(targets)
 				.attr("class", classCircles);
 
@@ -98,7 +98,7 @@ export default {
 
 		// Circles for each data point on lines
 		selectionEnabled && enterNode.append("g")
-			.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
+			.attr("class", d => $$.generateClass($SELECT.selectedCircles, d.id));
 
 		enterNode.append("g")
 			.attr("class", classCircles)
@@ -106,8 +106,8 @@ export default {
 
 		// Update date for selected circles
 		selectionEnabled && targets.forEach(t => {
-			$el.main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
-				.selectAll(`${CLASS.selectedCircle}`)
+			$el.main.selectAll(`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
+				.selectAll(`${$SELECT.selectedCircle}`)
 				.each(d => {
 					d.value = t.values[d.index].value;
 				});
@@ -121,8 +121,8 @@ export default {
 		const $root = isSub ? $el.subchart : $el;
 
 		if (config.point_show && !state.toggling) {
-			const circles = $root.main.selectAll(`.${CLASS.circles}`)
-				.selectAll(`.${CLASS.circle}`)
+			const circles = $root.main.selectAll(`.${$CIRCLE.circles}`)
+				.selectAll(`.${$CIRCLE.circle}`)
 				.data(d => (
 					($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
 						$$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
@@ -135,7 +135,7 @@ export default {
 				.filter(Boolean)
 				.append($$.point("create", this, $$.pointR.bind($$), $$.color));
 
-			$root.circle = $root.main.selectAll(`.${CLASS.circles} .${CLASS.circle}`)
+			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
 				.style("stroke", $$.color)
 				.style("opacity", $$.initialOpacityForCircle.bind($$));
 		}
@@ -145,7 +145,7 @@ export default {
 		const $$ = this;
 		const {state: {rendered}, $el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
-		const selectedCircles = $root.main.selectAll(`.${CLASS.selectedCircle}`);
+		const selectedCircles = $root.main.selectAll(`.${$SELECT.selectedCircle}`);
 
 		if (!$$.config.point_show) {
 			return [];
@@ -256,7 +256,7 @@ export default {
 
 		reset && $$.unexpandCircles();
 
-		const circles = $$.getShapeByIndex("circle", i, id).classed(CLASS.EXPANDED, true);
+		const circles = $$.getShapeByIndex("circle", i, id).classed($COMMON.EXPANDED, true);
 		const scale = r(circles) / $$.config.point_r;
 		const ratio = 1 - scale;
 
@@ -286,9 +286,9 @@ export default {
 
 		const circles = $$.getShapeByIndex("circle", i)
 			.filter(function() {
-				return d3Select(this).classed(CLASS.EXPANDED);
+				return d3Select(this).classed($COMMON.EXPANDED);
 			})
-			.classed(CLASS.EXPANDED, false);
+			.classed($COMMON.EXPANDED, false);
 
 		circles.attr("r", r);
 
@@ -398,8 +398,8 @@ export default {
 				circle.each(function(d) {
 					let className = $$.getClass("circle", true)(d);
 
-					if (this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1) {
-						className += ` ${CLASS.EXPANDED}`;
+					if (this.getAttribute("class").indexOf($COMMON.EXPANDED) > -1) {
+						className += ` ${$COMMON.EXPANDED}`;
 					}
 
 					this.setAttribute("class", className);

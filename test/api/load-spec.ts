@@ -6,9 +6,8 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
-import CLASS from "../../src/config/classes";
+import {$AREA, $AXIS, $COMMON, $CIRCLE, $LEGEND, $LINE} from "../../src/config/classes";
 import util from "../assets/util";
-import { area } from "../../src/config/resolver/shape";
 
 describe("API load", function() {
 	let chart;
@@ -90,7 +89,7 @@ describe("API load", function() {
 						const main = chart.$.main;
 
 						// updated classname?
-						expect(main.select(`.${CLASS.target}-data1.${CLASS.target}-${className}`).empty()).to.be.false;
+						expect(main.select(`.${$COMMON.target}-data1.${$COMMON.target}-${className}`).empty()).to.be.false;
 
 						// updated category?
 						expect(chart.categories()).to.deep.equal(categories);
@@ -121,9 +120,9 @@ describe("API load", function() {
 					["data3", 800, 500, 900, 500, 1000, 700]
 				],
 				done: () => {
-					const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
-					const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
-					const circles = main.selectAll(`.${CLASS.circles}.${CLASS.circles}-data3 circle`);
+					const target = main.select(`.${$LINE.chartLine}.${$COMMON.target}.${$COMMON.target}-data3`);
+					const legendItem = legend.select(`.${$LEGEND.legendItem}.${$LEGEND.legendItem}-data3`);
+					const circles = main.selectAll(`.${$CIRCLE.circles}.${$CIRCLE.circles}-data3 circle`);
 
 					expect(target.size()).to.be.equal(1);
 					expect(legendItem.size()).to.be.equal(1);
@@ -169,10 +168,10 @@ describe("API load", function() {
 					["data3", 400, 500, 450]
 				],
 				done: () => {
-					const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
-					const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
-					const circles = main.selectAll(`.${CLASS.circles}.${CLASS.circles}-data3 circle`);
-					const tickTexts = main.selectAll(`.${CLASS.axisX} g.tick text`);
+					const target = main.select(`.${$LINE.chartLine}.${$COMMON.target}.${$COMMON.target}-data3`);
+					const legendItem = legend.select(`.${$LEGEND.legendItem}.${$LEGEND.legendItem}-data3`);
+					const circles = main.selectAll(`.${$CIRCLE.circles}.${$CIRCLE.circles}-data3 circle`);
+					const tickTexts = main.selectAll(`.${$AXIS.axisX} g.tick text`);
 
 					expect(target.size()).to.be.equal(1);
 					expect(legendItem.size()).to.be.equal(1);
@@ -220,9 +219,9 @@ describe("API load", function() {
 						["data3", 800, 500, 900]
 					],
 					done: () => {
-						const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
-						const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
-						const tickTexts = main.selectAll(`.${CLASS.axisX} g.tick text`);
+						const target = main.select(`.${$LINE.chartLine}.${$COMMON.target}.${$COMMON.target}-data3`);
+						const legendItem = legend.select(`.${$LEGEND.legendItem}.${$LEGEND.legendItem}-data3`);
+						const tickTexts = main.selectAll(`.${$AXIS.axisX} g.tick text`);
 						const expected = ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6"];
 
 						expect(target.size()).to.be.equal(1);
@@ -250,9 +249,9 @@ describe("API load", function() {
 						["data3", 800, 500, 900, 500, 1000, 700]
 					],
 					done: () => {
-						const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
-						const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
-						const tickTexts = main.selectAll(`.${CLASS.axisX} g.tick text`);
+						const target = main.select(`.${$LINE.chartLine}.${$COMMON.target}.${$COMMON.target}-data3`);
+						const legendItem = legend.select(`.${$LEGEND.legendItem}.${$LEGEND.legendItem}-data3`);
+						const tickTexts = main.selectAll(`.${$AXIS.axisX} g.tick text`);
 						const expected = ["new1", "new2", "new3", "new4", "new5", "new6"];
 
 						expect(target.size()).to.be.equal(1);
@@ -379,7 +378,7 @@ describe("API load", function() {
 		});
 
 		it("should be updated the axis label position ", done => {
-			const axisLabel = chart.$.main.select(`.${CLASS.axisYLabel}`);
+			const axisLabel = chart.$.main.select(`.${$AXIS.axisYLabel}`);
 			const dy = +axisLabel.attr("dy");
 
 			chart.load({
@@ -569,7 +568,7 @@ describe("API load", function() {
 						expect(areas && !areas.empty()).to.be.true;
 
 						// check for duplicated node appends
-						expect(chart.$.main.selectAll(`.${CLASS.areas}`).size()).to.be.equal(1);
+						expect(chart.$.main.selectAll(`.${$AREA.areas}`).size()).to.be.equal(1);
 						done();
 					}
 				});
@@ -618,7 +617,7 @@ describe("API load", function() {
 					data3: "area-spline-range"
 				},
 				done: function() {
-					expect(this.$.line.areas.filter(`.${CLASS.area}-data3`).size()).to.be.equal(1);
+					expect(this.$.line.areas.filter(`.${$AREA.area}-data3`).size()).to.be.equal(1);
 
 					done();
 				}

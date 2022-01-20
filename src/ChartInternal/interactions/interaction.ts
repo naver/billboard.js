@@ -4,7 +4,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
-import CLASS from "../../config/classes";
+import {$ARC, $AXIS, $COMMON, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {emulateEvent, getPointer, isNumber, isObject} from "../../module/util";
 
@@ -27,9 +27,9 @@ export default {
 			}
 		}
 
-		main.selectAll(`.${CLASS.shape}-${index}`)
+		main.selectAll(`.${$SHAPE.shape}-${index}`)
 			.each(function() {
-				d3Select(this).classed(CLASS.EXPANDED, true);
+				d3Select(this).classed($COMMON.EXPANDED, true);
 
 				if (isSelectionEnabled) {
 					eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
@@ -96,8 +96,8 @@ export default {
 		["bar", "candlestick"]
 			.filter(v => $$.$el[v])
 			.forEach(v => {
-				reset && $$.$el[v].classed(CLASS.EXPANDED, false);
-				$$.getShapeByIndex(v, i, id).classed(CLASS.EXPANDED, expand);
+				reset && $$.$el[v].classed($COMMON.EXPANDED, false);
+				$$.getShapeByIndex(v, i, id).classed($COMMON.EXPANDED, expand);
 			});
 	},
 
@@ -119,11 +119,11 @@ export default {
 			config.color_onover && $$.setOverColor(isOver, d, isArc);
 
 			if (isArc) {
-				callback(d, main.select(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`).node());
+				callback(d, main.select(`.${$ARC.arc}${$$.getTargetSelectorSuffix(d.id)}`).node());
 			} else if (!config.tooltip_grouped) {
 				let last = $$.cache.get(KEY.setOverOut) || [];
 
-				const shape = main.selectAll(`.${CLASS.shape}-${d}`)
+				const shape = main.selectAll(`.${$SHAPE.shape}-${d}`)
 					.filter(function(d) {
 						return $$.isWithinShape(this, d);
 					});
@@ -151,7 +151,7 @@ export default {
 						$$.setExpand(d, null, true);
 				}
 
-				!$$.isMultipleX() && main.selectAll(`.${CLASS.shape}-${d}`)
+				!$$.isMultipleX() && main.selectAll(`.${$SHAPE.shape}-${d}`)
 					.each(function(d) {
 						callback(d, this);
 					});
@@ -213,8 +213,8 @@ export default {
 		const {config, state: {eventReceiver, hasAxis, hasRadar}, $el: {eventRect, arcs, radar}} = $$;
 		const isMultipleX = $$.isMultipleX();
 		const element = (
-			hasRadar ? radar.axes.select(`.${CLASS.axis}-${index} text`) : (
-				eventRect || arcs.selectAll(`.${CLASS.target} path`).filter((d, i) => i === index)
+			hasRadar ? radar.axes.select(`.${$AXIS.axis}-${index} text`) : (
+				eventRect || arcs.selectAll(`.${$COMMON.target} path`).filter((d, i) => i === index)
 			)
 		).node();
 

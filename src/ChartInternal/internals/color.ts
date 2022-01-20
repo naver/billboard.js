@@ -5,7 +5,7 @@
 import {select as d3Select} from "d3-selection";
 import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
 import {document, window} from "../../module/browser";
-import CLASS from "../../config/classes";
+import {$ARC, $COLOR, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {notEmpty, isFunction, isObject, isString} from "../../module/util";
 
@@ -54,7 +54,7 @@ export default {
 			const delimiter = ";";
 			const span = document.createElement("span");
 
-			span.className = CLASS.colorPattern;
+			span.className = $COLOR.colorPattern;
 			span.style.display = "none";
 			body.appendChild(span);
 
@@ -214,8 +214,8 @@ export default {
 		main.selectAll(
 			isObject(d) ?
 				// when is Arc type
-				`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}` :
-				`.${CLASS.shape}-${d}`
+				`.${$ARC.arc}${$$.getTargetSelectorSuffix(d.id)}` :
+				`.${$SHAPE.shape}-${d}`
 		).style("fill", color);
 	}
 };

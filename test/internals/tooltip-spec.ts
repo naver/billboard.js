@@ -10,7 +10,7 @@ import {
 	namespaces as d3Namespaces
 } from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$SHAPE, $TOOLTIP} from "../../src/config/classes";
 
 describe("TOOLTIP", function() {
 	let chart;
@@ -72,7 +72,7 @@ describe("TOOLTIP", function() {
 
 		if (expected) {
 			for (let i = 1, el; (el = tooltips[i]); i++) {
-				expect(el.className).to.be.equal(`${CLASS.tooltipName}-${expected[i - 1]}`);
+				expect(el.className).to.be.equal(`${$TOOLTIP.tooltipName}-${expected[i - 1]}`);
 			}
 		}
 	};
@@ -219,7 +219,7 @@ describe("TOOLTIP", function() {
 			it("should show tooltip on proper position", done => {
 				const tooltip = chart.$.tooltip;
 				const circles = chart.$.circles;
-				const getCircleRectX = x => circles.filter(`.${CLASS.shape}-${x}`)
+				const getCircleRectX = x => circles.filter(`.${$SHAPE.shape}-${x}`)
 					.node().getBoundingClientRect().x;
 
 				// when
@@ -660,9 +660,9 @@ describe("TOOLTIP", function() {
 	describe("tooltip order", () => {
 		it("should sort values in data display order", () => {
 			checkTooltip(chart, [
-				`${CLASS.tooltipName}-data1`,
-				`${CLASS.tooltipName}-data2`,
-				`${CLASS.tooltipName}-data3`
+				`${$TOOLTIP.tooltipName}-data1`,
+				`${$TOOLTIP.tooltipName}-data2`,
+				`${$TOOLTIP.tooltipName}-data3`
 			]);
 		});
 
@@ -672,9 +672,9 @@ describe("TOOLTIP", function() {
 
 		it("should sort values in ascending order", () => {
 			checkTooltip(chart, [
-				`${CLASS.tooltipName}-data2`,
-				`${CLASS.tooltipName}-data1`,
-				`${CLASS.tooltipName}-data3`
+				`${$TOOLTIP.tooltipName}-data2`,
+				`${$TOOLTIP.tooltipName}-data1`,
+				`${$TOOLTIP.tooltipName}-data3`
 			]);
 		});
 
@@ -684,9 +684,9 @@ describe("TOOLTIP", function() {
 
 		it("should sort values in descending order", () => {
 			checkTooltip(chart, [
-				`${CLASS.tooltipName}-data3`,
-				`${CLASS.tooltipName}-data1`,
-				`${CLASS.tooltipName}-data2`
+				`${$TOOLTIP.tooltipName}-data3`,
+				`${$TOOLTIP.tooltipName}-data1`,
+				`${$TOOLTIP.tooltipName}-data2`
 			]);
 		});
 
@@ -699,9 +699,9 @@ describe("TOOLTIP", function() {
 
 		it("stacked bar: should sort values in descending order", () => {
 			checkTooltip(chart, [
-				`${CLASS.tooltipName}-data3`,
-				`${CLASS.tooltipName}-data1`,
-				`${CLASS.tooltipName}-data2`
+				`${$TOOLTIP.tooltipName}-data3`,
+				`${$TOOLTIP.tooltipName}-data1`,
+				`${$TOOLTIP.tooltipName}-data2`
 			]);
 		});
 
@@ -711,9 +711,9 @@ describe("TOOLTIP", function() {
 
 		it("stacked bar: should sort values in ascending order", () => {
 			checkTooltip(chart, [
-				`${CLASS.tooltipName}-data2`,
-				`${CLASS.tooltipName}-data1`,
-				`${CLASS.tooltipName}-data3`
+				`${$TOOLTIP.tooltipName}-data2`,
+				`${$TOOLTIP.tooltipName}-data1`,
+				`${$TOOLTIP.tooltipName}-data3`
 			]);
 		});
 
@@ -723,9 +723,9 @@ describe("TOOLTIP", function() {
 
 		it("stacked bar: should be ordered in data input order", () => {
 			checkTooltip(chart, [
-				`${CLASS.tooltipName}-data3`,
-				`${CLASS.tooltipName}-data2`,
-				`${CLASS.tooltipName}-data1`
+				`${$TOOLTIP.tooltipName}-data3`,
+				`${$TOOLTIP.tooltipName}-data2`,
+				`${$TOOLTIP.tooltipName}-data1`
 			]);
 		});
 
@@ -1007,14 +1007,14 @@ describe("TOOLTIP", function() {
 				clientY: 107
 			});
 
-			let value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data3 .value`).text();
+			let value = +chart.$.tooltip.select(`.${$TOOLTIP.tooltipName}-data3 .value`).text();
 
 			expect(value).to.be.equal(800);
 
 			// check for circle point shape
 			util.hoverChart(chart, undefined, {clientX: 292, clientY: 34});
 
-			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).html();
+			value = +chart.$.tooltip.select(`.${$TOOLTIP.tooltipName}-data1 .value`).html();
 
 			expect(value).to.be.equal(1000);
 		});
@@ -1073,11 +1073,11 @@ describe("TOOLTIP", function() {
 			// check for custom point shape
 			util.hoverChart(chart, undefined, {clientX: 185, clientY: 107});
 
-			let value = chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).text();
+			let value = chart.$.tooltip.select(`.${$TOOLTIP.tooltipName}-data1 .value`).text();
 
 			expect(value).to.be.equal("Mid: 135 High: 160 Low: 120");
 
-			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data2 .value`).text();
+			value = +chart.$.tooltip.select(`.${$TOOLTIP.tooltipName}-data2 .value`).text();
 
 			expect(value).to.be.equal(200);
 		});

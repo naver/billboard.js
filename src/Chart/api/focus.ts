@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import CLASS from "../../config/classes";
+import {$FOCUS, $GAUGE} from "../../config/classes";
 
 type FocusParam = string | string[];
 
@@ -36,13 +36,13 @@ export default {
 		this.revert();
 		this.defocus();
 
-		candidates.classed(CLASS.focused, true).classed(CLASS.defocused, false);
+		candidates.classed($FOCUS.focused, true).classed($FOCUS.defocused, false);
 
 		if ($$.hasArcType() && !state.hasRadar) {
 			$$.expandArc(targetIds);
 
 			$$.hasType("gauge") &&
-				$$.markOverlapped(targetIdsValue, $$, `.${CLASS.gaugeValue}`);
+				$$.markOverlapped(targetIdsValue, $$, `.${$GAUGE.gaugeValue}`);
 		}
 
 		$$.toggleFocusLegend(targetIds, true);
@@ -76,13 +76,13 @@ export default {
 			$$.selectorTargets(targetIds.filter($$.isTargetToShow, $$))
 		);
 
-		candidates.classed(CLASS.focused, false).classed(CLASS.defocused, true);
+		candidates.classed($FOCUS.focused, false).classed($FOCUS.defocused, true);
 
 		if ($$.hasArcType()) {
 			$$.unexpandArc(targetIds);
 
 			$$.hasType("gauge") &&
-				$$.undoMarkOverlapped($$, `.${CLASS.gaugeValue}`);
+				$$.undoMarkOverlapped($$, `.${$GAUGE.gaugeValue}`);
 		}
 
 		$$.toggleFocusLegend(targetIds, false);
@@ -114,16 +114,16 @@ export default {
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
 		const candidates = $el.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
 
-		candidates.classed(CLASS.focused, false).classed(CLASS.defocused, false);
+		candidates.classed($FOCUS.focused, false).classed($FOCUS.defocused, false);
 		$$.hasArcType() && $$.unexpandArc(targetIds);
 
 		if (config.legend_show) {
 			$$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
 			$el.legend.selectAll($$.selectorLegends(targetIds))
 				.filter(function() {
-					return d3Select(this).classed(CLASS.legendItemFocused);
+					return d3Select(this).classed($FOCUS.legendItemFocused);
 				})
-				.classed(CLASS.legendItemFocused, false);
+				.classed($FOCUS.legendItemFocused, false);
 		}
 
 		state.focusedTargetIds = [];

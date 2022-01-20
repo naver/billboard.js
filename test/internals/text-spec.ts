@@ -8,7 +8,7 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $SHAPE, $TEXT} from "../../src/config/classes";
 import {isNumber} from "../../src/module/util";
 
 describe("TEXT", () => {
@@ -68,7 +68,7 @@ describe("TEXT", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
@@ -95,7 +95,7 @@ describe("TEXT", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
@@ -124,7 +124,7 @@ describe("TEXT", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
+					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`).each(function(d, i) {
 						const text = d3Select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i] - 20, 3);
@@ -213,7 +213,7 @@ describe("TEXT", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
@@ -240,7 +240,7 @@ describe("TEXT", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 4));
 				});
 			});
@@ -280,7 +280,7 @@ describe("TEXT", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
@@ -307,7 +307,7 @@ describe("TEXT", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 4));
 				});
 			});
@@ -375,15 +375,15 @@ describe("TEXT", () => {
 			it("should have data labels on all data", () => {
 				const main = chart.$.main;
 
-				main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
+				main.selectAll(`.${$TEXT.texts}-data1 text`).each(function(d, i) {
 					expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
 				});
 
-				main.selectAll(`.${CLASS.texts}-data2 text`).each(function(d, i) {
+				main.selectAll(`.${$TEXT.texts}-data2 text`).each(function(d, i) {
 					expect(d3Select(this).text()).to.equal(`${args.data.columns[1][i + 1]}`);
 				});
 
-				main.selectAll(`.${CLASS.texts}-data3 text`).each(function(d, i) {
+				main.selectAll(`.${$TEXT.texts}-data3 text`).each(function(d, i) {
 					expect(d3Select(this).text()).to.equal(`${args.data.columns[2][i + 1]}`);
 				});
 			});
@@ -411,15 +411,15 @@ describe("TEXT", () => {
 				it("should have data labels on all data", () => {
 					const main = chart.$.main;
 
-					main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
+					main.selectAll(`.${$TEXT.texts}-data1 text`).each(function(d, i) {
 						expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
 					});
 
-					main.selectAll(`.${CLASS.texts}-data2 text`).each(function() {
+					main.selectAll(`.${$TEXT.texts}-data2 text`).each(function() {
 						expect(d3Select(this).text()).to.be.equal("");
 					});
 
-					main.selectAll(`.${CLASS.texts}-data3 text`).each(function() {
+					main.selectAll(`.${$TEXT.texts}-data3 text`).each(function() {
 						expect(d3Select(this).text()).to.be.equal("");
 					});
 				});
@@ -446,15 +446,15 @@ describe("TEXT", () => {
 				it("should have data labels on all data", () => {
 					const main = chart.$.main;
 
-					main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
+					main.selectAll(`.${$TEXT.texts}-data1 text`).each(function(d, i) {
 						expect(d3Select(this).text()).to.equal(`$${args.data.columns[0][i + 1]}`);
 					});
 
-					main.selectAll(`.${CLASS.texts}-data2 text`).each(function() {
+					main.selectAll(`.${$TEXT.texts}-data2 text`).each(function() {
 						expect(d3Select(this).text()).to.equal("");
 					});
 
-					main.selectAll(`.${CLASS.texts}-data3 text`).each(function() {
+					main.selectAll(`.${$TEXT.texts}-data3 text`).each(function() {
 						expect(d3Select(this).text()).to.equal("");
 					});
 				});
@@ -511,7 +511,7 @@ describe("TEXT", () => {
 					const expectedYs = [68, 50, 68, 423];
 					const expectedXs = [75, 225, 374, 524];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 
@@ -530,7 +530,7 @@ describe("TEXT", () => {
 					const expectedYs = [375, 40, 375, 422];
 					const expectedXs = [6, 202, 397, 593];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
@@ -556,7 +556,7 @@ describe("TEXT", () => {
 					const expectedYs = [51, 145, 235, 327];
 					const expectedXs = [488.5, 514, 488.5, 4];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 4));
 				});
 
@@ -575,7 +575,7 @@ describe("TEXT", () => {
 					const expectedYs = [9, 130, 249, 370];
 					const expectedXs = [76, 526, 76, 4];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 4));
 				});
 			});
@@ -613,7 +613,7 @@ describe("TEXT", () => {
 					const expectedYs = [385, 11, 385, 12];
 					const expectedXs = [74, 221, 368, 515];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 5));
 				});
 
@@ -632,7 +632,7 @@ describe("TEXT", () => {
 					const expectedYs = [394, 60, 394, 39];
 					const expectedXs = [6, 198, 391, 583];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 4));
 				});
 			});
@@ -659,7 +659,7 @@ describe("TEXT", () => {
 					const expectedYs = [57, 162, 269, 375];
 					const expectedXs = [80, 584, 80, 514];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 10, y: 5}));
 				});
 
@@ -680,7 +680,7 @@ describe("TEXT", () => {
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [69, 527, 69, 527]; // 72.50132230092231
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
 				});
 			});
@@ -715,7 +715,7 @@ describe("TEXT", () => {
 					const expectedYs = [392, 43, 52, 215];
 					const expectedXs = [74, 221, 368, 515];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 10, y: 3}));
 				});
 
@@ -734,7 +734,7 @@ describe("TEXT", () => {
 					const expectedYs = [395, 40, 49, 211];
 					const expectedXs = [6, 198, 391, 583];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 10, y: 3}));
 				});
 			});
@@ -758,7 +758,7 @@ describe("TEXT", () => {
 					const expectedYs = [57, 163, 269, 375];
 					const expectedXs = [72, 525, 513, 295];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
 				});
 
@@ -777,7 +777,7 @@ describe("TEXT", () => {
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [70, 527, 515, 297];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
 				});
 			});
@@ -811,7 +811,7 @@ describe("TEXT", () => {
 					const expectedYs = [385, 317, 370, 164];
 					const expectedXs = [74, 225, 374, 524];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 
@@ -830,7 +830,7 @@ describe("TEXT", () => {
 					const expectedYs = [344, 284, 331, 144];
 					const expectedXs = [6, 202, 397, 593];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
@@ -854,7 +854,7 @@ describe("TEXT", () => {
 					const expectedYs = [57, 163, 269, 375];
 					const expectedXs = [57, 150, 77, 362];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 
@@ -873,7 +873,7 @@ describe("TEXT", () => {
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [107, 192, 125, 386];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
@@ -907,7 +907,7 @@ describe("TEXT", () => {
 					const expectedYs = [50, 117, 64, 270];
 					const expectedXs = [74, 221, 368, 515];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 10));
 				});
 
@@ -926,7 +926,7 @@ describe("TEXT", () => {
 					const expectedYs = [90, 151, 103, 290];
 					const expectedXs = [6, 198, 391, 583];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 10));
 				});
 			});
@@ -950,7 +950,7 @@ describe("TEXT", () => {
 					const expectedYs = [57, 163, 269, 375];
 					const expectedXs = [533, 441, 513, 232];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 3));
 				});
 
@@ -969,7 +969,7 @@ describe("TEXT", () => {
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [479, 397, 461, 206];
 
-					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 5));
 				});
 			});
@@ -990,7 +990,7 @@ describe("TEXT", () => {
 
 			it("data text label should be generated", () => {
 				const data = chart.data.values("data1");
-				const texts = chart.$.main.selectAll(`.${CLASS.chartText} text.${CLASS.text}`);
+				const texts = chart.$.main.selectAll(`.${$TEXT.chartText} text.${$TEXT.text}`);
 
 				expect(texts.size()).to.be.equal(data.length);
 			});
@@ -999,7 +999,7 @@ describe("TEXT", () => {
 				args.scatter = {zerobased: true};
 				chart = util.generate(args);
 
-				const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+				const tickNodes = chart.$.svg.select(`.${$AXIS.axisY}`).selectAll("g.tick");
 				const translateValues = [426, 389, 352, 314, 277, 240, 202, 165, 127, 90, 53, 15];
 
 				tickNodes.each(function(d, i) {
@@ -1011,7 +1011,7 @@ describe("TEXT", () => {
 				args.scatter = {zerobased: false};
 				chart = util.generate(args);
 
-				const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+				const tickNodes = chart.$.svg.select(`.${$AXIS.axisY}`).selectAll("g.tick");
 				const translateValues = [402, 367, 331, 296, 260, 225, 189, 154, 118, 83, 47, 12];
 
 				tickNodes.each(function(d, i) {
@@ -1042,14 +1042,14 @@ describe("TEXT", () => {
 			it("should draw points for the scatterplot", () => {
 				const id = "data1";
 				const data = chart.data.values(id);
-				const points = chart.$.main.selectAll(`.${CLASS.shapes}-${id} circle`);
+				const points = chart.$.main.selectAll(`.${$SHAPE.shapes}-${id} circle`);
 
 				expect(points.size()).to.be.equal(data.length);
 			});
 
 			it("should not draw points for the linechart", () => {
 				const id = "data2";
-				const points = chart.$.main.selectAll(`.${CLASS.shapes}-${id} circle`);
+				const points = chart.$.main.selectAll(`.${$SHAPE.shapes}-${id} circle`);
 
 				expect(points.size()).to.be.equal(0);
 			});
@@ -1073,14 +1073,14 @@ describe("TEXT", () => {
 			it("should draw points for the first line", () => {
 				const id = "data1";
 				const data = chart.data.values(id);
-				const points = chart.$.main.selectAll(`.${CLASS.shapes}-${id} circle`);
+				const points = chart.$.main.selectAll(`.${$SHAPE.shapes}-${id} circle`);
 
 				expect(points.size()).to.be.equal(data.length);
 			});
 
 			it("should not draw points for the second line", () => {
 				const id = "data2";
-				const points = chart.$.main.selectAll(`.${CLASS.shapes}-${id} circle`);
+				const points = chart.$.main.selectAll(`.${$SHAPE.shapes}-${id} circle`);
 
 				expect(points.size()).to.be.equal(0);
 			});
@@ -1107,7 +1107,7 @@ describe("TEXT", () => {
 
 				setTimeout(() => {
 					interval = setInterval(() => {
-						text = main.select(`.${CLASS.texts}-data2 .${CLASS.text}-3`);
+						text = main.select(`.${$TEXT.texts}-data2 .${$TEXT.text}-3`);
 						pos.push(+text.attr("x"));
 					}, 20);
 

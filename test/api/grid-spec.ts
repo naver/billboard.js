@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$GRID} from "../../src/config/classes";
 
 describe("API grid", function() {
 	let chart;
@@ -42,7 +42,7 @@ describe("API grid", function() {
 			chart.ygrids.add(expectedGrids);
 
 			setTimeout(() => {
-				grids = main.selectAll(`.${CLASS.ygridLine}`);
+				grids = main.selectAll(`.${$GRID.ygridLine}`);
 
 				expect(grids.size()).to.be.equal(expectedGrids.length);
 
@@ -60,7 +60,7 @@ describe("API grid", function() {
 				chart.ygrids.remove(expectedGrids);
 
 				setTimeout(() => {
-					grids = main.selectAll(`.${CLASS.ygridLine}`);
+					grids = main.selectAll(`.${$GRID.ygridLine}`);
 
 					expect(grids.size()).to.be.equal(0);
 					done();
@@ -92,7 +92,7 @@ describe("API grid", function() {
 
 				// for xgrids()
 				setTimeout(() => {
-					grids = main.selectAll(`.${CLASS.xgridLine}`);
+					grids = main.selectAll(`.${$GRID.xgridLine}`);
 
 					expect(grids.size()).to.be.equal(expectedGrids.length);
 
@@ -116,7 +116,7 @@ describe("API grid", function() {
 
 					// for xgrids.remove()
 					setTimeout(() => {
-						grids = main.selectAll(`.${CLASS.xgridLine}`);
+						grids = main.selectAll(`.${$GRID.xgridLine}`);
 
 						expect(grids.size()).to.be.equal(0);
 						done();
@@ -150,7 +150,7 @@ describe("API grid", function() {
 			chart.xgrids([gridData]);
 
 			setTimeout(() => {
-				const xgrid = chart.$.main.select(`.${CLASS.xgridLine}`);
+				const xgrid = chart.$.main.select(`.${$GRID.xgridLine}`);
 
 				expect(xgrid.classed(gridData.class)).to.be.true;
 
@@ -222,7 +222,7 @@ describe("API grid", function() {
 			chart.ygrids([gridData]);
 
 			setTimeout(() => {
-				const ygrid = chart.$.main.select(`.${CLASS.ygridLine}`);
+				const ygrid = chart.$.main.select(`.${$GRID.ygridLine}`);
 
 				expect(ygrid.classed(gridData.class)).to.be.true;
 

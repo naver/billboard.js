@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import CLASS from "../../config/classes";
+import {$REGION} from "../../config/classes";
 import {getOption, extend} from "../../module/util";
 
 type RegionsParam = {axis?: string, class?: string, start?: number, end?: number}[];
@@ -94,8 +94,8 @@ extend(regions, {
 		const {config, $T} = $$;
 
 		const options = optionsValue || {};
-		const classes = getOption(options, "classes", [CLASS.region]);
-		let regions = $$.$el.main.select(`.${CLASS.regions}`)
+		const classes = getOption(options, "classes", [$REGION.region]);
+		let regions = $$.$el.main.select(`.${$REGION.regions}`)
 			.selectAll(classes.map(c => `.${c}`));
 
 		$T(regions)

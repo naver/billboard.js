@@ -4,15 +4,15 @@
  */
 import {line as d3Line} from "d3-shape";
 import {getScale} from "../internals/scale";
-import CLASS from "../../config/classes";
+import {$COMMON, $LINE} from "../../config/classes";
 import {getPointer, getRandom, isArray, isDefined, isUndefined, isValue, parseDate} from "../../module/util";
 
 export default {
 	initLine(): void {
 		const {$el} = this;
 
-		$el.line = $el.main.select(`.${CLASS.chart}`).append("g")
-			.attr("class", CLASS.chartLines);
+		$el.line = $el.main.select(`.${$COMMON.chart}`).append("g")
+			.attr("class", $LINE.chartLines);
 	},
 
 	updateTargetsForLine(t): void {
@@ -28,8 +28,8 @@ export default {
 
 		const targets = t.filter(d => !($$.isScatterType(d) || $$.isBubbleType(d)));
 
-		const mainLineUpdate = main.select(`.${CLASS.chartLines}`)
-			.selectAll(`.${CLASS.chartLine}`)
+		const mainLineUpdate = main.select(`.${$LINE.chartLines}`)
+			.selectAll(`.${$LINE.chartLine}`)
 			.data(targets)
 			.attr("class", d => classChartLine(d) + classFocus(d));
 
@@ -62,8 +62,8 @@ export default {
 		const $root = isSub ? $el.subchart : $el;
 
 		const line = $root.main
-			.selectAll(`.${CLASS.lines}`)
-			.selectAll(`.${CLASS.line}`)
+			.selectAll(`.${$LINE.lines}`)
+			.selectAll(`.${$LINE.line}`)
 			.data($$.lineData.bind($$));
 
 		$T(line.exit(), withTransition)
