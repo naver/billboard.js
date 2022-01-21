@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AREA, $AXIS, $BAR, $FOCUS, $LINE, $SUBCHART} from "../../src/config/classes";
 
 describe("SUBCHART", () => {
 	let chart;
@@ -61,9 +61,9 @@ describe("SUBCHART", () => {
 
 			expect(children.length).to.be.equal(3);
 
-			expect(children[0].querySelectorAll(`.${CLASS.chartBars}, .${CLASS.chartLines}`).length).to.be.equal(2);
-			expect(children[1].classList.contains(CLASS.brush)).to.be.true;
-			expect(children[2].classList.contains(CLASS.axisX)).to.be.true;
+			expect(children[0].querySelectorAll(`.${$BAR.chartBars}, .${$LINE.chartLines}`).length).to.be.equal(2);
+			expect(children[1].classList.contains($SUBCHART.brush)).to.be.true;
+			expect(children[2].classList.contains($AXIS.axisX)).to.be.true;
 		});
 
 		it("set options subchart.size={height:80}", () => {
@@ -77,7 +77,7 @@ describe("SUBCHART", () => {
 		});
 
 		it("should generate tick nodes", () => {
-			const axis = chart.$.svg.selectAll(`.${CLASS.axisX}`).nodes()[1];
+			const axis = chart.$.svg.selectAll(`.${$AXIS.axisX}`).nodes()[1];
 
 			expect(axis.querySelectorAll(".tick").length).to.be.equal(3);
 			expect(axis.querySelectorAll(".tick line").length).to.be.equal(3);
@@ -89,7 +89,7 @@ describe("SUBCHART", () => {
 		});
 
 		it("shouldn't be generating tick lines", () => {
-			const axis = chart.$.svg.selectAll(`.${CLASS.axisX}`).nodes()[1];
+			const axis = chart.$.svg.selectAll(`.${$AXIS.axisX}`).nodes()[1];
 
 			expect(axis.querySelectorAll(".tick line").length).to.be.equal(0);
 		});
@@ -100,7 +100,7 @@ describe("SUBCHART", () => {
 		});
 
 		it("shouldn't be generating tick text", () => {
-			const axis = chart.$.svg.selectAll(`.${CLASS.axisX}`).nodes()[1];
+			const axis = chart.$.svg.selectAll(`.${$AXIS.axisX}`).nodes()[1];
 
 			expect(axis.querySelectorAll(".tick line").length).to.be.equal(3);
 			expect(axis.querySelectorAll(".tick text").length).to.be.equal(0);
@@ -114,7 +114,7 @@ describe("SUBCHART", () => {
 			const subchart = chart.$.svg.selectAll("[clip-path]").filter(function() {
 				return /subchart/.test(this.getAttribute("clip-path"))
 			}).node().parentNode;
-			const axis = subchart.querySelector(`.${CLASS.axisX}`).children;
+			const axis = subchart.querySelector(`.${$AXIS.axisX}`).children;
 
 			expect(axis.length).to.be.equal(1);
 			expect(axis[0].classList.contains("domain")).to.be.true;
@@ -357,14 +357,14 @@ describe("SUBCHART", () => {
 		};
 
 		it("check for area-spline", () => {
-			checkPath(`.${CLASS.line} path`, [
+			checkPath(`.${$LINE.line} path`, [
 				'M6,56.448321599836746C6,56.448321599836746,201.16666666666669,55.645682413359175,299,55.244362820120394C396.8333333333333,54.84304322688161,593,54.04040404040404,593,54.04040404040404',
 				'M6,52.896643199673505C6,52.896643199673505,201.16666666666669,51.291364826718365,299,50.488725640240794C396.8333333333333,49.686086453763224,593,48.08080808080808,593,48.08080808080808',
 				'M6,42.241607999183756C6,42.241607999183756,201.16666666666669,38.2284120667959,299,36.221814100601975C396.8333333333333,34.21521613440805,593,30.202020202020208,593,30.202020202020208',
 				'M6,28.03489439853076C6,28.03489439853076,201.16666666666669,20.81114172023262,299,17.199265381083556C396.8333333333333,13.587389041934493,593,6.363636363636374,593,6.363636363636374'
 			]);
 
-			checkPath(`.${CLASS.area} path`, [
+			checkPath(`.${$AREA.area} path`, [
 				'M6,56.448321599836746C6,56.448321599836746,201.16666666666669,55.645682413359175,299,55.244362820120394C396.8333333333333,54.84304322688161,593,54.04040404040404,593,54.04040404040404L593,60C593,60,396.8333333333333,60,299,60C201.16666666666669,60,6,60,6,60Z',
 				'M6,52.896643199673505C6,52.896643199673505,201.16666666666669,51.291364826718365,299,50.488725640240794C396.8333333333333,49.686086453763224,593,48.08080808080808,593,48.08080808080808L593,60C593,60,396.8333333333333,60,299,60C201.16666666666669,60,6,60,6,60Z',
 				'M6,42.241607999183756C6,42.241607999183756,201.16666666666669,38.2284120667959,299,36.221814100601975C396.8333333333333,34.21521613440805,593,30.202020202020208,593,30.202020202020208L593,48.08080808080808C593,48.08080808080808,396.8333333333333,49.686086453763224,299,50.488725640240794C201.16666666666669,51.291364826718365,6,52.896643199673505,6,52.896643199673505Z',
@@ -377,14 +377,14 @@ describe("SUBCHART", () => {
 		});
 
 		it("check for area-step type", () => {
-			checkPath(`.${CLASS.line} path`, [
+			checkPath(`.${$LINE.line} path`, [
 				'M6,56.448321599836746L152.5,56.448321599836746L152.5,55.244362820120394L446,55.244362820120394L446,54.04040404040404L593,54.04040404040404',
 				'M6,52.896643199673505L152.5,52.896643199673505L152.5,50.488725640240794L446,50.488725640240794L446,48.08080808080808L593,48.08080808080808',
 				'M6,42.241607999183756L152.5,42.241607999183756L152.5,36.221814100601975L446,36.221814100601975L446,30.202020202020208L593,30.202020202020208',
 				'M6,28.03489439853076L152.5,28.03489439853076L152.5,17.199265381083556L446,17.199265381083556L446,6.363636363636374L593,6.363636363636374'
 			]);
 
-			checkPath(`.${CLASS.area} path`, [
+			checkPath(`.${$AREA.area} path`, [
 				'M6,56.448321599836746L152.5,56.448321599836746L152.5,55.244362820120394L446,55.244362820120394L446,54.04040404040404L593,54.04040404040404L593,60L446,60L446,60L152.5,60L152.5,60L6,60Z',
 				'M6,52.896643199673505L152.5,52.896643199673505L152.5,50.488725640240794L446,50.488725640240794L446,48.08080808080808L593,48.08080808080808L593,60L446,60L446,60L152.5,60L152.5,60L6,60Z',
 				'M6,42.241607999183756L152.5,42.241607999183756L152.5,36.221814100601975L446,36.221814100601975L446,30.202020202020208L593,30.202020202020208L593,48.08080808080808L446,48.08080808080808L446,50.488725640240794L152.5,50.488725640240794L152.5,52.896643199673505L6,52.896643199673505Z',
@@ -397,7 +397,7 @@ describe("SUBCHART", () => {
 		});
 
 		it("check for bar type", () => {
-			checkPath(`.${CLASS.bar} path`, [
+			checkPath(`.${$BAR.bar} path`, [
 				"M39.96666666666666,60V56.448321599836746 H99.66666666666666 V60z",
 				"M239.3,60V55.244362820120394 H299 V60z",
 				"M438.6333333333334,60V54.04040404040404 H498.33333333333337 V60z",
@@ -419,7 +419,7 @@ describe("SUBCHART", () => {
 		});
 
 		it("check for non-grouped line type", () => {
-			checkPath(`.${CLASS.line} path`, [
+			checkPath(`.${$LINE.line} path`, [
 				'M6,55.083333333333336L299,52.16543026706231L593,49.24752720079129',
 				'M6,46.47551928783382L299,40.63971315529179L593,34.80390702274976',
 				'M6,37.867705242334324L299,29.11399604352127L593,20.36028684470821',
@@ -462,12 +462,12 @@ describe("SUBCHART", () => {
 		});
 
 		it("check for area-line-range type", () => {
-			checkPath(`.${CLASS.line} path`, [
+			checkPath(`.${$LINE.line} path`, [
 				'M6,44.981818181818184L124,46.054545454545455L241,45.518181818181816L358,47.12727272727273L475,43.909090909090914L593,42.836363636363636',
 				'M6,46.054545454545455L124,23.527272727272727L241,38.54545454545455L358,6.363636363636366L475,33.18181818181818L593,22.454545454545457'
 			]);
 
-			checkPath(`.${CLASS.area} path`, [
+			checkPath(`.${$AREA.area} path`, [
 				'M6,48.2L124,47.663636363636364L241,47.12727272727273L358,48.2L475,46.054545454545455L593,46.590909090909086L593,38.65272727272727L475,40.690909090909095L358,45.518181818181816L241,42.836363636363636L124,43.372727272727275L6,43.909090909090914Z',
 				'M 6 256.81818181818187'
 			]);
@@ -513,7 +513,7 @@ describe("SUBCHART", () => {
 			expect(selection.attr("height")).to.be.null;
 
 			expect(tooltip.style("display")).to.be.equal("none");
-			expect(main.selectAll(`line.${CLASS.xgridFocus}`).style("visibility")).to.be.equal("hidden");
+			expect(main.selectAll(`line.${$FOCUS.xgridFocus}`).style("visibility")).to.be.equal("hidden");
 		});
 	});
 
@@ -579,7 +579,7 @@ describe("SUBCHART", () => {
 				],
 				done: function() {
 					expect(
-						this.internal.$el.subchart.main.selectAll(`.${CLASS.line}-data1`).size()
+						this.internal.$el.subchart.main.selectAll(`.${$LINE.line}-data1`).size()
 					).to.be.equal(1);
 				}
 			});
@@ -596,11 +596,11 @@ describe("SUBCHART", () => {
 					const {main} = this.internal.$el.subchart;
 
 					expect(
-						main.selectAll(`.${CLASS.line}-data1`).empty()
+						main.selectAll(`.${$LINE.line}-data1`).empty()
 					).to.be.true;
 
 					expect(
-						main.selectAll(`.${CLASS.line}-data2`).size()
+						main.selectAll(`.${$LINE.line}-data2`).size()
 					).to.be.equal(1);
 				}
 			});

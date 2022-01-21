@@ -4,7 +4,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import {document} from "../../module/browser";
-import CLASS from "../../config/classes";
+import {$ARC, $TOOLTIP} from "../../config/classes";
 import {IDataRow} from "../data/IData";
 import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
 
@@ -22,7 +22,7 @@ export default {
 		if ($el.tooltip.empty()) {
 			$el.tooltip = $el.chart
 				.append("div")
-				.attr("class", CLASS.tooltipContainer)
+				.attr("class", $TOOLTIP.tooltipContainer)
 				.style("position", "absolute")
 				.style("pointer-events", "none")
 				.style("display", "none");
@@ -176,7 +176,7 @@ export default {
 					sanitise(titleFormat ? titleFormat(row.x) : row.x);
 
 				text = tplProcess(tpl[0], {
-					CLASS_TOOLTIP: CLASS.tooltip,
+					CLASS_TOOLTIP: $TOOLTIP.tooltip,
 					TITLE: isValue(title) ? (
 						tplStr ? title : `<tr><th colspan="2">${title}</th></tr>`
 					) : ""
@@ -184,7 +184,7 @@ export default {
 			}
 
 			if (!row.ratio && $$.$el.arcs) {
-				row.ratio = $$.getRatio("arc", $$.$el.arcs.select(`path.${CLASS.arc}-${row.id}`).data()[0]);
+				row.ratio = $$.getRatio("arc", $$.$el.arcs.select(`path.${$ARC.arc}-${row.id}`).data()[0]);
 			}
 
 			param = [row.ratio, row.id, row.index, d];
@@ -217,7 +217,7 @@ export default {
 				const name = sanitise(nameFormat(row.name, ...param));
 				const color = getBgColor(row);
 				const contentValue = {
-					CLASS_TOOLTIP_NAME: CLASS.tooltipName + $$.getTargetSelectorSuffix(row.id),
+					CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
 					COLOR: (tplStr || !$$.patterns) ? color : `<svg><rect style="fill:${color}" width="10" height="10"></rect></svg>`,
 					NAME: name,
 					VALUE: value

@@ -10,7 +10,7 @@ import {
 } from "d3-selection";
 import {expect} from "chai";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$ARC, $BAR, $COLOR, $COMMON, $EVENT, $LEGEND, $SHAPE, $TOOLTIP} from "../../src/config/classes";
 import {KEY as CACHE_KEY} from "../../src/module/Cache";
 import {isFunction, isObject, isString} from "../../src/module/util";
 
@@ -43,7 +43,7 @@ describe("COLOR", () => {
 		const styleSheet = document.createElement("style");
 
 		before(() => {
-			styleSheet.innerHTML = `.${CLASS.colorPattern} {
+			styleSheet.innerHTML = `.${$COLOR.colorPattern} {
 				background-image: url("${pattern.join(";")}");
 			}`;
 
@@ -65,7 +65,7 @@ describe("COLOR", () => {
 		});
 
 		it("check if color pattern applied to data elements", () => {
-			chart.$.main.selectAll(`.${CLASS.chartBars} .${CLASS.target} path:first-child`)
+			chart.$.main.selectAll(`.${$BAR.chartBars} .${$COMMON.target} path:first-child`)
 				.each(function(v, i) {
 					expect(this.style.fill).to.be.equal(util.hexToRgb(pattern[i]));
 				});
@@ -138,7 +138,7 @@ describe("COLOR", () => {
 		it("check for legend color tiles", () => {
 			const colors = [chart.color("data1"), chart.color("data2")];
 
-			chart.$.legend.selectAll(`.${CLASS.legendItemTile}`)
+			chart.$.legend.selectAll(`.${$LEGEND.legendItemTile}`)
 				.each(function(v, i) {
 					const stroke = d3Select(this).style("stroke").replace(/\"/g, "");
 
@@ -149,7 +149,7 @@ describe("COLOR", () => {
 		it("check for tooltip color tiles", () => {
 			const colors = [chart.color("data1"), chart.color("data2")];
 			const eventRect = chart.$.main
-				.select(`.${CLASS.eventRect}-1`)
+				.select(`.${$EVENT.eventRect}-1`)
 				.node();
 
 			util.fireEvent(eventRect, "mousemove", {
@@ -158,7 +158,7 @@ describe("COLOR", () => {
 			}, chart);
 
 			d3Select(chart.element)
-				.selectAll(`.${CLASS.tooltip} td rect`)
+				.selectAll(`.${$TOOLTIP.tooltip} td rect`)
 				.each(function(v, i) {
 					const fill = d3Select(this).style("fill").replace(/\"/g, "");
 
@@ -197,7 +197,7 @@ describe("COLOR", () => {
 				chart.data().forEach(v => {
 					const id = v.id;
 					const isLine = internal.isTypeOf(id, ["line", "spline", "step"]) || !internal.config.data_types[id];
-					const stroke = internal.$el.main.select(`.${CLASS.shapes}-${id} path`).style("fill");
+					const stroke = internal.$el.main.select(`.${$SHAPE.shapes}-${id} path`).style("fill");
 					// @ts-ignore
 					expect(rx.test(stroke)).to.be[!isLine];
 				})
@@ -269,7 +269,7 @@ describe("COLOR", () => {
 		const checkColor = (chart, colorOnover) => {
 			const {$: {main}, internal: {$el}} = chart;
 			const eventRect = $el.eventRect.node();
-			const shape = main.selectAll(`.${CLASS.shape}-1`);
+			const shape = main.selectAll(`.${$SHAPE.shape}-1`);
 			const originalColor = [];
 
 			shape.each(function() {
@@ -358,7 +358,7 @@ describe("COLOR", () => {
 		it("check for the arc type", done => {
 			setTimeout(() => {
 				const {main} = chart.$;
-				const arc = main.select(`.${CLASS.arc}-data1`).node();
+				const arc = main.select(`.${$ARC.arc}-data1`).node();
 				const originalColor = arc.style.fill;
 
 				util.fireEvent(arc, "mouseover");
@@ -392,7 +392,7 @@ describe("COLOR", () => {
 		});
 
 		it("check for color update", done => {
-			const path = chart.$.arc.select(`path.${CLASS.arc}-data`);
+			const path = chart.$.arc.select(`path.${$ARC.arc}-data`);
 			let i = 0;
 
 			expect(path.style("fill")).to.be.equal(args.color.pattern[i++]);
@@ -436,7 +436,7 @@ describe("COLOR", () => {
 
 
 			["data1", "data2"].forEach(v => {
-				expect(chart.$.tooltip.selectAll(`.${CLASS.tooltipName}-${v} .name span`).style("background-color")).to.be.equal(c[v]);
+				expect(chart.$.tooltip.selectAll(`.${$TOOLTIP.tooltipName}-${v} .name span`).style("background-color")).to.be.equal(c[v]);
 			});
 		});
 
@@ -447,7 +447,7 @@ describe("COLOR", () => {
 		it("arc should apply correct color values", () => {
 			chart.$.arc.selectAll("path").each(function(d) {
 				expect(this.style.fill).to.be.equal(
-					chart.internal.$el.legend.select(`.${CLASS.legendItem}-${d.data.id} line`).style("stroke")
+					chart.internal.$el.legend.select(`.${$LEGEND.legendItem}-${d.data.id} line`).style("stroke")
 				);
 			});
 		})

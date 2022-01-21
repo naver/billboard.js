@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import CLASS from "../../config/classes";
+import {$COMMON} from "../../config/classes";
 
 export default {
 	subchart: {
@@ -41,14 +41,14 @@ export default {
 				config.subchart_show = !show;
 				!subchart.main && $$.initSubchart();
 
-				let $target = subchart.main.selectAll(`.${CLASS.target}`);
+				let $target = subchart.main.selectAll(`.${$COMMON.target}`);
 
 				// need to cover when new data has been loaded
 				if ($$.data.targets.length !== $target.size()) {
 					$$.updateSizes();
 					$$.updateTargetsForSubchart($$.data.targets);
 
-					$target = subchart.main.selectAll(`.${CLASS.target}`);
+					$target = subchart.main.selectAll(`.${$COMMON.target}`);
 				}
 
 				$target.style("opacity", null);

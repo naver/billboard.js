@@ -10,7 +10,7 @@ import {
 	curveStepAfter as d3CurveStepAfter,
 	curveStepBefore as d3CurveStepBefore
 } from "d3-shape";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $COMMON, $LINE, $SELECT} from "../../src/config/classes";
 import util from "../assets/util";
 
 describe("SHAPE LINE", () => {
@@ -46,14 +46,14 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("Should render the lines correctly", () => {
-			const target = chart.$.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
-			const commands = parseSvgPath(target.select(`.${CLASS.line}-data1`).attr("d"));
+			const target = chart.$.main.select(`.${$LINE.chartLine}.${$COMMON.target}-data1`);
+			const commands = parseSvgPath(target.select(`.${$LINE.line}-data1`).attr("d"));
 
 			expect(commands.length).to.be.equal(6);
 		});
 
 		it("should not have shape-rendering when it's line chart", () => {
-			chart.$.main.selectAll(`.${CLASS.line}`).each(function() {
+			chart.$.main.selectAll(`.${$LINE.line}`).each(function() {
 				const style = d3Select(this).style("shape-rendering");
 
 				expect(style).to.be.equal("auto");
@@ -66,7 +66,7 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
-			chart.$.main.selectAll(`.${CLASS.line}`).each(function() {
+			chart.$.main.selectAll(`.${$LINE.line}`).each(function() {
 				const style = d3Select(this).style("shape-rendering").toLowerCase();
 
 				expect(style).to.be.equal("crispedges");
@@ -111,8 +111,8 @@ describe("SHAPE LINE", () => {
 
 		it("should not draw a line segment for null data", done => {
 			setTimeout(() => {
-				const target = chart.$.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
-				const commands = parseSvgPath(target.select(`.${CLASS.line}-data1`).attr("d"));
+				const target = chart.$.main.select(`.${$LINE.chartLine}.${$COMMON.target}-data1`);
+				const commands = parseSvgPath(target.select(`.${$LINE.line}-data1`).attr("d"));
 				let segments = 0;
 
 				for (let i = 0; i < commands.length; i++) {
@@ -181,7 +181,7 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("<g> selected node shouldn't be generated when point.show=false", () => {
-			const selectedCircle = chart.$.main.selectAll(`.${CLASS.selectedCircles}`);
+			const selectedCircle = chart.$.main.selectAll(`.${$SELECT.selectedCircles}`);
 
 			expect(selectedCircle.empty()).to.be.true;
 		});
@@ -198,7 +198,7 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("<g> selected node shouldn't be generated when data.selection.enabled=false", () => {
-			const selectedCircle = chart.$.main.selectAll(`.${CLASS.selectedCircles}`);
+			const selectedCircle = chart.$.main.selectAll(`.${$SELECT.selectedCircles}`);
 
 			expect(selectedCircle.empty()).to.be.true;
 		});
@@ -337,7 +337,7 @@ describe("SHAPE LINE", () => {
 			args.line.zerobased = false;
 			chart = util.generate(args);
 
-			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+			const tickNodes = chart.$.svg.select(`.${$AXIS.axisY}`).selectAll("g.tick");
 			const tickElements = tickNodes.nodes();
 
 			const translateValues = [
@@ -361,7 +361,7 @@ describe("SHAPE LINE", () => {
 			args.line.zerobased = true;
 			chart = util.generate(args);
 
-			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+			const tickNodes = chart.$.svg.select(`.${$AXIS.axisY}`).selectAll("g.tick");
 			const tickElements = tickNodes.nodes();
 
 			const translateValues = [

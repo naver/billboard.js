@@ -7,8 +7,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
-import State from "../../src/config/Store/State";
+import {$AXIS, $BAR, $COMMON, $EVENT, $SHAPE} from "../../src/config/classes";
 
 describe("SHAPE BAR", () => {
 	let chart;
@@ -38,7 +37,7 @@ describe("SHAPE BAR", () => {
 			it("should be stacked", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
-				chart.$.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
+				chart.$.main.selectAll(`.${$BAR.bars}-data1 .${$BAR.bar}`).each(function(d, i) {
 					const rect = d3Select(this).node()
 						.getBoundingClientRect();
 
@@ -75,7 +74,7 @@ describe("SHAPE BAR", () => {
 			it("should be stacked", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
-				chart.$.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
+				chart.$.main.selectAll(`.${$BAR.bars}-data1 .${$BAR.bar}`).each(function(d, i) {
 					const rect = d3Select(this).node()
 						.getBoundingClientRect();
 
@@ -95,7 +94,7 @@ describe("SHAPE BAR", () => {
 			});
 
 			it("check for bar width regardless tick count limit", () => {
-				const width = chart.$.main.select(`.${CLASS.bars}-data1 .${CLASS.bar}`).node()
+				const width = chart.$.main.select(`.${$BAR.bars}-data1 .${$BAR.bar}`).node()
 					.getBoundingClientRect().width;
 
 				expect(width).to.be.equal(barWidth);
@@ -128,7 +127,7 @@ describe("SHAPE BAR", () => {
 			it("should be stacked", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
-				chart.$.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
+				chart.$.main.selectAll(`.${$BAR.bars}-data1 .${$BAR.bar}`).each(function(d, i) {
 					const rect = d3Select(this).node()
 						.getBoundingClientRect();
 
@@ -338,7 +337,7 @@ describe("SHAPE BAR", () => {
 
 			it("should not be within bar", done => {
 				const internal = chart.internal;
-				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
@@ -354,7 +353,7 @@ describe("SHAPE BAR", () => {
 
 			it("should be within bar", done => {
 				const internal = chart.internal;
-				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
@@ -370,7 +369,7 @@ describe("SHAPE BAR", () => {
 
 			it("should not be within bar of negative value", done => {
 				const internal = chart.internal;
-				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${$COMMON.target}-data3 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
@@ -386,7 +385,7 @@ describe("SHAPE BAR", () => {
 
 			it("should be within bar of negative value", done => {
 				const internal = chart.internal;
-				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${$COMMON.target}-data3 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
@@ -408,7 +407,7 @@ describe("SHAPE BAR", () => {
 
 			it("should not be within bar", done => {
 				const internal = chart.internal;
-				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
@@ -424,7 +423,7 @@ describe("SHAPE BAR", () => {
 
 			it("should be within bar", done => {
 				const internal = chart.internal;
-				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${$COMMON.target}-data1 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
@@ -440,7 +439,7 @@ describe("SHAPE BAR", () => {
 
 			it("should be within bar of negative value", done => {
 				const internal = chart.internal;
-				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${$COMMON.target}-data3 .${$BAR.bar}-0`)
 					.on("click", function(event) {
 						internal.state.event = event;
 
@@ -482,7 +481,7 @@ describe("SHAPE BAR", () => {
 		});
 
 		it("should not throw error on click", () => {
-			const bar = chart.$.main.select(`.${CLASS.eventRectsMultiple} rect`).node();
+			const bar = chart.$.main.select(`.${$EVENT.eventRectsMultiple} rect`).node();
 
 			expect(() => util.fireEvent(bar, "click")).to.not.throw();
 		});
@@ -583,23 +582,23 @@ describe("SHAPE BAR", () => {
 			const {main} = chart.$;
 
 			// check the path from the third data value
-			main.selectAll(`.${CLASS.shape}.${CLASS.bar}-2`).each(function(d, i) {
+			main.selectAll(`.${$SHAPE.shape}.${$BAR.bar}-2`).each(function(d, i) {
 				expect(removeSpace(this.getAttribute("d"))).to.be.equal(removeSpace(path[i]));
 			})
 		};
 
 		it(`bar width should be ${width}px`, () => {
-			const barWidth = util.getBBox(chart.$.main.select(`.${CLASS.chartBar} path.${CLASS.shape}`)).width;
+			const barWidth = util.getBBox(chart.$.main.select(`.${$BAR.chartBar} path.${$SHAPE.shape}`)).width;
 
 			expect(barWidth).to.be.equal(width);
 		});
 
 		it(`bar padding should be ${padding}px`, () => {
 			const {main} = chart.$;
-			const targetClass = `.${CLASS.chartBar}.${CLASS.target}`;
+			const targetClass = `.${$BAR.chartBar}.${$COMMON.target}`;
 
-			const bar1 = util.getBBox(main.select(`${targetClass}-data1 path.${CLASS.shape}`)).x + width;
-			const bar2 = util.getBBox(main.select(`${targetClass}-data2 path.${CLASS.shape}`)).x;
+			const bar1 = util.getBBox(main.select(`${targetClass}-data1 path.${$SHAPE.shape}`)).x + width;
+			const bar2 = util.getBBox(main.select(`${targetClass}-data2 path.${$SHAPE.shape}`)).x;
 
 			expect(bar2 - bar1).to.be.equal(padding);
 		});
@@ -647,7 +646,7 @@ describe("SHAPE BAR", () => {
 
 		it("each data should be rendered with different width", () => {
 			chart.data().map(v => v.id).forEach(id => {
-				chart.$.main.selectAll(`.${CLASS.bars}-${id} path`).each(function() {
+				chart.$.main.selectAll(`.${$BAR.bars}-${id} path`).each(function() {
 					expect(Math.round(this.getBBox().width)).to.be.equal(args.bar.width[id]);
 				});
 			});
@@ -668,7 +667,7 @@ describe("SHAPE BAR", () => {
 			const expected = [25, 30];
 
 			chart.data().map(v => v.id).forEach((id, i) => {
-				chart.$.main.selectAll(`.${CLASS.bars}-${id} path`).each(function() {
+				chart.$.main.selectAll(`.${$BAR.bars}-${id} path`).each(function() {
 					expect(Math.round(this.getBBox().width)).to.be.equal(expected[i]);
 				});
 			});
@@ -783,7 +782,7 @@ describe("SHAPE BAR", () => {
 		});
 
 		it("clip-path attribute should be added, to avoid wrong rendering for small values", () => {
-			const chartBars = chart.$.main.select(`.${CLASS.chartBars}`).node();
+			const chartBars = chart.$.main.select(`.${$BAR.chartBars}`).node();
 
 			expect(chartBars.getAttribute("clip-path")).to.be.ok;
 		});
@@ -881,7 +880,7 @@ describe("SHAPE BAR", () => {
 		// check non-grouped bar path position
 		const checkBarPathPos = type => {
 			// Get x Axis pos
-			let xAxisYPos = chart.$.main.select(`.${CLASS.axisX} path`).node().getBoundingClientRect();
+			let xAxisYPos = chart.$.main.select(`.${$AXIS.axisX} path`).node().getBoundingClientRect();
 
 			xAxisYPos = type === "y" ? xAxisYPos[type] : xAxisYPos[type] + xAxisYPos.width;
 	

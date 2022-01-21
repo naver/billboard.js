@@ -6,108 +6,196 @@
  * CSS class names definition
  * @private
  */
-export default {
+export const $COMMON = {
+	button: "bb-button",
+	chart: "bb-chart",
+	empty: "bb-empty",
+	main: "bb-main",
+	target: "bb-target",
+	EXPANDED: "_expanded_"
+};
+
+export const $ARC = {
 	arc: "bb-arc",
 	arcLabelLine: "bb-arc-label-line",
 	arcs: "bb-arcs",
+	chartArc: "bb-chart-arc",
+	chartArcs: "bb-chart-arcs",
+	chartArcsBackground: "bb-chart-arcs-background",
+	chartArcsTitle: "bb-chart-arcs-title"
+};
+
+export const $AREA = {
 	area: "bb-area",
-	areas: "bb-areas",
+	areas: "bb-areas"
+};
+
+export const $AXIS = {
 	axis: "bb-axis",
 	axisX: "bb-axis-x",
 	axisXLabel: "bb-axis-x-label",
 	axisY: "bb-axis-y",
 	axisY2: "bb-axis-y2",
 	axisY2Label: "bb-axis-y2-label",
-	axisYLabel: "bb-axis-y-label",
+	axisYLabel: "bb-axis-y-label"
+};
+
+export const $BAR = {
 	bar: "bb-bar",
 	bars: "bb-bars",
-	brush: "bb-brush",
-	button: "bb-button",
-	buttonZoomReset: "bb-zoom-reset",
+	chartBar: "bb-chart-bar",
+	chartBars: "bb-chart-bars"
+};
+
+export const $CANDLESTICK = {
 	candlestick: "bb-candlestick",
 	candlesticks: "bb-candlesticks",
-	chart: "bb-chart",
-	chartArc: "bb-chart-arc",
-	chartArcs: "bb-chart-arcs",
-	chartArcsBackground: "bb-chart-arcs-background",
+	chartCandlestick: "bb-chart-candlestick",
+	chartCandlesticks: "bb-chart-candlesticks",
+	valueDown: "bb-value-down",
+	valueUp: "bb-value-up"
+};
+
+export const $CIRCLE = {
+	chartCircles: "bb-chart-circles",
+	circle: "bb-circle",
+	circles: "bb-circles"
+};
+
+export const $COLOR = {
+	colorPattern: "bb-color-pattern",
+	colorScale: "bb-colorscale"
+};
+
+export const $DRAG = {
+	dragarea: "bb-dragarea",
+	INCLUDED: "_included_"
+};
+
+export const $GAUGE = {
 	chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
 	chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
 	chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
-	chartArcsTitle: "bb-chart-arcs-title",
 	chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
-	chartBar: "bb-chart-bar",
-	chartBars: "bb-chart-bars",
-	chartCandlestick: "bb-chart-candlestick",
-	chartCandlesticks: "bb-chart-candlesticks",
-	chartCircles: "bb-chart-circles",
-	chartLine: "bb-chart-line",
-	chartLines: "bb-chart-lines",
-	chartRadar: "bb-chart-radar",
-	chartRadars: "bb-chart-radars",
-	chartText: "bb-chart-text",
-	chartTexts: "bb-chart-texts",
-	circle: "bb-circle",
-	circles: "bb-circles",
-	colorPattern: "bb-color-pattern",
-	colorScale: "bb-colorscale",
-	defocused: "bb-defocused",
-	dragarea: "bb-dragarea",
-	empty: "bb-empty",
-	eventRect: "bb-event-rect",
-	eventRects: "bb-event-rects",
-	eventRectsMultiple: "bb-event-rects-multiple",
-	eventRectsSingle: "bb-event-rects-single",
-	focused: "bb-focused",
-	gaugeValue: "bb-gauge-value",
-	grid: "bb-grid",
-	gridLines: "bb-grid-lines",
+	gaugeValue: "bb-gauge-value"
+};
+
+export const $LEGEND = {
 	legend: "bb-legend",
 	legendBackground: "bb-legend-background",
 	legendItem: "bb-legend-item",
 	legendItemEvent: "bb-legend-item-event",
-	legendItemFocused: "bb-legend-item-focused",
 	legendItemHidden: "bb-legend-item-hidden",
 	legendItemPoint: "bb-legend-item-point",
-	legendItemTile: "bb-legend-item-tile",
-	level: "bb-level",
-	levels: "bb-levels",
+	legendItemTile: "bb-legend-item-tile"
+};
+
+export const $LINE = {
+	chartLine: "bb-chart-line",
+	chartLines: "bb-chart-lines",
 	line: "bb-line",
-	lines: "bb-lines",
-	main: "bb-main",
-	region: "bb-region",
-	regions: "bb-regions",
-	selectedCircle: "bb-selected-circle",
-	selectedCircles: "bb-selected-circles",
-	shape: "bb-shape",
-	shapes: "bb-shapes",
-	stanfordElements: "bb-stanford-elements",
-	stanfordLine: "bb-stanford-line",
-	stanfordLines: "bb-stanford-lines",
-	stanfordRegion: "bb-stanford-region",
-	stanfordRegions: "bb-stanford-regions",
-	subchart: "bb-subchart",
-	target: "bb-target",
-	text: "bb-text",
-	texts: "bb-texts",
-	title: "bb-title",
-	tooltip: "bb-tooltip",
-	tooltipContainer: "bb-tooltip-container",
-	tooltipName: "bb-tooltip-name",
-	valueDown: "bb-value-down",
-	valueUp: "bb-value-up",
-	xgrid: "bb-xgrid",
+	lines: "bb-lines"
+};
+
+export const $EVENT = {
+	eventRect: "bb-event-rect",
+	eventRects: "bb-event-rects",
+	eventRectsMultiple: "bb-event-rects-multiple",
+	eventRectsSingle: "bb-event-rects-single",
+
+};
+
+export const $FOCUS = {
+	focused: "bb-focused",
+	defocused: "bb-defocused",
+	legendItemFocused: "bb-legend-item-focused",
 	xgridFocus: "bb-xgrid-focus",
+	ygridFocus: "bb-ygrid-focus"
+};
+
+export const $GRID = {
+	grid: "bb-grid",
+	gridLines: "bb-grid-lines",
+	xgrid: "bb-xgrid",
 	xgridLine: "bb-xgrid-line",
 	xgridLines: "bb-xgrid-lines",
 	xgrids: "bb-xgrids",
 	ygrid: "bb-ygrid",
-	ygridFocus: "bb-ygrid-focus",
 	ygridLine: "bb-ygrid-line",
 	ygridLines: "bb-ygrid-lines",
-	ygrids: "bb-ygrids",
-	zoomBrush: "bb-zoom-brush",
-	EXPANDED: "_expanded_",
-	SELECTED: "_selected_",
-	INCLUDED: "_included_",
+	ygrids: "bb-ygrids"
+};
+
+export const $RADAR = {
+	chartRadar: "bb-chart-radar",
+	chartRadars: "bb-chart-radars",
+	level: "bb-level",
+	levels: "bb-levels"
+};
+
+export const $REGION = {
+	region: "bb-region",
+	regions: "bb-regions"
+};
+
+export const $SELECT = {
+	selectedCircle: "bb-selected-circle",
+	selectedCircles: "bb-selected-circles",
+	SELECTED: "_selected_"
+};
+
+export const $SHAPE = {
+	shape: "bb-shape",
+	shapes: "bb-shapes",
+};
+
+export const $SUBCHART = {
+	brush: "bb-brush",
+	subchart: "bb-subchart"
+};
+
+export const $TEXT = {
+	chartText: "bb-chart-text",
+	chartTexts: "bb-chart-texts",
+	text: "bb-text",
+	texts: "bb-texts",
+	title: "bb-title",
 	TextOverlapping: "text-overlapping"
+};
+
+export const $TOOLTIP = {
+	tooltip: "bb-tooltip",
+	tooltipContainer: "bb-tooltip-container",
+	tooltipName: "bb-tooltip-name"
+};
+
+export const $ZOOM = {
+	buttonZoomReset: "bb-zoom-reset",
+	zoomBrush: "bb-zoom-brush"
+};
+
+export default {
+	...$COMMON,
+	...$ARC,
+	...$AREA,
+	...$AXIS,
+	...$BAR,
+	...$CANDLESTICK,
+	...$CIRCLE,
+	...$COLOR,
+	...$DRAG,
+	...$GAUGE,
+	...$LEGEND,
+	...$LINE,
+	...$EVENT,
+	...$FOCUS,
+	...$GRID,
+	...$RADAR,
+	...$REGION,
+	...$SELECT,
+	...$SHAPE,
+	...$SUBCHART,
+	...$TEXT,
+	...$TOOLTIP,
+	...$ZOOM
 };

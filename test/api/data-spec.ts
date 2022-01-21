@@ -5,7 +5,7 @@
 /* eslint-disable */
 import {expect} from "chai";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $LEGEND, $LINE} from "../../src/config/classes";
 
 describe("API data", function() {
 	let chart;
@@ -204,16 +204,16 @@ describe("API data", function() {
 			setTimeout(() => {
 				const svg = chart.$.svg;
 
-				expect(toHex(svg.select(`.${CLASS.line}-data`).style("stroke")))
+				expect(toHex(svg.select(`.${$LINE.line}-data`).style("stroke")))
 					.to.be.equal("#00ff00");
 
-				expect(toHex(svg.select(`.${CLASS.line}-data2`).style("stroke")))
+				expect(toHex(svg.select(`.${$LINE.line}-data2`).style("stroke")))
 					.to.be.equal("#ff0000");
 
-				expect(toHex(svg.select(`.${CLASS.legendItem}-data .${CLASS.legendItem}-tile`).style("stroke")))
+				expect(toHex(svg.select(`.${$LEGEND.legendItem}-data .${$LEGEND.legendItem}-tile`).style("stroke")))
 					.to.be.equal("#00ff00");
 
-				expect(toHex(svg.select(`.${CLASS.legendItem}-data2 .${CLASS.legendItem}-tile`).style("stroke")))
+				expect(toHex(svg.select(`.${$LEGEND.legendItem}-data2 .${$LEGEND.legendItem}-tile`).style("stroke")))
 					.to.be.equal("#ff0000");
 
 				done();
@@ -230,10 +230,10 @@ describe("API data", function() {
 			expect(results.data).to.be.equal("y");
 			expect(results.data2).to.be.equal("y2");
 
-			expect(main.select(`.${CLASS.axisY} g.tick text`).text())
+			expect(main.select(`.${$AXIS.axisY} g.tick text`).text())
 				.to.be.equal("0");
 
-			expect(main.select(`.${CLASS.axisY2} g.tick text`).text())
+			expect(main.select(`.${$AXIS.axisY2} g.tick text`).text())
 				.to.be.equal("1000");
 		});
 
@@ -248,10 +248,10 @@ describe("API data", function() {
 				expect(results.data).to.be.equal("y2");
 				expect(results.data2).to.be.equal("y");
 
-				expect(main.select(`.${CLASS.axisY} g.tick text`).text())
+				expect(main.select(`.${$AXIS.axisY} g.tick text`).text())
 					.to.be.equal("1000");
 
-				expect(main.select(`.${CLASS.axisY2} g.tick text`).text())
+				expect(main.select(`.${$AXIS.axisY2} g.tick text`).text())
 					.to.be.equal("0");
 
 				done();

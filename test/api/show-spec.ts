@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$BAR, $COMMON, $LINE, $LEGEND} from "../../src/config/classes";
 
 describe("API show", () => {
 	let chart;
@@ -31,12 +31,12 @@ describe("API show", () => {
 			chart.hide("data1");
 
 			setTimeout(() => {
-				const selector = `.${CLASS.chartLine}.${CLASS.target}`;
+				const selector = `.${$LINE.chartLine}.${$COMMON.target}`;
 
 				expect(+main.select(`${selector}-data1`).style("opacity")).to.be.equal(0);
 				expect(+main.select(`${selector}-data2`).style("opacity")).to.be.equal(1);
 
-				expect(+internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`).size()).to.be.equal(1);
+				expect(+internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`).size()).to.be.equal(1);
 
 				done();
 			}, 500);
@@ -49,11 +49,11 @@ describe("API show", () => {
 			chart.hide();
 
 			setTimeout(() => {
-				main.selectAll(`.${CLASS.chartLine}`).each(function() {
+				main.selectAll(`.${$LINE.chartLine}`).each(function() {
 					expect(+this.style.opacity).to.be.equal(0);
 				});
 
-				const legend = chart.$.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				const legend = chart.$.svg.selectAll(`.${$LEGEND.legendItemHidden}`);
 
 				expect(+legend.size()).to.be.equal(chart.data().length);
 
@@ -71,7 +71,7 @@ describe("API show", () => {
 
 			setTimeout(() => {
 				chart.$.svg
-					.selectAll(`.${CLASS.legendItemHidden}`)
+					.selectAll(`.${$LEGEND.legendItemHidden}`)
 					.each(function() {
 						expect(+d3Select(this).style("opacity")).to.be.closeTo(0.15, 0.15);
 					});
@@ -95,7 +95,7 @@ describe("API show", () => {
 
 			setTimeout(() => {
 				expect(
-					chart.$.main.select(`.${CLASS.target}-data1`).style("display")
+					chart.$.main.select(`.${$COMMON.target}-data1`).style("display")
 				).to.be.equal("none");
 				done();
 			}, 500);
@@ -103,13 +103,13 @@ describe("API show", () => {
 
 		it("legend items should be hidden", () => {
 			const {legend} = chart.$;
-			const item = legend.select(`.${CLASS.legendItem}-data1`).style("opacity", 1);
+			const item = legend.select(`.${$LEGEND.legendItem}-data1`).style("opacity", 1);
 	
 			// when
 			chart.hide();
 
 			expect(item.style("opacity")).to.be.equal("0.15");
-			expect(item.classed(CLASS.legendItemHidden)).to.be.true;
+			expect(item.classed($LEGEND.legendItemHidden)).to.be.true;
 		})
 	});
 
@@ -122,12 +122,12 @@ describe("API show", () => {
 			chart.show("data1");
 
 			setTimeout(() => {
-				const selector = `.${CLASS.chartLine}.${CLASS.target}`;
+				const selector = `.${$LINE.chartLine}.${$COMMON.target}`;
 
 				expect(+main.select(`${selector}-data1`).style("opacity")).to.be.equal(1);
 				expect(+main.select(`${selector}-data2`).style("opacity")).to.be.equal(0);
 
-				expect(+internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`).size()).to.be.equal(1);
+				expect(+internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`).size()).to.be.equal(1);
 
 				done();
 			}, 500);
@@ -141,18 +141,18 @@ describe("API show", () => {
 			// hide all data
 			chart.hide();
 
-			legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
+			legend = internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`);
 			expect(+legend.size()).to.be.equal(chart.data().length);
 
 			// show all data
 			chart.show();
 
 			setTimeout(() => {
-				main.selectAll(`.${CLASS.chartLine}`).each(function() {
+				main.selectAll(`.${$LINE.chartLine}`).each(function() {
 					expect(this.style.opacity).to.be.equal("");
 				});
 
-				legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				legend = internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`);
 
 				expect(+legend.size()).to.be.equal(0);
 
@@ -175,15 +175,15 @@ describe("API show", () => {
 			chart.show(null, {withLegend: false});
 
 			setTimeout(() => {
-				main.selectAll(`.${CLASS.chartLine}`).each(function() {
+				main.selectAll(`.${$LINE.chartLine}`).each(function() {
 					expect(this.style.opacity).to.be.equal("");
 				});
 
-				const legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				const legend = internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`);
 
 				expect(+legend.size()).to.be.equal(0);
 
-				internal.$el.svg.selectAll(`.${CLASS.legendItem}`).each(function() {
+				internal.$el.svg.selectAll(`.${$LEGEND.legendItem}`).each(function() {
 					expect(this.style.opacity).to.be.equal("");
 				});
 
@@ -202,11 +202,11 @@ describe("API show", () => {
 			chart.toggle();
 
 			setTimeout(() => {
-				main.selectAll(`.${CLASS.chartLine}`).each(function() {
+				main.selectAll(`.${$LINE.chartLine}`).each(function() {
 					expect(+this.style.opacity).to.be.below(1);
 				});
 
-				legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				legend = internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`);
 
 				expect(+legend.size()).to.be.equal(chart.data().length);
 
@@ -219,11 +219,11 @@ describe("API show", () => {
 			}, 100);
 
 			setTimeout(() => {
-				main.selectAll(`.${CLASS.chartLine}`).each(function() {
+				main.selectAll(`.${$LINE.chartLine}`).each(function() {
 					expect(this.style.opacity).to.be.equal("");
 				});
 
-				legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				legend = internal.$el.svg.selectAll(`.${$LEGEND.legendItemHidden}`);
 
 				expect(+legend.size()).to.be.equal(0);
 
@@ -268,12 +268,12 @@ describe("API show", () => {
 
 		it("should correctly rendered having same width", done => {
 			const main = chart.$.main;
-			const barWidth = Math.round(util.getBBox(main.select(`.${CLASS.bars}-${ids[0]}`)).width);
+			const barWidth = Math.round(util.getBBox(main.select(`.${$BAR.bars}-${ids[0]}`)).width);
 
 			chart.toggle(ids.concat().splice(1));
 
 			setTimeout(() => {
-				main.selectAll(`.${CLASS.bars}-${ids[0]}, .${CLASS.bars}-${ids[2]}`)
+				main.selectAll(`.${$BAR.bars}-${ids[0]}, .${$BAR.bars}-${ids[2]}`)
 					.each(function() {
 						expect(Math.round(util.getBBox(this).width)).to.be.equal(barWidth);
 					});

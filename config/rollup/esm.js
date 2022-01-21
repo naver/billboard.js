@@ -49,6 +49,7 @@ const bbPlugins = readdirSync(resolvePath("../src/Plugin/"), {
             format: "es",
             banner: getBannerStr(true)
         },
+        treeshake: "smallest",
         plugins,
         external
     }));

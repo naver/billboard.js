@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection"; // selection
-import CLASS from "../../config/classes";
+import {$REGION} from "../../config/classes";
 import {isValue, parseDate} from "../../module/util";
 import {AxisType} from "../../../types/types";
 
@@ -15,7 +15,7 @@ export default {
 		$el.region.main = $el.main
 			.insert("g", ":first-child")
 			.attr("clip-path", $$.state.clip.path)
-			.attr("class", CLASS.regions);
+			.attr("class", $REGION.regions);
 	},
 
 	updateRegion(): void {
@@ -31,7 +31,7 @@ export default {
 		// select <g> element
 
 		let list = region.main
-			.selectAll(`.${CLASS.region}`)
+			.selectAll(`.${$REGION.region}`)
 			.data(config.regions);
 
 		$T(list.exit())

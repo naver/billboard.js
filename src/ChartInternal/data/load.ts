@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import CLASS from "../../config/classes";
+import {$LEGEND} from "../../config/classes";
 import {endall} from "../../module/util";
 
 export default {
@@ -111,7 +111,7 @@ export default {
 
 			// Remove target's elements
 			if ($el.legend) {
-				$el.legend.selectAll(`.${CLASS.legendItem}${$$.getTargetSelectorSuffix(id)}`).remove();
+				$el.legend.selectAll(`.${$LEGEND.legendItem}${$$.getTargetSelectorSuffix(id)}`).remove();
 			}
 
 			// Remove target

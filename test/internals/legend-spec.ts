@@ -8,7 +8,7 @@ import sinon from "sinon";
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$FOCUS, $LEGEND} from "../../src/config/classes";
 
 describe("LEGEND", () => {
 	let chart;
@@ -344,7 +344,7 @@ describe("LEGEND", () => {
 
 		it("check for legend template setting with template string", () => {
 			const legend = d3Select("#legend");
-			const items = legend.selectAll(`.${CLASS.legendItem}`);
+			const items = legend.selectAll(`.${$LEGEND.legendItem}`);
 
 			expect(legend.html()).not.to.be.null;
 
@@ -365,7 +365,7 @@ describe("LEGEND", () => {
 		});
 
 		it("custom legend should behaves as normal legend", done => {
-			const selector = `.${CLASS.legendItem}-data1`;
+			const selector = `.${$LEGEND.legendItem}-data1`;
 			const legend = chart.$.legend.select(selector).node();
 			const rect = legend.getBoundingClientRect();
 
@@ -374,7 +374,7 @@ describe("LEGEND", () => {
 				clientY: rect.y
 			}, chart);
 
-			expect(legend.classList.contains(CLASS.legendItemFocused)).to.be.true;
+			expect(legend.classList.contains($FOCUS.legendItemFocused)).to.be.true;
 
 			util.fireEvent(legend, "click", {
 				clientX: rect.x,
@@ -382,7 +382,7 @@ describe("LEGEND", () => {
 			}, chart);
 
 			setTimeout(() => {
-				expect(chart.$.legend.select(selector).classed(CLASS.legendItemHidden)).to.be.true;
+				expect(chart.$.legend.select(selector).classed($LEGEND.legendItemHidden)).to.be.true;
 				done();
 			}, 300);
 		});
@@ -415,7 +415,7 @@ describe("LEGEND", () => {
 
 		it("check for legend template setting with template function callback", () => {
 			const legend = d3Select("#legend");
-			const items = legend.selectAll(`.${CLASS.legendItem}`);
+			const items = legend.selectAll(`.${$LEGEND.legendItem}`);
 
 			expect(legend.html()).not.to.be.null;
 
@@ -487,7 +487,7 @@ describe("LEGEND", () => {
 
 		it("should render custom points in legend", () => {
 			const {$el} = chart.internal;
-			const nodes = $el.svg.selectAll(`.${CLASS.legendItem} .${CLASS.legendItemPoint}`);
+			const nodes = $el.svg.selectAll(`.${$LEGEND.legendItem} .${$LEGEND.legendItemPoint}`);
 			const pointTagName = ["circle", "rect", "use", "circle"];
 
 			nodes.each(function(data, idx, selection) {
@@ -534,7 +534,7 @@ describe("LEGEND", () => {
 		it('selects the color from color_pattern if color_treshold is given', function () {
 			const tileColor = [];
 
-			chart.internal.$el.svg.selectAll(`.${CLASS.legendItemTile}`).each(function () {
+			chart.internal.$el.svg.selectAll(`.${$LEGEND.legendItemTile}`).each(function () {
 				tileColor.push(d3Select(this).style('stroke'));
 			});
 
@@ -592,7 +592,7 @@ describe("LEGEND", () => {
 		it("selects the color from data_colors, data_color or default", function() {
 			const tileColor = [];
 
-			chart.internal.$el.svg.selectAll(`.${CLASS.legendItemTile}`)
+			chart.internal.$el.svg.selectAll(`.${$LEGEND.legendItemTile}`)
 				.each(function() {
 					tileColor.push(d3Select(this).style("stroke"));
 				});
@@ -626,7 +626,7 @@ describe("LEGEND", () => {
 		});
 
 		it("check legend item after click", () => {
-			const legend = chart.$.legend.select(`.${CLASS.legendItem}-data2`);
+			const legend = chart.$.legend.select(`.${$LEGEND.legendItem}-data2`);
 			const {x, y} = legend.node().getBoundingClientRect();
 			
 			util.fireEvent(legend.node(), "mouseover", {
@@ -639,7 +639,7 @@ describe("LEGEND", () => {
 				clientY: y
 			}, chart);
 
-			expect(legend.classed(CLASS.legendItemFocused)).to.false;
+			expect(legend.classed($FOCUS.legendItemFocused)).to.false;
 		});
 	});
 

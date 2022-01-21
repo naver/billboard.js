@@ -7,7 +7,7 @@ import {
 	selectAll as d3SelectAll
 } from "d3-selection";
 import {KEY} from "../../module/Cache";
-import CLASS from "../../config/classes";
+import {$COMMON, $TEXT} from "../../config/classes";
 import {capitalize, getBoundingRect, getRandom, isFunction, isNumber, isObject, isString, getTranslation, setTextValue} from "../../module/util";
 import {IDataRow, IArcData} from "../data/IData";
 import {AxisType} from "../../../types/types";
@@ -28,8 +28,8 @@ export default {
 	initText(): void {
 		const {$el} = this;
 
-		$el.main.select(`.${CLASS.chart}`).append("g")
-			.attr("class", CLASS.chartTexts);
+		$el.main.select(`.${$COMMON.chart}`).append("g")
+			.attr("class", $TEXT.chartTexts);
 	},
 
 	/**
@@ -43,7 +43,7 @@ export default {
 		const classTexts = $$.getClass("texts", "id");
 
 		const classFocus = $$.classFocus.bind($$);
-		const mainTextUpdate = $$.$el.main.select(`.${CLASS.chartTexts}`).selectAll(`.${CLASS.chartText}`)
+		const mainTextUpdate = $$.$el.main.select(`.${$TEXT.chartTexts}`).selectAll(`.${$TEXT.chartText}`)
 			.data(targets)
 			.attr("class", d => classChartText(d) + classFocus(d));
 
@@ -65,8 +65,8 @@ export default {
 		const {$el, $T, config} = $$;
 		const classText = $$.getClass("text", "index");
 
-		const text = $el.main.selectAll(`.${CLASS.texts}`)
-			.selectAll(`.${CLASS.text}`)
+		const text = $el.main.selectAll(`.${$TEXT.texts}`)
+			.selectAll(`.${$TEXT.text}`)
 			.data($$.labelishData.bind($$));
 
 		$T(text.exit())
@@ -475,7 +475,7 @@ export default {
 			const overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) <
 				parseInt(textNode.style("font-size"), 10);
 
-			filteredTextNode.classed(CLASS.TextOverlapping, overlapsX && overlapsY);
+			filteredTextNode.classed($TEXT.TextOverlapping, overlapsX && overlapsY);
 		});
 	},
 
@@ -490,7 +490,7 @@ export default {
 		$$.$el.arcs.selectAll(selector)
 			.each(function() {
 				d3SelectAll([this, this.previousSibling])
-					.classed(CLASS.TextOverlapping, false);
+					.classed($TEXT.TextOverlapping, false);
 			});
 	},
 

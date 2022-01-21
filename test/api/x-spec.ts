@@ -5,7 +5,7 @@
 /* eslint-disable */
 import {expect} from "chai";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AXIS} from "../../src/config/classes";
 
 describe("API x", () => {
 	let chart;
@@ -40,7 +40,7 @@ describe("API x", () => {
 			xValue = [2,5,8];
 			Object.keys(chart.x(xValue)).forEach(checkFn);
 
-			chart.$.main.selectAll(`.${CLASS.axisX} .tick tspan`).each(function(v, i) {
+			chart.$.main.selectAll(`.${$AXIS.axisX} .tick tspan`).each(function(v, i) {
 				expect(+this.textContent).to.be.equal(xValue[i]);
 			});
 		});
@@ -72,7 +72,7 @@ describe("API x", () => {
 			xValue = ["d", "e", "f"];
 			expect(chart.x(xValue)).to.be.deep.equal(xValue);
 
-			chart.$.main.selectAll(`.${CLASS.axisX} .tick tspan`).each(function(v, i) {
+			chart.$.main.selectAll(`.${$AXIS.axisX} .tick tspan`).each(function(v, i) {
 				expect(this.textContent).to.be.equal(xValue[i]);
 			});
 		});
@@ -118,7 +118,7 @@ describe("API x", () => {
 
 			xsValue = xsValue.data1.concat(xsValue.data2).sort();
 
-			chart.$.main.selectAll(`.${CLASS.axisX} .tick tspan`).each(function(v, i) {
+			chart.$.main.selectAll(`.${$AXIS.axisX} .tick tspan`).each(function(v, i) {
 				expect(+this.textContent).to.be.equal(xsValue[i]);
 			});
 		});

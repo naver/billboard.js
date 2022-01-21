@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import sinon from "sinon";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $LINE} from "../../src/config/classes";
 import {window} from "../../src/module/browser";
 
 describe("API flow", () => {
@@ -45,7 +45,7 @@ describe("API flow", () => {
 					["data3", 200, 120]
 				],
 				done: function () {
-					const lineSize = this.internal.$el.main.selectAll(`.${CLASS.chartLines} > g`).size();
+					const lineSize = this.internal.$el.main.selectAll(`.${$LINE.chartLines} > g`).size();
 
 					expect(lineSize).to.be.equal(this.data().length);
 					done();
@@ -55,7 +55,7 @@ describe("API flow", () => {
 
 		it("should flow correctly with options", done => {
 			const spy = sinon.spy(function() {
-				chart.internal.$el.main.selectAll(`.${CLASS.axisX} .tick tspan`).each(function(d, i) {
+				chart.internal.$el.main.selectAll(`.${$AXIS.axisX} .tick tspan`).each(function(d, i) {
 					expect(this.textContent).to.be.equal(tickText[i]);
 					expect(d.splitted).to.be.equal(tickText[i]);
 				});
@@ -89,7 +89,7 @@ describe("API flow", () => {
 				done: spy
 			});
 
-			const lastTickText = chart.$.main.selectAll(`.${CLASS.axisX} .tick tspan`)
+			const lastTickText = chart.$.main.selectAll(`.${$AXIS.axisX} .tick tspan`)
 				.nodes().pop().innerHTML;
 
 			// when tab is not visible, it shouldn't be executed

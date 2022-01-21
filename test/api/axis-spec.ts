@@ -6,8 +6,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
-import axis from "../../src/Chart/api/axis";
+import {$AXIS} from "../../src/config/classes";
 
 describe("API axis", function() {
 	let chart;
@@ -56,7 +55,7 @@ describe("API axis", function() {
 			const labels = chart.axis.labels(axisLabel);
 
 			setTimeout(() => {
-				const label = main.select(`.${CLASS.axisYLabel}`);
+				const label = main.select(`.${$AXIS.axisYLabel}`);
 
 				expect(label.text()).to.be.equal("New Y Axis Label");
 				expect(label.attr("dx")).to.be.equal("-0.5em");
@@ -78,7 +77,7 @@ describe("API axis", function() {
 			});
 
 			setTimeout(() => {
-				const label = main.select(`.${CLASS.axisY2Label}`);
+				const label = main.select(`.${$AXIS.axisY2Label}`);
 
 				expect(label.text()).to.be.equal("New Y2 Axis Label");
 				expect(label.attr("dx")).to.be.equal("-0.5em");
@@ -98,7 +97,7 @@ describe("API axis", function() {
 
 	describe("axis.min/max()", () => {
 		it("should update axis min value", done => {
-			const xAxisTick = main.select(`.${CLASS.axisX} .tick`).node();
+			const xAxisTick = main.select(`.${$AXIS.axisX} .tick`).node();
 			const xTickValue = +xAxisTick.getAttribute("transform").replace(rx, "$1");
 			const x = -1;
 			const y = 0;
@@ -117,13 +116,13 @@ describe("API axis", function() {
 				expect(xTickValue).to.be.below(+xAxisTick.getAttribute("transform").replace(rx, "$1"));
 
 				// check for y max value
-				tspan = main.selectAll(`.${CLASS.axisY} tspan`).filter(function() {
+				tspan = main.selectAll(`.${$AXIS.axisY} tspan`).filter(function() {
 					return +d3Select(this).text() === y;
 				});
 
 				expect(tspan.empty()).to.be.false;
 
-				tspan = main.selectAll(`.${CLASS.axisY2} tspan`).filter(function() {
+				tspan = main.selectAll(`.${$AXIS.axisY2} tspan`).filter(function() {
 					return +d3Select(this).text() === y2;
 				});
 
@@ -134,7 +133,7 @@ describe("API axis", function() {
 		});
 
 		it("should update axis max value", done => {
-			const xAxisTick = main.selectAll(`.${CLASS.axisX} .tick`).nodes();
+			const xAxisTick = main.selectAll(`.${$AXIS.axisX} .tick`).nodes();
 			const lastIndex = xAxisTick.length - 1;
 
 			const lastXTickValue = +xAxisTick[lastIndex].getAttribute("transform").replace(rx, "$1");
@@ -155,11 +154,11 @@ describe("API axis", function() {
 				expect(lastXTickValue).to.be.above(+xAxisTick[lastIndex].getAttribute("transform").replace(rx, "$1"));
 
 				// check for y max value
-				tspan = main.selectAll(`.${CLASS.axisY} tspan`).nodes();
+				tspan = main.selectAll(`.${$AXIS.axisY} tspan`).nodes();
 				expect(+tspan[tspan.length - 1].innerHTML).to.be.equal(y);
 
 				// check for y2 max value
-				tspan = main.selectAll(`.${CLASS.axisY2} tspan`).nodes();
+				tspan = main.selectAll(`.${$AXIS.axisY2} tspan`).nodes();
 				expect(+tspan[tspan.length - 1].innerHTML).to.be.equal(y2);
 
 				done();
@@ -169,7 +168,7 @@ describe("API axis", function() {
 
 	describe("axis.range()", () => {
 		it("should update axis min/max value", done => {
-			const xAxisTick = main.selectAll(`.${CLASS.axisX} .tick`).nodes();
+			const xAxisTick = main.selectAll(`.${$AXIS.axisX} .tick`).nodes();
 			const xTickValueMin = +xAxisTick[0].getAttribute("transform").replace(rx, "$1");
 			const xTickValueMax = +xAxisTick[xAxisTick.length - 1].getAttribute("transform").replace(rx, "$1");
 
@@ -205,7 +204,7 @@ describe("API axis", function() {
 				expect(xTickValueMax).to.be.above(+xAxisTick[xAxisTick.length - 1].getAttribute("transform").replace(rx, "$1"));
 
 				// check for y value
-				tspan = main.selectAll(`.${CLASS.axisY} tspan`).filter(function() {
+				tspan = main.selectAll(`.${$AXIS.axisY} tspan`).filter(function() {
 					const val = +d3Select(this).text();
 
 					return val === min.y || val === max.y;
@@ -214,7 +213,7 @@ describe("API axis", function() {
 				expect(tspan.size()).to.be.equal(2);
 
 				// check for y2 value
-				tspan = main.selectAll(`.${CLASS.axisY2} tspan`).filter(function() {
+				tspan = main.selectAll(`.${$AXIS.axisY2} tspan`).filter(function() {
 					const val = +d3Select(this).text();
 
 					return val === min.y2 || val === max.y2;

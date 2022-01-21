@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import sinon from "sinon";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $EVENT, $GRID, $REGION, $ZOOM} from "../../src/config/classes";
 import util from "../assets/util";
 
 describe("ZOOM", function() {
@@ -183,7 +183,7 @@ describe("ZOOM", function() {
 			const main = chart.$.main;
 			const rx = /H(\d+)/;
 
-			const domain = main.select(`.${CLASS.axisX} > .domain`);
+			const domain = main.select(`.${$AXIS.axisX} > .domain`);
 			const pathValue = +domain.attr("d").match(rx)[1];
 
 			chart.zoom([0,4]);
@@ -196,7 +196,7 @@ describe("ZOOM", function() {
 			const main = chart.$.main;
 			const rx = /H(\d+)/;
 
-			const domain = main.select(`.${CLASS.axisX} > .domain`);
+			const domain = main.select(`.${$AXIS.axisX} > .domain`);
 			const pathValue = +domain.attr("d").match(rx)[1];
 
 			chart.zoom([0,4]);  // zoom in
@@ -330,7 +330,7 @@ describe("ZOOM", function() {
 				y: chart.internal.scale.y.domain()
 			};
 			const eventRect = chart.internal.$el.eventRect.node();
-			const xGridLine = chart.$.main.select(`.${CLASS.xgridLine} line`);
+			const xGridLine = chart.$.main.select(`.${$GRID.xgridLine} line`);
 			const xPos = {x1: +xGridLine.attr("x1"), x2: +xGridLine.attr("x2")};
 
 			// when zoom in
@@ -382,9 +382,9 @@ describe("ZOOM", function() {
 
 			setTimeout(() => {
 				expect(
-					getX(`.${CLASS.xgrids} line:nth-child(2)`)
+					getX(`.${$GRID.xgrids} line:nth-child(2)`)
 				).to.be.equal(
-					getX(`.${CLASS.axisX} g.tick:nth-child(5) line`)
+					getX(`.${$AXIS.axisX} g.tick:nth-child(5) line`)
 				);
 
 				done();
@@ -477,7 +477,7 @@ describe("ZOOM", function() {
 			const main = chart.$.main;
 			const rx = /H(\d+)/;
 
-			const domain = main.select(`.${CLASS.axisX} > .domain`);
+			const domain = main.select(`.${$AXIS.axisX} > .domain`);
 			const pathValue = +domain.attr("d").match(rx)[1];
 
 			chart.zoom([0, 4]);
@@ -490,7 +490,7 @@ describe("ZOOM", function() {
 			const main = chart.$.main;
 			const rx = /H(\d+)/;
 
-			const domain = main.select(`.${CLASS.axisX} > .domain`);
+			const domain = main.select(`.${$AXIS.axisX} > .domain`);
 			const pathValue = +domain.attr("d").match(rx)[1];
 
 			chart.zoom([0, 4]);  // zoom in
@@ -509,7 +509,7 @@ describe("ZOOM", function() {
 			// when
 			chart.zoom([0, 4]);
 
-			const resetBtn = chart.$.chart.select(`.${CLASS.buttonZoomReset}`);
+			const resetBtn = chart.$.chart.select(`.${$ZOOM.buttonZoomReset}`);
 
 			expect(resetBtn.empty()).to.be.false;
 
@@ -529,7 +529,7 @@ describe("ZOOM", function() {
 			// when
 			chart.zoom([0, 4]);
 
-			const resetBtn = chart.$.chart.select(`.${CLASS.buttonZoomReset}`);
+			const resetBtn = chart.$.chart.select(`.${$ZOOM.buttonZoomReset}`);
 
 			expect(resetBtn.empty()).to.be.false;
 			expect(resetBtn.text()).to.be.equal("test");
@@ -543,7 +543,7 @@ describe("ZOOM", function() {
 			// when
 			chart.zoom([0, 4]);
 
-			const resetBtn = chart.$.chart.select(`.${CLASS.buttonZoomReset}`).node();
+			const resetBtn = chart.$.chart.select(`.${$ZOOM.buttonZoomReset}`).node();
 
 			util.fireEvent(resetBtn, "click", {
 				clientX: 0,
@@ -559,7 +559,7 @@ describe("ZOOM", function() {
 		});
 
 		it("check for the y axis rescale", () => {
-			const axisY = chart.$.main.select(`.${CLASS.axisY}`);
+			const axisY = chart.$.main.select(`.${$AXIS.axisY}`);
 
 			// when
 			chart.zoom([0, 2]);
@@ -636,7 +636,7 @@ describe("ZOOM", function() {
 
 		it("region area should be resized on zoom", done => {
 			const main = chart.$.main;
-			const regionRect = main.select(`.${CLASS.region}-0 rect`);
+			const regionRect = main.select(`.${$REGION.region}-0 rect`);
 			const lineWidth = util.getBBox(chart.$.line.lines).width;
 
 			const size = {
@@ -683,7 +683,7 @@ describe("ZOOM", function() {
 			// when
 			chart.zoom(zoomDomain);
 
-			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
+			const eventRect = main.select(`.${$EVENT.eventRect}-2`).node();
 			const zoomedDomain = internal.zoom.getDomain().map(Math.round);
 
 			expect(zoomedDomain).to.be.deep.equal(zoomDomain);
@@ -779,7 +779,7 @@ describe("ZOOM", function() {
 		});
 
 		it("check zoom-in tick format for timeseries", () => {
-			const selector = `.${CLASS.axisX} .tick text`;
+			const selector = `.${$AXIS.axisX} .tick text`;
 
 			chart.$.main.selectAll(selector).each(function(d, i) {
 				expect(+this.textContent).to.be.equal(2015 + i);
@@ -835,8 +835,8 @@ describe("ZOOM", function() {
 					clientY: 100
 				}, chart);
 
-				brush = main.select(`.${CLASS.zoomBrush}`);
-				yAxisTickText = +chart.$.main.selectAll(`.${CLASS.axisY} .tick tspan`).nodes().pop().textContent;
+				brush = main.select(`.${$ZOOM.zoomBrush}`);
+				yAxisTickText = +chart.$.main.selectAll(`.${$AXIS.axisY} .tick tspan`).nodes().pop().textContent;
 
 				size.w = +brush.attr("width");
 				size.h = +brush.attr("height");
@@ -865,7 +865,7 @@ describe("ZOOM", function() {
 					}, chart);
 
 					// y axis rescaled?
-					const tickText = +main.selectAll(`.${CLASS.axisY} .tick tspan`).nodes().pop().textContent;
+					const tickText = +main.selectAll(`.${$AXIS.axisY} .tick tspan`).nodes().pop().textContent;
 
 					expect(tickText).to.be.below(yAxisTickText);
 					expect(tickText).to.be.equal(400);
@@ -974,7 +974,7 @@ describe("ZOOM", function() {
 
 		it("check on wheel zooming", () => {
 			const internal = chart.internal;
-			const eventRect = chart.$.main.select(`.${CLASS.eventRect}`).node();
+			const eventRect = chart.$.main.select(`.${$EVENT.eventRect}`).node();
 			const value = args.data.columns[0][2];
 
 			// when zoom in
@@ -1061,7 +1061,7 @@ describe("ZOOM", function() {
 		it("check y Axis culling after zoom", () => {
 			chart.zoom([4,5]);
 
-			const tickTexts = chart.$.main.selectAll(`.${CLASS.axisY} .tick text`)
+			const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY} .tick text`)
 				.filter(function() { return this.style.display === ""});
 
 			expect(tickTexts.size()).to.be.equal(args.axis.y.tick.culling.max);
