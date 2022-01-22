@@ -5,15 +5,13 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.0-nightly-20220119004526
+ * @version 3.3.0-nightly-20220122004528
  * @requires billboard.js
  * @summary billboard.js plugin
 */
 import { interpolateHslLong } from 'd3-interpolate';
 import { hsl } from 'd3-color';
 import { scaleSequential, scaleLog, scaleSequentialLog } from 'd3-scale';
-import 'd3-selection';
-import 'd3-brush';
 import { axisRight } from 'd3-axis';
 import { format } from 'd3-format';
 
@@ -58,6 +56,22 @@ function __extends(d, b) {
 
   d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
+
+var _assign = function __assign() {
+  _assign = Object.assign || function (t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+      s = arguments[i];
+
+      for (var p in s) {
+        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+      }
+    }
+
+    return t;
+  };
+
+  return _assign.apply(this, arguments);
+};
 function __spreadArray(to, from, pack) {
   if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
     if (ar || !(i in from)) {
@@ -76,111 +90,151 @@ function __spreadArray(to, from, pack) {
  * CSS class names definition
  * @private
  */
-var CLASS$1 = {
+var $COMMON = {
+    button: "bb-button",
+    chart: "bb-chart",
+    empty: "bb-empty",
+    main: "bb-main",
+    target: "bb-target",
+    EXPANDED: "_expanded_"
+};
+var $ARC = {
     arc: "bb-arc",
     arcLabelLine: "bb-arc-label-line",
     arcs: "bb-arcs",
+    chartArc: "bb-chart-arc",
+    chartArcs: "bb-chart-arcs",
+    chartArcsBackground: "bb-chart-arcs-background",
+    chartArcsTitle: "bb-chart-arcs-title"
+};
+var $AREA = {
     area: "bb-area",
-    areas: "bb-areas",
+    areas: "bb-areas"
+};
+var $AXIS = {
     axis: "bb-axis",
     axisX: "bb-axis-x",
     axisXLabel: "bb-axis-x-label",
     axisY: "bb-axis-y",
     axisY2: "bb-axis-y2",
     axisY2Label: "bb-axis-y2-label",
-    axisYLabel: "bb-axis-y-label",
+    axisYLabel: "bb-axis-y-label"
+};
+var $BAR = {
     bar: "bb-bar",
     bars: "bb-bars",
-    brush: "bb-brush",
-    button: "bb-button",
-    buttonZoomReset: "bb-zoom-reset",
+    chartBar: "bb-chart-bar",
+    chartBars: "bb-chart-bars"
+};
+var $CANDLESTICK = {
     candlestick: "bb-candlestick",
     candlesticks: "bb-candlesticks",
-    chart: "bb-chart",
-    chartArc: "bb-chart-arc",
-    chartArcs: "bb-chart-arcs",
-    chartArcsBackground: "bb-chart-arcs-background",
+    chartCandlestick: "bb-chart-candlestick",
+    chartCandlesticks: "bb-chart-candlesticks",
+    valueDown: "bb-value-down",
+    valueUp: "bb-value-up"
+};
+var $CIRCLE = {
+    chartCircles: "bb-chart-circles",
+    circle: "bb-circle",
+    circles: "bb-circles"
+};
+var $COLOR = {
+    colorPattern: "bb-color-pattern",
+    colorScale: "bb-colorscale"
+};
+var $DRAG = {
+    dragarea: "bb-dragarea",
+    INCLUDED: "_included_"
+};
+var $GAUGE = {
     chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
     chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
     chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
-    chartArcsTitle: "bb-chart-arcs-title",
     chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
-    chartBar: "bb-chart-bar",
-    chartBars: "bb-chart-bars",
-    chartCandlestick: "bb-chart-candlestick",
-    chartCandlesticks: "bb-chart-candlesticks",
-    chartCircles: "bb-chart-circles",
-    chartLine: "bb-chart-line",
-    chartLines: "bb-chart-lines",
-    chartRadar: "bb-chart-radar",
-    chartRadars: "bb-chart-radars",
-    chartText: "bb-chart-text",
-    chartTexts: "bb-chart-texts",
-    circle: "bb-circle",
-    circles: "bb-circles",
-    colorPattern: "bb-color-pattern",
-    colorScale: "bb-colorscale",
-    defocused: "bb-defocused",
-    dragarea: "bb-dragarea",
-    empty: "bb-empty",
-    eventRect: "bb-event-rect",
-    eventRects: "bb-event-rects",
-    eventRectsMultiple: "bb-event-rects-multiple",
-    eventRectsSingle: "bb-event-rects-single",
-    focused: "bb-focused",
-    gaugeValue: "bb-gauge-value",
-    grid: "bb-grid",
-    gridLines: "bb-grid-lines",
+    gaugeValue: "bb-gauge-value"
+};
+var $LEGEND = {
     legend: "bb-legend",
     legendBackground: "bb-legend-background",
     legendItem: "bb-legend-item",
     legendItemEvent: "bb-legend-item-event",
-    legendItemFocused: "bb-legend-item-focused",
     legendItemHidden: "bb-legend-item-hidden",
     legendItemPoint: "bb-legend-item-point",
-    legendItemTile: "bb-legend-item-tile",
-    level: "bb-level",
-    levels: "bb-levels",
+    legendItemTile: "bb-legend-item-tile"
+};
+var $LINE = {
+    chartLine: "bb-chart-line",
+    chartLines: "bb-chart-lines",
     line: "bb-line",
-    lines: "bb-lines",
-    main: "bb-main",
-    region: "bb-region",
-    regions: "bb-regions",
-    selectedCircle: "bb-selected-circle",
-    selectedCircles: "bb-selected-circles",
-    shape: "bb-shape",
-    shapes: "bb-shapes",
-    stanfordElements: "bb-stanford-elements",
-    stanfordLine: "bb-stanford-line",
-    stanfordLines: "bb-stanford-lines",
-    stanfordRegion: "bb-stanford-region",
-    stanfordRegions: "bb-stanford-regions",
-    subchart: "bb-subchart",
-    target: "bb-target",
-    text: "bb-text",
-    texts: "bb-texts",
-    title: "bb-title",
-    tooltip: "bb-tooltip",
-    tooltipContainer: "bb-tooltip-container",
-    tooltipName: "bb-tooltip-name",
-    valueDown: "bb-value-down",
-    valueUp: "bb-value-up",
-    xgrid: "bb-xgrid",
+    lines: "bb-lines"
+};
+var $EVENT = {
+    eventRect: "bb-event-rect",
+    eventRects: "bb-event-rects",
+    eventRectsMultiple: "bb-event-rects-multiple",
+    eventRectsSingle: "bb-event-rects-single"
+};
+var $FOCUS = {
+    focused: "bb-focused",
+    defocused: "bb-defocused",
+    legendItemFocused: "bb-legend-item-focused",
     xgridFocus: "bb-xgrid-focus",
+    ygridFocus: "bb-ygrid-focus"
+};
+var $GRID = {
+    grid: "bb-grid",
+    gridLines: "bb-grid-lines",
+    xgrid: "bb-xgrid",
     xgridLine: "bb-xgrid-line",
     xgridLines: "bb-xgrid-lines",
     xgrids: "bb-xgrids",
     ygrid: "bb-ygrid",
-    ygridFocus: "bb-ygrid-focus",
     ygridLine: "bb-ygrid-line",
     ygridLines: "bb-ygrid-lines",
-    ygrids: "bb-ygrids",
-    zoomBrush: "bb-zoom-brush",
-    EXPANDED: "_expanded_",
-    SELECTED: "_selected_",
-    INCLUDED: "_included_",
+    ygrids: "bb-ygrids"
+};
+var $RADAR = {
+    chartRadar: "bb-chart-radar",
+    chartRadars: "bb-chart-radars",
+    level: "bb-level",
+    levels: "bb-levels"
+};
+var $REGION = {
+    region: "bb-region",
+    regions: "bb-regions"
+};
+var $SELECT = {
+    selectedCircle: "bb-selected-circle",
+    selectedCircles: "bb-selected-circles",
+    SELECTED: "_selected_"
+};
+var $SHAPE = {
+    shape: "bb-shape",
+    shapes: "bb-shapes"
+};
+var $SUBCHART = {
+    brush: "bb-brush",
+    subchart: "bb-subchart"
+};
+var $TEXT = {
+    chartText: "bb-chart-text",
+    chartTexts: "bb-chart-texts",
+    text: "bb-text",
+    texts: "bb-texts",
+    title: "bb-title",
     TextOverlapping: "text-overlapping"
 };
+var $TOOLTIP = {
+    tooltip: "bb-tooltip",
+    tooltipContainer: "bb-tooltip-container",
+    tooltipName: "bb-tooltip-name"
+};
+var $ZOOM = {
+    buttonZoomReset: "bb-zoom-reset",
+    zoomBrush: "bb-zoom-brush"
+};
+_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM);
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -415,8 +469,6 @@ var Plugin = /*#__PURE__*/function () {
     if (options === void 0) {
       options = {};
     }
-
-    this.$$;
     this.options = options;
   }
   /**
@@ -467,7 +519,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "#3.3.0-nightly-20220119004526#";
+Plugin.version = "#3.3.0-nightly-20220122004528#";
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -614,6 +666,7 @@ var Options = /** @class */ (function () {
     }
     return Options;
 }());
+var Options$1 = Options;
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -853,6 +906,7 @@ var Elements = /** @class */ (function () {
     };
     return Elements;
 }());
+var Elements$1 = Elements;
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -938,6 +992,7 @@ var ColorScale = /** @class */ (function () {
     };
     return ColorScale;
 }());
+var ColorScale$1 = ColorScale;
 
 /**
  * Stanford diagram plugin
@@ -1028,7 +1083,7 @@ var Stanford = /** @class */ (function (_super) {
     __extends(Stanford, _super);
     function Stanford(options) {
         var _this = _super.call(this, options) || this;
-        _this.config = new Options();
+        _this.config = new Options$1();
         return _this;
     }
     Stanford.prototype.$beforeInit = function () {
@@ -1047,8 +1102,8 @@ var Stanford = /** @class */ (function (_super) {
         var $$ = this.$$;
         loadConfig.call(this, this.options);
         $$.color = this.getStanfordPointColor.bind($$);
-        this.colorScale = new ColorScale(this);
-        this.elements = new Elements(this);
+        this.colorScale = new ColorScale$1(this);
+        this.elements = new Elements$1(this);
         this.convertData();
         this.initStanfordData();
         this.setStanfordTooltip();
@@ -1061,7 +1116,7 @@ var Stanford = /** @class */ (function (_super) {
         (_b = this.elements) === null || _b === void 0 ? void 0 : _b.updateStanfordElements(duration);
     };
     Stanford.prototype.getOptions = function () {
-        return new Options();
+        return new Options$1();
     };
     Stanford.prototype.convertData = function () {
         var data = this.$$.data.targets;
@@ -1118,9 +1173,9 @@ var Stanford = /** @class */ (function (_super) {
         var config = this.$$.config;
         if (isEmpty(config.tooltip_contents)) {
             config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
-                var html = "<table class=\"".concat(CLASS$1.tooltip, "\"><tbody>");
+                var html = "<table class=\"".concat($TOOLTIP.tooltip, "\"><tbody>");
                 d.forEach(function (v) {
-                    html += "<tr>\n\t\t\t\t\t\t\t<th>".concat(defaultTitleFormat(config.data_x), "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(v.x), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>").concat(defaultTitleFormat(v.id), "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(v.value), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"").concat(CLASS$1.tooltipName, "-").concat(v.id, "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:").concat(color(v), "\"></span>").concat(defaultTitleFormat("Epochs"), "</td>\n\t\t\t\t\t\t\t<td class=\"value\">").concat(defaultValueFormat(v.epochs), "</td>\n\t\t\t\t\t\t</tr>");
+                    html += "<tr>\n\t\t\t\t\t\t\t<th>".concat(defaultTitleFormat(config.data_x), "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(v.x), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>").concat(defaultTitleFormat(v.id), "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(v.value), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"").concat($TOOLTIP.tooltipName, "-").concat(v.id, "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:").concat(color(v), "\"></span>").concat(defaultTitleFormat("Epochs"), "</td>\n\t\t\t\t\t\t\t<td class=\"value\">").concat(defaultValueFormat(v.epochs), "</td>\n\t\t\t\t\t\t</tr>");
                 });
                 return "".concat(html, "</tbody></table>");
             };

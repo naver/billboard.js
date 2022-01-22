@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.0-nightly-20220119004526
+ * @version 3.3.0-nightly-20220122004528
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -114,7 +114,28 @@ function _inheritsLoose(subClass, superClass) {
   subClass.prototype.constructor = subClass;
   _setPrototypeOf(subClass, superClass);
 }
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 ;// CONCATENATED MODULE: ./src/config/classes.ts
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -124,111 +145,151 @@ function _inheritsLoose(subClass, superClass) {
  * CSS class names definition
  * @private
  */
-/* harmony default export */ var classes = ({
+var $COMMON = {
+  button: "bb-button",
+  chart: "bb-chart",
+  empty: "bb-empty",
+  main: "bb-main",
+  target: "bb-target",
+  EXPANDED: "_expanded_"
+};
+var $ARC = {
   arc: "bb-arc",
   arcLabelLine: "bb-arc-label-line",
   arcs: "bb-arcs",
+  chartArc: "bb-chart-arc",
+  chartArcs: "bb-chart-arcs",
+  chartArcsBackground: "bb-chart-arcs-background",
+  chartArcsTitle: "bb-chart-arcs-title"
+};
+var $AREA = {
   area: "bb-area",
-  areas: "bb-areas",
+  areas: "bb-areas"
+};
+var $AXIS = {
   axis: "bb-axis",
   axisX: "bb-axis-x",
   axisXLabel: "bb-axis-x-label",
   axisY: "bb-axis-y",
   axisY2: "bb-axis-y2",
   axisY2Label: "bb-axis-y2-label",
-  axisYLabel: "bb-axis-y-label",
+  axisYLabel: "bb-axis-y-label"
+};
+var $BAR = {
   bar: "bb-bar",
   bars: "bb-bars",
-  brush: "bb-brush",
-  button: "bb-button",
-  buttonZoomReset: "bb-zoom-reset",
+  chartBar: "bb-chart-bar",
+  chartBars: "bb-chart-bars"
+};
+var $CANDLESTICK = {
   candlestick: "bb-candlestick",
   candlesticks: "bb-candlesticks",
-  chart: "bb-chart",
-  chartArc: "bb-chart-arc",
-  chartArcs: "bb-chart-arcs",
-  chartArcsBackground: "bb-chart-arcs-background",
+  chartCandlestick: "bb-chart-candlestick",
+  chartCandlesticks: "bb-chart-candlesticks",
+  valueDown: "bb-value-down",
+  valueUp: "bb-value-up"
+};
+var $CIRCLE = {
+  chartCircles: "bb-chart-circles",
+  circle: "bb-circle",
+  circles: "bb-circles"
+};
+var $COLOR = {
+  colorPattern: "bb-color-pattern",
+  colorScale: "bb-colorscale"
+};
+var $DRAG = {
+  dragarea: "bb-dragarea",
+  INCLUDED: "_included_"
+};
+var $GAUGE = {
   chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
   chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
   chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
-  chartArcsTitle: "bb-chart-arcs-title",
   chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
-  chartBar: "bb-chart-bar",
-  chartBars: "bb-chart-bars",
-  chartCandlestick: "bb-chart-candlestick",
-  chartCandlesticks: "bb-chart-candlesticks",
-  chartCircles: "bb-chart-circles",
-  chartLine: "bb-chart-line",
-  chartLines: "bb-chart-lines",
-  chartRadar: "bb-chart-radar",
-  chartRadars: "bb-chart-radars",
-  chartText: "bb-chart-text",
-  chartTexts: "bb-chart-texts",
-  circle: "bb-circle",
-  circles: "bb-circles",
-  colorPattern: "bb-color-pattern",
-  colorScale: "bb-colorscale",
-  defocused: "bb-defocused",
-  dragarea: "bb-dragarea",
-  empty: "bb-empty",
-  eventRect: "bb-event-rect",
-  eventRects: "bb-event-rects",
-  eventRectsMultiple: "bb-event-rects-multiple",
-  eventRectsSingle: "bb-event-rects-single",
-  focused: "bb-focused",
-  gaugeValue: "bb-gauge-value",
-  grid: "bb-grid",
-  gridLines: "bb-grid-lines",
+  gaugeValue: "bb-gauge-value"
+};
+var $LEGEND = {
   legend: "bb-legend",
   legendBackground: "bb-legend-background",
   legendItem: "bb-legend-item",
   legendItemEvent: "bb-legend-item-event",
-  legendItemFocused: "bb-legend-item-focused",
   legendItemHidden: "bb-legend-item-hidden",
   legendItemPoint: "bb-legend-item-point",
-  legendItemTile: "bb-legend-item-tile",
-  level: "bb-level",
-  levels: "bb-levels",
+  legendItemTile: "bb-legend-item-tile"
+};
+var $LINE = {
+  chartLine: "bb-chart-line",
+  chartLines: "bb-chart-lines",
   line: "bb-line",
-  lines: "bb-lines",
-  main: "bb-main",
-  region: "bb-region",
-  regions: "bb-regions",
-  selectedCircle: "bb-selected-circle",
-  selectedCircles: "bb-selected-circles",
-  shape: "bb-shape",
-  shapes: "bb-shapes",
-  stanfordElements: "bb-stanford-elements",
-  stanfordLine: "bb-stanford-line",
-  stanfordLines: "bb-stanford-lines",
-  stanfordRegion: "bb-stanford-region",
-  stanfordRegions: "bb-stanford-regions",
-  subchart: "bb-subchart",
-  target: "bb-target",
-  text: "bb-text",
-  texts: "bb-texts",
-  title: "bb-title",
-  tooltip: "bb-tooltip",
-  tooltipContainer: "bb-tooltip-container",
-  tooltipName: "bb-tooltip-name",
-  valueDown: "bb-value-down",
-  valueUp: "bb-value-up",
-  xgrid: "bb-xgrid",
+  lines: "bb-lines"
+};
+var $EVENT = {
+  eventRect: "bb-event-rect",
+  eventRects: "bb-event-rects",
+  eventRectsMultiple: "bb-event-rects-multiple",
+  eventRectsSingle: "bb-event-rects-single"
+};
+var $FOCUS = {
+  focused: "bb-focused",
+  defocused: "bb-defocused",
+  legendItemFocused: "bb-legend-item-focused",
   xgridFocus: "bb-xgrid-focus",
+  ygridFocus: "bb-ygrid-focus"
+};
+var $GRID = {
+  grid: "bb-grid",
+  gridLines: "bb-grid-lines",
+  xgrid: "bb-xgrid",
   xgridLine: "bb-xgrid-line",
   xgridLines: "bb-xgrid-lines",
   xgrids: "bb-xgrids",
   ygrid: "bb-ygrid",
-  ygridFocus: "bb-ygrid-focus",
   ygridLine: "bb-ygrid-line",
   ygridLines: "bb-ygrid-lines",
-  ygrids: "bb-ygrids",
-  zoomBrush: "bb-zoom-brush",
-  EXPANDED: "_expanded_",
-  SELECTED: "_selected_",
-  INCLUDED: "_included_",
+  ygrids: "bb-ygrids"
+};
+var $RADAR = {
+  chartRadar: "bb-chart-radar",
+  chartRadars: "bb-chart-radars",
+  level: "bb-level",
+  levels: "bb-levels"
+};
+var $REGION = {
+  region: "bb-region",
+  regions: "bb-regions"
+};
+var $SELECT = {
+  selectedCircle: "bb-selected-circle",
+  selectedCircles: "bb-selected-circles",
+  SELECTED: "_selected_"
+};
+var $SHAPE = {
+  shape: "bb-shape",
+  shapes: "bb-shapes"
+};
+var $SUBCHART = {
+  brush: "bb-brush",
+  subchart: "bb-subchart"
+};
+var $TEXT = {
+  chartText: "bb-chart-text",
+  chartTexts: "bb-chart-texts",
+  text: "bb-text",
+  texts: "bb-texts",
+  title: "bb-title",
   TextOverlapping: "text-overlapping"
-});
+};
+var $TOOLTIP = {
+  tooltip: "bb-tooltip",
+  tooltipContainer: "bb-tooltip-container",
+  tooltipName: "bb-tooltip-name"
+};
+var $ZOOM = {
+  buttonZoomReset: "bb-zoom-reset",
+  zoomBrush: "bb-zoom-brush"
+};
+/* harmony default export */ var classes = (_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM));
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -345,21 +406,6 @@ var Options = function () {
 };
 
 
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
@@ -398,16 +444,15 @@ var doc = win == null ? void 0 : win.document;
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function util_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function util_objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? util_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : util_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-
 
 
 
@@ -683,7 +728,7 @@ function getBrushSelection(ctx) {
   // check from event
   if (event && event.type === "brush") {
     selection = event.selection; // check from brush area selection
-  } else if (main && (selection = main.select("." + classes.brush).node())) {
+  } else if (main && (selection = main.select(".bb-brush").node())) {
     selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection);
   }
 
@@ -800,7 +845,7 @@ function deepClone() {
   return objectN.map(function (v) {
     return clone(v);
   }).reduce(function (a, c) {
-    return _objectSpread(_objectSpread({}, a), c);
+    return util_objectSpread(util_objectSpread({}, a), c);
   });
 }
 /**
@@ -1489,7 +1534,7 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
     data.map(function (v) {
       return v.id;
     }).forEach(function (id, i) {
-      var selector = "." + classes.target + "-" + id,
+      var selector = "." + $COMMON.target + "-" + id,
           shape = $el.main.selectAll(selector),
           svg = el[i].querySelector("svg");
 

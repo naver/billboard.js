@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.0-nightly-20220119004526
+ * @version 3.3.0-nightly-20220122004528
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -20990,121 +20990,6 @@ function brush_brush(dim) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-brush/src/index.js
 
-;// CONCATENATED MODULE: ./src/config/classes.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * CSS class names definition
- * @private
- */
-/* harmony default export */ var config_classes = ({
-  arc: "bb-arc",
-  arcLabelLine: "bb-arc-label-line",
-  arcs: "bb-arcs",
-  area: "bb-area",
-  areas: "bb-areas",
-  axis: "bb-axis",
-  axisX: "bb-axis-x",
-  axisXLabel: "bb-axis-x-label",
-  axisY: "bb-axis-y",
-  axisY2: "bb-axis-y2",
-  axisY2Label: "bb-axis-y2-label",
-  axisYLabel: "bb-axis-y-label",
-  bar: "bb-bar",
-  bars: "bb-bars",
-  brush: "bb-brush",
-  button: "bb-button",
-  buttonZoomReset: "bb-zoom-reset",
-  candlestick: "bb-candlestick",
-  candlesticks: "bb-candlesticks",
-  chart: "bb-chart",
-  chartArc: "bb-chart-arc",
-  chartArcs: "bb-chart-arcs",
-  chartArcsBackground: "bb-chart-arcs-background",
-  chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
-  chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
-  chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
-  chartArcsTitle: "bb-chart-arcs-title",
-  chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
-  chartBar: "bb-chart-bar",
-  chartBars: "bb-chart-bars",
-  chartCandlestick: "bb-chart-candlestick",
-  chartCandlesticks: "bb-chart-candlesticks",
-  chartCircles: "bb-chart-circles",
-  chartLine: "bb-chart-line",
-  chartLines: "bb-chart-lines",
-  chartRadar: "bb-chart-radar",
-  chartRadars: "bb-chart-radars",
-  chartText: "bb-chart-text",
-  chartTexts: "bb-chart-texts",
-  circle: "bb-circle",
-  circles: "bb-circles",
-  colorPattern: "bb-color-pattern",
-  colorScale: "bb-colorscale",
-  defocused: "bb-defocused",
-  dragarea: "bb-dragarea",
-  empty: "bb-empty",
-  eventRect: "bb-event-rect",
-  eventRects: "bb-event-rects",
-  eventRectsMultiple: "bb-event-rects-multiple",
-  eventRectsSingle: "bb-event-rects-single",
-  focused: "bb-focused",
-  gaugeValue: "bb-gauge-value",
-  grid: "bb-grid",
-  gridLines: "bb-grid-lines",
-  legend: "bb-legend",
-  legendBackground: "bb-legend-background",
-  legendItem: "bb-legend-item",
-  legendItemEvent: "bb-legend-item-event",
-  legendItemFocused: "bb-legend-item-focused",
-  legendItemHidden: "bb-legend-item-hidden",
-  legendItemPoint: "bb-legend-item-point",
-  legendItemTile: "bb-legend-item-tile",
-  level: "bb-level",
-  levels: "bb-levels",
-  line: "bb-line",
-  lines: "bb-lines",
-  main: "bb-main",
-  region: "bb-region",
-  regions: "bb-regions",
-  selectedCircle: "bb-selected-circle",
-  selectedCircles: "bb-selected-circles",
-  shape: "bb-shape",
-  shapes: "bb-shapes",
-  stanfordElements: "bb-stanford-elements",
-  stanfordLine: "bb-stanford-line",
-  stanfordLines: "bb-stanford-lines",
-  stanfordRegion: "bb-stanford-region",
-  stanfordRegions: "bb-stanford-regions",
-  subchart: "bb-subchart",
-  target: "bb-target",
-  text: "bb-text",
-  texts: "bb-texts",
-  title: "bb-title",
-  tooltip: "bb-tooltip",
-  tooltipContainer: "bb-tooltip-container",
-  tooltipName: "bb-tooltip-name",
-  valueDown: "bb-value-down",
-  valueUp: "bb-value-up",
-  xgrid: "bb-xgrid",
-  xgridFocus: "bb-xgrid-focus",
-  xgridLine: "bb-xgrid-line",
-  xgridLines: "bb-xgrid-lines",
-  xgrids: "bb-xgrids",
-  ygrid: "bb-ygrid",
-  ygridFocus: "bb-ygrid-focus",
-  ygridLine: "bb-ygrid-line",
-  ygridLines: "bb-ygrid-lines",
-  ygrids: "bb-ygrids",
-  zoomBrush: "bb-zoom-brush",
-  EXPANDED: "_expanded_",
-  SELECTED: "_selected_",
-  INCLUDED: "_included_",
-  TextOverlapping: "text-overlapping"
-});
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 
@@ -21117,7 +21002,6 @@ function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-
 
 
 
@@ -21393,7 +21277,7 @@ function getBrushSelection(ctx) {
   // check from event
   if (event && event.type === "brush") {
     selection = event.selection; // check from brush area selection
-  } else if (main && (selection = main.select("." + config_classes.brush).node())) {
+  } else if (main && (selection = main.select(".bb-brush").node())) {
     selection = brushSelection(selection);
   }
 
@@ -21971,6 +21855,167 @@ function logError(head, tail) {
 
   throw Error(prefix + " " + head.replace(/\%c([a-z-]+)/i, "'$1' ") + " " + tail);
 }
+;// CONCATENATED MODULE: ./src/config/classes.ts
+
+
+function classes_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function classes_objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? classes_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : classes_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * CSS class names definition
+ * @private
+ */
+var $COMMON = {
+  button: "bb-button",
+  chart: "bb-chart",
+  empty: "bb-empty",
+  main: "bb-main",
+  target: "bb-target",
+  EXPANDED: "_expanded_"
+};
+var $ARC = {
+  arc: "bb-arc",
+  arcLabelLine: "bb-arc-label-line",
+  arcs: "bb-arcs",
+  chartArc: "bb-chart-arc",
+  chartArcs: "bb-chart-arcs",
+  chartArcsBackground: "bb-chart-arcs-background",
+  chartArcsTitle: "bb-chart-arcs-title"
+};
+var $AREA = {
+  area: "bb-area",
+  areas: "bb-areas"
+};
+var $AXIS = {
+  axis: "bb-axis",
+  axisX: "bb-axis-x",
+  axisXLabel: "bb-axis-x-label",
+  axisY: "bb-axis-y",
+  axisY2: "bb-axis-y2",
+  axisY2Label: "bb-axis-y2-label",
+  axisYLabel: "bb-axis-y-label"
+};
+var $BAR = {
+  bar: "bb-bar",
+  bars: "bb-bars",
+  chartBar: "bb-chart-bar",
+  chartBars: "bb-chart-bars"
+};
+var $CANDLESTICK = {
+  candlestick: "bb-candlestick",
+  candlesticks: "bb-candlesticks",
+  chartCandlestick: "bb-chart-candlestick",
+  chartCandlesticks: "bb-chart-candlesticks",
+  valueDown: "bb-value-down",
+  valueUp: "bb-value-up"
+};
+var $CIRCLE = {
+  chartCircles: "bb-chart-circles",
+  circle: "bb-circle",
+  circles: "bb-circles"
+};
+var $COLOR = {
+  colorPattern: "bb-color-pattern",
+  colorScale: "bb-colorscale"
+};
+var $DRAG = {
+  dragarea: "bb-dragarea",
+  INCLUDED: "_included_"
+};
+var $GAUGE = {
+  chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
+  chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
+  chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
+  chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
+  gaugeValue: "bb-gauge-value"
+};
+var $LEGEND = {
+  legend: "bb-legend",
+  legendBackground: "bb-legend-background",
+  legendItem: "bb-legend-item",
+  legendItemEvent: "bb-legend-item-event",
+  legendItemHidden: "bb-legend-item-hidden",
+  legendItemPoint: "bb-legend-item-point",
+  legendItemTile: "bb-legend-item-tile"
+};
+var $LINE = {
+  chartLine: "bb-chart-line",
+  chartLines: "bb-chart-lines",
+  line: "bb-line",
+  lines: "bb-lines"
+};
+var $EVENT = {
+  eventRect: "bb-event-rect",
+  eventRects: "bb-event-rects",
+  eventRectsMultiple: "bb-event-rects-multiple",
+  eventRectsSingle: "bb-event-rects-single"
+};
+var $FOCUS = {
+  focused: "bb-focused",
+  defocused: "bb-defocused",
+  legendItemFocused: "bb-legend-item-focused",
+  xgridFocus: "bb-xgrid-focus",
+  ygridFocus: "bb-ygrid-focus"
+};
+var $GRID = {
+  grid: "bb-grid",
+  gridLines: "bb-grid-lines",
+  xgrid: "bb-xgrid",
+  xgridLine: "bb-xgrid-line",
+  xgridLines: "bb-xgrid-lines",
+  xgrids: "bb-xgrids",
+  ygrid: "bb-ygrid",
+  ygridLine: "bb-ygrid-line",
+  ygridLines: "bb-ygrid-lines",
+  ygrids: "bb-ygrids"
+};
+var $RADAR = {
+  chartRadar: "bb-chart-radar",
+  chartRadars: "bb-chart-radars",
+  level: "bb-level",
+  levels: "bb-levels"
+};
+var $REGION = {
+  region: "bb-region",
+  regions: "bb-regions"
+};
+var $SELECT = {
+  selectedCircle: "bb-selected-circle",
+  selectedCircles: "bb-selected-circles",
+  SELECTED: "_selected_"
+};
+var $SHAPE = {
+  shape: "bb-shape",
+  shapes: "bb-shapes"
+};
+var $SUBCHART = {
+  brush: "bb-brush",
+  subchart: "bb-subchart"
+};
+var $TEXT = {
+  chartText: "bb-chart-text",
+  chartTexts: "bb-chart-texts",
+  text: "bb-text",
+  texts: "bb-texts",
+  title: "bb-title",
+  TextOverlapping: "text-overlapping"
+};
+var $TOOLTIP = {
+  tooltip: "bb-tooltip",
+  tooltipContainer: "bb-tooltip-container",
+  tooltipName: "bb-tooltip-name"
+};
+var $ZOOM = {
+  buttonZoomReset: "bb-zoom-reset",
+  zoomBrush: "bb-zoom-brush"
+};
+/* harmony default export */ var classes = (classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM));
 ;// CONCATENATED MODULE: ./src/config/Store/Element.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -22219,7 +22264,7 @@ var State = function () {
 
  // mapping
 
-var classes = {
+var Store_classes = {
   element: Element,
   state: State
 };
@@ -22234,8 +22279,8 @@ var Store = /*#__PURE__*/function () {
   function Store() {
     var _this = this;
 
-    Object.keys(classes).forEach(function (v) {
-      _this[v] = new classes[v]();
+    Object.keys(Store_classes).forEach(function (v) {
+      _this[v] = new Store_classes[v]();
     });
   }
 
@@ -25471,7 +25516,7 @@ var tsvFormatValue = tsv.formatValue;
     data.filter(function (v) {
       return $$.isBarType(v.id) || $$.isCandlestickType(v.id);
     }).forEach(function (v) {
-      var selector = $$.isBarType(v.id) ? "." + config_classes.chartBar + "." + config_classes.target + $$.getTargetSelectorSuffix(v.id) + " ." + config_classes.bar + "-" + v.index : "." + config_classes.chartCandlestick + "." + config_classes.target + $$.getTargetSelectorSuffix(v.id) + " ." + config_classes.candlestick + "-" + v.index + " path";
+      var selector = $$.isBarType(v.id) ? "." + $BAR.chartBar + "." + $COMMON.target + $$.getTargetSelectorSuffix(v.id) + " ." + $BAR.bar + "-" + v.index : "." + $CANDLESTICK.chartCandlestick + "." + $COMMON.target + $$.getTargetSelectorSuffix(v.id) + " ." + $CANDLESTICK.candlestick + "-" + v.index + " path";
 
       if (!closest && $$.isWithinBar(main.select(selector).node())) {
         closest = v;
@@ -25842,7 +25887,7 @@ var tsvFormatValue = tsv.formatValue;
       state.withoutFadeIn[id] = !1; // Remove target's elements
 
       if ($el.legend) {
-        $el.legend.selectAll("." + config_classes.legendItem + $$.getTargetSelectorSuffix(id)).remove();
+        $el.legend.selectAll("." + $LEGEND.legendItem + $$.getTargetSelectorSuffix(id)).remove();
       } // Remove target
 
 
@@ -26168,8 +26213,8 @@ function drag_defaultTouchable() {
       }
     }
 
-    main.selectAll("." + config_classes.shape + "-" + index).each(function () {
-      src_select(this).classed(config_classes.EXPANDED, !0);
+    main.selectAll("." + $SHAPE.shape + "-" + index).each(function () {
+      src_select(this).classed($COMMON.EXPANDED, !0);
 
       if (isSelectionEnabled) {
         eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
@@ -26234,8 +26279,8 @@ function drag_defaultTouchable() {
     ["bar", "candlestick"].filter(function (v) {
       return $$.$el[v];
     }).forEach(function (v) {
-      reset && $$.$el[v].classed(config_classes.EXPANDED, !1);
-      $$.getShapeByIndex(v, i, id).classed(config_classes.EXPANDED, expand);
+      reset && $$.$el[v].classed($COMMON.EXPANDED, !1);
+      $$.getShapeByIndex(v, i, id).classed($COMMON.EXPANDED, expand);
     });
   },
 
@@ -26258,10 +26303,10 @@ function drag_defaultTouchable() {
       config.color_onover && $$.setOverColor(isOver, d, isArc);
 
       if (isArc) {
-        callback(d, main.select("." + config_classes.arc + $$.getTargetSelectorSuffix(d.id)).node());
+        callback(d, main.select("." + $ARC.arc + $$.getTargetSelectorSuffix(d.id)).node());
       } else if (!config.tooltip_grouped) {
         var last = $$.cache.get(KEY.setOverOut) || [],
-            shape = main.selectAll("." + config_classes.shape + "-" + d).filter(function (d) {
+            shape = main.selectAll("." + $SHAPE.shape + "-" + d).filter(function (d) {
           return $$.isWithinShape(this, d);
         });
         shape.each(function (d) {
@@ -26289,7 +26334,7 @@ function drag_defaultTouchable() {
           config.point_focus_only && hasRadar ? $$.showCircleFocus($$.getAllValuesOnIndex(d, !0)) : $$.setExpand(d, null, !0);
         }
 
-        $$.isMultipleX() || main.selectAll("." + config_classes.shape + "-" + d).each(function (d) {
+        $$.isMultipleX() || main.selectAll("." + $SHAPE.shape + "-" + d).each(function (d) {
           callback(d, this);
         });
       }
@@ -26352,7 +26397,7 @@ function drag_defaultTouchable() {
         arcs = _$$$$el.arcs,
         radar = _$$$$el.radar,
         isMultipleX = $$.isMultipleX(),
-        element = (hasRadar ? radar.axes.select("." + config_classes.axis + "-" + index + " text") : eventRect || arcs.selectAll("." + config_classes.target + " path").filter(function (d, i) {
+        element = (hasRadar ? radar.axes.select("." + $AXIS.axis + "-" + index + " text") : eventRect || arcs.selectAll("." + $COMMON.target + " path").filter(function (d, i) {
       return i === index;
     })).node(),
         _element$getBoundingC = element.getBoundingClientRect(),
@@ -26447,7 +26492,7 @@ function drag_defaultTouchable() {
 
     return function (d) {
       var data = d.data || d,
-          result = (withShape ? _this.generateClass(config_classes[isPlural ? "shapes" : "shape"], data[key]) : "") + _this.generateClass(config_classes[type], data[useIdKey ? "id" : key]);
+          result = (withShape ? _this.generateClass(classes[isPlural ? "shapes" : "shape"], data[key]) : "") + _this.generateClass(classes[type], data[useIdKey ? "id" : key]);
 
       return result.trim();
     };
@@ -26463,7 +26508,7 @@ function drag_defaultTouchable() {
     var _this2 = this;
 
     return function (d) {
-      return config_classes["chart" + type] + _this2.classTarget((d.data ? d.data : d).id);
+      return classes["chart" + type] + _this2.classTarget((d.data ? d.data : d).id);
     };
   },
   generateExtraLineClass: function generateExtraLineClass() {
@@ -26482,26 +26527,26 @@ function drag_defaultTouchable() {
     };
   },
   classRegion: function classRegion(d, i) {
-    return this.generateClass(config_classes.region, i) + " " + ("class" in d ? d.class : "");
+    return this.generateClass(classes.region, i) + " " + ("class" in d ? d.class : "");
   },
   classTarget: function classTarget(id) {
     var additionalClassSuffix = this.config.data_classes[id],
         additionalClass = "";
 
     if (additionalClassSuffix) {
-      additionalClass = " " + config_classes.target + "-" + additionalClassSuffix;
+      additionalClass = " " + classes.target + "-" + additionalClassSuffix;
     }
 
-    return this.generateClass(config_classes.target, id) + additionalClass;
+    return this.generateClass(classes.target, id) + additionalClass;
   },
   classFocus: function classFocus(d) {
     return this.classFocused(d) + this.classDefocused(d);
   },
   classFocused: function classFocused(d) {
-    return " " + (this.state.focusedTargetIds.indexOf(d.id) >= 0 ? config_classes.focused : "");
+    return " " + (this.state.focusedTargetIds.indexOf(d.id) >= 0 ? classes.focused : "");
   },
   classDefocused: function classDefocused(d) {
-    return " " + (this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? config_classes.defocused : "");
+    return " " + (this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? classes.defocused : "");
   },
   getTargetSelectorSuffix: function getTargetSelectorSuffix(targetId) {
     var targetStr = targetId || targetId === 0 ? "-" + targetId : "";
@@ -26511,7 +26556,7 @@ function drag_defaultTouchable() {
     var pfx = prefix || "",
         target = this.getTargetSelectorSuffix(id);
     // select target & circle
-    return pfx + "." + (config_classes.target + target) + ", " + pfx + "." + (config_classes.circles + target);
+    return pfx + "." + (classes.target + target) + ", " + pfx + "." + (classes.circles + target);
   },
   selectorTargets: function selectorTargets(idsValue, prefix) {
     var _this3 = this,
@@ -26522,7 +26567,7 @@ function drag_defaultTouchable() {
     }) : null;
   },
   selectorLegend: function selectorLegend(id) {
-    return "." + (config_classes.legendItem + this.getTargetSelectorSuffix(id));
+    return "." + (classes.legendItem + this.getTargetSelectorSuffix(id));
   },
   selectorLegends: function selectorLegends(ids) {
     var _this4 = this;
@@ -26943,7 +26988,7 @@ var colorizePattern = function (pattern, color, id) {
 
     if (!pattern) {
       var span = browser_doc.createElement("span");
-      span.className = config_classes.colorPattern;
+      span.className = $COLOR.colorPattern;
       span.style.display = "none";
       body.appendChild(span);
       var content = win.getComputedStyle(span).backgroundImage;
@@ -27083,7 +27128,7 @@ var colorizePattern = function (pattern, color, id) {
     }
 
     main.selectAll(isObject(d) ? // when is Arc type
-    "." + config_classes.arc + $$.getTargetSelectorSuffix(d.id) : "." + config_classes.shape + "-" + d).style("fill", color);
+    "." + $ARC.arc + $$.getTargetSelectorSuffix(d.id) : "." + $SHAPE.shape + "-" + d).style("fill", color);
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/domain.ts
@@ -27593,7 +27638,7 @@ function getFormat($$, typeValue, v) {
 
     if (config.legend_show) {
       if (!config.legend_contents_bindto) {
-        $el.legend = $$.$el.svg.append("g").classed(config_classes.legend, !0).attr("transform", $$.getTranslate("legend"));
+        $el.legend = $$.$el.svg.append("g").classed($LEGEND.legend, !0).attr("transform", $$.getTranslate("legend"));
       } // MEMO: call here to update legend box and translate for all
       // MEMO: translate will be updated by this, so transform not needed in updateLegend()
 
@@ -27632,7 +27677,7 @@ function getFormat($$, typeValue, v) {
     } // toggle legend state
 
 
-    $el.legend.selectAll("." + config_classes.legendItem).classed(config_classes.legendItemHidden, function (id) {
+    $el.legend.selectAll("." + $LEGEND.legendItem).classed($LEGEND.legendItemHidden, function (id) {
       var hide = !$$.isTargetToShow(id);
 
       if (hide) {
@@ -27760,7 +27805,7 @@ function getFormat($$, typeValue, v) {
     var legend = this.$el.legend;
 
     if (legend) {
-      legend.select("." + config_classes.legendItem + "-" + id + " line").style("stroke", color);
+      legend.select("." + $LEGEND.legendItem + "-" + id + " line").style("stroke", color);
     }
   },
 
@@ -27802,7 +27847,7 @@ function getFormat($$, typeValue, v) {
    * @private
    */
   opacityForUnfocusedLegend: function opacityForUnfocusedLegend(legendItem) {
-    return legendItem.classed(config_classes.legendItemHidden) ? null : "0.3";
+    return legendItem.classed($LEGEND.legendItemHidden) ? null : "0.3";
   },
 
   /**
@@ -27816,9 +27861,9 @@ function getFormat($$, typeValue, v) {
         legend = $$.$el.legend,
         $T = $$.$T,
         targetIdz = $$.mapToTargetIds(targetIds);
-    legend && $T(legend.selectAll("." + config_classes.legendItem).filter(function (id) {
+    legend && $T(legend.selectAll("." + $LEGEND.legendItem).filter(function (id) {
       return targetIdz.indexOf(id) >= 0;
-    }).classed(config_classes.legendItemFocused, focus)).style("opacity", function () {
+    }).classed($FOCUS.legendItemFocused, focus)).style("opacity", function () {
       return focus ? null : $$.opacityForUnfocusedLegend.call($$, src_select(this));
     });
   },
@@ -27831,7 +27876,7 @@ function getFormat($$, typeValue, v) {
     var $$ = this,
         legend = $$.$el.legend,
         $T = $$.$T;
-    legend && $T(legend.selectAll("." + config_classes.legendItem).classed(config_classes.legendItemFocused, !1)).style("opacity", null);
+    legend && $T(legend.selectAll("." + $LEGEND.legendItem).classed($FOCUS.legendItemFocused, !1)).style("opacity", null);
   },
 
   /**
@@ -27892,7 +27937,7 @@ function getFormat($$, typeValue, v) {
       data = !state.redrawing && cache.get(cacheKey) || {};
 
       if (!data[id]) {
-        data[id] = $$.getTextRect(textElement, config_classes.legendItem);
+        data[id] = $$.getTextRect(textElement, $LEGEND.legendItem);
         cache.add(cacheKey, data);
       }
 
@@ -27917,7 +27962,7 @@ function getFormat($$, typeValue, v) {
     item.attr("class", function (id) {
       var node = src_select(this),
           itemClass = !node.empty() && node.attr("class") || "";
-      return itemClass + $$.generateClass(config_classes.legendItem, id);
+      return itemClass + $$.generateClass($LEGEND.legendItem, id);
     }).style("visibility", function (id) {
       return $$.isLegendToShow(id) ? null : "hidden";
     });
@@ -27930,7 +27975,7 @@ function getFormat($$, typeValue, v) {
             api.show(id);
           } else {
             api.toggle(id);
-            src_select(this).classed(config_classes.legendItemFocused, !1);
+            src_select(this).classed($FOCUS.legendItemFocused, !1);
           }
         }
 
@@ -27938,20 +27983,20 @@ function getFormat($$, typeValue, v) {
       });
       isTouch || item.on("mouseout", function (event, id) {
         if (!callFn(config.legend_item_onout, api, id)) {
-          src_select(this).classed(config_classes.legendItemFocused, !1);
+          src_select(this).classed($FOCUS.legendItemFocused, !1);
 
           if (hasGauge) {
-            $$.undoMarkOverlapped($$, "." + config_classes.gaugeValue);
+            $$.undoMarkOverlapped($$, "." + $GAUGE.gaugeValue);
           }
 
           $$.api.revert();
         }
       }).on("mouseover", function (event, id) {
         if (!callFn(config.legend_item_onover, api, id)) {
-          src_select(this).classed(config_classes.legendItemFocused, !0);
+          src_select(this).classed($FOCUS.legendItemFocused, !0);
 
           if (hasGauge) {
-            $$.markOverlapped(id, $$, "." + config_classes.gaugeValue);
+            $$.markOverlapped(id, $$, "." + $GAUGE.gaugeValue);
           }
 
           if (!state.transiting && $$.isTargetToShow(id)) {
@@ -28122,7 +28167,7 @@ function getFormat($$, typeValue, v) {
       return yForLegend(id, i) + 4;
     },
         pos = -200,
-        l = legend.selectAll("." + config_classes.legendItem).data(targetIdz).enter().append("g");
+        l = legend.selectAll("." + $LEGEND.legendItem).data(targetIdz).enter().append("g");
 
     $$.setLegendItem(l);
     l.append("text").text(function (id) {
@@ -28130,7 +28175,7 @@ function getFormat($$, typeValue, v) {
     }).each(function (id, i) {
       updatePositions(this, id, i);
     }).style("pointer-events", "none").attr("x", isLegendRightOrInset ? xForLegendText : pos).attr("y", isLegendRightOrInset ? pos : yForLegendText);
-    l.append("rect").attr("class", config_classes.legendItemEvent).style("fill-opacity", "0").attr("x", isLegendRightOrInset ? xForLegendRect : pos).attr("y", isLegendRightOrInset ? pos : yForLegendRect);
+    l.append("rect").attr("class", $LEGEND.legendItemEvent).style("fill-opacity", "0").attr("x", isLegendRightOrInset ? xForLegendRect : pos).attr("y", isLegendRightOrInset ? pos : yForLegendRect);
 
     var getColor = function (id) {
       var data = $$.getDataById(id);
@@ -28150,21 +28195,21 @@ function getFormat($$, typeValue, v) {
         }
 
         return browser_doc.createElementNS(namespaces.svg, "hasValidPointType" in $$ && $$.hasValidPointType(point) ? point : "use");
-      }).attr("class", config_classes.legendItemPoint).style("fill", getColor).style("pointer-events", "none").attr("href", function (data, idx, selection) {
+      }).attr("class", $LEGEND.legendItemPoint).style("fill", getColor).style("pointer-events", "none").attr("href", function (data, idx, selection) {
         var node = selection[idx],
             nodeName = node.nodeName.toLowerCase(),
             id = $$.getTargetSelectorSuffix(data);
         return nodeName === "use" ? "#" + state.datetimeId + "-point" + id : undefined;
       });
     } else {
-      l.append("line").attr("class", config_classes.legendItemTile).style("stroke", getColor).style("pointer-events", "none").attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height);
+      l.append("line").attr("class", $LEGEND.legendItemTile).style("stroke", getColor).style("pointer-events", "none").attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height);
     } // Set background for inset legend
 
 
-    background = legend.select("." + config_classes.legendBackground + " rect");
+    background = legend.select("." + $LEGEND.legendBackground + " rect");
 
     if (state.isLegendInset && maxWidth > 0 && background.size() === 0) {
-      background = legend.insert("g", "." + config_classes.legendItem).attr("class", config_classes.legendBackground).append("rect");
+      background = legend.insert("g", "." + $LEGEND.legendItem).attr("class", $LEGEND.legendBackground).append("rect");
     }
 
     var texts = legend.selectAll("text").data(targetIdz).text(function (id) {
@@ -28174,7 +28219,7 @@ function getFormat($$, typeValue, v) {
       updatePositions(this, id, i);
     });
     $T(texts, withTransition).attr("x", xForLegendText).attr("y", yForLegendText);
-    var rects = legend.selectAll("rect." + config_classes.legendItemEvent).data(targetIdz);
+    var rects = legend.selectAll("rect." + $LEGEND.legendItemEvent).data(targetIdz);
     $T(rects, withTransition).attr("width", function (id) {
       return widths[id];
     }).attr("height", function (id) {
@@ -28182,7 +28227,7 @@ function getFormat($$, typeValue, v) {
     }).attr("x", xForLegendRect).attr("y", yForLegendRect);
 
     if (usePoint) {
-      var tiles = legend.selectAll("." + config_classes.legendItemPoint).data(targetIdz);
+      var tiles = legend.selectAll("." + $LEGEND.legendItemPoint).data(targetIdz);
       $T(tiles, withTransition).each(function () {
         var nodeName = this.nodeName.toLowerCase(),
             pointR = config.point_r,
@@ -28216,7 +28261,7 @@ function getFormat($$, typeValue, v) {
         }).attr("r", radius).attr("width", width).attr("height", height);
       });
     } else {
-      var _tiles = legend.selectAll("line." + config_classes.legendItemTile).data(targetIdz);
+      var _tiles = legend.selectAll("line." + $LEGEND.legendItemTile).data(targetIdz);
 
       $T(_tiles, withTransition).style("stroke", getColor).attr("x1", x1ForLegendTile).attr("y1", yForLegendTile).attr("x2", x2ForLegendTile).attr("y2", yForLegendTile);
     }
@@ -28284,7 +28329,7 @@ function getFormat($$, typeValue, v) {
       // @TODO: Make 'init' state to be accessible everywhere not passing as argument.
       $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing); // Data empty label positioning and text.
 
-      config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null); // grid
+      config.data_empty_label_text && main.select("text." + $TEXT.text + "." + $COMMON.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null); // grid
 
       $$.hasGrid() && $$.updateGrid(); // rect for regions
 
@@ -28297,7 +28342,7 @@ function getFormat($$, typeValue, v) {
         }
       }); // circles for select
 
-      $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(); // event rects will redrawn when flow called
+      $el.text && main.selectAll("." + $SELECT.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(); // event rects will redrawn when flow called
 
       if (config.interaction_enabled && !flow && wth.EventRect) {
         $$.redrawEventRect();
@@ -31517,7 +31562,7 @@ function stepAfter(context) {
         return isValue(i) ? d.index === i : !0;
       });
     } else {
-      shape = (id ? $el.main.selectAll("." + config_classes[shapeName + "s"] + $$.getTargetSelectorSuffix(id)) : $el.main).selectAll("." + config_classes[shapeName] + suffix);
+      shape = (id ? $el.main.selectAll("." + classes[shapeName + "s"] + $$.getTargetSelectorSuffix(id)) : $el.main).selectAll("." + classes[shapeName] + suffix);
     }
 
     return shape;
@@ -31532,7 +31577,7 @@ function stepAfter(context) {
     } else if ($$.hasValidPointType != null && $$.hasValidPointType(that.nodeName)) {
       isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) : $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);
     } else if (that.nodeName === "path") {
-      isWithin = shape.classed(config_classes.bar) ? $$.isWithinBar(that) : !0;
+      isWithin = shape.classed(classes.bar) ? $$.isWithinBar(that) : !0;
     }
 
     return isWithin;
@@ -31742,7 +31787,7 @@ function stepAfter(context) {
         config = $$.config,
         $el = $$.$el,
         hasLeftAxisRect = config.axis_rotated || !config.axis_rotated && !config.axis_y_inner,
-        leftAxisClass = config.axis_rotated ? config_classes.axisX : config_classes.axisY,
+        leftAxisClass = config.axis_rotated ? $AXIS.axisX : $AXIS.axisY,
         leftAxis = $el.main.select("." + leftAxisClass).node(),
         svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : {
       right: 0
@@ -31781,7 +31826,7 @@ function stepAfter(context) {
     svg.attr("width", current.width).attr("height", current.height);
 
     if (hasAxis) {
-      var brush = svg.select("." + config_classes.brush + " .overlay"),
+      var brush = svg.select("." + $SUBCHART.brush + " .overlay"),
           brushSize = {
         width: 0,
         height: 0
@@ -31950,7 +31995,7 @@ function stepAfter(context) {
    */
   initText: function initText() {
     var $el = this.$el;
-    $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartTexts);
+    $el.main.select("." + $COMMON.chart).append("g").attr("class", $TEXT.chartTexts);
   },
 
   /**
@@ -31963,7 +32008,7 @@ function stepAfter(context) {
         classChartText = $$.getChartClass("Text"),
         classTexts = $$.getClass("texts", "id"),
         classFocus = $$.classFocus.bind($$),
-        mainTextUpdate = $$.$el.main.select("." + config_classes.chartTexts).selectAll("." + config_classes.chartText).data(targets).attr("class", function (d) {
+        mainTextUpdate = $$.$el.main.select("." + $TEXT.chartTexts).selectAll("." + $TEXT.chartText).data(targets).attr("class", function (d) {
       return classChartText(d) + classFocus(d);
     }),
         mainTextEnter = mainTextUpdate.enter().append("g").style("opacity", "0").attr("class", classChartText).style("pointer-events", "none");
@@ -31980,7 +32025,7 @@ function stepAfter(context) {
         $T = $$.$T,
         config = $$.config,
         classText = $$.getClass("text", "index"),
-        text = $el.main.selectAll("." + config_classes.texts).selectAll("." + config_classes.text).data($$.labelishData.bind($$));
+        text = $el.main.selectAll("." + $TEXT.texts).selectAll("." + $TEXT.text).data($$.labelishData.bind($$));
     $T(text.exit()).style("fill-opacity", "0").remove();
     $el.text = text.enter().append("text").merge(text).attr("class", classText).attr("text-anchor", function (d) {
       // when value is negative or
@@ -32343,7 +32388,7 @@ function stepAfter(context) {
           nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ? textNode : filteredTextNode,
           overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) < Math.ceil(nodeForWidth.node().getComputedTextLength()),
           overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) < parseInt(textNode.style("font-size"), 10);
-      filteredTextNode.classed(config_classes.TextOverlapping, overlapsX && overlapsY);
+      filteredTextNode.classed($TEXT.TextOverlapping, overlapsX && overlapsY);
     });
   },
 
@@ -32356,7 +32401,7 @@ function stepAfter(context) {
    */
   undoMarkOverlapped: function undoMarkOverlapped($$, selector) {
     $$.$el.arcs.selectAll(selector).each(function () {
-      src_selectAll([this, this.previousSibling]).classed(config_classes.TextOverlapping, !1);
+      src_selectAll([this, this.previousSibling]).classed($TEXT.TextOverlapping, !1);
     });
   },
 
@@ -32424,7 +32469,7 @@ function getTextPos(pos, width) {
 
     if (config.title_text) {
       $el.title = $el.svg.append("g");
-      var text = $el.title.append("text").style("text-anchor", getTextPos(config.title_position)).attr("class", config_classes.title);
+      var text = $el.title.append("text").style("text-anchor", getTextPos(config.title_position)).attr("class", $TEXT.title);
       setTextValue(text, config.title_text, [.3, 1.5]);
     }
   },
@@ -32460,7 +32505,7 @@ function getTextPos(pos, width) {
         config = $$.config,
         current = $$.state.current,
         position = config.title_position || "left",
-        textRectWidth = $$.getTextRect($$.$el.title, config_classes.title).width,
+        textRectWidth = $$.getTextRect($$.$el.title, $TEXT.title).width,
         x;
 
     if (/(right|center)/.test(position)) {
@@ -32486,7 +32531,7 @@ function getTextPos(pos, width) {
    */
   yForTitle: function yForTitle() {
     var $$ = this;
-    return ($$.config.title_padding.top || 0) + $$.getTextRect($$.$el.title, config_classes.title).height;
+    return ($$.config.title_padding.top || 0) + $$.getTextRect($$.$el.title, $TEXT.title).height;
   },
 
   /**
@@ -32520,7 +32565,7 @@ function getTextPos(pos, width) {
     $el.tooltip = src_select(config.tooltip_contents.bindto);
 
     if ($el.tooltip.empty()) {
-      $el.tooltip = $el.chart.append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none");
+      $el.tooltip = $el.chart.append("div").attr("class", $TOOLTIP.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none");
     }
 
     $$.bindTooltipResizePos();
@@ -32673,13 +32718,13 @@ function getTextPos(pos, width) {
       if (isUndefined(text)) {
         var title = (state.hasAxis || state.hasRadar) && sanitise(titleFormat ? titleFormat(row.x) : row.x);
         text = tplProcess(tpl[0], {
-          CLASS_TOOLTIP: config_classes.tooltip,
+          CLASS_TOOLTIP: $TOOLTIP.tooltip,
           TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">" + title + "</th></tr>" : ""
         });
       }
 
       if (!row.ratio && $$.$el.arcs) {
-        row.ratio = $$.getRatio("arc", $$.$el.arcs.select("path." + config_classes.arc + "-" + row.id).data()[0]);
+        row.ratio = $$.getRatio("arc", $$.$el.arcs.select("path." + $ARC.arc + "-" + row.id).data()[0]);
       }
 
       param = [row.ratio, row.id, row.index, d];
@@ -32721,7 +32766,7 @@ function getTextPos(pos, width) {
           var name = sanitise(nameFormat.apply(void 0, [row.name].concat(param))),
               color = getBgColor(row),
               contentValue = {
-            CLASS_TOOLTIP_NAME: config_classes.tooltipName + $$.getTargetSelectorSuffix(row.id),
+            CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
             COLOR: tplStr || !$$.patterns ? color : "<svg><rect style=\"fill:" + color + "\" width=\"10\" height=\"10\"></rect></svg>",
             NAME: name,
             VALUE: value
@@ -33059,14 +33104,14 @@ function getTextPos(pos, width) {
     var $$ = this,
         main = $$.$el.main,
         $T = $$.$T,
-        xAxis = transitions != null && transitions.axisX ? transitions.axisX : $T(main.select("." + config_classes.axisX), withTransition),
-        yAxis = transitions != null && transitions.axisY ? transitions.axisY : $T(main.select("." + config_classes.axisY), withTransition),
-        y2Axis = transitions != null && transitions.axisY2 ? transitions.axisY2 : $T(main.select("." + config_classes.axisY2), withTransition);
+        xAxis = transitions != null && transitions.axisX ? transitions.axisX : $T(main.select("." + $AXIS.axisX), withTransition),
+        yAxis = transitions != null && transitions.axisY ? transitions.axisY : $T(main.select("." + $AXIS.axisY), withTransition),
+        y2Axis = transitions != null && transitions.axisY2 ? transitions.axisY2 : $T(main.select("." + $AXIS.axisY2), withTransition);
     $T(main, withTransition).attr("transform", $$.getTranslate("main"));
     xAxis.attr("transform", $$.getTranslate("x"));
     yAxis.attr("transform", $$.getTranslate("y"));
     y2Axis.attr("transform", $$.getTranslate("y2"));
-    main.select("." + config_classes.chartArcs).attr("transform", $$.getTranslate("arc"));
+    main.select("." + $ARC.chartArcs).attr("transform", $$.getTranslate("arc"));
   },
   transformAll: function transformAll(withTransition, transitions) {
     var $$ = this,
@@ -33687,7 +33732,7 @@ var ChartInternal = /*#__PURE__*/function () {
 
     $$.bindResize(); // Define regions
 
-    var main = $el.svg.append("g").classed(config_classes.main, !0).attr("transform", $$.getTranslate("main"));
+    var main = $el.svg.append("g").classed($COMMON.main, !0).attr("transform", $$.getTranslate("main"));
     $el.main = main; // initialize subchart when subchart show option is set
 
     config.subchart_show && $$.initSubchart();
@@ -33697,7 +33742,7 @@ var ChartInternal = /*#__PURE__*/function () {
     // text when empty
 
     if (config.data_empty_label_text) {
-      main.append("text").attr("class", config_classes.text + " " + config_classes.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
+      main.append("text").attr("class", $TEXT.text + " " + $COMMON.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
       .attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
     }
 
@@ -33709,7 +33754,7 @@ var ChartInternal = /*#__PURE__*/function () {
     } // Define g for chart area
 
 
-    main.append("g").attr("class", config_classes.chart).attr("clip-path", state.clip.path);
+    main.append("g").attr("class", $COMMON.chart).attr("clip-path", state.clip.path);
     $$.callPluginHook("$init");
 
     if (hasAxis) {
@@ -33908,7 +33953,7 @@ var ChartInternal = /*#__PURE__*/function () {
     var $$ = this,
         svg = $$.$el.svg,
         $T = $$.$T;
-    $T(svg.selectAll("." + config_classes.target).filter(function (d) {
+    $T(svg.selectAll("." + $COMMON.target).filter(function (d) {
       return $$.isTargetToShow(d.id);
     })).style("opacity", null);
   };
@@ -34612,11 +34657,11 @@ function nodeToSvgDataUrl(node, option, orgSize) {
         candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
     this.revert();
     this.defocus();
-    candidates.classed(config_classes.focused, !0).classed(config_classes.defocused, !1);
+    candidates.classed($FOCUS.focused, !0).classed($FOCUS.defocused, !1);
 
     if ($$.hasArcType() && !state.hasRadar) {
       $$.expandArc(targetIds);
-      $$.hasType("gauge") && $$.markOverlapped(targetIdsValue, $$, "." + config_classes.gaugeValue);
+      $$.hasType("gauge") && $$.markOverlapped(targetIdsValue, $$, "." + $GAUGE.gaugeValue);
     }
 
     $$.toggleFocusLegend(targetIds, !0);
@@ -34648,11 +34693,11 @@ function nodeToSvgDataUrl(node, option, orgSize) {
         state = $$.state,
         targetIds = $$.mapToTargetIds(targetIdsValue),
         candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
-    candidates.classed(config_classes.focused, !1).classed(config_classes.defocused, !0);
+    candidates.classed($FOCUS.focused, !1).classed($FOCUS.defocused, !0);
 
     if ($$.hasArcType()) {
       $$.unexpandArc(targetIds);
-      $$.hasType("gauge") && $$.undoMarkOverlapped($$, "." + config_classes.gaugeValue);
+      $$.hasType("gauge") && $$.undoMarkOverlapped($$, "." + $GAUGE.gaugeValue);
     }
 
     $$.toggleFocusLegend(targetIds, !1);
@@ -34687,14 +34732,14 @@ function nodeToSvgDataUrl(node, option, orgSize) {
         targetIds = $$.mapToTargetIds(targetIdsValue),
         candidates = $el.svg.selectAll($$.selectorTargets(targetIds));
     // should be for all targets
-    candidates.classed(config_classes.focused, !1).classed(config_classes.defocused, !1);
+    candidates.classed($FOCUS.focused, !1).classed($FOCUS.defocused, !1);
     $$.hasArcType() && $$.unexpandArc(targetIds);
 
     if (config.legend_show) {
       $$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
       $el.legend.selectAll($$.selectorLegends(targetIds)).filter(function () {
-        return src_select(this).classed(config_classes.legendItemFocused);
-      }).classed(config_classes.legendItemFocused, !1);
+        return src_select(this).classed($FOCUS.legendItemFocused);
+      }).classed($FOCUS.legendItemFocused, !1);
     }
 
     state.focusedTargetIds = [];
@@ -35933,8 +35978,8 @@ util_extend(regions, {
         config = $$.config,
         $T = $$.$T,
         options = optionsValue || {},
-        classes = getOption(options, "classes", [config_classes.region]),
-        regions = $$.$el.main.select("." + config_classes.regions).selectAll(classes.map(function (c) {
+        classes = getOption(options, "classes", [$REGION.region]),
+        regions = $$.$el.main.select("." + $REGION.regions).selectAll(classes.map(function (c) {
       return "." + c;
     }));
     $T(regions).style("opacity", "0").remove();
@@ -37077,7 +37122,7 @@ var Axis_Axis = /*#__PURE__*/function () {
   var _proto = Axis.prototype;
 
   _proto.getAxisClassName = function getAxisClassName(id) {
-    return config_classes.axis + " " + config_classes["axis" + capitalize(id)];
+    return $AXIS.axis + " " + $AXIS["axis" + capitalize(id)];
   };
 
   _proto.isHorizontal = function isHorizontal($$, forHorizontal) {
@@ -37147,7 +37192,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     config.axis_y2_show && target.push("y2");
     target.forEach(function (v) {
       var classAxis = _this.getAxisClassName(v),
-          classLabel = config_classes["axis" + v.toUpperCase() + "Label"];
+          classLabel = $AXIS["axis" + v.toUpperCase() + "Label"];
 
       axis[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
         var res = null;
@@ -37714,9 +37759,9 @@ var Axis_Axis = /*#__PURE__*/function () {
         main = $$.$el.main,
         $T = $$.$T,
         labels = {
-      x: main.select("." + config_classes.axisX + " ." + config_classes.axisXLabel),
-      y: main.select("." + config_classes.axisY + " ." + config_classes.axisYLabel),
-      y2: main.select("." + config_classes.axisY2 + " ." + config_classes.axisY2Label)
+      x: main.select("." + $AXIS.axisX + " ." + $AXIS.axisXLabel),
+      y: main.select("." + $AXIS.axisY + " ." + $AXIS.axisYLabel),
+      y2: main.select("." + $AXIS.axisY2 + " ." + $AXIS.axisY2Label)
     };
 
     Object.keys(labels).filter(function (id) {
@@ -37958,7 +38003,7 @@ var Axis_Axis = /*#__PURE__*/function () {
 
         if (type === "x") {
           var clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
-          $el.svg.selectAll("." + config_classes.axisX + " .tick text").attr("clip-path", clipPath);
+          $el.svg.selectAll("." + $AXIS.axisX + " .tick text").attr("clip-path", clipPath);
         }
       }
     });
@@ -37981,7 +38026,7 @@ var Axis_Axis = /*#__PURE__*/function () {
    */
   initEventRect: function initEventRect() {
     var $$ = this;
-    $$.$el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.eventRects).style("fill-opacity", "0");
+    $$.$el.main.select("." + $COMMON.chart).append("g").attr("class", $EVENT.eventRects).style("fill-opacity", "0");
   },
 
   /**
@@ -37998,8 +38043,8 @@ var Axis_Axis = /*#__PURE__*/function () {
     if ($el.eventRect) {
       $$.updateEventRect($el.eventRect, !0);
     } else {
-      var eventRects = $$.$el.main.select("." + config_classes.eventRects).style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX),
-          eventRectUpdate = eventRects.selectAll("." + config_classes.eventRect).data([0]).enter().append("rect"); // append event <rect>
+      var eventRects = $$.$el.main.select("." + $EVENT.eventRects).style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed($EVENT.eventRectsMultiple, isMultipleX).classed($EVENT.eventRectsSingle, !isMultipleX),
+          eventRectUpdate = eventRects.selectAll("." + $EVENT.eventRect).data([0]).enter().append("rect"); // append event <rect>
 
       $$.updateEventRect(eventRectUpdate); // bind event to <rect> element
 
@@ -38077,7 +38122,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     }).on("touchstart.eventRect touchmove.eventRect", function (event) {
       state.event = event;
 
-      if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
+      if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
         // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
         if (state.dragging || state.flowing || $$.hasArcType() || event.touches.length > 1) {
           return;
@@ -38091,7 +38136,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     }, !0).on("touchend.eventRect", function (event) {
       state.event = event;
 
-      if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
+      if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
         if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
           state.cancelClick && (state.cancelClick = !1);
         }
@@ -38133,7 +38178,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       rectElement.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height); // only for init
 
       if (!rendered) {
-        rectElement.attr("class", config_classes.eventRect);
+        rectElement.attr("class", $EVENT.eventRect);
       }
     }
 
@@ -38274,7 +38319,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     $$.showGridFocus(selectedData); // Show cursor as pointer if point is close to mouse position
 
     if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-      $$.$el.svg.select("." + config_classes.eventRect).style("cursor", "pointer");
+      $$.$el.svg.select("." + $EVENT.eventRect).style("cursor", "pointer");
 
       if (!state.mouseover) {
         config.data_onover.call($$.api, closest);
@@ -38293,7 +38338,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         _$$$$el2 = $$.$el,
         circle = _$$$$el2.circle,
         tooltip = _$$$$el2.tooltip;
-    $$.$el.svg.select("." + config_classes.eventRect).style("cursor", null);
+    $$.$el.svg.select("." + $EVENT.eventRect).style("cursor", null);
     $$.hideGridFocus();
 
     if (tooltip) {
@@ -38309,8 +38354,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   /**
    * Create eventRect for each data on the x-axis.
    * Register touch and drag events.
-   * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
-   * @returns {object} d3.select(CLASS.eventRects) object.
+   * @param {object} eventRectEnter d3.select($EVENT.eventRects) object.
+   * @returns {object} d3.select($EVENT.eventRects) object.
    * @private
    */
   generateEventRectsForSingleX: function generateEventRectsForSingleX(eventRectEnter) {
@@ -38402,7 +38447,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     }
 
     var index = d.index;
-    main.selectAll("." + config_classes.shape + "-" + index).each(function (d2) {
+    main.selectAll("." + $SHAPE.shape + "-" + index).each(function (d2) {
       if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
         $$.toggleShape == null ? void 0 : $$.toggleShape(this, d2, index);
         config.data_onclick.bind($$.api)(d2, this);
@@ -38413,7 +38458,7 @@ var Axis_Axis = /*#__PURE__*/function () {
   /**
    * Create an eventRect,
    * Register touch and drag events.
-   * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
+   * @param {object} eventRectEnter d3.select($EVENT.eventRects) object.
    * @private
    */
   generateEventRectsForMultipleXs: function generateEventRectsForMultipleXs(eventRectEnter) {
@@ -38458,7 +38503,7 @@ var Axis_Axis = /*#__PURE__*/function () {
 
 
     if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-      $$.$el.main.selectAll("." + config_classes.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll("." + config_classes.shape + "-" + closest.index).each(function () {
+      $$.$el.main.selectAll("." + $SHAPE.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll("." + $SHAPE.shape + "-" + closest.index).each(function () {
         if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
           $$.toggleShape == null ? void 0 : $$.toggleShape(this, closest, closest.index);
           config.data_onclick.bind($$.api)(closest, this);
@@ -38595,13 +38640,13 @@ var src_linear_linear = function (t) {
         var target = [];
 
         for (var i = 0; i < flowLength; i++) {
-          target.push("." + config_classes[v] + "-" + i);
+          target.push("." + classes[v] + "-" + i);
         }
 
-        svg.selectAll("." + config_classes[v + "s"]) // circles, shapes, texts, eventRects
+        svg.selectAll("." + classes[v + "s"]) // circles, shapes, texts, eventRects
         .selectAll(target).remove();
       });
-      svg.select("." + config_classes.xgrid).remove();
+      svg.select("." + classes.xgrid).remove();
     } // draw again for removing flowed elements and reverting attr
 
 
@@ -38894,9 +38939,9 @@ function smoothLines(el, type) {
         $el = $$.$el;
 
     if (config.grid_x_lines.length || config.grid_y_lines.length) {
-      $el.gridLines.main = $el.main.insert("g", "." + config_classes.chart + (config.grid_lines_front ? " + *" : "")).attr("clip-path", clip.pathGrid).attr("class", config_classes.grid + " " + config_classes.gridLines);
-      $el.gridLines.main.append("g").attr("class", config_classes.xgridLines);
-      $el.gridLines.main.append("g").attr("class", config_classes.ygridLines);
+      $el.gridLines.main = $el.main.insert("g", "." + $COMMON.chart + (config.grid_lines_front ? " + *" : "")).attr("clip-path", clip.pathGrid).attr("class", $GRID.grid + " " + $GRID.gridLines);
+      $el.gridLines.main.append("g").attr("class", $GRID.xgridLines);
+      $el.gridLines.main.append("g").attr("class", $GRID.ygridLines);
       $el.gridLines.x = src_selectAll([]);
     }
   },
@@ -38926,9 +38971,9 @@ function smoothLines(el, type) {
       "y1": 0,
       "y2": state.height
     };
-    grid.x = main.select("." + config_classes.xgrids).selectAll("." + config_classes.xgrid).data(xgridData);
+    grid.x = main.select("." + $GRID.xgrids).selectAll("." + $GRID.xgrid).data(xgridData);
     grid.x.exit().remove();
-    grid.x = grid.x.enter().append("line").attr("class", config_classes.xgrid).merge(grid.x);
+    grid.x = grid.x.enter().append("line").attr("class", $GRID.xgrid).merge(grid.x);
 
     if (!withoutUpdate) {
       grid.x.each(function () {
@@ -38954,9 +38999,9 @@ function smoothLines(el, type) {
       return Math.ceil($$.scale.y(d));
     };
 
-    grid.y = main.select("." + config_classes.ygrids).selectAll("." + config_classes.ygrid).data(gridValues);
+    grid.y = main.select("." + $GRID.ygrids).selectAll("." + $GRID.ygrid).data(gridValues);
     grid.y.exit().remove();
-    grid.y = grid.y.enter().append("line").attr("class", config_classes.ygrid).merge(grid.y);
+    grid.y = grid.y.enter().append("line").attr("class", $GRID.ygrid).merge(grid.y);
     grid.y.attr("x1", isRotated ? pos : 0).attr("x2", isRotated ? pos : state.width).attr("y1", isRotated ? 0 : pos).attr("y2", isRotated ? state.height : pos);
     smoothLines(grid.y, "grid");
   },
@@ -38986,7 +39031,7 @@ function smoothLines(el, type) {
         $T = $$.$T,
         isRotated = config.axis_rotated;
     config.grid_x_show && $$.updateXGrid();
-    var xLines = main.select("." + config_classes.xgridLines).selectAll("." + config_classes.xgridLine).data(config.grid_x_lines); // exit
+    var xLines = main.select("." + $GRID.xgridLines).selectAll("." + $GRID.xgridLine).data(config.grid_x_lines); // exit
 
     $T(xLines.exit()).style("opacity", "0").remove(); // enter
 
@@ -38995,7 +39040,7 @@ function smoothLines(el, type) {
     xgridLine.append("text").attr("transform", isRotated ? "" : "rotate(-90)").attr("dy", -5).style("opacity", "0");
     xLines = xgridLine.merge(xLines);
     $T(xLines.attr("class", function (d) {
-      return (config_classes.xgridLine + " " + (d.class || "")).trim();
+      return ($GRID.xgridLine + " " + (d.class || "")).trim();
     }).select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx)).text(function (d) {
       return d.text;
     }).style("opacity", null);
@@ -39016,7 +39061,7 @@ function smoothLines(el, type) {
         $T = $$.$T,
         isRotated = config.axis_rotated;
     config.grid_y_show && $$.updateYGrid();
-    var ygridLines = $el.main.select("." + config_classes.ygridLines).selectAll("." + config_classes.ygridLine).data(config.grid_y_lines); // exit
+    var ygridLines = $el.main.select("." + $GRID.ygridLines).selectAll("." + $GRID.ygridLine).data(config.grid_y_lines); // exit
 
     $T(ygridLines.exit()).style("opacity", "0").remove(); // enter
 
@@ -39027,7 +39072,7 @@ function smoothLines(el, type) {
 
     var yv = $$.yv.bind($$);
     $T(ygridLines.attr("class", function (d) {
-      return (config_classes.ygridLine + " " + (d.class || "")).trim();
+      return ($GRID.ygridLine + " " + (d.class || "")).trim();
     }).select("line")).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? height : yv).style("opacity", null);
     $T(ygridLines.select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx)).attr("dy", -5).attr("x", getGridTextX(isRotated, width, height)).attr("y", yv).text(function (d) {
       return d.text;
@@ -39057,17 +39102,17 @@ function smoothLines(el, type) {
         clip = $$.state.clip,
         $el = $$.$el,
         isFront = config.grid_front,
-        className = "." + config_classes[isFront && $el.gridLines.main ? "gridLines" : "chart"] + (isFront ? " + *" : ""),
-        grid = $el.main.insert("g", className).attr("clip-path", clip.pathGrid).attr("class", config_classes.grid);
+        className = "." + (isFront && $el.gridLines.main ? $GRID.gridLines : $COMMON.chart) + (isFront ? " + *" : ""),
+        grid = $el.main.insert("g", className).attr("clip-path", clip.pathGrid).attr("class", $GRID.grid);
     $el.grid.main = grid;
-    config.grid_x_show && grid.append("g").attr("class", config_classes.xgrids);
-    config.grid_y_show && grid.append("g").attr("class", config_classes.ygrids);
+    config.grid_x_show && grid.append("g").attr("class", $GRID.xgrids);
+    config.grid_y_show && grid.append("g").attr("class", $GRID.ygrids);
 
     if (config.interaction_enabled && config.grid_focus_show) {
-      grid.append("g").attr("class", config_classes.xgridFocus).append("line").attr("class", config_classes.xgridFocus); // to show xy focus grid line, should be 'tooltip.grouped=false'
+      grid.append("g").attr("class", $FOCUS.xgridFocus).append("line").attr("class", $FOCUS.xgridFocus); // to show xy focus grid line, should be 'tooltip.grouped=false'
 
       if (config.grid_focus_y && !config.tooltip_grouped) {
-        grid.append("g").attr("class", config_classes.ygridFocus).append("line").attr("class", config_classes.ygridFocus);
+        grid.append("g").attr("class", $FOCUS.ygridFocus).append("line").attr("class", $FOCUS.ygridFocus);
       }
     }
   },
@@ -39084,7 +39129,7 @@ function smoothLines(el, type) {
         width = _$$$state3.width,
         height = _$$$state3.height,
         isRotated = config.axis_rotated,
-        focusEl = $$.$el.main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus),
+        focusEl = $$.$el.main.selectAll("line." + $FOCUS.xgridFocus + ", line." + $FOCUS.ygridFocus),
         dataToShow = (data || [focusEl.datum()]).filter(function (d) {
       return d && isValue($$.getBaseValue(d));
     });
@@ -39104,7 +39149,7 @@ function smoothLines(el, type) {
       },
           xy;
 
-      if (el.classed(config_classes.xgridFocus)) {
+      if (el.classed($FOCUS.xgridFocus)) {
         // will contain 'x1, y1, x2, y2' order
         xy = isRotated ? [null, // x1
         pos.x, // y1
@@ -39135,7 +39180,7 @@ function smoothLines(el, type) {
         main = $$.$el.main;
 
     if (inputType === "mouse" || !resizing) {
-      main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus).style("visibility", "hidden");
+      main.selectAll("line." + $FOCUS.xgridFocus + ", line." + $FOCUS.ygridFocus).style("visibility", "hidden");
       $$.hideCircleFocus == null ? void 0 : $$.hideCircleFocus();
     }
   },
@@ -39147,7 +39192,7 @@ function smoothLines(el, type) {
         height = _$$$state5.height,
         resizing = _$$$state5.resizing,
         grid = $$.$el.grid,
-        xgridFocus = grid.main.select("line." + config_classes.xgridFocus);
+        xgridFocus = grid.main.select("line." + $FOCUS.xgridFocus);
 
     if (inputType === "touch") {
       if (xgridFocus.empty()) {
@@ -39166,7 +39211,7 @@ function smoothLines(el, type) {
   },
   generateGridData: function generateGridData(type, scale) {
     var $$ = this,
-        tickNum = $$.$el.main.select("." + config_classes.axisX).selectAll(".tick").size(),
+        tickNum = $$.$el.main.select("." + $AXIS.axisX).selectAll(".tick").size(),
         gridData = [];
 
     if (type === "year") {
@@ -39211,8 +39256,8 @@ function smoothLines(el, type) {
         config = $$.config,
         $T = $$.$T,
         toRemove = $$.getGridFilterToRemove(params),
-        classLines = forX ? config_classes.xgridLines : config_classes.ygridLines,
-        classLine = forX ? config_classes.xgridLine : config_classes.ygridLine;
+        classLines = forX ? $GRID.xgridLines : $GRID.ygridLines,
+        classLine = forX ? $GRID.xgridLine : $GRID.ygridLine;
     $T($$.$el.main.select("." + classLines).selectAll("." + classLine).filter(toRemove)).style("opacity", "0").remove();
     var gridLines = "grid_" + (forX ? "x" : "y") + "_lines";
     config[gridLines] = config[gridLines].filter(function toShow(line) {
@@ -39233,7 +39278,7 @@ function smoothLines(el, type) {
   initRegion: function initRegion() {
     var $$ = this,
         $el = $$.$el;
-    $el.region.main = $el.main.insert("g", ":first-child").attr("clip-path", $$.state.clip.path).attr("class", config_classes.regions);
+    $el.region.main = $el.main.insert("g", ":first-child").attr("clip-path", $$.state.clip.path).attr("class", $REGION.regions);
   },
   updateRegion: function updateRegion() {
     var $$ = this,
@@ -39248,7 +39293,7 @@ function smoothLines(el, type) {
 
     region.main.style("visibility", $$.hasArcType() ? "hidden" : null); // select <g> element
 
-    var list = region.main.selectAll("." + config_classes.region).data(config.regions);
+    var list = region.main.selectAll("." + $REGION.region).data(config.regions);
     $T(list.exit()).style("opacity", "0").remove();
     list = list.enter().append("g").merge(list).attr("class", $$.classRegion.bind($$));
     list.append("rect").style("fill-opacity", "0");
@@ -42195,14 +42240,14 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       var interval = setInterval(function () {
         if (!transiting) {
           clearInterval(interval);
-          $el.legend.selectAll("." + config_classes.legendItemFocused).size() > 0 && $$.expandArc(targetIds);
+          $el.legend.selectAll("." + $FOCUS.legendItemFocused).size() > 0 && $$.expandArc(targetIds);
         }
       }, 10);
       return;
     }
 
     var newTargetIds = $$.mapToTargetIds(targetIds);
-    $el.svg.selectAll($$.selectorTargets(newTargetIds, "." + config_classes.chartArc)).each(function (d) {
+    $el.svg.selectAll($$.selectorTargets(newTargetIds, "." + $ARC.chartArc)).each(function (d) {
       if (!$$.shouldExpand(d.data.id)) {
         return;
       }
@@ -42222,10 +42267,10 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     }
 
     var newTargetIds = $$.mapToTargetIds(targetIds);
-    svg.selectAll($$.selectorTargets(newTargetIds, "." + config_classes.chartArc)).selectAll("path").transition().duration(function (d) {
+    svg.selectAll($$.selectorTargets(newTargetIds, "." + $ARC.chartArc)).selectAll("path").transition().duration(function (d) {
       return $$.getExpandConfig(d.data.id, "duration");
     }).attr("d", $$.svgArc);
-    svg.selectAll("" + config_classes.arc).style("opacity", null);
+    svg.selectAll("" + $ARC.arc).style("opacity", null);
   },
 
   /**
@@ -42290,20 +42335,20 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         classChartArc = $$.getChartClass("Arc"),
         classArcs = $$.getClass("arcs", !0),
         classFocus = $$.classFocus.bind($$),
-        chartArcs = $el.main.select("." + config_classes.chartArcs),
-        mainPieUpdate = chartArcs.selectAll("." + config_classes.chartArc).data($$.pie(targets)).attr("class", function (d) {
+        chartArcs = $el.main.select("." + $ARC.chartArcs),
+        mainPieUpdate = chartArcs.selectAll("." + $ARC.chartArc).data($$.pie(targets)).attr("class", function (d) {
       return classChartArc(d) + classFocus(d.data);
     }),
         mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc);
     mainPieEnter.append("g").attr("class", classArcs).merge(mainPieUpdate);
     mainPieEnter.append("text").attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", "middle").style("pointer-events", "none");
-    $el.text = chartArcs.selectAll("." + config_classes.target + " text"); // MEMO: can not keep same color..., but not bad to update color in redraw
+    $el.text = chartArcs.selectAll("." + $COMMON.target + " text"); // MEMO: can not keep same color..., but not bad to update color in redraw
     // mainPieUpdate.exit().remove();
   },
   initArc: function initArc() {
     var $$ = this,
         $el = $$.$el;
-    $el.arcs = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartArcs).attr("transform", $$.getTranslate("arc"));
+    $el.arcs = $el.main.select("." + $COMMON.chart).append("g").attr("class", $ARC.chartArcs).attr("transform", $$.getTranslate("arc"));
     $$.setArcTitle();
   },
 
@@ -42317,7 +42362,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         hasGauge = $$.hasType("gauge");
 
     if (title) {
-      var text = $$.$el.arcs.append("text").attr("class", config_classes[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"]).style("text-anchor", "middle");
+      var text = $$.$el.arcs.append("text").attr("class", hasGauge ? $GAUGE.chartArcsGaugeTitle : $ARC.chartArcsTitle).style("text-anchor", "middle");
       hasGauge && text.attr("dy", "-0.3em");
       setTextValue(text, title, hasGauge ? undefined : [-.6, 1.35], !0);
     }
@@ -42329,7 +42374,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         main = $$.$el.main,
         hasInteraction = config.interaction_enabled,
         isSelectable = hasInteraction && config.data_selection_isselectable,
-        mainArc = main.selectAll("." + config_classes.arcs).selectAll("." + config_classes.arc).data($$.arcData.bind($$));
+        mainArc = main.selectAll("." + $ARC.arcs).selectAll("." + $ARC.arc).data($$.arcData.bind($$));
     mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove();
     mainArc = mainArc.enter().append("path").attr("class", $$.getClass("arc", !0)).style("fill", function (d) {
       return $$.color(d.data);
@@ -42418,13 +42463,13 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         isFullCircle = config.gauge_fullCircle,
         startAngle = $$.getStartAngle(),
         endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1,
-        backgroundArc = $$.$el.arcs.select((hasMultiArcGauge ? "g" : "") + "." + config_classes.chartArcsBackground);
+        backgroundArc = $$.$el.arcs.select((hasMultiArcGauge ? "g" : "") + "." + $ARC.chartArcsBackground);
 
     if (hasMultiArcGauge) {
       var index = 0;
-      backgroundArc = backgroundArc.selectAll("path." + config_classes.chartArcsBackground).data($$.data.targets);
+      backgroundArc = backgroundArc.selectAll("path." + $ARC.chartArcsBackground).data($$.data.targets);
       backgroundArc.enter().append("path").attr("class", function (d, i) {
-        return config_classes.chartArcsBackground + " " + config_classes.chartArcsBackground + "-" + i;
+        return $ARC.chartArcsBackground + " " + $ARC.chartArcsBackground + "-" + i;
       }).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", function (_ref2) {
         var id = _ref2.id;
 
@@ -42566,8 +42611,8 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 
     // for gauge type, update text when has no title & multi data
     if (!(hasGauge && $$.data.targets.length === 1 && config.gauge_title)) {
-      text = main.selectAll("." + config_classes.chartArc).select("text").style("opacity", "0").attr("class", function (d) {
-        return $$.isGaugeType(d.data) ? config_classes.gaugeValue : null;
+      text = main.selectAll("." + $ARC.chartArc).select("text").style("opacity", "0").attr("class", function (d) {
+        return $$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null;
       }).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
         return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? Math.round(state.radius / 5) + "px" : null;
       }).transition().duration(duration).style("opacity", function (d) {
@@ -42576,7 +42621,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       hasMultiArcGauge && text.attr("dy", "-.1em");
     }
 
-    main.select("." + config_classes.chartArcsTitle).style("opacity", $$.hasType("donut") || hasGauge ? null : "0");
+    main.select("." + $ARC.chartArcsTitle).style("opacity", $$.hasType("donut") || hasGauge ? null : "0");
 
     if (hasGauge) {
       var _text,
@@ -42585,10 +42630,10 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       isFullCircle && ((_text = text) == null ? void 0 : _text.attr("dy", "" + (hasMultiArcGauge ? 0 : Math.round(state.radius / 14))));
 
       if (config.gauge_label_show) {
-        arcs.select("." + config_classes.chartArcsGaugeUnit).attr("dy", (isFullCircle ? 1.5 : .75) + "em").text(config.gauge_units);
-        arcs.select("." + config_classes.chartArcsGaugeMin).attr("dx", -1 * (state.innerRadius + (state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)); // show max text when isn't fullCircle
+        arcs.select("." + $GAUGE.chartArcsGaugeUnit).attr("dy", (isFullCircle ? 1.5 : .75) + "em").text(config.gauge_units);
+        arcs.select("." + $GAUGE.chartArcsGaugeMin).attr("dx", -1 * (state.innerRadius + (state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)); // show max text when isn't fullCircle
 
-        isFullCircle || arcs.select("." + config_classes.chartArcsGaugeMax).attr("dx", state.innerRadius + (state.radius - state.innerRadius) / 2 + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0));
+        isFullCircle || arcs.select("." + $GAUGE.chartArcsGaugeMax).attr("dx", state.innerRadius + (state.radius - state.innerRadius) / 2 + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0));
       }
     }
   }
@@ -42779,7 +42824,7 @@ function point_y(p) {
   initArea: function initArea(mainLine) {
     var $$ = this,
         config = $$.config;
-    mainLine.insert("g", "." + config_classes[config.area_front ? "circles" : "lines"]).attr("class", $$.getClass("areas", !0));
+    mainLine.insert("g", "." + (config.area_front ? $CIRCLE.circles : $LINE.lines)).attr("class", $$.getClass("areas", !0));
   },
   updateAreaGradient: function updateAreaGradient() {
     var $$ = this,
@@ -42829,7 +42874,7 @@ function point_y(p) {
         $T = $$.$T,
         $root = isSub ? $el.subchart : $el;
     config.area_linearGradient && $$.updateAreaGradient();
-    var area = $root.main.selectAll("." + config_classes.areas).selectAll("." + config_classes.area).data($$.lineData.bind($$));
+    var area = $root.main.selectAll("." + $AREA.areas).selectAll("." + $AREA.area).data($$.lineData.bind($$));
     $T(area.exit(), withTransition).style("opacity", "0").remove();
     $root.area = area.enter().append("path").attr("class", $$.getClass("area", !0)).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function () {
       state.orgAreaOpacity = src_select(this).style("opacity");
@@ -42956,8 +43001,8 @@ function point_y(p) {
     var $el = this.$el,
         config = this.config,
         clip = this.state.clip;
-    $el.bar = $el.main.select("." + config_classes.chart) // should positioned at the beginning of the shape node to not overlap others
-    .insert("g", ":first-child").attr("class", config_classes.chartBars); // set clip-path attribute when condition meet
+    $el.bar = $el.main.select("." + $COMMON.chart) // should positioned at the beginning of the shape node to not overlap others
+    .insert("g", ":first-child").attr("class", $BAR.chartBars); // set clip-path attribute when condition meet
     // https://github.com/naver/billboard.js/issues/2421
 
     if (config.clipPath === !1 && (config.bar_radius || config.bar_radius_ratio)) {
@@ -42977,7 +43022,7 @@ function point_y(p) {
       $$.initBar();
     }
 
-    var mainBarUpdate = $$.$el.main.select("." + config_classes.chartBars).selectAll("." + config_classes.chartBar).data( // remove
+    var mainBarUpdate = $$.$el.main.select("." + $BAR.chartBars).selectAll("." + $BAR.chartBar).data( // remove
     targets.filter(function (v) {
       return v.values.some(function (d) {
         return isNumber(d.value) || $$.isBarRangeType(d);
@@ -43011,7 +43056,7 @@ function point_y(p) {
         $root = isSub ? $el.subchart : $el,
         classBar = $$.getClass("bar", !0),
         initialOpacity = $$.initialOpacity.bind($$),
-        bar = $root.main.selectAll("." + config_classes.bars).selectAll("." + config_classes.bar).data($$.labelishData.bind($$));
+        bar = $root.main.selectAll("." + $BAR.bars).selectAll("." + $BAR.bar).data($$.labelishData.bind($$));
     $T(bar.exit(), withTransition).style("opacity", "0").remove();
     $root.bar = bar.enter().append("path").attr("class", classBar).style("fill", $$.color).merge(bar).style("opacity", initialOpacity);
   },
@@ -43183,8 +43228,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
 /* harmony default export */ var candlestick = ({
   initCandlestick: function initCandlestick() {
     var $el = this.$el;
-    $el.candlestick = $el.main.select("." + config_classes.chart) // should positioned at the beginning of the shape node to not overlap others
-    .append("g").attr("class", config_classes.chartCandlesticks);
+    $el.candlestick = $el.main.select("." + $COMMON.chart) // should positioned at the beginning of the shape node to not overlap others
+    .append("g").attr("class", $CANDLESTICK.chartCandlesticks);
   },
 
   /**
@@ -43203,7 +43248,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       $$.initCandlestick();
     }
 
-    var mainUpdate = $$.$el.main.select("." + config_classes.chartCandlesticks).selectAll("." + config_classes.chartCandlestick).data(targets).attr("class", function (d) {
+    var mainUpdate = $$.$el.main.select("." + $CANDLESTICK.chartCandlesticks).selectAll("." + $CANDLESTICK.chartCandlestick).data(targets).attr("class", function (d) {
       return classChart(d) + classFocus(d);
     });
     mainUpdate.enter().append("g").attr("class", classChart).style("pointer-events", "none");
@@ -43226,7 +43271,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         $root = isSub ? $el.subchart : $el,
         classSetter = $$.getClass("candlestick", !0),
         initialOpacity = $$.initialOpacity.bind($$),
-        candlestick = $root.main.selectAll("." + config_classes.chartCandlestick).selectAll("." + config_classes.candlestick).data($$.labelishData.bind($$));
+        candlestick = $root.main.selectAll("." + $CANDLESTICK.chartCandlestick).selectAll("." + $CANDLESTICK.candlestick).data($$.labelishData.bind($$));
     $T(candlestick.exit(), withTransition).style("opacity", "0").remove();
     var candlestickEnter = candlestick.enter().filter(function (d) {
       return d.value;
@@ -43262,7 +43307,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
           indexX = +isRotated;
 
       if (g.classed) {
-        g.classed(config_classes[isUp ? "valueUp" : "valueDown"], !0);
+        g.classed($CANDLESTICK[isUp ? "valueUp" : "valueDown"], !0);
       }
 
       var path = isRotated ? "H" + points[1][1] + " V" + points[1][0] + " H" + points[0][1] : "V" + points[1][1] + " H" + points[1][0] + " V" + points[0][1];
@@ -43431,12 +43476,12 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
 
     if ($$.hasType("gauge")) {
       var hasMulti = $$.hasMultiArcGauge();
-      arcs.append(hasMulti ? "g" : "path").attr("class", config_classes.chartArcsBackground).style("fill", !hasMulti && config.gauge_background || null);
-      config.gauge_units && appendText(config_classes.chartArcsGaugeUnit);
+      arcs.append(hasMulti ? "g" : "path").attr("class", $ARC.chartArcsBackground).style("fill", !hasMulti && config.gauge_background || null);
+      config.gauge_units && appendText($GAUGE.chartArcsGaugeUnit);
 
       if (config.gauge_label_show) {
-        appendText(config_classes.chartArcsGaugeMin);
-        config.gauge_fullCircle || appendText(config_classes.chartArcsGaugeMax);
+        appendText($GAUGE.chartArcsGaugeMin);
+        config.gauge_fullCircle || appendText($GAUGE.chartArcsGaugeMax);
       }
     }
   },
@@ -43458,9 +43503,9 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         state = $$.state,
         $el = $$.$el,
         hiddenTargetIds = $$.state.hiddenTargetIds,
-        arcLabelLines = $el.main.selectAll("." + config_classes.arcs).selectAll("." + config_classes.arcLabelLine).data($$.arcData.bind($$)),
+        arcLabelLines = $el.main.selectAll("." + $ARC.arcs).selectAll("." + $ARC.arcLabelLine).data($$.arcData.bind($$)),
         mainArcLabelLine = arcLabelLines.enter().append("rect").attr("class", function (d) {
-      return config_classes.arcLabelLine + " " + config_classes.target + " " + config_classes.target + "-" + d.data.id;
+      return $ARC.arcLabelLine + " " + $COMMON.target + " " + $COMMON.target + "-" + d.data.id;
     }).merge(arcLabelLines);
     mainArcLabelLine.style("fill", function (d) {
       return $$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data);
@@ -43591,7 +43636,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
 /* harmony default export */ var line = ({
   initLine: function initLine() {
     var $el = this.$el;
-    $el.line = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartLines);
+    $el.line = $el.main.select("." + $COMMON.chart).append("g").attr("class", $LINE.chartLines);
   },
   updateTargetsForLine: function updateTargetsForLine(t) {
     var $$ = this,
@@ -43610,7 +43655,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     var targets = t.filter(function (d) {
       return !($$.isScatterType(d) || $$.isBubbleType(d));
     }),
-        mainLineUpdate = main.select("." + config_classes.chartLines).selectAll("." + config_classes.chartLine).data(targets).attr("class", function (d) {
+        mainLineUpdate = main.select("." + $LINE.chartLines).selectAll("." + $LINE.chartLine).data(targets).attr("class", function (d) {
       return classChartLine(d) + classFocus(d);
     }),
         mainLineEnter = mainLineUpdate.enter().append("g").attr("class", classChartLine).style("opacity", "0").style("pointer-events", "none");
@@ -43640,7 +43685,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         $el = $$.$el,
         $T = $$.$T,
         $root = isSub ? $el.subchart : $el,
-        line = $root.main.selectAll("." + config_classes.lines).selectAll("." + config_classes.line).data($$.lineData.bind($$));
+        line = $root.main.selectAll("." + $LINE.lines).selectAll("." + $LINE.line).data($$.lineData.bind($$));
     $T(line.exit(), withTransition).style("opacity", "0").remove();
     $root.line = line.enter().append("path").attr("class", function (d) {
       return $$.getClass("line", !0)(d) + " " + (extraLineClasses(d) || "");
@@ -43932,8 +43977,8 @@ var getTransitionName = function () {
         main = $$.$el.main;
     $$.point = $$.generatePoint();
 
-    if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select("." + config_classes.chartCircles).empty()) {
-      main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartCircles);
+    if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select("." + $CIRCLE.chartCircles).empty()) {
+      main.select("." + $COMMON.chart).append("g").attr("class", $CIRCLE.chartCircles);
     }
   },
   updateTargetForCircle: function updateTargetForCircle(targetsValue, enterNodeValue) {
@@ -43959,21 +44004,21 @@ var getTransitionName = function () {
       targets = data.targets.filter(function (d) {
         return _this.isScatterType(d) || _this.isBubbleType(d);
       });
-      var mainCircle = $el.main.select("." + config_classes.chartCircles).style("pointer-events", "none").selectAll("." + config_classes.circles).data(targets).attr("class", classCircles);
+      var mainCircle = $el.main.select("." + $CIRCLE.chartCircles).style("pointer-events", "none").selectAll("." + $CIRCLE.circles).data(targets).attr("class", classCircles);
       mainCircle.exit().remove();
       enterNode = mainCircle.enter();
     } // Circles for each data point on lines
 
 
     selectionEnabled && enterNode.append("g").attr("class", function (d) {
-      return $$.generateClass(config_classes.selectedCircles, d.id);
+      return $$.generateClass($SELECT.selectedCircles, d.id);
     });
     enterNode.append("g").attr("class", classCircles).style("cursor", function (d) {
       return isFunction(isSelectable) && isSelectable(d) ? "pointer" : null;
     }); // Update date for selected circles
 
     selectionEnabled && targets.forEach(function (t) {
-      $el.main.selectAll("." + config_classes.selectedCircles + $$.getTargetSelectorSuffix(t.id)).selectAll("" + config_classes.selectedCircle).each(function (d) {
+      $el.main.selectAll("." + $SELECT.selectedCircles + $$.getTargetSelectorSuffix(t.id)).selectAll("" + $SELECT.selectedCircle).each(function (d) {
         d.value = t.values[d.index].value;
       });
     });
@@ -43991,12 +44036,12 @@ var getTransitionName = function () {
         $root = isSub ? $el.subchart : $el;
 
     if (config.point_show && !state.toggling) {
-      var circles = $root.main.selectAll("." + config_classes.circles).selectAll("." + config_classes.circle).data(function (d) {
+      var circles = $root.main.selectAll("." + $CIRCLE.circles).selectAll("." + $CIRCLE.circle).data(function (d) {
         return $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[0]] : d.values : [];
       });
       circles.exit().remove();
       circles.enter().filter(Boolean).append($$.point("create", this, $$.pointR.bind($$), $$.color));
-      $root.circle = $root.main.selectAll("." + config_classes.circles + " ." + config_classes.circle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$));
+      $root.circle = $root.main.selectAll("." + $CIRCLE.circles + " ." + $CIRCLE.circle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$));
     }
   },
   redrawCircle: function redrawCircle(cx, cy, withTransition, flow, isSub) {
@@ -44009,7 +44054,7 @@ var getTransitionName = function () {
         $el = $$.$el,
         $T = $$.$T,
         $root = isSub ? $el.subchart : $el,
-        selectedCircles = $root.main.selectAll("." + config_classes.selectedCircle);
+        selectedCircles = $root.main.selectAll("." + $SELECT.selectedCircle);
 
     if (!$$.config.point_show) {
       return [];
@@ -44109,7 +44154,7 @@ var getTransitionName = function () {
     var $$ = this,
         r = $$.pointExpandedR.bind($$);
     reset && $$.unexpandCircles();
-    var circles = $$.getShapeByIndex("circle", i, id).classed(config_classes.EXPANDED, !0),
+    var circles = $$.getShapeByIndex("circle", i, id).classed($COMMON.EXPANDED, !0),
         scale = r(circles) / $$.config.point_r,
         ratio = 1 - scale;
 
@@ -44138,8 +44183,8 @@ var getTransitionName = function () {
     var $$ = this,
         r = $$.pointR.bind($$),
         circles = $$.getShapeByIndex("circle", i).filter(function () {
-      return src_select(this).classed(config_classes.EXPANDED);
-    }).classed(config_classes.EXPANDED, !1);
+      return src_select(this).classed($COMMON.EXPANDED);
+    }).classed($COMMON.EXPANDED, !1);
     circles.attr("r", r);
     $$.isCirclePoint() || circles.attr("transform", "scale(" + r(circles) / $$.config.point_r + ")");
   },
@@ -44231,8 +44276,8 @@ var getTransitionName = function () {
       pointClass = d === !0 ? circle.each(function (d) {
         var className = $$.getClass("circle", !0)(d);
 
-        if (this.getAttribute("class").indexOf(config_classes.EXPANDED) > -1) {
-          className += " " + config_classes.EXPANDED;
+        if (this.getAttribute("class").indexOf($COMMON.EXPANDED) > -1) {
+          className += " " + $COMMON.EXPANDED;
         }
 
         this.setAttribute("class", className);
@@ -44425,13 +44470,13 @@ var cacheKey = KEY.radarPoints;
         $el = $$.$el;
 
     if ($$.hasType("radar")) {
-      $el.radar = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartRadars); // level
+      $el.radar = $el.main.select("." + $COMMON.chart).append("g").attr("class", $RADAR.chartRadars); // level
 
-      $el.radar.levels = $el.radar.append("g").attr("class", config_classes.levels); // axis
+      $el.radar.levels = $el.radar.append("g").attr("class", $RADAR.levels); // axis
 
-      $el.radar.axes = $el.radar.append("g").attr("class", config_classes.axis); // shapes
+      $el.radar.axes = $el.radar.append("g").attr("class", $AXIS.axis); // shapes
 
-      $el.radar.shapes = $el.radar.append("g").attr("class", config_classes.shapes);
+      $el.radar.shapes = $el.radar.append("g").attr("class", $SHAPE.shapes);
       current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
     }
   },
@@ -44509,7 +44554,7 @@ var cacheKey = KEY.radarPoints;
     // Adjust radar, circles and texts' position
     if (translate) {
       radar.attr("transform", translate);
-      main.select("." + config_classes.chartTexts).attr("transform", translate);
+      main.select("." + $TEXT.chartTexts).attr("transform", translate);
       $$.generateRadarPoints();
       $$.updateRadarLevel();
       $$.updateRadarAxes();
@@ -44548,11 +44593,11 @@ var cacheKey = KEY.radarPoints;
       });
       return pos.join(" ");
     }),
-        level = radarLevels.selectAll("." + config_classes.level).data(levelData);
+        level = radarLevels.selectAll("." + $RADAR.level).data(levelData);
 
     level.exit().remove();
     var levelEnter = level.enter().append("g").attr("class", function (d, i) {
-      return config_classes.level + " " + config_classes.level + "-" + i;
+      return $RADAR.level + " " + $RADAR.level + "-" + i;
     });
     levelEnter.append("polygon").style("visibility", config.radar_level_show ? null : "hidden");
 
@@ -44594,7 +44639,7 @@ var cacheKey = KEY.radarPoints;
 
     axis.exit().remove();
     var axisEnter = axis.enter().append("g").attr("class", function (d, i) {
-      return config_classes.axis + "-" + i;
+      return $AXIS.axis + "-" + i;
     });
     config.radar_axis_line_show && axisEnter.append("line");
     config.radar_axis_text_show && axisEnter.append("text");
@@ -45820,8 +45865,8 @@ var _area = function area() {
   selected: function selected(targetId) {
     var $$ = this.internal,
         dataPoint = [];
-    $$.$el.main.selectAll("." + (config_classes.shapes + $$.getTargetSelectorSuffix(targetId))).selectAll("." + config_classes.shape).filter(function () {
-      return src_select(this).classed(config_classes.SELECTED);
+    $$.$el.main.selectAll("." + ($SHAPE.shapes + $$.getTargetSelectorSuffix(targetId))).selectAll("." + $SHAPE.shape).filter(function () {
+      return src_select(this).classed($SELECT.SELECTED);
     }).each(function (d) {
       return dataPoint.push(d);
     });
@@ -45861,25 +45906,25 @@ var _area = function area() {
       return;
     }
 
-    $el.main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).each(function (d, i) {
+    $el.main.selectAll("." + $SHAPE.shapes).selectAll("." + $SHAPE.shape).each(function (d, i) {
       var shape = src_select(this),
           id = d.data ? d.data.id : d.id,
           toggle = $$.getToggle(this, d).bind($$),
           isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0,
           isTargetIndex = !indices || indices.indexOf(i) >= 0,
-          isSelected = shape.classed(config_classes.SELECTED);
+          isSelected = shape.classed($SELECT.SELECTED);
 
       // line/area selection not supported yet
-      if (shape.classed(config_classes.line) || shape.classed(config_classes.area)) {
+      if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
         return;
       }
 
       if (isTargetId && isTargetIndex) {
         if (config.data_selection_isselectable.bind($$.api)(d) && !isSelected) {
-          toggle(!0, shape.classed(config_classes.SELECTED, !0), d, i);
+          toggle(!0, shape.classed($SELECT.SELECTED, !0), d, i);
         }
       } else if (isDefined(resetOther) && resetOther && isSelected) {
-        toggle(!1, shape.classed(config_classes.SELECTED, !1), d, i);
+        toggle(!1, shape.classed($SELECT.SELECTED, !1), d, i);
       }
     });
   },
@@ -45910,21 +45955,21 @@ var _area = function area() {
       return;
     }
 
-    $el.main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).each(function (d, i) {
+    $el.main.selectAll("." + $SHAPE.shapes).selectAll("." + $SHAPE.shape).each(function (d, i) {
       var shape = src_select(this),
           id = d.data ? d.data.id : d.id,
           toggle = $$.getToggle(this, d).bind($$),
           isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0,
           isTargetIndex = !indices || indices.indexOf(i) >= 0,
-          isSelected = shape.classed(config_classes.SELECTED);
+          isSelected = shape.classed($SELECT.SELECTED);
 
       // line/area selection not supported yet
-      if (shape.classed(config_classes.line) || shape.classed(config_classes.area)) {
+      if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
         return;
       }
 
       if (isTargetId && isTargetIndex && config.data_selection_isselectable.bind($$.api)(d) && isSelected) {
-        toggle(!1, shape.classed(config_classes.SELECTED, !1), d, i);
+        toggle(!1, shape.classed($SELECT.SELECTED, !1), d, i);
       }
     });
   }
@@ -45971,12 +46016,12 @@ var _area = function area() {
         $$.unbindZoomEvent();
         config.subchart_show = !show;
         subchart.main || $$.initSubchart();
-        var $target = subchart.main.selectAll("." + config_classes.target); // need to cover when new data has been loaded
+        var $target = subchart.main.selectAll("." + $COMMON.target); // need to cover when new data has been loaded
 
         if ($$.data.targets.length !== $target.size()) {
           $$.updateSizes();
           $$.updateTargetsForSubchart($$.data.targets);
-          $target = subchart.main.selectAll("." + config_classes.target);
+          $target = subchart.main.selectAll("." + $COMMON.target);
         }
 
         $target.style("opacity", null);
@@ -46943,25 +46988,25 @@ util_extend(zoom, {
         minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my),
         maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
 
-    main.select("." + config_classes.dragarea).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY); // TODO: binary search when multiple xs
+    main.select("." + $DRAG.dragarea).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY); // TODO: binary search when multiple xs
 
-    main.selectAll("." + config_classes.shapes).selectAll("." + config_classes.shape).filter(function (d) {
+    main.selectAll("." + $SHAPE.shapes).selectAll("." + $SHAPE.shape).filter(function (d) {
       var _isSelectable;
 
       return (_isSelectable = isSelectable) == null ? void 0 : _isSelectable.bind($$.api)(d);
     }).each(function (d, i) {
       var shape = src_select(this),
-          isSelected = shape.classed(config_classes.SELECTED),
-          isIncluded = shape.classed(config_classes.INCLUDED),
+          isSelected = shape.classed($SELECT.SELECTED),
+          isIncluded = shape.classed($DRAG.INCLUDED),
           isWithin = !1,
           toggle;
 
-      if (shape.classed(config_classes.circle)) {
+      if (shape.classed($CIRCLE.circle)) {
         var x = +shape.attr("cx") * 1,
             y = +shape.attr("cy") * 1;
         toggle = $$.togglePoint;
         isWithin = minX < x && x < maxX && minY < y && y < maxY;
-      } else if (shape.classed(config_classes.bar)) {
+      } else if (shape.classed($BAR.bar)) {
         var _getPathBox = getPathBox(this),
             _x = _getPathBox.x,
             y = _getPathBox.y,
@@ -46977,9 +47022,9 @@ util_extend(zoom, {
 
 
       if (isWithin ^ isIncluded) {
-        shape.classed(config_classes.INCLUDED, !isIncluded); // TODO: included/unincluded callback here
+        shape.classed($DRAG.INCLUDED, !isIncluded); // TODO: included/unincluded callback here
 
-        shape.classed(config_classes.SELECTED, !isSelected);
+        shape.classed($SELECT.SELECTED, !isSelected);
         toggle.call($$, !isSelected, shape, d, i);
       }
     });
@@ -47002,7 +47047,7 @@ util_extend(zoom, {
     }
 
     state.dragStart = mouse;
-    main.select("." + config_classes.chart).append("rect").attr("class", config_classes.dragarea).style("opacity", "0.1");
+    main.select("." + $COMMON.chart).append("rect").attr("class", $DRAG.dragarea).style("opacity", "0.1");
     $$.setDragStatus(!0);
   },
 
@@ -47022,8 +47067,8 @@ util_extend(zoom, {
       return;
     }
 
-    $T(main.select("." + config_classes.dragarea)).style("opacity", "0").remove();
-    main.selectAll("." + config_classes.shape).classed(config_classes.INCLUDED, !1);
+    $T(main.select("." + $DRAG.dragarea)).style("opacity", "0").remove();
+    main.selectAll("." + $SHAPE.shape).classed($DRAG.INCLUDED, !1);
     $$.setDragStatus(!1);
   }
 });
@@ -47061,8 +47106,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         r = $$.pointSelectR.bind($$);
     callFn(config.data_onselected, $$.api, d, target.node()); // add selected-circle on low layer g
 
-    $T(main.select("." + config_classes.selectedCircles + $$.getTargetSelectorSuffix(d.id)).selectAll("." + config_classes.selectedCircle + "-" + i).data([d]).enter().append("circle").attr("class", function () {
-      return $$.generateClass(config_classes.selectedCircle, i);
+    $T(main.select("." + $SELECT.selectedCircles + $$.getTargetSelectorSuffix(d.id)).selectAll("." + $SELECT.selectedCircle + "-" + i).data([d]).enter().append("circle").attr("class", function () {
+      return $$.generateClass($SELECT.selectedCircle, i);
     }).attr("cx", cx).attr("cy", cy).attr("stroke", $$.color).attr("r", function (d2) {
       return $$.pointSelectR(d2) * 1.4;
     })).attr("r", r);
@@ -47082,7 +47127,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         $T = $$.$T;
     callFn(config.data_onunselected, $$.api, d, target.node()); // remove selected-circle from low layer g
 
-    $T(main.select("." + config_classes.selectedCircles + $$.getTargetSelectorSuffix(d.id)).selectAll("." + config_classes.selectedCircle + "-" + i)).attr("r", 0).remove();
+    $T(main.select("." + $SELECT.selectedCircles + $$.getTargetSelectorSuffix(d.id)).selectAll("." + $SELECT.selectedCircle + "-" + i)).attr("r", 0).remove();
   },
 
   /**
@@ -47167,30 +47212,30 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         config = $$.config,
         main = $$.$el.main,
         shape = src_select(that),
-        isSelected = shape.classed(config_classes.SELECTED),
+        isSelected = shape.classed($SELECT.SELECTED),
         toggle = $$.getToggle(that, d).bind($$),
         toggledShape;
 
     if (config.data_selection_enabled && config.data_selection_isselectable.bind($$.api)(d)) {
       if (!config.data_selection_multiple) {
-        var selector = "." + config_classes.shapes;
+        var selector = "." + $SHAPE.shapes;
 
         if (config.data_selection_grouped) {
           selector += $$.getTargetSelectorSuffix(d.id);
         }
 
-        main.selectAll(selector).selectAll("." + config_classes.shape).each(function (d, i) {
+        main.selectAll(selector).selectAll("." + $SHAPE.shape).each(function (d, i) {
           var shape = src_select(this);
 
-          if (shape.classed(config_classes.SELECTED)) {
+          if (shape.classed($SELECT.SELECTED)) {
             toggledShape = shape;
-            toggle(!1, shape.classed(config_classes.SELECTED, !1), d, i);
+            toggle(!1, shape.classed($SELECT.SELECTED, !1), d, i);
           }
         });
       }
 
       if (!toggledShape || toggledShape.node() !== shape.node()) {
-        shape.classed(config_classes.SELECTED, !isSelected);
+        shape.classed($SELECT.SELECTED, !isSelected);
         toggle(!isSelected, shape, d, i);
       }
     }
@@ -47222,7 +47267,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     $$.brush = (isRotated ? brushY() : brushX()).handleSize(5);
 
     var getBrushSize = function () {
-      var brush = $$.$el.svg.select("." + config_classes.brush + " .overlay"),
+      var brush = $$.$el.svg.select("." + classes.brush + " .overlay"),
           brushSize = {
         width: 0,
         height: 0
@@ -47286,7 +47331,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       }).length === 0) {
         var _subchart$main;
 
-        (_subchart$main = subchart.main) == null ? void 0 : _subchart$main.select("." + config_classes.brush).call(this);
+        (_subchart$main = subchart.main) == null ? void 0 : _subchart$main.select("." + classes.brush).call(this);
       }
 
       return this;
@@ -47315,7 +47360,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
     $$.brush.getSelection = function () {
       return (// @ts-ignore
-        subchart.main ? subchart.main.select("." + config_classes.brush) : src_select([])
+        subchart.main ? subchart.main.select("." + classes.brush) : src_select([])
       );
     };
   },
@@ -47346,18 +47391,18 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     clip.idSubchart = clipId;
     $$.appendClip(defs, clipId);
     $$.initBrush();
-    subchart.main = svg.append("g").classed(config_classes.subchart, !0).attr("transform", $$.getTranslate("context"));
+    subchart.main = svg.append("g").classed(classes.subchart, !0).attr("transform", $$.getTranslate("context"));
     var main = subchart.main;
     main.style("visibility", visibility); // Define g for chart area
 
-    main.append("g").attr("clip-path", clipPath).attr("class", config_classes.chart); // Define g for chart types area
+    main.append("g").attr("clip-path", clipPath).attr("class", classes.chart); // Define g for chart types area
 
     ["bar", "line", "bubble", "candlestick", "scatter"].forEach(function (v) {
       var type = capitalize(/^(bubble|scatter)$/.test(v) ? "circle" : v);
 
       if ($$.hasType(v) || $$.hasTypeOf(type)) {
-        var chart = main.select("." + config_classes.chart),
-            chartClassName = config_classes["chart" + type + "s"];
+        var chart = main.select("." + classes.chart),
+            chartClassName = classes["chart" + type + "s"];
 
         if (chart.select("." + chartClassName).empty()) {
           chart.append("g").attr("class", chartClassName);
@@ -47365,11 +47410,11 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       }
     }); // Add extent rect for Brush
 
-    var brush = main.append("g").attr("clip-path", clipPath).attr("class", config_classes.brush).call($$.brush);
+    var brush = main.append("g").attr("clip-path", clipPath).attr("class", classes.brush).call($$.brush);
     config.subchart_showHandle && $$.addBrushHandle(brush); // ATTENTION: This must be called AFTER chart added
     // Add Axis
 
-    axis.subX = main.append("g").attr("class", config_classes.axisX).attr("transform", $$.getTranslate("subX")).attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
+    axis.subX = main.append("g").attr("class", classes.axisX).attr("transform", $$.getTranslate("subX")).attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
   },
 
   /**
@@ -47417,14 +47462,14 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
             name = capitalize(isPointType ? "circle" : v),
             chartClass = $$.getChartClass(name, !0),
             shapeClass = $$.getClass(isPointType ? "circles" : v + "s", !0),
-            shapeChart = main.select("." + config_classes["chart" + (name + "s")]);
+            shapeChart = main.select("." + classes["chart" + (name + "s")]);
 
         if (isPointType) {
-          var circle = shapeChart.selectAll("." + config_classes.circles).data(targets.filter($$["is" + capitalize(v) + "Type"].bind($$))).attr("class", shapeClass);
+          var circle = shapeChart.selectAll("." + classes.circles).data(targets.filter($$["is" + capitalize(v) + "Type"].bind($$))).attr("class", shapeClass);
           circle.exit().remove();
           circle.enter().append("g").attr("class", shapeClass);
         } else {
-          var shapeUpdate = shapeChart.selectAll("." + config_classes["chart" + name]).attr("class", chartClass).data(targets.filter($$["is" + name + "Type"].bind($$))),
+          var shapeUpdate = shapeChart.selectAll("." + classes["chart" + name]).attr("class", chartClass).data(targets.filter($$["is" + name + "Type"].bind($$))),
               shapeEnter = shapeUpdate.enter().append("g").style("opacity", "0").attr("class", chartClass).append("g").attr("class", shapeClass);
           shapeUpdate.exit().remove(); // Area
 
@@ -47432,7 +47477,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         }
       }); // -- Brush --//
 
-      main.selectAll("." + config_classes.brush + " rect").attr(config.axis_rotated ? "width" : "height", config.axis_rotated ? state.width2 : state.height2);
+      main.selectAll("." + classes.brush + " rect").attr(config.axis_rotated ? "width" : "height", config.axis_rotated ? state.width2 : state.height2);
     }
   },
 
@@ -47514,7 +47559,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     var $$ = this,
         subchart = $$.$el.subchart,
         $T = $$.$T,
-        subXAxis = transitions != null && transitions.axisSubX ? transitions.axisSubX : $T(subchart.main.select("." + config_classes.axisX), withTransition);
+        subXAxis = transitions != null && transitions.axisSubX ? transitions.axisSubX : $T(subchart.main.select("." + classes.axisX), withTransition);
     subchart.main.attr("transform", $$.getTranslate("context"));
     subXAxis.attr("transform", $$.getTranslate("subX"));
   },
@@ -47834,7 +47879,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       $$.unselectRect();
 
       if (!zoomRect) {
-        zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", config_classes.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height);
+        zoomRect = $$.$el.main.append("rect").attr("clip-path", state.clip.path).attr("class", $ZOOM.zoomBrush).attr("width", isRotated ? state.width : 0).attr("height", isRotated ? 0 : state.height);
       }
 
       start = getPointer(event, this)[prop.index];
@@ -47877,10 +47922,10 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
     if (resetButton && config.zoom_type === "drag") {
       if (!$el.zoomResetBtn) {
-        $el.zoomResetBtn = $$.$el.chart.append("div").classed(config_classes.button, !0).append("span").on("click", function () {
+        $el.zoomResetBtn = $$.$el.chart.append("div").classed($COMMON.button, !0).append("span").on("click", function () {
           isFunction(resetButton.onclick) && resetButton.onclick.bind($$.api)(this);
           $$.api.unzoom();
-        }).classed(config_classes.buttonZoomReset, !0).text(resetButton.text || "Reset Zoom");
+        }).classed($ZOOM.buttonZoomReset, !0).text(resetButton.text || "Reset Zoom");
       } else {
         $el.zoomResetBtn.style("display", null);
       }

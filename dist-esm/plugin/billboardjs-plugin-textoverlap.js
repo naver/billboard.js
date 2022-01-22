@@ -5,14 +5,12 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.0-nightly-20220119004526
+ * @version 3.3.0-nightly-20220122004528
  * @requires billboard.js
  * @summary billboard.js plugin
 */
 import { Delaunay } from 'd3-delaunay';
 import { polygonCentroid, polygonArea } from 'd3-polygon';
-import 'd3-selection';
-import 'd3-brush';
 
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
@@ -248,8 +246,6 @@ var Plugin = /*#__PURE__*/function () {
     if (options === void 0) {
       options = {};
     }
-
-    this.$$;
     this.options = options;
   }
   /**
@@ -300,7 +296,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "#3.3.0-nightly-20220119004526#";
+Plugin.version = "#3.3.0-nightly-20220122004528#";
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -353,6 +349,7 @@ var Options = /** @class */ (function () {
     }
     return Options;
 }());
+var Options$1 = Options;
 
 /**
  * TextOverlap plugin<br>
@@ -401,7 +398,7 @@ var TextOverlap = /** @class */ (function (_super) {
     __extends(TextOverlap, _super);
     function TextOverlap(options) {
         var _this = _super.call(this, options) || this;
-        _this.config = new Options();
+        _this.config = new Options$1();
         return _this;
     }
     TextOverlap.prototype.$init = function () {

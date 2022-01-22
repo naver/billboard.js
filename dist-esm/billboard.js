@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.0-nightly-20220119004526
+ * @version 3.3.0-nightly-20220122004528
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -166,120 +166,6 @@ function __spreadArray(to, from, pack) {
   }
   return to.concat(ar || Array.prototype.slice.call(from));
 }
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * CSS class names definition
- * @private
- */
-var CLASS = {
-    arc: "bb-arc",
-    arcLabelLine: "bb-arc-label-line",
-    arcs: "bb-arcs",
-    area: "bb-area",
-    areas: "bb-areas",
-    axis: "bb-axis",
-    axisX: "bb-axis-x",
-    axisXLabel: "bb-axis-x-label",
-    axisY: "bb-axis-y",
-    axisY2: "bb-axis-y2",
-    axisY2Label: "bb-axis-y2-label",
-    axisYLabel: "bb-axis-y-label",
-    bar: "bb-bar",
-    bars: "bb-bars",
-    brush: "bb-brush",
-    button: "bb-button",
-    buttonZoomReset: "bb-zoom-reset",
-    candlestick: "bb-candlestick",
-    candlesticks: "bb-candlesticks",
-    chart: "bb-chart",
-    chartArc: "bb-chart-arc",
-    chartArcs: "bb-chart-arcs",
-    chartArcsBackground: "bb-chart-arcs-background",
-    chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
-    chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
-    chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
-    chartArcsTitle: "bb-chart-arcs-title",
-    chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
-    chartBar: "bb-chart-bar",
-    chartBars: "bb-chart-bars",
-    chartCandlestick: "bb-chart-candlestick",
-    chartCandlesticks: "bb-chart-candlesticks",
-    chartCircles: "bb-chart-circles",
-    chartLine: "bb-chart-line",
-    chartLines: "bb-chart-lines",
-    chartRadar: "bb-chart-radar",
-    chartRadars: "bb-chart-radars",
-    chartText: "bb-chart-text",
-    chartTexts: "bb-chart-texts",
-    circle: "bb-circle",
-    circles: "bb-circles",
-    colorPattern: "bb-color-pattern",
-    colorScale: "bb-colorscale",
-    defocused: "bb-defocused",
-    dragarea: "bb-dragarea",
-    empty: "bb-empty",
-    eventRect: "bb-event-rect",
-    eventRects: "bb-event-rects",
-    eventRectsMultiple: "bb-event-rects-multiple",
-    eventRectsSingle: "bb-event-rects-single",
-    focused: "bb-focused",
-    gaugeValue: "bb-gauge-value",
-    grid: "bb-grid",
-    gridLines: "bb-grid-lines",
-    legend: "bb-legend",
-    legendBackground: "bb-legend-background",
-    legendItem: "bb-legend-item",
-    legendItemEvent: "bb-legend-item-event",
-    legendItemFocused: "bb-legend-item-focused",
-    legendItemHidden: "bb-legend-item-hidden",
-    legendItemPoint: "bb-legend-item-point",
-    legendItemTile: "bb-legend-item-tile",
-    level: "bb-level",
-    levels: "bb-levels",
-    line: "bb-line",
-    lines: "bb-lines",
-    main: "bb-main",
-    region: "bb-region",
-    regions: "bb-regions",
-    selectedCircle: "bb-selected-circle",
-    selectedCircles: "bb-selected-circles",
-    shape: "bb-shape",
-    shapes: "bb-shapes",
-    stanfordElements: "bb-stanford-elements",
-    stanfordLine: "bb-stanford-line",
-    stanfordLines: "bb-stanford-lines",
-    stanfordRegion: "bb-stanford-region",
-    stanfordRegions: "bb-stanford-regions",
-    subchart: "bb-subchart",
-    target: "bb-target",
-    text: "bb-text",
-    texts: "bb-texts",
-    title: "bb-title",
-    tooltip: "bb-tooltip",
-    tooltipContainer: "bb-tooltip-container",
-    tooltipName: "bb-tooltip-name",
-    valueDown: "bb-value-down",
-    valueUp: "bb-value-up",
-    xgrid: "bb-xgrid",
-    xgridFocus: "bb-xgrid-focus",
-    xgridLine: "bb-xgrid-line",
-    xgridLines: "bb-xgrid-lines",
-    xgrids: "bb-xgrids",
-    ygrid: "bb-ygrid",
-    ygridFocus: "bb-ygrid-focus",
-    ygridLine: "bb-ygrid-line",
-    ygridLines: "bb-ygrid-lines",
-    ygrids: "bb-ygrids",
-    zoomBrush: "bb-zoom-brush",
-    EXPANDED: "_expanded_",
-    SELECTED: "_selected_",
-    INCLUDED: "_included_",
-    TextOverlapping: "text-overlapping"
-};
 
 var isValue = function (v) { return v || v === 0; };
 var isFunction = function (v) { return typeof v === "function"; };
@@ -489,7 +375,7 @@ function getBrushSelection(ctx) {
         selection = event.selection;
         // check from brush area selection
     }
-    else if (main && (selection = main.select(".".concat(CLASS.brush)).node())) {
+    else if (main && (selection = main.select(".bb-brush").node())) {
         selection = brushSelection(selection);
     }
     return selection;
@@ -933,6 +819,160 @@ function logError(head, tail) {
     }
     throw Error("".concat(prefix, " ").concat(head.replace(/\%c([a-z-]+)/i, "'$1' "), " ").concat(tail));
 }
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * CSS class names definition
+ * @private
+ */
+var $COMMON = {
+    button: "bb-button",
+    chart: "bb-chart",
+    empty: "bb-empty",
+    main: "bb-main",
+    target: "bb-target",
+    EXPANDED: "_expanded_"
+};
+var $ARC = {
+    arc: "bb-arc",
+    arcLabelLine: "bb-arc-label-line",
+    arcs: "bb-arcs",
+    chartArc: "bb-chart-arc",
+    chartArcs: "bb-chart-arcs",
+    chartArcsBackground: "bb-chart-arcs-background",
+    chartArcsTitle: "bb-chart-arcs-title"
+};
+var $AREA = {
+    area: "bb-area",
+    areas: "bb-areas"
+};
+var $AXIS = {
+    axis: "bb-axis",
+    axisX: "bb-axis-x",
+    axisXLabel: "bb-axis-x-label",
+    axisY: "bb-axis-y",
+    axisY2: "bb-axis-y2",
+    axisY2Label: "bb-axis-y2-label",
+    axisYLabel: "bb-axis-y-label"
+};
+var $BAR = {
+    bar: "bb-bar",
+    bars: "bb-bars",
+    chartBar: "bb-chart-bar",
+    chartBars: "bb-chart-bars"
+};
+var $CANDLESTICK = {
+    candlestick: "bb-candlestick",
+    candlesticks: "bb-candlesticks",
+    chartCandlestick: "bb-chart-candlestick",
+    chartCandlesticks: "bb-chart-candlesticks",
+    valueDown: "bb-value-down",
+    valueUp: "bb-value-up"
+};
+var $CIRCLE = {
+    chartCircles: "bb-chart-circles",
+    circle: "bb-circle",
+    circles: "bb-circles"
+};
+var $COLOR = {
+    colorPattern: "bb-color-pattern",
+    colorScale: "bb-colorscale"
+};
+var $DRAG = {
+    dragarea: "bb-dragarea",
+    INCLUDED: "_included_"
+};
+var $GAUGE = {
+    chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
+    chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
+    chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
+    chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
+    gaugeValue: "bb-gauge-value"
+};
+var $LEGEND = {
+    legend: "bb-legend",
+    legendBackground: "bb-legend-background",
+    legendItem: "bb-legend-item",
+    legendItemEvent: "bb-legend-item-event",
+    legendItemHidden: "bb-legend-item-hidden",
+    legendItemPoint: "bb-legend-item-point",
+    legendItemTile: "bb-legend-item-tile"
+};
+var $LINE = {
+    chartLine: "bb-chart-line",
+    chartLines: "bb-chart-lines",
+    line: "bb-line",
+    lines: "bb-lines"
+};
+var $EVENT = {
+    eventRect: "bb-event-rect",
+    eventRects: "bb-event-rects",
+    eventRectsMultiple: "bb-event-rects-multiple",
+    eventRectsSingle: "bb-event-rects-single"
+};
+var $FOCUS = {
+    focused: "bb-focused",
+    defocused: "bb-defocused",
+    legendItemFocused: "bb-legend-item-focused",
+    xgridFocus: "bb-xgrid-focus",
+    ygridFocus: "bb-ygrid-focus"
+};
+var $GRID = {
+    grid: "bb-grid",
+    gridLines: "bb-grid-lines",
+    xgrid: "bb-xgrid",
+    xgridLine: "bb-xgrid-line",
+    xgridLines: "bb-xgrid-lines",
+    xgrids: "bb-xgrids",
+    ygrid: "bb-ygrid",
+    ygridLine: "bb-ygrid-line",
+    ygridLines: "bb-ygrid-lines",
+    ygrids: "bb-ygrids"
+};
+var $RADAR = {
+    chartRadar: "bb-chart-radar",
+    chartRadars: "bb-chart-radars",
+    level: "bb-level",
+    levels: "bb-levels"
+};
+var $REGION = {
+    region: "bb-region",
+    regions: "bb-regions"
+};
+var $SELECT = {
+    selectedCircle: "bb-selected-circle",
+    selectedCircles: "bb-selected-circles",
+    SELECTED: "_selected_"
+};
+var $SHAPE = {
+    shape: "bb-shape",
+    shapes: "bb-shapes"
+};
+var $SUBCHART = {
+    brush: "bb-brush",
+    subchart: "bb-subchart"
+};
+var $TEXT = {
+    chartText: "bb-chart-text",
+    chartTexts: "bb-chart-texts",
+    text: "bb-text",
+    texts: "bb-texts",
+    title: "bb-title",
+    TextOverlapping: "text-overlapping"
+};
+var $TOOLTIP = {
+    tooltip: "bb-tooltip",
+    tooltipContainer: "bb-tooltip-container",
+    tooltipName: "bb-tooltip-name"
+};
+var $ZOOM = {
+    buttonZoomReset: "bb-zoom-reset",
+    zoomBrush: "bb-zoom-brush"
+};
+var CLASS = _assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM);
 
 /**
  * Elements class.
@@ -3899,8 +3939,8 @@ var data$1 = {
             .filter(function (v) { return $$.isBarType(v.id) || $$.isCandlestickType(v.id); })
             .forEach(function (v) {
             var selector = $$.isBarType(v.id) ?
-                ".".concat(CLASS.chartBar, ".").concat(CLASS.target).concat($$.getTargetSelectorSuffix(v.id), " .").concat(CLASS.bar, "-").concat(v.index) :
-                ".".concat(CLASS.chartCandlestick, ".").concat(CLASS.target).concat($$.getTargetSelectorSuffix(v.id), " .").concat(CLASS.candlestick, "-").concat(v.index, " path");
+                ".".concat($BAR.chartBar, ".").concat($COMMON.target).concat($$.getTargetSelectorSuffix(v.id), " .").concat($BAR.bar, "-").concat(v.index) :
+                ".".concat($CANDLESTICK.chartCandlestick, ".").concat($COMMON.target).concat($$.getTargetSelectorSuffix(v.id), " .").concat($CANDLESTICK.candlestick, "-").concat(v.index, " path");
             if (!closest && $$.isWithinBar(main.select(selector).node())) {
                 closest = v;
             }
@@ -4203,7 +4243,7 @@ var dataLoad = {
             state.withoutFadeIn[id] = false;
             // Remove target's elements
             if ($el.legend) {
-                $el.legend.selectAll(".".concat(CLASS.legendItem).concat($$.getTargetSelectorSuffix(id))).remove();
+                $el.legend.selectAll(".".concat($LEGEND.legendItem).concat($$.getTargetSelectorSuffix(id))).remove();
             }
             // Remove target
             $$.data.targets = $$.data.targets.filter(function (t) { return t.id !== id; });
@@ -4234,10 +4274,10 @@ var interaction = {
                 return;
             }
         }
-        main.selectAll(".".concat(CLASS.shape, "-").concat(index))
+        main.selectAll(".".concat($SHAPE.shape, "-").concat(index))
             .each(function () {
             var _a;
-            select(this).classed(CLASS.EXPANDED, true);
+            select(this).classed($COMMON.EXPANDED, true);
             if (isSelectionEnabled) {
                 eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
             }
@@ -4294,8 +4334,8 @@ var interaction = {
         ["bar", "candlestick"]
             .filter(function (v) { return $$.$el[v]; })
             .forEach(function (v) {
-            reset && $$.$el[v].classed(CLASS.EXPANDED, false);
-            $$.getShapeByIndex(v, i, id).classed(CLASS.EXPANDED, expand);
+            reset && $$.$el[v].classed($COMMON.EXPANDED, false);
+            $$.getShapeByIndex(v, i, id).classed($COMMON.EXPANDED, expand);
         });
     },
     /**
@@ -4313,11 +4353,11 @@ var interaction = {
             var callback_1 = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
             config.color_onover && $$.setOverColor(isOver, d, isArc);
             if (isArc) {
-                callback_1(d, main.select(".".concat(CLASS.arc).concat($$.getTargetSelectorSuffix(d.id))).node());
+                callback_1(d, main.select(".".concat($ARC.arc).concat($$.getTargetSelectorSuffix(d.id))).node());
             }
             else if (!config.tooltip_grouped) {
                 var last_1 = $$.cache.get(KEY.setOverOut) || [];
-                var shape = main.selectAll(".".concat(CLASS.shape, "-").concat(d))
+                var shape = main.selectAll(".".concat($SHAPE.shape, "-").concat(d))
                     .filter(function (d) {
                     return $$.isWithinShape(this, d);
                 });
@@ -4342,7 +4382,7 @@ var interaction = {
                         $$.showCircleFocus($$.getAllValuesOnIndex(d, true)) :
                         $$.setExpand(d, null, true);
                 }
-                !$$.isMultipleX() && main.selectAll(".".concat(CLASS.shape, "-").concat(d))
+                !$$.isMultipleX() && main.selectAll(".".concat($SHAPE.shape, "-").concat(d))
                     .each(function (d) {
                     callback_1(d, this);
                 });
@@ -4397,7 +4437,7 @@ var interaction = {
         var $$ = this;
         var config = $$.config, _a = $$.state, eventReceiver = _a.eventReceiver, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar, _b = $$.$el, eventRect = _b.eventRect, arcs = _b.arcs, radar = _b.radar;
         var isMultipleX = $$.isMultipleX();
-        var element = (hasRadar ? radar.axes.select(".".concat(CLASS.axis, "-").concat(index, " text")) : (eventRect || arcs.selectAll(".".concat(CLASS.target, " path")).filter(function (d, i) { return i === index; }))).node();
+        var element = (hasRadar ? radar.axes.select(".".concat($AXIS.axis, "-").concat(index, " text")) : (eventRect || arcs.selectAll(".".concat($COMMON.target, " path")).filter(function (d, i) { return i === index; }))).node();
         var _c = element.getBoundingClientRect(), width = _c.width, left = _c.left, top = _c.top;
         if (hasAxis && !hasRadar && !isMultipleX) {
             var coords = eventReceiver.coords[index];
@@ -4616,7 +4656,7 @@ var color = {
         if (!pattern) {
             var delimiter = ";";
             var span = doc.createElement("span");
-            span.className = CLASS.colorPattern;
+            span.className = $COLOR.colorPattern;
             span.style.display = "none";
             body.appendChild(span);
             var content = win.getComputedStyle(span).backgroundImage;
@@ -4753,8 +4793,8 @@ var color = {
         }
         main.selectAll(isObject(d) ?
             // when is Arc type
-            ".".concat(CLASS.arc).concat($$.getTargetSelectorSuffix(d.id)) :
-            ".".concat(CLASS.shape, "-").concat(d)).style("fill", color);
+            ".".concat($ARC.arc).concat($$.getTargetSelectorSuffix(d.id)) :
+            ".".concat($SHAPE.shape, "-").concat(d)).style("fill", color);
     }
 };
 
@@ -5161,7 +5201,7 @@ var legend$1 = {
         if (config.legend_show) {
             if (!config.legend_contents_bindto) {
                 $el.legend = $$.$el.svg.append("g")
-                    .classed(CLASS.legend, true)
+                    .classed($LEGEND.legend, true)
                     .attr("transform", $$.getTranslate("legend"));
             }
             // MEMO: call here to update legend box and translate for all
@@ -5196,8 +5236,8 @@ var legend$1 = {
             $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions);
         }
         // toggle legend state
-        $el.legend.selectAll(".".concat(CLASS.legendItem))
-            .classed(CLASS.legendItemHidden, function (id) {
+        $el.legend.selectAll(".".concat($LEGEND.legendItem))
+            .classed($LEGEND.legendItemHidden, function (id) {
             var hide = !$$.isTargetToShow(id);
             if (hide) {
                 this.style.opacity = null;
@@ -5313,7 +5353,7 @@ var legend$1 = {
     updateLegendItemColor: function (id, color) {
         var legend = this.$el.legend;
         if (legend) {
-            legend.select(".".concat(CLASS.legendItem, "-").concat(id, " line"))
+            legend.select(".".concat($LEGEND.legendItem, "-").concat(id, " line"))
                 .style("stroke", color);
         }
     },
@@ -5346,7 +5386,7 @@ var legend$1 = {
      * @private
      */
     opacityForUnfocusedLegend: function (legendItem) {
-        return legendItem.classed(CLASS.legendItemHidden) ? null : "0.3";
+        return legendItem.classed($LEGEND.legendItemHidden) ? null : "0.3";
     },
     /**
      * Toggles the focus of the legend
@@ -5358,9 +5398,9 @@ var legend$1 = {
         var $$ = this;
         var legend = $$.$el.legend, $T = $$.$T;
         var targetIdz = $$.mapToTargetIds(targetIds);
-        legend && $T(legend.selectAll(".".concat(CLASS.legendItem))
+        legend && $T(legend.selectAll(".".concat($LEGEND.legendItem))
             .filter(function (id) { return targetIdz.indexOf(id) >= 0; })
-            .classed(CLASS.legendItemFocused, focus))
+            .classed($FOCUS.legendItemFocused, focus))
             .style("opacity", function () {
             return focus ? null :
                 $$.opacityForUnfocusedLegend.call($$, select(this));
@@ -5373,8 +5413,8 @@ var legend$1 = {
     revertLegend: function () {
         var $$ = this;
         var legend = $$.$el.legend, $T = $$.$T;
-        legend && $T(legend.selectAll(".".concat(CLASS.legendItem))
-            .classed(CLASS.legendItemFocused, false))
+        legend && $T(legend.selectAll(".".concat($LEGEND.legendItem))
+            .classed($FOCUS.legendItemFocused, false))
             .style("opacity", null);
     },
     /**
@@ -5429,7 +5469,7 @@ var legend$1 = {
         if (id) {
             data = (!state.redrawing && cache.get(cacheKey)) || {};
             if (!data[id]) {
-                data[id] = $$.getTextRect(textElement, CLASS.legendItem);
+                data[id] = $$.getTextRect(textElement, $LEGEND.legendItem);
                 cache.add(cacheKey, data);
             }
             data = data[id];
@@ -5450,7 +5490,7 @@ var legend$1 = {
             .attr("class", function (id) {
             var node = select(this);
             var itemClass = (!node.empty() && node.attr("class")) || "";
-            return itemClass + $$.generateClass(CLASS.legendItem, id);
+            return itemClass + $$.generateClass($LEGEND.legendItem, id);
         })
             .style("visibility", function (id) { return ($$.isLegendToShow(id) ? null : "hidden"); });
         if (config.interaction_enabled) {
@@ -5465,7 +5505,7 @@ var legend$1 = {
                     else {
                         api.toggle(id);
                         select(this)
-                            .classed(CLASS.legendItemFocused, false);
+                            .classed($FOCUS.legendItemFocused, false);
                     }
                 }
                 isTouch && $$.hideTooltip();
@@ -5473,18 +5513,18 @@ var legend$1 = {
             !isTouch && item
                 .on("mouseout", function (event, id) {
                 if (!callFn(config.legend_item_onout, api, id)) {
-                    select(this).classed(CLASS.legendItemFocused, false);
+                    select(this).classed($FOCUS.legendItemFocused, false);
                     if (hasGauge) {
-                        $$.undoMarkOverlapped($$, ".".concat(CLASS.gaugeValue));
+                        $$.undoMarkOverlapped($$, ".".concat($GAUGE.gaugeValue));
                     }
                     $$.api.revert();
                 }
             })
                 .on("mouseover", function (event, id) {
                 if (!callFn(config.legend_item_onover, api, id)) {
-                    select(this).classed(CLASS.legendItemFocused, true);
+                    select(this).classed($FOCUS.legendItemFocused, true);
                     if (hasGauge) {
-                        $$.markOverlapped(id, $$, ".".concat(CLASS.gaugeValue));
+                        $$.markOverlapped(id, $$, ".".concat($GAUGE.gaugeValue));
                     }
                     if (!state.transiting && $$.isTargetToShow(id)) {
                         api.focus(id);
@@ -5612,7 +5652,7 @@ var legend$1 = {
         var yForLegendTile = function (id, i) { return yForLegend(id, i) + 4; };
         var pos = -200;
         // Define g for legend area
-        var l = legend.selectAll(".".concat(CLASS.legendItem))
+        var l = legend.selectAll(".".concat($LEGEND.legendItem))
             .data(targetIdz)
             .enter()
             .append("g");
@@ -5626,7 +5666,7 @@ var legend$1 = {
             .attr("x", isLegendRightOrInset ? xForLegendText : pos)
             .attr("y", isLegendRightOrInset ? pos : yForLegendText);
         l.append("rect")
-            .attr("class", CLASS.legendItemEvent)
+            .attr("class", $LEGEND.legendItemEvent)
             .style("fill-opacity", "0")
             .attr("x", isLegendRightOrInset ? xForLegendRect : pos)
             .attr("y", isLegendRightOrInset ? pos : yForLegendRect);
@@ -5649,7 +5689,7 @@ var legend$1 = {
                 }
                 return doc.createElementNS(namespaces.svg, ("hasValidPointType" in $$) && $$.hasValidPointType(point) ? point : "use");
             })
-                .attr("class", CLASS.legendItemPoint)
+                .attr("class", $LEGEND.legendItemPoint)
                 .style("fill", getColor)
                 .style("pointer-events", "none")
                 .attr("href", function (data, idx, selection) {
@@ -5661,7 +5701,7 @@ var legend$1 = {
         }
         else {
             l.append("line")
-                .attr("class", CLASS.legendItemTile)
+                .attr("class", $LEGEND.legendItemTile)
                 .style("stroke", getColor)
                 .style("pointer-events", "none")
                 .attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
@@ -5671,10 +5711,10 @@ var legend$1 = {
                 .attr("stroke-width", config.legend_item_tile_height);
         }
         // Set background for inset legend
-        background = legend.select(".".concat(CLASS.legendBackground, " rect"));
+        background = legend.select(".".concat($LEGEND.legendBackground, " rect"));
         if (state.isLegendInset && maxWidth > 0 && background.size() === 0) {
-            background = legend.insert("g", ".".concat(CLASS.legendItem))
-                .attr("class", CLASS.legendBackground)
+            background = legend.insert("g", ".".concat($LEGEND.legendItem))
+                .attr("class", $LEGEND.legendBackground)
                 .append("rect");
         }
         var texts = legend.selectAll("text")
@@ -5686,7 +5726,7 @@ var legend$1 = {
         $T(texts, withTransition)
             .attr("x", xForLegendText)
             .attr("y", yForLegendText);
-        var rects = legend.selectAll("rect.".concat(CLASS.legendItemEvent))
+        var rects = legend.selectAll("rect.".concat($LEGEND.legendItemEvent))
             .data(targetIdz);
         $T(rects, withTransition)
             .attr("width", function (id) { return widths[id]; })
@@ -5694,7 +5734,7 @@ var legend$1 = {
             .attr("x", xForLegendRect)
             .attr("y", yForLegendRect);
         if (usePoint) {
-            var tiles = legend.selectAll(".".concat(CLASS.legendItemPoint))
+            var tiles = legend.selectAll(".".concat($LEGEND.legendItemPoint))
                 .data(targetIdz);
             $T(tiles, withTransition)
                 .each(function () {
@@ -5730,7 +5770,7 @@ var legend$1 = {
             });
         }
         else {
-            var tiles = legend.selectAll("line.".concat(CLASS.legendItemTile))
+            var tiles = legend.selectAll("line.".concat($LEGEND.legendItemTile))
                 .data(targetIdz);
             $T(tiles, withTransition)
                 .style("stroke", getColor)
@@ -5790,7 +5830,7 @@ var redraw = {
             // @TODO: Make 'init' state to be accessible everywhere not passing as argument.
             $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
             // Data empty label positioning and text.
-            config.data_empty_label_text && main.select("text.".concat(CLASS.text, ".").concat(CLASS.empty))
+            config.data_empty_label_text && main.select("text.".concat($TEXT.text, ".").concat($COMMON.empty))
                 .attr("x", state.width / 2)
                 .attr("y", state.height / 2)
                 .text(config.data_empty_label_text)
@@ -5806,7 +5846,7 @@ var redraw = {
                 }
             });
             // circles for select
-            $el.text && main.selectAll(".".concat(CLASS.selectedCircles))
+            $el.text && main.selectAll(".".concat($SELECT.selectedCircles))
                 .filter($$.isBarType.bind($$))
                 .selectAll("circle")
                 .remove();
@@ -6686,7 +6726,7 @@ var size = {
         var $$ = this;
         var config = $$.config, $el = $$.$el;
         var hasLeftAxisRect = config.axis_rotated || (!config.axis_rotated && !config.axis_y_inner);
-        var leftAxisClass = config.axis_rotated ? CLASS.axisX : CLASS.axisY;
+        var leftAxisClass = config.axis_rotated ? $AXIS.axisX : $AXIS.axisY;
         var leftAxis = $el.main.select(".".concat(leftAxisClass)).node();
         var svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : { right: 0 };
         var chartRect = $el.chart.node().getBoundingClientRect();
@@ -6714,7 +6754,7 @@ var size = {
             .attr("width", current.width)
             .attr("height", current.height);
         if (hasAxis) {
-            var brush = svg.select(".".concat(CLASS.brush, " .overlay"));
+            var brush = svg.select(".".concat($SUBCHART.brush, " .overlay"));
             var brushSize = { width: 0, height: 0 };
             if (brush.size()) {
                 brushSize.width = +brush.attr("width");
@@ -6867,8 +6907,8 @@ var text = {
      */
     initText: function () {
         var $el = this.$el;
-        $el.main.select(".".concat(CLASS.chart)).append("g")
-            .attr("class", CLASS.chartTexts);
+        $el.main.select(".".concat($COMMON.chart)).append("g")
+            .attr("class", $TEXT.chartTexts);
     },
     /**
      * Update chartText
@@ -6880,7 +6920,7 @@ var text = {
         var classChartText = $$.getChartClass("Text");
         var classTexts = $$.getClass("texts", "id");
         var classFocus = $$.classFocus.bind($$);
-        var mainTextUpdate = $$.$el.main.select(".".concat(CLASS.chartTexts)).selectAll(".".concat(CLASS.chartText))
+        var mainTextUpdate = $$.$el.main.select(".".concat($TEXT.chartTexts)).selectAll(".".concat($TEXT.chartText))
             .data(targets)
             .attr("class", function (d) { return classChartText(d) + classFocus(d); });
         var mainTextEnter = mainTextUpdate.enter().append("g")
@@ -6898,8 +6938,8 @@ var text = {
         var $$ = this;
         var $el = $$.$el, $T = $$.$T, config = $$.config;
         var classText = $$.getClass("text", "index");
-        var text = $el.main.selectAll(".".concat(CLASS.texts))
-            .selectAll(".".concat(CLASS.text))
+        var text = $el.main.selectAll(".".concat($TEXT.texts))
+            .selectAll(".".concat($TEXT.text))
             .data($$.labelishData.bind($$));
         $T(text.exit())
             .style("fill-opacity", "0")
@@ -7253,7 +7293,7 @@ var text = {
                 Math.ceil(nodeForWidth.node().getComputedTextLength());
             var overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) <
                 parseInt(textNode.style("font-size"), 10);
-            filteredTextNode.classed(CLASS.TextOverlapping, overlapsX && overlapsY);
+            filteredTextNode.classed($TEXT.TextOverlapping, overlapsX && overlapsY);
         });
     },
     /**
@@ -7267,7 +7307,7 @@ var text = {
         $$.$el.arcs.selectAll(selector)
             .each(function () {
             selectAll([this, this.previousSibling])
-                .classed(CLASS.TextOverlapping, false);
+                .classed($TEXT.TextOverlapping, false);
         });
     },
     /**
@@ -7325,7 +7365,7 @@ var title = {
             var text = $el.title
                 .append("text")
                 .style("text-anchor", getTextPos(config.title_position))
-                .attr("class", CLASS.title);
+                .attr("class", $TEXT.title);
             setTextValue(text, config.title_text, [0.3, 1.5]);
         }
     },
@@ -7355,7 +7395,7 @@ var title = {
         var $$ = this;
         var config = $$.config, current = $$.state.current;
         var position = config.title_position || "left";
-        var textRectWidth = $$.getTextRect($$.$el.title, CLASS.title).width;
+        var textRectWidth = $$.getTextRect($$.$el.title, $TEXT.title).width;
         var x;
         if (/(right|center)/.test(position)) {
             x = current.width - textRectWidth;
@@ -7379,7 +7419,7 @@ var title = {
     yForTitle: function () {
         var $$ = this;
         return ($$.config.title_padding.top || 0) +
-            $$.getTextRect($$.$el.title, CLASS.title).height;
+            $$.getTextRect($$.$el.title, $TEXT.title).height;
     },
     /**
      * Get title padding
@@ -7404,7 +7444,7 @@ var tooltip$1 = {
         if ($el.tooltip.empty()) {
             $el.tooltip = $el.chart
                 .append("div")
-                .attr("class", CLASS.tooltipContainer)
+                .attr("class", $TOOLTIP.tooltipContainer)
                 .style("position", "absolute")
                 .style("pointer-events", "none")
                 .style("display", "none");
@@ -7527,12 +7567,12 @@ var tooltip$1 = {
                 var title = (state.hasAxis || state.hasRadar) &&
                     sanitise(titleFormat ? titleFormat(row.x) : row.x);
                 text = tplProcess(tpl[0], {
-                    CLASS_TOOLTIP: CLASS.tooltip,
+                    CLASS_TOOLTIP: $TOOLTIP.tooltip,
                     TITLE: isValue(title) ? (tplStr ? title : "<tr><th colspan=\"2\">".concat(title, "</th></tr>")) : ""
                 });
             }
             if (!row.ratio && $$.$el.arcs) {
-                row.ratio = $$.getRatio("arc", $$.$el.arcs.select("path.".concat(CLASS.arc, "-").concat(row.id)).data()[0]);
+                row.ratio = $$.getRatio("arc", $$.$el.arcs.select("path.".concat($ARC.arc, "-").concat(row.id)).data()[0]);
             }
             param = [row.ratio, row.id, row.index, d];
             value = sanitise(valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param, false)));
@@ -7556,7 +7596,7 @@ var tooltip$1 = {
                 var name_1 = sanitise(nameFormat.apply(void 0, __spreadArray([row.name], param, false)));
                 var color_1 = getBgColor(row);
                 var contentValue_1 = {
-                    CLASS_TOOLTIP_NAME: CLASS.tooltipName + $$.getTargetSelectorSuffix(row.id),
+                    CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
                     COLOR: (tplStr || !$$.patterns) ? color_1 : "<svg><rect style=\"fill:".concat(color_1, "\" width=\"10\" height=\"10\"></rect></svg>"),
                     NAME: name_1,
                     VALUE: value
@@ -7833,19 +7873,19 @@ var transform = {
         var main = $$.$el.main, $T = $$.$T;
         var xAxis = (transitions === null || transitions === void 0 ? void 0 : transitions.axisX) ?
             transitions.axisX :
-            $T(main.select(".".concat(CLASS.axisX)), withTransition);
+            $T(main.select(".".concat($AXIS.axisX)), withTransition);
         var yAxis = (transitions === null || transitions === void 0 ? void 0 : transitions.axisY) ?
             transitions.axisY :
-            $T(main.select(".".concat(CLASS.axisY)), withTransition);
+            $T(main.select(".".concat($AXIS.axisY)), withTransition);
         var y2Axis = (transitions === null || transitions === void 0 ? void 0 : transitions.axisY2) ?
             transitions.axisY2 :
-            $T(main.select(".".concat(CLASS.axisY2)), withTransition);
+            $T(main.select(".".concat($AXIS.axisY2)), withTransition);
         $T(main, withTransition)
             .attr("transform", $$.getTranslate("main"));
         xAxis.attr("transform", $$.getTranslate("x"));
         yAxis.attr("transform", $$.getTranslate("y"));
         y2Axis.attr("transform", $$.getTranslate("y2"));
-        main.select(".".concat(CLASS.chartArcs))
+        main.select(".".concat($ARC.chartArcs))
             .attr("transform", $$.getTranslate("arc"));
     },
     transformAll: function (withTransition, transitions) {
@@ -8364,7 +8404,7 @@ var ChartInternal = /** @class */ (function () {
         $$.bindResize();
         // Define regions
         var main = $el.svg.append("g")
-            .classed(CLASS.main, true)
+            .classed($COMMON.main, true)
             .attr("transform", $$.getTranslate("main"));
         $el.main = main;
         // initialize subchart when subchart show option is set
@@ -8376,7 +8416,7 @@ var ChartInternal = /** @class */ (function () {
         // text when empty
         if (config.data_empty_label_text) {
             main.append("text")
-                .attr("class", "".concat(CLASS.text, " ").concat(CLASS.empty))
+                .attr("class", "".concat($TEXT.text, " ").concat($COMMON.empty))
                 .attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
                 .attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
         }
@@ -8387,7 +8427,7 @@ var ChartInternal = /** @class */ (function () {
             !config.clipPath && $$.axis.init();
         }
         // Define g for chart area
-        main.append("g").attr("class", CLASS.chart)
+        main.append("g").attr("class", $COMMON.chart)
             .attr("clip-path", state.clip.path);
         $$.callPluginHook("$init");
         if (hasAxis) {
@@ -8546,7 +8586,7 @@ var ChartInternal = /** @class */ (function () {
     ChartInternal.prototype.showTargets = function () {
         var $$ = this;
         var svg = $$.$el.svg, $T = $$.$T;
-        $T(svg.selectAll(".".concat(CLASS.target))
+        $T(svg.selectAll(".".concat($COMMON.target))
             .filter(function (d) { return $$.isTargetToShow(d.id); })).style("opacity", null);
     };
     ChartInternal.prototype.getWithOption = function (options) {
@@ -9176,11 +9216,11 @@ var apiFocus = {
         var candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
         this.revert();
         this.defocus();
-        candidates.classed(CLASS.focused, true).classed(CLASS.defocused, false);
+        candidates.classed($FOCUS.focused, true).classed($FOCUS.defocused, false);
         if ($$.hasArcType() && !state.hasRadar) {
             $$.expandArc(targetIds);
             $$.hasType("gauge") &&
-                $$.markOverlapped(targetIdsValue, $$, ".".concat(CLASS.gaugeValue));
+                $$.markOverlapped(targetIdsValue, $$, ".".concat($GAUGE.gaugeValue));
         }
         $$.toggleFocusLegend(targetIds, true);
         state.focusedTargetIds = targetIds;
@@ -9208,11 +9248,11 @@ var apiFocus = {
         var state = $$.state;
         var targetIds = $$.mapToTargetIds(targetIdsValue);
         var candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
-        candidates.classed(CLASS.focused, false).classed(CLASS.defocused, true);
+        candidates.classed($FOCUS.focused, false).classed($FOCUS.defocused, true);
         if ($$.hasArcType()) {
             $$.unexpandArc(targetIds);
             $$.hasType("gauge") &&
-                $$.undoMarkOverlapped($$, ".".concat(CLASS.gaugeValue));
+                $$.undoMarkOverlapped($$, ".".concat($GAUGE.gaugeValue));
         }
         $$.toggleFocusLegend(targetIds, false);
         state.focusedTargetIds = state.focusedTargetIds.filter(function (id) { return targetIds.indexOf(id) < 0; });
@@ -9240,15 +9280,15 @@ var apiFocus = {
         var config = $$.config, state = $$.state, $el = $$.$el;
         var targetIds = $$.mapToTargetIds(targetIdsValue);
         var candidates = $el.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
-        candidates.classed(CLASS.focused, false).classed(CLASS.defocused, false);
+        candidates.classed($FOCUS.focused, false).classed($FOCUS.defocused, false);
         $$.hasArcType() && $$.unexpandArc(targetIds);
         if (config.legend_show) {
             $$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
             $el.legend.selectAll($$.selectorLegends(targetIds))
                 .filter(function () {
-                return select(this).classed(CLASS.legendItemFocused);
+                return select(this).classed($FOCUS.legendItemFocused);
             })
-                .classed(CLASS.legendItemFocused, false);
+                .classed($FOCUS.legendItemFocused, false);
         }
         state.focusedTargetIds = [];
         state.defocusedTargetIds = [];
@@ -10386,8 +10426,8 @@ extend(regions, {
         var $$ = this.internal;
         var config = $$.config, $T = $$.$T;
         var options = optionsValue || {};
-        var classes = getOption(options, "classes", [CLASS.region]);
-        var regions = $$.$el.main.select(".".concat(CLASS.regions))
+        var classes = getOption(options, "classes", [$REGION.region]);
+        var regions = $$.$el.main.select(".".concat($REGION.regions))
             .selectAll(classes.map(function (c) { return ".".concat(c); }));
         $T(regions)
             .style("opacity", "0")
@@ -11261,7 +11301,7 @@ var Axis = /** @class */ (function () {
         this.setOrient();
     }
     Axis.prototype.getAxisClassName = function (id) {
-        return "".concat(CLASS.axis, " ").concat(CLASS["axis".concat(capitalize(id))]);
+        return "".concat($AXIS.axis, " ").concat($AXIS["axis".concat(capitalize(id))]);
     };
     Axis.prototype.isHorizontal = function ($$, forHorizontal) {
         var isRotated = $$.config.axis_rotated;
@@ -11306,7 +11346,7 @@ var Axis = /** @class */ (function () {
         config.axis_y2_show && target.push("y2");
         target.forEach(function (v) {
             var classAxis = _this.getAxisClassName(v);
-            var classLabel = CLASS["axis".concat(v.toUpperCase(), "Label")];
+            var classLabel = $AXIS["axis".concat(v.toUpperCase(), "Label")];
             axis[v] = main.append("g")
                 .attr("class", classAxis)
                 .attr("clip-path", function () {
@@ -11811,9 +11851,9 @@ var Axis = /** @class */ (function () {
         var $$ = this.owner;
         var main = $$.$el.main, $T = $$.$T;
         var labels = {
-            x: main.select(".".concat(CLASS.axisX, " .").concat(CLASS.axisXLabel)),
-            y: main.select(".".concat(CLASS.axisY, " .").concat(CLASS.axisYLabel)),
-            y2: main.select(".".concat(CLASS.axisY2, " .").concat(CLASS.axisY2Label))
+            x: main.select(".".concat($AXIS.axisX, " .").concat($AXIS.axisXLabel)),
+            y: main.select(".".concat($AXIS.axisY, " .").concat($AXIS.axisYLabel)),
+            y2: main.select(".".concat($AXIS.axisY2, " .").concat($AXIS.axisY2Label))
         };
         Object.keys(labels).filter(function (id) { return !labels[id].empty(); })
             .forEach(function (v) {
@@ -11999,7 +12039,7 @@ var Axis = /** @class */ (function () {
                 // set/unset x_axis_tick_clippath
                 if (type === "x") {
                     var clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
-                    $el.svg.selectAll(".".concat(CLASS.axisX, " .tick text"))
+                    $el.svg.selectAll(".".concat($AXIS.axisX, " .tick text"))
                         .attr("clip-path", clipPath);
                 }
             }
@@ -12020,9 +12060,9 @@ var eventrect = {
      */
     initEventRect: function () {
         var $$ = this;
-        $$.$el.main.select(".".concat(CLASS.chart))
+        $$.$el.main.select(".".concat($COMMON.chart))
             .append("g")
-            .attr("class", CLASS.eventRects)
+            .attr("class", $EVENT.eventRects)
             .style("fill-opacity", "0");
     },
     /**
@@ -12038,12 +12078,12 @@ var eventrect = {
             $$.updateEventRect($el.eventRect, true);
         }
         else {
-            var eventRects = $$.$el.main.select(".".concat(CLASS.eventRects))
+            var eventRects = $$.$el.main.select(".".concat($EVENT.eventRects))
                 .style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (config.axis_rotated ? "ns-resize" : "ew-resize") : null)
-                .classed(CLASS.eventRectsMultiple, isMultipleX)
-                .classed(CLASS.eventRectsSingle, !isMultipleX);
+                .classed($EVENT.eventRectsMultiple, isMultipleX)
+                .classed($EVENT.eventRectsSingle, !isMultipleX);
             // append event <rect>
-            var eventRectUpdate = eventRects.selectAll(".".concat(CLASS.eventRect))
+            var eventRectUpdate = eventRects.selectAll(".".concat($EVENT.eventRect))
                 .data([0])
                 .enter()
                 .append("rect");
@@ -12124,7 +12164,7 @@ var eventrect = {
         })
             .on("touchstart.eventRect touchmove.eventRect", function (event) {
             state.event = event;
-            if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
+            if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
                 // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
                 if (state.dragging || state.flowing || $$.hasArcType() || event.touches.length > 1) {
                     return;
@@ -12138,7 +12178,7 @@ var eventrect = {
         }, true)
             .on("touchend.eventRect", function (event) {
             state.event = event;
-            if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
+            if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
                 if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
                     state.cancelClick && (state.cancelClick = false);
                 }
@@ -12175,7 +12215,7 @@ var eventrect = {
                 .attr("height", height);
             // only for init
             if (!rendered) {
-                rectElement.attr("class", CLASS.eventRect);
+                rectElement.attr("class", $EVENT.eventRect);
             }
         }
         updateClientRect();
@@ -12287,7 +12327,7 @@ var eventrect = {
         $$.showGridFocus(selectedData);
         // Show cursor as pointer if point is close to mouse position
         if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-            $$.$el.svg.select(".".concat(CLASS.eventRect)).style("cursor", "pointer");
+            $$.$el.svg.select(".".concat($EVENT.eventRect)).style("cursor", "pointer");
             if (!state.mouseover) {
                 config.data_onover.call($$.api, closest);
                 state.mouseover = closest;
@@ -12301,7 +12341,7 @@ var eventrect = {
     unselectRect: function () {
         var $$ = this;
         var config = $$.config, _a = $$.$el, circle = _a.circle, tooltip = _a.tooltip;
-        $$.$el.svg.select(".".concat(CLASS.eventRect)).style("cursor", null);
+        $$.$el.svg.select(".".concat($EVENT.eventRect)).style("cursor", null);
         $$.hideGridFocus();
         if (tooltip) {
             $$.hideTooltip();
@@ -12313,8 +12353,8 @@ var eventrect = {
     /**
      * Create eventRect for each data on the x-axis.
      * Register touch and drag events.
-     * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
-     * @returns {object} d3.select(CLASS.eventRects) object.
+     * @param {object} eventRectEnter d3.select($EVENT.eventRects) object.
+     * @returns {object} d3.select($EVENT.eventRects) object.
      * @private
      */
     generateEventRectsForSingleX: function (eventRectEnter) {
@@ -12397,7 +12437,7 @@ var eventrect = {
             return;
         }
         var index = d.index;
-        main.selectAll(".".concat(CLASS.shape, "-").concat(index))
+        main.selectAll(".".concat($SHAPE.shape, "-").concat(index))
             .each(function (d2) {
             var _a;
             if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
@@ -12409,7 +12449,7 @@ var eventrect = {
     /**
      * Create an eventRect,
      * Register touch and drag events.
-     * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
+     * @param {object} eventRectEnter d3.select($EVENT.eventRects) object.
      * @private
      */
     generateEventRectsForMultipleXs: function (eventRectEnter) {
@@ -12450,8 +12490,8 @@ var eventrect = {
         }
         // select if selection enabled
         if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-            $$.$el.main.selectAll(".".concat(CLASS.shapes).concat($$.getTargetSelectorSuffix(closest.id)))
-                .selectAll(".".concat(CLASS.shape, "-").concat(closest.index))
+            $$.$el.main.selectAll(".".concat($SHAPE.shapes).concat($$.getTargetSelectorSuffix(closest.id)))
+                .selectAll(".".concat($SHAPE.shape, "-").concat(closest.index))
                 .each(function () {
                 var _a;
                 if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
@@ -12846,11 +12886,11 @@ var grid = {
         var $$ = this;
         var config = $$.config, clip = $$.state.clip, $el = $$.$el;
         if (config.grid_x_lines.length || config.grid_y_lines.length) {
-            $el.gridLines.main = $el.main.insert("g", ".".concat(CLASS.chart).concat(config.grid_lines_front ? " + *" : ""))
+            $el.gridLines.main = $el.main.insert("g", ".".concat($COMMON.chart).concat(config.grid_lines_front ? " + *" : ""))
                 .attr("clip-path", clip.pathGrid)
-                .attr("class", "".concat(CLASS.grid, " ").concat(CLASS.gridLines));
-            $el.gridLines.main.append("g").attr("class", CLASS.xgridLines);
-            $el.gridLines.main.append("g").attr("class", CLASS.ygridLines);
+                .attr("class", "".concat($GRID.grid, " ").concat($GRID.gridLines));
+            $el.gridLines.main.append("g").attr("class", $GRID.xgridLines);
+            $el.gridLines.main.append("g").attr("class", $GRID.ygridLines);
             $el.gridLines.x = selectAll([]);
         }
     },
@@ -12872,13 +12912,13 @@ var grid = {
             "y1": 0,
             "y2": state.height
         };
-        grid.x = main.select(".".concat(CLASS.xgrids))
-            .selectAll(".".concat(CLASS.xgrid))
+        grid.x = main.select(".".concat($GRID.xgrids))
+            .selectAll(".".concat($GRID.xgrid))
             .data(xgridData);
         grid.x.exit().remove();
         grid.x = grid.x.enter()
             .append("line")
-            .attr("class", CLASS.xgrid)
+            .attr("class", $GRID.xgrid)
             .merge(grid.x);
         if (!withoutUpdate) {
             grid.x.each(function () {
@@ -12897,14 +12937,14 @@ var grid = {
         var isRotated = config.axis_rotated;
         var gridValues = $$.axis.y.tickValues() || $$.scale.y.ticks(config.grid_y_ticks);
         var pos = function (d) { return Math.ceil($$.scale.y(d)); };
-        grid.y = main.select(".".concat(CLASS.ygrids))
-            .selectAll(".".concat(CLASS.ygrid))
+        grid.y = main.select(".".concat($GRID.ygrids))
+            .selectAll(".".concat($GRID.ygrid))
             .data(gridValues);
         grid.y.exit().remove();
         grid.y = grid.y
             .enter()
             .append("line")
-            .attr("class", CLASS.ygrid)
+            .attr("class", $GRID.ygrid)
             .merge(grid.y);
         grid.y.attr("x1", isRotated ? pos : 0)
             .attr("x2", isRotated ? pos : state.width)
@@ -12931,8 +12971,8 @@ var grid = {
         var config = $$.config, _a = $$.$el, gridLines = _a.gridLines, main = _a.main, $T = $$.$T;
         var isRotated = config.axis_rotated;
         config.grid_x_show && $$.updateXGrid();
-        var xLines = main.select(".".concat(CLASS.xgridLines))
-            .selectAll(".".concat(CLASS.xgridLine))
+        var xLines = main.select(".".concat($GRID.xgridLines))
+            .selectAll(".".concat($GRID.xgridLine))
             .data(config.grid_x_lines);
         // exit
         $T(xLines.exit())
@@ -12948,7 +12988,7 @@ var grid = {
             .style("opacity", "0");
         xLines = xgridLine.merge(xLines);
         $T(xLines
-            .attr("class", function (d) { return "".concat(CLASS.xgridLine, " ").concat(d["class"] || "").trim(); })
+            .attr("class", function (d) { return "".concat($GRID.xgridLine, " ").concat(d["class"] || "").trim(); })
             .select("text")
             .attr("text-anchor", getGridTextAnchor)
             .attr("dx", getGridTextDx))
@@ -12965,8 +13005,8 @@ var grid = {
         var config = $$.config, _a = $$.state, width = _a.width, height = _a.height, $el = $$.$el, $T = $$.$T;
         var isRotated = config.axis_rotated;
         config.grid_y_show && $$.updateYGrid();
-        var ygridLines = $el.main.select(".".concat(CLASS.ygridLines))
-            .selectAll(".".concat(CLASS.ygridLine))
+        var ygridLines = $el.main.select(".".concat($GRID.ygridLines))
+            .selectAll(".".concat($GRID.ygridLine))
             .data(config.grid_y_lines);
         // exit
         $T(ygridLines.exit())
@@ -12983,7 +13023,7 @@ var grid = {
         // update
         var yv = $$.yv.bind($$);
         $T(ygridLines
-            .attr("class", function (d) { return "".concat(CLASS.ygridLine, " ").concat(d["class"] || "").trim(); })
+            .attr("class", function (d) { return "".concat($GRID.ygridLine, " ").concat(d["class"] || "").trim(); })
             .select("line"))
             .attr("x1", isRotated ? yv : 0)
             .attr("x2", isRotated ? yv : width)
@@ -13024,26 +13064,26 @@ var grid = {
         var $$ = this;
         var config = $$.config, clip = $$.state.clip, $el = $$.$el;
         var isFront = config.grid_front;
-        var className = ".".concat(CLASS[isFront && $el.gridLines.main ? "gridLines" : "chart"]).concat(isFront ? " + *" : "");
+        var className = ".".concat(isFront && $el.gridLines.main ? $GRID.gridLines : $COMMON.chart).concat(isFront ? " + *" : "");
         var grid = $el.main.insert("g", className)
             .attr("clip-path", clip.pathGrid)
-            .attr("class", CLASS.grid);
+            .attr("class", $GRID.grid);
         $el.grid.main = grid;
         config.grid_x_show &&
-            grid.append("g").attr("class", CLASS.xgrids);
+            grid.append("g").attr("class", $GRID.xgrids);
         config.grid_y_show &&
-            grid.append("g").attr("class", CLASS.ygrids);
+            grid.append("g").attr("class", $GRID.ygrids);
         if (config.interaction_enabled && config.grid_focus_show) {
             grid.append("g")
-                .attr("class", CLASS.xgridFocus)
+                .attr("class", $FOCUS.xgridFocus)
                 .append("line")
-                .attr("class", CLASS.xgridFocus);
+                .attr("class", $FOCUS.xgridFocus);
             // to show xy focus grid line, should be 'tooltip.grouped=false'
             if (config.grid_focus_y && !config.tooltip_grouped) {
                 grid.append("g")
-                    .attr("class", CLASS.ygridFocus)
+                    .attr("class", $FOCUS.ygridFocus)
                     .append("line")
-                    .attr("class", CLASS.ygridFocus);
+                    .attr("class", $FOCUS.ygridFocus);
             }
         }
     },
@@ -13057,7 +13097,7 @@ var grid = {
         var $$ = this;
         var config = $$.config, _b = $$.state, width = _b.width, height = _b.height;
         var isRotated = config.axis_rotated;
-        var focusEl = $$.$el.main.selectAll("line.".concat(CLASS.xgridFocus, ", line.").concat(CLASS.ygridFocus));
+        var focusEl = $$.$el.main.selectAll("line.".concat($FOCUS.xgridFocus, ", line.").concat($FOCUS.ygridFocus));
         var dataToShow = (data || [focusEl.datum()]).filter(function (d) { return d && isValue($$.getBaseValue(d)); });
         // Hide when bubble/scatter/stanford plot exists
         if (!config.tooltip_show || dataToShow.length === 0 || $$.hasType("bubble") || $$.hasArcType()) {
@@ -13075,7 +13115,7 @@ var grid = {
                 y: $$.getYScaleById(d.id)(d.value)
             };
             var xy;
-            if (el.classed(CLASS.xgridFocus)) {
+            if (el.classed($FOCUS.xgridFocus)) {
                 // will contain 'x1, y1, x2, y2' order
                 xy = isRotated ?
                     [
@@ -13116,7 +13156,7 @@ var grid = {
         var $$ = this;
         var _b = $$.state, inputType = _b.inputType, resizing = _b.resizing, main = $$.$el.main;
         if (inputType === "mouse" || !resizing) {
-            main.selectAll("line.".concat(CLASS.xgridFocus, ", line.").concat(CLASS.ygridFocus))
+            main.selectAll("line.".concat($FOCUS.xgridFocus, ", line.").concat($FOCUS.ygridFocus))
                 .style("visibility", "hidden");
             (_a = $$.hideCircleFocus) === null || _a === void 0 ? void 0 : _a.call($$);
         }
@@ -13125,7 +13165,7 @@ var grid = {
         var _a;
         var $$ = this;
         var _b = $$.state, inputType = _b.inputType, width = _b.width, height = _b.height, resizing = _b.resizing, grid = $$.$el.grid;
-        var xgridFocus = grid.main.select("line.".concat(CLASS.xgridFocus));
+        var xgridFocus = grid.main.select("line.".concat($FOCUS.xgridFocus));
         if (inputType === "touch") {
             if (xgridFocus.empty()) {
                 resizing && ((_a = $$.showCircleFocus) === null || _a === void 0 ? void 0 : _a.call($$));
@@ -13148,7 +13188,7 @@ var grid = {
     },
     generateGridData: function (type, scale) {
         var $$ = this;
-        var tickNum = $$.$el.main.select(".".concat(CLASS.axisX))
+        var tickNum = $$.$el.main.select(".".concat($AXIS.axisX))
             .selectAll(".tick")
             .size();
         var gridData = [];
@@ -13183,8 +13223,8 @@ var grid = {
         var config = $$.config, $T = $$.$T;
         var toRemove = $$.getGridFilterToRemove(params);
         var toShow = function (line) { return !toRemove(line); };
-        var classLines = forX ? CLASS.xgridLines : CLASS.ygridLines;
-        var classLine = forX ? CLASS.xgridLine : CLASS.ygridLine;
+        var classLines = forX ? $GRID.xgridLines : $GRID.ygridLines;
+        var classLine = forX ? $GRID.xgridLine : $GRID.ygridLine;
         $T($$.$el.main.select(".".concat(classLines))
             .selectAll(".".concat(classLine))
             .filter(toRemove))
@@ -13206,7 +13246,7 @@ var region = {
         $el.region.main = $el.main
             .insert("g", ":first-child")
             .attr("clip-path", $$.state.clip.path)
-            .attr("class", CLASS.regions);
+            .attr("class", $REGION.regions);
     },
     updateRegion: function () {
         var $$ = this;
@@ -13218,7 +13258,7 @@ var region = {
         region.main.style("visibility", $$.hasArcType() ? "hidden" : null);
         // select <g> element
         var list = region.main
-            .selectAll(".".concat(CLASS.region))
+            .selectAll(".".concat($REGION.region))
             .data(config.regions);
         $T(list.exit())
             .style("opacity", "0")
@@ -15568,14 +15608,14 @@ var shapeArc = {
             var interval_1 = setInterval(function () {
                 if (!transiting) {
                     clearInterval(interval_1);
-                    $el.legend.selectAll(".".concat(CLASS.legendItemFocused)).size() > 0 &&
+                    $el.legend.selectAll(".".concat($FOCUS.legendItemFocused)).size() > 0 &&
                         $$.expandArc(targetIds);
                 }
             }, 10);
             return;
         }
         var newTargetIds = $$.mapToTargetIds(targetIds);
-        $el.svg.selectAll($$.selectorTargets(newTargetIds, ".".concat(CLASS.chartArc)))
+        $el.svg.selectAll($$.selectorTargets(newTargetIds, ".".concat($ARC.chartArc)))
             .each(function (d) {
             if (!$$.shouldExpand(d.data.id)) {
                 return;
@@ -15598,12 +15638,12 @@ var shapeArc = {
             return;
         }
         var newTargetIds = $$.mapToTargetIds(targetIds);
-        svg.selectAll($$.selectorTargets(newTargetIds, ".".concat(CLASS.chartArc)))
+        svg.selectAll($$.selectorTargets(newTargetIds, ".".concat($ARC.chartArc)))
             .selectAll("path")
             .transition()
             .duration(function (d) { return $$.getExpandConfig(d.data.id, "duration"); })
             .attr("d", $$.svgArc);
-        svg.selectAll("".concat(CLASS.arc))
+        svg.selectAll("".concat($ARC.arc))
             .style("opacity", null);
     },
     /**
@@ -15669,9 +15709,9 @@ var shapeArc = {
         var classChartArc = $$.getChartClass("Arc");
         var classArcs = $$.getClass("arcs", true);
         var classFocus = $$.classFocus.bind($$);
-        var chartArcs = $el.main.select(".".concat(CLASS.chartArcs));
+        var chartArcs = $el.main.select(".".concat($ARC.chartArcs));
         var mainPieUpdate = chartArcs
-            .selectAll(".".concat(CLASS.chartArc))
+            .selectAll(".".concat($ARC.chartArc))
             .data($$.pie(targets))
             .attr("class", function (d) { return classChartArc(d) + classFocus(d.data); });
         var mainPieEnter = mainPieUpdate.enter().append("g")
@@ -15684,16 +15724,16 @@ var shapeArc = {
             .style("opacity", "0")
             .style("text-anchor", "middle")
             .style("pointer-events", "none");
-        $el.text = chartArcs.selectAll(".".concat(CLASS.target, " text"));
+        $el.text = chartArcs.selectAll(".".concat($COMMON.target, " text"));
         // MEMO: can not keep same color..., but not bad to update color in redraw
         // mainPieUpdate.exit().remove();
     },
     initArc: function () {
         var $$ = this;
         var $el = $$.$el;
-        $el.arcs = $el.main.select(".".concat(CLASS.chart))
+        $el.arcs = $el.main.select(".".concat($COMMON.chart))
             .append("g")
-            .attr("class", CLASS.chartArcs)
+            .attr("class", $ARC.chartArcs)
             .attr("transform", $$.getTranslate("arc"));
         $$.setArcTitle();
     },
@@ -15707,7 +15747,7 @@ var shapeArc = {
         var hasGauge = $$.hasType("gauge");
         if (title) {
             var text = $$.$el.arcs.append("text")
-                .attr("class", CLASS[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"])
+                .attr("class", hasGauge ? $GAUGE.chartArcsGaugeTitle : $ARC.chartArcsTitle)
                 .style("text-anchor", "middle");
             hasGauge && text.attr("dy", "-0.3em");
             setTextValue(text, title, hasGauge ? undefined : [-0.6, 1.35], true);
@@ -15718,8 +15758,8 @@ var shapeArc = {
         var config = $$.config, state = $$.state, main = $$.$el.main;
         var hasInteraction = config.interaction_enabled;
         var isSelectable = hasInteraction && config.data_selection_isselectable;
-        var mainArc = main.selectAll(".".concat(CLASS.arcs))
-            .selectAll(".".concat(CLASS.arc))
+        var mainArc = main.selectAll(".".concat($ARC.arcs))
+            .selectAll(".".concat($ARC.arc))
             .data($$.arcData.bind($$));
         mainArc.exit()
             .transition()
@@ -15808,15 +15848,15 @@ var shapeArc = {
         var isFullCircle = config.gauge_fullCircle;
         var startAngle = $$.getStartAngle();
         var endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
-        var backgroundArc = $$.$el.arcs.select("".concat(hasMultiArcGauge ? "g" : "", ".").concat(CLASS.chartArcsBackground));
+        var backgroundArc = $$.$el.arcs.select("".concat(hasMultiArcGauge ? "g" : "", ".").concat($ARC.chartArcsBackground));
         if (hasMultiArcGauge) {
             var index_1 = 0;
             backgroundArc = backgroundArc
-                .selectAll("path.".concat(CLASS.chartArcsBackground))
+                .selectAll("path.".concat($ARC.chartArcsBackground))
                 .data($$.data.targets);
             backgroundArc.enter()
                 .append("path")
-                .attr("class", function (d, i) { return "".concat(CLASS.chartArcsBackground, " ").concat(CLASS.chartArcsBackground, "-").concat(i); })
+                .attr("class", function (d, i) { return "".concat($ARC.chartArcsBackground, " ").concat($ARC.chartArcsBackground, "-").concat(i); })
                 .merge(backgroundArc)
                 .style("fill", (config.gauge_background) || null)
                 .attr("d", function (_a) {
@@ -15940,10 +15980,10 @@ var shapeArc = {
         var text;
         // for gauge type, update text when has no title & multi data
         if (!(hasGauge && $$.data.targets.length === 1 && config.gauge_title)) {
-            text = main.selectAll(".".concat(CLASS.chartArc))
+            text = main.selectAll(".".concat($ARC.chartArc))
                 .select("text")
                 .style("opacity", "0")
-                .attr("class", function (d) { return ($$.isGaugeType(d.data) ? CLASS.gaugeValue : null); })
+                .attr("class", function (d) { return ($$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null); })
                 .call($$.textForArcLabel.bind($$))
                 .attr("transform", $$.transformForArcLabel.bind($$))
                 .style("font-size", function (d) { return ($$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ?
@@ -15953,21 +15993,21 @@ var shapeArc = {
                 .style("opacity", function (d) { return ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0"); });
             hasMultiArcGauge && text.attr("dy", "-.1em");
         }
-        main.select(".".concat(CLASS.chartArcsTitle))
+        main.select(".".concat($ARC.chartArcsTitle))
             .style("opacity", $$.hasType("donut") || hasGauge ? null : "0");
         if (hasGauge) {
             var isFullCircle = config.gauge_fullCircle;
             isFullCircle && (text === null || text === void 0 ? void 0 : text.attr("dy", "".concat(hasMultiArcGauge ? 0 : Math.round(state.radius / 14))));
             if (config.gauge_label_show) {
-                arcs.select(".".concat(CLASS.chartArcsGaugeUnit))
+                arcs.select(".".concat($GAUGE.chartArcsGaugeUnit))
                     .attr("dy", "".concat(isFullCircle ? 1.5 : 0.75, "em"))
                     .text(config.gauge_units);
-                arcs.select(".".concat(CLASS.chartArcsGaugeMin))
+                arcs.select(".".concat($GAUGE.chartArcsGaugeMin))
                     .attr("dx", "".concat(-1 * (state.innerRadius + ((state.radius - state.innerRadius) / (isFullCircle ? 1 : 2))), "px"))
                     .attr("dy", "1.2em")
                     .text($$.textForGaugeMinMax(config.gauge_min, false));
                 // show max text when isn't fullCircle
-                !isFullCircle && arcs.select(".".concat(CLASS.chartArcsGaugeMax))
+                !isFullCircle && arcs.select(".".concat($GAUGE.chartArcsGaugeMax))
                     .attr("dx", "".concat(state.innerRadius + ((state.radius - state.innerRadius) / 2), "px"))
                     .attr("dy", "1.2em")
                     .text($$.textForGaugeMinMax(config.gauge_max, true));
@@ -15985,7 +16025,7 @@ var shapeArea = {
         var $$ = this;
         var config = $$.config;
         mainLine
-            .insert("g", ".".concat(CLASS[config.area_front ? "circles" : "lines"]))
+            .insert("g", ".".concat(config.area_front ? $CIRCLE.circles : $LINE.lines))
             .attr("class", $$.getClass("areas", true));
     },
     updateAreaGradient: function () {
@@ -16030,8 +16070,8 @@ var shapeArea = {
         var config = $$.config, state = $$.state, $el = $$.$el, $T = $$.$T;
         var $root = isSub ? $el.subchart : $el;
         config.area_linearGradient && $$.updateAreaGradient();
-        var area = $root.main.selectAll(".".concat(CLASS.areas))
-            .selectAll(".".concat(CLASS.area))
+        var area = $root.main.selectAll(".".concat($AREA.areas))
+            .selectAll(".".concat($AREA.area))
             .data($$.lineData.bind($$));
         $T(area.exit(), withTransition)
             .style("opacity", "0")
@@ -16152,10 +16192,10 @@ var shapeArea = {
 var shapeBar = {
     initBar: function () {
         var _a = this, $el = _a.$el, config = _a.config, clip = _a.state.clip;
-        $el.bar = $el.main.select(".".concat(CLASS.chart))
+        $el.bar = $el.main.select(".".concat($COMMON.chart))
             // should positioned at the beginning of the shape node to not overlap others
             .insert("g", ":first-child")
-            .attr("class", CLASS.chartBars);
+            .attr("class", $BAR.chartBars);
         // set clip-path attribute when condition meet
         // https://github.com/naver/billboard.js/issues/2421
         if (config.clipPath === false && (config.bar_radius || config.bar_radius_ratio)) {
@@ -16172,8 +16212,8 @@ var shapeBar = {
         if (!$el.bar) {
             $$.initBar();
         }
-        var mainBarUpdate = $$.$el.main.select(".".concat(CLASS.chartBars))
-            .selectAll(".".concat(CLASS.chartBar))
+        var mainBarUpdate = $$.$el.main.select(".".concat($BAR.chartBars))
+            .selectAll(".".concat($BAR.chartBar))
             .data(
         // remove
         targets.filter(function (v) { return v.values.some(function (d) { return (isNumber(d.value) || $$.isBarRangeType(d)); }); }))
@@ -16200,8 +16240,8 @@ var shapeBar = {
         var $root = isSub ? $el.subchart : $el;
         var classBar = $$.getClass("bar", true);
         var initialOpacity = $$.initialOpacity.bind($$);
-        var bar = $root.main.selectAll(".".concat(CLASS.bars))
-            .selectAll(".".concat(CLASS.bar))
+        var bar = $root.main.selectAll(".".concat($BAR.bars))
+            .selectAll(".".concat($BAR.bar))
             .data($$.labelishData.bind($$));
         $T(bar.exit(), withTransition)
             .style("opacity", "0")
@@ -16355,10 +16395,10 @@ var shapeBar = {
 var shapeCandlestick = {
     initCandlestick: function () {
         var $el = this.$el;
-        $el.candlestick = $el.main.select(".".concat(CLASS.chart))
+        $el.candlestick = $el.main.select(".".concat($COMMON.chart))
             // should positioned at the beginning of the shape node to not overlap others
             .append("g")
-            .attr("class", CLASS.chartCandlesticks);
+            .attr("class", $CANDLESTICK.chartCandlesticks);
     },
     /**
      * Update targets by its data
@@ -16374,8 +16414,8 @@ var shapeCandlestick = {
         if (!$el.candlestick) {
             $$.initCandlestick();
         }
-        var mainUpdate = $$.$el.main.select(".".concat(CLASS.chartCandlesticks))
-            .selectAll(".".concat(CLASS.chartCandlestick))
+        var mainUpdate = $$.$el.main.select(".".concat($CANDLESTICK.chartCandlesticks))
+            .selectAll(".".concat($CANDLESTICK.chartCandlestick))
             .data(targets)
             .attr("class", function (d) { return classChart(d) + classFocus(d); });
         mainUpdate.enter().append("g")
@@ -16395,8 +16435,8 @@ var shapeCandlestick = {
         var $root = isSub ? $el.subchart : $el;
         var classSetter = $$.getClass("candlestick", true);
         var initialOpacity = $$.initialOpacity.bind($$);
-        var candlestick = $root.main.selectAll(".".concat(CLASS.chartCandlestick))
-            .selectAll(".".concat(CLASS.candlestick))
+        var candlestick = $root.main.selectAll(".".concat($CANDLESTICK.chartCandlestick))
+            .selectAll(".".concat($CANDLESTICK.candlestick))
             .data($$.labelishData.bind($$));
         $T(candlestick.exit(), withTransition)
             .style("opacity", "0")
@@ -16434,7 +16474,7 @@ var shapeCandlestick = {
             var indexX = +isRotated;
             var indexY = +!indexX;
             if (g.classed) {
-                g.classed(CLASS[isUp ? "valueUp" : "valueDown"], true);
+                g.classed($CANDLESTICK[isUp ? "valueUp" : "valueDown"], true);
             }
             var path = isRotated ?
                 "H".concat(points[1][1], " V").concat(points[1][0], " H").concat(points[0][1]) :
@@ -16584,12 +16624,12 @@ var shapeGauge = {
         if ($$.hasType("gauge")) {
             var hasMulti = $$.hasMultiArcGauge();
             arcs.append(hasMulti ? "g" : "path")
-                .attr("class", CLASS.chartArcsBackground)
+                .attr("class", $ARC.chartArcsBackground)
                 .style("fill", (!hasMulti && config.gauge_background) || null);
-            config.gauge_units && appendText(CLASS.chartArcsGaugeUnit);
+            config.gauge_units && appendText($GAUGE.chartArcsGaugeUnit);
             if (config.gauge_label_show) {
-                appendText(CLASS.chartArcsGaugeMin);
-                !config.gauge_fullCircle && appendText(CLASS.chartArcsGaugeMax);
+                appendText($GAUGE.chartArcsGaugeMin);
+                !config.gauge_fullCircle && appendText($GAUGE.chartArcsGaugeMax);
             }
         }
     },
@@ -16609,12 +16649,12 @@ var shapeGauge = {
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
         var hiddenTargetIds = $$.state.hiddenTargetIds;
-        var arcLabelLines = $el.main.selectAll(".".concat(CLASS.arcs))
-            .selectAll(".".concat(CLASS.arcLabelLine))
+        var arcLabelLines = $el.main.selectAll(".".concat($ARC.arcs))
+            .selectAll(".".concat($ARC.arcLabelLine))
             .data($$.arcData.bind($$));
         var mainArcLabelLine = arcLabelLines.enter()
             .append("rect")
-            .attr("class", function (d) { return "".concat(CLASS.arcLabelLine, " ").concat(CLASS.target, " ").concat(CLASS.target, "-").concat(d.data.id); })
+            .attr("class", function (d) { return "".concat($ARC.arcLabelLine, " ").concat($COMMON.target, " ").concat($COMMON.target, "-").concat(d.data.id); })
             .merge(arcLabelLines);
         mainArcLabelLine
             .style("fill", function (d) { return ($$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data)); })
@@ -16735,8 +16775,8 @@ var shapeBubble = {
 var shapeLine = {
     initLine: function () {
         var $el = this.$el;
-        $el.line = $el.main.select(".".concat(CLASS.chart)).append("g")
-            .attr("class", CLASS.chartLines);
+        $el.line = $el.main.select(".".concat($COMMON.chart)).append("g")
+            .attr("class", $LINE.chartLines);
     },
     updateTargetsForLine: function (t) {
         var $$ = this;
@@ -16748,8 +16788,8 @@ var shapeLine = {
             $$.initLine();
         }
         var targets = t.filter(function (d) { return !($$.isScatterType(d) || $$.isBubbleType(d)); });
-        var mainLineUpdate = main.select(".".concat(CLASS.chartLines))
-            .selectAll(".".concat(CLASS.chartLine))
+        var mainLineUpdate = main.select(".".concat($LINE.chartLines))
+            .selectAll(".".concat($LINE.chartLine))
             .data(targets)
             .attr("class", function (d) { return classChartLine(d) + classFocus(d); });
         var mainLineEnter = mainLineUpdate.enter().append("g")
@@ -16777,8 +16817,8 @@ var shapeLine = {
         var extraLineClasses = $$.format.extraLineClasses, $el = $$.$el, $T = $$.$T;
         var $root = isSub ? $el.subchart : $el;
         var line = $root.main
-            .selectAll(".".concat(CLASS.lines))
-            .selectAll(".".concat(CLASS.line))
+            .selectAll(".".concat($LINE.lines))
+            .selectAll(".".concat($LINE.line))
             .data($$.lineData.bind($$));
         $T(line.exit(), withTransition)
             .style("opacity", "0")
@@ -17023,10 +17063,10 @@ var shapePoint = {
         var $$ = this;
         var main = $$.$el.main;
         $$.point = $$.generatePoint();
-        if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select(".".concat(CLASS.chartCircles)).empty()) {
-            main.select(".".concat(CLASS.chart))
+        if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select(".".concat($CIRCLE.chartCircles)).empty()) {
+            main.select(".".concat($COMMON.chart))
                 .append("g")
-                .attr("class", CLASS.chartCircles);
+                .attr("class", $CIRCLE.chartCircles);
         }
     },
     updateTargetForCircle: function (targetsValue, enterNodeValue) {
@@ -17046,9 +17086,9 @@ var shapePoint = {
         if (!targets) {
             targets = (data.targets)
                 .filter(function (d) { return _this.isScatterType(d) || _this.isBubbleType(d); });
-            var mainCircle = $el.main.select(".".concat(CLASS.chartCircles))
+            var mainCircle = $el.main.select(".".concat($CIRCLE.chartCircles))
                 .style("pointer-events", "none")
-                .selectAll(".".concat(CLASS.circles))
+                .selectAll(".".concat($CIRCLE.circles))
                 .data(targets)
                 .attr("class", classCircles);
             mainCircle.exit().remove();
@@ -17056,14 +17096,14 @@ var shapePoint = {
         }
         // Circles for each data point on lines
         selectionEnabled && enterNode.append("g")
-            .attr("class", function (d) { return $$.generateClass(CLASS.selectedCircles, d.id); });
+            .attr("class", function (d) { return $$.generateClass($SELECT.selectedCircles, d.id); });
         enterNode.append("g")
             .attr("class", classCircles)
             .style("cursor", function (d) { return (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null); });
         // Update date for selected circles
         selectionEnabled && targets.forEach(function (t) {
-            $el.main.selectAll(".".concat(CLASS.selectedCircles).concat($$.getTargetSelectorSuffix(t.id)))
-                .selectAll("".concat(CLASS.selectedCircle))
+            $el.main.selectAll(".".concat($SELECT.selectedCircles).concat($$.getTargetSelectorSuffix(t.id)))
+                .selectAll("".concat($SELECT.selectedCircle))
                 .each(function (d) {
                 d.value = t.values[d.index].value;
             });
@@ -17076,8 +17116,8 @@ var shapePoint = {
         var focusOnly = config.point_focus_only;
         var $root = isSub ? $el.subchart : $el;
         if (config.point_show && !state.toggling) {
-            var circles = $root.main.selectAll(".".concat(CLASS.circles))
-                .selectAll(".".concat(CLASS.circle))
+            var circles = $root.main.selectAll(".".concat($CIRCLE.circles))
+                .selectAll(".".concat($CIRCLE.circle))
                 .data(function (d) { return (($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
                 $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
                 (focusOnly ? [d.values[0]] : d.values) : []); });
@@ -17085,7 +17125,7 @@ var shapePoint = {
             circles.enter()
                 .filter(Boolean)
                 .append($$.point("create", this, $$.pointR.bind($$), $$.color));
-            $root.circle = $root.main.selectAll(".".concat(CLASS.circles, " .").concat(CLASS.circle))
+            $root.circle = $root.main.selectAll(".".concat($CIRCLE.circles, " .").concat($CIRCLE.circle))
                 .style("stroke", $$.color)
                 .style("opacity", $$.initialOpacityForCircle.bind($$));
         }
@@ -17095,7 +17135,7 @@ var shapePoint = {
         var $$ = this;
         var rendered = $$.state.rendered, $el = $$.$el, $T = $$.$T;
         var $root = isSub ? $el.subchart : $el;
-        var selectedCircles = $root.main.selectAll(".".concat(CLASS.selectedCircle));
+        var selectedCircles = $root.main.selectAll(".".concat($SELECT.selectedCircle));
         if (!$$.config.point_show) {
             return [];
         }
@@ -17184,7 +17224,7 @@ var shapePoint = {
         var $$ = this;
         var r = $$.pointExpandedR.bind($$);
         reset && $$.unexpandCircles();
-        var circles = $$.getShapeByIndex("circle", i, id).classed(CLASS.EXPANDED, true);
+        var circles = $$.getShapeByIndex("circle", i, id).classed($COMMON.EXPANDED, true);
         var scale = r(circles) / $$.config.point_r;
         var ratio = 1 - scale;
         if ($$.isCirclePoint()) {
@@ -17211,9 +17251,9 @@ var shapePoint = {
         var r = $$.pointR.bind($$);
         var circles = $$.getShapeByIndex("circle", i)
             .filter(function () {
-            return select(this).classed(CLASS.EXPANDED);
+            return select(this).classed($COMMON.EXPANDED);
         })
-            .classed(CLASS.EXPANDED, false);
+            .classed($COMMON.EXPANDED, false);
         circles.attr("r", r);
         !$$.isCirclePoint() &&
             circles.attr("transform", "scale(".concat(r(circles) / $$.config.point_r, ")"));
@@ -17299,8 +17339,8 @@ var shapePoint = {
             pointClass = d === true ?
                 circle.each(function (d) {
                     var className = $$.getClass("circle", true)(d);
-                    if (this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1) {
-                        className += " ".concat(CLASS.EXPANDED);
+                    if (this.getAttribute("class").indexOf($COMMON.EXPANDED) > -1) {
+                        className += " ".concat($COMMON.EXPANDED);
                     }
                     this.setAttribute("class", className);
                 }) : $$.getClass("circle", true)(d);
@@ -17481,17 +17521,17 @@ var shapeRadar = {
         var $$ = this;
         var config = $$.config, current = $$.state.current, $el = $$.$el;
         if ($$.hasType("radar")) {
-            $el.radar = $el.main.select(".".concat(CLASS.chart)).append("g")
-                .attr("class", CLASS.chartRadars);
+            $el.radar = $el.main.select(".".concat($COMMON.chart)).append("g")
+                .attr("class", $RADAR.chartRadars);
             // level
             $el.radar.levels = $el.radar.append("g")
-                .attr("class", CLASS.levels);
+                .attr("class", $RADAR.levels);
             // axis
             $el.radar.axes = $el.radar.append("g")
-                .attr("class", CLASS.axis);
+                .attr("class", $AXIS.axis);
             // shapes
             $el.radar.shapes = $el.radar.append("g")
-                .attr("class", CLASS.shapes);
+                .attr("class", $SHAPE.shapes);
             current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
         }
     },
@@ -17545,7 +17585,7 @@ var shapeRadar = {
         // Adjust radar, circles and texts' position
         if (translate) {
             radar.attr("transform", translate);
-            main.select(".".concat(CLASS.chartTexts)).attr("transform", translate);
+            main.select(".".concat($TEXT.chartTexts)).attr("transform", translate);
             $$.generateRadarPoints();
             $$.updateRadarLevel();
             $$.updateRadarAxes();
@@ -17583,11 +17623,11 @@ var shapeRadar = {
             return pos.join(" ");
         });
         var level = radarLevels
-            .selectAll(".".concat(CLASS.level))
+            .selectAll(".".concat($RADAR.level))
             .data(levelData);
         level.exit().remove();
         var levelEnter = level.enter().append("g")
-            .attr("class", function (d, i) { return "".concat(CLASS.level, " ").concat(CLASS.level, "-").concat(i); });
+            .attr("class", function (d, i) { return "".concat($RADAR.level, " ").concat($RADAR.level, "-").concat(i); });
         levelEnter.append("polygon")
             .style("visibility", config.radar_level_show ? null : "hidden");
         if (showText) {
@@ -17625,7 +17665,7 @@ var shapeRadar = {
             .data(categories);
         axis.exit().remove();
         var axisEnter = axis.enter().append("g")
-            .attr("class", function (d, i) { return "".concat(CLASS.axis, "-").concat(i); });
+            .attr("class", function (d, i) { return "".concat($AXIS.axis, "-").concat(i); });
         config.radar_axis_line_show && axisEnter.append("line");
         config.radar_axis_text_show && axisEnter.append("text");
         axis = axisEnter.merge(axis);
@@ -18720,10 +18760,10 @@ var apiSelection = {
     selected: function (targetId) {
         var $$ = this.internal;
         var dataPoint = [];
-        $$.$el.main.selectAll(".".concat(CLASS.shapes + $$.getTargetSelectorSuffix(targetId)))
-            .selectAll(".".concat(CLASS.shape))
+        $$.$el.main.selectAll(".".concat($SHAPE.shapes + $$.getTargetSelectorSuffix(targetId)))
+            .selectAll(".".concat($SHAPE.shape))
             .filter(function () {
-            return select(this).classed(CLASS.SELECTED);
+            return select(this).classed($SELECT.SELECTED);
         })
             .each(function (d) { return dataPoint.push(d); });
         return dataPoint;
@@ -18758,26 +18798,26 @@ var apiSelection = {
         if (!config.data_selection_enabled) {
             return;
         }
-        $el.main.selectAll(".".concat(CLASS.shapes))
-            .selectAll(".".concat(CLASS.shape))
+        $el.main.selectAll(".".concat($SHAPE.shapes))
+            .selectAll(".".concat($SHAPE.shape))
             .each(function (d, i) {
             var shape = select(this);
             var id = d.data ? d.data.id : d.id;
             var toggle = $$.getToggle(this, d).bind($$);
             var isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0;
             var isTargetIndex = !indices || indices.indexOf(i) >= 0;
-            var isSelected = shape.classed(CLASS.SELECTED);
+            var isSelected = shape.classed($SELECT.SELECTED);
             // line/area selection not supported yet
-            if (shape.classed(CLASS.line) || shape.classed(CLASS.area)) {
+            if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
                 return;
             }
             if (isTargetId && isTargetIndex) {
                 if (config.data_selection_isselectable.bind($$.api)(d) && !isSelected) {
-                    toggle(true, shape.classed(CLASS.SELECTED, true), d, i);
+                    toggle(true, shape.classed($SELECT.SELECTED, true), d, i);
                 }
             }
             else if (isDefined(resetOther) && resetOther && isSelected) {
-                toggle(false, shape.classed(CLASS.SELECTED, false), d, i);
+                toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
             }
         });
     },
@@ -18804,24 +18844,24 @@ var apiSelection = {
         if (!config.data_selection_enabled) {
             return;
         }
-        $el.main.selectAll(".".concat(CLASS.shapes))
-            .selectAll(".".concat(CLASS.shape))
+        $el.main.selectAll(".".concat($SHAPE.shapes))
+            .selectAll(".".concat($SHAPE.shape))
             .each(function (d, i) {
             var shape = select(this);
             var id = d.data ? d.data.id : d.id;
             var toggle = $$.getToggle(this, d).bind($$);
             var isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0;
             var isTargetIndex = !indices || indices.indexOf(i) >= 0;
-            var isSelected = shape.classed(CLASS.SELECTED);
+            var isSelected = shape.classed($SELECT.SELECTED);
             // line/area selection not supported yet
-            if (shape.classed(CLASS.line) || shape.classed(CLASS.area)) {
+            if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
                 return;
             }
             if (isTargetId &&
                 isTargetIndex &&
                 config.data_selection_isselectable.bind($$.api)(d) &&
                 isSelected) {
-                toggle(false, shape.classed(CLASS.SELECTED, false), d, i);
+                toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
             }
         });
     }
@@ -18865,12 +18905,12 @@ var apiSubchart = {
                 $$.unbindZoomEvent();
                 config.subchart_show = !show;
                 !subchart.main && $$.initSubchart();
-                var $target = subchart.main.selectAll(".".concat(CLASS.target));
+                var $target = subchart.main.selectAll(".".concat($COMMON.target));
                 // need to cover when new data has been loaded
                 if ($$.data.targets.length !== $target.size()) {
                     $$.updateSizes();
                     $$.updateTargetsForSubchart($$.data.targets);
-                    $target = subchart.main.selectAll(".".concat(CLASS.target));
+                    $target = subchart.main.selectAll(".".concat($COMMON.target));
                 }
                 $target.style("opacity", null);
                 subchart.main.style("display", null);
@@ -19156,28 +19196,28 @@ var drag = {
         var maxX = Math.max(sx, mx);
         var minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my);
         var maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
-        main.select(".".concat(CLASS.dragarea))
+        main.select(".".concat($DRAG.dragarea))
             .attr("x", minX)
             .attr("y", minY)
             .attr("width", maxX - minX)
             .attr("height", maxY - minY);
         // TODO: binary search when multiple xs
-        main.selectAll(".".concat(CLASS.shapes))
-            .selectAll(".".concat(CLASS.shape))
+        main.selectAll(".".concat($SHAPE.shapes))
+            .selectAll(".".concat($SHAPE.shape))
             .filter(function (d) { return isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind($$.api)(d); })
             .each(function (d, i) {
             var shape = select(this);
-            var isSelected = shape.classed(CLASS.SELECTED);
-            var isIncluded = shape.classed(CLASS.INCLUDED);
+            var isSelected = shape.classed($SELECT.SELECTED);
+            var isIncluded = shape.classed($DRAG.INCLUDED);
             var isWithin = false;
             var toggle;
-            if (shape.classed(CLASS.circle)) {
+            if (shape.classed($CIRCLE.circle)) {
                 var x = +shape.attr("cx") * 1;
                 var y = +shape.attr("cy") * 1;
                 toggle = $$.togglePoint;
                 isWithin = minX < x && x < maxX && minY < y && y < maxY;
             }
-            else if (shape.classed(CLASS.bar)) {
+            else if (shape.classed($BAR.bar)) {
                 var _a = getPathBox(this), x = _a.x, y = _a.y, width = _a.width, height = _a.height;
                 toggle = $$.togglePath;
                 isWithin = !(maxX < x || x + width < minX) && !(maxY < y || y + height < minY);
@@ -19188,9 +19228,9 @@ var drag = {
             }
             // @ts-ignore
             if (isWithin ^ isIncluded) {
-                shape.classed(CLASS.INCLUDED, !isIncluded);
+                shape.classed($DRAG.INCLUDED, !isIncluded);
                 // TODO: included/unincluded callback here
-                shape.classed(CLASS.SELECTED, !isSelected);
+                shape.classed($SELECT.SELECTED, !isSelected);
                 toggle.call($$, !isSelected, shape, d, i);
             }
         });
@@ -19208,9 +19248,9 @@ var drag = {
             return;
         }
         state.dragStart = mouse;
-        main.select(".".concat(CLASS.chart))
+        main.select(".".concat($COMMON.chart))
             .append("rect")
-            .attr("class", CLASS.dragarea)
+            .attr("class", $DRAG.dragarea)
             .style("opacity", "0.1");
         $$.setDragStatus(true);
     },
@@ -19225,11 +19265,11 @@ var drag = {
         if ($$.hasArcType() || !config.data_selection_enabled) { // do nothing if not selectable
             return;
         }
-        $T(main.select(".".concat(CLASS.dragarea)))
+        $T(main.select(".".concat($DRAG.dragarea)))
             .style("opacity", "0")
             .remove();
-        main.selectAll(".".concat(CLASS.shape))
-            .classed(CLASS.INCLUDED, false);
+        main.selectAll(".".concat($SHAPE.shape))
+            .classed($DRAG.INCLUDED, false);
         $$.setDragStatus(false);
     }
 };
@@ -19251,12 +19291,12 @@ var selection = _assign(_assign({}, drag), {
         var r = $$.pointSelectR.bind($$);
         callFn(config.data_onselected, $$.api, d, target.node());
         // add selected-circle on low layer g
-        $T(main.select(".".concat(CLASS.selectedCircles).concat($$.getTargetSelectorSuffix(d.id)))
-            .selectAll(".".concat(CLASS.selectedCircle, "-").concat(i))
+        $T(main.select(".".concat($SELECT.selectedCircles).concat($$.getTargetSelectorSuffix(d.id)))
+            .selectAll(".".concat($SELECT.selectedCircle, "-").concat(i))
             .data([d])
             .enter()
             .append("circle")
-            .attr("class", function () { return $$.generateClass(CLASS.selectedCircle, i); })
+            .attr("class", function () { return $$.generateClass($SELECT.selectedCircle, i); })
             .attr("cx", cx)
             .attr("cy", cy)
             .attr("stroke", $$.color)
@@ -19274,8 +19314,8 @@ var selection = _assign(_assign({}, drag), {
         var config = $$.config, main = $$.$el.main, $T = $$.$T;
         callFn(config.data_onunselected, $$.api, d, target.node());
         // remove selected-circle from low layer g
-        $T(main.select(".".concat(CLASS.selectedCircles).concat($$.getTargetSelectorSuffix(d.id)))
-            .selectAll(".".concat(CLASS.selectedCircle, "-").concat(i)))
+        $T(main.select(".".concat($SELECT.selectedCircles).concat($$.getTargetSelectorSuffix(d.id)))
+            .selectAll(".".concat($SELECT.selectedCircle, "-").concat(i)))
             .attr("r", 0)
             .remove();
     }, 
@@ -19355,27 +19395,27 @@ var selection = _assign(_assign({}, drag), {
         var $$ = this;
         var config = $$.config, main = $$.$el.main;
         var shape = select(that);
-        var isSelected = shape.classed(CLASS.SELECTED);
+        var isSelected = shape.classed($SELECT.SELECTED);
         var toggle = $$.getToggle(that, d).bind($$);
         var toggledShape;
         if (config.data_selection_enabled && config.data_selection_isselectable.bind($$.api)(d)) {
             if (!config.data_selection_multiple) {
-                var selector = ".".concat(CLASS.shapes);
+                var selector = ".".concat($SHAPE.shapes);
                 if (config.data_selection_grouped) {
                     selector += $$.getTargetSelectorSuffix(d.id);
                 }
                 main.selectAll(selector)
-                    .selectAll(".".concat(CLASS.shape))
+                    .selectAll(".".concat($SHAPE.shape))
                     .each(function (d, i) {
                     var shape = select(this);
-                    if (shape.classed(CLASS.SELECTED)) {
+                    if (shape.classed($SELECT.SELECTED)) {
                         toggledShape = shape;
-                        toggle(false, shape.classed(CLASS.SELECTED, false), d, i);
+                        toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
                     }
                 });
             }
             if (!toggledShape || toggledShape.node() !== shape.node()) {
-                shape.classed(CLASS.SELECTED, !isSelected);
+                shape.classed($SELECT.SELECTED, !isSelected);
                 toggle(!isSelected, shape, d, i);
             }
         }
@@ -19941,7 +19981,7 @@ var zoom = {
             if (!zoomRect) {
                 zoomRect = $$.$el.main.append("rect")
                     .attr("clip-path", state.clip.path)
-                    .attr("class", CLASS.zoomBrush)
+                    .attr("class", $ZOOM.zoomBrush)
                     .attr("width", isRotated ? state.width : 0)
                     .attr("height", isRotated ? 0 : state.height);
             }
@@ -19985,13 +20025,13 @@ var zoom = {
         if (resetButton && config.zoom_type === "drag") {
             if (!$el.zoomResetBtn) {
                 $el.zoomResetBtn = $$.$el.chart.append("div")
-                    .classed(CLASS.button, true)
+                    .classed($COMMON.button, true)
                     .append("span")
                     .on("click", function () {
                     isFunction(resetButton.onclick) && resetButton.onclick.bind($$.api)(this);
                     $$.api.unzoom();
                 })
-                    .classed(CLASS.buttonZoomReset, true)
+                    .classed($ZOOM.buttonZoomReset, true)
                     .text(resetButton.text || "Reset Zoom");
             }
             else {
@@ -20322,7 +20362,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.0-nightly-20220119004526
+ * @version 3.3.0-nightly-20220122004528
  */
 var bb = {
     /**
@@ -20332,7 +20372,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.0-nightly-20220119004526",
+    version: "3.3.0-nightly-20220122004528",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
