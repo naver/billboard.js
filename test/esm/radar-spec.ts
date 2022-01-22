@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import bb, {radar} from "../../src/index.esm";
-import CLASS from "../../src/config/classes";
+import {$AXIS} from "../../src/config/classes";
 
 describe("ESM radar", function() {
     let chart;
@@ -45,7 +45,7 @@ describe("ESM radar", function() {
 
         expect(categories.length === args.data.columns[0].length - 1).to.be.true;
 
-        chart.$.main.selectAll(`.${CLASS.axis} text`).each(function(d, i) {
+        chart.$.main.selectAll(`.${$AXIS.axis} text`).each(function(d, i) {
             expect(this.textContent).to.be.equal(categories[i]);
         });
     });

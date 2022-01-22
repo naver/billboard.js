@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import CLASS from "../../config/classes";
+import {$BAR, $CANDLESTICK, $COMMON} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {IData, IDataRow} from "./IData";
 import {
@@ -750,8 +750,8 @@ export default {
 			.filter(v => $$.isBarType(v.id) || $$.isCandlestickType(v.id))
 			.forEach(v => {
 				const selector = $$.isBarType(v.id) ?
-					`.${CLASS.chartBar}.${CLASS.target}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.bar}-${v.index}` :
-					`.${CLASS.chartCandlestick}.${CLASS.target}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.candlestick}-${v.index} path`;
+					`.${$BAR.chartBar}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$BAR.bar}-${v.index}` :
+					`.${$CANDLESTICK.chartCandlestick}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$CANDLESTICK.candlestick}-${v.index} path`;
 
 				if (!closest && $$.isWithinBar(main.select(selector).node())) {
 					closest = v;

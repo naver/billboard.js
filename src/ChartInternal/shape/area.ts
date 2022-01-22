@@ -4,7 +4,7 @@
  */
 import {area as d3Area} from "d3-shape";
 import {select as d3Select} from "d3-selection";
-import CLASS from "../../config/classes";
+import {$AREA, $CIRCLE, $LINE} from "../../config/classes";
 import {getRandom, isFunction} from "../../module/util";
 
 export default {
@@ -13,7 +13,7 @@ export default {
 		const {config} = $$;
 
 		mainLine
-			.insert("g", `.${CLASS[config.area_front ? "circles" : "lines"]}`)
+			.insert("g", `.${config.area_front ? $CIRCLE.circles : $LINE.lines}`)
 			.attr("class", $$.getClass("areas", true));
 	},
 
@@ -72,8 +72,8 @@ export default {
 
 		config.area_linearGradient && $$.updateAreaGradient();
 
-		const area = $root.main.selectAll(`.${CLASS.areas}`)
-			.selectAll(`.${CLASS.area}`)
+		const area = $root.main.selectAll(`.${$AREA.areas}`)
+			.selectAll(`.${$AREA.area}`)
 			.data($$.lineData.bind($$));
 
 		$T(area.exit(), withTransition)

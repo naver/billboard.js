@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {document} from "../../module/browser";
-import CLASS from "../../config/classes";
+import {$AXIS, $SUBCHART} from "../../config/classes";
 import {isValue, ceil10, capitalize, isNumber, isEmpty} from "../../module/util";
 
 export default {
@@ -170,7 +170,7 @@ export default {
 		const $$ = this;
 		const {config, $el} = $$;
 		const hasLeftAxisRect = config.axis_rotated || (!config.axis_rotated && !config.axis_y_inner);
-		const leftAxisClass = config.axis_rotated ? CLASS.axisX : CLASS.axisY;
+		const leftAxisClass = config.axis_rotated ? $AXIS.axisX : $AXIS.axisY;
 		const leftAxis = $el.main.select(`.${leftAxisClass}`).node();
 		const svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : {right: 0};
 		const chartRect = $el.chart.node().getBoundingClientRect();
@@ -204,7 +204,7 @@ export default {
 			.attr("height", current.height);
 
 		if (hasAxis) {
-			const brush = svg.select(`.${CLASS.brush} .overlay`);
+			const brush = svg.select(`.${$SUBCHART.brush} .overlay`);
 			const brushSize = {width: 0, height: 0};
 
 			if (brush.size()) {

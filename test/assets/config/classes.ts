@@ -3,6 +3,5 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-import CLASS from "../../../src/config/classes";
-
-export default CLASS;
+export * from "../../../src/config/classes";
+export {default} from "../../../src/config/classes";

@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $COMMON, $RADAR} from "../../src/config/classes";
 
 describe("SHAPE RADAR", () => {
 	let chart;
@@ -34,18 +34,18 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("radar should be positioned at center", () => {
-			const rect = chart.$.main.select(`.${CLASS.chartRadars}`).node().getBoundingClientRect();
+			const rect = chart.$.main.select(`.${$RADAR.chartRadars}`).node().getBoundingClientRect();
 			const left = (chart.$.chart.node().getBoundingClientRect().width - rect.width) / 2;
 
 			expect(left).to.be.closeTo(rect.x, 5);
 		});
 
 		it("data points should positioned next to radar polygon element", () => {
-			expect(chart.internal.$el.radar.select(`.${CLASS.target}-data1 polygon`).node().nextSibling.querySelectorAll("circle").length).to.equal(3);
+			expect(chart.internal.$el.radar.select(`.${$COMMON.target}-data1 polygon`).node().nextSibling.querySelectorAll("circle").length).to.equal(3);
 		});
 
 		it("check for shape rendering", done => {
-			const radar = chart.$.main.select(`.${CLASS.chartRadars}`);
+			const radar = chart.$.main.select(`.${$RADAR.chartRadars}`);
 			const expectedPoints = "233,30.290000000000003 233,233 309.32696069614934,277.06739130434784";
 
 			setTimeout(() => {
@@ -56,12 +56,12 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("Should render level, axes and data edges", () => {
-			const radar = chart.$.main.select(`.${CLASS.chartRadars}`);
+			const radar = chart.$.main.select(`.${$RADAR.chartRadars}`);
 			const data = chart.data();
 			const dataLen = data[0].values.length;
 
-			const axes = radar.selectAll(`.${CLASS.axis} g`);
-			const levels = radar.selectAll(`.${CLASS.levels} g`);
+			const axes = radar.selectAll(`.${$AXIS.axis} g`);
+			const levels = radar.selectAll(`.${$RADAR.levels} g`);
 
 			expect(axes.size()).to.be.equal(dataLen);
 			expect(levels.size()).to.be.equal(dataLen);
@@ -86,8 +86,8 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check for axis options", () => {
-			const radar = chart.$.main.select(`.${CLASS.chartRadars}`);
-			const axis = radar.selectAll(`.${CLASS.axis}`);
+			const radar = chart.$.main.select(`.${$RADAR.chartRadars}`);
+			const axis = radar.selectAll(`.${$AXIS.axis}`);
 
 			expect(axis.selectAll("line").empty()).to.be.true;
 			expect(axis.selectAll("text").empty()).to.be.true;
@@ -101,8 +101,8 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check for level options", () => {
-			const radar = chart.$.main.select(`.${CLASS.chartRadars}`);
-			const levels = radar.select(`.${CLASS.levels}`);
+			const radar = chart.$.main.select(`.${$RADAR.chartRadars}`);
+			const levels = radar.select(`.${$RADAR.levels}`);
 			const level = levels.selectAll("polygon");
 
 			// check for level element depth size
@@ -121,9 +121,9 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check for resize", () => {
-			const radars = chart.$.main.select(`.${CLASS.chartRadars}`);
-			const level = radars.select(`.${CLASS.levels}`);
-			const axis = radars.select(`.${CLASS.axis}`);
+			const radars = chart.$.main.select(`.${$RADAR.chartRadars}`);
+			const level = radars.select(`.${$RADAR.levels}`);
+			const axis = radars.select(`.${$AXIS.axis}`);
 
 			const old = [radars, level, axis].map(v => util.getBBox(v));
 
@@ -142,7 +142,7 @@ describe("SHAPE RADAR", () => {
 			// retrieve point data for next the next test
 			points = [];
 
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`)
+			chart.$.main.selectAll(`.${$RADAR.chartRadars} .${$AXIS.axis} text`)
 				.each(function() {
 					points.push([+this.getAttribute("x"), +this.getAttribute("y")]);
 				});
@@ -153,7 +153,7 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check for direction", () => {
-			const texts = chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`);
+			const texts = chart.$.main.selectAll(`.${$RADAR.chartRadars} .${$AXIS.axis} text`);
 
 			texts.each(function(d, i) {
 				const newPoints = [+this.getAttribute("x"), +this.getAttribute("y")];
@@ -186,7 +186,7 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check for multiline axis text", () => {
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`)
+			chart.$.main.selectAll(`.${$RADAR.chartRadars} .${$AXIS.axis} text`)
 				.each(function(d, i) {
 					expect(this.childNodes.length).to.be.equal(i === 2 ? 1 : 2);
 				});
@@ -215,7 +215,7 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check if default indexed axis text are showing", () => {
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`)
+			chart.$.main.selectAll(`.${$RADAR.chartRadars} .${$AXIS.axis} text`)
 				.each(function(d, i) {
 					expect(+this.textContent).to.be.equal(i);
 				});
@@ -240,7 +240,7 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check for the default text position", () => {
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} g`)
+			chart.$.main.selectAll(`.${$RADAR.chartRadars} .${$AXIS.axis} g`)
 				.each(function(d, i) {
 					const line = this.firstChild.getBoundingClientRect();
 					const text = this.lastChild.getBoundingClientRect();
@@ -268,7 +268,7 @@ describe("SHAPE RADAR", () => {
 				}
 			};
 
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`)
+			chart.$.main.selectAll(`.${$RADAR.chartRadars} .${$AXIS.axis} text`)
 				.each(function() {
 					textPos.push(this.getBoundingClientRect());
 				});
@@ -277,7 +277,7 @@ describe("SHAPE RADAR", () => {
 		it("check for axis text position", () => {
 			const {x, y} = args.radar.axis.text.position;
 
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`)
+			chart.$.main.selectAll(`.${$RADAR.chartRadars} .${$AXIS.axis} text`)
 				.each(function(d, i) {
 					const rect = this.getBoundingClientRect();
 					let distance = 0;

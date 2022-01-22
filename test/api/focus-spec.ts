@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$COMMON, $FOCUS, $LEGEND, $LINE} from "../../src/config/classes";
 
 describe("API focus", function() {
 	let chart;
@@ -14,9 +14,9 @@ describe("API focus", function() {
 	let main;
 
 	// focus class name
-	const focused = CLASS.focused;
-	const defocused = CLASS.defocused;
-	const itemFocused = CLASS.legendItemFocused;
+	const focused = $FOCUS.focused;
+	const defocused = $FOCUS.defocused;
+	const itemFocused = $FOCUS.legendItemFocused;
 
 	// get fixed number
 	const getFixed = (val, len = 1) => +(+val).toFixed(len);
@@ -151,8 +151,8 @@ describe("API focus", function() {
 
 
 		it("should defocus one target", () => {
-			const targets = main.selectAll(`.${CLASS.chartLine}.${CLASS.target}`);
-			const legendItems = legend.selectAll(`.${CLASS.legendItem}`);
+			const targets = main.selectAll(`.${$LINE.chartLine}.${$COMMON.target}`);
+			const legendItems = legend.selectAll(`.${$LEGEND.legendItem}`);
 
 			chart.focus();
 			chart.defocus("data2");
@@ -183,8 +183,8 @@ describe("API focus", function() {
 		});
 
 		it("should defocus multiple targets", done => {
-			const targets = main.selectAll(`.${CLASS.chartLine}.${CLASS.target}`);
-			const legendItems = legend.selectAll(`.${CLASS.legendItem}`);
+			const targets = main.selectAll(`.${$LINE.chartLine}.${$COMMON.target}`);
+			const legendItems = legend.selectAll(`.${$LEGEND.legendItem}`);
 
 			chart.focus();
 			chart.defocus(["data1", "data2"]);
@@ -223,7 +223,7 @@ describe("API focus", function() {
 			setTimeout(() => {
 				chart.defocus(["data1", "data2"]);
 				setTimeout(() => {
-					const className = `.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data`;
+					const className = `.${$LINE.chartLine}.${$COMMON.target}.${$COMMON.target}-data`;
 					const targets = {
 						data1: main.select(`${className}1`),
 						data2: main.select(`${className}2`),
@@ -231,9 +231,9 @@ describe("API focus", function() {
 					};
 
 					const legendItems = {
-						data1: legend.select(`.${CLASS.legendItem}-data1`),
-						data2: legend.select(`.${CLASS.legendItem}-data2`),
-						data3: legend.select(`.${CLASS.legendItem}-data3`)
+						data1: legend.select(`.${$LEGEND.legendItem}-data1`),
+						data2: legend.select(`.${$LEGEND.legendItem}-data2`),
+						data3: legend.select(`.${$LEGEND.legendItem}-data3`)
 					};
 
 					expect(targets.data1.classed(defocused)).to.be.ok;
@@ -267,8 +267,8 @@ describe("API focus", function() {
 				chart.revert();
 
 				setTimeout(() => {
-					const targets = main.selectAll(`.${CLASS.chartLine}.${CLASS.target}`);
-					const legendItems = legend.selectAll(`.${CLASS.legendItem}`);
+					const targets = main.selectAll(`.${$LINE.chartLine}.${$COMMON.target}`);
+					const legendItems = legend.selectAll(`.${$LEGEND.legendItem}`);
 
 					targets.each(function() {
 						const line = d3Select(this);
@@ -296,8 +296,8 @@ describe("API focus", function() {
 				chart.revert();
 
 				setTimeout(function () {
-					const targets = main.selectAll(`.${CLASS.chartLine}.${CLASS.target}`);
-					const legendItems = legend.selectAll(`.${CLASS.legendItem}`);
+					const targets = main.selectAll(`.${$LINE.chartLine}.${$COMMON.target}`);
+					const legendItems = legend.selectAll(`.${$LEGEND.legendItem}`);
 
 					targets.each(function () {
 						const line = d3Select(this);
@@ -325,7 +325,7 @@ describe("API focus", function() {
 				chart.revert("data2");
 
 				setTimeout(() => {
-					const className = `.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data`;
+					const className = `.${$LINE.chartLine}.${$COMMON.target}.${$COMMON.target}-data`;
 					const targets = {
 						data1: main.select(`${className}1`),
 						data2: main.select(`${className}2`),
@@ -333,9 +333,9 @@ describe("API focus", function() {
 					};
 
 					const legendItems = {
-						data1: legend.select(`.${CLASS.legendItem}-data1`),
-						data2: legend.select(`.${CLASS.legendItem}-data2`),
-						data3: legend.select(`.${CLASS.legendItem}-data3`)
+						data1: legend.select(`.${$LEGEND.legendItem}-data1`),
+						data2: legend.select(`.${$LEGEND.legendItem}-data2`),
+						data3: legend.select(`.${$LEGEND.legendItem}-data3`)
 					};
 
 					expect(targets.data1.classed(focused)).to.be.ok;
@@ -373,7 +373,7 @@ describe("API focus", function() {
 				chart.revert("data2");
 
 				setTimeout(() => {
-					const className = `.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data`;
+					const className = `.${$LINE.chartLine}.${$COMMON.target}.${$COMMON.target}-data`;
 					const targets = {
 						data1: main.select(`${className}1`),
 						data2: main.select(`${className}2`),
@@ -381,9 +381,9 @@ describe("API focus", function() {
 					};
 
 					const legendItems = {
-						data1: legend.select(`.${CLASS.legendItem}-data1`),
-						data2: legend.select(`.${CLASS.legendItem}-data2`),
-						data3: legend.select(`.${CLASS.legendItem}-data3`)
+						data1: legend.select(`.${$LEGEND.legendItem}-data1`),
+						data2: legend.select(`.${$LEGEND.legendItem}-data2`),
+						data3: legend.select(`.${$LEGEND.legendItem}-data3`)
 					};
 
 					expect(targets.data1.classed(defocused)).to.be.ok;
@@ -415,7 +415,7 @@ describe("API focus", function() {
 				chart.revert(["data1", "data2"]);
 
 				setTimeout(() => {
-					const className = `.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data`;
+					const className = `.${$LINE.chartLine}.${$COMMON.target}.${$COMMON.target}-data`;
 					const targets = {
 						data1: main.select(`${className}1`),
 						data2: main.select(`${className}2`),
@@ -423,9 +423,9 @@ describe("API focus", function() {
 					};
 
 					const legendItems = {
-						data1: legend.select(`.${CLASS.legendItem}-data1`),
-						data2: legend.select(`.${CLASS.legendItem}-data2`),
-						data3: legend.select(`.${CLASS.legendItem}-data3`)
+						data1: legend.select(`.${$LEGEND.legendItem}-data1`),
+						data2: legend.select(`.${$LEGEND.legendItem}-data2`),
+						data3: legend.select(`.${$LEGEND.legendItem}-data3`)
 					};
 
 					expect(targets.data1.classed(focused)).to.not.be.ok;
@@ -463,7 +463,7 @@ describe("API focus", function() {
 				chart.revert(["data1", "data2"]);
 
 				setTimeout(() => {
-					const className = `.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data`;
+					const className = `.${$LINE.chartLine}.${$COMMON.target}.${$COMMON.target}-data`;
 					const targets = {
 						data1: main.select(`${className}1`),
 						data2: main.select(`${className}2`),
@@ -471,9 +471,9 @@ describe("API focus", function() {
 					};
 
 					const legendItems = {
-						data1: legend.select(`.${CLASS.legendItem}-data1`),
-						data2: legend.select(`.${CLASS.legendItem}-data2`),
-						data3: legend.select(`.${CLASS.legendItem}-data3`)
+						data1: legend.select(`.${$LEGEND.legendItem}-data1`),
+						data2: legend.select(`.${$LEGEND.legendItem}-data2`),
+						data3: legend.select(`.${$LEGEND.legendItem}-data3`)
 					};
 
 					expect(targets.data1.classed(defocused)).to.not.be.ok;
@@ -531,7 +531,7 @@ describe("API focus", function() {
 			chart.focus();
 
 			setTimeout(() => {
-				const targets = main.select(`.${CLASS.chartLine}.${CLASS.target}`);
+				const targets = main.select(`.${$LINE.chartLine}.${$COMMON.target}`);
 
 				targets.each(function() {
 					const line = d3Select(this);
@@ -570,7 +570,7 @@ describe("API focus", function() {
 				chart.revert();
 
 				setTimeout(() => {
-					const targets = main.select(`.${CLASS.chartLine}.${CLASS.target}`);
+					const targets = main.select(`.${$LINE.chartLine}.${$COMMON.target}`);
 
 					targets.each(function() {
 						const line = d3Select(this);

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {transition as d3Transition} from "d3-transition";
-import CLASS from "../../config/classes";
+import {$COMMON, $SELECT, $TEXT} from "../../config/classes";
 import {generateWait} from "../../module/generator";
 import {callFn, capitalize, getOption, isTabVisible, notEmpty} from "../../module/util";
 
@@ -47,7 +47,7 @@ export default {
 			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
 			// Data empty label positioning and text.
-			config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
+			config.data_empty_label_text && main.select(`text.${$TEXT.text}.${$COMMON.empty}`)
 				.attr("x", state.width / 2)
 				.attr("y", state.height / 2)
 				.text(config.data_empty_label_text)
@@ -69,7 +69,7 @@ export default {
 
 
 			// circles for select
-			$el.text && main.selectAll(`.${CLASS.selectedCircles}`)
+			$el.text && main.selectAll(`.${$SELECT.selectedCircles}`)
 				.filter($$.isBarType.bind($$))
 				.selectAll("circle")
 				.remove();

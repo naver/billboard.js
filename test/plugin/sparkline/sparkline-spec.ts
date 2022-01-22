@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 import {expect} from "chai";
-import CLASS from "../../../src/config/classes";
+import {$CIRCLE, $COMMON} from "../../../src/config/classes";
 import Sparkline from "../../../src/Plugin/sparkline";
 import util from "../../assets/util";
 
@@ -68,10 +68,10 @@ describe("PLUGIN: SPARKLINE", () => {
 		expect(tooltip.select(".name").text()).to.be.equal("data1");
 		expect(tooltip.select(".value").text()).to.be.equal("30");
 
-		const circle = svg.querySelector(`.${CLASS.EXPANDED}`);
+		const circle = svg.querySelector(`.${$COMMON.EXPANDED}`);
 
 		expect(circle).to.be.ok;
-		expect(circle.classList.contains(`${CLASS.circle}-0`)).to.be.true;
+		expect(circle.classList.contains(`${$CIRCLE.circle}-0`)).to.be.true;
 
 		// when
 		util.fireEvent(svg, "mouseout", {

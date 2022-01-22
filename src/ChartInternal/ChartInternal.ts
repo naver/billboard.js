@@ -12,8 +12,7 @@ import {
 import {select as d3Select} from "d3-selection";
 import {d3Selection} from "../../types/types";
 import {checkModuleImport} from "../module/error";
-
-import CLASS from "../config/classes";
+import {$COMMON, $TEXT} from "../config/classes";
 import Store from "../config/Store/Store";
 import Options from "../config/Options/Options";
 import {document, window} from "../module/browser";
@@ -413,7 +412,7 @@ export default class ChartInternal {
 
 		// Define regions
 		const main = $el.svg.append("g")
-			.classed(CLASS.main, true)
+			.classed($COMMON.main, true)
 			.attr("transform", $$.getTranslate("main"));
 
 		$el.main = main;
@@ -430,7 +429,7 @@ export default class ChartInternal {
 		// text when empty
 		if (config.data_empty_label_text) {
 			main.append("text")
-				.attr("class", `${CLASS.text} ${CLASS.empty}`)
+				.attr("class", `${$TEXT.text} ${$COMMON.empty}`)
 				.attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
 				.attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
 		}
@@ -444,7 +443,7 @@ export default class ChartInternal {
 		}
 
 		// Define g for chart area
-		main.append("g").attr("class", CLASS.chart)
+		main.append("g").attr("class", $COMMON.chart)
 			.attr("clip-path", state.clip.path);
 
 		$$.callPluginHook("$init");
@@ -645,7 +644,7 @@ export default class ChartInternal {
 		const $$ = <any> this;
 		const {$el: {svg}, $T} = $$;
 
-		$T(svg.selectAll(`.${CLASS.target}`)
+		$T(svg.selectAll(`.${$COMMON.target}`)
 			.filter(d => $$.isTargetToShow(d.id))
 		).style("opacity", null);
 	}

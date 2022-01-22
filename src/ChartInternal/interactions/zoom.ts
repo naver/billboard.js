@@ -4,7 +4,7 @@
  */
 import {drag as d3Drag} from "d3-drag";
 import {zoomIdentity as d3ZoomIdentity, zoom as d3Zoom} from "d3-zoom";
-import CLASS from "../../config/classes";
+import {$COMMON, $ZOOM} from "../../config/classes";
 import {callFn, diffDomain, getPointer, isFunction} from "../../module/util";
 
 export default {
@@ -301,7 +301,7 @@ export default {
 				if (!zoomRect) {
 					zoomRect = $$.$el.main.append("rect")
 						.attr("clip-path", state.clip.path)
-						.attr("class", CLASS.zoomBrush)
+						.attr("class", $ZOOM.zoomBrush)
 						.attr("width", isRotated ? state.width : 0)
 						.attr("height", isRotated ? 0 : state.height);
 				}
@@ -356,13 +356,13 @@ export default {
 		if (resetButton && config.zoom_type === "drag") {
 			if (!$el.zoomResetBtn) {
 				$el.zoomResetBtn = $$.$el.chart.append("div")
-					.classed(CLASS.button, true)
+					.classed($COMMON.button, true)
 					.append("span")
 					.on("click", function() {
 						isFunction(resetButton.onclick) && resetButton.onclick.bind($$.api)(this);
 						$$.api.unzoom();
 					})
-					.classed(CLASS.buttonZoomReset, true)
+					.classed($ZOOM.buttonZoomReset, true)
 					.text(resetButton.text || "Reset Zoom");
 			} else {
 				$el.zoomResetBtn.style("display", null);

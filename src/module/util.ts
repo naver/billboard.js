@@ -7,7 +7,6 @@ import {pointer as d3Pointer} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
 import {d3Selection} from "../../types/types";
 import {document, window} from "./browser";
-import CLASS from "../config/classes";
 
 export {
 	asHalfPixel,
@@ -284,7 +283,7 @@ function getBrushSelection(ctx) {
 	if (event && event.type === "brush") {
 		selection = event.selection;
 	// check from brush area selection
-	} else if (main && (selection = main.select(`.${CLASS.brush}`).node())) {
+	} else if (main && (selection = main.select(".bb-brush").node())) {
 		selection = d3BrushSelection(selection);
 	}
 

@@ -4,7 +4,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import {d3Selection} from "../../../types/types";
-import CLASS from "../../config/classes";
+import {$BAR, $CIRCLE, $COMMON, $DRAG, $SELECT, $SHAPE} from "../../config/classes";
 import {getPathBox} from "../../module/util";
 
 /**
@@ -39,30 +39,30 @@ export default {
 		const minY = isSelectionGrouped ? state.margin.top : Math.min(sy, my);
 		const maxY = isSelectionGrouped ? state.height : Math.max(sy, my);
 
-		main.select(`.${CLASS.dragarea}`)
+		main.select(`.${$DRAG.dragarea}`)
 			.attr("x", minX)
 			.attr("y", minY)
 			.attr("width", maxX - minX)
 			.attr("height", maxY - minY);
 
 		// TODO: binary search when multiple xs
-		main.selectAll(`.${CLASS.shapes}`)
-			.selectAll(`.${CLASS.shape}`)
+		main.selectAll(`.${$SHAPE.shapes}`)
+			.selectAll(`.${$SHAPE.shape}`)
 			.filter(d => isSelectable?.bind($$.api)(d))
 			.each(function(d, i) {
 				const shape: d3Selection = d3Select(this);
-				const isSelected = shape.classed(CLASS.SELECTED);
-				const isIncluded = shape.classed(CLASS.INCLUDED);
+				const isSelected = shape.classed($SELECT.SELECTED);
+				const isIncluded = shape.classed($DRAG.INCLUDED);
 				let isWithin: any = false;
 				let toggle;
 
-				if (shape.classed(CLASS.circle)) {
+				if (shape.classed($CIRCLE.circle)) {
 					const x: number = +shape.attr("cx") * 1;
 					const y: number = +shape.attr("cy") * 1;
 
 					toggle = $$.togglePoint;
 					isWithin = minX < x && x < maxX && minY < y && y < maxY;
-				} else if (shape.classed(CLASS.bar)) {
+				} else if (shape.classed($BAR.bar)) {
 					const {x, y, width, height} = getPathBox(this);
 
 					toggle = $$.togglePath;
@@ -74,9 +74,9 @@ export default {
 
 				// @ts-ignore
 				if (isWithin ^ isIncluded) {
-					shape.classed(CLASS.INCLUDED, !isIncluded);
+					shape.classed($DRAG.INCLUDED, !isIncluded);
 					// TODO: included/unincluded callback here
-					shape.classed(CLASS.SELECTED, !isSelected);
+					shape.classed($SELECT.SELECTED, !isSelected);
 					toggle.call($$, !isSelected, shape, d, i);
 				}
 			});
@@ -98,9 +98,9 @@ export default {
 
 		state.dragStart = mouse;
 
-		main.select(`.${CLASS.chart}`)
+		main.select(`.${$COMMON.chart}`)
 			.append("rect")
-			.attr("class", CLASS.dragarea)
+			.attr("class", $DRAG.dragarea)
 			.style("opacity", "0.1");
 
 		$$.setDragStatus(true);
@@ -119,12 +119,12 @@ export default {
 			return;
 		}
 
-		$T(main.select(`.${CLASS.dragarea}`))
+		$T(main.select(`.${$DRAG.dragarea}`))
 			.style("opacity", "0")
 			.remove();
 
-		main.selectAll(`.${CLASS.shape}`)
-			.classed(CLASS.INCLUDED, false);
+		main.selectAll(`.${$SHAPE.shape}`)
+			.classed($DRAG.INCLUDED, false);
 
 		$$.setDragStatus(false);
 	}

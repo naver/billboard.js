@@ -7,7 +7,7 @@ import {
 	namespaces as d3Namespaces
 } from "d3-selection";
 import {document} from "../../module/browser";
-import CLASS from "../../config/classes";
+import {$FOCUS, $GAUGE, $LEGEND} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {callFn, isDefined, getOption, isEmpty, isFunction, notEmpty, tplProcess} from "../../module/util";
 
@@ -26,7 +26,7 @@ export default {
 		if (config.legend_show) {
 			if (!config.legend_contents_bindto) {
 				$el.legend = $$.$el.svg.append("g")
-					.classed(CLASS.legend, true)
+					.classed($LEGEND.legend, true)
 					.attr("transform", $$.getTranslate("legend"));
 			}
 
@@ -68,8 +68,8 @@ export default {
 		}
 
 		// toggle legend state
-		$el.legend.selectAll(`.${CLASS.legendItem}`)
-			.classed(CLASS.legendItemHidden, function(id) {
+		$el.legend.selectAll(`.${$LEGEND.legendItem}`)
+			.classed($LEGEND.legendItemHidden, function(id) {
 				const hide = !$$.isTargetToShow(id);
 
 				if (hide) {
@@ -209,7 +209,7 @@ export default {
 		const {legend} = this.$el;
 
 		if (legend) {
-			legend.select(`.${CLASS.legendItem}-${id} line`)
+			legend.select(`.${$LEGEND.legendItem}-${id} line`)
 				.style("stroke", color);
 		}
 	},
@@ -251,7 +251,7 @@ export default {
 	 * @private
 	 */
 	opacityForUnfocusedLegend(legendItem): string | null {
-		return legendItem.classed(CLASS.legendItemHidden) ? null : "0.3";
+		return legendItem.classed($LEGEND.legendItemHidden) ? null : "0.3";
 	},
 
 	/**
@@ -265,9 +265,9 @@ export default {
 		const {$el: {legend}, $T} = $$;
 		const targetIdz = $$.mapToTargetIds(targetIds);
 
-		legend && $T(legend.selectAll(`.${CLASS.legendItem}`)
+		legend && $T(legend.selectAll(`.${$LEGEND.legendItem}`)
 			.filter(id => targetIdz.indexOf(id) >= 0)
-			.classed(CLASS.legendItemFocused, focus))
+			.classed($FOCUS.legendItemFocused, focus))
 			.style("opacity", function() {
 				return focus ? null :
 					$$.opacityForUnfocusedLegend.call($$, d3Select(this));
@@ -282,8 +282,8 @@ export default {
 		const $$ = this;
 		const {$el: {legend}, $T} = $$;
 
-		legend && $T(legend.selectAll(`.${CLASS.legendItem}`)
-			.classed(CLASS.legendItemFocused, false))
+		legend && $T(legend.selectAll(`.${$LEGEND.legendItem}`)
+			.classed($FOCUS.legendItemFocused, false))
 			.style("opacity", null);
 	},
 
@@ -353,7 +353,7 @@ export default {
 			data = (!state.redrawing && cache.get(cacheKey)) || {};
 
 			if (!data[id]) {
-				data[id] = $$.getTextRect(textElement, CLASS.legendItem);
+				data[id] = $$.getTextRect(textElement, $LEGEND.legendItem);
 				cache.add(cacheKey, data);
 			}
 
@@ -379,7 +379,7 @@ export default {
 				const node = d3Select(this);
 				const itemClass = (!node.empty() && node.attr("class")) || "";
 
-				return itemClass + $$.generateClass(CLASS.legendItem, id);
+				return itemClass + $$.generateClass($LEGEND.legendItem, id);
 			})
 			.style("visibility", id => ($$.isLegendToShow(id) ? null : "hidden"));
 
@@ -395,7 +395,7 @@ export default {
 							api.toggle(id);
 
 							d3Select(this)
-								.classed(CLASS.legendItemFocused, false);
+								.classed($FOCUS.legendItemFocused, false);
 						}
 					}
 
@@ -405,10 +405,10 @@ export default {
 			!isTouch && item
 				.on("mouseout", function(event, id) {
 					if (!callFn(config.legend_item_onout, api, id)) {
-						d3Select(this).classed(CLASS.legendItemFocused, false);
+						d3Select(this).classed($FOCUS.legendItemFocused, false);
 
 						if (hasGauge) {
-							$$.undoMarkOverlapped($$, `.${CLASS.gaugeValue}`);
+							$$.undoMarkOverlapped($$, `.${$GAUGE.gaugeValue}`);
 						}
 
 						$$.api.revert();
@@ -416,10 +416,10 @@ export default {
 				})
 				.on("mouseover", function(event, id) {
 					if (!callFn(config.legend_item_onover, api, id)) {
-						d3Select(this).classed(CLASS.legendItemFocused, true);
+						d3Select(this).classed($FOCUS.legendItemFocused, true);
 
 						if (hasGauge) {
-							$$.markOverlapped(id, $$, `.${CLASS.gaugeValue}`);
+							$$.markOverlapped(id, $$, `.${$GAUGE.gaugeValue}`);
 						}
 
 						if (!state.transiting && $$.isTargetToShow(id)) {
@@ -567,7 +567,7 @@ export default {
 		const pos = -200;
 
 		// Define g for legend area
-		const l = legend.selectAll(`.${CLASS.legendItem}`)
+		const l = legend.selectAll(`.${$LEGEND.legendItem}`)
 			.data(targetIdz)
 			.enter()
 			.append("g");
@@ -584,7 +584,7 @@ export default {
 			.attr("y", isLegendRightOrInset ? pos : yForLegendText);
 
 		l.append("rect")
-			.attr("class", CLASS.legendItemEvent)
+			.attr("class", $LEGEND.legendItemEvent)
 			.style("fill-opacity", "0")
 			.attr("x", isLegendRightOrInset ? xForLegendRect : pos)
 			.attr("y", isLegendRightOrInset ? pos : yForLegendRect);
@@ -616,7 +616,7 @@ export default {
 
 				return document.createElementNS(d3Namespaces.svg, ("hasValidPointType" in $$) && $$.hasValidPointType(point) ? point : "use");
 			})
-				.attr("class", CLASS.legendItemPoint)
+				.attr("class", $LEGEND.legendItemPoint)
 				.style("fill", getColor)
 				.style("pointer-events", "none")
 				.attr("href", (data, idx, selection) => {
@@ -628,7 +628,7 @@ export default {
 				});
 		} else {
 			l.append("line")
-				.attr("class", CLASS.legendItemTile)
+				.attr("class", $LEGEND.legendItemTile)
 				.style("stroke", getColor)
 				.style("pointer-events", "none")
 				.attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
@@ -639,11 +639,11 @@ export default {
 		}
 
 		// Set background for inset legend
-		background = legend.select(`.${CLASS.legendBackground} rect`);
+		background = legend.select(`.${$LEGEND.legendBackground} rect`);
 
 		if (state.isLegendInset && maxWidth > 0 && background.size() === 0) {
-			background = legend.insert("g", `.${CLASS.legendItem}`)
-				.attr("class", CLASS.legendBackground)
+			background = legend.insert("g", `.${$LEGEND.legendItem}`)
+				.attr("class", $LEGEND.legendBackground)
 				.append("rect");
 		}
 
@@ -658,7 +658,7 @@ export default {
 			.attr("x", xForLegendText)
 			.attr("y", yForLegendText);
 
-		const rects = legend.selectAll(`rect.${CLASS.legendItemEvent}`)
+		const rects = legend.selectAll(`rect.${$LEGEND.legendItemEvent}`)
 			.data(targetIdz);
 
 		$T(rects, withTransition)
@@ -668,7 +668,7 @@ export default {
 			.attr("y", yForLegendRect);
 
 		if (usePoint) {
-			const tiles = legend.selectAll(`.${CLASS.legendItemPoint}`)
+			const tiles = legend.selectAll(`.${$LEGEND.legendItemPoint}`)
 				.data(targetIdz);
 
 			$T(tiles, withTransition)
@@ -707,7 +707,7 @@ export default {
 						.attr("height", height);
 				});
 		} else {
-			const tiles = legend.selectAll(`line.${CLASS.legendItemTile}`)
+			const tiles = legend.selectAll(`line.${$LEGEND.legendItemTile}`)
 				.data(targetIdz);
 
 			$T(tiles, withTransition)

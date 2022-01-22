@@ -7,7 +7,7 @@ import {expect} from "chai";
 import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $COMMON, $GRID} from "../../src/config/classes";
 import {window, document} from "../../src/module/browser";
 
 describe("CORE", function() {
@@ -56,7 +56,7 @@ describe("CORE", function() {
 		});
 
 		it("y2 Axis shouldn't be generated", () => {
-			const y2 = chart.$.main.select(`.${CLASS.axisY2}`);
+			const y2 = chart.$.main.select(`.${$AXIS.axisY2}`);
 
 			expect(y2.empty()).to.be.true;
 		});
@@ -251,7 +251,7 @@ describe("CORE", function() {
 		});
 
 		it("should generate a chart", () => {
-			const ticks = chart.$.main.select(`.${CLASS.axisX}`)
+			const ticks = chart.$.main.select(`.${$AXIS.axisX}`)
 				.selectAll("g.tick");
 
 			expect(ticks.size()).to.be.equal(0);
@@ -278,7 +278,7 @@ describe("CORE", function() {
 		});
 
 		it("should generate a chart", () => {
-			const ticks = chart.$.main.select(`.${CLASS.axisX}`)
+			const ticks = chart.$.main.select(`.${$AXIS.axisX}`)
 				.selectAll("g.tick");
 
 			expect(ticks.size()).to.be.equal(0);
@@ -299,7 +299,7 @@ describe("CORE", function() {
 		});
 
 		it("chart should have clip-path property", () => {
-			const main = chart.$.main.select(`.${CLASS.chart}`);
+			const main = chart.$.main.select(`.${$COMMON.chart}`);
 
 			expect(main.attr("clip-path")).to.not.be.null;
 		});
@@ -313,7 +313,7 @@ describe("CORE", function() {
 		});
 
 		it("check for chart node's position", () => {
-			const next = chart.$.main.select(`.${CLASS.axisY2}`).node().nextSibling;
+			const next = chart.$.main.select(`.${$AXIS.axisY2}`).node().nextSibling;
 
 			// axis element should be the last positioned
 			expect(next).to.be.null;
@@ -324,16 +324,16 @@ describe("CORE", function() {
 		});
 
 		it("clip-path property should be null", () => {
-			const main = chart.$.main.select(`.${CLASS.chart}`);
+			const main = chart.$.main.select(`.${$COMMON.chart}`);
 
 			expect(main.attr("clip-path")).to.be.null;
 		});
 
 		it("check for chart node's position", () => {
-			const previous = chart.$.main.select(`.${CLASS.chart}`).node().previousSibling;
+			const previous = chart.$.main.select(`.${$COMMON.chart}`).node().previousSibling;
 
 			// chart element should positioned after axis element
-			expect(d3Select(previous).classed(CLASS.grid)).to.be.true;
+			expect(d3Select(previous).classed($GRID.grid)).to.be.true;
 		});
 	});
 

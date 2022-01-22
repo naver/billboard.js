@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import {timeFormat as d3TimeFormat} from "d3-time-format";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$TOOLTIP} from "../../src/config/classes";
 import sinon from "sinon";
 
 describe("API tooltip", () => {
@@ -52,7 +52,7 @@ describe("API tooltip", () => {
 			// check if tooltip data are correctly rendered
 			chart.data().forEach(v => {
 				const id = v.id;
-				const data = tooltip.select(`.${CLASS.tooltipName}-${id}`);
+				const data = tooltip.select(`.${$TOOLTIP.tooltipName}-${id}`);
 				const value = chart.data(id)[0].values[x];
 
 				expect(id).to.be.equal(v.id);

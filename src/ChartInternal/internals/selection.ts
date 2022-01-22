@@ -4,7 +4,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import drag from "../interactions/drag";
-import CLASS from "../../config/classes";
+import {$SELECT, $SHAPE} from "../../config/classes";
 import {callFn} from "../../module/util";
 
 export default {
@@ -28,12 +28,12 @@ export default {
 		callFn(config.data_onselected, $$.api, d, target.node());
 
 		// add selected-circle on low layer g
-		$T(main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
-			.selectAll(`.${CLASS.selectedCircle}-${i}`)
+		$T(main.select(`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
+			.selectAll(`.${$SELECT.selectedCircle}-${i}`)
 			.data([d])
 			.enter()
 			.append("circle")
-			.attr("class", () => $$.generateClass(CLASS.selectedCircle, i))
+			.attr("class", () => $$.generateClass($SELECT.selectedCircle, i))
 			.attr("cx", cx)
 			.attr("cy", cy)
 			.attr("stroke", $$.color)
@@ -55,8 +55,8 @@ export default {
 		callFn(config.data_onunselected, $$.api, d, target.node());
 
 		// remove selected-circle from low layer g
-		$T(main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
-			.selectAll(`.${CLASS.selectedCircle}-${i}`)
+		$T(main.select(`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
+			.selectAll(`.${$SELECT.selectedCircle}-${i}`)
 		)
 			.attr("r", 0)
 			.remove();
@@ -153,32 +153,32 @@ export default {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const shape = d3Select(that);
-		const isSelected = shape.classed(CLASS.SELECTED);
+		const isSelected = shape.classed($SELECT.SELECTED);
 		const toggle = $$.getToggle(that, d).bind($$);
 		let toggledShape;
 
 		if (config.data_selection_enabled && config.data_selection_isselectable.bind($$.api)(d)) {
 			if (!config.data_selection_multiple) {
-				let selector = `.${CLASS.shapes}`;
+				let selector = `.${$SHAPE.shapes}`;
 
 				if (config.data_selection_grouped) {
 					selector += $$.getTargetSelectorSuffix(d.id);
 				}
 
 				main.selectAll(selector)
-					.selectAll(`.${CLASS.shape}`)
+					.selectAll(`.${$SHAPE.shape}`)
 					.each(function(d, i) {
 						const shape = d3Select(this);
 
-						if (shape.classed(CLASS.SELECTED)) {
+						if (shape.classed($SELECT.SELECTED)) {
 							toggledShape = shape;
-							toggle(false, shape.classed(CLASS.SELECTED, false), d, i);
+							toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
 						}
 					});
 			}
 
 			if (!toggledShape || toggledShape.node() !== shape.node()) {
-				shape.classed(CLASS.SELECTED, !isSelected);
+				shape.classed($SELECT.SELECTED, !isSelected);
 				toggle(!isSelected, shape, d, i);
 			}
 		}

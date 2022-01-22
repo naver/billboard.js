@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $BAR, $GAUGE} from "../../src/config/classes";
 import bb from "../../src";
 
 describe("API chart", () => {
@@ -47,7 +47,7 @@ describe("API chart", () => {
 
 		it("should update groups correctly", done => {
 			const main = chart.$.main;
-			const path = main.select(`.${CLASS.bars}-data1 path`);
+			const path = main.select(`.${$BAR.bars}-data1 path`);
 			const barWidth = util.getBBox(path).width;
 
 			chart.groups([
@@ -199,7 +199,7 @@ describe("API chart", () => {
 			max = +chart.config("gauge.max", expected, true);
 
 			expect(max).to.be.equal(expected);
-			expect(+chart.$.arc.select(`.${CLASS.chartArcsGaugeMax}`).text()).to.be.equal(expected);
+			expect(+chart.$.arc.select(`.${$GAUGE.chartArcsGaugeMax}`).text()).to.be.equal(expected);
 		});
 
 		it("set options", () => {
@@ -220,7 +220,7 @@ describe("API chart", () => {
 		});
 
 		it("check for the axis config update", () => {
-			const axisYTick = chart.$.main.selectAll(`.${CLASS.axisY} .tick`);
+			const axisYTick = chart.$.main.selectAll(`.${$AXIS.axisY} .tick`);
 			const expected = [];
 
 			// axis y tick is outer
