@@ -251,10 +251,12 @@ export default {
 	 */
 	getShapeYMin(id: string): number {
 		const $$ = this;
-		const scale = $$.scale[$$.axis.getId(id)];
+		const axisId = $$.axis.getId(id);
+		const scale = $$.scale[axisId];
 		const [yMin] = scale.domain();
+		const inverted = $$.config[`axis_${axisId}_inverted`];
 
-		return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
+		return !$$.isGrouped(id) && !inverted && yMin > 0 ? yMin : 0;
 	},
 
 	/**
