@@ -197,7 +197,7 @@ class Axis {
 	 */
 	updateAxes() {
 		const $$ = this.owner;
-		const {config, $el: {main}} = $$;
+		const {config, $el: {main}, $T} = $$;
 
 		Object.keys(this.axesList).forEach(id => {
 			const axesConfig = config[`axis_${id}_axes`];
@@ -224,7 +224,7 @@ class Axis {
 				} else {
 					axesConfig[i].domain && scale.domain(axesConfig[i].domain);
 
-					$$.$T(g).call(v.scale(scale));
+					$T(g).call(v.scale(scale));
 				}
 
 				g.attr("transform", $$.getTranslate(id, i + 1));
@@ -891,11 +891,12 @@ class Axis {
 		}
 
 		["y", "y2"].forEach(key => {
+			const prefix = `axis_${key}_`;
 			const axisScale = scale[key];
 
-			if (axisScale) {
-				const tickValues = config[`axis_${key}_tick_values`];
-				const tickCount = config[`axis_${key}_tick_count`];
+			if (config[`${prefix}show`] && axisScale) {
+				const tickValues = config[`${prefix}tick_values`];
+				const tickCount = config[`${prefix}tick_count`];
 
 				axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
 

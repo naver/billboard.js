@@ -258,4 +258,43 @@ describe("DOMAIN", function() {
 			});
 		});
 	});
+
+	describe("data.axes with combination of zerobased and non-zerobased types.", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150],
+						["data2", 130, 100, 200, 250, 250]
+					],
+					axes: {
+						data1: "y1",
+						data2: "y2"
+					},
+					types: {
+						data1: "bar",
+						data2: "line"
+					}
+				  },
+				  axis: {
+					y: {
+						show: false
+					},
+					y2: {
+						show: true
+					}
+				}
+			};
+		});
+
+		it("y2 domain value shouldn't be chaging.", () => {
+			const {scale: {y2}} = chart.internal;
+			const domain = y2.domain();
+
+			// when toogling, y2 domain should stay same without changes
+			chart.toggle("data1");
+
+			expect(y2.domain()).to.be.deep.equal(domain);
+		});
+	});
 });
