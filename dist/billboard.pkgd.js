@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.0-nightly-20220122004528
+ * @version 3.3.0-nightly-20220127004529
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -31407,11 +31407,13 @@ function stepAfter(context) {
    */
   getShapeYMin: function getShapeYMin(id) {
     var $$ = this,
-        scale = $$.scale[$$.axis.getId(id)],
+        axisId = $$.axis.getId(id),
+        scale = $$.scale[axisId],
         _scale$domain = scale.domain(),
-        yMin = _scale$domain[0];
+        yMin = _scale$domain[0],
+        inverted = $$.config["axis_" + axisId + "_inverted"];
 
-    return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
+    return !$$.isGrouped(id) && !inverted && yMin > 0 ? yMin : 0;
   },
 
   /**

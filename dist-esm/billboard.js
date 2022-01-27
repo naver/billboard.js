@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.0-nightly-20220122004528
+ * @version 3.3.0-nightly-20220127004529
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -6385,9 +6385,11 @@ var shape = {
      */
     getShapeYMin: function (id) {
         var $$ = this;
-        var scale = $$.scale[$$.axis.getId(id)];
+        var axisId = $$.axis.getId(id);
+        var scale = $$.scale[axisId];
         var yMin = scale.domain()[0];
-        return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
+        var inverted = $$.config["axis_".concat(axisId, "_inverted")];
+        return !$$.isGrouped(id) && !inverted && yMin > 0 ? yMin : 0;
     },
     /**
      * Get Shape's offset data
@@ -20362,7 +20364,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.0-nightly-20220122004528
+ * @version 3.3.0-nightly-20220127004529
  */
 var bb = {
     /**
@@ -20372,7 +20374,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.0-nightly-20220122004528",
+    version: "3.3.0-nightly-20220127004529",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

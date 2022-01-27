@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.0-nightly-20220122004528
+ * @version 3.3.0-nightly-20220127004529
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -7512,11 +7512,13 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    */
   getShapeYMin: function getShapeYMin(id) {
     var $$ = this,
-        scale = $$.scale[$$.axis.getId(id)],
+        axisId = $$.axis.getId(id),
+        scale = $$.scale[axisId],
         _scale$domain = scale.domain(),
-        yMin = _scale$domain[0];
+        yMin = _scale$domain[0],
+        inverted = $$.config["axis_" + axisId + "_inverted"];
 
-    return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
+    return !$$.isGrouped(id) && !inverted && yMin > 0 ? yMin : 0;
   },
 
   /**
