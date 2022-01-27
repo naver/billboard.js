@@ -1781,94 +1781,205 @@ describe("AXIS", function() {
 		});
 	});
 
-	describe("axis.y.inner", () => {
+	describe("y/y2 Axis inner", () => {
+		describe("axis.y.inner", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 20, 10, 40, 15, 25]
+						]
+					},
+					axis: {
+						y: {
+							inner: false
+						}
+					}
+				};
+			});
+
+			it("should not have inner y axis", () => {
+				const paddingLeft = chart.internal.getCurrentPaddingLeft();
+				const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY} g.tick text`);
+
+				expect(paddingLeft).to.be.above(19);
+
+				tickTexts.each(function() {
+					expect(+d3Select(this).attr("x")).to.be.below(0);
+				});
+			});
+
+			it("set options axis.y.inner=true", () => {
+				args.axis.y.inner = true;
+			});
+
+			it("should have inner y axis", () => {
+				const paddingLeft = chart.internal.getCurrentPaddingLeft();
+				const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY} g.tick text`);
+
+				expect(paddingLeft).to.be.equal(1);
+
+				tickTexts.each(function() {
+					expect(+d3Select(this).attr("x")).to.be.above(0);
+				});
+			});
+
+		});
+
+		describe("axis.y2.inner", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 50, 20, 10, 40, 15, 25]
+						]
+					},
+					axis: {
+						y2: {
+							show: true,
+							inner: false
+						}
+					}
+				};
+			});
+
+			it("should not have inner y axis", () => {
+				const paddingRight = chart.internal.getCurrentPaddingRight();
+				const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick text`);
+
+				expect(paddingRight).to.be.above(19);
+
+				tickTexts.each(function() {
+					expect(+d3Select(this).attr("x")).to.be.above(0);
+				});
+			});
+
+			it("set options axis.y2.inner=true", () => {
+				args.axis.y2.inner = true;
+			});
+
+			it("should have inner y axis", () => {
+				const paddingRight = chart.internal.getCurrentPaddingRight();
+				const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick text`);
+
+				expect(paddingRight).to.be.equal(2);
+
+				tickTexts.each(function() {
+					expect(+d3Select(this).attr("x")).to.be.below(0);
+				});
+			});
+		});
+	});
+	
+	describe("y/y2 Axis inverted", () => {
 		before(() => {
 			args = {
 				data: {
 					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 50, 20, 10, 40, 15, 25]
-					]
+						["data1", 30, 200, -100],
+						["data2", 130, 100, 140]
+					],
+					type: "bar"
 				},
 				axis: {
 					y: {
-						inner: false
+						inverted: true
+					},
+					y2: {
+						show: true
 					}
 				}
-			};
+			}
 		});
 
-		it("should not have inner y axis", () => {
-			const paddingLeft = chart.internal.getCurrentPaddingLeft();
-			const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY} g.tick text`);
+		function checkInvertedAxis(bars, axisId) {
+			const y0 = chart.internal.scale[axisId](0);
 
-			expect(paddingLeft).to.be.above(19);
+			bars.each(function({value}) {
+				const d = this.getAttribute("d");
+				const {y, height} = this.getBoundingClientRect();
 
-			tickTexts.each(function() {
-				expect(+d3Select(this).attr("x")).to.be.below(0);
+				// every bar shape's starting y coordinate should be from 0(y0)
+				expect(+d.match(/,(\d+\.\d+)V/)[1]).to.be.equal(y0);
+
+				if (value > 0) {
+					expect(y + height).to.be.above(y0);
+				} else {
+					expect(y).to.be.below(y0);
+				}
 			});
+		}
+
+		it("bar should be draw correctly on inverted y axis.", () => {
+			const {bar: {bars}} = chart.$;
+
+			checkInvertedAxis(bars, "y");
 		});
 
-		it("set options axis.y.inner=true", () => {
-			args.axis.y.inner = true;
-		});
-
-		it("should have inner y axis", () => {
-			const paddingLeft = chart.internal.getCurrentPaddingLeft();
-			const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY} g.tick text`);
-
-			expect(paddingLeft).to.be.equal(1);
-
-			tickTexts.each(function() {
-				expect(+d3Select(this).attr("x")).to.be.above(0);
-			});
-		});
-
-	});
-
-	describe("axis.y2.inner", () => {
-		before(() => {
+		it("set options", () => {
 			args = {
 				data: {
 					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 50, 20, 10, 40, 15, 25]
-					]
+						["data1", 30, 200, -100],
+						["data2", 130, 100, 140]
+					],
+					type: "bar",
+					axes: {
+						data1: "y2",
+						data2: "y2",
+					}
 				},
 				axis: {
+					y: {
+						show: false
+					},
 					y2: {
 						show: true,
-						inner: false
+						inverted: true
 					}
 				}
 			};
 		});
 
-		it("should not have inner y axis", () => {
-			const paddingRight = chart.internal.getCurrentPaddingRight();
-			const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick text`);
+		it("bar should be draw correctly on inverted y2 axis.", () => {
+			const {bar: {bars}} = chart.$;
 
-			expect(paddingRight).to.be.above(19);
-
-			tickTexts.each(function() {
-				expect(+d3Select(this).attr("x")).to.be.above(0);
-			});
+			checkInvertedAxis(bars, "y2");
 		});
 
-		it("set options axis.y2.inner=true", () => {
-			args.axis.y2.inner = true;
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, -100],
+						["data2", 50, -50, 70]
+					],
+					type: "bar",
+					axes: {
+						data1: "y",
+						data2: "y2",
+					}
+				},
+				axis: {
+					y: {
+						inverted: true
+					},
+					y2: {
+						show: true,
+						inverted: true
+					}
+				}
+			}
 		});
 
-		it("should have inner y axis", () => {
-			const paddingRight = chart.internal.getCurrentPaddingRight();
-			const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick text`);
+		it("should draw bars bound to differenct axes with inverted option correctly.", () => {
+			const {bar: {bars}} = chart.$;
 
-			expect(paddingRight).to.be.equal(2);
-
-			tickTexts.each(function() {
-				expect(+d3Select(this).attr("x")).to.be.below(0);
-			});
-		});
+			checkInvertedAxis(bars.filter(({id}) => id === "data1"), "y");
+			checkInvertedAxis(bars.filter(({id}) => id === "data2"), "y2");
+		})
 	});
 
 	describe("axis.rotated", () => {
