@@ -109,7 +109,7 @@ export default {
 			.some(v => {
 				const type = v.indexOf("area") > -1 ? "area" : v;
 
-				return $$.hasType(v, yTargets) && config[`${type}_zerobased`];
+				return $$.hasType(v, yTargets, true) && config[`${type}_zerobased`];
 			});
 
 		// MEMO: avoid inverting domain unexpectedly
