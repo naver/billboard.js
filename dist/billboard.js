@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.0-nightly-20220127004529
+ * @version 3.3.0-nightly-20220128004559
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5759,7 +5759,7 @@ var colorizePattern = function (pattern, color, id) {
         yDomainMax = $$.getYDomainMinMax(yTargets, "max"),
         isZeroBased = [TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER].concat(TYPE_BY_CATEGORY.Line).some(function (v) {
       var type = v.indexOf("area") > -1 ? "area" : v;
-      return $$.hasType(v, yTargets) && config[type + "_zerobased"];
+      return $$.hasType(v, yTargets, !0) && config[type + "_zerobased"];
     });
     // MEMO: avoid inverting domain unexpectedly
     yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin;
@@ -13230,7 +13230,8 @@ var Axis_Axis = /*#__PURE__*/function () {
     var _this2 = this,
         $$ = this.owner,
         config = $$.config,
-        main = $$.$el.main;
+        main = $$.$el.main,
+        $T = $$.$T;
 
     Object.keys(this.axesList).forEach(function (id) {
       var axesConfig = config["axis_" + id + "_axes"],
@@ -13254,7 +13255,7 @@ var Axis_Axis = /*#__PURE__*/function () {
           g = main.append("g").attr("class", className).style("visibility", config["axis_" + id + "_show"] ? null : "hidden").call(v);
         } else {
           axesConfig[i].domain && scale.domain(axesConfig[i].domain);
-          $$.$T(g).call(v.scale(scale));
+          $T(g).call(v.scale(scale));
         }
 
         g.attr("transform", $$.getTranslate(id, i + 1));
@@ -13873,11 +13874,12 @@ var Axis_Axis = /*#__PURE__*/function () {
     }
 
     ["y", "y2"].forEach(function (key) {
-      var axisScale = scale[key];
+      var prefix = "axis_" + key + "_",
+          axisScale = scale[key];
 
-      if (axisScale) {
-        var tickValues = config["axis_" + key + "_tick_values"],
-            tickCount = config["axis_" + key + "_tick_count"];
+      if (config[prefix + "show"] && axisScale) {
+        var tickValues = config[prefix + "tick_values"],
+            tickCount = config[prefix + "tick_count"];
         axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
 
         if (!tickValues && tickCount) {

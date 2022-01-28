@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.0-nightly-20220127004529
+ * @version 3.3.0-nightly-20220128004559
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4882,7 +4882,7 @@ var domain = {
         var yDomainMax = $$.getYDomainMinMax(yTargets, "max");
         var isZeroBased = __spreadArray([TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER], TYPE_BY_CATEGORY.Line, true).some(function (v) {
             var type = v.indexOf("area") > -1 ? "area" : v;
-            return $$.hasType(v, yTargets) && config["".concat(type, "_zerobased")];
+            return $$.hasType(v, yTargets, true) && config["".concat(type, "_zerobased")];
         });
         // MEMO: avoid inverting domain unexpectedly
         yDomainMin = isValue(yMin) ? yMin :
@@ -11427,7 +11427,7 @@ var Axis = /** @class */ (function () {
     Axis.prototype.updateAxes = function () {
         var _this = this;
         var $$ = this.owner;
-        var config = $$.config, main = $$.$el.main;
+        var config = $$.config, main = $$.$el.main, $T = $$.$T;
         Object.keys(this.axesList).forEach(function (id) {
             var axesConfig = config["axis_".concat(id, "_axes")];
             var scale = $$.scale[id].copy();
@@ -11449,7 +11449,7 @@ var Axis = /** @class */ (function () {
                 }
                 else {
                     axesConfig[i].domain && scale.domain(axesConfig[i].domain);
-                    $$.$T(g).call(v.scale(scale));
+                    $T(g).call(v.scale(scale));
                 }
                 g.attr("transform", $$.getTranslate(id, i + 1));
             });
@@ -11975,10 +11975,11 @@ var Axis = /** @class */ (function () {
             xDomainForZoom = scale.x.orgDomain();
         }
         ["y", "y2"].forEach(function (key) {
+            var prefix = "axis_".concat(key, "_");
             var axisScale = scale[key];
-            if (axisScale) {
-                var tickValues = config["axis_".concat(key, "_tick_values")];
-                var tickCount = config["axis_".concat(key, "_tick_count")];
+            if (config["".concat(prefix, "show")] && axisScale) {
+                var tickValues = config["".concat(prefix, "tick_values")];
+                var tickCount = config["".concat(prefix, "tick_count")];
                 axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
                 if (!tickValues && tickCount) {
                     var axis = $$.axis[key];
@@ -20364,7 +20365,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.0-nightly-20220127004529
+ * @version 3.3.0-nightly-20220128004559
  */
 var bb = {
     /**
@@ -20374,7 +20375,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.0-nightly-20220127004529",
+    version: "3.3.0-nightly-20220128004559",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
