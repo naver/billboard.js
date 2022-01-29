@@ -152,12 +152,13 @@ export default {
 	toggleShape(that, d, i: number): void {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
-		const shape = d3Select(that);
-		const isSelected = shape.classed($SELECT.SELECTED);
-		const toggle = $$.getToggle(that, d).bind($$);
-		let toggledShape;
 
 		if (config.data_selection_enabled && config.data_selection_isselectable.bind($$.api)(d)) {
+			const shape = d3Select(that);
+			const isSelected = shape.classed($SELECT.SELECTED);
+			const toggle = $$.getToggle(that, d).bind($$);
+			let toggledShape;
+
 			if (!config.data_selection_multiple) {
 				let selector = `.${$SHAPE.shapes}`;
 

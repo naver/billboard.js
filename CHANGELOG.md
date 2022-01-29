@@ -1,3 +1,11 @@
+## [3.3.1](https://github.com/naver/billboard.js/compare/3.3.0...3.3.1) (2022-01-28)
+
+
+### Bug Fixes
+
+* **axis:** Fix bar draw for inverted y/y2 axes ([9d0fb70](https://github.com/naver/billboard.js/commit/9d0fb70e8607737aab5e1f85d19a0d6c449a31a1)), closes [#1323](https://github.com/naver/billboard.js/issues/1323) [#2503](https://github.com/naver/billboard.js/issues/2503)
+* **domain:** Fix incorrect domain updates ([a697b69](https://github.com/naver/billboard.js/commit/a697b69cb3807245b1cfe88480841e427623313c)), closes [#2523](https://github.com/naver/billboard.js/issues/2523)
+
 # [3.3.0](https://github.com/naver/billboard.js/compare/3.2.2...3.3.0) (2022-01-14)
 
 
