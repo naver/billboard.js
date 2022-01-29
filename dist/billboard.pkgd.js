@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.0-nightly-20220128004559
+ * @version 3.3.1-nightly-20220129004539
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -47214,13 +47214,14 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   toggleShape: function toggleShape(that, d, i) {
     var $$ = this,
         config = $$.config,
-        main = $$.$el.main,
-        shape = src_select(that),
-        isSelected = shape.classed($SELECT.SELECTED),
-        toggle = $$.getToggle(that, d).bind($$),
-        toggledShape;
+        main = $$.$el.main;
 
     if (config.data_selection_enabled && config.data_selection_isselectable.bind($$.api)(d)) {
+      var shape = src_select(that),
+          isSelected = shape.classed($SELECT.SELECTED),
+          toggle = $$.getToggle(that, d).bind($$),
+          toggledShape;
+
       if (!config.data_selection_multiple) {
         var selector = "." + $SHAPE.shapes;
 
@@ -48303,7 +48304,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.0",
+  version: "3.3.1",
 
   /**
    * Generate chart
@@ -48437,7 +48438,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.0
+ * @version 3.3.1
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.0-nightly-20220128004559
+ * @version 3.3.1-nightly-20220129004539
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -19397,11 +19397,11 @@ var selection = _assign(_assign({}, drag), {
     toggleShape: function (that, d, i) {
         var $$ = this;
         var config = $$.config, main = $$.$el.main;
-        var shape = select(that);
-        var isSelected = shape.classed($SELECT.SELECTED);
-        var toggle = $$.getToggle(that, d).bind($$);
-        var toggledShape;
         if (config.data_selection_enabled && config.data_selection_isselectable.bind($$.api)(d)) {
+            var shape = select(that);
+            var isSelected = shape.classed($SELECT.SELECTED);
+            var toggle_1 = $$.getToggle(that, d).bind($$);
+            var toggledShape_1;
             if (!config.data_selection_multiple) {
                 var selector = ".".concat($SHAPE.shapes);
                 if (config.data_selection_grouped) {
@@ -19412,14 +19412,14 @@ var selection = _assign(_assign({}, drag), {
                     .each(function (d, i) {
                     var shape = select(this);
                     if (shape.classed($SELECT.SELECTED)) {
-                        toggledShape = shape;
-                        toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
+                        toggledShape_1 = shape;
+                        toggle_1(false, shape.classed($SELECT.SELECTED, false), d, i);
                     }
                 });
             }
-            if (!toggledShape || toggledShape.node() !== shape.node()) {
+            if (!toggledShape_1 || toggledShape_1.node() !== shape.node()) {
                 shape.classed($SELECT.SELECTED, !isSelected);
-                toggle(!isSelected, shape, d, i);
+                toggle_1(!isSelected, shape, d, i);
             }
         }
     } });
@@ -20365,7 +20365,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.0-nightly-20220128004559
+ * @version 3.3.1-nightly-20220129004539
  */
 var bb = {
     /**
@@ -20375,7 +20375,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.0-nightly-20220128004559",
+    version: "3.3.1-nightly-20220129004539",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
