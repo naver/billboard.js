@@ -31,7 +31,7 @@ export default {
 
 			state.resizing = true;
 
-			this.flush(false, true);
+			this.flush(false);
 			$$.resizeFunction();
 		}
 	},

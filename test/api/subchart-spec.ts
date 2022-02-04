@@ -32,7 +32,7 @@ describe("API subchart", () => {
 		});
 
 		it("check subchart interactions", () => {
-			const {subchart} = chart.internal.$el;
+			const {$el: {axis, subchart}} = chart.internal;
 
 			expect(subchart.main).to.be.null;
 
@@ -50,11 +50,14 @@ describe("API subchart", () => {
 			chart.subchart.toggle();
 
 			expect(subchart.main.style("display")).to.be.not.equal("none");
+			const xAxisYPos = util.parseNum(axis.x.attr("transform"));
+
 
 			// when
 			chart.subchart.toggle();
 
 			expect(subchart.main.style("display")).to.be.equal("none");
+			expect(util.parseNum(axis.x.attr("transform"))).to.be.above(xAxisYPos);
 		});
 
 		it("dynamic data load", done => {
