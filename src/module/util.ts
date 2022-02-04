@@ -730,21 +730,28 @@ function isTabVisible(): boolean {
  * @private
  */
 function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | null {
-	let isMobile = false;
+	let hasTouch = false;
 
-	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
-	if (/Mobi/.test(window.navigator.userAgent) && touch) {
+	if (touch) {
 		// Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-		const hasTouchPoints = window.navigator && "maxTouchPoints" in window.navigator && window.navigator.maxTouchPoints > 0;
+		if (window.navigator && "maxTouchPoints" in window.navigator) {
+			hasTouch = window.navigator.maxTouchPoints > 0;
 
 		// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
 		// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-		const hasTouch = ("ontouchmove" in window || (window.DocumentTouch && document instanceof window.DocumentTouch));
+		} else if ("ontouchmove" in window || (window.DocumentTouch && document instanceof window.DocumentTouch)) {
+			hasTouch = true;
+		} else {
+			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
+			const mQ = window.matchMedia && matchMedia("(pointer:coarse)");
 
-		isMobile = hasTouchPoints || hasTouch;
+			if (mQ && mQ.media === "(pointer:coarse)") {
+				hasTouch = !!mQ.matches;
+			}
+		}
 	}
 
-	const hasMouse = mouse && !isMobile ? ("onmouseover" in window) : false;
+	const hasMouse = mouse && !hasTouch ? ("onmouseover" in window) : false;
 
-	return (hasMouse && "mouse") || (isMobile && "touch") || null;
+	return (hasMouse && "mouse") || (hasTouch && "touch") || null;
 }
