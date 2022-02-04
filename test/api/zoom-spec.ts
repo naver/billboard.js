@@ -561,4 +561,71 @@ describe("API zoom", function() {
 			chkZoomEvents();
 		});
 	});
+
+	describe("zoom for timeseries axis type", () => {
+		before(() => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 150, 250, 150, 200, 170, 240, 100, 150, 250, 150, 200, 170, 240, 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 350, 220, 250, 300, 270, 140, 150, 90, 150, 50, 120, 70, 40]
+					],
+					type: "line"
+				},
+				legend: {
+					show: true
+				},
+				zoom: {
+					enabled: true, 
+					type: "drag",
+				},
+				transition: {
+					duration: 0
+				}
+			});
+		});
+
+		it("unzoom after adding xgrid dynamically.", () => {
+			const {internal: $$} = chart;
+
+			// zoom
+			chart.zoom([30, 40]);
+
+			const {$el: {eventRect}, scale: {x, zoom}} = $$;
+			const xDomain = x.domain().reduce((prev, curr) => prev + curr);
+			const zoomDomain = zoom.domain().reduce((prev, curr) => prev + curr);
+
+			// when
+			chart.xgrids([{value: 33, text: "123"}]);
+
+			expect(zoomDomain).to.be.above(xDomain);
+
+			// unzoom
+			chart.unzoom();
+
+			expect($$.scale.x.domain()).to.be.deep.equal(x.domain());
+			expect($$.scale.zoom).to.be.null;
+		});
+
+		it("unzoom after adding regions dynamically.", () => {
+			const {internal: $$} = chart;
+
+			// zoom
+			chart.zoom([30, 40]);
+
+			const {$el: {eventRect}, scale: {x, zoom}} = $$;
+			const xDomain = x.domain().reduce((prev, curr) => prev + curr);
+			const zoomDomain = zoom.domain().reduce((prev, curr) => prev + curr);
+
+			// when
+			chart.regions([{axis: "x", start: 30, end: 35}]);
+
+			expect(zoomDomain).to.be.above(xDomain);
+
+			// unzoom
+			chart.unzoom();
+
+			expect($$.scale.x.domain()).to.be.deep.equal(x.domain());
+			expect($$.scale.zoom).to.be.null;		  	
+		});
+	});
 });
