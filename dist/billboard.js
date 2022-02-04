@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.1-nightly-20220129004539
+ * @version 3.3.1-nightly-20220204004536
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1107,19 +1107,27 @@ function isTabVisible() {
 
 
 function convertInputType(mouse, touch) {
-  var isMobile = !1; // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+  var hasTouch = !1;
 
-  if (/Mobi/.test(win.navigator.userAgent) && touch) {
+  if (touch) {
     // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-    var hasTouchPoints = win.navigator && "maxTouchPoints" in win.navigator && win.navigator.maxTouchPoints > 0,
-        hasTouch = "ontouchmove" in win || win.DocumentTouch && browser_doc instanceof win.DocumentTouch; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
-    // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+    if (win.navigator && "maxTouchPoints" in win.navigator) {
+      hasTouch = win.navigator.maxTouchPoints > 0; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+      // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+    } else if ("ontouchmove" in win || win.DocumentTouch && browser_doc instanceof win.DocumentTouch) {
+      hasTouch = !0;
+    } else {
+      // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
+      var mQ = win.matchMedia && matchMedia("(pointer:coarse)");
 
-    isMobile = hasTouchPoints || hasTouch;
+      if (mQ && mQ.media === "(pointer:coarse)") {
+        hasTouch = !!mQ.matches;
+      }
+    }
   }
 
-  var hasMouse = mouse && !isMobile ? "onmouseover" in win : !1;
-  return hasMouse && "mouse" || isMobile && "touch" || null;
+  var hasMouse = mouse && !hasTouch ? "onmouseover" in win : !1;
+  return hasMouse && "mouse" || hasTouch && "touch" || null;
 }
 ;// CONCATENATED MODULE: ./src/module/error.ts
 

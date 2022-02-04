@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.1-nightly-20220129004539
+ * @version 3.3.1-nightly-20220204004536
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -765,18 +765,27 @@ function isTabVisible() {
  * @private
  */
 function convertInputType(mouse, touch) {
-    var isMobile = false;
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
-    if (/Mobi/.test(win.navigator.userAgent) && touch) {
+    var hasTouch = false;
+    if (touch) {
         // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-        var hasTouchPoints = win.navigator && "maxTouchPoints" in win.navigator && win.navigator.maxTouchPoints > 0;
-        // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
-        // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-        var hasTouch = ("ontouchmove" in win || (win.DocumentTouch && doc instanceof win.DocumentTouch));
-        isMobile = hasTouchPoints || hasTouch;
+        if (win.navigator && "maxTouchPoints" in win.navigator) {
+            hasTouch = win.navigator.maxTouchPoints > 0;
+            // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+            // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+        }
+        else if ("ontouchmove" in win || (win.DocumentTouch && doc instanceof win.DocumentTouch)) {
+            hasTouch = true;
+        }
+        else {
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
+            var mQ = win.matchMedia && matchMedia("(pointer:coarse)");
+            if (mQ && mQ.media === "(pointer:coarse)") {
+                hasTouch = !!mQ.matches;
+            }
+        }
     }
-    var hasMouse = mouse && !isMobile ? ("onmouseover" in win) : false;
-    return (hasMouse && "mouse") || (isMobile && "touch") || null;
+    var hasMouse = mouse && !hasTouch ? ("onmouseover" in win) : false;
+    return (hasMouse && "mouse") || (hasTouch && "touch") || null;
 }
 
 /**
@@ -20365,7 +20374,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.1-nightly-20220129004539
+ * @version 3.3.1-nightly-20220204004536
  */
 var bb = {
     /**
@@ -20375,7 +20384,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.1-nightly-20220129004539",
+    version: "3.3.1-nightly-20220204004536",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
