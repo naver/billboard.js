@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.1-nightly-20220204004536
+ * @version 3.3.1-nightly-20220205004542
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -28644,7 +28644,8 @@ function getFormat($$, typeValue, v) {
   redrawWithoutRescale: function redrawWithoutRescale() {
     this.redraw({
       withY: !1,
-      withLegend: !0,
+      withDimension: !1,
+      withLegend: !1,
       withSubchart: !1,
       withEventRect: !1,
       withTransitionForAxis: !1
@@ -34261,7 +34262,7 @@ function loadConfig(config) {
       config.size_width = size ? size.width : null;
       config.size_height = size ? size.height : null;
       state.resizing = !0;
-      this.flush(!1, !0);
+      this.flush(!1);
       $$.resizeFunction();
     }
   },
@@ -46152,6 +46153,8 @@ var _area = function area() {
           show = config.subchart_show;
 
       if (!show) {
+        var _$target, _subchart$main2;
+
         // unbind zoom event bound to chart rect area
         $$.unbindZoomEvent();
         config.subchart_show = !show;
@@ -46159,14 +46162,16 @@ var _area = function area() {
         var $target = subchart.main.selectAll("." + $COMMON.target); // need to cover when new data has been loaded
 
         if ($$.data.targets.length !== $target.size()) {
+          var _subchart$main;
+
           $$.updateSizes();
           $$.updateTargetsForSubchart($$.data.targets);
-          $target = subchart.main.selectAll("." + $COMMON.target);
+          $target = (_subchart$main = subchart.main) == null ? void 0 : _subchart$main.selectAll("." + $COMMON.target);
         }
 
-        $target.style("opacity", null);
-        subchart.main.style("display", null);
-        this.flush();
+        (_$target = $target) == null ? void 0 : _$target.style("opacity", null);
+        (_subchart$main2 = subchart.main) == null ? void 0 : _subchart$main2.style("display", null);
+        this.resize();
       }
     },
 
@@ -46180,14 +46185,15 @@ var _area = function area() {
      *  chart.subchart.hide();
      */
     hide: function hide() {
-      var $$ = this.internal,
-          subchart = $$.$el.subchart,
+      var _main,
+          $$ = this.internal,
+          main = $$.$el.subchart.main,
           config = $$.config;
 
-      if (config.subchart_show && subchart.main.style("display") !== "none") {
+      if (config.subchart_show && ((_main = main) == null ? void 0 : _main.style("display")) !== "none") {
         config.subchart_show = !1;
-        subchart.main.style("display", "none");
-        this.flush();
+        main.style("display", "none");
+        this.resize();
       }
     },
 

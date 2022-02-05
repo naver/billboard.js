@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.1-nightly-20220204004536
+ * @version 3.3.1-nightly-20220205004542
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -6000,7 +6000,8 @@ var redraw = {
     redrawWithoutRescale: function () {
         this.redraw({
             withY: false,
-            withLegend: true,
+            withDimension: false,
+            withLegend: false,
             withSubchart: false,
             withEventRect: false,
             withTransitionForAxis: false
@@ -8760,7 +8761,7 @@ var apiChart = {
             config.size_width = size ? size.width : null;
             config.size_height = size ? size.height : null;
             state.resizing = true;
-            this.flush(false, true);
+            this.flush(false);
             $$.resizeFunction();
         }
     },
@@ -18909,6 +18910,7 @@ var apiSubchart = {
          * chart.subchart.show();
          */
         show: function () {
+            var _a, _b;
             var $$ = this.internal;
             var subchart = $$.$el.subchart, config = $$.config;
             var show = config.subchart_show;
@@ -18922,11 +18924,11 @@ var apiSubchart = {
                 if ($$.data.targets.length !== $target.size()) {
                     $$.updateSizes();
                     $$.updateTargetsForSubchart($$.data.targets);
-                    $target = subchart.main.selectAll(".".concat($COMMON.target));
+                    $target = (_a = subchart.main) === null || _a === void 0 ? void 0 : _a.selectAll(".".concat($COMMON.target));
                 }
-                $target.style("opacity", null);
-                subchart.main.style("display", null);
-                this.flush();
+                $target === null || $target === void 0 ? void 0 : $target.style("opacity", null);
+                (_b = subchart.main) === null || _b === void 0 ? void 0 : _b.style("display", null);
+                this.resize();
             }
         },
         /**
@@ -18940,11 +18942,11 @@ var apiSubchart = {
          */
         hide: function () {
             var $$ = this.internal;
-            var subchart = $$.$el.subchart, config = $$.config;
-            if (config.subchart_show && subchart.main.style("display") !== "none") {
+            var main = $$.$el.subchart.main, config = $$.config;
+            if (config.subchart_show && (main === null || main === void 0 ? void 0 : main.style("display")) !== "none") {
                 config.subchart_show = false;
-                subchart.main.style("display", "none");
-                this.flush();
+                main.style("display", "none");
+                this.resize();
             }
         },
         /**
@@ -20374,7 +20376,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.1-nightly-20220204004536
+ * @version 3.3.1-nightly-20220205004542
  */
 var bb = {
     /**
@@ -20384,7 +20386,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.1-nightly-20220204004536",
+    version: "3.3.1-nightly-20220205004542",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
