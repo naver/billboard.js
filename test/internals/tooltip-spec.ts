@@ -1265,6 +1265,40 @@ describe("TOOLTIP", function() {
 			};
 		});
 
+		it("set options tooltip.contents", () => {
+			args.tooltip.contents = function(data, defaultTitleFormat, defaultValueFormat, color) {
+				const d = data[0];
+				const value = defaultValueFormat(d.value, d?.ratio, d.id);
+				const hasYTickFormat = !!args.axis?.y?.tick?.format;
+
+				expect(typeof value === (hasYTickFormat ? "string" : "number")).to.be.ok;
+
+				return value;
+			};
+		});
+
+		it("tooltip.contents' defaultValueFormat should return number type.", () => {
+			// when
+			chart.tooltip.show({x:1});
+		});
+
+		it("set options tooltip.contents", () => {
+			args.axis = {
+				y: {
+					tick: {
+						format: function(x) {
+							return `${x}`;
+						}
+					}
+				}
+			}
+		});
+
+		it("tooltip.contents' defaultValueFormat should return string type.", () => {
+			// when
+			chart.tooltip.show({x:1});
+		});
+
 		it("tooltip shouldn't be hiding", () => {
 			util.hoverChart(chart, "mousemove", {clientX: 185, clientY: 107});
 			util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100});
