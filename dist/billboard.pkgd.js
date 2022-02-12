@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.1-nightly-20220211004558
+ * @version 3.3.1-nightly-20220212004714
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -23959,7 +23959,16 @@ var Store = /*#__PURE__*/function () {
    *   - `element {SVGElement}`: Tooltip event bound element
    *   - `pos {object}`: Current position of the tooltip.
    * @property {Function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
-   *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
+   *  If tooltip.grouped is true, data includes multiple data points.<br><br>
+   *  Specified function receives `data` array and `defaultTitleFormat`, `defaultValueFormat` and `color` functions of the data point to show.
+   *  - **Note:**
+   *    - defaultTitleFormat:
+   *      - if `axis.x.tick.format` option will be used if set.
+   *      - otherwise, will return funciton based on tick format type(category, timeseries).
+   *    - defaultValueFormat:
+   *	    - for Arc type (except gauge, radar), the function will return value from `(ratio * 100).toFixed(1)`.
+   *	    - for Axis based types, will be used `axis.[y|y2].tick.format` option value if is set.
+   *	    - otherwise, will parse value and return as number.
    * @property {string|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
    *  - **NOTE:** When is specified, will not be updating tooltip's position.
    * @property {string} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
@@ -27717,8 +27726,14 @@ function getFormat($$, typeValue, v) {
    */
   getDefaultValueFormat: function getDefaultValueFormat() {
     var $$ = this,
-        hasArc = $$.hasArcType();
-    return hasArc && !$$.hasType("gauge") ? $$.defaultArcValueFormat : $$.defaultValueFormat;
+        defaultArcValueFormat = $$.defaultArcValueFormat,
+        yFormat = $$.yFormat,
+        y2Format = $$.y2Format,
+        hasArc = $$.hasArcType(null, ["gauge", "radar"]);
+    return function (v, ratio, id) {
+      var format = hasArc ? defaultArcValueFormat : $$.axis && $$.axis.getId(id) === "y2" ? y2Format : yFormat;
+      return format.call($$, v, ratio);
+    };
   },
   defaultValueFormat: function defaultValueFormat(v) {
     return isValue(v) ? +v : "";
