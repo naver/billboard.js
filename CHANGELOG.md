@@ -1,3 +1,12 @@
+## [3.3.2](https://github.com/naver/billboard.js/compare/3.3.1...3.3.2) (2022-02-14)
+
+
+### Bug Fixes
+
+* **subchart:** Fix axis position on subchart.hide() call ([2ad65fd](https://github.com/naver/billboard.js/commit/2ad65fd2fcb78117be557f9b8351f9057d86b1d5)), closes [#2536](https://github.com/naver/billboard.js/issues/2536) [#2534](https://github.com/naver/billboard.js/issues/2534)
+* **tooltip:** revert tooltip.contents' defaultValueFormat ([333ccad](https://github.com/naver/billboard.js/commit/333ccadf9140369896d2ebe8e1e7dd26248ff98d)), closes [#2542](https://github.com/naver/billboard.js/issues/2542)
+* **zoom:** Fix unzoom after appending regions ([de64c4e](https://github.com/naver/billboard.js/commit/de64c4e2618df844ce5a4b3c25a5ad357683d49d)), closes [#2531](https://github.com/naver/billboard.js/issues/2531)
+
 ## [3.3.1](https://github.com/naver/billboard.js/compare/3.3.0...3.3.1) (2022-01-28)
 
 
