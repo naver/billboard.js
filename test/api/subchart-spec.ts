@@ -16,6 +16,44 @@ describe("API subchart", () => {
 		chart = util.generate(args);
 	});
 
+	describe("Initialization", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 500, 60]
+					]
+				},
+				axis: {
+					x: {
+						tick: {
+							culling: {
+								max: 3
+							}
+						}
+					}
+				},
+				subchart: {
+					show: true,
+					axis: {
+						x: {
+							tick: {
+								text: {
+									show: false
+								}
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("should initialize without error", () => {
+			// will reach this, if no error occurs on the generation
+			expect(true).to.be.ok;
+		});
+	});
+
 	describe(".subchart.show/hide/toggle()", () => {
 		before(() => {
 			args = {
