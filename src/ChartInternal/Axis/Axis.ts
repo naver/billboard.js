@@ -968,8 +968,9 @@ class Axis {
 
 					tickNodes.each(function(d) {
 						if (tickValues.indexOf(d) % intervalForCulling) {
-							(lines ? this.querySelector("text") : this)
-								.style.display = "none";
+							const node = (lines ? this.querySelector("text") : this);
+
+							node && (node.style.display = "none");
 						}
 					});
 				} else {
