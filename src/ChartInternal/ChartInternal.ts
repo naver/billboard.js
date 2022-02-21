@@ -18,7 +18,7 @@ import Options from "../config/Options/Options";
 import {document, window} from "../module/browser";
 import Cache from "../module/Cache";
 import {generateResize} from "../module/generator";
-import {capitalize, extend, notEmpty, convertInputType, getOption, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
+import {capitalize, extend, notEmpty, convertInputType, getOption, getRandom, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
 
 // data
 import dataConvert from "./data/convert";
@@ -255,7 +255,7 @@ export default class ChartInternal {
 		const isRotated = config.axis_rotated;
 
 		// datetime to be used for uniqueness
-		state.datetimeId = `bb-${+new Date()}`;
+		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
 
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();

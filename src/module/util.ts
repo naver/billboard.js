@@ -312,11 +312,13 @@ function getBoundingRect(node): {
 /**
  * Retrun random number
  * @param {boolean} asStr Convert returned value as string
+ * @param {number} min Minimum value
+ * @param {number} max Maximum value
  * @returns {number|string}
  * @private
  */
-function getRandom(asStr: boolean = true): number | string {
-	const rand = Math.random();
+function getRandom(asStr: boolean = true, min = 0, max = 10000): number | string {
+	const rand = Math.floor(Math.random() * (max - min) + min);
 
 	return asStr ? String(rand) : rand;
 }

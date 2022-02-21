@@ -285,6 +285,42 @@ describe("CORE", function() {
 		});
 	});
 
+	describe("miscellaneous", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 500, 60]
+					]
+				}
+			};
+		});
+
+		it("datetimeId should be an unique value", () => {
+			const inst = [
+				util.generate({
+					...args,
+					bindto: "#chart1"
+				}),
+				util.generate({
+					...args,
+					bindto: "#chart2"
+				}),
+				util.generate({
+					...args,
+					bindto: "#chart3"
+				})
+			];
+
+			expect(
+				inst.map(v => v.internal.state.datetimeId)
+					.every((v, i, array) => {
+						return array.filter(v2 => v2 === v).length === 1;
+				})
+			).to.be.true;
+		});
+	});	
+
 	describe("options", () => {
 		before(() => {
 			args = {
