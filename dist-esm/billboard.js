@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.2-nightly-20220217004542
+ * @version 3.3.2-nightly-20220222004611
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -395,12 +395,16 @@ function getBoundingRect(node) {
 /**
  * Retrun random number
  * @param {boolean} asStr Convert returned value as string
+ * @param {number} min Minimum value
+ * @param {number} max Maximum value
  * @returns {number|string}
  * @private
  */
-function getRandom(asStr) {
+function getRandom(asStr, min, max) {
     if (asStr === void 0) { asStr = true; }
-    var rand = Math.random();
+    if (min === void 0) { min = 0; }
+    if (max === void 0) { max = 10000; }
+    var rand = Math.floor(Math.random() * (max - min) + min);
     return asStr ? String(rand) : rand;
 }
 /**
@@ -8313,7 +8317,7 @@ var ChartInternal = /** @class */ (function () {
         var _a = $$, config = _a.config, format = _a.format, state = _a.state;
         var isRotated = config.axis_rotated;
         // datetime to be used for uniqueness
-        state.datetimeId = "bb-".concat(+new Date());
+        state.datetimeId = "bb-".concat(+new Date() * getRandom());
         $$.color = $$.generateColor();
         $$.levelColor = $$.generateLevelColor();
         if ($$.hasPointType()) {
@@ -12052,8 +12056,8 @@ var Axis = /** @class */ (function () {
                     }
                     tickNodes.each(function (d) {
                         if (tickValues_1.indexOf(d) % intervalForCulling_1) {
-                            (lines_1 ? this.querySelector("text") : this)
-                                .style.display = "none";
+                            var node = (lines_1 ? this.querySelector("text") : this);
+                            node && (node.style.display = "none");
                         }
                     });
                 }
@@ -20387,7 +20391,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.2-nightly-20220217004542
+ * @version 3.3.2-nightly-20220222004611
  */
 var bb = {
     /**
@@ -20397,7 +20401,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.2-nightly-20220217004542",
+    version: "3.3.2-nightly-20220222004611",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

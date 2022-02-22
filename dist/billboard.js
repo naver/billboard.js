@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.2-nightly-20220217004542
+ * @version 3.3.2-nightly-20220222004611
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -623,17 +623,27 @@ function getBoundingRect(node) {
 /**
  * Retrun random number
  * @param {boolean} asStr Convert returned value as string
+ * @param {number} min Minimum value
+ * @param {number} max Maximum value
  * @returns {number|string}
  * @private
  */
 
 
-function getRandom(asStr) {
+function getRandom(asStr, min, max) {
   if (asStr === void 0) {
     asStr = !0;
   }
 
-  var rand = Math.random();
+  if (min === void 0) {
+    min = 0;
+  }
+
+  if (max === void 0) {
+    max = 1e4;
+  }
+
+  var rand = Math.floor(Math.random() * (max - min) + min);
   return asStr ? rand + "" : rand;
 }
 /**
@@ -9720,7 +9730,7 @@ var ChartInternal = /*#__PURE__*/function () {
         state = _ref.state,
         isRotated = config.axis_rotated;
     // datetime to be used for uniqueness
-    state.datetimeId = "bb-" + +new Date();
+    state.datetimeId = "bb-" + +new Date() * getRandom();
     $$.color = $$.generateColor();
     $$.levelColor = $$.generateLevelColor();
 
@@ -13970,7 +13980,8 @@ var Axis_Axis = /*#__PURE__*/function () {
 
           tickNodes.each(function (d) {
             if (tickValues.indexOf(d) % intervalForCulling) {
-              (lines ? this.querySelector("text") : this).style.display = "none";
+              var node = lines ? this.querySelector("text") : this;
+              node && (node.style.display = "none");
             }
           });
         } else {

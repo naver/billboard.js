@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.2-nightly-20220217004542
+ * @version 3.3.2-nightly-20220222004611
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -21472,17 +21472,27 @@ function getBoundingRect(node) {
 /**
  * Retrun random number
  * @param {boolean} asStr Convert returned value as string
+ * @param {number} min Minimum value
+ * @param {number} max Maximum value
  * @returns {number|string}
  * @private
  */
 
 
-function getRandom(asStr) {
+function getRandom(asStr, min, max) {
   if (asStr === void 0) {
     asStr = !0;
   }
 
-  var rand = Math.random();
+  if (min === void 0) {
+    min = 0;
+  }
+
+  if (max === void 0) {
+    max = 1e4;
+  }
+
+  var rand = Math.floor(Math.random() * (max - min) + min);
   return asStr ? rand + "" : rand;
 }
 /**
