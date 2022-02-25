@@ -894,7 +894,7 @@ class Axis {
 			const prefix = `axis_${key}_`;
 			const axisScale = scale[key];
 
-			if (config[`${prefix}show`] && axisScale) {
+			if (axisScale) {
 				const tickValues = config[`${prefix}tick_values`];
 				const tickCount = config[`${prefix}tick_count`];
 
