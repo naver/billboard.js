@@ -2291,6 +2291,26 @@ describe("AXIS", function() {
 				expect(main.select(`.bb-axis-${v}`).style("visibility")).to.be.equal("hidden");
 			});
 		});
+
+		it("y Axis domain should update even is hidden", done => {
+			const yDomain = chart.internal.scale.y.domain();
+
+			// when
+			chart.load({
+				columns: [
+					['data1', 500, 600, 500, 4000, 750, 2000],
+					['data2', 123, 444, 555, 112, 3321, 232],
+				],
+				done: function() {
+					// after dynamic data load, y axis domain should be updated
+					expect(yDomain).to.not.be.deep.equal(
+						this.internal.scale.y.domain()
+					);
+
+					done();
+				}
+			});
+		});
 	});
 
 	describe("Multi axes", () => {
