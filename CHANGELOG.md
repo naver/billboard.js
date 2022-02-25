@@ -1,3 +1,11 @@
+## [3.3.3](https://github.com/naver/billboard.js/compare/3.3.2...3.3.3) (2022-02-24)
+
+
+### Bug Fixes
+
+* **axis:** Fix error when tick text isn't accessible ([3dd15c9](https://github.com/naver/billboard.js/commit/3dd15c90d11158798fb5847256c70faceb5d7caa)), closes [#2556](https://github.com/naver/billboard.js/issues/2556)
+* **build:** Fix incorrect versioning on build ([c7102bf](https://github.com/naver/billboard.js/commit/c7102bf16fc5f4e93f73d5b09011cac502b8b87c)), closes [#2560](https://github.com/naver/billboard.js/issues/2560)
+
 ## [3.3.2](https://github.com/naver/billboard.js/compare/3.3.1...3.3.2) (2022-02-14)
 
 
