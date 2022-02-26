@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220225004621
+ * @version 3.3.3-nightly-20220226004603
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -13911,7 +13911,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       var prefix = "axis_" + key + "_",
           axisScale = scale[key];
 
-      if (config[prefix + "show"] && axisScale) {
+      if (axisScale) {
         var tickValues = config[prefix + "tick_values"],
             tickCount = config[prefix + "tick_count"];
         axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
@@ -23046,7 +23046,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220225004621",
+  version: "3.3.3-nightly-20220226004603",
 
   /**
    * Generate chart
@@ -23180,7 +23180,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220225004621
+ * @version 3.3.3-nightly-20220226004603
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
