@@ -941,6 +941,7 @@ class Axis {
 		const $$ = this.owner;
 		const {config, state: {clip, current}, $el} = $$;
 
+
 		["subX", "x", "y", "y2"].forEach(type => {
 			const axis = $el.axis[type];
 
@@ -966,13 +967,14 @@ class Axis {
 						}
 					}
 
-					tickNodes.each(function(d) {
-						if (tickValues.indexOf(d) % intervalForCulling) {
+					tickNodes
+						.each(function(d) {
 							const node = (lines ? this.querySelector("text") : this);
 
-							node && (node.style.display = "none");
-						}
-					});
+							if (node) {
+								node.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : null;
+							}
+						});
 				} else {
 					tickNodes.style("display", null);
 				}
