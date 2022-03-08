@@ -732,28 +732,39 @@ function isTabVisible(): boolean {
  * @private
  */
 function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | null {
+	const {DocumentTouch, matchMedia, navigator} = window;
 	let hasTouch = false;
 
 	if (touch) {
 		// Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-		if (window.navigator && "maxTouchPoints" in window.navigator) {
-			hasTouch = window.navigator.maxTouchPoints > 0;
+		if (navigator && "maxTouchPoints" in navigator) {
+			hasTouch = navigator.maxTouchPoints > 0;
 
 		// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
 		// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-		} else if ("ontouchmove" in window || (window.DocumentTouch && document instanceof window.DocumentTouch)) {
+		} else if ("ontouchmove" in window || (DocumentTouch && document instanceof DocumentTouch)) {
 			hasTouch = true;
 		} else {
 			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
-			const mQ = window.matchMedia && matchMedia("(pointer:coarse)");
+			if (matchMedia?.("(pointer:coarse)").matches) {
+				hasTouch = true;
+			} else {
+				// Only as a last resort, fall back to user agent sniffing
+				const UA = navigator.userAgent;
 
-			if (mQ && mQ.media === "(pointer:coarse)") {
-				hasTouch = !!mQ.matches;
+				hasTouch = (
+					/\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+					/\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
+				);
 			}
 		}
 	}
 
-	const hasMouse = mouse && !hasTouch ? ("onmouseover" in window) : false;
+	// Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
+	// https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
+	// Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
+	const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"]
+		.some(v => matchMedia?.(`(${v})`).matches);
 
 	return (hasMouse && "mouse") || (hasTouch && "touch") || null;
 }
