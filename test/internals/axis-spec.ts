@@ -2627,6 +2627,79 @@ describe("AXIS", function() {
 				expect(axis[v].selectAll(selector).size()).to.be.equal(args.axis[v].tick.culling.max);
 			});
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "periods",
+					xFormat: "%Y",
+					type: "line",
+					columns: [
+						["periods", "2011", "2012", "2013", "2014", "2015","2016"],
+						["data1", 30, 200, 100, 170, 150, 250]
+					]
+				},
+			  axis: {
+				x: {
+				  tick: {
+					culling: {
+					  max: 8
+					}
+				  }
+				}
+			  }
+			}
+		});
+
+		it("tick text's culling visibility should work correctly", done => {
+			// count visibility text nodes
+			const countVisibility = () => {
+				let visible = 0;
+				let hidden = 0;
+
+				chart.internal.$el.axis.x.selectAll(".tick text")
+					.each(function() {
+						if (this.style.display === "none") {
+							hidden++;
+						} else {
+							visible++;
+						}
+					});
+
+				return {visible, hidden};
+			};
+
+			new Promise((resolve, reject) => {
+				// load new dataset
+				chart.load({
+					columns: [
+						["periods", "1999", "2000", "2001", "2002", "2003","2004","2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015","2016"],
+						["data1", 30, 200, 100, 170, 150, 250, 30, 200, 100, 170, 150, 250, 30, 200, 100, 170, 150, 250]
+					],
+					done: resolve
+				});
+			}).then(() => {
+				const {visible, hidden} = countVisibility();
+
+				expect(visible).to.equal(6);
+				expect(hidden).to.equal(12);				
+
+				return new Promise((resolve, reject) => {
+					// revert to original dataset
+					chart.load({
+						columns: args.data.columns,
+						done: resolve
+					});
+				});
+			}).then(() => {
+				const {visible, hidden} = countVisibility();
+
+				expect(visible).to.equal(6);
+				expect(hidden).to.equal(0);	
+
+				done();
+			});
+		});
 	});
 	
 	describe("Axes tick padding", () => {
