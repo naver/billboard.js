@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.3-nightly-20220303005130
+ * @version 3.3.3-nightly-20220309004620
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -12054,10 +12054,11 @@ var Axis = /** @class */ (function () {
                             break;
                         }
                     }
-                    tickNodes.each(function (d) {
-                        if (tickValues_1.indexOf(d) % intervalForCulling_1) {
-                            var node = (lines_1 ? this.querySelector("text") : this);
-                            node && (node.style.display = "none");
+                    tickNodes
+                        .each(function (d) {
+                        var node = (lines_1 ? this.querySelector("text") : this);
+                        if (node) {
+                            node.style.display = tickValues_1.indexOf(d) % intervalForCulling_1 ? "none" : null;
                         }
                     });
                 }
@@ -20391,7 +20392,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220303005130
+ * @version 3.3.3-nightly-20220309004620
  */
 var bb = {
     /**
@@ -20401,7 +20402,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.3-nightly-20220303005130",
+    version: "3.3.3-nightly-20220309004620",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
