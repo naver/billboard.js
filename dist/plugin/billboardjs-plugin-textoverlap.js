@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220309004620
+ * @version 3.3.3-nightly-20220311004624
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -986,26 +986,36 @@ function isTabVisible() {
 
 
 function convertInputType(mouse, touch) {
-  var hasTouch = !1;
+  var DocumentTouch = win.DocumentTouch,
+      matchMedia = win.matchMedia,
+      navigator = win.navigator,
+      hasTouch = !1;
 
   if (touch) {
     // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-    if (win.navigator && "maxTouchPoints" in win.navigator) {
-      hasTouch = win.navigator.maxTouchPoints > 0; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+    if (navigator && "maxTouchPoints" in navigator) {
+      hasTouch = navigator.maxTouchPoints > 0; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
       // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-    } else if ("ontouchmove" in win || win.DocumentTouch && doc instanceof win.DocumentTouch) {
+    } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
       hasTouch = !0;
     } else {
       // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
-      var mQ = win.matchMedia && matchMedia("(pointer:coarse)");
-
-      if (mQ && mQ.media === "(pointer:coarse)") {
-        hasTouch = !!mQ.matches;
+      if (matchMedia != null && matchMedia("(pointer:coarse)").matches) {
+        hasTouch = !0;
+      } else {
+        // Only as a last resort, fall back to user agent sniffing
+        var UA = navigator.userAgent;
+        hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
       }
     }
-  }
+  } // Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
+  // https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
+  // Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
 
-  var hasMouse = mouse && !hasTouch ? "onmouseover" in win : !1;
+
+  var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
+    return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
+  });
   return hasMouse && "mouse" || hasTouch && "touch" || null;
 }
 ;// CONCATENATED MODULE: ./src/config/config.ts
@@ -1131,7 +1141,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.3.3-nightly-20220309004620";
+Plugin.version = "3.3.3-nightly-20220311004624";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**

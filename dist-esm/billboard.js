@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.3-nightly-20220309004620
+ * @version 3.3.3-nightly-20220311004624
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -769,26 +769,36 @@ function isTabVisible() {
  * @private
  */
 function convertInputType(mouse, touch) {
+    var DocumentTouch = win.DocumentTouch, matchMedia = win.matchMedia, navigator = win.navigator;
     var hasTouch = false;
     if (touch) {
         // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-        if (win.navigator && "maxTouchPoints" in win.navigator) {
-            hasTouch = win.navigator.maxTouchPoints > 0;
+        if (navigator && "maxTouchPoints" in navigator) {
+            hasTouch = navigator.maxTouchPoints > 0;
             // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
             // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
         }
-        else if ("ontouchmove" in win || (win.DocumentTouch && doc instanceof win.DocumentTouch)) {
+        else if ("ontouchmove" in win || (DocumentTouch && doc instanceof DocumentTouch)) {
             hasTouch = true;
         }
         else {
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
-            var mQ = win.matchMedia && matchMedia("(pointer:coarse)");
-            if (mQ && mQ.media === "(pointer:coarse)") {
-                hasTouch = !!mQ.matches;
+            if (matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(pointer:coarse)").matches) {
+                hasTouch = true;
+            }
+            else {
+                // Only as a last resort, fall back to user agent sniffing
+                var UA = navigator.userAgent;
+                hasTouch = (/\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+                    /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA));
             }
         }
     }
-    var hasMouse = mouse && !hasTouch ? ("onmouseover" in win) : false;
+    // Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
+    // https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
+    // Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
+    var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"]
+        .some(function (v) { return matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(".concat(v, ")")).matches; });
     return (hasMouse && "mouse") || (hasTouch && "touch") || null;
 }
 
@@ -20392,7 +20402,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220309004620
+ * @version 3.3.3-nightly-20220311004624
  */
 var bb = {
     /**
@@ -20402,7 +20412,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.3-nightly-20220309004620",
+    version: "3.3.3-nightly-20220311004624",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
