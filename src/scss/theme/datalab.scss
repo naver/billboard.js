@@ -314,6 +314,19 @@ text.bb-chart-arcs-gauge-title {
         fill: #eaeaea;
         stroke-width: 0;
     }
+
+	/*-- Polar --*/
+	.bb-levels {
+		circle {
+			fill: none;
+			stroke: #848282;
+			stroke-width: .5px;
+		}
+
+		text {
+			fill: #848282;
+		}
+	}
 }
 
 .bb-chart-arc {

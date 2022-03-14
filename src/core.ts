@@ -70,6 +70,7 @@ const bb = {
 	 *   gauge,
 	 *   line,
 	 *   pie,
+	 *   polar,
 	 *   radar,
 	 *   scatter,
 	 *   spline,

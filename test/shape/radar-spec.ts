@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import util from "../assets/util";
-import {$AXIS, $COMMON, $RADAR} from "../../src/config/classes";
+import {$AXIS, $COMMON, $LEVEL, $RADAR} from "../../src/config/classes";
 
 describe("SHAPE RADAR", () => {
 	let chart;
@@ -61,7 +61,7 @@ describe("SHAPE RADAR", () => {
 			const dataLen = data[0].values.length;
 
 			const axes = radar.selectAll(`.${$AXIS.axis} g`);
-			const levels = radar.selectAll(`.${$RADAR.levels} g`);
+			const levels = radar.selectAll(`.${$LEVEL.levels} g`);
 
 			expect(axes.size()).to.be.equal(dataLen);
 			expect(levels.size()).to.be.equal(dataLen);
@@ -102,7 +102,7 @@ describe("SHAPE RADAR", () => {
 
 		it("check for level options", () => {
 			const radar = chart.$.main.select(`.${$RADAR.chartRadars}`);
-			const levels = radar.select(`.${$RADAR.levels}`);
+			const levels = radar.select(`.${$LEVEL.levels}`);
 			const level = levels.selectAll("polygon");
 
 			// check for level element depth size
@@ -122,7 +122,7 @@ describe("SHAPE RADAR", () => {
 
 		it("check for resize", () => {
 			const radars = chart.$.main.select(`.${$RADAR.chartRadars}`);
-			const level = radars.select(`.${$RADAR.levels}`);
+			const level = radars.select(`.${$LEVEL.levels}`);
 			const axis = radars.select(`.${$AXIS.axis}`);
 
 			const old = [radars, level, axis].map(v => util.getBBox(v));
