@@ -501,7 +501,7 @@ export default {
 	 * @returns {boolean}
 	 * @private
 	 */
-	meetsLabelThreshold(ratio: number = 0, type: "bar" | "donut" | "gauge" | "pie"): boolean {
+	meetsLabelThreshold(ratio: number = 0, type: "bar" | "donut" | "gauge" | "pie" | "polar"): boolean {
 		const $$ = this;
 		const {config} = $$;
 		const threshold = config[`${type}_label_threshold`] || 0;

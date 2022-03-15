@@ -187,6 +187,10 @@ export default {
 		return this.isTypeOf(d, "donut");
 	},
 
+	isPolarType(d): boolean {
+		return this.isTypeOf(d, "polar");
+	},
+
 	isRadarType(d): boolean {
 		return this.isTypeOf(d, "radar");
 	},
@@ -195,6 +199,7 @@ export default {
 		return this.isPieType(d) ||
 			this.isDonutType(d) ||
 			this.isGaugeType(d) ||
+			this.isPolarType(d) ||
 			this.isRadarType(d);
 	},
 

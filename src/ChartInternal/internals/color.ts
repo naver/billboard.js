@@ -160,12 +160,13 @@ export default {
 
 	/**
 	 * Append data backgound color filter definition
+	 * @param {string} color Color string
 	 * @private
 	 */
-	generateDataLabelBackgroundColorFilter(): void {
+	generateDataLabelBackgroundColorFilter(color?: string): void {
 		const $$ = this;
 		const {$el, config, state} = $$;
-		const backgroundColors = config.data_labels_backgroundColors;
+		const backgroundColors = color || config.data_labels_backgroundColors;
 
 		if (backgroundColors) {
 			let ids: string[] = [];
@@ -177,7 +178,7 @@ export default {
 			}
 
 			ids.forEach(v => {
-				const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}`;
+				const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}${color ? $$.getTargetSelectorSuffix(color) : ""}`;
 
 				$el.defs.append("filter")
 					.attr("x", "0")

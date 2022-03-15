@@ -13,6 +13,7 @@ const Types = {
         "spline",
         "step",
         "candlestick",
+        "polar",
         "radar",
         "gauge",
         "gauge-multi",
@@ -110,6 +111,21 @@ const Types = {
                 outerRadius: {},
                 label: {}
             },
+            polar: {
+                label: {
+                    format: function(value, ratio, id) {
+                        return `${value}\n(${(ratio * 100).toFixed(0)}%)`;
+                    },
+                    show: false
+                },
+                level:{
+                    depth: 4,
+                    text: {
+                        backgroundColor: "yellow"
+                    }
+                },
+                startingAngle: -0.6
+            },
             radar: {
                 axis: {
                     text: {
@@ -128,7 +144,6 @@ const Types = {
         };
     },
     generate: function() {
-
         // append div
         this.types.forEach((v, i) => {
             const div = document.createElement("div");
@@ -168,6 +183,17 @@ const Types = {
                 options.data.labels = {
                     colors: "#fff"
                 }
+
+            } else if (type === "polar") {
+                options.data.columns = [
+                    ["data0", 35],
+                    ["data1", 110],
+                    ["data2", 80]
+                ];
+                options.data.order = null;
+
+                options.polar.level.max = 120;
+
             
             } else if (type === "pie-inner-radius") {
                 type = "pie";

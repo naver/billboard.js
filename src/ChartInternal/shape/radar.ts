@@ -4,7 +4,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import {KEY} from "../../module/Cache";
-import {$AXIS, $COMMON, $RADAR, $SHAPE, $TEXT} from "../../config/classes";
+import {$AXIS, $COMMON, $LEVEL, $RADAR, $SHAPE, $TEXT} from "../../config/classes";
 import {getMinMax, getRange, isDefined, isEmpty, isNumber, isUndefined, setTextValue, toArray} from "../../module/util";
 
 /**
@@ -40,7 +40,7 @@ export default {
 
 			// level
 			$el.radar.levels = $el.radar.append("g")
-				.attr("class", $RADAR.levels);
+				.attr("class", $LEVEL.levels);
 
 			// axis
 			$el.radar.axes = $el.radar.append("g")
@@ -176,13 +176,13 @@ export default {
 		});
 
 		const level = radarLevels
-			.selectAll(`.${$RADAR.level}`)
+			.selectAll(`.${$LEVEL.level}`)
 			.data(levelData);
 
 		level.exit().remove();
 
 		const levelEnter = level.enter().append("g")
-			.attr("class", (d, i) => `${$RADAR.level} ${$RADAR.level}-${i}`);
+			.attr("class", (d, i) => `${$LEVEL.level} ${$LEVEL.level}-${i}`);
 
 		levelEnter.append("polygon")
 			.style("visibility", config.radar_level_show ? null : "hidden");

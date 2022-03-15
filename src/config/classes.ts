@@ -126,11 +126,14 @@ export const $GRID = {
 	ygrids: "bb-ygrids"
 };
 
-export const $RADAR = {
-	chartRadar: "bb-chart-radar",
-	chartRadars: "bb-chart-radars",
+export const $LEVEL = {
 	level: "bb-level",
 	levels: "bb-levels"
+};
+
+export const $RADAR = {
+	chartRadar: "bb-chart-radar",
+	chartRadars: "bb-chart-radars"
 };
 
 export const $REGION = {

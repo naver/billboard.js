@@ -93,6 +93,7 @@ export default {
 	 * - gauge
 	 * - line
 	 * - pie
+	 * - polar
 	 * - radar
 	 * - scatter
 	 * - spline
@@ -121,6 +122,7 @@ export default {
 	 *   gauge,
 	 *   line,
 	 *   pie,
+	 *   polar,
 	 *   radar,
 	 *   scatter,
 	 *   spline,
@@ -167,6 +169,7 @@ export default {
 	 *   gauge,
 	 *   line,
 	 *   pie,
+	 *   polar,
 	 *   radar,
 	 *   scatter,
 	 *   spline,

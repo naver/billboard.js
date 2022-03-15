@@ -12,17 +12,17 @@ import {document} from "../../module/browser";
 import {$ARC, $COMMON, $FOCUS, $GAUGE} from "../../config/classes";
 import {callFn, endall, isFunction, isNumber, isObject, isUndefined, setTextValue} from "../../module/util";
 import {d3Selection} from "../../../types/types";
-import {IData} from "../data/IData";
+import {IArcData, IData} from "../data/IData";
 
 export default {
 	initPie(): void {
 		const $$ = this;
 		const {config} = $$;
 		const dataType = config.data_type;
-		const padding = config.pie_padding;
+		const padding = config[`${dataType}_padding`];
 		const startingAngle = config[`${dataType}_startingAngle`] || 0;
 		const padAngle = (
-			$$.hasType("pie") && padding ? padding * 0.01 :
+			padding ? padding * 0.01 :
 				config[`${dataType}_padAngle`]
 		) || 0;
 
@@ -37,7 +37,8 @@ export default {
 	updateRadius(): void {
 		const $$ = this;
 		const {config, state} = $$;
-		const padding = config.pie_padding;
+		const dataType = config.data_type;
+		const padding = config[`${dataType}_padding`];
 		const w = config.gauge_width || config.donut_width;
 		const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
 			config.gauge_arcs_minWidth;
@@ -72,7 +73,7 @@ export default {
 	 * @returns {object}
 	 * @private
 	 */
-	getRadius(d): {innerRadius: number, outerRadius: number} {
+	getRadius(d: IArcData): {innerRadius: number, outerRadius: number} {
 		const $$ = this;
 		const data = d?.data;
 		let {innerRadius, outerRadius} = $$.state;
@@ -194,6 +195,7 @@ export default {
 		const {state} = $$;
 		const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
+		const hasPolar = $$.hasType("polar");
 
 		const arc = d3Arc()
 			.innerRadius((d: any) => {
@@ -205,8 +207,15 @@ export default {
 			})
 			.outerRadius((d: any) => {
 				const {outerRadius} = $$.getRadius(d);
+				let radius = outerRadius;
 
-				return hasMultiArcGauge ? (state.radius - singleArcWidth * d.index) : outerRadius;
+				if (hasMultiArcGauge) {
+					radius = state.radius - singleArcWidth * d.index;
+				} else if (hasPolar) {
+					radius = $$.getPolarOuterRadius(d, outerRadius);
+				}
+
+				return radius;
 			});
 
 		const newArc = function(d, withoutUpdate) {
@@ -253,6 +262,7 @@ export default {
 					radius = state.radius - singleArcWidth * d.index + expandWidth;
 				} else {
 					const {outerRadius} = $$.getRadius(d);
+
 					let {radiusExpanded} = state;
 
 					if (state.radius !== outerRadius) {
@@ -276,6 +286,12 @@ export default {
 		return force || this.isArcType(d.data) ? this.svgArc(d, withoutUpdate) : "M 0 0";
 	},
 
+	/**
+	 * Set transform attributes to arc label text
+	 * @param {Object} d Data object
+	 * @returns {string} Translate attribute string
+	 * @private
+	 */
 	transformForArcLabel(d): string {
 		const $$ = this;
 		const {config, state: {radiusExpanded}} = $$;
@@ -292,13 +308,19 @@ export default {
 
 				translate = `translate(${x},${y})`;
 			} else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
-				const {outerRadius} = $$.getRadius(d);
+				let {outerRadius} = $$.getRadius(d);
+
+				if ($$.hasType("polar")) {
+					outerRadius = $$.getPolarOuterRadius(d, outerRadius);
+				}
+
 				const c = this.svgArc.centroid(updated);
 				const [x, y] = c.map(v => (isNaN(v) ? 0 : v));
 				const h = Math.sqrt(x * x + y * y);
 
-				let ratio = ($$.hasType("donut") && config.donut_label_ratio) ||
-					($$.hasType("pie") && config.pie_label_ratio);
+				let ratio = ["donut", "pie", "polar"]
+					.filter($$.hasType.bind($$))
+					.map(v => config[`${v}_label_ratio`])?.[0];
 
 				if (ratio) {
 					ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
@@ -337,7 +359,7 @@ export default {
 					const updated = $$.updateAngle(d);
 					const ratio = $$.getRatio("arc", updated);
 					const isUnderThreshold = $$.meetsLabelThreshold(ratio,
-						($$.hasType("donut") && "donut") || ($$.hasType("gauge") && "gauge") || ($$.hasType("pie") && "pie")
+						["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))?.[0]
 					);
 
 					if (isUnderThreshold) {
@@ -453,20 +475,20 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 
-		return ["pie", "donut", "gauge"]
+		return ["donut", "gauge", "pie", "polar"]
 			.some(v => $$.hasType(v) && config[`${v}_label_show`]);
 	},
 
 	getArcLabelFormat(): number | string {
 		const $$ = this;
 		const {config} = $$;
-		let format = config.pie_label_format;
+		let format = v => v;
 
-		if ($$.hasType("gauge")) {
-			format = config.gauge_label_format;
-		} else if ($$.hasType("donut")) {
-			format = config.donut_label_format;
-		}
+		["donut", "gauge", "pie", "polar"]
+			.filter($$.hasType.bind($$))
+			.forEach(v => {
+				format = config[`${v}_label_format`];
+			});
 
 		return isFunction(format) ? format.bind($$.api) : format;
 	},
@@ -611,6 +633,7 @@ export default {
 					const interpolated = interpolate(t);
 
 					interpolated.data = d.data; // data.id will be updated by interporator
+
 					return $$.getArc(interpolated, true);
 				};
 			})
@@ -646,6 +669,7 @@ export default {
 		// bind arc events
 		hasInteraction && $$.bindArcEvent(mainArc);
 
+		$$.hasType("polar") && $$.redrawPolar();
 		$$.hasType("gauge") && $$.redrawBackgroundArcs();
 
 		$$.redrawArcText(duration);

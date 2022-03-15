@@ -461,6 +461,78 @@ export interface ChartOptions {
 		}
 	};
 
+	polar?: {
+		label?: {
+			/**
+			 * Show or hide label on each polar piece.
+			 */
+			show?: boolean;
+
+			/**
+			 * Set threshold ratio to show/hide labels.
+			 */
+			threshold?: number;
+
+			/**
+			 * Set formatter for the label on each polar piece.
+			 */
+			format?(this: Chart, value: number, ratio: number, id: string): string;
+
+			/**
+			 * Set ratio of labels position.
+			 */
+			ratio?: ((this: Chart, d: DataItem, radius: number, h: number) => void) | number
+		};
+		level?: {
+			/**
+			 * Set the level depth.
+			 */
+			depth?: number;
+
+			/**
+			 * Set level max value.
+			 */
+			max?: number;
+
+			/**
+			 * Show or hide level.
+			 */
+			show?: boolean;
+
+			text?: {
+				/**
+				 * Set label text's background color.
+				 */
+				backgroundColor?: string;
+
+				/**
+				 * Set format function for the level value.
+				 */
+				format?: (this: Chart, x: string) => string;
+
+				/**
+				 * Show or hide level text.
+				 */
+				show?: boolean;
+			}
+		};
+
+		/**
+		 * Set padding between data.
+		 */
+		padAngle?: number;
+
+		/**
+		 * Sets the gap between pie arcs.
+		 */
+		padding?: number;
+
+		/**
+		 * Set starting angle where data draws.
+		 */
+		startAngle?: number;
+	};
+
 	pie?: {
 		label?: {
 			/**

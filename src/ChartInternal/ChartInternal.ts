@@ -313,6 +313,7 @@ export default class ChartInternal {
 		const {config, scale, state, $el, org} = $$;
 		const {hasAxis} = state;
 		const hasInteraction = config.interaction_enabled;
+		const hasPolar = $$.hasType("polar");
 
 		// for arc type, set axes to not be shown
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
@@ -387,7 +388,7 @@ export default class ChartInternal {
 		// Define defs
 		const hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
 
-		if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors) {
+		if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors || hasPolar) {
 			$el.defs = $el.svg.append("defs");
 
 			if (hasAxis) {
@@ -396,7 +397,7 @@ export default class ChartInternal {
 				});
 			}
 
-			// Append data backgound color filter definition
+			// Append data background color filter definition
 			$$.generateDataLabelBackgroundColorFilter();
 
 			// set color patterns
@@ -512,6 +513,8 @@ export default class ChartInternal {
 				}
 			});
 		} else {
+			const hasPolar = $$.hasType("polar");
+
 			if (!hasRadar) {
 				types.push("Arc", "Pie");
 			}
@@ -520,6 +523,8 @@ export default class ChartInternal {
 				types.push("Gauge");
 			} else if (hasRadar) {
 				types.push("Radar");
+			} else if (hasPolar) {
+				types.push("Polar");
 			}
 		}
 
@@ -600,6 +605,9 @@ export default class ChartInternal {
 	updateTargets(targets): void {
 		const $$ = <any> this;
 		const {hasAxis, hasRadar} = $$.state;
+		const helper = type => $$[`updateTargetsFor${type}`](
+			targets.filter($$[`is${type}Type`].bind($$))
+		);
 
 		// Text
 		$$.updateTargetsForText(targets);
@@ -609,22 +617,25 @@ export default class ChartInternal {
 				const name = capitalize(v);
 
 				if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
-					$$[`updateTargetsFor${name}`](
-						targets.filter($$[`is${name}Type`].bind($$))
-					);
+					helper(name);
 				}
 			});
 
 			// Sub Chart
 			$$.updateTargetsForSubchart &&
 				$$.updateTargetsForSubchart(targets);
-		} else {
-			// Arc & Radar
-			$$.hasArcType(targets) && (
-				hasRadar ?
-					$$.updateTargetsForRadar(targets.filter($$.isRadarType.bind($$))) :
-					$$.updateTargetsForArc(targets.filter($$.isArcType.bind($$)))
-			);
+
+		// Arc, Polar, Radar
+		} else if ($$.hasArcType(targets)) {
+			let type = "Arc";
+
+			if (hasRadar) {
+				type = "Radar";
+			} else if ($$.hasType("polar")) {
+				type = "Polar";
+			}
+
+			helper(type);
 		}
 
 		// circle
