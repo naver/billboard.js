@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220315004747
+ * @version 3.3.3-nightly-20220316004757
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -286,11 +286,13 @@ var $GRID = {
   ygridLines: "bb-ygrid-lines",
   ygrids: "bb-ygrids"
 };
-var $RADAR = {
-  chartRadar: "bb-chart-radar",
-  chartRadars: "bb-chart-radars",
+var $LEVEL = {
   level: "bb-level",
   levels: "bb-levels"
+};
+var $RADAR = {
+  chartRadar: "bb-chart-radar",
+  chartRadars: "bb-chart-radars"
 };
 var $REGION = {
   region: "bb-region",
@@ -1320,7 +1322,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.3.3-nightly-20220315004747";
+Plugin.version = "3.3.3-nightly-20220316004757";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**

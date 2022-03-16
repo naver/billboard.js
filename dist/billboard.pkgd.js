@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220315004747
+ * @version 3.3.3-nightly-20220316004757
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -16311,6 +16311,7 @@ __webpack_require__.d(resolver_shape_namespaceObject, {
   "gauge": function() { return resolver_shape_gauge; },
   "line": function() { return resolver_shape_line; },
   "pie": function() { return resolver_shape_pie; },
+  "polar": function() { return resolver_shape_polar; },
   "radar": function() { return resolver_shape_radar; },
   "scatter": function() { return shape_scatter; },
   "spline": function() { return shape_spline; },
@@ -18345,6 +18346,7 @@ var TYPE = {
   GAUGE: "gauge",
   LINE: "line",
   PIE: "pie",
+  POLAR: "polar",
   RADAR: "radar",
   SCATTER: "scatter",
   SPLINE: "spline",
@@ -18368,6 +18370,7 @@ var TYPE_METHOD_NEEDED = {
   GAUGE: "initArc",
   LINE: "initLine",
   PIE: "initArc",
+  POLAR: "initPolar",
   RADAR: "initCircle",
   SCATTER: "initCircle",
   SPLINE: "initLine",
@@ -18381,7 +18384,7 @@ var TYPE_METHOD_NEEDED = {
 var TYPE_BY_CATEGORY = {
   Area: [TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.AREA_STEP],
   AreaRange: [TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE],
-  Arc: [TYPE.PIE, TYPE.DONUT, TYPE.GAUGE, TYPE.RADAR],
+  Arc: [TYPE.PIE, TYPE.DONUT, TYPE.GAUGE, TYPE.POLAR, TYPE.RADAR],
   Line: [TYPE.LINE, TYPE.SPLINE, TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.STEP, TYPE.AREA_STEP],
   Step: [TYPE.STEP, TYPE.AREA_STEP],
   Spline: [TYPE.SPLINE, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE]
@@ -22131,11 +22134,13 @@ var $GRID = {
   ygridLines: "bb-ygrid-lines",
   ygrids: "bb-ygrids"
 };
-var $RADAR = {
-  chartRadar: "bb-chart-radar",
-  chartRadars: "bb-chart-radars",
+var $LEVEL = {
   level: "bb-level",
   levels: "bb-levels"
+};
+var $RADAR = {
+  chartRadar: "bb-chart-radar",
+  chartRadars: "bb-chart-radars"
 };
 var $REGION = {
   region: "bb-region",
@@ -22909,6 +22914,7 @@ var Store = /*#__PURE__*/function () {
    * - gauge
    * - line
    * - pie
+   * - polar
    * - radar
    * - scatter
    * - spline
@@ -22937,6 +22943,7 @@ var Store = /*#__PURE__*/function () {
    *   gauge,
    *   line,
    *   pie,
+   *   polar,
    *   radar,
    *   scatter,
    *   spline,
@@ -22983,6 +22990,7 @@ var Store = /*#__PURE__*/function () {
    *   gauge,
    *   line,
    *   pie,
+   *   polar,
    *   radar,
    *   scatter,
    *   spline,
@@ -27240,14 +27248,15 @@ var colorizePattern = function (pattern, color, id) {
 
   /**
    * Append data backgound color filter definition
+   * @param {string} color Color string
    * @private
    */
-  generateDataLabelBackgroundColorFilter: function generateDataLabelBackgroundColorFilter() {
+  generateDataLabelBackgroundColorFilter: function generateDataLabelBackgroundColorFilter(color) {
     var $$ = this,
         $el = $$.$el,
         config = $$.config,
         state = $$.state,
-        backgroundColors = config.data_labels_backgroundColors;
+        backgroundColors = color || config.data_labels_backgroundColors;
 
     if (backgroundColors) {
       var ids = [];
@@ -27259,7 +27268,7 @@ var colorizePattern = function (pattern, color, id) {
       }
 
       ids.forEach(function (v) {
-        var id = state.datetimeId + "-labels-bg" + $$.getTargetSelectorSuffix(v);
+        var id = state.datetimeId + "-labels-bg" + $$.getTargetSelectorSuffix(v) + (color ? $$.getTargetSelectorSuffix(color) : "");
         $el.defs.append("filter").attr("x", "0").attr("y", "0").attr("width", "1").attr("height", "1").attr("id", id).html("<feFlood flood-color=\"" + (v === "" ? backgroundColors : backgroundColors[v]) + "\" /><feComposite in=\"SourceGraphic\"/>");
       });
     }
@@ -27749,7 +27758,7 @@ function getFormat($$, typeValue, v) {
         defaultArcValueFormat = $$.defaultArcValueFormat,
         yFormat = $$.yFormat,
         y2Format = $$.y2Format,
-        hasArc = $$.hasArcType(null, ["gauge", "radar"]);
+        hasArc = $$.hasArcType(null, ["gauge", "polar", "radar"]);
     return function (v, ratio, id) {
       var format = hasArc ? defaultArcValueFormat : $$.axis && $$.axis.getId(id) === "y2" ? y2Format : yFormat;
       return format.call($$, v, ratio);
@@ -27760,6 +27769,9 @@ function getFormat($$, typeValue, v) {
   },
   defaultArcValueFormat: function defaultArcValueFormat(v, ratio) {
     return (ratio * 100).toFixed(1) + "%";
+  },
+  defaultPolarValueFormat: function defaultPolarValueFormat(v) {
+    return "" + v;
   },
   dataLabelFormat: function dataLabelFormat(targetId) {
     var $$ = this,
@@ -28523,7 +28535,9 @@ function getFormat($$, typeValue, v) {
       // arc
       $el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform); // radar
 
-      $el.radar && $$.redrawRadar();
+      $el.radar && $$.redrawRadar(); // polar
+
+      $el.polar && $$.redrawPolar();
     } // @TODO: Axis & Radar type
 
 
@@ -33264,6 +33278,9 @@ function getTextPos(pos, width) {
     } else if (target === "arc") {
       x = state.arcWidth / 2;
       y = state.arcHeight / 2;
+    } else if (target === "polar") {
+      x = state.arcWidth / 2;
+      y = state.arcHeight / 2;
     } else if (target === "radar") {
       var _$$$getRadarSize = $$.getRadarSize(),
           width = _$$$getRadarSize[0];
@@ -33479,11 +33496,14 @@ function getTextPos(pos, width) {
   isDonutType: function isDonutType(d) {
     return this.isTypeOf(d, "donut");
   },
+  isPolarType: function isPolarType(d) {
+    return this.isTypeOf(d, "polar");
+  },
   isRadarType: function isRadarType(d) {
     return this.isTypeOf(d, "radar");
   },
   isArcType: function isArcType(d) {
-    return this.isPieType(d) || this.isDonutType(d) || this.isGaugeType(d) || this.isRadarType(d);
+    return this.isPieType(d) || this.isDonutType(d) || this.isGaugeType(d) || this.isPolarType(d) || this.isRadarType(d);
   },
   // determine if is 'circle' data point
   isCirclePoint: function isCirclePoint(node) {
@@ -33811,7 +33831,8 @@ var ChartInternal = /*#__PURE__*/function () {
         $el = $$.$el,
         org = $$.org,
         hasAxis = state.hasAxis,
-        hasInteraction = config.interaction_enabled;
+        hasInteraction = config.interaction_enabled,
+        hasPolar = $$.hasType("polar");
 
     // for arc type, set axes to not be shown
     // $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
@@ -33881,14 +33902,14 @@ var ChartInternal = /*#__PURE__*/function () {
 
     var hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
 
-    if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors) {
+    if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors || hasPolar) {
       $el.defs = $el.svg.append("defs");
 
       if (hasAxis) {
         ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
           $$.appendClip($el.defs, state.clip[v]);
         });
-      } // Append data backgound color filter definition
+      } // Append data background color filter definition
 
 
       $$.generateDataLabelBackgroundColorFilter(); // set color patterns
@@ -33991,6 +34012,8 @@ var ChartInternal = /*#__PURE__*/function () {
         }
       });
     } else {
+      var hasPolar = $$.hasType("polar");
+
       if (!hasRadar) {
         types.push("Arc", "Pie");
       }
@@ -33999,6 +34022,8 @@ var ChartInternal = /*#__PURE__*/function () {
         types.push("Gauge");
       } else if (hasRadar) {
         types.push("Radar");
+      } else if (hasPolar) {
+        types.push("Polar");
       }
     }
 
@@ -34090,7 +34115,11 @@ var ChartInternal = /*#__PURE__*/function () {
     var $$ = this,
         _$$$state2 = $$.state,
         hasAxis = _$$$state2.hasAxis,
-        hasRadar = _$$$state2.hasRadar;
+        hasRadar = _$$$state2.hasRadar,
+        helper = function (type) {
+      return $$["updateTargetsFor" + type](targets.filter($$["is" + type + "Type"].bind($$)));
+    };
+
     // Text
     $$.updateTargetsForText(targets);
 
@@ -34099,14 +34128,21 @@ var ChartInternal = /*#__PURE__*/function () {
         var name = capitalize(v);
 
         if (v === "line" && $$.hasTypeOf(name) || $$.hasType(v)) {
-          $$["updateTargetsFor" + name](targets.filter($$["is" + name + "Type"].bind($$)));
+          helper(name);
         }
       }); // Sub Chart
 
-      $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets);
-    } else {
-      // Arc & Radar
-      $$.hasArcType(targets) && (hasRadar ? $$.updateTargetsForRadar(targets.filter($$.isRadarType.bind($$))) : $$.updateTargetsForArc(targets.filter($$.isArcType.bind($$))));
+      $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets); // Arc, Polar, Radar
+    } else if ($$.hasArcType(targets)) {
+      var _type = "Arc";
+
+      if (hasRadar) {
+        _type = "Radar";
+      } else if ($$.hasType("polar")) {
+        _type = "Polar";
+      }
+
+      helper(_type);
     } // circle
 
 
@@ -34869,7 +34905,7 @@ function nodeToSvgDataUrl(node, option, orgSize) {
         candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
     candidates.classed($FOCUS.focused, !1).classed($FOCUS.defocused, !0);
 
-    if ($$.hasArcType()) {
+    if ($$.hasArcType(null, ["polar"])) {
       $$.unexpandArc(targetIds);
       $$.hasType("gauge") && $$.undoMarkOverlapped($$, "." + $GAUGE.gaugeValue);
     }
@@ -34907,7 +34943,7 @@ function nodeToSvgDataUrl(node, option, orgSize) {
         candidates = $el.svg.selectAll($$.selectorTargets(targetIds));
     // should be for all targets
     candidates.classed($FOCUS.focused, !1).classed($FOCUS.defocused, !1);
-    $$.hasArcType() && $$.unexpandArc(targetIds);
+    $$.hasArcType(null, ["polar"]) && $$.unexpandArc(targetIds);
 
     if (config.legend_show) {
       $$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
@@ -42127,9 +42163,9 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     var $$ = this,
         config = $$.config,
         dataType = config.data_type,
-        padding = config.pie_padding,
+        padding = config[dataType + "_padding"],
         startingAngle = config[dataType + "_startingAngle"] || 0,
-        padAngle = ($$.hasType("pie") && padding ? padding * .01 : config[dataType + "_padAngle"]) || 0;
+        padAngle = (padding ? padding * .01 : config[dataType + "_padAngle"]) || 0;
     $$.pie = pie().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).value(function (d) {
       return d.values.reduce(function (a, b) {
         return a + b.value;
@@ -42140,7 +42176,8 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     var $$ = this,
         config = $$.config,
         state = $$.state,
-        padding = config.pie_padding,
+        dataType = config.data_type,
+        padding = config[dataType + "_padding"],
         w = config.gauge_width || config.donut_width,
         gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length * config.gauge_arcs_minWidth;
     // determine radius
@@ -42275,6 +42312,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         state = $$.state,
         singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
         hasMultiArcGauge = $$.hasMultiArcGauge(),
+        hasPolar = $$.hasType("polar"),
         arc = src_arc().innerRadius(function (d) {
       var _$$$getRadius = $$.getRadius(d),
           innerRadius = _$$$getRadius.innerRadius;
@@ -42282,9 +42320,16 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       return hasMultiArcGauge ? state.radius - singleArcWidth * (d.index + 1) : isNumber(innerRadius) ? innerRadius : 0;
     }).outerRadius(function (d) {
       var _$$$getRadius2 = $$.getRadius(d),
-          outerRadius = _$$$getRadius2.outerRadius;
+          outerRadius = _$$$getRadius2.outerRadius,
+          radius = outerRadius;
 
-      return hasMultiArcGauge ? state.radius - singleArcWidth * d.index : outerRadius;
+      if (hasMultiArcGauge) {
+        radius = state.radius - singleArcWidth * d.index;
+      } else if (hasPolar) {
+        radius = $$.getPolarOuterRadius(d, outerRadius);
+      }
+
+      return radius;
     }),
         newArc = function (d, withoutUpdate) {
       var path = "M 0 0";
@@ -42342,6 +42387,13 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
   getArc: function getArc(d, withoutUpdate, force) {
     return force || this.isArcType(d.data) ? this.svgArc(d, withoutUpdate) : "M 0 0";
   },
+
+  /**
+   * Set transform attributes to arc label text
+   * @param {Object} d Data object
+   * @returns {string} Translate attribute string
+   * @private
+   */
   transformForArcLabel: function transformForArcLabel(d) {
     var $$ = this,
         config = $$.config,
@@ -42356,16 +42408,24 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
             y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
         translate = "translate(" + x + "," + y + ")";
       } else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
-        var _$$$getRadius4 = $$.getRadius(d),
-            outerRadius = _$$$getRadius4.outerRadius,
-            c = this.svgArc.centroid(updated),
+        var _filter$map,
+            _$$$getRadius4 = $$.getRadius(d),
+            outerRadius = _$$$getRadius4.outerRadius;
+
+        if ($$.hasType("polar")) {
+          outerRadius = $$.getPolarOuterRadius(d, outerRadius);
+        }
+
+        var c = this.svgArc.centroid(updated),
             _c$map = c.map(function (v) {
           return isNaN(v) ? 0 : v;
         }),
             x = _c$map[0],
             y = _c$map[1],
             h = Math.sqrt(x * x + y * y),
-            ratio = $$.hasType("donut") && config.donut_label_ratio || $$.hasType("pie") && config.pie_label_ratio;
+            ratio = (_filter$map = ["donut", "pie", "polar"].filter($$.hasType.bind($$)).map(function (v) {
+          return config[v + "_label_ratio"];
+        })) == null ? void 0 : _filter$map[0];
 
         if (ratio) {
           ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
@@ -42393,10 +42453,11 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 
     if ($$.shouldShowArcLabel()) {
       selection.style("fill", $$.updateTextColor.bind($$)).attr("filter", $$.updateTextBacgroundColor.bind($$)).each(function (d) {
-        var node = src_select(this),
+        var _filter,
+            node = src_select(this),
             updated = $$.updateAngle(d),
             ratio = $$.getRatio("arc", updated),
-            isUnderThreshold = $$.meetsLabelThreshold(ratio, $$.hasType("donut") && "donut" || $$.hasType("gauge") && "gauge" || $$.hasType("pie") && "pie");
+            isUnderThreshold = $$.meetsLabelThreshold(ratio, (_filter = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))) == null ? void 0 : _filter[0]);
 
         if (isUnderThreshold) {
           var value = (updated || d).value,
@@ -42484,21 +42545,20 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
   shouldShowArcLabel: function shouldShowArcLabel() {
     var $$ = this,
         config = $$.config;
-    return ["pie", "donut", "gauge"].some(function (v) {
+    return ["donut", "gauge", "pie", "polar"].some(function (v) {
       return $$.hasType(v) && config[v + "_label_show"];
     });
   },
   getArcLabelFormat: function getArcLabelFormat() {
     var $$ = this,
         config = $$.config,
-        format = config.pie_label_format;
+        format = function (v) {
+      return v;
+    };
 
-    if ($$.hasType("gauge")) {
-      format = config.gauge_label_format;
-    } else if ($$.hasType("donut")) {
-      format = config.donut_label_format;
-    }
-
+    ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).forEach(function (v) {
+      format = config[v + "_label_format"];
+    });
     return isFunction(format) ? format.bind($$.api) : format;
   },
   getArcTitle: function getArcTitle() {
@@ -42630,6 +42690,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     }); // bind arc events
 
     hasInteraction && $$.bindArcEvent(mainArc);
+    $$.hasType("polar") && $$.redrawPolar();
     $$.hasType("gauge") && $$.redrawBackgroundArcs();
     $$.redrawArcText(duration);
   },
@@ -44610,6 +44671,124 @@ var getTransitionName = function () {
     }
   }
 });
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/polar.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+/**
+ * Get data max value
+ * @param {object} $$ ChartInternal instance
+ * @returns {number} max value
+ * @private
+ */
+function getDataMax($$) {
+  var levelMax = $$.config.polar_level_max,
+      dataMax = $$.getMinMaxData().max[0].value;
+
+  // Apply level max only when is greater than the data max value
+  if (levelMax && levelMax > dataMax) {
+    dataMax = levelMax;
+  }
+
+  return dataMax;
+}
+
+/* harmony default export */ var polar = ({
+  /**
+   * Initialize polar
+   * @private
+   */
+  initPolar: function initPolar() {
+    var $$ = this,
+        arcs = $$.$el.arcs,
+        config = $$.config,
+        levelTextShow = config.polar_level_text_show,
+        levelTextBgColor = config.polar_level_text_backgroundColor;
+    // append <g> for level
+    arcs.levels = arcs.append("g").attr("class", $LEVEL.levels); // set level text background color
+
+    if (levelTextShow && levelTextBgColor) {
+      $$.generateDataLabelBackgroundColorFilter(levelTextBgColor);
+    }
+  },
+
+  /**
+   * Get polar outer radius according to the data value
+   * @param {object} d Data object
+   * @param {numbet} outerRadius Outer radius
+   * @returns {number} outer radius
+   * @private
+   */
+  getPolarOuterRadius: function getPolarOuterRadius(d, outerRadius) {
+    var dataMax = getDataMax(this);
+    return (d == null ? void 0 : d.data.values[0].value) / dataMax * outerRadius;
+  },
+
+  /**
+   * Update polar based on given data array
+   * @param {object} targets Data object
+   * @private
+   */
+  updateTargetsForPolar: function updateTargetsForPolar(targets) {
+    // borrow from Arc
+    this.updateTargetsForArc(targets);
+  },
+
+  /**
+   * Called whenever redraw happens
+   * @private
+   */
+  redrawPolar: function redrawPolar() {
+    var $$ = this,
+        config = $$.config;
+    config.polar_level_show && $$.updatePolarLevel();
+  },
+
+  /**
+   * Update polar level circle
+   * @private
+   */
+  updatePolarLevel: function updatePolarLevel() {
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        levels = $$.$el.arcs.levels,
+        depth = config.polar_level_depth,
+        dataMax = getDataMax($$),
+        levelData = getRange(0, depth),
+        outerRadius = state.radius,
+        levelRatio = levelData.map(function (l) {
+      return outerRadius * ((l + 1) / depth);
+    }),
+        levelTextFormat = (config.polar_level_text_format || function () {}).bind($$.api),
+        level = levels.selectAll("." + $LEVEL.level).data(levelData);
+
+    level.exit().remove();
+    var levelEnter = level.enter().append("g").attr("class", function (d, i) {
+      return $LEVEL.level + " " + $LEVEL.level + "-" + i;
+    }); // cx, cy, translate: Set center as origin (0,0) so that it can share same center with arcs
+
+    levelEnter.append("circle");
+    levelEnter.merge(level).selectAll("circle").style("visibility", config.polar_level_show ? null : "hidden").attr("cx", 0).attr("cy", 0).attr("r", function (d) {
+      return levelRatio[d];
+    });
+
+    if (config.polar_level_text_show) {
+      var levelTextBackgroundColor = config.polar_level_text_backgroundColor,
+          defsId = "#" + state.datetimeId + "-labels-bg" + $$.getTargetSelectorSuffix(levelTextBackgroundColor);
+      levelEnter.append("text").style("text-anchor", "middle");
+      levelEnter.merge(level).selectAll("text").attr("dy", function (d) {
+        return -levelRatio[d] + 5;
+      }).attr("filter", levelTextBackgroundColor ? "url(" + defsId + ")" : null).text(function (d) {
+        return levelTextFormat(dataMax / levelData.length * (d + 1));
+      });
+    }
+  }
+});
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/radar.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -44650,7 +44829,7 @@ var cacheKey = KEY.radarPoints;
     if ($$.hasType("radar")) {
       $el.radar = $el.main.select("." + $COMMON.chart).append("g").attr("class", $RADAR.chartRadars); // level
 
-      $el.radar.levels = $el.radar.append("g").attr("class", $RADAR.levels); // axis
+      $el.radar.levels = $el.radar.append("g").attr("class", $LEVEL.levels); // axis
 
       $el.radar.axes = $el.radar.append("g").attr("class", $AXIS.axis); // shapes
 
@@ -44771,11 +44950,11 @@ var cacheKey = KEY.radarPoints;
       });
       return pos.join(" ");
     }),
-        level = radarLevels.selectAll("." + $RADAR.level).data(levelData);
+        level = radarLevels.selectAll("." + $LEVEL.level).data(levelData);
 
     level.exit().remove();
     var levelEnter = level.enter().append("g").attr("class", function (d, i) {
-      return $RADAR.level + " " + $RADAR.level + "-" + i;
+      return $LEVEL.level + " " + $LEVEL.level + "-" + i;
     });
     levelEnter.append("polygon").style("visibility", config.radar_level_show ? null : "hidden");
 
@@ -45781,6 +45960,91 @@ var cacheKey = KEY.radarPoints;
   pie_padding: 0,
   pie_startingAngle: 0
 });
+;// CONCATENATED MODULE: ./src/config/Options/shape/polar.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * x Axis config options
+ */
+/* harmony default export */ var shape_polar = ({
+  /**
+   * Set polar options
+   * @name polar
+   * @memberof Options
+   * @type {object}
+   * @property {object} polar Polar object
+   * @property {boolean} [polar.label.show=true] Show or hide label on each polar piece.
+   * @property {Function} [polar.label.format] Set formatter for the label on each polar piece.
+   * @property {number} [polar.label.threshold=0.05] Set threshold ratio to show/hide labels.
+   * @property {number|Function} [polar.label.ratio=undefined] Set ratio of labels position.
+   * @property {number} [polar.level.depth=3] Set the level depth.
+   * @property {boolean} [polar.level.show=true] Show or hide level.
+   * @property {string} [polar.level.text.backgroundColor="#fff"] Set label text's background color.
+   * @property {Function} [polar.level.text.format] Set format function for the level value.<br>- Default value: `(x) => x % 1 === 0 ? x : x.toFixed(2)`
+   * @property {boolean} [polar.level.text.show=true] Show or hide level text.
+   * @property {number} [polar.padAngle=0] Set padding between data.
+   * @property {number} [polar.padding=0] Sets the gap between pie arcs.
+   * @property {number} [polar.startingAngle=0] Set starting angle where data draws.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
+   * @example
+   *  polar: {
+   *      label: {
+   *          show: false,
+   *          format: function(value, ratio, id) {
+   *              return d3.format("$")(value);
+   *
+   *              // to multiline, return with '\n' character
+   *              // return value +"%\nLine1\n2Line2";
+   *          },
+   *
+   *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
+   *          // if data value is below than 0.1, text label will be hidden.
+   *          threshold: 0.1,
+   *
+   *          // set ratio callback. Should return ratio value
+   *          ratio: function(d, radius, h) {
+   *              ...
+   *              return ratio;
+   *          },
+   *          // or set ratio number
+   *          ratio: 0.5
+   *      },
+   *      level: {
+   *          depth: 3,
+   *          max: 500,
+   *          show: true,
+   *          text: {
+   *              format: function(x) {
+   *                  return x + "%";
+   *              },
+   *              show: true,
+   *              backgroundColor: "red"
+   *          }
+   *      },
+   *      padAngle: 0.1,
+   *      padding: 0,
+   *      startingAngle: 1
+   *  }
+   */
+  polar_label_show: !0,
+  polar_label_format: undefined,
+  polar_label_threshold: .05,
+  polar_label_ratio: undefined,
+  polar_level_depth: 3,
+  polar_level_max: undefined,
+  polar_level_show: !0,
+  polar_level_text_backgroundColor: "#fff",
+  polar_level_text_format: function polar_level_text_format(x) {
+    return x % 1 === 0 ? x : x.toFixed(2);
+  },
+  polar_level_text_show: !0,
+  polar_padAngle: 0,
+  polar_padding: 0,
+  polar_startingAngle: 0
+});
 ;// CONCATENATED MODULE: ./src/config/Options/shape/radar.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -45881,6 +46145,7 @@ var cacheKey = KEY.radarPoints;
 
 
 
+
  // Options
 
 
@@ -45891,6 +46156,7 @@ var cacheKey = KEY.radarPoints;
 
 
  // Non-Axis based
+
 
 
 
@@ -45988,6 +46254,11 @@ var _area = function area() {
     resolver_shape_pie = function () {
   return extendArc(undefined, [shape_pie]), (resolver_shape_pie = function () {
     return TYPE.PIE;
+  })();
+},
+    resolver_shape_polar = function () {
+  return extendArc([polar], [shape_polar]), (resolver_shape_polar = function () {
+    return TYPE.POLAR;
   })();
 },
     resolver_shape_radar = function () {
@@ -48483,7 +48754,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220315004747",
+  version: "3.3.3-nightly-20220316004757",
 
   /**
    * Generate chart
@@ -48531,6 +48802,7 @@ var _defaults = {},
    *   gauge,
    *   line,
    *   pie,
+   *   polar,
    *   radar,
    *   scatter,
    *   spline,
@@ -48617,7 +48889,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220315004747
+ * @version 3.3.3-nightly-20220316004757
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
