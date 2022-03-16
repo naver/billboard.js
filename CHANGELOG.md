@@ -1,3 +1,19 @@
+# [3.4.0-next.1](https://github.com/naver/billboard.js/compare/3.3.3...3.4.0-next.1) (2022-03-16)
+
+
+### Bug Fixes
+
+* **axis:** Fix culling visibility on dynamic loading ([4c79daf](https://github.com/naver/billboard.js/commit/4c79daffe295f3de9d6820fef2a85ffa551c0e56)), closes [#2582](https://github.com/naver/billboard.js/issues/2582)
+* **axis:** fix hidden axis rescale on dynamic load ([5418853](https://github.com/naver/billboard.js/commit/541885327ce7bdd55de0588427be56baf57f2bcf)), closes [#2523](https://github.com/naver/billboard.js/issues/2523) [#2571](https://github.com/naver/billboard.js/issues/2571)
+* **util:** Check if agent has mouse ([d42adaa](https://github.com/naver/billboard.js/commit/d42adaa2e026316451036aeb9f1dc2580c191a4b)), closes [#2550](https://github.com/naver/billboard.js/issues/2550) [#2585](https://github.com/naver/billboard.js/issues/2585)
+
+
+### Features
+
+* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
+* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
+* **polar:** Intent to ship polar type ([feca715](https://github.com/naver/billboard.js/commit/feca71573024f23e099bc221a1a8dd431d560d40)), closes [#2462](https://github.com/naver/billboard.js/issues/2462)
+
 ## [3.3.3](https://github.com/naver/billboard.js/compare/3.3.2...3.3.3) (2022-02-24)
 
 
