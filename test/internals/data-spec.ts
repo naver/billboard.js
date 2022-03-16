@@ -8,7 +8,7 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import sinon from "sinon";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AREA, $AXIS, $BAR, $CIRCLE, $COMMON, $LINE, $SHAPE, $TEXT} from "../../src/config/classes";
 import {isNumber} from "../../src/module/util";
 
 describe("DATA", () => {
@@ -54,7 +54,7 @@ describe("DATA", () => {
 			const expectedCx = [6, 299, 593];
 			const expectedCy = [371, 391, 332];
 
-			chart.$.main.selectAll(`.${CLASS.circles}-data1 .${CLASS.circle}`)
+			chart.$.main.selectAll(`.${$CIRCLE.circles}-data1 .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx, expectedCy));
 		});
 	});
@@ -93,10 +93,10 @@ describe("DATA", () => {
 			const expectedCy = {443: [194, 351, 36], 995: [391, 0, 351]};
 			const main = chart.$.main;
 
-			main.selectAll(`.${CLASS.circles}-443 .${CLASS.circle}`)
+			main.selectAll(`.${$CIRCLE.circles}-443 .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx[443], expectedCy[443]));
 
-			main.selectAll(`.${CLASS.circles}-995 .${CLASS.circle}`)
+			main.selectAll(`.${$CIRCLE.circles}-995 .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx[995], expectedCy[995]));
 		});
 	});
@@ -161,25 +161,25 @@ describe("DATA", () => {
 				"778.889": [347, 376, 340]
 			};
 
-			main.selectAll(`.${CLASS.circles}-443 .${CLASS.circle}`)
+			main.selectAll(`.${$CIRCLE.circles}-443 .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx, expectedCy[443]));
 
-			main.selectAll(`.${CLASS.circles}-995-996 .${CLASS.circle}`)
+			main.selectAll(`.${$CIRCLE.circles}-995-996 .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx, expectedCy[995]));
 
-			main.selectAll(`.${CLASS.circles}-112-0- .${CLASS.circle}`)
+			main.selectAll(`.${$CIRCLE.circles}-112-0- .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx, expectedCy[112]));
 
-			main.selectAll(`.${CLASS.circles}-223-0--224 .${CLASS.circle}`)
+			main.selectAll(`.${$CIRCLE.circles}-223-0--224 .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx, expectedCy[223]));
 
-			main.selectAll(`.${CLASS.circles}-334-1--0--335 .${CLASS.circle}`)
+			main.selectAll(`.${$CIRCLE.circles}-334-1--0--335 .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx, expectedCy[334]));
 
-			main.selectAll(`.${CLASS.circles}-556-557-558-0- .${CLASS.circle}`)
+			main.selectAll(`.${$CIRCLE.circles}-556-557-558-0- .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx, expectedCy[556]));
 
-			main.selectAll(`.${CLASS.circles}-778-889 .${CLASS.circle}`)
+			main.selectAll(`.${$CIRCLE.circles}-778-889 .${$CIRCLE.circle}`)
 				.each(checkXY(expectedCx, expectedCy["778.889"]));
 		});
 	});
@@ -366,7 +366,7 @@ describe("DATA", () => {
 		it("check for ascending", () => {
 			const data = [];
 
-			chart.$.arc.selectAll(`g.${CLASS.shapes}`).each(function(d, i) {
+			chart.$.arc.selectAll(`g.${$SHAPE.shapes}`).each(function(d, i) {
 				data.push([d.data.id, d.startAngle]);
 			});
 
@@ -389,7 +389,7 @@ describe("DATA", () => {
 		it("check for descending", () => {
 			const data = [];
 
-			chart.$.arc.selectAll(`g.${CLASS.shapes}`).each(function(d, i) {
+			chart.$.arc.selectAll(`g.${$SHAPE.shapes}`).each(function(d, i) {
 				data.push([d.data.id, d.startAngle]);
 			});
 
@@ -560,7 +560,7 @@ describe("DATA", () => {
 				it("should have milliseconds tick format", () => {
 					const expected = ["2014-05-20 17:25:00.123", "2014-05-20 17:30:00.345"];
 
-					chart.$.main.selectAll(`.${CLASS.axisX} g.tick text`).each(function(d, i) {
+					chart.$.main.selectAll(`.${$AXIS.axisX} g.tick text`).each(function(d, i) {
 						expect(d3Select(this).text()).to.be.equal(expected[i]);
 					});
 				});
@@ -710,7 +710,7 @@ describe("DATA", () => {
 		});
 
 		const checkPathLengths = expected => {
-			const line = chart.$.main.select(`path.${CLASS.line}-data1`);
+			const line = chart.$.main.select(`path.${$LINE.line}-data1`);
 			const path = line.attr("d");
 
 			expect(path.split("M").length).to.be.equal(expected.M);
@@ -780,7 +780,7 @@ describe("DATA", () => {
 		});
 
 		it("check for the normalized y axis tick in percentage", () => {
-			const tick = chart.$.main.selectAll(`.${CLASS.axisY} .tick tspan`);
+			const tick = chart.$.main.selectAll(`.${$AXIS.axisY} .tick tspan`);
 
 			// check for the y axis to be in percentage
 			tick.each(function (v, i) {
@@ -802,7 +802,7 @@ describe("DATA", () => {
 			chart.hide("data1");
 
 			setTimeout(() => {
-				chart.$.main.selectAll(`.${CLASS.target}-data2 path`).each(function() {
+				chart.$.main.selectAll(`.${$COMMON.target}-data2 path`).each(function() {
 					expect(this.getBBox().height).to.be.equal(chartHeight);
 				});
 
@@ -821,8 +821,8 @@ describe("DATA", () => {
 
 		it("check for null data", done => {
 			const main = chart.$.main;
-			const data1Bar = main.select(`.${CLASS.bars}-data1 .${CLASS.bar}-2`).node();
-			const data2Bar = main.select(`.${CLASS.bars}-data2 .${CLASS.bar}-1`).node();
+			const data1Bar = main.select(`.${$BAR.bars}-data1 .${$BAR.bar}-2`).node();
+			const data2Bar = main.select(`.${$BAR.bars}-data2 .${$BAR.bar}-1`).node();
 
 			expect(data1Bar.getBBox().height).to.be.equal(chartHeight);
 			expect(data2Bar.getBBox().height).to.be.equal(chartHeight);
@@ -848,7 +848,7 @@ describe("DATA", () => {
 		it("check for the normalized area's height", () => {
 			let areaHeight = 0;
 
-			chart.$.main.selectAll(`.${CLASS.areas} path`).each(function() {
+			chart.$.main.selectAll(`.${$AREA.areas} path`).each(function() {
 				areaHeight += this.getBBox().height;
 			});
 
@@ -887,13 +887,13 @@ describe("DATA", () => {
 		});
 
 		it("check for empty label text", () => {
-			const emptyLabelText = chart.$.main.select(`.${CLASS.text}.${CLASS.empty}`);
+			const emptyLabelText = chart.$.main.select(`.${$TEXT.text}.${$COMMON.empty}`);
 
 			expect(emptyLabelText.style("display")).to.be.equal("block");
 		});
 
 		it("check the visiblity on data toggles", done => {
-			const emptyLabelText = chart.$.main.select(`.${CLASS.text}.${CLASS.empty}`);
+			const emptyLabelText = chart.$.main.select(`.${$TEXT.text}.${$COMMON.empty}`);
 
 			// display data
 			chart.toggle();
@@ -914,7 +914,7 @@ describe("DATA", () => {
 		});
 
 		it("shouldn't be generating empty label text node", () => {
-			const emptyLabelText = chart.$.main.select(`.${CLASS.text}.${CLASS.empty}`);
+			const emptyLabelText = chart.$.main.select(`.${$TEXT.text}.${$COMMON.empty}`);
 
 			expect(emptyLabelText.empty()).to.be.true;
 		});

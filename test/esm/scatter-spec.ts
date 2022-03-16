@@ -8,7 +8,7 @@ import {expect} from "chai";
 import sinon from "sinon";
 import bb, {scatter} from "../../src/index.esm";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$EVENT} from "../../src/config/classes";
 
 describe("ESM scatter", function() {
     let chart;
@@ -33,7 +33,7 @@ describe("ESM scatter", function() {
 	});
 
     it("check data.onclick for scatter type", () => {
-        const rect = chart.$.main.select(`rect.${CLASS.eventRect}`).node();
+        const rect = chart.$.main.select(`rect.${$EVENT.eventRect}`).node();
         const circle = chart.$.circles.nodes()[0];
         const pos = util.getBBox(circle);
 

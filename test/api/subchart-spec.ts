@@ -16,6 +16,44 @@ describe("API subchart", () => {
 		chart = util.generate(args);
 	});
 
+	describe("Initialization", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 500, 60]
+					]
+				},
+				axis: {
+					x: {
+						tick: {
+							culling: {
+								max: 3
+							}
+						}
+					}
+				},
+				subchart: {
+					show: true,
+					axis: {
+						x: {
+							tick: {
+								text: {
+									show: false
+								}
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("should initialize without error", () => {
+			// will reach this, if no error occurs on the generation
+			expect(true).to.be.ok;
+		});
+	});
+
 	describe(".subchart.show/hide/toggle()", () => {
 		before(() => {
 			args = {
@@ -32,7 +70,7 @@ describe("API subchart", () => {
 		});
 
 		it("check subchart interactions", () => {
-			const {subchart} = chart.internal.$el;
+			const {$el: {axis, subchart}} = chart.internal;
 
 			expect(subchart.main).to.be.null;
 
@@ -50,11 +88,14 @@ describe("API subchart", () => {
 			chart.subchart.toggle();
 
 			expect(subchart.main.style("display")).to.be.not.equal("none");
+			const xAxisYPos = util.parseNum(axis.x.attr("transform"));
+
 
 			// when
 			chart.subchart.toggle();
 
 			expect(subchart.main.style("display")).to.be.equal("none");
+			expect(util.parseNum(axis.x.attr("transform"))).to.be.above(xAxisYPos);
 		});
 
 		it("dynamic data load", done => {

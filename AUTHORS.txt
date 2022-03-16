@@ -51,3 +51,8 @@ Aziz Gazanchiyan <ZIZ@KMDPoland.pl>
 Eben Collins <collinseben@gmail.com>
 Shim Heungwoon <ajaxlab7@gmail.com>
 Marcos Gomez Castillo <marcos.gomez.castillo@tecsisa.com>
+Hjalmers <opensource@rhj.se>
+Won-Joon Lee <sniperj@sniperj.dev>
+Justin-Moon <https://github.com/Justin-Moon>
+Haung Lee <https://github.com/HanungLee>
+Chunmyong Park <chunmyong.park@kaist.ac.kr>

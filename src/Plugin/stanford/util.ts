@@ -3,7 +3,6 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-
 import {getRange, isEmpty, isFunction, isString, parseDate} from "../../module/util";
 
 /**

@@ -19,6 +19,7 @@ export const TYPE = {
 	GAUGE: "gauge",
 	LINE: "line",
 	PIE: "pie",
+	POLAR: "polar",
 	RADAR: "radar",
 	SCATTER: "scatter",
 	SPLINE: "spline",
@@ -42,6 +43,7 @@ export const TYPE_METHOD_NEEDED = {
 	GAUGE: "initArc",
 	LINE: "initLine",
 	PIE: "initArc",
+	POLAR: "initPolar",
 	RADAR: "initCircle",
 	SCATTER: "initCircle",
 	SPLINE: "initLine",
@@ -68,6 +70,7 @@ export const TYPE_BY_CATEGORY = {
 		TYPE.PIE,
 		TYPE.DONUT,
 		TYPE.GAUGE,
+		TYPE.POLAR,
 		TYPE.RADAR
 	],
 	Line: [

@@ -7,7 +7,6 @@ import {pointer as d3Pointer} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
 import {d3Selection} from "../../types/types";
 import {document, window} from "./browser";
-import CLASS from "../config/classes";
 
 export {
 	asHalfPixel,
@@ -284,7 +283,7 @@ function getBrushSelection(ctx) {
 	if (event && event.type === "brush") {
 		selection = event.selection;
 	// check from brush area selection
-	} else if (main && (selection = main.select(`.${CLASS.brush}`).node())) {
+	} else if (main && (selection = main.select(".bb-brush").node())) {
 		selection = d3BrushSelection(selection);
 	}
 
@@ -313,11 +312,13 @@ function getBoundingRect(node): {
 /**
  * Retrun random number
  * @param {boolean} asStr Convert returned value as string
+ * @param {number} min Minimum value
+ * @param {number} max Maximum value
  * @returns {number|string}
  * @private
  */
-function getRandom(asStr: boolean = true): number | string {
-	const rand = Math.random();
+function getRandom(asStr: boolean = true, min = 0, max = 10000): number | string {
+	const rand = Math.floor(Math.random() * (max - min) + min);
 
 	return asStr ? String(rand) : rand;
 }
@@ -731,21 +732,39 @@ function isTabVisible(): boolean {
  * @private
  */
 function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | null {
-	let isMobile = false;
+	const {DocumentTouch, matchMedia, navigator} = window;
+	let hasTouch = false;
 
-	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
-	if (/Mobi/.test(window.navigator.userAgent) && touch) {
+	if (touch) {
 		// Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-		const hasTouchPoints = window.navigator && "maxTouchPoints" in window.navigator && window.navigator.maxTouchPoints > 0;
+		if (navigator && "maxTouchPoints" in navigator) {
+			hasTouch = navigator.maxTouchPoints > 0;
 
 		// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
 		// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-		const hasTouch = ("ontouchmove" in window || (window.DocumentTouch && document instanceof window.DocumentTouch));
+		} else if ("ontouchmove" in window || (DocumentTouch && document instanceof DocumentTouch)) {
+			hasTouch = true;
+		} else {
+			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
+			if (matchMedia?.("(pointer:coarse)").matches) {
+				hasTouch = true;
+			} else {
+				// Only as a last resort, fall back to user agent sniffing
+				const UA = navigator.userAgent;
 
-		isMobile = hasTouchPoints || hasTouch;
+				hasTouch = (
+					/\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+					/\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
+				);
+			}
+		}
 	}
 
-	const hasMouse = mouse && !isMobile ? ("onmouseover" in window) : false;
+	// Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
+	// https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
+	// Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
+	const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"]
+		.some(v => matchMedia?.(`(${v})`).matches);
 
-	return (hasMouse && "mouse") || (isMobile && "touch") || null;
+	return (hasMouse && "mouse") || (hasTouch && "touch") || null;
 }

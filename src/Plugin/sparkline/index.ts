@@ -2,7 +2,7 @@
  * Copyright (c) 2021 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import CLASS from "../../config/classes";
+import {$COMMON} from "../../config/classes";
 import Plugin from "../Plugin";
 import Options from "./Options";
 import {IData} from "../../ChartInternal/data/IData";
@@ -244,7 +244,7 @@ export default class Sparkline extends Plugin {
 
 		data.map(v => v.id)
 			.forEach((id, i) => {
-				const selector = `.${CLASS.target}-${id}`;
+				const selector = `.${$COMMON.target}-${id}`;
 				const shape = $el.main.selectAll(selector);
 				let svg = el[i].querySelector("svg");
 

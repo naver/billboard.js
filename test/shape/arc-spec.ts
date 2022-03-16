@@ -7,15 +7,15 @@
 import {expect} from "chai";
 import sinon from "sinon";
 import {selectAll as d3SelectAll} from "d3-selection";
-import CLASS from "../../src/config/classes";
+import {$ARC, $COMMON, $LEGEND, $SHAPE} from "../../src/config/classes";
 import util from "../assets/util";
 
 describe("SHAPE ARC", () => {
 	let chart;
 	const selector = {
-		arc: `.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}`,
-		shapes: `g.${CLASS.shapes}.${CLASS.arcs}.${CLASS.arcs}`,
-		shape: `path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}`
+		arc: `.${$ARC.chartArc}.${$COMMON.target}.${$COMMON.target}`,
+		shapes: `g.${$SHAPE.shapes}.${$ARC.arcs}.${$ARC.arcs}`,
+		shape: `path.${$SHAPE.shape}.${$ARC.arc}.${$ARC.arc}`
 	};
 
 	after(() => {
@@ -40,11 +40,11 @@ describe("SHAPE ARC", () => {
 		});
 
 		it("should have correct classes", () => {
-			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
 			const selector = {
-				arc: `.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}`,
-				shapes: `g.${CLASS.shapes}.${CLASS.arcs}.${CLASS.arcs}`,
-				shape: `path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}`
+				arc: `.${$ARC.chartArc}.${$COMMON.target}.${$COMMON.target}`,
+				shapes: `g.${$SHAPE.shapes}.${$ARC.arcs}.${$ARC.arcs}`,
+				shape: `path.${$SHAPE.shape}.${$ARC.arc}.${$ARC.arc}`
 			}
 
 			const arcs = {
@@ -67,13 +67,13 @@ describe("SHAPE ARC", () => {
 		it("should have correct d", () => {
 			const main = chart.$.main;
 
-			expect(main.select(`.${CLASS.arc}-data1`).attr("d"))
+			expect(main.select(`.${$ARC.arc}-data1`).attr("d"))
 				.to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
 
-			expect(main.select(`.${CLASS.arc}-data2`).attr("d"))
+			expect(main.select(`.${$ARC.arc}-data2`).attr("d"))
 				.to.match(/M1\..+,-211\..+A211\..+,211\..+,0,0,1,1\..+,211\..+L0,0Z/);
 
-			expect(main.select(`.${CLASS.arc}-data3`).attr("d"))
+			expect(main.select(`.${$ARC.arc}-data3`).attr("d"))
 				.to.match(/M1\..+,211\..+A211\..+,211\..+,0,0,1,-124\..+,-171\..+L0,0Z/);
 		});
 
@@ -85,7 +85,7 @@ describe("SHAPE ARC", () => {
 			chart.hide("data1");
 
 			chart.data.shown().map(v => v.id)
-				.forEach(id => total += parseFloat(arc.select(`.${CLASS.target}-${id} text`).text()));
+				.forEach(id => total += parseFloat(arc.select(`.${$COMMON.target}-${id} text`).text()));
 
 			expect(total).to.be.equal(100);
 		});
@@ -103,7 +103,7 @@ describe("SHAPE ARC", () => {
 			});
 
 			setTimeout(() => {
-				expect(chart.$.main.select(`.${CLASS.arc}-black`).attr("d"))
+				expect(chart.$.main.select(`.${$ARC.arc}-black`).attr("d"))
 					.to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
 
 				done();
@@ -129,7 +129,7 @@ describe("SHAPE ARC", () => {
 		});
 
 		it("should have correct d attribute", () => {
-			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
 			const arcs = {
 				data1: chartArc.select(`${selector.arc}-data1`)
 					.select(`${selector.shapes}-data1`)
@@ -164,9 +164,9 @@ describe("SHAPE ARC", () => {
 			});
 
 			expect(chart.internal.pie.padAngle()()).to.be.equal(value);
-			expect(chart.$.main.selectAll(`text.${CLASS.chartArcsTitle} tspan`).size()).to.be.equal(3);
+			expect(chart.$.main.selectAll(`text.${$ARC.chartArcsTitle} tspan`).size()).to.be.equal(3);
 
-			d3SelectAll(`.${CLASS.chartArc} text`).each(function(d) {
+			d3SelectAll(`.${$ARC.chartArc} text`).each(function(d) {
 				// @ts-ignore
 				const value = parseInt(this.textContent);
 
@@ -197,7 +197,7 @@ describe("SHAPE ARC", () => {
 			expect(internal.pie.padAngle()()).to.be.equal(padding * 0.01);
 			expect(internal.state.innerRadius).to.be.equal(innerRadius);
 
-			d3SelectAll(`.${CLASS.chartArc} text`).each(function(d) {
+			d3SelectAll(`.${$ARC.chartArc} text`).each(function(d) {
 				// @ts-ignore
 				const value = parseInt(this.textContent);
 
@@ -411,7 +411,7 @@ describe("SHAPE ARC", () => {
 
 		it("should interact properly for mouseover & mouseout", done => {
 			setTimeout(() => {
-				const path = chart.$.main.select(`path.${CLASS.arc}-data2`).node();
+				const path = chart.$.main.select(`path.${$ARC.arc}-data2`).node();
 
 				util.fireEvent(path, "mouseover", {
 					clientX: 500,
@@ -449,7 +449,7 @@ describe("SHAPE ARC", () => {
 
 		it("the dimension should be 0x0", () => {
 			["data2", "data3"].forEach(id => {
-				const rect = chart.$.arc.select(`.${CLASS.arc}-${id}`).node().getBBox();
+				const rect = chart.$.arc.select(`.${$ARC.arc}-${id}`).node().getBBox();
 
 				expect(rect.width === 0).to.be.true;
 				expect(rect.height === 0).to.be.true;
@@ -567,7 +567,7 @@ describe("SHAPE ARC", () => {
 						["data2", 6],
 					],
 					done: () => {
-						const legend = chart.$.legend.select(`.${CLASS.legendItem}-data2`).node();
+						const legend = chart.$.legend.select(`.${$LEGEND.legendItem}-data2`).node();
 
 						util.fireEvent(legend, "mouseover");
 						util.fireEvent(legend, "mouseout");
@@ -689,7 +689,7 @@ describe("SHAPE ARC", () => {
 			new Promise((resolve, reject) => {
 				setTimeout(() => {
 					path = chart.$.arc
-						.select(`.${CLASS.arc}-data1`)
+						.select(`.${$ARC.arc}-data1`)
 						.node();
 
 					length = path.getTotalLength();

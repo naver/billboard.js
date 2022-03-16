@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import CLASS from "../../config/classes";
+import {$COMMON} from "../../config/classes";
 
 export default {
 	subchart: {
@@ -41,20 +41,20 @@ export default {
 				config.subchart_show = !show;
 				!subchart.main && $$.initSubchart();
 
-				let $target = subchart.main.selectAll(`.${CLASS.target}`);
+				let $target = subchart.main.selectAll(`.${$COMMON.target}`);
 
 				// need to cover when new data has been loaded
 				if ($$.data.targets.length !== $target.size()) {
 					$$.updateSizes();
 					$$.updateTargetsForSubchart($$.data.targets);
 
-					$target = subchart.main.selectAll(`.${CLASS.target}`);
+					$target = subchart.main?.selectAll(`.${$COMMON.target}`);
 				}
 
-				$target.style("opacity", null);
-				subchart.main.style("display", null);
+				$target?.style("opacity", null);
+				subchart.main?.style("display", null);
 
-				this.flush();
+				this.resize();
 			}
 		},
 
@@ -69,13 +69,13 @@ export default {
 		 */
 		hide(): void {
 			const $$ = this.internal;
-			const {$el: {subchart}, config} = $$;
+			const {$el: {subchart: {main}}, config} = $$;
 
-			if (config.subchart_show && subchart.main.style("display") !== "none") {
+			if (config.subchart_show && main?.style("display") !== "none") {
 				config.subchart_show = false;
-				subchart.main.style("display", "none");
+				main.style("display", "none");
 
-				this.flush();
+				this.resize();
 			}
 		},
 

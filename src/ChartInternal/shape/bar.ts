@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {DataRow} from "../../../types/types";
-import CLASS from "../../config/classes";
+import {$BAR, $COMMON} from "../../config/classes";
 import {getRandom, isNumber} from "../../module/util";
 import {IDataRow} from "../data/IData";
 
@@ -13,10 +13,10 @@ export default {
 	initBar(): void {
 		const {$el, config, state: {clip}} = this;
 
-		$el.bar = $el.main.select(`.${CLASS.chart}`)
+		$el.bar = $el.main.select(`.${$COMMON.chart}`)
 			// should positioned at the beginning of the shape node to not overlap others
 			.insert("g", ":first-child")
-			.attr("class", CLASS.chartBars);
+			.attr("class", $BAR.chartBars);
 
 		// set clip-path attribute when condition meet
 		// https://github.com/naver/billboard.js/issues/2421
@@ -39,8 +39,8 @@ export default {
 			$$.initBar();
 		}
 
-		const mainBarUpdate = $$.$el.main.select(`.${CLASS.chartBars}`)
-			.selectAll(`.${CLASS.chartBar}`)
+		const mainBarUpdate = $$.$el.main.select(`.${$BAR.chartBars}`)
+			.selectAll(`.${$BAR.chartBar}`)
 			.data(
 				// remove
 				targets.filter(
@@ -73,8 +73,8 @@ export default {
 		const classBar = $$.getClass("bar", true);
 		const initialOpacity = $$.initialOpacity.bind($$);
 
-		const bar = $root.main.selectAll(`.${CLASS.bars}`)
-			.selectAll(`.${CLASS.bar}`)
+		const bar = $root.main.selectAll(`.${$BAR.bars}`)
+			.selectAll(`.${$BAR.bar}`)
 			.data($$.labelishData.bind($$));
 
 		$T(bar.exit(), withTransition)

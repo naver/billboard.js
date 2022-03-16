@@ -24,6 +24,7 @@ import shapeGauge from "../../ChartInternal/shape/gauge";
 import shapeBubble from "../../ChartInternal/shape/bubble";
 import shapeLine from "../../ChartInternal/shape/line";
 import shapePoint from "../../ChartInternal/shape/point";
+import shapePolar from "../../ChartInternal/shape/polar";
 import shapeRadar from "../../ChartInternal/shape/radar";
 
 // Options
@@ -40,6 +41,7 @@ import optSpline from "../Options/shape/spline";
 import optDonut from "../Options/shape/donut";
 import optGauge from "../Options/shape/gauge";
 import optPie from "../Options/shape/pie";
+import optPolar from "../Options/shape/polar";
 import optRadar from "../Options/shape/radar";
 
 export {
@@ -55,6 +57,7 @@ export {
 	gauge,
 	line,
 	pie,
+	polar,
 	radar,
 	scatter,
 	spline,
@@ -121,6 +124,7 @@ let step = (): string => (extendLine(), (step = () => TYPE.STEP)());
 let donut = (): string => (extendArc(undefined, [optDonut]), (donut = () => TYPE.DONUT)());
 let gauge = (): string => (extendArc([shapeGauge], [optGauge]), (gauge = () => TYPE.GAUGE)());
 let pie = (): string => (extendArc(undefined, [optPie]), (pie = () => TYPE.PIE)());
+let polar = (): string => (extendArc([shapePolar], [optPolar]), (polar = () => TYPE.POLAR)());
 let radar = (): string => (
 	extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), (radar = () => TYPE.RADAR)()
 );

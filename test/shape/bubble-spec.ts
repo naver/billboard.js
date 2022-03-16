@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $CIRCLE, $TEXT} from "../../src/config/classes";
 import util from "../assets/util";
 import {isArray, isObject} from "../../src/module/util";
 
@@ -40,11 +40,11 @@ describe("SHAPE BUBBLE", () => {
 
 		it("check the radius: default", () => {
 			// check for the maximum
-			let r = +chart.$.main.select(`.${CLASS.circles}-data1 .${CLASS.circle}-3`).attr("r");
+			let r = +chart.$.main.select(`.${$CIRCLE.circles}-data1 .${$CIRCLE.circle}-3`).attr("r");
 			expect(r).to.be.equal(35);
 
 			// check for the minimum
-			r = +chart.$.main.select(`.${CLASS.circles}-data2 .${CLASS.circle}-2`).attr("r");
+			r = +chart.$.main.select(`.${$CIRCLE.circles}-data2 .${$CIRCLE.circle}-2`).attr("r");
 			expect(r).to.be.closeTo(5, 1);
 		});
 
@@ -54,7 +54,7 @@ describe("SHAPE BUBBLE", () => {
 					['data1', 500, 350, 200, 380, 10]
 				],
 				done: function() {
-					chart.$.main.selectAll(`.${CLASS.circles}-data1 circle`)
+					chart.$.main.selectAll(`.${$CIRCLE.circles}-data1 circle`)
 						.each(function(v, i) {
 							const r = +d3Select(this).attr("r");
 
@@ -76,7 +76,7 @@ describe("SHAPE BUBBLE", () => {
 		});
 
 		it("check the radius: customized", () => {
-			const r = +chart.$.main.select(`.${CLASS.circles}-data1 .${CLASS.circle}-3`).attr("r");
+			const r = +chart.$.main.select(`.${$CIRCLE.circles}-data1 .${$CIRCLE.circle}-3`).attr("r");
 
 			expect(r).to.be.equal(50);
 		});
@@ -87,7 +87,7 @@ describe("SHAPE BUBBLE", () => {
 
 		it("check for the label text", () => {
 			args.data.columns.forEach((v, i) => {
-				chart.$.main.selectAll(`.${CLASS.chartTexts}-data${i+1} text`).each(function(w, j) {
+				chart.$.main.selectAll(`.${$TEXT.chartTexts}-data${i+1} text`).each(function(w, j) {
 					expect(+d3Select(this).text()).to.be.equal(v[j+1]);
 				});
 			});
@@ -99,7 +99,7 @@ describe("SHAPE BUBBLE", () => {
 
 		it("check the radius: customized", () => {
 			const value = chart.data.values("data1")[3];
-			const r = +chart.$.main.select(`.${CLASS.circles}-data1 .${CLASS.circle}-3`).attr("r");
+			const r = +chart.$.main.select(`.${$CIRCLE.circles}-data1 .${$CIRCLE.circle}-3`).attr("r");
 
 			expect(r).to.be.equal(maxR({value}));
 		});
@@ -112,7 +112,7 @@ describe("SHAPE BUBBLE", () => {
 
 		it("check the radius: customized", () => {
 			const value = chart.data.values("data1")[3];
-			const r = +chart.$.main.select(`.${CLASS.circles}-data1 .${CLASS.circle}-3`).attr("r");
+			const r = +chart.$.main.select(`.${$CIRCLE.circles}-data1 .${$CIRCLE.circle}-3`).attr("r");
 
 			expect(r).to.be.equal(
 				chart.internal.getBubbleR({value})
@@ -128,7 +128,7 @@ describe("SHAPE BUBBLE", () => {
 		it("should be zerobased", () => {
 			chart = util.generate(args);
 
-			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+			const tickNodes = chart.$.svg.select(`.${$AXIS.axisY}`).selectAll("g.tick");
 			const translateValues = [426, 377, 328, 279, 230, 181, 131, 82, 33];
 
 			tickNodes.each(function(d, i) {
@@ -145,7 +145,7 @@ describe("SHAPE BUBBLE", () => {
 		it("should not be zerobased", () => {
 			chart = util.generate(args);
 
-			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+			const tickNodes = chart.$.svg.select(`.${$AXIS.axisY}`).selectAll("g.tick");
 			const translateValues = [390, 345, 300, 255, 209, 164, 119, 74, 29];
 
 			tickNodes.each(function(d, i) {

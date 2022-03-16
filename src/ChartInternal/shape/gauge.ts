@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import CLASS from "../../config/classes";
+import {$ARC, $COMMON, $GAUGE} from "../../config/classes";
 import {isFunction} from "../../module/util";
 
 export default {
@@ -21,14 +21,14 @@ export default {
 			const hasMulti = $$.hasMultiArcGauge();
 
 			arcs.append(hasMulti ? "g" : "path")
-				.attr("class", CLASS.chartArcsBackground)
+				.attr("class", $ARC.chartArcsBackground)
 				.style("fill", (!hasMulti && config.gauge_background) || null);
 
-			config.gauge_units && appendText(CLASS.chartArcsGaugeUnit);
+			config.gauge_units && appendText($GAUGE.chartArcsGaugeUnit);
 
 			if (config.gauge_label_show) {
-				appendText(CLASS.chartArcsGaugeMin);
-				!config.gauge_fullCircle && appendText(CLASS.chartArcsGaugeMax);
+				appendText($GAUGE.chartArcsGaugeMin);
+				!config.gauge_fullCircle && appendText($GAUGE.chartArcsGaugeMax);
 			}
 		}
 	},
@@ -53,13 +53,13 @@ export default {
 		const {config, state, $el} = $$;
 		const {hiddenTargetIds} = $$.state;
 
-		const arcLabelLines = $el.main.selectAll(`.${CLASS.arcs}`)
-			.selectAll(`.${CLASS.arcLabelLine}`)
+		const arcLabelLines = $el.main.selectAll(`.${$ARC.arcs}`)
+			.selectAll(`.${$ARC.arcLabelLine}`)
 			.data($$.arcData.bind($$));
 
 		const mainArcLabelLine = arcLabelLines.enter()
 			.append("rect")
-			.attr("class", d => `${CLASS.arcLabelLine} ${CLASS.target} ${CLASS.target}-${d.data.id}`)
+			.attr("class", d => `${$ARC.arcLabelLine} ${$COMMON.target} ${$COMMON.target}-${d.data.id}`)
 			.merge(arcLabelLines);
 
 		mainArcLabelLine

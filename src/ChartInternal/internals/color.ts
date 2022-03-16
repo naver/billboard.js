@@ -5,7 +5,7 @@
 import {select as d3Select} from "d3-selection";
 import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
 import {document, window} from "../../module/browser";
-import CLASS from "../../config/classes";
+import {$ARC, $COLOR, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {notEmpty, isFunction, isObject, isString} from "../../module/util";
 
@@ -54,7 +54,7 @@ export default {
 			const delimiter = ";";
 			const span = document.createElement("span");
 
-			span.className = CLASS.colorPattern;
+			span.className = $COLOR.colorPattern;
 			span.style.display = "none";
 			body.appendChild(span);
 
@@ -160,12 +160,13 @@ export default {
 
 	/**
 	 * Append data backgound color filter definition
+	 * @param {string} color Color string
 	 * @private
 	 */
-	generateDataLabelBackgroundColorFilter(): void {
+	generateDataLabelBackgroundColorFilter(color?: string): void {
 		const $$ = this;
 		const {$el, config, state} = $$;
-		const backgroundColors = config.data_labels_backgroundColors;
+		const backgroundColors = color || config.data_labels_backgroundColors;
 
 		if (backgroundColors) {
 			let ids: string[] = [];
@@ -177,7 +178,7 @@ export default {
 			}
 
 			ids.forEach(v => {
-				const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}`;
+				const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}${color ? $$.getTargetSelectorSuffix(color) : ""}`;
 
 				$el.defs.append("filter")
 					.attr("x", "0")
@@ -214,8 +215,8 @@ export default {
 		main.selectAll(
 			isObject(d) ?
 				// when is Arc type
-				`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}` :
-				`.${CLASS.shape}-${d}`
+				`.${$ARC.arc}${$$.getTargetSelectorSuffix(d.id)}` :
+				`.${$SHAPE.shape}-${d}`
 		).style("fill", color);
 	}
 };

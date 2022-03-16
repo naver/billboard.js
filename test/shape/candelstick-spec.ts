@@ -7,7 +7,7 @@
 import {expect} from "chai";
 import util from "../assets/util";
 import {isArray} from "../../src/module/util";
-import CLASS from "../../src/config/classes";
+import {$CANDLESTICK, $COMMON} from "../../src/config/classes";
 
 describe("SHAPE CANDLESTICK", () => {
 	let chart;
@@ -72,7 +72,7 @@ describe("SHAPE CANDLESTICK", () => {
 				const line = this.querySelector("line");
 
 				// check for bearish data
-				if (this.getAttribute("class").indexOf(CLASS.valueDown) > -1) {
+				if (this.getAttribute("class").indexOf($CANDLESTICK.valueDown) > -1) {
 					expect(data._isUp).to.be.false;
 					expect(data.close < data.open).to.be.true;
 
@@ -81,7 +81,7 @@ describe("SHAPE CANDLESTICK", () => {
 				// check for bullrish data
 				} else {
 					expect(data.close > data.open).to.be.true;
-					expect(this.getAttribute("class").indexOf(CLASS.valueUp) > -1).to.be.true;
+					expect(this.getAttribute("class").indexOf($CANDLESTICK.valueUp) > -1).to.be.true;
 				}
 
 				expect(expectedPath[i].test(path.getAttribute("d"))).to.be.true;
@@ -117,7 +117,7 @@ describe("SHAPE CANDLESTICK", () => {
 			chart.tooltip.show({index});
 
 			chart.$.candlestick.each(function(d, i) {
-				const hasExpandedClass = this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1;
+				const hasExpandedClass = this.getAttribute("class").indexOf($COMMON.EXPANDED) > -1;
 
 				expect(hasExpandedClass).to.be[i === index ? "true" : "false"];
 			});
@@ -126,7 +126,7 @@ describe("SHAPE CANDLESTICK", () => {
 			chart.tooltip.hide();
 
 			chart.$.candlestick.each(function() {
-				const hasExpandedClass = this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1;
+				const hasExpandedClass = this.getAttribute("class").indexOf($COMMON.EXPANDED) > -1;
 
 				expect(hasExpandedClass).to.be.false;
 			});
@@ -230,7 +230,7 @@ describe("SHAPE CANDLESTICK", () => {
 				const line = this.querySelector("line");
 
 				// check for bearish data
-				if (this.getAttribute("class").indexOf(CLASS.valueDown) > -1) {
+				if (this.getAttribute("class").indexOf($CANDLESTICK.valueDown) > -1) {
 					expect(data._isUp).to.be.false;
 					expect(data.close < data.open).to.be.true;
 
@@ -239,7 +239,7 @@ describe("SHAPE CANDLESTICK", () => {
 				// check for bullrish data
 				} else {
 					expect(data.close > data.open).to.be.true;
-					expect(this.getAttribute("class").indexOf(CLASS.valueUp) > -1).to.be.true;
+					expect(this.getAttribute("class").indexOf($CANDLESTICK.valueUp) > -1).to.be.true;
 				}
 
 				const compareData = expected[d.id];

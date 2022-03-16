@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $BAR, $GAUGE} from "../../src/config/classes";
 import bb from "../../src";
 
 describe("API chart", () => {
@@ -47,7 +47,7 @@ describe("API chart", () => {
 
 		it("should update groups correctly", done => {
 			const main = chart.$.main;
-			const path = main.select(`.${CLASS.bars}-data1 path`);
+			const path = main.select(`.${$BAR.bars}-data1 path`);
 			const barWidth = util.getBBox(path).width;
 
 			chart.groups([
@@ -115,6 +115,12 @@ describe("API chart", () => {
 			});
 
 			expect(bb.instance.indexOf(chart) === -1).to.be.true;
+
+			const el = document.getElementById("chart");
+
+			// should revert removing className and styles
+			expect(el.classList.contains("bb")).to.be.false;
+			expect(el.style.position).to.be.equal("");
 		});
 
 		it("should be destroyed without throwing error", done => {
@@ -137,6 +143,20 @@ describe("API chart", () => {
 
 		it("should not throw error when already destroyed", () => {
 			chart.destroy();
+			chart.destroy();
+		});
+
+		it("events should be unbound on destroy", () => {
+			const {internal} = chart;
+			const {$el: {eventRect}} = internal;
+
+			// all bound events are removed
+			chart.internal.unbindAllEvents();
+
+			["mouseover", "mousemove", "mouseout"].forEach(event => {
+				expect(eventRect.on(event)).to.be.undefined;
+			});
+
 			chart.destroy();
 		});
 	});
@@ -179,7 +199,7 @@ describe("API chart", () => {
 			max = +chart.config("gauge.max", expected, true);
 
 			expect(max).to.be.equal(expected);
-			expect(+chart.$.arc.select(`.${CLASS.chartArcsGaugeMax}`).text()).to.be.equal(expected);
+			expect(+chart.$.arc.select(`.${$GAUGE.chartArcsGaugeMax}`).text()).to.be.equal(expected);
 		});
 
 		it("set options", () => {
@@ -200,7 +220,7 @@ describe("API chart", () => {
 		});
 
 		it("check for the axis config update", () => {
-			const axisYTick = chart.$.main.selectAll(`.${CLASS.axisY} .tick`);
+			const axisYTick = chart.$.main.selectAll(`.${$AXIS.axisY} .tick`);
 			const expected = [];
 
 			// axis y tick is outer

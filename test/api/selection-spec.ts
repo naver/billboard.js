@@ -5,7 +5,7 @@
 /* eslint-disable */
 import {expect} from "chai";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$BAR, $SELECT, $SHAPE} from "../../src/config/classes";
 
 describe("API select", () => {
 	let chart;
@@ -31,7 +31,7 @@ describe("API select", () => {
 		it("should select all data points", () => {
 			chart.select();
 
-			const selected = main.selectAll(`.${CLASS.selectedCircle}`);
+			const selected = main.selectAll(`.${$SELECT.selectedCircle}`);
 			const dataLen = chart.data.values("data1").length + chart.data.values("data2").length;
 
 			expect(selected.size()).to.be.equal(dataLen);
@@ -43,8 +43,8 @@ describe("API select", () => {
 			chart.unselect(["data1", "data2"], [indice]);
 
 			setTimeout(() => {
-				const unselected = main.selectAll(`.${CLASS.selectedCircle}`)
-					.filter(`.${CLASS.selectedCircle}-${indice}`);
+				const unselected = main.selectAll(`.${$SELECT.selectedCircle}`)
+					.filter(`.${$SELECT.selectedCircle}-${indice}`);
 
 				expect(unselected.empty()).to.be.ok;
 
@@ -56,7 +56,7 @@ describe("API select", () => {
 			chart.unselect();
 
 			setTimeout(() => {
-				const unselected = main.selectAll(`.${CLASS.selectedCircle}`);
+				const unselected = main.selectAll(`.${$SELECT.selectedCircle}`);
 
 				expect(unselected.empty()).to.be.ok;
 
@@ -72,7 +72,7 @@ describe("API select", () => {
 			const selected = chart.selected();
 
 			setTimeout(() => {
-				main.selectAll(`.${CLASS.selectedCircles}-data1 circle`).each((v, i) => {
+				main.selectAll(`.${$SELECT.selectedCircles}-data1 circle`).each((v, i) => {
 					expect(v).to.be.equal(selected[i]);
 					expect(v.index).to.be.equal(indice[i]);
 				});
@@ -92,7 +92,7 @@ describe("API select", () => {
 		it("should select all data points", () => {
 			chart.select();
 
-			const selected = main.selectAll(`.${CLASS.SELECTED}`);
+			const selected = main.selectAll(`.${$SELECT.SELECTED}`);
 			const dataLen = chart.data.values("data1").length + chart.data.values("data2").length;
 
 			expect(selected.size()).to.be.equal(dataLen);
@@ -104,8 +104,8 @@ describe("API select", () => {
 			chart.unselect(["data1", "data2"], [indice]);
 
 			setTimeout(() => {
-				const unselected = main.selectAll(`.${CLASS.SELECTED}`)
-					.filter(`.${CLASS.bar}-${indice}`);
+				const unselected = main.selectAll(`.${$SELECT.SELECTED}`)
+					.filter(`.${$BAR.bar}-${indice}`);
 
 				expect(unselected.empty()).to.be.ok;
 
@@ -117,7 +117,7 @@ describe("API select", () => {
 			chart.unselect();
 
 			setTimeout(() => {
-				const unselected = main.selectAll(`.${CLASS.SELECTED}`);
+				const unselected = main.selectAll(`.${$SELECT.SELECTED}`);
 
 				expect(unselected.empty()).to.be.ok;
 
@@ -134,7 +134,7 @@ describe("API select", () => {
 			const selected = chart.selected();
 
 			setTimeout(() => {
-				main.selectAll(`.${CLASS.shapes}-data1 path.${CLASS.SELECTED}`).each(function(v, i) {
+				main.selectAll(`.${$SHAPE.shapes}-data1 path.${$SELECT.SELECTED}`).each(function(v, i) {
 					expect(v).to.be.equal(selected[i]);
 					expect(v.index).to.be.equal(indice[i]);
 

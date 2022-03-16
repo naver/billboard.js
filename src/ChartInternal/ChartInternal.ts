@@ -12,14 +12,13 @@ import {
 import {select as d3Select} from "d3-selection";
 import {d3Selection} from "../../types/types";
 import {checkModuleImport} from "../module/error";
-
-import CLASS from "../config/classes";
+import {$COMMON, $TEXT} from "../config/classes";
 import Store from "../config/Store/Store";
 import Options from "../config/Options/Options";
 import {document, window} from "../module/browser";
 import Cache from "../module/Cache";
 import {generateResize} from "../module/generator";
-import {capitalize, extend, notEmpty, convertInputType, getOption, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
+import {capitalize, extend, notEmpty, convertInputType, getOption, getRandom, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
 
 // data
 import dataConvert from "./data/convert";
@@ -210,7 +209,9 @@ export default class ChartInternal {
 			$el.chart = d3Select(document.body.appendChild(document.createElement("div")));
 		}
 
-		$el.chart.html("").classed(bindto.classname, true);
+		$el.chart.html("")
+			.classed(bindto.classname, true)
+			.style("position", "relative");
 
 		$$.initToRender();
 	}
@@ -254,7 +255,7 @@ export default class ChartInternal {
 		const isRotated = config.axis_rotated;
 
 		// datetime to be used for uniqueness
-		state.datetimeId = `bb-${+new Date()}`;
+		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
 
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();
@@ -312,6 +313,7 @@ export default class ChartInternal {
 		const {config, scale, state, $el, org} = $$;
 		const {hasAxis} = state;
 		const hasInteraction = config.interaction_enabled;
+		const hasPolar = $$.hasType("polar");
 
 		// for arc type, set axes to not be shown
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
@@ -386,7 +388,7 @@ export default class ChartInternal {
 		// Define defs
 		const hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
 
-		if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors) {
+		if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors || hasPolar) {
 			$el.defs = $el.svg.append("defs");
 
 			if (hasAxis) {
@@ -395,7 +397,7 @@ export default class ChartInternal {
 				});
 			}
 
-			// Append data backgound color filter definition
+			// Append data background color filter definition
 			$$.generateDataLabelBackgroundColorFilter();
 
 			// set color patterns
@@ -411,7 +413,7 @@ export default class ChartInternal {
 
 		// Define regions
 		const main = $el.svg.append("g")
-			.classed(CLASS.main, true)
+			.classed($COMMON.main, true)
 			.attr("transform", $$.getTranslate("main"));
 
 		$el.main = main;
@@ -428,7 +430,7 @@ export default class ChartInternal {
 		// text when empty
 		if (config.data_empty_label_text) {
 			main.append("text")
-				.attr("class", `${CLASS.text} ${CLASS.empty}`)
+				.attr("class", `${$TEXT.text} ${$COMMON.empty}`)
 				.attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
 				.attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
 		}
@@ -442,7 +444,7 @@ export default class ChartInternal {
 		}
 
 		// Define g for chart area
-		main.append("g").attr("class", CLASS.chart)
+		main.append("g").attr("class", $COMMON.chart)
 			.attr("clip-path", state.clip.path);
 
 		$$.callPluginHook("$init");
@@ -511,6 +513,8 @@ export default class ChartInternal {
 				}
 			});
 		} else {
+			const hasPolar = $$.hasType("polar");
+
 			if (!hasRadar) {
 				types.push("Arc", "Pie");
 			}
@@ -519,6 +523,8 @@ export default class ChartInternal {
 				types.push("Gauge");
 			} else if (hasRadar) {
 				types.push("Radar");
+			} else if (hasPolar) {
+				types.push("Polar");
 			}
 		}
 
@@ -599,6 +605,9 @@ export default class ChartInternal {
 	updateTargets(targets): void {
 		const $$ = <any> this;
 		const {hasAxis, hasRadar} = $$.state;
+		const helper = type => $$[`updateTargetsFor${type}`](
+			targets.filter($$[`is${type}Type`].bind($$))
+		);
 
 		// Text
 		$$.updateTargetsForText(targets);
@@ -608,22 +617,25 @@ export default class ChartInternal {
 				const name = capitalize(v);
 
 				if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
-					$$[`updateTargetsFor${name}`](
-						targets.filter($$[`is${name}Type`].bind($$))
-					);
+					helper(name);
 				}
 			});
 
 			// Sub Chart
 			$$.updateTargetsForSubchart &&
 				$$.updateTargetsForSubchart(targets);
-		} else {
-			// Arc & Radar
-			$$.hasArcType(targets) && (
-				hasRadar ?
-					$$.updateTargetsForRadar(targets.filter($$.isRadarType.bind($$))) :
-					$$.updateTargetsForArc(targets.filter($$.isArcType.bind($$)))
-			);
+
+		// Arc, Polar, Radar
+		} else if ($$.hasArcType(targets)) {
+			let type = "Arc";
+
+			if (hasRadar) {
+				type = "Radar";
+			} else if ($$.hasType("polar")) {
+				type = "Polar";
+			}
+
+			helper(type);
 		}
 
 		// circle
@@ -643,7 +655,7 @@ export default class ChartInternal {
 		const $$ = <any> this;
 		const {$el: {svg}, $T} = $$;
 
-		$T(svg.selectAll(`.${CLASS.target}`)
+		$T(svg.selectAll(`.${$COMMON.target}`)
 			.filter(d => $$.isTargetToShow(d.id))
 		).style("opacity", null);
 	}

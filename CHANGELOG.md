@@ -1,33 +1,48 @@
-# [3.3.0-next.2](https://github.com/naver/billboard.js/compare/3.3.0-next.1...3.3.0-next.2) (2022-01-05)
+## [3.3.3](https://github.com/naver/billboard.js/compare/3.3.2...3.3.3) (2022-02-24)
 
 
 ### Bug Fixes
 
+* **axis:** Fix error when tick text isn't accessible ([3dd15c9](https://github.com/naver/billboard.js/commit/3dd15c90d11158798fb5847256c70faceb5d7caa)), closes [#2556](https://github.com/naver/billboard.js/issues/2556)
+* **build:** Fix incorrect versioning on build ([c7102bf](https://github.com/naver/billboard.js/commit/c7102bf16fc5f4e93f73d5b09011cac502b8b87c)), closes [#2560](https://github.com/naver/billboard.js/issues/2560)
+
+## [3.3.2](https://github.com/naver/billboard.js/compare/3.3.1...3.3.2) (2022-02-14)
+
+
+### Bug Fixes
+
+* **subchart:** Fix axis position on subchart.hide() call ([2ad65fd](https://github.com/naver/billboard.js/commit/2ad65fd2fcb78117be557f9b8351f9057d86b1d5)), closes [#2536](https://github.com/naver/billboard.js/issues/2536) [#2534](https://github.com/naver/billboard.js/issues/2534)
+* **tooltip:** revert tooltip.contents' defaultValueFormat ([333ccad](https://github.com/naver/billboard.js/commit/333ccadf9140369896d2ebe8e1e7dd26248ff98d)), closes [#2542](https://github.com/naver/billboard.js/issues/2542)
+* **zoom:** Fix unzoom after appending regions ([de64c4e](https://github.com/naver/billboard.js/commit/de64c4e2618df844ce5a4b3c25a5ad357683d49d)), closes [#2531](https://github.com/naver/billboard.js/issues/2531)
+
+## [3.3.1](https://github.com/naver/billboard.js/compare/3.3.0...3.3.1) (2022-01-28)
+
+
+### Bug Fixes
+
+* **axis:** Fix bar draw for inverted y/y2 axes ([9d0fb70](https://github.com/naver/billboard.js/commit/9d0fb70e8607737aab5e1f85d19a0d6c449a31a1)), closes [#1323](https://github.com/naver/billboard.js/issues/1323) [#2503](https://github.com/naver/billboard.js/issues/2503)
+* **domain:** Fix incorrect domain updates ([a697b69](https://github.com/naver/billboard.js/commit/a697b69cb3807245b1cfe88480841e427623313c)), closes [#2523](https://github.com/naver/billboard.js/issues/2523)
+
+# [3.3.0](https://github.com/naver/billboard.js/compare/3.2.2...3.3.0) (2022-01-14)
+
+
+### Bug Fixes
+
+* **api:** Ensure svg nodes to be removed from memory  ([f49ed83](https://github.com/naver/billboard.js/commit/f49ed8338291aafdc1beacf071fe2d92236bd3d0)), closes [#2489](https://github.com/naver/billboard.js/issues/2489)
 * **event:** fix touch event handling on arc ([d3d2e05](https://github.com/naver/billboard.js/commit/d3d2e05551e443e85f90d083c70579f4a58e3ebe)), closes [#2477](https://github.com/naver/billboard.js/issues/2477)
+* **text:** Fix text position with candlestick type combination ([f84ab3e](https://github.com/naver/billboard.js/commit/f84ab3e9c60dd17b233992fea927e79b6e4b4530)), closes [#2436](https://github.com/naver/billboard.js/issues/2436)
+* **tooltip:** fix candlestick tooltip display with xs option ([0278067](https://github.com/naver/billboard.js/commit/027806717a62d7ca55131e1bd2f96ece66675f18)), closes [#2434](https://github.com/naver/billboard.js/issues/2434)
+* **types:** Fix axis types definition ([92fb033](https://github.com/naver/billboard.js/commit/92fb0333490e036e5fa08902292edfefa762dc86)), closes [#2499](https://github.com/naver/billboard.js/issues/2499)
 * **types:** Fix plugin's type definition ([f3690f9](https://github.com/naver/billboard.js/commit/f3690f90a053fe59695bb15e5cb413d718c24b2f)), closes [#2483](https://github.com/naver/billboard.js/issues/2483)
 
 
 ### Features
 
 * **axis:** alow user to hide tick lines while using culling ([aad8c45](https://github.com/naver/billboard.js/commit/aad8c4573641cb4d444c61d5b7a89b78e6b54e2e)), closes [#2478](https://github.com/naver/billboard.js/issues/2478) [#2480](https://github.com/naver/billboard.js/issues/2480)
-* **bar:** Intent to ship bar.indices.removeNull ([b16605d](https://github.com/naver/billboard.js/commit/b16605deb9e94c9fd6641e2e20c46d972cf4bbe0)), closes [#1687](https://github.com/naver/billboard.js/issues/1687)
-
-# [3.3.0-next.1](https://github.com/naver/billboard.js/compare/3.2.2...3.3.0-next.1) (2021-12-17)
-
-
-### Bug Fixes
-
-* **text:** Fix text position with candlestick type combination ([f84ab3e](https://github.com/naver/billboard.js/commit/f84ab3e9c60dd17b233992fea927e79b6e4b4530)), closes [#2436](https://github.com/naver/billboard.js/issues/2436)
-* **tooltip:** fix candlestick tooltip display with xs option ([0278067](https://github.com/naver/billboard.js/commit/027806717a62d7ca55131e1bd2f96ece66675f18)), closes [#2434](https://github.com/naver/billboard.js/issues/2434)
-
-
-### Features
-
 * **bar:** add non zero based bar chart ([3588abe](https://github.com/naver/billboard.js/commit/3588abe3e83ec34704bd9a07c1181259e8520c2f)), closes [#2408](https://github.com/naver/billboard.js/issues/2408) [#2438](https://github.com/naver/billboard.js/issues/2438)
 * **bar:** Implement stacking bar radius ([8f14d1a](https://github.com/naver/billboard.js/commit/8f14d1a40ca39dc47f1c320a59158811c5898596)), closes [#2428](https://github.com/naver/billboard.js/issues/2428)
-* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
+* **bar:** Intent to ship bar.indices.removeNull ([b16605d](https://github.com/naver/billboard.js/commit/b16605deb9e94c9fd6641e2e20c46d972cf4bbe0)), closes [#1687](https://github.com/naver/billboard.js/issues/1687)
 * **option:** Enhance padding to be removed completely ([2052a19](https://github.com/naver/billboard.js/commit/2052a19af7fae25688a182e1d5244e523ed1f3cc)), closes [#2367](https://github.com/naver/billboard.js/issues/2367)
-* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
 
 ## [3.2.2](https://github.com/naver/billboard.js/compare/3.2.1...3.2.2) (2021-11-19)
 

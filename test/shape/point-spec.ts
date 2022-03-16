@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$CIRCLE} from "../../src/config/classes";
 
 describe("SHAPE POINT", () => {
 	let chart;
@@ -164,7 +164,7 @@ describe("SHAPE POINT", () => {
 
 			setTimeout(() => {
 				interval = setInterval(() => {
-					point = main.select(`.${CLASS.circles}-data2 .${CLASS.circle}-3`);
+					point = main.select(`.${$CIRCLE.circles}-data2 .${$CIRCLE.circle}-3`);
 					pos.push(+point.attr("cx"));
 				}, 20);
 

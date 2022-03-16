@@ -38,11 +38,16 @@ export default {
 	 */
 	getDefaultValueFormat(): Function {
 		const $$ = this;
-		const hasArc = $$.hasArcType();
+		const {defaultArcValueFormat, yFormat, y2Format} = $$;
+		const hasArc = $$.hasArcType(null, ["gauge", "polar", "radar"]);
 
-		return hasArc && !$$.hasType("gauge") ?
-			$$.defaultArcValueFormat :
-			$$.defaultValueFormat;
+		return function(v, ratio, id) {
+			const format = hasArc ? defaultArcValueFormat : (
+				$$.axis && $$.axis.getId(id) === "y2" ? y2Format : yFormat
+			);
+
+			return format.call($$, v, ratio);
+		};
 	},
 
 	defaultValueFormat(v): number|string {
@@ -51,6 +56,10 @@ export default {
 
 	defaultArcValueFormat(v, ratio): string {
 		return `${(ratio * 100).toFixed(1)}%`;
+	},
+
+	defaultPolarValueFormat(v): string {
+		return `${v}`;
 	},
 
 	dataLabelFormat(targetId: string): Function {

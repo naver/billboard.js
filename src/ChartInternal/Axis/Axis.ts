@@ -10,7 +10,7 @@ import {
 } from "d3-axis";
 import AxisRenderer from "./AxisRenderer";
 import {getScale} from "../internals/scale";
-import CLASS from "../../config/classes";
+import {$AXIS} from "../../config/classes";
 import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, notEmpty, parseDate, sortValue} from "../../module/util";
 
 export default {
@@ -45,7 +45,7 @@ class Axis {
 	}
 
 	private getAxisClassName(id) {
-		return `${CLASS.axis} ${CLASS[`axis${capitalize(id)}`]}`;
+		return `${$AXIS.axis} ${$AXIS[`axis${capitalize(id)}`]}`;
 	}
 
 	private isHorizontal($$, forHorizontal) {
@@ -100,7 +100,7 @@ class Axis {
 
 		target.forEach(v => {
 			const classAxis = this.getAxisClassName(v);
-			const classLabel = CLASS[`axis${v.toUpperCase()}Label`];
+			const classLabel = $AXIS[`axis${v.toUpperCase()}Label`];
 
 			axis[v] = main.append("g")
 				.attr("class", classAxis)
@@ -197,7 +197,7 @@ class Axis {
 	 */
 	updateAxes() {
 		const $$ = this.owner;
-		const {config, $el: {main}} = $$;
+		const {config, $el: {main}, $T} = $$;
 
 		Object.keys(this.axesList).forEach(id => {
 			const axesConfig = config[`axis_${id}_axes`];
@@ -224,7 +224,7 @@ class Axis {
 				} else {
 					axesConfig[i].domain && scale.domain(axesConfig[i].domain);
 
-					$$.$T(g).call(v.scale(scale));
+					$T(g).call(v.scale(scale));
 				}
 
 				g.attr("transform", $$.getTranslate(id, i + 1));
@@ -739,9 +739,9 @@ class Axis {
 		const {$el: {main}, $T} = $$;
 
 		const labels = {
-			x: main.select(`.${CLASS.axisX} .${CLASS.axisXLabel}`),
-			y: main.select(`.${CLASS.axisY} .${CLASS.axisYLabel}`),
-			y2: main.select(`.${CLASS.axisY2} .${CLASS.axisY2Label}`)
+			x: main.select(`.${$AXIS.axisX} .${$AXIS.axisXLabel}`),
+			y: main.select(`.${$AXIS.axisY} .${$AXIS.axisYLabel}`),
+			y2: main.select(`.${$AXIS.axisY2} .${$AXIS.axisY2Label}`)
 		};
 
 		Object.keys(labels).filter(id => !labels[id].empty())
@@ -891,11 +891,12 @@ class Axis {
 		}
 
 		["y", "y2"].forEach(key => {
+			const prefix = `axis_${key}_`;
 			const axisScale = scale[key];
 
 			if (axisScale) {
-				const tickValues = config[`axis_${key}_tick_values`];
-				const tickCount = config[`axis_${key}_tick_count`];
+				const tickValues = config[`${prefix}tick_values`];
+				const tickCount = config[`${prefix}tick_count`];
 
 				axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
 
@@ -940,6 +941,7 @@ class Axis {
 		const $$ = this.owner;
 		const {config, state: {clip, current}, $el} = $$;
 
+
 		["subX", "x", "y", "y2"].forEach(type => {
 			const axis = $el.axis[type];
 
@@ -965,12 +967,14 @@ class Axis {
 						}
 					}
 
-					tickNodes.each(function(d) {
-						if (tickValues.indexOf(d) % intervalForCulling) {
-							(lines ? this.querySelector("text") : this)
-								.style.display = "none";
-						}
-					});
+					tickNodes
+						.each(function(d) {
+							const node = (lines ? this.querySelector("text") : this);
+
+							if (node) {
+								node.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : null;
+							}
+						});
 				} else {
 					tickNodes.style("display", null);
 				}
@@ -979,7 +983,7 @@ class Axis {
 				if (type === "x") {
 					const clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
 
-					$el.svg.selectAll(`.${CLASS.axisX} .tick text`)
+					$el.svg.selectAll(`.${$AXIS.axisX} .tick text`)
 						.attr("clip-path", clipPath);
 				}
 			}

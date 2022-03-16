@@ -94,10 +94,10 @@ export interface xAxisConfiguration extends AxisConfigurationBase {
 	 * Set default extent for subchart and zoom.
 	 * This can be an array or function that returns an array.
 	 */
-	extent?: number[] | string[] | (
+	extent?: Array<number|string> | (
 		(
 			this: Chart,
-			domain: Date|string|number[],
+			domain: Array<Date|string|number>,
 			scale: (value: any) => number
 		) => number[]
 	);
@@ -233,7 +233,7 @@ export interface XTickConfiguration {
 	 * If this option is provided, the position of the ticks will be determined based on those values.
 	 * This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
 	 */
-	values?: number[] | string[] | ((this: Chart) => number[]);
+	values?: Array<number|string> | ((this: Chart) => number[]);
 
 	/**
 	 * Rotate x axis tick text.
@@ -414,6 +414,6 @@ export interface AxesConfiguration {
 		/**
 		 * Set tick values manually
 		 */
-		values?: number|string|Date[];
+		values?: Array<number|string|Date>;
 	};
 }

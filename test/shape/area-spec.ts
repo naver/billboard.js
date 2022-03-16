@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
-import CLASS from "../../src/config/classes";
+import {$AREA, $AXIS, $CIRCLE, $COMMON, $LINE} from "../../src/config/classes";
 import util from "../assets/util";
 
 describe("SHAPE AREA", () => {
@@ -54,7 +54,7 @@ describe("SHAPE AREA", () => {
 		});
 
 		it("check for line path data count", () => {
-			chart.$.main.selectAll(`path.${CLASS.line}`).each(function(d) {
+			chart.$.main.selectAll(`path.${$LINE.line}`).each(function(d) {
 				const line = d3Select(this);
 
 				// it should have 4 lines
@@ -86,7 +86,7 @@ describe("SHAPE AREA", () => {
 		// check non-grouped bar path position
 		const checkBarPathPos = type => {
 			// Get x Axis pos
-			let xAxisYPos = chart.$.main.select(`.${CLASS.axisX} path`).node().getBoundingClientRect();
+			let xAxisYPos = chart.$.main.select(`.${$AXIS.axisX} path`).node().getBoundingClientRect();
 
 			xAxisYPos = type === "y" ? xAxisYPos[type] : xAxisYPos[type] + xAxisYPos.width;
 
@@ -153,8 +153,8 @@ describe("SHAPE AREA", () => {
 		});
 
 		const checkLineLen = dataName => {
-			const target = chart.$.main.select(`.${CLASS.chartLine}.${CLASS.target}-${dataName}`);
-			const commands = target.select(`.${CLASS.line}-${dataName}`).attr("d").split("C");
+			const target = chart.$.main.select(`.${$LINE.chartLine}.${$COMMON.target}-${dataName}`);
+			const commands = target.select(`.${$LINE.line}-${dataName}`).attr("d").split("C");
 			const dataLen = chart.internal.filterRemoveNull(chart.data(dataName)[0].values).length;
 
 			expect(commands.length).to.be.equal(dataLen);
@@ -207,7 +207,7 @@ describe("SHAPE AREA", () => {
 
 		it("check for correct generation", () => {
 			const d = chart.$.line.lines.attr("d");
-			const box = util.getBBox(d3Select(`.${CLASS.chartLine}.${CLASS.target}-data3`));
+			const box = util.getBBox(d3Select(`.${$LINE.chartLine}.${$COMMON.target}-data3`));
 
 			// check for correct path data
 			expect(/NaN/.test(d)).to.be.false;
@@ -242,7 +242,7 @@ describe("SHAPE AREA", () => {
 		});
 
 		function checkPath(pathData) {
-			const path = chart.$.main.selectAll(`.${CLASS.target}-data1 path`);
+			const path = chart.$.main.selectAll(`.${$COMMON.target}-data1 path`);
 
 			path.each(function(v, i) {
 				expect(this.getAttribute("d")).to.be.equal(pathData[i ? "area" : "line"]);
@@ -455,7 +455,7 @@ describe("SHAPE AREA", () => {
 					expect(+stop.attr("stop-opacity")).to.be.equal(expected.opacity[i]);
 				});
 
-				expect(chart.$.line.areas.filter(`.${CLASS.area}${selectorSuffix}`).style("fill")).to.be.equal(`url("${id}")`);
+				expect(chart.$.line.areas.filter(`.${$AREA.area}${selectorSuffix}`).style("fill")).to.be.equal(`url("${id}")`);
 			});
 		});
 
@@ -496,7 +496,7 @@ describe("SHAPE AREA", () => {
 					expect(+stop.attr("stop-opacity")).to.be.equal(stops[i][2]);
 				});
 
-				expect(chart.$.line.areas.filter(`.${CLASS.area}${selectorSuffix}`).style("fill")).to.be.equal(`url("${id}")`);
+				expect(chart.$.line.areas.filter(`.${$AREA.area}${selectorSuffix}`).style("fill")).to.be.equal(`url("${id}")`);
 			});
 		});
 
@@ -543,7 +543,7 @@ describe("SHAPE AREA", () => {
 		});
 
 		it("check stacking order: area.front=false", () => {
-			const stacking = [CLASS.areas, CLASS.lines, CLASS.circles];
+			const stacking = [$AREA.areas, $LINE.lines, $CIRCLE.circles];
 
 			chart.$.main.selectAll(".bb-chart-line > g").each(function(d, i) {
 				expect(this.classList.contains(stacking[i])).to.be.true;
@@ -555,7 +555,7 @@ describe("SHAPE AREA", () => {
 		});
 
 		it("check stacking order: area.front=true", () => {
-			const stacking = [CLASS.lines, CLASS.areas, CLASS.circles];
+			const stacking = [$LINE.lines, $AREA.areas, $CIRCLE.circles];
 
 			chart.$.main.selectAll(".bb-chart-line > g").each(function(d, i) {
 				expect(this.classList.contains(stacking[i])).to.be.true;

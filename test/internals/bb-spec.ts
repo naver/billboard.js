@@ -7,7 +7,7 @@ import {expect} from "chai";
 import sinon from "sinon";
 import bb from "../../src";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";
+import {$AXIS, $COMMON} from "../../src/config/classes";
 import Chart from "../../src/Chart/Chart";
 import {convertInputType, extend} from "../../src/module/util";
 
@@ -326,7 +326,7 @@ describe("Interface & initialization", () => {
 			expect(bb.defaults()).deep.equal(args);
 			expect(chart.config("data.types")).to.be.deep.equal(args.data.types);
 
-			chart.$.main.selectAll(`.${CLASS.axisX} .tick text`).each(function(d, i) {
+			chart.$.main.selectAll(`.${$AXIS.axisX} .tick text`).each(function(d, i) {
 				expect(this.textContent).to.be.equal(`${tickPrefix}${i}`);
 			})
 		});
@@ -359,7 +359,7 @@ describe("Interface & initialization", () => {
 				Object.assign({}, bb.defaults().data.types, args.data.types)
 			);
 
-			chart.$.main.selectAll(`.${CLASS.axisX} .tick text`).each(function(d, i) {
+			chart.$.main.selectAll(`.${$AXIS.axisX} .tick text`).each(function(d, i) {
 				expect(this.textContent).to.be.equal(`${tickPrefix}${i}`);
 			});
 		});
@@ -590,7 +590,7 @@ describe("Interface & initialization", () => {
 
 			const element = chart.$.main.select(".myBgClass");
 
-			expect(element.node().nextSibling.getAttribute("class")).to.be.equal(CLASS.chart);
+			expect(element.node().nextSibling.getAttribute("class")).to.be.equal($COMMON.chart);
 		});
 
 		it("set option background.color=red", () => {
@@ -616,7 +616,7 @@ describe("Interface & initialization", () => {
 
 			const element = chart.$.main.select(".myBgClass");
 
-			expect(element.node().nextSibling.getAttribute("class")).to.be.equal(CLASS.chart);
+			expect(element.node().nextSibling.getAttribute("class")).to.be.equal($COMMON.chart);
 		});
 	});
 });

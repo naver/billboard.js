@@ -5,7 +5,7 @@
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
-import CLASS from "../../src/config/classes";
+import {$DRAG, $SELECT} from "../../src/config/classes";
 import util from "../assets/util";
 
 describe("DRAG", function() {
@@ -57,8 +57,8 @@ describe("DRAG", function() {
 			internal.drag([186.5, 320.5]);
 
 			// circles are selected?
-			expect(main.selectAll(`.${CLASS.selectedCircles}`).size()).to.be.equal(2);
-			expect(main.selectAll(`.${CLASS.INCLUDED}`).size()).to.be.equal(3);
+			expect(main.selectAll(`.${$SELECT.selectedCircles}`).size()).to.be.equal(2);
+			expect(main.selectAll(`.${$DRAG.INCLUDED}`).size()).to.be.equal(3);
 		});
 
 		it("selected points should be unselected and drag area should be removed", done => {
@@ -69,10 +69,10 @@ describe("DRAG", function() {
 			internal.dragend();
 
 			setTimeout(() => {
-				expect(main.selectAll(`.${CLASS.INCLUDED}`).size()).to.be.equal(0);
+				expect(main.selectAll(`.${$DRAG.INCLUDED}`).size()).to.be.equal(0);
 
 				// check for selection rect
-				expect(main.select(`.${CLASS.dragarea}`).empty()).to.be.true;
+				expect(main.select(`.${$DRAG.dragarea}`).empty()).to.be.true;
 
 				// dragging flag to be set false
 				expect(internal.state.dragging).to.be.false;
@@ -112,7 +112,7 @@ describe("DRAG", function() {
 			});
 
 			setTimeout(() => {
-				const selectedCircle = $el.chart.selectAll(`.${CLASS.selectedCircles}`);
+				const selectedCircle = $el.chart.selectAll(`.${$SELECT.selectedCircles}`);
 
 				expect(selectedCircle.size()).to.be.equal(2);
 				done();

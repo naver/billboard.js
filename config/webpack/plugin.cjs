@@ -36,7 +36,7 @@ const config = {
 			banner: banner.production + banner.plugin,
 			entryOnly: true
 		})
-	],
+	]
 };
 
 module.exports = (common, env) => {

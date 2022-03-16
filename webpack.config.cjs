@@ -5,6 +5,7 @@ const webpack = require("webpack");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const WebpackBar = require("webpackbar");
 
+const {env} = process;
 const config = {
 	entry: {
 		billboard: [
@@ -55,7 +56,7 @@ const config = {
 				loader: "string-replace-loader",
 				options: {
 					search: /__VERSION__/ig,
-					replace: pkg.version
+					replace: env.VERSION || pkg.version
 				}
 			}
 		]
@@ -73,7 +74,6 @@ const config = {
 };
 
 module.exports = () => {
-	const env = process.env;
 	let mode = "development";
 
 	if (env.NODE_ENV) {
@@ -83,10 +83,6 @@ module.exports = () => {
 	env.ANALYZER && config.plugins.push(
 		new BundleAnalyzerPlugin()
 	);
-
-	if (env.VERSION) {
-		pkg.version = env.VERSION;
-	}
 
 	mode === "packaged" && delete config.externals;
 
