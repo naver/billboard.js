@@ -599,6 +599,34 @@ var demos = {
 				]
 			}
 		},
+		PolarChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+					order: null
+				},
+				polar: {
+					label: {
+						format: function(value, ratio, id) {
+							return `${value}\n(${(ratio * 100).toFixed(0)}%)`;
+						},
+						ratio: 1.07
+					},
+					level:{
+						depth: 5,
+						max: 150,
+						text: {
+							backgroundColor: "yellow"
+						}
+					},
+				}
+			}
+		},
 		RadarChart: {
 			options: {
 				data: {
@@ -4946,6 +4974,92 @@ d3.select(".chart_area")
 				}
 			}
 		}
+	},
+	PolarChartOptions: {
+		PolarLevel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+				},
+				polar: {
+					level: {
+						depth: 4,
+						max: 150,
+						show: false,
+						text: {
+							format: function(x) { return x + "%"; }
+						}
+					},
+				}
+			}
+		},
+		PolarSize: {
+			options: {
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+				},
+				polar: {
+					size: {
+						ratio: 0.7
+					}
+				}
+			}
+		},
+		Padding: {
+			options: {
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+				},
+				polar: {
+					padding: 5
+				}
+			}
+		},
+		PadAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+				},
+				polar: {
+					padAngle: 0.1
+				}
+			}
+		},
+		StartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 120],
+						["data3", 75]
+					],
+					type: "polar",
+				},
+				polar: {
+					startingAngle: 1
+				}
+			}
+		},
 	},
 	API: {
 		AxisLabel: {

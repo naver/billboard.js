@@ -78,7 +78,7 @@ export default {
 
 		candidates.classed($FOCUS.focused, false).classed($FOCUS.defocused, true);
 
-		if ($$.hasArcType()) {
+		if ($$.hasArcType(null, ["polar"])) {
 			$$.unexpandArc(targetIds);
 
 			$$.hasType("gauge") &&
@@ -115,7 +115,8 @@ export default {
 		const candidates = $el.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
 
 		candidates.classed($FOCUS.focused, false).classed($FOCUS.defocused, false);
-		$$.hasArcType() && $$.unexpandArc(targetIds);
+
+		$$.hasArcType(null, ["polar"]) && $$.unexpandArc(targetIds);
 
 		if (config.legend_show) {
 			$$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));

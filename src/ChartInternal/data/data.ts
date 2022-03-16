@@ -271,7 +271,7 @@ export default {
 	 * @private
 	 * @returns {{min: Array, max: Array}}
 	 */
-	getMinMaxData() {
+	getMinMaxData(): {min: IDataRow[], max: IDataRow[]} {
 		const $$ = this;
 		const cacheKey = KEY.dataMinMax;
 		let minMaxData = $$.cache.get(cacheKey);

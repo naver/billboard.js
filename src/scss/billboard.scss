@@ -250,6 +250,19 @@ text.bb-chart-arcs-gauge-title {
 	.bb-chart-arcs-gauge-min {
 		fill: #777;
 	}
+
+	/*-- Polar --*/
+	.bb-levels {
+		circle {
+			fill: none;
+			stroke: #848282;
+			stroke-width: .5px;
+		}
+
+		text {
+			fill: #848282;
+		}
+	}
 }
 
 /*-- Radar --*/
