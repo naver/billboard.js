@@ -230,7 +230,7 @@ export default {
 		} else {
 			translateX = $$.axis.isTimeSeries() ?
 				x(orgDomain[0]) - x(domain[0]) :
-				x(flowStart.x) - x(flowEnd.x);
+				x(flowStart?.x || 0) - x(flowEnd.x);
 		}
 
 		const scaleX = (diffDomain(orgDomain) / diffDomain(domain));
