@@ -164,4 +164,55 @@ describe("API flow", () => {
 			}, 50);
 		});
 	});
+
+
+	describe("Indexed and category type axis", () => {
+		it("Indexed axis: should flow without error", done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+					  ["data", 20, 30, 40]
+				  ]
+				}
+			});
+
+			chart.flow({
+				columns: [
+					["data", 50, 60]
+				],
+				done: function() {
+					expect(true).to.be.true;
+					done();
+				}
+			});
+		});
+
+		it("Category axis: should flow without error", done => {
+			const chart = util.generate({
+				data: {
+					x: "x",
+					columns: [
+						["x", "a", "b", "c"],
+						["data", 20, 30, 40]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			});
+
+			chart.flow({
+				columns: [
+					["x", "d", "e"],
+					["data", 50, 60]
+				],
+				done: function() {
+					expect(true).to.be.true;
+					done();
+				}
+			});
+		});
+	});
 });
