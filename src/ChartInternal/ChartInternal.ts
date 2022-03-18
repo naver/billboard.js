@@ -251,7 +251,7 @@ export default class ChartInternal {
 
 	initParams(): void {
 		const $$ = <any> this;
-		const {config, format, state} = <any> $$;
+		const {config, format, state} = $$;
 		const isRotated = config.axis_rotated;
 
 		// datetime to be used for uniqueness
@@ -378,9 +378,12 @@ export default class ChartInternal {
 
 		if (hasInteraction && state.inputType) {
 			const isTouch = state.inputType === "touch";
+			const {onclick, onover, onout} = config;
 
-			$el.svg.on(isTouch ? "touchstart" : "mouseenter", () => callFn(config.onover, $$.api))
-				.on(isTouch ? "touchend" : "mouseleave", () => callFn(config.onout, $$.api));
+			$el.svg
+				.on("click", onclick?.bind($$.api) || null)
+				.on(isTouch ? "touchstart" : "mouseenter", onover?.bind($$.api) || null)
+				.on(isTouch ? "touchend" : "mouseleave", onout?.bind($$.api) || null);
 		}
 
 		config.svg_classname && $el.svg.attr("class", config.svg_classname);
