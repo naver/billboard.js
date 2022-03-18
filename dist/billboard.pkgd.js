@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220316004757
+ * @version 3.3.3-nightly-20220318004636
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -38945,7 +38945,9 @@ var src_linear_linear = function (t) {
     } else if (orgDataCount === 1 || ((_flowStart = flowStart) == null ? void 0 : _flowStart.x) === ((_flowEnd = flowEnd) == null ? void 0 : _flowEnd.x)) {
       translateX = x(orgDomain[0]) - x(domain[0]);
     } else {
-      translateX = $$.axis.isTimeSeries() ? x(orgDomain[0]) - x(domain[0]) : x(flowStart.x) - x(flowEnd.x);
+      var _flowStart2;
+
+      translateX = $$.axis.isTimeSeries() ? x(orgDomain[0]) - x(domain[0]) : x(((_flowStart2 = flowStart) == null ? void 0 : _flowStart2.x) || 0) - x(flowEnd.x);
     }
 
     var scaleX = diffDomain(orgDomain) / diffDomain(domain);
@@ -48754,7 +48756,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220316004757",
+  version: "3.3.3-nightly-20220318004636",
 
   /**
    * Generate chart
@@ -48889,7 +48891,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220316004757
+ * @version 3.3.3-nightly-20220318004636
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.3-nightly-20220316004757
+ * @version 3.3.3-nightly-20220318004636
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -12774,7 +12774,7 @@ var flow = {
         else {
             translateX = $$.axis.isTimeSeries() ?
                 x(orgDomain[0]) - x(domain[0]) :
-                x(flowStart.x) - x(flowEnd.x);
+                x((flowStart === null || flowStart === void 0 ? void 0 : flowStart.x) || 0) - x(flowEnd.x);
         }
         var scaleX = (diffDomain(orgDomain) / diffDomain(domain));
         return "translate(".concat(translateX, ",0) scale(").concat(scaleX, ",1)");
@@ -20648,7 +20648,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220316004757
+ * @version 3.3.3-nightly-20220318004636
  */
 var bb = {
     /**
@@ -20658,7 +20658,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.3-nightly-20220316004757",
+    version: "3.3.3-nightly-20220318004636",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
