@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220318004636
+ * @version 3.3.3-nightly-20220319004614
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1807,14 +1807,30 @@ var Store = /*#__PURE__*/function () {
   resize_auto: !0,
 
   /**
+   * Set a callback to execute when the chart is clicked.
+   * @name onclick
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @example
+   * onclick: function(event) {
+   *   this; // chart instance itself
+   *   event; // native event object
+   *   ...
+   * }
+   */
+  onclick: undefined,
+
+  /**
    * Set a callback to execute when mouse/touch enters the chart.
    * @name onover
    * @memberof Options
    * @type {Function}
    * @default undefined
    * @example
-   * onover: function() {
+   * onover: function(event) {
    *   this; // chart instance itself
+   *   event; // native event object
    *   ...
    * }
    */
@@ -1827,8 +1843,9 @@ var Store = /*#__PURE__*/function () {
    * @type {Function}
    * @default undefined
    * @example
-   * onout: function() {
+   * onout: function(event) {
    *   this; // chart instance itself
+   *   event; // native event object
    *   ...
    * }
    */
@@ -9754,10 +9771,9 @@ var ChartInternal = /*#__PURE__*/function () {
 
   _proto.initParams = function initParams() {
     var $$ = this,
-        _ref = $$,
-        config = _ref.config,
-        format = _ref.format,
-        state = _ref.state,
+        config = $$.config,
+        format = $$.format,
+        state = $$.state,
         isRotated = config.axis_rotated;
     // datetime to be used for uniqueness
     state.datetimeId = "bb-" + +new Date() * getRandom();
@@ -9861,12 +9877,16 @@ var ChartInternal = /*#__PURE__*/function () {
     $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block");
 
     if (hasInteraction && state.inputType) {
-      var isTouch = state.inputType === "touch";
-      $el.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
-        return callFn(config.onover, $$.api);
-      }).on(isTouch ? "touchend" : "mouseleave", function () {
-        return callFn(config.onout, $$.api);
-      });
+      var _onclick,
+          _onover,
+          _onout,
+          isTouch = state.inputType === "touch",
+          _config = config,
+          onclick = _config.onclick,
+          onover = _config.onover,
+          onout = _config.onout;
+
+      $el.svg.on("click", ((_onclick = onclick) == null ? void 0 : _onclick.bind($$.api)) || null).on(isTouch ? "touchstart" : "mouseenter", ((_onover = onover) == null ? void 0 : _onover.bind($$.api)) || null).on(isTouch ? "touchend" : "mouseleave", ((_onout = onout) == null ? void 0 : _onout.bind($$.api)) || null);
     }
 
     config.svg_classname && $el.svg.attr("class", config.svg_classname); // Define defs
@@ -23330,7 +23350,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220318004636",
+  version: "3.3.3-nightly-20220319004614",
 
   /**
    * Generate chart
@@ -23465,7 +23485,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220318004636
+ * @version 3.3.3-nightly-20220319004614
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

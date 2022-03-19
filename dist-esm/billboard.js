@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.3-nightly-20220318004636
+ * @version 3.3.3-nightly-20220319004614
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1372,14 +1372,29 @@ var main = {
      */
     resize_auto: true,
     /**
+     * Set a callback to execute when the chart is clicked.
+     * @name onclick
+     * @memberof Options
+     * @type {Function}
+     * @default undefined
+     * @example
+     * onclick: function(event) {
+     *   this; // chart instance itself
+     *   event; // native event object
+     *   ...
+     * }
+     */
+    onclick: undefined,
+    /**
      * Set a callback to execute when mouse/touch enters the chart.
      * @name onover
      * @memberof Options
      * @type {Function}
      * @default undefined
      * @example
-     * onover: function() {
+     * onover: function(event) {
      *   this; // chart instance itself
+     *   event; // native event object
      *   ...
      * }
      */
@@ -1391,8 +1406,9 @@ var main = {
      * @type {Function}
      * @default undefined
      * @example
-     * onout: function() {
+     * onout: function(event) {
      *   this; // chart instance itself
+     *   event; // native event object
      *   ...
      * }
      */
@@ -8346,7 +8362,7 @@ var ChartInternal = /** @class */ (function () {
     };
     ChartInternal.prototype.initParams = function () {
         var $$ = this;
-        var _a = $$, config = _a.config, format = _a.format, state = _a.state;
+        var config = $$.config, format = $$.format, state = $$.state;
         var isRotated = config.axis_rotated;
         // datetime to be used for uniqueness
         state.datetimeId = "bb-".concat(+new Date() * getRandom());
@@ -8439,8 +8455,11 @@ var ChartInternal = /** @class */ (function () {
             .style("display", "block");
         if (hasInteraction && state.inputType) {
             var isTouch = state.inputType === "touch";
-            $el.svg.on(isTouch ? "touchstart" : "mouseenter", function () { return callFn(config.onover, $$.api); })
-                .on(isTouch ? "touchend" : "mouseleave", function () { return callFn(config.onout, $$.api); });
+            var onclick_1 = config.onclick, onover = config.onover, onout = config.onout;
+            $el.svg
+                .on("click", (onclick_1 === null || onclick_1 === void 0 ? void 0 : onclick_1.bind($$.api)) || null)
+                .on(isTouch ? "touchstart" : "mouseenter", (onover === null || onover === void 0 ? void 0 : onover.bind($$.api)) || null)
+                .on(isTouch ? "touchend" : "mouseleave", (onout === null || onout === void 0 ? void 0 : onout.bind($$.api)) || null);
         }
         config.svg_classname && $el.svg.attr("class", config.svg_classname);
         // Define defs
@@ -20648,7 +20667,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220318004636
+ * @version 3.3.3-nightly-20220319004614
  */
 var bb = {
     /**
@@ -20658,7 +20677,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.3-nightly-20220318004636",
+    version: "3.3.3-nightly-20220319004614",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
