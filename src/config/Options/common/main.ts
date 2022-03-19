@@ -152,14 +152,30 @@ export default {
 	resize_auto: true,
 
 	/**
+	 * Set a callback to execute when the chart is clicked.
+	 * @name onclick
+	 * @memberof Options
+	 * @type {Function}
+	 * @default undefined
+	 * @example
+	 * onclick: function(event) {
+	 *   this; // chart instance itself
+	 *   event; // native event object
+	 *   ...
+	 * }
+	 */
+	onclick: <(() => void)|undefined> undefined,
+
+	/**
 	 * Set a callback to execute when mouse/touch enters the chart.
 	 * @name onover
 	 * @memberof Options
 	 * @type {Function}
 	 * @default undefined
 	 * @example
-	 * onover: function() {
+	 * onover: function(event) {
 	 *   this; // chart instance itself
+	 *   event; // native event object
 	 *   ...
 	 * }
 	 */
@@ -172,8 +188,9 @@ export default {
 	 * @type {Function}
 	 * @default undefined
 	 * @example
-	 * onout: function() {
+	 * onout: function(event) {
 	 *   this; // chart instance itself
+	 *   event; // native event object
 	 *   ...
 	 * }
 	 */

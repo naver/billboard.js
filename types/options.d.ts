@@ -805,14 +805,19 @@ export interface ChartOptions {
 	onrendered?(this: Chart): void;
 
 	/**
+	 * Set a callback to execute when the chart is clicked.
+	 */
+	onclick?(this: Chart, event: Event): void;
+
+	/**
 	 * Set a callback to execute when mouse/touch enters the chart.
 	 */
-	onover?(this: Chart): void;
+	onover?(this: Chart, event: Event): void;
 
 	/**
 	 * Set a callback to execute when mouse/touch leaves the chart.
 	 */
-	onout?(this: Chart): void;
+	onout?(this: Chart, event: Event): void;
 
 	/**
 	 * Set a callback to execute when user resizes the screen.

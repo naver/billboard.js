@@ -378,7 +378,7 @@ describe("Interface & initialization", () => {
 				}
 			};
 
-			["beforeinit", "init", "rendered", "afterinit", "resize", "resized", "over", "out"]
+			["beforeinit", "init", "rendered", "afterinit", "resize", "resized", "click", "over", "out"]
 				.forEach(v => {
 					args[`on${v}`] = function() {
 						spy(v, this);
@@ -411,10 +411,11 @@ describe("Interface & initialization", () => {
 			});
 		});
 
-		it("check for the onover/out callbacks", () => {
-			const expected = ["over", "out"];
+		it("check for the onclick/over/out callbacks", () => {
+			const expected = ["click", "over", "out"];
 
 			// when
+			chart.$.svg.on("click")();
 			chart.$.svg.on("mouseenter")();
 			chart.$.svg.on("mouseleave")();
 
