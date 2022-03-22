@@ -2,7 +2,18 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isValue, isDefined, isObjectType} from "../../module/util";
+import {isValue, isDefined, isObjectType, isNumber} from "../../module/util";
+
+type AxisOption = {
+	x?: number | false;
+	y?: number | false;
+	y2?: number | false;
+} | number | false;
+
+type RangeAxisOption = {
+	min? : AxisOption;
+	max?: AxisOption;
+};
 
 /**
  * Set the min/max value
@@ -11,20 +22,28 @@ import {isValue, isDefined, isObjectType} from "../../module/util";
  * @param {object} value Value to be set
  * @private
  */
-function setMinMax($$, type: "min" | "max", value): void {
+function setMinMax($$, type: "min" | "max", value: AxisOption): void {
 	const {config} = $$;
-	const axisX = `axis_x_${type}`;
-	const axisY = `axis_y_${type}`;
-	const axisY2 = `axis_y2_${type}`;
+	const helper = (key, value) => {
+		const v = isNumber(value) ? value : (
+			value === false ? undefined : null
+		);
+
+		if (v !== null) {
+			config[`axis_${key}_${type}`] = v;
+		}
+	};
 
 	if (isDefined(value)) {
 		if (isObjectType(value)) {
-			isValue(value.x) && (config[axisX] = value.x);
-			isValue(value.y) && (config[axisY] = value.y);
-			isValue(value.y2) && (config[axisY2] = value.y2);
-		} else {
-			config[axisY] = value;
-			config[axisY2] = value;
+			Object.keys(value).forEach(key => {
+				helper(key, value[key]);
+			});
+		} else if (isNumber(value) || value === false) {
+			// shorthand values affects only y and y2.
+			["y", "y2"].forEach(key => {
+				helper(key, value);
+			});
 		}
 
 		$$.redraw({
@@ -111,8 +130,9 @@ const axis = {
 	 * @instance
 	 * @memberof Chart
 	 * @param {object} min If min is given, specified axis' min value will be updated.<br>
-	 *     If no argument is given, the min values set on generating option for each axis will be returned.
-	 *     If not set any min values on generation, it will return `undefined`.
+	 *   If no argument is given, the min values set on generating option for each axis will be returned.
+	 *   If not set any min values on generation, it will return `undefined`.<br>
+	 *   To unset specific axis max, set `false` to each of them.
 	 * @returns {object|undefined}
 	 * @example
 	 * // Update axis' min
@@ -121,12 +141,23 @@ const axis = {
 	 *   y: 1000,
 	 *   y2: 100
 	 * });
+	 *
+	 * // To unset specific axis min, set false to each of them.
+	 * chart.axis.min({
+	 *   x: false,
+	 *   y: false,
+	 *   y2: false
+	 * });
+	 *
+	 * // shorthand (only affects y and y2 axis)
+	 * chart.axis.min(-50);
+	 * chart.axis.min(false);
 	 */
-	min: function(min?: number): object|void {
+	min: function(min?: AxisOption): object|void {
 		const $$ = this.internal;
 
-		return isValue(min) ?
-			setMinMax($$, "min", min) :
+		return isValue(min) || min === false ?
+			setMinMax($$, "min", min as AxisOption) :
 			getMinMax($$, "min");
 	},
 
@@ -136,8 +167,9 @@ const axis = {
 	 * @instance
 	 * @memberof Chart
 	 * @param {object} max If max is given, specified axis' max value will be updated.<br>
-	 *     If no argument is given, the max values set on generating option for each axis will be returned.
-	 *     If not set any max values on generation, it will return `undefined`.
+	 *   If no argument is given, the max values set on generating option for each axis will be returned.
+	 *   If not set any max values on generation, it will return `undefined`.<br>
+	 *   To unset specific axis max, set `false` to each of them.
 	 * @returns {object|undefined}
 	 * @example
 	 * // Update axis' label
@@ -146,12 +178,23 @@ const axis = {
 	 *    y: 1000,
 	 *    y2: 10000
 	 * });
+	 *
+	 * // To unset specific axis max, set false to each of them.
+	 * chart.axis.max({
+	 *   x: false,
+	 *   y: false,
+	 *   y2: false
+	 * });
+	 *
+	 * // shorthand (only affects y and y2 axis)
+	 * chart.axis.max(10);
+	 * chart.axis.max(false);
 	 */
-	max: function(max?: number): object|void {
+	max: function(max?: AxisOption): object|void {
 		const $$ = this.internal;
 
-		return arguments.length ?
-			setMinMax($$, "max", max) :
+		return isValue(max) || max === false ?
+			setMinMax($$, "max", max as AxisOption) :
 			getMinMax($$, "max");
 	},
 
@@ -160,7 +203,9 @@ const axis = {
 	 * @function axis․range
 	 * @instance
 	 * @memberof Chart
-	 * @param {object} range If range is given, specified axis' min and max value will be updated. If no argument is given, the current min and max values for each axis will be returned.
+	 * @param {object} range If range is given, specified axis' min and max value will be updated.
+	 *   If no argument is given, the current min and max values for each axis will be returned.<br>
+	 *   To unset specific axis max, set `false` to each of them.
 	 * @returns {object|undefined}
 	 * @example
 	 * // Update axis' label
@@ -176,13 +221,33 @@ const axis = {
 	 *     y2: 10000
 	 *   },
 	 * });
+	 *
+	 * // To unset specific axis max, set false to each of them.
+	 * chart.axis.range({
+	 *   min: {
+	 *     x: false,
+	 *     y: false,
+	 *     y2: false
+	 *   },
+	 *   max: {
+	 *     x: false,
+	 *     y: false,
+	 *     y2: false
+	 *   },
+	 * });
+	 *
+	 * // shorthand (only affects y and y2 axis)
+	 * chart.axis.range({ min: -50, max: 1000 });
+	 * chart.axis.range({ min: false, max: false });
 	 */
-	range: function(range): object|void {
+	range: function(range: RangeAxisOption): object|void {
 		const {axis} = this;
 
 		if (arguments.length) {
-			isDefined(range.max) && axis.max(range.max);
-			isDefined(range.min) && axis.min(range.min);
+			const {min, max} = range;
+
+			isDefined(max) && axis.max(max);
+			isDefined(min) && axis.min(min);
 		} else {
 			return {
 				max: axis.max(),
