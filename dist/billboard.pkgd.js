@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220319004614
+ * @version 3.3.3-nightly-20220323004651
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -35667,6 +35667,7 @@ util_extend(Chart.prototype, [chart, api_color, api_data, api_export, api_focus,
  * billboard.js project is licensed under the MIT license
  */
 
+
 /**
  * Set the min/max value
  * @param {Chart} $$ Chart instance
@@ -35674,20 +35675,26 @@ util_extend(Chart.prototype, [chart, api_color, api_data, api_export, api_focus,
  * @param {object} value Value to be set
  * @private
  */
-
 function setMinMax($$, type, value) {
   var config = $$.config,
-      axisY = "axis_y_" + type,
-      axisY2 = "axis_y2_" + type;
+      helper = function (key, value) {
+    var v = isNumber(value) ? value : value === !1 ? undefined : null;
+
+    if (v !== null) {
+      config["axis_" + key + "_" + type] = v;
+    }
+  };
 
   if (isDefined(value)) {
     if (isObjectType(value)) {
-      isValue(value.x) && (config["axis_x_" + type] = value.x);
-      isValue(value.y) && (config[axisY] = value.y);
-      isValue(value.y2) && (config[axisY2] = value.y2);
-    } else {
-      config[axisY] = value;
-      config[axisY2] = value;
+      Object.keys(value).forEach(function (key) {
+        helper(key, value[key]);
+      });
+    } else if (isNumber(value) || value === !1) {
+      // shorthand values affects only y and y2.
+      ["y", "y2"].forEach(function (key) {
+        helper(key, value);
+      });
     }
 
     $$.redraw({
@@ -35773,8 +35780,9 @@ var axis = {
    * @instance
    * @memberof Chart
    * @param {object} min If min is given, specified axis' min value will be updated.<br>
-   *     If no argument is given, the min values set on generating option for each axis will be returned.
-   *     If not set any min values on generation, it will return `undefined`.
+   *   If no argument is given, the min values set on generating option for each axis will be returned.
+   *   If not set any min values on generation, it will return `undefined`.<br>
+   *   To unset specific axis max, set `false` to each of them.
    * @returns {object|undefined}
    * @example
    * // Update axis' min
@@ -35783,10 +35791,21 @@ var axis = {
    *   y: 1000,
    *   y2: 100
    * });
+   *
+   * // To unset specific axis min, set false to each of them.
+   * chart.axis.min({
+   *   x: false,
+   *   y: false,
+   *   y2: false
+   * });
+   *
+   * // shorthand (only affects y and y2 axis)
+   * chart.axis.min(-50);
+   * chart.axis.min(false);
    */
   min: function min(_min) {
     var $$ = this.internal;
-    return isValue(_min) ? setMinMax($$, "min", _min) : axis_getMinMax($$, "min");
+    return isValue(_min) || _min === !1 ? setMinMax($$, "min", _min) : axis_getMinMax($$, "min");
   },
 
   /**
@@ -35795,8 +35814,9 @@ var axis = {
    * @instance
    * @memberof Chart
    * @param {object} max If max is given, specified axis' max value will be updated.<br>
-   *     If no argument is given, the max values set on generating option for each axis will be returned.
-   *     If not set any max values on generation, it will return `undefined`.
+   *   If no argument is given, the max values set on generating option for each axis will be returned.
+   *   If not set any max values on generation, it will return `undefined`.<br>
+   *   To unset specific axis max, set `false` to each of them.
    * @returns {object|undefined}
    * @example
    * // Update axis' label
@@ -35805,10 +35825,21 @@ var axis = {
    *    y: 1000,
    *    y2: 10000
    * });
+   *
+   * // To unset specific axis max, set false to each of them.
+   * chart.axis.max({
+   *   x: false,
+   *   y: false,
+   *   y2: false
+   * });
+   *
+   * // shorthand (only affects y and y2 axis)
+   * chart.axis.max(10);
+   * chart.axis.max(false);
    */
   max: function max(_max) {
     var $$ = this.internal;
-    return arguments.length ? setMinMax($$, "max", _max) : axis_getMinMax($$, "max");
+    return isValue(_max) || _max === !1 ? setMinMax($$, "max", _max) : axis_getMinMax($$, "max");
   },
 
   /**
@@ -35816,7 +35847,9 @@ var axis = {
    * @function axis․range
    * @instance
    * @memberof Chart
-   * @param {object} range If range is given, specified axis' min and max value will be updated. If no argument is given, the current min and max values for each axis will be returned.
+   * @param {object} range If range is given, specified axis' min and max value will be updated.
+   *   If no argument is given, the current min and max values for each axis will be returned.<br>
+   *   To unset specific axis max, set `false` to each of them.
    * @returns {object|undefined}
    * @example
    * // Update axis' label
@@ -35832,13 +35865,33 @@ var axis = {
    *     y2: 10000
    *   },
    * });
+   *
+   * // To unset specific axis max, set false to each of them.
+   * chart.axis.range({
+   *   min: {
+   *     x: false,
+   *     y: false,
+   *     y2: false
+   *   },
+   *   max: {
+   *     x: false,
+   *     y: false,
+   *     y2: false
+   *   },
+   * });
+   *
+   * // shorthand (only affects y and y2 axis)
+   * chart.axis.range({ min: -50, max: 1000 });
+   * chart.axis.range({ min: false, max: false });
    */
   range: function range(_range) {
     var axis = this.axis;
 
     if (arguments.length) {
-      isDefined(_range.max) && axis.max(_range.max);
-      isDefined(_range.min) && axis.min(_range.min);
+      var min = _range.min,
+          max = _range.max;
+      isDefined(max) && axis.max(max);
+      isDefined(min) && axis.min(min);
     } else {
       return {
         max: axis.max(),
@@ -48776,7 +48829,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220319004614",
+  version: "3.3.3-nightly-20220323004651",
 
   /**
    * Generate chart
@@ -48911,7 +48964,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220319004614
+ * @version 3.3.3-nightly-20220323004651
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

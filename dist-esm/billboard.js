@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.3-nightly-20220319004614
+ * @version 3.3.3-nightly-20220323004651
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -10027,18 +10027,23 @@ extend(Chart.prototype, [
  */
 function setMinMax($$, type, value) {
     var config = $$.config;
-    var axisX = "axis_x_".concat(type);
-    var axisY = "axis_y_".concat(type);
-    var axisY2 = "axis_y2_".concat(type);
+    var helper = function (key, value) {
+        var v = isNumber(value) ? value : (value === false ? undefined : null);
+        if (v !== null) {
+            config["axis_".concat(key, "_").concat(type)] = v;
+        }
+    };
     if (isDefined(value)) {
         if (isObjectType(value)) {
-            isValue(value.x) && (config[axisX] = value.x);
-            isValue(value.y) && (config[axisY] = value.y);
-            isValue(value.y2) && (config[axisY2] = value.y2);
+            Object.keys(value).forEach(function (key) {
+                helper(key, value[key]);
+            });
         }
-        else {
-            config[axisY] = value;
-            config[axisY2] = value;
+        else if (isNumber(value) || value === false) {
+            // shorthand values affects only y and y2.
+            ["y", "y2"].forEach(function (key) {
+                helper(key, value);
+            });
         }
         $$.redraw({
             withUpdateOrgXDomain: true,
@@ -10115,8 +10120,9 @@ var axis$1 = {
      * @instance
      * @memberof Chart
      * @param {object} min If min is given, specified axis' min value will be updated.<br>
-     *     If no argument is given, the min values set on generating option for each axis will be returned.
-     *     If not set any min values on generation, it will return `undefined`.
+     *   If no argument is given, the min values set on generating option for each axis will be returned.
+     *   If not set any min values on generation, it will return `undefined`.<br>
+     *   To unset specific axis max, set `false` to each of them.
      * @returns {object|undefined}
      * @example
      * // Update axis' min
@@ -10125,10 +10131,21 @@ var axis$1 = {
      *   y: 1000,
      *   y2: 100
      * });
+     *
+     * // To unset specific axis min, set false to each of them.
+     * chart.axis.min({
+     *   x: false,
+     *   y: false,
+     *   y2: false
+     * });
+     *
+     * // shorthand (only affects y and y2 axis)
+     * chart.axis.min(-50);
+     * chart.axis.min(false);
      */
     min: function (min) {
         var $$ = this.internal;
-        return isValue(min) ?
+        return isValue(min) || min === false ?
             setMinMax($$, "min", min) :
             getMinMax($$, "min");
     },
@@ -10138,8 +10155,9 @@ var axis$1 = {
      * @instance
      * @memberof Chart
      * @param {object} max If max is given, specified axis' max value will be updated.<br>
-     *     If no argument is given, the max values set on generating option for each axis will be returned.
-     *     If not set any max values on generation, it will return `undefined`.
+     *   If no argument is given, the max values set on generating option for each axis will be returned.
+     *   If not set any max values on generation, it will return `undefined`.<br>
+     *   To unset specific axis max, set `false` to each of them.
      * @returns {object|undefined}
      * @example
      * // Update axis' label
@@ -10148,10 +10166,21 @@ var axis$1 = {
      *    y: 1000,
      *    y2: 10000
      * });
+     *
+     * // To unset specific axis max, set false to each of them.
+     * chart.axis.max({
+     *   x: false,
+     *   y: false,
+     *   y2: false
+     * });
+     *
+     * // shorthand (only affects y and y2 axis)
+     * chart.axis.max(10);
+     * chart.axis.max(false);
      */
     max: function (max) {
         var $$ = this.internal;
-        return arguments.length ?
+        return isValue(max) || max === false ?
             setMinMax($$, "max", max) :
             getMinMax($$, "max");
     },
@@ -10160,7 +10189,9 @@ var axis$1 = {
      * @function axis․range
      * @instance
      * @memberof Chart
-     * @param {object} range If range is given, specified axis' min and max value will be updated. If no argument is given, the current min and max values for each axis will be returned.
+     * @param {object} range If range is given, specified axis' min and max value will be updated.
+     *   If no argument is given, the current min and max values for each axis will be returned.<br>
+     *   To unset specific axis max, set `false` to each of them.
      * @returns {object|undefined}
      * @example
      * // Update axis' label
@@ -10176,12 +10207,31 @@ var axis$1 = {
      *     y2: 10000
      *   },
      * });
+     *
+     * // To unset specific axis max, set false to each of them.
+     * chart.axis.range({
+     *   min: {
+     *     x: false,
+     *     y: false,
+     *     y2: false
+     *   },
+     *   max: {
+     *     x: false,
+     *     y: false,
+     *     y2: false
+     *   },
+     * });
+     *
+     * // shorthand (only affects y and y2 axis)
+     * chart.axis.range({ min: -50, max: 1000 });
+     * chart.axis.range({ min: false, max: false });
      */
     range: function (range) {
         var axis = this.axis;
         if (arguments.length) {
-            isDefined(range.max) && axis.max(range.max);
-            isDefined(range.min) && axis.min(range.min);
+            var min = range.min, max = range.max;
+            isDefined(max) && axis.max(max);
+            isDefined(min) && axis.min(min);
         }
         else {
             return {
@@ -20667,7 +20717,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220319004614
+ * @version 3.3.3-nightly-20220323004651
  */
 var bb = {
     /**
@@ -20677,7 +20727,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.3-nightly-20220319004614",
+    version: "3.3.3-nightly-20220323004651",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
