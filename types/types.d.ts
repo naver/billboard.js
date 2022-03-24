@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {Selection} from "d3-selection";
+import {Transition} from "d3-transition";
 
 export type PrimitiveArray = Array<
 	string | boolean | number | Date | null |
@@ -10,6 +11,7 @@ export type PrimitiveArray = Array<
 >;
 export type ArrayOrString = string[] | string;
 export type d3Selection = Selection<any, any, any, any>;
+export type d3Transition = Transition<any, any, any, any>;
 export type ChartTypes = "area"
 	| "area-line-range"
 	| "area-spline"
