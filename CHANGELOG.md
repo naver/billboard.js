@@ -1,3 +1,16 @@
+# [3.4.0-next.2](https://github.com/naver/billboard.js/compare/3.4.0-next.1...3.4.0-next.2) (2022-03-24)
+
+
+### Bug Fixes
+
+* **api:** Fix flow on indexed/category axis type ([4aba436](https://github.com/naver/billboard.js/commit/4aba436f4c968cc04b3e5880546bc41bf6d2c5fa)), closes [#2595](https://github.com/naver/billboard.js/issues/2595)
+
+
+### Features
+
+* **api:** Implement axis range reset ([6c9d99e](https://github.com/naver/billboard.js/commit/6c9d99e01f51388de5c26562eb72bdfe39819547)), closes [#2398](https://github.com/naver/billboard.js/issues/2398)
+* **option:** Intent to ship onclick ([63c5a53](https://github.com/naver/billboard.js/commit/63c5a53777ced238528529cbe4b8a0ea8ab62ebd)), closes [#2587](https://github.com/naver/billboard.js/issues/2587)
+
 # [3.4.0-next.1](https://github.com/naver/billboard.js/compare/3.3.3...3.4.0-next.1) (2022-03-16)
 
 
