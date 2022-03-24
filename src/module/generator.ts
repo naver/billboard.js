@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {d3Transition} from "../../types/types";
 import {window} from "./browser";
 import {isArray} from "./util";
 
@@ -38,17 +39,24 @@ export function generateResize() {
 	return callResizeFn;
 }
 
+type Transition = boolean | d3Transition;
+
 /**
  * Generate transition queue function
  * @returns {Function}
  * @private
  */
 export function generateWait() {
-	let transitionsToWait: any = [];
-	const f = function(t, callback) {
+	let transitionsToWait: Transition[] = [];
+
+	// 'f' is called as selection.call(f, ...);
+	const f = function(selection: d3Transition, callback: Function) {
 		let timer;
 
-		// eslint-disable-next-line
+		/**
+		 * Check if transition is complete
+		 * @private
+		 */
 		function loop() {
 			let done = 0;
 
@@ -77,7 +85,7 @@ export function generateWait() {
 		loop();
 	};
 
-	f.add = function(t) {
+	f.add = function(t: Transition | Transition[]) {
 		isArray(t) ?
 			(transitionsToWait = transitionsToWait.concat(t)) :
 			transitionsToWait.push(t);
