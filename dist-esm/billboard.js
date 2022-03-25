@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.3-nightly-20220323004651
+ * @version 3.3.3-nightly-20220325004636
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3019,10 +3019,6 @@ var Cache = /** @class */ (function () {
     return Cache;
 }());
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 var setTimeout$1 = win.setTimeout, clearTimeout$1 = win.clearTimeout;
 /**
  * Generate resize queue function
@@ -3056,19 +3052,23 @@ function generateResize() {
  */
 function generateWait() {
     var transitionsToWait = [];
-    var f = function (t, callback) {
+    // 'f' is called as selection.call(f, ...);
+    var f = function (selection, callback) {
         var timer;
-        // eslint-disable-next-line
+        /**
+         * Check if transition is complete
+         * @private
+         */
         function loop() {
             var _a;
             var done = 0;
-            for (var i = 0, t_1; (t_1 = transitionsToWait[i]); i++) {
-                if (t_1 === true || ((_a = t_1.empty) === null || _a === void 0 ? void 0 : _a.call(t_1))) {
+            for (var i = 0, t = void 0; (t = transitionsToWait[i]); i++) {
+                if (t === true || ((_a = t.empty) === null || _a === void 0 ? void 0 : _a.call(t))) {
                     done++;
                     continue;
                 }
                 try {
-                    t_1.transition();
+                    t.transition();
                 }
                 catch (e) {
                     done++;
@@ -20717,7 +20717,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220323004651
+ * @version 3.3.3-nightly-20220325004636
  */
 var bb = {
     /**
@@ -20727,7 +20727,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.3-nightly-20220323004651",
+    version: "3.3.3-nightly-20220325004636",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

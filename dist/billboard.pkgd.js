@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220323004651
+ * @version 3.3.3-nightly-20220325004636
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -24412,28 +24412,32 @@ function generateResize() {
 
   return callResizeFn;
 }
+
 /**
  * Generate transition queue function
  * @returns {Function}
  * @private
  */
-
 function generateWait() {
   var transitionsToWait = [],
-      f = function (t, callback) {
-    var timer; // eslint-disable-next-line
+      f = function (selection, callback) {
+    var timer;
+    /**
+     * Check if transition is complete
+     * @private
+     */
 
     function loop() {
       var done = 0;
 
-      for (var i = 0, _t; _t = transitionsToWait[i]; i++) {
-        if (_t === !0 || _t.empty != null && _t.empty()) {
+      for (var i = 0, t; t = transitionsToWait[i]; i++) {
+        if (t === !0 || t.empty != null && t.empty()) {
           done++;
           continue;
         }
 
         try {
-          _t.transition();
+          t.transition();
         } catch (e) {
           done++;
         }
@@ -24449,7 +24453,8 @@ function generateWait() {
     }
 
     loop();
-  };
+  }; // 'f' is called as selection.call(f, ...);
+
 
   f.add = function (t) {
     isArray(t) ? transitionsToWait = transitionsToWait.concat(t) : transitionsToWait.push(t);
@@ -48829,7 +48834,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220323004651",
+  version: "3.3.3-nightly-20220325004636",
 
   /**
    * Generate chart
@@ -48964,7 +48969,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220323004651
+ * @version 3.3.3-nightly-20220325004636
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
