@@ -721,7 +721,7 @@ function parseDate(date: Date | string | number | any): Date {
  * @private
  */
 function isTabVisible(): boolean {
-	return !document.hidden;
+	return document?.hidden === false || document?.visibilityState === "visible";
 }
 
 /**

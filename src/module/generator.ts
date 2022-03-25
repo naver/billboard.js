@@ -4,7 +4,7 @@
  */
 import {d3Transition} from "../../types/types";
 import {window} from "./browser";
-import {isArray} from "./util";
+import {isArray, isTabVisible} from "./util";
 
 const {setTimeout, clearTimeout} = window;
 
@@ -64,6 +64,12 @@ export function generateWait() {
 				if (t === true || t.empty?.()) {
 					done++;
 					continue;
+				}
+
+				// when tab isn't visible exit loop
+				if (isTabVisible() === false) {
+					done = transitionsToWait.length;
+					break;
 				}
 
 				try {
