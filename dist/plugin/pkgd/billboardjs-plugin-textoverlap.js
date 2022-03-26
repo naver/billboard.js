@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220325004636
+ * @version 3.3.3-nightly-20220326004634
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -25636,7 +25636,7 @@ function parseDate(date) {
 
 
 function isTabVisible() {
-  return !doc.hidden;
+  return (doc == null ? void 0 : doc.hidden) === !1 || (doc == null ? void 0 : doc.visibilityState) === "visible";
 }
 /**
  * Get the current input type
@@ -25803,7 +25803,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.3.3-nightly-20220325004636";
+Plugin.version = "3.3.3-nightly-20220326004634";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**

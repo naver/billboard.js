@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.3-nightly-20220325004636
+ * @version 3.3.3-nightly-20220326004634
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -762,7 +762,7 @@ function parseDate(date) {
  * @private
  */
 function isTabVisible() {
-    return !doc.hidden;
+    return (doc === null || doc === void 0 ? void 0 : doc.hidden) === false || (doc === null || doc === void 0 ? void 0 : doc.visibilityState) === "visible";
 }
 /**
  * Get the current input type
@@ -3066,6 +3066,11 @@ function generateWait() {
                 if (t === true || ((_a = t.empty) === null || _a === void 0 ? void 0 : _a.call(t))) {
                     done++;
                     continue;
+                }
+                // when tab isn't visible exit loop
+                if (isTabVisible() === false) {
+                    done = transitionsToWait.length;
+                    break;
                 }
                 try {
                     t.transition();
@@ -20717,7 +20722,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220325004636
+ * @version 3.3.3-nightly-20220326004634
  */
 var bb = {
     /**
@@ -20727,7 +20732,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.3-nightly-20220325004636",
+    version: "3.3.3-nightly-20220326004634",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

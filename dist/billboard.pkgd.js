@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220325004636
+ * @version 3.3.3-nightly-20220326004634
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -21912,7 +21912,7 @@ function parseDate(date) {
 
 
 function isTabVisible() {
-  return !browser_doc.hidden;
+  return (browser_doc == null ? void 0 : browser_doc.hidden) === !1 || (browser_doc == null ? void 0 : browser_doc.visibilityState) === "visible";
 }
 /**
  * Get the current input type
@@ -24434,6 +24434,12 @@ function generateWait() {
         if (t === !0 || t.empty != null && t.empty()) {
           done++;
           continue;
+        } // when tab isn't visible exit loop
+
+
+        if (isTabVisible() === !1) {
+          done = transitionsToWait.length;
+          break;
         }
 
         try {
@@ -48834,7 +48840,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220325004636",
+  version: "3.3.3-nightly-20220326004634",
 
   /**
    * Generate chart
@@ -48969,7 +48975,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220325004636
+ * @version 3.3.3-nightly-20220326004634
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
