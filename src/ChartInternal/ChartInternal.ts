@@ -12,7 +12,7 @@ import {
 import {select as d3Select} from "d3-selection";
 import {d3Selection} from "../../types/types";
 import {checkModuleImport} from "../module/error";
-import {$COMMON, $TEXT} from "../config/classes";
+import {$COMMON, $CIRCLE, $TEXT} from "../config/classes";
 import Store from "../config/Store/Store";
 import Options from "../config/Options/Options";
 import {document, window} from "../module/browser";
@@ -338,6 +338,7 @@ export default class ChartInternal {
 					$$.mapToIds($$.data.targets) : config.data_hide
 			);
 		}
+
 		if (config.legend_hide) {
 			$$.addHiddenLegendIds(
 				config.legend_hide === true ?
@@ -641,24 +642,32 @@ export default class ChartInternal {
 			helper(type);
 		}
 
-		// circle
-		if ($$.hasType("bubble") || $$.hasType("scatter")) {
+		// Point types
+		const hasPointType = $$.hasType("bubble") || $$.hasType("scatter");
+
+		if (hasPointType) {
 			$$.updateTargetForCircle?.();
 		}
 
 		// Fade-in each chart
-		$$.showTargets();
+		$$.filterTargetsToShowAtInit(hasPointType);
 	}
 
 	/**
-	 * Display targeted elements
+	 * Display targeted elements at initialization
+	 * @param {boolean} hasPointType whether has point type(bubble, scatter) or not
 	 * @private
 	 */
-	showTargets(): void {
+	filterTargetsToShowAtInit(hasPointType: boolean = false): void {
 		const $$ = <any> this;
 		const {$el: {svg}, $T} = $$;
+		let selector = `.${$COMMON.target}`;
 
-		$T(svg.selectAll(`.${$COMMON.target}`)
+		if (hasPointType) {
+			selector += `, .${$CIRCLE.chartCircles} > .${$CIRCLE.circles}`;
+		}
+
+		$T(svg.selectAll(selector)
 			.filter(d => $$.isTargetToShow(d.id))
 		).style("opacity", null);
 	}
@@ -697,8 +706,10 @@ export default class ChartInternal {
 		const $$ = <any> this;
 		const {withoutFadeIn} = $$.state;
 
-		return $$.getBaseValue(d) !== null &&
+		const r = $$.getBaseValue(d) !== null &&
 			withoutFadeIn[d.id] ? null : "0";
+
+		return r;
 	}
 
 	bindResize(): void {

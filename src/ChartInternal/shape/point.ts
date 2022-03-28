@@ -89,8 +89,7 @@ export default {
 			const mainCircle = $el.main.select(`.${$CIRCLE.chartCircles}`)
 				.style("pointer-events", "none")
 				.selectAll(`.${$CIRCLE.circles}`)
-				.data(targets)
-				.attr("class", classCircles);
+				.data(targets);
 
 			mainCircle.exit().remove();
 			enterNode = mainCircle.enter();
@@ -102,7 +101,11 @@ export default {
 
 		enterNode.append("g")
 			.attr("class", classCircles)
-			.style("cursor", d => (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null));
+			.style("cursor", d => (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null))
+			.style("opacity", function() {
+				// if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
+				return this.parentNode?.classList.contains("bb-chart-circles") ? "0" : null;
+			});
 
 		// Update date for selected circles
 		selectionEnabled && targets.forEach(t => {
