@@ -684,6 +684,47 @@ describe("DATA", () => {
 		});
 	});
 
+	describe("data.hide", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", 170, 250, 210, 190, 175, 225],
+						["data4", 283, 170, 275, 143, 220, 255]
+					],
+					hide: true,
+					type: "line",
+					types: {
+						data1: "bubble",
+						data2: "scatter"
+					}
+				}
+			};
+		});
+
+		it("All types should be hidden", () => {
+			const selector = `.${$COMMON.target}, .${$CIRCLE.chartCircles} > .${$CIRCLE.circles}`;
+
+			chart.$.svg.selectAll(selector).each(function() {
+				expect(this.style.opacity).to.be.equal("0");
+			});
+		});
+
+		it("set options: data.hide=['data1', 'data2']", () => {
+			args.data.hide = ["data1", "data2"];
+		});
+
+		it("only given dataseries should be hidden", () => {
+			const selector = `.${$COMMON.target}, .${$CIRCLE.chartCircles} > .${$CIRCLE.circles}`;
+
+			chart.$.svg.selectAll(selector).each(function(d) {
+				expect(this.style.opacity).to.be.equal(args.data.hide.indexOf(d.id) > -1 ? "0" : "");
+			});
+		});
+	});
+
 	describe("data.regions", () => {
 		before(() => {
 			args = {
