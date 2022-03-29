@@ -183,7 +183,7 @@ export default {
 
 	/**
 	 * Determine if given stacking bar data is radius type
-	 * @param {Object} d Data row
+	 * @param {object} d Data row
 	 * @returns {boolean}
 	 */
 	isStackingRadiusData(d: IDataRow): boolean {
