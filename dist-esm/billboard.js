@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.3-nightly-20220326004634
+ * @version 3.3.3-nightly-20220329004653
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -8666,21 +8666,28 @@ var ChartInternal = /** @class */ (function () {
             }
             helper(type_1);
         }
-        // circle
-        if ($$.hasType("bubble") || $$.hasType("scatter")) {
+        // Point types
+        var hasPointType = $$.hasType("bubble") || $$.hasType("scatter");
+        if (hasPointType) {
             (_a = $$.updateTargetForCircle) === null || _a === void 0 ? void 0 : _a.call($$);
         }
         // Fade-in each chart
-        $$.showTargets();
+        $$.filterTargetsToShowAtInit(hasPointType);
     };
     /**
-     * Display targeted elements
+     * Display targeted elements at initialization
+     * @param {boolean} hasPointType whether has point type(bubble, scatter) or not
      * @private
      */
-    ChartInternal.prototype.showTargets = function () {
+    ChartInternal.prototype.filterTargetsToShowAtInit = function (hasPointType) {
+        if (hasPointType === void 0) { hasPointType = false; }
         var $$ = this;
         var svg = $$.$el.svg, $T = $$.$T;
-        $T(svg.selectAll(".".concat($COMMON.target))
+        var selector = ".".concat($COMMON.target);
+        if (hasPointType) {
+            selector += ", .".concat($CIRCLE.chartCircles, " > .").concat($CIRCLE.circles);
+        }
+        $T(svg.selectAll(selector)
             .filter(function (d) { return $$.isTargetToShow(d.id); })).style("opacity", null);
     };
     ChartInternal.prototype.getWithOption = function (options) {
@@ -8711,8 +8718,9 @@ var ChartInternal = /** @class */ (function () {
     ChartInternal.prototype.initialOpacity = function (d) {
         var $$ = this;
         var withoutFadeIn = $$.state.withoutFadeIn;
-        return $$.getBaseValue(d) !== null &&
+        var r = $$.getBaseValue(d) !== null &&
             withoutFadeIn[d.id] ? null : "0";
+        return r;
     };
     ChartInternal.prototype.bindResize = function () {
         var $$ = this;
@@ -17256,8 +17264,7 @@ var shapePoint = {
             var mainCircle = $el.main.select(".".concat($CIRCLE.chartCircles))
                 .style("pointer-events", "none")
                 .selectAll(".".concat($CIRCLE.circles))
-                .data(targets)
-                .attr("class", classCircles);
+                .data(targets);
             mainCircle.exit().remove();
             enterNode = mainCircle.enter();
         }
@@ -17266,7 +17273,12 @@ var shapePoint = {
             .attr("class", function (d) { return $$.generateClass($SELECT.selectedCircles, d.id); });
         enterNode.append("g")
             .attr("class", classCircles)
-            .style("cursor", function (d) { return (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null); });
+            .style("cursor", function (d) { return (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null); })
+            .style("opacity", function () {
+            var _a;
+            // if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
+            return ((_a = this.parentNode) === null || _a === void 0 ? void 0 : _a.classList.contains("bb-chart-circles")) ? "0" : null;
+        });
         // Update date for selected circles
         selectionEnabled && targets.forEach(function (t) {
             $el.main.selectAll(".".concat($SELECT.selectedCircles).concat($$.getTargetSelectorSuffix(t.id)))
@@ -20722,7 +20734,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220326004634
+ * @version 3.3.3-nightly-20220329004653
  */
 var bb = {
     /**
@@ -20732,7 +20744,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.3-nightly-20220326004634",
+    version: "3.3.3-nightly-20220329004653",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

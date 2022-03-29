@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220326004634
+ * @version 3.3.3-nightly-20220329004653
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10145,27 +10145,40 @@ var ChartInternal = /*#__PURE__*/function () {
       }
 
       helper(_type);
-    } // circle
+    } // Point types
 
 
-    if ($$.hasType("bubble") || $$.hasType("scatter")) {
+    var hasPointType = $$.hasType("bubble") || $$.hasType("scatter");
+
+    if (hasPointType) {
       $$.updateTargetForCircle == null ? void 0 : $$.updateTargetForCircle();
     } // Fade-in each chart
 
 
-    $$.showTargets();
+    $$.filterTargetsToShowAtInit(hasPointType);
   }
   /**
-   * Display targeted elements
+   * Display targeted elements at initialization
+   * @param {boolean} hasPointType whether has point type(bubble, scatter) or not
    * @private
    */
   ;
 
-  _proto.showTargets = function showTargets() {
+  _proto.filterTargetsToShowAtInit = function filterTargetsToShowAtInit(hasPointType) {
+    if (hasPointType === void 0) {
+      hasPointType = !1;
+    }
+
     var $$ = this,
         svg = $$.$el.svg,
-        $T = $$.$T;
-    $T(svg.selectAll("." + $COMMON.target).filter(function (d) {
+        $T = $$.$T,
+        selector = "." + $COMMON.target;
+
+    if (hasPointType) {
+      selector += ", ." + $CIRCLE.chartCircles + " > ." + $CIRCLE.circles;
+    }
+
+    $T(svg.selectAll(selector).filter(function (d) {
       return $$.isTargetToShow(d.id);
     })).style("opacity", null);
   };
@@ -10200,8 +10213,9 @@ var ChartInternal = /*#__PURE__*/function () {
 
   _proto.initialOpacity = function initialOpacity(d) {
     var $$ = this,
-        withoutFadeIn = $$.state.withoutFadeIn;
-    return $$.getBaseValue(d) !== null && withoutFadeIn[d.id] ? null : "0";
+        withoutFadeIn = $$.state.withoutFadeIn,
+        r = $$.getBaseValue(d) !== null && withoutFadeIn[d.id] ? null : "0";
+    return r;
   };
 
   _proto.bindResize = function bindResize() {
@@ -19530,7 +19544,7 @@ var getTransitionName = function () {
       targets = data.targets.filter(function (d) {
         return _this.isScatterType(d) || _this.isBubbleType(d);
       });
-      var mainCircle = $el.main.select("." + $CIRCLE.chartCircles).style("pointer-events", "none").selectAll("." + $CIRCLE.circles).data(targets).attr("class", classCircles);
+      var mainCircle = $el.main.select("." + $CIRCLE.chartCircles).style("pointer-events", "none").selectAll("." + $CIRCLE.circles).data(targets);
       mainCircle.exit().remove();
       enterNode = mainCircle.enter();
     } // Circles for each data point on lines
@@ -19541,6 +19555,11 @@ var getTransitionName = function () {
     });
     enterNode.append("g").attr("class", classCircles).style("cursor", function (d) {
       return isFunction(isSelectable) && isSelectable(d) ? "pointer" : null;
+    }).style("opacity", function () {
+      var _this$parentNode;
+
+      // if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
+      return (_this$parentNode = this.parentNode) != null && _this$parentNode.classList.contains("bb-chart-circles") ? "0" : null;
     }); // Update date for selected circles
 
     selectionEnabled && targets.forEach(function (t) {
@@ -23414,7 +23433,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220326004634",
+  version: "3.3.3-nightly-20220329004653",
 
   /**
    * Generate chart
@@ -23549,7 +23568,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220326004634
+ * @version 3.3.3-nightly-20220329004653
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
