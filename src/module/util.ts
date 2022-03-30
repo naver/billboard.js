@@ -702,7 +702,9 @@ function parseDate(date: Date | string | number | any): Date {
 	} else if (isString(date)) {
 		const {config, format} = this;
 
-		parsedDate = format.dataTime(config.data_xFormat)(date);
+		// if fails to parse, try by new Date()
+		// https://github.com/naver/billboard.js/issues/1714
+		parsedDate = format.dataTime(config.data_xFormat)(date) ?? new Date(date);
 	} else if (isNumber(date) && !isNaN(date)) {
 		parsedDate = new Date(+date);
 	}
