@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220329004653
+ * @version 3.3.3-nightly-20220330004813
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -42522,7 +42522,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 
   /**
    * Set transform attributes to arc label text
-   * @param {Object} d Data object
+   * @param {object} d Data object
    * @returns {string} Translate attribute string
    * @private
    */
@@ -43516,7 +43516,7 @@ function point_y(p) {
 
   /**
    * Determine if given stacking bar data is radius type
-   * @param {Object} d Data row
+   * @param {object} d Data row
    * @returns {boolean}
    */
   isStackingRadiusData: function isStackingRadiusData(d) {
@@ -48891,7 +48891,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220329004653",
+  version: "3.3.3-nightly-20220330004813",
 
   /**
    * Generate chart
@@ -49026,7 +49026,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220329004653
+ * @version 3.3.3-nightly-20220330004813
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

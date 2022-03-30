@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220329004653
+ * @version 3.3.3-nightly-20220330004813
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -17864,7 +17864,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
   /**
    * Set transform attributes to arc label text
-   * @param {Object} d Data object
+   * @param {object} d Data object
    * @returns {string} Translate attribute string
    * @private
    */
@@ -18685,7 +18685,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
   /**
    * Determine if given stacking bar data is radius type
-   * @param {Object} d Data row
+   * @param {object} d Data row
    * @returns {boolean}
    */
   isStackingRadiusData: function isStackingRadiusData(d) {
@@ -23433,7 +23433,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220329004653",
+  version: "3.3.3-nightly-20220330004813",
 
   /**
    * Generate chart
@@ -23568,7 +23568,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220329004653
+ * @version 3.3.3-nightly-20220330004813
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

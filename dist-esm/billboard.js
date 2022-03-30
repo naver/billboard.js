@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.3-nightly-20220329004653
+ * @version 3.3.3-nightly-20220330004813
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -15704,7 +15704,7 @@ var shapeArc = {
     },
     /**
      * Set transform attributes to arc label text
-     * @param {Object} d Data object
+     * @param {object} d Data object
      * @returns {string} Translate attribute string
      * @private
      */
@@ -16506,7 +16506,7 @@ var shapeBar = {
     },
     /**
      * Determine if given stacking bar data is radius type
-     * @param {Object} d Data row
+     * @param {object} d Data row
      * @returns {boolean}
      */
     isStackingRadiusData: function (d) {
@@ -20734,7 +20734,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220329004653
+ * @version 3.3.3-nightly-20220330004813
  */
 var bb = {
     /**
@@ -20744,7 +20744,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.3-nightly-20220329004653",
+    version: "3.3.3-nightly-20220330004813",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
