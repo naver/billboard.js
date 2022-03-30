@@ -288,7 +288,7 @@ export default {
 
 	/**
 	 * Set transform attributes to arc label text
-	 * @param {Object} d Data object
+	 * @param {object} d Data object
 	 * @returns {string} Translate attribute string
 	 * @private
 	 */
