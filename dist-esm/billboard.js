@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.3.3-nightly-20220330004813
+ * @version 3.3.3-nightly-20220331004620
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -739,13 +739,16 @@ function tplProcess(tpl, data) {
  * @private
  */
 function parseDate(date) {
+    var _a;
     var parsedDate;
     if (date instanceof Date) {
         parsedDate = date;
     }
     else if (isString(date)) {
-        var _a = this, config = _a.config, format = _a.format;
-        parsedDate = format.dataTime(config.data_xFormat)(date);
+        var _b = this, config = _b.config, format = _b.format;
+        // if fails to parse, try by new Date()
+        // https://github.com/naver/billboard.js/issues/1714
+        parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) !== null && _a !== void 0 ? _a : new Date(date);
     }
     else if (isNumber(date) && !isNaN(date)) {
         parsedDate = new Date(+date);
@@ -20734,7 +20737,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220330004813
+ * @version 3.3.3-nightly-20220331004620
  */
 var bb = {
     /**
@@ -20744,7 +20747,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.3.3-nightly-20220330004813",
+    version: "3.3.3-nightly-20220331004620",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

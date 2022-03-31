@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220330004813
+ * @version 3.3.3-nightly-20220331004620
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -21923,9 +21923,13 @@ function parseDate(date) {
   if (date instanceof Date) {
     parsedDate = date;
   } else if (isString(date)) {
-    var config = this.config,
+    var _format$dataTime,
+        config = this.config,
         format = this.format;
-    parsedDate = format.dataTime(config.data_xFormat)(date);
+
+    // if fails to parse, try by new Date()
+    // https://github.com/naver/billboard.js/issues/1714
+    parsedDate = (_format$dataTime = format.dataTime(config.data_xFormat)(date)) != null ? _format$dataTime : new Date(date);
   } else if (isNumber(date) && !isNaN(date)) {
     parsedDate = new Date(+date);
   }
@@ -48891,7 +48895,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.3.3-nightly-20220330004813",
+  version: "3.3.3-nightly-20220331004620",
 
   /**
    * Generate chart
@@ -49026,7 +49030,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.3.3-nightly-20220330004813
+ * @version 3.3.3-nightly-20220331004620
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.3.3-nightly-20220330004813
+ * @version 3.3.3-nightly-20220331004620
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -375,7 +375,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.3.3-nightly-20220330004813";
+Plugin.version = "3.3.3-nightly-20220331004620";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**
@@ -1213,9 +1213,13 @@ function parseDate(date) {
   if (date instanceof Date) {
     parsedDate = date;
   } else if (isString(date)) {
-    var config = this.config,
+    var _format$dataTime,
+        config = this.config,
         format = this.format;
-    parsedDate = format.dataTime(config.data_xFormat)(date);
+
+    // if fails to parse, try by new Date()
+    // https://github.com/naver/billboard.js/issues/1714
+    parsedDate = (_format$dataTime = format.dataTime(config.data_xFormat)(date)) != null ? _format$dataTime : new Date(date);
   } else if (isNumber(date) && !isNaN(date)) {
     parsedDate = new Date(+date);
   }
