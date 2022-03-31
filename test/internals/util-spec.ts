@@ -5,7 +5,10 @@
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
-import {toArray, getBoundingRect, getCssRules, getPathBox, getPointer, getUnique, isArray, isNumber, sortValue} from "../../src/module/util";
+import sinon from "sinon";
+import {timeParse as d3TimeParse} from "d3-time-format";
+import {window} from "../../src/module/browser";
+import {toArray, getBoundingRect, getCssRules, getPathBox, getPointer, getUnique, isArray, isNumber, sortValue, parseDate} from "../../src/module/util";
 
 describe("UTIL", function() {
 	describe("toArray", () => {
@@ -134,6 +137,71 @@ describe("UTIL", function() {
 			// for datetime
 			data = [new Date("2019-08-01"), new Date("2019-08-01"), new Date("2019-08-01")];
 			expect(getUnique(data)).to.deep.equal([new Date("2019-08-01")]);
+		});
+	});
+
+	describe("parseDate", () => {
+		it("when Date object value is given, should return as is.", () =>  {
+			const date = new Date();
+
+			expect(date).to.be.equal(parseDate(date));
+		});
+
+		it("when string is given with parse specifier.", () => {
+			const date = "2022-01-01";
+			const parsedDate = new Date(date);
+
+			const parsed = parseDate.call({
+				config: "%Y-%m-%d",
+				format: {
+					dataTime: d3TimeParse
+				}
+			}, date);
+
+			expect(parsed).to.be.deep.equal(parsedDate);
+		});
+
+		it("when string is given with mismatch parse specifier.", () => {
+			const date = "2022-01-01 00:00:00";
+			const parsedDate = new Date(date);
+
+			const parsed = parseDate.call({
+				config: "%Y-%m-%d",
+				format: {
+					dataTime: d3TimeParse
+				}
+			}, date);
+
+			expect(parsed).to.be.deep.equal(parsedDate);
+		});
+
+		it("when numeric datetime is given.", () => {
+			const datetime = 1648616365772;
+			const parsed = parseDate(datetime);
+
+			expect(parsed).to.be.deep.equal(new Date(datetime));
+		});
+
+		it("when non parsable string data is given.", () => {
+			const date = "aaa";
+			const console = window.console;
+
+			window.console = {
+				error: sinon.spy()
+			};
+
+			parseDate.call({
+				config: "%Y-%m-%d",
+				format: {
+					dataTime: d3TimeParse
+				}
+			}, date);
+
+			// console.error should be called
+			expect(window.console.error.called).to.be.true;
+
+			// rollback
+			window.console = console;
 		});
 	});
 });
