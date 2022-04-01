@@ -1,3 +1,23 @@
+# [3.4.0](https://github.com/naver/billboard.js/compare/3.3.3...3.4.0) (2022-03-31)
+
+
+### Bug Fixes
+
+* **api:** Fix flow on indexed/category axis type ([4aba436](https://github.com/naver/billboard.js/commit/4aba436f4c968cc04b3e5880546bc41bf6d2c5fa)), closes [#2595](https://github.com/naver/billboard.js/issues/2595)
+* **axis:** Fix culling visibility on dynamic loading ([4c79daf](https://github.com/naver/billboard.js/commit/4c79daffe295f3de9d6820fef2a85ffa551c0e56)), closes [#2582](https://github.com/naver/billboard.js/issues/2582)
+* **axis:** fix hidden axis rescale on dynamic load ([5418853](https://github.com/naver/billboard.js/commit/541885327ce7bdd55de0588427be56baf57f2bcf)), closes [#2523](https://github.com/naver/billboard.js/issues/2523) [#2571](https://github.com/naver/billboard.js/issues/2571)
+* **generator:** Prevent possible infinite loop when tab isn't visible ([bafdb17](https://github.com/naver/billboard.js/commit/bafdb17b3f3d4a30ae0d5e225bdd6fccc8e798f2)), closes [#2606](https://github.com/naver/billboard.js/issues/2606)
+* **option:** Fix data.hide not working for bubble/scatter type ([64ae74b](https://github.com/naver/billboard.js/commit/64ae74bba7df233198093691ac15f2a9a42f6549)), closes [#2609](https://github.com/naver/billboard.js/issues/2609)
+* **util:** Check if agent has mouse ([d42adaa](https://github.com/naver/billboard.js/commit/d42adaa2e026316451036aeb9f1dc2580c191a4b)), closes [#2550](https://github.com/naver/billboard.js/issues/2550) [#2585](https://github.com/naver/billboard.js/issues/2585)
+* **util:** Enhance parsing date string ([8d9f422](https://github.com/naver/billboard.js/commit/8d9f42257c6f30f785e54f67cf3680d353ddd5fa)), closes [#1714](https://github.com/naver/billboard.js/issues/1714)
+
+
+### Features
+
+* **api:** Implement axis range reset ([6c9d99e](https://github.com/naver/billboard.js/commit/6c9d99e01f51388de5c26562eb72bdfe39819547)), closes [#2398](https://github.com/naver/billboard.js/issues/2398)
+* **option:** Intent to ship onclick ([63c5a53](https://github.com/naver/billboard.js/commit/63c5a53777ced238528529cbe4b8a0ea8ab62ebd)), closes [#2587](https://github.com/naver/billboard.js/issues/2587)
+* **polar:** Intent to ship polar type ([feca715](https://github.com/naver/billboard.js/commit/feca71573024f23e099bc221a1a8dd431d560d40)), closes [#2462](https://github.com/naver/billboard.js/issues/2462)
+
 ## [3.3.3](https://github.com/naver/billboard.js/compare/3.3.2...3.3.3) (2022-02-24)
 
 
