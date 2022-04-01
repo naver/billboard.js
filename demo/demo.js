@@ -612,9 +612,8 @@ var demos = {
 				},
 				polar: {
 					label: {
-						format: function(value, ratio, id) {
-							return `${value}\n(${(ratio * 100).toFixed(0)}%)`;
-						},
+                        format: function(value, ratio, id) {
+ return value +"\n"+ (ratio * 100).toFixed(0) +"%"; },
 						ratio: 1.07
 					},
 					level:{

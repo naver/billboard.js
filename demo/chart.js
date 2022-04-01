@@ -359,13 +359,14 @@ code.data;
 			.replace("_plugins", "plugins")
 			.replace(new RegExp('"?'+ this.replacer.plugin +'"?', "g"), "");
 
-			if (/multiline/i.test(options.bindto)) {
-				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
-					.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n");
-			} else {
-				codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
-					.replace(/\\(u)/g, "\$1");
-			}
+            if (/(polarChart|multiline)/i.test(options.bindto)) {
+                codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
+                    .replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n")
+                    .replace('+"\\\\n"+', '+"\\n+"');
+            } else {
+                codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
+                    .replace(/\\(u)/g, "\$1");
+            }
 
 			codeStr += ");";
 
