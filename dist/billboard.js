@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.0-nightly-20220401004720
+ * @version 3.4.0-nightly-20220402004615
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1134,7 +1134,7 @@ function convertInputType(mouse, touch) {
     if (navigator && "maxTouchPoints" in navigator) {
       hasTouch = navigator.maxTouchPoints > 0; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
       // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-    } else if ("ontouchmove" in win || DocumentTouch && browser_doc instanceof DocumentTouch) {
+    } else if (true || DocumentTouch && browser_doc instanceof DocumentTouch) {
       hasTouch = !0;
     } else {
       // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
@@ -23437,7 +23437,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.0-nightly-20220401004720",
+  version: "3.4.0-nightly-20220402004615",
 
   /**
    * Generate chart
@@ -23572,7 +23572,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.0-nightly-20220401004720
+ * @version 3.4.0-nightly-20220402004615
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
