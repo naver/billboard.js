@@ -17,7 +17,7 @@ jobs:
         run: bash ./config/deploy-nightly.sh setup ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 14
 
