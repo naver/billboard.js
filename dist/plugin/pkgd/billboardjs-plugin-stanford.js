@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.0-nightly-20220407004650
+ * @version 3.4.0-nightly-20220412124200
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -17794,23 +17794,34 @@ function one(b) {
 function ascending(a, b) {
   return a == null || b == null ? NaN : a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
+;// CONCATENATED MODULE: ./node_modules/d3-array/src/descending.js
+function descending(a, b) {
+  return a == null || b == null ? NaN : b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+}
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
 
+
 function bisector(f) {
-  var delta = f,
-      compare1 = f,
-      compare2 = f;
+  var compare1, compare2, delta; // If an accessor is specified, promote it to a comparator. In this case we
+  // can test whether the search value is (self-) comparable. We can’t do this
+  // for a comparator (except for specific, known comparators) because we can’t
+  // tell if the comparator is symmetric, and an asymmetric comparator can’t be
+  // used to test whether a single value is comparable.
 
   if (f.length !== 2) {
-    delta = function (d, x) {
-      return f(d) - x;
-    };
-
     compare1 = ascending;
 
     compare2 = function (d, x) {
       return ascending(f(d), x);
     };
+
+    delta = function (d, x) {
+      return f(d) - x;
+    };
+  } else {
+    compare1 = f === ascending || f === descending ? f : bisector_zero;
+    compare2 = f;
+    delta = f;
   }
 
   function left(a, x, lo, hi) {
@@ -17873,6 +17884,10 @@ function bisector(f) {
     center: center,
     right: right
   };
+}
+
+function bisector_zero() {
+  return 0;
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
 var regenerator = __webpack_require__(448);
@@ -23138,7 +23153,7 @@ function convertInputType(mouse, touch) {
     if (navigator && "maxTouchPoints" in navigator) {
       hasTouch = navigator.maxTouchPoints > 0; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
       // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-    } else if (true || DocumentTouch && doc instanceof DocumentTouch) {
+    } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
       hasTouch = !0;
     } else {
       // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
@@ -23283,7 +23298,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.0-nightly-20220407004650";
+Plugin.version = "3.4.0-nightly-20220412124200";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**

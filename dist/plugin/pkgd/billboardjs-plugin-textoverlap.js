@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.0-nightly-20220407004650
+ * @version 3.4.0-nightly-20220412124200
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -25694,7 +25694,7 @@ function convertInputType(mouse, touch) {
     if (navigator && "maxTouchPoints" in navigator) {
       hasTouch = navigator.maxTouchPoints > 0; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
       // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-    } else if (true || DocumentTouch && doc instanceof DocumentTouch) {
+    } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
       hasTouch = !0;
     } else {
       // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
@@ -25839,7 +25839,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.0-nightly-20220407004650";
+Plugin.version = "3.4.0-nightly-20220412124200";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**
