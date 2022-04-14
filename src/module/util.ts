@@ -768,5 +768,6 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
 	const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"]
 		.some(v => matchMedia?.(`(${v})`).matches);
 
-	return (hasMouse && "mouse") || (hasTouch && "touch") || null;
+	// fallback to 'mouse' if no input type is detected.
+	return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
 }
