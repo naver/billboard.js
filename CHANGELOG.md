@@ -1,3 +1,10 @@
+## [3.4.1](https://github.com/naver/billboard.js/compare/3.4.0...3.4.1) (2022-04-14)
+
+
+### Bug Fixes
+
+* **point,util:** fix syntax to work on legacy browser ([77798af](https://github.com/naver/billboard.js/commit/77798af6e08c6db8f5994a62c01ff2d57e2daf5a)), closes [#2637](https://github.com/naver/billboard.js/issues/2637)
+
 # [3.4.0](https://github.com/naver/billboard.js/compare/3.3.3...3.4.0) (2022-03-31)
 
 
