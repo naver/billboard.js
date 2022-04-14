@@ -147,11 +147,15 @@ If you want to use 'billboard.js' without installation, load files directly from
 
 ## Supported Browsers
 
-> Basically will work on all SVG supported browsers.
+> - Basically will work on all SVG supported browsers.
+> - <sup>*</sup>Notes for legacy browsers:
+>   - Recommended to use `packaged` build or construct your own build following [`How to bundle for legacy browsers?`](https://github.com/naver/billboard.js/wiki/How-to-bundle-for-legacy-browsers%3F) instruction.
+>   - D3.js dropped the support of legacy browsers since [v6](https://observablehq.com/@d3/d3v6-migration-guide).
+>   - The support isn't fully guaranteed.
 
 |Internet Explorer|Chrome|Firefox|Safari|iOS|Android|
 |---|---|---|---|---|---|
-|9+|Latest|Latest|Latest|8+|4+|
+|9+<sup>*</sup>|Latest|Latest|Latest|8+|4+|
 
 
 ## Dependency by version
