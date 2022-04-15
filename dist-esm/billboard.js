@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.0-nightly-20220413004700
+ * @version 3.4.1-nightly-20220415004722
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -805,7 +805,8 @@ function convertInputType(mouse, touch) {
     // Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
     var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"]
         .some(function (v) { return matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(".concat(v, ")")).matches; });
-    return (hasMouse && "mouse") || (hasTouch && "touch") || null;
+    // fallback to 'mouse' if no input type is detected.
+    return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
 }
 
 /**
@@ -17278,9 +17279,9 @@ var shapePoint = {
             .attr("class", classCircles)
             .style("cursor", function (d) { return (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null); })
             .style("opacity", function () {
-            var _a;
+            var parent = select(this.parentNode);
             // if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
-            return ((_a = this.parentNode) === null || _a === void 0 ? void 0 : _a.classList.contains("bb-chart-circles")) ? "0" : null;
+            return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
         });
         // Update date for selected circles
         selectionEnabled && targets.forEach(function (t) {
@@ -20737,7 +20738,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.0-nightly-20220413004700
+ * @version 3.4.1-nightly-20220415004722
  */
 var bb = {
     /**
@@ -20747,7 +20748,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.0-nightly-20220413004700",
+    version: "3.4.1-nightly-20220415004722",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.0-nightly-20220413004700
+ * @version 3.4.1-nightly-20220415004722
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1019,8 +1019,9 @@ function convertInputType(mouse, touch) {
 
   var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
-  });
-  return hasMouse && "mouse" || hasTouch && "touch" || null;
+  }); // fallback to 'mouse' if no input type is detected.
+
+  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
 }
 ;// CONCATENATED MODULE: ./src/config/config.ts
 /**
@@ -1145,7 +1146,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.0-nightly-20220413004700";
+Plugin.version = "3.4.1-nightly-20220415004722";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**

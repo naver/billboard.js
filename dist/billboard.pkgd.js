@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.0-nightly-20220413004700
+ * @version 3.4.1-nightly-20220415004722
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -21989,8 +21989,9 @@ function convertInputType(mouse, touch) {
 
   var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
-  });
-  return hasMouse && "mouse" || hasTouch && "touch" || null;
+  }); // fallback to 'mouse' if no input type is detected.
+
+  return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
 }
 ;// CONCATENATED MODULE: ./src/module/error.ts
 
@@ -44406,10 +44407,9 @@ var getTransitionName = function () {
     enterNode.append("g").attr("class", classCircles).style("cursor", function (d) {
       return isFunction(isSelectable) && isSelectable(d) ? "pointer" : null;
     }).style("opacity", function () {
-      var _this$parentNode;
+      var parent = src_select(this.parentNode); // if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
 
-      // if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
-      return (_this$parentNode = this.parentNode) != null && _this$parentNode.classList.contains("bb-chart-circles") ? "0" : null;
+      return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
     }); // Update date for selected circles
 
     selectionEnabled && targets.forEach(function (t) {
@@ -48910,7 +48910,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.0-nightly-20220413004700",
+  version: "3.4.1-nightly-20220415004722",
 
   /**
    * Generate chart
@@ -49045,7 +49045,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.0-nightly-20220413004700
+ * @version 3.4.1-nightly-20220415004722
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
