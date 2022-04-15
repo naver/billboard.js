@@ -103,8 +103,10 @@ export default {
 			.attr("class", classCircles)
 			.style("cursor", d => (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null))
 			.style("opacity", function() {
+				const parent = d3Select(this.parentNode);
+
 				// if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
-				return this.parentNode?.classList.contains("bb-chart-circles") ? "0" : null;
+				return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
 			});
 
 		// Update date for selected circles
