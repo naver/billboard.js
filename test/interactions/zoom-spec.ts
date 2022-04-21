@@ -5,6 +5,7 @@
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
+import {zoomTransform as d3ZoomTransform} from "d3-zoom";
 import sinon from "sinon";
 import {$AXIS, $EVENT, $GRID, $REGION, $ZOOM} from "../../src/config/classes";
 import util from "../assets/util";
@@ -117,6 +118,8 @@ describe("ZOOM", function() {
 			const {$el: {eventRect}} = chart.internal;
 			const rect = eventRect.node();
 
+			// must set initial zoom level or the following pans will fail
+			chart.zoom([0, 3]);
 			new Promise((resolve, reject) => {
 				util.fireEvent(rect, "mousedown", {
 					clientX: 100,
@@ -419,6 +422,101 @@ describe("ZOOM", function() {
 			}, 500);
 		})
 	});
+
+	describe("wheel zoom doesn't stick", () => {
+		before(() => {
+			args = {
+				size: {
+					width: 300,
+					height: 250
+				},
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 3150, 250],
+						["data2", 50, 20, 10, 40, 15, 6025]
+					],
+				},
+				zoom: {
+					enabled: true
+				}
+			};
+		});
+
+		function drag(down, move, up) {
+			const eventRect = chart.internal.$el.eventRect.node();
+			return new Promise((resolve) => {
+				util.fireEvent(eventRect, "mousedown", {
+					clientX: down.x,
+					clientY: down.y
+				}, chart);
+				resolve(true);
+			}).then(() => {
+				return new Promise((resolve) => {
+					setTimeout(() => {
+						util.fireEvent(eventRect, "mousemove", {
+							clientX: move.x,
+							clientY: move.y
+						}, chart);
+
+						resolve(true);
+					}, 300);
+				})
+			}).then(() => {
+				return new Promise((resolve) => {
+					setTimeout(() => {
+						util.fireEvent(eventRect, "mouseup", {
+							clientX: up.x,
+							clientY: up.y
+						}, chart);
+						resolve(true);
+					}, 300);
+				});
+			})
+		}
+
+		it("check doesn't stick left", (done) => {
+			const {internal: {$el}} = chart;
+			const eventRect = $el.eventRect.node();
+
+			chart.zoom([0, 2]);
+			drag({x: 150, y: 150}, {x: 2000, y: 120}, {x: 2000, y: 120}).then(() => {
+				expect(d3ZoomTransform(eventRect).x).to.approximately(0, 0.01);
+				expect(chart.zoom()[0]).to.approximately(0, 0.1);
+				drag({x: 150, y: 150}, {x: 0, y: 130}, {x: 0, y: 130}).then(() => {
+					expect(d3ZoomTransform(eventRect).x).to.approximately(-150, 0.01);
+					expect(chart.zoom()[0]).to.greaterThan(0);
+					done();
+				});
+			});
+		});
+
+		it("check doesn't stick right", (done) => {
+			chart.zoom([4, 5]);
+			drag({x: 150, y: 150}, {x: -2000, y: 120}, {x: -2000, y: 120}).then(() => {
+				expect(chart.zoom()[1]).to.greaterThan(5);
+				drag({x: 150, y: 150}, {x: 300, y: 130}, {x: 300, y: 130}).then(() => {
+					expect(chart.zoom()[1]).to.lessThan(5);
+					done();
+				});
+			});
+		});
+
+		it("set rotated", () => {
+			args.axis = {rotated: true};
+		});
+
+		it("check doesn't stick rotated", (done) => {
+			chart.zoom([0, 3]);
+			drag({x: 150, y: 150}, {x: 150, y: 2000}, {x: 150, y: 2000}).then(() => {
+				expect(chart.zoom()[0]).to.approximately(0, 0.1);
+				drag({x: 150, y: 150}, {x: 150, y: 0}, {x: 150, y: 0}).then(() => {
+					expect(chart.zoom()[0]).to.greaterThan(0);
+					done();
+				});
+			});
+		})
+	});
+
 
 	describe("zoom type drag", () => {
 		const spy = sinon.spy();

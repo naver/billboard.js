@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {drag as d3Drag} from "d3-drag";
-import {zoomIdentity as d3ZoomIdentity, zoom as d3Zoom} from "d3-zoom";
+import {zoomIdentity as d3ZoomIdentity, zoom as d3Zoom, ZoomTransform as d3ZoomTransform} from "d3-zoom";
 import {$COMMON, $ZOOM} from "../../config/classes";
 import {callFn, diffDomain, getPointer, isFunction} from "../../module/util";
 
@@ -75,22 +75,35 @@ export default {
 		/**
 		 * Update scale according zoom transform value
 		 * @param {object} transform transform object
+		 * @param {boolean} correctTransform if the d3 transform should be updated after rescaling
 		 * @private
 		 */
 		// @ts-ignore
-		zoom.updateTransformScale = (transform: object): void => {
+		zoom.updateTransformScale = (transform: d3ZoomTransform, correctTransform: boolean): void => {
+			const isRotated = config.axis_rotated;
+
 			// in case of resize, update range of orgXScale
 			org.xScale?.range(scale.x.range());
 
 			// rescale from the original scale
 			const newScale = transform[
-				config.axis_rotated ? "rescaleY" : "rescaleX"
+				isRotated ? "rescaleY" : "rescaleX"
 			](org.xScale || scale.x);
 
 			const domain = $$.trimXDomain(newScale.domain());
 			const rescale = config.zoom_rescale;
 
 			newScale.domain(domain, org.xDomain);
+
+			// prevent chart from panning off the edge and feeling "stuck"
+			// https://github.com/naver/billboard.js/issues/2588
+			if (correctTransform) {
+				const t = newScale(scale.x.domain()[0]);
+				const tX = isRotated ? transform.x : t;
+				const tY = isRotated ? t : transform.y;
+
+				$$.$el.eventRect.property("__zoom", d3ZoomIdentity.translate(tX, tY).scale(transform.k));
+			}
 
 			if (!$$.state.xTickOffset) {
 				$$.state.xTickOffset = $$.axis.x.tickOffset();
@@ -172,7 +185,7 @@ export default {
 			scale.x.domain(org.xDomain);
 		}
 
-		$$.zoom.updateTransformScale(transform);
+		$$.zoom.updateTransformScale(transform, config.zoom_type === "wheel" && sourceEvent);
 
 		// do zoom transiton when:
 		// - zoom type 'drag'
