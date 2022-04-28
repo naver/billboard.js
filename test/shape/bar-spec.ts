@@ -773,9 +773,9 @@ describe("SHAPE BAR", () => {
 		});
 
 		// https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#arcs
-		it("for zero value, Arc 'a' path command shouldn't be added ", () => {
-			expect(chart.$.bar.bars.attr("d").indexOf("a") === -1).to.be.true;
-		});
+		// it("for zero value, Arc 'a' path command shouldn't be added ", () => {
+		// 	expect(chart.$.bar.bars.attr("d").indexOf("a") === -1).to.be.true;
+		// });
 
 		it("set options", () => {
 			args.data.columns[0][0] = 2;
@@ -843,6 +843,37 @@ describe("SHAPE BAR", () => {
 
 			expect(radiusCount).to.be.equal(8);
 		});
+
+		it("set options", () => {
+			args = {				
+				data: {
+					columns: [
+						["d3", 3, 5, 8, 3, 9, 2]
+					],
+					type: "bar",
+					labels: false
+				},
+				bar: {
+					padding: 2,
+					radius: {
+						ratio: 0.2
+					}
+				}
+			};
+		});
+
+		it("path data should remain with Arc command with value 0(zero).", done => {
+			// when
+			chart.load({
+				columns: [["d3", 3, 5, 8, 3, 9, 0]],
+				done: function() {
+					const d = this.$.bar.bars.filter(":last-child").attr("d");
+
+					expect(/\sa\d+/.test(d)).to.be.true;
+					done();
+				}
+			});
+		})
 	});
 
 	describe("bar position", () => {

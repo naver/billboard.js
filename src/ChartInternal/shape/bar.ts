@@ -102,7 +102,7 @@ export default {
 		return [
 			$$.$T(bar, withTransition, getRandom())
 				.attr("d", d => (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d))
-				.style("fill", this.color)
+				.style("fill", $$.color)
 				.style("opacity", null)
 		];
 	},
@@ -154,10 +154,10 @@ export default {
 			let radius = 0;
 
 			const isGrouped = $$.isGrouped(d.id);
-			const hasRadius = d.value !== 0 && getRadius;
-			const isRadiusData = hasRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
+			// const hasRadius = d.value !== 0 && getRadius;
+			const isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
 
-			if (hasRadius && (!isGrouped || isRadiusData)) {
+			if (getRadius && (!isGrouped || isRadiusData)) {
 				const index = isRotated ? indexY : indexX;
 				const barW = points[2][index] - points[0][index];
 
@@ -188,8 +188,15 @@ export default {
 	 */
 	isStackingRadiusData(d: IDataRow): boolean {
 		const $$ = this;
-		const {config, data} = $$;
+		const {$el, config, data, state} = $$;
 		const {id, index, value} = d;
+
+		// when the data is hidden, check if has rounded edges
+		if (state.hiddenTargetIds.indexOf(id) > -1) {
+			const target = $el.bar.filter(d => d.id === id && d.value === value);
+
+			return !target.empty() && /a\d+/i.test(target.attr("d"));
+		}
 
 		// Find same grouped ids
 		const keys = config.data_groups.find(v => v.indexOf(id) > -1);
