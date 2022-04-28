@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220420004716
+ * @version 3.4.1-nightly-20220428004809
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -1130,10 +1130,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.22.1',
+  version: '3.22.2',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.22.1/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.22.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -16328,7 +16328,7 @@ var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Avoid NodeJS experimental warning
 var safeGetBuiltIn = function (name) {
-  if (!DESCRIPTORS) return global(name);
+  if (!DESCRIPTORS) return global[name];
   var descriptor = getOwnPropertyDescriptor(global, name);
   return descriptor && descriptor.value;
 };
@@ -43896,7 +43896,7 @@ function point_y(p) {
 
     return [$$.$T(bar, withTransition, getRandom()).attr("d", function (d) {
       return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d);
-    }).style("fill", this.color).style("opacity", null)];
+    }).style("fill", $$.color).style("opacity", null)];
   },
 
   /**
@@ -43940,10 +43940,9 @@ function point_y(p) {
           pathRadius = ["", ""],
           radius = 0,
           isGrouped = $$.isGrouped(d.id),
-          hasRadius = d.value !== 0 && getRadius,
-          isRadiusData = hasRadius && isGrouped ? $$.isStackingRadiusData(d) : !1; // switch points if axis is rotated, not applicable for sub chart
+          isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : !1; // switch points if axis is rotated, not applicable for sub chart
 
-      if (hasRadius && (!isGrouped || isRadiusData)) {
+      if (getRadius && (!isGrouped || isRadiusData)) {
         var index = isRotated ? indexY : indexX,
             barW = points[2][index] - points[0][index];
         radius = getRadius(barW);
@@ -43967,12 +43966,24 @@ function point_y(p) {
    */
   isStackingRadiusData: function isStackingRadiusData(d) {
     var $$ = this,
+        $el = $$.$el,
         config = $$.config,
         data = $$.data,
+        state = $$.state,
         id = d.id,
         index = d.index,
-        value = d.value,
-        keys = config.data_groups.find(function (v) {
+        value = d.value;
+
+    // when the data is hidden, check if has rounded edges
+    if (state.hiddenTargetIds.indexOf(id) > -1) {
+      var target = $el.bar.filter(function (d) {
+        return d.id === id && d.value === value;
+      });
+      return !target.empty() && /a\d+/i.test(target.attr("d"));
+    } // Find same grouped ids
+
+
+    var keys = config.data_groups.find(function (v) {
       return v.indexOf(id) > -1;
     }),
         sortedList = $$.orderTargets($$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))).filter(function (v) {
@@ -43984,7 +43995,8 @@ function point_y(p) {
       })[0];
     }).filter(Boolean).map(function (v) {
       return v.id;
-    });
+    }); // Get sorted list
+
     // If the given id stays in the last position, then radius should be applied.
     return value !== 0 && sortedIds.indexOf(id) === sortedIds.length - 1;
   },
@@ -49336,7 +49348,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220420004716",
+  version: "3.4.1-nightly-20220428004809",
 
   /**
    * Generate chart
@@ -49471,7 +49483,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220420004716
+ * @version 3.4.1-nightly-20220428004809
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

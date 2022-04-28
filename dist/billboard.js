@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220420004716
+ * @version 3.4.1-nightly-20220428004809
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -18624,7 +18624,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
     return [$$.$T(bar, withTransition, getRandom()).attr("d", function (d) {
       return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d);
-    }).style("fill", this.color).style("opacity", null)];
+    }).style("fill", $$.color).style("opacity", null)];
   },
 
   /**
@@ -18668,10 +18668,9 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
           pathRadius = ["", ""],
           radius = 0,
           isGrouped = $$.isGrouped(d.id),
-          hasRadius = d.value !== 0 && getRadius,
-          isRadiusData = hasRadius && isGrouped ? $$.isStackingRadiusData(d) : !1; // switch points if axis is rotated, not applicable for sub chart
+          isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : !1; // switch points if axis is rotated, not applicable for sub chart
 
-      if (hasRadius && (!isGrouped || isRadiusData)) {
+      if (getRadius && (!isGrouped || isRadiusData)) {
         var index = isRotated ? indexY : indexX,
             barW = points[2][index] - points[0][index];
         radius = getRadius(barW);
@@ -18695,12 +18694,24 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    */
   isStackingRadiusData: function isStackingRadiusData(d) {
     var $$ = this,
+        $el = $$.$el,
         config = $$.config,
         data = $$.data,
+        state = $$.state,
         id = d.id,
         index = d.index,
-        value = d.value,
-        keys = config.data_groups.find(function (v) {
+        value = d.value;
+
+    // when the data is hidden, check if has rounded edges
+    if (state.hiddenTargetIds.indexOf(id) > -1) {
+      var target = $el.bar.filter(function (d) {
+        return d.id === id && d.value === value;
+      });
+      return !target.empty() && /a\d+/i.test(target.attr("d"));
+    } // Find same grouped ids
+
+
+    var keys = config.data_groups.find(function (v) {
       return v.indexOf(id) > -1;
     }),
         sortedList = $$.orderTargets($$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))).filter(function (v) {
@@ -18712,7 +18723,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       })[0];
     }).filter(Boolean).map(function (v) {
       return v.id;
-    });
+    }); // Get sorted list
+
     // If the given id stays in the last position, then radius should be applied.
     return value !== 0 && sortedIds.indexOf(id) === sortedIds.length - 1;
   },
@@ -23437,7 +23449,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220420004716",
+  version: "3.4.1-nightly-20220428004809",
 
   /**
    * Generate chart
@@ -23572,7 +23584,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220420004716
+ * @version 3.4.1-nightly-20220428004809
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220420004716
+ * @version 3.4.1-nightly-20220428004809
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -130,7 +130,7 @@ var TYPE_BY_CATEGORY = {
     ]
 };
 
-/*! *****************************************************************************
+/******************************************************************************
 Copyright (c) Microsoft Corporation.
 
 Permission to use, copy, modify, and/or distribute this software for any
@@ -16445,7 +16445,7 @@ var shapeBar = {
         return [
             $$.$T(bar, withTransition, getRandom())
                 .attr("d", function (d) { return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d); })
-                .style("fill", this.color)
+                .style("fill", $$.color)
                 .style("opacity", null)
         ];
     },
@@ -16489,9 +16489,9 @@ var shapeBar = {
             var pathRadius = ["", ""];
             var radius = 0;
             var isGrouped = $$.isGrouped(d.id);
-            var hasRadius = d.value !== 0 && getRadius;
-            var isRadiusData = hasRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
-            if (hasRadius && (!isGrouped || isRadiusData)) {
+            // const hasRadius = d.value !== 0 && getRadius;
+            var isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
+            if (getRadius && (!isGrouped || isRadiusData)) {
                 var index = isRotated ? indexY : indexX;
                 var barW = points[2][index] - points[0][index];
                 radius = getRadius(barW);
@@ -16515,8 +16515,13 @@ var shapeBar = {
      */
     isStackingRadiusData: function (d) {
         var $$ = this;
-        var config = $$.config, data = $$.data;
+        var $el = $$.$el, config = $$.config, data = $$.data, state = $$.state;
         var id = d.id, index = d.index, value = d.value;
+        // when the data is hidden, check if has rounded edges
+        if (state.hiddenTargetIds.indexOf(id) > -1) {
+            var target = $el.bar.filter(function (d) { return d.id === id && d.value === value; });
+            return !target.empty() && /a\d+/i.test(target.attr("d"));
+        }
         // Find same grouped ids
         var keys = config.data_groups.find(function (v) { return v.indexOf(id) > -1; });
         // Get sorted list
@@ -20738,7 +20743,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220420004716
+ * @version 3.4.1-nightly-20220428004809
  */
 var bb = {
     /**
@@ -20748,7 +20753,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220420004716",
+    version: "3.4.1-nightly-20220428004809",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

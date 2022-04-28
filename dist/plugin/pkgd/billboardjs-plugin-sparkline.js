@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220420004716
+ * @version 3.4.1-nightly-20220428004809
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1118,10 +1118,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.22.1',
+  version: '3.22.2',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.22.1/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.22.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -16316,7 +16316,7 @@ var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Avoid NodeJS experimental warning
 var safeGetBuiltIn = function (name) {
-  if (!DESCRIPTORS) return global(name);
+  if (!DESCRIPTORS) return global[name];
   var descriptor = getOwnPropertyDescriptor(global, name);
   return descriptor && descriptor.value;
 };
@@ -17759,7 +17759,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220420004716";
+Plugin.version = "3.4.1-nightly-20220428004809";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**
