@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220428004809
+ * @version 3.4.1-nightly-20220429004640
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -20180,18 +20180,28 @@ var zoom = {
         /**
          * Update scale according zoom transform value
          * @param {object} transform transform object
+         * @param {boolean} correctTransform if the d3 transform should be updated after rescaling
          * @private
          */
         // @ts-ignore
-        zoom.updateTransformScale = function (transform) {
+        zoom.updateTransformScale = function (transform, correctTransform) {
             var _a;
+            var isRotated = config.axis_rotated;
             // in case of resize, update range of orgXScale
             (_a = org.xScale) === null || _a === void 0 ? void 0 : _a.range(scale.x.range());
             // rescale from the original scale
-            var newScale = transform[config.axis_rotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x);
+            var newScale = transform[isRotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x);
             var domain = $$.trimXDomain(newScale.domain());
             var rescale = config.zoom_rescale;
             newScale.domain(domain, org.xDomain);
+            // prevent chart from panning off the edge and feeling "stuck"
+            // https://github.com/naver/billboard.js/issues/2588
+            if (correctTransform) {
+                var t = newScale(scale.x.domain()[0]);
+                var tX = isRotated ? transform.x : t;
+                var tY = isRotated ? t : transform.y;
+                $$.$el.eventRect.property("__zoom", zoomIdentity.translate(tX, tY).scale(transform.k));
+            }
             if (!$$.state.xTickOffset) {
                 $$.state.xTickOffset = $$.axis.x.tickOffset();
             }
@@ -20257,7 +20267,7 @@ var zoom = {
         if (!isMousemove && isZoomOut && scale.x.domain().every(function (v, i) { return v !== org.xDomain[i]; })) {
             scale.x.domain(org.xDomain);
         }
-        $$.zoom.updateTransformScale(transform);
+        $$.zoom.updateTransformScale(transform, config.zoom_type === "wheel" && sourceEvent);
         // do zoom transiton when:
         // - zoom type 'drag'
         // - when .unzoom() is called (event.transform === d3ZoomIdentity)
@@ -20743,7 +20753,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220428004809
+ * @version 3.4.1-nightly-20220429004640
  */
 var bb = {
     /**
@@ -20753,7 +20763,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220428004809",
+    version: "3.4.1-nightly-20220429004640",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

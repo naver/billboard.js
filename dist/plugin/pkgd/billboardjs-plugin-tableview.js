@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220428004809
+ * @version 3.4.1-nightly-20220429004640
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1118,10 +1118,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.22.2',
+  version: '3.22.3',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.22.2/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.22.3/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -4035,11 +4035,17 @@ module.exports = function (exec, SKIP_CLOSING) {
 
 var $ = __webpack_require__(3);
 var $includes = (__webpack_require__(57).includes);
+var fails = __webpack_require__(7);
 var addToUnscopables = __webpack_require__(131);
+
+// FF99+ bug
+var BROKEN_ON_SPARSE = fails(function () {
+  return !Array(1).includes();
+});
 
 // `Array.prototype.includes` method
 // https://tc39.es/ecma262/#sec-array.prototype.includes
-$({ target: 'Array', proto: true }, {
+$({ target: 'Array', proto: true, forced: BROKEN_ON_SPARSE }, {
   includes: function includes(el /* , fromIndex = 0 */) {
     return $includes(this, el, arguments.length > 1 ? arguments[1] : undefined);
   }
@@ -17598,7 +17604,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220428004809";
+Plugin.version = "3.4.1-nightly-20220429004640";
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
 /**

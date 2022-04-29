@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220428004809
+ * @version 3.4.1-nightly-20220429004640
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -22811,21 +22811,31 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     /**
      * Update scale according zoom transform value
      * @param {object} transform transform object
+     * @param {boolean} correctTransform if the d3 transform should be updated after rescaling
      * @private
      */
     // @ts-ignore
 
 
-    zoom.updateTransformScale = function (transform) {
-      var _org$xScale;
+    zoom.updateTransformScale = function (transform, correctTransform) {
+      var _org$xScale,
+          isRotated = config.axis_rotated;
 
       // in case of resize, update range of orgXScale
       (_org$xScale = org.xScale) == null ? void 0 : _org$xScale.range(scale.x.range()); // rescale from the original scale
 
-      var newScale = transform[config.axis_rotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x),
+      var newScale = transform[isRotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x),
           domain = $$.trimXDomain(newScale.domain()),
           rescale = config.zoom_rescale;
-      newScale.domain(domain, org.xDomain);
+      newScale.domain(domain, org.xDomain); // prevent chart from panning off the edge and feeling "stuck"
+      // https://github.com/naver/billboard.js/issues/2588
+
+      if (correctTransform) {
+        var t = newScale(scale.x.domain()[0]),
+            tX = isRotated ? transform.x : t,
+            tY = isRotated ? t : transform.y;
+        $$.$el.eventRect.property("__zoom", external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity.translate(tX, tY).scale(transform.k));
+      }
 
       if (!$$.state.xTickOffset) {
         $$.state.xTickOffset = $$.axis.x.tickOffset();
@@ -22914,7 +22924,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       scale.x.domain(org.xDomain);
     }
 
-    $$.zoom.updateTransformScale(transform); // do zoom transiton when:
+    $$.zoom.updateTransformScale(transform, config.zoom_type === "wheel" && sourceEvent); // do zoom transiton when:
     // - zoom type 'drag'
     // - when .unzoom() is called (event.transform === d3ZoomIdentity)
 
@@ -23449,7 +23459,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220428004809",
+  version: "3.4.1-nightly-20220429004640",
 
   /**
    * Generate chart
@@ -23584,7 +23594,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220428004809
+ * @version 3.4.1-nightly-20220429004640
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 /**
