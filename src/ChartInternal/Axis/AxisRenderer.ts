@@ -46,10 +46,10 @@ export default class AxisRenderer {
 	 */
 	create(g: d3Selection): void {
 		const ctx = this;
-		const {config, helper, params} = this;
+		const {config, helper, params} = ctx;
 		const {scale} = helper;
 		const {orient} = config;
-		const splitTickText = this.splitTickText.bind(this);
+		const splitTickText = this.splitTickText.bind(ctx);
 		const isLeftRight = /^(left|right)$/.test(orient);
 		const isTopBottom = /^(top|bottom)$/.test(orient);
 

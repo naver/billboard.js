@@ -95,12 +95,12 @@
 		"d3-zoom": "^3.0.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.17.9",
+		"@babel/core": "^7.17.10",
 		"@babel/eslint-parser": "^7.17.0",
 		"@babel/plugin-proposal-class-properties": "^7.16.7",
 		"@babel/plugin-proposal-object-rest-spread": "^7.17.3",
 		"@babel/plugin-transform-runtime": "^7.17.0",
-		"@babel/preset-env": "^7.16.8",
+		"@babel/preset-env": "^7.17.10",
 		"@babel/preset-typescript": "^7.16.7",
 		"@babel/runtime": "^7.17.9",
 		"@commitlint/cli": "^15.0.0",
@@ -170,7 +170,7 @@
 		"karma-webpack": "^5.0.0",
 		"lite-fixture": "^1.0.2",
 		"mini-css-extract-plugin": "^2.6.0",
-		"mocha": "^9.2.2",
+		"mocha": "^10.0.0",
 		"node-sass": "^7.0.1",
 		"regenerator-runtime": "^0.13.7",
 		"rollup": "^2.70.2",
