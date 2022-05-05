@@ -1465,4 +1465,131 @@ describe("ZOOM", function() {
 			}, 350);
 		});
 	});
+
+	describe("with region API combination", () => {
+		before(() => {
+			args = {
+				data: {
+					type: "area",
+					json: [
+						{
+						  value: 467,
+						  timestamp: 1651217329888,
+						},
+						{
+						  value: 467,
+						  timestamp: 1651217929888,
+						},
+						{
+						  value: 468,
+						  timestamp: 1651218529888,
+						},
+						{
+						  value: 468,
+						  timestamp: 1651219129888,
+						},
+						{
+						  value: 469,
+						  timestamp: 1651219729888,
+						},
+						{
+						  value: 470,
+						  timestamp: 1651220329888,
+						  isWithinThreshold: false,
+						},
+						{
+						  value: 470,
+						  timestamp: 1651220929888,
+						  isWithinThreshold: false,
+						},
+						{
+						  value: 471,
+						  timestamp: 1651221529888,
+						  isWithinThreshold: false,
+						},
+						{
+						  value: 470,
+						  timestamp: 1651222129888,
+						  isWithinThreshold: false,
+						},
+						{
+						  value: 469,
+						  timestamp: 1651222729888,
+						},
+						{
+						  value: 468,
+						  timestamp: 1651223329888,
+						},
+						{
+						  value: 468,
+						  timestamp: 1651223929888,
+						},
+						{
+						  value: 468,
+						  timestamp: 1651224529888,
+						},
+						{
+						  value: 467,
+						  timestamp: 1651225129888,
+						},
+						{
+						  value: 465,
+						  timestamp: 1651225729888,
+						},
+						{
+						  value: 464,
+						  timestamp: 1651226329888,
+						},
+						{
+						  value: 464,
+						  timestamp: 1651226929888,
+						},
+						{
+						  value: 462,
+						  timestamp: 1651227529888,
+						},
+						{
+						  value: 462,
+						  timestamp: 1651228129888,
+						}
+					],
+					keys: {
+						value: ["value"],
+						x: "timestamp",
+					},
+				},
+				zoom: {
+					enabled: true,
+					type: "drag"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d %H:%M:%S"
+						}
+					}
+				}
+			};
+		});
+
+		it("shoudn't throw error on zoom -> unzoom -> regions call", () => {
+			// when
+			try {
+				chart.zoom([
+					"2022-04-29 16:48:49",
+					"2022-04-29 17:28:49"
+				]);
+				chart.unzoom();
+				chart.regions([{
+					start: 1651217329888,
+					end: 1651228129888
+				}]);
+			} catch (e) {
+				throw Error(e);
+			}
+
+			expect(true).to.be.true;
+		});
+	});
 });

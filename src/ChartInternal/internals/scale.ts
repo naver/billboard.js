@@ -169,7 +169,9 @@ export default {
 			const xSubDomain = updateXDomain && org.xDomain;
 
 			scale.x = $$.getXScale(min.x, max.x, xDomain, () => axis.x.tickOffset());
-			scale.subX = $$.getXScale(min.x, max.x, xSubDomain, d => (d % 1 ? 0 : axis.subX.tickOffset()));
+			scale.subX = $$.getXScale(min.x, max.x, xSubDomain, d => (
+				d % 1 ? 0 : (axis.subX ?? axis.x).tickOffset())
+			);
 
 			format.xAxisTick = axis.getXAxisTickFormat();
 			format.subXAxisTick = axis.getXAxisTickFormat(true);
