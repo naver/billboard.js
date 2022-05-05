@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220429004640
+ * @version 3.4.1-nightly-20220505005116
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -6209,7 +6209,10 @@ var scale = {
             var xDomain = updateXDomain && ((_a = scale.x) === null || _a === void 0 ? void 0 : _a.orgDomain());
             var xSubDomain = updateXDomain && org.xDomain;
             scale.x = $$.getXScale(min.x, max.x, xDomain, function () { return axis.x.tickOffset(); });
-            scale.subX = $$.getXScale(min.x, max.x, xSubDomain, function (d) { return (d % 1 ? 0 : axis.subX.tickOffset()); });
+            scale.subX = $$.getXScale(min.x, max.x, xSubDomain, function (d) {
+                var _a;
+                return (d % 1 ? 0 : ((_a = axis.subX) !== null && _a !== void 0 ? _a : axis.x).tickOffset());
+            });
             format.xAxisTick = axis.getXAxisTickFormat();
             format.subXAxisTick = axis.getXAxisTickFormat(true);
             axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit);
@@ -11049,10 +11052,10 @@ var AxisRenderer = /** @class */ (function () {
      */
     AxisRenderer.prototype.create = function (g) {
         var ctx = this;
-        var _a = this, config = _a.config, helper = _a.helper, params = _a.params;
+        var config = ctx.config, helper = ctx.helper, params = ctx.params;
         var scale = helper.scale;
         var orient = config.orient;
-        var splitTickText = this.splitTickText.bind(this);
+        var splitTickText = this.splitTickText.bind(ctx);
         var isLeftRight = /^(left|right)$/.test(orient);
         var isTopBottom = /^(top|bottom)$/.test(orient);
         // line/text enter and path update
@@ -20753,7 +20756,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220429004640
+ * @version 3.4.1-nightly-20220505005116
  */
 var bb = {
     /**
@@ -20763,7 +20766,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220429004640",
+    version: "3.4.1-nightly-20220505005116",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

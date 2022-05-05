@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220429004640
+ * @version 3.4.1-nightly-20220505005116
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -83,6 +83,12 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ BubbleCompare; }
 });
 
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/newArrowCheck.js
+function _newArrowCheck(innerThis, boundThis) {
+  if (innerThis !== boundThis) {
+    throw new TypeError("Cannot instantiate an arrow function");
+  }
+}
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
 function _assertThisInitialized(self) {
   if (self === void 0) {
@@ -110,6 +116,8 @@ function _inheritsLoose(subClass, superClass) {
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -181,20 +189,21 @@ var Plugin = /*#__PURE__*/function () {
   ;
 
   _proto.$willDestroy = function $willDestroy() {
-    var _this = this;
-
     Object.keys(this).forEach(function (key) {
-      _this[key] = null;
-      delete _this[key];
-    });
+      _newArrowCheck(this, this);
+
+      this[key] = null;
+      delete this[key];
+    }.bind(this));
   };
 
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220429004640";
+Plugin.version = "3.4.1-nightly-20220505005116";
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
+
 
 
 
@@ -282,29 +291,33 @@ var BubbleCompare = /*#__PURE__*/function (_Plugin) {
         $$ = this.$$;
 
     return values.filter(function (v) {
+      _newArrowCheck(this, _this2);
+
       return v && !$$.isBarType(v.id);
-    }).reduce(function (acc, cur) {
+    }.bind(this)).reduce(function (acc, cur) {
+      _newArrowCheck(this, _this2);
+
       var d = $$.dist(cur, pos);
-      return d < _this2.getBubbleR(cur) ? cur : acc;
-    }, 0);
+      return d < this.getBubbleR(cur) ? cur : acc;
+    }.bind(this), 0);
   };
 
   _proto.getBubbleR = function getBubbleR(d) {
-    var _this3 = this,
-        _this$options = this.options,
+    var _this$options = this.options,
         minR = _this$options.minR,
         maxR = _this$options.maxR,
         curVal = this.getZData(d);
-
     if (!curVal) return minR;
 
     var _this$$$$data$targets = this.$$.data.targets.reduce(function (_ref, cur) {
       var accMin = _ref[0],
-          accMax = _ref[1],
-          val = _this3.getZData(cur.values[0]);
+          accMax = _ref[1];
 
+      _newArrowCheck(this, this);
+
+      var val = this.getZData(cur.values[0]);
       return [Math.min(accMin, val), Math.max(accMax, val)];
-    }, [1e4, 0]),
+    }.bind(this), [1e4, 0]),
         min = _this$$$$data$targets[0],
         max = _this$$$$data$targets[1],
         size = min > 0 && max === min ? 0 : curVal / max;

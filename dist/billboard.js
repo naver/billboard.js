@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220429004640
+ * @version 3.4.1-nightly-20220505005116
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -199,11 +199,21 @@ __webpack_require__.d(resolver_interaction_namespaceObject, {
   "zoom": function() { return zoomModule; }
 });
 
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/newArrowCheck.js
+function _newArrowCheck(innerThis, boundThis) {
+  if (innerThis !== boundThis) {
+    throw new TypeError("Cannot instantiate an arrow function");
+  }
+}
 // EXTERNAL MODULE: external {"commonjs":"d3-time-format","commonjs2":"d3-time-format","amd":"d3-time-format","root":"d3"}
 var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(4);
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(2);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
+
+
+var _this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -218,20 +228,26 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
 
 
 var win = function () {
+  _newArrowCheck(this, _this);
+
   var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
   return root || Function("return this")();
-}();
+}.bind(undefined)();
 /* eslint-enable no-new-func, no-undef */
 // fallback for non-supported environments
 
 
 win.requestIdleCallback = win.requestIdleCallback || function (cb) {
+  _newArrowCheck(this, _this);
+
   return setTimeout(cb, 1);
-};
+}.bind(undefined);
 
 win.cancelIdleCallback = win.cancelIdleCallback || function (id) {
+  _newArrowCheck(this, _this);
+
   return clearTimeout(id);
-};
+}.bind(undefined);
 
 var browser_doc = win == null ? void 0 : win.document;
 ;// CONCATENATED MODULE: ./src/config/const.ts
@@ -320,6 +336,9 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 
+
+var util_this = undefined;
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -335,50 +354,80 @@ function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i
 
 
 var isValue = function (v) {
+  _newArrowCheck(this, util_this);
+
   return v || v === 0;
-},
+}.bind(undefined),
     isFunction = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "function";
-},
+}.bind(undefined),
     isString = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "string";
-},
+}.bind(undefined),
     isNumber = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "number";
-},
+}.bind(undefined),
     isUndefined = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "undefined";
-},
+}.bind(undefined),
     isDefined = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v !== "undefined";
-},
+}.bind(undefined),
     isboolean = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "boolean";
-},
+}.bind(undefined),
     ceil10 = function (v) {
+  _newArrowCheck(this, util_this);
+
   return Math.ceil(v / 10) * 10;
-},
+}.bind(undefined),
     asHalfPixel = function (n) {
+  _newArrowCheck(this, util_this);
+
   return Math.ceil(n) + .5;
-},
+}.bind(undefined),
     diffDomain = function (d) {
+  _newArrowCheck(this, util_this);
+
   return d[1] - d[0];
-},
+}.bind(undefined),
     isObjectType = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "object";
-},
+}.bind(undefined),
     isEmpty = function (o) {
+  _newArrowCheck(this, util_this);
+
   return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
-},
+}.bind(undefined),
     notEmpty = function (o) {
+  _newArrowCheck(this, util_this);
+
   return !isEmpty(o);
-},
+}.bind(undefined),
     isArray = function (arr) {
+  _newArrowCheck(this, util_this);
+
   return Array.isArray(arr);
-},
+}.bind(undefined),
     isObject = function (obj) {
+  _newArrowCheck(this, util_this);
+
   return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
-};
+}.bind(undefined);
 
 /**
  * Get specified key value from object
@@ -404,8 +453,10 @@ function getOption(options, key, defaultValue) {
 function hasValue(dict, value) {
   var found = !1;
   Object.keys(dict).forEach(function (key) {
+    _newArrowCheck(this, this);
+
     return dict[key] === value && (found = !0);
-  });
+  }.bind(this));
   return found;
 }
 /**
@@ -447,8 +498,10 @@ function endall(transition, cb) {
   // if is transition selection
   if ("duration" in transition) {
     transition.each(function () {
+      _newArrowCheck(this, this);
+
       return ++n;
-    }).on("end", end);
+    }.bind(this)).on("end", end);
   } else {
     ++n;
     transition.call(end);
@@ -476,6 +529,8 @@ function sanitise(str) {
 
 
 function setTextValue(node, text, dy, toMiddle) {
+  var _this4 = this;
+
   if (dy === void 0) {
     dy = [-1, 1];
   }
@@ -492,8 +547,10 @@ function setTextValue(node, text, dy, toMiddle) {
     node.text(text);
   } else {
     var diff = [node.text(), text].map(function (v) {
+      _newArrowCheck(this, _this4);
+
       return v.replace(/[\s\n]/g, "");
-    });
+    }.bind(this));
 
     if (diff[0] !== diff[1]) {
       var multiline = text.split("\n"),
@@ -501,8 +558,10 @@ function setTextValue(node, text, dy, toMiddle) {
       // reset possible text
       node.html("");
       multiline.forEach(function (v, i) {
+        _newArrowCheck(this, _this4);
+
         node.append("tspan").attr("x", 0).attr("dy", (i === 0 ? dy[0] * len : dy[1]) + "em").text(v);
-      });
+      }.bind(this));
     }
   }
 }
@@ -584,8 +643,10 @@ function getPointer(event, element) {
       pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
 
   return pointer.map(function (v) {
+    _newArrowCheck(this, this);
+
     return isNaN(v) ? 0 : v;
-  });
+  }.bind(this));
 }
 /**
  * Return brush selection array
@@ -712,7 +773,9 @@ function brushEmpty(ctx) {
 
 
 function deepClone() {
-  for (var clone = function (v) {
+  for (var _this6 = this, clone = function (v) {
+    _newArrowCheck(this, _this6);
+
     if (isObject(v) && v.constructor) {
       var r = new v.constructor();
 
@@ -724,15 +787,19 @@ function deepClone() {
     }
 
     return v;
-  }, _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+  }.bind(this), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
     objectN[_key3] = arguments[_key3];
   }
 
   return objectN.map(function (v) {
+    _newArrowCheck(this, _this6);
+
     return clone(v);
-  }).reduce(function (a, c) {
+  }.bind(this)).reduce(function (a, c) {
+    _newArrowCheck(this, _this6);
+
     return _objectSpread(_objectSpread({}, a), c);
-  });
+  }.bind(this));
 }
 /**
  * Extend target from source object
@@ -750,8 +817,10 @@ function extend(target, source) {
 
   if (isArray(source)) {
     source.forEach(function (v) {
+      _newArrowCheck(this, this);
+
       return extend(target, v);
-    });
+    }.bind(this));
   } // exclude name with only numbers
 
 
@@ -774,8 +843,10 @@ function extend(target, source) {
 
 
 var capitalize = function (str) {
+  _newArrowCheck(this, util_this);
+
   return str.charAt(0).toUpperCase() + str.slice(1);
-};
+}.bind(undefined);
 /**
  * Camelize from kebob style string
  * @param {string} str Target string
@@ -791,8 +862,10 @@ function camelize(str, separator) {
   }
 
   return str.split(separator).map(function (v, i) {
+    _newArrowCheck(this, this);
+
     return i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase();
-  }).join("");
+  }.bind(this)).join("");
 }
 /**
  * Convert to array
@@ -803,8 +876,10 @@ function camelize(str, separator) {
 
 
 var toArray = function (v) {
+  _newArrowCheck(this, util_this);
+
   return [].slice.call(v);
-};
+}.bind(undefined);
 /**
  * Get css rules for specified stylesheets
  * @param {Array} styleSheets The stylesheets to get the rules from
@@ -816,6 +891,8 @@ var toArray = function (v) {
 function getCssRules(styleSheets) {
   var rules = [];
   styleSheets.forEach(function (sheet) {
+    _newArrowCheck(this, this);
+
     try {
       if (sheet.cssRules && sheet.cssRules.length) {
         rules = rules.concat(toArray(sheet.cssRules));
@@ -823,7 +900,7 @@ function getCssRules(styleSheets) {
     } catch (e) {
       console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
     }
-  });
+  }.bind(this));
   return rules;
 }
 /**
@@ -855,13 +932,19 @@ function getTranslation(node) {
 
 
 function getUnique(data) {
-  var isDate = data[0] instanceof Date,
+  var _this10 = this,
+      isDate = data[0] instanceof Date,
       d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
+    _newArrowCheck(this, _this10);
+
     return self.indexOf(v) === i;
-  });
+  }.bind(this));
+
   return isDate ? d.map(function (v) {
+    _newArrowCheck(this, _this10);
+
     return new Date(v);
-  }) : d;
+  }.bind(this)) : d;
 }
 /**
  * Merge array
@@ -873,8 +956,10 @@ function getUnique(data) {
 
 function mergeArray(arr) {
   return arr && arr.length ? arr.reduce(function (p, c) {
+    _newArrowCheck(this, this);
+
     return p.concat(c);
-  }) : [];
+  }.bind(this)) : [];
 }
 /**
  * Merge object returning new object
@@ -886,7 +971,7 @@ function mergeArray(arr) {
 
 
 function mergeObj(target) {
-  for (var _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+  for (var _this12 = this, _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
     objectN[_key4 - 1] = arguments[_key4];
   }
 
@@ -898,6 +983,8 @@ function mergeObj(target) {
 
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach(function (key) {
+      _newArrowCheck(this, _this12);
+
       var value = source[key];
 
       if (isObject(value)) {
@@ -906,7 +993,7 @@ function mergeObj(target) {
       } else {
         target[key] = isArray(value) ? value.concat() : value;
       }
-    });
+    }.bind(this));
   }
 
   return mergeObj.apply(void 0, [target].concat(objectN));
@@ -921,6 +1008,8 @@ function mergeObj(target) {
 
 
 function sortValue(data, isAsc) {
+  var _this13 = this;
+
   if (isAsc === void 0) {
     isAsc = !0;
   }
@@ -929,19 +1018,27 @@ function sortValue(data, isAsc) {
 
   if (data[0] instanceof Date) {
     fn = isAsc ? function (a, b) {
+      _newArrowCheck(this, _this13);
+
       return a - b;
-    } : function (a, b) {
+    }.bind(this) : function (a, b) {
+      _newArrowCheck(this, _this13);
+
       return b - a;
-    };
+    }.bind(this);
   } else {
     if (isAsc && !data.every(isNaN)) {
       fn = function (a, b) {
+        _newArrowCheck(this, _this13);
+
         return a - b;
-      };
+      }.bind(this);
     } else if (!isAsc) {
       fn = function (a, b) {
+        _newArrowCheck(this, _this13);
+
         return a > b && -1 || a < b && 1 || a === b && 0;
-      };
+      }.bind(this);
     }
   }
 
@@ -958,8 +1055,10 @@ function sortValue(data, isAsc) {
 
 function getMinMax(type, data) {
   var res = data.filter(function (v) {
+    _newArrowCheck(this, this);
+
     return notEmpty(v);
-  });
+  }.bind(this));
 
   if (res.length) {
     if (isNumber(res[0])) {
@@ -988,6 +1087,8 @@ var getRange = function (start, end, step) {
     step = 1;
   }
 
+  _newArrowCheck(this, util_this);
+
   var res = [],
       n = Math.max(0, Math.ceil((end - start) / step)) | 0;
 
@@ -996,10 +1097,16 @@ var getRange = function (start, end, step) {
   }
 
   return res;
-},
+}.bind(undefined),
     emulateEvent = {
   mouse: function () {
+    var _this15 = this;
+
+    _newArrowCheck(this, util_this);
+
     var getParams = function () {
+      _newArrowCheck(this, _this15);
+
       return {
         bubbles: !1,
         cancelable: !1,
@@ -1008,7 +1115,7 @@ var getRange = function (start, end, step) {
         clientX: 0,
         clientY: 0
       };
-    };
+    }.bind(this);
 
     try {
       // eslint-disable-next-line no-new
@@ -1018,8 +1125,10 @@ var getRange = function (start, end, step) {
           params = getParams();
         }
 
+        _newArrowCheck(this, _this15);
+
         el.dispatchEvent(new MouseEvent(eventType, params));
-      };
+      }.bind(this);
     } catch (e) {
       // Polyfills DOM4 MouseEvent
       return function (el, eventType, params) {
@@ -1027,15 +1136,19 @@ var getRange = function (start, end, step) {
           params = getParams();
         }
 
+        _newArrowCheck(this, _this15);
+
         var mouseEvent = browser_doc.createEvent("MouseEvent"); // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
 
         mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
         params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null);
         el.dispatchEvent(mouseEvent);
-      };
+      }.bind(this);
     }
-  }(),
+  }.bind(undefined)(),
   touch: function touch(el, eventType, params) {
+    _newArrowCheck(this, util_this);
+
     var touchObj = new Touch(mergeObj({
       identifier: Date.now(),
       target: el,
@@ -1052,7 +1165,7 @@ var getRange = function (start, end, step) {
       targetTouches: [],
       changedTouches: [touchObj]
     }));
-  }
+  }.bind(undefined)
 }; // emulate event
 
 
@@ -1152,8 +1265,10 @@ function convertInputType(mouse, touch) {
 
 
   var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
+    _newArrowCheck(this, this);
+
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
-  }); // fallback to 'mouse' if no input type is detected.
+  }.bind(this)); // fallback to 'mouse' if no input type is detected.
 
   return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
 }
@@ -1619,6 +1734,8 @@ var State = function () {
 
 
 ;// CONCATENATED MODULE: ./src/config/Store/Store.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -1639,11 +1756,11 @@ var Store_classes = {
 
 var Store = /*#__PURE__*/function () {
   function Store() {
-    var _this = this;
-
     Object.keys(Store_classes).forEach(function (v) {
-      _this[v] = new Store_classes[v]();
-    });
+      _newArrowCheck(this, this);
+
+      this[v] = new Store_classes[v]();
+    }.bind(this));
   }
 
   var _proto = Store.prototype;
@@ -2036,6 +2153,10 @@ var Store = /*#__PURE__*/function () {
   regions: []
 });
 ;// CONCATENATED MODULE: ./src/config/Options/data/data.ts
+
+
+var data_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -2079,8 +2200,10 @@ var Store = /*#__PURE__*/function () {
    * }
    */
   data_idConverter: function data_idConverter(id) {
+    _newArrowCheck(this, data_this);
+
     return id;
-  },
+  }.bind(undefined),
 
   /**
    * Set custom data name.
@@ -2483,7 +2606,9 @@ var Store = /*#__PURE__*/function () {
    *     }
    * }
    */
-  data_onclick: function data_onclick() {},
+  data_onclick: function data_onclick() {
+    _newArrowCheck(this, data_this);
+  }.bind(undefined),
 
   /**
    * Set a callback for mouse/touch over event on each data point.<br><br>
@@ -2504,7 +2629,9 @@ var Store = /*#__PURE__*/function () {
    *     }
    * }
    */
-  data_onover: function data_onover() {},
+  data_onover: function data_onover() {
+    _newArrowCheck(this, data_this);
+  }.bind(undefined),
 
   /**
    * Set a callback for mouse/touch out event on each data point.<br><br>
@@ -2525,7 +2652,9 @@ var Store = /*#__PURE__*/function () {
    *     }
    * }
    */
-  data_onout: function data_onout() {},
+  data_onout: function data_onout() {
+    _newArrowCheck(this, data_this);
+  }.bind(undefined),
 
   /**
    * Set a callback for when data is shown.<br>
@@ -3168,6 +3297,10 @@ var Store = /*#__PURE__*/function () {
   title_position: "center"
 });
 ;// CONCATENATED MODULE: ./src/config/Options/common/tooltip.ts
+
+
+var tooltip_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -3384,13 +3517,22 @@ var Store = /*#__PURE__*/function () {
   },
   tooltip_linked: !1,
   tooltip_linked_name: "",
-  tooltip_onshow: function tooltip_onshow() {},
-  tooltip_onhide: function tooltip_onhide() {},
-  tooltip_onshown: function tooltip_onshown() {},
-  tooltip_onhidden: function tooltip_onhidden() {},
+  tooltip_onshow: function tooltip_onshow() {
+    _newArrowCheck(this, tooltip_this);
+  }.bind(undefined),
+  tooltip_onhide: function tooltip_onhide() {
+    _newArrowCheck(this, tooltip_this);
+  }.bind(undefined),
+  tooltip_onshown: function tooltip_onshown() {
+    _newArrowCheck(this, tooltip_this);
+  }.bind(undefined),
+  tooltip_onhidden: function tooltip_onhidden() {
+    _newArrowCheck(this, tooltip_this);
+  }.bind(undefined),
   tooltip_order: null
 });
 ;// CONCATENATED MODULE: ./src/config/Options/Options.ts
+
 
 
 function Options_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -3420,8 +3562,10 @@ function Options_objectSpread(target) { for (var i = 1, source; i < arguments.le
 var Options = /*#__PURE__*/function () {
   Options.setOptions = function setOptions(options) {
     this.data = options.reduce(function (a, c) {
+      _newArrowCheck(this, this);
+
       return Options_objectSpread(Options_objectSpread({}, a), c);
-    }, this.data);
+    }.bind(this), this.data);
   };
 
   function Options() {
@@ -3434,6 +3578,8 @@ var Options = /*#__PURE__*/function () {
 Options.data = {};
 
 ;// CONCATENATED MODULE: ./src/module/Cache.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -3489,11 +3635,11 @@ var Cache = /*#__PURE__*/function () {
   ;
 
   _proto.remove = function remove(key) {
-    var _this = this;
-
     toArray(key).forEach(function (v) {
-      return delete _this.cache[v];
-    });
+      _newArrowCheck(this, this);
+
+      return delete this.cache[v];
+    }.bind(this));
   }
   /**
    * Get cahce
@@ -3555,12 +3701,14 @@ var Cache = /*#__PURE__*/function () {
       id: target.id,
       id_org: target.id_org,
       values: target.values.map(function (d) {
+        _newArrowCheck(this, this);
+
         return {
           x: d.x,
           value: d.value,
           id: d.id
         };
-      })
+      }.bind(this))
     };
   };
 
@@ -3569,6 +3717,8 @@ var Cache = /*#__PURE__*/function () {
 
 
 ;// CONCATENATED MODULE: ./src/module/generator.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -3584,32 +3734,43 @@ var generator_setTimeout = win.setTimeout,
  */
 
 function generateResize() {
-  var fn = [],
+  var _this3 = this,
+      fn = [],
       timeout,
       callResizeFn = function () {
     // Delay all resize functions call, to prevent unintended excessive call from resize event
     callResizeFn.clear();
     timeout = generator_setTimeout(function () {
+      _newArrowCheck(this, this);
+
       fn.forEach(function (f) {
+        _newArrowCheck(this, this);
+
         return f();
-      });
-    }, 200);
+      }.bind(this));
+    }.bind(this), 200);
   };
 
   callResizeFn.clear = function () {
+    _newArrowCheck(this, _this3);
+
     if (timeout) {
       generator_clearTimeout(timeout);
       timeout = null;
     }
-  };
+  }.bind(this);
 
   callResizeFn.add = function (f) {
+    _newArrowCheck(this, _this3);
+
     return fn.push(f);
-  };
+  }.bind(this);
 
   callResizeFn.remove = function (f) {
+    _newArrowCheck(this, _this3);
+
     return fn.splice(fn.indexOf(f), 1);
-  };
+  }.bind(this);
 
   return callResizeFn;
 }
@@ -3672,6 +3833,8 @@ function generateWait() {
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
 var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(5);
 ;// CONCATENATED MODULE: ./src/ChartInternal/data/convert.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -3698,12 +3861,14 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     if (args.bindto) {
       data = {};
       ["url", "mimeType", "headers", "keys", "json", "keys", "rows", "columns"].forEach(function (v) {
+        _newArrowCheck(this, this);
+
         var key = "data_" + v;
 
         if (key in args) {
           data[v] = args[key];
         }
-      });
+      }.bind(this));
     } else {
       data = args;
     }
@@ -3733,7 +3898,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @private
    */
   convertUrlToData: function convertUrlToData(url, mimeType, headers, keys, done) {
-    var _this = this;
+    var _this2 = this;
 
     if (mimeType === void 0) {
       mimeType = "csv";
@@ -3744,20 +3909,24 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
     if (headers) {
       Object.keys(headers).forEach(function (key) {
+        _newArrowCheck(this, _this2);
+
         req.setRequestHeader(key, headers[key]);
-      });
+      }.bind(this));
     }
 
     req.onreadystatechange = function () {
+      _newArrowCheck(this, _this2);
+
       if (req.readyState === 4) {
         if (req.status === 200) {
           var response = req.responseText;
-          response && done.call(_this, _this["convert" + capitalize(mimeType) + "ToData"](mimeType === "json" ? JSON.parse(response) : response, keys));
+          response && done.call(this, this["convert" + capitalize(mimeType) + "ToData"](mimeType === "json" ? JSON.parse(response) : response, keys));
         } else {
           throw new Error(url + ": Something went wrong loading!");
         }
       }
-    };
+    }.bind(this);
 
     req.send();
   },
@@ -3776,8 +3945,10 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     if (rows.length === 1) {
       d = [{}];
       rows[0].forEach(function (id) {
+        _newArrowCheck(this, this);
+
         d[0][id] = null;
-      });
+      }.bind(this));
     } else {
       d = parser.parse(xsv);
     }
@@ -3797,7 +3968,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     }, tsv);
   },
   convertJsonToData: function convertJsonToData(json, keysParam) {
-    var _this2 = this,
+    var _this4 = this,
         config = this.config,
         newRows = [],
         targetKeys,
@@ -3815,25 +3986,31 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
       newRows.push(targetKeys);
       json.forEach(function (o) {
+        _newArrowCheck(this, _this4);
+
         var newRow = targetKeys.map(function (key) {
+          _newArrowCheck(this, this);
+
           // convert undefined to null because undefined data will be removed in convertDataToTargets()
-          var v = _this2.findValueInJson(o, key);
+          var v = this.findValueInJson(o, key);
 
           if (isUndefined(v)) {
             v = null;
           }
 
           return v;
-        });
+        }.bind(this));
         newRows.push(newRow);
-      });
+      }.bind(this));
       data = this.convertRowsToData(newRows);
     } else {
       Object.keys(json).forEach(function (key) {
+        _newArrowCheck(this, _this4);
+
         var tmp = json[key].concat();
         tmp.unshift(key);
         newRows.push(tmp);
-      });
+      }.bind(this));
       data = this.convertColumnsToData(newRows);
     }
 
@@ -3849,33 +4026,43 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         target = object; // convert indexes to properties (replace [] with .)
 
     pathArray.some(function (k) {
+      _newArrowCheck(this, this);
+
       return !(target = target && k in target ? target[k] : undefined);
-    });
+    }.bind(this));
     return target;
   },
   convertRowsToData: function convertRowsToData(rows) {
     var keys = rows[0],
         newRows = [];
     rows.forEach(function (row, i) {
+      _newArrowCheck(this, this);
+
       if (i > 0) {
         var newRow = {};
         row.forEach(function (v, j) {
+          _newArrowCheck(this, this);
+
           if (isUndefined(v)) {
             throw new Error("Source data is missing a component at (" + i + ", " + j + ")!");
           }
 
           newRow[keys[j]] = v;
-        });
+        }.bind(this));
         newRows.push(newRow);
       }
-    });
+    }.bind(this));
     return newRows;
   },
   convertColumnsToData: function convertColumnsToData(columns) {
     var newRows = [];
     columns.forEach(function (col, i) {
+      _newArrowCheck(this, this);
+
       var key = col[0];
       col.forEach(function (v, j) {
+        _newArrowCheck(this, this);
+
         if (j > 0) {
           if (isUndefined(newRows[j - 1])) {
             newRows[j - 1] = {};
@@ -3887,12 +4074,12 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
           newRows[j - 1][key] = v;
         }
-      });
-    });
+      }.bind(this));
+    }.bind(this));
     return newRows;
   },
   convertDataToTargets: function convertDataToTargets(data, appendXs) {
-    var _this3 = this,
+    var _this11 = this,
         $$ = this,
         axis = $$.axis,
         config = $$.config,
@@ -3913,19 +4100,27 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         xsData;
     // save x for update data by load when custom x and bb.x API
     ids.forEach(function (id) {
-      var xKey = _this3.getXKey(id);
+      var _this12 = this;
+
+      _newArrowCheck(this, _this11);
+
+      var xKey = this.getXKey(id);
 
       if (isCustomX || isTimeSeries) {
         // if included in input data
         if (xs.indexOf(xKey) >= 0) {
           xsData = (appendXs && $$.data.xs[id] || []).concat(data.map(function (d) {
+            _newArrowCheck(this, _this12);
+
             return d[xKey];
-          }).filter(isValue).map(function (rawX, i) {
+          }.bind(this)).filter(isValue).map(function (rawX, i) {
+            _newArrowCheck(this, _this12);
+
             return $$.generateTargetX(rawX, id, i);
-          }));
+          }.bind(this)));
         } else if (config.data_x) {
           // if not included in input data, find from preloaded data of other id's x
-          xsData = _this3.getOtherTargetXs();
+          xsData = this.getOtherTargetXs();
         } else if (notEmpty(config.data_xs)) {
           // if not included in input data, find from preloaded data
           xsData = $$.getXValuesOfXKey(xKey, $$.data.targets);
@@ -3933,34 +4128,48 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
       } else {
         xsData = data.map(function (d, i) {
+          _newArrowCheck(this, _this12);
+
           return i;
-        });
+        }.bind(this));
       }
 
-      xsData && (_this3.data.xs[id] = xsData);
-    }); // check x is defined
+      xsData && (this.data.xs[id] = xsData);
+    }.bind(this)); // check x is defined
 
     ids.forEach(function (id) {
-      if (!_this3.data.xs[id]) {
+      _newArrowCheck(this, _this11);
+
+      if (!this.data.xs[id]) {
         throw new Error("x is not defined for id = \"" + id + "\".");
       }
-    }); // convert to target
+    }.bind(this)); // convert to target
 
     var targets = ids.map(function (id, index) {
+      var _this13 = this;
+
+      _newArrowCheck(this, _this11);
+
       var convertedId = config.data_idConverter.bind($$.api)(id),
           xKey = $$.getXKey(id),
           isCategory = isCustomX && isCategorized,
           hasCategory = isCategory && data.map(function (v) {
+        _newArrowCheck(this, _this13);
+
         return v.x;
-      }).every(function (v) {
+      }.bind(this)).every(function (v) {
+        _newArrowCheck(this, _this13);
+
         return config.axis_x_categories.indexOf(v) > -1;
-      }),
+      }.bind(this)),
           isDataAppend = data.__append__,
           xIndex = xKey === null && isDataAppend ? $$.api.data.values(id).length : 0;
       return {
         id: convertedId,
         id_org: id,
         values: data.map(function (d, i) {
+          _newArrowCheck(this, _this13);
+
           var rawX = d[xKey],
               value = d[id],
               x;
@@ -3991,49 +4200,67 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
             value: value,
             id: convertedId
           };
-        }).filter(function (v) {
+        }.bind(this)).filter(function (v) {
+          _newArrowCheck(this, _this13);
+
           return isDefined(v.x);
-        })
+        }.bind(this))
       };
-    }); // finish targets
+    }.bind(this)); // finish targets
 
     targets.forEach(function (t) {
+      var _this14 = this;
+
+      _newArrowCheck(this, _this11);
+
       // sort values by its x
       if (config.data_xSort) {
         t.values = t.values.sort(function (v1, v2) {
+          _newArrowCheck(this, _this14);
+
           var x1 = v1.x || v1.x === 0 ? v1.x : Infinity,
               x2 = v2.x || v2.x === 0 ? v2.x : Infinity;
           return x1 - x2;
-        });
+        }.bind(this));
       } // indexing each value
 
 
       t.values.forEach(function (v, i) {
+        _newArrowCheck(this, _this14);
+
         return v.index = i;
-      }); // this needs to be sorted because its index and value.index is identical
+      }.bind(this)); // this needs to be sorted because its index and value.index is identical
 
       $$.data.xs[t.id].sort(function (v1, v2) {
+        _newArrowCheck(this, _this14);
+
         return v1 - v2;
-      });
-    }); // cache information about values
+      }.bind(this));
+    }.bind(this)); // cache information about values
 
     state.hasNegativeValue = $$.hasNegativeValueInTargets(targets);
     state.hasPositiveValue = $$.hasPositiveValueInTargets(targets); // set target types
 
     if (config.data_type) {
       $$.setTargetType($$.mapToIds(targets).filter(function (id) {
+        _newArrowCheck(this, _this11);
+
         return !(id in config.data_types);
-      }), config.data_type);
+      }.bind(this)), config.data_type);
     } // cache as original id keyed
 
 
     targets.forEach(function (d) {
+      _newArrowCheck(this, _this11);
+
       return $$.cache.add(d.id_org, d, !0);
-    });
+    }.bind(this));
     return targets;
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/data/data.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -4043,8 +4270,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 /* harmony default export */ var data_data = ({
   isX: function isX(key) {
-    var $$ = this,
-        config = $$.config,
+    var config = this.config,
         dataKey = config.data_x && key === config.data_x,
         existValue = notEmpty(config.data_xs) && hasValue(config.data_xs, key);
     return dataKey || existValue;
@@ -4059,12 +4285,13 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   isGrouped: function isGrouped(id) {
     var groups = this.config.data_groups;
     return id ? groups.some(function (v) {
+      _newArrowCheck(this, this);
+
       return v.indexOf(id) >= 0 && v.length > 1;
-    }) : groups.length > 0;
+    }.bind(this)) : groups.length > 0;
   },
   getXKey: function getXKey(id) {
-    var $$ = this,
-        config = $$.config;
+    var config = this.config;
     return config.data_x ? config.data_x : notEmpty(config.data_xs) ? config.data_xs[id] : null;
   },
   getXValuesOfXKey: function getXValuesOfXKey(key, targets) {
@@ -4072,10 +4299,12 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         ids = targets && notEmpty(targets) ? $$.mapToIds(targets) : [],
         xValues;
     ids.forEach(function (id) {
+      _newArrowCheck(this, this);
+
       if ($$.getXKey(id) === key) {
         xValues = $$.data.xs[id];
       }
-    });
+    }.bind(this));
     return xValues;
   },
 
@@ -4106,18 +4335,18 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     return xs && index < xs.length ? xs[index] : null;
   },
   addXs: function addXs(xs) {
-    var $$ = this,
-        config = $$.config;
+    var config = this.config;
     Object.keys(xs).forEach(function (id) {
+      _newArrowCheck(this, this);
+
       config.data_xs[id] = xs[id];
-    });
+    }.bind(this));
   },
   isMultipleX: function isMultipleX() {
     return notEmpty(this.config.data_xs) || !this.config.data_xSort || this.hasType("bubble") || this.hasType("scatter");
   },
   addName: function addName(data) {
-    var $$ = this,
-        config = $$.config,
+    var config = this.config,
         name;
 
     if (data) {
@@ -4136,43 +4365,56 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @private
    */
   getAllValuesOnIndex: function getAllValuesOnIndex(index, filterNull) {
+    var _this4 = this;
+
     if (filterNull === void 0) {
       filterNull = !1;
     }
 
     var $$ = this,
         value = $$.filterTargetsToShow($$.data.targets).map(function (t) {
+      _newArrowCheck(this, _this4);
+
       return $$.addName($$.getValueOnIndex(t.values, index));
-    });
+    }.bind(this));
 
     if (filterNull) {
       value = value.filter(function (v) {
+        _newArrowCheck(this, _this4);
+
         return v && "value" in v && isValue(v.value);
-      });
+      }.bind(this));
     }
 
     return value;
   },
   getValueOnIndex: function getValueOnIndex(values, index) {
     var valueOnIndex = values.filter(function (v) {
+      _newArrowCheck(this, this);
+
       return v.index === index;
-    });
+    }.bind(this));
     return valueOnIndex.length ? valueOnIndex[0] : null;
   },
   updateTargetX: function updateTargetX(targets, x) {
     var $$ = this;
     targets.forEach(function (t) {
+      _newArrowCheck(this, this);
+
       t.values.forEach(function (v, i) {
+        _newArrowCheck(this, this);
+
         v.x = $$.generateTargetX(x[i], t.id, i);
-      });
+      }.bind(this));
       $$.data.xs[t.id] = x;
-    });
+    }.bind(this));
   },
   updateTargetXs: function updateTargetXs(targets, xs) {
-    var $$ = this;
     targets.forEach(function (t) {
-      xs[t.id] && $$.updateTargetX([t], xs[t.id]);
-    });
+      _newArrowCheck(this, this);
+
+      xs[t.id] && this.updateTargetX([t], xs[t.id]);
+    }.bind(this));
   },
   generateTargetX: function generateTargetX(rawX, id, index) {
     var _axis,
@@ -4195,8 +4437,10 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   updateXs: function updateXs(values) {
     if (values.length) {
       this.axis.xs = values.map(function (v) {
+        _newArrowCheck(this, this);
+
         return v.x;
-      });
+      }.bind(this));
     }
   },
   getPrevX: function getPrevX(i) {
@@ -4239,16 +4483,22 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @returns {{min: {number}, max: {number}}}
    */
   getMinMaxValue: function getMinMaxValue(data) {
-    var getBaseValue = this.getBaseValue.bind(this),
+    var _this10 = this,
+        getBaseValue = this.getBaseValue.bind(this),
         min,
         max;
+
     (data || this.data.targets.map(function (t) {
+      _newArrowCheck(this, _this10);
+
       return t.values;
-    })).forEach(function (v, i) {
+    }.bind(this))).forEach(function (v, i) {
+      _newArrowCheck(this, _this10);
+
       var value = v.map(getBaseValue).filter(isNumber);
       min = Math.min.apply(Math, [i ? min : Infinity].concat(value));
       max = Math.max.apply(Math, [i ? max : -Infinity].concat(value));
-    });
+    }.bind(this));
     return {
       min: min,
       max: max
@@ -4261,33 +4511,38 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @returns {{min: Array, max: Array}}
    */
   getMinMaxData: function getMinMaxData() {
-    var $$ = this,
+    var _this11 = this,
+        $$ = this,
         cacheKey = KEY.dataMinMax,
         minMaxData = $$.cache.get(cacheKey);
 
     if (!minMaxData) {
       var data = $$.data.targets.map(function (t) {
+        _newArrowCheck(this, _this11);
+
         return t.values;
-      }),
+      }.bind(this)),
           minMax = $$.getMinMaxValue(data),
-          min = [],
-          max = [];
+          _min = [],
+          _max = [];
       data.forEach(function (v) {
+        _newArrowCheck(this, _this11);
+
         var minData = $$.getFilteredDataByValue(v, minMax.min),
             maxData = $$.getFilteredDataByValue(v, minMax.max);
 
         if (minData.length) {
-          min = min.concat(minData);
+          _min = _min.concat(minData);
         }
 
         if (maxData.length) {
-          max = max.concat(maxData);
+          _max = _max.concat(maxData);
         }
-      }); // update the cached data
+      }.bind(this)); // update the cached data
 
       $$.cache.add(cacheKey, minMaxData = {
-        min: min,
-        max: max
+        min: _min,
+        max: _max
       });
     }
 
@@ -4307,14 +4562,18 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     if ($$.isStackNormalized() && !sum) {
       sum = [];
       $$.data.targets.forEach(function (row) {
+        _newArrowCheck(this, this);
+
         row.values.forEach(function (v, i) {
+          _newArrowCheck(this, this);
+
           if (!sum[i]) {
             sum[i] = 0;
           }
 
           sum[i] += isNumber(v.value) ? v.value : 0;
-        });
-      });
+        }.bind(this));
+      }.bind(this));
     }
 
     return sum;
@@ -4327,19 +4586,27 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @private
    */
   getTotalDataSum: function getTotalDataSum(subtractHidden) {
-    var $$ = this,
+    var _this14 = this,
+        $$ = this,
         cacheKey = KEY.dataTotalSum,
         total = $$.cache.get(cacheKey);
 
     if (!isNumber(total)) {
-      var sum = mergeArray($$.data.targets.map(function (t) {
+      var _sum = mergeArray($$.data.targets.map(function (t) {
+        _newArrowCheck(this, _this14);
+
         return t.values;
-      })).map(function (v) {
+      }.bind(this))).map(function (v) {
+        _newArrowCheck(this, _this14);
+
         return v.value;
-      }).reduce(function (p, c) {
+      }.bind(this)).reduce(function (p, c) {
+        _newArrowCheck(this, _this14);
+
         return p + c;
-      });
-      $$.cache.add(cacheKey, total = sum);
+      }.bind(this));
+
+      $$.cache.add(cacheKey, total = _sum);
     }
 
     if (subtractHidden) {
@@ -4362,8 +4629,10 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
     if (hiddenTargetIds.length) {
       total = api.data.values.bind(api)(hiddenTargetIds).reduce(function (p, c) {
+        _newArrowCheck(this, this);
+
         return p + c;
-      });
+      }.bind(this));
     }
 
     return total;
@@ -4377,11 +4646,11 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @private
    */
   getFilteredDataByValue: function getFilteredDataByValue(data, value) {
-    var _this = this;
-
     return data.filter(function (t) {
-      return _this.getBaseValue(t) === value;
-    });
+      _newArrowCheck(this, this);
+
+      return this.getBaseValue(t) === value;
+    }.bind(this));
   },
 
   /**
@@ -4391,27 +4660,38 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    */
   getMaxDataCount: function getMaxDataCount() {
     return Math.max.apply(Math, this.data.targets.map(function (t) {
+      _newArrowCheck(this, this);
+
       return t.values.length;
-    }));
+    }.bind(this)));
   },
   getMaxDataCountTarget: function getMaxDataCountTarget() {
-    var target = this.filterTargetsToShow() || [],
+    var _this18 = this,
+        target = this.filterTargetsToShow() || [],
         length = target.length;
 
     if (length > 1) {
       target = target.map(function (t) {
+        _newArrowCheck(this, _this18);
+
         return t.values;
-      }).reduce(function (a, b) {
+      }.bind(this)).reduce(function (a, b) {
+        _newArrowCheck(this, _this18);
+
         return a.concat(b);
-      }).map(function (v) {
+      }.bind(this)).map(function (v) {
+        _newArrowCheck(this, _this18);
+
         return v.x;
-      });
+      }.bind(this));
       target = sortValue(getUnique(target)).map(function (x, index) {
+        _newArrowCheck(this, _this18);
+
         return {
           x: x,
           index: index
         };
-      });
+      }.bind(this));
     } else if (length) {
       target = target[0].values;
     }
@@ -4420,8 +4700,10 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   },
   mapToIds: function mapToIds(targets) {
     return targets.map(function (d) {
+      _newArrowCheck(this, this);
+
       return d.id;
-    });
+    }.bind(this));
   },
   mapToTargetIds: function mapToTargetIds(ids) {
     var $$ = this;
@@ -4447,25 +4729,33 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   filterTargetsToShow: function filterTargetsToShow(targets) {
     var $$ = this;
     return (targets || $$.data.targets).filter(function (t) {
+      _newArrowCheck(this, this);
+
       return $$.isTargetToShow(t.id);
-    });
+    }.bind(this));
   },
   mapTargetsToUniqueXs: function mapTargetsToUniqueXs(targets) {
-    var $$ = this,
-        axis = $$.axis,
+    var _this21 = this,
+        axis = this.axis,
         xs = [];
 
     if (targets != null && targets.length) {
       var _axis5;
 
       xs = getUnique(mergeArray(targets.map(function (t) {
+        _newArrowCheck(this, _this21);
+
         return t.values.map(function (v) {
+          _newArrowCheck(this, this);
+
           return +v.x;
-        });
-      })));
+        }.bind(this));
+      }.bind(this))));
       xs = (_axis5 = axis) != null && _axis5.isTimeSeries() ? xs.map(function (x) {
+        _newArrowCheck(this, _this21);
+
         return new Date(+x);
-      }) : xs.map(Number);
+      }.bind(this)) : xs.map(Number);
     }
 
     return sortValue(xs);
@@ -4481,8 +4771,10 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     var state = this.state,
         ids = isArray(targetIds) ? targetIds : [targetIds];
     ids.forEach(function (v) {
+      _newArrowCheck(this, this);
+
       state[type].indexOf(v) < 0 && state[type].push(v);
-    });
+    }.bind(this));
   },
 
   /**
@@ -4495,9 +4787,11 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     var state = this.state,
         ids = isArray(targetIds) ? targetIds : [targetIds];
     ids.forEach(function (v) {
+      _newArrowCheck(this, this);
+
       var index = state[type].indexOf(v);
       index >= 0 && state[type].splice(index, 1);
-    });
+    }.bind(this));
   },
   addHiddenTargetIds: function addHiddenTargetIds(targetIds) {
     this.addTargetIds("hiddenTargetIds", targetIds);
@@ -4512,19 +4806,32 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     this.removeTargetIds("hiddenLegendIds", targetIds);
   },
   getValuesAsIdKeyed: function getValuesAsIdKeyed(targets) {
-    var $$ = this,
+    var _this25 = this,
+        $$ = this,
         hasAxis = $$.state.hasAxis,
         ys = {},
         isMultipleX = $$.isMultipleX(),
         xs = isMultipleX ? $$.mapTargetsToUniqueXs(targets).map(function (v) {
+      _newArrowCheck(this, _this25);
+
       return isString(v) ? v : +v;
-    }) : null;
+    }.bind(this)) : null;
+
     targets.forEach(function (t) {
+      var _this26 = this;
+
+      _newArrowCheck(this, _this25);
+
       var data = [];
       t.values.filter(function (_ref) {
         var value = _ref.value;
+
+        _newArrowCheck(this, _this26);
+
         return isValue(value) || value === null;
-      }).forEach(function (v) {
+      }.bind(this)).forEach(function (v) {
+        _newArrowCheck(this, _this26);
+
         var value = v.value; // exclude 'volume' value to correct mis domain calculation
 
         if (value !== null && $$.isCandlestickType(v)) {
@@ -4544,9 +4851,9 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
             data.push(value);
           }
         }
-      });
+      }.bind(this));
       ys[t.id] = data;
-    });
+    }.bind(this));
     return ys;
   },
   checkValueInTargets: function checkValueInTargets(targets, checker) {
@@ -4570,13 +4877,17 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   },
   hasNegativeValueInTargets: function hasNegativeValueInTargets(targets) {
     return this.checkValueInTargets(targets, function (v) {
+      _newArrowCheck(this, this);
+
       return v < 0;
-    });
+    }.bind(this));
   },
   hasPositiveValueInTargets: function hasPositiveValueInTargets(targets) {
     return this.checkValueInTargets(targets, function (v) {
+      _newArrowCheck(this, this);
+
       return v > 0;
-    });
+    }.bind(this));
   },
 
   /**
@@ -4587,9 +4898,8 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @private
    */
   orderTargets: function orderTargets(targetsValue) {
-    var $$ = this,
-        targets = [].concat(targetsValue),
-        fn = $$.getSortCompareFn();
+    var targets = [].concat(targetsValue),
+        fn = this.getSortCompareFn();
     fn && targets.sort(fn);
     return targets;
   },
@@ -4601,6 +4911,8 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @private
    */
   getSortCompareFn: function getSortCompareFn(isArc) {
+    var _this29 = this;
+
     if (isArc === void 0) {
       isArc = !1;
     }
@@ -4614,14 +4926,18 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
     if (orderAsc || orderDesc) {
       var reducer = function (p, c) {
+        _newArrowCheck(this, _this29);
+
         return p + Math.abs(c.value);
-      };
+      }.bind(this);
 
       fn = function (t1, t2) {
+        _newArrowCheck(this, _this29);
+
         var t1Sum = "values" in t1 ? t1.values.reduce(reducer, 0) : t1.value,
             t2Sum = "values" in t2 ? t2.values.reduce(reducer, 0) : t2.value;
         return isArc ? orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum : orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
-      };
+      }.bind(this);
     } else if (isFunction(order)) {
       fn = order.bind($$.api);
     }
@@ -4629,29 +4945,39 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     return fn || null;
   },
   filterByX: function filterByX(targets, x) {
+    var _this30 = this;
+
     return mergeArray(targets.map(function (t) {
+      _newArrowCheck(this, _this30);
+
       return t.values;
-    })).filter(function (v) {
+    }.bind(this))).filter(function (v) {
+      _newArrowCheck(this, _this30);
+
       return v.x - x === 0;
-    });
+    }.bind(this));
   },
   filterRemoveNull: function filterRemoveNull(data) {
-    var _this2 = this;
-
     return data.filter(function (d) {
-      return isValue(_this2.getBaseValue(d));
-    });
+      _newArrowCheck(this, this);
+
+      return isValue(this.getBaseValue(d));
+    }.bind(this));
   },
   filterByXDomain: function filterByXDomain(targets, xDomain) {
     return targets.map(function (t) {
+      _newArrowCheck(this, this);
+
       return {
         id: t.id,
         id_org: t.id_org,
         values: t.values.filter(function (v) {
+          _newArrowCheck(this, this);
+
           return xDomain[0] <= v.x && v.x <= xDomain[1];
-        })
+        }.bind(this))
       };
-    });
+    }.bind(this));
   },
   hasDataLabel: function hasDataLabel() {
     var dataLabels = this.config.data_labels;
@@ -4680,8 +5006,10 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     var $$ = this,
         lengths = [0, 0];
     $$.$el.chart.select("svg").selectAll(".dummy").data([min, max]).enter().append("text").text(function (d) {
+      _newArrowCheck(this, this);
+
       return $$.dataLabelFormat(d.id)(d);
-    }).each(function (d, i) {
+    }.bind(this)).each(function (d, i) {
       lengths[i] = this.getBoundingClientRect()[key] * 1.3;
     }).remove();
     return lengths;
@@ -4718,43 +5046,57 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   findClosestFromTargets: function findClosestFromTargets(targets, pos) {
     var $$ = this,
         candidates = targets.map(function (target) {
+      _newArrowCheck(this, this);
+
       return $$.findClosest(target.values, pos);
-    });
+    }.bind(this));
     // map to array of closest points of each target
     // decide closest point and return
     return $$.findClosest(candidates, pos);
   },
   findClosest: function findClosest(values, pos) {
-    var $$ = this,
+    var _this36 = this,
+        $$ = this,
         config = $$.config,
         main = $$.$el.main,
         data = values.filter(function (v) {
+      _newArrowCheck(this, _this36);
+
       return v && isValue(v.value);
-    }),
+    }.bind(this)),
         minDist = config.point_sensitivity,
         closest;
+
     // find mouseovering bar/candlestick
     // https://github.com/naver/billboard.js/issues/2434
     data.filter(function (v) {
+      _newArrowCheck(this, _this36);
+
       return $$.isBarType(v.id) || $$.isCandlestickType(v.id);
-    }).forEach(function (v) {
+    }.bind(this)).forEach(function (v) {
+      _newArrowCheck(this, _this36);
+
       var selector = $$.isBarType(v.id) ? "." + $BAR.chartBar + "." + $COMMON.target + $$.getTargetSelectorSuffix(v.id) + " ." + $BAR.bar + "-" + v.index : "." + $CANDLESTICK.chartCandlestick + "." + $COMMON.target + $$.getTargetSelectorSuffix(v.id) + " ." + $CANDLESTICK.candlestick + "-" + v.index + " path";
 
       if (!closest && $$.isWithinBar(main.select(selector).node())) {
         closest = v;
       }
-    }); // find closest point from non-bar/candlestick
+    }.bind(this)); // find closest point from non-bar/candlestick
 
     data.filter(function (v) {
+      _newArrowCheck(this, _this36);
+
       return !$$.isBarType(v.id) && !$$.isCandlestickType(v.id);
-    }).forEach(function (v) {
+    }.bind(this)).forEach(function (v) {
+      _newArrowCheck(this, _this36);
+
       var d = $$.dist(v, pos);
 
       if (d < minDist) {
         minDist = d;
         closest = v;
       }
-    });
+    }.bind(this));
     return closest;
   },
   dist: function dist(data, pos) {
@@ -4820,6 +5162,8 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     var converted = isArray(values) ? values.concat() : [values],
         ranges = [];
     converted.forEach(function (range) {
+      _newArrowCheck(this, this);
+
       var x = range.x,
           id = range.id;
       ranges.push({
@@ -4832,7 +5176,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         id: id,
         value: range.value[2]
       });
-    });
+    }.bind(this));
     return ranges;
   },
   updateDataAttributes: function updateDataAttributes(name, attrs) {
@@ -4845,8 +5189,10 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     }
 
     Object.keys(attrs).forEach(function (id) {
+      _newArrowCheck(this, this);
+
       current[id] = attrs[id];
-    });
+    }.bind(this));
     $$.redraw({
       withLegend: !0
     });
@@ -4886,6 +5232,8 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @private
    */
   getRatio: function getRatio(type, d, asPercent) {
+    var _this39 = this;
+
     if (asPercent === void 0) {
       asPercent = !1;
     }
@@ -4917,13 +5265,19 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
           if (hiddenSum.length) {
             hiddenSum = hiddenSum.reduce(function (acc, curr) {
+              _newArrowCheck(this, _this39);
+
               return acc.map(function (v, i) {
+                _newArrowCheck(this, this);
+
                 return (isNumber(v) ? v : 0) + curr[i];
-              });
-            });
+              }.bind(this));
+            }.bind(this));
             total = total.map(function (v, i) {
+              _newArrowCheck(this, _this39);
+
               return v - hiddenSum[i];
-            });
+            }.bind(this));
           }
         }
 
@@ -4933,11 +5287,14 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         ratio = parseFloat(Math.max(d.value, 0) + "") / state.current.dataMax * config.radar_size_ratio;
       } else if (type === "bar") {
         var yScale = $$.getYScaleById.bind($$)(d.id),
-            max = yScale.domain().reduce(function (a, c) {
+            _max2 = yScale.domain().reduce(function (a, c) {
+          _newArrowCheck(this, _this39);
+
           return c - a;
-        });
+        }.bind(this));
+
         // when all data are 0, return 0
-        ratio = max === 0 ? 0 : Math.abs(d.value) / max;
+        ratio = _max2 === 0 ? 0 : Math.abs(d.value) / _max2;
       }
     }
 
@@ -4950,13 +5307,20 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @private
    */
   updateDataIndexByX: function updateDataIndexByX(tickValues) {
-    var $$ = this,
+    var _this41 = this,
         tickValueMap = tickValues.reduce(function (out, tick, index) {
+      _newArrowCheck(this, _this41);
+
       out[+tick.x] = index;
       return out;
-    }, {});
-    $$.data.targets.forEach(function (t) {
+    }.bind(this), {});
+
+    this.data.targets.forEach(function (t) {
+      _newArrowCheck(this, _this41);
+
       t.values.forEach(function (value, valueIndex) {
+        _newArrowCheck(this, this);
+
         var index = tickValueMap[+value.x];
 
         if (index === undefined) {
@@ -4964,8 +5328,8 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         }
 
         value.index = index;
-      });
-    });
+      }.bind(this));
+    }.bind(this));
   },
 
   /**
@@ -4975,8 +5339,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @private
    */
   isBubbleZType: function isBubbleZType(d) {
-    var $$ = this;
-    return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
+    return this.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
   },
 
   /**
@@ -4986,11 +5349,12 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
    * @private
    */
   isBarRangeType: function isBarRangeType(d) {
-    var $$ = this,
-        value = d.value;
-    return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(function (v) {
+    var value = d.value;
+    return this.isBarType(d) && isArray(value) && value.length === 2 && value.every(function (v) {
+      _newArrowCheck(this, this);
+
       return isNumber(v);
-    });
+    }.bind(this));
   },
 
   /**
@@ -5007,6 +5371,8 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/data/load.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5015,7 +5381,8 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 /* harmony default export */ var load = ({
   load: function load(rawTargets, args) {
-    var _args$done,
+    var _this = this,
+        _args$done,
         $$ = this,
         append = args.append,
         targets = rawTargets;
@@ -5029,15 +5396,19 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
       if (args.type || args.types) {
         targets.forEach(function (t) {
-          var _args$types,
-              type = ((_args$types = args.types) == null ? void 0 : _args$types[t.id]) || args.type;
+          var _args$types;
 
+          _newArrowCheck(this, _this);
+
+          var type = ((_args$types = args.types) == null ? void 0 : _args$types[t.id]) || args.type;
           $$.setTargetType(t.id, type);
-        });
+        }.bind(this));
       } // Update/Add data
 
 
       $$.data.targets.forEach(function (d) {
+        _newArrowCheck(this, _this);
+
         for (var i = 0; i < targets.length; i++) {
           if (d.id === targets[i].id) {
             d.values = append ? d.values.concat(targets[i].values) : targets[i].values;
@@ -5045,7 +5416,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
             break;
           }
         }
-      });
+      }.bind(this));
       $$.data.targets = $$.data.targets.concat(targets); // add remained
     } // Set targets
 
@@ -5062,8 +5433,9 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     (_args$done = args.done) == null ? void 0 : _args$done.call($$.api);
   },
   loadFromArgs: function loadFromArgs(args) {
-    var $$ = this; // prevent load when chart is already destroyed
+    var $$ = this;
 
+    // prevent load when chart is already destroyed
     if (!$$.config) {
       return;
     } // reset internally cached data
@@ -5071,29 +5443,37 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
     $$.cache.reset();
     var data = args.data || $$.convertData(args, function (d) {
+      _newArrowCheck(this, this);
+
       return $$.load($$.convertDataToTargets(d), args);
-    });
+    }.bind(this));
     args.append && (data.__append__ = !0);
     data && $$.load($$.convertDataToTargets(data), args);
   },
   unload: function unload(rawTargetIds, customDoneCb) {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         state = $$.state,
         $el = $$.$el,
         $T = $$.$T,
         done = customDoneCb,
         targetIds = rawTargetIds;
+
     // reset internally cached data
     $$.cache.reset();
 
     if (!done) {
-      done = function () {};
+      done = function () {
+        _newArrowCheck(this, _this3);
+      }.bind(this);
     } // filter existing target
 
 
     targetIds = targetIds.filter(function (id) {
+      _newArrowCheck(this, _this3);
+
       return $$.hasTarget($$.data.targets, id);
-    }); // If no target, call done and return
+    }.bind(this)); // If no target, call done and return
 
     if (!targetIds || targetIds.length === 0) {
       done();
@@ -5101,10 +5481,14 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     }
 
     var targets = $el.svg.selectAll(targetIds.map(function (id) {
+      _newArrowCheck(this, _this3);
+
       return $$.selectorTarget(id);
-    }));
+    }.bind(this)));
     $T(targets).style("opacity", "0").remove().call(endall, done);
     targetIds.forEach(function (id) {
+      _newArrowCheck(this, _this3);
+
       // Reset fadein for future load
       state.withoutFadeIn[id] = !1; // Remove target's elements
 
@@ -5114,9 +5498,11 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 
       $$.data.targets = $$.data.targets.filter(function (t) {
+        _newArrowCheck(this, this);
+
         return t.id !== id;
-      });
-    }); // Update current state chart type and elements list after redraw
+      }.bind(this));
+    }.bind(this)); // Update current state chart type and elements list after redraw
 
     $$.updateTypesElements();
   }
@@ -5124,6 +5510,8 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 // EXTERNAL MODULE: external {"commonjs":"d3-drag","commonjs2":"d3-drag","amd":"d3-drag","root":"d3"}
 var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(7);
 ;// CONCATENATED MODULE: ./src/ChartInternal/interactions/interaction.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5168,8 +5556,11 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     }).filter(function (d) {
       return $$.isWithinShape(this, d);
     }).call(function (selected) {
-      var _isSelectable,
-          d = selected.data();
+      var _isSelectable;
+
+      _newArrowCheck(this, this);
+
+      var d = selected.data();
 
       if (isSelectionEnabled && (isSelectionGrouped || (_isSelectable = isSelectable) != null && _isSelectable.bind($$.api)(d))) {
         eventRect.style("cursor", "pointer");
@@ -5180,10 +5571,12 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         $$.showGridFocus == null ? void 0 : $$.showGridFocus(d);
         $$.unexpandCircles == null ? void 0 : $$.unexpandCircles();
         selected.each(function (d) {
+          _newArrowCheck(this, this);
+
           return $$.setExpand(index, d.id);
-        });
+        }.bind(this));
       }
-    });
+    }.bind(this));
   },
 
   /**
@@ -5211,17 +5604,23 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @private
    */
   expandBarTypeShapes: function expandBarTypeShapes(expand, i, id, reset) {
+    var _this3 = this;
+
     if (expand === void 0) {
       expand = !0;
     }
 
     var $$ = this;
     ["bar", "candlestick"].filter(function (v) {
+      _newArrowCheck(this, _this3);
+
       return $$.$el[v];
-    }).forEach(function (v) {
+    }.bind(this)).forEach(function (v) {
+      _newArrowCheck(this, _this3);
+
       reset && $$.$el[v].classed($COMMON.EXPANDED, !1);
       $$.getShapeByIndex(v, i, id).classed($COMMON.EXPANDED, expand);
-    });
+    }.bind(this));
   },
 
   /**
@@ -5250,11 +5649,11 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
           return $$.isWithinShape(this, d);
         });
         shape.each(function (d) {
-          var _this = this;
-
           if (last.length === 0 || last.every(function (v) {
-            return v !== _this;
-          })) {
+            _newArrowCheck(this, this);
+
+            return v !== this;
+          }.bind(this))) {
             callback(d, this);
             last.push(this);
           }
@@ -5263,8 +5662,10 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         if (last.length > 0 && shape.empty()) {
           callback = config.data_onout.bind($$.api);
           last.forEach(function (v) {
+            _newArrowCheck(this, this);
+
             return callback((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(v).datum(), v);
-          });
+          }.bind(this));
           last = [];
         }
 
@@ -5303,9 +5704,11 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @private
    */
   getDraggableSelection: function getDraggableSelection() {
-    var $$ = this,
+    var _this6 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state;
+
     return config.interaction_enabled && config.data_selection_draggable && $$.drag ? (0,external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_.drag)().on("drag", function (event) {
       state.event = event;
       $$.drag(getPointer(event, this));
@@ -5313,9 +5716,13 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
       state.event = event;
       $$.dragstart(getPointer(event, this));
     }).on("end", function (event) {
+      _newArrowCheck(this, _this6);
+
       state.event = event;
       $$.dragend();
-    }) : function () {};
+    }.bind(this)) : function () {
+      _newArrowCheck(this, _this6);
+    }.bind(this);
   },
 
   /**
@@ -5338,8 +5745,10 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         radar = _$$$$el.radar,
         isMultipleX = $$.isMultipleX(),
         element = (hasRadar ? radar.axes.select("." + $AXIS.axis + "-" + index + " text") : eventRect || arcs.selectAll("." + $COMMON.target + " path").filter(function (d, i) {
+      _newArrowCheck(this, this);
+
       return i === index;
-    })).node(),
+    }.bind(this))).node(),
         _element$getBoundingC = element.getBoundingClientRect(),
         width = _element$getBoundingC.width,
         left = _element$getBoundingC.left,
@@ -5372,8 +5781,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   unbindZoomEvent: function unbindZoomEvent() {
     var _eventRect,
         _zoomResetBtn,
-        $$ = this,
-        _$$$$el2 = $$.$el,
+        _$$$$el2 = this.$el,
         eventRect = _$$$$el2.eventRect,
         zoomResetBtn = _$$$$el2.zoomResetBtn;
 
@@ -5401,12 +5809,16 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 
     // detach all possible event types
     [svg, eventRect, (_region = region) == null ? void 0 : _region.list, (_brush = brush) == null ? void 0 : _brush.getSelection(), (_arcs = arcs) == null ? void 0 : _arcs.selectAll("path"), (_legend = legend) == null ? void 0 : _legend.selectAll("g")].forEach(function (v) {
+      _newArrowCheck(this, this);
+
       return v == null ? void 0 : v.on("wheel click mouseover mousemove mouseout touchstart touchmove touchend touchstart.eventRect touchmove.eventRect touchend.eventRect .brush .drag .zoom wheel.zoom dblclick.zoom", null);
-    });
+    }.bind(this));
     $$.unbindZoomEvent == null ? void 0 : $$.unbindZoomEvent();
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/class.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5425,17 +5837,16 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @private
    */
   getClass: function getClass(type, withShape) {
-    var _this = this,
-        isPlural = /s$/.test(type),
+    var isPlural = /s$/.test(type),
         useIdKey = /^(area|arc|line)s?$/.test(type),
         key = isPlural ? "id" : "index";
-
     return function (d) {
-      var data = d.data || d,
-          result = (withShape ? _this.generateClass(classes[isPlural ? "shapes" : "shape"], data[key]) : "") + _this.generateClass(classes[type], data[useIdKey ? "id" : key]);
+      _newArrowCheck(this, this);
 
+      var data = d.data || d,
+          result = (withShape ? this.generateClass(classes[isPlural ? "shapes" : "shape"], data[key]) : "") + this.generateClass(classes[type], data[useIdKey ? "id" : key]);
       return result.trim();
-    };
+    }.bind(this);
   },
 
   /**
@@ -5445,15 +5856,14 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @private
    */
   getChartClass: function getChartClass(type) {
-    var _this2 = this;
-
     return function (d) {
-      return classes["chart" + type] + _this2.classTarget((d.data ? d.data : d).id);
-    };
+      _newArrowCheck(this, this);
+
+      return classes["chart" + type] + this.classTarget((d.data ? d.data : d).id);
+    }.bind(this);
   },
   generateExtraLineClass: function generateExtraLineClass() {
-    var $$ = this,
-        classes = $$.config.line_classes || [],
+    var classes = this.config.line_classes || [],
         ids = [];
     return function (d) {
       var _d$data,
@@ -5499,22 +5909,22 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     return pfx + "." + (classes.target + target) + ", " + pfx + "." + (classes.circles + target);
   },
   selectorTargets: function selectorTargets(idsValue, prefix) {
-    var _this3 = this,
-        ids = idsValue || [];
-
+    var ids = idsValue || [];
     return ids.length ? ids.map(function (id) {
-      return _this3.selectorTarget(id, prefix);
-    }) : null;
+      _newArrowCheck(this, this);
+
+      return this.selectorTarget(id, prefix);
+    }.bind(this)) : null;
   },
   selectorLegend: function selectorLegend(id) {
     return "." + (classes.legendItem + this.getTargetSelectorSuffix(id));
   },
   selectorLegends: function selectorLegends(ids) {
-    var _this4 = this;
-
     return ids != null && ids.length ? ids.map(function (id) {
-      return _this4.selectorLegend(id);
-    }) : null;
+      _newArrowCheck(this, this);
+
+      return this.selectorLegend(id);
+    }.bind(this)) : null;
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/category.ts
@@ -5537,6 +5947,10 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
 var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(6);
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/color.ts
+
+
+var color_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5558,13 +5972,15 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
  */
 
 var colorizePattern = function (pattern, color, id) {
+  _newArrowCheck(this, color_this);
+
   var node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(pattern.cloneNode(!0));
   node.attr("id", id).insert("rect", ":first-child").attr("width", node.attr("width")).attr("height", node.attr("height")).style("fill", color);
   return {
     id: id,
     node: node.node()
   };
-},
+}.bind(undefined),
     schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]; // Replacement of d3.schemeCategory10.
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
 
@@ -5591,8 +6007,10 @@ var colorizePattern = function (pattern, color, id) {
 
       if (content.indexOf(";") > -1) {
         pattern = content.replace(/url[^#]*|["'()]|(\s|%20)/g, "").split(";").map(function (v) {
+          _newArrowCheck(this, this);
+
           return v.trim().replace(/[\"'\s]/g, "");
-        }).filter(Boolean);
+        }.bind(this)).filter(Boolean);
         body[cacheKey] = pattern;
       }
     }
@@ -5600,7 +6018,8 @@ var colorizePattern = function (pattern, color, id) {
     return pattern;
   },
   generateColor: function generateColor() {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         config = $$.config,
         colors = config.data_colors,
         callback = config.data_color,
@@ -5611,14 +6030,18 @@ var colorizePattern = function (pattern, color, id) {
     if (isFunction(config.color_tiles)) {
       var tiles = config.color_tiles.bind($$.api)(),
           colorizedPatterns = pattern.map(function (p, index) {
+        _newArrowCheck(this, _this3);
+
         var color = p.replace(/[#\(\)\s,]/g, ""),
             id = $$.state.datetimeId + "-pattern-" + color + "-" + index;
         return colorizePattern(tiles[index % tiles.length], p, id);
-      }); // Add background color to patterns
+      }.bind(this)); // Add background color to patterns
 
       pattern = colorizedPatterns.map(function (p) {
+        _newArrowCheck(this, _this3);
+
         return "url(#" + p.id + ")";
-      });
+      }.bind(this));
       $$.patterns = colorizedPatterns;
     }
 
@@ -5646,8 +6069,7 @@ var colorizePattern = function (pattern, color, id) {
     };
   },
   generateLevelColor: function generateLevelColor() {
-    var $$ = this,
-        config = $$.config,
+    var config = this.config,
         colors = config.color_pattern,
         threshold = config.color_threshold,
         asValue = threshold.unit === "value",
@@ -5690,9 +6112,11 @@ var colorizePattern = function (pattern, color, id) {
       }
 
       ids.forEach(function (v) {
+        _newArrowCheck(this, this);
+
         var id = state.datetimeId + "-labels-bg" + $$.getTargetSelectorSuffix(v) + (color ? $$.getTargetSelectorSuffix(color) : "");
         $el.defs.append("filter").attr("x", "0").attr("y", "0").attr("width", "1").attr("height", "1").attr("id", id).html("<feFlood flood-color=\"" + (v === "" ? backgroundColors : backgroundColors[v]) + "\" /><feComposite in=\"SourceGraphic\"/>");
-      });
+      }.bind(this));
     }
   },
 
@@ -5704,7 +6128,8 @@ var colorizePattern = function (pattern, color, id) {
    * @private
    */
   setOverColor: function setOverColor(isOver, d) {
-    var $$ = this,
+    var _this5 = this,
+        $$ = this,
         config = $$.config,
         main = $$.$el.main,
         onover = config.color_onover,
@@ -5713,12 +6138,17 @@ var colorizePattern = function (pattern, color, id) {
     if (isObject(color)) {
       color = function (_ref) {
         var id = _ref.id;
+
+        _newArrowCheck(this, _this5);
+
         return id in onover ? onover[id] : $$.color(id);
-      };
+      }.bind(this);
     } else if (isString(color)) {
       color = function () {
+        _newArrowCheck(this, _this5);
+
         return onover;
-      };
+      }.bind(this);
     } else if (isFunction(onover)) {
       color = color.bind($$.api);
     }
@@ -5728,6 +6158,8 @@ var colorizePattern = function (pattern, color, id) {
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/domain.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5736,7 +6168,8 @@ var colorizePattern = function (pattern, color, id) {
 
 /* harmony default export */ var domain = ({
   getYDomainMinMax: function getYDomainMinMax(targets, type) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         axis = $$.axis,
         config = $$.config,
         isMin = type === "min",
@@ -5747,10 +6180,16 @@ var colorizePattern = function (pattern, color, id) {
     if (dataGroups.length > 0) {
       var hasValue = $$["has" + (isMin ? "Negative" : "Positive") + "ValueInTargets"](targets);
       dataGroups.forEach(function (groupIds) {
+        var _this2 = this;
+
+        _newArrowCheck(this, _this);
+
         // Determine baseId
         var idsInGroup = groupIds.filter(function (v) {
+          _newArrowCheck(this, _this2);
+
           return ids.indexOf(v) >= 0;
-        });
+        }.bind(this));
 
         if (idsInGroup.length) {
           var baseId = idsInGroup[0],
@@ -5759,32 +6198,42 @@ var colorizePattern = function (pattern, color, id) {
           // Initialize base value. Set to 0 if not match with the condition
           if (hasValue && ys[baseId]) {
             ys[baseId] = ys[baseId].map(function (v) {
+              _newArrowCheck(this, _this2);
+
               return (isMin ? v < 0 : v > 0) ? v : 0;
-            });
+            }.bind(this));
           }
 
           idsInGroup.filter(function (v, i) {
+            _newArrowCheck(this, _this2);
+
             return i > 0;
-          }).forEach(function (id) {
+          }.bind(this)).forEach(function (id) {
+            _newArrowCheck(this, _this2);
+
             if (ys[id]) {
               var axisId = axis.getId(id);
               ys[id].forEach(function (v, i) {
+                _newArrowCheck(this, this);
+
                 var val = +v,
                     meetCondition = isMin ? val > 0 : val < 0;
 
                 if (axisId === baseAxisId && !(hasValue && meetCondition)) {
                   ys[baseId][i] += val;
                 }
-              });
+              }.bind(this));
             }
-          });
+          }.bind(this));
         }
-      });
+      }.bind(this));
     }
 
     return getMinMax(type, Object.keys(ys).map(function (key) {
+      _newArrowCheck(this, _this);
+
       return getMinMax(type, ys[key]);
-    }));
+    }.bind(this)));
   },
 
   /**
@@ -5796,11 +6245,14 @@ var colorizePattern = function (pattern, color, id) {
   isHiddenTargetWithYDomain: function isHiddenTargetWithYDomain(id) {
     var $$ = this;
     return $$.state.hiddenTargetIds.some(function (v) {
+      _newArrowCheck(this, this);
+
       return $$.axis.getId(v) === id;
-    });
+    }.bind(this));
   },
   getYDomain: function getYDomain(targets, axisId, xDomain) {
     var _scale,
+        _this5 = this,
         $$ = this,
         axis = $$.axis,
         config = $$.config,
@@ -5813,8 +6265,10 @@ var colorizePattern = function (pattern, color, id) {
 
     var isLog = ((_scale = scale) == null ? void 0 : _scale[axisId]) && scale[axisId].type === "log",
         targetsByAxisId = targets.filter(function (t) {
+      _newArrowCheck(this, _this5);
+
       return axis.getId(t.id) === axisId;
-    }),
+    }.bind(this)),
         yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
 
     if (yTargets.length === 0) {
@@ -5837,9 +6291,11 @@ var colorizePattern = function (pattern, color, id) {
         yDomainMin = $$.getYDomainMinMax(yTargets, "min"),
         yDomainMax = $$.getYDomainMinMax(yTargets, "max"),
         isZeroBased = [TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER].concat(TYPE_BY_CATEGORY.Line).some(function (v) {
+      _newArrowCheck(this, _this5);
+
       var type = v.indexOf("area") > -1 ? "area" : v;
       return $$.hasType(v, yTargets, !0) && config[type + "_zerobased"];
-    });
+    }.bind(this));
     // MEMO: avoid inverting domain unexpectedly
     yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin;
     yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax;
@@ -5888,16 +6344,22 @@ var colorizePattern = function (pattern, color, id) {
     if (showHorizontalDataLabel) {
       var diff = diffDomain(scale.y.range()),
           ratio = $$.getDataLabelLength(yDomainMin, yDomainMax, "width").map(function (v) {
+        _newArrowCheck(this, _this5);
+
         return v / diff;
-      });
+      }.bind(this));
       ["bottom", "top"].forEach(function (v, i) {
+        _newArrowCheck(this, _this5);
+
         padding[v] += domainLength * (ratio[i] / (1 - ratio[0] - ratio[1]));
-      });
+      }.bind(this));
     } else if (showVerticalDataLabel) {
       var lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height");
       ["bottom", "top"].forEach(function (v, i) {
+        _newArrowCheck(this, _this5);
+
         padding[v] += $$.convertPixelToScale("y", lengths[i], domainLength);
-      });
+      }.bind(this));
     }
 
     padding = $$.getResettedPadding(padding); // if padding is set, the domain will be updated relative the current domain value
@@ -5907,8 +6369,10 @@ var colorizePattern = function (pattern, color, id) {
 
     if (notEmpty(p)) {
       ["bottom", "top"].forEach(function (v) {
+        _newArrowCheck(this, _this5);
+
         padding[v] = axis.getPadding(p, v, padding[v], domainLength);
-      });
+      }.bind(this));
     } // Bar/Area chart should be 0-based if all positive|negative
 
 
@@ -5918,20 +6382,26 @@ var colorizePattern = function (pattern, color, id) {
     }
 
     var domain = isLog ? [yDomainMin, yDomainMax].map(function (v) {
+      _newArrowCheck(this, _this5);
+
       return v < 0 ? 0 : v;
-    }) : [yDomainMin - padding.bottom, yDomainMax + padding.top];
+    }.bind(this)) : [yDomainMin - padding.bottom, yDomainMax + padding.top];
     return isInverted ? domain.reverse() : domain;
   },
   getXDomainMinMax: function getXDomainMinMax(targets, type) {
-    var _$$$axis,
-        $$ = this,
+    var $$ = this,
         configValue = $$.config["axis_x_" + type],
         dataValue = getMinMax(type, targets.map(function (t) {
+      _newArrowCheck(this, this);
+
       return getMinMax(type, t.values.map(function (v) {
+        _newArrowCheck(this, this);
+
         return v.x;
-      }));
-    })),
-        value = isObject(configValue) ? configValue.value : configValue;
+      }.bind(this)));
+    }.bind(this))),
+        value = isObject(configValue) ? configValue.value : configValue,
+        _$$$axis;
 
     value = isDefined(value) && (_$$$axis = $$.axis) != null && _$$$axis.isTimeSeries() ? parseDate.bind(this)(value) : value;
 
@@ -6018,7 +6488,7 @@ var colorizePattern = function (pattern, color, id) {
     if (x.type !== "log") {
       var isCategorized = axis.isCategorized(),
           isTimeSeries = axis.isTimeSeries(),
-          padding = $$.getXDomainPadding(domain),
+          _padding = $$.getXDomainPadding(domain),
           _domain2 = domain,
           firstX = _domain2[0],
           lastX = _domain2[1];
@@ -6035,11 +6505,11 @@ var colorizePattern = function (pattern, color, id) {
       }
 
       if (firstX || firstX === 0) {
-        min = isTimeSeries ? new Date(firstX.getTime() - padding.left) : firstX - padding.left;
+        min = isTimeSeries ? new Date(firstX.getTime() - _padding.left) : firstX - _padding.left;
       }
 
       if (lastX || lastX === 0) {
-        max = isTimeSeries ? new Date(lastX.getTime() + padding.right) : lastX + padding.right;
+        max = isTimeSeries ? new Date(lastX.getTime() + _padding.right) : lastX + _padding.right;
       }
     }
 
@@ -6141,6 +6611,8 @@ var colorizePattern = function (pattern, color, id) {
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/format.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6196,11 +6668,14 @@ function getFormat($$, typeValue, v) {
     return "" + v;
   },
   dataLabelFormat: function dataLabelFormat(targetId) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         dataLabels = $$.config.data_labels,
         defaultFormat = function (v) {
+      _newArrowCheck(this, _this);
+
       return isValue(v) ? +v : "";
-    },
+    }.bind(this),
         format = defaultFormat;
 
     // find format according to axis id
@@ -6211,8 +6686,10 @@ function getFormat($$, typeValue, v) {
         format = dataLabels.format[targetId] === !0 ? defaultFormat : dataLabels.format[targetId];
       } else {
         format = function () {
+          _newArrowCheck(this, _this);
+
           return "";
-        };
+        }.bind(this);
       }
     }
 
@@ -6220,6 +6697,8 @@ function getFormat($$, typeValue, v) {
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/legend.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6315,6 +6794,8 @@ function getFormat($$, typeValue, v) {
           ids = [],
           html = "";
       targets.forEach(function (v) {
+        _newArrowCheck(this, this);
+
         var content = isFunction(template) ? template.bind($$.api)(v, $$.color(v), $$.api.data(v)[0].values) : tplProcess(template, {
           COLOR: $$.color(v),
           TITLE: v
@@ -6324,7 +6805,7 @@ function getFormat($$, typeValue, v) {
           ids.push(v);
           html += content;
         }
-      });
+      }.bind(this));
       var legendItem = wrapper.html(html).selectAll(function () {
         return this.childNodes;
       }).data(ids);
@@ -6467,8 +6948,10 @@ function getFormat($$, typeValue, v) {
         $T = $$.$T,
         targetIdz = $$.mapToTargetIds(targetIds);
     legend && $T(legend.selectAll("." + $LEGEND.legendItem).filter(function (id) {
+      _newArrowCheck(this, this);
+
       return targetIdz.indexOf(id) >= 0;
-    }).classed($FOCUS.legendItemFocused, focus)).style("opacity", function () {
+    }.bind(this)).classed($FOCUS.legendItemFocused, focus)).style("opacity", function () {
       return focus ? null : $$.opacityForUnfocusedLegend.call($$, (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this));
     });
   },
@@ -6569,8 +7052,10 @@ function getFormat($$, typeValue, v) {
           itemClass = !node.empty() && node.attr("class") || "";
       return itemClass + $$.generateClass($LEGEND.legendItem, id);
     }).style("visibility", function (id) {
+      _newArrowCheck(this, this);
+
       return $$.isLegendToShow(id) ? null : "hidden";
-    });
+    }.bind(this));
 
     if (config.interaction_enabled) {
       item.style("cursor", "pointer").on("click", function (event, id) {
@@ -6619,7 +7104,8 @@ function getFormat($$, typeValue, v) {
    * @private
    */
   updateLegendElement: function updateLegendElement(targetIds, options) {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         legend = $$.$el.legend,
@@ -6640,11 +7126,14 @@ function getFormat($$, typeValue, v) {
         background,
         isLegendRightOrInset = state.isLegendRight || state.isLegendInset,
         targetIdz = targetIds.filter(function (id) {
+      _newArrowCheck(this, _this4);
+
       return !isDefined(config.data_names[id]) || config.data_names[id] !== null;
-    }),
+    }.bind(this)),
         withTransition = options.withTransition,
         updatePositions = function (textElement, id, index) {
-      var isLast = index === targetIdz.length - 1,
+      var _this5 = this,
+          isLast = index === targetIdz.length - 1,
           box = $$.getLegendItemTextBox(id, textElement),
           itemWidth = box.width + tileWidth + (isLast && !isLegendRightOrInset ? 0 : 10) + config.legend_padding,
           itemHeight = box.height + 4,
@@ -6698,19 +7187,25 @@ function getFormat($$, typeValue, v) {
 
       if (config.legend_equally) {
         Object.keys(widths).forEach(function (id2) {
+          _newArrowCheck(this, _this5);
+
           return widths[id2] = maxWidth;
-        });
+        }.bind(this));
         Object.keys(heights).forEach(function (id2) {
+          _newArrowCheck(this, _this5);
+
           return heights[id2] = maxHeight;
-        });
+        }.bind(this));
         margin = (areaLength - maxLength * targetIdz.length) / 2;
 
         if (margin < posMin) {
           totalLength = 0;
           step = 0;
           targetIdz.forEach(function (id2) {
+            _newArrowCheck(this, _this5);
+
             return updateValues(id2);
-          });
+          }.bind(this));
         } else {
           updateValues(id, !0);
         }
@@ -6726,86 +7221,120 @@ function getFormat($$, typeValue, v) {
 
     if (state.isLegendRight) {
       xForLegend = function (id) {
+        _newArrowCheck(this, _this4);
+
         return maxWidth * steps[id];
-      };
+      }.bind(this);
 
       yForLegend = function (id) {
+        _newArrowCheck(this, _this4);
+
         return margins[steps[id]] + offsets[id];
-      };
+      }.bind(this);
     } else if (state.isLegendInset) {
       xForLegend = function (id) {
+        _newArrowCheck(this, _this4);
+
         return maxWidth * steps[id] + 10;
-      };
+      }.bind(this);
 
       yForLegend = function (id) {
+        _newArrowCheck(this, _this4);
+
         return margins[steps[id]] + offsets[id];
-      };
+      }.bind(this);
     } else {
       xForLegend = function (id) {
+        _newArrowCheck(this, _this4);
+
         return margins[steps[id]] + offsets[id];
-      };
+      }.bind(this);
 
       yForLegend = function (id) {
+        _newArrowCheck(this, _this4);
+
         return maxHeight * steps[id];
-      };
+      }.bind(this);
     }
 
     var xForLegendText = function (id, i) {
+      _newArrowCheck(this, _this4);
+
       return xForLegend(id, i) + 4 + config.legend_item_tile_width;
-    },
+    }.bind(this),
         xForLegendRect = function (id, i) {
+      _newArrowCheck(this, _this4);
+
       return xForLegend(id, i);
-    },
+    }.bind(this),
         x1ForLegendTile = function (id, i) {
+      _newArrowCheck(this, _this4);
+
       return xForLegend(id, i) - 2;
-    },
+    }.bind(this),
         x2ForLegendTile = function (id, i) {
+      _newArrowCheck(this, _this4);
+
       return xForLegend(id, i) - 2 + config.legend_item_tile_width;
-    },
+    }.bind(this),
         yForLegendText = function (id, i) {
+      _newArrowCheck(this, _this4);
+
       return yForLegend(id, i) + 9;
-    },
+    }.bind(this),
         yForLegendRect = function (id, i) {
+      _newArrowCheck(this, _this4);
+
       return yForLegend(id, i) - 5;
-    },
+    }.bind(this),
         yForLegendTile = function (id, i) {
+      _newArrowCheck(this, _this4);
+
       return yForLegend(id, i) + 4;
-    },
+    }.bind(this),
         pos = -200,
         l = legend.selectAll("." + $LEGEND.legendItem).data(targetIdz).enter().append("g");
 
     $$.setLegendItem(l);
     l.append("text").text(function (id) {
+      _newArrowCheck(this, _this4);
+
       return isDefined(config.data_names[id]) ? config.data_names[id] : id;
-    }).each(function (id, i) {
+    }.bind(this)).each(function (id, i) {
       updatePositions(this, id, i);
     }).style("pointer-events", "none").attr("x", isLegendRightOrInset ? xForLegendText : pos).attr("y", isLegendRightOrInset ? pos : yForLegendText);
     l.append("rect").attr("class", $LEGEND.legendItemEvent).style("fill-opacity", "0").attr("x", isLegendRightOrInset ? xForLegendRect : pos).attr("y", isLegendRightOrInset ? pos : yForLegendRect);
 
     var getColor = function (id) {
+      _newArrowCheck(this, _this4);
+
       var data = $$.getDataById(id);
       return $$.levelColor ? $$.levelColor(data.values[0].value) : $$.color(data);
-    },
+    }.bind(this),
         usePoint = config.legend_usePoint;
 
     if (usePoint) {
-      var ids = [];
+      var _ids = [];
       l.append(function (d) {
+        _newArrowCheck(this, _this4);
+
         var pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
-        ids.indexOf(d) === -1 && ids.push(d);
-        var point = pattern[ids.indexOf(d) % pattern.length];
+        _ids.indexOf(d) === -1 && _ids.push(d);
+        var point = pattern[_ids.indexOf(d) % pattern.length];
 
         if (point === "rectangle") {
           point = "rect";
         }
 
         return browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg, "hasValidPointType" in $$ && $$.hasValidPointType(point) ? point : "use");
-      }).attr("class", $LEGEND.legendItemPoint).style("fill", getColor).style("pointer-events", "none").attr("href", function (data, idx, selection) {
+      }.bind(this)).attr("class", $LEGEND.legendItemPoint).style("fill", getColor).style("pointer-events", "none").attr("href", function (data, idx, selection) {
+        _newArrowCheck(this, _this4);
+
         var node = selection[idx],
             nodeName = node.nodeName.toLowerCase(),
             id = $$.getTargetSelectorSuffix(data);
         return nodeName === "use" ? "#" + state.datetimeId + "-point" + id : undefined;
-      });
+      }.bind(this));
     } else {
       l.append("line").attr("class", $LEGEND.legendItemTile).style("stroke", getColor).style("pointer-events", "none").attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height);
     } // Set background for inset legend
@@ -6818,23 +7347,30 @@ function getFormat($$, typeValue, v) {
     }
 
     var texts = legend.selectAll("text").data(targetIdz).text(function (id) {
+      _newArrowCheck(this, _this4);
+
       return isDefined(config.data_names[id]) ? config.data_names[id] : id;
-    }) // MEMO: needed for update
+    }.bind(this)) // MEMO: needed for update
     .each(function (id, i) {
       updatePositions(this, id, i);
     });
     $T(texts, withTransition).attr("x", xForLegendText).attr("y", yForLegendText);
     var rects = legend.selectAll("rect." + $LEGEND.legendItemEvent).data(targetIdz);
     $T(rects, withTransition).attr("width", function (id) {
+      _newArrowCheck(this, _this4);
+
       return widths[id];
-    }).attr("height", function (id) {
+    }.bind(this)).attr("height", function (id) {
+      _newArrowCheck(this, _this4);
+
       return heights[id];
-    }).attr("x", xForLegendRect).attr("y", yForLegendRect);
+    }.bind(this)).attr("x", xForLegendRect).attr("y", yForLegendRect);
 
     if (usePoint) {
       var tiles = legend.selectAll("." + $LEGEND.legendItemPoint).data(targetIdz);
       $T(tiles, withTransition).each(function () {
-        var nodeName = this.nodeName.toLowerCase(),
+        var _this6 = this,
+            nodeName = this.nodeName.toLowerCase(),
             pointR = config.point_r,
             x = "x",
             y = "y",
@@ -6860,10 +7396,14 @@ function getFormat($$, typeValue, v) {
         }
 
         (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).attr(x, function (d) {
+          _newArrowCheck(this, _this6);
+
           return x1ForLegendTile(d) + xOffset;
-        }).attr(y, function (d) {
+        }.bind(this)).attr(y, function (d) {
+          _newArrowCheck(this, _this6);
+
           return yForLegendTile(d) - yOffset;
-        }).attr("r", radius).attr("width", width).attr("height", height);
+        }.bind(this)).attr("r", radius).attr("width", width).attr("height", height);
       });
     } else {
       var _tiles = legend.selectAll("line." + $LEGEND.legendItemTile).data(targetIdz);
@@ -6884,6 +7424,8 @@ function getFormat($$, typeValue, v) {
 // EXTERNAL MODULE: external {"commonjs":"d3-transition","commonjs2":"d3-transition","amd":"d3-transition","root":"d3"}
 var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_ = __webpack_require__(8);
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/redraw.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6942,12 +7484,14 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 
       config.regions.length && $$.updateRegion();
       ["bar", "candlestick", "line", "area"].forEach(function (v) {
+        _newArrowCheck(this, this);
+
         var name = capitalize(v);
 
         if (/^(line|area)$/.test(v) && $$.hasTypeOf(name) || $$.hasType(v)) {
           $$["update" + name](wth.TransitionForExit);
         }
-      }); // circles for select
+      }.bind(this)); // circles for select
 
       $el.text && main.selectAll("." + $SELECT.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(); // event rects will redrawn when flow called
 
@@ -6987,7 +7531,8 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
    * @private
    */
   generateRedrawList: function generateRedrawList(targets, flow, duration, withSubchart) {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         shape = $$.getDrawShape();
@@ -7008,10 +7553,12 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
         withTransition = (duration || flowFn) && isTabVisible(),
         redrawList = $$.getRedrawList(shape, flow, flowFn, withTransition),
         afterRedraw = function () {
+      _newArrowCheck(this, _this2);
+
       flowFn && flowFn();
       state.redrawing = !1;
       callFn(config.onrendered, $$.api);
-    };
+    }.bind(this);
 
     if (afterRedraw) {
       // Only use transition when current tab is visible.
@@ -7020,12 +7567,20 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
         var waitForDraw = generateWait(); // transition should be derived from one transition
 
         (0,external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_.transition)().duration(duration).each(function () {
+          var _this3 = this;
+
+          _newArrowCheck(this, _this2);
+
           redrawList.reduce(function (acc, t1) {
+            _newArrowCheck(this, _this3);
+
             return acc.concat(t1);
-          }, []).forEach(function (t) {
+          }.bind(this), []).forEach(function (t) {
+            _newArrowCheck(this, _this3);
+
             return waitForDraw.add(t);
-          });
-        }).call(waitForDraw, afterRedraw);
+          }.bind(this));
+        }.bind(this)).call(waitForDraw, afterRedraw);
       } else if (!state.transiting) {
         afterRedraw();
       }
@@ -7033,8 +7588,10 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 
 
     $$.mapToIds($$.data.targets).forEach(function (id) {
+      _newArrowCheck(this, _this2);
+
       state.withoutFadeIn[id] = !0;
-    });
+    }.bind(this));
   },
   getRedrawList: function getRedrawList(shape, flow, flowFn, withTransition) {
     var $$ = this,
@@ -7060,13 +7617,15 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       }
 
       Object.keys(shape.type).forEach(function (v) {
+        _newArrowCheck(this, this);
+
         var name = capitalize(v),
             drawFn = shape.type[v];
 
         if (/^(area|line)$/.test(v) && $$.hasTypeOf(name) || $$.hasType(v)) {
           list.push($$["redraw" + name](drawFn, withTransition));
         }
-      });
+      }.bind(this));
       !flow && grid.main && list.push($$.updateGridFocus());
     }
 
@@ -7126,6 +7685,8 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/scale.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -7191,8 +7752,7 @@ function getScale(type, min, max) {
    * @private
    */
   getYScale: function getYScale(id, min, max, domain) {
-    var $$ = this,
-        scale = getScale($$.axis.getAxisType(id), min, max);
+    var scale = getScale(this.axis.getAxisType(id), min, max);
     domain && scale.domain(domain);
     return scale;
   },
@@ -7222,10 +7782,13 @@ function getScale(type, min, max) {
    * @private
    */
   getCustomizedScale: function getCustomizedScale(scaleValue, offsetValue) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         offset = offsetValue || function () {
+      _newArrowCheck(this, _this);
+
       return $$.axis.x.tickOffset();
-    },
+    }.bind(this),
         scale = function (d, raw) {
       var v = scaleValue(d) + offset();
       return raw ? v : Math.ceil(v);
@@ -7237,12 +7800,16 @@ function getScale(type, min, max) {
     }
 
     scale.orgDomain = function () {
+      _newArrowCheck(this, _this);
+
       return scaleValue.domain();
-    };
+    }.bind(this);
 
     scale.orgScale = function () {
+      _newArrowCheck(this, _this);
+
       return scaleValue;
-    }; // define custom domain() for categorized axis
+    }.bind(this); // define custom domain() for categorized axis
 
 
     if ($$.axis.isCategorized()) {
@@ -7269,6 +7836,8 @@ function getScale(type, min, max) {
    * @private
    */
   updateScales: function updateScales(isInit, updateXDomain) {
+    var _this2 = this;
+
     if (updateXDomain === void 0) {
       updateXDomain = !0;
     }
@@ -7306,11 +7875,17 @@ function getScale(type, min, max) {
           xSubDomain = updateXDomain && org.xDomain;
 
       scale.x = $$.getXScale(min.x, max.x, xDomain, function () {
+        _newArrowCheck(this, _this2);
+
         return axis.x.tickOffset();
-      });
+      }.bind(this));
       scale.subX = $$.getXScale(min.x, max.x, xSubDomain, function (d) {
-        return d % 1 ? 0 : axis.subX.tickOffset();
-      });
+        var _axis$subX;
+
+        _newArrowCheck(this, _this2);
+
+        return d % 1 ? 0 : ((_axis$subX = axis.subX) != null ? _axis$subX : axis.x).tickOffset();
+      }.bind(this));
       format.xAxisTick = axis.getXAxisTickFormat();
       format.subXAxisTick = axis.getXAxisTickFormat(!0);
       axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit);
@@ -7383,6 +7958,8 @@ function getScale(type, min, max) {
 // EXTERNAL MODULE: external {"commonjs":"d3-shape","commonjs2":"d3-shape","amd":"d3-shape","root":"d3"}
 var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(9);
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/shape.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -7407,6 +7984,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       pos: {}
     };
     ["bar", "candlestick", "line", "area"].forEach(function (v) {
+      _newArrowCheck(this, this);
+
       var name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
 
       if ($$.hasType(v) || $$.hasTypeOf(name) || v === "line" && ($$.hasType("bubble") || $$.hasType("scatter"))) {
@@ -7415,7 +7994,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         shape.indices[v] = indices;
         shape.type[v] = drawFn ? drawFn.bind($$)(indices, !1) : undefined;
       }
-    });
+    }.bind(this));
 
     if (!$$.hasArcType() || hasRadar) {
       // generate circle x/y functions depending on updated params
@@ -7446,7 +8025,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @returns {object} Indices object with its position
    */
   getShapeIndices: function getShapeIndices(typeFilter) {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         config = $$.config,
         xs = config.data_xs,
         hasXs = notEmpty(xs),
@@ -7455,14 +8035,20 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
     if (hasXs) {
       getUnique(Object.keys(xs).map(function (v) {
+        _newArrowCheck(this, _this2);
+
         return xs[v];
-      })).forEach(function (v) {
+      }.bind(this))).forEach(function (v) {
+        _newArrowCheck(this, _this2);
+
         i[v] = 0;
         indices[v] = {};
-      });
+      }.bind(this));
     }
 
     $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(function (d) {
+      _newArrowCheck(this, _this2);
+
       var xKey = d.id in xs ? xs[d.id] : "",
           ind = xKey ? indices[xKey] : indices;
 
@@ -7483,7 +8069,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         ind[d.id] = xKey ? i[xKey]++ : i++;
         ind.__max__ = (xKey ? i[xKey] : i) - 1;
       }
-    });
+    }.bind(this));
     return indices;
   },
 
@@ -7496,7 +8082,6 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @private
    */
   getIndices: function getIndices(indices, d) {
-    // eslint-disable-line
     var $$ = this,
         _$$$config = $$.config,
         xs = _$$$config.data_xs,
@@ -7508,9 +8093,11 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       var ind = {}; // redefine bar indices order
 
       $$.getAllValuesOnIndex(index, !0).forEach(function (v, i) {
+        _newArrowCheck(this, this);
+
         ind[v.id] = i;
         ind.__max__ = i;
-      });
+      }.bind(this));
       return ind;
     }
 
@@ -7524,25 +8111,36 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @private
    */
   getIndicesMax: function getIndicesMax(indices) {
+    var _this4 = this;
+
     return notEmpty(this.config.data_xs) ? // if is multiple xs, return total sum of xs' __max__ value
     Object.keys(indices).map(function (v) {
+      _newArrowCheck(this, _this4);
+
       return indices[v].__max__ || 0;
-    }).reduce(function (acc, curr) {
+    }.bind(this)).reduce(function (acc, curr) {
+      _newArrowCheck(this, _this4);
+
       return acc + curr;
-    }) : indices.__max__;
+    }.bind(this)) : indices.__max__;
   },
   getShapeX: function getShapeX(offset, indices, isSub) {
-    var $$ = this,
+    var _this5 = this,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         currScale = isSub ? scale.subX : scale.zoom || scale.x,
         barPadding = config.bar_padding,
         sum = function (p, c) {
+      _newArrowCheck(this, _this5);
+
       return p + c;
-    },
+    }.bind(this),
         halfWidth = isObjectType(offset) && (offset._$total.length ? offset._$total.reduce(sum) / 2 : 0);
 
     return function (d) {
+      _newArrowCheck(this, _this5);
+
       var ind = $$.getIndices(indices, d, "getShapeX"),
           index = d.id in ind ? ind[d.id] : 0,
           targetsNum = (ind.__max__ || 0) + 1,
@@ -7572,12 +8170,14 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       }
 
       return x;
-    };
+    }.bind(this);
   },
   getShapeY: function getShapeY(isSub) {
     var $$ = this,
         isStackNormalized = $$.isStackNormalized();
     return function (d) {
+      _newArrowCheck(this, this);
+
       var value = d.value;
 
       if (isNumber(d)) {
@@ -7592,7 +8192,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       }
 
       return $$.getYScaleById(d.id, isSub)(value);
-    };
+    }.bind(this);
   },
 
   /**
@@ -7619,10 +8219,13 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @private
    */
   getShapeOffsetData: function getShapeOffsetData(typeFilter) {
-    var $$ = this,
+    var _this7 = this,
+        $$ = this,
         targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
         isStackNormalized = $$.isStackNormalized(),
         shapeOffsetTargets = targets.map(function (target) {
+      _newArrowCheck(this, _this7);
+
       var rowValues = target.values,
           values = {};
 
@@ -7631,23 +8234,29 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       }
 
       var rowValueMapByXValue = rowValues.reduce(function (out, d) {
+        _newArrowCheck(this, this);
+
         var key = +d.x;
         out[key] = d;
         values[key] = isStackNormalized ? $$.getRatio("index", d, !0) : d.value;
         return out;
-      }, {});
+      }.bind(this), {});
       return {
         id: target.id,
         rowValues: rowValues,
         rowValueMapByXValue: rowValueMapByXValue,
         values: values
       };
-    }),
+    }.bind(this)),
         indexMapByTargetId = targets.reduce(function (out, _ref, index) {
       var id = _ref.id;
+
+      _newArrowCheck(this, _this7);
+
       out[id] = index;
       return out;
-    }, {});
+    }.bind(this), {});
+
     return {
       indexMapByTargetId: indexMapByTargetId,
       shapeOffsetTargets: shapeOffsetTargets
@@ -7660,6 +8269,10 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         indexMapByTargetId = _$$$getShapeOffsetDat.indexMapByTargetId;
 
     return function (d, idx) {
+      var _this10 = this;
+
+      _newArrowCheck(this, this);
+
       var id = d.id,
           value = d.value,
           x = d.x,
@@ -7675,8 +8288,12 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
           dataXAsNumber = +x,
           offset = y0;
       shapeOffsetTargets.filter(function (t) {
+        _newArrowCheck(this, _this10);
+
         return t.id !== id;
-      }).forEach(function (t) {
+      }.bind(this)).forEach(function (t) {
+        _newArrowCheck(this, _this10);
+
         var tid = t.id,
             rowValueMapByXValue = t.rowValueMapByXValue,
             rowValues = t.rowValues,
@@ -7695,12 +8312,13 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
             offset += scale(tvalues[dataXAsNumber]) - y0;
           }
         }
-      });
+      }.bind(this));
       return offset;
-    };
+    }.bind(this);
   },
   getBarW: function getBarW(type, axis, targetsNum) {
-    var $$ = this,
+    var _this11 = this,
+        $$ = this,
         config = $$.config,
         org = $$.org,
         scale = $$.scale,
@@ -7708,17 +8326,23 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         isGrouped = type === "bar" && config.data_groups.length,
         configName = type + "_width",
         tickInterval = scale.zoom && !$$.axis.isCategorized() ? org.xDomain.map(function (v) {
+      _newArrowCheck(this, _this11);
+
       return scale.zoom(v);
-    }).reduce(function (a, c) {
+    }.bind(this)).reduce(function (a, c) {
+      _newArrowCheck(this, _this11);
+
       return Math.abs(a) + c;
-    }) / maxDataCount : axis.tickInterval(maxDataCount),
+    }.bind(this)) / maxDataCount : axis.tickInterval(maxDataCount),
         getWidth = function (id) {
+      _newArrowCheck(this, _this11);
+
       var width = id ? config[configName][id] : config[configName],
           ratio = id ? width.ratio : config[configName + "_ratio"],
           max = id ? width.max : config[configName + "_max"],
           w = isNumber(width) ? width : targetsNum ? tickInterval * ratio / targetsNum : 0;
       return max && w > max ? max : w;
-    },
+    }.bind(this),
         result = getWidth();
 
     if (!isGrouped && isObjectType(config[configName])) {
@@ -7727,12 +8351,14 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         _$total: []
       };
       $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
+        _newArrowCheck(this, _this11);
+
         if (config[configName][v.id]) {
           result[v.id] = getWidth(v.id);
 
           result._$total.push(result[v.id] || result._$width);
         }
-      });
+      }.bind(this));
     }
 
     return result;
@@ -7747,7 +8373,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @private
    */
   getShapeByIndex: function getShapeByIndex(shapeName, i, id) {
-    var $$ = this,
+    var _this12 = this,
+        $$ = this,
         $el = $$.$el,
         suffix = isValue(i) ? "-" + i : "",
         shape = $el[shapeName];
@@ -7755,10 +8382,14 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     // filter from shape reference if has
     if (shape && !shape.empty()) {
       shape = shape.filter(function (d) {
+        _newArrowCheck(this, _this12);
+
         return id ? d.id === id : !0;
-      }).filter(function (d) {
+      }.bind(this)).filter(function (d) {
+        _newArrowCheck(this, _this12);
+
         return isValue(i) ? d.index === i : !0;
-      });
+      }.bind(this));
     } else {
       shape = (id ? $el.main.selectAll("." + classes[shapeName + "s"] + $$.getTargetSelectorSuffix(id)) : $el.main).selectAll("." + classes[shapeName] + suffix);
     }
@@ -7781,8 +8412,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     return isWithin;
   },
   getInterpolate: function getInterpolate(d) {
-    var $$ = this,
-        interpolation = $$.getInterpolateType(d);
+    var interpolation = this.getInterpolateType(d);
     return {
       "basis": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveBasis,
       "basis-closed": external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.curveBasisClosed,
@@ -7829,6 +8459,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/size.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8050,16 +8682,17 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @private
    */
   getResettedPadding: function getResettedPadding(v) {
-    var $$ = this,
-        config = $$.config,
+    var config = this.config,
         isNum = isNumber(v),
         p = isNum ? 0 : {};
 
     if (config.padding === !1) {
       isNum || Object.keys(v).forEach(function (key) {
+        _newArrowCheck(this, this);
+
         // when data.lables=true, do not reset top padding
         p[key] = !isEmpty(config.data_labels) && config.data_labels !== !1 && key === "top" ? v[key] : 0;
-      });
+      }.bind(this));
     } else {
       p = v;
     }
@@ -8167,6 +8800,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/text.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8201,8 +8836,10 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         classTexts = $$.getClass("texts", "id"),
         classFocus = $$.classFocus.bind($$),
         mainTextUpdate = $$.$el.main.select("." + $TEXT.chartTexts).selectAll("." + $TEXT.chartText).data(targets).attr("class", function (d) {
+      _newArrowCheck(this, this);
+
       return classChartText(d) + classFocus(d);
-    }),
+    }.bind(this)),
         mainTextEnter = mainTextUpdate.enter().append("g").style("opacity", "0").attr("class", classChartText).style("pointer-events", "none");
     mainTextEnter.append("g").attr("class", classTexts);
   },
@@ -8220,6 +8857,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         text = $el.main.selectAll("." + $TEXT.texts).selectAll("." + $TEXT.text).data($$.labelishData.bind($$));
     $T(text.exit()).style("fill-opacity", "0").remove();
     $el.text = text.enter().append("text").merge(text).attr("class", classText).attr("text-anchor", function (d) {
+      _newArrowCheck(this, this);
+
       // when value is negative or
       var isEndAnchor = d.value < 0;
 
@@ -8229,7 +8868,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       }
 
       return config.axis_rotated ? isEndAnchor ? "end" : "start" : "middle";
-    }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", "0").each(function (d, i, texts) {
+    }.bind(this)).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", "0").each(function (d, i, texts) {
       var node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           value = d.value;
 
@@ -8359,8 +8998,10 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
     if (!rect) {
       $$.$el.svg.append("text").style("visibility", "hidden").style("font", (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(base).style("font")).classed(className, !0).text(text).call(function (v) {
+        _newArrowCheck(this, this);
+
         rect = getBoundingRect(v.node());
-      }).remove();
+      }.bind(this)).remove();
       $$.cache.add(cacheKey, rect);
     }
 
@@ -8381,8 +9022,10 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         getter = forX ? $$.getXForText : $$.getYForText;
     $$.hasType("radar") && types.push("radar");
     types.forEach(function (v) {
+      _newArrowCheck(this, this);
+
       points[v] = $$["generateGet" + capitalize(v) + "Points"](indices[v], !1);
-    });
+    }.bind(this));
     return function (d, i) {
       var type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || $$.isCandlestickType(d) && "candlestick" || $$.isRadarType(d) && "radar" || "line";
       return getter.call($$, points[type](d, i), d, this);
@@ -8403,14 +9046,14 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         isRotated = config.axis_rotated;
 
     if (config.data_labels.centered && $$.isBarType(d)) {
-      var rect = getBoundingRect(textElement),
+      var _rect = getBoundingRect(textElement),
           isPositive = d.value >= 0;
 
       if (isRotated) {
-        var w = (isPositive ? points[1][1] - points[0][1] : points[0][1] - points[1][1]) / 2 + rect.width / 2;
+        var w = (isPositive ? points[1][1] - points[0][1] : points[0][1] - points[1][1]) / 2 + _rect.width / 2;
         return isPositive ? -w - 3 : w + 2;
       } else {
-        var h = (isPositive ? points[0][1] - points[1][1] : points[1][1] - points[0][1]) / 2 + rect.height / 2;
+        var h = (isPositive ? points[0][1] - points[1][1] : points[1][1] - points[0][1]) / 2 + _rect.height / 2;
         return isPositive ? h : -h - 2;
       }
     }
@@ -8562,17 +9205,24 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @private
    */
   markOverlapped: function markOverlapped(id, $$, selector) {
-    var textNodes = $$.$el.arcs.selectAll(selector),
+    var _this5 = this,
+        textNodes = $$.$el.arcs.selectAll(selector),
         filteredTextNodes = textNodes.filter(function (node) {
+      _newArrowCheck(this, _this5);
+
       return node.data.id !== id;
-    }),
+    }.bind(this)),
         textNode = textNodes.filter(function (node) {
+      _newArrowCheck(this, _this5);
+
       return node.data.id === id;
-    }),
+    }.bind(this)),
         translate = getTranslation(textNode.node()),
         calcHypo = function (x, y) {
+      _newArrowCheck(this, _this5);
+
       return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
-    };
+    }.bind(this);
 
     textNode.node() && filteredTextNodes.each(function () {
       var coordinate = getTranslation(this),
@@ -8609,8 +9259,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       ratio = 0;
     }
 
-    var $$ = this,
-        config = $$.config,
+    var config = this.config,
         threshold = config[type + "_label_threshold"] || 0;
     return ratio >= threshold;
   }
@@ -8737,6 +9386,8 @@ function getTextPos(pos, width) {
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/tooltip.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8792,9 +9443,11 @@ function getTextPos(pos, width) {
       }
 
       var data = $$.data.targets.map(function (d) {
+        _newArrowCheck(this, this);
+
         var x = isArc ? 0 : config.tooltip_init_x;
         return $$.addName(d.values[x]);
-      });
+      }.bind(this));
 
       if (isArc) {
         data = [data[config.tooltip_init_x]];
@@ -8831,14 +9484,17 @@ function getTextPos(pos, width) {
    * @private
    */
   getTooltipContent: function getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         api = $$.api,
         config = $$.config,
         state = $$.state,
         _map = ["title", "name", "value"].map(function (v) {
+      _newArrowCheck(this, _this2);
+
       var fn = config["tooltip_format_" + v];
       return isFunction(fn) ? fn.bind(api) : fn;
-    }),
+    }.bind(this)),
         titleFormat = _map[0],
         nameFormat = _map[1],
         valueFormat = _map[2];
@@ -8846,22 +9502,32 @@ function getTextPos(pos, width) {
     titleFormat = titleFormat || defaultTitleFormat;
 
     nameFormat = nameFormat || function (name) {
+      _newArrowCheck(this, _this2);
+
       return name;
-    };
+    }.bind(this);
 
     valueFormat = valueFormat || ($$.isStackNormalized() ? function (v, ratio) {
+      _newArrowCheck(this, _this2);
+
       return (ratio * 100).toFixed(2) + "%";
-    } : defaultValueFormat);
+    }.bind(this) : defaultValueFormat);
 
     var order = config.tooltip_order,
         getRowValue = function (row) {
+      _newArrowCheck(this, _this2);
+
       return $$.axis && $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row);
-    },
+    }.bind(this),
         getBgColor = $$.levelColor ? function (row) {
+      _newArrowCheck(this, _this2);
+
       return $$.levelColor(row.value);
-    } : function (row) {
+    }.bind(this) : function (row) {
+      _newArrowCheck(this, _this2);
+
       return color(row);
-    },
+    }.bind(this),
         contents = config.tooltip_contents,
         tplStr = contents.template,
         targetIds = $$.mapToTargetIds();
@@ -8869,9 +9535,13 @@ function getTextPos(pos, width) {
     if (order === null && config.data_groups.length) {
       // for stacked data, order should aligned with the visually displayed data
       var ids = $$.orderTargets($$.data.targets).map(function (i2) {
+        _newArrowCheck(this, _this2);
+
         return i2.id;
-      }).reverse();
+      }.bind(this)).reverse();
       d.sort(function (a, b) {
+        _newArrowCheck(this, _this2);
+
         var v1 = a ? a.value : null,
             v2 = b ? b.value : null;
 
@@ -8881,13 +9551,15 @@ function getTextPos(pos, width) {
         }
 
         return v1 - v2;
-      });
+      }.bind(this));
     } else if (/^(asc|desc)$/.test(order)) {
       d.sort(function (a, b) {
+        _newArrowCheck(this, _this2);
+
         var v1 = a ? getRowValue(a) : null,
             v2 = b ? getRowValue(b) : null;
         return order === "asc" ? v1 - v2 : v2 - v1;
-      });
+      }.bind(this));
     } else if (isFunction(order)) {
       d.sort(order.bind(api));
     }
@@ -8924,16 +9596,20 @@ function getTextPos(pos, width) {
 
       if ($$.isAreaRangeType(row)) {
         var _map2 = ["high", "low"].map(function (v) {
+          _newArrowCheck(this, _this2);
+
           return sanitise(valueFormat.apply(void 0, [$$.getRangedData(row, v)].concat(param)));
-        }),
+        }.bind(this)),
             high = _map2[0],
             low = _map2[1];
 
         value = "<b>Mid:</b> " + value + " <b>High:</b> " + high + " <b>Low:</b> " + low;
       } else if ($$.isCandlestickType(row)) {
         var _map3 = ["open", "high", "low", "close", "volume"].map(function (v) {
+          _newArrowCheck(this, _this2);
+
           return sanitise(valueFormat.apply(void 0, [$$.getRangedData(row, v, "candlestick")].concat(param)));
-        }),
+        }.bind(this)),
             open = _map3[0],
             _high = _map3[1],
             _low = _map3[2],
@@ -8967,8 +9643,10 @@ function getTextPos(pos, width) {
           if (tplStr && isObject(contents.text)) {
             var index = targetIds.indexOf(row.id);
             Object.keys(contents.text).forEach(function (key) {
+              _newArrowCheck(this, this);
+
               contentValue[key] = contents.text[key][index];
-            });
+            }.bind(this));
           }
 
           text += tplProcess(tpl[1], contentValue);
@@ -9057,10 +9735,12 @@ function getTextPos(pos, width) {
     }; // make sure to not be positioned out of viewport
 
     Object.keys(pos).forEach(function (v) {
+      _newArrowCheck(this, this);
+
       if (pos[v] < 0) {
         pos[v] = 0;
       }
-    });
+    }.bind(this));
     return pos;
   },
 
@@ -9071,15 +9751,18 @@ function getTextPos(pos, width) {
    * @private
    */
   showTooltip: function showTooltip(selectedData, eventRect) {
-    var $$ = this,
+    var _this5 = this,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         state = $$.state,
         tooltip = $$.$el.tooltip,
         bindto = config.tooltip_contents.bindto,
         dataToShow = selectedData.filter(function (d) {
+      _newArrowCheck(this, _this5);
+
       return d && isValue($$.getBaseValue(d));
-    });
+    }.bind(this));
 
     if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
       return;
@@ -9133,13 +9816,15 @@ function getTextPos(pos, width) {
 
       var pos = fnPos(dataToShow, width, height, eventRect, currPos);
       ["top", "left"].forEach(function (v) {
+        _newArrowCheck(this, _this5);
+
         var value = pos[v];
         tooltip.style(v, value + "px"); // Remember left pos in percentage to be used on resize call
 
         if (v === "left" && !datum.xPosInPercent) {
           datum.xPosInPercent = value / state.current.width * 100;
         }
-      });
+      }.bind(this));
     }
   },
 
@@ -9153,6 +9838,8 @@ function getTextPos(pos, width) {
         state = $$.state,
         tooltip = $$.$el.tooltip;
     resizeFunction.add(function () {
+      _newArrowCheck(this, this);
+
       if (tooltip.style("display") === "block") {
         var current = state.current,
             _tooltip$datum = tooltip.datum(),
@@ -9168,7 +9855,7 @@ function getTextPos(pos, width) {
 
         tooltip.style("left", _value + "px");
       }
-    });
+    }.bind(this));
   },
 
   /**
@@ -9200,6 +9887,7 @@ function getTextPos(pos, width) {
    */
   _handleLinkedCharts: function _handleLinkedCharts(show, index) {
     var _event,
+        _this7 = this,
         $$ = this,
         charts = $$.charts,
         config = $$.config,
@@ -9210,8 +9898,12 @@ function getTextPos(pos, width) {
     if ((_event = event) != null && _event.isTrusted && config.tooltip_linked && charts.length > 1) {
       var linkedName = config.tooltip_linked_name;
       charts.filter(function (c) {
+        _newArrowCheck(this, _this7);
+
         return c !== $$.api;
-      }).forEach(function (c) {
+      }.bind(this)).forEach(function (c) {
+        _newArrowCheck(this, _this7);
+
         var _c$internal = c.internal,
             config = _c$internal.config,
             $el = _c$internal.$el,
@@ -9229,7 +9921,7 @@ function getTextPos(pos, width) {
             });
           } catch (e) {}
         }
-      });
+      }.bind(this));
     }
   }
 });
@@ -9319,6 +10011,8 @@ function getTextPos(pos, width) {
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/type.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -9331,9 +10025,11 @@ function getTextPos(pos, width) {
         config = $$.config,
         withoutFadeIn = $$.state.withoutFadeIn;
     $$.mapToTargetIds(targetIds).forEach(function (id) {
+      _newArrowCheck(this, this);
+
       withoutFadeIn[id] = type === config.data_types[id];
       config.data_types[id] = type;
-    });
+    }.bind(this));
 
     if (!targetIds) {
       config.data_type = type;
@@ -9348,6 +10044,8 @@ function getTextPos(pos, width) {
     var $$ = this,
         current = $$.state.current;
     Object.keys(TYPE).forEach(function (v) {
+      _newArrowCheck(this, this);
+
       var t = TYPE[v],
           has = $$.hasType(t, null, !0),
           idx = current.types.indexOf(t);
@@ -9357,7 +10055,7 @@ function getTextPos(pos, width) {
       } else if (idx > -1 && !has) {
         current.types.splice(idx, 1);
       }
-    }); // Update current chart elements reference
+    }.bind(this)); // Update current chart elements reference
 
     $$.setChartElements();
   },
@@ -9371,7 +10069,9 @@ function getTextPos(pos, width) {
    * @private
    */
   hasType: function hasType(type, targetsValue, checkFromData) {
-    var _current$types, _targets;
+    var _current$types,
+        _targets,
+        _this3 = this;
 
     if (checkFromData === void 0) {
       checkFromData = !1;
@@ -9388,18 +10088,22 @@ function getTextPos(pos, width) {
       has = !0;
     } else if ((_targets = targets) != null && _targets.length) {
       targets.forEach(function (target) {
+        _newArrowCheck(this, _this3);
+
         var t = types[target.id];
 
         if (t === type || !t && type === "line") {
           has = !0;
         }
-      });
+      }.bind(this));
     } else if (Object.keys(types).length) {
       Object.keys(types).forEach(function (id) {
+        _newArrowCheck(this, _this3);
+
         if (types[id] === type) {
           has = !0;
         }
-      });
+      }.bind(this));
     } else {
       has = config.data_type === type;
     }
@@ -9416,7 +10120,7 @@ function getTextPos(pos, width) {
    * @private
    */
   hasTypeOf: function hasTypeOf(type, targets, exclude) {
-    var _this = this;
+    var _this4 = this;
 
     if (exclude === void 0) {
       exclude = [];
@@ -9424,10 +10128,14 @@ function getTextPos(pos, width) {
 
     if (type in TYPE_BY_CATEGORY) {
       return !TYPE_BY_CATEGORY[type].filter(function (v) {
+        _newArrowCheck(this, _this4);
+
         return exclude.indexOf(v) === -1;
-      }).every(function (v) {
-        return !_this.hasType(v, targets);
-      });
+      }.bind(this)).every(function (v) {
+        _newArrowCheck(this, _this4);
+
+        return !this.hasType(v, targets);
+      }.bind(this));
     }
 
     return !1;
@@ -9538,8 +10246,10 @@ function getTextPos(pos, width) {
    */
   labelishData: function labelishData(d) {
     return this.isBarType(d) || this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isCandlestickType(d) || this.isRadarType(d) ? d.values.filter(function (v) {
+      _newArrowCheck(this, this);
+
       return isNumber(v.value) || !!v.value;
-    }) : [];
+    }.bind(this)) : [];
   },
   barLineBubbleData: function barLineBubbleData(d) {
     return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ? d.values : [];
@@ -9550,6 +10260,8 @@ function getTextPos(pos, width) {
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/ChartInternal.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -9756,23 +10468,28 @@ var ChartInternal = /*#__PURE__*/function () {
   ;
 
   _proto.initToRender = function initToRender(forced) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         chart = $$.$el.chart,
         isHidden = function () {
+      _newArrowCheck(this, _this);
+
       return chart.style("display") === "none" || chart.style("visibility") === "hidden";
-    },
+    }.bind(this),
         isLazy = config.render.lazy || isHidden(),
         MutationObserver = win.MutationObserver;
 
     if (isLazy && MutationObserver && config.render.observe !== !1 && !forced) {
       new MutationObserver(function (mutation, observer) {
+        _newArrowCheck(this, _this);
+
         if (!isHidden()) {
           observer.disconnect();
           state.rendered || $$.initToRender(!0);
         }
-      }).observe(chart.node(), {
+      }.bind(this)).observe(chart.node(), {
         attributes: !0,
         attributeFilter: ["class", "style"]
       });
@@ -9808,13 +10525,15 @@ var ChartInternal = /*#__PURE__*/function () {
       var isDragZoom = $$.config.zoom_enabled && $$.config.zoom_type === "drag";
 
       format.defaultAxisTime = function (d) {
+        _newArrowCheck(this, this);
+
         var _$$$scale = $$.scale,
             x = _$$$scale.x,
             zoom = _$$$scale.zoom,
             isZoomed = isDragZoom ? zoom : zoom && x.orgDomain().toString() !== zoom.domain().toString(),
             specifier = d.getMilliseconds() && ".%L" || d.getSeconds() && ".:%S" || d.getMinutes() && "%I:%M" || d.getHours() && "%I %p" || d.getDate() !== 1 && "%b %d" || isZoomed && d.getDate() === 1 && "%b\'%y" || d.getMonth() && "%-m/%-d" || "%Y";
         return format.axisTime(specifier)(d);
-      };
+      }.bind(this);
     }
 
     state.isLegendRight = config.legend_position === "right";
@@ -9827,7 +10546,8 @@ var ChartInternal = /*#__PURE__*/function () {
   };
 
   _proto.initWithData = function initWithData(data) {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         state = $$.state,
@@ -9914,8 +10634,10 @@ var ChartInternal = /*#__PURE__*/function () {
 
       if (hasAxis) {
         ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
+          _newArrowCheck(this, _this3);
+
           $$.appendClip($el.defs, state.clip[v]);
-        });
+        }.bind(this));
       } // Append data background color filter definition
 
 
@@ -9923,10 +10645,14 @@ var ChartInternal = /*#__PURE__*/function () {
 
       if (hasColorPatterns) {
         $$.patterns.forEach(function (p) {
+          _newArrowCheck(this, _this3);
+
           return $el.defs.append(function () {
+            _newArrowCheck(this, this);
+
             return p.node;
-          });
-        });
+          }.bind(this));
+        }.bind(this));
       }
     }
 
@@ -10004,7 +10730,8 @@ var ChartInternal = /*#__PURE__*/function () {
   ;
 
   _proto.initChartElements = function initChartElements() {
-    var $$ = this,
+    var _this5 = this,
+        $$ = this,
         _$$$state = $$.state,
         hasAxis = _$$$state.hasAxis,
         hasRadar = _$$$state.hasRadar,
@@ -10012,12 +10739,14 @@ var ChartInternal = /*#__PURE__*/function () {
 
     if (hasAxis) {
       ["bar", "bubble", "candlestick", "line"].forEach(function (v) {
+        _newArrowCheck(this, _this5);
+
         var name = capitalize(v);
 
         if (v === "line" && $$.hasTypeOf(name) || $$.hasType(v)) {
           types.push(name);
         }
-      });
+      }.bind(this));
     } else {
       var hasPolar = $$.hasType("polar");
 
@@ -10035,8 +10764,10 @@ var ChartInternal = /*#__PURE__*/function () {
     }
 
     types.forEach(function (v) {
+      _newArrowCheck(this, _this5);
+
       $$["init" + v]();
-    });
+    }.bind(this));
     notEmpty($$.config.data_labels) && !$$.hasArcType(null, ["radar"]) && $$.initText();
   }
   /**
@@ -10119,25 +10850,30 @@ var ChartInternal = /*#__PURE__*/function () {
   ;
 
   _proto.updateTargets = function updateTargets(targets) {
-    var $$ = this,
+    var _this6 = this,
+        $$ = this,
         _$$$state2 = $$.state,
         hasAxis = _$$$state2.hasAxis,
         hasRadar = _$$$state2.hasRadar,
         helper = function (type) {
+      _newArrowCheck(this, _this6);
+
       return $$["updateTargetsFor" + type](targets.filter($$["is" + type + "Type"].bind($$)));
-    };
+    }.bind(this);
 
     // Text
     $$.updateTargetsForText(targets);
 
     if (hasAxis) {
       ["bar", "candlestick", "line"].forEach(function (v) {
+        _newArrowCheck(this, _this6);
+
         var name = capitalize(v);
 
         if (v === "line" && $$.hasTypeOf(name) || $$.hasType(v)) {
           helper(name);
         }
-      }); // Sub Chart
+      }.bind(this)); // Sub Chart
 
       $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets); // Arc, Polar, Radar
     } else if ($$.hasArcType(targets)) {
@@ -10184,8 +10920,10 @@ var ChartInternal = /*#__PURE__*/function () {
     }
 
     $T(svg.selectAll(selector).filter(function (d) {
+      _newArrowCheck(this, this);
+
       return $$.isTargetToShow(d.id);
-    })).style("opacity", null);
+    }.bind(this))).style("opacity", null);
   };
 
   _proto.getWithOption = function getWithOption(options) {
@@ -10205,6 +10943,8 @@ var ChartInternal = /*#__PURE__*/function () {
       Y: !0
     };
     Object.keys(withOptions).forEach(function (key) {
+      _newArrowCheck(this, this);
+
       var defVal = withOptions[key];
 
       if (isString(defVal)) {
@@ -10212,7 +10952,7 @@ var ChartInternal = /*#__PURE__*/function () {
       }
 
       withOptions[key] = getOption(options, "with" + key, defVal);
-    });
+    }.bind(this));
     return withOptions;
   };
 
@@ -10224,30 +10964,40 @@ var ChartInternal = /*#__PURE__*/function () {
   };
 
   _proto.bindResize = function bindResize() {
-    var $$ = this,
+    var _this9 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         resizeFunction = generateResize(),
         list = [];
+
     list.push(function () {
+      _newArrowCheck(this, _this9);
+
       return callFn(config.onresize, $$, $$.api);
-    });
+    }.bind(this));
 
     if (config.resize_auto) {
       list.push(function () {
+        _newArrowCheck(this, _this9);
+
         state.resizing = !0;
         $$.api.flush(!1);
-      });
+      }.bind(this));
     }
 
     list.push(function () {
+      _newArrowCheck(this, _this9);
+
       callFn(config.onresized, $$, $$.api);
       state.resizing = !1;
-    }); // add resize functions
+    }.bind(this)); // add resize functions
 
     list.forEach(function (v) {
+      _newArrowCheck(this, _this9);
+
       return resizeFunction.add(v);
-    });
+    }.bind(this));
     $$.resizeFunction = resizeFunction; // attach resize event
 
     win.addEventListener("resize", $$.resizeFunction = resizeFunction);
@@ -10261,19 +11011,20 @@ var ChartInternal = /*#__PURE__*/function () {
   ;
 
   _proto.callPluginHook = function callPluginHook(phase) {
-    for (var _this = this, _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+    for (var _this10 = this, _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       args[_key - 1] = arguments[_key];
     }
 
     this.config.plugins.forEach(function (v) {
-      if (phase === "$beforeInit") {
-        v.$$ = _this;
+      _newArrowCheck(this, _this10);
 
-        _this.api.plugins.push(v);
+      if (phase === "$beforeInit") {
+        v.$$ = this;
+        this.api.plugins.push(v);
       }
 
       v[phase].apply(v, args);
-    });
+    }.bind(this));
   };
 
   return ChartInternal;
@@ -10283,6 +11034,8 @@ var ChartInternal = /*#__PURE__*/function () {
 extend(ChartInternal.prototype, [// common
 convert, data_data, load, category, internals_class, internals_color, domain, interactions_interaction, format, internals_legend, redraw, scale, shape, size, internals_text, internals_title, internals_tooltip, transform, type]);
 ;// CONCATENATED MODULE: ./src/config/config.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10295,11 +11048,14 @@ convert, data_data, load, category, internals_class, internals_color, domain, in
  * @private
  */
 function loadConfig(config) {
-  var thisConfig = this.config,
+  var _this = this,
+      thisConfig = this.config,
       target,
       keys,
       read,
       find = function () {
+    _newArrowCheck(this, _this);
+
     var key = keys.shift();
 
     if (key && target && isObjectType(target) && key in target) {
@@ -10310,9 +11066,11 @@ function loadConfig(config) {
     }
 
     return undefined;
-  };
+  }.bind(this);
 
   Object.keys(thisConfig).forEach(function (key) {
+    _newArrowCheck(this, _this);
+
     target = config;
     keys = key.split("_");
     read = find();
@@ -10320,9 +11078,11 @@ function loadConfig(config) {
     if (isDefined(read)) {
       thisConfig[key] = read;
     }
-  });
+  }.bind(this));
 }
 ;// CONCATENATED MODULE: ./src/Chart/api/chart.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10446,15 +11206,21 @@ function loadConfig(config) {
       chart.classed("bb", !1).style("position", null).selectChildren().remove(); // releasing own references
 
       Object.keys(this).forEach(function (key) {
+        _newArrowCheck(this, _this);
+
         key === "internal" && Object.keys($$).forEach(function (k) {
+          _newArrowCheck(this, this);
+
           $$[k] = null;
-        });
-        _this[key] = null;
-        delete _this[key];
-      }); // release prototype chains
+        }.bind(this));
+        this[key] = null;
+        delete this[key];
+      }.bind(this)); // release prototype chains
 
       for (var key in this) {
-        this[key] = function () {};
+        this[key] = function () {
+          _newArrowCheck(this, _this);
+        }.bind(this);
       }
     }
 
@@ -10521,6 +11287,8 @@ function loadConfig(config) {
   }
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/data.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10551,10 +11319,14 @@ function api_data_data(targetIds) {
   if (!isUndefined(targetIds)) {
     var ids = isArray(targetIds) ? targetIds : [targetIds];
     return targets.filter(function (t) {
+      _newArrowCheck(this, this);
+
       return ids.some(function (v) {
+        _newArrowCheck(this, this);
+
         return v === t.id;
-      });
-    });
+      }.bind(this));
+    }.bind(this));
   }
 
   return targets;
@@ -10609,11 +11381,15 @@ extend(api_data_data, {
       if (isArray(targets)) {
         values = [];
         targets.forEach(function (v) {
+          _newArrowCheck(this, this);
+
           var dataValue = v.values.map(function (d) {
+            _newArrowCheck(this, this);
+
             return d.value;
-          });
+          }.bind(this));
           flat ? values = values.concat(dataValue) : values.push(dataValue);
-        });
+        }.bind(this));
       }
     }
 
@@ -10722,6 +11498,10 @@ extend(api_data_data, {
   data: api_data_data
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/export.ts
+
+
+var export_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10738,10 +11518,14 @@ extend(api_data_data, {
  * @see https://developer.mozilla.org/ko/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
  */
 var b64EncodeUnicode = function (str) {
+  _newArrowCheck(this, export_this);
+
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p) {
+    _newArrowCheck(this, this);
+
     return String.fromCharCode(+("0x" + p));
-  }));
-};
+  }.bind(this)));
+}.bind(undefined);
 /**
  * Convert svg node to data url
  * @param {HTMLElement} node target node
@@ -10753,16 +11537,21 @@ var b64EncodeUnicode = function (str) {
 
 
 function nodeToSvgDataUrl(node, option, orgSize) {
-  var _ref = option || orgSize,
+  var _this3 = this,
+      _ref = option || orgSize,
       width = _ref.width,
       height = _ref.height,
       serializer = new XMLSerializer(),
       clone = node.cloneNode(!0),
       cssText = getCssRules(toArray(browser_doc.styleSheets)).filter(function (r) {
+    _newArrowCheck(this, _this3);
+
     return r.cssText;
-  }).map(function (r) {
+  }.bind(this)).map(function (r) {
+    _newArrowCheck(this, _this3);
+
     return r.cssText;
-  });
+  }.bind(this));
 
   clone.setAttribute("xmlns", external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.xhtml);
   var nodeXml = serializer.serializeToString(clone),
@@ -10819,8 +11608,7 @@ function nodeToSvgDataUrl(node, option, orgSize) {
    *  );
    */
   export: function _export(option, callback) {
-    var _this = this,
-        $$ = this.internal,
+    var $$ = this.internal,
         state = $$.state,
         chart = $$.$el.chart,
         _state$current = state.current,
@@ -10842,13 +11630,15 @@ function nodeToSvgDataUrl(node, option, orgSize) {
       img.crossOrigin = "Anonymous";
 
       img.onload = function () {
+        _newArrowCheck(this, this);
+
         var canvas = browser_doc.createElement("canvas"),
             ctx = canvas.getContext("2d");
         canvas.width = opt.width || width;
         canvas.height = opt.height || height;
         ctx.drawImage(img, 0, 0);
-        callback.bind(_this)(canvas.toDataURL(opt.mimeType));
-      };
+        callback.bind(this)(canvas.toDataURL(opt.mimeType));
+      }.bind(this);
 
       img.src = svgDataUrl;
     }
@@ -10857,6 +11647,8 @@ function nodeToSvgDataUrl(node, option, orgSize) {
   }
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/focus.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10898,8 +11690,10 @@ function nodeToSvgDataUrl(node, option, orgSize) {
     $$.toggleFocusLegend(targetIds, !0);
     state.focusedTargetIds = targetIds;
     state.defocusedTargetIds = state.defocusedTargetIds.filter(function (id) {
+      _newArrowCheck(this, this);
+
       return targetIds.indexOf(id) < 0;
-    });
+    }.bind(this));
   },
 
   /**
@@ -10933,8 +11727,10 @@ function nodeToSvgDataUrl(node, option, orgSize) {
 
     $$.toggleFocusLegend(targetIds, !1);
     state.focusedTargetIds = state.focusedTargetIds.filter(function (id) {
+      _newArrowCheck(this, this);
+
       return targetIds.indexOf(id) < 0;
-    });
+    }.bind(this));
     state.defocusedTargetIds = targetIds;
   },
 
@@ -11046,6 +11842,8 @@ var legend_legend = {
   legend: legend_legend
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/load.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11183,16 +11981,20 @@ var legend_legend = {
    * });
    */
   load: function load(args) {
-    var $$ = this.internal,
+    var _this = this,
+        $$ = this.internal,
         config = $$.config;
+
     // update xs if specified
     args.xs && $$.addXs(args.xs); // update names if exists
 
     "names" in args && this.data.names(args.names); // update classes if exists
 
     "classes" in args && Object.keys(args.classes).forEach(function (id) {
+      _newArrowCheck(this, _this);
+
       config.data_classes[id] = args.classes[id];
-    }); // update categories if exists
+    }.bind(this)); // update categories if exists
 
     if ("categories" in args && $$.axis.isCategorized()) {
       config.axis_x_categories = args.categories;
@@ -11200,22 +12002,30 @@ var legend_legend = {
 
 
     "axes" in args && Object.keys(args.axes).forEach(function (id) {
+      _newArrowCheck(this, _this);
+
       config.data_axes[id] = args.axes[id];
-    }); // update colors if exists
+    }.bind(this)); // update colors if exists
 
     "colors" in args && Object.keys(args.colors).forEach(function (id) {
+      _newArrowCheck(this, _this);
+
       config.data_colors[id] = args.colors[id];
-    }); // unload if needed
+    }.bind(this)); // unload if needed
 
     if ("unload" in args && args.unload !== !1) {
       // TODO: do not unload if target will load (included in url/rows/columns)
       $$.unload($$.mapToTargetIds(args.unload === !0 ? null : args.unload), function () {
+        _newArrowCheck(this, _this);
+
         // to mitigate improper rendering for multiple consecutive calls
         // https://github.com/naver/billboard.js/issues/2121
         win.requestIdleCallback(function () {
+          _newArrowCheck(this, this);
+
           return $$.loadFromArgs(args);
-        });
-      });
+        }.bind(this));
+      }.bind(this));
     } else {
       $$.loadFromArgs(args);
     }
@@ -11245,8 +12055,7 @@ var legend_legend = {
    *  });
    */
   unload: function unload(argsValue) {
-    var _this = this,
-        $$ = this.internal,
+    var $$ = this.internal,
         args = argsValue || {};
 
     if (isArray(args)) {
@@ -11261,17 +12070,21 @@ var legend_legend = {
 
     var ids = $$.mapToTargetIds(args.ids);
     $$.unload(ids, function () {
+      _newArrowCheck(this, this);
+
       $$.redraw({
         withUpdateOrgXDomain: !0,
         withUpdateXDomain: !0,
         withLegend: !0
       });
       $$.cache.remove(ids);
-      args.done && args.done.call(_this);
-    });
+      args.done && args.done.call(this);
+    }.bind(this));
   }
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/show.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11290,8 +12103,10 @@ function showHide(show, targetIdsValue, options) {
       $$ = this.internal,
       targetIds = $$.mapToTargetIds(targetIdsValue),
       hiddenIds = $$.state.hiddenTargetIds.map(function (v) {
+    _newArrowCheck(this, _this);
+
     return targetIds.indexOf(v) > -1 && v;
-  }).filter(Boolean);
+  }.bind(this)).filter(Boolean);
 
   $$.state.toggling = !0;
   $$[(show ? "remove" : "add") + "HiddenTargetIds"](targetIds);
@@ -11304,14 +12119,16 @@ function showHide(show, targetIdsValue, options) {
   }
 
   $$.$T(targets).style("opacity", opacity, "important").call(endall, function () {
+    _newArrowCheck(this, _this);
+
     // https://github.com/naver/billboard.js/issues/1758
     if (!show && hiddenIds.length === 0) {
       targets.style("display", "none");
-      callFn($$.config.data_onhidden, _this, targetIds);
+      callFn($$.config.data_onhidden, this, targetIds);
     }
 
     targets.style("opacity", opacity);
-  });
+  }.bind(this));
   options.withLegend && $$[(show ? "show" : "hide") + "Legend"](targetIds);
   $$.redraw({
     withUpdateOrgXDomain: !0,
@@ -11409,17 +12226,23 @@ function showHide(show, targetIdsValue, options) {
     };
     // sort show & hide target ids
     $$.mapToTargetIds(targetIds).forEach(function (id) {
+      _newArrowCheck(this, _this2);
+
       return targets[$$.isTargetToShow(id) ? "hide" : "show"].push(id);
-    }); // perform show & hide task separately
+    }.bind(this)); // perform show & hide task separately
     // https://github.com/naver/billboard.js/issues/454
 
     targets.show.length && this.show(targets.show, options);
     targets.hide.length && setTimeout(function () {
-      return _this2.hide(targets.hide, options);
-    }, 0);
+      _newArrowCheck(this, _this2);
+
+      return this.hide(targets.hide, options);
+    }.bind(this), 0);
   }
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/tooltip.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11515,8 +12338,10 @@ var tooltip_tooltip = {
     }
 
     (inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach(function (eventName) {
+      _newArrowCheck(this, this);
+
       $$.dispatchEvent(eventName, index, mouse);
-    });
+    }.bind(this));
   },
 
   /**
@@ -11532,11 +12357,13 @@ var tooltip_tooltip = {
         data = tooltip == null ? void 0 : tooltip.datum();
 
     if (data) {
-      var index = JSON.parse(data.current)[0].index; // make to finalize, possible pending event flow set from '.tooltip.show()' call
+      var _index = JSON.parse(data.current)[0].index; // make to finalize, possible pending event flow set from '.tooltip.show()' call
 
       (inputType === "mouse" ? ["mouseout"] : ["touchend"]).forEach(function (eventName) {
-        $$.dispatchEvent(eventName, index);
-      });
+        _newArrowCheck(this, this);
+
+        $$.dispatchEvent(eventName, _index);
+      }.bind(this));
     } // reset last touch point index
 
 
@@ -11551,6 +12378,8 @@ var tooltip_tooltip = {
   tooltip: tooltip_tooltip
 });
 ;// CONCATENATED MODULE: ./src/Chart/Chart.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11637,6 +12466,8 @@ var Chart = function Chart(options) {
 
   (function bindThis(fn, target, argThis) {
     Object.keys(fn).forEach(function (key) {
+      _newArrowCheck(this, this);
+
       var isFunc = isFunction(fn[key]),
           isChild = target !== argThis,
           isNotNil = notEmpty(fn[key]),
@@ -11651,7 +12482,7 @@ var Chart = function Chart(options) {
       }
 
       hasChild && bindThis(fn[key], target[key], argThis);
-    });
+    }.bind(this));
   })(Chart.prototype, this, this);
 
   loadConfig.call($$, options);
@@ -11663,6 +12494,8 @@ var Chart = function Chart(options) {
 
 extend(Chart.prototype, [chart, api_color, api_data, api_export, api_focus, api_legend, api_load, show, api_tooltip]);
 ;// CONCATENATED MODULE: ./src/Chart/api/axis.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11677,25 +12510,32 @@ extend(Chart.prototype, [chart, api_color, api_data, api_export, api_focus, api_
  * @private
  */
 function setMinMax($$, type, value) {
-  var config = $$.config,
+  var _this = this,
+      config = $$.config,
       helper = function (key, value) {
+    _newArrowCheck(this, _this);
+
     var v = isNumber(value) ? value : value === !1 ? undefined : null;
 
     if (v !== null) {
       config["axis_" + key + "_" + type] = v;
     }
-  };
+  }.bind(this);
 
   if (isDefined(value)) {
     if (isObjectType(value)) {
       Object.keys(value).forEach(function (key) {
+        _newArrowCheck(this, _this);
+
         helper(key, value[key]);
-      });
+      }.bind(this));
     } else if (isNumber(value) || value === !1) {
       // shorthand values affects only y and y2.
       ["y", "y2"].forEach(function (key) {
+        _newArrowCheck(this, _this);
+
         helper(key, value);
-      });
+      }.bind(this));
     }
 
     $$.redraw({
@@ -11754,24 +12594,29 @@ var axis = {
    * // }
    */
   labels: function labels(_labels) {
-    var $$ = this.internal,
+    var _this2 = this,
+        $$ = this.internal,
         labelText;
 
     if (_labels) {
       Object.keys(_labels).forEach(function (axisId) {
+        _newArrowCheck(this, _this2);
+
         $$.axis.setLabelText(axisId, _labels[axisId]);
-      });
+      }.bind(this));
       $$.axis.updateLabels();
     }
 
     ["x", "y", "y2"].forEach(function (v) {
+      _newArrowCheck(this, _this2);
+
       var text = $$.axis.getLabelText(v);
 
       if (text) {
         labelText || (labelText = {});
         labelText[v] = text;
       }
-    });
+    }.bind(this));
     return labelText;
   },
 
@@ -12170,6 +13015,8 @@ extend(ygrids, {
   }
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/regions.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12258,19 +13105,25 @@ extend(regions, {
    * chart.regions.remove();
    */
   remove: function remove(optionsValue) {
-    var $$ = this.internal,
+    var _this = this,
+        $$ = this.internal,
         config = $$.config,
         $T = $$.$T,
         options = optionsValue || {},
         classes = getOption(options, "classes", [$REGION.region]),
         regions = $$.$el.main.select("." + $REGION.regions).selectAll(classes.map(function (c) {
+      _newArrowCheck(this, _this);
+
       return "." + c;
-    }));
+    }.bind(this)));
+
     $T(regions).style("opacity", "0").remove();
     regions = config.regions;
 
     if (Object.keys(options).length) {
       regions = regions.filter(function (region) {
+        _newArrowCheck(this, _this);
+
         var found = !1;
 
         if (!region.class) {
@@ -12278,12 +13131,14 @@ extend(regions, {
         }
 
         region.class.split(" ").forEach(function (c) {
+          _newArrowCheck(this, this);
+
           if (classes.indexOf(c) >= 0) {
             found = !0;
           }
-        });
+        }.bind(this));
         return !found;
-      });
+      }.bind(this));
       config.regions = regions;
     } else {
       config.regions = [];
@@ -12369,6 +13224,8 @@ extend(regions, {
   }
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/flow.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12425,7 +13282,8 @@ extend(regions, {
    * });
    */
   flow: function flow(args) {
-    var $$ = this.internal,
+    var _this = this,
+        $$ = this.internal,
         data,
         domain,
         length = 0,
@@ -12447,6 +13305,8 @@ extend(regions, {
         isTimeSeries = $$.axis.isTimeSeries();
     // Update/Add data
     $$.data.targets.forEach(function (t) {
+      _newArrowCheck(this, _this);
+
       var found = !1;
 
       for (var i = 0; i < targets.length; i++) {
@@ -12474,9 +13334,11 @@ extend(regions, {
       }
 
       found || notfoundIds.push(t.id);
-    }); // Append null for not found targets
+    }.bind(this)); // Append null for not found targets
 
     $$.data.targets.forEach(function (t) {
+      _newArrowCheck(this, _this);
+
       for (var i = 0; i < notfoundIds.length; i++) {
         if (t.id === notfoundIds[i]) {
           tail = t.values[t.values.length - 1].index + 1;
@@ -12491,10 +13353,12 @@ extend(regions, {
           }
         }
       }
-    }); // Generate null values for new target
+    }.bind(this)); // Generate null values for new target
 
     if ($$.data.targets.length) {
       targets.forEach(function (t) {
+        _newArrowCheck(this, _this);
+
         var missing = [];
 
         for (var i = $$.data.targets[0].values[0].index; i < tail; i++) {
@@ -12507,14 +13371,16 @@ extend(regions, {
         }
 
         t.values.forEach(function (v) {
+          _newArrowCheck(this, this);
+
           v.index += tail;
 
           if (!isTimeSeries) {
             v.x += tail;
           }
-        });
+        }.bind(this));
         t.values = missing.concat(t.values);
-      });
+      }.bind(this));
     }
 
     $$.data.targets = $$.data.targets.concat(targets); // add remained
@@ -12529,8 +13395,10 @@ extend(regions, {
       length = 0;
       to = isTimeSeries ? parseDate.call($$, args.to) : args.to;
       baseTarget.values.forEach(function (v) {
+        _newArrowCheck(this, _this);
+
         v.x < to && length++;
-      });
+      }.bind(this));
     } else if (isDefined(args.length)) {
       length = args.length;
     } // If only one data, update the domain to flow from left edge of the chart
@@ -12571,6 +13439,8 @@ extend(regions, {
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(10);
 ;// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRendererHelper.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12607,12 +13477,15 @@ var AxisRendererHelper = /*#__PURE__*/function () {
 
 
   AxisRendererHelper.getSizeFor1Char = function getSizeFor1Char(node) {
-    // default size for one character
-    var size = {
+    var _this = this,
+        size = {
       w: 5.5,
       h: 11.5
     };
+
     node.empty() || node.select("text").text("0").call(function (el) {
+      _newArrowCheck(this, _this);
+
       try {
         var _el$node$getBBox = el.node().getBBox(),
             width = _el$node$getBBox.width,
@@ -12625,11 +13498,13 @@ var AxisRendererHelper = /*#__PURE__*/function () {
       } catch (e) {} finally {
         el.text("");
       }
-    });
+    }.bind(this));
 
     this.getSizeFor1Char = function () {
+      _newArrowCheck(this, _this);
+
       return size;
-    };
+    }.bind(this);
 
     return size;
   }
@@ -12644,17 +13519,27 @@ var AxisRendererHelper = /*#__PURE__*/function () {
   var _proto = AxisRendererHelper.prototype;
 
   _proto.getTickTransformSetter = function getTickTransformSetter(id) {
-    var config = this.config,
+    var _this2 = this,
+        config = this.config,
         fn = id === "x" ? function (value) {
+      _newArrowCheck(this, _this2);
+
       return "translate(" + (value + config.tickOffset) + ",0)";
-    } : function (value) {
+    }.bind(this) : function (value) {
+      _newArrowCheck(this, _this2);
+
       return "translate(0," + value + ")";
-    };
+    }.bind(this);
+
     return function (selection, scale) {
+      _newArrowCheck(this, _this2);
+
       selection.attr("transform", function (d) {
+        _newArrowCheck(this, this);
+
         return fn(Math.ceil(scale(d)));
-      });
-    };
+      }.bind(this));
+    }.bind(this);
   };
 
   _proto.scaleExtent = function scaleExtent(domain) {
@@ -12698,10 +13583,12 @@ var AxisRendererHelper = /*#__PURE__*/function () {
       }
 
       ticks = ticks.map(function (v) {
+        _newArrowCheck(this, this);
+
         // round the tick value if is number
         var r = isString(v) && isNumber(v) && !isNaN(v) && Math.round(v * 10) / 10 || v;
         return r;
-      });
+      }.bind(this));
     } else {
       for (var i = Math.ceil(start); i < end; i++) {
         ticks.push(i);
@@ -12758,6 +13645,8 @@ var AxisRendererHelper = /*#__PURE__*/function () {
 
 
 ;// CONCATENATED MODULE: ./src/ChartInternal/Axis/AxisRenderer.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12809,12 +13698,12 @@ var AxisRenderer = /*#__PURE__*/function () {
 
   _proto.create = function create(g) {
     var ctx = this,
-        config = this.config,
-        helper = this.helper,
-        params = this.params,
+        config = ctx.config,
+        helper = ctx.helper,
+        params = ctx.params,
         scale = helper.scale,
         orient = config.orient,
-        splitTickText = this.splitTickText.bind(this),
+        splitTickText = this.splitTickText.bind(ctx),
         isLeftRight = /^(left|right)$/.test(orient),
         isTopBottom = /^(top|bottom)$/.test(orient),
         tickTransform = helper.getTickTransformSetter(isTopBottom ? "x" : "y"),
@@ -12840,9 +13729,11 @@ var AxisRenderer = /*#__PURE__*/function () {
         $g; // // get the axis' tick position configuration
 
     g.each(function () {
-      var g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
+      var _this = this,
+          g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           scale0 = this.__chart__ || scale,
           scale1 = helper.copyScale();
+
       $g = g;
       this.__chart__ = scale1;
       config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0; // update selection - data join
@@ -12851,9 +13742,11 @@ var AxisRenderer = /*#__PURE__*/function () {
 
       path.enter().append("path").attr("class", "domain") // https://observablehq.com/@d3/d3-selection-2-0
       .merge(path).attr("d", function () {
+        _newArrowCheck(this, _this);
+
         var outerTickSized = config.outerTickSize * sign;
         return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
-      });
+      }.bind(this));
 
       if (tickShow.tick || tickShow.text) {
         // count of tick data in array
@@ -12869,21 +13762,29 @@ var AxisRenderer = /*#__PURE__*/function () {
         var sizeFor1Char = AxisRendererHelper.getSizeFor1Char(tick),
             counts = [],
             tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
+          _newArrowCheck(this, _this);
+
           var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
           counts[index] = split.length;
           return split.map(function (splitted) {
+            _newArrowCheck(this, this);
+
             return {
               index: index,
               splitted: splitted
             };
-          });
-        });
+          }.bind(this));
+        }.bind(this));
         tspan.exit().remove();
         tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
+          _newArrowCheck(this, _this);
+
           return d.splitted;
-        }); // set <tspan>'s position
+        }.bind(this)); // set <tspan>'s position
 
         tspan.attr("x", isTopBottom ? 0 : tickLength * sign).attr("dx", function () {
+          _newArrowCheck(this, _this);
+
           var dx = 0;
 
           if (/(top|bottom)/.test(orient) && rotate) {
@@ -12891,7 +13792,9 @@ var AxisRenderer = /*#__PURE__*/function () {
           }
 
           return dx + (tickTextPos.x || 0);
-        }()).attr("dy", function (d, i) {
+        }.bind(this)()).attr("dy", function (d, i) {
+          _newArrowCheck(this, _this);
+
           var dy = 0;
 
           if (orient !== "top") {
@@ -12903,7 +13806,7 @@ var AxisRenderer = /*#__PURE__*/function () {
           }
 
           return isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
-        });
+        }.bind(this));
         var lineUpdate = tick.select("line"),
             textUpdate = tick.select("text");
         tickEnter.select("line").attr(axisPx + "2", innerTickSize * sign);
@@ -12913,8 +13816,10 @@ var AxisRenderer = /*#__PURE__*/function () {
         if (params.tickTitle) {
           var title = textUpdate.select("title");
           (title.empty() ? textUpdate.append("title") : title).text(function (index) {
+            _newArrowCheck(this, _this);
+
             return params.tickTitle[index];
-          });
+          }.bind(this));
         }
 
         if (scale1.bandwidth) {
@@ -12922,8 +13827,10 @@ var AxisRenderer = /*#__PURE__*/function () {
               dx = x.bandwidth() / 2;
 
           scale0 = function (d) {
+            _newArrowCheck(this, _this);
+
             return x(d) + dx;
-          };
+          }.bind(this);
 
           scale1 = scale0;
         } else if (scale0.bandwidth) {
@@ -12988,7 +13895,8 @@ var AxisRenderer = /*#__PURE__*/function () {
   ;
 
   _proto.setTickLineTextPosition = function setTickLineTextPosition(lineUpdate, textUpdate) {
-    var tickPos = this.getTickXY(),
+    var _this3 = this,
+        tickPos = this.getTickXY(),
         _this$config = this.config,
         innerTickSize = _this$config.innerTickSize,
         orient = _this$config.orient,
@@ -12996,17 +13904,23 @@ var AxisRenderer = /*#__PURE__*/function () {
         tickOffset = _this$config.tickOffset,
         rotate = this.params.tickTextRotate,
         textAnchorForText = function (r) {
+      _newArrowCheck(this, _this3);
+
       var value = ["start", "end"];
       orient === "top" && value.reverse();
       return !r ? "middle" : value[r > 0 ? 0 : 1];
-    },
+    }.bind(this),
         textTransform = function (r) {
+      _newArrowCheck(this, _this3);
+
       return r ? "rotate(" + r + ")" : null;
-    },
+    }.bind(this),
         yForText = function (r) {
+      _newArrowCheck(this, _this3);
+
       var r2 = r / (orient === "bottom" ? 15 : 23);
       return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
-    };
+    }.bind(this);
 
     switch (orient) {
       case "bottom":
@@ -13138,8 +14052,7 @@ var AxisRenderer = /*#__PURE__*/function () {
   ;
 
   _proto.tickInterval = function tickInterval(size) {
-    var _this = this,
-        _this$config2 = this.config,
+    var _this$config2 = this.config,
         outerTickSize = _this$config2.outerTickSize,
         tickOffset = _this$config2.tickOffset,
         tickValues = _this$config2.tickValues,
@@ -13152,9 +14065,11 @@ var AxisRenderer = /*#__PURE__*/function () {
       interval = length / (size || this.g.selectAll("line").size()); // get the interval by its values
 
       var intervalByValue = tickValues ? tickValues.map(function (v, i, arr) {
+        _newArrowCheck(this, this);
+
         var next = i + 1;
-        return next < arr.length ? _this.helper.scale(arr[next]) - _this.helper.scale(v) : null;
-      }).filter(Boolean) : [];
+        return next < arr.length ? this.helper.scale(arr[next]) - this.helper.scale(v) : null;
+      }.bind(this)).filter(Boolean) : [];
       interval = Math.min.apply(Math, intervalByValue.concat([interval]));
     }
 
@@ -13186,13 +14101,14 @@ var AxisRenderer = /*#__PURE__*/function () {
   };
 
   _proto.tickValues = function tickValues(x) {
-    var _this2 = this,
-        config = this.config;
+    var config = this.config;
 
     if (isFunction(x)) {
       config.tickValues = function () {
-        return x(_this2.helper.scale.domain());
-      };
+        _newArrowCheck(this, this);
+
+        return x(this.helper.scale.domain());
+      }.bind(this);
     } else {
       if (!arguments.length) {
         return config.tickValues;
@@ -13214,6 +14130,8 @@ var AxisRenderer = /*#__PURE__*/function () {
 
 
 ;// CONCATENATED MODULE: ./src/ChartInternal/Axis/Axis.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -13313,8 +14231,7 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
 
   _proto.init = function init() {
-    var _this = this,
-        $$ = this.owner,
+    var $$ = this.owner,
         config = $$.config,
         _$$$$el = $$.$el,
         main = _$$$$el.main,
@@ -13322,13 +14239,17 @@ var Axis_Axis = /*#__PURE__*/function () {
         clip = $$.state.clip,
         isRotated = config.axis_rotated,
         target = ["x", "y"];
-
     config.axis_y2_show && target.push("y2");
     target.forEach(function (v) {
-      var classAxis = _this.getAxisClassName(v),
-          classLabel = $AXIS["axis" + v.toUpperCase() + "Label"];
+      var _this2 = this;
 
+      _newArrowCheck(this, this);
+
+      var classAxis = this.getAxisClassName(v),
+          classLabel = $AXIS["axis" + v.toUpperCase() + "Label"];
       axis[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
+        _newArrowCheck(this, _this2);
+
         var res = null;
 
         if (v === "x") {
@@ -13339,13 +14260,14 @@ var Axis_Axis = /*#__PURE__*/function () {
         }
 
         return res;
-      }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_" + v + "_show"] ? null : "hidden");
+      }.bind(this)).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_" + v + "_show"] ? null : "hidden");
       axis[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", function () {
-        return _this.textAnchorForAxisLabel(v);
-      });
+        _newArrowCheck(this, _this2);
 
-      _this.generateAxes(v);
-    });
+        return this.textAnchorForAxisLabel(v);
+      }.bind(this));
+      this.generateAxes(v);
+    }.bind(this));
   }
   /**
    * Set axis orient according option value
@@ -13392,13 +14314,17 @@ var Axis_Axis = /*#__PURE__*/function () {
 
     if (axesConfig.length) {
       axesConfig.forEach(function (v) {
+        _newArrowCheck(this, this);
+
         var tick = v.tick || {},
             scale = $$.scale[id].copy();
         v.domain && scale.domain(v.domain);
         axes.push(d3Axis(scale).ticks(tick.count).tickFormat(isFunction(tick.format) ? tick.format.bind($$.api) : function (x) {
+          _newArrowCheck(this, this);
+
           return x;
-        }).tickValues(tick.values).tickSizeOuter(tick.outer === !1 ? 0 : 6));
-      });
+        }.bind(this)).tickValues(tick.values).tickSizeOuter(tick.outer === !1 ? 0 : 6));
+      }.bind(this));
     }
 
     this.axesList[id] = axes;
@@ -13410,28 +14336,31 @@ var Axis_Axis = /*#__PURE__*/function () {
   ;
 
   _proto.updateAxes = function updateAxes() {
-    var _this2 = this,
-        $$ = this.owner,
+    var $$ = this.owner,
         config = $$.config,
         main = $$.$el.main,
         $T = $$.$T;
-
     Object.keys(this.axesList).forEach(function (id) {
+      _newArrowCheck(this, this);
+
       var axesConfig = config["axis_" + id + "_axes"],
           scale = $$.scale[id].copy(),
           range = scale.range();
+      this.axesList[id].forEach(function (v, i) {
+        _newArrowCheck(this, this);
 
-      _this2.axesList[id].forEach(function (v, i) {
         var axisRange = v.scale().range(); // adjust range value with the current
         // https://github.com/naver/billboard.js/issues/859
 
         if (!range.every(function (v, i) {
+          _newArrowCheck(this, this);
+
           return v === axisRange[i];
-        })) {
+        }.bind(this))) {
           v.scale().range(range);
         }
 
-        var className = _this2.getAxisClassName(id) + "-" + (i + 1),
+        var className = this.getAxisClassName(id) + "-" + (i + 1),
             g = main.select("." + className.replace(/\s/, "."));
 
         if (g.empty()) {
@@ -13442,8 +14371,8 @@ var Axis_Axis = /*#__PURE__*/function () {
         }
 
         g.attr("transform", $$.getTranslate(id, i + 1));
-      });
-    });
+      }.bind(this));
+    }.bind(this));
   }
   /**
    * Set Axis & tick values
@@ -13471,7 +14400,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   ;
 
   _proto.getAxis = function getAxis(id, scale, outerTick, noTransition, noTickTextRotate) {
-    var $$ = this.owner,
+    var _this8 = this,
+        $$ = this.owner,
         config = $$.config,
         isX = /^(x|subX)$/.test(id),
         type = isX ? "x" : id,
@@ -13516,8 +14446,10 @@ var Axis_Axis = /*#__PURE__*/function () {
       var _fn = parseDate.bind($$);
 
       tickValues = tickValues.map(function (v) {
+        _newArrowCheck(this, _this8);
+
         return _fn(v);
-      });
+      }.bind(this));
     } else if (!isX && this.isTimeSeriesY()) {
       // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
       axis.ticks(config.axis_y_tick_time_value);
@@ -13527,8 +14459,10 @@ var Axis_Axis = /*#__PURE__*/function () {
     tickValues && axis.tickValues(tickValues); // Set tick
 
     axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
+      _newArrowCheck(this, _this8);
+
       return x + "%";
-    });
+    }.bind(this));
 
     if (isCategory) {
       axis.tickCentered(config.axis_x_tick_centered);
@@ -13587,7 +14521,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
 
   _proto.getXAxisTickFormat = function getXAxisTickFormat(forSubchart) {
-    var $$ = this.owner,
+    var _this9 = this,
+        $$ = this.owner,
         config = $$.config,
         format = $$.format,
         tickFormat = forSubchart ? config.subchart_axis_x_tick_format || config.axis_x_tick_format : config.axis_x_tick_format,
@@ -13600,18 +14535,24 @@ var Axis_Axis = /*#__PURE__*/function () {
         currFormat = tickFormat.bind($$.api);
       } else if (isTimeSeries) {
         currFormat = function (date) {
+          _newArrowCheck(this, _this9);
+
           return date ? format.axisTime(tickFormat)(date) : "";
-        };
+        }.bind(this);
       }
     } else {
       currFormat = isTimeSeries ? format.defaultAxisTime : isCategorized ? $$.categoryName : function (v) {
+        _newArrowCheck(this, _this9);
+
         return v < 0 ? v.toFixed(0) : v;
-      };
+      }.bind(this);
     }
 
     return isFunction(currFormat) ? function (v) {
+      _newArrowCheck(this, _this9);
+
       return currFormat.apply($$, isCategorized ? [v, $$.categoryName(v)] : [v]);
-    } : currFormat;
+    }.bind(this) : currFormat;
   };
 
   _proto.getTickValues = function getTickValues(id) {
@@ -13647,8 +14588,10 @@ var Axis_Axis = /*#__PURE__*/function () {
         option = this.getLabelOptionByAxisId(id),
         position = isObjectType(option) && option.position ? option.position : defaultPosition[+!isRotated],
         has = function (v) {
+      _newArrowCheck(this, this);
+
       return !!~position.indexOf(v);
-    };
+    }.bind(this);
 
     return {
       isInner: has("inner"),
@@ -13761,7 +14704,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
 
   _proto.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
-    var $$ = this.owner,
+    var _this11 = this,
+        $$ = this.owner,
         config = $$.config,
         current = $$.state.current,
         _$$$$el2 = $$.$el,
@@ -13777,14 +14721,18 @@ var Axis_Axis = /*#__PURE__*/function () {
     if (svg) {
       var isYAxis = /^y2?$/.test(id),
           targetsToShow = $$.filterTargetsToShow($$.data.targets),
-          scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id)),
-          domain = scale.domain(),
+          _scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id)),
+          domain = _scale.domain(),
           isDomainSame = domain[0] === domain[1] && domain.every(function (v) {
+        _newArrowCheck(this, _this11);
+
         return v > 0;
-      }),
+      }.bind(this)),
           isCurrentMaxTickDomainSame = isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1] && currentTickMax.domain.every(function (v) {
+        _newArrowCheck(this, _this11);
+
         return v > 0;
-      });
+      }.bind(this));
 
       // do not compute if domain or currentMaxTickDomain is same
       if (isDomainSame || isCurrentMaxTickDomainSame) {
@@ -13798,7 +14746,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         currentTickMax.ticks.splice(0);
       }
 
-      var axis = this.getAxis(id, scale, !1, !1, !0),
+      var _axis = this.getAxis(id, _scale, !1, !1, !0),
           tickCount = config["axis_" + id + "_tick_count"],
           tickValues = config["axis_" + id + "_tick_values"];
 
@@ -13807,12 +14755,14 @@ var Axis_Axis = /*#__PURE__*/function () {
       // Do not generate if 'tick values' option is given
       // https://github.com/naver/billboard.js/issues/1251
       if (!tickValues && tickCount) {
-        axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries()));
+        _axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries()));
       }
 
-      isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
+      isYAxis || this.updateXAxisTickValues(targetsToShow, _axis);
       var dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0").style("left", "0");
-      axis.create(dummy);
+
+      _axis.create(dummy);
+
       dummy.selectAll("text").each(function (d, i) {
         var currentTextWidth = this.getBoundingClientRect().width;
         maxWidth = Math.max(maxWidth, currentTextWidth); // cache tick text width for getXAxisTickTextY2Overflow()
@@ -13881,15 +14831,16 @@ var Axis_Axis = /*#__PURE__*/function () {
         tickOffset = 0;
 
     if (!isTimeSeries && config.axis_x_tick_count <= filteredTargets.length && filteredTargets[0].values.length) {
-      var scale = getScale($$.axis.getAxisType("x"), 0, widthWithoutCurrentPaddingLeft - maxOverflow).domain([left * -1, $$.getXDomainMax($$.data.targets) + 1 + right]);
-      tickOffset = Math.ceil((scale(1) - scale(0)) / 2);
+      var _scale2 = getScale($$.axis.getAxisType("x"), 0, widthWithoutCurrentPaddingLeft - maxOverflow).domain([left * -1, $$.getXDomainMax($$.data.targets) + 1 + right]);
+
+      tickOffset = Math.ceil((_scale2(1) - _scale2(0)) / 2);
     }
 
     return maxOverflow + tickOffset;
   };
 
   _proto.updateLabels = function updateLabels(withTransition) {
-    var _this3 = this,
+    var _this12 = this,
         $$ = this.owner,
         main = $$.$el.main,
         $T = $$.$T,
@@ -13900,20 +14851,34 @@ var Axis_Axis = /*#__PURE__*/function () {
     };
 
     Object.keys(labels).filter(function (id) {
+      _newArrowCheck(this, _this12);
+
       return !labels[id].empty();
-    }).forEach(function (v) {
+    }.bind(this)).forEach(function (v) {
+      var _this13 = this;
+
+      _newArrowCheck(this, _this12);
+
       var node = labels[v]; // @check $$.$T(node, withTransition)
 
       $T(node, withTransition).attr("x", function () {
-        return _this3.xForAxisLabel(v);
-      }).attr("dx", function () {
-        return _this3.dxForAxisLabel(v);
-      }).attr("dy", function () {
-        return _this3.dyForAxisLabel(v);
-      }).text(function () {
-        return _this3.getLabelText(v);
-      });
-    });
+        _newArrowCheck(this, _this13);
+
+        return this.xForAxisLabel(v);
+      }.bind(this)).attr("dx", function () {
+        _newArrowCheck(this, _this13);
+
+        return this.dxForAxisLabel(v);
+      }.bind(this)).attr("dy", function () {
+        _newArrowCheck(this, _this13);
+
+        return this.dyForAxisLabel(v);
+      }.bind(this)).text(function () {
+        _newArrowCheck(this, _this13);
+
+        return this.getLabelText(v);
+      }.bind(this));
+    }.bind(this));
   }
   /**
    * Get axis padding value
@@ -13947,17 +14912,18 @@ var Axis_Axis = /*#__PURE__*/function () {
       } else if (targetCount === 2) {
         tickValues = [values[0], values[values.length - 1]];
       } else if (targetCount > 2) {
-        var isCategorized = this.isCategorized(),
+        var _isCategorized = this.isCategorized(),
             count = targetCount - 2,
             start = values[0],
             end = values[values.length - 1],
             tickValue;
+
         // re-construct unique values
         tickValues = [start];
 
         for (var i = 0; i < count; i++) {
           tickValue = +start + (end - start) / (count + 1) * (i + 1);
-          tickValues.push(forTimeSeries ? new Date(tickValue) : isCategorized ? Math.round(tickValue) : tickValue);
+          tickValues.push(forTimeSeries ? new Date(tickValue) : _isCategorized ? Math.round(tickValue) : tickValue);
         }
 
         tickValues.push(end);
@@ -13966,8 +14932,10 @@ var Axis_Axis = /*#__PURE__*/function () {
 
     if (!forTimeSeries) {
       tickValues = tickValues.sort(function (a, b) {
+        _newArrowCheck(this, this);
+
         return a - b;
-      });
+      }.bind(this));
     }
 
     return tickValues;
@@ -13978,8 +14946,10 @@ var Axis_Axis = /*#__PURE__*/function () {
         axis = $$.$el.axis,
         $T = $$.$T,
         _map = ["x", "y", "y2", "subX"].map(function (v) {
+      _newArrowCheck(this, this);
+
       return $T(axis[v], withTransition);
-    }),
+    }.bind(this)),
         axisX = _map[0],
         axisY = _map[1],
         axisY2 = _map[2],
@@ -13994,14 +14964,14 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
 
   _proto.redraw = function redraw(transitions, isHidden, isInit) {
-    var _this4 = this,
-        $$ = this.owner,
+    var $$ = this.owner,
         config = $$.config,
         $el = $$.$el,
         opacity = isHidden ? "0" : null;
-
     ["x", "y", "y2", "subX"].forEach(function (id) {
-      var axis = _this4[id],
+      _newArrowCheck(this, this);
+
+      var axis = this[id],
           $axis = $el.axis[id];
 
       if (axis && $axis) {
@@ -14012,7 +14982,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         $axis.style("opacity", opacity);
         axis.create(transitions["axis" + capitalize(id)]);
       }
-    });
+    }.bind(this));
     this.updateAxes();
   }
   /**
@@ -14027,8 +14997,7 @@ var Axis_Axis = /*#__PURE__*/function () {
   ;
 
   _proto.redrawAxis = function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
-    var _this5 = this,
-        $$ = this.owner,
+    var $$ = this.owner,
         config = $$.config,
         scale = $$.scale,
         $el = $$.$el,
@@ -14057,6 +15026,8 @@ var Axis_Axis = /*#__PURE__*/function () {
     }
 
     ["y", "y2"].forEach(function (key) {
+      _newArrowCheck(this, this);
+
       var prefix = "axis_" + key + "_",
           axisScale = scale[key];
 
@@ -14066,15 +15037,17 @@ var Axis_Axis = /*#__PURE__*/function () {
         axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
 
         if (!tickValues && tickCount) {
-          var _axis = $$.axis[key],
+          var _axis2 = $$.axis[key],
               domain = axisScale.domain();
 
-          _axis.tickValues(_this5.generateTickValues(domain, domain.every(function (v) {
+          _axis2.tickValues(this.generateTickValues(domain, domain.every(function (v) {
+            _newArrowCheck(this, this);
+
             return v === 0;
-          }) ? 1 : tickCount, _this5.isTimeSeriesY()));
+          }.bind(this)) ? 1 : tickCount, this.isTimeSeriesY()));
         }
       }
-    }); // axes
+    }.bind(this)); // axes
 
     this.redraw(transitions, $$.hasArcType(), isInit); // Update axis label
 
@@ -14106,6 +15079,8 @@ var Axis_Axis = /*#__PURE__*/function () {
         current = _$$$state2.current,
         $el = $$.$el;
     ["subX", "x", "y", "y2"].forEach(function (type) {
+      _newArrowCheck(this, this);
+
       var axis = $el.axis[type],
           id = type === "subX" ? "x" : type,
           cullingOptionPrefix = "axis_" + id + "_tick_culling",
@@ -14144,12 +15119,14 @@ var Axis_Axis = /*#__PURE__*/function () {
           $el.svg.selectAll("." + $AXIS.axisX + " .tick text").attr("clip-path", clipPath);
         }
       }
-    });
+    }.bind(this));
   };
 
   return Axis;
 }();
 ;// CONCATENATED MODULE: ./src/ChartInternal/interactions/eventrect.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -14163,8 +15140,7 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   initEventRect: function initEventRect() {
-    var $$ = this;
-    $$.$el.main.select("." + $COMMON.chart).append("g").attr("class", $EVENT.eventRects).style("fill-opacity", "0");
+    this.$el.main.select("." + $COMMON.chart).append("g").attr("class", $EVENT.eventRects).style("fill-opacity", "0");
   },
 
   /**
@@ -14209,13 +15185,16 @@ var Axis_Axis = /*#__PURE__*/function () {
     $$.updateEventRectData();
   },
   bindTouchOnEventRect: function bindTouchOnEventRect(isMultipleX) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         _$$$$el = $$.$el,
         eventRect = _$$$$el.eventRect,
         svg = _$$$$el.svg,
         selectRect = function (context) {
+      _newArrowCheck(this, _this);
+
       if (isMultipleX) {
         $$.selectRectForMultipleXs(context);
       } else {
@@ -14223,16 +15202,20 @@ var Axis_Axis = /*#__PURE__*/function () {
         $$.callOverOutForTouch(index);
         index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
       }
-    },
+    }.bind(this),
         unselectRect = function () {
+      _newArrowCheck(this, _this);
+
       $$.unselectRect();
       $$.callOverOutForTouch();
-    },
+    }.bind(this),
         preventDefault = config.interaction_inputType_touch.preventDefault,
         isPrevented = isboolean(preventDefault) && preventDefault || !1,
         preventThreshold = !isNaN(preventDefault) && preventDefault || null,
         startPx,
         preventEvent = function (event) {
+      _newArrowCheck(this, _this);
+
       var eventType = event.type,
           touch = event.changedTouches[0],
           currentXY = touch["client" + (config.axis_rotated ? "Y" : "X")];
@@ -14251,13 +15234,17 @@ var Axis_Axis = /*#__PURE__*/function () {
           event.preventDefault();
         }
       }
-    };
+    }.bind(this);
 
     // bind touch events
     eventRect.on("touchstart", function (event) {
+      _newArrowCheck(this, _this);
+
       state.event = event;
       $$.updateEventRect();
-    }).on("touchstart.eventRect touchmove.eventRect", function (event) {
+    }.bind(this)).on("touchstart.eventRect touchmove.eventRect", function (event) {
+      _newArrowCheck(this, _this);
+
       state.event = event;
 
       if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
@@ -14271,7 +15258,9 @@ var Axis_Axis = /*#__PURE__*/function () {
       } else {
         unselectRect();
       }
-    }, !0).on("touchend.eventRect", function (event) {
+    }.bind(this), !0).on("touchend.eventRect", function (event) {
+      _newArrowCheck(this, _this);
+
       state.event = event;
 
       if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
@@ -14279,15 +15268,17 @@ var Axis_Axis = /*#__PURE__*/function () {
           state.cancelClick && (state.cancelClick = !1);
         }
       }
-    }, !0);
+    }.bind(this), !0);
     svg.on("touchstart", function (event) {
+      _newArrowCheck(this, _this);
+
       state.event = event;
       var target = event.target;
 
       if (target && target !== eventRect.node()) {
         unselectRect();
       }
-    });
+    }.bind(this));
   },
 
   /**
@@ -14310,7 +15301,12 @@ var Axis_Axis = /*#__PURE__*/function () {
         height = _state.height,
         rendered = _state.rendered,
         resizing = _state.resizing,
-        rectElement = eventRect || $el.eventRect;
+        rectElement = eventRect || $el.eventRect,
+        updateClientRect = function () {
+      _newArrowCheck(this, this);
+
+      eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
+    }.bind(this);
 
     if (!rendered || resizing || force) {
       rectElement.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height); // only for init
@@ -14320,9 +15316,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       }
     }
 
-    (function updateClientRect() {
-      eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
-    })();
+    updateClientRect();
   },
 
   /**
@@ -14330,7 +15324,8 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   updateEventRectData: function updateEventRectData() {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         state = $$.state,
@@ -14354,18 +15349,25 @@ var Axis_Axis = /*#__PURE__*/function () {
         rectW = $$.getEventRectWidth();
 
         rectX = function (d) {
+          _newArrowCheck(this, _this3);
+
           return xScale(d.x) - rectW / 2;
-        };
+        }.bind(this);
       } else {
         var getPrevNextX = function (_ref) {
           var index = _ref.index;
+
+          _newArrowCheck(this, _this3);
+
           return {
             prev: $$.getPrevX(index),
             next: $$.getNextX(index)
           };
-        };
+        }.bind(this);
 
         rectW = function (d) {
+          _newArrowCheck(this, _this3);
+
           var x = getPrevNextX(d),
               xDomain = xScale.domain();
 
@@ -14377,12 +15379,16 @@ var Axis_Axis = /*#__PURE__*/function () {
           Object.keys(x).forEach(function (key, i) {
             var _x$key;
 
+            _newArrowCheck(this, this);
+
             x[key] = (_x$key = x[key]) != null ? _x$key : xDomain[i];
-          });
+          }.bind(this));
           return Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
-        };
+        }.bind(this);
 
         rectX = function (d) {
+          _newArrowCheck(this, _this3);
+
           var x = getPrevNextX(d),
               thisX = d.x;
 
@@ -14396,7 +15402,7 @@ var Axis_Axis = /*#__PURE__*/function () {
           }
 
           return (xScale(thisX) + xScale(x.prev)) / 2;
-        };
+        }.bind(this);
       }
 
       x = isRotated ? 0 : rectX;
@@ -14407,19 +15413,23 @@ var Axis_Axis = /*#__PURE__*/function () {
 
     var eventReceiver = state.eventReceiver,
         call = function (fn, v) {
+      _newArrowCheck(this, _this3);
+
       return isFunction(fn) ? fn(v) : fn;
-    };
+    }.bind(this);
 
     // reset for possible remains coords data before the data loading
     eventReceiver.coords.splice(eventReceiver.data.length);
     eventReceiver.data.forEach(function (d, i) {
+      _newArrowCheck(this, _this3);
+
       eventReceiver.coords[i] = {
         x: call(x, d),
         y: call(y, d),
         w: call(w, d),
         h: call(h, d)
       };
-    });
+    }.bind(this));
   },
   selectRectForMultipleXs: function selectRectForMultipleXs(context) {
     var $$ = this,
@@ -14447,8 +15457,10 @@ var Axis_Axis = /*#__PURE__*/function () {
 
     var sameXData = $$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped ? [closest] : $$.filterByX(targetsToShow, closest.x),
         selectedData = sameXData.map(function (d) {
+      _newArrowCheck(this, this);
+
       return $$.addName(d);
-    }); // show tooltip when cursor is close to some point
+    }.bind(this)); // show tooltip when cursor is close to some point
 
     $$.showTooltip(selectedData, context); // expand points
 
@@ -14497,7 +15509,8 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   generateEventRectsForSingleX: function generateEventRectsForSingleX(eventRectEnter) {
-    var $$ = this,
+    var _this6 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         eventReceiver = state.eventReceiver,
@@ -14512,14 +15525,18 @@ var Axis_Axis = /*#__PURE__*/function () {
 
     if (state.inputType === "mouse") {
       var getData = function (event) {
+        _newArrowCheck(this, _this6);
+
         var index = event ? $$.getDataIndexFromEvent(event) : eventReceiver.currentIdx;
         return index > -1 ? eventReceiver.data[index] : null;
-      };
+      }.bind(this);
 
       rect.on("mouseover", function (event) {
+        _newArrowCheck(this, _this6);
+
         state.event = event;
         $$.updateEventRect();
-      }).on("mousemove", function (event) {
+      }.bind(this)).on("mousemove", function (event) {
         var d = getData(event);
         state.event = event;
 
@@ -14558,6 +15575,8 @@ var Axis_Axis = /*#__PURE__*/function () {
 
         $$.setOverOut(index !== -1, index);
       }).on("mouseout", function (event) {
+        _newArrowCheck(this, _this6);
+
         state.event = event; // chart is destroyed
 
         if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
@@ -14568,7 +15587,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         $$.setOverOut(!1, eventReceiver.currentIdx); // reset the event current index
 
         eventReceiver.currentIdx = -1;
-      });
+      }.bind(this));
     }
 
     return rect;
@@ -14612,6 +15631,8 @@ var Axis_Axis = /*#__PURE__*/function () {
         state.event = event;
         $$.selectRectForMultipleXs(this);
       }).on("mouseout", function (event) {
+        _newArrowCheck(this, this);
+
         state.event = event; // chart is destroyed
 
         if (!$$.config || $$.hasArcType()) {
@@ -14619,7 +15640,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         }
 
         $$.unselectRect();
-      });
+      }.bind(this));
     }
   },
   clickHandlerForMultipleXS: function clickHandlerForMultipleXS(ctx) {
@@ -14653,6 +15674,8 @@ var Axis_Axis = /*#__PURE__*/function () {
 // EXTERNAL MODULE: external {"commonjs":"d3-ease","commonjs2":"d3-ease","amd":"d3-ease","root":"d3"}
 var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(11);
 ;// CONCATENATED MODULE: ./src/ChartInternal/interactions/flow.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -14674,13 +15697,17 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
         state = $$.state,
         $el = $$.$el;
     return function () {
-      var flowLength = args.flow.length; // set flag
+      var _this = this,
+          flowLength = args.flow.length;
 
+      // set flag
       state.flowing = !0; // remove head data after rendered
 
       data.targets.forEach(function (d) {
+        _newArrowCheck(this, _this);
+
         d.values.splice(0, flowLength);
-      }); // update elements related to x scale
+      }.bind(this)); // update elements related to x scale
 
       if ($$.updateXGrid) {
         $$.updateXGrid(!0);
@@ -14689,8 +15716,11 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
 
       var elements = {};
       ["axis.x", "grid.x", "gridLines.x", "region.list", "text", "bar", "line", "area", "circle"].forEach(function (v) {
-        var _node,
-            name = v.split("."),
+        var _node;
+
+        _newArrowCheck(this, _this);
+
+        var name = v.split("."),
             node = $el[name[0]];
 
         if (node && name.length > 1) {
@@ -14700,7 +15730,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
         if ((_node = node) != null && _node.size()) {
           elements[v] = node;
         }
-      });
+      }.bind(this));
       $$.hideGridFocus();
       $$.setFlowList(elements, args);
     };
@@ -14713,7 +15743,8 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * @private
    */
   setFlowList: function setFlowList(elements, args) {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         flow = args.flow,
         targets = args.targets,
         _flow = flow,
@@ -14725,13 +15756,18 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
         transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength),
         wait = generateWait(),
         n;
+
     wait.add(Object.keys(elements).map(function (v) {
+      _newArrowCheck(this, _this2);
+
       n = elements[v].transition().ease(external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_.easeLinear).duration(duration);
 
       if (v === "axis.x") {
         n = n.call(function (g) {
+          _newArrowCheck(this, this);
+
           $$.axis.x.setTransition(g).create(g);
-        });
+        }.bind(this));
       } else if (v === "region.list") {
         n = n.filter($$.isRegionOnX).attr("transform", transform);
       } else {
@@ -14739,10 +15775,12 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
       }
 
       return n;
-    }));
+    }.bind(this)));
     n.call(wait, function () {
+      _newArrowCheck(this, _this2);
+
       $$.cleanUpFlow(elements, args);
-    });
+    }.bind(this));
   },
 
   /**
@@ -14752,7 +15790,8 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * @private
    */
   cleanUpFlow: function cleanUpFlow(elements, args) {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         svg = $$.$el.svg,
@@ -14767,12 +15806,16 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
         yForText = _shape$pos.yForText,
         _flow2 = flow,
         _flow2$done = _flow2.done,
-        done = _flow2$done === void 0 ? function () {} : _flow2$done,
+        done = _flow2$done === void 0 ? function () {
+      _newArrowCheck(this, _this4);
+    }.bind(this) : _flow2$done,
         flowLength = _flow2.length;
 
     // Remove flowed elements
     if (flowLength) {
       ["circle", "text", "shape", "eventRect"].forEach(function (v) {
+        _newArrowCheck(this, _this4);
+
         var target = [];
 
         for (var i = 0; i < flowLength; i++) {
@@ -14781,12 +15824,16 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
 
         svg.selectAll("." + classes[v + "s"]) // circles, shapes, texts, eventRects
         .selectAll(target).remove();
-      });
+      }.bind(this));
       svg.select("." + classes.xgrid).remove();
     } // draw again for removing flowed elements and reverting attr
 
 
     Object.keys(elements).forEach(function (v) {
+      var _this5 = this;
+
+      _newArrowCheck(this, _this4);
+
       var n = elements[v];
 
       if (v !== "axis.x") {
@@ -14809,11 +15856,15 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
           n.attr("cx", cx).attr("cy", cy);
         } else {
           var xFunc = function (d) {
+            _newArrowCheck(this, _this5);
+
             return cx(d) - config.point_r;
-          },
+          }.bind(this),
               yFunc = function (d) {
+            _newArrowCheck(this, _this5);
+
             return cy(d) - config.point_r;
-          };
+          }.bind(this);
 
           n.attr("x", xFunc).attr("y", yFunc).attr("cx", cx) // when pattern is used, it possibly contain 'circle' also.
           .attr("cy", cy);
@@ -14821,7 +15872,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
       } else if (v === "region.list") {
         n.select("rect").filter($$.isRegionOnX).attr("x", $$.regionX.bind($$)).attr("width", $$.regionWidth.bind($$));
       }
-    });
+    }.bind(this));
     config.interaction_enabled && $$.redrawEventRect(); // callback for end of flow
 
     done.call($$.api);
@@ -14898,8 +15949,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
     clip.pathGrid = $$.getClipPath(clip.idGrid);
   },
   getClipPath: function getClipPath(id) {
-    var $$ = this,
-        config = $$.config;
+    var config = this.config;
 
     if (!config.clipPath && /-clip$/.test(id) || !config.axis_x_clipPath && /-clip-xaxis$/.test(id) || !config.axis_y_clipPath && /-clip-yaxis$/.test(id)) {
       return null;
@@ -15003,6 +16053,10 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/grid.ts
+
+
+var grid_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15012,11 +16066,15 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
  // Grid position and text anchor helpers
 
 var getGridTextAnchor = function (d) {
+  _newArrowCheck(this, grid_this);
+
   return isValue(d.position) || "end";
-},
+}.bind(undefined),
     getGridTextDx = function (d) {
+  _newArrowCheck(this, grid_this);
+
   return d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
-};
+}.bind(undefined);
 
 /**
  * Get grid text x value getter function
@@ -15028,6 +16086,8 @@ var getGridTextAnchor = function (d) {
  */
 function getGridTextX(isX, width, height) {
   return function (d) {
+    _newArrowCheck(this, this);
+
     var x = isX ? 0 : width;
 
     if (d.position === "start") {
@@ -15037,7 +16097,7 @@ function getGridTextX(isX, width, height) {
     }
 
     return x;
-  };
+  }.bind(this);
 }
 /**
  * Update coordinate attributes value
@@ -15052,8 +16112,10 @@ function smoothLines(el, type) {
     el.each(function () {
       var g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
       ["x1", "x2", "y1", "y2"].forEach(function (v) {
+        _newArrowCheck(this, this);
+
         return g.attr(v, Math.ceil(+g.attr(v)));
-      });
+      }.bind(this));
     });
   }
 }
@@ -15062,8 +16124,10 @@ function smoothLines(el, type) {
   hasGrid: function hasGrid() {
     var config = this.config;
     return ["x", "y"].some(function (v) {
+      _newArrowCheck(this, this);
+
       return config["grid_" + v + "_show"] || config["grid_" + v + "_lines"].length;
-    });
+    }.bind(this));
   },
   initGrid: function initGrid() {
     var $$ = this;
@@ -15095,8 +16159,10 @@ function smoothLines(el, type) {
         xgridData = $$.generateGridData(config.grid_x_type, scale.x),
         tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0,
         pos = function (d) {
+      _newArrowCheck(this, this);
+
       return (scale.zoom || scale.x)(d) + tickOffset * (isRotated ? -1 : 1);
-    };
+    }.bind(this);
 
     state.xgridAttr = isRotated ? {
       "x1": 0,
@@ -15117,10 +16183,14 @@ function smoothLines(el, type) {
       grid.x.each(function () {
         var grid = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
         Object.keys(state.xgridAttr).forEach(function (id) {
+          _newArrowCheck(this, this);
+
           grid.attr(id, state.xgridAttr[id]).style("opacity", function () {
+            _newArrowCheck(this, this);
+
             return grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ? "0" : null;
-          });
-        });
+          }.bind(this));
+        }.bind(this));
       });
     }
   },
@@ -15134,8 +16204,10 @@ function smoothLines(el, type) {
         isRotated = config.axis_rotated,
         gridValues = $$.axis.y.tickValues() || $$.scale.y.ticks(config.grid_y_ticks),
         pos = function (d) {
+      _newArrowCheck(this, this);
+
       return Math.ceil($$.scale.y(d));
-    };
+    }.bind(this);
 
     grid.y = main.select("." + $GRID.ygrids).selectAll("." + $GRID.ygrid).data(gridValues);
     grid.y.exit().remove();
@@ -15161,13 +16233,15 @@ function smoothLines(el, type) {
    * @private
    */
   updateXGridLines: function updateXGridLines() {
-    var $$ = this,
+    var _this9 = this,
+        $$ = this,
         config = $$.config,
         _$$$$el4 = $$.$el,
         gridLines = _$$$$el4.gridLines,
         main = _$$$$el4.main,
         $T = $$.$T,
         isRotated = config.axis_rotated;
+
     config.grid_x_show && $$.updateXGrid();
     var xLines = main.select("." + $GRID.xgridLines).selectAll("." + $GRID.xgridLine).data(config.grid_x_lines); // exit
 
@@ -15178,10 +16252,14 @@ function smoothLines(el, type) {
     xgridLine.append("text").attr("transform", isRotated ? "" : "rotate(-90)").attr("dy", -5).style("opacity", "0");
     xLines = xgridLine.merge(xLines);
     $T(xLines.attr("class", function (d) {
+      _newArrowCheck(this, _this9);
+
       return ($GRID.xgridLine + " " + (d.class || "")).trim();
-    }).select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx)).text(function (d) {
+    }.bind(this)).select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx)).text(function (d) {
+      _newArrowCheck(this, _this9);
+
       return d.text;
-    }).style("opacity", null);
+    }.bind(this)).style("opacity", null);
     gridLines.x = xLines;
   },
 
@@ -15190,7 +16268,8 @@ function smoothLines(el, type) {
    * @private
    */
   updateYGridLines: function updateYGridLines() {
-    var $$ = this,
+    var _this10 = this,
+        $$ = this,
         config = $$.config,
         _$$$state = $$.state,
         width = _$$$state.width,
@@ -15198,6 +16277,7 @@ function smoothLines(el, type) {
         $el = $$.$el,
         $T = $$.$T,
         isRotated = config.axis_rotated;
+
     config.grid_y_show && $$.updateYGrid();
     var ygridLines = $el.main.select("." + $GRID.ygridLines).selectAll("." + $GRID.ygridLine).data(config.grid_y_lines); // exit
 
@@ -15210,11 +16290,15 @@ function smoothLines(el, type) {
 
     var yv = $$.yv.bind($$);
     $T(ygridLines.attr("class", function (d) {
+      _newArrowCheck(this, _this10);
+
       return ($GRID.ygridLine + " " + (d.class || "")).trim();
-    }).select("line")).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? height : yv).style("opacity", null);
+    }.bind(this)).select("line")).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? height : yv).style("opacity", null);
     $T(ygridLines.select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx)).attr("dy", -5).attr("x", getGridTextX(isRotated, width, height)).attr("y", yv).text(function (d) {
+      _newArrowCheck(this, _this10);
+
       return d.text;
-    }).style("opacity", null);
+    }.bind(this)).style("opacity", null);
     $el.gridLines.y = ygridLines;
   },
   redrawGrid: function redrawGrid(withTransition) {
@@ -15230,8 +16314,10 @@ function smoothLines(el, type) {
         texts = gridLines.x.select("text");
     lines = $T(lines, withTransition).attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? width : xv).attr("y1", isRotated ? xv : 0).attr("y2", isRotated ? xv : height);
     texts = $T(texts, withTransition).attr("x", getGridTextX(!isRotated, width, height)).attr("y", xv).text(function (d) {
+      _newArrowCheck(this, this);
+
       return d.text;
-    });
+    }.bind(this));
     return [lines.style("opacity", null), texts.style("opacity", null)];
   },
   initFocusGrid: function initFocusGrid() {
@@ -15269,8 +16355,10 @@ function smoothLines(el, type) {
         isRotated = config.axis_rotated,
         focusEl = $$.$el.main.selectAll("line." + $FOCUS.xgridFocus + ", line." + $FOCUS.ygridFocus),
         dataToShow = (data || [focusEl.datum()]).filter(function (d) {
+      _newArrowCheck(this, this);
+
       return d && isValue($$.getBaseValue(d));
-    });
+    }.bind(this));
 
     // Hide when bubble/scatter/stanford plot exists
     if (!config.tooltip_show || dataToShow.length === 0 || $$.hasType("bubble") || $$.hasArcType()) {
@@ -15304,8 +16392,10 @@ function smoothLines(el, type) {
       }
 
       ["x1", "y1", "x2", "y2"].forEach(function (v, i) {
+        _newArrowCheck(this, this);
+
         return el.attr(v, xy[i]);
-      });
+      }.bind(this));
     });
     smoothLines(focusEl, "grid");
     $$.showCircleFocus == null ? void 0 : $$.showCircleFocus(data);
@@ -15348,15 +16438,18 @@ function smoothLines(el, type) {
     return !0;
   },
   generateGridData: function generateGridData(type, scale) {
-    var $$ = this,
+    var _this14 = this,
+        $$ = this,
         tickNum = $$.$el.main.select("." + $AXIS.axisX).selectAll(".tick").size(),
         gridData = [];
 
     if (type === "year") {
       var xDomain = $$.getXDomain(),
           _xDomain$map = xDomain.map(function (v) {
+        _newArrowCheck(this, _this14);
+
         return v.getFullYear();
-      }),
+      }.bind(this)),
           firstYear = _xDomain$map[0],
           lastYear = _xDomain$map[1];
 
@@ -15369,41 +16462,57 @@ function smoothLines(el, type) {
       if (gridData.length > tickNum) {
         // use only int
         gridData = gridData.filter(function (d) {
+          _newArrowCheck(this, _this14);
+
           return (d + "").indexOf(".") < 0;
-        });
+        }.bind(this));
       }
     }
 
     return gridData;
   },
   getGridFilterToRemove: function getGridFilterToRemove(params) {
+    var _this15 = this;
+
     return params ? function (line) {
+      _newArrowCheck(this, _this15);
+
       var found = !1;
       (isArray(params) ? params.concat() : [params]).forEach(function (param) {
+        _newArrowCheck(this, this);
+
         if ("value" in param && line.value === param.value || "class" in param && line.class === param.class) {
           found = !0;
         }
-      });
+      }.bind(this));
       return found;
-    } : function () {
+    }.bind(this) : function () {
+      _newArrowCheck(this, _this15);
+
       return !0;
-    };
+    }.bind(this);
   },
   removeGridLines: function removeGridLines(params, forX) {
     var $$ = this,
         config = $$.config,
         $T = $$.$T,
         toRemove = $$.getGridFilterToRemove(params),
+        toShow = function (line) {
+      _newArrowCheck(this, this);
+
+      return !toRemove(line);
+    }.bind(this),
         classLines = forX ? $GRID.xgridLines : $GRID.ygridLines,
         classLine = forX ? $GRID.xgridLine : $GRID.ygridLine;
+
     $T($$.$el.main.select("." + classLines).selectAll("." + classLine).filter(toRemove)).style("opacity", "0").remove();
     var gridLines = "grid_" + (forX ? "x" : "y") + "_lines";
-    config[gridLines] = config[gridLines].filter(function toShow(line) {
-      return !toRemove(line);
-    });
+    config[gridLines] = config[gridLines].filter(toShow);
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/region.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -15444,8 +16553,10 @@ function smoothLines(el, type) {
         regions = region.list.select("rect");
     regions = $T(regions, withTransition).attr("x", $$.regionX.bind($$)).attr("y", $$.regionY.bind($$)).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$));
     return [regions.style("fill-opacity", function (d) {
+      _newArrowCheck(this, this);
+
       return isValue(d.opacity) ? d.opacity : null;
-    }).on("end", function () {
+    }.bind(this)).on("end", function () {
       // remove unnecessary rect after transition
       (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode).selectAll("rect:not([x])").remove();
     })];
@@ -17627,6 +18738,8 @@ var options = [data_axis, axis_axis, common_grid];
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
 var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(12);
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -17646,10 +18759,14 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         startingAngle = config[dataType + "_startingAngle"] || 0,
         padAngle = (padding ? padding * .01 : config[dataType + "_padAngle"]) || 0;
     $$.pie = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.pie)().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).value(function (d) {
+      _newArrowCheck(this, this);
+
       return d.values.reduce(function (a, b) {
+        _newArrowCheck(this, this);
+
         return a + b.value;
-      }, 0);
-    }).sort($$.getSortCompareFn.bind($$)(!0));
+      }.bind(this), 0);
+    }.bind(this)).sort($$.getSortCompareFn.bind($$)(!0));
   },
   updateRadius: function updateRadius() {
     var $$ = this,
@@ -17705,8 +18822,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     $$.svgArcExpanded = $$.getSvgArcExpanded();
   },
   getArcLength: function getArcLength() {
-    var $$ = this,
-        config = $$.config,
+    var config = this.config,
         arcLengthInPercent = config.gauge_arcLength * 3.6,
         len = 2 * (arcLengthInPercent / 360);
 
@@ -17719,8 +18835,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     return len * Math.PI;
   },
   getStartAngle: function getStartAngle() {
-    var $$ = this,
-        config = $$.config,
+    var config = this.config,
         isFullCircle = config.gauge_fullCircle,
         defaultStartAngle = -1 * Math.PI / 2,
         defaultEndAngle = Math.PI / 2,
@@ -17761,12 +18876,14 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }
 
     pie($$.filterTargetsToShow()).forEach(function (t, i) {
+      _newArrowCheck(this, this);
+
       if (!found && t.data.id === d.data.id) {
         found = !0;
         d = t;
         d.index = i;
       }
-    });
+    }.bind(this));
 
     if (isNaN(d.startAngle)) {
       d.startAngle = 0;
@@ -17787,17 +18904,22 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     return found ? d : null;
   },
   getSvgArc: function getSvgArc() {
-    var $$ = this,
+    var _this5 = this,
+        $$ = this,
         state = $$.state,
         singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
         hasMultiArcGauge = $$.hasMultiArcGauge(),
         hasPolar = $$.hasType("polar"),
         arc = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.arc)().innerRadius(function (d) {
+      _newArrowCheck(this, _this5);
+
       var _$$$getRadius = $$.getRadius(d),
           innerRadius = _$$$getRadius.innerRadius;
 
       return hasMultiArcGauge ? state.radius - singleArcWidth * (d.index + 1) : isNumber(innerRadius) ? innerRadius : 0;
-    }).outerRadius(function (d) {
+    }.bind(this)).outerRadius(function (d) {
+      _newArrowCheck(this, _this5);
+
       var _$$$getRadius2 = $$.getRadius(d),
           outerRadius = _$$$getRadius2.outerRadius,
           radius = outerRadius;
@@ -17809,7 +18931,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       }
 
       return radius;
-    }),
+    }.bind(this)),
         newArc = function (d, withoutUpdate) {
       var path = "M 0 0";
 
@@ -17831,15 +18953,20 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     return newArc;
   },
   getSvgArcExpanded: function getSvgArcExpanded(rate) {
-    var $$ = this,
+    var _this6 = this,
+        $$ = this,
         state = $$.state,
         newRate = rate || 1,
         singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
         hasMultiArcGauge = $$.hasMultiArcGauge(),
         expandWidth = Math.min(state.radiusExpanded * newRate - state.radius, singleArcWidth * .8 - (1 - newRate) * 100),
         arc = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.arc)().innerRadius(function (d) {
+      _newArrowCheck(this, _this6);
+
       return hasMultiArcGauge ? state.radius - singleArcWidth * (d.index + 1) : $$.getRadius(d).innerRadius;
-    }).outerRadius(function (d) {
+    }.bind(this)).outerRadius(function (d) {
+      _newArrowCheck(this, _this6);
+
       var radius;
 
       if (hasMultiArcGauge) {
@@ -17857,7 +18984,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       }
 
       return radius;
-    });
+    }.bind(this));
+
     return function (d) {
       var updated = $$.updateAngle(d);
       return updated ? arc(updated) : "M 0 0";
@@ -17874,7 +19002,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @private
    */
   transformForArcLabel: function transformForArcLabel(d) {
-    var $$ = this,
+    var _this7 = this,
+        $$ = this,
         config = $$.config,
         radiusExpanded = $$.state.radiusExpanded,
         updated = $$.updateAngle(d),
@@ -17897,14 +19026,18 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
         var c = this.svgArc.centroid(updated),
             _c$map = c.map(function (v) {
+          _newArrowCheck(this, _this7);
+
           return isNaN(v) ? 0 : v;
-        }),
+        }.bind(this)),
             x = _c$map[0],
             y = _c$map[1],
             h = Math.sqrt(x * x + y * y),
             ratio = (_filter$map = ["donut", "pie", "polar"].filter($$.hasType.bind($$)).map(function (v) {
+          _newArrowCheck(this, _this7);
+
           return config[v + "_label_ratio"];
-        })) == null ? void 0 : _filter$map[0];
+        }.bind(this))) == null ? void 0 : _filter$map[0];
 
         if (ratio) {
           ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
@@ -17956,11 +19089,13 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     // MEMO: avoid to cancel transition
     if (transiting) {
       var interval = setInterval(function () {
+        _newArrowCheck(this, this);
+
         if (!transiting) {
           clearInterval(interval);
           $el.legend.selectAll("." + $FOCUS.legendItemFocused).size() > 0 && $$.expandArc(targetIds);
         }
-      }, 10);
+      }.bind(this), 10);
       return;
     }
 
@@ -17986,8 +19121,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
     var newTargetIds = $$.mapToTargetIds(targetIds);
     svg.selectAll($$.selectorTargets(newTargetIds, "." + $ARC.chartArc)).selectAll("path").transition().duration(function (d) {
+      _newArrowCheck(this, this);
+
       return $$.getExpandConfig(d.data.id, "duration");
-    }).attr("d", $$.svgArc);
+    }.bind(this)).attr("d", $$.svgArc);
     svg.selectAll("" + $ARC.arc).style("opacity", null);
   },
 
@@ -18025,19 +19162,26 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     var $$ = this,
         config = $$.config;
     return ["donut", "gauge", "pie", "polar"].some(function (v) {
+      _newArrowCheck(this, this);
+
       return $$.hasType(v) && config[v + "_label_show"];
-    });
+    }.bind(this));
   },
   getArcLabelFormat: function getArcLabelFormat() {
-    var $$ = this,
+    var _this11 = this,
+        $$ = this,
         config = $$.config,
         format = function (v) {
+      _newArrowCheck(this, _this11);
+
       return v;
-    };
+    }.bind(this);
 
     ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).forEach(function (v) {
+      _newArrowCheck(this, _this11);
+
       format = config[v + "_label_format"];
-    });
+    }.bind(this));
     return isFunction(format) ? format.bind($$.api) : format;
   },
   getArcTitle: function getArcTitle() {
@@ -18054,8 +19198,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         classFocus = $$.classFocus.bind($$),
         chartArcs = $el.main.select("." + $ARC.chartArcs),
         mainPieUpdate = chartArcs.selectAll("." + $ARC.chartArc).data($$.pie(targets)).attr("class", function (d) {
+      _newArrowCheck(this, this);
+
       return classChartArc(d) + classFocus(d.data);
-    }),
+    }.bind(this)),
         mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc);
     mainPieEnter.append("g").attr("class", classArcs).merge(mainPieUpdate);
     mainPieEnter.append("text").attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", "middle").style("pointer-events", "none");
@@ -18085,21 +19231,27 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }
   },
   redrawArc: function redrawArc(duration, durationForExit, withTransform) {
-    var $$ = this,
+    var _this13 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         main = $$.$el.main,
         hasInteraction = config.interaction_enabled,
         isSelectable = hasInteraction && config.data_selection_isselectable,
         mainArc = main.selectAll("." + $ARC.arcs).selectAll("." + $ARC.arc).data($$.arcData.bind($$));
+
     mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove();
     mainArc = mainArc.enter().append("path").attr("class", $$.getClass("arc", !0)).style("fill", function (d) {
+      _newArrowCheck(this, _this13);
+
       return $$.color(d.data);
-    }).style("cursor", function (d) {
+    }.bind(this)).style("cursor", function (d) {
       var _isSelectable;
 
+      _newArrowCheck(this, _this13);
+
       return (_isSelectable = isSelectable) != null && _isSelectable.bind != null && _isSelectable.bind($$.api)(d) ? "pointer" : null;
-    }).style("opacity", "0").each(function (d) {
+    }.bind(this)).style("opacity", "0").each(function (d) {
       if ($$.isGaugeType(d.data)) {
         d.startAngle = config.gauge_startingAngle;
         d.endAngle = config.gauge_startingAngle;
@@ -18114,18 +19266,24 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }
 
     mainArc.attr("transform", function (d) {
+      _newArrowCheck(this, _this13);
+
       return !$$.isGaugeType(d.data) && withTransform ? "scale(0)" : "";
-    }).style("opacity", function (d) {
+    }.bind(this)).style("opacity", function (d) {
       return d === this._current ? "0" : null;
     }).each(function () {
+      _newArrowCheck(this, _this13);
+
       state.transiting = !0;
-    }).transition().duration(duration).attrTween("d", function (d) {
+    }.bind(this)).transition().duration(duration).attrTween("d", function (d) {
       var updated = $$.updateAngle(d);
 
       if (!updated) {
         return function () {
+          _newArrowCheck(this, this);
+
           return "M 0 0";
-        };
+        }.bind(this);
       }
 
       if (isNaN(this._current.startAngle)) {
@@ -18145,6 +19303,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         return $$.getArc(interpolated, !0);
       };
     }).attr("transform", withTransform ? "scale(1)" : "").style("fill", function (d) {
+      _newArrowCheck(this, _this13);
+
       var color;
 
       if ($$.levelColor) {
@@ -18156,12 +19316,13 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       }
 
       return color;
-    }) // Where gauge reading color would receive customization.
+    }.bind(this)) // Where gauge reading color would receive customization.
     .style("opacity", null).call(endall, function () {
       if ($$.levelColor) {
         var path = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
-            d = path.datum();
-        $$.updateLegendItemColor(d.data.id, path.style("fill"));
+            _d = path.datum();
+
+        $$.updateLegendItemColor(_d.data.id, path.style("fill"));
       }
 
       state.transiting = !1;
@@ -18174,7 +19335,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     $$.redrawArcText(duration);
   },
   redrawBackgroundArcs: function redrawBackgroundArcs() {
-    var $$ = this,
+    var _this15 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         hasMultiArcGauge = $$.hasMultiArcGauge(),
@@ -18187,9 +19349,13 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       var index = 0;
       backgroundArc = backgroundArc.selectAll("path." + $ARC.chartArcsBackground).data($$.data.targets);
       backgroundArc.enter().append("path").attr("class", function (d, i) {
+        _newArrowCheck(this, _this15);
+
         return $ARC.chartArcsBackground + " " + $ARC.chartArcsBackground + "-" + i;
-      }).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", function (_ref2) {
+      }.bind(this)).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", function (_ref2) {
         var id = _ref2.id;
+
+        _newArrowCheck(this, _this15);
 
         if (state.hiddenTargetIds.indexOf(id) >= 0) {
           return "M 0 0";
@@ -18204,10 +19370,12 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
           index: index++
         };
         return $$.getArc(d, !0, !0);
-      });
+      }.bind(this));
       backgroundArc.exit().remove();
     } else {
       backgroundArc.attr("d", function () {
+        _newArrowCheck(this, _this15);
+
         var d = {
           data: [{
             value: config.gauge_max
@@ -18216,11 +19384,12 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
           endAngle: endAngle
         };
         return $$.getArc(d, !0, !0);
-      });
+      }.bind(this));
     }
   },
   bindArcEvent: function bindArcEvent(arc) {
-    var $$ = this,
+    var _this16 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         isTouch = state.inputType === "touch",
@@ -18271,6 +19440,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         selectArc(this, arcData, id);
         $$.setOverOut(!0, arcData);
       }).on("mouseout", function (event, d) {
+        _newArrowCheck(this, _this16);
+
         if (state.transiting) {
           // skip while transiting
           return;
@@ -18281,7 +19452,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
             arcData = updated ? $$.convertToArcData(updated) : null;
         unselectArc();
         $$.setOverOut(!1, arcData);
-      }).on("mousemove", function (event, d) {
+      }.bind(this)).on("mousemove", function (event, d) {
         var updated = $$.updateAngle(d),
             arcData = updated ? $$.convertToArcData(updated) : null;
         state.event = event;
@@ -18292,10 +19463,12 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
     if (isTouch && $$.hasArcType() && !$$.radars) {
       var getEventArc = function (event) {
+        _newArrowCheck(this, _this16);
+
         var touch = event.changedTouches[0],
             eventArc = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
         return eventArc;
-      };
+      }.bind(this);
 
       $$.$el.svg.on("touchstart touchmove", function (event) {
         var _datum, _arcData2;
@@ -18317,7 +19490,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }
   },
   redrawArcText: function redrawArcText(duration) {
-    var $$ = this,
+    var _this17 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         _$$$$el = $$.$el,
@@ -18330,12 +19504,18 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     // for gauge type, update text when has no title & multi data
     if (!(hasGauge && $$.data.targets.length === 1 && config.gauge_title)) {
       text = main.selectAll("." + $ARC.chartArc).select("text").style("opacity", "0").attr("class", function (d) {
+        _newArrowCheck(this, _this17);
+
         return $$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null;
-      }).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
+      }.bind(this)).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
+        _newArrowCheck(this, _this17);
+
         return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? Math.round(state.radius / 5) + "px" : null;
-      }).transition().duration(duration).style("opacity", function (d) {
+      }.bind(this)).transition().duration(duration).style("opacity", function (d) {
+        _newArrowCheck(this, _this17);
+
         return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0";
-      });
+      }.bind(this));
       hasMultiArcGauge && text.attr("dy", "-.1em");
     }
 
@@ -18357,6 +19537,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/area.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -18377,6 +19559,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         datetimeId = $$.state.datetimeId,
         defs = $$.$el.defs;
     $$.data.targets.forEach(function (d) {
+      _newArrowCheck(this, this);
+
       var id = datetimeId + "-areaGradient" + $$.getTargetSelectorSuffix(d.id);
 
       if ($$.isAreaType(d) && defs.select("#" + id).empty()) {
@@ -18390,11 +19574,13 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
             stops = _config$area_linearGr4 === void 0 ? [[0, color, 1], [1, color, 0]] : _config$area_linearGr4,
             linearGradient = defs.append("linearGradient").attr("id", "" + id).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
         stops.forEach(function (v) {
+          _newArrowCheck(this, this);
+
           var stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
           linearGradient.append("stop").attr("offset", v[0]).attr("stop-color", stopColor || color).attr("stop-opacity", v[2]);
-        });
+        }.bind(this));
       }
-    });
+    }.bind(this));
   },
   updateAreaColor: function updateAreaColor(d) {
     var $$ = this;
@@ -18446,8 +19632,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         orgAreaOpacity = $$.state.orgAreaOpacity;
 
     return [$$.$T(area, withTransition, getRandom()).attr("d", drawFn).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function (d) {
+      _newArrowCheck(this, this);
+
       return ($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity) + "";
-    })];
+    }.bind(this))];
   },
 
   /**
@@ -18458,23 +19646,32 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @private
    */
   generateDrawArea: function generateDrawArea(areaIndices, isSub) {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         config = $$.config,
         lineConnectNull = config.line_connectNull,
         isRotated = config.axis_rotated,
         getPoints = $$.generateGetAreaPoints(areaIndices, isSub),
         yScale = $$.getYScaleById.bind($$),
         xValue = function (d) {
+      _newArrowCheck(this, _this4);
+
       return (isSub ? $$.subxx : $$.xx).call($$, d);
-    },
+    }.bind(this),
         value0 = function (d, i) {
+      _newArrowCheck(this, _this4);
+
       return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)($$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : $$.getShapeYMin(d.id));
-    },
+    }.bind(this),
         value1 = function (d, i) {
+      _newArrowCheck(this, _this4);
+
       return $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScale(d.id, isSub)($$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : d.value);
-    };
+    }.bind(this);
 
     return function (d) {
+      _newArrowCheck(this, _this4);
+
       var values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values,
           x0 = 0,
           y0 = 0,
@@ -18487,8 +19684,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
         if (!lineConnectNull) {
           area = area.defined(function (d) {
+            _newArrowCheck(this, this);
+
             return $$.getBaseValue(d) !== null;
-          });
+          }.bind(this));
         }
 
         if ($$.isStepType(d)) {
@@ -18506,7 +19705,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       }
 
       return path || "M 0 0";
-    };
+    }.bind(this);
   },
   generateGetAreaPoints: function generateGetAreaPoints(areaIndices, isSub) {
     // partial duplication of generateGetBarPoints
@@ -18535,6 +19734,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/bar.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -18555,7 +19756,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }
   },
   updateTargetsForBar: function updateTargetsForBar(targets) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         $el = $$.$el,
         classChartBar = $$.getChartClass("Bar"),
@@ -18569,19 +19771,27 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
     var mainBarUpdate = $$.$el.main.select("." + $BAR.chartBars).selectAll("." + $BAR.chartBar).data( // remove
     targets.filter(function (v) {
+      _newArrowCheck(this, _this);
+
       return v.values.some(function (d) {
+        _newArrowCheck(this, this);
+
         return isNumber(d.value) || $$.isBarRangeType(d);
-      });
-    })).attr("class", function (d) {
+      }.bind(this));
+    }.bind(this))).attr("class", function (d) {
+      _newArrowCheck(this, _this);
+
       return classChartBar(d) + classFocus(d);
-    }),
+    }.bind(this)),
         mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", "none");
     // Bars for each data
     mainBarEnter.append("g").attr("class", classBars).style("cursor", function (d) {
       var _isSelectable;
 
+      _newArrowCheck(this, _this);
+
       return (_isSelectable = isSelectable) != null && _isSelectable.bind != null && _isSelectable.bind($$.api)(d) ? "pointer" : null;
-    });
+    }.bind(this));
   },
 
   /**
@@ -18623,8 +19833,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         bar = _ref.bar;
 
     return [$$.$T(bar, withTransition, getRandom()).attr("d", function (d) {
+      _newArrowCheck(this, this);
+
       return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d);
-    }).style("fill", $$.color).style("opacity", null)];
+    }.bind(this)).style("fill", $$.color).style("opacity", null)];
   },
 
   /**
@@ -18648,18 +19860,26 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @private
    */
   generateDrawBar: function generateDrawBar(barIndices, isSub) {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         config = $$.config,
         getPoints = $$.generateGetBarPoints(barIndices, isSub),
         isRotated = config.axis_rotated,
         barRadius = config.bar_radius,
         barRadiusRatio = config.bar_radius_ratio,
         getRadius = isNumber(barRadius) && barRadius > 0 ? function () {
+      _newArrowCheck(this, _this4);
+
       return barRadius;
-    } : isNumber(barRadiusRatio) ? function (w) {
+    }.bind(this) : isNumber(barRadiusRatio) ? function (w) {
+      _newArrowCheck(this, _this4);
+
       return w * barRadiusRatio;
-    } : null;
+    }.bind(this) : null;
+
     return function (d, i) {
+      _newArrowCheck(this, _this4);
+
       // 4 points that make a bar
       var points = getPoints(d, i),
           indexX = +isRotated,
@@ -18684,7 +19904,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
       var path = isRotated ? "H" + (points[1][indexX] - radius) + " " + pathRadius[0] + "V" + (points[2][indexY] - radius) + " " + pathRadius[1] + "H" + points[3][indexX] : "V" + (points[1][indexY] + (isNegative ? -radius : radius)) + " " + pathRadius[0] + "H" + (points[2][indexX] - radius) + " " + pathRadius[1] + "V" + points[3][indexY];
       return "M" + points[0][indexX] + "," + points[0][indexY] + path + "z";
-    };
+    }.bind(this);
   },
 
   /**
@@ -18693,7 +19913,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @returns {boolean}
    */
   isStackingRadiusData: function isStackingRadiusData(d) {
-    var $$ = this,
+    var _this5 = this,
+        $$ = this,
         $el = $$.$el,
         config = $$.config,
         data = $$.data,
@@ -18705,25 +19926,37 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     // when the data is hidden, check if has rounded edges
     if (state.hiddenTargetIds.indexOf(id) > -1) {
       var target = $el.bar.filter(function (d) {
+        _newArrowCheck(this, _this5);
+
         return d.id === id && d.value === value;
-      });
+      }.bind(this));
       return !target.empty() && /a\d+/i.test(target.attr("d"));
     } // Find same grouped ids
 
 
     var keys = config.data_groups.find(function (v) {
+      _newArrowCheck(this, _this5);
+
       return v.indexOf(id) > -1;
-    }),
+    }.bind(this)),
         sortedList = $$.orderTargets($$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))).filter(function (v) {
+      _newArrowCheck(this, _this5);
+
       return keys.indexOf(v.id) > -1;
-    }),
+    }.bind(this)),
         sortedIds = sortedList.map(function (v) {
+      _newArrowCheck(this, _this5);
+
       return v.values.filter(function (v2) {
+        _newArrowCheck(this, this);
+
         return v2.index === index && (value > 0 ? v2.value > 0 : v2.value < 0);
-      })[0];
-    }).filter(Boolean).map(function (v) {
+      }.bind(this))[0];
+    }.bind(this)).filter(Boolean).map(function (v) {
+      _newArrowCheck(this, _this5);
+
       return v.id;
-    }); // Get sorted list
+    }.bind(this)); // Get sorted list
 
     // If the given id stays in the last position, then radius should be applied.
     return value !== 0 && sortedIds.indexOf(id) === sortedIds.length - 1;
@@ -18747,6 +19980,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub),
         yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
+      _newArrowCheck(this, this);
+
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
           offset = barOffset(d, i) || y0,
           width = isNumber(barW) ? barW : barW[d.id] || barW._$width,
@@ -18765,10 +20000,11 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       var startPosX = posX + width; // 4 points that make a bar
 
       return [[posX, offset], [posX, posY], [startPosX, posY], [startPosX, offset]];
-    };
+    }.bind(this);
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/candlestick.ts
+
 
 
 function candlestick_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
@@ -18806,8 +20042,10 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     }
 
     var mainUpdate = $$.$el.main.select("." + $CANDLESTICK.chartCandlesticks).selectAll("." + $CANDLESTICK.chartCandlestick).data(targets).attr("class", function (d) {
+      _newArrowCheck(this, this);
+
       return classChart(d) + classFocus(d);
-    });
+    }.bind(this));
     mainUpdate.enter().append("g").attr("class", classChart).style("pointer-events", "none");
   },
 
@@ -18831,8 +20069,10 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         candlestick = $root.main.selectAll("." + $CANDLESTICK.chartCandlestick).selectAll("." + $CANDLESTICK.candlestick).data($$.labelishData.bind($$));
     $T(candlestick.exit(), withTransition).style("opacity", "0").remove();
     var candlestickEnter = candlestick.enter().filter(function (d) {
+      _newArrowCheck(this, this);
+
       return d.value;
-    }).append("g").attr("class", classSetter);
+    }.bind(this)).append("g").attr("class", classSetter);
     candlestickEnter.append("line");
     candlestickEnter.append("path");
 
@@ -18857,8 +20097,11 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         isRotated = config.axis_rotated,
         downColor = config.candlestick_color_down;
     return function (d, i, g) {
-      var _value,
-          points = getPoints(d, i),
+      var _value;
+
+      _newArrowCheck(this, this);
+
+      var points = getPoints(d, i),
           value = $$.getCandlestickData(d),
           isUp = (_value = value) == null ? void 0 : _value._isUp,
           indexX = +isRotated;
@@ -18869,9 +20112,11 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
 
       var path = isRotated ? "H" + points[1][1] + " V" + points[1][0] + " H" + points[0][1] : "V" + points[1][1] + " H" + points[1][0] + " V" + points[0][1];
       g.select("path").attr("d", "M" + points[0][indexX] + "," + points[0][+!indexX] + path + "z").style("fill", function (d) {
+        _newArrowCheck(this, this);
+
         var color = isUp ? $$.color(d) : isObject(downColor) ? downColor[d.id] : downColor;
         return color || $$.color(d);
-      }); // set line position
+      }.bind(this)); // set line position
 
       var line = g.select("line"),
           pos = isRotated ? {
@@ -18889,7 +20134,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       for (var x in pos) {
         line.attr(x, pos[x]);
       }
-    };
+    }.bind(this);
   },
 
   /**
@@ -18913,6 +20158,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         shapeOffset = $$.getShapeOffset($$.isBarType, indices, !!isSub),
         yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
+      _newArrowCheck(this, this);
+
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
           offset = shapeOffset(d, i) || y0,
           width = isNumber(barW) ? barW : barW[d.id] || barW._$width,
@@ -18947,7 +20194,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       }
 
       return points;
-    };
+    }.bind(this);
   },
 
   /**
@@ -19015,6 +20262,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/gauge.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -19028,8 +20277,10 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         config = $$.config,
         arcs = $$.$el.arcs,
         appendText = function (className) {
+      _newArrowCheck(this, this);
+
       arcs.append("text").attr("class", className).style("text-anchor", "middle").style("pointer-events", "none");
-    };
+    }.bind(this);
 
     if ($$.hasType("gauge")) {
       var hasMulti = $$.hasMultiArcGauge();
@@ -19055,18 +20306,24 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     }
   },
   redrawMultiArcGauge: function redrawMultiArcGauge() {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         $el = $$.$el,
         hiddenTargetIds = $$.state.hiddenTargetIds,
         arcLabelLines = $el.main.selectAll("." + $ARC.arcs).selectAll("." + $ARC.arcLabelLine).data($$.arcData.bind($$)),
         mainArcLabelLine = arcLabelLines.enter().append("rect").attr("class", function (d) {
+      _newArrowCheck(this, _this2);
+
       return $ARC.arcLabelLine + " " + $COMMON.target + " " + $COMMON.target + "-" + d.data.id;
-    }).merge(arcLabelLines);
+    }.bind(this)).merge(arcLabelLines);
+
     mainArcLabelLine.style("fill", function (d) {
+      _newArrowCheck(this, _this2);
+
       return $$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data);
-    }).style("display", config.gauge_label_show ? null : "none").each(function (d) {
+    }.bind(this)).style("display", config.gauge_label_show ? null : "none").each(function (d) {
       var lineLength = 0,
           lineThickness = 2,
           x = 0,
@@ -19104,6 +20361,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/bubble.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -19163,8 +20422,10 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     }
 
     var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) {
+      _newArrowCheck(this, this);
+
       return $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : isObject(d.value) ? d.value.mid : d.value;
-    })),
+    }.bind(this))),
         maxArea = maxR * maxR * Math.PI,
         area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
     return Math.sqrt(area / Math.PI);
@@ -19182,6 +20443,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/line.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -19196,7 +20459,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     $el.line = $el.main.select("." + $COMMON.chart).append("g").attr("class", $LINE.chartLines);
   },
   updateTargetsForLine: function updateTargetsForLine(t) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         _$$$$el = $$.$el,
         area = _$$$$el.area,
         line = _$$$$el.line,
@@ -19210,11 +20474,15 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     }
 
     var targets = t.filter(function (d) {
+      _newArrowCheck(this, _this);
+
       return !($$.isScatterType(d) || $$.isBubbleType(d));
-    }),
+    }.bind(this)),
         mainLineUpdate = main.select("." + $LINE.chartLines).selectAll("." + $LINE.chartLine).data(targets).attr("class", function (d) {
+      _newArrowCheck(this, _this);
+
       return classChartLine(d) + classFocus(d);
-    }),
+    }.bind(this)),
         mainLineEnter = mainLineUpdate.enter().append("g").attr("class", classChartLine).style("opacity", "0").style("pointer-events", "none");
     // Lines for each data
     mainLineEnter.append("g").attr("class", classLines); // Areas
@@ -19233,6 +20501,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @private
    */
   updateLine: function updateLine(withTransition, isSub) {
+    var _this2 = this;
+
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -19245,10 +20515,14 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         line = $root.main.selectAll("." + $LINE.lines).selectAll("." + $LINE.line).data($$.lineData.bind($$));
     $T(line.exit(), withTransition).style("opacity", "0").remove();
     $root.line = line.enter().append("path").attr("class", function (d) {
+      _newArrowCheck(this, _this2);
+
       return $$.getClass("line", !0)(d) + " " + (extraLineClasses(d) || "");
-    }).style("stroke", $$.color).merge(line).style("opacity", $$.initialOpacity.bind($$)).style("shape-rendering", function (d) {
+    }.bind(this)).style("stroke", $$.color).merge(line).style("opacity", $$.initialOpacity.bind($$)).style("shape-rendering", function (d) {
+      _newArrowCheck(this, _this2);
+
       return $$.isStepType(d) ? "crispEdges" : "";
-    }).attr("transform", null);
+    }.bind(this)).attr("transform", null);
   },
 
   /**
@@ -19284,6 +20558,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     // when is step & rotated, should be computed in different way
     // https://github.com/naver/billboard.js/issues/471
     return isRotatedStepType ? function (context) {
+      _newArrowCheck(this, this);
+
       var step = $$.getInterpolate(d)(context); // keep the original method
 
       step.orgPoint = step.point; // to get rotated path data
@@ -19305,10 +20581,11 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       };
 
       return step;
-    } : $$.getInterpolate(d);
+    }.bind(this) : $$.getInterpolate(d);
   },
   generateDrawLine: function generateDrawLine(lineIndices, isSub) {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         lineConnectNull = config.line_connectNull,
@@ -19316,23 +20593,31 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         getPoints = $$.generateGetLinePoints(lineIndices, isSub),
         yScale = $$.getYScaleById.bind($$),
         xValue = function (d) {
+      _newArrowCheck(this, _this4);
+
       return (isSub ? $$.subxx : $$.xx).call($$, d);
-    },
+    }.bind(this),
         yValue = function (d, i) {
+      _newArrowCheck(this, _this4);
+
       return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)($$.getBaseValue(d));
-    },
+    }.bind(this),
         line = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.line)();
 
     line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
 
     if (!lineConnectNull) {
       line = line.defined(function (d) {
+        _newArrowCheck(this, _this4);
+
         return $$.getBaseValue(d) !== null;
-      });
+      }.bind(this));
     }
 
     var x = isSub ? scale.subX : scale.x;
     return function (d) {
+      _newArrowCheck(this, _this4);
+
       var y = yScale(d.id, isSub),
           values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values,
           x0 = 0,
@@ -19361,10 +20646,11 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       }
 
       return path || "M 0 0";
-    };
+    }.bind(this);
   },
   lineWithRegions: function lineWithRegions(d, x, y, _regions) {
-    var $$ = this,
+    var _this5 = this,
+        $$ = this,
         config = $$.config,
         isRotated = config.axis_rotated,
         isTimeSeries = $$.axis.isTimeSeries(),
@@ -19376,6 +20662,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         diff,
         diffx2,
         isWithinRegions = function (withinX, withinRegions) {
+      _newArrowCheck(this, _this5);
+
       for (var i = 0, reg; reg = withinRegions[i]; i++) {
         if (reg.start < withinX && withinX <= reg.end) {
           return reg.style;
@@ -19383,13 +20671,15 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       }
 
       return !1;
-    };
+    }.bind(this);
 
     // Check start/end of regions
     if (isDefined(_regions)) {
       var getValue = function (v, def) {
+        _newArrowCheck(this, _this5);
+
         return isUndefined(v) ? def : isTimeSeries ? parseDate.call($$, v) : v;
-      };
+      }.bind(this);
 
       for (var i = 0, reg; reg = _regions[i]; i++) {
         var start = getValue(reg.start, d[0].x),
@@ -19407,29 +20697,43 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
 
 
     var xValue = isRotated ? function (dt) {
+      _newArrowCheck(this, _this5);
+
       return y(dt.value);
-    } : function (dt) {
+    }.bind(this) : function (dt) {
+      _newArrowCheck(this, _this5);
+
       return x(dt.x);
-    },
+    }.bind(this),
         yValue = isRotated ? function (dt) {
+      _newArrowCheck(this, _this5);
+
       return x(dt.x);
-    } : function (dt) {
+    }.bind(this) : function (dt) {
+      _newArrowCheck(this, _this5);
+
       return y(dt.value);
-    },
+    }.bind(this),
         generateM = function (points) {
+      _newArrowCheck(this, _this5);
+
       return "M" + points[0][0] + "," + points[0][1] + "L" + points[1][0] + "," + points[1][1];
-    },
+    }.bind(this),
         sWithRegion = isTimeSeries ? function (d0, d1, k, timeseriesDiff) {
+      _newArrowCheck(this, _this5);
+
       var x0 = d0.x.getTime(),
           xDiff = d1.x - d0.x,
           xv0 = new Date(x0 + xDiff * k),
           xv1 = new Date(x0 + xDiff * (k + timeseriesDiff)),
           points = isRotated ? [[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] : [[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
       return generateM(points);
-    } : function (d0, d1, k, otherDiff) {
+    }.bind(this) : function (d0, d1, k, otherDiff) {
+      _newArrowCheck(this, _this5);
+
       var points = isRotated ? [[y(yp(k), !0), x(xp(k))], [y(yp(k + otherDiff), !0), x(xp(k + otherDiff))]] : [[x(xp(k), !0), y(yp(k))], [x(xp(k + otherDiff), !0), y(yp(k + otherDiff))]];
       return generateM(points);
-    },
+    }.bind(this),
         axisType = {
       x: $$.axis.getAxisType("x"),
       y: $$.axis.getAxisType("y")
@@ -19486,6 +20790,10 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/point.ts
+
+
+var point_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -19496,8 +20804,10 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
 
 
 var getTransitionName = function () {
+  _newArrowCheck(this, point_this);
+
   return getRandom();
-};
+}.bind(undefined);
 
 /* harmony default export */ var point = ({
   hasValidPointType: function hasValidPointType(type) {
@@ -19539,7 +20849,7 @@ var getTransitionName = function () {
     }
   },
   updateTargetForCircle: function updateTargetForCircle(targetsValue, enterNodeValue) {
-    var _this = this,
+    var _this2 = this,
         $$ = this,
         config = $$.config,
         data = $$.data,
@@ -19559,8 +20869,10 @@ var getTransitionName = function () {
     // only for scatter & bubble type should generate seprate <g> node
     if (!targets) {
       targets = data.targets.filter(function (d) {
-        return _this.isScatterType(d) || _this.isBubbleType(d);
-      });
+        _newArrowCheck(this, _this2);
+
+        return this.isScatterType(d) || this.isBubbleType(d);
+      }.bind(this));
       var mainCircle = $el.main.select("." + $CIRCLE.chartCircles).style("pointer-events", "none").selectAll("." + $CIRCLE.circles).data(targets);
       mainCircle.exit().remove();
       enterNode = mainCircle.enter();
@@ -19568,21 +20880,29 @@ var getTransitionName = function () {
 
 
     selectionEnabled && enterNode.append("g").attr("class", function (d) {
+      _newArrowCheck(this, _this2);
+
       return $$.generateClass($SELECT.selectedCircles, d.id);
-    });
+    }.bind(this));
     enterNode.append("g").attr("class", classCircles).style("cursor", function (d) {
+      _newArrowCheck(this, _this2);
+
       return isFunction(isSelectable) && isSelectable(d) ? "pointer" : null;
-    }).style("opacity", function () {
+    }.bind(this)).style("opacity", function () {
       var parent = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode); // if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
 
       return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
     }); // Update date for selected circles
 
     selectionEnabled && targets.forEach(function (t) {
+      _newArrowCheck(this, _this2);
+
       $el.main.selectAll("." + $SELECT.selectedCircles + $$.getTargetSelectorSuffix(t.id)).selectAll("" + $SELECT.selectedCircle).each(function (d) {
+        _newArrowCheck(this, this);
+
         d.value = t.values[d.index].value;
-      });
-    });
+      }.bind(this));
+    }.bind(this));
   },
   updateCircle: function updateCircle(isSub) {
     if (isSub === void 0) {
@@ -19598,8 +20918,10 @@ var getTransitionName = function () {
 
     if (config.point_show && !state.toggling) {
       var circles = $root.main.selectAll("." + $CIRCLE.circles).selectAll("." + $CIRCLE.circle).data(function (d) {
+        _newArrowCheck(this, this);
+
         return $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[0]] : d.values : [];
-      });
+      }.bind(this));
       circles.exit().remove();
       circles.enter().filter(Boolean).append($$.point("create", this, $$.pointR.bind($$), $$.color));
       $root.circle = $root.main.selectAll("." + $CIRCLE.circles + " ." + $CIRCLE.circle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$));
@@ -19659,8 +20981,10 @@ var getTransitionName = function () {
       if (d) {
         circle = circle.filter(function (t) {
           var data = d.filter(function (v) {
+            _newArrowCheck(this, this);
+
             return v.id === t.id;
-          });
+          }.bind(this));
           return data.length ? (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).datum(data[0]) : !1;
         });
       }
@@ -19707,9 +21031,11 @@ var getTransitionName = function () {
     var $$ = this,
         getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), isSub);
     return function (d, i) {
+      _newArrowCheck(this, this);
+
       var id = d.id;
       return $$.isGrouped(id) ? getPoints(d, i)[0][1] : $$.getYScaleById(id, isSub)($$.getBaseValue(d));
-    };
+    }.bind(this);
   },
   expandCircles: function expandCircles(i, id, reset) {
     var $$ = this,
@@ -19794,17 +21120,19 @@ var getTransitionName = function () {
     return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || this.config.point_sensitivity);
   },
   insertPointInfoDefs: function insertPointInfoDefs(point, id) {
-    var _node$childNodes,
-        $$ = this,
+    var _this7 = this,
         copyAttr = function (from, target) {
+      _newArrowCheck(this, _this7);
+
       for (var attribs = from.attributes, i = 0, name; name = attribs[i]; i++) {
         name = name.name;
         target.setAttribute(name, from.getAttribute(name));
       }
-    },
+    }.bind(this),
         doc = new DOMParser().parseFromString(point, "image/svg+xml"),
         node = doc.documentElement,
-        clone = browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg, node.nodeName.toLowerCase());
+        clone = browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg, node.nodeName.toLowerCase()),
+        _node$childNodes;
 
     clone.id = id;
     clone.style.fill = "inherit";
@@ -19818,12 +21146,14 @@ var getTransitionName = function () {
         parent.html(node.innerHTML);
       } else {
         toArray(node.childNodes).forEach(function (v) {
+          _newArrowCheck(this, _this7);
+
           copyAttr(v, parent.append(v.tagName).node());
-        });
+        }.bind(this));
       }
     }
 
-    $$.$el.defs.node().appendChild(clone);
+    this.$el.defs.node().appendChild(clone);
   },
   pointFromDefs: function pointFromDefs(id) {
     return this.$el.defs.select("#" + id);
@@ -19848,7 +21178,6 @@ var getTransitionName = function () {
     return pointClass;
   },
   generateGetLinePoints: function generateGetLinePoints(lineIndices, isSub) {
-    // partial duplication of generateGetBarPoints
     var $$ = this,
         config = $$.config,
         x = $$.getShapeX(0, lineIndices, isSub),
@@ -19856,6 +21185,8 @@ var getTransitionName = function () {
         lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub),
         yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
+      _newArrowCheck(this, this);
+
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
           offset = lineOffset(d, i) || y0,
           posX = x(d),
@@ -19870,7 +21201,7 @@ var getTransitionName = function () {
       var point = [posX, posY - (y0 - offset)];
       return [point, point, // from here and below, needed for compatibility
       point, point];
-    };
+    }.bind(this);
   },
   generatePoint: function generatePoint() {
     var $$ = this,
@@ -19917,13 +21248,21 @@ var getTransitionName = function () {
       return element.append("use").attr("xlink:href", "#" + id).attr("class", this.updatePointClass.bind(this)).style("fill", fillStyleFn).node();
     },
     update: function update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-      var $$ = this,
+      var _this9 = this,
+          $$ = this,
           _element$node$getBBox = element.node().getBBox(),
           width = _element$node$getBBox.width,
           height = _element$node$getBBox.height,
           xPosFn2 = function (d) {
+        _newArrowCheck(this, _this9);
+
         return isValue(d.value) ? xPosFn(d) - width / 2 : 0;
-      },
+      }.bind(this),
+          yPosFn2 = function (d) {
+        _newArrowCheck(this, _this9);
+
+        return isValue(d.value) ? yPosFn(d) - height / 2 : 0;
+      }.bind(this),
           mainCircles = element;
 
       if (withTransition) {
@@ -19932,9 +21271,7 @@ var getTransitionName = function () {
         selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
       }
 
-      return mainCircles.attr("x", xPosFn2).attr("y", function yPosFn2(d) {
-        return isValue(d.value) ? yPosFn(d) - height / 2 : 0;
-      }).style("fill", fillStyleFn);
+      return mainCircles.attr("x", xPosFn2).attr("y", yPosFn2).style("fill", fillStyleFn);
     }
   },
   // 'circle' data point
@@ -19968,17 +21305,27 @@ var getTransitionName = function () {
   rectangle: {
     create: function create(element, sizeFn, fillStyleFn) {
       var rectSizeFn = function (d) {
+        _newArrowCheck(this, this);
+
         return sizeFn(d) * 2;
-      };
+      }.bind(this);
 
       return element.append("rect").attr("class", this.updatePointClass.bind(this)).attr("width", rectSizeFn).attr("height", rectSizeFn).style("fill", fillStyleFn).node();
     },
     update: function update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-      var $$ = this,
+      var _this11 = this,
+          $$ = this,
           r = $$.config.point_r,
           rectXPosFn = function (d) {
+        _newArrowCheck(this, _this11);
+
         return xPosFn(d) - r;
-      },
+      }.bind(this),
+          rectYPosFn = function (d) {
+        _newArrowCheck(this, _this11);
+
+        return yPosFn(d) - r;
+      }.bind(this),
           mainCircles = element;
 
       if (withTransition) {
@@ -19987,13 +21334,13 @@ var getTransitionName = function () {
         selectedCircles && $$.$T(selectedCircles, withTransition, getTransitionName());
       }
 
-      return mainCircles.attr("x", rectXPosFn).attr("y", function rectYPosFn(d) {
-        return yPosFn(d) - r;
-      }).style("fill", fillStyleFn);
+      return mainCircles.attr("x", rectXPosFn).attr("y", rectYPosFn).style("fill", fillStyleFn);
     }
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/polar.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -20075,7 +21422,8 @@ function getDataMax($$) {
    * @private
    */
   updatePolarLevel: function updatePolarLevel() {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         levels = $$.$el.arcs.levels,
@@ -20084,34 +21432,46 @@ function getDataMax($$) {
         levelData = getRange(0, depth),
         outerRadius = state.radius,
         levelRatio = levelData.map(function (l) {
+      _newArrowCheck(this, _this);
+
       return outerRadius * ((l + 1) / depth);
-    }),
+    }.bind(this)),
         levelTextFormat = (config.polar_level_text_format || function () {}).bind($$.api),
         level = levels.selectAll("." + $LEVEL.level).data(levelData);
 
     level.exit().remove();
     var levelEnter = level.enter().append("g").attr("class", function (d, i) {
+      _newArrowCheck(this, _this);
+
       return $LEVEL.level + " " + $LEVEL.level + "-" + i;
-    }); // cx, cy, translate: Set center as origin (0,0) so that it can share same center with arcs
+    }.bind(this)); // cx, cy, translate: Set center as origin (0,0) so that it can share same center with arcs
 
     levelEnter.append("circle");
     levelEnter.merge(level).selectAll("circle").style("visibility", config.polar_level_show ? null : "hidden").attr("cx", 0).attr("cy", 0).attr("r", function (d) {
+      _newArrowCheck(this, _this);
+
       return levelRatio[d];
-    });
+    }.bind(this));
 
     if (config.polar_level_text_show) {
       var levelTextBackgroundColor = config.polar_level_text_backgroundColor,
           defsId = "#" + state.datetimeId + "-labels-bg" + $$.getTargetSelectorSuffix(levelTextBackgroundColor);
       levelEnter.append("text").style("text-anchor", "middle");
       levelEnter.merge(level).selectAll("text").attr("dy", function (d) {
+        _newArrowCheck(this, _this);
+
         return -levelRatio[d] + 5;
-      }).attr("filter", levelTextBackgroundColor ? "url(" + defsId + ")" : null).text(function (d) {
+      }.bind(this)).attr("filter", levelTextBackgroundColor ? "url(" + defsId + ")" : null).text(function (d) {
+        _newArrowCheck(this, _this);
+
         return levelTextFormat(dataMax / levelData.length * (d + 1));
-      });
+      }.bind(this));
     }
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/radar.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -20175,8 +21535,10 @@ var cacheKey = KEY.radarPoints;
 
     if (isEmpty(config.axis_x_categories)) {
       config.axis_x_categories = getRange(0, getMinMax("max", targets.map(function (v) {
+        _newArrowCheck(this, this);
+
         return v.values.length;
-      })));
+      }.bind(this))));
     }
 
     $$.generateRadarPoints();
@@ -20190,8 +21552,10 @@ var cacheKey = KEY.radarPoints;
         edge = config.axis_x_categories.length,
         isClockwise = config.radar_direction_clockwise,
         pos = toArray(type).map(function (v) {
+      _newArrowCheck(this, this);
+
       return getPosition(isClockwise, v, edge, index, isDefined(range) ? range : type === "x" ? width : height, isNumber(ratio) ? ratio : config.radar_size_ratio);
-    });
+    }.bind(this));
 
     return pos.length === 1 ? pos[0] : pos;
   },
@@ -20212,10 +21576,14 @@ var cacheKey = KEY.radarPoints;
     // recalculate position only when the previous dimension has been changed
     if (!size || size.width !== width && size.height !== height) {
       targets.forEach(function (d) {
+        _newArrowCheck(this, this);
+
         points[d.id] = d.values.map(function (v, i) {
+          _newArrowCheck(this, this);
+
           return $$.getRadarPosition(["x", "y"], i, undefined, $$.getRatio("radar", v));
-        });
-      });
+        }.bind(this));
+      }.bind(this));
       points._size = {
         width: width,
         height: height
@@ -20243,12 +21611,15 @@ var cacheKey = KEY.radarPoints;
   generateGetRadarPoints: function generateGetRadarPoints() {
     var points = this.cache.get(cacheKey);
     return function (d, i) {
+      _newArrowCheck(this, this);
+
       var point = points[d.id][i];
       return [point, point, point, point];
-    };
+    }.bind(this);
   },
   updateRadarLevel: function updateRadarLevel() {
-    var $$ = this,
+    var _this6 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         radar = $$.$el.radar,
@@ -20262,52 +21633,73 @@ var cacheKey = KEY.radarPoints;
         levelData = getRange(0, depth),
         radius = config.radar_size_ratio * Math.min(width, height),
         levelRatio = levelData.map(function (l) {
+      _newArrowCheck(this, _this6);
+
       return radius * ((l + 1) / depth);
-    }),
+    }.bind(this)),
         levelTextFormat = (config.radar_level_text_format || function () {}).bind($$.api),
         points = levelData.map(function (v) {
+      _newArrowCheck(this, _this6);
+
       var range = levelRatio[v],
           pos = getRange(0, edge).map(function (i) {
+        _newArrowCheck(this, this);
+
         return $$.getRadarPosition(["x", "y"], i, range, 1).join(",");
-      });
+      }.bind(this));
       return pos.join(" ");
-    }),
+    }.bind(this)),
         level = radarLevels.selectAll("." + $LEVEL.level).data(levelData);
 
     level.exit().remove();
     var levelEnter = level.enter().append("g").attr("class", function (d, i) {
+      _newArrowCheck(this, _this6);
+
       return $LEVEL.level + " " + $LEVEL.level + "-" + i;
-    });
+    }.bind(this));
     levelEnter.append("polygon").style("visibility", config.radar_level_show ? null : "hidden");
 
     if (showText) {
       if (radarLevels.select("text").empty()) {
         radarLevels.append("text").attr("dx", "-.5em").attr("dy", "-.7em").style("text-anchor", "end").text(function () {
+          _newArrowCheck(this, _this6);
+
           return levelTextFormat(0);
-        });
+        }.bind(this));
       }
 
       levelEnter.append("text").attr("dx", "-.5em").style("text-anchor", "end").text(function (d) {
+        _newArrowCheck(this, _this6);
+
         return levelTextFormat(state.current.dataMax / levelData.length * (d + 1));
-      });
+      }.bind(this));
     }
 
     levelEnter.merge(level).attr("transform", function (d) {
+      _newArrowCheck(this, _this6);
+
       return "translate(" + (width - levelRatio[d]) + ", " + (height - levelRatio[d]) + ")";
-    }).selectAll("polygon").attr("points", function (d) {
+    }.bind(this)).selectAll("polygon").attr("points", function (d) {
+      _newArrowCheck(this, _this6);
+
       return points[d];
-    }); // update level text position
+    }.bind(this)); // update level text position
 
     if (showText) {
       radarLevels.selectAll("text").attr("x", function (d) {
+        _newArrowCheck(this, _this6);
+
         return isUndefined(d) ? width : points[d].split(",")[0];
-      }).attr("y", function (d) {
+      }.bind(this)).attr("y", function (d) {
+        _newArrowCheck(this, _this6);
+
         return isUndefined(d) ? height : 0;
-      });
+      }.bind(this));
     }
   },
   updateRadarAxes: function updateRadarAxes() {
-    var $$ = this,
+    var _this8 = this,
+        $$ = this,
         config = $$.config,
         radar = $$.$el.radar,
         _$$$getRadarSize4 = $$.getRadarSize(),
@@ -20318,18 +21710,24 @@ var cacheKey = KEY.radarPoints;
 
     axis.exit().remove();
     var axisEnter = axis.enter().append("g").attr("class", function (d, i) {
+      _newArrowCheck(this, _this8);
+
       return $AXIS.axis + "-" + i;
-    });
+    }.bind(this));
     config.radar_axis_line_show && axisEnter.append("line");
     config.radar_axis_text_show && axisEnter.append("text");
     axis = axisEnter.merge(axis); // axis line
 
     if (config.radar_axis_line_show) {
       axis.select("line").attr("x1", width).attr("y1", height).attr("x2", function (d, i) {
+        _newArrowCheck(this, _this8);
+
         return $$.getRadarPosition("x", i);
-      }).attr("y2", function (d, i) {
+      }.bind(this)).attr("y2", function (d, i) {
+        _newArrowCheck(this, _this8);
+
         return $$.getRadarPosition("y", i);
-      });
+      }.bind(this));
     } // axis text
 
 
@@ -20340,14 +21738,18 @@ var cacheKey = KEY.radarPoints;
           _config$radar_axis_te3 = _config$radar_axis_te.y,
           y = _config$radar_axis_te3 === void 0 ? 0 : _config$radar_axis_te3;
       axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
+        _newArrowCheck(this, _this8);
+
         selection.each(function (d) {
           setTextValue((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this), d + "", [-.6, 1.2]);
         });
-      }).datum(function (d, i) {
+      }.bind(this)).datum(function (d, i) {
+        _newArrowCheck(this, _this8);
+
         return {
           index: i
         };
-      }).attr("transform", function (d) {
+      }.bind(this)).attr("transform", function (d) {
         if (isUndefined(this.width)) {
           // cache evaluated axis text width
           this.width = this.getBoundingClientRect().width / 2;
@@ -20380,7 +21782,8 @@ var cacheKey = KEY.radarPoints;
     $$.bindEvent();
   },
   bindEvent: function bindEvent() {
-    var $$ = this,
+    var _this9 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         _$$$$el2 = $$.$el,
@@ -20394,6 +21797,8 @@ var cacheKey = KEY.radarPoints;
     if (config.interaction_enabled) {
       var isMouse = inputType === "mouse",
           getIndex = function (event) {
+        _newArrowCheck(this, _this9);
+
         var target = event.target; // in case of multilined axis text
 
         if (/tspan/i.test(target.tagName)) {
@@ -20402,8 +21807,10 @@ var cacheKey = KEY.radarPoints;
 
         var d = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(target).datum();
         return d && Object.keys(d).length === 1 ? d.index : undefined;
-      },
+      }.bind(this),
           hide = function (event) {
+        _newArrowCheck(this, _this9);
+
         state.event = event;
         var index = getIndex(event),
             noIndex = isUndefined(index);
@@ -20418,9 +21825,11 @@ var cacheKey = KEY.radarPoints;
             $$.callOverOutForTouch();
           }
         }
-      };
+      }.bind(this);
 
       radar.axes.selectAll("text").on(isMouse ? "mouseover " : "touchstart", function (event) {
+        _newArrowCheck(this, _this9);
+
         if (transiting) {
           // skip while transiting
           return;
@@ -20430,7 +21839,7 @@ var cacheKey = KEY.radarPoints;
         var index = getIndex(event);
         $$.selectRectForSingle(svg.node(), null, index);
         isMouse ? $$.setOverOut(!0, index) : $$.callOverOutForTouch(index);
-      }).on("mouseout", isMouse ? hide : null);
+      }.bind(this)).on("mouseout", isMouse ? hide : null);
 
       if (!isMouse) {
         svg.on("touchstart", hide);
@@ -20438,17 +21847,23 @@ var cacheKey = KEY.radarPoints;
     }
   },
   updateRadarShape: function updateRadarShape() {
-    var $$ = this,
+    var _this10 = this,
+        $$ = this,
         targets = $$.data.targets.filter(function (d) {
+      _newArrowCheck(this, _this10);
+
       return $$.isRadarType(d);
-    }),
+    }.bind(this)),
         points = $$.cache.get(cacheKey),
         areas = $$.$el.radar.shapes.selectAll("polygon").data(targets),
         areasEnter = areas.enter().append("g").attr("class", $$.getChartClass("Radar"));
+
     $$.$T(areas.exit()).remove();
     areasEnter.append("polygon").merge(areas).style("fill", $$.color).style("stroke", $$.color).attr("points", function (d) {
+      _newArrowCheck(this, _this10);
+
       return points[d.id].join(" ");
-    });
+    }.bind(this));
     $$.updateTargetForCircle(targets, areasEnter);
   },
 
@@ -21283,6 +22698,10 @@ var cacheKey = KEY.radarPoints;
   pie_startingAngle: 0
 });
 ;// CONCATENATED MODULE: ./src/config/Options/shape/polar.ts
+
+
+var polar_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -21360,14 +22779,20 @@ var cacheKey = KEY.radarPoints;
   polar_level_show: !0,
   polar_level_text_backgroundColor: "#fff",
   polar_level_text_format: function polar_level_text_format(x) {
+    _newArrowCheck(this, polar_this);
+
     return x % 1 === 0 ? x : x.toFixed(2);
-  },
+  }.bind(undefined),
   polar_level_text_show: !0,
   polar_padAngle: 0,
   polar_padding: 0,
   polar_startingAngle: 0
 });
 ;// CONCATENATED MODULE: ./src/config/Options/shape/radar.ts
+
+
+var radar_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -21440,13 +22865,19 @@ var cacheKey = KEY.radarPoints;
   radar_level_depth: 3,
   radar_level_show: !0,
   radar_level_text_format: function radar_level_text_format(x) {
+    _newArrowCheck(this, radar_this);
+
     return x % 1 === 0 ? x : x.toFixed(2);
-  },
+  }.bind(undefined),
   radar_level_text_show: !0,
   radar_size_ratio: .87,
   radar_direction_clockwise: !1
 });
 ;// CONCATENATED MODULE: ./src/config/resolver/shape.ts
+
+
+var shape_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -21524,91 +22955,161 @@ function extendArc(module, option) {
 
 
 var _area = function area() {
-  return extendLine(shape_area, [Options_shape_area]), (_area = function area() {
+  _newArrowCheck(this, shape_this);
+
+  return extendLine(shape_area, [Options_shape_area]), (_area = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.AREA;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     areaLineRange = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendLine(shape_area, [Options_shape_area]), (areaLineRange = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.AREA_LINE_RANGE;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     areaSpline = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendLine(shape_area, [Options_shape_area, spline]), (areaSpline = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.AREA_SPLINE;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     areaSplineRange = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendLine(shape_area, [Options_shape_area, spline]), (areaSplineRange = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.AREA_SPLINE_RANGE;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     areaStep = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendLine(shape_area, [Options_shape_area]), (areaStep = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.AREA_STEP;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     resolver_shape_line = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendLine(), (resolver_shape_line = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.LINE;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     shape_spline = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendLine(undefined, [spline]), (shape_spline = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.SPLINE;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     step = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendLine(), (step = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.STEP;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     shape_donut = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendArc(undefined, [donut]), (shape_donut = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.DONUT;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     resolver_shape_gauge = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendArc([gauge], [shape_gauge]), (resolver_shape_gauge = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.GAUGE;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     shape_pie = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendArc(undefined, [pie]), (shape_pie = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.PIE;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     resolver_shape_polar = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendArc([polar], [shape_polar]), (resolver_shape_polar = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.POLAR;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     resolver_shape_radar = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendArc([point, radar], [common_point, shape_radar]), (resolver_shape_radar = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.RADAR;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     resolver_shape_bar = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendAxis([bar], shape_bar), (resolver_shape_bar = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.BAR;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     resolver_shape_bubble = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendAxis([point, bubble], [shape_bubble, common_point]), (resolver_shape_bubble = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.BUBBLE;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     resolver_shape_candlestick = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendAxis([candlestick], [shape_candlestick]), (resolver_shape_candlestick = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.CANDLESTICK;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     shape_scatter = function () {
+  _newArrowCheck(this, shape_this);
+
   return extendAxis([point], [common_point, scatter]), (shape_scatter = function () {
+    _newArrowCheck(this, this);
+
     return TYPE.SCATTER;
-  })();
-};
+  }.bind(this))();
+}.bind(undefined);
 ;// CONCATENATED MODULE: ./src/Chart/api/selection.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -21639,8 +23140,10 @@ var _area = function area() {
     $$.$el.main.selectAll("." + ($SHAPE.shapes + $$.getTargetSelectorSuffix(targetId))).selectAll("." + $SHAPE.shape).filter(function () {
       return (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed($SELECT.SELECTED);
     }).each(function (d) {
+      _newArrowCheck(this, this);
+
       return dataPoint.push(d);
-    });
+    }.bind(this));
     return dataPoint;
   },
 
@@ -21848,6 +23351,8 @@ var _area = function area() {
 // EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
 var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(13);
 ;// CONCATENATED MODULE: ./src/Chart/api/zoom.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -21867,10 +23372,14 @@ function withinRange(domain, current, range) {
   var min = range[0],
       max = range[1];
   return domain.every(function (v, i) {
+    _newArrowCheck(this, this);
+
     return (i === 0 ? v >= min : v <= max) && !domain.every(function (v, i) {
+      _newArrowCheck(this, this);
+
       return v === current[i];
-    });
-  });
+    }.bind(this));
+  }.bind(this));
 }
 /**
  * Zoom by giving x domain range.
@@ -21895,7 +23404,8 @@ function withinRange(domain, current, range) {
 
 
 var zoom = function (domainValue) {
-  var $$ = this.internal,
+  var _this3 = this,
+      $$ = this.internal,
       $el = $$.$el,
       axis = $$.axis,
       config = $$.config,
@@ -21908,15 +23418,19 @@ var zoom = function (domainValue) {
   if (config.zoom_enabled && domain) {
     if (axis.isTimeSeries()) {
       domain = domain.map(function (x) {
+        _newArrowCheck(this, _this3);
+
         return parseDate.bind($$)(x);
-      });
+      }.bind(this));
     }
 
     if (withinRange(domain, $$.getZoomDomain(!0), $$.getZoomDomain())) {
       if (isCategorized) {
         domain = domain.map(function (v, i) {
+          _newArrowCheck(this, _this3);
+
           return +v + (i === 0 ? 0 : 1);
-        });
+        }.bind(this));
       } // hide any possible tooltip show before the zoom
 
 
@@ -22094,6 +23608,8 @@ extend(zoom, {
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/interactions/drag.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -22142,8 +23658,10 @@ extend(zoom, {
     main.selectAll("." + $SHAPE.shapes).selectAll("." + $SHAPE.shape).filter(function (d) {
       var _isSelectable;
 
+      _newArrowCheck(this, this);
+
       return (_isSelectable = isSelectable) == null ? void 0 : _isSelectable.bind($$.api)(d);
-    }).each(function (d, i) {
+    }.bind(this)).each(function (d, i) {
       var shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
           isSelected = shape.classed($SELECT.SELECTED),
           isIncluded = shape.classed($DRAG.INCLUDED),
@@ -22224,6 +23742,7 @@ extend(zoom, {
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/selection.ts
 
 
+
 function selection_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
 function selection_objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? selection_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : selection_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
@@ -22245,7 +23764,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   selectPoint: function selectPoint(target, d, i) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         main = $$.$el.main,
         $T = $$.$T,
@@ -22253,13 +23773,18 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         cx = (isRotated ? $$.circleY : $$.circleX).bind($$),
         cy = (isRotated ? $$.circleX : $$.circleY).bind($$),
         r = $$.pointSelectR.bind($$);
+
     callFn(config.data_onselected, $$.api, d, target.node()); // add selected-circle on low layer g
 
     $T(main.select("." + $SELECT.selectedCircles + $$.getTargetSelectorSuffix(d.id)).selectAll("." + $SELECT.selectedCircle + "-" + i).data([d]).enter().append("circle").attr("class", function () {
+      _newArrowCheck(this, _this);
+
       return $$.generateClass($SELECT.selectedCircle, i);
-    }).attr("cx", cx).attr("cy", cy).attr("stroke", $$.color).attr("r", function (d2) {
+    }.bind(this)).attr("cx", cx).attr("cy", cy).attr("stroke", $$.color).attr("r", function (d2) {
+      _newArrowCheck(this, _this);
+
       return $$.pointSelectR(d2) * 1.4;
-    })).attr("r", r);
+    }.bind(this))).attr("r", r);
   },
 
   /**
@@ -22345,7 +23870,9 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    */
   getToggle: function getToggle(that, d) {
     var $$ = this;
-    return that.nodeName === "path" ? $$.togglePath : $$.isStepType(d) ? function () {} : // circle is hidden in step chart, so treat as within the click area
+    return that.nodeName === "path" ? $$.togglePath : $$.isStepType(d) ? function () {
+      _newArrowCheck(this, this);
+    }.bind(this) : // circle is hidden in step chart, so treat as within the click area
     $$.togglePoint;
   },
 
@@ -22392,6 +23919,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   }
 }));
 ;// CONCATENATED MODULE: ./src/ChartInternal/interactions/subchart.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -22406,17 +23935,21 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   initBrush: function initBrush() {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         subchart = $$.$el.subchart,
         isRotated = config.axis_rotated,
         lastDomain,
         timeout;
+
     // set the brush
     $$.brush = (isRotated ? (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushY)() : (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushX)()).handleSize(5);
 
     var getBrushSize = function () {
+      _newArrowCheck(this, _this);
+
       var brush = $$.$el.svg.select("." + classes.brush + " .overlay"),
           brushSize = {
         width: 0,
@@ -22429,10 +23962,12 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       }
 
       return brushSize[isRotated ? "width" : "height"];
-    }; // bind brush event
+    }.bind(this); // bind brush event
 
 
     $$.brush.on("start brush end", function (event) {
+      _newArrowCheck(this, _this);
+
       var selection = event.selection,
           target = event.target,
           type = event.type;
@@ -22455,30 +23990,33 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
           $$.brush.handle.attr("display", "none");
         } else {
           $$.brush.handle.attr("display", null).attr("transform", function (d, i) {
+            _newArrowCheck(this, this);
+
             var pos = isRotated ? [33, selection[i] - (i === 0 ? 30 : 24)] : [selection[i], 3];
             return "translate(" + pos + ")";
-          });
+          }.bind(this));
         }
       }
-    });
+    }.bind(this));
 
     $$.brush.updateResize = function () {
-      var _this = this;
-
       timeout && clearTimeout(timeout);
       timeout = setTimeout(function () {
-        var selection = _this.getSelection();
+        _newArrowCheck(this, this);
 
-        lastDomain && (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection.node()) && _this.move(selection, lastDomain.map(scale.subX.orgScale()));
-      }, 0);
+        var selection = this.getSelection();
+        lastDomain && (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection.node()) && this.move(selection, lastDomain.map(scale.subX.orgScale()));
+      }.bind(this), 0);
     };
 
     $$.brush.update = function () {
       var extent = this.extent()();
 
       if (extent[1].filter(function (v) {
+        _newArrowCheck(this, this);
+
         return isNaN(v);
-      }).length === 0) {
+      }.bind(this)).length === 0) {
         var _subchart$main;
 
         (_subchart$main = subchart.main) == null ? void 0 : _subchart$main.select("." + classes.brush).call(this);
@@ -22496,8 +24034,10 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         extent = [[0, 0], [scale.range()[1], h]];
       } else if (isArray(extent)) {
         extent = extent.map(function (v, i) {
+          _newArrowCheck(this, this);
+
           return [v, i > 0 ? h : i];
-        });
+        }.bind(this));
       } // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
 
 
@@ -22509,10 +24049,12 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     };
 
     $$.brush.getSelection = function () {
+      _newArrowCheck(this, _this);
+
       return (// @ts-ignore
         subchart.main ? subchart.main.select("." + classes.brush) : (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)([])
       );
-    };
+    }.bind(this);
   },
 
   /**
@@ -22548,6 +24090,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     main.append("g").attr("clip-path", clipPath).attr("class", classes.chart); // Define g for chart types area
 
     ["bar", "line", "bubble", "candlestick", "scatter"].forEach(function (v) {
+      _newArrowCheck(this, this);
+
       var type = capitalize(/^(bubble|scatter)$/.test(v) ? "circle" : v);
 
       if ($$.hasType(v) || $$.hasTypeOf(type)) {
@@ -22558,7 +24102,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
           chart.append("g").attr("class", chartClassName);
         }
       }
-    }); // Add extent rect for Brush
+    }.bind(this)); // Add extent rect for Brush
 
     var brush = main.append("g").attr("clip-path", clipPath).attr("class", classes.brush).call($$.brush);
     config.subchart_showHandle && $$.addBrushHandle(brush); // ATTENTION: This must be called AFTER chart added
@@ -22589,8 +24133,10 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     }, {
       type: "e"
     }]).enter().append("path").attr("class", customHandleClass).attr("cursor", (isRotated ? "ns" : "ew") + "-resize").attr("d", function (d) {
+      _newArrowCheck(this, this);
+
       return path[+/[se]/.test(d.type)];
-    }).attr("display", initRange ? null : "none");
+    }.bind(this)).attr("display", initRange ? null : "none");
   },
 
   /**
@@ -22599,15 +24145,20 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   updateTargetsForSubchart: function updateTargetsForSubchart(targets) {
-    var $$ = this,
+    var _this8 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         main = $$.$el.subchart.main;
 
     if (config.subchart_show) {
       ["bar", "line", "bubble", "candlestick", "scatter"].filter(function (v) {
+        _newArrowCheck(this, _this8);
+
         return $$.hasType(v) || $$.hasTypeOf(capitalize(v));
-      }).forEach(function (v) {
+      }.bind(this)).forEach(function (v) {
+        _newArrowCheck(this, _this8);
+
         var isPointType = /^(bubble|scatter)$/.test(v),
             name = capitalize(isPointType ? "circle" : v),
             chartClass = $$.getChartClass(name, !0),
@@ -22625,7 +24176,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
           v === "line" && $$.hasTypeOf("Area") && shapeEnter.append("g").attr("class", $$.getClass("areas", !0));
         }
-      }); // -- Brush --//
+      }.bind(this)); // -- Brush --//
 
       main.selectAll("." + classes.brush + " rect").attr(config.axis_rotated ? "width" : "height", config.axis_rotated ? state.width2 : state.height2);
     }
@@ -22660,12 +24211,14 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
         brushEmpty($$) || $$.brush.update();
         Object.keys(shape.type).forEach(function (v) {
+          _newArrowCheck(this, this);
+
           var name = capitalize(v),
               drawFn = $$["generateDraw" + name](shape.indices[v], !0);
           // call shape's update & redraw method
           $$["update" + name](withTransition, !0);
           $$["redraw" + name](drawFn, withTransition, !0);
-        });
+        }.bind(this));
 
         if ($$.hasType("bubble") || $$.hasType("scatter")) {
           var cx = shape.pos.cx,
@@ -22731,8 +24284,10 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       } else if ($$.axis.isTimeSeries() && extent.every(isNaN)) {
         var fn = parseDate.bind($$);
         extent = extent.map(function (v) {
+          _newArrowCheck(this, this);
+
           return scale.subX(fn(v));
-        });
+        }.bind(this));
       }
     }
 
@@ -22740,6 +24295,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/interactions/zoom.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -22788,7 +24345,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   generateZoom: function generateZoom() {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         org = $$.org,
         scale = $$.scale,
@@ -22797,9 +24355,11 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     // get zoom extent
     // @ts-ignore
     zoom.orgScaleExtent = function () {
+      _newArrowCheck(this, _this);
+
       var extent = config.zoom_extent || [1, 10];
       return [extent[0], Math.max($$.getMaxDataCount() / extent[1], extent[1])];
-    }; // @ts-ignore
+    }.bind(this); // @ts-ignore
 
 
     zoom.updateScaleExtent = function () {
@@ -22818,10 +24378,12 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
 
     zoom.updateTransformScale = function (transform, correctTransform) {
-      var _org$xScale,
-          isRotated = config.axis_rotated;
+      var _org$xScale;
 
-      // in case of resize, update range of orgXScale
+      _newArrowCheck(this, _this);
+
+      var isRotated = config.axis_rotated; // in case of resize, update range of orgXScale
+
       (_org$xScale = org.xScale) == null ? void 0 : _org$xScale.range(scale.x.range()); // rescale from the original scale
 
       var newScale = transform[isRotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x),
@@ -22849,7 +24411,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         org.xScale || (org.xScale = scale.x.copy());
         scale.x.domain(domain);
       }
-    };
+    }.bind(this);
     /**
      * Get zoom domain
      * @returns {Array} zoom domain
@@ -22859,6 +24421,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
 
     zoom.getDomain = function () {
+      _newArrowCheck(this, _this);
+
       var domain = scale[scale.zoom ? "zoom" : "subX"].domain(),
           isCategorized = $$.axis.isCategorized();
 
@@ -22867,7 +24431,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       }
 
       return domain;
-    };
+    }.bind(this);
 
     $$.zoom = zoom;
   },
@@ -22919,8 +24483,10 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         transform = event.transform;
 
     if (!isMousemove && isZoomOut && scale.x.domain().every(function (v, i) {
+      _newArrowCheck(this, this);
+
       return v !== org.xDomain[i];
-    })) {
+    }.bind(this))) {
       scale.x.domain(org.xDomain);
     }
 
@@ -23012,7 +24578,9 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
     // Since Chrome 89, wheel zoom not works properly
     // Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
-    $$.$el.svg.on("wheel", function () {});
+    $$.$el.svg.on("wheel", function () {
+      _newArrowCheck(this, this);
+    }.bind(this));
     eventRect.call(behaviour).on("dblclick.zoom", null);
   },
 
@@ -23050,6 +24618,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       end = getPointer(event, this)[prop.index];
       zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
     }).on("end", function (event) {
+      _newArrowCheck(this, this);
+
       var scale = $$.scale.zoom || $$.scale.x;
       state.event = event;
       zoomRect.attr(prop.axis, 0).attr(prop.attr, 0);
@@ -23067,12 +24637,14 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
       if (start !== end) {
         $$.api.zoom([start, end].map(function (v) {
+          _newArrowCheck(this, this);
+
           return scale.invert(v);
-        }));
+        }.bind(this)));
       }
 
       $$.setDragStatus(!1);
-    });
+    }.bind(this));
   },
   setZoomResetButton: function setZoomResetButton() {
     var $$ = this,
@@ -23093,6 +24665,10 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   }
 });
 ;// CONCATENATED MODULE: ./src/config/Options/data/selection.ts
+
+
+var selection_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -23162,8 +24738,10 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * }
    */
   data_selection_isselectable: function data_selection_isselectable() {
+    _newArrowCheck(this, selection_this);
+
     return !0;
-  },
+  }.bind(undefined),
 
   /**
    * Set multiple data points selection enabled.<br><br>
@@ -23213,7 +24791,9 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    *    }
    * }
    */
-  data_onselected: function data_onselected() {},
+  data_onselected: function data_onselected() {
+    _newArrowCheck(this, selection_this);
+  }.bind(undefined),
 
   /**
    * Set a callback for on data un-selection.
@@ -23230,9 +24810,15 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    *    }
    * }
    */
-  data_onunselected: function data_onunselected() {}
+  data_onunselected: function data_onunselected() {
+    _newArrowCheck(this, selection_this);
+  }.bind(undefined)
 });
 ;// CONCATENATED MODULE: ./src/config/Options/interaction/subchart.ts
+
+
+var subchart_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -23304,7 +24890,9 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   subchart_axis_x_tick_format: undefined,
   subchart_axis_x_tick_text_show: !0,
   subchart_init_range: undefined,
-  subchart_onbrush: function subchart_onbrush() {}
+  subchart_onbrush: function subchart_onbrush() {
+    _newArrowCheck(this, subchart_this);
+  }.bind(undefined)
 });
 ;// CONCATENATED MODULE: ./src/config/Options/interaction/zoom.ts
 /**
@@ -23395,6 +24983,10 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   zoom_x_max: undefined
 });
 ;// CONCATENATED MODULE: ./src/config/resolver/interaction.ts
+
+
+var interaction_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -23418,29 +25010,41 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
 
 var _selectionModule = function selectionModule() {
+  _newArrowCheck(this, interaction_this);
+
   extend(ChartInternal.prototype, internals_selection);
   extend(Chart.prototype, selection);
   Options.setOptions([data_selection]);
-  return (_selectionModule = function selectionModule() {
+  return (_selectionModule = function () {
+    _newArrowCheck(this, this);
+
     return !0;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     subchartModule = function () {
+  _newArrowCheck(this, interaction_this);
+
   extend(ChartInternal.prototype, interactions_subchart);
   extend(Chart.prototype, subchart);
   Options.setOptions([interaction_subchart]);
   return (subchartModule = function () {
+    _newArrowCheck(this, this);
+
     return !0;
-  })();
-},
+  }.bind(this))();
+}.bind(undefined),
     zoomModule = function () {
+  _newArrowCheck(this, interaction_this);
+
   extend(ChartInternal.prototype, interactions_zoom);
   extend(Chart.prototype, api_zoom);
   Options.setOptions([interaction_zoom]);
   return (zoomModule = function () {
+    _newArrowCheck(this, this);
+
     return !0;
-  })();
-};
+  }.bind(this))();
+}.bind(undefined);
 ;// CONCATENATED MODULE: ./src/core.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -23459,7 +25063,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220429004640",
+  version: "3.4.1-nightly-20220505005116",
 
   /**
    * Generate chart
@@ -23594,9 +25198,13 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220429004640
+ * @version 3.4.1-nightly-20220505005116
  */
 ;// CONCATENATED MODULE: ./src/index.ts
+
+
+var src_this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
@@ -23605,12 +25213,16 @@ var _defaults = {},
  // extends shape modules
 
 Object.keys(resolver_shape_namespaceObject).forEach(function (v) {
+  _newArrowCheck(this, src_this);
+
   return resolver_shape_namespaceObject[v]();
-}); // extends interaction modules
+}.bind(undefined)); // extends interaction modules
 
 Object.keys(resolver_interaction_namespaceObject).forEach(function (v) {
+  _newArrowCheck(this, src_this);
+
   return resolver_interaction_namespaceObject[v]();
-});
+}.bind(undefined));
 
 }();
 /******/ 	return __webpack_exports__;

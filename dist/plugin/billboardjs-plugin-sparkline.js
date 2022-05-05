@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220429004640
+ * @version 3.4.1-nightly-20220505005116
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -90,6 +90,12 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ Sparkline; }
 });
 
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/newArrowCheck.js
+function _newArrowCheck(innerThis, boundThis) {
+  if (innerThis !== boundThis) {
+    throw new TypeError("Cannot instantiate an arrow function");
+  }
+}
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
 function _assertThisInitialized(self) {
   if (self === void 0) {
@@ -293,6 +299,8 @@ var $ZOOM = {
 };
 /* harmony default export */ var classes = (_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM));
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -364,18 +372,18 @@ var Plugin = /*#__PURE__*/function () {
   ;
 
   _proto.$willDestroy = function $willDestroy() {
-    var _this = this;
-
     Object.keys(this).forEach(function (key) {
-      _this[key] = null;
-      delete _this[key];
-    });
+      _newArrowCheck(this, this);
+
+      this[key] = null;
+      delete this[key];
+    }.bind(this));
   };
 
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220429004640";
+Plugin.version = "3.4.1-nightly-20220505005116";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**
@@ -413,6 +421,10 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
+
+
+var _this = undefined;
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -427,24 +439,33 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
 
 
 var win = function () {
+  _newArrowCheck(this, _this);
+
   var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
   return root || Function("return this")();
-}();
+}.bind(undefined)();
 /* eslint-enable no-new-func, no-undef */
 // fallback for non-supported environments
 
 
 win.requestIdleCallback = win.requestIdleCallback || function (cb) {
+  _newArrowCheck(this, _this);
+
   return setTimeout(cb, 1);
-};
+}.bind(undefined);
 
 win.cancelIdleCallback = win.cancelIdleCallback || function (id) {
+  _newArrowCheck(this, _this);
+
   return clearTimeout(id);
-};
+}.bind(undefined);
 
 var doc = win == null ? void 0 : win.document;
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
+
+
+var util_this = undefined;
 
 function util_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
@@ -461,50 +482,80 @@ function util_objectSpread(target) { for (var i = 1, source; i < arguments.lengt
 
 
 var isValue = function (v) {
+  _newArrowCheck(this, util_this);
+
   return v || v === 0;
-},
+}.bind(undefined),
     isFunction = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "function";
-},
+}.bind(undefined),
     isString = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "string";
-},
+}.bind(undefined),
     isNumber = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "number";
-},
+}.bind(undefined),
     isUndefined = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "undefined";
-},
+}.bind(undefined),
     isDefined = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v !== "undefined";
-},
+}.bind(undefined),
     isboolean = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "boolean";
-},
+}.bind(undefined),
     ceil10 = function (v) {
+  _newArrowCheck(this, util_this);
+
   return Math.ceil(v / 10) * 10;
-},
+}.bind(undefined),
     asHalfPixel = function (n) {
+  _newArrowCheck(this, util_this);
+
   return Math.ceil(n) + .5;
-},
+}.bind(undefined),
     diffDomain = function (d) {
+  _newArrowCheck(this, util_this);
+
   return d[1] - d[0];
-},
+}.bind(undefined),
     isObjectType = function (v) {
+  _newArrowCheck(this, util_this);
+
   return typeof v === "object";
-},
+}.bind(undefined),
     isEmpty = function (o) {
+  _newArrowCheck(this, util_this);
+
   return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
-},
+}.bind(undefined),
     notEmpty = function (o) {
+  _newArrowCheck(this, util_this);
+
   return !isEmpty(o);
-},
+}.bind(undefined),
     isArray = function (arr) {
+  _newArrowCheck(this, util_this);
+
   return Array.isArray(arr);
-},
+}.bind(undefined),
     isObject = function (obj) {
+  _newArrowCheck(this, util_this);
+
   return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
-};
+}.bind(undefined);
 
 /**
  * Get specified key value from object
@@ -530,8 +581,10 @@ function getOption(options, key, defaultValue) {
 function hasValue(dict, value) {
   var found = !1;
   Object.keys(dict).forEach(function (key) {
+    _newArrowCheck(this, this);
+
     return dict[key] === value && (found = !0);
-  });
+  }.bind(this));
   return found;
 }
 /**
@@ -573,8 +626,10 @@ function endall(transition, cb) {
   // if is transition selection
   if ("duration" in transition) {
     transition.each(function () {
+      _newArrowCheck(this, this);
+
       return ++n;
-    }).on("end", end);
+    }.bind(this)).on("end", end);
   } else {
     ++n;
     transition.call(end);
@@ -602,6 +657,8 @@ function sanitise(str) {
 
 
 function setTextValue(node, text, dy, toMiddle) {
+  var _this4 = this;
+
   if (dy === void 0) {
     dy = [-1, 1];
   }
@@ -618,8 +675,10 @@ function setTextValue(node, text, dy, toMiddle) {
     node.text(text);
   } else {
     var diff = [node.text(), text].map(function (v) {
+      _newArrowCheck(this, _this4);
+
       return v.replace(/[\s\n]/g, "");
-    });
+    }.bind(this));
 
     if (diff[0] !== diff[1]) {
       var multiline = text.split("\n"),
@@ -627,8 +686,10 @@ function setTextValue(node, text, dy, toMiddle) {
       // reset possible text
       node.html("");
       multiline.forEach(function (v, i) {
+        _newArrowCheck(this, _this4);
+
         node.append("tspan").attr("x", 0).attr("dy", (i === 0 ? dy[0] * len : dy[1]) + "em").text(v);
-      });
+      }.bind(this));
     }
   }
 }
@@ -710,8 +771,10 @@ function getPointer(event, element) {
       pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
 
   return pointer.map(function (v) {
+    _newArrowCheck(this, this);
+
     return isNaN(v) ? 0 : v;
-  });
+  }.bind(this));
 }
 /**
  * Return brush selection array
@@ -838,7 +901,9 @@ function brushEmpty(ctx) {
 
 
 function deepClone() {
-  for (var clone = function (v) {
+  for (var _this6 = this, clone = function (v) {
+    _newArrowCheck(this, _this6);
+
     if (isObject(v) && v.constructor) {
       var r = new v.constructor();
 
@@ -850,15 +915,19 @@ function deepClone() {
     }
 
     return v;
-  }, _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+  }.bind(this), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
     objectN[_key3] = arguments[_key3];
   }
 
   return objectN.map(function (v) {
+    _newArrowCheck(this, _this6);
+
     return clone(v);
-  }).reduce(function (a, c) {
+  }.bind(this)).reduce(function (a, c) {
+    _newArrowCheck(this, _this6);
+
     return util_objectSpread(util_objectSpread({}, a), c);
-  });
+  }.bind(this));
 }
 /**
  * Extend target from source object
@@ -876,8 +945,10 @@ function extend(target, source) {
 
   if (isArray(source)) {
     source.forEach(function (v) {
+      _newArrowCheck(this, this);
+
       return extend(target, v);
-    });
+    }.bind(this));
   } // exclude name with only numbers
 
 
@@ -900,8 +971,10 @@ function extend(target, source) {
 
 
 var capitalize = function (str) {
+  _newArrowCheck(this, util_this);
+
   return str.charAt(0).toUpperCase() + str.slice(1);
-};
+}.bind(undefined);
 /**
  * Camelize from kebob style string
  * @param {string} str Target string
@@ -917,8 +990,10 @@ function camelize(str, separator) {
   }
 
   return str.split(separator).map(function (v, i) {
+    _newArrowCheck(this, this);
+
     return i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase();
-  }).join("");
+  }.bind(this)).join("");
 }
 /**
  * Convert to array
@@ -929,8 +1004,10 @@ function camelize(str, separator) {
 
 
 var toArray = function (v) {
+  _newArrowCheck(this, util_this);
+
   return [].slice.call(v);
-};
+}.bind(undefined);
 /**
  * Get css rules for specified stylesheets
  * @param {Array} styleSheets The stylesheets to get the rules from
@@ -942,6 +1019,8 @@ var toArray = function (v) {
 function getCssRules(styleSheets) {
   var rules = [];
   styleSheets.forEach(function (sheet) {
+    _newArrowCheck(this, this);
+
     try {
       if (sheet.cssRules && sheet.cssRules.length) {
         rules = rules.concat(toArray(sheet.cssRules));
@@ -949,7 +1028,7 @@ function getCssRules(styleSheets) {
     } catch (e) {
       console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
     }
-  });
+  }.bind(this));
   return rules;
 }
 /**
@@ -981,13 +1060,19 @@ function getTranslation(node) {
 
 
 function getUnique(data) {
-  var isDate = data[0] instanceof Date,
+  var _this10 = this,
+      isDate = data[0] instanceof Date,
       d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
+    _newArrowCheck(this, _this10);
+
     return self.indexOf(v) === i;
-  });
+  }.bind(this));
+
   return isDate ? d.map(function (v) {
+    _newArrowCheck(this, _this10);
+
     return new Date(v);
-  }) : d;
+  }.bind(this)) : d;
 }
 /**
  * Merge array
@@ -999,8 +1084,10 @@ function getUnique(data) {
 
 function mergeArray(arr) {
   return arr && arr.length ? arr.reduce(function (p, c) {
+    _newArrowCheck(this, this);
+
     return p.concat(c);
-  }) : [];
+  }.bind(this)) : [];
 }
 /**
  * Merge object returning new object
@@ -1012,7 +1099,7 @@ function mergeArray(arr) {
 
 
 function mergeObj(target) {
-  for (var _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+  for (var _this12 = this, _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
     objectN[_key4 - 1] = arguments[_key4];
   }
 
@@ -1024,6 +1111,8 @@ function mergeObj(target) {
 
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach(function (key) {
+      _newArrowCheck(this, _this12);
+
       var value = source[key];
 
       if (isObject(value)) {
@@ -1032,7 +1121,7 @@ function mergeObj(target) {
       } else {
         target[key] = isArray(value) ? value.concat() : value;
       }
-    });
+    }.bind(this));
   }
 
   return mergeObj.apply(void 0, [target].concat(objectN));
@@ -1047,6 +1136,8 @@ function mergeObj(target) {
 
 
 function sortValue(data, isAsc) {
+  var _this13 = this;
+
   if (isAsc === void 0) {
     isAsc = !0;
   }
@@ -1055,19 +1146,27 @@ function sortValue(data, isAsc) {
 
   if (data[0] instanceof Date) {
     fn = isAsc ? function (a, b) {
+      _newArrowCheck(this, _this13);
+
       return a - b;
-    } : function (a, b) {
+    }.bind(this) : function (a, b) {
+      _newArrowCheck(this, _this13);
+
       return b - a;
-    };
+    }.bind(this);
   } else {
     if (isAsc && !data.every(isNaN)) {
       fn = function (a, b) {
+        _newArrowCheck(this, _this13);
+
         return a - b;
-      };
+      }.bind(this);
     } else if (!isAsc) {
       fn = function (a, b) {
+        _newArrowCheck(this, _this13);
+
         return a > b && -1 || a < b && 1 || a === b && 0;
-      };
+      }.bind(this);
     }
   }
 
@@ -1084,8 +1183,10 @@ function sortValue(data, isAsc) {
 
 function getMinMax(type, data) {
   var res = data.filter(function (v) {
+    _newArrowCheck(this, this);
+
     return notEmpty(v);
-  });
+  }.bind(this));
 
   if (res.length) {
     if (isNumber(res[0])) {
@@ -1114,6 +1215,8 @@ var getRange = function (start, end, step) {
     step = 1;
   }
 
+  _newArrowCheck(this, util_this);
+
   var res = [],
       n = Math.max(0, Math.ceil((end - start) / step)) | 0;
 
@@ -1122,10 +1225,16 @@ var getRange = function (start, end, step) {
   }
 
   return res;
-},
+}.bind(undefined),
     emulateEvent = {
   mouse: function () {
+    var _this15 = this;
+
+    _newArrowCheck(this, util_this);
+
     var getParams = function () {
+      _newArrowCheck(this, _this15);
+
       return {
         bubbles: !1,
         cancelable: !1,
@@ -1134,7 +1243,7 @@ var getRange = function (start, end, step) {
         clientX: 0,
         clientY: 0
       };
-    };
+    }.bind(this);
 
     try {
       // eslint-disable-next-line no-new
@@ -1144,8 +1253,10 @@ var getRange = function (start, end, step) {
           params = getParams();
         }
 
+        _newArrowCheck(this, _this15);
+
         el.dispatchEvent(new MouseEvent(eventType, params));
-      };
+      }.bind(this);
     } catch (e) {
       // Polyfills DOM4 MouseEvent
       return function (el, eventType, params) {
@@ -1153,15 +1264,19 @@ var getRange = function (start, end, step) {
           params = getParams();
         }
 
+        _newArrowCheck(this, _this15);
+
         var mouseEvent = doc.createEvent("MouseEvent"); // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
 
         mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
         params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null);
         el.dispatchEvent(mouseEvent);
-      };
+      }.bind(this);
     }
-  }(),
+  }.bind(undefined)(),
   touch: function touch(el, eventType, params) {
+    _newArrowCheck(this, util_this);
+
     var touchObj = new Touch(mergeObj({
       identifier: Date.now(),
       target: el,
@@ -1178,7 +1293,7 @@ var getRange = function (start, end, step) {
       targetTouches: [],
       changedTouches: [touchObj]
     }));
-  }
+  }.bind(undefined)
 }; // emulate event
 
 
@@ -1278,12 +1393,16 @@ function convertInputType(mouse, touch) {
 
 
   var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
+    _newArrowCheck(this, this);
+
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
-  }); // fallback to 'mouse' if no input type is detected.
+  }.bind(this)); // fallback to 'mouse' if no input type is detected.
 
   return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
 }
 ;// CONCATENATED MODULE: ./src/config/config.ts
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -1296,11 +1415,14 @@ function convertInputType(mouse, touch) {
  * @private
  */
 function loadConfig(config) {
-  var thisConfig = this.config,
+  var _this = this,
+      thisConfig = this.config,
       target,
       keys,
       read,
       find = function () {
+    _newArrowCheck(this, _this);
+
     var key = keys.shift();
 
     if (key && target && isObjectType(target) && key in target) {
@@ -1311,9 +1433,11 @@ function loadConfig(config) {
     }
 
     return undefined;
-  };
+  }.bind(this);
 
   Object.keys(thisConfig).forEach(function (key) {
+    _newArrowCheck(this, _this);
+
     target = config;
     keys = key.split("_");
     read = find();
@@ -1321,9 +1445,10 @@ function loadConfig(config) {
     if (isDefined(read)) {
       thisConfig[key] = read;
     }
-  });
+  }.bind(this));
 }
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/index.ts
+
 
 
 
@@ -1498,8 +1623,6 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
   ;
 
   _proto.bindEvents = function bindEvents(bind) {
-    var _this2 = this;
-
     if (bind === void 0) {
       bind = !0;
     }
@@ -1507,11 +1630,13 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
     if (this.$$.config.interaction_enabled) {
       var method = (bind ? "add" : "remove") + "EventListener";
       this.element.forEach(function (el) {
+        _newArrowCheck(this, this);
+
         var svg = el.querySelector("svg");
-        svg[method]("mouseover", _this2.overHandler);
-        svg[method]("mousemove", _this2.moveHandler);
-        svg[method]("mouseout", _this2.outHandler);
-      });
+        svg[method]("mouseover", this.overHandler);
+        svg[method]("mousemove", this.moveHandler);
+        svg[method]("mouseout", this.outHandler);
+      }.bind(this));
     }
   };
 
@@ -1552,7 +1677,8 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
         $el = $$.$el,
         el = this.element,
         data = $$.api.data(),
-        svgWrapper = (_$el$chart$html$match = $el.chart.html().match(/<svg[^>]*>/)) == null ? void 0 : _$el$chart$html$match[0];
+        svgWrapper = (_$el$chart$html$match = $el.chart.html().match(/<svg[^>]*>/)) == null ? void 0 : _$el$chart$html$match[0],
+        _this3 = this;
 
     // append sparkline holder if is less than the data length
     if (el.length < data.length) {
@@ -1567,8 +1693,12 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
     }
 
     data.map(function (v) {
+      _newArrowCheck(this, _this3);
+
       return v.id;
-    }).forEach(function (id, i) {
+    }.bind(this)).forEach(function (id, i) {
+      _newArrowCheck(this, _this3);
+
       var selector = "." + $COMMON.target + "-" + id,
           shape = $el.main.selectAll(selector),
           svg = el[i].querySelector("svg");
@@ -1586,14 +1716,16 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
       shape.style("fill", "none").style("opacity", null);
       svg.innerHTML = "";
       svg.appendChild(shape.node());
-    });
+    }.bind(this));
   };
 
   _proto.$willDestroy = function $willDestroy() {
     this.bindEvents(!1);
     this.element.forEach(function (el) {
+      _newArrowCheck(this, this);
+
       el.innerHTML = "";
-    });
+    }.bind(this));
   };
 
   return Sparkline;
