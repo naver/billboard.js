@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220505005116
+ * @version 3.4.1-nightly-20220506004637
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23973,7 +23973,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220505005116";
+Plugin.version = "3.4.1-nightly-20220506004637";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
@@ -24923,11 +24923,20 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
 
     if (isEmpty(config.tooltip_contents)) {
       config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
-        var html = "<table class=\"" + $TOOLTIP.tooltip + "\"><tbody>";
+        var data_x = config.data_x,
+            html = "<table class=\"" + $TOOLTIP.tooltip + "\"><tbody>";
         d.forEach(function (v) {
           _newArrowCheck(this, this);
 
-          html += "<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(config.data_x) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.x) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(v.id) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.value) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"" + $TOOLTIP.tooltipName + "-" + v.id + "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:" + color(v) + "\"></span>" + defaultTitleFormat("Epochs") + "</td>\n\t\t\t\t\t\t\t<td class=\"value\">" + defaultValueFormat(v.epochs) + "</td>\n\t\t\t\t\t\t</tr>";
+          var _v$id = v.id,
+              id = _v$id === void 0 ? "" : _v$id,
+              _v$value = v.value,
+              value = _v$value === void 0 ? 0 : _v$value,
+              _v$epochs = v.epochs,
+              epochs = _v$epochs === void 0 ? 0 : _v$epochs,
+              _v$x = v.x,
+              x = _v$x === void 0 ? "" : _v$x;
+          html += "<tr>\n\t\t\t\t\t\t\t<th>" + (data_x || "") + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultTitleFormat(x) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>" + v.id + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(value) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"" + $TOOLTIP.tooltipName + "-" + id + "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:" + color(v) + "\"></span>Epochs</td>\n\t\t\t\t\t\t\t<td class=\"value\">" + defaultValueFormat(epochs) + "</td>\n\t\t\t\t\t\t</tr>";
         }.bind(this));
         return html + "</tbody></table>";
       };

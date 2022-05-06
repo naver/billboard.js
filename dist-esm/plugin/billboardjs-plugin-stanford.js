@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220505005116
+ * @version 3.4.1-nightly-20220506004637
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -489,7 +489,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.4.1-nightly-20220505005116";
+    Plugin.version = "3.4.1-nightly-20220506004637";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -1146,9 +1146,11 @@ var Stanford = /** @class */ (function (_super) {
         var config = this.$$.config;
         if (isEmpty(config.tooltip_contents)) {
             config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
+                var data_x = config.data_x;
                 var html = "<table class=\"".concat($TOOLTIP.tooltip, "\"><tbody>");
                 d.forEach(function (v) {
-                    html += "<tr>\n\t\t\t\t\t\t\t<th>".concat(defaultTitleFormat(config.data_x), "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(v.x), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>").concat(defaultTitleFormat(v.id), "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(v.value), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"").concat($TOOLTIP.tooltipName, "-").concat(v.id, "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:").concat(color(v), "\"></span>").concat(defaultTitleFormat("Epochs"), "</td>\n\t\t\t\t\t\t\t<td class=\"value\">").concat(defaultValueFormat(v.epochs), "</td>\n\t\t\t\t\t\t</tr>");
+                    var _a = v.id, id = _a === void 0 ? "" : _a, _b = v.value, value = _b === void 0 ? 0 : _b, _c = v.epochs, epochs = _c === void 0 ? 0 : _c, _d = v.x, x = _d === void 0 ? "" : _d;
+                    html += "<tr>\n\t\t\t\t\t\t\t<th>".concat(data_x || "", "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultTitleFormat(x), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>").concat(v.id, "</th>\n\t\t\t\t\t\t\t<th class=\"value\">").concat(defaultValueFormat(value), "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"").concat($TOOLTIP.tooltipName, "-").concat(id, "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:").concat(color(v), "\"></span>Epochs</td>\n\t\t\t\t\t\t\t<td class=\"value\">").concat(defaultValueFormat(epochs), "</td>\n\t\t\t\t\t\t</tr>");
                 });
                 return "".concat(html, "</tbody></table>");
             };
