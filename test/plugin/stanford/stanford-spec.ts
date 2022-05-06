@@ -12,7 +12,7 @@ import {compareEpochs, getCentroid, getRegionArea, pointInRegion} from "../../..
 describe("PLUGIN: STANFORD", () => {
 	let chart;
 	let stanford = new Stanford({ epochs: [30, 35] });
-	let args = {
+	let args: any = {
 		data: {
 			x: "x",
 			columns: [
@@ -175,6 +175,76 @@ describe("PLUGIN: STANFORD", () => {
 			chart.plugins[0].options.regions[0].text.args.forEach(v => {
 				expect(v.every(t => typeof t === "number")).to.be.true;
 			});
+		});
+	});
+
+	describe("tooltip", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "Datetime",
+					columns: [
+					  [
+						"Datetime",
+						1650965572,
+						1650965572,
+						1650965572
+					  ],
+					  [
+						"Pressure",
+						1,
+						2.04,
+						2.96
+					  ],
+					],
+					type: "scatter"
+				},
+				axis: {
+					x: {
+						label: "Datetime",
+						tick: {
+							fit: true,
+							count: 30,
+							format: '%d/%m/%y',
+							culling: {
+								max: 6
+							}
+						},
+						type: 'timeseries'
+					}
+				},
+				plugins: [
+					new Stanford({
+						epochs: [
+							34.794, 34.787, 34.791
+						],
+						scale: {
+							min: 34.79,
+							max: 35.139,
+							width: 10
+						}
+					})
+				]
+			};
+		});
+
+		it("sholud tooltip name and value display correctly for timeseries.", () => {
+			const {tooltip} = chart.$;
+
+			chart.tooltip.show({
+				data: {
+					x: new Date(1650965572),  // x Axis value
+					id: "Pressure",
+					value: 1
+				}
+			});
+
+			tooltip.selectAll("th:first-child").each(function(d, i) {
+				expect(this.textContent).to.be.equal(args.data.columns[i][0]);
+			});
+
+			expect(tooltip.select(".value").text()).to.be.equal("20/01/70");
+			expect(tooltip.select(".name").text()).to.be.equal("Epochs");
 		});
 	});
 });

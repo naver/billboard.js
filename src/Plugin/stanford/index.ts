@@ -228,20 +228,23 @@ export default class Stanford extends Plugin {
 
 		if (isEmpty(config.tooltip_contents)) {
 			config.tooltip_contents = function(d, defaultTitleFormat, defaultValueFormat, color) {
+				const {data_x} = config;
 				let html = `<table class="${$TOOLTIP.tooltip}"><tbody>`;
 
 				d.forEach(v => {
+					const {id = "", value = 0, epochs = 0, x = ""} = v;
+
 					html += `<tr>
-							<th>${defaultTitleFormat(config.data_x)}</th>
-							<th class="value">${defaultValueFormat(v.x)}</th>
+							<th>${data_x || ""}</th>
+							<th class="value">${defaultTitleFormat(x)}</th>
 						</tr>
 						<tr>
-							<th>${defaultTitleFormat(v.id)}</th>
-							<th class="value">${defaultValueFormat(v.value)}</th>
+							<th>${v.id}</th>
+							<th class="value">${defaultValueFormat(value)}</th>
 						</tr>
-						<tr class="${$TOOLTIP.tooltipName}-${v.id}">
-							<td class="name"><span style="background-color:${color(v)}"></span>${defaultTitleFormat("Epochs")}</td>
-							<td class="value">${defaultValueFormat(v.epochs)}</td>
+						<tr class="${$TOOLTIP.tooltipName}-${id}">
+							<td class="name"><span style="background-color:${color(v)}"></span>Epochs</td>
+							<td class="value">${defaultValueFormat(epochs)}</td>
 						</tr>`;
 				});
 
