@@ -45,6 +45,7 @@ export default {
 
 	/**
 	 * Set custom data name.
+	 * If a name is set to `null`, the series is omitted from the legend.
 	 * @name data․names
 	 * @memberof Options
 	 * @type {object}
@@ -58,7 +59,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_names: <{[key: string]: string}> {},
+	data_names: <{[key: string]: string|null}> {},
 
 	/**
 	 * Set custom data class.<br><br>

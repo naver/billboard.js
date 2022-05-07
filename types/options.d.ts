@@ -1520,7 +1520,7 @@ export interface Data {
 	/**
 	 * Set custom data name.
 	 */
-	names?: { [key: string]: string };
+	names?: { [key: string]: string|null };
 	/**
 	 * Set custom data class.
 	 * If this option is specified, the element g for the data has an additional class that has the prefix billboard-target- (e.g. billboard-target-additional-data1-class).
