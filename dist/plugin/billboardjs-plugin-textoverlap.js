@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220506004637
+ * @version 3.4.1-nightly-20220517004647
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -317,9 +317,11 @@ function getOption(options, key, defaultValue) {
 
 
 function hasValue(dict, value) {
-  var found = !1;
+  var _this2 = this,
+      found = !1;
+
   Object.keys(dict).forEach(function (key) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return dict[key] === value && (found = !0);
   }.bind(this));
@@ -352,7 +354,8 @@ function callFn(fn, thisArg) {
 
 
 function endall(transition, cb) {
-  var n = 0,
+  var _this3 = this,
+      n = 0,
       end = function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       args[_key2] = arguments[_key2];
@@ -364,7 +367,7 @@ function endall(transition, cb) {
   // if is transition selection
   if ("duration" in transition) {
     transition.each(function () {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       return ++n;
     }.bind(this)).on("end", end);
@@ -506,10 +509,11 @@ function getPathBox(path) {
 function getPointer(event, element) {
   var _ref,
       touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
-      pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
+      pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element),
+      _this5 = this;
 
   return pointer.map(function (v) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this5);
 
     return isNaN(v) ? 0 : v;
   }.bind(this));
@@ -677,13 +681,15 @@ function deepClone() {
 
 
 function extend(target, source) {
+  var _this7 = this;
+
   if (target === void 0) {
     target = {};
   }
 
   if (isArray(source)) {
     source.forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this7);
 
       return extend(target, v);
     }.bind(this));
@@ -723,12 +729,14 @@ var capitalize = function (str) {
 
 
 function camelize(str, separator) {
+  var _this8 = this;
+
   if (separator === void 0) {
     separator = "-";
   }
 
   return str.split(separator).map(function (v, i) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this8);
 
     return i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase();
   }.bind(this)).join("");
@@ -755,9 +763,11 @@ var toArray = function (v) {
 
 
 function getCssRules(styleSheets) {
-  var rules = [];
+  var _this9 = this,
+      rules = [];
+
   styleSheets.forEach(function (sheet) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this9);
 
     try {
       if (sheet.cssRules && sheet.cssRules.length) {
@@ -821,8 +831,10 @@ function getUnique(data) {
 
 
 function mergeArray(arr) {
+  var _this11 = this;
+
   return arr && arr.length ? arr.reduce(function (p, c) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this11);
 
     return p.concat(c);
   }.bind(this)) : [];
@@ -920,8 +932,9 @@ function sortValue(data, isAsc) {
 
 
 function getMinMax(type, data) {
-  var res = data.filter(function (v) {
-    _newArrowCheck(this, this);
+  var _this14 = this,
+      res = data.filter(function (v) {
+    _newArrowCheck(this, _this14);
 
     return notEmpty(v);
   }.bind(this));
@@ -1103,7 +1116,8 @@ function isTabVisible() {
 
 
 function convertInputType(mouse, touch) {
-  var DocumentTouch = win.DocumentTouch,
+  var _this16 = this,
+      DocumentTouch = win.DocumentTouch,
       matchMedia = win.matchMedia,
       navigator = win.navigator,
       hasTouch = !1;
@@ -1131,7 +1145,7 @@ function convertInputType(mouse, touch) {
 
 
   var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this16);
 
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
   }.bind(this)); // fallback to 'mouse' if no input type is detected.
@@ -1259,8 +1273,10 @@ var Plugin = /*#__PURE__*/function () {
   ;
 
   _proto.$willDestroy = function $willDestroy() {
+    var _this = this;
+
     Object.keys(this).forEach(function (key) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       this[key] = null;
       delete this[key];
@@ -1270,7 +1286,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220506004637";
+Plugin.version = "3.4.1-nightly-20220517004647";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**
@@ -1416,10 +1432,11 @@ var TextOverlap = /*#__PURE__*/function (_Plugin) {
   ;
 
   _proto.generateVoronoi = function generateVoronoi(points) {
-    var $$ = this.$$,
+    var _this2 = this,
+        $$ = this.$$,
         scale = $$.scale,
         _map = ["x", "y"].map(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       return scale[v].domain();
     }.bind(this)),
@@ -1439,16 +1456,18 @@ var TextOverlap = /*#__PURE__*/function (_Plugin) {
   ;
 
   _proto.preventLabelOverlap = function preventLabelOverlap(text) {
-    var _this$config = this.config,
+    var _this3 = this,
+        _this$config = this.config,
         extent = _this$config.extent,
         area = _this$config.area,
         points = text.data().map(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       return [v.index, v.value];
     }.bind(this)),
         voronoi = this.generateVoronoi(points),
         i = 0;
+
     text.each(function () {
       var cell = voronoi.cellPolygon(i);
 

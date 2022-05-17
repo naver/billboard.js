@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220506004637
+ * @version 3.4.1-nightly-20220517004647
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -506,7 +506,7 @@ if (!NATIVE_SYMBOL) {
   }
 }
 
-$({ global: true, wrap: true, forced: !NATIVE_SYMBOL, sham: !NATIVE_SYMBOL }, {
+$({ global: true, constructor: true, wrap: true, forced: !NATIVE_SYMBOL, sham: !NATIVE_SYMBOL }, {
   Symbol: $Symbol
 });
 
@@ -1129,10 +1129,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.22.4',
+  version: '3.22.5',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.22.4/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.22.5/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -1395,15 +1395,17 @@ module.exports = function (O, key, value, options) {
 var fails = __webpack_require__(7);
 var isCallable = __webpack_require__(20);
 var hasOwn = __webpack_require__(37);
-var defineProperty = (__webpack_require__(43).f);
+var DESCRIPTORS = __webpack_require__(6);
 var CONFIGURABLE_FUNCTION_NAME = (__webpack_require__(48).CONFIGURABLE);
 var inspectSource = __webpack_require__(49);
 var InternalStateModule = __webpack_require__(50);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
+// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+var defineProperty = Object.defineProperty;
 
-var CONFIGURABLE_LENGTH = !fails(function () {
+var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
   return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
 });
 
@@ -1421,6 +1423,11 @@ var makeBuiltIn = module.exports = function (value, name, options) {
   if (CONFIGURABLE_LENGTH && options && hasOwn(options, 'arity') && value.length !== options.arity) {
     defineProperty(value, 'length', { value: options.arity });
   }
+  if (options && hasOwn(options, 'constructor') && options.constructor) {
+    if (DESCRIPTORS) try {
+      defineProperty(value, 'prototype', { writable: false });
+    } catch (error) { /* empty */ }
+  } else value.prototype = undefined;
   var state = enforceInternalState(value);
   if (!hasOwn(state, 'source')) {
     state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
@@ -2635,7 +2642,7 @@ if (DESCRIPTORS && isCallable(NativeSymbol) && (!('description' in SymbolPrototy
     }
   });
 
-  $({ global: true, forced: true }, {
+  $({ global: true, constructor: true, forced: true }, {
     Symbol: SymbolWrapper
   });
 }
@@ -2813,14 +2820,14 @@ var FORCED = Error('e', { cause: 7 }).cause !== 7;
 var exportGlobalErrorCauseWrapper = function (ERROR_NAME, wrapper) {
   var O = {};
   O[ERROR_NAME] = wrapErrorConstructorWithCause(ERROR_NAME, wrapper, FORCED);
-  $({ global: true, arity: 1, forced: FORCED }, O);
+  $({ global: true, constructor: true, arity: 1, forced: FORCED }, O);
 };
 
 var exportWebAssemblyErrorCauseWrapper = function (ERROR_NAME, wrapper) {
   if (WebAssembly && WebAssembly[ERROR_NAME]) {
     var O = {};
     O[ERROR_NAME] = wrapErrorConstructorWithCause(WEB_ASSEMBLY + '.' + ERROR_NAME, wrapper, FORCED);
-    $({ target: WEB_ASSEMBLY, stat: true, arity: 1, forced: FORCED }, O);
+    $({ target: WEB_ASSEMBLY, stat: true, constructor: true, arity: 1, forced: FORCED }, O);
   }
 };
 
@@ -3198,7 +3205,7 @@ var AggregateErrorPrototype = $AggregateError.prototype = create(Error.prototype
 
 // `AggregateError` constructor
 // https://tc39.es/ecma262/#sec-aggregate-error-constructor
-$({ global: true }, {
+$({ global: true, constructor: true, arity: 2 }, {
   AggregateError: $AggregateError
 });
 
@@ -3425,7 +3432,7 @@ var FORCED = !fails(function () {
 });
 
 // https://github.com/tc39/proposal-error-cause
-$({ global: true, arity: 2, forced: FORCED }, {
+$({ global: true, constructor: true, arity: 2, forced: FORCED }, {
   AggregateError: wrapErrorConstructorWithCause(AGGREGATE_ERROR, function (init) {
     // eslint-disable-next-line no-unused-vars -- required for functions `.length`
     return function AggregateError(errors, message) { return apply(init, this, arguments); };
@@ -5082,7 +5089,7 @@ var NativeArrayBuffer = global[ARRAY_BUFFER];
 
 // `ArrayBuffer` constructor
 // https://tc39.es/ecma262/#sec-arraybuffer-constructor
-$({ global: true, forced: NativeArrayBuffer !== ArrayBuffer }, {
+$({ global: true, constructor: true, forced: NativeArrayBuffer !== ArrayBuffer }, {
   ArrayBuffer: ArrayBuffer
 });
 
@@ -5813,7 +5820,7 @@ var NATIVE_ARRAY_BUFFER = __webpack_require__(184);
 
 // `DataView` constructor
 // https://tc39.es/ecma262/#sec-dataview-constructor
-$({ global: true, forced: !NATIVE_ARRAY_BUFFER }, {
+$({ global: true, constructor: true, forced: !NATIVE_ARRAY_BUFFER }, {
   DataView: ArrayBufferModule.DataView
 });
 
@@ -6446,7 +6453,7 @@ module.exports = function (CONSTRUCTOR_NAME, wrapper, common) {
   }
 
   exported[CONSTRUCTOR_NAME] = Constructor;
-  $({ global: true, forced: Constructor != NativeConstructor }, exported);
+  $({ global: true, constructor: true, forced: Constructor != NativeConstructor }, exported);
 
   setToStringTag(Constructor, CONSTRUCTOR_NAME);
 
@@ -7358,7 +7365,7 @@ if (isForced(NUMBER, !NativeNumber(' 0o1') || !NativeNumber('0b1') || NativeNumb
   }
   NumberWrapper.prototype = NumberPrototype;
   NumberPrototype.constructor = NumberWrapper;
-  defineBuiltIn(global, NUMBER, NumberWrapper);
+  defineBuiltIn(global, NUMBER, NumberWrapper, { constructor: true });
 }
 
 
@@ -8928,7 +8935,7 @@ if (FORCED_PROMISE_CONSTRUCTOR) {
   }
 }
 
-$({ global: true, wrap: true, forced: FORCED_PROMISE_CONSTRUCTOR }, {
+$({ global: true, constructor: true, wrap: true, forced: FORCED_PROMISE_CONSTRUCTOR }, {
   Promise: PromiseConstructor
 });
 
@@ -10257,7 +10264,7 @@ if (isForced('RegExp', BASE_FORCED)) {
 
   RegExpPrototype.constructor = RegExpWrapper;
   RegExpWrapper.prototype = RegExpPrototype;
-  defineBuiltIn(global, 'RegExp', RegExpWrapper);
+  defineBuiltIn(global, 'RegExp', RegExpWrapper, { constructor: true });
 }
 
 // https://tc39.es/ecma262/#sec-get-regexp-@@species
@@ -12616,11 +12623,11 @@ if (DESCRIPTORS) {
       createNonEnumerableProperty(TypedArrayConstructorPrototype, TYPED_ARRAY_TAG, CONSTRUCTOR_NAME);
     }
 
+    var FORCED = TypedArrayConstructor != NativeTypedArrayConstructor;
+
     exported[CONSTRUCTOR_NAME] = TypedArrayConstructor;
 
-    $({
-      global: true, forced: TypedArrayConstructor != NativeTypedArrayConstructor, sham: !NATIVE_ARRAY_BUFFER_VIEWS
-    }, exported);
+    $({ global: true, constructor: true, forced: FORCED, sham: !NATIVE_ARRAY_BUFFER_VIEWS }, exported);
 
     if (!(BYTES_PER_ELEMENT in TypedArrayConstructor)) {
       createNonEnumerableProperty(TypedArrayConstructor, BYTES_PER_ELEMENT, BYTES);
@@ -14274,7 +14281,7 @@ var FORCED_CONSTRUCTOR = IS_PURE ? INCORRECT_TO_STRING || INCORRECT_CODE || MISS
 
 // `DOMException` constructor
 // https://webidl.spec.whatwg.org/#idl-DOMException
-$({ global: true, forced: FORCED_CONSTRUCTOR }, {
+$({ global: true, constructor: true, forced: FORCED_CONSTRUCTOR }, {
   DOMException: FORCED_CONSTRUCTOR ? $DOMException : NativeDOMException
 });
 
@@ -14394,7 +14401,7 @@ var FORCED_CONSTRUCTOR = ERROR_HAS_STACK && !DOM_EXCEPTION_HAS_STACK;
 
 // `DOMException` constructor patch for `.stack` where it's required
 // https://webidl.spec.whatwg.org/#es-DOMException-specialness
-$({ global: true, forced: IS_PURE || FORCED_CONSTRUCTOR }, { // TODO: fix export logic
+$({ global: true, constructor: true, forced: IS_PURE || FORCED_CONSTRUCTOR }, { // TODO: fix export logic
   DOMException: FORCED_CONSTRUCTOR ? $DOMException : NativeDOMException
 });
 
@@ -14559,30 +14566,42 @@ var checkBasicSemantic = function (structuredCloneImplementation) {
   }) && structuredCloneImplementation;
 };
 
+var checkErrorsCloning = function (structuredCloneImplementation) {
+  return !fails(function () {
+    var error = new Error();
+    var test = structuredCloneImplementation({ a: error, b: error });
+    return !(test && test.a === test.b && test.a instanceof Error);
+  });
+};
+
 // https://github.com/whatwg/html/pull/5749
-var checkNewErrorsSemantic = function (structuredCloneImplementation) {
+var checkNewErrorsCloningSemantic = function (structuredCloneImplementation) {
   return !fails(function () {
     var test = structuredCloneImplementation(new global.AggregateError([1], PERFORMANCE_MARK, { cause: 3 }));
     return test.name != 'AggregateError' || test.errors[0] != 1 || test.message != PERFORMANCE_MARK || test.cause != 3;
-  }) && structuredCloneImplementation;
+  });
 };
 
-// FF94+, Safari TP134+, Chrome Canary 98+, NodeJS 17.0+, Deno 1.13+
-// current FF and Safari implementations can't clone errors
+// FF94+, Safari 15.4+, Chrome 98+, NodeJS 17.0+, Deno 1.13+
+// FF and Safari implementations can't clone errors
 // https://bugzilla.mozilla.org/show_bug.cgi?id=1556604
+// Chrome <103 returns `null` if cloned object contains multiple references to one error
+// https://bugs.chromium.org/p/v8/issues/detail?id=12542
 // no one of current implementations supports new (html/5749) error cloning semantic
 var nativeStructuredClone = global.structuredClone;
 
-var FORCED_REPLACEMENT = IS_PURE || !checkNewErrorsSemantic(nativeStructuredClone);
+var FORCED_REPLACEMENT = IS_PURE || !checkErrorsCloning(nativeStructuredClone) || !checkNewErrorsCloningSemantic(nativeStructuredClone);
 
 // Chrome 82+, Safari 14.1+, Deno 1.11+
 // Chrome 78-81 implementation swaps `.name` and `.message` of cloned `DOMException`
+// Chrome returns `null` if cloned object contains multiple references to one error
 // Safari 14.1 implementation doesn't clone some `RegExp` flags, so requires a workaround
-// current Safari implementation can't clone errors
+// Safari implementation can't clone errors
 // Deno 1.2-1.10 implementations too naive
-// NodeJS 16.0+ does not have `PerformanceMark` constructor, structured cloning implementation
-//   from `performance.mark` is too naive and can't clone, for example, `RegExp` or some boxed primitives
-//   https://github.com/nodejs/node/issues/40840
+// NodeJS 16.0+ does not have `PerformanceMark` constructor
+// NodeJS <17.2 structured cloning implementation from `performance.mark` is too naive
+// and can't clone, for example, `RegExp` or some boxed primitives
+// https://github.com/nodejs/node/issues/40840
 // no one of current implementations supports new (html/5749) error cloning semantic
 var structuredCloneFromMark = !nativeStructuredClone && checkBasicSemantic(function (value) {
   return new PerformanceMark(PERFORMANCE_MARK, { detail: value }).detail;
@@ -16087,7 +16106,7 @@ if (NativeURL) {
 
 setToStringTag(URLConstructor, 'URL');
 
-$({ global: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS }, {
+$({ global: true, constructor: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS }, {
   URL: URLConstructor
 });
 
@@ -16665,7 +16684,7 @@ defineBuiltIn(URLSearchParamsPrototype, 'toString', function toString() {
 
 setToStringTag(URLSearchParamsConstructor, URL_SEARCH_PARAMS);
 
-$({ global: true, forced: !USE_NATIVE_URL }, {
+$({ global: true, constructor: true, forced: !USE_NATIVE_URL }, {
   URLSearchParams: URLSearchParamsConstructor
 });
 
@@ -16708,7 +16727,7 @@ if (!USE_NATIVE_URL && isCallable(Headers)) {
     RequestPrototype.constructor = RequestConstructor;
     RequestConstructor.prototype = RequestPrototype;
 
-    $({ global: true, forced: true, noTargetGet: true }, {
+    $({ global: true, constructor: true, noTargetGet: true, forced: true }, {
       Request: RequestConstructor
     });
   }
@@ -17411,8 +17430,10 @@ function formatRe(names) {
 }
 
 function formatLookup(names) {
+  var _this = this;
+
   return new Map(names.map(function (name, i) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this);
 
     return [name.toLowerCase(), i];
   }.bind(this)));
@@ -19530,10 +19551,12 @@ function basis(t1, v0, v1, v2, v3) {
 var constant_this = undefined;
 
 /* harmony default export */ var src_constant = ((function (x) {
+  var _this2 = this;
+
   _newArrowCheck(this, constant_this);
 
   return function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return x;
   }.bind(this);
@@ -19928,10 +19951,12 @@ function sleep(time) {
 
 
 /* harmony default export */ function src_timeout(callback, delay, time) {
-  var t = new Timer();
+  var _this = this,
+      t = new Timer();
+
   delay = delay == null ? 0 : +delay;
   t.restart(function (elapsed) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this);
 
     t.stop();
     callback(elapsed + delay);
@@ -20989,10 +21014,12 @@ src_selection.prototype.transition = selection_transition;
 var src_constant_this = undefined;
 
 /* harmony default export */ var d3_brush_src_constant = ((function (x) {
+  var _this2 = this;
+
   _newArrowCheck(this, src_constant_this);
 
   return function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return x;
   }.bind(this);
@@ -21352,6 +21379,8 @@ function brush_brush(dim) {
   };
 
   function started(event) {
+    var _this = this;
+
     if (touchending && !event.touches) return;
     if (!filter.apply(this, arguments)) return;
     var that = this,
@@ -21381,7 +21410,7 @@ function brush_brush(dim) {
         lockX,
         lockY,
         points = Array.from(event.touches || [event], function (t) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       var i = t.identifier;
       t = src_pointer(t, that);
@@ -21795,9 +21824,11 @@ function getOption(options, key, defaultValue) {
 
 
 function hasValue(dict, value) {
-  var found = !1;
+  var _this2 = this,
+      found = !1;
+
   Object.keys(dict).forEach(function (key) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return dict[key] === value && (found = !0);
   }.bind(this));
@@ -21830,7 +21861,8 @@ function callFn(fn, thisArg) {
 
 
 function endall(transition, cb) {
-  var n = 0,
+  var _this3 = this,
+      n = 0,
       end = function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       args[_key2] = arguments[_key2];
@@ -21842,7 +21874,7 @@ function endall(transition, cb) {
   // if is transition selection
   if ("duration" in transition) {
     transition.each(function () {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       return ++n;
     }.bind(this)).on("end", end);
@@ -21984,10 +22016,11 @@ function getPathBox(path) {
 function getPointer(event, element) {
   var _ref,
       touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
-      pointer = src_pointer(touches || event, element);
+      pointer = src_pointer(touches || event, element),
+      _this5 = this;
 
   return pointer.map(function (v) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this5);
 
     return isNaN(v) ? 0 : v;
   }.bind(this));
@@ -22155,13 +22188,15 @@ function deepClone() {
 
 
 function util_extend(target, source) {
+  var _this7 = this;
+
   if (target === void 0) {
     target = {};
   }
 
   if (isArray(source)) {
     source.forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this7);
 
       return util_extend(target, v);
     }.bind(this));
@@ -22201,12 +22236,14 @@ var capitalize = function (str) {
 
 
 function camelize(str, separator) {
+  var _this8 = this;
+
   if (separator === void 0) {
     separator = "-";
   }
 
   return str.split(separator).map(function (v, i) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this8);
 
     return i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase();
   }.bind(this)).join("");
@@ -22233,9 +22270,11 @@ var toArray = function (v) {
 
 
 function getCssRules(styleSheets) {
-  var rules = [];
+  var _this9 = this,
+      rules = [];
+
   styleSheets.forEach(function (sheet) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this9);
 
     try {
       if (sheet.cssRules && sheet.cssRules.length) {
@@ -22299,8 +22338,10 @@ function getUnique(data) {
 
 
 function mergeArray(arr) {
+  var _this11 = this;
+
   return arr && arr.length ? arr.reduce(function (p, c) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this11);
 
     return p.concat(c);
   }.bind(this)) : [];
@@ -22398,8 +22439,9 @@ function sortValue(data, isAsc) {
 
 
 function getMinMax(type, data) {
-  var res = data.filter(function (v) {
-    _newArrowCheck(this, this);
+  var _this14 = this,
+      res = data.filter(function (v) {
+    _newArrowCheck(this, _this14);
 
     return notEmpty(v);
   }.bind(this));
@@ -22581,7 +22623,8 @@ function isTabVisible() {
 
 
 function convertInputType(mouse, touch) {
-  var DocumentTouch = win.DocumentTouch,
+  var _this16 = this,
+      DocumentTouch = win.DocumentTouch,
       matchMedia = win.matchMedia,
       navigator = win.navigator,
       hasTouch = !1;
@@ -22609,7 +22652,7 @@ function convertInputType(mouse, touch) {
 
 
   var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this16);
 
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
   }.bind(this)); // fallback to 'mouse' if no input type is detected.
@@ -23100,8 +23143,10 @@ var Store_classes = {
 
 var Store = /*#__PURE__*/function () {
   function Store() {
+    var _this = this;
+
     Object.keys(Store_classes).forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       this[v] = new Store_classes[v]();
     }.bind(this));
@@ -24905,8 +24950,10 @@ function Options_objectSpread(target) { for (var i = 1, source; i < arguments.le
 
 var Options = /*#__PURE__*/function () {
   Options.setOptions = function setOptions(options) {
+    var _this = this;
+
     this.data = options.reduce(function (a, c) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       return Options_objectSpread(Options_objectSpread({}, a), c);
     }.bind(this), this.data);
@@ -24979,8 +25026,10 @@ var Cache = /*#__PURE__*/function () {
   ;
 
   _proto.remove = function remove(key) {
+    var _this = this;
+
     toArray(key).forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       return delete this.cache[v];
     }.bind(this));
@@ -25041,11 +25090,13 @@ var Cache = /*#__PURE__*/function () {
   ;
 
   _proto.cloneTarget = function cloneTarget(target) {
+    var _this2 = this;
+
     return {
       id: target.id,
       id_org: target.id_org,
       values: target.values.map(function (d) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this2);
 
         return {
           x: d.x,
@@ -25082,13 +25133,17 @@ function generateResize() {
       fn = [],
       timeout,
       callResizeFn = function () {
+    var _this = this;
+
     // Delay all resize functions call, to prevent unintended excessive call from resize event
     callResizeFn.clear();
     timeout = generator_setTimeout(function () {
-      _newArrowCheck(this, this);
+      var _this2 = this;
+
+      _newArrowCheck(this, _this);
 
       fn.forEach(function (f) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this2);
 
         return f();
       }.bind(this));
@@ -25380,12 +25435,13 @@ var tsvFormatValue = tsv.formatValue;
    * @private
    */
   convertData: function convertData(args, callback) {
-    var data;
+    var _this = this,
+        data;
 
     if (args.bindto) {
       data = {};
       ["url", "mimeType", "headers", "keys", "json", "keys", "rows", "columns"].forEach(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this);
 
         var key = "data_" + v;
 
@@ -25463,13 +25519,14 @@ var tsvFormatValue = tsv.formatValue;
    * @returns {object}
    */
   convertCsvTsvToData: function convertCsvTsvToData(parser, xsv) {
-    var rows = parser.rows(xsv),
+    var _this3 = this,
+        rows = parser.rows(xsv),
         d;
 
     if (rows.length === 1) {
       d = [{}];
       rows[0].forEach(function (id) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this3);
 
         d[0][id] = null;
       }.bind(this));
@@ -25510,10 +25567,12 @@ var tsvFormatValue = tsv.formatValue;
 
       newRows.push(targetKeys);
       json.forEach(function (o) {
+        var _this5 = this;
+
         _newArrowCheck(this, _this4);
 
         var newRow = targetKeys.map(function (key) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this5);
 
           // convert undefined to null because undefined data will be removed in convertDataToTargets()
           var v = this.findValueInJson(o, key);
@@ -25541,6 +25600,8 @@ var tsvFormatValue = tsv.formatValue;
     return data;
   },
   findValueInJson: function findValueInJson(object, path) {
+    var _this6 = this;
+
     if (object[path] !== undefined) {
       return object[path];
     }
@@ -25550,22 +25611,26 @@ var tsvFormatValue = tsv.formatValue;
         target = object; // convert indexes to properties (replace [] with .)
 
     pathArray.some(function (k) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this6);
 
       return !(target = target && k in target ? target[k] : undefined);
     }.bind(this));
     return target;
   },
   convertRowsToData: function convertRowsToData(rows) {
-    var keys = rows[0],
+    var _this7 = this,
+        keys = rows[0],
         newRows = [];
+
     rows.forEach(function (row, i) {
-      _newArrowCheck(this, this);
+      var _this8 = this;
+
+      _newArrowCheck(this, _this7);
 
       if (i > 0) {
         var newRow = {};
         row.forEach(function (v, j) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this8);
 
           if (isUndefined(v)) {
             throw new Error("Source data is missing a component at (" + i + ", " + j + ")!");
@@ -25579,13 +25644,17 @@ var tsvFormatValue = tsv.formatValue;
     return newRows;
   },
   convertColumnsToData: function convertColumnsToData(columns) {
-    var newRows = [];
+    var _this9 = this,
+        newRows = [];
+
     columns.forEach(function (col, i) {
-      _newArrowCheck(this, this);
+      var _this10 = this;
+
+      _newArrowCheck(this, _this9);
 
       var key = col[0];
       col.forEach(function (v, j) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this10);
 
         if (j > 0) {
           if (isUndefined(newRows[j - 1])) {
@@ -25794,7 +25863,8 @@ var tsvFormatValue = tsv.formatValue;
 
 /* harmony default export */ var ChartInternal_data_data = ({
   isX: function isX(key) {
-    var config = this.config,
+    var $$ = this,
+        config = $$.config,
         dataKey = config.data_x && key === config.data_x,
         existValue = notEmpty(config.data_xs) && hasValue(config.data_xs, key);
     return dataKey || existValue;
@@ -25807,23 +25877,28 @@ var tsvFormatValue = tsv.formatValue;
     return !!(config.data_stack_normalize && config.data_groups.length);
   },
   isGrouped: function isGrouped(id) {
-    var groups = this.config.data_groups;
+    var _this = this,
+        groups = this.config.data_groups;
+
     return id ? groups.some(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       return v.indexOf(id) >= 0 && v.length > 1;
     }.bind(this)) : groups.length > 0;
   },
   getXKey: function getXKey(id) {
-    var config = this.config;
+    var $$ = this,
+        config = $$.config;
     return config.data_x ? config.data_x : notEmpty(config.data_xs) ? config.data_xs[id] : null;
   },
   getXValuesOfXKey: function getXValuesOfXKey(key, targets) {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         ids = targets && notEmpty(targets) ? $$.mapToIds(targets) : [],
         xValues;
+
     ids.forEach(function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       if ($$.getXKey(id) === key) {
         xValues = $$.data.xs[id];
@@ -25859,9 +25934,12 @@ var tsvFormatValue = tsv.formatValue;
     return xs && index < xs.length ? xs[index] : null;
   },
   addXs: function addXs(xs) {
-    var config = this.config;
+    var _this3 = this,
+        $$ = this,
+        config = $$.config;
+
     Object.keys(xs).forEach(function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       config.data_xs[id] = xs[id];
     }.bind(this));
@@ -25870,7 +25948,8 @@ var tsvFormatValue = tsv.formatValue;
     return notEmpty(this.config.data_xs) || !this.config.data_xSort || this.hasType("bubble") || this.hasType("scatter");
   },
   addName: function addName(data) {
-    var config = this.config,
+    var $$ = this,
+        config = $$.config,
         name;
 
     if (data) {
@@ -25913,20 +25992,26 @@ var tsvFormatValue = tsv.formatValue;
     return value;
   },
   getValueOnIndex: function getValueOnIndex(values, index) {
-    var valueOnIndex = values.filter(function (v) {
-      _newArrowCheck(this, this);
+    var _this5 = this,
+        valueOnIndex = values.filter(function (v) {
+      _newArrowCheck(this, _this5);
 
       return v.index === index;
     }.bind(this));
+
     return valueOnIndex.length ? valueOnIndex[0] : null;
   },
   updateTargetX: function updateTargetX(targets, x) {
-    var $$ = this;
+    var _this6 = this,
+        $$ = this;
+
     targets.forEach(function (t) {
-      _newArrowCheck(this, this);
+      var _this7 = this;
+
+      _newArrowCheck(this, _this6);
 
       t.values.forEach(function (v, i) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this7);
 
         v.x = $$.generateTargetX(x[i], t.id, i);
       }.bind(this));
@@ -25934,34 +26019,35 @@ var tsvFormatValue = tsv.formatValue;
     }.bind(this));
   },
   updateTargetXs: function updateTargetXs(targets, xs) {
-    targets.forEach(function (t) {
-      _newArrowCheck(this, this);
+    var _this8 = this,
+        $$ = this;
 
-      xs[t.id] && this.updateTargetX([t], xs[t.id]);
+    targets.forEach(function (t) {
+      _newArrowCheck(this, _this8);
+
+      xs[t.id] && $$.updateTargetX([t], xs[t.id]);
     }.bind(this));
   },
   generateTargetX: function generateTargetX(rawX, id, index) {
-    var _axis,
-        $$ = this,
+    var $$ = this,
         axis = $$.axis,
-        x = (_axis = axis) != null && _axis.isCategorized() ? index : rawX || index,
-        _axis2,
-        _axis3,
-        _axis4;
+        x = axis != null && axis.isCategorized() ? index : rawX || index;
 
-    if ((_axis2 = axis) != null && _axis2.isTimeSeries()) {
+    if (axis != null && axis.isTimeSeries()) {
       var fn = parseDate.bind($$);
       x = rawX ? fn(rawX) : fn($$.getXValue(id, index));
-    } else if ((_axis3 = axis) != null && _axis3.isCustomX() && !((_axis4 = axis) != null && _axis4.isCategorized())) {
+    } else if (axis != null && axis.isCustomX() && !(axis != null && axis.isCategorized())) {
       x = isValue(rawX) ? +rawX : $$.getXValue(id, index);
     }
 
     return x;
   },
   updateXs: function updateXs(values) {
+    var _this9 = this;
+
     if (values.length) {
       this.axis.xs = values.map(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this9);
 
         return v.x;
       }.bind(this));
@@ -26079,17 +26165,20 @@ var tsvFormatValue = tsv.formatValue;
    * @returns {Array}
    */
   getTotalPerIndex: function getTotalPerIndex() {
-    var $$ = this,
+    var _this12 = this,
+        $$ = this,
         cacheKey = KEY.dataTotalPerIndex,
         sum = $$.cache.get(cacheKey);
 
     if ($$.isStackNormalized() && !sum) {
       sum = [];
       $$.data.targets.forEach(function (row) {
-        _newArrowCheck(this, this);
+        var _this13 = this;
+
+        _newArrowCheck(this, _this12);
 
         row.values.forEach(function (v, i) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this13);
 
           if (!sum[i]) {
             sum[i] = 0;
@@ -26146,14 +26235,15 @@ var tsvFormatValue = tsv.formatValue;
    * @private
    */
   getHiddenTotalDataSum: function getHiddenTotalDataSum() {
-    var $$ = this,
+    var _this15 = this,
+        $$ = this,
         api = $$.api,
         hiddenTargetIds = $$.state.hiddenTargetIds,
         total = 0;
 
     if (hiddenTargetIds.length) {
       total = api.data.values.bind(api)(hiddenTargetIds).reduce(function (p, c) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this15);
 
         return p + c;
       }.bind(this));
@@ -26170,8 +26260,10 @@ var tsvFormatValue = tsv.formatValue;
    * @private
    */
   getFilteredDataByValue: function getFilteredDataByValue(data, value) {
+    var _this16 = this;
+
     return data.filter(function (t) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this16);
 
       return this.getBaseValue(t) === value;
     }.bind(this));
@@ -26183,8 +26275,10 @@ var tsvFormatValue = tsv.formatValue;
    * @private
    */
   getMaxDataCount: function getMaxDataCount() {
+    var _this17 = this;
+
     return Math.max.apply(Math, this.data.targets.map(function (t) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this17);
 
       return t.values.length;
     }.bind(this)));
@@ -26223,8 +26317,10 @@ var tsvFormatValue = tsv.formatValue;
     return target;
   },
   mapToIds: function mapToIds(targets) {
+    var _this19 = this;
+
     return targets.map(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this19);
 
       return d.id;
     }.bind(this));
@@ -26251,31 +26347,34 @@ var tsvFormatValue = tsv.formatValue;
     return this.state.hiddenLegendIds.indexOf(targetId) < 0;
   },
   filterTargetsToShow: function filterTargetsToShow(targets) {
-    var $$ = this;
+    var _this20 = this,
+        $$ = this;
+
     return (targets || $$.data.targets).filter(function (t) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this20);
 
       return $$.isTargetToShow(t.id);
     }.bind(this));
   },
   mapTargetsToUniqueXs: function mapTargetsToUniqueXs(targets) {
     var _this21 = this,
-        axis = this.axis,
+        $$ = this,
+        axis = $$.axis,
         xs = [];
 
     if (targets != null && targets.length) {
-      var _axis5;
-
       xs = getUnique(mergeArray(targets.map(function (t) {
+        var _this22 = this;
+
         _newArrowCheck(this, _this21);
 
         return t.values.map(function (v) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this22);
 
           return +v.x;
         }.bind(this));
       }.bind(this))));
-      xs = (_axis5 = axis) != null && _axis5.isTimeSeries() ? xs.map(function (x) {
+      xs = axis != null && axis.isTimeSeries() ? xs.map(function (x) {
         _newArrowCheck(this, _this21);
 
         return new Date(+x);
@@ -26292,10 +26391,12 @@ var tsvFormatValue = tsv.formatValue;
    * @private
    */
   addTargetIds: function addTargetIds(type, targetIds) {
-    var state = this.state,
+    var _this23 = this,
+        state = this.state,
         ids = isArray(targetIds) ? targetIds : [targetIds];
+
     ids.forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this23);
 
       state[type].indexOf(v) < 0 && state[type].push(v);
     }.bind(this));
@@ -26308,10 +26409,12 @@ var tsvFormatValue = tsv.formatValue;
    * @private
    */
   removeTargetIds: function removeTargetIds(type, targetIds) {
-    var state = this.state,
+    var _this24 = this,
+        state = this.state,
         ids = isArray(targetIds) ? targetIds : [targetIds];
+
     ids.forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this24);
 
       var index = state[type].indexOf(v);
       index >= 0 && state[type].splice(index, 1);
@@ -26400,15 +26503,19 @@ var tsvFormatValue = tsv.formatValue;
     return this.filterTargetsToShow().length > 1;
   },
   hasNegativeValueInTargets: function hasNegativeValueInTargets(targets) {
+    var _this27 = this;
+
     return this.checkValueInTargets(targets, function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this27);
 
       return v < 0;
     }.bind(this));
   },
   hasPositiveValueInTargets: function hasPositiveValueInTargets(targets) {
+    var _this28 = this;
+
     return this.checkValueInTargets(targets, function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this28);
 
       return v > 0;
     }.bind(this));
@@ -26422,8 +26529,9 @@ var tsvFormatValue = tsv.formatValue;
    * @private
    */
   orderTargets: function orderTargets(targetsValue) {
-    var targets = [].concat(targetsValue),
-        fn = this.getSortCompareFn();
+    var $$ = this,
+        targets = [].concat(targetsValue),
+        fn = $$.getSortCompareFn();
     fn && targets.sort(fn);
     return targets;
   },
@@ -26482,21 +26590,27 @@ var tsvFormatValue = tsv.formatValue;
     }.bind(this));
   },
   filterRemoveNull: function filterRemoveNull(data) {
+    var _this31 = this;
+
     return data.filter(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this31);
 
       return isValue(this.getBaseValue(d));
     }.bind(this));
   },
   filterByXDomain: function filterByXDomain(targets, xDomain) {
+    var _this32 = this;
+
     return targets.map(function (t) {
-      _newArrowCheck(this, this);
+      var _this33 = this;
+
+      _newArrowCheck(this, _this32);
 
       return {
         id: t.id,
         id_org: t.id_org,
         values: t.values.filter(function (v) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this33);
 
           return xDomain[0] <= v.x && v.x <= xDomain[1];
         }.bind(this))
@@ -26527,10 +26641,12 @@ var tsvFormatValue = tsv.formatValue;
     return index;
   },
   getDataLabelLength: function getDataLabelLength(min, max, key) {
-    var $$ = this,
+    var _this34 = this,
+        $$ = this,
         lengths = [0, 0];
+
     $$.$el.chart.select("svg").selectAll(".dummy").data([min, max]).enter().append("text").text(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this34);
 
       return $$.dataLabelFormat(d.id)(d);
     }.bind(this)).each(function (d, i) {
@@ -26568,12 +26684,14 @@ var tsvFormatValue = tsv.formatValue;
     return sames;
   },
   findClosestFromTargets: function findClosestFromTargets(targets, pos) {
-    var $$ = this,
+    var _this35 = this,
+        $$ = this,
         candidates = targets.map(function (target) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this35);
 
       return $$.findClosest(target.values, pos);
     }.bind(this));
+
     // map to array of closest points of each target
     // decide closest point and return
     return $$.findClosest(candidates, pos);
@@ -26683,10 +26801,12 @@ var tsvFormatValue = tsv.formatValue;
     return converted;
   },
   convertValuesToRange: function convertValuesToRange(values) {
-    var converted = isArray(values) ? values.concat() : [values],
+    var _this37 = this,
+        converted = isArray(values) ? values.concat() : [values],
         ranges = [];
+
     converted.forEach(function (range) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this37);
 
       var x = range.x,
           id = range.id;
@@ -26704,7 +26824,8 @@ var tsvFormatValue = tsv.formatValue;
     return ranges;
   },
   updateDataAttributes: function updateDataAttributes(name, attrs) {
-    var $$ = this,
+    var _this38 = this,
+        $$ = this,
         config = $$.config,
         current = config["data_" + name];
 
@@ -26713,7 +26834,7 @@ var tsvFormatValue = tsv.formatValue;
     }
 
     Object.keys(attrs).forEach(function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this38);
 
       current[id] = attrs[id];
     }.bind(this));
@@ -26789,10 +26910,12 @@ var tsvFormatValue = tsv.formatValue;
 
           if (hiddenSum.length) {
             hiddenSum = hiddenSum.reduce(function (acc, curr) {
+              var _this40 = this;
+
               _newArrowCheck(this, _this39);
 
               return acc.map(function (v, i) {
-                _newArrowCheck(this, this);
+                _newArrowCheck(this, _this40);
 
                 return (isNumber(v) ? v : 0) + curr[i];
               }.bind(this));
@@ -26832,6 +26955,7 @@ var tsvFormatValue = tsv.formatValue;
    */
   updateDataIndexByX: function updateDataIndexByX(tickValues) {
     var _this41 = this,
+        $$ = this,
         tickValueMap = tickValues.reduce(function (out, tick, index) {
       _newArrowCheck(this, _this41);
 
@@ -26839,11 +26963,13 @@ var tsvFormatValue = tsv.formatValue;
       return out;
     }.bind(this), {});
 
-    this.data.targets.forEach(function (t) {
+    $$.data.targets.forEach(function (t) {
+      var _this42 = this;
+
       _newArrowCheck(this, _this41);
 
       t.values.forEach(function (value, valueIndex) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this42);
 
         var index = tickValueMap[+value.x];
 
@@ -26863,7 +26989,8 @@ var tsvFormatValue = tsv.formatValue;
    * @private
    */
   isBubbleZType: function isBubbleZType(d) {
-    return this.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
+    var $$ = this;
+    return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
   },
 
   /**
@@ -26873,9 +27000,12 @@ var tsvFormatValue = tsv.formatValue;
    * @private
    */
   isBarRangeType: function isBarRangeType(d) {
-    var value = d.value;
-    return this.isBarType(d) && isArray(value) && value.length === 2 && value.every(function (v) {
-      _newArrowCheck(this, this);
+    var _this43 = this,
+        $$ = this,
+        value = d.value;
+
+    return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(function (v) {
+      _newArrowCheck(this, _this43);
 
       return isNumber(v);
     }.bind(this));
@@ -26957,7 +27087,8 @@ var tsvFormatValue = tsv.formatValue;
     (_args$done = args.done) == null ? void 0 : _args$done.call($$.api);
   },
   loadFromArgs: function loadFromArgs(args) {
-    var $$ = this;
+    var _this2 = this,
+        $$ = this;
 
     // prevent load when chart is already destroyed
     if (!$$.config) {
@@ -26967,7 +27098,7 @@ var tsvFormatValue = tsv.formatValue;
 
     $$.cache.reset();
     var data = args.data || $$.convertData(args, function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       return $$.load($$.convertDataToTargets(d), args);
     }.bind(this));
@@ -27011,6 +27142,8 @@ var tsvFormatValue = tsv.formatValue;
     }.bind(this)));
     $T(targets).style("opacity", "0").remove().call(endall, done);
     targetIds.forEach(function (id) {
+      var _this4 = this;
+
       _newArrowCheck(this, _this3);
 
       // Reset fadein for future load
@@ -27022,7 +27155,7 @@ var tsvFormatValue = tsv.formatValue;
 
 
       $$.data.targets = $$.data.targets.filter(function (t) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this4);
 
         return t.id !== id;
       }.bind(this));
@@ -27037,10 +27170,12 @@ var tsvFormatValue = tsv.formatValue;
 var d3_drag_src_constant_this = undefined;
 
 /* harmony default export */ var d3_drag_src_constant = ((function (x) {
+  var _this2 = this;
+
   _newArrowCheck(this, d3_drag_src_constant_this);
 
   return function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return x;
   }.bind(this);
@@ -27337,7 +27472,8 @@ function drag_defaultTouchable() {
 
 /* harmony default export */ var interactions_interaction = ({
   selectRectForSingle: function selectRectForSingle(context, eventRect, index) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         main = $$.$el.main,
         isSelectionEnabled = config.data_selection_enabled,
@@ -27370,13 +27506,13 @@ function drag_defaultTouchable() {
     }).filter(function (d) {
       return $$.isWithinShape(this, d);
     }).call(function (selected) {
-      var _isSelectable;
+      var _this2 = this;
 
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       var d = selected.data();
 
-      if (isSelectionEnabled && (isSelectionGrouped || (_isSelectable = isSelectable) != null && _isSelectable.bind($$.api)(d))) {
+      if (isSelectionEnabled && (isSelectionGrouped || isSelectable != null && isSelectable.bind($$.api)(d))) {
         eventRect.style("cursor", "pointer");
       }
 
@@ -27385,7 +27521,7 @@ function drag_defaultTouchable() {
         $$.showGridFocus == null ? void 0 : $$.showGridFocus(d);
         $$.unexpandCircles == null ? void 0 : $$.unexpandCircles();
         selected.each(function (d) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this2);
 
           return $$.setExpand(index, d.id);
         }.bind(this));
@@ -27444,7 +27580,8 @@ function drag_defaultTouchable() {
    * @private
    */
   setOverOut: function setOverOut(isOver, d) {
-    var $$ = this,
+    var _this5 = this,
+        $$ = this,
         config = $$.config,
         hasRadar = $$.state.hasRadar,
         main = $$.$el.main,
@@ -27463,8 +27600,10 @@ function drag_defaultTouchable() {
           return $$.isWithinShape(this, d);
         });
         shape.each(function (d) {
+          var _this4 = this;
+
           if (last.length === 0 || last.every(function (v) {
-            _newArrowCheck(this, this);
+            _newArrowCheck(this, _this4);
 
             return v !== this;
           }.bind(this))) {
@@ -27476,7 +27615,7 @@ function drag_defaultTouchable() {
         if (last.length > 0 && shape.empty()) {
           callback = config.data_onout.bind($$.api);
           last.forEach(function (v) {
-            _newArrowCheck(this, this);
+            _newArrowCheck(this, _this5);
 
             return callback(src_select(v).datum(), v);
           }.bind(this));
@@ -27547,7 +27686,8 @@ function drag_defaultTouchable() {
    * @param {Array} mouse x and y coordinate value
    */
   dispatchEvent: function dispatchEvent(type, index, mouse) {
-    var $$ = this,
+    var _this7 = this,
+        $$ = this,
         config = $$.config,
         _$$$state = $$.state,
         eventReceiver = _$$$state.eventReceiver,
@@ -27559,7 +27699,7 @@ function drag_defaultTouchable() {
         radar = _$$$$el.radar,
         isMultipleX = $$.isMultipleX(),
         element = (hasRadar ? radar.axes.select("." + $AXIS.axis + "-" + index + " text") : eventRect || arcs.selectAll("." + $COMMON.target + " path").filter(function (d, i) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this7);
 
       return i === index;
     }.bind(this))).node(),
@@ -27593,14 +27733,12 @@ function drag_defaultTouchable() {
    * @private
    */
   unbindZoomEvent: function unbindZoomEvent() {
-    var _eventRect,
-        _zoomResetBtn,
-        _$$$$el2 = this.$el,
+    var $$ = this,
+        _$$$$el2 = $$.$el,
         eventRect = _$$$$el2.eventRect,
         zoomResetBtn = _$$$$el2.zoomResetBtn;
-
-    (_eventRect = eventRect) == null ? void 0 : _eventRect.on(".zoom wheel.zoom .drag", null);
-    (_zoomResetBtn = zoomResetBtn) == null ? void 0 : _zoomResetBtn.on("click", null).style("display", "none");
+    eventRect == null ? void 0 : eventRect.on(".zoom wheel.zoom .drag", null);
+    zoomResetBtn == null ? void 0 : zoomResetBtn.on("click", null).style("display", "none");
   },
 
   /**
@@ -27608,10 +27746,7 @@ function drag_defaultTouchable() {
    * @private
    */
   unbindAllEvents: function unbindAllEvents() {
-    var _region,
-        _brush,
-        _arcs,
-        _legend,
+    var _this8 = this,
         $$ = this,
         _$$$$el3 = $$.$el,
         arcs = _$$$$el3.arcs,
@@ -27622,8 +27757,8 @@ function drag_defaultTouchable() {
         brush = $$.brush;
 
     // detach all possible event types
-    [svg, eventRect, (_region = region) == null ? void 0 : _region.list, (_brush = brush) == null ? void 0 : _brush.getSelection(), (_arcs = arcs) == null ? void 0 : _arcs.selectAll("path"), (_legend = legend) == null ? void 0 : _legend.selectAll("g")].forEach(function (v) {
-      _newArrowCheck(this, this);
+    [svg, eventRect, region == null ? void 0 : region.list, brush == null ? void 0 : brush.getSelection(), arcs == null ? void 0 : arcs.selectAll("path"), legend == null ? void 0 : legend.selectAll("g")].forEach(function (v) {
+      _newArrowCheck(this, _this8);
 
       return v == null ? void 0 : v.on("wheel click mouseover mousemove mouseout touchstart touchmove touchend touchstart.eventRect touchmove.eventRect touchend.eventRect .brush .drag .zoom wheel.zoom dblclick.zoom", null);
     }.bind(this));
@@ -27651,11 +27786,13 @@ function drag_defaultTouchable() {
    * @private
    */
   getClass: function getClass(type, withShape) {
-    var isPlural = /s$/.test(type),
+    var _this = this,
+        isPlural = /s$/.test(type),
         useIdKey = /^(area|arc|line)s?$/.test(type),
         key = isPlural ? "id" : "index";
+
     return function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       var data = d.data || d,
           result = (withShape ? this.generateClass(classes[isPlural ? "shapes" : "shape"], data[key]) : "") + this.generateClass(classes[type], data[useIdKey ? "id" : key]);
@@ -27670,14 +27807,17 @@ function drag_defaultTouchable() {
    * @private
    */
   getChartClass: function getChartClass(type) {
+    var _this2 = this;
+
     return function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       return classes["chart" + type] + this.classTarget((d.data ? d.data : d).id);
     }.bind(this);
   },
   generateExtraLineClass: function generateExtraLineClass() {
-    var classes = this.config.line_classes || [],
+    var $$ = this,
+        classes = $$.config.line_classes || [],
         ids = [];
     return function (d) {
       var _d$data,
@@ -27723,9 +27863,11 @@ function drag_defaultTouchable() {
     return pfx + "." + (classes.target + target) + ", " + pfx + "." + (classes.circles + target);
   },
   selectorTargets: function selectorTargets(idsValue, prefix) {
-    var ids = idsValue || [];
+    var _this3 = this,
+        ids = idsValue || [];
+
     return ids.length ? ids.map(function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       return this.selectorTarget(id, prefix);
     }.bind(this)) : null;
@@ -27734,8 +27876,10 @@ function drag_defaultTouchable() {
     return "." + (classes.legendItem + this.getTargetSelectorSuffix(id));
   },
   selectorLegends: function selectorLegends(ids) {
+    var _this4 = this;
+
     return ids != null && ids.length ? ids.map(function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this4);
 
       return this.selectorLegend(id);
     }.bind(this)) : null;
@@ -28152,7 +28296,8 @@ var colorizePattern = function (pattern, color, id) {
    * @private
    */
   getColorFromCss: function getColorFromCss() {
-    var cacheKey = KEY.colorPattern,
+    var _this2 = this,
+        cacheKey = KEY.colorPattern,
         body = browser_doc.body,
         pattern = body[cacheKey];
 
@@ -28166,7 +28311,7 @@ var colorizePattern = function (pattern, color, id) {
 
       if (content.indexOf(";") > -1) {
         pattern = content.replace(/url[^#]*|["'()]|(\s|%20)/g, "").split(";").map(function (v) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this2);
 
           return v.trim().replace(/[\"'\s]/g, "");
         }.bind(this)).filter(Boolean);
@@ -28228,7 +28373,8 @@ var colorizePattern = function (pattern, color, id) {
     };
   },
   generateLevelColor: function generateLevelColor() {
-    var config = this.config,
+    var $$ = this,
+        config = $$.config,
         colors = config.color_pattern,
         threshold = config.color_threshold,
         asValue = threshold.unit === "value",
@@ -28255,7 +28401,8 @@ var colorizePattern = function (pattern, color, id) {
    * @private
    */
   generateDataLabelBackgroundColorFilter: function generateDataLabelBackgroundColorFilter(color) {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         $el = $$.$el,
         config = $$.config,
         state = $$.state,
@@ -28271,7 +28418,7 @@ var colorizePattern = function (pattern, color, id) {
       }
 
       ids.forEach(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this4);
 
         var id = state.datetimeId + "-labels-bg" + $$.getTargetSelectorSuffix(v) + (color ? $$.getTargetSelectorSuffix(color) : "");
         $el.defs.append("filter").attr("x", "0").attr("y", "0").attr("width", "1").attr("height", "1").attr("id", id).html("<feFlood flood-color=\"" + (v === "" ? backgroundColors : backgroundColors[v]) + "\" /><feComposite in=\"SourceGraphic\"/>");
@@ -28368,12 +28515,14 @@ var colorizePattern = function (pattern, color, id) {
 
             return i > 0;
           }.bind(this)).forEach(function (id) {
+            var _this3 = this;
+
             _newArrowCheck(this, _this2);
 
             if (ys[id]) {
               var axisId = axis.getId(id);
               ys[id].forEach(function (v, i) {
-                _newArrowCheck(this, this);
+                _newArrowCheck(this, _this3);
 
                 var val = +v,
                     meetCondition = isMin ? val > 0 : val < 0;
@@ -28402,16 +28551,17 @@ var colorizePattern = function (pattern, color, id) {
    * @private
    */
   isHiddenTargetWithYDomain: function isHiddenTargetWithYDomain(id) {
-    var $$ = this;
+    var _this4 = this,
+        $$ = this;
+
     return $$.state.hiddenTargetIds.some(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this4);
 
       return $$.axis.getId(v) === id;
     }.bind(this));
   },
   getYDomain: function getYDomain(targets, axisId, xDomain) {
-    var _scale,
-        _this5 = this,
+    var _this5 = this,
         $$ = this,
         axis = $$.axis,
         config = $$.config,
@@ -28422,7 +28572,7 @@ var colorizePattern = function (pattern, color, id) {
       return [0, 100];
     }
 
-    var isLog = ((_scale = scale) == null ? void 0 : _scale[axisId]) && scale[axisId].type === "log",
+    var isLog = (scale == null ? void 0 : scale[axisId]) && scale[axisId].type === "log",
         targetsByAxisId = targets.filter(function (t) {
       _newArrowCheck(this, _this5);
 
@@ -28548,13 +28698,16 @@ var colorizePattern = function (pattern, color, id) {
     return isInverted ? domain.reverse() : domain;
   },
   getXDomainMinMax: function getXDomainMinMax(targets, type) {
-    var $$ = this,
+    var _this6 = this,
+        $$ = this,
         configValue = $$.config["axis_x_" + type],
         dataValue = getMinMax(type, targets.map(function (t) {
-      _newArrowCheck(this, this);
+      var _this7 = this;
+
+      _newArrowCheck(this, _this6);
 
       return getMinMax(type, t.values.map(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this7);
 
         return v.x;
       }.bind(this)));
@@ -28648,9 +28801,8 @@ var colorizePattern = function (pattern, color, id) {
       var isCategorized = axis.isCategorized(),
           isTimeSeries = axis.isTimeSeries(),
           _padding = $$.getXDomainPadding(domain),
-          _domain2 = domain,
-          firstX = _domain2[0],
-          lastX = _domain2[1];
+          firstX = domain[0],
+          lastX = domain[1];
 
       // show center of x domain if min and max are the same
       if (firstX - lastX === 0 && !isCategorized) {
@@ -28942,7 +29094,8 @@ function getFormat($$, typeValue, v) {
    * @private
    */
   updateLegendTemplate: function updateLegendTemplate() {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         $el = $$.$el,
         wrapper = src_select(config.legend_contents_bindto),
@@ -28953,7 +29106,7 @@ function getFormat($$, typeValue, v) {
           ids = [],
           html = "";
       targets.forEach(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this);
 
         var content = isFunction(template) ? template.bind($$.api)(v, $$.color(v), $$.api.data(v)[0].values) : tplProcess(template, {
           COLOR: $$.color(v),
@@ -29102,12 +29255,14 @@ function getFormat($$, typeValue, v) {
    * @private
    */
   toggleFocusLegend: function toggleFocusLegend(targetIds, focus) {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         legend = $$.$el.legend,
         $T = $$.$T,
         targetIdz = $$.mapToTargetIds(targetIds);
+
     legend && $T(legend.selectAll("." + $LEGEND.legendItem).filter(function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       return targetIdz.indexOf(id) >= 0;
     }.bind(this)).classed($FOCUS.legendItemFocused, focus)).style("opacity", function () {
@@ -29200,18 +29355,20 @@ function getFormat($$, typeValue, v) {
    * @private
    */
   setLegendItem: function setLegendItem(item) {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         api = $$.api,
         config = $$.config,
         state = $$.state,
         isTouch = state.inputType === "touch",
         hasGauge = $$.hasType("gauge");
+
     item.attr("class", function (id) {
       var node = src_select(this),
           itemClass = !node.empty() && node.attr("class") || "";
       return itemClass + $$.generateClass($LEGEND.legendItem, id);
     }).style("visibility", function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       return $$.isLegendToShow(id) ? null : "hidden";
     }.bind(this));
@@ -29269,7 +29426,6 @@ function getFormat($$, typeValue, v) {
         state = $$.state,
         legend = $$.$el.legend,
         $T = $$.$T,
-        posMin = 10,
         tileWidth = config.legend_item_tile_width + 5,
         maxWidth = 0,
         maxHeight = 0,
@@ -29303,7 +29459,7 @@ function getFormat($$, typeValue, v) {
         if (!withoutStep) {
           margin = (areaLength - totalLength - itemLength) / 2;
 
-          if (margin < posMin) {
+          if (margin < 10) {
             margin = (areaLength - itemLength) / 2;
             totalLength = 0;
             step++;
@@ -29357,7 +29513,7 @@ function getFormat($$, typeValue, v) {
         }.bind(this));
         margin = (areaLength - maxLength * targetIdz.length) / 2;
 
-        if (margin < posMin) {
+        if (margin < 10) {
           totalLength = 0;
           step = 0;
           targetIdz.forEach(function (id2) {
@@ -29593,7 +29749,8 @@ function getFormat($$, typeValue, v) {
 
 /* harmony default export */ var redraw = ({
   redraw: function redraw(options) {
-    var _$$$axis;
+    var _$$$axis,
+        _this = this;
 
     if (options === void 0) {
       options = {};
@@ -29641,7 +29798,7 @@ function getFormat($$, typeValue, v) {
 
       config.regions.length && $$.updateRegion();
       ["bar", "candlestick", "line", "area"].forEach(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this);
 
         var name = capitalize(v);
 
@@ -29751,7 +29908,8 @@ function getFormat($$, typeValue, v) {
     }.bind(this));
   },
   getRedrawList: function getRedrawList(shape, flow, flowFn, withTransition) {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         config = $$.config,
         _$$$state = $$.state,
         hasAxis = _$$$state.hasAxis,
@@ -29774,7 +29932,7 @@ function getFormat($$, typeValue, v) {
       }
 
       Object.keys(shape.type).forEach(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this4);
 
         var name = capitalize(v),
             drawFn = shape.type[v];
@@ -29923,13 +30081,13 @@ function bisector(f) {
   if (f.length !== 2) {
     compare1 = ascending_ascending;
 
-    compare2 = function (d, x) {
+    compare2 = function compare2(d, x) {
       _newArrowCheck(this, _this);
 
       return ascending_ascending(f(d), x);
     }.bind(this);
 
-    delta = function (d, x) {
+    delta = function delta(d, x) {
       _newArrowCheck(this, _this);
 
       return f(d) - x;
@@ -30791,24 +30949,30 @@ function pow10(x) {
 }
 
 function powp(base) {
+  var _this = this;
+
   return base === 10 ? pow10 : base === Math.E ? Math.exp : function (x) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this);
 
     return Math.pow(base, x);
   }.bind(this);
 }
 
 function logp(base) {
+  var _this2 = this;
+
   return base === Math.E ? Math.log : base === 10 && Math.log10 || base === 2 && Math.log2 || (base = Math.log(base), function (x) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return Math.log(x) / base;
   }.bind(this));
 }
 
 function reflect(f) {
+  var _this3 = this;
+
   return function (x, k) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this3);
 
     return -f(-x, k);
   }.bind(this);
@@ -30890,6 +31054,8 @@ function loggish(transform) {
   }.bind(this);
 
   scale.tickFormat = function (count, specifier) {
+    var _this5 = this;
+
     _newArrowCheck(this, _this4);
 
     if (count == null) count = 10;
@@ -30904,7 +31070,7 @@ function loggish(transform) {
     var k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
 
     return function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this5);
 
       var i = d / pows(Math.round(logs(d)));
       if (i * base < base - .5) i *= base;
@@ -30934,10 +31100,11 @@ function loggish(transform) {
   return scale;
 }
 function log() {
-  var scale = loggish(transformer()).domain([1, 10]);
+  var _this7 = this,
+      scale = loggish(transformer()).domain([1, 10]);
 
   scale.copy = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this7);
 
     return copy(scale, log()).base(scale.base());
   }.bind(this);
@@ -31105,14 +31272,16 @@ function ticker(year, month, week, day, hour, minute) {
   }
 
   function tickInterval(start, stop, count) {
-    var target = Math.abs(stop - start) / count,
+    var _this = this,
+        target = Math.abs(stop - start) / count,
         i = bisector(function (_ref2) {
       var step = _ref2[2];
 
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       return step;
     }.bind(this)).right(tickIntervals, target);
+
     if (i === tickIntervals.length) return year.every(tickStep(start / durationYear, stop / durationYear, count));
     if (i === 0) return src_millisecond.every(Math.max(tickStep(start, stop, count), 1));
     var _tickIntervals = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i],
@@ -31272,7 +31441,8 @@ function getScale(type, min, max) {
    * @private
    */
   getYScale: function getYScale(id, min, max, domain) {
-    var scale = getScale(this.axis.getAxisType(id), min, max);
+    var $$ = this,
+        scale = getScale($$.axis.getAxisType(id), min, max);
     domain && scale.domain(domain);
     return scale;
   },
@@ -32622,7 +32792,8 @@ function stepAfter(context) {
    * @private
    */
   getDrawShape: function getDrawShape() {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         isRotated = $$.config.axis_rotated,
         hasRadar = $$.state.hasRadar,
         shape = {
@@ -32630,8 +32801,9 @@ function stepAfter(context) {
       indices: {},
       pos: {}
     };
+
     ["bar", "candlestick", "line", "area"].forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       var name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
 
@@ -32729,7 +32901,8 @@ function stepAfter(context) {
    * @private
    */
   getIndices: function getIndices(indices, d) {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         _$$$config = $$.config,
         xs = _$$$config.data_xs,
         removeNull = _$$$config.bar_indices_removeNull,
@@ -32740,7 +32913,7 @@ function stepAfter(context) {
       var ind = {}; // redefine bar indices order
 
       $$.getAllValuesOnIndex(index, !0).forEach(function (v, i) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this3);
 
         ind[v.id] = i;
         ind.__max__ = i;
@@ -32820,10 +32993,12 @@ function stepAfter(context) {
     }.bind(this);
   },
   getShapeY: function getShapeY(isSub) {
-    var $$ = this,
+    var _this6 = this,
+        $$ = this,
         isStackNormalized = $$.isStackNormalized();
+
     return function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this6);
 
       var value = d.value;
 
@@ -32871,6 +33046,8 @@ function stepAfter(context) {
         targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
         isStackNormalized = $$.isStackNormalized(),
         shapeOffsetTargets = targets.map(function (target) {
+      var _this8 = this;
+
       _newArrowCheck(this, _this7);
 
       var rowValues = target.values,
@@ -32881,7 +33058,7 @@ function stepAfter(context) {
       }
 
       var rowValueMapByXValue = rowValues.reduce(function (out, d) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this8);
 
         var key = +d.x;
         out[key] = d;
@@ -32910,7 +33087,8 @@ function stepAfter(context) {
     };
   },
   getShapeOffset: function getShapeOffset(typeFilter, indices, isSub) {
-    var $$ = this,
+    var _this9 = this,
+        $$ = this,
         _$$$getShapeOffsetDat = $$.getShapeOffsetData(typeFilter),
         shapeOffsetTargets = _$$$getShapeOffsetDat.shapeOffsetTargets,
         indexMapByTargetId = _$$$getShapeOffsetDat.indexMapByTargetId;
@@ -32918,7 +33096,7 @@ function stepAfter(context) {
     return function (d, idx) {
       var _this10 = this;
 
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this9);
 
       var id = d.id,
           value = d.value,
@@ -33059,7 +33237,8 @@ function stepAfter(context) {
     return isWithin;
   },
   getInterpolate: function getInterpolate(d) {
-    var interpolation = this.getInterpolateType(d);
+    var $$ = this,
+        interpolation = $$.getInterpolateType(d);
     return {
       "basis": curve_basis,
       "basis-closed": curve_basisClosed,
@@ -33194,17 +33373,16 @@ function stepAfter(context) {
     var $$ = this,
         config = $$.config,
         hasAxis = $$.state.hasAxis,
-        defaultPadding = 10,
         legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
         axesLen = hasAxis ? config.axis_y2_axes.length : 0,
         axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0,
-        xAxisTickTextOverflow = withXAxisTickTextOverflow ? $$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0,
+        xAxisTickTextOverflow = withXAxisTickTextOverflow ? $$.axis.getXAxisTickTextY2Overflow(10) : 0,
         padding;
 
     if (isValue(config.padding_right)) {
       padding = config.padding_right + 1; // 1 is needed not to hide tick line
     } else if ($$.axis && config.axis_rotated) {
-      padding = defaultPadding + legendWidthOnRight;
+      padding = 10 + legendWidthOnRight;
     } else if ($$.axis && (!config.axis_y2_show || config.axis_y2_inner)) {
       // && !config.axis_rotated
       padding = Math.max(2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0), xAxisTickTextOverflow);
@@ -33329,13 +33507,15 @@ function stepAfter(context) {
    * @private
    */
   getResettedPadding: function getResettedPadding(v) {
-    var config = this.config,
+    var _this = this,
+        $$ = this,
+        config = $$.config,
         isNum = isNumber(v),
         p = isNum ? 0 : {};
 
     if (config.padding === !1) {
       isNum || Object.keys(v).forEach(function (key) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this);
 
         // when data.lables=true, do not reset top padding
         p[key] = !isEmpty(config.data_labels) && config.data_labels !== !1 && key === "top" ? v[key] : 0;
@@ -33484,16 +33664,18 @@ function stepAfter(context) {
    * @private
    */
   updateTargetsForText: function updateTargetsForText(targets) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         classChartText = $$.getChartClass("Text"),
         classTexts = $$.getClass("texts", "id"),
         classFocus = $$.classFocus.bind($$),
         mainTextUpdate = $$.$el.main.select("." + $TEXT.chartTexts).selectAll("." + $TEXT.chartText).data(targets).attr("class", function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       return classChartText(d) + classFocus(d);
     }.bind(this)),
         mainTextEnter = mainTextUpdate.enter().append("g").style("opacity", "0").attr("class", classChartText).style("pointer-events", "none");
+
     mainTextEnter.append("g").attr("class", classTexts);
   },
 
@@ -33502,15 +33684,17 @@ function stepAfter(context) {
    * @private
    */
   updateText: function updateText() {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         $el = $$.$el,
         $T = $$.$T,
         config = $$.config,
         classText = $$.getClass("text", "index"),
         text = $el.main.selectAll("." + $TEXT.texts).selectAll("." + $TEXT.text).data($$.labelishData.bind($$));
+
     $T(text.exit()).style("fill-opacity", "0").remove();
     $el.text = text.enter().append("text").merge(text).attr("class", classText).attr("text-anchor", function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       // when value is negative or
       var isEndAnchor = d.value < 0;
@@ -33638,7 +33822,8 @@ function stepAfter(context) {
    * @private
    */
   getTextRect: function getTextRect(element, className) {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         base = element.node ? element.node() : element;
 
     if (!/text/i.test(base.tagName)) {
@@ -33651,7 +33836,7 @@ function stepAfter(context) {
 
     if (!rect) {
       $$.$el.svg.append("text").style("visibility", "hidden").style("font", src_select(base).style("font")).classed(className, !0).text(text).call(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this3);
 
         rect = getBoundingRect(v.node());
       }.bind(this)).remove();
@@ -33669,13 +33854,15 @@ function stepAfter(context) {
    * @private
    */
   generateXYForText: function generateXYForText(indices, forX) {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         types = Object.keys(indices),
         points = {},
         getter = forX ? $$.getXForText : $$.getYForText;
+
     $$.hasType("radar") && types.push("radar");
     types.forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this4);
 
       points[v] = $$["generateGet" + capitalize(v) + "Points"](indices[v], !1);
     }.bind(this));
@@ -33912,7 +34099,8 @@ function stepAfter(context) {
       ratio = 0;
     }
 
-    var config = this.config,
+    var $$ = this,
+        config = $$.config,
         threshold = config[type + "_label_threshold"] || 0;
     return ratio >= threshold;
   }
@@ -34067,7 +34255,8 @@ function getTextPos(pos, width) {
     $$.bindTooltipResizePos();
   },
   initShowTooltip: function initShowTooltip() {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         $el = $$.$el,
         _$$$state = $$.state,
@@ -34096,7 +34285,7 @@ function getTextPos(pos, width) {
       }
 
       var data = $$.data.targets.map(function (d) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this);
 
         var x = isArc ? 0 : config.tooltip_init_x;
         return $$.addName(d.values[x]);
@@ -34279,6 +34468,8 @@ function getTextPos(pos, width) {
 
       if (value !== undefined) {
         var _ret = function () {
+          var _this3 = this;
+
           // Skip elements when their name is set to null
           if (row.name === null) {
             return "continue";
@@ -34296,7 +34487,7 @@ function getTextPos(pos, width) {
           if (tplStr && isObject(contents.text)) {
             var index = targetIds.indexOf(row.id);
             Object.keys(contents.text).forEach(function (key) {
-              _newArrowCheck(this, this);
+              _newArrowCheck(this, _this3);
 
               contentValue[key] = contents.text[key][index];
             }.bind(this));
@@ -34332,7 +34523,8 @@ function getTextPos(pos, width) {
    * @private
    */
   tooltipPosition: function tooltipPosition(dataToShow, tWidth, tHeight, element) {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         state = $$.state,
@@ -34347,7 +34539,6 @@ function getTextPos(pos, width) {
         svgLeft = $$.getSvgLeft(!0),
         chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(),
         chartLeft = $$.getCurrentPaddingLeft(!0),
-        size = 20,
         _getPointer = getPointer(event, element),
         x = _getPointer[0],
         y = _getPointer[1];
@@ -34364,12 +34555,12 @@ function getTextPos(pos, width) {
       var dataScale = scale.x(dataToShow[0].x);
 
       if (config.axis_rotated) {
-        y = dataScale + size;
+        y = dataScale + 20;
         x += svgLeft + 100;
         chartRight -= svgLeft;
       } else {
         y -= 5;
-        x = svgLeft + chartLeft + size + ($$.scale.zoom ? x : dataScale);
+        x = svgLeft + chartLeft + 20 + ($$.scale.zoom ? x : dataScale);
       }
     } // when tooltip left + tWidth > chart's width
 
@@ -34388,7 +34579,7 @@ function getTextPos(pos, width) {
     }; // make sure to not be positioned out of viewport
 
     Object.keys(pos).forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this4);
 
       if (pos[v] < 0) {
         pos[v] = 0;
@@ -34486,12 +34677,14 @@ function getTextPos(pos, width) {
    * @private
    */
   bindTooltipResizePos: function bindTooltipResizePos() {
-    var $$ = this,
+    var _this6 = this,
+        $$ = this,
         resizeFunction = $$.resizeFunction,
         state = $$.state,
         tooltip = $$.$el.tooltip;
+
     resizeFunction.add(function () {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this6);
 
       if (tooltip.style("display") === "block") {
         var current = state.current,
@@ -34539,8 +34732,7 @@ function getTextPos(pos, width) {
    * @private
    */
   _handleLinkedCharts: function _handleLinkedCharts(show, index) {
-    var _event,
-        _this7 = this,
+    var _this7 = this,
         $$ = this,
         charts = $$.charts,
         config = $$.config,
@@ -34548,7 +34740,7 @@ function getTextPos(pos, width) {
 
     // Prevent propagation among instances if isn't instantiated from the user's event
     // https://github.com/naver/billboard.js/issues/1979
-    if ((_event = event) != null && _event.isTrusted && config.tooltip_linked && charts.length > 1) {
+    if (event != null && event.isTrusted && config.tooltip_linked && charts.length > 1) {
       var linkedName = config.tooltip_linked_name;
       charts.filter(function (c) {
         _newArrowCheck(this, _this7);
@@ -34674,11 +34866,13 @@ function getTextPos(pos, width) {
 
 /* harmony default export */ var internals_type = ({
   setTargetType: function setTargetType(targetIds, type) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         withoutFadeIn = $$.state.withoutFadeIn;
+
     $$.mapToTargetIds(targetIds).forEach(function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       withoutFadeIn[id] = type === config.data_types[id];
       config.data_types[id] = type;
@@ -34694,10 +34888,12 @@ function getTextPos(pos, width) {
    * @private
    */
   updateTypesElements: function updateTypesElements() {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         current = $$.state.current;
+
     Object.keys(TYPE).forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       var t = TYPE[v],
           has = $$.hasType(t, null, !0),
@@ -34723,7 +34919,6 @@ function getTextPos(pos, width) {
    */
   hasType: function hasType(type, targetsValue, checkFromData) {
     var _current$types,
-        _targets,
         _this3 = this;
 
     if (checkFromData === void 0) {
@@ -34739,7 +34934,7 @@ function getTextPos(pos, width) {
 
     if (!checkFromData && ((_current$types = current.types) == null ? void 0 : _current$types.indexOf(type)) > -1) {
       has = !0;
-    } else if ((_targets = targets) != null && _targets.length) {
+    } else if (targets != null && targets.length) {
       targets.forEach(function (target) {
         _newArrowCheck(this, _this3);
 
@@ -34898,8 +35093,10 @@ function getTextPos(pos, width) {
    * @private
    */
   labelishData: function labelishData(d) {
+    var _this5 = this;
+
     return this.isBarType(d) || this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isCandlestickType(d) || this.isRadarType(d) ? d.values.filter(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this5);
 
       return isNumber(v.value) || !!v.value;
     }.bind(this)) : [];
@@ -35156,11 +35353,13 @@ var ChartInternal = /*#__PURE__*/function () {
   };
 
   _proto.initParams = function initParams() {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         config = $$.config,
         format = $$.format,
         state = $$.state,
         isRotated = config.axis_rotated;
+
     // datetime to be used for uniqueness
     state.datetimeId = "bb-" + +new Date() * getRandom();
     $$.color = $$.generateColor();
@@ -35178,7 +35377,7 @@ var ChartInternal = /*#__PURE__*/function () {
       var isDragZoom = $$.config.zoom_enabled && $$.config.zoom_type === "drag";
 
       format.defaultAxisTime = function (d) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this2);
 
         var _$$$scale = $$.scale,
             x = _$$$scale.x,
@@ -35266,16 +35465,11 @@ var ChartInternal = /*#__PURE__*/function () {
     $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block");
 
     if (hasInteraction && state.inputType) {
-      var _onclick,
-          _onover,
-          _onout,
-          isTouch = state.inputType === "touch",
-          _config = config,
-          onclick = _config.onclick,
-          onover = _config.onover,
-          onout = _config.onout;
-
-      $el.svg.on("click", ((_onclick = onclick) == null ? void 0 : _onclick.bind($$.api)) || null).on(isTouch ? "touchstart" : "mouseenter", ((_onover = onover) == null ? void 0 : _onover.bind($$.api)) || null).on(isTouch ? "touchend" : "mouseleave", ((_onout = onout) == null ? void 0 : _onout.bind($$.api)) || null);
+      var isTouch = state.inputType === "touch",
+          onclick = config.onclick,
+          onover = config.onover,
+          onout = config.onout;
+      $el.svg.on("click", (onclick == null ? void 0 : onclick.bind($$.api)) || null).on(isTouch ? "touchstart" : "mouseenter", (onover == null ? void 0 : onover.bind($$.api)) || null).on(isTouch ? "touchend" : "mouseleave", (onout == null ? void 0 : onout.bind($$.api)) || null);
     }
 
     config.svg_classname && $el.svg.attr("class", config.svg_classname); // Define defs
@@ -35298,10 +35492,12 @@ var ChartInternal = /*#__PURE__*/function () {
 
       if (hasColorPatterns) {
         $$.patterns.forEach(function (p) {
+          var _this4 = this;
+
           _newArrowCheck(this, _this3);
 
           return $el.defs.append(function () {
-            _newArrowCheck(this, this);
+            _newArrowCheck(this, _this4);
 
             return p.node;
           }.bind(this));
@@ -35559,6 +35755,8 @@ var ChartInternal = /*#__PURE__*/function () {
   ;
 
   _proto.filterTargetsToShowAtInit = function filterTargetsToShowAtInit(hasPointType) {
+    var _this7 = this;
+
     if (hasPointType === void 0) {
       hasPointType = !1;
     }
@@ -35573,14 +35771,15 @@ var ChartInternal = /*#__PURE__*/function () {
     }
 
     $T(svg.selectAll(selector).filter(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this7);
 
       return $$.isTargetToShow(d.id);
     }.bind(this))).style("opacity", null);
   };
 
   _proto.getWithOption = function getWithOption(options) {
-    var withOptions = {
+    var _this8 = this,
+        withOptions = {
       Dimension: !0,
       EventRect: !0,
       Legend: !1,
@@ -35595,8 +35794,9 @@ var ChartInternal = /*#__PURE__*/function () {
       TransitionForAxis: "Transition",
       Y: !0
     };
+
     Object.keys(withOptions).forEach(function (key) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this8);
 
       var defVal = withOptions[key];
 
@@ -35791,8 +35991,6 @@ function loadConfig(config) {
         zoomResetBtn = $$.$el.zoomResetBtn;
 
     if (state.rendered) {
-      var _zoomResetBtn;
-
       // reset possible zoom scale when is called from resize event
       // eslint-disable-next-line prefer-rest-params
       if (state.resizing) {
@@ -35809,7 +36007,7 @@ function loadConfig(config) {
       // https://github.com/naver/billboard.js/issues/2201
 
 
-      (_zoomResetBtn = zoomResetBtn) == null ? void 0 : _zoomResetBtn.style("display", "none");
+      zoomResetBtn == null ? void 0 : zoomResetBtn.style("display", "none");
       $$.scale.zoom = null;
       soft ? $$.redraw({
         withTransform: !0,
@@ -35859,10 +36057,12 @@ function loadConfig(config) {
       chart.classed("bb", !1).style("position", null).selectChildren().remove(); // releasing own references
 
       Object.keys(this).forEach(function (key) {
+        var _this2 = this;
+
         _newArrowCheck(this, _this);
 
         key === "internal" && Object.keys($$).forEach(function (k) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this2);
 
           $$[k] = null;
         }.bind(this));
@@ -35967,15 +36167,18 @@ function loadConfig(config) {
  * chart.data();
  */
 function api_data_data(targetIds) {
-  var targets = this.internal.data.targets;
+  var _this = this,
+      targets = this.internal.data.targets;
 
   if (!isUndefined(targetIds)) {
     var ids = isArray(targetIds) ? targetIds : [targetIds];
     return targets.filter(function (t) {
-      _newArrowCheck(this, this);
+      var _this2 = this;
+
+      _newArrowCheck(this, _this);
 
       return ids.some(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this2);
 
         return v === t.id;
       }.bind(this));
@@ -36022,6 +36225,8 @@ util_extend(api_data_data, {
    * // --> [10, 20, 30, 40]
    */
   values: function (targetIds, flat) {
+    var _this3 = this;
+
     if (flat === void 0) {
       flat = !0;
     }
@@ -36034,10 +36239,12 @@ util_extend(api_data_data, {
       if (isArray(targets)) {
         values = [];
         targets.forEach(function (v) {
-          _newArrowCheck(this, this);
+          var _this4 = this;
+
+          _newArrowCheck(this, _this3);
 
           var dataValue = v.values.map(function (d) {
-            _newArrowCheck(this, this);
+            _newArrowCheck(this, _this4);
 
             return d.value;
           }.bind(this));
@@ -36171,10 +36378,12 @@ var export_this = undefined;
  * @see https://developer.mozilla.org/ko/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
  */
 var b64EncodeUnicode = function (str) {
+  var _this2 = this;
+
   _newArrowCheck(this, export_this);
 
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return String.fromCharCode(+("0x" + p));
   }.bind(this)));
@@ -36261,7 +36470,8 @@ function nodeToSvgDataUrl(node, option, orgSize) {
    *  );
    */
   export: function _export(option, callback) {
-    var $$ = this.internal,
+    var _this4 = this,
+        $$ = this.internal,
         state = $$.state,
         chart = $$.$el.chart,
         _state$current = state.current,
@@ -36283,7 +36493,7 @@ function nodeToSvgDataUrl(node, option, orgSize) {
       img.crossOrigin = "Anonymous";
 
       img.onload = function () {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this4);
 
         var canvas = browser_doc.createElement("canvas"),
             ctx = canvas.getContext("2d");
@@ -36327,10 +36537,12 @@ function nodeToSvgDataUrl(node, option, orgSize) {
    * chart.focus();
    */
   focus: function focus(targetIdsValue) {
-    var $$ = this.internal,
+    var _this = this,
+        $$ = this.internal,
         state = $$.state,
         targetIds = $$.mapToTargetIds(targetIdsValue),
         candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
+
     this.revert();
     this.defocus();
     candidates.classed($FOCUS.focused, !0).classed($FOCUS.defocused, !1);
@@ -36343,7 +36555,7 @@ function nodeToSvgDataUrl(node, option, orgSize) {
     $$.toggleFocusLegend(targetIds, !0);
     state.focusedTargetIds = targetIds;
     state.defocusedTargetIds = state.defocusedTargetIds.filter(function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       return targetIds.indexOf(id) < 0;
     }.bind(this));
@@ -36367,10 +36579,12 @@ function nodeToSvgDataUrl(node, option, orgSize) {
    * chart.defocus();
    */
   defocus: function defocus(targetIdsValue) {
-    var $$ = this.internal,
+    var _this2 = this,
+        $$ = this.internal,
         state = $$.state,
         targetIds = $$.mapToTargetIds(targetIdsValue),
         candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
+
     candidates.classed($FOCUS.focused, !1).classed($FOCUS.defocused, !0);
 
     if ($$.hasArcType(null, ["polar"])) {
@@ -36380,7 +36594,7 @@ function nodeToSvgDataUrl(node, option, orgSize) {
 
     $$.toggleFocusLegend(targetIds, !1);
     state.focusedTargetIds = state.focusedTargetIds.filter(function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       return targetIds.indexOf(id) < 0;
     }.bind(this));
@@ -36669,12 +36883,14 @@ var legend_legend = {
     if ("unload" in args && args.unload !== !1) {
       // TODO: do not unload if target will load (included in url/rows/columns)
       $$.unload($$.mapToTargetIds(args.unload === !0 ? null : args.unload), function () {
+        var _this2 = this;
+
         _newArrowCheck(this, _this);
 
         // to mitigate improper rendering for multiple consecutive calls
         // https://github.com/naver/billboard.js/issues/2121
         win.requestIdleCallback(function () {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this2);
 
           return $$.loadFromArgs(args);
         }.bind(this));
@@ -36708,7 +36924,8 @@ var legend_legend = {
    *  });
    */
   unload: function unload(argsValue) {
-    var $$ = this.internal,
+    var _this3 = this,
+        $$ = this.internal,
         args = argsValue || {};
 
     if (isArray(args)) {
@@ -36723,7 +36940,7 @@ var legend_legend = {
 
     var ids = $$.mapToTargetIds(args.ids);
     $$.unload(ids, function () {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       $$.redraw({
         withUpdateOrgXDomain: !0,
@@ -36958,7 +37175,8 @@ var tooltip_tooltip = {
    *  });
    */
   show: function show(args) {
-    var $$ = this.internal,
+    var _this = this,
+        $$ = this.internal,
         config = $$.config,
         inputType = $$.state.inputType,
         index,
@@ -36991,7 +37209,7 @@ var tooltip_tooltip = {
     }
 
     (inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach(function (eventName) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       $$.dispatchEvent(eventName, index, mouse);
     }.bind(this));
@@ -37004,18 +37222,19 @@ var tooltip_tooltip = {
    * @memberof Chart
    */
   hide: function hide() {
-    var $$ = this.internal,
+    var _this2 = this,
+        $$ = this.internal,
         inputType = $$.state.inputType,
         tooltip = $$.$el.tooltip,
         data = tooltip == null ? void 0 : tooltip.datum();
 
     if (data) {
-      var _index = JSON.parse(data.current)[0].index; // make to finalize, possible pending event flow set from '.tooltip.show()' call
+      var index = JSON.parse(data.current)[0].index; // make to finalize, possible pending event flow set from '.tooltip.show()' call
 
       (inputType === "mouse" ? ["mouseout"] : ["touchend"]).forEach(function (eventName) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this2);
 
-        $$.dispatchEvent(eventName, _index);
+        $$.dispatchEvent(eventName, index);
       }.bind(this));
     } // reset last touch point index
 
@@ -37118,8 +37337,10 @@ var Chart = function Chart(options) {
   this.internal = $$; // bind to namespaced APIs
 
   (function bindThis(fn, target, argThis) {
+    var _this = this;
+
     Object.keys(fn).forEach(function (key) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       var isFunc = isFunction(fn[key]),
           isChild = target !== argThis,
@@ -37775,6 +37996,8 @@ util_extend(regions, {
 
     if (Object.keys(options).length) {
       regions = regions.filter(function (region) {
+        var _this2 = this;
+
         _newArrowCheck(this, _this);
 
         var found = !1;
@@ -37784,7 +38007,7 @@ util_extend(regions, {
         }
 
         region.class.split(" ").forEach(function (c) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this2);
 
           if (classes.indexOf(c) >= 0) {
             found = !0;
@@ -38010,6 +38233,8 @@ util_extend(regions, {
 
     if ($$.data.targets.length) {
       targets.forEach(function (t) {
+        var _this2 = this;
+
         _newArrowCheck(this, _this);
 
         var missing = [];
@@ -38024,7 +38249,7 @@ util_extend(regions, {
         }
 
         t.values.forEach(function (v) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this2);
 
           v.index += tail;
 
@@ -38111,18 +38336,22 @@ function translateY(y) {
 }
 
 function axis_number(scale) {
+  var _this = this;
+
   return function (d) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this);
 
     return +scale(d);
   }.bind(this);
 }
 
 function center(scale, offset) {
+  var _this2 = this;
+
   offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
   if (scale.round()) offset = Math.round(offset);
   return function (d) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return +scale(d) + offset;
   }.bind(this);
@@ -38340,10 +38569,12 @@ var AxisRendererHelper = /*#__PURE__*/function () {
     }.bind(this);
 
     return function (selection, scale) {
+      var _this3 = this;
+
       _newArrowCheck(this, _this2);
 
       selection.attr("transform", function (d) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this3);
 
         return fn(Math.ceil(scale(d)));
       }.bind(this));
@@ -38357,7 +38588,8 @@ var AxisRendererHelper = /*#__PURE__*/function () {
   };
 
   _proto.generateTicks = function generateTicks(scale, isYAxes) {
-    var tickStepSize = this.owner.params.tickStepSize,
+    var _this4 = this,
+        tickStepSize = this.owner.params.tickStepSize,
         _scale$domain = scale.domain(),
         start = _scale$domain[0],
         end = _scale$domain[1],
@@ -38391,7 +38623,7 @@ var AxisRendererHelper = /*#__PURE__*/function () {
       }
 
       ticks = ticks.map(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this4);
 
         // round the tick value if is number
         var r = isString(v) && isNumber(v) && !isNaN(v) && Math.round(v * 10) / 10 || v;
@@ -38519,10 +38751,9 @@ var AxisRenderer = /*#__PURE__*/function () {
         sign = /^(top|left)$/.test(orient) ? -1 : 1,
         rotate = params.tickTextRotate;
     this.config.range = scale.rangeExtent ? scale.rangeExtent() : helper.scaleExtent((params.orgXScale || scale).range());
-    var _config2 = config,
-        innerTickSize = _config2.innerTickSize,
-        tickLength = _config2.tickLength,
-        range = _config2.range,
+    var innerTickSize = config.innerTickSize,
+        tickLength = config.tickLength,
+        range = config.range,
         id = params.id,
         tickTextPos = id && /^(x|y|y2)$/.test(id) ? params.config["axis_" + id + "_tick_text_position"] : {
       x: 0,
@@ -38570,12 +38801,14 @@ var AxisRenderer = /*#__PURE__*/function () {
         var sizeFor1Char = AxisRendererHelper.getSizeFor1Char(tick),
             counts = [],
             tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
+          var _this2 = this;
+
           _newArrowCheck(this, _this);
 
           var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
           counts[index] = split.length;
           return split.map(function (splitted) {
-            _newArrowCheck(this, this);
+            _newArrowCheck(this, _this2);
 
             return {
               index: index,
@@ -38688,9 +38921,9 @@ var AxisRenderer = /*#__PURE__*/function () {
   _proto.getTickSize = function getTickSize(d) {
     var scale = this.helper.scale,
         config = this.config,
-        _config3 = config,
-        innerTickSize = _config3.innerTickSize,
-        range = _config3.range,
+        _config2 = config,
+        innerTickSize = _config2.innerTickSize,
+        range = _config2.range,
         tickPosition = scale(d) + (config.tickCentered ? 0 : config.tickOffset);
     return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
   }
@@ -38860,7 +39093,8 @@ var AxisRenderer = /*#__PURE__*/function () {
   ;
 
   _proto.tickInterval = function tickInterval(size) {
-    var _this$config2 = this.config,
+    var _this4 = this,
+        _this$config2 = this.config,
         outerTickSize = _this$config2.outerTickSize,
         tickOffset = _this$config2.tickOffset,
         tickValues = _this$config2.tickValues,
@@ -38873,7 +39107,7 @@ var AxisRenderer = /*#__PURE__*/function () {
       interval = length / (size || this.g.selectAll("line").size()); // get the interval by its values
 
       var intervalByValue = tickValues ? tickValues.map(function (v, i, arr) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this4);
 
         var next = i + 1;
         return next < arr.length ? this.helper.scale(arr[next]) - this.helper.scale(v) : null;
@@ -38909,11 +39143,12 @@ var AxisRenderer = /*#__PURE__*/function () {
   };
 
   _proto.tickValues = function tickValues(x) {
-    var config = this.config;
+    var _this5 = this,
+        config = this.config;
 
     if (isFunction(x)) {
       config.tickValues = function () {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this5);
 
         return x(this.helper.scale.domain());
       }.bind(this);
@@ -39039,7 +39274,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
 
   _proto.init = function init() {
-    var $$ = this.owner,
+    var _this = this,
+        $$ = this.owner,
         config = $$.config,
         _$$$$el = $$.$el,
         main = _$$$$el.main,
@@ -39047,11 +39283,12 @@ var Axis_Axis = /*#__PURE__*/function () {
         clip = $$.state.clip,
         isRotated = config.axis_rotated,
         target = ["x", "y"];
+
     config.axis_y2_show && target.push("y2");
     target.forEach(function (v) {
       var _this2 = this;
 
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       var classAxis = this.getAxisClassName(v),
           classLabel = $AXIS["axis" + v.toUpperCase() + "Label"];
@@ -39105,7 +39342,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   ;
 
   _proto.generateAxes = function generateAxes(id) {
-    var $$ = this.owner,
+    var _this3 = this,
+        $$ = this.owner,
         config = $$.config,
         axes = [],
         axesConfig = config["axis_" + id + "_axes"],
@@ -39122,13 +39360,15 @@ var Axis_Axis = /*#__PURE__*/function () {
 
     if (axesConfig.length) {
       axesConfig.forEach(function (v) {
-        _newArrowCheck(this, this);
+        var _this4 = this;
+
+        _newArrowCheck(this, _this3);
 
         var tick = v.tick || {},
             scale = $$.scale[id].copy();
         v.domain && scale.domain(v.domain);
         axes.push(d3Axis(scale).ticks(tick.count).tickFormat(isFunction(tick.format) ? tick.format.bind($$.api) : function (x) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this4);
 
           return x;
         }.bind(this)).tickValues(tick.values).tickSizeOuter(tick.outer === !1 ? 0 : 6));
@@ -39144,24 +39384,30 @@ var Axis_Axis = /*#__PURE__*/function () {
   ;
 
   _proto.updateAxes = function updateAxes() {
-    var $$ = this.owner,
+    var _this5 = this,
+        $$ = this.owner,
         config = $$.config,
         main = $$.$el.main,
         $T = $$.$T;
+
     Object.keys(this.axesList).forEach(function (id) {
-      _newArrowCheck(this, this);
+      var _this6 = this;
+
+      _newArrowCheck(this, _this5);
 
       var axesConfig = config["axis_" + id + "_axes"],
           scale = $$.scale[id].copy(),
           range = scale.range();
       this.axesList[id].forEach(function (v, i) {
-        _newArrowCheck(this, this);
+        var _this7 = this;
+
+        _newArrowCheck(this, _this6);
 
         var axisRange = v.scale().range(); // adjust range value with the current
         // https://github.com/naver/billboard.js/issues/859
 
         if (!range.every(function (v, i) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this7);
 
           return v === axisRange[i];
         }.bind(this))) {
@@ -39392,11 +39638,12 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
 
   _proto.getLabelPosition = function getLabelPosition(id, defaultPosition) {
-    var isRotated = this.owner.config.axis_rotated,
+    var _this10 = this,
+        isRotated = this.owner.config.axis_rotated,
         option = this.getLabelOptionByAxisId(id),
         position = isObjectType(option) && option.position ? option.position : defaultPosition[+!isRotated],
         has = function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this10);
 
       return !!~position.indexOf(v);
     }.bind(this);
@@ -39554,7 +39801,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         currentTickMax.ticks.splice(0);
       }
 
-      var _axis = this.getAxis(id, _scale, !1, !1, !0),
+      var axis = this.getAxis(id, _scale, !1, !1, !0),
           tickCount = config["axis_" + id + "_tick_count"],
           tickValues = config["axis_" + id + "_tick_values"];
 
@@ -39563,14 +39810,12 @@ var Axis_Axis = /*#__PURE__*/function () {
       // Do not generate if 'tick values' option is given
       // https://github.com/naver/billboard.js/issues/1251
       if (!tickValues && tickCount) {
-        _axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries()));
+        axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries()));
       }
 
-      isYAxis || this.updateXAxisTickValues(targetsToShow, _axis);
+      isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
       var dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0").style("left", "0");
-
-      _axis.create(dummy);
-
+      axis.create(dummy);
       dummy.selectAll("text").each(function (d, i) {
         var currentTextWidth = this.getBoundingClientRect().width;
         maxWidth = Math.max(maxWidth, currentTextWidth); // cache tick text width for getXAxisTickTextY2Overflow()
@@ -39710,7 +39955,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
 
   _proto.generateTickValues = function generateTickValues(values, tickCount, forTimeSeries) {
-    var tickValues = values;
+    var _this14 = this,
+        tickValues = values;
 
     if (tickCount) {
       var targetCount = isFunction(tickCount) ? tickCount() : tickCount; // compute ticks according to tickCount
@@ -39720,18 +39966,17 @@ var Axis_Axis = /*#__PURE__*/function () {
       } else if (targetCount === 2) {
         tickValues = [values[0], values[values.length - 1]];
       } else if (targetCount > 2) {
-        var _isCategorized = this.isCategorized(),
+        var isCategorized = this.isCategorized(),
             count = targetCount - 2,
             start = values[0],
             end = values[values.length - 1],
             tickValue;
-
         // re-construct unique values
         tickValues = [start];
 
         for (var i = 0; i < count; i++) {
           tickValue = +start + (end - start) / (count + 1) * (i + 1);
-          tickValues.push(forTimeSeries ? new Date(tickValue) : _isCategorized ? Math.round(tickValue) : tickValue);
+          tickValues.push(forTimeSeries ? new Date(tickValue) : isCategorized ? Math.round(tickValue) : tickValue);
         }
 
         tickValues.push(end);
@@ -39740,7 +39985,7 @@ var Axis_Axis = /*#__PURE__*/function () {
 
     if (!forTimeSeries) {
       tickValues = tickValues.sort(function (a, b) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this14);
 
         return a - b;
       }.bind(this));
@@ -39750,11 +39995,12 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
 
   _proto.generateTransitions = function generateTransitions(withTransition) {
-    var $$ = this.owner,
+    var _this15 = this,
+        $$ = this.owner,
         axis = $$.$el.axis,
         $T = $$.$T,
         _map = ["x", "y", "y2", "subX"].map(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this15);
 
       return $T(axis[v], withTransition);
     }.bind(this)),
@@ -39772,12 +40018,14 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
 
   _proto.redraw = function redraw(transitions, isHidden, isInit) {
-    var $$ = this.owner,
+    var _this16 = this,
+        $$ = this.owner,
         config = $$.config,
         $el = $$.$el,
         opacity = isHidden ? "0" : null;
+
     ["x", "y", "y2", "subX"].forEach(function (id) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this16);
 
       var axis = this[id],
           $axis = $el.axis[id];
@@ -39805,7 +40053,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   ;
 
   _proto.redrawAxis = function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
-    var $$ = this.owner,
+    var _this17 = this,
+        $$ = this.owner,
         config = $$.config,
         scale = $$.scale,
         $el = $$.$el,
@@ -39834,7 +40083,9 @@ var Axis_Axis = /*#__PURE__*/function () {
     }
 
     ["y", "y2"].forEach(function (key) {
-      _newArrowCheck(this, this);
+      var _this18 = this;
+
+      _newArrowCheck(this, _this17);
 
       var prefix = "axis_" + key + "_",
           axisScale = scale[key];
@@ -39845,11 +40096,10 @@ var Axis_Axis = /*#__PURE__*/function () {
         axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
 
         if (!tickValues && tickCount) {
-          var _axis2 = $$.axis[key],
+          var axis = $$.axis[key],
               domain = axisScale.domain();
-
-          _axis2.tickValues(this.generateTickValues(domain, domain.every(function (v) {
-            _newArrowCheck(this, this);
+          axis.tickValues(this.generateTickValues(domain, domain.every(function (v) {
+            _newArrowCheck(this, _this18);
 
             return v === 0;
           }.bind(this)) ? 1 : tickCount, this.isTimeSeriesY()));
@@ -39880,14 +40130,16 @@ var Axis_Axis = /*#__PURE__*/function () {
   ;
 
   _proto.setCulling = function setCulling() {
-    var $$ = this.owner,
+    var _this19 = this,
+        $$ = this.owner,
         config = $$.config,
         _$$$state2 = $$.state,
         clip = _$$$state2.clip,
         current = _$$$state2.current,
         $el = $$.$el;
+
     ["subX", "x", "y", "y2"].forEach(function (type) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this19);
 
       var axis = $el.axis[type],
           id = type === "subX" ? "x" : type,
@@ -39948,7 +40200,8 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   initEventRect: function initEventRect() {
-    this.$el.main.select("." + $COMMON.chart).append("g").attr("class", $EVENT.eventRects).style("fill-opacity", "0");
+    var $$ = this;
+    $$.$el.main.select("." + $COMMON.chart).append("g").attr("class", $EVENT.eventRects).style("fill-opacity", "0");
   },
 
   /**
@@ -40096,6 +40349,8 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   updateEventRect: function updateEventRect(eventRect, force) {
+    var _this2 = this;
+
     if (force === void 0) {
       force = !1;
     }
@@ -40111,7 +40366,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         resizing = _state.resizing,
         rectElement = eventRect || $el.eventRect,
         updateClientRect = function () {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
     }.bind(this);
@@ -40174,6 +40429,8 @@ var Axis_Axis = /*#__PURE__*/function () {
         }.bind(this);
 
         rectW = function (d) {
+          var _this4 = this;
+
           _newArrowCheck(this, _this3);
 
           var x = getPrevNextX(d),
@@ -40187,7 +40444,7 @@ var Axis_Axis = /*#__PURE__*/function () {
           Object.keys(x).forEach(function (key, i) {
             var _x$key;
 
-            _newArrowCheck(this, this);
+            _newArrowCheck(this, _this4);
 
             x[key] = (_x$key = x[key]) != null ? _x$key : xDomain[i];
           }.bind(this));
@@ -40240,7 +40497,8 @@ var Axis_Axis = /*#__PURE__*/function () {
     }.bind(this));
   },
   selectRectForMultipleXs: function selectRectForMultipleXs(context) {
-    var $$ = this,
+    var _this5 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         targetsToShow = $$.filterTargetsToShow($$.data.targets);
@@ -40265,7 +40523,7 @@ var Axis_Axis = /*#__PURE__*/function () {
 
     var sameXData = $$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped ? [closest] : $$.filterByX(targetsToShow, closest.x),
         selectedData = sameXData.map(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this5);
 
       return $$.addName(d);
     }.bind(this)); // show tooltip when cursor is close to some point
@@ -40324,9 +40582,8 @@ var Axis_Axis = /*#__PURE__*/function () {
         eventReceiver = state.eventReceiver,
         rect = eventRectEnter.style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null).on("click", function (event) {
       state.event = event;
-      var _eventReceiver = eventReceiver,
-          currentIdx = _eventReceiver.currentIdx,
-          data = _eventReceiver.data,
+      var currentIdx = eventReceiver.currentIdx,
+          data = eventReceiver.data,
           d = data[currentIdx === -1 ? $$.getDataIndexFromEvent(event) : currentIdx];
       $$.clickHandlerForSingleX.bind(this)(d, $$);
     });
@@ -40427,8 +40684,10 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   generateEventRectsForMultipleXs: function generateEventRectsForMultipleXs(eventRectEnter) {
-    var $$ = this,
+    var _this7 = this,
+        $$ = this,
         state = $$.state;
+
     eventRectEnter.on("click", function (event) {
       state.event = event;
       $$.clickHandlerForMultipleXS.bind(this)($$);
@@ -40439,7 +40698,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         state.event = event;
         $$.selectRectForMultipleXs(this);
       }).on("mouseout", function (event) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this7);
 
         state.event = event; // chart is destroyed
 
@@ -40574,13 +40833,15 @@ var src_linear_linear = function (t) {
         n;
 
     wait.add(Object.keys(elements).map(function (v) {
+      var _this3 = this;
+
       _newArrowCheck(this, _this2);
 
       n = elements[v].transition().ease(src_linear_linear).duration(duration);
 
       if (v === "axis.x") {
         n = n.call(function (g) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this3);
 
           $$.axis.x.setTransition(g).create(g);
         }.bind(this));
@@ -40765,7 +41026,8 @@ var src_linear_linear = function (t) {
     clip.pathGrid = $$.getClipPath(clip.idGrid);
   },
   getClipPath: function getClipPath(id) {
-    var config = this.config;
+    var $$ = this,
+        config = $$.config;
 
     if (!config.clipPath && /-clip$/.test(id) || !config.axis_x_clipPath && /-clip-xaxis$/.test(id) || !config.axis_y_clipPath && /-clip-yaxis$/.test(id)) {
       return null;
@@ -40901,8 +41163,10 @@ var getGridTextAnchor = function (d) {
  * @private
  */
 function getGridTextX(isX, width, height) {
+  var _this2 = this;
+
   return function (d) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     var x = isX ? 0 : width;
 
@@ -40926,9 +41190,11 @@ function getGridTextX(isX, width, height) {
 function smoothLines(el, type) {
   if (type === "grid") {
     el.each(function () {
-      var g = src_select(this);
+      var _this3 = this,
+          g = src_select(this);
+
       ["x1", "x2", "y1", "y2"].forEach(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this3);
 
         return g.attr(v, Math.ceil(+g.attr(v)));
       }.bind(this));
@@ -40938,9 +41204,11 @@ function smoothLines(el, type) {
 
 /* harmony default export */ var grid = ({
   hasGrid: function hasGrid() {
-    var config = this.config;
+    var _this4 = this,
+        config = this.config;
+
     return ["x", "y"].some(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this4);
 
       return config["grid_" + v + "_show"] || config["grid_" + v + "_lines"].length;
     }.bind(this));
@@ -40964,7 +41232,8 @@ function smoothLines(el, type) {
     }
   },
   updateXGrid: function updateXGrid(withoutUpdate) {
-    var $$ = this,
+    var _this5 = this,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         state = $$.state,
@@ -40975,7 +41244,7 @@ function smoothLines(el, type) {
         xgridData = $$.generateGridData(config.grid_x_type, scale.x),
         tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0,
         pos = function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this5);
 
       return (scale.zoom || scale.x)(d) + tickOffset * (isRotated ? -1 : 1);
     }.bind(this);
@@ -40997,12 +41266,16 @@ function smoothLines(el, type) {
 
     if (!withoutUpdate) {
       grid.x.each(function () {
-        var grid = src_select(this);
+        var _this6 = this,
+            grid = src_select(this);
+
         Object.keys(state.xgridAttr).forEach(function (id) {
-          _newArrowCheck(this, this);
+          var _this7 = this;
+
+          _newArrowCheck(this, _this6);
 
           grid.attr(id, state.xgridAttr[id]).style("opacity", function () {
-            _newArrowCheck(this, this);
+            _newArrowCheck(this, _this7);
 
             return grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ? "0" : null;
           }.bind(this));
@@ -41011,7 +41284,8 @@ function smoothLines(el, type) {
     }
   },
   updateYGrid: function updateYGrid() {
-    var $$ = this,
+    var _this8 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         _$$$$el2 = $$.$el,
@@ -41020,7 +41294,7 @@ function smoothLines(el, type) {
         isRotated = config.axis_rotated,
         gridValues = $$.axis.y.tickValues() || $$.scale.y.ticks(config.grid_y_ticks),
         pos = function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this8);
 
       return Math.ceil($$.scale.y(d));
     }.bind(this);
@@ -41118,7 +41392,8 @@ function smoothLines(el, type) {
     $el.gridLines.y = ygridLines;
   },
   redrawGrid: function redrawGrid(withTransition) {
-    var $$ = this,
+    var _this11 = this,
+        $$ = this,
         isRotated = $$.config.axis_rotated,
         _$$$state2 = $$.state,
         width = _$$$state2.width,
@@ -41128,9 +41403,10 @@ function smoothLines(el, type) {
         xv = $$.xv.bind($$),
         lines = gridLines.x.select("line"),
         texts = gridLines.x.select("text");
+
     lines = $T(lines, withTransition).attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? width : xv).attr("y1", isRotated ? xv : 0).attr("y2", isRotated ? xv : height);
     texts = $T(texts, withTransition).attr("x", getGridTextX(!isRotated, width, height)).attr("y", xv).text(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this11);
 
       return d.text;
     }.bind(this));
@@ -41163,7 +41439,8 @@ function smoothLines(el, type) {
    * @private
    */
   showGridFocus: function showGridFocus(data) {
-    var $$ = this,
+    var _this12 = this,
+        $$ = this,
         config = $$.config,
         _$$$state3 = $$.state,
         width = _$$$state3.width,
@@ -41171,7 +41448,7 @@ function smoothLines(el, type) {
         isRotated = config.axis_rotated,
         focusEl = $$.$el.main.selectAll("line." + $FOCUS.xgridFocus + ", line." + $FOCUS.ygridFocus),
         dataToShow = (data || [focusEl.datum()]).filter(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this12);
 
       return d && isValue($$.getBaseValue(d));
     }.bind(this));
@@ -41184,7 +41461,8 @@ function smoothLines(el, type) {
     var isEdge = config.grid_focus_edge && !config.tooltip_grouped,
         xx = $$.xx.bind($$);
     focusEl.style("visibility", null).data(dataToShow.concat(dataToShow)).each(function (d) {
-      var el = src_select(this),
+      var _this13 = this,
+          el = src_select(this),
           pos = {
         x: xx(d),
         y: $$.getYScaleById(d.id)(d.value)
@@ -41208,7 +41486,7 @@ function smoothLines(el, type) {
       }
 
       ["x1", "y1", "x2", "y2"].forEach(function (v, i) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this13);
 
         return el.attr(v, xy[i]);
       }.bind(this));
@@ -41291,11 +41569,13 @@ function smoothLines(el, type) {
     var _this15 = this;
 
     return params ? function (line) {
+      var _this16 = this;
+
       _newArrowCheck(this, _this15);
 
       var found = !1;
       (isArray(params) ? params.concat() : [params]).forEach(function (param) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this16);
 
         if ("value" in param && line.value === param.value || "class" in param && line.class === param.class) {
           found = !0;
@@ -41309,12 +41589,13 @@ function smoothLines(el, type) {
     }.bind(this);
   },
   removeGridLines: function removeGridLines(params, forX) {
-    var $$ = this,
+    var _this17 = this,
+        $$ = this,
         config = $$.config,
         $T = $$.$T,
         toRemove = $$.getGridFilterToRemove(params),
         toShow = function (line) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this17);
 
       return !toRemove(line);
     }.bind(this),
@@ -41363,13 +41644,15 @@ function smoothLines(el, type) {
     region.list = list;
   },
   redrawRegion: function redrawRegion(withTransition) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         region = $$.$el.region,
         $T = $$.$T,
         regions = region.list.select("rect");
+
     regions = $T(regions, withTransition).attr("x", $$.regionX.bind($$)).attr("y", $$.regionY.bind($$)).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$));
     return [regions.style("fill-opacity", function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       return isValue(d.opacity) ? d.opacity : null;
     }.bind(this)).on("end", function () {
@@ -44013,17 +44296,21 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 
 /* harmony default export */ var arc = ({
   initPie: function initPie() {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         config = $$.config,
         dataType = config.data_type,
         padding = config[dataType + "_padding"],
         startingAngle = config[dataType + "_startingAngle"] || 0,
         padAngle = (padding ? padding * .01 : config[dataType + "_padAngle"]) || 0;
+
     $$.pie = pie().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).value(function (d) {
-      _newArrowCheck(this, this);
+      var _this3 = this;
+
+      _newArrowCheck(this, _this2);
 
       return d.values.reduce(function (a, b) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this3);
 
         return a + b.value;
       }.bind(this), 0);
@@ -44083,7 +44370,8 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     $$.svgArcExpanded = $$.getSvgArcExpanded();
   },
   getArcLength: function getArcLength() {
-    var config = this.config,
+    var $$ = this,
+        config = $$.config,
         arcLengthInPercent = config.gauge_arcLength * 3.6,
         len = 2 * (arcLengthInPercent / 360);
 
@@ -44096,7 +44384,8 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     return len * Math.PI;
   },
   getStartAngle: function getStartAngle() {
-    var config = this.config,
+    var $$ = this,
+        config = $$.config,
         isFullCircle = config.gauge_fullCircle,
         defaultStartAngle = -1 * Math.PI / 2,
         defaultEndAngle = Math.PI / 2,
@@ -44113,7 +44402,8 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     return startAngle;
   },
   updateAngle: function updateAngle(dValue) {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         pie = $$.pie,
@@ -44128,16 +44418,15 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
 
     if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
-      var _config = config,
-          min = _config.gauge_min,
-          max = _config.gauge_max,
+      var min = config.gauge_min,
+          max = config.gauge_max,
           totalSum = $$.getTotalDataSum(state.rendered); // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
 
       pie = pie.startAngle(gStart).endAngle(radius * ((totalSum - min) / (max - min)) + gStart);
     }
 
     pie($$.filterTargetsToShow()).forEach(function (t, i) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this4);
 
       if (!found && t.data.id === d.data.id) {
         found = !0;
@@ -44343,14 +44632,15 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     }
   },
   expandArc: function expandArc(targetIds) {
-    var $$ = this,
+    var _this8 = this,
+        $$ = this,
         transiting = $$.state.transiting,
         $el = $$.$el;
 
     // MEMO: avoid to cancel transition
     if (transiting) {
       var interval = setInterval(function () {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this8);
 
         if (!transiting) {
           clearInterval(interval);
@@ -44372,7 +44662,8 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     });
   },
   unexpandArc: function unexpandArc(targetIds) {
-    var $$ = this,
+    var _this9 = this,
+        $$ = this,
         transiting = $$.state.transiting,
         svg = $$.$el.svg;
 
@@ -44382,7 +44673,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 
     var newTargetIds = $$.mapToTargetIds(targetIds);
     svg.selectAll($$.selectorTargets(newTargetIds, "." + $ARC.chartArc)).selectAll("path").transition().duration(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this9);
 
       return $$.getExpandConfig(d.data.id, "duration");
     }.bind(this)).attr("d", $$.svgArc);
@@ -44420,10 +44711,12 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     return $$.isDonutType(id) && config.donut_expand || $$.isGaugeType(id) && config.gauge_expand || $$.isPieType(id) && config.pie_expand;
   },
   shouldShowArcLabel: function shouldShowArcLabel() {
-    var $$ = this,
+    var _this10 = this,
+        $$ = this,
         config = $$.config;
+
     return ["donut", "gauge", "pie", "polar"].some(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this10);
 
       return $$.hasType(v) && config[v + "_label_show"];
     }.bind(this));
@@ -44451,7 +44744,8 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     return type ? $$.config[type + "_title"] : "";
   },
   updateTargetsForArc: function updateTargetsForArc(targets) {
-    var $$ = this,
+    var _this12 = this,
+        $$ = this,
         $el = $$.$el,
         hasGauge = $$.hasType("gauge"),
         classChartArc = $$.getChartClass("Arc"),
@@ -44459,11 +44753,12 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         classFocus = $$.classFocus.bind($$),
         chartArcs = $el.main.select("." + $ARC.chartArcs),
         mainPieUpdate = chartArcs.selectAll("." + $ARC.chartArc).data($$.pie(targets)).attr("class", function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this12);
 
       return classChartArc(d) + classFocus(d.data);
     }.bind(this)),
         mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc);
+
     mainPieEnter.append("g").attr("class", classArcs).merge(mainPieUpdate);
     mainPieEnter.append("text").attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", "middle").style("pointer-events", "none");
     $el.text = chartArcs.selectAll("." + $COMMON.target + " text"); // MEMO: can not keep same color..., but not bad to update color in redraw
@@ -44507,11 +44802,9 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 
       return $$.color(d.data);
     }.bind(this)).style("cursor", function (d) {
-      var _isSelectable;
-
       _newArrowCheck(this, _this13);
 
-      return (_isSelectable = isSelectable) != null && _isSelectable.bind != null && _isSelectable.bind($$.api)(d) ? "pointer" : null;
+      return isSelectable != null && isSelectable.bind != null && isSelectable.bind($$.api)(d) ? "pointer" : null;
     }.bind(this)).style("opacity", "0").each(function (d) {
       if ($$.isGaugeType(d.data)) {
         d.startAngle = config.gauge_startingAngle;
@@ -44537,11 +44830,12 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 
       state.transiting = !0;
     }.bind(this)).transition().duration(duration).attrTween("d", function (d) {
-      var updated = $$.updateAngle(d);
+      var _this14 = this,
+          updated = $$.updateAngle(d);
 
       if (!updated) {
         return function () {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this14);
 
           return "M 0 0";
         }.bind(this);
@@ -44581,9 +44875,8 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     .style("opacity", null).call(endall, function () {
       if ($$.levelColor) {
         var path = src_select(this),
-            _d = path.datum();
-
-        $$.updateLegendItemColor(_d.data.id, path.style("fill"));
+            d = path.datum();
+        $$.updateLegendItemColor(d.data.id, path.style("fill"));
       }
 
       state.transiting = !1;
@@ -44988,12 +45281,16 @@ function point_y(p) {
     mainLine.insert("g", "." + (config.area_front ? $CIRCLE.circles : $LINE.lines)).attr("class", $$.getClass("areas", !0));
   },
   updateAreaGradient: function updateAreaGradient() {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         datetimeId = $$.state.datetimeId,
         defs = $$.$el.defs;
+
     $$.data.targets.forEach(function (d) {
-      _newArrowCheck(this, this);
+      var _this2 = this;
+
+      _newArrowCheck(this, _this);
 
       var id = datetimeId + "-areaGradient" + $$.getTargetSelectorSuffix(d.id);
 
@@ -45008,7 +45305,7 @@ function point_y(p) {
             stops = _config$area_linearGr4 === void 0 ? [[0, color, 1], [1, color, 0]] : _config$area_linearGr4,
             linearGradient = defs.append("linearGradient").attr("id", "" + id).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
         stops.forEach(function (v) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this2);
 
           var stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
           linearGradient.append("stop").attr("offset", v[0]).attr("stop-color", stopColor || color).attr("stop-opacity", v[2]);
@@ -45056,6 +45353,8 @@ function point_y(p) {
    * @returns {Array}
    */
   redrawArea: function redrawArea(drawFn, withTransition, isSub) {
+    var _this3 = this;
+
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -45066,7 +45365,7 @@ function point_y(p) {
         orgAreaOpacity = $$.state.orgAreaOpacity;
 
     return [$$.$T(area, withTransition, getRandom()).attr("d", drawFn).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       return ($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity) + "";
     }.bind(this))];
@@ -45104,6 +45403,8 @@ function point_y(p) {
     }.bind(this);
 
     return function (d) {
+      var _this5 = this;
+
       _newArrowCheck(this, _this4);
 
       var values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values,
@@ -45118,7 +45419,7 @@ function point_y(p) {
 
         if (!lineConnectNull) {
           area = area.defined(function (d) {
-            _newArrowCheck(this, this);
+            _newArrowCheck(this, _this5);
 
             return $$.getBaseValue(d) !== null;
           }.bind(this));
@@ -45205,10 +45506,12 @@ function point_y(p) {
 
     var mainBarUpdate = $$.$el.main.select("." + $BAR.chartBars).selectAll("." + $BAR.chartBar).data( // remove
     targets.filter(function (v) {
+      var _this2 = this;
+
       _newArrowCheck(this, _this);
 
       return v.values.some(function (d) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this2);
 
         return isNumber(d.value) || $$.isBarRangeType(d);
       }.bind(this));
@@ -45220,11 +45523,9 @@ function point_y(p) {
         mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", "none");
     // Bars for each data
     mainBarEnter.append("g").attr("class", classBars).style("cursor", function (d) {
-      var _isSelectable;
-
       _newArrowCheck(this, _this);
 
-      return (_isSelectable = isSelectable) != null && _isSelectable.bind != null && _isSelectable.bind($$.api)(d) ? "pointer" : null;
+      return isSelectable != null && isSelectable.bind != null && isSelectable.bind($$.api)(d) ? "pointer" : null;
     }.bind(this));
   },
 
@@ -45258,6 +45559,8 @@ function point_y(p) {
    * @returns {Array}
    */
   redrawBar: function redrawBar(drawFn, withTransition, isSub) {
+    var _this3 = this;
+
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -45267,7 +45570,7 @@ function point_y(p) {
         bar = _ref.bar;
 
     return [$$.$T(bar, withTransition, getRandom()).attr("d", function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d);
     }.bind(this)).style("fill", $$.color).style("opacity", null)];
@@ -45379,10 +45682,12 @@ function point_y(p) {
       return keys.indexOf(v.id) > -1;
     }.bind(this)),
         sortedIds = sortedList.map(function (v) {
+      var _this6 = this;
+
       _newArrowCheck(this, _this5);
 
       return v.values.filter(function (v2) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this6);
 
         return v2.index === index && (value > 0 ? v2.value > 0 : v2.value < 0);
       }.bind(this))[0];
@@ -45404,7 +45709,8 @@ function point_y(p) {
    * @private
    */
   generateGetBarPoints: function generateGetBarPoints(barIndices, isSub) {
-    var $$ = this,
+    var _this7 = this,
+        $$ = this,
         config = $$.config,
         axis = isSub ? $$.axis.subX : $$.axis.x,
         barTargetsNum = $$.getIndicesMax(barIndices) + 1,
@@ -45413,8 +45719,9 @@ function point_y(p) {
         barY = $$.getShapeY(!!isSub),
         barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub),
         yScale = $$.getYScaleById.bind($$);
+
     return function (d, i) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this7);
 
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
           offset = barOffset(d, i) || y0,
@@ -45466,7 +45773,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @private
    */
   updateTargetsForCandlestick: function updateTargetsForCandlestick(targets) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         $el = $$.$el,
         classChart = $$.getChartClass("Candlestick"),
         classFocus = $$.classFocus.bind($$);
@@ -45476,7 +45784,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     }
 
     var mainUpdate = $$.$el.main.select("." + $CANDLESTICK.chartCandlesticks).selectAll("." + $CANDLESTICK.chartCandlestick).data(targets).attr("class", function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       return classChart(d) + classFocus(d);
     }.bind(this));
@@ -45490,6 +45798,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @private
    */
   updateCandlestick: function updateCandlestick(withTransition, isSub) {
+    var _this2 = this;
+
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -45503,7 +45813,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         candlestick = $root.main.selectAll("." + $CANDLESTICK.chartCandlestick).selectAll("." + $CANDLESTICK.candlestick).data($$.labelishData.bind($$));
     $T(candlestick.exit(), withTransition).style("opacity", "0").remove();
     var candlestickEnter = candlestick.enter().filter(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       return d.value;
     }.bind(this)).append("g").attr("class", classSetter);
@@ -45525,15 +45835,18 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @private
    */
   generateDrawCandlestick: function generateDrawCandlestick(indices, isSub) {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         config = $$.config,
         getPoints = $$.generateGetCandlestickPoints(indices, isSub),
         isRotated = config.axis_rotated,
         downColor = config.candlestick_color_down;
-    return function (d, i, g) {
-      var _value;
 
-      _newArrowCheck(this, this);
+    return function (d, i, g) {
+      var _value,
+          _this4 = this;
+
+      _newArrowCheck(this, _this3);
 
       var points = getPoints(d, i),
           value = $$.getCandlestickData(d),
@@ -45546,7 +45859,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
 
       var path = isRotated ? "H" + points[1][1] + " V" + points[1][0] + " H" + points[0][1] : "V" + points[1][1] + " H" + points[1][0] + " V" + points[0][1];
       g.select("path").attr("d", "M" + points[0][indexX] + "," + points[0][+!indexX] + path + "z").style("fill", function (d) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this4);
 
         var color = isUp ? $$.color(d) : isObject(downColor) ? downColor[d.id] : downColor;
         return color || $$.color(d);
@@ -45578,6 +45891,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @returns {Function}
    */
   generateGetCandlestickPoints: function generateGetCandlestickPoints(indices, isSub) {
+    var _this5 = this;
+
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -45592,7 +45907,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         shapeOffset = $$.getShapeOffset($$.isBarType, indices, !!isSub),
         yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this5);
 
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
           offset = shapeOffset(d, i) || y0,
@@ -45707,11 +46022,12 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
 
 /* harmony default export */ var gauge = ({
   initGauge: function initGauge() {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         arcs = $$.$el.arcs,
         appendText = function (className) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       arcs.append("text").attr("class", className).style("text-anchor", "middle").style("pointer-events", "none");
     }.bind(this);
@@ -45846,7 +46162,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @private
    */
   getBubbleR: function getBubbleR(d) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         maxR = $$.config.bubble_maxR;
 
     if (isFunction(maxR)) {
@@ -45856,7 +46173,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     }
 
     var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       return $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : isObject(d.value) ? d.value.mid : d.value;
     }.bind(this))),
@@ -45987,12 +46304,14 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @private
    */
   getCurve: function getCurve(d) {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
+
     // when is step & rotated, should be computed in different way
     // https://github.com/naver/billboard.js/issues/471
     return isRotatedStepType ? function (context) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       var step = $$.getInterpolate(d)(context); // keep the original method
 
@@ -46329,16 +46648,20 @@ var getTransitionName = function () {
     }); // Update date for selected circles
 
     selectionEnabled && targets.forEach(function (t) {
+      var _this3 = this;
+
       _newArrowCheck(this, _this2);
 
       $el.main.selectAll("." + $SELECT.selectedCircles + $$.getTargetSelectorSuffix(t.id)).selectAll("" + $SELECT.selectedCircle).each(function (d) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this3);
 
         d.value = t.values[d.index].value;
       }.bind(this));
     }.bind(this));
   },
   updateCircle: function updateCircle(isSub) {
+    var _this4 = this;
+
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -46352,7 +46675,7 @@ var getTransitionName = function () {
 
     if (config.point_show && !state.toggling) {
       var circles = $root.main.selectAll("." + $CIRCLE.circles).selectAll("." + $CIRCLE.circle).data(function (d) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this4);
 
         return $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[0]] : d.values : [];
       }.bind(this));
@@ -46414,11 +46737,13 @@ var getTransitionName = function () {
 
       if (d) {
         circle = circle.filter(function (t) {
-          var data = d.filter(function (v) {
-            _newArrowCheck(this, this);
+          var _this5 = this,
+              data = d.filter(function (v) {
+            _newArrowCheck(this, _this5);
 
             return v.id === t.id;
           }.bind(this));
+
           return data.length ? src_select(this).datum(data[0]) : !1;
         });
       }
@@ -46458,6 +46783,8 @@ var getTransitionName = function () {
     return this.xx(d);
   },
   updateCircleY: function updateCircleY(isSub) {
+    var _this6 = this;
+
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -46465,7 +46792,7 @@ var getTransitionName = function () {
     var $$ = this,
         getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), isSub);
     return function (d, i) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this6);
 
       var id = d.id;
       return $$.isGrouped(id) ? getPoints(d, i)[0][1] : $$.getYScaleById(id, isSub)($$.getBaseValue(d));
@@ -46555,6 +46882,7 @@ var getTransitionName = function () {
   },
   insertPointInfoDefs: function insertPointInfoDefs(point, id) {
     var _this7 = this,
+        $$ = this,
         copyAttr = function (from, target) {
       _newArrowCheck(this, _this7);
 
@@ -46587,7 +46915,7 @@ var getTransitionName = function () {
       }
     }
 
-    this.$el.defs.node().appendChild(clone);
+    $$.$el.defs.node().appendChild(clone);
   },
   pointFromDefs: function pointFromDefs(id) {
     return this.$el.defs.select("#" + id);
@@ -46612,14 +46940,16 @@ var getTransitionName = function () {
     return pointClass;
   },
   generateGetLinePoints: function generateGetLinePoints(lineIndices, isSub) {
-    var $$ = this,
+    var _this8 = this,
+        $$ = this,
         config = $$.config,
         x = $$.getShapeX(0, lineIndices, isSub),
         y = $$.getShapeY(isSub),
         lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub),
         yScale = $$.getYScaleById.bind($$);
+
     return function (d, i) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this8);
 
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
           offset = lineOffset(d, i) || y0,
@@ -46738,8 +47068,9 @@ var getTransitionName = function () {
   // 'rectangle' data point
   rectangle: {
     create: function create(element, sizeFn, fillStyleFn) {
-      var rectSizeFn = function (d) {
-        _newArrowCheck(this, this);
+      var _this10 = this,
+          rectSizeFn = function (d) {
+        _newArrowCheck(this, _this10);
 
         return sizeFn(d) * 2;
       }.bind(this);
@@ -46964,12 +47295,13 @@ var cacheKey = KEY.radarPoints;
     return [size, size];
   },
   updateTargetsForRadar: function updateTargetsForRadar(targets) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config;
 
     if (isEmpty(config.axis_x_categories)) {
       config.axis_x_categories = getRange(0, getMinMax("max", targets.map(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this);
 
         return v.values.length;
       }.bind(this))));
@@ -46978,7 +47310,8 @@ var cacheKey = KEY.radarPoints;
     $$.generateRadarPoints();
   },
   getRadarPosition: function getRadarPosition(type, index, range, ratio) {
-    var $$ = this,
+    var _this2 = this,
+        $$ = this,
         config = $$.config,
         _$$$getRadarSize = $$.getRadarSize(),
         width = _$$$getRadarSize[0],
@@ -46986,7 +47319,7 @@ var cacheKey = KEY.radarPoints;
         edge = config.axis_x_categories.length,
         isClockwise = config.radar_direction_clockwise,
         pos = toArray(type).map(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       return getPosition(isClockwise, v, edge, index, isDefined(range) ? range : type === "x" ? width : height, isNumber(ratio) ? ratio : config.radar_size_ratio);
     }.bind(this));
@@ -46999,7 +47332,8 @@ var cacheKey = KEY.radarPoints;
    * @private
    */
   generateRadarPoints: function generateRadarPoints() {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         targets = $$.data.targets,
         _$$$getRadarSize2 = $$.getRadarSize(),
         width = _$$$getRadarSize2[0],
@@ -47010,10 +47344,12 @@ var cacheKey = KEY.radarPoints;
     // recalculate position only when the previous dimension has been changed
     if (!size || size.width !== width && size.height !== height) {
       targets.forEach(function (d) {
-        _newArrowCheck(this, this);
+        var _this4 = this;
+
+        _newArrowCheck(this, _this3);
 
         points[d.id] = d.values.map(function (v, i) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this4);
 
           return $$.getRadarPosition(["x", "y"], i, undefined, $$.getRatio("radar", v));
         }.bind(this));
@@ -47043,9 +47379,11 @@ var cacheKey = KEY.radarPoints;
     }
   },
   generateGetRadarPoints: function generateGetRadarPoints() {
-    var points = this.cache.get(cacheKey);
+    var _this5 = this,
+        points = this.cache.get(cacheKey);
+
     return function (d, i) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this5);
 
       var point = points[d.id][i];
       return [point, point, point, point];
@@ -47073,11 +47411,13 @@ var cacheKey = KEY.radarPoints;
     }.bind(this)),
         levelTextFormat = (config.radar_level_text_format || function () {}).bind($$.api),
         points = levelData.map(function (v) {
+      var _this7 = this;
+
       _newArrowCheck(this, _this6);
 
       var range = levelRatio[v],
           pos = getRange(0, edge).map(function (i) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this7);
 
         return $$.getRadarPosition(["x", "y"], i, range, 1).join(",");
       }.bind(this));
@@ -48389,154 +48729,188 @@ function extendArc(module, option) {
 
 
 var _area = function area() {
+  var _this2 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendLine(shape_area, [Options_shape_area]), (_area = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return TYPE.AREA;
   }.bind(this))();
 }.bind(undefined),
     areaLineRange = function () {
+  var _this3 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendLine(shape_area, [Options_shape_area]), (areaLineRange = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this3);
 
     return TYPE.AREA_LINE_RANGE;
   }.bind(this))();
 }.bind(undefined),
     areaSpline = function () {
+  var _this4 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendLine(shape_area, [Options_shape_area, spline]), (areaSpline = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this4);
 
     return TYPE.AREA_SPLINE;
   }.bind(this))();
 }.bind(undefined),
     areaSplineRange = function () {
+  var _this5 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendLine(shape_area, [Options_shape_area, spline]), (areaSplineRange = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this5);
 
     return TYPE.AREA_SPLINE_RANGE;
   }.bind(this))();
 }.bind(undefined),
     areaStep = function () {
+  var _this6 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendLine(shape_area, [Options_shape_area]), (areaStep = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this6);
 
     return TYPE.AREA_STEP;
   }.bind(this))();
 }.bind(undefined),
     resolver_shape_line = function () {
+  var _this7 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendLine(), (resolver_shape_line = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this7);
 
     return TYPE.LINE;
   }.bind(this))();
 }.bind(undefined),
     shape_spline = function () {
+  var _this8 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendLine(undefined, [spline]), (shape_spline = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this8);
 
     return TYPE.SPLINE;
   }.bind(this))();
 }.bind(undefined),
     shape_step = function () {
+  var _this9 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendLine(), (shape_step = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this9);
 
     return TYPE.STEP;
   }.bind(this))();
 }.bind(undefined),
     shape_donut = function () {
+  var _this10 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendArc(undefined, [donut]), (shape_donut = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this10);
 
     return TYPE.DONUT;
   }.bind(this))();
 }.bind(undefined),
     resolver_shape_gauge = function () {
+  var _this11 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendArc([gauge], [shape_gauge]), (resolver_shape_gauge = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this11);
 
     return TYPE.GAUGE;
   }.bind(this))();
 }.bind(undefined),
     resolver_shape_pie = function () {
+  var _this12 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendArc(undefined, [shape_pie]), (resolver_shape_pie = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this12);
 
     return TYPE.PIE;
   }.bind(this))();
 }.bind(undefined),
     resolver_shape_polar = function () {
+  var _this13 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendArc([polar], [shape_polar]), (resolver_shape_polar = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this13);
 
     return TYPE.POLAR;
   }.bind(this))();
 }.bind(undefined),
     resolver_shape_radar = function () {
+  var _this14 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendArc([point, radar], [common_point, shape_radar]), (resolver_shape_radar = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this14);
 
     return TYPE.RADAR;
   }.bind(this))();
 }.bind(undefined),
     resolver_shape_bar = function () {
+  var _this15 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendAxis([bar], shape_bar), (resolver_shape_bar = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this15);
 
     return TYPE.BAR;
   }.bind(this))();
 }.bind(undefined),
     resolver_shape_bubble = function () {
+  var _this16 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendAxis([point, bubble], [shape_bubble, common_point]), (resolver_shape_bubble = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this16);
 
     return TYPE.BUBBLE;
   }.bind(this))();
 }.bind(undefined),
     resolver_shape_candlestick = function () {
+  var _this17 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendAxis([candlestick], [shape_candlestick]), (resolver_shape_candlestick = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this17);
 
     return TYPE.CANDLESTICK;
   }.bind(this))();
 }.bind(undefined),
     shape_scatter = function () {
+  var _this18 = this;
+
   _newArrowCheck(this, shape_this);
 
   return extendAxis([point], [common_point, scatter]), (shape_scatter = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this18);
 
     return TYPE.SCATTER;
   }.bind(this))();
@@ -48569,12 +48943,14 @@ var _area = function area() {
    *  chart.selected("data1");
    */
   selected: function selected(targetId) {
-    var $$ = this.internal,
+    var _this = this,
+        $$ = this.internal,
         dataPoint = [];
+
     $$.$el.main.selectAll("." + ($SHAPE.shapes + $$.getTargetSelectorSuffix(targetId))).selectAll("." + $SHAPE.shape).filter(function () {
       return src_select(this).classed($SELECT.SELECTED);
     }).each(function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       return dataPoint.push(d);
     }.bind(this));
@@ -48752,12 +49128,11 @@ var _area = function area() {
      *  chart.subchart.hide();
      */
     hide: function hide() {
-      var _main,
-          $$ = this.internal,
+      var $$ = this.internal,
           main = $$.$el.subchart.main,
           config = $$.config;
 
-      if (config.subchart_show && ((_main = main) == null ? void 0 : _main.style("display")) !== "none") {
+      if (config.subchart_show && (main == null ? void 0 : main.style("display")) !== "none") {
         config.subchart_show = !1;
         main.style("display", "none");
         this.resize();
@@ -48855,10 +49230,12 @@ function tanh(x) {
 var d3_zoom_src_constant_this = undefined;
 
 /* harmony default export */ var d3_zoom_src_constant = ((function (x) {
+  var _this2 = this;
+
   _newArrowCheck(this, d3_zoom_src_constant_this);
 
   return function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return x;
   }.bind(this);
@@ -49145,7 +49522,7 @@ function defaultConstrain(transform, extent, translateExtent) {
 
       return this;
     },
-    zoom: function (key, transform) {
+    zoom: function zoom(key, transform) {
       if (this.mouse && key !== "mouse") this.mouse[1] = transform.invert(this.mouse[0]);
       if (this.touch0 && key !== "touch") this.touch0[1] = transform.invert(this.touch0[0]);
       if (this.touch1 && key !== "touch") this.touch1[1] = transform.invert(this.touch1[0]);
@@ -49200,11 +49577,13 @@ function defaultConstrain(transform, extent, translateExtent) {
     }
 
     d3_zoom_src_noevent(event);
-    g.wheel = setTimeout(function () {
+    g.wheel = setTimeout(wheelidled, 150);
+    g.zoom("mouse", constrain(translate(scale(t, k), g.mouse[0], g.mouse[1]), g.extent, translateExtent));
+
+    function wheelidled() {
       g.wheel = null;
       g.end();
-    }, 150);
-    g.zoom("mouse", constrain(translate(scale(t, k), g.mouse[0], g.mouse[1]), g.extent, translateExtent));
+    }
   }
 
   function mousedowned(event) {
@@ -49215,12 +49594,7 @@ function defaultConstrain(transform, extent, translateExtent) {
     if (touchending || !filter.apply(this, arguments)) return;
     var currentTarget = event.currentTarget,
         g = gesture(this, args, !0).event(event),
-        v = src_select(event.view).on("mousemove.zoom", mousemoved, !0).on("mouseup.zoom", function (event) {
-      v.on("mousemove.zoom mouseup.zoom", null);
-      yesdrag(event.view, g.moved);
-      d3_zoom_src_noevent(event);
-      g.event(event).end();
-    }, !0),
+        v = src_select(event.view).on("mousemove.zoom", mousemoved, !0).on("mouseup.zoom", mouseupped, !0),
         p = src_pointer(event, currentTarget),
         x0 = event.clientX,
         y0 = event.clientY;
@@ -49240,6 +49614,13 @@ function defaultConstrain(transform, extent, translateExtent) {
       }
 
       g.event(event).zoom("mouse", constrain(translate(g.that.__zoom, g.mouse[0] = src_pointer(event, currentTarget), g.mouse[1]), g.extent, translateExtent));
+    }
+
+    function mouseupped(event) {
+      v.on("mousemove.zoom mouseup.zoom", null);
+      yesdrag(event.view, g.moved);
+      d3_zoom_src_noevent(event);
+      g.event(event).end();
     }
   }
 
@@ -49438,13 +49819,17 @@ function defaultConstrain(transform, extent, translateExtent) {
  */
 
 function withinRange(domain, current, range) {
-  var min = range[0],
+  var _this = this,
+      min = range[0],
       max = range[1];
+
   return domain.every(function (v, i) {
-    _newArrowCheck(this, this);
+    var _this2 = this;
+
+    _newArrowCheck(this, _this);
 
     return (i === 0 ? v >= min : v <= max) && !domain.every(function (v, i) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       return v === current[i];
     }.bind(this));
@@ -49664,11 +50049,9 @@ util_extend(zoom, {
         zoomResetBtn = _$$$$el.zoomResetBtn;
 
     if ($$.scale.zoom) {
-      var _zoomResetBtn;
-
       config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(transform_identity);
       $$.updateZoom(!0);
-      (_zoomResetBtn = zoomResetBtn) == null ? void 0 : _zoomResetBtn.style("display", "none"); // reset transform
+      zoomResetBtn == null ? void 0 : zoomResetBtn.style("display", "none"); // reset transform
 
       if (transform_transform(eventRect.node()) !== transform_identity) {
         $$.zoom.transform(eventRect, transform_identity);
@@ -49698,7 +50081,8 @@ util_extend(zoom, {
    * @param {object} mouse Object
    */
   drag: function drag(mouse) {
-    var $$ = this,
+    var _this = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         main = $$.$el.main,
@@ -49725,11 +50109,9 @@ util_extend(zoom, {
     main.select("." + $DRAG.dragarea).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY); // TODO: binary search when multiple xs
 
     main.selectAll("." + $SHAPE.shapes).selectAll("." + $SHAPE.shape).filter(function (d) {
-      var _isSelectable;
+      _newArrowCheck(this, _this);
 
-      _newArrowCheck(this, this);
-
-      return (_isSelectable = isSelectable) == null ? void 0 : _isSelectable.bind($$.api)(d);
+      return isSelectable == null ? void 0 : isSelectable.bind($$.api)(d);
     }.bind(this)).each(function (d, i) {
       var shape = src_select(this),
           isSelected = shape.classed($SELECT.SELECTED),
@@ -49938,9 +50320,11 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   getToggle: function getToggle(that, d) {
-    var $$ = this;
+    var _this2 = this,
+        $$ = this;
+
     return that.nodeName === "path" ? $$.togglePath : $$.isStepType(d) ? function () {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
     }.bind(this) : // circle is hidden in step chart, so treat as within the click area
     $$.togglePoint;
   },
@@ -50035,6 +50419,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
 
     $$.brush.on("start brush end", function (event) {
+      var _this2 = this;
+
       _newArrowCheck(this, _this);
 
       var selection = event.selection,
@@ -50059,7 +50445,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
           $$.brush.handle.attr("display", "none");
         } else {
           $$.brush.handle.attr("display", null).attr("transform", function (d, i) {
-            _newArrowCheck(this, this);
+            _newArrowCheck(this, _this2);
 
             var pos = isRotated ? [33, selection[i] - (i === 0 ? 30 : 24)] : [selection[i], 3];
             return "translate(" + pos + ")";
@@ -50069,9 +50455,11 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     }.bind(this));
 
     $$.brush.updateResize = function () {
+      var _this3 = this;
+
       timeout && clearTimeout(timeout);
       timeout = setTimeout(function () {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this3);
 
         var selection = this.getSelection();
         lastDomain && brushSelection(selection.node()) && this.move(selection, lastDomain.map(scale.subX.orgScale()));
@@ -50079,10 +50467,11 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     };
 
     $$.brush.update = function () {
-      var extent = this.extent()();
+      var _this4 = this,
+          extent = this.extent()();
 
       if (extent[1].filter(function (v) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this4);
 
         return isNaN(v);
       }.bind(this)).length === 0) {
@@ -50096,14 +50485,15 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
 
     $$.brush.scale = function (scale) {
-      var h = config.subchart_size_height || getBrushSize(),
+      var _this5 = this,
+          h = config.subchart_size_height || getBrushSize(),
           extent = $$.getExtent();
 
       if (!extent && scale.range) {
         extent = [[0, 0], [scale.range()[1], h]];
       } else if (isArray(extent)) {
         extent = extent.map(function (v, i) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this5);
 
           return [v, i > 0 ? h : i];
         }.bind(this));
@@ -50131,7 +50521,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   initSubchart: function initSubchart() {
-    var $$ = this,
+    var _this6 = this,
+        $$ = this,
         config = $$.config,
         _$$$state = $$.state,
         clip = _$$$state.clip,
@@ -50159,7 +50550,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     main.append("g").attr("clip-path", clipPath).attr("class", classes.chart); // Define g for chart types area
 
     ["bar", "line", "bubble", "candlestick", "scatter"].forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this6);
 
       var type = capitalize(/^(bubble|scatter)$/.test(v) ? "circle" : v);
 
@@ -50187,13 +50578,14 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   addBrushHandle: function addBrushHandle(brush) {
-    var $$ = this,
+    var _this7 = this,
+        $$ = this,
         config = $$.config,
         isRotated = config.axis_rotated,
         initRange = config.subchart_init_range,
-        customHandleClass = "handle--custom",
         path = isRotated ? ["M 5.2491724,29.749209 a 6,6 0 0 0 -5.50000003,-6.5 H -5.7508276 a 6,6 0 0 0 -6.0000004,6.5 z m -5.00000003,-2 H -6.7508276 m 6.99999997,-2 H -6.7508276Z", "M 5.2491724,23.249172 a 6,-6 0 0 1 -5.50000003,6.5 H -5.7508276 a 6,-6 0 0 1 -6.0000004,-6.5 z m -5.00000003,2 H -6.7508276 m 6.99999997,2 H -6.7508276Z"] : ["M 0 18 A 6 6 0 0 0 -6.5 23.5 V 29 A 6 6 0 0 0 0 35 Z M -2 23 V 30 M -4 23 V 30Z", "M 0 18 A 6 6 0 0 1 6.5 23.5 V 29 A 6 6 0 0 1 0 35 Z M 2 23 V 30 M 4 23 V 30Z"];
-    $$.brush.handle = brush.selectAll("." + customHandleClass).data(isRotated ? [{
+
+    $$.brush.handle = brush.selectAll(".handle--custom").data(isRotated ? [{
       type: "n"
     }, {
       type: "s"
@@ -50201,8 +50593,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       type: "w"
     }, {
       type: "e"
-    }]).enter().append("path").attr("class", customHandleClass).attr("cursor", (isRotated ? "ns" : "ew") + "-resize").attr("d", function (d) {
-      _newArrowCheck(this, this);
+    }]).enter().append("path").attr("class", "handle--custom").attr("cursor", (isRotated ? "ns" : "ew") + "-resize").attr("d", function (d) {
+      _newArrowCheck(this, _this7);
 
       return path[+/[se]/.test(d.type)];
     }.bind(this)).attr("display", initRange ? null : "none");
@@ -50259,11 +50651,13 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @param {object} shape Shape's info
    */
   redrawSubchart: function redrawSubchart(withSubchart, duration, shape) {
-    var $$ = this,
+    var _this9 = this,
+        $$ = this,
         config = $$.config,
         main = $$.$el.subchart.main,
         state = $$.state,
         withTransition = !!duration;
+
     main.style("visibility", config.subchart_show ? null : "hidden"); // subchart
 
     if (config.subchart_show) {
@@ -50280,7 +50674,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
         brushEmpty($$) || $$.brush.update();
         Object.keys(shape.type).forEach(function (v) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this9);
 
           var name = capitalize(v),
               drawFn = $$["generateDraw" + name](shape.indices[v], !0);
@@ -50342,7 +50736,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   getExtent: function getExtent() {
-    var $$ = this,
+    var _this10 = this,
+        $$ = this,
         config = $$.config,
         scale = $$.scale,
         extent = config.axis_x_extent;
@@ -50353,7 +50748,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       } else if ($$.axis.isTimeSeries() && extent.every(isNaN)) {
         var fn = parseDate.bind($$);
         extent = extent.map(function (v) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this10);
 
           return scale.subX(fn(v));
         }.bind(this));
@@ -50527,10 +50922,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   onZoom: function onZoom(event) {
-    var _sourceEvent,
-        _sourceEvent2,
-        _sourceEvent3,
-        _sourceEvent4,
+    var _this2 = this,
         $$ = this,
         config = $$.config,
         scale = $$.scale,
@@ -50539,7 +50931,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         sourceEvent = event.sourceEvent,
         isUnZoom = (event == null ? void 0 : event.transform) === transform_identity;
 
-    if (!config.zoom_enabled || $$.filterTargetsToShow($$.data.targets).length === 0 || !scale.zoom && ((_sourceEvent = sourceEvent) == null ? void 0 : _sourceEvent.type.indexOf("touch")) > -1 && ((_sourceEvent2 = sourceEvent) == null ? void 0 : _sourceEvent2.touches.length) === 1) {
+    if (!config.zoom_enabled || $$.filterTargetsToShow($$.data.targets).length === 0 || !scale.zoom && (sourceEvent == null ? void 0 : sourceEvent.type.indexOf("touch")) > -1 && (sourceEvent == null ? void 0 : sourceEvent.touches.length) === 1) {
       return;
     }
 
@@ -50547,12 +50939,12 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       state.zooming = !0;
     }
 
-    var isMousemove = ((_sourceEvent3 = sourceEvent) == null ? void 0 : _sourceEvent3.type) === "mousemove",
-        isZoomOut = ((_sourceEvent4 = sourceEvent) == null ? void 0 : _sourceEvent4.wheelDelta) < 0,
+    var isMousemove = (sourceEvent == null ? void 0 : sourceEvent.type) === "mousemove",
+        isZoomOut = (sourceEvent == null ? void 0 : sourceEvent.wheelDelta) < 0,
         transform = event.transform;
 
     if (!isMousemove && isZoomOut && scale.x.domain().every(function (v, i) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this2);
 
       return v !== org.xDomain[i];
     }.bind(this))) {
@@ -50641,14 +51033,16 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   bindZoomOnEventRect: function bindZoomOnEventRect() {
-    var $$ = this,
+    var _this3 = this,
+        $$ = this,
         config = $$.config,
         eventRect = $$.$el.eventRect,
         behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
+
     // Since Chrome 89, wheel zoom not works properly
     // Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
     $$.$el.svg.on("wheel", function () {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
     }.bind(this));
     eventRect.call(behaviour).on("dblclick.zoom", null);
   },
@@ -50658,7 +51052,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    */
   initZoomBehaviour: function initZoomBehaviour() {
-    var $$ = this,
+    var _this4 = this,
+        $$ = this,
         config = $$.config,
         state = $$.state,
         isRotated = config.axis_rotated,
@@ -50670,6 +51065,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       attr: isRotated ? "height" : "width",
       index: isRotated ? 1 : 0
     };
+
     $$.zoomBehaviour = drag().clickDistance(4).on("start", function (event) {
       state.event = event;
       $$.setDragStatus(!0);
@@ -50687,7 +51083,9 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       end = getPointer(event, this)[prop.index];
       zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
     }).on("end", function (event) {
-      _newArrowCheck(this, this);
+      var _this5 = this;
+
+      _newArrowCheck(this, _this4);
 
       var scale = $$.scale.zoom || $$.scale.x;
       state.event = event;
@@ -50706,7 +51104,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
 
       if (start !== end) {
         $$.api.zoom([start, end].map(function (v) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this5);
 
           return scale.invert(v);
         }.bind(this)));
@@ -51079,37 +51477,43 @@ var interaction_this = undefined;
 
 
 var _selectionModule = function selectionModule() {
+  var _this2 = this;
+
   _newArrowCheck(this, interaction_this);
 
   util_extend(ChartInternal.prototype, internals_selection);
   util_extend(Chart.prototype, api_selection);
   Options.setOptions([data_selection]);
   return (_selectionModule = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return !0;
   }.bind(this))();
 }.bind(undefined),
     subchartModule = function () {
+  var _this3 = this;
+
   _newArrowCheck(this, interaction_this);
 
   util_extend(ChartInternal.prototype, interactions_subchart);
   util_extend(Chart.prototype, subchart);
   Options.setOptions([interaction_subchart]);
   return (subchartModule = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this3);
 
     return !0;
   }.bind(this))();
 }.bind(undefined),
     zoomModule = function () {
+  var _this4 = this;
+
   _newArrowCheck(this, interaction_this);
 
   util_extend(ChartInternal.prototype, interactions_zoom);
   util_extend(Chart.prototype, api_zoom);
   Options.setOptions([interaction_zoom]);
   return (zoomModule = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this4);
 
     return !0;
   }.bind(this))();
@@ -51132,7 +51536,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220506004637",
+  version: "3.4.1-nightly-20220517004647",
 
   /**
    * Generate chart
@@ -51267,7 +51671,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220506004637
+ * @version 3.4.1-nightly-20220517004647
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220506004637
+ * @version 3.4.1-nightly-20220517004647
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -189,8 +189,10 @@ var Plugin = /*#__PURE__*/function () {
   ;
 
   _proto.$willDestroy = function $willDestroy() {
+    var _this = this;
+
     Object.keys(this).forEach(function (key) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       this[key] = null;
       delete this[key];
@@ -200,7 +202,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220506004637";
+Plugin.version = "3.4.1-nightly-20220517004647";
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
 
@@ -303,17 +305,19 @@ var BubbleCompare = /*#__PURE__*/function (_Plugin) {
   };
 
   _proto.getBubbleR = function getBubbleR(d) {
-    var _this$options = this.options,
+    var _this3 = this,
+        _this$options = this.options,
         minR = _this$options.minR,
         maxR = _this$options.maxR,
         curVal = this.getZData(d);
+
     if (!curVal) return minR;
 
     var _this$$$$data$targets = this.$$.data.targets.reduce(function (_ref, cur) {
       var accMin = _ref[0],
           accMax = _ref[1];
 
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       var val = this.getZData(cur.values[0]);
       return [Math.min(accMin, val), Math.max(accMax, val)];

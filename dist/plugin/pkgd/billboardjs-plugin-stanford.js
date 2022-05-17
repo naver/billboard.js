@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220506004637
+ * @version 3.4.1-nightly-20220517004647
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -494,7 +494,7 @@ if (!NATIVE_SYMBOL) {
   }
 }
 
-$({ global: true, wrap: true, forced: !NATIVE_SYMBOL, sham: !NATIVE_SYMBOL }, {
+$({ global: true, constructor: true, wrap: true, forced: !NATIVE_SYMBOL, sham: !NATIVE_SYMBOL }, {
   Symbol: $Symbol
 });
 
@@ -1117,10 +1117,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.22.4',
+  version: '3.22.5',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.22.4/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.22.5/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -1383,15 +1383,17 @@ module.exports = function (O, key, value, options) {
 var fails = __webpack_require__(7);
 var isCallable = __webpack_require__(20);
 var hasOwn = __webpack_require__(37);
-var defineProperty = (__webpack_require__(43).f);
+var DESCRIPTORS = __webpack_require__(6);
 var CONFIGURABLE_FUNCTION_NAME = (__webpack_require__(48).CONFIGURABLE);
 var inspectSource = __webpack_require__(49);
 var InternalStateModule = __webpack_require__(50);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
+// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+var defineProperty = Object.defineProperty;
 
-var CONFIGURABLE_LENGTH = !fails(function () {
+var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
   return defineProperty(function () { /* empty */ }, 'length', { value: 8 }).length !== 8;
 });
 
@@ -1409,6 +1411,11 @@ var makeBuiltIn = module.exports = function (value, name, options) {
   if (CONFIGURABLE_LENGTH && options && hasOwn(options, 'arity') && value.length !== options.arity) {
     defineProperty(value, 'length', { value: options.arity });
   }
+  if (options && hasOwn(options, 'constructor') && options.constructor) {
+    if (DESCRIPTORS) try {
+      defineProperty(value, 'prototype', { writable: false });
+    } catch (error) { /* empty */ }
+  } else value.prototype = undefined;
   var state = enforceInternalState(value);
   if (!hasOwn(state, 'source')) {
     state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
@@ -2623,7 +2630,7 @@ if (DESCRIPTORS && isCallable(NativeSymbol) && (!('description' in SymbolPrototy
     }
   });
 
-  $({ global: true, forced: true }, {
+  $({ global: true, constructor: true, forced: true }, {
     Symbol: SymbolWrapper
   });
 }
@@ -2801,14 +2808,14 @@ var FORCED = Error('e', { cause: 7 }).cause !== 7;
 var exportGlobalErrorCauseWrapper = function (ERROR_NAME, wrapper) {
   var O = {};
   O[ERROR_NAME] = wrapErrorConstructorWithCause(ERROR_NAME, wrapper, FORCED);
-  $({ global: true, arity: 1, forced: FORCED }, O);
+  $({ global: true, constructor: true, arity: 1, forced: FORCED }, O);
 };
 
 var exportWebAssemblyErrorCauseWrapper = function (ERROR_NAME, wrapper) {
   if (WebAssembly && WebAssembly[ERROR_NAME]) {
     var O = {};
     O[ERROR_NAME] = wrapErrorConstructorWithCause(WEB_ASSEMBLY + '.' + ERROR_NAME, wrapper, FORCED);
-    $({ target: WEB_ASSEMBLY, stat: true, arity: 1, forced: FORCED }, O);
+    $({ target: WEB_ASSEMBLY, stat: true, constructor: true, arity: 1, forced: FORCED }, O);
   }
 };
 
@@ -3186,7 +3193,7 @@ var AggregateErrorPrototype = $AggregateError.prototype = create(Error.prototype
 
 // `AggregateError` constructor
 // https://tc39.es/ecma262/#sec-aggregate-error-constructor
-$({ global: true }, {
+$({ global: true, constructor: true, arity: 2 }, {
   AggregateError: $AggregateError
 });
 
@@ -3413,7 +3420,7 @@ var FORCED = !fails(function () {
 });
 
 // https://github.com/tc39/proposal-error-cause
-$({ global: true, arity: 2, forced: FORCED }, {
+$({ global: true, constructor: true, arity: 2, forced: FORCED }, {
   AggregateError: wrapErrorConstructorWithCause(AGGREGATE_ERROR, function (init) {
     // eslint-disable-next-line no-unused-vars -- required for functions `.length`
     return function AggregateError(errors, message) { return apply(init, this, arguments); };
@@ -5070,7 +5077,7 @@ var NativeArrayBuffer = global[ARRAY_BUFFER];
 
 // `ArrayBuffer` constructor
 // https://tc39.es/ecma262/#sec-arraybuffer-constructor
-$({ global: true, forced: NativeArrayBuffer !== ArrayBuffer }, {
+$({ global: true, constructor: true, forced: NativeArrayBuffer !== ArrayBuffer }, {
   ArrayBuffer: ArrayBuffer
 });
 
@@ -5801,7 +5808,7 @@ var NATIVE_ARRAY_BUFFER = __webpack_require__(184);
 
 // `DataView` constructor
 // https://tc39.es/ecma262/#sec-dataview-constructor
-$({ global: true, forced: !NATIVE_ARRAY_BUFFER }, {
+$({ global: true, constructor: true, forced: !NATIVE_ARRAY_BUFFER }, {
   DataView: ArrayBufferModule.DataView
 });
 
@@ -6434,7 +6441,7 @@ module.exports = function (CONSTRUCTOR_NAME, wrapper, common) {
   }
 
   exported[CONSTRUCTOR_NAME] = Constructor;
-  $({ global: true, forced: Constructor != NativeConstructor }, exported);
+  $({ global: true, constructor: true, forced: Constructor != NativeConstructor }, exported);
 
   setToStringTag(Constructor, CONSTRUCTOR_NAME);
 
@@ -7346,7 +7353,7 @@ if (isForced(NUMBER, !NativeNumber(' 0o1') || !NativeNumber('0b1') || NativeNumb
   }
   NumberWrapper.prototype = NumberPrototype;
   NumberPrototype.constructor = NumberWrapper;
-  defineBuiltIn(global, NUMBER, NumberWrapper);
+  defineBuiltIn(global, NUMBER, NumberWrapper, { constructor: true });
 }
 
 
@@ -8916,7 +8923,7 @@ if (FORCED_PROMISE_CONSTRUCTOR) {
   }
 }
 
-$({ global: true, wrap: true, forced: FORCED_PROMISE_CONSTRUCTOR }, {
+$({ global: true, constructor: true, wrap: true, forced: FORCED_PROMISE_CONSTRUCTOR }, {
   Promise: PromiseConstructor
 });
 
@@ -10245,7 +10252,7 @@ if (isForced('RegExp', BASE_FORCED)) {
 
   RegExpPrototype.constructor = RegExpWrapper;
   RegExpWrapper.prototype = RegExpPrototype;
-  defineBuiltIn(global, 'RegExp', RegExpWrapper);
+  defineBuiltIn(global, 'RegExp', RegExpWrapper, { constructor: true });
 }
 
 // https://tc39.es/ecma262/#sec-get-regexp-@@species
@@ -12604,11 +12611,11 @@ if (DESCRIPTORS) {
       createNonEnumerableProperty(TypedArrayConstructorPrototype, TYPED_ARRAY_TAG, CONSTRUCTOR_NAME);
     }
 
+    var FORCED = TypedArrayConstructor != NativeTypedArrayConstructor;
+
     exported[CONSTRUCTOR_NAME] = TypedArrayConstructor;
 
-    $({
-      global: true, forced: TypedArrayConstructor != NativeTypedArrayConstructor, sham: !NATIVE_ARRAY_BUFFER_VIEWS
-    }, exported);
+    $({ global: true, constructor: true, forced: FORCED, sham: !NATIVE_ARRAY_BUFFER_VIEWS }, exported);
 
     if (!(BYTES_PER_ELEMENT in TypedArrayConstructor)) {
       createNonEnumerableProperty(TypedArrayConstructor, BYTES_PER_ELEMENT, BYTES);
@@ -14262,7 +14269,7 @@ var FORCED_CONSTRUCTOR = IS_PURE ? INCORRECT_TO_STRING || INCORRECT_CODE || MISS
 
 // `DOMException` constructor
 // https://webidl.spec.whatwg.org/#idl-DOMException
-$({ global: true, forced: FORCED_CONSTRUCTOR }, {
+$({ global: true, constructor: true, forced: FORCED_CONSTRUCTOR }, {
   DOMException: FORCED_CONSTRUCTOR ? $DOMException : NativeDOMException
 });
 
@@ -14382,7 +14389,7 @@ var FORCED_CONSTRUCTOR = ERROR_HAS_STACK && !DOM_EXCEPTION_HAS_STACK;
 
 // `DOMException` constructor patch for `.stack` where it's required
 // https://webidl.spec.whatwg.org/#es-DOMException-specialness
-$({ global: true, forced: IS_PURE || FORCED_CONSTRUCTOR }, { // TODO: fix export logic
+$({ global: true, constructor: true, forced: IS_PURE || FORCED_CONSTRUCTOR }, { // TODO: fix export logic
   DOMException: FORCED_CONSTRUCTOR ? $DOMException : NativeDOMException
 });
 
@@ -14547,30 +14554,42 @@ var checkBasicSemantic = function (structuredCloneImplementation) {
   }) && structuredCloneImplementation;
 };
 
+var checkErrorsCloning = function (structuredCloneImplementation) {
+  return !fails(function () {
+    var error = new Error();
+    var test = structuredCloneImplementation({ a: error, b: error });
+    return !(test && test.a === test.b && test.a instanceof Error);
+  });
+};
+
 // https://github.com/whatwg/html/pull/5749
-var checkNewErrorsSemantic = function (structuredCloneImplementation) {
+var checkNewErrorsCloningSemantic = function (structuredCloneImplementation) {
   return !fails(function () {
     var test = structuredCloneImplementation(new global.AggregateError([1], PERFORMANCE_MARK, { cause: 3 }));
     return test.name != 'AggregateError' || test.errors[0] != 1 || test.message != PERFORMANCE_MARK || test.cause != 3;
-  }) && structuredCloneImplementation;
+  });
 };
 
-// FF94+, Safari TP134+, Chrome Canary 98+, NodeJS 17.0+, Deno 1.13+
-// current FF and Safari implementations can't clone errors
+// FF94+, Safari 15.4+, Chrome 98+, NodeJS 17.0+, Deno 1.13+
+// FF and Safari implementations can't clone errors
 // https://bugzilla.mozilla.org/show_bug.cgi?id=1556604
+// Chrome <103 returns `null` if cloned object contains multiple references to one error
+// https://bugs.chromium.org/p/v8/issues/detail?id=12542
 // no one of current implementations supports new (html/5749) error cloning semantic
 var nativeStructuredClone = global.structuredClone;
 
-var FORCED_REPLACEMENT = IS_PURE || !checkNewErrorsSemantic(nativeStructuredClone);
+var FORCED_REPLACEMENT = IS_PURE || !checkErrorsCloning(nativeStructuredClone) || !checkNewErrorsCloningSemantic(nativeStructuredClone);
 
 // Chrome 82+, Safari 14.1+, Deno 1.11+
 // Chrome 78-81 implementation swaps `.name` and `.message` of cloned `DOMException`
+// Chrome returns `null` if cloned object contains multiple references to one error
 // Safari 14.1 implementation doesn't clone some `RegExp` flags, so requires a workaround
-// current Safari implementation can't clone errors
+// Safari implementation can't clone errors
 // Deno 1.2-1.10 implementations too naive
-// NodeJS 16.0+ does not have `PerformanceMark` constructor, structured cloning implementation
-//   from `performance.mark` is too naive and can't clone, for example, `RegExp` or some boxed primitives
-//   https://github.com/nodejs/node/issues/40840
+// NodeJS 16.0+ does not have `PerformanceMark` constructor
+// NodeJS <17.2 structured cloning implementation from `performance.mark` is too naive
+// and can't clone, for example, `RegExp` or some boxed primitives
+// https://github.com/nodejs/node/issues/40840
 // no one of current implementations supports new (html/5749) error cloning semantic
 var structuredCloneFromMark = !nativeStructuredClone && checkBasicSemantic(function (value) {
   return new PerformanceMark(PERFORMANCE_MARK, { detail: value }).detail;
@@ -16075,7 +16094,7 @@ if (NativeURL) {
 
 setToStringTag(URLConstructor, 'URL');
 
-$({ global: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS }, {
+$({ global: true, constructor: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS }, {
   URL: URLConstructor
 });
 
@@ -16653,7 +16672,7 @@ defineBuiltIn(URLSearchParamsPrototype, 'toString', function toString() {
 
 setToStringTag(URLSearchParamsConstructor, URL_SEARCH_PARAMS);
 
-$({ global: true, forced: !USE_NATIVE_URL }, {
+$({ global: true, constructor: true, forced: !USE_NATIVE_URL }, {
   URLSearchParams: URLSearchParamsConstructor
 });
 
@@ -16696,7 +16715,7 @@ if (!USE_NATIVE_URL && isCallable(Headers)) {
     RequestPrototype.constructor = RequestConstructor;
     RequestConstructor.prototype = RequestPrototype;
 
-    $({ global: true, forced: true, noTargetGet: true }, {
+    $({ global: true, constructor: true, noTargetGet: true, forced: true }, {
       Request: RequestConstructor
     });
   }
@@ -17943,10 +17962,12 @@ function hsl2rgb(h, m1, m2) {
 var _this = undefined;
 
 /* harmony default export */ var constant = ((function (x) {
+  var _this2 = this;
+
   _newArrowCheck(this, _this);
 
   return function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return x;
   }.bind(this);
@@ -18295,13 +18316,13 @@ function bisector(f) {
   if (f.length !== 2) {
     compare1 = ascending;
 
-    compare2 = function (d, x) {
+    compare2 = function compare2(d, x) {
       _newArrowCheck(this, _this);
 
       return ascending(f(d), x);
     }.bind(this);
 
-    delta = function (d, x) {
+    delta = function delta(d, x) {
       _newArrowCheck(this, _this);
 
       return f(d) - x;
@@ -19217,24 +19238,30 @@ function pow10(x) {
 }
 
 function powp(base) {
+  var _this = this;
+
   return base === 10 ? pow10 : base === Math.E ? Math.exp : function (x) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this);
 
     return Math.pow(base, x);
   }.bind(this);
 }
 
 function logp(base) {
+  var _this2 = this;
+
   return base === Math.E ? Math.log : base === 10 && Math.log10 || base === 2 && Math.log2 || (base = Math.log(base), function (x) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return Math.log(x) / base;
   }.bind(this));
 }
 
 function reflect(f) {
+  var _this3 = this;
+
   return function (x, k) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this3);
 
     return -f(-x, k);
   }.bind(this);
@@ -19316,6 +19343,8 @@ function loggish(transform) {
   }.bind(this);
 
   scale.tickFormat = function (count, specifier) {
+    var _this5 = this;
+
     _newArrowCheck(this, _this4);
 
     if (count == null) count = 10;
@@ -19330,7 +19359,7 @@ function loggish(transform) {
     var k = Math.max(1, base * count / scale.ticks().length); // TODO fast estimate?
 
     return function (d) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this5);
 
       var i = d / pows(Math.round(logs(d)));
       if (i * base < base - .5) i *= base;
@@ -19360,10 +19389,11 @@ function loggish(transform) {
   return scale;
 }
 function log() {
-  var scale = loggish(transformer()).domain([1, 10]);
+  var _this7 = this,
+      scale = loggish(transformer()).domain([1, 10]);
 
   scale.copy = function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this7);
 
     return copy(scale, log()).base(scale.base());
   }.bind(this);
@@ -21112,10 +21142,12 @@ function sleep(time) {
 
 
 /* harmony default export */ function src_timeout(callback, delay, time) {
-  var t = new Timer();
+  var _this = this,
+      t = new Timer();
+
   delay = delay == null ? 0 : +delay;
   t.restart(function (elapsed) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this);
 
     t.stop();
     callback(elapsed + delay);
@@ -22173,10 +22205,12 @@ src_selection.prototype.transition = selection_transition;
 var constant_this = undefined;
 
 /* harmony default export */ var d3_brush_src_constant = ((function (x) {
+  var _this2 = this;
+
   _newArrowCheck(this, constant_this);
 
   return function () {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return x;
   }.bind(this);
@@ -22536,6 +22570,8 @@ function brush_brush(dim) {
   };
 
   function started(event) {
+    var _this = this;
+
     if (touchending && !event.touches) return;
     if (!filter.apply(this, arguments)) return;
     var that = this,
@@ -22565,7 +22601,7 @@ function brush_brush(dim) {
         lockX,
         lockY,
         points = Array.from(event.touches || [event], function (t) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       var i = t.identifier;
       t = src_pointer(t, that);
@@ -23020,9 +23056,11 @@ function getOption(options, key, defaultValue) {
 
 
 function hasValue(dict, value) {
-  var found = !1;
+  var _this2 = this,
+      found = !1;
+
   Object.keys(dict).forEach(function (key) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return dict[key] === value && (found = !0);
   }.bind(this));
@@ -23055,7 +23093,8 @@ function callFn(fn, thisArg) {
 
 
 function endall(transition, cb) {
-  var n = 0,
+  var _this3 = this,
+      n = 0,
       end = function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
       args[_key2] = arguments[_key2];
@@ -23067,7 +23106,7 @@ function endall(transition, cb) {
   // if is transition selection
   if ("duration" in transition) {
     transition.each(function () {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this3);
 
       return ++n;
     }.bind(this)).on("end", end);
@@ -23209,10 +23248,11 @@ function getPathBox(path) {
 function getPointer(event, element) {
   var _ref,
       touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
-      pointer = src_pointer(touches || event, element);
+      pointer = src_pointer(touches || event, element),
+      _this5 = this;
 
   return pointer.map(function (v) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this5);
 
     return isNaN(v) ? 0 : v;
   }.bind(this));
@@ -23380,13 +23420,15 @@ function deepClone() {
 
 
 function util_extend(target, source) {
+  var _this7 = this;
+
   if (target === void 0) {
     target = {};
   }
 
   if (isArray(source)) {
     source.forEach(function (v) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this7);
 
       return util_extend(target, v);
     }.bind(this));
@@ -23426,12 +23468,14 @@ var capitalize = function (str) {
 
 
 function camelize(str, separator) {
+  var _this8 = this;
+
   if (separator === void 0) {
     separator = "-";
   }
 
   return str.split(separator).map(function (v, i) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this8);
 
     return i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase();
   }.bind(this)).join("");
@@ -23458,9 +23502,11 @@ var toArray = function (v) {
 
 
 function getCssRules(styleSheets) {
-  var rules = [];
+  var _this9 = this,
+      rules = [];
+
   styleSheets.forEach(function (sheet) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this9);
 
     try {
       if (sheet.cssRules && sheet.cssRules.length) {
@@ -23524,8 +23570,10 @@ function getUnique(data) {
 
 
 function mergeArray(arr) {
+  var _this11 = this;
+
   return arr && arr.length ? arr.reduce(function (p, c) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this11);
 
     return p.concat(c);
   }.bind(this)) : [];
@@ -23623,8 +23671,9 @@ function sortValue(data, isAsc) {
 
 
 function getMinMax(type, data) {
-  var res = data.filter(function (v) {
-    _newArrowCheck(this, this);
+  var _this14 = this,
+      res = data.filter(function (v) {
+    _newArrowCheck(this, _this14);
 
     return notEmpty(v);
   }.bind(this));
@@ -23806,7 +23855,8 @@ function isTabVisible() {
 
 
 function convertInputType(mouse, touch) {
-  var DocumentTouch = win.DocumentTouch,
+  var _this16 = this,
+      DocumentTouch = win.DocumentTouch,
       matchMedia = win.matchMedia,
       navigator = win.navigator,
       hasTouch = !1;
@@ -23834,7 +23884,7 @@ function convertInputType(mouse, touch) {
 
 
   var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this16);
 
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
   }.bind(this)); // fallback to 'mouse' if no input type is detected.
@@ -23962,8 +24012,10 @@ var Plugin = /*#__PURE__*/function () {
   ;
 
   _proto.$willDestroy = function $willDestroy() {
+    var _this = this;
+
     Object.keys(this).forEach(function (key) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this);
 
       this[key] = null;
       delete this[key];
@@ -23973,7 +24025,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220506004637";
+Plugin.version = "3.4.1-nightly-20220517004647";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
@@ -24345,10 +24397,12 @@ var Elements = /*#__PURE__*/function () {
 
       return stanford_classes.stanfordRegion + (d.class ? " " + d.class : "");
     }.bind(this)).select("polygon").transition().duration(duration).attr("points", function (d) {
+      var _this3 = this;
+
       _newArrowCheck(this, _this2);
 
       return d.points.map(function (value) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this3);
 
         return [isRotated ? yvCustom(value, "y") : xvCustom(value, "x"), isRotated ? xvCustom(value, "x") : yvCustom(value, "y")].join(",");
       }.bind(this)).join(" ");
@@ -24437,18 +24491,22 @@ function translateY(y) {
 }
 
 function axis_number(scale) {
+  var _this = this;
+
   return function (d) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this);
 
     return +scale(d);
   }.bind(this);
 }
 
 function center(scale, offset) {
+  var _this2 = this;
+
   offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
   if (scale.round()) offset = Math.round(offset);
   return function (d) {
-    _newArrowCheck(this, this);
+    _newArrowCheck(this, _this2);
 
     return +scale(d) + offset;
   }.bind(this);
@@ -24608,8 +24666,7 @@ var ColorScale = /*#__PURE__*/function () {
         target = $$.data.targets[0],
         height = $$.state.height - config.padding_bottom - config.padding_top,
         barWidth = config.scale_width,
-        barHeight = 5,
-        points = getRange(config.padding_bottom, height, barHeight),
+        points = getRange(config.padding_bottom, height, 5),
         inverseScale = sequential(target.colors).domain([points[points.length - 1], points[0]]);
 
     if (this.colorScale) {
@@ -24620,14 +24677,14 @@ var ColorScale = /*#__PURE__*/function () {
     this.colorScale.append("g").attr("transform", "translate(0, " + config.padding_top + ")").selectAll("bars").data(points).enter().append("rect").attr("y", function (d, i) {
       _newArrowCheck(this, _this);
 
-      return i * barHeight;
-    }.bind(this)).attr("x", 0).attr("width", barWidth).attr("height", barHeight).attr("fill", function (d) {
+      return i * 5;
+    }.bind(this)).attr("x", 0).attr("width", barWidth).attr("height", 5).attr("fill", function (d) {
       _newArrowCheck(this, _this);
 
       return inverseScale(d);
     }.bind(this)); // Legend Axis
 
-    var axisScale = log().domain([target.minEpochs, target.maxEpochs]).range([points[0] + config.padding_top + points[points.length - 1] + barHeight - 1, points[0] + config.padding_top]),
+    var axisScale = log().domain([target.minEpochs, target.maxEpochs]).range([points[0] + config.padding_top + points[points.length - 1] + 5 - 1, points[0] + config.padding_top]),
         legendAxis = axisRight(axisScale),
         scaleFormat = config.scale_format;
 
@@ -24855,13 +24912,17 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
   };
 
   _proto.convertData = function convertData() {
-    var data = this.$$.data.targets,
+    var _this3 = this,
+        data = this.$$.data.targets,
         epochs = this.options.epochs;
+
     data.forEach(function (d) {
-      _newArrowCheck(this, this);
+      var _this4 = this;
+
+      _newArrowCheck(this, _this3);
 
       d.values.forEach(function (v, i) {
-        _newArrowCheck(this, this);
+        _newArrowCheck(this, _this4);
 
         v.epochs = epochs[i];
       }.bind(this));
@@ -24896,14 +24957,16 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
   };
 
   _proto.initStanfordData = function initStanfordData() {
-    var config = this.config,
+    var _this5 = this,
+        config = this.config,
         target = this.$$.data.targets[0];
+
     // TODO STANFORD see if (data.js -> orderTargets)+ can be used instead
     // Make larger values appear on top
     target.values.sort(compareEpochs); // Get array of epochs
 
     var epochs = target.values.map(function (a) {
-      _newArrowCheck(this, this);
+      _newArrowCheck(this, _this5);
 
       return a.epochs;
     }.bind(this));
@@ -24923,10 +24986,12 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
 
     if (isEmpty(config.tooltip_contents)) {
       config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
-        var data_x = config.data_x,
+        var _this6 = this,
+            data_x = config.data_x,
             html = "<table class=\"" + $TOOLTIP.tooltip + "\"><tbody>";
+
         d.forEach(function (v) {
-          _newArrowCheck(this, this);
+          _newArrowCheck(this, _this6);
 
           var _v$id = v.id,
               id = _v$id === void 0 ? "" : _v$id,
@@ -24945,7 +25010,8 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
 
   _proto.countEpochsInRegion = function countEpochsInRegion(region) {
     var _this7 = this,
-        target = this.data.targets[0],
+        $$ = this,
+        target = $$.data.targets[0],
         total = target.values.reduce(function (accumulator, currentValue) {
       _newArrowCheck(this, _this7);
 
