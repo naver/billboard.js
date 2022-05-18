@@ -1193,7 +1193,7 @@ export interface SubchartOptions {
 				 * Use custom format for x axis ticks - see 'axis.x.tick.format' option for details.
 				 */
 				format?: string
-					| ((this: Chart, x: number | Date) => string | number)
+					| ((this: Chart, x: Date) => string | number)
 					| ((this: Chart, index: number, categoryName: string) => string);
 				/**
 				 * Show or hide x axis tick line.
@@ -1520,7 +1520,7 @@ export interface Data {
 	/**
 	 * Set custom data name.
 	 */
-	names?: { [key: string]: string };
+	names?: { [key: string]: string|null };
 	/**
 	 * Set custom data class.
 	 * If this option is specified, the element g for the data has an additional class that has the prefix billboard-target- (e.g. billboard-target-additional-data1-class).
