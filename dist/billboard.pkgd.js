@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220517004647
+ * @version 3.4.1-nightly-20220518004612
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -23596,6 +23596,7 @@ var data_this = undefined;
 
   /**
    * Set custom data name.
+   * If a name is set to `null`, the series is omitted from the legend.
    * @name data․names
    * @memberof Options
    * @type {object}
@@ -36261,7 +36262,7 @@ util_extend(api_data_data, {
    * @function data․names
    * @instance
    * @memberof Chart
-   * @param {object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
+   * @param {object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as [data.names](./Options.html#.data%25E2%2580%25A4names).
    * @returns {object} Corresponding names according its key value, if specified names values.
    * @example
    * // Get current names
@@ -51536,7 +51537,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220517004647",
+  version: "3.4.1-nightly-20220518004612",
 
   /**
    * Generate chart
@@ -51671,7 +51672,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220517004647
+ * @version 3.4.1-nightly-20220518004612
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
