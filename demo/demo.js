@@ -2578,7 +2578,7 @@ var demos = {
 							// select data points
 							d3.select(".bb-shapes-" + v.id + " .bb-circle-" + v.index)
 								.style("fill", "red")
-								.attr("r", "8");
+								.attr("stroke-width", "10");
 						});
 					},
 					onmax: function(data) {
@@ -2586,7 +2586,7 @@ var demos = {
 							// select data points
 							d3.select(".bb-shapes-" + v.id + " .bb-circle-" + v.index)
 								.style("fill", "green")
-								.attr("r", "8");
+								.attr("stroke-width", "10");
 						});
 					}
 				}
