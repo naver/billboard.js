@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220518004612
+ * @version 3.4.1-nightly-20220520004709
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -286,7 +286,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.4.1-nightly-20220518004612";
+    Plugin.version = "3.4.1-nightly-20220520004709";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -561,13 +561,21 @@ var Sparkline = /** @class */ (function (_super) {
         config.legend_show = false;
         config.resize_auto = false;
         config.axis_x_show = false;
-        config.axis_x_padding = {
-            left: 15,
-            right: 15,
-            unit: "px"
-        };
+        // set default axes padding
+        if (config.padding !== false) {
+            var hasOption = function (o) { return Object.keys(o || {}).length > 0; };
+            if (hasOption(config.axis_x_padding)) {
+                config.axis_x_padding = {
+                    left: 15,
+                    right: 15,
+                    unit: "px"
+                };
+            }
+            if (hasOption(config.axis_y_padding)) {
+                config.axis_y_padding = 5;
+            }
+        }
         config.axis_y_show = false;
-        config.axis_y_padding = 5;
         if (!config.tooltip_position) {
             config.tooltip_position = function (data, width, height) {
                 var event = this.internal.state.event;
@@ -584,14 +592,14 @@ var Sparkline = /** @class */ (function (_super) {
         }
     };
     Sparkline.prototype.$init = function () {
-        var $$ = this.$$;
-        var $el = $$.$el;
+        var _a;
+        var $el = this.$$.$el;
         // make disable-ish main chart element
         $el.chart
             .style("width", "0")
             .style("height", "0")
             .style("pointer-events", "none");
-        document.body.appendChild($el.tooltip.node());
+        ((_a = $el.tooltip) === null || _a === void 0 ? void 0 : _a.node()) && document.body.appendChild($el.tooltip.node());
     };
     Sparkline.prototype.$afterInit = function () {
         var $$ = this.$$;
@@ -608,7 +616,8 @@ var Sparkline = /** @class */ (function (_super) {
     Sparkline.prototype.bindEvents = function (bind) {
         var _this = this;
         if (bind === void 0) { bind = true; }
-        if (this.$$.config.interaction_enabled) {
+        var config = this.$$.config;
+        if (config.interaction_enabled && config.tooltip_show) {
             var method_1 = "".concat(bind ? "add" : "remove", "EventListener");
             this.element
                 .forEach(function (el) {

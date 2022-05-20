@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220518004612
+ * @version 3.4.1-nightly-20220520004709
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -385,7 +385,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220518004612";
+Plugin.version = "3.4.1-nightly-20220520004709";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**
@@ -1584,17 +1584,34 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
   };
 
   _proto.overrideOptions = function overrideOptions() {
-    var config = this.$$.config;
+    var _this2 = this,
+        config = this.$$.config;
+
     config.legend_show = !1;
     config.resize_auto = !1;
-    config.axis_x_show = !1;
-    config.axis_x_padding = {
-      left: 15,
-      right: 15,
-      unit: "px"
-    };
+    config.axis_x_show = !1; // set default axes padding
+
+    if (config.padding !== !1) {
+      var hasOption = function (o) {
+        _newArrowCheck(this, _this2);
+
+        return Object.keys(o || {}).length > 0;
+      }.bind(this);
+
+      if (hasOption(config.axis_x_padding)) {
+        config.axis_x_padding = {
+          left: 15,
+          right: 15,
+          unit: "px"
+        };
+      }
+
+      if (hasOption(config.axis_y_padding)) {
+        config.axis_y_padding = 5;
+      }
+    }
+
     config.axis_y_show = !1;
-    config.axis_y_padding = 5;
 
     if (!config.tooltip_position) {
       config.tooltip_position = function (data, width, height) {
@@ -1619,11 +1636,12 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
   };
 
   _proto.$init = function $init() {
-    var $$ = this.$$,
-        $el = $$.$el;
+    var _$el$tooltip,
+        $el = this.$$.$el;
+
     // make disable-ish main chart element
     $el.chart.style("width", "0").style("height", "0").style("pointer-events", "none");
-    document.body.appendChild($el.tooltip.node());
+    ((_$el$tooltip = $el.tooltip) == null ? void 0 : _$el$tooltip.node()) && document.body.appendChild($el.tooltip.node());
   };
 
   _proto.$afterInit = function $afterInit() {
@@ -1639,16 +1657,18 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
   ;
 
   _proto.bindEvents = function bindEvents(bind) {
-    var _this2 = this;
+    var _this3 = this;
 
     if (bind === void 0) {
       bind = !0;
     }
 
-    if (this.$$.config.interaction_enabled) {
+    var config = this.$$.config;
+
+    if (config.interaction_enabled && config.tooltip_show) {
       var method = (bind ? "add" : "remove") + "EventListener";
       this.element.forEach(function (el) {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this3);
 
         var svg = el.querySelector("svg");
         svg[method]("mouseover", this.overHandler);
@@ -1695,7 +1715,7 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
         el = this.element,
         data = $$.api.data(),
         svgWrapper = (_$el$chart$html$match = $el.chart.html().match(/<svg[^>]*>/)) == null ? void 0 : _$el$chart$html$match[0],
-        _this3 = this;
+        _this4 = this;
 
     // append sparkline holder if is less than the data length
     if (el.length < data.length) {
@@ -1710,11 +1730,11 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
     }
 
     data.map(function (v) {
-      _newArrowCheck(this, _this3);
+      _newArrowCheck(this, _this4);
 
       return v.id;
     }.bind(this)).forEach(function (id, i) {
-      _newArrowCheck(this, _this3);
+      _newArrowCheck(this, _this4);
 
       var selector = "." + $COMMON.target + "-" + id,
           shape = $el.main.selectAll(selector),
@@ -1737,11 +1757,11 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
   };
 
   _proto.$willDestroy = function $willDestroy() {
-    var _this4 = this;
+    var _this5 = this;
 
     this.bindEvents(!1);
     this.element.forEach(function (el) {
-      _newArrowCheck(this, _this4);
+      _newArrowCheck(this, _this5);
 
       el.innerHTML = "";
     }.bind(this));
