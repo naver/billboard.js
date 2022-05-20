@@ -1083,9 +1083,9 @@ export interface TooltipOptions {
 	contents?: ((
 		this: Chart,
 		data: any,
-		defaultTitleFormat: string,
-		defaultValueFormat: string,
-		color: any
+		defaultTitleFormat: (x: any) => string,
+		defaultValueFormat: (value: any, ratio: number|undefined, id: string) => number|string,
+		color: (d: any) => string
 	) => string) | {
 		/**
 		 * Set CSS selector or element reference to bind tooltip.
