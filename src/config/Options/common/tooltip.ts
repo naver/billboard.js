@@ -39,7 +39,7 @@ export default {
 	 *  - **Note:**
 	 *    - defaultTitleFormat:
 	 *      - if `axis.x.tick.format` option will be used if set.
-	 *      - otherwise, will return funciton based on tick format type(category, timeseries).
+	 *      - otherwise, will return function based on tick format type(category, timeseries).
 	 *    - defaultValueFormat:
 	 *	    - for Arc type (except gauge, radar), the function will return value from `(ratio * 100).toFixed(1)`.
 	 *	    - for Axis based types, will be used `axis.[y|y2].tick.format` option value if is set.

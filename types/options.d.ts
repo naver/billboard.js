@@ -8,7 +8,7 @@ import Bubblecompare from "./plugin/bubblecompare/index";
 import Stanford from "./plugin/stanford/index";
 import TextOverlap from "./plugin/textoverlap/index";
 import {Chart} from "./chart";
-import {IData} from "../src/ChartInternal/data/IData";
+import {IArcData, IData, IDataRow} from "../src/ChartInternal/data/IData";
 
 export interface ChartOptions {
 	/**
@@ -1082,10 +1082,10 @@ export interface TooltipOptions {
 	 */
 	contents?: ((
 		this: Chart,
-		data: any,
-		defaultTitleFormat: string,
-		defaultValueFormat: string,
-		color: any
+		data: IDataRow[],
+		defaultTitleFormat: (x: Date|number|string) => number|string,
+		defaultValueFormat: (value: number, ratio: number|undefined, id: string) => number|string,
+		color: (d: IDataRow|IArcData|string) => string
 	) => string) | {
 		/**
 		 * Set CSS selector or element reference to bind tooltip.
