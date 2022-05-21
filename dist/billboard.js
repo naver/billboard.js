@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220520004709
+ * @version 3.4.1-nightly-20220521004701
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -16891,9 +16891,11 @@ function smoothLines(el, type) {
 
     if ($$.axis) {
       var _$$$axis,
-          position = (_$$$axis = $$.axis) == null ? void 0 : _$$$axis.getLabelPositionById(id);
+          position = (_$$$axis = $$.axis) == null ? void 0 : _$$$axis.getLabelPositionById(id),
+          width = $$.axis.getMaxTickWidth(id, withoutRecompute),
+          gap = width === 0 ? .5 : 0;
 
-      return $$.axis.getMaxTickWidth(id, withoutRecompute) + (position.isInner ? 20 : 40);
+      return width + (position.isInner ? 20 + gap : 40);
     } else {
       return 40;
     }
@@ -25416,7 +25418,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220520004709",
+  version: "3.4.1-nightly-20220521004701",
 
   /**
    * Generate chart
@@ -25551,7 +25553,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220520004709
+ * @version 3.4.1-nightly-20220521004701
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
