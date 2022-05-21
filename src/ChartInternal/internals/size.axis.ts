@@ -25,9 +25,12 @@ export default {
 
 		if ($$.axis) {
 			const position = $$.axis?.getLabelPositionById(id);
+			const width = $$.axis.getMaxTickWidth(id, withoutRecompute);
+			const gap = width === 0 ? 0.5 : 0;
 
-			return $$.axis.getMaxTickWidth(id, withoutRecompute) +
-				(position.isInner ? 20 : 40);
+			return width + (
+				position.isInner ? (20 + gap) : 40
+			);
 		} else {
 			return 40;
 		}

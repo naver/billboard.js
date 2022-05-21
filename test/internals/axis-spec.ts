@@ -2537,6 +2537,33 @@ describe("AXIS", function() {
 				axisY.select(".tick:nth-child(12)").node().getBoundingClientRect().width
 			);
 		});
+
+		it("set option", () => {
+			args = {
+				data: {
+					columns: [
+						["data1"]
+					],
+					empty: {
+						label: {
+							text: "No data..."
+						}
+					},
+					type: "line"
+				},
+				axis: {
+					y: {
+						label: "Your Y Axis"
+					}
+				}
+			};
+		});
+
+		it("<clipPath> width shouldn't truncate y axis tick when has no data", () => {
+			const rect = chart.internal.$el.defs.selectAll("clipPath[id$='yaxis'] rect");
+
+			expect(+rect.attr("width")).to.be.equal(50);
+		});
 	});
 
 	describe("Axes tick culling", () => {
