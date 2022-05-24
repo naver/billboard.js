@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220521004701
+ * @version 3.4.1-nightly-20220524004734
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -2724,7 +2724,7 @@ var tooltip$2 = {
      *  - **Note:**
      *    - defaultTitleFormat:
      *      - if `axis.x.tick.format` option will be used if set.
-     *      - otherwise, will return funciton based on tick format type(category, timeseries).
+     *      - otherwise, will return function based on tick format type(category, timeseries).
      *    - defaultValueFormat:
      *	    - for Arc type (except gauge, radar), the function will return value from `(ratio * 100).toFixed(1)`.
      *	    - for Axis based types, will be used `axis.[y|y2].tick.format` option value if is set.
@@ -20758,7 +20758,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220521004701
+ * @version 3.4.1-nightly-20220524004734
  */
 var bb = {
     /**
@@ -20768,7 +20768,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220521004701",
+    version: "3.4.1-nightly-20220524004734",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

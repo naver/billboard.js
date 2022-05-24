@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220521004701
+ * @version 3.4.1-nightly-20220524004734
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3360,7 +3360,7 @@ var tooltip_this = undefined;
    *  - **Note:**
    *    - defaultTitleFormat:
    *      - if `axis.x.tick.format` option will be used if set.
-   *      - otherwise, will return funciton based on tick format type(category, timeseries).
+   *      - otherwise, will return function based on tick format type(category, timeseries).
    *    - defaultValueFormat:
    *	    - for Arc type (except gauge, radar), the function will return value from `(ratio * 100).toFixed(1)`.
    *	    - for Axis based types, will be used `axis.[y|y2].tick.format` option value if is set.
@@ -6075,6 +6075,7 @@ var color_this = undefined;
 
 
 
+
 /**
  * Set pattern's background color
  * (it adds a <rect> element to simulate bg-color)
@@ -6084,7 +6085,6 @@ var color_this = undefined;
  * @returns {{id: string, node: SVGPatternElement}}
  * @private
  */
-
 var colorizePattern = function (pattern, color, id) {
   _newArrowCheck(this, color_this);
 
@@ -6161,8 +6161,8 @@ var colorizePattern = function (pattern, color, id) {
     }
 
     return function (d) {
-      var _d$data,
-          id = d.id || ((_d$data = d.data) == null ? void 0 : _d$data.id) || d,
+      var _data,
+          id = d.id || ((_data = d.data) == null ? void 0 : _data.id) || d,
           isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !config.data_types[id],
           color;
 
@@ -25418,7 +25418,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220521004701",
+  version: "3.4.1-nightly-20220524004734",
 
   /**
    * Generate chart
@@ -25553,7 +25553,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220521004701
+ * @version 3.4.1-nightly-20220524004734
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
