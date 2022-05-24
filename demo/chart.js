@@ -286,6 +286,7 @@ code.data;
 			document.body.removeChild(textArea);
 		}
 	},
+
 	showCopyMsg: function() {
 		if (this.timer.btn) {
 			return;
@@ -302,6 +303,7 @@ code.data;
 			ctx.timer.btn = null;
 		}, 1000);
 	},
+
 	getLowerFirstCase: function(str) {
 		return /^(JSON)/.test(str) ?
 			str : str.charAt(0).toLowerCase() + str.slice(1);
@@ -359,9 +361,10 @@ code.data;
 			.replace("_plugins", "plugins")
 			.replace(new RegExp('"?'+ this.replacer.plugin +'"?', "g"), "");
 
-			if (/multiline/i.test(options.bindto)) {
+			if (/(polarChart|multiline)/i.test(options.bindto)) {
 				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
-					.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n");
+					.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n")
+					.replace('+"\\\\n"+', '+"\\n+"');
 			} else {
 				codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
 					.replace(/\\(u)/g, "\$1");

@@ -97,7 +97,7 @@ extend(data, {
 	 * @function data․names
 	 * @instance
 	 * @memberof Chart
-	 * @param {object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
+	 * @param {object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as [data.names](./Options.html#.data%25E2%2580%25A4names).
 	 * @returns {object} Corresponding names according its key value, if specified names values.
 	 * @example
 	 * // Get current names
@@ -110,7 +110,7 @@ extend(data, {
 	 *  data2: "New Name 2"
 	 *});
 	 */
-	names: function(names?: Array<{ [key: string]: string; }>): {[key: string]: string} {
+	names: function(names?: Array<{ [key: string]: string|null; }>): {[key: string]: string|null} {
 		const $$ = this.internal;
 
 		return $$.updateDataAttributes("names", names);

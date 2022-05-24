@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 import {expect} from "chai";
-import {$CIRCLE, $COMMON} from "../../../src/config/classes";
+import {$AREA, $CIRCLE, $COMMON} from "../../../src/config/classes";
 import Sparkline from "../../../src/Plugin/sparkline";
 import util from "../../assets/util";
 
@@ -22,6 +22,13 @@ describe("PLUGIN: SPARKLINE", () => {
 				["data2", 200, 130, 90],
 				["data3", 300, 200, 160]
 			],
+			types: {
+				data3: "area"
+			}
+		},
+		padding: {},
+		tooltip: {
+			show: true
 		},
 		plugins: [
 			new Sparkline({
@@ -80,7 +87,21 @@ describe("PLUGIN: SPARKLINE", () => {
 		}, chart);
 
 		expect(tooltip.style("display")).to.be.equal("none");
+	});
+	
+	it("set options", () => {
+		args.padding = false;
+		args.tooltip.show = false;
+	});
 
-		console.log(1);
-	})
+	it("check for the dimension & tooltip", () => {
+		const last = document.querySelectorAll(selector)[2];
+		const {width, height} = last.querySelector(`.${$AREA.areas} path`).getBoundingClientRect();
+
+		// chart element should occupy the whole dimension of given size
+		expect({width, height}).to.be.deep.equal(args.size);
+
+		// tooltip element shouldn't be added to the DOM
+		expect(chart.$.tooltip).to.be.null;
+	});
 });

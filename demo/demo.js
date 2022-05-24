@@ -613,8 +613,7 @@ var demos = {
 				polar: {
 					label: {
 						format: function(value, ratio, id) {
-							return `${value}\n(${(ratio * 100).toFixed(0)}%)`;
-						},
+ return value +"\n"+ (ratio * 100).toFixed(0) +"%"; },
 						ratio: 1.07
 					},
 					level:{
@@ -2579,7 +2578,7 @@ var demos = {
 							// select data points
 							d3.select(".bb-shapes-" + v.id + " .bb-circle-" + v.index)
 								.style("fill", "red")
-								.attr("r", "8");
+								.attr("stroke-width", "10");
 						});
 					},
 					onmax: function(data) {
@@ -2587,7 +2586,7 @@ var demos = {
 							// select data points
 							d3.select(".bb-shapes-" + v.id + " .bb-circle-" + v.index)
 								.style("fill", "green")
-								.attr("r", "8");
+								.attr("stroke-width", "10");
 						});
 					}
 				}

@@ -119,16 +119,26 @@ export default class Sparkline extends Plugin {
 
 		config.legend_show = false;
 		config.resize_auto = false;
-
 		config.axis_x_show = false;
-		config.axis_x_padding = {
-			left: 15,
-			right: 15,
-			unit: "px"
-		};
+
+		// set default axes padding
+		if (config.padding !== false) {
+			const hasOption = o => Object.keys(o || {}).length > 0;
+
+			if (hasOption(config.axis_x_padding)) {
+				config.axis_x_padding = {
+					left: 15,
+					right: 15,
+					unit: "px"
+				};
+			}
+
+			if (hasOption(config.axis_y_padding)) {
+				config.axis_y_padding = 5;
+			}
+		}
 
 		config.axis_y_show = false;
-		config.axis_y_padding = 5;
 
 		if (!config.tooltip_position) {
 			config.tooltip_position = function(data, width, height) {
@@ -150,8 +160,7 @@ export default class Sparkline extends Plugin {
 	}
 
 	$init(): void {
-		const {$$} = this;
-		const {$el} = $$;
+		const {$$: {$el}} = this;
 
 		// make disable-ish main chart element
 		$el.chart
@@ -159,7 +168,7 @@ export default class Sparkline extends Plugin {
 			.style("height", "0")
 			.style("pointer-events", "none");
 
-		document.body.appendChild($el.tooltip.node());
+		$el.tooltip?.node() && document.body.appendChild($el.tooltip.node());
 	}
 
 	$afterInit(): void {
@@ -178,7 +187,9 @@ export default class Sparkline extends Plugin {
 	 * @private
 	 */
 	bindEvents(bind = true): void {
-		if (this.$$.config.interaction_enabled) {
+		const {$$: {config}} = this;
+
+		if (config.interaction_enabled && config.tooltip_show) {
 			const method = `${bind ? "add" : "remove"}EventListener`;
 
 			this.element

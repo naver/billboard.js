@@ -8,6 +8,7 @@ import {document, window} from "../../module/browser";
 import {$ARC, $COLOR, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {notEmpty, isFunction, isObject, isString} from "../../module/util";
+import {IArcData, IDataRow} from "../data/IData";
 
 /**
  * Set pattern's background color
@@ -103,8 +104,8 @@ export default {
 			$$.patterns = colorizedPatterns;
 		}
 
-		return function(d) {
-			const id: string = d.id || d.data?.id || d;
+		return function(d: IDataRow | IArcData | string): string {
+			const id: string = (d as IDataRow).id || (d as IArcData).data?.id || d as string;
 			const isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !config.data_types[id];
 			let color;
 

@@ -702,7 +702,9 @@ function parseDate(date: Date | string | number | any): Date {
 	} else if (isString(date)) {
 		const {config, format} = this;
 
-		parsedDate = format.dataTime(config.data_xFormat)(date);
+		// if fails to parse, try by new Date()
+		// https://github.com/naver/billboard.js/issues/1714
+		parsedDate = format.dataTime(config.data_xFormat)(date) ?? new Date(date);
 	} else if (isNumber(date) && !isNaN(date)) {
 		parsedDate = new Date(+date);
 	}
@@ -721,7 +723,7 @@ function parseDate(date: Date | string | number | any): Date {
  * @private
  */
 function isTabVisible(): boolean {
-	return !document.hidden;
+	return document?.hidden === false || document?.visibilityState === "visible";
 }
 
 /**
@@ -766,5 +768,6 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
 	const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"]
 		.some(v => matchMedia?.(`(${v})`).matches);
 
-	return (hasMouse && "mouse") || (hasTouch && "touch") || null;
+	// fallback to 'mouse' if no input type is detected.
+	return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
 }

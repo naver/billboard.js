@@ -25,3 +25,7 @@ updates:
       - dependency-name: "d3-zoom"
       - dependency-name: "d3-format"
       - dependency-name: "d3-polygon"
+  - package-ecosystem: github-actions 
+    directory: "/"
+    schedule:
+        interval: "weekly"
