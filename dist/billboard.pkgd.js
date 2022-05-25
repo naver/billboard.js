@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220524004734
+ * @version 3.4.1-nightly-20220525004703
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -1129,10 +1129,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.22.6',
+  version: '3.22.7',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.22.6/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.22.7/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -1418,11 +1418,12 @@ var makeBuiltIn = module.exports = function (value, name, options) {
   if (CONFIGURABLE_LENGTH && options && hasOwn(options, 'arity') && value.length !== options.arity) {
     defineProperty(value, 'length', { value: options.arity });
   }
-  if (options && hasOwn(options, 'constructor') && options.constructor) {
-    if (DESCRIPTORS) try {
-      defineProperty(value, 'prototype', { writable: false });
-    } catch (error) { /* empty */ }
-  } else value.prototype = undefined;
+  try {
+    if (options && hasOwn(options, 'constructor') && options.constructor) {
+      if (DESCRIPTORS) defineProperty(value, 'prototype', { writable: false });
+    // in V8 ~ Chrome 53, prototypes of some methods, like `Array.prototype.values`, are non-writable
+    } else if (value.prototype) value.prototype = undefined;
+  } catch (error) { /* empty */ }
   var state = enforceInternalState(value);
   if (!hasOwn(state, 'source')) {
     state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
@@ -51556,7 +51557,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220524004734",
+  version: "3.4.1-nightly-20220525004703",
 
   /**
    * Generate chart
@@ -51691,7 +51692,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220524004734
+ * @version 3.4.1-nightly-20220525004703
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
