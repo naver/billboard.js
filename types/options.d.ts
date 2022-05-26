@@ -1613,7 +1613,12 @@ export interface Data {
 				 */
 				y?: number;
 			};
-		}
+		};
+
+		/**
+		 * Rotate label text. Specify degree value in a range of `0 ~ 360`.
+		 */
+		rotate?: number;
 	};
 
 	/**

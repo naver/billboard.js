@@ -12,6 +12,70 @@ import {capitalize, getBoundingRect, getRandom, isFunction, isNumber, isObject, 
 import {IDataRow, IArcData} from "../data/IData";
 import {AxisType} from "../../../types/types";
 
+type Coord = {x: number, y: number};
+type Anchor = "start" | "middle" | "end";
+
+/**
+ * Get text-anchor according text.labels.rotate angle
+ * @param {number} angle Angle value
+ * @returns {string} Anchor string value
+ * @private
+ */
+function getRotateAnchor(angle: number): Anchor {
+	let anchor: Anchor = "middle";
+
+	if (angle > 0 && angle <= 170) {
+		anchor = "end";
+	} else if (angle > 190 && angle <= 360) {
+		anchor = "start";
+	}
+
+	return anchor;
+}
+
+/**
+ * Set rotated position coordinate according text.labels.rotate angle
+ * @param {number} value Data value
+ * @param {object} pos Position object
+ * @param {object} pos.x x coordinate
+ * @param {object} pos.y y coordinate
+ * @param {string} anchor string value
+ * @param {boolean} isRotated If axis is rotated
+ * @returns {object} x, y coordinate
+ * @private
+ */
+function setRotatePos(value: number, pos: Coord, anchor: Anchor, isRotated: boolean): Coord {
+	let {x, y} = pos;
+	const isNegative = value < 0;
+	const gap = 4;
+	const doubleGap = gap * 2;
+
+	if (isRotated) {
+		if (anchor === "start") {
+			x += isNegative ? 0 : doubleGap;
+			y += gap;
+		} else if (anchor === "middle") {
+			x += doubleGap;
+			y -= doubleGap;
+		} else if (anchor === "end") {
+			isNegative && (x -= doubleGap);
+			y += gap;
+		}
+	} else {
+		if (anchor === "start") {
+			x += gap;
+			isNegative && (y += doubleGap * 2);
+		} else if (anchor === "middle") {
+			y -= doubleGap;
+		} else if (anchor === "end") {
+			x -= gap;
+			isNegative && (y += doubleGap * 2);
+		}
+	}
+
+	return {x, y};
+}
+
 export default {
 	opacityForText(d): null | "0" {
 		const $$ = this;
@@ -171,34 +235,45 @@ export default {
 
 	/**
 	 * Redraw chartText
-	 * @param {Function} x Positioning function for x
-	 * @param {Function} y Positioning function for y
+	 * @param {Function} getX Positioning function for x
+	 * @param {Function} getY Positioning function for y
 	 * @param {boolean} forFlow Weather is flow
 	 * @param {boolean} withTransition transition is enabled
 	 * @returns {Array}
 	 * @private
 	 */
-	redrawText(x, y, forFlow?: boolean, withTransition?: boolean): true {
+	redrawText(getX, getY, forFlow?: boolean, withTransition?: boolean): true {
 		const $$ = this;
-		const {$T} = $$;
+		const {$T, config} = $$;
 		const t = <string>getRandom(true);
+		const isRotated = config.axis_rotated;
+		const angle = config.data_labels.rotate;
+
+		const anchorString = getRotateAnchor(angle);
+		const rotateString = angle ? `rotate(${angle})` : "";
 
 		$$.$el.text
 			.style("fill", $$.updateTextColor.bind($$))
 			.attr("filter", $$.updateTextBacgroundColor.bind($$))
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
-			.each(function(d, i) {
+			.each(function(d: IDataRow, i: number) {
 				// do not apply transition for newly added text elements
 				const node = $T(this, !!(withTransition && this.getAttribute("x")), t);
+				let pos = {
+					x: getX.bind(this)(d, i),
+					y: getY.bind(this)(d, i)
+				};
 
-				const posX = x.bind(this)(d, i);
-				const posY = y.bind(this)(d, i);
+				if (angle) {
+					pos = setRotatePos(d.value, pos, anchorString, isRotated);
+					node.attr("text-anchor", anchorString);
+				}
 
 				// when is multiline
-				if (this.childElementCount) {
-					node.attr("transform", `translate(${posX} ${posY})`);
+				if (this.childElementCount || angle) {
+					node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
 				} else {
-					node.attr("x", posX).attr("y", posY);
+					node.attr("x", pos.x).attr("y", pos.y);
 				}
 			});
 
