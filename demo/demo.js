@@ -2503,6 +2503,24 @@ var demos = {
 				}
 			},
 		],
+		DataLabelRotate: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, -200, -100, 400, 150, 250]
+					],
+					type: "bar",
+					labels: {
+						rotate: 90
+					}
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			}
+		},
 		DataSelection: {
 			options: {
 				data: {
