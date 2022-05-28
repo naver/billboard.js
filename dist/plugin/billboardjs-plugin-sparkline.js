@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220525004703
+ * @version 3.4.1-nightly-20220528004655
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -106,11 +106,10 @@ function _assertThisInitialized(self) {
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
 function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
     o.__proto__ = p;
     return o;
   };
-
   return _setPrototypeOf(o, p);
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
@@ -385,7 +384,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220525004703";
+Plugin.version = "3.4.1-nightly-20220528004655";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220525004703
+ * @version 3.4.1-nightly-20220528004655
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -23881,6 +23881,8 @@ var data_this = undefined;
    * @property {object} [data.labels.position] Set each dataset position, relative the original.
    * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
    * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
+   * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
+   * - **NOTE:** Depend on rotate value, text position need to be adjusted manually(using `data.labels.position` option) to be shown nicely.
    * @memberof Options
    * @type {object}
    * @default {}
@@ -23890,6 +23892,7 @@ var data_this = undefined;
    * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
    * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
    * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+   * @see [Demo: label rotate](https://naver.github.io/billboard.js/demo/#Data.DataLabelRotate)
    * @example
    * data: {
    *   labels: true,
@@ -23948,7 +23951,10 @@ var data_this = undefined;
    *     position: {
    *        data1: {x: 5, y: 5},
    *        data2: {x: 10, y: -20}
-   *     }
+   *     },
+   *
+   *	   // rotate degree for label text
+   *     rotate: 90
    *   }
    * }
    */
@@ -27931,11 +27937,10 @@ function _assertThisInitialized(self) {
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
 function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
     o.__proto__ = p;
     return o;
   };
-
   return _setPrototypeOf(o, p);
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
@@ -27947,7 +27952,7 @@ function _inheritsLoose(subClass, superClass) {
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/getPrototypeOf.js
 function _getPrototypeOf(o) {
-  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) {
     return o.__proto__ || Object.getPrototypeOf(o);
   };
   return _getPrototypeOf(o);
@@ -27974,7 +27979,7 @@ function _isNativeReflectConstruct() {
 
 function _construct(Parent, args, Class) {
   if (_isNativeReflectConstruct()) {
-    _construct = Reflect.construct;
+    _construct = Reflect.construct.bind();
   } else {
     _construct = function _construct(Parent, args, Class) {
       var a = [null];
@@ -33662,6 +33667,71 @@ function stepAfter(context) {
 
 
 
+
+/**
+ * Get text-anchor according text.labels.rotate angle
+ * @param {number} angle Angle value
+ * @returns {string} Anchor string value
+ * @private
+ */
+function getRotateAnchor(angle) {
+  var anchor = "middle";
+
+  if (angle > 0 && angle <= 170) {
+    anchor = "end";
+  } else if (angle > 190 && angle <= 360) {
+    anchor = "start";
+  }
+
+  return anchor;
+}
+/**
+ * Set rotated position coordinate according text.labels.rotate angle
+ * @param {number} value Data value
+ * @param {object} pos Position object
+ * @param {object} pos.x x coordinate
+ * @param {object} pos.y y coordinate
+ * @param {string} anchor string value
+ * @param {boolean} isRotated If axis is rotated
+ * @returns {object} x, y coordinate
+ * @private
+ */
+
+
+function setRotatePos(value, pos, anchor, isRotated) {
+  var x = pos.x,
+      y = pos.y,
+      isNegative = value < 0;
+
+  if (isRotated) {
+    if (anchor === "start") {
+      x += isNegative ? 0 : 8;
+      y += 4;
+    } else if (anchor === "middle") {
+      x += 8;
+      y -= 8;
+    } else if (anchor === "end") {
+      isNegative && (x -= 8);
+      y += 4;
+    }
+  } else {
+    if (anchor === "start") {
+      x += 4;
+      isNegative && (y += 16);
+    } else if (anchor === "middle") {
+      y -= 8;
+    } else if (anchor === "end") {
+      x -= 4;
+      isNegative && (y += 16);
+    }
+  }
+
+  return {
+    x: x,
+    y: y
+  };
+}
+
 /* harmony default export */ var internals_text = ({
   opacityForText: function opacityForText(d) {
     var $$ = this;
@@ -33804,28 +33874,40 @@ function stepAfter(context) {
 
   /**
    * Redraw chartText
-   * @param {Function} x Positioning function for x
-   * @param {Function} y Positioning function for y
+   * @param {Function} getX Positioning function for x
+   * @param {Function} getY Positioning function for y
    * @param {boolean} forFlow Weather is flow
    * @param {boolean} withTransition transition is enabled
    * @returns {Array}
    * @private
    */
-  redrawText: function redrawText(x, y, forFlow, withTransition) {
+  redrawText: function redrawText(getX, getY, forFlow, withTransition) {
     var $$ = this,
         $T = $$.$T,
-        t = getRandom(!0);
+        config = $$.config,
+        t = getRandom(!0),
+        isRotated = config.axis_rotated,
+        angle = config.data_labels.rotate,
+        anchorString = getRotateAnchor(angle),
+        rotateString = angle ? "rotate(" + angle + ")" : "";
     $$.$el.text.style("fill", $$.updateTextColor.bind($$)).attr("filter", $$.updateTextBacgroundColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
       // do not apply transition for newly added text elements
       var node = $T(this, !!(withTransition && this.getAttribute("x")), t),
-          posX = x.bind(this)(d, i),
-          posY = y.bind(this)(d, i);
+          pos = {
+        x: getX.bind(this)(d, i),
+        y: getY.bind(this)(d, i)
+      };
 
-      // when is multiline
-      if (this.childElementCount) {
-        node.attr("transform", "translate(" + posX + " " + posY + ")");
+      if (angle) {
+        pos = setRotatePos(d.value, pos, anchorString, isRotated);
+        node.attr("text-anchor", anchorString);
+      } // when is multiline
+
+
+      if (this.childElementCount || angle) {
+        node.attr("transform", "translate(" + pos.x + " " + pos.y + ") " + rotateString);
       } else {
-        node.attr("x", posX).attr("y", posY);
+        node.attr("x", pos.x).attr("y", pos.y);
       }
     }); // need to return 'true' as of being pushed to the redraw list
     // ref: getRedrawList()
@@ -51557,7 +51639,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220525004703",
+  version: "3.4.1-nightly-20220528004655",
 
   /**
    * Generate chart
@@ -51692,7 +51774,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220525004703
+ * @version 3.4.1-nightly-20220528004655
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
@@ -51723,7 +51805,21 @@ Object.keys(resolver_interaction_namespaceObject).forEach(function (v) {
 /* 484 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = __webpack_require__(485)();
+// TODO(Babel 8): Remove this file.
+
+var runtime = __webpack_require__(485)();
+module.exports = runtime;
+
+// Copied from https://github.com/facebook/regenerator/blob/main/packages/runtime/runtime.js#L736=
+try {
+  regeneratorRuntime = runtime;
+} catch (accidentalStrictMode) {
+  if (typeof globalThis === "object") {
+    globalThis.regeneratorRuntime = runtime;
+  } else {
+    Function("r", "regeneratorRuntime = r")(runtime);
+  }
+}
 
 
 /***/ }),

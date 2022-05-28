@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220525004703
+ * @version 3.4.1-nightly-20220528004655
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1886,6 +1886,8 @@ var data$2 = {
      * @property {object} [data.labels.position] Set each dataset position, relative the original.
      * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
      * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
+     * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
+     * - **NOTE:** Depend on rotate value, text position need to be adjusted manually(using `data.labels.position` option) to be shown nicely.
      * @memberof Options
      * @type {object}
      * @default {}
@@ -1895,6 +1897,7 @@ var data$2 = {
      * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
      * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
      * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+     * @see [Demo: label rotate](https://naver.github.io/billboard.js/demo/#Data.DataLabelRotate)
      * @example
      * data: {
      *   labels: true,
@@ -1953,7 +1956,10 @@ var data$2 = {
      *     position: {
      *        data1: {x: 5, y: 5},
      *        data2: {x: 10, y: -20}
-     *     }
+     *     },
+     *
+     *	   // rotate degree for label text
+     *     rotate: 90
      *   }
      * }
      */
@@ -6976,6 +6982,67 @@ var size = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/**
+ * Get text-anchor according text.labels.rotate angle
+ * @param {number} angle Angle value
+ * @returns {string} Anchor string value
+ * @private
+ */
+function getRotateAnchor(angle) {
+    var anchor = "middle";
+    if (angle > 0 && angle <= 170) {
+        anchor = "end";
+    }
+    else if (angle > 190 && angle <= 360) {
+        anchor = "start";
+    }
+    return anchor;
+}
+/**
+ * Set rotated position coordinate according text.labels.rotate angle
+ * @param {number} value Data value
+ * @param {object} pos Position object
+ * @param {object} pos.x x coordinate
+ * @param {object} pos.y y coordinate
+ * @param {string} anchor string value
+ * @param {boolean} isRotated If axis is rotated
+ * @returns {object} x, y coordinate
+ * @private
+ */
+function setRotatePos(value, pos, anchor, isRotated) {
+    var x = pos.x, y = pos.y;
+    var isNegative = value < 0;
+    var gap = 4;
+    var doubleGap = gap * 2;
+    if (isRotated) {
+        if (anchor === "start") {
+            x += isNegative ? 0 : doubleGap;
+            y += gap;
+        }
+        else if (anchor === "middle") {
+            x += doubleGap;
+            y -= doubleGap;
+        }
+        else if (anchor === "end") {
+            isNegative && (x -= doubleGap);
+            y += gap;
+        }
+    }
+    else {
+        if (anchor === "start") {
+            x += gap;
+            isNegative && (y += doubleGap * 2);
+        }
+        else if (anchor === "middle") {
+            y -= doubleGap;
+        }
+        else if (anchor === "end") {
+            x -= gap;
+            isNegative && (y += doubleGap * 2);
+        }
+    }
+    return { x: x, y: y };
+}
 var text = {
     opacityForText: function (d) {
         var $$ = this;
@@ -7107,17 +7174,21 @@ var text = {
     },
     /**
      * Redraw chartText
-     * @param {Function} x Positioning function for x
-     * @param {Function} y Positioning function for y
+     * @param {Function} getX Positioning function for x
+     * @param {Function} getY Positioning function for y
      * @param {boolean} forFlow Weather is flow
      * @param {boolean} withTransition transition is enabled
      * @returns {Array}
      * @private
      */
-    redrawText: function (x, y, forFlow, withTransition) {
+    redrawText: function (getX, getY, forFlow, withTransition) {
         var $$ = this;
-        var $T = $$.$T;
+        var $T = $$.$T, config = $$.config;
         var t = getRandom(true);
+        var isRotated = config.axis_rotated;
+        var angle = config.data_labels.rotate;
+        var anchorString = getRotateAnchor(angle);
+        var rotateString = angle ? "rotate(".concat(angle, ")") : "";
         $$.$el.text
             .style("fill", $$.updateTextColor.bind($$))
             .attr("filter", $$.updateTextBacgroundColor.bind($$))
@@ -7125,14 +7196,20 @@ var text = {
             .each(function (d, i) {
             // do not apply transition for newly added text elements
             var node = $T(this, !!(withTransition && this.getAttribute("x")), t);
-            var posX = x.bind(this)(d, i);
-            var posY = y.bind(this)(d, i);
+            var pos = {
+                x: getX.bind(this)(d, i),
+                y: getY.bind(this)(d, i)
+            };
+            if (angle) {
+                pos = setRotatePos(d.value, pos, anchorString, isRotated);
+                node.attr("text-anchor", anchorString);
+            }
             // when is multiline
-            if (this.childElementCount) {
-                node.attr("transform", "translate(".concat(posX, " ").concat(posY, ")"));
+            if (this.childElementCount || angle) {
+                node.attr("transform", "translate(".concat(pos.x, " ").concat(pos.y, ") ").concat(rotateString));
             }
             else {
-                node.attr("x", posX).attr("y", posY);
+                node.attr("x", pos.x).attr("y", pos.y);
             }
         });
         // need to return 'true' as of being pushed to the redraw list
@@ -20758,7 +20835,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220525004703
+ * @version 3.4.1-nightly-20220528004655
  */
 var bb = {
     /**
@@ -20768,7 +20845,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220525004703",
+    version: "3.4.1-nightly-20220528004655",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
