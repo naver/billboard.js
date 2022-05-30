@@ -1343,7 +1343,7 @@ describe("TEXT", () => {
 				const expectedY = [390, 321];
 
 				chart.$.text.texts.each(function(d, i) {
-					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 1);
+					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 2);
 				});
 			});
 
@@ -1356,7 +1356,7 @@ describe("TEXT", () => {
 				const expectedY = [394, 42];
 
 				chart.$.text.texts.each(function(d, i) {
-					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 1);
+					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 2);
 				});
 			});
 
@@ -1368,7 +1368,7 @@ describe("TEXT", () => {
 				const expectedY = [389, 44];
 
 				chart.$.text.texts.each(function(d, i) {
-					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 1);
+					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 2);
 				});
 			});
 
@@ -1382,7 +1382,7 @@ describe("TEXT", () => {
 				chart.$.text.texts.each(function(d, i) {
 					const y = +this.getAttribute("transform").match(/\s(\d+\.\d+)/)[1];
 
-					expect(y).to.be.closeTo(expectedY[i], 1);
+					expect(y).to.be.closeTo(expectedY[i], 2);
 				});
 			});
 
@@ -1396,7 +1396,7 @@ describe("TEXT", () => {
 				chart.$.text.texts.each(function(d, i) {
 					const y = +this.getAttribute("transform").match(/\s(\d+\.\d+)/)[1];
 
-					expect(y).to.be.closeTo(expectedY[i], 1);
+					expect(y).to.be.closeTo(expectedY[i], 2);
 				});
 			});
 		});
