@@ -1315,6 +1315,92 @@ describe("TEXT", () => {
 			});
 		});
 
+		describe("Labels' postion on inverted axis", () => {
+			before(() => {
+				args = {
+					data: {
+					  columns: [
+						  ["data1",
+							  [1027, 1369, 1289, 1348],
+							  [1348, 1371, 1314, 1320],
+							]
+				  
+					  ],
+					  type: "candlestick",
+					  labels: {
+						  rotate: 0
+					  },
+					},
+					axis: {
+					  y: {
+						  inverted: true
+					  }
+					}
+				};
+			});
+
+			it("check for candlestick type", () => {
+				const expectedY = [390, 321];
+
+				chart.$.text.texts.each(function(d, i) {
+					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 1);
+				});
+			});
+
+			it("set options", () => {
+				args.data.columns = [["data1", 90, -100]];
+				args.data.type = "line";
+			});
+
+			it("check for line type", () => {
+				const expectedY = [394, 42];
+
+				chart.$.text.texts.each(function(d, i) {
+					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 1);
+				});
+			});
+
+			it("set options: data.type='bar'", () => {
+				args.data.type = "bar";
+			});
+
+			it("check for bar type", () => {
+				const expectedY = [389, 44];
+
+				chart.$.text.texts.each(function(d, i) {
+					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 1);
+				});
+			});
+
+			it("set options: data.labels.rotate = 270", () => {
+				args.data.labels.rotate = 270;
+			});
+
+			it("check for bar type with rotate option", () => {
+				const expectedY = [396, 43];
+
+				chart.$.text.texts.each(function(d, i) {
+					const y = +this.getAttribute("transform").match(/\s(\d+\.\d+)/)[1];
+
+					expect(y).to.be.closeTo(expectedY[i], 1);
+				});
+			});
+
+			it("set options: data.type = 'line'", () => {
+				args.data.type = "line";
+			});
+
+			it("check for line type with rotate option", () => {
+				const expectedY = [401, 41];
+
+				chart.$.text.texts.each(function(d, i) {
+					const y = +this.getAttribute("transform").match(/\s(\d+\.\d+)/)[1];
+
+					expect(y).to.be.closeTo(expectedY[i], 1);
+				});
+			});
+		});
+
 		describe("labels.colors callback", () => {
 			let ctx = [];
 
