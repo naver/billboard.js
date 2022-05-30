@@ -35,18 +35,27 @@ function getRotateAnchor(angle: number): Anchor {
 
 /**
  * Set rotated position coordinate according text.labels.rotate angle
- * @param {number} value Data value
+ * @param {object} d Data object
  * @param {object} pos Position object
  * @param {object} pos.x x coordinate
  * @param {object} pos.y y coordinate
  * @param {string} anchor string value
  * @param {boolean} isRotated If axis is rotated
+ * @param {boolean} isInverted If axis is inverted
  * @returns {object} x, y coordinate
  * @private
  */
-function setRotatePos(value: number, pos: Coord, anchor: Anchor, isRotated: boolean): Coord {
+function setRotatePos(
+	d: IDataRow, pos: Coord, anchor: Anchor, isRotated: boolean, isInverted: boolean
+): Coord {
+	const $$ = this;
+	const {value} = d;
+	const isCandlestickType = $$.isCandlestickType(d);
+	const isNegative = value < 0 || (
+		isCandlestickType && !$$.getCandlestickData(d)?._isUp
+	);
+
 	let {x, y} = pos;
-	const isNegative = value < 0;
 	const gap = 4;
 	const doubleGap = gap * 2;
 
@@ -70,6 +79,10 @@ function setRotatePos(value: number, pos: Coord, anchor: Anchor, isRotated: bool
 		} else if (anchor === "end") {
 			x -= gap;
 			isNegative && (y += doubleGap * 2);
+		}
+
+		if (isInverted) {
+			y += isNegative ? -17 : (isCandlestickType ? 13 : 7);
 		}
 	}
 
@@ -244,7 +257,7 @@ export default {
 	 */
 	redrawText(getX, getY, forFlow?: boolean, withTransition?: boolean): true {
 		const $$ = this;
-		const {$T, config} = $$;
+		const {$T, axis, config} = $$;
 		const t = <string>getRandom(true);
 		const isRotated = config.axis_rotated;
 		const angle = config.data_labels.rotate;
@@ -259,13 +272,14 @@ export default {
 			.each(function(d: IDataRow, i: number) {
 				// do not apply transition for newly added text elements
 				const node = $T(this, !!(withTransition && this.getAttribute("x")), t);
+				const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
 				let pos = {
 					x: getX.bind(this)(d, i),
 					y: getY.bind(this)(d, i)
 				};
 
 				if (angle) {
-					pos = setRotatePos(d.value, pos, anchorString, isRotated);
+					pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
 					node.attr("text-anchor", anchorString);
 				}
 
@@ -413,7 +427,6 @@ export default {
 		const isRotated = config.axis_rotated;
 		let xPos = points[0][0];
 
-
 		if ($$.isCandlestickType(d)) {
 			if (isRotated) {
 				xPos = $$.getCandlestickData(d)?._isUp ?
@@ -459,8 +472,10 @@ export default {
 	 */
 	getYForText(points, d, textElement): number {
 		const $$ = this;
-		const {config, state} = $$;
+		const {axis, config, state} = $$;
 		const isRotated = config.axis_rotated;
+		const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
+		const isBarType = $$.isBarType(d);
 		const r = config.point_r;
 		const rect = getBoundingRect(textElement);
 		let {value} = d;
@@ -477,6 +492,10 @@ export default {
 				yPos = value && value._isUp ?
 					points[2][2] - baseY :
 					points[2][1] + (baseY * 4);
+
+				if (isInverted) {
+					yPos += 15 * (value._isUp ? 1 : -1);
+				}
 			}
 		} else {
 			if (isRotated) {
@@ -489,14 +508,20 @@ export default {
 				}
 
 				if (value < 0 || (value === 0 && !state.hasPositiveValue && state.hasNegativeValue)) {
-					yPos += rect.height + ($$.isBarType(d) ? -baseY : baseY);
+					yPos += isInverted ? (isBarType ? -3 : -5) : (
+						rect.height + (isBarType ? -baseY : baseY)
+					);
 				} else {
 					let diff = -baseY * 2;
 
-					if ($$.isBarType(d)) {
+					if (isBarType) {
 						diff = -baseY;
 					} else if ($$.isBubbleType(d)) {
 						diff = baseY;
+					}
+
+					if (isInverted) {
+						diff = isBarType ? 10 : 15;
 					}
 
 					yPos += diff;
