@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220528004655
+ * @version 3.4.1-nightly-20220531004641
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -7000,18 +7000,23 @@ function getRotateAnchor(angle) {
 }
 /**
  * Set rotated position coordinate according text.labels.rotate angle
- * @param {number} value Data value
+ * @param {object} d Data object
  * @param {object} pos Position object
  * @param {object} pos.x x coordinate
  * @param {object} pos.y y coordinate
  * @param {string} anchor string value
  * @param {boolean} isRotated If axis is rotated
+ * @param {boolean} isInverted If axis is inverted
  * @returns {object} x, y coordinate
  * @private
  */
-function setRotatePos(value, pos, anchor, isRotated) {
+function setRotatePos(d, pos, anchor, isRotated, isInverted) {
+    var _a;
+    var $$ = this;
+    var value = d.value;
+    var isCandlestickType = $$.isCandlestickType(d);
+    var isNegative = value < 0 || (isCandlestickType && !((_a = $$.getCandlestickData(d)) === null || _a === void 0 ? void 0 : _a._isUp));
     var x = pos.x, y = pos.y;
-    var isNegative = value < 0;
     var gap = 4;
     var doubleGap = gap * 2;
     if (isRotated) {
@@ -7039,6 +7044,9 @@ function setRotatePos(value, pos, anchor, isRotated) {
         else if (anchor === "end") {
             x -= gap;
             isNegative && (y += doubleGap * 2);
+        }
+        if (isInverted) {
+            y += isNegative ? -17 : (isCandlestickType ? 13 : 7);
         }
     }
     return { x: x, y: y };
@@ -7183,7 +7191,7 @@ var text = {
      */
     redrawText: function (getX, getY, forFlow, withTransition) {
         var $$ = this;
-        var $T = $$.$T, config = $$.config;
+        var $T = $$.$T, axis = $$.axis, config = $$.config;
         var t = getRandom(true);
         var isRotated = config.axis_rotated;
         var angle = config.data_labels.rotate;
@@ -7196,12 +7204,13 @@ var text = {
             .each(function (d, i) {
             // do not apply transition for newly added text elements
             var node = $T(this, !!(withTransition && this.getAttribute("x")), t);
+            var isInverted = config["axis_".concat(axis === null || axis === void 0 ? void 0 : axis.getId(d.id), "_inverted")];
             var pos = {
                 x: getX.bind(this)(d, i),
                 y: getY.bind(this)(d, i)
             };
             if (angle) {
-                pos = setRotatePos(d.value, pos, anchorString, isRotated);
+                pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
                 node.attr("text-anchor", anchorString);
             }
             // when is multiline
@@ -7368,8 +7377,10 @@ var text = {
      */
     getYForText: function (points, d, textElement) {
         var $$ = this;
-        var config = $$.config, state = $$.state;
+        var axis = $$.axis, config = $$.config, state = $$.state;
         var isRotated = config.axis_rotated;
+        var isInverted = config["axis_".concat(axis === null || axis === void 0 ? void 0 : axis.getId(d.id), "_inverted")];
+        var isBarType = $$.isBarType(d);
         var r = config.point_r;
         var rect = getBoundingRect(textElement);
         var value = d.value;
@@ -7385,6 +7396,9 @@ var text = {
                 yPos = value && value._isUp ?
                     points[2][2] - baseY :
                     points[2][1] + (baseY * 4);
+                if (isInverted) {
+                    yPos += 15 * (value._isUp ? 1 : -1);
+                }
             }
         }
         else {
@@ -7397,15 +7411,18 @@ var text = {
                     baseY += config.point_r / 2.3;
                 }
                 if (value < 0 || (value === 0 && !state.hasPositiveValue && state.hasNegativeValue)) {
-                    yPos += rect.height + ($$.isBarType(d) ? -baseY : baseY);
+                    yPos += isInverted ? (isBarType ? -3 : -5) : (rect.height + (isBarType ? -baseY : baseY));
                 }
                 else {
                     var diff = -baseY * 2;
-                    if ($$.isBarType(d)) {
+                    if (isBarType) {
                         diff = -baseY;
                     }
                     else if ($$.isBubbleType(d)) {
                         diff = baseY;
+                    }
+                    if (isInverted) {
+                        diff = isBarType ? 10 : 15;
                     }
                     yPos += diff;
                 }
@@ -20835,7 +20852,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220528004655
+ * @version 3.4.1-nightly-20220531004641
  */
 var bb = {
     /**
@@ -20845,7 +20862,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220528004655",
+    version: "3.4.1-nightly-20220531004641",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

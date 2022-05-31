@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220528004655
+ * @version 3.4.1-nightly-20220531004641
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -33687,42 +33687,53 @@ function getRotateAnchor(angle) {
 }
 /**
  * Set rotated position coordinate according text.labels.rotate angle
- * @param {number} value Data value
+ * @param {object} d Data object
  * @param {object} pos Position object
  * @param {object} pos.x x coordinate
  * @param {object} pos.y y coordinate
  * @param {string} anchor string value
  * @param {boolean} isRotated If axis is rotated
+ * @param {boolean} isInverted If axis is inverted
  * @returns {object} x, y coordinate
  * @private
  */
 
 
-function setRotatePos(value, pos, anchor, isRotated) {
-  var x = pos.x,
+function setRotatePos(d, pos, anchor, isRotated, isInverted) {
+  var _$$$getCandlestickDat,
+      $$ = this,
+      value = d.value,
+      isCandlestickType = $$.isCandlestickType(d),
+      isNegative = value < 0 || isCandlestickType && !((_$$$getCandlestickDat = $$.getCandlestickData(d)) != null && _$$$getCandlestickDat._isUp),
+      x = pos.x,
       y = pos.y,
-      isNegative = value < 0;
+      gap = 4,
+      doubleGap = 8;
 
   if (isRotated) {
     if (anchor === "start") {
-      x += isNegative ? 0 : 8;
-      y += 4;
+      x += isNegative ? 0 : doubleGap;
+      y += gap;
     } else if (anchor === "middle") {
-      x += 8;
-      y -= 8;
+      x += doubleGap;
+      y -= doubleGap;
     } else if (anchor === "end") {
-      isNegative && (x -= 8);
-      y += 4;
+      isNegative && (x -= doubleGap);
+      y += gap;
     }
   } else {
     if (anchor === "start") {
-      x += 4;
-      isNegative && (y += 16);
+      x += gap;
+      isNegative && (y += doubleGap * 2);
     } else if (anchor === "middle") {
-      y -= 8;
+      y -= doubleGap;
     } else if (anchor === "end") {
-      x -= 4;
-      isNegative && (y += 16);
+      x -= gap;
+      isNegative && (y += doubleGap * 2);
+    }
+
+    if (isInverted) {
+      y += isNegative ? -17 : isCandlestickType ? 13 : 7;
     }
   }
 
@@ -33884,6 +33895,7 @@ function setRotatePos(value, pos, anchor, isRotated) {
   redrawText: function redrawText(getX, getY, forFlow, withTransition) {
     var $$ = this,
         $T = $$.$T,
+        axis = $$.axis,
         config = $$.config,
         t = getRandom(!0),
         isRotated = config.axis_rotated,
@@ -33893,13 +33905,14 @@ function setRotatePos(value, pos, anchor, isRotated) {
     $$.$el.text.style("fill", $$.updateTextColor.bind($$)).attr("filter", $$.updateTextBacgroundColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
       // do not apply transition for newly added text elements
       var node = $T(this, !!(withTransition && this.getAttribute("x")), t),
+          isInverted = config["axis_" + (axis == null ? void 0 : axis.getId(d.id)) + "_inverted"],
           pos = {
         x: getX.bind(this)(d, i),
         y: getY.bind(this)(d, i)
       };
 
       if (angle) {
-        pos = setRotatePos(d.value, pos, anchorString, isRotated);
+        pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
         node.attr("text-anchor", anchorString);
       } // when is multiline
 
@@ -34031,9 +34044,9 @@ function setRotatePos(value, pos, anchor, isRotated) {
 
     if ($$.isCandlestickType(d)) {
       if (isRotated) {
-        var _$$$getCandlestickDat;
+        var _$$$getCandlestickDat2;
 
-        xPos = (_$$$getCandlestickDat = $$.getCandlestickData(d)) != null && _$$$getCandlestickDat._isUp ? points[2][2] + 4 : points[2][1] - 4;
+        xPos = (_$$$getCandlestickDat2 = $$.getCandlestickData(d)) != null && _$$$getCandlestickDat2._isUp ? points[2][2] + 4 : points[2][1] - 4;
       } else {
         xPos += (points[1][0] - xPos) / 2;
       }
@@ -34075,9 +34088,12 @@ function setRotatePos(value, pos, anchor, isRotated) {
    */
   getYForText: function getYForText(points, d, textElement) {
     var $$ = this,
+        axis = $$.axis,
         config = $$.config,
         state = $$.state,
         isRotated = config.axis_rotated,
+        isInverted = config["axis_" + (axis == null ? void 0 : axis.getId(d.id)) + "_inverted"],
+        isBarType = $$.isBarType(d),
         r = config.point_r,
         rect = getBoundingRect(textElement),
         value = d.value,
@@ -34092,6 +34108,10 @@ function setRotatePos(value, pos, anchor, isRotated) {
         yPos += (points[1][0] - yPos) / 2 + baseY;
       } else {
         yPos = value && value._isUp ? points[2][2] - baseY : points[2][1] + baseY * 4;
+
+        if (isInverted) {
+          yPos += 15 * (value._isUp ? 1 : -1);
+        }
       }
     } else {
       if (isRotated) {
@@ -34104,14 +34124,18 @@ function setRotatePos(value, pos, anchor, isRotated) {
         }
 
         if (value < 0 || value === 0 && !state.hasPositiveValue && state.hasNegativeValue) {
-          yPos += rect.height + ($$.isBarType(d) ? -baseY : baseY);
+          yPos += isInverted ? isBarType ? -3 : -5 : rect.height + (isBarType ? -baseY : baseY);
         } else {
           var diff = -baseY * 2;
 
-          if ($$.isBarType(d)) {
+          if (isBarType) {
             diff = -baseY;
           } else if ($$.isBubbleType(d)) {
             diff = baseY;
+          }
+
+          if (isInverted) {
+            diff = isBarType ? 10 : 15;
           }
 
           yPos += diff;
@@ -51639,7 +51663,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220528004655",
+  version: "3.4.1-nightly-20220531004641",
 
   /**
    * Generate chart
@@ -51774,7 +51798,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220528004655
+ * @version 3.4.1-nightly-20220531004641
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
