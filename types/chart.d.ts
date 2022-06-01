@@ -358,7 +358,7 @@ export interface Chart {
 		axes?: { [key: string]: string | string[] };
 		colors?: { [key: string]: string };
 		headers?: { [key: string]: string };
-		keys?: { [key: string]: string };
+		keys?: { [key: string]: string | string[] };
 		mimeType?: string;
 		type?: string;
 		types?: { [key: string]: string };
