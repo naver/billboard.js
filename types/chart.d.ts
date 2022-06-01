@@ -347,7 +347,7 @@ export interface Chart {
 	load(this: Chart, args: {
 		append?: boolean;
 		url?: string;
-		json?: [{ [key: string]: string | number }] | {[key: string]: Array<string|number>};
+		json?: Array<{[key: string]: string | number }> | {[key: string]: Array<string | number>};
 		rows?: PrimitiveArray[];
 		columns?: PrimitiveArray[];
 		data?: Array<{ [key: string]: number }>;
@@ -358,7 +358,7 @@ export interface Chart {
 		axes?: { [key: string]: string | string[] };
 		colors?: { [key: string]: string };
 		headers?: { [key: string]: string };
-		keys?: { [key: string]: string };
+		keys?: { [key: string]: string | string[] };
 		mimeType?: string;
 		type?: string;
 		types?: { [key: string]: string };
