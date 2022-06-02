@@ -99,6 +99,14 @@ export interface ChartOptions {
 		 * Indicate if the chart should automatically get resized when the window gets resized.
 		 */
 		auto?: boolean;
+
+		/**
+		 * Set resize timer option.
+		 * - **NOTE:**
+		 *   - The resize function will be called using: true - `setTimeout()`, false - `requestIdleCallback()`.
+		 *   - Given number(delay in ms) value, resize function will be triggered using `setTimer()` with given delay.
+		 */
+		timer?: boolean | number;
 	};
 
 	color?: {
