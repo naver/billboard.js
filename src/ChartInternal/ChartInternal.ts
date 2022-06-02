@@ -715,7 +715,7 @@ export default class ChartInternal {
 	bindResize(): void {
 		const $$ = <any> this;
 		const {config, state} = $$;
-		const resizeFunction = generateResize();
+		const resizeFunction = generateResize(config.resize_timer);
 		const list: Function[] = [];
 
 		list.push(() => callFn(config.onresize, $$, $$.api));

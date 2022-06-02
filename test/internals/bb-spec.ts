@@ -285,6 +285,76 @@ describe("Interface & initialization", () => {
 
 			expect(chart.$.chart.node().getBoundingClientRect().height).to.be.equal(height);
 		});
+
+		it("check for the resize timer delay call", done => {
+			const width = 300;
+			container.innerHTML = `<div id="chartTimerResize" style="width:640px"></div>`;
+
+			chart = util.generate({
+				bindto: "#chartTimerResize",
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400],
+						["data2", 500, 800, 500, 2000]
+					]
+				},
+				resize: {
+					timer: 1000
+				}
+			});
+
+			// resize chart holder
+			chart.$.chart.style("width", `${width}px`);
+
+			// trigger resize eventize 
+			window.dispatchEvent(new Event("resize"));
+
+			// wait for the timer
+			let count = 0;
+			const interval = setInterval(function() {
+				const w = +chart.$.svg.attr("width");
+
+				if (w === width) {
+					clearInterval(interval);
+
+					expect(count > 0).to.be.true;
+					done();
+				}
+
+				count++;
+			}, 50);
+
+		});
+
+		it("check for the resize timer using requestIdleCallback()", done => {
+			chart.$.chart.style("width", "640px");
+
+			chart = util.generate({
+				bindto: "#chartTimerResize",
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400],
+						["data2", 500, 800, 500, 2000]
+					]
+				},
+				resize: {
+					timer: false
+				}
+			});
+
+			const width = 300;
+
+			// resize chart holder
+			chart.$.chart.style("width", `${width}px`);
+
+			// trigger resize eventize 
+			window.dispatchEvent(new Event("resize"));
+
+			setTimeout(() => {
+				expect(+chart.$.svg.attr("width")).to.be.equal(width);
+				done();
+			}, 50);
+		});
 	});
 
 	describe("set defaults options", () => {
