@@ -140,14 +140,15 @@ describe("Interface & initialization", () => {
 	});
 
 	describe("auto resize", () => {
+		const containerName = "container";
 		let container;
 
 		beforeEach(() => {
-			container = document.getElementById("container");
+			container = document.getElementById(containerName);
 
 			if (!container) {
 				container = document.createElement("div");
-				container.id = "container";
+				container.id = containerName;
 				document.body.appendChild(container);
 			}
 		});
@@ -618,6 +619,52 @@ describe("Interface & initialization", () => {
 			const element = chart.$.main.select(".myBgClass");
 
 			expect(element.node().nextSibling.getAttribute("class")).to.be.equal($COMMON.chart);
+		});
+	});
+
+	describe("resize options", () => {
+		const containerName = "container2";
+		let container;
+
+		beforeEach(() => {
+			container = document.getElementById(containerName);
+
+			if (!container) {
+				container = document.createElement("div");
+				container.id = containerName;
+				document.body.appendChild(container);
+			}
+		});
+
+		it("check for the resize timer using requestIdleCallback()", done => {			
+			container.innerHTML = `<div id="chartTimerResize1" style="width:640px"></div>`;
+
+			let start = 0;
+			const chart = util.generate({
+				bindto: "#chartTimerResize1",
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400],
+						["data2", 500, 800, 500, 2000]
+					]
+				},
+				resize: {
+					timer: false
+				},
+				onresized: function() {
+					expect(Date.now() - start).to.be.below(100);
+					done();
+				}
+			});
+
+			const width = 300;
+
+			// resize chart holder
+			chart.$.chart.style("width", `${width}px`);
+
+			// trigger resize eventize 
+			start = Date.now();
+			window.dispatchEvent(new Event("resize"));
 		});
 	});
 });
