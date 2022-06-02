@@ -668,9 +668,17 @@ describe("Interface & initialization", () => {
 		});
 
 		it("check for the resize timer delay call", done => {
-			const width = 300;
 			const timer = 1000;
 			let start = 0;
+			const resized = function() {
+				const diff = Date.now() - start;
+
+				if (diff > 1000 && diff < 1100) {
+					expect(true).to.be.ok;
+				}
+
+				done();
+			};
 
 			container.innerHTML = `<div id="chartTimerResize2" style="width:640px"></div>`;
 
@@ -685,19 +693,12 @@ describe("Interface & initialization", () => {
 				resize: {
 					timer
 				},
-				onresized: function() {
-					const diff = Date.now() - start;
-
-					if (diff > 1000 && diff < 1100) {
-						expect(true).to.be.ok;
-					}
-
-					done();
-				}
+				onresized: resized,
+				onreisze: resized
 			});
 
 			// resize chart holder
-			chart.$.chart.style("width", `${width}px`);
+			chart.$.chart.style("width", "300px");
 
 			// trigger resize eventize 
 			start = Date.now();
