@@ -299,7 +299,7 @@ describe("Interface & initialization", () => {
 					]
 				},
 				resize: {
-					timer: 1000
+					timer: 500
 				}
 			});
 
@@ -313,7 +313,7 @@ describe("Interface & initialization", () => {
 			let count = 0;
 			const interval = setInterval(function() {
 				const w = +chart.$.svg.attr("width");
-console.log("-->", w)
+
 				if (w === width) {
 					clearInterval(interval);
 
