@@ -666,43 +666,5 @@ describe("Interface & initialization", () => {
 			start = Date.now();
 			window.dispatchEvent(new Event("resize"));
 		});
-
-		it("check for the resize timer delay call", done => {
-			const timer = 1000;
-			let start = 0;
-			const resized = function() {
-				const diff = Date.now() - start;
-
-				if (diff > 1000 && diff < 1100) {
-					expect(true).to.be.ok;
-				}
-
-				done();
-			};
-
-			container.innerHTML = `<div id="chartTimerResize2" style="width:640px"></div>`;
-
-			const chart = util.generate({
-				bindto: "#chartTimerResize2",
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400],
-						["data2", 500, 800, 500, 2000]
-					]
-				},
-				resize: {
-					timer
-				},
-				onresized: resized,
-				onreisze: resized
-			});
-
-			// resize chart holder
-			chart.$.chart.style("width", "300px");
-
-			// trigger resize eventize 
-			start = Date.now();
-			window.dispatchEvent(new Event("resize"));
-		});
 	});
 });
