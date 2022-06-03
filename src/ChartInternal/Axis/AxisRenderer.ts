@@ -13,6 +13,7 @@ export default class AxisRenderer {
 	private config;
 	private params;
 	private g;
+	private generatedTicks: (Date|number)[];
 
 	constructor(params: any = {}) {
 		const config = {
@@ -112,6 +113,9 @@ export default class AxisRenderer {
 			if (tickShow.tick || tickShow.text) {
 				// count of tick data in array
 				const ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight);
+
+				// set generated ticks
+				ctx.generatedTicks = ticks;
 
 				// update selection
 				let tick: d3Selection = g.selectAll(".tick")
@@ -226,6 +230,28 @@ export default class AxisRenderer {
 		});
 
 		this.g = $g;
+	}
+
+	/**
+	 * Get generated ticks
+	 * @param {number} count Count of ticks
+	 * @returns {Array} Generated ticks
+	 * @private
+	 */
+	getGeneratedTicks(count: number): (Date|number)[] {
+		const len = this.generatedTicks.length - 1;
+		let res = this.generatedTicks;
+
+		if (len > count) {
+			const interval = Math.round((len / count) - 0.1);
+
+			res = this.generatedTicks
+				.map((v, i) => (i % interval === 0 ? v : null))
+				.filter(v => v !== null)
+				.splice(0, count) as (Date|number)[];
+		}
+
+		return res;
 	}
 
 	/**
@@ -505,7 +531,7 @@ export default class AxisRenderer {
 		return this;
 	}
 
-	tickValues(x?): AxisRenderer | (number|Date|string)[] {
+	tickValues(x?: (number|Date|string)[]|Function): AxisRenderer | (number|Date|string)[] {
 		const {config} = this;
 
 		if (isFunction(x)) {

@@ -133,10 +133,12 @@ export default {
 
 	updateYGrid(): void {
 		const $$ = this;
-		const {config, state, $el: {grid, main}} = $$;
+		const {axis, config, scale, state, $el: {grid, main}} = $$;
 		const isRotated = config.axis_rotated;
-		const gridValues = $$.axis.y.tickValues() || $$.scale.y.ticks(config.grid_y_ticks);
-		const pos = d => Math.ceil($$.scale.y(d));
+		const pos = d => Math.ceil(scale.y(d));
+
+		const gridValues =
+			axis.y.getGeneratedTicks(config.grid_y_ticks) || $$.scale.y.ticks(config.grid_y_ticks);
 
 		grid.y = main.select(`.${$GRID.ygrids}`)
 			.selectAll(`.${$GRID.ygrid}`)
