@@ -57,3 +57,4 @@ Justin-Moon <https://github.com/Justin-Moon>
 Haung Lee <https://github.com/HanungLee>
 Chunmyong Park <chunmyong.park@kaist.ac.kr>
 neilnaveen <https://github.com/neilnaveen>
+Frank Tackitt <franklyn@tackitt.net>
