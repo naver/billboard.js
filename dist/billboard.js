@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220601004713
+ * @version 3.4.1-nightly-20220603004738
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1937,12 +1937,26 @@ var Store = /*#__PURE__*/function () {
    * @type {object}
    * @property {object} [resize] resize object
    * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
+   * @property {boolean|number} [resize.timer=true] Set resize timer option.
+   * - **NOTE:**
+   *   - The resize function will be called using: true - `setTimeout()`, false - `requestIdleCallback()`.
+   *   - Given number(delay in ms) value, resize function will be triggered using `setTimer()` with given delay.
    * @example
    *  resize: {
-   *      auto: false
+   *      auto: false,
+   *
+   *      // set resize function will be triggered using `setTimer()`
+   *      timer: true,
+   *
+   *      // set resize function will be triggered using `requestIdleCallback()`
+   *      timer: false,
+   *
+   *      // set resize function will be triggered using `setTimer()` with a delay of `100ms`.
+   *      timer: 100
    *  }
    */
   resize_auto: !0,
+  resize_timer: !0,
 
   /**
    * Set a callback to execute when the chart is clicked.
@@ -3758,12 +3772,13 @@ var generator_setTimeout = win.setTimeout,
     generator_clearTimeout = win.clearTimeout;
 /**
  * Generate resize queue function
+ * @param {boolean|number} option Resize option
  * @returns {Fucntion}
  * @private
  */
 
-function generateResize() {
-  var _this3 = this,
+function generateResize(option) {
+  var _this4 = this,
       fn = [],
       timeout,
       callResizeFn = function () {
@@ -3771,21 +3786,38 @@ function generateResize() {
 
     // Delay all resize functions call, to prevent unintended excessive call from resize event
     callResizeFn.clear();
-    timeout = generator_setTimeout(function () {
-      var _this2 = this;
 
-      _newArrowCheck(this, _this);
+    if (option === !1 && win.requestIdleCallback) {
+      requestIdleCallback(function () {
+        var _this2 = this;
 
-      fn.forEach(function (f) {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this);
 
-        return f();
-      }.bind(this));
-    }.bind(this), 200);
+        fn.forEach(function (f) {
+          _newArrowCheck(this, _this2);
+
+          return f();
+        }.bind(this));
+      }.bind(this), {
+        timeout: 200
+      });
+    } else {
+      timeout = generator_setTimeout(function () {
+        var _this3 = this;
+
+        _newArrowCheck(this, _this);
+
+        fn.forEach(function (f) {
+          _newArrowCheck(this, _this3);
+
+          return f();
+        }.bind(this));
+      }.bind(this), isNumber(option) ? option : 200);
+    }
   };
 
   callResizeFn.clear = function () {
-    _newArrowCheck(this, _this3);
+    _newArrowCheck(this, _this4);
 
     if (timeout) {
       generator_clearTimeout(timeout);
@@ -3794,13 +3826,13 @@ function generateResize() {
   }.bind(this);
 
   callResizeFn.add = function (f) {
-    _newArrowCheck(this, _this3);
+    _newArrowCheck(this, _this4);
 
     return fn.push(f);
   }.bind(this);
 
   callResizeFn.remove = function (f) {
-    _newArrowCheck(this, _this3);
+    _newArrowCheck(this, _this4);
 
     return fn.splice(fn.indexOf(f), 1);
   }.bind(this);
@@ -11234,7 +11266,7 @@ var ChartInternal = /*#__PURE__*/function () {
         $$ = this,
         config = $$.config,
         state = $$.state,
-        resizeFunction = generateResize(),
+        resizeFunction = generateResize(config.resize_timer),
         list = [];
 
     list.push(function () {
@@ -25525,7 +25557,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220601004713",
+  version: "3.4.1-nightly-20220603004738",
 
   /**
    * Generate chart
@@ -25660,7 +25692,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220601004713
+ * @version 3.4.1-nightly-20220603004738
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

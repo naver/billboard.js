@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220601004713
+ * @version 3.4.1-nightly-20220603004738
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1369,12 +1369,26 @@ var main = {
      * @type {object}
      * @property {object} [resize] resize object
      * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
+     * @property {boolean|number} [resize.timer=true] Set resize timer option.
+     * - **NOTE:**
+     *   - The resize function will be called using: true - `setTimeout()`, false - `requestIdleCallback()`.
+     *   - Given number(delay in ms) value, resize function will be triggered using `setTimer()` with given delay.
      * @example
      *  resize: {
-     *      auto: false
+     *      auto: false,
+     *
+     *      // set resize function will be triggered using `setTimer()`
+     *      timer: true,
+     *
+     *      // set resize function will be triggered using `requestIdleCallback()`
+     *      timer: false,
+     *
+     *      // set resize function will be triggered using `setTimer()` with a delay of `100ms`.
+     *      timer: 100
      *  }
      */
     resize_auto: true,
+    resize_timer: true,
     /**
      * Set a callback to execute when the chart is clicked.
      * @name onclick
@@ -3033,18 +3047,26 @@ var Cache = /** @class */ (function () {
 var setTimeout$1 = win.setTimeout, clearTimeout$1 = win.clearTimeout;
 /**
  * Generate resize queue function
+ * @param {boolean|number} option Resize option
  * @returns {Fucntion}
  * @private
  */
-function generateResize() {
+function generateResize(option) {
     var fn = [];
     var timeout;
     var callResizeFn = function () {
         // Delay all resize functions call, to prevent unintended excessive call from resize event
         callResizeFn.clear();
-        timeout = setTimeout$1(function () {
-            fn.forEach(function (f) { return f(); });
-        }, 200);
+        if (option === false && win.requestIdleCallback) {
+            requestIdleCallback(function () {
+                fn.forEach(function (f) { return f(); });
+            }, { timeout: 200 });
+        }
+        else {
+            timeout = setTimeout$1(function () {
+                fn.forEach(function (f) { return f(); });
+            }, isNumber(option) ? option : 200);
+        }
     };
     callResizeFn.clear = function () {
         if (timeout) {
@@ -8827,7 +8849,7 @@ var ChartInternal = /** @class */ (function () {
     ChartInternal.prototype.bindResize = function () {
         var $$ = this;
         var config = $$.config, state = $$.state;
-        var resizeFunction = generateResize();
+        var resizeFunction = generateResize(config.resize_timer);
         var list = [];
         list.push(function () { return callFn(config.onresize, $$, $$.api); });
         if (config.resize_auto) {
@@ -20852,7 +20874,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220601004713
+ * @version 3.4.1-nightly-20220603004738
  */
 var bb = {
     /**
@@ -20862,7 +20884,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220601004713",
+    version: "3.4.1-nightly-20220603004738",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
