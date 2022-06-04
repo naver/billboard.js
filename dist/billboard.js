@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220603004738
+ * @version 3.4.1-nightly-20220604004649
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -13992,6 +13992,7 @@ var AxisRenderer = /*#__PURE__*/function () {
     this.config = void 0;
     this.params = void 0;
     this.g = void 0;
+    this.generatedTicks = void 0;
     var config = {
       innerTickSize: 6,
       outerTickSize: params.outerTick ? 6 : 0,
@@ -14075,10 +14076,13 @@ var AxisRenderer = /*#__PURE__*/function () {
 
       if (tickShow.tick || tickShow.text) {
         // count of tick data in array
-        var ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight),
-            tick = g.selectAll(".tick").data(ticks, scale1),
+        var ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight); // set generated ticks
+
+        ctx.generatedTicks = ticks; // update selection
+
+        var tick = g.selectAll(".tick").data(ticks, scale1),
             tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick"),
-            tickExit = tick.exit().remove(); // update selection
+            tickExit = tick.exit().remove(); // enter selection
 
         // enter + update selection
         tick = tickEnter.merge(tick);
@@ -14176,6 +14180,34 @@ var AxisRenderer = /*#__PURE__*/function () {
     this.g = $g;
   }
   /**
+   * Get generated ticks
+   * @param {number} count Count of ticks
+   * @returns {Array} Generated ticks
+   * @private
+   */
+  ;
+
+  _proto.getGeneratedTicks = function getGeneratedTicks(count) {
+    var _this3 = this,
+        len = this.generatedTicks.length - 1,
+        res = this.generatedTicks;
+
+    if (len > count) {
+      var interval = Math.round(len / count - .1);
+      res = this.generatedTicks.map(function (v, i) {
+        _newArrowCheck(this, _this3);
+
+        return i % interval === 0 ? v : null;
+      }.bind(this)).filter(function (v) {
+        _newArrowCheck(this, _this3);
+
+        return v !== null;
+      }.bind(this)).splice(0, count);
+    }
+
+    return res;
+  }
+  /**
    * Get tick x/y coordinate
    * @returns {{x: number, y: number}}
    * @private
@@ -14222,7 +14254,7 @@ var AxisRenderer = /*#__PURE__*/function () {
   ;
 
   _proto.setTickLineTextPosition = function setTickLineTextPosition(lineUpdate, textUpdate) {
-    var _this3 = this,
+    var _this4 = this,
         tickPos = this.getTickXY(),
         _this$config = this.config,
         innerTickSize = _this$config.innerTickSize,
@@ -14231,19 +14263,19 @@ var AxisRenderer = /*#__PURE__*/function () {
         tickOffset = _this$config.tickOffset,
         rotate = this.params.tickTextRotate,
         textAnchorForText = function (r) {
-      _newArrowCheck(this, _this3);
+      _newArrowCheck(this, _this4);
 
       var value = ["start", "end"];
       orient === "top" && value.reverse();
       return !r ? "middle" : value[r > 0 ? 0 : 1];
     }.bind(this),
         textTransform = function (r) {
-      _newArrowCheck(this, _this3);
+      _newArrowCheck(this, _this4);
 
       return r ? "rotate(" + r + ")" : null;
     }.bind(this),
         yForText = function (r) {
-      _newArrowCheck(this, _this3);
+      _newArrowCheck(this, _this4);
 
       var r2 = r / (orient === "bottom" ? 15 : 23);
       return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
@@ -14379,7 +14411,7 @@ var AxisRenderer = /*#__PURE__*/function () {
   ;
 
   _proto.tickInterval = function tickInterval(size) {
-    var _this4 = this,
+    var _this5 = this,
         _this$config2 = this.config,
         outerTickSize = _this$config2.outerTickSize,
         tickOffset = _this$config2.tickOffset,
@@ -14393,7 +14425,7 @@ var AxisRenderer = /*#__PURE__*/function () {
       interval = length / (size || this.g.selectAll("line").size()); // get the interval by its values
 
       var intervalByValue = tickValues ? tickValues.map(function (v, i, arr) {
-        _newArrowCheck(this, _this4);
+        _newArrowCheck(this, _this5);
 
         var next = i + 1;
         return next < arr.length ? this.helper.scale(arr[next]) - this.helper.scale(v) : null;
@@ -14429,12 +14461,12 @@ var AxisRenderer = /*#__PURE__*/function () {
   };
 
   _proto.tickValues = function tickValues(x) {
-    var _this5 = this,
+    var _this6 = this,
         config = this.config;
 
     if (isFunction(x)) {
       config.tickValues = function () {
-        _newArrowCheck(this, _this5);
+        _newArrowCheck(this, _this6);
 
         return x(this.helper.scale.domain());
       }.bind(this);
@@ -16564,18 +16596,20 @@ function smoothLines(el, type) {
   updateYGrid: function updateYGrid() {
     var _this8 = this,
         $$ = this,
+        axis = $$.axis,
         config = $$.config,
+        scale = $$.scale,
         state = $$.state,
         _$$$$el2 = $$.$el,
         grid = _$$$$el2.grid,
         main = _$$$$el2.main,
         isRotated = config.axis_rotated,
-        gridValues = $$.axis.y.tickValues() || $$.scale.y.ticks(config.grid_y_ticks),
         pos = function (d) {
       _newArrowCheck(this, _this8);
 
-      return Math.ceil($$.scale.y(d));
-    }.bind(this);
+      return Math.ceil(scale.y(d));
+    }.bind(this),
+        gridValues = axis.y.getGeneratedTicks(config.grid_y_ticks) || $$.scale.y.ticks(config.grid_y_ticks);
 
     grid.y = main.select("." + $GRID.ygrids).selectAll("." + $GRID.ygrid).data(gridValues);
     grid.y.exit().remove();
@@ -25557,7 +25591,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220603004738",
+  version: "3.4.1-nightly-20220604004649",
 
   /**
    * Generate chart
@@ -25692,7 +25726,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220603004738
+ * @version 3.4.1-nightly-20220604004649
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

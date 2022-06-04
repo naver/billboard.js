@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220603004738
+ * @version 3.4.1-nightly-20220604004649
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -11221,6 +11221,8 @@ var AxisRenderer = /** @class */ (function () {
             if (tickShow.tick || tickShow.text) {
                 // count of tick data in array
                 var ticks_1 = config.tickValues || helper.generateTicks(scale1, isLeftRight);
+                // set generated ticks
+                ctx.generatedTicks = ticks_1;
                 // update selection
                 var tick = g.selectAll(".tick")
                     .data(ticks_1, scale1);
@@ -11308,6 +11310,24 @@ var AxisRenderer = /** @class */ (function () {
             }
         });
         this.g = $g;
+    };
+    /**
+     * Get generated ticks
+     * @param {number} count Count of ticks
+     * @returns {Array} Generated ticks
+     * @private
+     */
+    AxisRenderer.prototype.getGeneratedTicks = function (count) {
+        var len = this.generatedTicks.length - 1;
+        var res = this.generatedTicks;
+        if (len > count) {
+            var interval_1 = Math.round((len / count) - 0.1);
+            res = this.generatedTicks
+                .map(function (v, i) { return (i % interval_1 === 0 ? v : null); })
+                .filter(function (v) { return v !== null; })
+                .splice(0, count);
+        }
+        return res;
     };
     /**
      * Get tick x/y coordinate
@@ -13211,10 +13231,10 @@ var grid = {
     },
     updateYGrid: function () {
         var $$ = this;
-        var config = $$.config, state = $$.state, _a = $$.$el, grid = _a.grid, main = _a.main;
+        var axis = $$.axis, config = $$.config, scale = $$.scale, state = $$.state, _a = $$.$el, grid = _a.grid, main = _a.main;
         var isRotated = config.axis_rotated;
-        var gridValues = $$.axis.y.tickValues() || $$.scale.y.ticks(config.grid_y_ticks);
-        var pos = function (d) { return Math.ceil($$.scale.y(d)); };
+        var pos = function (d) { return Math.ceil(scale.y(d)); };
+        var gridValues = axis.y.getGeneratedTicks(config.grid_y_ticks) || $$.scale.y.ticks(config.grid_y_ticks);
         grid.y = main.select(".".concat($GRID.ygrids))
             .selectAll(".".concat($GRID.ygrid))
             .data(gridValues);
@@ -20874,7 +20894,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220603004738
+ * @version 3.4.1-nightly-20220604004649
  */
 var bb = {
     /**
@@ -20884,7 +20904,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220603004738",
+    version: "3.4.1-nightly-20220604004649",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
