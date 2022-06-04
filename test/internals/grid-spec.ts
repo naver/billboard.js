@@ -162,7 +162,7 @@ describe("GRID", function() {
 			});
 
 			expect(ygrids.size()).to.be.equal(1);
-			expect(ygrids.selectAll(`.${$GRID.ygrid}`).size()).to.be.equal(5);
+			expect(ygrids.selectAll(`.${$GRID.ygrid}`).size()).to.be.equal(3);
 
 			chart.$.main.select(`.${$AXIS.axisY}`).selectAll(".tick").each(function(d, i) {
 				let y: any = d3Select(this).attr("transform").match(/\d+\)/);
@@ -171,12 +171,72 @@ describe("GRID", function() {
 					y = parseInt(y[0]);
 				}
 
-				expect(y).to.be.closeTo(expectedYs[i], 1);
+				if (expectedYs[i]) {
+					expect(y).to.be.closeTo(expectedYs[i], 1);
+				}
 			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+					["data1", 100, 50, 150, 200, 100, 350, 58, 210, 80, 126],
+					["data2", 305, 350, 55, 25, 335, 29, 258, 310, 180, 226],
+					["data3", 223, 121, 259, 247, 53, 159, 95, 111, 307, 337]
+					],
+					type: "line",
+					labels: true
+				},
+				axis: {
+					y: {
+					type: "log",
+					max: 400
+					}
+				},
+				grid: {
+					y: {
+					show: true
+					}
+				}
+			};
+		});
+
+		it("grid lines should fully generated for log type y axis", () => {
+			const gridLen = chart.$.grid.y.size();
+			const tickLen = chart.internal.$el.axis.y.selectAll(".tick").size();
+
+			expect(gridLen).to.be.equal(tickLen);
 		});
 	});
 
 	describe("front option", () => {
+		before(() => {
+			args = {
+				data:{
+					columns:[
+						["data1",30,200,100,400,150,250]
+					]
+				},
+				axis:{
+					y:{
+						tick:{
+							count: 5
+						}
+					}
+				},
+				grid:{
+					y:{
+						show: true,
+						lines:[
+							{"value":2,"text":"Label on 2"}
+						],
+						ticks: 3
+					}
+				}
+			};
+		});
+
 		it("grid element should positioned before chart element", () => {
 			const grid = chart.$.main.select(`.${$GRID.grid}`).node();
 			const nextSiblingClassName = grid.nextSibling.getAttribute("class");
