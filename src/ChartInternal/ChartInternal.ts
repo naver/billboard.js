@@ -723,6 +723,13 @@ export default class ChartInternal {
 		if (config.resize_auto) {
 			list.push(() => {
 				state.resizing = true;
+
+				// https://github.com/naver/billboard.js/issues/2650
+				if (config.legend_show) {
+					$$.updateSizes();
+					$$.updateLegend();
+				}
+
 				$$.api.flush(false);
 			});
 		}
