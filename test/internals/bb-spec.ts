@@ -666,7 +666,11 @@ describe("Interface & initialization", () => {
 				resize: {
 					timer: false
 				},
+				onresize: function() {
+					expect(this).to.be.deep.equal(chart);
+				},
 				onresized: function() {
+					expect(this).to.be.deep.equal(chart);
 					expect(chart.$.chart.style("width")).to.be.equal(`${width}px`);
 					done();
 				}

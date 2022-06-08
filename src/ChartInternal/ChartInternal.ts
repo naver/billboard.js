@@ -718,7 +718,7 @@ export default class ChartInternal {
 		const resizeFunction = generateResize(config.resize_timer);
 		const list: Function[] = [];
 
-		list.push(() => callFn(config.onresize, $$, $$.api));
+		list.push(() => callFn(config.onresize, $$.api));
 
 		if (config.resize_auto) {
 			list.push(() => {
@@ -735,7 +735,7 @@ export default class ChartInternal {
 		}
 
 		list.push(() => {
-			callFn(config.onresized, $$, $$.api);
+			callFn(config.onresized, $$.api);
 			state.resizing = false;
 		});
 
