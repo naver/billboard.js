@@ -312,6 +312,8 @@ export default {
 	 * @property {object} [data.labels.position] Set each dataset position, relative the original.
 	 * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
 	 * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
+	 * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
+	 * - **NOTE:** Depend on rotate value, text position need to be adjusted manually(using `data.labels.position` option) to be shown nicely.
 	 * @memberof Options
 	 * @type {object}
 	 * @default {}
@@ -321,6 +323,7 @@ export default {
 	 * @see [Demo: label multiline](https://naver.github.io/billboard.js/demo/#Data.DataLabelMultiline)
 	 * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
 	 * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+	 * @see [Demo: label rotate](https://naver.github.io/billboard.js/demo/#Data.DataLabelRotate)
 	 * @example
 	 * data: {
 	 *   labels: true,
@@ -379,7 +382,10 @@ export default {
 	 *     position: {
 	 *        data1: {x: 5, y: 5},
 	 *        data2: {x: 10, y: -20}
-	 *     }
+	 *     },
+	 *
+	 *	   // rotate degree for label text
+	 *     rotate: 90
 	 *   }
 	 * }
 	 */
@@ -388,7 +394,8 @@ export default {
 			centered?: boolean;
 			format?: Function;
 			colors?: string|{[key: string]: string};
-			position?: {[key: string]: number}|{[key: string]: {x?: number; y?: number;}}
+			position?: {[key: string]: number}|{[key: string]: {x?: number; y?: number;}};
+			rotate?: number;
 		}> {},
 	data_labels_backgroundColors: <string|{[key: string]: string}|undefined> undefined,
 	data_labels_colors: <string|object|Function|undefined> undefined,

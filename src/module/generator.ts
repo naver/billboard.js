@@ -4,16 +4,17 @@
  */
 import {d3Transition} from "../../types/types";
 import {window} from "./browser";
-import {isArray, isTabVisible} from "./util";
+import {isArray, isNumber, isTabVisible} from "./util";
 
 const {setTimeout, clearTimeout} = window;
 
 /**
  * Generate resize queue function
+ * @param {boolean|number} option Resize option
  * @returns {Fucntion}
  * @private
  */
-export function generateResize() {
+export function generateResize(option: boolean|number) {
 	const fn: any[] = [];
 	let timeout;
 
@@ -21,9 +22,15 @@ export function generateResize() {
 		// Delay all resize functions call, to prevent unintended excessive call from resize event
 		callResizeFn.clear();
 
-		timeout = setTimeout(() => {
-			fn.forEach((f: Function) => f());
-		}, 200);
+		if (option === false && window.requestIdleCallback) {
+			requestIdleCallback(() => {
+				fn.forEach((f: Function) => f());
+			}, {timeout: 200});
+		} else {
+			timeout = setTimeout(() => {
+				fn.forEach((f: Function) => f());
+			}, isNumber(option) ? option : 200);
+		}
 	};
 
 	callResizeFn.clear = () => {

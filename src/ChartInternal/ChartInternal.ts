@@ -715,7 +715,7 @@ export default class ChartInternal {
 	bindResize(): void {
 		const $$ = <any> this;
 		const {config, state} = $$;
-		const resizeFunction = generateResize();
+		const resizeFunction = generateResize(config.resize_timer);
 		const list: Function[] = [];
 
 		list.push(() => callFn(config.onresize, $$, $$.api));
@@ -723,6 +723,13 @@ export default class ChartInternal {
 		if (config.resize_auto) {
 			list.push(() => {
 				state.resizing = true;
+
+				// https://github.com/naver/billboard.js/issues/2650
+				if (config.legend_show) {
+					$$.updateSizes();
+					$$.updateLegend();
+				}
+
 				$$.api.flush(false);
 			});
 		}

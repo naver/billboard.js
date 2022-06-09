@@ -10,9 +10,22 @@ import util from "../assets/util";
 import {$AXIS, $COMMON} from "../../src/config/classes";
 import Chart from "../../src/Chart/Chart";
 import {convertInputType, extend} from "../../src/module/util";
+import { interpolateSpectral } from "d3";
 
 describe("Interface & initialization", () => {
 	let chart;
+
+	function getWrapper(id) {
+		let container = document.getElementById(id);
+
+		if (!container) {
+			container = document.createElement("div");
+			container.id = id;
+			document.body.appendChild(container);
+		}
+
+		return container;
+	}
 
 	describe("Initialization", () => {
 		const checkElements = $ => {
@@ -140,14 +153,15 @@ describe("Interface & initialization", () => {
 	});
 
 	describe("auto resize", () => {
+		const containerName = "container";
 		let container;
 
 		beforeEach(() => {
-			container = document.getElementById("container");
+			container = document.getElementById(containerName);
 
 			if (!container) {
 				container = document.createElement("div");
-				container.id = "container";
+				container.id = containerName;
 				document.body.appendChild(container);
 			}
 		});
@@ -239,34 +253,43 @@ describe("Interface & initialization", () => {
 		});
 
 		it("should be resizing all generated chart elements", function(done) {
-			this.timeout(5000);
-			container.innerHTML = '<div id="chartResize1"></div><div id="chartResize2"></div>';
-
+			this.timeout(6000);
 			const width = 300;
-			const args = {
-				data: {
-					columns: [
-						["data1", 30]
-					]
-				},
-				bindto: "#chartResize1"
-			};
+			const inst = [];
 
-			const chart1 = util.generate(args);
-			const chart2 = util.generate((args.bindto = "#chartResize2") && args);
+			before(() => {
+				container.innerHTML = '<div id="chartResize1"></div><div id="chartResize2"></div>';
+	
+				const args = {
+					data: {
+						columns: [
+							["data1", 30]
+						]
+					},
+					transition: {
+						duration: 0
+					},
+					bindto: "#chartResize1"
+				};
+	
+				inst.push(util.generate(args));
+				inst.push(util.generate((args.bindto = "#chartResize2") && args));
+			});
 
 			container.style.width = width + "px";
 
 			// run the resize handler
-			chart.internal.charts.forEach(c => {
+			inst.forEach(c => {
 				c.internal.resizeFunction();
 			});
 
 			setTimeout(() => {
-				expect(+chart1.internal.$el.svg.attr("width")).to.be.equal(width);
-				expect(+chart2.internal.$el.svg.attr("width")).to.be.equal(width);
+				inst.forEach(c => {
+					expect(+c.internal.$el.svg.attr("width")).to.be.equal(width);
+				});
+
 				done();
-			}, 200);
+			}, 500);
 		});
 
 		it("should set correct height value", () => {
@@ -618,6 +641,85 @@ describe("Interface & initialization", () => {
 			const element = chart.$.main.select(".myBgClass");
 
 			expect(element.node().nextSibling.getAttribute("class")).to.be.equal($COMMON.chart);
+		});
+	});
+
+	describe("resize options", () => {
+		const containerName = "container2";
+		const spy = sinon.spy();
+		let container;
+
+		beforeEach(() => {
+			container = getWrapper(containerName);
+		});
+
+		it("check for the resize timer using requestIdleCallback()", done => {			
+			const width = 300;
+			const chart = util.generate({
+				bindto: `#${containerName}`,
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400],
+						["data2", 500, 800, 500, 2000]
+					]
+				},
+				resize: {
+					timer: false
+				},
+				onresized: function() {
+					expect(chart.$.chart.style("width")).to.be.equal(`${width}px`);
+					done();
+				}
+			});
+
+			// resize chart holder
+			chart.$.chart.style("width", `${width}px`);
+
+			// trigger resize eventize 
+			window.dispatchEvent(new Event("resize"));
+		});
+	});
+
+	describe("resize legend", () => {
+		const containerName = "containerForLegend";
+		let container;
+
+		before(() => {
+			container = getWrapper(containerName);
+		});
+
+		it("should legend resized correctly?", function(done) {
+			container.innerHTML = `<div id="${containerName}"></div>`;
+
+			const chart = util.generate({
+				bindto: `#${containerName}`,
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400],
+						["data2", 500, 800, 500, 2000]
+					]
+				},
+				resize: {
+					timer: 100
+				},
+				transition: {
+					duration: 0
+				},
+				onresized: function() {
+					const {$: {legend}, internal} = chart;
+					const rect = legend.node().getBoundingClientRect();
+
+					expect(
+						util.parseNum(legend.attr("transform")) + rect.height
+					).to.be.below(internal.state.current.height);
+
+					done();
+				}
+			});
+
+			// resize chart holder
+			chart.$.chart.style("width", "100px");
+			window.dispatchEvent(new Event("resize"));
 		});
 	});
 });

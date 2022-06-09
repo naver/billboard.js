@@ -179,6 +179,94 @@ describe("TEXT", () => {
 			});
 		});
 
+		describe("rotate", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 90, 100, -100]
+						],
+						type: "bar",
+						labels: {
+							rotate: 90
+						}
+					},
+					axis: {
+						rotated: false
+					}
+				}
+			});
+
+			it("rotate attribute should be applied", () => {
+				chart.$.text.texts.each(function(d) {
+					const transform = this.getAttribute("transform");
+					const anchor = this.getAttribute("text-anchor");
+
+					expect(transform.indexOf(`rotate(${args.data.labels.rotate})`) > -1).to.be.true;
+					expect(anchor).to.be.equal("end");
+
+					if (d.value < 0) {
+						const y = +this.getAttribute("transform").match(/\s(\d+\.\d+)/)[1];
+
+						expect(y).to.be.closeTo(405, 1);
+					}
+				});
+			});
+
+			it("set options: data.labels.rotate=180", () => {
+				args.data.labels.rotate = 180;
+			});
+
+			it("text-anchor should be middle for rotate(180deg)", () => {
+				chart.$.text.texts.each(function() {
+					const anchor = this.getAttribute("text-anchor");
+
+					expect(anchor).to.be.equal("middle");
+				});
+			});
+
+			it("set options: data.labels.rotate=270", () => {
+				args.data.labels.rotate = 270;
+			});
+
+			it("text-anchor should be middle for rotate(270deg)", () => {
+				chart.$.text.texts.each(function(d) {
+					const anchor = this.getAttribute("text-anchor");
+
+					expect(anchor).to.be.equal("start");
+
+					if (d.value < 0) {
+						const y = +this.getAttribute("transform").match(/\s(\d+\.\d+)/)[1];
+
+						expect(y).to.be.closeTo(405, 1);
+					}
+				});
+			});
+
+			it("set options: axis.rotated=true", () => {
+				args.axis.rotated = true;
+				args.data.labels.rotate = 90;
+			});
+
+			it("check for rotated axis", () => {
+				const expectedY = [80, 220, 362];
+
+				chart.$.text.texts.each(function(d, i) {
+					const transform = +this.getAttribute("transform").match(/\s(\d+\.\d+)/)[1];
+					const anchor = this.getAttribute("text-anchor");
+
+					expect(transform).to.be.closeTo(expectedY[i], 1);
+					expect(anchor).to.be.equal("end");
+
+					if (d.value < 0) {
+						const x = +this.getAttribute("transform").match(/\((\d+\.\d+)/)[1];
+
+						expect(x).to.be.closeTo(57, 1);
+					}
+				});
+			});
+		});
+
 		describe("on area chart", () => {
 			before(() => {
 				args = {
@@ -1223,6 +1311,92 @@ describe("TEXT", () => {
 						expectedPos[0] + confPos[d.id].x,
 						expectedPos[1] + confPos[d.id].y
 					]);
+				});
+			});
+		});
+
+		describe("Labels' postion on inverted axis", () => {
+			before(() => {
+				args = {
+					data: {
+					  columns: [
+						  ["data1",
+							  [1027, 1369, 1289, 1348],
+							  [1348, 1371, 1314, 1320],
+							]
+				  
+					  ],
+					  type: "candlestick",
+					  labels: {
+						  rotate: 0
+					  },
+					},
+					axis: {
+					  y: {
+						  inverted: true
+					  }
+					}
+				};
+			});
+
+			it("check for candlestick type", () => {
+				const expectedY = [390, 321];
+
+				chart.$.text.texts.each(function(d, i) {
+					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 2);
+				});
+			});
+
+			it("set options", () => {
+				args.data.columns = [["data1", 90, -100]];
+				args.data.type = "line";
+			});
+
+			it("check for line type", () => {
+				const expectedY = [394, 42];
+
+				chart.$.text.texts.each(function(d, i) {
+					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 2);
+				});
+			});
+
+			it("set options: data.type='bar'", () => {
+				args.data.type = "bar";
+			});
+
+			it("check for bar type", () => {
+				const expectedY = [389, 44];
+
+				chart.$.text.texts.each(function(d, i) {
+					expect(+this.getAttribute("y")).to.be.closeTo(expectedY[i], 2);
+				});
+			});
+
+			it("set options: data.labels.rotate = 270", () => {
+				args.data.labels.rotate = 270;
+			});
+
+			it("check for bar type with rotate option", () => {
+				const expectedY = [396, 43];
+
+				chart.$.text.texts.each(function(d, i) {
+					const y = +this.getAttribute("transform").match(/\s(\d+\.\d+)/)[1];
+
+					expect(y).to.be.closeTo(expectedY[i], 2);
+				});
+			});
+
+			it("set options: data.type = 'line'", () => {
+				args.data.type = "line";
+			});
+
+			it("check for line type with rotate option", () => {
+				const expectedY = [401, 41];
+
+				chart.$.text.texts.each(function(d, i) {
+					const y = +this.getAttribute("transform").match(/\s(\d+\.\d+)/)[1];
+
+					expect(y).to.be.closeTo(expectedY[i], 2);
 				});
 			});
 		});

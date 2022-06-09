@@ -144,12 +144,26 @@ export default {
 	 * @type {object}
 	 * @property {object} [resize] resize object
 	 * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
+	 * @property {boolean|number} [resize.timer=true] Set resize timer option.
+	 * - **NOTE:**
+	 *   - The resize function will be called using: true - `setTimeout()`, false - `requestIdleCallback()`.
+	 *   - Given number(delay in ms) value, resize function will be triggered using `setTimer()` with given delay.
 	 * @example
 	 *  resize: {
-	 *      auto: false
+	 *      auto: false,
+	 *
+	 *      // set resize function will be triggered using `setTimer()`
+	 *      timer: true,
+	 *
+	 *      // set resize function will be triggered using `requestIdleCallback()`
+	 *      timer: false,
+	 *
+	 *      // set resize function will be triggered using `setTimer()` with a delay of `100ms`.
+	 *      timer: 100
 	 *  }
 	 */
 	resize_auto: true,
+	resize_timer: true,
 
 	/**
 	 * Set a callback to execute when the chart is clicked.

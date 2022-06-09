@@ -12,6 +12,83 @@ import {capitalize, getBoundingRect, getRandom, isFunction, isNumber, isObject, 
 import {IDataRow, IArcData} from "../data/IData";
 import {AxisType} from "../../../types/types";
 
+type Coord = {x: number, y: number};
+type Anchor = "start" | "middle" | "end";
+
+/**
+ * Get text-anchor according text.labels.rotate angle
+ * @param {number} angle Angle value
+ * @returns {string} Anchor string value
+ * @private
+ */
+function getRotateAnchor(angle: number): Anchor {
+	let anchor: Anchor = "middle";
+
+	if (angle > 0 && angle <= 170) {
+		anchor = "end";
+	} else if (angle > 190 && angle <= 360) {
+		anchor = "start";
+	}
+
+	return anchor;
+}
+
+/**
+ * Set rotated position coordinate according text.labels.rotate angle
+ * @param {object} d Data object
+ * @param {object} pos Position object
+ * @param {object} pos.x x coordinate
+ * @param {object} pos.y y coordinate
+ * @param {string} anchor string value
+ * @param {boolean} isRotated If axis is rotated
+ * @param {boolean} isInverted If axis is inverted
+ * @returns {object} x, y coordinate
+ * @private
+ */
+function setRotatePos(
+	d: IDataRow, pos: Coord, anchor: Anchor, isRotated: boolean, isInverted: boolean
+): Coord {
+	const $$ = this;
+	const {value} = d;
+	const isCandlestickType = $$.isCandlestickType(d);
+	const isNegative = value < 0 || (
+		isCandlestickType && !$$.getCandlestickData(d)?._isUp
+	);
+
+	let {x, y} = pos;
+	const gap = 4;
+	const doubleGap = gap * 2;
+
+	if (isRotated) {
+		if (anchor === "start") {
+			x += isNegative ? 0 : doubleGap;
+			y += gap;
+		} else if (anchor === "middle") {
+			x += doubleGap;
+			y -= doubleGap;
+		} else if (anchor === "end") {
+			isNegative && (x -= doubleGap);
+			y += gap;
+		}
+	} else {
+		if (anchor === "start") {
+			x += gap;
+			isNegative && (y += doubleGap * 2);
+		} else if (anchor === "middle") {
+			y -= doubleGap;
+		} else if (anchor === "end") {
+			x -= gap;
+			isNegative && (y += doubleGap * 2);
+		}
+
+		if (isInverted) {
+			y += isNegative ? -17 : (isCandlestickType ? 13 : 7);
+		}
+	}
+
+	return {x, y};
+}
+
 export default {
 	opacityForText(d): null | "0" {
 		const $$ = this;
@@ -171,34 +248,46 @@ export default {
 
 	/**
 	 * Redraw chartText
-	 * @param {Function} x Positioning function for x
-	 * @param {Function} y Positioning function for y
+	 * @param {Function} getX Positioning function for x
+	 * @param {Function} getY Positioning function for y
 	 * @param {boolean} forFlow Weather is flow
 	 * @param {boolean} withTransition transition is enabled
 	 * @returns {Array}
 	 * @private
 	 */
-	redrawText(x, y, forFlow?: boolean, withTransition?: boolean): true {
+	redrawText(getX, getY, forFlow?: boolean, withTransition?: boolean): true {
 		const $$ = this;
-		const {$T} = $$;
+		const {$T, axis, config} = $$;
 		const t = <string>getRandom(true);
+		const isRotated = config.axis_rotated;
+		const angle = config.data_labels.rotate;
+
+		const anchorString = getRotateAnchor(angle);
+		const rotateString = angle ? `rotate(${angle})` : "";
 
 		$$.$el.text
 			.style("fill", $$.updateTextColor.bind($$))
 			.attr("filter", $$.updateTextBacgroundColor.bind($$))
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
-			.each(function(d, i) {
+			.each(function(d: IDataRow, i: number) {
 				// do not apply transition for newly added text elements
 				const node = $T(this, !!(withTransition && this.getAttribute("x")), t);
+				const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
+				let pos = {
+					x: getX.bind(this)(d, i),
+					y: getY.bind(this)(d, i)
+				};
 
-				const posX = x.bind(this)(d, i);
-				const posY = y.bind(this)(d, i);
+				if (angle) {
+					pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
+					node.attr("text-anchor", anchorString);
+				}
 
 				// when is multiline
-				if (this.childElementCount) {
-					node.attr("transform", `translate(${posX} ${posY})`);
+				if (this.childElementCount || angle) {
+					node.attr("transform", `translate(${pos.x} ${pos.y}) ${rotateString}`);
 				} else {
-					node.attr("x", posX).attr("y", posY);
+					node.attr("x", pos.x).attr("y", pos.y);
 				}
 			});
 
@@ -338,7 +427,6 @@ export default {
 		const isRotated = config.axis_rotated;
 		let xPos = points[0][0];
 
-
 		if ($$.isCandlestickType(d)) {
 			if (isRotated) {
 				xPos = $$.getCandlestickData(d)?._isUp ?
@@ -384,8 +472,10 @@ export default {
 	 */
 	getYForText(points, d, textElement): number {
 		const $$ = this;
-		const {config, state} = $$;
+		const {axis, config, state} = $$;
 		const isRotated = config.axis_rotated;
+		const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
+		const isBarType = $$.isBarType(d);
 		const r = config.point_r;
 		const rect = getBoundingRect(textElement);
 		let {value} = d;
@@ -402,6 +492,10 @@ export default {
 				yPos = value && value._isUp ?
 					points[2][2] - baseY :
 					points[2][1] + (baseY * 4);
+
+				if (isInverted) {
+					yPos += 15 * (value._isUp ? 1 : -1);
+				}
 			}
 		} else {
 			if (isRotated) {
@@ -414,14 +508,20 @@ export default {
 				}
 
 				if (value < 0 || (value === 0 && !state.hasPositiveValue && state.hasNegativeValue)) {
-					yPos += rect.height + ($$.isBarType(d) ? -baseY : baseY);
+					yPos += isInverted ? (isBarType ? -3 : -5) : (
+						rect.height + (isBarType ? -baseY : baseY)
+					);
 				} else {
 					let diff = -baseY * 2;
 
-					if ($$.isBarType(d)) {
+					if (isBarType) {
 						diff = -baseY;
 					} else if ($$.isBubbleType(d)) {
 						diff = baseY;
+					}
+
+					if (isInverted) {
+						diff = isBarType ? 10 : 15;
 					}
 
 					yPos += diff;
