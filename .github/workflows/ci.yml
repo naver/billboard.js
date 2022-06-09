@@ -1,8 +1,7 @@
 name: CI
 on: [push, pull_request]
 
-permissions:
-  contents: read
+permissions: write-all
 
 jobs:
   test:
