@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220607004651
+ * @version 3.4.1-nightly-20220609004712
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -6090,6 +6090,10 @@ var redraw = {
         // Draw with new sizes & scales
         $$.redraw(options, transitions);
     },
+    /**
+     * Redraw without rescale
+     * @private
+     */
     redrawWithoutRescale: function () {
         this.redraw({
             withY: false,
@@ -8851,15 +8855,20 @@ var ChartInternal = /** @class */ (function () {
         var config = $$.config, state = $$.state;
         var resizeFunction = generateResize(config.resize_timer);
         var list = [];
-        list.push(function () { return callFn(config.onresize, $$, $$.api); });
+        list.push(function () { return callFn(config.onresize, $$.api); });
         if (config.resize_auto) {
             list.push(function () {
                 state.resizing = true;
+                // https://github.com/naver/billboard.js/issues/2650
+                if (config.legend_show) {
+                    $$.updateSizes();
+                    $$.updateLegend();
+                }
                 $$.api.flush(false);
             });
         }
         list.push(function () {
-            callFn(config.onresized, $$, $$.api);
+            callFn(config.onresized, $$.api);
             state.resizing = false;
         });
         // add resize functions
@@ -20894,7 +20903,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220607004651
+ * @version 3.4.1-nightly-20220609004712
  */
 var bb = {
     /**
@@ -20904,7 +20913,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220607004651",
+    version: "3.4.1-nightly-20220609004712",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

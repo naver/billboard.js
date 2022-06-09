@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220607004651
+ * @version 3.4.1-nightly-20220609004712
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -30044,6 +30044,11 @@ function getFormat($$, typeValue, v) {
 
     $$.redraw(options, transitions);
   },
+
+  /**
+   * Redraw without rescale
+   * @private
+   */
   redrawWithoutRescale: function redrawWithoutRescale() {
     this.redraw({
       withY: !1,
@@ -35984,14 +35989,20 @@ var ChartInternal = /*#__PURE__*/function () {
     list.push(function () {
       _newArrowCheck(this, _this9);
 
-      return callFn(config.onresize, $$, $$.api);
+      return callFn(config.onresize, $$.api);
     }.bind(this));
 
     if (config.resize_auto) {
       list.push(function () {
         _newArrowCheck(this, _this9);
 
-        state.resizing = !0;
+        state.resizing = !0; // https://github.com/naver/billboard.js/issues/2650
+
+        if (config.legend_show) {
+          $$.updateSizes();
+          $$.updateLegend();
+        }
+
         $$.api.flush(!1);
       }.bind(this));
     }
@@ -35999,7 +36010,7 @@ var ChartInternal = /*#__PURE__*/function () {
     list.push(function () {
       _newArrowCheck(this, _this9);
 
-      callFn(config.onresized, $$, $$.api);
+      callFn(config.onresized, $$.api);
       state.resizing = !1;
     }.bind(this)); // add resize functions
 
@@ -51729,7 +51740,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220607004651",
+  version: "3.4.1-nightly-20220609004712",
 
   /**
    * Generate chart
@@ -51864,7 +51875,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220607004651
+ * @version 3.4.1-nightly-20220609004712
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
