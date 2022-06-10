@@ -91,7 +91,10 @@ export default class TextOverlap extends Plugin {
 
 		return d3Delaunay
 			.from(points)
-			.voronoi([...min, ...max]); // bounds = [xmin, ymin, xmax, ymax], default value: [0, 0, 960, 500]
+			.voronoi([
+				...min as [number, number],
+				...max as [number, number]
+			]); // bounds = [xmin, ymin, xmax, ymax], default value: [0, 0, 960, 500]
 	}
 
 	/**
