@@ -175,11 +175,32 @@ export default class ChartInternal {
 	init(): void {
 		const $$ = <any> this;
 		const {config, state, $el} = $$;
+		const useCssRule = config.boost_useCssRule;
 
 		checkModuleImport($$);
 
 		state.hasAxis = !$$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");
+
+		// datetime to be used for uniqueness
+		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
+
+		if (useCssRule) {
+			// append style element
+			const styleEl = document.createElement("style");
+
+			// styleEl.id = styleId;
+			styleEl.type = "text/css";
+			document.head.appendChild(styleEl);
+
+			state.style = {
+				rootSelctor: `.${state.datetimeId}`,
+				sheet: styleEl.sheet
+			};
+
+			// used on .destroy()
+			$el.style = styleEl;
+		}
 
 		// when 'padding=false' is set, disable axes and subchart. Because they are useless.
 		if (config.padding === false) {
@@ -211,6 +232,7 @@ export default class ChartInternal {
 
 		$el.chart.html("")
 			.classed(bindto.classname, true)
+			.classed(state.datetimeId, useCssRule)
 			.style("position", "relative");
 
 		$$.initToRender();
@@ -253,12 +275,21 @@ export default class ChartInternal {
 		const $$ = <any> this;
 		const {config, format, state} = $$;
 		const isRotated = config.axis_rotated;
+		const useCssRule = config.boost_useCssRule;
 
-		// datetime to be used for uniqueness
-		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
-
+		// color settings
 		$$.color = $$.generateColor();
+		$$.colorByRule = $$.color;
+		$$.colorTextByRule = $$.updateTextColor.bind($$);
 		$$.levelColor = $$.generateLevelColor();
+
+		if (useCssRule) {
+			state.colorRule = {};
+
+			// to not apply inline color setting
+			$$.colorByRule = null;
+			$$.colorTextByRule = null;
+		}
 
 		if ($$.hasPointType()) {
 			$$.point = $$.generatePoint();

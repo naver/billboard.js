@@ -10,6 +10,7 @@ import {window} from "../../src/module/browser";
 import * as orgUtil from "../../test/assets/module/fake";
 
 export const {
+	addCssRules,
 	asHalfPixel,
 	brushEmpty,
 	callFn,

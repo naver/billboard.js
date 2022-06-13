@@ -57,7 +57,8 @@ export default {
 		// Bars for each data
 		mainBarEnter.append("g")
 			.attr("class", classBars)
-			.style("cursor", d => (isSelectable?.bind?.($$.api)(d) ? "pointer" : null));
+			.style("cursor", d => (isSelectable?.bind?.($$.api)(d) ? "pointer" : null))
+			.call($$.setColorByRule(null, $BAR.bar, ["fill"]));
 	},
 
 	/**
@@ -83,7 +84,7 @@ export default {
 
 		$root.bar = bar.enter().append("path")
 			.attr("class", classBar)
-			.style("fill", $$.color)
+			.style("fill", $$.colorByRule)
 			.merge(bar)
 			.style("opacity", initialOpacity);
 	},
@@ -102,7 +103,7 @@ export default {
 		return [
 			$$.$T(bar, withTransition, getRandom())
 				.attr("d", d => (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d))
-				.style("fill", $$.color)
+				.style("fill", $$.colorByRule)
 				.style("opacity", null)
 		];
 	},

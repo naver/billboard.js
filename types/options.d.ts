@@ -49,6 +49,16 @@ export interface ChartOptions {
 		imgUrl?: string;
 	};
 
+	boost?: {
+		/**
+		 * Avoid setting inline styles for each shape elements.
+		 * - **NOTE:**
+		 *   - Will append <style> to the head tag and will add shpes' CSS rules dynamically.
+		 *   - For now, covers colors related properties (fill, stroke, etc.) only.
+		 */
+		useCssRule?: boolean;
+	};
+
 	size?: {
 		/**
 		 * The desired width of the chart element.
