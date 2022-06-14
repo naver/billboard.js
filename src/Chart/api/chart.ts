@@ -100,7 +100,7 @@ export default {
 	 */
 	destroy(): null {
 		const $$ = this.internal;
-		const {$el: {chart, svg}} = $$;
+		const {$el: {chart, style, svg}} = $$;
 
 		if (notEmpty($$)) {
 			$$.callPluginHook("$willDestroy");
@@ -118,6 +118,9 @@ export default {
 				.style("position", null)
 				.selectChildren()
 				.remove();
+
+			// remove <style> element added by boost.useCssRule option
+			style && style.parentNode.removeChild(style);
 
 			// releasing own references
 			Object.keys(this).forEach(key => {

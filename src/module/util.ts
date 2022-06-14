@@ -9,6 +9,7 @@ import {d3Selection} from "../../types/types";
 import {document, window} from "./browser";
 
 export {
+	addCssRules,
 	asHalfPixel,
 	brushEmpty,
 	callFn,
@@ -254,6 +255,7 @@ function getPathBox(
 	};
 }
 
+
 /**
  * Get event's current position coordinates
  * @param {object} event Event object
@@ -456,6 +458,28 @@ function camelize(str: string, separator = "-"): string {
  * @private
  */
 const toArray = (v: CSSStyleDeclaration | any): any => [].slice.call(v);
+
+/**
+ * Add CSS rules
+ * @param {object} style Style object
+ * @param {string} selector Selector string
+ * @param {Array} prop Prps arrary
+ * @returns {number} Newely added rule index
+ * @private
+ */
+function addCssRules(style, selector: string, prop: string[]): number {
+	const {rootSelctor, sheet} = style;
+	const getSelector = s => s
+		.replace(/\s?(bb-)/g, ".$1")
+		.replace(/\.+/g, ".");
+
+	const rule = `${rootSelctor} ${getSelector(selector)} {${prop.join(";")}}`;
+
+	return sheet[sheet.insertRule ? "insertRule" : "addRule"](
+		rule,
+		sheet.cssRules.length
+	);
+}
 
 /**
  * Get css rules for specified stylesheets
