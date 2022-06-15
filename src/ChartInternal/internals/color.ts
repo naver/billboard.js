@@ -21,17 +21,18 @@ import {d3Selection} from "../../../types";
  * @private
  */
 const colorizePattern = (pattern, color, id: string) => {
-	const n = d3Select(pattern.cloneNode(true));
-	const node = n
+	const node = d3Select(pattern.cloneNode(true));
+
+	node
 		.attr("id", id)
 		.insert("rect", ":first-child")
-		.attr("width", n.attr("width"))
-		.attr("height", n.attr("height"))
-		.style("fill", color)
-		.node();
+		.attr("width", node.attr("width"))
+		.attr("height", node.attr("height"))
+		.style("fill", color);
 
 	return {
-		id, node
+		id,
+		node: node.node()
 	};
 };
 
