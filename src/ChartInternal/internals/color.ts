@@ -4,7 +4,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
-import {document, window} from "../../module/browser";
+import {document} from "../../module/browser";
 import {$ARC, $COLOR, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {addCssRules, notEmpty, isFunction, isObject, isString} from "../../module/util";
@@ -21,20 +21,53 @@ import {d3Selection} from "../../../types";
  * @private
  */
 const colorizePattern = (pattern, color, id: string) => {
-	const node = d3Select(pattern.cloneNode(true));
-
-	node
+	const n = d3Select(pattern.cloneNode(true));
+	const node = n
 		.attr("id", id)
 		.insert("rect", ":first-child")
-		.attr("width", node.attr("width"))
-		.attr("height", node.attr("height"))
-		.style("fill", color);
+		.attr("width", n.attr("width"))
+		.attr("height", n.attr("height"))
+		.style("fill", color)
+		.node();
 
 	return {
-		id,
-		node: node.node()
+		id, node
 	};
 };
+
+/**
+ * Get color pattern from CSS file
+ * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
+ * @param {d3Selection} element Chart element
+ * @returns {Array}
+ * @private
+ */
+function getColorFromCss(element: d3Selection): string[] {
+	const cacheKey = KEY.colorPattern;
+	const {body} = document;
+	let pattern = body[cacheKey];
+
+	if (!pattern) {
+		const delimiter = ";";
+		const content = element
+			.classed($COLOR.colorPattern, true)
+			.style("background-image");
+
+		element.classed($COLOR.colorPattern, false);
+
+		if (content.indexOf(delimiter) > -1) {
+			pattern = content
+				.replace(/url[^#]*|["'()]|(\s|%20)/g, "")
+				.split(delimiter)
+				.map(v => v.trim().replace(/[\"'\s]/g, ""))
+				.filter(Boolean);
+
+			body[cacheKey] = pattern;
+		}
+	}
+
+	return pattern;
+}
 
 // Replacement of d3.schemeCategory10.
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
@@ -65,52 +98,15 @@ export default {
 		} : () => {};
 	},
 
-	/**
-	 * Get color pattern from CSS file
-	 * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
-	 * @returns {Array}
-	 * @private
-	 */
-	getColorFromCss(): string[] {
-		const cacheKey = KEY.colorPattern;
-		const {body} = document;
-		let pattern = body[cacheKey];
-
-		if (!pattern) {
-			const delimiter = ";";
-			const span = document.createElement("span");
-
-			span.className = $COLOR.colorPattern;
-			span.style.display = "none";
-			body.appendChild(span);
-
-			const content = window.getComputedStyle(span).backgroundImage;
-
-			span.parentNode.removeChild(span);
-
-			if (content.indexOf(delimiter) > -1) {
-				pattern = content
-					.replace(/url[^#]*|["'()]|(\s|%20)/g, "")
-					.split(delimiter)
-					.map(v => v.trim().replace(/[\"'\s]/g, ""))
-					.filter(Boolean);
-
-				body[cacheKey] = pattern;
-			}
-		}
-
-		return pattern;
-	},
-
 	generateColor(): Function {
 		const $$ = this;
-		const {config} = $$;
+		const {$el, config} = $$;
 		const colors = config.data_colors;
 		const callback = config.data_color;
 		const ids: string[] = [];
 
 		let pattern = notEmpty(config.color_pattern) ? config.color_pattern :
-			d3ScaleOrdinal($$.getColorFromCss() || schemeCategory10).range();
+			d3ScaleOrdinal(getColorFromCss($el.chart) || schemeCategory10).range();
 
 		const originalColorPattern = pattern;
 

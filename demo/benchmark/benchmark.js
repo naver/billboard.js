@@ -11,6 +11,10 @@ window.bench = {
         transition: document.getElementById("transition")
     },
     init() {
+        if (/^(127\.|localhost)/.test(location.host)) {
+            this.target.push("local");
+        }
+
        // append targeted version list
        this.target.forEach(v => {
          this.$el.version.add(new Option(v, v));
@@ -36,7 +40,7 @@ window.bench = {
     
             data.push(d);
         }
-    
+    console.log(JSON.stringify(data));
         return data;
     },
     loadBillboard: function() {
@@ -44,7 +48,8 @@ window.bench = {
 
         this.billboard && document.head.removeChild(this.billboard);
         this.billboard = document.createElement("script");
-        this.billboard.src = `https://cdn.jsdelivr.net/npm/billboard.js${version === "latest" ? "" : `@${version}`}/dist/billboard.pkgd.min.js`;
+        this.billboard.src = version === "local" ? "../../dist/billboard.pkgd.min.js" :
+            `https://cdn.jsdelivr.net/npm/billboard.js${version === "latest" ? "" : `@${version}`}/dist/billboard.pkgd.min.js`;
 
         this.billboard.onload = () => {
             const {options} = this.$el.version;

@@ -202,16 +202,6 @@ export default class ChartInternal {
 			$el.style = styleEl;
 		}
 
-		// when 'padding=false' is set, disable axes and subchart. Because they are useless.
-		if (config.padding === false) {
-			config.axis_x_show = false;
-			config.axis_y_show = false;
-			config.axis_y2_show = false;
-			config.subchart_show = false;
-		}
-
-		$$.initParams();
-
 		const bindto = {
 			element: config.bindto,
 			classname: "bb"
@@ -235,6 +225,7 @@ export default class ChartInternal {
 			.classed(state.datetimeId, useCssRule)
 			.style("position", "relative");
 
+		$$.initParams();
 		$$.initToRender();
 	}
 
@@ -289,6 +280,14 @@ export default class ChartInternal {
 			// to not apply inline color setting
 			$$.colorByRule = null;
 			$$.colorTextByRule = null;
+		}
+
+		// when 'padding=false' is set, disable axes and subchart. Because they are useless.
+		if (config.padding === false) {
+			config.axis_x_show = false;
+			config.axis_y_show = false;
+			config.axis_y2_show = false;
+			config.subchart_show = false;
 		}
 
 		if ($$.hasPointType()) {
