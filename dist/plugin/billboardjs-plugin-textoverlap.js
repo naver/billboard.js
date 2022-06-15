@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220610004719
+ * @version 3.4.1-nightly-20220615004729
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -754,6 +754,29 @@ var toArray = function (v) {
   return [].slice.call(v);
 }.bind(undefined);
 /**
+ * Add CSS rules
+ * @param {object} style Style object
+ * @param {string} selector Selector string
+ * @param {Array} prop Prps arrary
+ * @returns {number} Newely added rule index
+ * @private
+ */
+
+
+function addCssRules(style, selector, prop) {
+  var _this9 = this,
+      rootSelctor = style.rootSelctor,
+      sheet = style.sheet,
+      getSelector = function (s) {
+    _newArrowCheck(this, _this9);
+
+    return s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
+  }.bind(this),
+      rule = rootSelctor + " " + getSelector(selector) + " {" + prop.join(";") + "}";
+
+  return sheet[sheet.insertRule ? "insertRule" : "addRule"](rule, sheet.cssRules.length);
+}
+/**
  * Get css rules for specified stylesheets
  * @param {Array} styleSheets The stylesheets to get the rules from
  * @returns {Array}
@@ -762,11 +785,11 @@ var toArray = function (v) {
 
 
 function getCssRules(styleSheets) {
-  var _this9 = this,
+  var _this10 = this,
       rules = [];
 
   styleSheets.forEach(function (sheet) {
-    _newArrowCheck(this, _this9);
+    _newArrowCheck(this, _this10);
 
     try {
       if (sheet.cssRules && sheet.cssRules.length) {
@@ -807,16 +830,16 @@ function getTranslation(node) {
 
 
 function getUnique(data) {
-  var _this10 = this,
+  var _this11 = this,
       isDate = data[0] instanceof Date,
       d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
-    _newArrowCheck(this, _this10);
+    _newArrowCheck(this, _this11);
 
     return self.indexOf(v) === i;
   }.bind(this));
 
   return isDate ? d.map(function (v) {
-    _newArrowCheck(this, _this10);
+    _newArrowCheck(this, _this11);
 
     return new Date(v);
   }.bind(this)) : d;
@@ -830,10 +853,10 @@ function getUnique(data) {
 
 
 function mergeArray(arr) {
-  var _this11 = this;
+  var _this12 = this;
 
   return arr && arr.length ? arr.reduce(function (p, c) {
-    _newArrowCheck(this, _this11);
+    _newArrowCheck(this, _this12);
 
     return p.concat(c);
   }.bind(this)) : [];
@@ -848,7 +871,7 @@ function mergeArray(arr) {
 
 
 function mergeObj(target) {
-  for (var _this12 = this, _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+  for (var _this13 = this, _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
     objectN[_key4 - 1] = arguments[_key4];
   }
 
@@ -860,7 +883,7 @@ function mergeObj(target) {
 
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach(function (key) {
-      _newArrowCheck(this, _this12);
+      _newArrowCheck(this, _this13);
 
       var value = source[key];
 
@@ -885,7 +908,7 @@ function mergeObj(target) {
 
 
 function sortValue(data, isAsc) {
-  var _this13 = this;
+  var _this14 = this;
 
   if (isAsc === void 0) {
     isAsc = !0;
@@ -895,24 +918,24 @@ function sortValue(data, isAsc) {
 
   if (data[0] instanceof Date) {
     fn = isAsc ? function (a, b) {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this14);
 
       return a - b;
     }.bind(this) : function (a, b) {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this14);
 
       return b - a;
     }.bind(this);
   } else {
     if (isAsc && !data.every(isNaN)) {
       fn = function (a, b) {
-        _newArrowCheck(this, _this13);
+        _newArrowCheck(this, _this14);
 
         return a - b;
       }.bind(this);
     } else if (!isAsc) {
       fn = function (a, b) {
-        _newArrowCheck(this, _this13);
+        _newArrowCheck(this, _this14);
 
         return a > b && -1 || a < b && 1 || a === b && 0;
       }.bind(this);
@@ -931,9 +954,9 @@ function sortValue(data, isAsc) {
 
 
 function getMinMax(type, data) {
-  var _this14 = this,
+  var _this15 = this,
       res = data.filter(function (v) {
-    _newArrowCheck(this, _this14);
+    _newArrowCheck(this, _this15);
 
     return notEmpty(v);
   }.bind(this));
@@ -978,12 +1001,12 @@ var getRange = function (start, end, step) {
 }.bind(undefined),
     emulateEvent = {
   mouse: function () {
-    var _this15 = this;
+    var _this16 = this;
 
     _newArrowCheck(this, util_this);
 
     var getParams = function () {
-      _newArrowCheck(this, _this15);
+      _newArrowCheck(this, _this16);
 
       return {
         bubbles: !1,
@@ -1003,7 +1026,7 @@ var getRange = function (start, end, step) {
           params = getParams();
         }
 
-        _newArrowCheck(this, _this15);
+        _newArrowCheck(this, _this16);
 
         el.dispatchEvent(new MouseEvent(eventType, params));
       }.bind(this);
@@ -1014,7 +1037,7 @@ var getRange = function (start, end, step) {
           params = getParams();
         }
 
-        _newArrowCheck(this, _this15);
+        _newArrowCheck(this, _this16);
 
         var mouseEvent = doc.createEvent("MouseEvent"); // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
 
@@ -1115,7 +1138,7 @@ function isTabVisible() {
 
 
 function convertInputType(mouse, touch) {
-  var _this16 = this,
+  var _this17 = this,
       DocumentTouch = win.DocumentTouch,
       matchMedia = win.matchMedia,
       navigator = win.navigator,
@@ -1144,7 +1167,7 @@ function convertInputType(mouse, touch) {
 
 
   var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
-    _newArrowCheck(this, _this16);
+    _newArrowCheck(this, _this17);
 
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
   }.bind(this)); // fallback to 'mouse' if no input type is detected.
@@ -1285,7 +1308,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220610004719";
+Plugin.version = "3.4.1-nightly-20220615004729";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**

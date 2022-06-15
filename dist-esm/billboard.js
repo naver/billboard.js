@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220610004719
+ * @version 3.4.1-nightly-20220615004729
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -525,6 +525,22 @@ function camelize(str, separator) {
  * @private
  */
 var toArray = function (v) { return [].slice.call(v); };
+/**
+ * Add CSS rules
+ * @param {object} style Style object
+ * @param {string} selector Selector string
+ * @param {Array} prop Prps arrary
+ * @returns {number} Newely added rule index
+ * @private
+ */
+function addCssRules(style, selector, prop) {
+    var rootSelctor = style.rootSelctor, sheet = style.sheet;
+    var getSelector = function (s) { return s
+        .replace(/\s?(bb-)/g, ".$1")
+        .replace(/\.+/g, "."); };
+    var rule = "".concat(rootSelctor, " ").concat(getSelector(selector), " {").concat(prop.join(";"), "}");
+    return sheet[sheet.insertRule ? "insertRule" : "addRule"](rule, sheet.cssRules.length);
+}
 /**
  * Get css rules for specified stylesheets
  * @param {Array} styleSheets The stylesheets to get the rules from
@@ -1105,6 +1121,8 @@ var State = /** @class */ (function () {
             xAxisHeight: 0,
             hasAxis: false,
             hasRadar: false,
+            // for data CSS rule index (used when boost.useCssRule is true)
+            colorRule: {},
             current: {
                 // chart whole dimension
                 width: 0,
@@ -1600,6 +1618,32 @@ var main = {
      *  ]
      */
     regions: []
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * boost config options
+ */
+var boost = {
+    /**
+     * Set boost options
+     * @name boost
+     * @memberof Options
+     * @type {object}
+     * @property {object} boost boost object
+     * @property {boolean} [boost.useCssRule=false] Avoid setting inline styles for each shape elements.
+     * - **NOTE:**
+     *   - Will append &lt;style> to the head tag and will add shpes' CSS rules dynamically.
+     *   - For now, covers colors related properties (fill, stroke, etc.) only.
+     * @example
+     *  boost: {
+     *      useCssRule: true
+     *  }
+     */
+    boost_useCssRule: false
 };
 
 /**
@@ -2933,7 +2977,7 @@ var tooltip$2 = {
  */
 var Options = /** @class */ (function () {
     function Options() {
-        return deepClone(main, data$2, color$1, interaction$1, legend$2, title$1, tooltip$2, Options.data);
+        return deepClone(main, boost, data$2, color$1, interaction$1, legend$2, title$1, tooltip$2, Options.data);
     }
     Options.setOptions = function (options) {
         this.data = options
@@ -4737,6 +4781,27 @@ var colorizePattern = function (pattern, color, id) {
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
 var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
 var color = {
+    /**
+     * Add props color css rule to given selector
+     * @param {Function} fn Color function
+     * @param {string} selector CSS selector
+     * @param {Array} props CSS props list
+     * @returns {Function}
+     * @private
+     */
+    setColorByRule: function (fn, selector, props) {
+        var $$ = this;
+        var config = $$.config, _a = $$.state, colorRule = _a.colorRule, style = _a.style;
+        var colorFn = fn || $$.color;
+        return config.boost_useCssRule ? function (selection) {
+            selection.each(function (d) {
+                var color = colorFn.call($$, d);
+                var shapeSelector = "".concat($SHAPE.shapes).concat($$.getTargetSelectorSuffix(d.id), " .").concat(selector);
+                (shapeSelector in colorRule) && style.sheet.deleteRule(colorRule[shapeSelector]);
+                $$.state.colorRule[shapeSelector] = addCssRules(style, shapeSelector, props.map(function (v) { return "".concat(v, ": ").concat(color); }));
+            });
+        } : function () { };
+    },
     /**
      * Get color pattern from CSS file
      * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
@@ -7107,6 +7172,7 @@ var text = {
         var mainTextEnter = mainTextUpdate.enter().append("g")
             .style("opacity", "0")
             .attr("class", classChartText)
+            .call($$.setColorByRule($$.updateTextColor, $TEXT.text, ["fill"]))
             .style("pointer-events", "none");
         mainTextEnter.append("g")
             .attr("class", classTexts);
@@ -7138,7 +7204,7 @@ var text = {
             }
             return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
         })
-            .style("fill", $$.updateTextColor.bind($$))
+            .style("fill", $$.colorTextByRule)
             .style("fill-opacity", "0")
             .each(function (d, i, texts) {
             var node = select(this);
@@ -7224,7 +7290,7 @@ var text = {
         var anchorString = getRotateAnchor(angle);
         var rotateString = angle ? "rotate(".concat(angle, ")") : "";
         $$.$el.text
-            .style("fill", $$.updateTextColor.bind($$))
+            .style("fill", $$.colorTextByRule)
             .attr("filter", $$.updateTextBacgroundColor.bind($$))
             .style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
             .each(function (d, i) {
@@ -8435,9 +8501,25 @@ var ChartInternal = /** @class */ (function () {
     ChartInternal.prototype.init = function () {
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
+        var useCssRule = config.boost_useCssRule;
         checkModuleImport($$);
         state.hasAxis = !$$.hasArcType();
         state.hasRadar = !state.hasAxis && $$.hasType("radar");
+        // datetime to be used for uniqueness
+        state.datetimeId = "bb-".concat(+new Date() * getRandom());
+        if (useCssRule) {
+            // append style element
+            var styleEl = doc.createElement("style");
+            // styleEl.id = styleId;
+            styleEl.type = "text/css";
+            doc.head.appendChild(styleEl);
+            state.style = {
+                rootSelctor: ".".concat(state.datetimeId),
+                sheet: styleEl.sheet
+            };
+            // used on .destroy()
+            $el.style = styleEl;
+        }
         // when 'padding=false' is set, disable axes and subchart. Because they are useless.
         if (config.padding === false) {
             config.axis_x_show = false;
@@ -8462,6 +8544,7 @@ var ChartInternal = /** @class */ (function () {
         }
         $el.chart.html("")
             .classed(bindto.classname, true)
+            .classed(state.datetimeId, useCssRule)
             .style("position", "relative");
         $$.initToRender();
     };
@@ -8497,10 +8580,18 @@ var ChartInternal = /** @class */ (function () {
         var $$ = this;
         var config = $$.config, format = $$.format, state = $$.state;
         var isRotated = config.axis_rotated;
-        // datetime to be used for uniqueness
-        state.datetimeId = "bb-".concat(+new Date() * getRandom());
+        var useCssRule = config.boost_useCssRule;
+        // color settings
         $$.color = $$.generateColor();
+        $$.colorByRule = $$.color;
+        $$.colorTextByRule = $$.updateTextColor.bind($$);
         $$.levelColor = $$.generateLevelColor();
+        if (useCssRule) {
+            state.colorRule = {};
+            // to not apply inline color setting
+            $$.colorByRule = null;
+            $$.colorTextByRule = null;
+        }
         if ($$.hasPointType()) {
             $$.point = $$.generatePoint();
         }
@@ -9051,7 +9142,7 @@ var apiChart = {
     destroy: function () {
         var _this = this;
         var $$ = this.internal;
-        var _a = $$.$el, chart = _a.chart, svg = _a.svg;
+        var _a = $$.$el, chart = _a.chart, style = _a.style, svg = _a.svg;
         if (notEmpty($$)) {
             $$.callPluginHook("$willDestroy");
             $$.charts.splice($$.charts.indexOf(this), 1);
@@ -9065,6 +9156,8 @@ var apiChart = {
                 .style("position", null)
                 .selectChildren()
                 .remove();
+            // remove <style> element added by boost.useCssRule option
+            style && style.parentNode.removeChild(style);
             // releasing own references
             Object.keys(this).forEach(function (key) {
                 key === "internal" && Object.keys($$).forEach(function (k) {
@@ -16554,7 +16647,8 @@ var shapeBar = {
         // Bars for each data
         mainBarEnter.append("g")
             .attr("class", classBars)
-            .style("cursor", function (d) { var _a; return (((_a = isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind) === null || _a === void 0 ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null); });
+            .style("cursor", function (d) { var _a; return (((_a = isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind) === null || _a === void 0 ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null); })
+            .call($$.setColorByRule(null, $BAR.bar, ["fill"]));
     },
     /**
      * Generate/Update elements
@@ -16577,7 +16671,7 @@ var shapeBar = {
             .remove();
         $root.bar = bar.enter().append("path")
             .attr("class", classBar)
-            .style("fill", $$.color)
+            .style("fill", $$.colorByRule)
             .merge(bar)
             .style("opacity", initialOpacity);
     },
@@ -16595,7 +16689,7 @@ var shapeBar = {
         return [
             $$.$T(bar, withTransition, getRandom())
                 .attr("d", function (d) { return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d); })
-                .style("fill", $$.color)
+                .style("fill", $$.colorByRule)
                 .style("opacity", null)
         ];
     },
@@ -17433,6 +17527,7 @@ var shapePoint = {
         enterNode.append("g")
             .attr("class", classCircles)
             .style("cursor", function (d) { return (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null); })
+            .call($$.setColorByRule(null, $CIRCLE.circle, ["fill", "stroke"]))
             .style("opacity", function () {
             var parent = select(this.parentNode);
             // if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
@@ -17462,9 +17557,9 @@ var shapePoint = {
             circles.exit().remove();
             circles.enter()
                 .filter(Boolean)
-                .append($$.point("create", this, $$.pointR.bind($$), $$.color));
+                .append($$.point("create", this, $$.pointR.bind($$), $$.colorByRule));
             $root.circle = $root.main.selectAll(".".concat($CIRCLE.circles, " .").concat($CIRCLE.circle))
-                .style("stroke", $$.color)
+                .style("stroke", $$.colorByRule)
                 .style("opacity", $$.initialOpacityForCircle.bind($$));
         }
     },
@@ -17477,7 +17572,7 @@ var shapePoint = {
         if (!$$.config.point_show) {
             return [];
         }
-        var fn = $$.point("update", $$, cx, cy, $$.color, withTransition, flow, selectedCircles);
+        var fn = $$.point("update", $$, cx, cy, $$.colorByRule, withTransition, flow, selectedCircles);
         var posAttr = $$.isCirclePoint() ? "c" : "";
         var t = getRandom();
         var opacityStyleFn = $$.opacityForCircle.bind($$);
@@ -17508,7 +17603,7 @@ var shapePoint = {
             var cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
             var cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
             var withTransition = toggling || isUndefined(d);
-            var fn_1 = $$.point("update", $$, cx, cy, $$.color, resizing ? false : withTransition);
+            var fn_1 = $$.point("update", $$, cx, cy, $$.colorByRule, resizing ? false : withTransition);
             if (d) {
                 circle = circle
                     .filter(function (t) {
@@ -17593,8 +17688,10 @@ var shapePoint = {
         })
             .classed($COMMON.EXPANDED, false);
         circles.attr("r", r);
-        !$$.isCirclePoint() &&
-            circles.attr("transform", "scale(".concat(r(circles) / $$.config.point_r, ")"));
+        if (!$$.isCirclePoint()) {
+            var scale = r(circles) / $$.config.point_r;
+            circles.attr("transform", scale !== 1 ? "scale(".concat(scale, ")") : null);
+        }
     },
     pointR: function (d) {
         var $$ = this;
@@ -17748,7 +17845,7 @@ var shapePoint = {
         };
     },
     custom: {
-        create: function (element, id, sizeFn, fillStyleFn) {
+        create: function (element, id, fillStyleFn) {
             return element.append("use")
                 .attr("xlink:href", "#".concat(id))
                 .attr("class", this.updatePointClass.bind(this))
@@ -20903,7 +21000,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220610004719
+ * @version 3.4.1-nightly-20220615004729
  */
 var bb = {
     /**
@@ -20913,7 +21010,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220610004719",
+    version: "3.4.1-nightly-20220615004729",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
