@@ -102,6 +102,7 @@ export default {
 		enterNode.append("g")
 			.attr("class", classCircles)
 			.style("cursor", d => (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null))
+			.call($$.setColorByRule(null, $CIRCLE.circle, ["fill", "stroke"]))
 			.style("opacity", function() {
 				const parent = d3Select(this.parentNode);
 
@@ -138,10 +139,10 @@ export default {
 
 			circles.enter()
 				.filter(Boolean)
-				.append($$.point("create", this, $$.pointR.bind($$), $$.color));
+				.append($$.point("create", this, $$.pointR.bind($$), $$.colorByRule));
 
 			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
-				.style("stroke", $$.color)
+				.style("stroke", $$.colorByRule)
 				.style("opacity", $$.initialOpacityForCircle.bind($$));
 		}
 	},
@@ -156,10 +157,10 @@ export default {
 			return [];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, $$.color, withTransition, flow, selectedCircles);
+		const fn = $$.point("update", $$, cx, cy, $$.colorByRule, withTransition, flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
-		const t: any = getRandom();
+		const t = getRandom();
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
 		const mainCircles: any[] = [];
 
@@ -194,7 +195,7 @@ export default {
 			const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
 			const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
 			const withTransition = toggling || isUndefined(d);
-			const fn = $$.point("update", $$, cx, cy, $$.color, resizing ? false : withTransition);
+			const fn = $$.point("update", $$, cx, cy, $$.colorByRule, resizing ? false : withTransition);
 
 			if (d) {
 				circle = circle
@@ -297,8 +298,11 @@ export default {
 
 		circles.attr("r", r);
 
-		!$$.isCirclePoint() &&
-			circles.attr("transform", `scale(${r(circles) / $$.config.point_r})`);
+		if (!$$.isCirclePoint()) {
+			const scale = r(circles) / $$.config.point_r;
+
+			circles.attr("transform", scale !== 1 ? `scale(${scale})` : null);
+		}
 	},
 
 	pointR(d): number {
@@ -485,7 +489,7 @@ export default {
 	},
 
 	custom: {
-		create(element, id, sizeFn, fillStyleFn) {
+		create(element, id, fillStyleFn) {
 			return element.append("use")
 				.attr("xlink:href", `#${id}`)
 				.attr("class", this.updatePointClass.bind(this))

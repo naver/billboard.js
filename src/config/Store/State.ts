@@ -41,6 +41,9 @@ export default class State {
 			hasAxis: false,
 			hasRadar: false,
 
+			// for data CSS rule index (used when boost.useCssRule is true)
+			colorRule: {},
+
 			current: {
 				// chart whole dimension
 				width: 0,

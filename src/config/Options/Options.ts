@@ -4,6 +4,7 @@
  */
 // common
 import main from "./common/main";
+import boost from "./common/boost";
 import data from "./data/data";
 import color from "./common/color";
 import interaction from "./interaction/interaction";
@@ -30,6 +31,7 @@ export default class Options {
 	constructor() {
 		return deepClone(
 			main,
+			boost,
 			data,
 			color,
 			interaction,
