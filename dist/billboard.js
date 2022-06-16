@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220615004729
+ * @version 3.4.1-nightly-20220616004658
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6185,11 +6185,42 @@ var colorizePattern = function (pattern, color, id) {
     id: id,
     node: node.node()
   };
-}.bind(undefined),
-    schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"]; // Replacement of d3.schemeCategory10.
+}.bind(undefined);
+/**
+ * Get color pattern from CSS file
+ * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
+ * @param {d3Selection} element Chart element
+ * @returns {Array}
+ * @private
+ */
+
+
+function getColorFromCss(element) {
+  var _this2 = this,
+      cacheKey = KEY.colorPattern,
+      body = browser_doc.body,
+      pattern = body[cacheKey];
+
+  if (!pattern) {
+    var content = element.classed($COLOR.colorPattern, !0).style("background-image");
+    element.classed($COLOR.colorPattern, !1);
+
+    if (content.indexOf(";") > -1) {
+      pattern = content.replace(/url[^#]*|["'()]|(\s|%20)/g, "").split(";").map(function (v) {
+        _newArrowCheck(this, _this2);
+
+        return v.trim().replace(/[\"'\s]/g, "");
+      }.bind(this)).filter(Boolean);
+      body[cacheKey] = pattern;
+    }
+  }
+
+  return pattern;
+} // Replacement of d3.schemeCategory10.
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
 
 
+var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
 /* harmony default export */ var internals_color = ({
   /**
    * Add props color css rule to given selector
@@ -6200,7 +6231,7 @@ var colorizePattern = function (pattern, color, id) {
    * @private
    */
   setColorByRule: function setColorByRule(fn, selector, props) {
-    var _this2 = this,
+    var _this3 = this,
         $$ = this,
         config = $$.config,
         _$$$state = $$.state,
@@ -6209,69 +6240,37 @@ var colorizePattern = function (pattern, color, id) {
         colorFn = fn || $$.color;
 
     return config.boost_useCssRule ? function (selection) {
-      var _this3 = this;
+      var _this4 = this;
 
-      _newArrowCheck(this, _this2);
+      _newArrowCheck(this, _this3);
 
       selection.each(function (d) {
-        var _this4 = this;
+        var _this5 = this;
 
-        _newArrowCheck(this, _this3);
+        _newArrowCheck(this, _this4);
 
         var color = colorFn.call($$, d),
             shapeSelector = "" + $SHAPE.shapes + $$.getTargetSelectorSuffix(d.id) + " ." + selector;
         shapeSelector in colorRule && style.sheet.deleteRule(colorRule[shapeSelector]);
         $$.state.colorRule[shapeSelector] = addCssRules(style, shapeSelector, props.map(function (v) {
-          _newArrowCheck(this, _this4);
+          _newArrowCheck(this, _this5);
 
           return v + ": " + color;
         }.bind(this)));
       }.bind(this));
     }.bind(this) : function () {
-      _newArrowCheck(this, _this2);
+      _newArrowCheck(this, _this3);
     }.bind(this);
-  },
-
-  /**
-   * Get color pattern from CSS file
-   * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
-   * @returns {Array}
-   * @private
-   */
-  getColorFromCss: function getColorFromCss() {
-    var _this5 = this,
-        cacheKey = KEY.colorPattern,
-        body = browser_doc.body,
-        pattern = body[cacheKey];
-
-    if (!pattern) {
-      var span = browser_doc.createElement("span");
-      span.className = $COLOR.colorPattern;
-      span.style.display = "none";
-      body.appendChild(span);
-      var content = win.getComputedStyle(span).backgroundImage;
-      span.parentNode.removeChild(span);
-
-      if (content.indexOf(";") > -1) {
-        pattern = content.replace(/url[^#]*|["'()]|(\s|%20)/g, "").split(";").map(function (v) {
-          _newArrowCheck(this, _this5);
-
-          return v.trim().replace(/[\"'\s]/g, "");
-        }.bind(this)).filter(Boolean);
-        body[cacheKey] = pattern;
-      }
-    }
-
-    return pattern;
   },
   generateColor: function generateColor() {
     var _this6 = this,
         $$ = this,
+        $el = $$.$el,
         config = $$.config,
         colors = config.data_colors,
         callback = config.data_color,
         ids = [],
-        pattern = notEmpty(config.color_pattern) ? config.color_pattern : (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleOrdinal)($$.getColorFromCss() || schemeCategory10).range(),
+        pattern = notEmpty(config.color_pattern) ? config.color_pattern : (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleOrdinal)(getColorFromCss($el.chart) || schemeCategory10).range(),
         originalColorPattern = pattern;
 
     if (isFunction(config.color_tiles)) {
@@ -10841,17 +10840,8 @@ var ChartInternal = /*#__PURE__*/function () {
       }; // used on .destroy()
 
       $el.style = styleEl;
-    } // when 'padding=false' is set, disable axes and subchart. Because they are useless.
-
-
-    if (config.padding === !1) {
-      config.axis_x_show = !1;
-      config.axis_y_show = !1;
-      config.axis_y2_show = !1;
-      config.subchart_show = !1;
     }
 
-    $$.initParams();
     var bindto = {
       element: config.bindto,
       classname: "bb"
@@ -10870,6 +10860,7 @@ var ChartInternal = /*#__PURE__*/function () {
     }
 
     $el.chart.html("").classed(bindto.classname, !0).classed(state.datetimeId, useCssRule).style("position", "relative");
+    $$.initParams();
     $$.initToRender();
   }
   /**
@@ -10934,6 +10925,14 @@ var ChartInternal = /*#__PURE__*/function () {
 
       $$.colorByRule = null;
       $$.colorTextByRule = null;
+    } // when 'padding=false' is set, disable axes and subchart. Because they are useless.
+
+
+    if (config.padding === !1) {
+      config.axis_x_show = !1;
+      config.axis_y_show = !1;
+      config.axis_y2_show = !1;
+      config.subchart_show = !1;
     }
 
     if ($$.hasPointType()) {
@@ -25731,7 +25730,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220615004729",
+  version: "3.4.1-nightly-20220616004658",
 
   /**
    * Generate chart
@@ -25866,7 +25865,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220615004729
+ * @version 3.4.1-nightly-20220616004658
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

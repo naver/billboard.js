@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220615004729
+ * @version 3.4.1-nightly-20220616004658
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4777,6 +4777,34 @@ var colorizePattern = function (pattern, color, id) {
         node: node.node()
     };
 };
+/**
+ * Get color pattern from CSS file
+ * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
+ * @param {d3Selection} element Chart element
+ * @returns {Array}
+ * @private
+ */
+function getColorFromCss(element) {
+    var cacheKey = KEY.colorPattern;
+    var body = doc.body;
+    var pattern = body[cacheKey];
+    if (!pattern) {
+        var delimiter = ";";
+        var content = element
+            .classed($COLOR.colorPattern, true)
+            .style("background-image");
+        element.classed($COLOR.colorPattern, false);
+        if (content.indexOf(delimiter) > -1) {
+            pattern = content
+                .replace(/url[^#]*|["'()]|(\s|%20)/g, "")
+                .split(delimiter)
+                .map(function (v) { return v.trim().replace(/[\"'\s]/g, ""); })
+                .filter(Boolean);
+            body[cacheKey] = pattern;
+        }
+    }
+    return pattern;
+}
 // Replacement of d3.schemeCategory10.
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
 var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
@@ -4802,43 +4830,14 @@ var color = {
             });
         } : function () { };
     },
-    /**
-     * Get color pattern from CSS file
-     * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
-     * @returns {Array}
-     * @private
-     */
-    getColorFromCss: function () {
-        var cacheKey = KEY.colorPattern;
-        var body = doc.body;
-        var pattern = body[cacheKey];
-        if (!pattern) {
-            var delimiter = ";";
-            var span = doc.createElement("span");
-            span.className = $COLOR.colorPattern;
-            span.style.display = "none";
-            body.appendChild(span);
-            var content = win.getComputedStyle(span).backgroundImage;
-            span.parentNode.removeChild(span);
-            if (content.indexOf(delimiter) > -1) {
-                pattern = content
-                    .replace(/url[^#]*|["'()]|(\s|%20)/g, "")
-                    .split(delimiter)
-                    .map(function (v) { return v.trim().replace(/[\"'\s]/g, ""); })
-                    .filter(Boolean);
-                body[cacheKey] = pattern;
-            }
-        }
-        return pattern;
-    },
     generateColor: function () {
         var $$ = this;
-        var config = $$.config;
+        var $el = $$.$el, config = $$.config;
         var colors = config.data_colors;
         var callback = config.data_color;
         var ids = [];
         var pattern = notEmpty(config.color_pattern) ? config.color_pattern :
-            scaleOrdinal($$.getColorFromCss() || schemeCategory10).range();
+            scaleOrdinal(getColorFromCss($el.chart) || schemeCategory10).range();
         var originalColorPattern = pattern;
         if (isFunction(config.color_tiles)) {
             var tiles_1 = config.color_tiles.bind($$.api)();
@@ -8520,14 +8519,6 @@ var ChartInternal = /** @class */ (function () {
             // used on .destroy()
             $el.style = styleEl;
         }
-        // when 'padding=false' is set, disable axes and subchart. Because they are useless.
-        if (config.padding === false) {
-            config.axis_x_show = false;
-            config.axis_y_show = false;
-            config.axis_y2_show = false;
-            config.subchart_show = false;
-        }
-        $$.initParams();
         var bindto = {
             element: config.bindto,
             classname: "bb"
@@ -8546,6 +8537,7 @@ var ChartInternal = /** @class */ (function () {
             .classed(bindto.classname, true)
             .classed(state.datetimeId, useCssRule)
             .style("position", "relative");
+        $$.initParams();
         $$.initToRender();
     };
     /**
@@ -8591,6 +8583,13 @@ var ChartInternal = /** @class */ (function () {
             // to not apply inline color setting
             $$.colorByRule = null;
             $$.colorTextByRule = null;
+        }
+        // when 'padding=false' is set, disable axes and subchart. Because they are useless.
+        if (config.padding === false) {
+            config.axis_x_show = false;
+            config.axis_y_show = false;
+            config.axis_y2_show = false;
+            config.subchart_show = false;
         }
         if ($$.hasPointType()) {
             $$.point = $$.generatePoint();
@@ -21000,7 +20999,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220615004729
+ * @version 3.4.1-nightly-20220616004658
  */
 var bb = {
     /**
@@ -21010,7 +21009,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220615004729",
+    version: "3.4.1-nightly-20220616004658",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
