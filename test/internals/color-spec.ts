@@ -51,16 +51,21 @@ describe("COLOR", () => {
 		});
 
 		after(() => {
-			styleSheet.parentNode.removeChild(styleSheet);
+			styleSheet.parentNode?.removeChild(styleSheet);
 			document.body[CACHE_KEY.colorPattern] = null;
 		});
 
 		it("should get and parse from the stylesheet", () => {			
-			const pttrn = chart.internal.getColorFromCss();
+			const color = chart.internal.generateColor();
+			const pttrn: string[] = [];
+			
+			chart.data().forEach(v => {
+				pttrn.push(color(v.id));
+			});
 
 			expect(pttrn).to.deep.equal(pattern);
 
-			// check if pattern value are cached
+			// // check if pattern value are cached
 			expect(document.body["__colorPattern__"]).to.deep.equal(pattern);
 		});
 
@@ -270,7 +275,7 @@ describe("COLOR", () => {
 			const {$: {main}, internal: {$el}} = chart;
 			const eventRect = $el.eventRect.node();
 			const shape = main.selectAll(`.${$SHAPE.shape}-1`);
-			const originalColor = [];
+			const originalColor: any = [];
 
 			shape.each(function() {
 				originalColor.push({
