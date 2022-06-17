@@ -1,4 +1,7 @@
-<img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js"><br>
+<picture>
+  <source srcset="https://naver.github.io/billboard.js/img/logo/billboard.js-white.svg" media="(prefers-color-scheme: dark)">
+  <img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js"><br>
+</picture>
 
 [![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![semantic-release][badge-semantic-release]][link-semantic-release]
 
