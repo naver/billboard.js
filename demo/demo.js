@@ -3736,6 +3736,34 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		Below: [{
+			options: {
+				title: {
+				 text: "Area with negative values"
+				},
+				data: {
+					columns: [
+						["data", 230, -280, 251, -400, 150, 546, 158]
+					],
+					type: "area",
+				},
+			}
+		}, {
+			options: {
+				title: {
+				 text: "Area with negative values and area below set to true"
+				},
+			 data: {
+				 columns: [
+					 ["data", 230, -280, 251, -400, 150, 546, 158]
+					],
+					type: "area",
+				},
+				area: {
+					below: true
+				}
+			}
+		}],
 		LinearGradient: [
 			{
 				options: {
@@ -4030,7 +4058,7 @@ d3.select(".chart_area")
 				}
 			}
 		],
-		Padding: [			
+		Padding: [
 			{
 				options: {
 					data: {
