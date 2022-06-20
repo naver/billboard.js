@@ -157,7 +157,7 @@ export default {
 						.x1(value1) :
 					area.x(xValue)
 						// @ts-ignore
-						.y0(config.area_above ? 0 : value0)
+						.y0(config.area_above ? 0 : config.area_below ? $$.state.height : value0)
 						.y1(value1);
 
 				if (!lineConnectNull) {
