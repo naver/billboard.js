@@ -55,7 +55,7 @@ export default {
 	getPolarOuterRadius(d: IArcData, outerRadius: number): number {
 		const dataMax = getDataMax(this);
 
-		return (d?.data.values[0].value / dataMax) * outerRadius;
+		return ((d?.data.values[0].value ?? 0) / dataMax) * outerRadius;
 	},
 
 	/**

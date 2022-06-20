@@ -309,7 +309,7 @@ describe("DATA", () => {
 		});
 
 		it("check for ascending", () => {
-			const data = [];
+			const data: [string, number][] = [];
 
 			chart.$.bar.bars.each(function(d) {
 				data.push([d.id, this.getBoundingClientRect().y]);
@@ -339,7 +339,7 @@ describe("DATA", () => {
 		});
 
 		it("check for descending", () => {
-			const data = [];
+			const data: [string, number][] = [];
 
 			chart.$.bar.bars.each(function(d) {
 				data.push([d.id, this.getBoundingClientRect().y]);
@@ -364,7 +364,7 @@ describe("DATA", () => {
 		});
 
 		it("check for ascending", () => {
-			const data = [];
+			const data: [string, number][] = [];
 
 			chart.$.arc.selectAll(`g.${$SHAPE.shapes}`).each(function(d, i) {
 				data.push([d.data.id, d.startAngle]);
@@ -387,7 +387,7 @@ describe("DATA", () => {
 		});
 
 		it("check for descending", () => {
-			const data = [];
+			const data: [string, number][] = [];
 
 			chart.$.arc.selectAll(`g.${$SHAPE.shapes}`).each(function(d, i) {
 				data.push([d.data.id, d.startAngle]);

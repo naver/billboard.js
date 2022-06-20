@@ -4,7 +4,7 @@
  */
 import {d3Transition} from "../../types/types";
 import {window} from "./browser";
-import {isArray, isNumber, isTabVisible} from "./util";
+import {isArray, isNumber, isTabVisible, runUntil} from "./util";
 
 const {setTimeout, clearTimeout} = window;
 
@@ -58,13 +58,12 @@ export function generateWait() {
 
 	// 'f' is called as selection.call(f, ...);
 	const f = function(selection: d3Transition, callback: Function) {
-		let timer;
-
 		/**
 		 * Check if transition is complete
+		 * @returns {boolean} Whether transition is complete
 		 * @private
 		 */
-		function loop() {
+		function loop(): boolean {
 			let done = 0;
 
 			for (let i = 0, t; (t = transitionsToWait[i]); i++) {
@@ -86,16 +85,12 @@ export function generateWait() {
 				}
 			}
 
-			timer && clearTimeout(timer);
-
-			if (done === transitionsToWait.length) {
-				callback?.();
-			} else {
-				timer = setTimeout(loop, 50);
-			}
+			return done === transitionsToWait.length;
 		}
 
-		loop();
+		runUntil(() => {
+			callback?.();
+		}, loop);
 	};
 
 	f.add = function(t: Transition | Transition[]) {

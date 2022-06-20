@@ -69,11 +69,12 @@ export default {
 		// reset internally cached data
 		$$.cache.reset();
 
-		const data = args.data || $$.convertData(args, d => $$.load($$.convertDataToTargets(d), args));
+		$$.convertData(args, d => {
+			const data = args.data || d;
 
-		args.append && (data.__append__ = true);
-
-		data && $$.load($$.convertDataToTargets(data), args);
+			args.append && (data.__append__ = true);
+			data && $$.load($$.convertDataToTargets(data), args);
+		});
 	},
 
 	unload(rawTargetIds, customDoneCb): void {
