@@ -562,4 +562,46 @@ describe("SHAPE AREA", () => {
 			});
 		});
 	});
+
+	describe("area fill options: above & below", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 150, 200, 130]
+					],
+					type: "area"
+				},
+				area: {
+					above: true
+				}
+			};
+		});
+
+		it("should area rendered at the above of line?", () => {
+			const {areas, lines} = chart.$.line;
+			const lineRect = lines.node().getBoundingClientRect();
+			const areaRect = areas.node().getBoundingClientRect();
+
+			expect(areaRect.bottom).to.be.above(lineRect.bottom);
+			expect(areaRect.top).to.be.below(5);
+			expect(areaRect.height).to.be.closeTo(282, 5);
+		});
+
+		it("set options", () => {
+			args.data.columns = [["data2", 130, -100, -140, -200, 150, 50]];
+			args.area = {
+				below: true
+			};
+		});
+
+		it("should area rendered at the below of line?", () => {
+			const {line: {areas, lines}, svg} = chart.$;
+			const lineRect = lines.node().getBoundingClientRect();
+			const areaRect = areas.node().getBoundingClientRect();
+
+			expect(areaRect.top).to.be.below(lineRect.bottom);
+			expect(areaRect.bottom).to.be.closeTo(+svg.attr("height"), 60);
+		});
+	});
 });
