@@ -255,10 +255,10 @@ export default class ChartInternal {
 		}
 
 		if (!isLazy || forced) {
-			const convertedData = $$.convertData(config, $$.initWithData);
-
-			convertedData && $$.initWithData(convertedData);
-			$$.afterInit();
+			$$.convertData(config, res => {
+				$$.initWithData(res);
+				$$.afterInit();
+			});
 		}
 	}
 

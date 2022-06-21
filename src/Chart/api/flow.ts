@@ -57,153 +57,163 @@ export default {
 	flow(args): void {
 		const $$ = this.internal;
 		let data;
-		let domain;
-		let length: number = 0;
-		let tail = 0;
-		let diff;
-		let to;
 
 		if (args.json || args.rows || args.columns) {
-			data = $$.convertData(args);
+			$$.convertData(args, res => {
+				data = res;
+				_();
+			});
 		}
 
-		if ($$.state.redrawing || !data || !isTabVisible()) {
-			return;
-		}
+		/**
+		 * Process flows
+		 * @private
+		 */
+		function _(): void {
+			let domain;
+			let length: number = 0;
+			let tail = 0;
+			let diff;
+			let to;
 
-		const notfoundIds: string[] = [];
-		const orgDataCount = $$.getMaxDataCount();
-		const targets = $$.convertDataToTargets(data, true);
-		const isTimeSeries = $$.axis.isTimeSeries();
-
-		// Update/Add data
-		$$.data.targets.forEach(t => {
-			let found = false;
-
-			for (let i = 0; i < targets.length; i++) {
-				if (t.id === targets[i].id) {
-					found = true;
-
-					if (t.values[t.values.length - 1]) {
-						tail = t.values[t.values.length - 1].index + 1;
-					}
-
-					length = targets[i].values.length;
-
-					for (let j = 0; j < length; j++) {
-						targets[i].values[j].index = tail + j;
-
-						if (!isTimeSeries) {
-							targets[i].values[j].x = tail + j;
-						}
-					}
-
-					t.values = t.values.concat(targets[i].values);
-					targets.splice(i, 1);
-					break;
-				}
+			if ($$.state.redrawing || !data || !isTabVisible()) {
+				return;
 			}
 
-			!found && notfoundIds.push(t.id);
-		});
+			const notfoundIds: string[] = [];
+			const orgDataCount = $$.getMaxDataCount();
+			const targets = $$.convertDataToTargets(data, true);
+			const isTimeSeries = $$.axis.isTimeSeries();
 
-		// Append null for not found targets
-		$$.data.targets.forEach(t => {
-			for (let i = 0; i < notfoundIds.length; i++) {
-				if (t.id === notfoundIds[i]) {
-					tail = t.values[t.values.length - 1].index + 1;
+			// Update/Add data
+			$$.data.targets.forEach(t => {
+				let found = false;
 
-					for (let j = 0; j < length; j++) {
-						t.values.push({
+				for (let i = 0; i < targets.length; i++) {
+					if (t.id === targets[i].id) {
+						found = true;
+
+						if (t.values[t.values.length - 1]) {
+							tail = t.values[t.values.length - 1].index + 1;
+						}
+
+						length = targets[i].values.length;
+
+						for (let j = 0; j < length; j++) {
+							targets[i].values[j].index = tail + j;
+
+							if (!isTimeSeries) {
+								targets[i].values[j].x = tail + j;
+							}
+						}
+
+						t.values = t.values.concat(targets[i].values);
+						targets.splice(i, 1);
+						break;
+					}
+				}
+
+				!found && notfoundIds.push(t.id);
+			});
+
+			// Append null for not found targets
+			$$.data.targets.forEach(t => {
+				for (let i = 0; i < notfoundIds.length; i++) {
+					if (t.id === notfoundIds[i]) {
+						tail = t.values[t.values.length - 1].index + 1;
+
+						for (let j = 0; j < length; j++) {
+							t.values.push({
+								id: t.id,
+								index: tail + j,
+								x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
+								value: null
+							});
+						}
+					}
+				}
+			});
+
+			// Generate null values for new target
+			if ($$.data.targets.length) {
+				targets.forEach(t => {
+					const missing: any[] = [];
+
+					for (let i = $$.data.targets[0].values[0].index; i < tail; i++) {
+						missing.push({
 							id: t.id,
-							index: tail + j,
-							x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
+							index: i,
+							x: isTimeSeries ? $$.getOtherTargetX(i) : i,
 							value: null
 						});
 					}
-				}
-			}
-		});
 
-		// Generate null values for new target
-		if ($$.data.targets.length) {
-			targets.forEach(t => {
-				const missing: any[] = [];
+					t.values.forEach(v => {
+						v.index += tail;
 
-				for (let i = $$.data.targets[0].values[0].index; i < tail; i++) {
-					missing.push({
-						id: t.id,
-						index: i,
-						x: isTimeSeries ? $$.getOtherTargetX(i) : i,
-						value: null
+						if (!isTimeSeries) {
+							v.x += tail;
+						}
 					});
-				}
 
-				t.values.forEach(v => {
-					v.index += tail;
-
-					if (!isTimeSeries) {
-						v.x += tail;
-					}
+					t.values = missing.concat(t.values);
 				});
-
-				t.values = missing.concat(t.values);
-			});
-		}
-
-		$$.data.targets = $$.data.targets.concat(targets); // add remained
-
-		// check data count because behavior needs to change when it"s only one
-		// const dataCount = $$.getMaxDataCount();
-		const baseTarget = $$.data.targets[0];
-		const baseValue = baseTarget.values[0];
-
-		// Update length to flow if needed
-		if (isDefined(args.to)) {
-			length = 0;
-			to = isTimeSeries ? parseDate.call($$, args.to) : args.to;
-
-			baseTarget.values.forEach(v => {
-				v.x < to && length++;
-			});
-		} else if (isDefined(args.length)) {
-			length = args.length;
-		}
-
-		// If only one data, update the domain to flow from left edge of the chart
-		if (!orgDataCount) {
-			if (isTimeSeries) {
-				diff = baseTarget.values.length > 1 ?
-					baseTarget.values[baseTarget.values.length - 1].x - baseValue.x :
-					baseValue.x - $$.getXDomain($$.data.targets)[0];
-			} else {
-				diff = 1;
 			}
 
-			domain = [baseValue.x - diff, baseValue.x];
-		} else if (orgDataCount === 1 && isTimeSeries) {
-			diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
-			domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
+			$$.data.targets = $$.data.targets.concat(targets); // add remained
+
+			// check data count because behavior needs to change when it"s only one
+			// const dataCount = $$.getMaxDataCount();
+			const baseTarget = $$.data.targets[0];
+			const baseValue = baseTarget.values[0];
+
+			// Update length to flow if needed
+			if (isDefined(args.to)) {
+				length = 0;
+				to = isTimeSeries ? parseDate.call($$, args.to) : args.to;
+
+				baseTarget.values.forEach(v => {
+					v.x < to && length++;
+				});
+			} else if (isDefined(args.length)) {
+				length = args.length;
+			}
+
+			// If only one data, update the domain to flow from left edge of the chart
+			if (!orgDataCount) {
+				if (isTimeSeries) {
+					diff = baseTarget.values.length > 1 ?
+						baseTarget.values[baseTarget.values.length - 1].x - baseValue.x :
+						baseValue.x - $$.getXDomain($$.data.targets)[0];
+				} else {
+					diff = 1;
+				}
+
+				domain = [baseValue.x - diff, baseValue.x];
+			} else if (orgDataCount === 1 && isTimeSeries) {
+				diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
+				domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
+			}
+
+			domain && $$.updateXDomain(null, true, true, false, domain);
+
+			// Set targets
+			$$.updateTargets($$.data.targets);
+
+			// Redraw with new targets
+			$$.redraw({
+				flow: {
+					index: baseValue.index,
+					length: length,
+					duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
+					done: args.done,
+					orgDataCount: orgDataCount,
+				},
+				withLegend: true,
+				withTransition: orgDataCount > 1,
+				withTrimXDomain: false,
+				withUpdateXAxis: true
+			});
 		}
-
-		domain && $$.updateXDomain(null, true, true, false, domain);
-
-		// Set targets
-		$$.updateTargets($$.data.targets);
-
-		// Redraw with new targets
-		$$.redraw({
-			flow: {
-				index: baseValue.index,
-				length: length,
-				duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
-				done: args.done,
-				orgDataCount: orgDataCount,
-			},
-			withLegend: true,
-			withTransition: orgDataCount > 1,
-			withTrimXDomain: false,
-			withUpdateXAxis: true
-		});
 	}
 };
