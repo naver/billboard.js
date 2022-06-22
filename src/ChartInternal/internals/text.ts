@@ -51,7 +51,7 @@ function setRotatePos(
 	const $$ = this;
 	const {value} = d;
 	const isCandlestickType = $$.isCandlestickType(d);
-	const isNegative = value < 0 || (
+	const isNegative = (isNumber(value) && value < 0) || (
 		isCandlestickType && !$$.getCandlestickData(d)?._isUp
 	);
 
@@ -127,6 +127,7 @@ export default {
 		const mainTextEnter = mainTextUpdate.enter().append("g")
 			.style("opacity", "0")
 			.attr("class", classChartText)
+			.call($$.setColorByRule($$.updateTextColor, $TEXT.text, ["fill"]))
 			.style("pointer-events", "none");
 
 		mainTextEnter.append("g")
@@ -166,7 +167,7 @@ export default {
 
 				return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
 			})
-			.style("fill", $$.updateTextColor.bind($$))
+			.style("fill", $$.colorTextByRule)
 			.style("fill-opacity", "0")
 			.each(function(d, i, texts) {
 				const node = d3Select(this);
@@ -266,7 +267,7 @@ export default {
 		const rotateString = angle ? `rotate(${angle})` : "";
 
 		$$.$el.text
-			.style("fill", $$.updateTextColor.bind($$))
+			.style("fill", $$.colorTextByRule)
 			.attr("filter", $$.updateTextBacgroundColor.bind($$))
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
 			.each(function(d: IDataRow, i: number) {

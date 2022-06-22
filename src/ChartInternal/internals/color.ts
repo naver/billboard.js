@@ -4,11 +4,12 @@
  */
 import {select as d3Select} from "d3-selection";
 import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
-import {document, window} from "../../module/browser";
+import {document} from "../../module/browser";
 import {$ARC, $COLOR, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
-import {notEmpty, isFunction, isObject, isString} from "../../module/util";
+import {addCssRules, notEmpty, isFunction, isObject, isString} from "../../module/util";
 import {IArcData, IDataRow} from "../data/IData";
+import {d3Selection} from "../../../types";
 
 /**
  * Set pattern's background color
@@ -35,57 +36,78 @@ const colorizePattern = (pattern, color, id: string) => {
 	};
 };
 
+/**
+ * Get color pattern from CSS file
+ * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
+ * @param {d3Selection} element Chart element
+ * @returns {Array}
+ * @private
+ */
+function getColorFromCss(element: d3Selection): string[] {
+	const cacheKey = KEY.colorPattern;
+	const {body} = document;
+	let pattern = body[cacheKey];
+
+	if (!pattern) {
+		const delimiter = ";";
+		const content = element
+			.classed($COLOR.colorPattern, true)
+			.style("background-image");
+
+		element.classed($COLOR.colorPattern, false);
+
+		if (content.indexOf(delimiter) > -1) {
+			pattern = content
+				.replace(/url[^#]*|["'()]|(\s|%20)/g, "")
+				.split(delimiter)
+				.map(v => v.trim().replace(/[\"'\s]/g, ""))
+				.filter(Boolean);
+
+			body[cacheKey] = pattern;
+		}
+	}
+
+	return pattern;
+}
+
 // Replacement of d3.schemeCategory10.
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
 const schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
 
 export default {
 	/**
-	 * Get color pattern from CSS file
-	 * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
-	 * @returns {Array}
+	 * Add props color css rule to given selector
+	 * @param {Function} fn Color function
+	 * @param {string} selector CSS selector
+	 * @param {Array} props CSS props list
+	 * @returns {Function}
 	 * @private
 	 */
-	getColorFromCss(): string[] {
-		const cacheKey = KEY.colorPattern;
-		const {body} = document;
-		let pattern = body[cacheKey];
+	setColorByRule(fn: Function, selector: string, props: string[]): Function {
+		const $$ = this;
+		const {config, state: {colorRule, style}} = $$;
+		const colorFn = fn || $$.color;
 
-		if (!pattern) {
-			const delimiter = ";";
-			const span = document.createElement("span");
+		return config.boost_useCssRule ? (selection: d3Selection) => {
+			selection.each((d: IDataRow) => {
+				const color = colorFn.call($$, d);
+				const shapeSelector = `${$SHAPE.shapes}${$$.getTargetSelectorSuffix(d.id)} .${selector}`;
 
-			span.className = $COLOR.colorPattern;
-			span.style.display = "none";
-			body.appendChild(span);
-
-			const content = window.getComputedStyle(span).backgroundImage;
-
-			span.parentNode.removeChild(span);
-
-			if (content.indexOf(delimiter) > -1) {
-				pattern = content
-					.replace(/url[^#]*|["'()]|(\s|%20)/g, "")
-					.split(delimiter)
-					.map(v => v.trim().replace(/[\"'\s]/g, ""))
-					.filter(Boolean);
-
-				body[cacheKey] = pattern;
-			}
-		}
-
-		return pattern;
+				(shapeSelector in colorRule) && style.sheet.deleteRule(colorRule[shapeSelector]);
+				$$.state.colorRule[shapeSelector] = addCssRules(style, shapeSelector, props.map(v => `${v}: ${color}`));
+			});
+		} : () => {};
 	},
 
 	generateColor(): Function {
 		const $$ = this;
-		const {config} = $$;
+		const {$el, config} = $$;
 		const colors = config.data_colors;
 		const callback = config.data_color;
 		const ids: string[] = [];
 
 		let pattern = notEmpty(config.color_pattern) ? config.color_pattern :
-			d3ScaleOrdinal($$.getColorFromCss() || schemeCategory10).range();
+			d3ScaleOrdinal(getColorFromCss($el.chart) || schemeCategory10).range();
 
 		const originalColorPattern = pattern;
 

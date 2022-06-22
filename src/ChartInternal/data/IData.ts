@@ -4,7 +4,7 @@
  */
 export interface IDataRow {
     x: number;
-    value: number;
+    value: number | null;
     id: string;
     index: number;
     name?: string;
@@ -22,7 +22,7 @@ export interface IArcData {
     padAngle: number;
     startAngle: number;
     endAngle: number;
-    value: number;
+    value: number | null;
 }
 
 export interface IGridData {

@@ -49,6 +49,24 @@ export interface ChartOptions {
 		imgUrl?: string;
 	};
 
+	boost?: {
+		/**
+		 * Avoid setting inline styles for each shape elements.
+		 * - **NOTE:**
+		 *   - Will append <style> to the head tag and will add shpes' CSS rules dynamically.
+		 *   - For now, covers colors related properties (fill, stroke, etc.) only.
+		 */
+		useCssRule?: boolean;
+
+		/**
+		 * Use Web Worker as possible for processing.
+		 * - **NOTE:**
+		 *   - For now, only applies for data conversion at the initial time.
+		 *   - As of Web Worker's async nature, handling chart instance synchrously is not recommended.
+		 */
+		useWorker?: boolean;
+	};
+
 	size?: {
 		/**
 		 * The desired width of the chart element.
@@ -261,6 +279,12 @@ export interface ChartOptions {
 		 * Set background area above the data chart line.
 		 */
 		above?: boolean;
+
+		/**
+		 * Set background area `below` the data chart line.
+		 *  - **NOTE**: Can't be used along with `above` option. When above & below options are set to true, `above` will be prioritized.
+		 */
+		below?: boolean;
 
 		/**
 		 * Set area node to be positioned over line node.

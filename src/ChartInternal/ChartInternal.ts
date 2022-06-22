@@ -175,21 +175,32 @@ export default class ChartInternal {
 	init(): void {
 		const $$ = <any> this;
 		const {config, state, $el} = $$;
+		const useCssRule = config.boost_useCssRule;
 
 		checkModuleImport($$);
 
 		state.hasAxis = !$$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");
 
-		// when 'padding=false' is set, disable axes and subchart. Because they are useless.
-		if (config.padding === false) {
-			config.axis_x_show = false;
-			config.axis_y_show = false;
-			config.axis_y2_show = false;
-			config.subchart_show = false;
-		}
+		// datetime to be used for uniqueness
+		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
 
-		$$.initParams();
+		if (useCssRule) {
+			// append style element
+			const styleEl = document.createElement("style");
+
+			// styleEl.id = styleId;
+			styleEl.type = "text/css";
+			document.head.appendChild(styleEl);
+
+			state.style = {
+				rootSelctor: `.${state.datetimeId}`,
+				sheet: styleEl.sheet
+			};
+
+			// used on .destroy()
+			$el.style = styleEl;
+		}
 
 		const bindto = {
 			element: config.bindto,
@@ -211,8 +222,10 @@ export default class ChartInternal {
 
 		$el.chart.html("")
 			.classed(bindto.classname, true)
+			.classed(state.datetimeId, useCssRule)
 			.style("position", "relative");
 
+		$$.initParams();
 		$$.initToRender();
 	}
 
@@ -242,10 +255,10 @@ export default class ChartInternal {
 		}
 
 		if (!isLazy || forced) {
-			const convertedData = $$.convertData(config, $$.initWithData);
-
-			convertedData && $$.initWithData(convertedData);
-			$$.afterInit();
+			$$.convertData(config, res => {
+				$$.initWithData(res);
+				$$.afterInit();
+			});
 		}
 	}
 
@@ -253,12 +266,29 @@ export default class ChartInternal {
 		const $$ = <any> this;
 		const {config, format, state} = $$;
 		const isRotated = config.axis_rotated;
+		const useCssRule = config.boost_useCssRule;
 
-		// datetime to be used for uniqueness
-		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
-
+		// color settings
 		$$.color = $$.generateColor();
+		$$.colorByRule = $$.color;
+		$$.colorTextByRule = $$.updateTextColor.bind($$);
 		$$.levelColor = $$.generateLevelColor();
+
+		if (useCssRule) {
+			state.colorRule = {};
+
+			// to not apply inline color setting
+			$$.colorByRule = null;
+			$$.colorTextByRule = null;
+		}
+
+		// when 'padding=false' is set, disable axes and subchart. Because they are useless.
+		if (config.padding === false) {
+			config.axis_x_show = false;
+			config.axis_y_show = false;
+			config.axis_y2_show = false;
+			config.subchart_show = false;
+		}
 
 		if ($$.hasPointType()) {
 			$$.point = $$.generatePoint();
@@ -718,7 +748,7 @@ export default class ChartInternal {
 		const resizeFunction = generateResize(config.resize_timer);
 		const list: Function[] = [];
 
-		list.push(() => callFn(config.onresize, $$, $$.api));
+		list.push(() => callFn(config.onresize, $$.api));
 
 		if (config.resize_auto) {
 			list.push(() => {
@@ -735,7 +765,7 @@ export default class ChartInternal {
 		}
 
 		list.push(() => {
-			callFn(config.onresized, $$, $$.api);
+			callFn(config.onresized, $$.api);
 			state.resizing = false;
 		});
 
