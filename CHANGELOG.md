@@ -1,3 +1,18 @@
+# [3.5.0-next.2](https://github.com/naver/billboard.js/compare/3.5.0-next.1...3.5.0-next.2) (2022-06-22)
+
+
+### Bug Fixes
+
+* **option:** Fix onresize/onresized call context ([3ef9684](https://github.com/naver/billboard.js/commit/3ef968455d86df99177fd1d0d807cbbb53cd5de1)), closes [#2726](https://github.com/naver/billboard.js/issues/2726)
+* **plugin, type:** fix TextOverlap type definition ([80cc3b7](https://github.com/naver/billboard.js/commit/80cc3b711db9e480ced5d1ab16086e34b59e8437))
+
+
+### Features
+
+* **area:** add option to render area below line ([cf60291](https://github.com/naver/billboard.js/commit/cf6029164be48c5fe96fce71917bc23e94335a43)), closes [#2740](https://github.com/naver/billboard.js/issues/2740) [#2741](https://github.com/naver/billboard.js/issues/2741)
+* **option:** Intent to ship boost.useCssRule ([4a060d6](https://github.com/naver/billboard.js/commit/4a060d6de054ce1960814ba2ec320639ed0153f1)), closes [#2716](https://github.com/naver/billboard.js/issues/2716)
+* **option:** Intent to ship boost.useWorker ([eeaf8bd](https://github.com/naver/billboard.js/commit/eeaf8bd57cb3e8603e090cdbfed2b7d2d8d99ac3))
+
 # [3.5.0-next.1](https://github.com/naver/billboard.js/compare/3.4.1...3.5.0-next.1) (2022-06-09)
 
 
