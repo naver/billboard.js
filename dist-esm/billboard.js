@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220618004835
+ * @version 3.4.1-nightly-20220622004710
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -33,7 +33,8 @@ var win = (function () {
 /* eslint-enable no-new-func, no-undef */
 // fallback for non-supported environments
 win.requestIdleCallback = win.requestIdleCallback || (function (cb) { return setTimeout(cb, 1); });
-win.cancelIdleCallback = win.cancelIdleCallback || (function (id) { return clearTimeout(id); });
+// win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
+win.requestAnimationFrame = win.requestAnimationFrame || (function (cb) { return setTimeout(cb, 1); });
 var doc = win === null || win === void 0 ? void 0 : win.document;
 
 /**
@@ -823,6 +824,88 @@ function convertInputType(mouse, touch) {
         .some(function (v) { return matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(".concat(v, ")")).matches; });
     // fallback to 'mouse' if no input type is detected.
     return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
+}
+/**
+ * Create and run on Web Worker
+ * @param {boolean} useWorker Use Web Worker
+ * @param {Function} fn Function to be executed in worker
+ * @param {Function} callback Callback function to receive result from worker
+ * @param {Array} depsFn Dependency functions to run given function(fn).
+ * @returns {object}
+ * @example
+ * 	const worker = runWorker(function(arg) {
+ *		  // do some tasks...
+ *		  console.log("param:", A(arg));
+ *
+ *		  return 1234;
+ *	   }, function(data) {
+ *		  // callback after worker is done
+ *	 	  console.log("result:", data);
+ *	   },
+ *	   [function A(){}]
+ *	);
+ *
+ *	worker(11111);
+ * @private
+ */
+function runWorker(useWorker, fn, callback, depsFn) {
+    var _a;
+    if (useWorker === void 0) { useWorker = true; }
+    var runFn;
+    if (win.Worker && useWorker) {
+        // Web Worker body
+        var blob = new Blob([
+            "".concat((_a = depsFn === null || depsFn === void 0 ? void 0 : depsFn.map(String).join(";")) !== null && _a !== void 0 ? _a : "", "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (").concat(fn.toString(), ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};")
+        ], {
+            type: "text/javascript"
+        });
+        var worker_1 = new Worker(URL.createObjectURL(blob));
+        runFn = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            // trigger worker
+            worker_1.postMessage(args);
+            // listen worker
+            worker_1.onmessage = function (e) {
+                return callback(e.data);
+            };
+            // handle error
+            worker_1.onerror = function (e) {
+                console.error(e);
+            };
+            // return new Promise((resolve, reject) => {
+            // 	worker.onmessage = ({data}) => resolve(data);
+            // 	worker.onerror = reject;
+            // });
+        };
+    }
+    else {
+        runFn = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            var res = fn.apply(void 0, args);
+            callback(res);
+        };
+    }
+    return runFn;
+}
+/**
+ * Run function until given condition function return true
+ * @param {Function} fn Function to be executed when condition is true
+ * @param {Function} conditionFn Condition function to check if condition is true
+ * @private
+ */
+function runUntil(fn, conditionFn) {
+    if (conditionFn() === false) {
+        win.requestAnimationFrame(function () { return runUntil(fn, conditionFn); });
+    }
+    else {
+        fn();
+    }
 }
 
 /**
@@ -1638,12 +1721,18 @@ var boost = {
      * - **NOTE:**
      *   - Will append &lt;style> to the head tag and will add shpes' CSS rules dynamically.
      *   - For now, covers colors related properties (fill, stroke, etc.) only.
+     * @property {boolean} [boost.useWorker=false] Use Web Worker as possible for processing.
+     * - **NOTE:**
+     *   - For now, only applies for data conversion at the initial time.
+     *   - As of Web Worker's async nature, handling chart instance synchrously is not recommended.
      * @example
      *  boost: {
-     *      useCssRule: true
+     *      useCssRule: true,
+     *      useWorker: false
      *  }
      */
-    boost_useCssRule: false
+    boost_useCssRule: false,
+    boost_useWorker: false
 };
 
 /**
@@ -3131,9 +3220,9 @@ function generateWait() {
     var transitionsToWait = [];
     // 'f' is called as selection.call(f, ...);
     var f = function (selection, callback) {
-        var timer;
         /**
          * Check if transition is complete
+         * @returns {boolean} Whether transition is complete
          * @private
          */
         function loop() {
@@ -3156,15 +3245,11 @@ function generateWait() {
                     done++;
                 }
             }
-            timer && clearTimeout$1(timer);
-            if (done === transitionsToWait.length) {
-                callback === null || callback === void 0 ? void 0 : callback();
-            }
-            else {
-                timer = setTimeout$1(loop, 50);
-            }
+            return done === transitionsToWait.length;
         }
-        loop();
+        runUntil(function () {
+            callback === null || callback === void 0 ? void 0 : callback();
+        }, loop);
     };
     f.add = function (t) {
         isArray(t) ?
@@ -3178,6 +3263,197 @@ function generateWait() {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/***** Functions to be executed on Web Worker *****
+ * NOTE: Don't allowed to use
+ * - arrow function syntax
+ * - Utils functions
+ */
+/**
+ * Convert Columns data
+ * @param {object} columns
+ * @returns {Array}
+ * @private
+ */
+function columns(columns) {
+    var newRows = [];
+    columns.forEach(function (col, i) {
+        var key = col[0];
+        col.forEach(function (v, j) {
+            if (j > 0) {
+                if (typeof newRows[j - 1] === "undefined") {
+                    newRows[j - 1] = {};
+                }
+                if (typeof v === "undefined") {
+                    throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
+                }
+                newRows[j - 1][key] = v;
+            }
+        });
+    });
+    return newRows;
+}
+/**
+ * Convert Rows data
+ * @param {object} columns
+ * @returns {Array}
+ * @private
+ */
+function rows(rows) {
+    var keys = rows[0];
+    var newRows = [];
+    rows.forEach(function (row, i) {
+        if (i > 0) {
+            var newRow_1 = {};
+            row.forEach(function (v, j) {
+                if (typeof v === "undefined") {
+                    throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
+                }
+                newRow_1[keys[j]] = v;
+            });
+            newRows.push(newRow_1);
+        }
+    });
+    return newRows;
+}
+/**
+ * Convert JSON data
+ * @param {object} columns
+ * @returns {Array}
+ * @private
+ */
+function json(json, keysParam) {
+    var newRows = [];
+    var findValueInJson = function (object, path) {
+        if (object[path] !== undefined) {
+            return object[path];
+        }
+        var convertedPath = path.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties (replace [] with .)
+        var pathArray = convertedPath.replace(/^\./, "").split("."); // strip a leading dot
+        var target = object;
+        pathArray.some(function (k) {
+            return !(target = target && k in target ?
+                target[k] : undefined);
+        });
+        return target;
+    };
+    var targetKeys;
+    var data;
+    if (Array.isArray(json)) {
+        if (keysParam.x) {
+            targetKeys = keysParam.value.concat(keysParam.x);
+        }
+        else {
+            targetKeys = keysParam.value;
+        }
+        newRows.push(targetKeys);
+        json.forEach(function (o) {
+            var newRow = targetKeys.map(function (key) {
+                // convert undefined to null because undefined data will be removed in convertDataToTargets()
+                var v = findValueInJson(o, key);
+                if (typeof v === "undefined") {
+                    v = null;
+                }
+                return v;
+            });
+            newRows.push(newRow);
+        });
+        data = rows(newRows);
+    }
+    else {
+        Object.keys(json).forEach(function (key) {
+            var tmp = json[key].concat();
+            tmp.unshift(key);
+            newRows.push(tmp);
+        });
+        data = columns(newRows);
+    }
+    return data;
+}
+/***** Functions can't be executed on Web Worker *****/
+/**
+ * Convert URL data
+ * @param {string} url Remote URL
+ * @param {string} mimeType MIME type string: json | csv | tsv
+ * @param {object} headers Header object
+ * @param {object} keys Key object
+ * @param {Function} done Callback function
+ * @private
+ */
+function url(url, mimeType, headers, keys, done) {
+    if (mimeType === void 0) { mimeType = "csv"; }
+    var req = new XMLHttpRequest();
+    var converter = { csv: csv, tsv: tsv, json: json };
+    req.open("GET", url);
+    if (headers) {
+        Object.keys(headers).forEach(function (key) {
+            req.setRequestHeader(key, headers[key]);
+        });
+    }
+    req.onreadystatechange = function () {
+        if (req.readyState === 4) {
+            if (req.status === 200) {
+                var response = req.responseText;
+                response && done.call(this, converter[mimeType](mimeType === "json" ? JSON.parse(response) : response, keys));
+            }
+            else {
+                throw new Error("".concat(url, ": Something went wrong loading!"));
+            }
+        }
+    };
+    req.send();
+}
+/**
+ * Convert CSV/TSV data
+ * @param {object} parser Parser object
+ * @param {object} xsv Data
+ * @returns {object}
+ * @private
+ */
+function convertCsvTsvToData(parser, xsv) {
+    var rows = parser.rows(xsv);
+    var d;
+    if (rows.length === 1) {
+        d = [{}];
+        rows[0].forEach(function (id) {
+            d[0][id] = null;
+        });
+    }
+    else {
+        d = parser.parse(xsv);
+    }
+    return d;
+}
+function csv(xsv) {
+    return convertCsvTsvToData({
+        rows: csvParseRows,
+        parse: csvParse
+    }, xsv);
+}
+function tsv(tsv) {
+    return convertCsvTsvToData({
+        rows: tsvParseRows,
+        parse: tsvParse
+    }, tsv);
+}
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Get data key for JSON
+ * @param {string|object} keysParam Key params
+ * @param {object} config Config object
+ * @returns {string} Data key
+ * @private
+ */
+function getDataKeyForJson(keysParam, config) {
+    var keys = keysParam || (config === null || config === void 0 ? void 0 : config.data_keys);
+    if (keys === null || keys === void 0 ? void 0 : keys.x) {
+        config.data_x = keys.x;
+    }
+    return keys;
+}
 /**
  * Data convert
  * @memberof ChartInternal
@@ -3188,11 +3464,12 @@ var dataConvert = {
      * Convert data according its type
      * @param {object} args data object
      * @param {Function} [callback] callback for url(XHR) type loading
-     * @returns {object}
      * @private
      */
     convertData: function (args, callback) {
-        var data;
+        var config = this.config;
+        var useWorker = config.boost_useWorker;
+        var data = args;
         if (args.bindto) {
             data = {};
             ["url", "mimeType", "headers", "keys", "json", "keys", "rows", "columns"]
@@ -3203,175 +3480,21 @@ var dataConvert = {
                 }
             });
         }
-        else {
-            data = args;
-        }
         if (data.url && callback) {
-            this.convertUrlToData(data.url, data.mimeType, data.headers, data.keys, callback);
+            url(data.url, data.mimeType, data.headers, getDataKeyForJson(data.keys, config), callback);
         }
         else if (data.json) {
-            data = this.convertJsonToData(data.json, data.keys);
+            runWorker(useWorker, json, callback, [columns, rows])(data.json, getDataKeyForJson(data.keys, config));
         }
         else if (data.rows) {
-            data = this.convertRowsToData(data.rows);
+            runWorker(useWorker, rows, callback)(data.rows);
         }
         else if (data.columns) {
-            data = this.convertColumnsToData(data.columns);
+            runWorker(useWorker, columns, callback)(data.columns);
         }
         else if (args.bindto) {
             throw Error("url or json or rows or columns is required.");
         }
-        return isArray(data) && data;
-    },
-    /**
-     * Convert URL data
-     * @param {string} url Remote URL
-     * @param {string} mimeType MIME type string: json | csv | tsv
-     * @param {object} headers Header object
-     * @param {object} keys Key object
-     * @param {Function} done Callback function
-     * @private
-     */
-    convertUrlToData: function (url, mimeType, headers, keys, done) {
-        var _this = this;
-        if (mimeType === void 0) { mimeType = "csv"; }
-        var req = new XMLHttpRequest();
-        req.open("GET", url);
-        if (headers) {
-            Object.keys(headers).forEach(function (key) {
-                req.setRequestHeader(key, headers[key]);
-            });
-        }
-        req.onreadystatechange = function () {
-            if (req.readyState === 4) {
-                if (req.status === 200) {
-                    var response = req.responseText;
-                    response && done.call(_this, _this["convert".concat(capitalize(mimeType), "ToData")](mimeType === "json" ? JSON.parse(response) : response, keys));
-                }
-                else {
-                    throw new Error("".concat(url, ": Something went wrong loading!"));
-                }
-            }
-        };
-        req.send();
-    },
-    /**
-     * Convert CSV/TSV data
-     * @param {object} parser Parser object
-     * @param {object} xsv Data
-     * @private
-     * @returns {object}
-     */
-    convertCsvTsvToData: function (parser, xsv) {
-        var rows = parser.rows(xsv);
-        var d;
-        if (rows.length === 1) {
-            d = [{}];
-            rows[0].forEach(function (id) {
-                d[0][id] = null;
-            });
-        }
-        else {
-            d = parser.parse(xsv);
-        }
-        return d;
-    },
-    convertCsvToData: function (xsv) {
-        return this.convertCsvTsvToData({
-            rows: csvParseRows,
-            parse: csvParse
-        }, xsv);
-    },
-    convertTsvToData: function (tsv) {
-        return this.convertCsvTsvToData({
-            rows: tsvParseRows,
-            parse: tsvParse
-        }, tsv);
-    },
-    convertJsonToData: function (json, keysParam) {
-        var _this = this;
-        var config = this.config;
-        var newRows = [];
-        var targetKeys;
-        var data;
-        if (isArray(json)) {
-            var keys = keysParam || config.data_keys;
-            if (keys.x) {
-                targetKeys = keys.value.concat(keys.x);
-                config.data_x = keys.x;
-            }
-            else {
-                targetKeys = keys.value;
-            }
-            newRows.push(targetKeys);
-            json.forEach(function (o) {
-                var newRow = targetKeys.map(function (key) {
-                    // convert undefined to null because undefined data will be removed in convertDataToTargets()
-                    var v = _this.findValueInJson(o, key);
-                    if (isUndefined(v)) {
-                        v = null;
-                    }
-                    return v;
-                });
-                newRows.push(newRow);
-            });
-            data = this.convertRowsToData(newRows);
-        }
-        else {
-            Object.keys(json).forEach(function (key) {
-                var tmp = json[key].concat();
-                tmp.unshift(key);
-                newRows.push(tmp);
-            });
-            data = this.convertColumnsToData(newRows);
-        }
-        return data;
-    },
-    findValueInJson: function (object, path) {
-        if (object[path] !== undefined) {
-            return object[path];
-        }
-        var convertedPath = path.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties (replace [] with .)
-        var pathArray = convertedPath.replace(/^\./, "").split("."); // strip a leading dot
-        var target = object;
-        pathArray.some(function (k) { return !(target = target && k in target ?
-            target[k] : undefined); });
-        return target;
-    },
-    convertRowsToData: function (rows) {
-        var keys = rows[0];
-        var newRows = [];
-        rows.forEach(function (row, i) {
-            if (i > 0) {
-                var newRow_1 = {};
-                row.forEach(function (v, j) {
-                    if (isUndefined(v)) {
-                        throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
-                    }
-                    newRow_1[keys[j]] = v;
-                });
-                newRows.push(newRow_1);
-            }
-        });
-        return newRows;
-    },
-    convertColumnsToData: function (columns) {
-        var newRows = [];
-        columns.forEach(function (col, i) {
-            var key = col[0];
-            col.forEach(function (v, j) {
-                if (j > 0) {
-                    if (isUndefined(newRows[j - 1])) {
-                        newRows[j - 1] = {};
-                    }
-                    if (isUndefined(v)) {
-                        throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
-                    }
-                    newRows[j - 1][key] = v;
-                }
-            });
-        });
-        return newRows;
     },
     convertDataToTargets: function (data, appendXs) {
         var _this = this;
@@ -3429,6 +3552,7 @@ var dataConvert = {
             var hasCategory = isCategory && data.map(function (v) { return v.x; })
                 .every(function (v) { return config.axis_x_categories.indexOf(v) > -1; });
             // when .load() with 'append' option is used for indexed axis
+            // @ts-ignore
             var isDataAppend = data.__append__;
             var xIndex = xKey === null && isDataAppend ?
                 $$.api.data.values(id).length : 0;
@@ -3459,7 +3583,12 @@ var dataConvert = {
                     if (isUndefined(value) || $$.data.xs[id].length <= i) {
                         x = undefined;
                     }
-                    return { x: x, value: value, id: convertedId };
+                    return {
+                        x: x,
+                        value: value,
+                        id: convertedId,
+                        index: -1
+                    };
                 }).filter(function (v) { return isDefined(v.x); })
             };
         });
@@ -4350,9 +4479,11 @@ var dataLoad = {
         }
         // reset internally cached data
         $$.cache.reset();
-        var data = args.data || $$.convertData(args, function (d) { return $$.load($$.convertDataToTargets(d), args); });
-        args.append && (data.__append__ = true);
-        data && $$.load($$.convertDataToTargets(data), args);
+        $$.convertData(args, function (d) {
+            var data = args.data || d;
+            args.append && (data.__append__ = true);
+            data && $$.load($$.convertDataToTargets(data), args);
+        });
     },
     unload: function (rawTargetIds, customDoneCb) {
         var $$ = this;
@@ -7105,7 +7236,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     var $$ = this;
     var value = d.value;
     var isCandlestickType = $$.isCandlestickType(d);
-    var isNegative = value < 0 || (isCandlestickType && !((_a = $$.getCandlestickData(d)) === null || _a === void 0 ? void 0 : _a._isUp));
+    var isNegative = (isNumber(value) && value < 0) || (isCandlestickType && !((_a = $$.getCandlestickData(d)) === null || _a === void 0 ? void 0 : _a._isUp));
     var x = pos.x, y = pos.y;
     var gap = 4;
     var doubleGap = gap * 2;
@@ -8563,9 +8694,10 @@ var ChartInternal = /** @class */ (function () {
             });
         }
         if (!isLazy || forced) {
-            var convertedData = $$.convertData(config, $$.initWithData);
-            convertedData && $$.initWithData(convertedData);
-            $$.afterInit();
+            $$.convertData(config, function (res) {
+                $$.initWithData(res);
+                $$.afterInit();
+            });
         }
     };
     ChartInternal.prototype.initParams = function () {
@@ -10957,130 +11089,139 @@ var apiFlow = {
     flow: function (args) {
         var $$ = this.internal;
         var data;
-        var domain;
-        var length = 0;
-        var tail = 0;
-        var diff;
-        var to;
         if (args.json || args.rows || args.columns) {
-            data = $$.convertData(args);
+            $$.convertData(args, function (res) {
+                data = res;
+                _();
+            });
         }
-        if ($$.state.redrawing || !data || !isTabVisible()) {
-            return;
-        }
-        var notfoundIds = [];
-        var orgDataCount = $$.getMaxDataCount();
-        var targets = $$.convertDataToTargets(data, true);
-        var isTimeSeries = $$.axis.isTimeSeries();
-        // Update/Add data
-        $$.data.targets.forEach(function (t) {
-            var found = false;
-            for (var i = 0; i < targets.length; i++) {
-                if (t.id === targets[i].id) {
-                    found = true;
-                    if (t.values[t.values.length - 1]) {
-                        tail = t.values[t.values.length - 1].index + 1;
+        /**
+         * Process flows
+         * @private
+         */
+        function _() {
+            var domain;
+            var length = 0;
+            var tail = 0;
+            var diff;
+            var to;
+            if ($$.state.redrawing || !data || !isTabVisible()) {
+                return;
+            }
+            var notfoundIds = [];
+            var orgDataCount = $$.getMaxDataCount();
+            var targets = $$.convertDataToTargets(data, true);
+            var isTimeSeries = $$.axis.isTimeSeries();
+            // Update/Add data
+            $$.data.targets.forEach(function (t) {
+                var found = false;
+                for (var i = 0; i < targets.length; i++) {
+                    if (t.id === targets[i].id) {
+                        found = true;
+                        if (t.values[t.values.length - 1]) {
+                            tail = t.values[t.values.length - 1].index + 1;
+                        }
+                        length = targets[i].values.length;
+                        for (var j = 0; j < length; j++) {
+                            targets[i].values[j].index = tail + j;
+                            if (!isTimeSeries) {
+                                targets[i].values[j].x = tail + j;
+                            }
+                        }
+                        t.values = t.values.concat(targets[i].values);
+                        targets.splice(i, 1);
+                        break;
                     }
-                    length = targets[i].values.length;
-                    for (var j = 0; j < length; j++) {
-                        targets[i].values[j].index = tail + j;
-                        if (!isTimeSeries) {
-                            targets[i].values[j].x = tail + j;
+                }
+                !found && notfoundIds.push(t.id);
+            });
+            // Append null for not found targets
+            $$.data.targets.forEach(function (t) {
+                for (var i = 0; i < notfoundIds.length; i++) {
+                    if (t.id === notfoundIds[i]) {
+                        tail = t.values[t.values.length - 1].index + 1;
+                        for (var j = 0; j < length; j++) {
+                            t.values.push({
+                                id: t.id,
+                                index: tail + j,
+                                x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
+                                value: null
+                            });
                         }
                     }
-                    t.values = t.values.concat(targets[i].values);
-                    targets.splice(i, 1);
-                    break;
                 }
-            }
-            !found && notfoundIds.push(t.id);
-        });
-        // Append null for not found targets
-        $$.data.targets.forEach(function (t) {
-            for (var i = 0; i < notfoundIds.length; i++) {
-                if (t.id === notfoundIds[i]) {
-                    tail = t.values[t.values.length - 1].index + 1;
-                    for (var j = 0; j < length; j++) {
-                        t.values.push({
+            });
+            // Generate null values for new target
+            if ($$.data.targets.length) {
+                targets.forEach(function (t) {
+                    var missing = [];
+                    for (var i = $$.data.targets[0].values[0].index; i < tail; i++) {
+                        missing.push({
                             id: t.id,
-                            index: tail + j,
-                            x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
+                            index: i,
+                            x: isTimeSeries ? $$.getOtherTargetX(i) : i,
                             value: null
                         });
                     }
-                }
-            }
-        });
-        // Generate null values for new target
-        if ($$.data.targets.length) {
-            targets.forEach(function (t) {
-                var missing = [];
-                for (var i = $$.data.targets[0].values[0].index; i < tail; i++) {
-                    missing.push({
-                        id: t.id,
-                        index: i,
-                        x: isTimeSeries ? $$.getOtherTargetX(i) : i,
-                        value: null
+                    t.values.forEach(function (v) {
+                        v.index += tail;
+                        if (!isTimeSeries) {
+                            v.x += tail;
+                        }
                     });
-                }
-                t.values.forEach(function (v) {
-                    v.index += tail;
-                    if (!isTimeSeries) {
-                        v.x += tail;
-                    }
+                    t.values = missing.concat(t.values);
                 });
-                t.values = missing.concat(t.values);
+            }
+            $$.data.targets = $$.data.targets.concat(targets); // add remained
+            // check data count because behavior needs to change when it"s only one
+            // const dataCount = $$.getMaxDataCount();
+            var baseTarget = $$.data.targets[0];
+            var baseValue = baseTarget.values[0];
+            // Update length to flow if needed
+            if (isDefined(args.to)) {
+                length = 0;
+                to = isTimeSeries ? parseDate.call($$, args.to) : args.to;
+                baseTarget.values.forEach(function (v) {
+                    v.x < to && length++;
+                });
+            }
+            else if (isDefined(args.length)) {
+                length = args.length;
+            }
+            // If only one data, update the domain to flow from left edge of the chart
+            if (!orgDataCount) {
+                if (isTimeSeries) {
+                    diff = baseTarget.values.length > 1 ?
+                        baseTarget.values[baseTarget.values.length - 1].x - baseValue.x :
+                        baseValue.x - $$.getXDomain($$.data.targets)[0];
+                }
+                else {
+                    diff = 1;
+                }
+                domain = [baseValue.x - diff, baseValue.x];
+            }
+            else if (orgDataCount === 1 && isTimeSeries) {
+                diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
+                domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
+            }
+            domain && $$.updateXDomain(null, true, true, false, domain);
+            // Set targets
+            $$.updateTargets($$.data.targets);
+            // Redraw with new targets
+            $$.redraw({
+                flow: {
+                    index: baseValue.index,
+                    length: length,
+                    duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
+                    done: args.done,
+                    orgDataCount: orgDataCount
+                },
+                withLegend: true,
+                withTransition: orgDataCount > 1,
+                withTrimXDomain: false,
+                withUpdateXAxis: true
             });
         }
-        $$.data.targets = $$.data.targets.concat(targets); // add remained
-        // check data count because behavior needs to change when it"s only one
-        // const dataCount = $$.getMaxDataCount();
-        var baseTarget = $$.data.targets[0];
-        var baseValue = baseTarget.values[0];
-        // Update length to flow if needed
-        if (isDefined(args.to)) {
-            length = 0;
-            to = isTimeSeries ? parseDate.call($$, args.to) : args.to;
-            baseTarget.values.forEach(function (v) {
-                v.x < to && length++;
-            });
-        }
-        else if (isDefined(args.length)) {
-            length = args.length;
-        }
-        // If only one data, update the domain to flow from left edge of the chart
-        if (!orgDataCount) {
-            if (isTimeSeries) {
-                diff = baseTarget.values.length > 1 ?
-                    baseTarget.values[baseTarget.values.length - 1].x - baseValue.x :
-                    baseValue.x - $$.getXDomain($$.data.targets)[0];
-            }
-            else {
-                diff = 1;
-            }
-            domain = [baseValue.x - diff, baseValue.x];
-        }
-        else if (orgDataCount === 1 && isTimeSeries) {
-            diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
-            domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
-        }
-        domain && $$.updateXDomain(null, true, true, false, domain);
-        // Set targets
-        $$.updateTargets($$.data.targets);
-        // Redraw with new targets
-        $$.redraw({
-            flow: {
-                index: baseValue.index,
-                length: length,
-                duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
-                done: args.done,
-                orgDataCount: orgDataCount
-            },
-            withLegend: true,
-            withTransition: orgDataCount > 1,
-            withTrimXDomain: false,
-            withUpdateXAxis: true
-        });
     }
 };
 
@@ -16771,7 +16912,7 @@ var shapeBar = {
         var sortedList = $$.orderTargets($$.filterTargetsToShow(data.targets.filter($$.isBarType, $$))).filter(function (v) { return keys.indexOf(v.id) > -1; });
         // Get sorted Ids. Filter positive or negative values Ids from given value
         var sortedIds = sortedList
-            .map(function (v) { return v.values.filter(function (v2) { return v2.index === index && (value > 0 ? v2.value > 0 : v2.value < 0); })[0]; })
+            .map(function (v) { return v.values.filter(function (v2) { return v2.index === index && (isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0); })[0]; })
             .filter(Boolean)
             .map(function (v) { return v.id; });
         // If the given id stays in the last position, then radius should be applied.
@@ -16798,10 +16939,11 @@ var shapeBar = {
             var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
             var offset = barOffset(d, i) || y0; // offset is for stacked bar chart
             var width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
+            var value = d.value;
             var posX = barX(d);
             var posY = barY(d);
             // fix posY not to overflow opposite quadrant
-            if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
+            if (config.axis_rotated && ((value > 0 && posY < y0) || (value < 0 && y0 < posY))) {
                 posY = y0;
             }
             if (!$$.isBarRangeType(d)) {
@@ -17972,8 +18114,9 @@ var shapePolar = {
      * @private
      */
     getPolarOuterRadius: function (d, outerRadius) {
+        var _a;
         var dataMax = getDataMax(this);
-        return ((d === null || d === void 0 ? void 0 : d.data.values[0].value) / dataMax) * outerRadius;
+        return (((_a = d === null || d === void 0 ? void 0 : d.data.values[0].value) !== null && _a !== void 0 ? _a : 0) / dataMax) * outerRadius;
     },
     /**
      * Update polar based on given data array
@@ -20999,7 +21142,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220618004835
+ * @version 3.4.1-nightly-20220622004710
  */
 var bb = {
     /**
@@ -21009,7 +21152,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220618004835",
+    version: "3.4.1-nightly-20220622004710",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

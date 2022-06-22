@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220618004835
+ * @version 3.4.1-nightly-20220622004710
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -241,12 +241,13 @@ win.requestIdleCallback = win.requestIdleCallback || function (cb) {
   _newArrowCheck(this, _this);
 
   return setTimeout(cb, 1);
-}.bind(undefined);
+}.bind(undefined); // win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
 
-win.cancelIdleCallback = win.cancelIdleCallback || function (id) {
+
+win.requestAnimationFrame = win.requestAnimationFrame || function (cb) {
   _newArrowCheck(this, _this);
 
-  return clearTimeout(id);
+  return setTimeout(cb, 1);
 }.bind(undefined);
 
 var browser_doc = win == null ? void 0 : win.document;
@@ -1309,6 +1310,96 @@ function convertInputType(mouse, touch) {
 
   return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
 }
+/**
+ * Create and run on Web Worker
+ * @param {boolean} useWorker Use Web Worker
+ * @param {Function} fn Function to be executed in worker
+ * @param {Function} callback Callback function to receive result from worker
+ * @param {Array} depsFn Dependency functions to run given function(fn).
+ * @returns {object}
+ * @example
+ * 	const worker = runWorker(function(arg) {
+ *		  // do some tasks...
+ *		  console.log("param:", A(arg));
+ *
+ *		  return 1234;
+ *	   }, function(data) {
+ *		  // callback after worker is done
+ *	 	  console.log("result:", data);
+ *	   },
+ *	   [function A(){}]
+ *	);
+ *
+ *	worker(11111);
+ * @private
+ */
+
+
+function runWorker(useWorker, fn, callback, depsFn) {
+  if (useWorker === void 0) {
+    useWorker = !0;
+  }
+
+  var runFn;
+
+  if (win.Worker && useWorker) {
+    var _depsFn$map$join,
+        blob = new Blob([((_depsFn$map$join = depsFn == null ? void 0 : depsFn.map(String).join(";")) != null ? _depsFn$map$join : "") + "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (" + fn.toString() + ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};"], {
+      type: "text/javascript"
+    }),
+        worker = new Worker(URL.createObjectURL(blob));
+
+    runFn = function () {
+      for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        args[_key5] = arguments[_key5];
+      }
+
+      // trigger worker
+      worker.postMessage(args); // listen worker
+
+      worker.onmessage = function (e) {
+        return callback(e.data);
+      }; // handle error
+
+
+      worker.onerror = function (e) {
+        console.error(e);
+      }; // return new Promise((resolve, reject) => {
+      // 	worker.onmessage = ({data}) => resolve(data);
+      // 	worker.onerror = reject;
+      // });
+
+    };
+  } else {
+    runFn = function () {
+      var res = fn.apply(void 0, arguments);
+      callback(res);
+    };
+  }
+
+  return runFn;
+}
+/**
+ * Run function until given condition function return true
+ * @param {Function} fn Function to be executed when condition is true
+ * @param {Function} conditionFn Condition function to check if condition is true
+ * @private
+ */
+
+
+function runUntil(fn, conditionFn) {
+  var _this18 = this;
+
+  if (conditionFn() === !1) {
+    win.requestAnimationFrame(function () {
+      _newArrowCheck(this, _this18);
+
+      return runUntil(fn, conditionFn);
+    }.bind(this));
+  } else {
+    fn();
+  }
+}
 ;// CONCATENATED MODULE: ./src/module/error.ts
 
 
@@ -2227,12 +2318,18 @@ var Store = /*#__PURE__*/function () {
    * - **NOTE:**
    *   - Will append &lt;style> to the head tag and will add shpes' CSS rules dynamically.
    *   - For now, covers colors related properties (fill, stroke, etc.) only.
+   * @property {boolean} [boost.useWorker=false] Use Web Worker as possible for processing.
+   * - **NOTE:**
+   *   - For now, only applies for data conversion at the initial time.
+   *   - As of Web Worker's async nature, handling chart instance synchrously is not recommended.
    * @example
    *  boost: {
-   *      useCssRule: true
+   *      useCssRule: true,
+   *      useWorker: false
    *  }
    */
-  boost_useCssRule: !1
+  boost_useCssRule: !1,
+  boost_useWorker: !1
 });
 ;// CONCATENATED MODULE: ./src/config/Options/data/data.ts
 
@@ -3901,12 +3998,13 @@ function generateResize(option) {
 function generateWait() {
   var transitionsToWait = [],
       f = function (selection, callback) {
-    var timer;
+    var _this5 = this;
+
     /**
      * Check if transition is complete
+     * @returns {boolean} Whether transition is complete
      * @private
      */
-
     function loop() {
       var done = 0;
 
@@ -3929,16 +4027,14 @@ function generateWait() {
         }
       }
 
-      timer && generator_clearTimeout(timer);
-
-      if (done === transitionsToWait.length) {
-        callback == null ? void 0 : callback();
-      } else {
-        timer = generator_setTimeout(loop, 50);
-      }
+      return done === transitionsToWait.length;
     }
 
-    loop();
+    runUntil(function () {
+      _newArrowCheck(this, _this5);
+
+      callback == null ? void 0 : callback();
+    }.bind(this), loop);
   }; // 'f' is called as selection.call(f, ...);
 
 
@@ -3950,6 +4046,222 @@ function generateWait() {
 }
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
 var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(5);
+;// CONCATENATED MODULE: ./src/ChartInternal/data/convert.helper.ts
+
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/* eslint-disable */
+
+
+/***** Functions to be executed on Web Worker *****
+ * NOTE: Don't allowed to use
+ * - arrow function syntax
+ * - Utils functions
+ */
+
+/**
+ * Convert Columns data
+ * @param {object} columns
+ * @returns {Array}
+ * @private
+ */
+
+function columns(columns) {
+  var newRows = [];
+  columns.forEach(function (col, i) {
+    var key = col[0];
+    col.forEach(function (v, j) {
+      if (j > 0) {
+        if (typeof newRows[j - 1] === "undefined") {
+          newRows[j - 1] = {};
+        }
+
+        if (typeof v === "undefined") {
+          throw new Error("Source data is missing a component at (" + i + ", " + j + ")!");
+        }
+
+        newRows[j - 1][key] = v;
+      }
+    });
+  });
+  return newRows;
+}
+/**
+ * Convert Rows data
+ * @param {object} columns
+ * @returns {Array}
+ * @private
+ */
+
+
+function rows(rows) {
+  var keys = rows[0],
+      newRows = [];
+  rows.forEach(function (row, i) {
+    if (i > 0) {
+      var newRow = {};
+      row.forEach(function (v, j) {
+        if (typeof v === "undefined") {
+          throw new Error("Source data is missing a component at (" + i + ", " + j + ")!");
+        }
+
+        newRow[keys[j]] = v;
+      });
+      newRows.push(newRow);
+    }
+  });
+  return newRows;
+}
+/**
+ * Convert JSON data
+ * @param {object} columns
+ * @returns {Array}
+ * @private
+ */
+
+
+function json(json, keysParam) {
+  var newRows = [],
+      findValueInJson = function (object, path) {
+    if (object[path] !== undefined) {
+      return object[path];
+    }
+
+    var convertedPath = path.replace(/\[(\w+)\]/g, ".$1"),
+        pathArray = convertedPath.replace(/^\./, "").split("."),
+        target = object; // convert indexes to properties (replace [] with .)
+
+    pathArray.some(function (k) {
+      return !(target = target && k in target ? target[k] : undefined);
+    });
+    return target;
+  },
+      targetKeys,
+      data;
+
+  if (Array.isArray(json)) {
+    if (keysParam.x) {
+      targetKeys = keysParam.value.concat(keysParam.x);
+    } else {
+      targetKeys = keysParam.value;
+    }
+
+    newRows.push(targetKeys);
+    json.forEach(function (o) {
+      var newRow = targetKeys.map(function (key) {
+        // convert undefined to null because undefined data will be removed in convertDataToTargets()
+        var v = findValueInJson(o, key);
+
+        if (typeof v === "undefined") {
+          v = null;
+        }
+
+        return v;
+      });
+      newRows.push(newRow);
+    });
+    data = rows(newRows);
+  } else {
+    Object.keys(json).forEach(function (key) {
+      var tmp = json[key].concat();
+      tmp.unshift(key);
+      newRows.push(tmp);
+    });
+    data = columns(newRows);
+  }
+
+  return data;
+}
+/***** Functions can't be executed on Web Worker *****/
+
+/**
+ * Convert URL data
+ * @param {string} url Remote URL
+ * @param {string} mimeType MIME type string: json | csv | tsv
+ * @param {object} headers Header object
+ * @param {object} keys Key object
+ * @param {Function} done Callback function
+ * @private
+ */
+
+
+function url(url, mimeType, headers, keys, done) {
+  if (mimeType === void 0) {
+    mimeType = "csv";
+  }
+
+  var req = new XMLHttpRequest(),
+      converter = {
+    csv: csv,
+    tsv: tsv,
+    json: json
+  };
+  req.open("GET", url);
+
+  if (headers) {
+    Object.keys(headers).forEach(function (key) {
+      req.setRequestHeader(key, headers[key]);
+    });
+  }
+
+  req.onreadystatechange = function () {
+    if (req.readyState === 4) {
+      if (req.status === 200) {
+        var response = req.responseText;
+        response && done.call(this, converter[mimeType](mimeType === "json" ? JSON.parse(response) : response, keys));
+      } else {
+        throw new Error(url + ": Something went wrong loading!");
+      }
+    }
+  };
+
+  req.send();
+}
+/**
+ * Convert CSV/TSV data
+ * @param {object} parser Parser object
+ * @param {object} xsv Data
+ * @returns {object}
+ * @private
+ */
+
+
+function convertCsvTsvToData(parser, xsv) {
+  var _this = this,
+      rows = parser.rows(xsv),
+      d;
+
+  if (rows.length === 1) {
+    d = [{}];
+    rows[0].forEach(function (id) {
+      _newArrowCheck(this, _this);
+
+      d[0][id] = null;
+    }.bind(this));
+  } else {
+    d = parser.parse(xsv);
+  }
+
+  return d;
+}
+
+function csv(xsv) {
+  return convertCsvTsvToData({
+    rows: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.csvParseRows,
+    parse: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.csvParse
+  }, xsv);
+}
+
+function tsv(tsv) {
+  return convertCsvTsvToData({
+    rows: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.tsvParseRows,
+    parse: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.tsvParse
+  }, tsv);
+}
 ;// CONCATENATED MODULE: ./src/ChartInternal/data/convert.ts
 
 
@@ -3959,23 +4271,42 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
  */
 
 
+
+/**
+ * Get data key for JSON
+ * @param {string|object} keysParam Key params
+ * @param {object} config Config object
+ * @returns {string} Data key
+ * @private
+ */
+function getDataKeyForJson(keysParam, config) {
+  var keys = keysParam || (config == null ? void 0 : config.data_keys);
+
+  if (keys != null && keys.x) {
+    config.data_x = keys.x;
+  }
+
+  return keys;
+}
 /**
  * Data convert
  * @memberof ChartInternal
  * @private
  */
 
+
 /* harmony default export */ var convert = ({
   /**
    * Convert data according its type
    * @param {object} args data object
    * @param {Function} [callback] callback for url(XHR) type loading
-   * @returns {object}
    * @private
    */
   convertData: function convertData(args, callback) {
     var _this = this,
-        data;
+        config = this.config,
+        useWorker = config.boost_useWorker,
+        data = args;
 
     if (args.bindto) {
       data = {};
@@ -3988,230 +4319,22 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
           data[v] = args[key];
         }
       }.bind(this));
-    } else {
-      data = args;
     }
 
     if (data.url && callback) {
-      this.convertUrlToData(data.url, data.mimeType, data.headers, data.keys, callback);
+      url(data.url, data.mimeType, data.headers, getDataKeyForJson(data.keys, config), callback);
     } else if (data.json) {
-      data = this.convertJsonToData(data.json, data.keys);
+      runWorker(useWorker, json, callback, [columns, rows])(data.json, getDataKeyForJson(data.keys, config));
     } else if (data.rows) {
-      data = this.convertRowsToData(data.rows);
+      runWorker(useWorker, rows, callback)(data.rows);
     } else if (data.columns) {
-      data = this.convertColumnsToData(data.columns);
+      runWorker(useWorker, columns, callback)(data.columns);
     } else if (args.bindto) {
       throw Error("url or json or rows or columns is required.");
     }
-
-    return isArray(data) && data;
-  },
-
-  /**
-   * Convert URL data
-   * @param {string} url Remote URL
-   * @param {string} mimeType MIME type string: json | csv | tsv
-   * @param {object} headers Header object
-   * @param {object} keys Key object
-   * @param {Function} done Callback function
-   * @private
-   */
-  convertUrlToData: function convertUrlToData(url, mimeType, headers, keys, done) {
-    var _this2 = this;
-
-    if (mimeType === void 0) {
-      mimeType = "csv";
-    }
-
-    var req = new XMLHttpRequest();
-    req.open("GET", url);
-
-    if (headers) {
-      Object.keys(headers).forEach(function (key) {
-        _newArrowCheck(this, _this2);
-
-        req.setRequestHeader(key, headers[key]);
-      }.bind(this));
-    }
-
-    req.onreadystatechange = function () {
-      _newArrowCheck(this, _this2);
-
-      if (req.readyState === 4) {
-        if (req.status === 200) {
-          var response = req.responseText;
-          response && done.call(this, this["convert" + capitalize(mimeType) + "ToData"](mimeType === "json" ? JSON.parse(response) : response, keys));
-        } else {
-          throw new Error(url + ": Something went wrong loading!");
-        }
-      }
-    }.bind(this);
-
-    req.send();
-  },
-
-  /**
-   * Convert CSV/TSV data
-   * @param {object} parser Parser object
-   * @param {object} xsv Data
-   * @private
-   * @returns {object}
-   */
-  convertCsvTsvToData: function convertCsvTsvToData(parser, xsv) {
-    var _this3 = this,
-        rows = parser.rows(xsv),
-        d;
-
-    if (rows.length === 1) {
-      d = [{}];
-      rows[0].forEach(function (id) {
-        _newArrowCheck(this, _this3);
-
-        d[0][id] = null;
-      }.bind(this));
-    } else {
-      d = parser.parse(xsv);
-    }
-
-    return d;
-  },
-  convertCsvToData: function convertCsvToData(xsv) {
-    return this.convertCsvTsvToData({
-      rows: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.csvParseRows,
-      parse: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.csvParse
-    }, xsv);
-  },
-  convertTsvToData: function convertTsvToData(tsv) {
-    return this.convertCsvTsvToData({
-      rows: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.tsvParseRows,
-      parse: external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_.tsvParse
-    }, tsv);
-  },
-  convertJsonToData: function convertJsonToData(json, keysParam) {
-    var _this4 = this,
-        config = this.config,
-        newRows = [],
-        targetKeys,
-        data;
-
-    if (isArray(json)) {
-      var keys = keysParam || config.data_keys;
-
-      if (keys.x) {
-        targetKeys = keys.value.concat(keys.x);
-        config.data_x = keys.x;
-      } else {
-        targetKeys = keys.value;
-      }
-
-      newRows.push(targetKeys);
-      json.forEach(function (o) {
-        var _this5 = this;
-
-        _newArrowCheck(this, _this4);
-
-        var newRow = targetKeys.map(function (key) {
-          _newArrowCheck(this, _this5);
-
-          // convert undefined to null because undefined data will be removed in convertDataToTargets()
-          var v = this.findValueInJson(o, key);
-
-          if (isUndefined(v)) {
-            v = null;
-          }
-
-          return v;
-        }.bind(this));
-        newRows.push(newRow);
-      }.bind(this));
-      data = this.convertRowsToData(newRows);
-    } else {
-      Object.keys(json).forEach(function (key) {
-        _newArrowCheck(this, _this4);
-
-        var tmp = json[key].concat();
-        tmp.unshift(key);
-        newRows.push(tmp);
-      }.bind(this));
-      data = this.convertColumnsToData(newRows);
-    }
-
-    return data;
-  },
-  findValueInJson: function findValueInJson(object, path) {
-    var _this6 = this;
-
-    if (object[path] !== undefined) {
-      return object[path];
-    }
-
-    var convertedPath = path.replace(/\[(\w+)\]/g, ".$1"),
-        pathArray = convertedPath.replace(/^\./, "").split("."),
-        target = object; // convert indexes to properties (replace [] with .)
-
-    pathArray.some(function (k) {
-      _newArrowCheck(this, _this6);
-
-      return !(target = target && k in target ? target[k] : undefined);
-    }.bind(this));
-    return target;
-  },
-  convertRowsToData: function convertRowsToData(rows) {
-    var _this7 = this,
-        keys = rows[0],
-        newRows = [];
-
-    rows.forEach(function (row, i) {
-      var _this8 = this;
-
-      _newArrowCheck(this, _this7);
-
-      if (i > 0) {
-        var newRow = {};
-        row.forEach(function (v, j) {
-          _newArrowCheck(this, _this8);
-
-          if (isUndefined(v)) {
-            throw new Error("Source data is missing a component at (" + i + ", " + j + ")!");
-          }
-
-          newRow[keys[j]] = v;
-        }.bind(this));
-        newRows.push(newRow);
-      }
-    }.bind(this));
-    return newRows;
-  },
-  convertColumnsToData: function convertColumnsToData(columns) {
-    var _this9 = this,
-        newRows = [];
-
-    columns.forEach(function (col, i) {
-      var _this10 = this;
-
-      _newArrowCheck(this, _this9);
-
-      var key = col[0];
-      col.forEach(function (v, j) {
-        _newArrowCheck(this, _this10);
-
-        if (j > 0) {
-          if (isUndefined(newRows[j - 1])) {
-            newRows[j - 1] = {};
-          }
-
-          if (isUndefined(v)) {
-            throw new Error("Source data is missing a component at (" + i + ", " + j + ")!");
-          }
-
-          newRows[j - 1][key] = v;
-        }
-      }.bind(this));
-    }.bind(this));
-    return newRows;
   },
   convertDataToTargets: function convertDataToTargets(data, appendXs) {
-    var _this11 = this,
+    var _this2 = this,
         $$ = this,
         axis = $$.axis,
         config = $$.config,
@@ -4232,9 +4355,9 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         xsData;
     // save x for update data by load when custom x and bb.x API
     ids.forEach(function (id) {
-      var _this12 = this;
+      var _this3 = this;
 
-      _newArrowCheck(this, _this11);
+      _newArrowCheck(this, _this2);
 
       var xKey = this.getXKey(id);
 
@@ -4242,11 +4365,11 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         // if included in input data
         if (xs.indexOf(xKey) >= 0) {
           xsData = (appendXs && $$.data.xs[id] || []).concat(data.map(function (d) {
-            _newArrowCheck(this, _this12);
+            _newArrowCheck(this, _this3);
 
             return d[xKey];
           }.bind(this)).filter(isValue).map(function (rawX, i) {
-            _newArrowCheck(this, _this12);
+            _newArrowCheck(this, _this3);
 
             return $$.generateTargetX(rawX, id, i);
           }.bind(this)));
@@ -4260,7 +4383,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
       } else {
         xsData = data.map(function (d, i) {
-          _newArrowCheck(this, _this12);
+          _newArrowCheck(this, _this3);
 
           return i;
         }.bind(this));
@@ -4270,7 +4393,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     }.bind(this)); // check x is defined
 
     ids.forEach(function (id) {
-      _newArrowCheck(this, _this11);
+      _newArrowCheck(this, _this2);
 
       if (!this.data.xs[id]) {
         throw new Error("x is not defined for id = \"" + id + "\".");
@@ -4278,19 +4401,19 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     }.bind(this)); // convert to target
 
     var targets = ids.map(function (id, index) {
-      var _this13 = this;
+      var _this4 = this;
 
-      _newArrowCheck(this, _this11);
+      _newArrowCheck(this, _this2);
 
       var convertedId = config.data_idConverter.bind($$.api)(id),
           xKey = $$.getXKey(id),
           isCategory = isCustomX && isCategorized,
           hasCategory = isCategory && data.map(function (v) {
-        _newArrowCheck(this, _this13);
+        _newArrowCheck(this, _this4);
 
         return v.x;
       }.bind(this)).every(function (v) {
-        _newArrowCheck(this, _this13);
+        _newArrowCheck(this, _this4);
 
         return config.axis_x_categories.indexOf(v) > -1;
       }.bind(this)),
@@ -4300,7 +4423,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         id: convertedId,
         id_org: id,
         values: data.map(function (d, i) {
-          _newArrowCheck(this, _this13);
+          _newArrowCheck(this, _this4);
 
           var rawX = d[xKey],
               value = d[id],
@@ -4330,10 +4453,11 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
           return {
             x: x,
             value: value,
-            id: convertedId
+            id: convertedId,
+            index: -1
           };
         }.bind(this)).filter(function (v) {
-          _newArrowCheck(this, _this13);
+          _newArrowCheck(this, _this4);
 
           return isDefined(v.x);
         }.bind(this))
@@ -4341,14 +4465,14 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     }.bind(this)); // finish targets
 
     targets.forEach(function (t) {
-      var _this14 = this;
+      var _this5 = this;
 
-      _newArrowCheck(this, _this11);
+      _newArrowCheck(this, _this2);
 
       // sort values by its x
       if (config.data_xSort) {
         t.values = t.values.sort(function (v1, v2) {
-          _newArrowCheck(this, _this14);
+          _newArrowCheck(this, _this5);
 
           var x1 = v1.x || v1.x === 0 ? v1.x : Infinity,
               x2 = v2.x || v2.x === 0 ? v2.x : Infinity;
@@ -4358,13 +4482,13 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 
       t.values.forEach(function (v, i) {
-        _newArrowCheck(this, _this14);
+        _newArrowCheck(this, _this5);
 
         return v.index = i;
       }.bind(this)); // this needs to be sorted because its index and value.index is identical
 
       $$.data.xs[t.id].sort(function (v1, v2) {
-        _newArrowCheck(this, _this14);
+        _newArrowCheck(this, _this5);
 
         return v1 - v2;
       }.bind(this));
@@ -4375,7 +4499,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
     if (config.data_type) {
       $$.setTargetType($$.mapToIds(targets).filter(function (id) {
-        _newArrowCheck(this, _this11);
+        _newArrowCheck(this, _this2);
 
         return !(id in config.data_types);
       }.bind(this)), config.data_type);
@@ -4383,7 +4507,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 
     targets.forEach(function (d) {
-      _newArrowCheck(this, _this11);
+      _newArrowCheck(this, _this2);
 
       return $$.cache.add(d.id_org, d, !0);
     }.bind(this));
@@ -5636,13 +5760,13 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 
     $$.cache.reset();
-    var data = args.data || $$.convertData(args, function (d) {
+    $$.convertData(args, function (d) {
       _newArrowCheck(this, _this2);
 
-      return $$.load($$.convertDataToTargets(d), args);
+      var data = args.data || d;
+      args.append && (data.__append__ = !0);
+      data && $$.load($$.convertDataToTargets(data), args);
     }.bind(this));
-    args.append && (data.__append__ = !0);
-    data && $$.load($$.convertDataToTargets(data), args);
   },
   unload: function unload(rawTargetIds, customDoneCb) {
     var _this3 = this,
@@ -9122,7 +9246,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       $$ = this,
       value = d.value,
       isCandlestickType = $$.isCandlestickType(d),
-      isNegative = value < 0 || isCandlestickType && !((_$$$getCandlestickDat = $$.getCandlestickData(d)) != null && _$$$getCandlestickDat._isUp),
+      isNegative = isNumber(value) && value < 0 || isCandlestickType && !((_$$$getCandlestickDat = $$.getCandlestickData(d)) != null && _$$$getCandlestickDat._isUp),
       x = pos.x,
       y = pos.y,
       gap = 4,
@@ -10899,9 +11023,12 @@ var ChartInternal = /*#__PURE__*/function () {
     }
 
     if (!isLazy || forced) {
-      var convertedData = $$.convertData(config, $$.initWithData);
-      convertedData && $$.initWithData(convertedData);
-      $$.afterInit();
+      $$.convertData(config, function (res) {
+        _newArrowCheck(this, _this);
+
+        $$.initWithData(res);
+        $$.afterInit();
+      }.bind(this));
     }
   };
 
@@ -13739,158 +13866,173 @@ extend(regions, {
   flow: function flow(args) {
     var _this = this,
         $$ = this.internal,
-        data,
-        domain,
-        length = 0,
-        tail = 0,
-        diff,
-        to;
+        data;
 
     if (args.json || args.rows || args.columns) {
-      data = $$.convertData(args);
+      $$.convertData(args, function (res) {
+        _newArrowCheck(this, _this);
+
+        data = res;
+
+        _();
+      }.bind(this));
     }
+    /**
+     * Process flows
+     * @private
+     */
 
-    if ($$.state.redrawing || !data || !isTabVisible()) {
-      return;
-    }
 
-    var notfoundIds = [],
-        orgDataCount = $$.getMaxDataCount(),
-        targets = $$.convertDataToTargets(data, !0),
-        isTimeSeries = $$.axis.isTimeSeries();
-    // Update/Add data
-    $$.data.targets.forEach(function (t) {
-      _newArrowCheck(this, _this);
+    function _() {
+      var _this2 = this,
+          domain,
+          length = 0,
+          tail = 0,
+          diff,
+          to;
 
-      var found = !1;
-
-      for (var i = 0; i < targets.length; i++) {
-        if (t.id === targets[i].id) {
-          found = !0;
-
-          if (t.values[t.values.length - 1]) {
-            tail = t.values[t.values.length - 1].index + 1;
-          }
-
-          length = targets[i].values.length;
-
-          for (var j = 0; j < length; j++) {
-            targets[i].values[j].index = tail + j;
-
-            if (!isTimeSeries) {
-              targets[i].values[j].x = tail + j;
-            }
-          }
-
-          t.values = t.values.concat(targets[i].values);
-          targets.splice(i, 1);
-          break;
-        }
+      if ($$.state.redrawing || !data || !isTabVisible()) {
+        return;
       }
 
-      found || notfoundIds.push(t.id);
-    }.bind(this)); // Append null for not found targets
+      var notfoundIds = [],
+          orgDataCount = $$.getMaxDataCount(),
+          targets = $$.convertDataToTargets(data, !0),
+          isTimeSeries = $$.axis.isTimeSeries();
+      // Update/Add data
+      $$.data.targets.forEach(function (t) {
+        _newArrowCheck(this, _this2);
 
-    $$.data.targets.forEach(function (t) {
-      _newArrowCheck(this, _this);
+        var found = !1;
 
-      for (var i = 0; i < notfoundIds.length; i++) {
-        if (t.id === notfoundIds[i]) {
-          tail = t.values[t.values.length - 1].index + 1;
+        for (var i = 0; i < targets.length; i++) {
+          if (t.id === targets[i].id) {
+            found = !0;
 
-          for (var j = 0; j < length; j++) {
-            t.values.push({
+            if (t.values[t.values.length - 1]) {
+              tail = t.values[t.values.length - 1].index + 1;
+            }
+
+            length = targets[i].values.length;
+
+            for (var j = 0; j < length; j++) {
+              targets[i].values[j].index = tail + j;
+
+              if (!isTimeSeries) {
+                targets[i].values[j].x = tail + j;
+              }
+            }
+
+            t.values = t.values.concat(targets[i].values);
+            targets.splice(i, 1);
+            break;
+          }
+        }
+
+        found || notfoundIds.push(t.id);
+      }.bind(this)); // Append null for not found targets
+
+      $$.data.targets.forEach(function (t) {
+        _newArrowCheck(this, _this2);
+
+        for (var i = 0; i < notfoundIds.length; i++) {
+          if (t.id === notfoundIds[i]) {
+            tail = t.values[t.values.length - 1].index + 1;
+
+            for (var j = 0; j < length; j++) {
+              t.values.push({
+                id: t.id,
+                index: tail + j,
+                x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
+                value: null
+              });
+            }
+          }
+        }
+      }.bind(this)); // Generate null values for new target
+
+      if ($$.data.targets.length) {
+        targets.forEach(function (t) {
+          var _this3 = this;
+
+          _newArrowCheck(this, _this2);
+
+          var missing = [];
+
+          for (var i = $$.data.targets[0].values[0].index; i < tail; i++) {
+            missing.push({
               id: t.id,
-              index: tail + j,
-              x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
+              index: i,
+              x: isTimeSeries ? $$.getOtherTargetX(i) : i,
               value: null
             });
           }
-        }
+
+          t.values.forEach(function (v) {
+            _newArrowCheck(this, _this3);
+
+            v.index += tail;
+
+            if (!isTimeSeries) {
+              v.x += tail;
+            }
+          }.bind(this));
+          t.values = missing.concat(t.values);
+        }.bind(this));
       }
-    }.bind(this)); // Generate null values for new target
 
-    if ($$.data.targets.length) {
-      targets.forEach(function (t) {
-        var _this2 = this;
+      $$.data.targets = $$.data.targets.concat(targets); // add remained
+      // check data count because behavior needs to change when it"s only one
+      // const dataCount = $$.getMaxDataCount();
 
-        _newArrowCheck(this, _this);
+      var baseTarget = $$.data.targets[0],
+          baseValue = baseTarget.values[0];
 
-        var missing = [];
-
-        for (var i = $$.data.targets[0].values[0].index; i < tail; i++) {
-          missing.push({
-            id: t.id,
-            index: i,
-            x: isTimeSeries ? $$.getOtherTargetX(i) : i,
-            value: null
-          });
-        }
-
-        t.values.forEach(function (v) {
+      // Update length to flow if needed
+      if (isDefined(args.to)) {
+        length = 0;
+        to = isTimeSeries ? parseDate.call($$, args.to) : args.to;
+        baseTarget.values.forEach(function (v) {
           _newArrowCheck(this, _this2);
 
-          v.index += tail;
-
-          if (!isTimeSeries) {
-            v.x += tail;
-          }
+          v.x < to && length++;
         }.bind(this));
-        t.values = missing.concat(t.values);
-      }.bind(this));
-    }
-
-    $$.data.targets = $$.data.targets.concat(targets); // add remained
-    // check data count because behavior needs to change when it"s only one
-    // const dataCount = $$.getMaxDataCount();
-
-    var baseTarget = $$.data.targets[0],
-        baseValue = baseTarget.values[0];
-
-    // Update length to flow if needed
-    if (isDefined(args.to)) {
-      length = 0;
-      to = isTimeSeries ? parseDate.call($$, args.to) : args.to;
-      baseTarget.values.forEach(function (v) {
-        _newArrowCheck(this, _this);
-
-        v.x < to && length++;
-      }.bind(this));
-    } else if (isDefined(args.length)) {
-      length = args.length;
-    } // If only one data, update the domain to flow from left edge of the chart
+      } else if (isDefined(args.length)) {
+        length = args.length;
+      } // If only one data, update the domain to flow from left edge of the chart
 
 
-    if (!orgDataCount) {
-      if (isTimeSeries) {
-        diff = baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0];
-      } else {
-        diff = 1;
+      if (!orgDataCount) {
+        if (isTimeSeries) {
+          diff = baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0];
+        } else {
+          diff = 1;
+        }
+
+        domain = [baseValue.x - diff, baseValue.x];
+      } else if (orgDataCount === 1 && isTimeSeries) {
+        diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
+        domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
       }
 
-      domain = [baseValue.x - diff, baseValue.x];
-    } else if (orgDataCount === 1 && isTimeSeries) {
-      diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
-      domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
+      domain && $$.updateXDomain(null, !0, !0, !1, domain); // Set targets
+
+      $$.updateTargets($$.data.targets); // Redraw with new targets
+
+      $$.redraw({
+        flow: {
+          index: baseValue.index,
+          length: length,
+          duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
+          done: args.done,
+          orgDataCount: orgDataCount
+        },
+        withLegend: !0,
+        withTransition: orgDataCount > 1,
+        withTrimXDomain: !1,
+        withUpdateXAxis: !0
+      });
     }
-
-    domain && $$.updateXDomain(null, !0, !0, !1, domain); // Set targets
-
-    $$.updateTargets($$.data.targets); // Redraw with new targets
-
-    $$.redraw({
-      flow: {
-        index: baseValue.index,
-        length: length,
-        duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
-        done: args.done,
-        orgDataCount: orgDataCount
-      },
-      withLegend: !0,
-      withTransition: orgDataCount > 1,
-      withTrimXDomain: !1,
-      withUpdateXAxis: !0
-    });
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
@@ -20519,7 +20661,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       return v.values.filter(function (v2) {
         _newArrowCheck(this, _this6);
 
-        return v2.index === index && (value > 0 ? v2.value > 0 : v2.value < 0);
+        return v2.index === index && (isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0);
       }.bind(this))[0];
     }.bind(this)).filter(Boolean).map(function (v) {
       _newArrowCheck(this, _this5);
@@ -20556,11 +20698,12 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
           offset = barOffset(d, i) || y0,
           width = isNumber(barW) ? barW : barW[d.id] || barW._$width,
+          value = d.value,
           posX = barX(d),
           posY = barY(d);
 
       // fix posY not to overflow opposite quadrant
-      if (config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY)) {
+      if (config.axis_rotated && (value > 0 && posY < y0 || value < 0 && y0 < posY)) {
         posY = y0;
       }
 
@@ -21993,8 +22136,10 @@ function getDataMax($$) {
    * @private
    */
   getPolarOuterRadius: function getPolarOuterRadius(d, outerRadius) {
-    var dataMax = getDataMax(this);
-    return (d == null ? void 0 : d.data.values[0].value) / dataMax * outerRadius;
+    var _d$data$values$0$valu,
+        dataMax = getDataMax(this);
+
+    return ((_d$data$values$0$valu = d == null ? void 0 : d.data.values[0].value) != null ? _d$data$values$0$valu : 0) / dataMax * outerRadius;
   },
 
   /**
@@ -25730,7 +25875,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220618004835",
+  version: "3.4.1-nightly-20220622004710",
 
   /**
    * Generate chart
@@ -25865,7 +26010,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220618004835
+ * @version 3.4.1-nightly-20220622004710
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

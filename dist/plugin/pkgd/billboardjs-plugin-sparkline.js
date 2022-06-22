@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220618004835
+ * @version 3.4.1-nightly-20220622004710
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1114,10 +1114,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.23.1',
+  version: '3.23.2',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.23.1/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.23.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -5735,7 +5735,10 @@ var getPrototypeOf = __webpack_require__(123);
 var setPrototypeOf = __webpack_require__(111);
 var wellKnownSymbol = __webpack_require__(32);
 var uid = __webpack_require__(39);
+var InternalStateModule = __webpack_require__(50);
 
+var enforceInternalState = InternalStateModule.enforce;
+var getInternalState = InternalStateModule.get;
 var Int8Array = global.Int8Array;
 var Int8ArrayPrototype = Int8Array && Int8Array.prototype;
 var Uint8ClampedArray = global.Uint8ClampedArray;
@@ -5747,7 +5750,7 @@ var TypeError = global.TypeError;
 
 var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 var TYPED_ARRAY_TAG = uid('TYPED_ARRAY_TAG');
-var TYPED_ARRAY_CONSTRUCTOR = uid('TYPED_ARRAY_CONSTRUCTOR');
+var TYPED_ARRAY_CONSTRUCTOR = 'TypedArrayConstructor';
 // Fixing native typed arrays in Opera Presto crashes the browser, see #595
 var NATIVE_ARRAY_BUFFER_VIEWS = NATIVE_ARRAY_BUFFER && !!setPrototypeOf && classof(global.opera) !== 'Opera';
 var TYPED_ARRAY_TAG_REQUIRED = false;
@@ -5776,6 +5779,13 @@ var isView = function isView(it) {
   return klass === 'DataView'
     || hasOwn(TypedArrayConstructorsList, klass)
     || hasOwn(BigIntArrayConstructorsList, klass);
+};
+
+var getTypedArrayConstructor = function (it) {
+  var proto = getPrototypeOf(it);
+  if (!isObject(proto)) return;
+  var state = getInternalState(proto);
+  return (state && hasOwn(state, TYPED_ARRAY_CONSTRUCTOR)) ? state[TYPED_ARRAY_CONSTRUCTOR] : getTypedArrayConstructor(proto);
 };
 
 var isTypedArray = function (it) {
@@ -5842,14 +5852,14 @@ var exportTypedArrayStaticMethod = function (KEY, property, forced) {
 for (NAME in TypedArrayConstructorsList) {
   Constructor = global[NAME];
   Prototype = Constructor && Constructor.prototype;
-  if (Prototype) createNonEnumerableProperty(Prototype, TYPED_ARRAY_CONSTRUCTOR, Constructor);
+  if (Prototype) enforceInternalState(Prototype)[TYPED_ARRAY_CONSTRUCTOR] = Constructor;
   else NATIVE_ARRAY_BUFFER_VIEWS = false;
 }
 
 for (NAME in BigIntArrayConstructorsList) {
   Constructor = global[NAME];
   Prototype = Constructor && Constructor.prototype;
-  if (Prototype) createNonEnumerableProperty(Prototype, TYPED_ARRAY_CONSTRUCTOR, Constructor);
+  if (Prototype) enforceInternalState(Prototype)[TYPED_ARRAY_CONSTRUCTOR] = Constructor;
 }
 
 // WebKit bug - typed arrays constructors prototype is Object.prototype
@@ -5887,12 +5897,12 @@ if (DESCRIPTORS && !hasOwn(TypedArrayPrototype, TO_STRING_TAG)) {
 
 module.exports = {
   NATIVE_ARRAY_BUFFER_VIEWS: NATIVE_ARRAY_BUFFER_VIEWS,
-  TYPED_ARRAY_CONSTRUCTOR: TYPED_ARRAY_CONSTRUCTOR,
   TYPED_ARRAY_TAG: TYPED_ARRAY_TAG_REQUIRED && TYPED_ARRAY_TAG,
   aTypedArray: aTypedArray,
   aTypedArrayConstructor: aTypedArrayConstructor,
   exportTypedArrayMethod: exportTypedArrayMethod,
   exportTypedArrayStaticMethod: exportTypedArrayStaticMethod,
+  getTypedArrayConstructor: getTypedArrayConstructor,
   isView: isView,
   isTypedArray: isTypedArray,
   TypedArray: TypedArray,
@@ -12640,6 +12650,7 @@ var inheritIfRequired = __webpack_require__(114);
 
 var getInternalState = InternalStateModule.get;
 var setInternalState = InternalStateModule.set;
+var enforceInternalState = InternalStateModule.enforce;
 var nativeDefineProperty = definePropertyModule.f;
 var nativeGetOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
 var round = Math.round;
@@ -12648,7 +12659,6 @@ var ArrayBuffer = ArrayBufferModule.ArrayBuffer;
 var ArrayBufferPrototype = ArrayBuffer.prototype;
 var DataView = ArrayBufferModule.DataView;
 var NATIVE_ARRAY_BUFFER_VIEWS = ArrayBufferViewCore.NATIVE_ARRAY_BUFFER_VIEWS;
-var TYPED_ARRAY_CONSTRUCTOR = ArrayBufferViewCore.TYPED_ARRAY_CONSTRUCTOR;
 var TYPED_ARRAY_TAG = ArrayBufferViewCore.TYPED_ARRAY_TAG;
 var TypedArray = ArrayBufferViewCore.TypedArray;
 var TypedArrayPrototype = ArrayBufferViewCore.TypedArrayPrototype;
@@ -12825,7 +12835,7 @@ if (DESCRIPTORS) {
       createNonEnumerableProperty(TypedArrayConstructorPrototype, 'constructor', TypedArrayConstructor);
     }
 
-    createNonEnumerableProperty(TypedArrayConstructorPrototype, TYPED_ARRAY_CONSTRUCTOR, TypedArrayConstructor);
+    enforceInternalState(TypedArrayConstructorPrototype).TypedArrayConstructor = TypedArrayConstructor;
 
     if (TYPED_ARRAY_TAG) {
       createNonEnumerableProperty(TypedArrayConstructorPrototype, TYPED_ARRAY_TAG, CONSTRUCTOR_NAME);
@@ -13243,13 +13253,13 @@ module.exports = function (Constructor, list) {
 var ArrayBufferViewCore = __webpack_require__(198);
 var speciesConstructor = __webpack_require__(200);
 
-var TYPED_ARRAY_CONSTRUCTOR = ArrayBufferViewCore.TYPED_ARRAY_CONSTRUCTOR;
 var aTypedArrayConstructor = ArrayBufferViewCore.aTypedArrayConstructor;
+var getTypedArrayConstructor = ArrayBufferViewCore.getTypedArrayConstructor;
 
 // a part of `TypedArraySpeciesCreate` abstract operation
 // https://tc39.es/ecma262/#typedarray-species-create
 module.exports = function (originalArray) {
-  return aTypedArrayConstructor(speciesConstructor(originalArray, originalArray[TYPED_ARRAY_CONSTRUCTOR]));
+  return aTypedArrayConstructor(speciesConstructor(originalArray, getTypedArrayConstructor(originalArray)));
 };
 
 
@@ -17757,7 +17767,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220618004835";
+Plugin.version = "3.4.1-nightly-20220622004710";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**
@@ -21658,12 +21668,13 @@ win.requestIdleCallback = win.requestIdleCallback || function (cb) {
   _newArrowCheck(this, browser_this);
 
   return setTimeout(cb, 1);
-}.bind(undefined);
+}.bind(undefined); // win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
 
-win.cancelIdleCallback = win.cancelIdleCallback || function (id) {
+
+win.requestAnimationFrame = win.requestAnimationFrame || function (cb) {
   _newArrowCheck(this, browser_this);
 
-  return clearTimeout(id);
+  return setTimeout(cb, 1);
 }.bind(undefined);
 
 var doc = win == null ? void 0 : win.document;
@@ -22642,6 +22653,96 @@ function convertInputType(mouse, touch) {
   }.bind(this)); // fallback to 'mouse' if no input type is detected.
 
   return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
+}
+/**
+ * Create and run on Web Worker
+ * @param {boolean} useWorker Use Web Worker
+ * @param {Function} fn Function to be executed in worker
+ * @param {Function} callback Callback function to receive result from worker
+ * @param {Array} depsFn Dependency functions to run given function(fn).
+ * @returns {object}
+ * @example
+ * 	const worker = runWorker(function(arg) {
+ *		  // do some tasks...
+ *		  console.log("param:", A(arg));
+ *
+ *		  return 1234;
+ *	   }, function(data) {
+ *		  // callback after worker is done
+ *	 	  console.log("result:", data);
+ *	   },
+ *	   [function A(){}]
+ *	);
+ *
+ *	worker(11111);
+ * @private
+ */
+
+
+function runWorker(useWorker, fn, callback, depsFn) {
+  if (useWorker === void 0) {
+    useWorker = !0;
+  }
+
+  var runFn;
+
+  if (win.Worker && useWorker) {
+    var _depsFn$map$join,
+        blob = new Blob([((_depsFn$map$join = depsFn == null ? void 0 : depsFn.map(String).join(";")) != null ? _depsFn$map$join : "") + "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (" + fn.toString() + ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};"], {
+      type: "text/javascript"
+    }),
+        worker = new Worker(URL.createObjectURL(blob));
+
+    runFn = function () {
+      for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        args[_key5] = arguments[_key5];
+      }
+
+      // trigger worker
+      worker.postMessage(args); // listen worker
+
+      worker.onmessage = function (e) {
+        return callback(e.data);
+      }; // handle error
+
+
+      worker.onerror = function (e) {
+        console.error(e);
+      }; // return new Promise((resolve, reject) => {
+      // 	worker.onmessage = ({data}) => resolve(data);
+      // 	worker.onerror = reject;
+      // });
+
+    };
+  } else {
+    runFn = function () {
+      var res = fn.apply(void 0, arguments);
+      callback(res);
+    };
+  }
+
+  return runFn;
+}
+/**
+ * Run function until given condition function return true
+ * @param {Function} fn Function to be executed when condition is true
+ * @param {Function} conditionFn Condition function to check if condition is true
+ * @private
+ */
+
+
+function runUntil(fn, conditionFn) {
+  var _this18 = this;
+
+  if (conditionFn() === !1) {
+    win.requestAnimationFrame(function () {
+      _newArrowCheck(this, _this18);
+
+      return runUntil(fn, conditionFn);
+    }.bind(this));
+  } else {
+    fn();
+  }
 }
 ;// CONCATENATED MODULE: ./src/config/config.ts
 
