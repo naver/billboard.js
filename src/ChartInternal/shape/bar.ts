@@ -150,7 +150,7 @@ export default {
 			const indexX = +isRotated;
 			const indexY = +!indexX;
 
-			const isNegative = d.value < 0;
+			const isNegative = d.value as number < 0;
 			const pathRadius = ["", ""];
 			let radius = 0;
 
@@ -211,7 +211,7 @@ export default {
 		const sortedIds = sortedList
 			.map(v => v.values.filter(
 				v2 => v2.index === index && (
-					value > 0 ? v2.value > 0 : v2.value < 0
+					isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0
 				))[0]
 			)
 			.filter(Boolean)
@@ -243,12 +243,13 @@ export default {
 			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
 			const offset = barOffset(d, i) || y0; // offset is for stacked bar chart
 			const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
+			const value = d.value as number;
 			const posX = barX(d);
 			let posY = barY(d);
 
 			// fix posY not to overflow opposite quadrant
 			if (config.axis_rotated && (
-				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+				(value > 0 && posY < y0) || (value < 0 && y0 < posY)
 			)) {
 				posY = y0;
 			}

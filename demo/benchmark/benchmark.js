@@ -12,7 +12,7 @@ window.bench = {
     },
     init() {
         if (/^(127\.|localhost)/.test(location.host)) {
-            this.target.push("local");
+            this.target.unshift("local");
         }
 
        // append targeted version list
@@ -40,7 +40,8 @@ window.bench = {
     
             data.push(d);
         }
-    console.log(JSON.stringify(data));
+        
+        //console.log(JSON.stringify(data));
         return data;
     },
     loadBillboard: function() {
@@ -72,6 +73,10 @@ window.bench = {
         }
 
         this.chart = bb.generate({
+            boost: {
+                useCssRule: document.getElementById("useCssRule").checked,
+                useWorker: document.getElementById("useWorker").checked
+            },
             data: {
                 columns: this.getData(),
                 type: this.$el.type.value

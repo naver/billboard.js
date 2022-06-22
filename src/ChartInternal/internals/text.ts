@@ -51,7 +51,7 @@ function setRotatePos(
 	const $$ = this;
 	const {value} = d;
 	const isCandlestickType = $$.isCandlestickType(d);
-	const isNegative = value < 0 || (
+	const isNegative = (isNumber(value) && value < 0) || (
 		isCandlestickType && !$$.getCandlestickData(d)?._isUp
 	);
 

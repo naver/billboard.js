@@ -57,6 +57,14 @@ export interface ChartOptions {
 		 *   - For now, covers colors related properties (fill, stroke, etc.) only.
 		 */
 		useCssRule?: boolean;
+
+		/**
+		 * Use Web Worker as possible for processing.
+		 * - **NOTE:**
+		 *   - For now, only applies for data conversion at the initial time.
+		 *   - As of Web Worker's async nature, handling chart instance synchrously is not recommended.
+		 */
+		useWorker?: boolean;
 	};
 
 	size?: {

@@ -20,7 +20,8 @@ const win = (() => {
 
 // fallback for non-supported environments
 win.requestIdleCallback = win.requestIdleCallback || (cb => setTimeout(cb, 1));
-win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
+// win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
+win.requestAnimationFrame = win.requestAnimationFrame || (cb => setTimeout(cb, 1));
 
 const doc = win?.document;
 

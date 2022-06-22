@@ -10,7 +10,6 @@ import util from "../assets/util";
 import {$AXIS, $COMMON} from "../../src/config/classes";
 import Chart from "../../src/Chart/Chart";
 import {convertInputType, extend} from "../../src/module/util";
-import { interpolateSpectral } from "d3";
 
 describe("Interface & initialization", () => {
 	let chart;
@@ -31,7 +30,7 @@ describe("Interface & initialization", () => {
 		const checkElements = $ => {
 			const isD3Node = v => v && "node" in v || false;
 
-			Object.values($).forEach(v1 => {
+			Object.values($).forEach((v1: any) => {
 				const isNode = isD3Node(v1);
 
 				if (isNode) {
@@ -205,7 +204,7 @@ describe("Interface & initialization", () => {
 			setTimeout(() => {
 				expect(+chart.internal.$el.svg.attr("width")).to.be.equal(chartWidth - diff);
 
-				div.parentNode.removeChild(div);
+				div.parentNode?.removeChild(div);
 				//document.body.innerHTML = innerHTML;
 
 				done();
@@ -255,7 +254,7 @@ describe("Interface & initialization", () => {
 		it("should be resizing all generated chart elements", function(done) {
 			this.timeout(6000);
 			const width = 300;
-			const inst = [];
+			const inst: any[] = [];
 
 			before(() => {
 				container.innerHTML = '<div id="chartResize1"></div><div id="chartResize2"></div>';
@@ -499,20 +498,20 @@ describe("Interface & initialization", () => {
 			const el = document.body.querySelector("#chart");
 
 			// hide to lazy render
-			el.classList.add("hide");
+			el?.classList.add("hide");
 
 			chart = util.generate(args);
 
-			expect(el.innerHTML).to.be.empty;
+			expect(el?.innerHTML).to.be.empty;
 
 			for (let x in spy) {
 				expect(spy[x].called).to.be.false;
 			}
 
-			el.classList.remove("hide");
+			el?.classList.remove("hide");
 
 			setTimeout(() => {
-				expect(el.innerHTML).to.be.not.empty;
+				expect(el?.innerHTML).to.be.not.empty;
 				expect(spy.afterinit.called).to.be.true;
 				expect(spy.rendered.called).to.be.true;
 				done();
@@ -566,7 +565,7 @@ describe("Interface & initialization", () => {
 			chart = util.generate(args);
 
 			// chart shouldn't be rendered
-			expect(el.innerHTML).to.be.empty;
+			expect(el?.innerHTML).to.be.empty;
 
 			for (let x in spy) {
 				expect(spy[x].called).to.be.false;
@@ -576,7 +575,7 @@ describe("Interface & initialization", () => {
 			chart.flush();
 
 			setTimeout(() => {
-				expect(el.innerHTML).to.be.not.empty;
+				expect(el?.innerHTML).to.be.not.empty;
 				expect(spy.afterinit.called).to.be.true;
 				expect(spy.rendered.called).to.be.true;
 				done();

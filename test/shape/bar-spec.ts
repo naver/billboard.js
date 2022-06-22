@@ -971,7 +971,7 @@ describe("SHAPE BAR", () => {
 		});
 
 		it("bar's x position interval should be same", () => {
-			const interval = [];
+			const interval: number[] = [];
 			let lastX = 0;
 
 			chart.$.bar.bars.each(function(d, i) {
@@ -1121,7 +1121,7 @@ describe("SHAPE BAR", () => {
 		});
 
 		it("should maintain width size after toggle", done => {
-			const zoomBarWidth = [];
+			const zoomBarWidth: number[] = [];
 
 			// when
 			chart.zoom([1, 3]);
