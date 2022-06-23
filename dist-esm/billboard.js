@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220622004710
+ * @version 3.4.1-nightly-20220623004704
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -16702,8 +16702,7 @@ var shapeArea = {
                         .x0(value0)
                         .x1(value1) :
                     area.x(xValue)
-                        // @ts-ignore
-                        .y0(config.area_above ? 0 : value0)
+                        .y0(config.area_above ? 0 : (config.area_below ? $$.state.height : value0))
                         .y1(value1);
                 if (!lineConnectNull) {
                     area = area.defined(function (d) { return $$.getBaseValue(d) !== null; });
@@ -18606,7 +18605,9 @@ var optArea = {
      * @memberof Options
      * @type {object}
      * @property {object} area Area object
-     * @property {boolean} [area.above=false] Set background area above the data chart line.
+     * @property {boolean} [area.above=false] Set background area `above` the data chart line.
+     * @property {boolean} [area.below=false] Set background area `below` the data chart line.
+     *  - **NOTE**: Can't be used along with `above` option. When above & below options are set to true, `above` will be prioritized.
      * @property {boolean} [area.front=true] Set area node to be positioned over line node.
      * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
      * Or customize by giving below object value:
@@ -18617,10 +18618,12 @@ var optArea = {
      * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
      * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
+     * @see [Demo: below](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Below)
      * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
      * @example
      *  area: {
      *      above: true,
+     *      below: false,
      *      zerobased: false,
      *
      *      // <g class='bb-areas'> will be positioned behind the line <g class='bb-lines'> in stacking order
@@ -18652,6 +18655,7 @@ var optArea = {
      *  }
      */
     area_above: false,
+    area_below: false,
     area_front: true,
     area_linearGradient: false,
     area_zerobased: true
@@ -21142,7 +21146,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220622004710
+ * @version 3.4.1-nightly-20220623004704
  */
 var bb = {
     /**
@@ -21152,7 +21156,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220622004710",
+    version: "3.4.1-nightly-20220623004704",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

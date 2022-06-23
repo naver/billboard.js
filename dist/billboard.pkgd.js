@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220622004710
+ * @version 3.4.1-nightly-20220623004704
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -46177,8 +46177,7 @@ function point_y(p) {
 
       if ($$.isAreaType(d)) {
         var area = src_area();
-        area = isRotated ? area.y(xValue).x0(value0).x1(value1) : area.x(xValue) // @ts-ignore
-        .y0(config.area_above ? 0 : value0).y1(value1);
+        area = isRotated ? area.y(xValue).x0(value0).x1(value1) : area.x(xValue).y0(config.area_above ? 0 : config.area_below ? $$.state.height : value0).y1(value1);
 
         if (!lineConnectNull) {
           area = area.defined(function (d) {
@@ -48550,7 +48549,9 @@ var cacheKey = KEY.radarPoints;
    * @memberof Options
    * @type {object}
    * @property {object} area Area object
-   * @property {boolean} [area.above=false] Set background area above the data chart line.
+   * @property {boolean} [area.above=false] Set background area `above` the data chart line.
+   * @property {boolean} [area.below=false] Set background area `below` the data chart line.
+   *  - **NOTE**: Can't be used along with `above` option. When above & below options are set to true, `above` will be prioritized.
    * @property {boolean} [area.front=true] Set area node to be positioned over line node.
    * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
    * Or customize by giving below object value:
@@ -48561,10 +48562,12 @@ var cacheKey = KEY.radarPoints;
    * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
    * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
+   * @see [Demo: below](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Below)
    * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
    * @example
    *  area: {
    *      above: true,
+   *      below: false,
    *      zerobased: false,
    *
    *      // <g class='bb-areas'> will be positioned behind the line <g class='bb-lines'> in stacking order
@@ -48596,6 +48599,7 @@ var cacheKey = KEY.radarPoints;
    *  }
    */
   area_above: !1,
+  area_below: !1,
   area_front: !0,
   area_linearGradient: !1,
   area_zerobased: !0
@@ -52307,7 +52311,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220622004710",
+  version: "3.4.1-nightly-20220623004704",
 
   /**
    * Generate chart
@@ -52442,7 +52446,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220622004710
+ * @version 3.4.1-nightly-20220623004704
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
