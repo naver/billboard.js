@@ -42,7 +42,7 @@ export default class State {
 			hasRadar: false,
 
 			// for data CSS rule index (used when boost.useCssRule is true)
-			colorRule: {},
+			cssRule: {},
 
 			current: {
 				// chart whole dimension

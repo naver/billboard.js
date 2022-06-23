@@ -16,7 +16,8 @@ export default {
 		$el.bar = $el.main.select(`.${$COMMON.chart}`)
 			// should positioned at the beginning of the shape node to not overlap others
 			.insert("g", ":first-child")
-			.attr("class", $BAR.chartBars);
+			.attr("class", $BAR.chartBars)
+			.call(this.setCssRule(false, `.${$BAR.chartBars}`, ["pointer-events:none"]));
 
 		// set clip-path attribute when condition meet
 		// https://github.com/naver/billboard.js/issues/2421
@@ -52,13 +53,13 @@ export default {
 		const mainBarEnter = mainBarUpdate.enter().append("g")
 			.attr("class", classChartBar)
 			.style("opacity", "0")
-			.style("pointer-events", "none");
+			.style("pointer-events", $$.getStylePropValue("none"));
 
 		// Bars for each data
 		mainBarEnter.append("g")
 			.attr("class", classBars)
 			.style("cursor", d => (isSelectable?.bind?.($$.api)(d) ? "pointer" : null))
-			.call($$.setColorByRule(null, $BAR.bar, ["fill"]));
+			.call($$.setCssRule(true, ` .${$BAR.bar}`, ["fill"], $$.color));
 	},
 
 	/**
@@ -84,7 +85,7 @@ export default {
 
 		$root.bar = bar.enter().append("path")
 			.attr("class", classBar)
-			.style("fill", $$.colorByRule)
+			.style("fill", $$.getStylePropValue($$.color))
 			.merge(bar)
 			.style("opacity", initialOpacity);
 	},
@@ -103,7 +104,7 @@ export default {
 		return [
 			$$.$T(bar, withTransition, getRandom())
 				.attr("d", d => (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d))
-				.style("fill", $$.colorByRule)
+				.style("fill", $$.getStylePropValue($$.color))
 				.style("opacity", null)
 		];
 	},

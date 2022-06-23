@@ -12,7 +12,8 @@ export default {
 		const {$el} = this;
 
 		$el.line = $el.main.select(`.${$COMMON.chart}`).append("g")
-			.attr("class", $LINE.chartLines);
+			.attr("class", $LINE.chartLines)
+			.call(this.setCssRule(false, `.${$LINE.chartLines}`, ["pointer-events:none"]));
 	},
 
 	updateTargetsForLine(t): void {
@@ -36,7 +37,7 @@ export default {
 		const mainLineEnter = mainLineUpdate.enter().append("g")
 			.attr("class", classChartLine)
 			.style("opacity", "0")
-			.style("pointer-events", "none");
+			.style("pointer-events", $$.getStylePropValue("none"));
 
 		// Lines for each data
 		mainLineEnter.append("g")

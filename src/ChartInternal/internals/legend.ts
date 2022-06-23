@@ -370,9 +370,10 @@ export default {
 	 */
 	setLegendItem(item): void {
 		const $$ = this;
-		const {api, config, state} = $$;
+		const {$el, api, config, state} = $$;
 		const isTouch = state.inputType === "touch";
 		const hasGauge = $$.hasType("gauge");
+		const useCssRule = config.boost_useCssRule;
 
 		item
 			.attr("class", function(id) {
@@ -384,8 +385,22 @@ export default {
 			.style("visibility", id => ($$.isLegendToShow(id) ? null : "hidden"));
 
 		if (config.interaction_enabled) {
+			if (useCssRule) {
+				[
+					[`.${$LEGEND.legendItem}`, "cursor:pointer"],
+					[`.${$LEGEND.legendItem} text`, "pointer-events:none"],
+					[`.${$LEGEND.legendItemPoint} text`, "pointer-events:none"],
+					[`.${$LEGEND.legendItemTile}`, "pointer-events:none"],
+					[`.${$LEGEND.legendItemEvent}`, "fill-opacity:0"]
+				].forEach(v => {
+					const [selector, props] = v;
+
+					$$.setCssRule(false, selector, [props])($el.legend);
+				});
+			}
+
 			item
-				.style("cursor", "pointer")
+				.style("cursor", $$.getStylePropValue("pointer"))
 				.on("click", function(event, id) {
 					if (!callFn(config.legend_item_onclick, api, id)) {
 						if (event.altKey) {
@@ -579,13 +594,13 @@ export default {
 			.each(function(id, i) {
 				updatePositions(this, id, i);
 			})
-			.style("pointer-events", "none")
+			.style("pointer-events", $$.getStylePropValue("none"))
 			.attr("x", isLegendRightOrInset ? xForLegendText : pos)
 			.attr("y", isLegendRightOrInset ? pos : yForLegendText);
 
 		l.append("rect")
 			.attr("class", $LEGEND.legendItemEvent)
-			.style("fill-opacity", "0")
+			.style("fill-opacity", $$.getStylePropValue("0"))
 			.attr("x", isLegendRightOrInset ? xForLegendRect : pos)
 			.attr("y", isLegendRightOrInset ? pos : yForLegendRect);
 
@@ -618,7 +633,7 @@ export default {
 			})
 				.attr("class", $LEGEND.legendItemPoint)
 				.style("fill", getColor)
-				.style("pointer-events", "none")
+				.style("pointer-events", $$.getStylePropValue("none"))
 				.attr("href", (data, idx, selection) => {
 					const node = selection[idx];
 					const nodeName = node.nodeName.toLowerCase();
@@ -630,7 +645,7 @@ export default {
 			l.append("line")
 				.attr("class", $LEGEND.legendItemTile)
 				.style("stroke", getColor)
-				.style("pointer-events", "none")
+				.style("pointer-events", $$.getStylePropValue("none"))
 				.attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
 				.attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
 				.attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos)

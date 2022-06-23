@@ -515,7 +515,8 @@ export default {
 			.attr("class", d => classChartArc(d) + classFocus(d.data));
 
 		const mainPieEnter = mainPieUpdate.enter().append("g")
-			.attr("class", classChartArc);
+			.attr("class", classChartArc)
+			.call(this.setCssRule(false, `.${$ARC.chartArcs} text`, ["pointer-events:none", "text-anchor:middle"]));
 
 		mainPieEnter.append("g")
 			.attr("class", classArcs)
@@ -524,8 +525,8 @@ export default {
 		mainPieEnter.append("text")
 			.attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em")
 			.style("opacity", "0")
-			.style("text-anchor", "middle")
-			.style("pointer-events", "none");
+			.style("text-anchor", $$.getStylePropValue("middle"))
+			.style("pointer-events", $$.getStylePropValue("none"));
 
 		$el.text = chartArcs.selectAll(`.${$COMMON.target} text`);
 		// MEMO: can not keep same color..., but not bad to update color in redraw
