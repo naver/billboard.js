@@ -6,9 +6,13 @@ import {area as d3Area} from "d3-shape";
 import {select as d3Select} from "d3-selection";
 import {$AREA, $CIRCLE, $LINE} from "../../config/classes";
 import {getRandom, isFunction} from "../../module/util";
+import {IData, IDataRow} from "../data/IData";
+import {d3Selection} from "../../../types";
+
+type Indices = {[key: string | "__max__"]: number};
 
 export default {
-	initArea(mainLine): void {
+	initArea(mainLine: d3Selection): void {
 		const $$ = this;
 		const {config} = $$;
 
@@ -51,7 +55,7 @@ export default {
 		});
 	},
 
-	updateAreaColor(d): string {
+	updateAreaColor(d: IDataRow): string {
 		const $$ = this;
 
 		return $$.config.area_linearGradient ?
@@ -99,7 +103,7 @@ export default {
 	 * @param {boolean} isSub Subchart draw
 	 * @returns {Array}
 	 */
-	redrawArea(drawFn, withTransition?: boolean, isSub = false) {
+	redrawArea(drawFn: Function, withTransition?: boolean, isSub = false): d3Selection[] {
 		const $$ = this;
 		const {area} = (isSub ? this.$el.subchart : this.$el);
 		const {orgAreaOpacity} = $$.state;
@@ -119,7 +123,7 @@ export default {
 	 * @returns {Function}
 	 * @private
 	 */
-	generateDrawArea(areaIndices, isSub?: boolean): (d) => string {
+	generateDrawArea(areaIndices: Indices, isSub?: boolean): (d: IData) => string {
 		const $$ = this;
 		const {config} = $$;
 		const lineConnectNull = config.line_connectNull;
@@ -156,8 +160,9 @@ export default {
 						.x0(value0)
 						.x1(value1) :
 					area.x(xValue)
-						// @ts-ignore
-						.y0(config.area_above ? 0 : value0)
+						.y0(config.area_above ? 0 : (
+							config.area_below ? $$.state.height : value0
+						))
 						.y1(value1);
 
 				if (!lineConnectNull) {
@@ -182,7 +187,9 @@ export default {
 		};
 	},
 
-	generateGetAreaPoints(areaIndices, isSub?: boolean): Function {
+	generateGetAreaPoints(
+		areaIndices: Indices, isSub?: boolean
+	): (d: IDataRow, i: number) => [number, number][] {
 		// partial duplication of generateGetBarPoints
 		const $$ = this;
 		const {config} = $$;

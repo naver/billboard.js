@@ -12,7 +12,9 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} area Area object
-	 * @property {boolean} [area.above=false] Set background area above the data chart line.
+	 * @property {boolean} [area.above=false] Set background area `above` the data chart line.
+	 * @property {boolean} [area.below=false] Set background area `below` the data chart line.
+	 *  - **NOTE**: Can't be used along with `above` option. When above & below options are set to true, `above` will be prioritized.
 	 * @property {boolean} [area.front=true] Set area node to be positioned over line node.
 	 * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
 	 * Or customize by giving below object value:
@@ -23,10 +25,12 @@ export default {
 	 * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
 	 * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
+	 * @see [Demo: below](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Below)
 	 * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
 	 * @example
 	 *  area: {
 	 *      above: true,
+	 *      below: false,
 	 *      zerobased: false,
 	 *
 	 *      // <g class='bb-areas'> will be positioned behind the line <g class='bb-lines'> in stacking order
@@ -58,6 +62,7 @@ export default {
 	 *  }
 	 */
 	area_above: false,
+	area_below: false,
 	area_front: true,
 	area_linearGradient: <
 	boolean|{x?: number[]; y?: number[]; stops?: [number, string|Function|null, number]}

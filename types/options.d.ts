@@ -281,6 +281,12 @@ export interface ChartOptions {
 		above?: boolean;
 
 		/**
+		 * Set background area `below` the data chart line.
+		 *  - **NOTE**: Can't be used along with `above` option. When above & below options are set to true, `above` will be prioritized.
+		 */
+		below?: boolean;
+
+		/**
 		 * Set area node to be positioned over line node.
 		 */
 		front?: boolean;
