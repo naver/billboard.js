@@ -101,8 +101,10 @@ export default {
 
 		enterNode.append("g")
 			.attr("class", classCircles)
-			.style("cursor", d => (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null))
-			.call($$.setColorByRule(null, $CIRCLE.circle, ["fill", "stroke"]))
+			.call(selection => {
+				$$.setCssRule(true, `.${$CIRCLE.circles}`, ["cursor:pointer"], isSelectable)(selection);
+				$$.setCssRule(true, ` .${$CIRCLE.circle}`, ["fill", "stroke"], $$.color)(selection);
+			})
 			.style("opacity", function() {
 				const parent = d3Select(this.parentNode);
 
@@ -139,10 +141,10 @@ export default {
 
 			circles.enter()
 				.filter(Boolean)
-				.append($$.point("create", this, $$.pointR.bind($$), $$.colorByRule));
+				.append($$.point("create", this, $$.pointR.bind($$), $$.getStylePropValue($$.color)));
 
 			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
-				.style("stroke", $$.colorByRule)
+				.style("stroke", $$.getStylePropValue($$.color))
 				.style("opacity", $$.initialOpacityForCircle.bind($$));
 		}
 	},
@@ -157,7 +159,7 @@ export default {
 			return [];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, $$.colorByRule, withTransition, flow, selectedCircles);
+		const fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), withTransition, flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
 		const t = getRandom();
@@ -195,7 +197,7 @@ export default {
 			const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
 			const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
 			const withTransition = toggling || isUndefined(d);
-			const fn = $$.point("update", $$, cx, cy, $$.colorByRule, resizing ? false : withTransition);
+			const fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), resizing ? false : withTransition);
 
 			if (d) {
 				circle = circle

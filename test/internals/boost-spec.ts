@@ -29,7 +29,7 @@ describe("BOOST", () => {
 
 	describe("useCssRule", () => {		
 		it("shouldn't set inline style props for <circle>, <text> elements", () => {
-			const {$el: {circle, text}} = chart.internal;
+			const {$el: {circle, legend, text}} = chart.internal;
 
 			[circle, text].forEach(nodes => {
 				nodes.each(function() {
@@ -37,6 +37,19 @@ describe("BOOST", () => {
 					expect(this.style.stroke).to.be.equal("");
 				});
 			});
+
+			// check for legend elements
+			["g", "text", "rect"].forEach(v => {
+				legend.selectAll(v).each(function(){
+					expect(this.getAttribute("style")).to.be.null;
+				});
+			});
+
+			legend.selectAll("line").each(function(){
+				expect(this.style.pointerEvents).to.be.empty;
+			});
+			
+			legend.selectAll("g")
 		});
 
 		it("set option: data.type='bar'", () => {
@@ -53,6 +66,8 @@ describe("BOOST", () => {
 				});
 			});
 		});
+
+
 	});
 
 
