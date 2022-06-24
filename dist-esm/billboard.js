@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.4.1-nightly-20220623004704
+ * @version 3.4.1-nightly-20220624004708
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1205,7 +1205,7 @@ var State = /** @class */ (function () {
             hasAxis: false,
             hasRadar: false,
             // for data CSS rule index (used when boost.useCssRule is true)
-            colorRule: {},
+            cssRule: {},
             current: {
                 // chart whole dimension
                 width: 0,
@@ -4940,27 +4940,6 @@ function getColorFromCss(element) {
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
 var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
 var color = {
-    /**
-     * Add props color css rule to given selector
-     * @param {Function} fn Color function
-     * @param {string} selector CSS selector
-     * @param {Array} props CSS props list
-     * @returns {Function}
-     * @private
-     */
-    setColorByRule: function (fn, selector, props) {
-        var $$ = this;
-        var config = $$.config, _a = $$.state, colorRule = _a.colorRule, style = _a.style;
-        var colorFn = fn || $$.color;
-        return config.boost_useCssRule ? function (selection) {
-            selection.each(function (d) {
-                var color = colorFn.call($$, d);
-                var shapeSelector = "".concat($SHAPE.shapes).concat($$.getTargetSelectorSuffix(d.id), " .").concat(selector);
-                (shapeSelector in colorRule) && style.sheet.deleteRule(colorRule[shapeSelector]);
-                $$.state.colorRule[shapeSelector] = addCssRules(style, shapeSelector, props.map(function (v) { return "".concat(v, ": ").concat(color); }));
-            });
-        } : function () { };
-    },
     generateColor: function () {
         var $$ = this;
         var $el = $$.$el, config = $$.config;
@@ -5778,9 +5757,10 @@ var legend$1 = {
      */
     setLegendItem: function (item) {
         var $$ = this;
-        var api = $$.api, config = $$.config, state = $$.state;
+        var $el = $$.$el, api = $$.api, config = $$.config, state = $$.state;
         var isTouch = state.inputType === "touch";
         var hasGauge = $$.hasType("gauge");
+        var useCssRule = config.boost_useCssRule;
         item
             .attr("class", function (id) {
             var node = select(this);
@@ -5789,8 +5769,20 @@ var legend$1 = {
         })
             .style("visibility", function (id) { return ($$.isLegendToShow(id) ? null : "hidden"); });
         if (config.interaction_enabled) {
+            if (useCssRule) {
+                [
+                    [".".concat($LEGEND.legendItem), "cursor:pointer"],
+                    [".".concat($LEGEND.legendItem, " text"), "pointer-events:none"],
+                    [".".concat($LEGEND.legendItemPoint, " text"), "pointer-events:none"],
+                    [".".concat($LEGEND.legendItemTile), "pointer-events:none"],
+                    [".".concat($LEGEND.legendItemEvent), "fill-opacity:0"]
+                ].forEach(function (v) {
+                    var selector = v[0], props = v[1];
+                    $$.setCssRule(false, selector, [props])($el.legend);
+                });
+            }
             item
-                .style("cursor", "pointer")
+                .style("cursor", $$.getStylePropValue("pointer"))
                 .on("click", function (event, id) {
                 if (!callFn(config.legend_item_onclick, api, id)) {
                     if (event.altKey) {
@@ -5957,12 +5949,12 @@ var legend$1 = {
             .each(function (id, i) {
             updatePositions(this, id, i);
         })
-            .style("pointer-events", "none")
+            .style("pointer-events", $$.getStylePropValue("none"))
             .attr("x", isLegendRightOrInset ? xForLegendText : pos)
             .attr("y", isLegendRightOrInset ? pos : yForLegendText);
         l.append("rect")
             .attr("class", $LEGEND.legendItemEvent)
-            .style("fill-opacity", "0")
+            .style("fill-opacity", $$.getStylePropValue("0"))
             .attr("x", isLegendRightOrInset ? xForLegendRect : pos)
             .attr("y", isLegendRightOrInset ? pos : yForLegendRect);
         var getColor = function (id) {
@@ -5986,7 +5978,7 @@ var legend$1 = {
             })
                 .attr("class", $LEGEND.legendItemPoint)
                 .style("fill", getColor)
-                .style("pointer-events", "none")
+                .style("pointer-events", $$.getStylePropValue("none"))
                 .attr("href", function (data, idx, selection) {
                 var node = selection[idx];
                 var nodeName = node.nodeName.toLowerCase();
@@ -5998,7 +5990,7 @@ var legend$1 = {
             l.append("line")
                 .attr("class", $LEGEND.legendItemTile)
                 .style("stroke", getColor)
-                .style("pointer-events", "none")
+                .style("pointer-events", $$.getStylePropValue("none"))
                 .attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
                 .attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
                 .attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos)
@@ -7203,6 +7195,44 @@ var size = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+var style = {
+    /**
+     * Add props color css rule to given selector
+     * @param {boolean} withShape Set shpes' prefix class
+     * @param {string} selector CSS selector
+     * @param {Array} props CSS props list
+     * @param {Function} propsFn Function to retrieve value or determine for props
+     * @returns {Function}
+     * @private
+     */
+    setCssRule: function (withShape, selector, props, propsFn) {
+        var $$ = this;
+        var config = $$.config, _a = $$.state, cssRule = _a.cssRule, style = _a.style;
+        return config.boost_useCssRule ? function (selection) {
+            selection.each(function (d) {
+                var res = propsFn && (propsFn === null || propsFn === void 0 ? void 0 : propsFn.call($$, d));
+                var shapeSelector = "".concat(withShape ? ".".concat($SHAPE.shapes + $$.getTargetSelectorSuffix(d.id)) : "").concat(selector);
+                (selector in cssRule) && style.sheet.deleteRule(cssRule[shapeSelector]);
+                $$.state.cssRule[shapeSelector] = addCssRules(style, shapeSelector, props.filter(Boolean).map(function (v) { return (isString(res) && v.indexOf(":") === -1 ? "".concat(v, ": ").concat(res) : (v || "")); }));
+            });
+        } : function () { };
+    },
+    /**
+     * Get style prop value
+     * @param {Function|string} v Value
+     * @returns {string|null}
+     * @private
+     */
+    getStylePropValue: function (v) {
+        var useCssRule = this.config.boost_useCssRule;
+        return useCssRule ? null : isFunction(v) ? v.bind(this) : v;
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 /**
  * Get text-anchor according text.labels.rotate angle
  * @param {number} angle Angle value
@@ -7302,8 +7332,7 @@ var text = {
         var mainTextEnter = mainTextUpdate.enter().append("g")
             .style("opacity", "0")
             .attr("class", classChartText)
-            .call($$.setColorByRule($$.updateTextColor, $TEXT.text, ["fill"]))
-            .style("pointer-events", "none");
+            .call($$.setCssRule(true, " .".concat($TEXT.text), ["fill", "pointer-events:none"], $$.updateTextColor));
         mainTextEnter.append("g")
             .attr("class", classTexts);
     },
@@ -7334,7 +7363,7 @@ var text = {
             }
             return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
         })
-            .style("fill", $$.colorTextByRule)
+            .style("fill", $$.getStylePropValue($$.updateTextColor))
             .style("fill-opacity", "0")
             .each(function (d, i, texts) {
             var node = select(this);
@@ -7420,7 +7449,7 @@ var text = {
         var anchorString = getRotateAnchor(angle);
         var rotateString = angle ? "rotate(".concat(angle, ")") : "";
         $$.$el.text
-            .style("fill", $$.colorTextByRule)
+            .style("fill", $$.getStylePropValue($$.updateTextColor))
             .attr("filter", $$.updateTextBacgroundColor.bind($$))
             .style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
             .each(function (d, i) {
@@ -8704,18 +8733,9 @@ var ChartInternal = /** @class */ (function () {
         var $$ = this;
         var config = $$.config, format = $$.format, state = $$.state;
         var isRotated = config.axis_rotated;
-        var useCssRule = config.boost_useCssRule;
         // color settings
         $$.color = $$.generateColor();
-        $$.colorByRule = $$.color;
-        $$.colorTextByRule = $$.updateTextColor.bind($$);
         $$.levelColor = $$.generateLevelColor();
-        if (useCssRule) {
-            state.colorRule = {};
-            // to not apply inline color setting
-            $$.colorByRule = null;
-            $$.colorTextByRule = null;
-        }
         // when 'padding=false' is set, disable axes and subchart. Because they are useless.
         if (config.padding === false) {
             config.axis_x_show = false;
@@ -9137,6 +9157,7 @@ extend(ChartInternal.prototype, [
     scale,
     shape,
     size,
+    style,
     text,
     title,
     tooltip$1,
@@ -16276,15 +16297,16 @@ var shapeArc = {
             .data($$.pie(targets))
             .attr("class", function (d) { return classChartArc(d) + classFocus(d.data); });
         var mainPieEnter = mainPieUpdate.enter().append("g")
-            .attr("class", classChartArc);
+            .attr("class", classChartArc)
+            .call(this.setCssRule(false, ".".concat($ARC.chartArcs, " text"), ["pointer-events:none", "text-anchor:middle"]));
         mainPieEnter.append("g")
             .attr("class", classArcs)
             .merge(mainPieUpdate);
         mainPieEnter.append("text")
             .attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em")
             .style("opacity", "0")
-            .style("text-anchor", "middle")
-            .style("pointer-events", "none");
+            .style("text-anchor", $$.getStylePropValue("middle"))
+            .style("pointer-events", $$.getStylePropValue("none"));
         $el.text = chartArcs.selectAll(".".concat($COMMON.target, " text"));
         // MEMO: can not keep same color..., but not bad to update color in redraw
         // mainPieUpdate.exit().remove();
@@ -16756,7 +16778,8 @@ var shapeBar = {
         $el.bar = $el.main.select(".".concat($COMMON.chart))
             // should positioned at the beginning of the shape node to not overlap others
             .insert("g", ":first-child")
-            .attr("class", $BAR.chartBars);
+            .attr("class", $BAR.chartBars)
+            .call(this.setCssRule(false, ".".concat($BAR.chartBars), ["pointer-events:none"]));
         // set clip-path attribute when condition meet
         // https://github.com/naver/billboard.js/issues/2421
         if (config.clipPath === false && (config.bar_radius || config.bar_radius_ratio)) {
@@ -16782,12 +16805,12 @@ var shapeBar = {
         var mainBarEnter = mainBarUpdate.enter().append("g")
             .attr("class", classChartBar)
             .style("opacity", "0")
-            .style("pointer-events", "none");
+            .style("pointer-events", $$.getStylePropValue("none"));
         // Bars for each data
         mainBarEnter.append("g")
             .attr("class", classBars)
             .style("cursor", function (d) { var _a; return (((_a = isSelectable === null || isSelectable === void 0 ? void 0 : isSelectable.bind) === null || _a === void 0 ? void 0 : _a.call(isSelectable, $$.api)(d)) ? "pointer" : null); })
-            .call($$.setColorByRule(null, $BAR.bar, ["fill"]));
+            .call($$.setCssRule(true, " .".concat($BAR.bar), ["fill"], $$.color));
     },
     /**
      * Generate/Update elements
@@ -16810,7 +16833,7 @@ var shapeBar = {
             .remove();
         $root.bar = bar.enter().append("path")
             .attr("class", classBar)
-            .style("fill", $$.colorByRule)
+            .style("fill", $$.getStylePropValue($$.color))
             .merge(bar)
             .style("opacity", initialOpacity);
     },
@@ -16828,7 +16851,7 @@ var shapeBar = {
         return [
             $$.$T(bar, withTransition, getRandom())
                 .attr("d", function (d) { return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d); })
-                .style("fill", $$.colorByRule)
+                .style("fill", $$.getStylePropValue($$.color))
                 .style("opacity", null)
         ];
     },
@@ -17344,7 +17367,8 @@ var shapeLine = {
     initLine: function () {
         var $el = this.$el;
         $el.line = $el.main.select(".".concat($COMMON.chart)).append("g")
-            .attr("class", $LINE.chartLines);
+            .attr("class", $LINE.chartLines)
+            .call(this.setCssRule(false, ".".concat($LINE.chartLines), ["pointer-events:none"]));
     },
     updateTargetsForLine: function (t) {
         var $$ = this;
@@ -17363,7 +17387,7 @@ var shapeLine = {
         var mainLineEnter = mainLineUpdate.enter().append("g")
             .attr("class", classChartLine)
             .style("opacity", "0")
-            .style("pointer-events", "none");
+            .style("pointer-events", $$.getStylePropValue("none"));
         // Lines for each data
         mainLineEnter.append("g")
             .attr("class", classLines);
@@ -17666,8 +17690,10 @@ var shapePoint = {
             .attr("class", function (d) { return $$.generateClass($SELECT.selectedCircles, d.id); });
         enterNode.append("g")
             .attr("class", classCircles)
-            .style("cursor", function (d) { return (isFunction(isSelectable) && isSelectable(d) ? "pointer" : null); })
-            .call($$.setColorByRule(null, $CIRCLE.circle, ["fill", "stroke"]))
+            .call(function (selection) {
+            $$.setCssRule(true, ".".concat($CIRCLE.circles), ["cursor:pointer"], isSelectable)(selection);
+            $$.setCssRule(true, " .".concat($CIRCLE.circle), ["fill", "stroke"], $$.color)(selection);
+        })
             .style("opacity", function () {
             var parent = select(this.parentNode);
             // if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
@@ -17697,9 +17723,9 @@ var shapePoint = {
             circles.exit().remove();
             circles.enter()
                 .filter(Boolean)
-                .append($$.point("create", this, $$.pointR.bind($$), $$.colorByRule));
+                .append($$.point("create", this, $$.pointR.bind($$), $$.getStylePropValue($$.color)));
             $root.circle = $root.main.selectAll(".".concat($CIRCLE.circles, " .").concat($CIRCLE.circle))
-                .style("stroke", $$.colorByRule)
+                .style("stroke", $$.getStylePropValue($$.color))
                 .style("opacity", $$.initialOpacityForCircle.bind($$));
         }
     },
@@ -17712,7 +17738,7 @@ var shapePoint = {
         if (!$$.config.point_show) {
             return [];
         }
-        var fn = $$.point("update", $$, cx, cy, $$.colorByRule, withTransition, flow, selectedCircles);
+        var fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), withTransition, flow, selectedCircles);
         var posAttr = $$.isCirclePoint() ? "c" : "";
         var t = getRandom();
         var opacityStyleFn = $$.opacityForCircle.bind($$);
@@ -17743,7 +17769,7 @@ var shapePoint = {
             var cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
             var cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
             var withTransition = toggling || isUndefined(d);
-            var fn_1 = $$.point("update", $$, cx, cy, $$.colorByRule, resizing ? false : withTransition);
+            var fn_1 = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), resizing ? false : withTransition);
             if (d) {
                 circle = circle
                     .filter(function (t) {
@@ -21146,7 +21172,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220623004704
+ * @version 3.4.1-nightly-20220624004708
  */
 var bb = {
     /**
@@ -21156,7 +21182,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.4.1-nightly-20220623004704",
+    version: "3.4.1-nightly-20220624004708",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220623004704
+ * @version 3.4.1-nightly-20220624004708
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -23429,7 +23429,7 @@ var State = function () {
     hasAxis: !1,
     hasRadar: !1,
     // for data CSS rule index (used when boost.useCssRule is true)
-    colorRule: {},
+    cssRule: {},
     current: {
       // chart whole dimension
       width: 0,
@@ -28847,48 +28847,8 @@ function getColorFromCss(element) {
 
 var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
 /* harmony default export */ var internals_color = ({
-  /**
-   * Add props color css rule to given selector
-   * @param {Function} fn Color function
-   * @param {string} selector CSS selector
-   * @param {Array} props CSS props list
-   * @returns {Function}
-   * @private
-   */
-  setColorByRule: function setColorByRule(fn, selector, props) {
-    var _this3 = this,
-        $$ = this,
-        config = $$.config,
-        _$$$state = $$.state,
-        colorRule = _$$$state.colorRule,
-        style = _$$$state.style,
-        colorFn = fn || $$.color;
-
-    return config.boost_useCssRule ? function (selection) {
-      var _this4 = this;
-
-      _newArrowCheck(this, _this3);
-
-      selection.each(function (d) {
-        var _this5 = this;
-
-        _newArrowCheck(this, _this4);
-
-        var color = colorFn.call($$, d),
-            shapeSelector = "" + $SHAPE.shapes + $$.getTargetSelectorSuffix(d.id) + " ." + selector;
-        shapeSelector in colorRule && style.sheet.deleteRule(colorRule[shapeSelector]);
-        $$.state.colorRule[shapeSelector] = addCssRules(style, shapeSelector, props.map(function (v) {
-          _newArrowCheck(this, _this5);
-
-          return v + ": " + color;
-        }.bind(this)));
-      }.bind(this));
-    }.bind(this) : function () {
-      _newArrowCheck(this, _this3);
-    }.bind(this);
-  },
   generateColor: function generateColor() {
-    var _this6 = this,
+    var _this3 = this,
         $$ = this,
         $el = $$.$el,
         config = $$.config,
@@ -28901,7 +28861,7 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
     if (isFunction(config.color_tiles)) {
       var tiles = config.color_tiles.bind($$.api)(),
           colorizedPatterns = pattern.map(function (p, index) {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this3);
 
         var color = p.replace(/[#\(\)\s,]/g, ""),
             id = $$.state.datetimeId + "-pattern-" + color + "-" + index;
@@ -28909,7 +28869,7 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
       }.bind(this)); // Add background color to patterns
 
       pattern = colorizedPatterns.map(function (p) {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this3);
 
         return "url(#" + p.id + ")";
       }.bind(this));
@@ -28968,7 +28928,7 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
    * @private
    */
   generateDataLabelBackgroundColorFilter: function generateDataLabelBackgroundColorFilter(color) {
-    var _this7 = this,
+    var _this4 = this,
         $$ = this,
         $el = $$.$el,
         config = $$.config,
@@ -28985,7 +28945,7 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
       }
 
       ids.forEach(function (v) {
-        _newArrowCheck(this, _this7);
+        _newArrowCheck(this, _this4);
 
         var id = state.datetimeId + "-labels-bg" + $$.getTargetSelectorSuffix(v) + (color ? $$.getTargetSelectorSuffix(color) : "");
         $el.defs.append("filter").attr("x", "0").attr("y", "0").attr("width", "1").attr("height", "1").attr("id", id).html("<feFlood flood-color=\"" + (v === "" ? backgroundColors : backgroundColors[v]) + "\" /><feComposite in=\"SourceGraphic\"/>");
@@ -29001,7 +28961,7 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
    * @private
    */
   setOverColor: function setOverColor(isOver, d) {
-    var _this8 = this,
+    var _this5 = this,
         $$ = this,
         config = $$.config,
         main = $$.$el.main,
@@ -29012,13 +28972,13 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
       color = function (_ref) {
         var id = _ref.id;
 
-        _newArrowCheck(this, _this8);
+        _newArrowCheck(this, _this5);
 
         return id in onover ? onover[id] : $$.color(id);
       }.bind(this);
     } else if (isString(color)) {
       color = function () {
-        _newArrowCheck(this, _this8);
+        _newArrowCheck(this, _this5);
 
         return onover;
       }.bind(this);
@@ -29924,11 +29884,13 @@ function getFormat($$, typeValue, v) {
   setLegendItem: function setLegendItem(item) {
     var _this3 = this,
         $$ = this,
+        $el = $$.$el,
         api = $$.api,
         config = $$.config,
         state = $$.state,
         isTouch = state.inputType === "touch",
-        hasGauge = $$.hasType("gauge");
+        hasGauge = $$.hasType("gauge"),
+        useCssRule = config.boost_useCssRule;
 
     item.attr("class", function (id) {
       var node = src_select(this),
@@ -29941,7 +29903,17 @@ function getFormat($$, typeValue, v) {
     }.bind(this));
 
     if (config.interaction_enabled) {
-      item.style("cursor", "pointer").on("click", function (event, id) {
+      if (useCssRule) {
+        [["." + $LEGEND.legendItem, "cursor:pointer"], ["." + $LEGEND.legendItem + " text", "pointer-events:none"], ["." + $LEGEND.legendItemPoint + " text", "pointer-events:none"], ["." + $LEGEND.legendItemTile, "pointer-events:none"], ["." + $LEGEND.legendItemEvent, "fill-opacity:0"]].forEach(function (v) {
+          _newArrowCheck(this, _this3);
+
+          var selector = v[0],
+              props = v[1];
+          $$.setCssRule(!1, selector, [props])($el.legend);
+        }.bind(this));
+      }
+
+      item.style("cursor", $$.getStylePropValue("pointer")).on("click", function (event, id) {
         if (!callFn(config.legend_item_onclick, api, id)) {
           if (event.altKey) {
             api.hide();
@@ -30184,8 +30156,8 @@ function getFormat($$, typeValue, v) {
       return isDefined(config.data_names[id]) ? config.data_names[id] : id;
     }.bind(this)).each(function (id, i) {
       updatePositions(this, id, i);
-    }).style("pointer-events", "none").attr("x", isLegendRightOrInset ? xForLegendText : pos).attr("y", isLegendRightOrInset ? pos : yForLegendText);
-    l.append("rect").attr("class", $LEGEND.legendItemEvent).style("fill-opacity", "0").attr("x", isLegendRightOrInset ? xForLegendRect : pos).attr("y", isLegendRightOrInset ? pos : yForLegendRect);
+    }).style("pointer-events", $$.getStylePropValue("none")).attr("x", isLegendRightOrInset ? xForLegendText : pos).attr("y", isLegendRightOrInset ? pos : yForLegendText);
+    l.append("rect").attr("class", $LEGEND.legendItemEvent).style("fill-opacity", $$.getStylePropValue("0")).attr("x", isLegendRightOrInset ? xForLegendRect : pos).attr("y", isLegendRightOrInset ? pos : yForLegendRect);
 
     var getColor = function (id) {
       _newArrowCheck(this, _this4);
@@ -30209,7 +30181,7 @@ function getFormat($$, typeValue, v) {
         }
 
         return browser_doc.createElementNS(namespaces.svg, "hasValidPointType" in $$ && $$.hasValidPointType(point) ? point : "use");
-      }.bind(this)).attr("class", $LEGEND.legendItemPoint).style("fill", getColor).style("pointer-events", "none").attr("href", function (data, idx, selection) {
+      }.bind(this)).attr("class", $LEGEND.legendItemPoint).style("fill", getColor).style("pointer-events", $$.getStylePropValue("none")).attr("href", function (data, idx, selection) {
         _newArrowCheck(this, _this4);
 
         var node = selection[idx],
@@ -30218,7 +30190,7 @@ function getFormat($$, typeValue, v) {
         return nodeName === "use" ? "#" + state.datetimeId + "-point" + id : undefined;
       }.bind(this));
     } else {
-      l.append("line").attr("class", $LEGEND.legendItemTile).style("stroke", getColor).style("pointer-events", "none").attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height);
+      l.append("line").attr("class", $LEGEND.legendItemTile).style("stroke", getColor).style("pointer-events", $$.getStylePropValue("none")).attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height);
     } // Set background for inset legend
 
 
@@ -34198,6 +34170,68 @@ function stepAfter(context) {
     }
   }
 });
+;// CONCATENATED MODULE: ./src/ChartInternal/internals/style.ts
+
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+/* harmony default export */ var internals_style = ({
+  /**
+   * Add props color css rule to given selector
+   * @param {boolean} withShape Set shpes' prefix class
+   * @param {string} selector CSS selector
+   * @param {Array} props CSS props list
+   * @param {Function} propsFn Function to retrieve value or determine for props
+   * @returns {Function}
+   * @private
+   */
+  setCssRule: function setCssRule(withShape, selector, props, propsFn) {
+    var _this = this,
+        $$ = this,
+        config = $$.config,
+        _$$$state = $$.state,
+        cssRule = _$$$state.cssRule,
+        style = _$$$state.style;
+
+    return config.boost_useCssRule ? function (selection) {
+      var _this2 = this;
+
+      _newArrowCheck(this, _this);
+
+      selection.each(function (d) {
+        var _this3 = this;
+
+        _newArrowCheck(this, _this2);
+
+        var res = propsFn && (propsFn == null ? void 0 : propsFn.call($$, d)),
+            shapeSelector = "" + (withShape ? "." + ($SHAPE.shapes + $$.getTargetSelectorSuffix(d.id)) : "") + selector;
+        selector in cssRule && style.sheet.deleteRule(cssRule[shapeSelector]);
+        $$.state.cssRule[shapeSelector] = addCssRules(style, shapeSelector, props.filter(Boolean).map(function (v) {
+          _newArrowCheck(this, _this3);
+
+          return isString(res) && v.indexOf(":") === -1 ? v + ": " + res : v || "";
+        }.bind(this)));
+      }.bind(this));
+    }.bind(this) : function () {
+      _newArrowCheck(this, _this);
+    }.bind(this);
+  },
+
+  /**
+   * Get style prop value
+   * @param {Function|string} v Value
+   * @returns {string|null}
+   * @private
+   */
+  getStylePropValue: function getStylePropValue(v) {
+    var useCssRule = this.config.boost_useCssRule;
+    return useCssRule ? null : isFunction(v) ? v.bind(this) : v;
+  }
+});
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selectAll.js
 
 
@@ -34322,7 +34356,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
 
       return classChartText(d) + classFocus(d);
     }.bind(this)),
-        mainTextEnter = mainTextUpdate.enter().append("g").style("opacity", "0").attr("class", classChartText).call($$.setColorByRule($$.updateTextColor, $TEXT.text, ["fill"])).style("pointer-events", "none");
+        mainTextEnter = mainTextUpdate.enter().append("g").style("opacity", "0").attr("class", classChartText).call($$.setCssRule(!0, " ." + $TEXT.text, ["fill", "pointer-events:none"], $$.updateTextColor));
 
     mainTextEnter.append("g").attr("class", classTexts);
   },
@@ -34353,7 +34387,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       }
 
       return config.axis_rotated ? isEndAnchor ? "end" : "start" : "middle";
-    }.bind(this)).style("fill", $$.colorTextByRule).style("fill-opacity", "0").each(function (d, i, texts) {
+    }.bind(this)).style("fill", $$.getStylePropValue($$.updateTextColor)).style("fill-opacity", "0").each(function (d, i, texts) {
       var node = src_select(this),
           value = d.value;
 
@@ -34450,7 +34484,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
         angle = config.data_labels.rotate,
         anchorString = getRotateAnchor(angle),
         rotateString = angle ? "rotate(" + angle + ")" : "";
-    $$.$el.text.style("fill", $$.colorTextByRule).attr("filter", $$.updateTextBacgroundColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
+    $$.$el.text.style("fill", $$.getStylePropValue($$.updateTextColor)).attr("filter", $$.updateTextBacgroundColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
       // do not apply transition for newly added text elements
       var node = $T(this, !!(withTransition && this.getAttribute("x")), t),
           isInverted = config["axis_" + (axis == null ? void 0 : axis.getId(d.id)) + "_inverted"],
@@ -35823,6 +35857,7 @@ function getTextPos(pos, width) {
 
 
 
+
 /**
  * Internal chart class.
  * - Note: Instantiated internally, not exposed for public.
@@ -36044,22 +36079,11 @@ var ChartInternal = /*#__PURE__*/function () {
         config = $$.config,
         format = $$.format,
         state = $$.state,
-        isRotated = config.axis_rotated,
-        useCssRule = config.boost_useCssRule;
+        isRotated = config.axis_rotated;
 
     // color settings
     $$.color = $$.generateColor();
-    $$.colorByRule = $$.color;
-    $$.colorTextByRule = $$.updateTextColor.bind($$);
-    $$.levelColor = $$.generateLevelColor();
-
-    if (useCssRule) {
-      state.colorRule = {}; // to not apply inline color setting
-
-      $$.colorByRule = null;
-      $$.colorTextByRule = null;
-    } // when 'padding=false' is set, disable axes and subchart. Because they are useless.
-
+    $$.levelColor = $$.generateLevelColor(); // when 'padding=false' is set, disable axes and subchart. Because they are useless.
 
     if (config.padding === !1) {
       config.axis_x_show = !1;
@@ -36594,7 +36618,7 @@ var ChartInternal = /*#__PURE__*/function () {
 
 
 util_extend(ChartInternal.prototype, [// common
-convert, ChartInternal_data_data, load, category, internals_class, internals_color, domain, interactions_interaction, format, internals_legend, redraw, scale, shape, internals_size, internals_text, internals_title, internals_tooltip, transform, internals_type]);
+convert, ChartInternal_data_data, load, category, internals_class, internals_color, domain, interactions_interaction, format, internals_legend, redraw, scale, shape, internals_size, internals_style, internals_text, internals_title, internals_tooltip, transform, internals_type]);
 ;// CONCATENATED MODULE: ./src/config/config.ts
 
 
@@ -45520,10 +45544,10 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 
       return classChartArc(d) + classFocus(d.data);
     }.bind(this)),
-        mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc);
+        mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc).call(this.setCssRule(!1, "." + $ARC.chartArcs + " text", ["pointer-events:none", "text-anchor:middle"]));
 
     mainPieEnter.append("g").attr("class", classArcs).merge(mainPieUpdate);
-    mainPieEnter.append("text").attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", "middle").style("pointer-events", "none");
+    mainPieEnter.append("text").attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", $$.getStylePropValue("middle")).style("pointer-events", $$.getStylePropValue("none"));
     $el.text = chartArcs.selectAll("." + $COMMON.target + " text"); // MEMO: can not keep same color..., but not bad to update color in redraw
     // mainPieUpdate.exit().remove();
   },
@@ -46245,7 +46269,7 @@ function point_y(p) {
         config = this.config,
         clip = this.state.clip;
     $el.bar = $el.main.select("." + $COMMON.chart) // should positioned at the beginning of the shape node to not overlap others
-    .insert("g", ":first-child").attr("class", $BAR.chartBars); // set clip-path attribute when condition meet
+    .insert("g", ":first-child").attr("class", $BAR.chartBars).call(this.setCssRule(!1, "." + $BAR.chartBars, ["pointer-events:none"])); // set clip-path attribute when condition meet
     // https://github.com/naver/billboard.js/issues/2421
 
     if (config.clipPath === !1 && (config.bar_radius || config.bar_radius_ratio)) {
@@ -46282,13 +46306,13 @@ function point_y(p) {
 
       return classChartBar(d) + classFocus(d);
     }.bind(this)),
-        mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", "none");
+        mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", $$.getStylePropValue("none"));
     // Bars for each data
     mainBarEnter.append("g").attr("class", classBars).style("cursor", function (d) {
       _newArrowCheck(this, _this);
 
       return isSelectable != null && isSelectable.bind != null && isSelectable.bind($$.api)(d) ? "pointer" : null;
-    }.bind(this)).call($$.setColorByRule(null, $BAR.bar, ["fill"]));
+    }.bind(this)).call($$.setCssRule(!0, " ." + $BAR.bar, ["fill"], $$.color));
   },
 
   /**
@@ -46310,7 +46334,7 @@ function point_y(p) {
         initialOpacity = $$.initialOpacity.bind($$),
         bar = $root.main.selectAll("." + $BAR.bars).selectAll("." + $BAR.bar).data($$.labelishData.bind($$));
     $T(bar.exit(), withTransition).style("opacity", "0").remove();
-    $root.bar = bar.enter().append("path").attr("class", classBar).style("fill", $$.colorByRule).merge(bar).style("opacity", initialOpacity);
+    $root.bar = bar.enter().append("path").attr("class", classBar).style("fill", $$.getStylePropValue($$.color)).merge(bar).style("opacity", initialOpacity);
   },
 
   /**
@@ -46335,7 +46359,7 @@ function point_y(p) {
       _newArrowCheck(this, _this3);
 
       return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d);
-    }.bind(this)).style("fill", $$.colorByRule).style("opacity", null)];
+    }.bind(this)).style("fill", $$.getStylePropValue($$.color)).style("opacity", null)];
   },
 
   /**
@@ -46970,7 +46994,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
 /* harmony default export */ var line = ({
   initLine: function initLine() {
     var $el = this.$el;
-    $el.line = $el.main.select("." + $COMMON.chart).append("g").attr("class", $LINE.chartLines);
+    $el.line = $el.main.select("." + $COMMON.chart).append("g").attr("class", $LINE.chartLines).call(this.setCssRule(!1, "." + $LINE.chartLines, ["pointer-events:none"]));
   },
   updateTargetsForLine: function updateTargetsForLine(t) {
     var _this = this,
@@ -46997,7 +47021,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
 
       return classChartLine(d) + classFocus(d);
     }.bind(this)),
-        mainLineEnter = mainLineUpdate.enter().append("g").attr("class", classChartLine).style("opacity", "0").style("pointer-events", "none");
+        mainLineEnter = mainLineUpdate.enter().append("g").attr("class", classChartLine).style("opacity", "0").style("pointer-events", $$.getStylePropValue("none"));
     // Lines for each data
     mainLineEnter.append("g").attr("class", classLines); // Areas
 
@@ -47400,11 +47424,12 @@ var getTransitionName = function () {
 
       return $$.generateClass($SELECT.selectedCircles, d.id);
     }.bind(this));
-    enterNode.append("g").attr("class", classCircles).style("cursor", function (d) {
+    enterNode.append("g").attr("class", classCircles).call(function (selection) {
       _newArrowCheck(this, _this2);
 
-      return isFunction(isSelectable) && isSelectable(d) ? "pointer" : null;
-    }.bind(this)).call($$.setColorByRule(null, $CIRCLE.circle, ["fill", "stroke"])).style("opacity", function () {
+      $$.setCssRule(!0, "." + $CIRCLE.circles, ["cursor:pointer"], isSelectable)(selection);
+      $$.setCssRule(!0, " ." + $CIRCLE.circle, ["fill", "stroke"], $$.color)(selection);
+    }.bind(this)).style("opacity", function () {
       var parent = src_select(this.parentNode); // if the parent node is .bb-chart-circles (bubble, scatter), initialize <g bb-circles> with opacity "0"
 
       return parent.attr("class").indexOf($CIRCLE.chartCircles) > -1 ? "0" : null;
@@ -47443,8 +47468,8 @@ var getTransitionName = function () {
         return $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[0]] : d.values : [];
       }.bind(this));
       circles.exit().remove();
-      circles.enter().filter(Boolean).append($$.point("create", this, $$.pointR.bind($$), $$.colorByRule));
-      $root.circle = $root.main.selectAll("." + $CIRCLE.circles + " ." + $CIRCLE.circle).style("stroke", $$.colorByRule).style("opacity", $$.initialOpacityForCircle.bind($$));
+      circles.enter().filter(Boolean).append($$.point("create", this, $$.pointR.bind($$), $$.getStylePropValue($$.color)));
+      $root.circle = $root.main.selectAll("." + $CIRCLE.circles + " ." + $CIRCLE.circle).style("stroke", $$.getStylePropValue($$.color)).style("opacity", $$.initialOpacityForCircle.bind($$));
     }
   },
   redrawCircle: function redrawCircle(cx, cy, withTransition, flow, isSub) {
@@ -47463,7 +47488,7 @@ var getTransitionName = function () {
       return [];
     }
 
-    var fn = $$.point("update", $$, cx, cy, $$.colorByRule, withTransition, flow, selectedCircles),
+    var fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), withTransition, flow, selectedCircles),
         posAttr = $$.isCirclePoint() ? "c" : "",
         t = getRandom(),
         opacityStyleFn = $$.opacityForCircle.bind($$),
@@ -47496,7 +47521,7 @@ var getTransitionName = function () {
       var cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$),
           cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$),
           withTransition = toggling || isUndefined(d),
-          fn = $$.point("update", $$, cx, cy, $$.colorByRule, resizing ? !1 : withTransition);
+          fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), resizing ? !1 : withTransition);
 
       if (d) {
         circle = circle.filter(function (t) {
@@ -52311,7 +52336,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.4.1-nightly-20220623004704",
+  version: "3.4.1-nightly-20220624004708",
 
   /**
    * Generate chart
@@ -52446,7 +52471,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.4.1-nightly-20220623004704
+ * @version 3.4.1-nightly-20220624004708
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
