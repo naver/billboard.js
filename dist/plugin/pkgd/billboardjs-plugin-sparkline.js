@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.4.1-nightly-20220624004708
+ * @version 3.4.1-nightly-20220628004739
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1114,10 +1114,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.23.2',
+  version: '3.23.3',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.23.2/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.23.3/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -1357,8 +1357,10 @@ module.exports = function (O, key, value, options) {
     if (simple) O[key] = value;
     else defineGlobalProperty(key, value);
   } else {
-    if (!options.unsafe) delete O[key];
-    else if (O[key]) simple = true;
+    try {
+      if (!options.unsafe) delete O[key];
+      else if (O[key]) simple = true;
+    } catch (error) { /* empty */ }
     if (simple) O[key] = value;
     else definePropertyModule.f(O, key, {
       value: value,
@@ -1400,7 +1402,8 @@ var makeBuiltIn = module.exports = function (value, name, options) {
   if (options && options.getter) name = 'get ' + name;
   if (options && options.setter) name = 'set ' + name;
   if (!hasOwn(value, 'name') || (CONFIGURABLE_FUNCTION_NAME && value.name !== name)) {
-    defineProperty(value, 'name', { value: name, configurable: true });
+    if (DESCRIPTORS) defineProperty(value, 'name', { value: name, configurable: true });
+    else value.name = name;
   }
   if (CONFIGURABLE_LENGTH && options && hasOwn(options, 'arity') && value.length !== options.arity) {
     defineProperty(value, 'length', { value: options.arity });
@@ -17767,7 +17770,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.4.1-nightly-20220624004708";
+Plugin.version = "3.4.1-nightly-20220628004739";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**
