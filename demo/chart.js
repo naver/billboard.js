@@ -176,6 +176,8 @@ var billboardDemo = {
 		var inst = bb.instance;
 		var typeData = demos[type][key];
 		var isArray = typeData && typeData.constructor === Array;
+		var hasPlugin = /plugin/i.test(type);
+		var pluginName = key.replace(/Diagram/, "").toLowerCase() || "";
 		var camelize = function(s) {
 			return s.replace(/-./g, function(x) { return x.toUpperCase()[1] });
 		}
@@ -224,9 +226,13 @@ var billboardDemo = {
 			});
 
 		this.$code.innerHTML = '// for ESM environment, need to import modules as:\r\n' +
-'// import bb, {'+ code.esm.join(", ") +'} from "billboard.js"\r\n\r\n' +
-code.data;
+'// import bb, {'+ code.esm.join(", ") +'} from "billboard.js";\r\n';
 
+		if (hasPlugin) {
+			this.$code.innerHTML += '// import '+ pluginName +' from "billboard.js/dist/plugin/billboardjs-plugin-'+ pluginName +'";';
+		}
+
+		this.$code.innerHTML += '\r\n\r\n'+ code.data;
 		this.$code.scrollTop = 0;
 
 		hljs.highlightBlock(this.$html);
@@ -325,10 +331,10 @@ code.data;
 
 		val.forEach(function(p) {
 			Object.keys(p).forEach(function(key) {
-				plugins += "new bb.plugin."+ key +"(";
+				plugins += "new bb.plugin."+ key +"({ // for ESM specify as: new "+ key +"()";
 				plugins += JSON.stringify(p[key], function(k, v) {
 					return typeof v === "function" ? v.toString() : v;
-				}, 5).replace(/\\n/g, "\n").replace(/}$/, "    }");
+				}, 5).replace(/\\n/g, "\n").replace(/}$/, "    }").replace(/{/, "");
 				plugins += "),";
 			})
 		});
