@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {isValue, isFunction, isObjectType} from "../../module/util";
-import {AxisType} from "../../../types/types";
+import type {AxisType} from "../../../types/types";
 
 /**
  * Get formatted

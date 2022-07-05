@@ -5,7 +5,7 @@
 import {$COMMON} from "../../config/classes";
 import Plugin from "../Plugin";
 import Options from "./Options";
-import {IData} from "../../ChartInternal/data/IData";
+import type {IData} from "../../ChartInternal/data/IData";
 import {loadConfig} from "../../config/config";
 
 /**

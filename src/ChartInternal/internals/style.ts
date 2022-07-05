@@ -3,8 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 import {$SHAPE} from "../../config/classes";
-import {d3Selection} from "../../../types/types";
-import {IDataRow} from "../data/IData";
+import type {d3Selection} from "../../../types/types";
+import type {IDataRow} from "../data/IData";
 import {addCssRules, isFunction, isString} from "../../module/util";
 
 export default {

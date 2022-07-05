@@ -5,7 +5,7 @@
 import {select as d3Select} from "d3-selection"; // selection
 import {$REGION} from "../../config/classes";
 import {isValue, parseDate} from "../../module/util";
-import {AxisType} from "../../../types/types";
+import type {AxisType} from "../../../types/types";
 
 export default {
 	initRegion() {
