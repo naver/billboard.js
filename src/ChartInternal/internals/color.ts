@@ -8,7 +8,7 @@ import {document} from "../../module/browser";
 import {$ARC, $COLOR, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {notEmpty, isFunction, isObject, isString} from "../../module/util";
-import {IArcData, IDataRow} from "../data/IData";
+import type {IArcData, IDataRow} from "../data/IData";
 import {d3Selection} from "../../../types";
 
 /**

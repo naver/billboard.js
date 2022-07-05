@@ -4,7 +4,7 @@
  */
 import {runWorker, isUndefined, isDefined, isObject, isValue, notEmpty, isArray} from "../../module/util";
 import {columns, json, rows, url} from "./convert.helper";
-import {IData} from "../data/IData";
+import type {IData} from "../data/IData";
 
 /**
  * Get data key for JSON

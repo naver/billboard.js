@@ -23,10 +23,10 @@ import {
 	curveStep as d3CurveStep
 } from "d3-shape";
 import {select as d3Select} from "d3-selection";
-import {d3Selection} from "../../../types/types";
+import type {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
-import {IDataRow, IDataIndice, TIndices} from "../data/IData";
+import type {IDataRow, IDataIndice, TIndices} from "../data/IData";
 
 export default {
 	/**

@@ -5,7 +5,7 @@
  */
 import {pointer as d3Pointer} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
-import {d3Selection} from "../../types/types";
+import type {d3Selection} from "../../types/types";
 import {document, window} from "./browser";
 
 export {

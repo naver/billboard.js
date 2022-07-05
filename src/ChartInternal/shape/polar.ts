@@ -4,7 +4,7 @@
  */
 import {$LEVEL} from "../../config/classes";
 import {getRange} from "../../module/util";
-import {IArcData, IData} from "../data/IData";
+import type {IArcData, IData} from "../data/IData";
 
 /**
  * Get data max value

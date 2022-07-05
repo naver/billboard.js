@@ -5,7 +5,7 @@
 import {select as d3Select} from "d3-selection";
 import {document} from "../../module/browser";
 import {$ARC, $TOOLTIP} from "../../config/classes";
-import {IDataRow} from "../data/IData";
+import type {IDataRow} from "../data/IData";
 import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
 
 export default {

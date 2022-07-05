@@ -9,8 +9,8 @@ import {
 import {KEY} from "../../module/Cache";
 import {$COMMON, $TEXT} from "../../config/classes";
 import {capitalize, getBoundingRect, getRandom, isFunction, isNumber, isObject, isString, getTranslation, setTextValue} from "../../module/util";
-import {IDataRow, IArcData} from "../data/IData";
-import {AxisType} from "../../../types/types";
+import type {IDataRow, IArcData} from "../data/IData";
+import type {AxisType} from "../../../types/types";
 
 type Coord = {x: number, y: number};
 type Anchor = "start" | "middle" | "end";

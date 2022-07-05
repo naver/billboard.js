@@ -11,8 +11,8 @@ import {interpolate as d3Interpolate} from "d3-interpolate";
 import {document} from "../../module/browser";
 import {$ARC, $COMMON, $FOCUS, $GAUGE} from "../../config/classes";
 import {callFn, endall, isFunction, isNumber, isObject, isUndefined, setTextValue} from "../../module/util";
-import {d3Selection} from "../../../types/types";
-import {IArcData, IData} from "../data/IData";
+import type {d3Selection} from "../../../types/types";
+import type {IArcData, IData} from "../data/IData";
 
 export default {
 	initPie(): void {
