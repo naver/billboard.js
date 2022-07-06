@@ -2,9 +2,9 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {DataItem} from "../../../types/types";
+import type {DataItem} from "../../../types/types";
 import {extend, isUndefined, isArray} from "../../module/util";
-import {IDataRow} from "../../ChartInternal/data/IData";
+import type {IDataRow} from "../../ChartInternal/data/IData";
 
 /**
  * Get data loaded in the chart.

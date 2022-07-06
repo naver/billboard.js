@@ -2,10 +2,10 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {DataRow} from "../../../types/types";
+import type {DataRow} from "../../../types/types";
 import {$BAR, $COMMON} from "../../config/classes";
 import {getRandom, isNumber} from "../../module/util";
-import {IDataRow} from "../data/IData";
+import type {IDataRow} from "../data/IData";
 
 type BarTypeDataRow = DataRow<number | number[]>;
 

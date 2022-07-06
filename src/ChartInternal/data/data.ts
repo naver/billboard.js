@@ -4,7 +4,7 @@
  */
 import {$BAR, $CANDLESTICK, $COMMON} from "../../config/classes";
 import {KEY} from "../../module/Cache";
-import {IData, IDataRow} from "./IData";
+import type {IData, IDataRow} from "./IData";
 import {
 	findIndex,
 	getUnique,

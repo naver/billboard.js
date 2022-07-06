@@ -10,7 +10,7 @@ import {
 	utcFormat as d3UtcFormat
 } from "d3-time-format";
 import {select as d3Select} from "d3-selection";
-import {d3Selection} from "../../types/types";
+import type {d3Selection} from "../../types/types";
 import {checkModuleImport} from "../module/error";
 import {$COMMON, $CIRCLE, $TEXT} from "../config/classes";
 import Store from "../config/Store/Store";

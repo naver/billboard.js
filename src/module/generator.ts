@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {d3Transition} from "../../types/types";
+import type {d3Transition} from "../../types/types";
 import {window} from "./browser";
 import {isArray, isNumber, isTabVisible, runUntil} from "./util";
 

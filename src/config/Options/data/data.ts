@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {ChartTypes} from "../../../../types/types";
+import type {ChartTypes} from "../../../../types/types";
 
 /**
  * data config options

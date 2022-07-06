@@ -6,7 +6,7 @@ import {
 	namespaces as d3Namespaces,
 	select as d3Select
 } from "d3-selection";
-import {d3Selection} from "../../../types/types";
+import type {d3Selection} from "../../../types/types";
 import {$CIRCLE, $COMMON, $SELECT} from "../../config/classes";
 import {document} from "../../module/browser";
 import {getBoundingRect, getPointer, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
