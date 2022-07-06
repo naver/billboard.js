@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.0-nightly-20220701004742
+ * @version 3.5.0-nightly-20220706004704
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -20449,10 +20449,11 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
           offset = areaOffset(d, i) || y0,
           posX = x(d),
+          value = d.value,
           posY = y(d);
 
       // fix posY not to overflow opposite quadrant
-      if (config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY)) {
+      if (config.axis_rotated && (value > 0 && posY < y0 || value < 0 && y0 < posY)) {
         posY = y0;
       } // 1 point that marks the area position
 
@@ -25904,7 +25905,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.0-nightly-20220701004742",
+  version: "3.5.0-nightly-20220706004704",
 
   /**
    * Generate chart
@@ -26039,7 +26040,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.0-nightly-20220701004742
+ * @version 3.5.0-nightly-20220706004704
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

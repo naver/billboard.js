@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.0-nightly-20220701004742
+ * @version 3.5.0-nightly-20220706004704
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -16756,9 +16756,10 @@ var shapeArea = {
             var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
             var offset = areaOffset(d, i) || y0; // offset is for stacked area chart
             var posX = x(d);
+            var value = d.value;
             var posY = y(d);
             // fix posY not to overflow opposite quadrant
-            if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
+            if (config.axis_rotated && ((value > 0 && posY < y0) || (value < 0 && y0 < posY))) {
                 posY = y0;
             }
             // 1 point that marks the area position
@@ -21172,7 +21173,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.0-nightly-20220701004742
+ * @version 3.5.0-nightly-20220706004704
  */
 var bb = {
     /**
@@ -21182,7 +21183,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.0-nightly-20220701004742",
+    version: "3.5.0-nightly-20220706004704",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
