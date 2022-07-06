@@ -192,7 +192,7 @@ export interface XTickConfiguration {
 	 * A function to format tick value. Format string is also available for timeseries data.
 	 */
 	format?: string
-		| ((this: Chart, x: number | Date) => string | number)
+		| ((this: Chart, x: Date) => string | number)
 		| ((this: Chart, index: number, categoryName: string) => string);
 
 	/**
