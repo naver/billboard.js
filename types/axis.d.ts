@@ -192,7 +192,7 @@ export interface XTickConfiguration {
 	 * A function to format tick value. Format string is also available for timeseries data.
 	 */
 	format?: string
-		| ((this: Chart, x: number | Date) => string | number)
+		| ((this: Chart, x: Date) => string | number)
 		| ((this: Chart, index: number, categoryName: string) => string);
 
 	/**
@@ -337,7 +337,7 @@ export interface YTickConfiguration {
 	 * Set formatter for y axis tick text.
 	 * This option accepts d3.format object as well as a function you define.
 	 */
-	format?(this: Chart, x: number): string;
+	format?(this: Chart, x: number | Date): string | number;
 
 	/**
 	 * Setting for culling ticks.
