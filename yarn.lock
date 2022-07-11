@@ -4065,9 +4065,9 @@ cliui@^7.0.2:
     wrap-ansi "^7.0.0"
 
 cloc@^2.9.0:
-  version "2.9.0"
-  resolved "https://registry.npmjs.org/cloc/-/cloc-2.9.0.tgz#70bcac923342acf8724ec3f618e7f6fd900706ba"
-  integrity sha512-Eo97MtQ5nozSd5CFcYgwUg5Ej7GVcdopVd5T+SGwJc3VAmu0vNxV/ZDl06QAQhCUkM2EGKl8nhhP1BZuQXGiZg==
+  version "2.10.0"
+  resolved "https://registry.yarnpkg.com/cloc/-/cloc-2.10.0.tgz#1dbd3755a9ca8d426e9222b2e8a4feaecf855837"
+  integrity sha512-iHYXbhKNF+Wy6TNxHozD8WkW0qbZ7WKecyFntyFron4BF4SOX6hp7HEuNJ8iVnjimnf3xpLd81kMwoRj2WiCoA==
 
 clone-deep@^4.0.1:
   version "4.0.1"
