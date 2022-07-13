@@ -115,7 +115,7 @@ There're two ways to install from `nightly` branch directly.
 // Specify on 'package.json' file
 "dependencies": {
       ...
-      "billboard.js": "git://github.com/naver/billboard.js.git#nightly"
+      "billboard.js": "naver/billboard.js#nightly"
 },
 ```
 
