@@ -52,7 +52,6 @@ export const {
 	notEmpty,
 	parseDate,
 	runUntil,
-	runWorker,
 	sanitise,
 	setTextValue,
 	sortValue,
