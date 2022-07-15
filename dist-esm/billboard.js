@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.0-nightly-20220714004806
+ * @version 3.5.1-nightly-20220715004812
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -824,74 +824,6 @@ function convertInputType(mouse, touch) {
         .some(function (v) { return matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(".concat(v, ")")).matches; });
     // fallback to 'mouse' if no input type is detected.
     return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
-}
-/**
- * Create and run on Web Worker
- * @param {boolean} useWorker Use Web Worker
- * @param {Function} fn Function to be executed in worker
- * @param {Function} callback Callback function to receive result from worker
- * @param {Array} depsFn Dependency functions to run given function(fn).
- * @returns {object}
- * @example
- * 	const worker = runWorker(function(arg) {
- *		  // do some tasks...
- *		  console.log("param:", A(arg));
- *
- *		  return 1234;
- *	   }, function(data) {
- *		  // callback after worker is done
- *	 	  console.log("result:", data);
- *	   },
- *	   [function A(){}]
- *	);
- *
- *	worker(11111);
- * @private
- */
-function runWorker(useWorker, fn, callback, depsFn) {
-    var _a;
-    if (useWorker === void 0) { useWorker = true; }
-    var runFn;
-    if (win.Worker && useWorker) {
-        // Web Worker body
-        var blob = new Blob([
-            "".concat((_a = depsFn === null || depsFn === void 0 ? void 0 : depsFn.map(String).join(";")) !== null && _a !== void 0 ? _a : "", "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (").concat(fn.toString(), ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};")
-        ], {
-            type: "text/javascript"
-        });
-        var worker_1 = new Worker(URL.createObjectURL(blob));
-        runFn = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            // trigger worker
-            worker_1.postMessage(args);
-            // listen worker
-            worker_1.onmessage = function (e) {
-                return callback(e.data);
-            };
-            // handle error
-            worker_1.onerror = function (e) {
-                console.error(e);
-            };
-            // return new Promise((resolve, reject) => {
-            // 	worker.onmessage = ({data}) => resolve(data);
-            // 	worker.onerror = reject;
-            // });
-        };
-    }
-    else {
-        runFn = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            var res = fn.apply(void 0, args);
-            callback(res);
-        };
-    }
-    return runFn;
 }
 /**
  * Run function until given condition function return true
@@ -3257,6 +3189,98 @@ function generateWait() {
             transitionsToWait.push(t);
     };
     return f;
+}
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+// Store blob in memory
+var blob = {};
+/**
+ * Get Object URL
+ * @param {Function} fn Function to be executed in worker
+ * @param {Array} depsFn Dependency functions to run given function(fn).
+ * @returns {string}
+ * @private
+ */
+function getObjectURL(fn, depsFn) {
+    var _a;
+    var fnString = fn.toString();
+    var key = fnString.replace(/(function|[\s\W\n])/g, "").substring(0, 15);
+    if (!(key in blob)) {
+        // Web Worker body
+        blob[key] = new win.Blob([
+            "".concat((_a = depsFn === null || depsFn === void 0 ? void 0 : depsFn.map(String).join(";")) !== null && _a !== void 0 ? _a : "", "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (").concat(fnString, ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};")
+        ], {
+            type: "text/javascript"
+        });
+    }
+    return win.URL.createObjectURL(blob[key]);
+}
+/**
+ * Create and run on Web Worker
+ * @param {boolean} useWorker Use Web Worker
+ * @param {Function} fn Function to be executed in worker
+ * @param {Function} callback Callback function to receive result from worker
+ * @param {Array} depsFn Dependency functions to run given function(fn).
+ * @returns {object}
+ * @example
+ * 	const worker = runWorker(function(arg) {
+ *		  // do some tasks...
+ *		  console.log("param:", A(arg));
+ *
+ *		  return 1234;
+ *	   }, function(data) {
+ *		  // callback after worker is done
+ *	 	  console.log("result:", data);
+ *	   },
+ *	   [function A(){}]
+ *	);
+ *
+ *	worker(11111);
+ * @private
+ */
+function runWorker(useWorker, fn, callback, depsFn) {
+    if (useWorker === void 0) { useWorker = true; }
+    var runFn;
+    if (win.Worker && useWorker) {
+        var src_1 = getObjectURL(fn, depsFn);
+        var worker_1 = new win.Worker(src_1);
+        runFn = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            // trigger worker
+            worker_1.postMessage(args);
+            // listen worker
+            worker_1.onmessage = function (e) {
+                // release object URL from memory
+                win.URL.revokeObjectURL(src_1);
+                return callback(e.data);
+            };
+            // handle error
+            worker_1.onerror = function (e) {
+                console.error(e);
+            };
+            // return new Promise((resolve, reject) => {
+            // 	worker.onmessage = ({data}) => resolve(data);
+            // 	worker.onerror = reject;
+            // });
+        };
+    }
+    else {
+        runFn = function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            var res = fn.apply(void 0, args);
+            callback(res);
+        };
+    }
+    return runFn;
 }
 
 /**
@@ -21173,7 +21197,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.0-nightly-20220714004806
+ * @version 3.5.1-nightly-20220715004812
  */
 var bb = {
     /**
@@ -21183,7 +21207,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.0-nightly-20220714004806",
+    version: "3.5.1-nightly-20220715004812",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

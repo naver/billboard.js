@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.0-nightly-20220714004806
+ * @version 3.5.1-nightly-20220715004812
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1309,75 +1309,6 @@ function convertInputType(mouse, touch) {
   }.bind(this)); // fallback to 'mouse' if no input type is detected.
 
   return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
-}
-/**
- * Create and run on Web Worker
- * @param {boolean} useWorker Use Web Worker
- * @param {Function} fn Function to be executed in worker
- * @param {Function} callback Callback function to receive result from worker
- * @param {Array} depsFn Dependency functions to run given function(fn).
- * @returns {object}
- * @example
- * 	const worker = runWorker(function(arg) {
- *		  // do some tasks...
- *		  console.log("param:", A(arg));
- *
- *		  return 1234;
- *	   }, function(data) {
- *		  // callback after worker is done
- *	 	  console.log("result:", data);
- *	   },
- *	   [function A(){}]
- *	);
- *
- *	worker(11111);
- * @private
- */
-
-
-function runWorker(useWorker, fn, callback, depsFn) {
-  if (useWorker === void 0) {
-    useWorker = !0;
-  }
-
-  var runFn;
-
-  if (win.Worker && useWorker) {
-    var _depsFn$map$join,
-        blob = new Blob([((_depsFn$map$join = depsFn == null ? void 0 : depsFn.map(String).join(";")) != null ? _depsFn$map$join : "") + "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (" + fn.toString() + ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};"], {
-      type: "text/javascript"
-    }),
-        worker = new Worker(URL.createObjectURL(blob));
-
-    runFn = function () {
-      for (var _len5 = arguments.length, args = Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
-        args[_key5] = arguments[_key5];
-      }
-
-      // trigger worker
-      worker.postMessage(args); // listen worker
-
-      worker.onmessage = function (e) {
-        return callback(e.data);
-      }; // handle error
-
-
-      worker.onerror = function (e) {
-        console.error(e);
-      }; // return new Promise((resolve, reject) => {
-      // 	worker.onmessage = ({data}) => resolve(data);
-      // 	worker.onerror = reject;
-      // });
-
-    };
-  } else {
-    runFn = function () {
-      var res = fn.apply(void 0, arguments);
-      callback(res);
-    };
-  }
-
-  return runFn;
 }
 /**
  * Run function until given condition function return true
@@ -4044,6 +3975,105 @@ function generateWait() {
 
   return f;
 }
+;// CONCATENATED MODULE: ./src/module/worker.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+ // Store blob in memory
+
+var blob = {};
+/**
+ * Get Object URL
+ * @param {Function} fn Function to be executed in worker
+ * @param {Array} depsFn Dependency functions to run given function(fn).
+ * @returns {string}
+ * @private
+ */
+
+function getObjectURL(fn, depsFn) {
+  var fnString = fn.toString(),
+      key = fnString.replace(/(function|[\s\W\n])/g, "").substring(0, 15);
+
+  if (!(key in blob)) {
+    var _depsFn$map$join;
+
+    // Web Worker body
+    blob[key] = new win.Blob([((_depsFn$map$join = depsFn == null ? void 0 : depsFn.map(String).join(";")) != null ? _depsFn$map$join : "") + "\n\n\t\t\tself.onmessage=function({data}) {\n\t\t\t\tconst result = (" + fnString + ").apply(null, data);\n\t\t\t\tself.postMessage(result);\n\t\t\t};"], {
+      type: "text/javascript"
+    });
+  }
+
+  return win.URL.createObjectURL(blob[key]);
+}
+/**
+ * Create and run on Web Worker
+ * @param {boolean} useWorker Use Web Worker
+ * @param {Function} fn Function to be executed in worker
+ * @param {Function} callback Callback function to receive result from worker
+ * @param {Array} depsFn Dependency functions to run given function(fn).
+ * @returns {object}
+ * @example
+ * 	const worker = runWorker(function(arg) {
+ *		  // do some tasks...
+ *		  console.log("param:", A(arg));
+ *
+ *		  return 1234;
+ *	   }, function(data) {
+ *		  // callback after worker is done
+ *	 	  console.log("result:", data);
+ *	   },
+ *	   [function A(){}]
+ *	);
+ *
+ *	worker(11111);
+ * @private
+ */
+
+
+function runWorker(useWorker, fn, callback, depsFn) {
+  if (useWorker === void 0) {
+    useWorker = !0;
+  }
+
+  var runFn;
+
+  if (win.Worker && useWorker) {
+    var src = getObjectURL(fn, depsFn),
+        worker = new win.Worker(src);
+
+    runFn = function () {
+      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
+      }
+
+      // trigger worker
+      worker.postMessage(args); // listen worker
+
+      worker.onmessage = function (e) {
+        // release object URL from memory
+        win.URL.revokeObjectURL(src);
+        return callback(e.data);
+      }; // handle error
+
+
+      worker.onerror = function (e) {
+        console.error(e);
+      }; // return new Promise((resolve, reject) => {
+      // 	worker.onmessage = ({data}) => resolve(data);
+      // 	worker.onerror = reject;
+      // });
+
+    };
+  } else {
+    runFn = function () {
+      var res = fn.apply(void 0, arguments);
+      callback(res);
+    };
+  }
+
+  return runFn;
+}
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
 var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(5);
 ;// CONCATENATED MODULE: ./src/ChartInternal/data/convert.helper.ts
@@ -4269,6 +4299,7 @@ function tsv(tsv) {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 
 
 
@@ -25905,7 +25936,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.0-nightly-20220714004806",
+  version: "3.5.1-nightly-20220715004812",
 
   /**
    * Generate chart
@@ -26040,7 +26071,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.0-nightly-20220714004806
+ * @version 3.5.1-nightly-20220715004812
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
