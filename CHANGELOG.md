@@ -1,3 +1,11 @@
+## [3.5.1](https://github.com/naver/billboard.js/compare/3.5.0...3.5.1) (2022-07-14)
+
+
+### Bug Fixes
+
+* **options:** Fix possible memory leak for boost.useWorker ([394d1c3](https://github.com/naver/billboard.js/commit/394d1c356747ebf0328b1a1eda1323250238e01b)), closes [#2778](https://github.com/naver/billboard.js/issues/2778)
+* **types:** Fix the signature of the tick format callback for timeseries ([fb246bc](https://github.com/naver/billboard.js/commit/fb246bc92d328450b185314d5267dfc0862e55d3)), closes [#2769](https://github.com/naver/billboard.js/issues/2769)
+
 # [3.5.0](https://github.com/naver/billboard.js/compare/3.4.1...3.5.0) (2022-06-30)
 
 
