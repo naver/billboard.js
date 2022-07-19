@@ -5,6 +5,7 @@
 /* eslint-disable */
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
+import { utils } from "mocha";
 import {$AXIS, $COMMON, $EVENT, $FOCUS, $GRID} from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -155,7 +156,7 @@ describe("GRID", function() {
 
 		it("should show grids depending on y axis ticks", () => {
 			const ygrids = chart.$.main.select(`.${$GRID.ygrids}`);
-			const expectedYs = [];
+			const expectedYs: number[] = [];
 
 			ygrids.selectAll(`.${$GRID.ygrid}`).each(function(d, i) {
 				expectedYs[i] = +d3Select(this).attr("y1");
@@ -181,9 +182,9 @@ describe("GRID", function() {
 			args = {
 				data: {
 					columns: [
-					["data1", 100, 50, 150, 200, 100, 350, 58, 210, 80, 126],
-					["data2", 305, 350, 55, 25, 335, 29, 258, 310, 180, 226],
-					["data3", 223, 121, 259, 247, 53, 159, 95, 111, 307, 337]
+						["data1", 100, 50, 150, 200, 100, 350, 58, 210, 80, 126],
+						["data2", 305, 350, 55, 25, 335, 29, 258, 310, 180, 226],
+						["data3", 223, 121, 259, 247, 53, 159, 95, 111, 307, 337]
 					],
 					type: "line",
 					labels: true
@@ -207,6 +208,59 @@ describe("GRID", function() {
 			const tickLen = chart.internal.$el.axis.y.selectAll(".tick").size();
 
 			expect(gridLen).to.be.equal(tickLen);
+		});
+
+		it("shouldn't be throw error", () => {
+			try {
+				util.generate({
+					"data": {
+						"json": [
+							{ "data_periodo": "2018-05-01", "int_exists": 0 },
+							{ "data_periodo": "2018-06-01", "int_exists": 0 }
+						],
+						"keys": {
+							"x": "data_periodo",
+							"value": [
+								"int_exists"
+							]
+						},
+						"type": "line"
+					},
+					"axis": {
+						"y": {
+							"tick": {
+								"format": null,
+								"count": 1
+							},
+							"show": false,
+							"max": 1,
+							"min": 0.1
+						},
+					},
+					"grid": {
+						"y": {
+							"show": true,
+							"lines": [
+								{
+									"value": 0,
+									"position": "start",
+									"text": "assenza"
+								},
+								{
+									"value": 1,
+									"position": "start",
+									"text": "presenza"
+								}
+							]
+						}
+					}
+				});
+			} catch (e) {
+				// it shouldn't be thrown
+				expect(false).to.be.true;
+			}
+
+			expect(true).to.be.ok;
 		});
 	});
 
