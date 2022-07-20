@@ -16,7 +16,8 @@ export default {
 	 * @property {boolean} [legend.hide=false] Hide legend
 	 *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
 	 * @property {string|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
-	 * @property {string|Function} [legend.contents.template=undefined] Set item's template.<br>
+	 * - **NOTE:** Should be used along with `legend.contents.template`.
+	 * @property {string|Function} [legend.contents.template="<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>"] Set item's template.<br>
 	 *  - If set `string` value, within template the 'color' and 'title' can be replaced using template-like syntax string:
 	 *    - {=COLOR}: data color value
 	 *    - {=TITLE}: data title value
@@ -94,7 +95,7 @@ export default {
 	legend_show: true,
 	legend_hide: false,
 	legend_contents_bindto: <string|HTMLElement|undefined> undefined,
-	legend_contents_template: <string|(() => string)|undefined>undefined,
+	legend_contents_template: <string|(() => string)|undefined> "<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>",
 	legend_position: <"bottom"|"right"|"inset"> "bottom",
 	legend_inset_anchor: <"top-left"|"top-right"|"bottom-left"|"bottom-right"> "top-left",
 	legend_inset_x: 10,
