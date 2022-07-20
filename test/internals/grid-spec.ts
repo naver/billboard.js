@@ -5,7 +5,6 @@
 /* eslint-disable */
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
-import { utils } from "mocha";
 import {$AXIS, $COMMON, $EVENT, $FOCUS, $GRID} from "../../src/config/classes";
 import util from "../assets/util";
 
