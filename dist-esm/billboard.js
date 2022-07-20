@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220715004812
+ * @version 3.5.1-nightly-20220720004708
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -11605,7 +11605,8 @@ var AxisRenderer = /** @class */ (function () {
      * @private
      */
     AxisRenderer.prototype.getGeneratedTicks = function (count) {
-        var len = this.generatedTicks.length - 1;
+        var _a;
+        var len = ((_a = this.generatedTicks) === null || _a === void 0 ? void 0 : _a.length) - 1;
         var res = this.generatedTicks;
         if (len > count) {
             var interval_1 = Math.round((len / count) - 0.1);
@@ -21197,7 +21198,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220715004812
+ * @version 3.5.1-nightly-20220720004708
  */
 var bb = {
     /**
@@ -21207,7 +21208,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220715004812",
+    version: "3.5.1-nightly-20220720004708",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

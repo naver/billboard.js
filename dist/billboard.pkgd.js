@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220715004812
+ * @version 3.5.1-nightly-20220720004708
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -1126,10 +1126,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.23.4',
+  version: '3.23.5',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.23.4/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.23.5/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -14883,7 +14883,7 @@ var checkErrorsCloning = function (structuredCloneImplementation, $Error) {
   return !fails(function () {
     var error = new $Error();
     var test = structuredCloneImplementation({ a: error, b: error });
-    return !(test && test.a === test.b && test.a instanceof $Error && test.stack === error.stack);
+    return !(test && test.a === test.b && test.a instanceof $Error && test.a.stack === error.stack);
   });
 };
 
@@ -39704,9 +39704,10 @@ var AxisRenderer = /*#__PURE__*/function () {
   ;
 
   _proto.getGeneratedTicks = function getGeneratedTicks(count) {
-    var _this3 = this,
-        len = this.generatedTicks.length - 1,
-        res = this.generatedTicks;
+    var _this$generatedTicks,
+        len = ((_this$generatedTicks = this.generatedTicks) == null ? void 0 : _this$generatedTicks.length) - 1,
+        res = this.generatedTicks,
+        _this3 = this;
 
     if (len > count) {
       var interval = Math.round(len / count - .1);
@@ -52388,7 +52389,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220715004812",
+  version: "3.5.1-nightly-20220720004708",
 
   /**
    * Generate chart
@@ -52523,7 +52524,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220715004812
+ * @version 3.5.1-nightly-20220720004708
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

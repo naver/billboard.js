@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220715004812
+ * @version 3.5.1-nightly-20220720004708
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1114,10 +1114,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.23.4',
+  version: '3.23.5',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.23.4/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.23.5/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -14871,7 +14871,7 @@ var checkErrorsCloning = function (structuredCloneImplementation, $Error) {
   return !fails(function () {
     var error = new $Error();
     var test = structuredCloneImplementation({ a: error, b: error });
-    return !(test && test.a === test.b && test.a instanceof $Error && test.stack === error.stack);
+    return !(test && test.a === test.b && test.a instanceof $Error && test.a.stack === error.stack);
   });
 };
 
@@ -18263,7 +18263,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.5.1-nightly-20220715004812";
+Plugin.version = "3.5.1-nightly-20220720004708";
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
 
