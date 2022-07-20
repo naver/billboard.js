@@ -239,7 +239,7 @@ export default class AxisRenderer {
 	 * @private
 	 */
 	getGeneratedTicks(count: number): (Date|number)[] {
-		const len = this.generatedTicks.length - 1;
+		const len = this.generatedTicks?.length - 1;
 		let res = this.generatedTicks;
 
 		if (len > count) {
