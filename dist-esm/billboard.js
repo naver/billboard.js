@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220720004708
+ * @version 3.5.1-nightly-20220721004820
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -2627,7 +2627,8 @@ var legend$2 = {
      * @property {boolean} [legend.hide=false] Hide legend
      *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
      * @property {string|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
-     * @property {string|Function} [legend.contents.template=undefined] Set item's template.<br>
+     * - **NOTE:** Should be used along with `legend.contents.template`.
+     * @property {string|Function} [legend.contents.template="<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>"] Set item's template.<br>
      *  - If set `string` value, within template the 'color' and 'title' can be replaced using template-like syntax string:
      *    - {=COLOR}: data color value
      *    - {=TITLE}: data title value
@@ -2705,7 +2706,7 @@ var legend$2 = {
     legend_show: true,
     legend_hide: false,
     legend_contents_bindto: undefined,
-    legend_contents_template: undefined,
+    legend_contents_template: "<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>",
     legend_position: "bottom",
     legend_inset_anchor: "top-left",
     legend_inset_x: 10,
@@ -21198,7 +21199,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220720004708
+ * @version 3.5.1-nightly-20220721004820
  */
 var bb = {
     /**
@@ -21208,7 +21209,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220720004708",
+    version: "3.5.1-nightly-20220721004820",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

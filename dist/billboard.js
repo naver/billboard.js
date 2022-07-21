@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220720004708
+ * @version 3.5.1-nightly-20220721004820
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3272,7 +3272,8 @@ var data_this = undefined;
    * @property {boolean} [legend.hide=false] Hide legend
    *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
    * @property {string|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
-   * @property {string|Function} [legend.contents.template=undefined] Set item's template.<br>
+   * - **NOTE:** Should be used along with `legend.contents.template`.
+   * @property {string|Function} [legend.contents.template="<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>"] Set item's template.<br>
    *  - If set `string` value, within template the 'color' and 'title' can be replaced using template-like syntax string:
    *    - {=COLOR}: data color value
    *    - {=TITLE}: data title value
@@ -3350,7 +3351,7 @@ var data_this = undefined;
   legend_show: !0,
   legend_hide: !1,
   legend_contents_bindto: undefined,
-  legend_contents_template: undefined,
+  legend_contents_template: "<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>",
   legend_position: "bottom",
   legend_inset_anchor: "top-left",
   legend_inset_x: 10,
@@ -25937,7 +25938,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220720004708",
+  version: "3.5.1-nightly-20220721004820",
 
   /**
    * Generate chart
@@ -26072,7 +26073,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220720004708
+ * @version 3.5.1-nightly-20220721004820
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
