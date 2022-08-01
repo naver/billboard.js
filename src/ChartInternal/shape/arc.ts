@@ -45,7 +45,7 @@ export default {
 
 		// determine radius
 		state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * (
-			$$.hasMultiArcGauge() ? 0.85 : 1
+			$$.hasMultiArcGauge() && config.gauge_label_show ? 0.85 : 1
 		);
 
 		state.radius = state.radiusExpanded * 0.95;
