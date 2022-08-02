@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220727004904
+ * @version 3.5.1-nightly-20220802004840
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -1126,10 +1126,10 @@ var store = __webpack_require__(35);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.24.0',
+  version: '3.24.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.24.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.24.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -9501,7 +9501,7 @@ var FORCED_PROMISE_CONSTRUCTOR = isForced('Promise', function () {
   // We can't use @@species feature detection in V8 since it causes
   // deoptimization and performance degradation
   // https://github.com/zloirock/core-js/issues/679
-  if (V8_VERSION < 51 || !/native code/.test(PROMISE_CONSTRUCTOR_SOURCE)) {
+  if (!V8_VERSION || V8_VERSION < 51 || !/native code/.test(PROMISE_CONSTRUCTOR_SOURCE)) {
     // Detect correctness of subclassing with @@species support
     var promise = new NativePromiseConstructor(function (resolve) { resolve(1); });
     var FakePromise = function (exec) {
@@ -9524,9 +9524,14 @@ module.exports = {
 
 /***/ }),
 /* 320 */
-/***/ (function(module) {
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-module.exports = typeof window == 'object' && typeof Deno != 'object';
+var IS_DENO = __webpack_require__(321);
+var IS_NODE = __webpack_require__(174);
+
+module.exports = !IS_DENO && !IS_NODE
+  && typeof window == 'object'
+  && typeof document == 'object';
 
 
 /***/ }),
@@ -45166,7 +45171,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         w = config.gauge_width || config.donut_width,
         gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length * config.gauge_arcs_minWidth;
     // determine radius
-    state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() ? .85 : 1);
+    state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() && config.gauge_label_show ? .85 : 1);
     state.radius = state.radiusExpanded * .95;
     state.innerRadiusRatio = w ? (state.radius - w) / state.radius : .6;
     state.gaugeArcWidth = w || (gaugeArcWidth <= state.radius - state.innerRadius ? state.radius - state.innerRadius : gaugeArcWidth <= state.radius ? gaugeArcWidth : state.radius);
@@ -52391,7 +52396,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220727004904",
+  version: "3.5.1-nightly-20220802004840",
 
   /**
    * Generate chart
@@ -52526,7 +52531,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220727004904
+ * @version 3.5.1-nightly-20220802004840
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

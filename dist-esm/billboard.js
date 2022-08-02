@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220727004904
+ * @version 3.5.1-nightly-20220802004840
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -15947,7 +15947,7 @@ var shapeArc = {
         var gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
             config.gauge_arcs_minWidth;
         // determine radius
-        state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() ? 0.85 : 1);
+        state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() && config.gauge_label_show ? 0.85 : 1);
         state.radius = state.radiusExpanded * 0.95;
         state.innerRadiusRatio = w ? (state.radius - w) / state.radius : 0.6;
         state.gaugeArcWidth = w || (gaugeArcWidth <= state.radius - state.innerRadius ?
@@ -21199,7 +21199,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220727004904
+ * @version 3.5.1-nightly-20220802004840
  */
 var bb = {
     /**
@@ -21209,7 +21209,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220727004904",
+    version: "3.5.1-nightly-20220802004840",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

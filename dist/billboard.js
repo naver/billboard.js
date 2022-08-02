@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220727004904
+ * @version 3.5.1-nightly-20220802004840
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -19527,7 +19527,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         w = config.gauge_width || config.donut_width,
         gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length * config.gauge_arcs_minWidth;
     // determine radius
-    state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() ? .85 : 1);
+    state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() && config.gauge_label_show ? .85 : 1);
     state.radius = state.radiusExpanded * .95;
     state.innerRadiusRatio = w ? (state.radius - w) / state.radius : .6;
     state.gaugeArcWidth = w || (gaugeArcWidth <= state.radius - state.innerRadius ? state.radius - state.innerRadius : gaugeArcWidth <= state.radius ? gaugeArcWidth : state.radius);
@@ -25938,7 +25938,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220727004904",
+  version: "3.5.1-nightly-20220802004840",
 
   /**
    * Generate chart
@@ -26073,7 +26073,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220727004904
+ * @version 3.5.1-nightly-20220802004840
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
