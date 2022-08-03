@@ -606,10 +606,11 @@ export default {
 
 		const getColor = id => {
 			const data = $$.getDataById(id);
-
-			return $$.levelColor ?
+			const color = $$.levelColor ?
 				$$.levelColor(data.values[0].value) :
 				$$.color(data);
+
+			return color;
 		};
 
 		const usePoint = config.legend_usePoint;

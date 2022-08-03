@@ -1118,4 +1118,41 @@ describe("DATA", () => {
 			});
 		});
 	});
+
+	describe("data.idConverter", () => {
+		before(() => {
+			args = {
+				data: {
+					idConverter: function(id) {
+						return id ? id : "data2";
+					},
+					columns: [
+						["data1", 30, 200, 100],
+						["", 50, 20, 10]
+					],
+					colors: {
+						data1: "red",
+						data2: "blue"
+					}
+				}
+			};
+		})
+
+		it("should generate chart without error.", () => {
+			expect(
+				chart = util.generate(args)
+			).to.not.throw;
+		});
+
+		it("data color should be defined correctly.", () => {
+			const {svg} = chart.$;
+
+			["circle", "line", "path"].forEach(type => {
+				const prop = type === "circle" ? "fill" : "stroke";
+				const node = svg.select(`[class$=data2] > ${type}`);
+
+				expect(node.style(prop)).to.be.equal("blue");
+			});
+		});
+	});
 });
