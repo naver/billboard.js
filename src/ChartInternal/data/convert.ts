@@ -199,7 +199,7 @@ export default {
 			t.values.forEach((v, i) => (v.index = i));
 
 			// this needs to be sorted because its index and value.index is identical
-			$$.data.xs[t.id].sort((v1, v2) => v1 - v2);
+			$$.data.xs[t.id]?.sort((v1, v2) => v1 - v2);
 		});
 
 		// cache information about values

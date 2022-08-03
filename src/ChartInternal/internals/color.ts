@@ -103,7 +103,10 @@ export default {
 		}
 
 		return function(d: IDataRow | IArcData | string): string {
-			const id: string = (d as IDataRow).id || (d as IArcData).data?.id || d as string;
+			const id: string = (d as IDataRow).id ||
+				(d as IArcData).data?.id ||
+				d as string;
+
 			const isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !config.data_types[id];
 			let color;
 
