@@ -23,7 +23,7 @@ export default {
 	 * @property {boolean} [y.show=false] Show grids along x axis.
 	 * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
 	 *  This option accepts array including object that has value, text, position and class.
-	 * @property {number} [y.ticks=10] Number of y grids to be shown.
+	 * @property {number} [y.ticks=undefined] Number of y grids to be shown.
 	 * @property {object} focus Grid focus object
 	 * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
 	 * @property {boolean} [focus.show=true] Show grid line when focus.
@@ -71,7 +71,7 @@ export default {
 	grid_x_lines: <Lines> [],
 	grid_y_show: false,
 	grid_y_lines: <Lines> [],
-	grid_y_ticks: 10,
+	grid_y_ticks: <number|undefined> undefined,
 	grid_focus_edge: false,
 	grid_focus_show: true,
 	grid_focus_y: false,
