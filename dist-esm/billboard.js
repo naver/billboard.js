@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220803004718
+ * @version 3.5.1-nightly-20220804004717
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3619,6 +3619,7 @@ var dataConvert = {
         });
         // finish targets
         targets.forEach(function (t) {
+            var _a;
             // sort values by its x
             if (config.data_xSort) {
                 t.values = t.values.sort(function (v1, v2) {
@@ -3630,7 +3631,7 @@ var dataConvert = {
             // indexing each value
             t.values.forEach(function (v, i) { return (v.index = i); });
             // this needs to be sorted because its index and value.index is identical
-            $$.data.xs[t.id].sort(function (v1, v2) { return v1 - v2; });
+            (_a = $$.data.xs[t.id]) === null || _a === void 0 ? void 0 : _a.sort(function (v1, v2) { return v1 - v2; });
         });
         // cache information about values
         state.hasNegativeValue = $$.hasNegativeValueInTargets(targets);
@@ -4987,7 +4988,9 @@ var color = {
         }
         return function (d) {
             var _a;
-            var id = d.id || ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id) || d;
+            var id = d.id ||
+                ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id) ||
+                d;
             var isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !config.data_types[id];
             var color;
             // if callback function is provided
@@ -5984,9 +5987,10 @@ var legend$1 = {
             .attr("y", isLegendRightOrInset ? pos : yForLegendRect);
         var getColor = function (id) {
             var data = $$.getDataById(id);
-            return $$.levelColor ?
+            var color = $$.levelColor ?
                 $$.levelColor(data.values[0].value) :
                 $$.color(data);
+            return color;
         };
         var usePoint = config.legend_usePoint;
         if (usePoint) {
@@ -21199,7 +21203,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220803004718
+ * @version 3.5.1-nightly-20220804004717
  */
 var bb = {
     /**
@@ -21209,7 +21213,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220803004718",
+    version: "3.5.1-nightly-20220804004717",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

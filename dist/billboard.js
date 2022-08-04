@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220803004718
+ * @version 3.5.1-nightly-20220804004717
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4497,7 +4497,8 @@ function getDataKeyForJson(keysParam, config) {
     }.bind(this)); // finish targets
 
     targets.forEach(function (t) {
-      var _this5 = this;
+      var _this5 = this,
+          _$$$data$xs$t$id;
 
       _newArrowCheck(this, _this2);
 
@@ -4519,7 +4520,7 @@ function getDataKeyForJson(keysParam, config) {
         return v.index = i;
       }.bind(this)); // this needs to be sorted because its index and value.index is identical
 
-      $$.data.xs[t.id].sort(function (v1, v2) {
+      (_$$$data$xs$t$id = $$.data.xs[t.id]) == null ? void 0 : _$$$data$xs$t$id.sort(function (v1, v2) {
         _newArrowCheck(this, _this5);
 
         return v1 - v2;
@@ -7693,8 +7694,9 @@ function getFormat($$, typeValue, v) {
     var getColor = function (id) {
       _newArrowCheck(this, _this4);
 
-      var data = $$.getDataById(id);
-      return $$.levelColor ? $$.levelColor(data.values[0].value) : $$.color(data);
+      var data = $$.getDataById(id),
+          color = $$.levelColor ? $$.levelColor(data.values[0].value) : $$.color(data);
+      return color;
     }.bind(this),
         usePoint = config.legend_usePoint;
 
@@ -25938,7 +25940,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220803004718",
+  version: "3.5.1-nightly-20220804004717",
 
   /**
    * Generate chart
@@ -26073,7 +26075,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220803004718
+ * @version 3.5.1-nightly-20220804004717
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
