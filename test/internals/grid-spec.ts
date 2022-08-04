@@ -178,6 +178,36 @@ describe("GRID", function() {
 		});
 
 		it("set options", () => {
+				args = {
+					data: {
+						columns: [
+							["data1", 130, 340, 200, 500, 250, 350]
+						],
+						type: "line"
+					},
+					axis: {
+						y: {
+							min: 0
+						}
+					},
+					grid: {
+						y: {
+							show: true,
+							ticks: 5
+						}
+					}
+				};
+		});
+		
+		it("y grid showed with nice intervals?", () => {
+			const yPos = [426, 320, 214, 108, 1];
+
+			chart.$.grid.y.each(function(d, i) {
+				expect(+this.getAttribute("y1")).to.be.equal(yPos[i]);
+			});
+		});
+
+		it("set options", () => {
 			args = {
 				data: {
 					columns: [
