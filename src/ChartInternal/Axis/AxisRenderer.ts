@@ -243,7 +243,7 @@ export default class AxisRenderer {
 		let res = this.generatedTicks;
 
 		if (len > count) {
-			const interval = Math.round((len / count) - 0.1);
+			const interval = Math.round((len / count) + 0.1);
 
 			res = this.generatedTicks
 				.map((v, i) => (i % interval === 0 ? v : null))
