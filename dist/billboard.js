@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220804004717
+ * @version 3.5.1-nightly-20220805004950
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -14528,7 +14528,7 @@ var AxisRenderer = /*#__PURE__*/function () {
         _this3 = this;
 
     if (len > count) {
-      var interval = Math.round(len / count - .1);
+      var interval = Math.round(len / count + .1);
       res = this.generatedTicks.map(function (v, i) {
         _newArrowCheck(this, _this3);
 
@@ -19395,7 +19395,7 @@ function axis_objectSpread(target) { for (var i = 1, source; i < arguments.lengt
    * @property {boolean} [y.show=false] Show grids along x axis.
    * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
    *  This option accepts array including object that has value, text, position and class.
-   * @property {number} [y.ticks=10] Number of y grids to be shown.
+   * @property {number} [y.ticks=undefined] Number of y grids to be shown.
    * @property {object} focus Grid focus object
    * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
    * @property {boolean} [focus.show=true] Show grid line when focus.
@@ -19443,7 +19443,7 @@ function axis_objectSpread(target) { for (var i = 1, source; i < arguments.lengt
   grid_x_lines: [],
   grid_y_show: !1,
   grid_y_lines: [],
-  grid_y_ticks: 10,
+  grid_y_ticks: undefined,
   grid_focus_edge: !1,
   grid_focus_show: !0,
   grid_focus_y: !1,
@@ -25940,7 +25940,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220804004717",
+  version: "3.5.1-nightly-20220805004950",
 
   /**
    * Generate chart
@@ -26075,7 +26075,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220804004717
+ * @version 3.5.1-nightly-20220805004950
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220804004717
+ * @version 3.5.1-nightly-20220805004950
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -11614,7 +11614,7 @@ var AxisRenderer = /** @class */ (function () {
         var len = ((_a = this.generatedTicks) === null || _a === void 0 ? void 0 : _a.length) - 1;
         var res = this.generatedTicks;
         if (len > count) {
-            var interval_1 = Math.round((len / count) - 0.1);
+            var interval_1 = Math.round((len / count) + 0.1);
             res = this.generatedTicks
                 .map(function (v, i) { return (i % interval_1 === 0 ? v : null); })
                 .filter(function (v) { return v !== null; })
@@ -15837,7 +15837,7 @@ var optGrid = {
      * @property {boolean} [y.show=false] Show grids along x axis.
      * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
      *  This option accepts array including object that has value, text, position and class.
-     * @property {number} [y.ticks=10] Number of y grids to be shown.
+     * @property {number} [y.ticks=undefined] Number of y grids to be shown.
      * @property {object} focus Grid focus object
      * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
      * @property {boolean} [focus.show=true] Show grid line when focus.
@@ -15885,7 +15885,7 @@ var optGrid = {
     grid_x_lines: [],
     grid_y_show: false,
     grid_y_lines: [],
-    grid_y_ticks: 10,
+    grid_y_ticks: undefined,
     grid_focus_edge: false,
     grid_focus_show: true,
     grid_focus_y: false,
@@ -21203,7 +21203,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220804004717
+ * @version 3.5.1-nightly-20220805004950
  */
 var bb = {
     /**
@@ -21213,7 +21213,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220804004717",
+    version: "3.5.1-nightly-20220805004950",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
