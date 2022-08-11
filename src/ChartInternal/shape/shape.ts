@@ -305,6 +305,7 @@ export default {
 	getShapeOffset(typeFilter, indices, isSub?: boolean): Function {
 		const $$ = this;
 		const {shapeOffsetTargets, indexMapByTargetId} = $$.getShapeOffsetData(typeFilter);
+		const groupsZeroAs = $$.config.data_groupsZeroAs;
 
 		return (d, idx) => {
 			const {id, value, x} = d;
@@ -316,18 +317,18 @@ export default {
 				return scale(value[0]);
 			}
 
-			const y0 = scale($$.getShapeYMin(id));
-
 			const dataXAsNumber = Number(x);
+			const y0 = scale(groupsZeroAs === "zero" ? 0 : $$.getShapeYMin(id));
 			let offset = y0;
 
 			shapeOffsetTargets
-				.filter(t => t.id !== id)
+				.filter(t => t.id !== id && ind[t.id] === ind[id])
 				.forEach(t => {
 					const {id: tid, rowValueMapByXValue, rowValues, values: tvalues} = t;
 
 					// for same stacked group (ind[tid] === ind[id])
-					if (ind[tid] === ind[id] && indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+					if (indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+						const rValue = tvalues[dataXAsNumber];
 						let row = rowValues[idx];
 
 						// check if the x values line up
@@ -335,8 +336,15 @@ export default {
 							row = rowValueMapByXValue[dataXAsNumber];
 						}
 
-						if (row?.value * value >= 0 && isNumber(tvalues[dataXAsNumber])) {
-							offset += scale(tvalues[dataXAsNumber]) - y0;
+						if (row?.value * value >= 0 && isNumber(rValue)) {
+							const addOffset = value === 0 ? (
+								(groupsZeroAs === "positive" && rValue > 0) ||
+								(groupsZeroAs === "negative" && rValue < 0)
+							) : true;
+
+							if (addOffset) {
+								offset += scale(rValue) - y0;
+							}
 						}
 					}
 				});
