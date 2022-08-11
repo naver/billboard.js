@@ -258,6 +258,24 @@ export default {
 	data_groups: <string[][]> [],
 
 	/**
+	 * Set how zero value will be treated on groups.<br>
+	 * Possible values:
+	 * - `zero`: 0 will be positioned at absolute axis zero point.
+	 * - `positive`: 0 will be positioned at the top of a stack.
+	 * - `negative`: 0 will be positioned at the bottom of a stack.
+	 * @name data․groupsZeroAs
+	 * @memberof Options
+	 * @type {string}
+	 * @default "positive"
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.Groups)
+	 * @example
+	 * data: {
+	 *   groupsZeroAs: "zero" // "positive" or "negative"
+	 * }
+	 */
+	data_groupsZeroAs: <"zero" | "positive" | "negative"> "positive",
+
+	/**
 	 * Set color converter function.<br><br>
 	 * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
 	 * @name data․color
