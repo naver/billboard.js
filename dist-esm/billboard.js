@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220805004950
+ * @version 3.5.1-nightly-20220812004743
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1912,6 +1912,23 @@ var data$2 = {
      * }
      */
     data_groups: [],
+    /**
+     * Set how zero value will be treated on groups.<br>
+     * Possible values:
+     * - `zero`: 0 will be positioned at absolute axis zero point.
+     * - `positive`: 0 will be positioned at the top of a stack.
+     * - `negative`: 0 will be positioned at the bottom of a stack.
+     * @name data․groupsZeroAs
+     * @memberof Options
+     * @type {string}
+     * @default "positive"
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.Groups)
+     * @example
+     * data: {
+     *   groupsZeroAs: "zero" // "positive" or "negative"
+     * }
+     */
+    data_groupsZeroAs: "positive",
     /**
      * Set color converter function.<br><br>
      * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
@@ -6756,6 +6773,7 @@ var shape = {
     getShapeOffset: function (typeFilter, indices, isSub) {
         var $$ = this;
         var _a = $$.getShapeOffsetData(typeFilter), shapeOffsetTargets = _a.shapeOffsetTargets, indexMapByTargetId = _a.indexMapByTargetId;
+        var groupsZeroAs = $$.config.data_groupsZeroAs;
         return function (d, idx) {
             var id = d.id, value = d.value, x = d.x;
             var ind = $$.getIndices(indices, d);
@@ -6764,22 +6782,27 @@ var shape = {
                 // TODO use range.getStart()
                 return scale(value[0]);
             }
-            var y0 = scale($$.getShapeYMin(id));
             var dataXAsNumber = Number(x);
+            var y0 = scale(groupsZeroAs === "zero" ? 0 : $$.getShapeYMin(id));
             var offset = y0;
             shapeOffsetTargets
-                .filter(function (t) { return t.id !== id; })
+                .filter(function (t) { return t.id !== id && ind[t.id] === ind[id]; })
                 .forEach(function (t) {
                 var tid = t.id, rowValueMapByXValue = t.rowValueMapByXValue, rowValues = t.rowValues, tvalues = t.values;
                 // for same stacked group (ind[tid] === ind[id])
-                if (ind[tid] === ind[id] && indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+                if (indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+                    var rValue = tvalues[dataXAsNumber];
                     var row = rowValues[idx];
                     // check if the x values line up
                     if (!row || Number(row.x) !== dataXAsNumber) {
                         row = rowValueMapByXValue[dataXAsNumber];
                     }
-                    if ((row === null || row === void 0 ? void 0 : row.value) * value >= 0 && isNumber(tvalues[dataXAsNumber])) {
-                        offset += scale(tvalues[dataXAsNumber]) - y0;
+                    if ((row === null || row === void 0 ? void 0 : row.value) * value >= 0 && isNumber(rValue)) {
+                        var addOffset = value === 0 ? ((groupsZeroAs === "positive" && rValue > 0) ||
+                            (groupsZeroAs === "negative" && rValue < 0)) : true;
+                        if (addOffset) {
+                            offset += scale(rValue) - y0;
+                        }
                     }
                 }
             });
@@ -21203,7 +21226,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220805004950
+ * @version 3.5.1-nightly-20220812004743
  */
 var bb = {
     /**
@@ -21213,7 +21236,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220805004950",
+    version: "3.5.1-nightly-20220812004743",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

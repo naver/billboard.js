@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220805004950
+ * @version 3.5.1-nightly-20220812004743
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2528,6 +2528,24 @@ var data_this = undefined;
    * }
    */
   data_groups: [],
+
+  /**
+   * Set how zero value will be treated on groups.<br>
+   * Possible values:
+   * - `zero`: 0 will be positioned at absolute axis zero point.
+   * - `positive`: 0 will be positioned at the top of a stack.
+   * - `negative`: 0 will be positioned at the bottom of a stack.
+   * @name data․groupsZeroAs
+   * @memberof Options
+   * @type {string}
+   * @default "positive"
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.Groups)
+   * @example
+   * data: {
+   *   groupsZeroAs: "zero" // "positive" or "negative"
+   * }
+   */
+  data_groupsZeroAs: "positive",
 
   /**
    * Set color converter function.<br><br>
@@ -8669,7 +8687,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         $$ = this,
         _$$$getShapeOffsetDat = $$.getShapeOffsetData(typeFilter),
         shapeOffsetTargets = _$$$getShapeOffsetDat.shapeOffsetTargets,
-        indexMapByTargetId = _$$$getShapeOffsetDat.indexMapByTargetId;
+        indexMapByTargetId = _$$$getShapeOffsetDat.indexMapByTargetId,
+        groupsZeroAs = $$.config.data_groupsZeroAs;
 
     return function (d, idx) {
       var _this10 = this;
@@ -8687,13 +8706,13 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         return scale(value[0]);
       }
 
-      var y0 = scale($$.getShapeYMin(id)),
-          dataXAsNumber = +x,
+      var dataXAsNumber = +x,
+          y0 = scale(groupsZeroAs === "zero" ? 0 : $$.getShapeYMin(id)),
           offset = y0;
       shapeOffsetTargets.filter(function (t) {
         _newArrowCheck(this, _this10);
 
-        return t.id !== id;
+        return t.id !== id && ind[t.id] === ind[id];
       }.bind(this)).forEach(function (t) {
         _newArrowCheck(this, _this10);
 
@@ -8702,8 +8721,9 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
             rowValues = t.rowValues,
             tvalues = t.values; // for same stacked group (ind[tid] === ind[id])
 
-        if (ind[tid] === ind[id] && indexMapByTargetId[tid] < indexMapByTargetId[id]) {
+        if (indexMapByTargetId[tid] < indexMapByTargetId[id]) {
           var _row,
+              rValue = tvalues[dataXAsNumber],
               row = rowValues[idx];
 
           // check if the x values line up
@@ -8711,8 +8731,12 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
             row = rowValueMapByXValue[dataXAsNumber];
           }
 
-          if (((_row = row) == null ? void 0 : _row.value) * value >= 0 && isNumber(tvalues[dataXAsNumber])) {
-            offset += scale(tvalues[dataXAsNumber]) - y0;
+          if (((_row = row) == null ? void 0 : _row.value) * value >= 0 && isNumber(rValue)) {
+            var addOffset = value === 0 ? groupsZeroAs === "positive" && rValue > 0 || groupsZeroAs === "negative" && rValue < 0 : !0;
+
+            if (addOffset) {
+              offset += scale(rValue) - y0;
+            }
           }
         }
       }.bind(this));
@@ -25940,7 +25964,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220805004950",
+  version: "3.5.1-nightly-20220812004743",
 
   /**
    * Generate chart
@@ -26075,7 +26099,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220805004950
+ * @version 3.5.1-nightly-20220812004743
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
