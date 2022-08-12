@@ -18,7 +18,7 @@ export default {
 	 *     ["data1", "data2"]
 	 *  ]);
 	 */
-	groups(groups: string[][]): string[][] {
+	groups<T = string[][]>(groups: T): T {
 		const $$ = this.internal;
 		const {config} = $$;
 

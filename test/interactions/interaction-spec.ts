@@ -302,7 +302,7 @@ describe("INTERACTION", () => {
 				});
 
 				it("rect elements should be positioned without gaps", () => {
-					const rect = [];
+					const rect: number[] = [];
 
 					chart.$.main.selectAll(`.${$EVENT.eventRect}`).each(function(d, i) {
 						const x = +this.getAttribute("x");

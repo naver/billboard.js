@@ -2583,6 +2583,80 @@ var demos = {
 				}
 			}
 		],
+		Groups: [
+			{
+				options: {
+					title: {
+						text: "Groups zero treated as 'positive' value"
+					},
+					data: {
+						columns: [
+							["series1", -11, -11, -11, -11],
+							["series2", 4, 4, 4, 4],
+							["series3", 0, 1, 0, -1]
+						],
+						type: "area",
+						order: null,
+						groups: [
+						  [
+							"series1",
+							"series2",
+							"series3",
+						  ]
+						],
+						groupsZeroAs: "positive"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Groups zero treated as 'negative' value"
+					},
+					data: {
+						columns: [
+							["series1", -11, -11, -11, -11],
+							["series2", 4, 4, 4, 4],
+							["series3", 0, 1, 0, -1]
+						],
+						type: "area",
+						order: null,
+						groups: [
+						  [
+							"series1",
+							"series2",
+							"series3",
+						  ]
+						],
+						groupsZeroAs: "negative"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Groups zero treated as absolute 'zero' value"
+					},
+					data: {
+						columns: [
+							["series1", -11, -11, -11, -11],
+							["series2", 4, 4, 4, 4],
+							["series3", 0, 1, 0, -1]
+						],
+						type: "area",
+						order: null,
+						groups: [
+						  [
+							"series1",
+							"series2",
+							"series3",
+						  ]
+						],
+						groupsZeroAs: "zero"
+					}
+				}
+			}
+		],
 		OnMinMaxCallback: {
 			options: {
 				data: {
