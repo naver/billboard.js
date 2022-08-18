@@ -45,7 +45,11 @@ export default {
 
 		// Areas
 		if ($$.hasTypeOf("Area")) {
-			$$.initArea(!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter);
+			const mainLine = (
+				!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter
+			).filter($$.isAreaType.bind($$));
+
+			$$.initArea(mainLine);
 		}
 
 		$$.updateTargetForCircle(targets, mainLineEnter);
