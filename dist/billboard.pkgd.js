@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220817004704
+ * @version 3.5.1-nightly-20220819004732
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -47112,7 +47112,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     mainLineEnter.append("g").attr("class", classLines); // Areas
 
     if ($$.hasTypeOf("Area")) {
-      $$.initArea(!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter);
+      var mainLine = (!area && mainLineEnter.empty() ? mainLineUpdate : mainLineEnter).filter($$.isAreaType.bind($$));
+      $$.initArea(mainLine);
     }
 
     $$.updateTargetForCircle(targets, mainLineEnter);
@@ -52422,7 +52423,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220817004704",
+  version: "3.5.1-nightly-20220819004732",
 
   /**
    * Generate chart
@@ -52557,7 +52558,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220817004704
+ * @version 3.5.1-nightly-20220819004732
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
