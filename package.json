@@ -183,7 +183,7 @@
 		"style-loader": "^3.3.1",
 		"terser-webpack-plugin": "^5.3.5",
 		"tslib": "^2.4.0",
-		"typescript": "4.6.2",
+		"typescript": "4.8.2",
 		"webpack": "^5.74.0",
 		"webpack-bundle-analyzer": "^4.6.1",
 		"webpack-clean": "^1.2.5",
