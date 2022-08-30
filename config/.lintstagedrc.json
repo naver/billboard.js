@@ -1,0 +1,3 @@
+{
+    "*.ts": "npm run lint"
+}
