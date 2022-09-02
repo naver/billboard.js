@@ -3,7 +3,8 @@
   <img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js"><br>
 </picture>
 
-[![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![semantic-release][badge-semantic-release]][link-semantic-release]
+[![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![bb][badge-@billboard.js/react]][link-@billboard.js/react]<br> 
+ [![semantic-release][badge-semantic-release]][link-semantic-release] ![React][badge-react]
 
 ![CI Status][badge-ci-status] [![Coverage Status][badge-coverage]][link-coverage] [![Known Vulnerabilities][badge-snyk]][link-snyk] 
 [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size]
@@ -138,6 +139,12 @@ $ npm install billboard.js@next --save
 ```bash
 $ npm install billboard.js
 ```
+
+### Packages
+
+Name | For | Description
+:---: | :---:| :---:
+[![bb][badge-@billboard.js/react]][link-@billboard.js/react] | ![React][badge-react] | React component for billboard.js
 
 ### Using CDN
 
@@ -344,6 +351,8 @@ THE SOFTWARE.
 [badge-latest]: https://img.shields.io/npm/v/billboard.js/latest.svg
 [badge-next]: https://img.shields.io/npm/v/billboard.js/next.svg
 [badge-semantic-release]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
+[badge-react]: https://img.shields.io/badge/React-20232A?style=flat&logo=react&logoColor=fff&labelColor=grey&color=62d9fb
+[badge-@billboard.js/react]: https://img.shields.io/npm/v/@billboard.js/react?style=flat&labelColor=grey&label=%40billboard.js%2Freact
 
 <!-- links -->
 [link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
@@ -353,5 +362,6 @@ THE SOFTWARE.
 [link-snyk]: https://snyk.io/test/github/naver/billboard.js?targetFile=package.json
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
 [link-semantic-release]: https://github.com/semantic-release/semantic-release
+[link-@billboard.js/react]: https://www.npmjs.com/package/@billboard.js/react
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js?ref=badge_large)
