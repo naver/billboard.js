@@ -97,7 +97,6 @@ describe("SHAPE AREA", () => {
 			});
 		}
 
-
 		it("check bar path node position: non rotated Axis", () => {
 			checkBarPathPos("y");
 		});
@@ -108,6 +107,31 @@ describe("SHAPE AREA", () => {
 
 		it("check bar path node position: rotated Axis", () => {
 			checkBarPathPos("x");
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 800, 750, 730],
+						["data2", null, 500, 730]
+					],
+					type: "line",
+					types: {
+						data1: "area"
+					}
+				}
+			};
+		});
+
+		it("area element should be generated for area type dataset only.", () => {
+			const {areas} = chart.$.line;
+
+			expect(areas.size()).to.be.equal(1);
+			
+			areas.each(function() {
+				expect(/undefined/.test(this.getAttribute("d"))).to.be.false;
+			});
 		});
 	});
 

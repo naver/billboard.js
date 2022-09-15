@@ -10,7 +10,7 @@ import {
 	utcFormat as d3UtcFormat
 } from "d3-time-format";
 import {select as d3Select} from "d3-selection";
-import {d3Selection} from "../../types/types";
+import type {d3Selection} from "../../types/types";
 import {checkModuleImport} from "../module/error";
 import {$COMMON, $CIRCLE, $TEXT} from "../config/classes";
 import Store from "../config/Store/Store";
@@ -39,11 +39,12 @@ import redraw from "./internals/redraw";
 import scale from "./internals/scale";
 import shape from "./shape/shape";
 import size from "./internals/size";
+import style from "./internals/style";
 import text from "./internals/text";
 import title from "./internals/title";
 import tooltip from "./internals/tooltip";
 import transform from "./internals/transform";
-import type from "./internals/type";
+import typeInternals from "./internals/type";
 
 /**
  * Internal chart class.
@@ -266,21 +267,10 @@ export default class ChartInternal {
 		const $$ = <any> this;
 		const {config, format, state} = $$;
 		const isRotated = config.axis_rotated;
-		const useCssRule = config.boost_useCssRule;
 
 		// color settings
 		$$.color = $$.generateColor();
-		$$.colorByRule = $$.color;
-		$$.colorTextByRule = $$.updateTextColor.bind($$);
 		$$.levelColor = $$.generateLevelColor();
-
-		if (useCssRule) {
-			state.colorRule = {};
-
-			// to not apply inline color setting
-			$$.colorByRule = null;
-			$$.colorTextByRule = null;
-		}
 
 		// when 'padding=false' is set, disable axes and subchart. Because they are useless.
 		if (config.padding === false) {
@@ -812,9 +802,10 @@ extend(ChartInternal.prototype, [
 	scale,
 	shape,
 	size,
+	style,
 	text,
 	title,
 	tooltip,
 	transform,
-	type
+	typeInternals
 ]);

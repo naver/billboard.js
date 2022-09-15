@@ -1118,4 +1118,97 @@ describe("DATA", () => {
 			});
 		});
 	});
+
+	describe("data.idConverter", () => {
+		before(() => {
+			args = {
+				data: {
+					idConverter: function(id) {
+						return id ? id : "data2";
+					},
+					columns: [
+						["data1", 30, 200, 100],
+						["", 50, 20, 10]
+					],
+					colors: {
+						data1: "red",
+						data2: "blue"
+					}
+				}
+			};
+		});
+
+		it("should generate chart without error.", () => {
+			expect(
+				chart = util.generate(args)
+			).to.not.throw;
+		});
+
+		it("data color should be defined correctly.", () => {
+			const {svg} = chart.$;
+
+			["circle", "line", "path"].forEach(type => {
+				const prop = type === "circle" ? "fill" : "stroke";
+				const node = svg.select(`[class$=data2] > ${type}`);
+
+				expect(node.style(prop)).to.be.equal("blue");
+			});
+		});
+	});
+
+	describe("data.groups", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", -11, -11, -11, -11],
+						["data2", 4, 4, 4, 4],
+						["data3", 0, 1, 0, -1]
+					],
+					type: "area",
+					order: null,
+					groups: [
+					  [
+						"data1",
+						"data2",
+						"data3",
+					  ]
+					],
+					groupsZeroAs: "positive"
+				}
+			};
+		});
+
+		it("when data.groupsZeroAs='positivie'", () => {
+			const expectedY = [57, 36, 57, 390];
+
+			chart.$.circles.filter(d => d.id === "data3").each(function(d, i) {
+				expect(+this.getAttribute("cy")).to.be.closeTo(expectedY[i], 1);
+			});
+		});
+
+		it("set options: data.groupsZeroAs='negative'", () => {
+			args.data.groupsZeroAs = "negative";
+		});
+
+		it("when data.groupsZeroAs='negative'", () => {
+			const expectedY = [369, 36, 369, 390];
+
+			chart.$.circles.filter(d => d.id === "data3").each(function(d, i) {
+				expect(+this.getAttribute("cy")).to.be.closeTo(expectedY[i], 1);
+			});
+		});
+
+		it("set options: data.groupsZeroAs='zero'", () => {
+			args.data.groupsZeroAs = "zero";
+		});
+
+		it("when data.groupsZeroAs='zero'", () => {
+			const expectedY = [140, 36, 140, 390];
+
+			chart.$.circles.filter(d => d.id === "data3").each(function(d, i) {
+				expect(+this.getAttribute("cy")).to.be.closeTo(expectedY[i], 1);
+			});
+		});
+	});
 });

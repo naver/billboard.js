@@ -69,8 +69,11 @@ window.bench = {
         if (!window.bb) {
             alert("Select the desired version fisrt.");
             this.$el.version.focus();
+
             return;
         }
+
+        const chartType = this.$el.type.value;
 
         this.chart = bb.generate({
             boost: {
@@ -79,7 +82,7 @@ window.bench = {
             },
             data: {
                 columns: this.getData(),
-                type: this.$el.type.value
+                type: chartType
             },
             transition: {
                 duration: +this.$el.transition.value
@@ -87,11 +90,11 @@ window.bench = {
             legend: {
               show: false
             },
-            point: {
+            point: chartType !== "scatter" ? {
                 focus: {
                     only: true
                 },
-            },
+            } : {},
             axis: {
                 x: {
                     tick: {

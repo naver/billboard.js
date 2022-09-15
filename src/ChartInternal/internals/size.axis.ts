@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {AxisType} from "../../../types/types";
+import type {AxisType} from "../../../types/types";
 
 export default {
 	/**

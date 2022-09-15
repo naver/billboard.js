@@ -112,5 +112,5 @@ export default {
 	selectorLegends(ids): string[] | null {
 		return ids?.length ?
 			ids.map(id => this.selectorLegend(id)) : null;
-	},
+	}
 };

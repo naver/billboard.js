@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {isValue, toArray} from "./util";
-import {DataRow} from "../../types/types";
+import type {DataRow} from "../../types/types";
 
 /**
  * Constant for cache key

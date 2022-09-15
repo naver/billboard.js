@@ -446,13 +446,17 @@ describe("SHAPE GAUGE", () => {
 					colors: {}
 				}
 			},
+			legend: {
+				show: true
+			},
 			gauge: {
 				background: "",
 				type: "multi",
 				label: {
 					format: function(value) {
 						return `${value}%`;
-					}
+					},
+					show: true
 				},
 				fullCircle: false,
 				arcLength: 360,
@@ -761,6 +765,32 @@ describe("SHAPE GAUGE", () => {
 			}, 100);
 		});
 
+		const gaugeSizeWithoutLabel = {
+			width: 0,
+			height: 0,
+			radius: 0
+		};
+
+		it("set options: legend.show & gauge.label.show", () => {
+			const rect = chart.$.arc.node().getBoundingClientRect();
+
+			// store values to compare with next test
+			gaugeSizeWithoutLabel.width = rect.width;
+			gaugeSizeWithoutLabel.height = rect.height;
+			gaugeSizeWithoutLabel.radius = chart.internal.state.radius;
+
+			args.legend.show = false;
+			args.gauge.label.show = false;
+		});
+
+		it("Arc size should expand w/o when gauge label text is hidden.", () => {
+			const rect = chart.$.arc.node().getBoundingClientRect();
+			const {radius} = chart.internal.state;
+
+			expect(rect.width).to.be.greaterThan(gaugeSizeWithoutLabel.width);
+			expect(rect.height).to.be.greaterThan(gaugeSizeWithoutLabel.height);
+			expect(radius).to.be.greaterThan(gaugeSizeWithoutLabel.radius);
+		});
     });
     
     describe("Positioning", () => {

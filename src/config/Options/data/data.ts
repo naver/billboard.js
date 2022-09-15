@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {ChartTypes} from "../../../../types/types";
+import type {ChartTypes} from "../../../../types/types";
 
 /**
  * data config options
@@ -256,6 +256,24 @@ export default {
 	 * }
 	 */
 	data_groups: <string[][]> [],
+
+	/**
+	 * Set how zero value will be treated on groups.<br>
+	 * Possible values:
+	 * - `zero`: 0 will be positioned at absolute axis zero point.
+	 * - `positive`: 0 will be positioned at the top of a stack.
+	 * - `negative`: 0 will be positioned at the bottom of a stack.
+	 * @name data․groupsZeroAs
+	 * @memberof Options
+	 * @type {string}
+	 * @default "positive"
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.Groups)
+	 * @example
+	 * data: {
+	 *   groupsZeroAs: "zero" // "positive" or "negative"
+	 * }
+	 */
+	data_groupsZeroAs: <"zero" | "positive" | "negative"> "positive",
 
 	/**
 	 * Set color converter function.<br><br>

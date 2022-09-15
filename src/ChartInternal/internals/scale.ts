@@ -10,7 +10,7 @@ import {
 	scaleSymlog as d3ScaleSymlog
 } from "d3-scale";
 import {isString, isValue, parseDate} from "../../module/util";
-import {IDataRow, IGridData} from "../data/IData";
+import type {IDataRow, IGridData} from "../data/IData";
 
 
 /**

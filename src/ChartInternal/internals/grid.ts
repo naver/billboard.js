@@ -136,7 +136,6 @@ export default {
 		const {axis, config, scale, state, $el: {grid, main}} = $$;
 		const isRotated = config.axis_rotated;
 		const pos = d => Math.ceil(scale.y(d));
-
 		const gridValues =
 			axis.y.getGeneratedTicks(config.grid_y_ticks) || $$.scale.y.ticks(config.grid_y_ticks);
 

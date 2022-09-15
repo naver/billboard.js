@@ -5,7 +5,7 @@
  */
 import {getScale} from "../internals/scale";
 import {isDefined, isNumber, isString} from "../../module/util";
-import {d3Selection} from "../../../types/types";
+import type {d3Selection} from "../../../types/types";
 
 export default class AxisRendererHelper {
 	private owner;

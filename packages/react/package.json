@@ -1,0 +1,75 @@
+{
+	"name": "@billboard.js/react",
+	"version": "1.0.0",
+	"description": "React component for billboard.js",
+	"main": "dist/billboardjs-react.js",
+	"types": "dist/types/index.d.ts",
+	"type": "module",
+	"exports": {
+		".": {
+			"import": "./dist/billboardjs-react.js",
+			"require": "./dist/billboardjs-react.cjs"
+		}
+	},
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build && tsc --emitDeclarationOnly",
+		"build:test": "vite --config vite.config.test.ts build",
+		"preview": "npm run build:test && vite preview",
+		"test": "npm run build:test && vitest",
+		"test:ui": "npm test -- --ui",
+		"coverage": "npm run build:test && vitest run --coverage",
+		"storybook": "start-storybook -p 6006",
+		"build-storybook": "build-storybook",
+		"deploy": "npm run coverage && npm run build"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/naver/billboard.js/tree/master/packages/react"
+	},
+	"keywords": [
+		"billboard.js",
+		"chart",
+		"graph",
+		"react",
+		"svg"
+	],
+	"files": [
+		"dist",
+		"src",
+		"README.md"
+	],
+	"author": "NAVER Corp.",
+	"license": "MIT",
+	"readmeFilename": "README.md",
+	"peerDependencies": {
+		"billboard.js": ">=3.0.0",
+		"react": ">=16.8.0"
+	},
+	"devDependencies": {
+		"@babel/core": "^7.18.10",
+		"@playwright/test": "^1.25.1",
+		"@storybook/addon-actions": "^6.5.10",
+		"@storybook/addon-console": "^1.2.3",
+		"@storybook/addon-essentials": "^6.5.10",
+		"@storybook/addon-interactions": "^6.5.10",
+		"@storybook/addon-links": "^6.5.10",
+		"@storybook/builder-vite": "^0.2.2",
+		"@storybook/react": "^6.5.10",
+		"@storybook/testing-library": "^0.0.13",
+		"@types/react": "^18.0.17",
+		"@types/react-dom": "^18.0.6",
+		"@vitejs/plugin-react": "^2.0.1",
+		"@vitest/coverage-c8": "^0.22.1",
+		"@vitest/ui": "^0.22.1",
+		"babel-loader": "^8.2.5",
+		"billboard.js": "^3.5.1",
+		"jsdom": "^20.0.0",
+		"playwright": "^1.25.1",
+		"react": "^18.2.0",
+		"react-dom": "^18.2.0",
+		"typescript": "^4.6.4",
+		"vite": "^3.0.7",
+		"vitest": "^0.22.1"
+	}
+}

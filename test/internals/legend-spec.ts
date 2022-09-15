@@ -441,7 +441,7 @@ describe("LEGEND", () => {
 			expect(chart.internal.getCurrentHeight()).to.be.equal(newSize.height);
 		});
 
-		it("set options data.type='pie'", () => {
+		it("set options: data.type='pie'", () => {
 			args.data.type = "pie";
 		});
 
@@ -458,6 +458,30 @@ describe("LEGEND", () => {
 			transform1.forEach((v, i) => {
 				expect(v).to.be.above(transform2[i]);
 			});
+		});
+
+		it("shoudn't throw error when contents.template isn't specified.", () => {
+			expect(
+				chart = util.generate({
+					data: {
+					columns: [
+						["data1", 120]
+					],
+					type: "line", // for ESM specify as: line()
+					},
+					legend: {
+						contents: {
+							bindto: "#legend"
+						}
+					}
+				})
+			).to.not.throw;
+
+			const template = chart.internal.config.legend_contents_template;
+
+			expect(template).to.be.equal(
+				"<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>"
+			);
 		});
 	});
 
@@ -532,7 +556,7 @@ describe("LEGEND", () => {
 
 		// espacially for gauges with multiple arcs to have the same coloring between legend tiles, tooltip tiles and arc
 		it('selects the color from color_pattern if color_treshold is given', function () {
-			const tileColor = [];
+			const tileColor: string[] = [];
 
 			chart.internal.$el.svg.selectAll(`.${$LEGEND.legendItemTile}`).each(function () {
 				tileColor.push(d3Select(this).style('stroke'));
@@ -590,7 +614,7 @@ describe("LEGEND", () => {
 		});
 
 		it("selects the color from data_colors, data_color or default", function() {
-			const tileColor = [];
+			const tileColor: string[] = [];
 
 			chart.internal.$el.svg.selectAll(`.${$LEGEND.legendItemTile}`)
 				.each(function() {
@@ -670,7 +694,7 @@ describe("LEGEND", () => {
 			});
 
 			let cnt = 0
-			const pos = [];
+			const pos: string[] = [];
 			const interval = setInterval(() => {
 				if (cnt >= 5) {
 					clearInterval(interval);

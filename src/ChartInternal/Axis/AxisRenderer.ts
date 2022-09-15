@@ -4,7 +4,7 @@
  * @ignore
  */
 import {select as d3Select} from "d3-selection";
-import {d3Selection} from "../../../types/types";
+import type {d3Selection} from "../../../types/types";
 import Helper from "./AxisRendererHelper";
 import {isArray, toArray, isFunction, isString, isNumber} from "../../module/util";
 
@@ -239,11 +239,11 @@ export default class AxisRenderer {
 	 * @private
 	 */
 	getGeneratedTicks(count: number): (Date|number)[] {
-		const len = this.generatedTicks.length - 1;
+		const len = this.generatedTicks?.length - 1;
 		let res = this.generatedTicks;
 
 		if (len > count) {
-			const interval = Math.round((len / count) - 0.1);
+			const interval = Math.round((len / count) + 0.1);
 
 			res = this.generatedTicks
 				.map((v, i) => (i % interval === 0 ? v : null))

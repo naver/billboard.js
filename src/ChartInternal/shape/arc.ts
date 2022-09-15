@@ -11,8 +11,8 @@ import {interpolate as d3Interpolate} from "d3-interpolate";
 import {document} from "../../module/browser";
 import {$ARC, $COMMON, $FOCUS, $GAUGE} from "../../config/classes";
 import {callFn, endall, isFunction, isNumber, isObject, isUndefined, setTextValue} from "../../module/util";
-import {d3Selection} from "../../../types/types";
-import {IArcData, IData} from "../data/IData";
+import type {d3Selection} from "../../../types/types";
+import type {IArcData, IData} from "../data/IData";
 
 export default {
 	initPie(): void {
@@ -45,7 +45,7 @@ export default {
 
 		// determine radius
 		state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * (
-			$$.hasMultiArcGauge() ? 0.85 : 1
+			$$.hasMultiArcGauge() && config.gauge_label_show ? 0.85 : 1
 		);
 
 		state.radius = state.radiusExpanded * 0.95;
@@ -515,7 +515,8 @@ export default {
 			.attr("class", d => classChartArc(d) + classFocus(d.data));
 
 		const mainPieEnter = mainPieUpdate.enter().append("g")
-			.attr("class", classChartArc);
+			.attr("class", classChartArc)
+			.call(this.setCssRule(false, `.${$ARC.chartArcs} text`, ["pointer-events:none", "text-anchor:middle"]));
 
 		mainPieEnter.append("g")
 			.attr("class", classArcs)
@@ -524,8 +525,8 @@ export default {
 		mainPieEnter.append("text")
 			.attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em")
 			.style("opacity", "0")
-			.style("text-anchor", "middle")
-			.style("pointer-events", "none");
+			.style("text-anchor", $$.getStylePropValue("middle"))
+			.style("pointer-events", $$.getStylePropValue("none"));
 
 		$el.text = chartArcs.selectAll(`.${$COMMON.target} text`);
 		// MEMO: can not keep same color..., but not bad to update color in redraw

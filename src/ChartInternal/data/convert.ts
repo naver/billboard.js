@@ -2,9 +2,10 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {runWorker, isUndefined, isDefined, isObject, isValue, notEmpty, isArray} from "../../module/util";
+import {isUndefined, isDefined, isObject, isValue, notEmpty, isArray} from "../../module/util";
+import {runWorker} from "../../module/worker";
 import {columns, json, rows, url} from "./convert.helper";
-import {IData} from "../data/IData";
+import type {IData} from "../data/IData";
 
 /**
  * Get data key for JSON
@@ -198,7 +199,7 @@ export default {
 			t.values.forEach((v, i) => (v.index = i));
 
 			// this needs to be sorted because its index and value.index is identical
-			$$.data.xs[t.id].sort((v1, v2) => v1 - v2);
+			$$.data.xs[t.id]?.sort((v1, v2) => v1 - v2);
 		});
 
 		// cache information about values

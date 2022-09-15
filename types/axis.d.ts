@@ -180,6 +180,21 @@ export interface yAxisConfiguration extends yAxisConfigurationBase {
 	 * Set clip-path attribute for y axis element.
 	 */
 	clipPath?: boolean;
+
+	/**
+	 * Set type of y axis.<br><br>
+	 * **Available Values:**
+	 *  - indexed
+	 *  - log
+	 *  - timeseries
+	 *
+	 * **NOTE:**
+	 * - **log** type:
+	 *   - the bound data values must be exclusively-positive.
+	 *   - y axis min value should be >= 0.
+	 *   - `data.groups`(stacked data) option aren't supported.
+	 */
+	type?: "indexed" | "log" | "timeseries";
 }
 
 export interface XTickConfiguration {
@@ -192,7 +207,7 @@ export interface XTickConfiguration {
 	 * A function to format tick value. Format string is also available for timeseries data.
 	 */
 	format?: string
-		| ((this: Chart, x: number | Date) => string | number)
+		| ((this: Chart, x: Date) => string | number)
 		| ((this: Chart, index: number, categoryName: string) => string);
 
 	/**
@@ -305,7 +320,7 @@ export interface XTickConfiguration {
 	 *   - axis min value should be >= 0.
 	 *   - `data.groups`(stacked data) option aren't supported.
 	 */
-	type?: "indexed" | "log" | "timeseries";
+	type?: "category" | "indexed" | "log" | "timeseries";
 }
 
 export interface YTickConfiguration {
@@ -337,7 +352,7 @@ export interface YTickConfiguration {
 	 * Set formatter for y axis tick text.
 	 * This option accepts d3.format object as well as a function you define.
 	 */
-	format?(this: Chart, x: number): string;
+	format?: (this: Chart, x: number | Date) => string | number;
 
 	/**
 	 * Setting for culling ticks.

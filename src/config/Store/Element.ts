@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {d3Selection} from "../../../types/types";
+import type {d3Selection} from "../../../types/types";
 
 type T = d3Selection | null;
 

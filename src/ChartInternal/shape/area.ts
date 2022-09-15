@@ -6,7 +6,7 @@ import {area as d3Area} from "d3-shape";
 import {select as d3Select} from "d3-selection";
 import {$AREA, $CIRCLE, $LINE} from "../../config/classes";
 import {getRandom, isFunction} from "../../module/util";
-import {IData, IDataRow} from "../data/IData";
+import type {IData, IDataRow} from "../data/IData";
 import {d3Selection} from "../../../types";
 
 type Indices = {[key: string | "__max__"]: number};
@@ -202,11 +202,12 @@ export default {
 			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
 			const offset = areaOffset(d, i) || y0; // offset is for stacked area chart
 			const posX = x(d);
+			const value = d.value as number;
 			let posY = y(d);
 
 			// fix posY not to overflow opposite quadrant
 			if (config.axis_rotated && (
-				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+				(value > 0 && posY < y0) || (value < 0 && y0 < posY)
 			)) {
 				posY = y0;
 			}

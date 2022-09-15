@@ -9,8 +9,8 @@ import {
 import {KEY} from "../../module/Cache";
 import {$COMMON, $TEXT} from "../../config/classes";
 import {capitalize, getBoundingRect, getRandom, isFunction, isNumber, isObject, isString, getTranslation, setTextValue} from "../../module/util";
-import {IDataRow, IArcData} from "../data/IData";
-import {AxisType} from "../../../types/types";
+import type {IDataRow, IArcData} from "../data/IData";
+import type {AxisType} from "../../../types/types";
 
 type Coord = {x: number, y: number};
 type Anchor = "start" | "middle" | "end";
@@ -127,8 +127,7 @@ export default {
 		const mainTextEnter = mainTextUpdate.enter().append("g")
 			.style("opacity", "0")
 			.attr("class", classChartText)
-			.call($$.setColorByRule($$.updateTextColor, $TEXT.text, ["fill"]))
-			.style("pointer-events", "none");
+			.call($$.setCssRule(true, ` .${$TEXT.text}`, ["fill", "pointer-events:none"], $$.updateTextColor));
 
 		mainTextEnter.append("g")
 			.attr("class", classTexts);
@@ -167,7 +166,7 @@ export default {
 
 				return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
 			})
-			.style("fill", $$.colorTextByRule)
+			.style("fill", $$.getStylePropValue($$.updateTextColor))
 			.style("fill-opacity", "0")
 			.each(function(d, i, texts) {
 				const node = d3Select(this);
@@ -267,7 +266,7 @@ export default {
 		const rotateString = angle ? `rotate(${angle})` : "";
 
 		$$.$el.text
-			.style("fill", $$.colorTextByRule)
+			.style("fill", $$.getStylePropValue($$.updateTextColor))
 			.attr("filter", $$.updateTextBacgroundColor.bind($$))
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
 			.each(function(d: IDataRow, i: number) {
