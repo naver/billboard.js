@@ -44,7 +44,7 @@ import text from "./internals/text";
 import title from "./internals/title";
 import tooltip from "./internals/tooltip";
 import transform from "./internals/transform";
-import type from "./internals/type";
+import typeInternals from "./internals/type";
 
 /**
  * Internal chart class.
@@ -807,5 +807,5 @@ extend(ChartInternal.prototype, [
 	title,
 	tooltip,
 	transform,
-	type
+	typeInternals
 ]);
