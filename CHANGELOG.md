@@ -1,3 +1,26 @@
+# [3.6.0-next.1](https://github.com/naver/billboard.js/compare/3.5.1...3.6.0-next.1) (2022-09-15)
+
+
+### Bug Fixes
+
+* **area:** Fix unnecessary area element generation ([d43a1a7](https://github.com/naver/billboard.js/commit/d43a1a78d487d2a2b32091db677de34e5c9a99ff)), closes [#2826](https://github.com/naver/billboard.js/issues/2826)
+* **axis:** fix undefined error reading generatedTicks ([4f3c101](https://github.com/naver/billboard.js/commit/4f3c10174f2e9e3ba5ea3567c548dbbba35b3340)), closes [#2786](https://github.com/naver/billboard.js/issues/2786)
+* **data:** Fix idConverter error ([98f7103](https://github.com/naver/billboard.js/commit/98f71034e6be01933dc5a41b04e87e9010e9a6de)), closes [#2808](https://github.com/naver/billboard.js/issues/2808)
+* **gauge:** Fix size mismatch w/o gauge multi label text is hidden ([6ee8a1e](https://github.com/naver/billboard.js/commit/6ee8a1edcdf57882954bf43e12217a73c2b92d56)), closes [#2799](https://github.com/naver/billboard.js/issues/2799)
+* **grid:** Remove grid.y.ticks default value ([4818e44](https://github.com/naver/billboard.js/commit/4818e44f373f97f90eea6751d793629201619229)), closes [#2809](https://github.com/naver/billboard.js/issues/2809)
+* **legend:** Add default for legend.contents.template ([55fbb02](https://github.com/naver/billboard.js/commit/55fbb0217d1cd6c147b7ef28f0809e71619e3bde)), closes [#2780](https://github.com/naver/billboard.js/issues/2780)
+* **type:** Add missing polar module export ([a950abd](https://github.com/naver/billboard.js/commit/a950abdfcfc0ad78f04baa35c5f5026a8d0649d1)), closes [#2833](https://github.com/naver/billboard.js/issues/2833)
+* **typescript:** update entry point in tsconfig ([ab4d98d](https://github.com/naver/billboard.js/commit/ab4d98d3fa50b998c71c3444e2a886574550c666)), closes [#2855](https://github.com/naver/billboard.js/issues/2855)
+* **types:** Fix the type declarations for the y tick format ([1d378e0](https://github.com/naver/billboard.js/commit/1d378e05af25e33d6d50d92dea51db7fd6b411d7)), closes [#2790](https://github.com/naver/billboard.js/issues/2790)
+
+
+### Features
+
+* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
+* **options:** Intent to ship data.groupsZeroAs ([3de8e7a](https://github.com/naver/billboard.js/commit/3de8e7a6e1dd799fdf7f51e793d21df1124cdc0a)), closes [#2813](https://github.com/naver/billboard.js/issues/2813)
+* **packages:** Intent to ship React wrapper ([4cef6ad](https://github.com/naver/billboard.js/commit/4cef6adac03deb79040f28addf0489badfd217c8)), closes [#2838](https://github.com/naver/billboard.js/issues/2838)
+* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
+
 ## [3.5.1](https://github.com/naver/billboard.js/compare/3.5.0...3.5.1) (2022-07-14)
 
 
