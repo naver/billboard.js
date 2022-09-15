@@ -12,7 +12,7 @@
 		]
 	},
 	"include": [
-		"src/**/*.ts"
+		"src/**/index*.ts",
 	],
 	"exclude": [
 		"test/**/*.ts"
