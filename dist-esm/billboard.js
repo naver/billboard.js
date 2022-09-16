@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220910004723
+ * @version 3.5.1-nightly-20220916004750
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -8383,7 +8383,7 @@ var transform = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-var type = {
+var typeInternals = {
     setTargetType: function (targetIds, type) {
         var $$ = this;
         var config = $$.config, withoutFadeIn = $$.state.withoutFadeIn;
@@ -9079,14 +9079,14 @@ var ChartInternal = /** @class */ (function () {
             // Arc, Polar, Radar
         }
         else if ($$.hasArcType(targets)) {
-            var type_1 = "Arc";
+            var type = "Arc";
             if (hasRadar) {
-                type_1 = "Radar";
+                type = "Radar";
             }
             else if ($$.hasType("polar")) {
-                type_1 = "Polar";
+                type = "Polar";
             }
-            helper(type_1);
+            helper(type);
         }
         // Point types
         var hasPointType = $$.hasType("bubble") || $$.hasType("scatter");
@@ -9214,7 +9214,7 @@ extend(ChartInternal.prototype, [
     title,
     tooltip$1,
     transform,
-    type
+    typeInternals
 ]);
 
 /**
@@ -21227,7 +21227,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220910004723
+ * @version 3.5.1-nightly-20220916004750
  */
 var bb = {
     /**
@@ -21237,7 +21237,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220910004723",
+    version: "3.5.1-nightly-20220916004750",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220910004723
+ * @version 3.5.1-nightly-20220916004750
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -11505,15 +11505,15 @@ var ChartInternal = /*#__PURE__*/function () {
 
       $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets); // Arc, Polar, Radar
     } else if ($$.hasArcType(targets)) {
-      var _type = "Arc";
+      var type = "Arc";
 
       if (hasRadar) {
-        _type = "Radar";
+        type = "Radar";
       } else if ($$.hasType("polar")) {
-        _type = "Polar";
+        type = "Polar";
       }
 
-      helper(_type);
+      helper(type);
     } // Point types
 
 
@@ -25965,7 +25965,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220910004723",
+  version: "3.5.1-nightly-20220916004750",
 
   /**
    * Generate chart
@@ -26100,7 +26100,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220910004723
+ * @version 3.5.1-nightly-20220916004750
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
