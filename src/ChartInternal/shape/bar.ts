@@ -6,6 +6,7 @@ import type {DataRow} from "../../../types/types";
 import {$BAR, $COMMON} from "../../config/classes";
 import {getRandom, isNumber} from "../../module/util";
 import type {IDataRow} from "../data/IData";
+import type {IOffset} from "./shape";
 
 type BarTypeDataRow = DataRow<number | number[]>;
 
@@ -234,7 +235,7 @@ export default {
 		const {config} = $$;
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
 		const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
-		const barW = $$.getBarW("bar", axis, barTargetsNum);
+		const barW: IOffset = $$.getBarW("bar", axis, barTargetsNum);
 		const barX = $$.getShapeX(barW, barIndices, !!isSub);
 		const barY = $$.getShapeY(!!isSub);
 		const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);

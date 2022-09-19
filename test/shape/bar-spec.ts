@@ -876,6 +876,49 @@ describe("SHAPE BAR", () => {
 		})
 	});
 
+	describe("bar overlap", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 80, 150, 100],
+						["data2", 100, 120, 130],
+						["data3", 150, 80, 120]
+					],
+					type: "bar"
+				},
+				bar: {
+					width: {
+						data1: 60,
+						data2: 40,
+						data3: 20
+					},
+					overlap: true
+				}
+			};
+		});
+
+		it("bars should positioned at the center of each x Axis ticks.", () => {
+			const {x} = chart.internal.scale;
+			const {bars} = chart.$.bar;
+			const dataNames = chart.data().map(v => v.id);
+			const {width} = args.bar;
+			const ticks = dataNames.map((v, i) => x(i));
+			const re = /^M(\d+)/;
+
+			dataNames.forEach(id => {
+				const bar = bars.filter(d => d.id === id).nodes();
+
+				ticks.forEach((t, i) => {
+					const xPos = +bar[i].getAttribute("d").match(re)?.[1] ?? 0;
+					const expectedX = t - width[id] / 2;
+
+					expect(xPos).to.be.closeTo(expectedX, 1);
+				});
+			});
+		});
+	});
+
 	describe("bar position", () => {
 		before(() => {
 			args = {
