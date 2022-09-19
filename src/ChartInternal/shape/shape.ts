@@ -28,6 +28,11 @@ import CLASS from "../../config/classes";
 import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
 import type {IDataRow, IDataIndice, TIndices} from "../data/IData";
 
+export interface IOffset {
+	_$width: number;
+	_$total: number[]
+}
+
 export default {
 	/**
 	 * Get the shape draw function
@@ -35,7 +40,7 @@ export default {
 	 * @private
 	 */
 	getDrawShape() {
-		type SHAPE = {
+		type TShape = {
 			area?: any;
 			bar?: any;
 			line?: any;
@@ -44,7 +49,7 @@ export default {
 		const $$ = this;
 		const isRotated = $$.config.axis_rotated;
 		const {hasRadar} = $$.state;
-		const shape = {type: <SHAPE> {}, indices: <SHAPE> {}, pos: {}};
+		const shape = {type: <TShape>{}, indices: <TShape>{}, pos: {}};
 
 		["bar", "candlestick", "line", "area"].forEach(v => {
 			const name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
@@ -176,12 +181,15 @@ export default {
 				.reduce((acc, curr) => acc + curr) : (indices as IDataIndice).__max__;
 	},
 
-	getShapeX(offset, indices, isSub?: boolean): (d) => number {
+	getShapeX(offset: IOffset, indices, isSub?: boolean): (d) => number {
 		const $$ = this;
 		const {config, scale} = $$;
 		const currScale = isSub ? scale.subX : (scale.zoom || scale.x);
+		const barOverlap = config.bar_overlap;
 		const barPadding = config.bar_padding;
 		const sum = (p, c) => p + c;
+
+		// total shapes half width
 		const halfWidth = isObjectType(offset) && (
 			offset._$total.length ? offset._$total.reduce(sum) / 2 : 0
 		);
@@ -196,15 +204,20 @@ export default {
 				const xPos = currScale(d.x, true);
 
 				if (halfWidth) {
-					x = xPos - (offset[d.id] || offset._$width) +
-						offset._$total.slice(0, index + 1).reduce(sum) -
-						halfWidth;
+					const offsetWidth = offset[d.id] || offset._$width;
+
+					x = barOverlap ?
+						xPos - offsetWidth / 2 :
+						xPos - offsetWidth + offset._$total.slice(0, index + 1).reduce(sum) - halfWidth;
 				} else {
-					x = xPos - (isNumber(offset) ? offset : offset._$width) * (targetsNum / 2 - index);
+					x = xPos - (isNumber(offset) ? offset : offset._$width) *
+						(targetsNum / 2 - (
+							barOverlap ? 1 : index
+						));
 				}
 			}
 
-			// adjust x position for bar.padding optionq
+			// adjust x position for bar.padding option
 			if (offset && x && targetsNum > 1 && barPadding) {
 				if (index) {
 					x += barPadding * index;
@@ -353,7 +366,7 @@ export default {
 		};
 	},
 
-	getBarW(type, axis, targetsNum: number): number {
+	getBarW(type, axis, targetsNum: number): number | IOffset {
 		const $$ = this;
 		const {config, org, scale} = $$;
 		const maxDataCount = $$.getMaxDataCount();
