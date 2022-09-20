@@ -5,8 +5,9 @@
 import {select as d3Select} from "d3-selection";
 import {$CANDLESTICK, $COMMON} from "../../config/classes";
 import {getRandom, isArray, isNumber, isObject} from "../../module/util";
+import type {IOffset} from "./shape";
 
-type CandlestickData = {
+interface ICandlestickData {
 	open: number;
 	high: number;
 	low: number;
@@ -160,7 +161,7 @@ export default {
 
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
 		const targetsNum = $$.getIndicesMax(indices) + 1;
-		const barW = $$.getBarW("candlestick", axis, targetsNum);
+		const barW: IOffset = $$.getBarW("candlestick", axis, targetsNum);
 		const x = $$.getShapeX(barW, indices, !!isSub);
 		const y = $$.getShapeY(!!isSub);
 		const shapeOffset = $$.getShapeOffset($$.isBarType, indices, !!isSub);
@@ -244,7 +245,7 @@ export default {
 	 * @returns {object|null} Converted data object
 	 * @private
 	 */
-	getCandlestickData({value}): CandlestickData | null {
+	getCandlestickData({value}): ICandlestickData | null {
 		let d;
 
 		if (isArray(value)) {

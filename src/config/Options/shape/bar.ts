@@ -14,6 +14,7 @@ export default {
 	 * @property {object} bar Bar object
 	 * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
 	 * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
+	 * @property {boolean} [bar.overlap=false] Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
 	 * @property {number} [bar.padding=0] The padding pixel value between each bar.
 	 * @property {number} [bar.radius] Set the radius of bar edge in pixel.
 	 * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
@@ -29,6 +30,7 @@ export default {
 	 * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
 	 * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
 	 * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
+	 * @see [Demo: bar overlap](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarOverlap)
 	 * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
 	 * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
 	 * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
@@ -39,6 +41,9 @@ export default {
 	 *      indices: {
 	 *          removeNull: true
 	 *      },
+	 *
+	 *      // remove nullish da
+	 *      overlap: true,
 	 *
 	 *      padding: 1,
 	 *
@@ -80,6 +85,7 @@ export default {
 	 */
 	bar_label_threshold: 0,
 	bar_indices_removeNull: false,
+	bar_overlap: false,
 	bar_padding: 0,
 	bar_radius: <number|{ratio: number}|undefined> undefined,
 	bar_radius_ratio: <number|undefined> undefined,
