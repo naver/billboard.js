@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220916004750
+ * @version 3.5.1-nightly-20220920004934
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8546,6 +8546,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         config = $$.config,
         scale = $$.scale,
         currScale = isSub ? scale.subX : scale.zoom || scale.x,
+        barOverlap = config.bar_overlap,
         barPadding = config.bar_padding,
         sum = function (p, c) {
       _newArrowCheck(this, _this5);
@@ -8566,11 +8567,12 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         var xPos = currScale(d.x, !0);
 
         if (halfWidth) {
-          x = xPos - (offset[d.id] || offset._$width) + offset._$total.slice(0, index + 1).reduce(sum) - halfWidth;
+          var offsetWidth = offset[d.id] || offset._$width;
+          x = barOverlap ? xPos - offsetWidth / 2 : xPos - offsetWidth + offset._$total.slice(0, index + 1).reduce(sum) - halfWidth;
         } else {
-          x = xPos - (isNumber(offset) ? offset : offset._$width) * (targetsNum / 2 - index);
+          x = xPos - (isNumber(offset) ? offset : offset._$width) * (targetsNum / 2 - (barOverlap ? 1 : index));
         }
-      } // adjust x position for bar.padding optionq
+      } // adjust x position for bar.padding option
 
 
       if (offset && x && targetsNum > 1 && barPadding) {
@@ -22917,6 +22919,7 @@ var cacheKey = KEY.radarPoints;
    * @property {object} bar Bar object
    * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
    * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
+   * @property {boolean} [bar.overlap=false] Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
    * @property {number} [bar.padding=0] The padding pixel value between each bar.
    * @property {number} [bar.radius] Set the radius of bar edge in pixel.
    * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
@@ -22932,6 +22935,7 @@ var cacheKey = KEY.radarPoints;
    * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
    * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
    * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
+   * @see [Demo: bar overlap](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarOverlap)
    * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
    * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
    * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
@@ -22942,6 +22946,9 @@ var cacheKey = KEY.radarPoints;
    *      indices: {
    *          removeNull: true
    *      },
+   *
+   *      // remove nullish da
+   *      overlap: true,
    *
    *      padding: 1,
    *
@@ -22983,6 +22990,7 @@ var cacheKey = KEY.radarPoints;
    */
   bar_label_threshold: 0,
   bar_indices_removeNull: !1,
+  bar_overlap: !1,
   bar_padding: 0,
   bar_radius: undefined,
   bar_radius_ratio: undefined,
@@ -25965,7 +25973,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220916004750",
+  version: "3.5.1-nightly-20220920004934",
 
   /**
    * Generate chart
@@ -26100,7 +26108,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220916004750
+ * @version 3.5.1-nightly-20220920004934
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

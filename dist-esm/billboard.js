@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220916004750
+ * @version 3.5.1-nightly-20220920004934
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -6665,8 +6665,10 @@ var shape = {
         var $$ = this;
         var config = $$.config, scale = $$.scale;
         var currScale = isSub ? scale.subX : (scale.zoom || scale.x);
+        var barOverlap = config.bar_overlap;
         var barPadding = config.bar_padding;
         var sum = function (p, c) { return p + c; };
+        // total shapes half width
         var halfWidth = isObjectType(offset) && (offset._$total.length ? offset._$total.reduce(sum) / 2 : 0);
         return function (d) {
             var ind = $$.getIndices(indices, d, "getShapeX");
@@ -6676,15 +6678,17 @@ var shape = {
             if (notEmpty(d.x)) {
                 var xPos = currScale(d.x, true);
                 if (halfWidth) {
-                    x = xPos - (offset[d.id] || offset._$width) +
-                        offset._$total.slice(0, index + 1).reduce(sum) -
-                        halfWidth;
+                    var offsetWidth = offset[d.id] || offset._$width;
+                    x = barOverlap ?
+                        xPos - offsetWidth / 2 :
+                        xPos - offsetWidth + offset._$total.slice(0, index + 1).reduce(sum) - halfWidth;
                 }
                 else {
-                    x = xPos - (isNumber(offset) ? offset : offset._$width) * (targetsNum / 2 - index);
+                    x = xPos - (isNumber(offset) ? offset : offset._$width) *
+                        (targetsNum / 2 - (barOverlap ? 1 : index));
                 }
             }
-            // adjust x position for bar.padding optionq
+            // adjust x position for bar.padding option
             if (offset && x && targetsNum > 1 && barPadding) {
                 if (index) {
                     x += barPadding * index;
@@ -18758,6 +18762,7 @@ var optBar = {
      * @property {object} bar Bar object
      * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
      * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
+     * @property {boolean} [bar.overlap=false] Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
      * @property {number} [bar.padding=0] The padding pixel value between each bar.
      * @property {number} [bar.radius] Set the radius of bar edge in pixel.
      * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
@@ -18773,6 +18778,7 @@ var optBar = {
      * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
      * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
      * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
+     * @see [Demo: bar overlap](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarOverlap)
      * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
      * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
      * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
@@ -18783,6 +18789,9 @@ var optBar = {
      *      indices: {
      *          removeNull: true
      *      },
+     *
+     *      // remove nullish da
+     *      overlap: true,
      *
      *      padding: 1,
      *
@@ -18824,6 +18833,7 @@ var optBar = {
      */
     bar_label_threshold: 0,
     bar_indices_removeNull: false,
+    bar_overlap: false,
     bar_padding: 0,
     bar_radius: undefined,
     bar_radius_ratio: undefined,
@@ -21227,7 +21237,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220916004750
+ * @version 3.5.1-nightly-20220920004934
  */
 var bb = {
     /**
@@ -21237,7 +21247,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220916004750",
+    version: "3.5.1-nightly-20220920004934",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
