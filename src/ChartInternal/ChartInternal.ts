@@ -468,8 +468,9 @@ export default class ChartInternal {
 		}
 
 		// Define g for chart area
-		main.append("g").attr("class", $COMMON.chart)
-			.attr("clip-path", state.clip.path);
+		main.append("g")
+			.classed($COMMON.chart, true)
+			.attr("clip-path", hasAxis ? state.clip.path : null);
 
 		$$.callPluginHook("$init");
 
