@@ -515,11 +515,13 @@ export interface Chart {
 
 	/**
 	 * Get or set single config option value.
+	 * - **NOTE:**
+	 *   - without parameter, will return all specified generation options object only. (will exclude any other options not specified at the initialization)
 	 * @param optionName The option key name.
 	 * @param value The value accepted for indicated option.
 	 * @param redraw Set to redraw with the new option changes. (NOTE: Doesn't guarantee work in all circumstances. It can be applied for limited options only)
 	 */
-	config(optionName: string, value?: any, redraw?: boolean): any;
+	config(optionName?: string, value?: any, redraw?: boolean): any;
 }
 
 export interface GridOperations {

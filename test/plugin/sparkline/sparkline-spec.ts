@@ -96,7 +96,7 @@ describe("PLUGIN: SPARKLINE", () => {
 
 	it("check for the dimension & tooltip", () => {
 		const last = document.querySelectorAll(selector)[2];
-		const {width, height} = last.querySelector(`.${$AREA.areas} path`).getBoundingClientRect();
+		const {width, height} = last.querySelector(`.${$AREA.areas} path`)?.getBoundingClientRect() ?? {width:0, height: 0};
 
 		// chart element should occupy the whole dimension of given size
 		expect({width, height}).to.be.deep.equal(args.size);

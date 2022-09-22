@@ -116,7 +116,7 @@ describe("API chart", () => {
 
 			expect(bb.instance.indexOf(chart) === -1).to.be.true;
 
-			const el = document.getElementById("chart");
+			const el = <HTMLDivElement>document.getElementById("chart");
 
 			// should revert removing className and styles
 			expect(el.classList.contains("bb")).to.be.false;
@@ -221,7 +221,7 @@ describe("API chart", () => {
 
 		it("check for the axis config update", () => {
 			const axisYTick = chart.$.main.selectAll(`.${$AXIS.axisY} .tick`);
-			const expected = [];
+			const expected: {[key: string]: number}[] = [];
 
 			// axis y tick is outer
 			axisYTick.each(function() {
@@ -252,6 +252,10 @@ describe("API chart", () => {
 				expect(text.style.textAnchor).to.be.equal("start");
 				expect(+tspan.getAttribute("x")).to.be.equal(Math.abs(expected[i].tspan));
 			});
+		});
+
+		it("should return generation options object.", () => {
+			expect(args).to.be.deep.equal(chart.config());
 		});
 	});
 });
