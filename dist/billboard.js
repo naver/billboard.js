@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220920004934
+ * @version 3.5.1-nightly-20220922004742
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1771,6 +1771,8 @@ var State = function () {
     hasNegativeValue: !1,
     hasPositiveValue: !0,
     orgAreaOpacity: "0.2",
+    orgConfig: {},
+    // user original genration config
     // ID strings
     hiddenTargetIds: [],
     hiddenLegendIds: [],
@@ -11312,7 +11314,7 @@ var ChartInternal = /*#__PURE__*/function () {
     } // Define g for chart area
 
 
-    main.append("g").attr("class", $COMMON.chart).attr("clip-path", state.clip.path);
+    main.append("g").classed($COMMON.chart, !0).attr("clip-path", hasAxis ? state.clip.path : null);
     $$.callPluginHook("$init");
 
     if (hasAxis) {
@@ -11718,7 +11720,11 @@ function loadConfig(config) {
     if (isDefined(read)) {
       thisConfig[key] = read;
     }
-  }.bind(this));
+  }.bind(this)); // only should run in the ChartInternal context
+
+  if (this.api) {
+    this.state.orgConfig = config;
+  }
 }
 ;// CONCATENATED MODULE: ./src/Chart/api/chart.ts
 
@@ -11871,7 +11877,9 @@ function loadConfig(config) {
   },
 
   /**
-   * Get or set single config option value.
+   * Get or set config option value.
+   * - **NOTE:** for without parameter occasion
+   * 	- will return all specified generation options object only. (will exclude any other options not specified at the initialization)
    * @function config
    * @instance
    * @memberof Chart
@@ -11881,8 +11889,12 @@ function loadConfig(config) {
    * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
    * @returns {*}
    * @example
+   *
    * // Getter
    * chart.config("gauge.max");
+   *
+   * // without any arguments, it returns generation config object
+   * chart.config();  // {data: { ... }, axis: { ... }, ...}
    *
    * // Setter
    * chart.config("gauge.max", 100);
@@ -11893,10 +11905,11 @@ function loadConfig(config) {
   config: function (name, value, redraw) {
     var $$ = this.internal,
         config = $$.config,
+        state = $$.state,
         key = name == null ? void 0 : name.replace(/\./g, "_"),
         res;
 
-    if (key in config) {
+    if (name && key in config) {
       if (isDefined(value)) {
         config[key] = value;
         res = value;
@@ -11904,6 +11917,8 @@ function loadConfig(config) {
       } else {
         res = config[key];
       }
+    } else {
+      res = state.orgConfig;
     }
 
     return res;
@@ -25973,7 +25988,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220920004934",
+  version: "3.5.1-nightly-20220922004742",
 
   /**
    * Generate chart
@@ -26108,7 +26123,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220920004934
+ * @version 3.5.1-nightly-20220922004742
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

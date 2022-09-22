@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220920004934
+ * @version 3.5.1-nightly-20220922004742
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1210,6 +1210,7 @@ var State = /** @class */ (function () {
             hasNegativeValue: false,
             hasPositiveValue: true,
             orgAreaOpacity: "0.2",
+            orgConfig: {},
             // ID strings
             hiddenTargetIds: [],
             hiddenLegendIds: [],
@@ -8937,8 +8938,9 @@ var ChartInternal = /** @class */ (function () {
             !config.clipPath && $$.axis.init();
         }
         // Define g for chart area
-        main.append("g").attr("class", $COMMON.chart)
-            .attr("clip-path", state.clip.path);
+        main.append("g")
+            .classed($COMMON.chart, true)
+            .attr("clip-path", hasAxis ? state.clip.path : null);
         $$.callPluginHook("$init");
         if (hasAxis) {
             // Cover whole with rects for events
@@ -9254,6 +9256,10 @@ function loadConfig(config) {
             thisConfig[key] = read;
         }
     });
+    // only should run in the ChartInternal context
+    if (this.api) {
+        this.state.orgConfig = config;
+    }
 }
 
 /**
@@ -9382,7 +9388,9 @@ var apiChart = {
         return null;
     },
     /**
-     * Get or set single config option value.
+     * Get or set config option value.
+     * - **NOTE:** for without parameter occasion
+     * 	- will return all specified generation options object only. (will exclude any other options not specified at the initialization)
      * @function config
      * @instance
      * @memberof Chart
@@ -9392,8 +9400,12 @@ var apiChart = {
      * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
      * @returns {*}
      * @example
+     *
      * // Getter
      * chart.config("gauge.max");
+     *
+     * // without any arguments, it returns generation config object
+     * chart.config();  // {data: { ... }, axis: { ... }, ...}
      *
      * // Setter
      * chart.config("gauge.max", 100);
@@ -9403,10 +9415,10 @@ var apiChart = {
      */
     config: function (name, value, redraw) {
         var $$ = this.internal;
-        var config = $$.config;
+        var config = $$.config, state = $$.state;
         var key = name === null || name === void 0 ? void 0 : name.replace(/\./g, "_");
         var res;
-        if (key in config) {
+        if (name && key in config) {
             if (isDefined(value)) {
                 config[key] = value;
                 res = value;
@@ -9415,6 +9427,9 @@ var apiChart = {
             else {
                 res = config[key];
             }
+        }
+        else {
+            res = state.orgConfig;
         }
         return res;
     }
@@ -21237,7 +21252,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220920004934
+ * @version 3.5.1-nightly-20220922004742
  */
 var bb = {
     /**
@@ -21247,7 +21262,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220920004934",
+    version: "3.5.1-nightly-20220922004742",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
