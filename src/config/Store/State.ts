@@ -127,6 +127,7 @@ export default class State {
 			hasPositiveValue: true,
 
 			orgAreaOpacity: "0.2",
+			orgConfig: {}, // user original genration config
 
 			// ID strings
 			hiddenTargetIds: <string[]> [],

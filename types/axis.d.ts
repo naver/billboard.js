@@ -352,7 +352,7 @@ export interface YTickConfiguration {
 	 * Set formatter for y axis tick text.
 	 * This option accepts d3.format object as well as a function you define.
 	 */
-	format?: (this: Chart, x: number | Date) => string | number;
+	format?: ((this: Chart, x: number) => string | number) | ((this: Chart, x: Date) => string | number);
 
 	/**
 	 * Setting for culling ticks.

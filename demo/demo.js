@@ -3924,6 +3924,50 @@ d3.select(".chart_area")
 				}
 			},
 		],
+		BarOverlap: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 80, 150, 100, 100, 100],
+							["data2", 100, 120, 130, 50, 150],
+							["data3", 150, 80, 120, 30, 80]
+						],
+						type: "bar"
+					},
+					bar: {
+						width: {
+							data1: {
+								ratio: 1.2
+							},
+							data2: 40,
+							data3: 20
+						},
+						overlap: true
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 130, 150, 130, 100, 130],
+							["data2", 70, 120, 125, 50, 125],
+							["data3", 50, 80, 110, 30, 20]
+						],
+						type: "bar"
+					},
+					bar: {
+						width: {
+							data1: 20,
+							data2: 40,
+							data3: 60
+						},
+						overlap: true
+					}
+				}
+			}
+		],
 		BarPadding: {
 			options: {
 				data: {
