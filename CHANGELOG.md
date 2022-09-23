@@ -1,3 +1,16 @@
+# [3.6.0-next.2](https://github.com/naver/billboard.js/compare/3.6.0-next.1...3.6.0-next.2) (2022-09-23)
+
+
+### Bug Fixes
+
+* **types:** Fix the type declarations for the y tick format ([#2865](https://github.com/naver/billboard.js/issues/2865)) ([2e38dee](https://github.com/naver/billboard.js/commit/2e38dee90bf66ea0ae4266c346d634eb81b57ac4))
+
+
+### Features
+
+* **api:** Enhance .config() to return generation options ([455944e](https://github.com/naver/billboard.js/commit/455944e75038a4c301763100bd6a8385b510a396)), closes [#2864](https://github.com/naver/billboard.js/issues/2864)
+* **options:** Intent to ship bar.overlap ([046aedb](https://github.com/naver/billboard.js/commit/046aedb08851834fc9b39b723747310078cd4bde)), closes [#2839](https://github.com/naver/billboard.js/issues/2839)
+
 # [3.6.0-next.1](https://github.com/naver/billboard.js/compare/3.5.1...3.6.0-next.1) (2022-09-15)
 
 
