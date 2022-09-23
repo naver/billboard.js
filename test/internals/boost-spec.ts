@@ -69,7 +69,9 @@ describe("BOOST", () => {
 		});
 	});
 
-	describe("useWorker", () => {
+	describe("useWorker", function() {
+		this.timeout(5000);
+
 		it("check if given function run on WebWorker thread.", done => {
 			runWorker(true, function test_for_worker(p) {
 					return `${p}_123`;
