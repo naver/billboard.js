@@ -708,4 +708,62 @@ describe("LEGEND", () => {
 			}, 50);
 		});
 	});
+
+	describe("item.tile.type option", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 100],
+						["data2", 300],
+						["data3", 200]
+					],
+					type: "pie", // for ESM specify as: pie()
+				},
+				legend: {
+					item: {
+						tile: {
+							type: "circle"
+						},
+					}
+				}
+			};
+		});
+
+		it("should item tile's shapes are 'circle'?", () => {
+			const legendItems = chart.$.legend.selectAll("circle");
+
+			expect(legendItems.size()).to.be.equal(chart.data().length);
+			
+			legendItems.each(function() {
+				expect(+this.getAttribute("r")).to.be.equal(5);
+			});
+		});
+
+		it("set options: legend.item.tile.r=7", () => {
+			args.legend.item.tile.r = 7;
+		});
+
+		it("check 'circle' item's radius", () => {
+			const legendItems = chart.$.legend.selectAll("circle");
+
+			expect(legendItems.size()).to.be.equal(chart.data().length);
+			
+			legendItems.each(function() {
+				expect(+this.getAttribute("r")).to.be.equal(args.legend.item.tile.r);
+			});
+		});
+
+		it("set options: legend.item.tile='rectangle'", () => {
+			args.legend.item.tile = {
+				type: "rectangle"
+			};
+		});
+
+		it("should item tile's shapes are 'rectangle'?", () => {
+			const legendItems = chart.$.legend.selectAll("line");
+
+			expect(legendItems.size()).to.be.equal(chart.data().length);
+		});
+	});
 });

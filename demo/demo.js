@@ -2877,6 +2877,51 @@ var demos = {
 	},
 
 	Legend: {
+		CustomLegend: {
+			options: {
+				data: {
+					columns: [
+						["data1", 100],
+						["data2", 300],
+						["data3", 200]
+					],
+					type: "pie"
+				},
+				legend: {
+					show: false
+				}
+			},
+			func: function(chart) {
+				function toggle(id) { chart.toggle(id); }
+
+d3.select(".chart_area")
+	.insert("div", ".chart")
+	.attr("class", "legend")
+	.selectAll("span")
+	.data(["data1", "data2", "data3"])
+	.enter()
+	.append("span")
+	.attr('data-id', function(id) {
+		return id;
+	})
+	.html(function(id) {
+		return id;
+	})
+	.each(function(id) {
+		d3.select(this)
+			.style('background-color', chart.color(id));
+	})
+	.on("mouseover", function(event, id) {
+		chart.focus(id);
+	})
+	.on("mouseout", function(event, id) {
+		chart.revert();
+	})
+	.on("click", function(event, id) {
+		chart.toggle(id);
+	});
+			}
+		},
 		HideLegend: {
 			options: {
 				data: {
@@ -2890,6 +2935,49 @@ var demos = {
 				}
 			}
 		},
+		LegendItemTileType: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 300],
+							["data3", 200]
+						],
+						type: "pie"
+					},
+					legend: {
+						item: {
+							tile: {							
+								type: "circle",
+								r: 7
+							},
+						}
+					}
+				},
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 300],
+							["data3", 200]
+						],
+						type: "pie"
+					},
+					legend: {
+						item: {
+							tile: {							
+								type: "rectangle",
+								width: 15,
+								height: 15
+							},
+						}
+					}
+				}
+			}
+		],
 		LegendPosition: {
 			options: {
 				data: {
@@ -2959,51 +3047,6 @@ var demos = {
 						}
 					}
 				}
-			}
-		},
-		CustomLegend: {
-			options: {
-				data: {
-					columns: [
-						["data1", 100],
-						["data2", 300],
-						["data3", 200]
-					],
-					type: "pie"
-				},
-				legend: {
-					show: false
-				}
-			},
-			func: function(chart) {
-				function toggle(id) { chart.toggle(id); }
-
-d3.select(".chart_area")
-	.insert("div", ".chart")
-	.attr("class", "legend")
-	.selectAll("span")
-	.data(["data1", "data2", "data3"])
-	.enter()
-	.append("span")
-	.attr('data-id', function(id) {
-		return id;
-	})
-	.html(function(id) {
-		return id;
-	})
-	.each(function(id) {
-		d3.select(this)
-			.style('background-color', chart.color(id));
-	})
-	.on("mouseover", function(event, id) {
-		chart.focus(id);
-	})
-	.on("mouseout", function(event, id) {
-		chart.revert();
-	})
-	.on("click", function(event, id) {
-		chart.toggle(id);
-	});
 			}
 		},
 		usePoint: {
