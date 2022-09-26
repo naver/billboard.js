@@ -1000,14 +1000,24 @@ export interface LegendOptions {
 		 */
 		tile?: {
 			/**
-			 * Tile width.
+			 * Set width for 'rectangle' legend item tile element.
 			 */
 			width?: number;
 
 			/**
-			 * Tile height
+			 * Set height for 'rectangle' legend item tile element.
 			 */
 			height?: number;
+
+			/**
+			 * Set legend item shape type.
+			 */
+			type?: "circle" | "recntangle";
+
+			/**
+			 * Set the radius for 'circle' legend item tile type.
+			 */
+			r?: number;
 		};
 		/**
 		 * Set click event handler to the legend item.

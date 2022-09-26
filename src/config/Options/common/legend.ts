@@ -43,9 +43,15 @@ export default {
 	 * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
 	 * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
 	 * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
-	 * @property {number} [legend.item.tile.width=10] Set width of item tile element
-	 * @property {number} [legend.item.tile.height=10] Set height of item tile element
+	 * @property {number} [legend.item.tile.width=10] Set width for 'rectangle' legend item tile element.
+	 * @property {number} [legend.item.tile.height=10] ㄹ
+	 * @property {number} [legend.item.tile.r=5] Set the radius for 'circle' legend item tile type.
+	 * @property {string} [legend.item.tile.type="rectangle"] Set legend item shape type.<br>
+	 * - **Available Values:**
+	 *   - circle
+	 *   - rectangle
 	 * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
+	 * @see [Demo: item.tile.type](https://naver.github.io/billboard.js/demo/#Legend.LegendItemTileType)
 	 * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
 	 * @see [Demo: contents.template](https://naver.github.io/billboard.js/demo/#Legend.LegendTemplate1)
 	 * @see [Demo: usePoint](https://naver.github.io/billboard.js/demo/#Legend.usePoint)
@@ -85,8 +91,15 @@ export default {
 	 *
 	 *          // set tile's size
 	 *          tile: {
-	 *              width: 20,
+	 *              // set tile type
+	 *              type: "circle"  // or "rectangle" (default)
+	 *
+	 *              // width & height, are only applicable for 'rectangle' legend type
+	 *              width: 15,
 	 *              height: 15
+	 *
+	 *              // radis is only applicable for 'circle' legend type
+	 *              r: 10
 	 *          }
 	 *      },
 	 *      usePoint: true
@@ -108,5 +121,7 @@ export default {
 	legend_padding: 0,
 	legend_item_tile_width: 10,
 	legend_item_tile_height: 10,
+	legend_item_tile_r: 5,
+	legend_item_tile_type: <"rectangle"|"circle"> "rectangle",
 	legend_usePoint: false
 };

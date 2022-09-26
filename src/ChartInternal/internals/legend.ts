@@ -454,15 +454,26 @@ export default {
 	updateLegendElement(targetIds: string[], options): void {
 		const $$ = this;
 		const {config, state, $el: {legend}, $T} = $$;
+		const legendType = config.legend_item_tile_type;
+		const isRectangle = legendType !== "circle";
+		const legendItemR = config.legend_item_tile_r;
+
+		const itemTileSize = {
+			width: isRectangle ? config.legend_item_tile_width : legendItemR * 2,
+			height: isRectangle ? config.legend_item_tile_height : legendItemR * 2
+		};
+
 		const paddingTop = 4;
 		const paddingRight = 10;
 		const posMin = 10;
-		const tileWidth = config.legend_item_tile_width + 5;
+		const tileWidth = itemTileSize.width + 5;
+
 		let maxWidth = 0;
 		let maxHeight = 0;
 		let xForLegend;
 		let yForLegend;
 		let totalLength = 0;
+
 		const offsets = {};
 		const widths = {};
 		const heights = {};
@@ -570,10 +581,10 @@ export default {
 			yForLegend = id => maxHeight * steps[id];
 		}
 
-		const xForLegendText = (id, i?: number) => xForLegend(id, i) + 4 + config.legend_item_tile_width;
+		const xForLegendText = (id, i?: number) => xForLegend(id, i) + 4 + itemTileSize.width;
 		const xForLegendRect = (id, i?: number) => xForLegend(id, i);
 		const x1ForLegendTile = (id, i?: number) => xForLegend(id, i) - 2;
-		const x2ForLegendTile = (id, i?: number) => xForLegend(id, i) - 2 + config.legend_item_tile_width;
+		const x2ForLegendTile = (id, i?: number) => xForLegend(id, i) - 2 + itemTileSize.width;
 
 		const yForLegendText = (id, i?: number) => yForLegend(id, i) + 9;
 		const yForLegendRect = (id, i?: number) => yForLegend(id, i) - 5;
@@ -643,15 +654,26 @@ export default {
 					return nodeName === "use" ? `#${state.datetimeId}-point${id}` : undefined;
 				});
 		} else {
-			l.append("line")
+			l.append(isRectangle ? "line" : legendType)
 				.attr("class", $LEGEND.legendItemTile)
 				.style("stroke", getColor)
 				.style("pointer-events", $$.getStylePropValue("none"))
-				.attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
-				.attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
-				.attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos)
-				.attr("y2", isLegendRightOrInset ? pos : yForLegendTile)
-				.attr("stroke-width", config.legend_item_tile_height);
+				.call(selection => {
+					if (legendType === "circle") {
+						selection
+							.attr("r", legendItemR)
+							.style("fill", getColor)
+							.attr("cx", isLegendRightOrInset ? x2ForLegendTile : pos)
+							.attr("cy", isLegendRightOrInset ? pos : yForLegendTile);
+					} else if (isRectangle) {
+						selection
+							.attr("stroke-width", itemTileSize.height)
+							.attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
+							.attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
+							.attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos)
+							.attr("y2", isLegendRightOrInset ? pos : yForLegendTile);
+					}
+				});
 		}
 
 		// Set background for inset legend
@@ -723,15 +745,28 @@ export default {
 						.attr("height", height);
 				});
 		} else {
-			const tiles = legend.selectAll(`line.${$LEGEND.legendItemTile}`)
+			const tiles = legend.selectAll(`.${$LEGEND.legendItemTile}`)
 				.data(targetIdz);
 
 			$T(tiles, withTransition)
 				.style("stroke", getColor)
-				.attr("x1", x1ForLegendTile)
-				.attr("y1", yForLegendTile)
-				.attr("x2", x2ForLegendTile)
-				.attr("y2", yForLegendTile);
+				.call(selection => {
+					if (legendType === "circle") {
+						selection
+							.attr("cx", d => {
+								const x2 = x2ForLegendTile(d);
+
+								return x2 - ((x2 - x1ForLegendTile(d)) / 2);
+							})
+							.attr("cy", yForLegendTile);
+					} else if (isRectangle) {
+						selection
+							.attr("x1", x1ForLegendTile)
+							.attr("y1", yForLegendTile)
+							.attr("x2", x2ForLegendTile)
+							.attr("y2", yForLegendTile);
+					}
+				});
 		}
 
 		if (background) {
