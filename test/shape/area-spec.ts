@@ -464,7 +464,7 @@ describe("SHAPE AREA", () => {
 			chart.data().forEach(v => {
 				const color = chart.color(v.id);
 				const selectorSuffix = internal.getTargetSelectorSuffix(v.id);
-				const id = `#${internal.state.datetimeId}-areaGradient${selectorSuffix}`;
+				const id = `#${internal.state.datetimeId}-gradient${selectorSuffix}`;
 				const gradient = chart.$.svg.select(id);
 
 				expect(gradient.empty()).to.be.false;
@@ -502,7 +502,7 @@ describe("SHAPE AREA", () => {
 
 			chart.data().forEach(v => {
 				const selectorSuffix = internal.getTargetSelectorSuffix(v.id);
-				const id = `#${internal.state.datetimeId}-areaGradient${selectorSuffix}`;
+				const id = `#${internal.state.datetimeId}-gradient${selectorSuffix}`;
 				const gradient = chart.$.svg.select(id);
 
 				expect(gradient.empty()).to.be.false;

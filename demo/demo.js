@@ -3967,6 +3967,74 @@ d3.select(".chart_area")
 				}
 			},
 		],
+		BarLinearGradient: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 275, 250, 200, 130, 350],
+							["data2", 130, 350, 273, 200, 190],
+							["data3", 275, 250, 200, 130, 350],
+							["data4", 500, 490, 770, 675, 750]
+						],
+						type: "bar",
+						groups: [
+							["data1", "data2", "data3"]
+						]
+					},
+					bar: {
+						linearGradient: {
+							stops: [
+								   [0, null, 1],
+								[1, null, 0.3]
+							]
+				
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, 280, 251, 400, 150, 546, 158],
+							["data2", 180, 220, 201, 300, 250, 346, 358]
+						],
+						type: "bar"
+					},
+					bar: {
+						linearGradient: {
+							x: [1, 0],
+							y: [0, 1],
+							stops: [
+								[0, null, 1],
+								[0.3, null, 0.5],
+								[0.6, "green", 0.7],
+								[0.8, null, 0.7],
+								[1, "purple", 1]
+							]
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 275, 250, 200],
+							["data2", 130, 350, 273]
+						],
+						type: "bar"
+					},
+					axis: {
+						rotated: true
+					},
+					bar: {
+						linearGradient: true
+					}
+				}
+			}			
+		],
 		BarOverlap: [
 			{
 				options: {
