@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220923004809
+ * @version 3.5.1-nightly-20220927004759
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -616,7 +616,7 @@ var check = function (it) {
 
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 module.exports =
-  // eslint-disable-next-line es-x/no-global-this -- safe
+  // eslint-disable-next-line es/no-global-this -- safe
   check(typeof globalThis == 'object' && globalThis) ||
   check(typeof window == 'object' && window) ||
   // eslint-disable-next-line no-restricted-globals -- safe
@@ -639,7 +639,7 @@ var toPropertyKey = __webpack_require__(18);
 var hasOwn = __webpack_require__(39);
 var IE8_DOM_DEFINE = __webpack_require__(42);
 
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // `Object.getOwnPropertyDescriptor` method
@@ -662,7 +662,7 @@ var fails = __webpack_require__(7);
 
 // Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function () {
-  // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] != 7;
 });
 
@@ -700,7 +700,7 @@ module.exports = NATIVE_BIND ? call.bind(call) : function () {
 var fails = __webpack_require__(7);
 
 module.exports = !fails(function () {
-  // eslint-disable-next-line es-x/no-function-prototype-bind -- safe
+  // eslint-disable-next-line es/no-function-prototype-bind -- safe
   var test = (function () { /* empty */ }).bind();
   // eslint-disable-next-line no-prototype-builtins -- safe
   return typeof test != 'function' || test.hasOwnProperty('prototype');
@@ -714,7 +714,7 @@ module.exports = !fails(function () {
 "use strict";
 
 var $propertyIsEnumerable = {}.propertyIsEnumerable;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Nashorn ~ JDK8 bug
@@ -979,7 +979,7 @@ module.exports = uncurryThis({}.isPrototypeOf);
 /* 26 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-/* eslint-disable es-x/no-symbol -- required for testing */
+/* eslint-disable es/no-symbol -- required for testing */
 var NATIVE_SYMBOL = __webpack_require__(27);
 
 module.exports = NATIVE_SYMBOL
@@ -991,11 +991,11 @@ module.exports = NATIVE_SYMBOL
 /* 27 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-/* eslint-disable es-x/no-symbol -- required for testing */
+/* eslint-disable es/no-symbol -- required for testing */
 var V8_VERSION = __webpack_require__(28);
 var fails = __webpack_require__(7);
 
-// eslint-disable-next-line es-x/no-object-getownpropertysymbols -- required for testing
+// eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
   var symbol = Symbol();
   // Chrome 38 Symbol has incorrect toString conversion
@@ -1155,10 +1155,10 @@ var store = __webpack_require__(37);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.25.2',
+  version: '3.25.3',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.25.2/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.25.3/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -1189,7 +1189,7 @@ module.exports = store;
 
 var global = __webpack_require__(4);
 
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+// eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
 
 module.exports = function (key, value) {
@@ -1212,7 +1212,7 @@ var hasOwnProperty = uncurryThis({}.hasOwnProperty);
 
 // `HasOwnProperty` abstract operation
 // https://tc39.es/ecma262/#sec-hasownproperty
-// eslint-disable-next-line es-x/no-object-hasown -- safe
+// eslint-disable-next-line es/no-object-hasown -- safe
 module.exports = Object.hasOwn || function hasOwn(it, key) {
   return hasOwnProperty(toObject(it), key);
 };
@@ -1258,7 +1258,7 @@ var createElement = __webpack_require__(43);
 
 // Thanks to IE8 for its funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function () {
-  // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(createElement('div'), 'a', {
     get: function () { return 7; }
   }).a != 7;
@@ -1308,9 +1308,9 @@ var anObject = __webpack_require__(47);
 var toPropertyKey = __webpack_require__(18);
 
 var $TypeError = TypeError;
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+// eslint-disable-next-line es/no-object-defineproperty -- safe
 var $defineProperty = Object.defineProperty;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 var ENUMERABLE = 'enumerable';
 var CONFIGURABLE = 'configurable';
@@ -1356,7 +1356,7 @@ var fails = __webpack_require__(7);
 // V8 ~ Chrome 36-
 // https://bugs.chromium.org/p/v8/issues/detail?id=3334
 module.exports = DESCRIPTORS && fails(function () {
-  // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty(function () { /* empty */ }, 'prototype', {
     value: 42,
     writable: false
@@ -1427,7 +1427,7 @@ var InternalStateModule = __webpack_require__(52);
 
 var enforceInternalState = InternalStateModule.enforce;
 var getInternalState = InternalStateModule.get;
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+// eslint-disable-next-line es/no-object-defineproperty -- safe
 var defineProperty = Object.defineProperty;
 
 var CONFIGURABLE_LENGTH = DESCRIPTORS && !fails(function () {
@@ -1476,7 +1476,7 @@ var DESCRIPTORS = __webpack_require__(6);
 var hasOwn = __webpack_require__(39);
 
 var FunctionPrototype = Function.prototype;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getDescriptor = DESCRIPTORS && Object.getOwnPropertyDescriptor;
 
 var EXISTS = hasOwn(FunctionPrototype, 'name');
@@ -1672,7 +1672,7 @@ var hiddenKeys = enumBugKeys.concat('length', 'prototype');
 
 // `Object.getOwnPropertyNames` method
 // https://tc39.es/ecma262/#sec-object.getownpropertynames
-// eslint-disable-next-line es-x/no-object-getownpropertynames -- safe
+// eslint-disable-next-line es/no-object-getownpropertynames -- safe
 exports.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
   return internalObjectKeys(O, hiddenKeys);
 };
@@ -1784,7 +1784,7 @@ var floor = Math.floor;
 
 // `Math.trunc` method
 // https://tc39.es/ecma262/#sec-math.trunc
-// eslint-disable-next-line es-x/no-math-trunc -- safe
+// eslint-disable-next-line es/no-math-trunc -- safe
 module.exports = Math.trunc || function trunc(x) {
   var n = +x;
   return (n > 0 ? floor : ceil)(n);
@@ -1839,7 +1839,7 @@ module.exports = [
 /* 67 */
 /***/ (function(__unused_webpack_module, exports) {
 
-// eslint-disable-next-line es-x/no-object-getownpropertysymbols -- safe
+// eslint-disable-next-line es/no-object-getownpropertysymbols -- safe
 exports.f = Object.getOwnPropertySymbols;
 
 
@@ -2009,7 +2009,7 @@ hiddenKeys[IE_PROTO] = true;
 
 // `Object.create` method
 // https://tc39.es/ecma262/#sec-object.create
-// eslint-disable-next-line es-x/no-object-create -- safe
+// eslint-disable-next-line es/no-object-create -- safe
 module.exports = Object.create || function create(O, Properties) {
   var result;
   if (O !== null) {
@@ -2036,7 +2036,7 @@ var objectKeys = __webpack_require__(74);
 
 // `Object.defineProperties` method
 // https://tc39.es/ecma262/#sec-object.defineproperties
-// eslint-disable-next-line es-x/no-object-defineproperties -- safe
+// eslint-disable-next-line es/no-object-defineproperties -- safe
 exports.f = DESCRIPTORS && !V8_PROTOTYPE_DEFINE_BUG ? Object.defineProperties : function defineProperties(O, Properties) {
   anObject(O);
   var props = toIndexedObject(Properties);
@@ -2058,7 +2058,7 @@ var enumBugKeys = __webpack_require__(66);
 
 // `Object.keys` method
 // https://tc39.es/ecma262/#sec-object.keys
-// eslint-disable-next-line es-x/no-object-keys -- safe
+// eslint-disable-next-line es/no-object-keys -- safe
 module.exports = Object.keys || function keys(O) {
   return internalObjectKeys(O, enumBugKeys);
 };
@@ -2077,7 +2077,7 @@ module.exports = getBuiltIn('document', 'documentElement');
 /* 76 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-/* eslint-disable es-x/no-object-getownpropertynames -- safe */
+/* eslint-disable es/no-object-getownpropertynames -- safe */
 var classof = __webpack_require__(15);
 var toIndexedObject = __webpack_require__(12);
 var $getOwnPropertyNames = (__webpack_require__(58).f);
@@ -2367,7 +2367,7 @@ var classof = __webpack_require__(15);
 
 // `IsArray` abstract operation
 // https://tc39.es/ecma262/#sec-isarray
-// eslint-disable-next-line es-x/no-array-isarray -- safe
+// eslint-disable-next-line es/no-array-isarray -- safe
 module.exports = Array.isArray || function isArray(argument) {
   return classof(argument) == 'Array';
 };
@@ -2465,7 +2465,7 @@ $({ target: 'Symbol', stat: true, forced: !NATIVE_SYMBOL_REGISTRY }, {
 
 var NATIVE_SYMBOL = __webpack_require__(27);
 
-/* eslint-disable es-x/no-symbol -- safe */
+/* eslint-disable es/no-symbol -- safe */
 module.exports = NATIVE_SYMBOL && !!Symbol['for'] && !!Symbol.keyFor;
 
 
@@ -2580,7 +2580,7 @@ var FunctionPrototype = Function.prototype;
 var apply = FunctionPrototype.apply;
 var call = FunctionPrototype.call;
 
-// eslint-disable-next-line es-x/no-reflect -- safe
+// eslint-disable-next-line es/no-reflect -- safe
 module.exports = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND ? call.bind(apply) : function () {
   return call.apply(apply, arguments);
 });
@@ -2986,13 +2986,13 @@ var aPossiblePrototype = __webpack_require__(114);
 // `Object.setPrototypeOf` method
 // https://tc39.es/ecma262/#sec-object.setprototypeof
 // Works with __proto__ only. Old v8 can't work with null proto objects.
-// eslint-disable-next-line es-x/no-object-setprototypeof -- safe
+// eslint-disable-next-line es/no-object-setprototypeof -- safe
 module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
   var CORRECT_SETTER = false;
   var test = {};
   var setter;
   try {
-    // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
     setter = uncurryThis(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
     setter(test, []);
     CORRECT_SETTER = test instanceof Array;
@@ -3118,7 +3118,7 @@ var createPropertyDescriptor = __webpack_require__(11);
 module.exports = !fails(function () {
   var error = Error('a');
   if (!('stack' in error)) return true;
-  // eslint-disable-next-line es-x/no-object-defineproperty -- safe
+  // eslint-disable-next-line es/no-object-defineproperty -- safe
   Object.defineProperty(error, 'stack', createPropertyDescriptor(1, 7));
   return error.stack !== 7;
 });
@@ -3157,7 +3157,7 @@ var nativeErrorToString = Error.prototype.toString;
 var INCORRECT_TO_STRING = fails(function () {
   if (DESCRIPTORS) {
     // Chrome 32- incorrectly call accessor
-    // eslint-disable-next-line es-x/no-object-defineproperty -- safe
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
     var object = create(Object.defineProperty({}, 'name', { get: function () {
       return this === object;
     } }));
@@ -3261,7 +3261,7 @@ var ObjectPrototype = $Object.prototype;
 
 // `Object.getPrototypeOf` method
 // https://tc39.es/ecma262/#sec-object.getprototypeof
-// eslint-disable-next-line es-x/no-object-getprototypeof -- safe
+// eslint-disable-next-line es/no-object-getprototypeof -- safe
 module.exports = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O) {
   var object = toObject(O);
   if (hasOwn(object, IE_PROTO)) return object[IE_PROTO];
@@ -3281,7 +3281,7 @@ var fails = __webpack_require__(7);
 module.exports = !fails(function () {
   function F() { /* empty */ }
   F.prototype.constructor = null;
-  // eslint-disable-next-line es-x/no-object-getprototypeof -- required for testing
+  // eslint-disable-next-line es/no-object-getprototypeof -- required for testing
   return Object.getPrototypeOf(new F()) !== F.prototype;
 });
 
@@ -3669,7 +3669,7 @@ var min = Math.min;
 
 // `Array.prototype.copyWithin` method implementation
 // https://tc39.es/ecma262/#sec-array.prototype.copywithin
-// eslint-disable-next-line es-x/no-array-prototype-copywithin -- safe
+// eslint-disable-next-line es/no-array-prototype-copywithin -- safe
 module.exports = [].copyWithin || function copyWithin(target /* = 0 */, start /* = 0, end = @length */) {
   var O = toObject(this);
   var len = lengthOfArrayLike(O);
@@ -4054,7 +4054,7 @@ var forEach = __webpack_require__(156);
 
 // `Array.prototype.forEach` method
 // https://tc39.es/ecma262/#sec-array.prototype.foreach
-// eslint-disable-next-line es-x/no-array-prototype-foreach -- safe
+// eslint-disable-next-line es/no-array-prototype-foreach -- safe
 $({ target: 'Array', proto: true, forced: [].forEach != forEach }, {
   forEach: forEach
 });
@@ -4075,7 +4075,7 @@ var STRICT_METHOD = arrayMethodIsStrict('forEach');
 // https://tc39.es/ecma262/#sec-array.prototype.foreach
 module.exports = !STRICT_METHOD ? function forEach(callbackfn /* , thisArg */) {
   return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
-// eslint-disable-next-line es-x/no-array-prototype-foreach -- safe
+// eslint-disable-next-line es/no-array-prototype-foreach -- safe
 } : [].forEach;
 
 
@@ -4088,7 +4088,7 @@ var from = __webpack_require__(158);
 var checkCorrectnessOfIteration = __webpack_require__(160);
 
 var INCORRECT_ITERATION = !checkCorrectnessOfIteration(function (iterable) {
-  // eslint-disable-next-line es-x/no-array-from -- required for testing
+  // eslint-disable-next-line es/no-array-from -- required for testing
   Array.from(iterable);
 });
 
@@ -4191,7 +4191,7 @@ try {
   iteratorWithReturn[ITERATOR] = function () {
     return this;
   };
-  // eslint-disable-next-line es-x/no-array-from, no-throw-literal -- required for testing
+  // eslint-disable-next-line es/no-array-from, no-throw-literal -- required for testing
   Array.from(iteratorWithReturn, function () { throw 2; });
 } catch (error) { /* empty */ }
 
@@ -4247,7 +4247,7 @@ addToUnscopables('includes');
 
 "use strict";
 
-/* eslint-disable es-x/no-array-prototype-indexof -- required for testing */
+/* eslint-disable es/no-array-prototype-indexof -- required for testing */
 var $ = __webpack_require__(3);
 var uncurryThis = __webpack_require__(14);
 var $indexOf = (__webpack_require__(60).indexOf);
@@ -4505,7 +4505,7 @@ var BUGGY_SAFARI_ITERATORS = false;
 // https://tc39.es/ecma262/#sec-%iteratorprototype%-object
 var IteratorPrototype, PrototypeOfArrayIteratorPrototype, arrayIterator;
 
-/* eslint-disable es-x/no-array-prototype-keys -- safe */
+/* eslint-disable es/no-array-prototype-keys -- safe */
 if ([].keys) {
   arrayIterator = [].keys();
   // Safari 8 has buggy iterators w/o `next`
@@ -4585,7 +4585,7 @@ var lastIndexOf = __webpack_require__(171);
 
 // `Array.prototype.lastIndexOf` method
 // https://tc39.es/ecma262/#sec-array.prototype.lastindexof
-// eslint-disable-next-line es-x/no-array-prototype-lastindexof -- required for testing
+// eslint-disable-next-line es/no-array-prototype-lastindexof -- required for testing
 $({ target: 'Array', proto: true, forced: lastIndexOf !== [].lastIndexOf }, {
   lastIndexOf: lastIndexOf
 });
@@ -4597,7 +4597,7 @@ $({ target: 'Array', proto: true, forced: lastIndexOf !== [].lastIndexOf }, {
 
 "use strict";
 
-/* eslint-disable es-x/no-array-prototype-lastindexof -- safe */
+/* eslint-disable es/no-array-prototype-lastindexof -- safe */
 var apply = __webpack_require__(94);
 var toIndexedObject = __webpack_require__(12);
 var toIntegerOrInfinity = __webpack_require__(62);
@@ -4662,7 +4662,7 @@ var $Array = Array;
 
 var ISNT_GENERIC = fails(function () {
   function F() { /* empty */ }
-  // eslint-disable-next-line es-x/no-array-of -- safe
+  // eslint-disable-next-line es/no-array-of -- safe
   return !($Array.of.call(F) instanceof F);
 });
 
@@ -4702,7 +4702,7 @@ var INCORRECT_TO_LENGTH = fails(function () {
 // https://bugs.chromium.org/p/v8/issues/detail?id=12681
 var SILENT_ON_NON_WRITABLE_LENGTH = !function () {
   try {
-    // eslint-disable-next-line es-x/no-object-defineproperty -- safe
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
     Object.defineProperty([], 'length', { writable: false }).push();
   } catch (error) {
     return error instanceof TypeError;
@@ -4738,7 +4738,7 @@ var DESCRIPTORS = __webpack_require__(6);
 var isArray = __webpack_require__(88);
 
 var $TypeError = TypeError;
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Safari < 13 does not throw an error in this case
@@ -4746,7 +4746,7 @@ var SILENT_ON_NON_WRITABLE_LENGTH_SET = DESCRIPTORS && !function () {
   // makes no sense without proper strict mode support
   if (this !== undefined) return true;
   try {
-    // eslint-disable-next-line es-x/no-object-defineproperty -- safe
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
     Object.defineProperty([], 'length', { writable: false }).length = 1;
   } catch (error) {
     return error instanceof TypeError;
@@ -5324,7 +5324,7 @@ var INCORRECT_RESULT = [].unshift(0) !== 1;
 // V8 ~ Chrome < 71 and Safari <= 15.4, FF < 23 throws InternalError
 var SILENT_ON_NON_WRITABLE_LENGTH = !function () {
   try {
-    // eslint-disable-next-line es-x/no-object-defineproperty -- safe
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
     Object.defineProperty([], 'length', { writable: false }).unshift();
   } catch (error) {
     return error instanceof TypeError;
@@ -5637,7 +5637,7 @@ module.exports = {
 /* 196 */
 /***/ (function(module) {
 
-// eslint-disable-next-line es-x/no-typed-arrays -- safe
+// eslint-disable-next-line es/no-typed-arrays -- safe
 module.exports = typeof ArrayBuffer != 'undefined' && typeof DataView != 'undefined';
 
 
@@ -6853,7 +6853,7 @@ var isObject = __webpack_require__(20);
 var classof = __webpack_require__(15);
 var ARRAY_BUFFER_NON_EXTENSIBLE = __webpack_require__(232);
 
-// eslint-disable-next-line es-x/no-object-isextensible -- safe
+// eslint-disable-next-line es/no-object-isextensible -- safe
 var $isExtensible = Object.isExtensible;
 var FAILS_ON_PRIMITIVES = fails(function () { $isExtensible(1); });
 
@@ -6876,7 +6876,7 @@ var fails = __webpack_require__(7);
 module.exports = fails(function () {
   if (typeof ArrayBuffer == 'function') {
     var buffer = new ArrayBuffer(8);
-    // eslint-disable-next-line es-x/no-object-isextensible, es-x/no-object-defineproperty -- safe
+    // eslint-disable-next-line es/no-object-isextensible, es/no-object-defineproperty -- safe
     if (Object.isExtensible(buffer)) Object.defineProperty(buffer, 'a', { value: 8 });
   }
 });
@@ -6889,7 +6889,7 @@ module.exports = fails(function () {
 var fails = __webpack_require__(7);
 
 module.exports = !fails(function () {
-  // eslint-disable-next-line es-x/no-object-isextensible, es-x/no-object-preventextensions -- required for testing
+  // eslint-disable-next-line es/no-object-isextensible, es/no-object-preventextensions -- required for testing
   return Object.isExtensible(Object.preventExtensions({}));
 });
 
@@ -7114,7 +7114,7 @@ module.exports = {
 var $ = __webpack_require__(3);
 var log1p = __webpack_require__(236);
 
-// eslint-disable-next-line es-x/no-math-acosh -- required for testing
+// eslint-disable-next-line es/no-math-acosh -- required for testing
 var $acosh = Math.acosh;
 var log = Math.log;
 var sqrt = Math.sqrt;
@@ -7146,7 +7146,7 @@ var log = Math.log;
 
 // `Math.log1p` method implementation
 // https://tc39.es/ecma262/#sec-math.log1p
-// eslint-disable-next-line es-x/no-math-log1p -- safe
+// eslint-disable-next-line es/no-math-log1p -- safe
 module.exports = Math.log1p || function log1p(x) {
   var n = +x;
   return n > -1e-8 && n < 1e-8 ? n - n * n / 2 : log(1 + n);
@@ -7159,7 +7159,7 @@ module.exports = Math.log1p || function log1p(x) {
 
 var $ = __webpack_require__(3);
 
-// eslint-disable-next-line es-x/no-math-asinh -- required for testing
+// eslint-disable-next-line es/no-math-asinh -- required for testing
 var $asinh = Math.asinh;
 var log = Math.log;
 var sqrt = Math.sqrt;
@@ -7183,7 +7183,7 @@ $({ target: 'Math', stat: true, forced: !($asinh && 1 / $asinh(0) > 0) }, {
 
 var $ = __webpack_require__(3);
 
-// eslint-disable-next-line es-x/no-math-atanh -- required for testing
+// eslint-disable-next-line es/no-math-atanh -- required for testing
 var $atanh = Math.atanh;
 var log = Math.log;
 
@@ -7224,7 +7224,7 @@ $({ target: 'Math', stat: true }, {
 
 // `Math.sign` method implementation
 // https://tc39.es/ecma262/#sec-math.sign
-// eslint-disable-next-line es-x/no-math-sign -- safe
+// eslint-disable-next-line es/no-math-sign -- safe
 module.exports = Math.sign || function sign(x) {
   var n = +x;
   // eslint-disable-next-line no-self-compare -- NaN check
@@ -7259,7 +7259,7 @@ $({ target: 'Math', stat: true }, {
 var $ = __webpack_require__(3);
 var expm1 = __webpack_require__(243);
 
-// eslint-disable-next-line es-x/no-math-cosh -- required for testing
+// eslint-disable-next-line es/no-math-cosh -- required for testing
 var $cosh = Math.cosh;
 var abs = Math.abs;
 var E = Math.E;
@@ -7278,7 +7278,7 @@ $({ target: 'Math', stat: true, forced: !$cosh || $cosh(710) === Infinity }, {
 /* 243 */
 /***/ (function(module) {
 
-// eslint-disable-next-line es-x/no-math-expm1 -- safe
+// eslint-disable-next-line es/no-math-expm1 -- safe
 var $expm1 = Math.expm1;
 var exp = Math.exp;
 
@@ -7304,7 +7304,7 @@ var expm1 = __webpack_require__(243);
 
 // `Math.expm1` method
 // https://tc39.es/ecma262/#sec-math.expm1
-// eslint-disable-next-line es-x/no-math-expm1 -- required for testing
+// eslint-disable-next-line es/no-math-expm1 -- required for testing
 $({ target: 'Math', stat: true, forced: expm1 != Math.expm1 }, { expm1: expm1 });
 
 
@@ -7339,7 +7339,7 @@ var roundTiesToEven = function (n) {
 
 // `Math.fround` method implementation
 // https://tc39.es/ecma262/#sec-math.fround
-// eslint-disable-next-line es-x/no-math-fround -- safe
+// eslint-disable-next-line es/no-math-fround -- safe
 module.exports = Math.fround || function fround(x) {
   var n = +x;
   var $abs = abs(n);
@@ -7360,7 +7360,7 @@ module.exports = Math.fround || function fround(x) {
 
 var $ = __webpack_require__(3);
 
-// eslint-disable-next-line es-x/no-math-hypot -- required for testing
+// eslint-disable-next-line es/no-math-hypot -- required for testing
 var $hypot = Math.hypot;
 var abs = Math.abs;
 var sqrt = Math.sqrt;
@@ -7402,7 +7402,7 @@ $({ target: 'Math', stat: true, arity: 2, forced: BUGGY }, {
 var $ = __webpack_require__(3);
 var fails = __webpack_require__(7);
 
-// eslint-disable-next-line es-x/no-math-imul -- required for testing
+// eslint-disable-next-line es/no-math-imul -- required for testing
 var $imul = Math.imul;
 
 var FORCED = fails(function () {
@@ -7445,7 +7445,7 @@ $({ target: 'Math', stat: true }, {
 var log = Math.log;
 var LOG10E = Math.LOG10E;
 
-// eslint-disable-next-line es-x/no-math-log10 -- safe
+// eslint-disable-next-line es/no-math-log10 -- safe
 module.exports = Math.log10 || function log10(x) {
   return log(x) * LOG10E;
 };
@@ -7508,7 +7508,7 @@ var exp = Math.exp;
 var E = Math.E;
 
 var FORCED = fails(function () {
-  // eslint-disable-next-line es-x/no-math-sinh -- required for testing
+  // eslint-disable-next-line es/no-math-sinh -- required for testing
   return Math.sinh(-2e-17) != -2e-17;
 });
 
@@ -7756,7 +7756,7 @@ var globalIsFinite = global.isFinite;
 
 // `Number.isFinite` method
 // https://tc39.es/ecma262/#sec-number.isfinite
-// eslint-disable-next-line es-x/no-number-isfinite -- safe
+// eslint-disable-next-line es/no-number-isfinite -- safe
 module.exports = Number.isFinite || function isFinite(it) {
   return typeof it == 'number' && globalIsFinite(it);
 };
@@ -7786,7 +7786,7 @@ var floor = Math.floor;
 
 // `IsIntegralNumber` abstract operation
 // https://tc39.es/ecma262/#sec-isintegralnumber
-// eslint-disable-next-line es-x/no-number-isinteger -- safe
+// eslint-disable-next-line es/no-number-isinteger -- safe
 module.exports = Number.isInteger || function isInteger(it) {
   return !isObject(it) && isFinite(it) && floor(it) === it;
 };
@@ -7861,7 +7861,7 @@ var parseFloat = __webpack_require__(272);
 
 // `Number.parseFloat` method
 // https://tc39.es/ecma262/#sec-number.parseFloat
-// eslint-disable-next-line es-x/no-number-parsefloat -- required for testing
+// eslint-disable-next-line es/no-number-parsefloat -- required for testing
 $({ target: 'Number', stat: true, forced: Number.parseFloat != parseFloat }, {
   parseFloat: parseFloat
 });
@@ -7904,7 +7904,7 @@ var parseInt = __webpack_require__(274);
 
 // `Number.parseInt` method
 // https://tc39.es/ecma262/#sec-number.parseint
-// eslint-disable-next-line es-x/no-number-parseint -- required for testing
+// eslint-disable-next-line es/no-number-parseint -- required for testing
 $({ target: 'Number', stat: true, forced: Number.parseInt != parseInt }, {
   parseInt: parseInt
 });
@@ -8223,7 +8223,7 @@ var assign = __webpack_require__(279);
 
 // `Object.assign` method
 // https://tc39.es/ecma262/#sec-object.assign
-// eslint-disable-next-line es-x/no-object-assign -- required for testing
+// eslint-disable-next-line es/no-object-assign -- required for testing
 $({ target: 'Object', stat: true, arity: 2, forced: Object.assign !== assign }, {
   assign: assign
 });
@@ -8245,9 +8245,9 @@ var propertyIsEnumerableModule = __webpack_require__(10);
 var toObject = __webpack_require__(40);
 var IndexedObject = __webpack_require__(13);
 
-// eslint-disable-next-line es-x/no-object-assign -- safe
+// eslint-disable-next-line es/no-object-assign -- safe
 var $assign = Object.assign;
-// eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
+// eslint-disable-next-line es/no-object-defineproperty -- required for testing
 var defineProperty = Object.defineProperty;
 var concat = uncurryThis([].concat);
 
@@ -8267,7 +8267,7 @@ module.exports = !$assign || fails(function () {
   // should work with symbols and should have deterministic property order (V8 bug)
   var A = {};
   var B = {};
-  // eslint-disable-next-line es-x/no-symbol -- safe
+  // eslint-disable-next-line es/no-symbol -- safe
   var symbol = Symbol();
   var alphabet = 'abcdefghijklmnopqrst';
   A[symbol] = 7;
@@ -8351,7 +8351,7 @@ module.exports = IS_PURE || !fails(function () {
   if (WEBKIT && WEBKIT < 535) return;
   var key = Math.random();
   // In FF throws only define methods
-  // eslint-disable-next-line no-undef, no-useless-call, es-x/no-legacy-object-prototype-accessor-methods -- required for testing
+  // eslint-disable-next-line no-undef, no-useless-call, es/no-legacy-object-prototype-accessor-methods -- required for testing
   __defineSetter__.call(null, key, function () { /* empty */ });
   delete global[key];
 });
@@ -8367,7 +8367,7 @@ var defineProperties = (__webpack_require__(73).f);
 
 // `Object.defineProperties` method
 // https://tc39.es/ecma262/#sec-object.defineproperties
-// eslint-disable-next-line es-x/no-object-defineproperties -- safe
+// eslint-disable-next-line es/no-object-defineproperties -- safe
 $({ target: 'Object', stat: true, forced: Object.defineProperties !== defineProperties, sham: !DESCRIPTORS }, {
   defineProperties: defineProperties
 });
@@ -8383,7 +8383,7 @@ var defineProperty = (__webpack_require__(45).f);
 
 // `Object.defineProperty` method
 // https://tc39.es/ecma262/#sec-object.defineproperty
-// eslint-disable-next-line es-x/no-object-defineproperty -- safe
+// eslint-disable-next-line es/no-object-defineproperty -- safe
 $({ target: 'Object', stat: true, forced: Object.defineProperty !== defineProperty, sham: !DESCRIPTORS }, {
   defineProperty: defineProperty
 });
@@ -8481,7 +8481,7 @@ var fails = __webpack_require__(7);
 var isObject = __webpack_require__(20);
 var onFreeze = (__webpack_require__(230).onFreeze);
 
-// eslint-disable-next-line es-x/no-object-freeze -- safe
+// eslint-disable-next-line es/no-object-freeze -- safe
 var $freeze = Object.freeze;
 var FAILS_ON_PRIMITIVES = fails(function () { $freeze(1); });
 
@@ -8575,7 +8575,7 @@ var $ = __webpack_require__(3);
 var fails = __webpack_require__(7);
 var getOwnPropertyNames = (__webpack_require__(76).f);
 
-// eslint-disable-next-line es-x/no-object-getownpropertynames -- required for testing
+// eslint-disable-next-line es/no-object-getownpropertynames -- required for testing
 var FAILS_ON_PRIMITIVES = fails(function () { return !Object.getOwnPropertyNames(1); });
 
 // `Object.getOwnPropertyNames` method
@@ -8641,7 +8641,7 @@ $({ target: 'Object', stat: true }, {
 
 // `SameValue` abstract operation
 // https://tc39.es/ecma262/#sec-samevalue
-// eslint-disable-next-line es-x/no-object-is -- safe
+// eslint-disable-next-line es/no-object-is -- safe
 module.exports = Object.is || function is(x, y) {
   // eslint-disable-next-line no-self-compare -- NaN check
   return x === y ? x !== 0 || 1 / x === 1 / y : x != x && y != y;
@@ -8657,7 +8657,7 @@ var $isExtensible = __webpack_require__(231);
 
 // `Object.isExtensible` method
 // https://tc39.es/ecma262/#sec-object.isextensible
-// eslint-disable-next-line es-x/no-object-isextensible -- safe
+// eslint-disable-next-line es/no-object-isextensible -- safe
 $({ target: 'Object', stat: true, forced: Object.isExtensible !== $isExtensible }, {
   isExtensible: $isExtensible
 });
@@ -8673,7 +8673,7 @@ var isObject = __webpack_require__(20);
 var classof = __webpack_require__(15);
 var ARRAY_BUFFER_NON_EXTENSIBLE = __webpack_require__(232);
 
-// eslint-disable-next-line es-x/no-object-isfrozen -- safe
+// eslint-disable-next-line es/no-object-isfrozen -- safe
 var $isFrozen = Object.isFrozen;
 var FAILS_ON_PRIMITIVES = fails(function () { $isFrozen(1); });
 
@@ -8698,7 +8698,7 @@ var isObject = __webpack_require__(20);
 var classof = __webpack_require__(15);
 var ARRAY_BUFFER_NON_EXTENSIBLE = __webpack_require__(232);
 
-// eslint-disable-next-line es-x/no-object-issealed -- safe
+// eslint-disable-next-line es/no-object-issealed -- safe
 var $isSealed = Object.isSealed;
 var FAILS_ON_PRIMITIVES = fails(function () { $isSealed(1); });
 
@@ -8803,7 +8803,7 @@ var onFreeze = (__webpack_require__(230).onFreeze);
 var FREEZING = __webpack_require__(233);
 var fails = __webpack_require__(7);
 
-// eslint-disable-next-line es-x/no-object-preventextensions -- safe
+// eslint-disable-next-line es/no-object-preventextensions -- safe
 var $preventExtensions = Object.preventExtensions;
 var FAILS_ON_PRIMITIVES = fails(function () { $preventExtensions(1); });
 
@@ -8828,9 +8828,9 @@ var isObject = __webpack_require__(20);
 var toObject = __webpack_require__(40);
 var requireObjectCoercible = __webpack_require__(16);
 
-// eslint-disable-next-line es-x/no-object-getprototypeof -- safe
+// eslint-disable-next-line es/no-object-getprototypeof -- safe
 var getPrototypeOf = Object.getPrototypeOf;
-// eslint-disable-next-line es-x/no-object-setprototypeof -- safe
+// eslint-disable-next-line es/no-object-setprototypeof -- safe
 var setPrototypeOf = Object.setPrototypeOf;
 var ObjectPrototype = Object.prototype;
 var PROTO = '__proto__';
@@ -8876,7 +8876,7 @@ var onFreeze = (__webpack_require__(230).onFreeze);
 var FREEZING = __webpack_require__(233);
 var fails = __webpack_require__(7);
 
-// eslint-disable-next-line es-x/no-object-seal -- safe
+// eslint-disable-next-line es/no-object-seal -- safe
 var $seal = Object.seal;
 var FAILS_ON_PRIMITIVES = fails(function () { $seal(1); });
 
@@ -9313,11 +9313,11 @@ var String = global.String;
 var counter = 0;
 var queue = {};
 var ONREADYSTATECHANGE = 'onreadystatechange';
-var location, defer, channel, port;
+var $location, defer, channel, port;
 
 try {
   // Deno throws a ReferenceError on `location` access without `--location` flag
-  location = global.location;
+  $location = global.location;
 } catch (error) { /* empty */ }
 
 var run = function (id) {
@@ -9340,7 +9340,7 @@ var listener = function (event) {
 
 var post = function (id) {
   // old engines have not location.origin
-  global.postMessage(String(id), location.protocol + '//' + location.host);
+  global.postMessage(String(id), $location.protocol + '//' + $location.host);
 };
 
 // Node.js 0.9+ & IE10+ has setImmediate, otherwise:
@@ -9381,7 +9381,7 @@ if (!set || !clear) {
     global.addEventListener &&
     isCallable(global.postMessage) &&
     !global.importScripts &&
-    location && location.protocol !== 'file:' &&
+    $location && $location.protocol !== 'file:' &&
     !fails(post)
   ) {
     defer = post;
@@ -10061,7 +10061,7 @@ var fails = __webpack_require__(7);
 
 // MS Edge argumentsList argument is optional
 var OPTIONAL_ARGUMENTS_LIST = !fails(function () {
-  // eslint-disable-next-line es-x/no-reflect -- required for testing
+  // eslint-disable-next-line es/no-reflect -- required for testing
   Reflect.apply(function () { /* empty */ });
 });
 
@@ -10149,7 +10149,7 @@ var fails = __webpack_require__(7);
 
 // MS Edge has broken Reflect.defineProperty - throwing instead of returning false
 var ERROR_INSTEAD_OF_FALSE = fails(function () {
-  // eslint-disable-next-line es-x/no-reflect -- required for testing
+  // eslint-disable-next-line es/no-reflect -- required for testing
   Reflect.defineProperty(definePropertyModule.f({}, 1, { value: 1 }), 1, { value: 2 });
 });
 
@@ -10383,7 +10383,7 @@ function set(target, propertyKey, V /* , receiver */) {
 var MS_EDGE_BUG = fails(function () {
   var Constructor = function () { /* empty */ };
   var object = definePropertyModule.f(new Constructor(), 'a', { configurable: true });
-  // eslint-disable-next-line es-x/no-reflect -- required for testing
+  // eslint-disable-next-line es/no-reflect -- required for testing
   return Reflect.set(Constructor.prototype, 'a', 1, object) !== false;
 });
 
@@ -10957,7 +10957,7 @@ var FORCED = DESCRIPTORS && fails(function () {
   var expected = INDICES_SUPPORT ? 'dgimsy' : 'gimsy';
 
   var addGetter = function (key, chr) {
-    // eslint-disable-next-line es-x/no-object-defineproperty -- safe
+    // eslint-disable-next-line es/no-object-defineproperty -- safe
     Object.defineProperty(O, key, { get: function () {
       calls += chr;
       return true;
@@ -10976,7 +10976,7 @@ var FORCED = DESCRIPTORS && fails(function () {
 
   for (var key in pairs) addGetter(key, pairs[key]);
 
-  // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+  // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
   var result = Object.getOwnPropertyDescriptor(RegExpPrototype, 'flags').get.call(O);
 
   return result !== expected || calls !== expected;
@@ -11136,7 +11136,7 @@ var fails = __webpack_require__(7);
 var charAt = uncurryThis(''.charAt);
 
 var FORCED = fails(function () {
-  // eslint-disable-next-line es-x/no-array-string-prototype-at -- safe
+  // eslint-disable-next-line es/no-array-string-prototype-at -- safe
   return '𠮷'.at(-2) !== '\uD842';
 });
 
@@ -11229,7 +11229,7 @@ var requireObjectCoercible = __webpack_require__(16);
 var correctIsRegExpLogic = __webpack_require__(375);
 var IS_PURE = __webpack_require__(36);
 
-// eslint-disable-next-line es-x/no-string-prototype-endswith -- safe
+// eslint-disable-next-line es/no-string-prototype-endswith -- safe
 var nativeEndsWith = uncurryThis(''.endsWith);
 var slice = uncurryThis(''.slice);
 var min = Math.min;
@@ -11304,7 +11304,7 @@ var toAbsoluteIndex = __webpack_require__(61);
 
 var $RangeError = RangeError;
 var fromCharCode = String.fromCharCode;
-// eslint-disable-next-line es-x/no-string-fromcodepoint -- required for testing
+// eslint-disable-next-line es/no-string-fromcodepoint -- required for testing
 var $fromCodePoint = String.fromCodePoint;
 var join = uncurryThis([].join);
 
@@ -11580,7 +11580,7 @@ module.exports = function (R, S) {
 
 "use strict";
 
-/* eslint-disable es-x/no-string-prototype-matchall -- safe */
+/* eslint-disable es/no-string-prototype-matchall -- safe */
 var $ = __webpack_require__(3);
 var call = __webpack_require__(8);
 var uncurryThis = __webpack_require__(14);
@@ -12274,7 +12274,7 @@ var requireObjectCoercible = __webpack_require__(16);
 var correctIsRegExpLogic = __webpack_require__(375);
 var IS_PURE = __webpack_require__(36);
 
-// eslint-disable-next-line es-x/no-string-prototype-startswith -- safe
+// eslint-disable-next-line es/no-string-prototype-startswith -- safe
 var nativeStartsWith = uncurryThis(''.startsWith);
 var stringSlice = uncurryThis(''.slice);
 var min = Math.min;
@@ -12317,7 +12317,7 @@ var stringSlice = uncurryThis(''.slice);
 var max = Math.max;
 var min = Math.min;
 
-// eslint-disable-next-line unicorn/prefer-string-slice, es-x/no-string-prototype-substr -- required for testing
+// eslint-disable-next-line unicorn/prefer-string-slice, es/no-string-prototype-substr -- required for testing
 var FORCED = !''.substr || 'ab'.substr(-1) !== 'b';
 
 // `String.prototype.substr` method
@@ -12389,7 +12389,7 @@ var trimEnd = __webpack_require__(400);
 
 // `String.prototype.trimEnd` method
 // https://tc39.es/ecma262/#sec-string.prototype.trimend
-// eslint-disable-next-line es-x/no-string-prototype-trimstart-trimend -- safe
+// eslint-disable-next-line es/no-string-prototype-trimstart-trimend -- safe
 $({ target: 'String', proto: true, name: 'trimEnd', forced: ''.trimEnd !== trimEnd }, {
   trimEnd: trimEnd
 });
@@ -12404,7 +12404,7 @@ var trimEnd = __webpack_require__(400);
 
 // `String.prototype.trimRight` method
 // https://tc39.es/ecma262/#sec-string.prototype.trimend
-// eslint-disable-next-line es-x/no-string-prototype-trimleft-trimright -- safe
+// eslint-disable-next-line es/no-string-prototype-trimleft-trimright -- safe
 $({ target: 'String', proto: true, name: 'trimEnd', forced: ''.trimRight !== trimEnd }, {
   trimRight: trimEnd
 });
@@ -12424,7 +12424,7 @@ var forcedStringTrimMethod = __webpack_require__(397);
 // https://tc39.es/ecma262/#String.prototype.trimright
 module.exports = forcedStringTrimMethod('trimEnd') ? function trimEnd() {
   return $trimEnd(this);
-// eslint-disable-next-line es-x/no-string-prototype-trimstart-trimend -- safe
+// eslint-disable-next-line es/no-string-prototype-trimstart-trimend -- safe
 } : ''.trimEnd;
 
 
@@ -12439,7 +12439,7 @@ var trimStart = __webpack_require__(403);
 
 // `String.prototype.trimStart` method
 // https://tc39.es/ecma262/#sec-string.prototype.trimstart
-// eslint-disable-next-line es-x/no-string-prototype-trimstart-trimend -- safe
+// eslint-disable-next-line es/no-string-prototype-trimstart-trimend -- safe
 $({ target: 'String', proto: true, name: 'trimStart', forced: ''.trimStart !== trimStart }, {
   trimStart: trimStart
 });
@@ -12454,7 +12454,7 @@ var trimStart = __webpack_require__(403);
 
 // `String.prototype.trimLeft` method
 // https://tc39.es/ecma262/#sec-string.prototype.trimleft
-// eslint-disable-next-line es-x/no-string-prototype-trimleft-trimright -- safe
+// eslint-disable-next-line es/no-string-prototype-trimleft-trimright -- safe
 $({ target: 'String', proto: true, name: 'trimStart', forced: ''.trimLeft !== trimStart }, {
   trimLeft: trimStart
 });
@@ -12474,7 +12474,7 @@ var forcedStringTrimMethod = __webpack_require__(397);
 // https://tc39.es/ecma262/#String.prototype.trimleft
 module.exports = forcedStringTrimMethod('trimStart') ? function trimStart() {
   return $trimStart(this);
-// eslint-disable-next-line es-x/no-string-prototype-trimstart-trimend -- safe
+// eslint-disable-next-line es/no-string-prototype-trimstart-trimend -- safe
 } : ''.trimStart;
 
 
@@ -13158,7 +13158,7 @@ var $TypeError = TypeError;
 module.exports = function (argument) {
   var prim = toPrimitive(argument, 'number');
   if (typeof prim == 'number') throw $TypeError("Can't convert number to bigint");
-  // eslint-disable-next-line es-x/no-bigint -- safe
+  // eslint-disable-next-line es/no-bigint -- safe
   return BigInt(prim);
 };
 
@@ -13368,7 +13368,7 @@ var slice = uncurryThis(''.slice);
 // V8 ~ Chrome < 59, Safari < 14.1, FF < 55, Edge <=18
 var CONVERSION_BUG = fails(function () {
   var count = 0;
-  // eslint-disable-next-line es-x/no-typed-arrays -- safe
+  // eslint-disable-next-line es/no-typed-arrays -- safe
   new Int8Array(2).fill({ valueOf: function () { return count++; } });
   return count !== 1;
 });
@@ -13825,7 +13825,7 @@ var aTypedArray = ArrayBufferViewCore.aTypedArray;
 var exportTypedArrayMethod = ArrayBufferViewCore.exportTypedArrayMethod;
 
 var WORKS_WITH_OBJECTS_AND_GEERIC_ON_TYPED_ARRAYS = !fails(function () {
-  // eslint-disable-next-line es-x/no-typed-arrays -- required for testing
+  // eslint-disable-next-line es/no-typed-arrays -- required for testing
   var array = new Uint8ClampedArray(2);
   call($set, array, { length: 1, 0: 3 }, 1);
   return array[1] !== 3;
@@ -13869,7 +13869,7 @@ var aTypedArray = ArrayBufferViewCore.aTypedArray;
 var exportTypedArrayMethod = ArrayBufferViewCore.exportTypedArrayMethod;
 
 var FORCED = fails(function () {
-  // eslint-disable-next-line es-x/no-typed-arrays -- required for testing
+  // eslint-disable-next-line es/no-typed-arrays -- required for testing
   new Int8Array(1).slice();
 });
 
@@ -14664,7 +14664,7 @@ var NativeDOMException = getBuiltIn(DOM_EXCEPTION) || (function () {
   try {
     // NodeJS < 15.0 does not expose `MessageChannel` to global
     var MessageChannel = getBuiltIn('MessageChannel') || tryNodeRequire('worker_threads').MessageChannel;
-    // eslint-disable-next-line es-x/no-weak-map, unicorn/require-post-message-target-origin -- safe
+    // eslint-disable-next-line es/no-weak-map, unicorn/require-post-message-target-origin -- safe
     new MessageChannel().port1.postMessage(new WeakMap());
   } catch (error) {
     if (error.name == DATA_CLONE_ERR && error.code == 25) return error.constructor;
@@ -14867,7 +14867,7 @@ var DOMExceptionPrototype = $DOMException.prototype = NativeDOMException.prototy
 var ERROR_HAS_STACK = 'stack' in Error(DOM_EXCEPTION);
 var DOM_EXCEPTION_HAS_STACK = 'stack' in new NativeDOMException(1, 2);
 
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var descriptor = NativeDOMException && DESCRIPTORS && Object.getOwnPropertyDescriptor(global, DOM_EXCEPTION);
 
 // Bun ~ 0.1.1 DOMException have incorrect descriptor and we can't redefine it
@@ -16885,7 +16885,7 @@ var URL_SEARCH_PARAMS_ITERATOR = URL_SEARCH_PARAMS + 'Iterator';
 var setInternalState = InternalStateModule.set;
 var getInternalParamsState = InternalStateModule.getterFor(URL_SEARCH_PARAMS);
 var getInternalIteratorState = InternalStateModule.getterFor(URL_SEARCH_PARAMS_ITERATOR);
-// eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Avoid NodeJS experimental warning
@@ -26702,7 +26702,7 @@ var Plugin = /*#__PURE__*/function () {
   return Plugin;
 }();
 
-Plugin.version = "3.5.1-nightly-20220923004809";
+Plugin.version = "3.5.1-nightly-20220927004759";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**

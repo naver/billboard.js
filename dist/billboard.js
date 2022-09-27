@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.5.1-nightly-20220923004809
+ * @version 3.5.1-nightly-20220927004759
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3319,9 +3319,15 @@ var data_this = undefined;
    * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
    * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
    * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
-   * @property {number} [legend.item.tile.width=10] Set width of item tile element
-   * @property {number} [legend.item.tile.height=10] Set height of item tile element
+   * @property {number} [legend.item.tile.width=10] Set width for 'rectangle' legend item tile element.
+   * @property {number} [legend.item.tile.height=10] ㄹ
+   * @property {number} [legend.item.tile.r=5] Set the radius for 'circle' legend item tile type.
+   * @property {string} [legend.item.tile.type="rectangle"] Set legend item shape type.<br>
+   * - **Available Values:**
+   *   - circle
+   *   - rectangle
    * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
+   * @see [Demo: item.tile.type](https://naver.github.io/billboard.js/demo/#Legend.LegendItemTileType)
    * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
    * @see [Demo: contents.template](https://naver.github.io/billboard.js/demo/#Legend.LegendTemplate1)
    * @see [Demo: usePoint](https://naver.github.io/billboard.js/demo/#Legend.usePoint)
@@ -3361,8 +3367,15 @@ var data_this = undefined;
    *
    *          // set tile's size
    *          tile: {
-   *              width: 20,
+   *              // set tile type
+   *              type: "circle"  // or "rectangle" (default)
+   *
+   *              // width & height, are only applicable for 'rectangle' legend type
+   *              width: 15,
    *              height: 15
+   *
+   *              // radis is only applicable for 'circle' legend type
+   *              r: 10
    *          }
    *      },
    *      usePoint: true
@@ -3384,6 +3397,8 @@ var data_this = undefined;
   legend_padding: 0,
   legend_item_tile_width: 10,
   legend_item_tile_height: 10,
+  legend_item_tile_r: 5,
+  legend_item_tile_type: "rectangle",
   legend_usePoint: !1
 });
 ;// CONCATENATED MODULE: ./src/config/Options/common/title.ts
@@ -7517,7 +7532,14 @@ function getFormat($$, typeValue, v) {
         state = $$.state,
         legend = $$.$el.legend,
         $T = $$.$T,
-        tileWidth = config.legend_item_tile_width + 5,
+        legendType = config.legend_item_tile_type,
+        isRectangle = legendType !== "circle",
+        legendItemR = config.legend_item_tile_r,
+        itemTileSize = {
+      width: isRectangle ? config.legend_item_tile_width : legendItemR * 2,
+      height: isRectangle ? config.legend_item_tile_height : legendItemR * 2
+    },
+        tileWidth = itemTileSize.width + 5,
         maxWidth = 0,
         maxHeight = 0,
         xForLegend,
@@ -7666,7 +7688,7 @@ function getFormat($$, typeValue, v) {
     var xForLegendText = function (id, i) {
       _newArrowCheck(this, _this4);
 
-      return xForLegend(id, i) + 4 + config.legend_item_tile_width;
+      return xForLegend(id, i) + 4 + itemTileSize.width;
     }.bind(this),
         xForLegendRect = function (id, i) {
       _newArrowCheck(this, _this4);
@@ -7681,7 +7703,7 @@ function getFormat($$, typeValue, v) {
         x2ForLegendTile = function (id, i) {
       _newArrowCheck(this, _this4);
 
-      return xForLegend(id, i) - 2 + config.legend_item_tile_width;
+      return xForLegend(id, i) - 2 + itemTileSize.width;
     }.bind(this),
         yForLegendText = function (id, i) {
       _newArrowCheck(this, _this4);
@@ -7743,7 +7765,15 @@ function getFormat($$, typeValue, v) {
         return nodeName === "use" ? "#" + state.datetimeId + "-point" + id : undefined;
       }.bind(this));
     } else {
-      l.append("line").attr("class", $LEGEND.legendItemTile).style("stroke", getColor).style("pointer-events", $$.getStylePropValue("none")).attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height);
+      l.append(isRectangle ? "line" : legendType).attr("class", $LEGEND.legendItemTile).style("stroke", getColor).style("pointer-events", $$.getStylePropValue("none")).call(function (selection) {
+        _newArrowCheck(this, _this4);
+
+        if (legendType === "circle") {
+          selection.attr("r", legendItemR).style("fill", getColor).attr("cx", isLegendRightOrInset ? x2ForLegendTile : pos).attr("cy", isLegendRightOrInset ? pos : yForLegendTile);
+        } else if (isRectangle) {
+          selection.attr("stroke-width", itemTileSize.height).attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile);
+        }
+      }.bind(this));
     } // Set background for inset legend
 
 
@@ -7813,9 +7843,24 @@ function getFormat($$, typeValue, v) {
         }.bind(this)).attr("r", radius).attr("width", width).attr("height", height);
       });
     } else {
-      var _tiles = legend.selectAll("line." + $LEGEND.legendItemTile).data(targetIdz);
+      var _tiles = legend.selectAll("." + $LEGEND.legendItemTile).data(targetIdz);
 
-      $T(_tiles, withTransition).style("stroke", getColor).attr("x1", x1ForLegendTile).attr("y1", yForLegendTile).attr("x2", x2ForLegendTile).attr("y2", yForLegendTile);
+      $T(_tiles, withTransition).style("stroke", getColor).call(function (selection) {
+        var _this7 = this;
+
+        _newArrowCheck(this, _this4);
+
+        if (legendType === "circle") {
+          selection.attr("cx", function (d) {
+            _newArrowCheck(this, _this7);
+
+            var x2 = x2ForLegendTile(d);
+            return x2 - (x2 - x1ForLegendTile(d)) / 2;
+          }.bind(this)).attr("cy", yForLegendTile);
+        } else if (isRectangle) {
+          selection.attr("x1", x1ForLegendTile).attr("y1", yForLegendTile).attr("x2", x2ForLegendTile).attr("y2", yForLegendTile);
+        }
+      }.bind(this));
     }
 
     if (background) {
@@ -25988,7 +26033,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.5.1-nightly-20220923004809",
+  version: "3.5.1-nightly-20220927004759",
 
   /**
    * Generate chart
@@ -26123,7 +26168,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220923004809
+ * @version 3.5.1-nightly-20220927004759
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

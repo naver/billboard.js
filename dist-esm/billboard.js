@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220923004809
+ * @version 3.5.1-nightly-20220927004759
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -2672,9 +2672,15 @@ var legend$2 = {
      * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
      * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
      * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
-     * @property {number} [legend.item.tile.width=10] Set width of item tile element
-     * @property {number} [legend.item.tile.height=10] Set height of item tile element
+     * @property {number} [legend.item.tile.width=10] Set width for 'rectangle' legend item tile element.
+     * @property {number} [legend.item.tile.height=10] ㄹ
+     * @property {number} [legend.item.tile.r=5] Set the radius for 'circle' legend item tile type.
+     * @property {string} [legend.item.tile.type="rectangle"] Set legend item shape type.<br>
+     * - **Available Values:**
+     *   - circle
+     *   - rectangle
      * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
+     * @see [Demo: item.tile.type](https://naver.github.io/billboard.js/demo/#Legend.LegendItemTileType)
      * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
      * @see [Demo: contents.template](https://naver.github.io/billboard.js/demo/#Legend.LegendTemplate1)
      * @see [Demo: usePoint](https://naver.github.io/billboard.js/demo/#Legend.usePoint)
@@ -2714,8 +2720,15 @@ var legend$2 = {
      *
      *          // set tile's size
      *          tile: {
-     *              width: 20,
+     *              // set tile type
+     *              type: "circle"  // or "rectangle" (default)
+     *
+     *              // width & height, are only applicable for 'rectangle' legend type
+     *              width: 15,
      *              height: 15
+     *
+     *              // radis is only applicable for 'circle' legend type
+     *              r: 10
      *          }
      *      },
      *      usePoint: true
@@ -2737,6 +2750,8 @@ var legend$2 = {
     legend_padding: 0,
     legend_item_tile_width: 10,
     legend_item_tile_height: 10,
+    legend_item_tile_r: 5,
+    legend_item_tile_type: "rectangle",
     legend_usePoint: false
 };
 
@@ -5875,10 +5890,17 @@ var legend$1 = {
     updateLegendElement: function (targetIds, options) {
         var $$ = this;
         var config = $$.config, state = $$.state, legend = $$.$el.legend, $T = $$.$T;
+        var legendType = config.legend_item_tile_type;
+        var isRectangle = legendType !== "circle";
+        var legendItemR = config.legend_item_tile_r;
+        var itemTileSize = {
+            width: isRectangle ? config.legend_item_tile_width : legendItemR * 2,
+            height: isRectangle ? config.legend_item_tile_height : legendItemR * 2
+        };
         var paddingTop = 4;
         var paddingRight = 10;
         var posMin = 10;
-        var tileWidth = config.legend_item_tile_width + 5;
+        var tileWidth = itemTileSize.width + 5;
         var maxWidth = 0;
         var maxHeight = 0;
         var xForLegend;
@@ -5976,10 +5998,10 @@ var legend$1 = {
             xForLegend = function (id) { return margins[steps[id]] + offsets[id]; };
             yForLegend = function (id) { return maxHeight * steps[id]; };
         }
-        var xForLegendText = function (id, i) { return xForLegend(id, i) + 4 + config.legend_item_tile_width; };
+        var xForLegendText = function (id, i) { return xForLegend(id, i) + 4 + itemTileSize.width; };
         var xForLegendRect = function (id, i) { return xForLegend(id, i); };
         var x1ForLegendTile = function (id, i) { return xForLegend(id, i) - 2; };
-        var x2ForLegendTile = function (id, i) { return xForLegend(id, i) - 2 + config.legend_item_tile_width; };
+        var x2ForLegendTile = function (id, i) { return xForLegend(id, i) - 2 + itemTileSize.width; };
         var yForLegendText = function (id, i) { return yForLegend(id, i) + 9; };
         var yForLegendRect = function (id, i) { return yForLegend(id, i) - 5; };
         var yForLegendTile = function (id, i) { return yForLegend(id, i) + 4; };
@@ -6034,15 +6056,27 @@ var legend$1 = {
             });
         }
         else {
-            l.append("line")
+            l.append(isRectangle ? "line" : legendType)
                 .attr("class", $LEGEND.legendItemTile)
                 .style("stroke", getColor)
                 .style("pointer-events", $$.getStylePropValue("none"))
-                .attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
-                .attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
-                .attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos)
-                .attr("y2", isLegendRightOrInset ? pos : yForLegendTile)
-                .attr("stroke-width", config.legend_item_tile_height);
+                .call(function (selection) {
+                if (legendType === "circle") {
+                    selection
+                        .attr("r", legendItemR)
+                        .style("fill", getColor)
+                        .attr("cx", isLegendRightOrInset ? x2ForLegendTile : pos)
+                        .attr("cy", isLegendRightOrInset ? pos : yForLegendTile);
+                }
+                else if (isRectangle) {
+                    selection
+                        .attr("stroke-width", itemTileSize.height)
+                        .attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
+                        .attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
+                        .attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos)
+                        .attr("y2", isLegendRightOrInset ? pos : yForLegendTile);
+                }
+            });
         }
         // Set background for inset legend
         background = legend.select(".".concat($LEGEND.legendBackground, " rect"));
@@ -6104,14 +6138,27 @@ var legend$1 = {
             });
         }
         else {
-            var tiles = legend.selectAll("line.".concat($LEGEND.legendItemTile))
+            var tiles = legend.selectAll(".".concat($LEGEND.legendItemTile))
                 .data(targetIdz);
             $T(tiles, withTransition)
                 .style("stroke", getColor)
-                .attr("x1", x1ForLegendTile)
-                .attr("y1", yForLegendTile)
-                .attr("x2", x2ForLegendTile)
-                .attr("y2", yForLegendTile);
+                .call(function (selection) {
+                if (legendType === "circle") {
+                    selection
+                        .attr("cx", function (d) {
+                        var x2 = x2ForLegendTile(d);
+                        return x2 - ((x2 - x1ForLegendTile(d)) / 2);
+                    })
+                        .attr("cy", yForLegendTile);
+                }
+                else if (isRectangle) {
+                    selection
+                        .attr("x1", x1ForLegendTile)
+                        .attr("y1", yForLegendTile)
+                        .attr("x2", x2ForLegendTile)
+                        .attr("y2", yForLegendTile);
+                }
+            });
         }
         if (background) {
             $T(background, withTransition)
@@ -21252,7 +21299,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220923004809
+ * @version 3.5.1-nightly-20220927004759
  */
 var bb = {
     /**
@@ -21262,7 +21309,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220923004809",
+    version: "3.5.1-nightly-20220927004759",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
