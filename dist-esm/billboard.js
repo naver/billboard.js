@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220927004759
+ * @version 3.5.1-nightly-20220928004753
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -5096,6 +5096,45 @@ var color = {
                     .html("<feFlood flood-color=\"".concat(v === "" ? backgroundColors : backgroundColors[v], "\" /><feComposite in=\"SourceGraphic\"/>"));
             });
         }
+    },
+    /**
+     * Get data gradient color url
+     * @param {string} id Data id
+     * @returns {string}
+     * @private
+     */
+    getGradienColortUrl: function (id) {
+        return "url(#".concat(this.state.datetimeId, "-gradient").concat(this.getTargetSelectorSuffix(id), ")");
+    },
+    /**
+     * Update linear gradient definition (for area & bar only)
+     * @private
+     */
+    updateLinearGradient: function () {
+        var $$ = this;
+        var config = $$.config, targets = $$.data.targets, datetimeId = $$.state.datetimeId, defs = $$.$el.defs;
+        targets.forEach(function (d) {
+            var id = "".concat(datetimeId, "-gradient").concat($$.getTargetSelectorSuffix(d.id));
+            var supportedType = ($$.isAreaType(d) && "area") || ($$.isBarType(d) && "bar");
+            var isRotated = config.axis_rotated;
+            if (supportedType && defs.select("#".concat(id)).empty()) {
+                var color_1 = $$.color(d);
+                var _a = config["".concat(supportedType, "_linearGradient")], _b = _a.x, x = _b === void 0 ? isRotated ? [1, 0] : [0, 0] : _b, _c = _a.y, y = _c === void 0 ? isRotated ? [0, 0] : [0, 1] : _c, _d = _a.stops, stops = _d === void 0 ? [[0, color_1, 1], [1, color_1, 0]] : _d;
+                var linearGradient_1 = defs.append("linearGradient")
+                    .attr("id", "".concat(id))
+                    .attr("x1", x[0])
+                    .attr("x2", x[1])
+                    .attr("y1", y[0])
+                    .attr("y2", y[1]);
+                stops.forEach(function (v) {
+                    var stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
+                    linearGradient_1.append("stop")
+                        .attr("offset", v[0])
+                        .attr("stop-color", stopColor || color_1)
+                        .attr("stop-opacity", v[2]);
+                });
+            }
+        });
     },
     /**
      * Set the data over color.
@@ -16731,35 +16770,16 @@ var shapeArea = {
             .insert("g", ".".concat(config.area_front ? $CIRCLE.circles : $LINE.lines))
             .attr("class", $$.getClass("areas", true));
     },
-    updateAreaGradient: function () {
-        var $$ = this;
-        var config = $$.config, datetimeId = $$.state.datetimeId, defs = $$.$el.defs;
-        $$.data.targets.forEach(function (d) {
-            var id = "".concat(datetimeId, "-areaGradient").concat($$.getTargetSelectorSuffix(d.id));
-            if ($$.isAreaType(d) && defs.select("#".concat(id)).empty()) {
-                var color_1 = $$.color(d);
-                var _a = config.area_linearGradient, _b = _a.x, x = _b === void 0 ? [0, 0] : _b, _c = _a.y, y = _c === void 0 ? [0, 1] : _c, _d = _a.stops, stops = _d === void 0 ? [[0, color_1, 1], [1, color_1, 0]] : _d;
-                var linearGradient_1 = defs.append("linearGradient")
-                    .attr("id", "".concat(id))
-                    .attr("x1", x[0])
-                    .attr("x2", x[1])
-                    .attr("y1", y[0])
-                    .attr("y2", y[1]);
-                stops.forEach(function (v) {
-                    var stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
-                    linearGradient_1.append("stop")
-                        .attr("offset", v[0])
-                        .attr("stop-color", stopColor || color_1)
-                        .attr("stop-opacity", v[2]);
-                });
-            }
-        });
-    },
+    /**
+     * Update area color
+     * @param {object} d Data object
+     * @returns {string} Color string
+     * @private
+     */
     updateAreaColor: function (d) {
         var $$ = this;
         return $$.config.area_linearGradient ?
-            "url(#".concat($$.state.datetimeId, "-areaGradient").concat($$.getTargetSelectorSuffix(d.id), ")") :
-            $$.color(d);
+            $$.getGradienColortUrl(d.id) : $$.color(d);
     },
     /**
      * Generate/Update elements
@@ -16772,7 +16792,7 @@ var shapeArea = {
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el, $T = $$.$T;
         var $root = isSub ? $el.subchart : $el;
-        config.area_linearGradient && $$.updateAreaGradient();
+        config.area_linearGradient && $$.updateLinearGradient();
         var area = $root.main.selectAll(".".concat($AREA.areas))
             .selectAll(".".concat($AREA.area))
             .data($$.lineData.bind($$));
@@ -16941,10 +16961,11 @@ var shapeBar = {
     updateBar: function (withTransition, isSub) {
         if (isSub === void 0) { isSub = false; }
         var $$ = this;
-        var $el = $$.$el, $T = $$.$T;
+        var config = $$.config, $el = $$.$el, $T = $$.$T;
         var $root = isSub ? $el.subchart : $el;
         var classBar = $$.getClass("bar", true);
         var initialOpacity = $$.initialOpacity.bind($$);
+        config.bar_linearGradient && $$.updateLinearGradient();
         var bar = $root.main.selectAll(".".concat($BAR.bars))
             .selectAll(".".concat($BAR.bar))
             .data($$.labelishData.bind($$));
@@ -16953,9 +16974,21 @@ var shapeBar = {
             .remove();
         $root.bar = bar.enter().append("path")
             .attr("class", classBar)
-            .style("fill", $$.getStylePropValue($$.color))
+            .style("fill", $$.updateBarColor.bind($$))
             .merge(bar)
             .style("opacity", initialOpacity);
+    },
+    /**
+     * Update bar color
+     * @param {object} d Data object
+     * @returns {string} Color string
+     * @private
+     */
+    updateBarColor: function (d) {
+        var $$ = this;
+        var fn = $$.getStylePropValue($$.color);
+        return $$.config.bar_linearGradient ?
+            $$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
     },
     /**
      * Redraw function
@@ -16963,6 +16996,7 @@ var shapeBar = {
      * @param {boolean} withTransition With or without transition
      * @param {boolean} isSub Subchart draw
      * @returns {Array}
+     * @private
      */
     redrawBar: function (drawFn, withTransition, isSub) {
         if (isSub === void 0) { isSub = false; }
@@ -16971,7 +17005,7 @@ var shapeBar = {
         return [
             $$.$T(bar, withTransition, getRandom())
                 .attr("d", function (d) { return (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d); })
-                .style("fill", $$.getStylePropValue($$.color))
+                .style("fill", $$.updateBarColor.bind($$))
                 .style("opacity", null)
         ];
     },
@@ -18824,6 +18858,11 @@ var optBar = {
      * @property {object} bar Bar object
      * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
      * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
+     * @property {boolean|object} [bar.linearGradient=false] Set the linear gradient on bar.<br><br>
+     * Or customize by giving below object value:
+     *  - x {Array}: `x1`, `x2` value
+     *  - y {Array}: `y1`, `y2` value
+     *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
      * @property {boolean} [bar.overlap=false] Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
      * @property {number} [bar.padding=0] The padding pixel value between each bar.
      * @property {number} [bar.radius] Set the radius of bar edge in pixel.
@@ -18850,6 +18889,30 @@ var optBar = {
      *      // remove nullish data on bar indices postions
      *      indices: {
      *          removeNull: true
+     *      },
+     *
+     *      // will generate follwing linearGradient:
+     *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
+     *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+     *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+     *      // </linearGradient>
+     *      linearGradient: true,
+     *
+     *      // Or customized gradient
+     *      linearGradient: {
+     *      	x: [0, 0],  // x1, x2 attributes
+     *      	y: [0, 0],  // y1, y2 attributes
+     *      	stops: [
+     *      	  // offset, stop-color, stop-opacity
+     *      	  [0, "#7cb5ec", 1],
+     *
+     *      	  // setting 'null' for stop-color, will set its original data color
+     *      	  [0.5, null, 0],
+     *
+     *      	  // setting 'function' for stop-color, will pass data id as argument.
+     *      	  // It should return color string or null value
+     *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+     *      	]
      *      },
      *
      *      // remove nullish da
@@ -18894,6 +18957,7 @@ var optBar = {
      *  }
      */
     bar_label_threshold: 0,
+    bar_linearGradient: false,
     bar_indices_removeNull: false,
     bar_overlap: false,
     bar_padding: 0,
@@ -21299,7 +21363,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220927004759
+ * @version 3.5.1-nightly-20220928004753
  */
 var bb = {
     /**
@@ -21309,7 +21373,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220927004759",
+    version: "3.5.1-nightly-20220928004753",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
