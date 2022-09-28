@@ -71,10 +71,12 @@ export default {
 	 */
 	updateBar(withTransition: boolean, isSub = false): void {
 		const $$ = this;
-		const {$el, $T} = $$;
+		const {config, $el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
 		const classBar = $$.getClass("bar", true);
 		const initialOpacity = $$.initialOpacity.bind($$);
+
+		config.bar_linearGradient && $$.updateLinearGradient();
 
 		const bar = $root.main.selectAll(`.${$BAR.bars}`)
 			.selectAll(`.${$BAR.bar}`)
@@ -86,9 +88,23 @@ export default {
 
 		$root.bar = bar.enter().append("path")
 			.attr("class", classBar)
-			.style("fill", $$.getStylePropValue($$.color))
+			.style("fill", $$.updateBarColor.bind($$))
 			.merge(bar)
 			.style("opacity", initialOpacity);
+	},
+
+	/**
+	 * Update bar color
+	 * @param {object} d Data object
+	 * @returns {string} Color string
+	 * @private
+	 */
+	updateBarColor(d: IDataRow): string {
+		const $$ = this;
+		const fn = $$.getStylePropValue($$.color);
+
+		return $$.config.bar_linearGradient ?
+			$$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
 	},
 
 	/**
@@ -97,6 +113,7 @@ export default {
 	 * @param {boolean} withTransition With or without transition
 	 * @param {boolean} isSub Subchart draw
 	 * @returns {Array}
+	 * @private
 	 */
 	redrawBar(drawFn, withTransition?: boolean, isSub = false) {
 		const $$ = this;
@@ -105,7 +122,7 @@ export default {
 		return [
 			$$.$T(bar, withTransition, getRandom())
 				.attr("d", d => (isNumber(d.value) || $$.isBarRangeType(d)) && drawFn(d))
-				.style("fill", $$.getStylePropValue($$.color))
+				.style("fill", $$.updateBarColor.bind($$))
 				.style("opacity", null)
 		];
 	},

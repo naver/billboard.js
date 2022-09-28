@@ -14,6 +14,11 @@ export default {
 	 * @property {object} bar Bar object
 	 * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
 	 * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
+	 * @property {boolean|object} [bar.linearGradient=false] Set the linear gradient on bar.<br><br>
+	 * Or customize by giving below object value:
+	 *  - x {Array}: `x1`, `x2` value
+	 *  - y {Array}: `y1`, `y2` value
+	 *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
 	 * @property {boolean} [bar.overlap=false] Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
 	 * @property {number} [bar.padding=0] The padding pixel value between each bar.
 	 * @property {number} [bar.radius] Set the radius of bar edge in pixel.
@@ -40,6 +45,30 @@ export default {
 	 *      // remove nullish data on bar indices postions
 	 *      indices: {
 	 *          removeNull: true
+	 *      },
+	 *
+	 *      // will generate follwing linearGradient:
+	 *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
+	 *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+	 *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+	 *      // </linearGradient>
+	 *      linearGradient: true,
+	 *
+	 *      // Or customized gradient
+	 *      linearGradient: {
+	 *      	x: [0, 0],  // x1, x2 attributes
+	 *      	y: [0, 0],  // y1, y2 attributes
+	 *      	stops: [
+	 *      	  // offset, stop-color, stop-opacity
+	 *      	  [0, "#7cb5ec", 1],
+	 *
+	 *      	  // setting 'null' for stop-color, will set its original data color
+	 *      	  [0.5, null, 0],
+	 *
+	 *      	  // setting 'function' for stop-color, will pass data id as argument.
+	 *      	  // It should return color string or null value
+	 *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+	 *      	]
 	 *      },
 	 *
 	 *      // remove nullish da
@@ -84,6 +113,9 @@ export default {
 	 *  }
 	 */
 	bar_label_threshold: 0,
+	bar_linearGradient: <
+	boolean|{x?: number[]; y?: number[]; stops?: [number, string|Function|null, number]}
+	> false,
 	bar_indices_removeNull: false,
 	bar_overlap: false,
 	bar_padding: 0,

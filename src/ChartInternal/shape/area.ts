@@ -5,7 +5,7 @@
 import {area as d3Area} from "d3-shape";
 import {select as d3Select} from "d3-selection";
 import {$AREA, $CIRCLE, $LINE} from "../../config/classes";
-import {getRandom, isFunction} from "../../module/util";
+import {getRandom} from "../../module/util";
 import type {IData, IDataRow} from "../data/IData";
 import {d3Selection} from "../../../types";
 
@@ -21,46 +21,17 @@ export default {
 			.attr("class", $$.getClass("areas", true));
 	},
 
-	updateAreaGradient(): void {
-		const $$ = this;
-		const {config, state: {datetimeId}, $el: {defs}} = $$;
-
-		$$.data.targets.forEach(d => {
-			const id = `${datetimeId}-areaGradient${$$.getTargetSelectorSuffix(d.id)}`;
-
-			if ($$.isAreaType(d) && defs.select(`#${id}`).empty()) {
-				const color = $$.color(d);
-				const {
-					x = [0, 0],
-					y = [0, 1],
-					stops = [[0, color, 1], [1, color, 0]]
-				} = config.area_linearGradient;
-
-				const linearGradient = defs.append("linearGradient")
-					.attr("id", `${id}`)
-					.attr("x1", x[0])
-					.attr("x2", x[1])
-					.attr("y1", y[0])
-					.attr("y2", y[1]);
-
-				stops.forEach(v => {
-					const stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
-
-					linearGradient.append("stop")
-						.attr("offset", v[0])
-						.attr("stop-color", stopColor || color)
-						.attr("stop-opacity", v[2]);
-				});
-			}
-		});
-	},
-
+	/**
+	 * Update area color
+	 * @param {object} d Data object
+	 * @returns {string} Color string
+	 * @private
+	 */
 	updateAreaColor(d: IDataRow): string {
 		const $$ = this;
 
 		return $$.config.area_linearGradient ?
-			`url(#${$$.state.datetimeId}-areaGradient${$$.getTargetSelectorSuffix(d.id)})` :
-			$$.color(d);
+			$$.getGradienColortUrl(d.id) : $$.color(d);
 	},
 
 	/**
@@ -74,7 +45,7 @@ export default {
 		const {config, state, $el, $T} = $$;
 		const $root = isSub ? $el.subchart : $el;
 
-		config.area_linearGradient && $$.updateAreaGradient();
+		config.area_linearGradient && $$.updateLinearGradient();
 
 		const area = $root.main.selectAll(`.${$AREA.areas}`)
 			.selectAll(`.${$AREA.area}`)

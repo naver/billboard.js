@@ -876,6 +876,142 @@ describe("SHAPE BAR", () => {
 		})
 	});
 
+	describe("bar linear gradient", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 230, 280, 251, 400, 150, 546, 158],
+						["hello there", 230, 280, 251, 400, 150, 546, 158],
+						["123 test", 130, 220, 120, 129, 410, 100, 440]
+					],
+					type: "bar",
+				},
+				bar: {
+					linearGradient: true
+				}
+			}
+		});
+
+		it("should generate liearGradient element", () => {
+			const internal = chart.internal;
+			const expected = {
+				x: [0, 0],
+				y: [0, 1],
+				offset: [0, 1],
+				opacity: [1, 0]
+			};
+
+			chart.data().forEach(v => {
+				const color = chart.color(v.id);
+				const selectorSuffix = internal.getTargetSelectorSuffix(v.id);
+				const id = `#${internal.state.datetimeId}-gradient${selectorSuffix}`;
+				const gradient = chart.$.svg.select(id);
+
+				expect(gradient.empty()).to.be.false;
+				expect([+gradient.attr("x1"), +gradient.attr("x2")]).to.be.deep.equal(expected.x);
+				expect([+gradient.attr("y1"), +gradient.attr("y2")]).to.be.deep.equal(expected.y);
+
+				gradient.selectAll("stop").each(function(d, i) {
+					const stop = d3Select(this);
+
+					expect(+stop.attr("offset")).to.be.equal(expected.offset[i]);
+					expect(stop.attr("stop-color")).to.be.equal(color);
+					expect(+stop.attr("stop-opacity")).to.be.equal(expected.opacity[i]);
+				});
+
+				expect(chart.$.bar.bars.filter(d => d.id === v.id).style("fill")).to.be.equal(`url("${id}")`);
+			});
+		});
+
+		it("set options: customzied linearGradient", () => {
+			args.bar = {
+				linearGradient: {
+					x: [1, 0],
+					y: [0, 1],
+					stops: [
+						[0, id => id == "data1" ? "red" : "yellow", 1],
+						[0.3, "orange", 0.5],
+						[0.6, "green", 0.7],
+						[0.8, "purple", 0.7],
+						[1, null, 1]
+					]
+				}
+			};
+		});
+
+		it("should generate customized liearGradient element", () => {
+			const internal = chart.internal;
+
+			chart.data().forEach(v => {
+				const selectorSuffix = internal.getTargetSelectorSuffix(v.id);
+				const id = `#${internal.state.datetimeId}-gradient${selectorSuffix}`;
+				const gradient = chart.$.svg.select(id);
+
+				expect(gradient.empty()).to.be.false;
+				expect([+gradient.attr("x1"), +gradient.attr("x2")]).to.be.deep.equal(args.bar.linearGradient.x);
+				expect([+gradient.attr("y1"), +gradient.attr("y2")]).to.be.deep.equal(args.bar.linearGradient.y);
+
+				const stops = args.bar.linearGradient.stops;
+
+				gradient.selectAll("stop").each(function(d, i) {
+					const color = i === 0 ? stops[i][1](v.id) : stops[i][1];
+					const stop = d3Select(this);
+
+					expect(+stop.attr("offset")).to.be.equal(stops[i][0]);
+					expect(stop.attr("stop-color")).to.be.equal(color || chart.color(v.id));
+					expect(+stop.attr("stop-opacity")).to.be.equal(stops[i][2]);
+				});
+
+				expect(chart.$.bar.bars.filter(d => d.id === v.id).style("fill")).to.be.equal(`url("${id}")`);
+			});
+		});
+
+		it("set options", () => {
+			args.bar.linearGradient = true;
+			args.axis = {
+				rotated: true
+			};
+		});
+
+		it("check for axis rotated gradient", () => {
+			const expected = [1, 0, 0, 0];
+
+			chart.$.defs.selectAll("linearGradient").each(function() {
+				["x1", "x2", "y1", "y2"].forEach((v, i) => {
+					expect(+this.getAttribute(v)).to.be.equal(expected[i]);
+				});
+			});
+		});
+
+		it("set options: reset options", () => {
+			args = {
+				data: {
+					columns: [["data"]],
+					type: "bar"
+				},
+				bar: {
+					linearGradient: true
+				}
+			};
+		});
+
+		it("should generate customized liearGradient element", done => {
+			setTimeout(() => {
+				chart.load({
+				  columns: [
+					["data", 10, 20, 30, 40]
+				  ],
+				  done: () => {
+					  expect(chart.$.defs.select("linearGradient").empty()).to.be.false;
+					  done();
+				  }
+				});
+			  }, 1000);
+		});
+
+	});
+
 	describe("bar overlap", () => {
 		before(() => {
 			args = {
