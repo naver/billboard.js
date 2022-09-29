@@ -1021,7 +1021,7 @@ export interface LegendOptions {
 			/**
 			 * Set legend item shape type.
 			 */
-			type?: "circle" | "recntangle";
+			type?: "circle" | "rectangle";
 
 			/**
 			 * Set the radius for 'circle' legend item tile type.
