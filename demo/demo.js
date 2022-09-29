@@ -2583,6 +2583,80 @@ var demos = {
 				}
 			}
 		],
+		Groups: [
+			{
+				options: {
+					title: {
+						text: "Groups zero treated as 'positive' value"
+					},
+					data: {
+						columns: [
+							["series1", -11, -11, -11, -11],
+							["series2", 4, 4, 4, 4],
+							["series3", 0, 1, 0, -1]
+						],
+						type: "area",
+						order: null,
+						groups: [
+						  [
+							"series1",
+							"series2",
+							"series3",
+						  ]
+						],
+						groupsZeroAs: "positive"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Groups zero treated as 'negative' value"
+					},
+					data: {
+						columns: [
+							["series1", -11, -11, -11, -11],
+							["series2", 4, 4, 4, 4],
+							["series3", 0, 1, 0, -1]
+						],
+						type: "area",
+						order: null,
+						groups: [
+						  [
+							"series1",
+							"series2",
+							"series3",
+						  ]
+						],
+						groupsZeroAs: "negative"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Groups zero treated as absolute 'zero' value"
+					},
+					data: {
+						columns: [
+							["series1", -11, -11, -11, -11],
+							["series2", 4, 4, 4, 4],
+							["series3", 0, 1, 0, -1]
+						],
+						type: "area",
+						order: null,
+						groups: [
+						  [
+							"series1",
+							"series2",
+							"series3",
+						  ]
+						],
+						groupsZeroAs: "zero"
+					}
+				}
+			}
+		],
 		OnMinMaxCallback: {
 			options: {
 				data: {
@@ -2803,6 +2877,51 @@ var demos = {
 	},
 
 	Legend: {
+		CustomLegend: {
+			options: {
+				data: {
+					columns: [
+						["data1", 100],
+						["data2", 300],
+						["data3", 200]
+					],
+					type: "pie"
+				},
+				legend: {
+					show: false
+				}
+			},
+			func: function(chart) {
+				function toggle(id) { chart.toggle(id); }
+
+d3.select(".chart_area")
+	.insert("div", ".chart")
+	.attr("class", "legend")
+	.selectAll("span")
+	.data(["data1", "data2", "data3"])
+	.enter()
+	.append("span")
+	.attr('data-id', function(id) {
+		return id;
+	})
+	.html(function(id) {
+		return id;
+	})
+	.each(function(id) {
+		d3.select(this)
+			.style('background-color', chart.color(id));
+	})
+	.on("mouseover", function(event, id) {
+		chart.focus(id);
+	})
+	.on("mouseout", function(event, id) {
+		chart.revert();
+	})
+	.on("click", function(event, id) {
+		chart.toggle(id);
+	});
+			}
+		},
 		HideLegend: {
 			options: {
 				data: {
@@ -2816,6 +2935,49 @@ var demos = {
 				}
 			}
 		},
+		LegendItemTileType: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 300],
+							["data3", 200]
+						],
+						type: "pie"
+					},
+					legend: {
+						item: {
+							tile: {							
+								type: "circle",
+								r: 7
+							},
+						}
+					}
+				},
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 300],
+							["data3", 200]
+						],
+						type: "pie"
+					},
+					legend: {
+						item: {
+							tile: {							
+								type: "rectangle",
+								width: 15,
+								height: 15
+							},
+						}
+					}
+				}
+			}
+		],
 		LegendPosition: {
 			options: {
 				data: {
@@ -2885,51 +3047,6 @@ var demos = {
 						}
 					}
 				}
-			}
-		},
-		CustomLegend: {
-			options: {
-				data: {
-					columns: [
-						["data1", 100],
-						["data2", 300],
-						["data3", 200]
-					],
-					type: "pie"
-				},
-				legend: {
-					show: false
-				}
-			},
-			func: function(chart) {
-				function toggle(id) { chart.toggle(id); }
-
-d3.select(".chart_area")
-	.insert("div", ".chart")
-	.attr("class", "legend")
-	.selectAll("span")
-	.data(["data1", "data2", "data3"])
-	.enter()
-	.append("span")
-	.attr('data-id', function(id) {
-		return id;
-	})
-	.html(function(id) {
-		return id;
-	})
-	.each(function(id) {
-		d3.select(this)
-			.style('background-color', chart.color(id));
-	})
-	.on("mouseover", function(event, id) {
-		chart.focus(id);
-	})
-	.on("mouseout", function(event, id) {
-		chart.revert();
-	})
-	.on("click", function(event, id) {
-		chart.toggle(id);
-	});
 			}
 		},
 		usePoint: {
@@ -3849,6 +3966,118 @@ d3.select(".chart_area")
 					}
 				}
 			},
+		],
+		BarLinearGradient: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 275, 250, 200, 130, 350],
+							["data2", 130, 350, 273, 200, 190],
+							["data3", 275, 250, 200, 130, 350],
+							["data4", 500, 490, 770, 675, 750]
+						],
+						type: "bar",
+						groups: [
+							["data1", "data2", "data3"]
+						]
+					},
+					bar: {
+						linearGradient: {
+							stops: [
+								   [0, null, 1],
+								[1, null, 0.3]
+							]
+				
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, 280, 251, 400, 150, 546, 158],
+							["data2", 180, 220, 201, 300, 250, 346, 358]
+						],
+						type: "bar"
+					},
+					bar: {
+						linearGradient: {
+							x: [1, 0],
+							y: [0, 1],
+							stops: [
+								[0, null, 1],
+								[0.3, null, 0.5],
+								[0.6, "green", 0.7],
+								[0.8, null, 0.7],
+								[1, "purple", 1]
+							]
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 275, 250, 200],
+							["data2", 130, 350, 273]
+						],
+						type: "bar"
+					},
+					axis: {
+						rotated: true
+					},
+					bar: {
+						linearGradient: true
+					}
+				}
+			}			
+		],
+		BarOverlap: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 80, 150, 100, 100, 100],
+							["data2", 100, 120, 130, 50, 150],
+							["data3", 150, 80, 120, 30, 80]
+						],
+						type: "bar"
+					},
+					bar: {
+						width: {
+							data1: {
+								ratio: 1.2
+							},
+							data2: 40,
+							data3: 20
+						},
+						overlap: true
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 130, 150, 130, 100, 130],
+							["data2", 70, 120, 125, 50, 125],
+							["data3", 50, 80, 110, 30, 20]
+						],
+						type: "bar"
+					},
+					bar: {
+						width: {
+							data1: 20,
+							data2: 40,
+							data3: 60
+						},
+						overlap: true
+					}
+				}
+			}
 		],
 		BarPadding: {
 			options: {
