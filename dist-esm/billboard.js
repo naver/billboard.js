@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.5.1-nightly-20220928004753
+ * @version 3.6.0-nightly-20220930005221
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -5562,6 +5562,20 @@ var format = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/**
+ * Get color string for given data id
+ * @param {string} id Data id
+ * @returns {string} Color string
+ * @private
+ */
+function getLegendColor(id) {
+    var $$ = this;
+    var data = $$.getDataById(id);
+    var color = $$.levelColor ?
+        $$.levelColor(data.values[0].value) :
+        $$.color(data);
+    return color;
+}
 var legend$1 = {
     /**
      * Initialize the legend.
@@ -5936,81 +5950,162 @@ var legend$1 = {
             width: isRectangle ? config.legend_item_tile_width : legendItemR * 2,
             height: isRectangle ? config.legend_item_tile_height : legendItemR * 2
         };
-        var paddingTop = 4;
-        var paddingRight = 10;
-        var posMin = 10;
-        var tileWidth = itemTileSize.width + 5;
-        var maxWidth = 0;
-        var maxHeight = 0;
+        var dimension = {
+            padding: {
+                top: 4,
+                right: 10
+            },
+            max: {
+                width: 0,
+                height: 0
+            },
+            posMin: 10,
+            step: 0,
+            tileWidth: itemTileSize.width + 5,
+            totalLength: 0
+        };
+        var sizes = {
+            offsets: {},
+            widths: {},
+            heights: {},
+            margins: [0],
+            steps: {}
+        };
         var xForLegend;
         var yForLegend;
-        var totalLength = 0;
-        var offsets = {};
-        var widths = {};
-        var heights = {};
-        var margins = [0];
-        var steps = {};
-        var step = 0;
         var background;
-        var isLegendRightOrInset = state.isLegendRight || state.isLegendInset;
         // Skip elements when their name is set to null
         var targetIdz = targetIds
             .filter(function (id) { return !isDefined(config.data_names[id]) || config.data_names[id] !== null; });
         var withTransition = options.withTransition;
-        var updatePositions = function (textElement, id, index) {
+        var updatePositions = $$.getUpdateLegendPositions(targetIdz, dimension, sizes);
+        if (state.isLegendInset) {
+            dimension.step = config.legend_inset_step ? config.legend_inset_step : targetIdz.length;
+            $$.updateLegendStep(dimension.step);
+        }
+        if (state.isLegendRight) {
+            xForLegend = function (id) { return dimension.max.width * sizes.steps[id]; };
+            yForLegend = function (id) { return sizes.margins[sizes.steps[id]] + sizes.offsets[id]; };
+        }
+        else if (state.isLegendInset) {
+            xForLegend = function (id) { return dimension.max.width * sizes.steps[id] + 10; };
+            yForLegend = function (id) { return sizes.margins[sizes.steps[id]] + sizes.offsets[id]; };
+        }
+        else {
+            xForLegend = function (id) { return sizes.margins[sizes.steps[id]] + sizes.offsets[id]; };
+            yForLegend = function (id) { return dimension.max.height * sizes.steps[id]; };
+        }
+        var posFn = {
+            xText: function (id, i) { return xForLegend(id, i) + 4 + itemTileSize.width; },
+            xRect: function (id, i) { return xForLegend(id, i); },
+            x1Tile: function (id, i) { return xForLegend(id, i) - 2; },
+            x2Tile: function (id, i) { return xForLegend(id, i) - 2 + itemTileSize.width; },
+            yText: function (id, i) { return yForLegend(id, i) + 9; },
+            yRect: function (id, i) { return yForLegend(id, i) - 5; },
+            yTile: function (id, i) { return yForLegend(id, i) + 4; }
+        };
+        $$.generateLegendItem(targetIdz, itemTileSize, updatePositions, posFn);
+        // Set background for inset legend
+        background = legend.select(".".concat($LEGEND.legendBackground, " rect"));
+        if (state.isLegendInset && dimension.max.width > 0 && background.size() === 0) {
+            background = legend.insert("g", ".".concat($LEGEND.legendItem))
+                .attr("class", $LEGEND.legendBackground)
+                .append("rect");
+        }
+        var texts = legend.selectAll("text")
+            .data(targetIdz)
+            .text(function (id) { return (isDefined(config.data_names[id]) ? config.data_names[id] : id); }) // MEMO: needed for update
+            .each(function (id, i) {
+            updatePositions(this, id, i);
+        });
+        $T(texts, withTransition)
+            .attr("x", posFn.xText)
+            .attr("y", posFn.yText);
+        var rects = legend.selectAll("rect.".concat($LEGEND.legendItemEvent))
+            .data(targetIdz);
+        $T(rects, withTransition)
+            .attr("width", function (id) { return sizes.widths[id]; })
+            .attr("height", function (id) { return sizes.heights[id]; })
+            .attr("x", posFn.xRect)
+            .attr("y", posFn.yRect);
+        // update legend items position
+        $$.updateLegendItemPos(targetIdz, withTransition, posFn);
+        if (background) {
+            $T(background, withTransition)
+                .attr("height", $$.getLegendHeight() - 12)
+                .attr("width", dimension.max.width * (dimension.step + 1) + 10);
+        }
+        // Update all to reflect change of legend
+        $$.updateLegendItemWidth(dimension.max.width);
+        $$.updateLegendItemHeight(dimension.max.height);
+        $$.updateLegendStep(dimension.step);
+    },
+    /**
+     * Get position update function
+     * @param {Array} targetIdz Data ids
+     * @param {object} dimension Dimension object
+     * @param {object} sizes Size object
+     * @returns {Function} Update position function
+     * @private
+     */
+    getUpdateLegendPositions: function (targetIdz, dimension, sizes) {
+        var $$ = this;
+        var config = $$.config, state = $$.state;
+        var isLegendRightOrInset = state.isLegendRight || state.isLegendInset;
+        return function (textElement, id, index) {
             var reset = index === 0;
             var isLast = index === targetIdz.length - 1;
             var box = $$.getLegendItemTextBox(id, textElement);
-            var itemWidth = box.width + tileWidth +
-                (isLast && !isLegendRightOrInset ? 0 : paddingRight) + config.legend_padding;
-            var itemHeight = box.height + paddingTop;
+            var itemWidth = box.width + dimension.tileWidth +
+                (isLast && !isLegendRightOrInset ? 0 : dimension.padding.right) + config.legend_padding;
+            var itemHeight = box.height + dimension.padding.top;
             var itemLength = isLegendRightOrInset ? itemHeight : itemWidth;
             var areaLength = isLegendRightOrInset ? $$.getLegendHeight() : $$.getLegendWidth();
             var margin;
             // MEMO: care about condifion of step, totalLength
             var updateValues = function (id2, withoutStep) {
                 if (!withoutStep) {
-                    margin = (areaLength - totalLength - itemLength) / 2;
-                    if (margin < posMin) {
+                    margin = (areaLength - dimension.totalLength - itemLength) / 2;
+                    if (margin < dimension.posMin) {
                         margin = (areaLength - itemLength) / 2;
-                        totalLength = 0;
-                        step++;
+                        dimension.totalLength = 0;
+                        dimension.step++;
                     }
                 }
-                steps[id2] = step;
-                margins[step] = state.isLegendInset ? 10 : margin;
-                offsets[id2] = totalLength;
-                totalLength += itemLength;
+                sizes.steps[id2] = dimension.step;
+                sizes.margins[dimension.step] = state.isLegendInset ? 10 : margin;
+                sizes.offsets[id2] = dimension.totalLength;
+                dimension.totalLength += itemLength;
             };
             if (reset) {
-                totalLength = 0;
-                step = 0;
-                maxWidth = 0;
-                maxHeight = 0;
+                dimension.totalLength = 0;
+                dimension.step = 0;
+                dimension.max.width = 0;
+                dimension.max.height = 0;
             }
             if (config.legend_show && !$$.isLegendToShow(id)) {
-                widths[id] = 0;
-                heights[id] = 0;
-                steps[id] = 0;
-                offsets[id] = 0;
+                sizes.widths[id] = 0;
+                sizes.heights[id] = 0;
+                sizes.steps[id] = 0;
+                sizes.offsets[id] = 0;
                 return;
             }
-            widths[id] = itemWidth;
-            heights[id] = itemHeight;
-            if (!maxWidth || itemWidth >= maxWidth) {
-                maxWidth = itemWidth;
+            sizes.widths[id] = itemWidth;
+            sizes.heights[id] = itemHeight;
+            if (!dimension.max.width || itemWidth >= dimension.max.width) {
+                dimension.max.width = itemWidth;
             }
-            if (!maxHeight || itemHeight >= maxHeight) {
-                maxHeight = itemHeight;
+            if (!dimension.max.height || itemHeight >= dimension.max.height) {
+                dimension.max.height = itemHeight;
             }
-            var maxLength = isLegendRightOrInset ? maxHeight : maxWidth;
+            var maxLength = isLegendRightOrInset ? dimension.max.height : dimension.max.width;
             if (config.legend_equally) {
-                Object.keys(widths).forEach(function (id2) { return (widths[id2] = maxWidth); });
-                Object.keys(heights).forEach(function (id2) { return (heights[id2] = maxHeight); });
+                Object.keys(sizes.widths).forEach(function (id2) { return (sizes.widths[id2] = dimension.max.width); });
+                Object.keys(sizes.heights).forEach(function (id2) { return (sizes.heights[id2] = dimension.max.height); });
                 margin = (areaLength - maxLength * targetIdz.length) / 2;
-                if (margin < posMin) {
-                    totalLength = 0;
-                    step = 0;
+                if (margin < dimension.posMin) {
+                    dimension.totalLength = 0;
+                    dimension.step = 0;
                     targetIdz.forEach(function (id2) { return updateValues(id2); });
                 }
                 else {
@@ -6021,29 +6116,23 @@ var legend$1 = {
                 updateValues(id);
             }
         };
-        if (state.isLegendInset) {
-            step = config.legend_inset_step ? config.legend_inset_step : targetIdz.length;
-            $$.updateLegendStep(step);
-        }
-        if (state.isLegendRight) {
-            xForLegend = function (id) { return maxWidth * steps[id]; };
-            yForLegend = function (id) { return margins[steps[id]] + offsets[id]; };
-        }
-        else if (state.isLegendInset) {
-            xForLegend = function (id) { return maxWidth * steps[id] + 10; };
-            yForLegend = function (id) { return margins[steps[id]] + offsets[id]; };
-        }
-        else {
-            xForLegend = function (id) { return margins[steps[id]] + offsets[id]; };
-            yForLegend = function (id) { return maxHeight * steps[id]; };
-        }
-        var xForLegendText = function (id, i) { return xForLegend(id, i) + 4 + itemTileSize.width; };
-        var xForLegendRect = function (id, i) { return xForLegend(id, i); };
-        var x1ForLegendTile = function (id, i) { return xForLegend(id, i) - 2; };
-        var x2ForLegendTile = function (id, i) { return xForLegend(id, i) - 2 + itemTileSize.width; };
-        var yForLegendText = function (id, i) { return yForLegend(id, i) + 9; };
-        var yForLegendRect = function (id, i) { return yForLegend(id, i) - 5; };
-        var yForLegendTile = function (id, i) { return yForLegend(id, i) + 4; };
+    },
+    /**
+     * Generate legend item elements
+     * @param {Array} targetIdz Data ids
+     * @param {object} itemTileSize Item tile size {width, height}
+     * @param {Function} updatePositions Update position function
+     * @param {object} posFn Position functions
+     * @private
+     */
+    generateLegendItem: function (targetIdz, itemTileSize, updatePositions, posFn) {
+        var $$ = this;
+        var config = $$.config, state = $$.state, legend = $$.$el.legend;
+        var usePoint = config.legend_usePoint;
+        var legendItemR = config.legend_item_tile_r;
+        var legendType = config.legend_item_tile_type;
+        var isRectangle = legendType !== "circle";
+        var isLegendRightOrInset = state.isLegendRight || state.isLegendInset;
         var pos = -200;
         // Define g for legend area
         var l = legend.selectAll(".".concat($LEGEND.legendItem))
@@ -6057,21 +6146,13 @@ var legend$1 = {
             updatePositions(this, id, i);
         })
             .style("pointer-events", $$.getStylePropValue("none"))
-            .attr("x", isLegendRightOrInset ? xForLegendText : pos)
-            .attr("y", isLegendRightOrInset ? pos : yForLegendText);
+            .attr("x", isLegendRightOrInset ? posFn.xText : pos)
+            .attr("y", isLegendRightOrInset ? pos : posFn.yText);
         l.append("rect")
             .attr("class", $LEGEND.legendItemEvent)
             .style("fill-opacity", $$.getStylePropValue("0"))
-            .attr("x", isLegendRightOrInset ? xForLegendRect : pos)
-            .attr("y", isLegendRightOrInset ? pos : yForLegendRect);
-        var getColor = function (id) {
-            var data = $$.getDataById(id);
-            var color = $$.levelColor ?
-                $$.levelColor(data.values[0].value) :
-                $$.color(data);
-            return color;
-        };
-        var usePoint = config.legend_usePoint;
+            .attr("x", isLegendRightOrInset ? posFn.xRect : pos)
+            .attr("y", isLegendRightOrInset ? pos : posFn.yRect);
         if (usePoint) {
             var ids_2 = [];
             l.append(function (d) {
@@ -6085,7 +6166,7 @@ var legend$1 = {
                 return doc.createElementNS(namespaces.svg, ("hasValidPointType" in $$) && $$.hasValidPointType(point) ? point : "use");
             })
                 .attr("class", $LEGEND.legendItemPoint)
-                .style("fill", getColor)
+                .style("fill", getLegendColor.bind($$))
                 .style("pointer-events", $$.getStylePropValue("none"))
                 .attr("href", function (data, idx, selection) {
                 var node = selection[idx];
@@ -6097,49 +6178,40 @@ var legend$1 = {
         else {
             l.append(isRectangle ? "line" : legendType)
                 .attr("class", $LEGEND.legendItemTile)
-                .style("stroke", getColor)
+                .style("stroke", getLegendColor.bind($$))
                 .style("pointer-events", $$.getStylePropValue("none"))
                 .call(function (selection) {
                 if (legendType === "circle") {
                     selection
                         .attr("r", legendItemR)
-                        .style("fill", getColor)
-                        .attr("cx", isLegendRightOrInset ? x2ForLegendTile : pos)
-                        .attr("cy", isLegendRightOrInset ? pos : yForLegendTile);
+                        .style("fill", getLegendColor.bind($$))
+                        .attr("cx", isLegendRightOrInset ? posFn.x2Tile : pos)
+                        .attr("cy", isLegendRightOrInset ? pos : posFn.yTile);
                 }
                 else if (isRectangle) {
                     selection
                         .attr("stroke-width", itemTileSize.height)
-                        .attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
-                        .attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
-                        .attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos)
-                        .attr("y2", isLegendRightOrInset ? pos : yForLegendTile);
+                        .attr("x1", isLegendRightOrInset ? posFn.x1Tile : pos)
+                        .attr("y1", isLegendRightOrInset ? pos : posFn.yTile)
+                        .attr("x2", isLegendRightOrInset ? posFn.x2Tile : pos)
+                        .attr("y2", isLegendRightOrInset ? pos : posFn.yTile);
                 }
             });
         }
-        // Set background for inset legend
-        background = legend.select(".".concat($LEGEND.legendBackground, " rect"));
-        if (state.isLegendInset && maxWidth > 0 && background.size() === 0) {
-            background = legend.insert("g", ".".concat($LEGEND.legendItem))
-                .attr("class", $LEGEND.legendBackground)
-                .append("rect");
-        }
-        var texts = legend.selectAll("text")
-            .data(targetIdz)
-            .text(function (id) { return (isDefined(config.data_names[id]) ? config.data_names[id] : id); }) // MEMO: needed for update
-            .each(function (id, i) {
-            updatePositions(this, id, i);
-        });
-        $T(texts, withTransition)
-            .attr("x", xForLegendText)
-            .attr("y", yForLegendText);
-        var rects = legend.selectAll("rect.".concat($LEGEND.legendItemEvent))
-            .data(targetIdz);
-        $T(rects, withTransition)
-            .attr("width", function (id) { return widths[id]; })
-            .attr("height", function (id) { return heights[id]; })
-            .attr("x", xForLegendRect)
-            .attr("y", yForLegendRect);
+    },
+    /**
+     * Update legend item position
+     * @param {Array} targetIdz Data ids
+     * @param {boolean} withTransition Whether or not to apply transition
+     * @param {object} posFn Position functions
+     * @private
+     */
+    updateLegendItemPos: function (targetIdz, withTransition, posFn) {
+        var $$ = this;
+        var config = $$.config, legend = $$.$el.legend, $T = $$.$T;
+        var usePoint = config.legend_usePoint;
+        var legendType = config.legend_item_tile_type;
+        var isRectangle = legendType !== "circle";
         if (usePoint) {
             var tiles = legend.selectAll(".".concat($LEGEND.legendItemPoint))
                 .data(targetIdz);
@@ -6151,9 +6223,9 @@ var legend$1 = {
                 var y = "y";
                 var xOffset = 2;
                 var yOffset = 2.5;
-                var radius;
-                var width;
-                var height;
+                var radius = null;
+                var width = null;
+                var height = null;
                 if (nodeName === "circle") {
                     var size = pointR * 0.2;
                     x = "cx";
@@ -6169,8 +6241,8 @@ var legend$1 = {
                     yOffset = 3;
                 }
                 select(this)
-                    .attr(x, function (d) { return x1ForLegendTile(d) + xOffset; })
-                    .attr(y, function (d) { return yForLegendTile(d) - yOffset; })
+                    .attr(x, function (d) { return posFn.x1Tile(d) + xOffset; })
+                    .attr(y, function (d) { return posFn.yTile(d) - yOffset; })
                     .attr("r", radius)
                     .attr("width", width)
                     .attr("height", height);
@@ -6180,34 +6252,25 @@ var legend$1 = {
             var tiles = legend.selectAll(".".concat($LEGEND.legendItemTile))
                 .data(targetIdz);
             $T(tiles, withTransition)
-                .style("stroke", getColor)
+                .style("stroke", getLegendColor.bind($$))
                 .call(function (selection) {
                 if (legendType === "circle") {
                     selection
                         .attr("cx", function (d) {
-                        var x2 = x2ForLegendTile(d);
-                        return x2 - ((x2 - x1ForLegendTile(d)) / 2);
+                        var x2 = posFn.x2Tile(d);
+                        return x2 - ((x2 - posFn.x1Tile(d)) / 2);
                     })
-                        .attr("cy", yForLegendTile);
+                        .attr("cy", posFn.yTile);
                 }
                 else if (isRectangle) {
                     selection
-                        .attr("x1", x1ForLegendTile)
-                        .attr("y1", yForLegendTile)
-                        .attr("x2", x2ForLegendTile)
-                        .attr("y2", yForLegendTile);
+                        .attr("x1", posFn.x1Tile)
+                        .attr("y1", posFn.yTile)
+                        .attr("x2", posFn.x2Tile)
+                        .attr("y2", posFn.yTile);
                 }
             });
         }
-        if (background) {
-            $T(background, withTransition)
-                .attr("height", $$.getLegendHeight() - 12)
-                .attr("width", maxWidth * (step + 1) + 10);
-        }
-        // Update all to reflect change of legend
-        $$.updateLegendItemWidth(maxWidth);
-        $$.updateLegendItemHeight(maxHeight);
-        $$.updateLegendStep(step);
     }
 };
 
@@ -21363,7 +21426,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.5.1-nightly-20220928004753
+ * @version 3.6.0-nightly-20220930005221
  */
 var bb = {
     /**
@@ -21373,7 +21436,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.5.1-nightly-20220928004753",
+    version: "3.6.0-nightly-20220930005221",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
