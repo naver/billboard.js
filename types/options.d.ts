@@ -82,6 +82,13 @@ export interface ChartOptions {
 		height?: number;
 	};
 
+	svg?: {
+		/**
+		 * Set svg element's class name
+		 */
+		classname?: string;
+	};
+
 	/**
 	 * Set padding of chart, and accepts object or boolean type.
 	 * - `Object`: Specify each side's padding.
