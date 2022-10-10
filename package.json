@@ -108,7 +108,7 @@
 		"@commitlint/config-conventional": "^17.1.0",
 		"@rollup/plugin-babel": "^5.3.1",
 		"@rollup/plugin-node-resolve": "^14.1.0",
-		"@rollup/plugin-replace": "^4.0.0",
+		"@rollup/plugin-replace": "^5.0.0",
 		"@rollup/plugin-typescript": "^8.5.0",
 		"@semantic-release/changelog": "^6.0.1",
 		"@semantic-release/commit-analyzer": "^9.0.2",
