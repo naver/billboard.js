@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.0-nightly-20221006004814
+ * @version 3.6.0-nightly-20221012004915
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -17316,22 +17316,18 @@ try {
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var _typeof = (__webpack_require__(504)["default"]);
-
 function _regeneratorRuntime() {
-  "use strict";
-  /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-
+  "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
   module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
     return exports;
   }, module.exports.__esModule = true, module.exports["default"] = module.exports;
   var exports = {},
-      Op = Object.prototype,
-      hasOwn = Op.hasOwnProperty,
-      $Symbol = "function" == typeof Symbol ? Symbol : {},
-      iteratorSymbol = $Symbol.iterator || "@@iterator",
-      asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
-      toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-
+    Op = Object.prototype,
+    hasOwn = Op.hasOwnProperty,
+    $Symbol = "function" == typeof Symbol ? Symbol : {},
+    iteratorSymbol = $Symbol.iterator || "@@iterator",
+    asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
+    toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
   function define(obj, key, value) {
     return Object.defineProperty(obj, key, {
       value: value,
@@ -17340,7 +17336,6 @@ function _regeneratorRuntime() {
       writable: !0
     }), obj[key];
   }
-
   try {
     define({}, "");
   } catch (err) {
@@ -17348,40 +17343,33 @@ function _regeneratorRuntime() {
       return obj[key] = value;
     };
   }
-
   function wrap(innerFn, outerFn, self, tryLocsList) {
     var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
-        generator = Object.create(protoGenerator.prototype),
-        context = new Context(tryLocsList || []);
+      generator = Object.create(protoGenerator.prototype),
+      context = new Context(tryLocsList || []);
     return generator._invoke = function (innerFn, self, context) {
       var state = "suspendedStart";
       return function (method, arg) {
         if ("executing" === state) throw new Error("Generator is already running");
-
         if ("completed" === state) {
           if ("throw" === method) throw arg;
           return doneResult();
         }
-
         for (context.method = method, context.arg = arg;;) {
           var delegate = context.delegate;
-
           if (delegate) {
             var delegateResult = maybeInvokeDelegate(delegate, context);
-
             if (delegateResult) {
               if (delegateResult === ContinueSentinel) continue;
               return delegateResult;
             }
           }
-
           if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
             if ("suspendedStart" === state) throw state = "completed", context.arg;
             context.dispatchException(context.arg);
           } else "return" === context.method && context.abrupt("return", context.arg);
           state = "executing";
           var record = tryCatch(innerFn, self, context);
-
           if ("normal" === record.type) {
             if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
             return {
@@ -17389,13 +17377,11 @@ function _regeneratorRuntime() {
               done: context.done
             };
           }
-
           "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
         }
       };
     }(innerFn, self, context), generator;
   }
-
   function tryCatch(fn, obj, arg) {
     try {
       return {
@@ -17409,25 +17395,19 @@ function _regeneratorRuntime() {
       };
     }
   }
-
   exports.wrap = wrap;
   var ContinueSentinel = {};
-
   function Generator() {}
-
   function GeneratorFunction() {}
-
   function GeneratorFunctionPrototype() {}
-
   var IteratorPrototype = {};
   define(IteratorPrototype, iteratorSymbol, function () {
     return this;
   });
   var getProto = Object.getPrototypeOf,
-      NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+    NativeIteratorPrototype = getProto && getProto(getProto(values([])));
   NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
   var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
-
   function defineIteratorMethods(prototype) {
     ["next", "throw", "return"].forEach(function (method) {
       define(prototype, method, function (arg) {
@@ -17435,14 +17415,12 @@ function _regeneratorRuntime() {
       });
     });
   }
-
   function AsyncIterator(generator, PromiseImpl) {
     function invoke(method, arg, resolve, reject) {
       var record = tryCatch(generator[method], generator, arg);
-
       if ("throw" !== record.type) {
         var result = record.arg,
-            value = result.value;
+          value = result.value;
         return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
           invoke("next", value, resolve, reject);
         }, function (err) {
@@ -17453,91 +17431,73 @@ function _regeneratorRuntime() {
           return invoke("throw", error, resolve, reject);
         });
       }
-
       reject(record.arg);
     }
-
     var previousPromise;
-
     this._invoke = function (method, arg) {
       function callInvokeWithMethodAndArg() {
         return new PromiseImpl(function (resolve, reject) {
           invoke(method, arg, resolve, reject);
         });
       }
-
       return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
     };
   }
-
   function maybeInvokeDelegate(delegate, context) {
     var method = delegate.iterator[context.method];
-
     if (undefined === method) {
       if (context.delegate = null, "throw" === context.method) {
         if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel;
         context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method");
       }
-
       return ContinueSentinel;
     }
-
     var record = tryCatch(method, delegate.iterator, context.arg);
     if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
     var info = record.arg;
     return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
   }
-
   function pushTryEntry(locs) {
     var entry = {
       tryLoc: locs[0]
     };
     1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
   }
-
   function resetTryEntry(entry) {
     var record = entry.completion || {};
     record.type = "normal", delete record.arg, entry.completion = record;
   }
-
   function Context(tryLocsList) {
     this.tryEntries = [{
       tryLoc: "root"
     }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
   }
-
   function values(iterable) {
     if (iterable) {
       var iteratorMethod = iterable[iteratorSymbol];
       if (iteratorMethod) return iteratorMethod.call(iterable);
       if ("function" == typeof iterable.next) return iterable;
-
       if (!isNaN(iterable.length)) {
         var i = -1,
-            next = function next() {
-          for (; ++i < iterable.length;) {
-            if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-          }
-
-          return next.value = undefined, next.done = !0, next;
-        };
-
+          next = function next() {
+            for (; ++i < iterable.length;) {
+              if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
+            }
+            return next.value = undefined, next.done = !0, next;
+          };
         return next.next = next;
       }
     }
-
     return {
       next: doneResult
     };
   }
-
   function doneResult() {
     return {
       value: undefined,
       done: !0
     };
   }
-
   return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
     var ctor = "function" == typeof genFun && genFun.constructor;
     return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
@@ -17561,17 +17521,14 @@ function _regeneratorRuntime() {
     return "[object Generator]";
   }), exports.keys = function (object) {
     var keys = [];
-
     for (var key in object) {
       keys.push(key);
     }
-
     return keys.reverse(), function next() {
       for (; keys.length;) {
         var key = keys.pop();
         if (key in object) return next.value = key, next.done = !1, next;
       }
-
       return next.done = !0, next;
     };
   }, exports.values = values, Context.prototype = {
@@ -17590,20 +17547,16 @@ function _regeneratorRuntime() {
     dispatchException: function dispatchException(exception) {
       if (this.done) throw exception;
       var context = this;
-
       function handle(loc, caught) {
         return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
       }
-
       for (var i = this.tryEntries.length - 1; i >= 0; --i) {
         var entry = this.tryEntries[i],
-            record = entry.completion;
+          record = entry.completion;
         if ("root" === entry.tryLoc) return handle("end");
-
         if (entry.tryLoc <= this.prev) {
           var hasCatch = hasOwn.call(entry, "catchLoc"),
-              hasFinally = hasOwn.call(entry, "finallyLoc");
-
+            hasFinally = hasOwn.call(entry, "finallyLoc");
           if (hasCatch && hasFinally) {
             if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
             if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
@@ -17619,13 +17572,11 @@ function _regeneratorRuntime() {
     abrupt: function abrupt(type, arg) {
       for (var i = this.tryEntries.length - 1; i >= 0; --i) {
         var entry = this.tryEntries[i];
-
         if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
           var finallyEntry = entry;
           break;
         }
       }
-
       finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
       var record = finallyEntry ? finallyEntry.completion : {};
       return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
@@ -17643,19 +17594,15 @@ function _regeneratorRuntime() {
     "catch": function _catch(tryLoc) {
       for (var i = this.tryEntries.length - 1; i >= 0; --i) {
         var entry = this.tryEntries[i];
-
         if (entry.tryLoc === tryLoc) {
           var record = entry.completion;
-
           if ("throw" === record.type) {
             var thrown = record.arg;
             resetTryEntry(entry);
           }
-
           return thrown;
         }
       }
-
       throw new Error("illegal catch attempt");
     },
     delegateYield: function delegateYield(iterable, resultName, nextLoc) {
@@ -17667,7 +17614,6 @@ function _regeneratorRuntime() {
     }
   }, exports;
 }
-
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
@@ -17683,7 +17629,6 @@ function _typeof(obj) {
     return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
   }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(obj);
 }
-
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
@@ -17711,7 +17656,6 @@ function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
   }
-
   return self;
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
@@ -20560,146 +20504,115 @@ function defaultGetY(p) {
 
 ;// CONCATENATED MODULE: ./node_modules/d3-delaunay/src/path.js
 var path_epsilon = 1e-6;
-
 var Path = /*#__PURE__*/function () {
   function Path() {
-    this._x0 = this._y0 = // start of current subpath
+    this._x0 = this._y0 =
+    // start of current subpath
     this._x1 = this._y1 = null; // end of current subpath
-
     this._ = "";
   }
-
   var _proto = Path.prototype;
-
   _proto.moveTo = function moveTo(x, y) {
     this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y);
   };
-
   _proto.closePath = function closePath() {
     if (this._x1 !== null) {
       this._x1 = this._x0, this._y1 = this._y0;
       this._ += "Z";
     }
   };
-
   _proto.lineTo = function lineTo(x, y) {
     this._ += "L" + (this._x1 = +x) + "," + (this._y1 = +y);
   };
-
   _proto.arc = function arc(x, y, r) {
     x = +x, y = +y, r = +r;
     var x0 = x + r,
-        y0 = y;
+      y0 = y;
     if (r < 0) throw new Error("negative radius");
     if (this._x1 === null) this._ += "M" + x0 + "," + y0;else if (Math.abs(this._x1 - x0) > path_epsilon || Math.abs(this._y1 - y0) > path_epsilon) this._ += "L" + x0 + "," + y0;
     if (!r) return;
     this._ += "A" + r + "," + r + ",0,1,1," + (x - r) + "," + y + "A" + r + "," + r + ",0,1,1," + (this._x1 = x0) + "," + (this._y1 = y0);
   };
-
   _proto.rect = function rect(x, y, w, h) {
     this._ += "M" + (this._x0 = this._x1 = +x) + "," + (this._y0 = this._y1 = +y) + "h" + +w + "v" + +h + "h" + -w + "Z";
   };
-
   _proto.value = function value() {
     return this._ || null;
   };
-
   return Path;
 }();
-
 
 ;// CONCATENATED MODULE: ./node_modules/d3-delaunay/src/polygon.js
 var Polygon = /*#__PURE__*/function () {
   function Polygon() {
     this._ = [];
   }
-
   var _proto = Polygon.prototype;
-
   _proto.moveTo = function moveTo(x, y) {
     this._.push([x, y]);
   };
-
   _proto.closePath = function closePath() {
     this._.push(this._[0].slice());
   };
-
   _proto.lineTo = function lineTo(x, y) {
     this._.push([x, y]);
   };
-
   _proto.value = function value() {
     return this._.length ? this._ : null;
   };
-
   return Polygon;
 }();
 
-
 ;// CONCATENATED MODULE: ./node_modules/d3-delaunay/src/voronoi.js
 function _createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
-
 
 
 
 var Voronoi = /*#__PURE__*/function () {
   function Voronoi(delaunay, _temp) {
     var _ref = _temp === void 0 ? [0, 0, 960, 500] : _temp,
-        xmin = _ref[0],
-        ymin = _ref[1],
-        xmax = _ref[2],
-        ymax = _ref[3];
-
+      xmin = _ref[0],
+      ymin = _ref[1],
+      xmax = _ref[2],
+      ymax = _ref[3];
     if (!((xmax = +xmax) >= (xmin = +xmin)) || !((ymax = +ymax) >= (ymin = +ymin))) throw new Error("invalid bounds");
     this.delaunay = delaunay;
     this._circumcenters = new Float64Array(delaunay.points.length * 2);
     this.vectors = new Float64Array(delaunay.points.length * 2);
     this.xmax = xmax, this.xmin = xmin;
     this.ymax = ymax, this.ymin = ymin;
-
     this._init();
   }
-
   var _proto = Voronoi.prototype;
-
   _proto.update = function update() {
     this.delaunay.update();
-
     this._init();
-
     return this;
   };
-
   _proto._init = function _init() {
     var _this$delaunay = this.delaunay,
-        points = _this$delaunay.points,
-        hull = _this$delaunay.hull,
-        triangles = _this$delaunay.triangles,
-        vectors = this.vectors,
-        circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2); // Compute circumcenters.
-
-
+      points = _this$delaunay.points,
+      hull = _this$delaunay.hull,
+      triangles = _this$delaunay.triangles,
+      vectors = this.vectors,
+      circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2); // Compute circumcenters.
     for (var i = 0, j = 0, n = triangles.length, x, y; i < n; i += 3, j += 2) {
       var t1 = triangles[i] * 2,
-          t2 = triangles[i + 1] * 2,
-          t3 = triangles[i + 2] * 2,
-          _x = points[t1],
-          _y = points[t1 + 1],
-          x2 = points[t2],
-          y2 = points[t2 + 1],
-          x3 = points[t3],
-          y3 = points[t3 + 1],
-          dx = x2 - _x,
-          dy = y2 - _y,
-          ex = x3 - _x,
-          ey = y3 - _y,
-          ab = (dx * ey - dy * ex) * 2;
-
+        t2 = triangles[i + 1] * 2,
+        t3 = triangles[i + 2] * 2,
+        _x = points[t1],
+        _y = points[t1 + 1],
+        x2 = points[t2],
+        y2 = points[t2 + 1],
+        x3 = points[t3],
+        y3 = points[t3 + 1],
+        dx = x2 - _x,
+        dy = y2 - _y,
+        ex = x3 - _x,
+        ey = y3 - _y,
+        ab = (dx * ey - dy * ex) * 2;
       if (Math.abs(ab) < 1e-9) {
         // degenerate case (collinear diagram)
         // almost equal points (degenerate triangle)
@@ -20707,35 +20620,32 @@ var Voronoi = /*#__PURE__*/function () {
         // direction that is:
         // 1. orthogonal to the halfedge.
         var a = 1e9,
-            r = triangles[0] * 2; // 2. points away from the center; since the list of triangles starts
+          r = triangles[0] * 2; // 2. points away from the center; since the list of triangles starts
         // in the center, the first point of the first triangle
         // will be our reference
-
         a *= Math.sign((points[r] - _x) * ey - (points[r + 1] - _y) * ex);
         x = (_x + x3) / 2 - a * ey;
         y = (_y + y3) / 2 + a * ex;
       } else {
         var d = 1 / ab,
-            bl = dx * dx + dy * dy,
-            cl = ex * ex + ey * ey;
+          bl = dx * dx + dy * dy,
+          cl = ex * ex + ey * ey;
         x = _x + (ey * bl - dy * cl) * d;
         y = _y + (dx * cl - ex * bl) * d;
       }
-
       circumcenters[j] = x;
       circumcenters[j + 1] = y;
-    } // Compute exterior cell rays.
+    }
 
-
+    // Compute exterior cell rays.
     var h = hull[hull.length - 1],
-        p0,
-        p1 = h * 4,
-        x0,
-        x1 = points[2 * h],
-        y0,
-        y1 = points[2 * h + 1];
+      p0,
+      p1 = h * 4,
+      x0,
+      x1 = points[2 * h],
+      y0,
+      y1 = points[2 * h + 1];
     vectors.fill(0);
-
     for (var _i = 0; _i < hull.length; ++_i) {
       h = hull[_i];
       p0 = p1, x0 = x1, y0 = y1;
@@ -20744,74 +20654,59 @@ var Voronoi = /*#__PURE__*/function () {
       vectors[p0 + 3] = vectors[p1 + 1] = x1 - x0;
     }
   };
-
   _proto.render = function render(context) {
     var buffer = context == null ? context = new Path() : undefined,
-        _this$delaunay2 = this.delaunay,
-        halfedges = _this$delaunay2.halfedges,
-        inedges = _this$delaunay2.inedges,
-        hull = _this$delaunay2.hull,
-        circumcenters = this.circumcenters,
-        vectors = this.vectors;
+      _this$delaunay2 = this.delaunay,
+      halfedges = _this$delaunay2.halfedges,
+      inedges = _this$delaunay2.inedges,
+      hull = _this$delaunay2.hull,
+      circumcenters = this.circumcenters,
+      vectors = this.vectors;
     if (hull.length <= 1) return null;
-
     for (var i = 0, n = halfedges.length; i < n; ++i) {
       var j = halfedges[i];
       if (j < i) continue;
       var ti = Math.floor(i / 3) * 2,
-          tj = Math.floor(j / 3) * 2,
-          xi = circumcenters[ti],
-          yi = circumcenters[ti + 1],
-          xj = circumcenters[tj],
-          yj = circumcenters[tj + 1];
-
+        tj = Math.floor(j / 3) * 2,
+        xi = circumcenters[ti],
+        yi = circumcenters[ti + 1],
+        xj = circumcenters[tj],
+        yj = circumcenters[tj + 1];
       this._renderSegment(xi, yi, xj, yj, context);
     }
-
     var h0,
-        h1 = hull[hull.length - 1];
-
+      h1 = hull[hull.length - 1];
     for (var _i2 = 0; _i2 < hull.length; ++_i2) {
       h0 = h1, h1 = hull[_i2];
-
       var t = Math.floor(inedges[h1] / 3) * 2,
-          x = circumcenters[t],
-          y = circumcenters[t + 1],
-          v = h0 * 4,
-          p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
-
+        x = circumcenters[t],
+        y = circumcenters[t + 1],
+        v = h0 * 4,
+        p = this._project(x, y, vectors[v + 2], vectors[v + 3]);
       if (p) this._renderSegment(x, y, p[0], p[1], context);
     }
-
     return buffer && buffer.value();
   };
-
   _proto.renderBounds = function renderBounds(context) {
     var buffer = context == null ? context = new Path() : undefined;
     context.rect(this.xmin, this.ymin, this.xmax - this.xmin, this.ymax - this.ymin);
     return buffer && buffer.value();
   };
-
   _proto.renderCell = function renderCell(i, context) {
     var buffer = context == null ? context = new Path() : undefined,
-        points = this._clip(i);
-
+      points = this._clip(i);
     if (points === null || !points.length) return;
     context.moveTo(points[0], points[1]);
     var n = points.length;
-
     while (points[0] === points[n - 2] && points[1] === points[n - 1] && n > 1) {
       n -= 2;
     }
-
     for (var _i3 = 2; _i3 < n; _i3 += 2) {
       if (points[_i3] !== points[_i3 - 2] || points[_i3 + 1] !== points[_i3 - 1]) context.lineTo(points[_i3], points[_i3 + 1]);
     }
-
     context.closePath();
     return buffer && buffer.value();
   };
-
   _proto.cellPolygons = /*#__PURE__*/regenerator.mark(function cellPolygons() {
     var points, i, n, cell;
     return regenerator.wrap(function (_context) {
@@ -20820,29 +20715,23 @@ var Voronoi = /*#__PURE__*/function () {
           case 0:
             points = this.delaunay.points;
             i = 0, n = points.length / 2;
-
           case 2:
             if (!(i < n)) {
               _context.next = 11;
               break;
             }
-
             cell = this.cellPolygon(i);
-
             if (!cell) {
               _context.next = 8;
               break;
             }
-
             cell.index = i;
             _context.next = 8;
             return cell;
-
           case 8:
             ++i;
             _context.next = 2;
             break;
-
           case 11:
           case "end":
             return _context.stop();
@@ -20850,18 +20739,15 @@ var Voronoi = /*#__PURE__*/function () {
       }
     }, cellPolygons, this);
   });
-
   _proto.cellPolygon = function cellPolygon(i) {
     var polygon = new Polygon();
     this.renderCell(i, polygon);
     return polygon.value();
   };
-
   _proto._renderSegment = function _renderSegment(x0, y0, x1, y1, context) {
     var S,
-        c0 = this._regioncode(x0, y0),
-        c1 = this._regioncode(x1, y1);
-
+      c0 = this._regioncode(x0, y0),
+      c1 = this._regioncode(x1, y1);
     if (c0 === 0 && c1 === 0) {
       context.moveTo(x0, y0);
       context.lineTo(x1, y1);
@@ -20870,82 +20756,63 @@ var Voronoi = /*#__PURE__*/function () {
       context.lineTo(S[2], S[3]);
     }
   };
-
   _proto.contains = function contains(i, x, y) {
     if ((x = +x, x !== x) || (y = +y, y !== y)) return !1;
     return this.delaunay._step(i, x, y) === i;
   };
-
   _proto.neighbors = /*#__PURE__*/regenerator.mark(function neighbors(i) {
     var ci, _iterator, _step, j, cj, ai, li, aj, lj;
-
     return regenerator.wrap(function (_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             ci = this._clip(i);
-
             if (!ci) {
               _context2.next = 22;
               break;
             }
-
             _iterator = _createForOfIteratorHelperLoose(this.delaunay.neighbors(i));
-
           case 3:
             if ((_step = _iterator()).done) {
               _context2.next = 22;
               break;
             }
-
             j = _step.value, cj = this._clip(j);
-
             if (!cj) {
               _context2.next = 20;
               break;
             }
-
             ai = 0, li = ci.length;
-
           case 7:
             if (!(ai < li)) {
               _context2.next = 20;
               break;
             }
-
             aj = 0, lj = cj.length;
-
           case 9:
             if (!(aj < lj)) {
               _context2.next = 17;
               break;
             }
-
             if (!(ci[ai] == cj[aj] && ci[ai + 1] == cj[aj + 1] && ci[(ai + 2) % li] == cj[(aj + lj - 2) % lj] && ci[(ai + 3) % li] == cj[(aj + lj - 1) % lj])) {
               _context2.next = 14;
               break;
             }
-
             _context2.next = 13;
             return j;
-
           case 13:
             return _context2.abrupt("break", 20);
-
           case 14:
             aj += 2;
             _context2.next = 9;
             break;
-
           case 17:
             ai += 2;
             _context2.next = 7;
             break;
-
           case 20:
             _context2.next = 3;
             break;
-
           case 22:
           case "end":
             return _context2.stop();
@@ -20953,71 +20820,59 @@ var Voronoi = /*#__PURE__*/function () {
       }
     }, neighbors, this);
   });
-
   _proto._cell = function _cell(i) {
     var circumcenters = this.circumcenters,
-        _this$delaunay3 = this.delaunay,
-        inedges = _this$delaunay3.inedges,
-        halfedges = _this$delaunay3.halfedges,
-        triangles = _this$delaunay3.triangles,
-        e0 = inedges[i];
+      _this$delaunay3 = this.delaunay,
+      inedges = _this$delaunay3.inedges,
+      halfedges = _this$delaunay3.halfedges,
+      triangles = _this$delaunay3.triangles,
+      e0 = inedges[i];
     if (e0 === -1) return null; // coincident point
-
     var points = [],
-        e = e0;
-
+      e = e0;
     do {
       var t = Math.floor(e / 3);
       points.push(circumcenters[t * 2], circumcenters[t * 2 + 1]);
       e = e % 3 === 2 ? e - 2 : e + 1;
       if (triangles[e] !== i) break; // bad triangulation
-
       e = halfedges[e];
     } while (e !== e0 && e !== -1);
-
     return points;
   };
-
   _proto._clip = function _clip(i) {
     // degenerate case (1 valid point: return the box)
     if (i === 0 && this.delaunay.hull.length === 1) {
       return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
     }
-
     var points = this._cell(i);
-
     if (points === null) return null;
     var V = this.vectors,
-        v = i * 4;
+      v = i * 4;
     return V[v] || V[v + 1] ? this._clipInfinite(i, points, V[v], V[v + 1], V[v + 2], V[v + 3]) : this._clipFinite(i, points);
   };
-
   _proto._clipFinite = function _clipFinite(i, points) {
     var n = points.length,
-        P = null,
-        x0,
-        y0,
-        x1 = points[n - 2],
-        y1 = points[n - 1],
-        c0,
-        c1 = this._regioncode(x1, y1),
-        e0,
-        e1 = 0;
-
+      P = null,
+      x0,
+      y0,
+      x1 = points[n - 2],
+      y1 = points[n - 1],
+      c0,
+      c1 = this._regioncode(x1, y1),
+      e0,
+      e1 = 0;
     for (var j = 0; j < n; j += 2) {
       x0 = x1, y0 = y1, x1 = points[j], y1 = points[j + 1];
       c0 = c1, c1 = this._regioncode(x1, y1);
-
       if (c0 === 0 && c1 === 0) {
         e0 = e1, e1 = 0;
         if (P) P.push(x1, y1);else P = [x1, y1];
       } else {
         var S = void 0,
-            sx0 = void 0,
-            sy0 = void 0,
-            sx1 = void 0,
-            sy1 = void 0;
-
+          sx0 = void 0,
+          sy0 = void 0,
+          sx1 = void 0,
+          sy1 = void 0;
         if (c0 === 0) {
           if ((S = this._clipSegment(x0, y0, x1, y1, c0, c1)) === null) continue;
           var _S = S;
@@ -21036,41 +20891,35 @@ var Voronoi = /*#__PURE__*/function () {
           if (e0 && e1) this._edge(i, e0, e1, P, P.length);
           if (P) P.push(sx0, sy0);else P = [sx0, sy0];
         }
-
         e0 = e1, e1 = this._edgecode(sx1, sy1);
         if (e0 && e1) this._edge(i, e0, e1, P, P.length);
         if (P) P.push(sx1, sy1);else P = [sx1, sy1];
       }
     }
-
     if (P) {
       e0 = e1, e1 = this._edgecode(P[0], P[1]);
       if (e0 && e1) this._edge(i, e0, e1, P, P.length);
     } else if (this.contains(i, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
       return [this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax, this.xmin, this.ymin];
     }
-
     return P;
   };
-
   _proto._clipSegment = function _clipSegment(x0, y0, x1, y1, c0, c1) {
     while (!0) {
       if (c0 === 0 && c1 === 0) return [x0, y0, x1, y1];
       if (c0 & c1) return null;
       var x = void 0,
-          y = void 0,
-          c = c0 || c1;
+        y = void 0,
+        c = c0 || c1;
       if (c & 8) x = x0 + (x1 - x0) * (this.ymax - y0) / (y1 - y0), y = this.ymax;else if (c & 4) x = x0 + (x1 - x0) * (this.ymin - y0) / (y1 - y0), y = this.ymin;else if (c & 2) y = y0 + (y1 - y0) * (this.xmax - x0) / (x1 - x0), x = this.xmax;else y = y0 + (y1 - y0) * (this.xmin - x0) / (x1 - x0), x = this.xmin;
       if (c0) x0 = x, y0 = y, c0 = this._regioncode(x0, y0);else x1 = x, y1 = y, c1 = this._regioncode(x1, y1);
     }
   };
-
   _proto._clipInfinite = function _clipInfinite(i, points, vx0, vy0, vxn, vyn) {
     var P = Array.from(points),
-        p;
+      p;
     if (p = this._project(P[0], P[1], vx0, vy0)) P.unshift(p[0], p[1]);
     if (p = this._project(P[P.length - 2], P[P.length - 1], vxn, vyn)) P.push(p[0], p[1]);
-
     if (P = this._clipFinite(i, P)) {
       for (var j = 0, n = P.length, _c, _c2 = this._edgecode(P[n - 2], P[n - 1]); j < n; j += 2) {
         _c = _c2, _c2 = this._edgecode(P[j], P[j + 1]);
@@ -21079,82 +20928,66 @@ var Voronoi = /*#__PURE__*/function () {
     } else if (this.contains(i, (this.xmin + this.xmax) / 2, (this.ymin + this.ymax) / 2)) {
       P = [this.xmin, this.ymin, this.xmax, this.ymin, this.xmax, this.ymax, this.xmin, this.ymax];
     }
-
     return P;
   };
-
   _proto._edge = function _edge(i, e0, e1, P, j) {
     while (e0 !== e1) {
       var x = void 0,
-          y = void 0;
-
+        y = void 0;
       switch (e0) {
         case 5:
           e0 = 4;
           continue;
         // top-left
-
         case 4:
           e0 = 6, x = this.xmax, y = this.ymin;
           break;
         // top
-
         case 6:
           e0 = 2;
           continue;
         // top-right
-
         case 2:
           e0 = 10, x = this.xmax, y = this.ymax;
           break;
         // right
-
         case 10:
           e0 = 8;
           continue;
         // bottom-right
-
         case 8:
           e0 = 9, x = this.xmin, y = this.ymax;
           break;
         // bottom
-
         case 9:
           e0 = 1;
           continue;
         // bottom-left
-
         case 1:
           e0 = 5, x = this.xmin, y = this.ymin;
           break;
         // left
-      } // Note: this implicitly checks for out of bounds: if P[j] or P[j+1] are
+      }
+      // Note: this implicitly checks for out of bounds: if P[j] or P[j+1] are
       // undefined, the conditional statement will be executed.
-
-
       if ((P[j] !== x || P[j + 1] !== y) && this.contains(i, x, y)) {
         P.splice(j, 0, x, y), j += 2;
       }
     }
-
     if (P.length > 4) {
       for (var _i4 = 0; _i4 < P.length; _i4 += 2) {
         var _j = (_i4 + 2) % P.length,
-            k = (_i4 + 4) % P.length;
-
+          k = (_i4 + 4) % P.length;
         if (P[_i4] === P[_j] && P[_j] === P[k] || P[_i4 + 1] === P[_j + 1] && P[_j + 1] === P[k + 1]) P.splice(_j, 2), _i4 -= 2;
       }
     }
-
     return j;
   };
-
   _proto._project = function _project(x0, y0, vx, vy) {
     var t = Infinity,
-        c,
-        x,
-        y;
-
+      c,
+      x,
+      y;
     if (vy < 0) {
       // top
       if (y0 <= this.ymin) return null;
@@ -21164,7 +20997,6 @@ var Voronoi = /*#__PURE__*/function () {
       if (y0 >= this.ymax) return null;
       if ((c = (this.ymax - y0) / vy) < t) y = this.ymax, x = x0 + (t = c) * vx;
     }
-
     if (vx > 0) {
       // right
       if (x0 >= this.xmax) return null;
@@ -21174,142 +21006,109 @@ var Voronoi = /*#__PURE__*/function () {
       if (x0 <= this.xmin) return null;
       if ((c = (this.xmin - x0) / vx) < t) x = this.xmin, y = y0 + (t = c) * vy;
     }
-
     return [x, y];
   };
-
   _proto._edgecode = function _edgecode(x, y) {
     return (x === this.xmin ? 1 : x === this.xmax ? 2 : 0) | (y === this.ymin ? 4 : y === this.ymax ? 8 : 0);
   };
-
   _proto._regioncode = function _regioncode(x, y) {
     return (x < this.xmin ? 1 : x > this.xmax ? 2 : 0) | (y < this.ymin ? 4 : y > this.ymax ? 8 : 0);
   };
-
   return Voronoi;
 }();
 
-
 ;// CONCATENATED MODULE: ./node_modules/d3-delaunay/src/delaunay.js
 
-
 var _marked = /*#__PURE__*/regenerator.mark(flatIterable);
-
 function delaunay_createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = delaunay_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
 function delaunay_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return delaunay_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return delaunay_arrayLikeToArray(o, minLen); }
-
 function delaunay_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 
 
 
 
-
 var tau = 2 * Math.PI,
-    pow = Math.pow;
-
+  pow = Math.pow;
 function pointX(p) {
   return p[0];
 }
-
 function pointY(p) {
   return p[1];
-} // A triangulation is collinear if all its triangles have a non-null area
-
-
-function collinear(d) {
-  var triangles = d.triangles,
-      coords = d.coords;
-
-  for (var i = 0; i < triangles.length; i += 3) {
-    var a = 2 * triangles[i],
-        b = 2 * triangles[i + 1],
-        c = 2 * triangles[i + 2],
-        cross = (coords[c] - coords[a]) * (coords[b + 1] - coords[a + 1]) - (coords[b] - coords[a]) * (coords[c + 1] - coords[a + 1]);
-    if (cross > 1e-10) return !1;
-  }
-
-  return !0;
 }
 
+// A triangulation is collinear if all its triangles have a non-null area
+function collinear(d) {
+  var triangles = d.triangles,
+    coords = d.coords;
+  for (var i = 0; i < triangles.length; i += 3) {
+    var a = 2 * triangles[i],
+      b = 2 * triangles[i + 1],
+      c = 2 * triangles[i + 2],
+      cross = (coords[c] - coords[a]) * (coords[b + 1] - coords[a + 1]) - (coords[b] - coords[a]) * (coords[c + 1] - coords[a + 1]);
+    if (cross > 1e-10) return !1;
+  }
+  return !0;
+}
 function jitter(x, y, r) {
   return [x + Math.sin(x + y) * r, y + Math.cos(x - y) * r];
 }
-
 var Delaunay = /*#__PURE__*/function () {
   Delaunay.from = function from(points, fx, fy, that) {
     if (fx === void 0) {
       fx = pointX;
     }
-
     if (fy === void 0) {
       fy = pointY;
     }
-
     return new Delaunay("length" in points ? flatArray(points, fx, fy, that) : Float64Array.from(flatIterable(points, fx, fy, that)));
   };
-
   function Delaunay(points) {
     this._delaunator = new Delaunator(points);
     this.inedges = new Int32Array(points.length / 2);
     this._hullIndex = new Int32Array(points.length / 2);
     this.points = this._delaunator.coords;
-
     this._init();
   }
-
   var _proto = Delaunay.prototype;
-
   _proto.update = function update() {
     this._delaunator.update();
-
     this._init();
-
     return this;
   };
-
   _proto._init = function _init() {
     var _this = this,
-        d = this._delaunator,
-        points = this.points;
-
+      d = this._delaunator,
+      points = this.points;
     // check for collinear
     if (d.hull && d.hull.length > 2 && collinear(d)) {
       this.collinear = Int32Array.from({
         length: points.length / 2
       }, function (_, i) {
         _newArrowCheck(this, _this);
-
         return i;
       }.bind(this)).sort(function (i, j) {
         _newArrowCheck(this, _this);
-
         return points[2 * i] - points[2 * j] || points[2 * i + 1] - points[2 * j + 1];
       }.bind(this)); // for exact neighbors
-
       var e = this.collinear[0],
-          f = this.collinear[this.collinear.length - 1],
-          bounds = [points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1]],
-          r = 1e-8 * Math.hypot(bounds[3] - bounds[1], bounds[2] - bounds[0]);
-
+        f = this.collinear[this.collinear.length - 1],
+        bounds = [points[2 * e], points[2 * e + 1], points[2 * f], points[2 * f + 1]],
+        r = 1e-8 * Math.hypot(bounds[3] - bounds[1], bounds[2] - bounds[0]);
       for (var i = 0, n = points.length / 2; i < n; ++i) {
         var p = jitter(points[2 * i], points[2 * i + 1], r);
         points[2 * i] = p[0];
         points[2 * i + 1] = p[1];
       }
-
       this._delaunator = new Delaunator(points);
     } else {
       delete this.collinear;
     }
-
     var halfedges = this.halfedges = this._delaunator.halfedges,
-        hull = this.hull = this._delaunator.hull,
-        triangles = this.triangles = this._delaunator.triangles,
-        inedges = this.inedges.fill(-1),
-        hullIndex = this._hullIndex.fill(-1);
-
+      hull = this.hull = this._delaunator.hull,
+      triangles = this.triangles = this._delaunator.triangles,
+      inedges = this.inedges.fill(-1),
+      hullIndex = this._hullIndex.fill(-1);
     // Compute an index from each point to an (arbitrary) incoming halfedge
     // Used to give the first neighbor of each point; for this reason,
     // on the hull we give priority to exterior halfedges
@@ -21317,18 +21116,16 @@ var Delaunay = /*#__PURE__*/function () {
       var _p = triangles[_e % 3 === 2 ? _e - 2 : _e + 1];
       if (halfedges[_e] === -1 || inedges[_p] === -1) inedges[_p] = _e;
     }
-
     for (var _i = 0, _n2 = hull.length; _i < _n2; ++_i) {
       hullIndex[hull[_i]] = _i;
-    } // degenerate case: 1 or 2 (distinct) points
+    }
 
-
+    // degenerate case: 1 or 2 (distinct) points
     if (hull.length <= 2 && hull.length > 0) {
       this.triangles = new Int32Array(3).fill(-1);
       this.halfedges = new Int32Array(3).fill(-1);
       this.triangles[0] = hull[0];
       inedges[hull[0]] = 1;
-
       if (hull.length === 2) {
         inedges[hull[1]] = 0;
         this.triangles[1] = hull[1];
@@ -21336,103 +21133,77 @@ var Delaunay = /*#__PURE__*/function () {
       }
     }
   };
-
   _proto.voronoi = function voronoi(bounds) {
     return new Voronoi(this, bounds);
   };
-
   _proto.neighbors = /*#__PURE__*/regenerator.mark(function neighbors(i) {
     var inedges, hull, _hullIndex, halfedges, triangles, collinear, l, e0, e, p0, p;
-
     return regenerator.wrap(function (_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
             inedges = this.inedges, hull = this.hull, _hullIndex = this._hullIndex, halfedges = this.halfedges, triangles = this.triangles, collinear = this.collinear; // degenerate case with several collinear points
-
             if (!collinear) {
               _context.next = 10;
               break;
             }
-
             l = collinear.indexOf(i);
-
             if (!(l > 0)) {
               _context.next = 6;
               break;
             }
-
             _context.next = 6;
             return collinear[l - 1];
-
           case 6:
             if (!(l < collinear.length - 1)) {
               _context.next = 9;
               break;
             }
-
             _context.next = 9;
             return collinear[l + 1];
-
           case 9:
             return _context.abrupt("return");
-
           case 10:
             e0 = inedges[i];
-
             if (!(e0 === -1)) {
               _context.next = 13;
               break;
             }
-
             return _context.abrupt("return");
-
           case 13:
             // coincident point
             e = e0, p0 = -1;
-
           case 14:
             _context.next = 16;
             return p0 = triangles[e];
-
           case 16:
             e = e % 3 === 2 ? e - 2 : e + 1;
-
             if (!(triangles[e] !== i)) {
               _context.next = 19;
               break;
             }
-
             return _context.abrupt("return");
-
           case 19:
             // bad triangulation
             e = halfedges[e];
-
             if (!(e === -1)) {
               _context.next = 26;
               break;
             }
-
             p = hull[(_hullIndex[i] + 1) % hull.length];
-
             if (!(p !== p0)) {
               _context.next = 25;
               break;
             }
-
             _context.next = 25;
             return p;
-
           case 25:
             return _context.abrupt("return");
-
           case 26:
             if (e !== e0) {
               _context.next = 14;
               break;
             }
-
           case 27:
           case "end":
             return _context.stop();
@@ -21440,132 +21211,108 @@ var Delaunay = /*#__PURE__*/function () {
       }
     }, neighbors, this);
   });
-
   _proto.find = function find(x, y, i) {
     if (i === void 0) {
       i = 0;
     }
-
     if ((x = +x, x !== x) || (y = +y, y !== y)) return -1;
     var i0 = i,
-        c;
-
+      c;
     while ((c = this._step(i, x, y)) >= 0 && c !== i && c !== i0) {
       i = c;
     }
-
     return c;
   };
-
   _proto._step = function _step(i, x, y) {
     var inedges = this.inedges,
-        hull = this.hull,
-        _hullIndex = this._hullIndex,
-        halfedges = this.halfedges,
-        triangles = this.triangles,
-        points = this.points;
+      hull = this.hull,
+      _hullIndex = this._hullIndex,
+      halfedges = this.halfedges,
+      triangles = this.triangles,
+      points = this.points;
     if (inedges[i] === -1 || !points.length) return (i + 1) % (points.length >> 1);
     var c = i,
-        dc = pow(x - points[i * 2], 2) + pow(y - points[i * 2 + 1], 2),
-        e0 = inedges[i],
-        e = e0;
-
+      dc = pow(x - points[i * 2], 2) + pow(y - points[i * 2 + 1], 2),
+      e0 = inedges[i],
+      e = e0;
     do {
       var t = triangles[e],
-          dt = pow(x - points[t * 2], 2) + pow(y - points[t * 2 + 1], 2);
+        dt = pow(x - points[t * 2], 2) + pow(y - points[t * 2 + 1], 2);
       if (dt < dc) dc = dt, c = t;
       e = e % 3 === 2 ? e - 2 : e + 1;
       if (triangles[e] !== i) break; // bad triangulation
-
       e = halfedges[e];
-
       if (e === -1) {
         e = hull[(_hullIndex[i] + 1) % hull.length];
-
         if (e !== t) {
           if (pow(x - points[e * 2], 2) + pow(y - points[e * 2 + 1], 2) < dc) return e;
         }
-
         break;
       }
     } while (e !== e0);
-
     return c;
   };
-
   _proto.render = function render(context) {
     var buffer = context == null ? context = new Path() : undefined,
-        points = this.points,
-        halfedges = this.halfedges,
-        triangles = this.triangles;
-
+      points = this.points,
+      halfedges = this.halfedges,
+      triangles = this.triangles;
     for (var i = 0, n = halfedges.length; i < n; ++i) {
       var j = halfedges[i];
       if (j < i) continue;
       var ti = triangles[i] * 2,
-          tj = triangles[j] * 2;
+        tj = triangles[j] * 2;
       context.moveTo(points[ti], points[ti + 1]);
       context.lineTo(points[tj], points[tj + 1]);
     }
-
     this.renderHull(context);
     return buffer && buffer.value();
   };
-
   _proto.renderPoints = function renderPoints(context, r) {
     if (r === undefined && (!context || typeof context.moveTo !== "function")) r = context, context = null;
     r = r == undefined ? 2 : +r;
     var buffer = context == null ? context = new Path() : undefined,
-        points = this.points;
-
+      points = this.points;
     for (var i = 0, n = points.length; i < n; i += 2) {
       var x = points[i],
-          y = points[i + 1];
+        y = points[i + 1];
       context.moveTo(x + r, y);
       context.arc(x, y, r, 0, tau);
     }
-
     return buffer && buffer.value();
   };
-
   _proto.renderHull = function renderHull(context) {
     var buffer = context == null ? context = new Path() : undefined,
-        hull = this.hull,
-        points = this.points,
-        h = hull[0] * 2,
-        n = hull.length;
+      hull = this.hull,
+      points = this.points,
+      h = hull[0] * 2,
+      n = hull.length;
     context.moveTo(points[h], points[h + 1]);
-
     for (var i = 1; i < n; ++i) {
       var _h = 2 * hull[i];
-
       context.lineTo(points[_h], points[_h + 1]);
     }
-
     context.closePath();
     return buffer && buffer.value();
   };
-
   _proto.hullPolygon = function hullPolygon() {
     var polygon = new Polygon();
     this.renderHull(polygon);
     return polygon.value();
   };
-
   _proto.renderTriangle = function renderTriangle(i, context) {
     var buffer = context == null ? context = new Path() : undefined,
-        points = this.points,
-        triangles = this.triangles,
-        t0 = triangles[i *= 3] * 2,
-        t1 = triangles[i + 1] * 2,
-        t2 = triangles[i + 2] * 2;
+      points = this.points,
+      triangles = this.triangles,
+      t0 = triangles[i *= 3] * 2,
+      t1 = triangles[i + 1] * 2,
+      t2 = triangles[i + 2] * 2;
     context.moveTo(points[t0], points[t0 + 1]);
     context.lineTo(points[t1], points[t1 + 1]);
     context.lineTo(points[t2], points[t2 + 1]);
     context.closePath();
     return buffer && buffer.value();
   };
-
   _proto.trianglePolygons = /*#__PURE__*/regenerator.mark(function trianglePolygons() {
     var triangles, i, n;
     return regenerator.wrap(function (_context2) {
@@ -21574,21 +21321,17 @@ var Delaunay = /*#__PURE__*/function () {
           case 0:
             triangles = this.triangles;
             i = 0, n = triangles.length / 3;
-
           case 2:
             if (!(i < n)) {
               _context2.next = 8;
               break;
             }
-
             _context2.next = 5;
             return this.trianglePolygon(i);
-
           case 5:
             ++i;
             _context2.next = 2;
             break;
-
           case 8:
           case "end":
             return _context2.stop();
@@ -21596,62 +21339,48 @@ var Delaunay = /*#__PURE__*/function () {
       }
     }, trianglePolygons, this);
   });
-
   _proto.trianglePolygon = function trianglePolygon(i) {
     var polygon = new Polygon();
     this.renderTriangle(i, polygon);
     return polygon.value();
   };
-
   return Delaunay;
 }();
 
-
-
 function flatArray(points, fx, fy, that) {
   var n = points.length,
-      array = new Float64Array(n * 2);
-
+    array = new Float64Array(n * 2);
   for (var i = 0; i < n; ++i) {
     var p = points[i];
     array[i * 2] = fx.call(that, p, i, points);
     array[i * 2 + 1] = fy.call(that, p, i, points);
   }
-
   return array;
 }
-
 function flatIterable(points, fx, fy, that) {
   var i, _iterator, _step2, p;
-
   return regenerator.wrap(function (_context3) {
     while (1) {
       switch (_context3.prev = _context3.next) {
         case 0:
           i = 0;
           _iterator = delaunay_createForOfIteratorHelperLoose(points);
-
         case 2:
           if ((_step2 = _iterator()).done) {
             _context3.next = 11;
             break;
           }
-
           p = _step2.value;
           _context3.next = 6;
           return fx.call(that, p, i, points);
-
         case 6:
           _context3.next = 8;
           return fy.call(that, p, i, points);
-
         case 8:
           ++i;
-
         case 9:
           _context3.next = 2;
           break;
-
         case 11:
         case "end":
           return _context3.stop();
@@ -21662,14 +21391,13 @@ function flatIterable(points, fx, fy, that) {
 ;// CONCATENATED MODULE: ./node_modules/d3-polygon/src/centroid.js
 /* harmony default export */ function centroid(polygon) {
   var i = -1,
-      n = polygon.length,
-      x = 0,
-      y = 0,
-      a,
-      b = polygon[n - 1],
-      c,
-      k = 0;
-
+    n = polygon.length,
+    x = 0,
+    y = 0,
+    a,
+    b = polygon[n - 1],
+    c,
+    k = 0;
   while (++i < n) {
     a = b;
     b = polygon[i];
@@ -21677,23 +21405,20 @@ function flatIterable(points, fx, fy, that) {
     x += (a[0] + b[0]) * c;
     y += (a[1] + b[1]) * c;
   }
-
   return k *= 3, [x / k, y / k];
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-polygon/src/area.js
 /* harmony default export */ function src_area(polygon) {
   var i = -1,
-      n = polygon.length,
-      a,
-      b = polygon[n - 1],
-      area = 0;
-
+    n = polygon.length,
+    a,
+    b = polygon[n - 1],
+    area = 0;
   while (++i < n) {
     a = b;
     b = polygon[i];
     area += a[1] * b[0] - a[0] * b[1];
   }
-
   return area / 2;
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
@@ -21708,17 +21433,14 @@ function _defineProperty(obj, key, value) {
   } else {
     obj[key] = value;
   }
-
   return obj;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/sourceEvent.js
 /* harmony default export */ function sourceEvent(event) {
   var sourceEvent;
-
   while (sourceEvent = event.sourceEvent) {
     event = sourceEvent;
   }
-
   return event;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/pointer.js
@@ -21726,52 +21448,43 @@ function _defineProperty(obj, key, value) {
 /* harmony default export */ function src_pointer(event, node) {
   event = sourceEvent(event);
   if (node === undefined) node = event.currentTarget;
-
   if (node) {
     var svg = node.ownerSVGElement || node;
-
     if (svg.createSVGPoint) {
       var point = svg.createSVGPoint();
       point.x = event.clientX, point.y = event.clientY;
       point = point.matrixTransform(node.getScreenCTM().inverse());
       return [point.x, point.y];
     }
-
     if (node.getBoundingClientRect) {
       var rect = node.getBoundingClientRect();
       return [event.clientX - rect.left - node.clientLeft, event.clientY - rect.top - node.clientTop];
     }
   }
-
   return [event.pageX, event.pageY];
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-dispatch/src/dispatch.js
 
-
 var _this = undefined,
-    noop = {
-  value: function value() {
-    _newArrowCheck(this, _this);
-  }.bind(undefined)
-};
-
+  noop = {
+    value: function value() {
+      _newArrowCheck(this, _this);
+    }.bind(undefined)
+  };
 function dispatch() {
   for (var i = 0, n = arguments.length, _ = {}, t; i < n; ++i) {
     if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
     _[t] = [];
   }
-
   return new Dispatch(_);
 }
-
 function Dispatch(_) {
   this._ = _;
 }
-
 function parseTypenames(typenames, types) {
   return typenames.trim().split(/^|\s+/).map(function (t) {
     var name = "",
-        i = t.indexOf(".");
+      i = t.indexOf(".");
     if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
     if (t && !types.hasOwnProperty(t)) throw new Error("unknown type: " + t);
     return {
@@ -21780,44 +21493,39 @@ function parseTypenames(typenames, types) {
     };
   });
 }
-
 Dispatch.prototype = dispatch.prototype = {
   constructor: Dispatch,
   on: function on(typename, callback) {
     var _ = this._,
-        T = parseTypenames(typename + "", _),
-        t,
-        i = -1,
-        n = T.length; // If no callback was specified, return the callback of the given type and name.
+      T = parseTypenames(typename + "", _),
+      t,
+      i = -1,
+      n = T.length;
 
+    // If no callback was specified, return the callback of the given type and name.
     if (arguments.length < 2) {
       while (++i < n) {
         if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
       }
-
       return;
-    } // If a type was specified, set the callback for the given type and name.
+    }
+
+    // If a type was specified, set the callback for the given type and name.
     // Otherwise, if a null callback was specified, remove callbacks of the given name.
-
-
     if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
-
     while (++i < n) {
       if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);else if (callback == null) for (t in _) {
         _[t] = set(_[t], typename.name, null);
       }
     }
-
     return this;
   },
   copy: function () {
     var copy = {},
-        _ = this._;
-
+      _ = this._;
     for (var t in _) {
       copy[t] = _[t].slice();
     }
-
     return new Dispatch(copy);
   },
   call: function call(type, that) {
@@ -21825,20 +21533,17 @@ Dispatch.prototype = dispatch.prototype = {
       args[i] = arguments[i + 2];
     }
     if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-
     for (t = this._[type], i = 0, n = t.length; i < n; ++i) {
       t[i].value.apply(that, args);
     }
   },
   apply: function apply(type, that, args) {
     if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-
     for (var t = this._[type], i = 0, n = t.length; i < n; ++i) {
       t[i].value.apply(that, args);
     }
   }
 };
-
 function get(type, name) {
   for (var i = 0, n = type.length, c; i < n; ++i) {
     if ((c = type[i]).name === name) {
@@ -21846,7 +21551,6 @@ function get(type, name) {
     }
   }
 }
-
 function set(type, name, callback) {
   for (var i = 0, n = type.length; i < n; ++i) {
     if (type[i].name === name) {
@@ -21854,18 +21558,15 @@ function set(type, name, callback) {
       break;
     }
   }
-
   if (callback != null) type.push({
     name: name,
     value: callback
   });
   return type;
 }
-
 /* harmony default export */ var src_dispatch = (dispatch);
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selector.js
 function none() {}
-
 /* harmony default export */ function selector(selector) {
   return selector == null ? none : function () {
     return this.querySelector(selector);
@@ -21876,7 +21577,6 @@ function none() {}
 
 /* harmony default export */ function selection_select(select) {
   if (typeof select !== "function") select = selector(select);
-
   for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = Array(n), node, subnode, i = 0; i < n; ++i) {
       if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
@@ -21885,7 +21585,6 @@ function none() {}
       }
     }
   }
-
   return new Selection(subgroups, this._parents);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/array.js
@@ -21902,7 +21601,6 @@ function array(x) {
 function empty() {
   return [];
 }
-
 /* harmony default export */ function selectorAll(selector) {
   return selector == null ? empty : function () {
     return this.querySelectorAll(selector);
@@ -21912,16 +21610,13 @@ function empty() {
 
 
 
-
 function arrayAll(select) {
   return function () {
     return array(select.apply(this, arguments));
   };
 }
-
 /* harmony default export */ function selectAll(select) {
   if (typeof select === "function") select = arrayAll(select);else select = selectorAll(select);
-
   for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
       if (node = group[i]) {
@@ -21930,7 +21625,6 @@ function arrayAll(select) {
       }
     }
   }
-
   return new Selection(subgroups, parents);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/matcher.js
@@ -21947,34 +21641,28 @@ function childMatcher(selector) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectChild.js
 
 var find = Array.prototype.find;
-
 function childFind(match) {
   return function () {
     return find.call(this.children, match);
   };
 }
-
 function childFirst() {
   return this.firstElementChild;
 }
-
 /* harmony default export */ function selectChild(match) {
   return this.select(match == null ? childFirst : childFind(typeof match === "function" ? match : childMatcher(match)));
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectChildren.js
 
 var filter = Array.prototype.filter;
-
 function children() {
   return Array.from(this.children);
 }
-
 function childrenFilter(match) {
   return function () {
     return filter.call(this.children, match);
   };
 }
-
 /* harmony default export */ function selectChildren(match) {
   return this.selectAll(match == null ? children : childrenFilter(typeof match === "function" ? match : childMatcher(match)));
 }
@@ -21983,7 +21671,6 @@ function childrenFilter(match) {
 
 /* harmony default export */ function selection_filter(match) {
   if (typeof match !== "function") match = matcher(match);
-
   for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
       if ((node = group[i]) && match.call(node, node.__data__, i, group)) {
@@ -21991,7 +21678,6 @@ function childrenFilter(match) {
       }
     }
   }
-
   return new Selection(subgroups, this._parents);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sparse.js
@@ -22036,15 +21722,15 @@ EnterNode.prototype = {
 
 
 
-
 function bindIndex(parent, group, enter, update, exit, data) {
   var i = 0,
-      node,
-      groupLength = group.length,
-      dataLength = data.length; // Put any non-null nodes that fit into update.
+    node,
+    groupLength = group.length,
+    dataLength = data.length;
+
+  // Put any non-null nodes that fit into update.
   // Put any null nodes into enter.
   // Put any remaining data into enter.
-
   for (; i < dataLength; ++i) {
     if (node = group[i]) {
       node.__data__ = data[i];
@@ -22052,44 +21738,42 @@ function bindIndex(parent, group, enter, update, exit, data) {
     } else {
       enter[i] = new EnterNode(parent, data[i]);
     }
-  } // Put any non-null nodes that don’t fit into exit.
+  }
 
-
+  // Put any non-null nodes that don’t fit into exit.
   for (; i < groupLength; ++i) {
     if (node = group[i]) {
       exit[i] = node;
     }
   }
 }
-
 function bindKey(parent, group, enter, update, exit, data, key) {
   var i,
-      node,
-      nodeByKeyValue = new Map(),
-      groupLength = group.length,
-      dataLength = data.length,
-      keyValues = Array(groupLength),
-      keyValue; // Compute the key for each node.
-  // If multiple nodes have the same key, the duplicates are added to exit.
+    node,
+    nodeByKeyValue = new Map(),
+    groupLength = group.length,
+    dataLength = data.length,
+    keyValues = Array(groupLength),
+    keyValue;
 
+  // Compute the key for each node.
+  // If multiple nodes have the same key, the duplicates are added to exit.
   for (i = 0; i < groupLength; ++i) {
     if (node = group[i]) {
       keyValues[i] = keyValue = key.call(node, node.__data__, i, group) + "";
-
       if (nodeByKeyValue.has(keyValue)) {
         exit[i] = node;
       } else {
         nodeByKeyValue.set(keyValue, node);
       }
     }
-  } // Compute the key for each datum.
+  }
+
+  // Compute the key for each datum.
   // If there a node associated with this key, join and add it to update.
   // If there is not (or the key is a duplicate), add it to enter.
-
-
   for (i = 0; i < dataLength; ++i) {
     keyValue = key.call(parent, data[i], i, data) + "";
-
     if (node = nodeByKeyValue.get(keyValue)) {
       update[i] = node;
       node.__data__ = data[i];
@@ -22097,62 +21781,58 @@ function bindKey(parent, group, enter, update, exit, data, key) {
     } else {
       enter[i] = new EnterNode(parent, data[i]);
     }
-  } // Add any remaining nodes that were not bound to data to exit.
+  }
 
-
+  // Add any remaining nodes that were not bound to data to exit.
   for (i = 0; i < groupLength; ++i) {
     if ((node = group[i]) && nodeByKeyValue.get(keyValues[i]) === node) {
       exit[i] = node;
     }
   }
 }
-
 function datum(node) {
   return node.__data__;
 }
-
 /* harmony default export */ function data(value, key) {
   if (!arguments.length) return Array.from(this, datum);
   var bind = key ? bindKey : bindIndex,
-      parents = this._parents,
-      groups = this._groups;
+    parents = this._parents,
+    groups = this._groups;
   if (typeof value !== "function") value = constant(value);
-
   for (var m = groups.length, update = Array(m), enter = Array(m), exit = Array(m), j = 0; j < m; ++j) {
     var parent = parents[j],
-        group = groups[j],
-        groupLength = group.length,
-        data = arraylike(value.call(parent, parent && parent.__data__, j, parents)),
-        dataLength = data.length,
-        enterGroup = enter[j] = Array(dataLength),
-        updateGroup = update[j] = Array(dataLength),
-        exitGroup = exit[j] = Array(groupLength);
-    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key); // Now connect the enter nodes to their following update node, such that
+      group = groups[j],
+      groupLength = group.length,
+      data = arraylike(value.call(parent, parent && parent.__data__, j, parents)),
+      dataLength = data.length,
+      enterGroup = enter[j] = Array(dataLength),
+      updateGroup = update[j] = Array(dataLength),
+      exitGroup = exit[j] = Array(groupLength);
+    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key);
+
+    // Now connect the enter nodes to their following update node, such that
     // appendChild can insert the materialized enter node before this node,
     // rather than at the end of the parent node.
-
     for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
       if (previous = enterGroup[i0]) {
         if (i0 >= i1) i1 = i0 + 1;
-
         while (!(next = updateGroup[i1]) && ++i1 < dataLength) {}
-
         previous._next = next || null;
       }
     }
   }
-
   update = new Selection(update, parents);
   update._enter = enter;
   update._exit = exit;
   return update;
-} // Given some data, this returns an array-like view of it: an object that
+}
+
+// Given some data, this returns an array-like view of it: an object that
 // exposes a length property and allows numeric indexing. Note that unlike
 // selectAll, this isn’t worried about “live” collections because the resulting
 // array will only be used briefly while data is being bound. (It is possible to
 // cause the data to change while iterating by using a key function, but please
 // don’t; we’d rather avoid a gratuitous copy.)
-
 function arraylike(data) {
   return typeof data === "object" && "length" in data ? data // Array, TypedArray, NodeList, array-like
   : Array.from(data); // Map, Set, iterable, string, or anything else
@@ -22166,21 +21846,18 @@ function arraylike(data) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/join.js
 /* harmony default export */ function join(onenter, onupdate, onexit) {
   var enter = this.enter(),
-      update = this,
-      exit = this.exit();
-
+    update = this,
+    exit = this.exit();
   if (typeof onenter === "function") {
     enter = onenter(enter);
     if (enter) enter = enter.selection();
   } else {
     enter = enter.append(onenter + "");
   }
-
   if (onupdate != null) {
     update = onupdate(update);
     if (update) update = update.selection();
   }
-
   if (onexit == null) exit.remove();else onexit(exit);
   return enter && update ? enter.merge(update).order() : update;
 }
@@ -22194,11 +21871,9 @@ function arraylike(data) {
       }
     }
   }
-
   for (; j < m0; ++j) {
     merges[j] = groups0[j];
   }
-
   return new Selection(merges, this._parents);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/order.js
@@ -22211,31 +21886,25 @@ function arraylike(data) {
       }
     }
   }
-
   return this;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sort.js
 
 /* harmony default export */ function sort(compare) {
   if (!compare) compare = ascending;
-
   function compareNode(a, b) {
     return a && b ? compare(a.__data__, b.__data__) : !a - !b;
   }
-
   for (var groups = this._groups, m = groups.length, sortgroups = Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, sortgroup = sortgroups[j] = Array(n), node, i = 0; i < n; ++i) {
       if (node = group[i]) {
         sortgroup[i] = node;
       }
     }
-
     sortgroup.sort(compareNode);
   }
-
   return new Selection(sortgroups, this._parents).order();
 }
-
 function ascending(a, b) {
   return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
@@ -22258,25 +21927,18 @@ function ascending(a, b) {
       if (node) return node;
     }
   }
-
   return null;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/size.js
 function size_createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = size_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
 function size_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return size_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return size_arrayLikeToArray(o, minLen); }
-
 function size_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 /* harmony default export */ function size() {
   var size = 0;
-
   for (var _iterator = size_createForOfIteratorHelperLoose(this), _step; !(_step = _iterator()).done;) {
     _step.value;
     ++size;
   } // eslint-disable-line no-unused-vars
-
-
   return size;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/empty.js
@@ -22290,7 +21952,6 @@ function size_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) 
       if (node = group[i]) callback.call(node, node.__data__, i, group);
     }
   }
-
   return this;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/namespaces.js
@@ -22306,7 +21967,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
 
 /* harmony default export */ function namespace(name) {
   var prefix = name += "",
-      i = prefix.indexOf(":");
+    i = prefix.indexOf(":");
   if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") name = name.slice(i + 1);
   return namespaces.hasOwnProperty(prefix) ? {
     space: namespaces[prefix],
@@ -22315,53 +21976,44 @@ var xhtml = "http://www.w3.org/1999/xhtml";
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/attr.js
 
-
 function attrRemove(name) {
   return function () {
     this.removeAttribute(name);
   };
 }
-
 function attrRemoveNS(fullname) {
   return function () {
     this.removeAttributeNS(fullname.space, fullname.local);
   };
 }
-
 function attrConstant(name, value) {
   return function () {
     this.setAttribute(name, value);
   };
 }
-
 function attrConstantNS(fullname, value) {
   return function () {
     this.setAttributeNS(fullname.space, fullname.local, value);
   };
 }
-
 function attrFunction(name, value) {
   return function () {
     var v = value.apply(this, arguments);
     if (v == null) this.removeAttribute(name);else this.setAttribute(name, v);
   };
 }
-
 function attrFunctionNS(fullname, value) {
   return function () {
     var v = value.apply(this, arguments);
     if (v == null) this.removeAttributeNS(fullname.space, fullname.local);else this.setAttributeNS(fullname.space, fullname.local, v);
   };
 }
-
 /* harmony default export */ function attr(name, value) {
   var fullname = namespace(name);
-
   if (arguments.length < 2) {
     var node = this.node();
     return fullname.local ? node.getAttributeNS(fullname.space, fullname.local) : node.getAttribute(fullname);
   }
-
   return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/window.js
@@ -22372,26 +22024,22 @@ function attrFunctionNS(fullname, value) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/style.js
 
-
 function styleRemove(name) {
   return function () {
     this.style.removeProperty(name);
   };
 }
-
 function styleConstant(name, value, priority) {
   return function () {
     this.style.setProperty(name, value, priority);
   };
 }
-
 function styleFunction(name, value, priority) {
   return function () {
     var v = value.apply(this, arguments);
     if (v == null) this.style.removeProperty(name);else this.style.setProperty(name, v, priority);
   };
 }
-
 /* harmony default export */ function style(name, value, priority) {
   return arguments.length > 1 ? this.each((value == null ? styleRemove : typeof value === "function" ? styleFunction : styleConstant)(name, value, priority == null ? "" : priority)) : styleValue(this.node(), name);
 }
@@ -22404,20 +22052,17 @@ function propertyRemove(name) {
     delete this[name];
   };
 }
-
 function propertyConstant(name, value) {
   return function () {
     this[name] = value;
   };
 }
-
 function propertyFunction(name, value) {
   return function () {
     var v = value.apply(this, arguments);
     if (v == null) delete this[name];else this[name] = v;
   };
 }
-
 /* harmony default export */ function property(name, value) {
   return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
 }
@@ -22425,32 +22070,25 @@ function propertyFunction(name, value) {
 function classArray(string) {
   return string.trim().split(/^|\s+/);
 }
-
 function classList(node) {
   return node.classList || new ClassList(node);
 }
-
 function ClassList(node) {
   this._node = node;
   this._names = classArray(node.getAttribute("class") || "");
 }
-
 ClassList.prototype = {
   add: function add(name) {
     var i = this._names.indexOf(name);
-
     if (i < 0) {
       this._names.push(name);
-
       this._node.setAttribute("class", this._names.join(" "));
     }
   },
   remove: function remove(name) {
     var i = this._names.indexOf(name);
-
     if (i >= 0) {
       this._names.splice(i, 1);
-
       this._node.setAttribute("class", this._names.join(" "));
     }
   },
@@ -22458,80 +22096,65 @@ ClassList.prototype = {
     return this._names.indexOf(name) >= 0;
   }
 };
-
 function classedAdd(node, names) {
   var list = classList(node),
-      i = -1,
-      n = names.length;
-
+    i = -1,
+    n = names.length;
   while (++i < n) {
     list.add(names[i]);
   }
 }
-
 function classedRemove(node, names) {
   var list = classList(node),
-      i = -1,
-      n = names.length;
-
+    i = -1,
+    n = names.length;
   while (++i < n) {
     list.remove(names[i]);
   }
 }
-
 function classedTrue(names) {
   return function () {
     classedAdd(this, names);
   };
 }
-
 function classedFalse(names) {
   return function () {
     classedRemove(this, names);
   };
 }
-
 function classedFunction(names, value) {
   return function () {
     (value.apply(this, arguments) ? classedAdd : classedRemove)(this, names);
   };
 }
-
 /* harmony default export */ function classed(name, value) {
   var names = classArray(name + "");
-
   if (arguments.length < 2) {
     var list = classList(this.node()),
-        i = -1,
-        n = names.length;
-
+      i = -1,
+      n = names.length;
     while (++i < n) {
       if (!list.contains(names[i])) return !1;
     }
-
     return !0;
   }
-
   return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/text.js
 function textRemove() {
   this.textContent = "";
 }
-
 function textConstant(value) {
   return function () {
     this.textContent = value;
   };
 }
-
 function textFunction(value) {
   return function () {
     var v = value.apply(this, arguments);
     this.textContent = v == null ? "" : v;
   };
 }
-
 /* harmony default export */ function selection_text(value) {
   return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
 }
@@ -22539,20 +22162,17 @@ function textFunction(value) {
 function htmlRemove() {
   this.innerHTML = "";
 }
-
 function htmlConstant(value) {
   return function () {
     this.innerHTML = value;
   };
 }
-
 function htmlFunction(value) {
   return function () {
     var v = value.apply(this, arguments);
     this.innerHTML = v == null ? "" : v;
   };
 }
-
 /* harmony default export */ function html(value) {
   return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
 }
@@ -22560,7 +22180,6 @@ function htmlFunction(value) {
 function raise() {
   if (this.nextSibling) this.parentNode.appendChild(this);
 }
-
 /* harmony default export */ function selection_raise() {
   return this.each(raise);
 }
@@ -22568,28 +22187,24 @@ function raise() {
 function lower() {
   if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
 }
-
 /* harmony default export */ function selection_lower() {
   return this.each(lower);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/creator.js
 
 
-
 function creatorInherit(name) {
   return function () {
     var document = this.ownerDocument,
-        uri = this.namespaceURI;
+      uri = this.namespaceURI;
     return uri === xhtml && document.documentElement.namespaceURI === xhtml ? document.createElement(name) : document.createElementNS(uri, name);
   };
 }
-
 function creatorFixed(fullname) {
   return function () {
     return this.ownerDocument.createElementNS(fullname.space, fullname.local);
   };
 }
-
 /* harmony default export */ function creator(name) {
   var fullname = namespace(name);
   return (fullname.local ? creatorFixed : creatorInherit)(fullname);
@@ -22605,14 +22220,12 @@ function creatorFixed(fullname) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/insert.js
 
 
-
 function constantNull() {
   return null;
 }
-
 /* harmony default export */ function insert(name, before) {
   var create = typeof name === "function" ? name : creator(name),
-      select = before == null ? constantNull : typeof before === "function" ? before : selector(before);
+    select = before == null ? constantNull : typeof before === "function" ? before : selector(before);
   return this.select(function () {
     return this.insertBefore(create.apply(this, arguments), select.apply(this, arguments) || null);
   });
@@ -22622,23 +22235,20 @@ function remove() {
   var parent = this.parentNode;
   if (parent) parent.removeChild(this);
 }
-
 /* harmony default export */ function selection_remove() {
   return this.each(remove);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/clone.js
 function selection_cloneShallow() {
   var clone = this.cloneNode(!1),
-      parent = this.parentNode;
+    parent = this.parentNode;
   return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
 }
-
 function selection_cloneDeep() {
   var clone = this.cloneNode(!0),
-      parent = this.parentNode;
+    parent = this.parentNode;
   return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
 }
-
 /* harmony default export */ function clone(deep) {
   return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
 }
@@ -22652,11 +22262,10 @@ function contextListener(listener) {
     listener.call(this, event, this.__data__);
   };
 }
-
 function on_parseTypenames(typenames) {
   return typenames.trim().split(/^|\s+/).map(function (t) {
     var name = "",
-        i = t.indexOf(".");
+      i = t.indexOf(".");
     if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
     return {
       type: t,
@@ -22664,12 +22273,10 @@ function on_parseTypenames(typenames) {
     };
   });
 }
-
 function onRemove(typename) {
   return function () {
     var on = this.__on;
     if (!on) return;
-
     for (var j = 0, i = -1, m = on.length, o; j < m; ++j) {
       if (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) {
         this.removeEventListener(o.type, o.listener, o.options);
@@ -22677,16 +22284,14 @@ function onRemove(typename) {
         on[++i] = o;
       }
     }
-
     if (++i) on.length = i;else delete this.__on;
   };
 }
-
 function onAdd(typename, value, options) {
   return function () {
     var on = this.__on,
-        o,
-        listener = contextListener(value);
+      o,
+      listener = contextListener(value);
     if (on) for (var j = 0, m = on.length; j < m; ++j) {
       if ((o = on[j]).type === typename.type && o.name === typename.name) {
         this.removeEventListener(o.type, o.listener, o.options);
@@ -22706,16 +22311,13 @@ function onAdd(typename, value, options) {
     if (!on) this.__on = [o];else on.push(o);
   };
 }
-
 /* harmony default export */ function on(typename, value, options) {
   var typenames = on_parseTypenames(typename + ""),
-      i,
-      n = typenames.length,
-      t;
-
+    i,
+    n = typenames.length,
+    t;
   if (arguments.length < 2) {
     var on = this.node().__on;
-
     if (on) for (var j = 0, m = on.length, o; j < m; ++j) {
       for (i = 0, o = on[j]; i < n; ++i) {
         if ((t = typenames[i]).type === o.type && t.name === o.name) {
@@ -22725,52 +22327,41 @@ function onAdd(typename, value, options) {
     }
     return;
   }
-
   on = value ? onAdd : onRemove;
-
   for (i = 0; i < n; ++i) {
     this.each(on(typenames[i], value, options));
   }
-
   return this;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/dispatch.js
 
-
 function dispatchEvent(node, type, params) {
   var window = src_window(node),
-      event = window.CustomEvent;
-
+    event = window.CustomEvent;
   if (typeof event === "function") {
     event = new event(type, params);
   } else {
     event = window.document.createEvent("Event");
     if (params) event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;else event.initEvent(type, !1, !1);
   }
-
   node.dispatchEvent(event);
 }
-
 function dispatchConstant(type, params) {
   return function () {
     return dispatchEvent(this, type, params);
   };
 }
-
 function dispatchFunction(type, params) {
   return function () {
     return dispatchEvent(this, type, params.apply(this, arguments));
   };
 }
-
 /* harmony default export */ function selection_dispatch(type, params) {
   return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/iterator.js
 
-
 var iterator_marked = /*#__PURE__*/regenerator.mark(_callee);
-
 function _callee() {
   var groups, j, m, group, i, n, node;
   return regenerator.wrap(function (_context) {
@@ -22778,39 +22369,31 @@ function _callee() {
       switch (_context.prev = _context.next) {
         case 0:
           groups = this._groups, j = 0, m = groups.length;
-
         case 1:
           if (!(j < m)) {
             _context.next = 13;
             break;
           }
-
           group = groups[j], i = 0, n = group.length;
-
         case 3:
           if (!(i < n)) {
             _context.next = 10;
             break;
           }
-
           if (!(node = group[i])) {
             _context.next = 7;
             break;
           }
-
           _context.next = 7;
           return node;
-
         case 7:
           ++i;
           _context.next = 3;
           break;
-
         case 10:
           ++j;
           _context.next = 1;
           break;
-
         case 13:
         case "end":
           return _context.stop();
@@ -22854,21 +22437,17 @@ var _selection$prototype;
 
 
 
-
 var root = [null];
 function Selection(groups, parents) {
   this._groups = groups;
   this._parents = parents;
 }
-
 function selection() {
   return new Selection([[document.documentElement]], root);
 }
-
 function selection_selection() {
   return this;
 }
-
 Selection.prototype = selection.prototype = (_selection$prototype = {
   constructor: Selection,
   select: selection_select,
@@ -22934,8 +22513,7 @@ function nopropagation(event) {
 
 /* harmony default export */ function nodrag(view) {
   var root = view.document.documentElement,
-      selection = src_select(view).on("dragstart.drag", noevent, nonpassivecapture);
-
+    selection = src_select(view).on("dragstart.drag", noevent, nonpassivecapture);
   if ("onselectstart" in root) {
     selection.on("selectstart.drag", noevent, nonpassivecapture);
   } else {
@@ -22945,15 +22523,13 @@ function nopropagation(event) {
 }
 function yesdrag(view, noclick) {
   var root = view.document.documentElement,
-      selection = src_select(view).on("dragstart.drag", null);
-
+    selection = src_select(view).on("dragstart.drag", null);
   if (noclick) {
     selection.on("click.drag", noevent, nonpassivecapture);
     setTimeout(function () {
       selection.on("click.drag", null);
     }, 0);
   }
-
   if ("onselectstart" in root) {
     selection.on("selectstart.drag", null);
   } else {
@@ -22968,11 +22544,9 @@ function yesdrag(view, noclick) {
 }
 function extend(parent, definition) {
   var prototype = Object.create(parent.prototype);
-
   for (var key in definition) {
     prototype[key] = definition[key];
   }
-
   return prototype;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-color/src/color.js
@@ -22980,170 +22554,168 @@ function extend(parent, definition) {
 function Color() {}
 var _darker = .7;
 
-
 var _brighter = 1 / _darker;
 
-
 var reI = "\\s*([+-]?\\d+)\\s*",
-    reN = "\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*",
-    reP = "\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
-    reHex = /^#([0-9a-f]{3,8})$/,
-    reRgbInteger = new RegExp("^rgb\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*\\)$"),
-    reRgbPercent = new RegExp("^rgb\\(\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
-    reRgbaInteger = new RegExp("^rgba\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    reRgbaPercent = new RegExp("^rgba\\(\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    reHslPercent = new RegExp("^hsl\\(\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
-    reHslaPercent = new RegExp("^hsla\\(\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    named = {
-  aliceblue: 0xf0f8ff,
-  antiquewhite: 0xfaebd7,
-  aqua: 65535,
-  aquamarine: 8388564,
-  azure: 0xf0ffff,
-  beige: 0xf5f5dc,
-  bisque: 0xffe4c4,
-  black: 0,
-  blanchedalmond: 0xffebcd,
-  blue: 255,
-  blueviolet: 9055202,
-  brown: 0xa52a2a,
-  burlywood: 0xdeb887,
-  cadetblue: 6266528,
-  chartreuse: 8388352,
-  chocolate: 0xd2691e,
-  coral: 0xff7f50,
-  cornflowerblue: 6591981,
-  cornsilk: 0xfff8dc,
-  crimson: 0xdc143c,
-  cyan: 65535,
-  darkblue: 139,
-  darkcyan: 35723,
-  darkgoldenrod: 0xb8860b,
-  darkgray: 0xa9a9a9,
-  darkgreen: 25600,
-  darkgrey: 0xa9a9a9,
-  darkkhaki: 0xbdb76b,
-  darkmagenta: 9109643,
-  darkolivegreen: 5597999,
-  darkorange: 0xff8c00,
-  darkorchid: 0x9932cc,
-  darkred: 9109504,
-  darksalmon: 0xe9967a,
-  darkseagreen: 9419919,
-  darkslateblue: 4734347,
-  darkslategray: 3100495,
-  darkslategrey: 3100495,
-  darkturquoise: 52945,
-  darkviolet: 9699539,
-  deeppink: 0xff1493,
-  deepskyblue: 49151,
-  dimgray: 6908265,
-  dimgrey: 6908265,
-  dodgerblue: 2003199,
-  firebrick: 0xb22222,
-  floralwhite: 0xfffaf0,
-  forestgreen: 2263842,
-  fuchsia: 0xff00ff,
-  gainsboro: 0xdcdcdc,
-  ghostwhite: 0xf8f8ff,
-  gold: 0xffd700,
-  goldenrod: 0xdaa520,
-  gray: 8421504,
-  green: 32768,
-  greenyellow: 0xadff2f,
-  grey: 8421504,
-  honeydew: 0xf0fff0,
-  hotpink: 0xff69b4,
-  indianred: 0xcd5c5c,
-  indigo: 4915330,
-  ivory: 0xfffff0,
-  khaki: 0xf0e68c,
-  lavender: 0xe6e6fa,
-  lavenderblush: 0xfff0f5,
-  lawngreen: 8190976,
-  lemonchiffon: 0xfffacd,
-  lightblue: 0xadd8e6,
-  lightcoral: 0xf08080,
-  lightcyan: 0xe0ffff,
-  lightgoldenrodyellow: 0xfafad2,
-  lightgray: 0xd3d3d3,
-  lightgreen: 9498256,
-  lightgrey: 0xd3d3d3,
-  lightpink: 0xffb6c1,
-  lightsalmon: 0xffa07a,
-  lightseagreen: 2142890,
-  lightskyblue: 8900346,
-  lightslategray: 7833753,
-  lightslategrey: 7833753,
-  lightsteelblue: 0xb0c4de,
-  lightyellow: 0xffffe0,
-  lime: 65280,
-  limegreen: 3329330,
-  linen: 0xfaf0e6,
-  magenta: 0xff00ff,
-  maroon: 8388608,
-  mediumaquamarine: 6737322,
-  mediumblue: 205,
-  mediumorchid: 0xba55d3,
-  mediumpurple: 9662683,
-  mediumseagreen: 3978097,
-  mediumslateblue: 8087790,
-  mediumspringgreen: 64154,
-  mediumturquoise: 4772300,
-  mediumvioletred: 0xc71585,
-  midnightblue: 1644912,
-  mintcream: 0xf5fffa,
-  mistyrose: 0xffe4e1,
-  moccasin: 0xffe4b5,
-  navajowhite: 0xffdead,
-  navy: 128,
-  oldlace: 0xfdf5e6,
-  olive: 8421376,
-  olivedrab: 7048739,
-  orange: 0xffa500,
-  orangered: 0xff4500,
-  orchid: 0xda70d6,
-  palegoldenrod: 0xeee8aa,
-  palegreen: 0x98fb98,
-  paleturquoise: 0xafeeee,
-  palevioletred: 0xdb7093,
-  papayawhip: 0xffefd5,
-  peachpuff: 0xffdab9,
-  peru: 0xcd853f,
-  pink: 0xffc0cb,
-  plum: 0xdda0dd,
-  powderblue: 0xb0e0e6,
-  purple: 8388736,
-  rebeccapurple: 6697881,
-  red: 0xff0000,
-  rosybrown: 0xbc8f8f,
-  royalblue: 4286945,
-  saddlebrown: 9127187,
-  salmon: 0xfa8072,
-  sandybrown: 0xf4a460,
-  seagreen: 3050327,
-  seashell: 0xfff5ee,
-  sienna: 0xa0522d,
-  silver: 0xc0c0c0,
-  skyblue: 8900331,
-  slateblue: 6970061,
-  slategray: 7372944,
-  slategrey: 7372944,
-  snow: 0xfffafa,
-  springgreen: 65407,
-  steelblue: 4620980,
-  tan: 0xd2b48c,
-  teal: 32896,
-  thistle: 0xd8bfd8,
-  tomato: 0xff6347,
-  turquoise: 4251856,
-  violet: 0xee82ee,
-  wheat: 0xf5deb3,
-  white: 0xffffff,
-  whitesmoke: 0xf5f5f5,
-  yellow: 0xffff00,
-  yellowgreen: 0x9acd32
-};
+  reN = "\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*",
+  reP = "\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
+  reHex = /^#([0-9a-f]{3,8})$/,
+  reRgbInteger = new RegExp("^rgb\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*\\)$"),
+  reRgbPercent = new RegExp("^rgb\\(\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
+  reRgbaInteger = new RegExp("^rgba\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
+  reRgbaPercent = new RegExp("^rgba\\(\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
+  reHslPercent = new RegExp("^hsl\\(\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
+  reHslaPercent = new RegExp("^hsla\\(\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?(?:\\d*\\.)?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
+  named = {
+    aliceblue: 0xf0f8ff,
+    antiquewhite: 0xfaebd7,
+    aqua: 65535,
+    aquamarine: 8388564,
+    azure: 0xf0ffff,
+    beige: 0xf5f5dc,
+    bisque: 0xffe4c4,
+    black: 0,
+    blanchedalmond: 0xffebcd,
+    blue: 255,
+    blueviolet: 9055202,
+    brown: 0xa52a2a,
+    burlywood: 0xdeb887,
+    cadetblue: 6266528,
+    chartreuse: 8388352,
+    chocolate: 0xd2691e,
+    coral: 0xff7f50,
+    cornflowerblue: 6591981,
+    cornsilk: 0xfff8dc,
+    crimson: 0xdc143c,
+    cyan: 65535,
+    darkblue: 139,
+    darkcyan: 35723,
+    darkgoldenrod: 0xb8860b,
+    darkgray: 0xa9a9a9,
+    darkgreen: 25600,
+    darkgrey: 0xa9a9a9,
+    darkkhaki: 0xbdb76b,
+    darkmagenta: 9109643,
+    darkolivegreen: 5597999,
+    darkorange: 0xff8c00,
+    darkorchid: 0x9932cc,
+    darkred: 9109504,
+    darksalmon: 0xe9967a,
+    darkseagreen: 9419919,
+    darkslateblue: 4734347,
+    darkslategray: 3100495,
+    darkslategrey: 3100495,
+    darkturquoise: 52945,
+    darkviolet: 9699539,
+    deeppink: 0xff1493,
+    deepskyblue: 49151,
+    dimgray: 6908265,
+    dimgrey: 6908265,
+    dodgerblue: 2003199,
+    firebrick: 0xb22222,
+    floralwhite: 0xfffaf0,
+    forestgreen: 2263842,
+    fuchsia: 0xff00ff,
+    gainsboro: 0xdcdcdc,
+    ghostwhite: 0xf8f8ff,
+    gold: 0xffd700,
+    goldenrod: 0xdaa520,
+    gray: 8421504,
+    green: 32768,
+    greenyellow: 0xadff2f,
+    grey: 8421504,
+    honeydew: 0xf0fff0,
+    hotpink: 0xff69b4,
+    indianred: 0xcd5c5c,
+    indigo: 4915330,
+    ivory: 0xfffff0,
+    khaki: 0xf0e68c,
+    lavender: 0xe6e6fa,
+    lavenderblush: 0xfff0f5,
+    lawngreen: 8190976,
+    lemonchiffon: 0xfffacd,
+    lightblue: 0xadd8e6,
+    lightcoral: 0xf08080,
+    lightcyan: 0xe0ffff,
+    lightgoldenrodyellow: 0xfafad2,
+    lightgray: 0xd3d3d3,
+    lightgreen: 9498256,
+    lightgrey: 0xd3d3d3,
+    lightpink: 0xffb6c1,
+    lightsalmon: 0xffa07a,
+    lightseagreen: 2142890,
+    lightskyblue: 8900346,
+    lightslategray: 7833753,
+    lightslategrey: 7833753,
+    lightsteelblue: 0xb0c4de,
+    lightyellow: 0xffffe0,
+    lime: 65280,
+    limegreen: 3329330,
+    linen: 0xfaf0e6,
+    magenta: 0xff00ff,
+    maroon: 8388608,
+    mediumaquamarine: 6737322,
+    mediumblue: 205,
+    mediumorchid: 0xba55d3,
+    mediumpurple: 9662683,
+    mediumseagreen: 3978097,
+    mediumslateblue: 8087790,
+    mediumspringgreen: 64154,
+    mediumturquoise: 4772300,
+    mediumvioletred: 0xc71585,
+    midnightblue: 1644912,
+    mintcream: 0xf5fffa,
+    mistyrose: 0xffe4e1,
+    moccasin: 0xffe4b5,
+    navajowhite: 0xffdead,
+    navy: 128,
+    oldlace: 0xfdf5e6,
+    olive: 8421376,
+    olivedrab: 7048739,
+    orange: 0xffa500,
+    orangered: 0xff4500,
+    orchid: 0xda70d6,
+    palegoldenrod: 0xeee8aa,
+    palegreen: 0x98fb98,
+    paleturquoise: 0xafeeee,
+    palevioletred: 0xdb7093,
+    papayawhip: 0xffefd5,
+    peachpuff: 0xffdab9,
+    peru: 0xcd853f,
+    pink: 0xffc0cb,
+    plum: 0xdda0dd,
+    powderblue: 0xb0e0e6,
+    purple: 8388736,
+    rebeccapurple: 6697881,
+    red: 0xff0000,
+    rosybrown: 0xbc8f8f,
+    royalblue: 4286945,
+    saddlebrown: 9127187,
+    salmon: 0xfa8072,
+    sandybrown: 0xf4a460,
+    seagreen: 3050327,
+    seashell: 0xfff5ee,
+    sienna: 0xa0522d,
+    silver: 0xc0c0c0,
+    skyblue: 8900331,
+    slateblue: 6970061,
+    slategray: 7372944,
+    slategrey: 7372944,
+    snow: 0xfffafa,
+    springgreen: 65407,
+    steelblue: 4620980,
+    tan: 0xd2b48c,
+    teal: 32896,
+    thistle: 0xd8bfd8,
+    tomato: 0xff6347,
+    turquoise: 4251856,
+    violet: 0xee82ee,
+    wheat: 0xf5deb3,
+    white: 0xffffff,
+    whitesmoke: 0xf5f5f5,
+    yellow: 0xffff00,
+    yellowgreen: 0x9acd32
+  };
 src_define(Color, color, {
   copy: function copy(channels) {
     return Object.assign(new this.constructor(), this, channels);
@@ -23159,23 +22731,18 @@ src_define(Color, color, {
   formatRgb: color_formatRgb,
   toString: color_formatRgb
 });
-
 function color_formatHex() {
   return this.rgb().formatHex();
 }
-
 function color_formatHex8() {
   return this.rgb().formatHex8();
 }
-
 function color_formatHsl() {
   return hslConvert(this).formatHsl();
 }
-
 function color_formatRgb() {
   return this.rgb().formatRgb();
 }
-
 function color(format) {
   var m, l;
   format = (format + "").trim().toLowerCase();
@@ -23193,16 +22760,13 @@ function color(format) {
   : named.hasOwnProperty(format) ? rgbn(named[format]) // eslint-disable-line no-prototype-builtins
   : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0) : null;
 }
-
 function rgbn(n) {
   return new Rgb(n >> 16 & 255, n >> 8 & 255, n & 255, 1);
 }
-
 function rgba(r, g, b, a) {
   if (a <= 0) r = g = b = NaN;
   return new Rgb(r, g, b, a);
 }
-
 function rgbConvert(o) {
   if (!(o instanceof Color)) o = color(o);
   if (!o) return new Rgb();
@@ -23243,38 +22807,30 @@ src_define(Rgb, color_rgb, extend(Color, {
   formatRgb: rgb_formatRgb,
   toString: rgb_formatRgb
 }));
-
 function rgb_formatHex() {
   return "#" + hex(this.r) + hex(this.g) + hex(this.b);
 }
-
 function rgb_formatHex8() {
   return "#" + hex(this.r) + hex(this.g) + hex(this.b) + hex((isNaN(this.opacity) ? 1 : this.opacity) * 255);
 }
-
 function rgb_formatRgb() {
   var a = clampa(this.opacity);
   return "" + (a === 1 ? "rgb(" : "rgba(") + clampi(this.r) + ", " + clampi(this.g) + ", " + clampi(this.b) + (a === 1 ? ")" : ", " + a + ")");
 }
-
 function clampa(opacity) {
   return isNaN(opacity) ? 1 : Math.max(0, Math.min(1, opacity));
 }
-
 function clampi(value) {
   return Math.max(0, Math.min(255, Math.round(value) || 0));
 }
-
 function hex(value) {
   value = clampi(value);
   return (value < 16 ? "0" : "") + value.toString(16);
 }
-
 function hsla(h, s, l, a) {
   if (a <= 0) h = s = l = NaN;else if (l <= 0 || l >= 1) h = s = NaN;else if (s <= 0) h = NaN;
   return new Hsl(h, s, l, a);
 }
-
 function hslConvert(o) {
   if (o instanceof Hsl) return new Hsl(o.h, o.s, o.l, o.opacity);
   if (!(o instanceof Color)) o = color(o);
@@ -23282,14 +22838,13 @@ function hslConvert(o) {
   if (o instanceof Hsl) return o;
   o = o.rgb();
   var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      min = Math.min(r, g, b),
-      max = Math.max(r, g, b),
-      h = NaN,
-      s = max - min,
-      l = (max + min) / 2;
-
+    g = o.g / 255,
+    b = o.b / 255,
+    min = Math.min(r, g, b),
+    max = Math.max(r, g, b),
+    h = NaN,
+    s = max - min,
+    l = (max + min) / 2;
   if (s) {
     if (r === max) h = (g - b) / s + (g < b) * 6;else if (g === max) h = (b - r) / s + 2;else h = (r - g) / s + 4;
     s /= l < .5 ? max + min : 2 - max - min;
@@ -23297,20 +22852,17 @@ function hslConvert(o) {
   } else {
     s = l > 0 && l < 1 ? 0 : h;
   }
-
   return new Hsl(h, s, l, o.opacity);
 }
 function hsl(h, s, l, opacity) {
   return arguments.length === 1 ? hslConvert(h) : new Hsl(h, s, l, opacity == null ? 1 : opacity);
 }
-
 function Hsl(h, s, l, opacity) {
   this.h = +h;
   this.s = +s;
   this.l = +l;
   this.opacity = +opacity;
 }
-
 src_define(Hsl, hsl, extend(Color, {
   brighter: function brighter(k) {
     k = k == null ? _brighter : Math.pow(_brighter, k);
@@ -23322,10 +22874,10 @@ src_define(Hsl, hsl, extend(Color, {
   },
   rgb: function () {
     var h = this.h % 360 + (this.h < 0) * 360,
-        s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
-        l = this.l,
-        m2 = l + (l < .5 ? l : 1 - l) * s,
-        m1 = 2 * l - m2;
+      s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
+      l = this.l,
+      m2 = l + (l < .5 ? l : 1 - l) * s,
+      m1 = 2 * l - m2;
     return new Rgb(hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2), hsl2rgb(h, m1, m2), hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2), this.opacity);
   },
   clamp: function clamp() {
@@ -23339,35 +22891,32 @@ src_define(Hsl, hsl, extend(Color, {
     return "" + (a === 1 ? "hsl(" : "hsla(") + clamph(this.h) + ", " + clampt(this.s) * 100 + "%, " + clampt(this.l) * 100 + "%" + (a === 1 ? ")" : ", " + a + ")");
   }
 }));
-
 function clamph(value) {
   value = (value || 0) % 360;
   return value < 0 ? value + 360 : value;
 }
-
 function clampt(value) {
   return Math.max(0, Math.min(1, value || 0));
 }
+
 /* From FvD 13.37, CSS Color Module Level 3 */
-
-
 function hsl2rgb(h, m1, m2) {
   return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basis.js
 function basis(t1, v0, v1, v2, v3) {
   var t2 = t1 * t1,
-      t3 = t2 * t1;
+    t3 = t2 * t1;
   return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
 }
 /* harmony default export */ function src_basis(values) {
   var n = values.length - 1;
   return function (t) {
     var i = t <= 0 ? t = 0 : t >= 1 ? (t = 1, n - 1) : Math.floor(t * n),
-        v1 = values[i],
-        v2 = values[i + 1],
-        v0 = i > 0 ? values[i - 1] : 2 * v1 - v2,
-        v3 = i < n - 1 ? values[i + 2] : 2 * v2 - v1;
+      v1 = values[i],
+      v2 = values[i + 1],
+      v0 = i > 0 ? values[i - 1] : 2 * v1 - v2,
+      v3 = i < n - 1 ? values[i + 2] : 2 * v2 - v1;
     return basis((t - i / n) * n, v0, v1, v2, v3);
   };
 }
@@ -23377,44 +22926,36 @@ function basis(t1, v0, v1, v2, v3) {
   var n = values.length;
   return function (t) {
     var i = Math.floor(((t %= 1) < 0 ? ++t : t) * n),
-        v0 = values[(i + n - 1) % n],
-        v1 = values[i % n],
-        v2 = values[(i + 1) % n],
-        v3 = values[(i + 2) % n];
+      v0 = values[(i + n - 1) % n],
+      v1 = values[i % n],
+      v2 = values[(i + 1) % n],
+      v3 = values[(i + 2) % n];
     return basis((t - i / n) * n, v0, v1, v2, v3);
   };
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/constant.js
 
-
 var constant_this = undefined;
-
 /* harmony default export */ var src_constant = ((function (x) {
   var _this2 = this;
-
   _newArrowCheck(this, constant_this);
-
   return function () {
     _newArrowCheck(this, _this2);
-
     return x;
   }.bind(this);
 }).bind(undefined));
 ;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/color.js
-
 
 function linear(a, d) {
   return function (t) {
     return a + t * d;
   };
 }
-
 function exponential(a, b, y) {
   return a = Math.pow(a, y), b = Math.pow(b, y) - a, y = 1 / y, function (t) {
     return Math.pow(a + t * b, y);
   };
 }
-
 function hue(a, b) {
   var d = b - a;
   return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : src_constant(isNaN(a) ? b : a);
@@ -23435,12 +22976,11 @@ function nogamma(a, b) {
 
 /* harmony default export */ var rgb = ((function rgbGamma(y) {
   var color = gamma(y);
-
   function rgb(start, end) {
     var r = color((start = color_rgb(start)).r, (end = color_rgb(end)).r),
-        g = color(start.g, end.g),
-        b = color(start.b, end.b),
-        opacity = nogamma(start.opacity, end.opacity);
+      g = color(start.g, end.g),
+      b = color(start.b, end.b),
+      opacity = nogamma(start.opacity, end.opacity);
     return function (t) {
       start.r = r(t);
       start.g = g(t);
@@ -23449,27 +22989,23 @@ function nogamma(a, b) {
       return start + "";
     };
   }
-
   rgb.gamma = rgbGamma;
   return rgb;
 })(1));
-
 function rgbSpline(spline) {
   return function (colors) {
     var n = colors.length,
-        r = Array(n),
-        g = Array(n),
-        b = Array(n),
-        i,
-        color;
-
+      r = Array(n),
+      g = Array(n),
+      b = Array(n),
+      i,
+      color;
     for (i = 0; i < n; ++i) {
       color = color_rgb(colors[i]);
       r[i] = color.r || 0;
       g[i] = color.g || 0;
       b[i] = color.b || 0;
     }
-
     r = spline(r);
     g = spline(g);
     b = spline(b);
@@ -23482,20 +23018,18 @@ function rgbSpline(spline) {
     };
   };
 }
-
 var rgbBasis = rgbSpline(src_basis);
 var rgbBasisClosed = rgbSpline(basisClosed);
 ;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/numberArray.js
 /* harmony default export */ function numberArray(a, b) {
   if (!b) b = [];
   var n = a ? Math.min(b.length, a.length) : 0,
-      c = b.slice(),
-      i;
+    c = b.slice(),
+    i;
   return function (t) {
     for (i = 0; i < n; ++i) {
       c[i] = a[i] * (1 - t) + b[i] * t;
     }
-
     return c;
   };
 }
@@ -23510,24 +23044,20 @@ function isNumberArray(x) {
 }
 function genericArray(a, b) {
   var nb = b ? b.length : 0,
-      na = a ? Math.min(nb, a.length) : 0,
-      x = Array(na),
-      c = Array(nb),
-      i;
-
+    na = a ? Math.min(nb, a.length) : 0,
+    x = Array(na),
+    c = Array(nb),
+    i;
   for (i = 0; i < na; ++i) {
     x[i] = value(a[i], b[i]);
   }
-
   for (; i < nb; ++i) {
     c[i] = b[i];
   }
-
   return function (t) {
     for (i = 0; i < na; ++i) {
       c[i] = x[i](t);
     }
-
     return c;
   };
 }
@@ -23548,11 +23078,10 @@ function genericArray(a, b) {
 
 /* harmony default export */ function object(a, b) {
   var i = {},
-      c = {},
-      k;
+    c = {},
+    k;
   if (a === null || typeof a !== "object") a = {};
   if (b === null || typeof b !== "object") b = {};
-
   for (k in b) {
     if (k in a) {
       i[k] = value(a[k], b[k]);
@@ -23560,50 +23089,46 @@ function genericArray(a, b) {
       c[k] = b[k];
     }
   }
-
   return function (t) {
     for (k in i) {
       c[k] = i[k](t);
     }
-
     return c;
   };
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/string.js
 
 var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g,
-    reB = new RegExp(reA.source, "g");
-
+  reB = new RegExp(reA.source, "g");
 function zero(b) {
   return function () {
     return b;
   };
 }
-
 function one(b) {
   return function (t) {
     return b(t) + "";
   };
 }
-
 /* harmony default export */ function string(a, b) {
   var bi = reA.lastIndex = reB.lastIndex = 0,
-      // scan index for next number in b
-  am,
-      // current match in a
-  bm,
-      // current match in b
-  bs,
-      // string preceding current number in b, if any
-  i = -1,
-      // index in s
-  s = [],
-      // string constants and placeholders
-  q = []; // number interpolators
+    // scan index for next number in b
+    am,
+    // current match in a
+    bm,
+    // current match in b
+    bs,
+    // string preceding current number in b, if any
+    i = -1,
+    // index in s
+    s = [],
+    // string constants and placeholders
+    q = []; // number interpolators
+
   // Coerce inputs to strings.
+  a = a + "", b = b + "";
 
-  a = a + "", b = b + ""; // Interpolate pairs of numbers in a & b.
-
+  // Interpolate pairs of numbers in a & b.
   while ((am = reA.exec(a)) && (bm = reB.exec(b))) {
     if ((bs = bm.index) > bi) {
       // a string precedes the next number in b
@@ -23611,7 +23136,6 @@ function one(b) {
       if (s[i]) s[i] += bs; // coalesce with previous string
       else s[++i] = bs;
     }
-
     if ((am = am[0]) === (bm = bm[0])) {
       // numbers in a & b match
       if (s[i]) s[i] += bm; // coalesce with previous string
@@ -23624,24 +23148,22 @@ function one(b) {
         x: number(am, bm)
       });
     }
-
     bi = reB.lastIndex;
-  } // Add remains of b.
+  }
 
-
+  // Add remains of b.
   if (bi < b.length) {
     bs = b.slice(bi);
     if (s[i]) s[i] += bs; // coalesce with previous string
     else s[++i] = bs;
-  } // Special optimization for only a single match.
+  }
+
+  // Special optimization for only a single match.
   // Otherwise, interpolate each of the numbers and rejoin the string.
-
-
   return s.length < 2 ? q[0] ? one(q[0].x) : zero(b) : (b = q.length, function (t) {
     for (var i = 0, o; i < b; ++i) {
       s[(o = q[i]).i] = o.x(t);
     }
-
     return s.join("");
   });
 }
@@ -23657,35 +23179,33 @@ function one(b) {
 
 /* harmony default export */ function value(a, b) {
   var t = typeof b,
-      c;
+    c;
   return b == null || t === "boolean" ? src_constant(b) : (t === "number" ? number : t === "string" ? (c = color(b)) ? (b = c, rgb) : string : b instanceof color ? rgb : b instanceof Date ? date : isNumberArray(b) ? numberArray : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object : number)(a, b);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-timer/src/timer.js
 var timer_frame = 0,
-    // is an animation frame pending?
-timeout = 0,
-    // is a timeout pending?
-interval = 0,
-    // are any timers active?
-pokeDelay = 1e3,
-    // how frequently we check for clock skew
-taskHead,
-    taskTail,
-    clockLast = 0,
-    clockNow = 0,
-    clockSkew = 0,
-    clock = typeof performance === "object" && performance.now ? performance : Date,
-    setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function (f) {
-  setTimeout(f, 17);
-};
+  // is an animation frame pending?
+  timeout = 0,
+  // is a timeout pending?
+  interval = 0,
+  // are any timers active?
+  pokeDelay = 1e3,
+  // how frequently we check for clock skew
+  taskHead,
+  taskTail,
+  clockLast = 0,
+  clockNow = 0,
+  clockSkew = 0,
+  clock = typeof performance === "object" && performance.now ? performance : Date,
+  setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function (f) {
+    setTimeout(f, 17);
+  };
 function now() {
   return clockNow || (setFrame(clearNow), clockNow = clock.now() + clockSkew);
 }
-
 function clearNow() {
   clockNow = 0;
 }
-
 function Timer() {
   this._call = this._time = this._next = null;
 }
@@ -23694,12 +23214,10 @@ Timer.prototype = timer.prototype = {
   restart: function restart(callback, delay, time) {
     if (typeof callback !== "function") throw new TypeError("callback is not a function");
     time = (time == null ? now() : +time) + (delay == null ? 0 : +delay);
-
     if (!this._next && taskTail !== this) {
       if (taskTail) taskTail._next = this;else taskHead = this;
       taskTail = this;
     }
-
     this._call = callback;
     this._time = time;
     sleep();
@@ -23719,24 +23237,18 @@ function timer(callback, delay, time) {
 }
 function timerFlush() {
   now(); // Get the current time, if not already set.
-
   ++timer_frame; // Pretend we’ve set an alarm, if we haven’t already.
-
   var t = taskHead,
-      e;
-
+    e;
   while (t) {
     if ((e = clockNow - t._time) >= 0) t._call.call(undefined, e);
     t = t._next;
   }
-
   --timer_frame;
 }
-
 function wake() {
   clockNow = (clockLast = clock.now()) + clockSkew;
   timer_frame = timeout = 0;
-
   try {
     timerFlush();
   } finally {
@@ -23745,19 +23257,16 @@ function wake() {
     clockNow = 0;
   }
 }
-
 function poke() {
   var now = clock.now(),
-      delay = now - clockLast;
+    delay = now - clockLast;
   if (delay > pokeDelay) clockSkew -= delay, clockLast = now;
 }
-
 function nap() {
   var t0,
-      t1 = taskHead,
-      t2,
-      time = Infinity;
-
+    t1 = taskHead,
+    t2,
+    time = Infinity;
   while (t1) {
     if (t1._call) {
       if (time > t1._time) time = t1._time;
@@ -23767,17 +23276,13 @@ function nap() {
       t1 = t0 ? t0._next = t2 : taskHead = t2;
     }
   }
-
   taskTail = t0;
   sleep(time);
 }
-
 function sleep(time) {
   if (timer_frame) return; // Soonest alarm already set, or will be.
-
   if (timeout) timeout = clearTimeout(timeout);
   var delay = time - clockNow; // Strictly less than if we recomputed clockNow.
-
   if (delay > 24) {
     if (time < Infinity) timeout = setTimeout(wake, time - clock.now() - clockSkew);
     if (interval) interval = clearInterval(interval);
@@ -23791,12 +23296,10 @@ function sleep(time) {
 
 /* harmony default export */ function src_timeout(callback, delay, time) {
   var _this = this,
-      t = new Timer();
-
+    t = new Timer();
   delay = delay == null ? 0 : +delay;
   t.restart(function (elapsed) {
     _newArrowCheck(this, _this);
-
     t.stop();
     callback(elapsed + delay);
   }.bind(this), delay, time);
@@ -23806,7 +23309,7 @@ function sleep(time) {
 
 
 var emptyOn = src_dispatch("start", "end", "cancel", "interrupt"),
-    emptyTween = [];
+  emptyTween = [];
 var CREATED = 0;
 var SCHEDULED = 1;
 var STARTING = 2;
@@ -23848,103 +23351,100 @@ function schedule_get(node, id) {
   if (!schedule || !(schedule = schedule[id])) throw new Error("transition not found");
   return schedule;
 }
-
 function create(node, id, self) {
   var schedules = node.__transition,
-      tween; // Initialize the self timer when the transition is created.
-  // Note the actual delay is not known until the first callback!
+    tween;
 
+  // Initialize the self timer when the transition is created.
+  // Note the actual delay is not known until the first callback!
   schedules[id] = self;
   self.timer = timer(function (elapsed) {
     self.state = SCHEDULED;
-    self.timer.restart(start, self.delay, self.time); // If the elapsed delay is less than our first sleep, start immediately.
+    self.timer.restart(start, self.delay, self.time);
 
+    // If the elapsed delay is less than our first sleep, start immediately.
     if (self.delay <= elapsed) start(elapsed - self.delay);
   }, 0, self.time);
-
   function start(elapsed) {
-    var i, j, n, o; // If the state is not SCHEDULED, then we previously errored on start.
+    var i, j, n, o;
 
+    // If the state is not SCHEDULED, then we previously errored on start.
     if (self.state !== SCHEDULED) return stop();
-
     for (i in schedules) {
       o = schedules[i];
-      if (o.name !== self.name) continue; // While this element already has a starting transition during this frame,
+      if (o.name !== self.name) continue;
+
+      // While this element already has a starting transition during this frame,
       // defer starting an interrupting transition until that transition has a
       // chance to tick (and possibly end); see d3/d3-transition#54!
+      if (o.state === STARTED) return src_timeout(start);
 
-      if (o.state === STARTED) return src_timeout(start); // Interrupt the active transition, if any.
-
+      // Interrupt the active transition, if any.
       if (o.state === RUNNING) {
         o.state = ENDED;
         o.timer.stop();
         o.on.call("interrupt", node, node.__data__, o.index, o.group);
         delete schedules[i];
-      } // Cancel any pre-empted transitions.
+      }
+
+      // Cancel any pre-empted transitions.
       else if (+i < id) {
         o.state = ENDED;
         o.timer.stop();
         o.on.call("cancel", node, node.__data__, o.index, o.group);
         delete schedules[i];
       }
-    } // Defer the first tick to end of the current frame; see d3/d3#1576.
+    }
+
+    // Defer the first tick to end of the current frame; see d3/d3#1576.
     // Note the transition may be canceled after start and before the first tick!
     // Note this must be scheduled before the start event; see d3/d3-transition#16!
     // Assuming this is successful, subsequent callbacks go straight to tick.
-
-
     src_timeout(function () {
       if (self.state === STARTED) {
         self.state = RUNNING;
         self.timer.restart(tick, self.delay, self.time);
         tick(elapsed);
       }
-    }); // Dispatch the start event.
-    // Note this must be done before the tween are initialized.
+    });
 
+    // Dispatch the start event.
+    // Note this must be done before the tween are initialized.
     self.state = STARTING;
     self.on.call("start", node, node.__data__, self.index, self.group);
     if (self.state !== STARTING) return; // interrupted
+    self.state = STARTED;
 
-    self.state = STARTED; // Initialize the tween, deleting null tween.
-
+    // Initialize the tween, deleting null tween.
     tween = Array(n = self.tween.length);
-
     for (i = 0, j = -1; i < n; ++i) {
       if (o = self.tween[i].value.call(node, node.__data__, self.index, self.group)) {
         tween[++j] = o;
       }
     }
-
     tween.length = j + 1;
   }
-
   function tick(elapsed) {
     var t = elapsed < self.duration ? self.ease.call(null, elapsed / self.duration) : (self.timer.restart(stop), self.state = ENDING, 1),
-        i = -1,
-        n = tween.length;
-
+      i = -1,
+      n = tween.length;
     while (++i < n) {
       tween[i].call(node, t);
-    } // Dispatch the end event.
+    }
 
-
+    // Dispatch the end event.
     if (self.state === ENDING) {
       self.on.call("end", node, node.__data__, self.index, self.group);
       stop();
     }
   }
-
   function stop() {
     self.state = ENDED;
     self.timer.stop();
     delete schedules[id];
-
     for (var i in schedules) {
       return;
     } // eslint-disable-line no-unused-vars
-
-
     delete node.__transition;
   }
 }
@@ -23952,26 +23452,23 @@ function create(node, id, self) {
 
 /* harmony default export */ function interrupt(node, name) {
   var schedules = node.__transition,
-      schedule,
-      active,
-      empty = !0,
-      i;
+    schedule,
+    active,
+    empty = !0,
+    i;
   if (!schedules) return;
   name = name == null ? null : name + "";
-
   for (i in schedules) {
     if ((schedule = schedules[i]).name !== name) {
       empty = !1;
       continue;
     }
-
     active = schedule.state > STARTING && schedule.state < ENDING;
     schedule.state = ENDED;
     schedule.timer.stop();
     schedule.on.call(active ? "interrupt" : "cancel", node, node.__data__, schedule.index, schedule.group);
     delete schedules[i];
   }
-
   if (empty) delete node.__transition;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/interrupt.js
@@ -24009,8 +23506,8 @@ var identity = {
 ;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/parse.js
 
 var svgNode;
-/* eslint-disable no-undef */
 
+/* eslint-disable no-undef */
 function parseCss(value) {
   var m = new (typeof DOMMatrix === "function" ? DOMMatrix : WebKitCSSMatrix)(value + "");
   return m.isIdentity ? identity : decompose(m.a, m.b, m.c, m.d, m.e, m.f);
@@ -24026,12 +23523,10 @@ function parseSvg(value) {
 ;// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/index.js
 
 
-
 function interpolateTransform(parse, pxComma, pxParen, degParen) {
   function pop(s) {
     return s.length ? s.pop() + " " : "";
   }
-
   function translate(xa, ya, xb, yb, s, q) {
     if (xa !== xb || ya !== yb) {
       var i = s.push("translate(", null, pxComma, null, pxParen);
@@ -24046,11 +23541,9 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
       s.push("translate(" + xb + pxComma + yb + pxParen);
     }
   }
-
   function rotate(a, b, s, q) {
     if (a !== b) {
       if (a - b > 180) b += 360;else if (b - a > 180) a += 360; // shortest path
-
       q.push({
         i: s.push(pop(s) + "rotate(", null, degParen) - 2,
         x: number(a, b)
@@ -24059,7 +23552,6 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
       s.push(pop(s) + "rotate(" + b + degParen);
     }
   }
-
   function skewX(a, b, s, q) {
     if (a !== b) {
       q.push({
@@ -24070,7 +23562,6 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
       s.push(pop(s) + "skewX(" + b + degParen);
     }
   }
-
   function scale(xa, ya, xb, yb, s, q) {
     if (xa !== xb || ya !== yb) {
       var i = s.push(pop(s) + "scale(", null, ",", null, ")");
@@ -24085,49 +23576,42 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
       s.push(pop(s) + "scale(" + xb + "," + yb + ")");
     }
   }
-
   return function (a, b) {
     var s = [],
-        // string constants and placeholders
-    q = []; // number interpolators
-
+      // string constants and placeholders
+      q = []; // number interpolators
     a = parse(a), b = parse(b);
     translate(a.translateX, a.translateY, b.translateX, b.translateY, s, q);
     rotate(a.rotate, b.rotate, s, q);
     skewX(a.skewX, b.skewX, s, q);
     scale(a.scaleX, a.scaleY, b.scaleX, b.scaleY, s, q);
     a = b = null; // gc
-
     return function (t) {
       var i = -1,
-          n = q.length,
-          o;
-
+        n = q.length,
+        o;
       while (++i < n) {
         s[(o = q[i]).i] = o.x(t);
       }
-
       return s.join("");
     };
   };
 }
-
 var interpolateTransformCss = interpolateTransform(parseCss, "px, ", "px)", "deg)");
 var interpolateTransformSvg = interpolateTransform(parseSvg, ", ", ")", ")");
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/tween.js
-
 
 function tweenRemove(id, name) {
   var tween0, tween1;
   return function () {
     var schedule = schedule_set(this, id),
-        tween = schedule.tween; // If this node shared tween with the previous node,
+      tween = schedule.tween;
+
+    // If this node shared tween with the previous node,
     // just assign the updated shared tween and we’re done!
     // Otherwise, copy-on-write.
-
     if (tween !== tween0) {
       tween1 = tween0 = tween;
-
       for (var i = 0, n = tween1.length; i < n; ++i) {
         if (tween1[i].name === name) {
           tween1 = tween1.slice();
@@ -24136,54 +23620,46 @@ function tweenRemove(id, name) {
         }
       }
     }
-
     schedule.tween = tween1;
   };
 }
-
 function tweenFunction(id, name, value) {
   var tween0, tween1;
   if (typeof value !== "function") throw new Error();
   return function () {
     var schedule = schedule_set(this, id),
-        tween = schedule.tween; // If this node shared tween with the previous node,
+      tween = schedule.tween;
+
+    // If this node shared tween with the previous node,
     // just assign the updated shared tween and we’re done!
     // Otherwise, copy-on-write.
-
     if (tween !== tween0) {
       tween1 = (tween0 = tween).slice();
-
       for (var t = {
-        name: name,
-        value: value
-      }, i = 0, n = tween1.length; i < n; ++i) {
+          name: name,
+          value: value
+        }, i = 0, n = tween1.length; i < n; ++i) {
         if (tween1[i].name === name) {
           tween1[i] = t;
           break;
         }
       }
-
       if (i === n) tween1.push(t);
     }
-
     schedule.tween = tween1;
   };
 }
-
 /* harmony default export */ function tween(name, value) {
   var id = this._id;
   name += "";
-
   if (arguments.length < 2) {
     for (var tween = schedule_get(this.node(), id).tween, i = 0, n = tween.length, t; i < n; ++i) {
       if ((t = tween[i]).name === name) {
         return t.value;
       }
     }
-
     return null;
   }
-
   return this.each((value == null ? tweenRemove : tweenFunction)(id, name, value));
 }
 function tweenValue(transition, name, value) {
@@ -24208,19 +23684,16 @@ function tweenValue(transition, name, value) {
 
 
 
-
 function attr_attrRemove(name) {
   return function () {
     this.removeAttribute(name);
   };
 }
-
 function attr_attrRemoveNS(fullname) {
   return function () {
     this.removeAttributeNS(fullname.space, fullname.local);
   };
 }
-
 function attr_attrConstant(name, interpolate, value1) {
   var string00, interpolate0;
   return function () {
@@ -24228,7 +23701,6 @@ function attr_attrConstant(name, interpolate, value1) {
     return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
   };
 }
-
 function attr_attrConstantNS(fullname, interpolate, value1) {
   var string00, interpolate0;
   return function () {
@@ -24236,79 +23708,67 @@ function attr_attrConstantNS(fullname, interpolate, value1) {
     return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
   };
 }
-
 function attr_attrFunction(name, interpolate, value) {
   var string00, string10, interpolate0;
   return function () {
     var string0,
-        value1 = value(this),
-        string1;
+      value1 = value(this),
+      string1;
     if (value1 == null) return void this.removeAttribute(name);
     string0 = this.getAttribute(name);
     string1 = value1 + "";
     return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
   };
 }
-
 function attr_attrFunctionNS(fullname, interpolate, value) {
   var string00, string10, interpolate0;
   return function () {
     var string0,
-        value1 = value(this),
-        string1;
+      value1 = value(this),
+      string1;
     if (value1 == null) return void this.removeAttributeNS(fullname.space, fullname.local);
     string0 = this.getAttributeNS(fullname.space, fullname.local);
     string1 = value1 + "";
     return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
   };
 }
-
 /* harmony default export */ function transition_attr(name, value) {
   var fullname = namespace(name),
-      i = fullname === "transform" ? interpolateTransformSvg : interpolate;
+    i = fullname === "transform" ? interpolateTransformSvg : interpolate;
   return this.attrTween(name, typeof value === "function" ? (fullname.local ? attr_attrFunctionNS : attr_attrFunction)(fullname, i, tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? attr_attrRemoveNS : attr_attrRemove)(fullname) : (fullname.local ? attr_attrConstantNS : attr_attrConstant)(fullname, i, value));
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attrTween.js
-
 
 function attrInterpolate(name, i) {
   return function (t) {
     this.setAttribute(name, i.call(this, t));
   };
 }
-
 function attrInterpolateNS(fullname, i) {
   return function (t) {
     this.setAttributeNS(fullname.space, fullname.local, i.call(this, t));
   };
 }
-
 function attrTweenNS(fullname, value) {
   var t0, i0;
-
   function tween() {
     var i = value.apply(this, arguments);
     if (i !== i0) t0 = (i0 = i) && attrInterpolateNS(fullname, i);
     return t0;
   }
-
   tween._value = value;
   return tween;
 }
-
 function attrTween(name, value) {
   var t0, i0;
-
   function tween() {
     var i = value.apply(this, arguments);
     if (i !== i0) t0 = (i0 = i) && attrInterpolate(name, i);
     return t0;
   }
-
   tween._value = value;
   return tween;
 }
-
 /* harmony default export */ function transition_attrTween(name, value) {
   var key = "attr." + name;
   if (arguments.length < 2) return (key = this.tween(key)) && key._value;
@@ -24319,44 +23779,37 @@ function attrTween(name, value) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/delay.js
 
-
 function delayFunction(id, value) {
   return function () {
     init(this, id).delay = +value.apply(this, arguments);
   };
 }
-
 function delayConstant(id, value) {
   return value = +value, function () {
     init(this, id).delay = value;
   };
 }
-
 /* harmony default export */ function delay(value) {
   var id = this._id;
   return arguments.length ? this.each((typeof value === "function" ? delayFunction : delayConstant)(id, value)) : schedule_get(this.node(), id).delay;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/duration.js
 
-
 function durationFunction(id, value) {
   return function () {
     schedule_set(this, id).duration = +value.apply(this, arguments);
   };
 }
-
 function durationConstant(id, value) {
   return value = +value, function () {
     schedule_set(this, id).duration = value;
   };
 }
-
 /* harmony default export */ function duration(value) {
   var id = this._id;
   return arguments.length ? this.each((typeof value === "function" ? durationFunction : durationConstant)(id, value)) : schedule_get(this.node(), id).duration;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/ease.js
-
 
 function easeConstant(id, value) {
   if (typeof value !== "function") throw new Error();
@@ -24364,13 +23817,11 @@ function easeConstant(id, value) {
     schedule_set(this, id).ease = value;
   };
 }
-
 /* harmony default export */ function ease(value) {
   var id = this._id;
   return arguments.length ? this.each(easeConstant(id, value)) : schedule_get(this.node(), id).ease;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/easeVarying.js
-
 
 function easeVarying(id, value) {
   return function () {
@@ -24379,7 +23830,6 @@ function easeVarying(id, value) {
     schedule_set(this, id).ease = v;
   };
 }
-
 /* harmony default export */ function transition_easeVarying(value) {
   if (typeof value !== "function") throw new Error();
   return this.each(easeVarying(this._id, value));
@@ -24389,7 +23839,6 @@ function easeVarying(id, value) {
 
 /* harmony default export */ function transition_filter(match) {
   if (typeof match !== "function") match = matcher(match);
-
   for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
       if ((node = group[i]) && match.call(node, node.__data__, i, group)) {
@@ -24397,14 +23846,12 @@ function easeVarying(id, value) {
       }
     }
   }
-
   return new Transition(subgroups, this._parents, this._name, this._id);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/merge.js
 
 /* harmony default export */ function transition_merge(transition) {
   if (transition._id !== this._id) throw new Error();
-
   for (var groups0 = this._groups, groups1 = transition._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = Array(m0), j = 0; j < m; ++j) {
     for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = Array(n), node, i = 0; i < n; ++i) {
       if (node = group0[i] || group1[i]) {
@@ -24412,15 +23859,12 @@ function easeVarying(id, value) {
       }
     }
   }
-
   for (; j < m0; ++j) {
     merges[j] = groups0[j];
   }
-
   return new Transition(merges, this._parents, this._name, this._id);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/on.js
-
 
 function start(name) {
   return (name + "").trim().split(/^|\s+/).every(function (t) {
@@ -24429,22 +23873,21 @@ function start(name) {
     return !t || t === "start";
   });
 }
-
 function onFunction(id, name, listener) {
   var on0,
-      on1,
-      sit = start(name) ? init : schedule_set;
+    on1,
+    sit = start(name) ? init : schedule_set;
   return function () {
     var schedule = sit(this, id),
-        on = schedule.on; // If this node shared a dispatch with the previous node,
+      on = schedule.on;
+
+    // If this node shared a dispatch with the previous node,
     // just assign the updated shared dispatch and we’re done!
     // Otherwise, copy-on-write.
-
     if (on !== on0) (on1 = (on0 = on).copy()).on(name, listener);
     schedule.on = on1;
   };
 }
-
 /* harmony default export */ function transition_on(name, listener) {
   var id = this._id;
   return arguments.length < 2 ? schedule_get(this.node(), id).on.on(name) : this.each(onFunction(id, name, listener));
@@ -24453,15 +23896,12 @@ function onFunction(id, name, listener) {
 function removeFunction(id) {
   return function () {
     var parent = this.parentNode;
-
     for (var i in this.__transition) {
       if (+i !== id) return;
     }
-
     if (parent) parent.removeChild(this);
   };
 }
-
 /* harmony default export */ function transition_remove() {
   return this.on("end.remove", removeFunction(this._id));
 }
@@ -24471,9 +23911,8 @@ function removeFunction(id) {
 
 /* harmony default export */ function transition_select(select) {
   var name = this._name,
-      id = this._id;
+    id = this._id;
   if (typeof select !== "function") select = selector(select);
-
   for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = Array(n), node, subnode, i = 0; i < n; ++i) {
       if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
@@ -24483,7 +23922,6 @@ function removeFunction(id) {
       }
     }
   }
-
   return new Transition(subgroups, this._parents, name, id);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selectAll.js
@@ -24492,9 +23930,8 @@ function removeFunction(id) {
 
 /* harmony default export */ function transition_selectAll(select) {
   var name = this._name,
-      id = this._id;
+    id = this._id;
   if (typeof select !== "function") select = selectorAll(select);
-
   for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
       if (node = group[i]) {
@@ -24503,13 +23940,11 @@ function removeFunction(id) {
             schedule(child, name, id, k, children, inherit);
           }
         }
-
         subgroups.push(children);
         parents.push(node);
       }
     }
   }
-
   return new Transition(subgroups, parents, name, id);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selection.js
@@ -24524,22 +23959,19 @@ var selection_Selection = src_selection.prototype.constructor;
 
 
 
-
 function styleNull(name, interpolate) {
   var string00, string10, interpolate0;
   return function () {
     var string0 = styleValue(this, name),
-        string1 = (this.style.removeProperty(name), styleValue(this, name));
+      string1 = (this.style.removeProperty(name), styleValue(this, name));
     return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : interpolate0 = interpolate(string00 = string0, string10 = string1);
   };
 }
-
 function style_styleRemove(name) {
   return function () {
     this.style.removeProperty(name);
   };
 }
-
 function style_styleConstant(name, interpolate, value1) {
   var string00, interpolate0;
   return function () {
@@ -24547,36 +23979,34 @@ function style_styleConstant(name, interpolate, value1) {
     return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
   };
 }
-
 function style_styleFunction(name, interpolate, value) {
   var string00, string10, interpolate0;
   return function () {
     var string0 = styleValue(this, name),
-        value1 = value(this),
-        string1 = value1 + "";
+      value1 = value(this),
+      string1 = value1 + "";
     if (value1 == null) string1 = value1 = (this.style.removeProperty(name), styleValue(this, name));
     return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
   };
 }
-
 function styleMaybeRemove(id, name) {
   var on0,
-      on1,
-      listener0,
-      key = "style." + name,
-      remove;
+    on1,
+    listener0,
+    key = "style." + name,
+    remove;
   return function () {
     var schedule = schedule_set(this, id),
-        on = schedule.on,
-        listener = schedule.value[key] == null ? remove || (remove = style_styleRemove(name)) : undefined; // If this node shared a dispatch with the previous node,
+      on = schedule.on,
+      listener = schedule.value[key] == null ? remove || (remove = style_styleRemove(name)) : undefined;
+
+    // If this node shared a dispatch with the previous node,
     // just assign the updated shared dispatch and we’re done!
     // Otherwise, copy-on-write.
-
     if (on !== on0 || listener0 !== listener) (on1 = (on0 = on).copy()).on("end." + key, listener0 = listener);
     schedule.on = on1;
   };
 }
-
 /* harmony default export */ function transition_style(name, value, priority) {
   var i = (name += "") === "transform" ? interpolateTransformCss : interpolate;
   return value == null ? this.styleTween(name, styleNull(name, i)).on("end.style." + name, style_styleRemove(name)) : typeof value === "function" ? this.styleTween(name, style_styleFunction(name, i, tweenValue(this, "style." + name, value))).each(styleMaybeRemove(this._id, name)) : this.styleTween(name, style_styleConstant(name, i, value), priority).on("end.style." + name, null);
@@ -24587,20 +24017,16 @@ function styleInterpolate(name, i, priority) {
     this.style.setProperty(name, i.call(this, t), priority);
   };
 }
-
 function styleTween(name, value, priority) {
   var t, i0;
-
   function tween() {
     var i = value.apply(this, arguments);
     if (i !== i0) t = (i0 = i) && styleInterpolate(name, i, priority);
     return t;
   }
-
   tween._value = value;
   return tween;
 }
-
 /* harmony default export */ function transition_styleTween(name, value, priority) {
   var key = "style." + (name += "");
   if (arguments.length < 2) return (key = this.tween(key)) && key._value;
@@ -24610,20 +24036,17 @@ function styleTween(name, value, priority) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/text.js
 
-
 function text_textConstant(value) {
   return function () {
     this.textContent = value;
   };
 }
-
 function text_textFunction(value) {
   return function () {
     var value1 = value(this);
     this.textContent = value1 == null ? "" : value1;
   };
 }
-
 /* harmony default export */ function transition_text(value) {
   return this.tween("text", typeof value === "function" ? text_textFunction(tweenValue(this, "text", value)) : text_textConstant(value == null ? "" : value + ""));
 }
@@ -24633,20 +24056,16 @@ function textInterpolate(i) {
     this.textContent = i.call(this, t);
   };
 }
-
 function textTween(value) {
   var t0, i0;
-
   function tween() {
     var i = value.apply(this, arguments);
     if (i !== i0) t0 = (i0 = i) && textInterpolate(i);
     return t0;
   }
-
   tween._value = value;
   return tween;
 }
-
 /* harmony default export */ function transition_textTween(value) {
   var key = "text";
   if (arguments.length < 1) return (key = this.tween(key)) && key._value;
@@ -24671,51 +24090,47 @@ function textTween(value) {
       }
     }
   }
-
   return new Transition(groups, this._parents, name, id1);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/end.js
 
 /* harmony default export */ function end() {
   var on0,
-      on1,
-      that = this,
-      id = that._id,
-      size = that.size();
+    on1,
+    that = this,
+    id = that._id,
+    size = that.size();
   return new Promise(function (resolve, reject) {
     var cancel = {
-      value: reject
-    },
-        end = {
-      value: function value() {
-        if (--size === 0) resolve();
-      }
-    };
+        value: reject
+      },
+      end = {
+        value: function value() {
+          if (--size === 0) resolve();
+        }
+      };
     that.each(function () {
       var schedule = schedule_set(this, id),
-          on = schedule.on; // If this node shared a dispatch with the previous node,
+        on = schedule.on;
+
+      // If this node shared a dispatch with the previous node,
       // just assign the updated shared dispatch and we’re done!
       // Otherwise, copy-on-write.
-
       if (on !== on0) {
         on1 = (on0 = on).copy();
-
         on1._.cancel.push(cancel);
-
         on1._.interrupt.push(cancel);
-
         on1._.end.push(end);
       }
-
       schedule.on = on1;
-    }); // The selection was empty, resolve end immediately
+    });
 
+    // The selection was empty, resolve end immediately
     if (size === 0) resolve();
   });
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/index.js
 var _transition$prototype;
-
 
 
 
@@ -24804,28 +24219,22 @@ var defaultTiming = {
   duration: 250,
   ease: cubicInOut
 };
-
 function inherit(node, id) {
   var timing;
-
   while (!(timing = node.__transition) || !(timing = timing[id])) {
     if (!(node = node.parentNode)) {
       throw new Error("transition " + id + " not found");
     }
   }
-
   return timing;
 }
-
 /* harmony default export */ function selection_transition(name) {
   var id, timing;
-
   if (name instanceof Transition) {
     id = name._id, name = name._name;
   } else {
     id = newId(), (timing = defaultTiming).time = now(), name = name == null ? null : name + "";
   }
-
   for (var groups = this._groups, m = groups.length, j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
       if (node = group[i]) {
@@ -24833,7 +24242,6 @@ function inherit(node, id) {
       }
     }
   }
-
   return new Transition(groups, this._parents, name, id);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/index.js
@@ -24849,27 +24257,22 @@ src_selection.prototype.transition = selection_transition;
 
 ;// CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
 
-
 var src_constant_this = undefined;
-
 /* harmony default export */ var d3_brush_src_constant = ((function (x) {
   var _this2 = this;
-
   _newArrowCheck(this, src_constant_this);
-
   return function () {
     _newArrowCheck(this, _this2);
-
     return x;
   }.bind(this);
 }).bind(undefined));
 ;// CONCATENATED MODULE: ./node_modules/d3-brush/src/event.js
 function BrushEvent(type, _ref) {
   var sourceEvent = _ref.sourceEvent,
-      target = _ref.target,
-      selection = _ref.selection,
-      mode = _ref.mode,
-      dispatch = _ref.dispatch;
+    target = _ref.target,
+    selection = _ref.selection,
+    mode = _ref.mode,
+    dispatch = _ref.dispatch;
   Object.defineProperties(this, {
     type: {
       value: type,
@@ -24911,11 +24314,8 @@ function noevent_nopropagation(event) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
 
-
 function brush_createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = brush_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
 function brush_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return brush_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return brush_arrayLikeToArray(o, minLen); }
-
 function brush_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 
@@ -24925,153 +24325,141 @@ function brush_arrayLikeToArray(arr, len) { if (len == null || len > arr.length)
 
 
 
-
 var MODE_DRAG = {
-  name: "drag"
-},
-    MODE_SPACE = {
-  name: "space"
-},
-    MODE_HANDLE = {
-  name: "handle"
-},
-    MODE_CENTER = {
-  name: "center"
-},
-    abs = Math.abs,
-    max = Math.max,
-    min = Math.min;
-
+    name: "drag"
+  },
+  MODE_SPACE = {
+    name: "space"
+  },
+  MODE_HANDLE = {
+    name: "handle"
+  },
+  MODE_CENTER = {
+    name: "center"
+  },
+  abs = Math.abs,
+  max = Math.max,
+  min = Math.min;
 function number1(e) {
   return [+e[0], +e[1]];
 }
-
 function number2(e) {
   return [number1(e[0]), number1(e[1])];
 }
-
 var X = {
-  name: "x",
-  handles: ["w", "e"].map(type),
-  input: function input(x, e) {
-    return x == null ? null : [[+x[0], e[0][1]], [+x[1], e[1][1]]];
+    name: "x",
+    handles: ["w", "e"].map(type),
+    input: function input(x, e) {
+      return x == null ? null : [[+x[0], e[0][1]], [+x[1], e[1][1]]];
+    },
+    output: function output(xy) {
+      return xy && [xy[0][0], xy[1][0]];
+    }
   },
-  output: function output(xy) {
-    return xy && [xy[0][0], xy[1][0]];
-  }
-},
-    Y = {
-  name: "y",
-  handles: ["n", "s"].map(type),
-  input: function input(y, e) {
-    return y == null ? null : [[e[0][0], +y[0]], [e[1][0], +y[1]]];
+  Y = {
+    name: "y",
+    handles: ["n", "s"].map(type),
+    input: function input(y, e) {
+      return y == null ? null : [[e[0][0], +y[0]], [e[1][0], +y[1]]];
+    },
+    output: function output(xy) {
+      return xy && [xy[0][1], xy[1][1]];
+    }
   },
-  output: function output(xy) {
-    return xy && [xy[0][1], xy[1][1]];
-  }
-},
-    XY = {
-  name: "xy",
-  handles: ["n", "w", "e", "s", "nw", "ne", "sw", "se"].map(type),
-  input: function input(xy) {
-    return xy == null ? null : number2(xy);
+  XY = {
+    name: "xy",
+    handles: ["n", "w", "e", "s", "nw", "ne", "sw", "se"].map(type),
+    input: function input(xy) {
+      return xy == null ? null : number2(xy);
+    },
+    output: function output(xy) {
+      return xy;
+    }
   },
-  output: function output(xy) {
-    return xy;
-  }
-},
-    cursors = {
-  overlay: "crosshair",
-  selection: "move",
-  n: "ns-resize",
-  e: "ew-resize",
-  s: "ns-resize",
-  w: "ew-resize",
-  nw: "nwse-resize",
-  ne: "nesw-resize",
-  se: "nwse-resize",
-  sw: "nesw-resize"
-},
-    flipX = {
-  e: "w",
-  w: "e",
-  nw: "ne",
-  ne: "nw",
-  se: "sw",
-  sw: "se"
-},
-    flipY = {
-  n: "s",
-  s: "n",
-  nw: "sw",
-  ne: "se",
-  se: "ne",
-  sw: "nw"
-},
-    signsX = {
-  overlay: 1,
-  selection: 1,
-  n: null,
-  e: 1,
-  s: null,
-  w: -1,
-  nw: -1,
-  ne: 1,
-  se: 1,
-  sw: -1
-},
-    signsY = {
-  overlay: 1,
-  selection: 1,
-  n: -1,
-  e: null,
-  s: 1,
-  w: null,
-  nw: -1,
-  ne: -1,
-  se: 1,
-  sw: 1
-};
-
+  cursors = {
+    overlay: "crosshair",
+    selection: "move",
+    n: "ns-resize",
+    e: "ew-resize",
+    s: "ns-resize",
+    w: "ew-resize",
+    nw: "nwse-resize",
+    ne: "nesw-resize",
+    se: "nwse-resize",
+    sw: "nesw-resize"
+  },
+  flipX = {
+    e: "w",
+    w: "e",
+    nw: "ne",
+    ne: "nw",
+    se: "sw",
+    sw: "se"
+  },
+  flipY = {
+    n: "s",
+    s: "n",
+    nw: "sw",
+    ne: "se",
+    se: "ne",
+    sw: "nw"
+  },
+  signsX = {
+    overlay: 1,
+    selection: 1,
+    n: null,
+    e: 1,
+    s: null,
+    w: -1,
+    nw: -1,
+    ne: 1,
+    se: 1,
+    sw: -1
+  },
+  signsY = {
+    overlay: 1,
+    selection: 1,
+    n: -1,
+    e: null,
+    s: 1,
+    w: null,
+    nw: -1,
+    ne: -1,
+    se: 1,
+    sw: 1
+  };
 function type(t) {
   return {
     type: t
   };
-} // Ignore right-click, since that should open the context menu.
+}
 
-
+// Ignore right-click, since that should open the context menu.
 function defaultFilter(event) {
   return !event.ctrlKey && !event.button;
 }
-
 function defaultExtent() {
   var svg = this.ownerSVGElement || this;
-
   if (svg.hasAttribute("viewBox")) {
     svg = svg.viewBox.baseVal;
     return [[svg.x, svg.y], [svg.x + svg.width, svg.y + svg.height]];
   }
-
   return [[0, 0], [svg.width.baseVal.value, svg.height.baseVal.value]];
 }
-
 function defaultTouchable() {
   return navigator.maxTouchPoints || "ontouchstart" in this;
-} // Like d3.local, but with the name “__brush” rather than auto-generated.
+}
 
-
+// Like d3.local, but with the name “__brush” rather than auto-generated.
 function local(node) {
   while (!node.__brush) {
     if (!(node = node.parentNode)) return;
   }
-
   return node.__brush;
 }
-
 function brush_empty(extent) {
   return extent[0][0] === extent[1][0] || extent[0][1] === extent[1][1];
 }
-
 function brushSelection(node) {
   var state = node.__brush;
   return state ? state.dim.output(state.selection) : null;
@@ -25085,16 +24473,14 @@ function brushY() {
 /* harmony default export */ function brush() {
   return brush_brush(XY);
 }
-
 function brush_brush(dim) {
   var extent = defaultExtent,
-      filter = defaultFilter,
-      touchable = defaultTouchable,
-      keys = !0,
-      listeners = src_dispatch("start", "brush", "end"),
-      handleSize = 6,
-      touchending;
-
+    filter = defaultFilter,
+    touchable = defaultTouchable,
+    keys = !0,
+    listeners = src_dispatch("start", "brush", "end"),
+    handleSize = 6,
+    touchending;
   function brush(group) {
     var overlay = group.property("__brush", initialize).selectAll(".overlay").data([type("overlay")]);
     overlay.enter().append("rect").attr("class", "overlay").attr("pointer-events", "all").attr("cursor", cursors.overlay).merge(overlay).each(function () {
@@ -25113,7 +24499,6 @@ function brush_brush(dim) {
     });
     group.each(redraw).attr("fill", "none").attr("pointer-events", "all").on("mousedown.brush", started).filter(touchable).on("touchstart.brush", started).on("touchmove.brush", touchmoved).on("touchend.brush touchcancel.brush", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
   }
-
   brush.move = function (group, selection, event) {
     if (group.tween) {
       group.on("start.brush", function (event) {
@@ -25122,27 +24507,25 @@ function brush_brush(dim) {
         emitter(this, arguments).end(event);
       }).tween("brush", function () {
         var that = this,
-            state = that.__brush,
-            emit = emitter(that, arguments),
-            selection0 = state.selection,
-            selection1 = dim.input(typeof selection === "function" ? selection.apply(this, arguments) : selection, state.extent),
-            i = value(selection0, selection1);
-
+          state = that.__brush,
+          emit = emitter(that, arguments),
+          selection0 = state.selection,
+          selection1 = dim.input(typeof selection === "function" ? selection.apply(this, arguments) : selection, state.extent),
+          i = value(selection0, selection1);
         function tween(t) {
           state.selection = t === 1 && selection1 === null ? null : i(t);
           redraw.call(that);
           emit.brush();
         }
-
         return selection0 !== null && selection1 !== null ? tween : tween(1);
       });
     } else {
       group.each(function () {
         var that = this,
-            args = arguments,
-            state = that.__brush,
-            selection1 = dim.input(typeof selection === "function" ? selection.apply(that, args) : selection, state.extent),
-            emit = emitter(that, args).beforestart();
+          args = arguments,
+          state = that.__brush,
+          selection1 = dim.input(typeof selection === "function" ? selection.apply(that, args) : selection, state.extent),
+          emit = emitter(that, args).beforestart();
         interrupt(that);
         state.selection = selection1 === null ? null : selection1;
         redraw.call(that);
@@ -25150,15 +24533,12 @@ function brush_brush(dim) {
       });
     }
   };
-
   brush.clear = function (group, event) {
     brush.move(group, null, event);
   };
-
   function redraw() {
     var group = src_select(this),
-        selection = local(this).selection;
-
+      selection = local(this).selection;
     if (selection) {
       group.selectAll(".selection").style("display", null).attr("x", selection[0][0]).attr("y", selection[0][1]).attr("width", selection[1][0] - selection[0][0]).attr("height", selection[1][1] - selection[0][1]);
       group.selectAll(".handle").style("display", null).attr("x", function (d) {
@@ -25174,12 +24554,10 @@ function brush_brush(dim) {
       group.selectAll(".selection,.handle").style("display", "none").attr("x", null).attr("y", null).attr("width", null).attr("height", null);
     }
   }
-
   function emitter(that, args, clean) {
     var emit = that.__brush.emitter;
     return emit && (!clean || !emit.clean) ? emit : new Emitter(that, args, clean);
   }
-
   function Emitter(that, args, clean) {
     this.that = that;
     this.args = args;
@@ -25187,7 +24565,6 @@ function brush_brush(dim) {
     this.active = 0;
     this.clean = clean;
   }
-
   Emitter.prototype = {
     beforestart: function beforestart() {
       if (++this.active === 1) this.state.emitter = this, this.starting = !0;
@@ -25216,50 +24593,46 @@ function brush_brush(dim) {
       }), d);
     }
   };
-
   function started(event) {
     var _this = this;
-
     if (touchending && !event.touches) return;
     if (!filter.apply(this, arguments)) return;
     var that = this,
-        type = event.target.__data__.type,
-        mode = (keys && event.metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : keys && event.altKey ? MODE_CENTER : MODE_HANDLE,
-        signX = dim === Y ? null : signsX[type],
-        signY = dim === X ? null : signsY[type],
-        state = local(that),
-        extent = state.extent,
-        selection = state.selection,
-        W = extent[0][0],
-        w0,
-        w1,
-        N = extent[0][1],
-        n0,
-        n1,
-        E = extent[1][0],
-        e0,
-        e1,
-        S = extent[1][1],
-        s0,
-        s1,
-        dx = 0,
-        dy = 0,
-        moving,
-        shifting = signX && signY && keys && event.shiftKey,
-        lockX,
-        lockY,
-        points = Array.from(event.touches || [event], function (t) {
-      _newArrowCheck(this, _this);
-
-      var i = t.identifier;
-      t = src_pointer(t, that);
-      t.point0 = t.slice();
-      t.identifier = i;
-      return t;
-    }.bind(this));
+      type = event.target.__data__.type,
+      mode = (keys && event.metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : keys && event.altKey ? MODE_CENTER : MODE_HANDLE,
+      signX = dim === Y ? null : signsX[type],
+      signY = dim === X ? null : signsY[type],
+      state = local(that),
+      extent = state.extent,
+      selection = state.selection,
+      W = extent[0][0],
+      w0,
+      w1,
+      N = extent[0][1],
+      n0,
+      n1,
+      E = extent[1][0],
+      e0,
+      e1,
+      S = extent[1][1],
+      s0,
+      s1,
+      dx = 0,
+      dy = 0,
+      moving,
+      shifting = signX && signY && keys && event.shiftKey,
+      lockX,
+      lockY,
+      points = Array.from(event.touches || [event], function (t) {
+        _newArrowCheck(this, _this);
+        var i = t.identifier;
+        t = src_pointer(t, that);
+        t.point0 = t.slice();
+        t.identifier = i;
+        return t;
+      }.bind(this));
     interrupt(that);
     var emit = emitter(that, arguments, !0).beforestart();
-
     if (type === "overlay") {
       if (selection) moving = !0;
       var pts = [points[0], points[1] || points[0]];
@@ -25271,14 +24644,12 @@ function brush_brush(dim) {
       e0 = selection[1][0];
       s0 = selection[1][1];
     }
-
     w1 = w0;
     n1 = n0;
     e1 = e0;
     s1 = s0;
     var group = src_select(that).attr("pointer-events", "none"),
-        overlay = group.selectAll(".overlay").attr("cursor", cursors[type]);
-
+      overlay = group.selectAll(".overlay").attr("cursor", cursors[type]);
     if (event.touches) {
       emit.moved = moved;
       emit.ended = ended;
@@ -25287,42 +24658,34 @@ function brush_brush(dim) {
       if (keys) view.on("keydown.brush", keydowned, !0).on("keyup.brush", keyupped, !0);
       nodrag(event.view);
     }
-
     redraw.call(that);
     emit.start(event, mode.name);
-
     function moved(event) {
       for (var _iterator = brush_createForOfIteratorHelperLoose(event.changedTouches || [event]), _step; !(_step = _iterator()).done;) {
         var p = _step.value;
-
         for (var _iterator3 = brush_createForOfIteratorHelperLoose(points), _step3; !(_step3 = _iterator3()).done;) {
           var d = _step3.value;
           if (d.identifier === p.identifier) d.cur = src_pointer(p, that);
         }
       }
-
       if (shifting && !lockX && !lockY && points.length === 1) {
         var point = points[0];
         if (abs(point.cur[0] - point[0]) > abs(point.cur[1] - point[1])) lockY = !0;else lockX = !0;
       }
-
       for (var _iterator2 = brush_createForOfIteratorHelperLoose(points), _step2; !(_step2 = _iterator2()).done;) {
         var _point = _step2.value;
         if (_point.cur) _point[0] = _point.cur[0], _point[1] = _point.cur[1];
       }
-
       moving = !0;
       src_noevent(event);
       move(event);
     }
-
     function move(event) {
       var point = points[0],
-          point0 = point.point0,
-          t;
+        point0 = point.point0,
+        t;
       dx = point[0] - point0[0];
       dy = point[1] - point0[1];
-
       switch (mode) {
         case MODE_SPACE:
         case MODE_DRAG:
@@ -25331,7 +24694,6 @@ function brush_brush(dim) {
             if (signY) dy = max(N - n0, min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
             break;
           }
-
         case MODE_HANDLE:
           {
             if (points[1]) {
@@ -25341,10 +24703,8 @@ function brush_brush(dim) {
               if (signX < 0) dx = max(W - w0, min(E - w0, dx)), w1 = w0 + dx, e1 = e0;else if (signX > 0) dx = max(W - e0, min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
               if (signY < 0) dy = max(N - n0, min(S - n0, dy)), n1 = n0 + dy, s1 = s0;else if (signY > 0) dy = max(N - s0, min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
             }
-
             break;
           }
-
         case MODE_CENTER:
           {
             if (signX) w1 = max(W, min(E, w0 - dx * signX)), e1 = max(W, min(E, e0 + dx * signX));
@@ -25352,36 +24712,29 @@ function brush_brush(dim) {
             break;
           }
       }
-
       if (e1 < w1) {
         signX *= -1;
         t = w0, w0 = e0, e0 = t;
         t = w1, w1 = e1, e1 = t;
         if (type in flipX) overlay.attr("cursor", cursors[type = flipX[type]]);
       }
-
       if (s1 < n1) {
         signY *= -1;
         t = n0, n0 = s0, s0 = t;
         t = n1, n1 = s1, s1 = t;
         if (type in flipY) overlay.attr("cursor", cursors[type = flipY[type]]);
       }
-
       if (state.selection) selection = state.selection; // May be set by brush.move!
-
       if (lockX) w1 = selection[0][0], e1 = selection[1][0];
       if (lockY) n1 = selection[0][1], s1 = selection[1][1];
-
       if (selection[0][0] !== w1 || selection[0][1] !== n1 || selection[1][0] !== e1 || selection[1][1] !== s1) {
         state.selection = [[w1, n1], [e1, s1]];
         redraw.call(that);
         emit.brush(event, mode.name);
       }
     }
-
     function ended(event) {
       noevent_nopropagation(event);
-
       if (event.touches) {
         if (event.touches.length) return;
         if (touchending) clearTimeout(touchending);
@@ -25392,15 +24745,12 @@ function brush_brush(dim) {
         yesdrag(event.view, moving);
         view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
       }
-
       group.attr("pointer-events", "all");
       overlay.attr("cursor", cursors.overlay);
       if (state.selection) selection = state.selection; // May be set by brush.move (on start)!
-
       if (brush_empty(selection)) state.selection = null, redraw.call(that);
       emit.end(event, mode.name);
     }
-
     function keydowned(event) {
       switch (event.keyCode) {
         case 16:
@@ -25409,7 +24759,6 @@ function brush_brush(dim) {
             shifting = signX && signY;
             break;
           }
-
         case 18:
           {
             // ALT
@@ -25419,10 +24768,8 @@ function brush_brush(dim) {
               mode = MODE_CENTER;
               move(event);
             }
-
             break;
           }
-
         case 32:
           {
             // SPACE; takes priority over ALT
@@ -25433,17 +24780,13 @@ function brush_brush(dim) {
               overlay.attr("cursor", cursors.selection);
               move(event);
             }
-
             break;
           }
-
         default:
           return;
       }
-
       src_noevent(event);
     }
-
     function keyupped(event) {
       switch (event.keyCode) {
         case 16:
@@ -25453,10 +24796,8 @@ function brush_brush(dim) {
               lockX = lockY = shifting = !1;
               move(event);
             }
-
             break;
           }
-
         case 18:
           {
             // ALT
@@ -25466,10 +24807,8 @@ function brush_brush(dim) {
               mode = MODE_HANDLE;
               move(event);
             }
-
             break;
           }
-
         case 32:
           {
             // SPACE
@@ -25483,30 +24822,23 @@ function brush_brush(dim) {
                 if (signY < 0) s0 = s1;else if (signY > 0) n0 = n1;
                 mode = MODE_HANDLE;
               }
-
               overlay.attr("cursor", cursors[type]);
               move(event);
             }
-
             break;
           }
-
         default:
           return;
       }
-
       src_noevent(event);
     }
   }
-
   function touchmoved(event) {
     emitter(this, arguments).moved(event);
   }
-
   function touchended(event) {
     emitter(this, arguments).ended(event);
   }
-
   function initialize() {
     var state = this.__brush || {
       selection: null
@@ -25515,88 +24847,66 @@ function brush_brush(dim) {
     state.dim = dim;
     return state;
   }
-
   brush.extent = function (_) {
     return arguments.length ? (extent = typeof _ === "function" ? _ : d3_brush_src_constant(number2(_)), brush) : extent;
   };
-
   brush.filter = function (_) {
     return arguments.length ? (filter = typeof _ === "function" ? _ : d3_brush_src_constant(!!_), brush) : filter;
   };
-
   brush.touchable = function (_) {
     return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_brush_src_constant(!!_), brush) : touchable;
   };
-
   brush.handleSize = function (_) {
     return arguments.length ? (handleSize = +_, brush) : handleSize;
   };
-
   brush.keyModifiers = function (_) {
     return arguments.length ? (keys = !!_, brush) : keys;
   };
-
   brush.on = function () {
     var value = listeners.on.apply(listeners, arguments);
     return value === listeners ? brush : value;
   };
-
   return brush;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-brush/src/index.js
 
 ;// CONCATENATED MODULE: ./src/module/browser.ts
 
-
 var browser_this = undefined;
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
 /**
  * Window object
  * @private
  */
-
 /* eslint-disable no-new-func, no-undef */
-
 
 var win = function () {
   _newArrowCheck(this, browser_this);
-
   var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
   return root || Function("return this")();
 }.bind(undefined)();
 /* eslint-enable no-new-func, no-undef */
+
 // fallback for non-supported environments
-
-
 win.requestIdleCallback = win.requestIdleCallback || function (cb) {
   _newArrowCheck(this, browser_this);
-
-  return setTimeout(cb, 1);
-}.bind(undefined); // win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
-
-
-win.requestAnimationFrame = win.requestAnimationFrame || function (cb) {
-  _newArrowCheck(this, browser_this);
-
   return setTimeout(cb, 1);
 }.bind(undefined);
-
+// win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
+win.requestAnimationFrame = win.requestAnimationFrame || function (cb) {
+  _newArrowCheck(this, browser_this);
+  return setTimeout(cb, 1);
+}.bind(undefined);
 var doc = win == null ? void 0 : win.document;
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 
-
 var util_this = undefined;
-
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
 function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -25606,83 +24916,66 @@ function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i
 
 
 
-
 var isValue = function (v) {
-  _newArrowCheck(this, util_this);
-
-  return v || v === 0;
-}.bind(undefined),
-    isFunction = function (v) {
-  _newArrowCheck(this, util_this);
-
-  return typeof v === "function";
-}.bind(undefined),
-    isString = function (v) {
-  _newArrowCheck(this, util_this);
-
-  return typeof v === "string";
-}.bind(undefined),
-    isNumber = function (v) {
-  _newArrowCheck(this, util_this);
-
-  return typeof v === "number";
-}.bind(undefined),
-    isUndefined = function (v) {
-  _newArrowCheck(this, util_this);
-
-  return typeof v === "undefined";
-}.bind(undefined),
-    isDefined = function (v) {
-  _newArrowCheck(this, util_this);
-
-  return typeof v !== "undefined";
-}.bind(undefined),
-    isboolean = function (v) {
-  _newArrowCheck(this, util_this);
-
-  return typeof v === "boolean";
-}.bind(undefined),
-    ceil10 = function (v) {
-  _newArrowCheck(this, util_this);
-
-  return Math.ceil(v / 10) * 10;
-}.bind(undefined),
-    asHalfPixel = function (n) {
-  _newArrowCheck(this, util_this);
-
-  return Math.ceil(n) + .5;
-}.bind(undefined),
-    diffDomain = function (d) {
-  _newArrowCheck(this, util_this);
-
-  return d[1] - d[0];
-}.bind(undefined),
-    isObjectType = function (v) {
-  _newArrowCheck(this, util_this);
-
-  return typeof v === "object";
-}.bind(undefined),
-    isEmpty = function (o) {
-  _newArrowCheck(this, util_this);
-
-  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
-}.bind(undefined),
-    notEmpty = function (o) {
-  _newArrowCheck(this, util_this);
-
-  return !isEmpty(o);
-}.bind(undefined),
-    isArray = function (arr) {
-  _newArrowCheck(this, util_this);
-
-  return Array.isArray(arr);
-}.bind(undefined),
-    isObject = function (obj) {
-  _newArrowCheck(this, util_this);
-
-  return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
-}.bind(undefined);
-
+    _newArrowCheck(this, util_this);
+    return v || v === 0;
+  }.bind(undefined),
+  isFunction = function (v) {
+    _newArrowCheck(this, util_this);
+    return typeof v === "function";
+  }.bind(undefined),
+  isString = function (v) {
+    _newArrowCheck(this, util_this);
+    return typeof v === "string";
+  }.bind(undefined),
+  isNumber = function (v) {
+    _newArrowCheck(this, util_this);
+    return typeof v === "number";
+  }.bind(undefined),
+  isUndefined = function (v) {
+    _newArrowCheck(this, util_this);
+    return typeof v === "undefined";
+  }.bind(undefined),
+  isDefined = function (v) {
+    _newArrowCheck(this, util_this);
+    return typeof v !== "undefined";
+  }.bind(undefined),
+  isboolean = function (v) {
+    _newArrowCheck(this, util_this);
+    return typeof v === "boolean";
+  }.bind(undefined),
+  ceil10 = function (v) {
+    _newArrowCheck(this, util_this);
+    return Math.ceil(v / 10) * 10;
+  }.bind(undefined),
+  asHalfPixel = function (n) {
+    _newArrowCheck(this, util_this);
+    return Math.ceil(n) + .5;
+  }.bind(undefined),
+  diffDomain = function (d) {
+    _newArrowCheck(this, util_this);
+    return d[1] - d[0];
+  }.bind(undefined),
+  isObjectType = function (v) {
+    _newArrowCheck(this, util_this);
+    return typeof v === "object";
+  }.bind(undefined),
+  isEmpty = function (o) {
+    _newArrowCheck(this, util_this);
+    return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
+  }.bind(undefined),
+  notEmpty = function (o) {
+    _newArrowCheck(this, util_this);
+    return !isEmpty(o);
+  }.bind(undefined),
+  isArray = function (arr) {
+    _newArrowCheck(this, util_this);
+    return Array.isArray(arr);
+  }.bind(undefined),
+  isObject = function (obj) {
+    _newArrowCheck(this, util_this);
+    return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
+  }.bind(undefined);
 /**
  * Get specified key value from object
  * If default value is given, will return if given key value not found
@@ -25695,6 +24988,7 @@ var isValue = function (v) {
 function getOption(options, key, defaultValue) {
   return isDefined(options[key]) ? options[key] : defaultValue;
 }
+
 /**
  * Check if value exist in the given object
  * @param {object} dict Target object to be checked
@@ -25702,19 +24996,16 @@ function getOption(options, key, defaultValue) {
  * @returns {boolean}
  * @private
  */
-
-
 function hasValue(dict, value) {
   var _this2 = this,
-      found = !1;
-
+    found = !1;
   Object.keys(dict).forEach(function (key) {
     _newArrowCheck(this, _this2);
-
     return dict[key] === value && (found = !0);
   }.bind(this));
   return found;
 }
+
 /**
  * Call function with arguments
  * @param {Function} fn Function to be called
@@ -25723,40 +25014,33 @@ function hasValue(dict, value) {
  * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
-
-
 function callFn(fn, thisArg) {
   for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     args[_key - 2] = arguments[_key];
   }
-
   isFn && fn.call.apply(fn, [thisArg].concat(args));
   return isFn;
 }
+
 /**
  * Call function after all transitions ends
  * @param {d3.transition} transition Transition
  * @param {Fucntion} cb Callback function
  * @private
  */
-
-
 function endall(transition, cb) {
   var _this3 = this,
-      n = 0,
-      end = function () {
-    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
-    }
-
-    --n || cb.apply.apply(cb, [this].concat(args));
-  };
-
+    n = 0,
+    end = function () {
+      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+        args[_key2] = arguments[_key2];
+      }
+      --n || cb.apply.apply(cb, [this].concat(args));
+    };
   // if is transition selection
   if ("duration" in transition) {
     transition.each(function () {
       _newArrowCheck(this, _this3);
-
       return ++n;
     }.bind(this)).on("end", end);
   } else {
@@ -25764,17 +25048,17 @@ function endall(transition, cb) {
     transition.call(end);
   }
 }
+
 /**
  * Replace tag sign to html entity
  * @param {string} str Target string value
  * @returns {string}
  * @private
  */
-
-
 function sanitise(str) {
   return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
 }
+
 /**
  * Set text value. If there's multiline add nodes.
  * @param {d3Selection} node Text node
@@ -25783,53 +25067,43 @@ function sanitise(str) {
  * @param {boolean} toMiddle To be alingned vertically middle
  * @private
  */
-
-
 function setTextValue(node, text, dy, toMiddle) {
   var _this4 = this;
-
   if (dy === void 0) {
     dy = [-1, 1];
   }
-
   if (toMiddle === void 0) {
     toMiddle = !1;
   }
-
   if (!node || !isString(text)) {
     return;
   }
-
   if (text.indexOf("\n") === -1) {
     node.text(text);
   } else {
     var diff = [node.text(), text].map(function (v) {
       _newArrowCheck(this, _this4);
-
       return v.replace(/[\s\n]/g, "");
     }.bind(this));
-
     if (diff[0] !== diff[1]) {
       var multiline = text.split("\n"),
-          len = toMiddle ? multiline.length - 1 : 1;
+        len = toMiddle ? multiline.length - 1 : 1;
       // reset possible text
       node.html("");
       multiline.forEach(function (v, i) {
         _newArrowCheck(this, _this4);
-
         node.append("tspan").attr("x", 0).attr("dy", (i === 0 ? dy[0] * len : dy[1]) + "em").text(v);
       }.bind(this));
     }
   }
 }
+
 /**
  * Substitution of SVGPathSeg API polyfill
  * @param {SVGGraphicsElement} path Target svg element
  * @returns {Array}
  * @private
  */
-
-
 function getRectSegList(path) {
   /*
    * seg1 ---------- seg2
@@ -25839,45 +25113,45 @@ function getRectSegList(path) {
    * seg0 ---------- seg3
    * */
   var _path$getBBox = path.getBBox(),
-      x = _path$getBBox.x,
-      y = _path$getBBox.y,
-      width = _path$getBBox.width,
-      height = _path$getBBox.height;
-
+    x = _path$getBBox.x,
+    y = _path$getBBox.y,
+    width = _path$getBBox.width,
+    height = _path$getBBox.height;
   return [{
     x: x,
     y: y + height
-  }, // seg0
+  },
+  // seg0
   {
     x: x,
     y: y
-  }, // seg1
+  },
+  // seg1
   {
     x: x + width,
     y: y
-  }, // seg2
+  },
+  // seg2
   {
     x: x + width,
     y: y + height
   } // seg3
   ];
 }
+
 /**
  * Get svg bounding path box dimension
  * @param {SVGGraphicsElement} path Target svg element
  * @returns {object}
  * @private
  */
-
-
 function getPathBox(path) {
   var _path$getBoundingClie = path.getBoundingClientRect(),
-      width = _path$getBoundingClie.width,
-      height = _path$getBoundingClie.height,
-      items = getRectSegList(path),
-      x = items[0].x,
-      y = Math.min(items[0].y, items[1].y);
-
+    width = _path$getBoundingClie.width,
+    height = _path$getBoundingClie.height,
+    items = getRectSegList(path),
+    x = items[0].x,
+    y = Math.min(items[0].y, items[1].y);
   return {
     x: x,
     y: y,
@@ -25885,6 +25159,7 @@ function getPathBox(path) {
     height: height
   };
 }
+
 /**
  * Get event's current position coordinates
  * @param {object} event Event object
@@ -25892,43 +25167,38 @@ function getPathBox(path) {
  * @returns {Array} [x, y] Coordinates x, y array
  * @private
  */
-
-
 function getPointer(event, element) {
   var _ref,
-      touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
-      pointer = src_pointer(touches || event, element),
-      _this5 = this;
-
+    touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
+    pointer = src_pointer(touches || event, element),
+    _this5 = this;
   return pointer.map(function (v) {
     _newArrowCheck(this, _this5);
-
     return isNaN(v) ? 0 : v;
   }.bind(this));
 }
+
 /**
  * Return brush selection array
  * @param {object} ctx Current instance
  * @returns {d3.brushSelection}
  * @private
  */
-
-
 function getBrushSelection(ctx) {
   var event = ctx.event,
-      $el = ctx.$el,
-      main = $el.subchart.main || $el.main,
-      selection;
-
+    $el = ctx.$el,
+    main = $el.subchart.main || $el.main,
+    selection;
   // check from event
   if (event && event.type === "brush") {
-    selection = event.selection; // check from brush area selection
+    selection = event.selection;
+    // check from brush area selection
   } else if (main && (selection = main.select(".bb-brush").node())) {
     selection = brushSelection(selection);
   }
-
   return selection;
 }
+
 /**
  * Get boundingClientRect.
  * Cache the evaluated value once it was called.
@@ -25936,12 +25206,11 @@ function getBrushSelection(ctx) {
  * @returns {object}
  * @private
  */
-
-
 function getBoundingRect(node) {
   var needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
   return needEvaluate ? node.rect = node.getBoundingClientRect() : node.rect;
 }
+
 /**
  * Retrun random number
  * @param {boolean} asStr Convert returned value as string
@@ -25950,24 +25219,20 @@ function getBoundingRect(node) {
  * @returns {number|string}
  * @private
  */
-
-
 function getRandom(asStr, min, max) {
   if (asStr === void 0) {
     asStr = !0;
   }
-
   if (min === void 0) {
     min = 0;
   }
-
   if (max === void 0) {
     max = 1e4;
   }
-
   var rand = Math.floor(Math.random() * (max - min) + min);
   return asStr ? rand + "" : rand;
 }
+
 /**
  * Find index based on binary search
  * @param {Array} arr Data array
@@ -25978,87 +25243,71 @@ function getRandom(asStr, min, max) {
  * @returns {number} Index number
  * @private
  */
-
-
 function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
     return -1;
   }
-
   var mid = Math.floor((start + end) / 2),
-      _arr$mid = arr[mid],
-      x = _arr$mid.x,
-      _arr$mid$w = _arr$mid.w,
-      w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
-
+    _arr$mid = arr[mid],
+    x = _arr$mid.x,
+    _arr$mid$w = _arr$mid.w,
+    w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
   if (isRotated) {
     x = arr[mid].y;
     w = arr[mid].h;
   }
-
   if (v >= x && v <= x + w) {
     return mid;
   }
-
   return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
 }
+
 /**
  * Check if brush is empty
  * @param {object} ctx Bursh context
  * @returns {boolean}
  * @private
  */
-
-
 function brushEmpty(ctx) {
   var selection = getBrushSelection(ctx);
-
   if (selection) {
     // brush selected area
     // two-dimensional: [[x0, y0], [x1, y1]]
     // one-dimensional: [x0, x1] or [y0, y1]
     return selection[0] === selection[1];
   }
-
   return !0;
 }
+
 /**
  * Deep copy object
  * @param {object} objectN Source object
  * @returns {object} Cloned object
  * @private
  */
-
-
 function deepClone() {
   for (var _this6 = this, clone = function (v) {
-    _newArrowCheck(this, _this6);
-
-    if (isObject(v) && v.constructor) {
-      var r = new v.constructor();
-
-      for (var k in v) {
-        r[k] = clone(v[k]);
+      _newArrowCheck(this, _this6);
+      if (isObject(v) && v.constructor) {
+        var r = new v.constructor();
+        for (var k in v) {
+          r[k] = clone(v[k]);
+        }
+        return r;
       }
-
-      return r;
-    }
-
-    return v;
-  }.bind(this), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      return v;
+    }.bind(this), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
     objectN[_key3] = arguments[_key3];
   }
-
   return objectN.map(function (v) {
     _newArrowCheck(this, _this6);
-
     return clone(v);
   }.bind(this)).reduce(function (a, c) {
     _newArrowCheck(this, _this6);
-
     return _objectSpread(_objectSpread({}, a), c);
   }.bind(this));
 }
+
 /**
  * Extend target from source object
  * @param {object} target Target object
@@ -26066,47 +25315,39 @@ function deepClone() {
  * @returns {object}
  * @private
  */
-
-
 function util_extend(target, source) {
   var _this7 = this;
-
   if (target === void 0) {
     target = {};
   }
-
   if (isArray(source)) {
     source.forEach(function (v) {
       _newArrowCheck(this, _this7);
-
       return util_extend(target, v);
     }.bind(this));
-  } // exclude name with only numbers
+  }
 
-
+  // exclude name with only numbers
   for (var p in source) {
     if (/^\d+$/.test(p) || p in target) {
       continue;
     }
-
     target[p] = source[p];
   }
-
   return target;
 }
+
 /**
  * Return first letter capitalized
  * @param {string} str Target string
  * @returns {string} capitalized string
  * @private
  */
-
-
 var capitalize = function (str) {
   _newArrowCheck(this, util_this);
-
   return str.charAt(0).toUpperCase() + str.slice(1);
 }.bind(undefined);
+
 /**
  * Camelize from kebob style string
  * @param {string} str Target string
@@ -26114,34 +25355,28 @@ var capitalize = function (str) {
  * @returns {string} camelized string
  * @private
  */
-
-
 function camelize(str, separator) {
   var _this8 = this;
-
   if (separator === void 0) {
     separator = "-";
   }
-
   return str.split(separator).map(function (v, i) {
     _newArrowCheck(this, _this8);
-
     return i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase();
   }.bind(this)).join("");
 }
+
 /**
  * Convert to array
  * @param {object} v Target to be converted
  * @returns {Array}
  * @private
  */
-
-
 var toArray = function (v) {
   _newArrowCheck(this, util_this);
-
   return [].slice.call(v);
 }.bind(undefined);
+
 /**
  * Add CSS rules
  * @param {object} style Style object
@@ -26150,36 +25385,29 @@ var toArray = function (v) {
  * @returns {number} Newely added rule index
  * @private
  */
-
-
 function addCssRules(style, selector, prop) {
   var _this9 = this,
-      rootSelctor = style.rootSelctor,
-      sheet = style.sheet,
-      getSelector = function (s) {
-    _newArrowCheck(this, _this9);
-
-    return s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
-  }.bind(this),
-      rule = rootSelctor + " " + getSelector(selector) + " {" + prop.join(";") + "}";
-
+    rootSelctor = style.rootSelctor,
+    sheet = style.sheet,
+    getSelector = function (s) {
+      _newArrowCheck(this, _this9);
+      return s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
+    }.bind(this),
+    rule = rootSelctor + " " + getSelector(selector) + " {" + prop.join(";") + "}";
   return sheet[sheet.insertRule ? "insertRule" : "addRule"](rule, sheet.cssRules.length);
 }
+
 /**
  * Get css rules for specified stylesheets
  * @param {Array} styleSheets The stylesheets to get the rules from
  * @returns {Array}
  * @private
  */
-
-
 function getCssRules(styleSheets) {
   var _this10 = this,
-      rules = [];
-
+    rules = [];
   styleSheets.forEach(function (sheet) {
     _newArrowCheck(this, _this10);
-
     try {
       if (sheet.cssRules && sheet.cssRules.length) {
         rules = rules.concat(toArray(sheet.cssRules));
@@ -26190,17 +25418,16 @@ function getCssRules(styleSheets) {
   }.bind(this));
   return rules;
 }
+
 /**
  * Gets the SVGMatrix of an SVGGElement
  * @param {SVGElement} node Node element
  * @returns {SVGMatrix} matrix
  * @private
  */
-
-
 function getTranslation(node) {
   var transform = node ? node.transform : null,
-      baseVal = transform && transform.baseVal;
+    baseVal = transform && transform.baseVal;
   return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
     a: 0,
     b: 0,
@@ -26210,46 +25437,40 @@ function getTranslation(node) {
     f: 0
   };
 }
+
 /**
  * Get unique value from array
  * @param {Array} data Source data
  * @returns {Array} Unique array value
  * @private
  */
-
-
 function getUnique(data) {
   var _this11 = this,
-      isDate = data[0] instanceof Date,
-      d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
-    _newArrowCheck(this, _this11);
-
-    return self.indexOf(v) === i;
-  }.bind(this));
-
+    isDate = data[0] instanceof Date,
+    d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
+      _newArrowCheck(this, _this11);
+      return self.indexOf(v) === i;
+    }.bind(this));
   return isDate ? d.map(function (v) {
     _newArrowCheck(this, _this11);
-
     return new Date(v);
   }.bind(this)) : d;
 }
+
 /**
  * Merge array
  * @param {Array} arr Source array
  * @returns {Array}
  * @private
  */
-
-
 function mergeArray(arr) {
   var _this12 = this;
-
   return arr && arr.length ? arr.reduce(function (p, c) {
     _newArrowCheck(this, _this12);
-
     return p.concat(c);
   }.bind(this)) : [];
 }
+
 /**
  * Merge object returning new object
  * @param {object} target Target object
@@ -26257,25 +25478,18 @@ function mergeArray(arr) {
  * @returns {object} merged target object
  * @private
  */
-
-
 function mergeObj(target) {
   for (var _this13 = this, _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
     objectN[_key4 - 1] = arguments[_key4];
   }
-
   if (!objectN.length || objectN.length === 1 && !objectN[0]) {
     return target;
   }
-
   var source = objectN.shift();
-
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach(function (key) {
       _newArrowCheck(this, _this13);
-
       var value = source[key];
-
       if (isObject(value)) {
         target[key] || (target[key] = {});
         target[key] = mergeObj(target[key], value);
@@ -26284,9 +25498,9 @@ function mergeObj(target) {
       }
     }.bind(this));
   }
-
   return mergeObj.apply(void 0, [target].concat(objectN));
 }
+
 /**
  * Sort value
  * @param {Array} data value to be sorted
@@ -26294,45 +25508,36 @@ function mergeObj(target) {
  * @returns {number|string|Date} sorted date
  * @private
  */
-
-
 function sortValue(data, isAsc) {
   var _this14 = this;
-
   if (isAsc === void 0) {
     isAsc = !0;
   }
-
   var fn;
-
   if (data[0] instanceof Date) {
     fn = isAsc ? function (a, b) {
       _newArrowCheck(this, _this14);
-
       return a - b;
     }.bind(this) : function (a, b) {
       _newArrowCheck(this, _this14);
-
       return b - a;
     }.bind(this);
   } else {
     if (isAsc && !data.every(isNaN)) {
       fn = function (a, b) {
         _newArrowCheck(this, _this14);
-
         return a - b;
       }.bind(this);
     } else if (!isAsc) {
       fn = function (a, b) {
         _newArrowCheck(this, _this14);
-
         return a > b && -1 || a < b && 1 || a === b && 0;
       }.bind(this);
     }
   }
-
   return data.concat().sort(fn);
 }
+
 /**
  * Get min/max value
  * @param {string} type 'min' or 'max'
@@ -26340,16 +25545,12 @@ function sortValue(data, isAsc) {
  * @returns {number|Date|undefined}
  * @private
  */
-
-
 function getMinMax(type, data) {
   var _this15 = this,
-      res = data.filter(function (v) {
-    _newArrowCheck(this, _this15);
-
-    return notEmpty(v);
-  }.bind(this));
-
+    res = data.filter(function (v) {
+      _newArrowCheck(this, _this15);
+      return notEmpty(v);
+    }.bind(this));
   if (res.length) {
     if (isNumber(res[0])) {
       res = Math[type].apply(Math, res);
@@ -26359,9 +25560,9 @@ function getMinMax(type, data) {
   } else {
     res = undefined;
   }
-
   return res;
 }
+
 /**
  * Get range
  * @param {number} start Start number
@@ -26370,95 +25571,80 @@ function getMinMax(type, data) {
  * @returns {Array}
  * @private
  */
-
-
 var getRange = function (start, end, step) {
-  if (step === void 0) {
-    step = 1;
-  }
-
-  _newArrowCheck(this, util_this);
-
-  var res = [],
-      n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-
-  for (var i = start; i < n; i++) {
-    res.push(start + i * step);
-  }
-
-  return res;
-}.bind(undefined),
-    emulateEvent = {
-  mouse: function () {
-    var _this16 = this;
-
-    _newArrowCheck(this, util_this);
-
-    var getParams = function () {
-      _newArrowCheck(this, _this16);
-
-      return {
-        bubbles: !1,
-        cancelable: !1,
-        screenX: 0,
-        screenY: 0,
-        clientX: 0,
-        clientY: 0
-      };
-    }.bind(this);
-
-    try {
-      // eslint-disable-next-line no-new
-      new MouseEvent("t");
-      return function (el, eventType, params) {
-        if (params === void 0) {
-          params = getParams();
-        }
-
-        _newArrowCheck(this, _this16);
-
-        el.dispatchEvent(new MouseEvent(eventType, params));
-      }.bind(this);
-    } catch (e) {
-      // Polyfills DOM4 MouseEvent
-      return function (el, eventType, params) {
-        if (params === void 0) {
-          params = getParams();
-        }
-
-        _newArrowCheck(this, _this16);
-
-        var mouseEvent = doc.createEvent("MouseEvent"); // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
-
-        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
-        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null);
-        el.dispatchEvent(mouseEvent);
-      }.bind(this);
+    if (step === void 0) {
+      step = 1;
     }
-  }.bind(undefined)(),
-  touch: function touch(el, eventType, params) {
     _newArrowCheck(this, util_this);
+    var res = [],
+      n = Math.max(0, Math.ceil((end - start) / step)) | 0;
+    for (var i = start; i < n; i++) {
+      res.push(start + i * step);
+    }
+    return res;
+  }.bind(undefined),
+  emulateEvent = {
+    mouse: function () {
+      var _this16 = this;
+      _newArrowCheck(this, util_this);
+      var getParams = function () {
+        _newArrowCheck(this, _this16);
+        return {
+          bubbles: !1,
+          cancelable: !1,
+          screenX: 0,
+          screenY: 0,
+          clientX: 0,
+          clientY: 0
+        };
+      }.bind(this);
+      try {
+        // eslint-disable-next-line no-new
+        new MouseEvent("t");
+        return function (el, eventType, params) {
+          if (params === void 0) {
+            params = getParams();
+          }
+          _newArrowCheck(this, _this16);
+          el.dispatchEvent(new MouseEvent(eventType, params));
+        }.bind(this);
+      } catch (e) {
+        // Polyfills DOM4 MouseEvent
+        return function (el, eventType, params) {
+          if (params === void 0) {
+            params = getParams();
+          }
+          _newArrowCheck(this, _this16);
+          var mouseEvent = doc.createEvent("MouseEvent");
 
-    var touchObj = new Touch(mergeObj({
-      identifier: Date.now(),
-      target: el,
-      radiusX: 2.5,
-      radiusY: 2.5,
-      rotationAngle: 10,
-      force: .5
-    }, params));
-    el.dispatchEvent(new TouchEvent(eventType, {
-      cancelable: !0,
-      bubbles: !0,
-      shiftKey: !0,
-      touches: [touchObj],
-      targetTouches: [],
-      changedTouches: [touchObj]
-    }));
-  }.bind(undefined)
-}; // emulate event
-
-
+          // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+          mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0,
+          // the event's mouse click count
+          params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null);
+          el.dispatchEvent(mouseEvent);
+        }.bind(this);
+      }
+    }.bind(undefined)(),
+    touch: function touch(el, eventType, params) {
+      _newArrowCheck(this, util_this);
+      var touchObj = new Touch(mergeObj({
+        identifier: Date.now(),
+        target: el,
+        radiusX: 2.5,
+        radiusY: 2.5,
+        rotationAngle: 10,
+        force: .5
+      }, params));
+      el.dispatchEvent(new TouchEvent(eventType, {
+        cancelable: !0,
+        bubbles: !0,
+        shiftKey: !0,
+        touches: [touchObj],
+        targetTouches: [],
+        changedTouches: [touchObj]
+      }));
+    }.bind(undefined)
+  }; // emulate event
 /**
  * Process the template  & return bound string
  * @param {string} tpl Template string
@@ -26468,13 +25654,12 @@ var getRange = function (start, end, step) {
  */
 function tplProcess(tpl, data) {
   var res = tpl;
-
   for (var x in data) {
     res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
   }
-
   return res;
 }
+
 /**
  * Get parsed date value
  * (It must be called in 'ChartInternal' context)
@@ -26482,41 +25667,35 @@ function tplProcess(tpl, data) {
  * @returns {Date}
  * @private
  */
-
-
 function parseDate(date) {
   var parsedDate;
-
   if (date instanceof Date) {
     parsedDate = date;
   } else if (isString(date)) {
     var _format$dataTime,
-        config = this.config,
-        format = this.format;
-
+      config = this.config,
+      format = this.format;
     // if fails to parse, try by new Date()
     // https://github.com/naver/billboard.js/issues/1714
     parsedDate = (_format$dataTime = format.dataTime(config.data_xFormat)(date)) != null ? _format$dataTime : new Date(date);
   } else if (isNumber(date) && !isNaN(date)) {
     parsedDate = new Date(+date);
   }
-
   if (!parsedDate || isNaN(+parsedDate)) {
     console && console.error && console.error("Failed to parse x '" + date + "' to Date object");
   }
-
   return parsedDate;
 }
+
 /**
  * Return if the current doc is visible or not
  * @returns {boolean}
  * @private
  */
-
-
 function isTabVisible() {
   return (doc == null ? void 0 : doc.hidden) === !1 || (doc == null ? void 0 : doc.visibilityState) === "visible";
 }
+
 /**
  * Get the current input type
  * @param {boolean} mouse Config value: interaction.inputType.mouse
@@ -26524,19 +25703,18 @@ function isTabVisible() {
  * @returns {string} "mouse" | "touch" | null
  * @private
  */
-
-
 function convertInputType(mouse, touch) {
   var _this17 = this,
-      DocumentTouch = win.DocumentTouch,
-      matchMedia = win.matchMedia,
-      navigator = win.navigator,
-      hasTouch = !1;
-
+    DocumentTouch = win.DocumentTouch,
+    matchMedia = win.matchMedia,
+    navigator = win.navigator,
+    hasTouch = !1;
   if (touch) {
     // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
     if (navigator && "maxTouchPoints" in navigator) {
-      hasTouch = navigator.maxTouchPoints > 0; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+      hasTouch = navigator.maxTouchPoints > 0;
+
+      // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
       // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
     } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
       hasTouch = !0;
@@ -26550,34 +25728,31 @@ function convertInputType(mouse, touch) {
         hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
       }
     }
-  } // Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
+  }
+
+  // Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
   // https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
   // Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
-
-
   var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
     _newArrowCheck(this, _this17);
-
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
-  }.bind(this)); // fallback to 'mouse' if no input type is detected.
+  }.bind(this));
 
+  // fallback to 'mouse' if no input type is detected.
   return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
 }
+
 /**
  * Run function until given condition function return true
  * @param {Function} fn Function to be executed when condition is true
  * @param {Function} conditionFn Condition function to check if condition is true
  * @private
  */
-
-
 function runUntil(fn, conditionFn) {
   var _this18 = this;
-
   if (conditionFn() === !1) {
     win.requestAnimationFrame(function () {
       _newArrowCheck(this, _this18);
-
       return runUntil(fn, conditionFn);
     }.bind(this));
   } else {
@@ -26586,12 +25761,10 @@ function runUntil(fn, conditionFn) {
 }
 ;// CONCATENATED MODULE: ./src/config/config.ts
 
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
 
 /**
  * Load configuration option
@@ -26600,54 +25773,46 @@ function runUntil(fn, conditionFn) {
  */
 function loadConfig(config) {
   var _this = this,
-      thisConfig = this.config,
-      target,
-      keys,
-      read,
-      find = function () {
-    _newArrowCheck(this, _this);
-
-    var key = keys.shift();
-
-    if (key && target && isObjectType(target) && key in target) {
-      target = target[key];
-      return find();
-    } else if (!key) {
-      return target;
-    }
-
-    return undefined;
-  }.bind(this);
-
+    thisConfig = this.config,
+    target,
+    keys,
+    read,
+    find = function () {
+      _newArrowCheck(this, _this);
+      var key = keys.shift();
+      if (key && target && isObjectType(target) && key in target) {
+        target = target[key];
+        return find();
+      } else if (!key) {
+        return target;
+      }
+      return undefined;
+    }.bind(this);
   Object.keys(thisConfig).forEach(function (key) {
     _newArrowCheck(this, _this);
-
     target = config;
     keys = key.split("_");
     read = find();
-
     if (isDefined(read)) {
       thisConfig[key] = read;
     }
-  }.bind(this)); // only should run in the ChartInternal context
+  }.bind(this));
 
+  // only should run in the ChartInternal context
   if (this.api) {
     this.state.orgConfig = config;
   }
 }
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
 
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
 /**
  * Base class to generate billboard.js plugin
  * @class Plugin
  */
-
 /**
  * Version info string for plugin
  * @name version
@@ -26667,69 +25832,57 @@ var Plugin = /*#__PURE__*/function () {
     if (options === void 0) {
       options = {};
     }
-
     this.$$ = void 0;
     this.options = void 0;
     this.options = options;
   }
+
   /**
    * Lifecycle hook for 'beforeInit' phase.
    * @private
    */
-
-
   var _proto = Plugin.prototype;
-
   _proto.$beforeInit = function $beforeInit() {}
+
   /**
    * Lifecycle hook for 'init' phase.
    * @private
-   */
-  ;
-
+   */;
   _proto.$init = function $init() {}
+
   /**
    * Lifecycle hook for 'afterInit' phase.
    * @private
-   */
-  ;
-
+   */;
   _proto.$afterInit = function $afterInit() {}
+
   /**
    * Lifecycle hook for 'redraw' phase.
    * @private
-   */
-  ;
-
+   */;
   _proto.$redraw = function $redraw() {}
+
   /**
    * Lifecycle hook for 'willDestroy' phase.
    * @private
-   */
-  ;
-
+   */;
   _proto.$willDestroy = function $willDestroy() {
     var _this = this;
-
     Object.keys(this).forEach(function (key) {
       _newArrowCheck(this, _this);
-
       this[key] = null;
       delete this[key];
     }.bind(this));
   };
-
   return Plugin;
 }();
-
-Plugin.version = "3.6.0-nightly-20221006004814";
+Plugin.version = "3.6.0-nightly-20221012004915";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
 /**
  * TextOverlap plugin option class
  * @class TextOverlapOptions
@@ -26752,7 +25905,6 @@ var Options = function () {
      * selector: ".bb-texts text"
      */
     selector: undefined,
-
     /**
      * Extent of label overlap prevention.
      * @name extent
@@ -26763,7 +25915,6 @@ var Options = function () {
      * 	extent: 1
      */
     extent: 1,
-
     /**
      * Minimum area needed to show a data label.
      * @name area
@@ -26777,9 +25928,7 @@ var Options = function () {
   };
 };
 
-
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/index.ts
-
 
 
 
@@ -26787,6 +25936,8 @@ var Options = function () {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
+
 
 
 
@@ -26835,105 +25986,87 @@ var Options = function () {
  *     ]
  * })
  */
-
 var TextOverlap = /*#__PURE__*/function (_Plugin) {
   _inheritsLoose(TextOverlap, _Plugin);
-
   function TextOverlap(options) {
     var _this = _Plugin.call(this, options) || this;
-
     _this.config = void 0;
     _this.config = new Options();
     return _assertThisInitialized(_this) || _assertThisInitialized(_this);
   }
-
   var _proto = TextOverlap.prototype;
-
   _proto.$init = function $init() {
     loadConfig.call(this, this.options);
   };
-
   _proto.$redraw = function $redraw() {
     var $el = this.$$.$el,
-        selector = this.config.selector,
-        text = selector ? $el.main.selectAll(selector) : $el.text;
+      selector = this.config.selector,
+      text = selector ? $el.main.selectAll(selector) : $el.text;
     text.empty() || this.preventLabelOverlap(text);
   }
+
   /**
    * Generates the voronoi layout for data labels
    * @param {Array} points Indices values
    * @returns {object} Voronoi layout points and corresponding Data points
    * @private
-   */
-  ;
-
+   */;
   _proto.generateVoronoi = function generateVoronoi(points) {
     var _this2 = this,
-        $$ = this.$$,
-        scale = $$.scale,
-        _map = ["x", "y"].map(function (v) {
-      _newArrowCheck(this, _this2);
-
-      return scale[v].domain();
-    }.bind(this)),
-        min = _map[0],
-        max = _map[1],
-        _ref = [max[0], min[1]];
-
+      $$ = this.$$,
+      scale = $$.scale,
+      _map = ["x", "y"].map(function (v) {
+        _newArrowCheck(this, _this2);
+        return scale[v].domain();
+      }.bind(this)),
+      min = _map[0],
+      max = _map[1],
+      _ref = [max[0], min[1]];
     min[1] = _ref[0];
     max[0] = _ref[1];
     return Delaunay.from(points).voronoi([].concat(min, max)); // bounds = [xmin, ymin, xmax, ymax], default value: [0, 0, 960, 500]
   }
+
   /**
    * Set text label's position to preventg overlap.
    * @param {d3Selection} text target text selection
    * @private
-   */
-  ;
-
+   */;
   _proto.preventLabelOverlap = function preventLabelOverlap(text) {
     var _this3 = this,
-        _this$config = this.config,
-        extent = _this$config.extent,
-        area = _this$config.area,
-        points = text.data().map(function (v) {
-      _newArrowCheck(this, _this3);
-
-      return [v.index, v.value];
-    }.bind(this)),
-        voronoi = this.generateVoronoi(points),
-        i = 0;
-
+      _this$config = this.config,
+      extent = _this$config.extent,
+      area = _this$config.area,
+      points = text.data().map(function (v) {
+        _newArrowCheck(this, _this3);
+        return [v.index, v.value];
+      }.bind(this)),
+      voronoi = this.generateVoronoi(points),
+      i = 0;
     text.each(function () {
       var cell = voronoi.cellPolygon(i);
-
       if (cell && this) {
         var _points$i = points[i],
-            x = _points$i[0],
-            y = _points$i[1],
-            _d3PolygonCentroid = centroid(cell),
-            cx = _d3PolygonCentroid[0],
-            cy = _d3PolygonCentroid[1],
-            polygonArea = Math.abs(src_area(cell)),
-            angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2),
-            xTranslate = extent * (angle === 0 ? 1 : -1),
-            yTranslate = angle === -1 ? -extent : extent + 5,
-            txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end"; // @ts-ignore wrong type definiton for d3PolygonCentroid
-
-
+          x = _points$i[0],
+          y = _points$i[1],
+          _d3PolygonCentroid = centroid(cell),
+          cx = _d3PolygonCentroid[0],
+          cy = _d3PolygonCentroid[1],
+          polygonArea = Math.abs(src_area(cell)),
+          angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2),
+          xTranslate = extent * (angle === 0 ? 1 : -1),
+          yTranslate = angle === -1 ? -extent : extent + 5,
+          txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end"; // @ts-ignore wrong type definiton for d3PolygonCentroid
         this.style.display = polygonArea < area ? "none" : "";
         this.setAttribute("text-anchor", txtAnchor);
         this.setAttribute("dy", "0." + (angle === 1 ? 71 : 35) + "em");
         this.setAttribute("transform", "translate(" + xTranslate + ", " + yTranslate + ")");
       }
-
       i++;
     });
   };
-
   return TextOverlap;
 }(Plugin);
-
 
 
 /***/ })

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.0-nightly-20221006004814
+ * @version 3.6.0-nightly-20221012004915
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -25,8 +25,8 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-
 /* global Reflect, Promise */
+
 var _extendStatics = function extendStatics(d, b) {
   _extendStatics = Object.setPrototypeOf || {
     __proto__: []
@@ -37,19 +37,14 @@ var _extendStatics = function extendStatics(d, b) {
       if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
     }
   };
-
   return _extendStatics(d, b);
 };
-
 function __extends(d, b) {
   if (typeof b !== "function" && b !== null) throw new TypeError("Class extends value " + (b + "") + " is not a constructor or null");
-
   _extendStatics(d, b);
-
   function __() {
     this.constructor = d;
   }
-
   d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 
@@ -111,7 +106,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.6.0-nightly-20221006004814";
+    Plugin.version = "3.6.0-nightly-20221012004915";
     return Plugin;
 }());
 var Plugin$1 = Plugin;

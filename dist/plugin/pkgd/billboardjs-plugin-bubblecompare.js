@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.0-nightly-20221006004814
+ * @version 3.6.0-nightly-20221012004915
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -17311,7 +17311,6 @@ function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
   }
-
   return self;
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
@@ -17331,7 +17330,6 @@ function _inheritsLoose(subClass, superClass) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selector.js
 function none() {}
-
 /* harmony default export */ function selector(selector) {
   return selector == null ? none : function () {
     return this.querySelector(selector);
@@ -17342,7 +17340,6 @@ function none() {}
 
 /* harmony default export */ function selection_select(select) {
   if (typeof select !== "function") select = selector(select);
-
   for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = Array(n), node, subnode, i = 0; i < n; ++i) {
       if ((node = group[i]) && (subnode = select.call(node, node.__data__, i, group))) {
@@ -17351,7 +17348,6 @@ function none() {}
       }
     }
   }
-
   return new Selection(subgroups, this._parents);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/array.js
@@ -17368,7 +17364,6 @@ function array(x) {
 function empty() {
   return [];
 }
-
 /* harmony default export */ function selectorAll(selector) {
   return selector == null ? empty : function () {
     return this.querySelectorAll(selector);
@@ -17378,16 +17373,13 @@ function empty() {
 
 
 
-
 function arrayAll(select) {
   return function () {
     return array(select.apply(this, arguments));
   };
 }
-
 /* harmony default export */ function selectAll(select) {
   if (typeof select === "function") select = arrayAll(select);else select = selectorAll(select);
-
   for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, node, i = 0; i < n; ++i) {
       if (node = group[i]) {
@@ -17396,7 +17388,6 @@ function arrayAll(select) {
       }
     }
   }
-
   return new Selection(subgroups, parents);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/matcher.js
@@ -17413,34 +17404,28 @@ function childMatcher(selector) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectChild.js
 
 var find = Array.prototype.find;
-
 function childFind(match) {
   return function () {
     return find.call(this.children, match);
   };
 }
-
 function childFirst() {
   return this.firstElementChild;
 }
-
 /* harmony default export */ function selectChild(match) {
   return this.select(match == null ? childFirst : childFind(typeof match === "function" ? match : childMatcher(match)));
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/selectChildren.js
 
 var filter = Array.prototype.filter;
-
 function children() {
   return Array.from(this.children);
 }
-
 function childrenFilter(match) {
   return function () {
     return filter.call(this.children, match);
   };
 }
-
 /* harmony default export */ function selectChildren(match) {
   return this.selectAll(match == null ? children : childrenFilter(typeof match === "function" ? match : childMatcher(match)));
 }
@@ -17449,7 +17434,6 @@ function childrenFilter(match) {
 
 /* harmony default export */ function selection_filter(match) {
   if (typeof match !== "function") match = matcher(match);
-
   for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
       if ((node = group[i]) && match.call(node, node.__data__, i, group)) {
@@ -17457,7 +17441,6 @@ function childrenFilter(match) {
       }
     }
   }
-
   return new Selection(subgroups, this._parents);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sparse.js
@@ -17502,15 +17485,15 @@ EnterNode.prototype = {
 
 
 
-
 function bindIndex(parent, group, enter, update, exit, data) {
   var i = 0,
-      node,
-      groupLength = group.length,
-      dataLength = data.length; // Put any non-null nodes that fit into update.
+    node,
+    groupLength = group.length,
+    dataLength = data.length;
+
+  // Put any non-null nodes that fit into update.
   // Put any null nodes into enter.
   // Put any remaining data into enter.
-
   for (; i < dataLength; ++i) {
     if (node = group[i]) {
       node.__data__ = data[i];
@@ -17518,44 +17501,42 @@ function bindIndex(parent, group, enter, update, exit, data) {
     } else {
       enter[i] = new EnterNode(parent, data[i]);
     }
-  } // Put any non-null nodes that don’t fit into exit.
+  }
 
-
+  // Put any non-null nodes that don’t fit into exit.
   for (; i < groupLength; ++i) {
     if (node = group[i]) {
       exit[i] = node;
     }
   }
 }
-
 function bindKey(parent, group, enter, update, exit, data, key) {
   var i,
-      node,
-      nodeByKeyValue = new Map(),
-      groupLength = group.length,
-      dataLength = data.length,
-      keyValues = Array(groupLength),
-      keyValue; // Compute the key for each node.
-  // If multiple nodes have the same key, the duplicates are added to exit.
+    node,
+    nodeByKeyValue = new Map(),
+    groupLength = group.length,
+    dataLength = data.length,
+    keyValues = Array(groupLength),
+    keyValue;
 
+  // Compute the key for each node.
+  // If multiple nodes have the same key, the duplicates are added to exit.
   for (i = 0; i < groupLength; ++i) {
     if (node = group[i]) {
       keyValues[i] = keyValue = key.call(node, node.__data__, i, group) + "";
-
       if (nodeByKeyValue.has(keyValue)) {
         exit[i] = node;
       } else {
         nodeByKeyValue.set(keyValue, node);
       }
     }
-  } // Compute the key for each datum.
+  }
+
+  // Compute the key for each datum.
   // If there a node associated with this key, join and add it to update.
   // If there is not (or the key is a duplicate), add it to enter.
-
-
   for (i = 0; i < dataLength; ++i) {
     keyValue = key.call(parent, data[i], i, data) + "";
-
     if (node = nodeByKeyValue.get(keyValue)) {
       update[i] = node;
       node.__data__ = data[i];
@@ -17563,62 +17544,58 @@ function bindKey(parent, group, enter, update, exit, data, key) {
     } else {
       enter[i] = new EnterNode(parent, data[i]);
     }
-  } // Add any remaining nodes that were not bound to data to exit.
+  }
 
-
+  // Add any remaining nodes that were not bound to data to exit.
   for (i = 0; i < groupLength; ++i) {
     if ((node = group[i]) && nodeByKeyValue.get(keyValues[i]) === node) {
       exit[i] = node;
     }
   }
 }
-
 function datum(node) {
   return node.__data__;
 }
-
 /* harmony default export */ function data(value, key) {
   if (!arguments.length) return Array.from(this, datum);
   var bind = key ? bindKey : bindIndex,
-      parents = this._parents,
-      groups = this._groups;
+    parents = this._parents,
+    groups = this._groups;
   if (typeof value !== "function") value = constant(value);
-
   for (var m = groups.length, update = Array(m), enter = Array(m), exit = Array(m), j = 0; j < m; ++j) {
     var parent = parents[j],
-        group = groups[j],
-        groupLength = group.length,
-        data = arraylike(value.call(parent, parent && parent.__data__, j, parents)),
-        dataLength = data.length,
-        enterGroup = enter[j] = Array(dataLength),
-        updateGroup = update[j] = Array(dataLength),
-        exitGroup = exit[j] = Array(groupLength);
-    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key); // Now connect the enter nodes to their following update node, such that
+      group = groups[j],
+      groupLength = group.length,
+      data = arraylike(value.call(parent, parent && parent.__data__, j, parents)),
+      dataLength = data.length,
+      enterGroup = enter[j] = Array(dataLength),
+      updateGroup = update[j] = Array(dataLength),
+      exitGroup = exit[j] = Array(groupLength);
+    bind(parent, group, enterGroup, updateGroup, exitGroup, data, key);
+
+    // Now connect the enter nodes to their following update node, such that
     // appendChild can insert the materialized enter node before this node,
     // rather than at the end of the parent node.
-
     for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
       if (previous = enterGroup[i0]) {
         if (i0 >= i1) i1 = i0 + 1;
-
         while (!(next = updateGroup[i1]) && ++i1 < dataLength) {}
-
         previous._next = next || null;
       }
     }
   }
-
   update = new Selection(update, parents);
   update._enter = enter;
   update._exit = exit;
   return update;
-} // Given some data, this returns an array-like view of it: an object that
+}
+
+// Given some data, this returns an array-like view of it: an object that
 // exposes a length property and allows numeric indexing. Note that unlike
 // selectAll, this isn’t worried about “live” collections because the resulting
 // array will only be used briefly while data is being bound. (It is possible to
 // cause the data to change while iterating by using a key function, but please
 // don’t; we’d rather avoid a gratuitous copy.)
-
 function arraylike(data) {
   return typeof data === "object" && "length" in data ? data // Array, TypedArray, NodeList, array-like
   : Array.from(data); // Map, Set, iterable, string, or anything else
@@ -17632,21 +17609,18 @@ function arraylike(data) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/join.js
 /* harmony default export */ function join(onenter, onupdate, onexit) {
   var enter = this.enter(),
-      update = this,
-      exit = this.exit();
-
+    update = this,
+    exit = this.exit();
   if (typeof onenter === "function") {
     enter = onenter(enter);
     if (enter) enter = enter.selection();
   } else {
     enter = enter.append(onenter + "");
   }
-
   if (onupdate != null) {
     update = onupdate(update);
     if (update) update = update.selection();
   }
-
   if (onexit == null) exit.remove();else onexit(exit);
   return enter && update ? enter.merge(update).order() : update;
 }
@@ -17660,11 +17634,9 @@ function arraylike(data) {
       }
     }
   }
-
   for (; j < m0; ++j) {
     merges[j] = groups0[j];
   }
-
   return new Selection(merges, this._parents);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/order.js
@@ -17677,31 +17649,25 @@ function arraylike(data) {
       }
     }
   }
-
   return this;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/sort.js
 
 /* harmony default export */ function sort(compare) {
   if (!compare) compare = ascending;
-
   function compareNode(a, b) {
     return a && b ? compare(a.__data__, b.__data__) : !a - !b;
   }
-
   for (var groups = this._groups, m = groups.length, sortgroups = Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, sortgroup = sortgroups[j] = Array(n), node, i = 0; i < n; ++i) {
       if (node = group[i]) {
         sortgroup[i] = node;
       }
     }
-
     sortgroup.sort(compareNode);
   }
-
   return new Selection(sortgroups, this._parents).order();
 }
-
 function ascending(a, b) {
   return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
 }
@@ -17724,25 +17690,18 @@ function ascending(a, b) {
       if (node) return node;
     }
   }
-
   return null;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/size.js
 function _createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
-
 /* harmony default export */ function size() {
   var size = 0;
-
   for (var _iterator = _createForOfIteratorHelperLoose(this), _step; !(_step = _iterator()).done;) {
     _step.value;
     ++size;
   } // eslint-disable-line no-unused-vars
-
-
   return size;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/empty.js
@@ -17756,7 +17715,6 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       if (node = group[i]) callback.call(node, node.__data__, i, group);
     }
   }
-
   return this;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/namespaces.js
@@ -17772,7 +17730,7 @@ var xhtml = "http://www.w3.org/1999/xhtml";
 
 /* harmony default export */ function namespace(name) {
   var prefix = name += "",
-      i = prefix.indexOf(":");
+    i = prefix.indexOf(":");
   if (i >= 0 && (prefix = name.slice(0, i)) !== "xmlns") name = name.slice(i + 1);
   return namespaces.hasOwnProperty(prefix) ? {
     space: namespaces[prefix],
@@ -17781,53 +17739,44 @@ var xhtml = "http://www.w3.org/1999/xhtml";
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/attr.js
 
-
 function attrRemove(name) {
   return function () {
     this.removeAttribute(name);
   };
 }
-
 function attrRemoveNS(fullname) {
   return function () {
     this.removeAttributeNS(fullname.space, fullname.local);
   };
 }
-
 function attrConstant(name, value) {
   return function () {
     this.setAttribute(name, value);
   };
 }
-
 function attrConstantNS(fullname, value) {
   return function () {
     this.setAttributeNS(fullname.space, fullname.local, value);
   };
 }
-
 function attrFunction(name, value) {
   return function () {
     var v = value.apply(this, arguments);
     if (v == null) this.removeAttribute(name);else this.setAttribute(name, v);
   };
 }
-
 function attrFunctionNS(fullname, value) {
   return function () {
     var v = value.apply(this, arguments);
     if (v == null) this.removeAttributeNS(fullname.space, fullname.local);else this.setAttributeNS(fullname.space, fullname.local, v);
   };
 }
-
 /* harmony default export */ function attr(name, value) {
   var fullname = namespace(name);
-
   if (arguments.length < 2) {
     var node = this.node();
     return fullname.local ? node.getAttributeNS(fullname.space, fullname.local) : node.getAttribute(fullname);
   }
-
   return this.each((value == null ? fullname.local ? attrRemoveNS : attrRemove : typeof value === "function" ? fullname.local ? attrFunctionNS : attrFunction : fullname.local ? attrConstantNS : attrConstant)(fullname, value));
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/window.js
@@ -17838,26 +17787,22 @@ function attrFunctionNS(fullname, value) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/style.js
 
-
 function styleRemove(name) {
   return function () {
     this.style.removeProperty(name);
   };
 }
-
 function styleConstant(name, value, priority) {
   return function () {
     this.style.setProperty(name, value, priority);
   };
 }
-
 function styleFunction(name, value, priority) {
   return function () {
     var v = value.apply(this, arguments);
     if (v == null) this.style.removeProperty(name);else this.style.setProperty(name, v, priority);
   };
 }
-
 /* harmony default export */ function style(name, value, priority) {
   return arguments.length > 1 ? this.each((value == null ? styleRemove : typeof value === "function" ? styleFunction : styleConstant)(name, value, priority == null ? "" : priority)) : styleValue(this.node(), name);
 }
@@ -17870,20 +17815,17 @@ function propertyRemove(name) {
     delete this[name];
   };
 }
-
 function propertyConstant(name, value) {
   return function () {
     this[name] = value;
   };
 }
-
 function propertyFunction(name, value) {
   return function () {
     var v = value.apply(this, arguments);
     if (v == null) delete this[name];else this[name] = v;
   };
 }
-
 /* harmony default export */ function property(name, value) {
   return arguments.length > 1 ? this.each((value == null ? propertyRemove : typeof value === "function" ? propertyFunction : propertyConstant)(name, value)) : this.node()[name];
 }
@@ -17891,32 +17833,25 @@ function propertyFunction(name, value) {
 function classArray(string) {
   return string.trim().split(/^|\s+/);
 }
-
 function classList(node) {
   return node.classList || new ClassList(node);
 }
-
 function ClassList(node) {
   this._node = node;
   this._names = classArray(node.getAttribute("class") || "");
 }
-
 ClassList.prototype = {
   add: function add(name) {
     var i = this._names.indexOf(name);
-
     if (i < 0) {
       this._names.push(name);
-
       this._node.setAttribute("class", this._names.join(" "));
     }
   },
   remove: function remove(name) {
     var i = this._names.indexOf(name);
-
     if (i >= 0) {
       this._names.splice(i, 1);
-
       this._node.setAttribute("class", this._names.join(" "));
     }
   },
@@ -17924,80 +17859,65 @@ ClassList.prototype = {
     return this._names.indexOf(name) >= 0;
   }
 };
-
 function classedAdd(node, names) {
   var list = classList(node),
-      i = -1,
-      n = names.length;
-
+    i = -1,
+    n = names.length;
   while (++i < n) {
     list.add(names[i]);
   }
 }
-
 function classedRemove(node, names) {
   var list = classList(node),
-      i = -1,
-      n = names.length;
-
+    i = -1,
+    n = names.length;
   while (++i < n) {
     list.remove(names[i]);
   }
 }
-
 function classedTrue(names) {
   return function () {
     classedAdd(this, names);
   };
 }
-
 function classedFalse(names) {
   return function () {
     classedRemove(this, names);
   };
 }
-
 function classedFunction(names, value) {
   return function () {
     (value.apply(this, arguments) ? classedAdd : classedRemove)(this, names);
   };
 }
-
 /* harmony default export */ function classed(name, value) {
   var names = classArray(name + "");
-
   if (arguments.length < 2) {
     var list = classList(this.node()),
-        i = -1,
-        n = names.length;
-
+      i = -1,
+      n = names.length;
     while (++i < n) {
       if (!list.contains(names[i])) return !1;
     }
-
     return !0;
   }
-
   return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/text.js
 function textRemove() {
   this.textContent = "";
 }
-
 function textConstant(value) {
   return function () {
     this.textContent = value;
   };
 }
-
 function textFunction(value) {
   return function () {
     var v = value.apply(this, arguments);
     this.textContent = v == null ? "" : v;
   };
 }
-
 /* harmony default export */ function selection_text(value) {
   return arguments.length ? this.each(value == null ? textRemove : (typeof value === "function" ? textFunction : textConstant)(value)) : this.node().textContent;
 }
@@ -18005,20 +17925,17 @@ function textFunction(value) {
 function htmlRemove() {
   this.innerHTML = "";
 }
-
 function htmlConstant(value) {
   return function () {
     this.innerHTML = value;
   };
 }
-
 function htmlFunction(value) {
   return function () {
     var v = value.apply(this, arguments);
     this.innerHTML = v == null ? "" : v;
   };
 }
-
 /* harmony default export */ function html(value) {
   return arguments.length ? this.each(value == null ? htmlRemove : (typeof value === "function" ? htmlFunction : htmlConstant)(value)) : this.node().innerHTML;
 }
@@ -18026,7 +17943,6 @@ function htmlFunction(value) {
 function raise() {
   if (this.nextSibling) this.parentNode.appendChild(this);
 }
-
 /* harmony default export */ function selection_raise() {
   return this.each(raise);
 }
@@ -18034,28 +17950,24 @@ function raise() {
 function lower() {
   if (this.previousSibling) this.parentNode.insertBefore(this, this.parentNode.firstChild);
 }
-
 /* harmony default export */ function selection_lower() {
   return this.each(lower);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/creator.js
 
 
-
 function creatorInherit(name) {
   return function () {
     var document = this.ownerDocument,
-        uri = this.namespaceURI;
+      uri = this.namespaceURI;
     return uri === xhtml && document.documentElement.namespaceURI === xhtml ? document.createElement(name) : document.createElementNS(uri, name);
   };
 }
-
 function creatorFixed(fullname) {
   return function () {
     return this.ownerDocument.createElementNS(fullname.space, fullname.local);
   };
 }
-
 /* harmony default export */ function creator(name) {
   var fullname = namespace(name);
   return (fullname.local ? creatorFixed : creatorInherit)(fullname);
@@ -18071,14 +17983,12 @@ function creatorFixed(fullname) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/insert.js
 
 
-
 function constantNull() {
   return null;
 }
-
 /* harmony default export */ function insert(name, before) {
   var create = typeof name === "function" ? name : creator(name),
-      select = before == null ? constantNull : typeof before === "function" ? before : selector(before);
+    select = before == null ? constantNull : typeof before === "function" ? before : selector(before);
   return this.select(function () {
     return this.insertBefore(create.apply(this, arguments), select.apply(this, arguments) || null);
   });
@@ -18088,23 +17998,20 @@ function remove() {
   var parent = this.parentNode;
   if (parent) parent.removeChild(this);
 }
-
 /* harmony default export */ function selection_remove() {
   return this.each(remove);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/clone.js
 function selection_cloneShallow() {
   var clone = this.cloneNode(!1),
-      parent = this.parentNode;
+    parent = this.parentNode;
   return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
 }
-
 function selection_cloneDeep() {
   var clone = this.cloneNode(!0),
-      parent = this.parentNode;
+    parent = this.parentNode;
   return parent ? parent.insertBefore(clone, this.nextSibling) : clone;
 }
-
 /* harmony default export */ function clone(deep) {
   return this.select(deep ? selection_cloneDeep : selection_cloneShallow);
 }
@@ -18118,11 +18025,10 @@ function contextListener(listener) {
     listener.call(this, event, this.__data__);
   };
 }
-
 function parseTypenames(typenames) {
   return typenames.trim().split(/^|\s+/).map(function (t) {
     var name = "",
-        i = t.indexOf(".");
+      i = t.indexOf(".");
     if (i >= 0) name = t.slice(i + 1), t = t.slice(0, i);
     return {
       type: t,
@@ -18130,12 +18036,10 @@ function parseTypenames(typenames) {
     };
   });
 }
-
 function onRemove(typename) {
   return function () {
     var on = this.__on;
     if (!on) return;
-
     for (var j = 0, i = -1, m = on.length, o; j < m; ++j) {
       if (o = on[j], (!typename.type || o.type === typename.type) && o.name === typename.name) {
         this.removeEventListener(o.type, o.listener, o.options);
@@ -18143,16 +18047,14 @@ function onRemove(typename) {
         on[++i] = o;
       }
     }
-
     if (++i) on.length = i;else delete this.__on;
   };
 }
-
 function onAdd(typename, value, options) {
   return function () {
     var on = this.__on,
-        o,
-        listener = contextListener(value);
+      o,
+      listener = contextListener(value);
     if (on) for (var j = 0, m = on.length; j < m; ++j) {
       if ((o = on[j]).type === typename.type && o.name === typename.name) {
         this.removeEventListener(o.type, o.listener, o.options);
@@ -18172,16 +18074,13 @@ function onAdd(typename, value, options) {
     if (!on) this.__on = [o];else on.push(o);
   };
 }
-
 /* harmony default export */ function on(typename, value, options) {
   var typenames = parseTypenames(typename + ""),
-      i,
-      n = typenames.length,
-      t;
-
+    i,
+    n = typenames.length,
+    t;
   if (arguments.length < 2) {
     var on = this.node().__on;
-
     if (on) for (var j = 0, m = on.length, o; j < m; ++j) {
       for (i = 0, o = on[j]; i < n; ++i) {
         if ((t = typenames[i]).type === o.type && t.name === o.name) {
@@ -18191,44 +18090,35 @@ function onAdd(typename, value, options) {
     }
     return;
   }
-
   on = value ? onAdd : onRemove;
-
   for (i = 0; i < n; ++i) {
     this.each(on(typenames[i], value, options));
   }
-
   return this;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/dispatch.js
 
-
 function dispatchEvent(node, type, params) {
   var window = src_window(node),
-      event = window.CustomEvent;
-
+    event = window.CustomEvent;
   if (typeof event === "function") {
     event = new event(type, params);
   } else {
     event = window.document.createEvent("Event");
     if (params) event.initEvent(type, params.bubbles, params.cancelable), event.detail = params.detail;else event.initEvent(type, !1, !1);
   }
-
   node.dispatchEvent(event);
 }
-
 function dispatchConstant(type, params) {
   return function () {
     return dispatchEvent(this, type, params);
   };
 }
-
 function dispatchFunction(type, params) {
   return function () {
     return dispatchEvent(this, type, params.apply(this, arguments));
   };
 }
-
 /* harmony default export */ function dispatch(type, params) {
   return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
 }
@@ -18236,9 +18126,7 @@ function dispatchFunction(type, params) {
 var regenerator = __webpack_require__(502);
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/iterator.js
 
-
 var _marked = /*#__PURE__*/regenerator.mark(_callee);
-
 function _callee() {
   var groups, j, m, group, i, n, node;
   return regenerator.wrap(function (_context) {
@@ -18246,39 +18134,31 @@ function _callee() {
       switch (_context.prev = _context.next) {
         case 0:
           groups = this._groups, j = 0, m = groups.length;
-
         case 1:
           if (!(j < m)) {
             _context.next = 13;
             break;
           }
-
           group = groups[j], i = 0, n = group.length;
-
         case 3:
           if (!(i < n)) {
             _context.next = 10;
             break;
           }
-
           if (!(node = group[i])) {
             _context.next = 7;
             break;
           }
-
           _context.next = 7;
           return node;
-
         case 7:
           ++i;
           _context.next = 3;
           break;
-
         case 10:
           ++j;
           _context.next = 1;
           break;
-
         case 13:
         case "end":
           return _context.stop();
@@ -18322,21 +18202,17 @@ var _selection$prototype;
 
 
 
-
 var root = [null];
 function Selection(groups, parents) {
   this._groups = groups;
   this._parents = parents;
 }
-
 function selection() {
   return new Selection([[document.documentElement]], root);
 }
-
 function selection_selection() {
   return this;
 }
-
 Selection.prototype = selection.prototype = (_selection$prototype = {
   constructor: Selection,
   select: selection_select,
@@ -18382,17 +18258,14 @@ Selection.prototype = selection.prototype = (_selection$prototype = {
 }
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
 
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
 /**
  * Base class to generate billboard.js plugin
  * @class Plugin
  */
-
 /**
  * Version info string for plugin
  * @name version
@@ -18412,64 +18285,54 @@ var Plugin = /*#__PURE__*/function () {
     if (options === void 0) {
       options = {};
     }
-
     this.$$ = void 0;
     this.options = void 0;
     this.options = options;
   }
+
   /**
    * Lifecycle hook for 'beforeInit' phase.
    * @private
    */
-
-
   var _proto = Plugin.prototype;
-
   _proto.$beforeInit = function $beforeInit() {}
+
   /**
    * Lifecycle hook for 'init' phase.
    * @private
-   */
-  ;
-
+   */;
   _proto.$init = function $init() {}
+
   /**
    * Lifecycle hook for 'afterInit' phase.
    * @private
-   */
-  ;
-
+   */;
   _proto.$afterInit = function $afterInit() {}
+
   /**
    * Lifecycle hook for 'redraw' phase.
    * @private
-   */
-  ;
-
+   */;
   _proto.$redraw = function $redraw() {}
+
   /**
    * Lifecycle hook for 'willDestroy' phase.
    * @private
-   */
-  ;
-
+   */;
   _proto.$willDestroy = function $willDestroy() {
     var _this = this;
-
     Object.keys(this).forEach(function (key) {
       _newArrowCheck(this, _this);
-
       this[key] = null;
       delete this[key];
     }.bind(this));
   };
-
   return Plugin;
 }();
-
-Plugin.version = "3.6.0-nightly-20221006004814";
+Plugin.version = "3.6.0-nightly-20221012004915";
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
+
 
 
 
@@ -18516,91 +18379,70 @@ Plugin.version = "3.6.0-nightly-20221006004814";
  *     ]
  * })
  */
-
 var BubbleCompare = /*#__PURE__*/function (_Plugin) {
   _inheritsLoose(BubbleCompare, _Plugin);
-
   function BubbleCompare(options) {
     var _this = _Plugin.call(this, options) || this;
-
     _this.$$ = void 0;
     return _assertThisInitialized(_this) || _assertThisInitialized(_this);
   }
-
   var _proto = BubbleCompare.prototype;
-
   _proto.$init = function $init() {
     var $$ = this.$$;
     $$.findClosest = this.findClosest.bind(this);
     $$.getBubbleR = this.getBubbleR.bind(this);
     $$.pointExpandedR = this.pointExpandedR.bind(this);
   };
-
   _proto.pointExpandedR = function pointExpandedR(d) {
     var baseR = this.getBubbleR(d),
-        _this$options$expandS = this.options.expandScale,
-        expandScale = _this$options$expandS === void 0 ? 1 : _this$options$expandS;
+      _this$options$expandS = this.options.expandScale,
+      expandScale = _this$options$expandS === void 0 ? 1 : _this$options$expandS;
     BubbleCompare.raiseFocusedBubbleLayer(d);
     this.changeCursorPoint();
     return baseR * expandScale;
   };
-
   BubbleCompare.raiseFocusedBubbleLayer = function raiseFocusedBubbleLayer(d) {
     d.raise && src_select(d.node().parentNode.parentNode).raise();
   };
-
   _proto.changeCursorPoint = function changeCursorPoint() {
     this.$$.$el.svg.select(".bb-event-rect").style("cursor", "pointer");
   };
-
   _proto.findClosest = function findClosest(values, pos) {
     var _this2 = this,
-        $$ = this.$$;
-
+      $$ = this.$$;
     return values.filter(function (v) {
       _newArrowCheck(this, _this2);
-
       return v && !$$.isBarType(v.id);
     }.bind(this)).reduce(function (acc, cur) {
       _newArrowCheck(this, _this2);
-
       var d = $$.dist(cur, pos);
       return d < this.getBubbleR(cur) ? cur : acc;
     }.bind(this), 0);
   };
-
   _proto.getBubbleR = function getBubbleR(d) {
     var _this3 = this,
-        _this$options = this.options,
-        minR = _this$options.minR,
-        maxR = _this$options.maxR,
-        curVal = this.getZData(d);
-
+      _this$options = this.options,
+      minR = _this$options.minR,
+      maxR = _this$options.maxR,
+      curVal = this.getZData(d);
     if (!curVal) return minR;
-
     var _this$$$$data$targets = this.$$.data.targets.reduce(function (_ref, cur) {
-      var accMin = _ref[0],
+        var accMin = _ref[0],
           accMax = _ref[1];
-
-      _newArrowCheck(this, _this3);
-
-      var val = this.getZData(cur.values[0]);
-      return [Math.min(accMin, val), Math.max(accMax, val)];
-    }.bind(this), [1e4, 0]),
-        min = _this$$$$data$targets[0],
-        max = _this$$$$data$targets[1],
-        size = min > 0 && max === min ? 0 : curVal / max;
-
+        _newArrowCheck(this, _this3);
+        var val = this.getZData(cur.values[0]);
+        return [Math.min(accMin, val), Math.max(accMax, val)];
+      }.bind(this), [1e4, 0]),
+      min = _this$$$$data$targets[0],
+      max = _this$$$$data$targets[1],
+      size = min > 0 && max === min ? 0 : curVal / max;
     return Math.abs(size) * (maxR - minR) + minR;
   };
-
   _proto.getZData = function getZData(d) {
     return this.$$.isBubbleZType(d) ? this.$$.getBubbleZData(d.value, "z") : d.value;
   };
-
   return BubbleCompare;
 }(Plugin);
-
 BubbleCompare.version = "0.0.1";
 
 
@@ -18630,22 +18472,18 @@ try {
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var _typeof = (__webpack_require__(504)["default"]);
-
 function _regeneratorRuntime() {
-  "use strict";
-  /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
-
+  "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
   module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
     return exports;
   }, module.exports.__esModule = true, module.exports["default"] = module.exports;
   var exports = {},
-      Op = Object.prototype,
-      hasOwn = Op.hasOwnProperty,
-      $Symbol = "function" == typeof Symbol ? Symbol : {},
-      iteratorSymbol = $Symbol.iterator || "@@iterator",
-      asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
-      toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-
+    Op = Object.prototype,
+    hasOwn = Op.hasOwnProperty,
+    $Symbol = "function" == typeof Symbol ? Symbol : {},
+    iteratorSymbol = $Symbol.iterator || "@@iterator",
+    asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
+    toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
   function define(obj, key, value) {
     return Object.defineProperty(obj, key, {
       value: value,
@@ -18654,7 +18492,6 @@ function _regeneratorRuntime() {
       writable: !0
     }), obj[key];
   }
-
   try {
     define({}, "");
   } catch (err) {
@@ -18662,40 +18499,33 @@ function _regeneratorRuntime() {
       return obj[key] = value;
     };
   }
-
   function wrap(innerFn, outerFn, self, tryLocsList) {
     var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
-        generator = Object.create(protoGenerator.prototype),
-        context = new Context(tryLocsList || []);
+      generator = Object.create(protoGenerator.prototype),
+      context = new Context(tryLocsList || []);
     return generator._invoke = function (innerFn, self, context) {
       var state = "suspendedStart";
       return function (method, arg) {
         if ("executing" === state) throw new Error("Generator is already running");
-
         if ("completed" === state) {
           if ("throw" === method) throw arg;
           return doneResult();
         }
-
         for (context.method = method, context.arg = arg;;) {
           var delegate = context.delegate;
-
           if (delegate) {
             var delegateResult = maybeInvokeDelegate(delegate, context);
-
             if (delegateResult) {
               if (delegateResult === ContinueSentinel) continue;
               return delegateResult;
             }
           }
-
           if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
             if ("suspendedStart" === state) throw state = "completed", context.arg;
             context.dispatchException(context.arg);
           } else "return" === context.method && context.abrupt("return", context.arg);
           state = "executing";
           var record = tryCatch(innerFn, self, context);
-
           if ("normal" === record.type) {
             if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
             return {
@@ -18703,13 +18533,11 @@ function _regeneratorRuntime() {
               done: context.done
             };
           }
-
           "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
         }
       };
     }(innerFn, self, context), generator;
   }
-
   function tryCatch(fn, obj, arg) {
     try {
       return {
@@ -18723,25 +18551,19 @@ function _regeneratorRuntime() {
       };
     }
   }
-
   exports.wrap = wrap;
   var ContinueSentinel = {};
-
   function Generator() {}
-
   function GeneratorFunction() {}
-
   function GeneratorFunctionPrototype() {}
-
   var IteratorPrototype = {};
   define(IteratorPrototype, iteratorSymbol, function () {
     return this;
   });
   var getProto = Object.getPrototypeOf,
-      NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+    NativeIteratorPrototype = getProto && getProto(getProto(values([])));
   NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
   var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
-
   function defineIteratorMethods(prototype) {
     ["next", "throw", "return"].forEach(function (method) {
       define(prototype, method, function (arg) {
@@ -18749,14 +18571,12 @@ function _regeneratorRuntime() {
       });
     });
   }
-
   function AsyncIterator(generator, PromiseImpl) {
     function invoke(method, arg, resolve, reject) {
       var record = tryCatch(generator[method], generator, arg);
-
       if ("throw" !== record.type) {
         var result = record.arg,
-            value = result.value;
+          value = result.value;
         return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
           invoke("next", value, resolve, reject);
         }, function (err) {
@@ -18767,91 +18587,73 @@ function _regeneratorRuntime() {
           return invoke("throw", error, resolve, reject);
         });
       }
-
       reject(record.arg);
     }
-
     var previousPromise;
-
     this._invoke = function (method, arg) {
       function callInvokeWithMethodAndArg() {
         return new PromiseImpl(function (resolve, reject) {
           invoke(method, arg, resolve, reject);
         });
       }
-
       return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
     };
   }
-
   function maybeInvokeDelegate(delegate, context) {
     var method = delegate.iterator[context.method];
-
     if (undefined === method) {
       if (context.delegate = null, "throw" === context.method) {
         if (delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method)) return ContinueSentinel;
         context.method = "throw", context.arg = new TypeError("The iterator does not provide a 'throw' method");
       }
-
       return ContinueSentinel;
     }
-
     var record = tryCatch(method, delegate.iterator, context.arg);
     if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
     var info = record.arg;
     return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
   }
-
   function pushTryEntry(locs) {
     var entry = {
       tryLoc: locs[0]
     };
     1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
   }
-
   function resetTryEntry(entry) {
     var record = entry.completion || {};
     record.type = "normal", delete record.arg, entry.completion = record;
   }
-
   function Context(tryLocsList) {
     this.tryEntries = [{
       tryLoc: "root"
     }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
   }
-
   function values(iterable) {
     if (iterable) {
       var iteratorMethod = iterable[iteratorSymbol];
       if (iteratorMethod) return iteratorMethod.call(iterable);
       if ("function" == typeof iterable.next) return iterable;
-
       if (!isNaN(iterable.length)) {
         var i = -1,
-            next = function next() {
-          for (; ++i < iterable.length;) {
-            if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-          }
-
-          return next.value = undefined, next.done = !0, next;
-        };
-
+          next = function next() {
+            for (; ++i < iterable.length;) {
+              if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
+            }
+            return next.value = undefined, next.done = !0, next;
+          };
         return next.next = next;
       }
     }
-
     return {
       next: doneResult
     };
   }
-
   function doneResult() {
     return {
       value: undefined,
       done: !0
     };
   }
-
   return GeneratorFunction.prototype = GeneratorFunctionPrototype, define(Gp, "constructor", GeneratorFunctionPrototype), define(GeneratorFunctionPrototype, "constructor", GeneratorFunction), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
     var ctor = "function" == typeof genFun && genFun.constructor;
     return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
@@ -18875,17 +18677,14 @@ function _regeneratorRuntime() {
     return "[object Generator]";
   }), exports.keys = function (object) {
     var keys = [];
-
     for (var key in object) {
       keys.push(key);
     }
-
     return keys.reverse(), function next() {
       for (; keys.length;) {
         var key = keys.pop();
         if (key in object) return next.value = key, next.done = !1, next;
       }
-
       return next.done = !0, next;
     };
   }, exports.values = values, Context.prototype = {
@@ -18904,20 +18703,16 @@ function _regeneratorRuntime() {
     dispatchException: function dispatchException(exception) {
       if (this.done) throw exception;
       var context = this;
-
       function handle(loc, caught) {
         return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
       }
-
       for (var i = this.tryEntries.length - 1; i >= 0; --i) {
         var entry = this.tryEntries[i],
-            record = entry.completion;
+          record = entry.completion;
         if ("root" === entry.tryLoc) return handle("end");
-
         if (entry.tryLoc <= this.prev) {
           var hasCatch = hasOwn.call(entry, "catchLoc"),
-              hasFinally = hasOwn.call(entry, "finallyLoc");
-
+            hasFinally = hasOwn.call(entry, "finallyLoc");
           if (hasCatch && hasFinally) {
             if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
             if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
@@ -18933,13 +18728,11 @@ function _regeneratorRuntime() {
     abrupt: function abrupt(type, arg) {
       for (var i = this.tryEntries.length - 1; i >= 0; --i) {
         var entry = this.tryEntries[i];
-
         if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
           var finallyEntry = entry;
           break;
         }
       }
-
       finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
       var record = finallyEntry ? finallyEntry.completion : {};
       return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
@@ -18957,19 +18750,15 @@ function _regeneratorRuntime() {
     "catch": function _catch(tryLoc) {
       for (var i = this.tryEntries.length - 1; i >= 0; --i) {
         var entry = this.tryEntries[i];
-
         if (entry.tryLoc === tryLoc) {
           var record = entry.completion;
-
           if ("throw" === record.type) {
             var thrown = record.arg;
             resetTryEntry(entry);
           }
-
           return thrown;
         }
       }
-
       throw new Error("illegal catch attempt");
     },
     delegateYield: function delegateYield(iterable, resultName, nextLoc) {
@@ -18981,7 +18770,6 @@ function _regeneratorRuntime() {
     }
   }, exports;
 }
-
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
@@ -18997,7 +18785,6 @@ function _typeof(obj) {
     return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
   }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(obj);
 }
-
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ })

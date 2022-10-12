@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.0-nightly-20221006004814
+ * @version 3.6.0-nightly-20221012004915
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -145,20 +145,16 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-
 var _assign = function __assign() {
   _assign = Object.assign || function (t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
-
       for (var p in s) {
         if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
       }
     }
-
     return t;
   };
-
   return _assign.apply(this, arguments);
 };
 function __spreadArray(to, from, pack) {
@@ -21426,7 +21422,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.0-nightly-20221006004814
+ * @version 3.6.0-nightly-20221012004915
  */
 var bb = {
     /**
@@ -21436,7 +21432,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.0-nightly-20221006004814",
+    version: "3.6.0-nightly-20221012004915",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
