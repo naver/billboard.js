@@ -504,6 +504,12 @@ export interface Chart {
 	 * @param [option.width={currentWidth}] width
 	 * @param [option.height={currentHeigth}] height
 	 * @param [option.preserveAspectRatio=true] Preserve aspect ratio on given size
+	 * @param [option.preserveFontStyle=false]  Preserve font style(font-family).
+	 * **NOTE:**
+	 *   - This option is useful when outlink web font style's `font-family` are applied to chart's text element.
+	 *   - Text element's position(especially "transformed") can't be preserved correctly according the page's layout condition.
+	 *   - If need to preserve accurate text position, embed the web font data within to the page and set `preserveFontStyle=false`.
+	 *     - Checkout the embed example: https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html
 	 * @param callback The callback to be invoked when export is ready.
 	 */
 	export(this: Chart, option?: {
@@ -511,6 +517,7 @@ export interface Chart {
 		height?: number;
 		mimeType?: string;
 		preserveAspectRatio?: boolean;
+		preserveFontStyle?: boolean;
 	}, callback?: (this: Chart, dataUrl: string) => void): string;
 
 	/**
