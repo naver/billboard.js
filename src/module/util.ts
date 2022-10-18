@@ -497,7 +497,7 @@ function getCssRules(styleSheets: any[]) {
 				rules = rules.concat(toArray(sheet.cssRules));
 			}
 		} catch (e) {
-			console.error(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
+			window.console?.warn(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
 		}
 	});
 
