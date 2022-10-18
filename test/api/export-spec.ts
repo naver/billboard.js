@@ -199,9 +199,18 @@ describe("API export", () => {
 		});
 
 		const expected = [
-			"P9CArwf2B9IIJoEKAAdimvjBKA5GoLnJZFJOuSu",
-			"oANQ+oASUgBJQAkpACSiBEiOgArDEHK7NVQJKQA",
-			"SWgBJTA/wPqQjRHnDx9rAAAAABJRU5ErkJggg=="
+			// pattern for local
+			[
+				"P9CArwf2B9IIJoEKAAdimvjBKA5GoLnJZFJOuSu",
+				"oANQ+oASUgBJQAkpACSiBEiOgArDEHK7NVQJKQA",
+				"SWgBJTA/wPqQjRHnDx9rAAAAABJRU5ErkJggg=="
+			],
+			// pattern for CI
+			[
+				"SR0IArs4c6QAAIABJREFUeF7snXmcXEXV/p9TdwI",
+				"ALxJBBVAaiTpCOq8cRzdkU0qkwmo8lkknMpovmj2",
+				"AAmQAAnESOD/AxjGOWWrWLsNAAAAAElFTkSuQmCC"
+			]
 		];
 
 		it("check when 'preserveFontStyle=false'", done => {
@@ -209,7 +218,7 @@ describe("API export", () => {
 				preserveFontStyle: false
 			}, function(dataUrl) {
 				expect(
-					expected.every(v => dataUrl.indexOf(v) == -1)
+					expected.some(pttr => pttr.every(v => dataUrl.indexOf(v) == -1))
 				).to.be.true;
 
 				done();
@@ -236,10 +245,8 @@ describe("API export", () => {
 				chart.export({
 					preserveFontStyle: true
 				}, function(dataUrl) {
-					console.log(dataUrl)
-
 					expect(
-						expected.every(v => dataUrl.indexOf(v) >= 0)
+						expected.some(pttr => pttr.every(v => dataUrl.indexOf(v) >= 0))
 					).to.be.true;
 	
 					chart.$.chart
