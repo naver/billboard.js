@@ -5589,6 +5589,85 @@ d3.select(".chart_area")
 				]
 			}
 		},
+		ExportPreserveFontStyle: {
+			description: "Export with preserving web font-family.",
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+					],
+					types: {
+						data1: "bar",
+						data2: "area"
+					},
+					labels: true
+				},
+				grid: {
+					x: {
+						lines: [
+							{
+								value: 1,
+								text: "Label 1",
+								position: 'middle'
+							},
+							{
+								value: 3,
+								text: "Label 3"
+							}
+						]
+					},
+					y: {
+						lines: [
+							{
+								value: 4000,
+								text: "Y Label 1"
+							},
+						]
+					}
+				},
+			},
+			style: [
+				`@font-face {
+  font-family: 'Alfa Slab One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/alfaslabone/v17/6NUQ8FmMKwSEKjnm5-4v-4Jh2dJhe_escmA.woff2) format('woff2');
+}
+	
+#exportPreserveFontStyle svg {
+  font-family: 'Alfa Slab One';
+}`
+			],
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						// crate a div element
+						var exported = document.createElement("div");
+
+						document.getElementById("exportPreserveFontStyle")
+							.insertAdjacentElement("afterend", exported);
+
+						// Preserve web-font style
+						chart.export({
+							preserveFontStyle: true
+						}, function(dataUrl) {
+							var img = document.getElementById("exported");
+
+							if (!img) {
+								img = document.createElement("img");
+
+								img.id = "exported";
+								exported.appendChild(img);
+							}
+
+							img.src = dataUrl;
+						});
+					}, 1000)
+				]
+			}
+		},
 		Flow: {
 			options: {
 				data: {
