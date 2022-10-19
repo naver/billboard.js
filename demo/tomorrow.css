@@ -49,11 +49,15 @@
     max-height: 80px;
     overflow: auto;
   }
- 
-  .js code {
+
+  .chart_area, .js code {
     overflow-y: scroll;
     margin: 0 auto;
     height: calc(100vh - 200px);
+  }
+
+  div.chart_area {
+    height: calc(100vh - 100px);
   }
 }
 
