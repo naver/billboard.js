@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.0-nightly-20221012004915
+ * @version 3.6.0-nightly-20221019004730
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -547,13 +547,14 @@ function addCssRules(style, selector, prop) {
 function getCssRules(styleSheets) {
     var rules = [];
     styleSheets.forEach(function (sheet) {
+        var _a;
         try {
             if (sheet.cssRules && sheet.cssRules.length) {
                 rules = rules.concat(toArray(sheet.cssRules));
             }
         }
         catch (e) {
-            console.error("Error while reading rules from ".concat(sheet.href, ": ").concat(e.toString()));
+            (_a = win.console) === null || _a === void 0 ? void 0 : _a.warn("Error while reading rules from ".concat(sheet.href, ": ").concat(e.toString()));
         }
     });
     return rules;
@@ -9783,8 +9784,11 @@ var apiData = { data: data };
  * @private
  * @see https://developer.mozilla.org/ko/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
  */
-var b64EncodeUnicode = function (str) { return btoa(encodeURIComponent(str)
-    .replace(/%([0-9A-F]{2})/g, function (match, p) { return String.fromCharCode(Number("0x".concat(p))); })); };
+var b64EncodeUnicode = function (str) {
+    var _a;
+    return (_a = win.btoa) === null || _a === void 0 ? void 0 : _a.call(win, encodeURIComponent(str)
+        .replace(/%([0-9A-F]{2})/g, function (match, p) { return String.fromCharCode(Number("0x".concat(p))); }));
+};
 /**
  * Convert svg node to data url
  * @param {HTMLElement} node target node
@@ -9801,6 +9805,15 @@ function nodeToSvgDataUrl(node, option, orgSize) {
         .filter(function (r) { return r.cssText; })
         .map(function (r) { return r.cssText; });
     clone.setAttribute("xmlns", namespaces.xhtml);
+    // remove padding & margin
+    clone.style.margin = "0";
+    clone.style.padding = "0";
+    // remove text nodes
+    if (option.preserveFontStyle) {
+        clone.querySelectorAll("text").forEach(function (t) {
+            t.innerHTML = "";
+        });
+    }
     var nodeXml = serializer.serializeToString(clone);
     // escape css for XML
     var style = doc.createElement("style");
@@ -9812,12 +9825,113 @@ function nodeToSvgDataUrl(node, option, orgSize) {
         .replace("/\n/g", "%0A");
     return "data:image/svg+xml;base64,".concat(b64EncodeUnicode(dataStr));
 }
+/**
+ * Get coordinate of the element
+ * @param {SVGElement} elem Target element
+ * @param {object} svgOffset SVG offset
+ * @returns {object}
+ * @private
+ */
+function getCoords(elem, svgOffset) {
+    var top = svgOffset.top, left = svgOffset.left;
+    var _a = elem.getBBox(), x = _a.x, y = _a.y;
+    var _b = elem.getScreenCTM(), a = _b.a, b = _b.b, c = _b.c, d = _b.d, e = _b.e, f = _b.f;
+    var _c = elem.getBoundingClientRect(), width = _c.width, height = _c.height;
+    return {
+        x: (a * x) + (c * y) + e - left,
+        y: (b * x) + (d * y) + f - top + (height - Math.round(height / 4)),
+        width: width,
+        height: height
+    };
+}
+/**
+ * Get text glyph
+ * @param {SVGTextElement} svg Target svg node
+ * @returns {Array}
+ * @private
+ */
+function getGlyph(svg) {
+    var _a = svg.getBoundingClientRect(), left = _a.left, top = _a.top;
+    var filterFn = function (t) { return t.textContent || t.childElementCount; };
+    var glyph = [];
+    toArray(svg.querySelectorAll("text"))
+        .filter(filterFn)
+        .forEach(function (t) {
+        var getStyleFn = function (ts) {
+            var _a;
+            var _b = win.getComputedStyle(ts), fill = _b.fill, fontFamily = _b.fontFamily, fontSize = _b.fontSize, textAnchor = _b.textAnchor, transform = _b.transform;
+            var _c = getCoords(ts, { left: left, top: top }), x = _c.x, y = _c.y, width = _c.width, height = _c.height;
+            return _a = {},
+                _a[ts.textContent] = {
+                    x: x,
+                    y: y,
+                    width: width,
+                    height: height,
+                    fill: fill,
+                    fontFamily: fontFamily,
+                    fontSize: fontSize,
+                    textAnchor: textAnchor,
+                    transform: transform
+                },
+                _a;
+        };
+        if (t.childElementCount > 1) {
+            var text = [];
+            toArray(t.querySelectorAll("tspan"))
+                .filter(filterFn)
+                .forEach(function (ts) {
+                glyph.push(getStyleFn(ts));
+            });
+            return text;
+        }
+        else {
+            glyph.push(getStyleFn(t));
+        }
+    });
+    return glyph;
+}
+/**
+ * Render text glyph
+ * - NOTE: Called when the 'preserveFontStyle' option is true
+ * @param {CanvasRenderingContext2D} ctx Canvas context
+ * @param {Array} glyph Text glyph array
+ * @private
+ */
+function renderText(ctx, glyph) {
+    glyph.forEach(function (g) {
+        Object.keys(g).forEach(function (key) {
+            var _a = g[key], x = _a.x, y = _a.y, width = _a.width, height = _a.height, fill = _a.fill, fontFamily = _a.fontFamily, fontSize = _a.fontSize, transform = _a.transform;
+            ctx.save();
+            ctx.font = "".concat(fontSize, " ").concat(fontFamily);
+            ctx.fillStyle = fill;
+            if (transform === "none") {
+                ctx.fillText(key, x, y);
+            }
+            else {
+                var args = transform
+                    .replace(/(matrix|\(|\))/g, "")
+                    .split(",");
+                if (args.splice(4).every(function (v) { return +v === 0; })) {
+                    args.push(x + width - (width / 4));
+                    args.push(y - height + (height / 3));
+                }
+                else {
+                    args.push(x);
+                    args.push(y);
+                }
+                ctx.transform.apply(ctx, args);
+                ctx.fillText(key, 0, 0);
+            }
+            ctx.restore();
+        });
+    });
+}
 var apiExport = {
     /**
      * Export chart as an image.
      * - **NOTE:**
      *   - IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
-     *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
+     *   - Every style applied to the chart & the basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
      * @function export
      * @instance
      * @memberof Chart
@@ -9826,6 +9940,12 @@ var apiExport = {
      * @param {number} [option.width={currentWidth}] width
      * @param {number} [option.height={currentHeigth}] height
      * @param {boolean} [option.preserveAspectRatio=true] Preserve aspect ratio on given size
+     * @param {boolean} [option.preserveFontStyle=false] Preserve font style(font-family).<br>
+     * **NOTE:**
+     *   - This option is useful when outlink web font style's `font-family` are applied to chart's text element.
+     *   - Text element's position(especially "transformed") can't be preserved correctly according the page's layout condition.
+     *   - If need to preserve accurate text position, embed the web font data within to the page and set `preserveFontStyle=false`.
+     *     - Checkout the embed example: <a href="https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html">https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html</a>
      * @param {Function} [callback] The callback to be invoked when export is ready.
      * @returns {string} dataURI
      * @example
@@ -9849,6 +9969,7 @@ var apiExport = {
      *      width: 800,
      *      height: 600,
      *      preserveAspectRatio: false,
+     *      preserveFontStyle: false,
      *      mimeType: "image/png"
      *    },
      *    dataUrl => { ... }
@@ -9857,15 +9978,17 @@ var apiExport = {
     "export": function (option, callback) {
         var _this = this;
         var $$ = this.internal;
-        var state = $$.state, chart = $$.$el.chart;
-        var _a = state.current, width = _a.width, height = _a.height;
+        var state = $$.state, _a = $$.$el, chart = _a.chart, svg = _a.svg;
+        var _b = state.current, width = _b.width, height = _b.height;
         var opt = mergeObj({
             width: width,
             height: height,
             preserveAspectRatio: true,
+            preserveFontStyle: false,
             mimeType: "image/png"
         }, option);
         var svgDataUrl = nodeToSvgDataUrl(chart.node(), opt, { width: width, height: height });
+        var glyph = opt.preserveFontStyle ? getGlyph(svg.node()) : [];
         if (callback && isFunction(callback)) {
             var img_1 = new Image();
             img_1.crossOrigin = "Anonymous";
@@ -9875,6 +9998,11 @@ var apiExport = {
                 canvas.width = opt.width || width;
                 canvas.height = opt.height || height;
                 ctx.drawImage(img_1, 0, 0);
+                if (glyph.length) {
+                    renderText(ctx, glyph);
+                    // release glyph array
+                    glyph.length = 0;
+                }
                 callback.bind(_this)(canvas.toDataURL(opt.mimeType));
             };
             img_1.src = svgDataUrl;
@@ -13761,7 +13889,7 @@ var grid = {
         xgridLine.append("line")
             .style("opacity", "0");
         xgridLine.append("text")
-            .attr("transform", isRotated ? "" : "rotate(-90)")
+            .attr("transform", isRotated ? null : "rotate(-90)")
             .attr("dy", -5)
             .style("opacity", "0");
         xLines = xgridLine.merge(xLines);
@@ -21422,7 +21550,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.0-nightly-20221012004915
+ * @version 3.6.0-nightly-20221019004730
  */
 var bb = {
     /**
@@ -21432,7 +21560,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.0-nightly-20221012004915",
+    version: "3.6.0-nightly-20221019004730",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

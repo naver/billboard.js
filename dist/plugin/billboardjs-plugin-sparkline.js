@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.0-nightly-20221012004915
+ * @version 3.6.0-nightly-20221019004730
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -364,7 +364,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.6.0-nightly-20221012004915";
+Plugin.version = "3.6.0-nightly-20221019004730";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**
@@ -942,7 +942,8 @@ function getCssRules(styleSheets) {
         rules = rules.concat(toArray(sheet.cssRules));
       }
     } catch (e) {
-      console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
+      var _window$console;
+      (_window$console = win.console) == null ? void 0 : _window$console.warn("Error while reading rules from " + sheet.href + ": " + e.toString());
     }
   }.bind(this));
   return rules;

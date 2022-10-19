@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.0-nightly-20221012004915
+ * @version 3.6.0-nightly-20221019004730
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -22233,7 +22233,8 @@ function getCssRules(styleSheets) {
         rules = rules.concat(toArray(sheet.cssRules));
       }
     } catch (e) {
-      console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
+      var _window$console;
+      (_window$console = win.console) == null ? void 0 : _window$console.warn("Error while reading rules from " + sheet.href + ": " + e.toString());
     }
   }.bind(this));
   return rules;
@@ -35253,7 +35254,7 @@ var export_this = undefined;
 var b64EncodeUnicode = function (str) {
   var _this2 = this;
   _newArrowCheck(this, export_this);
-  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p) {
+  return win.btoa == null ? void 0 : win.btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p) {
     _newArrowCheck(this, _this2);
     return String.fromCharCode(+("0x" + p));
   }.bind(this)));
@@ -35282,6 +35283,18 @@ function nodeToSvgDataUrl(node, option, orgSize) {
       return r.cssText;
     }.bind(this));
   clone.setAttribute("xmlns", namespaces.xhtml);
+
+  // remove padding & margin
+  clone.style.margin = "0";
+  clone.style.padding = "0";
+
+  // remove text nodes
+  if (option.preserveFontStyle) {
+    clone.querySelectorAll("text").forEach(function (t) {
+      _newArrowCheck(this, _this3);
+      t.innerHTML = "";
+    }.bind(this));
+  }
   var nodeXml = serializer.serializeToString(clone),
     style = browser_doc.createElement("style"); // escape css for XML
   style.appendChild(browser_doc.createTextNode(cssText.join("\n")));
@@ -35290,12 +35303,154 @@ function nodeToSvgDataUrl(node, option, orgSize) {
   // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
   return "data:image/svg+xml;base64," + b64EncodeUnicode(dataStr);
 }
+
+/**
+ * Get coordinate of the element
+ * @param {SVGElement} elem Target element
+ * @param {object} svgOffset SVG offset
+ * @returns {object}
+ * @private
+ */
+function getCoords(elem, svgOffset) {
+  var top = svgOffset.top,
+    left = svgOffset.left,
+    _elem$getBBox = elem.getBBox(),
+    x = _elem$getBBox.x,
+    y = _elem$getBBox.y,
+    _elem$getScreenCTM = elem.getScreenCTM(),
+    a = _elem$getScreenCTM.a,
+    b = _elem$getScreenCTM.b,
+    c = _elem$getScreenCTM.c,
+    d = _elem$getScreenCTM.d,
+    e = _elem$getScreenCTM.e,
+    f = _elem$getScreenCTM.f,
+    _elem$getBoundingClie = elem.getBoundingClientRect(),
+    width = _elem$getBoundingClie.width,
+    height = _elem$getBoundingClie.height;
+  return {
+    x: a * x + c * y + e - left,
+    y: b * x + d * y + f - top + (height - Math.round(height / 4)),
+    width: width,
+    height: height
+  };
+}
+
+/**
+ * Get text glyph
+ * @param {SVGTextElement} svg Target svg node
+ * @returns {Array}
+ * @private
+ */
+function getGlyph(svg) {
+  var _this4 = this,
+    _svg$getBoundingClien = svg.getBoundingClientRect(),
+    left = _svg$getBoundingClien.left,
+    top = _svg$getBoundingClien.top,
+    filterFn = function (t) {
+      _newArrowCheck(this, _this4);
+      return t.textContent || t.childElementCount;
+    }.bind(this),
+    glyph = [];
+  toArray(svg.querySelectorAll("text")).filter(filterFn).forEach(function (t) {
+    var _this5 = this;
+    _newArrowCheck(this, _this4);
+    // eslint-disable-line
+    var getStyleFn = function (ts) {
+      var _ref2;
+      _newArrowCheck(this, _this5);
+      var _window$getComputedSt = win.getComputedStyle(ts),
+        fill = _window$getComputedSt.fill,
+        fontFamily = _window$getComputedSt.fontFamily,
+        fontSize = _window$getComputedSt.fontSize,
+        textAnchor = _window$getComputedSt.textAnchor,
+        transform = _window$getComputedSt.transform,
+        _getCoords = getCoords(ts, {
+          left: left,
+          top: top
+        }),
+        x = _getCoords.x,
+        y = _getCoords.y,
+        width = _getCoords.width,
+        height = _getCoords.height;
+      return _ref2 = {}, _ref2[ts.textContent] = {
+        x: x,
+        y: y,
+        width: width,
+        height: height,
+        fill: fill,
+        fontFamily: fontFamily,
+        fontSize: fontSize,
+        textAnchor: textAnchor,
+        transform: transform
+      }, _ref2;
+    }.bind(this);
+    if (t.childElementCount > 1) {
+      toArray(t.querySelectorAll("tspan")).filter(filterFn).forEach(function (ts) {
+        _newArrowCheck(this, _this5);
+        glyph.push(getStyleFn(ts));
+      }.bind(this));
+      return [];
+    } else {
+      glyph.push(getStyleFn(t));
+    }
+  }.bind(this));
+  return glyph;
+}
+
+/**
+ * Render text glyph
+ * - NOTE: Called when the 'preserveFontStyle' option is true
+ * @param {CanvasRenderingContext2D} ctx Canvas context
+ * @param {Array} glyph Text glyph array
+ * @private
+ */
+function renderText(ctx, glyph) {
+  var _this6 = this;
+  glyph.forEach(function (g) {
+    var _this7 = this;
+    _newArrowCheck(this, _this6);
+    Object.keys(g).forEach(function (key) {
+      var _this8 = this;
+      _newArrowCheck(this, _this7);
+      var _g$key = g[key],
+        x = _g$key.x,
+        y = _g$key.y,
+        width = _g$key.width,
+        height = _g$key.height,
+        fill = _g$key.fill,
+        fontFamily = _g$key.fontFamily,
+        fontSize = _g$key.fontSize,
+        transform = _g$key.transform;
+      ctx.save();
+      ctx.font = fontSize + " " + fontFamily;
+      ctx.fillStyle = fill;
+      if (transform === "none") {
+        ctx.fillText(key, x, y);
+      } else {
+        var args = transform.replace(/(matrix|\(|\))/g, "").split(",");
+        if (args.splice(4).every(function (v) {
+          _newArrowCheck(this, _this8);
+          return +v === 0;
+        }.bind(this))) {
+          args.push(x + width - width / 4);
+          args.push(y - height + height / 3);
+        } else {
+          args.push(x);
+          args.push(y);
+        }
+        ctx.transform.apply(ctx, args);
+        ctx.fillText(key, 0, 0);
+      }
+      ctx.restore();
+    }.bind(this));
+  }.bind(this));
+}
 /* harmony default export */ var api_export = ({
   /**
    * Export chart as an image.
    * - **NOTE:**
    *   - IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
-   *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
+   *   - Every style applied to the chart & the basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
    * @function export
    * @instance
    * @memberof Chart
@@ -35304,6 +35459,12 @@ function nodeToSvgDataUrl(node, option, orgSize) {
    * @param {number} [option.width={currentWidth}] width
    * @param {number} [option.height={currentHeigth}] height
    * @param {boolean} [option.preserveAspectRatio=true] Preserve aspect ratio on given size
+   * @param {boolean} [option.preserveFontStyle=false] Preserve font style(font-family).<br>
+   * **NOTE:**
+   *   - This option is useful when outlink web font style's `font-family` are applied to chart's text element.
+   *   - Text element's position(especially "transformed") can't be preserved correctly according the page's layout condition.
+   *   - If need to preserve accurate text position, embed the web font data within to the page and set `preserveFontStyle=false`.
+   *     - Checkout the embed example: <a href="https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html">https://stackblitz.com/edit/zfbya9-8nf9nn?file=index.html</a>
    * @param {Function} [callback] The callback to be invoked when export is ready.
    * @returns {string} dataURI
    * @example
@@ -35327,15 +35488,18 @@ function nodeToSvgDataUrl(node, option, orgSize) {
    *      width: 800,
    *      height: 600,
    *      preserveAspectRatio: false,
+   *      preserveFontStyle: false,
    *      mimeType: "image/png"
    *    },
    *    dataUrl => { ... }
    *  );
    */export: function _export(option, callback) {
-    var _this4 = this,
+    var _this9 = this,
       $$ = this.internal,
       state = $$.state,
-      chart = $$.$el.chart,
+      _$$$$el = $$.$el,
+      chart = _$$$$el.chart,
+      svg = _$$$$el.svg,
       _state$current = state.current,
       width = _state$current.width,
       height = _state$current.height,
@@ -35343,22 +35507,30 @@ function nodeToSvgDataUrl(node, option, orgSize) {
         width: width,
         height: height,
         preserveAspectRatio: !0,
+        preserveFontStyle: !1,
         mimeType: "image/png"
       }, option),
       svgDataUrl = nodeToSvgDataUrl(chart.node(), opt, {
         width: width,
         height: height
-      });
+      }),
+      glyph = opt.preserveFontStyle ? getGlyph(svg.node()) : [];
     if (callback && isFunction(callback)) {
       var img = new Image();
       img.crossOrigin = "Anonymous";
       img.onload = function () {
-        _newArrowCheck(this, _this4);
+        _newArrowCheck(this, _this9);
         var canvas = browser_doc.createElement("canvas"),
           ctx = canvas.getContext("2d");
         canvas.width = opt.width || width;
         canvas.height = opt.height || height;
         ctx.drawImage(img, 0, 0);
+        if (glyph.length) {
+          renderText(ctx, glyph);
+
+          // release glyph array
+          glyph.length = 0;
+        }
         callback.bind(this)(canvas.toDataURL(opt.mimeType));
       }.bind(this);
       img.src = svgDataUrl;
@@ -39664,7 +39836,7 @@ function smoothLines(el, type) {
     // enter
     var xgridLine = xLines.enter().append("g");
     xgridLine.append("line").style("opacity", "0");
-    xgridLine.append("text").attr("transform", isRotated ? "" : "rotate(-90)").attr("dy", -5).style("opacity", "0");
+    xgridLine.append("text").attr("transform", isRotated ? null : "rotate(-90)").attr("dy", -5).style("opacity", "0");
     xLines = xgridLine.merge(xLines);
     $T(xLines.attr("class", function (d) {
       _newArrowCheck(this, _this9);
@@ -48940,7 +49112,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.0-nightly-20221012004915",
+    version: "3.6.0-nightly-20221019004730",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -49067,7 +49239,7 @@ var _defaults = {},
     plugin: {}
   }; /**
       * @namespace bb
-      * @version 3.6.0-nightly-20221012004915
+      * @version 3.6.0-nightly-20221019004730
       */
 ;// CONCATENATED MODULE: ./src/index.ts
 
