@@ -155,12 +155,14 @@ pre {
 
 .code .html {
     background-color: #eefbff;
+    max-height: 5;
 }
 
 .code .js {
     position: relative;
     font-family: Raleway;
     font-size: 11px;
+    height: 1;
 }
 
 .code .js .focus {
