@@ -3,13 +3,13 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+// @ts-nocheck
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$ARC, $AXIS, $BAR, $CIRCLE, $COMMON, $FOCUS, $EVENT, $SELECT, $SHAPE} from "../../src/config/classes";
-import bb from "../../src";
 
 describe("INTERACTION", () => {
 	let chart;
@@ -479,12 +479,89 @@ describe("INTERACTION", () => {
 						expect(v.d.x).to.be.equal(index);
 						expect(v.element.tagName).to.be.equal("circle");
 
-						expect(itemOut[i].d).to.be.deep.equal(v.d);
-						expect(itemOut[i].element).to.be.deep.equal(v.element);
+						expect(itemOut.some(t => JSON.stringify(t) === JSON.stringify(v))).to.be.true;
+						expect(itemOut.some(t => t.element === v.element)).to.be.true;
 					});
 
 					done();
 				}, 500);
+			});
+
+			it("set options", () => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 200, 130, 150, 250],
+							["data2", 130, 100, 140, 150, 150, 50],
+							["data3", 130, 100, 140, 220, 150, 50]
+						],
+						groups: [
+							["data1", "data2"]
+						],
+						type: "bar",
+						onover: spyOver,
+						onout: spyOut
+					},
+					bar: {
+						sensitivity: 0
+					},
+					tooltip: {
+						show: false,
+						grouped: false,
+					}
+				};
+			});
+
+			it("callback should called correctly on same x Axis for bar type.", done => {
+				new Promise(resolve => {
+					util.hoverChart(chart, "mousemove", {
+						clientX: 360,
+						clientY: 300
+					});
+
+					setTimeout(resolve, 300);
+				}).then(() => {
+					new Promise(resolve => {
+						util.hoverChart(chart, "mousemove", {
+							clientX: 340,
+							clientY: 300
+						});
+
+						setTimeout(resolve, 300);
+					});
+				}).then(() => {
+					new Promise(resolve => {
+						util.hoverChart(chart, "mousemove", {
+							clientX: 340,
+							clientY: 200
+						});
+
+						setTimeout(resolve, 300);
+					});
+				})
+				.then(() => {
+					const expectedX = 3;
+					const expectedFlow = {
+						over: ["data3", "data2", "data1"],
+						out: ["data3", "data2"]
+					};
+
+					itemOver
+						.map(({d: {x, id}}) => ({x, id}))
+						.forEach((v, i) => {							
+							expect(v.x).to.be.equal(expectedX);
+							expect(expectedFlow.over[i]).to.be.equal(v.id);
+						});
+
+					itemOut
+						.map(({d: {x, id}}) => ({x, id}))
+						.forEach((v, i) => {							
+							expect(v.x).to.be.equal(expectedX);
+							expect(expectedFlow.out[i]).to.be.equal(v.id);
+						});
+
+					done();
+				});
 			});
 		});
 
