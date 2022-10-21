@@ -28,24 +28,26 @@ export default {
 			}
 		}
 
-		main.selectAll(`.${$SHAPE.shape}-${index}`)
+		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
 			.each(function() {
 				d3Select(this).classed($COMMON.EXPANDED, true);
 
 				if (isSelectionEnabled) {
 					eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
 				}
-
-				if (!isTooltipGrouped) {
-					$$.hideGridFocus?.();
-					$$.hideTooltip();
-
-					!isSelectionGrouped && $$.setExpand(index);
-				}
 			})
 			.filter(function(d) {
 				return $$.isWithinShape(this, d);
-			})
+			});
+
+		if (shapeAtIndex.empty() && !isTooltipGrouped) {
+			$$.hideGridFocus?.();
+			$$.hideTooltip();
+
+			!isSelectionGrouped && $$.setExpand(index);
+		}
+
+		shapeAtIndex
 			.call(selected => {
 				const d = selected.data();
 
