@@ -3,8 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import sinon from "sinon";
+// @ts-nocheck
 import {expect} from "chai";
+import sinon from "sinon";
 import {
 	select as d3Select,
 	namespaces as d3Namespaces
@@ -111,13 +112,14 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("Tooltip callbacks", () => {
-		let called = [];
+		const called = [];
 		const spy = {
 			onshow: sinon.spy(function(data) { called.push({ctx: this, data, type: "onshow"}) }),
 			onshown: sinon.spy(function(data) { called.push({ctx: this, data, type: "onshown"}) }),
 			onhide: sinon.spy(function(data) { called.push({ctx: this, data, type: "onhide"}) }),
 			onhidden: sinon.spy(function(data) { called.push({ctx: this, data, type: "onhidden"}) })
 		};
+		let orgArgs;
 
 		const check = fn => {
 			["show", "shown", "hide", "hidden"].forEach((v, i) => {
@@ -131,8 +133,13 @@ describe("TOOLTIP", function() {
 			});
 		});
 
+		after(() => {
+			// restore original args
+			args = orgArgs;
+		});
+
 		afterEach(() => {
-			called = [];
+			called.length = 0;
 
 			check((name) => {
 				spy[name].resetHistory();
@@ -161,6 +168,93 @@ describe("TOOLTIP", function() {
 
 				// check the passed data argument
 				expect(JSON.stringify(call.data)).to.be.equal(expectedData);
+			});
+		});
+
+		it("set options", () => {
+			orgArgs = args;
+
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 200, 130, 150, 250],
+						["data2", 130, 100, 140, 150, 150, 50],
+						["data3", 130, 100, 140, 220, 150, 50]
+					],
+					groups: [
+						["data1", "data2"]
+					],
+					type: "bar"
+				},
+				tooltip: {
+					show: true,
+					grouped: false,
+					contents: () => "",
+					onshow: spy.onshow,
+					onshown: spy.onshown,
+					onhide: spy.onhide,
+					onhidden: spy.onhidden
+				}
+			};
+		})
+		
+		it("tooltip events should be called", function(done) {
+			new Promise(resolve => {
+				util.hoverChart(chart, "mousemove", {
+					clientX: 360,
+					clientY: 300
+				});
+
+				setTimeout(resolve, 300);
+			}).then(() => {
+				new Promise(resolve => {
+					util.hoverChart(chart, "mousemove", {
+						clientX: 340,
+						clientY: 300
+					});
+
+					setTimeout(resolve, 300);
+				});
+			}).then(() => {
+				new Promise(resolve => {
+					util.hoverChart(chart, "mousemove", {
+						clientX: 340,
+						clientY: 200
+					});
+
+					setTimeout(resolve, 300);
+				});
+			}).then(() => {
+				new Promise(resolve => {
+					util.hoverChart(chart, "mouseout", {
+						clientX: 0,
+						clientY: 0
+					});
+
+					setTimeout(resolve, 300);
+				});
+			})
+			.then(() => {
+				const expectedFlow = [
+					["onshow", "data3"],
+					["onshown", "data3"],
+					["onshow", "data2"],
+					["onshown", "data2"],
+					["onshow", "data1"],
+					["onshown", "data1"],
+					["onhide", "data1"],
+					["onhidden", "data1"]
+				];
+
+				called.forEach((v, i) => {
+					const {data, type} = v;
+					const d = data[0];
+					
+					expect(d.x).to.be.equal(3);
+					expect([type, d.id]).to.be.deep.equal(expectedFlow[i]);
+				})
+				
+				done();
 			});
 		});
 	});
