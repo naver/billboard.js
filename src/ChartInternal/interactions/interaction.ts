@@ -7,6 +7,7 @@ import {drag as d3Drag} from "d3-drag";
 import {$ARC, $AXIS, $COMMON, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {emulateEvent, getPointer, isNumber, isObject} from "../../module/util";
+import type {IArcDataRow} from "../data/IData";
 
 export default {
 	selectRectForSingle(context, eventRect, index: number): void {
@@ -27,24 +28,26 @@ export default {
 			}
 		}
 
-		main.selectAll(`.${$SHAPE.shape}-${index}`)
+		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
 			.each(function() {
 				d3Select(this).classed($COMMON.EXPANDED, true);
 
 				if (isSelectionEnabled) {
 					eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
 				}
-
-				if (!isTooltipGrouped) {
-					$$.hideGridFocus?.();
-					$$.hideTooltip();
-
-					!isSelectionGrouped && $$.setExpand(index);
-				}
 			})
 			.filter(function(d) {
 				return $$.isWithinShape(this, d);
-			})
+			});
+
+		if (shapeAtIndex.empty() && !isTooltipGrouped) {
+			$$.hideGridFocus?.();
+			$$.hideTooltip();
+
+			!isSelectionGrouped && $$.setExpand(index);
+		}
+
+		shapeAtIndex
 			.call(selected => {
 				const d = selected.data();
 
@@ -107,41 +110,51 @@ export default {
 	 * @param {number|object} d data object
 	 * @private
 	 */
-	setOverOut(isOver: boolean, d): void {
+	setOverOut(isOver: boolean, d: number | IArcDataRow): void {
 		const $$ = this;
 		const {config, state: {hasRadar}, $el: {main}} = $$;
 		const isArc = isObject(d);
 
 		// Call event handler
 		if (isArc || d !== -1) {
-			let callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
+			const callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
 
 			config.color_onover && $$.setOverColor(isOver, d, isArc);
 
-			if (isArc) {
-				callback(d, main.select(`.${$ARC.arc}${$$.getTargetSelectorSuffix(d.id)}`).node());
+			if (isArc && "id") {
+				callback(d, main.select(`.${$ARC.arc}${$$.getTargetSelectorSuffix((d as IArcDataRow).id)}`).node());
 			} else if (!config.tooltip_grouped) {
-				let last = $$.cache.get(KEY.setOverOut) || [];
+				const last = $$.cache.get(KEY.setOverOut) || [];
 
-				const shape = main.selectAll(`.${$SHAPE.shape}-${d}`)
+				// select based on the index
+				const shapesAtIndex = main.selectAll(`.${$SHAPE.shape}-${d}`)
 					.filter(function(d) {
 						return $$.isWithinShape(this, d);
 					});
 
-				shape
-					.each(function(d) {
-						if (last.length === 0 || last.every(v => v !== this)) {
-							callback(d, this);
-							last.push(this);
-						}
-					});
+				// filter if has new selection
+				const shape = shapesAtIndex.filter(function() {
+					return last.every(v => v !== this);
+				});
 
-				if (last.length > 0 && shape.empty()) {
-					callback = config.data_onout.bind($$.api);
+				// call onout callback
+				if (!isOver || shapesAtIndex.empty() || (
+					last.length === shape.size() && shape.nodes().every(((v, i) => v !== last[i]))
+				)) {
+					while (last.length) {
+						const target = last.pop();
 
-					last.forEach(v => callback(d3Select(v).datum(), v));
-					last = [];
+						config.data_onout.bind($$.api)(d3Select(target).datum(), target);
+					}
 				}
+
+				// call onover callback
+				shape.each(function() {
+					if (isOver) {
+						callback(d3Select(this).datum(), this);
+						last.push(this);
+					}
+				});
 
 				$$.cache.add(KEY.setOverOut, last);
 			} else {
