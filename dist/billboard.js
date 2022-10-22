@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.0-nightly-20221020004751
+ * @version 3.6.1-nightly-20221022004829
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3530,7 +3530,8 @@ var Cache = /*#__PURE__*/function () {
    * @param {boolean} isDataType Weather the cache is data typed '{id:'data', id_org: 'data', values: [{x:0, index:0,...}, ...]}'
    * @returns {*} Added data value
    * @private
-   */_proto.add = function add(key, value, isDataType) {
+   */
+  _proto.add = function add(key, value, isDataType) {
     if (isDataType === void 0) {
       isDataType = !1;
     }
@@ -4047,7 +4048,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {object} args data object
    * @param {Function} [callback] callback for url(XHR) type loading
    * @private
-   */convertData: function convertData(args, callback) {
+   */
+  convertData: function convertData(args, callback) {
     var _this = this,
       config = this.config,
       useWorker = config.boost_useWorker,
@@ -4293,7 +4295,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {Array} basedX x Axis list to be based on
    * @returns {number} index number
    * @private
-   */getIndexByX: function getIndexByX(x, basedX) {
+   */
+  getIndexByX: function getIndexByX(x, basedX) {
     var $$ = this;
     return basedX ? basedX.indexOf(isString(x) ? x : +x) : ($$.filterByX($$.data.targets, x)[0] || {
       index: null
@@ -4340,7 +4343,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {boolean} filterNull Filter nullish value
    * @returns {Array}
    * @private
-   */getAllValuesOnIndex: function getAllValuesOnIndex(index, filterNull) {
+   */
+  getAllValuesOnIndex: function getAllValuesOnIndex(index, filterNull) {
     var _this4 = this;
     if (filterNull === void 0) {
       filterNull = !1;
@@ -4421,7 +4425,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {object} data Data object
    * @returns {number}
    * @private
-   */getBaseValue: function getBaseValue(data) {
+   */
+  getBaseValue: function getBaseValue(data) {
     var $$ = this,
       hasAxis = $$.state.hasAxis,
       value = data.value;
@@ -4441,7 +4446,8 @@ function getDataKeyForJson(keysParam, config) {
    * @private
    * @param {Array} data array data to be evaluated
    * @returns {{min: {number}, max: {number}}}
-   */getMinMaxValue: function getMinMaxValue(data) {
+   */
+  getMinMaxValue: function getMinMaxValue(data) {
     var _this10 = this,
       getBaseValue = this.getBaseValue.bind(this),
       min,
@@ -4464,7 +4470,8 @@ function getDataKeyForJson(keysParam, config) {
    * Get the min/max data
    * @private
    * @returns {{min: Array, max: Array}}
-   */getMinMaxData: function getMinMaxData() {
+   */
+  getMinMaxData: function getMinMaxData() {
     var _this11 = this,
       $$ = this,
       cacheKey = KEY.dataMinMax,
@@ -4501,7 +4508,8 @@ function getDataKeyForJson(keysParam, config) {
    * Get sum of data per index
    * @private
    * @returns {Array}
-   */getTotalPerIndex: function getTotalPerIndex() {
+   */
+  getTotalPerIndex: function getTotalPerIndex() {
     var _this12 = this,
       $$ = this,
       cacheKey = KEY.dataTotalPerIndex,
@@ -4527,7 +4535,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {boolean} subtractHidden Subtract hidden data from total
    * @returns {number}
    * @private
-   */getTotalDataSum: function getTotalDataSum(subtractHidden) {
+   */
+  getTotalDataSum: function getTotalDataSum(subtractHidden) {
     var _this14 = this,
       $$ = this,
       cacheKey = KEY.dataTotalSum,
@@ -4554,7 +4563,8 @@ function getDataKeyForJson(keysParam, config) {
    * Get total hidden data sum
    * @returns {number}
    * @private
-   */getHiddenTotalDataSum: function getHiddenTotalDataSum() {
+   */
+  getHiddenTotalDataSum: function getHiddenTotalDataSum() {
     var _this15 = this,
       $$ = this,
       api = $$.api,
@@ -4574,7 +4584,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {number} value Value to be filtered
    * @returns {Array} filtered array data
    * @private
-   */getFilteredDataByValue: function getFilteredDataByValue(data, value) {
+   */
+  getFilteredDataByValue: function getFilteredDataByValue(data, value) {
     var _this16 = this;
     return data.filter(function (t) {
       _newArrowCheck(this, _this16);
@@ -4585,7 +4596,8 @@ function getDataKeyForJson(keysParam, config) {
    * Return the max length of the data
    * @returns {number} max data length
    * @private
-   */getMaxDataCount: function getMaxDataCount() {
+   */
+  getMaxDataCount: function getMaxDataCount() {
     var _this17 = this;
     return Math.max.apply(Math, this.data.targets.map(function (t) {
       _newArrowCheck(this, _this17);
@@ -4679,7 +4691,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {string} type State's prop name
    * @param {Array|string} targetIds Target ids array
    * @private
-   */addTargetIds: function addTargetIds(type, targetIds) {
+   */
+  addTargetIds: function addTargetIds(type, targetIds) {
     var _this23 = this,
       state = this.state,
       ids = isArray(targetIds) ? targetIds : [targetIds];
@@ -4693,7 +4706,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {string} type State's prop name
    * @param {Array|string} targetIds Target ids array
    * @private
-   */removeTargetIds: function removeTargetIds(type, targetIds) {
+   */
+  removeTargetIds: function removeTargetIds(type, targetIds) {
     var _this24 = this,
       state = this.state,
       ids = isArray(targetIds) ? targetIds : [targetIds];
@@ -4795,7 +4809,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {Array} targetsValue Target value
    * @returns {Array}
    * @private
-   */orderTargets: function orderTargets(targetsValue) {
+   */
+  orderTargets: function orderTargets(targetsValue) {
     var $$ = this,
       targets = [].concat(targetsValue),
       fn = $$.getSortCompareFn();
@@ -4807,7 +4822,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {boolean} isArc Is for Arc type sort or not
    * @returns {Function} compare function
    * @private
-   */getSortCompareFn: function getSortCompareFn(isArc) {
+   */
+  getSortCompareFn: function getSortCompareFn(isArc) {
     var _this29 = this;
     if (isArc === void 0) {
       isArc = !1;
@@ -4874,7 +4890,8 @@ function getDataKeyForJson(keysParam, config) {
    * Get data index from the event coodinates
    * @param {Event} event Event object
    * @returns {number}
-   */getDataIndexFromEvent: function getDataIndexFromEvent(event) {
+   */
+  getDataIndexFromEvent: function getDataIndexFromEvent(event) {
     var $$ = this,
       config = $$.config,
       _$$$state = $$.state,
@@ -4988,7 +5005,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {Array} values Object data values
    * @returns {Array}
    * @private
-   */convertValuesToStep: function convertValuesToStep(values) {
+   */
+  convertValuesToStep: function convertValuesToStep(values) {
     var $$ = this,
       axis = $$.axis,
       config = $$.config,
@@ -5095,7 +5113,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {boolean} asPercent Convert the return as percent or not
    * @returns {number} Ratio value
    * @private
-   */getRatio: function getRatio(type, d, asPercent) {
+   */
+  getRatio: function getRatio(type, d, asPercent) {
     var _this39 = this;
     if (asPercent === void 0) {
       asPercent = !1;
@@ -5158,7 +5177,8 @@ function getDataKeyForJson(keysParam, config) {
    * Sort data index to be aligned with x axis.
    * @param {Array} tickValues Tick array values
    * @private
-   */updateDataIndexByX: function updateDataIndexByX(tickValues) {
+   */
+  updateDataIndexByX: function updateDataIndexByX(tickValues) {
     var _this41 = this,
       $$ = this,
       tickValueMap = tickValues.reduce(function (out, tick, index) {
@@ -5184,7 +5204,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {object|Array} d data value
    * @returns {boolean}
    * @private
-   */isBubbleZType: function isBubbleZType(d) {
+   */
+  isBubbleZType: function isBubbleZType(d) {
     var $$ = this;
     return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
   },
@@ -5193,7 +5214,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {Array} d data value
    * @returns {boolean}
    * @private
-   */isBarRangeType: function isBarRangeType(d) {
+   */
+  isBarRangeType: function isBarRangeType(d) {
     var _this43 = this,
       $$ = this,
       value = d.value;
@@ -5207,7 +5229,8 @@ function getDataKeyForJson(keysParam, config) {
    * @param {string} id data id
    * @returns {object}
    * @private
-   */getDataById: function getDataById(id) {
+   */
+  getDataById: function getDataById(id) {
     var _d$,
       d = this.cache.get(id) || this.api.data(id);
     return (_d$ = d == null ? void 0 : d[0]) != null ? _d$ : d;
@@ -5374,19 +5397,20 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         return;
       }
     }
-    main.selectAll("." + $SHAPE.shape + "-" + index).each(function () {
+    var shapeAtIndex = main.selectAll("." + $SHAPE.shape + "-" + index).each(function () {
       (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).classed($COMMON.EXPANDED, !0);
       if (isSelectionEnabled) {
         eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
       }
-      if (!isTooltipGrouped) {
-        $$.hideGridFocus == null ? void 0 : $$.hideGridFocus();
-        $$.hideTooltip();
-        isSelectionGrouped || $$.setExpand(index);
-      }
     }).filter(function (d) {
       return $$.isWithinShape(this, d);
-    }).call(function (selected) {
+    });
+    if (shapeAtIndex.empty() && !isTooltipGrouped) {
+      $$.hideGridFocus == null ? void 0 : $$.hideGridFocus();
+      $$.hideTooltip();
+      isSelectionGrouped || $$.setExpand(index);
+    }
+    shapeAtIndex.call(function (selected) {
       var _this2 = this;
       _newArrowCheck(this, _this);
       var d = selected.data();
@@ -5410,7 +5434,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @param {string} id Data id
    * @param {boolean} reset Reset expand state
    * @private
-   */setExpand: function setExpand(index, id, reset) {
+   */
+  setExpand: function setExpand(index, id, reset) {
     var $$ = this,
       config = $$.config,
       circle = $$.$el.circle;
@@ -5426,7 +5451,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @param {string} id Data id
    * @param {boolean} reset Reset expand style
    * @private
-   */expandBarTypeShapes: function expandBarTypeShapes(expand, i, id, reset) {
+   */
+  expandBarTypeShapes: function expandBarTypeShapes(expand, i, id, reset) {
     var _this3 = this;
     if (expand === void 0) {
       expand = !0;
@@ -5446,7 +5472,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @param {boolean} isOver Over or not
    * @param {number|object} d data object
    * @private
-   */setOverOut: function setOverOut(isOver, d) {
+   */
+  setOverOut: function setOverOut(isOver, d) {
     var _this5 = this,
       $$ = this,
       config = $$.config,
@@ -5457,31 +5484,38 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     if (isArc || d !== -1) {
       var callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
       config.color_onover && $$.setOverColor(isOver, d, isArc);
-      if (isArc) {
+      if (isArc && "id") {
         callback(d, main.select("." + $ARC.arc + $$.getTargetSelectorSuffix(d.id)).node());
       } else if (!config.tooltip_grouped) {
         var last = $$.cache.get(KEY.setOverOut) || [],
-          shape = main.selectAll("." + $SHAPE.shape + "-" + d).filter(function (d) {
+          shapesAtIndex = main.selectAll("." + $SHAPE.shape + "-" + d).filter(function (d) {
             return $$.isWithinShape(this, d);
-          });
-        shape.each(function (d) {
-          var _this4 = this;
-          if (last.length === 0 || last.every(function (v) {
-            _newArrowCheck(this, _this4);
-            return v !== this;
-          }.bind(this))) {
-            callback(d, this);
+          }),
+          shape = shapesAtIndex.filter(function () {
+            var _this4 = this;
+            return last.every(function (v) {
+              _newArrowCheck(this, _this4);
+              return v !== this;
+            }.bind(this));
+          }); // select based on the index
+        // call onout callback
+        if (!isOver || shapesAtIndex.empty() || last.length === shape.size() && shape.nodes().every(function (v, i) {
+          _newArrowCheck(this, _this5);
+          return v !== last[i];
+        }.bind(this))) {
+          while (last.length) {
+            var target = last.pop();
+            config.data_onout.bind($$.api)((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(target).datum(), target);
+          }
+        }
+
+        // call onover callback
+        shape.each(function () {
+          if (isOver) {
+            callback((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).datum(), this);
             last.push(this);
           }
         });
-        if (last.length > 0 && shape.empty()) {
-          callback = config.data_onout.bind($$.api);
-          last.forEach(function (v) {
-            _newArrowCheck(this, _this5);
-            return callback((0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(v).datum(), v);
-          }.bind(this));
-          last = [];
-        }
         $$.cache.add(KEY.setOverOut, last);
       } else {
         if (isOver) {
@@ -5497,7 +5531,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * Call data.onover/out callback for touch event
    * @param {number|object} d target index or data object for Arc type
    * @private
-   */callOverOutForTouch: function callOverOutForTouch(d) {
+   */
+  callOverOutForTouch: function callOverOutForTouch(d) {
     var $$ = this,
       last = $$.cache.get(KEY.callOverOutForTouch);
     if (isObject(d) && last ? d.id !== last.id : d !== last) {
@@ -5510,7 +5545,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * Return draggable selection function
    * @returns {Function}
    * @private
-   */getDraggableSelection: function getDraggableSelection() {
+   */
+  getDraggableSelection: function getDraggableSelection() {
     var _this6 = this,
       $$ = this,
       config = $$.config,
@@ -5535,7 +5571,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @param {string} type event type
    * @param {number} index Index of eventRect
    * @param {Array} mouse x and y coordinate value
-   */dispatchEvent: function dispatchEvent(type, index, mouse) {
+   */
+  dispatchEvent: function dispatchEvent(type, index, mouse) {
     var _this7 = this,
       $$ = this,
       config = $$.config,
@@ -5577,7 +5614,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   /**
    * Unbind zoom events
    * @private
-   */unbindZoomEvent: function unbindZoomEvent() {
+   */
+  unbindZoomEvent: function unbindZoomEvent() {
     var $$ = this,
       _$$$$el2 = $$.$el,
       eventRect = _$$$$el2.eventRect,
@@ -5588,7 +5626,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   /**
    * Unbind all attached events
    * @private
-   */unbindAllEvents: function unbindAllEvents() {
+   */
+  unbindAllEvents: function unbindAllEvents() {
     var _this8 = this,
       $$ = this,
       _$$$$el3 = $$.$el,
@@ -5623,7 +5662,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @param {boolean} withShape Get with shape prefix
    * @returns {string} Class string
    * @private
-   */getClass: function getClass(type, withShape) {
+   */
+  getClass: function getClass(type, withShape) {
     var _this = this,
       isPlural = /s$/.test(type),
       useIdKey = /^(area|arc|line)s?$/.test(type),
@@ -5640,7 +5680,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @param {string} type Shape type
    * @returns {string} Class string
    * @private
-   */getChartClass: function getChartClass(type) {
+   */
+  getChartClass: function getChartClass(type) {
     var _this2 = this;
     return function (d) {
       _newArrowCheck(this, _this2);
@@ -5720,7 +5761,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @param {number} i Index number
    * @returns {string} category Name
    * @private
-   */categoryName: function categoryName(i) {
+   */
+  categoryName: function categoryName(i) {
     var categories = this.config.axis_x_categories;
     return i < (categories == null ? void 0 : categories.length) ? categories[i] : i;
   }
@@ -5861,7 +5903,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
    * Append data backgound color filter definition
    * @param {string} color Color string
    * @private
-   */generateDataLabelBackgroundColorFilter: function generateDataLabelBackgroundColorFilter(color) {
+   */
+  generateDataLabelBackgroundColorFilter: function generateDataLabelBackgroundColorFilter(color) {
     var _this4 = this,
       $$ = this,
       $el = $$.$el,
@@ -5887,13 +5930,15 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
    * @param {string} id Data id
    * @returns {string}
    * @private
-   */getGradienColortUrl: function getGradienColortUrl(id) {
+   */
+  getGradienColortUrl: function getGradienColortUrl(id) {
     return "url(#" + this.state.datetimeId + "-gradient" + this.getTargetSelectorSuffix(id) + ")";
   },
   /**
    * Update linear gradient definition (for area & bar only)
    * @private
-   */updateLinearGradient: function updateLinearGradient() {
+   */
+  updateLinearGradient: function updateLinearGradient() {
     var _this5 = this,
       $$ = this,
       config = $$.config,
@@ -5930,7 +5975,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
    * @param {boolean} isOver true: set overed color, false: restore
    * @param {number|object} d target index or data object for Arc type
    * @private
-   */setOverColor: function setOverColor(isOver, d) {
+   */
+  setOverColor: function setOverColor(isOver, d) {
     var _this7 = this,
       $$ = this,
       config = $$.config,
@@ -6024,7 +6070,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
    * @param {string} id ID to be checked
    * @returns {boolean}
    * @private
-   */isHiddenTargetWithYDomain: function isHiddenTargetWithYDomain(id) {
+   */
+  isHiddenTargetWithYDomain: function isHiddenTargetWithYDomain(id) {
     var _this4 = this,
       $$ = this;
     return $$.state.hiddenTargetIds.some(function (v) {
@@ -6176,7 +6223,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
    * @param {number} tickCount Tick count
    * @returns {object} Padding object values with 'left' & 'right' key
    * @private
-   */getXDomainPadding: function getXDomainPadding(domain, tickCount) {
+   */
+  getXDomainPadding: function getXDomainPadding(domain, tickCount) {
     var $$ = this,
       axis = $$.axis,
       config = $$.config,
@@ -6225,7 +6273,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
    * @param {Array} targets targets
    * @returns {Array} x Axis domain
    * @private
-   */getXDomain: function getXDomain(targets) {
+   */
+  getXDomain: function getXDomain(targets) {
     var $$ = this,
       axis = $$.axis,
       x = $$.scale.x,
@@ -6304,7 +6353,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
    * Get zoom domain
    * @returns {Array} zoom domain
    * @private
-   */getZoomDomain: function getZoomDomain() {
+   */
+  getZoomDomain: function getZoomDomain() {
     var $$ = this,
       config = $$.config,
       org = $$.org,
@@ -6326,7 +6376,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
    * @param {number} domainLength Domain length
    * @returns {number}
    * @private
-   */convertPixelToScale: function convertPixelToScale(type, pixels, domainLength) {
+   */
+  convertPixelToScale: function convertPixelToScale(type, pixels, domainLength) {
     var $$ = this,
       config = $$.config,
       state = $$.state,
@@ -6372,7 +6423,8 @@ function getFormat($$, typeValue, v) {
    * Get default value format function
    * @returns {Function} formatter function
    * @private
-   */getDefaultValueFormat: function getDefaultValueFormat() {
+   */
+  getDefaultValueFormat: function getDefaultValueFormat() {
     var $$ = this,
       defaultArcValueFormat = $$.defaultArcValueFormat,
       yFormat = $$.yFormat,
@@ -6445,7 +6497,8 @@ function getLegendColor(id) {
   /**
    * Initialize the legend.
    * @private
-   */initLegend: function initLegend() {
+   */
+  initLegend: function initLegend() {
     var $$ = this,
       config = $$.config,
       $el = $$.$el;
@@ -6469,7 +6522,8 @@ function getLegendColor(id) {
    * @param {object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
    * @param {object} transitions Return value of the generateTransitions
    * @private
-   */updateLegend: function updateLegend(targetIds, options, transitions) {
+   */
+  updateLegend: function updateLegend(targetIds, options, transitions) {
     var $$ = this,
       config = $$.config,
       state = $$.state,
@@ -6508,7 +6562,8 @@ function getLegendColor(id) {
   /**
    * Update legend using template option
    * @private
-   */updateLegendTemplate: function updateLegendTemplate() {
+   */
+  updateLegendTemplate: function updateLegendTemplate() {
     var _this = this,
       $$ = this,
       config = $$.config,
@@ -6541,7 +6596,8 @@ function getLegendColor(id) {
    * Update the size of the legend.
    * @param {Obejct} size Size object
    * @private
-   */updateSizeForLegend: function updateSizeForLegend(size) {
+   */
+  updateSizeForLegend: function updateSizeForLegend(size) {
     var $$ = this,
       config = $$.config,
       _$$$state = $$.state,
@@ -6567,7 +6623,8 @@ function getLegendColor(id) {
    * Transform Legend
    * @param {boolean} withTransition whether or not to transition.
    * @private
-   */transformLegend: function transformLegend(withTransition) {
+   */
+  transformLegend: function transformLegend(withTransition) {
     var $$ = this,
       legend = $$.$el.legend,
       $T = $$.$T;
@@ -6577,21 +6634,24 @@ function getLegendColor(id) {
    * Update the legend step
    * @param {number} step Step value
    * @private
-   */updateLegendStep: function updateLegendStep(step) {
+   */
+  updateLegendStep: function updateLegendStep(step) {
     this.state.legendStep = step;
   },
   /**
    * Update legend item width
    * @param {number} width Width value
    * @private
-   */updateLegendItemWidth: function updateLegendItemWidth(width) {
+   */
+  updateLegendItemWidth: function updateLegendItemWidth(width) {
     this.state.legendItemWidth = width;
   },
   /**
    * Update legend item height
    * @param {number} height Height value
    * @private
-   */updateLegendItemHeight: function updateLegendItemHeight(height) {
+   */
+  updateLegendItemHeight: function updateLegendItemHeight(height) {
     this.state.legendItemHeight = height;
   },
   /**
@@ -6599,7 +6659,8 @@ function getLegendColor(id) {
    * @param {string} id Corresponding data ID value
    * @param {string} color Color value
    * @private
-   */updateLegendItemColor: function updateLegendItemColor(id, color) {
+   */
+  updateLegendItemColor: function updateLegendItemColor(id, color) {
     var legend = this.$el.legend;
     if (legend) {
       legend.select("." + $LEGEND.legendItem + "-" + id + " line").style("stroke", color);
@@ -6609,7 +6670,8 @@ function getLegendColor(id) {
    * Get the width of the legend
    * @returns {number} width
    * @private
-   */getLegendWidth: function getLegendWidth() {
+   */
+  getLegendWidth: function getLegendWidth() {
     var $$ = this,
       _$$$state2 = $$.state,
       width = _$$$state2.current.width,
@@ -6623,7 +6685,8 @@ function getLegendColor(id) {
    * Get the height of the legend
    * @returns {number} height
    * @private
-   */getLegendHeight: function getLegendHeight() {
+   */
+  getLegendHeight: function getLegendHeight() {
     var $$ = this,
       _$$$state3 = $$.state,
       current = _$$$state3.current,
@@ -6637,7 +6700,8 @@ function getLegendColor(id) {
    * @param {d3.selection} legendItem Legend item node
    * @returns {string|null} opacity
    * @private
-   */opacityForUnfocusedLegend: function opacityForUnfocusedLegend(legendItem) {
+   */
+  opacityForUnfocusedLegend: function opacityForUnfocusedLegend(legendItem) {
     return legendItem.classed($LEGEND.legendItemHidden) ? null : "0.3";
   },
   /**
@@ -6645,7 +6709,8 @@ function getLegendColor(id) {
    * @param {Array} targetIds ID's of target
    * @param {boolean} focus whether or not to focus.
    * @private
-   */toggleFocusLegend: function toggleFocusLegend(targetIds, focus) {
+   */
+  toggleFocusLegend: function toggleFocusLegend(targetIds, focus) {
     var _this2 = this,
       $$ = this,
       legend = $$.$el.legend,
@@ -6661,7 +6726,8 @@ function getLegendColor(id) {
   /**
    * Revert the legend to its default state
    * @private
-   */revertLegend: function revertLegend() {
+   */
+  revertLegend: function revertLegend() {
     var $$ = this,
       legend = $$.$el.legend,
       $T = $$.$T;
@@ -6671,7 +6737,8 @@ function getLegendColor(id) {
    * Shows the legend
    * @param {Array} targetIds ID's of target
    * @private
-   */showLegend: function showLegend(targetIds) {
+   */
+  showLegend: function showLegend(targetIds) {
     var $$ = this,
       config = $$.config,
       $el = $$.$el,
@@ -6688,7 +6755,8 @@ function getLegendColor(id) {
    * Hide the legend
    * @param {Array} targetIds ID's of target
    * @private
-   */hideLegend: function hideLegend(targetIds) {
+   */
+  hideLegend: function hideLegend(targetIds) {
     var $$ = this,
       config = $$.config,
       legend = $$.$el.legend;
@@ -6705,7 +6773,8 @@ function getLegendColor(id) {
    * @param {HTMLElement|d3.selection} textElement Text node element
    * @returns {object} Bounding rect
    * @private
-   */getLegendItemTextBox: function getLegendItemTextBox(id, textElement) {
+   */
+  getLegendItemTextBox: function getLegendItemTextBox(id, textElement) {
     var $$ = this,
       cache = $$.cache,
       state = $$.state,
@@ -6725,7 +6794,8 @@ function getLegendColor(id) {
    * Set legend item style & bind events
    * @param {d3.selection} item Item node
    * @private
-   */setLegendItem: function setLegendItem(item) {
+   */
+  setLegendItem: function setLegendItem(item) {
     var _this3 = this,
       $$ = this,
       $el = $$.$el,
@@ -6790,7 +6860,8 @@ function getLegendColor(id) {
    * @param {Array} targetIds ID's of target
    * @param {object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
    * @private
-   */updateLegendElement: function updateLegendElement(targetIds, options) {
+   */
+  updateLegendElement: function updateLegendElement(targetIds, options) {
     var _this4 = this,
       $$ = this,
       config = $$.config,
@@ -6938,7 +7009,8 @@ function getLegendColor(id) {
    * @param {object} sizes Size object
    * @returns {Function} Update position function
    * @private
-   */getUpdateLegendPositions: function getUpdateLegendPositions(targetIdz, dimension, sizes) {
+   */
+  getUpdateLegendPositions: function getUpdateLegendPositions(targetIdz, dimension, sizes) {
     var $$ = this,
       config = $$.config,
       state = $$.state,
@@ -7020,7 +7092,8 @@ function getLegendColor(id) {
    * @param {Function} updatePositions Update position function
    * @param {object} posFn Position functions
    * @private
-   */generateLegendItem: function generateLegendItem(targetIdz, itemTileSize, updatePositions, posFn) {
+   */
+  generateLegendItem: function generateLegendItem(targetIdz, itemTileSize, updatePositions, posFn) {
     var _this6 = this,
       $$ = this,
       config = $$.config,
@@ -7075,7 +7148,8 @@ function getLegendColor(id) {
    * @param {boolean} withTransition Whether or not to apply transition
    * @param {object} posFn Position functions
    * @private
-   */updateLegendItemPos: function updateLegendItemPos(targetIdz, withTransition, posFn) {
+   */
+  updateLegendItemPos: function updateLegendItemPos(targetIdz, withTransition, posFn) {
     var _this8 = this,
       $$ = this,
       config = $$.config,
@@ -7247,7 +7321,8 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
    * @param {number} duration duration value
    * @param {boolean} withSubchart whether or not to show subchart
    * @private
-   */generateRedrawList: function generateRedrawList(targets, flow, duration, withSubchart) {
+   */
+  generateRedrawList: function generateRedrawList(targets, flow, duration, withSubchart) {
     var _this2 = this,
       $$ = this,
       config = $$.config,
@@ -7381,7 +7456,8 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
   /**
    * Redraw without rescale
    * @private
-   */redrawWithoutRescale: function redrawWithoutRescale() {
+   */
+  redrawWithoutRescale: function redrawWithoutRescale() {
     this.redraw({
       withY: !1,
       withDimension: !1,
@@ -7438,7 +7514,8 @@ function getScale(type, min, max) {
    * @param {Function} offset The offset getter to be sum
    * @returns {Function} scale
    * @private
-   */getXScale: function getXScale(min, max, domain, offset) {
+   */
+  getXScale: function getXScale(min, max, domain, offset) {
     var $$ = this,
       scale = $$.scale.zoom || getScale($$.axis.getAxisType("x"), min, max);
     return $$.getCustomizedScale(domain ? scale.domain(domain) : scale, offset);
@@ -7451,7 +7528,8 @@ function getScale(type, min, max) {
    * @param {Array} domain Domain value
    * @returns {Function} Scale function
    * @private
-   */getYScale: function getYScale(id, min, max, domain) {
+   */
+  getYScale: function getYScale(id, min, max, domain) {
     var $$ = this,
       scale = getScale($$.axis.getAxisType(id), min, max);
     domain && scale.domain(domain);
@@ -7463,7 +7541,8 @@ function getScale(type, min, max) {
    * @param {boolean} isSub Weather is sub Axis
    * @returns {Function} Scale function
    * @private
-   */getYScaleById: function getYScaleById(id, isSub) {
+   */
+  getYScaleById: function getYScaleById(id, isSub) {
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -7477,7 +7556,8 @@ function getScale(type, min, max) {
    * @param {Function} offsetValue Offset getter to be sum
    * @returns {Function} Scale function
    * @private
-   */getCustomizedScale: function getCustomizedScale(scaleValue, offsetValue) {
+   */
+  getCustomizedScale: function getCustomizedScale(scaleValue, offsetValue) {
     var _this = this,
       $$ = this,
       offset = offsetValue || function () {
@@ -7520,7 +7600,8 @@ function getScale(type, min, max) {
    * @param {boolean} isInit Param is given at the init rendering
    * @param {boolean} updateXDomain If update x domain
    * @private
-   */updateScales: function updateScales(isInit, updateXDomain) {
+   */
+  updateScales: function updateScales(isInit, updateXDomain) {
     var _this2 = this;
     if (updateXDomain === void 0) {
       updateXDomain = !0;
@@ -7592,7 +7673,8 @@ function getScale(type, min, max) {
    * @param {Date|number|object} d Data value
    * @returns {number|null}
    * @private
-   */xx: function xx(d) {
+   */
+  xx: function xx(d) {
     var $$ = this,
       config = $$.config,
       _$$$scale = $$.scale,
@@ -7646,7 +7728,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * Get the shape draw function
    * @returns {object}
    * @private
-   */getDrawShape: function getDrawShape() {
+   */
+  getDrawShape: function getDrawShape() {
     var _this = this,
       $$ = this,
       isRotated = $$.config.axis_rotated,
@@ -7691,7 +7774,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    *		 0             1
    * @param {Function} typeFilter Chart type filter function
    * @returns {object} Indices object with its position
-   */getShapeIndices: function getShapeIndices(typeFilter) {
+   */
+  getShapeIndices: function getShapeIndices(typeFilter) {
     var _this2 = this,
       $$ = this,
       config = $$.config,
@@ -7738,7 +7822,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @param {string} caller Caller function name (Used only for 'sparkline' plugin)
    * @returns {object} Indices object
    * @private
-   */getIndices: function getIndices(indices, d) {
+   */
+  getIndices: function getIndices(indices, d) {
     var _this3 = this,
       $$ = this,
       _$$$config = $$.config,
@@ -7764,7 +7849,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @param {object} indices Indices object
    * @returns {number} Max number
    * @private
-   */getIndicesMax: function getIndicesMax(indices) {
+   */
+  getIndicesMax: function getIndicesMax(indices) {
     var _this4 = this;
     return notEmpty(this.config.data_xs) ?
     // if is multiple xs, return total sum of xs' __max__ value
@@ -7844,7 +7930,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @param {string} id Data id
    * @returns {number}
    * @private
-   */getShapeYMin: function getShapeYMin(id) {
+   */
+  getShapeYMin: function getShapeYMin(id) {
     var $$ = this,
       axisId = $$.axis.getId(id),
       scale = $$.scale[axisId],
@@ -7858,7 +7945,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @param {Function} typeFilter Type filter function
    * @returns {object}
    * @private
-   */getShapeOffsetData: function getShapeOffsetData(typeFilter) {
+   */
+  getShapeOffsetData: function getShapeOffsetData(typeFilter) {
     var _this7 = this,
       $$ = this,
       targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
@@ -7995,7 +8083,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @param {string} id Data series id
    * @returns {d3Selection}
    * @private
-   */getShapeByIndex: function getShapeByIndex(shapeName, i, id) {
+   */
+  getShapeByIndex: function getShapeByIndex(shapeName, i, id) {
     var _this12 = this,
       $$ = this,
       $el = $$.$el,
@@ -8088,7 +8177,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
   /**
    * Update container size
    * @private
-   */setContainerSize: function setContainerSize() {
+   */
+  setContainerSize: function setContainerSize() {
     var $$ = this,
       state = $$.state;
     state.current.width = $$.getCurrentWidth();
@@ -8178,7 +8268,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @param {string} key property/attribute name
    * @returns {number}
    * @private
-   */getParentRectValue: function getParentRectValue(key) {
+   */
+  getParentRectValue: function getParentRectValue(key) {
     var offsetName = "offset" + capitalize(key),
       parent = this.$el.chart.node(),
       v = 0;
@@ -8274,7 +8365,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @param {number|object} v Padding values to be resetted
    * @returns {number|object} Padding value
    * @private
-   */getResettedPadding: function getResettedPadding(v) {
+   */
+  getResettedPadding: function getResettedPadding(v) {
     var _this = this,
       $$ = this,
       config = $$.config,
@@ -8295,7 +8387,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * Update size values
    * @param {boolean} isInit If is called at initialization
    * @private
-   */updateSizes: function updateSizes(isInit) {
+   */
+  updateSizes: function updateSizes(isInit) {
     var $$ = this,
       config = $$.config,
       state = $$.state,
@@ -8398,7 +8491,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @param {Function} propsFn Function to retrieve value or determine for props
    * @returns {Function}
    * @private
-   */setCssRule: function setCssRule(withShape, selector, props, propsFn) {
+   */
+  setCssRule: function setCssRule(withShape, selector, props, propsFn) {
     var _this = this,
       $$ = this,
       config = $$.config,
@@ -8428,7 +8522,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @param {Function|string} v Value
    * @returns {string|null}
    * @private
-   */getStylePropValue: function getStylePropValue(v) {
+   */
+  getStylePropValue: function getStylePropValue(v) {
     var useCssRule = this.config.boost_useCssRule;
     return useCssRule ? null : isFunction(v) ? v.bind(this) : v;
   }
@@ -8519,7 +8614,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
   /**
    * Initializes the text
    * @private
-   */initText: function initText() {
+   */
+  initText: function initText() {
     var $el = this.$el;
     $el.main.select("." + $COMMON.chart).append("g").attr("class", $TEXT.chartTexts);
   },
@@ -8527,7 +8623,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * Update chartText
    * @param {object} targets $$.data.targets
    * @private
-   */updateTargetsForText: function updateTargetsForText(targets) {
+   */
+  updateTargetsForText: function updateTargetsForText(targets) {
     var _this = this,
       $$ = this,
       classChartText = $$.getChartClass("Text"),
@@ -8543,7 +8640,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
   /**
    * Update text
    * @private
-   */updateText: function updateText() {
+   */
+  updateText: function updateText() {
     var _this2 = this,
       $$ = this,
       $el = $$.$el,
@@ -8609,7 +8707,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {object} d Data object
    * @returns {string|null}
    * @private
-   */updateTextBacgroundColor: function updateTextBacgroundColor(d) {
+   */
+  updateTextBacgroundColor: function updateTextBacgroundColor(d) {
     var $$ = this,
       $el = $$.$el,
       config = $$.config,
@@ -8632,7 +8731,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {boolean} withTransition transition is enabled
    * @returns {Array}
    * @private
-   */redrawText: function redrawText(getX, getY, forFlow, withTransition) {
+   */
+  redrawText: function redrawText(getX, getY, forFlow, withTransition) {
     var $$ = this,
       $T = $$.$T,
       axis = $$.axis,
@@ -8673,7 +8773,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {string} className Class name
    * @returns {object} value of element.getBoundingClientRect()
    * @private
-   */getTextRect: function getTextRect(element, className) {
+   */
+  getTextRect: function getTextRect(element, className) {
     var _this3 = this,
       $$ = this,
       base = element.node ? element.node() : element;
@@ -8698,7 +8799,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {boolean} forX whether or not to x
    * @returns {number} coordinates
    * @private
-   */generateXYForText: function generateXYForText(indices, forX) {
+   */
+  generateXYForText: function generateXYForText(indices, forX) {
     var _this4 = this,
       $$ = this,
       types = Object.keys(indices),
@@ -8721,7 +8823,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {HTMLElement} textElement Data label text element
    * @returns {number} Position value
    * @private
-   */getCenteredTextPos: function getCenteredTextPos(d, points, textElement) {
+   */
+  getCenteredTextPos: function getCenteredTextPos(d, points, textElement) {
     var $$ = this,
       config = $$.config,
       isRotated = config.axis_rotated;
@@ -8744,7 +8847,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {string} type x | y
    * @returns {number} Position value
    * @private
-   */getTextPos: function getTextPos(id, type) {
+   */
+  getTextPos: function getTextPos(id, type) {
     var pos = this.config.data_labels_position;
     return (id in pos ? pos[id] : pos)[type] || 0;
   },
@@ -8755,7 +8859,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {HTMLElement} textElement Data label text element
    * @returns {number} x coordinate
    * @private
-   */getXForText: function getXForText(points, d, textElement) {
+   */
+  getXForText: function getXForText(points, d, textElement) {
     var $$ = this,
       config = $$.config,
       state = $$.state,
@@ -8799,7 +8904,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {HTMLElement} textElement Data label text element
    * @returns {number} y coordinate
    * @private
-   */getYForText: function getYForText(points, d, textElement) {
+   */
+  getYForText: function getYForText(points, d, textElement) {
     var $$ = this,
       axis = $$.axis,
       config = $$.config,
@@ -8869,7 +8975,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {ChartInternal} $$ ChartInternal context
    * @param {string} selector Selector string
    * @private
-   */markOverlapped: function markOverlapped(id, $$, selector) {
+   */
+  markOverlapped: function markOverlapped(id, $$, selector) {
     var _this5 = this,
       textNodes = $$.$el.arcs.selectAll(selector),
       filteredTextNodes = textNodes.filter(function (node) {
@@ -8900,7 +9007,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {ChartInternal} $$ ChartInternal context
    * @param {string} selector Selector string
    * @private
-   */undoMarkOverlapped: function undoMarkOverlapped($$, selector) {
+   */
+  undoMarkOverlapped: function undoMarkOverlapped($$, selector) {
     $$.$el.arcs.selectAll(selector).each(function () {
       (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.selectAll)([this, this.previousSibling]).classed($TEXT.TextOverlapping, !1);
     });
@@ -8911,7 +9019,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {string} type chart type
    * @returns {boolean}
    * @private
-   */meetsLabelThreshold: function meetsLabelThreshold(ratio, type) {
+   */
+  meetsLabelThreshold: function meetsLabelThreshold(ratio, type) {
     if (ratio === void 0) {
       ratio = 0;
     }
@@ -8955,7 +9064,8 @@ function getTextPos(pos, width) {
   /**
    * Initializes the title
    * @private
-   */initTitle: function initTitle() {
+   */
+  initTitle: function initTitle() {
     var $$ = this,
       config = $$.config,
       $el = $$.$el;
@@ -8968,7 +9078,8 @@ function getTextPos(pos, width) {
   /**
    * Redraw title
    * @private
-   */redrawTitle: function redrawTitle() {
+   */
+  redrawTitle: function redrawTitle() {
     var $$ = this,
       config = $$.config,
       current = $$.state.current,
@@ -8986,7 +9097,8 @@ function getTextPos(pos, width) {
    * Returns the x attribute value of the title
    * @returns {number} x attribute value
    * @private
-   */xForTitle: function xForTitle() {
+   */
+  xForTitle: function xForTitle() {
     var $$ = this,
       config = $$.config,
       current = $$.state.current,
@@ -9010,7 +9122,8 @@ function getTextPos(pos, width) {
    * Returns the y attribute value of the title
    * @returns {number} y attribute value
    * @private
-   */yForTitle: function yForTitle() {
+   */
+  yForTitle: function yForTitle() {
     var $$ = this;
     return ($$.config.title_padding.top || 0) + $$.getTextRect($$.$el.title, $TEXT.title).height;
   },
@@ -9018,7 +9131,8 @@ function getTextPos(pos, width) {
    * Get title padding
    * @returns {number} padding value
    * @private
-   */getTitlePadding: function getTitlePadding() {
+   */
+  getTitlePadding: function getTitlePadding() {
     var $$ = this;
     return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
   }
@@ -9037,7 +9151,8 @@ function getTextPos(pos, width) {
   /**
    * Initializes the tooltip
    * @private
-   */initTooltip: function initTooltip() {
+   */
+  initTooltip: function initTooltip() {
     var $$ = this,
       config = $$.config,
       $el = $$.$el;
@@ -9091,7 +9206,8 @@ function getTextPos(pos, width) {
    * @param  {Array} args Arguments
    * @returns {string} Formatted HTML string
    * @private
-   */getTooltipHTML: function getTooltipHTML() {
+   */
+  getTooltipHTML: function getTooltipHTML() {
     var $$ = this,
       api = $$.api,
       config = $$.config;
@@ -9105,7 +9221,8 @@ function getTextPos(pos, width) {
    * @param {Function} color Color function
    * @returns {string} html
    * @private
-   */getTooltipContent: function getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
+   */
+  getTooltipContent: function getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
     var _this2 = this,
       $$ = this,
       api = $$.api,
@@ -9252,7 +9369,8 @@ function getTextPos(pos, width) {
    * @param {string} tplStr Tempalte string
    * @returns {Array} Template string
    * @private
-   */getTooltipContentTemplate: function getTooltipContentTemplate(tplStr) {
+   */
+  getTooltipContentTemplate: function getTooltipContentTemplate(tplStr) {
     return (tplStr || "<table class=\"{=CLASS_TOOLTIP}\"><tbody>\n\t\t\t\t{=TITLE}\n\t\t\t\t{{<tr class=\"{=CLASS_TOOLTIP_NAME}\">\n\t\t\t\t\t<td class=\"name\">" + (this.patterns ? "{=COLOR}" : "<span style=\"background-color:{=COLOR}\"></span>") + "{=NAME}</td>\n\t\t\t\t\t<td class=\"value\">{=VALUE}</td>\n\t\t\t\t</tr>}}\n\t\t\t</tbody></table>").replace(/(\r?\n|\t)/g, "").split(/{{(.*)}}/);
   },
   /**
@@ -9263,7 +9381,8 @@ function getTextPos(pos, width) {
    * @param {HTMLElement} element Tooltip element
    * @returns {object} top, left value
    * @private
-   */tooltipPosition: function tooltipPosition(dataToShow, tWidth, tHeight, element) {
+   */
+  tooltipPosition: function tooltipPosition(dataToShow, tWidth, tHeight, element) {
     var _this4 = this,
       $$ = this,
       config = $$.config,
@@ -9328,7 +9447,8 @@ function getTextPos(pos, width) {
    * @param {object} selectedData Data object
    * @param {SVGElement} eventRect Event <rect> element
    * @private
-   */showTooltip: function showTooltip(selectedData, eventRect) {
+   */
+  showTooltip: function showTooltip(selectedData, eventRect) {
     var _this5 = this,
       $$ = this,
       config = $$.config,
@@ -9405,7 +9525,8 @@ function getTextPos(pos, width) {
   /**
    * Adjust tooltip position on resize event
    * @private
-   */bindTooltipResizePos: function bindTooltipResizePos() {
+   */
+  bindTooltipResizePos: function bindTooltipResizePos() {
     var _this6 = this,
       $$ = this,
       resizeFunction = $$.resizeFunction,
@@ -9432,7 +9553,8 @@ function getTextPos(pos, width) {
    * Hide the tooltip
    * @param {boolean} force Force to hide
    * @private
-   */hideTooltip: function hideTooltip(force) {
+   */
+  hideTooltip: function hideTooltip(force) {
     var $$ = this,
       api = $$.api,
       config = $$.config,
@@ -9452,7 +9574,8 @@ function getTextPos(pos, width) {
    * @param {boolean} show true: show, false: hide
    * @param {number} index x Axis index
    * @private
-   */_handleLinkedCharts: function _handleLinkedCharts(show, index) {
+   */
+  _handleLinkedCharts: function _handleLinkedCharts(show, index) {
     var _this7 = this,
       $$ = this,
       charts = $$.charts,
@@ -9592,7 +9715,8 @@ function getTextPos(pos, width) {
   /**
    * Updte current used chart types
    * @private
-   */updateTypesElements: function updateTypesElements() {
+   */
+  updateTypesElements: function updateTypesElements() {
     var _this2 = this,
       $$ = this,
       current = $$.state.current;
@@ -9618,7 +9742,8 @@ function getTextPos(pos, width) {
    * @param {boolean} checkFromData Force to check type cotains from data targets
    * @returns {boolean}
    * @private
-   */hasType: function hasType(type, targetsValue, checkFromData) {
+   */
+  hasType: function hasType(type, targetsValue, checkFromData) {
     var _current$types,
       _this3 = this;
     if (checkFromData === void 0) {
@@ -9659,7 +9784,8 @@ function getTextPos(pos, width) {
    * @param {Array} exclude Excluded types
    * @returns {boolean}
    * @private
-   */hasTypeOf: function hasTypeOf(type, targets, exclude) {
+   */
+  hasTypeOf: function hasTypeOf(type, targets, exclude) {
     var _this4 = this;
     if (exclude === void 0) {
       exclude = [];
@@ -9681,7 +9807,8 @@ function getTextPos(pos, width) {
    * @param {string|Array} type chart type
    * @returns {boolean}
    * @private
-   */isTypeOf: function isTypeOf(d, type) {
+   */
+  isTypeOf: function isTypeOf(d, type) {
     var id = isString(d) ? d : d.id,
       dataType = this.config.data_types[id] || this.config.data_type;
     return isArray(type) ? type.indexOf(dataType) >= 0 : dataType === type;
@@ -9696,7 +9823,8 @@ function getTextPos(pos, width) {
    * @param {Array} exclude Excluded types
    * @returns {boolean}
    * @private
-   */hasArcType: function hasArcType(targets, exclude) {
+   */
+  hasArcType: function hasArcType(targets, exclude) {
     return this.hasTypeOf("Arc", targets, exclude);
   },
   hasMultiArcGauge: function hasMultiArcGauge() {
@@ -9771,7 +9899,8 @@ function getTextPos(pos, width) {
    * @param {object} d Data object
    * @returns {Array}
    * @private
-   */labelishData: function labelishData(d) {
+   */
+  labelishData: function labelishData(d) {
     var _this5 = this;
     return this.isBarType(d) || this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isCandlestickType(d) || this.isRadarType(d) ? d.values.filter(function (v) {
       _newArrowCheck(this, _this5);
@@ -10602,7 +10731,8 @@ function loadConfig(config) {
    *    width: 640,
    *    height: 480
    * });
-   */resize: function resize(size) {
+   */
+  resize: function resize(size) {
     var $$ = this.internal,
       config = $$.config,
       state = $$.state;
@@ -10626,7 +10756,8 @@ function loadConfig(config) {
    *
    * // for soft redraw
    * chart.flush(true);
-   */flush: function flush(soft) {
+   */
+  flush: function flush(soft) {
     var $$ = this.internal,
       state = $$.state,
       zoomResetBtn = $$.$el.zoomResetBtn;
@@ -10675,7 +10806,8 @@ function loadConfig(config) {
    * @returns {null}
    * @example
    * chart.destroy();
-   */destroy: function destroy() {
+   */
+  destroy: function destroy() {
     var _this = this,
       $$ = this.internal,
       _$$$$el = $$.$el,
@@ -10744,7 +10876,8 @@ function loadConfig(config) {
    *
    * // Setter & redraw with the new option
    * chart.config("gauge.max", 100, true);
-   */config: function (name, value, redraw) {
+   */
+  config: function (name, value, redraw) {
     var $$ = this.internal,
       config = $$.config,
       state = $$.state,
@@ -10779,7 +10912,8 @@ function loadConfig(config) {
    * @returns {string}
    * @example
    * chart.color("data1");
-   */color: function color(id) {
+   */
+  color: function color(id) {
     return this.internal.color(id); // more patterns
   }
 });
@@ -11239,7 +11373,8 @@ function renderText(ctx, glyph) {
    *    },
    *    dataUrl => { ... }
    *  );
-   */export: function _export(option, callback) {
+   */
+  export: function _export(option, callback) {
     var _this9 = this,
       $$ = this.internal,
       state = $$.state,
@@ -11309,7 +11444,8 @@ function renderText(ctx, glyph) {
    *
    * // all targets will be highlighted
    * chart.focus();
-   */focus: function focus(targetIdsValue) {
+   */
+  focus: function focus(targetIdsValue) {
     var _this = this,
       $$ = this.internal,
       state = $$.state,
@@ -11345,7 +11481,8 @@ function renderText(ctx, glyph) {
    *
    * // all targets will be faded out.
    * chart.defocus();
-   */defocus: function defocus(targetIdsValue) {
+   */
+  defocus: function defocus(targetIdsValue) {
     var _this2 = this,
       $$ = this.internal,
       state = $$.state,
@@ -11379,7 +11516,8 @@ function renderText(ctx, glyph) {
    *
    * // all targets will be reverted.
    * chart.revert();
-   */revert: function revert(targetIdsValue) {
+   */
+  revert: function revert(targetIdsValue) {
     var $$ = this.internal,
       config = $$.config,
       state = $$.state,
@@ -11603,7 +11741,8 @@ var legend_legend = {
    *       data2:[200, 130, 90, 240, 130, 220],
    *   }
    * });
-   */load: function load(args) {
+   */
+  load: function load(args) {
     var _this = this,
       $$ = this.internal,
       config = $$.config;
@@ -11675,7 +11814,8 @@ var legend_legend = {
    *       // called after the unloaded
    *    }
    *  });
-   */unload: function unload(argsValue) {
+   */
+  unload: function unload(argsValue) {
     var _this3 = this,
       $$ = this.internal,
       args = argsValue || {};
@@ -11768,7 +11908,8 @@ function showHide(show, targetIdsValue, options) {
    *
    * // show 'data1' and 'data3'
    * chart.show(["data1", "data3"]);
-   */show: function show(targetIdsValue, options) {
+   */
+  show: function show(targetIdsValue, options) {
     if (options === void 0) {
       options = {};
     }
@@ -11792,7 +11933,8 @@ function showHide(show, targetIdsValue, options) {
    *
    * // hide 'data1' and 'data3'
    * chart.hide(["data1", "data3"]);
-   */hide: function hide(targetIdsValue, options) {
+   */
+  hide: function hide(targetIdsValue, options) {
     if (options === void 0) {
       options = {};
     }
@@ -11816,7 +11958,8 @@ function showHide(show, targetIdsValue, options) {
    *
    * // toggle 'data1' and 'data3'
    * chart.toggle(["data1", "data3"]);
-   */toggle: function toggle(targetIds, options) {
+   */
+  toggle: function toggle(targetIds, options) {
     var _this2 = this;
     if (options === void 0) {
       options = {};
@@ -12335,7 +12478,8 @@ var axis = {
    * @returns {string}
    * @example
    * chart.category(2, "Category 3");
-   */category: function category(i, _category) {
+   */
+  category: function category(i, _category) {
     var $$ = this.internal,
       config = $$.config;
     if (arguments.length > 1) {
@@ -12355,7 +12499,8 @@ var axis = {
    * chart.categories([
    *      "Category 1", "Category 2", ...
    * ]);
-   */categories: function categories(_categories) {
+   */
+  categories: function categories(_categories) {
     var $$ = this.internal,
       config = $$.config;
     if (!arguments.length) {
@@ -12552,7 +12697,8 @@ extend(ygrids, {
    *  chart.groups([
    *     ["data1", "data2"]
    *  ]);
-   */groups: function groups(_groups) {
+   */
+  groups: function groups(_groups) {
     var $$ = this.internal,
       config = $$.config;
     if (isUndefined(_groups)) {
@@ -12704,7 +12850,8 @@ extend(regions, {
    *
    *  // Update x values for all targets
    *  chart.x([100, 200, 300, 400, ...]);
-   */x: function x(_x) {
+   */
+  x: function x(_x) {
     var $$ = this.internal,
       axis = $$.axis,
       data = $$.data,
@@ -12738,7 +12885,8 @@ extend(regions, {
    *    data1: [10, 20, 30, 40, ...],
    *    data2: [100, 200, 300, 400, ...]
    *  });
-   */xs: function xs(_xs) {
+   */
+  xs: function xs(_xs) {
     var $$ = this.internal;
     if (isObject(_xs)) {
       $$.updateTargetXs($$.data.targets, _xs);
@@ -12806,7 +12954,8 @@ extend(regions, {
    *    });
    *  }
    * });
-   */flow: function flow(args) {
+   */
+  flow: function flow(args) {
     var _this = this,
       $$ = this.internal,
       data;
@@ -14455,14 +14604,16 @@ var Axis_Axis = /*#__PURE__*/function () {
    * Initialize the area that detects the event.
    * Add a container for the zone that detects the event.
    * @private
-   */initEventRect: function initEventRect() {
+   */
+  initEventRect: function initEventRect() {
     var $$ = this;
     $$.$el.main.select("." + $COMMON.chart).append("g").attr("class", $EVENT.eventRects).style("fill-opacity", "0");
   },
   /**
    * Redraws the area that detects the event.
    * @private
-   */redrawEventRect: function redrawEventRect() {
+   */
+  redrawEventRect: function redrawEventRect() {
     var $$ = this,
       config = $$.config,
       state = $$.state,
@@ -14585,7 +14736,8 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @param {d3Selection} eventRect Event <rect> element
    * @param {boolean} force Force to update
    * @private
-   */updateEventRect: function updateEventRect(eventRect, force) {
+   */
+  updateEventRect: function updateEventRect(eventRect, force) {
     var _this2 = this;
     if (force === void 0) {
       force = !1;
@@ -14617,7 +14769,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   /**
    * Updates the location and size of the eventRect.
    * @private
-   */updateEventRectData: function updateEventRectData() {
+   */
+  updateEventRectData: function updateEventRectData() {
     var _this3 = this,
       $$ = this,
       config = $$.config,
@@ -14749,7 +14902,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   /**
    * Unselect EventRect.
    * @private
-   */unselectRect: function unselectRect() {
+   */
+  unselectRect: function unselectRect() {
     var $$ = this,
       config = $$.config,
       _$$$$el2 = $$.$el,
@@ -14770,7 +14924,8 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @param {object} eventRectEnter d3.select($EVENT.eventRects) object.
    * @returns {object} d3.select($EVENT.eventRects) object.
    * @private
-   */generateEventRectsForSingleX: function generateEventRectsForSingleX(eventRectEnter) {
+   */
+  generateEventRectsForSingleX: function generateEventRectsForSingleX(eventRectEnter) {
     var _this6 = this,
       $$ = this,
       config = $$.config,
@@ -14865,7 +15020,8 @@ var Axis_Axis = /*#__PURE__*/function () {
    * Register touch and drag events.
    * @param {object} eventRectEnter d3.select($EVENT.eventRects) object.
    * @private
-   */generateEventRectsForMultipleXs: function generateEventRectsForMultipleXs(eventRectEnter) {
+   */
+  generateEventRectsForMultipleXs: function generateEventRectsForMultipleXs(eventRectEnter) {
     var _this7 = this,
       $$ = this,
       state = $$.state;
@@ -14932,7 +15088,8 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * @param {object} args option object
    * @returns {Function}
    * @private
-   */generateFlow: function generateFlow(args) {
+   */
+  generateFlow: function generateFlow(args) {
     var $$ = this,
       data = $$.data,
       state = $$.state,
@@ -14977,7 +15134,8 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * @param {object} elements Target elements
    * @param {object} args option object
    * @private
-   */setFlowList: function setFlowList(elements, args) {
+   */
+  setFlowList: function setFlowList(elements, args) {
     var _this2 = this,
       $$ = this,
       flow = args.flow,
@@ -15017,7 +15175,8 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * @param {object} elements Target elements
    * @param {object} args option object
    * @private
-   */cleanUpFlow: function cleanUpFlow(elements, args) {
+   */
+  cleanUpFlow: function cleanUpFlow(elements, args) {
     var _this4 = this,
       $$ = this,
       config = $$.config,
@@ -15104,7 +15263,8 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * @param {number} flowLength flow length
    * @returns {string}
    * @private
-   */getFlowTransform: function getFlowTransform(targets, orgDataCount, flowIndex, flowLength) {
+   */
+  getFlowTransform: function getFlowTransform(targets, orgDataCount, flowIndex, flowLength) {
     var _flowStart,
       _flowEnd,
       $$ = this,
@@ -15178,7 +15338,8 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * Set x Axis clipPath dimension
    * @param {d3Selecton} node clipPath <rect> selection
    * @private
-   */setXAxisClipPath: function setXAxisClipPath(node) {
+   */
+  setXAxisClipPath: function setXAxisClipPath(node) {
     var $$ = this,
       config = $$.config,
       _$$$state = $$.state,
@@ -15197,7 +15358,8 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * Set y Axis clipPath dimension
    * @param {d3Selecton} node clipPath <rect> selection
    * @private
-   */setYAxisClipPath: function setYAxisClipPath(node) {
+   */
+  setYAxisClipPath: function setYAxisClipPath(node) {
     var $$ = this,
       config = $$.config,
       _$$$state2 = $$.state,
@@ -15425,7 +15587,8 @@ function smoothLines(el, type) {
   /**
    * Update X Grid lines
    * @private
-   */updateXGridLines: function updateXGridLines() {
+   */
+  updateXGridLines: function updateXGridLines() {
     var _this9 = this,
       $$ = this,
       config = $$.config,
@@ -15457,7 +15620,8 @@ function smoothLines(el, type) {
   /**
    * Update Y Grid lines
    * @private
-   */updateYGridLines: function updateYGridLines() {
+   */
+  updateYGridLines: function updateYGridLines() {
     var _this10 = this,
       $$ = this,
       config = $$.config,
@@ -15534,7 +15698,8 @@ function smoothLines(el, type) {
    * Show grid focus line
    * @param {Array} data Selected data
    * @private
-   */showGridFocus: function showGridFocus(data) {
+   */
+  showGridFocus: function showGridFocus(data) {
     var _this12 = this,
       $$ = this,
       config = $$.config,
@@ -15813,7 +15978,8 @@ function smoothLines(el, type) {
    * @param {string} id Axis id value - x, y or y2
    * @returns {number} size Axis size value
    * @private
-   */getAxisSize: function getAxisSize(id) {
+   */
+  getAxisSize: function getAxisSize(id) {
     var $$ = this,
       isRotated = $$.config.axis_rotated;
     return isRotated && id === "x" || !isRotated && /y2?/.test(id) ? $$.getAxisWidthByAxisId(id, !0) : $$.getHorizontalAxisHeight(id);
@@ -15874,7 +16040,8 @@ function smoothLines(el, type) {
    * @param {string} id Axis id
    * @returns {number} rotate value
    * @private
-   */getAxisTickRotate: function getAxisTickRotate(id) {
+   */
+  getAxisTickRotate: function getAxisTickRotate(id) {
     var $$ = this,
       axis = $$.axis,
       config = $$.config,
@@ -15908,7 +16075,8 @@ function smoothLines(el, type) {
    * Check weather axis tick text needs to be rotated
    * @returns {boolean}
    * @private
-   */needToRotateXAxisTickTexts: function needToRotateXAxisTickTexts() {
+   */
+  needToRotateXAxisTickTexts: function needToRotateXAxisTickTexts() {
     var $$ = this,
       _$$$state = $$.state,
       axis = _$$$state.axis,
@@ -17858,7 +18026,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {object|undefined} d Data object
    * @returns {object}
    * @private
-   */getRadius: function getRadius(d) {
+   */
+  getRadius: function getRadius(d) {
     var $$ = this,
       data = d == null ? void 0 : d.data,
       _$$$state = $$.state,
@@ -18033,7 +18202,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {object} d Data object
    * @returns {string} Translate attribute string
    * @private
-   */transformForArcLabel: function transformForArcLabel(d) {
+   */
+  transformForArcLabel: function transformForArcLabel(d) {
     var _this7 = this,
       $$ = this,
       config = $$.config,
@@ -18150,7 +18320,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {string} key config key: 'duration | rate'
    * @returns {number}
    * @private
-   */getExpandConfig: function getExpandConfig(id, key) {
+   */
+  getExpandConfig: function getExpandConfig(id, key) {
     var $$ = this,
       config = $$.config,
       type;
@@ -18228,7 +18399,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   /**
    * Set arc title text
    * @private
-   */setArcTitle: function setArcTitle() {
+   */
+  setArcTitle: function setArcTitle() {
     var $$ = this,
       title = $$.getArcTitle(),
       hasGauge = $$.hasType("gauge");
@@ -18526,7 +18698,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {object} d Data object
    * @returns {string} Color string
    * @private
-   */updateAreaColor: function updateAreaColor(d) {
+   */
+  updateAreaColor: function updateAreaColor(d) {
     var $$ = this;
     return $$.config.area_linearGradient ? $$.getGradienColortUrl(d.id) : $$.color(d);
   },
@@ -18535,7 +18708,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {boolean} withTransition Transition for exit elements
    * @param {boolean} isSub Subchart draw
    * @private
-   */updateArea: function updateArea(withTransition, isSub) {
+   */
+  updateArea: function updateArea(withTransition, isSub) {
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -18560,7 +18734,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {boolean} withTransition With or without transition
    * @param {boolean} isSub Subchart draw
    * @returns {Array}
-   */redrawArea: function redrawArea(drawFn, withTransition, isSub) {
+   */
+  redrawArea: function redrawArea(drawFn, withTransition, isSub) {
     var _this = this;
     if (isSub === void 0) {
       isSub = !1;
@@ -18580,7 +18755,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {boolean} isSub Weather is sub axis
    * @returns {Function}
    * @private
-   */generateDrawArea: function generateDrawArea(areaIndices, isSub) {
+   */
+  generateDrawArea: function generateDrawArea(areaIndices, isSub) {
     var _this2 = this,
       $$ = this,
       config = $$.config,
@@ -18718,7 +18894,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {boolean} withTransition Transition for exit elements
    * @param {boolean} isSub Subchart draw
    * @private
-   */updateBar: function updateBar(withTransition, isSub) {
+   */
+  updateBar: function updateBar(withTransition, isSub) {
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -18739,7 +18916,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {object} d Data object
    * @returns {string} Color string
    * @private
-   */updateBarColor: function updateBarColor(d) {
+   */
+  updateBarColor: function updateBarColor(d) {
     var $$ = this,
       fn = $$.getStylePropValue($$.color);
     return $$.config.bar_linearGradient ? $$.getGradienColortUrl(d.id) : fn ? fn(d) : null;
@@ -18751,7 +18929,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {boolean} isSub Subchart draw
    * @returns {Array}
    * @private
-   */redrawBar: function redrawBar(drawFn, withTransition, isSub) {
+   */
+  redrawBar: function redrawBar(drawFn, withTransition, isSub) {
     var _this3 = this;
     if (isSub === void 0) {
       isSub = !1;
@@ -18783,7 +18962,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {boolean} isSub If is for subchart
    * @returns {Function}
    * @private
-   */generateDrawBar: function generateDrawBar(barIndices, isSub) {
+   */
+  generateDrawBar: function generateDrawBar(barIndices, isSub) {
     var _this4 = this,
       $$ = this,
       config = $$.config,
@@ -18829,7 +19009,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * Determine if given stacking bar data is radius type
    * @param {object} d Data row
    * @returns {boolean}
-   */isStackingRadiusData: function isStackingRadiusData(d) {
+   */
+  isStackingRadiusData: function isStackingRadiusData(d) {
     var _this5 = this,
       $$ = this,
       $el = $$.$el,
@@ -18877,7 +19058,8 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
    * @param {boolean} isSub If is for subchart
    * @returns {Array} Array of coordinate points
    * @private
-   */generateGetBarPoints: function generateGetBarPoints(barIndices, isSub) {
+   */
+  generateGetBarPoints: function generateGetBarPoints(barIndices, isSub) {
     var _this7 = this,
       $$ = this,
       config = $$.config,
@@ -18934,7 +19116,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * called from: ChartInternal.updateTargets()
    * @param {Array} targets Filtered target by type
    * @private
-   */updateTargetsForCandlestick: function updateTargetsForCandlestick(targets) {
+   */
+  updateTargetsForCandlestick: function updateTargetsForCandlestick(targets) {
     var _this = this,
       $$ = this,
       $el = $$.$el,
@@ -18954,7 +19137,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @param {boolean} withTransition Transition for exit elements
    * @param {boolean} isSub Subchart draw
    * @private
-   */updateCandlestick: function updateCandlestick(withTransition, isSub) {
+   */
+  updateCandlestick: function updateCandlestick(withTransition, isSub) {
     var _this2 = this;
     if (isSub === void 0) {
       isSub = !1;
@@ -18984,7 +19168,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @param {boolean} isSub Subchart draw
    * @returns {Function}
    * @private
-   */generateDrawCandlestick: function generateDrawCandlestick(indices, isSub) {
+   */
+  generateDrawCandlestick: function generateDrawCandlestick(indices, isSub) {
     var _this3 = this,
       $$ = this,
       config = $$.config,
@@ -19032,7 +19217,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @param {object} indices Indice data
    * @param {boolean} isSub Subchart draw
    * @returns {Function}
-   */generateGetCandlestickPoints: function generateGetCandlestickPoints(indices, isSub) {
+   */
+  generateGetCandlestickPoints: function generateGetCandlestickPoints(indices, isSub) {
     var _this5 = this;
     if (isSub === void 0) {
       isSub = !1;
@@ -19086,7 +19272,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @param {boolean} withTransition With or without transition
    * @param {boolean} isSub Subchart draw
    * @returns {Array}
-   */redrawCandlestick: function redrawCandlestick(drawFn, withTransition, isSub) {
+   */
+  redrawCandlestick: function redrawCandlestick(drawFn, withTransition, isSub) {
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -19107,7 +19294,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @param {Array|object} param.value Data value
    * @returns {object|null} Converted data object
    * @private
-   */getCandlestickData: function getCandlestickData(_ref2) {
+   */
+  getCandlestickData: function getCandlestickData(_ref2) {
     var value = _ref2.value,
       d;
     if (isArray(value)) {
@@ -19237,7 +19425,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
   /**
    * Initializer
    * @private
-   */initBubble: function initBubble() {
+   */
+  initBubble: function initBubble() {
     var $$ = this,
       config = $$.config;
     if ($$.hasType("bubble")) {
@@ -19250,7 +19439,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * Get user agent's computed value
    * @returns {number}
    * @private
-   */getBaseLength: function getBaseLength() {
+   */
+  getBaseLength: function getBaseLength() {
     var $$ = this,
       _$$$state = $$.state,
       width = _$$$state.width,
@@ -19267,7 +19457,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @param {object} d Data object
    * @returns {number}
    * @private
-   */getBubbleR: function getBubbleR(d) {
+   */
+  getBubbleR: function getBubbleR(d) {
     var _this = this,
       $$ = this,
       maxR = $$.config.bubble_maxR;
@@ -19290,7 +19481,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @param {string} type - y or z
    * @returns {number}
    * @private
-   */getBubbleZData: function getBubbleZData(d, type) {
+   */
+  getBubbleZData: function getBubbleZData(d, type) {
     return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
   }
 });
@@ -19346,7 +19538,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @param {boolean} withTransition Transition for exit elements
    * @param {boolean} isSub Subchart draw
    * @private
-   */updateLine: function updateLine(withTransition, isSub) {
+   */
+  updateLine: function updateLine(withTransition, isSub) {
     var _this2 = this;
     if (isSub === void 0) {
       isSub = !1;
@@ -19372,7 +19565,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @param {boolean} withTransition With or without transition
    * @param {boolean} isSub Subchart draw
    * @returns {Array}
-   */redrawLine: function redrawLine(drawFn, withTransition, isSub) {
+   */
+  redrawLine: function redrawLine(drawFn, withTransition, isSub) {
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -19388,7 +19582,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
    * @param {Array} d Data object
    * @returns {Function}
    * @private
-   */getCurve: function getCurve(d) {
+   */
+  getCurve: function getCurve(d) {
     var _this3 = this,
       $$ = this,
       isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
@@ -19746,7 +19941,8 @@ var getTransitionName = function () {
    * Show focused data point circle
    * @param {object} d Selected data
    * @private
-   */showCircleFocus: function showCircleFocus(d) {
+   */
+  showCircleFocus: function showCircleFocus(d) {
     var $$ = this,
       config = $$.config,
       _$$$state = $$.state,
@@ -19788,7 +19984,8 @@ var getTransitionName = function () {
   /**
    * Hide focused data point circle
    * @private
-   */hideCircleFocus: function hideCircleFocus() {
+   */
+  hideCircleFocus: function hideCircleFocus() {
     var $$ = this,
       config = $$.config,
       circle = $$.$el.circle;
@@ -20107,7 +20304,8 @@ function getDataMax($$) {
   /**
    * Initialize polar
    * @private
-   */initPolar: function initPolar() {
+   */
+  initPolar: function initPolar() {
     var $$ = this,
       arcs = $$.$el.arcs,
       config = $$.config,
@@ -20127,7 +20325,8 @@ function getDataMax($$) {
    * @param {numbet} outerRadius Outer radius
    * @returns {number} outer radius
    * @private
-   */getPolarOuterRadius: function getPolarOuterRadius(d, outerRadius) {
+   */
+  getPolarOuterRadius: function getPolarOuterRadius(d, outerRadius) {
     var _d$data$values$0$valu,
       dataMax = getDataMax(this);
     return ((_d$data$values$0$valu = d == null ? void 0 : d.data.values[0].value) != null ? _d$data$values$0$valu : 0) / dataMax * outerRadius;
@@ -20136,14 +20335,16 @@ function getDataMax($$) {
    * Update polar based on given data array
    * @param {object} targets Data object
    * @private
-   */updateTargetsForPolar: function updateTargetsForPolar(targets) {
+   */
+  updateTargetsForPolar: function updateTargetsForPolar(targets) {
     // borrow from Arc
     this.updateTargetsForArc(targets);
   },
   /**
    * Called whenever redraw happens
    * @private
-   */redrawPolar: function redrawPolar() {
+   */
+  redrawPolar: function redrawPolar() {
     var $$ = this,
       config = $$.config;
     config.polar_level_show && $$.updatePolarLevel();
@@ -20151,7 +20352,8 @@ function getDataMax($$) {
   /**
    * Update polar level circle
    * @private
-   */updatePolarLevel: function updatePolarLevel() {
+   */
+  updatePolarLevel: function updatePolarLevel() {
     var _this = this,
       $$ = this,
       config = $$.config,
@@ -20284,7 +20486,8 @@ var cacheKey = KEY.radarPoints;
   /**
    * Generate data points
    * @private
-   */generateRadarPoints: function generateRadarPoints() {
+   */
+  generateRadarPoints: function generateRadarPoints() {
     var _this3 = this,
       $$ = this,
       targets = $$.data.targets,
@@ -20554,7 +20757,8 @@ var cacheKey = KEY.radarPoints;
    * @param {object} d Data object
    * @returns {number}
    * @private
-   */radarCircleX: function radarCircleX(d) {
+   */
+  radarCircleX: function radarCircleX(d) {
     return this.cache.get(cacheKey)[d.id][d.index][0];
   },
   /**
@@ -20562,7 +20766,8 @@ var cacheKey = KEY.radarPoints;
    * @param {object} d Data object
    * @returns {number}
    * @private
-   */radarCircleY: function radarCircleY(d) {
+   */
+  radarCircleY: function radarCircleY(d) {
     return this.cache.get(cacheKey)[d.id][d.index][1];
   }
 });
@@ -21816,7 +22021,8 @@ var _area = function area() {
    *
    *  // all selected data points of data1 will be returned.
    *  chart.selected("data1");
-   */selected: function selected(targetId) {
+   */
+  selected: function selected(targetId) {
     var _this = this,
       $$ = this.internal,
       dataPoint = [];
@@ -21851,7 +22057,8 @@ var _area = function area() {
    *
    *  // select from 'data1', indices 0, 3 and 5
    *  chart.select("data1", [0, 3, 5]);
-   */select: function select(ids, indices, resetOther) {
+   */
+  select: function select(ids, indices, resetOther) {
     var $$ = this.internal,
       config = $$.config,
       $el = $$.$el;
@@ -21894,7 +22101,8 @@ var _area = function area() {
    *
    *  // unselect from 'data1', indices 2
    *  chart.unselect("data1", [2]);
-   */unselect: function unselect(ids, indices) {
+   */
+  unselect: function unselect(ids, indices) {
     var $$ = this.internal,
       config = $$.config,
       $el = $$.$el;
@@ -21948,7 +22156,8 @@ var _area = function area() {
      * });
      *
      * chart.subchart.show();
-     */show: function () {
+     */
+    show: function () {
       var $$ = this.internal,
         subchart = $$.$el.subchart,
         config = $$.config,
@@ -21981,7 +22190,8 @@ var _area = function area() {
      * @memberof Chart
      * @example
      *  chart.subchart.hide();
-     */hide: function hide() {
+     */
+    hide: function hide() {
       var $$ = this.internal,
         main = $$.$el.subchart.main,
         config = $$.config;
@@ -22001,7 +22211,8 @@ var _area = function area() {
      * // When subchart is hidden, will be shown
      * // When subchart is shown, will be hidden
      * chart.subchart.toggle();
-     */toggle: function toggle() {
+     */
+    toggle: function toggle() {
       var $$ = this.internal,
         config = $$.config;
       this.subchart[config.subchart_show ? "hide" : "show"]();
@@ -22222,7 +22433,8 @@ extend(zoom, {
    * @memberof Chart
    * @example
    *  chart.unzoom();
-   */unzoom: function unzoom() {
+   */
+  unzoom: function unzoom() {
     var $$ = this.internal,
       config = $$.config,
       _$$$$el = $$.$el,
@@ -22259,7 +22471,8 @@ extend(zoom, {
    * Data points can be selected.
    * @private
    * @param {object} mouse Object
-   */drag: function drag(mouse) {
+   */
+  drag: function drag(mouse) {
     var _this = this,
       $$ = this,
       config = $$.config,
@@ -22328,7 +22541,8 @@ extend(zoom, {
    * Adds and Shows the drag area.
    * @private
    * @param {object} mouse Object
-   */dragstart: function dragstart(mouse) {
+   */
+  dragstart: function dragstart(mouse) {
     var $$ = this,
       config = $$.config,
       state = $$.state,
@@ -22344,7 +22558,8 @@ extend(zoom, {
    * Called when the drag finishes.
    * Removes the drag area.
    * @private
-   */dragend: function dragend() {
+   */
+  dragend: function dragend() {
     var $$ = this,
       config = $$.config,
       main = $$.$el.main,
@@ -22378,7 +22593,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @param {object} d Data object
    * @param {number} i Index number
    * @private
-   */selectPoint: function selectPoint(target, d, i) {
+   */
+  selectPoint: function selectPoint(target, d, i) {
     var _this = this,
       $$ = this,
       config = $$.config,
@@ -22405,7 +22621,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @param {object} d Data object
    * @param {number} i Index number
    * @private
-   */unselectPoint: function unselectPoint(target, d, i) {
+   */
+  unselectPoint: function unselectPoint(target, d, i) {
     var $$ = this,
       config = $$.config,
       main = $$.$el.main,
@@ -22422,7 +22639,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @param {object} d Data object
    * @param {number} i Index number
    * @private
-   */togglePoint: function togglePoint(selected, target, d, i) {
+   */
+  togglePoint: function togglePoint(selected, target, d, i) {
     var method = (selected ? "" : "un") + "selectPoint";
     this[method](target, d, i);
   },
@@ -22431,7 +22649,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @param {object} target Target path
    * @param {object} d Data object
    * @private
-   */selectPath: function selectPath(target, d) {
+   */
+  selectPath: function selectPath(target, d) {
     var $$ = this,
       config = $$.config;
     callFn(config.data_onselected, $$.api, d, target.node());
@@ -22444,7 +22663,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @private
    * @param {object} target Target path
    * @param {object} d Data object
-   */unselectPath: function unselectPath(target, d) {
+   */
+  unselectPath: function unselectPath(target, d) {
     var $$ = this,
       config = $$.config;
     callFn(config.data_onunselected, $$.api, d, target.node());
@@ -22459,7 +22679,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @param {object} d Data object
    * @param {number} i Index number
    * @private
-   */togglePath: function togglePath(selected, target, d, i) {
+   */
+  togglePath: function togglePath(selected, target, d, i) {
     this[(selected ? "" : "un") + "selectPath"](target, d, i);
   },
   /**
@@ -22468,7 +22689,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @param {object} d Data object
    * @returns {Function} toggle method
    * @private
-   */getToggle: function getToggle(that, d) {
+   */
+  getToggle: function getToggle(that, d) {
     var _this2 = this,
       $$ = this;
     return that.nodeName === "path" ? $$.togglePath : $$.isStepType(d) ? function () {
@@ -22483,7 +22705,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @param {object} d Data object
    * @param {number} i Index number
    * @private
-   */toggleShape: function toggleShape(that, d, i) {
+   */
+  toggleShape: function toggleShape(that, d, i) {
     var $$ = this,
       config = $$.config,
       main = $$.$el.main;
@@ -22526,7 +22749,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   /**
    * Initialize the brush.
    * @private
-   */initBrush: function initBrush() {
+   */
+  initBrush: function initBrush() {
     var _this = this,
       $$ = this,
       config = $$.config,
@@ -22636,7 +22860,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   /**
    * Initialize the subchart.
    * @private
-   */initSubchart: function initSubchart() {
+   */
+  initSubchart: function initSubchart() {
     var _this6 = this,
       $$ = this,
       config = $$.config,
@@ -22690,7 +22915,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * Enabled when: subchart.showHandle=true
    * @param {d3Selection} brush Brush selection
    * @private
-   */addBrushHandle: function addBrushHandle(brush) {
+   */
+  addBrushHandle: function addBrushHandle(brush) {
     var _this7 = this,
       $$ = this,
       config = $$.config,
@@ -22714,7 +22940,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * Update sub chart
    * @param {object} targets $$.data.targets
    * @private
-   */updateTargetsForSubchart: function updateTargetsForSubchart(targets) {
+   */
+  updateTargetsForSubchart: function updateTargetsForSubchart(targets) {
     var _this8 = this,
       $$ = this,
       config = $$.config,
@@ -22755,7 +22982,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @param {boolean} withSubchart whether or not to show subchart
    * @param {number} duration duration
    * @param {object} shape Shape's info
-   */redrawSubchart: function redrawSubchart(withSubchart, duration, shape) {
+   */
+  redrawSubchart: function redrawSubchart(withSubchart, duration, shape) {
     var _this9 = this,
       $$ = this,
       config = $$.config,
@@ -22799,7 +23027,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   /**
    * Redraw the brush.
    * @private
-   */redrawForBrush: function redrawForBrush() {
+   */
+  redrawForBrush: function redrawForBrush() {
     var $$ = this,
       _$$$config = $$.config,
       onBrush = _$$$config.subchart_onbrush,
@@ -22819,7 +23048,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * @param {boolean} withTransition indicates transition is enabled
    * @param {object} transitions The return value of the generateTransitions method of Axis.
    * @private
-   */transformContext: function transformContext(withTransition, transitions) {
+   */
+  transformContext: function transformContext(withTransition, transitions) {
     var $$ = this,
       subchart = $$.$el.subchart,
       $T = $$.$T,
@@ -22831,7 +23061,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * Get extent value
    * @returns {Array} default extent
    * @private
-   */getExtent: function getExtent() {
+   */
+  getExtent: function getExtent() {
     var _this10 = this,
       $$ = this,
       config = $$.config,
@@ -22865,7 +23096,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   /**
    * Initialize zoom.
    * @private
-   */initZoom: function initZoom() {
+   */
+  initZoom: function initZoom() {
     var $$ = this;
     $$.scale.zoom = null;
     $$.generateZoom();
@@ -22875,7 +23107,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * Bind zoom event
    * @param {boolean} bind Weather bind or unbound
    * @private
-   */bindZoomEvent: function bindZoomEvent(bind) {
+   */
+  bindZoomEvent: function bindZoomEvent(bind) {
     if (bind === void 0) {
       bind = !0;
     }
@@ -22893,7 +23126,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   /**
    * Generate zoom
    * @private
-   */generateZoom: function generateZoom() {
+   */
+  generateZoom: function generateZoom() {
     var _this = this,
       $$ = this,
       config = $$.config,
@@ -22978,7 +23212,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * 'start' event listener
    * @param {object} event Event object
    * @private
-   */onZoomStart: function onZoomStart(event) {
+   */
+  onZoomStart: function onZoomStart(event) {
     var $$ = this,
       sourceEvent = event.sourceEvent;
     if (sourceEvent) {
@@ -22991,7 +23226,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * 'zoom' event listener
    * @param {object} event Event object
    * @private
-   */onZoom: function onZoom(event) {
+   */
+  onZoom: function onZoom(event) {
     var _this2 = this,
       $$ = this,
       config = $$.config,
@@ -23037,7 +23273,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * 'end' event listener
    * @param {object} event Event object
    * @private
-   */onZoomEnd: function onZoomEnd(event) {
+   */
+  onZoomEnd: function onZoomEnd(event) {
     var _startEvent,
       $$ = this,
       config = $$.config,
@@ -23066,7 +23303,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
    * Update zoom
    * @param {boolean} force Force unzoom
    * @private
-   */updateZoom: function updateZoom(force) {
+   */
+  updateZoom: function updateZoom(force) {
     var $$ = this,
       _$$$scale = $$.scale,
       subX = _$$$scale.subX,
@@ -23088,7 +23326,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   /**
    * Attach zoom event on <rect>
    * @private
-   */bindZoomOnEventRect: function bindZoomOnEventRect() {
+   */
+  bindZoomOnEventRect: function bindZoomOnEventRect() {
     var _this3 = this,
       $$ = this,
       config = $$.config,
@@ -23104,7 +23343,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
   /**
    * Initialize the drag behaviour used for zooming.
    * @private
-   */initZoomBehaviour: function initZoomBehaviour() {
+   */
+  initZoomBehaviour: function initZoomBehaviour() {
     var _this4 = this,
       $$ = this,
       config = $$.config,
@@ -23556,7 +23796,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.0-nightly-20221020004751",
+    version: "3.6.1-nightly-20221022004829",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -23626,7 +23866,8 @@ var _defaults = {},
      *        data2: step()
      *      }
      * });
-     */generate: function generate(config) {
+     */
+    generate: function generate(config) {
       var options = mergeObj({}, _defaults, config),
         inst = new Chart(options);
       inst.internal.charts = this.instance;
@@ -23654,7 +23895,8 @@ var _defaults = {},
      *
      * // data.type defaults to 'bar'
      * var chart = bb.generate({ ... });
-     */defaults: function defaults(options) {
+     */
+    defaults: function defaults(options) {
       if (isObject(options)) {
         _defaults = options;
       }
@@ -23681,10 +23923,11 @@ var _defaults = {},
      * @memberof bb
      */
     plugin: {}
-  }; /**
-      * @namespace bb
-      * @version 3.6.0-nightly-20221020004751
-      */
+  };
+/**
+ * @namespace bb
+ * @version 3.6.1-nightly-20221022004829
+ */
 ;// CONCATENATED MODULE: ./src/index.ts
 
 var src_this = undefined;

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.0-nightly-20221020004751
+ * @version 3.6.1-nightly-20221022004829
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4584,7 +4584,7 @@ var dataLoad = {
  */
 var interaction = {
     selectRectForSingle: function (context, eventRect, index) {
-        var _a;
+        var _a, _b;
         var $$ = this;
         var config = $$.config, main = $$.$el.main;
         var isSelectionEnabled = config.data_selection_enabled;
@@ -4599,22 +4599,22 @@ var interaction = {
                 return;
             }
         }
-        main.selectAll(".".concat($SHAPE.shape, "-").concat(index))
+        var shapeAtIndex = main.selectAll(".".concat($SHAPE.shape, "-").concat(index))
             .each(function () {
-            var _a;
             select(this).classed($COMMON.EXPANDED, true);
             if (isSelectionEnabled) {
                 eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
             }
-            if (!isTooltipGrouped) {
-                (_a = $$.hideGridFocus) === null || _a === void 0 ? void 0 : _a.call($$);
-                $$.hideTooltip();
-                !isSelectionGrouped && $$.setExpand(index);
-            }
         })
             .filter(function (d) {
             return $$.isWithinShape(this, d);
-        })
+        });
+        if (shapeAtIndex.empty() && !isTooltipGrouped) {
+            (_b = $$.hideGridFocus) === null || _b === void 0 ? void 0 : _b.call($$);
+            $$.hideTooltip();
+            !isSelectionGrouped && $$.setExpand(index);
+        }
+        shapeAtIndex
             .call(function (selected) {
             var _a, _b;
             var d = selected.data();
@@ -4677,28 +4677,35 @@ var interaction = {
         if (isArc || d !== -1) {
             var callback_1 = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
             config.color_onover && $$.setOverColor(isOver, d, isArc);
-            if (isArc) {
+            if (isArc && "id") {
                 callback_1(d, main.select(".".concat($ARC.arc).concat($$.getTargetSelectorSuffix(d.id))).node());
             }
             else if (!config.tooltip_grouped) {
                 var last_1 = $$.cache.get(KEY.setOverOut) || [];
-                var shape = main.selectAll(".".concat($SHAPE.shape, "-").concat(d))
+                // select based on the index
+                var shapesAtIndex = main.selectAll(".".concat($SHAPE.shape, "-").concat(d))
                     .filter(function (d) {
                     return $$.isWithinShape(this, d);
                 });
-                shape
-                    .each(function (d) {
+                // filter if has new selection
+                var shape = shapesAtIndex.filter(function () {
                     var _this = this;
-                    if (last_1.length === 0 || last_1.every(function (v) { return v !== _this; })) {
-                        callback_1(d, this);
+                    return last_1.every(function (v) { return v !== _this; });
+                });
+                // call onout callback
+                if (!isOver || shapesAtIndex.empty() || (last_1.length === shape.size() && shape.nodes().every((function (v, i) { return v !== last_1[i]; })))) {
+                    while (last_1.length) {
+                        var target = last_1.pop();
+                        config.data_onout.bind($$.api)(select(target).datum(), target);
+                    }
+                }
+                // call onover callback
+                shape.each(function () {
+                    if (isOver) {
+                        callback_1(select(this).datum(), this);
                         last_1.push(this);
                     }
                 });
-                if (last_1.length > 0 && shape.empty()) {
-                    callback_1 = config.data_onout.bind($$.api);
-                    last_1.forEach(function (v) { return callback_1(select(v).datum(), v); });
-                    last_1 = [];
-                }
                 $$.cache.add(KEY.setOverOut, last_1);
             }
             else {
@@ -21550,7 +21557,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.0-nightly-20221020004751
+ * @version 3.6.1-nightly-20221022004829
  */
 var bb = {
     /**
@@ -21560,7 +21567,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.0-nightly-20221020004751",
+    version: "3.6.1-nightly-20221022004829",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
