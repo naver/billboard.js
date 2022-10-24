@@ -11,6 +11,7 @@ node_modules
 dist
 dist-ssr
 *.local
+.*
 
 test/coverage
 test/__snapshots__
