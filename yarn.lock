@@ -7829,8 +7829,8 @@ dts-critic@latest:
   linkType: hard
 
 "eslint-plugin-jsdoc@npm:^39.3.13":
-  version: 39.3.14
-  resolution: "eslint-plugin-jsdoc@npm:39.3.14"
+  version: 39.3.24
+  resolution: "eslint-plugin-jsdoc@npm:39.3.24"
   dependencies:
     "@es-joy/jsdoccomment": ~0.33.0
     comment-parser: 1.3.1
@@ -7841,7 +7841,7 @@ dts-critic@latest:
     spdx-expression-parse: ^3.0.1
   peerDependencies:
     eslint: ^7.0.0 || ^8.0.0
-  checksum: 448cc78968a9d3481c21d1a2e99be4e8ccb73c9669ae0949df68957d8c219471501f68eb02095f869d91fde8c3d135563492fce5128523325d81dc5eb8112a15
+  checksum: 2d6149a48903502f61c0c5d06944d5a46789a1c38d4999a42f0bd32129e4c66cbc470df8cae7d5d1a730b8dad3e06c9d869ba8abd3d6e08eaa1a5cd39464b7b4
   languageName: node
   linkType: hard
 
@@ -17192,17 +17192,17 @@ dts-critic@latest:
 
 "typescript@patch:typescript@4.8.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.5.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>":
   version: 4.8.4
-  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=701156"
+  resolution: "typescript@patch:typescript@npm%3A4.8.4#~builtin<compat/typescript>::version=4.8.4&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 301459fc3eb3b1a38fe91bf96d98eb55da88a9cb17b4ef80b4d105d620f4d547ba776cc27b44cc2ef58b66eda23fe0a74142feb5e79a6fb99f54fc018a696afa
+  checksum: 563a0ef47abae6df27a9a3ab38f75fc681f633ccf1a3502b1108e252e187787893de689220f4544aaf95a371a4eb3141e4a337deb9895de5ac3c1ca76430e5f0
   languageName: node
   linkType: hard
 
 "typescript@patch:typescript@^3.2.2#~builtin<compat/typescript>":
   version: 3.9.10
-  resolution: "typescript@patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=701156"
+  resolution: "typescript@patch:typescript@npm%3A3.9.10#~builtin<compat/typescript>::version=3.9.10&hash=a1c5e5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
