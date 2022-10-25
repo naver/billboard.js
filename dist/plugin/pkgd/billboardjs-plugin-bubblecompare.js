@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.1-nightly-20221022004829
+ * @version 3.6.1-nightly-20221025004757
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -268,9 +268,10 @@ __webpack_require__(485);
 __webpack_require__(488);
 __webpack_require__(489);
 __webpack_require__(490);
-__webpack_require__(494);
-__webpack_require__(499);
+__webpack_require__(491);
+__webpack_require__(495);
 __webpack_require__(500);
+__webpack_require__(501);
 
 /* unused reexport */ __webpack_require__(82);
 
@@ -815,8 +816,8 @@ var FunctionPrototype = Function.prototype;
 var call = FunctionPrototype.call;
 var uncurryThisWithBind = NATIVE_BIND && FunctionPrototype.bind.bind(call, call);
 
-module.exports = function (fn) {
-  return NATIVE_BIND ? uncurryThisWithBind(fn) : function () {
+module.exports = NATIVE_BIND ? uncurryThisWithBind : function (fn) {
+  return function () {
     return call.apply(fn, arguments);
   };
 };
@@ -1167,10 +1168,10 @@ var store = __webpack_require__(38);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.25.5',
+  version: '3.26.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.25.5/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.26.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -14993,6 +14994,54 @@ $({ global: true, enumerable: true, dontCallGetSet: true }, {
 /* 489 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
+"use strict";
+
+var $ = __webpack_require__(3);
+var global = __webpack_require__(4);
+var defineBuiltInAccessor = __webpack_require__(306);
+var DESCRIPTORS = __webpack_require__(6);
+
+var $TypeError = TypeError;
+// eslint-disable-next-line es/no-object-defineproperty -- safe
+var defineProperty = Object.defineProperty;
+var INCORRECT_VALUE = global.self !== global;
+
+// `self` getter
+// https://html.spec.whatwg.org/multipage/window-object.html#dom-self
+try {
+  if (DESCRIPTORS) {
+    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+    var descriptor = Object.getOwnPropertyDescriptor(global, 'self');
+    // some engines have `self`, but with incorrect descriptor
+    // https://github.com/denoland/deno/issues/15765
+    if (INCORRECT_VALUE || !descriptor || !descriptor.get || !descriptor.enumerable) {
+      defineBuiltInAccessor(global, 'self', {
+        get: function self() {
+          return global;
+        },
+        set: function self(value) {
+          if (this !== global) throw $TypeError('Illegal invocation');
+          defineProperty(global, 'self', {
+            value: value,
+            writable: true,
+            configurable: true,
+            enumerable: true
+          });
+        },
+        configurable: true,
+        enumerable: true
+      });
+    }
+  } else $({ global: true, simple: true, forced: INCORRECT_VALUE }, {
+    self: global
+  });
+} catch (error) { /* empty */ }
+
+
+/***/ }),
+/* 490 */
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
 var IS_PURE = __webpack_require__(37);
 var $ = __webpack_require__(3);
 var global = __webpack_require__(4);
@@ -15504,21 +15553,21 @@ $({ global: true, enumerable: true, sham: !PROPER_TRANSFER, forced: FORCED_REPLA
 
 
 /***/ }),
-/* 490 */
+/* 491 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
-__webpack_require__(491);
-__webpack_require__(493);
+__webpack_require__(492);
+__webpack_require__(494);
 
 
 /***/ }),
-/* 491 */
+/* 492 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 var $ = __webpack_require__(3);
 var global = __webpack_require__(4);
-var setInterval = (__webpack_require__(492).setInterval);
+var setInterval = (__webpack_require__(493).setInterval);
 
 // ie9- setInterval additional parameters fix
 // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-setinterval
@@ -15528,7 +15577,7 @@ $({ global: true, bind: true, forced: global.setInterval !== setInterval }, {
 
 
 /***/ }),
-/* 492 */
+/* 493 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var global = __webpack_require__(4);
@@ -15565,12 +15614,12 @@ module.exports = {
 
 
 /***/ }),
-/* 493 */
+/* 494 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 var $ = __webpack_require__(3);
 var global = __webpack_require__(4);
-var setTimeout = (__webpack_require__(492).setTimeout);
+var setTimeout = (__webpack_require__(493).setTimeout);
 
 // ie9- setTimeout additional parameters fix
 // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-settimeout
@@ -15580,15 +15629,15 @@ $({ global: true, bind: true, forced: global.setTimeout !== setTimeout }, {
 
 
 /***/ }),
-/* 494 */
+/* 495 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's replaced to module below
-__webpack_require__(495);
+__webpack_require__(496);
 
 
 /***/ }),
-/* 495 */
+/* 496 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -15597,7 +15646,7 @@ __webpack_require__(495);
 __webpack_require__(379);
 var $ = __webpack_require__(3);
 var DESCRIPTORS = __webpack_require__(6);
-var USE_NATIVE_URL = __webpack_require__(496);
+var USE_NATIVE_URL = __webpack_require__(497);
 var global = __webpack_require__(4);
 var bind = __webpack_require__(86);
 var uncurryThis = __webpack_require__(14);
@@ -15609,11 +15658,11 @@ var assign = __webpack_require__(280);
 var arrayFrom = __webpack_require__(159);
 var arraySlice = __webpack_require__(78);
 var codeAt = (__webpack_require__(373).codeAt);
-var toASCII = __webpack_require__(497);
+var toASCII = __webpack_require__(498);
 var $toString = __webpack_require__(70);
 var setToStringTag = __webpack_require__(84);
 var validateArgumentsLength = __webpack_require__(317);
-var URLSearchParamsModule = __webpack_require__(498);
+var URLSearchParamsModule = __webpack_require__(499);
 var InternalStateModule = __webpack_require__(53);
 
 var setInternalState = InternalStateModule.set;
@@ -16637,7 +16686,7 @@ $({ global: true, constructor: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS
 
 
 /***/ }),
-/* 496 */
+/* 497 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var fails = __webpack_require__(7);
@@ -16677,7 +16726,7 @@ module.exports = !fails(function () {
 
 
 /***/ }),
-/* 497 */
+/* 498 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -16865,7 +16914,7 @@ module.exports = function (input) {
 
 
 /***/ }),
-/* 498 */
+/* 499 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -16877,7 +16926,7 @@ var global = __webpack_require__(4);
 var call = __webpack_require__(8);
 var uncurryThis = __webpack_require__(14);
 var DESCRIPTORS = __webpack_require__(6);
-var USE_NATIVE_URL = __webpack_require__(496);
+var USE_NATIVE_URL = __webpack_require__(497);
 var defineBuiltIn = __webpack_require__(49);
 var defineBuiltIns = __webpack_require__(198);
 var setToStringTag = __webpack_require__(84);
@@ -17264,7 +17313,7 @@ module.exports = {
 
 
 /***/ }),
-/* 499 */
+/* 500 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -17282,15 +17331,15 @@ $({ target: 'URL', proto: true, enumerable: true }, {
 
 
 /***/ }),
-/* 500 */
+/* 501 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's replaced to module below
-__webpack_require__(498);
+__webpack_require__(499);
 
 
 /***/ }),
-/* 501 */
+/* 502 */
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18123,7 +18172,7 @@ function dispatchFunction(type, params) {
   return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(502);
+var regenerator = __webpack_require__(503);
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/iterator.js
 
 var _marked = /*#__PURE__*/regenerator.mark(_callee);
@@ -18329,7 +18378,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.6.1-nightly-20221022004829";
+Plugin.version = "3.6.1-nightly-20221025004757";
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
 
@@ -18447,12 +18496,12 @@ BubbleCompare.version = "0.0.1";
 
 
 /***/ }),
-/* 502 */
+/* 503 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO(Babel 8): Remove this file.
 
-var runtime = __webpack_require__(503)();
+var runtime = __webpack_require__(504)();
 module.exports = runtime;
 
 // Copied from https://github.com/facebook/regenerator/blob/main/packages/runtime/runtime.js#L736=
@@ -18468,10 +18517,10 @@ try {
 
 
 /***/ }),
-/* 503 */
+/* 504 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var _typeof = (__webpack_require__(504)["default"]);
+var _typeof = (__webpack_require__(505)["default"]);
 function _regeneratorRuntime() {
   "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
   module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
@@ -18773,7 +18822,7 @@ function _regeneratorRuntime() {
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-/* 504 */
+/* 505 */
 /***/ (function(module) {
 
 function _typeof(obj) {
@@ -18838,7 +18887,7 @@ module.exports = _typeof, module.exports.__esModule = true, module.exports["defa
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module used 'module' so it can't be inlined
 /******/ 	__webpack_require__(0);
-/******/ 	var __webpack_exports__ = __webpack_require__(501);
+/******/ 	var __webpack_exports__ = __webpack_require__(502);
 /******/ 	__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	
 /******/ 	return __webpack_exports__;
