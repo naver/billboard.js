@@ -525,17 +525,19 @@ describe("TOOLTIP", function() {
 			});
 
 			it("should have tooltip to nearest", () => {
+				const {eventReceiver} = chart.internal.state;
+
 				util.hoverChart(chart, "mousemove", {clientX: 150, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(0);
+				expect(eventReceiver.currentIdx).to.be.equal(0);
 
 				util.hoverChart(chart, "mousemove", {clientX: 200, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+				expect(eventReceiver.currentIdx).to.be.equal(1);
 
 				util.hoverChart(chart, "mousemove", {clientX: 425, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+				expect(eventReceiver.currentIdx).to.be.equal(1);
 
 				util.hoverChart(chart, "mousemove", {clientX: 500, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(2);
+				expect(eventReceiver.currentIdx).to.be.equal(2);
 			})
 
 			it("set step type to step before", () => {
@@ -543,17 +545,19 @@ describe("TOOLTIP", function() {
 			});
 
 			it("should have tooltip to right", () => {
+				const {eventReceiver} = chart.internal.state;
+
 				util.hoverChart(chart, "mousemove", {clientX: 150, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+				expect(eventReceiver.currentIdx).to.be.equal(1);
 
 				util.hoverChart(chart, "mousemove", {clientX: 200, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+				expect(eventReceiver.currentIdx).to.be.equal(1);
 
 				util.hoverChart(chart, "mousemove", {clientX: 450, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(2);
+				expect(eventReceiver.currentIdx).to.be.equal(2);
 
 				util.hoverChart(chart, "mousemove", {clientX: 500, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(2);
+				expect(eventReceiver.currentIdx).to.be.equal(2);
 			});
 
 			it("set step type to default", () => {
@@ -561,17 +565,19 @@ describe("TOOLTIP", function() {
 			});
 
 			const checkStepAfter = () => {
+				const {eventReceiver} = chart.internal.state;
+
 				util.hoverChart(chart, "mousemove", {clientX: 150, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(0);
+				expect(eventReceiver.currentIdx).to.be.equal(0);
 
 				util.hoverChart(chart, "mousemove", {clientX: 200, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(0);
+				expect(eventReceiver.currentIdx).to.be.equal(0);
 
 				util.hoverChart(chart, "mousemove", {clientX: 450, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+				expect(eventReceiver.currentIdx).to.be.equal(1);
 
 				util.hoverChart(chart, "mousemove", {clientX: 500, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+				expect(eventReceiver.currentIdx).to.be.equal(1);
 			}
 
 			it("should have tooltip to left", () => {
@@ -595,11 +601,13 @@ describe("TOOLTIP", function() {
 			});
 
 			it("should change when enter from right", () => {
+				const {eventReceiver} = chart.internal.state;
+
 				util.hoverChart(chart, "mousemove", {clientX: 350, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(1);
+				expect(eventReceiver.currentIdx).to.be.equal(1);
 
 				util.hoverChart(chart, "mousemove", {clientX: 250, clientY: 300});
-				expect(chart.internal.state.eventReceiver.currentIdx).to.be.equal(0);
+				expect(eventReceiver.currentIdx).to.be.equal(0);
 			});
 
 		});
