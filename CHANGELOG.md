@@ -1,3 +1,10 @@
+## [3.6.2](https://github.com/naver/billboard.js/compare/3.6.1...3.6.2) (2022-10-26)
+
+
+### Bug Fixes
+
+* **eventrect:** Fix eventReceiver coordinates ([6526c9e](https://github.com/naver/billboard.js/commit/6526c9e1d5061b8ff09d96d65a2fdcd3e58599d3)), closes [#2913](https://github.com/naver/billboard.js/issues/2913)
+
 ## [3.6.1](https://github.com/naver/billboard.js/compare/3.6.0...3.6.1) (2022-10-21)
 
 
