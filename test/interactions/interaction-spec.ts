@@ -39,8 +39,8 @@ describe("INTERACTION", () => {
 			});
 
 			it("should have 4 event rects properly", () => {
-				const lefts = [38.5, 99.5, 167.5, 372.5];
-				const widths = [61, 68, 205, 197.5];
+				const lefts = [0, 99.5, 167.5, 372.5];
+				const widths = [99.5, 68, 205, 235.5];
 
 				chart.internal.state.eventReceiver.coords.forEach((v, i) => {
 					expect(v.x).to.be.closeTo(lefts[i], 10);
@@ -161,8 +161,8 @@ describe("INTERACTION", () => {
 						expect(d.index).to.be.equal(i);
 					});
 
-					coords.forEach(v => {
-						expect(v.x).to.be.above(lastX);
+					coords.forEach((v, i) => {
+						i && expect(v.x).to.be.above(lastX);
 						expect(v.w).to.be.above(0);
 
 						lastX = v.x;
