@@ -242,33 +242,42 @@ export default {
 				rectW = (d): number => {
 					const x = getPrevNextX(d);
 					const xDomain = xScale.domain();
+					let val: number;
 
 					// if there this is a single data point make the eventRect full width (or height)
 					if (x.prev === null && x.next === null) {
-						return isRotated ? state.height : state.width;
+						val = isRotated ? state.height : state.width;
+					} else if (x.prev === null) {
+						val = (xScale(x.next) + xScale(d.x)) / 2;
+					} else if (x.next === null) {
+						val = xScale(xDomain[1]) - (
+							(xScale(x.prev) + xScale(d.x)) / 2
+						);
+					} else {
+						Object.keys(x).forEach((key, i) => {
+							x[key] = x[key] ?? xDomain[i];
+						});
+
+						val = Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
 					}
 
-					Object.keys(x).forEach((key, i) => {
-						x[key] = x[key] ?? xDomain[i];
-					});
-
-					return Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
+					return val;
 				};
 
 				rectX = (d): number => {
 					const x = getPrevNextX(d);
-					const thisX = d.x;
+					let val: number;
 
 					// if there this is a single data point position the eventRect at 0
 					if (x.prev === null && x.next === null) {
-						return 0;
+						val = 0;
+					} else if (x.prev === null) {
+						val = xScale(xScale.domain()[0]);
+					} else {
+						val = (xScale(d.x) + xScale(x.prev)) / 2;
 					}
 
-					if (x.prev === null) {
-						x.prev = xScale.domain()[0];
-					}
-
-					return (xScale(thisX) + xScale(x.prev)) / 2;
+					return val;
 				};
 			}
 
