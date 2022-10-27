@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.1-nightly-20221026004746
+ * @version 3.6.2-nightly-20221027004746
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -14809,30 +14809,38 @@ var Axis_Axis = /*#__PURE__*/function () {
           var _this4 = this;
           _newArrowCheck(this, _this3);
           var x = getPrevNextX(d),
-            xDomain = xScale.domain();
+            xDomain = xScale.domain(),
+            val;
           // if there this is a single data point make the eventRect full width (or height)
           if (x.prev === null && x.next === null) {
-            return isRotated ? state.height : state.width;
+            val = isRotated ? state.height : state.width;
+          } else if (x.prev === null) {
+            val = (xScale(x.next) + xScale(d.x)) / 2;
+          } else if (x.next === null) {
+            val = xScale(xDomain[1]) - (xScale(x.prev) + xScale(d.x)) / 2;
+          } else {
+            Object.keys(x).forEach(function (key, i) {
+              var _x$key;
+              _newArrowCheck(this, _this4);
+              x[key] = (_x$key = x[key]) != null ? _x$key : xDomain[i];
+            }.bind(this));
+            val = Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
           }
-          Object.keys(x).forEach(function (key, i) {
-            var _x$key;
-            _newArrowCheck(this, _this4);
-            x[key] = (_x$key = x[key]) != null ? _x$key : xDomain[i];
-          }.bind(this));
-          return Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
+          return val;
         }.bind(this);
         rectX = function (d) {
           _newArrowCheck(this, _this3);
           var x = getPrevNextX(d),
-            thisX = d.x;
+            val;
           // if there this is a single data point position the eventRect at 0
           if (x.prev === null && x.next === null) {
-            return 0;
+            val = 0;
+          } else if (x.prev === null) {
+            val = xScale(xScale.domain()[0]);
+          } else {
+            val = (xScale(d.x) + xScale(x.prev)) / 2;
           }
-          if (x.prev === null) {
-            x.prev = xScale.domain()[0];
-          }
-          return (xScale(thisX) + xScale(x.prev)) / 2;
+          return val;
         }.bind(this);
       }
       x = isRotated ? 0 : rectX;
@@ -23796,7 +23804,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.1-nightly-20221026004746",
+    version: "3.6.2-nightly-20221027004746",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -23926,7 +23934,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.1-nightly-20221026004746
+ * @version 3.6.2-nightly-20221027004746
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

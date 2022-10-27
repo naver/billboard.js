@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.1-nightly-20221026004746
+ * @version 3.6.2-nightly-20221027004746
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -13171,27 +13171,40 @@ var eventrect = {
                 rectW_1 = function (d) {
                     var x = getPrevNextX_1(d);
                     var xDomain = xScale.domain();
+                    var val;
                     // if there this is a single data point make the eventRect full width (or height)
                     if (x.prev === null && x.next === null) {
-                        return isRotated ? state.height : state.width;
+                        val = isRotated ? state.height : state.width;
                     }
-                    Object.keys(x).forEach(function (key, i) {
-                        var _a;
-                        x[key] = (_a = x[key]) !== null && _a !== void 0 ? _a : xDomain[i];
-                    });
-                    return Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
+                    else if (x.prev === null) {
+                        val = (xScale(x.next) + xScale(d.x)) / 2;
+                    }
+                    else if (x.next === null) {
+                        val = xScale(xDomain[1]) - ((xScale(x.prev) + xScale(d.x)) / 2);
+                    }
+                    else {
+                        Object.keys(x).forEach(function (key, i) {
+                            var _a;
+                            x[key] = (_a = x[key]) !== null && _a !== void 0 ? _a : xDomain[i];
+                        });
+                        val = Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
+                    }
+                    return val;
                 };
                 rectX = function (d) {
                     var x = getPrevNextX_1(d);
-                    var thisX = d.x;
+                    var val;
                     // if there this is a single data point position the eventRect at 0
                     if (x.prev === null && x.next === null) {
-                        return 0;
+                        val = 0;
                     }
-                    if (x.prev === null) {
-                        x.prev = xScale.domain()[0];
+                    else if (x.prev === null) {
+                        val = xScale(xScale.domain()[0]);
                     }
-                    return (xScale(thisX) + xScale(x.prev)) / 2;
+                    else {
+                        val = (xScale(d.x) + xScale(x.prev)) / 2;
+                    }
+                    return val;
                 };
             }
             x = isRotated ? 0 : rectX;
@@ -21557,7 +21570,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.1-nightly-20221026004746
+ * @version 3.6.2-nightly-20221027004746
  */
 var bb = {
     /**
@@ -21567,7 +21580,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.1-nightly-20221026004746",
+    version: "3.6.2-nightly-20221027004746",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
