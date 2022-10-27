@@ -4,7 +4,7 @@
  * @ignore
  */
 import {getScale} from "../internals/scale";
-import {isDefined, isNumber, isString} from "../../module/util";
+import {isDefined, isNumber, isString, isValue} from "../../module/util";
 import type {d3Selection} from "../../../types/types";
 
 export default class AxisRendererHelper {
@@ -75,7 +75,9 @@ export default class AxisRendererHelper {
 			value => `translate(0,${value})`;
 
 		return (selection, scale) => {
-			selection.attr("transform", d => fn(Math.ceil(scale(d))));
+			selection.attr("transform", d => (
+				isValue(d) ? fn(Math.ceil(scale(d))) : null
+			));
 		};
 	}
 
