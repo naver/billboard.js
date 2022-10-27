@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+// @ts-nocheck
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
@@ -2851,6 +2852,43 @@ describe("AXIS", function() {
 			const padding = args.axis.x.padding;
 
 			expect(state.axis.x.padding).to.be.deep.equal(padding);
+		});
+	});
+
+	describe("Axis tick.values", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2022-01-01", "2022-01-02", "2022-01-03", "2022-01-04", "2022-01-05", "2022-01-06"],
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d",
+							 fit: false,
+							values: [
+								"2022-01-01",
+								"2022-01-03",,
+								"2022-01-05"
+							]
+						}
+					}
+				}
+			};
+		});
+
+		it("tick transform translate shoudn't contain NaN value.", () => {
+			chart.$.main.selectAll(".tick")
+				.each(function() {
+					const hasNaN = this.getAttribute("transform")?.indexOf("NaN") >= 0;
+
+					expect(hasNaN).to.be.false;
+				});
 		});
 	});
 
