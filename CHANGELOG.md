@@ -1,3 +1,11 @@
+## [3.6.3](https://github.com/naver/billboard.js/compare/3.6.2...3.6.3) (2022-10-28)
+
+
+### Bug Fixes
+
+* **axis:** Fix translate NaN error ([b8396a0](https://github.com/naver/billboard.js/commit/b8396a077ce4e7c1e0e354e18911e9c6dfe007c8)), closes [#2924](https://github.com/naver/billboard.js/issues/2924)
+* **interaction:** Fix unset focused state ([14f6de6](https://github.com/naver/billboard.js/commit/14f6de6bfd7ad2f1f876013c0bd1353a95386dcd)), closes [#2927](https://github.com/naver/billboard.js/issues/2927)
+
 ## [3.6.2](https://github.com/naver/billboard.js/compare/3.6.1...3.6.2) (2022-10-26)
 
 
