@@ -563,6 +563,36 @@ describe("INTERACTION", () => {
 					done();
 				});
 			});
+
+			it("should focused/defocused state class set & unset correctly.", done => {
+				new Promise(resolve => {
+					util.hoverChart(chart, "mousemove", {
+						clientX: 360,
+						clientY: 300
+					});
+
+					setTimeout(resolve, 300);
+				}).then(() => {
+					new Promise(resolve => {
+						util.hoverChart(chart, "mousemove", {
+							clientX: 240,
+							clientY: 300
+						});
+
+						setTimeout(resolve, 300);
+					});
+				}).then(() => {
+					const expanded = chart.$.bar.bars.filter(`.${$COMMON.EXPANDED}`);
+
+					expect(expanded.size()).to.be.equal(chart.data().length);
+
+					expanded.each(d => {
+						expect(d.index).to.be.equal(2);
+					});
+
+					done();
+				});
+			});
 		});
 
 		describe("check for data.onclick", () => {
