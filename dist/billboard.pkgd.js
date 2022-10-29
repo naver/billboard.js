@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.2-nightly-20221028004753
+ * @version 3.6.3-nightly-20221029004754
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -27267,12 +27267,10 @@ function drag_defaultTouchable() {
         return;
       }
     }
-    var shapeAtIndex = main.selectAll("." + $SHAPE.shape + "-" + index).each(function () {
-      src_select(this).classed($COMMON.EXPANDED, !0);
-      if (isSelectionEnabled) {
-        eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
-      }
-    }).filter(function (d) {
+
+    // remove possible previous focused state
+    main.selectAll("." + $COMMON.EXPANDED + ":not(." + $SHAPE.shape + "-" + index + ")").classed($COMMON.EXPANDED, !1);
+    var shapeAtIndex = main.selectAll("." + $SHAPE.shape + "-" + index).classed($COMMON.EXPANDED, !0).style("cursor", isSelectable ? "pointer" : null).filter(function (d) {
       return $$.isWithinShape(this, d);
     });
     if (shapeAtIndex.empty() && !isTooltipGrouped) {
@@ -49409,7 +49407,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.2-nightly-20221028004753",
+    version: "3.6.3-nightly-20221029004754",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -49539,7 +49537,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.2-nightly-20221028004753
+ * @version 3.6.3-nightly-20221029004754
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
