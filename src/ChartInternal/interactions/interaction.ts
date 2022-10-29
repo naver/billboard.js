@@ -28,14 +28,13 @@ export default {
 			}
 		}
 
-		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
-			.each(function() {
-				d3Select(this).classed($COMMON.EXPANDED, true);
+		// remove possible previous focused state
+		main.selectAll(`.${$COMMON.EXPANDED}:not(.${$SHAPE.shape}-${index})`)
+			.classed($COMMON.EXPANDED, false);
 
-				if (isSelectionEnabled) {
-					eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
-				}
-			})
+		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
+			.classed($COMMON.EXPANDED, true)
+			.style("cursor", isSelectable ? "pointer" : null)
 			.filter(function(d) {
 				return $$.isWithinShape(this, d);
 			});
