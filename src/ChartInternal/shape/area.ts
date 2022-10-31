@@ -65,6 +65,9 @@ export default {
 			.merge(area);
 
 		area.style("opacity", state.orgAreaOpacity);
+
+		// calculate ratio if grouped data exists
+		$$.setRatioForGroupedData($root.area.data());
 	},
 
 	/**

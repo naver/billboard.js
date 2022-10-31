@@ -1108,12 +1108,14 @@ export interface TooltipOptions {
 		name?(this: Chart, name: string, ratio: number, id: string, index: number): string;
 
 		/**
-		 * Set format for the value of each data in tooltip.
-		 * Specified function receives name, ratio, id and index of the data point to show.
-		 * ratio will be undefined if the chart is not donut/pie/gauge.
-		 * If undefined returned, the row of that value will be skipped.
+		 * Set format for the value of each data in tooltip. If undefined returned, the row of that value will be skipped to be called.
+		 *  - Will pass following arguments to the given function:
+		 *    - `value {string}`: Value of the data point
+		 *    - `ratio {number}`: Ratio of the data point in the `pie/donut/gauge` and `area/bar` when contains grouped data. Otherwise is `undefined`.
+		 *    - `id {string}`: id of the data point
+		 *    - `index {number}`: Index of the data point
 		 */
-		value?(this: Chart, value: any, ratio: number, id: string, index: number): string;
+		value?(this: Chart, value: number, ratio: number | undefined, id: string, index: number): string;
 	};
 	/**
 	 * Set tooltip values order
