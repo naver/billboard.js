@@ -91,6 +91,9 @@ export default {
 			.style("fill", $$.updateBarColor.bind($$))
 			.merge(bar)
 			.style("opacity", initialOpacity);
+
+		// calculate ratio if grouped data exists
+		$$.setRatioForGroupedData($root.bar.data());
 	},
 
 	/**

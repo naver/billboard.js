@@ -1580,7 +1580,6 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip: bar type within a range", () => {
-
 		it("should display start ~ end", () => {
 			chart = util.generate({
 				data: {
@@ -1594,6 +1593,79 @@ describe("TOOLTIP", function() {
 
 			expect(chart.$.tooltip.select(".value").html())
 				.to.be.equal("1300 ~ 1339");
+		});
+	});
+
+	describe("tooltip: format", () => {
+		const spy = sinon.spy(function(value, ratio, id, index) {
+			return [value, ratio, id, index];
+		});
+	
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 50, 80, 10],
+						["data2", 50, 20, 90]
+					],
+					type: "bar", // for ESM specify as: bar()
+					groups: [
+						["data1", "data2"]
+					],
+				},
+				tooltip: {
+					format: {
+						value: spy
+					}
+				}
+			};
+		});
+	
+		it("check if ratio value is given to format function for 'bar' type.", () => {
+			chart.data.values("data1").forEach((v, i) => {
+				chart.tooltip.show({x: i});
+
+				expect(spy.callCount).to.be.equal(args.data.columns.length);
+
+				// check ratio
+				expect(spy.returnValues.reduce((p, a) => p?.[1] ?? p + a[1], 0)).to.be.equal(1);
+
+				spy.resetHistory();
+			});
+		});
+
+		it("set option: data.type='area'", () => {
+			args.data.type = "area";
+		});
+
+		it("check if ratio value is given to format function for 'area' type.", () => {
+			chart.data.values("data1").forEach((v, i) => {
+				chart.tooltip.show({x: i});
+
+				expect(spy.callCount).to.be.equal(args.data.columns.length);
+
+				// check ratio
+				expect(spy.returnValues.reduce((p, a) => p?.[1] ?? p + a[1], 0)).to.be.equal(1);
+
+				spy.resetHistory();
+			});
+		});
+
+		it("set option: data.type='area'", () => {
+			args.data.columns.push(["data3", 50, 20, 90]);
+		});
+
+		it("check correct ratio value is given when contains non-grouped single data series.", () => {
+			chart.data.values("data1").forEach((v, i) => {
+				chart.tooltip.show({x: i});
+
+				expect(spy.callCount).to.be.equal(args.data.columns.length);
+
+				// check ratio
+				expect(spy.returnValues.reduce((p, a) => p?.[1] ?? p + a[1], 0)).to.be.equal(1);
+
+				spy.resetHistory();
+			});
 		});
 	});
 });
