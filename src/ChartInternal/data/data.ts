@@ -313,7 +313,7 @@ export default {
 		const cacheKey = KEY.dataTotalPerIndex;
 		let sum = $$.cache.get(cacheKey);
 
-		if ($$.isStackNormalized() && !sum) {
+		if (($$.config.data_groups.length || $$.isStackNormalized()) && !sum) {
 			sum = [];
 
 			$$.data.targets.forEach(row => {
@@ -884,6 +884,25 @@ export default {
 	},
 
 	/**
+	 * Set ratio for grouped data
+	 * @param {Array} data Data array
+	 * @private
+	 */
+	setRatioForGroupedData(data: (IDataRow | IData)[]): void {
+		const $$ = this;
+		const {config} = $$;
+
+		// calculate ratio if grouped data exists
+		if (config.data_groups.length && data.some(d => $$.isGrouped(d.id))) {
+			const setter = (d: IDataRow) => $$.getRatio("index", d, true);
+
+			data.forEach(v => {
+				"values" in v ? v.values.forEach(setter) : setter(v);
+			});
+		}
+	},
+
+	/**
 	 * Get ratio value
 	 * @param {string} type Ratio for given type
 	 * @param {object} d Data value object
@@ -927,7 +946,7 @@ export default {
 					}
 				}
 
-				d.ratio = isNumber(d.value) && total && total[d.index] > 0 ?
+				d.ratio = isNumber(d.value) && total ?
 					d.value / total[d.index] : 0;
 
 				ratio = d.ratio;
