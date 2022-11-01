@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.3-nightly-20221029004754
+ * @version 3.6.3-nightly-20221101004832
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -2823,17 +2823,20 @@ var tooltip$2 = {
      *  Specified function receives x of the data point to show.
      * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
      *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-     * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip.<br>
-     *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-     *  If undefined returned, the row of that value will be skipped.
+     * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip. If undefined returned, the row of that value will be skipped to be called.
+     *  - Will pass following arguments to the given function:
+     *    - `value {string}`: Value of the data point
+     *    - `ratio {number}`: Ratio of the data point in the `pie/donut/gauge` and `area/bar` when contains grouped data. Otherwise is `undefined`.
+     *    - `id {string}`: id of the data point
+     *    - `index {number}`: Index of the data point
      * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
      *  This option can be used to modify the tooltip position by returning object that has top and left.
      *  - Will pass following arguments to the given function:
-     *   - `data {Array}`: Current selected data array object.
-     *   - `width {number}`: Width of tooltip.
-     *   - `height {number}`: Height of tooltip.
-     *   - `element {SVGElement}`: Tooltip event bound element
-     *   - `pos {object}`: Current position of the tooltip.
+     *    - `data {Array}`: Current selected data array object.
+     *    - `width {number}`: Width of tooltip.
+     *    - `height {number}`: Height of tooltip.
+     *    - `element {SVGElement}`: Tooltip event bound element
+     *    - `pos {object}`: Current position of the tooltip.
      * @property {Function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
      *  If tooltip.grouped is true, data includes multiple data points.<br><br>
      *  Specified function receives `data` array and `defaultTitleFormat`, `defaultValueFormat` and `color` functions of the data point to show.
@@ -3906,7 +3909,7 @@ var data$1 = {
         var $$ = this;
         var cacheKey = KEY.dataTotalPerIndex;
         var sum = $$.cache.get(cacheKey);
-        if ($$.isStackNormalized() && !sum) {
+        if (($$.config.data_groups.length || $$.isStackNormalized()) && !sum) {
             sum = [];
             $$.data.targets.forEach(function (row) {
                 row.values.forEach(function (v, i) {
@@ -4369,6 +4372,22 @@ var data$1 = {
         return value;
     },
     /**
+     * Set ratio for grouped data
+     * @param {Array} data Data array
+     * @private
+     */
+    setRatioForGroupedData: function (data) {
+        var $$ = this;
+        var config = $$.config;
+        // calculate ratio if grouped data exists
+        if (config.data_groups.length && data.some(function (d) { return $$.isGrouped(d.id); })) {
+            var setter_1 = function (d) { return $$.getRatio("index", d, true); };
+            data.forEach(function (v) {
+                "values" in v ? v.values.forEach(setter_1) : setter_1(v);
+            });
+        }
+    },
+    /**
      * Get ratio value
      * @param {string} type Ratio for given type
      * @param {object} d Data value object
@@ -4407,7 +4426,7 @@ var data$1 = {
                         total = total.map(function (v, i) { return v - hiddenSum_1[i]; });
                     }
                 }
-                d.ratio = isNumber(d.value) && total && total[d.index] > 0 ?
+                d.ratio = isNumber(d.value) && total ?
                     d.value / total[d.index] : 0;
                 ratio = d.ratio;
             }
@@ -17014,6 +17033,8 @@ var shapeArea = {
         })
             .merge(area);
         area.style("opacity", state.orgAreaOpacity);
+        // calculate ratio if grouped data exists
+        $$.setRatioForGroupedData($root.area.data());
     },
     /**
      * Redraw function
@@ -17183,6 +17204,8 @@ var shapeBar = {
             .style("fill", $$.updateBarColor.bind($$))
             .merge(bar)
             .style("opacity", initialOpacity);
+        // calculate ratio if grouped data exists
+        $$.setRatioForGroupedData($root.bar.data());
     },
     /**
      * Update bar color
@@ -21569,7 +21592,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221029004754
+ * @version 3.6.3-nightly-20221101004832
  */
 var bb = {
     /**
@@ -21579,7 +21602,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221029004754",
+    version: "3.6.3-nightly-20221101004832",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

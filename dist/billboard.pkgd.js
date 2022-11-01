@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221029004754
+ * @version 3.6.3-nightly-20221101004832
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -24697,17 +24697,20 @@ var tooltip_this = undefined;
    *  Specified function receives x of the data point to show.
    * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
    *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-   * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip.<br>
-   *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-   *  If undefined returned, the row of that value will be skipped.
+   * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip. If undefined returned, the row of that value will be skipped to be called.
+   *  - Will pass following arguments to the given function:
+   *    - `value {string}`: Value of the data point
+   *    - `ratio {number}`: Ratio of the data point in the `pie/donut/gauge` and `area/bar` when contains grouped data. Otherwise is `undefined`.
+   *    - `id {string}`: id of the data point
+   *    - `index {number}`: Index of the data point
    * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
    *  This option can be used to modify the tooltip position by returning object that has top and left.
    *  - Will pass following arguments to the given function:
-   *   - `data {Array}`: Current selected data array object.
-   *   - `width {number}`: Width of tooltip.
-   *   - `height {number}`: Height of tooltip.
-   *   - `element {SVGElement}`: Tooltip event bound element
-   *   - `pos {object}`: Current position of the tooltip.
+   *    - `data {Array}`: Current selected data array object.
+   *    - `width {number}`: Width of tooltip.
+   *    - `height {number}`: Height of tooltip.
+   *    - `element {SVGElement}`: Tooltip event bound element
+   *    - `pos {object}`: Current position of the tooltip.
    * @property {Function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
    *  If tooltip.grouped is true, data includes multiple data points.<br><br>
    *  Specified function receives `data` array and `defaultTitleFormat`, `defaultValueFormat` and `color` functions of the data point to show.
@@ -26126,7 +26129,7 @@ function getDataKeyForJson(keysParam, config) {
       $$ = this,
       cacheKey = KEY.dataTotalPerIndex,
       sum = $$.cache.get(cacheKey);
-    if ($$.isStackNormalized() && !sum) {
+    if (($$.config.data_groups.length || $$.isStackNormalized()) && !sum) {
       sum = [];
       $$.data.targets.forEach(function (row) {
         var _this13 = this;
@@ -26719,6 +26722,30 @@ function getDataKeyForJson(keysParam, config) {
     return value;
   },
   /**
+   * Set ratio for grouped data
+   * @param {Array} data Data array
+   * @private
+   */
+  setRatioForGroupedData: function setRatioForGroupedData(data) {
+    var _this39 = this,
+      $$ = this,
+      config = $$.config;
+    // calculate ratio if grouped data exists
+    if (config.data_groups.length && data.some(function (d) {
+      _newArrowCheck(this, _this39);
+      return $$.isGrouped(d.id);
+    }.bind(this))) {
+      var setter = function (d) {
+        _newArrowCheck(this, _this39);
+        return $$.getRatio("index", d, !0);
+      }.bind(this);
+      data.forEach(function (v) {
+        _newArrowCheck(this, _this39);
+        "values" in v ? v.values.forEach(setter) : setter(v);
+      }.bind(this));
+    }
+  },
+  /**
    * Get ratio value
    * @param {string} type Ratio for given type
    * @param {object} d Data value object
@@ -26727,7 +26754,7 @@ function getDataKeyForJson(keysParam, config) {
    * @private
    */
   getRatio: function getRatio(type, d, asPercent) {
-    var _this39 = this;
+    var _this40 = this;
     if (asPercent === void 0) {
       asPercent = !1;
     }
@@ -26756,27 +26783,27 @@ function getDataKeyForJson(keysParam, config) {
           var hiddenSum = dataValues(state.hiddenTargetIds, !1);
           if (hiddenSum.length) {
             hiddenSum = hiddenSum.reduce(function (acc, curr) {
-              var _this40 = this;
-              _newArrowCheck(this, _this39);
+              var _this41 = this;
+              _newArrowCheck(this, _this40);
               return acc.map(function (v, i) {
-                _newArrowCheck(this, _this40);
+                _newArrowCheck(this, _this41);
                 return (isNumber(v) ? v : 0) + curr[i];
               }.bind(this));
             }.bind(this));
             total = total.map(function (v, i) {
-              _newArrowCheck(this, _this39);
+              _newArrowCheck(this, _this40);
               return v - hiddenSum[i];
             }.bind(this));
           }
         }
-        d.ratio = isNumber(d.value) && total && total[d.index] > 0 ? d.value / total[d.index] : 0;
+        d.ratio = isNumber(d.value) && total ? d.value / total[d.index] : 0;
         ratio = d.ratio;
       } else if (type === "radar") {
         ratio = parseFloat(Math.max(d.value, 0) + "") / state.current.dataMax * config.radar_size_ratio;
       } else if (type === "bar") {
         var yScale = $$.getYScaleById.bind($$)(d.id),
           _max2 = yScale.domain().reduce(function (a, c) {
-            _newArrowCheck(this, _this39);
+            _newArrowCheck(this, _this40);
             return c - a;
           }.bind(this));
         // when all data are 0, return 0
@@ -26791,18 +26818,18 @@ function getDataKeyForJson(keysParam, config) {
    * @private
    */
   updateDataIndexByX: function updateDataIndexByX(tickValues) {
-    var _this41 = this,
+    var _this42 = this,
       $$ = this,
       tickValueMap = tickValues.reduce(function (out, tick, index) {
-        _newArrowCheck(this, _this41);
+        _newArrowCheck(this, _this42);
         out[+tick.x] = index;
         return out;
       }.bind(this), {});
     $$.data.targets.forEach(function (t) {
-      var _this42 = this;
-      _newArrowCheck(this, _this41);
+      var _this43 = this;
+      _newArrowCheck(this, _this42);
       t.values.forEach(function (value, valueIndex) {
-        _newArrowCheck(this, _this42);
+        _newArrowCheck(this, _this43);
         var index = tickValueMap[+value.x];
         if (index === undefined) {
           index = valueIndex;
@@ -26828,11 +26855,11 @@ function getDataKeyForJson(keysParam, config) {
    * @private
    */
   isBarRangeType: function isBarRangeType(d) {
-    var _this43 = this,
+    var _this44 = this,
       $$ = this,
       value = d.value;
     return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(function (v) {
-      _newArrowCheck(this, _this43);
+      _newArrowCheck(this, _this44);
       return isNumber(v);
     }.bind(this));
   },
@@ -43773,6 +43800,9 @@ function point_y(p) {
       return "0";
     }).merge(area);
     area.style("opacity", state.orgAreaOpacity);
+
+    // calculate ratio if grouped data exists
+    $$.setRatioForGroupedData($root.area.data());
   },
   /**
    * Redraw function
@@ -43956,6 +43986,9 @@ function point_y(p) {
     var bar = $root.main.selectAll("." + $BAR.bars).selectAll("." + $BAR.bar).data($$.labelishData.bind($$));
     $T(bar.exit(), withTransition).style("opacity", "0").remove();
     $root.bar = bar.enter().append("path").attr("class", classBar).style("fill", $$.updateBarColor.bind($$)).merge(bar).style("opacity", initialOpacity);
+
+    // calculate ratio if grouped data exists
+    $$.setRatioForGroupedData($root.bar.data());
   },
   /**
    * Update bar color
@@ -49407,7 +49440,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221029004754",
+    version: "3.6.3-nightly-20221101004832",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -49537,7 +49570,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221029004754
+ * @version 3.6.3-nightly-20221101004832
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
