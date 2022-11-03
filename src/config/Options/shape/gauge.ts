@@ -39,7 +39,7 @@ export default {
 	 *   - `startingAngle < -1 * Math.PI` defaults to `Math.PI`
 	 *   - `startingAngle >  Math.PI` defaults to `Math.PI`
 	 * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100.<br>
-	 * Negative value will draw the arc **counterclockwise**.
+	 * Negative value will draw the arc **counterclockwise**. Need to be used in conjunction with `gauge.fullCircle=true`.
 	 *
 	 * **Limitations:**
 	 * - -100 <= arcLength (in percent) <= 100
@@ -52,7 +52,7 @@ export default {
 	 * **Available Values:**
 	 * - single
 	 * - multi
-	 * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+	 * @property {number} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
 	 * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
 	 * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
 	 * @example
