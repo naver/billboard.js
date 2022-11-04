@@ -12,7 +12,99 @@ import {document} from "../../module/browser";
 import {$ARC, $COMMON, $FOCUS, $GAUGE} from "../../config/classes";
 import {callFn, endall, isFunction, isNumber, isObject, isUndefined, setTextValue} from "../../module/util";
 import type {d3Selection} from "../../../types/types";
-import type {IArcData, IData} from "../data/IData";
+import type {IArcData, IArcDataRow, IData} from "../data/IData";
+
+/**
+ * Get radius functions
+ * @param {number} expandRate Expand rate number.
+ *   - If 0, means for "normal" radius.
+ *   - If > 0, means for "expanded" radius.
+ * @returns {object} radius functions
+ * @private
+ */
+function getRadiusFn(expandRate = 0) {
+	const $$ = this;
+	const {config, state} = $$;
+	const hasMultiArcGauge = $$.hasMultiArcGauge();
+	const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
+	const expandWidth = expandRate ? (
+		Math.min(
+			state.radiusExpanded * expandRate - state.radius,
+			singleArcWidth * 0.8 - (1 - expandRate) * 100
+		)) : 0;
+
+	return {
+		/**
+		 * Getter of arc innerRadius value
+		 * @param {IArcData} d Data object
+		 * @returns {number} innerRadius value
+		 * @private
+		 */
+		inner(d: IArcData) {
+			const {innerRadius} = $$.getRadius(d);
+
+			return hasMultiArcGauge ?
+				state.radius - singleArcWidth * (d.index + 1) :
+				isNumber(innerRadius) ? innerRadius : 0;
+		},
+
+		/**
+		 * Getter of arc outerRadius value
+		 * @param {IArcData} d Data object
+		 * @returns {number} outerRadius value
+		 * @private
+		 */
+		outer(d: IArcData) {
+			const {outerRadius} = $$.getRadius(d);
+			let radius: number;
+
+			if (hasMultiArcGauge) {
+				radius = state.radius - singleArcWidth * d.index + expandWidth;
+			} else if ($$.hasType("polar") && !expandRate) {
+				radius = $$.getPolarOuterRadius(d, outerRadius);
+			} else {
+				radius = outerRadius;
+
+				if (expandRate) {
+					let {radiusExpanded} = state;
+
+					if (state.radius !== outerRadius) {
+						radiusExpanded -= Math.abs(state.radius - outerRadius);
+					}
+
+					radius = radiusExpanded * expandRate;
+				}
+			}
+
+			return radius;
+		},
+
+		/**
+		 * Getter of arc cornerRadius value
+		 * @param {IArcData} d Data object
+		 * @param {number} outerRadius outer radius value
+		 * @returns {number} cornerRadius value
+		 * @private
+		 */
+		corner(d: IArcData, outerRadius): number {
+			const {
+				arc_cornerRadius_ratio: ratio = 0,
+				arc_cornerRadius: cornerRadius = 0
+			} = config;
+			const {data: {id}, value} = d;
+			let corner = 0;
+
+			if (ratio) {
+				corner = ratio * outerRadius;
+			} else {
+				corner = isNumber(cornerRadius) ?
+					cornerRadius : cornerRadius.call($$.api, id, value, outerRadius);
+			}
+
+			return corner;
+		}
+	};
+}
 
 export default {
 	initPie(): void {
@@ -192,42 +284,22 @@ export default {
 
 	getSvgArc(): Function {
 		const $$ = this;
-		const {state} = $$;
-		const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
-		const hasMultiArcGauge = $$.hasMultiArcGauge();
-		const hasPolar = $$.hasType("polar");
+		const {inner, outer, corner} = getRadiusFn.call($$);
 
 		const arc = d3Arc()
-			.innerRadius((d: any) => {
-				const {innerRadius} = $$.getRadius(d);
-
-				return hasMultiArcGauge ?
-					state.radius - singleArcWidth * (d.index + 1) :
-					isNumber(innerRadius) ? innerRadius : 0;
-			})
-			.outerRadius((d: any) => {
-				const {outerRadius} = $$.getRadius(d);
-				let radius = outerRadius;
-
-				if (hasMultiArcGauge) {
-					radius = state.radius - singleArcWidth * d.index;
-				} else if (hasPolar) {
-					radius = $$.getPolarOuterRadius(d, outerRadius);
-				}
-
-				return radius;
-			});
+			.innerRadius(inner)
+			.outerRadius(outer);
 
 		const newArc = function(d, withoutUpdate) {
 			let path: string | null = "M 0 0";
 
 			if (d.value || d.data) {
-				const updated = !withoutUpdate && $$.updateAngle(d);
+				const data = withoutUpdate ? d : $$.updateAngle(d) ?? null;
 
-				if (withoutUpdate) {
-					path = arc(d);
-				} else if (updated) {
-					path = arc(updated);
+				if (data) {
+					path = arc.cornerRadius(
+						corner(data, outer(data))
+					)(data);
 				}
 			}
 
@@ -240,45 +312,35 @@ export default {
 		return newArc;
 	},
 
-	getSvgArcExpanded(rate?: number): Function {
+	/**
+	 * Get expanded arc path function
+	 * @param {number} rate Expand rate
+	 * @returns {Function} Expanded arc path getter function
+	 * @private
+	 */
+	getSvgArcExpanded(rate = 1): (d: IArcData) => string {
 		const $$ = this;
-		const {state} = $$;
-		const newRate = rate || 1;
-		const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
-		const hasMultiArcGauge = $$.hasMultiArcGauge();
-		const expandWidth = Math.min(state.radiusExpanded * newRate - state.radius,
-			singleArcWidth * 0.8 - (1 - newRate) * 100
-		);
+		const {inner, outer, corner} = getRadiusFn.call($$, rate);
 
 		const arc = d3Arc()
-			.innerRadius((d: any) => (
-				hasMultiArcGauge ?
-					state.radius - singleArcWidth * (d.index + 1) : $$.getRadius(d).innerRadius
-			))
-			.outerRadius((d: any) => {
-				let radius: number;
+			.innerRadius(inner)
+			.outerRadius(outer);
 
-				if (hasMultiArcGauge) {
-					radius = state.radius - singleArcWidth * d.index + expandWidth;
-				} else {
-					const {outerRadius} = $$.getRadius(d);
-
-					let {radiusExpanded} = state;
-
-					if (state.radius !== outerRadius) {
-						radiusExpanded -= Math.abs(state.radius - outerRadius);
-					}
-
-					radius = radiusExpanded * newRate;
-				}
-
-				return radius;
-			});
-
-		return function(d) {
+		return (d: IArcData): string => {
 			const updated = $$.updateAngle(d);
+			const outerR = outer(updated);
+			let cornerR = 0;
 
-			return updated ? arc(updated) : "M 0 0";
+			if (updated && (cornerR = corner(updated, outerR))) {
+				// corner radius can't surpass the "(outerR - innerR)/2"
+				const maxCorner = (outerR - inner(updated)) / 2;
+
+				if (cornerR > maxCorner) {
+					cornerR = maxCorner;
+				}
+			}
+
+			return updated ? <string>arc.cornerRadius(cornerR)(updated) : "M 0 0";
 		};
 	},
 
@@ -292,7 +354,7 @@ export default {
 	 * @returns {string} Translate attribute string
 	 * @private
 	 */
-	transformForArcLabel(d): string {
+	transformForArcLabel(d: IArcData): string {
 		const $$ = this;
 		const {config, state: {radiusExpanded}} = $$;
 
@@ -337,9 +399,9 @@ export default {
 		return translate;
 	},
 
-	convertToArcData(d): object {
+	convertToArcData(d: IArcData | IArcDataRow): object {
 		return this.addName({
-			id: d.data ? d.data.id : d.id,
+			id: "data" in d ? d.data.id : d.id,
 			value: d.value,
 			ratio: this.getRatio("arc", d),
 			index: d.index,
