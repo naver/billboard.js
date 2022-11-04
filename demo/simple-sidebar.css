@@ -245,8 +245,11 @@ div.row {
 
 @media(max-width:768px) {
     #menu-toggle {
-        display: inline-block;
         float: right;
+        position: sticky;
+        top: 10px;
+        border: solid 1px #eee;
+        z-index: 100;
     }
 
     #wrapper {
