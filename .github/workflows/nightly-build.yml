@@ -15,7 +15,9 @@ jobs:
 
       - name: Setup Git
         shell: bash
-        run: bash ./config/deploy-nightly.sh setup ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git remote set-url origin https://netil:${{ secrets.GH_TOKEN }}@github.com/naver/billboard.js.git > /dev/null 2>&1
+          bash ./config/deploy-nightly.sh setup
 
       - name: Setup Node.js
         uses: actions/setup-node@v3
