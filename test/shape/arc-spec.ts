@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+// @ts-nocheck
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
 import sinon from "sinon";
@@ -725,6 +726,94 @@ describe("SHAPE ARC", () => {
 
 		it("check Gauge's expand", done => {
 			checkExpand(done);
+		});
+	});
+
+	describe("Arc options", () => {
+		let args = {
+			data: {
+				columns: [
+					["data1", 30],
+					["data2", 45],
+					["data3", 25]
+				],
+				type: "donut"
+			},
+			arc: {
+				cornerRadius: 25
+			}
+		};
+
+		beforeEach(() => {
+			return new Promise(resolve => {
+				args.onrendered = resolve;
+				chart = util.generate(args);
+			});
+		});
+
+		it("check the corner radius applied correctly.", () => {
+			const expected = [
+				["M57.22067150815714,176.10711868676853", "25,25,0,0,1,37.919005536927386,208.42881643163085"],
+				["M7.105427357601002e-15,-185.1699827185821", "25,25,0,0,1,28.34492908750335,-209.9452011716972"],
+				["M-185.1699827185821,-1.3500311979441904e-13", "25,25,0,0,1,-209.94520117169716,-28.344929087503502"]
+			];
+
+			chart.$.arc.selectAll("path").each(function(d, i) {
+				const path = this.getAttribute("d").split("A").splice(0, 2);
+
+				expect(path).to.be.deep.equal(expected[i]);
+			});
+		});
+
+		it("set option: ratio", () => {
+			args.arc.cornerRadius = {
+				ratio: 0.2
+			};
+		});
+
+		it("check the corner radius in 'ratio' value,  applied correctly.", done => {
+			const expected = [
+				["M28.424419731594476,87.48136866168787", "23.75,23.75,0,0,1,7.296034336980716,118.52565284761607"],
+				["M7.105427357601002e-15,-91.98335447242616", "23.75,23.75,0,0,1,29.687500000000007,-114.9791930905327"],
+				["M-91.98335447242614,-7.105427357601002e-14", "23.75,23.75,0,0,1,-114.97919309053266,-29.68750000000009"]
+			];
+
+			// when resizes
+			chart.resize({width: 250});
+
+			setTimeout(() => {
+				chart.$.arc.selectAll("path").each(function(d, i) {
+					const path = this.getAttribute("d").split("A").splice(0, 2);
+
+					expect(path).to.be.deep.equal(expected[i]);
+				});
+
+				done();
+			}, 300);
+		});
+
+		it("set option: function", () => {
+			args.arc.cornerRadius = function(id, value, outerRadius) {
+				return ({
+					data1: outerRadius * 0.1,
+					data2: value > 45 ? outerRadius * 0.5 : 0,
+					data3: 60
+				})[id];
+			};
+		});
+
+		it("check the corner radius with 'function', applied correctly.", () => {
+			const expected = [
+				["M58.553899896666884,180.21037374937964", "21.185000000000002,21.185000000000002,0,0,1,42.67307510994895,207.50766530579213"],
+				["M1.2972071219968338e-14,-211.85", "211.85,211.85,0,0,1,65.46525025833253,201.4813229771283L39.27915015499951,120.88879378627696"],
+				["M-164.09830437880822,-1.2789769243681803e-13", "42.370000000000005,42.370000000000005,0,0,1,-205.12288047351026,-52.96250000000016"]
+			];
+
+			chart.$.arc.selectAll("path").each(function(d, i) {
+				const path = this.getAttribute("d").split("A").splice(0, 2);
+
+				expect(path).to.be.deep.equal(expected[i]);
+			});
 		});
 	});
 });

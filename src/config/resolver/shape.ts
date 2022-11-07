@@ -38,6 +38,7 @@ import optScatter from "../Options/shape/scatter";
 import optSpline from "../Options/shape/spline";
 
 // Non-Axis based
+import optArc from "../Options/shape/arc";
 import optDonut from "../Options/shape/donut";
 import optGauge from "../Options/shape/gauge";
 import optPie from "../Options/shape/pie";
@@ -121,10 +122,18 @@ let spline = (): string => (extendLine(undefined, [optSpline]), (spline = () => 
 let step = (): string => (extendLine(), (step = () => TYPE.STEP)());
 
 // Arc types
-let donut = (): string => (extendArc(undefined, [optDonut]), (donut = () => TYPE.DONUT)());
-let gauge = (): string => (extendArc([shapeGauge], [optGauge]), (gauge = () => TYPE.GAUGE)());
-let pie = (): string => (extendArc(undefined, [optPie]), (pie = () => TYPE.PIE)());
-let polar = (): string => (extendArc([shapePolar], [optPolar]), (polar = () => TYPE.POLAR)());
+let donut = (): string => (
+	extendArc(undefined, [optArc, optDonut]), (donut = () => TYPE.DONUT)()
+);
+let gauge = (): string => (
+	extendArc([shapeGauge], [optArc, optGauge]), (gauge = () => TYPE.GAUGE)()
+);
+let pie = (): string => (
+	extendArc(undefined, [optArc, optPie]), (pie = () => TYPE.PIE)()
+);
+let polar = (): string => (
+	extendArc([shapePolar], [optArc, optPolar]), (polar = () => TYPE.POLAR)()
+);
 let radar = (): string => (
 	extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), (radar = () => TYPE.RADAR)()
 );

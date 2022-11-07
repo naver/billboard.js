@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
+ * @ignore
  */
 type TDataRow = {
     value: number | null;
