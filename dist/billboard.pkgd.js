@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221104004748
+ * @version 3.6.3-nightly-20221108004736
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -42914,6 +42914,86 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 
 
 
+/**
+ * Get radius functions
+ * @param {number} expandRate Expand rate number.
+ *   - If 0, means for "normal" radius.
+ *   - If > 0, means for "expanded" radius.
+ * @returns {object} radius functions
+ * @private
+ */
+function getRadiusFn(expandRate) {
+  if (expandRate === void 0) {
+    expandRate = 0;
+  }
+  var $$ = this,
+    config = $$.config,
+    state = $$.state,
+    hasMultiArcGauge = $$.hasMultiArcGauge(),
+    singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
+    expandWidth = expandRate ? Math.min(state.radiusExpanded * expandRate - state.radius, singleArcWidth * .8 - (1 - expandRate) * 100) : 0;
+  return {
+    /**
+     * Getter of arc innerRadius value
+     * @param {IArcData} d Data object
+     * @returns {number} innerRadius value
+     * @private
+     */
+    inner: function inner(d) {
+      var _$$$getRadius = $$.getRadius(d),
+        innerRadius = _$$$getRadius.innerRadius;
+      return hasMultiArcGauge ? state.radius - singleArcWidth * (d.index + 1) : isNumber(innerRadius) ? innerRadius : 0;
+    },
+    /**
+     * Getter of arc outerRadius value
+     * @param {IArcData} d Data object
+     * @returns {number} outerRadius value
+     * @private
+     */
+    outer: function outer(d) {
+      var _$$$getRadius2 = $$.getRadius(d),
+        outerRadius = _$$$getRadius2.outerRadius,
+        radius;
+      if (hasMultiArcGauge) {
+        radius = state.radius - singleArcWidth * d.index + expandWidth;
+      } else if ($$.hasType("polar") && !expandRate) {
+        radius = $$.getPolarOuterRadius(d, outerRadius);
+      } else {
+        radius = outerRadius;
+        if (expandRate) {
+          var radiusExpanded = state.radiusExpanded;
+          if (state.radius !== outerRadius) {
+            radiusExpanded -= Math.abs(state.radius - outerRadius);
+          }
+          radius = radiusExpanded * expandRate;
+        }
+      }
+      return radius;
+    },
+    /**
+     * Getter of arc cornerRadius value
+     * @param {IArcData} d Data object
+     * @param {number} outerRadius outer radius value
+     * @returns {number} cornerRadius value
+     * @private
+     */
+    corner: function (d, outerRadius) {
+      var _config$arc_cornerRad = config.arc_cornerRadius_ratio,
+        ratio = _config$arc_cornerRad === void 0 ? 0 : _config$arc_cornerRad,
+        _config$arc_cornerRad2 = config.arc_cornerRadius,
+        cornerRadius = _config$arc_cornerRad2 === void 0 ? 0 : _config$arc_cornerRad2,
+        id = d.data.id,
+        value = d.value,
+        corner = 0;
+      if (ratio) {
+        corner = ratio * outerRadius;
+      } else {
+        corner = isNumber(cornerRadius) ? cornerRadius : cornerRadius.call($$.api, id, value, outerRadius);
+      }
+      return corner;
+    }
+  };
+}
 /* harmony default export */ var arc = ({
   initPie: function initPie() {
     var _this2 = this,
@@ -43053,37 +43133,19 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     return found ? d : null;
   },
   getSvgArc: function getSvgArc() {
-    var _this5 = this,
-      $$ = this,
-      state = $$.state,
-      singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
-      hasMultiArcGauge = $$.hasMultiArcGauge(),
-      hasPolar = $$.hasType("polar"),
-      arc = src_arc().innerRadius(function (d) {
-        _newArrowCheck(this, _this5);
-        var _$$$getRadius = $$.getRadius(d),
-          innerRadius = _$$$getRadius.innerRadius;
-        return hasMultiArcGauge ? state.radius - singleArcWidth * (d.index + 1) : isNumber(innerRadius) ? innerRadius : 0;
-      }.bind(this)).outerRadius(function (d) {
-        _newArrowCheck(this, _this5);
-        var _$$$getRadius2 = $$.getRadius(d),
-          outerRadius = _$$$getRadius2.outerRadius,
-          radius = outerRadius;
-        if (hasMultiArcGauge) {
-          radius = state.radius - singleArcWidth * d.index;
-        } else if (hasPolar) {
-          radius = $$.getPolarOuterRadius(d, outerRadius);
-        }
-        return radius;
-      }.bind(this)),
+    var $$ = this,
+      _getRadiusFn$call = getRadiusFn.call($$),
+      inner = _getRadiusFn$call.inner,
+      outer = _getRadiusFn$call.outer,
+      corner = _getRadiusFn$call.corner,
+      arc = src_arc().innerRadius(inner).outerRadius(outer),
       newArc = function (d, withoutUpdate) {
         var path = "M 0 0";
         if (d.value || d.data) {
-          var updated = !withoutUpdate && $$.updateAngle(d);
-          if (withoutUpdate) {
-            path = arc(d);
-          } else if (updated) {
-            path = arc(updated);
+          var _$$$updateAngle,
+            data = withoutUpdate ? d : (_$$$updateAngle = $$.updateAngle(d)) != null ? _$$$updateAngle : null;
+          if (data) {
+            path = arc.cornerRadius(corner(data, outer(data)))(data);
           }
         }
         return path;
@@ -43092,37 +43154,37 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     newArc.centroid = arc.centroid;
     return newArc;
   },
+  /**
+   * Get expanded arc path function
+   * @param {number} rate Expand rate
+   * @returns {Function} Expanded arc path getter function
+   * @private
+   */
   getSvgArcExpanded: function getSvgArcExpanded(rate) {
-    var _this6 = this,
-      $$ = this,
-      state = $$.state,
-      newRate = rate || 1,
-      singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
-      hasMultiArcGauge = $$.hasMultiArcGauge(),
-      expandWidth = Math.min(state.radiusExpanded * newRate - state.radius, singleArcWidth * .8 - (1 - newRate) * 100),
-      arc = src_arc().innerRadius(function (d) {
-        _newArrowCheck(this, _this6);
-        return hasMultiArcGauge ? state.radius - singleArcWidth * (d.index + 1) : $$.getRadius(d).innerRadius;
-      }.bind(this)).outerRadius(function (d) {
-        _newArrowCheck(this, _this6);
-        var radius;
-        if (hasMultiArcGauge) {
-          radius = state.radius - singleArcWidth * d.index + expandWidth;
-        } else {
-          var _$$$getRadius3 = $$.getRadius(d),
-            outerRadius = _$$$getRadius3.outerRadius,
-            radiusExpanded = state.radiusExpanded;
-          if (state.radius !== outerRadius) {
-            radiusExpanded -= Math.abs(state.radius - outerRadius);
-          }
-          radius = radiusExpanded * newRate;
-        }
-        return radius;
-      }.bind(this));
+    var _this5 = this;
+    if (rate === void 0) {
+      rate = 1;
+    }
+    var $$ = this,
+      _getRadiusFn$call2 = getRadiusFn.call($$, rate),
+      inner = _getRadiusFn$call2.inner,
+      outer = _getRadiusFn$call2.outer,
+      corner = _getRadiusFn$call2.corner,
+      arc = src_arc().innerRadius(inner).outerRadius(outer);
     return function (d) {
-      var updated = $$.updateAngle(d);
-      return updated ? arc(updated) : "M 0 0";
-    };
+      _newArrowCheck(this, _this5);
+      var updated = $$.updateAngle(d),
+        outerR = outer(updated),
+        cornerR = 0;
+      if (updated && (cornerR = corner(updated, outerR))) {
+        // corner radius can't surpass the "(outerR - innerR)/2"
+        var maxCorner = (outerR - inner(updated)) / 2;
+        if (cornerR > maxCorner) {
+          cornerR = maxCorner;
+        }
+      }
+      return updated ? arc.cornerRadius(cornerR)(updated) : "M 0 0";
+    }.bind(this);
   },
   getArc: function getArc(d, withoutUpdate, force) {
     return force || this.isArcType(d.data) ? this.svgArc(d, withoutUpdate) : "M 0 0";
@@ -43134,7 +43196,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
    * @private
    */
   transformForArcLabel: function transformForArcLabel(d) {
-    var _this7 = this,
+    var _this6 = this,
       $$ = this,
       config = $$.config,
       radiusExpanded = $$.state.radiusExpanded,
@@ -43148,21 +43210,21 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         translate = "translate(" + x + "," + y + ")";
       } else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
         var _filter$map,
-          _$$$getRadius4 = $$.getRadius(d),
-          outerRadius = _$$$getRadius4.outerRadius;
+          _$$$getRadius3 = $$.getRadius(d),
+          outerRadius = _$$$getRadius3.outerRadius;
         if ($$.hasType("polar")) {
           outerRadius = $$.getPolarOuterRadius(d, outerRadius);
         }
         var c = this.svgArc.centroid(updated),
           _c$map = c.map(function (v) {
-            _newArrowCheck(this, _this7);
+            _newArrowCheck(this, _this6);
             return isNaN(v) ? 0 : v;
           }.bind(this)),
           x = _c$map[0],
           y = _c$map[1],
           h = Math.sqrt(x * x + y * y),
           ratio = (_filter$map = ["donut", "pie", "polar"].filter($$.hasType.bind($$)).map(function (v) {
-            _newArrowCheck(this, _this7);
+            _newArrowCheck(this, _this6);
             return config[v + "_label_ratio"];
           }.bind(this))) == null ? void 0 : _filter$map[0];
         if (ratio) {
@@ -43177,7 +43239,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
   },
   convertToArcData: function convertToArcData(d) {
     return this.addName({
-      id: d.data ? d.data.id : d.id,
+      id: "data" in d ? d.data.id : d.id,
       value: d.value,
       ratio: this.getRatio("arc", d),
       index: d.index
@@ -43204,14 +43266,14 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     }
   },
   expandArc: function expandArc(targetIds) {
-    var _this8 = this,
+    var _this7 = this,
       $$ = this,
       transiting = $$.state.transiting,
       $el = $$.$el;
     // MEMO: avoid to cancel transition
     if (transiting) {
       var interval = setInterval(function () {
-        _newArrowCheck(this, _this8);
+        _newArrowCheck(this, _this7);
         if (!transiting) {
           clearInterval(interval);
           $el.legend.selectAll("." + $FOCUS.legendItemFocused).size() > 0 && $$.expandArc(targetIds);
@@ -43230,7 +43292,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     });
   },
   unexpandArc: function unexpandArc(targetIds) {
-    var _this9 = this,
+    var _this8 = this,
       $$ = this,
       transiting = $$.state.transiting,
       svg = $$.$el.svg;
@@ -43239,7 +43301,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     }
     var newTargetIds = $$.mapToTargetIds(targetIds);
     svg.selectAll($$.selectorTargets(newTargetIds, "." + $ARC.chartArc)).selectAll("path").transition().duration(function (d) {
-      _newArrowCheck(this, _this9);
+      _newArrowCheck(this, _this8);
       return $$.getExpandConfig(d.data.id, "duration");
     }.bind(this)).attr("d", $$.svgArc);
     svg.selectAll("" + $ARC.arc).style("opacity", null);
@@ -43273,24 +43335,24 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     return $$.isDonutType(id) && config.donut_expand || $$.isGaugeType(id) && config.gauge_expand || $$.isPieType(id) && config.pie_expand;
   },
   shouldShowArcLabel: function shouldShowArcLabel() {
-    var _this10 = this,
+    var _this9 = this,
       $$ = this,
       config = $$.config;
     return ["donut", "gauge", "pie", "polar"].some(function (v) {
-      _newArrowCheck(this, _this10);
+      _newArrowCheck(this, _this9);
       return $$.hasType(v) && config[v + "_label_show"];
     }.bind(this));
   },
   getArcLabelFormat: function getArcLabelFormat() {
-    var _this11 = this,
+    var _this10 = this,
       $$ = this,
       config = $$.config,
       format = function (v) {
-        _newArrowCheck(this, _this11);
+        _newArrowCheck(this, _this10);
         return v;
       }.bind(this);
     ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).forEach(function (v) {
-      _newArrowCheck(this, _this11);
+      _newArrowCheck(this, _this10);
       format = config[v + "_label_format"];
     }.bind(this));
     return isFunction(format) ? format.bind($$.api) : format;
@@ -43301,7 +43363,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     return type ? $$.config[type + "_title"] : "";
   },
   updateTargetsForArc: function updateTargetsForArc(targets) {
-    var _this12 = this,
+    var _this11 = this,
       $$ = this,
       $el = $$.$el,
       hasGauge = $$.hasType("gauge"),
@@ -43310,7 +43372,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       classFocus = $$.classFocus.bind($$),
       chartArcs = $el.main.select("." + $ARC.chartArcs),
       mainPieUpdate = chartArcs.selectAll("." + $ARC.chartArc).data($$.pie(targets)).attr("class", function (d) {
-        _newArrowCheck(this, _this12);
+        _newArrowCheck(this, _this11);
         return classChartArc(d) + classFocus(d.data);
       }.bind(this)),
       mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc).call(this.setCssRule(!1, "." + $ARC.chartArcs + " text", ["pointer-events:none", "text-anchor:middle"]));
@@ -43341,7 +43403,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     }
   },
   redrawArc: function redrawArc(duration, durationForExit, withTransform) {
-    var _this13 = this,
+    var _this12 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -43351,10 +43413,10 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       mainArc = main.selectAll("." + $ARC.arcs).selectAll("." + $ARC.arc).data($$.arcData.bind($$));
     mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove();
     mainArc = mainArc.enter().append("path").attr("class", $$.getClass("arc", !0)).style("fill", function (d) {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this12);
       return $$.color(d.data);
     }.bind(this)).style("cursor", function (d) {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this12);
       return isSelectable != null && isSelectable.bind != null && isSelectable.bind($$.api)(d) ? "pointer" : null;
     }.bind(this)).style("opacity", "0").each(function (d) {
       if ($$.isGaugeType(d.data)) {
@@ -43368,19 +43430,19 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       $$.hasMultiArcGauge() && $$.redrawMultiArcGauge();
     }
     mainArc.attr("transform", function (d) {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this12);
       return !$$.isGaugeType(d.data) && withTransform ? "scale(0)" : "";
     }.bind(this)).style("opacity", function (d) {
       return d === this._current ? "0" : null;
     }).each(function () {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this12);
       state.transiting = !0;
     }.bind(this)).transition().duration(duration).attrTween("d", function (d) {
-      var _this14 = this,
+      var _this13 = this,
         updated = $$.updateAngle(d);
       if (!updated) {
         return function () {
-          _newArrowCheck(this, _this14);
+          _newArrowCheck(this, _this13);
           return "M 0 0";
         }.bind(this);
       }
@@ -43399,7 +43461,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         return $$.getArc(interpolated, !0);
       };
     }).attr("transform", withTransform ? "scale(1)" : "").style("fill", function (d) {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this12);
       var color;
       if ($$.levelColor) {
         color = $$.levelColor(d.data.values[0].value);
@@ -43415,8 +43477,8 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     .style("opacity", null).call(endall, function () {
       if ($$.levelColor) {
         var path = src_select(this),
-          d = path.datum();
-        $$.updateLegendItemColor(d.data.id, path.style("fill"));
+          _d = path.datum();
+        $$.updateLegendItemColor(_d.data.id, path.style("fill"));
       }
       state.transiting = !1;
       callFn(config.onrendered, $$.api);
@@ -43429,7 +43491,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     $$.redrawArcText(duration);
   },
   redrawBackgroundArcs: function redrawBackgroundArcs() {
-    var _this15 = this,
+    var _this14 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -43442,11 +43504,11 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       var index = 0;
       backgroundArc = backgroundArc.selectAll("path." + $ARC.chartArcsBackground).data($$.data.targets);
       backgroundArc.enter().append("path").attr("class", function (d, i) {
-        _newArrowCheck(this, _this15);
+        _newArrowCheck(this, _this14);
         return $ARC.chartArcsBackground + " " + $ARC.chartArcsBackground + "-" + i;
       }.bind(this)).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", function (_ref2) {
         var id = _ref2.id;
-        _newArrowCheck(this, _this15);
+        _newArrowCheck(this, _this14);
         if (state.hiddenTargetIds.indexOf(id) >= 0) {
           return "M 0 0";
         }
@@ -43463,7 +43525,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
       backgroundArc.exit().remove();
     } else {
       backgroundArc.attr("d", function () {
-        _newArrowCheck(this, _this15);
+        _newArrowCheck(this, _this14);
         var d = {
           data: [{
             value: config.gauge_max
@@ -43476,7 +43538,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     }
   },
   bindArcEvent: function bindArcEvent(arc) {
-    var _this16 = this,
+    var _this15 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -43524,7 +43586,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         selectArc(this, arcData, id);
         $$.setOverOut(!0, arcData);
       }).on("mouseout", function (event, d) {
-        _newArrowCheck(this, _this16);
+        _newArrowCheck(this, _this15);
         if (state.transiting) {
           // skip while transiting
           return;
@@ -43545,7 +43607,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     // touch events
     if (isTouch && $$.hasArcType() && !$$.radars) {
       var getEventArc = function (event) {
-        _newArrowCheck(this, _this16);
+        _newArrowCheck(this, _this15);
         var touch = event.changedTouches[0],
           eventArc = src_select(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
         return eventArc;
@@ -43568,7 +43630,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     }
   },
   redrawArcText: function redrawArcText(duration) {
-    var _this17 = this,
+    var _this16 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -43581,13 +43643,13 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     // for gauge type, update text when has no title & multi data
     if (!(hasGauge && $$.data.targets.length === 1 && config.gauge_title)) {
       text = main.selectAll("." + $ARC.chartArc).select("text").style("opacity", "0").attr("class", function (d) {
-        _newArrowCheck(this, _this17);
+        _newArrowCheck(this, _this16);
         return $$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null;
       }.bind(this)).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
-        _newArrowCheck(this, _this17);
+        _newArrowCheck(this, _this16);
         return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? Math.round(state.radius / 5) + "px" : null;
       }.bind(this)).transition().duration(duration).style("opacity", function (d) {
-        _newArrowCheck(this, _this17);
+        _newArrowCheck(this, _this16);
         return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0";
       }.bind(this));
       hasMultiArcGauge && text.attr("dy", "-.1em");
@@ -46385,6 +46447,53 @@ var cacheKey = KEY.radarPoints;
    */
   spline_interpolation_type: "cardinal"
 });
+;// CONCATENATED MODULE: ./src/config/Options/shape/arc.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * area config options
+ */
+/* harmony default export */ var shape_arc = ({
+  /**
+   * Set arc options
+   * @name arc
+   * @memberof Options
+   * @type {object}
+   * @property {object} arc Arc object
+   * @property {number|Function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
+   *  - **NOTE:**
+   * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
+   * 	  - When specified value is greater than the limitation, the radius value will be adjusted to meet the condition.
+   * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
+   * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
+   * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
+   * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
+   * @example
+   *  arc: {
+   *      cornerRadius: 12,
+   *
+   *      // can customize corner radius for each data with function callback
+   *      //
+   *      // The function will receive:
+   *      // - id {string}: Data id
+   *      // - value {number}: Data value
+   *      // - outerRadius {number}: Outer radius value
+   *      cornerRadius: function(id, value, outerRadius) {
+   *          return (id === "data1" && value > 10) ?
+   *          	50 : outerRadius * 1.2;
+   *      },
+   *
+   *      // set ratio relative of outer radius
+   *      cornerRadius: {
+   *          ratio: 0.5
+   *      }
+   *  }
+   */
+  arc_cornerRadius: 0,
+  arc_cornerRadius_ratio: 0
+});
 ;// CONCATENATED MODULE: ./src/config/Options/shape/donut.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -46509,7 +46618,7 @@ var cacheKey = KEY.radarPoints;
    *   - `startingAngle < -1 * Math.PI` defaults to `Math.PI`
    *   - `startingAngle >  Math.PI` defaults to `Math.PI`
    * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100.<br>
-   * Negative value will draw the arc **counterclockwise**.
+   * Negative value will draw the arc **counterclockwise**. Need to be used in conjunction with `gauge.fullCircle=true`.
    *
    * **Limitations:**
    * - -100 <= arcLength (in percent) <= 100
@@ -46522,7 +46631,7 @@ var cacheKey = KEY.radarPoints;
    * **Available Values:**
    * - single
    * - multi
-   * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+   * @property {number} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
    * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
    * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
    * @example
@@ -46904,6 +47013,7 @@ var shape_this = undefined;
 
 
 
+
 /**
  * Extend Axis
  * @param {Array} module Module to be extended
@@ -47006,7 +47116,7 @@ var _area = function area() {
   shape_donut = function () {
     var _this10 = this;
     _newArrowCheck(this, shape_this);
-    return extendArc(undefined, [donut]), (shape_donut = function () {
+    return extendArc(undefined, [shape_arc, donut]), (shape_donut = function () {
       _newArrowCheck(this, _this10);
       return TYPE.DONUT;
     }.bind(this))();
@@ -47014,7 +47124,7 @@ var _area = function area() {
   resolver_shape_gauge = function () {
     var _this11 = this;
     _newArrowCheck(this, shape_this);
-    return extendArc([gauge], [shape_gauge]), (resolver_shape_gauge = function () {
+    return extendArc([gauge], [shape_arc, shape_gauge]), (resolver_shape_gauge = function () {
       _newArrowCheck(this, _this11);
       return TYPE.GAUGE;
     }.bind(this))();
@@ -47022,7 +47132,7 @@ var _area = function area() {
   resolver_shape_pie = function () {
     var _this12 = this;
     _newArrowCheck(this, shape_this);
-    return extendArc(undefined, [shape_pie]), (resolver_shape_pie = function () {
+    return extendArc(undefined, [shape_arc, shape_pie]), (resolver_shape_pie = function () {
       _newArrowCheck(this, _this12);
       return TYPE.PIE;
     }.bind(this))();
@@ -47030,7 +47140,7 @@ var _area = function area() {
   resolver_shape_polar = function () {
     var _this13 = this;
     _newArrowCheck(this, shape_this);
-    return extendArc([polar], [shape_polar]), (resolver_shape_polar = function () {
+    return extendArc([polar], [shape_arc, shape_polar]), (resolver_shape_polar = function () {
       _newArrowCheck(this, _this13);
       return TYPE.POLAR;
     }.bind(this))();
@@ -49440,7 +49550,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221104004748",
+    version: "3.6.3-nightly-20221108004736",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -49570,7 +49680,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221104004748
+ * @version 3.6.3-nightly-20221108004736
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

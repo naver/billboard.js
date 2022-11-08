@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.3-nightly-20221104004748
+ * @version 3.6.3-nightly-20221108004736
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -16279,6 +16279,83 @@ var options = [
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/**
+ * Get radius functions
+ * @param {number} expandRate Expand rate number.
+ *   - If 0, means for "normal" radius.
+ *   - If > 0, means for "expanded" radius.
+ * @returns {object} radius functions
+ * @private
+ */
+function getRadiusFn(expandRate) {
+    if (expandRate === void 0) { expandRate = 0; }
+    var $$ = this;
+    var config = $$.config, state = $$.state;
+    var hasMultiArcGauge = $$.hasMultiArcGauge();
+    var singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
+    var expandWidth = expandRate ? (Math.min(state.radiusExpanded * expandRate - state.radius, singleArcWidth * 0.8 - (1 - expandRate) * 100)) : 0;
+    return {
+        /**
+         * Getter of arc innerRadius value
+         * @param {IArcData} d Data object
+         * @returns {number} innerRadius value
+         * @private
+         */
+        inner: function (d) {
+            var innerRadius = $$.getRadius(d).innerRadius;
+            return hasMultiArcGauge ?
+                state.radius - singleArcWidth * (d.index + 1) :
+                isNumber(innerRadius) ? innerRadius : 0;
+        },
+        /**
+         * Getter of arc outerRadius value
+         * @param {IArcData} d Data object
+         * @returns {number} outerRadius value
+         * @private
+         */
+        outer: function (d) {
+            var outerRadius = $$.getRadius(d).outerRadius;
+            var radius;
+            if (hasMultiArcGauge) {
+                radius = state.radius - singleArcWidth * d.index + expandWidth;
+            }
+            else if ($$.hasType("polar") && !expandRate) {
+                radius = $$.getPolarOuterRadius(d, outerRadius);
+            }
+            else {
+                radius = outerRadius;
+                if (expandRate) {
+                    var radiusExpanded = state.radiusExpanded;
+                    if (state.radius !== outerRadius) {
+                        radiusExpanded -= Math.abs(state.radius - outerRadius);
+                    }
+                    radius = radiusExpanded * expandRate;
+                }
+            }
+            return radius;
+        },
+        /**
+         * Getter of arc cornerRadius value
+         * @param {IArcData} d Data object
+         * @param {number} outerRadius outer radius value
+         * @returns {number} cornerRadius value
+         * @private
+         */
+        corner: function (d, outerRadius) {
+            var _a = config.arc_cornerRadius_ratio, ratio = _a === void 0 ? 0 : _a, _b = config.arc_cornerRadius, cornerRadius = _b === void 0 ? 0 : _b;
+            var id = d.data.id, value = d.value;
+            var corner = 0;
+            if (ratio) {
+                corner = ratio * outerRadius;
+            }
+            else {
+                corner = isNumber(cornerRadius) ?
+                    cornerRadius : cornerRadius.call($$.api, id, value, outerRadius);
+            }
+            return corner;
+        }
+    };
+}
 var shapeArc = {
     initPie: function () {
         var $$ = this;
@@ -16421,37 +16498,17 @@ var shapeArc = {
     },
     getSvgArc: function () {
         var $$ = this;
-        var state = $$.state;
-        var singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
-        var hasMultiArcGauge = $$.hasMultiArcGauge();
-        var hasPolar = $$.hasType("polar");
+        var _a = getRadiusFn.call($$), inner = _a.inner, outer = _a.outer, corner = _a.corner;
         var arc$1 = arc()
-            .innerRadius(function (d) {
-            var innerRadius = $$.getRadius(d).innerRadius;
-            return hasMultiArcGauge ?
-                state.radius - singleArcWidth * (d.index + 1) :
-                isNumber(innerRadius) ? innerRadius : 0;
-        })
-            .outerRadius(function (d) {
-            var outerRadius = $$.getRadius(d).outerRadius;
-            var radius = outerRadius;
-            if (hasMultiArcGauge) {
-                radius = state.radius - singleArcWidth * d.index;
-            }
-            else if (hasPolar) {
-                radius = $$.getPolarOuterRadius(d, outerRadius);
-            }
-            return radius;
-        });
+            .innerRadius(inner)
+            .outerRadius(outer);
         var newArc = function (d, withoutUpdate) {
+            var _a;
             var path = "M 0 0";
             if (d.value || d.data) {
-                var updated = !withoutUpdate && $$.updateAngle(d);
-                if (withoutUpdate) {
-                    path = arc$1(d);
-                }
-                else if (updated) {
-                    path = arc$1(updated);
+                var data = withoutUpdate ? d : (_a = $$.updateAngle(d)) !== null && _a !== void 0 ? _a : null;
+                if (data) {
+                    path = arc$1.cornerRadius(corner(data, outer(data)))(data);
                 }
             }
             return path;
@@ -16460,34 +16517,31 @@ var shapeArc = {
         newArc.centroid = arc$1.centroid;
         return newArc;
     },
+    /**
+     * Get expanded arc path function
+     * @param {number} rate Expand rate
+     * @returns {Function} Expanded arc path getter function
+     * @private
+     */
     getSvgArcExpanded: function (rate) {
+        if (rate === void 0) { rate = 1; }
         var $$ = this;
-        var state = $$.state;
-        var newRate = rate || 1;
-        var singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
-        var hasMultiArcGauge = $$.hasMultiArcGauge();
-        var expandWidth = Math.min(state.radiusExpanded * newRate - state.radius, singleArcWidth * 0.8 - (1 - newRate) * 100);
+        var _a = getRadiusFn.call($$, rate), inner = _a.inner, outer = _a.outer, corner = _a.corner;
         var arc$1 = arc()
-            .innerRadius(function (d) { return (hasMultiArcGauge ?
-            state.radius - singleArcWidth * (d.index + 1) : $$.getRadius(d).innerRadius); })
-            .outerRadius(function (d) {
-            var radius;
-            if (hasMultiArcGauge) {
-                radius = state.radius - singleArcWidth * d.index + expandWidth;
-            }
-            else {
-                var outerRadius = $$.getRadius(d).outerRadius;
-                var radiusExpanded = state.radiusExpanded;
-                if (state.radius !== outerRadius) {
-                    radiusExpanded -= Math.abs(state.radius - outerRadius);
-                }
-                radius = radiusExpanded * newRate;
-            }
-            return radius;
-        });
+            .innerRadius(inner)
+            .outerRadius(outer);
         return function (d) {
             var updated = $$.updateAngle(d);
-            return updated ? arc$1(updated) : "M 0 0";
+            var outerR = outer(updated);
+            var cornerR = 0;
+            if (updated && (cornerR = corner(updated, outerR))) {
+                // corner radius can't surpass the "(outerR - innerR)/2"
+                var maxCorner = (outerR - inner(updated)) / 2;
+                if (cornerR > maxCorner) {
+                    cornerR = maxCorner;
+                }
+            }
+            return updated ? arc$1.cornerRadius(cornerR)(updated) : "M 0 0";
         };
     },
     getArc: function (d, withoutUpdate, force) {
@@ -16536,7 +16590,7 @@ var shapeArc = {
     },
     convertToArcData: function (d) {
         return this.addName({
-            id: d.data ? d.data.id : d.id,
+            id: "data" in d ? d.data.id : d.id,
             value: d.value,
             ratio: this.getRatio("arc", d),
             index: d.index
@@ -19440,6 +19494,53 @@ var optSpline = {
  * billboard.js project is licensed under the MIT license
  */
 /**
+ * area config options
+ */
+var optArc = {
+    /**
+     * Set arc options
+     * @name arc
+     * @memberof Options
+     * @type {object}
+     * @property {object} arc Arc object
+     * @property {number|Function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
+     *  - **NOTE:**
+     * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
+     * 	  - When specified value is greater than the limitation, the radius value will be adjusted to meet the condition.
+     * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
+     * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
+     * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
+     * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
+     * @example
+     *  arc: {
+     *      cornerRadius: 12,
+     *
+     *      // can customize corner radius for each data with function callback
+     *      //
+     *      // The function will receive:
+     *      // - id {string}: Data id
+     *      // - value {number}: Data value
+     *      // - outerRadius {number}: Outer radius value
+     *      cornerRadius: function(id, value, outerRadius) {
+     *          return (id === "data1" && value > 10) ?
+     *          	50 : outerRadius * 1.2;
+     *      },
+     *
+     *      // set ratio relative of outer radius
+     *      cornerRadius: {
+     *          ratio: 0.5
+     *      }
+     *  }
+     */
+    arc_cornerRadius: 0,
+    arc_cornerRadius_ratio: 0
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
  * donut config options
  */
 var optDonut = {
@@ -19558,7 +19659,7 @@ var optGauge = {
      *   - `startingAngle < -1 * Math.PI` defaults to `Math.PI`
      *   - `startingAngle >  Math.PI` defaults to `Math.PI`
      * @property {number} [gauge.arcLength=100] Set the length of the arc to be drawn in percent from -100 to 100.<br>
-     * Negative value will draw the arc **counterclockwise**.
+     * Negative value will draw the arc **counterclockwise**. Need to be used in conjunction with `gauge.fullCircle=true`.
      *
      * **Limitations:**
      * - -100 <= arcLength (in percent) <= 100
@@ -19571,7 +19672,7 @@ var optGauge = {
      * **Available Values:**
      * - single
      * - multi
-     * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+     * @property {number} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
      * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
      * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
      * @example
@@ -19944,10 +20045,10 @@ var line = function () { return (extendLine(), (line = function () { return TYPE
 var spline = function () { return (extendLine(undefined, [optSpline]), (spline = function () { return TYPE.SPLINE; })()); };
 var step = function () { return (extendLine(), (step = function () { return TYPE.STEP; })()); };
 // Arc types
-var donut = function () { return (extendArc(undefined, [optDonut]), (donut = function () { return TYPE.DONUT; })()); };
-var gauge = function () { return (extendArc([shapeGauge], [optGauge]), (gauge = function () { return TYPE.GAUGE; })()); };
-var pie = function () { return (extendArc(undefined, [optPie]), (pie = function () { return TYPE.PIE; })()); };
-var polar = function () { return (extendArc([shapePolar], [optPolar]), (polar = function () { return TYPE.POLAR; })()); };
+var donut = function () { return (extendArc(undefined, [optArc, optDonut]), (donut = function () { return TYPE.DONUT; })()); };
+var gauge = function () { return (extendArc([shapeGauge], [optArc, optGauge]), (gauge = function () { return TYPE.GAUGE; })()); };
+var pie = function () { return (extendArc(undefined, [optArc, optPie]), (pie = function () { return TYPE.PIE; })()); };
+var polar = function () { return (extendArc([shapePolar], [optArc, optPolar]), (polar = function () { return TYPE.POLAR; })()); };
 var radar = function () { return (extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), (radar = function () { return TYPE.RADAR; })()); };
 // Axis based types
 var bar = function () { return (extendAxis([shapeBar], optBar), (bar = function () { return TYPE.BAR; })()); };
@@ -21592,7 +21693,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221104004748
+ * @version 3.6.3-nightly-20221108004736
  */
 var bb = {
     /**
@@ -21602,7 +21703,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221104004748",
+    version: "3.6.3-nightly-20221108004736",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
