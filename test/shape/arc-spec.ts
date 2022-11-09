@@ -815,5 +815,63 @@ describe("SHAPE ARC", () => {
 				expect(path).to.be.deep.equal(expected[i]);
 			});
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30],
+						["data3", 25]
+					],
+					type: "pie"
+				},
+				arc: {
+					cornerRadius: {
+						ratio: 0.7
+					}
+				}, 
+				pie: {
+					expand: {
+						duration: 300
+					}
+				}
+			};
+		});
+
+		it("should exapnd Arc shape correctly on transition.", done => {
+			const {arc} = chart.$;
+			const rx = /^[01]$/;
+			let i = 0;
+
+			// when
+			chart.tooltip.show({ index: 0});
+
+			const interval = setInterval(function() {
+				if (i > 10) {
+					clearInterval(interval);
+					done();
+				}
+
+				const arcCommand = arc.select(`.${$ARC.arc}-data1`)
+					.attr("d")
+					.replace(/(M[^A]+|,\d+Z)/g, "") // extract Arc command only from path
+					.split("A");
+					
+				arcCommand.forEach(v => {
+					const param = v.split(",");
+
+					// Arc params formed as:
+					// A rx ry x-axis-rotation large-arc-flag sweep-flag x y
+					// https://developer.mozilla.org/en-US/docs/Web/SVG/Tutorial/Paths#arcs
+					if (param.length === 7) {
+						// 'large-arc-flag' and 'sweep-flag' should be 0 or 1
+						expect(rx.test(param[2])).to.be.true;
+						expect(rx.test(param[3])).to.be.true;
+					}
+				});
+
+				i++;
+			}, 15);
+		});
 	});
 });

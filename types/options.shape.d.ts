@@ -10,7 +10,6 @@ export interface ArcOptions {
 	 *  Set corner radius of Arc(donut/gauge/pie/polar) shape.
 	 *  - **NOTE:**
 	 * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
-	 * 	  - When specified value is greater than the limitation, the radius value will be adjusted to meet the condition.
 	 */
 	cornerRadius?: number | ((id: string, value: number, outerRadius: number) => number) | {
 		ratio?: number
