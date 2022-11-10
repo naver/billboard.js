@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221109004732
+ * @version 3.6.3-nightly-20221110004701
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -18097,6 +18097,23 @@ function getRadiusFn(expandRate) {
     }
   };
 }
+
+/**
+ * Get attrTween function to get interpolated value on transition
+ * @param {Function} fn Arc function to execute
+ * @returns {Function} attrTween function
+ * @private
+ */
+function getAttrTweenFn(fn) {
+  return function (d) {
+    var interpolate = (0,external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_.interpolate)(this._current, d);
+    this._current = d;
+    return function (t) {
+      var interpolated = interpolate(t);
+      return fn(interpolated);
+    };
+  };
+}
 /* harmony default export */ var arc = ({
   initPie: function initPie() {
     var _this2 = this,
@@ -18279,12 +18296,8 @@ function getRadiusFn(expandRate) {
       var updated = $$.updateAngle(d),
         outerR = outer(updated),
         cornerR = 0;
-      if (updated && (cornerR = corner(updated, outerR))) {
-        // corner radius can't surpass the "(outerR - innerR)/2"
-        var maxCorner = (outerR - inner(updated)) / 2;
-        if (cornerR > maxCorner) {
-          cornerR = maxCorner;
-        }
+      if (updated) {
+        cornerR = corner(updated, outerR);
       }
       return updated ? arc.cornerRadius(cornerR)(updated) : "M 0 0";
     }.bind(this);
@@ -18391,7 +18404,7 @@ function getRadiusFn(expandRate) {
       }
       var expandDuration = $$.getExpandConfig(d.data.id, "duration"),
         svgArcExpandedSub = $$.getSvgArcExpanded($$.getExpandConfig(d.data.id, "rate"));
-      (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).selectAll("path").transition().duration(expandDuration).attr("d", $$.svgArcExpanded).transition().duration(expandDuration * 2).attr("d", svgArcExpandedSub);
+      (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).selectAll("path").transition().duration(expandDuration).attrTween("d", getAttrTweenFn($$.svgArcExpanded.bind($$))).transition().duration(expandDuration * 2).attrTween("d", getAttrTweenFn(svgArcExpandedSub.bind($$)));
     });
   },
   unexpandArc: function unexpandArc(targetIds) {
@@ -18406,7 +18419,7 @@ function getRadiusFn(expandRate) {
     svg.selectAll($$.selectorTargets(newTargetIds, "." + $ARC.chartArc)).selectAll("path").transition().duration(function (d) {
       _newArrowCheck(this, _this8);
       return $$.getExpandConfig(d.data.id, "duration");
-    }.bind(this)).attr("d", $$.svgArc);
+    }.bind(this)).attrTween("d", getAttrTweenFn($$.svgArc.bind($$)));
     svg.selectAll("" + $ARC.arc).style("opacity", null);
   },
   /**
@@ -21425,7 +21438,6 @@ var cacheKey = KEY.radarPoints;
    * @property {number|Function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
    *  - **NOTE:**
    * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
-   * 	  - When specified value is greater than the limitation, the radius value will be adjusted to meet the condition.
    * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
    * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
    * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
@@ -23945,7 +23957,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221109004732",
+    version: "3.6.3-nightly-20221110004701",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -24075,7 +24087,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221109004732
+ * @version 3.6.3-nightly-20221110004701
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.3-nightly-20221109004732
+ * @version 3.6.3-nightly-20221110004701
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -16356,6 +16356,22 @@ function getRadiusFn(expandRate) {
         }
     };
 }
+/**
+ * Get attrTween function to get interpolated value on transition
+ * @param {Function} fn Arc function to execute
+ * @returns {Function} attrTween function
+ * @private
+ */
+function getAttrTweenFn(fn) {
+    return function (d) {
+        var interpolate$1 = interpolate(this._current, d);
+        this._current = d;
+        return function (t) {
+            var interpolated = interpolate$1(t);
+            return fn(interpolated);
+        };
+    };
+}
 var shapeArc = {
     initPie: function () {
         var $$ = this;
@@ -16534,12 +16550,8 @@ var shapeArc = {
             var updated = $$.updateAngle(d);
             var outerR = outer(updated);
             var cornerR = 0;
-            if (updated && (cornerR = corner(updated, outerR))) {
-                // corner radius can't surpass the "(outerR - innerR)/2"
-                var maxCorner = (outerR - inner(updated)) / 2;
-                if (cornerR > maxCorner) {
-                    cornerR = maxCorner;
-                }
+            if (updated) {
+                cornerR = corner(updated, outerR);
             }
             return updated ? arc$1.cornerRadius(cornerR)(updated) : "M 0 0";
         };
@@ -16645,10 +16657,10 @@ var shapeArc = {
             select(this).selectAll("path")
                 .transition()
                 .duration(expandDuration)
-                .attr("d", $$.svgArcExpanded)
+                .attrTween("d", getAttrTweenFn($$.svgArcExpanded.bind($$)))
                 .transition()
                 .duration(expandDuration * 2)
-                .attr("d", svgArcExpandedSub);
+                .attrTween("d", getAttrTweenFn(svgArcExpandedSub.bind($$)));
         });
     },
     unexpandArc: function (targetIds) {
@@ -16662,7 +16674,7 @@ var shapeArc = {
             .selectAll("path")
             .transition()
             .duration(function (d) { return $$.getExpandConfig(d.data.id, "duration"); })
-            .attr("d", $$.svgArc);
+            .attrTween("d", getAttrTweenFn($$.svgArc.bind($$)));
         svg.selectAll("".concat($ARC.arc))
             .style("opacity", null);
     },
@@ -19506,7 +19518,6 @@ var optArc = {
      * @property {number|Function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
      *  - **NOTE:**
      * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
-     * 	  - When specified value is greater than the limitation, the radius value will be adjusted to meet the condition.
      * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
      * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
      * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
@@ -21693,7 +21704,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221109004732
+ * @version 3.6.3-nightly-20221110004701
  */
 var bb = {
     /**
@@ -21703,7 +21714,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221109004732",
+    version: "3.6.3-nightly-20221110004701",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
