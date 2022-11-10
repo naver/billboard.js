@@ -106,6 +106,26 @@ function getRadiusFn(expandRate = 0) {
 	};
 }
 
+/**
+ * Get attrTween function to get interpolated value on transition
+ * @param {Function} fn Arc function to execute
+ * @returns {Function} attrTween function
+ * @private
+ */
+function getAttrTweenFn(fn: (d: IArcData) => string) {
+	return function(d: IArcData): (t: number) => string {
+		const interpolate = d3Interpolate(this._current, d);
+
+		this._current = d;
+
+		return function(t: number): string {
+			const interpolated = interpolate(t);
+
+			return fn(interpolated);
+		};
+	};
+}
+
 export default {
 	initPie(): void {
 		const $$ = this;
@@ -331,13 +351,8 @@ export default {
 			const outerR = outer(updated);
 			let cornerR = 0;
 
-			if (updated && (cornerR = corner(updated, outerR))) {
-				// corner radius can't surpass the "(outerR - innerR)/2"
-				const maxCorner = (outerR - inner(updated)) / 2;
-
-				if (cornerR > maxCorner) {
-					cornerR = maxCorner;
-				}
+			if (updated) {
+				cornerR = corner(updated, outerR);
 			}
 
 			return updated ? <string>arc.cornerRadius(cornerR)(updated) : "M 0 0";
@@ -470,10 +485,10 @@ export default {
 				d3Select(this).selectAll("path")
 					.transition()
 					.duration(expandDuration)
-					.attr("d", $$.svgArcExpanded)
+					.attrTween("d", getAttrTweenFn($$.svgArcExpanded.bind($$)))
 					.transition()
 					.duration(expandDuration * 2)
-					.attr("d", svgArcExpandedSub);
+					.attrTween("d", getAttrTweenFn(svgArcExpandedSub.bind($$)));
 			});
 	},
 
@@ -491,7 +506,7 @@ export default {
 			.selectAll("path")
 			.transition()
 			.duration(d => $$.getExpandConfig(d.data.id, "duration"))
-			.attr("d", $$.svgArc);
+			.attrTween("d", getAttrTweenFn($$.svgArc.bind($$)));
 
 		svg.selectAll(`${$ARC.arc}`)
 			.style("opacity", null);

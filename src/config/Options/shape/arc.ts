@@ -15,7 +15,6 @@ export default {
 	 * @property {number|Function} [arc.cornerRadius=0] Set corner radius of Arc(donut/gauge/pie/polar) shape.
 	 *  - **NOTE:**
 	 * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
-	 * 	  - When specified value is greater than the limitation, the radius value will be adjusted to meet the condition.
 	 * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
 	 * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
 	 * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
