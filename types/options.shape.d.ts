@@ -257,7 +257,7 @@ export interface GaugeOptions {
 		/**
 		 * Set formatter for the label on gauge.
 		 */
-		format?(this: Chart, value: any, ratio: number): string;
+		format?(this: Chart, value: any, ratio: number, id: string): string;
 
 		/**
 		 * Set customized min/max label text.
