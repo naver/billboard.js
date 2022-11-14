@@ -175,7 +175,7 @@
 		"lite-fixture": "^1.0.2",
 		"mini-css-extract-plugin": "^2.6.1",
 		"mocha": "^10.1.0",
-		"node-sass": "^7.0.3",
+		"node-sass": "^8.0.0",
 		"regenerator-runtime": "^0.13.10",
 		"rollup": "^3.2.5",
 		"rollup-plugin-delete": "^2.0.0",
