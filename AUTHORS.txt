@@ -59,3 +59,4 @@ Chunmyong Park <chunmyong.park@kaist.ac.kr>
 neilnaveen <https://github.com/neilnaveen>
 Frank Tackitt <franklyn@tackitt.net>
 jongwooo <jongwooo.han@gmail.com>
+Jørn Andre Sundt <jorn.andre.sundt@jasmin.no>

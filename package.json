@@ -9,10 +9,12 @@
 	"type": "module",
 	"exports": {
 		".": {
+			"types": "./types/index.d.ts",
 			"import": "./dist-esm/billboard.js",
 			"require": "./dist/billboard.pkgd.js"
 		},
 		"./dist/plugin/*": {
+			"types": "./types/plugin/*.d.ts",
 			"import": "./dist-esm/plugin/*.js",
 			"require": "./dist/plugin/pkgd/*.js"
 		},
