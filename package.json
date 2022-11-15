@@ -84,6 +84,8 @@
 	"license": "MIT",
 	"readmeFilename": "README.md",
 	"dependencies": {
+		"@types/d3-selection": "*",
+		"@types/d3-transition": "*",
 		"d3-axis": "^3.0.0",
 		"d3-brush": "^3.0.0",
 		"d3-drag": "^3.0.0",
