@@ -209,7 +209,6 @@ export default {
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
 		const isTimeSeries = $$.axis.isTimeSeries();
-		const xOffset = $$.axis.isCategorized() ? 0.5 : 0;
 		const regions: any[] = [];
 		const dasharray = "2 2"; // default value
 
@@ -217,17 +216,6 @@ export default {
 		let yp;
 		let diff;
 		let diffx2;
-
-		// check weather data is within region
-		const isWithinRegions = (withinX, withinRegions) => {
-			for (let i = 0, reg; (reg = withinRegions[i]); i++) {
-				if (reg.start < withinX && withinX <= reg.end) {
-					return reg.style;
-				}
-			}
-
-			return false;
-		};
 
 		// Check start/end of regions
 		if (isDefined(_regions)) {
@@ -250,7 +238,6 @@ export default {
 
 		// Define svg generator function for region
 		const generateM = points => `M${points[0][0]},${points[0][1]}L${points[1][0]},${points[1][1]}`;
-
 		const sWithRegion = isTimeSeries ? (d0, d1, k, timeseriesDiff) => {
 			const x0 = d0.x.getTime();
 			const xDiff = d1.x - d0.x;
@@ -277,7 +264,7 @@ export default {
 		for (let i = 0, data; (data = d[i]); i++) {
 			const prevData = d[i - 1];
 			const hasPrevData = prevData && isValue(prevData.value);
-			let style = isWithinRegions(data.x, regions);
+			let style = $$.isWithinRegions(data.x, regions);
 
 			// https://github.com/naver/billboard.js/issues/1172
 			if (!isValue(data.value)) {
@@ -295,7 +282,7 @@ export default {
 				}
 
 				// Draw with region // TODO: Fix for horizotal charts
-				xp = getScale(axisType.x, prevData.x + xOffset, data.x + xOffset);
+				xp = getScale(axisType.x, prevData.x, data.x);
 				yp = getScale(axisType.y, prevData.value, data.value);
 
 				const dx = x(data.x) - x(prevData.x);
@@ -317,6 +304,16 @@ export default {
 		}
 
 		return path;
+	},
+
+	isWithinRegions(withinX, withinRegions): boolean {
+		for (let i = 0, reg; (reg = withinRegions[i]); i++) {
+			if (reg.start < withinX && withinX <= reg.end) {
+				return reg.style;
+			}
+		}
+
+		return false;
 	},
 
 	isWithinStep(that, y: number): boolean {

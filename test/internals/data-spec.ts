@@ -797,6 +797,42 @@ describe("DATA", () => {
 		it("should be generating correct dashed path data", () => {
 			checkPathLengths({M: 37, L: 38});
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 1869155, 1909489, 1949823, 1938947]
+					],
+					type: "line",
+					regions: {
+						data1: [{
+						  start: 0,
+						  end: 1
+						}]
+					}
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			}
+		});
+
+		it("check regions for 'category' type axis", () => {
+			const d = chart.$.line.lines.attr("d").split("M").filter(Boolean);
+
+			expect(d.length).to.be.greaterThan(50);
+
+			// check x coordinate starts
+			d.slice(0,4).forEach(v => {
+				const x = parseInt(v, 10);
+
+				// should be between 70 ~ 80
+				expect(x > 70 && x < 80).to.be.true;
+			});
+		});
 	});
 
 	describe("data.stack", () => {
