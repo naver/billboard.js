@@ -112,7 +112,7 @@ describe("SHAPE LINE", () => {
 		it("should not draw a line segment for null data", done => {
 			setTimeout(() => {
 				const target = chart.$.main.select(`.${$LINE.chartLine}.${$COMMON.target}-data1`);
-				const commands = parseSvgPath(target.select(`.${$LINE.line}-data1`).attr("d"));
+				const commands: any = parseSvgPath(target.select(`.${$LINE.line}-data1`).attr("d"));
 				let segments = 0;
 
 				for (let i = 0; i < commands.length; i++) {
