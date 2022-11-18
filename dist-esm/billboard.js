@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.3-nightly-20221116004713
+ * @version 3.6.3-nightly-20221118004742
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -17974,22 +17974,12 @@ var shapeLine = {
         var config = $$.config;
         var isRotated = config.axis_rotated;
         var isTimeSeries = $$.axis.isTimeSeries();
-        var xOffset = $$.axis.isCategorized() ? 0.5 : 0;
         var regions = [];
         var dasharray = "2 2"; // default value
         var xp;
         var yp;
         var diff;
         var diffx2;
-        // check weather data is within region
-        var isWithinRegions = function (withinX, withinRegions) {
-            for (var i = 0, reg = void 0; (reg = withinRegions[i]); i++) {
-                if (reg.start < withinX && withinX <= reg.end) {
-                    return reg.style;
-                }
-            }
-            return false;
-        };
         // Check start/end of regions
         if (isDefined(_regions)) {
             var getValue = function (v, def) { return (isUndefined(v) ? def : (isTimeSeries ? parseDate.call($$, v) : v)); };
@@ -18026,7 +18016,7 @@ var shapeLine = {
         for (var i = 0, data = void 0; (data = d[i]); i++) {
             var prevData = d[i - 1];
             var hasPrevData = prevData && isValue(prevData.value);
-            var style = isWithinRegions(data.x, regions);
+            var style = $$.isWithinRegions(data.x, regions);
             // https://github.com/naver/billboard.js/issues/1172
             if (!isValue(data.value)) {
                 continue;
@@ -18043,7 +18033,7 @@ var shapeLine = {
                     style = dasharray.split(" ");
                 }
                 // Draw with region // TODO: Fix for horizotal charts
-                xp = getScale(axisType.x, prevData.x + xOffset, data.x + xOffset);
+                xp = getScale(axisType.x, prevData.x, data.x);
                 yp = getScale(axisType.y, prevData.value, data.value);
                 var dx = x(data.x) - x(prevData.x);
                 var dy = y(data.value) - y(prevData.value);
@@ -18060,6 +18050,14 @@ var shapeLine = {
             }
         }
         return path;
+    },
+    isWithinRegions: function (withinX, withinRegions) {
+        for (var i = 0, reg = void 0; (reg = withinRegions[i]); i++) {
+            if (reg.start < withinX && withinX <= reg.end) {
+                return reg.style;
+            }
+        }
+        return false;
     },
     isWithinStep: function (that, y) {
         return Math.abs(y - getPointer(this.state.event, that)[1]) < 30;
@@ -21704,7 +21702,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221116004713
+ * @version 3.6.3-nightly-20221118004742
  */
 var bb = {
     /**
@@ -21714,7 +21712,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221116004713",
+    version: "3.6.3-nightly-20221118004742",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

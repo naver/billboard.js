@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221116004713
+ * @version 3.6.3-nightly-20221118004742
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -19784,22 +19784,11 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       config = $$.config,
       isRotated = config.axis_rotated,
       isTimeSeries = $$.axis.isTimeSeries(),
-      xOffset = $$.axis.isCategorized() ? .5 : 0,
       regions = [],
-      dasharray = "2 2",
       xp,
       yp,
       diff,
-      diffx2,
-      isWithinRegions = function (withinX, withinRegions) {
-        _newArrowCheck(this, _this5);
-        for (var i = 0, reg; reg = withinRegions[i]; i++) {
-          if (reg.start < withinX && withinX <= reg.end) {
-            return reg.style;
-          }
-        }
-        return !1;
-      }.bind(this);
+      diffx2;
     // Check start/end of regions
     if (isDefined(_regions)) {
       var getValue = function (v, def) {
@@ -19810,7 +19799,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         var start = getValue(reg.start, d[0].x),
           end = getValue(reg.end, d[d.length - 1].x),
           style = reg.style || {
-            dasharray: dasharray
+            dasharray: "2 2"
           };
         regions[i] = {
           start: start,
@@ -19860,7 +19849,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     for (var _i = 0, data; data = d[_i]; _i++) {
       var prevData = d[_i - 1],
         hasPrevData = prevData && isValue(prevData.value),
-        style = isWithinRegions(data.x, regions);
+        style = $$.isWithinRegions(data.x, regions);
       // https://github.com/naver/billboard.js/issues/1172
       if (!isValue(data.value)) {
         continue;
@@ -19873,11 +19862,11 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         try {
           style = style.dasharray.split(" ");
         } catch (e) {
-          style = dasharray.split(" ");
+          style = "2 2".split(" ");
         }
 
         // Draw with region // TODO: Fix for horizotal charts
-        xp = getScale(axisType.x, prevData.x + xOffset, data.x + xOffset);
+        xp = getScale(axisType.x, prevData.x, data.x);
         yp = getScale(axisType.y, prevData.value, data.value);
         var dx = x(data.x) - x(prevData.x),
           dy = y(data.value) - y(prevData.value),
@@ -19895,6 +19884,14 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       }
     }
     return path;
+  },
+  isWithinRegions: function isWithinRegions(withinX, withinRegions) {
+    for (var i = 0, reg; reg = withinRegions[i]; i++) {
+      if (reg.start < withinX && withinX <= reg.end) {
+        return reg.style;
+      }
+    }
+    return !1;
   },
   isWithinStep: function isWithinStep(that, y) {
     return Math.abs(y - getPointer(this.state.event, that)[1]) < 30;
@@ -23957,7 +23954,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221116004713",
+    version: "3.6.3-nightly-20221118004742",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -24087,7 +24084,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221116004713
+ * @version 3.6.3-nightly-20221118004742
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
