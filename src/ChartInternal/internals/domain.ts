@@ -113,10 +113,17 @@ export default {
 			});
 
 		// MEMO: avoid inverting domain unexpectedly
-		yDomainMin = isValue(yMin) ? yMin :
-			(isValue(yMax) ? (yDomainMin < yMax ? yDomainMin : yMax - 10) : yDomainMin);
-		yDomainMax = isValue(yMax) ? yMax :
-			(isValue(yMin) ? (yMin < yDomainMax ? yDomainMax : yMin + 10) : yDomainMax);
+		yDomainMin = isValue(yMin) ? yMin : (
+			isValue(yMax) ? (
+				yDomainMin <= yMax ? yDomainMin : yMax - 10
+			) : yDomainMin
+		);
+
+		yDomainMax = isValue(yMax) ? yMax : (
+			isValue(yMin) ? (
+				yMin <= yDomainMax ? yDomainMax : yMin + 10
+			) : yDomainMax
+		);
 
 		if (isNaN(yDomainMin)) { // set minimum to zero when not number
 			yDomainMin = 0;
