@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.3-nightly-20221122004732
+ * @version 3.6.3-nightly-20221123004658
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -5276,10 +5276,8 @@ var domain = {
             return $$.hasType(v, yTargets, true) && config["".concat(type, "_zerobased")];
         });
         // MEMO: avoid inverting domain unexpectedly
-        yDomainMin = isValue(yMin) ? yMin :
-            (isValue(yMax) ? (yDomainMin < yMax ? yDomainMin : yMax - 10) : yDomainMin);
-        yDomainMax = isValue(yMax) ? yMax :
-            (isValue(yMin) ? (yMin < yDomainMax ? yDomainMax : yMin + 10) : yDomainMax);
+        yDomainMin = isValue(yMin) ? yMin : (isValue(yMax) ? (yDomainMin <= yMax ? yDomainMin : yMax - 10) : yDomainMin);
+        yDomainMax = isValue(yMax) ? yMax : (isValue(yMin) ? (yMin <= yDomainMax ? yDomainMax : yMin + 10) : yDomainMax);
         if (isNaN(yDomainMin)) { // set minimum to zero when not number
             yDomainMin = 0;
         }
@@ -21702,7 +21700,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221122004732
+ * @version 3.6.3-nightly-20221123004658
  */
 var bb = {
     /**
@@ -21712,7 +21710,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221122004732",
+    version: "3.6.3-nightly-20221123004658",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

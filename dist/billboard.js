@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221122004732
+ * @version 3.6.3-nightly-20221123004658
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6145,8 +6145,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
         return $$.hasType(v, yTargets, !0) && config[type + "_zerobased"];
       }.bind(this));
     // MEMO: avoid inverting domain unexpectedly
-    yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin;
-    yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax;
+    yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin <= yMax ? yDomainMin : yMax - 10 : yDomainMin;
+    yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin <= yDomainMax ? yDomainMax : yMin + 10 : yDomainMax;
     if (isNaN(yDomainMin)) {
       // set minimum to zero when not number
       yDomainMin = 0;
@@ -23954,7 +23954,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221122004732",
+    version: "3.6.3-nightly-20221123004658",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -24084,7 +24084,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221122004732
+ * @version 3.6.3-nightly-20221123004658
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
