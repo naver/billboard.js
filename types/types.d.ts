@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Selection} from "d3-selection";
-import {Transition} from "d3-transition";
+import type {Selection} from "d3-selection";
+import type {Transition} from "d3-transition";
 
 export type PrimitiveArray = Array<
 	string | boolean | number | Date | null |
