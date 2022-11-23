@@ -18,6 +18,7 @@ var billboardDemo = {
 		this.$title = document.getElementById("title");
 		this.$description = document.getElementById("description");
 		this.$codeArea = document.querySelector(".code");
+		this.$gridArea = document.querySelector(".example-grid");
 		this.$launch = document.getElementById("launch");
 
 		this.$html = document.querySelector("code.html");
@@ -144,6 +145,7 @@ var billboardDemo = {
 		}
 
 		type = type.replace("#", "").split(".");
+		this.$gridArea.classList.add("example-grid");
 
 		try {
 			this.generate(type[0], type[1]);
@@ -542,6 +544,7 @@ var billboardDemo = {
 		project.files["index."+ type.toLowerCase()] = code.import +"\r\n\r\n"+ code.body;
 
 		this.$wrapper.className = "";
+		this.$gridArea.className = "";
 
 		if (isOpen) {
 			StackBlitzSDK.openProject(project);
