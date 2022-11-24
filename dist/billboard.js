@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221123004658
+ * @version 3.6.3-nightly-20221124004800
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10878,8 +10878,9 @@ function loadConfig(config) {
   },
   /**
    * Get or set config option value.
-   * - **NOTE:** for without parameter occasion
-   * 	- will return all specified generation options object only. (will exclude any other options not specified at the initialization)
+   * - **NOTE**
+   *  - The option key name must be specified as the last level.
+   *  - when no argument is given, will return all specified generation options object only. (will exclude any other options not specified at the initialization)
    * @function config
    * @instance
    * @memberof Chart
@@ -10893,11 +10894,19 @@ function loadConfig(config) {
    * // Getter
    * chart.config("gauge.max");
    *
+   * // Getter specified with top level key name will not work.
+   * // The option key name must be specified as the last level.
+   * // chart.config("gauge"); // will not work
+   *
    * // without any arguments, it returns generation config object
    * chart.config();  // {data: { ... }, axis: { ... }, ...}
    *
    * // Setter
    * chart.config("gauge.max", 100);
+   *
+   * // Setter specified with top level key name will not work.
+   * // The option key name must be specified as the last level.
+   * // chart.config("gauge", {min: 10, max: 20}); // will not work
    *
    * // Setter & redraw with the new option
    * chart.config("gauge.max", 100, true);
@@ -10916,7 +10925,7 @@ function loadConfig(config) {
       } else {
         res = config[key];
       }
-    } else {
+    } else if (arguments.length === 0 || isEmpty(name)) {
       res = state.orgConfig;
     }
     return res;
@@ -23954,7 +23963,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221123004658",
+    version: "3.6.3-nightly-20221124004800",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -24084,7 +24093,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221123004658
+ * @version 3.6.3-nightly-20221124004800
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
