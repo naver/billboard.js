@@ -19,7 +19,7 @@ function getFormat($$, typeValue: AxisType, v: number): number | string {
 	const format = config[type] ?
 		config[type] : $$.defaultValueFormat;
 
-	return format(v);
+	return format.call($$.api, v);
 }
 
 export default {
