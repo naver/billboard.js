@@ -1570,6 +1570,34 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("axis.y.tick.format", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100]
+					],
+				},
+				axis: {
+					y: {
+						tick: {
+							format: function(x) {
+								return this.data.values("data1")[0];
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("tick.format context should be chart instance itself.", () => {
+			// when
+			chart.tooltip.show({x:1});
+
+			expect(+chart.$.tooltip.select(".value").text()).to.be.equal(30);
+		});
+	});
+
 	describe("axis.y.tick.rotate", () => {
 		describe("y Axis", () => {
 			before(() => {
