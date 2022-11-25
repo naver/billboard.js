@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221124004800
+ * @version 3.6.3-nightly-20221125004720
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.3
@@ -28584,7 +28584,7 @@ function getFormat($$, typeValue, v) {
   var config = $$.config,
     type = "axis_" + typeValue + "_tick_format",
     format = config[type] ? config[type] : $$.defaultValueFormat;
-  return format(v);
+  return format.call($$.api, v);
 }
 /* harmony default export */ var format = ({
   yFormat: function yFormat(v) {
@@ -49570,7 +49570,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221124004800",
+    version: "3.6.3-nightly-20221125004720",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -49700,7 +49700,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221124004800
+ * @version 3.6.3-nightly-20221125004720
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
