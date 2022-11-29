@@ -580,7 +580,7 @@ class Axis {
 		const currentTickMax = current.maxTickWidths[id];
 		let maxWidth = 0;
 
-		if (withoutRecompute || !config[`axis_${id}_show`] || $$.filterTargetsToShow().length === 0) {
+		if (withoutRecompute || !config[`axis_${id}_show`] || (currentTickMax.size > 0 && $$.filterTargetsToShow().length === 0)) {
 			return currentTickMax.size;
 		}
 

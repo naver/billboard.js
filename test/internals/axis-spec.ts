@@ -2582,7 +2582,8 @@ describe("AXIS", function() {
 				},
 				axis: {
 					y: {
-						label: "Your Y Axis"
+						label: "Your Y Axis",
+						position: ""
 					}
 				}
 			};
@@ -2591,8 +2592,39 @@ describe("AXIS", function() {
 		it("<clipPath> width shouldn't truncate y axis tick when has no data", () => {
 			const rect = chart.internal.$el.defs.selectAll("clipPath[id$='yaxis'] rect");
 
-			expect(+rect.attr("width")).to.be.equal(50);
+			expect(+rect.attr("width")).to.be.equal(60);
 		});
+
+		it("set options: axis.y.label", () => {
+			args.axis.y.label = {
+				text: "Your Y Axis",
+				position: "outer-middle"
+			};
+
+			args.axis.y2 = {
+				show: true,
+				label: args.axis.y.label
+			}
+		});
+
+		it("label text shouldn't be overlapped with tick text", () => {
+			const y = chart.$.main.select(`.${$AXIS.axisY}`);
+			const y2 = chart.$.main.select(`.${$AXIS.axisY2}`);
+
+			[y, y2].forEach((v, i) => {
+				const labelRect = v.select("text").node().getBoundingClientRect();
+				const tickRect = v.select(".tick:nth-child(7)").node().getBoundingClientRect();
+
+				// y axis
+				if (i === 0) {
+					expect(labelRect.x + labelRect.width < tickRect.x).to.be.true;
+
+				// y2 axis
+				} else {
+					expect(labelRect.x > tickRect.x + tickRect.width).to.be.true
+				}
+			});
+		})
 	});
 
 	describe("Axes tick culling", () => {
