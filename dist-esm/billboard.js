@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.3-nightly-20221125004720
+ * @version 3.6.3-nightly-20221129004714
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -12670,7 +12670,7 @@ var Axis = /** @class */ (function () {
         var config = $$.config, current = $$.state.current, _a = $$.$el, svg = _a.svg, chart = _a.chart;
         var currentTickMax = current.maxTickWidths[id];
         var maxWidth = 0;
-        if (withoutRecompute || !config["axis_".concat(id, "_show")] || $$.filterTargetsToShow().length === 0) {
+        if (withoutRecompute || !config["axis_".concat(id, "_show")] || (currentTickMax.size > 0 && $$.filterTargetsToShow().length === 0)) {
             return currentTickMax.size;
         }
         if (svg) {
@@ -21709,7 +21709,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221125004720
+ * @version 3.6.3-nightly-20221129004714
  */
 var bb = {
     /**
@@ -21719,7 +21719,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221125004720",
+    version: "3.6.3-nightly-20221129004714",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221125004720
+ * @version 3.6.3-nightly-20221129004714
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -305,8 +305,39 @@ var TYPE_BY_CATEGORY = {
   Step: [TYPE.STEP, TYPE.AREA_STEP],
   Spline: [TYPE.SPLINE, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE]
 };
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
+function _typeof(obj) {
+  "@babel/helpers - typeof";
+
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+  }, _typeof(obj);
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPrimitive.js
+
+function _toPrimitive(input, hint) {
+  if (_typeof(input) !== "object" || input === null) return input;
+  var prim = input[Symbol.toPrimitive];
+  if (prim !== undefined) {
+    var res = prim.call(input, hint || "default");
+    if (_typeof(res) !== "object") return res;
+    throw new TypeError("@@toPrimitive must return a primitive value.");
+  }
+  return (hint === "string" ? String : Number)(input);
+}
+;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPropertyKey.js
+
+
+function _toPropertyKey(arg) {
+  var key = _toPrimitive(arg, "string");
+  return _typeof(key) === "symbol" ? key : String(key);
+}
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
+
 function _defineProperty(obj, key, value) {
+  key = _toPropertyKey(key);
   if (key in obj) {
     Object.defineProperty(obj, key, {
       value: value,
@@ -14267,7 +14298,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       chart = _$$$$el2.chart,
       currentTickMax = current.maxTickWidths[id],
       maxWidth = 0;
-    if (withoutRecompute || !config["axis_" + id + "_show"] || $$.filterTargetsToShow().length === 0) {
+    if (withoutRecompute || !config["axis_" + id + "_show"] || currentTickMax.size > 0 && $$.filterTargetsToShow().length === 0) {
       return currentTickMax.size;
     }
     if (svg) {
@@ -23963,7 +23994,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221125004720",
+    version: "3.6.3-nightly-20221129004714",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -24093,7 +24124,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221125004720
+ * @version 3.6.3-nightly-20221129004714
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
