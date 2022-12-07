@@ -9,17 +9,19 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+
       - name: Setup Git
         shell: bash
-        run: bash ./config/deploy-nightly.sh setup ${{ secrets.GITHUB_TOKEN }}
+        run: bash ./config/deploy-nightly.sh setup
 
       - name: Setup Node.js
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: 14
+          cache: 'npm'
 
       - name: Install dependencies
         run: |
@@ -27,6 +29,7 @@ jobs:
           npm install
 
       - name: Deploy
+        env:
+          GITHUB_TOKEN: ${{ secrets.WORKFLOW_TOKEN }}
         shell: bash
         run: bash ./config/deploy-nightly.sh build
-

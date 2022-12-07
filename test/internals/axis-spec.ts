@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+// @ts-nocheck
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
@@ -1569,6 +1570,34 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("axis.y.tick.format", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100]
+					],
+				},
+				axis: {
+					y: {
+						tick: {
+							format: function(x) {
+								return this.data.values("data1")[0];
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("tick.format context should be chart instance itself.", () => {
+			// when
+			chart.tooltip.show({x:1});
+
+			expect(+chart.$.tooltip.select(".value").text()).to.be.equal(30);
+		});
+	});
+
 	describe("axis.y.tick.rotate", () => {
 		describe("y Axis", () => {
 			before(() => {
@@ -2553,7 +2582,8 @@ describe("AXIS", function() {
 				},
 				axis: {
 					y: {
-						label: "Your Y Axis"
+						label: "Your Y Axis",
+						position: ""
 					}
 				}
 			};
@@ -2562,8 +2592,39 @@ describe("AXIS", function() {
 		it("<clipPath> width shouldn't truncate y axis tick when has no data", () => {
 			const rect = chart.internal.$el.defs.selectAll("clipPath[id$='yaxis'] rect");
 
-			expect(+rect.attr("width")).to.be.equal(50);
+			expect(+rect.attr("width")).to.be.equal(60);
 		});
+
+		it("set options: axis.y.label", () => {
+			args.axis.y.label = {
+				text: "Your Y Axis",
+				position: "outer-middle"
+			};
+
+			args.axis.y2 = {
+				show: true,
+				label: args.axis.y.label
+			}
+		});
+
+		it("label text shouldn't be overlapped with tick text", () => {
+			const y = chart.$.main.select(`.${$AXIS.axisY}`);
+			const y2 = chart.$.main.select(`.${$AXIS.axisY2}`);
+
+			[y, y2].forEach((v, i) => {
+				const labelRect = v.select("text").node().getBoundingClientRect();
+				const tickRect = v.select(".tick:nth-child(7)").node().getBoundingClientRect();
+
+				// y axis
+				if (i === 0) {
+					expect(labelRect.x + labelRect.width < tickRect.x).to.be.true;
+
+				// y2 axis
+				} else {
+					expect(labelRect.x > tickRect.x + tickRect.width).to.be.true
+				}
+			});
+		})
 	});
 
 	describe("Axes tick culling", () => {
@@ -2851,6 +2912,43 @@ describe("AXIS", function() {
 			const padding = args.axis.x.padding;
 
 			expect(state.axis.x.padding).to.be.deep.equal(padding);
+		});
+	});
+
+	describe("Axis tick.values", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2022-01-01", "2022-01-02", "2022-01-03", "2022-01-04", "2022-01-05", "2022-01-06"],
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d",
+							 fit: false,
+							values: [
+								"2022-01-01",
+								"2022-01-03",,
+								"2022-01-05"
+							]
+						}
+					}
+				}
+			};
+		});
+
+		it("tick transform translate shoudn't contain NaN value.", () => {
+			chart.$.main.selectAll(".tick")
+				.each(function() {
+					const hasNaN = this.getAttribute("transform")?.indexOf("NaN") >= 0;
+
+					expect(hasNaN).to.be.false;
+				});
 		});
 	});
 

@@ -18,6 +18,7 @@ var billboardDemo = {
 		this.$title = document.getElementById("title");
 		this.$description = document.getElementById("description");
 		this.$codeArea = document.querySelector(".code");
+		this.$gridArea = document.querySelector(".example-grid");
 		this.$launch = document.getElementById("launch");
 
 		this.$html = document.querySelector("code.html");
@@ -144,8 +145,11 @@ var billboardDemo = {
 		}
 
 		type = type.replace("#", "").split(".");
+		this.$gridArea.classList.add("example-grid");
 
-		this.generate(type[0], type[1]);
+		try {
+			this.generate(type[0], type[1]);
+		} catch(e) {}
 
 		this.$title.innerHTML = type[1]
 			.replace(/([A-Z][a-z])/g, " $1")
@@ -162,8 +166,23 @@ var billboardDemo = {
 		// add selected class
 		$selected = this.$list.querySelector("[href='#"+ type.join(".") +"']");
 		$selected.className += this.selectedClass;
-
+		
 		window.scrollTo(0, 0);
+		
+		!this.isVisible($selected) && $selected.scrollIntoView({
+			behavior: "auto",
+			block: "start"
+		});
+	},
+
+	isVisible($el) {
+		const {clientWidth, clientHeight} = document.documentElement;
+		const {top, right, bottom, left} = $el.getBoundingClientRect();
+	  
+		return top <= clientHeight && 
+			right >= 0 && 
+			bottom >= 0 &&
+			left <= clientWidth;
 	},
 
 	/**
@@ -229,10 +248,10 @@ var billboardDemo = {
 '// import bb, {'+ code.esm.join(", ") +'} from "billboard.js";\r\n';
 
 		if (hasPlugin) {
-			this.$code.innerHTML += '// import '+ pluginName +' from "billboard.js/dist/plugin/billboardjs-plugin-'+ pluginName +'";';
+			this.$code.innerHTML += '// import '+ pluginName +' from "billboard.js/dist/plugin/billboardjs-plugin-'+ pluginName +'";\r\n';
 		}
 
-		this.$code.innerHTML += '\r\n\r\n'+ code.data;
+		this.$code.innerHTML += '\r\n'+ code.data;
 		this.$code.scrollTop = 0;
 
 		hljs.highlightBlock(this.$html);
@@ -525,6 +544,7 @@ var billboardDemo = {
 		project.files["index."+ type.toLowerCase()] = code.import +"\r\n\r\n"+ code.body;
 
 		this.$wrapper.className = "";
+		this.$gridArea.className = "";
 
 		if (isOpen) {
 			StackBlitzSDK.openProject(project);

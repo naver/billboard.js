@@ -194,6 +194,56 @@ export default {
 	},
 
 	/**
+	 * Get data gradient color url
+	 * @param {string} id Data id
+	 * @returns {string}
+	 * @private
+	 */
+	getGradienColortUrl(id: string): string {
+		return `url(#${this.state.datetimeId}-gradient${this.getTargetSelectorSuffix(id)})`;
+	},
+
+	/**
+	 * Update linear gradient definition (for area & bar only)
+	 * @private
+	 */
+	updateLinearGradient(): void {
+		const $$ = this;
+		const {config, data: {targets}, state: {datetimeId}, $el: {defs}} = $$;
+
+		targets.forEach(d => {
+			const id = `${datetimeId}-gradient${$$.getTargetSelectorSuffix(d.id)}`;
+			const supportedType = ($$.isAreaType(d) && "area") || ($$.isBarType(d) && "bar");
+			const isRotated = config.axis_rotated;
+
+			if (supportedType && defs.select(`#${id}`).empty()) {
+				const color = $$.color(d);
+				const {
+					x = isRotated ? [1, 0] : [0, 0],
+					y = isRotated ? [0, 0] : [0, 1],
+					stops = [[0, color, 1], [1, color, 0]]
+				} = config[`${supportedType}_linearGradient`];
+
+				const linearGradient = defs.append("linearGradient")
+					.attr("id", `${id}`)
+					.attr("x1", x[0])
+					.attr("x2", x[1])
+					.attr("y1", y[0])
+					.attr("y2", y[1]);
+
+				stops.forEach(v => {
+					const stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
+
+					linearGradient.append("stop")
+						.attr("offset", v[0])
+						.attr("stop-color", stopColor || color)
+						.attr("stop-opacity", v[2]);
+				});
+			}
+		});
+	},
+
+	/**
 	 * Set the data over color.
 	 * When is out, will restate in its previous color value
 	 * @param {boolean} isOver true: set overed color, false: restore

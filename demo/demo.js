@@ -2877,6 +2877,51 @@ var demos = {
 	},
 
 	Legend: {
+		CustomLegend: {
+			options: {
+				data: {
+					columns: [
+						["data1", 100],
+						["data2", 300],
+						["data3", 200]
+					],
+					type: "pie"
+				},
+				legend: {
+					show: false
+				}
+			},
+			func: function(chart) {
+				function toggle(id) { chart.toggle(id); }
+
+d3.select(".chart_area")
+	.insert("div", ".chart")
+	.attr("class", "legend")
+	.selectAll("span")
+	.data(["data1", "data2", "data3"])
+	.enter()
+	.append("span")
+	.attr('data-id', function(id) {
+		return id;
+	})
+	.html(function(id) {
+		return id;
+	})
+	.each(function(id) {
+		d3.select(this)
+			.style('background-color', chart.color(id));
+	})
+	.on("mouseover", function(event, id) {
+		chart.focus(id);
+	})
+	.on("mouseout", function(event, id) {
+		chart.revert();
+	})
+	.on("click", function(event, id) {
+		chart.toggle(id);
+	});
+			}
+		},
 		HideLegend: {
 			options: {
 				data: {
@@ -2890,6 +2935,49 @@ var demos = {
 				}
 			}
 		},
+		LegendItemTileType: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 300],
+							["data3", 200]
+						],
+						type: "pie"
+					},
+					legend: {
+						item: {
+							tile: {							
+								type: "circle",
+								r: 7
+							},
+						}
+					}
+				},
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 300],
+							["data3", 200]
+						],
+						type: "pie"
+					},
+					legend: {
+						item: {
+							tile: {							
+								type: "rectangle",
+								width: 15,
+								height: 15
+							},
+						}
+					}
+				}
+			}
+		],
 		LegendPosition: {
 			options: {
 				data: {
@@ -2959,51 +3047,6 @@ var demos = {
 						}
 					}
 				}
-			}
-		},
-		CustomLegend: {
-			options: {
-				data: {
-					columns: [
-						["data1", 100],
-						["data2", 300],
-						["data3", 200]
-					],
-					type: "pie"
-				},
-				legend: {
-					show: false
-				}
-			},
-			func: function(chart) {
-				function toggle(id) { chart.toggle(id); }
-
-d3.select(".chart_area")
-	.insert("div", ".chart")
-	.attr("class", "legend")
-	.selectAll("span")
-	.data(["data1", "data2", "data3"])
-	.enter()
-	.append("span")
-	.attr('data-id', function(id) {
-		return id;
-	})
-	.html(function(id) {
-		return id;
-	})
-	.each(function(id) {
-		d3.select(this)
-			.style('background-color', chart.color(id));
-	})
-	.on("mouseover", function(event, id) {
-		chart.focus(id);
-	})
-	.on("mouseout", function(event, id) {
-		chart.revert();
-	})
-	.on("click", function(event, id) {
-		chart.toggle(id);
-	});
 			}
 		},
 		usePoint: {
@@ -3924,6 +3967,74 @@ d3.select(".chart_area")
 				}
 			},
 		],
+		BarLinearGradient: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 275, 250, 200, 130, 350],
+							["data2", 130, 350, 273, 200, 190],
+							["data3", 275, 250, 200, 130, 350],
+							["data4", 500, 490, 770, 675, 750]
+						],
+						type: "bar",
+						groups: [
+							["data1", "data2", "data3"]
+						]
+					},
+					bar: {
+						linearGradient: {
+							stops: [
+								   [0, null, 1],
+								[1, null, 0.3]
+							]
+				
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, 280, 251, 400, 150, 546, 158],
+							["data2", 180, 220, 201, 300, 250, 346, 358]
+						],
+						type: "bar"
+					},
+					bar: {
+						linearGradient: {
+							x: [1, 0],
+							y: [0, 1],
+							stops: [
+								[0, null, 1],
+								[0.3, null, 0.5],
+								[0.6, "green", 0.7],
+								[0.8, null, 0.7],
+								[1, "purple", 1]
+							]
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 275, 250, 200],
+							["data2", 130, 350, 273]
+						],
+						type: "bar"
+					},
+					axis: {
+						rotated: true
+					},
+					bar: {
+						linearGradient: true
+					}
+				}
+			}			
+		],
 		BarOverlap: [
 			{
 				options: {
@@ -4486,6 +4597,23 @@ d3.select(".chart_area")
 		}
 	},
 	DonutChartOptions: {
+		DonutCornerRadius: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "donut"
+				},
+				arc: {
+					cornerRadius: {
+						ratio: 0.2
+					}
+				}
+			}
+		},
 		LabelRatio: {
 			options: {
 				data: {
@@ -4544,6 +4672,21 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		StartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					startingAngle: 0.7
+				}
+			}
+		},
 		padAngle: {
 			options: {
 				data: {
@@ -4559,24 +4702,61 @@ d3.select(".chart_area")
 					padAngle: 0.1
 				}
 			}
-		},
-		StartingAngle: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30],
-						["data2", 45],
-						["data3", 25]
-					],
-					type: "donut"
-				},
-				donut: {
-					startingAngle: 0.7
-				}
-			}
 		}
 	},
 	GaugeChartOptions: {
+		GaugeCornerRadius: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data", 77]
+						],
+						type: "gauge"
+					},
+					arc: {
+						cornerRadius: 15
+					},
+					gauge: {
+						arcLength: 70,
+						fullCircle: true,
+						label: {
+							extents: function() { return ""; }
+						},
+						startingAngle: -2.2,
+						width: 25
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 77],
+							["data2", 50],
+							["data3", 20],
+
+						],
+						type: "gauge"
+					},
+					arc: {
+						cornerRadius: {
+							ratio: 0.5
+						}
+					},
+					gauge: {
+						type: "multi",
+						arcLength: 95,
+						fullCircle: true,
+						label: {
+							extents: function() { return ""; }
+						},
+						startingAngle: -3,
+						width: 50
+					}
+				}
+			}
+		],
 		GaugeFullCircle: {
 			options: {
 				data: {
@@ -4845,7 +5025,48 @@ d3.select(".chart_area")
 		}
 	},
 	PieChartOptions: {
-		LabelRatio: {
+		CornerRadius: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 45],
+							["data3", 25],
+							["data4", 35],
+							["data5", 15],
+							["data6", 35]
+						],
+						type: "pie"
+					},
+					arc: {
+						cornerRadius: 70
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 45],
+							["data3", 25]
+						],
+						type: "pie"
+					},
+					arc: {
+						cornerRadius: function(id, value, outerRadius) {
+						return ({
+						    data1: outerRadius * 0.3,
+						    data2: value > 45 ? 50 : 0,
+						    data3: 60
+						})[id];
+						}
+					}
+				}
+			},
+		],
+		ExpandRate: {
 			options: {
 				data: {
 					columns: [
@@ -4856,51 +5077,8 @@ d3.select(".chart_area")
 					type: "pie"
 				},
 				pie: {
-					label: {
-						ratio: 2.4
-					}
-				},
-				legend: {
-					show: false
-				}
-			},
-			style: [
-				"#labelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
-			]
-		},
-		LabelFormat: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30],
-						["data2", 50]
-					],
-					type: "pie"
-				},
-				pie: {
-					label: {
-						format: function(value, ratio, id) {
-							return d3.format('$')(value);
-								}
-					}
-				}
-			}
-		},
-		MultilineLabel: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30],
-						["data2", 50],
-						["data3", 45]
-					],
-					type: "pie"
-				},
-				pie: {
-					label: {
-						format: function(value, ratio, id) {
-							return value +"\nHours";
-								}
+					expand: {
+						rate: 1.007
 					}
 				}
 			}
@@ -4941,6 +5119,66 @@ d3.select(".chart_area")
 				}
 			},
 		],
+		LabelFormat: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						format: function(value, ratio, id) {
+							return d3.format('$')(value);
+								}
+					}
+				}
+			}
+		},
+		LabelRatio: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						ratio: 2.4
+					}
+				},
+				legend: {
+					show: false
+				}
+			},
+			style: [
+				"#labelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
+			]
+		},
+		MultilineLabel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50],
+						["data3", 45]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						format: function(value, ratio, id) {
+							return value +"\nHours";
+								}
+					}
+				}
+			}
+		},		
 		OuterRadius: [
 			{
 				options: {
@@ -5020,24 +5258,7 @@ d3.select(".chart_area")
 					startingAngle: 1
 				}
 			}
-		},
-		ExpandRate: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30],
-						["data2", 45],
-						["data3", 25]
-					],
-					type: "pie"
-				},
-				pie: {
-					expand: {
-						rate: 1.007
-					}
-				}
-			}
-		}
+		}		
 	},
 	RadarChartOptions: {
 		RadarAxis: {
@@ -5475,6 +5696,85 @@ d3.select(".chart_area")
 							img.src = dataUrl;
 						});
 					}, 500)
+				]
+			}
+		},
+		ExportPreserveFontStyle: {
+			description: "Export with preserving web font-family.",
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+					],
+					types: {
+						data1: "bar",
+						data2: "area"
+					},
+					labels: true
+				},
+				grid: {
+					x: {
+						lines: [
+							{
+								value: 1,
+								text: "Label 1",
+								position: 'middle'
+							},
+							{
+								value: 3,
+								text: "Label 3"
+							}
+						]
+					},
+					y: {
+						lines: [
+							{
+								value: 4000,
+								text: "Y Label 1"
+							},
+						]
+					}
+				},
+			},
+			style: [
+				`@font-face {
+  font-family: 'Alfa Slab One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/alfaslabone/v17/6NUQ8FmMKwSEKjnm5-4v-4Jh2dJhe_escmA.woff2) format('woff2');
+}
+	
+#exportPreserveFontStyle svg {
+  font-family: 'Alfa Slab One';
+}`
+			],
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						// crate a div element
+						var exported = document.createElement("div");
+
+						document.getElementById("exportPreserveFontStyle")
+							.insertAdjacentElement("afterend", exported);
+
+						// Preserve web-font style
+						chart.export({
+							preserveFontStyle: true
+						}, function(dataUrl) {
+							var img = document.getElementById("exported");
+
+							if (!img) {
+								img = document.createElement("img");
+
+								img.id = "exported";
+								exported.appendChild(img);
+							}
+
+							img.src = dataUrl;
+						});
+					}, 1000)
 				]
 			}
 		},

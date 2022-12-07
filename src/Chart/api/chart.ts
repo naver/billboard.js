@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {window} from "../../module/browser";
-import {notEmpty, isDefined} from "../../module/util";
+import {isDefined, isEmpty, notEmpty} from "../../module/util";
 
 export default {
 	/**
@@ -143,8 +143,9 @@ export default {
 
 	/**
 	 * Get or set config option value.
-	 * - **NOTE:** for without parameter occasion
-	 * 	- will return all specified generation options object only. (will exclude any other options not specified at the initialization)
+	 * - **NOTE**
+	 *  - The option key name must be specified as the last level.
+	 *  - when no argument is given, will return all specified generation options object only. (will exclude any other options not specified at the initialization)
 	 * @function config
 	 * @instance
 	 * @memberof Chart
@@ -158,11 +159,19 @@ export default {
 	 * // Getter
 	 * chart.config("gauge.max");
 	 *
+	 * // Getter specified with top level key name will not work.
+	 * // The option key name must be specified as the last level.
+	 * // chart.config("gauge"); // will not work
+	 *
 	 * // without any arguments, it returns generation config object
 	 * chart.config();  // {data: { ... }, axis: { ... }, ...}
 	 *
 	 * // Setter
 	 * chart.config("gauge.max", 100);
+	 *
+	 * // Setter specified with top level key name will not work.
+	 * // The option key name must be specified as the last level.
+	 * // chart.config("gauge", {min: 10, max: 20}); // will not work
 	 *
 	 * // Setter & redraw with the new option
 	 * chart.config("gauge.max", 100, true);
@@ -182,7 +191,7 @@ export default {
 			} else {
 				res = config[key];
 			}
-		} else {
+		} else if (arguments.length === 0 || isEmpty(name)) {
 			res = state.orgConfig;
 		}
 

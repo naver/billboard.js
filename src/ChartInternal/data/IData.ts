@@ -1,13 +1,20 @@
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
+ * @ignore
  */
-export interface IDataRow {
-    x: number;
+type TDataRow = {
     value: number | null;
     id: string;
     index: number;
     name?: string;
+};
+
+export interface IDataRow extends TDataRow {
+    x: number;
+}
+export interface IArcDataRow extends TDataRow {
+    ratio: number;
 }
 
 export interface IData {

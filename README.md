@@ -18,6 +18,7 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on [
 - [Examples](https://naver.github.io/billboard.js/demo/)
 - [Roadmap](https://github.com/naver/billboard.js/wiki/Roadmap)
 - [Contribution Guide](CONTRIBUTING.md)
+- [Development Guide](DEVELOPMENT.md)
 - [Comparison table with other libraries](https://github.com/naver/billboard.js/wiki/Comparison-table)
 - [Migration guide from C3.js](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F)
 - [Third Party Applications](https://github.com/naver/billboard.js/wiki/Third-party-applications)
@@ -33,11 +34,6 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on [
 - v3 updates:
   - [billboard.js 3.0 release: D3.js v6 support & new candlestick type!](https://netil.medium.com/billboard-js-3-0-release-d3-js-v6-support-new-candlestick-type-9bd74af6a753)
 
-## Playground
-Play with the diverse options generating on the fly!
-- https://naver.github.io/billboard.js/playground/ (obsolete)
-- https://beta.observablehq.com/@idris-maps/billboard-js-playground (by [@idris-maps](https://github.com/idris-maps))
-
 ## Questions?
 If you have any questions, checkout the previous posts or create a new one at:
 - [Stack Overflow: billboard.js tagged posts](https://stackoverflow.com/questions/tagged/billboard.js)
@@ -49,6 +45,9 @@ If you have any questions, checkout the previous posts or create a new one at:
 ## Download and Installation
 
 Download dist files from the repo directly or install it via npm.
+
+<details>
+  <summary>Dist file list from the repo. (click to expand)</summary>
 
 ### For development (Uncompressed)
 
@@ -85,9 +84,15 @@ You can download the compressed files for production
     - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.js
     - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.min.js
 
+</details>
+
 ### Themes
 > If you want apply themes, simply load one of the theme css file provided instead of the default css file.
 > - [Screenshot Preview](https://github.com/naver/billboard.js/wiki/Themes)
+
+
+<details>
+  <summary>Dist theme file list from the repo. (click to expand)</summary>
 
 #### datalab
 - https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.css
@@ -101,6 +106,8 @@ You can download the compressed files for production
 #### graph
 - https://naver.github.io/billboard.js/release/latest/dist/theme/graph.css
 - https://naver.github.io/billboard.js/release/latest/dist/theme/graph.min.css
+
+</details>
 
 ### Nightly version
 
@@ -192,6 +199,7 @@ Load billboard.js after D3.js.
 ```
 
 or use importing ESM.
+> 📌 Also check: [How to load as ESM directly from the browser?](https://github.com/naver/billboard.js/wiki/How-to-load-as-ESM-directly-from-the-browser%3F)
 
 ```js
 // 1) import billboard.js
@@ -243,78 +251,6 @@ var chart = bb.generate({
 // call some API
 chart.load( ... );
 ```
-
-## How to start developing billboard.js?
-
-For anyone interested in developing billboard.js, follow the instructions below.
-> Required Node.js version: `10.10.0+`
-
-### Development Environment
-
-#### 1. Clone the repository
-
-Clone the billboard.js repository and install the dependency modules.
-
-```bash
-# Create a folder and move.
-$ mkdir billboard.js && cd billboard.js
-
-# Clone the repository.
-$ git clone https://github.com/naver/billboard.js.git
-```
-
-#### 2. Install dependencies
-`npm` and `Yarn` are supported.
-
-```
-# Install the dependency modules.
-$ npm install
-
-# or
-$ yarn
-```
-
-#### 3. Build
-
-Use npm script to build billboard.js
-
-```bash
-# Run webpack-dev-server for development
-$ npm start
-
-# Build
-$ npm run build
-
-# Generate jsdoc
-$ npm run jsdoc
-```
-
-Two folders will be created after the build is completed.
-
-- **dist** folder: Includes the **billboard.js** and **billboard.min.js** files.
-- **doc** folder: Includes API documentation. The home page for the documentation is **doc/index.html**.
-
-### Linting
-
-To maintain the same code style and quality, we adopted [ESLint](https://eslint.org/). The [rules](https://github.com/naver/eslint-config-naver/tree/master/rules) are based on the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) with some modifications.
-Setup your editor for check or run the below command for linting.
-
-```bash
-$ npm run lint
-```
-
-### Test
-
-Once you created a branch and finished the development, you must perform a test with `npm test` command before the push to a remote repository.
-
-```bash
-$ npm test
-```
-Running the `npm test` command will start [Mocha](https://mochajs.org/) tests via [Karma-runner](https://karma-runner.github.io/).
-
-## Bug Report
-
-If you find a bug, please report to us by posting [issues](https://github.com/naver/billboard.js/issues) on GitHub.
 
 ## License
 billboard.js is released under the [MIT license](https://github.com/naver/billboard.js/blob/master/LICENSE).

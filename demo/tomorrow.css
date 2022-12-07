@@ -34,16 +34,58 @@
   color: #8959a8;
 }
 
+@media (min-width: 1200px) {
+  .example-grid {
+    display: grid;
+    grid-template-columns: 45% 55%;
+    grid-gap: 0 20px;
+  }
+
+  .sub_tit {
+    margin-top: 0;
+  }
+
+  .code .html {
+    max-height: 80px;
+    overflow: auto;
+  }
+
+  .chart_area, .js code {
+    overflow-y: scroll;
+    margin: 0 auto;
+    height: calc(100vh - 200px);
+  }
+
+  div.chart_area {
+    height: calc(100vh - 100px);
+  }
+}
+
+#title {
+  margin-top: 0;
+}
+
+.sub_tit {
+  background-color: #0a82d3;
+  color: #fff;
+  padding: 5px;
+}
+
 pre code {
   display: block;
   background: white;
   color: #4d4d4c;
   font-family: Menlo, Monaco, Consolas, monospace;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.3;
   border: 1px solid #ccc;
   padding: 10px;
 }
+
+code.html {
+  font-size: 12px;
+}
+
 
 .chart_area h4 {
   border-bottom:dotted 1px;padding:10px 0 5px
@@ -56,6 +98,7 @@ pre code {
 #description {
   font-size: 13px;
   color: gray;
+  display: inline-block;
 }
 
 .sparkline {  
@@ -70,4 +113,16 @@ pre code {
   float: none;
   clear: left;
   content: "";
+}
+
+@font-face {
+  font-family: 'Alfa Slab One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/alfaslabone/v17/6NUQ8FmMKwSEKjnm5-4v-4Jh2dJhe_escmA.woff2) format('woff2');
+}
+
+#exportPreserveFontStyle svg {
+  font-family: 'Alfa Slab One';
 }

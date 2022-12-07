@@ -22,17 +22,20 @@ export default {
 	 *  Specified function receives x of the data point to show.
 	 * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
 	 *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-	 * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip.<br>
-	 *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-	 *  If undefined returned, the row of that value will be skipped.
+	 * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip. If undefined returned, the row of that value will be skipped to be called.
+	 *  - Will pass following arguments to the given function:
+	 *    - `value {string}`: Value of the data point
+	 *    - `ratio {number}`: Ratio of the data point in the `pie/donut/gauge` and `area/bar` when contains grouped data. Otherwise is `undefined`.
+	 *    - `id {string}`: id of the data point
+	 *    - `index {number}`: Index of the data point
 	 * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
 	 *  This option can be used to modify the tooltip position by returning object that has top and left.
 	 *  - Will pass following arguments to the given function:
-	 *   - `data {Array}`: Current selected data array object.
-	 *   - `width {number}`: Width of tooltip.
-	 *   - `height {number}`: Height of tooltip.
-	 *   - `element {SVGElement}`: Tooltip event bound element
-	 *   - `pos {object}`: Current position of the tooltip.
+	 *    - `data {Array}`: Current selected data array object.
+	 *    - `width {number}`: Width of tooltip.
+	 *    - `height {number}`: Height of tooltip.
+	 *    - `element {SVGElement}`: Tooltip event bound element
+	 *    - `pos {object}`: Current position of the tooltip.
 	 * @property {Function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
 	 *  If tooltip.grouped is true, data includes multiple data points.<br><br>
 	 *  Specified function receives `data` array and `defaultTitleFormat`, `defaultValueFormat` and `color` functions of the data point to show.

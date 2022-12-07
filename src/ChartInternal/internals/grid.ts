@@ -200,7 +200,7 @@ export default {
 			.style("opacity", "0");
 
 		xgridLine.append("text")
-			.attr("transform", isRotated ? "" : "rotate(-90)")
+			.attr("transform", isRotated ? null : "rotate(-90)")
 			.attr("dy", -5)
 			.style("opacity", "0");
 

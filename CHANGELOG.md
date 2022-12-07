@@ -1,17 +1,28 @@
-# [3.6.0-next.2](https://github.com/naver/billboard.js/compare/3.6.0-next.1...3.6.0-next.2) (2022-09-23)
+## [3.6.3](https://github.com/naver/billboard.js/compare/3.6.2...3.6.3) (2022-10-28)
 
 
 ### Bug Fixes
 
-* **types:** Fix the type declarations for the y tick format ([#2865](https://github.com/naver/billboard.js/issues/2865)) ([2e38dee](https://github.com/naver/billboard.js/commit/2e38dee90bf66ea0ae4266c346d634eb81b57ac4))
+* **axis:** Fix translate NaN error ([b8396a0](https://github.com/naver/billboard.js/commit/b8396a077ce4e7c1e0e354e18911e9c6dfe007c8)), closes [#2924](https://github.com/naver/billboard.js/issues/2924)
+* **interaction:** Fix unset focused state ([14f6de6](https://github.com/naver/billboard.js/commit/14f6de6bfd7ad2f1f876013c0bd1353a95386dcd)), closes [#2927](https://github.com/naver/billboard.js/issues/2927)
+
+## [3.6.2](https://github.com/naver/billboard.js/compare/3.6.1...3.6.2) (2022-10-26)
 
 
-### Features
+### Bug Fixes
 
-* **api:** Enhance .config() to return generation options ([455944e](https://github.com/naver/billboard.js/commit/455944e75038a4c301763100bd6a8385b510a396)), closes [#2864](https://github.com/naver/billboard.js/issues/2864)
-* **options:** Intent to ship bar.overlap ([046aedb](https://github.com/naver/billboard.js/commit/046aedb08851834fc9b39b723747310078cd4bde)), closes [#2839](https://github.com/naver/billboard.js/issues/2839)
+* **eventrect:** Fix eventReceiver coordinates ([6526c9e](https://github.com/naver/billboard.js/commit/6526c9e1d5061b8ff09d96d65a2fdcd3e58599d3)), closes [#2913](https://github.com/naver/billboard.js/issues/2913)
 
-# [3.6.0-next.1](https://github.com/naver/billboard.js/compare/3.5.1...3.6.0-next.1) (2022-09-15)
+## [3.6.1](https://github.com/naver/billboard.js/compare/3.6.0...3.6.1) (2022-10-21)
+
+
+### Bug Fixes
+
+* **interaction:** Fix incorrect data.onover/out event call ([1389d85](https://github.com/naver/billboard.js/commit/1389d8597e56a690d01f469a160c6b0bff8df1f1)), closes [#2901](https://github.com/naver/billboard.js/issues/2901)
+* **tooltip:** fix redundant onxxx callback calls ([85cdf36](https://github.com/naver/billboard.js/commit/85cdf36b8bfb6f211f1be152c3757fa3241dc982)), closes [#2901](https://github.com/naver/billboard.js/issues/2901)
+* **type:** add missing svg.classname type definition ([72e5c84](https://github.com/naver/billboard.js/commit/72e5c848925e7dc88aee7a6bc95824aa99a9c3c1)), closes [#2893](https://github.com/naver/billboard.js/issues/2893)
+
+# [3.6.0](https://github.com/naver/billboard.js/compare/3.5.1...3.6.0) (2022-09-29)
 
 
 ### Bug Fixes
@@ -24,15 +35,19 @@
 * **legend:** Add default for legend.contents.template ([55fbb02](https://github.com/naver/billboard.js/commit/55fbb0217d1cd6c147b7ef28f0809e71619e3bde)), closes [#2780](https://github.com/naver/billboard.js/issues/2780)
 * **type:** Add missing polar module export ([a950abd](https://github.com/naver/billboard.js/commit/a950abdfcfc0ad78f04baa35c5f5026a8d0649d1)), closes [#2833](https://github.com/naver/billboard.js/issues/2833)
 * **typescript:** update entry point in tsconfig ([ab4d98d](https://github.com/naver/billboard.js/commit/ab4d98d3fa50b998c71c3444e2a886574550c666)), closes [#2855](https://github.com/naver/billboard.js/issues/2855)
+* **types:** Fix legend.item.tile.type literal type typo ([de9781f](https://github.com/naver/billboard.js/commit/de9781f29723fa841a2f936f038c0c0c4809c921))
 * **types:** Fix the type declarations for the y tick format ([1d378e0](https://github.com/naver/billboard.js/commit/1d378e05af25e33d6d50d92dea51db7fd6b411d7)), closes [#2790](https://github.com/naver/billboard.js/issues/2790)
+* **types:** Fix the type declarations for the y tick format ([#2865](https://github.com/naver/billboard.js/issues/2865)) ([2e38dee](https://github.com/naver/billboard.js/commit/2e38dee90bf66ea0ae4266c346d634eb81b57ac4))
 
 
 ### Features
 
-* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
+* **api:** Enhance .config() to return generation options ([455944e](https://github.com/naver/billboard.js/commit/455944e75038a4c301763100bd6a8385b510a396)), closes [#2864](https://github.com/naver/billboard.js/issues/2864)
+* **options:** Intent to ship bar.linearGradient ([3a9989f](https://github.com/naver/billboard.js/commit/3a9989f7a05c1856ff20092f3af6df827d172b37)), closes [#397](https://github.com/naver/billboard.js/issues/397)
+* **options:** Intent to ship bar.overlap ([046aedb](https://github.com/naver/billboard.js/commit/046aedb08851834fc9b39b723747310078cd4bde)), closes [#2839](https://github.com/naver/billboard.js/issues/2839)
 * **options:** Intent to ship data.groupsZeroAs ([3de8e7a](https://github.com/naver/billboard.js/commit/3de8e7a6e1dd799fdf7f51e793d21df1124cdc0a)), closes [#2813](https://github.com/naver/billboard.js/issues/2813)
+* **options:** Intent to ship legend.item.tile.type ([c379c9f](https://github.com/naver/billboard.js/commit/c379c9ff612acd18b139aadcbdf69ab79770f5c5)), closes [#2874](https://github.com/naver/billboard.js/issues/2874)
 * **packages:** Intent to ship React wrapper ([4cef6ad](https://github.com/naver/billboard.js/commit/4cef6adac03deb79040f28addf0489badfd217c8)), closes [#2838](https://github.com/naver/billboard.js/issues/2838)
-* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
 
 ## [3.5.1](https://github.com/naver/billboard.js/compare/3.5.0...3.5.1) (2022-07-14)
 
