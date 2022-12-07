@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221130004736
+ * @version 3.6.3-nightly-20221207004711
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.3
@@ -17405,43 +17405,54 @@ function _newArrowCheck(innerThis, boundThis) {
   }
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/interval.js
+
 var t0 = new Date(),
   t1 = new Date();
-function newInterval(floori, offseti, count, field) {
+function timeInterval(floori, offseti, count, field) {
+  var _this = this;
   function interval(date) {
     return floori(date = arguments.length === 0 ? new Date() : new Date(+date)), date;
   }
   interval.floor = function (date) {
+    _newArrowCheck(this, _this);
     return floori(date = new Date(+date)), date;
-  };
+  }.bind(this);
   interval.ceil = function (date) {
+    _newArrowCheck(this, _this);
     return floori(date = new Date(date - 1)), offseti(date, 1), floori(date), date;
-  };
+  }.bind(this);
   interval.round = function (date) {
+    _newArrowCheck(this, _this);
     var d0 = interval(date),
       d1 = interval.ceil(date);
     return date - d0 < d1 - date ? d0 : d1;
-  };
+  }.bind(this);
   interval.offset = function (date, step) {
+    _newArrowCheck(this, _this);
     return offseti(date = new Date(+date), step == null ? 1 : Math.floor(step)), date;
-  };
+  }.bind(this);
   interval.range = function (start, stop, step) {
-    var range = [],
-      previous;
+    _newArrowCheck(this, _this);
+    var range = [];
     start = interval.ceil(start);
     step = step == null ? 1 : Math.floor(step);
     if (!(start < stop) || !(step > 0)) return range; // also handles Invalid Date
+    var previous;
     do {
       range.push(previous = new Date(+start)), offseti(start, step), floori(start);
     } while (previous < start && start < stop);
     return range;
-  };
+  }.bind(this);
   interval.filter = function (test) {
-    return newInterval(function (date) {
+    var _this2 = this;
+    _newArrowCheck(this, _this);
+    return timeInterval(function (date) {
+      _newArrowCheck(this, _this2);
       if (date >= date) while (floori(date), !test(date)) {
         date.setTime(date - 1);
       }
-    }, function (date, step) {
+    }.bind(this), function (date, step) {
+      _newArrowCheck(this, _this2);
       if (date >= date) {
         if (step < 0) while (++step <= 0) {
           while (offseti(date, -1), !test(date)) {} // eslint-disable-line no-empty
@@ -17449,23 +17460,27 @@ function newInterval(floori, offseti, count, field) {
           while (offseti(date, 1), !test(date)) {} // eslint-disable-line no-empty
         }
       }
-    });
-  };
-
+    }.bind(this));
+  }.bind(this);
   if (count) {
     interval.count = function (start, end) {
+      _newArrowCheck(this, _this);
       t0.setTime(+start), t1.setTime(+end);
       floori(t0), floori(t1);
       return Math.floor(count(t0, t1));
-    };
+    }.bind(this);
     interval.every = function (step) {
+      var _this3 = this;
+      _newArrowCheck(this, _this);
       step = Math.floor(step);
       return !isFinite(step) || !(step > 0) ? null : !(step > 1) ? interval : interval.filter(field ? function (d) {
+        _newArrowCheck(this, _this3);
         return field(d) % step === 0;
-      } : function (d) {
+      }.bind(this) : function (d) {
+        _newArrowCheck(this, _this3);
         return interval.count(0, d) % step === 0;
-      });
-    };
+      }.bind(this));
+    }.bind(this);
   }
   return interval;
 }
@@ -17477,18 +17492,51 @@ var durationDay = 86400000;
 var durationWeek = 604800000;
 var durationMonth = 2592000000;
 var durationYear = 31536000000;
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcWeek.js
+;// CONCATENATED MODULE: ./node_modules/d3-time/src/week.js
 
 
+
+function timeWeekday(i) {
+  var _this = this;
+  return timeInterval(function (date) {
+    _newArrowCheck(this, _this);
+    date.setDate(date.getDate() - (date.getDay() + 7 - i) % 7);
+    date.setHours(0, 0, 0, 0);
+  }.bind(this), function (date, step) {
+    _newArrowCheck(this, _this);
+    date.setDate(date.getDate() + step * 7);
+  }.bind(this), function (start, end) {
+    _newArrowCheck(this, _this);
+    return (end - start - (end.getTimezoneOffset() - start.getTimezoneOffset()) * durationMinute) / durationWeek;
+  }.bind(this));
+}
+var timeSunday = timeWeekday(0);
+var timeMonday = timeWeekday(1);
+var timeTuesday = timeWeekday(2);
+var timeWednesday = timeWeekday(3);
+var timeThursday = timeWeekday(4);
+var timeFriday = timeWeekday(5);
+var timeSaturday = timeWeekday(6);
+var timeSundays = timeSunday.range;
+var timeMondays = timeMonday.range;
+var timeTuesdays = timeTuesday.range;
+var timeWednesdays = timeWednesday.range;
+var timeThursdays = timeThursday.range;
+var timeFridays = timeFriday.range;
+var timeSaturdays = timeSaturday.range;
 function utcWeekday(i) {
-  return newInterval(function (date) {
+  var _this2 = this;
+  return timeInterval(function (date) {
+    _newArrowCheck(this, _this2);
     date.setUTCDate(date.getUTCDate() - (date.getUTCDay() + 7 - i) % 7);
     date.setUTCHours(0, 0, 0, 0);
-  }, function (date, step) {
+  }.bind(this), function (date, step) {
+    _newArrowCheck(this, _this2);
     date.setUTCDate(date.getUTCDate() + step * 7);
-  }, function (start, end) {
+  }.bind(this), function (start, end) {
+    _newArrowCheck(this, _this2);
     return (end - start) / durationWeek;
-  });
+  }.bind(this));
 }
 var utcSunday = utcWeekday(0);
 var utcMonday = utcWeekday(1);
@@ -17504,53 +17552,12 @@ var utcWednesdays = utcWednesday.range;
 var utcThursdays = utcThursday.range;
 var utcFridays = utcFriday.range;
 var utcSaturdays = utcSaturday.range;
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcDay.js
-
-
-var utcDay = newInterval(function (date) {
-  date.setUTCHours(0, 0, 0, 0);
-}, function (date, step) {
-  date.setUTCDate(date.getUTCDate() + step);
-}, function (start, end) {
-  return (end - start) / durationDay;
-}, function (date) {
-  return date.getUTCDate() - 1;
-});
-/* harmony default export */ var src_utcDay = (utcDay);
-var utcDays = utcDay.range;
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/week.js
-
-
-function weekday(i) {
-  return newInterval(function (date) {
-    date.setDate(date.getDate() - (date.getDay() + 7 - i) % 7);
-    date.setHours(0, 0, 0, 0);
-  }, function (date, step) {
-    date.setDate(date.getDate() + step * 7);
-  }, function (start, end) {
-    return (end - start - (end.getTimezoneOffset() - start.getTimezoneOffset()) * durationMinute) / durationWeek;
-  });
-}
-var sunday = weekday(0);
-var monday = weekday(1);
-var tuesday = weekday(2);
-var wednesday = weekday(3);
-var thursday = weekday(4);
-var friday = weekday(5);
-var saturday = weekday(6);
-var sundays = sunday.range;
-var mondays = monday.range;
-var tuesdays = tuesday.range;
-var wednesdays = wednesday.range;
-var thursdays = thursday.range;
-var fridays = friday.range;
-var saturdays = saturday.range;
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/day.js
 
 var _this = undefined;
 
 
-var day = newInterval(function (date) {
+var timeDay = timeInterval(function (date) {
   _newArrowCheck(this, _this);
   return date.setHours(0, 0, 0, 0);
 }.bind(undefined), function (date, step) {
@@ -17563,57 +17570,98 @@ var day = newInterval(function (date) {
   _newArrowCheck(this, _this);
   return date.getDate() - 1;
 }.bind(undefined));
-/* harmony default export */ var src_day = (day);
-var days = day.range;
+var timeDays = timeDay.range;
+var utcDay = timeInterval(function (date) {
+  _newArrowCheck(this, _this);
+  date.setUTCHours(0, 0, 0, 0);
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, _this);
+  date.setUTCDate(date.getUTCDate() + step);
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, _this);
+  return (end - start) / durationDay;
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, _this);
+  return date.getUTCDate() - 1;
+}.bind(undefined));
+var utcDays = utcDay.range;
+var unixDay = timeInterval(function (date) {
+  _newArrowCheck(this, _this);
+  date.setUTCHours(0, 0, 0, 0);
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, _this);
+  date.setUTCDate(date.getUTCDate() + step);
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, _this);
+  return (end - start) / durationDay;
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, _this);
+  return Math.floor(date / durationDay);
+}.bind(undefined));
+var unixDays = unixDay.range;
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/year.js
 
-var year = newInterval(function (date) {
+var year_this = undefined;
+
+var timeYear = timeInterval(function (date) {
+  _newArrowCheck(this, year_this);
   date.setMonth(0, 1);
   date.setHours(0, 0, 0, 0);
-}, function (date, step) {
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, year_this);
   date.setFullYear(date.getFullYear() + step);
-}, function (start, end) {
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, year_this);
   return end.getFullYear() - start.getFullYear();
-}, function (date) {
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, year_this);
   return date.getFullYear();
-});
+}.bind(undefined));
 
 // An optimized implementation for this simple case.
-year.every = function (k) {
-  return !isFinite(k = Math.floor(k)) || !(k > 0) ? null : newInterval(function (date) {
+timeYear.every = function (k) {
+  var _this2 = this;
+  _newArrowCheck(this, year_this);
+  return !isFinite(k = Math.floor(k)) || !(k > 0) ? null : timeInterval(function (date) {
+    _newArrowCheck(this, _this2);
     date.setFullYear(Math.floor(date.getFullYear() / k) * k);
     date.setMonth(0, 1);
     date.setHours(0, 0, 0, 0);
-  }, function (date, step) {
+  }.bind(this), function (date, step) {
+    _newArrowCheck(this, _this2);
     date.setFullYear(date.getFullYear() + step * k);
-  });
-};
-/* harmony default export */ var src_year = (year);
-var years = year.range;
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcYear.js
-
-var utcYear = newInterval(function (date) {
+  }.bind(this));
+}.bind(undefined);
+var timeYears = timeYear.range;
+var utcYear = timeInterval(function (date) {
+  _newArrowCheck(this, year_this);
   date.setUTCMonth(0, 1);
   date.setUTCHours(0, 0, 0, 0);
-}, function (date, step) {
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, year_this);
   date.setUTCFullYear(date.getUTCFullYear() + step);
-}, function (start, end) {
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, year_this);
   return end.getUTCFullYear() - start.getUTCFullYear();
-}, function (date) {
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, year_this);
   return date.getUTCFullYear();
-});
+}.bind(undefined));
 
 // An optimized implementation for this simple case.
 utcYear.every = function (k) {
-  return !isFinite(k = Math.floor(k)) || !(k > 0) ? null : newInterval(function (date) {
+  var _this3 = this;
+  _newArrowCheck(this, year_this);
+  return !isFinite(k = Math.floor(k)) || !(k > 0) ? null : timeInterval(function (date) {
+    _newArrowCheck(this, _this3);
     date.setUTCFullYear(Math.floor(date.getUTCFullYear() / k) * k);
     date.setUTCMonth(0, 1);
     date.setUTCHours(0, 0, 0, 0);
-  }, function (date, step) {
+  }.bind(this), function (date, step) {
+    _newArrowCheck(this, _this3);
     date.setUTCFullYear(date.getUTCFullYear() + step * k);
-  });
-};
-/* harmony default export */ var src_utcYear = (utcYear);
+  }.bind(this));
+}.bind(undefined);
 var utcYears = utcYear.range;
 ;// CONCATENATED MODULE: ./node_modules/d3-time-format/src/locale.js
 
@@ -17869,14 +17917,14 @@ function formatLocale(locale) {
         if ("Z" in d) {
           week = utcDate(newDate(d.y, 0, 1)), day = week.getUTCDay();
           week = day > 4 || day === 0 ? utcMonday.ceil(week) : utcMonday(week);
-          week = src_utcDay.offset(week, (d.V - 1) * 7);
+          week = utcDay.offset(week, (d.V - 1) * 7);
           d.y = week.getUTCFullYear();
           d.m = week.getUTCMonth();
           d.d = week.getUTCDate() + (d.w + 6) % 7;
         } else {
           week = localDate(newDate(d.y, 0, 1)), day = week.getDay();
-          week = day > 4 || day === 0 ? monday.ceil(week) : monday(week);
-          week = src_day.offset(week, (d.V - 1) * 7);
+          week = day > 4 || day === 0 ? timeMonday.ceil(week) : timeMonday(week);
+          week = timeDay.offset(week, (d.V - 1) * 7);
           d.y = week.getFullYear();
           d.m = week.getMonth();
           d.d = week.getDate() + (d.w + 6) % 7;
@@ -18068,7 +18116,7 @@ function formatHour12(d, p) {
   return pad(d.getHours() % 12 || 12, p, 2);
 }
 function formatDayOfYear(d, p) {
-  return pad(1 + src_day.count(src_year(d), d), p, 3);
+  return pad(1 + timeDay.count(timeYear(d), d), p, 3);
 }
 function formatMilliseconds(d, p) {
   return pad(d.getMilliseconds(), p, 3);
@@ -18090,21 +18138,21 @@ function formatWeekdayNumberMonday(d) {
   return day === 0 ? 7 : day;
 }
 function formatWeekNumberSunday(d, p) {
-  return pad(sunday.count(src_year(d) - 1, d), p, 2);
+  return pad(timeSunday.count(timeYear(d) - 1, d), p, 2);
 }
 function dISO(d) {
   var day = d.getDay();
-  return day >= 4 || day === 0 ? thursday(d) : thursday.ceil(d);
+  return day >= 4 || day === 0 ? timeThursday(d) : timeThursday.ceil(d);
 }
 function formatWeekNumberISO(d, p) {
   d = dISO(d);
-  return pad(thursday.count(src_year(d), d) + (src_year(d).getDay() === 4), p, 2);
+  return pad(timeThursday.count(timeYear(d), d) + (timeYear(d).getDay() === 4), p, 2);
 }
 function formatWeekdayNumberSunday(d) {
   return d.getDay();
 }
 function formatWeekNumberMonday(d, p) {
-  return pad(monday.count(src_year(d) - 1, d), p, 2);
+  return pad(timeMonday.count(timeYear(d) - 1, d), p, 2);
 }
 function formatYear(d, p) {
   return pad(d.getFullYear() % 100, p, 2);
@@ -18118,7 +18166,7 @@ function formatFullYear(d, p) {
 }
 function formatFullYearISO(d, p) {
   var day = d.getDay();
-  d = day >= 4 || day === 0 ? thursday(d) : thursday.ceil(d);
+  d = day >= 4 || day === 0 ? timeThursday(d) : timeThursday.ceil(d);
   return pad(d.getFullYear() % 1e4, p, 4);
 }
 function formatZone(d) {
@@ -18135,7 +18183,7 @@ function formatUTCHour12(d, p) {
   return pad(d.getUTCHours() % 12 || 12, p, 2);
 }
 function formatUTCDayOfYear(d, p) {
-  return pad(1 + src_utcDay.count(src_utcYear(d), d), p, 3);
+  return pad(1 + utcDay.count(utcYear(d), d), p, 3);
 }
 function formatUTCMilliseconds(d, p) {
   return pad(d.getUTCMilliseconds(), p, 3);
@@ -18157,7 +18205,7 @@ function formatUTCWeekdayNumberMonday(d) {
   return dow === 0 ? 7 : dow;
 }
 function formatUTCWeekNumberSunday(d, p) {
-  return pad(utcSunday.count(src_utcYear(d) - 1, d), p, 2);
+  return pad(utcSunday.count(utcYear(d) - 1, d), p, 2);
 }
 function UTCdISO(d) {
   var day = d.getUTCDay();
@@ -18165,13 +18213,13 @@ function UTCdISO(d) {
 }
 function formatUTCWeekNumberISO(d, p) {
   d = UTCdISO(d);
-  return pad(utcThursday.count(src_utcYear(d), d) + (src_utcYear(d).getUTCDay() === 4), p, 2);
+  return pad(utcThursday.count(utcYear(d), d) + (utcYear(d).getUTCDay() === 4), p, 2);
 }
 function formatUTCWeekdayNumberSunday(d) {
   return d.getUTCDay();
 }
 function formatUTCWeekNumberMonday(d, p) {
-  return pad(utcMonday.count(src_utcYear(d) - 1, d), p, 2);
+  return pad(utcMonday.count(utcYear(d) - 1, d), p, 2);
 }
 function formatUTCYear(d, p) {
   return pad(d.getUTCFullYear() % 100, p, 2);
@@ -30644,126 +30692,156 @@ function log() {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/millisecond.js
 
-var millisecond = newInterval(function () {
-  // noop
-}, function (date, step) {
+var millisecond_this = undefined;
+
+var millisecond = timeInterval(function () {
+  _newArrowCheck(this, millisecond_this);
+} // noop
+.bind(undefined), function (date, step) {
+  _newArrowCheck(this, millisecond_this);
   date.setTime(+date + step);
-}, function (start, end) {
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, millisecond_this);
   return end - start;
-});
+}.bind(undefined));
 
 // An optimized implementation for this simple case.
 millisecond.every = function (k) {
+  var _this2 = this;
+  _newArrowCheck(this, millisecond_this);
   k = Math.floor(k);
   if (!isFinite(k) || !(k > 0)) return null;
   if (!(k > 1)) return millisecond;
-  return newInterval(function (date) {
+  return timeInterval(function (date) {
+    _newArrowCheck(this, _this2);
     date.setTime(Math.floor(date / k) * k);
-  }, function (date, step) {
+  }.bind(this), function (date, step) {
+    _newArrowCheck(this, _this2);
     date.setTime(+date + step * k);
-  }, function (start, end) {
+  }.bind(this), function (start, end) {
+    _newArrowCheck(this, _this2);
     return (end - start) / k;
-  });
-};
-/* harmony default export */ var src_millisecond = (millisecond);
+  }.bind(this));
+}.bind(undefined);
 var milliseconds = millisecond.range;
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/second.js
 
+var second_this = undefined;
 
-var second = newInterval(function (date) {
+
+var second = timeInterval(function (date) {
+  _newArrowCheck(this, second_this);
   date.setTime(date - date.getMilliseconds());
-}, function (date, step) {
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, second_this);
   date.setTime(+date + step * durationSecond);
-}, function (start, end) {
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, second_this);
   return (end - start) / durationSecond;
-}, function (date) {
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, second_this);
   return date.getUTCSeconds();
-});
-/* harmony default export */ var src_second = (second);
+}.bind(undefined));
 var seconds = second.range;
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/minute.js
 
+var minute_this = undefined;
 
-var minute = newInterval(function (date) {
+
+var timeMinute = timeInterval(function (date) {
+  _newArrowCheck(this, minute_this);
   date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond);
-}, function (date, step) {
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, minute_this);
   date.setTime(+date + step * durationMinute);
-}, function (start, end) {
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, minute_this);
   return (end - start) / durationMinute;
-}, function (date) {
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, minute_this);
   return date.getMinutes();
-});
-/* harmony default export */ var src_minute = (minute);
-var minutes = minute.range;
+}.bind(undefined));
+var timeMinutes = timeMinute.range;
+var utcMinute = timeInterval(function (date) {
+  _newArrowCheck(this, minute_this);
+  date.setUTCSeconds(0, 0);
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, minute_this);
+  date.setTime(+date + step * durationMinute);
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, minute_this);
+  return (end - start) / durationMinute;
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, minute_this);
+  return date.getUTCMinutes();
+}.bind(undefined));
+var utcMinutes = utcMinute.range;
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/hour.js
 
+var hour_this = undefined;
 
-var hour = newInterval(function (date) {
+
+var timeHour = timeInterval(function (date) {
+  _newArrowCheck(this, hour_this);
   date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond - date.getMinutes() * durationMinute);
-}, function (date, step) {
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, hour_this);
   date.setTime(+date + step * durationHour);
-}, function (start, end) {
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, hour_this);
   return (end - start) / durationHour;
-}, function (date) {
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, hour_this);
   return date.getHours();
-});
-/* harmony default export */ var src_hour = (hour);
-var hours = hour.range;
+}.bind(undefined));
+var timeHours = timeHour.range;
+var utcHour = timeInterval(function (date) {
+  _newArrowCheck(this, hour_this);
+  date.setUTCMinutes(0, 0, 0);
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, hour_this);
+  date.setTime(+date + step * durationHour);
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, hour_this);
+  return (end - start) / durationHour;
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, hour_this);
+  return date.getUTCHours();
+}.bind(undefined));
+var utcHours = utcHour.range;
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/month.js
 
-var month = newInterval(function (date) {
+var month_this = undefined;
+
+var timeMonth = timeInterval(function (date) {
+  _newArrowCheck(this, month_this);
   date.setDate(1);
   date.setHours(0, 0, 0, 0);
-}, function (date, step) {
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, month_this);
   date.setMonth(date.getMonth() + step);
-}, function (start, end) {
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, month_this);
   return end.getMonth() - start.getMonth() + (end.getFullYear() - start.getFullYear()) * 12;
-}, function (date) {
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, month_this);
   return date.getMonth();
-});
-/* harmony default export */ var src_month = (month);
-var months = month.range;
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcMinute.js
-
-
-var utcMinute = newInterval(function (date) {
-  date.setUTCSeconds(0, 0);
-}, function (date, step) {
-  date.setTime(+date + step * durationMinute);
-}, function (start, end) {
-  return (end - start) / durationMinute;
-}, function (date) {
-  return date.getUTCMinutes();
-});
-/* harmony default export */ var src_utcMinute = (utcMinute);
-var utcMinutes = utcMinute.range;
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcHour.js
-
-
-var utcHour = newInterval(function (date) {
-  date.setUTCMinutes(0, 0, 0);
-}, function (date, step) {
-  date.setTime(+date + step * durationHour);
-}, function (start, end) {
-  return (end - start) / durationHour;
-}, function (date) {
-  return date.getUTCHours();
-});
-/* harmony default export */ var src_utcHour = (utcHour);
-var utcHours = utcHour.range;
-;// CONCATENATED MODULE: ./node_modules/d3-time/src/utcMonth.js
-
-var utcMonth = newInterval(function (date) {
+}.bind(undefined));
+var timeMonths = timeMonth.range;
+var utcMonth = timeInterval(function (date) {
+  _newArrowCheck(this, month_this);
   date.setUTCDate(1);
   date.setUTCHours(0, 0, 0, 0);
-}, function (date, step) {
+}.bind(undefined), function (date, step) {
+  _newArrowCheck(this, month_this);
   date.setUTCMonth(date.getUTCMonth() + step);
-}, function (start, end) {
+}.bind(undefined), function (start, end) {
+  _newArrowCheck(this, month_this);
   return end.getUTCMonth() - start.getUTCMonth() + (end.getUTCFullYear() - start.getUTCFullYear()) * 12;
-}, function (date) {
+}.bind(undefined), function (date) {
+  _newArrowCheck(this, month_this);
   return date.getUTCMonth();
-});
-/* harmony default export */ var src_utcMonth = (utcMonth);
+}.bind(undefined));
 var utcMonths = utcMonth.range;
 ;// CONCATENATED MODULE: ./node_modules/d3-time/src/ticks.js
 
@@ -30777,14 +30855,8 @@ var utcMonths = utcMonth.range;
 
 
 
-
-
-
-
-
-
 function ticker(year, month, week, day, hour, minute) {
-  var tickIntervals = [[src_second, 1, durationSecond], [src_second, 5, 5 * durationSecond], [src_second, 15, 15 * durationSecond], [src_second, 30, 30 * durationSecond], [minute, 1, durationMinute], [minute, 5, 5 * durationMinute], [minute, 15, 15 * durationMinute], [minute, 30, 30 * durationMinute], [hour, 1, durationHour], [hour, 3, 3 * durationHour], [hour, 6, 6 * durationHour], [hour, 12, 12 * durationHour], [day, 1, durationDay], [day, 2, 2 * durationDay], [week, 1, durationWeek], [month, 1, durationMonth], [month, 3, 3 * durationMonth], [year, 1, durationYear]];
+  var tickIntervals = [[second, 1, durationSecond], [second, 5, 5 * durationSecond], [second, 15, 15 * durationSecond], [second, 30, 30 * durationSecond], [minute, 1, durationMinute], [minute, 5, 5 * durationMinute], [minute, 15, 15 * durationMinute], [minute, 30, 30 * durationMinute], [hour, 1, durationHour], [hour, 3, 3 * durationHour], [hour, 6, 6 * durationHour], [hour, 12, 12 * durationHour], [day, 1, durationDay], [day, 2, 2 * durationDay], [week, 1, durationWeek], [month, 1, durationMonth], [month, 3, 3 * durationMonth], [year, 1, durationYear]];
   function ticks(start, stop, count) {
     var reverse = stop < start;
     if (reverse) {
@@ -30806,7 +30878,7 @@ function ticker(year, month, week, day, hour, minute) {
         return step;
       }.bind(this)).right(tickIntervals, target);
     if (i === tickIntervals.length) return year.every(tickStep(start / durationYear, stop / durationYear, count));
-    if (i === 0) return src_millisecond.every(Math.max(tickStep(start, stop, count), 1));
+    if (i === 0) return millisecond.every(Math.max(tickStep(start, stop, count), 1));
     var _tickIntervals = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i],
       t = _tickIntervals[0],
       step = _tickIntervals[1];
@@ -30814,10 +30886,10 @@ function ticker(year, month, week, day, hour, minute) {
   }
   return [ticks, tickInterval];
 }
-var _ticker = ticker(src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute),
+var _ticker = ticker(utcYear, utcMonth, utcSunday, unixDay, utcHour, utcMinute),
   utcTicks = _ticker[0],
   utcTickInterval = _ticker[1],
-  _ticker2 = ticker(src_year, src_month, sunday, src_day, src_hour, src_minute),
+  _ticker2 = ticker(timeYear, timeMonth, timeSunday, timeDay, timeHour, timeMinute),
   timeTicks = _ticker2[0],
   timeTickInterval = _ticker2[1];
 
@@ -30872,7 +30944,7 @@ function calendar(ticks, tickInterval, year, month, week, day, hour, minute, sec
   return scale;
 }
 function time() {
-  return initRange.apply(calendar(timeTicks, timeTickInterval, src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
+  return initRange.apply(calendar(timeTicks, timeTickInterval, timeYear, timeMonth, timeSunday, timeDay, timeHour, timeMinute, second, timeFormat).domain([new Date(2e3, 0, 1), new Date(2e3, 0, 2)]), arguments);
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-scale/src/utcTime.js
 
@@ -30880,7 +30952,7 @@ function time() {
 
 
 function utcTime() {
-  return initRange.apply(calendar(utcTicks, utcTickInterval, src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute, src_second, utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
+  return initRange.apply(calendar(utcTicks, utcTickInterval, utcYear, utcMonth, utcSunday, utcDay, utcHour, utcMinute, second, utcFormat).domain([Date.UTC(2e3, 0, 1), Date.UTC(2e3, 0, 2)]), arguments);
 }
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/scale.ts
 
@@ -49601,7 +49673,7 @@ var _defaults = {},
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221130004736",
+    version: "3.6.3-nightly-20221207004711",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -49731,7 +49803,7 @@ var _defaults = {},
   };
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221130004736
+ * @version 3.6.3-nightly-20221207004711
  */
 ;// CONCATENATED MODULE: ./src/index.ts
 
