@@ -82,7 +82,7 @@ export default {
 	 * @private
 	 */
 	getYScaleById(id: string, isSub = false): Function {
-		const isY2 = this.axis.getId(id) === "y2";
+		const isY2 = this.axis?.getId(id) === "y2";
 		const key = isSub ? (isY2 ? "subY2" : "subY") : (isY2 ? "y2" : "y");
 
 		return this.scale[key];
@@ -141,7 +141,7 @@ export default {
 	updateScales(isInit: boolean, updateXDomain = true): void {
 		const $$ = this;
 		const {axis, config, format, org, scale,
-			state: {width, height, width2, height2, hasAxis}
+			state: {current, width, height, width2, height2, hasAxis, hasTreemap}
 		} = $$;
 
 		if (hasAxis) {
@@ -197,6 +197,11 @@ export default {
 
 				axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
 			}
+		} else if (hasTreemap) {
+			const padding = $$.getCurrentPadding();
+
+			scale.x = d3ScaleLinear().rangeRound([padding.left, current.width - padding.right]);
+			scale.y = d3ScaleLinear().rangeRound([padding.top, current.height - padding.bottom]);
 		} else {
 			// update for arc
 			$$.updateArc?.();

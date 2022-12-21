@@ -180,8 +180,9 @@ export default class ChartInternal {
 
 		checkModuleImport($$);
 
-		state.hasAxis = !$$.hasArcType();
 		state.hasRadar = !state.hasAxis && $$.hasType("radar");
+		state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
+		state.hasAxis = !$$.hasArcType() && !state.hasTreemap;
 
 		// datetime to be used for uniqueness
 		state.datetimeId = `bb-${+new Date() * (getRandom() as number)}`;
@@ -284,9 +285,9 @@ export default class ChartInternal {
 			$$.point = $$.generatePoint();
 		}
 
-		if (state.hasAxis) {
-			$$.initClip();
+		$$.initClip();
 
+		if (state.hasAxis) {
 			format.extraLineClasses = $$.generateExtraLineClass();
 			format.dataTime = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
 			format.axisTime = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
@@ -331,7 +332,7 @@ export default class ChartInternal {
 	initWithData(data): void {
 		const $$ = <any> this;
 		const {config, scale, state, $el, org} = $$;
-		const {hasAxis} = state;
+		const {hasAxis, hasTreemap} = state;
 		const hasInteraction = config.interaction_enabled;
 		const hasPolar = $$.hasType("polar");
 
@@ -371,25 +372,27 @@ export default class ChartInternal {
 		$$.updateScales(true);
 
 		// retrieve scale after the 'updateScales()' is called
-		const {x, y, y2, subX, subY, subY2} = scale;
+		if (hasAxis) {
+			const {x, y, y2, subX, subY, subY2} = scale;
 
-		// Set domains for each scale
-		if (x) {
-			x.domain(sortValue($$.getXDomain($$.data.targets)));
-			subX.domain(x.domain());
+			// Set domains for each scale
+			if (x) {
+				x.domain(sortValue($$.getXDomain($$.data.targets)));
+				subX.domain(x.domain());
 
-			// Save original x domain for zoom update
-			org.xDomain = x.domain();
-		}
+				// Save original x domain for zoom update
+				org.xDomain = x.domain();
+			}
 
-		if (y) {
-			y.domain($$.getYDomain($$.data.targets, "y"));
-			subY.domain(y.domain());
-		}
+			if (y) {
+				y.domain($$.getYDomain($$.data.targets, "y"));
+				subY.domain(y.domain());
+			}
 
-		if (y2) {
-			y2.domain($$.getYDomain($$.data.targets, "y2"));
-			subY2 && subY2.domain(y2.domain());
+			if (y2) {
+				y2.domain($$.getYDomain($$.data.targets, "y2"));
+				subY2 && subY2.domain(y2.domain());
+			}
 		}
 
 		// -- Basic Elements --
@@ -412,7 +415,8 @@ export default class ChartInternal {
 		// Define defs
 		const hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
 
-		if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors || hasPolar) {
+		if (hasAxis || hasColorPatterns || hasPolar || hasTreemap ||
+			config.data_labels_backgroundColors) {
 			$el.defs = $el.svg.append("defs");
 
 			if (hasAxis) {
@@ -438,7 +442,7 @@ export default class ChartInternal {
 		// Define regions
 		const main = $el.svg.append("g")
 			.classed($COMMON.main, true)
-			.attr("transform", $$.getTranslate("main"));
+			.attr("transform", hasTreemap ? null : $$.getTranslate("main"));
 
 		$el.main = main;
 
@@ -446,8 +450,9 @@ export default class ChartInternal {
 		config.subchart_show && $$.initSubchart();
 
 		config.tooltip_show && $$.initTooltip();
+
 		config.title_text && $$.initTitle();
-		config.legend_show && $$.initLegend();
+		!hasTreemap && config.legend_show && $$.initLegend();
 
 		// -- Main Region --
 
@@ -526,7 +531,7 @@ export default class ChartInternal {
 	 */
 	initChartElements(): void {
 		const $$ = <any> this;
-		const {hasAxis, hasRadar} = $$.state;
+		const {hasAxis, hasRadar, hasTreemap} = $$.state;
 		const types: string[] = [];
 
 		if (hasAxis) {
@@ -537,6 +542,8 @@ export default class ChartInternal {
 					types.push(name);
 				}
 			});
+		} else if (hasTreemap) {
+			types.push("Treemap");
 		} else {
 			const hasPolar = $$.hasType("polar");
 
@@ -574,7 +581,7 @@ export default class ChartInternal {
 			candlestick,
 			line: lines,
 			area: areas,
-			text: texts
+			text: texts,
 		}} = $$;
 
 		$$.api.$ = {
@@ -629,7 +636,7 @@ export default class ChartInternal {
 	 */
 	updateTargets(targets): void {
 		const $$ = <any> this;
-		const {hasAxis, hasRadar} = $$.state;
+		const {hasAxis, hasRadar, hasTreemap} = $$.state;
 		const helper = type => $$[`updateTargetsFor${type}`](
 			targets.filter($$[`is${type}Type`].bind($$))
 		);
@@ -661,6 +668,9 @@ export default class ChartInternal {
 			}
 
 			helper(type);
+		// Arc, Polar, Radar
+		} else if (hasTreemap) {
+			helper("Treemap");
 		}
 
 		// Point types

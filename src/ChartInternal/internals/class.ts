@@ -18,7 +18,7 @@ export default {
 	 */
 	getClass(type: string, withShape: boolean): Function {
 		const isPlural = /s$/.test(type);
-		const useIdKey = /^(area|arc|line)s?$/.test(type);
+		const useIdKey = /^(area|arc|line|treemap)s?$/.test(type);
 		const key = isPlural ? "id" : "index";
 
 		return (d): string => {
@@ -90,12 +90,11 @@ export default {
 		return targetStr.replace(/([\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\])/g, "-");
 	},
 
-	selectorTarget(id: string, prefix?: string): string {
-		const pfx = prefix || "";
+	selectorTarget(id: string, prefix = "", postfix = ""): string {
 		const target = this.getTargetSelectorSuffix(id);
 
 		// select target & circle
-		return `${pfx}.${CLASS.target + target}, ${pfx}.${CLASS.circles + target}`;
+		return `${prefix}.${CLASS.target + target} ${postfix}, ${prefix}.${CLASS.circles + target} ${postfix}`;
 	},
 
 	selectorTargets(idsValue, prefix: string): string[] | null {

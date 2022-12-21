@@ -11,7 +11,7 @@ import {
 	tsvParseRows as d3TsvParseRows,
 } from "d3-dsv";
 
-export {columns, json, rows, url, csv, tsv};
+export {columns, json, jsonTreemap, rows, url, csv, tsv};
 
 /***** Functions to be executed on Web Worker *****
  * NOTE: Don't allowed to use
@@ -85,29 +85,29 @@ function rows(rows) {
  */
 function json(json, keysParam) {
     const newRows: string[][] = [];
-	const findValueInJson = function(object, path) {
-		if (object[path] !== undefined) {
-			return object[path];
-		}
-
-		const convertedPath = path.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties (replace [] with .)
-		const pathArray = convertedPath.replace(/^\./, "").split("."); // strip a leading dot
-		let target = object;
-
-		pathArray.some(function(k) {
-            return !(
-			    target = target && k in target ?
-				    target[k] : undefined
-		    );
-        });
-
-		return target;
-	};
-
     let targetKeys: string[];
     let data;
 
     if (Array.isArray(json)) {
+		const findValueInJson = function(object, path) {
+			if (object[path] !== undefined) {
+				return object[path];
+			}
+	
+			const convertedPath = path.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties (replace [] with .)
+			const pathArray = convertedPath.replace(/^\./, "").split("."); // strip a leading dot
+			let target = object;
+	
+			pathArray.some(function(k) {
+				return !(
+					target = target && k in target ?
+						target[k] : undefined
+				);
+			});
+	
+			return target;
+		};
+
         if (keysParam.x) {
             targetKeys = keysParam.value.concat(keysParam.x);
         } else {
@@ -136,7 +136,7 @@ function json(json, keysParam) {
         Object.keys(json).forEach(function(key) {
             const tmp = json[key].concat();
 
-            tmp.unshift(key);
+            tmp.unshift?.(key);
             newRows.push(tmp);
         });
 
@@ -144,6 +144,20 @@ function json(json, keysParam) {
     }
 
     return data;
+}
+
+function jsonTreemap(json) {
+	const convertKey = v => {
+		if (v.children) {
+			v.children.forEach(convertKey);
+		}
+
+		v.name = v.id;
+	}
+
+	json.forEach(convertKey);
+
+	return json;
 }
 
 /***** Functions can't be executed on Web Worker *****/

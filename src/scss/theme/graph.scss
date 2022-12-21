@@ -200,6 +200,12 @@ rect.bb-circle, use.bb-circle {
     font-size: 14px;
 }
 
+/*-- Treemap --*/
+.bb-chart-treemaps rect {
+    stroke: #fff;
+    stroke-width: 1px;
+}
+
 /*-- Tooltip --*/
 .bb-tooltip-container {
     z-index: 10;

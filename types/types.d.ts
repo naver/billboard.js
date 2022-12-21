@@ -27,7 +27,8 @@ export type ChartTypes = "area"
 	| "radar"
 	| "scatter"
 	| "spline"
-	| "step";
+	| "step"
+	| "treemap";
 
 export type GaugeTypes = "single" | "multi";
 export type AxisType = "x" | "y" | "y2";

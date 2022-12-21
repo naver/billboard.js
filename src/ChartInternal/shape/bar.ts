@@ -41,7 +41,7 @@ export default {
 			$$.initBar();
 		}
 
-		const mainBarUpdate = $$.$el.main.select(`.${$BAR.chartBars}`)
+		const mainBarUpdate = $el.main.select(`.${$BAR.chartBars}`)
 			.selectAll(`.${$BAR.chartBar}`)
 			.data(
 				// remove

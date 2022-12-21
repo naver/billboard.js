@@ -22,7 +22,8 @@ import {
 	PolarOptions,
 	RadarOptions,
 	ScatterOptions,
-	SplineOptions
+	SplineOptions,
+	TreemapOptions
 } from "./options.shape";
 
 export interface ChartOptions {
@@ -270,6 +271,7 @@ export interface ChartOptions {
 	radar?: RadarOptions;
 	scatter?: ScatterOptions;
 	spline?: SplineOptions;
+	treemap?: TreemapOptions;
 
 	/**
 	 * Set a callback to execute when the chart is initialized.
@@ -1035,6 +1037,7 @@ export interface Data {
 	/**
 	 * Set chart type for each data.
 	 * This setting overwrites data.type setting.
+	 * - **NOTE:** `radar` and `treemap` type can't be combined with other types.
 	 */
 	types?: { [key: string]: ChartTypes };
 

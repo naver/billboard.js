@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /**
- * x Axis config options
+ * polar config options
  */
 export default {
 	/**

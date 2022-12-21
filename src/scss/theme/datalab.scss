@@ -189,6 +189,12 @@ $text-font-size: 11px;
     font-size: 14px;
 }
 
+/*-- Treemap --*/
+.bb-chart-treemaps rect {
+    stroke: #000;
+    stroke-width: 1px;
+}
+
 /*-- Tooltip --*/
 .bb-tooltip-container {
     z-index: 10;
