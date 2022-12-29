@@ -23,7 +23,8 @@ export const TYPE = {
 	RADAR: "radar",
 	SCATTER: "scatter",
 	SPLINE: "spline",
-	STEP: "step"
+	STEP: "step",
+	TREEMAP: "treemap"
 };
 
 /**
@@ -47,7 +48,8 @@ export const TYPE_METHOD_NEEDED = {
 	RADAR: "initCircle",
 	SCATTER: "initCircle",
 	SPLINE: "initLine",
-	STEP: "initLine"
+	STEP: "initLine",
+	TREEMAP: "initTreemap"
 };
 
 /**

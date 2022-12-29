@@ -64,6 +64,7 @@ export default {
 	updateLegend(targetIds, options, transitions): void {
 		const $$ = this;
 		const {config, state, scale, $el} = $$;
+
 		const optionz = options || {
 			withTransform: false,
 			withTransitionForTransform: false,
@@ -75,7 +76,7 @@ export default {
 
 		if (config.legend_contents_bindto && config.legend_contents_template) {
 			$$.updateLegendTemplate();
-		} else {
+		} else if (!state.hasTreemap) {
 			$$.updateLegendElement(
 				targetIds || $$.mapToIds($$.data.targets),
 				optionz,
@@ -84,7 +85,7 @@ export default {
 		}
 
 		// toggle legend state
-		$el.legend.selectAll(`.${$LEGEND.legendItem}`)
+		$el.legend?.selectAll(`.${$LEGEND.legendItem}`)
 			.classed($LEGEND.legendItemHidden, function(id) {
 				const hide = !$$.isTargetToShow(id);
 

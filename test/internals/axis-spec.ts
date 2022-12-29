@@ -2979,7 +2979,7 @@ describe("AXIS", function() {
 		it("check if x axis min/max is fitten.", () => {
 			const yAxisRect = getBoundingRect(chart.$.main.select(`.${$AXIS.axisY}`).node());
 			const lineRect = getBoundingRect(chart.$.line.lines.node());
-
+debugger;
 			// check min
 			expect(lineRect.left).to.be.closeTo(yAxisRect.right, 10);
 

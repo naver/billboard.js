@@ -174,6 +174,7 @@ export default {
 				window.requestIdleCallback(() => $$.loadFromArgs(args));
 			});
 		} else {
+			$$.api.tooltip.hide();
 			$$.loadFromArgs(args);
 		}
 	},

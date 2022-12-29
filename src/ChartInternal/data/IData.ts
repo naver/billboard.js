@@ -10,6 +10,14 @@ type TDataRow = {
     name?: string;
 };
 
+export interface ITreemapData {
+    name: string;
+    id?: string; // for compatibility
+    value?: number;
+    ratio?: number;
+    children?: ITreemapData[];
+}
+
 export interface IDataRow extends TDataRow {
     x: number;
 }

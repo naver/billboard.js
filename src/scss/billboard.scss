@@ -168,6 +168,12 @@
 	font: 14px sans-serif;
 }
 
+/*-- Treemap --*/
+.bb-chart-treemaps rect {
+    stroke: #fff;
+    stroke-width: 1px;
+}
+
 /*-- Tooltip --*/
 .bb-tooltip-container {
 	z-index: 10;

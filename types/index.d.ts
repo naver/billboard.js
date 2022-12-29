@@ -27,6 +27,7 @@ export {
 	scatter,
 	spline,
 	step,
+	treemap,
 
 	// interaction modules
 	selection,
