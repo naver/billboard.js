@@ -826,7 +826,7 @@ describe("API load", function() {
 	
 						expect(lines.size()).to.be.equal(1);
 						expect(+axis.y.selectAll(".tick:last-of-type text").text()).to.be.equal(155);
-						expect(lines.attr("d")).to.be.equal("M6,390.5833333333333L124,319.75L241,248.91666666666663L358,178.08333333333331L475,107.25L593,36.41666666666668");
+						expect(lines.attr("d")).to.be.equal("M6,390.583L124,319.75L241,248.917L358,178.083L475,107.25L593,36.417");
 
 						done();
 					}

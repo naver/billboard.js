@@ -12,8 +12,6 @@ import Chart from "../../src/Chart/Chart";
 import {convertInputType, extend} from "../../src/module/util";
 
 describe("Interface & initialization", () => {
-	let chart;
-
 	function getWrapper(id) {
 		let container = document.getElementById(id);
 
@@ -27,6 +25,7 @@ describe("Interface & initialization", () => {
 	}
 
 	describe("Initialization", () => {
+		let instChart;
 		const checkElements = $ => {
 			const isD3Node = v => v && "node" in v || false;
 
@@ -50,7 +49,7 @@ describe("Interface & initialization", () => {
 		});
 
 		it("Check for initialization", () => {
-			chart = util.generate({
+			instChart = util.generate({
 				title: {
 					text: "test"
 				},
@@ -67,13 +66,13 @@ describe("Interface & initialization", () => {
 					checkElements(this.$);
 				}
 			});
-			const internal = chart.internal;
+			const internal = instChart.internal;
 
-			expect(chart).not.to.be.null;
-			expect(chart.$.chart.classed("bb")).to.be.true;
+			expect(instChart).not.to.be.null;
+			expect(instChart.$.chart.classed("bb")).to.be.true;
 			expect(internal.$el.svg.node().tagName).to.be.equal("svg");
 			expect(convertInputType(true, false)).to.be.equal(internal.state.inputType);
-			expect(chart).to.be.equal(bb.instance[bb.instance.length - 1]);
+			expect(instChart).to.be.equal(bb.instance[bb.instance.length - 1]);
 		});
 
 		it("should return version string", () => {
@@ -81,11 +80,11 @@ describe("Interface & initialization", () => {
 		});
 
 		it("should be accessing node elements", () => {
-			checkElements(chart.$);
+			checkElements(instChart.$);
 		});
 
 		it("instantiate with non-existing element", () => {
-			chart = util.generate({
+			instChart = util.generate({
 				bindto: "#no-exist-element",
 				data: {
 					columns: [
@@ -94,7 +93,7 @@ describe("Interface & initialization", () => {
 				}
 			});
 
-			expect(chart.$.chart.classed("bb")).to.be.true;
+			expect(instChart.$.chart.classed("bb")).to.be.true;
 		});
 
 		it("instantiate with empty data", () => {
@@ -111,7 +110,7 @@ describe("Interface & initialization", () => {
 
 		it("instantiate with different classname on wrapper element", () => {
 			const bindtoClassName = "billboard-js";
-			chart = bb.generate({
+			instChart = bb.generate({
 				bindto: {
 					element: "#chart",
 					classname: bindtoClassName
@@ -124,7 +123,7 @@ describe("Interface & initialization", () => {
 				}
 			});
 
-			expect(chart.$.chart.classed(bindtoClassName)).to.be.true;
+			expect(instChart.$.chart.classed(bindtoClassName)).to.be.true;
 		});
 
 		it("should bind correctly with nullish properties", () => {
@@ -152,6 +151,7 @@ describe("Interface & initialization", () => {
 	});
 
 	describe("auto resize", () => {
+		let chart;
 		const containerName = "container";
 		let container;
 
@@ -310,6 +310,7 @@ describe("Interface & initialization", () => {
 	});
 
 	describe("set defaults options", () => {
+		let chart;
 		let tickPrefix = "-A-";
 		let args: any = {
 			data: {
@@ -449,6 +450,7 @@ describe("Interface & initialization", () => {
 	});
 
 	describe("check for lazy rendering", () => {
+		let chart;
 		const spy: any = {};
 		const args: any = {
 			data: {
@@ -584,6 +586,7 @@ describe("Interface & initialization", () => {
 	});
 
 	describe("check for background", () => {
+		let chart;
 		const args: any = {
 			data: {
 				columns: [
