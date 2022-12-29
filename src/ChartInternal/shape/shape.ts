@@ -48,10 +48,10 @@ export default {
 
 		const $$ = this;
 		const isRotated = $$.config.axis_rotated;
-		const {hasRadar} = $$.state;
+		const {hasRadar, hasTreemap} = $$.state;
 		const shape = {type: <TShape>{}, indices: <TShape>{}, pos: {}};
 
-		["bar", "candlestick", "line", "area"].forEach(v => {
+		!hasTreemap && ["bar", "candlestick", "line", "area"].forEach(v => {
 			const name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
 
 			if ($$.hasType(v) || $$.hasTypeOf(name) || (
@@ -65,10 +65,15 @@ export default {
 			}
 		});
 
-		if (!$$.hasArcType() || hasRadar) {
+		if (!$$.hasArcType() || hasRadar || hasTreemap) {
+			let cx;
+			let cy;
+
 			// generate circle x/y functions depending on updated params
-			const cx = hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX);
-			const cy = hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY);
+			if (!hasTreemap) {
+				cx = hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX);
+				cy = hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY);
+			}
 
 			shape.pos = {
 				xForText: $$.generateXYForText(shape.indices, true),

@@ -105,7 +105,7 @@ export default {
 	 */
 	getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color): string {
 		const $$ = this;
-		const {api, config, state} = $$;
+		const {api, config, state, $el} = $$;
 
 		let [titleFormat, nameFormat, valueFormat] = ["title", "name", "value"].map(v => {
 			const fn = config[`tooltip_format_${v}`];
@@ -116,7 +116,7 @@ export default {
 		titleFormat = titleFormat || defaultTitleFormat;
 		nameFormat = nameFormat || (name => name);
 		valueFormat = valueFormat || (
-			$$.isStackNormalized() ? (v, ratio) => `${(ratio * 100).toFixed(2)}%` : defaultValueFormat
+			state.hasTreemap || $$.isStackNormalized() ? (v, ratio) => `${(ratio * 100).toFixed(2)}%` : defaultValueFormat
 		);
 
 		const order = config.tooltip_order;
@@ -183,8 +183,9 @@ export default {
 				});
 			}
 
-			if (!row.ratio && $$.$el.arcs) {
-				row.ratio = $$.getRatio("arc", $$.$el.arcs.select(`path.${$ARC.arc}-${row.id}`).data()[0]);
+			if (!row.ratio && $el.arcs) {
+				param = ["arc", $$.$el.arcs.select(`path.${$ARC.arc}-${row.id}`).data()[0]];
+				row.ratio = $$.getRatio(...param);
 			}
 
 			param = [row.ratio, row.id, row.index, d];
@@ -271,6 +272,7 @@ export default {
 		const {config, scale, state} = $$;
 		const {width, height, current, isLegendRight, inputType, event} = state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
+		const hasTreemap = state.hasTreemap;
 		const svgLeft = $$.getSvgLeft(true);
 		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
 		const chartLeft = $$.getCurrentPaddingLeft(true);
@@ -285,7 +287,7 @@ export default {
 				y += hasGauge ? height : height / 2;
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
 			}
-		} else {
+		} else if (!hasTreemap) {
 			const dataScale = scale.x(dataToShow[0].x);
 
 			if (config.axis_rotated) {
@@ -294,17 +296,19 @@ export default {
 				chartRight -= svgLeft;
 			} else {
 				y -= 5;
-				x = svgLeft + chartLeft + size + ($$.scale.zoom ? x : dataScale);
+				x = svgLeft + chartLeft + size + (scale.zoom ? x : dataScale);
 			}
 		}
 
 		// when tooltip left + tWidth > chart's width
 		if ((x + tWidth + 15) > chartRight) {
-			x -= tWidth + chartLeft;
+			x -= tWidth + (hasTreemap ? 0 : chartLeft);
 		}
 
 		if (y + tHeight > current.height) {
-			y -= hasGauge ? tHeight * 3 : tHeight + 30;
+			const gap = hasTreemap ? 0 : 30;
+
+			y -= hasGauge ? tHeight * 3 : tHeight + gap;
 		}
 
 		const pos = {top: y, left: x};

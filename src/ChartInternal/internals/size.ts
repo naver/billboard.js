@@ -100,7 +100,7 @@ export default {
 		let padding;
 
 		if (isValue(config.padding_right)) {
-			padding = config.padding_right + 1; // 1 is needed not to hide tick line
+			padding = config.padding_right + (hasAxis ? 1 : 0); // 1 is needed not to hide tick line
 		} else if ($$.axis && config.axis_rotated) {
 			padding = defaultPadding + legendWidthOnRight;
 		} else if ($$.axis && (!config.axis_y2_show || config.axis_y2_inner)) { // && !config.axis_rotated
@@ -232,6 +232,17 @@ export default {
 		}
 	},
 
+	getCurrentPadding(): {top: number, bottom: number, left: number, right: number} {
+		const $$ = this;
+
+		return {
+			top: $$.getCurrentPaddingTop(),
+			bottom: $$.getCurrentPaddingBottom(),
+			left: $$.getCurrentPaddingLeft(),
+			right: $$.getCurrentPaddingRight()
+		};
+	},
+
 	/**
 	 * Get resetted padding values when 'padding=false' option is set
 	 * https://github.com/naver/billboard.js/issues/2367
@@ -239,14 +250,14 @@ export default {
 	 * @returns {number|object} Padding value
 	 * @private
 	 */
-	getResettedPadding<T = number | {[key: string]: string;}>(v: T): T {
+	getResettedPadding<T = number | {[key: string]: string}>(v: T): T {
 		const $$ = this;
 		const {config} = $$;
 		const isNum = isNumber(v);
-		let p = isNum ? 0 : {};
+		let p: any = isNum ? 0 : {};
 
 		if (config.padding === false) {
-			!isNum && Object.keys(v).forEach(key => {
+			!isNum && Object.keys(v as object).forEach(key => {
 				// when data.lables=true, do not reset top padding
 				p[key] = (
 					!isEmpty(config.data_labels) &&
@@ -270,7 +281,7 @@ export default {
 		const $$ = this;
 		const {config, state, $el: {legend}} = $$;
 		const isRotated = config.axis_rotated;
-		const hasArc = $$.hasArcType();
+		const isNonAxis = $$.hasArcType() || state.hasTreemap;
 
 		!isInit && $$.setContainerSize();
 
@@ -279,29 +290,31 @@ export default {
 			height: legend ? $$.getLegendHeight() : 0
 		};
 
-		if (!hasArc && config.axis_x_show && config.axis_x_tick_autorotate) {
+		if (!isNonAxis && config.axis_x_show && config.axis_x_tick_autorotate) {
 			$$.updateXAxisTickClip();
 		}
 
 		const legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height;
-		const xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x");
+		const xAxisHeight = isRotated || isNonAxis ? 0 : $$.getHorizontalAxisHeight("x");
 
 		const subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ?
 			xAxisHeight : 30;
-		const subchartHeight = config.subchart_show && !hasArc ?
+		const subchartHeight = config.subchart_show && !isNonAxis ?
 			(config.subchart_size_height + subchartXAxisHeight) : 0;
 
+		const padding = $$.getCurrentPadding();
+
 		// for main
-		state.margin = !hasArc && isRotated ? {
-			top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
-			right: hasArc ? 0 : $$.getCurrentPaddingRight(true),
-			bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-			left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
+		state.margin = !isNonAxis && isRotated ? {
+			top: $$.getHorizontalAxisHeight("y2") + padding.top,
+			right: isNonAxis ? 0 : $$.getCurrentPaddingRight(true),
+			bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + padding.bottom,
+			left: subchartHeight + (isNonAxis ? 0 : padding.left)
 		} : {
-			top: 4 + $$.getCurrentPaddingTop(), // for top tick text
-			right: hasArc ? 0 : $$.getCurrentPaddingRight(true),
-			bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-			left: hasArc ? 0 : $$.getCurrentPaddingLeft()
+			top: 4 + padding.top, // for top tick text
+			right: isNonAxis ? 0 : $$.getCurrentPaddingRight(true),
+			bottom: xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
+			left: isNonAxis ? 0 : padding.left
 		};
 
 		state.margin = $$.getResettedPadding(state.margin);
@@ -355,19 +368,21 @@ export default {
 		}
 
 		// for arc
-		const hasGauge = $$.hasType("gauge");
-		const isLegendRight = config.legend_show && state.isLegendRight;
+		if ($$.hasArcType()) {
+			const hasGauge = $$.hasType("gauge");
+			const isLegendRight = config.legend_show && state.isLegendRight;
 
-		state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
-		state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
+			state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
+			state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
 
-		if (hasGauge && !config.gauge_fullCircle) {
-			state.arcHeight += state.height - $$.getPaddingBottomForGauge();
+			if (hasGauge && !config.gauge_fullCircle) {
+				state.arcHeight += state.height - $$.getPaddingBottomForGauge();
+			}
+
+			$$.updateRadius?.();
 		}
 
-		$$.updateRadius?.();
-
-		if (state.isLegendRight && hasArc) {
+		if (state.isLegendRight && isNonAxis) {
 			state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
 		}
 	}

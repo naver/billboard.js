@@ -40,6 +40,7 @@ export default class State {
 
 			hasAxis: false,
 			hasRadar: false,
+			hasTreemap: false,
 
 			// for data CSS rule index (used when boost.useCssRule is true)
 			cssRule: {},

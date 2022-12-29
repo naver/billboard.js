@@ -175,6 +175,10 @@ export default {
 		return this.isTypeOf(d, "scatter");
 	},
 
+	isTreemapType(d): boolean {
+		return this.isTypeOf(d, "treemap");
+	},
+
 	isPieType(d): boolean {
 		return this.isTypeOf(d, "pie");
 	},
@@ -241,7 +245,8 @@ export default {
 			this.isScatterType(d) ||
 			this.isBubbleType(d) ||
 			this.isCandlestickType(d) ||
-			this.isRadarType(d) ? d.values.filter(v => isNumber(v.value) || Boolean(v.value)) : [];
+			this.isRadarType(d) ||
+			this.isTreemapType(d) ? d.values.filter(v => isNumber(v.value) || Boolean(v.value)) : [];
 	},
 
 	barLineBubbleData(d) {

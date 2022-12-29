@@ -99,6 +99,7 @@ export default {
 	 * - scatter
 	 * - spline
 	 * - step
+	 * - treemap
 	 * @name data․type
 	 * @memberof Options
 	 * @type {string}
@@ -127,7 +128,8 @@ export default {
 	 *   radar,
 	 *   scatter,
 	 *   spline,
-	 *   step
+	 *   step,
+	 *   treemap
 	 * }
 	 *
 	 * bb.generate({
@@ -142,7 +144,7 @@ export default {
 	/**
 	 * Set chart type for each data.<br>
 	 * This setting overwrites data.type setting.
-	 * - **NOTE:** `radar` type can't be combined with other types.
+	 * - **NOTE:** `radar` and `treemap` type can't be combined with other types.
 	 * @name data․types
 	 * @memberof Options
 	 * @type {object}
@@ -174,7 +176,8 @@ export default {
 	 *   radar,
 	 *   scatter,
 	 *   spline,
-	 *   step
+	 *   step,
+	 *   treemap
 	 * }
 	 *
 	 * bb.generate({

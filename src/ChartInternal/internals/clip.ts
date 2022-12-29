@@ -7,19 +7,22 @@ import {document, window} from "../../module/browser";
 export default {
 	initClip(): void {
 		const $$ = this;
-		const {clip} = $$.state;
+		const {clip, hasAxis} = $$.state;
 
 		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
 		clip.id = `${$$.state.datetimeId}-clip`;
-		clip.idXAxis = `${clip.id}-xaxis`;
-		clip.idYAxis = `${clip.id}-yaxis`;
-		clip.idGrid = `${clip.id}-grid`;
 
-		// Define 'clip-path' attribute values
-		clip.path = $$.getClipPath(clip.id);
-		clip.pathXAxis = $$.getClipPath(clip.idXAxis);
-		clip.pathYAxis = $$.getClipPath(clip.idYAxis);
-		clip.pathGrid = $$.getClipPath(clip.idGrid);
+		if (hasAxis) {
+			clip.idXAxis = `${clip.id}-xaxis`;
+			clip.idYAxis = `${clip.id}-yaxis`;
+			clip.idGrid = `${clip.id}-grid`;
+
+			// Define 'clip-path' attribute values
+			clip.path = $$.getClipPath(clip.id);
+			clip.pathXAxis = $$.getClipPath(clip.idXAxis);
+			clip.pathYAxis = $$.getClipPath(clip.idYAxis);
+			clip.pathGrid = $$.getClipPath(clip.idGrid);
+		}
 	},
 
 	getClipPath(id: string): string | null {

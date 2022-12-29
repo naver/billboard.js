@@ -88,7 +88,9 @@ describe("ESM build", function() {
 
                     } else if (v === "polar") {
                         path = chart.$.main.selectAll("path").attr("d");
-
+                    
+                    } else if (v === "treemap") {
+                        path = chart.$.main.selectAll("rect").size();
                     } else {
                         // donut, gauge, pie
                         path = chart.$.arc.selectAll("path").attr("d");

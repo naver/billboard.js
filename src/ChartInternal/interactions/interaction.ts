@@ -4,7 +4,7 @@
  */
 import {select as d3Select} from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
-import {$ARC, $AXIS, $COMMON, $SHAPE} from "../../config/classes";
+import {$ARC, $AXIS, $COMMON, $SHAPE, $TREEMAP} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {emulateEvent, getPointer, isNumber, isObject} from "../../module/util";
 import type {IArcDataRow} from "../data/IData";
@@ -111,17 +111,19 @@ export default {
 	 */
 	setOverOut(isOver: boolean, d: number | IArcDataRow): void {
 		const $$ = this;
-		const {config, state: {hasRadar}, $el: {main}} = $$;
-		const isArc = isObject(d);
+		const {config, state: {hasRadar, hasTreemap}, $el: {main}} = $$;
+		const isArcTreemap = isObject(d);
 
 		// Call event handler
-		if (isArc || d !== -1) {
+		if (isArcTreemap || d !== -1) {
 			const callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
 
-			config.color_onover && $$.setOverColor(isOver, d, isArc);
+			config.color_onover && $$.setOverColor(isOver, d, isArcTreemap);
 
-			if (isArc && "id") {
-				callback(d, main.select(`.${$ARC.arc}${$$.getTargetSelectorSuffix((d as IArcDataRow).id)}`).node());
+			if (isArcTreemap && "id") {
+				const selector = hasTreemap ? $TREEMAP.treemap : $ARC.arc;
+
+				callback(d, main.select(`.${selector}${$$.getTargetSelectorSuffix((d as IArcDataRow).id)}`).node());
 			} else if (!config.tooltip_grouped) {
 				const last = $$.cache.get(KEY.setOverOut) || [];
 
@@ -222,36 +224,43 @@ export default {
 	 */
 	dispatchEvent(type: string, index: number, mouse): void {
 		const $$ = this;
-		const {config, state: {eventReceiver, hasAxis, hasRadar}, $el: {eventRect, arcs, radar}} = $$;
-		const isMultipleX = $$.isMultipleX();
+		const {config, state: {
+			eventReceiver, hasAxis, hasRadar, hasTreemap
+		}, $el: {eventRect, arcs, radar, treemap}} = $$;
 		const element = (
-			hasRadar ? radar.axes.select(`.${$AXIS.axis}-${index} text`) : (
-				eventRect || arcs.selectAll(`.${$COMMON.target} path`).filter((d, i) => i === index)
+			(hasTreemap && eventReceiver.rect) ||
+			(hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`)) || (
+				eventRect || arcs?.selectAll(`.${$COMMON.target} path`).filter((d, i) => i === index)
 			)
-		).node();
+		)?.node();
 
-		let {width, left, top} = element.getBoundingClientRect();
+		if (element) {
+			const isMultipleX = $$.isMultipleX();
+			let {width, left, top} = element.getBoundingClientRect();
 
-		if (hasAxis && !hasRadar && !isMultipleX) {
-			const coords = eventReceiver.coords[index];
+			if (hasAxis && !hasRadar && !isMultipleX) {
+				const coords = eventReceiver.coords[index];
 
-			width = coords.w;
-			left += coords.x;
-			top += coords.y;
+				width = coords.w;
+				left += coords.x;
+				top += coords.y;
+			}
+
+			const x = left + (mouse ? mouse[0] : 0) + (
+				isMultipleX || config.axis_rotated ? 0 : (width / 2)
+			);
+			const y = top + (mouse ? mouse[1] : 0);
+			const params = {
+				screenX: x,
+				screenY: y,
+				clientX: x,
+				clientY: y
+			};
+
+			emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](
+				hasTreemap ? treemap.node() : element,
+				type, params);
 		}
-
-		const x = left + (mouse ? mouse[0] : 0) + (
-			isMultipleX || config.axis_rotated ? 0 : (width / 2)
-		);
-		const y = top + (mouse ? mouse[1] : 0);
-		const params = {
-			screenX: x,
-			screenY: y,
-			clientX: x,
-			clientY: y
-		};
-
-		emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](element, type, params);
 	},
 
 	setDragStatus(isDragging: boolean): void {
@@ -278,7 +287,7 @@ export default {
 	 */
 	unbindAllEvents():	void {
 		const $$ = this;
-		const {$el: {arcs, eventRect, legend, region, svg}, brush} = $$;
+		const {$el: {arcs, eventRect, legend, region, svg, treemap}, brush} = $$;
 		const list = [
 			"wheel",
 			"click",
@@ -299,7 +308,7 @@ export default {
 		].join(" ");
 
 		// detach all possible event types
-		[svg, eventRect, region?.list, brush?.getSelection(), arcs?.selectAll("path"), legend?.selectAll("g")]
+		[svg, eventRect, region?.list, brush?.getSelection(), arcs?.selectAll("path"), legend?.selectAll("g"), treemap]
 			.forEach(v => v?.on(list, null));
 
 		$$.unbindZoomEvent?.();

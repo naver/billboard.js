@@ -106,7 +106,8 @@ export default {
 		const {$el} = this;
 
 		$el.main.select(`.${$COMMON.chart}`).append("g")
-			.attr("class", $TEXT.chartTexts);
+			.attr("class", $TEXT.chartTexts)
+			.style("pointer-events", $el.treemap ? "none" : null);
 	},
 
 	/**
@@ -120,9 +121,10 @@ export default {
 		const classTexts = $$.getClass("texts", "id");
 
 		const classFocus = $$.classFocus.bind($$);
-		const mainTextUpdate = $$.$el.main.select(`.${$TEXT.chartTexts}`).selectAll(`.${$TEXT.chartText}`)
+		const mainTextUpdate = $$.$el.main.select(`.${$TEXT.chartTexts}`)
+			.selectAll(`.${$TEXT.chartText}`)
 			.data(targets)
-			.attr("class", d => classChartText(d) + classFocus(d));
+			.attr("class", d => `${classChartText(d)}${classFocus(d)}`.trim());
 
 		const mainTextEnter = mainTextUpdate.enter().append("g")
 			.style("opacity", "0")
@@ -141,6 +143,7 @@ export default {
 		const $$ = this;
 		const {$el, $T, config} = $$;
 		const classText = $$.getClass("text", "index");
+		const labelsCentered = config.data_labels.centered;
 
 		const text = $el.main.selectAll(`.${$TEXT.texts}`)
 			.selectAll(`.${$TEXT.text}`)
@@ -162,6 +165,8 @@ export default {
 					const data = $$.getCandlestickData(d);
 
 					isEndAnchor = !data?._isUp;
+				} else if ($$.isTreemapType(d)) {
+					return labelsCentered ? "middle" : "start";
 				}
 
 				return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
@@ -182,7 +187,8 @@ export default {
 					}
 				}
 
-				value = $$.dataLabelFormat(d.id)(value, d.id, i, texts);
+				value = $$.isTreemapType(d) ? $$.treemapDataLabelFormat(d)(node) :
+					$$.dataLabelFormat(d.id)(value, d.id, i, texts);
 
 				if (isNumber(value)) {
 					this.textContent = value;
@@ -196,7 +202,8 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 		const labelColors = config.data_labels_colors;
-		const defaultColor = $$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d);
+		const defaultColor = ($$.isArcType(d) && !$$.isRadarType(d)) || $$.isTreemapType(d) ?
+			null : $$.color(d);
 		let color;
 
 		if (isString(labelColors)) {
@@ -257,13 +264,15 @@ export default {
 	 */
 	redrawText(getX, getY, forFlow?: boolean, withTransition?: boolean): true {
 		const $$ = this;
-		const {$T, axis, config} = $$;
+		const {$T, axis, config, state: {hasTreemap}} = $$;
 		const t = <string>getRandom(true);
 		const isRotated = config.axis_rotated;
 		const angle = config.data_labels.rotate;
-
 		const anchorString = getRotateAnchor(angle);
 		const rotateString = angle ? `rotate(${angle})` : "";
+
+
+		// $$.meetsLabelThreshold(ratio,
 
 		$$.$el.text
 			.style("fill", $$.getStylePropValue($$.updateTextColor))
@@ -271,7 +280,7 @@ export default {
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
 			.each(function(d: IDataRow, i: number) {
 				// do not apply transition for newly added text elements
-				const node = $T(this, !!(withTransition && this.getAttribute("x")), t);
+				const node = $T(hasTreemap && this.childElementCount ? this.parentNode : this, !!(withTransition && this.getAttribute("x")), t);
 				const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
 				let pos = {
 					x: getX.bind(this)(d, i),
@@ -341,11 +350,13 @@ export default {
 	 */
 	generateXYForText(indices, forX?: boolean): (d, i) => number {
 		const $$ = this;
+		const {state: {hasRadar, hasTreemap}} = $$;
 		const types = Object.keys(indices);
 		const points = {};
 		const getter = forX ? $$.getXForText : $$.getYForText;
 
-		$$.hasType("radar") && types.push("radar");
+		hasRadar && types.push("radar");
+		hasTreemap && types.push("treemap");
 
 		types.forEach(v => {
 			points[v] = $$[`generateGet${capitalize(v)}Points`](indices[v], false);
@@ -355,7 +366,8 @@ export default {
 			const type = ($$.isAreaType(d) && "area") ||
 				($$.isBarType(d) && "bar") ||
 				($$.isCandlestickType(d) && "candlestick") ||
-				($$.isRadarType(d) && "radar") || "line";
+				($$.isRadarType(d) && "radar") ||
+				($$.isTreemapType(d) && "treemap") || "line";
 
 			return getter.call($$, points[type](d, i), d, this);
 		};
@@ -366,34 +378,44 @@ export default {
 	 * @param {object} d Data object
 	 * @param {Array} points Data points position
 	 * @param {HTMLElement} textElement Data label text element
+	 * @param {string} type 'x' or 'y'
 	 * @returns {number} Position value
 	 * @private
 	 */
-	getCenteredTextPos(d, points, textElement): number {
+	getCenteredTextPos(d, points, textElement, type: "x" | "y"): number {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
+		const isBarType = $$.isBarType(d);
+		const isTreemapType = $$.isTreemapType(d);
 
-		if (config.data_labels.centered && $$.isBarType(d)) {
+		if (config.data_labels.centered && (isBarType || isTreemapType)) {
 			const rect = getBoundingRect(textElement);
-			const isPositive = d.value >= 0;
 
-			if (isRotated) {
-				const w = (
-					isPositive ?
-						points[1][1] - points[0][1] :
-						points[0][1] - points[1][1]
-				) / 2 + (rect.width / 2);
+			if (isBarType) {
+				const isPositive = d.value >= 0;
 
-				return isPositive ? -w - 3 : w + 2;
-			} else {
-				const h = (
-					isPositive ?
-						points[0][1] - points[1][1] :
-						points[1][1] - points[0][1]
-				) / 2 + (rect.height / 2);
+				if (isRotated) {
+					const w = (
+						isPositive ?
+							points[1][1] - points[0][1] :
+							points[0][1] - points[1][1]
+					) / 2 + (rect.width / 2);
 
-				return isPositive ? h : -h - 2;
+					return isPositive ? -w - 3 : w + 2;
+				} else {
+					const h = (
+						isPositive ?
+							points[0][1] - points[1][1] :
+							points[1][1] - points[0][1]
+					) / 2 + (rect.height / 2);
+
+					return isPositive ? h : -h - 2;
+				}
+			} else if (isTreemapType) {
+				return type === "x" ?
+					(points[1][0] - points[0][0]) / 2 :
+					(points[1][1] - points[0][1]) / 2 + (rect.height / 2);
 			}
 		}
 
@@ -425,6 +447,7 @@ export default {
 		const $$ = this;
 		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
+		const isTreemapType = $$.isTreemapType(d);
 		let xPos = points[0][0];
 
 		if ($$.isCandlestickType(d)) {
@@ -434,6 +457,8 @@ export default {
 			} else {
 				xPos += (points[1][0] - xPos) / 2;
 			}
+		} else if (isTreemapType) {
+			xPos += config.data_labels.centered ? 0 : 5;
 		} else {
 			if (isRotated) {
 				const padding = $$.isBarType(d) ? 4 : 6;
@@ -455,8 +480,8 @@ export default {
 			}
 		}
 
-		if (isRotated) {
-			xPos += $$.getCenteredTextPos(d, points, textElement);
+		if (isRotated || isTreemapType) {
+			xPos += $$.getCenteredTextPos(d, points, textElement, "x");
 		}
 
 		return xPos + $$.getTextPos(d.id, "x");
@@ -476,6 +501,7 @@ export default {
 		const isRotated = config.axis_rotated;
 		const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
 		const isBarType = $$.isBarType(d);
+		const isTreemapType = $$.isTreemapType(d);
 		const r = config.point_r;
 		const rect = getBoundingRect(textElement);
 		let {value} = d;
@@ -497,6 +523,8 @@ export default {
 					yPos += 15 * (value._isUp ? 1 : -1);
 				}
 			}
+		} else if (isTreemapType) {
+			yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);
 		} else {
 			if (isRotated) {
 				yPos = (points[0][0] + points[2][0] + rect.height * 0.6) / 2;
@@ -540,8 +568,8 @@ export default {
 			}
 		}
 
-		if (!isRotated) {
-			yPos += $$.getCenteredTextPos(d, points, textElement);
+		if (!isRotated || isTreemapType) {
+			yPos += $$.getCenteredTextPos(d, points, textElement, "y");
 		}
 
 		return yPos + $$.getTextPos(d.id, "y");
@@ -601,7 +629,7 @@ export default {
 	 * @returns {boolean}
 	 * @private
 	 */
-	meetsLabelThreshold(ratio: number = 0, type: "bar" | "donut" | "gauge" | "pie" | "polar"): boolean {
+	meetsLabelThreshold(ratio: number = 0, type: "bar" | "donut" | "gauge" | "pie" | "polar" | "treemap"): boolean {
 		const $$ = this;
 		const {config} = $$;
 		const threshold = config[`${type}_label_threshold`] || 0;

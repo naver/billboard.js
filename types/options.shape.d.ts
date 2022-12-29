@@ -631,3 +631,34 @@ export interface LinearGradientOptions {
 	 */
 	stops?: Array<[number, string | null | ((this: Chart, id: string) => string), number]>;
 }
+
+export interface TreemapOptions {
+	/**
+	 * Treemap tile type
+	 * - **Available tile type values:**
+	 *  - binary (d3.treemapBinary)
+	 *  - dice (d3.treemapDice)
+	 * 	- slice (d3.treemapSlice)
+	 * 	- sliceDice (d3.treemapSliceDice)
+	 * 	- squrify (d3.treemapSquarify)
+	 * 	- resquarify (d3.treemapResquarify)
+	 */
+	tile?: string;
+
+	label?: {
+		/**
+		 * Show or hide label text.
+		 */
+		show?: boolean;
+
+		/**
+		 * Set formatter for the label.
+		 */
+		format?: (this: Chart, value: number, ratio: number, id: string) => string;
+
+		/**
+		 * Set threshold ratio to show/hide labels.
+		 */
+		threshold?: number
+	};
+}

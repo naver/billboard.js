@@ -954,7 +954,127 @@ var demos = {
 					}, 1000)
 				];
 			}
-		}
+		},
+		TreemapChart: [
+			{
+				options: {
+					title: {
+						text: "'binary' tile",
+					},
+					padding: {
+						top: 10,
+						bottom: 15
+					},
+					data: {
+						columns: [
+							["data1", 1300],
+							["data2", 200],
+							["data3", 500],
+							["data4", 50],
+							["data5", 100],
+							["data6", 70],
+							["data7", 200],
+							["data8", 133],
+							["data9", 220],
+							["data10", 15],
+						],
+						type: "treemap",
+						labels: {
+							colors: "#fff"
+						}
+					},
+					treemap: {
+						label:{
+							threshold: 0.03
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() {
+							chart.load({
+								columns: [
+									["data4", 1000],
+									["data5", 280],
+								],
+								unload: ["data1"]
+							});
+						}, 1500)
+					];
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "'dice' tile",
+					},
+					padding: {
+						top: 10,
+						bottom: 15
+					},
+					data: {
+						rows: [
+							["data1", "data2", "data3", "data4"],
+							[300, 200, 500, 380]
+						],
+						type: "treemap",
+						order: "asc",
+						labels: {
+							colors: {
+								data1: "red",
+								data2: "#fff",
+								data3: "blue",
+								data4: "purple"
+							},
+							centered: true
+						}
+					},
+					tooltip: {
+						format: {
+							value: function(value, ratio, id, index) { 
+								return value;
+							}
+						}
+					},
+					treemap: {
+						tile: "dice",
+						label: {
+							format: function(value, ratio, id) {
+								return value;
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "'slice' tile",
+					},
+					padding: {
+						top: 10
+					},
+					data: {
+						json: [
+							{"data1": 250, "data2": 200, "data3": 250, "data4": 150, "data5": 150}
+						],
+						keys: {
+							value: ["data1", "data2", "data3", "data4", "data5"]
+						},
+						type: "treemap",
+						labels: {
+							centered: true,
+							colors: "#000",
+							backgroundColors: "yellow",
+						},
+						order: null
+					},
+					treemap: {
+						tile: "slice"
+					}
+				}
+			},
+		]
 	},
 	Axis: {
 		AdditionalYAxis: {
