@@ -1,3 +1,10 @@
+# [3.7.0-next.2](https://github.com/naver/billboard.js/compare/3.7.0-next.1...3.7.0-next.2) (2022-12-29)
+
+
+### Features
+
+* **treemap:** Intent to ship treemap type ([9809ef1](https://github.com/naver/billboard.js/commit/9809ef1a74c65a50797ac60ffdb711a0bf85281b)), closes [#123](https://github.com/naver/billboard.js/issues/123) [#3002](https://github.com/naver/billboard.js/issues/3002) [#3004](https://github.com/naver/billboard.js/issues/3004) [#3006](https://github.com/naver/billboard.js/issues/3006) [#3007](https://github.com/naver/billboard.js/issues/3007) [#3008](https://github.com/naver/billboard.js/issues/3008)
+
 # [3.7.0-next.1](https://github.com/naver/billboard.js/compare/3.6.3...3.7.0-next.1) (2022-12-07)
 
 
