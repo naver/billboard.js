@@ -9,6 +9,7 @@
 const legend = {
 	/**
 	 * Show legend for each target.
+	 * - **NOTE:** Legend APIs aren't supported for `treemap` type.
 	 * @function legend․show
 	 * @instance
 	 * @memberof Chart

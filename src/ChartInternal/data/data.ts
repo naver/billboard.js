@@ -603,11 +603,11 @@ export default {
 
 	/**
 	 * Get data.order compare function
-	 * @param {boolean} isArc Is for Arc type sort or not
+	 * @param {boolean} isReversed for Arc & Treemap type sort order needs to be reversed
 	 * @returns {Function} compare function
 	 * @private
 	 */
-	getSortCompareFn(isArc = false): Function | null {
+	getSortCompareFn(isReversed = false): Function | null {
 		const $$ = this;
 		const {config} = $$;
 		const order = config.data_order;
@@ -622,7 +622,7 @@ export default {
 				const t1Sum = "values" in t1 ? t1.values.reduce(reducer, 0) : t1.value;
 				const t2Sum = "values" in t2 ? t2.values.reduce(reducer, 0) : t2.value;
 
-				return isArc ?
+				return isReversed ?
 					(orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
 					(orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum);
 			};
@@ -960,6 +960,8 @@ export default {
 
 				// when all data are 0, return 0
 				ratio = max === 0 ? 0 : Math.abs(d.value) / max;
+			} else if (type === "treemap") {
+				ratio /= $$.getTotalDataSum(true);
 			}
 		}
 

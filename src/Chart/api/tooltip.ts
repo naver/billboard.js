@@ -41,6 +41,13 @@ const tooltip = {
 	 *    x: new Date("2018-01-02 00:00")
 	 *  });
 	 *
+	 *  // treemap type can be shown by using "id" only.
+	 *  chart.tooltip.show({
+	 *    data: {
+	 *        id: "data1"  // data id
+	 *    }
+	 *  });
+	 *
 	 *  // when data.xs is used
 	 *  chart.tooltip.show({
 	 *    data: {
@@ -61,7 +68,7 @@ const tooltip = {
 	 */
 	show: function(args): void {
 		const $$ = this.internal;
-		const {config, state: {inputType}} = $$;
+		const {$el, config, state: {eventReceiver, hasTreemap, inputType}} = $$;
 		let index;
 		let mouse;
 
@@ -75,7 +82,9 @@ const tooltip = {
 			const {data} = args;
 			const y = $$.getYScaleById(data.id)(data.value);
 
-			if ($$.isMultipleX()) {
+			if (hasTreemap && data.id) {
+				eventReceiver.rect = $el.main.select(`${$$.selectorTarget(data.id, undefined, "rect")}`);
+			} else if ($$.isMultipleX()) {
 				// if multiple xs, target point will be determined by mouse
 				mouse = [$$.scale.x(data.x), y];
 			} else {

@@ -20,7 +20,8 @@ export {
 	radar,
 	scatter,
 	spline,
-	step
+	step,
+	treemap
 } from "./config/resolver/shape";
 
 // interaction module

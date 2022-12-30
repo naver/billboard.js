@@ -172,6 +172,12 @@ export const $TOOLTIP = {
 	tooltipName: "bb-tooltip-name"
 };
 
+export const $TREEMAP = {
+	treemap: "bb-treemap",
+	chartTreemap: "bb-chart-treemap",
+	chartTreemaps: "bb-chart-treemaps"
+};
+
 export const $ZOOM = {
 	buttonZoomReset: "bb-zoom-reset",
 	zoomBrush: "bb-zoom-brush"
@@ -200,5 +206,6 @@ export default {
 	...$SUBCHART,
 	...$TEXT,
 	...$TOOLTIP,
+	...$TREEMAP,
 	...$ZOOM
 };

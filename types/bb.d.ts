@@ -50,6 +50,7 @@ export function radar(): "radar";
 export function scatter(): "scatter";
 export function spline(): "spline";
 export function step(): "step";
+export function treemap(): "treemap";
 
 // interaction modules
 export function selection(): true;

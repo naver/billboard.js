@@ -24,9 +24,11 @@ describe("SHAPE ARC", () => {
 	});
 
 	describe("show pie chart", () => {
+		let instChart;
+
 		before(() => {
 			return new Promise((resolve) => {
-				chart = util.generate({
+				instChart = util.generate({
 					data: {
 						columns: [
 							["data1", 30],
@@ -41,7 +43,7 @@ describe("SHAPE ARC", () => {
 		});
 
 		it("should have correct classes", () => {
-			const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
+			const chartArc = instChart.$.main.select(`.${$ARC.chartArcs}`);
 			const selector = {
 				arc: `.${$ARC.chartArc}.${$COMMON.target}.${$COMMON.target}`,
 				shapes: `g.${$SHAPE.shapes}.${$ARC.arcs}.${$ARC.arcs}`,
@@ -66,26 +68,27 @@ describe("SHAPE ARC", () => {
 		});
 
 		it("should have correct d", () => {
-			const main = chart.$.main;
+			const main = instChart.$.main;
 
 			expect(main.select(`.${$ARC.arc}-data1`).attr("d"))
-				.to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
+			 	.to.be.equal("M-124.522,-171.39A211.85,211.85,0,0,1,0,-211.85L0,0Z");
 
+			
 			expect(main.select(`.${$ARC.arc}-data2`).attr("d"))
-				.to.match(/M1\..+,-211\..+A211\..+,211\..+,0,0,1,1\..+,211\..+L0,0Z/);
-
+				.to.be.equal("M0,-211.85A211.85,211.85,0,0,1,0,211.85L0,0Z");
+			
 			expect(main.select(`.${$ARC.arc}-data3`).attr("d"))
-				.to.match(/M1\..+,211\..+A211\..+,211\..+,0,0,1,-124\..+,-171\..+L0,0Z/);
+				.to.be.equal("M0,211.85A211.85,211.85,0,0,1,-124.522,-171.39L0,0Z");
 		});
 
 		it("check when hiding data", () => {
-			const arc = chart.$.arc;
+			const arc = instChart.$.arc;
 			let total = 0;
 
 			// when
-			chart.hide("data1");
+			instChart.hide("data1");
 
-			chart.data.shown().map(v => v.id)
+			instChart.data.shown().map(v => v.id)
 				.forEach(id => total += parseFloat(arc.select(`.${$COMMON.target}-${id} text`).text()));
 
 			expect(total).to.be.equal(100);
@@ -105,7 +108,7 @@ describe("SHAPE ARC", () => {
 
 			setTimeout(() => {
 				expect(chart.$.main.select(`.${$ARC.arc}-black`).attr("d"))
-					.to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
+					.to.be.equal("M-124.522,-171.39A211.85,211.85,0,0,1,0,-211.85L0,0Z");
 
 				done();
 			}, 500);
@@ -113,9 +116,11 @@ describe("SHAPE ARC", () => {
 	});
 
 	describe("Check attribute", () => {
+		let instChart;
+
 		before(() => {
 			return new Promise((resolve) => {
-				chart = util.generate({
+				instChart = util.generate({
 					data: {
 						columns: [
 							["data1", null],
@@ -130,7 +135,7 @@ describe("SHAPE ARC", () => {
 		});
 
 		it("should have correct d attribute", () => {
-			const chartArc = chart.$.main.select(`.${$ARC.chartArcs}`);
+			const chartArc = instChart.$.main.select(`.${$ARC.chartArcs}`);
 			const arcs = {
 				data1: chartArc.select(`${selector.arc}-data1`)
 					.select(`${selector.shapes}-data1`)
@@ -228,16 +233,16 @@ describe("SHAPE ARC", () => {
 			});
 
 			const expectedPath = {
-				data1: "M-8.110822788676742e-14,211.85A211.85,211.85,0,0,1,-201.48132297712823,-65.46525025833276L-47.55282581475767,-15.450849718747406A50,50,0,0,0,-1.9142843494634746e-14,50Z",
-				data2: "M1.2972071219968338e-14,-211.85A211.85,211.85,0,1,1,-8.110822788676742e-14,211.85L-3.06285495914156e-14,80A80,80,0,1,0,4.898587196589413e-15,-80Z",
-				data3: "M-201.48132297712823,-65.46525025833276A211.85,211.85,0,0,1,1.4924438455356651e-13,-211.85L0,0Z"
+				data1: "M0,211.85A211.85,211.85,0,0,1",
+				data2: "M0,-211.85A211.85,211.85,0,1,1,0,211.85",
+				data3: "M-201.481,-65.465A211.85,211.85,0,0,1,0,-211.85L0,0"
 			};
 			
 			expect(chart.internal.state.innerRadius).to.be.deep.equal(innerRadius);
 
 			setTimeout(() => {
 				chart.$.arc.selectAll("path").each(function(d) {
-					expect(this.getAttribute("d")).to.be.equal(expectedPath[d.data.id]);
+					expect(this.getAttribute("d").indexOf(expectedPath[d.data.id]) > -1).to.be.ok;
 				});
 				done();
 			}, 500);
@@ -263,7 +268,7 @@ describe("SHAPE ARC", () => {
 
 				expect(rect.width).to.be.below(337);
 				expect(rect.height).to.be.below(249);
-				expect(rect.width).to.be.equal(rect.height);
+				expect(rect.width).to.be.closeTo(rect.height, 1);
 
 				expect(chart.internal.state.outerRadius).to.be.equal(chart.config("pie.outerRadius"));
 
@@ -291,9 +296,9 @@ describe("SHAPE ARC", () => {
 			});
 
 			const expectedPath = {
-				data1: "M-4.594282438712339e-14,120A120,120,0,0,1,-114.1267819554184,-37.08203932499377L0,0Z",
-				data2: "M4.898587196589413e-15,-80A80,80,0,1,1,-3.06285495914156e-14,80L0,0Z",
-				data3: "M-201.48132297712823,-65.46525025833276A211.85,211.85,0,0,1,1.4924438455356651e-13,-211.85L0,0Z"
+				data1: "M0,120A120,120,0,0,1,-114.127,-37.082L0,0Z",
+				data2: "M0,-80A80,80,0,1,1,0,80L0,0Z",
+				data3: "M-201.481,-65.465A211.85,211.85,0,0,1,0,-211.85L0,0Z"
 			};
 			const expectedTextPos = {
 				data1: "translate(-77.665631459995,56.42738422007736)",
@@ -614,9 +619,9 @@ describe("SHAPE ARC", () => {
 
 		it("check Pie's startingAngle", done => {
 			const expectedPath = [
-				"M-134.1696615971501,163.9479319994803A211.85,211.85,0,0,1,-114.46304349816526,-178.26562813155297L0,0Z",
-				"M178.26562813155286,-114.46304349816538A211.85,211.85,0,0,1,-134.1696615971501,163.9479319994803L0,0Z",
-				"M-114.46304349816526,-178.26562813155297A211.85,211.85,0,0,1,178.26562813155294,-114.46304349816526L0,0Z"
+				"M-134.17,163.948A211.85,211.85,0,0,1,-114.463,-178.266L0,0Z",
+				"M178.266,-114.463A211.85,211.85,0,0,1,-134.17,163.948L0,0Z",
+				"M-114.463,-178.266A211.85,211.85,0,0,1,178.266,-114.463L0,0Z"
 			];
 
 			setTimeout(() => {
@@ -634,9 +639,9 @@ describe("SHAPE ARC", () => {
 
 		it("check Donut's startingAngle", done => {
 			const expectedPath = [
-				"M-39.144129750495274,208.2022084562899A211.85,211.85,0,0,1,-185.91586573647538,-101.56630035330055L-111.54951944188521,-60.93978021198032A127.10999999999999,127.10999999999999,0,0,0,-23.486477850297163,124.92132507377393Z",
-				"M101.56630035330042,-185.91586573647544A211.85,211.85,0,0,1,-39.144129750495274,208.2022084562899L-23.486477850297163,124.92132507377393A127.10999999999999,127.10999999999999,0,0,0,60.93978021198024,-111.54951944188525Z",
-				"M-185.91586573647538,-101.56630035330055A211.85,211.85,0,0,1,101.56630035330053,-185.91586573647538L60.93978021198031,-111.54951944188522A127.10999999999999,127.10999999999999,0,0,0,-111.54951944188521,-60.93978021198032Z"
+				"M-39.144,208.202A211.85,211.85,0,0,1,-185.916,-101.566L-111.55,-60.94A127.11,127.11,0,0,0,-23.486,124.921Z",
+				"M101.566,-185.916A211.85,211.85,0,0,1,-39.144,208.202L-23.486,124.921A127.11,127.11,0,0,0,60.94,-111.55Z",
+				"M-185.916,-101.566A211.85,211.85,0,0,1,101.566,-185.916L60.94,-111.55A127.11,127.11,0,0,0,-111.55,-60.94Z"
 			];
 
 			setTimeout(() => {
@@ -730,6 +735,7 @@ describe("SHAPE ARC", () => {
 	});
 
 	describe("Arc options", () => {
+		let instChart;
 		let args = {
 			data: {
 				columns: [
@@ -747,18 +753,18 @@ describe("SHAPE ARC", () => {
 		beforeEach(() => {
 			return new Promise(resolve => {
 				args.onrendered = resolve;
-				chart = util.generate(args);
+				instChart = util.generate(args);
 			});
 		});
 
 		it("check the corner radius applied correctly.", () => {
 			const expected = [
-				["M57.22067150815714,176.10711868676853", "25,25,0,0,1,37.919005536927386,208.42881643163085"],
-				["M7.105427357601002e-15,-185.1699827185821", "25,25,0,0,1,28.34492908750335,-209.9452011716972"],
-				["M-185.1699827185821,-1.3500311979441904e-13", "25,25,0,0,1,-209.94520117169716,-28.344929087503502"]
+				['M57.221,176.107', '25,25,0,0,1,37.919,208.429'],
+				['M0,-185.17', '25,25,0,0,1,28.345,-209.945'],
+				['M-185.17,0', '25,25,0,0,1,-209.945,-28.345']
 			];
 
-			chart.$.arc.selectAll("path").each(function(d, i) {
+			instChart.$.arc.selectAll("path").each(function(d, i) {
 				const path = this.getAttribute("d").split("A").splice(0, 2);
 
 				expect(path).to.be.deep.equal(expected[i]);
@@ -771,18 +777,18 @@ describe("SHAPE ARC", () => {
 			};
 		});
 
-		it("check the corner radius in 'ratio' value,  applied correctly.", done => {
+		it("check the corner radius in 'ratio' value, applied correctly.", done => {
 			const expected = [
-				["M28.424419731594476,87.48136866168787", "23.75,23.75,0,0,1,7.296034336980716,118.52565284761607"],
-				["M7.105427357601002e-15,-91.98335447242616", "23.75,23.75,0,0,1,29.687500000000007,-114.9791930905327"],
-				["M-91.98335447242614,-7.105427357601002e-14", "23.75,23.75,0,0,1,-114.97919309053266,-29.68750000000009"]
+				['M28.424,87.481', '23.75,23.75,0,0,1,7.296,118.526'],
+				['M0,-91.983', '23.75,23.75,0,0,1,29.688,-114.979'],
+				['M-91.983,0', '23.75,23.75,0,0,1,-114.979,-29.688']
 			];
 
 			// when resizes
-			chart.resize({width: 250});
+			instChart.resize({width: 250});
 
 			setTimeout(() => {
-				chart.$.arc.selectAll("path").each(function(d, i) {
+				instChart.$.arc.selectAll("path").each(function(d, i) {
 					const path = this.getAttribute("d").split("A").splice(0, 2);
 
 					expect(path).to.be.deep.equal(expected[i]);
@@ -804,12 +810,12 @@ describe("SHAPE ARC", () => {
 
 		it("check the corner radius with 'function', applied correctly.", () => {
 			const expected = [
-				["M58.553899896666884,180.21037374937964", "21.185000000000002,21.185000000000002,0,0,1,42.67307510994895,207.50766530579213"],
-				["M1.2972071219968338e-14,-211.85", "211.85,211.85,0,0,1,65.46525025833253,201.4813229771283L39.27915015499951,120.88879378627696"],
-				["M-164.09830437880822,-1.2789769243681803e-13", "42.370000000000005,42.370000000000005,0,0,1,-205.12288047351026,-52.96250000000016"]
+				['M58.554,180.21', '21.185,21.185,0,0,1,42.673,207.508'],
+				['M0,-211.85', '211.85,211.85,0,0,1,65.465,201.481L39.279,120.889'],
+				['M-164.098,0', '42.37,42.37,0,0,1,-205.123,-52.963']
 			];
 
-			chart.$.arc.selectAll("path").each(function(d, i) {
+			instChart.$.arc.selectAll("path").each(function(d, i) {
 				const path = this.getAttribute("d").split("A").splice(0, 2);
 
 				expect(path).to.be.deep.equal(expected[i]);
@@ -839,12 +845,12 @@ describe("SHAPE ARC", () => {
 		});
 
 		it("should exapnd Arc shape correctly on transition.", done => {
-			const {arc} = chart.$;
+			const {arc} = instChart.$;
 			const rx = /^[01]$/;
 			let i = 0;
 
 			// when
-			chart.tooltip.show({ index: 0});
+			instChart.tooltip.show({ index: 0});
 
 			const interval = setInterval(function() {
 				if (i > 10) {

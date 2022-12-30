@@ -290,10 +290,10 @@ export default {
 				});
 		}
 
-		$$.bindEvent();
+		$$.bindRadarEvent();
 	},
 
-	bindEvent(): void {
+	bindRadarEvent(): void {
 		const $$ = this;
 		const {config, state, $el: {radar, svg}} = $$;
 		const focusOnly = config.point_focus_only;

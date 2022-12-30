@@ -26,6 +26,7 @@ import shapeLine from "../../ChartInternal/shape/line";
 import shapePoint from "../../ChartInternal/shape/point";
 import shapePolar from "../../ChartInternal/shape/polar";
 import shapeRadar from "../../ChartInternal/shape/radar";
+import shapeTreemap from "../../ChartInternal/shape/treemap";
 
 // Options
 import optPoint from "../Options/common/point";
@@ -44,6 +45,7 @@ import optGauge from "../Options/shape/gauge";
 import optPie from "../Options/shape/pie";
 import optPolar from "../Options/shape/polar";
 import optRadar from "../Options/shape/radar";
+import optTreemap from "../Options/shape/treemap";
 
 export {
 	area,
@@ -62,7 +64,8 @@ export {
 	radar,
 	scatter,
 	spline,
-	step
+	step,
+	treemap
 };
 
 /**
@@ -148,4 +151,9 @@ let candlestick = (): string => (
 );
 let scatter = (): string => (
 	extendAxis([shapePoint], [optPoint, optScatter]), (scatter = () => TYPE.SCATTER)()
+);
+
+// Non Axis based types
+let treemap = (): string => (
+	extendAxis([shapeTreemap], [optTreemap]), (treemap = () => TYPE.TREEMAP)()
 );

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /**
- * area config options
+ * arc config options
  */
 export default {
 	/**
