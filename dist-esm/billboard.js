@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.3-nightly-20221217004651
+ * @version 3.6.3-nightly-20221230004723
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -18,6 +18,7 @@ import { curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardina
 import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
 import { easeLinear } from 'd3-ease';
 import { interpolate } from 'd3-interpolate';
+import { treemap as treemap$1, hierarchy, treemapBinary, treemapDice, treemapSlice, treemapSliceDice, treemapSquarify, treemapResquarify } from 'd3-hierarchy';
 import { zoomIdentity, zoomTransform, zoom as zoom$2 } from 'd3-zoom';
 
 /**
@@ -62,7 +63,8 @@ var TYPE = {
     RADAR: "radar",
     SCATTER: "scatter",
     SPLINE: "spline",
-    STEP: "step"
+    STEP: "step",
+    TREEMAP: "treemap"
 };
 /**
  * Chart type module and its method from ChartInternal class, needed to be initialized.
@@ -85,7 +87,8 @@ var TYPE_METHOD_NEEDED = {
     RADAR: "initCircle",
     SCATTER: "initCircle",
     SPLINE: "initLine",
-    STEP: "initLine"
+    STEP: "initLine",
+    TREEMAP: "initTreemap"
 };
 /**
  * chart types by category
@@ -149,9 +152,7 @@ var _assign = function __assign() {
   _assign = Object.assign || function (t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
     }
     return t;
   };
@@ -1028,11 +1029,16 @@ var $TOOLTIP = {
     tooltipContainer: "bb-tooltip-container",
     tooltipName: "bb-tooltip-name"
 };
+var $TREEMAP = {
+    treemap: "bb-treemap",
+    chartTreemap: "bb-chart-treemap",
+    chartTreemaps: "bb-chart-treemaps"
+};
 var $ZOOM = {
     buttonZoomReset: "bb-zoom-reset",
     zoomBrush: "bb-zoom-brush"
 };
-var CLASS = _assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM);
+var CLASS = _assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM);
 
 /**
  * Elements class.
@@ -1133,6 +1139,7 @@ var State = /** @class */ (function () {
             xAxisHeight: 0,
             hasAxis: false,
             hasRadar: false,
+            hasTreemap: false,
             // for data CSS rule index (used when boost.useCssRule is true)
             cssRule: {},
             current: {
@@ -1756,6 +1763,7 @@ var data$2 = {
      * - scatter
      * - spline
      * - step
+     * - treemap
      * @name data․type
      * @memberof Options
      * @type {string}
@@ -1784,7 +1792,8 @@ var data$2 = {
      *   radar,
      *   scatter,
      *   spline,
-     *   step
+     *   step,
+     *   treemap
      * }
      *
      * bb.generate({
@@ -1798,7 +1807,7 @@ var data$2 = {
     /**
      * Set chart type for each data.<br>
      * This setting overwrites data.type setting.
-     * - **NOTE:** `radar` type can't be combined with other types.
+     * - **NOTE:** `radar` and `treemap` type can't be combined with other types.
      * @name data․types
      * @memberof Options
      * @type {object}
@@ -1830,7 +1839,8 @@ var data$2 = {
      *   radar,
      *   scatter,
      *   spline,
-     *   step
+     *   step,
+     *   treemap
      * }
      *
      * bb.generate({
@@ -3381,22 +3391,22 @@ function rows(rows) {
  */
 function json(json, keysParam) {
     var newRows = [];
-    var findValueInJson = function (object, path) {
-        if (object[path] !== undefined) {
-            return object[path];
-        }
-        var convertedPath = path.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties (replace [] with .)
-        var pathArray = convertedPath.replace(/^\./, "").split("."); // strip a leading dot
-        var target = object;
-        pathArray.some(function (k) {
-            return !(target = target && k in target ?
-                target[k] : undefined);
-        });
-        return target;
-    };
     var targetKeys;
     var data;
     if (Array.isArray(json)) {
+        var findValueInJson_1 = function (object, path) {
+            if (object[path] !== undefined) {
+                return object[path];
+            }
+            var convertedPath = path.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties (replace [] with .)
+            var pathArray = convertedPath.replace(/^\./, "").split("."); // strip a leading dot
+            var target = object;
+            pathArray.some(function (k) {
+                return !(target = target && k in target ?
+                    target[k] : undefined);
+            });
+            return target;
+        };
         if (keysParam.x) {
             targetKeys = keysParam.value.concat(keysParam.x);
         }
@@ -3407,7 +3417,7 @@ function json(json, keysParam) {
         json.forEach(function (o) {
             var newRow = targetKeys.map(function (key) {
                 // convert undefined to null because undefined data will be removed in convertDataToTargets()
-                var v = findValueInJson(o, key);
+                var v = findValueInJson_1(o, key);
                 if (typeof v === "undefined") {
                     v = null;
                 }
@@ -3419,8 +3429,9 @@ function json(json, keysParam) {
     }
     else {
         Object.keys(json).forEach(function (key) {
+            var _a;
             var tmp = json[key].concat();
-            tmp.unshift(key);
+            (_a = tmp.unshift) === null || _a === void 0 ? void 0 : _a.call(tmp, key);
             newRows.push(tmp);
         });
         data = columns(newRows);
@@ -4148,12 +4159,12 @@ var data$1 = {
     },
     /**
      * Get data.order compare function
-     * @param {boolean} isArc Is for Arc type sort or not
+     * @param {boolean} isReversed for Arc & Treemap type sort order needs to be reversed
      * @returns {Function} compare function
      * @private
      */
-    getSortCompareFn: function (isArc) {
-        if (isArc === void 0) { isArc = false; }
+    getSortCompareFn: function (isReversed) {
+        if (isReversed === void 0) { isReversed = false; }
         var $$ = this;
         var config = $$.config;
         var order = config.data_order;
@@ -4165,7 +4176,7 @@ var data$1 = {
             fn = function (t1, t2) {
                 var t1Sum = "values" in t1 ? t1.values.reduce(reducer_1, 0) : t1.value;
                 var t2Sum = "values" in t2 ? t2.values.reduce(reducer_1, 0) : t2.value;
-                return isArc ?
+                return isReversed ?
                     (orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
                     (orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum);
             };
@@ -4439,6 +4450,9 @@ var data$1 = {
                 // when all data are 0, return 0
                 ratio = max === 0 ? 0 : Math.abs(d.value) / max;
             }
+            else if (type === "treemap") {
+                ratio /= $$.getTotalDataSum(true);
+            }
         }
         return asPercent && ratio ? ratio * 100 : ratio;
     },
@@ -4592,6 +4606,8 @@ var dataLoad = {
             // Remove target
             $$.data.targets = $$.data.targets.filter(function (t) { return t.id !== id; });
         });
+        // since treemap uses different data types, it needs to be transformed
+        state.hasTreemap && $$.updateTargetsForTreemap($$.data.targets);
         // Update current state chart type and elements list after redraw
         $$.updateTypesElements();
     }
@@ -4689,14 +4705,15 @@ var interaction = {
      */
     setOverOut: function (isOver, d) {
         var $$ = this;
-        var config = $$.config, hasRadar = $$.state.hasRadar, main = $$.$el.main;
-        var isArc = isObject(d);
+        var config = $$.config, _a = $$.state, hasRadar = _a.hasRadar, hasTreemap = _a.hasTreemap, main = $$.$el.main;
+        var isArcTreemap = isObject(d);
         // Call event handler
-        if (isArc || d !== -1) {
+        if (isArcTreemap || d !== -1) {
             var callback_1 = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
-            config.color_onover && $$.setOverColor(isOver, d, isArc);
-            if (isArc && "id") {
-                callback_1(d, main.select(".".concat($ARC.arc).concat($$.getTargetSelectorSuffix(d.id))).node());
+            config.color_onover && $$.setOverColor(isOver, d, isArcTreemap);
+            if (isArcTreemap && "id") {
+                var selector = hasTreemap ? $TREEMAP.treemap : $ARC.arc;
+                callback_1(d, main.select(".".concat(selector).concat($$.getTargetSelectorSuffix(d.id))).node());
             }
             else if (!config.tooltip_grouped) {
                 var last_1 = $$.cache.get(KEY.setOverOut) || [];
@@ -4784,26 +4801,30 @@ var interaction = {
      * @param {Array} mouse x and y coordinate value
      */
     dispatchEvent: function (type, index, mouse) {
+        var _a;
         var $$ = this;
-        var config = $$.config, _a = $$.state, eventReceiver = _a.eventReceiver, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar, _b = $$.$el, eventRect = _b.eventRect, arcs = _b.arcs, radar = _b.radar;
-        var isMultipleX = $$.isMultipleX();
-        var element = (hasRadar ? radar.axes.select(".".concat($AXIS.axis, "-").concat(index, " text")) : (eventRect || arcs.selectAll(".".concat($COMMON.target, " path")).filter(function (d, i) { return i === index; }))).node();
-        var _c = element.getBoundingClientRect(), width = _c.width, left = _c.left, top = _c.top;
-        if (hasAxis && !hasRadar && !isMultipleX) {
-            var coords = eventReceiver.coords[index];
-            width = coords.w;
-            left += coords.x;
-            top += coords.y;
+        var config = $$.config, _b = $$.state, eventReceiver = _b.eventReceiver, hasAxis = _b.hasAxis, hasRadar = _b.hasRadar, hasTreemap = _b.hasTreemap, _c = $$.$el, eventRect = _c.eventRect, arcs = _c.arcs, radar = _c.radar, treemap = _c.treemap;
+        var element = (_a = ((hasTreemap && eventReceiver.rect) ||
+            (hasRadar && radar.axes.select(".".concat($AXIS.axis, "-").concat(index, " text"))) || (eventRect || (arcs === null || arcs === void 0 ? void 0 : arcs.selectAll(".".concat($COMMON.target, " path")).filter(function (d, i) { return i === index; }))))) === null || _a === void 0 ? void 0 : _a.node();
+        if (element) {
+            var isMultipleX = $$.isMultipleX();
+            var _d = element.getBoundingClientRect(), width = _d.width, left = _d.left, top_1 = _d.top;
+            if (hasAxis && !hasRadar && !isMultipleX) {
+                var coords = eventReceiver.coords[index];
+                width = coords.w;
+                left += coords.x;
+                top_1 += coords.y;
+            }
+            var x = left + (mouse ? mouse[0] : 0) + (isMultipleX || config.axis_rotated ? 0 : (width / 2));
+            var y = top_1 + (mouse ? mouse[1] : 0);
+            var params = {
+                screenX: x,
+                screenY: y,
+                clientX: x,
+                clientY: y
+            };
+            emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](hasTreemap ? treemap.node() : element, type, params);
         }
-        var x = left + (mouse ? mouse[0] : 0) + (isMultipleX || config.axis_rotated ? 0 : (width / 2));
-        var y = top + (mouse ? mouse[1] : 0);
-        var params = {
-            screenX: x,
-            screenY: y,
-            clientX: x,
-            clientY: y
-        };
-        emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](element, type, params);
     },
     setDragStatus: function (isDragging) {
         this.state.dragging = isDragging;
@@ -4825,7 +4846,7 @@ var interaction = {
     unbindAllEvents: function () {
         var _a;
         var $$ = this;
-        var _b = $$.$el, arcs = _b.arcs, eventRect = _b.eventRect, legend = _b.legend, region = _b.region, svg = _b.svg, brush = $$.brush;
+        var _b = $$.$el, arcs = _b.arcs, eventRect = _b.eventRect, legend = _b.legend, region = _b.region, svg = _b.svg, treemap = _b.treemap, brush = $$.brush;
         var list = [
             "wheel",
             "click",
@@ -4845,7 +4866,7 @@ var interaction = {
             "dblclick.zoom"
         ].join(" ");
         // detach all possible event types
-        [svg, eventRect, region === null || region === void 0 ? void 0 : region.list, brush === null || brush === void 0 ? void 0 : brush.getSelection(), arcs === null || arcs === void 0 ? void 0 : arcs.selectAll("path"), legend === null || legend === void 0 ? void 0 : legend.selectAll("g")]
+        [svg, eventRect, region === null || region === void 0 ? void 0 : region.list, brush === null || brush === void 0 ? void 0 : brush.getSelection(), arcs === null || arcs === void 0 ? void 0 : arcs.selectAll("path"), legend === null || legend === void 0 ? void 0 : legend.selectAll("g"), treemap]
             .forEach(function (v) { return v === null || v === void 0 ? void 0 : v.on(list, null); });
         (_a = $$.unbindZoomEvent) === null || _a === void 0 ? void 0 : _a.call($$);
     }
@@ -4869,7 +4890,7 @@ var classModule = {
     getClass: function (type, withShape) {
         var _this = this;
         var isPlural = /s$/.test(type);
-        var useIdKey = /^(area|arc|line)s?$/.test(type);
+        var useIdKey = /^(area|arc|line|treemap)s?$/.test(type);
         var key = isPlural ? "id" : "index";
         return function (d) {
             var data = d.data || d;
@@ -4924,11 +4945,12 @@ var classModule = {
         var targetStr = targetId || targetId === 0 ? "-".concat(targetId) : "";
         return targetStr.replace(/([\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\])/g, "-");
     },
-    selectorTarget: function (id, prefix) {
-        var pfx = prefix || "";
+    selectorTarget: function (id, prefix, postfix) {
+        if (prefix === void 0) { prefix = ""; }
+        if (postfix === void 0) { postfix = ""; }
         var target = this.getTargetSelectorSuffix(id);
         // select target & circle
-        return "".concat(pfx, ".").concat(CLASS.target + target, ", ").concat(pfx, ".").concat(CLASS.circles + target);
+        return "".concat(prefix, ".").concat(CLASS.target + target, " ").concat(postfix, ", ").concat(prefix, ".").concat(CLASS.circles + target, " ").concat(postfix);
     },
     selectorTargets: function (idsValue, prefix) {
         var _this = this;
@@ -5628,6 +5650,7 @@ var legend$1 = {
      * @private
      */
     updateLegend: function (targetIds, options, transitions) {
+        var _a;
         var $$ = this;
         var config = $$.config, state = $$.state, scale = $$.scale, $el = $$.$el;
         var optionz = options || {
@@ -5640,12 +5663,11 @@ var legend$1 = {
         if (config.legend_contents_bindto && config.legend_contents_template) {
             $$.updateLegendTemplate();
         }
-        else {
+        else if (!state.hasTreemap) {
             $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions);
         }
         // toggle legend state
-        $el.legend.selectAll(".".concat($LEGEND.legendItem))
-            .classed($LEGEND.legendItemHidden, function (id) {
+        (_a = $el.legend) === null || _a === void 0 ? void 0 : _a.selectAll(".".concat($LEGEND.legendItem)).classed($LEGEND.legendItemHidden, function (id) {
             var hide = !$$.isTargetToShow(id);
             if (hide) {
                 this.style.opacity = null;
@@ -6304,7 +6326,7 @@ var redraw = {
         if (options === void 0) { options = {}; }
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
-        var main = $el.main;
+        var main = $el.main, treemap = $el.treemap;
         state.redrawing = true;
         var targetsToShow = $$.filterTargetsToShow($$.data.targets);
         var flow = options.flow, initializing = options.initializing;
@@ -6317,7 +6339,7 @@ var redraw = {
         // update legend and transform each g
         if (wth.Legend && config.legend_show) {
             options.withTransition = !!duration;
-            $$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
+            !treemap && $$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
         }
         else if (wth.Dimension) {
             // need to update dimension (e.g. axis.y.tick.values) because y tick values should change
@@ -6325,7 +6347,7 @@ var redraw = {
             $$.updateDimension(true);
         }
         // update circleY based on updated parameters
-        if (!$$.hasArcType() || state.hasRadar) {
+        if (!treemap && (!$$.hasArcType() || state.hasRadar)) {
             $$.updateCircleY && ($$.circleY = $$.updateCircleY());
         }
         // update axis
@@ -6366,9 +6388,11 @@ var redraw = {
             $el.radar && $$.redrawRadar();
             // polar
             $el.polar && $$.redrawPolar();
+            // treemap
+            treemap && $$.updateTreemap(durationForExit);
         }
         // @TODO: Axis & Radar type
-        if (!state.resizing && ($$.hasPointType() || state.hasRadar)) {
+        if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
             $$.updateCircle();
         }
         // text
@@ -6437,7 +6461,7 @@ var redraw = {
     },
     getRedrawList: function (shape, flow, flowFn, withTransition) {
         var $$ = this;
-        var config = $$.config, _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar, grid = $$.$el.grid;
+        var config = $$.config, _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar, hasTreemap = _a.hasTreemap, grid = $$.$el.grid;
         var _b = shape.pos, cx = _b.cx, cy = _b.cy, xForText = _b.xForText, yForText = _b.yForText;
         var list = [];
         if (hasAxis) {
@@ -6462,6 +6486,9 @@ var redraw = {
         }
         if (($$.hasPointType() || hasRadar) && !config.point_focus_only) {
             $$.redrawCircle && list.push($$.redrawCircle(cx, cy, withTransition, flowFn));
+        }
+        if (hasTreemap) {
+            list.push($$.redrawTreemap(withTransition));
         }
         return list;
     },
@@ -6574,8 +6601,9 @@ var scale = {
      * @private
      */
     getYScaleById: function (id, isSub) {
+        var _a;
         if (isSub === void 0) { isSub = false; }
-        var isY2 = this.axis.getId(id) === "y2";
+        var isY2 = ((_a = this.axis) === null || _a === void 0 ? void 0 : _a.getId(id)) === "y2";
         var key = isSub ? (isY2 ? "subY2" : "subY") : (isY2 ? "y2" : "y");
         return this.scale[key];
     },
@@ -6623,7 +6651,7 @@ var scale = {
         var _a, _b;
         if (updateXDomain === void 0) { updateXDomain = true; }
         var $$ = this;
-        var axis = $$.axis, config = $$.config, format = $$.format, org = $$.org, scale = $$.scale, _c = $$.state, width = _c.width, height = _c.height, width2 = _c.width2, height2 = _c.height2, hasAxis = _c.hasAxis;
+        var axis = $$.axis, config = $$.config, format = $$.format, org = $$.org, scale = $$.scale, _c = $$.state, current = _c.current, width = _c.width, height = _c.height, width2 = _c.width2, height2 = _c.height2, hasAxis = _c.hasAxis, hasTreemap = _c.hasTreemap;
         if (hasAxis) {
             var isRotated = config.axis_rotated;
             var resettedPadding = $$.getResettedPadding(1);
@@ -6665,6 +6693,11 @@ var scale = {
                 scale.subY2 = $$.getYScale("y2", min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default);
                 axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
             }
+        }
+        else if (hasTreemap) {
+            var padding = $$.getCurrentPadding();
+            scale.x = scaleLinear().rangeRound([padding.left, current.width - padding.right]);
+            scale.y = scaleLinear().rangeRound([padding.top, current.height - padding.bottom]);
         }
         else {
             // update for arc
@@ -6720,9 +6753,9 @@ var shape = {
     getDrawShape: function () {
         var $$ = this;
         var isRotated = $$.config.axis_rotated;
-        var hasRadar = $$.state.hasRadar;
+        var _a = $$.state, hasRadar = _a.hasRadar, hasTreemap = _a.hasTreemap;
         var shape = { type: {}, indices: {}, pos: {} };
-        ["bar", "candlestick", "line", "area"].forEach(function (v) {
+        !hasTreemap && ["bar", "candlestick", "line", "area"].forEach(function (v) {
             var name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
             if ($$.hasType(v) || $$.hasTypeOf(name) || (v === "line" && ($$.hasType("bubble") || $$.hasType("scatter")))) {
                 var indices = $$.getShapeIndices($$["is".concat(name, "Type")]);
@@ -6731,10 +6764,14 @@ var shape = {
                 shape.type[v] = drawFn ? drawFn.bind($$)(indices, false) : undefined;
             }
         });
-        if (!$$.hasArcType() || hasRadar) {
+        if (!$$.hasArcType() || hasRadar || hasTreemap) {
+            var cx = void 0;
+            var cy = void 0;
             // generate circle x/y functions depending on updated params
-            var cx = hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX);
-            var cy = hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY);
+            if (!hasTreemap) {
+                cx = hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX);
+                cy = hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY);
+            }
             shape.pos = {
                 xForText: $$.generateXYForText(shape.indices, true),
                 yForText: $$.generateXYForText(shape.indices, false),
@@ -7192,7 +7229,7 @@ var size = {
             $$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
         var padding;
         if (isValue(config.padding_right)) {
-            padding = config.padding_right + 1; // 1 is needed not to hide tick line
+            padding = config.padding_right + (hasAxis ? 1 : 0); // 1 is needed not to hide tick line
         }
         else if ($$.axis && config.axis_rotated) {
             padding = defaultPadding + legendWidthOnRight;
@@ -7301,6 +7338,15 @@ var size = {
                 .attr("height", brushSize.height);
         }
     },
+    getCurrentPadding: function () {
+        var $$ = this;
+        return {
+            top: $$.getCurrentPaddingTop(),
+            bottom: $$.getCurrentPaddingBottom(),
+            left: $$.getCurrentPaddingLeft(),
+            right: $$.getCurrentPaddingRight()
+        };
+    },
     /**
      * Get resetted padding values when 'padding=false' option is set
      * https://github.com/naver/billboard.js/issues/2367
@@ -7336,32 +7382,33 @@ var size = {
         var $$ = this;
         var config = $$.config, state = $$.state, legend = $$.$el.legend;
         var isRotated = config.axis_rotated;
-        var hasArc = $$.hasArcType();
+        var isNonAxis = $$.hasArcType() || state.hasTreemap;
         !isInit && $$.setContainerSize();
         var currLegend = {
             width: legend ? $$.getLegendWidth() : 0,
             height: legend ? $$.getLegendHeight() : 0
         };
-        if (!hasArc && config.axis_x_show && config.axis_x_tick_autorotate) {
+        if (!isNonAxis && config.axis_x_show && config.axis_x_tick_autorotate) {
             $$.updateXAxisTickClip();
         }
         var legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height;
-        var xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x");
+        var xAxisHeight = isRotated || isNonAxis ? 0 : $$.getHorizontalAxisHeight("x");
         var subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ?
             xAxisHeight : 30;
-        var subchartHeight = config.subchart_show && !hasArc ?
+        var subchartHeight = config.subchart_show && !isNonAxis ?
             (config.subchart_size_height + subchartXAxisHeight) : 0;
+        var padding = $$.getCurrentPadding();
         // for main
-        state.margin = !hasArc && isRotated ? {
-            top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
-            right: hasArc ? 0 : $$.getCurrentPaddingRight(true),
-            bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-            left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
+        state.margin = !isNonAxis && isRotated ? {
+            top: $$.getHorizontalAxisHeight("y2") + padding.top,
+            right: isNonAxis ? 0 : $$.getCurrentPaddingRight(true),
+            bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + padding.bottom,
+            left: subchartHeight + (isNonAxis ? 0 : padding.left)
         } : {
-            top: 4 + $$.getCurrentPaddingTop(),
-            right: hasArc ? 0 : $$.getCurrentPaddingRight(true),
-            bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-            left: hasArc ? 0 : $$.getCurrentPaddingLeft()
+            top: 4 + padding.top,
+            right: isNonAxis ? 0 : $$.getCurrentPaddingRight(true),
+            bottom: xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
+            left: isNonAxis ? 0 : padding.left
         };
         state.margin = $$.getResettedPadding(state.margin);
         // for subchart
@@ -7403,15 +7450,17 @@ var size = {
             state.height2 = 0;
         }
         // for arc
-        var hasGauge = $$.hasType("gauge");
-        var isLegendRight = config.legend_show && state.isLegendRight;
-        state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
-        state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
-        if (hasGauge && !config.gauge_fullCircle) {
-            state.arcHeight += state.height - $$.getPaddingBottomForGauge();
+        if ($$.hasArcType()) {
+            var hasGauge = $$.hasType("gauge");
+            var isLegendRight = config.legend_show && state.isLegendRight;
+            state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
+            state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
+            if (hasGauge && !config.gauge_fullCircle) {
+                state.arcHeight += state.height - $$.getPaddingBottomForGauge();
+            }
+            (_b = $$.updateRadius) === null || _b === void 0 ? void 0 : _b.call($$);
         }
-        (_b = $$.updateRadius) === null || _b === void 0 ? void 0 : _b.call($$);
-        if (state.isLegendRight && hasArc) {
+        if (state.isLegendRight && isNonAxis) {
             state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
         }
     }
@@ -7540,7 +7589,8 @@ var text = {
     initText: function () {
         var $el = this.$el;
         $el.main.select(".".concat($COMMON.chart)).append("g")
-            .attr("class", $TEXT.chartTexts);
+            .attr("class", $TEXT.chartTexts)
+            .style("pointer-events", $el.treemap ? "none" : null);
     },
     /**
      * Update chartText
@@ -7552,9 +7602,10 @@ var text = {
         var classChartText = $$.getChartClass("Text");
         var classTexts = $$.getClass("texts", "id");
         var classFocus = $$.classFocus.bind($$);
-        var mainTextUpdate = $$.$el.main.select(".".concat($TEXT.chartTexts)).selectAll(".".concat($TEXT.chartText))
+        var mainTextUpdate = $$.$el.main.select(".".concat($TEXT.chartTexts))
+            .selectAll(".".concat($TEXT.chartText))
             .data(targets)
-            .attr("class", function (d) { return classChartText(d) + classFocus(d); });
+            .attr("class", function (d) { return "".concat(classChartText(d)).concat(classFocus(d)).trim(); });
         var mainTextEnter = mainTextUpdate.enter().append("g")
             .style("opacity", "0")
             .attr("class", classChartText)
@@ -7570,6 +7621,7 @@ var text = {
         var $$ = this;
         var $el = $$.$el, $T = $$.$T, config = $$.config;
         var classText = $$.getClass("text", "index");
+        var labelsCentered = config.data_labels.centered;
         var text = $el.main.selectAll(".".concat($TEXT.texts))
             .selectAll(".".concat($TEXT.text))
             .data($$.labelishData.bind($$));
@@ -7587,6 +7639,9 @@ var text = {
                 var data = $$.getCandlestickData(d);
                 isEndAnchor = !(data === null || data === void 0 ? void 0 : data._isUp);
             }
+            else if ($$.isTreemapType(d)) {
+                return labelsCentered ? "middle" : "start";
+            }
             return (config.axis_rotated ? (isEndAnchor ? "end" : "start") : "middle");
         })
             .style("fill", $$.getStylePropValue($$.updateTextColor))
@@ -7603,7 +7658,8 @@ var text = {
                     value = data.close;
                 }
             }
-            value = $$.dataLabelFormat(d.id)(value, d.id, i, texts);
+            value = $$.isTreemapType(d) ? $$.treemapDataLabelFormat(d)(node) :
+                $$.dataLabelFormat(d.id)(value, d.id, i, texts);
             if (isNumber(value)) {
                 this.textContent = value;
             }
@@ -7616,7 +7672,8 @@ var text = {
         var $$ = this;
         var config = $$.config;
         var labelColors = config.data_labels_colors;
-        var defaultColor = $$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d);
+        var defaultColor = ($$.isArcType(d) && !$$.isRadarType(d)) || $$.isTreemapType(d) ?
+            null : $$.color(d);
         var color;
         if (isString(labelColors)) {
             color = labelColors;
@@ -7668,19 +7725,20 @@ var text = {
      */
     redrawText: function (getX, getY, forFlow, withTransition) {
         var $$ = this;
-        var $T = $$.$T, axis = $$.axis, config = $$.config;
+        var $T = $$.$T, axis = $$.axis, config = $$.config, hasTreemap = $$.state.hasTreemap;
         var t = getRandom(true);
         var isRotated = config.axis_rotated;
         var angle = config.data_labels.rotate;
         var anchorString = getRotateAnchor(angle);
         var rotateString = angle ? "rotate(".concat(angle, ")") : "";
+        // $$.meetsLabelThreshold(ratio,
         $$.$el.text
             .style("fill", $$.getStylePropValue($$.updateTextColor))
             .attr("filter", $$.updateTextBacgroundColor.bind($$))
             .style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
             .each(function (d, i) {
             // do not apply transition for newly added text elements
-            var node = $T(this, !!(withTransition && this.getAttribute("x")), t);
+            var node = $T(hasTreemap && this.childElementCount ? this.parentNode : this, !!(withTransition && this.getAttribute("x")), t);
             var isInverted = config["axis_".concat(axis === null || axis === void 0 ? void 0 : axis.getId(d.id), "_inverted")];
             var pos = {
                 x: getX.bind(this)(d, i),
@@ -7741,10 +7799,12 @@ var text = {
      */
     generateXYForText: function (indices, forX) {
         var $$ = this;
+        var _a = $$.state, hasRadar = _a.hasRadar, hasTreemap = _a.hasTreemap;
         var types = Object.keys(indices);
         var points = {};
         var getter = forX ? $$.getXForText : $$.getYForText;
-        $$.hasType("radar") && types.push("radar");
+        hasRadar && types.push("radar");
+        hasTreemap && types.push("treemap");
         types.forEach(function (v) {
             points[v] = $$["generateGet".concat(capitalize(v), "Points")](indices[v], false);
         });
@@ -7752,7 +7812,8 @@ var text = {
             var type = ($$.isAreaType(d) && "area") ||
                 ($$.isBarType(d) && "bar") ||
                 ($$.isCandlestickType(d) && "candlestick") ||
-                ($$.isRadarType(d) && "radar") || "line";
+                ($$.isRadarType(d) && "radar") ||
+                ($$.isTreemapType(d) && "treemap") || "line";
             return getter.call($$, points[type](d, i), d, this);
         };
     },
@@ -7761,27 +7822,37 @@ var text = {
      * @param {object} d Data object
      * @param {Array} points Data points position
      * @param {HTMLElement} textElement Data label text element
+     * @param {string} type 'x' or 'y'
      * @returns {number} Position value
      * @private
      */
-    getCenteredTextPos: function (d, points, textElement) {
+    getCenteredTextPos: function (d, points, textElement, type) {
         var $$ = this;
         var config = $$.config;
         var isRotated = config.axis_rotated;
-        if (config.data_labels.centered && $$.isBarType(d)) {
+        var isBarType = $$.isBarType(d);
+        var isTreemapType = $$.isTreemapType(d);
+        if (config.data_labels.centered && (isBarType || isTreemapType)) {
             var rect = getBoundingRect(textElement);
-            var isPositive = d.value >= 0;
-            if (isRotated) {
-                var w = (isPositive ?
-                    points[1][1] - points[0][1] :
-                    points[0][1] - points[1][1]) / 2 + (rect.width / 2);
-                return isPositive ? -w - 3 : w + 2;
+            if (isBarType) {
+                var isPositive = d.value >= 0;
+                if (isRotated) {
+                    var w = (isPositive ?
+                        points[1][1] - points[0][1] :
+                        points[0][1] - points[1][1]) / 2 + (rect.width / 2);
+                    return isPositive ? -w - 3 : w + 2;
+                }
+                else {
+                    var h = (isPositive ?
+                        points[0][1] - points[1][1] :
+                        points[1][1] - points[0][1]) / 2 + (rect.height / 2);
+                    return isPositive ? h : -h - 2;
+                }
             }
-            else {
-                var h = (isPositive ?
-                    points[0][1] - points[1][1] :
-                    points[1][1] - points[0][1]) / 2 + (rect.height / 2);
-                return isPositive ? h : -h - 2;
+            else if (isTreemapType) {
+                return type === "x" ?
+                    (points[1][0] - points[0][0]) / 2 :
+                    (points[1][1] - points[0][1]) / 2 + (rect.height / 2);
             }
         }
         return 0;
@@ -7810,6 +7881,7 @@ var text = {
         var $$ = this;
         var config = $$.config, state = $$.state;
         var isRotated = config.axis_rotated;
+        var isTreemapType = $$.isTreemapType(d);
         var xPos = points[0][0];
         if ($$.isCandlestickType(d)) {
             if (isRotated) {
@@ -7819,6 +7891,9 @@ var text = {
             else {
                 xPos += (points[1][0] - xPos) / 2;
             }
+        }
+        else if (isTreemapType) {
+            xPos += config.data_labels.centered ? 0 : 5;
         }
         else {
             if (isRotated) {
@@ -7839,8 +7914,8 @@ var text = {
                 xPos = 4;
             }
         }
-        if (isRotated) {
-            xPos += $$.getCenteredTextPos(d, points, textElement);
+        if (isRotated || isTreemapType) {
+            xPos += $$.getCenteredTextPos(d, points, textElement, "x");
         }
         return xPos + $$.getTextPos(d.id, "x");
     },
@@ -7858,6 +7933,7 @@ var text = {
         var isRotated = config.axis_rotated;
         var isInverted = config["axis_".concat(axis === null || axis === void 0 ? void 0 : axis.getId(d.id), "_inverted")];
         var isBarType = $$.isBarType(d);
+        var isTreemapType = $$.isTreemapType(d);
         var r = config.point_r;
         var rect = getBoundingRect(textElement);
         var value = d.value;
@@ -7877,6 +7953,9 @@ var text = {
                     yPos += 15 * (value._isUp ? 1 : -1);
                 }
             }
+        }
+        else if (isTreemapType) {
+            yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);
         }
         else {
             if (isRotated) {
@@ -7915,8 +7994,8 @@ var text = {
                 yPos = state.height - 4;
             }
         }
-        if (!isRotated) {
-            yPos += $$.getCenteredTextPos(d, points, textElement);
+        if (!isRotated || isTreemapType) {
+            yPos += $$.getCenteredTextPos(d, points, textElement, "y");
         }
         return yPos + $$.getTextPos(d.id, "y");
     },
@@ -8162,14 +8241,14 @@ var tooltip$1 = {
      */
     getTooltipContent: function (d, defaultTitleFormat, defaultValueFormat, color) {
         var $$ = this;
-        var api = $$.api, config = $$.config, state = $$.state;
+        var api = $$.api, config = $$.config, state = $$.state, $el = $$.$el;
         var _a = ["title", "name", "value"].map(function (v) {
             var fn = config["tooltip_format_".concat(v)];
             return isFunction(fn) ? fn.bind(api) : fn;
         }), titleFormat = _a[0], nameFormat = _a[1], valueFormat = _a[2];
         titleFormat = titleFormat || defaultTitleFormat;
         nameFormat = nameFormat || (function (name) { return name; });
-        valueFormat = valueFormat || ($$.isStackNormalized() ? function (v, ratio) { return "".concat((ratio * 100).toFixed(2), "%"); } : defaultValueFormat);
+        valueFormat = valueFormat || (state.hasTreemap || $$.isStackNormalized() ? function (v, ratio) { return "".concat((ratio * 100).toFixed(2), "%"); } : defaultValueFormat);
         var order = config.tooltip_order;
         var getRowValue = function (row) { return ($$.axis && $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row)); };
         var getBgColor = $$.levelColor ? function (row) { return $$.levelColor(row.value); } : function (row) { return color(row); };
@@ -8222,8 +8301,9 @@ var tooltip$1 = {
                     TITLE: isValue(title) ? (tplStr ? title : "<tr><th colspan=\"2\">".concat(title, "</th></tr>")) : ""
                 });
             }
-            if (!row.ratio && $$.$el.arcs) {
-                row.ratio = $$.getRatio("arc", $$.$el.arcs.select("path.".concat($ARC.arc, "-").concat(row.id)).data()[0]);
+            if (!row.ratio && $el.arcs) {
+                param = ["arc", $$.$el.arcs.select("path.".concat($ARC.arc, "-").concat(row.id)).data()[0]];
+                row.ratio = $$.getRatio.apply($$, param);
             }
             param = [row.ratio, row.id, row.index, d];
             value = sanitise(valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param, false)));
@@ -8291,6 +8371,7 @@ var tooltip$1 = {
         var config = $$.config, scale = $$.scale, state = $$.state;
         var width = state.width, height = state.height, current = state.current, isLegendRight = state.isLegendRight, inputType = state.inputType, event = state.event;
         var hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
+        var hasTreemap = state.hasTreemap;
         var svgLeft = $$.getSvgLeft(true);
         var chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
         var chartLeft = $$.getCurrentPaddingLeft(true);
@@ -8304,7 +8385,7 @@ var tooltip$1 = {
                 x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
             }
         }
-        else {
+        else if (!hasTreemap) {
             var dataScale = scale.x(dataToShow[0].x);
             if (config.axis_rotated) {
                 y = dataScale + size;
@@ -8313,15 +8394,16 @@ var tooltip$1 = {
             }
             else {
                 y -= 5;
-                x = svgLeft + chartLeft + size + ($$.scale.zoom ? x : dataScale);
+                x = svgLeft + chartLeft + size + (scale.zoom ? x : dataScale);
             }
         }
         // when tooltip left + tWidth > chart's width
         if ((x + tWidth + 15) > chartRight) {
-            x -= tWidth + chartLeft;
+            x -= tWidth + (hasTreemap ? 0 : chartLeft);
         }
         if (y + tHeight > current.height) {
-            y -= hasGauge ? tHeight * 3 : tHeight + 30;
+            var gap = hasTreemap ? 0 : 30;
+            y -= hasGauge ? tHeight * 3 : tHeight + gap;
         }
         var pos = { top: y, left: x };
         // make sure to not be positioned out of viewport
@@ -8545,8 +8627,8 @@ var transform = {
     },
     transformAll: function (withTransition, transitions) {
         var $$ = this;
-        var config = $$.config, hasAxis = $$.state.hasAxis, $el = $$.$el;
-        $$.transformMain(withTransition, transitions);
+        var config = $$.config, _a = $$.state, hasAxis = _a.hasAxis, hasTreemap = _a.hasTreemap, $el = $$.$el;
+        !hasTreemap && $$.transformMain(withTransition, transitions);
         hasAxis && config.subchart_show &&
             $$.transformContext(withTransition, transitions);
         $el.legend && $$.transformLegend(withTransition);
@@ -8706,6 +8788,9 @@ var typeInternals = {
     isScatterType: function (d) {
         return this.isTypeOf(d, "scatter");
     },
+    isTreemapType: function (d) {
+        return this.isTypeOf(d, "treemap");
+    },
     isPieType: function (d) {
         return this.isTypeOf(d, "pie");
     },
@@ -8760,7 +8845,8 @@ var typeInternals = {
             this.isScatterType(d) ||
             this.isBubbleType(d) ||
             this.isCandlestickType(d) ||
-            this.isRadarType(d) ? d.values.filter(function (v) { return isNumber(v.value) || Boolean(v.value); }) : [];
+            this.isRadarType(d) ||
+            this.isTreemapType(d) ? d.values.filter(function (v) { return isNumber(v.value) || Boolean(v.value); }) : [];
     },
     barLineBubbleData: function (d) {
         return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ?
@@ -8888,8 +8974,9 @@ var ChartInternal = /** @class */ (function () {
         var config = $$.config, state = $$.state, $el = $$.$el;
         var useCssRule = config.boost_useCssRule;
         checkModuleImport($$);
-        state.hasAxis = !$$.hasArcType();
         state.hasRadar = !state.hasAxis && $$.hasType("radar");
+        state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
+        state.hasAxis = !$$.hasArcType() && !state.hasTreemap;
         // datetime to be used for uniqueness
         state.datetimeId = "bb-".concat(+new Date() * getRandom());
         if (useCssRule) {
@@ -8972,8 +9059,8 @@ var ChartInternal = /** @class */ (function () {
         if ($$.hasPointType()) {
             $$.point = $$.generatePoint();
         }
+        $$.initClip();
         if (state.hasAxis) {
-            $$.initClip();
             format.extraLineClasses = $$.generateExtraLineClass();
             format.dataTime = config.data_xLocaltime ? timeParse : utcParse;
             format.axisTime = config.axis_x_localtime ? timeFormat : utcFormat;
@@ -9006,7 +9093,7 @@ var ChartInternal = /** @class */ (function () {
         var _a, _b;
         var $$ = this;
         var config = $$.config, scale = $$.scale, state = $$.state, $el = $$.$el, org = $$.org;
-        var hasAxis = state.hasAxis;
+        var hasAxis = state.hasAxis, hasTreemap = state.hasTreemap;
         var hasInteraction = config.interaction_enabled;
         var hasPolar = $$.hasType("polar");
         // for arc type, set axes to not be shown
@@ -9034,21 +9121,23 @@ var ChartInternal = /** @class */ (function () {
         $$.updateSizes();
         $$.updateScales(true);
         // retrieve scale after the 'updateScales()' is called
-        var x = scale.x, y = scale.y, y2 = scale.y2, subX = scale.subX, subY = scale.subY, subY2 = scale.subY2;
-        // Set domains for each scale
-        if (x) {
-            x.domain(sortValue($$.getXDomain($$.data.targets)));
-            subX.domain(x.domain());
-            // Save original x domain for zoom update
-            org.xDomain = x.domain();
-        }
-        if (y) {
-            y.domain($$.getYDomain($$.data.targets, "y"));
-            subY.domain(y.domain());
-        }
-        if (y2) {
-            y2.domain($$.getYDomain($$.data.targets, "y2"));
-            subY2 && subY2.domain(y2.domain());
+        if (hasAxis) {
+            var x = scale.x, y = scale.y, y2 = scale.y2, subX = scale.subX, subY = scale.subY, subY2 = scale.subY2;
+            // Set domains for each scale
+            if (x) {
+                x.domain(sortValue($$.getXDomain($$.data.targets)));
+                subX.domain(x.domain());
+                // Save original x domain for zoom update
+                org.xDomain = x.domain();
+            }
+            if (y) {
+                y.domain($$.getYDomain($$.data.targets, "y"));
+                subY.domain(y.domain());
+            }
+            if (y2) {
+                y2.domain($$.getYDomain($$.data.targets, "y2"));
+                subY2 && subY2.domain(y2.domain());
+            }
         }
         // -- Basic Elements --
         $el.svg = $el.chart.append("svg")
@@ -9065,7 +9154,8 @@ var ChartInternal = /** @class */ (function () {
         config.svg_classname && $el.svg.attr("class", config.svg_classname);
         // Define defs
         var hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
-        if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors || hasPolar) {
+        if (hasAxis || hasColorPatterns || hasPolar || hasTreemap ||
+            config.data_labels_backgroundColors) {
             $el.defs = $el.svg.append("defs");
             if (hasAxis) {
                 ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
@@ -9085,13 +9175,13 @@ var ChartInternal = /** @class */ (function () {
         // Define regions
         var main = $el.svg.append("g")
             .classed($COMMON.main, true)
-            .attr("transform", $$.getTranslate("main"));
+            .attr("transform", hasTreemap ? null : $$.getTranslate("main"));
         $el.main = main;
         // initialize subchart when subchart show option is set
         config.subchart_show && $$.initSubchart();
         config.tooltip_show && $$.initTooltip();
         config.title_text && $$.initTitle();
-        config.legend_show && $$.initLegend();
+        !hasTreemap && config.legend_show && $$.initLegend();
         // -- Main Region --
         // text when empty
         if (config.data_empty_label_text) {
@@ -9151,7 +9241,7 @@ var ChartInternal = /** @class */ (function () {
      */
     ChartInternal.prototype.initChartElements = function () {
         var $$ = this;
-        var _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar;
+        var _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar, hasTreemap = _a.hasTreemap;
         var types = [];
         if (hasAxis) {
             ["bar", "bubble", "candlestick", "line"].forEach(function (v) {
@@ -9160,6 +9250,9 @@ var ChartInternal = /** @class */ (function () {
                     types.push(name);
                 }
             });
+        }
+        else if (hasTreemap) {
+            types.push("Treemap");
         }
         else {
             var hasPolar = $$.hasType("polar");
@@ -9237,7 +9330,7 @@ var ChartInternal = /** @class */ (function () {
     ChartInternal.prototype.updateTargets = function (targets) {
         var _a;
         var $$ = this;
-        var _b = $$.state, hasAxis = _b.hasAxis, hasRadar = _b.hasRadar;
+        var _b = $$.state, hasAxis = _b.hasAxis, hasRadar = _b.hasRadar, hasTreemap = _b.hasTreemap;
         var helper = function (type) { return $$["updateTargetsFor".concat(type)](targets.filter($$["is".concat(type, "Type")].bind($$))); };
         // Text
         $$.updateTargetsForText(targets);
@@ -9262,6 +9355,10 @@ var ChartInternal = /** @class */ (function () {
                 type = "Polar";
             }
             helper(type);
+            // Arc, Polar, Radar
+        }
+        else if (hasTreemap) {
+            helper("Treemap");
         }
         // Point types
         var hasPointType = $$.hasType("bubble") || $$.hasType("scatter");
@@ -10162,6 +10259,7 @@ var apiFocus = {
 var legend = {
     /**
      * Show legend for each target.
+     * - **NOTE:** Legend APIs aren't supported for `treemap` type.
      * @function legend․show
      * @instance
      * @memberof Chart
@@ -10378,6 +10476,7 @@ var apiLoad = {
             });
         }
         else {
+            $$.api.tooltip.hide();
             $$.loadFromArgs(args);
         }
     },
@@ -10593,6 +10692,13 @@ var tooltip = {
      *    x: new Date("2018-01-02 00:00")
      *  });
      *
+     *  // treemap type can be shown by using "id" only.
+     *  chart.tooltip.show({
+     *    data: {
+     *        id: "data1"  // data id
+     *    }
+     *  });
+     *
      *  // when data.xs is used
      *  chart.tooltip.show({
      *    data: {
@@ -10613,7 +10719,7 @@ var tooltip = {
      */
     show: function (args) {
         var $$ = this.internal;
-        var config = $$.config, inputType = $$.state.inputType;
+        var $el = $$.$el, config = $$.config, _a = $$.state, eventReceiver = _a.eventReceiver, hasTreemap = _a.hasTreemap, inputType = _a.inputType;
         var index;
         var mouse;
         // determine mouse position on the chart
@@ -10624,7 +10730,10 @@ var tooltip = {
         if (args.data) {
             var data = args.data;
             var y = $$.getYScaleById(data.id)(data.value);
-            if ($$.isMultipleX()) {
+            if (hasTreemap && data.id) {
+                eventReceiver.rect = $el.main.select("".concat($$.selectorTarget(data.id, undefined, "rect")));
+            }
+            else if ($$.isMultipleX()) {
                 // if multiple xs, target point will be determined by mouse
                 mouse = [$$.scale.x(data.x), y];
             }
@@ -13667,17 +13776,19 @@ var flow = {
 var clip = {
     initClip: function () {
         var $$ = this;
-        var clip = $$.state.clip;
+        var _a = $$.state, clip = _a.clip, hasAxis = _a.hasAxis;
         // MEMO: clipId needs to be unique because it conflicts when multiple charts exist
         clip.id = "".concat($$.state.datetimeId, "-clip");
-        clip.idXAxis = "".concat(clip.id, "-xaxis");
-        clip.idYAxis = "".concat(clip.id, "-yaxis");
-        clip.idGrid = "".concat(clip.id, "-grid");
-        // Define 'clip-path' attribute values
-        clip.path = $$.getClipPath(clip.id);
-        clip.pathXAxis = $$.getClipPath(clip.idXAxis);
-        clip.pathYAxis = $$.getClipPath(clip.idYAxis);
-        clip.pathGrid = $$.getClipPath(clip.idGrid);
+        if (hasAxis) {
+            clip.idXAxis = "".concat(clip.id, "-xaxis");
+            clip.idYAxis = "".concat(clip.id, "-yaxis");
+            clip.idGrid = "".concat(clip.id, "-grid");
+            // Define 'clip-path' attribute values
+            clip.path = $$.getClipPath(clip.id);
+            clip.pathXAxis = $$.getClipPath(clip.idXAxis);
+            clip.pathYAxis = $$.getClipPath(clip.idYAxis);
+            clip.pathGrid = $$.getClipPath(clip.idGrid);
+        }
     },
     getClipPath: function (id) {
         var $$ = this;
@@ -17236,7 +17347,7 @@ var shapeBar = {
         if (!$el.bar) {
             $$.initBar();
         }
-        var mainBarUpdate = $$.$el.main.select(".".concat($BAR.chartBars))
+        var mainBarUpdate = $el.main.select(".".concat($BAR.chartBars))
             .selectAll(".".concat($BAR.chartBar))
             .data(
         // remove
@@ -18881,9 +18992,9 @@ var shapeRadar = {
                 return "translate(".concat(posX, " ").concat(posY, ")");
             });
         }
-        $$.bindEvent();
+        $$.bindRadarEvent();
     },
-    bindEvent: function () {
+    bindRadarEvent: function () {
         var $$ = this;
         var config = $$.config, state = $$.state, _a = $$.$el, radar = _a.radar, svg = _a.svg;
         var focusOnly = config.point_focus_only;
@@ -18968,6 +19079,236 @@ var shapeRadar = {
      */
     radarCircleY: function (d) {
         return this.cache.get(cacheKey)[d.id][d.index][1];
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Get treemap elements' position
+ * @param {d3Selection} group Root selection
+ * @param {object} root Root data
+ * @private
+ */
+function position(group, root) {
+    var $$ = this;
+    var _a = $$.scale, x = _a.x, y = _a.y, width = $$.state.width;
+    group.selectAll("g")
+        .attr("transform", function (d) { return ("translate(".concat(d === root ? "0,0" : "".concat(x(d.x0), ",").concat(y(d.y0)), ")")); })
+        .select("rect")
+        .attr("width", function (d) { return (d === root ? width : x(d.x1) - x(d.x0)); })
+        .attr("height", function (d) { return (d === root ? 0 : y(d.y1) - y(d.y0)); });
+}
+/**
+ * Convert data for treemap hierarchy
+ * @param {object} data Data object
+ * @returns {Array} Array of data for treemap hierarchy
+ * @private
+ */
+function convertDataToTreemapData(data) {
+    var $$ = this;
+    return data.map(function (d) {
+        var id = d.id, values = d.values;
+        var value = values[0].value;
+        return {
+            name: id,
+            id: id,
+            value: value,
+            ratio: $$.getRatio("treemap", values[0])
+        };
+    });
+}
+var shapeTreemap = {
+    initTreemap: function () {
+        var $$ = this;
+        var $el = $$.$el, _a = $$.state, _b = _a.current, width = _b.width, height = _b.height, clip = _a.clip;
+        var clipId = clip.id;
+        $$.treemap = treemap$1()
+            .tile($$.getTreemapTile());
+        $$.treemapFn = function (data) {
+            var hierarchyData = hierarchy(data).sum(function (d) { return d.value; });
+            var sortFn = $$.getSortCompareFn(true);
+            return $$.treemap(sortFn ? hierarchyData.sort(sortFn) : hierarchyData);
+        };
+        $el.defs
+            .append("clipPath")
+            .attr("id", clipId)
+            .append("rect")
+            .attr("width", width)
+            .attr("height", height);
+        $el.treemap = $el.main.select(".".concat($COMMON.chart))
+            .attr("clip-path", "url(#".concat(clipId, ")"))
+            .append("g")
+            .classed($TREEMAP.chartTreemaps, true);
+        $$.bindTreemapEvent();
+    },
+    /**
+     * Bind events
+     * @private
+     */
+    bindTreemapEvent: function () {
+        var $$ = this;
+        var $el = $$.$el, config = $$.config, state = $$.state;
+        var getTarget = function (event) {
+            var _a;
+            var target = event.isTrusted ? event.target : (_a = state.eventReceiver.rect) === null || _a === void 0 ? void 0 : _a.node();
+            var data;
+            if (/^rect$/i.test(target.tagName)) {
+                state.event = event;
+                data = select(target).datum();
+            }
+            return data === null || data === void 0 ? void 0 : data.data;
+        };
+        if (config.interaction_enabled) {
+            var isTouch = state.inputType === "touch";
+            $el.treemap
+                .on(isTouch ? "touchstart" : "mousemove", function (event) {
+                var data = getTarget(event);
+                if (data) {
+                    $$.showTooltip([data], event.currentTarget);
+                    event.type === "mouseover" && $$.setOverOut(true, data);
+                }
+            })
+                .on(isTouch ? "touchend" : "mouseout", function (event) {
+                var data = getTarget(event);
+                $$.hideTooltip();
+                $$.setOverOut(false, data);
+            });
+        }
+    },
+    /**
+     * Get tiling function
+     * @returns {Function}
+     * @private
+     */
+    getTreemapTile: function () {
+        var _a, _b;
+        var $$ = this;
+        var config = $$.config, _c = $$.state.current, width = _c.width, height = _c.height;
+        var tile = (_b = {
+            "binary": treemapBinary,
+            "dice": treemapDice,
+            "slice": treemapSlice,
+            "sliceDice": treemapSliceDice,
+            "squarify": treemapSquarify,
+            "resquarify": treemapResquarify
+        }[(_a = config.treemap_tile) !== null && _a !== void 0 ? _a : "binary"]) !== null && _b !== void 0 ? _b : treemapBinary;
+        return function (node, x0, y0, x1, y1) {
+            tile(node, 0, 0, width, height);
+            for (var _i = 0, _a = node.children; _i < _a.length; _i++) {
+                var child = _a[_i];
+                child.x0 = x0 + child.x0 / width * (x1 - x0);
+                child.x1 = x0 + child.x1 / width * (x1 - x0);
+                child.y0 = y0 + child.y0 / height * (y1 - y0);
+                child.y1 = y0 + child.y1 / height * (y1 - y0);
+            }
+        };
+    },
+    /**
+     * Get treemap hierarchy data
+     * @param {Array} targets Data targets
+     * @returns {object}
+     * @private
+     */
+    getTreemapData: function (targets) {
+        var $$ = this;
+        return {
+            name: "root",
+            children: convertDataToTreemapData.bind($$)($$.filterTargetsToShow(targets.filter($$.isTreemapType, $$)))
+        };
+    },
+    /**
+     * Update treemap data
+     * @param {Array} targets Data targets
+     * @private
+     */
+    updateTargetsForTreemap: function (targets) {
+        var $$ = this;
+        var treemap = $$.$el.treemap;
+        var treemapData = $$.treemapFn($$.getTreemapData(targets !== null && targets !== void 0 ? targets : $$.data.targets));
+        // using $el.treemap reference can alter data, so select treemap <g> again
+        treemap.data(treemapData);
+    },
+    /**
+     * Render treemap
+     * @param {number} durationForExit Duration for exit transition
+     * @private
+     */
+    updateTreemap: function (durationForExit) {
+        var $$ = this;
+        var $el = $$.$el, $T = $$.$T;
+        var data = $el.treemap.datum();
+        var classChartTreemap = $$.getChartClass("Treemap");
+        var treemap = $el.treemap
+            .selectAll("g")
+            .data(data.children);
+        $T(treemap.exit(), durationForExit)
+            .style("opacity", "0")
+            .remove();
+        treemap.enter()
+            .append("g")
+            .append("rect");
+        $el.treemap.selectAll("g")
+            .attr("class", classChartTreemap)
+            .select("rect")
+            .attr("fill", function (d) { return $$.color(d.data.name); });
+    },
+    /**
+     * Generate treemap coordinate points data
+     * @returns {Array} Array of coordinate points
+     * @private
+     */
+    generateGetTreemapPoints: function () {
+        var $$ = this;
+        var $el = $$.$el, _a = $$.scale, x = _a.x, y = _a.y;
+        var points = {};
+        $el.treemap.selectAll("g").each(function (d) {
+            points[d.data.name] = [
+                [x(d.x0), y(d.y0)],
+                [x(d.x1), y(d.y1)]
+            ];
+        });
+        return function (d) { return points[d.id]; };
+    },
+    /**
+     * Redraw treemap
+     * @param {boolean} withTransition With or without transition
+     * @returns {Array} Selections
+     * @private
+     */
+    redrawTreemap: function (withTransition) {
+        var $$ = this;
+        var $el = $$.$el, _a = $$.state.current, width = _a.width, height = _a.height;
+        // update defs
+        $el.defs.select("rect")
+            .attr("width", width)
+            .attr("height", height);
+        return [
+            $$.$T($el.treemap, withTransition, getRandom())
+                .call(position.bind($$), $el.treemap.datum())
+        ];
+    },
+    /**
+     * Get treemap data label format function
+     * @param {object} d Data object
+     * @returns {Function}
+     * @private
+     */
+    treemapDataLabelFormat: function (d) {
+        var $$ = this;
+        var config = $$.config;
+        var id = d.id, value = d.value;
+        var format = config.treemap_label_format;
+        var ratio = $$.getRatio("treemap", d);
+        var percentValue = (ratio * 100).toFixed(2);
+        var meetLabelThreshold = config.treemap_label_show && $$.meetsLabelThreshold(ratio, "treemap") ? null : "0";
+        return function (node) {
+            node.style("opacity", meetLabelThreshold);
+            return isFunction(format) ? format.bind($$.api)(value, ratio, id) :
+                "".concat(id, "\n").concat(percentValue, "%");
+        };
     }
 };
 
@@ -19465,7 +19806,7 @@ var optScatter = {
  * billboard.js project is licensed under the MIT license
  */
 /**
- * x Axis config options
+ * spline config options
  */
 var optSpline = {
     /**
@@ -19511,7 +19852,7 @@ var optSpline = {
  * billboard.js project is licensed under the MIT license
  */
 /**
- * area config options
+ * arc config options
  */
 var optArc = {
     /**
@@ -19762,7 +20103,7 @@ var optGauge = {
  * billboard.js project is licensed under the MIT license
  */
 /**
- * x Axis config options
+ * pie config options
  */
 var optPie = {
     /**
@@ -19862,7 +20203,7 @@ var optPie = {
  * billboard.js project is licensed under the MIT license
  */
 /**
- * x Axis config options
+ * polar config options
  */
 var optPolar = {
     /**
@@ -19944,7 +20285,7 @@ var optPolar = {
  * billboard.js project is licensed under the MIT license
  */
 /**
- * x Axis config options
+ * radar config options
  */
 var optRadar = {
     /**
@@ -20020,6 +20361,60 @@ var optRadar = {
  * billboard.js project is licensed under the MIT license
  */
 /**
+ * treemap config options
+ */
+var optTreemap = {
+    /**
+     * Set treemap options
+     * @name treemap
+     * @memberof Options
+     * @type {object}
+     * @property {object} treemap Treemap object
+     * @property {string} [treemap.tile="binary"] Treemap tile type
+     * - **Available tile type values:**
+     * 	- binary ([d3.treemapBinary](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapBinary))
+     * 	- dice ([d3.treemapDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapDice))
+     * 	- slice ([d3.treemapSlice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSlice))
+     * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
+     * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
+     * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
+     * @property {Function} [treemap.label.format] Set formatter for the label text.
+     * @property {number} [treemap.label.threshold=0.05] Set threshold ratio to show/hide labels text.
+     * @property {number} [treemap.label.show=true] Show or hide label text.
+     * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)
+     * @example
+     *  treemap: {
+     *      // "binary", "dice", "slice", "sliceDice", "squrify", "resquarify"
+     *      tile: "dice",
+     *
+     *      label: {
+     *          // show or hide label text
+     *          show: false,
+     *
+     *          // set label text formatter
+     *          format: function(value, ratio, id) {
+     *              return d3.format("$")(value);
+     *
+     *              // to multiline, return with '\n' character
+     *              // return value +"%\nLine1\n2Line2";
+     *          },
+     *
+     *          // set ratio number
+     *          ratio: 0.05
+     *      }
+     *  }
+     */
+    treemap_tile: "binary",
+    treemap_label_format: undefined,
+    treemap_label_threshold: 0.05,
+    treemap_label_show: true
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
  * Extend Axis
  * @param {Array} module Module to be extended
  * @param {Array} option Option object to be extended
@@ -20071,6 +20466,8 @@ var bar = function () { return (extendAxis([shapeBar], optBar), (bar = function 
 var bubble = function () { return (extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), (bubble = function () { return TYPE.BUBBLE; })()); };
 var candlestick = function () { return (extendAxis([shapeCandlestick], [optCandlestick]), (candlestick = function () { return TYPE.CANDLESTICK; })()); };
 var scatter = function () { return (extendAxis([shapePoint], [optPoint, optScatter]), (scatter = function () { return TYPE.SCATTER; })()); };
+// Non Axis based types
+var treemap = function () { return (extendAxis([shapeTreemap], [optTreemap]), (treemap = function () { return TYPE.TREEMAP; })()); };
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -21709,7 +22106,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221217004651
+ * @version 3.6.3-nightly-20221230004723
  */
 var bb = {
     /**
@@ -21719,7 +22116,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20221217004651",
+    version: "3.6.3-nightly-20221230004723",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -21848,4 +22245,4 @@ var bb = {
     plugin: {}
 };
 
-export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, candlestick, bb as default, donut, gauge, line, pie, polar, radar, scatter, selectionModule as selection, spline, step, subchartModule as subchart, zoomModule as zoom };
+export { area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar, bb, bubble, candlestick, bb as default, donut, gauge, line, pie, polar, radar, scatter, selectionModule as selection, spline, step, subchartModule as subchart, treemap, zoomModule as zoom };

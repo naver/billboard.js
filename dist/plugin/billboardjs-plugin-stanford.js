@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221217004651
+ * @version 3.6.3-nightly-20221230004723
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -354,11 +354,16 @@ var $TOOLTIP = {
   tooltipContainer: "bb-tooltip-container",
   tooltipName: "bb-tooltip-name"
 };
+var $TREEMAP = {
+  treemap: "bb-treemap",
+  chartTreemap: "bb-chart-treemap",
+  chartTreemaps: "bb-chart-treemaps"
+};
 var $ZOOM = {
   buttonZoomReset: "bb-zoom-reset",
   zoomBrush: "bb-zoom-brush"
 };
-/* harmony default export */ var classes = (_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM));
+/* harmony default export */ var classes = (_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
@@ -508,7 +513,8 @@ function hasValue(dict, value) {
  * @private
  */
 function callFn(fn, thisArg) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+  var isFn = isFunction(fn);
+  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     args[_key - 2] = arguments[_key];
   }
   isFn && fn.call.apply(fn, [thisArg].concat(args));
@@ -680,8 +686,9 @@ function getPointer(event, element) {
 function getBrushSelection(ctx) {
   var event = ctx.event,
     $el = ctx.$el,
-    main = $el.subchart.main || $el.main,
-    selection;
+    main = $el.subchart.main || $el.main;
+  var selection;
+
   // check from event
   if (event && event.type === "brush") {
     selection = event.selection;
@@ -740,8 +747,8 @@ function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
     return -1;
   }
-  var mid = Math.floor((start + end) / 2),
-    _arr$mid = arr[mid],
+  var mid = Math.floor((start + end) / 2);
+  var _arr$mid = arr[mid],
     x = _arr$mid.x,
     _arr$mid$w = _arr$mid.w,
     w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
@@ -779,12 +786,12 @@ function brushEmpty(ctx) {
  * @private
  */
 function deepClone() {
-  for (var _this6 = this, clone = function (v) {
+  for (var _this6 = this, _clone = function clone(v) {
       _newArrowCheck(this, _this6);
       if (isObject(v) && v.constructor) {
         var r = new v.constructor();
         for (var k in v) {
-          r[k] = clone(v[k]);
+          r[k] = _clone(v[k]);
         }
         return r;
       }
@@ -794,7 +801,7 @@ function deepClone() {
   }
   return objectN.map(function (v) {
     _newArrowCheck(this, _this6);
-    return clone(v);
+    return _clone(v);
   }.bind(this)).reduce(function (a, c) {
     _newArrowCheck(this, _this6);
     return util_objectSpread(util_objectSpread({}, a), c);
@@ -1271,12 +1278,12 @@ function loadConfig(config) {
     target,
     keys,
     read,
-    find = function () {
+    _find = function find() {
       _newArrowCheck(this, _this);
       var key = keys.shift();
       if (key && target && isObjectType(target) && key in target) {
         target = target[key];
-        return find();
+        return _find();
       } else if (!key) {
         return target;
       }
@@ -1286,7 +1293,7 @@ function loadConfig(config) {
     _newArrowCheck(this, _this);
     target = config;
     keys = key.split("_");
-    read = find();
+    read = _find();
     if (isDefined(read)) {
       thisConfig[key] = read;
     }
@@ -1370,7 +1377,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.6.3-nightly-20221217004651";
+Plugin.version = "3.6.3-nightly-20221230004723";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
@@ -1553,8 +1560,8 @@ function pointInRegion(point, region) {
   // ray-casting algorithm based on
   // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
   var x = point.x,
-    y = point.value,
-    inside = !1;
+    y = point.value;
+  var inside = !1;
   for (var i = 0, j = region.length - 1; i < region.length; j = i++) {
     var xi = region[i].x,
       yi = region[i].y,
@@ -1613,8 +1620,8 @@ function getRegionArea(points) {
  * @private
  */
 function getCentroid(points) {
-  var area = getRegionArea(points),
-    x = 0,
+  var area = getRegionArea(points);
+  var x = 0,
     y = 0,
     f;
   for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
@@ -1751,8 +1758,8 @@ var Elements = /*#__PURE__*/function () {
   _proto.xvCustom = function xvCustom(d, xyValue) {
     var $$ = this,
       axis = $$.axis,
-      config = $$.config,
-      value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+      config = $$.config;
+    var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     if (axis.isTimeSeries()) {
       value = parseDate.call($$, value);
     } else if (axis.isCategorized() && isString(value)) {
@@ -2038,8 +2045,8 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
   _proto.xvCustom = function xvCustom(d, xyValue) {
     var $$ = this,
       axis = $$.axis,
-      config = $$.config,
-      value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+      config = $$.config;
+    var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     if (axis.isTimeSeries()) {
       value = parseDate.call($$, value);
     } else if (axis.isCategorized() && isString(value)) {

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.3-nightly-20221217004651
+ * @version 3.6.3-nightly-20221230004723
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -31,9 +31,7 @@ var _extendStatics = function extendStatics(d, b) {
   } instanceof Array && function (d, b) {
     d.__proto__ = b;
   } || function (d, b) {
-    for (var p in b) {
-      if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
-    }
+    for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p];
   };
   return _extendStatics(d, b);
 };
@@ -49,9 +47,7 @@ var _assign = function __assign() {
   _assign = Object.assign || function (t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
       s = arguments[i];
-      for (var p in s) {
-        if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-      }
+      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
     }
     return t;
   };
@@ -213,11 +209,16 @@ var $TOOLTIP = {
     tooltipContainer: "bb-tooltip-container",
     tooltipName: "bb-tooltip-name"
 };
+var $TREEMAP = {
+    treemap: "bb-treemap",
+    chartTreemap: "bb-chart-treemap",
+    chartTreemaps: "bb-chart-treemaps"
+};
 var $ZOOM = {
     buttonZoomReset: "bb-zoom-reset",
     zoomBrush: "bb-zoom-brush"
 };
-_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM);
+_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM);
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -277,7 +278,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.6.3-nightly-20221217004651";
+    Plugin.version = "3.6.3-nightly-20221230004723";
     return Plugin;
 }());
 var Plugin$1 = Plugin;

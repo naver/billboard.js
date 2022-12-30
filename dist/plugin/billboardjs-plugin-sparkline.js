@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221217004651
+ * @version 3.6.3-nightly-20221230004723
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -317,11 +317,16 @@ var $TOOLTIP = {
   tooltipContainer: "bb-tooltip-container",
   tooltipName: "bb-tooltip-name"
 };
+var $TREEMAP = {
+  treemap: "bb-treemap",
+  chartTreemap: "bb-chart-treemap",
+  chartTreemaps: "bb-chart-treemaps"
+};
 var $ZOOM = {
   buttonZoomReset: "bb-zoom-reset",
   zoomBrush: "bb-zoom-brush"
 };
-/* harmony default export */ var classes = (_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM));
+/* harmony default export */ var classes = (_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
 
 /**
@@ -395,7 +400,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.6.3-nightly-20221217004651";
+Plugin.version = "3.6.3-nightly-20221230004723";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**
@@ -575,7 +580,8 @@ function hasValue(dict, value) {
  * @private
  */
 function callFn(fn, thisArg) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+  var isFn = isFunction(fn);
+  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     args[_key - 2] = arguments[_key];
   }
   isFn && fn.call.apply(fn, [thisArg].concat(args));
@@ -747,8 +753,9 @@ function getPointer(event, element) {
 function getBrushSelection(ctx) {
   var event = ctx.event,
     $el = ctx.$el,
-    main = $el.subchart.main || $el.main,
-    selection;
+    main = $el.subchart.main || $el.main;
+  var selection;
+
   // check from event
   if (event && event.type === "brush") {
     selection = event.selection;
@@ -807,8 +814,8 @@ function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
     return -1;
   }
-  var mid = Math.floor((start + end) / 2),
-    _arr$mid = arr[mid],
+  var mid = Math.floor((start + end) / 2);
+  var _arr$mid = arr[mid],
     x = _arr$mid.x,
     _arr$mid$w = _arr$mid.w,
     w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
@@ -846,12 +853,12 @@ function brushEmpty(ctx) {
  * @private
  */
 function deepClone() {
-  for (var _this6 = this, clone = function (v) {
+  for (var _this6 = this, _clone = function clone(v) {
       _newArrowCheck(this, _this6);
       if (isObject(v) && v.constructor) {
         var r = new v.constructor();
         for (var k in v) {
-          r[k] = clone(v[k]);
+          r[k] = _clone(v[k]);
         }
         return r;
       }
@@ -861,7 +868,7 @@ function deepClone() {
   }
   return objectN.map(function (v) {
     _newArrowCheck(this, _this6);
-    return clone(v);
+    return _clone(v);
   }.bind(this)).reduce(function (a, c) {
     _newArrowCheck(this, _this6);
     return util_objectSpread(util_objectSpread({}, a), c);
@@ -1338,12 +1345,12 @@ function loadConfig(config) {
     target,
     keys,
     read,
-    find = function () {
+    _find = function find() {
       _newArrowCheck(this, _this);
       var key = keys.shift();
       if (key && target && isObjectType(target) && key in target) {
         target = target[key];
-        return find();
+        return _find();
       } else if (!key) {
         return target;
       }
@@ -1353,7 +1360,7 @@ function loadConfig(config) {
     _newArrowCheck(this, _this);
     target = config;
     keys = key.split("_");
-    read = find();
+    read = _find();
     if (isDefined(read)) {
       thisConfig[key] = read;
     }
@@ -1450,8 +1457,8 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
   };
   _proto.validate = function validate() {
     var $$ = this.$$,
-      config = this.config,
-      msg = "";
+      config = this.config;
+    var msg = "";
     if (!config.selector || !document.querySelector(config.selector)) {
       msg = "No holder elements found from given selector option.";
     }
@@ -1501,8 +1508,8 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
     config.axis_y_show = !1;
     if (!config.tooltip_position) {
       config.tooltip_position = function (data, width, height) {
-        var event = this.internal.state.event,
-          top = event.pageY - height * 1.35,
+        var event = this.internal.state.event;
+        var top = event.pageY - height * 1.35,
           left = event.pageX - width / 2;
         if (top < 0) {
           top = 0;
@@ -1579,12 +1586,12 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
   };
   _proto.$redraw = function $redraw() {
     var _$el$chart$html$match,
+      _this4 = this,
       $$ = this.$$,
       $el = $$.$el,
       el = this.element,
       data = $$.api.data(),
-      svgWrapper = (_$el$chart$html$match = $el.chart.html().match(/<svg[^>]*>/)) == null ? void 0 : _$el$chart$html$match[0],
-      _this4 = this;
+      svgWrapper = (_$el$chart$html$match = $el.chart.html().match(/<svg[^>]*>/)) == null ? void 0 : _$el$chart$html$match[0];
     // append sparkline holder if is less than the data length
     if (el.length < data.length) {
       var chart = $el.chart.node();
@@ -1600,8 +1607,8 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
     }.bind(this)).forEach(function (id, i) {
       _newArrowCheck(this, _this4);
       var selector = "." + $COMMON.target + "-" + id,
-        shape = $el.main.selectAll(selector),
-        svg = el[i].querySelector("svg");
+        shape = $el.main.selectAll(selector);
+      var svg = el[i].querySelector("svg");
       if (!svg) {
         el[i].innerHTML = svgWrapper + "</svg>";
         svg = el[i].querySelector("svg");

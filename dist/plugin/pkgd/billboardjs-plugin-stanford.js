@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221217004651
+ * @version 3.6.3-nightly-20221230004723
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -265,13 +265,13 @@ __webpack_require__(480);
 __webpack_require__(483);
 __webpack_require__(484);
 __webpack_require__(485);
-__webpack_require__(488);
-__webpack_require__(489);
 __webpack_require__(490);
 __webpack_require__(491);
+__webpack_require__(492);
 __webpack_require__(495);
-__webpack_require__(500);
-__webpack_require__(501);
+__webpack_require__(498);
+__webpack_require__(503);
+__webpack_require__(504);
 
 /* unused reexport */ __webpack_require__(81);
 
@@ -921,6 +921,7 @@ module.exports = $documentAll.IS_HTMLDDA ? function (argument) {
 var documentAll = typeof document == 'object' && document.all;
 
 // https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot
+// eslint-disable-next-line unicorn/no-typeof-undefined -- required for testing
 var IS_HTMLDDA = typeof documentAll == 'undefined' && documentAll !== undefined;
 
 module.exports = {
@@ -1153,10 +1154,10 @@ var store = __webpack_require__(37);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.26.1',
+  version: '3.27.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.26.1/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.27.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -7589,11 +7590,13 @@ $({ target: 'Math', stat: true }, {
 
 "use strict";
 
+var $ = __webpack_require__(3);
+var IS_PURE = __webpack_require__(36);
 var DESCRIPTORS = __webpack_require__(6);
 var global = __webpack_require__(4);
+var path = __webpack_require__(81);
 var uncurryThis = __webpack_require__(14);
 var isForced = __webpack_require__(68);
-var defineBuiltIn = __webpack_require__(48);
 var hasOwn = __webpack_require__(39);
 var inheritIfRequired = __webpack_require__(117);
 var isPrototypeOf = __webpack_require__(25);
@@ -7608,9 +7611,10 @@ var trim = (__webpack_require__(261).trim);
 
 var NUMBER = 'Number';
 var NativeNumber = global[NUMBER];
+var PureNumberNamespace = path[NUMBER];
 var NumberPrototype = NativeNumber.prototype;
 var TypeError = global.TypeError;
-var arraySlice = uncurryThis(''.slice);
+var stringSlice = uncurryThis(''.slice);
 var charCodeAt = uncurryThis(''.charCodeAt);
 
 // `ToNumeric` abstract operation
@@ -7638,7 +7642,7 @@ var toNumber = function (argument) {
         case 79: case 111: radix = 8; maxCode = 55; break; // fast equal of /^0o[0-7]+$/i
         default: return +it;
       }
-      digits = arraySlice(it, 2);
+      digits = stringSlice(it, 2);
       length = digits.length;
       for (index = 0; index < length; index++) {
         code = charCodeAt(digits, index);
@@ -7650,17 +7654,30 @@ var toNumber = function (argument) {
   } return +it;
 };
 
+var FORCED = isForced(NUMBER, !NativeNumber(' 0o1') || !NativeNumber('0b1') || NativeNumber('+0x1'));
+
+var calledWithNew = function (dummy) {
+  // includes check on 1..constructor(foo) case
+  return isPrototypeOf(NumberPrototype, dummy) && fails(function () { thisNumberValue(dummy); });
+};
+
 // `Number` constructor
 // https://tc39.es/ecma262/#sec-number-constructor
-if (isForced(NUMBER, !NativeNumber(' 0o1') || !NativeNumber('0b1') || NativeNumber('+0x1'))) {
-  var NumberWrapper = function Number(value) {
-    var n = arguments.length < 1 ? 0 : NativeNumber(toNumeric(value));
-    var dummy = this;
-    // check on 1..constructor(foo) case
-    return isPrototypeOf(NumberPrototype, dummy) && fails(function () { thisNumberValue(dummy); })
-      ? inheritIfRequired(Object(n), dummy, NumberWrapper) : n;
-  };
-  for (var keys = DESCRIPTORS ? getOwnPropertyNames(NativeNumber) : (
+var NumberWrapper = function Number(value) {
+  var n = arguments.length < 1 ? 0 : NativeNumber(toNumeric(value));
+  return calledWithNew(this) ? inheritIfRequired(Object(n), this, NumberWrapper) : n;
+};
+
+NumberWrapper.prototype = NumberPrototype;
+if (FORCED && !IS_PURE) NumberPrototype.constructor = NumberWrapper;
+
+$({ global: true, constructor: true, wrap: true, forced: FORCED }, {
+  Number: NumberWrapper
+});
+
+// Use `internal/copy-constructor-properties` helper in `core-js@4`
+var copyConstructorProperties = function (target, source) {
+  for (var keys = DESCRIPTORS ? getOwnPropertyNames(source) : (
     // ES3:
     'MAX_VALUE,MIN_VALUE,NaN,NEGATIVE_INFINITY,POSITIVE_INFINITY,' +
     // ES2015 (in case, if modules with ES2015 Number statics required before):
@@ -7668,14 +7685,14 @@ if (isForced(NUMBER, !NativeNumber(' 0o1') || !NativeNumber('0b1') || NativeNumb
     // ESNext
     'fromString,range'
   ).split(','), j = 0, key; keys.length > j; j++) {
-    if (hasOwn(NativeNumber, key = keys[j]) && !hasOwn(NumberWrapper, key)) {
-      defineProperty(NumberWrapper, key, getOwnPropertyDescriptor(NativeNumber, key));
+    if (hasOwn(source, key = keys[j]) && !hasOwn(target, key)) {
+      defineProperty(target, key, getOwnPropertyDescriptor(source, key));
     }
   }
-  NumberWrapper.prototype = NumberPrototype;
-  NumberPrototype.constructor = NumberWrapper;
-  defineBuiltIn(global, NUMBER, NumberWrapper, { constructor: true });
-}
+};
+
+if (IS_PURE && PureNumberNamespace) copyConstructorProperties(path[NUMBER], PureNumberNamespace);
+if (FORCED || IS_PURE) copyConstructorProperties(path[NUMBER], NativeNumber);
 
 
 /***/ }),
@@ -14159,6 +14176,7 @@ __webpack_require__(469);
 
 "use strict";
 
+var FREEZING = __webpack_require__(234);
 var global = __webpack_require__(4);
 var uncurryThis = __webpack_require__(14);
 var defineBuiltIns = __webpack_require__(198);
@@ -14166,10 +14184,26 @@ var InternalMetadataModule = __webpack_require__(231);
 var collection = __webpack_require__(230);
 var collectionWeak = __webpack_require__(470);
 var isObject = __webpack_require__(20);
-var isExtensible = __webpack_require__(232);
 var enforceInternalState = (__webpack_require__(52).enforce);
+var fails = __webpack_require__(7);
 var NATIVE_WEAK_MAP = __webpack_require__(53);
 
+var $Object = Object;
+// eslint-disable-next-line es/no-array-isarray -- safe
+var isArray = Array.isArray;
+// eslint-disable-next-line es/no-object-isextensible -- safe
+var isExtensible = $Object.isExtensible;
+// eslint-disable-next-line es/no-object-isfrozen -- safe
+var isFrozen = $Object.isFrozen;
+// eslint-disable-next-line es/no-object-issealed -- safe
+var isSealed = $Object.isSealed;
+// eslint-disable-next-line es/no-object-freeze -- safe
+var freeze = $Object.freeze;
+// eslint-disable-next-line es/no-object-seal -- safe
+var seal = $Object.seal;
+
+var FROZEN = {};
+var SEALED = {};
 var IS_IE11 = !global.ActiveXObject && 'ActiveXObject' in global;
 var InternalWeakMap;
 
@@ -14182,18 +14216,27 @@ var wrapper = function (init) {
 // `WeakMap` constructor
 // https://tc39.es/ecma262/#sec-weakmap-constructor
 var $WeakMap = collection('WeakMap', wrapper, collectionWeak);
+var WeakMapPrototype = $WeakMap.prototype;
+var nativeSet = uncurryThis(WeakMapPrototype.set);
+
+// Chakra Edge bug: adding frozen arrays to WeakMap unfreeze them
+var hasMSEdgeFreezingBug = function () {
+  return FREEZING && fails(function () {
+    var frozenArray = freeze([]);
+    nativeSet(new $WeakMap(), frozenArray, 1);
+    return !isFrozen(frozenArray);
+  });
+};
 
 // IE11 WeakMap frozen keys fix
 // We can't use feature detection because it crash some old IE builds
 // https://github.com/zloirock/core-js/issues/485
-if (NATIVE_WEAK_MAP && IS_IE11) {
+if (NATIVE_WEAK_MAP) if (IS_IE11) {
   InternalWeakMap = collectionWeak.getConstructor(wrapper, 'WeakMap', true);
   InternalMetadataModule.enable();
-  var WeakMapPrototype = $WeakMap.prototype;
   var nativeDelete = uncurryThis(WeakMapPrototype['delete']);
   var nativeHas = uncurryThis(WeakMapPrototype.has);
   var nativeGet = uncurryThis(WeakMapPrototype.get);
-  var nativeSet = uncurryThis(WeakMapPrototype.set);
   defineBuiltIns(WeakMapPrototype, {
     'delete': function (key) {
       if (isObject(key) && !isExtensible(key)) {
@@ -14222,6 +14265,21 @@ if (NATIVE_WEAK_MAP && IS_IE11) {
         if (!state.frozen) state.frozen = new InternalWeakMap();
         nativeHas(this, key) ? nativeSet(this, key, value) : state.frozen.set(key, value);
       } else nativeSet(this, key, value);
+      return this;
+    }
+  });
+// Chakra Edge frozen keys fix
+} else if (hasMSEdgeFreezingBug()) {
+  defineBuiltIns(WeakMapPrototype, {
+    set: function set(key, value) {
+      var arrayIntegrityLevel;
+      if (isArray(key)) {
+        if (isFrozen(key)) arrayIntegrityLevel = FROZEN;
+        else if (isSealed(key)) arrayIntegrityLevel = SEALED;
+      }
+      nativeSet(this, key, value);
+      if (arrayIntegrityLevel == FROZEN) freeze(key);
+      if (arrayIntegrityLevel == SEALED) seal(key);
       return this;
     }
   });
@@ -14956,7 +15014,11 @@ $({ global: true, bind: true, enumerable: true, forced: global.clearImmediate !=
 
 var $ = __webpack_require__(3);
 var global = __webpack_require__(4);
-var setImmediate = (__webpack_require__(316).set);
+var setTask = (__webpack_require__(316).set);
+var schedulersFix = __webpack_require__(488);
+
+// https://github.com/oven-sh/bun/issues/1633
+var setImmediate = global.setImmediate ? schedulersFix(setTask, false) : setTask;
 
 // `setImmediate` method
 // http://w3c.github.io/setImmediate/#si-setImmediate
@@ -14967,6 +15029,52 @@ $({ global: true, bind: true, enumerable: true, forced: global.setImmediate !== 
 
 /***/ }),
 /* 488 */
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+
+var global = __webpack_require__(4);
+var apply = __webpack_require__(95);
+var isCallable = __webpack_require__(21);
+var ENGINE_IS_BUN = __webpack_require__(489);
+var USER_AGENT = __webpack_require__(29);
+var arraySlice = __webpack_require__(96);
+var validateArgumentsLength = __webpack_require__(317);
+
+var Function = global.Function;
+// dirty IE9- and Bun 0.3.0- checks
+var WRAP = /MSIE .\./.test(USER_AGENT) || ENGINE_IS_BUN && (function () {
+  var version = global.Bun.version.split('.');
+  return version.length < 3 || version[0] == 0 && (version[1] < 3 || version[1] == 3 && version[2] == 0);
+})();
+
+// IE9- / Bun 0.3.0- setTimeout / setInterval / setImmediate additional parameters fix
+// https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#timers
+// https://github.com/oven-sh/bun/issues/1633
+module.exports = function (scheduler, hasTimeArg) {
+  var firstParamIndex = hasTimeArg ? 2 : 1;
+  return WRAP ? function (handler, timeout /* , ...arguments */) {
+    var boundArgs = validateArgumentsLength(arguments.length, 1) > firstParamIndex;
+    var fn = isCallable(handler) ? handler : Function(handler);
+    var params = boundArgs ? arraySlice(arguments, firstParamIndex) : [];
+    var callback = boundArgs ? function () {
+      apply(fn, this, params);
+    } : fn;
+    return hasTimeArg ? scheduler(callback, timeout) : scheduler(callback);
+  } : scheduler;
+};
+
+
+/***/ }),
+/* 489 */
+/***/ (function(module) {
+
+/* global Bun -- Deno case */
+module.exports = typeof Bun == 'function' && Bun && typeof Bun.version == 'string';
+
+
+/***/ }),
+/* 490 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 var $ = __webpack_require__(3);
@@ -14991,7 +15099,7 @@ $({ global: true, enumerable: true, dontCallGetSet: true }, {
 
 
 /***/ }),
-/* 489 */
+/* 491 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -15039,7 +15147,7 @@ try {
 
 
 /***/ }),
-/* 490 */
+/* 492 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 var IS_PURE = __webpack_require__(36);
@@ -15063,6 +15171,8 @@ var createNonEnumerableProperty = __webpack_require__(44);
 var lengthOfArrayLike = __webpack_require__(64);
 var validateArgumentsLength = __webpack_require__(317);
 var getRegExpFlags = __webpack_require__(357);
+var MapHelpers = __webpack_require__(493);
+var SetHelpers = __webpack_require__(494);
 var ERROR_STACK_INSTALLABLE = __webpack_require__(121);
 var V8 = __webpack_require__(28);
 var IS_BROWSER = __webpack_require__(327);
@@ -15070,6 +15180,7 @@ var IS_DENO = __webpack_require__(328);
 var IS_NODE = __webpack_require__(179);
 
 var Object = global.Object;
+var Array = global.Array;
 var Date = global.Date;
 var Error = global.Error;
 var EvalError = global.EvalError;
@@ -15084,13 +15195,12 @@ var CompileError = WebAssembly && WebAssembly.CompileError || Error;
 var LinkError = WebAssembly && WebAssembly.LinkError || Error;
 var RuntimeError = WebAssembly && WebAssembly.RuntimeError || Error;
 var DOMException = getBuiltin('DOMException');
-var Set = getBuiltin('Set');
-var Map = getBuiltin('Map');
-var MapPrototype = Map.prototype;
-var mapHas = uncurryThis(MapPrototype.has);
-var mapGet = uncurryThis(MapPrototype.get);
-var mapSet = uncurryThis(MapPrototype.set);
-var setAdd = uncurryThis(Set.prototype.add);
+var Map = MapHelpers.Map;
+var mapHas = MapHelpers.has;
+var mapGet = MapHelpers.get;
+var mapSet = MapHelpers.set;
+var Set = SetHelpers.Set;
+var setAdd = SetHelpers.add;
 var objectKeys = getBuiltin('Object', 'keys');
 var push = uncurryThis([].push);
 var thisBooleanValue = uncurryThis(true.valueOf);
@@ -15196,7 +15306,7 @@ var structuredCloneInternal = function (value, map) {
 
   switch (type) {
     case 'Array':
-      cloned = [];
+      cloned = Array(lengthOfArrayLike(value));
       deep = true;
       break;
     case 'Object':
@@ -15553,23 +15663,66 @@ $({ global: true, enumerable: true, sham: !PROPER_TRANSFER, forced: FORCED_REPLA
 
 
 /***/ }),
-/* 491 */
-/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+/* 493 */
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-// TODO: Remove this module from `core-js@4` since it's split to modules listed below
-__webpack_require__(492);
-__webpack_require__(494);
+var uncurryThis = __webpack_require__(14);
+
+// eslint-disable-next-line es/no-map -- safe
+var MapPrototype = Map.prototype;
+
+module.exports = {
+  // eslint-disable-next-line es/no-map -- safe
+  Map: Map,
+  set: uncurryThis(MapPrototype.set),
+  get: uncurryThis(MapPrototype.get),
+  has: uncurryThis(MapPrototype.has),
+  remove: uncurryThis(MapPrototype['delete']),
+  proto: MapPrototype
+};
 
 
 /***/ }),
-/* 492 */
+/* 494 */
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+var uncurryThis = __webpack_require__(14);
+
+// eslint-disable-next-line es/no-set -- safe
+var SetPrototype = Set.prototype;
+
+module.exports = {
+  // eslint-disable-next-line es/no-set -- safe
+  Set: Set,
+  add: uncurryThis(SetPrototype.add),
+  has: uncurryThis(SetPrototype.has),
+  remove: uncurryThis(SetPrototype['delete']),
+  proto: SetPrototype,
+  $has: SetPrototype.has,
+  $keys: SetPrototype.keys
+};
+
+
+/***/ }),
+/* 495 */
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
+// TODO: Remove this module from `core-js@4` since it's split to modules listed below
+__webpack_require__(496);
+__webpack_require__(497);
+
+
+/***/ }),
+/* 496 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 var $ = __webpack_require__(3);
 var global = __webpack_require__(4);
-var setInterval = (__webpack_require__(493).setInterval);
+var schedulersFix = __webpack_require__(488);
 
-// ie9- setInterval additional parameters fix
+var setInterval = schedulersFix(global.setInterval, true);
+
+// Bun / IE9- setInterval additional parameters fix
 // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-setinterval
 $({ global: true, bind: true, forced: global.setInterval !== setInterval }, {
   setInterval: setInterval
@@ -15577,51 +15730,16 @@ $({ global: true, bind: true, forced: global.setInterval !== setInterval }, {
 
 
 /***/ }),
-/* 493 */
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-var global = __webpack_require__(4);
-var apply = __webpack_require__(95);
-var isCallable = __webpack_require__(21);
-var userAgent = __webpack_require__(29);
-var arraySlice = __webpack_require__(96);
-var validateArgumentsLength = __webpack_require__(317);
-
-var MSIE = /MSIE .\./.test(userAgent); // <- dirty ie9- check
-var Function = global.Function;
-
-var wrap = function (scheduler) {
-  return MSIE ? function (handler, timeout /* , ...arguments */) {
-    var boundArgs = validateArgumentsLength(arguments.length, 1) > 2;
-    var fn = isCallable(handler) ? handler : Function(handler);
-    var args = boundArgs ? arraySlice(arguments, 2) : undefined;
-    return scheduler(boundArgs ? function () {
-      apply(fn, this, args);
-    } : fn, timeout);
-  } : scheduler;
-};
-
-// ie9- setTimeout & setInterval additional parameters fix
-// https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#timers
-module.exports = {
-  // `setTimeout` method
-  // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-settimeout
-  setTimeout: wrap(global.setTimeout),
-  // `setInterval` method
-  // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-setinterval
-  setInterval: wrap(global.setInterval)
-};
-
-
-/***/ }),
-/* 494 */
+/* 497 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 var $ = __webpack_require__(3);
 var global = __webpack_require__(4);
-var setTimeout = (__webpack_require__(493).setTimeout);
+var schedulersFix = __webpack_require__(488);
 
-// ie9- setTimeout additional parameters fix
+var setTimeout = schedulersFix(global.setTimeout, true);
+
+// Bun / IE9- setTimeout additional parameters fix
 // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-settimeout
 $({ global: true, bind: true, forced: global.setTimeout !== setTimeout }, {
   setTimeout: setTimeout
@@ -15629,15 +15747,15 @@ $({ global: true, bind: true, forced: global.setTimeout !== setTimeout }, {
 
 
 /***/ }),
-/* 495 */
+/* 498 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's replaced to module below
-__webpack_require__(496);
+__webpack_require__(499);
 
 
 /***/ }),
-/* 496 */
+/* 499 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -15646,7 +15764,7 @@ __webpack_require__(496);
 __webpack_require__(379);
 var $ = __webpack_require__(3);
 var DESCRIPTORS = __webpack_require__(6);
-var USE_NATIVE_URL = __webpack_require__(497);
+var USE_NATIVE_URL = __webpack_require__(500);
 var global = __webpack_require__(4);
 var bind = __webpack_require__(85);
 var uncurryThis = __webpack_require__(14);
@@ -15658,11 +15776,11 @@ var assign = __webpack_require__(280);
 var arrayFrom = __webpack_require__(159);
 var arraySlice = __webpack_require__(77);
 var codeAt = (__webpack_require__(373).codeAt);
-var toASCII = __webpack_require__(498);
+var toASCII = __webpack_require__(501);
 var $toString = __webpack_require__(69);
 var setToStringTag = __webpack_require__(83);
 var validateArgumentsLength = __webpack_require__(317);
-var URLSearchParamsModule = __webpack_require__(499);
+var URLSearchParamsModule = __webpack_require__(502);
 var InternalStateModule = __webpack_require__(52);
 
 var setInternalState = InternalStateModule.set;
@@ -16686,7 +16804,7 @@ $({ global: true, constructor: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS
 
 
 /***/ }),
-/* 497 */
+/* 500 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 var fails = __webpack_require__(7);
@@ -16726,7 +16844,7 @@ module.exports = !fails(function () {
 
 
 /***/ }),
-/* 498 */
+/* 501 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -16914,7 +17032,7 @@ module.exports = function (input) {
 
 
 /***/ }),
-/* 499 */
+/* 502 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -16926,7 +17044,7 @@ var global = __webpack_require__(4);
 var call = __webpack_require__(8);
 var uncurryThis = __webpack_require__(14);
 var DESCRIPTORS = __webpack_require__(6);
-var USE_NATIVE_URL = __webpack_require__(497);
+var USE_NATIVE_URL = __webpack_require__(500);
 var defineBuiltIn = __webpack_require__(48);
 var defineBuiltIns = __webpack_require__(198);
 var setToStringTag = __webpack_require__(83);
@@ -17313,7 +17431,7 @@ module.exports = {
 
 
 /***/ }),
-/* 500 */
+/* 503 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -17331,21 +17449,21 @@ $({ target: 'URL', proto: true, enumerable: true }, {
 
 
 /***/ }),
-/* 501 */
+/* 504 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's replaced to module below
-__webpack_require__(499);
+__webpack_require__(502);
 
 
 /***/ }),
-/* 502 */,
-/* 503 */
+/* 505 */,
+/* 506 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO(Babel 8): Remove this file.
 
-var runtime = __webpack_require__(504)();
+var runtime = __webpack_require__(507)();
 module.exports = runtime;
 
 // Copied from https://github.com/facebook/regenerator/blob/main/packages/runtime/runtime.js#L736=
@@ -17361,10 +17479,10 @@ try {
 
 
 /***/ }),
-/* 504 */
+/* 507 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var _typeof = (__webpack_require__(505)["default"]);
+var _typeof = (__webpack_require__(508)["default"]);
 function _regeneratorRuntime() {
   "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
   module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
@@ -17532,9 +17650,7 @@ function _regeneratorRuntime() {
       if (!isNaN(iterable.length)) {
         var i = -1,
           next = function next() {
-            for (; ++i < iterable.length;) {
-              if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-            }
+            for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
             return next.value = undefined, next.done = !0, next;
           };
         return next.next = next;
@@ -17580,9 +17696,7 @@ function _regeneratorRuntime() {
   }), exports.keys = function (val) {
     var object = Object(val),
       keys = [];
-    for (var key in object) {
-      keys.push(key);
-    }
+    for (var key in object) keys.push(key);
     return keys.reverse(), function next() {
       for (; keys.length;) {
         var key = keys.pop();
@@ -17593,9 +17707,7 @@ function _regeneratorRuntime() {
   }, exports.values = values, Context.prototype = {
     constructor: Context,
     reset: function reset(skipTempReset) {
-      if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) {
-        "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined);
-      }
+      if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined);
     },
     stop: function stop() {
       this.done = !0;
@@ -17676,7 +17788,7 @@ function _regeneratorRuntime() {
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-/* 505 */
+/* 508 */
 /***/ (function(module) {
 
 function _typeof(obj) {
@@ -17691,8 +17803,8 @@ function _typeof(obj) {
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-/* 506 */,
-/* 507 */
+/* 509 */,
+/* 510 */
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17737,9 +17849,7 @@ function _inheritsLoose(subClass, superClass) {
 }
 function extend(parent, definition) {
   var prototype = Object.create(parent.prototype);
-  for (var key in definition) {
-    prototype[key] = definition[key];
-  }
+  for (var key in definition) prototype[key] = definition[key];
   return prototype;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-color/src/color.js
@@ -18240,9 +18350,7 @@ var rgbBasisClosed = rgbSpline(basisClosed);
     c = b.slice(),
     i;
   return function (t) {
-    for (i = 0; i < n; ++i) {
-      c[i] = a[i] * (1 - t) + b[i] * t;
-    }
+    for (i = 0; i < n; ++i) c[i] = a[i] * (1 - t) + b[i] * t;
     return c;
   };
 }
@@ -18261,16 +18369,10 @@ function genericArray(a, b) {
     x = Array(na),
     c = Array(nb),
     i;
-  for (i = 0; i < na; ++i) {
-    x[i] = value(a[i], b[i]);
-  }
-  for (; i < nb; ++i) {
-    c[i] = b[i];
-  }
+  for (i = 0; i < na; ++i) x[i] = value(a[i], b[i]);
+  for (; i < nb; ++i) c[i] = b[i];
   return function (t) {
-    for (i = 0; i < na; ++i) {
-      c[i] = x[i](t);
-    }
+    for (i = 0; i < na; ++i) c[i] = x[i](t);
     return c;
   };
 }
@@ -18303,9 +18405,7 @@ function genericArray(a, b) {
     }
   }
   return function (t) {
-    for (k in i) {
-      c[k] = i[k](t);
-    }
+    for (k in i) c[k] = i[k](t);
     return c;
   };
 }
@@ -18374,9 +18474,7 @@ function one(b) {
   // Special optimization for only a single match.
   // Otherwise, interpolate each of the numbers and rejoin the string.
   return s.length < 2 ? q[0] ? one(q[0].x) : zero(b) : (b = q.length, function (t) {
-    for (var i = 0, o; i < b; ++i) {
-      s[(o = q[i]).i] = o.x(t);
-    }
+    for (var i = 0, o; i < b; ++i) s[(o = q[i]).i] = o.x(t);
     return s.join("");
   });
 }
@@ -18490,67 +18588,65 @@ function bisector_zero() {
   return 0;
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(503);
+var regenerator = __webpack_require__(506);
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
 
 var _marked = /*#__PURE__*/regenerator.mark(numbers);
 function _createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 function number_number(x) {
   return x === null ? NaN : +x;
 }
 function numbers(values, valueof) {
   var _iterator, _step, value, index, _iterator2, _step2, _value;
   return regenerator.wrap(function (_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          if (!(valueof === undefined)) {
-            _context.next = 11;
-            break;
-          }
-          _iterator = _createForOfIteratorHelperLoose(values);
-        case 2:
-          if ((_step = _iterator()).done) {
-            _context.next = 9;
-            break;
-          }
-          value = _step.value;
-          if (!(value != null && (value = +value) >= value)) {
-            _context.next = 7;
-            break;
-          }
-          _context.next = 7;
-          return value;
-        case 7:
-          _context.next = 2;
+    while (1) switch (_context.prev = _context.next) {
+      case 0:
+        if (!(valueof === undefined)) {
+          _context.next = 11;
           break;
-        case 9:
+        }
+        _iterator = _createForOfIteratorHelperLoose(values);
+      case 2:
+        if ((_step = _iterator()).done) {
+          _context.next = 9;
+          break;
+        }
+        value = _step.value;
+        if (!(value != null && (value = +value) >= value)) {
+          _context.next = 7;
+          break;
+        }
+        _context.next = 7;
+        return value;
+      case 7:
+        _context.next = 2;
+        break;
+      case 9:
+        _context.next = 20;
+        break;
+      case 11:
+        index = -1;
+        _iterator2 = _createForOfIteratorHelperLoose(values);
+      case 13:
+        if ((_step2 = _iterator2()).done) {
           _context.next = 20;
           break;
-        case 11:
-          index = -1;
-          _iterator2 = _createForOfIteratorHelperLoose(values);
-        case 13:
-          if ((_step2 = _iterator2()).done) {
-            _context.next = 20;
-            break;
-          }
-          _value = _step2.value;
-          if (!((_value = valueof(_value, ++index, values)) != null && (_value = +_value) >= _value)) {
-            _context.next = 18;
-            break;
-          }
+        }
+        _value = _step2.value;
+        if (!((_value = valueof(_value, ++index, values)) != null && (_value = +_value) >= _value)) {
           _context.next = 18;
-          return _value;
-        case 18:
-          _context.next = 13;
           break;
-        case 20:
-        case "end":
-          return _context.stop();
-      }
+        }
+        _context.next = 18;
+        return _value;
+      case 18:
+        _context.next = 13;
+        break;
+      case 20:
+      case "end":
+        return _context.stop();
     }
   }, _marked);
 }
@@ -18732,9 +18828,7 @@ function ticks(start, stop, count) {
     if (r0 * step < start) ++r0;
     if (r1 * step > stop) --r1;
     ticks = Array(n = r1 - r0 + 1);
-    while (++i < n) {
-      ticks[i] = (r0 + i) * step;
-    }
+    while (++i < n) ticks[i] = (r0 + i) * step;
   } else {
     step = -step;
     var _r = Math.round(start * step),
@@ -18742,9 +18836,7 @@ function ticks(start, stop, count) {
     if (_r / step < start) ++_r;
     if (_r2 / step > stop) --_r2;
     ticks = Array(n = _r2 - _r + 1);
-    while (++i < n) {
-      ticks[i] = (_r + i) / step;
-    }
+    while (++i < n) ticks[i] = (_r + i) / step;
   }
   if (reverse) ticks.reverse();
   return ticks;
@@ -19289,10 +19381,10 @@ function loggish(transform) {
   };
   scale.ticks = function (count) {
     _newArrowCheck(this, _this4);
-    var d = domain(),
-      u = d[0],
-      v = d[d.length - 1],
-      r = v < u;
+    var d = domain();
+    var u = d[0],
+      v = d[d.length - 1];
+    var r = v < u;
     if (r) {
       var _ref = [v, u];
       u = _ref[0];
@@ -19301,9 +19393,9 @@ function loggish(transform) {
     var i = logs(u),
       j = logs(v),
       k,
-      t,
-      n = count == null ? 10 : +count,
-      z = [];
+      t;
+    var n = count == null ? 10 : +count;
+    var z = [];
     if (!(base % 1) && j - i < n) {
       i = Math.floor(i), j = Math.ceil(j);
       if (u > 0) for (; i <= j; ++i) {
@@ -19716,17 +19808,20 @@ var $TOOLTIP = {
   tooltipContainer: "bb-tooltip-container",
   tooltipName: "bb-tooltip-name"
 };
+var $TREEMAP = {
+  treemap: "bb-treemap",
+  chartTreemap: "bb-chart-treemap",
+  chartTreemaps: "bb-chart-treemaps"
+};
 var $ZOOM = {
   buttonZoomReset: "bb-zoom-reset",
   zoomBrush: "bb-zoom-brush"
 };
-/* harmony default export */ var classes = (_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM));
+/* harmony default export */ var classes = (_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread(_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/sourceEvent.js
 /* harmony default export */ function sourceEvent(event) {
   var sourceEvent;
-  while (sourceEvent = event.sourceEvent) {
-    event = sourceEvent;
-  }
+  while (sourceEvent = event.sourceEvent) event = sourceEvent;
   return event;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/pointer.js
@@ -19790,9 +19885,7 @@ Dispatch.prototype = dispatch.prototype = {
 
     // If no callback was specified, return the callback of the given type and name.
     if (arguments.length < 2) {
-      while (++i < n) {
-        if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
-      }
+      while (++i < n) if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
       return;
     }
 
@@ -19800,34 +19893,24 @@ Dispatch.prototype = dispatch.prototype = {
     // Otherwise, if a null callback was specified, remove callbacks of the given name.
     if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
     while (++i < n) {
-      if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);else if (callback == null) for (t in _) {
-        _[t] = set(_[t], typename.name, null);
-      }
+      if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);else if (callback == null) for (t in _) _[t] = set(_[t], typename.name, null);
     }
     return this;
   },
   copy: function () {
     var copy = {},
       _ = this._;
-    for (var t in _) {
-      copy[t] = _[t].slice();
-    }
+    for (var t in _) copy[t] = _[t].slice();
     return new Dispatch(copy);
   },
   call: function call(type, that) {
-    if ((n = arguments.length - 2) > 0) for (var args = Array(n), i = 0, n, t; i < n; ++i) {
-      args[i] = arguments[i + 2];
-    }
+    if ((n = arguments.length - 2) > 0) for (var args = Array(n), i = 0, n, t; i < n; ++i) args[i] = arguments[i + 2];
     if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-    for (t = this._[type], i = 0, n = t.length; i < n; ++i) {
-      t[i].value.apply(that, args);
-    }
+    for (t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
   },
   apply: function apply(type, that, args) {
     if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-    for (var t = this._[type], i = 0, n = t.length; i < n; ++i) {
-      t[i].value.apply(that, args);
-    }
+    for (var t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
   }
 };
 function get(type, name) {
@@ -20102,7 +20185,7 @@ function datum(node) {
     for (var i0 = 0, i1 = 0, previous, next; i0 < dataLength; ++i0) {
       if (previous = enterGroup[i0]) {
         if (i0 >= i1) i1 = i0 + 1;
-        while (!(next = updateGroup[i1]) && ++i1 < dataLength) {}
+        while (!(next = updateGroup[i1]) && ++i1 < dataLength);
         previous._next = next || null;
       }
     }
@@ -20218,7 +20301,7 @@ function sort_ascending(a, b) {
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/size.js
 function size_createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = size_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function size_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return size_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return size_arrayLikeToArray(o, minLen); }
-function size_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function size_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 /* harmony default export */ function size() {
   var size = 0;
   for (var _iterator = size_createForOfIteratorHelperLoose(this), _step; !(_step = _iterator()).done;) {
@@ -20386,17 +20469,13 @@ function classedAdd(node, names) {
   var list = classList(node),
     i = -1,
     n = names.length;
-  while (++i < n) {
-    list.add(names[i]);
-  }
+  while (++i < n) list.add(names[i]);
 }
 function classedRemove(node, names) {
   var list = classList(node),
     i = -1,
     n = names.length;
-  while (++i < n) {
-    list.remove(names[i]);
-  }
+  while (++i < n) list.remove(names[i]);
 }
 function classedTrue(names) {
   return function () {
@@ -20419,9 +20498,7 @@ function classedFunction(names, value) {
     var list = classList(this.node()),
       i = -1,
       n = names.length;
-    while (++i < n) {
-      if (!list.contains(names[i])) return !1;
-    }
+    while (++i < n) if (!list.contains(names[i])) return !1;
     return !0;
   }
   return this.each((typeof value === "function" ? classedFunction : value ? classedTrue : classedFalse)(names, value));
@@ -20614,9 +20691,7 @@ function onAdd(typename, value, options) {
     return;
   }
   on = value ? onAdd : onRemove;
-  for (i = 0; i < n; ++i) {
-    this.each(on(typenames[i], value, options));
-  }
+  for (i = 0; i < n; ++i) this.each(on(typenames[i], value, options));
   return this;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/dispatch.js
@@ -20651,39 +20726,37 @@ var iterator_marked = /*#__PURE__*/regenerator.mark(_callee);
 function _callee() {
   var groups, j, m, group, i, n, node;
   return regenerator.wrap(function (_context) {
-    while (1) {
-      switch (_context.prev = _context.next) {
-        case 0:
-          groups = this._groups, j = 0, m = groups.length;
-        case 1:
-          if (!(j < m)) {
-            _context.next = 13;
-            break;
-          }
-          group = groups[j], i = 0, n = group.length;
-        case 3:
-          if (!(i < n)) {
-            _context.next = 10;
-            break;
-          }
-          if (!(node = group[i])) {
-            _context.next = 7;
-            break;
-          }
+    while (1) switch (_context.prev = _context.next) {
+      case 0:
+        groups = this._groups, j = 0, m = groups.length;
+      case 1:
+        if (!(j < m)) {
+          _context.next = 13;
+          break;
+        }
+        group = groups[j], i = 0, n = group.length;
+      case 3:
+        if (!(i < n)) {
+          _context.next = 10;
+          break;
+        }
+        if (!(node = group[i])) {
           _context.next = 7;
-          return node;
-        case 7:
-          ++i;
-          _context.next = 3;
           break;
-        case 10:
-          ++j;
-          _context.next = 1;
-          break;
-        case 13:
-        case "end":
-          return _context.stop();
-      }
+        }
+        _context.next = 7;
+        return node;
+      case 7:
+        ++i;
+        _context.next = 3;
+        break;
+      case 10:
+        ++j;
+        _context.next = 1;
+        break;
+      case 13:
+      case "end":
+        return _context.stop();
     }
   }, iterator_marked, this);
 }
@@ -21083,9 +21156,7 @@ function create(node, id, self) {
     self.state = ENDED;
     self.timer.stop();
     delete schedules[id];
-    for (var i in schedules) {
-      return;
-    } // eslint-disable-line no-unused-vars
+    for (var i in schedules) return; // eslint-disable-line no-unused-vars
     delete node.__transition;
   }
 }
@@ -21231,9 +21302,7 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
       var i = -1,
         n = q.length,
         o;
-      while (++i < n) {
-        s[(o = q[i]).i] = o.x(t);
-      }
+      while (++i < n) s[(o = q[i]).i] = o.x(t);
       return s.join("");
     };
   };
@@ -21537,9 +21606,7 @@ function onFunction(id, name, listener) {
 function removeFunction(id) {
   return function () {
     var parent = this.parentNode;
-    for (var i in this.__transition) {
-      if (+i !== id) return;
-    }
+    for (var i in this.__transition) if (+i !== id) return;
     if (parent) parent.removeChild(this);
   };
 }
@@ -21957,7 +22024,7 @@ function noevent_nopropagation(event) {
 
 function brush_createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = brush_unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function brush_unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return brush_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return brush_arrayLikeToArray(o, minLen); }
-function brush_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+function brush_arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 
 
 
@@ -21977,8 +22044,8 @@ var MODE_DRAG = {
   },
   MODE_CENTER = {
     name: "center"
-  },
-  abs = Math.abs,
+  };
+var abs = Math.abs,
   max = Math.max,
   min = Math.min;
 function number1(e) {
@@ -22093,9 +22160,7 @@ function defaultTouchable() {
 
 // Like d3.local, but with the name “__brush” rather than auto-generated.
 function local(node) {
-  while (!node.__brush) {
-    if (!(node = node.parentNode)) return;
-  }
+  while (!node.__brush) if (!(node = node.parentNode)) return;
   return node.__brush;
 }
 function brush_empty(extent) {
@@ -22323,8 +22388,8 @@ function brush_brush(dim) {
     }
     function move(event) {
       var point = points[0],
-        point0 = point.point0,
-        t;
+        point0 = point.point0;
+      var t;
       dx = point[0] - point0[0];
       dy = point[1] - point0[1];
       switch (mode) {
@@ -22656,7 +22721,8 @@ function hasValue(dict, value) {
  * @private
  */
 function callFn(fn, thisArg) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+  var isFn = isFunction(fn);
+  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     args[_key - 2] = arguments[_key];
   }
   isFn && fn.call.apply(fn, [thisArg].concat(args));
@@ -22828,8 +22894,9 @@ function getPointer(event, element) {
 function getBrushSelection(ctx) {
   var event = ctx.event,
     $el = ctx.$el,
-    main = $el.subchart.main || $el.main,
-    selection;
+    main = $el.subchart.main || $el.main;
+  var selection;
+
   // check from event
   if (event && event.type === "brush") {
     selection = event.selection;
@@ -22888,8 +22955,8 @@ function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
     return -1;
   }
-  var mid = Math.floor((start + end) / 2),
-    _arr$mid = arr[mid],
+  var mid = Math.floor((start + end) / 2);
+  var _arr$mid = arr[mid],
     x = _arr$mid.x,
     _arr$mid$w = _arr$mid.w,
     w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
@@ -22927,12 +22994,12 @@ function brushEmpty(ctx) {
  * @private
  */
 function deepClone() {
-  for (var _this6 = this, clone = function (v) {
+  for (var _this6 = this, _clone = function clone(v) {
       _newArrowCheck(this, _this6);
       if (isObject(v) && v.constructor) {
         var r = new v.constructor();
         for (var k in v) {
-          r[k] = clone(v[k]);
+          r[k] = _clone(v[k]);
         }
         return r;
       }
@@ -22942,7 +23009,7 @@ function deepClone() {
   }
   return objectN.map(function (v) {
     _newArrowCheck(this, _this6);
-    return clone(v);
+    return _clone(v);
   }.bind(this)).reduce(function (a, c) {
     _newArrowCheck(this, _this6);
     return util_objectSpread(util_objectSpread({}, a), c);
@@ -23419,12 +23486,12 @@ function loadConfig(config) {
     target,
     keys,
     read,
-    find = function () {
+    _find = function find() {
       _newArrowCheck(this, _this);
       var key = keys.shift();
       if (key && target && isObjectType(target) && key in target) {
         target = target[key];
-        return find();
+        return _find();
       } else if (!key) {
         return target;
       }
@@ -23434,7 +23501,7 @@ function loadConfig(config) {
     _newArrowCheck(this, _this);
     target = config;
     keys = key.split("_");
-    read = find();
+    read = _find();
     if (isDefined(read)) {
       thisConfig[key] = read;
     }
@@ -23518,7 +23585,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.6.3-nightly-20221217004651";
+Plugin.version = "3.6.3-nightly-20221230004723";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
@@ -23701,8 +23768,8 @@ function pointInRegion(point, region) {
   // ray-casting algorithm based on
   // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
   var x = point.x,
-    y = point.value,
-    inside = !1;
+    y = point.value;
+  var inside = !1;
   for (var i = 0, j = region.length - 1; i < region.length; j = i++) {
     var xi = region[i].x,
       yi = region[i].y,
@@ -23761,8 +23828,8 @@ function getRegionArea(points) {
  * @private
  */
 function getCentroid(points) {
-  var area = getRegionArea(points),
-    x = 0,
+  var area = getRegionArea(points);
+  var x = 0,
     y = 0,
     f;
   for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
@@ -23899,8 +23966,8 @@ var Elements = /*#__PURE__*/function () {
   _proto.xvCustom = function xvCustom(d, xyValue) {
     var $$ = this,
       axis = $$.axis,
-      config = $$.config,
-      value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+      config = $$.config;
+    var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     if (axis.isTimeSeries()) {
       value = parseDate.call($$, value);
     } else if (axis.isCategorized() && isString(value)) {
@@ -24318,8 +24385,8 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
   _proto.xvCustom = function xvCustom(d, xyValue) {
     var $$ = this,
       axis = $$.axis,
-      config = $$.config,
-      value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+      config = $$.config;
+    var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     if (axis.isTimeSeries()) {
       value = parseDate.call($$, value);
     } else if (axis.isCategorized() && isString(value)) {
@@ -24454,7 +24521,7 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module used 'module' so it can't be inlined
 /******/ 	__webpack_require__(0);
-/******/ 	var __webpack_exports__ = __webpack_require__(507);
+/******/ 	var __webpack_exports__ = __webpack_require__(510);
 /******/ 	__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	
 /******/ 	return __webpack_exports__;

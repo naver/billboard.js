@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221217004651
+ * @version 3.6.3-nightly-20221230004723
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -236,7 +236,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.6.3-nightly-20221217004651";
+Plugin.version = "3.6.3-nightly-20221230004723";
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
 /**
@@ -507,7 +507,8 @@ function hasValue(dict, value) {
  * @private
  */
 function callFn(fn, thisArg) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+  var isFn = isFunction(fn);
+  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     args[_key - 2] = arguments[_key];
   }
   isFn && fn.call.apply(fn, [thisArg].concat(args));
@@ -679,8 +680,9 @@ function getPointer(event, element) {
 function getBrushSelection(ctx) {
   var event = ctx.event,
     $el = ctx.$el,
-    main = $el.subchart.main || $el.main,
-    selection;
+    main = $el.subchart.main || $el.main;
+  var selection;
+
   // check from event
   if (event && event.type === "brush") {
     selection = event.selection;
@@ -739,8 +741,8 @@ function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
     return -1;
   }
-  var mid = Math.floor((start + end) / 2),
-    _arr$mid = arr[mid],
+  var mid = Math.floor((start + end) / 2);
+  var _arr$mid = arr[mid],
     x = _arr$mid.x,
     _arr$mid$w = _arr$mid.w,
     w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
@@ -778,12 +780,12 @@ function brushEmpty(ctx) {
  * @private
  */
 function deepClone() {
-  for (var _this6 = this, clone = function (v) {
+  for (var _this6 = this, _clone = function clone(v) {
       _newArrowCheck(this, _this6);
       if (isObject(v) && v.constructor) {
         var r = new v.constructor();
         for (var k in v) {
-          r[k] = clone(v[k]);
+          r[k] = _clone(v[k]);
         }
         return r;
       }
@@ -793,7 +795,7 @@ function deepClone() {
   }
   return objectN.map(function (v) {
     _newArrowCheck(this, _this6);
-    return clone(v);
+    return _clone(v);
   }.bind(this)).reduce(function (a, c) {
     _newArrowCheck(this, _this6);
     return _objectSpread(_objectSpread({}, a), c);
@@ -1270,12 +1272,12 @@ function loadConfig(config) {
     target,
     keys,
     read,
-    find = function () {
+    _find = function find() {
       _newArrowCheck(this, _this);
       var key = keys.shift();
       if (key && target && isObjectType(target) && key in target) {
         target = target[key];
-        return find();
+        return _find();
       } else if (!key) {
         return target;
       }
@@ -1285,7 +1287,7 @@ function loadConfig(config) {
     _newArrowCheck(this, _this);
     target = config;
     keys = key.split("_");
-    read = find();
+    read = _find();
     if (isDefined(read)) {
       thisConfig[key] = read;
     }

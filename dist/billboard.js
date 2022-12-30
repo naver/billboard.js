@@ -5,18 +5,18 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221217004651
+ * @version 3.6.3-nightly-20221230004723
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-dsv"), require("d3-ease"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom"));
+		module.exports = factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-dsv"), require("d3-ease"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom"));
 	else if(typeof define === 'function' && define.amd)
-		define(["d3-axis", "d3-brush", "d3-drag", "d3-dsv", "d3-ease", "d3-interpolate", "d3-scale", "d3-selection", "d3-shape", "d3-time-format", "d3-transition", "d3-zoom"], factory);
+		define(["d3-axis", "d3-brush", "d3-drag", "d3-dsv", "d3-ease", "d3-hierarchy", "d3-interpolate", "d3-scale", "d3-selection", "d3-shape", "d3-time-format", "d3-transition", "d3-zoom"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-dsv"), require("d3-ease"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
+		var a = typeof exports === 'object' ? factory(require("d3-axis"), require("d3-brush"), require("d3-drag"), require("d3-dsv"), require("d3-ease"), require("d3-hierarchy"), require("d3-interpolate"), require("d3-scale"), require("d3-selection"), require("d3-shape"), require("d3-time-format"), require("d3-transition"), require("d3-zoom")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__13__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__14__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -92,6 +92,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
 /***/ (function(module) {
 
 module.exports = __WEBPACK_EXTERNAL_MODULE__13__;
+
+/***/ }),
+/* 14 */
+/***/ (function(module) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
 
 /***/ })
 /******/ 	]);
@@ -187,7 +193,8 @@ __webpack_require__.d(resolver_shape_namespaceObject, {
   "radar": function() { return resolver_shape_radar; },
   "scatter": function() { return shape_scatter; },
   "spline": function() { return shape_spline; },
-  "step": function() { return step; }
+  "step": function() { return step; },
+  "treemap": function() { return resolver_shape_treemap; }
 });
 
 // NAMESPACE OBJECT: ./src/config/resolver/interaction.ts
@@ -266,7 +273,8 @@ var TYPE = {
   RADAR: "radar",
   SCATTER: "scatter",
   SPLINE: "spline",
-  STEP: "step"
+  STEP: "step",
+  TREEMAP: "treemap"
 };
 
 /**
@@ -290,7 +298,8 @@ var TYPE_METHOD_NEEDED = {
   RADAR: "initCircle",
   SCATTER: "initCircle",
   SPLINE: "initLine",
-  STEP: "initLine"
+  STEP: "initLine",
+  TREEMAP: "initTreemap"
 };
 
 /**
@@ -466,7 +475,8 @@ function hasValue(dict, value) {
  * @private
  */
 function callFn(fn, thisArg) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+  var isFn = isFunction(fn);
+  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     args[_key - 2] = arguments[_key];
   }
   isFn && fn.call.apply(fn, [thisArg].concat(args));
@@ -638,8 +648,9 @@ function getPointer(event, element) {
 function getBrushSelection(ctx) {
   var event = ctx.event,
     $el = ctx.$el,
-    main = $el.subchart.main || $el.main,
-    selection;
+    main = $el.subchart.main || $el.main;
+  var selection;
+
   // check from event
   if (event && event.type === "brush") {
     selection = event.selection;
@@ -698,8 +709,8 @@ function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
     return -1;
   }
-  var mid = Math.floor((start + end) / 2),
-    _arr$mid = arr[mid],
+  var mid = Math.floor((start + end) / 2);
+  var _arr$mid = arr[mid],
     x = _arr$mid.x,
     _arr$mid$w = _arr$mid.w,
     w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
@@ -737,12 +748,12 @@ function brushEmpty(ctx) {
  * @private
  */
 function deepClone() {
-  for (var _this6 = this, clone = function (v) {
+  for (var _this6 = this, _clone = function clone(v) {
       _newArrowCheck(this, _this6);
       if (isObject(v) && v.constructor) {
         var r = new v.constructor();
         for (var k in v) {
-          r[k] = clone(v[k]);
+          r[k] = _clone(v[k]);
         }
         return r;
       }
@@ -752,7 +763,7 @@ function deepClone() {
   }
   return objectN.map(function (v) {
     _newArrowCheck(this, _this6);
-    return clone(v);
+    return _clone(v);
   }.bind(this)).reduce(function (a, c) {
     _newArrowCheck(this, _this6);
     return _objectSpread(_objectSpread({}, a), c);
@@ -1230,8 +1241,8 @@ function runUntil(fn, conditionFn) {
  */
 function checkModuleImport(ctx) {
   var $$ = ctx,
-    config = $$.config,
-    type = "";
+    config = $$.config;
+  var type = "";
   if (isEmpty(config.data_type || config.data_types) && !$$[TYPE_METHOD_NEEDED.LINE]) {
     type = "line";
   } else {
@@ -1416,11 +1427,16 @@ var $TOOLTIP = {
   tooltipContainer: "bb-tooltip-container",
   tooltipName: "bb-tooltip-name"
 };
+var $TREEMAP = {
+  treemap: "bb-treemap",
+  chartTreemap: "bb-chart-treemap",
+  chartTreemaps: "bb-chart-treemaps"
+};
 var $ZOOM = {
   buttonZoomReset: "bb-zoom-reset",
   zoomBrush: "bb-zoom-brush"
 };
-/* harmony default export */ var classes = (classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $ZOOM));
+/* harmony default export */ var classes = (classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread(classes_objectSpread({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 ;// CONCATENATED MODULE: ./src/config/Store/Element.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -1539,6 +1555,7 @@ var State = function () {
     xAxisHeight: 0,
     hasAxis: !1,
     hasRadar: !1,
+    hasTreemap: !1,
     // for data CSS rule index (used when boost.useCssRule is true)
     cssRule: {},
     current: {
@@ -2204,6 +2221,7 @@ var data_this = undefined;
    * - scatter
    * - spline
    * - step
+   * - treemap
    * @name data․type
    * @memberof Options
    * @type {string}
@@ -2232,7 +2250,8 @@ var data_this = undefined;
    *   radar,
    *   scatter,
    *   spline,
-   *   step
+   *   step,
+   *   treemap
    * }
    *
    * bb.generate({
@@ -2246,7 +2265,7 @@ var data_this = undefined;
   /**
    * Set chart type for each data.<br>
    * This setting overwrites data.type setting.
-   * - **NOTE:** `radar` type can't be combined with other types.
+   * - **NOTE:** `radar` and `treemap` type can't be combined with other types.
    * @name data․types
    * @memberof Options
    * @type {object}
@@ -2278,7 +2297,8 @@ var data_this = undefined;
    *   radar,
    *   scatter,
    *   spline,
-   *   step
+   *   step,
+   *   treemap
    * }
    *
    * bb.generate({
@@ -3723,40 +3743,42 @@ function generateResize(option) {
  * @private
  */
 function generateWait() {
-  var transitionsToWait = [],
-    f = function (selection, callback) {
-      var _this5 = this;
-      /**
-       * Check if transition is complete
-       * @returns {boolean} Whether transition is complete
-       * @private
-       */
-      function loop() {
-        var done = 0;
-        for (var i = 0, t; t = transitionsToWait[i]; i++) {
-          if (t === !0 || t.empty != null && t.empty()) {
-            done++;
-            continue;
-          }
+  var transitionsToWait = [];
 
-          // when tab isn't visible exit loop
-          if (isTabVisible() === !1) {
-            done = transitionsToWait.length;
-            break;
-          }
-          try {
-            t.transition();
-          } catch (e) {
-            done++;
-          }
+  // 'f' is called as selection.call(f, ...);
+  var f = function (selection, callback) {
+    var _this5 = this;
+    /**
+     * Check if transition is complete
+     * @returns {boolean} Whether transition is complete
+     * @private
+     */
+    function loop() {
+      var done = 0;
+      for (var i = 0, t; t = transitionsToWait[i]; i++) {
+        if (t === !0 || t.empty != null && t.empty()) {
+          done++;
+          continue;
         }
-        return done === transitionsToWait.length;
+
+        // when tab isn't visible exit loop
+        if (isTabVisible() === !1) {
+          done = transitionsToWait.length;
+          break;
+        }
+        try {
+          t.transition();
+        } catch (e) {
+          done++;
+        }
       }
-      runUntil(function () {
-        _newArrowCheck(this, _this5);
-        callback == null ? void 0 : callback();
-      }.bind(this), loop);
-    }; // 'f' is called as selection.call(f, ...);
+      return done === transitionsToWait.length;
+    }
+    runUntil(function () {
+      _newArrowCheck(this, _this5);
+      callback == null ? void 0 : callback();
+    }.bind(this), loop);
+  };
   f.add = function (t) {
     isArray(t) ? transitionsToWait = transitionsToWait.concat(t) : transitionsToWait.push(t);
   };
@@ -3929,22 +3951,22 @@ function rows(rows) {
  * @private
  */
 function json(json, keysParam) {
-  var newRows = [],
-    findValueInJson = function (object, path) {
+  var newRows = [];
+  var targetKeys, data;
+  if (Array.isArray(json)) {
+    var findValueInJson = function (object, path) {
       if (object[path] !== undefined) {
         return object[path];
       }
       var convertedPath = path.replace(/\[(\w+)\]/g, ".$1"),
-        pathArray = convertedPath.replace(/^\./, "").split("."),
-        target = object; // convert indexes to properties (replace [] with .)
+        pathArray = convertedPath.replace(/^\./, "").split("."); // convert indexes to properties (replace [] with .)
+      // strip a leading dot
+      var target = object;
       pathArray.some(function (k) {
         return !(target = target && k in target ? target[k] : undefined);
       });
       return target;
-    },
-    targetKeys,
-    data;
-  if (Array.isArray(json)) {
+    };
     if (keysParam.x) {
       targetKeys = keysParam.value.concat(keysParam.x);
     } else {
@@ -3966,12 +3988,24 @@ function json(json, keysParam) {
   } else {
     Object.keys(json).forEach(function (key) {
       var tmp = json[key].concat();
-      tmp.unshift(key);
+      tmp.unshift == null ? void 0 : tmp.unshift(key);
       newRows.push(tmp);
     });
     data = columns(newRows);
   }
   return data;
+}
+function jsonTreemap(json) {
+  var _this = this,
+    _convertKey = function convertKey(v) {
+      _newArrowCheck(this, _this);
+      if (v.children) {
+        v.children.forEach(_convertKey);
+      }
+      v.name = v.id;
+    }.bind(this);
+  json.forEach(_convertKey);
+  return json;
 }
 
 /***** Functions can't be executed on Web Worker *****/
@@ -4021,13 +4055,13 @@ function url(url, mimeType, headers, keys, done) {
  * @private
  */
 function convertCsvTsvToData(parser, xsv) {
-  var _this = this,
+  var _this2 = this,
     rows = parser.rows(xsv),
     d;
   if (rows.length === 1) {
     d = [{}];
     rows[0].forEach(function (id) {
-      _newArrowCheck(this, _this);
+      _newArrowCheck(this, _this2);
       d[0][id] = null;
     }.bind(this));
   } else {
@@ -4126,8 +4160,9 @@ function getDataKeyForJson(keysParam, config) {
     }
     var dataKeys = Object.keys(data[0] || {}),
       ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [],
-      xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [],
-      xsData;
+      xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
+    var xsData;
+
     // save x for update data by load when custom x and bb.x API
     ids.forEach(function (id) {
       var _this3 = this;
@@ -4189,8 +4224,8 @@ function getDataKeyForJson(keysParam, config) {
         id_org: id,
         values: data.map(function (d, i) {
           _newArrowCheck(this, _this4);
-          var rawX = d[xKey],
-            value = d[id],
+          var rawX = d[xKey];
+          var value = d[id],
             x;
           value = value !== null && !isNaN(value) && !isObject(value) ? +value : isArray(value) || isObject(value) ? value : null;
 
@@ -4363,8 +4398,8 @@ function getDataKeyForJson(keysParam, config) {
   },
   addName: function addName(data) {
     var $$ = this,
-      config = $$.config,
-      name;
+      config = $$.config;
+    var name;
     if (data) {
       name = config.data_names[data.id];
       data.name = name !== undefined ? name : data.id;
@@ -4383,11 +4418,11 @@ function getDataKeyForJson(keysParam, config) {
     if (filterNull === void 0) {
       filterNull = !1;
     }
-    var $$ = this,
-      value = $$.filterTargetsToShow($$.data.targets).map(function (t) {
-        _newArrowCheck(this, _this4);
-        return $$.addName($$.getValueOnIndex(t.values, index));
-      }.bind(this));
+    var $$ = this;
+    var value = $$.filterTargetsToShow($$.data.targets).map(function (t) {
+      _newArrowCheck(this, _this4);
+      return $$.addName($$.getValueOnIndex(t.values, index));
+    }.bind(this));
     if (filterNull) {
       value = value.filter(function (v) {
         _newArrowCheck(this, _this4);
@@ -4427,8 +4462,8 @@ function getDataKeyForJson(keysParam, config) {
   },
   generateTargetX: function generateTargetX(rawX, id, index) {
     var $$ = this,
-      axis = $$.axis,
-      x = axis != null && axis.isCategorized() ? index : rawX || index;
+      axis = $$.axis;
+    var x = axis != null && axis.isCategorized() ? index : rawX || index;
     if (axis != null && axis.isTimeSeries()) {
       var fn = parseDate.bind($$);
       x = rawX ? fn(rawX) : fn($$.getXValue(id, index));
@@ -4462,8 +4497,9 @@ function getDataKeyForJson(keysParam, config) {
    */
   getBaseValue: function getBaseValue(data) {
     var $$ = this,
-      hasAxis = $$.state.hasAxis,
-      value = data.value;
+      hasAxis = $$.state.hasAxis;
+    var value = data.value;
+
     // In case of area-range, data is given as: [low, mid, high] or {low, mid, high}
     // will take the 'mid' as the base value
     if (value && hasAxis) {
@@ -4515,25 +4551,25 @@ function getDataKeyForJson(keysParam, config) {
           _newArrowCheck(this, _this11);
           return t.values;
         }.bind(this)),
-        minMax = $$.getMinMaxValue(data),
-        _min = [],
-        _max = [];
+        minMax = $$.getMinMaxValue(data);
+      var min = [],
+        max = [];
       data.forEach(function (v) {
         _newArrowCheck(this, _this11);
         var minData = $$.getFilteredDataByValue(v, minMax.min),
           maxData = $$.getFilteredDataByValue(v, minMax.max);
         if (minData.length) {
-          _min = _min.concat(minData);
+          min = min.concat(minData);
         }
         if (maxData.length) {
-          _max = _max.concat(maxData);
+          max = max.concat(maxData);
         }
       }.bind(this));
 
       // update the cached data
       $$.cache.add(cacheKey, minMaxData = {
-        min: _min,
-        max: _max
+        min: min,
+        max: max
       });
     }
     return minMaxData;
@@ -4576,7 +4612,7 @@ function getDataKeyForJson(keysParam, config) {
       cacheKey = KEY.dataTotalSum,
       total = $$.cache.get(cacheKey);
     if (!isNumber(total)) {
-      var _sum = mergeArray($$.data.targets.map(function (t) {
+      var sum = mergeArray($$.data.targets.map(function (t) {
         _newArrowCheck(this, _this14);
         return t.values;
       }.bind(this))).map(function (v) {
@@ -4586,7 +4622,7 @@ function getDataKeyForJson(keysParam, config) {
         _newArrowCheck(this, _this14);
         return p + c;
       }.bind(this));
-      $$.cache.add(cacheKey, total = _sum);
+      $$.cache.add(cacheKey, total = sum);
     }
     if (subtractHidden) {
       total -= $$.getHiddenTotalDataSum();
@@ -4808,8 +4844,8 @@ function getDataKeyForJson(keysParam, config) {
     return ys;
   },
   checkValueInTargets: function checkValueInTargets(targets, checker) {
-    var ids = Object.keys(targets),
-      values;
+    var ids = Object.keys(targets);
+    var values;
     for (var i = 0; i < ids.length; i++) {
       values = targets[ids[i]].values;
       for (var j = 0; j < values.length; j++) {
@@ -4853,21 +4889,21 @@ function getDataKeyForJson(keysParam, config) {
   },
   /**
    * Get data.order compare function
-   * @param {boolean} isArc Is for Arc type sort or not
+   * @param {boolean} isReversed for Arc & Treemap type sort order needs to be reversed
    * @returns {Function} compare function
    * @private
    */
-  getSortCompareFn: function getSortCompareFn(isArc) {
+  getSortCompareFn: function getSortCompareFn(isReversed) {
     var _this29 = this;
-    if (isArc === void 0) {
-      isArc = !1;
+    if (isReversed === void 0) {
+      isReversed = !1;
     }
     var $$ = this,
       config = $$.config,
       order = config.data_order,
       orderAsc = /asc/i.test(order),
-      orderDesc = /desc/i.test(order),
-      fn;
+      orderDesc = /desc/i.test(order);
+    var fn;
     if (orderAsc || orderDesc) {
       var reducer = function (p, c) {
         _newArrowCheck(this, _this29);
@@ -4877,7 +4913,7 @@ function getDataKeyForJson(keysParam, config) {
         _newArrowCheck(this, _this29);
         var t1Sum = "values" in t1 ? t1.values.reduce(reducer, 0) : t1.value,
           t2Sum = "values" in t2 ? t2.values.reduce(reducer, 0) : t2.value;
-        return isArc ? orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum : orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
+        return isReversed ? orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum : orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
       }.bind(this);
     } else if (isFunction(order)) {
       fn = order.bind($$.api);
@@ -4958,8 +4994,8 @@ function getDataKeyForJson(keysParam, config) {
   },
   findSameXOfValues: function findSameXOfValues(values, index) {
     var targetX = values[index].x,
-      sames = [],
-      i;
+      sames = [];
+    var i;
     for (i = index - 1; i >= 0; i--) {
       if (targetX !== values[i].x) {
         break;
@@ -5054,8 +5090,9 @@ function getDataKeyForJson(keysParam, config) {
     // insert & append cloning first/last value to be fully rendered covering on each gap sides
     var head = converted[0],
       tail = converted[converted.length - 1],
-      id = head.id,
-      x = head.x;
+      id = head.id;
+    var x = head.x;
+
     // insert head
     converted.unshift({
       x: --x,
@@ -5180,8 +5217,8 @@ function getDataKeyForJson(keysParam, config) {
     var $$ = this,
       config = $$.config,
       state = $$.state,
-      api = $$.api,
-      ratio = 0;
+      api = $$.api;
+    var ratio = 0;
     if (d && api.data.shown().length) {
       ratio = d.ratio || d.value;
       if (type === "arc") {
@@ -5196,8 +5233,8 @@ function getDataKeyForJson(keysParam, config) {
           ratio = (d.endAngle - d.startAngle) / arcLength;
         }
       } else if (type === "index") {
-        var dataValues = api.data.values.bind(api),
-          total = this.getTotalPerIndex();
+        var dataValues = api.data.values.bind(api);
+        var total = this.getTotalPerIndex();
         if (state.hiddenTargetIds.length) {
           var hiddenSum = dataValues(state.hiddenTargetIds, !1);
           if (hiddenSum.length) {
@@ -5221,12 +5258,14 @@ function getDataKeyForJson(keysParam, config) {
         ratio = parseFloat(Math.max(d.value, 0) + "") / state.current.dataMax * config.radar_size_ratio;
       } else if (type === "bar") {
         var yScale = $$.getYScaleById.bind($$)(d.id),
-          _max2 = yScale.domain().reduce(function (a, c) {
+          max = yScale.domain().reduce(function (a, c) {
             _newArrowCheck(this, _this40);
             return c - a;
           }.bind(this));
         // when all data are 0, return 0
-        ratio = _max2 === 0 ? 0 : Math.abs(d.value) / _max2;
+        ratio = max === 0 ? 0 : Math.abs(d.value) / max;
+      } else if (type === "treemap") {
+        ratio /= $$.getTotalDataSum(!0);
       }
     }
     return asPercent && ratio ? ratio * 100 : ratio;
@@ -5420,6 +5459,9 @@ function getDataKeyForJson(keysParam, config) {
       }.bind(this));
     }.bind(this));
 
+    // since treemap uses different data types, it needs to be transformed
+    state.hasTreemap && $$.updateTargetsForTreemap($$.data.targets);
+
     // Update current state chart type and elements list after redraw
     $$.updateTypesElements();
   }
@@ -5533,15 +5575,18 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     var _this5 = this,
       $$ = this,
       config = $$.config,
-      hasRadar = $$.state.hasRadar,
+      _$$$state = $$.state,
+      hasRadar = _$$$state.hasRadar,
+      hasTreemap = _$$$state.hasTreemap,
       main = $$.$el.main,
-      isArc = isObject(d);
+      isArcTreemap = isObject(d);
     // Call event handler
-    if (isArc || d !== -1) {
+    if (isArcTreemap || d !== -1) {
       var callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
-      config.color_onover && $$.setOverColor(isOver, d, isArc);
-      if (isArc && "id") {
-        callback(d, main.select("." + $ARC.arc + $$.getTargetSelectorSuffix(d.id)).node());
+      config.color_onover && $$.setOverColor(isOver, d, isArcTreemap);
+      if (isArcTreemap && "id") {
+        var selector = hasTreemap ? $TREEMAP.treemap : $ARC.arc;
+        callback(d, main.select("." + selector + $$.getTargetSelectorSuffix(d.id)).node());
       } else if (!config.tooltip_grouped) {
         var last = $$.cache.get(KEY.setOverOut) || [],
           shapesAtIndex = main.selectAll("." + $SHAPE.shape + "-" + d).filter(function (d) {
@@ -5629,40 +5674,45 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @param {Array} mouse x and y coordinate value
    */
   dispatchEvent: function dispatchEvent(type, index, mouse) {
-    var _this7 = this,
+    var _ref,
+      _this7 = this,
       $$ = this,
       config = $$.config,
-      _$$$state = $$.state,
-      eventReceiver = _$$$state.eventReceiver,
-      hasAxis = _$$$state.hasAxis,
-      hasRadar = _$$$state.hasRadar,
+      _$$$state2 = $$.state,
+      eventReceiver = _$$$state2.eventReceiver,
+      hasAxis = _$$$state2.hasAxis,
+      hasRadar = _$$$state2.hasRadar,
+      hasTreemap = _$$$state2.hasTreemap,
       _$$$$el = $$.$el,
       eventRect = _$$$$el.eventRect,
       arcs = _$$$$el.arcs,
       radar = _$$$$el.radar,
-      isMultipleX = $$.isMultipleX(),
-      element = (hasRadar ? radar.axes.select("." + $AXIS.axis + "-" + index + " text") : eventRect || arcs.selectAll("." + $COMMON.target + " path").filter(function (d, i) {
+      treemap = _$$$$el.treemap,
+      element = (_ref = hasTreemap && eventReceiver.rect || hasRadar && radar.axes.select("." + $AXIS.axis + "-" + index + " text") || eventRect || (arcs == null ? void 0 : arcs.selectAll("." + $COMMON.target + " path").filter(function (d, i) {
         _newArrowCheck(this, _this7);
         return i === index;
-      }.bind(this))).node(),
-      _element$getBoundingC = element.getBoundingClientRect(),
-      width = _element$getBoundingC.width,
-      left = _element$getBoundingC.left,
-      top = _element$getBoundingC.top;
-    if (hasAxis && !hasRadar && !isMultipleX) {
-      var coords = eventReceiver.coords[index];
-      width = coords.w;
-      left += coords.x;
-      top += coords.y;
+      }.bind(this)))) == null ? void 0 : _ref.node();
+    if (element) {
+      var isMultipleX = $$.isMultipleX();
+      var _element$getBoundingC = element.getBoundingClientRect(),
+        width = _element$getBoundingC.width,
+        left = _element$getBoundingC.left,
+        top = _element$getBoundingC.top;
+      if (hasAxis && !hasRadar && !isMultipleX) {
+        var coords = eventReceiver.coords[index];
+        width = coords.w;
+        left += coords.x;
+        top += coords.y;
+      }
+      var x = left + (mouse ? mouse[0] : 0) + (isMultipleX || config.axis_rotated ? 0 : width / 2),
+        y = top + (mouse ? mouse[1] : 0);
+      emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](hasTreemap ? treemap.node() : element, type, {
+        screenX: x,
+        screenY: y,
+        clientX: x,
+        clientY: y
+      });
     }
-    var x = left + (mouse ? mouse[0] : 0) + (isMultipleX || config.axis_rotated ? 0 : width / 2),
-      y = top + (mouse ? mouse[1] : 0);
-    emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](element, type, {
-      screenX: x,
-      screenY: y,
-      clientX: x,
-      clientY: y
-    });
   },
   setDragStatus: function setDragStatus(isDragging) {
     this.state.dragging = isDragging;
@@ -5692,9 +5742,10 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
       legend = _$$$$el3.legend,
       region = _$$$$el3.region,
       svg = _$$$$el3.svg,
+      treemap = _$$$$el3.treemap,
       brush = $$.brush;
     // detach all possible event types
-    [svg, eventRect, region == null ? void 0 : region.list, brush == null ? void 0 : brush.getSelection(), arcs == null ? void 0 : arcs.selectAll("path"), legend == null ? void 0 : legend.selectAll("g")].forEach(function (v) {
+    [svg, eventRect, region == null ? void 0 : region.list, brush == null ? void 0 : brush.getSelection(), arcs == null ? void 0 : arcs.selectAll("path"), legend == null ? void 0 : legend.selectAll("g"), treemap].forEach(function (v) {
       _newArrowCheck(this, _this8);
       return v == null ? void 0 : v.on("wheel click mouseover mousemove mouseout touchstart touchmove touchend touchstart.eventRect touchmove.eventRect touchend.eventRect .brush .drag .zoom wheel.zoom dblclick.zoom", null);
     }.bind(this));
@@ -5722,7 +5773,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   getClass: function getClass(type, withShape) {
     var _this = this,
       isPlural = /s$/.test(type),
-      useIdKey = /^(area|arc|line)s?$/.test(type),
+      useIdKey = /^(area|arc|line|treemap)s?$/.test(type),
       key = isPlural ? "id" : "index";
     return function (d) {
       _newArrowCheck(this, _this);
@@ -5761,8 +5812,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     return this.generateClass(classes.region, i) + " " + ("class" in d ? d.class : "");
   },
   classTarget: function classTarget(id) {
-    var additionalClassSuffix = this.config.data_classes[id],
-      additionalClass = "";
+    var additionalClassSuffix = this.config.data_classes[id];
+    var additionalClass = "";
     if (additionalClassSuffix) {
       additionalClass = " " + classes.target + "-" + additionalClassSuffix;
     }
@@ -5781,11 +5832,17 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     var targetStr = targetId || targetId === 0 ? "-" + targetId : "";
     return targetStr.replace(/([\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\])/g, "-");
   },
-  selectorTarget: function selectorTarget(id, prefix) {
-    var pfx = prefix || "",
-      target = this.getTargetSelectorSuffix(id);
+  selectorTarget: function selectorTarget(id, prefix, postfix) {
+    if (prefix === void 0) {
+      prefix = "";
+    }
+    if (postfix === void 0) {
+      postfix = "";
+    }
+    var target = this.getTargetSelectorSuffix(id);
+
     // select target & circle
-    return pfx + "." + (classes.target + target) + ", " + pfx + "." + (classes.circles + target);
+    return prefix + "." + (classes.target + target) + " " + postfix + ", " + prefix + "." + (classes.circles + target) + " " + postfix;
   },
   selectorTargets: function selectorTargets(idsValue, prefix) {
     var _this3 = this,
@@ -5944,8 +6001,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
       max = threshold.max || 100,
       values = threshold.values && threshold.values.length ? threshold.values : [];
     return notEmpty(threshold) ? function (value) {
-      var v = asValue ? value : value * 100 / max,
-        color = colors[colors.length - 1];
+      var v = asValue ? value : value * 100 / max;
+      var color = colors[colors.length - 1];
       for (var i = 0, l = values.length; i < l; i++) {
         if (v <= values[i]) {
           color = colors[i];
@@ -6167,8 +6224,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
       center = config[pfx + "_center"],
       isInverted = config[pfx + "_inverted"],
       showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
-      showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated,
-      yDomainMin = $$.getYDomainMinMax(yTargets, "min"),
+      showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
+    var yDomainMin = $$.getYDomainMinMax(yTargets, "min"),
       yDomainMax = $$.getYDomainMinMax(yTargets, "max"),
       isZeroBased = [TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER].concat(TYPE_BY_CATEGORY.Line).some(function (v) {
         _newArrowCheck(this, _this5);
@@ -6201,11 +6258,11 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
       isAllPositive && (yDomainMin = 0);
       isAllNegative && (yDomainMax = 0);
     }
-    var domainLength = Math.abs(yDomainMax - yDomainMin),
-      padding = {
-        top: domainLength * .1,
-        bottom: domainLength * .1
-      };
+    var domainLength = Math.abs(yDomainMax - yDomainMin);
+    var padding = {
+      top: domainLength * .1,
+      bottom: domainLength * .1
+    };
     if (isDefined(center)) {
       var yDomainAbs = Math.max(Math.abs(yDomainMin), Math.abs(yDomainMax));
       yDomainMax = center + yDomainAbs;
@@ -6265,8 +6322,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
           return v.x;
         }.bind(this)));
       }.bind(this))),
-      value = isObject(configValue) ? configValue.value : configValue,
-      _$$$axis;
+      _$$$axis,
+      value = isObject(configValue) ? configValue.value : configValue;
     value = isDefined(value) && (_$$$axis = $$.axis) != null && _$$$axis.isTimeSeries() ? parseDate.bind(this)(value) : value;
     if (isObject(configValue) && configValue.fit && (type === "min" && value < dataValue || type === "max" && value > dataValue)) {
       value = undefined;
@@ -6286,8 +6343,9 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
       config = $$.config,
       padding = config.axis_x_padding,
       isTimeSeriesTickCount = axis.isTimeSeries() && tickCount,
-      diff = diffDomain(domain),
-      defaultValue;
+      diff = diffDomain(domain);
+    var defaultValue;
+
     // determine default padding value
     if (axis.isCategorized() || isTimeSeriesTickCount) {
       defaultValue = 0;
@@ -6334,18 +6392,18 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
     var $$ = this,
       axis = $$.axis,
       x = $$.scale.x,
-      domain = [$$.getXDomainMinMax(targets, "min"), $$.getXDomainMinMax(targets, "max")],
-      _domain = domain,
-      _domain$ = _domain[0],
+      domain = [$$.getXDomainMinMax(targets, "min"), $$.getXDomainMinMax(targets, "max")];
+    var _domain$ = domain[0],
       min = _domain$ === void 0 ? 0 : _domain$,
-      _domain$2 = _domain[1],
+      _domain$2 = domain[1],
       max = _domain$2 === void 0 ? 0 : _domain$2;
     if (x.type !== "log") {
       var isCategorized = axis.isCategorized(),
         isTimeSeries = axis.isTimeSeries(),
-        _padding = $$.getXDomainPadding(domain),
-        firstX = domain[0],
+        padding = $$.getXDomainPadding(domain);
+      var firstX = domain[0],
         lastX = domain[1];
+
       // show center of x domain if min and max are the same
       if (firstX - lastX === 0 && !isCategorized) {
         if (isTimeSeries) {
@@ -6357,10 +6415,10 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
         }
       }
       if (firstX || firstX === 0) {
-        min = isTimeSeries ? new Date(firstX.getTime() - _padding.left) : firstX - _padding.left;
+        min = isTimeSeries ? new Date(firstX.getTime() - padding.left) : firstX - padding.left;
       }
       if (lastX || lastX === 0) {
-        max = isTimeSeries ? new Date(lastX.getTime() + _padding.right) : lastX + _padding.right;
+        max = isTimeSeries ? new Date(lastX.getTime() + padding.right) : lastX + padding.right;
       }
     }
     return [min, max];
@@ -6413,8 +6471,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
   getZoomDomain: function getZoomDomain() {
     var $$ = this,
       config = $$.config,
-      org = $$.org,
-      _org$xDomain = org.xDomain,
+      org = $$.org;
+    var _org$xDomain = org.xDomain,
       min = _org$xDomain[0],
       max = _org$xDomain[1];
     if (isDefined(config.zoom_x_min)) {
@@ -6437,8 +6495,8 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
     var $$ = this,
       config = $$.config,
       state = $$.state,
-      isRotated = config.axis_rotated,
-      length;
+      isRotated = config.axis_rotated;
+    var length;
     if (type === "x") {
       length = isRotated ? "height" : "width";
     } else {
@@ -6580,7 +6638,8 @@ function getLegendColor(id) {
    * @private
    */
   updateLegend: function updateLegend(targetIds, options, transitions) {
-    var $$ = this,
+    var _$el$legend,
+      $$ = this,
       config = $$.config,
       state = $$.state,
       scale = $$.scale,
@@ -6594,12 +6653,12 @@ function getLegendColor(id) {
     optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", !0);
     if (config.legend_contents_bindto && config.legend_contents_template) {
       $$.updateLegendTemplate();
-    } else {
+    } else if (!state.hasTreemap) {
       $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions);
     }
 
     // toggle legend state
-    $el.legend.selectAll("." + $LEGEND.legendItem).classed($LEGEND.legendItemHidden, function (id) {
+    (_$el$legend = $el.legend) == null ? void 0 : _$el$legend.selectAll("." + $LEGEND.legendItem).classed($LEGEND.legendItemHidden, function (id) {
       var hide = !$$.isTargetToShow(id);
       if (hide) {
         this.style.opacity = null;
@@ -6628,8 +6687,8 @@ function getLegendColor(id) {
       template = config.legend_contents_template;
     if (!wrapper.empty()) {
       var targets = $$.mapToIds($$.data.targets),
-        ids = [],
-        html = "";
+        ids = [];
+      var html = "";
       targets.forEach(function (v) {
         _newArrowCheck(this, _this);
         var content = isFunction(template) ? template.bind($$.api)(v, $$.color(v), $$.api.data(v)[0].values) : tplProcess(template, {
@@ -6833,9 +6892,11 @@ function getLegendColor(id) {
   getLegendItemTextBox: function getLegendItemTextBox(id, textElement) {
     var $$ = this,
       cache = $$.cache,
-      state = $$.state,
-      data,
-      cacheKey = KEY.legendItemTextBox;
+      state = $$.state;
+    var data;
+
+    // do not prefix w/'$', to not be resetted cache in .load() call
+    var cacheKey = KEY.legendItemTextBox;
     if (id) {
       data = !state.redrawing && cache.get(cacheKey) || {};
       if (!data[id]) {
@@ -7288,7 +7349,9 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       config = $$.config,
       state = $$.state,
       $el = $$.$el,
-      main = $el.main;
+      _$el = $el,
+      main = _$el.main,
+      treemap = _$el.treemap;
     state.redrawing = !0;
     var targetsToShow = $$.filterTargetsToShow($$.data.targets),
       _options = options,
@@ -7304,7 +7367,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     // update legend and transform each g
     if (wth.Legend && config.legend_show) {
       options.withTransition = !!duration;
-      $$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
+      treemap || $$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
     } else if (wth.Dimension) {
       // need to update dimension (e.g. axis.y.tick.values) because y tick values should change
       // no need to update axis in it because they will be updated in redraw()
@@ -7312,7 +7375,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     }
 
     // update circleY based on updated parameters
-    if (!$$.hasArcType() || state.hasRadar) {
+    if (!treemap && (!$$.hasArcType() || state.hasRadar)) {
       $$.updateCircleY && ($$.circleY = $$.updateCircleY());
     }
 
@@ -7354,10 +7417,13 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 
       // polar
       $el.polar && $$.redrawPolar();
+
+      // treemap
+      treemap && $$.updateTreemap(durationForExit);
     }
 
     // @TODO: Axis & Radar type
-    if (!state.resizing && ($$.hasPointType() || state.hasRadar)) {
+    if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
       $$.updateCircle();
     }
 
@@ -7441,6 +7507,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       _$$$state = $$.state,
       hasAxis = _$$$state.hasAxis,
       hasRadar = _$$$state.hasRadar,
+      hasTreemap = _$$$state.hasTreemap,
       grid = $$.$el.grid,
       _shape$pos = shape.pos,
       cx = _shape$pos.cx,
@@ -7471,6 +7538,9 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     if (($$.hasPointType() || hasRadar) && !config.point_focus_only) {
       $$.redrawCircle && list.push($$.redrawCircle(cx, cy, withTransition, flowFn));
     }
+    if (hasTreemap) {
+      list.push($$.redrawTreemap(withTransition));
+    }
     return list;
   },
   updateAndRedraw: function updateAndRedraw(options) {
@@ -7479,8 +7549,9 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     }
     var $$ = this,
       config = $$.config,
-      state = $$.state,
-      transitions;
+      state = $$.state;
+    var transitions;
+
     // same with redraw
     options.withTransition = getOption(options, "withTransition", !0);
     options.withTransform = getOption(options, "withTransform", !1);
@@ -7599,10 +7670,11 @@ function getScale(type, min, max) {
    * @private
    */
   getYScaleById: function getYScaleById(id, isSub) {
+    var _this$axis;
     if (isSub === void 0) {
       isSub = !1;
     }
-    var isY2 = this.axis.getId(id) === "y2",
+    var isY2 = ((_this$axis = this.axis) == null ? void 0 : _this$axis.getId(id)) === "y2",
       key = isSub ? isY2 ? "subY2" : "subY" : isY2 ? "y2" : "y";
     return this.scale[key];
   },
@@ -7669,11 +7741,13 @@ function getScale(type, min, max) {
       org = $$.org,
       scale = $$.scale,
       _$$$state = $$.state,
+      current = _$$$state.current,
       width = _$$$state.width,
       height = _$$$state.height,
       width2 = _$$$state.width2,
       height2 = _$$$state.height2,
-      hasAxis = _$$$state.hasAxis;
+      hasAxis = _$$$state.hasAxis,
+      hasTreemap = _$$$state.hasTreemap;
     if (hasAxis) {
       var _scale$x,
         isRotated = config.axis_rotated,
@@ -7719,6 +7793,10 @@ function getScale(type, min, max) {
         scale.subY2 = $$.getYScale("y2", min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default);
         axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
       }
+    } else if (hasTreemap) {
+      var padding = $$.getCurrentPadding();
+      scale.x = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleLinear)().rangeRound([padding.left, current.width - padding.right]);
+      scale.y = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleLinear)().rangeRound([padding.top, current.height - padding.bottom]);
     } else {
       // update for arc
       $$.updateArc == null ? void 0 : $$.updateArc();
@@ -7746,8 +7824,8 @@ function getScale(type, min, max) {
       _$$$scale2 = $$.scale,
       x = _$$$scale2.x,
       zoom = _$$$scale2.zoom,
-      fn = config.zoom_enabled && zoom ? zoom : x,
-      value = $$.getBaseValue(d);
+      fn = config.zoom_enabled && zoom ? zoom : x;
+    var value = $$.getBaseValue(d);
     if (axis.isTimeSeries()) {
       value = parseDate.call($$, value);
     } else if (axis.isCategorized() && isString(value)) {
@@ -7789,13 +7867,15 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     var _this = this,
       $$ = this,
       isRotated = $$.config.axis_rotated,
-      hasRadar = $$.state.hasRadar,
+      _$$$state = $$.state,
+      hasRadar = _$$$state.hasRadar,
+      hasTreemap = _$$$state.hasTreemap,
       shape = {
         type: {},
         indices: {},
         pos: {}
       };
-    ["bar", "candlestick", "line", "area"].forEach(function (v) {
+    hasTreemap || ["bar", "candlestick", "line", "area"].forEach(function (v) {
       _newArrowCheck(this, _this);
       var name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
       if ($$.hasType(v) || $$.hasTypeOf(name) || v === "line" && ($$.hasType("bubble") || $$.hasType("scatter"))) {
@@ -7805,10 +7885,13 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         shape.type[v] = drawFn ? drawFn.bind($$)(indices, !1) : undefined;
       }
     }.bind(this));
-    if (!$$.hasArcType() || hasRadar) {
+    if (!$$.hasArcType() || hasRadar || hasTreemap) {
+      var cx, cy;
       // generate circle x/y functions depending on updated params
-      var cx = hasRadar ? $$.radarCircleX : isRotated ? $$.circleY : $$.circleX,
+      if (!hasTreemap) {
+        cx = hasRadar ? $$.radarCircleX : isRotated ? $$.circleY : $$.circleX;
         cy = hasRadar ? $$.radarCircleY : isRotated ? $$.circleX : $$.circleY;
+      }
       shape.pos = {
         xForText: $$.generateXYForText(shape.indices, !0),
         yForText: $$.generateXYForText(shape.indices, !1),
@@ -7935,8 +8018,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       _newArrowCheck(this, _this5);
       var ind = $$.getIndices(indices, d, "getShapeX"),
         index = d.id in ind ? ind[d.id] : 0,
-        targetsNum = (ind.__max__ || 0) + 1,
-        x = 0;
+        targetsNum = (ind.__max__ || 0) + 1;
+      var x = 0;
       if (notEmpty(d.x)) {
         var xPos = currScale(d.x, !0);
         if (halfWidth) {
@@ -8060,8 +8143,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         return scale(value[0]);
       }
       var dataXAsNumber = +x,
-        y0 = scale(groupsZeroAs === "zero" ? 0 : $$.getShapeYMin(id)),
-        offset = y0;
+        y0 = scale(groupsZeroAs === "zero" ? 0 : $$.getShapeYMin(id));
+      var offset = y0;
       shapeOffsetTargets.filter(function (t) {
         _newArrowCheck(this, _this10);
         return t.id !== id && ind[t.id] === ind[id];
@@ -8162,8 +8245,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
   },
   isWithinShape: function isWithinShape(that, d) {
     var $$ = this,
-      shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(that),
-      isWithin;
+      shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(that);
+    var isWithin;
     if (!$$.isTargetToShow(d.id)) {
       isWithin = !1;
     } else if ($$.hasValidPointType != null && $$.hasValidPointType(that.nodeName)) {
@@ -8255,8 +8338,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       config = $$.config,
       hasAxis = $$.state.hasAxis,
       $el = $$.$el,
-      axesLen = hasAxis ? config.axis_y2_axes.length : 0,
-      padding = isValue(config.padding_top) ? config.padding_top : 0;
+      axesLen = hasAxis ? config.axis_y2_axes.length : 0;
+    var padding = isValue(config.padding_top) ? config.padding_top : 0;
     if ($el.title && $el.title.node()) {
       padding += $$.getTitlePadding();
     }
@@ -8281,8 +8364,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       isRotated = config.axis_rotated,
       axisId = isRotated ? "x" : "y",
       axesLen = hasAxis ? config["axis_" + axisId + "_axes"].length : 0,
-      axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0,
-      padding;
+      axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
+    var padding;
     if (isValue(config.padding_left)) {
       padding = config.padding_left;
     } else if (hasAxis && isRotated) {
@@ -8305,10 +8388,10 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
       axesLen = hasAxis ? config.axis_y2_axes.length : 0,
       axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0,
-      xAxisTickTextOverflow = withXAxisTickTextOverflow ? $$.axis.getXAxisTickTextY2Overflow(10) : 0,
-      padding;
+      xAxisTickTextOverflow = withXAxisTickTextOverflow ? $$.axis.getXAxisTickTextY2Overflow(10) : 0;
+    var padding;
     if (isValue(config.padding_right)) {
-      padding = config.padding_right + 1; // 1 is needed not to hide tick line
+      padding = config.padding_right + (hasAxis ? 1 : 0); // 1 is needed not to hide tick line
     } else if ($$.axis && config.axis_rotated) {
       padding = 10 + legendWidthOnRight;
     } else if ($$.axis && (!config.axis_y2_show || config.axis_y2_inner)) {
@@ -8326,8 +8409,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
    * @private
    */
   getParentRectValue: function getParentRectValue(key) {
-    var offsetName = "offset" + capitalize(key),
-      parent = this.$el.chart.node(),
+    var offsetName = "offset" + capitalize(key);
+    var parent = this.$el.chart.node(),
       v = 0;
     while (v < 30 && parent && parent.tagName !== "BODY") {
       try {
@@ -8352,8 +8435,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     return this.getParentRectValue("width");
   },
   getParentHeight: function getParentHeight() {
-    var h = this.$el.chart.style("height"),
-      height = 0;
+    var h = this.$el.chart.style("height");
+    var height = 0;
     if (h) {
       height = /px$/.test(h) ? parseInt(h, 10) : this.getParentRectValue("height");
     }
@@ -8415,6 +8498,15 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       clip.idSubchart && svg.select("#" + clip.idSubchart).select("rect").attr("width", width).attr("height", brushSize.height);
     }
   },
+  getCurrentPadding: function getCurrentPadding() {
+    var $$ = this;
+    return {
+      top: $$.getCurrentPaddingTop(),
+      bottom: $$.getCurrentPaddingBottom(),
+      left: $$.getCurrentPaddingLeft(),
+      right: $$.getCurrentPaddingRight()
+    };
+  },
   /**
    * Get resetted padding values when 'padding=false' option is set
    * https://github.com/naver/billboard.js/issues/2367
@@ -8450,31 +8542,32 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
       state = $$.state,
       legend = $$.$el.legend,
       isRotated = config.axis_rotated,
-      hasArc = $$.hasArcType();
+      isNonAxis = $$.hasArcType() || state.hasTreemap;
     isInit || $$.setContainerSize();
     var currLegend = {
       width: legend ? $$.getLegendWidth() : 0,
       height: legend ? $$.getLegendHeight() : 0
     };
-    if (!hasArc && config.axis_x_show && config.axis_x_tick_autorotate) {
+    if (!isNonAxis && config.axis_x_show && config.axis_x_tick_autorotate) {
       $$.updateXAxisTickClip();
     }
     var legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height,
-      xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x"),
+      xAxisHeight = isRotated || isNonAxis ? 0 : $$.getHorizontalAxisHeight("x"),
       subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ? xAxisHeight : 30,
-      subchartHeight = config.subchart_show && !hasArc ? config.subchart_size_height + subchartXAxisHeight : 0;
+      subchartHeight = config.subchart_show && !isNonAxis ? config.subchart_size_height + subchartXAxisHeight : 0,
+      padding = $$.getCurrentPadding();
     // for main
-    state.margin = !hasArc && isRotated ? {
-      top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
-      right: hasArc ? 0 : $$.getCurrentPaddingRight(!0),
-      bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-      left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
+    state.margin = !isNonAxis && isRotated ? {
+      top: $$.getHorizontalAxisHeight("y2") + padding.top,
+      right: isNonAxis ? 0 : $$.getCurrentPaddingRight(!0),
+      bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + padding.bottom,
+      left: subchartHeight + (isNonAxis ? 0 : padding.left)
     } : {
-      top: 4 + $$.getCurrentPaddingTop(),
+      top: 4 + padding.top,
       // for top tick text
-      right: hasArc ? 0 : $$.getCurrentPaddingRight(!0),
-      bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-      left: hasArc ? 0 : $$.getCurrentPaddingLeft()
+      right: isNonAxis ? 0 : $$.getCurrentPaddingRight(!0),
+      bottom: xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
+      left: isNonAxis ? 0 : padding.left
     };
     state.margin = $$.getResettedPadding(state.margin);
 
@@ -8517,15 +8610,17 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
     }
 
     // for arc
-    var hasGauge = $$.hasType("gauge"),
-      isLegendRight = config.legend_show && state.isLegendRight;
-    state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
-    state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
-    if (hasGauge && !config.gauge_fullCircle) {
-      state.arcHeight += state.height - $$.getPaddingBottomForGauge();
+    if ($$.hasArcType()) {
+      var hasGauge = $$.hasType("gauge"),
+        isLegendRight = config.legend_show && state.isLegendRight;
+      state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
+      state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
+      if (hasGauge && !config.gauge_fullCircle) {
+        state.arcHeight += state.height - $$.getPaddingBottomForGauge();
+      }
+      $$.updateRadius == null ? void 0 : $$.updateRadius();
     }
-    $$.updateRadius == null ? void 0 : $$.updateRadius();
-    if (state.isLegendRight && hasArc) {
+    if (state.isLegendRight && isNonAxis) {
       state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
     }
   }
@@ -8630,27 +8725,26 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     isNegative = isNumber(value) && value < 0 || isCandlestickType && !((_$$$getCandlestickDat = $$.getCandlestickData(d)) != null && _$$$getCandlestickDat._isUp),
     x = pos.x,
     y = pos.y,
-    gap = 4,
     doubleGap = 8;
   if (isRotated) {
     if (anchor === "start") {
       x += isNegative ? 0 : doubleGap;
-      y += gap;
+      y += 4;
     } else if (anchor === "middle") {
       x += doubleGap;
       y -= doubleGap;
     } else if (anchor === "end") {
       isNegative && (x -= doubleGap);
-      y += gap;
+      y += 4;
     }
   } else {
     if (anchor === "start") {
-      x += gap;
+      x += 4;
       isNegative && (y += doubleGap * 2);
     } else if (anchor === "middle") {
       y -= doubleGap;
     } else if (anchor === "end") {
-      x -= gap;
+      x -= 4;
       isNegative && (y += doubleGap * 2);
     }
     if (isInverted) {
@@ -8673,7 +8767,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    */
   initText: function initText() {
     var $el = this.$el;
-    $el.main.select("." + $COMMON.chart).append("g").attr("class", $TEXT.chartTexts);
+    $el.main.select("." + $COMMON.chart).append("g").attr("class", $TEXT.chartTexts).style("pointer-events", $el.treemap ? "none" : null);
   },
   /**
    * Update chartText
@@ -8688,7 +8782,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       classFocus = $$.classFocus.bind($$),
       mainTextUpdate = $$.$el.main.select("." + $TEXT.chartTexts).selectAll("." + $TEXT.chartText).data(targets).attr("class", function (d) {
         _newArrowCheck(this, _this);
-        return classChartText(d) + classFocus(d);
+        return ("" + classChartText(d) + classFocus(d)).trim();
       }.bind(this)),
       mainTextEnter = mainTextUpdate.enter().append("g").style("opacity", "0").attr("class", classChartText).call($$.setCssRule(!0, " ." + $TEXT.text, ["fill", "pointer-events:none"], $$.updateTextColor));
     mainTextEnter.append("g").attr("class", classTexts);
@@ -8704,6 +8798,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       $T = $$.$T,
       config = $$.config,
       classText = $$.getClass("text", "index"),
+      labelsCentered = config.data_labels.centered,
       text = $el.main.selectAll("." + $TEXT.texts).selectAll("." + $TEXT.text).data($$.labelishData.bind($$));
     $T(text.exit()).style("fill-opacity", "0").remove();
     $el.text = text.enter().append("text").merge(text).attr("class", classText).attr("text-anchor", function (d) {
@@ -8713,11 +8808,13 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       if ($$.isCandlestickType(d)) {
         var data = $$.getCandlestickData(d);
         isEndAnchor = !(data != null && data._isUp);
+      } else if ($$.isTreemapType(d)) {
+        return labelsCentered ? "middle" : "start";
       }
       return config.axis_rotated ? isEndAnchor ? "end" : "start" : "middle";
     }.bind(this)).style("fill", $$.getStylePropValue($$.updateTextColor)).style("fill-opacity", "0").each(function (d, i, texts) {
-      var node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
-        value = d.value;
+      var node = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+      var value = d.value;
       if ($$.isBubbleZType(d)) {
         value = $$.getBubbleZData(value, "z");
       } else if ($$.isCandlestickType(d)) {
@@ -8726,7 +8823,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
           value = data.close;
         }
       }
-      value = $$.dataLabelFormat(d.id)(value, d.id, i, texts);
+      value = $$.isTreemapType(d) ? $$.treemapDataLabelFormat(d)(node) : $$.dataLabelFormat(d.id)(value, d.id, i, texts);
       if (isNumber(value)) {
         this.textContent = value;
       } else {
@@ -8738,8 +8835,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     var $$ = this,
       config = $$.config,
       labelColors = config.data_labels_colors,
-      defaultColor = $$.isArcType(d) && !$$.isRadarType(d) ? null : $$.color(d),
-      color;
+      defaultColor = $$.isArcType(d) && !$$.isRadarType(d) || $$.isTreemapType(d) ? null : $$.color(d);
+    var color;
     if (isString(labelColors)) {
       color = labelColors;
     } else if (isObject(labelColors)) {
@@ -8768,8 +8865,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     var $$ = this,
       $el = $$.$el,
       config = $$.config,
-      backgroundColor = config.data_labels_backgroundColors,
-      color = "";
+      backgroundColor = config.data_labels_backgroundColors;
+    var color = "";
     if (isString(backgroundColor) || isObject(backgroundColor)) {
       var id = isString(backgroundColor) ? "" : $$.getTargetSelectorSuffix("id" in d ? d.id : d.data.id),
         filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
@@ -8793,19 +8890,22 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       $T = $$.$T,
       axis = $$.axis,
       config = $$.config,
+      hasTreemap = $$.state.hasTreemap,
       t = getRandom(!0),
       isRotated = config.axis_rotated,
       angle = config.data_labels.rotate,
       anchorString = getRotateAnchor(angle),
       rotateString = angle ? "rotate(" + angle + ")" : "";
+    // $$.meetsLabelThreshold(ratio,
+
     $$.$el.text.style("fill", $$.getStylePropValue($$.updateTextColor)).attr("filter", $$.updateTextBacgroundColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
       // do not apply transition for newly added text elements
-      var node = $T(this, !!(withTransition && this.getAttribute("x")), t),
-        isInverted = config["axis_" + (axis == null ? void 0 : axis.getId(d.id)) + "_inverted"],
-        pos = {
-          x: getX.bind(this)(d, i),
-          y: getY.bind(this)(d, i)
-        };
+      var node = $T(hasTreemap && this.childElementCount ? this.parentNode : this, !!(withTransition && this.getAttribute("x")), t),
+        isInverted = config["axis_" + (axis == null ? void 0 : axis.getId(d.id)) + "_inverted"];
+      var pos = {
+        x: getX.bind(this)(d, i),
+        y: getY.bind(this)(d, i)
+      };
       if (angle) {
         pos = setRotatePos.bind($$)(d, pos, anchorString, isRotated, isInverted);
         node.attr("text-anchor", anchorString);
@@ -8838,8 +8938,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       base = base.querySelector("text");
     }
     var text = base.textContent,
-      cacheKey = KEY.textRect + "-" + text.replace(/\W/g, "_"),
-      rect = $$.cache.get(cacheKey);
+      cacheKey = KEY.textRect + "-" + text.replace(/\W/g, "_");
+    var rect = $$.cache.get(cacheKey);
     if (!rect) {
       $$.$el.svg.append("text").style("visibility", "hidden").style("font", (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(base).style("font")).classed(className, !0).text(text).call(function (v) {
         _newArrowCheck(this, _this3);
@@ -8859,16 +8959,20 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
   generateXYForText: function generateXYForText(indices, forX) {
     var _this4 = this,
       $$ = this,
+      _$$$state = $$.state,
+      hasRadar = _$$$state.hasRadar,
+      hasTreemap = _$$$state.hasTreemap,
       types = Object.keys(indices),
       points = {},
       getter = forX ? $$.getXForText : $$.getYForText;
-    $$.hasType("radar") && types.push("radar");
+    hasRadar && types.push("radar");
+    hasTreemap && types.push("treemap");
     types.forEach(function (v) {
       _newArrowCheck(this, _this4);
       points[v] = $$["generateGet" + capitalize(v) + "Points"](indices[v], !1);
     }.bind(this));
     return function (d, i) {
-      var type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || $$.isCandlestickType(d) && "candlestick" || $$.isRadarType(d) && "radar" || "line";
+      var type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || $$.isCandlestickType(d) && "candlestick" || $$.isRadarType(d) && "radar" || $$.isTreemapType(d) && "treemap" || "line";
       return getter.call($$, points[type](d, i), d, this);
     };
   },
@@ -8877,22 +8981,29 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
    * @param {object} d Data object
    * @param {Array} points Data points position
    * @param {HTMLElement} textElement Data label text element
+   * @param {string} type 'x' or 'y'
    * @returns {number} Position value
    * @private
    */
-  getCenteredTextPos: function getCenteredTextPos(d, points, textElement) {
+  getCenteredTextPos: function getCenteredTextPos(d, points, textElement, type) {
     var $$ = this,
       config = $$.config,
-      isRotated = config.axis_rotated;
-    if (config.data_labels.centered && $$.isBarType(d)) {
-      var _rect = getBoundingRect(textElement),
-        isPositive = d.value >= 0;
-      if (isRotated) {
-        var w = (isPositive ? points[1][1] - points[0][1] : points[0][1] - points[1][1]) / 2 + _rect.width / 2;
-        return isPositive ? -w - 3 : w + 2;
-      } else {
-        var h = (isPositive ? points[0][1] - points[1][1] : points[1][1] - points[0][1]) / 2 + _rect.height / 2;
-        return isPositive ? h : -h - 2;
+      isRotated = config.axis_rotated,
+      isBarType = $$.isBarType(d),
+      isTreemapType = $$.isTreemapType(d);
+    if (config.data_labels.centered && (isBarType || isTreemapType)) {
+      var rect = getBoundingRect(textElement);
+      if (isBarType) {
+        var isPositive = d.value >= 0;
+        if (isRotated) {
+          var w = (isPositive ? points[1][1] - points[0][1] : points[0][1] - points[1][1]) / 2 + rect.width / 2;
+          return isPositive ? -w - 3 : w + 2;
+        } else {
+          var h = (isPositive ? points[0][1] - points[1][1] : points[1][1] - points[0][1]) / 2 + rect.height / 2;
+          return isPositive ? h : -h - 2;
+        }
+      } else if (isTreemapType) {
+        return type === "x" ? (points[1][0] - points[0][0]) / 2 : (points[1][1] - points[0][1]) / 2 + rect.height / 2;
       }
     }
     return 0;
@@ -8921,7 +9032,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       config = $$.config,
       state = $$.state,
       isRotated = config.axis_rotated,
-      xPos = points[0][0];
+      isTreemapType = $$.isTreemapType(d);
+    var xPos = points[0][0];
     if ($$.isCandlestickType(d)) {
       if (isRotated) {
         var _$$$getCandlestickDat2;
@@ -8929,6 +9041,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       } else {
         xPos += (points[1][0] - xPos) / 2;
       }
+    } else if (isTreemapType) {
+      xPos += config.data_labels.centered ? 0 : 5;
     } else {
       if (isRotated) {
         var padding = $$.isBarType(d) ? 4 : 6;
@@ -8948,8 +9062,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
         xPos = 4;
       }
     }
-    if (isRotated) {
-      xPos += $$.getCenteredTextPos(d, points, textElement);
+    if (isRotated || isTreemapType) {
+      xPos += $$.getCenteredTextPos(d, points, textElement, "x");
     }
     return xPos + $$.getTextPos(d.id, "x");
   },
@@ -8969,9 +9083,10 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       isRotated = config.axis_rotated,
       isInverted = config["axis_" + (axis == null ? void 0 : axis.getId(d.id)) + "_inverted"],
       isBarType = $$.isBarType(d),
+      isTreemapType = $$.isTreemapType(d),
       r = config.point_r,
-      rect = getBoundingRect(textElement),
-      value = d.value,
+      rect = getBoundingRect(textElement);
+    var value = d.value,
       baseY = 3,
       yPos;
     if ($$.isCandlestickType(d)) {
@@ -8985,6 +9100,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
           yPos += 15 * (value._isUp ? 1 : -1);
         }
       }
+    } else if (isTreemapType) {
+      yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);
     } else {
       if (isRotated) {
         yPos = (points[0][0] + points[2][0] + rect.height * .6) / 2;
@@ -9019,8 +9136,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
         yPos = state.height - 4;
       }
     }
-    if (!isRotated) {
-      yPos += $$.getCenteredTextPos(d, points, textElement);
+    if (!isRotated || isTreemapType) {
+      yPos += $$.getCenteredTextPos(d, points, textElement, "y");
     }
     return yPos + $$.getTextPos(d.id, "y");
   },
@@ -9105,8 +9222,8 @@ function getTextPos(pos, width) {
   if (pos === void 0) {
     pos = "left";
   }
-  var isNum = isNumber(width),
-    position;
+  var isNum = isNumber(width);
+  var position;
   if (pos.indexOf("center") > -1) {
     position = isNum ? width / 2 : "middle";
   } else if (pos.indexOf("right") > -1) {
@@ -9159,8 +9276,8 @@ function getTextPos(pos, width) {
       config = $$.config,
       current = $$.state.current,
       position = config.title_position || "left",
-      textRectWidth = $$.getTextRect($$.$el.title, $TEXT.title).width,
-      x;
+      textRectWidth = $$.getTextRect($$.$el.title, $TEXT.title).width;
+    var x;
     if (/(right|center)/.test(position)) {
       x = current.width - textRectWidth;
       if (position.indexOf("right") >= 0) {
@@ -9232,9 +9349,8 @@ function getTextPos(pos, width) {
         _$$$axis2,
         isArc = !(hasAxis && hasRadar);
       if ((_$$$axis = $$.axis) != null && _$$$axis.isTimeSeries() && isString(config.tooltip_init_x)) {
-        var targets = $$.data.targets[0],
-          i,
-          val;
+        var targets = $$.data.targets[0];
+        var i, val;
         config.tooltip_init_x = parseDate.call($$, config.tooltip_init_x);
         for (i = 0; val = targets.values[i]; i++) {
           if (val.x - config.tooltip_init_x === 0) {
@@ -9278,12 +9394,13 @@ function getTextPos(pos, width) {
    * @returns {string} html
    * @private
    */
-  getTooltipContent: function getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
+  getTooltipContent: function getTooltipContent(d, defaultTitleFormat, defaultValueFormat, _color) {
     var _this2 = this,
       $$ = this,
       api = $$.api,
       config = $$.config,
       state = $$.state,
+      $el = $$.$el,
       _map = ["title", "name", "value"].map(function (v) {
         _newArrowCheck(this, _this2);
         var fn = config["tooltip_format_" + v];
@@ -9297,7 +9414,7 @@ function getTextPos(pos, width) {
       _newArrowCheck(this, _this2);
       return name;
     }.bind(this);
-    valueFormat = valueFormat || ($$.isStackNormalized() ? function (v, ratio) {
+    valueFormat = valueFormat || (state.hasTreemap || $$.isStackNormalized() ? function (v, ratio) {
       _newArrowCheck(this, _this2);
       return (ratio * 100).toFixed(2) + "%";
     }.bind(this) : defaultValueFormat);
@@ -9311,7 +9428,7 @@ function getTextPos(pos, width) {
         return $$.levelColor(row.value);
       }.bind(this) : function (row) {
         _newArrowCheck(this, _this2);
-        return color(row);
+        return _color(row);
       }.bind(this),
       contents = config.tooltip_contents,
       tplStr = contents.template,
@@ -9343,16 +9460,13 @@ function getTextPos(pos, width) {
       d.sort(order.bind(api));
     }
     var tpl = $$.getTooltipContentTemplate(tplStr),
-      len = d.length,
-      text,
-      row,
-      param,
-      value,
-      i;
-    for (i = 0; i < len; i++) {
+      len = d.length;
+    var text, row, param, value, i;
+    var _loop = function () {
+      var _this3 = this;
       row = d[i];
       if (!row || !(getRowValue(row) || getRowValue(row) === 0)) {
-        continue;
+        return "continue";
       }
       if (isUndefined(text)) {
         var title = (state.hasAxis || state.hasRadar) && sanitise(titleFormat ? titleFormat(row.x) : row.x);
@@ -9361,14 +9475,15 @@ function getTextPos(pos, width) {
           TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">" + title + "</th></tr>" : ""
         });
       }
-      if (!row.ratio && $$.$el.arcs) {
-        row.ratio = $$.getRatio("arc", $$.$el.arcs.select("path." + $ARC.arc + "-" + row.id).data()[0]);
+      if (!row.ratio && $el.arcs) {
+        param = ["arc", $$.$el.arcs.select("path." + $ARC.arc + "-" + row.id).data()[0]];
+        row.ratio = $$.getRatio.apply($$, param);
       }
       param = [row.ratio, row.id, row.index, d];
       value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(param)));
       if ($$.isAreaRangeType(row)) {
         var _map2 = ["high", "low"].map(function (v) {
-            _newArrowCheck(this, _this2);
+            _newArrowCheck(this, _this3);
             return sanitise(valueFormat.apply(void 0, [$$.getRangedData(row, v)].concat(param)));
           }.bind(this)),
           high = _map2[0],
@@ -9376,7 +9491,7 @@ function getTextPos(pos, width) {
         value = "<b>Mid:</b> " + value + " <b>High:</b> " + high + " <b>Low:</b> " + low;
       } else if ($$.isCandlestickType(row)) {
         var _map3 = ["open", "high", "low", "close", "volume"].map(function (v) {
-            _newArrowCheck(this, _this2);
+            _newArrowCheck(this, _this3);
             return sanitise(valueFormat.apply(void 0, [$$.getRangedData(row, v, "candlestick")].concat(param)));
           }.bind(this)),
           open = _map3[0],
@@ -9392,31 +9507,31 @@ function getTextPos(pos, width) {
         value = valueFormat(start) + " ~ " + valueFormat(end);
       }
       if (value !== undefined) {
-        var _ret = function () {
-          var _this3 = this;
-          // Skip elements when their name is set to null
-          if (row.name === null) {
-            return "continue";
-          }
-          var name = sanitise(nameFormat.apply(void 0, [row.name].concat(param))),
-            color = getBgColor(row),
-            contentValue = {
-              CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
-              COLOR: tplStr || !$$.patterns ? color : "<svg><rect style=\"fill:" + color + "\" width=\"10\" height=\"10\"></rect></svg>",
-              NAME: name,
-              VALUE: value
-            };
-          if (tplStr && isObject(contents.text)) {
-            var index = targetIds.indexOf(row.id);
-            Object.keys(contents.text).forEach(function (key) {
-              _newArrowCheck(this, _this3);
-              contentValue[key] = contents.text[key][index];
-            }.bind(this));
-          }
-          text += tplProcess(tpl[1], contentValue);
-        }();
-        if (_ret === "continue") continue;
+        // Skip elements when their name is set to null
+        if (row.name === null) {
+          return "continue";
+        }
+        var name = sanitise(nameFormat.apply(void 0, [row.name].concat(param))),
+          _color = getBgColor(row),
+          contentValue = {
+            CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
+            COLOR: tplStr || !$$.patterns ? _color : "<svg><rect style=\"fill:" + _color + "\" width=\"10\" height=\"10\"></rect></svg>",
+            NAME: name,
+            VALUE: value
+          };
+        if (tplStr && isObject(contents.text)) {
+          var index = targetIds.indexOf(row.id);
+          Object.keys(contents.text).forEach(function (key) {
+            _newArrowCheck(this, _this3);
+            contentValue[key] = contents.text[key][index];
+          }.bind(this));
+        }
+        text += tplProcess(tpl[1], contentValue);
       }
+    };
+    for (i = 0; i < len; i++) {
+      var _ret = _loop();
+      if (_ret === "continue") continue;
     }
     return text + "</table>";
   },
@@ -9452,6 +9567,7 @@ function getTextPos(pos, width) {
       inputType = _state.inputType,
       event = _state.event,
       hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle,
+      hasTreemap = state.hasTreemap,
       svgLeft = $$.getSvgLeft(!0),
       chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(),
       chartLeft = $$.getCurrentPaddingLeft(!0),
@@ -9465,7 +9581,7 @@ function getTextPos(pos, width) {
         y += hasGauge ? height : height / 2;
         x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
       }
-    } else {
+    } else if (!hasTreemap) {
       var dataScale = scale.x(dataToShow[0].x);
       if (config.axis_rotated) {
         y = dataScale + 20;
@@ -9473,16 +9589,17 @@ function getTextPos(pos, width) {
         chartRight -= svgLeft;
       } else {
         y -= 5;
-        x = svgLeft + chartLeft + 20 + ($$.scale.zoom ? x : dataScale);
+        x = svgLeft + chartLeft + 20 + (scale.zoom ? x : dataScale);
       }
     }
 
     // when tooltip left + tWidth > chart's width
     if (x + tWidth + 15 > chartRight) {
-      x -= tWidth + chartLeft;
+      x -= tWidth + (hasTreemap ? 0 : chartLeft);
     }
     if (y + tHeight > current.height) {
-      y -= hasGauge ? tHeight * 3 : tHeight + 30;
+      var gap = hasTreemap ? 0 : 30;
+      y -= hasGauge ? tHeight * 3 : tHeight + gap;
     }
     var pos = {
       top: y,
@@ -9524,8 +9641,8 @@ function getTextPos(pos, width) {
       _ref$width = _ref.width,
       width = _ref$width === void 0 ? 0 : _ref$width,
       _ref$height = _ref.height,
-      height = _ref$height === void 0 ? 0 : _ref$height,
-      dataStr = JSON.stringify(selectedData);
+      height = _ref$height === void 0 ? 0 : _ref$height;
+    var dataStr = JSON.stringify(selectedData);
     if (!datum || datum.current !== dataStr) {
       var index = selectedData.concat().sort()[0].index;
       callFn(config.tooltip_onshow, $$.api, selectedData);
@@ -9594,9 +9711,10 @@ function getTextPos(pos, width) {
         var current = state.current,
           _tooltip$datum = tooltip.datum(),
           width = _tooltip$datum.width,
-          xPosInPercent = _tooltip$datum.xPosInPercent,
-          _value = current.width / 100 * xPosInPercent,
-          diff = current.width - (_value + width);
+          xPosInPercent = _tooltip$datum.xPosInPercent;
+        var _value = current.width / 100 * xPosInPercent;
+        var diff = current.width - (_value + width);
+
         // if tooltip size overs current viewport size
         if (diff < 0) {
           _value += diff;
@@ -9680,8 +9798,8 @@ function getTextPos(pos, width) {
     var $$ = this,
       config = $$.config,
       state = $$.state,
-      isRotated = config.axis_rotated,
-      padding = 0,
+      isRotated = config.axis_rotated;
+    var padding = 0,
       x,
       y;
     if (index && /^(x|y2?)$/.test(target)) {
@@ -9738,9 +9856,11 @@ function getTextPos(pos, width) {
   transformAll: function transformAll(withTransition, transitions) {
     var $$ = this,
       config = $$.config,
-      hasAxis = $$.state.hasAxis,
+      _$$$state = $$.state,
+      hasAxis = _$$$state.hasAxis,
+      hasTreemap = _$$$state.hasTreemap,
       $el = $$.$el;
-    $$.transformMain(withTransition, transitions);
+    hasTreemap || $$.transformMain(withTransition, transitions);
     hasAxis && config.subchart_show && $$.transformContext(withTransition, transitions);
     $el.legend && $$.transformLegend(withTransition);
   }
@@ -9809,8 +9929,8 @@ function getTextPos(pos, width) {
       config = $$.config,
       current = $$.state.current,
       types = config.data_types,
-      targets = targetsValue || $$.data.targets,
-      has = !1;
+      targets = targetsValue || $$.data.targets;
+    var has = !1;
     if (!checkFromData && ((_current$types = current.types) == null ? void 0 : _current$types.indexOf(type)) > -1) {
       has = !0;
     } else if (targets != null && targets.length) {
@@ -9914,6 +10034,9 @@ function getTextPos(pos, width) {
   isScatterType: function isScatterType(d) {
     return this.isTypeOf(d, "scatter");
   },
+  isTreemapType: function isTreemapType(d) {
+    return this.isTypeOf(d, "treemap");
+  },
   isPieType: function isPieType(d) {
     return this.isTypeOf(d, "pie");
   },
@@ -9935,8 +10058,8 @@ function getTextPos(pos, width) {
   // determine if is 'circle' data point
   isCirclePoint: function isCirclePoint(node) {
     var config = this.config,
-      pattern = config.point_pattern,
-      isCircle = !1;
+      pattern = config.point_pattern;
+    var isCircle = !1;
     if ((node == null ? void 0 : node.tagName) === "circle") {
       isCircle = !0;
     } else {
@@ -9958,7 +10081,7 @@ function getTextPos(pos, width) {
    */
   labelishData: function labelishData(d) {
     var _this5 = this;
-    return this.isBarType(d) || this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isCandlestickType(d) || this.isRadarType(d) ? d.values.filter(function (v) {
+    return this.isBarType(d) || this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isCandlestickType(d) || this.isRadarType(d) || this.isTreemapType(d) ? d.values.filter(function (v) {
       _newArrowCheck(this, _this5);
       return isNumber(v.value) || !!v.value;
     }.bind(this)) : [];
@@ -10106,8 +10229,8 @@ var ChartInternal = /*#__PURE__*/function () {
     var config = this.config,
       state = this.state,
       duration = config.transition_duration,
-      subchart = config.subchart_show,
-      t = selection;
+      subchart = config.subchart_show;
+    var t = selection;
     if (t) {
       // in case of non d3 selection, wrap with d3 selection
       if ("tagName" in t) {
@@ -10145,8 +10268,9 @@ var ChartInternal = /*#__PURE__*/function () {
       $el = $$.$el,
       useCssRule = config.boost_useCssRule;
     checkModuleImport($$);
-    state.hasAxis = !$$.hasArcType();
     state.hasRadar = !state.hasAxis && $$.hasType("radar");
+    state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
+    state.hasAxis = !$$.hasArcType() && !state.hasTreemap;
 
     // datetime to be used for uniqueness
     state.datetimeId = "bb-" + +new Date() * getRandom();
@@ -10242,8 +10366,8 @@ var ChartInternal = /*#__PURE__*/function () {
     if ($$.hasPointType()) {
       $$.point = $$.generatePoint();
     }
+    $$.initClip();
     if (state.hasAxis) {
-      $$.initClip();
       format.extraLineClasses = $$.generateExtraLineClass();
       format.dataTime = config.data_xLocaltime ? external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_.timeParse : external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_.utcParse;
       format.axisTime = config.axis_x_localtime ? external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_.timeFormat : external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_.utcFormat;
@@ -10274,7 +10398,9 @@ var ChartInternal = /*#__PURE__*/function () {
       state = $$.state,
       $el = $$.$el,
       org = $$.org,
-      hasAxis = state.hasAxis,
+      _state = state,
+      hasAxis = _state.hasAxis,
+      hasTreemap = _state.hasTreemap,
       hasInteraction = config.interaction_enabled,
       hasPolar = $$.hasType("polar");
     // for arc type, set axes to not be shown
@@ -10305,28 +10431,30 @@ var ChartInternal = /*#__PURE__*/function () {
     $$.updateScales(!0);
 
     // retrieve scale after the 'updateScales()' is called
-    var x = scale.x,
-      y = scale.y,
-      y2 = scale.y2,
-      subX = scale.subX,
-      subY = scale.subY,
-      subY2 = scale.subY2;
+    if (hasAxis) {
+      var x = scale.x,
+        y = scale.y,
+        y2 = scale.y2,
+        subX = scale.subX,
+        subY = scale.subY,
+        subY2 = scale.subY2;
 
-    // Set domains for each scale
-    if (x) {
-      x.domain(sortValue($$.getXDomain($$.data.targets)));
-      subX.domain(x.domain());
+      // Set domains for each scale
+      if (x) {
+        x.domain(sortValue($$.getXDomain($$.data.targets)));
+        subX.domain(x.domain());
 
-      // Save original x domain for zoom update
-      org.xDomain = x.domain();
-    }
-    if (y) {
-      y.domain($$.getYDomain($$.data.targets, "y"));
-      subY.domain(y.domain());
-    }
-    if (y2) {
-      y2.domain($$.getYDomain($$.data.targets, "y2"));
-      subY2 && subY2.domain(y2.domain());
+        // Save original x domain for zoom update
+        org.xDomain = x.domain();
+      }
+      if (y) {
+        y.domain($$.getYDomain($$.data.targets, "y"));
+        subY.domain(y.domain());
+      }
+      if (y2) {
+        y2.domain($$.getYDomain($$.data.targets, "y2"));
+        subY2 && subY2.domain(y2.domain());
+      }
     }
 
     // -- Basic Elements --
@@ -10342,7 +10470,7 @@ var ChartInternal = /*#__PURE__*/function () {
 
     // Define defs
     var hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
-    if (hasAxis || hasColorPatterns || config.data_labels_backgroundColors || hasPolar) {
+    if (hasAxis || hasColorPatterns || hasPolar || hasTreemap || config.data_labels_backgroundColors) {
       $el.defs = $el.svg.append("defs");
       if (hasAxis) {
         ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
@@ -10372,14 +10500,14 @@ var ChartInternal = /*#__PURE__*/function () {
     $$.bindResize();
 
     // Define regions
-    var main = $el.svg.append("g").classed($COMMON.main, !0).attr("transform", $$.getTranslate("main"));
+    var main = $el.svg.append("g").classed($COMMON.main, !0).attr("transform", hasTreemap ? null : $$.getTranslate("main"));
     $el.main = main;
 
     // initialize subchart when subchart show option is set
     config.subchart_show && $$.initSubchart();
     config.tooltip_show && $$.initTooltip();
     config.title_text && $$.initTitle();
-    config.legend_show && $$.initLegend();
+    !hasTreemap && config.legend_show && $$.initLegend();
 
     // -- Main Region --
 
@@ -10453,6 +10581,7 @@ var ChartInternal = /*#__PURE__*/function () {
       _$$$state = $$.state,
       hasAxis = _$$$state.hasAxis,
       hasRadar = _$$$state.hasRadar,
+      hasTreemap = _$$$state.hasTreemap,
       types = [];
     if (hasAxis) {
       ["bar", "bubble", "candlestick", "line"].forEach(function (v) {
@@ -10462,6 +10591,8 @@ var ChartInternal = /*#__PURE__*/function () {
           types.push(name);
         }
       }.bind(this));
+    } else if (hasTreemap) {
+      types.push("Treemap");
     } else {
       var hasPolar = $$.hasType("polar");
       if (!hasRadar) {
@@ -10560,6 +10691,7 @@ var ChartInternal = /*#__PURE__*/function () {
       _$$$state2 = $$.state,
       hasAxis = _$$$state2.hasAxis,
       hasRadar = _$$$state2.hasRadar,
+      hasTreemap = _$$$state2.hasTreemap,
       helper = function (type) {
         _newArrowCheck(this, _this6);
         return $$["updateTargetsFor" + type](targets.filter($$["is" + type + "Type"].bind($$)));
@@ -10587,6 +10719,9 @@ var ChartInternal = /*#__PURE__*/function () {
         type = "Polar";
       }
       helper(type);
+      // Arc, Polar, Radar
+    } else if (hasTreemap) {
+      helper("Treemap");
     }
 
     // Point types
@@ -10611,8 +10746,8 @@ var ChartInternal = /*#__PURE__*/function () {
     }
     var $$ = this,
       svg = $$.$el.svg,
-      $T = $$.$T,
-      selector = "." + $COMMON.target;
+      $T = $$.$T;
+    var selector = "." + $COMMON.target;
     if (hasPointType) {
       selector += ", ." + $CIRCLE.chartCircles + " > ." + $CIRCLE.circles;
     }
@@ -10738,12 +10873,12 @@ function loadConfig(config) {
     target,
     keys,
     read,
-    find = function () {
+    _find = function find() {
       _newArrowCheck(this, _this);
       var key = keys.shift();
       if (key && target && isObjectType(target) && key in target) {
         target = target[key];
-        return find();
+        return _find();
       } else if (!key) {
         return target;
       }
@@ -10753,7 +10888,7 @@ function loadConfig(config) {
     _newArrowCheck(this, _this);
     target = config;
     keys = key.split("_");
-    read = find();
+    read = _find();
     if (isDefined(read)) {
       thisConfig[key] = read;
     }
@@ -10946,8 +11081,8 @@ function loadConfig(config) {
     var $$ = this.internal,
       config = $$.config,
       state = $$.state,
-      key = name == null ? void 0 : name.replace(/\./g, "_"),
-      res;
+      key = name == null ? void 0 : name.replace(/\./g, "_");
+    var res;
     if (name && key in config) {
       if (isDefined(value)) {
         config[key] = value;
@@ -11615,6 +11750,7 @@ function renderText(ctx, glyph) {
 var legend_legend = {
   /**
    * Show legend for each target.
+   * - **NOTE:** Legend APIs aren't supported for `treemap` type.
    * @function legend․show
    * @instance
    * @memberof Chart
@@ -11854,6 +11990,7 @@ var legend_legend = {
         }.bind(this));
       }.bind(this));
     } else {
+      $$.api.tooltip.hide();
       $$.loadFromArgs(args);
     }
   },
@@ -12094,6 +12231,13 @@ var tooltip_tooltip = {
    *    x: new Date("2018-01-02 00:00")
    *  });
    *
+   *  // treemap type can be shown by using "id" only.
+   *  chart.tooltip.show({
+   *    data: {
+   *        id: "data1"  // data id
+   *    }
+   *  });
+   *
    *  // when data.xs is used
    *  chart.tooltip.show({
    *    data: {
@@ -12115,8 +12259,12 @@ var tooltip_tooltip = {
   show: function show(args) {
     var _this = this,
       $$ = this.internal,
+      $el = $$.$el,
       config = $$.config,
-      inputType = $$.state.inputType,
+      _$$$state = $$.state,
+      eventReceiver = _$$$state.eventReceiver,
+      hasTreemap = _$$$state.hasTreemap,
+      inputType = _$$$state.inputType,
       index,
       mouse;
     // determine mouse position on the chart
@@ -12128,7 +12276,9 @@ var tooltip_tooltip = {
     if (args.data) {
       var data = args.data,
         y = $$.getYScaleById(data.id)(data.value);
-      if ($$.isMultipleX()) {
+      if (hasTreemap && data.id) {
+        eventReceiver.rect = $el.main.select("" + $$.selectorTarget(data.id, undefined, "rect"));
+      } else if ($$.isMultipleX()) {
         // if multiple xs, target point will be determined by mouse
         mouse = [$$.scale.x(data.x), y];
       } else {
@@ -13327,8 +13477,8 @@ var AxisRendererHelper = /*#__PURE__*/function () {
     return isDefined(formatted) ? formatted : "";
   };
   _proto.transitionise = function transitionise(selection) {
-    var config = this.config,
-      transitionSelection = selection;
+    var config = this.config;
+    var transitionSelection = selection;
     if (config.withoutTransition) {
       transitionSelection = selection.interrupt();
     } else if (config.transition || !this.owner.params.noTransition) {
@@ -13419,8 +13569,8 @@ var AxisRenderer = /*#__PURE__*/function () {
       tickShow = {
         tick: axisShow ? params.config[prefix + "_tick_show"] : !1,
         text: axisShow ? params.config[prefix + "_tick_text_show"] : !1
-      },
-      $g; // // get the axis' tick position configuration
+      }; // // get the axis' tick position configuration
+    var $g;
     g.each(function () {
       var _this = this,
         g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
@@ -13449,28 +13599,30 @@ var AxisRenderer = /*#__PURE__*/function () {
         ctx.generatedTicks = ticks;
 
         // update selection
-        var tick = g.selectAll(".tick").data(ticks, scale1),
-          tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick"),
-          tickExit = tick.exit().remove(); // enter selection
+        var tick = g.selectAll(".tick").data(ticks, scale1);
+
+        // enter selection
+        var tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick"),
+          tickExit = tick.exit().remove(); // MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
         // enter + update selection
         tick = tickEnter.merge(tick);
         tickShow.tick && tickEnter.append("line");
         tickShow.text && tickEnter.append("text");
         var sizeFor1Char = AxisRendererHelper.getSizeFor1Char(tick),
-          counts = [],
-          tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
-            var _this2 = this;
-            _newArrowCheck(this, _this);
-            var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
-            counts[index] = split.length;
-            return split.map(function (splitted) {
-              _newArrowCheck(this, _this2);
-              return {
-                index: index,
-                splitted: splitted
-              };
-            }.bind(this));
+          counts = [];
+        var tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
+          var _this2 = this;
+          _newArrowCheck(this, _this);
+          var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
+          counts[index] = split.length;
+          return split.map(function (splitted) {
+            _newArrowCheck(this, _this2);
+            return {
+              index: index,
+              splitted: splitted
+            };
           }.bind(this));
+        }.bind(this));
         tspan.exit().remove();
         tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
           _newArrowCheck(this, _this);
@@ -13542,9 +13694,9 @@ var AxisRenderer = /*#__PURE__*/function () {
    */;
   _proto.getGeneratedTicks = function getGeneratedTicks(count) {
     var _this$generatedTicks,
+      _this3 = this,
       len = ((_this$generatedTicks = this.generatedTicks) == null ? void 0 : _this$generatedTicks.length) - 1,
-      res = this.generatedTicks,
-      _this3 = this;
+      res = this.generatedTicks;
     if (len > count) {
       var interval = Math.round(len / count + .1);
       res = this.generatedTicks.map(function (v, i) {
@@ -13754,7 +13906,8 @@ var AxisRenderer = /*#__PURE__*/function () {
     return interval === Infinity ? 0 : interval;
   };
   _proto.ticks = function ticks() {
-    for (var config = this.config, _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+    var config = this.config;
+    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
       args[_key] = arguments[_key];
     }
     if (!args.length) {
@@ -13997,8 +14150,8 @@ var Axis_Axis = /*#__PURE__*/function () {
         }.bind(this))) {
           v.scale().range(range);
         }
-        var className = this.getAxisClassName(id) + "-" + (i + 1),
-          g = main.select("." + className.replace(/\s/, "."));
+        var className = this.getAxisClassName(id) + "-" + (i + 1);
+        var g = main.select("." + className.replace(/\s/, "."));
         if (g.empty()) {
           g = main.append("g").attr("class", className).style("visibility", config["axis_" + id + "_show"] ? null : "hidden").call(v);
         } else {
@@ -14052,21 +14205,21 @@ var Axis_Axis = /*#__PURE__*/function () {
         tickFormat = fn.bind($$.api);
       }
     }
-    var tickValues = this.tick[type],
-      axisParams = mergeObj({
-        outerTick: outerTick,
-        noTransition: noTransition,
-        config: config,
-        id: id,
-        tickTextRotate: tickTextRotate,
-        owner: $$
-      }, isX && {
-        isCategory: isCategory,
-        tickMultiline: config.axis_x_tick_multiline,
-        tickWidth: config.axis_x_tick_width,
-        tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
-        orgXScale: $$.scale.x
-      });
+    var tickValues = this.tick[type];
+    var axisParams = mergeObj({
+      outerTick: outerTick,
+      noTransition: noTransition,
+      config: config,
+      id: id,
+      tickTextRotate: tickTextRotate,
+      owner: $$
+    }, isX && {
+      isCategory: isCategory,
+      tickMultiline: config.axis_x_tick_multiline,
+      tickWidth: config.axis_x_tick_width,
+      tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
+      orgXScale: $$.scale.x
+    });
     if (!isX) {
       axisParams.tickStepSize = config["axis_" + type + "_tick_stepSize"];
     }
@@ -14102,8 +14255,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   _proto.updateXAxisTickValues = function updateXAxisTickValues(targets, axis) {
     var $$ = this.owner,
       config = $$.config,
-      fit = config.axis_x_tick_fit,
-      count = config.axis_x_tick_count,
+      fit = config.axis_x_tick_fit;
+    var count = config.axis_x_tick_count,
       values;
     if (fit || count && fit) {
       values = $$.mapTargetsToUniqueXs(targets);
@@ -14126,8 +14279,9 @@ var Axis_Axis = /*#__PURE__*/function () {
   _proto.getId = function getId(id) {
     var _this$owner2 = this.owner,
       config = _this$owner2.config,
-      scale = _this$owner2.scale,
-      axis = config.data_axes[id];
+      scale = _this$owner2.scale;
+    var axis = config.data_axes[id];
+
     // when data.axes option has 'y2', but 'axis.y2.show=true' isn't set will return 'y'
     if (!axis || !scale[axis]) {
       axis = "y";
@@ -14217,8 +14371,8 @@ var Axis_Axis = /*#__PURE__*/function () {
       _$$$state = $$.state,
       width = _$$$state.width,
       height = _$$$state.height,
-      position = this.getAxisLabelPosition(id),
-      x = position.isMiddle ? -height / 2 : 0;
+      position = this.getAxisLabelPosition(id);
+    var x = position.isMiddle ? -height / 2 : 0;
     if (this.isHorizontal($$, id !== "x")) {
       x = position.isLeft ? 0 : position.isCenter ? width / 2 : width;
     } else if (position.isBottom) {
@@ -14228,8 +14382,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
   _proto.dxForAxisLabel = function dxForAxisLabel(id) {
     var $$ = this.owner,
-      position = this.getAxisLabelPosition(id),
-      dx = position.isBottom ? "0.5em" : "0";
+      position = this.getAxisLabelPosition(id);
+    var dx = position.isBottom ? "0.5em" : "0";
     if (this.isHorizontal($$, id !== "x")) {
       dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0";
     } else if (position.isTop) {
@@ -14239,8 +14393,8 @@ var Axis_Axis = /*#__PURE__*/function () {
   };
   _proto.textAnchorForAxisLabel = function textAnchorForAxisLabel(id) {
     var $$ = this.owner,
-      position = this.getAxisLabelPosition(id),
-      anchor = position.isMiddle ? "middle" : "end";
+      position = this.getAxisLabelPosition(id);
+    var anchor = position.isMiddle ? "middle" : "end";
     if (this.isHorizontal($$, id !== "x")) {
       anchor = position.isLeft ? "start" : position.isCenter ? "middle" : "end";
     } else if (position.isBottom) {
@@ -14254,8 +14408,8 @@ var Axis_Axis = /*#__PURE__*/function () {
       isRotated = config.axis_rotated,
       isInner = this.getAxisLabelPosition(id).isInner,
       tickRotate = config["axis_" + id + "_tick_rotate"] ? $$.getHorizontalAxisHeight(id) : 0,
-      maxTickWidth = this.getMaxTickWidth(id),
-      dy;
+      maxTickWidth = this.getMaxTickWidth(id);
+    var dy;
     if (id === "x") {
       var xHeight = config.axis_x_height;
       if (isRotated) {
@@ -14304,8 +14458,8 @@ var Axis_Axis = /*#__PURE__*/function () {
     if (svg) {
       var isYAxis = /^y2?$/.test(id),
         targetsToShow = $$.filterTargetsToShow($$.data.targets),
-        _scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id)),
-        domain = _scale.domain(),
+        scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id)),
+        domain = scale.domain(),
         isDomainSame = domain[0] === domain[1] && domain.every(function (v) {
           _newArrowCheck(this, _this11);
           return v > 0;
@@ -14325,7 +14479,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       if (!isYAxis) {
         currentTickMax.ticks.splice(0);
       }
-      var axis = this.getAxis(id, _scale, !1, !1, !0),
+      var axis = this.getAxis(id, scale, !1, !1, !0),
         tickCount = config["axis_" + id + "_tick_count"],
         tickValues = config["axis_" + id + "_tick_values"];
       // Make to generate the final tick text to be rendered
@@ -14379,9 +14533,9 @@ var Axis_Axis = /*#__PURE__*/function () {
       tickCount = tickTextWidths.length,
       _state$axis$x$padding = state.axis.x.padding,
       left = _state$axis$x$padding.left,
-      right = _state$axis$x$padding.right,
-      maxOverflow = 0,
-      remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? .5 : 0);
+      right = _state$axis$x$padding.right;
+    var maxOverflow = 0;
+    var remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? .5 : 0);
     for (var i = 0; i < tickCount; i++) {
       var tickIndex = i + 1,
         rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidths[i],
@@ -14398,8 +14552,8 @@ var Axis_Axis = /*#__PURE__*/function () {
         overflow = rotatedTickTextWidth - tickLength / 2 - remainingTickWidth;
       maxOverflow = Math.max(maxOverflow, overflow);
     }
-    var filteredTargets = $$.filterTargetsToShow($$.data.targets),
-      tickOffset = 0;
+    var filteredTargets = $$.filterTargetsToShow($$.data.targets);
+    var tickOffset = 0;
     if (!isTimeSeries && config.axis_x_tick_count <= filteredTargets.length && filteredTargets[0].values.length) {
       var _scale2 = getScale($$.axis.getAxisType("x"), 0, widthWithoutCurrentPaddingLeft - maxOverflow).domain([left * -1, $$.getXDomainMax($$.data.targets) + 1 + right]);
       tickOffset = Math.ceil((_scale2(1) - _scale2(0)) / 2);
@@ -14472,8 +14626,9 @@ var Axis_Axis = /*#__PURE__*/function () {
         var isCategorized = this.isCategorized(),
           count = targetCount - 2,
           start = values[0],
-          end = values[values.length - 1],
-          tickValue;
+          end = values[values.length - 1];
+        var tickValue;
+
         // re-construct unique values
         tickValues = [start];
         for (var i = 0; i < count; i++) {
@@ -14627,8 +14782,8 @@ var Axis_Axis = /*#__PURE__*/function () {
           tickValues = sortValue(tickNodes.data()),
           tickSize = tickValues.length,
           cullingMax = config[cullingOptionPrefix + "_max"],
-          lines = config[cullingOptionPrefix + "_lines"],
-          intervalForCulling;
+          lines = config[cullingOptionPrefix + "_lines"];
+        var intervalForCulling;
         if (tickSize) {
           for (var i = 1; i < tickSize; i++) {
             if (tickSize / i < cullingMax) {
@@ -14874,8 +15029,9 @@ var Axis_Axis = /*#__PURE__*/function () {
           var _this4 = this;
           _newArrowCheck(this, _this3);
           var x = getPrevNextX(d),
-            xDomain = xScale.domain(),
-            val;
+            xDomain = xScale.domain();
+          var val;
+
           // if there this is a single data point make the eventRect full width (or height)
           if (x.prev === null && x.next === null) {
             val = isRotated ? state.height : state.width;
@@ -14895,8 +15051,9 @@ var Axis_Axis = /*#__PURE__*/function () {
         }.bind(this);
         rectX = function (d) {
           _newArrowCheck(this, _this3);
-          var x = getPrevNextX(d),
-            val;
+          var x = getPrevNextX(d);
+          var val;
+
           // if there this is a single data point position the eventRect at 0
           if (x.prev === null && x.next === null) {
             val = 0;
@@ -15027,8 +15184,9 @@ var Axis_Axis = /*#__PURE__*/function () {
         if (!d) {
           return;
         }
-        var index = d.index,
-          stepType = config.line_step_type;
+        var index = d.index;
+        var stepType = config.line_step_type;
+
         // tooltip position match for step-before & step-after
         if (config.line_step_tooltipMatch && $$.hasType("step") && /^step\-(before|after)$/.test(stepType)) {
           var scale = $$.scale.zoom || $$.scale.x,
@@ -15189,8 +15347,8 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
       ["axis.x", "grid.x", "gridLines.x", "region.list", "text", "bar", "line", "area", "circle"].forEach(function (v) {
         var _node;
         _newArrowCheck(this, _this);
-        var name = v.split("."),
-          node = $el[name[0]];
+        var name = v.split(".");
+        var node = $el[name[0]];
         if (node && name.length > 1) {
           node = node[name[1]];
         }
@@ -15382,18 +15540,22 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
 /* harmony default export */ var clip = ({
   initClip: function initClip() {
     var $$ = this,
-      clip = $$.state.clip;
+      _$$$state = $$.state,
+      clip = _$$$state.clip,
+      hasAxis = _$$$state.hasAxis;
     // MEMO: clipId needs to be unique because it conflicts when multiple charts exist
     clip.id = $$.state.datetimeId + "-clip";
-    clip.idXAxis = clip.id + "-xaxis";
-    clip.idYAxis = clip.id + "-yaxis";
-    clip.idGrid = clip.id + "-grid";
+    if (hasAxis) {
+      clip.idXAxis = clip.id + "-xaxis";
+      clip.idYAxis = clip.id + "-yaxis";
+      clip.idGrid = clip.id + "-grid";
 
-    // Define 'clip-path' attribute values
-    clip.path = $$.getClipPath(clip.id);
-    clip.pathXAxis = $$.getClipPath(clip.idXAxis);
-    clip.pathYAxis = $$.getClipPath(clip.idYAxis);
-    clip.pathGrid = $$.getClipPath(clip.idGrid);
+      // Define 'clip-path' attribute values
+      clip.path = $$.getClipPath(clip.id);
+      clip.pathXAxis = $$.getClipPath(clip.idXAxis);
+      clip.pathYAxis = $$.getClipPath(clip.idYAxis);
+      clip.pathGrid = $$.getClipPath(clip.idGrid);
+    }
   },
   getClipPath: function getClipPath(id) {
     var $$ = this,
@@ -15415,10 +15577,10 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   setXAxisClipPath: function setXAxisClipPath(node) {
     var $$ = this,
       config = $$.config,
-      _$$$state = $$.state,
-      margin = _$$$state.margin,
-      width = _$$$state.width,
-      height = _$$$state.height,
+      _$$$state2 = $$.state,
+      margin = _$$$state2.margin,
+      width = _$$$state2.width,
+      height = _$$$state2.height,
       isRotated = config.axis_rotated,
       left = Math.max(30, margin.left) - (isRotated ? 0 : 20),
       x = isRotated ? -(1 + left) : -(left - 1),
@@ -15435,10 +15597,10 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   setYAxisClipPath: function setYAxisClipPath(node) {
     var $$ = this,
       config = $$.config,
-      _$$$state2 = $$.state,
-      margin = _$$$state2.margin,
-      width = _$$$state2.width,
-      height = _$$$state2.height,
+      _$$$state3 = $$.state,
+      margin = _$$$state3.margin,
+      width = _$$$state3.width,
+      height = _$$$state3.height,
       isRotated = config.axis_rotated,
       left = Math.max(30, margin.left) - (isRotated ? 20 : 0),
       isInner = config.axis_y_inner,
@@ -15451,9 +15613,9 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   updateXAxisTickClip: function updateXAxisTickClip() {
     var $$ = this,
       config = $$.config,
-      _$$$state3 = $$.state,
-      clip = _$$$state3.clip,
-      xAxisHeight = _$$$state3.xAxisHeight,
+      _$$$state4 = $$.state,
+      clip = _$$$state4.clip,
+      xAxisHeight = _$$$state4.xAxisHeight,
       defs = $$.$el.defs,
       newXAxisHeight = $$.getHorizontalAxisHeight("x");
     if (defs && !clip.idXAxisTickTexts) {
@@ -15482,9 +15644,9 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   },
   setXAxisTickTextClipPathWidth: function setXAxisTickTextClipPathWidth() {
     var $$ = this,
-      _$$$state4 = $$.state,
-      clip = _$$$state4.clip,
-      current = _$$$state4.current,
+      _$$$state5 = $$.state,
+      clip = _$$$state5.clip,
+      current = _$$$state5.current,
       svg = $$.$el.svg;
     if (svg) {
       svg.select("#" + clip.idXAxisTickTexts + " rect").attr("width", current.maxTickWidths.x.clipPath).attr("height", 30);
@@ -15980,8 +16142,8 @@ function smoothLines(el, type) {
       config = $$.config,
       scale = $$.scale,
       isRotated = config.axis_rotated,
-      isX = type === "x",
-      key = "start",
+      isX = type === "x";
+    var key = "start",
       currScale,
       pos = 0;
     if (d.axis === "y" || d.axis === "y2") {
@@ -16011,8 +16173,8 @@ function smoothLines(el, type) {
       state = $$.state,
       isRotated = config.axis_rotated,
       isWidth = type === "width",
-      start = $$[isWidth ? "regionX" : "regionY"](d),
-      currScale,
+      start = $$[isWidth ? "regionX" : "regionY"](d);
+    var currScale,
       key = "end",
       end = state[type];
     if (d.axis === "y" || d.axis === "y2") {
@@ -16078,8 +16240,8 @@ function smoothLines(el, type) {
       rotatedPadding = _state.rotatedPadding,
       isLegendRight = _state.isLegendRight,
       isLegendInset = _state.isLegendInset,
-      isRotated = config.axis_rotated,
-      h = 30;
+      isRotated = config.axis_rotated;
+    var h = 30;
     if (id === "x" && !config.axis_x_show) {
       return 8;
     }
@@ -16119,14 +16281,14 @@ function smoothLines(el, type) {
       axis = $$.axis,
       config = $$.config,
       state = $$.state,
-      $el = $$.$el,
-      rotate = config["axis_" + id + "_tick_rotate"];
+      $el = $$.$el;
+    var rotate = config["axis_" + id + "_tick_rotate"];
     if (id === "x") {
       var allowedXAxisTypes = axis.isCategorized() || axis.isTimeSeries();
       if (config.axis_x_tick_fit && allowedXAxisTypes) {
         var xTickCount = config.axis_x_tick_count,
-          currentXTicksLength = state.current.maxTickWidths.x.ticks.length,
-          tickCount = 0;
+          currentXTicksLength = state.current.maxTickWidths.x.ticks.length;
+        var tickCount = 0;
         if (xTickCount) {
           tickCount = xTickCount > currentXTicksLength ? currentXTicksLength : xTickCount;
         } else if (currentXTicksLength) {
@@ -18095,8 +18257,8 @@ function getRadiusFn(expandRate) {
      */
     outer: function outer(d) {
       var _$$$getRadius2 = $$.getRadius(d),
-        outerRadius = _$$$getRadius2.outerRadius,
-        radius;
+        outerRadius = _$$$getRadius2.outerRadius;
+      var radius;
       if (hasMultiArcGauge) {
         radius = state.radius - singleArcWidth * d.index + expandWidth;
       } else if ($$.hasType("polar") && !expandRate) {
@@ -18126,8 +18288,8 @@ function getRadiusFn(expandRate) {
         _config$arc_cornerRad2 = config.arc_cornerRadius,
         cornerRadius = _config$arc_cornerRad2 === void 0 ? 0 : _config$arc_cornerRad2,
         id = d.data.id,
-        value = d.value,
-        corner = 0;
+        value = d.value;
+      var corner = 0;
       if (ratio) {
         corner = ratio * outerRadius;
       } else {
@@ -18199,8 +18361,8 @@ function getAttrTweenFn(fn) {
    */
   getRadius: function getRadius(d) {
     var $$ = this,
-      data = d == null ? void 0 : d.data,
-      _$$$state = $$.state,
+      data = d == null ? void 0 : d.data;
+    var _$$$state = $$.state,
       innerRadius = _$$$state.innerRadius,
       outerRadius = _$$$state.outerRadius;
     if (!isNumber(innerRadius) && data) {
@@ -18225,8 +18387,8 @@ function getAttrTweenFn(fn) {
   getArcLength: function getArcLength() {
     var $$ = this,
       config = $$.config,
-      arcLengthInPercent = config.gauge_arcLength * 3.6,
-      len = 2 * (arcLengthInPercent / 360);
+      arcLengthInPercent = config.gauge_arcLength * 3.6;
+    var len = 2 * (arcLengthInPercent / 360);
     if (arcLengthInPercent < -360) {
       len = -2;
     } else if (arcLengthInPercent > 360) {
@@ -18239,8 +18401,8 @@ function getAttrTweenFn(fn) {
       config = $$.config,
       isFullCircle = config.gauge_fullCircle,
       defaultStartAngle = -1 * Math.PI / 2,
-      defaultEndAngle = Math.PI / 2,
-      startAngle = config.gauge_startingAngle;
+      defaultEndAngle = Math.PI / 2;
+    var startAngle = config.gauge_startingAngle;
     if (!isFullCircle && startAngle <= defaultStartAngle) {
       startAngle = defaultStartAngle;
     } else if (!isFullCircle && startAngle >= defaultEndAngle) {
@@ -18334,8 +18496,8 @@ function getAttrTweenFn(fn) {
     return function (d) {
       _newArrowCheck(this, _this5);
       var updated = $$.updateAngle(d),
-        outerR = outer(updated),
-        cornerR = 0;
+        outerR = outer(updated);
+      var cornerR = 0;
       if (updated) {
         cornerR = corner(updated, outerR);
       }
@@ -18378,11 +18540,11 @@ function getAttrTweenFn(fn) {
           }.bind(this)),
           x = _c$map[0],
           y = _c$map[1],
-          h = Math.sqrt(x * x + y * y),
-          ratio = (_filter$map = ["donut", "pie", "polar"].filter($$.hasType.bind($$)).map(function (v) {
-            _newArrowCheck(this, _this6);
-            return config[v + "_label_ratio"];
-          }.bind(this))) == null ? void 0 : _filter$map[0];
+          h = Math.sqrt(x * x + y * y);
+        var ratio = (_filter$map = ["donut", "pie", "polar"].filter($$.hasType.bind($$)).map(function (v) {
+          _newArrowCheck(this, _this6);
+          return config[v + "_label_ratio"];
+        }.bind(this))) == null ? void 0 : _filter$map[0];
         if (ratio) {
           ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
         } else {
@@ -18471,8 +18633,8 @@ function getAttrTweenFn(fn) {
    */
   getExpandConfig: function getExpandConfig(id, key) {
     var $$ = this,
-      config = $$.config,
-      type;
+      config = $$.config;
+    var type;
     if ($$.isDonutType(id)) {
       type = "donut";
     } else if ($$.isGaugeType(id)) {
@@ -18633,8 +18795,8 @@ function getAttrTweenFn(fn) {
     .style("opacity", null).call(endall, function () {
       if ($$.levelColor) {
         var path = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
-          _d = path.datum();
-        $$.updateLegendItemColor(_d.data.id, path.style("fill"));
+          d = path.datum();
+        $$.updateLegendItemColor(d.data.id, path.style("fill"));
       }
       state.transiting = !1;
       callFn(config.onrendered, $$.api);
@@ -18718,8 +18880,8 @@ function getAttrTweenFn(fn) {
       $$.hideTooltip();
     }
     arc.on("click", function (event, d, i) {
-      var updated = $$.updateAngle(d),
-        arcData;
+      var updated = $$.updateAngle(d);
+      var arcData;
       if (updated) {
         arcData = $$.convertToArcData(updated);
         $$.toggleShape == null ? void 0 : $$.toggleShape(this, arcData, i);
@@ -18969,8 +19131,9 @@ function getAttrTweenFn(fn) {
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
         offset = areaOffset(d, i) || y0,
         posX = x(d),
-        value = d.value,
-        posY = y(d);
+        value = d.value;
+      var posY = y(d);
+
       // fix posY not to overflow opposite quadrant
       if (config.axis_rotated && (value > 0 && posY < y0 || value < 0 && y0 < posY)) {
         posY = y0;
@@ -19020,7 +19183,7 @@ function getAttrTweenFn(fn) {
     if (!$el.bar) {
       $$.initBar();
     }
-    var mainBarUpdate = $$.$el.main.select("." + $BAR.chartBars).selectAll("." + $BAR.chartBar).data(
+    var mainBarUpdate = $el.main.select("." + $BAR.chartBars).selectAll("." + $BAR.chartBar).data(
       // remove
       targets.filter(function (v) {
         var _this2 = this;
@@ -19139,10 +19302,10 @@ function getAttrTweenFn(fn) {
         indexX = +isRotated,
         indexY = +!indexX,
         isNegative = d.value < 0,
-        pathRadius = ["", ""],
-        radius = 0,
-        isGrouped = $$.isGrouped(d.id),
-        isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : !1; // switch points if axis is rotated, not applicable for sub chart
+        pathRadius = ["", ""]; // switch points if axis is rotated, not applicable for sub chart
+      var radius = 0;
+      var isGrouped = $$.isGrouped(d.id),
+        isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : !1; // const hasRadius = d.value !== 0 && getRadius;
       if (getRadius && (!isGrouped || isRadiusData)) {
         var index = isRotated ? indexY : indexX,
           barW = points[2][index] - points[0][index];
@@ -19230,8 +19393,9 @@ function getAttrTweenFn(fn) {
         offset = barOffset(d, i) || y0,
         width = isNumber(barW) ? barW : barW[d.id] || barW._$width,
         value = d.value,
-        posX = barX(d),
-        posY = barY(d);
+        posX = barX(d);
+      var posY = barY(d);
+
       // fix posY not to overflow opposite quadrant
       if (config.axis_rotated && (value > 0 && posY < y0 || value < 0 && y0 < posY)) {
         posY = y0;
@@ -19391,8 +19555,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
         offset = shapeOffset(d, i) || y0,
         width = isNumber(barW) ? barW : barW[d.id] || barW._$width,
-        value = $$.getCandlestickData(d),
-        points;
+        value = $$.getCandlestickData(d);
+      var points;
       if (value) {
         var posX = {
           start: x(d),
@@ -19533,9 +19697,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       _newArrowCheck(this, _this2);
       return $$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data);
     }.bind(this)).style("display", config.gauge_label_show ? null : "none").each(function (d) {
-      var lineLength = 0,
-        lineThickness = 2,
-        x = 0,
+      var lineLength = 0;
+      var x = 0,
         y = 0,
         transform = "";
       if (hiddenTargetIds.indexOf(d.data.id) < 0) {
@@ -19549,7 +19712,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
         y = Math.sin(linePositioningAngle) * arcInnerRadius;
         transform = "rotate(" + lineAngle * 180 / Math.PI + ", " + x + ", " + y + ")";
       }
-      (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).attr("x", x).attr("y", y).attr("width", lineLength).attr("height", lineThickness).attr("transform", transform).style("stroke-dasharray", "0, " + (lineLength + lineThickness) + ", 0");
+      (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).attr("x", x).attr("y", y).attr("width", lineLength).attr("height", 2).attr("transform", transform).style("stroke-dasharray", "0, " + (lineLength + 2) + ", 0");
     });
   },
   textForGaugeMinMax: function textForGaugeMinMax(value, isMax) {
@@ -19599,8 +19762,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       _$$$state = $$.state,
       width = _$$$state.width,
       height = _$$$state.height,
-      cacheKey = KEY.bubbleBaseLength,
-      baseLength = $$.cache.get(cacheKey);
+      cacheKey = KEY.bubbleBaseLength;
+    var baseLength = $$.cache.get(cacheKey);
     if (!baseLength) {
       $$.cache.add(cacheKey, baseLength = getMinMax("min", [width, height]));
     }
@@ -19793,8 +19956,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     var x = isSub ? scale.subX : scale.x;
     return function (d) {
       _newArrowCheck(this, _this4);
-      var y = yScale(d.id, isSub),
-        values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values,
+      var y = yScale(d.id, isSub);
+      var values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values,
         x0 = 0,
         y0 = 0,
         path;
@@ -19884,12 +20047,13 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       axisType = {
         x: $$.axis.getAxisType("x"),
         y: $$.axis.getAxisType("y")
-      },
-      path = "";
+      };
+    var path = "";
     for (var _i = 0, data; data = d[_i]; _i++) {
       var prevData = d[_i - 1],
-        hasPrevData = prevData && isValue(prevData.value),
-        style = $$.isWithinRegions(data.x, regions);
+        hasPrevData = prevData && isValue(prevData.value);
+      var style = $$.isWithinRegions(data.x, regions);
+
       // https://github.com/naver/billboard.js/issues/1172
       if (!isValue(data.value)) {
         continue;
@@ -19966,16 +20130,16 @@ var getTransitionName = function () {
   },
   initialOpacityForCircle: function initialOpacityForCircle(d) {
     var config = this.config,
-      withoutFadeIn = this.state.withoutFadeIn,
-      opacity = config.point_opacity;
+      withoutFadeIn = this.state.withoutFadeIn;
+    var opacity = config.point_opacity;
     if (isUndefined(opacity)) {
       opacity = this.getBaseValue(d) !== null && withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
     }
     return opacity;
   },
   opacityForCircle: function opacityForCircle(d) {
-    var config = this.config,
-      opacity = config.point_opacity;
+    var config = this.config;
+    var opacity = config.point_opacity;
     if (isUndefined(opacity)) {
       opacity = config.point_show && !config.point_focus_only ? null : "0";
       opacity = isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
@@ -20101,8 +20265,8 @@ var getTransitionName = function () {
       resizing = _$$$state.resizing,
       toggling = _$$$state.toggling,
       transiting = _$$$state.transiting,
-      $el = $$.$el,
-      circle = $el.circle;
+      $el = $$.$el;
+    var circle = $el.circle;
     if (transiting === !1 && config.point_focus_only && circle) {
       var cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$),
         cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$),
@@ -20121,8 +20285,8 @@ var getTransitionName = function () {
       circle.attr("class", this.updatePointClass.bind(this)).style("opacity", null).each(function (d) {
         var id = d.id,
           index = d.index,
-          value = d.value,
-          visibility = "hidden";
+          value = d.value;
+        var visibility = "hidden";
         if (isValue(value)) {
           fn.bind(this)(d);
           $$.expandCircles(index, id);
@@ -20202,8 +20366,8 @@ var getTransitionName = function () {
   pointR: function (d) {
     var $$ = this,
       config = $$.config,
-      pointR = config.point_r,
-      r = pointR;
+      pointR = config.point_r;
+    var r = pointR;
     if ($$.isBubbleType(d)) {
       r = $$.getBubbleR(d);
     } else if (isFunction(pointR)) {
@@ -20225,8 +20389,8 @@ var getTransitionName = function () {
   isWithinCircle: function isWithinCircle(node, r) {
     var mouse = getPointer(this.state.event, node),
       element = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(node),
-      prefix = this.isCirclePoint(node) ? "c" : "",
-      cx = +element.attr(prefix + "x"),
+      prefix = this.isCirclePoint(node) ? "c" : "";
+    var cx = +element.attr(prefix + "x"),
       cy = +element.attr(prefix + "y");
     // if node don't have cx/y or x/y attribute value
     if (!(cx || cy) && node.nodeType === 1) {
@@ -20274,8 +20438,8 @@ var getTransitionName = function () {
   },
   updatePointClass: function updatePointClass(d) {
     var $$ = this,
-      circle = $$.$el.circle,
-      pointClass = !1;
+      circle = $$.$el.circle;
+    var pointClass = !1;
     if (isObject(d) || circle) {
       pointClass = d === !0 ? circle.each(function (d) {
         var className = $$.getClass("circle", !0)(d);
@@ -20299,8 +20463,9 @@ var getTransitionName = function () {
       _newArrowCheck(this, _this8);
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
         offset = lineOffset(d, i) || y0,
-        posX = x(d),
-        posY = y(d);
+        posX = x(d);
+      var posY = y(d);
+
       // fix posY not to overflow opposite quadrant
       if (config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY)) {
         posY = y0;
@@ -20380,8 +20545,9 @@ var getTransitionName = function () {
       return element.append("circle").attr("class", this.updatePointClass.bind(this)).attr("r", sizeFn).style("fill", fillStyleFn).node();
     },
     update: function update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-      var $$ = this,
-        mainCircles = element;
+      var $$ = this;
+      var mainCircles = element;
+
       // when '.load()' called, bubble size should be updated
       if ($$.hasType("bubble")) {
         mainCircles.attr("r", $$.pointR.bind($$));
@@ -20443,8 +20609,9 @@ var getTransitionName = function () {
  * @private
  */
 function getDataMax($$) {
-  var levelMax = $$.config.polar_level_max,
-    dataMax = $$.getMinMaxData().max[0].value;
+  var levelMax = $$.config.polar_level_max;
+  var dataMax = $$.getMinMaxData().max[0].value;
+
   // Apply level max only when is greater than the data max value
   if (levelMax && levelMax > dataMax) {
     dataMax = levelMax;
@@ -20828,9 +20995,9 @@ var cacheKey = KEY.radarPoints;
         return "translate(" + posX + " " + posY + ")";
       });
     }
-    $$.bindEvent();
+    $$.bindRadarEvent();
   },
-  bindEvent: function bindEvent() {
+  bindRadarEvent: function bindRadarEvent() {
     var _this9 = this,
       $$ = this,
       config = $$.config,
@@ -20920,6 +21087,271 @@ var cacheKey = KEY.radarPoints;
    */
   radarCircleY: function radarCircleY(d) {
     return this.cache.get(cacheKey)[d.id][d.index][1];
+  }
+});
+// EXTERNAL MODULE: external {"commonjs":"d3-hierarchy","commonjs2":"d3-hierarchy","amd":"d3-hierarchy","root":"d3"}
+var external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_ = __webpack_require__(13);
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/treemap.ts
+
+function _createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+
+/**
+ * Get treemap elements' position
+ * @param {d3Selection} group Root selection
+ * @param {object} root Root data
+ * @private
+ */
+function position(group, root) {
+  var _this = this,
+    $$ = this,
+    _$$$scale = $$.scale,
+    x = _$$$scale.x,
+    y = _$$$scale.y,
+    width = $$.state.width;
+  group.selectAll("g").attr("transform", function (d) {
+    _newArrowCheck(this, _this);
+    return "translate(" + (d === root ? "0,0" : x(d.x0) + "," + y(d.y0)) + ")";
+  }.bind(this)).select("rect").attr("width", function (d) {
+    _newArrowCheck(this, _this);
+    return d === root ? width : x(d.x1) - x(d.x0);
+  }.bind(this)).attr("height", function (d) {
+    _newArrowCheck(this, _this);
+    return d === root ? 0 : y(d.y1) - y(d.y0);
+  }.bind(this));
+}
+
+/**
+ * Convert data for treemap hierarchy
+ * @param {object} data Data object
+ * @returns {Array} Array of data for treemap hierarchy
+ * @private
+ */
+function convertDataToTreemapData(data) {
+  var _this2 = this,
+    $$ = this;
+  return data.map(function (d) {
+    _newArrowCheck(this, _this2);
+    var id = d.id,
+      values = d.values,
+      value = values[0].value;
+    return {
+      name: id,
+      id: id,
+      // needed to keep compatibility on whole code logic
+      value: value,
+      ratio: $$.getRatio("treemap", values[0])
+    };
+  }.bind(this));
+}
+/* harmony default export */ var treemap = ({
+  initTreemap: function initTreemap() {
+    var _this3 = this,
+      $$ = this,
+      $el = $$.$el,
+      _$$$state = $$.state,
+      _$$$state$current = _$$$state.current,
+      width = _$$$state$current.width,
+      height = _$$$state$current.height,
+      clip = _$$$state.clip,
+      clipId = clip.id;
+    $$.treemap = (0,external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.treemap)().tile($$.getTreemapTile());
+    $$.treemapFn = function (data) {
+      var _this4 = this;
+      _newArrowCheck(this, _this3);
+      var hierarchyData = (0,external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.hierarchy)(data).sum(function (d) {
+          _newArrowCheck(this, _this4);
+          return d.value;
+        }.bind(this)),
+        sortFn = $$.getSortCompareFn(!0);
+      return $$.treemap(sortFn ? hierarchyData.sort(sortFn) : hierarchyData);
+    }.bind(this);
+    $el.defs.append("clipPath").attr("id", clipId).append("rect").attr("width", width).attr("height", height);
+    $el.treemap = $el.main.select("." + $COMMON.chart).attr("clip-path", "url(#" + clipId + ")").append("g").classed($TREEMAP.chartTreemaps, !0);
+    $$.bindTreemapEvent();
+  },
+  /**
+   * Bind events
+   * @private
+   */
+  bindTreemapEvent: function bindTreemapEvent() {
+    var _this5 = this,
+      $$ = this,
+      $el = $$.$el,
+      config = $$.config,
+      state = $$.state,
+      getTarget = function (event) {
+        var _state$eventReceiver$, _data;
+        _newArrowCheck(this, _this5);
+        var target = event.isTrusted ? event.target : (_state$eventReceiver$ = state.eventReceiver.rect) == null ? void 0 : _state$eventReceiver$.node(),
+          data;
+        if (/^rect$/i.test(target.tagName)) {
+          state.event = event;
+          data = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(target).datum();
+        }
+        return (_data = data) == null ? void 0 : _data.data;
+      }.bind(this);
+    if (config.interaction_enabled) {
+      var isTouch = state.inputType === "touch";
+      $el.treemap.on(isTouch ? "touchstart" : "mousemove", function (event) {
+        _newArrowCheck(this, _this5);
+        var data = getTarget(event);
+        if (data) {
+          $$.showTooltip([data], event.currentTarget);
+          event.type === "mouseover" && $$.setOverOut(!0, data);
+        }
+      }.bind(this)).on(isTouch ? "touchend" : "mouseout", function (event) {
+        _newArrowCheck(this, _this5);
+        var data = getTarget(event);
+        $$.hideTooltip();
+        $$.setOverOut(!1, data);
+      }.bind(this));
+    }
+  },
+  /**
+   * Get tiling function
+   * @returns {Function}
+   * @private
+   */
+  getTreemapTile: function getTreemapTile() {
+    var _binary$dice$slice$sl,
+      _config$treemap_tile,
+      $$ = this,
+      config = $$.config,
+      _$$$state$current2 = $$.state.current,
+      width = _$$$state$current2.width,
+      height = _$$$state$current2.height,
+      tile = (_binary$dice$slice$sl = {
+        "binary": external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.treemapBinary,
+        "dice": external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.treemapDice,
+        "slice": external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.treemapSlice,
+        "sliceDice": external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.treemapSliceDice,
+        "squarify": external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.treemapSquarify,
+        "resquarify": external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.treemapResquarify
+      }[(_config$treemap_tile = config.treemap_tile) != null ? _config$treemap_tile : "binary"]) != null ? _binary$dice$slice$sl : external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.treemapBinary,
+      _this6 = this;
+    return function (node, x0, y0, x1, y1) {
+      _newArrowCheck(this, _this6);
+      tile(node, 0, 0, width, height);
+      for (var _iterator = _createForOfIteratorHelperLoose(node.children), _step; !(_step = _iterator()).done;) {
+        var child = _step.value;
+        child.x0 = x0 + child.x0 / width * (x1 - x0);
+        child.x1 = x0 + child.x1 / width * (x1 - x0);
+        child.y0 = y0 + child.y0 / height * (y1 - y0);
+        child.y1 = y0 + child.y1 / height * (y1 - y0);
+      }
+    }.bind(this);
+  },
+  /**
+   * Get treemap hierarchy data
+   * @param {Array} targets Data targets
+   * @returns {object}
+   * @private
+   */
+  getTreemapData: function getTreemapData(targets) {
+    var $$ = this;
+    return {
+      name: "root",
+      children: convertDataToTreemapData.bind($$)($$.filterTargetsToShow(targets.filter($$.isTreemapType, $$)))
+    };
+  },
+  /**
+   * Update treemap data
+   * @param {Array} targets Data targets
+   * @private
+   */
+  updateTargetsForTreemap: function updateTargetsForTreemap(targets) {
+    var $$ = this,
+      treemap = $$.$el.treemap,
+      treemapData = $$.treemapFn($$.getTreemapData(targets != null ? targets : $$.data.targets));
+    // using $el.treemap reference can alter data, so select treemap <g> again
+    treemap.data(treemapData);
+  },
+  /**
+   * Render treemap
+   * @param {number} durationForExit Duration for exit transition
+   * @private
+   */
+  updateTreemap: function updateTreemap(durationForExit) {
+    var _this7 = this,
+      $$ = this,
+      $el = $$.$el,
+      $T = $$.$T,
+      data = $el.treemap.datum(),
+      classChartTreemap = $$.getChartClass("Treemap"),
+      treemap = $el.treemap.selectAll("g").data(data.children);
+    $T(treemap.exit(), durationForExit).style("opacity", "0").remove();
+    treemap.enter().append("g").append("rect");
+    $el.treemap.selectAll("g").attr("class", classChartTreemap).select("rect").attr("fill", function (d) {
+      _newArrowCheck(this, _this7);
+      return $$.color(d.data.name);
+    }.bind(this));
+  },
+  /**
+   * Generate treemap coordinate points data
+   * @returns {Array} Array of coordinate points
+   * @private
+   */
+  generateGetTreemapPoints: function generateGetTreemapPoints() {
+    var _this8 = this,
+      $$ = this,
+      $el = $$.$el,
+      _$$$scale2 = $$.scale,
+      x = _$$$scale2.x,
+      y = _$$$scale2.y,
+      points = {};
+    $el.treemap.selectAll("g").each(function (d) {
+      _newArrowCheck(this, _this8);
+      points[d.data.name] = [[x(d.x0), y(d.y0)], [x(d.x1), y(d.y1)]];
+    }.bind(this));
+    return function (d) {
+      _newArrowCheck(this, _this8);
+      return points[d.id];
+    }.bind(this);
+  },
+  /**
+   * Redraw treemap
+   * @param {boolean} withTransition With or without transition
+   * @returns {Array} Selections
+   * @private
+   */
+  redrawTreemap: function redrawTreemap(withTransition) {
+    var $$ = this,
+      $el = $$.$el,
+      _$$$state$current3 = $$.state.current,
+      width = _$$$state$current3.width,
+      height = _$$$state$current3.height;
+    // update defs
+    $el.defs.select("rect").attr("width", width).attr("height", height);
+    return [$$.$T($el.treemap, withTransition, getRandom()).call(position.bind($$), $el.treemap.datum())];
+  },
+  /**
+   * Get treemap data label format function
+   * @param {object} d Data object
+   * @returns {Function}
+   * @private
+   */
+  treemapDataLabelFormat: function treemapDataLabelFormat(d) {
+    var $$ = this,
+      config = $$.config,
+      id = d.id,
+      value = d.value,
+      format = config.treemap_label_format,
+      ratio = $$.getRatio("treemap", d),
+      percentValue = (ratio * 100).toFixed(2),
+      meetLabelThreshold = config.treemap_label_show && $$.meetsLabelThreshold(ratio, "treemap") ? null : "0";
+    return function (node) {
+      node.style("opacity", meetLabelThreshold);
+      return isFunction(format) ? format.bind($$.api)(value, ratio, id) : id + "\n" + percentValue + "%";
+    };
   }
 });
 ;// CONCATENATED MODULE: ./src/config/Options/common/point.ts
@@ -21417,7 +21849,7 @@ var cacheKey = KEY.radarPoints;
  * billboard.js project is licensed under the MIT license
  */
 /**
- * x Axis config options
+ * spline config options
  */
 /* harmony default export */ var spline = ({
   /**
@@ -21463,7 +21895,7 @@ var cacheKey = KEY.radarPoints;
  * billboard.js project is licensed under the MIT license
  */
 /**
- * area config options
+ * arc config options
  */
 /* harmony default export */ var shape_arc = ({
   /**
@@ -21714,7 +22146,7 @@ var cacheKey = KEY.radarPoints;
  * billboard.js project is licensed under the MIT license
  */
 /**
- * x Axis config options
+ * pie config options
  */
 /* harmony default export */ var pie = ({
   /**
@@ -21816,7 +22248,7 @@ var polar_this = undefined;
  * billboard.js project is licensed under the MIT license
  */
 /**
- * x Axis config options
+ * polar config options
  */
 /* harmony default export */ var shape_polar = ({
   /**
@@ -21903,7 +22335,7 @@ var radar_this = undefined;
  * billboard.js project is licensed under the MIT license
  */
 /**
- * x Axis config options
+ * radar config options
  */
 /* harmony default export */ var shape_radar = ({
   /**
@@ -21976,6 +22408,60 @@ var radar_this = undefined;
   radar_size_ratio: .87,
   radar_direction_clockwise: !1
 });
+;// CONCATENATED MODULE: ./src/config/Options/shape/treemap.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * treemap config options
+ */
+/* harmony default export */ var shape_treemap = ({
+  /**
+   * Set treemap options
+   * @name treemap
+   * @memberof Options
+   * @type {object}
+   * @property {object} treemap Treemap object
+   * @property {string} [treemap.tile="binary"] Treemap tile type
+   * - **Available tile type values:**
+   * 	- binary ([d3.treemapBinary](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapBinary))
+   * 	- dice ([d3.treemapDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapDice))
+   * 	- slice ([d3.treemapSlice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSlice))
+   * 	- sliceDice ([d3.treemapSliceDice](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSliceDice))
+   * 	- squrify ([d3.treemapSquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapSquarify))
+   * 	- resquarify ([d3.treemapResquarify](https://github.com/d3/d3-hierarchy/blob/main/README.md#treemapResquarify))
+   * @property {Function} [treemap.label.format] Set formatter for the label text.
+   * @property {number} [treemap.label.threshold=0.05] Set threshold ratio to show/hide labels text.
+   * @property {number} [treemap.label.show=true] Show or hide label text.
+   * @see [Demo: treemap](https://naver.github.io/billboard.js/demo/#Chart.TreemapChart)
+   * @example
+   *  treemap: {
+   *      // "binary", "dice", "slice", "sliceDice", "squrify", "resquarify"
+   *      tile: "dice",
+   *
+   *      label: {
+   *          // show or hide label text
+   *          show: false,
+   *
+   *          // set label text formatter
+   *          format: function(value, ratio, id) {
+   *              return d3.format("$")(value);
+   *
+   *              // to multiline, return with '\n' character
+   *              // return value +"%\nLine1\n2Line2";
+   *          },
+   *
+   *          // set ratio number
+   *          ratio: 0.05
+   *      }
+   *  }
+   */
+  treemap_tile: "binary",
+  treemap_label_format: undefined,
+  treemap_label_threshold: .05,
+  treemap_label_show: !0
+});
 ;// CONCATENATED MODULE: ./src/config/resolver/shape.ts
 
 var shape_this = undefined;
@@ -22004,6 +22490,7 @@ var shape_this = undefined;
 
 
 
+
 // Options
 
 
@@ -22015,6 +22502,7 @@ var shape_this = undefined;
 
 
 // Non-Axis based
+
 
 
 
@@ -22192,6 +22680,14 @@ var _area = function area() {
     return extendAxis([point], [common_point, scatter]), (shape_scatter = function () {
       _newArrowCheck(this, _this18);
       return TYPE.SCATTER;
+    }.bind(this))();
+  }.bind(undefined),
+  resolver_shape_treemap = function () {
+    var _this19 = this;
+    _newArrowCheck(this, shape_this);
+    return extendAxis([treemap], [shape_treemap]), (resolver_shape_treemap = function () {
+      _newArrowCheck(this, _this19);
+      return TYPE.TREEMAP;
     }.bind(this))();
   }.bind(undefined);
 ;// CONCATENATED MODULE: ./src/Chart/api/selection.ts
@@ -22418,7 +22914,7 @@ var _area = function area() {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
-var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(13);
+var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(14);
 ;// CONCATENATED MODULE: ./src/Chart/api/zoom.ts
 
 /**
@@ -22704,8 +23200,8 @@ extend(zoom, {
     }.bind(this)).each(function (d, i) {
       var shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
         isSelected = shape.classed($SELECT.SELECTED),
-        isIncluded = shape.classed($DRAG.INCLUDED),
-        isWithin = !1,
+        isIncluded = shape.classed($DRAG.INCLUDED);
+      var isWithin = !1,
         toggle;
       if (shape.classed($CIRCLE.circle)) {
         var x = +shape.attr("cx") * 1,
@@ -22911,8 +23407,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     if (config.data_selection_enabled && config.data_selection_isselectable.bind($$.api)(d)) {
       var shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(that),
         isSelected = shape.classed($SELECT.SELECTED),
-        toggle = $$.getToggle(that, d).bind($$),
-        toggledShape;
+        toggle = $$.getToggle(that, d).bind($$);
+      var toggledShape;
       if (!config.data_selection_multiple) {
         var selector = "." + $SHAPE.shapes;
         if (config.data_selection_grouped) {
@@ -23985,147 +24481,148 @@ var _selectionModule = function selectionModule() {
 
 // eslint-disable-next-line no-use-before-define
 
-var _defaults = {},
-  bb = {
-    /**
-     * Version information
-     * @property {string} version version
-     * @example
-     *    bb.version;  // "1.0.0"
-     * @memberof bb
-     */
-    version: "3.6.3-nightly-20221217004651",
-    /**
-     * Generate chart
-     * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
-     *   - Unused option value is given.
-     *     - ex) For `data.type="pie"` option, setting 'axis' option can cause unexpected generation error.
-     *   - Insufficient value is given for certain option used.
-     *     - ex) `data: { x: "x", columns: [["x"], ["data1", 30, 200, 100]] }`
-     * @param {Options} config chart options
-     * @memberof bb
-     * @returns {Chart}
-     * @see {@link Options} for different generation options
-     * @see {@link Chart} for different methods API
-     * @example
-     *  <!-- chart holder -->
-     * <div id="LineChart"></div>
-     * @example
-     *  // Generate chart with options
-     *  var chart = bb.generate({
-     *      "bindto": "#LineChart"
-     *      "data": {
-     *          "columns": [
-     *              ["data1", 30, 200, 100, 400, 150, 250],
-     *              ["data2", 50, 20, 10, 40, 15, 25]
-     *           ],
-     *          "type": "line"
-     *      }
-     *  });
-     *
-     *  // call some API
-     *  // ex) get the data of 'data1'
-     *  chart.data("data1");
-     * @example
-     * // Generate chart by importing ESM
-     * // Import types to be used only, where this will make smaller bundle size.
-     * import bb, {
-     *   area,
-     *   areaLineRange,
-     *   areaSpline,
-     *   areaSplineRange,
-     *   areaStep,
-     *   bar,
-     *   bubble,
-     *   donut,
-     *   gauge,
-     *   line,
-     *   pie,
-     *   polar,
-     *   radar,
-     *   scatter,
-     *   spline,
-     *   step
-     * }
-     *
-     * bb.generate({
-     *      "bindto": "#LineChart"
-     *      "data": {
-     *          "columns": [
-     *              ["data1", 30, 200, 100, 400, 150, 250],
-     *              ["data2", 50, 20, 10, 40, 15, 25]
-     *           ]
-     *      },
-     *      type: line(),
-     *
-     *      // or
-     *      types: {
-     *        data1: bar(),
-     *        data2: step()
-     *      }
-     * });
-     */
-    generate: function generate(config) {
-      var options = mergeObj({}, _defaults, config),
-        inst = new Chart(options);
-      inst.internal.charts = this.instance;
-      this.instance.push(inst);
-      return inst;
-    },
-    /**
-     * Set or get global default options.
-     * - **NOTE:**
-     *   - The options values settings are valid within page context only.
-     *   - If is called multiple times, will override the last value.
-     * @param {Options} options chart options
-     * @memberof bb
-     * @returns {Options}
-     * @see {@link Options}
-     * @example
-     * // Set same option value as for `.generate()`
-     * bb.defaults({
-     *   data: {
-     *     type: "bar"
-     *   }
-     * });
-     *
-     * bb.defaults();  // {data:{type: "bar"}}
-     *
-     * // data.type defaults to 'bar'
-     * var chart = bb.generate({ ... });
-     */
-    defaults: function defaults(options) {
-      if (isObject(options)) {
-        _defaults = options;
-      }
-      return _defaults;
-    },
-    /**
-     * An array containing instance created
-     * @property {Array} instance instance array
-     * @example
-     *  // generate charts
-     *  var chart1 = bb.generate(...);
-     *  var chart2 = bb.generate(...);
-     *
-     *  bb.instance;  // [ chart1, chart2, ... ]
-     * @memberof bb
-     */
-    instance: [],
-    /**
-     * Namespace for plugins
-     * @property {object} plugin plugin namespace
-     * @example
-     *  // Stanford diagram plugin
-     *  bb.plugin.stanford;
-     * @memberof bb
-     */
-    plugin: {}
-  };
+var _defaults = {};
+
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20221217004651
+ * @version 3.6.3-nightly-20221230004723
  */
+var bb = {
+  /**
+   * Version information
+   * @property {string} version version
+   * @example
+   *    bb.version;  // "1.0.0"
+   * @memberof bb
+   */
+  version: "3.6.3-nightly-20221230004723",
+  /**
+   * Generate chart
+   * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
+   *   - Unused option value is given.
+   *     - ex) For `data.type="pie"` option, setting 'axis' option can cause unexpected generation error.
+   *   - Insufficient value is given for certain option used.
+   *     - ex) `data: { x: "x", columns: [["x"], ["data1", 30, 200, 100]] }`
+   * @param {Options} config chart options
+   * @memberof bb
+   * @returns {Chart}
+   * @see {@link Options} for different generation options
+   * @see {@link Chart} for different methods API
+   * @example
+   *  <!-- chart holder -->
+   * <div id="LineChart"></div>
+   * @example
+   *  // Generate chart with options
+   *  var chart = bb.generate({
+   *      "bindto": "#LineChart"
+   *      "data": {
+   *          "columns": [
+   *              ["data1", 30, 200, 100, 400, 150, 250],
+   *              ["data2", 50, 20, 10, 40, 15, 25]
+   *           ],
+   *          "type": "line"
+   *      }
+   *  });
+   *
+   *  // call some API
+   *  // ex) get the data of 'data1'
+   *  chart.data("data1");
+   * @example
+   * // Generate chart by importing ESM
+   * // Import types to be used only, where this will make smaller bundle size.
+   * import bb, {
+   *   area,
+   *   areaLineRange,
+   *   areaSpline,
+   *   areaSplineRange,
+   *   areaStep,
+   *   bar,
+   *   bubble,
+   *   donut,
+   *   gauge,
+   *   line,
+   *   pie,
+   *   polar,
+   *   radar,
+   *   scatter,
+   *   spline,
+   *   step
+   * }
+   *
+   * bb.generate({
+   *      "bindto": "#LineChart"
+   *      "data": {
+   *          "columns": [
+   *              ["data1", 30, 200, 100, 400, 150, 250],
+   *              ["data2", 50, 20, 10, 40, 15, 25]
+   *           ]
+   *      },
+   *      type: line(),
+   *
+   *      // or
+   *      types: {
+   *        data1: bar(),
+   *        data2: step()
+   *      }
+   * });
+   */
+  generate: function generate(config) {
+    var options = mergeObj({}, _defaults, config),
+      inst = new Chart(options);
+    inst.internal.charts = this.instance;
+    this.instance.push(inst);
+    return inst;
+  },
+  /**
+   * Set or get global default options.
+   * - **NOTE:**
+   *   - The options values settings are valid within page context only.
+   *   - If is called multiple times, will override the last value.
+   * @param {Options} options chart options
+   * @memberof bb
+   * @returns {Options}
+   * @see {@link Options}
+   * @example
+   * // Set same option value as for `.generate()`
+   * bb.defaults({
+   *   data: {
+   *     type: "bar"
+   *   }
+   * });
+   *
+   * bb.defaults();  // {data:{type: "bar"}}
+   *
+   * // data.type defaults to 'bar'
+   * var chart = bb.generate({ ... });
+   */
+  defaults: function defaults(options) {
+    if (isObject(options)) {
+      _defaults = options;
+    }
+    return _defaults;
+  },
+  /**
+   * An array containing instance created
+   * @property {Array} instance instance array
+   * @example
+   *  // generate charts
+   *  var chart1 = bb.generate(...);
+   *  var chart2 = bb.generate(...);
+   *
+   *  bb.instance;  // [ chart1, chart2, ... ]
+   * @memberof bb
+   */
+  instance: [],
+  /**
+   * Namespace for plugins
+   * @property {object} plugin plugin namespace
+   * @example
+   *  // Stanford diagram plugin
+   *  bb.plugin.stanford;
+   * @memberof bb
+   */
+  plugin: {}
+};
 ;// CONCATENATED MODULE: ./src/index.ts
 
 var src_this = undefined;

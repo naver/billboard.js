@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20221217004651
+ * @version 3.6.3-nightly-20221230004723
  */
 /*-- Datalab Theme --*/
 /*-- Default color pattern --*/
@@ -135,6 +135,11 @@
 /*-- Title --*/
 .bb-title {
   font-size: 14px; }
+
+/*-- Treemap --*/
+.bb-chart-treemaps rect {
+  stroke: #000;
+  stroke-width: 1px; }
 
 /*-- Tooltip --*/
 .bb-tooltip-container {
