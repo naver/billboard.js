@@ -52,7 +52,7 @@ export default {
 		const $$ = this;
 		const {config, $el: {main}, $T} = $$;
 
-		callFn(config.data_onunselected, $$.api, d, target.node());
+		callFn(config.data_onunselected, $$.api, d, target?.node());
 
 		// remove selected-circle from low layer g
 		$T(main.select(`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
@@ -160,21 +160,21 @@ export default {
 			let toggledShape;
 
 			if (!config.data_selection_multiple) {
-				let selector = `.${$SHAPE.shapes}`;
+				const focusOnly = config.point_focus_only;
+				let selector = `.${focusOnly ? $SELECT.selectedCircles : $SHAPE.shapes}`;
 
 				if (config.data_selection_grouped) {
 					selector += $$.getTargetSelectorSuffix(d.id);
 				}
 
 				main.selectAll(selector)
-					.selectAll(`.${$SHAPE.shape}`)
-					.each(function(d, i) {
+					.selectAll(focusOnly ? `.${$SELECT.selectedCircle}` : `.${$SHAPE.shape}.${$SELECT.SELECTED}`)
+					.classed($SELECT.SELECTED, false)
+					.each(function(d) {
 						const shape = d3Select(this);
 
-						if (shape.classed($SELECT.SELECTED)) {
-							toggledShape = shape;
-							toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
-						}
+						toggledShape = shape;
+						toggle(false, shape, d, d.index);
 					});
 			}
 
