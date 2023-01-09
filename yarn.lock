@@ -5347,9 +5347,9 @@ dns-packet@^5.2.2:
     "@leichtgewicht/ip-codec" "^2.0.1"
 
 docdash@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/docdash/-/docdash-2.0.0.tgz#1db24c934f9d4feb5576c638e8c061deb5ae1832"
-  integrity sha512-AxxZwrMLmiArEHJirdyZmW6YTBKxkd/Z5V9U2EU1crIMtpgoU/cH7Hnc9n1E0lzB1ZSam+VVMSnvlc+9+GUGVg==
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/docdash/-/docdash-2.0.1.tgz#ac36dd1b64a2ae298e642c9a8d8d3c0f7f0a2c55"
+  integrity sha512-mkBhkeMyMwGV4YIdA7S4dIC25ENrfU/ZBfyTs/MXj/HUewW/dtx44xoho4PttCOMsqxlcghzfj8HRlam5QiSoQ==
   dependencies:
     "@jsdoc/salty" "^0.2.1"
 
