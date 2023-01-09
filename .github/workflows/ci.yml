@@ -72,6 +72,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm config set package-lock false
+          npm config set legacy-peer-deps=true
           npm install
 
       - name: Publish
