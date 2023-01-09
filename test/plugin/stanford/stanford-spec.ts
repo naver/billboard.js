@@ -7,6 +7,7 @@ import {expect} from "chai";
 import sinon from "sinon";
 import util from "../../assets/util";
 import Stanford from "../../../src/Plugin/stanford/index";
+import CLASS from "../../../src/Plugin/stanford/classes";
 import {compareEpochs, getCentroid, getRegionArea, pointInRegion} from "../../../src/Plugin/stanford/util";
 
 describe("PLUGIN: STANFORD", () => {
@@ -245,6 +246,45 @@ describe("PLUGIN: STANFORD", () => {
 
 			expect(tooltip.select(".value").text()).to.be.equal("20/01/70");
 			expect(tooltip.select(".name").text()).to.be.equal("Epochs");
+		});
+	});
+
+	describe("scale", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "HPE",
+					columns: [
+						["HPE", 2.5, 2.5, 3.5],
+						["HPL", 24.5, 24, 67.5]
+					],
+					type: "scatter"
+				},
+				plugins: [
+					new Stanford({
+						epochs: [
+							1,
+							32,
+							103,
+							124
+						],
+						scale: {
+							min: 0,
+							max: 10000,
+							format: "pow10"
+						},
+						padding: {
+							top: 15
+						}
+					})
+				]
+			};
+		});
+
+		it("specifying 0(zero) for min value", () => {
+			chart.$.svg.selectAll(`.${CLASS.colorScale} .tick text`).each(function(d, i) {
+				expect(this.textContent).to.be.equal(`10${i}`);
+			});
 		});
 	});
 });
