@@ -1,3 +1,11 @@
+# [3.7.0-next.3](https://github.com/naver/billboard.js/compare/3.7.0-next.2...3.7.0-next.3) (2023-01-09)
+
+
+### Bug Fixes
+
+* **plugin:** Fix stanford scale to accept 0 as min value ([02c4270](https://github.com/naver/billboard.js/commit/02c427088c42c37537bb3b6809e92519e0b569c6)), closes [#2999](https://github.com/naver/billboard.js/issues/2999)
+* **selection:** Fix selection w/point.focus.only=true & selection.multiple=false ([af93a8a](https://github.com/naver/billboard.js/commit/af93a8a07993158aeff1474a3fe157d6e594750d)), closes [#2928](https://github.com/naver/billboard.js/issues/2928) [#3013](https://github.com/naver/billboard.js/issues/3013)
+
 # [3.7.0-next.2](https://github.com/naver/billboard.js/compare/3.7.0-next.1...3.7.0-next.2) (2022-12-29)
 
 
