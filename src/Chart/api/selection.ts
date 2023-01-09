@@ -7,6 +7,58 @@ import {isDefined} from "../../module/util";
 import {$AREA, $LINE, $SELECT, $SHAPE} from "../../config/classes";
 import type {DataItem} from "../../../types/types";
 
+/**
+ * Toggler function to select or unselect
+ * @param {boolean} isSelection Weather select or unselect
+ * @param {Array} ids Target ids
+ * @param {Array} indices Indices number
+ * @param {boolean} resetOther Weather reset other selected points (only for selection)
+ * @private
+ */
+function setSelection(
+	isSelection = false,
+	ids?: string | string[],
+	indices?: number[],
+	resetOther?: boolean
+): void {
+	const $$ = this;
+	const {config, $el: {main}} = $$;
+	const selectionGrouped = config.data_selection_grouped;
+	const isSelectable = config.data_selection_isselectable.bind($$.api);
+
+	if (!config.data_selection_enabled) {
+		return;
+	}
+
+	main.selectAll(`.${$SHAPE.shapes}`)
+		.selectAll(`.${$SHAPE.shape}`)
+		.each(function(d) {
+			const shape = d3Select(this);
+			const {id, index} = d.data ? d.data : d;
+			const toggle = $$.getToggle(this, d).bind($$);
+			const isTargetId = selectionGrouped || !ids || ids.indexOf(id) >= 0;
+			const isTargetIndex = !indices || indices.indexOf(index) >= 0;
+			const isSelected = shape.classed($SELECT.SELECTED);
+
+			// line/area selection not supported yet
+			if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
+				return;
+			}
+
+			if (isSelection) {
+				if (isTargetId && isTargetIndex && isSelectable(d) && !isSelected) {
+					toggle(true, shape.classed($SELECT.SELECTED, true), d, index);
+				} else if (isDefined(resetOther) && resetOther && isSelected) {
+					toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
+				}
+			} else {
+				if (isTargetId && isTargetIndex && isSelectable(d) && isSelected) {
+					toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
+				}
+			}
+		});
+}
+
 export default {
 	/**
 	 * Get selected data points.<br><br>
@@ -64,35 +116,8 @@ export default {
 	 */
 	select(ids?: string[] | string, indices?: number[], resetOther?: boolean): void {
 		const $$ = this.internal;
-		const {config, $el} = $$;
 
-		if (!config.data_selection_enabled) {
-			return;
-		}
-
-		$el.main.selectAll(`.${$SHAPE.shapes}`)
-			.selectAll(`.${$SHAPE.shape}`)
-			.each(function(d, i) {
-				const shape = d3Select(this);
-				const id = d.data ? d.data.id : d.id;
-				const toggle = $$.getToggle(this, d).bind($$);
-				const isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0;
-				const isTargetIndex = !indices || indices.indexOf(i) >= 0;
-				const isSelected = shape.classed($SELECT.SELECTED);
-
-				// line/area selection not supported yet
-				if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
-					return;
-				}
-
-				if (isTargetId && isTargetIndex) {
-					if (config.data_selection_isselectable.bind($$.api)(d) && !isSelected) {
-						toggle(true, shape.classed($SELECT.SELECTED, true), d, i);
-					}
-				} else if (isDefined(resetOther) && resetOther && isSelected) {
-					toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
-				}
-			});
+		setSelection.bind($$)(true, ids, indices, resetOther);
 	},
 
 	/**
@@ -114,34 +139,7 @@ export default {
 	 */
 	unselect(ids?: string | string[], indices?: number[]): void {
 		const $$ = this.internal;
-		const {config, $el} = $$;
 
-		if (!config.data_selection_enabled) {
-			return;
-		}
-
-		$el.main.selectAll(`.${$SHAPE.shapes}`)
-			.selectAll(`.${$SHAPE.shape}`)
-			.each(function(d, i) {
-				const shape = d3Select(this);
-				const id = d.data ? d.data.id : d.id;
-				const toggle = $$.getToggle(this, d).bind($$);
-				const isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0;
-				const isTargetIndex = !indices || indices.indexOf(i) >= 0;
-				const isSelected = shape.classed($SELECT.SELECTED);
-
-				// line/area selection not supported yet
-				if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
-					return;
-				}
-
-				if (isTargetId &&
-					isTargetIndex &&
-					config.data_selection_isselectable.bind($$.api)(d) &&
-					isSelected
-				) {
-					toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
-				}
-			});
+		setSelection.bind($$)(false, ids, indices);
 	}
 };
