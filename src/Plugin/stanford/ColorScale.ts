@@ -4,7 +4,7 @@
  */
 import {axisRight as d3AxisRight} from "d3-axis";
 import {format as d3Format} from "d3-format";
-import {scaleSequential as d3ScaleSequential, scaleLog as d3ScaleLog} from "d3-scale";
+import {scaleSequential as d3ScaleSequential, scaleSymlog as d3ScaleSymlog} from "d3-scale";
 import CLASS from "./classes";
 import {isFunction, getRange} from "./util";
 
@@ -55,7 +55,7 @@ export default class ColorScale {
 			.attr("fill", d => inverseScale(d));
 
 		// Legend Axis
-		const axisScale = d3ScaleLog()
+		const axisScale = d3ScaleSymlog()
 			.domain([target.minEpochs, target.maxEpochs])
 			.range([
 				points[0] + config.padding_top + points[points.length - 1] + barHeight - 1,

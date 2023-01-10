@@ -12,7 +12,7 @@ import type {IArcDataRow} from "../data/IData";
 export default {
 	selectRectForSingle(context, eventRect, index: number): void {
 		const $$ = this;
-		const {config, $el: {main}} = $$;
+		const {config, $el: {main, circle}} = $$;
 		const isSelectionEnabled = config.data_selection_enabled;
 		const isSelectionGrouped = config.data_selection_grouped;
 		const isSelectable = config.data_selection_isselectable;
@@ -29,8 +29,7 @@ export default {
 		}
 
 		// remove possible previous focused state
-		main.selectAll(`.${$COMMON.EXPANDED}:not(.${$SHAPE.shape}-${index})`)
-			.classed($COMMON.EXPANDED, false);
+		!circle && main.selectAll(`.${$COMMON.EXPANDED}:not(.${$SHAPE.shape}-${index})`).classed($COMMON.EXPANDED, false);
 
 		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
 			.classed($COMMON.EXPANDED, true)

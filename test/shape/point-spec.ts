@@ -158,7 +158,7 @@ describe("SHAPE POINT", () => {
 
 		it("newly added points shouldn't be transitioning from the top/left", done => {
 			const main = chart.$.main;
-			const pos = [];
+			const pos: number[] = [];
 			let point;
 			let interval;
 
@@ -406,6 +406,42 @@ describe("SHAPE POINT", () => {
 		it("check for point opacity value", () => {
 			chart.$.circles.each(function() {
 				expect(+this.style.opacity).to.be.equal(args.point.opacity);
+			});
+		});
+	});
+
+	describe("point expand", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 230, 280, 320, 218, 250, 150]
+					],
+					type: "line",
+					selection: {
+						enabled: true,
+						draggable: true
+					}
+				  },
+				  point:{
+					r: 0,
+					focus: {
+						expand: {
+							r: 3.5
+						}
+					}
+				}
+			};
+		});
+
+		it("should point r attribute to be set to 0(zero).", () => {
+			// when
+			chart.tooltip.show({ x: 0 });
+			chart.tooltip.show({ x: 1 });
+
+			chart.$.circles.filter(".bb-circle-0").each(function() {
+				expect(+this.getAttribute("r")).to.be.equal(0);
 			});
 		});
 	});
