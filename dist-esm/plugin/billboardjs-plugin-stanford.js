@@ -5,13 +5,13 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.3-nightly-20230109004703
+ * @version 3.6.3-nightly-20230110004726
  * @requires billboard.js
  * @summary billboard.js plugin
 */
 import { interpolateHslLong } from 'd3-interpolate';
 import { hsl } from 'd3-color';
-import { scaleSequential, scaleLog, scaleSequentialLog } from 'd3-scale';
+import { scaleSequential, scaleSymlog, scaleSequentialLog } from 'd3-scale';
 import { axisRight } from 'd3-axis';
 import { format } from 'd3-format';
 
@@ -486,7 +486,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.6.3-nightly-20230109004703";
+    Plugin.version = "3.6.3-nightly-20230110004726";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -920,7 +920,7 @@ var ColorScale = /** @class */ (function () {
             .attr("height", barHeight)
             .attr("fill", function (d) { return inverseScale(d); });
         // Legend Axis
-        var axisScale = scaleLog()
+        var axisScale = scaleSymlog()
             .domain([target.minEpochs, target.maxEpochs])
             .range([
             points[0] + config.padding_top + points[points.length - 1] + barHeight - 1,

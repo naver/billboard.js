@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20230109004703
+ * @version 3.6.3-nightly-20230110004726
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5484,7 +5484,9 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     var _this = this,
       $$ = this,
       config = $$.config,
-      main = $$.$el.main,
+      _$$$$el = $$.$el,
+      main = _$$$$el.main,
+      circle = _$$$$el.circle,
       isSelectionEnabled = config.data_selection_enabled,
       isSelectionGrouped = config.data_selection_grouped,
       isSelectable = config.data_selection_isselectable,
@@ -5499,7 +5501,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     }
 
     // remove possible previous focused state
-    main.selectAll("." + $COMMON.EXPANDED + ":not(." + $SHAPE.shape + "-" + index + ")").classed($COMMON.EXPANDED, !1);
+    circle || main.selectAll("." + $COMMON.EXPANDED + ":not(." + $SHAPE.shape + "-" + index + ")").classed($COMMON.EXPANDED, !1);
     var shapeAtIndex = main.selectAll("." + $SHAPE.shape + "-" + index).classed($COMMON.EXPANDED, !0).style("cursor", isSelectable ? "pointer" : null).filter(function (d) {
       return $$.isWithinShape(this, d);
     });
@@ -5683,11 +5685,11 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
       hasAxis = _$$$state2.hasAxis,
       hasRadar = _$$$state2.hasRadar,
       hasTreemap = _$$$state2.hasTreemap,
-      _$$$$el = $$.$el,
-      eventRect = _$$$$el.eventRect,
-      arcs = _$$$$el.arcs,
-      radar = _$$$$el.radar,
-      treemap = _$$$$el.treemap,
+      _$$$$el2 = $$.$el,
+      eventRect = _$$$$el2.eventRect,
+      arcs = _$$$$el2.arcs,
+      radar = _$$$$el2.radar,
+      treemap = _$$$$el2.treemap,
       element = (_ref = hasTreemap && eventReceiver.rect || hasRadar && radar.axes.select("." + $AXIS.axis + "-" + index + " text") || eventRect || (arcs == null ? void 0 : arcs.selectAll("." + $COMMON.target + " path").filter(function (d, i) {
         _newArrowCheck(this, _this7);
         return i === index;
@@ -5723,9 +5725,9 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    */
   unbindZoomEvent: function unbindZoomEvent() {
     var $$ = this,
-      _$$$$el2 = $$.$el,
-      eventRect = _$$$$el2.eventRect,
-      zoomResetBtn = _$$$$el2.zoomResetBtn;
+      _$$$$el3 = $$.$el,
+      eventRect = _$$$$el3.eventRect,
+      zoomResetBtn = _$$$$el3.zoomResetBtn;
     eventRect == null ? void 0 : eventRect.on(".zoom wheel.zoom .drag", null);
     zoomResetBtn == null ? void 0 : zoomResetBtn.on("click", null).style("display", "none");
   },
@@ -5736,13 +5738,13 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   unbindAllEvents: function unbindAllEvents() {
     var _this8 = this,
       $$ = this,
-      _$$$$el3 = $$.$el,
-      arcs = _$$$$el3.arcs,
-      eventRect = _$$$$el3.eventRect,
-      legend = _$$$$el3.legend,
-      region = _$$$$el3.region,
-      svg = _$$$$el3.svg,
-      treemap = _$$$$el3.treemap,
+      _$$$$el4 = $$.$el,
+      arcs = _$$$$el4.arcs,
+      eventRect = _$$$$el4.eventRect,
+      legend = _$$$$el4.legend,
+      region = _$$$$el4.region,
+      svg = _$$$$el4.svg,
+      treemap = _$$$$el4.treemap,
       brush = $$.brush;
     // detach all possible event types
     [svg, eventRect, region == null ? void 0 : region.list, brush == null ? void 0 : brush.getSelection(), arcs == null ? void 0 : arcs.selectAll("path"), legend == null ? void 0 : legend.selectAll("g"), treemap].forEach(function (v) {
@@ -22699,6 +22701,52 @@ var _area = function area() {
 
 
 
+/**
+ * Toggler function to select or unselect
+ * @param {boolean} isSelection Weather select or unselect
+ * @param {Array} ids Target ids
+ * @param {Array} indices Indices number
+ * @param {boolean} resetOther Weather reset other selected points (only for selection)
+ * @private
+ */
+function setSelection(isSelection, ids, indices, resetOther) {
+  if (isSelection === void 0) {
+    isSelection = !1;
+  }
+  var $$ = this,
+    config = $$.config,
+    main = $$.$el.main,
+    selectionGrouped = config.data_selection_grouped,
+    isSelectable = config.data_selection_isselectable.bind($$.api);
+  if (!config.data_selection_enabled) {
+    return;
+  }
+  main.selectAll("." + $SHAPE.shapes).selectAll("." + $SHAPE.shape).each(function (d) {
+    var shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
+      _ref = d.data ? d.data : d,
+      id = _ref.id,
+      index = _ref.index,
+      toggle = $$.getToggle(this, d).bind($$),
+      isTargetId = selectionGrouped || !ids || ids.indexOf(id) >= 0,
+      isTargetIndex = !indices || indices.indexOf(index) >= 0,
+      isSelected = shape.classed($SELECT.SELECTED);
+    // line/area selection not supported yet
+    if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
+      return;
+    }
+    if (isSelection) {
+      if (isTargetId && isTargetIndex && isSelectable(d) && !isSelected) {
+        toggle(!0, shape.classed($SELECT.SELECTED, !0), d, index);
+      } else if (isDefined(resetOther) && resetOther && isSelected) {
+        toggle(!1, shape.classed($SELECT.SELECTED, !1), d, index);
+      }
+    } else {
+      if (isTargetId && isTargetIndex && isSelectable(d) && isSelected) {
+        toggle(!1, shape.classed($SELECT.SELECTED, !1), d, index);
+      }
+    }
+  });
+}
 /* harmony default export */ var selection = ({
   /**
    * Get selected data points.<br><br>
@@ -22753,31 +22801,8 @@ var _area = function area() {
    *  chart.select("data1", [0, 3, 5]);
    */
   select: function select(ids, indices, resetOther) {
-    var $$ = this.internal,
-      config = $$.config,
-      $el = $$.$el;
-    if (!config.data_selection_enabled) {
-      return;
-    }
-    $el.main.selectAll("." + $SHAPE.shapes).selectAll("." + $SHAPE.shape).each(function (d, i) {
-      var shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
-        id = d.data ? d.data.id : d.id,
-        toggle = $$.getToggle(this, d).bind($$),
-        isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0,
-        isTargetIndex = !indices || indices.indexOf(i) >= 0,
-        isSelected = shape.classed($SELECT.SELECTED);
-      // line/area selection not supported yet
-      if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
-        return;
-      }
-      if (isTargetId && isTargetIndex) {
-        if (config.data_selection_isselectable.bind($$.api)(d) && !isSelected) {
-          toggle(!0, shape.classed($SELECT.SELECTED, !0), d, i);
-        }
-      } else if (isDefined(resetOther) && resetOther && isSelected) {
-        toggle(!1, shape.classed($SELECT.SELECTED, !1), d, i);
-      }
-    });
+    var $$ = this.internal;
+    setSelection.bind($$)(!0, ids, indices, resetOther);
   },
   /**
    * Set data points to be un-selected.
@@ -22797,27 +22822,8 @@ var _area = function area() {
    *  chart.unselect("data1", [2]);
    */
   unselect: function unselect(ids, indices) {
-    var $$ = this.internal,
-      config = $$.config,
-      $el = $$.$el;
-    if (!config.data_selection_enabled) {
-      return;
-    }
-    $el.main.selectAll("." + $SHAPE.shapes).selectAll("." + $SHAPE.shape).each(function (d, i) {
-      var shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this),
-        id = d.data ? d.data.id : d.id,
-        toggle = $$.getToggle(this, d).bind($$),
-        isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0,
-        isTargetIndex = !indices || indices.indexOf(i) >= 0,
-        isSelected = shape.classed($SELECT.SELECTED);
-      // line/area selection not supported yet
-      if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
-        return;
-      }
-      if (isTargetId && isTargetIndex && config.data_selection_isselectable.bind($$.api)(d) && isSelected) {
-        toggle(!1, shape.classed($SELECT.SELECTED, !1), d, i);
-      }
-    });
+    var $$ = this.internal;
+    setSelection.bind($$)(!1, ids, indices);
   }
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/subchart.ts
@@ -23321,7 +23327,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       config = $$.config,
       main = $$.$el.main,
       $T = $$.$T;
-    callFn(config.data_onunselected, $$.api, d, target.node());
+    callFn(config.data_onunselected, $$.api, d, target == null ? void 0 : target.node());
 
     // remove selected-circle from low layer g
     $T(main.select("." + $SELECT.selectedCircles + $$.getTargetSelectorSuffix(d.id)).selectAll("." + $SELECT.selectedCircle + "-" + i)).attr("r", 0).remove();
@@ -23410,16 +23416,15 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         toggle = $$.getToggle(that, d).bind($$);
       var toggledShape;
       if (!config.data_selection_multiple) {
-        var selector = "." + $SHAPE.shapes;
+        var focusOnly = config.point_focus_only;
+        var selector = "." + (focusOnly ? $SELECT.selectedCircles : $SHAPE.shapes);
         if (config.data_selection_grouped) {
           selector += $$.getTargetSelectorSuffix(d.id);
         }
-        main.selectAll(selector).selectAll("." + $SHAPE.shape).each(function (d, i) {
+        main.selectAll(selector).selectAll(focusOnly ? "." + $SELECT.selectedCircle : "." + $SHAPE.shape + "." + $SELECT.SELECTED).classed($SELECT.SELECTED, !1).each(function (d) {
           var shape = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
-          if (shape.classed($SELECT.SELECTED)) {
-            toggledShape = shape;
-            toggle(!1, shape.classed($SELECT.SELECTED, !1), d, i);
-          }
+          toggledShape = shape;
+          toggle(!1, shape, d, d.index);
         });
       }
       if (!toggledShape || toggledShape.node() !== shape.node()) {
@@ -24485,7 +24490,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20230109004703
+ * @version 3.6.3-nightly-20230110004726
  */
 var bb = {
   /**
@@ -24495,7 +24500,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.6.3-nightly-20230109004703",
+  version: "3.6.3-nightly-20230110004726",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

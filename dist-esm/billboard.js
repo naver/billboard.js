@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.6.3-nightly-20230109004703
+ * @version 3.6.3-nightly-20230110004726
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4621,7 +4621,7 @@ var interaction = {
     selectRectForSingle: function (context, eventRect, index) {
         var _a, _b;
         var $$ = this;
-        var config = $$.config, main = $$.$el.main;
+        var config = $$.config, _c = $$.$el, main = _c.main, circle = _c.circle;
         var isSelectionEnabled = config.data_selection_enabled;
         var isSelectionGrouped = config.data_selection_grouped;
         var isSelectable = config.data_selection_isselectable;
@@ -4635,8 +4635,7 @@ var interaction = {
             }
         }
         // remove possible previous focused state
-        main.selectAll(".".concat($COMMON.EXPANDED, ":not(.").concat($SHAPE.shape, "-").concat(index, ")"))
-            .classed($COMMON.EXPANDED, false);
+        !circle && main.selectAll(".".concat($COMMON.EXPANDED, ":not(.").concat($SHAPE.shape, "-").concat(index, ")")).classed($COMMON.EXPANDED, false);
         var shapeAtIndex = main.selectAll(".".concat($SHAPE.shape, "-").concat(index))
             .classed($COMMON.EXPANDED, true)
             .style("cursor", isSelectable ? "pointer" : null)
@@ -20473,6 +20472,51 @@ var treemap = function () { return (extendAxis([shapeTreemap], [optTreemap]), (t
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/**
+ * Toggler function to select or unselect
+ * @param {boolean} isSelection Weather select or unselect
+ * @param {Array} ids Target ids
+ * @param {Array} indices Indices number
+ * @param {boolean} resetOther Weather reset other selected points (only for selection)
+ * @private
+ */
+function setSelection(isSelection, ids, indices, resetOther) {
+    if (isSelection === void 0) { isSelection = false; }
+    var $$ = this;
+    var config = $$.config, main = $$.$el.main;
+    var selectionGrouped = config.data_selection_grouped;
+    var isSelectable = config.data_selection_isselectable.bind($$.api);
+    if (!config.data_selection_enabled) {
+        return;
+    }
+    main.selectAll(".".concat($SHAPE.shapes))
+        .selectAll(".".concat($SHAPE.shape))
+        .each(function (d) {
+        var shape = select(this);
+        var _a = d.data ? d.data : d, id = _a.id, index = _a.index;
+        var toggle = $$.getToggle(this, d).bind($$);
+        var isTargetId = selectionGrouped || !ids || ids.indexOf(id) >= 0;
+        var isTargetIndex = !indices || indices.indexOf(index) >= 0;
+        var isSelected = shape.classed($SELECT.SELECTED);
+        // line/area selection not supported yet
+        if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
+            return;
+        }
+        if (isSelection) {
+            if (isTargetId && isTargetIndex && isSelectable(d) && !isSelected) {
+                toggle(true, shape.classed($SELECT.SELECTED, true), d, index);
+            }
+            else if (isDefined(resetOther) && resetOther && isSelected) {
+                toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
+            }
+        }
+        else {
+            if (isTargetId && isTargetIndex && isSelectable(d) && isSelected) {
+                toggle(false, shape.classed($SELECT.SELECTED, false), d, index);
+            }
+        }
+    });
+}
 var apiSelection = {
     /**
      * Get selected data points.<br><br>
@@ -20527,32 +20571,7 @@ var apiSelection = {
      */
     select: function (ids, indices, resetOther) {
         var $$ = this.internal;
-        var config = $$.config, $el = $$.$el;
-        if (!config.data_selection_enabled) {
-            return;
-        }
-        $el.main.selectAll(".".concat($SHAPE.shapes))
-            .selectAll(".".concat($SHAPE.shape))
-            .each(function (d, i) {
-            var shape = select(this);
-            var id = d.data ? d.data.id : d.id;
-            var toggle = $$.getToggle(this, d).bind($$);
-            var isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0;
-            var isTargetIndex = !indices || indices.indexOf(i) >= 0;
-            var isSelected = shape.classed($SELECT.SELECTED);
-            // line/area selection not supported yet
-            if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
-                return;
-            }
-            if (isTargetId && isTargetIndex) {
-                if (config.data_selection_isselectable.bind($$.api)(d) && !isSelected) {
-                    toggle(true, shape.classed($SELECT.SELECTED, true), d, i);
-                }
-            }
-            else if (isDefined(resetOther) && resetOther && isSelected) {
-                toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
-            }
-        });
+        setSelection.bind($$)(true, ids, indices, resetOther);
     },
     /**
      * Set data points to be un-selected.
@@ -20573,30 +20592,7 @@ var apiSelection = {
      */
     unselect: function (ids, indices) {
         var $$ = this.internal;
-        var config = $$.config, $el = $$.$el;
-        if (!config.data_selection_enabled) {
-            return;
-        }
-        $el.main.selectAll(".".concat($SHAPE.shapes))
-            .selectAll(".".concat($SHAPE.shape))
-            .each(function (d, i) {
-            var shape = select(this);
-            var id = d.data ? d.data.id : d.id;
-            var toggle = $$.getToggle(this, d).bind($$);
-            var isTargetId = config.data_selection_grouped || !ids || ids.indexOf(id) >= 0;
-            var isTargetIndex = !indices || indices.indexOf(i) >= 0;
-            var isSelected = shape.classed($SELECT.SELECTED);
-            // line/area selection not supported yet
-            if (shape.classed($LINE.line) || shape.classed($AREA.area)) {
-                return;
-            }
-            if (isTargetId &&
-                isTargetIndex &&
-                config.data_selection_isselectable.bind($$.api)(d) &&
-                isSelected) {
-                toggle(false, shape.classed($SELECT.SELECTED, false), d, i);
-            }
-        });
+        setSelection.bind($$)(false, ids, indices);
     }
 };
 
@@ -21046,7 +21042,7 @@ var selection = _assign(_assign({}, drag), {
     unselectPoint: function (target, d, i) {
         var $$ = this;
         var config = $$.config, main = $$.$el.main, $T = $$.$T;
-        callFn(config.data_onunselected, $$.api, d, target.node());
+        callFn(config.data_onunselected, $$.api, d, target === null || target === void 0 ? void 0 : target.node());
         // remove selected-circle from low layer g
         $T(main.select(".".concat($SELECT.selectedCircles).concat($$.getTargetSelectorSuffix(d.id)))
             .selectAll(".".concat($SELECT.selectedCircle, "-").concat(i)))
@@ -21134,18 +21130,18 @@ var selection = _assign(_assign({}, drag), {
             var toggle_1 = $$.getToggle(that, d).bind($$);
             var toggledShape_1;
             if (!config.data_selection_multiple) {
-                var selector = ".".concat($SHAPE.shapes);
+                var focusOnly = config.point_focus_only;
+                var selector = ".".concat(focusOnly ? $SELECT.selectedCircles : $SHAPE.shapes);
                 if (config.data_selection_grouped) {
                     selector += $$.getTargetSelectorSuffix(d.id);
                 }
                 main.selectAll(selector)
-                    .selectAll(".".concat($SHAPE.shape))
-                    .each(function (d, i) {
+                    .selectAll(focusOnly ? ".".concat($SELECT.selectedCircle) : ".".concat($SHAPE.shape, ".").concat($SELECT.SELECTED))
+                    .classed($SELECT.SELECTED, false)
+                    .each(function (d) {
                     var shape = select(this);
-                    if (shape.classed($SELECT.SELECTED)) {
-                        toggledShape_1 = shape;
-                        toggle_1(false, shape.classed($SELECT.SELECTED, false), d, i);
-                    }
+                    toggledShape_1 = shape;
+                    toggle_1(false, shape, d, d.index);
                 });
             }
             if (!toggledShape_1 || toggledShape_1.node() !== shape.node()) {
@@ -22106,7 +22102,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.6.3-nightly-20230109004703
+ * @version 3.6.3-nightly-20230110004726
  */
 var bb = {
     /**
@@ -22116,7 +22112,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.6.3-nightly-20230109004703",
+    version: "3.6.3-nightly-20230110004726",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

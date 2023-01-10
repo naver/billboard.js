@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.6.3-nightly-20230109004703
+ * @version 3.6.3-nightly-20230110004726
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -23585,7 +23585,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.6.3-nightly-20230109004703";
+Plugin.version = "3.6.3-nightly-20230110004726";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
@@ -24168,7 +24168,7 @@ var ColorScale = /*#__PURE__*/function () {
     }.bind(this));
 
     // Legend Axis
-    var axisScale = log().domain([target.minEpochs, target.maxEpochs]).range([points[0] + config.padding_top + points[points.length - 1] + 5 - 1, points[0] + config.padding_top]),
+    var axisScale = symlog().domain([target.minEpochs, target.maxEpochs]).range([points[0] + config.padding_top + points[points.length - 1] + 5 - 1, points[0] + config.padding_top]),
       legendAxis = axisRight(axisScale),
       scaleFormat = config.scale_format;
     if (scaleFormat === "pow10") {
