@@ -1,3 +1,26 @@
+# [3.7.0](https://github.com/naver/billboard.js/compare/3.6.3...3.7.0) (2023-01-11)
+
+
+### Bug Fixes
+
+* **axis:** Fix axis label overlap when has no data ([643357b](https://github.com/naver/billboard.js/commit/643357b5b150b6a9bfc4a8ffe80a891d87e4cdb8)), closes [#2974](https://github.com/naver/billboard.js/issues/2974)
+* **axis:** fix axis.y/y2.tick.format context error ([54ee419](https://github.com/naver/billboard.js/commit/54ee419bcd6976bd9dde3deead25879ef56ce1a3)), closes [#2976](https://github.com/naver/billboard.js/issues/2976)
+* **domain:** Fix wrong domain range setting ([b55b153](https://github.com/naver/billboard.js/commit/b55b1535a1cea08d377cb8aecaafc681723b4a1e)), closes [#2962](https://github.com/naver/billboard.js/issues/2962)
+* **options:** Fix data.regions path rendering for category axis ([249d0ac](https://github.com/naver/billboard.js/commit/249d0ac37a7ed488ef42acc2ee18d83aed11d990)), closes [#2950](https://github.com/naver/billboard.js/issues/2950)
+* **plugin:** Fix stanford scale to accept 0 as min value ([02c4270](https://github.com/naver/billboard.js/commit/02c427088c42c37537bb3b6809e92519e0b569c6)), closes [#2999](https://github.com/naver/billboard.js/issues/2999)
+* **selection:** Fix selection w/point.focus.only=true & selection.multiple=false ([af93a8a](https://github.com/naver/billboard.js/commit/af93a8a07993158aeff1474a3fe157d6e594750d)), closes [#2928](https://github.com/naver/billboard.js/issues/2928) [#3013](https://github.com/naver/billboard.js/issues/3013)
+* **types:** Add missing param definition for gauge.label.format ([d663532](https://github.com/naver/billboard.js/commit/d6635320b34c4aeceabe5f9c7e2275d50c6ef885)), closes [#2946](https://github.com/naver/billboard.js/issues/2946)
+* **types:** Fix to referenced but missing d3 types ([0b57454](https://github.com/naver/billboard.js/commit/0b57454958dc06f2db6d0cdd1f4db19a724a7f3f)), closes [#2954](https://github.com/naver/billboard.js/issues/2954) [#2961](https://github.com/naver/billboard.js/issues/2961)
+* **types:** Support dual module type.d in TS >= 4.7 ([143e491](https://github.com/naver/billboard.js/commit/143e491ec53c0e08e83e4c4a56f20e1ebfbca486)), closes [#2952](https://github.com/naver/billboard.js/issues/2952) [#2953](https://github.com/naver/billboard.js/issues/2953)
+
+
+### Features
+
+* **api:** Enhance .export() to preserve fontStyle ([0809ae7](https://github.com/naver/billboard.js/commit/0809ae716124df954219c5089fbc8a96924ea0ba)), closes [#2892](https://github.com/naver/billboard.js/issues/2892)
+* **arc:** Intent to ship arc.cornerRadius ([e8320cf](https://github.com/naver/billboard.js/commit/e8320cf7f863ea8ebf9671d9e9f2e40877be2d97)), closes [#2936](https://github.com/naver/billboard.js/issues/2936)
+* **tooltip:** Enhance passing ratio value for stacked area/bar ([9e7ff01](https://github.com/naver/billboard.js/commit/9e7ff01ce560d8a0986c72faff50f99de34bed29)), closes [#2921](https://github.com/naver/billboard.js/issues/2921)
+* **treemap:** Intent to ship treemap type ([9809ef1](https://github.com/naver/billboard.js/commit/9809ef1a74c65a50797ac60ffdb711a0bf85281b)), closes [#123](https://github.com/naver/billboard.js/issues/123) [#3002](https://github.com/naver/billboard.js/issues/3002) [#3004](https://github.com/naver/billboard.js/issues/3004) [#3006](https://github.com/naver/billboard.js/issues/3006) [#3007](https://github.com/naver/billboard.js/issues/3007) [#3008](https://github.com/naver/billboard.js/issues/3008)
+
 ## [3.6.3](https://github.com/naver/billboard.js/compare/3.6.2...3.6.3) (2022-10-28)
 
 
