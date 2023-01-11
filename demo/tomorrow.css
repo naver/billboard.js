@@ -114,3 +114,15 @@ code.html {
   clear: left;
   content: "";
 }
+
+@font-face {
+  font-family: 'Alfa Slab One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/alfaslabone/v17/6NUQ8FmMKwSEKjnm5-4v-4Jh2dJhe_escmA.woff2) format('woff2');
+}
+
+#exportPreserveFontStyle svg {
+  font-family: 'Alfa Slab One';
+}
