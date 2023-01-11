@@ -954,7 +954,127 @@ var demos = {
 					}, 1000)
 				];
 			}
-		}
+		},
+		TreemapChart: [
+			{
+				options: {
+					title: {
+						text: "'binary' tile",
+					},
+					padding: {
+						top: 10,
+						bottom: 15
+					},
+					data: {
+						columns: [
+							["data1", 1300],
+							["data2", 200],
+							["data3", 500],
+							["data4", 50],
+							["data5", 100],
+							["data6", 70],
+							["data7", 200],
+							["data8", 133],
+							["data9", 220],
+							["data10", 15],
+						],
+						type: "treemap",
+						labels: {
+							colors: "#fff"
+						}
+					},
+					treemap: {
+						label:{
+							threshold: 0.03
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() {
+							chart.load({
+								columns: [
+									["data4", 1000],
+									["data5", 280],
+								],
+								unload: ["data1"]
+							});
+						}, 1500)
+					];
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "'dice' tile",
+					},
+					padding: {
+						top: 10,
+						bottom: 15
+					},
+					data: {
+						rows: [
+							["data1", "data2", "data3", "data4"],
+							[300, 200, 500, 380]
+						],
+						type: "treemap",
+						order: "asc",
+						labels: {
+							colors: {
+								data1: "red",
+								data2: "#fff",
+								data3: "blue",
+								data4: "purple"
+							},
+							centered: true
+						}
+					},
+					tooltip: {
+						format: {
+							value: function(value, ratio, id, index) { 
+								return value;
+							}
+						}
+					},
+					treemap: {
+						tile: "dice",
+						label: {
+							format: function(value, ratio, id) {
+								return value;
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "'slice' tile",
+					},
+					padding: {
+						top: 10
+					},
+					data: {
+						json: [
+							{"data1": 250, "data2": 200, "data3": 250, "data4": 150, "data5": 150}
+						],
+						keys: {
+							value: ["data1", "data2", "data3", "data4", "data5"]
+						},
+						type: "treemap",
+						labels: {
+							centered: true,
+							colors: "#000",
+							backgroundColors: "yellow",
+						},
+						order: null
+					},
+					treemap: {
+						tile: "slice"
+					}
+				}
+			},
+		]
 	},
 	Axis: {
 		AdditionalYAxis: {
@@ -4597,6 +4717,23 @@ d3.select(".chart_area")
 		}
 	},
 	DonutChartOptions: {
+		DonutCornerRadius: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "donut"
+				},
+				arc: {
+					cornerRadius: {
+						ratio: 0.2
+					}
+				}
+			}
+		},
 		LabelRatio: {
 			options: {
 				data: {
@@ -4655,6 +4792,21 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		StartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					startingAngle: 0.7
+				}
+			}
+		},
 		padAngle: {
 			options: {
 				data: {
@@ -4670,24 +4822,61 @@ d3.select(".chart_area")
 					padAngle: 0.1
 				}
 			}
-		},
-		StartingAngle: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30],
-						["data2", 45],
-						["data3", 25]
-					],
-					type: "donut"
-				},
-				donut: {
-					startingAngle: 0.7
-				}
-			}
 		}
 	},
 	GaugeChartOptions: {
+		GaugeCornerRadius: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data", 77]
+						],
+						type: "gauge"
+					},
+					arc: {
+						cornerRadius: 15
+					},
+					gauge: {
+						arcLength: 70,
+						fullCircle: true,
+						label: {
+							extents: function() { return ""; }
+						},
+						startingAngle: -2.2,
+						width: 25
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 77],
+							["data2", 50],
+							["data3", 20],
+
+						],
+						type: "gauge"
+					},
+					arc: {
+						cornerRadius: {
+							ratio: 0.5
+						}
+					},
+					gauge: {
+						type: "multi",
+						arcLength: 95,
+						fullCircle: true,
+						label: {
+							extents: function() { return ""; }
+						},
+						startingAngle: -3,
+						width: 50
+					}
+				}
+			}
+		],
 		GaugeFullCircle: {
 			options: {
 				data: {
@@ -4956,7 +5145,48 @@ d3.select(".chart_area")
 		}
 	},
 	PieChartOptions: {
-		LabelRatio: {
+		CornerRadius: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 45],
+							["data3", 25],
+							["data4", 35],
+							["data5", 15],
+							["data6", 35]
+						],
+						type: "pie"
+					},
+					arc: {
+						cornerRadius: 70
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 45],
+							["data3", 25]
+						],
+						type: "pie"
+					},
+					arc: {
+						cornerRadius: function(id, value, outerRadius) {
+						return ({
+						    data1: outerRadius * 0.3,
+						    data2: value > 45 ? 50 : 0,
+						    data3: 60
+						})[id];
+						}
+					}
+				}
+			},
+		],
+		ExpandRate: {
 			options: {
 				data: {
 					columns: [
@@ -4967,51 +5197,8 @@ d3.select(".chart_area")
 					type: "pie"
 				},
 				pie: {
-					label: {
-						ratio: 2.4
-					}
-				},
-				legend: {
-					show: false
-				}
-			},
-			style: [
-				"#labelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
-			]
-		},
-		LabelFormat: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30],
-						["data2", 50]
-					],
-					type: "pie"
-				},
-				pie: {
-					label: {
-						format: function(value, ratio, id) {
-							return d3.format('$')(value);
-								}
-					}
-				}
-			}
-		},
-		MultilineLabel: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30],
-						["data2", 50],
-						["data3", 45]
-					],
-					type: "pie"
-				},
-				pie: {
-					label: {
-						format: function(value, ratio, id) {
-							return value +"\nHours";
-								}
+					expand: {
+						rate: 1.007
 					}
 				}
 			}
@@ -5052,6 +5239,66 @@ d3.select(".chart_area")
 				}
 			},
 		],
+		LabelFormat: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						format: function(value, ratio, id) {
+							return d3.format('$')(value);
+								}
+					}
+				}
+			}
+		},
+		LabelRatio: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						ratio: 2.4
+					}
+				},
+				legend: {
+					show: false
+				}
+			},
+			style: [
+				"#labelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
+			]
+		},
+		MultilineLabel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50],
+						["data3", 45]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						format: function(value, ratio, id) {
+							return value +"\nHours";
+								}
+					}
+				}
+			}
+		},		
 		OuterRadius: [
 			{
 				options: {
@@ -5131,24 +5378,7 @@ d3.select(".chart_area")
 					startingAngle: 1
 				}
 			}
-		},
-		ExpandRate: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30],
-						["data2", 45],
-						["data3", 25]
-					],
-					type: "pie"
-				},
-				pie: {
-					expand: {
-						rate: 1.007
-					}
-				}
-			}
-		}
+		}		
 	},
 	RadarChartOptions: {
 		RadarAxis: {
@@ -5586,6 +5816,85 @@ d3.select(".chart_area")
 							img.src = dataUrl;
 						});
 					}, 500)
+				]
+			}
+		},
+		ExportPreserveFontStyle: {
+			description: "Export with preserving web font-family.",
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+					],
+					types: {
+						data1: "bar",
+						data2: "area"
+					},
+					labels: true
+				},
+				grid: {
+					x: {
+						lines: [
+							{
+								value: 1,
+								text: "Label 1",
+								position: 'middle'
+							},
+							{
+								value: 3,
+								text: "Label 3"
+							}
+						]
+					},
+					y: {
+						lines: [
+							{
+								value: 4000,
+								text: "Y Label 1"
+							},
+						]
+					}
+				},
+			},
+			style: [
+				`@font-face {
+  font-family: 'Alfa Slab One';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/s/alfaslabone/v17/6NUQ8FmMKwSEKjnm5-4v-4Jh2dJhe_escmA.woff2) format('woff2');
+}
+	
+#exportPreserveFontStyle svg {
+  font-family: 'Alfa Slab One';
+}`
+			],
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						// crate a div element
+						var exported = document.createElement("div");
+
+						document.getElementById("exportPreserveFontStyle")
+							.insertAdjacentElement("afterend", exported);
+
+						// Preserve web-font style
+						chart.export({
+							preserveFontStyle: true
+						}, function(dataUrl) {
+							var img = document.getElementById("exported");
+
+							if (!img) {
+								img = document.createElement("img");
+
+								img.id = "exported";
+								exported.appendChild(img);
+							}
+
+							img.src = dataUrl;
+						});
+					}, 1000)
 				]
 			}
 		},
