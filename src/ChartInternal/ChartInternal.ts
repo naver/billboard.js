@@ -285,9 +285,9 @@ export default class ChartInternal {
 			$$.point = $$.generatePoint();
 		}
 
-		$$.initClip();
-
 		if (state.hasAxis) {
+			$$.initClip();
+
 			format.extraLineClasses = $$.generateExtraLineClass();
 			format.dataTime = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
 			format.axisTime = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
