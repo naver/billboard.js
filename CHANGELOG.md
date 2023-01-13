@@ -1,3 +1,10 @@
+## [3.7.1](https://github.com/naver/billboard.js/compare/3.7.0...3.7.1) (2023-01-13)
+
+
+### Bug Fixes
+
+* **internals:** Fix unexpected initClip() call ([162fbf7](https://github.com/naver/billboard.js/commit/162fbf7c9a2538f489fff66311727ea53b94c592)), closes [#3012](https://github.com/naver/billboard.js/issues/3012) [#3035](https://github.com/naver/billboard.js/issues/3035)
+
 # [3.7.0](https://github.com/naver/billboard.js/compare/3.6.3...3.7.0) (2023-01-11)
 
 
