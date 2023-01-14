@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.0-nightly-20230113004737
+ * @version 3.7.1-nightly-20230114004704
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -9058,8 +9058,8 @@ var ChartInternal = /** @class */ (function () {
         if ($$.hasPointType()) {
             $$.point = $$.generatePoint();
         }
-        $$.initClip();
         if (state.hasAxis) {
+            $$.initClip();
             format.extraLineClasses = $$.generateExtraLineClass();
             format.dataTime = config.data_xLocaltime ? timeParse : utcParse;
             format.axisTime = config.axis_x_localtime ? timeFormat : utcFormat;
@@ -13775,19 +13775,17 @@ var flow = {
 var clip = {
     initClip: function () {
         var $$ = this;
-        var _a = $$.state, clip = _a.clip, hasAxis = _a.hasAxis;
+        var _a = $$.state, clip = _a.clip, datetimeId = _a.datetimeId;
         // MEMO: clipId needs to be unique because it conflicts when multiple charts exist
-        clip.id = "".concat($$.state.datetimeId, "-clip");
-        if (hasAxis) {
-            clip.idXAxis = "".concat(clip.id, "-xaxis");
-            clip.idYAxis = "".concat(clip.id, "-yaxis");
-            clip.idGrid = "".concat(clip.id, "-grid");
-            // Define 'clip-path' attribute values
-            clip.path = $$.getClipPath(clip.id);
-            clip.pathXAxis = $$.getClipPath(clip.idXAxis);
-            clip.pathYAxis = $$.getClipPath(clip.idYAxis);
-            clip.pathGrid = $$.getClipPath(clip.idGrid);
-        }
+        clip.id = "".concat(datetimeId, "-clip");
+        clip.idXAxis = "".concat(clip.id, "-xaxis");
+        clip.idYAxis = "".concat(clip.id, "-yaxis");
+        clip.idGrid = "".concat(clip.id, "-grid");
+        // Define 'clip-path' attribute values
+        clip.path = $$.getClipPath(clip.id);
+        clip.pathXAxis = $$.getClipPath(clip.idXAxis);
+        clip.pathYAxis = $$.getClipPath(clip.idYAxis);
+        clip.pathGrid = $$.getClipPath(clip.idGrid);
     },
     getClipPath: function (id) {
         var $$ = this;
@@ -19122,8 +19120,8 @@ function convertDataToTreemapData(data) {
 var shapeTreemap = {
     initTreemap: function () {
         var $$ = this;
-        var $el = $$.$el, _a = $$.state, _b = _a.current, width = _b.width, height = _b.height, clip = _a.clip;
-        var clipId = clip.id;
+        var $el = $$.$el, _a = $$.state, _b = _a.current, width = _b.width, height = _b.height, clip = _a.clip, datetimeId = _a.datetimeId;
+        clip.id = "".concat(datetimeId, "-clip");
         $$.treemap = treemap$1()
             .tile($$.getTreemapTile());
         $$.treemapFn = function (data) {
@@ -19133,12 +19131,12 @@ var shapeTreemap = {
         };
         $el.defs
             .append("clipPath")
-            .attr("id", clipId)
+            .attr("id", clip.id)
             .append("rect")
             .attr("width", width)
             .attr("height", height);
         $el.treemap = $el.main.select(".".concat($COMMON.chart))
-            .attr("clip-path", "url(#".concat(clipId, ")"))
+            .attr("clip-path", "url(#".concat(clip.id, ")"))
             .append("g")
             .classed($TREEMAP.chartTreemaps, true);
         $$.bindTreemapEvent();
@@ -22102,7 +22100,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.0-nightly-20230113004737
+ * @version 3.7.1-nightly-20230114004704
  */
 var bb = {
     /**
@@ -22112,7 +22110,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.0-nightly-20230113004737",
+    version: "3.7.1-nightly-20230114004704",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
