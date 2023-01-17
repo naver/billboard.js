@@ -1468,4 +1468,31 @@ describe("SHAPE BAR", () => {
 			});
 		});
 	});
+
+	describe("rotated & inverted axis", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 50, 70, 100, 150, 250],
+						["data2", -30, -50, -70, -100, -150, -250]
+					],
+					type: "bar",
+					labels: true
+				},
+				axis: {
+					rotated: true,
+					y: {
+						inverted: true
+					}
+				}
+			};
+		});
+
+		it("bar should be drawn correctly.", () => {
+			chart.$.bar.bars.each(function() {
+				expect(this.getBoundingClientRect().width > 0).to.be.true;
+			});
+		});
+	});
 });
