@@ -133,10 +133,10 @@ const tooltip = {
 		inputType === "touch" && $$.callOverOutForTouch();
 
 		$$.hideTooltip(true);
-		$$.hideGridFocus();
+		$$.hideGridFocus?.();
 
 		$$.unexpandCircles?.();
-		$$.expandBarTypeShapes(false);
+		$$.expandBarTypeShapes?.(false);
 	}
 };
 
