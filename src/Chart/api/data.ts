@@ -24,7 +24,7 @@ import type {IDataRow} from "../../ChartInternal/data/IData";
  * // Get all data
  * chart.data();
  */
-function data(targetIds: string|string[]): DataItem[] {
+const data = function(targetIds: string|string[]): DataItem[] {
 	const {targets} = this.internal.data;
 
 	if (!isUndefined(targetIds)) {
@@ -34,7 +34,7 @@ function data(targetIds: string|string[]): DataItem[] {
 	}
 
 	return targets;
-}
+};
 
 extend(data, {
 	/**

@@ -21,7 +21,7 @@ type RegionsParam = {axis?: string, class?: string, start?: number, end?: number
  *    {axis: "y", end: 50, class: "regionY"}
  * ]);
  */
-function regions(regions: RegionsParam): RegionsParam {
+const regions = function(regions: RegionsParam): RegionsParam {
 	const $$ = this.internal;
 	const {config} = $$;
 
@@ -33,7 +33,7 @@ function regions(regions: RegionsParam): RegionsParam {
 	$$.redrawWithoutRescale();
 
 	return regions;
-}
+};
 
 extend(regions, {
 	/**
