@@ -1490,8 +1490,25 @@ describe("SHAPE BAR", () => {
 		});
 
 		it("bar should be drawn correctly.", () => {
-			chart.$.bar.bars.each(function() {
-				expect(this.getBoundingClientRect().width > 0).to.be.true;
+			const texts = chart.$.text.texts.nodes();
+
+			chart.$.bar.bars.each(function(d, i) {
+				const text = texts.shift();
+				const {x: textX} = text.getBoundingClientRect();
+				const barRect = this.getBoundingClientRect();
+				const {id} = d;
+
+				// check bar shape has been rendered
+				expect(barRect.width > 0).to.be.true;
+
+				// check data label text's position
+				expect(text.getAttribute("text-anchor")).to.be.equal(id === "data1" ? "end" : "start");
+
+				if (id === "data1") {
+					expect(textX < barRect.x).to.be.true;
+				} else if (id === "data2") {
+					expect(textX > barRect.x + barRect.width).to.be.true;
+				}
 			});
 		});
 	});
