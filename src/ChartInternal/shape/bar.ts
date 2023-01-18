@@ -262,15 +262,17 @@ export default {
 		const yScale = $$.getYScaleById.bind($$);
 
 		return (d: IDataRow, i: number) => {
-			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+			const {id} = d;
+			const y0 = yScale.call($$, id, isSub)($$.getShapeYMin(id));
 			const offset = barOffset(d, i) || y0; // offset is for stacked bar chart
 			const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
+			const isInverted = config[`axis_${$$.axis.getId(id)}_inverted`];
 			const value = d.value as number;
 			const posX = barX(d);
 			let posY = barY(d);
 
 			// fix posY not to overflow opposite quadrant
-			if (config.axis_rotated && (
+			if (config.axis_rotated && !isInverted && (
 				(value > 0 && posY < y0) || (value < 0 && y0 < posY)
 			)) {
 				posY = y0;
