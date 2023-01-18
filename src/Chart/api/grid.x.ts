@@ -21,7 +21,7 @@ type GridsParam = {value?: number, class?: string, text?: string}[];
  * ]);
  * // --> Returns: [{value: 1, text: "Label 1"}, {value: 4, text: "Label 4"}]
  */
-function xgrids(grids: GridsParam): GridsParam {
+const xgrids = function(grids: GridsParam): GridsParam {
 	const $$ = this.internal;
 	const {config} = $$;
 
@@ -33,7 +33,7 @@ function xgrids(grids: GridsParam): GridsParam {
 	$$.redrawWithoutRescale();
 
 	return config.grid_x_lines;
-}
+};
 
 extend(xgrids, {
 	/**

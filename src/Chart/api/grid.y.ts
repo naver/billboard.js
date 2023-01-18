@@ -19,7 +19,9 @@ import {extend} from "../../module/util";
  * ]);
  * // --> Returns: [{value: 100, text: "Label 1"}, {value: 400, text: "Label 4"}]
  */
-function ygrids(grids: {value?: number, text?: string}[]): {value?: number, text?: string}[] {
+const ygrids = function(grids: {value?: number, text?: string}[]): {
+	value?: number, text?: string
+}[] {
 	const $$ = this.internal;
 	const {config} = $$;
 
@@ -31,7 +33,7 @@ function ygrids(grids: {value?: number, text?: string}[]): {value?: number, text
 	$$.redrawWithoutRescale();
 
 	return config.grid_y_lines;
-}
+};
 
 extend(ygrids, {
 	/**

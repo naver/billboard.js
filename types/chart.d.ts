@@ -102,20 +102,30 @@ export interface Chart {
 		 * Update regions.
 		 * @param regions Regions will be replaced with this argument. The format of this argument is the same as regions.
 		 */
-		(regions: any[]): void;
+		(regions: Array<{
+			axis: "x" | "y" | "y2",
+			start?: number | Date,
+			end?: number | Date,
+			class?: string
+		}>): void;
 
 		/**
 		 * Add new region. This API adds new region instead of replacing like regions.
 		 * @param grids New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
 		 */
-		add(regions: any[] | {}): void;
+		add<T = {
+			axis: "x" | "y" | "y2",
+			start?: number | Date,
+			end?: number | Date,
+			class?: string
+		}>(regions: T | T[]): void;
 
 		/**
 		 * Remove regions. This API removes regions.
 		 * @param args This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be
 		 * removed.
 		 */
-		remove(args?: { value?: number | string; class?: string }): void;
+		remove(args?: { classes: string[] }): void;
 	};
 
 	data: {
