@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.1-nightly-20230114004704
+ * @version 3.7.1-nightly-20230118004709
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -11145,7 +11145,7 @@ function loadConfig(config) {
  * // Get all data
  * chart.data();
  */
-function api_data_data(targetIds) {
+var api_data_data = function (targetIds) {
   var _this = this,
     targets = this.internal.data.targets;
   if (!isUndefined(targetIds)) {
@@ -11160,7 +11160,7 @@ function api_data_data(targetIds) {
     }.bind(this));
   }
   return targets;
-}
+};
 extend(api_data_data, {
   /**
    * Get data shown in the chart.
@@ -12324,9 +12324,9 @@ var tooltip_tooltip = {
     // reset last touch point index
     inputType === "touch" && $$.callOverOutForTouch();
     $$.hideTooltip(!0);
-    $$.hideGridFocus();
+    $$.hideGridFocus == null ? void 0 : $$.hideGridFocus();
     $$.unexpandCircles == null ? void 0 : $$.unexpandCircles();
-    $$.expandBarTypeShapes(!1);
+    $$.expandBarTypeShapes == null ? void 0 : $$.expandBarTypeShapes(!1);
   }
 };
 /* harmony default export */ var api_tooltip = ({
@@ -12749,7 +12749,7 @@ var axis = {
  * ]);
  * // --> Returns: [{value: 1, text: "Label 1"}, {value: 4, text: "Label 4"}]
  */
-function xgrids(grids) {
+var xgrids = function (grids) {
   var $$ = this.internal,
     config = $$.config;
   if (!grids) {
@@ -12758,7 +12758,7 @@ function xgrids(grids) {
   config.grid_x_lines = grids;
   $$.redrawWithoutRescale();
   return config.grid_x_lines;
-}
+};
 extend(xgrids, {
   /**
    * Add x grid lines.<br>
@@ -12832,7 +12832,7 @@ extend(xgrids, {
  * ]);
  * // --> Returns: [{value: 100, text: "Label 1"}, {value: 400, text: "Label 4"}]
  */
-function ygrids(grids) {
+var ygrids = function (grids) {
   var $$ = this.internal,
     config = $$.config;
   if (!grids) {
@@ -12841,7 +12841,7 @@ function ygrids(grids) {
   config.grid_y_lines = grids;
   $$.redrawWithoutRescale();
   return config.grid_y_lines;
-}
+};
 extend(ygrids, {
   /**
    * Add y grid lines.<br>
@@ -12948,16 +12948,16 @@ extend(ygrids, {
  *    {axis: "y", end: 50, class: "regionY"}
  * ]);
  */
-function regions(regions) {
+var regions = function (_regions) {
   var $$ = this.internal,
     config = $$.config;
-  if (!regions) {
+  if (!_regions) {
     return config.regions;
   }
-  config.regions = regions;
+  config.regions = _regions;
   $$.redrawWithoutRescale();
-  return regions;
-}
+  return _regions;
+};
 extend(regions, {
   /**
    * Add new region.<br><br>
@@ -24489,7 +24489,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.1-nightly-20230114004704
+ * @version 3.7.1-nightly-20230118004709
  */
 var bb = {
   /**
@@ -24499,7 +24499,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.1-nightly-20230114004704",
+  version: "3.7.1-nightly-20230118004709",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

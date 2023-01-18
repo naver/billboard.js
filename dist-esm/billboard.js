@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.1-nightly-20230114004704
+ * @version 3.7.1-nightly-20230118004709
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -9747,14 +9747,14 @@ var apiColor = {
  * // Get all data
  * chart.data();
  */
-function data(targetIds) {
+var data = function (targetIds) {
     var targets = this.internal.data.targets;
     if (!isUndefined(targetIds)) {
         var ids_1 = isArray(targetIds) ? targetIds : [targetIds];
         return targets.filter(function (t) { return ids_1.some(function (v) { return v === t.id; }); });
     }
     return targets;
-}
+};
 extend(data, {
     /**
      * Get data shown in the chart.
@@ -10761,7 +10761,7 @@ var tooltip = {
      * @memberof Chart
      */
     hide: function () {
-        var _a;
+        var _a, _b, _c;
         var $$ = this.internal;
         var inputType = $$.state.inputType, tooltip = $$.$el.tooltip;
         var data = tooltip === null || tooltip === void 0 ? void 0 : tooltip.datum();
@@ -10776,9 +10776,9 @@ var tooltip = {
         // reset last touch point index
         inputType === "touch" && $$.callOverOutForTouch();
         $$.hideTooltip(true);
-        $$.hideGridFocus();
-        (_a = $$.unexpandCircles) === null || _a === void 0 ? void 0 : _a.call($$);
-        $$.expandBarTypeShapes(false);
+        (_a = $$.hideGridFocus) === null || _a === void 0 ? void 0 : _a.call($$);
+        (_b = $$.unexpandCircles) === null || _b === void 0 ? void 0 : _b.call($$);
+        (_c = $$.expandBarTypeShapes) === null || _c === void 0 ? void 0 : _c.call($$, false);
     }
 };
 var apiTooltip = { tooltip: tooltip };
@@ -11187,7 +11187,7 @@ var apiCategory = {
  * ]);
  * // --> Returns: [{value: 1, text: "Label 1"}, {value: 4, text: "Label 4"}]
  */
-function xgrids(grids) {
+var xgrids = function (grids) {
     var $$ = this.internal;
     var config = $$.config;
     if (!grids) {
@@ -11196,7 +11196,7 @@ function xgrids(grids) {
     config.grid_x_lines = grids;
     $$.redrawWithoutRescale();
     return config.grid_x_lines;
-}
+};
 extend(xgrids, {
     /**
      * Add x grid lines.<br>
@@ -11266,7 +11266,7 @@ var apiXGrid = { xgrids: xgrids };
  * ]);
  * // --> Returns: [{value: 100, text: "Label 1"}, {value: 400, text: "Label 4"}]
  */
-function ygrids(grids) {
+var ygrids = function (grids) {
     var $$ = this.internal;
     var config = $$.config;
     if (!grids) {
@@ -11275,7 +11275,7 @@ function ygrids(grids) {
     config.grid_y_lines = grids;
     $$.redrawWithoutRescale();
     return config.grid_y_lines;
-}
+};
 extend(ygrids, {
     /**
      * Add y grid lines.<br>
@@ -11376,7 +11376,7 @@ var apiGroup = {
  *    {axis: "y", end: 50, class: "regionY"}
  * ]);
  */
-function regions(regions) {
+var regions = function (regions) {
     var $$ = this.internal;
     var config = $$.config;
     if (!regions) {
@@ -11385,7 +11385,7 @@ function regions(regions) {
     config.regions = regions;
     $$.redrawWithoutRescale();
     return regions;
-}
+};
 extend(regions, {
     /**
      * Add new region.<br><br>
@@ -22100,7 +22100,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.1-nightly-20230114004704
+ * @version 3.7.1-nightly-20230118004709
  */
 var bb = {
     /**
@@ -22110,7 +22110,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.1-nightly-20230114004704",
+    version: "3.7.1-nightly-20230118004709",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
