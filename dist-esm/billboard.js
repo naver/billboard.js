@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.1-nightly-20230118004709
+ * @version 3.7.1-nightly-20230119004729
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -7618,7 +7618,7 @@ var text = {
      */
     updateText: function () {
         var $$ = this;
-        var $el = $$.$el, $T = $$.$T, config = $$.config;
+        var $el = $$.$el, $T = $$.$T, config = $$.config, axis = $$.axis;
         var classText = $$.getClass("text", "index");
         var labelsCentered = config.data_labels.centered;
         var text = $el.main.selectAll(".".concat($TEXT.texts))
@@ -7632,8 +7632,9 @@ var text = {
             .merge(text)
             .attr("class", classText)
             .attr("text-anchor", function (d) {
+            var isInverted = config["axis_".concat(axis === null || axis === void 0 ? void 0 : axis.getId(d.id), "_inverted")];
             // when value is negative or
-            var isEndAnchor = d.value < 0;
+            var isEndAnchor = isInverted ? d.value > 0 : d.value < 0;
             if ($$.isCandlestickType(d)) {
                 var data = $$.getCandlestickData(d);
                 isEndAnchor = !(data === null || data === void 0 ? void 0 : data._isUp);
@@ -7896,8 +7897,16 @@ var text = {
         }
         else {
             if (isRotated) {
+                var isInverted = config["axis_".concat($$.axis.getId(d.id), "_inverted")];
                 var padding = $$.isBarType(d) ? 4 : 6;
-                xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1);
+                var value = d.value;
+                xPos = points[2][1];
+                if (isInverted) {
+                    xPos -= padding * (value > 0 ? 1 : -1);
+                }
+                else {
+                    xPos += padding * (value < 0 ? -1 : 1);
+                }
             }
             else {
                 xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
@@ -17522,14 +17531,16 @@ var shapeBar = {
         var barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
         var yScale = $$.getYScaleById.bind($$);
         return function (d, i) {
-            var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+            var id = d.id;
+            var y0 = yScale.call($$, id, isSub)($$.getShapeYMin(id));
             var offset = barOffset(d, i) || y0; // offset is for stacked bar chart
             var width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
+            var isInverted = config["axis_".concat($$.axis.getId(id), "_inverted")];
             var value = d.value;
             var posX = barX(d);
             var posY = barY(d);
             // fix posY not to overflow opposite quadrant
-            if (config.axis_rotated && ((value > 0 && posY < y0) || (value < 0 && y0 < posY))) {
+            if (config.axis_rotated && !isInverted && ((value > 0 && posY < y0) || (value < 0 && y0 < posY))) {
                 posY = y0;
             }
             if (!$$.isBarRangeType(d)) {
@@ -22100,7 +22111,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.1-nightly-20230118004709
+ * @version 3.7.1-nightly-20230119004729
  */
 var bb = {
     /**
@@ -22110,7 +22121,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.1-nightly-20230118004709",
+    version: "3.7.1-nightly-20230119004729",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.1-nightly-20230118004709
+ * @version 3.7.1-nightly-20230119004729
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8799,14 +8799,17 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       $el = $$.$el,
       $T = $$.$T,
       config = $$.config,
+      axis = $$.axis,
       classText = $$.getClass("text", "index"),
       labelsCentered = config.data_labels.centered,
       text = $el.main.selectAll("." + $TEXT.texts).selectAll("." + $TEXT.text).data($$.labelishData.bind($$));
     $T(text.exit()).style("fill-opacity", "0").remove();
     $el.text = text.enter().append("text").merge(text).attr("class", classText).attr("text-anchor", function (d) {
       _newArrowCheck(this, _this2);
+      var isInverted = config["axis_" + (axis == null ? void 0 : axis.getId(d.id)) + "_inverted"];
+
       // when value is negative or
-      var isEndAnchor = d.value < 0;
+      var isEndAnchor = isInverted ? d.value > 0 : d.value < 0;
       if ($$.isCandlestickType(d)) {
         var data = $$.getCandlestickData(d);
         isEndAnchor = !(data != null && data._isUp);
@@ -9047,8 +9050,15 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
       xPos += config.data_labels.centered ? 0 : 5;
     } else {
       if (isRotated) {
-        var padding = $$.isBarType(d) ? 4 : 6;
-        xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1);
+        var isInverted = config["axis_" + $$.axis.getId(d.id) + "_inverted"],
+          padding = $$.isBarType(d) ? 4 : 6,
+          value = d.value;
+        xPos = points[2][1];
+        if (isInverted) {
+          xPos -= padding * (value > 0 ? 1 : -1);
+        } else {
+          xPos += padding * (value < 0 ? -1 : 1);
+        }
       } else {
         xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
       }
@@ -19389,15 +19399,17 @@ function getAttrTweenFn(fn) {
       yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
       _newArrowCheck(this, _this7);
-      var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
+      var id = d.id,
+        y0 = yScale.call($$, id, isSub)($$.getShapeYMin(id)),
         offset = barOffset(d, i) || y0,
         width = isNumber(barW) ? barW : barW[d.id] || barW._$width,
+        isInverted = config["axis_" + $$.axis.getId(id) + "_inverted"],
         value = d.value,
         posX = barX(d);
       var posY = barY(d);
 
       // fix posY not to overflow opposite quadrant
-      if (config.axis_rotated && (value > 0 && posY < y0 || value < 0 && y0 < posY)) {
+      if (config.axis_rotated && !isInverted && (value > 0 && posY < y0 || value < 0 && y0 < posY)) {
         posY = y0;
       }
       if (!$$.isBarRangeType(d)) {
@@ -24489,7 +24501,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.1-nightly-20230118004709
+ * @version 3.7.1-nightly-20230119004729
  */
 var bb = {
   /**
@@ -24499,7 +24511,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.1-nightly-20230118004709",
+  version: "3.7.1-nightly-20230119004729",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
