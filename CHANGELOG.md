@@ -1,3 +1,12 @@
+## [3.7.2](https://github.com/naver/billboard.js/compare/3.7.1...3.7.2) (2023-01-19)
+
+
+### Bug Fixes
+
+* **api:** Fix tooltip.hide() error call for Arc types ([163495b](https://github.com/naver/billboard.js/commit/163495b7e809566f71f416951647b20f3417556a)), closes [#3038](https://github.com/naver/billboard.js/issues/3038)
+* **bar:** Fix drawing on inverted axis ([d25bf31](https://github.com/naver/billboard.js/commit/d25bf3100d02385d321b2db427db0f8419670a79)), closes [#3049](https://github.com/naver/billboard.js/issues/3049)
+* **type:** fix wrong .grid() API param type ([0ef8a51](https://github.com/naver/billboard.js/commit/0ef8a51f885ee40dd37a21b7c61ed96ccd4bc177)), closes [#3037](https://github.com/naver/billboard.js/issues/3037)
+
 ## [3.7.1](https://github.com/naver/billboard.js/compare/3.7.0...3.7.1) (2023-01-13)
 
 
