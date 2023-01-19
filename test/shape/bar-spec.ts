@@ -1468,4 +1468,48 @@ describe("SHAPE BAR", () => {
 			});
 		});
 	});
+
+	describe("rotated & inverted axis", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 50, 70, 100, 150, 250],
+						["data2", -30, -50, -70, -100, -150, -250]
+					],
+					type: "bar",
+					labels: true
+				},
+				axis: {
+					rotated: true,
+					y: {
+						inverted: true
+					}
+				}
+			};
+		});
+
+		it("bar should be drawn correctly.", () => {
+			const texts = chart.$.text.texts.nodes();
+
+			chart.$.bar.bars.each(function(d, i) {
+				const text = texts.shift();
+				const {x: textX} = text.getBoundingClientRect();
+				const barRect = this.getBoundingClientRect();
+				const {id} = d;
+
+				// check bar shape has been rendered
+				expect(barRect.width > 0).to.be.true;
+
+				// check data label text's position
+				expect(text.getAttribute("text-anchor")).to.be.equal(id === "data1" ? "end" : "start");
+
+				if (id === "data1") {
+					expect(textX < barRect.x).to.be.true;
+				} else if (id === "data2") {
+					expect(textX > barRect.x + barRect.width).to.be.true;
+				}
+			});
+		});
+	});
 });
