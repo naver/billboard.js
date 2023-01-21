@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Data} from "./options";
+import {Data, RegionOptions} from "./options";
 import {ArrayOrString, d3Selection, DataArray, DataItem, PrimitiveArray, TargetIds} from "./types";
 
 export interface Chart {
@@ -102,23 +102,13 @@ export interface Chart {
 		 * Update regions.
 		 * @param regions Regions will be replaced with this argument. The format of this argument is the same as regions.
 		 */
-		(regions: Array<{
-			axis: "x" | "y" | "y2",
-			start?: number | Date,
-			end?: number | Date,
-			class?: string
-		}>): void;
+		(regions: RegionOptions[]): void;
 
 		/**
 		 * Add new region. This API adds new region instead of replacing like regions.
 		 * @param grids New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
 		 */
-		add<T = {
-			axis: "x" | "y" | "y2",
-			start?: number | Date,
-			end?: number | Date,
-			class?: string
-		}>(regions: T | T[]): void;
+		add(regions: RegionOptions | RegionOptions[]): void;
 
 		/**
 		 * Remove regions. This API removes regions.
