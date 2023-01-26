@@ -946,8 +946,10 @@ export default {
 					}
 				}
 
-				d.ratio = isNumber(d.value) && total ?
-					d.value / total[d.index] : 0;
+				const divisor = total[d.index];
+
+				d.ratio = isNumber(d.value) && total && divisor ?
+					d.value / divisor : 0;
 
 				ratio = d.ratio;
 			} else if (type === "radar") {
