@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.2-nightly-20230121004653
+ * @version 3.7.2-nightly-20230126004650
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -17464,7 +17464,9 @@ var shapeBar = {
             // switch points if axis is rotated, not applicable for sub chart
             var indexX = +isRotated;
             var indexY = +!indexX;
-            var isNegative = d.value < 0;
+            var isUnderZero = d.value < 0;
+            var isInverted = config["axis_".concat($$.axis.getId(d.id), "_inverted")];
+            var isNegative = (!isInverted && isUnderZero) || (isInverted && !isUnderZero);
             var pathRadius = ["", ""];
             var radius = 0;
             var isGrouped = $$.isGrouped(d.id);
@@ -17482,7 +17484,7 @@ var shapeBar = {
             // path string data shouldn't be containing new line chars
             // https://github.com/naver/billboard.js/issues/530
             var path = isRotated ?
-                "H".concat(points[1][indexX] - radius, " ").concat(pathRadius[0], "V").concat(points[2][indexY] - radius, " ").concat(pathRadius[1], "H").concat(points[3][indexX]) :
+                "H".concat(points[1][indexX] + (isNegative ? radius : -radius), " ").concat(pathRadius[0], "V").concat(points[2][indexY] - radius, " ").concat(pathRadius[1], "H").concat(points[3][indexX]) :
                 "V".concat(points[1][indexY] + (isNegative ? -radius : radius), " ").concat(pathRadius[0], "H").concat(points[2][indexX] - radius, " ").concat(pathRadius[1], "V").concat(points[3][indexY]);
             return "M".concat(points[0][indexX], ",").concat(points[0][indexY]).concat(path, "z");
         };
@@ -22111,7 +22113,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.2-nightly-20230121004653
+ * @version 3.7.2-nightly-20230126004650
  */
 var bb = {
     /**
@@ -22121,7 +22123,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.2-nightly-20230121004653",
+    version: "3.7.2-nightly-20230126004650",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

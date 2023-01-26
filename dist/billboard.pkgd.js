@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.2-nightly-20230121004653
+ * @version 3.7.2-nightly-20230126004650
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.4
@@ -44593,7 +44593,9 @@ function point_y(p) {
       var points = getPoints(d, i),
         indexX = +isRotated,
         indexY = +!indexX,
-        isNegative = d.value < 0,
+        isUnderZero = d.value < 0,
+        isInverted = config["axis_" + $$.axis.getId(d.id) + "_inverted"],
+        isNegative = !isInverted && isUnderZero || isInverted && !isUnderZero,
         pathRadius = ["", ""]; // switch points if axis is rotated, not applicable for sub chart
       var radius = 0;
       var isGrouped = $$.isGrouped(d.id),
@@ -44610,7 +44612,7 @@ function point_y(p) {
 
       // path string data shouldn't be containing new line chars
       // https://github.com/naver/billboard.js/issues/530
-      var path = isRotated ? "H" + (points[1][indexX] - radius) + " " + pathRadius[0] + "V" + (points[2][indexY] - radius) + " " + pathRadius[1] + "H" + points[3][indexX] : "V" + (points[1][indexY] + (isNegative ? -radius : radius)) + " " + pathRadius[0] + "H" + (points[2][indexX] - radius) + " " + pathRadius[1] + "V" + points[3][indexY];
+      var path = isRotated ? "H" + (points[1][indexX] + (isNegative ? radius : -radius)) + " " + pathRadius[0] + "V" + (points[2][indexY] - radius) + " " + pathRadius[1] + "H" + points[3][indexX] : "V" + (points[1][indexY] + (isNegative ? -radius : radius)) + " " + pathRadius[0] + "H" + (points[2][indexX] - radius) + " " + pathRadius[1] + "V" + points[3][indexY];
       return "M" + points[0][indexX] + "," + points[0][indexY] + path + "z";
     }.bind(this);
   },
@@ -50892,7 +50894,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.2-nightly-20230121004653
+ * @version 3.7.2-nightly-20230126004650
  */
 var bb = {
   /**
@@ -50902,7 +50904,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.2-nightly-20230121004653",
+  version: "3.7.2-nightly-20230126004650",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
