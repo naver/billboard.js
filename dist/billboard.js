@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.2-nightly-20230126004650
+ * @version 3.7.3-nightly-20230127004658
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5252,7 +5252,8 @@ function getDataKeyForJson(keysParam, config) {
             }.bind(this));
           }
         }
-        d.ratio = isNumber(d.value) && total ? d.value / total[d.index] : 0;
+        var divisor = total[d.index];
+        d.ratio = isNumber(d.value) && total && divisor ? d.value / divisor : 0;
         ratio = d.ratio;
       } else if (type === "radar") {
         ratio = parseFloat(Math.max(d.value, 0) + "") / state.current.dataMax * config.radar_size_ratio;
@@ -24503,7 +24504,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.2-nightly-20230126004650
+ * @version 3.7.3-nightly-20230127004658
  */
 var bb = {
   /**
@@ -24513,7 +24514,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.2-nightly-20230126004650",
+  version: "3.7.3-nightly-20230127004658",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
