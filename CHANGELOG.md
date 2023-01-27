@@ -1,3 +1,12 @@
+## [3.7.3](https://github.com/naver/billboard.js/compare/3.7.2...3.7.3) (2023-01-26)
+
+
+### Bug Fixes
+
+* **bar:** Fix bar radius on inverted axis ([21b7004](https://github.com/naver/billboard.js/commit/21b70042ac811a9942e897b128bf961306b19067)), closes [#3054](https://github.com/naver/billboard.js/issues/3054)
+* **data:** Fix ratio calculation ([519cd0d](https://github.com/naver/billboard.js/commit/519cd0de2d39bd52f32402e6ef43f7b9abe20624)), closes [#3055](https://github.com/naver/billboard.js/issues/3055)
+* **type:** align grid api with option interface ([b89b74a](https://github.com/naver/billboard.js/commit/b89b74ad3c6b3f39ee11811e7fefbc6ac6ec2f44)), closes [#3037](https://github.com/naver/billboard.js/issues/3037)
+
 ## [3.7.2](https://github.com/naver/billboard.js/compare/3.7.1...3.7.2) (2023-01-19)
 
 
