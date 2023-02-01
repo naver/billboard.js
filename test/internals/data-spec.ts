@@ -8,7 +8,7 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import sinon from "sinon";
 import util from "../assets/util";
-import {$AREA, $AXIS, $BAR, $CIRCLE, $COMMON, $LINE, $SHAPE, $TEXT} from "../../src/config/classes";
+import {$ARC, $AREA, $AXIS, $BAR, $CIRCLE, $COMMON, $LINE, $SHAPE, $TEXT} from "../../src/config/classes";
 import {isNumber} from "../../src/module/util";
 
 describe("DATA", () => {
@@ -994,6 +994,49 @@ describe("DATA", () => {
 			const emptyLabelText = chart.$.main.select(`.${$TEXT.text}.${$COMMON.empty}`);
 
 			expect(emptyLabelText.empty()).to.be.true;
+		});
+
+		it("set option", () => {
+			args = {
+				data: {
+					columns: [],
+					type: "gauge",
+					empty: {
+						label: {
+							text: "No data to display."
+						}
+					}
+				}
+			};
+		});
+
+		it("should show empty text when empty data array is given.", () => {
+			const emptyText = chart.$.main.select("text").text();
+
+			expect(emptyText).to.be.equal(args.data.empty.label.text);
+		});
+
+		it("set option: data", () => {
+			args.data.columns = [["data", 10]];
+		});
+
+		it("check when no data is shown.", done => {
+			const bgArc = chart.$.main.select(`.${$ARC.chartArcsBackground}`);
+
+			// when
+			chart.toggle();
+
+			setTimeout(() => {
+				const emptyText = chart.$.main.select("text");
+
+				expect(emptyText.text()).to.be.equal(args.data.empty.label.text);
+				expect(emptyText.style("display")).to.be.equal("block");				
+
+				// background arc shouldn't be drawn
+				expect(bgArc.attr("d")).to.be.equal("M 0 0");
+
+				done();
+			}, 300);
 		});
 	});
 

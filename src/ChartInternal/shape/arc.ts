@@ -758,6 +758,8 @@ export default {
 		const {config, state} = $$;
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
 		const isFullCircle = config.gauge_fullCircle;
+		const showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 &&
+			!!config.data_empty_label_text;
 
 		const startAngle = $$.getStartAngle();
 		const endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
@@ -779,7 +781,7 @@ export default {
 				.merge(backgroundArc)
 				.style("fill", (config.gauge_background) || null)
 				.attr("d", ({id}) => {
-					if (state.hiddenTargetIds.indexOf(id) >= 0) {
+					if (showEmptyTextLabel || state.hiddenTargetIds.indexOf(id) >= 0) {
 						return "M 0 0";
 					}
 
@@ -795,7 +797,7 @@ export default {
 
 			backgroundArc.exit().remove();
 		} else {
-			backgroundArc.attr("d", () => {
+			backgroundArc.attr("d", showEmptyTextLabel ? "M 0 0" : () => {
 				const d = {
 					data: [{value: config.gauge_max}],
 					startAngle,
