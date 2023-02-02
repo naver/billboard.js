@@ -343,10 +343,11 @@ export default {
 
 		if (!isNumber(total)) {
 			const sum = mergeArray($$.data.targets.map(t => t.values))
-				.map(v => v.value)
-				.reduce((p, c) => p + c);
+				.map(v => v.value);
 
-			$$.cache.add(cacheKey, total = sum);
+			total = sum.length ? sum.reduce((p, c) => p + c) : 0;
+
+			$$.cache.add(cacheKey, total);
 		}
 
 		if (subtractHidden) {
