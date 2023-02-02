@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.3-nightly-20230201004706
+ * @version 3.7.3-nightly-20230202004721
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4618,11 +4618,12 @@ function getDataKeyForJson(keysParam, config) {
       }.bind(this))).map(function (v) {
         _newArrowCheck(this, _this14);
         return v.value;
-      }.bind(this)).reduce(function (p, c) {
+      }.bind(this));
+      total = sum.length ? sum.reduce(function (p, c) {
         _newArrowCheck(this, _this14);
         return p + c;
-      }.bind(this));
-      $$.cache.add(cacheKey, total = sum);
+      }.bind(this)) : 0;
+      $$.cache.add(cacheKey, total);
     }
     if (subtractHidden) {
       total -= $$.getHiddenTotalDataSum();
@@ -7382,13 +7383,13 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
       $$.updateCircleY && ($$.circleY = $$.updateCircleY());
     }
 
+    // Data empty label positioning and text.
+    config.data_empty_label_text && main.select("text." + $TEXT.text + "." + $COMMON.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null);
+
     // update axis
     if (state.hasAxis) {
       // @TODO: Make 'init' state to be accessible everywhere not passing as argument.
       $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
-
-      // Data empty label positioning and text.
-      config.data_empty_label_text && main.select("text." + $TEXT.text + "." + $COMMON.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null);
 
       // grid
       $$.hasGrid() && $$.updateGrid();
@@ -18826,6 +18827,7 @@ function getAttrTweenFn(fn) {
       state = $$.state,
       hasMultiArcGauge = $$.hasMultiArcGauge(),
       isFullCircle = config.gauge_fullCircle,
+      showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 && !!config.data_empty_label_text,
       startAngle = $$.getStartAngle(),
       endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1,
       backgroundArc = $$.$el.arcs.select((hasMultiArcGauge ? "g" : "") + "." + $ARC.chartArcsBackground);
@@ -18838,7 +18840,7 @@ function getAttrTweenFn(fn) {
       }.bind(this)).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", function (_ref2) {
         var id = _ref2.id;
         _newArrowCheck(this, _this14);
-        if (state.hiddenTargetIds.indexOf(id) >= 0) {
+        if (showEmptyTextLabel || state.hiddenTargetIds.indexOf(id) >= 0) {
           return "M 0 0";
         }
         var d = {
@@ -18853,7 +18855,7 @@ function getAttrTweenFn(fn) {
       }.bind(this));
       backgroundArc.exit().remove();
     } else {
-      backgroundArc.attr("d", function () {
+      backgroundArc.attr("d", showEmptyTextLabel ? "M 0 0" : function () {
         _newArrowCheck(this, _this14);
         var d = {
           data: [{
@@ -24504,7 +24506,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.3-nightly-20230201004706
+ * @version 3.7.3-nightly-20230202004721
  */
 var bb = {
   /**
@@ -24514,7 +24516,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.3-nightly-20230201004706",
+  version: "3.7.3-nightly-20230202004721",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.3-nightly-20230201004706
+ * @version 3.7.3-nightly-20230202004721
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3945,9 +3945,9 @@ var data$1 = {
         var total = $$.cache.get(cacheKey);
         if (!isNumber(total)) {
             var sum = mergeArray($$.data.targets.map(function (t) { return t.values; }))
-                .map(function (v) { return v.value; })
-                .reduce(function (p, c) { return p + c; });
-            $$.cache.add(cacheKey, total = sum);
+                .map(function (v) { return v.value; });
+            total = sum.length ? sum.reduce(function (p, c) { return p + c; }) : 0;
+            $$.cache.add(cacheKey, total);
         }
         if (subtractHidden) {
             total -= $$.getHiddenTotalDataSum();
@@ -6350,16 +6350,16 @@ var redraw = {
         if (!treemap && (!$$.hasArcType() || state.hasRadar)) {
             $$.updateCircleY && ($$.circleY = $$.updateCircleY());
         }
+        // Data empty label positioning and text.
+        config.data_empty_label_text && main.select("text.".concat($TEXT.text, ".").concat($COMMON.empty))
+            .attr("x", state.width / 2)
+            .attr("y", state.height / 2)
+            .text(config.data_empty_label_text)
+            .style("display", targetsToShow.length ? "none" : null);
         // update axis
         if (state.hasAxis) {
             // @TODO: Make 'init' state to be accessible everywhere not passing as argument.
             $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
-            // Data empty label positioning and text.
-            config.data_empty_label_text && main.select("text.".concat($TEXT.text, ".").concat($COMMON.empty))
-                .attr("x", state.width / 2)
-                .attr("y", state.height / 2)
-                .text(config.data_empty_label_text)
-                .style("display", targetsToShow.length ? "none" : null);
             // grid
             $$.hasGrid() && $$.updateGrid();
             // rect for regions
@@ -17004,6 +17004,8 @@ var shapeArc = {
         var config = $$.config, state = $$.state;
         var hasMultiArcGauge = $$.hasMultiArcGauge();
         var isFullCircle = config.gauge_fullCircle;
+        var showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 &&
+            !!config.data_empty_label_text;
         var startAngle = $$.getStartAngle();
         var endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
         var backgroundArc = $$.$el.arcs.select("".concat(hasMultiArcGauge ? "g" : "", ".").concat($ARC.chartArcsBackground));
@@ -17019,7 +17021,7 @@ var shapeArc = {
                 .style("fill", (config.gauge_background) || null)
                 .attr("d", function (_a) {
                 var id = _a.id;
-                if (state.hiddenTargetIds.indexOf(id) >= 0) {
+                if (showEmptyTextLabel || state.hiddenTargetIds.indexOf(id) >= 0) {
                     return "M 0 0";
                 }
                 var d = {
@@ -17033,7 +17035,7 @@ var shapeArc = {
             backgroundArc.exit().remove();
         }
         else {
-            backgroundArc.attr("d", function () {
+            backgroundArc.attr("d", showEmptyTextLabel ? "M 0 0" : function () {
                 var d = {
                     data: [{ value: config.gauge_max }],
                     startAngle: startAngle,
@@ -22114,7 +22116,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.3-nightly-20230201004706
+ * @version 3.7.3-nightly-20230202004721
  */
 var bb = {
     /**
@@ -22124,7 +22126,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.3-nightly-20230201004706",
+    version: "3.7.3-nightly-20230202004721",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
