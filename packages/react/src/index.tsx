@@ -17,7 +17,7 @@ export interface IChart {
 export default forwardRef((props: IProp, ref) => {
 	const container = useRef<HTMLDivElement>(null);
 	const instance = useRef<Chart | null>();
-	const {bb, options} = props;
+	const {bb, options: {...options}} = props;
 
 	// generate chart
 	const generate = () => {
