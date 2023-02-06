@@ -41,17 +41,18 @@ export default {
 			$$.updateCircleY && $$.updateCircleY();
 		}
 
+		// Data empty label positioning and text.
+		config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
+			.attr("x", state.width / 2)
+			.attr("y", state.height / 2)
+			.text(config.data_empty_label_text)
+			.style("display", targetsToShow.length ? "none" : null);
+
 		// update axis
 		if (state.hasAxis) {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
-			// Data empty label positioning and text.
-			config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
-				.attr("x", state.width / 2)
-				.attr("y", state.height / 2)
-				.text(config.data_empty_label_text)
-				.style("display", targetsToShow.length ? "none" : null);
 
 			// grid
 			$$.hasGrid() && $$.updateGrid(duration);

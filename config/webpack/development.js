@@ -7,12 +7,10 @@ const config = {
 		static: [
 			{
 				serveIndex: true,
-				watch: true
+				watch: true,
+				directory: "./",
 			}
 		],
-		dev: {
-			publicPath: "/dist"
-		},
 		host: "127.0.0.1"
 	},
 	devtool: "cheap-module-source-map",

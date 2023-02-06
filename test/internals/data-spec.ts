@@ -2151,6 +2151,76 @@ describe("DATA", () => {
 
 			expect(emptyLabelText.empty()).to.be.true;
 		});
+
+		it("check the visiblity on data toggles", done => {
+			const emptyLabelText = chart.$.main.select(`.${$TEXT.text}.${$COMMON.empty}`);
+
+			// display data
+			chart.toggle();
+
+			expect(emptyLabelText.style("display")).to.be.equal("none");
+
+			// hide data
+			chart.toggle();
+
+			setTimeout(() => {
+				expect(emptyLabelText.style("display")).to.be.equal("block");
+				done();
+			}, 300)
+		});
+
+		it("set options empty.label.text=''", () => {
+			args.data.empty.label.text = "";
+		});
+
+		it("shouldn't be generating empty label text node", () => {
+			const emptyLabelText = chart.$.main.select(`.${$TEXT.text}.${$COMMON.empty}`);
+
+			expect(emptyLabelText.empty()).to.be.true;
+		});
+
+		it("set option", () => {
+			args = {
+				data: {
+					columns: [],
+					type: "gauge",
+					empty: {
+						label: {
+							text: "No data to display."
+						}
+					}
+				}
+			};
+		});
+
+		it("should show empty text when empty data array is given.", () => {
+			const emptyText = chart.$.main.select("text").text();
+
+			expect(emptyText).to.be.equal(args.data.empty.label.text);
+		});
+
+		it("set option: data", () => {
+			args.data.columns = [["data", 10]];
+		});
+
+		it("check when no data is shown.", done => {
+			const bgArc = chart.$.main.select(`.${$ARC.chartArcsBackground}`);
+
+			// when
+			chart.toggle();
+
+			setTimeout(() => {
+				const emptyText = chart.$.main.select("text");
+
+				expect(emptyText.text()).to.be.equal(args.data.empty.label.text);
+				expect(emptyText.style("display")).to.be.equal("block");				
+
+				// background arc shouldn't be drawn
+				expect(bgArc.attr("d")).to.be.equal("M 0 0");
+
+				done();
+			}, 300);
+		});
 	});
 
 	describe("Multilined data.label text", () => {
