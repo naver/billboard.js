@@ -5,6 +5,8 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useRef} from "react";
 import type {bb, Chart, ChartOptions} from "billboard.js";
 
+export {ChartOptions as IChartOptions};
+
 export interface IProp {
 	bb: typeof bb;
 	options: ChartOptions;
@@ -14,7 +16,7 @@ export interface IChart {
 	instance: Chart;
 }
 
-export default forwardRef((props: IProp, ref) => {
+export default forwardRef<IChart, IProp>((props, ref) => {
 	const container = useRef<HTMLDivElement>(null);
 	const instance = useRef<Chart | null>();
 	const {bb, options: {...options}} = props;
@@ -50,7 +52,7 @@ export default forwardRef((props: IProp, ref) => {
 	useImperativeHandle(
 		ref, () => ({
 			get instance() {
-				return instance.current;
+				return instance.current as Chart;
 			}
 		})
 	);
