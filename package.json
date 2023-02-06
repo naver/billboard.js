@@ -172,7 +172,7 @@
 		"karma-mocha-reporter": "^2.2.3",
 		"karma-scss-preprocessor": "^4.0.0",
 		"karma-sinon": "^1.0.5",
-		"karma-sourcemap-loader": "^0.3.8",
+		"karma-sourcemap-loader": "^0.4.0",
 		"karma-webpack": "^5.0.0",
 		"lint-staged": "^13.1.0",
 		"lite-fixture": "^1.0.2",
