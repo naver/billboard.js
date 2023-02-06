@@ -1,6 +1,7 @@
 import React, {useEffect, useRef} from "react";
 
-import bb, {area, bar, line} from "billboard.js";
+import bb, {bar, line} from "billboard.js";
+import * as BB from "billboard.js";
 import "billboard.js/dist/billboard.css";
 import BillboardJS, {IChart} from "../src/index";
 // import BillboardJS, {IChart} from "@billboard.js/react";
@@ -11,7 +12,7 @@ import BillboardJS, {IChart} from "../src/index";
  * @returns {JSX.Element}
  */
 function App(props) {
-	const chartComponent = useRef<IChart>();
+	const chartComponent = useRef<IChart>(null);
 
 	const d = {
 		data: {
@@ -33,9 +34,11 @@ function App(props) {
 		}
 	};
 
-	if (props.data.type === "area") {
-		area();
-	}
+	BB[props.data.type]();
+
+	// if (props.data?.type === "area") {
+	// 	area();
+	// }
 
 	useEffect(() => {
 		const chart = chartComponent.current?.instance;
