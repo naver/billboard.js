@@ -1,3 +1,12 @@
+## [3.7.4](https://github.com/naver/billboard.js/compare/3.7.3...3.7.4) (2023-02-06)
+
+
+### Bug Fixes
+
+* **gauge:** fix when has no data ([efe7435](https://github.com/naver/billboard.js/commit/efe7435b2b1dfd3f537541f1cf09c7dc553320bf)), closes [#3066](https://github.com/naver/billboard.js/issues/3066)
+* **react:** Fix props argument handlling ([fb38d30](https://github.com/naver/billboard.js/commit/fb38d30ba742ee9527a67893f5c4269b1cb5b906)), closes [#3075](https://github.com/naver/billboard.js/issues/3075)
+* **type:** fix to export option type definition ([e4f3a2f](https://github.com/naver/billboard.js/commit/e4f3a2f4c308db795573188a5276ae40bc69b123)), closes [#3077](https://github.com/naver/billboard.js/issues/3077)
+
 ## [3.7.3](https://github.com/naver/billboard.js/compare/3.7.2...3.7.3) (2023-01-26)
 
 
