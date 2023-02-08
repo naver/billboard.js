@@ -73,7 +73,7 @@ const options = {
 // App.tsx
 import * as Chart from "billboard.js";
 import "billboard.js/dist/billboard.css";  // default css
-import BillboardJS, {IChar, IChartOptions} from "../src/index";
+import BillboardJS, {IChart, IChartOptions} from "../src/index";
 
 export function App(props: IChartOptions) {
     const chartComponent = useRef<IChart>(null);
