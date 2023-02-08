@@ -1,6 +1,6 @@
 {
   "name": "billboard.js",
-  "version": "1.12.11",
+  "version": "1.12.12",
   "description": "Re-usable easy interface JavaScript chart library, based on D3 v4+",
   "homepage": "https://naver.github.io/billboard.js/",
   "main": "dist/billboard.js",
@@ -70,7 +70,6 @@
   "dependencies": {
     "d3-axis": "^1.0.12",
     "d3-brush": "^1.1.5",
-    "d3-color": "^1.4.0",
     "d3-drag": "^1.2.5",
     "d3-dsv": "^1.2.0",
     "d3-ease": "^1.0.6",
@@ -116,6 +115,7 @@
     "coveralls": "^3.1.0",
     "cross-env": "^7.0.2",
     "css-loader": "^3.5.3",
+    "d3-color": "^3.1.0",
     "d3-format": "^1.4.4",
     "d3-polygon": "^1.0.6",
     "d3-voronoi": "^1.1.4",

@@ -3,7 +3,6 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import {rgb as d3Rgb} from "d3-color";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
 import {extend, callFn} from "./util";
@@ -90,8 +89,7 @@ extend(ChartInternal.prototype, {
 		callFn(config.data_onselected, $$, d, target.node());
 
 		if (config.interaction_brighten) {
-			target.transition().duration(100)
-				.style("fill", () => d3Rgb($$.color(d)).brighter(0.75));
+			target.style("filter", "brightness(1.25)");
 		}
 	},
 
