@@ -1007,7 +1007,7 @@ export default {
 
 		return $$.isBubbleType(d) && (
 			(isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
-			(isArray(d.value) && d.value.length === 2)
+			(isArray(d.value) && d.value.length >= 2)
 		);
 	},
 
@@ -1021,7 +1021,7 @@ export default {
 		const $$ = this;
 		const {value} = d;
 
-		return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(v => isNumber(v));
+		return $$.isBarType(d) && isArray(value) && value.length >= 2 && value.every(v => isNumber(v));
 	},
 
 	/**
