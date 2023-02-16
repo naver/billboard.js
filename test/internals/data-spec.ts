@@ -1290,4 +1290,33 @@ describe("DATA", () => {
 			});
 		});
 	});
+
+	describe("ranged data", () => {
+		before(() => {
+			args = {
+				data: {
+					type: "bar",
+					columns: [,
+						["data1", [350, 70, 60], [230, 290], [200, 500]]
+					]
+				}
+			};
+		});
+
+		it("when bar ranged type data contains additional value than needed.", () => {
+			const path = chart.$.bar.bars.attr("d");
+
+			expect(/^M\d+/.test(path)).to.be.true;
+		});
+
+		it("set options: data.type='bubble'", () => {
+			args.data.type = "bubble";
+		});
+
+		it("when bubble dimension type data contains additional value than needed.", () => {
+			const r = +chart.$.circles.attr("r");
+
+			expect(r > 0).to.be.true;
+		});
+	});
 });
