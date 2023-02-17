@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.4-nightly-20230215004757
+ * @version 3.7.4-nightly-20230217004729
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.4
@@ -27418,7 +27418,7 @@ function getDataKeyForJson(keysParam, config) {
    */
   isBubbleZType: function isBubbleZType(d) {
     var $$ = this;
-    return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
+    return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length >= 2);
   },
   /**
    * Determine if bar has ranged data
@@ -27430,7 +27430,7 @@ function getDataKeyForJson(keysParam, config) {
     var _this44 = this,
       $$ = this,
       value = d.value;
-    return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(function (v) {
+    return $$.isBarType(d) && isArray(value) && value.length >= 2 && value.every(function (v) {
       _newArrowCheck(this, _this44);
       return isNumber(v);
     }.bind(this));
@@ -51257,7 +51257,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.4-nightly-20230215004757
+ * @version 3.7.4-nightly-20230217004729
  */
 var bb = {
   /**
@@ -51267,7 +51267,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.4-nightly-20230215004757",
+  version: "3.7.4-nightly-20230217004729",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

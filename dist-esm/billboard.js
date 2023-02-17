@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.4-nightly-20230215004757
+ * @version 3.7.4-nightly-20230217004729
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4487,7 +4487,7 @@ var data$1 = {
     isBubbleZType: function (d) {
         var $$ = this;
         return $$.isBubbleType(d) && ((isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
-            (isArray(d.value) && d.value.length === 2));
+            (isArray(d.value) && d.value.length >= 2));
     },
     /**
      * Determine if bar has ranged data
@@ -4498,7 +4498,7 @@ var data$1 = {
     isBarRangeType: function (d) {
         var $$ = this;
         var value = d.value;
-        return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(function (v) { return isNumber(v); });
+        return $$.isBarType(d) && isArray(value) && value.length >= 2 && value.every(function (v) { return isNumber(v); });
     },
     /**
      * Get data object by id
@@ -22116,7 +22116,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.4-nightly-20230215004757
+ * @version 3.7.4-nightly-20230217004729
  */
 var bb = {
     /**
@@ -22126,7 +22126,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.4-nightly-20230215004757",
+    version: "3.7.4-nightly-20230217004729",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
