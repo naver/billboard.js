@@ -17,6 +17,9 @@ describe("API chart", () => {
 				["data1", 30, 200, 100, 400],
 				["data2", 500, 800, 500, 2000]
 			]
+		},
+		interaction: {
+			duration: 0
 		}
 	};
 
@@ -50,6 +53,7 @@ describe("API chart", () => {
 			const path = main.select(`.${$BAR.bars}-data1 path`);
 			const barWidth = util.getBBox(path).width;
 
+			// when
 			chart.groups([
 				["data1", "data2"]
 			]);
