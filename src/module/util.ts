@@ -320,8 +320,11 @@ function getBoundingRect(node): {
  * @returns {number|string}
  * @private
  */
-function getRandom(asStr: boolean = true, min = 0, max = 10000): number | string {
-	const rand = Math.floor(Math.random() * (max - min) + min);
+function getRandom(asStr = true, min = 0, max = 10000) {
+	const crpt = window.crypto || window.msCrypto;
+	const rand = crpt ?
+		min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) :
+		Math.floor(Math.random() * (max - min) + min);
 
 	return asStr ? String(rand) : rand;
 }
