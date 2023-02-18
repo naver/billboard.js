@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.4-nightly-20230217004729
+ * @version 3.7.4-nightly-20230218004712
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -405,7 +405,10 @@ function getRandom(asStr, min, max) {
     if (asStr === void 0) { asStr = true; }
     if (min === void 0) { min = 0; }
     if (max === void 0) { max = 10000; }
-    var rand = Math.floor(Math.random() * (max - min) + min);
+    var crpt = win.crypto || win.msCrypto;
+    var rand = crpt ?
+        min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) :
+        Math.floor(Math.random() * (max - min) + min);
     return asStr ? String(rand) : rand;
 }
 /**
@@ -22116,7 +22119,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.4-nightly-20230217004729
+ * @version 3.7.4-nightly-20230218004712
  */
 var bb = {
     /**
@@ -22126,7 +22129,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.4-nightly-20230217004729",
+    version: "3.7.4-nightly-20230218004712",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

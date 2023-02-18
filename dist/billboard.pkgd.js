@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.4-nightly-20230217004729
+ * @version 3.7.4-nightly-20230218004712
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.4
@@ -22642,7 +22642,8 @@ function getRandom(asStr, min, max) {
   if (max === void 0) {
     max = 1e4;
   }
-  var rand = Math.floor(Math.random() * (max - min) + min);
+  var crpt = win.crypto || win.msCrypto,
+    rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
   return asStr ? rand + "" : rand;
 }
 
@@ -51257,7 +51258,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.4-nightly-20230217004729
+ * @version 3.7.4-nightly-20230218004712
  */
 var bb = {
   /**
@@ -51267,7 +51268,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.4-nightly-20230217004729",
+  version: "3.7.4-nightly-20230218004712",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
