@@ -608,6 +608,35 @@ describe("DATA", () => {
 		});
 	});
 
+	describe("data.xSort", () => {
+		before(() => {
+			args = {
+				data: {
+					xSort: false,
+					x: "x",
+					columns: [
+						["x", 3, 1, 2],
+						["data1", 300, 350, 300]
+					]
+				}
+			};
+		});
+
+		it("line path should rendered correctly.", () => {
+			expect(chart.$.line.lines.attr("d")).to.be.equal("M593,390.583L6,36.417L299,390.583");
+		});
+
+		it("check for tooltip show", () => {
+			const {tooltip} = chart.$;
+
+			// when
+			chart.tooltip.show({x: 2});
+
+			expect(tooltip.select(".name").text()).to.be.equal("data1");
+			expect(+tooltip.select(".value").text()).to.be.equal(300);
+		});
+	});
+
 	describe("inner functions", () => {
 		it("should check returns of mapToTargetIds", () => {
 			const internal = chart.internal;

@@ -122,7 +122,6 @@ export default {
 
 	isMultipleX(): boolean {
 		return notEmpty(this.config.data_xs) ||
-			!this.config.data_xSort ||
 			this.hasType("bubble") ||
 			this.hasType("scatter");
 	},
@@ -407,7 +406,7 @@ export default {
 			target = sortValue(getUnique(target))
 				.map((x, index) => ({x, index}));
 		} else if (length) {
-			target = target[0].values;
+			target = target[0].values.concat();
 		}
 
 		return target;
