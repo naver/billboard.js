@@ -66,6 +66,10 @@ export default {
 			// Set data and update eventReceiver.data
 			const xAxisTickValues = $$.getMaxDataCountTarget();
 
+			if (!config.data_xSort) {
+				xAxisTickValues.sort((a, b) => a.x - b.x);
+			}
+
 			// update data's index value to be alinged with the x Axis
 			$$.updateDataIndexByX(xAxisTickValues);
 			$$.updateXs(xAxisTickValues);
