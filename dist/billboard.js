@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.4-nightly-20230223004723
+ * @version 3.7.4-nightly-20230225004719
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -4395,7 +4395,7 @@ function getDataKeyForJson(keysParam, config) {
     }.bind(this));
   },
   isMultipleX: function isMultipleX() {
-    return notEmpty(this.config.data_xs) || !this.config.data_xSort || this.hasType("bubble") || this.hasType("scatter");
+    return notEmpty(this.config.data_xs) || this.hasType("bubble") || this.hasType("scatter");
   },
   addName: function addName(data) {
     var $$ = this,
@@ -4699,7 +4699,7 @@ function getDataKeyForJson(keysParam, config) {
         };
       }.bind(this));
     } else if (length) {
-      target = target[0].values;
+      target = target[0].values.concat();
     }
     return target;
   },
@@ -14849,7 +14849,8 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   redrawEventRect: function redrawEventRect() {
-    var $$ = this,
+    var _this = this,
+      $$ = this,
       config = $$.config,
       state = $$.state,
       $el = $$.$el,
@@ -14874,6 +14875,12 @@ var Axis_Axis = /*#__PURE__*/function () {
     if (!isMultipleX) {
       // Set data and update eventReceiver.data
       var xAxisTickValues = $$.getMaxDataCountTarget();
+      if (!config.data_xSort) {
+        xAxisTickValues.sort(function (a, b) {
+          _newArrowCheck(this, _this);
+          return a.x - b.x;
+        }.bind(this));
+      }
 
       // update data's index value to be alinged with the x Axis
       $$.updateDataIndexByX(xAxisTickValues);
@@ -14884,7 +14891,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     $$.updateEventRectData();
   },
   bindTouchOnEventRect: function bindTouchOnEventRect(isMultipleX) {
-    var _this = this,
+    var _this2 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -14892,7 +14899,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       eventRect = _$$$$el.eventRect,
       svg = _$$$$el.svg,
       selectRect = function (context) {
-        _newArrowCheck(this, _this);
+        _newArrowCheck(this, _this2);
         if (isMultipleX) {
           $$.selectRectForMultipleXs(context);
         } else {
@@ -14902,7 +14909,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         }
       }.bind(this),
       unselectRect = function () {
-        _newArrowCheck(this, _this);
+        _newArrowCheck(this, _this2);
         $$.unselectRect();
         $$.callOverOutForTouch();
       }.bind(this),
@@ -14911,7 +14918,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       preventThreshold = !isNaN(preventDefault) && preventDefault || null,
       startPx,
       preventEvent = function (event) {
-        _newArrowCheck(this, _this);
+        _newArrowCheck(this, _this2);
         var eventType = event.type,
           touch = event.changedTouches[0],
           currentXY = touch["client" + (config.axis_rotated ? "Y" : "X")];
@@ -14932,11 +14939,11 @@ var Axis_Axis = /*#__PURE__*/function () {
       }.bind(this);
     // bind touch events
     eventRect.on("touchstart", function (event) {
-      _newArrowCheck(this, _this);
+      _newArrowCheck(this, _this2);
       state.event = event;
       $$.updateEventRect();
     }.bind(this)).on("touchstart.eventRect touchmove.eventRect", function (event) {
-      _newArrowCheck(this, _this);
+      _newArrowCheck(this, _this2);
       state.event = event;
       if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
         // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
@@ -14949,7 +14956,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         unselectRect();
       }
     }.bind(this), !0).on("touchend.eventRect", function (event) {
-      _newArrowCheck(this, _this);
+      _newArrowCheck(this, _this2);
       state.event = event;
       if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
         if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
@@ -14958,7 +14965,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       }
     }.bind(this), !0);
     svg.on("touchstart", function (event) {
-      _newArrowCheck(this, _this);
+      _newArrowCheck(this, _this2);
       state.event = event;
       var target = event.target;
       if (target && target !== eventRect.node()) {
@@ -14973,7 +14980,7 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   updateEventRect: function updateEventRect(eventRect, force) {
-    var _this2 = this;
+    var _this3 = this;
     if (force === void 0) {
       force = !1;
     }
@@ -14988,7 +14995,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       resizing = _state.resizing,
       rectElement = eventRect || $el.eventRect,
       updateClientRect = function () {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this3);
         eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
       }.bind(this);
     if (!rendered || resizing || force) {
@@ -15006,7 +15013,7 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   updateEventRectData: function updateEventRectData() {
-    var _this3 = this,
+    var _this4 = this,
       $$ = this,
       config = $$.config,
       scale = $$.scale,
@@ -15028,21 +15035,21 @@ var Axis_Axis = /*#__PURE__*/function () {
       if ($$.axis.isCategorized()) {
         rectW = $$.getEventRectWidth();
         rectX = function (d) {
-          _newArrowCheck(this, _this3);
+          _newArrowCheck(this, _this4);
           return xScale(d.x) - rectW / 2;
         }.bind(this);
       } else {
         var getPrevNextX = function (_ref) {
           var index = _ref.index;
-          _newArrowCheck(this, _this3);
+          _newArrowCheck(this, _this4);
           return {
             prev: $$.getPrevX(index),
             next: $$.getNextX(index)
           };
         }.bind(this);
         rectW = function (d) {
-          var _this4 = this;
-          _newArrowCheck(this, _this3);
+          var _this5 = this;
+          _newArrowCheck(this, _this4);
           var x = getPrevNextX(d),
             xDomain = xScale.domain();
           var val;
@@ -15057,7 +15064,7 @@ var Axis_Axis = /*#__PURE__*/function () {
           } else {
             Object.keys(x).forEach(function (key, i) {
               var _x$key;
-              _newArrowCheck(this, _this4);
+              _newArrowCheck(this, _this5);
               x[key] = (_x$key = x[key]) != null ? _x$key : xDomain[i];
             }.bind(this));
             val = Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
@@ -15065,7 +15072,7 @@ var Axis_Axis = /*#__PURE__*/function () {
           return val;
         }.bind(this);
         rectX = function (d) {
-          _newArrowCheck(this, _this3);
+          _newArrowCheck(this, _this4);
           var x = getPrevNextX(d);
           var val;
 
@@ -15087,13 +15094,13 @@ var Axis_Axis = /*#__PURE__*/function () {
     }
     var eventReceiver = state.eventReceiver,
       call = function (fn, v) {
-        _newArrowCheck(this, _this3);
+        _newArrowCheck(this, _this4);
         return isFunction(fn) ? fn(v) : fn;
       }.bind(this);
     // reset for possible remains coords data before the data loading
     eventReceiver.coords.splice(eventReceiver.data.length);
     eventReceiver.data.forEach(function (d, i) {
-      _newArrowCheck(this, _this3);
+      _newArrowCheck(this, _this4);
       eventReceiver.coords[i] = {
         x: call(x, d),
         y: call(y, d),
@@ -15103,7 +15110,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     }.bind(this));
   },
   selectRectForMultipleXs: function selectRectForMultipleXs(context) {
-    var _this5 = this,
+    var _this6 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -15124,7 +15131,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     }
     var sameXData = $$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped ? [closest] : $$.filterByX(targetsToShow, closest.x),
       selectedData = sameXData.map(function (d) {
-        _newArrowCheck(this, _this5);
+        _newArrowCheck(this, _this6);
         return $$.addName(d);
       }.bind(this)); // show tooltip when cursor is close to some point
     $$.showTooltip(selectedData, context);
@@ -15171,7 +15178,7 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   generateEventRectsForSingleX: function generateEventRectsForSingleX(eventRectEnter) {
-    var _this6 = this,
+    var _this7 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -15185,12 +15192,12 @@ var Axis_Axis = /*#__PURE__*/function () {
       });
     if (state.inputType === "mouse") {
       var getData = function (event) {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this7);
         var index = event ? $$.getDataIndexFromEvent(event) : eventReceiver.currentIdx;
         return index > -1 ? eventReceiver.data[index] : null;
       }.bind(this);
       rect.on("mouseover", function (event) {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this7);
         state.event = event;
         $$.updateEventRect();
       }.bind(this)).on("mousemove", function (event) {
@@ -15228,7 +15235,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         // to determine current interacting element, so use 'mousemove' event instead.
         $$.setOverOut(index !== -1, index);
       }).on("mouseout", function (event) {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this7);
         state.event = event;
 
         // chart is destroyed
@@ -15268,7 +15275,7 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   generateEventRectsForMultipleXs: function generateEventRectsForMultipleXs(eventRectEnter) {
-    var _this7 = this,
+    var _this8 = this,
       $$ = this,
       state = $$.state;
     eventRectEnter.on("click", function (event) {
@@ -15280,7 +15287,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         state.event = event;
         $$.selectRectForMultipleXs(this);
       }).on("mouseout", function (event) {
-        _newArrowCheck(this, _this7);
+        _newArrowCheck(this, _this8);
         state.event = event;
 
         // chart is destroyed
@@ -16399,13 +16406,22 @@ function smoothLines(el, type) {
   data_xLocaltime: !0,
   /**
    * Sort on x axis.
+   * - **NOTE:** This option works for lineish(area/line/spline/step) types only.
    * @name data․xSort
    * @memberof Options
    * @type {boolean}
    * @default true
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataXSort)
    * @example
    * data: {
-   *   xSort: false
+   *   xSort: false,
+   *   x: "x",
+   *   columns: [
+   *     // The line graph will start to be drawn following the x axis sequence
+   *     // Below data, wil start drawing x=1: 200, x=2: 300, x=3: 100
+   *     ["x", 3, 1, 2],
+   *     ["data1", 100, 200, 300]
+   *   ]
    * }
    */
   data_xSort: !0,
@@ -24507,7 +24523,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.4-nightly-20230223004723
+ * @version 3.7.4-nightly-20230225004719
  */
 var bb = {
   /**
@@ -24517,7 +24533,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.4-nightly-20230223004723",
+  version: "3.7.4-nightly-20230225004719",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

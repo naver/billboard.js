@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.4-nightly-20230223004723
+ * @version 3.7.4-nightly-20230225004719
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3769,7 +3769,6 @@ var data$1 = {
     },
     isMultipleX: function () {
         return notEmpty(this.config.data_xs) ||
-            !this.config.data_xSort ||
             this.hasType("bubble") ||
             this.hasType("scatter");
     },
@@ -4002,7 +4001,7 @@ var data$1 = {
                 .map(function (x, index) { return ({ x: x, index: index }); });
         }
         else if (length) {
-            target = target[0].values;
+            target = target[0].values.concat();
         }
         return target;
     },
@@ -13161,6 +13160,9 @@ var eventrect = {
         if (!isMultipleX) {
             // Set data and update eventReceiver.data
             var xAxisTickValues = $$.getMaxDataCountTarget();
+            if (!config.data_xSort) {
+                xAxisTickValues.sort(function (a, b) { return a.x - b.x; });
+            }
             // update data's index value to be alinged with the x Axis
             $$.updateDataIndexByX(xAxisTickValues);
             $$.updateXs(xAxisTickValues);
@@ -14617,13 +14619,22 @@ var optDataAxis = {
     data_xLocaltime: true,
     /**
      * Sort on x axis.
+     * - **NOTE:** This option works for lineish(area/line/spline/step) types only.
      * @name data․xSort
      * @memberof Options
      * @type {boolean}
      * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataXSort)
      * @example
      * data: {
-     *   xSort: false
+     *   xSort: false,
+     *   x: "x",
+     *   columns: [
+     *     // The line graph will start to be drawn following the x axis sequence
+     *     // Below data, wil start drawing x=1: 200, x=2: 300, x=3: 100
+     *     ["x", 3, 1, 2],
+     *     ["data1", 100, 200, 300]
+     *   ]
      * }
      */
     data_xSort: true,
@@ -22119,7 +22130,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.4-nightly-20230223004723
+ * @version 3.7.4-nightly-20230225004719
  */
 var bb = {
     /**
@@ -22129,7 +22140,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.4-nightly-20230223004723",
+    version: "3.7.4-nightly-20230225004719",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
