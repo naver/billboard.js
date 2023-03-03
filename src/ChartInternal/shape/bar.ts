@@ -180,14 +180,13 @@ export default {
 			let radius = 0;
 
 			const isGrouped = $$.isGrouped(d.id);
-			// const hasRadius = d.value !== 0 && getRadius;
 			const isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
 
-			if (getRadius && (!isGrouped || isRadiusData)) {
+			if (getRadius) {
 				const index = isRotated ? indexY : indexX;
 				const barW = points[2][index] - points[0][index];
 
-				radius = getRadius(barW);
+				radius = !isGrouped || isRadiusData ? getRadius(barW) : 0;
 
 				const arc = `a${radius},${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
 

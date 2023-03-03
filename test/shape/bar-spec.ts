@@ -815,6 +815,7 @@ describe("SHAPE BAR", () => {
 
 		it("should apply bar radius for stacking bars", () => {
 			let radiusCount = 0;
+			let nonRadiusCount = 0;
 			const expected = [
 				[
 					{id: "data1", value: -80},
@@ -831,17 +832,20 @@ describe("SHAPE BAR", () => {
 			];
 
 			chart.$.bar.bars.each(function(d) {
-				const hasRadius = this.getAttribute("d").indexOf("a") > -1;
+				const hasRadius = !/a0,0/.test(this.getAttribute("d"));
 
 				if (hasRadius) {
 					const found = expected[d.index].some(v => v.id === d.id && v.value === d.value);
 
 					expect(found).to.be.true;
 					radiusCount++;
+				} else {
+					nonRadiusCount++;
 				}
 			});
 
 			expect(radiusCount).to.be.equal(8);
+			expect(nonRadiusCount).to.be.equal(4);
 		});
 
 		it("set options", () => {
