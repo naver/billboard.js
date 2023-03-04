@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.4-nightly-20230301004658
+ * @version 3.7.4-nightly-20230304004736
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -17487,12 +17487,11 @@ var shapeBar = {
             var pathRadius = ["", ""];
             var radius = 0;
             var isGrouped = $$.isGrouped(d.id);
-            // const hasRadius = d.value !== 0 && getRadius;
             var isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
-            if (getRadius && (!isGrouped || isRadiusData)) {
+            if (getRadius) {
                 var index = isRotated ? indexY : indexX;
                 var barW = points[2][index] - points[0][index];
-                radius = getRadius(barW);
+                radius = !isGrouped || isRadiusData ? getRadius(barW) : 0;
                 var arc = "a".concat(radius, ",").concat(radius, " ").concat(isNegative ? "1 0 0" : "0 0 1", " ");
                 pathRadius[+!isRotated] = "".concat(arc).concat(radius, ",").concat(radius);
                 pathRadius[+isRotated] = "".concat(arc).concat([-radius, radius][isRotated ? "sort" : "reverse"]());
@@ -22130,7 +22129,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.4-nightly-20230301004658
+ * @version 3.7.4-nightly-20230304004736
  */
 var bb = {
     /**
@@ -22140,7 +22139,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.4-nightly-20230301004658",
+    version: "3.7.4-nightly-20230304004736",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

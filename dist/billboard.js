@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.4-nightly-20230301004658
+ * @version 3.7.4-nightly-20230304004736
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -19337,11 +19337,11 @@ function getAttrTweenFn(fn) {
         pathRadius = ["", ""]; // switch points if axis is rotated, not applicable for sub chart
       var radius = 0;
       var isGrouped = $$.isGrouped(d.id),
-        isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : !1; // const hasRadius = d.value !== 0 && getRadius;
-      if (getRadius && (!isGrouped || isRadiusData)) {
+        isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : !1;
+      if (getRadius) {
         var index = isRotated ? indexY : indexX,
           barW = points[2][index] - points[0][index];
-        radius = getRadius(barW);
+        radius = !isGrouped || isRadiusData ? getRadius(barW) : 0;
         var arc = "a" + radius + "," + radius + " " + (isNegative ? "1 0 0" : "0 0 1") + " ";
         pathRadius[+!isRotated] = "" + arc + radius + "," + radius;
         pathRadius[+isRotated] = "" + arc + [-radius, radius][isRotated ? "sort" : "reverse"]();
@@ -24523,7 +24523,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.4-nightly-20230301004658
+ * @version 3.7.4-nightly-20230304004736
  */
 var bb = {
   /**
@@ -24533,7 +24533,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.4-nightly-20230301004658",
+  version: "3.7.4-nightly-20230304004736",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
