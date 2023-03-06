@@ -4474,6 +4474,36 @@ d3.select(".chart_area")
 				}
 			}
 		],
+		FitPadding: [
+			{
+				options: {
+					title: {
+						text: "default padding (padding=true)"
+					},
+					data: {
+						columns: [
+							["data", 130, 100, 140, 35, 110, 50]
+						],
+						type: "area"
+					},
+					padding: true
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "padding='fit'"
+					},
+					data: {
+						columns: [
+							["data", 130, 100, 140, 35, 110, 50]
+						],
+						type: "area"
+					},
+					padding: "fit"
+				}
+			}
+		],
 		ColorOnover: [
 			{
 				options: {

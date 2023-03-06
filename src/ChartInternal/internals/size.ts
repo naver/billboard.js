@@ -69,20 +69,25 @@ export default {
 		const $$ = this;
 		const {config, state: {hasAxis}} = $$;
 		const isRotated = config.axis_rotated;
+		const isFitPadding = config.padding === "fit";
 		const axisId = isRotated ? "x" : "y";
 		const axesLen = hasAxis ? config[`axis_${axisId}_axes`].length : 0;
-		const axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
+		let axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
 		let padding;
+
+		if (!isFitPadding) {
+			axisWidth = ceil10(axisWidth);
+		}
 
 		if (isValue(config.padding_left)) {
 			padding = config.padding_left;
 		} else if (hasAxis && isRotated) {
 			padding = !config.axis_x_show ?
-				1 : Math.max(ceil10(axisWidth), 40);
+				1 : (isFitPadding ? axisWidth : Math.max(axisWidth, 40));
 		} else if (hasAxis && (!config.axis_y_show || config.axis_y_inner)) { // && !config.axis_rotated
 			padding = $$.axis.getAxisLabelPosition("y").isOuter ? 30 : 1;
 		} else {
-			padding = ceil10(axisWidth);
+			padding = axisWidth;
 		}
 
 		return padding + (axisWidth * axesLen);
@@ -94,10 +99,14 @@ export default {
 		const defaultPadding = 10;
 		const legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
 		const axesLen = hasAxis ? config.axis_y2_axes.length : 0;
-		const axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0;
 		const xAxisTickTextOverflow = withXAxisTickTextOverflow ?
 			$$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
+		let axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0;
 		let padding;
+
+		if (config.padding !== "fit") {
+			axisWidth = ceil10(axisWidth);
+		}
 
 		if (isValue(config.padding_right)) {
 			padding = config.padding_right + (hasAxis ? 1 : 0); // 1 is needed not to hide tick line
@@ -109,7 +118,7 @@ export default {
 				xAxisTickTextOverflow
 			);
 		} else {
-			padding = Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow);
+			padding = Math.max(axisWidth + legendWidthOnRight, xAxisTickTextOverflow);
 		}
 
 		return padding + (axisWidth * axesLen);
@@ -282,6 +291,7 @@ export default {
 		const {config, state, $el: {legend}} = $$;
 		const isRotated = config.axis_rotated;
 		const isNonAxis = $$.hasArcType() || state.hasTreemap;
+		const isFitPadding = config.padding === "fit";
 
 		!isInit && $$.setContainerSize();
 
@@ -311,7 +321,7 @@ export default {
 			bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + padding.bottom,
 			left: subchartHeight + (isNonAxis ? 0 : padding.left)
 		} : {
-			top: 4 + padding.top, // for top tick text
+			top: (isFitPadding ? 0 : 4) + padding.top, // for top tick text
 			right: isNonAxis ? 0 : $$.getCurrentPaddingRight(true),
 			bottom: xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
 			left: isNonAxis ? 0 : padding.left

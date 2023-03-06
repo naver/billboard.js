@@ -2444,7 +2444,7 @@ describe("AXIS", function() {
 
 		const checkY2Axes = (rotated?) => {
 			const main = chart.$.main;
-			const yAxisY = util.parseNum(main.select(`.${$AXIS.axis}-y2`).attr("transform"));
+			const yAxisY = util.parseNum(main.select(`.${$AXIS.axis}-y2`).attr("transform").split(",")[rotated ? 1 : 0]);
 			const axis1 = main.select(`.${$AXIS.axis}-y2-1`);
 
 			expect(util.parseNum(axis1.attr("transform"))).to.be[rotated ? "below" : "above"](yAxisY);
