@@ -1,3 +1,12 @@
+## [3.7.5](https://github.com/naver/billboard.js/compare/3.7.4...3.7.5) (2023-03-06)
+
+
+### Bug Fixes
+
+* **bar:** Fix broken bar shape transition with grouped radius option ([600df46](https://github.com/naver/billboard.js/commit/600df46ac3686ba373aff28a512e30e7f3e6dae0)), closes [#2642](https://github.com/naver/billboard.js/issues/2642)
+* **data:** Fix tooltip event bound when data.xSort=false set ([aa4afc3](https://github.com/naver/billboard.js/commit/aa4afc3d76b3d73293f8efa4afc54666ce3a9c23)), closes [#3100](https://github.com/naver/billboard.js/issues/3100)
+* **data:** mitigate bar/bubble ranged data to handle data length than needed ([51603ec](https://github.com/naver/billboard.js/commit/51603ec0e1574c90a38ca41712d413b04bc33be6)), closes [#3096](https://github.com/naver/billboard.js/issues/3096)
+
 ## [3.7.4](https://github.com/naver/billboard.js/compare/3.7.3...3.7.4) (2023-02-06)
 
 
