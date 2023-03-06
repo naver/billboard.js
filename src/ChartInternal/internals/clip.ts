@@ -86,7 +86,7 @@ export default {
 		const x = isInner ? -1 : (isRotated ? -(1 + left) : -(left - 1));
 		const y = -(isRotated ? 20 : margin.top);
 		const w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0);
-		const h = (isRotated ? margin.bottom : (margin.top + height)) + 10;
+		const h = (isRotated ? margin.bottom + (config.padding === "fit" ? 10 : 0) : (margin.top + height)) + 10;
 
 		node
 			.attr("x", x)

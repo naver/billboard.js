@@ -254,10 +254,13 @@ export default {
 	getLegendHeight(): number {
 		const $$ = this;
 		const {current, isLegendRight, legendItemHeight, legendStep} = $$.state;
+		const isFitPadding = $$.config.padding === "fit";
 
 		return $$.config.legend_show ? (
 			isLegendRight ?
-				current.height : Math.max(20, legendItemHeight) * (legendStep + 1)
+				current.height : (
+					isFitPadding ? 10 : Math.max(20, legendItemHeight)
+				) * (legendStep + 1)
 		) : 0;
 	},
 
