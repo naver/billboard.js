@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.4-nightly-20230304004736
+ * @version 3.7.5-nightly-20230307004716
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1376,8 +1376,9 @@ var main = {
      * @name padding
      * @memberof Options
      * @type {object}
-     * @property {object|boolean} [padding=true] Set padding of chart, and accepts object or boolean type.
+     * @property {object|boolean|string} [padding=true] Set padding of chart, and accepts object or boolean type.
      * - `Object`: Specify each side's padding.
+     * - `"fit"`: Reduce padding as much as possible to make chart fit to the container element for chart types w/axis.
      * - `false`: Remove padding completely and make shape to fully occupy the container element.
      *   - In this case, axes and subchart will be hidden.
      *   - To adjust some padding from this state, use `axis.[x|y].padding` option.
@@ -1386,9 +1387,13 @@ var main = {
      * @property {number} [padding.bottom] padding on the bottom of chart
      * @property {number} [padding.left] padding on the left of chart
      * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Padding)
+     * @see [Demo: Fit padding](https://naver.github.io/billboard.js/demo/#ChartOptions.FitPadding)
      * @example
      * // remove padding completely.
      * padding: false,
+     *
+     * // reduce padding and make fit to the container element.
+     * padding: "fit",
      *
      * // or specify padding value for each side
      * padding: {
@@ -5808,8 +5813,9 @@ var legend$1 = {
     getLegendHeight: function () {
         var $$ = this;
         var _a = $$.state, current = _a.current, isLegendRight = _a.isLegendRight, legendItemHeight = _a.legendItemHeight, legendStep = _a.legendStep;
+        var isFitPadding = $$.config.padding === "fit";
         return $$.config.legend_show ? (isLegendRight ?
-            current.height : Math.max(20, legendItemHeight) * (legendStep + 1)) : 0;
+            current.height : (isFitPadding ? 10 : Math.max(20, legendItemHeight)) * (legendStep + 1)) : 0;
     },
     /**
      * Get the opacity of the legend that is unfocused
@@ -7200,22 +7206,26 @@ var size = {
         var $$ = this;
         var config = $$.config, hasAxis = $$.state.hasAxis;
         var isRotated = config.axis_rotated;
+        var isFitPadding = config.padding === "fit";
         var axisId = isRotated ? "x" : "y";
         var axesLen = hasAxis ? config["axis_".concat(axisId, "_axes")].length : 0;
         var axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
         var padding;
+        if (!isFitPadding) {
+            axisWidth = ceil10(axisWidth);
+        }
         if (isValue(config.padding_left)) {
             padding = config.padding_left;
         }
         else if (hasAxis && isRotated) {
             padding = !config.axis_x_show ?
-                1 : Math.max(ceil10(axisWidth), 40);
+                1 : (isFitPadding ? axisWidth : Math.max(axisWidth, 40));
         }
         else if (hasAxis && (!config.axis_y_show || config.axis_y_inner)) { // && !config.axis_rotated
             padding = $$.axis.getAxisLabelPosition("y").isOuter ? 30 : 1;
         }
         else {
-            padding = ceil10(axisWidth);
+            padding = axisWidth;
         }
         return padding + (axisWidth * axesLen);
     },
@@ -7226,10 +7236,13 @@ var size = {
         var defaultPadding = 10;
         var legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
         var axesLen = hasAxis ? config.axis_y2_axes.length : 0;
-        var axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0;
         var xAxisTickTextOverflow = withXAxisTickTextOverflow ?
             $$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
+        var axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0;
         var padding;
+        if (config.padding !== "fit") {
+            axisWidth = ceil10(axisWidth);
+        }
         if (isValue(config.padding_right)) {
             padding = config.padding_right + (hasAxis ? 1 : 0); // 1 is needed not to hide tick line
         }
@@ -7240,7 +7253,7 @@ var size = {
             padding = Math.max(2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0), xAxisTickTextOverflow);
         }
         else {
-            padding = Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow);
+            padding = Math.max(axisWidth + legendWidthOnRight, xAxisTickTextOverflow);
         }
         return padding + (axisWidth * axesLen);
     },
@@ -7385,6 +7398,7 @@ var size = {
         var config = $$.config, state = $$.state, legend = $$.$el.legend;
         var isRotated = config.axis_rotated;
         var isNonAxis = $$.hasArcType() || state.hasTreemap;
+        var isFitPadding = config.padding === "fit";
         !isInit && $$.setContainerSize();
         var currLegend = {
             width: legend ? $$.getLegendWidth() : 0,
@@ -7407,7 +7421,7 @@ var size = {
             bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + padding.bottom,
             left: subchartHeight + (isNonAxis ? 0 : padding.left)
         } : {
-            top: 4 + padding.top,
+            top: (isFitPadding ? 0 : 4) + padding.top,
             right: isNonAxis ? 0 : $$.getCurrentPaddingRight(true),
             bottom: xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
             left: isNonAxis ? 0 : padding.left
@@ -8595,7 +8609,7 @@ var transform = {
         }
         else if (target === "y2") {
             x = isRotated ? 0 : state.width + padding;
-            y = isRotated ? 1 - padding : 0;
+            y = isRotated && padding ? 1 - padding : 0;
         }
         else if (target === "subX") {
             x = 0;
@@ -13855,7 +13869,7 @@ var clip = {
         var x = isInner ? -1 : (isRotated ? -(1 + left) : -(left - 1));
         var y = -(isRotated ? 20 : margin.top);
         var w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0);
-        var h = (isRotated ? margin.bottom : (margin.top + height)) + 10;
+        var h = (isRotated ? margin.bottom + (config.padding === "fit" ? 10 : 0) : (margin.top + height)) + 10;
         node
             .attr("x", x)
             .attr("y", y)
@@ -14451,7 +14465,9 @@ var sizeAxis = {
             var position = (_a = $$.axis) === null || _a === void 0 ? void 0 : _a.getLabelPositionById(id);
             var width = $$.axis.getMaxTickWidth(id, withoutRecompute);
             var gap = width === 0 ? 0.5 : 0;
-            return width + (position.isInner ? (20 + gap) : 40);
+            return width + ($$.config.padding === "fit" ?
+                position.isInner ? (10 + gap) : 10 :
+                position.isInner ? (20 + gap) : 40);
         }
         else {
             return 40;
@@ -14462,7 +14478,8 @@ var sizeAxis = {
         var config = $$.config, state = $$.state;
         var current = state.current, rotatedPadding = state.rotatedPadding, isLegendRight = state.isLegendRight, isLegendInset = state.isLegendInset;
         var isRotated = config.axis_rotated;
-        var h = 30;
+        var isInner = config["axis_".concat(id, "_inner")];
+        var h = config.padding === "fit" ? (isInner ? 1 : 20) : 30;
         if (id === "x" && !config.axis_x_show) {
             return 8;
         }
@@ -22129,7 +22146,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.4-nightly-20230304004736
+ * @version 3.7.5-nightly-20230307004716
  */
 var bb = {
     /**
@@ -22139,7 +22156,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.4-nightly-20230304004736",
+    version: "3.7.5-nightly-20230307004716",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
