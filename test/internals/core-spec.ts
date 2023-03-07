@@ -374,6 +374,8 @@ describe("CORE", function() {
 	});
 
 	describe("padding", () => {
+		let margin;
+
 		before(() => {
 			args = {
 				data: {
@@ -446,6 +448,97 @@ describe("CORE", function() {
 
 			expect(width).to.be.equal(args.size.width);
 			expect(height).to.be.equal(args.size.height);
+		});
+
+		it("set options: padding = true", () => {
+			args.padding = true;
+			args.legend.show = true;
+			args.axis.y2 = {show: true};
+		});
+
+		it("set options: padding = 'fit'", () => {
+			// remember the margin when "padding=true"
+			margin = chart.internal.state.margin;
+
+			args.padding = "fit";
+		});
+
+		it("when padding set to 'fit', margin values should be below than normal.", () => {
+			const currMargin = chart.internal.state.margin;
+
+			Object.keys(margin).forEach(v => {
+				expect(currMargin[v]).to.be.below(margin[v]);
+			});
+		});
+
+		it("set options: legend.show=false", () => {
+			margin = chart.internal.state.margin;
+
+			args.legend.show = false;
+		});
+
+		it("check when legend is hidden.", () => {
+			expect(chart.internal.state.margin.bottom).to.be.below(margin.bottom);
+
+			margin = chart.internal.state.margin;
+		});
+
+		it("set options: legend.show=false", () => {
+			args.axis.y = { 
+				show: true,
+				inner: true
+			};
+
+			args.axis.y2 = { 
+				show: true,
+				inner: true
+			};
+		});
+
+		it("check when axes with inner option.", () => {
+			const currMargin = chart.internal.state.margin;
+
+			["left", "right"].forEach(v => {
+				expect(margin[v] - currMargin[v] > 20).to.be.true;
+			});
+		});
+
+		it("check element's position by its coordination.", () => {
+			const {svg, main} = chart.$;
+			const svgRect = svg.node().getBoundingClientRect();
+			let rect = main.select(`.${$AXIS.axisX}`).node().getBoundingClientRect();
+
+			expect(rect.x).to.closeTo(2, 1);
+
+			// y axis
+			rect = main.select(`.${$AXIS.axisY}`).node().getBoundingClientRect();			
+			expect(rect.y).to.closeTo(svgRect.y, 2);
+
+			// y2 axis
+			rect = main.select(`.${$AXIS.axisY2}`).node().getBoundingClientRect();			
+			expect(rect.x + rect.width).to.be.closeTo(svgRect.width, 2);
+		});		
+
+		it("set options: axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("check element's position by its coordination for rotated axis.", () => {
+			const {svg, main} = chart.$;
+			const svgRect = svg.node().getBoundingClientRect();
+
+			// x axis
+			let rect = main.select(`.${$AXIS.axisX}`).node().getBoundingClientRect();
+
+			expect(rect.x).to.closeTo(2, 1);
+
+			// y axis
+			rect = main.select(`.${$AXIS.axisY}`).node().getBoundingClientRect();			
+			expect(rect.y + rect.height).to.closeTo(svgRect.y + svgRect.height, 1);
+
+			// y2 axis
+			rect = main.select(`.${$AXIS.axisY2}`).node().getBoundingClientRect();			
+			expect(rect.y).to.be.closeTo(svgRect.y, 2);			
 		});
 	});
 });

@@ -29,7 +29,9 @@ export default {
 			const gap = width === 0 ? 0.5 : 0;
 
 			return width + (
-				position.isInner ? (20 + gap) : 40
+				$$.config.padding === "fit" ?
+					position.isInner ? (10 + gap) : 10 :
+					position.isInner ? (20 + gap) : 40
 			);
 		} else {
 			return 40;
@@ -41,7 +43,8 @@ export default {
 		const {config, state} = $$;
 		const {current, rotatedPadding, isLegendRight, isLegendInset} = state;
 		const isRotated = config.axis_rotated;
-		let h = 30;
+		const isInner = config[`axis_${id}_inner`];
+		let h = config.padding === "fit" ? (isInner ? 1 : 20) : 30;
 
 		if (id === "x" && !config.axis_x_show) {
 			return 8;
