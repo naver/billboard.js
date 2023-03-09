@@ -109,12 +109,13 @@ export default {
 	 * @name padding
 	 * @memberof Options
 	 * @type {object}
-	 * @property {object|boolean|string} [padding=true] Set padding of chart, and accepts object or boolean type.
+	 * @property {object|boolean} [padding=true] Set padding of chart, and accepts object or boolean type.
 	 * - `Object`: Specify each side's padding.
-	 * - `"fit"`: Reduce padding as much as possible to make chart fit to the container element for chart types w/axis.
 	 * - `false`: Remove padding completely and make shape to fully occupy the container element.
 	 *   - In this case, axes and subchart will be hidden.
 	 *   - To adjust some padding from this state, use `axis.[x|y].padding` option.
+	 * @property {string} [padding.mode] padding mode
+	 * - `"fit"`: Reduce padding as much as possible to make chart fit to the container element for chart types w/axis.<br>When specified, all padding values will be relative from fitted value.
 	 * @property {number} [padding.top] padding on the top of chart
 	 * @property {number} [padding.right] padding on the right of chart
 	 * @property {number} [padding.bottom] padding on the bottom of chart
@@ -125,8 +126,17 @@ export default {
 	 * // remove padding completely.
 	 * padding: false,
 	 *
-	 * // reduce padding and make fit to the container element.
-	 * padding: "fit",
+	 * padding: {
+	 *   // specifying mode value, will reduce padding and make fit to the container element.
+	 *   mode: "fit"
+	 *
+	 *   // when mode is "fit", all padding values will be relative from fitted value.
+	 *   // so, 0 will be initial fitted value.
+	 *   top: 20,
+	 *   right: 20,
+	 *   bottom: 20,
+	 *   left: 20
+	 * }
 	 *
 	 * // or specify padding value for each side
 	 * padding: {
@@ -137,6 +147,7 @@ export default {
 	 * }
 	 */
 	padding: true,
+	padding_mode: <"fit"|undefined> undefined,
 	padding_left: <number|undefined> undefined,
 	padding_right: <number|undefined> undefined,
 	padding_top: <number|undefined> undefined,

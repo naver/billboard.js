@@ -4478,7 +4478,7 @@ d3.select(".chart_area")
 			{
 				options: {
 					title: {
-						text: "default padding (padding=true)"
+						text: "default padding"
 					},
 					data: {
 						columns: [
@@ -4492,7 +4492,7 @@ d3.select(".chart_area")
 			{
 				options: {
 					title: {
-						text: "padding='fit'"
+						text: "padding.mode='fit'"
 					},
 					data: {
 						columns: [
@@ -4500,7 +4500,9 @@ d3.select(".chart_area")
 						],
 						type: "area"
 					},
-					padding: "fit"
+					padding: {
+						mode: "fit"
+					}
 				}
 			}
 		],

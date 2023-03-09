@@ -69,7 +69,7 @@ describe("AXIS", function() {
 		});
 
 		it("x Axis ticks should be positioned correctly", () => {
-			const expectedXPos = [50, 349, 549];
+			const expectedXPos = [50, 350, 550];
 
 			chart.$.main.selectAll(`.${$AXIS.axisX} .tick`).each(function(d, i) {
 				expect(
@@ -1847,7 +1847,7 @@ describe("AXIS", function() {
 				const paddingLeft = chart.internal.getCurrentPaddingLeft();
 				const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY} g.tick text`);
 
-				expect(paddingLeft).to.be.equal(1);
+				expect(paddingLeft).to.be.equal(0);
 
 				tickTexts.each(function() {
 					expect(+d3Select(this).attr("x")).to.be.above(0);
@@ -1893,7 +1893,7 @@ describe("AXIS", function() {
 				const paddingRight = chart.internal.getCurrentPaddingRight();
 				const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick text`);
 
-				expect(paddingRight).to.be.equal(2);
+				expect(paddingRight).to.be.equal(1);
 
 				tickTexts.each(function() {
 					expect(+d3Select(this).attr("x")).to.be.below(0);
@@ -2979,7 +2979,7 @@ describe("AXIS", function() {
 		it("check if x axis min/max is fitten.", () => {
 			const yAxisRect = getBoundingRect(chart.$.main.select(`.${$AXIS.axisY}`).node());
 			const lineRect = getBoundingRect(chart.$.line.lines.node());
-debugger;
+
 			// check min
 			expect(lineRect.left).to.be.closeTo(yAxisRect.right, 10);
 

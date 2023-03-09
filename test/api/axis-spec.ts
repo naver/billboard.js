@@ -174,7 +174,7 @@ describe("API axis", function() {
 			const current = chart.axis.min();
 
 			after(() => {
-				chart.axis.min(current);
+				chart.axis?.min?.(current);
 			})
 
 			// when
@@ -211,7 +211,7 @@ describe("API axis", function() {
 			const current = chart.axis.max();
 
 			after(() => {
-				chart.axis.max(current);
+				chart.axis?.max?.(current);
 			})
 
 			// when
@@ -308,7 +308,7 @@ describe("API axis", function() {
 			const current = chart.axis.range();
 
 			after(() => {
-				chart.axis.range(current);
+				chart.axis?.range?.(current);
 			});
 
 			// when

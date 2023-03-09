@@ -183,7 +183,7 @@ describe("API zoom", function() {
 					.filter((v, i) => target.indexOf(i) !== -1);
 
 				const rectSize = rectlist[0].w;
-				const domain = internal.zoom.getDomain();
+				const domain = internal.zoom.getDomain().map(Math.floor);
 
 				expect(domain).to.deep.equal(target);
 
@@ -217,7 +217,7 @@ describe("API zoom", function() {
 
 		it("should be zoomed properly", done => {
 			const rectlist = chart.$.main.selectAll(`.${$EVENT.eventRect}`).nodes();
-			const rect = [];
+			const rect: number[] = [];
 
 			// when
 			chart.zoom([3, 5]);
@@ -307,7 +307,7 @@ describe("API zoom", function() {
 
 			//const selector = `.${$EVENT.eventRect}-1`;
 			const xValue = coords[1].x;
-			const tickTransform = [];
+			const tickTransform: string[] = [];
 
 			main.selectAll(`.${$AXIS.axisX} .tick`).each(function() {
 				tickTransform.push(this.getAttribute("transform"));
@@ -422,7 +422,7 @@ describe("API zoom", function() {
 		});
 
 		it("check bar's width for zoom in/out API call", done => {
-			const len = [];
+			const len: number[] = [];
 
 			chart.$.bar.bars.each(function() {
 				len.push(this.getTotalLength());
