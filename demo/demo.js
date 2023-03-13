@@ -4486,7 +4486,12 @@ d3.select(".chart_area")
 						],
 						type: "area"
 					},
-					padding: true
+					padding: true,
+					axis: {
+						y2: {
+							show: true
+						}
+					}
 				}
 			},
 			{
@@ -4502,6 +4507,11 @@ d3.select(".chart_area")
 					},
 					padding: {
 						mode: "fit"
+					},
+					axis: {
+						y2: {
+							show: true
+						}
 					}
 				}
 			}
