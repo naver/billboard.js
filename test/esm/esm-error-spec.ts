@@ -25,7 +25,6 @@ describe("ESM-ERROR check", function() {
         const types = Object.keys(TYPE);
         let fn;
         let errorCount = 0;
-        // console.log(JSON.stringify(bb.instance[0].internal.config.data_columns));
 
         types.forEach(type => {
             try {

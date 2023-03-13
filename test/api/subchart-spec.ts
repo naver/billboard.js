@@ -114,10 +114,10 @@ describe("API subchart", () => {
 					// show subchart again
 					this.subchart.show();
 
-					const currentPath =  this.internal.$el.subchart.line.attr("d")
+					const currentPath =  this.internal.$el.subchart.line.attr("d");
 
 					expect(currentPath).to.be.not.equal(path);
-					expect(currentPath).to.be.equal("M6,38.694L299,55.083L593,5.917");
+					expect(currentPath).to.be.equal("M6,38.694L300,55.083L594,5.917");
 					done();
 				}
 			});

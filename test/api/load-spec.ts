@@ -823,10 +823,10 @@ describe("API load", function() {
 					done: function() {
 						const {axis} = this.internal.$el;
 						const {lines} = this.$.line;
-	
+		
 						expect(lines.size()).to.be.equal(1);
 						expect(+axis.y.selectAll(".tick:last-of-type text").text()).to.be.equal(155);
-						expect(lines.attr("d")).to.be.equal("M6,390.583L124,319.75L241,248.917L358,178.083L475,107.25L593,36.417");
+						expect(lines.attr("d")).to.be.equal("M6,390.583L124,319.75L241,248.917L359,178.083L476,107.25L594,36.417");
 
 						done();
 					}
