@@ -67,7 +67,7 @@ export default {
 			const xAxisTickValues = $$.getMaxDataCountTarget();
 
 			if (!config.data_xSort) {
-				xAxisTickValues.sort((a, b) => a.x - b.x);
+				xAxisTickValues.sort((a, b) => b.x - a.x);
 			}
 
 			// update data's index value to be alinged with the x Axis
