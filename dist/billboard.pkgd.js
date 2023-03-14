@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230308004649
+ * @version 3.7.5-nightly-20230314004656
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.4
@@ -1170,10 +1170,10 @@ var store = __webpack_require__(37);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.29.0',
+  version: '3.29.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.29.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.29.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -23820,12 +23820,13 @@ var Store = /*#__PURE__*/function () {
    * @name padding
    * @memberof Options
    * @type {object}
-   * @property {object|boolean|string} [padding=true] Set padding of chart, and accepts object or boolean type.
+   * @property {object|boolean} [padding=true] Set padding of chart, and accepts object or boolean type.
    * - `Object`: Specify each side's padding.
-   * - `"fit"`: Reduce padding as much as possible to make chart fit to the container element for chart types w/axis.
    * - `false`: Remove padding completely and make shape to fully occupy the container element.
    *   - In this case, axes and subchart will be hidden.
    *   - To adjust some padding from this state, use `axis.[x|y].padding` option.
+   * @property {string} [padding.mode] padding mode
+   * - `"fit"`: Reduce padding as much as possible to make chart fit to the container element for chart types w/axis.<br>When specified, all padding values will be relative from fitted value.
    * @property {number} [padding.top] padding on the top of chart
    * @property {number} [padding.right] padding on the right of chart
    * @property {number} [padding.bottom] padding on the bottom of chart
@@ -23836,8 +23837,17 @@ var Store = /*#__PURE__*/function () {
    * // remove padding completely.
    * padding: false,
    *
-   * // reduce padding and make fit to the container element.
-   * padding: "fit",
+   * padding: {
+   *   // specifying mode value, will reduce padding and make fit to the container element.
+   *   mode: "fit"
+   *
+   *   // when mode is "fit", all padding values will be relative from fitted value.
+   *   // so, 0 will be initial fitted value.
+   *   top: 20,
+   *   right: 20,
+   *   bottom: 20,
+   *   left: 20
+   * }
    *
    * // or specify padding value for each side
    * padding: {
@@ -23848,6 +23858,7 @@ var Store = /*#__PURE__*/function () {
    * }
    */
   padding: !0,
+  padding_mode: undefined,
   padding_left: undefined,
   padding_right: undefined,
   padding_top: undefined,
@@ -29506,13 +29517,14 @@ function getLegendColor(id) {
    * @private
    */
   getLegendHeight: function getLegendHeight() {
-    var $$ = this,
+    var _$$$config$padding,
+      $$ = this,
       _$$$state3 = $$.state,
       current = _$$$state3.current,
       isLegendRight = _$$$state3.isLegendRight,
       legendItemHeight = _$$$state3.legendItemHeight,
       legendStep = _$$$state3.legendStep,
-      isFitPadding = $$.config.padding === "fit";
+      isFitPadding = ((_$$$config$padding = $$.config.padding) == null ? void 0 : _$$$config$padding.mode) === "fit";
     return $$.config.legend_show ? isLegendRight ? current.height : (isFitPadding ? 10 : Math.max(20, legendItemHeight)) * (legendStep + 1) : 0;
   },
   /**
@@ -33233,54 +33245,60 @@ function stepAfter(context) {
     return padding + (axesLen ? $$.getHorizontalAxisHeight(axisId) * axesLen : 0);
   },
   getCurrentPaddingLeft: function getCurrentPaddingLeft(withoutRecompute) {
-    var $$ = this,
+    var _config$padding,
+      $$ = this,
       config = $$.config,
       hasAxis = $$.state.hasAxis,
       isRotated = config.axis_rotated,
-      isFitPadding = config.padding === "fit",
+      isFitPadding = ((_config$padding = config.padding) == null ? void 0 : _config$padding.mode) === "fit",
       axisId = isRotated ? "x" : "y",
-      axesLen = hasAxis ? config["axis_" + axisId + "_axes"].length : 0;
-    var axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0,
-      padding;
+      axesLen = hasAxis ? config["axis_" + axisId + "_axes"].length : 0,
+      axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
     if (!isFitPadding) {
       axisWidth = ceil10(axisWidth);
     }
+    var padding = config["axis_" + axisId + "_inner"] || !config["axis_" + axisId + "_show"] ? 0 : axisWidth;
     if (isValue(config.padding_left)) {
-      padding = config.padding_left;
+      padding = config.padding_left + (isFitPadding && isRotated ? axisWidth : 0);
     } else if (hasAxis && isRotated) {
       padding = !config.axis_x_show ? 1 : isFitPadding ? axisWidth : Math.max(axisWidth, 40);
-    } else if (hasAxis && (!config.axis_y_show || config.axis_y_inner)) {
-      // && !config.axis_rotated
-      padding = $$.axis.getAxisLabelPosition("y").isOuter ? 30 : 1;
-    } else {
-      padding = axisWidth;
+    }
+    if (hasAxis && (isFitPadding || config["axis_" + axisId + "_inner"]) && config["axis_" + axisId + "_label"].text) {
+      padding += $$.axis.getAxisLabelPosition("y").isOuter ? 20 : 0;
     }
     return padding + axisWidth * axesLen;
   },
   getCurrentPaddingRight: function getCurrentPaddingRight(withXAxisTickTextOverflow) {
+    var _config$padding2, _$$$axis;
     if (withXAxisTickTextOverflow === void 0) {
       withXAxisTickTextOverflow = !1;
     }
     var $$ = this,
       config = $$.config,
       hasAxis = $$.state.hasAxis,
+      isRotated = config.axis_rotated,
+      isFitPadding = ((_config$padding2 = config.padding) == null ? void 0 : _config$padding2.mode) === "fit",
+      defaultPadding = isFitPadding ? 2 : 10,
       legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
       axesLen = hasAxis ? config.axis_y2_axes.length : 0,
-      xAxisTickTextOverflow = withXAxisTickTextOverflow ? $$.axis.getXAxisTickTextY2Overflow(10) : 0;
-    var axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0,
-      padding;
-    if (config.padding !== "fit") {
+      axisLabelWidth = (_$$$axis = $$.axis) != null && _$$$axis.getAxisLabelPosition("y2").isOuter ? 20 : 0,
+      xAxisTickTextOverflow = withXAxisTickTextOverflow ? $$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
+    var axisWidth = hasAxis && !config.axis_y2_inner ? $$.getAxisWidthByAxisId("y2") : 1;
+    if (!isFitPadding) {
       axisWidth = ceil10(axisWidth);
     }
+    var padding = isRotated ? 0 : Math.max(axisWidth + legendWidthOnRight, xAxisTickTextOverflow);
     if (isValue(config.padding_right)) {
-      padding = config.padding_right + (hasAxis ? 1 : 0); // 1 is needed not to hide tick line
-    } else if ($$.axis && config.axis_rotated) {
-      padding = 10 + legendWidthOnRight;
+      // padding = config.padding_right + (hasAxis ? 1 : 0); // 1 is needed not to hide tick line
+
+      padding = config.padding_right + (isFitPadding && (isRotated || !config.axis_y2_show ? defaultPadding : padding)) + (hasAxis && !isFitPadding ? 1 : 0); // 1 is needed not to hide tick line
+    } else if ($$.axis && isRotated) {
+      padding = defaultPadding + legendWidthOnRight;
     } else if ($$.axis && (!config.axis_y2_show || config.axis_y2_inner)) {
-      // && !config.axis_rotated
-      padding = Math.max(2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0), xAxisTickTextOverflow);
-    } else {
-      padding = Math.max(axisWidth + legendWidthOnRight, xAxisTickTextOverflow);
+      padding = Math.max((isFitPadding && !config.axis_y2_show ? 2 : 1) + legendWidthOnRight + axisLabelWidth, xAxisTickTextOverflow);
+    }
+    if (hasAxis && !isRotated && isFitPadding && config.axis_y2_show && !config.axis_y2_inner && config.axis_y2_label.text) {
+      padding += axisLabelWidth;
     }
     return padding + axisWidth * axesLen;
   },
@@ -33419,13 +33437,14 @@ function stepAfter(context) {
    * @private
    */
   updateSizes: function updateSizes(isInit) {
-    var $$ = this,
+    var _config$padding3,
+      $$ = this,
       config = $$.config,
       state = $$.state,
       legend = $$.$el.legend,
       isRotated = config.axis_rotated,
       isNonAxis = $$.hasArcType() || state.hasTreemap,
-      isFitPadding = config.padding === "fit";
+      isFitPadding = ((_config$padding3 = config.padding) == null ? void 0 : _config$padding3.mode) === "fit";
     isInit || $$.setContainerSize();
     var currLegend = {
       width: legend ? $$.getLegendWidth() : 0,
@@ -40638,7 +40657,8 @@ var src_linear_linear = function (t) {
    * @private
    */
   setYAxisClipPath: function setYAxisClipPath(node) {
-    var $$ = this,
+    var _config$padding,
+      $$ = this,
       config = $$.config,
       _$$$state3 = $$.state,
       margin = _$$$state3.margin,
@@ -40647,10 +40667,10 @@ var src_linear_linear = function (t) {
       isRotated = config.axis_rotated,
       left = Math.max(30, margin.left) - (isRotated ? 20 : 0),
       isInner = config.axis_y_inner,
-      x = isInner ? -1 : isRotated ? -(1 + left) : -(left - 1),
+      x = isInner && !isRotated ? config.axis_y_label.text ? -20 : -1 : isRotated ? -(1 + left) : -(left - 1),
       y = -(isRotated ? 20 : margin.top),
       w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0),
-      h = (isRotated ? margin.bottom + (config.padding === "fit" ? 10 : 0) : margin.top + height) + 10;
+      h = (isRotated ? margin.bottom + (((_config$padding = config.padding) == null ? void 0 : _config$padding.mode) === "fit" ? 10 : 0) : margin.top + height) + 10;
     node.attr("x", x).attr("y", y).attr("width", w).attr("height", h);
   },
   updateXAxisTickClip: function updateXAxisTickClip() {
@@ -41268,14 +41288,16 @@ function smoothLines(el, type) {
       var _$$$axis,
         position = (_$$$axis = $$.axis) == null ? void 0 : _$$$axis.getLabelPositionById(id),
         width = $$.axis.getMaxTickWidth(id, withoutRecompute),
-        gap = width === 0 ? .5 : 0;
-      return width + ($$.config.padding === "fit" ? position.isInner ? 10 + gap : 10 : position.isInner ? 20 + gap : 40);
+        gap = width === 0 ? .5 : 0,
+        _$$$config$padding;
+      return width + (((_$$$config$padding = $$.config.padding) == null ? void 0 : _$$$config$padding.mode) === "fit" ? position.isInner ? 10 + gap : 10 : position.isInner ? 20 + gap : 40);
     } else {
       return 40;
     }
   },
   getHorizontalAxisHeight: function getHorizontalAxisHeight(id) {
-    var $$ = this,
+    var _config$padding,
+      $$ = this,
       config = $$.config,
       state = $$.state,
       _state = state,
@@ -41284,8 +41306,11 @@ function smoothLines(el, type) {
       isLegendRight = _state.isLegendRight,
       isLegendInset = _state.isLegendInset,
       isRotated = config.axis_rotated,
-      isInner = config["axis_" + id + "_inner"];
-    var h = config.padding === "fit" ? isInner ? 1 : 20 : 30;
+      isFitPadding = ((_config$padding = config.padding) == null ? void 0 : _config$padding.mode) === "fit",
+      isInner = config["axis_" + id + "_inner"],
+      hasLabelText = config["axis_" + id + "_label"].text,
+      _config$padding2,
+      h = ((_config$padding2 = config.padding) == null ? void 0 : _config$padding2.mode) === "fit" ? isInner && !hasLabelText ? id === "y" ? 1 : 0 : 20 : 30;
     if (id === "x" && !config.axis_x_show) {
       return 8;
     }
@@ -41296,7 +41321,7 @@ function smoothLines(el, type) {
       return config.legend_show && !isLegendRight && !isLegendInset ? 10 : 1;
     }
     if (id === "y2" && !config.axis_y2_show) {
-      return rotatedPadding.top;
+      return isFitPadding ? 0 : rotatedPadding.top;
     }
     var rotate = $$.getAxisTickRotate(id);
 
@@ -51336,7 +51361,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230308004649
+ * @version 3.7.5-nightly-20230314004656
  */
 var bb = {
   /**
@@ -51346,7 +51371,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.5-nightly-20230308004649",
+  version: "3.7.5-nightly-20230314004656",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230308004649
+ * @version 3.7.5-nightly-20230314004656
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1155,10 +1155,10 @@ var store = __webpack_require__(37);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.29.0',
+  version: '3.29.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.29.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.29.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -18397,7 +18397,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.7.5-nightly-20230308004649";
+Plugin.version = "3.7.5-nightly-20230314004656";
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
 /**
