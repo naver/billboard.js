@@ -795,31 +795,34 @@ export default {
 		const {axis, config} = $$;
 		const stepType = config.line_step_type;
 		const isCategorized = axis ? axis.isCategorized() : false;
-
 		const converted = isArray(values) ? values.concat() : [values];
 
 		if (!(isCategorized || /step\-(after|before)/.test(stepType))) {
 			return values;
 		}
 
-		// insert & append cloning first/last value to be fully rendered covering on each gap sides
-		const head = converted[0];
-		const tail = converted[converted.length - 1];
-		const {id} = head;
-		let {x} = head;
+		// when all datas are null, return empty array
+		// https://github.com/naver/billboard.js/issues/3124
+		if (converted.length) {
+			// insert & append cloning first/last value to be fully rendered covering on each gap sides
+			const head = converted[0];
+			const tail = converted[converted.length - 1];
+			const {id} = head;
+			let {x} = head;
 
-		// insert head
-		converted.unshift({x: --x, value: head.value, id});
-
-		isCategorized && stepType === "step-after" &&
+			// insert head
 			converted.unshift({x: --x, value: head.value, id});
 
-		// append tail
-		x = tail.x;
-		converted.push({x: ++x, value: tail.value, id});
+			isCategorized && stepType === "step-after" &&
+				converted.unshift({x: --x, value: head.value, id});
 
-		isCategorized && stepType === "step-before" &&
+			// append tail
+			x = tail.x;
 			converted.push({x: ++x, value: tail.value, id});
+
+			isCategorized && stepType === "step-before" &&
+				converted.push({x: ++x, value: tail.value, id});
+		}
 
 		return converted;
 	},
