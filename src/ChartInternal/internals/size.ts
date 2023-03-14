@@ -69,25 +69,26 @@ export default {
 		const $$ = this;
 		const {config, state: {hasAxis}} = $$;
 		const isRotated = config.axis_rotated;
-		const isFitPadding = config.padding === "fit";
+		const isFitPadding = config.padding?.mode === "fit";
 		const axisId = isRotated ? "x" : "y";
 		const axesLen = hasAxis ? config[`axis_${axisId}_axes`].length : 0;
 		let axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
-		let padding;
 
 		if (!isFitPadding) {
 			axisWidth = ceil10(axisWidth);
 		}
 
+		let padding = config[`axis_${axisId}_inner`] || !config[`axis_${axisId}_show`] ? 0 : axisWidth;
+
 		if (isValue(config.padding_left)) {
-			padding = config.padding_left;
+			padding = config.padding_left + (isFitPadding && isRotated ? axisWidth : 0);
 		} else if (hasAxis && isRotated) {
 			padding = !config.axis_x_show ?
 				1 : (isFitPadding ? axisWidth : Math.max(axisWidth, 40));
-		} else if (hasAxis && (!config.axis_y_show || config.axis_y_inner)) { // && !config.axis_rotated
-			padding = $$.axis.getAxisLabelPosition("y").isOuter ? 30 : 1;
-		} else {
-			padding = axisWidth;
+		}
+
+		if (hasAxis && (isFitPadding || config[`axis_${axisId}_inner`]) && config[`axis_${axisId}_label`].text) {
+			padding += $$.axis.getAxisLabelPosition("y").isOuter ? 20 : 0;
 		}
 
 		return padding + (axisWidth * axesLen);
@@ -96,29 +97,41 @@ export default {
 	getCurrentPaddingRight(withXAxisTickTextOverflow = false): number {
 		const $$ = this;
 		const {config, state: {hasAxis}} = $$;
-		const defaultPadding = 10;
+		const isRotated = config.axis_rotated;
+		const isFitPadding = config.padding?.mode === "fit";
+		const defaultPadding = isFitPadding ? 2 : 10;
 		const legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
 		const axesLen = hasAxis ? config.axis_y2_axes.length : 0;
+		const axisLabelWidth = $$.axis?.getAxisLabelPosition("y2").isOuter ? 20 : 0;
 		const xAxisTickTextOverflow = withXAxisTickTextOverflow ?
 			$$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
-		let axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0;
-		let padding;
+		let axisWidth = hasAxis && !config.axis_y2_inner ? $$.getAxisWidthByAxisId("y2") : 1;
 
-		if (config.padding !== "fit") {
+		if (!isFitPadding) {
 			axisWidth = ceil10(axisWidth);
 		}
 
+		let padding = isRotated ? 0 : Math.max(axisWidth + legendWidthOnRight, xAxisTickTextOverflow);
+
 		if (isValue(config.padding_right)) {
-			padding = config.padding_right + (hasAxis ? 1 : 0); // 1 is needed not to hide tick line
-		} else if ($$.axis && config.axis_rotated) {
+			// padding = config.padding_right + (hasAxis ? 1 : 0); // 1 is needed not to hide tick line
+
+			padding = config.padding_right +
+				(isFitPadding && (isRotated || !config.axis_y2_show ? defaultPadding : padding)) +
+				(hasAxis && !isFitPadding ? 1 : 0); // 1 is needed not to hide tick line
+		} else if ($$.axis && isRotated) {
 			padding = defaultPadding + legendWidthOnRight;
-		} else if ($$.axis && (!config.axis_y2_show || config.axis_y2_inner)) { // && !config.axis_rotated
+		} else if ($$.axis && (!config.axis_y2_show || config.axis_y2_inner)) {
 			padding = Math.max(
-				2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0),
+				(isFitPadding && !config.axis_y2_show ? 2 : 1) + legendWidthOnRight + axisLabelWidth,
 				xAxisTickTextOverflow
 			);
-		} else {
-			padding = Math.max(axisWidth + legendWidthOnRight, xAxisTickTextOverflow);
+		}
+
+		if (hasAxis && !isRotated && isFitPadding &&
+			config.axis_y2_show && !config.axis_y2_inner && config.axis_y2_label.text
+		) {
+			padding += axisLabelWidth;
 		}
 
 		return padding + (axisWidth * axesLen);
@@ -291,7 +304,7 @@ export default {
 		const {config, state, $el: {legend}} = $$;
 		const isRotated = config.axis_rotated;
 		const isNonAxis = $$.hasArcType() || state.hasTreemap;
-		const isFitPadding = config.padding === "fit";
+		const isFitPadding = config.padding?.mode === "fit";
 
 		!isInit && $$.setContainerSize();
 

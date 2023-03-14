@@ -29,7 +29,7 @@ export default {
 			const gap = width === 0 ? 0.5 : 0;
 
 			return width + (
-				$$.config.padding === "fit" ?
+				$$.config.padding?.mode === "fit" ?
 					position.isInner ? (10 + gap) : 10 :
 					position.isInner ? (20 + gap) : 40
 			);
@@ -43,8 +43,10 @@ export default {
 		const {config, state} = $$;
 		const {current, rotatedPadding, isLegendRight, isLegendInset} = state;
 		const isRotated = config.axis_rotated;
+		const isFitPadding = config.padding?.mode === "fit";
 		const isInner = config[`axis_${id}_inner`];
-		let h = config.padding === "fit" ? (isInner ? 1 : 20) : 30;
+		const hasLabelText = config[`axis_${id}_label`].text;
+		let h = config.padding?.mode === "fit" ? (isInner && !hasLabelText ? (id === "y" ? 1 : 0) : 20) : 30;
 
 		if (id === "x" && !config.axis_x_show) {
 			return 8;
@@ -61,7 +63,7 @@ export default {
 		}
 
 		if (id === "y2" && !config.axis_y2_show) {
-			return rotatedPadding.top;
+			return isFitPadding ? 0 : rotatedPadding.top;
 		}
 
 		const rotate = $$.getAxisTickRotate(id);

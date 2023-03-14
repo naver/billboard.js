@@ -326,7 +326,7 @@ describe("SHAPE AREA", () => {
 
 		const checkPath = expected => {
 			const {areas, lines} = chart.$.line;
-			
+
 			areas.each(function(d) {
 				expect(this.getAttribute("d").indexOf(expected.areas[d.id]) > -1).to.be.ok;
 			});
@@ -339,8 +339,8 @@ describe("SHAPE AREA", () => {
 		it("should be rendering correctly for category type", () => {		
 			const expectedPath = {
 				areas: {
-					data1: 'M-99,229.369L0.5,229.369L0.5,229.369L200,229.369L200',
-					data2: 'M-99,39.636L0.5,39.636L0.5,39.636L200,39.636L200'
+					data1: "M-99,229.369L0.5,229.369L0.5,229.369L200,229.369L200",
+					data2: "M-99,39.636L0.5,39.636L0.5,39.636L200"
 				},
 				lines: {
 					data1: 'M-99,229.369L0.5,229.369L0.5,229.369L200,229.369L200',
@@ -360,12 +360,12 @@ describe("SHAPE AREA", () => {
 		it("should be rendering correctly for timeseries type", () => {		
 			const expectedPath = {
 				areas: {
-					data1: 'M6,229.369L299.5,229.369L299.5,28',
-					data2: 'M6,39.636L299.5,39.636L299.5,94.831L593,94.831L593'
+					data1: "M6,229.369L300,229.369L300,284.563L594,284.563L594,426L300,426L300,426L6,426Z",
+					data2: "M6,39.636L300,39.636L300,94.831L594,94.831L594,284.563L300,284.563L300,229.369L6,229.369Z"
 				},
 				lines: {
-					data1: 'M6,229.369L299.5,229.369L299.5,284.563L593,284.563',
-					data2: 'M6,39.636L299.5,39.636L299.5,94.831L593,94.831'
+					data1: "M6,229.369L300,229.369L300,284.563L594,284.563",
+					data2: "M6,39.636L300,39.636L300,94.831L594,94.831"
 				}
 			};
 

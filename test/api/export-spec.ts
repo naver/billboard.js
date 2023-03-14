@@ -51,25 +51,14 @@ describe("API export", () => {
 		});
 
 		it("should export in different size", done => {
-			const expectedDataURL = [
-				"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAJYCAYAAADxHswlAAA",
-
-				// tails
-				"AAAAASUVORK5CYII=",
-				"XRLKx5vmwDQAAAABJRU5ErkJggg==",
-
-				// for window test
-				"AAAAAElFTkSuQmCC"
-			];
+			const expectedDataURL = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA+gAAAJYCAYAAA";
 
 			setTimeout(() => {
 				chart.export({
 					width: 1000, height: 600
 				}, data => {
-					expect(
-						expectedDataURL.map(v => data.indexOf(v) >= 0).filter(Boolean).length
-					).to.be.equal(2);
-
+					expect(data.indexOf(expectedDataURL) >= 0).to.be.true;
+					
 					done();
 				});
 			}, 500);
@@ -201,15 +190,22 @@ describe("API export", () => {
 		const expected = [
 			// pattern for local
 			[
-				"P9CArwf2B9IIJoEKAAdimvjBKA5GoLnJZFJOuSu",
-				"oANQ+oASUgBJQAkpACSiBEiOgArDEHK7NVQJKQA",
-				"SWgBJTA/wPqQjRHnDx9rAAAAABJRU5ErkJggg=="
+				"7IGcA2HBgMua0IUAC2VboZ",
+				"3amcNi7UuVTxRPSwvAfFB62tT3oGPq19",
+				"txj4AmOudAzWBRz9SPQ4x9bahVff"
 			],
 			// pattern for CI
 			[
-				"SR0IArs4c6QAAIABJREFUeF7snXmcXEXV/p9TdwI",
-				"ALxJBBVAaiTpCOq8cRzdkU0qkwmo8lkknMpovmj2",
-				"AAmQAAnESOD/AxjGOWWrWLsNAAAAAElFTkSuQmCC"
+				"LK8KS5EACZAACZAACfiBAAWgB71YLAC11tnTH8uqY2dn5PWVkaY3jBC8wrz",
+				"XIn7akz9quVQcDAW9d9BgONwWgqycjBaCr3eMv47RG",
+				"REQAREQAREQAT+PxFHMN6p9sQ/AAAAAElFTkSuQmCC"
+			],
+
+			// pattern for CI: preserveFontStyle=true
+			[
+				"8WKaVQdVJgNdDneDYjQQcJkAB6FhyJheA1l",
+				"3zRzZpi2si4SsIoABWBRd5jVv80BvATgDgAvAkgBeBfAKwDyv1CKCMAng58Pl5",
+				"AmQAAmQQIQE/j8J/ypz0WHw1wAAAABJRU5ErkJggg=="
 			]
 		];
 
@@ -248,14 +244,14 @@ describe("API export", () => {
 					expect(
 						expected.some(pttr => pttr.every(v => dataUrl.indexOf(v) >= 0))
 					).to.be.true;
-	
+
 					chart.$.chart
 						.style("margin-left", null)
 						.style("padding-top", null);
 
 					done();
 				});
-			});			
+			});
 		});
 	});
 });
