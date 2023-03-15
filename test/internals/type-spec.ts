@@ -15,6 +15,41 @@ describe("TYPES", () => {
 		chart = util.generate(args);
 	});
 
+	describe("data.type / data.types", () => {
+		before(() => {
+			args = {
+				data: {
+					type: "bars",
+					columns: [
+						["data1", 30, 20, 50, 40, 60, 50],
+						["data2", 200, 130, 90, 240, 130, 220],
+					]
+				}
+			};
+		});
+
+		it("should generate when wrong data.type is specified.", () => {
+			const lines = chart.$.line.lines.size();
+
+			expect(lines).to.be.equal(2);
+		});
+
+		it("set option: data.types", () => {
+			args.data.type = "bar";
+			args.data.types = {
+				data2: undefined
+			};
+		});
+
+		it("should generate when falsy data.types value is specified.", () => {
+			const {bar: {bars}, line: {lines}} = chart.$;
+
+			expect(lines).to.be.null;
+			expect(bars.size()).to.be.equal(12);
+		});
+	});
+
+
 	describe("internal.hasArcType", () => {
 		describe("with data", () => {
 			before(() => {
