@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230314004656
+ * @version 3.7.5-nightly-20230315004715
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.4
@@ -27264,36 +27264,40 @@ function getDataKeyForJson(keysParam, config) {
       return values;
     }
 
-    // insert & append cloning first/last value to be fully rendered covering on each gap sides
-    var head = converted[0],
-      tail = converted[converted.length - 1],
-      id = head.id;
-    var x = head.x;
+    // when all datas are null, return empty array
+    // https://github.com/naver/billboard.js/issues/3124
+    if (converted.length) {
+      // insert & append cloning first/last value to be fully rendered covering on each gap sides
+      var head = converted[0],
+        tail = converted[converted.length - 1],
+        id = head.id;
+      var x = head.x;
 
-    // insert head
-    converted.unshift({
-      x: --x,
-      value: head.value,
-      id: id
-    });
-    isCategorized && stepType === "step-after" && converted.unshift({
-      x: --x,
-      value: head.value,
-      id: id
-    });
+      // insert head
+      converted.unshift({
+        x: --x,
+        value: head.value,
+        id: id
+      });
+      isCategorized && stepType === "step-after" && converted.unshift({
+        x: --x,
+        value: head.value,
+        id: id
+      });
 
-    // append tail
-    x = tail.x;
-    converted.push({
-      x: ++x,
-      value: tail.value,
-      id: id
-    });
-    isCategorized && stepType === "step-before" && converted.push({
-      x: ++x,
-      value: tail.value,
-      id: id
-    });
+      // append tail
+      x = tail.x;
+      converted.push({
+        x: ++x,
+        value: tail.value,
+        id: id
+      });
+      isCategorized && stepType === "step-before" && converted.push({
+        x: ++x,
+        value: tail.value,
+        id: id
+      });
+    }
     return converted;
   },
   convertValuesToRange: function convertValuesToRange(values) {
@@ -51361,7 +51365,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230314004656
+ * @version 3.7.5-nightly-20230315004715
  */
 var bb = {
   /**
@@ -51371,7 +51375,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.5-nightly-20230314004656",
+  version: "3.7.5-nightly-20230315004715",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

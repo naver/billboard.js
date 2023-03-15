@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.5-nightly-20230314004656
+ * @version 3.7.5-nightly-20230315004715
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4336,20 +4336,24 @@ var data$1 = {
         if (!(isCategorized || /step\-(after|before)/.test(stepType))) {
             return values;
         }
-        // insert & append cloning first/last value to be fully rendered covering on each gap sides
-        var head = converted[0];
-        var tail = converted[converted.length - 1];
-        var id = head.id;
-        var x = head.x;
-        // insert head
-        converted.unshift({ x: --x, value: head.value, id: id });
-        isCategorized && stepType === "step-after" &&
+        // when all datas are null, return empty array
+        // https://github.com/naver/billboard.js/issues/3124
+        if (converted.length) {
+            // insert & append cloning first/last value to be fully rendered covering on each gap sides
+            var head = converted[0];
+            var tail = converted[converted.length - 1];
+            var id = head.id;
+            var x = head.x;
+            // insert head
             converted.unshift({ x: --x, value: head.value, id: id });
-        // append tail
-        x = tail.x;
-        converted.push({ x: ++x, value: tail.value, id: id });
-        isCategorized && stepType === "step-before" &&
+            isCategorized && stepType === "step-after" &&
+                converted.unshift({ x: --x, value: head.value, id: id });
+            // append tail
+            x = tail.x;
             converted.push({ x: ++x, value: tail.value, id: id });
+            isCategorized && stepType === "step-before" &&
+                converted.push({ x: ++x, value: tail.value, id: id });
+        }
         return converted;
     },
     convertValuesToRange: function (values) {
@@ -22169,7 +22173,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230314004656
+ * @version 3.7.5-nightly-20230315004715
  */
 var bb = {
     /**
@@ -22179,7 +22183,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.5-nightly-20230314004656",
+    version: "3.7.5-nightly-20230315004715",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
