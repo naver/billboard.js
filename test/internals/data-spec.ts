@@ -1348,4 +1348,30 @@ describe("DATA", () => {
 			expect(r > 0).to.be.true;
 		});
 	});
+
+	describe("null data", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", null, null, null, null, null, null],
+						["data2", 1, 10, 100, 1000, 10000, 100000],
+					],
+					type: "area-step"
+				},
+				line: {
+					connectNull: true
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("category x axis with whole dataseries contains null", () => {
+			expect(true).to.be.true;
+		});
+	});
 });
