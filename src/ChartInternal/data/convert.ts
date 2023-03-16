@@ -76,6 +76,7 @@ export default {
 	convertDataToTargets(data: {[key:string]: number|null}[], appendXs: boolean): IData[] {
 		const $$ = this;
 		const {axis, config, state} = $$;
+		const chartType = config.data_type;
 		let isCategorized = false;
 		let isTimeSeries = false;
 		let isCustomX = false;
@@ -207,9 +208,11 @@ export default {
 		state.hasPositiveValue = $$.hasPositiveValueInTargets(targets);
 
 		// set target types
-		if (config.data_type) {
-			$$.setTargetType($$.mapToIds(targets)
-				.filter(id => !(id in config.data_types)), config.data_type);
+		if (chartType && $$.isValidChartType(chartType)) {
+			const targetIds = $$.mapToIds(targets)
+				.filter(id => !(id in config.data_types) || !$$.isValidChartType(config.data_types[id]));
+
+			$$.setTargetType(targetIds, chartType);
 		}
 
 		// cache as original id keyed

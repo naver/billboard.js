@@ -6,6 +6,16 @@ import {isArray, isNumber, isString} from "../../module/util";
 import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
 
 export default {
+	/**
+	 * Check if the given chart type is valid
+	 * @param {string} type Chart type string
+	 * @returns {boolean}
+	 * @private
+	 */
+	isValidChartType(type: string): boolean {
+		return !!(type && Object.values(TYPE).indexOf(type) > -1);
+	},
+
 	setTargetType(targetIds: string[], type: string): void {
 		const $$ = this;
 		const {config, state: {withoutFadeIn}} = $$;
