@@ -24,7 +24,8 @@ const plugins = [
     }),
     typescript(),
     replace({
-        "__VERSION__": version
+        "__VERSION__": version,
+        preventAssignment: true
     })
 ];
 const external = id => /^d3-/.test(id);
@@ -37,7 +38,7 @@ const bbPlugins = fs.readdirSync(path.resolve(__dirname, "../../src/Plugin/"), {
 .map(({name}) => ({
     input: `src/Plugin/${name}/index.ts`,
     output: {
-        file: `dist/plugin/billboardjs-plugin-${name}.esm.js`,
+        file: `dist/plugin/billboardjs-plugin-${name}.esm.mjs`,
         format: "es",
         banner: getBanner(true)
     },
@@ -49,7 +50,7 @@ export default [
     {
         input: "src/index.esm.ts",
         output: {
-            file: "dist/billboard.esm.js",
+            file: "dist/billboard.esm.mjs",
             format: "es",
             banner: getBanner()
         },
