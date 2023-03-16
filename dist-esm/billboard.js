@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.5-nightly-20230315004715
+ * @version 3.7.5-nightly-20230316004649
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3588,6 +3588,7 @@ var dataConvert = {
         var _this = this;
         var $$ = this;
         var axis = $$.axis, config = $$.config, state = $$.state;
+        var chartType = config.data_type;
         var isCategorized = false;
         var isTimeSeries = false;
         var isCustomX = false;
@@ -3700,9 +3701,10 @@ var dataConvert = {
         state.hasNegativeValue = $$.hasNegativeValueInTargets(targets);
         state.hasPositiveValue = $$.hasPositiveValueInTargets(targets);
         // set target types
-        if (config.data_type) {
-            $$.setTargetType($$.mapToIds(targets)
-                .filter(function (id) { return !(id in config.data_types); }), config.data_type);
+        if (chartType && $$.isValidChartType(chartType)) {
+            var targetIds = $$.mapToIds(targets)
+                .filter(function (id) { return !(id in config.data_types) || !$$.isValidChartType(config.data_types[id]); });
+            $$.setTargetType(targetIds, chartType);
         }
         // cache as original id keyed
         targets.forEach(function (d) { return $$.cache.add(d.id_org, d, true); });
@@ -8687,6 +8689,15 @@ var transform = {
  * billboard.js project is licensed under the MIT license
  */
 var typeInternals = {
+    /**
+     * Check if the given chart type is valid
+     * @param {string} type Chart type string
+     * @returns {boolean}
+     * @private
+     */
+    isValidChartType: function (type) {
+        return !!(type && Object.values(TYPE).indexOf(type) > -1);
+    },
     setTargetType: function (targetIds, type) {
         var $$ = this;
         var config = $$.config, withoutFadeIn = $$.state.withoutFadeIn;
@@ -22173,7 +22184,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230315004715
+ * @version 3.7.5-nightly-20230316004649
  */
 var bb = {
     /**
@@ -22183,7 +22194,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.5-nightly-20230315004715",
+    version: "3.7.5-nightly-20230316004649",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

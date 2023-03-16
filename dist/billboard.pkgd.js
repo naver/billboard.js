@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230315004715
+ * @version 3.7.5-nightly-20230316004649
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.4
@@ -26326,6 +26326,7 @@ function getDataKeyForJson(keysParam, config) {
       axis = $$.axis,
       config = $$.config,
       state = $$.state,
+      chartType = config.data_type,
       isCategorized = !1,
       isTimeSeries = !1,
       isCustomX = !1;
@@ -26469,11 +26470,12 @@ function getDataKeyForJson(keysParam, config) {
     state.hasPositiveValue = $$.hasPositiveValueInTargets(targets);
 
     // set target types
-    if (config.data_type) {
-      $$.setTargetType($$.mapToIds(targets).filter(function (id) {
+    if (chartType && $$.isValidChartType(chartType)) {
+      var targetIds = $$.mapToIds(targets).filter(function (id) {
         _newArrowCheck(this, _this2);
-        return !(id in config.data_types);
-      }.bind(this)), config.data_type);
+        return !(id in config.data_types) || !$$.isValidChartType(config.data_types[id]);
+      }.bind(this));
+      $$.setTargetType(targetIds, chartType);
     }
 
     // cache as original id keyed
@@ -34796,6 +34798,15 @@ function getTextPos(pos, width) {
 
 
 /* harmony default export */ var internals_type = ({
+  /**
+   * Check if the given chart type is valid
+   * @param {string} type Chart type string
+   * @returns {boolean}
+   * @private
+   */
+  isValidChartType: function isValidChartType(type) {
+    return !!(type && Object.values(TYPE).indexOf(type) > -1);
+  },
   setTargetType: function setTargetType(targetIds, type) {
     var _this = this,
       $$ = this,
@@ -51365,7 +51376,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230315004715
+ * @version 3.7.5-nightly-20230316004649
  */
 var bb = {
   /**
@@ -51375,7 +51386,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.5-nightly-20230315004715",
+  version: "3.7.5-nightly-20230316004649",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
