@@ -250,20 +250,5 @@ export default {
 
 		// Draw with new sizes & scales
 		$$.redraw(options, transitions);
-	},
-
-	/**
-	 * Redraw without rescale
-	 * @private
-	 */
-	redrawWithoutRescale(): void {
-		this.redraw({
-			withY: false,
-			withDimension: false,
-			withLegend: false,
-			withSubchart: false,
-			withEventRect: false,
-			withTransitionForAxis: false,
-		});
 	}
 };
