@@ -3,9 +3,33 @@
  * billboard.js project is licensed under the MIT license
  */
 import {$REGION} from "../../config/classes";
-import {getOption, extend} from "../../module/util";
+import {getOption, extend, isTabVisible} from "../../module/util";
 
-type RegionsParam = {axis?: string, class?: string, start?: number, end?: number}[];
+type RegionsParam = {axis?: "add" | "update", class?: string, start?: number, end?: number}[];
+
+/**
+ * Region add/update function
+ * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as regions.
+ * @param {boolean} isAdd If true, add new regions, otherwise update regions
+ * @returns {Array} regions
+ * @private
+ */
+function regionsFn(regions: RegionsParam, isAdd = false): RegionsParam {
+	const $$ = this.internal;
+	const {config} = $$;
+	const withTransition = config.transition_duration && isTabVisible();
+
+	if (!regions) {
+		return config.regions;
+	}
+
+	config.regions = isAdd ? config.regions.concat(regions) : regions;
+
+	$$.updateRegion();
+	$$.redrawRegion(withTransition);
+
+	return isAdd ? config.regions : regions;
+}
 
 /**
  * Update regions.
@@ -22,17 +46,7 @@ type RegionsParam = {axis?: string, class?: string, start?: number, end?: number
  * ]);
  */
 const regions = function(regions: RegionsParam): RegionsParam {
-	const $$ = this.internal;
-	const {config} = $$;
-
-	if (!regions) {
-		return config.regions;
-	}
-
-	config.regions = regions;
-	$$.redrawWithoutRescale();
-
-	return regions;
+	return regionsFn.bind(this)(regions);
 };
 
 extend(regions, {
@@ -57,17 +71,7 @@ extend(regions, {
 	 *]);
 	 */
 	add: function(regions: RegionsParam): RegionsParam {
-		const $$ = this.internal;
-		const {config} = $$;
-
-		if (!regions) {
-			return config.regions;
-		}
-
-		config.regions = config.regions.concat(regions);
-		$$.redrawWithoutRescale();
-
-		return config.regions;
+		return regionsFn.bind(this)(regions, true);
 	},
 
 	/**

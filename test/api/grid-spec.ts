@@ -13,11 +13,14 @@ describe("API grid", function() {
 
 	before(() => {
 		return new Promise((resolve) => {
-				chart = util.generate({
+			chart = util.generate({
 				data: {
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250]
 					]
+				},
+				transition: {
+					duration: 0
 				},
 				onrendered: resolve
 			});
@@ -36,16 +39,14 @@ describe("API grid", function() {
 					text: "Pressure High"
 				}];
 
-			let grids;
-
 			// add grid
 			chart.ygrids.add(expectedGrids);
 
+			let grids = main.selectAll(`.${$GRID.ygridLine}`);
+
+			expect(grids.size()).to.be.equal(expectedGrids.length);
+
 			setTimeout(() => {
-				grids = main.selectAll(`.${$GRID.ygridLine}`);
-
-				expect(grids.size()).to.be.equal(expectedGrids.length);
-
 				grids.each(function (d, i) {
 					const y = +d3Select(this).select("line").attr("y1");
 					const text = d3Select(this).select("text").text();
@@ -59,12 +60,10 @@ describe("API grid", function() {
 				// remove grid
 				chart.ygrids.remove(expectedGrids);
 
-				setTimeout(() => {
-					grids = main.selectAll(`.${$GRID.ygridLine}`);
+				grids = main.selectAll(`.${$GRID.ygridLine}`);
 
-					expect(grids.size()).to.be.equal(0);
-					done();
-				}, 500);
+				expect(grids.size()).to.be.equal(0);
+				done();
 			}, 500);
 		});
 

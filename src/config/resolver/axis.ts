@@ -8,8 +8,7 @@
 // Chart
 import apiAxis from "../../Chart/api/axis";
 import apiCategory from "../../Chart/api/category";
-import apiXGrid from "../../Chart/api/grid.x";
-import apiYGrid from "../../Chart/api/grid.y";
+import apiGrid from "../../Chart/api/grid";
 import apiGroup from "../../Chart/api/group";
 import apiRegion from "../../Chart/api/regions";
 import apiX from "../../Chart/api/x";
@@ -33,9 +32,8 @@ import optGrid from "../Options/common/grid";
 export const api = [
 	apiAxis,
 	apiCategory,
-	apiXGrid,
-	apiYGrid,
 	apiFlow,
+	apiGrid,
 	apiGroup,
 	apiRegion,
 	apiX
