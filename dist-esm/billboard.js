@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.5-nightly-20230316004649
+ * @version 3.7.5-nightly-20230322004715
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -973,7 +973,7 @@ var $EVENT = {
     eventRect: "bb-event-rect",
     eventRects: "bb-event-rects",
     eventRectsMultiple: "bb-event-rects-multiple",
-    eventRectsSingle: "bb-event-rects-single"
+    eventRectsSingle: "bb-event-rects-single",
 };
 var $FOCUS = {
     focused: "bb-focused",
@@ -1013,7 +1013,7 @@ var $SELECT = {
 };
 var $SHAPE = {
     shape: "bb-shape",
-    shapes: "bb-shapes"
+    shapes: "bb-shapes",
 };
 var $SUBCHART = {
     brush: "bb-brush",
@@ -1082,12 +1082,12 @@ var Element = /** @class */ (function () {
             grid: {
                 main: null,
                 x: null,
-                y: null
+                y: null, // ygrid,
             },
             gridLines: {
                 main: null,
                 x: null,
-                y: null
+                y: null, // ygridLines
             },
             region: {
                 main: null,
@@ -1156,7 +1156,7 @@ var State = /** @class */ (function () {
                     y2: { size: 0, domain: "" }
                 },
                 // current used chart type list
-                types: []
+                types: [],
             },
             // legend
             isLegendRight: false,
@@ -4946,7 +4946,7 @@ var classModule = {
         };
     },
     classRegion: function (d, i) {
-        return "".concat(this.generateClass(CLASS.region, i), " ").concat("class" in d ? d["class"] : "");
+        return "".concat(this.generateClass(CLASS.region, i), " ").concat("class" in d ? d.class : "");
     },
     classTarget: function (id) {
         var additionalClassSuffix = this.config.data_classes[id];
@@ -5006,7 +5006,7 @@ var category = {
     categoryName: function (i) {
         var categories = this.config.axis_x_categories;
         return i < (categories === null || categories === void 0 ? void 0 : categories.length) ? categories[i] : i;
-    }
+    },
 };
 
 /**
@@ -6557,7 +6557,7 @@ var redraw = {
             withLegend: false,
             withSubchart: false,
             withEventRect: false,
-            withTransitionForAxis: false
+            withTransitionForAxis: false,
         });
     }
 };
@@ -8208,7 +8208,7 @@ var title = {
     getTitlePadding: function () {
         var $$ = this;
         return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
-    }
+    },
 };
 
 var tooltip$1 = {
@@ -9375,7 +9375,7 @@ var ChartInternal = /** @class */ (function () {
                     .attr("clip-path", state.clip.path);
             }
             element
-                .attr("class", bg["class"] || null)
+                .attr("class", bg.class || null)
                 .attr("width", "100%")
                 .attr("height", "100%");
         }
@@ -9656,7 +9656,7 @@ var apiChart = {
             }) : $$.updateAndRedraw({
                 withLegend: true,
                 withTransition: false,
-                withTransitionForTransform: false
+                withTransitionForTransform: false,
             });
             // reset subchart selection & selection state
             if (!state.resizing && $$.brush) {
@@ -10162,7 +10162,7 @@ var apiExport = {
      *    dataUrl => { ... }
      *  );
      */
-    "export": function (option, callback) {
+    export: function (option, callback) {
         var _this = this;
         var $$ = this.internal;
         var state = $$.state, _a = $$.$el, chart = _a.chart, svg = _a.svg;
@@ -11509,10 +11509,10 @@ extend(regions, {
         if (Object.keys(options).length) {
             regions = regions.filter(function (region) {
                 var found = false;
-                if (!region["class"]) {
+                if (!region.class) {
                     return true;
                 }
-                region["class"].split(" ").forEach(function (c) {
+                region.class.split(" ").forEach(function (c) {
                     if (classes.indexOf(c) >= 0) {
                         found = true;
                     }
@@ -11778,7 +11778,7 @@ var apiFlow = {
                     length: length,
                     duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
                     done: args.done,
-                    orgDataCount: orgDataCount
+                    orgDataCount: orgDataCount,
                 },
                 withLegend: true,
                 withTransition: orgDataCount > 1,
@@ -14028,12 +14028,12 @@ var grid = {
             "x1": 0,
             "x2": state.width,
             "y1": pos,
-            "y2": pos
+            "y2": pos,
         } : {
             "x1": pos,
             "x2": pos,
             "y1": 0,
-            "y2": state.height
+            "y2": state.height,
         };
         grid.x = main.select(".".concat($GRID.xgrids))
             .selectAll(".".concat($GRID.xgrid))
@@ -14111,7 +14111,7 @@ var grid = {
             .style("opacity", "0");
         xLines = xgridLine.merge(xLines);
         $T(xLines
-            .attr("class", function (d) { return "".concat($GRID.xgridLine, " ").concat(d["class"] || "").trim(); })
+            .attr("class", function (d) { return "".concat($GRID.xgridLine, " ").concat(d.class || "").trim(); })
             .select("text")
             .attr("text-anchor", getGridTextAnchor)
             .attr("dx", getGridTextDx))
@@ -14146,7 +14146,7 @@ var grid = {
         // update
         var yv = $$.yv.bind($$);
         $T(ygridLines
-            .attr("class", function (d) { return "".concat($GRID.ygridLine, " ").concat(d["class"] || "").trim(); })
+            .attr("class", function (d) { return "".concat($GRID.ygridLine, " ").concat(d.class || "").trim(); })
             .select("line"))
             .attr("x1", isRotated ? yv : 0)
             .attr("x2", isRotated ? yv : width)
@@ -14334,7 +14334,7 @@ var grid = {
         return params ? function (line) {
             var found = false;
             (isArray(params) ? params.concat() : [params]).forEach(function (param) {
-                if ((("value" in param && line.value === param.value) || ("class" in param && line["class"] === param["class"]))) {
+                if ((("value" in param && line.value === param.value) || ("class" in param && line.class === param.class))) {
                     found = true;
                 }
             });
@@ -14355,7 +14355,7 @@ var grid = {
             .remove();
         var gridLines = "grid_".concat(forX ? "x" : "y", "_lines");
         config[gridLines] = config[gridLines].filter(toShow);
-    }
+    },
 };
 
 /**
@@ -14476,7 +14476,7 @@ var region = {
     },
     isRegionOnX: function (d) {
         return !d.axis || d.axis === "x";
-    }
+    },
 };
 
 var sizeAxis = {
@@ -16799,7 +16799,7 @@ var shapeArc = {
             id: "data" in d ? d.data.id : d.id,
             value: d.value,
             ratio: this.getRatio("arc", d),
-            index: d.index
+            index: d.index,
         });
     },
     textForArcLabel: function (selection) {
@@ -18265,7 +18265,7 @@ var shapeLine = {
         var linePoint = this.config.line_point;
         return linePoint === true ||
             (isArray(linePoint) && linePoint.indexOf(d.id) !== -1);
-    }
+    },
 };
 
 var getTransitionName = function () { return getRandom(); };
@@ -19879,7 +19879,7 @@ var optScatter = {
      *      zerobased: false
      *  }
      */
-    scatter_zerobased: false
+    scatter_zerobased: false,
 };
 
 /**
@@ -22184,7 +22184,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230316004649
+ * @version 3.7.5-nightly-20230322004715
  */
 var bb = {
     /**
@@ -22194,7 +22194,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.5-nightly-20230316004649",
+    version: "3.7.5-nightly-20230322004715",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

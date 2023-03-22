@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.5-nightly-20230316004649
+ * @version 3.7.5-nightly-20230322004715
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -121,7 +121,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.7.5-nightly-20230316004649";
+    Plugin.version = "3.7.5-nightly-20230322004715";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -191,7 +191,7 @@ var Options = /** @class */ (function () {
              * @example
              *   class: "table-class-name"
              */
-            "class": undefined,
+            class: undefined,
             /**
              * Set to apply default style(`.bb-tableview`) to tableview element.
              * @name style
@@ -235,7 +235,7 @@ var Options$1 = Options;
  */
 var defaultStyle = {
     id: "__tableview-style__",
-    "class": "bb-tableview",
+    class: "bb-tableview",
     rule: ".bb-tableview {\n\t\tborder-collapse:collapse;\n\t\tborder-spacing:0;\n\t\tbackground:#fff;\n\t\tmin-width:100%;\n\t\tmargin-top:10px;\n\t\tfont-family:sans-serif;\n\t\tfont-size:.9em;\n\t}\n\t.bb-tableview tr:hover {\n\t\tbackground:#eef7ff;\n\t}\n\t.bb-tableview thead tr {\n\t\tbackground:#f8f8f8;\n\t}\n\t.bb-tableview caption,.bb-tableview td,.bb-tableview th {\n\t\ttext-align: center;\n\t\tborder:1px solid silver;\n\t\tpadding:.5em;\n\t}\n\t.bb-tableview caption {\n\t\tfont-size:1.1em;\n\t\tfont-weight:700;\n\t\tmargin-bottom: -1px;\n\t}"
 };
 // template
@@ -465,8 +465,8 @@ var TableView = /** @class */ (function (_super) {
     };
     TableView.prototype.$init = function () {
         var _a;
-        var _b = this.config, className = _b["class"], selector = _b.selector, style = _b.style;
-        var element = document.querySelector(selector || ".".concat(className || defaultStyle["class"]));
+        var _b = this.config, className = _b.class, selector = _b.selector, style = _b.style;
+        var element = document.querySelector(selector || ".".concat(className || defaultStyle.class));
         if (!element) {
             var chart = this.$$.$el.chart.node();
             element = document.createElement("table");
@@ -485,7 +485,7 @@ var TableView = /** @class */ (function (_super) {
             (document.head || document.getElementsByTagName("head")[0])
                 .appendChild(s);
         }
-        (_a = element.classList).add.apply(_a, [style && defaultStyle["class"], className].filter(Boolean));
+        (_a = element.classList).add.apply(_a, [style && defaultStyle.class, className].filter(Boolean));
         this.element = element;
     };
     /**

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.5-nightly-20230316004649
+ * @version 3.7.5-nightly-20230322004715
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -154,7 +154,7 @@ var $EVENT = {
     eventRect: "bb-event-rect",
     eventRects: "bb-event-rects",
     eventRectsMultiple: "bb-event-rects-multiple",
-    eventRectsSingle: "bb-event-rects-single"
+    eventRectsSingle: "bb-event-rects-single",
 };
 var $FOCUS = {
     focused: "bb-focused",
@@ -190,7 +190,7 @@ var $SELECT = {
 };
 var $SHAPE = {
     shape: "bb-shape",
-    shapes: "bb-shapes"
+    shapes: "bb-shapes",
 };
 var $SUBCHART = {
     brush: "bb-brush",
@@ -278,7 +278,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.7.5-nightly-20230316004649";
+    Plugin.version = "3.7.5-nightly-20230322004715";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
