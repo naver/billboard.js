@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230322004715
+ * @version 3.7.5-nightly-20230323004638
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -30300,20 +30300,6 @@ function getLegendColor(id) {
 
     // Draw with new sizes & scales
     $$.redraw(options, transitions);
-  },
-  /**
-   * Redraw without rescale
-   * @private
-   */
-  redrawWithoutRescale: function redrawWithoutRescale() {
-    this.redraw({
-      withY: !1,
-      withDimension: !1,
-      withLegend: !1,
-      withSubchart: !1,
-      withEventRect: !1,
-      withTransitionForAxis: !1
-    });
   }
 });
 ;// CONCATENATED MODULE: ./node_modules/d3-array/src/ticks.js
@@ -37659,11 +37645,53 @@ var axis = {
     return config.axis_x_categories;
   }
 });
-;// CONCATENATED MODULE: ./src/Chart/api/grid.x.ts
+;// CONCATENATED MODULE: ./src/Chart/api/grid.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
+/**
+ * Update grid lines.
+ * @param {Array} grids grid lines to update
+ * @param {string} axisId axis' id: "x" or "y"
+ * @returns {Array}
+ * @private
+ */
+function grid(grids, axisId) {
+  var $$ = this.internal,
+    config = $$.config,
+    withTransition = config.transition_duration && isTabVisible(),
+    gridPropLines = "grid_" + axisId + "_lines";
+  if (!grids) {
+    return config[gridPropLines];
+  }
+  config[gridPropLines] = grids;
+  $$.updateGrid();
+  $$.redrawGrid(withTransition);
+  return config[gridPropLines];
+}
+
+/**
+ * Add grid lines.
+ * @param {Array|object} grids grid lines to add
+ * @param {string} axisId axis' id: "x" or "y"
+ * @returns {Array}
+ * @private
+ */
+function _add(grids, axisId) {
+  return grid.bind(this)(this.internal.config["grid_" + axisId + "_lines"].concat(grids || []), axisId);
+}
+
+/**
+ * Remove grid lines.
+ * @param {object} grids grid lines to remove
+ * @param {boolean} isXAxis weather is x axis or not
+ * @private
+ */
+function _remove(grids, isXAxis) {
+  this.internal.removeGridLines(grids, isXAxis);
+}
 
 /**
  * Update x grid lines.
@@ -37671,7 +37699,7 @@ var axis = {
  * @instance
  * @memberof Chart
  * @param {Array} grids X grid lines will be replaced with this argument. The format of this argument is the same as grid.x.lines.
- * @returns {object}
+ * @returns {Array}
  * @example
  *  // Show 2 x grid lines
  * chart.xgrids([
@@ -37681,14 +37709,7 @@ var axis = {
  * // --> Returns: [{value: 1, text: "Label 1"}, {value: 4, text: "Label 4"}]
  */
 var xgrids = function (grids) {
-  var $$ = this.internal,
-    config = $$.config;
-  if (!grids) {
-    return config.grid_x_lines;
-  }
-  config.grid_x_lines = grids;
-  $$.redrawWithoutRescale();
-  return config.grid_x_lines;
+  return grid.bind(this)(grids, "x");
 };
 util_extend(xgrids, {
   /**
@@ -37698,7 +37719,7 @@ util_extend(xgrids, {
    * @instance
    * @memberof Chart
    * @param {Array|object} grids New x grid lines will be added. The format of this argument is the same as grid.x.lines and it's possible to give an Object if only one line will be added.
-   * @returns {object}
+   * @returns {Array}
    * @example
    *  // Add a new x grid line
    * chart.xgrids.add(
@@ -37712,7 +37733,7 @@ util_extend(xgrids, {
    * ]);
    */
   add: function add(grids) {
-    return this.xgrids(this.internal.config.grid_x_lines.concat(grids || []));
+    return _add.bind(this)(grids, "x");
   },
   /**
    * Remove x grid lines.<br>
@@ -37720,7 +37741,10 @@ util_extend(xgrids, {
    * @function xgrids․remove
    * @instance
    * @memberof Chart
-   * @param {object} params This argument should include value or class. If value is given, the x grid lines that have specified x value will be removed. If class is given, the x grid lines that have specified class will be removed. If args is not given, all of x grid lines will be removed.
+   * @param {object} grids This argument should include value or class. If value is given, the x grid lines that have specified x value will be removed. If class is given, the x grid lines that have specified class will be removed. If args is not given, all of x grid lines will be removed.
+   * @param {number} [grids.value] target value
+   * @param {string} [grids.class] target class
+   * @returns {void}
    * @example
    * // x grid line on x = 2 will be removed
    * chart.xgrids.remove({value: 2});
@@ -37733,20 +37757,11 @@ util_extend(xgrids, {
    * // all of x grid lines will be removed
    * chart.xgrids.remove();
    */
-  remove: function remove(params) {
+  remove: function remove(grids) {
     // TODO: multiple
-    this.internal.removeGridLines(params, !0);
+    return _remove.bind(this)(grids, !0);
   }
 });
-/* harmony default export */ var grid_x = ({
-  xgrids: xgrids
-});
-;// CONCATENATED MODULE: ./src/Chart/api/grid.y.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
 
 /**
  * Update y grid lines.
@@ -37764,14 +37779,7 @@ util_extend(xgrids, {
  * // --> Returns: [{value: 100, text: "Label 1"}, {value: 400, text: "Label 4"}]
  */
 var ygrids = function (grids) {
-  var $$ = this.internal,
-    config = $$.config;
-  if (!grids) {
-    return config.grid_y_lines;
-  }
-  config.grid_y_lines = grids;
-  $$.redrawWithoutRescale();
-  return config.grid_y_lines;
+  return grid.bind(this)(grids, "y");
 };
 util_extend(ygrids, {
   /**
@@ -37795,7 +37803,7 @@ util_extend(ygrids, {
    * ]);
    */
   add: function add(grids) {
-    return this.ygrids(this.internal.config.grid_y_lines.concat(grids || []));
+    return _add.bind(this)(grids, "y");
   },
   /**
    * Remove y grid lines.<br>
@@ -37803,9 +37811,10 @@ util_extend(ygrids, {
    * @function ygrids․remove
    * @instance
    * @memberof Chart
-   * @param {object} params This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
-   * @param {number} [params.value] target value
-   * @param {string} [params.class] target class
+   * @param {object} grids This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
+   * @param {number} [grids.value] target value
+   * @param {string} [grids.class] target class
+   * @returns {void}
    * @example
    * // y grid line on y = 200 will be removed
    * chart.ygrids.remove({value: 200});
@@ -37818,12 +37827,13 @@ util_extend(ygrids, {
    * // all of y grid lines will be removed
    * chart.ygrids.remove();
    */
-  remove: function remove(params) {
+  remove: function remove(grids) {
     // TODO: multiple
-    this.internal.removeGridLines(params, !1);
+    return _remove.bind(this)(grids, !1);
   }
 });
-/* harmony default export */ var grid_y = ({
+/* harmony default export */ var api_grid = ({
+  xgrids: xgrids,
   ygrids: ygrids
 });
 ;// CONCATENATED MODULE: ./src/Chart/api/group.ts
@@ -37866,6 +37876,29 @@ util_extend(ygrids, {
 
 
 /**
+ * Region add/update function
+ * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as regions.
+ * @param {boolean} isAdd If true, add new regions, otherwise update regions
+ * @returns {Array} regions
+ * @private
+ */
+function regionsFn(regions, isAdd) {
+  if (isAdd === void 0) {
+    isAdd = !1;
+  }
+  var $$ = this.internal,
+    config = $$.config,
+    withTransition = config.transition_duration && isTabVisible();
+  if (!regions) {
+    return config.regions;
+  }
+  config.regions = isAdd ? config.regions.concat(regions) : regions;
+  $$.updateRegion();
+  $$.redrawRegion(withTransition);
+  return isAdd ? config.regions : regions;
+}
+
+/**
  * Update regions.
  * @function regions
  * @instance
@@ -37880,14 +37913,7 @@ util_extend(ygrids, {
  * ]);
  */
 var regions = function (_regions) {
-  var $$ = this.internal,
-    config = $$.config;
-  if (!_regions) {
-    return config.regions;
-  }
-  config.regions = _regions;
-  $$.redrawWithoutRescale();
-  return _regions;
+  return regionsFn.bind(this)(_regions);
 };
 util_extend(regions, {
   /**
@@ -37911,14 +37937,7 @@ util_extend(regions, {
    *]);
    */
   add: function add(regions) {
-    var $$ = this.internal,
-      config = $$.config;
-    if (!regions) {
-      return config.regions;
-    }
-    config.regions = config.regions.concat(regions);
-    $$.redrawWithoutRescale();
-    return config.regions;
+    return regionsFn.bind(this)(regions, !0);
   },
   /**
    * Remove regions.<br><br>
@@ -40791,7 +40810,7 @@ function smoothLines(el, type) {
     });
   }
 }
-/* harmony default export */ var grid = ({
+/* harmony default export */ var internals_grid = ({
   hasGrid: function hasGrid() {
     var _this4 = this,
       config = this.config;
@@ -43281,7 +43300,6 @@ function axis_objectSpread(target) { for (var i = 1, source; i < arguments.lengt
 
 
 
-
 // ChartInternal
 
 
@@ -43295,8 +43313,8 @@ function axis_objectSpread(target) { for (var i = 1, source; i < arguments.lengt
 
 
 
-var api = [api_axis, api_category, grid_x, grid_y, flow, group, api_regions, x];
-var internal = [Axis, clip, eventrect, interactions_flow, grid, region, size_axis];
+var api = [api_axis, api_category, flow, api_grid, group, api_regions, x];
+var internal = [Axis, clip, eventrect, interactions_flow, internals_grid, region, size_axis];
 var options = [data_axis, Options_axis_axis, common_grid];
 ;// CONCATENATED MODULE: ./node_modules/d3-shape/src/array.js
 var slice = Array.prototype.slice;
@@ -51376,7 +51394,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230322004715
+ * @version 3.7.5-nightly-20230323004638
  */
 var bb = {
   /**
@@ -51386,7 +51404,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.5-nightly-20230322004715",
+  version: "3.7.5-nightly-20230323004638",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

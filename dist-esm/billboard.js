@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.5-nightly-20230322004715
+ * @version 3.7.5-nightly-20230323004638
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -6545,20 +6545,6 @@ var redraw = {
         }
         // Draw with new sizes & scales
         $$.redraw(options, transitions);
-    },
-    /**
-     * Redraw without rescale
-     * @private
-     */
-    redrawWithoutRescale: function () {
-        this.redraw({
-            withY: false,
-            withDimension: false,
-            withLegend: false,
-            withSubchart: false,
-            withEventRect: false,
-            withTransitionForAxis: false,
-        });
     }
 };
 
@@ -11232,12 +11218,52 @@ var apiCategory = {
  * billboard.js project is licensed under the MIT license
  */
 /**
+ * Update grid lines.
+ * @param {Array} grids grid lines to update
+ * @param {string} axisId axis' id: "x" or "y"
+ * @returns {Array}
+ * @private
+ */
+function grid$1(grids, axisId) {
+    var $$ = this.internal;
+    var config = $$.config;
+    var withTransition = config.transition_duration && isTabVisible();
+    var gridPropLines = "grid_".concat(axisId, "_lines");
+    if (!grids) {
+        return config[gridPropLines];
+    }
+    config[gridPropLines] = grids;
+    $$.updateGrid();
+    $$.redrawGrid(withTransition);
+    return config[gridPropLines];
+}
+/**
+ * Add grid lines.
+ * @param {Array|object} grids grid lines to add
+ * @param {string} axisId axis' id: "x" or "y"
+ * @returns {Array}
+ * @private
+ */
+function add(grids, axisId) {
+    var gridPropLines = "grid_".concat(axisId, "_lines");
+    return grid$1.bind(this)(this.internal.config[gridPropLines].concat(grids || []), axisId);
+}
+/**
+ * Remove grid lines.
+ * @param {object} grids grid lines to remove
+ * @param {boolean} isXAxis weather is x axis or not
+ * @private
+ */
+function remove(grids, isXAxis) {
+    this.internal.removeGridLines(grids, isXAxis);
+}
+/**
  * Update x grid lines.
  * @function xgrids
  * @instance
  * @memberof Chart
  * @param {Array} grids X grid lines will be replaced with this argument. The format of this argument is the same as grid.x.lines.
- * @returns {object}
+ * @returns {Array}
  * @example
  *  // Show 2 x grid lines
  * chart.xgrids([
@@ -11247,14 +11273,7 @@ var apiCategory = {
  * // --> Returns: [{value: 1, text: "Label 1"}, {value: 4, text: "Label 4"}]
  */
 var xgrids = function (grids) {
-    var $$ = this.internal;
-    var config = $$.config;
-    if (!grids) {
-        return config.grid_x_lines;
-    }
-    config.grid_x_lines = grids;
-    $$.redrawWithoutRescale();
-    return config.grid_x_lines;
+    return grid$1.bind(this)(grids, "x");
 };
 extend(xgrids, {
     /**
@@ -11264,7 +11283,7 @@ extend(xgrids, {
      * @instance
      * @memberof Chart
      * @param {Array|object} grids New x grid lines will be added. The format of this argument is the same as grid.x.lines and it's possible to give an Object if only one line will be added.
-     * @returns {object}
+     * @returns {Array}
      * @example
      *  // Add a new x grid line
      * chart.xgrids.add(
@@ -11278,8 +11297,7 @@ extend(xgrids, {
      * ]);
      */
     add: function (grids) {
-        return this.xgrids(this.internal.config.grid_x_lines
-            .concat(grids || []));
+        return add.bind(this)(grids, "x");
     },
     /**
      * Remove x grid lines.<br>
@@ -11287,7 +11305,10 @@ extend(xgrids, {
      * @function xgrids․remove
      * @instance
      * @memberof Chart
-     * @param {object} params This argument should include value or class. If value is given, the x grid lines that have specified x value will be removed. If class is given, the x grid lines that have specified class will be removed. If args is not given, all of x grid lines will be removed.
+     * @param {object} grids This argument should include value or class. If value is given, the x grid lines that have specified x value will be removed. If class is given, the x grid lines that have specified class will be removed. If args is not given, all of x grid lines will be removed.
+     * @param {number} [grids.value] target value
+     * @param {string} [grids.class] target class
+     * @returns {void}
      * @example
      * // x grid line on x = 2 will be removed
      * chart.xgrids.remove({value: 2});
@@ -11300,16 +11321,10 @@ extend(xgrids, {
      * // all of x grid lines will be removed
      * chart.xgrids.remove();
      */
-    remove: function (params) {
-        this.internal.removeGridLines(params, true);
+    remove: function (grids) {
+        return remove.bind(this)(grids, true);
     }
 });
-var apiXGrid = { xgrids: xgrids };
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 /**
  * Update y grid lines.
  * @function ygrids
@@ -11326,14 +11341,7 @@ var apiXGrid = { xgrids: xgrids };
  * // --> Returns: [{value: 100, text: "Label 1"}, {value: 400, text: "Label 4"}]
  */
 var ygrids = function (grids) {
-    var $$ = this.internal;
-    var config = $$.config;
-    if (!grids) {
-        return config.grid_y_lines;
-    }
-    config.grid_y_lines = grids;
-    $$.redrawWithoutRescale();
-    return config.grid_y_lines;
+    return grid$1.bind(this)(grids, "y");
 };
 extend(ygrids, {
     /**
@@ -11357,8 +11365,7 @@ extend(ygrids, {
      * ]);
      */
     add: function (grids) {
-        return this.ygrids(this.internal.config.grid_y_lines
-            .concat(grids || []));
+        return add.bind(this)(grids, "y");
     },
     /**
      * Remove y grid lines.<br>
@@ -11366,9 +11373,10 @@ extend(ygrids, {
      * @function ygrids․remove
      * @instance
      * @memberof Chart
-     * @param {object} params This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
-     * @param {number} [params.value] target value
-     * @param {string} [params.class] target class
+     * @param {object} grids This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
+     * @param {number} [grids.value] target value
+     * @param {string} [grids.class] target class
+     * @returns {void}
      * @example
      * // y grid line on y = 200 will be removed
      * chart.ygrids.remove({value: 200});
@@ -11381,11 +11389,11 @@ extend(ygrids, {
      * // all of y grid lines will be removed
      * chart.ygrids.remove();
      */
-    remove: function (params) {
-        this.internal.removeGridLines(params, false);
+    remove: function (grids) {
+        return remove.bind(this)(grids, false);
     }
 });
-var apiYGrid = { ygrids: ygrids };
+var apiGrid = { xgrids: xgrids, ygrids: ygrids };
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -11422,6 +11430,26 @@ var apiGroup = {
  * billboard.js project is licensed under the MIT license
  */
 /**
+ * Region add/update function
+ * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as regions.
+ * @param {boolean} isAdd If true, add new regions, otherwise update regions
+ * @returns {Array} regions
+ * @private
+ */
+function regionsFn(regions, isAdd) {
+    if (isAdd === void 0) { isAdd = false; }
+    var $$ = this.internal;
+    var config = $$.config;
+    var withTransition = config.transition_duration && isTabVisible();
+    if (!regions) {
+        return config.regions;
+    }
+    config.regions = isAdd ? config.regions.concat(regions) : regions;
+    $$.updateRegion();
+    $$.redrawRegion(withTransition);
+    return isAdd ? config.regions : regions;
+}
+/**
  * Update regions.
  * @function regions
  * @instance
@@ -11436,14 +11464,7 @@ var apiGroup = {
  * ]);
  */
 var regions = function (regions) {
-    var $$ = this.internal;
-    var config = $$.config;
-    if (!regions) {
-        return config.regions;
-    }
-    config.regions = regions;
-    $$.redrawWithoutRescale();
-    return regions;
+    return regionsFn.bind(this)(regions);
 };
 extend(regions, {
     /**
@@ -11467,14 +11488,7 @@ extend(regions, {
      *]);
      */
     add: function (regions) {
-        var $$ = this.internal;
-        var config = $$.config;
-        if (!regions) {
-            return config.regions;
-        }
-        config.regions = config.regions.concat(regions);
-        $$.redrawWithoutRescale();
-        return config.regions;
+        return regionsFn.bind(this)(regions, true);
     },
     /**
      * Remove regions.<br><br>
@@ -16447,9 +16461,8 @@ var optGrid = {
 var api = [
     apiAxis,
     apiCategory,
-    apiXGrid,
-    apiYGrid,
     apiFlow,
+    apiGrid,
     apiGroup,
     apiRegion,
     apiX
@@ -22184,7 +22197,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230322004715
+ * @version 3.7.5-nightly-20230323004638
  */
 var bb = {
     /**
@@ -22194,7 +22207,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.5-nightly-20230322004715",
+    version: "3.7.5-nightly-20230323004638",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
