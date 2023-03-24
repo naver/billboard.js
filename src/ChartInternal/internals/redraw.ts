@@ -66,7 +66,6 @@ export default {
 				}
 			});
 
-
 			// circles for select
 			$el.text && main.selectAll(`.${$SELECT.selectedCircles}`)
 				.filter($$.isBarType.bind($$))

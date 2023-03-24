@@ -511,6 +511,23 @@ export default {
 	axis_x_min: <number|undefined> undefined,
 
 	/**
+	 * Change the direction of x axis.<br><br>
+	 * If true set, the direction will be `right -> left`.
+	 * @name axis․x․inverted
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default false
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.InvertedAxis)
+	 * @example
+	 * axis: {
+	 *   x: {
+	 *     inverted: true
+	 *   }
+	 * }
+	 */
+	axis_x_inverted: false,
+
+	/**
 	 * Set padding for x axis.<br><br>
 	 * If this option is set, the range of x axis will increase/decrease according to the values.
 	 * If no padding is needed in the rage of x axis, 0 should be set.
