@@ -377,7 +377,7 @@ export default class ChartInternal {
 
 			// Set domains for each scale
 			if (x) {
-				x.domain(sortValue($$.getXDomain($$.data.targets)));
+				x.domain(sortValue($$.getXDomain($$.data.targets), !config.axis_x_inverted));
 				subX.domain(x.domain());
 
 				// Save original x domain for zoom update

@@ -96,11 +96,12 @@ export default {
 
 	/**
 	 * Change the direction of y axis.<br><br>
-	 * If true set, the direction will be from the top to the bottom.
+	 * If true set, the direction will be `top -> bottom`.
 	 * @name axis․y․inverted
 	 * @memberof Options
 	 * @type {boolean}
 	 * @default false
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.InvertedAxis)
 	 * @example
 	 * axis: {
 	 *   y: {

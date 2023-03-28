@@ -274,9 +274,10 @@ export default {
 	 * @returns {Array} x Axis domain
 	 * @private
 	 */
-	getXDomain(targets?: IData[]): (Date|number)[] {
+	getXDomain(targets: IData[]): (Date|number)[] {
 		const $$ = this;
-		const {axis, scale: {x}} = $$;
+		const {axis, config, scale: {x}} = $$;
+		const isInverted = config.axis_x_inverted;
 		const domain = [
 			$$.getXDomainMinMax(targets, "min"),
 			$$.getXDomainMinMax(targets, "max")
@@ -309,7 +310,7 @@ export default {
 			}
 		}
 
-		return [min, max];
+		return isInverted ? [max, min] : [min, max];
 	},
 
 	updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
@@ -318,7 +319,7 @@ export default {
 		const zoomEnabled = config.zoom_enabled;
 
 		if (withUpdateOrgXDomain) {
-			x.domain(domain || sortValue($$.getXDomain(targets)));
+			x.domain(domain || sortValue($$.getXDomain(targets), !config.axis_x_inverted));
 			org.xDomain = x.domain();
 
 			zoomEnabled && $$.zoom.updateScaleExtent();
@@ -341,16 +342,24 @@ export default {
 		return x.domain();
 	},
 
+	/**
+	 * Trim x domain when given domain surpasses the range
+	 * @param {Array} domain Domain value
+	 * @returns {Array} Trimed domain if given domain is out of range
+	 * @private
+	 */
 	trimXDomain(domain) {
-		const zoomDomain = this.getZoomDomain();
+		const $$ = this;
+		const isInverted = $$.config.axis_x_inverted;
+		const zoomDomain = $$.getZoomDomain();
 		const [min, max] = zoomDomain;
 
-		if (domain[0] <= min) {
-			domain[1] = +domain[1] + (min - domain[0]);
+		if (isInverted ? domain[0] >= min : domain[0] <= min) {
 			domain[0] = min;
+			domain[1] = +domain[1] + (min - domain[0]);
 		}
 
-		if (max <= domain[1]) {
+		if (isInverted ? domain[1] <= max : domain[1] >= max) {
 			domain[0] = +domain[0] - (domain[1] - max);
 			domain[1] = max;
 		}

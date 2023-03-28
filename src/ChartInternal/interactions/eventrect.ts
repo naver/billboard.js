@@ -28,6 +28,7 @@ export default {
 		const $$ = this;
 		const {config, state, $el} = $$;
 		const isMultipleX = $$.isMultipleX();
+		const isInverted = config.axis_x_inverted;
 
 		if ($el.eventRect) {
 			$$.updateEventRect($el.eventRect, true);
@@ -66,8 +67,8 @@ export default {
 			// Set data and update eventReceiver.data
 			const xAxisTickValues = $$.getMaxDataCountTarget();
 
-			if (!config.data_xSort) {
-				xAxisTickValues.sort((a, b) => a.x - b.x);
+			if (!config.data_xSort || isInverted) {
+				xAxisTickValues.sort((a, b) => (isInverted ? b.x - a.x : a.x - b.x));
 			}
 
 			// update data's index value to be alinged with the x Axis
