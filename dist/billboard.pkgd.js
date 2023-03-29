@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230323004638
+ * @version 3.7.5-nightly-20230329004731
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -26856,7 +26856,8 @@ function getDataKeyForJson(keysParam, config) {
   getMaxDataCountTarget: function getMaxDataCountTarget() {
     var _this18 = this,
       target = this.filterTargetsToShow() || [],
-      length = target.length;
+      length = target.length,
+      isInverted = this.config.axis_x_inverted;
     if (length > 1) {
       target = target.map(function (t) {
         _newArrowCheck(this, _this18);
@@ -26868,11 +26869,11 @@ function getDataKeyForJson(keysParam, config) {
         _newArrowCheck(this, _this18);
         return v.x;
       }.bind(this));
-      target = sortValue(getUnique(target)).map(function (x, index) {
+      target = sortValue(getUnique(target)).map(function (x, index, array) {
         _newArrowCheck(this, _this18);
         return {
           x: x,
-          index: index
+          index: isInverted ? array.length - index - 1 : index
         };
       }.bind(this));
     } else if (length) {
@@ -29112,7 +29113,9 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
   getXDomain: function getXDomain(targets) {
     var $$ = this,
       axis = $$.axis,
+      config = $$.config,
       x = $$.scale.x,
+      isInverted = config.axis_x_inverted,
       domain = [$$.getXDomainMinMax(targets, "min"), $$.getXDomainMinMax(targets, "max")];
     var _domain$ = domain[0],
       min = _domain$ === void 0 ? 0 : _domain$,
@@ -29142,7 +29145,7 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
         max = isTimeSeries ? new Date(lastX.getTime() + padding.right) : lastX + padding.right;
       }
     }
-    return [min, max];
+    return isInverted ? [max, min] : [min, max];
   },
   updateXDomain: function updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
     var $$ = this,
@@ -29154,7 +29157,7 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
       zoomEnabled = config.zoom_enabled;
     if (withUpdateOrgXDomain) {
       var _$$$brush;
-      x.domain(domain || sortValue($$.getXDomain(targets)));
+      x.domain(domain || sortValue($$.getXDomain(targets), !config.axis_x_inverted));
       org.xDomain = x.domain();
       zoomEnabled && $$.zoom.updateScaleExtent();
       subX.domain(x.domain());
@@ -29170,15 +29173,24 @@ var schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "
     withTrim && x.domain($$.trimXDomain(x.orgDomain()));
     return x.domain();
   },
+  /**
+   * Trim x domain when given domain surpasses the range
+   * @param {Array} domain Domain value
+   * @returns {Array} Trimed domain if given domain is out of range
+   * @private
+   */
   trimXDomain: function trimXDomain(domain) {
-    var zoomDomain = this.getZoomDomain(),
-      min = zoomDomain[0],
-      max = zoomDomain[1];
-    if (domain[0] <= min) {
-      domain[1] = +domain[1] + (min - domain[0]);
+    var $$ = this,
+      isInverted = $$.config.axis_x_inverted,
+      zoomDomain = $$.getZoomDomain(),
+      _zoomDomain = zoomDomain,
+      min = _zoomDomain[0],
+      max = _zoomDomain[1];
+    if (isInverted ? domain[0] >= min : domain[0] <= min) {
       domain[0] = min;
+      domain[1] = +domain[1] + (min - domain[0]);
     }
-    if (max <= domain[1]) {
+    if (isInverted ? domain[1] <= max : domain[1] >= max) {
       domain[0] = +domain[0] - (domain[1] - max);
       domain[1] = max;
     }
@@ -31591,7 +31603,7 @@ function getScale(type, min, max) {
   getXScale: function getXScale(min, max, domain, offset) {
     var $$ = this,
       scale = $$.scale.zoom || getScale($$.axis.getAxisType("x"), min, max);
-    return $$.getCustomizedScale(domain ? scale.domain(domain) : scale, offset);
+    return $$.getCustomizedXScale(domain ? scale.domain(domain) : scale, offset);
   },
   /**
    * Get y Axis scale function
@@ -31625,19 +31637,20 @@ function getScale(type, min, max) {
     return this.scale[key];
   },
   /**
-   * Get customized scale
+   * Get customized x axis scale
    * @param {d3.scaleLinear|d3.scaleTime} scaleValue Scale function
    * @param {Function} offsetValue Offset getter to be sum
    * @returns {Function} Scale function
    * @private
    */
-  getCustomizedScale: function getCustomizedScale(scaleValue, offsetValue) {
+  getCustomizedXScale: function getCustomizedXScale(scaleValue, offsetValue) {
     var _this = this,
       $$ = this,
       offset = offsetValue || function () {
         _newArrowCheck(this, _this);
         return $$.axis.x.tickOffset();
       }.bind(this),
+      isInverted = $$.config.axis_x_inverted,
       scale = function (d, raw) {
         var v = scaleValue(d) + offset();
         return raw ? v : Math.ceil(v);
@@ -31661,7 +31674,7 @@ function getScale(type, min, max) {
         var domain = domainValue;
         if (!arguments.length) {
           domain = this.orgDomain();
-          return [domain[0], domain[1] + 1];
+          return isInverted ? [domain[0] + 1, domain[1]] : [domain[0], domain[1] + 1];
         }
         scaleValue.domain(domain);
         return scale;
@@ -35360,7 +35373,7 @@ var ChartInternal = /*#__PURE__*/function () {
 
       // Set domains for each scale
       if (x) {
-        x.domain(sortValue($$.getXDomain($$.data.targets)));
+        x.domain(sortValue($$.getXDomain($$.data.targets), !config.axis_x_inverted));
         subX.domain(x.domain());
 
         // Save original x domain for zoom update
@@ -38893,7 +38906,7 @@ var AxisRenderer = /*#__PURE__*/function () {
     }
     var tickWidth = params.tickWidth;
     if (!tickWidth || tickWidth <= 0) {
-      tickWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(scale(ticks[1]) - scale(ticks[0])) - 12 : 110;
+      tickWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(params.isInverted ? scale(ticks[0]) - scale(ticks[1]) : scale(ticks[1]) - scale(ticks[0])) - 12 : 110;
     }
 
     // split given text by tick width size
@@ -39301,6 +39314,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       owner: $$
     }, isX && {
       isCategory: isCategory,
+      isInverted: config.axis_x_inverted,
       tickMultiline: config.axis_x_tick_multiline,
       tickWidth: config.axis_x_tick_width,
       tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
@@ -39925,7 +39939,8 @@ var Axis_Axis = /*#__PURE__*/function () {
       config = $$.config,
       state = $$.state,
       $el = $$.$el,
-      isMultipleX = $$.isMultipleX();
+      isMultipleX = $$.isMultipleX(),
+      isInverted = config.axis_x_inverted;
     if ($el.eventRect) {
       $$.updateEventRect($el.eventRect, !0);
     } else {
@@ -39946,10 +39961,10 @@ var Axis_Axis = /*#__PURE__*/function () {
     if (!isMultipleX) {
       // Set data and update eventReceiver.data
       var xAxisTickValues = $$.getMaxDataCountTarget();
-      if (!config.data_xSort) {
+      if (!config.data_xSort || isInverted) {
         xAxisTickValues.sort(function (a, b) {
           _newArrowCheck(this, _this);
-          return a.x - b.x;
+          return isInverted ? b.x - a.x : a.x - b.x;
         }.bind(this));
       }
 
@@ -41371,7 +41386,12 @@ function smoothLines(el, type) {
     return h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id === "y2" && !isRotated ? -10 : 0);
   },
   getEventRectWidth: function getEventRectWidth() {
-    return Math.max(0, this.axis.x.tickInterval());
+    var $$ = this,
+      config = $$.config,
+      axis = $$.axis,
+      isInverted = config.axis_x_inverted,
+      tickInterval = axis.x.tickInterval();
+    return Math.max(0, isInverted ? Math.abs(tickInterval) : tickInterval);
   },
   /**
    * Get axis tick test rotate value
@@ -42065,6 +42085,22 @@ function smoothLines(el, type) {
    */
   axis_x_min: undefined,
   /**
+   * Change the direction of x axis.<br><br>
+   * If true set, the direction will be `right -> left`.
+   * @name axis․x․inverted
+   * @memberof Options
+   * @type {boolean}
+   * @default false
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.InvertedAxis)
+   * @example
+   * axis: {
+   *   x: {
+   *     inverted: true
+   *   }
+   * }
+   */
+  axis_x_inverted: !1,
+  /**
    * Set padding for x axis.<br><br>
    * If this option is set, the range of x axis will increase/decrease according to the values.
    * If no padding is needed in the rage of x axis, 0 should be set.
@@ -42326,11 +42362,12 @@ function smoothLines(el, type) {
   axis_y_min: undefined,
   /**
    * Change the direction of y axis.<br><br>
-   * If true set, the direction will be from the top to the bottom.
+   * If true set, the direction will be `top -> bottom`.
    * @name axis․y․inverted
    * @memberof Options
    * @type {boolean}
    * @default false
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.InvertedAxis)
    * @example
    * axis: {
    *   y: {
@@ -42804,11 +42841,12 @@ function smoothLines(el, type) {
   axis_y2_min: undefined,
   /**
    * Change the direction of y2 axis.<br><br>
-   * If true set, the direction will be from the top to the bottom.
+   * If true set, the direction will be `top -> bottom`.
    * @name axis․y2․inverted
    * @memberof Options
    * @type {boolean}
    * @default false
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.InvertedAxis)
    * @example
    * axis: {
    *   y2: {
@@ -49839,17 +49877,21 @@ function defaultConstrain(transform, extent, translateExtent) {
  * @param {Array} domain Target domain value
  * @param {Array} current Current zoom domain value
  * @param {Array} range Zoom range value
+ * @param {boolean} isInverted Whether the axis is inverted or not
  * @returns {boolean}
  * @private
  */
-function withinRange(domain, current, range) {
-  var _this = this,
-    min = range[0],
+function withinRange(domain, current, range, isInverted) {
+  var _this = this;
+  if (isInverted === void 0) {
+    isInverted = !1;
+  }
+  var min = range[0],
     max = range[1];
   return domain.every(function (v, i) {
     var _this2 = this;
     _newArrowCheck(this, _this);
-    return (i === 0 ? v >= min : v <= max) && !domain.every(function (v, i) {
+    return (i === 0 ? isInverted ? v <= min : v >= min : isInverted ? v >= max : v <= max) && !domain.every(function (v, i) {
       _newArrowCheck(this, _this2);
       return v === current[i];
     }.bind(this));
@@ -49885,6 +49927,7 @@ var zoom = function (domainValue) {
     org = $$.org,
     scale = $$.scale,
     isRotated = config.axis_rotated,
+    isInverted = config.axis_x_inverted,
     isCategorized = axis.isCategorized(),
     domain = domainValue;
   if (config.zoom_enabled && domain) {
@@ -49894,7 +49937,8 @@ var zoom = function (domainValue) {
         return parseDate.bind($$)(x);
       }.bind(this));
     }
-    if (withinRange(domain, $$.getZoomDomain(!0), $$.getZoomDomain())) {
+    var isWithinRange = withinRange(domain, $$.getZoomDomain(!0), $$.getZoomDomain(), isInverted);
+    if (isWithinRange) {
       if (isCategorized) {
         domain = domain.map(function (v, i) {
           _newArrowCheck(this, _this3);
@@ -50785,7 +50829,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       if (!$$.state.xTickOffset) {
         $$.state.xTickOffset = $$.axis.x.tickOffset();
       }
-      scale.zoom = $$.getCustomizedScale(newScale);
+      scale.zoom = $$.getCustomizedXScale(newScale);
       $$.axis.x.scale(scale.zoom);
       if (rescale) {
         // copy current initial x scale in case of rescale option is used
@@ -50917,7 +50961,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       var zoomDomain = zoom.domain(),
         xDomain = subX.domain(),
         delta = .015,
-        isfullyShown = (zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta);
+        isfullyShown = $$.config.axis_x_inverted ? (zoomDomain[0] >= xDomain[0] || zoomDomain[0] + delta >= xDomain[0]) && (xDomain[1] >= zoomDomain[1] || xDomain[1] >= zoomDomain[1] + delta) : (zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta);
       // check if the zoomed chart is fully shown, then reset scale when zoom is out as initial
       if (force || isfullyShown) {
         $$.axis.x.scale(subX);
@@ -51394,7 +51438,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230323004638
+ * @version 3.7.5-nightly-20230329004731
  */
 var bb = {
   /**
@@ -51404,7 +51448,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.5-nightly-20230323004638",
+  version: "3.7.5-nightly-20230329004731",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

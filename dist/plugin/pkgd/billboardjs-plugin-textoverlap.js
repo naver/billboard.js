@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230323004638
+ * @version 3.7.5-nightly-20230329004731
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -21402,7 +21402,7 @@ var Voronoi = /*#__PURE__*/function () {
             _context2.next = 17;
             break;
           }
-          if (!(ci[ai] == cj[aj] && ci[ai + 1] == cj[aj + 1] && ci[(ai + 2) % li] == cj[(aj + lj - 2) % lj] && ci[(ai + 3) % li] == cj[(aj + lj - 1) % lj])) {
+          if (!(ci[ai] === cj[aj] && ci[ai + 1] === cj[aj + 1] && ci[(ai + 2) % li] === cj[(aj + lj - 2) % lj] && ci[(ai + 3) % li] === cj[(aj + lj - 1) % lj])) {
             _context2.next = 14;
             break;
           }
@@ -21455,7 +21455,7 @@ var Voronoi = /*#__PURE__*/function () {
     if (points === null) return null;
     var V = this.vectors,
       v = i * 4;
-    return V[v] || V[v + 1] ? this._clipInfinite(i, points, V[v], V[v + 1], V[v + 2], V[v + 3]) : this._clipFinite(i, points);
+    return this._simplify(V[v] || V[v + 1] ? this._clipInfinite(i, points, V[v], V[v + 1], V[v + 2], V[v + 3]) : this._clipFinite(i, points));
   };
   _proto._clipFinite = function _clipFinite(i, points) {
     var n = points.length;
@@ -21512,8 +21512,19 @@ var Voronoi = /*#__PURE__*/function () {
     return P;
   };
   _proto._clipSegment = function _clipSegment(x0, y0, x1, y1, c0, c1) {
+    // for more robustness, always consider the segment in the same order
+    var flip = c0 < c1;
+    if (flip) {
+      var _ref2 = [x1, y1, x0, y0, c1, c0];
+      x0 = _ref2[0];
+      y0 = _ref2[1];
+      x1 = _ref2[2];
+      y1 = _ref2[3];
+      c0 = _ref2[4];
+      c1 = _ref2[5];
+    }
     while (!0) {
-      if (c0 === 0 && c1 === 0) return [x0, y0, x1, y1];
+      if (c0 === 0 && c1 === 0) return flip ? [x1, y1, x0, y0] : [x0, y0, x1, y1];
       if (c0 & c1) return null;
       var x = void 0,
         y = void 0,
@@ -21581,13 +21592,6 @@ var Voronoi = /*#__PURE__*/function () {
         P.splice(j, 0, x, y), j += 2;
       }
     }
-    if (P.length > 4) {
-      for (var _i4 = 0; _i4 < P.length; _i4 += 2) {
-        var _j = (_i4 + 2) % P.length,
-          k = (_i4 + 4) % P.length;
-        if (P[_i4] === P[_j] && P[_j] === P[k] || P[_i4 + 1] === P[_j + 1] && P[_j + 1] === P[k + 1]) P.splice(_j, 2), _i4 -= 2;
-      }
-    }
     return j;
   };
   _proto._project = function _project(x0, y0, vx, vy) {
@@ -21620,6 +21624,19 @@ var Voronoi = /*#__PURE__*/function () {
   };
   _proto._regioncode = function _regioncode(x, y) {
     return (x < this.xmin ? 1 : x > this.xmax ? 2 : 0) | (y < this.ymin ? 4 : y > this.ymax ? 8 : 0);
+  };
+  _proto._simplify = function _simplify(P) {
+    if (P && P.length > 4) {
+      for (var i = 0; i < P.length; i += 2) {
+        var j = (i + 2) % P.length,
+          k = (i + 4) % P.length;
+        if (P[i] === P[j] && P[j] === P[k] || P[i + 1] === P[j + 1] && P[j + 1] === P[k + 1]) {
+          P.splice(j, 2), i -= 2;
+        }
+      }
+      if (!P.length) P = null;
+    }
+    return P;
   };
   return Voronoi;
 }();
@@ -26464,7 +26481,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.7.5-nightly-20230323004638";
+Plugin.version = "3.7.5-nightly-20230329004731";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**
