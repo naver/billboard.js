@@ -206,7 +206,6 @@ export default {
 			"M 0 18 A 6 6 0 0 1 6.5 23.5 V 29 A 6 6 0 0 1 0 35 Z M 2 23 V 30 M 4 23 V 30Z"
 		];
 
-
 		$$.brush.handle = brush.selectAll(`.${customHandleClass}`)
 			.data(isRotated ?
 				[{type: "n"}, {type: "s"}] :
@@ -335,7 +334,9 @@ export default {
 	 */
 	redrawForBrush() {
 		const $$ = this;
-		const {config: {subchart_onbrush: onBrush, zoom_rescale: withY}, scale} = $$;
+		const {config: {
+			subchart_onbrush: onBrush, zoom_rescale: withY
+		}, scale} = $$;
 
 		$$.redraw({
 			withTransition: false,

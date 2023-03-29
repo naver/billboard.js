@@ -397,6 +397,7 @@ export default {
 	getMaxDataCountTarget() {
 		let target = this.filterTargetsToShow() || [];
 		const length = target.length;
+		const isInverted = this.config.axis_x_inverted;
 
 		if (length > 1) {
 			target = target.map(t => t.values)
@@ -404,7 +405,7 @@ export default {
 				.map(v => v.x);
 
 			target = sortValue(getUnique(target))
-				.map((x, index) => ({x, index}));
+				.map((x, index, array) => ({x, index: isInverted ? array.length - index - 1 : index}));
 		} else if (length) {
 			target = target[0].values.concat();
 		}

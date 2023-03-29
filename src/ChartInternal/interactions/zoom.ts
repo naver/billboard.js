@@ -109,7 +109,7 @@ export default {
 				$$.state.xTickOffset = $$.axis.x.tickOffset();
 			}
 
-			scale.zoom = $$.getCustomizedScale(newScale);
+			scale.zoom = $$.getCustomizedXScale(newScale);
 			$$.axis.x.scale(scale.zoom);
 
 			if (rescale) {
@@ -256,8 +256,15 @@ export default {
 			const xDomain = subX.domain();
 			const delta = 0.015; // arbitrary value
 
-			const isfullyShown = (zoomDomain[0] <= xDomain[0] || (zoomDomain[0] - delta) <= xDomain[0]) &&
-				(xDomain[1] <= zoomDomain[1] || xDomain[1] <= (zoomDomain[1] - delta));
+			const isfullyShown = $$.config.axis_x_inverted ? (
+				zoomDomain[0] >= xDomain[0] || (zoomDomain[0] + delta) >= xDomain[0]
+			) && (
+				xDomain[1] >= zoomDomain[1] || xDomain[1] >= (zoomDomain[1] + delta)
+			) : (
+				zoomDomain[0] <= xDomain[0] || (zoomDomain[0] - delta) <= xDomain[0]
+			) && (
+				xDomain[1] <= zoomDomain[1] || xDomain[1] <= (zoomDomain[1] - delta)
+			);
 
 			// check if the zoomed chart is fully shown, then reset scale when zoom is out as initial
 			if (force || isfullyShown) {

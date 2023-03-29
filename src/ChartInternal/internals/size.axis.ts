@@ -89,7 +89,12 @@ export default {
 	},
 
 	getEventRectWidth(): number {
-		return Math.max(0, this.axis.x.tickInterval());
+		const $$ = this;
+		const {config, axis} = $$;
+		const isInverted = config.axis_x_inverted;
+		const tickInterval = axis.x.tickInterval();
+
+		return Math.max(0, isInverted ? Math.abs(tickInterval) : tickInterval);
 	},
 
 	/**

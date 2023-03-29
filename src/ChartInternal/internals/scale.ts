@@ -50,7 +50,7 @@ export default {
 		const $$ = this;
 		const scale = $$.scale.zoom || getScale($$.axis.getAxisType("x"), min, max);
 
-		return $$.getCustomizedScale(
+		return $$.getCustomizedXScale(
 			domain ? scale.domain(domain) : scale,
 			offset
 		);
@@ -89,15 +89,16 @@ export default {
 	},
 
 	/**
-	 * Get customized scale
+	 * Get customized x axis scale
 	 * @param {d3.scaleLinear|d3.scaleTime} scaleValue Scale function
 	 * @param {Function} offsetValue Offset getter to be sum
 	 * @returns {Function} Scale function
 	 * @private
 	 */
-	getCustomizedScale(scaleValue: Function | any, offsetValue): Function {
+	getCustomizedXScale(scaleValue: Function | any, offsetValue): Function {
 		const $$ = this;
 		const offset = offsetValue || (() => $$.axis.x.tickOffset());
+		const isInverted = $$.config.axis_x_inverted;
 		const scale = function(d, raw) {
 			const v = scaleValue(d) + offset();
 
@@ -120,7 +121,9 @@ export default {
 				if (!arguments.length) {
 					domain = this.orgDomain();
 
-					return [domain[0], domain[1] + 1];
+					return isInverted ?
+						[domain[0] + 1, domain[1]] :
+						[domain[0], domain[1] + 1];
 				}
 
 				scaleValue.domain(domain);
