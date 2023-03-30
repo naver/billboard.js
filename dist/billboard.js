@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230329004731
+ * @version 3.7.5-nightly-20230330004720
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -11763,17 +11763,17 @@ function renderText(ctx, glyph) {
     state.defocusedTargetIds = targetIds;
   },
   /**
-   * This API reverts specified targets.<br><br>
-   * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be reverted.
+   * Revert focused or defocused state to initial state.<br><br>
+   * You can specify multiple targets by giving an array that includes id as string. If no argument is given, all of targets will be reverted.
    * @function revert
    * @instance
    * @memberof Chart
    * @param {string|Array} targetIdsValue Target ids to be reverted
    * @example
-   * // data1 will be reverted.
+   * // 'data1' will be reverted.
    * chart.revert("data1");
    *
-   * // data1 and data2 will be reverted.
+   * // 'data1' and 'data2' will be reverted.
    * chart.revert(["data1", "data2"]);
    *
    * // all targets will be reverted.
@@ -24640,7 +24640,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230329004731
+ * @version 3.7.5-nightly-20230330004720
  */
 var bb = {
   /**
@@ -24650,7 +24650,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.5-nightly-20230329004731",
+  version: "3.7.5-nightly-20230330004720",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
