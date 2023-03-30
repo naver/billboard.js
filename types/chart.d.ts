@@ -364,6 +364,7 @@ export interface Chart {
 		types?: { [key: string]: string };
 		unload?: boolean | ArrayOrString;
 		done?: (this: Chart) => void;
+		resizeAfter?: boolean;
 	}): void;
 
 	/**
@@ -378,7 +379,11 @@ export interface Chart {
 	 *   - If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.
 	 *   - done will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
 	 */
-	unload(this: Chart, targetIds?: TargetIds, done?: (this: Chart) => void): void;
+	unload(this: Chart, args?: TargetIds | {
+		ids?: TargetIds,
+		done?: (this: Chart) => void,
+		resizeAfter?: boolean;
+	}): void;
 
 	/**
 	 * Flow data to the chart. By this API, you can append new data points to the chart.
