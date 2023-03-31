@@ -103,7 +103,7 @@ export function App(props: IChartOptions) {
 interface IChartOptions;
 
 // @billboard.js/react props
-interface IProp {
+interface IProp extends Pick<HTMLProps<HTMLDivElement>, 'className' | 'style'> {
 	bb: typeof bb;
 	options: ChartOptions;
 }
