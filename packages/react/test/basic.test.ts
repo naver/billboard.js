@@ -44,7 +44,17 @@ describe("basic", async () => {
 
 		const legendText = await page.locator(".bb .bb-legend-item-data4 text");
 
-		await expect(legendText).toHaveText("data4");
+		expect(legendText).toHaveText("data4");
+
+		// check if 2nd chart has 'style' attribute
+		const style = await page.evaluate(() => document.querySelector(".bb:nth-child(2)")?.getAttribute("style"));
+
+		expect(style).not.toBeNull();
+
+		// check if 3rd chart has 'class' attribute
+		const className = await page.evaluate(() => document.querySelector(".bb:nth-child(3)")?.className);
+
+		expect(className).not.toBeNull();
 	});
 
 	test("should charts lengend be interactable.", async () => {

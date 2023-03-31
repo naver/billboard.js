@@ -11,7 +11,10 @@ $ npm install billboard.js @billboard.js/react
 
 ## How to use
 
+> ℹ️ The component will create a `<div>` element and append it to the parent element and [`bindto`](https://naver.github.io/billboard.js/release/latest/doc/Options.html#.bindto) option is not supported in this case.
+
 ### Basic Usage
+
 ```jsx
 import React, {useEffect, useRef} from "react";
 
@@ -45,9 +48,21 @@ function App() {
         }
     }, []);
 
-    return <div style={{width: "500px"}}>
-        <BillboardJS bb={bb} options={options} ref={chartComponent} />
-    </div>;
+    return <BillboardJS 
+        bb={bb}
+        options={options}
+        ref={chartComponent}
+
+        /* The values will be specified to the bound element as inlined styles */
+        style={{
+            width: "500px",
+            ...
+        }}
+
+        /* When class name doesn't contains `bb`,
+           then you also need to update the default CSS to be rendered correctly. */
+        className={"bb my-classname"}
+    />;
 }
 ```
 
@@ -70,6 +85,14 @@ const options = {
 
 <App {...options} />
 
+// or
+// <App data={
+//     columns: [
+//         ["data1", 300, 350, 300]
+//     ],
+//     type: "bar"
+// } />
+
 // App.tsx
 import * as Chart from "billboard.js";
 import "billboard.js/dist/billboard.css";  // default css
@@ -90,9 +113,11 @@ export function App(props: IChartOptions) {
         }
     }, []);
 
-    return <div style={{width: "500px"}}>
-        <BillboardJS bb={Chart.bb} options={props} ref={chartComponent} />
-    </div>;
+    return <BillboardJS 
+        bb={Chart.bb} 
+        options={props} 
+        ref={chartComponent}
+     />;
 }
 ```
 
@@ -103,7 +128,7 @@ export function App(props: IChartOptions) {
 interface IChartOptions;
 
 // @billboard.js/react props
-interface IProp {
+interface IProp extends Pick<HTMLProps<HTMLDivElement>, "className" | "style"> {
 	bb: typeof bb;
 	options: ChartOptions;
 }

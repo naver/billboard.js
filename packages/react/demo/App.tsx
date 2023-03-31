@@ -61,10 +61,13 @@ function App(props) {
 	return (
 		<div className="App" style={{width: "500px"}}>
 			<BillboardJS bb={bb} options={d} ref={chartComponent} />
-			<BillboardJS bb={bb} options={d2} />
+			<BillboardJS bb={bb} options={d2} style={{
+				width: "800px",
+				border: "solid 1px red"
+			}} />
 
 			{/* passing given props */}
-			<BillboardJS bb={bb} options={props} />
+			<BillboardJS bb={bb} options={props} className={"bb my-class"} />
 		</div>
 	);
 }
