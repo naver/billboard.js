@@ -73,18 +73,16 @@ describe("BOOST", () => {
 		this.timeout(4000);
 
 		it("check if given function run on WebWorker thread.", done => {
-			const timeout = setTimeout(() => done(), 3500);
-
 			runWorker(true, function test_for_worker(p) {
 					return `${p}_123`;
 				},
 				function(res) {
-					timeout && clearTimeout(timeout);
-
 					expect(res).to.be.equal("abcd_123");
 					done();
 				}
 			)("abcd");
+
+			setTimeout(done, 3800);
 		});
 	});
 });

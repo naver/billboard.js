@@ -38,7 +38,7 @@ export default {
 	 *    | keys | Object |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
 	 *    | mimeType | string |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
 	 *    | names | Object | Same as data.names() |
-	 *    | resizeAfter | boolean | Resize after the load. Default value is `true`. This option won't call `onresize` neither `onresized`. |
+	 *    | resizeAfter | boolean | Resize after the load. Default value is `false`.<br>- This option won't call `onresize` neither `onresized`.<br>- When set to 'true', will call `.flush(true)` at the end of load. |
 	 *    | type | string | The type of targets will be updated. |
 	 *    | types | Object | The types of targets will be updated. |
 	 *    | unload | Array | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
@@ -54,7 +54,7 @@ export default {
 	 *    unload: ["data2", "data3"],
 	 *    url: "...",
 	 *    done: function() { ... }
-	 *    resizeAfter: false  // will not resize after load
+	 *    resizeAfter: true  // will resize after load
 	 * });
 	 * @example
 	 * const chart = bb.generate({
@@ -201,7 +201,7 @@ export default {
 	 *  | --- | --- | --- |
 	 *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
 	 *  | done | Fuction | Callback after data is unloaded. |
-	 *  | resizeAfter | boolean | Resize after the unload. Default value is `true`. This option won't call `onresize` neither `onresized`. |
+	 *  | resizeAfter | boolean | Resize after the unload. Default value is `false`.<br>- This option won't call `onresize` neither `onresized`.<br>- When set to 'true', will call `.flush(true)` at the end of unload. |
 	 * @example
 	 *  // Unload data2 and data3
 	 *  chart.unload({
@@ -209,7 +209,7 @@ export default {
 	 *    done: function() {
 	 *       // called after the unloaded
 	 *    },
-	 *    resizeAfter: false  // will not resize after unload
+	 *    resizeAfter: true  // will resize after unload
 	 *  });
 	 */
 	unload(argsValue): void {

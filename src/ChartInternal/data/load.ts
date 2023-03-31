@@ -11,14 +11,11 @@ import {endall} from "../../module/util";
  * @param {boolean} resizeAfter Weather to resize chart after the load
  * @private
  */
-export function callDone(fn, resizeAfter = true) {
+export function callDone(fn, resizeAfter = false) {
 	const $$ = this;
 	const {api} = $$;
 
-	if (resizeAfter !== false) {
-		$$.api.flush(true);
-	}
-
+	resizeAfter && $$.api.flush(true);
 	fn?.call(api);
 }
 
