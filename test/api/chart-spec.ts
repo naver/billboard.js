@@ -66,7 +66,9 @@ describe("API chart", () => {
 				expect(util.getBBox(path).width).to.be.equal(barWidth * 2);
 
 				done();
-			}, 500);
+			}, 300);
+
+			setTimeout(done, 500);
 		});
 	});
 
