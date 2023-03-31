@@ -7,7 +7,12 @@
  * @private
  */
 /* eslint-disable no-new-func, no-undef */
-export {win as window, doc as document};
+export {
+	win as window,
+	doc as document,
+	requestAnimationFrame, cancelAnimationFrame,
+	requestIdleCallback, cancelIdleCallback
+};
 
 const win = (() => {
 	const root = (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
@@ -19,9 +24,12 @@ const win = (() => {
 /* eslint-enable no-new-func, no-undef */
 
 // fallback for non-supported environments
-win.requestIdleCallback = win.requestIdleCallback || (cb => setTimeout(cb, 1));
-// win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
-win.requestAnimationFrame = win.requestAnimationFrame || (cb => setTimeout(cb, 1));
+const hasRAF = typeof win.requestAnimationFrame === "function";
+const hasRIC = typeof win.requestIdleCallback === "function";
+
+const requestAnimationFrame = hasRAF ? win.requestAnimationFrame : (cb => setTimeout(cb, 1));
+const cancelAnimationFrame = hasRAF ? win.cancelAnimationFrame : (id => clearTimeout(id));
+const requestIdleCallback = hasRIC ? win.requestIdleCallback : requestAnimationFrame;
+const cancelIdleCallback = hasRIC ? win.cancelIdleCallback : cancelAnimationFrame;
 
 const doc = win?.document;
-

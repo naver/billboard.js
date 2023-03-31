@@ -6,7 +6,7 @@
 import {pointer as d3Pointer} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
 import type {d3Selection} from "../../types/types";
-import {document, window} from "./browser";
+import {document, window, requestAnimationFrame} from "./browser";
 
 export {
 	addCssRules,
@@ -808,7 +808,7 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
  */
 function runUntil(fn: Function, conditionFn: Function): void {
 	if (conditionFn() === false) {
-		window.requestAnimationFrame(() => runUntil(fn, conditionFn));
+		requestAnimationFrame(() => runUntil(fn, conditionFn));
 	} else {
 		fn();
 	}
