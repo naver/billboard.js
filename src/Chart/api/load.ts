@@ -4,6 +4,7 @@
  */
 import {window} from "../../module/browser";
 import {isString, isArray} from "../../module/util";
+import {callDone} from "../../ChartInternal/data/load";
 
 export default {
 	/**
@@ -19,23 +20,29 @@ export default {
 	 * @memberof Chart
 	 * @param {object} args The object can consist with following members:<br>
 	 *
-	 *    | Key | Description |
-	 *    | --- | --- |
-	 *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
-	 *    | data | Data objects to be loaded. Checkout the example. |
-	 *    | append | Load data appending it to the current dataseries.<br>If the existing chart has`x` value, should provide with corresponding `x` value for newly loaded data.  |
-	 *    | names | Same as data.names() |
-	 *    | xs | Same as data.xs option  |
-	 *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
-	 *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
-	 *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
-	 *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
-	 *    | headers |  Set request header if loading via `data.url`.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
-	 *    | keys |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
-	 *    | mimeType |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
-	 *    | - type<br>- types | The type of targets will be updated. type must be String and types must be Object. |
-	 *    | unload | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
-	 *    | done | The specified function will be called after data loaded.|
+	 *    | Key | Type | Description |
+	 *    | --- | --- | --- |
+	 *    | columns | Array | The `columns` data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+	 *    | json | Array | The `json` data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+	 *    | rows | Array | The `rows` data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+	 *    | url | string | The data from `url` will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+	 *    | &nbsp; | | |
+	 *    | append | boolean | Load data appending it to the current dataseries.<br>If the existing chart has`x` value, should provide with corresponding `x` value for newly loaded data.  |
+	 *    | axes | Object | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
+	 *    | categories | Array | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
+	 *    | classes | Object | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
+	 *    | colors | Object | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
+	 *    | data | Obejct | Data objects to be loaded. Checkout the example. |
+	 *    | done | Function | The specified function will be called after data loaded.|
+	 *    | headers | string |  Set request header if loading via `data.url`.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
+	 *    | keys | Object |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
+	 *    | mimeType | string |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
+	 *    | names | Object | Same as data.names() |
+	 *    | resizeAfter | boolean | Resize after the load. Default value is `true`. This option won't call `onresize` neither `onresized`. |
+	 *    | type | string | The type of targets will be updated. |
+	 *    | types | Object | The types of targets will be updated. |
+	 *    | unload | Array | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
+	 *    | xs | string | Same as data.xs option  |
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataFromURL)
 	 * @example
 	 * // Load data1 and unload data2 and data3
@@ -47,6 +54,7 @@ export default {
 	 *    unload: ["data2", "data3"],
 	 *    url: "...",
 	 *    done: function() { ... }
+	 *    resizeAfter: false  // will not resize after load
 	 * });
 	 * @example
 	 * const chart = bb.generate({
@@ -193,13 +201,15 @@ export default {
 	 *  | --- | --- | --- |
 	 *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
 	 *  | done | Fuction | Callback after data is unloaded. |
+	 *  | resizeAfter | boolean | Resize after the unload. Default value is `true`. This option won't call `onresize` neither `onresized`. |
 	 * @example
 	 *  // Unload data2 and data3
 	 *  chart.unload({
 	 *    ids: ["data2", "data3"],
 	 *    done: function() {
 	 *       // called after the unloaded
-	 *    }
+	 *    },
+	 *    resizeAfter: false  // will not resize after unload
 	 *  });
 	 */
 	unload(argsValue): void {
@@ -222,7 +232,7 @@ export default {
 			});
 
 			$$.cache.remove(ids);
-			args.done && args.done.call(this);
+			callDone.call($$, args.done, args.resizeAfter);
 		});
 	}
 };

@@ -15,7 +15,7 @@ const {setTimeout, clearTimeout} = window;
  * @private
  */
 export function generateResize(option: boolean|number) {
-	const fn: any[] = [];
+	const fn: Function[] = [];
 	let timeout;
 
 	const callResizeFn = function() {
