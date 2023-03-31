@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.5-nightly-20230330004720
+ * @version 3.7.5-nightly-20230331004646
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1428,7 +1428,9 @@ var main = {
      * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
      * @property {boolean|number} [resize.timer=true] Set resize timer option.
      * - **NOTE:**
-     *   - The resize function will be called using: true - `setTimeout()`, false - `requestIdleCallback()`.
+     *   - The resize function will be called using:
+     *     - true: `setTimeout()`
+     *     - false: `requestIdleCallback()`
      *   - Given number(delay in ms) value, resize function will be triggered using `setTimer()` with given delay.
      * @example
      *  resize: {
@@ -4542,10 +4544,25 @@ var data$1 = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/**
+ * Call done callback with resize after transition
+ * @param {Function} fn Callback function
+ * @param {boolean} resizeAfter Weather to resize chart after the load
+ * @private
+ */
+function callDone(fn, resizeAfter) {
+    if (resizeAfter === void 0) { resizeAfter = true; }
+    var $$ = this;
+    var api = $$.api;
+    if (resizeAfter !== false) {
+        $$.api.flush(true);
+    }
+    fn === null || fn === void 0 ? void 0 : fn.call(api);
+}
 var dataLoad = {
     load: function (rawTargets, args) {
-        var _a;
         var $$ = this;
+        var data = $$.data;
         var append = args.append;
         var targets = rawTargets;
         if (targets) {
@@ -4562,7 +4579,7 @@ var dataLoad = {
                 });
             }
             // Update/Add data
-            $$.data.targets.forEach(function (d) {
+            data.targets.forEach(function (d) {
                 for (var i = 0; i < targets.length; i++) {
                     if (d.id === targets[i].id) {
                         d.values = append ?
@@ -4572,10 +4589,10 @@ var dataLoad = {
                     }
                 }
             });
-            $$.data.targets = $$.data.targets.concat(targets); // add remained
+            data.targets = data.targets.concat(targets); // add remained
         }
         // Set targets
-        $$.updateTargets($$.data.targets);
+        $$.updateTargets(data.targets);
         // Redraw with new targets
         $$.redraw({
             withUpdateOrgXDomain: true,
@@ -4584,7 +4601,7 @@ var dataLoad = {
         });
         // Update current state chart type and elements list after redraw
         $$.updateTypesElements();
-        (_a = args.done) === null || _a === void 0 ? void 0 : _a.call($$.api);
+        callDone.call($$, args.done, args.resizeAfter);
     },
     loadFromArgs: function (args) {
         var $$ = this;
@@ -10384,23 +10401,29 @@ var apiLoad = {
      * @memberof Chart
      * @param {object} args The object can consist with following members:<br>
      *
-     *    | Key | Description |
-     *    | --- | --- |
-     *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
-     *    | data | Data objects to be loaded. Checkout the example. |
-     *    | append | Load data appending it to the current dataseries.<br>If the existing chart has`x` value, should provide with corresponding `x` value for newly loaded data.  |
-     *    | names | Same as data.names() |
-     *    | xs | Same as data.xs option  |
-     *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
-     *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
-     *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
-     *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
-     *    | headers |  Set request header if loading via `data.url`.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
-     *    | keys |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
-     *    | mimeType |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
-     *    | - type<br>- types | The type of targets will be updated. type must be String and types must be Object. |
-     *    | unload | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
-     *    | done | The specified function will be called after data loaded.|
+     *    | Key | Type | Description |
+     *    | --- | --- | --- |
+     *    | columns | Array | The `columns` data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+     *    | json | Array | The `json` data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+     *    | rows | Array | The `rows` data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+     *    | url | string | The data from `url` will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+     *    | &nbsp; | | |
+     *    | append | boolean | Load data appending it to the current dataseries.<br>If the existing chart has`x` value, should provide with corresponding `x` value for newly loaded data.  |
+     *    | axes | Object | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
+     *    | categories | Array | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
+     *    | classes | Object | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
+     *    | colors | Object | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
+     *    | data | Obejct | Data objects to be loaded. Checkout the example. |
+     *    | done | Function | The specified function will be called after data loaded.|
+     *    | headers | string |  Set request header if loading via `data.url`.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
+     *    | keys | Object |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
+     *    | mimeType | string |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
+     *    | names | Object | Same as data.names() |
+     *    | resizeAfter | boolean | Resize after the load. Default value is `true`. This option won't call `onresize` neither `onresized`. |
+     *    | type | string | The type of targets will be updated. |
+     *    | types | Object | The types of targets will be updated. |
+     *    | unload | Array | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
+     *    | xs | string | Same as data.xs option  |
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataFromURL)
      * @example
      * // Load data1 and unload data2 and data3
@@ -10412,6 +10435,7 @@ var apiLoad = {
      *    unload: ["data2", "data3"],
      *    url: "...",
      *    done: function() { ... }
+     *    resizeAfter: false  // will not resize after load
      * });
      * @example
      * const chart = bb.generate({
@@ -10551,17 +10575,18 @@ var apiLoad = {
      *  | --- | --- | --- |
      *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
      *  | done | Fuction | Callback after data is unloaded. |
+     *  | resizeAfter | boolean | Resize after the unload. Default value is `true`. This option won't call `onresize` neither `onresized`. |
      * @example
      *  // Unload data2 and data3
      *  chart.unload({
      *    ids: ["data2", "data3"],
      *    done: function() {
      *       // called after the unloaded
-     *    }
+     *    },
+     *    resizeAfter: false  // will not resize after unload
      *  });
      */
     unload: function (argsValue) {
-        var _this = this;
         var $$ = this.internal;
         var args = argsValue || {};
         if (isArray(args)) {
@@ -10578,7 +10603,7 @@ var apiLoad = {
                 withLegend: true
             });
             $$.cache.remove(ids);
-            args.done && args.done.call(_this);
+            callDone.call($$, args.done, args.resizeAfter);
         });
     }
 };
@@ -22238,7 +22263,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230330004720
+ * @version 3.7.5-nightly-20230331004646
  */
 var bb = {
     /**
@@ -22248,7 +22273,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.5-nightly-20230330004720",
+    version: "3.7.5-nightly-20230331004646",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
