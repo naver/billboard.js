@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {Data} from "./options";
+import {Data, RegionOptions} from "./options";
 import {ArrayOrString, d3Selection, DataArray, DataItem, PrimitiveArray, TargetIds} from "./types";
 
 export interface Chart {
@@ -102,20 +102,20 @@ export interface Chart {
 		 * Update regions.
 		 * @param regions Regions will be replaced with this argument. The format of this argument is the same as regions.
 		 */
-		(regions: any[]): void;
+		(regions: RegionOptions[]): void;
 
 		/**
 		 * Add new region. This API adds new region instead of replacing like regions.
 		 * @param grids New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
 		 */
-		add(regions: any[] | {}): void;
+		add(regions: RegionOptions | RegionOptions[]): void;
 
 		/**
 		 * Remove regions. This API removes regions.
 		 * @param args This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be
 		 * removed.
 		 */
-		remove(args?: { value?: number | string; class?: string }): void;
+		remove(args?: { classes: string[] }): void;
 	};
 
 	data: {
@@ -364,6 +364,7 @@ export interface Chart {
 		types?: { [key: string]: string };
 		unload?: boolean | ArrayOrString;
 		done?: (this: Chart) => void;
+		resizeAfter?: boolean;
 	}): void;
 
 	/**
@@ -378,7 +379,11 @@ export interface Chart {
 	 *   - If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.
 	 *   - done will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
 	 */
-	unload(this: Chart, targetIds?: TargetIds, done?: (this: Chart) => void): void;
+	unload(this: Chart, args?: TargetIds | {
+		ids?: TargetIds,
+		done?: (this: Chart) => void,
+		resizeAfter?: boolean;
+	}): void;
 
 	/**
 	 * Flow data to the chart. By this API, you can append new data points to the chart.

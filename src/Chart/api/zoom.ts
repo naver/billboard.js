@@ -10,14 +10,21 @@ import {extend, getMinMax, isDefined, isObject, parseDate} from "../../module/ut
  * @param {Array} domain Target domain value
  * @param {Array} current Current zoom domain value
  * @param {Array} range Zoom range value
+ * @param {boolean} isInverted Whether the axis is inverted or not
  * @returns {boolean}
  * @private
  */
-function withinRange(domain: (number|Date)[], current, range: number[]): boolean {
+function withinRange(
+	domain: (number|Date)[], current, range: number[], isInverted = false
+): boolean {
 	const [min, max] = range;
 
 	return domain.every((v, i) => (
-		i === 0 ? (v >= min) : (v <= max)
+		i === 0 ? (
+			isInverted ? +v <= min : +v >= min
+		) : (
+			isInverted ? +v >= max : +v <= max
+		)
 	) && !(domain.every((v, i) => v === current[i])));
 }
 
@@ -45,6 +52,7 @@ const zoom = function(domainValue?: (Date|number|string)[]): (Date|number)[]|und
 	const $$ = this.internal;
 	const {$el, axis, config, org, scale} = $$;
 	const isRotated = config.axis_rotated;
+	const isInverted = config.axis_x_inverted;
 	const isCategorized = axis.isCategorized();
 	let domain = domainValue;
 
@@ -53,7 +61,14 @@ const zoom = function(domainValue?: (Date|number|string)[]): (Date|number)[]|und
 			domain = domain.map(x => parseDate.bind($$)(x));
 		}
 
-		if (withinRange(domain as (number|Date)[], $$.getZoomDomain(true), $$.getZoomDomain())) {
+		const isWithinRange = withinRange(
+			domain as (number|Date)[],
+			$$.getZoomDomain(true),
+			$$.getZoomDomain(),
+			isInverted
+		);
+
+		if (isWithinRange) {
 			if (isCategorized) {
 				domain = domain.map((v, i) => Number(v) + (i === 0 ? 0 : 1));
 			}

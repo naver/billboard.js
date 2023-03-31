@@ -34,7 +34,7 @@ function initDom(idValue) {
 
 	if (!document.getElementById(id)) {
 		sandbox(id, {
-			style: "width:640px;height:480px;"
+			style: "position:absolute;top:0;left:0;width:640px;height:480px;"
 		});
 
 		document.body.style.margin = "0px";
@@ -74,6 +74,26 @@ function destroyAll() {
 	bb.instance.forEach(v => v.destroy());
 }
 
+const print = {
+	arg(param) {
+		const msg = JSON.stringify(param, null, 2)
+			.replace(/\"([a-zA-Z_]+)\":/g, "$1:");
+
+		console.log(msg);
+	},
+	path(selection, log = true) {
+		const p = [];
+
+		selection.each(function() {
+			p.push(this.getAttribute("d"));
+		});
+
+		log && console.log(`"${p.join("\",\r\n\"")}"`);
+
+		return p;
+	}
+}
+
 export default {
 	destroyAll,
 	doDrag,
@@ -84,5 +104,6 @@ export default {
 	hoverChart,
 	parseNum,
 	parseSvgPath,
+	print,
 	simulator
 };

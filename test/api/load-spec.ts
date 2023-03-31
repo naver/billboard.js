@@ -823,14 +823,154 @@ describe("API load", function() {
 					done: function() {
 						const {axis} = this.internal.$el;
 						const {lines} = this.$.line;
-	
+		
 						expect(lines.size()).to.be.equal(1);
 						expect(+axis.y.selectAll(".tick:last-of-type text").text()).to.be.equal(155);
-						expect(lines.attr("d")).to.be.equal("M6,390.583L124,319.75L241,248.917L358,178.083L475,107.25L593,36.417");
+						expect(lines.attr("d")).to.be.equal("M6,390.583L124,319.75L241,248.917L359,178.083L476,107.25L594,36.417");
 
 						done();
 					}
 				});
+			});
+		});
+	});
+
+	describe("Check 'resizeAfter' option", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150]
+					],
+					type: "line"
+				}
+			};
+		});
+
+		it("should resize correctly after the load", done => {
+			const {height} = chart.internal.state;
+
+			// when
+			chart.load({
+				columns: [
+				   ["www-abcd-abcd", 100, 200, 150, 300],
+				   ["www2-abcd-abcd", 200, 200, 150, 300],
+				   ["www3-abcd-abcd", 300, 200, 150, 300],
+				   ["www4-abcd-abcd", 400, 200, 150, 300],
+				   ["www5-abcd-abcd", 500, 200, 150, 300],
+				   ["www6-abcd-abcd", 600, 200, 150, 300],
+				   ["www7-abcd-abcd", 700, 200, 150, 300]
+				],
+				resizeAfter: true,
+				done: function() {
+					const lastLegend = this.$.legend.select("g:last-child").node();
+					const chartNode = this.$.chart.node();
+
+					setTimeout(() => {
+						expect(this.internal.state.height).to.be.below(height);
+						expect(lastLegend.getBoundingClientRect().bottom).to.be.below(chartNode.getBoundingClientRect().bottom);
+						
+						done();
+					}, 300);
+				}
+			});
+		});
+
+		it("shouldn't resize after the load", done => {
+			const {height} = chart.internal.state;
+
+			// when
+			chart.load({
+				columns: [
+				   ["www-abcd-abcd", 100, 200, 150, 300],
+				   ["www2-abcd-abcd", 200, 200, 150, 300],
+				   ["www3-abcd-abcd", 300, 200, 150, 300],
+				   ["www4-abcd-abcd", 400, 200, 150, 300],
+				   ["www5-abcd-abcd", 500, 200, 150, 300],
+				   ["www6-abcd-abcd", 600, 200, 150, 300],
+				   ["www7-abcd-abcd", 700, 200, 150, 300]
+				],
+				done: function() {
+					const lastLegend = this.$.legend.select("g:last-child").node();
+					const chartNode = this.$.chart.node();
+
+					setTimeout(() => {
+						expect(this.internal.state.height).to.be.equal(height);
+						expect(lastLegend.getBoundingClientRect().bottom).to.be.above(chartNode.getBoundingClientRect().bottom);
+						
+						done();
+					}, 300);
+				}
+			});
+		});
+
+		it("should resize correctly after the unload", done => {
+			// when
+			chart.load({
+				columns: [
+				   ["www-abcd-abcd", 100, 200, 150, 300],
+				   ["www2-abcd-abcd", 200, 200, 150, 300],
+				   ["www3-abcd-abcd", 300, 200, 150, 300],
+				   ["www4-abcd-abcd", 400, 200, 150, 300],
+				   ["www5-abcd-abcd", 500, 200, 150, 300],
+				   ["www6-abcd-abcd", 600, 200, 150, 300],
+				   ["www7-abcd-abcd", 700, 200, 150, 300],
+				],
+				done: function() {
+					this.unload({
+                        ids: ["www-abcd-abcd", "www2-abcd-abcd", "www3-abcd-abcd"],
+						resizeAfter: true,
+						done: function() {
+							const lastLegend = this.$.legend.select("g:last-child").node();
+							const chartNode = this.$.chart.node();
+
+							setTimeout(() => {
+								const legendBottom = lastLegend.getBoundingClientRect().bottom;
+								const chartBottom = chartNode.getBoundingClientRect().bottom;
+
+								expect(legendBottom).to.be.closeTo(chartBottom, 10);
+								expect(legendBottom < chartBottom).to.be.true;
+								
+								done();
+							}, 300);
+						}
+                    })
+				}
+			});
+		});
+
+		it("shouldn't resize after the unload", done => {
+			// when
+			chart.load({
+				columns: [
+				   ["www-abcd-abcd", 100, 200, 150, 300],
+				   ["www2-abcd-abcd", 200, 200, 150, 300],
+				   ["www3-abcd-abcd", 300, 200, 150, 300],
+				   ["www4-abcd-abcd", 400, 200, 150, 300],
+				   ["www5-abcd-abcd", 500, 200, 150, 300],
+				   ["www6-abcd-abcd", 600, 200, 150, 300],
+				   ["www7-abcd-abcd", 700, 200, 150, 300],
+				],
+				done: function() {
+					this.unload({
+                        ids: ["www-abcd-abcd", "www2-abcd-abcd", "www3-abcd-abcd"],
+						resizeAfter: false,
+						done: function() {
+							const lastLegend = this.$.legend.select("g:last-child").node();
+							const chartNode = this.$.chart.node();
+
+							setTimeout(() => {
+								const legendBottom = lastLegend.getBoundingClientRect().bottom;
+								const chartBottom = chartNode.getBoundingClientRect().bottom;
+
+								expect(legendBottom).to.not.be.closeTo(chartBottom, 10);
+								expect(chartBottom - legendBottom > 25).to.be.true;
+								
+								done();
+							}, 300);
+						}
+                    })
+				}
 			});
 		});
 	});

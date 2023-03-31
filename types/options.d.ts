@@ -114,6 +114,12 @@ export interface ChartOptions {
 	 */
 	padding?: boolean | {
 		/**
+		 * Padding mode
+	 	* - `"fit"`: Reduce padding as much as possible to make chart fit to the container element for chart types w/axis.<br>When specified, all padding values will be relative from fitted value.
+		*/
+		mode?: "fit";
+
+		/**
 		 * The padding on the top of the chart.
 		 */
 		top?: number;
@@ -383,7 +389,7 @@ export interface ChartOptions {
 }
 
 export interface RegionOptions {
-	axis?: string;
+	axis?: "x" | "y" | "y2";
 	start?: string | number | Date;
 	end?: string | number | Date;
 	class?: string;

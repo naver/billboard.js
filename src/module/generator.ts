@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import type {d3Transition} from "../../types/types";
-import {window} from "./browser";
+import {window, requestIdleCallback} from "./browser";
 import {isArray, isNumber, isTabVisible, runUntil} from "./util";
 
 const {setTimeout, clearTimeout} = window;
@@ -15,14 +15,14 @@ const {setTimeout, clearTimeout} = window;
  * @private
  */
 export function generateResize(option: boolean|number) {
-	const fn: any[] = [];
+	const fn: Function[] = [];
 	let timeout;
 
 	const callResizeFn = function() {
 		// Delay all resize functions call, to prevent unintended excessive call from resize event
 		callResizeFn.clear();
 
-		if (option === false && window.requestIdleCallback) {
+		if (option === false) {
 			requestIdleCallback(() => {
 				fn.forEach((f: Function) => f());
 			}, {timeout: 200});

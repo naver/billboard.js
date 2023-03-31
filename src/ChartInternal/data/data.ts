@@ -122,7 +122,6 @@ export default {
 
 	isMultipleX(): boolean {
 		return notEmpty(this.config.data_xs) ||
-			!this.config.data_xSort ||
 			this.hasType("bubble") ||
 			this.hasType("scatter");
 	},
@@ -343,10 +342,11 @@ export default {
 
 		if (!isNumber(total)) {
 			const sum = mergeArray($$.data.targets.map(t => t.values))
-				.map(v => v.value)
-				.reduce((p, c) => p + c);
+				.map(v => v.value);
 
-			$$.cache.add(cacheKey, total = sum);
+			total = sum.length ? sum.reduce((p, c) => p + c) : 0;
+
+			$$.cache.add(cacheKey, total);
 		}
 
 		if (subtractHidden) {
@@ -397,6 +397,7 @@ export default {
 	getMaxDataCountTarget() {
 		let target = this.filterTargetsToShow() || [];
 		const length = target.length;
+		const isInverted = this.config.axis_x_inverted;
 
 		if (length > 1) {
 			target = target.map(t => t.values)
@@ -404,9 +405,9 @@ export default {
 				.map(v => v.x);
 
 			target = sortValue(getUnique(target))
-				.map((x, index) => ({x, index}));
+				.map((x, index, array) => ({x, index: isInverted ? array.length - index - 1 : index}));
 		} else if (length) {
-			target = target[0].values;
+			target = target[0].values.concat();
 		}
 
 		return target;
@@ -795,31 +796,34 @@ export default {
 		const {axis, config} = $$;
 		const stepType = config.line_step_type;
 		const isCategorized = axis ? axis.isCategorized() : false;
-
 		const converted = isArray(values) ? values.concat() : [values];
 
 		if (!(isCategorized || /step\-(after|before)/.test(stepType))) {
 			return values;
 		}
 
-		// insert & append cloning first/last value to be fully rendered covering on each gap sides
-		const head = converted[0];
-		const tail = converted[converted.length - 1];
-		const {id} = head;
-		let {x} = head;
+		// when all datas are null, return empty array
+		// https://github.com/naver/billboard.js/issues/3124
+		if (converted.length) {
+			// insert & append cloning first/last value to be fully rendered covering on each gap sides
+			const head = converted[0];
+			const tail = converted[converted.length - 1];
+			const {id} = head;
+			let {x} = head;
 
-		// insert head
-		converted.unshift({x: --x, value: head.value, id});
-
-		isCategorized && stepType === "step-after" &&
+			// insert head
 			converted.unshift({x: --x, value: head.value, id});
 
-		// append tail
-		x = tail.x;
-		converted.push({x: ++x, value: tail.value, id});
+			isCategorized && stepType === "step-after" &&
+				converted.unshift({x: --x, value: head.value, id});
 
-		isCategorized && stepType === "step-before" &&
+			// append tail
+			x = tail.x;
 			converted.push({x: ++x, value: tail.value, id});
+
+			isCategorized && stepType === "step-before" &&
+				converted.push({x: ++x, value: tail.value, id});
+		}
 
 		return converted;
 	},
@@ -946,8 +950,10 @@ export default {
 					}
 				}
 
-				d.ratio = isNumber(d.value) && total ?
-					d.value / total[d.index] : 0;
+				const divisor = total[d.index];
+
+				d.ratio = isNumber(d.value) && total && divisor ?
+					d.value / divisor : 0;
 
 				ratio = d.ratio;
 			} else if (type === "radar") {
@@ -1004,7 +1010,7 @@ export default {
 
 		return $$.isBubbleType(d) && (
 			(isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
-			(isArray(d.value) && d.value.length === 2)
+			(isArray(d.value) && d.value.length >= 2)
 		);
 	},
 
@@ -1018,7 +1024,7 @@ export default {
 		const $$ = this;
 		const {value} = d;
 
-		return $$.isBarType(d) && isArray(value) && value.length === 2 && value.every(v => isNumber(v));
+		return $$.isBarType(d) && isArray(value) && value.length >= 2 && value.every(v => isNumber(v));
 	},
 
 	/**

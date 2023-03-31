@@ -19,7 +19,7 @@ export interface ITreemapData {
 }
 
 export interface IDataRow extends TDataRow {
-    x: number;
+    x: number | string | Date;
 }
 export interface IArcDataRow extends TDataRow {
     ratio: number;

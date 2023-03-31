@@ -8,7 +8,7 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import sinon from "sinon";
 import util from "../assets/util";
-import {$AREA, $AXIS, $BAR, $CIRCLE, $COMMON, $LINE, $SHAPE, $TEXT} from "../../src/config/classes";
+import {$ARC, $AREA, $AXIS, $BAR, $CIRCLE, $COMMON, $LINE, $SHAPE, $TEXT} from "../../src/config/classes";
 import {isNumber} from "../../src/module/util";
 
 describe("DATA", () => {
@@ -89,7 +89,7 @@ describe("DATA", () => {
 		});
 
 		it("should draw correctly", () => {
-			const expectedCx = {443: [98, 294, 490], 995: [98, 294, 490]};
+			const expectedCx = {443: [98, 296, 492], 995: [98, 296, 492]};
 			const expectedCy = {443: [194, 351, 36], 995: [391, 0, 351]};
 			const main = chart.$.main;
 
@@ -150,7 +150,7 @@ describe("DATA", () => {
 
 		it("should draw nested JSON correctly", () => {
 			const main = chart.$.main;
-			const expectedCx = [98, 294, 490];
+			const expectedCx = [98, 296, 492];
 			const expectedCy = {
 				443: [181, 326, 36],
 				995: [362, 0, 326],
@@ -608,6 +608,35 @@ describe("DATA", () => {
 		});
 	});
 
+	describe("data.xSort", () => {
+		before(() => {
+			args = {
+				data: {
+					xSort: false,
+					x: "x",
+					columns: [
+						["x", 3, 1, 2],
+						["data1", 300, 350, 300]
+					]
+				}
+			};
+		});
+
+		it("line path should rendered correctly.", () => {
+			expect(chart.$.line.lines.attr("d")).to.be.equal("M594,390.583L6,36.417L300,390.583");
+		});
+
+		it("check for tooltip show", () => {
+			const {tooltip} = chart.$;
+
+			// when
+			chart.tooltip.show({x: 2});
+
+			expect(tooltip.select(".name").text()).to.be.equal("data1");
+			expect(+tooltip.select(".value").text()).to.be.equal(300);
+		});
+	});
+
 	describe("inner functions", () => {
 		it("should check returns of mapToTargetIds", () => {
 			const internal = chart.internal;
@@ -995,6 +1024,49 @@ describe("DATA", () => {
 
 			expect(emptyLabelText.empty()).to.be.true;
 		});
+
+		it("set option", () => {
+			args = {
+				data: {
+					columns: [],
+					type: "gauge",
+					empty: {
+						label: {
+							text: "No data to display."
+						}
+					}
+				}
+			};
+		});
+
+		it("should show empty text when empty data array is given.", () => {
+			const emptyText = chart.$.main.select("text").text();
+
+			expect(emptyText).to.be.equal(args.data.empty.label.text);
+		});
+
+		it("set option: data", () => {
+			args.data.columns = [["data", 10]];
+		});
+
+		it("check when no data is shown.", done => {
+			const bgArc = chart.$.main.select(`.${$ARC.chartArcsBackground}`);
+
+			// when
+			chart.toggle();
+
+			setTimeout(() => {
+				const emptyText = chart.$.main.select("text");
+
+				expect(emptyText.text()).to.be.equal(args.data.empty.label.text);
+				expect(emptyText.style("display")).to.be.equal("block");				
+
+				// background arc shouldn't be drawn
+				expect(bgArc.attr("d")).to.be.equal("M 0 0");
+
+				done();
+			}, 300);
+		});
 	});
 
 	describe("Multilined data.label text", () => {
@@ -1245,6 +1317,61 @@ describe("DATA", () => {
 			chart.$.circles.filter(d => d.id === "data3").each(function(d, i) {
 				expect(+this.getAttribute("cy")).to.be.closeTo(expectedY[i], 1);
 			});
+		});
+	});
+
+	describe("ranged data", () => {
+		before(() => {
+			args = {
+				data: {
+					type: "bar",
+					columns: [,
+						["data1", [350, 70, 60], [230, 290], [200, 500]]
+					]
+				}
+			};
+		});
+
+		it("when bar ranged type data contains additional value than needed.", () => {
+			const path = chart.$.bar.bars.attr("d");
+
+			expect(/^M\d+/.test(path)).to.be.true;
+		});
+
+		it("set options: data.type='bubble'", () => {
+			args.data.type = "bubble";
+		});
+
+		it("when bubble dimension type data contains additional value than needed.", () => {
+			const r = +chart.$.circles.attr("r");
+
+			expect(r > 0).to.be.true;
+		});
+	});
+
+	describe("null data", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", null, null, null, null, null, null],
+						["data2", 1, 10, 100, 1000, 10000, 100000],
+					],
+					type: "area-step"
+				},
+				line: {
+					connectNull: true
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("category x axis with whole dataseries contains null", () => {
+			expect(true).to.be.true;
 		});
 	});
 });

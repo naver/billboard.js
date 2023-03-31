@@ -292,6 +292,7 @@ class Axis {
 			owner: $$
 		}, isX && {
 			isCategory,
+			isInverted: config.axis_x_inverted,
 			tickMultiline: config.axis_x_tick_multiline,
 			tickWidth: config.axis_x_tick_width,
 			tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),

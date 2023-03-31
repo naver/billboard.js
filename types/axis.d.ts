@@ -24,6 +24,12 @@ export interface AxisConfigurationBase {
 	 * Set additional axes for Axis
 	 */
 	axes?: AxesConfiguration[];
+
+	/**
+	 * Change the direction of axis.
+	 * If true set, the direction will be from: right -> left for x axis / top -> bottom for y/y2 axis.
+	 */
+	inverted?: boolean;
 }
 
 export interface xAxisConfiguration extends AxisConfigurationBase {
@@ -134,12 +140,6 @@ export interface yAxisConfigurationBase extends AxisConfigurationBase {
 	 * Set min value of y axis.
 	 */
 	min?: number;
-
-	/**
-	 * Change the direction of y axis.
-	 * If true set, the direction will be from the top to the bottom.
-	 */
-	inverted?: boolean;
 
 	/**
 	 * Set center value of y axis.
@@ -352,7 +352,8 @@ export interface YTickConfiguration {
 	 * Set formatter for y axis tick text.
 	 * This option accepts d3.format object as well as a function you define.
 	 */
-	format?: ((this: Chart, x: number) => string | number) | ((this: Chart, x: Date) => string | number);
+	format?: ((this: Chart, x: number) => string | number) |
+		((this: Chart, x: Date) => string | number);
 
 	/**
 	 * Setting for culling ticks.

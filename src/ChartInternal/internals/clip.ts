@@ -7,22 +7,20 @@ import {document, window} from "../../module/browser";
 export default {
 	initClip(): void {
 		const $$ = this;
-		const {clip, hasAxis} = $$.state;
+		const {clip, datetimeId} = $$.state;
 
 		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
-		clip.id = `${$$.state.datetimeId}-clip`;
+		clip.id = `${datetimeId}-clip`;
 
-		if (hasAxis) {
-			clip.idXAxis = `${clip.id}-xaxis`;
-			clip.idYAxis = `${clip.id}-yaxis`;
-			clip.idGrid = `${clip.id}-grid`;
+		clip.idXAxis = `${clip.id}-xaxis`;
+		clip.idYAxis = `${clip.id}-yaxis`;
+		clip.idGrid = `${clip.id}-grid`;
 
-			// Define 'clip-path' attribute values
-			clip.path = $$.getClipPath(clip.id);
-			clip.pathXAxis = $$.getClipPath(clip.idXAxis);
-			clip.pathYAxis = $$.getClipPath(clip.idYAxis);
-			clip.pathGrid = $$.getClipPath(clip.idGrid);
-		}
+		// Define 'clip-path' attribute values
+		clip.path = $$.getClipPath(clip.id);
+		clip.pathXAxis = $$.getClipPath(clip.idXAxis);
+		clip.pathYAxis = $$.getClipPath(clip.idYAxis);
+		clip.pathGrid = $$.getClipPath(clip.idGrid);
 	},
 
 	getClipPath(id: string): string | null {
@@ -85,10 +83,11 @@ export default {
 		const left = Math.max(30, margin.left) - (isRotated ? 20 : 0);
 		const isInner = config.axis_y_inner;
 
-		const x = isInner ? -1 : (isRotated ? -(1 + left) : -(left - 1));
+		const x = isInner && !isRotated ? (config.axis_y_label.text ? -20 : -1) :
+			(isRotated ? -(1 + left) : -(left - 1));
 		const y = -(isRotated ? 20 : margin.top);
 		const w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0);
-		const h = (isRotated ? margin.bottom : (margin.top + height)) + 10;
+		const h = (isRotated ? margin.bottom + (config.padding?.mode === "fit" ? 10 : 0) : (margin.top + height)) + 10;
 
 		node
 			.attr("x", x)

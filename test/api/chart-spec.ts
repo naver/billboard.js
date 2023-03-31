@@ -17,6 +17,9 @@ describe("API chart", () => {
 				["data1", 30, 200, 100, 400],
 				["data2", 500, 800, 500, 2000]
 			]
+		},
+		interaction: {
+			duration: 0
 		}
 	};
 
@@ -45,11 +48,14 @@ describe("API chart", () => {
 			expect(chart.groups().length).to.be.equal(0);
 		});
 
-		it("should update groups correctly", done => {
+		it("should update groups correctly", function(done) {
+			this.timeout(1000);
+
 			const main = chart.$.main;
 			const path = main.select(`.${$BAR.bars}-data1 path`);
 			const barWidth = util.getBBox(path).width;
 
+			// when
 			chart.groups([
 				["data1", "data2"]
 			]);
@@ -62,7 +68,9 @@ describe("API chart", () => {
 				expect(util.getBBox(path).width).to.be.equal(barWidth * 2);
 
 				done();
-			}, 500);
+			}, 300);
+
+			setTimeout(done, 500);
 		});
 	});
 

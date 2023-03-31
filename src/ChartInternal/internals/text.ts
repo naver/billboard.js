@@ -141,7 +141,7 @@ export default {
 	 */
 	updateText(): void {
 		const $$ = this;
-		const {$el, $T, config} = $$;
+		const {$el, $T, config, axis} = $$;
 		const classText = $$.getClass("text", "index");
 		const labelsCentered = config.data_labels.centered;
 
@@ -158,8 +158,10 @@ export default {
 			.merge(text)
 			.attr("class", classText)
 			.attr("text-anchor", d => {
+				const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
+
 				// when value is negative or
-				let isEndAnchor = d.value < 0;
+				let isEndAnchor = isInverted ? d.value > 0 : d.value < 0;
 
 				if ($$.isCandlestickType(d)) {
 					const data = $$.getCandlestickData(d);
@@ -443,7 +445,7 @@ export default {
 	 * @returns {number} x coordinate
 	 * @private
 	 */
-	getXForText(points, d, textElement): number {
+	getXForText(points, d: IDataRow, textElement): number {
 		const $$ = this;
 		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
@@ -461,9 +463,17 @@ export default {
 			xPos += config.data_labels.centered ? 0 : 5;
 		} else {
 			if (isRotated) {
+				const isInverted = config[`axis_${$$.axis.getId(d.id)}_inverted`];
 				const padding = $$.isBarType(d) ? 4 : 6;
+				const value = d.value as number;
 
-				xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1);
+				xPos = points[2][1];
+
+				if (isInverted) {
+					xPos -= padding * (value > 0 ? 1 : -1);
+				} else {
+					xPos += padding * (value < 0 ? -1 : 1);
+				}
 			} else {
 				xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
 			}

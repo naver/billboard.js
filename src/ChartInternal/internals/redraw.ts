@@ -40,17 +40,17 @@ export default {
 			$$.updateCircleY && ($$.circleY = $$.updateCircleY());
 		}
 
+		// Data empty label positioning and text.
+		config.data_empty_label_text && main.select(`text.${$TEXT.text}.${$COMMON.empty}`)
+			.attr("x", state.width / 2)
+			.attr("y", state.height / 2)
+			.text(config.data_empty_label_text)
+			.style("display", targetsToShow.length ? "none" : null);
+
 		// update axis
 		if (state.hasAxis) {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
-
-			// Data empty label positioning and text.
-			config.data_empty_label_text && main.select(`text.${$TEXT.text}.${$COMMON.empty}`)
-				.attr("x", state.width / 2)
-				.attr("y", state.height / 2)
-				.text(config.data_empty_label_text)
-				.style("display", targetsToShow.length ? "none" : null);
 
 			// grid
 			$$.hasGrid() && $$.updateGrid();
@@ -65,7 +65,6 @@ export default {
 					$$[`update${name}`](wth.TransitionForExit);
 				}
 			});
-
 
 			// circles for select
 			$el.text && main.selectAll(`.${$SELECT.selectedCircles}`)
@@ -250,20 +249,5 @@ export default {
 
 		// Draw with new sizes & scales
 		$$.redraw(options, transitions);
-	},
-
-	/**
-	 * Redraw without rescale
-	 * @private
-	 */
-	redrawWithoutRescale(): void {
-		this.redraw({
-			withY: false,
-			withDimension: false,
-			withLegend: false,
-			withSubchart: false,
-			withEventRect: false,
-			withTransitionForAxis: false,
-		});
 	}
 };

@@ -39,8 +39,8 @@ describe("basic", async () => {
 		// @ts-ignore
 		const instances = await page.evaluate(() => window.charts);
 
-		expect(elements).toEqual(2);
-		expect(instances.length).toEqual(2);
+		expect(elements).toEqual(3);
+		expect(instances.length).toEqual(3);
 
 		const legendText = await page.locator(".bb .bb-legend-item-data4 text");
 
@@ -56,5 +56,11 @@ describe("basic", async () => {
 		await page.locator('text=data1data2 >> rect').first().click();
 		// Click text=data1data2 >> rect >> nth=1
 		await page.locator('text=data1data2 >> rect').nth(1).click();
+	});
+
+	test("should area chart be generated.", async () => {
+		const areaLen = await page.evaluate(() => document.querySelectorAll("path.bb-area").length);
+		
+		expect(areaLen).toEqual(2);
 	});
 });

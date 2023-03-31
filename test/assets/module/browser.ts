@@ -3,4 +3,4 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-export {window, document} from "../../../src/module/browser";
+export {window, document, requestAnimationFrame, requestIdleCallback} from "../../../src/module/browser";

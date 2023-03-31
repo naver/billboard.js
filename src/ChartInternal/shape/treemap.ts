@@ -66,8 +66,11 @@ function convertDataToTreemapData(data: IData[]): ITreemapData[] {
 export default {
 	initTreemap(): void {
 		const $$ = this;
-		const {$el, state: {current: {width, height}, clip}} = $$;
-		const clipId = clip.id;
+		const {$el, state: {
+			current: {width, height}, clip, datetimeId
+		}} = $$;
+
+		clip.id = `${datetimeId}-clip`;
 
 		$$.treemap = d3Treemap()
 			.tile($$.getTreemapTile());
@@ -83,13 +86,13 @@ export default {
 
 		$el.defs
 			.append("clipPath")
-			.attr("id", clipId)
+			.attr("id", clip.id)
 			.append("rect")
 			.attr("width", width)
 			.attr("height", height);
 
 		$el.treemap = $el.main.select(`.${$COMMON.chart}`)
-			.attr("clip-path", `url(#${clipId})`)
+			.attr("clip-path", `url(#${clip.id})`)
 			.append("g")
 			.classed($TREEMAP.chartTreemaps, true);
 

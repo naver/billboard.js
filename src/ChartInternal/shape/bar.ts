@@ -172,19 +172,21 @@ export default {
 			const indexX = +isRotated;
 			const indexY = +!indexX;
 
-			const isNegative = d.value as number < 0;
+			const isUnderZero = d.value as number < 0;
+			const isInverted = config[`axis_${$$.axis.getId(d.id)}_inverted`];
+			const isNegative = (!isInverted && isUnderZero) || (isInverted && !isUnderZero);
+
 			const pathRadius = ["", ""];
 			let radius = 0;
 
 			const isGrouped = $$.isGrouped(d.id);
-			// const hasRadius = d.value !== 0 && getRadius;
 			const isRadiusData = getRadius && isGrouped ? $$.isStackingRadiusData(d) : false;
 
-			if (getRadius && (!isGrouped || isRadiusData)) {
+			if (getRadius) {
 				const index = isRotated ? indexY : indexX;
 				const barW = points[2][index] - points[0][index];
 
-				radius = getRadius(barW);
+				radius = !isGrouped || isRadiusData ? getRadius(barW) : 0;
 
 				const arc = `a${radius},${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
 
@@ -197,7 +199,7 @@ export default {
 			// path string data shouldn't be containing new line chars
 			// https://github.com/naver/billboard.js/issues/530
 			const path = isRotated ?
-				`H${points[1][indexX] - radius} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` :
+				`H${points[1][indexX] + (isNegative ? radius : -radius)} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` :
 				`V${points[1][indexY] + (isNegative ? -radius : radius)} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
 
 			return `M${points[0][indexX]},${points[0][indexY]}${path}z`;
@@ -262,15 +264,17 @@ export default {
 		const yScale = $$.getYScaleById.bind($$);
 
 		return (d: IDataRow, i: number) => {
-			const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id));
+			const {id} = d;
+			const y0 = yScale.call($$, id, isSub)($$.getShapeYMin(id));
 			const offset = barOffset(d, i) || y0; // offset is for stacked bar chart
 			const width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
+			const isInverted = config[`axis_${$$.axis.getId(id)}_inverted`];
 			const value = d.value as number;
 			const posX = barX(d);
 			let posY = barY(d);
 
 			// fix posY not to overflow opposite quadrant
-			if (config.axis_rotated && (
+			if (config.axis_rotated && !isInverted && (
 				(value > 0 && posY < y0) || (value < 0 && y0 < posY)
 			)) {
 				posY = y0;

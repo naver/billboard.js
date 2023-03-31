@@ -379,8 +379,13 @@ export default class AxisRenderer {
 
 		if (!tickWidth || tickWidth <= 0) {
 			tickWidth = isLeftRight ? 95 : (
-				params.isCategory ?
-					(Math.ceil(scale(ticks[1]) - scale(ticks[0])) - 12) : 110
+				params.isCategory ?	(
+					Math.ceil(
+						params.isInverted ?
+							scale(ticks[0]) - scale(ticks[1]) :
+							scale(ticks[1]) - scale(ticks[0])
+					) - 12
+				) : 110
 			);
 		}
 
