@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {window} from "../../module/browser";
+import {requestIdleCallback} from "../../module/browser";
 import {isString, isArray} from "../../module/util";
 import {callDone} from "../../ChartInternal/data/load";
 
@@ -179,7 +179,7 @@ export default {
 			$$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () => {
 				// to mitigate improper rendering for multiple consecutive calls
 				// https://github.com/naver/billboard.js/issues/2121
-				window.requestIdleCallback(() => $$.loadFromArgs(args));
+				requestIdleCallback(() => $$.loadFromArgs(args));
 			});
 		} else {
 			$$.api.tooltip.hide();
