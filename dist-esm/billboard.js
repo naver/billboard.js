@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.5-nightly-20230331004646
+ * @version 3.7.5-nightly-20230401004631
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -33,9 +33,12 @@ var win = (function () {
 })();
 /* eslint-enable no-new-func, no-undef */
 // fallback for non-supported environments
-win.requestIdleCallback = win.requestIdleCallback || (function (cb) { return setTimeout(cb, 1); });
-// win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
-win.requestAnimationFrame = win.requestAnimationFrame || (function (cb) { return setTimeout(cb, 1); });
+var hasRAF = typeof win.requestAnimationFrame === "function";
+var hasRIC = typeof win.requestIdleCallback === "function";
+var requestAnimationFrame = hasRAF ? win.requestAnimationFrame : (function (cb) { return setTimeout(cb, 1); });
+var cancelAnimationFrame = hasRAF ? win.cancelAnimationFrame : (function (id) { return clearTimeout(id); });
+var requestIdleCallback = hasRIC ? win.requestIdleCallback : requestAnimationFrame;
+hasRIC ? win.cancelIdleCallback : cancelAnimationFrame;
 var doc = win === null || win === void 0 ? void 0 : win.document;
 
 /**
@@ -834,7 +837,7 @@ function convertInputType(mouse, touch) {
  */
 function runUntil(fn, conditionFn) {
     if (conditionFn() === false) {
-        win.requestAnimationFrame(function () { return runUntil(fn, conditionFn); });
+        requestAnimationFrame(function () { return runUntil(fn, conditionFn); });
     }
     else {
         fn();
@@ -3187,7 +3190,7 @@ function generateResize(option) {
     var callResizeFn = function () {
         // Delay all resize functions call, to prevent unintended excessive call from resize event
         callResizeFn.clear();
-        if (option === false && win.requestIdleCallback) {
+        if (option === false) {
             requestIdleCallback(function () {
                 fn.forEach(function (f) { return f(); });
             }, { timeout: 200 });
@@ -4551,12 +4554,10 @@ var data$1 = {
  * @private
  */
 function callDone(fn, resizeAfter) {
-    if (resizeAfter === void 0) { resizeAfter = true; }
+    if (resizeAfter === void 0) { resizeAfter = false; }
     var $$ = this;
     var api = $$.api;
-    if (resizeAfter !== false) {
-        $$.api.flush(true);
-    }
+    resizeAfter && $$.api.flush(true);
     fn === null || fn === void 0 ? void 0 : fn.call(api);
 }
 var dataLoad = {
@@ -10419,7 +10420,7 @@ var apiLoad = {
      *    | keys | Object |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
      *    | mimeType | string |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
      *    | names | Object | Same as data.names() |
-     *    | resizeAfter | boolean | Resize after the load. Default value is `true`. This option won't call `onresize` neither `onresized`. |
+     *    | resizeAfter | boolean | Resize after the load. Default value is `false`.<br>- This option won't call `onresize` neither `onresized`.<br>- When set to 'true', will call `.flush(true)` at the end of load. |
      *    | type | string | The type of targets will be updated. |
      *    | types | Object | The types of targets will be updated. |
      *    | unload | Array | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
@@ -10435,7 +10436,7 @@ var apiLoad = {
      *    unload: ["data2", "data3"],
      *    url: "...",
      *    done: function() { ... }
-     *    resizeAfter: false  // will not resize after load
+     *    resizeAfter: true  // will resize after load
      * });
      * @example
      * const chart = bb.generate({
@@ -10553,7 +10554,7 @@ var apiLoad = {
             $$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), function () {
                 // to mitigate improper rendering for multiple consecutive calls
                 // https://github.com/naver/billboard.js/issues/2121
-                win.requestIdleCallback(function () { return $$.loadFromArgs(args); });
+                requestIdleCallback(function () { return $$.loadFromArgs(args); });
             });
         }
         else {
@@ -10575,7 +10576,7 @@ var apiLoad = {
      *  | --- | --- | --- |
      *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
      *  | done | Fuction | Callback after data is unloaded. |
-     *  | resizeAfter | boolean | Resize after the unload. Default value is `true`. This option won't call `onresize` neither `onresized`. |
+     *  | resizeAfter | boolean | Resize after the unload. Default value is `false`.<br>- This option won't call `onresize` neither `onresized`.<br>- When set to 'true', will call `.flush(true)` at the end of unload. |
      * @example
      *  // Unload data2 and data3
      *  chart.unload({
@@ -10583,7 +10584,7 @@ var apiLoad = {
      *    done: function() {
      *       // called after the unloaded
      *    },
-     *    resizeAfter: false  // will not resize after unload
+     *    resizeAfter: true  // will resize after unload
      *  });
      */
     unload: function (argsValue) {
@@ -20858,7 +20859,7 @@ var apiSubchart = {
 function withinRange(domain, current, range, isInverted) {
     if (isInverted === void 0) { isInverted = false; }
     var min = range[0], max = range[1];
-    return domain.every(function (v, i) { return (i === 0 ? (isInverted ? v <= min : v >= min) : (isInverted ? v >= max : v <= max)) && !(domain.every(function (v, i) { return v === current[i]; })); });
+    return domain.every(function (v, i) { return (i === 0 ? (isInverted ? +v <= min : +v >= min) : (isInverted ? +v >= max : +v <= max)) && !(domain.every(function (v, i) { return v === current[i]; })); });
 }
 /**
  * Zoom by giving x domain range.
@@ -22263,7 +22264,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230331004646
+ * @version 3.7.5-nightly-20230401004631
  */
 var bb = {
     /**
@@ -22273,7 +22274,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.5-nightly-20230331004646",
+    version: "3.7.5-nightly-20230401004631",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

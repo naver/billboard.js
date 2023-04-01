@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230331004646
+ * @version 3.7.5-nightly-20230401004631
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -382,23 +382,25 @@ var _this = undefined;
 /* eslint-disable no-new-func, no-undef */
 
 var win = function () {
-  _newArrowCheck(this, _this);
-  var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
-  return root || Function("return this")();
-}.bind(undefined)();
+    _newArrowCheck(this, _this);
+    var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
+    return root || Function("return this")();
+  }.bind(undefined)(),
+  hasRAF = typeof win.requestAnimationFrame === "function",
+  hasRIC = typeof win.requestIdleCallback === "function",
+  requestAnimationFrame = hasRAF ? win.requestAnimationFrame : function (cb) {
+    _newArrowCheck(this, _this);
+    return setTimeout(cb, 1);
+  }.bind(undefined),
+  cancelAnimationFrame = hasRAF ? win.cancelAnimationFrame : function (id) {
+    _newArrowCheck(this, _this);
+    return clearTimeout(id);
+  }.bind(undefined),
+  requestIdleCallback = hasRIC ? win.requestIdleCallback : requestAnimationFrame,
+  cancelIdleCallback = hasRIC ? win.cancelIdleCallback : cancelAnimationFrame,
+  doc = win == null ? void 0 : win.document;
 /* eslint-enable no-new-func, no-undef */
-
 // fallback for non-supported environments
-win.requestIdleCallback = win.requestIdleCallback || function (cb) {
-  _newArrowCheck(this, _this);
-  return setTimeout(cb, 1);
-}.bind(undefined);
-// win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
-win.requestAnimationFrame = win.requestAnimationFrame || function (cb) {
-  _newArrowCheck(this, _this);
-  return setTimeout(cb, 1);
-}.bind(undefined);
-var doc = win == null ? void 0 : win.document;
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 
@@ -474,6 +476,18 @@ var isValue = function (v) {
     _newArrowCheck(this, util_this);
     return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
   }.bind(undefined);
+/**
+ * Check if is array
+ * @param {Array} arr Data to be checked
+ * @returns {boolean}
+ * @private
+ */
+/**
+ * Check if is object
+ * @param {object} obj Data to be checked
+ * @returns {boolean}
+ * @private
+ */
 /**
  * Get specified key value from object
  * If default value is given, will return if given key value not found
@@ -1253,7 +1267,7 @@ function convertInputType(mouse, touch) {
 function runUntil(fn, conditionFn) {
   var _this18 = this;
   if (conditionFn() === !1) {
-    win.requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
       _newArrowCheck(this, _this18);
       return runUntil(fn, conditionFn);
     }.bind(this));
@@ -1378,7 +1392,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.7.5-nightly-20230331004646";
+Plugin.version = "3.7.5-nightly-20230401004631";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
@@ -1675,6 +1689,8 @@ var Elements = /*#__PURE__*/function () {
       xvCustom = this.xvCustom.bind($$),
       yvCustom = this.yvCustom.bind($$),
       stanfordLine = main.select("." + stanford_classes.stanfordLines).style("shape-rendering", "geometricprecision").selectAll("." + stanford_classes.stanfordLine).data(this.owner.config.lines);
+    // Stanford-Lines
+
     // exit
     stanfordLine.exit().transition().duration(duration).style("opacity", "0").remove();
 
@@ -1707,7 +1723,7 @@ var Elements = /*#__PURE__*/function () {
       xvCustom = this.xvCustom.bind($$),
       yvCustom = this.yvCustom.bind($$),
       countPointsInRegion = this.owner.countEpochsInRegion.bind($$),
-      stanfordRegion = main.select("." + stanford_classes.stanfordRegions).selectAll("." + stanford_classes.stanfordRegion).data(this.owner.config.regions);
+      stanfordRegion = main.select("." + stanford_classes.stanfordRegions).selectAll("." + stanford_classes.stanfordRegion).data(this.owner.config.regions); // Stanford-Regions
     // exit
     stanfordRegion.exit().transition().duration(duration).style("opacity", "0").remove();
 

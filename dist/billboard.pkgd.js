@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230331004646
+ * @version 3.7.5-nightly-20230401004631
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -19757,23 +19757,25 @@ var browser_this = undefined;
 /* eslint-disable no-new-func, no-undef */
 
 var win = function () {
-  _newArrowCheck(this, browser_this);
-  var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
-  return root || Function("return this")();
-}.bind(undefined)();
+    _newArrowCheck(this, browser_this);
+    var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
+    return root || Function("return this")();
+  }.bind(undefined)(),
+  hasRAF = typeof win.requestAnimationFrame === "function",
+  hasRIC = typeof win.requestIdleCallback === "function",
+  requestAnimationFrame = hasRAF ? win.requestAnimationFrame : function (cb) {
+    _newArrowCheck(this, browser_this);
+    return setTimeout(cb, 1);
+  }.bind(undefined),
+  cancelAnimationFrame = hasRAF ? win.cancelAnimationFrame : function (id) {
+    _newArrowCheck(this, browser_this);
+    return clearTimeout(id);
+  }.bind(undefined),
+  requestIdleCallback = hasRIC ? win.requestIdleCallback : requestAnimationFrame,
+  cancelIdleCallback = hasRIC ? win.cancelIdleCallback : cancelAnimationFrame,
+  browser_doc = win == null ? void 0 : win.document;
 /* eslint-enable no-new-func, no-undef */
-
 // fallback for non-supported environments
-win.requestIdleCallback = win.requestIdleCallback || function (cb) {
-  _newArrowCheck(this, browser_this);
-  return setTimeout(cb, 1);
-}.bind(undefined);
-// win.cancelIdleCallback = win.cancelIdleCallback || (id => clearTimeout(id));
-win.requestAnimationFrame = win.requestAnimationFrame || function (cb) {
-  _newArrowCheck(this, browser_this);
-  return setTimeout(cb, 1);
-}.bind(undefined);
-var browser_doc = win == null ? void 0 : win.document;
 ;// CONCATENATED MODULE: ./src/config/const.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -22435,6 +22437,18 @@ var isValue = function (v) {
     return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
   }.bind(undefined);
 /**
+ * Check if is array
+ * @param {Array} arr Data to be checked
+ * @returns {boolean}
+ * @private
+ */
+/**
+ * Check if is object
+ * @param {object} obj Data to be checked
+ * @returns {boolean}
+ * @private
+ */
+/**
  * Get specified key value from object
  * If default value is given, will return if given key value not found
  * @param {object} options Source object
@@ -23213,7 +23227,7 @@ function convertInputType(mouse, touch) {
 function runUntil(fn, conditionFn) {
   var _this18 = this;
   if (conditionFn() === !1) {
-    win.requestAnimationFrame(function () {
+    requestAnimationFrame(function () {
       _newArrowCheck(this, _this18);
       return runUntil(fn, conditionFn);
     }.bind(this));
@@ -25715,7 +25729,7 @@ function generateResize(option) {
       var _this = this;
       // Delay all resize functions call, to prevent unintended excessive call from resize event
       callResizeFn.clear();
-      if (option === !1 && win.requestIdleCallback) {
+      if (option === !1) {
         requestIdleCallback(function () {
           var _this2 = this;
           _newArrowCheck(this, _this);
@@ -26397,7 +26411,8 @@ function getDataKeyForJson(keysParam, config) {
           return config.axis_x_categories.indexOf(v) > -1;
         }.bind(this)),
         isDataAppend = data.__append__,
-        xIndex = xKey === null && isDataAppend ? $$.api.data.values(id).length : 0;
+        xIndex = xKey === null && isDataAppend ? $$.api.data.values(id).length : 0; // when .load() with 'append' option is used for indexed axis
+      // @ts-ignore
       return {
         id: convertedId,
         id_org: id,
@@ -27154,6 +27169,9 @@ function getDataKeyForJson(keysParam, config) {
       isRotated = config.axis_rotated,
       e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event,
       index = findIndex(coords, isRotated ? e.clientY - rect.top : e.clientX - rect.left, 0, coords.length - 1, isRotated);
+
+    // get data based on the mouse coords
+
     return index;
   },
   getDataLabelLength: function getDataLabelLength(min, max, key) {
@@ -27200,7 +27218,6 @@ function getDataKeyForJson(keysParam, config) {
         return $$.findClosest(target.values, pos);
       }.bind(this));
     // map to array of closest points of each target
-
     // decide closest point and return
     return $$.findClosest(candidates, pos);
   },
@@ -27537,13 +27554,11 @@ function getDataKeyForJson(keysParam, config) {
  */
 function callDone(fn, resizeAfter) {
   if (resizeAfter === void 0) {
-    resizeAfter = !0;
+    resizeAfter = !1;
   }
   var $$ = this,
     api = $$.api;
-  if (resizeAfter !== !1) {
-    $$.api.flush(!0);
-  }
+  resizeAfter && $$.api.flush(!0);
   fn == null ? void 0 : fn.call(api);
 }
 /* harmony default export */ var load = ({
@@ -28064,6 +28079,7 @@ function drag_defaultTouchable() {
               return v !== this;
             }.bind(this));
           }); // select based on the index
+        // filter if has new selection
         // call onout callback
         if (!isOver || shapesAtIndex.empty() || last.length === shape.size() && shape.nodes().every(function (v, i) {
           _newArrowCheck(this, _this5);
@@ -29776,7 +29792,7 @@ function getLegendColor(id) {
         return !isDefined(config.data_names[id]) || config.data_names[id] !== null;
       }.bind(this)),
       withTransition = options.withTransition,
-      updatePositions = $$.getUpdateLegendPositions(targetIdz, dimension, sizes);
+      updatePositions = $$.getUpdateLegendPositions(targetIdz, dimension, sizes); // Skip elements when their name is set to null
     if (state.isLegendInset) {
       dimension.step = config.legend_inset_step ? config.legend_inset_step : targetIdz.length;
       $$.updateLegendStep(dimension.step);
@@ -29909,7 +29925,7 @@ function getLegendColor(id) {
           sizes.margins[dimension.step] = state.isLegendInset ? 10 : margin;
           sizes.offsets[id2] = dimension.totalLength;
           dimension.totalLength += itemLength;
-        };
+        }; // MEMO: care about condifion of step, totalLength
       if (index === 0) {
         dimension.totalLength = 0;
         dimension.step = 0;
@@ -29977,6 +29993,8 @@ function getLegendColor(id) {
       isRectangle = legendType !== "circle",
       isLegendRightOrInset = state.isLegendRight || state.isLegendInset,
       l = legend.selectAll("." + $LEGEND.legendItem).data(targetIdz).enter().append("g");
+    // Define g for legend area
+
     $$.setLegendItem(l);
     l.append("text").text(function (id) {
       _newArrowCheck(this, _this6);
@@ -30223,7 +30241,8 @@ function getLegendColor(id) {
         flowFn && flowFn();
         state.redrawing = !1;
         callFn(config.onrendered, $$.api);
-      }.bind(this);
+      }.bind(this); // redraw list
+    // callback function after redraw ends
     if (afterRedraw) {
       // Only use transition when current tab is visible.
       if (withTransition && redrawList.length) {
@@ -31745,6 +31764,11 @@ function getScale(type, min, max) {
         },
         xDomain = updateXDomain && ((_scale$x = scale.x) == null ? void 0 : _scale$x.orgDomain()),
         xSubDomain = updateXDomain && org.xDomain;
+      // update edges
+
+      // update scales
+      // x Axis
+
       scale.x = $$.getXScale(min.x, max.x, xDomain, function () {
         _newArrowCheck(this, _this2);
         return axis.x.tickOffset();
@@ -32881,7 +32905,7 @@ function stepAfter(context) {
       xs = _$$$config.data_xs,
       removeNull = _$$$config.bar_indices_removeNull,
       id = d.id,
-      index = d.index;
+      index = d.index; // eslint-disable-line
     if ($$.isBarType(id) && removeNull) {
       var ind = {};
 
@@ -32926,6 +32950,8 @@ function stepAfter(context) {
         return p + c;
       }.bind(this),
       halfWidth = isObjectType(offset) && (offset._$total.length ? offset._$total.reduce(sum) / 2 : 0);
+    // total shapes half width
+
     return function (d) {
       _newArrowCheck(this, _this5);
       var ind = $$.getIndices(indices, d, "getShapeX"),
@@ -34108,6 +34134,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
         _newArrowCheck(this, _this5);
         return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
       }.bind(this);
+    // Calculates the length of the hypotenuse
+
     textNode.node() && filteredTextNodes.each(function () {
       var coordinate = getTranslation(this),
         filteredTextNode = src_select(this),
@@ -34620,6 +34648,8 @@ function getTextPos(pos, width) {
           y: y
         },
         data = (_selectedData$filter = selectedData.filter(Boolean)) == null ? void 0 : _selectedData$filter.shift();
+      // get mouse event position
+
       if (scale.x && data && "x" in data) {
         currPos.xAxis = scale.x(data.x);
       }
@@ -35098,38 +35128,28 @@ function getTextPos(pos, width) {
  * @private
  */
 var ChartInternal = /*#__PURE__*/function () {
-  // API interface
-  // config object
-  // cache instance
-  // elements
-  // state variables
-  // all Chart instances array within page (equivalent of 'bb.instances')
-
-  // data object
-
-  // Axis
-  // Axis
-
-  // scales
-
-  // original values
-
-  // formatter function
-
-  // format function
-
   function ChartInternal(api) {
     this.api = void 0;
+    // API interface
     this.config = void 0;
+    // config object
     this.cache = void 0;
+    // cache instance
     this.$el = void 0;
+    // elements
     this.state = void 0;
+    // state variables
     this.charts = void 0;
+    // all Chart instances array within page (equivalent of 'bb.instances')
+    // data object
     this.data = {
       xs: {},
       targets: []
     };
+    // Axis
     this.axis = void 0;
+    // Axis
+    // scales
     this.scale = {
       x: null,
       y: null,
@@ -35139,15 +35159,18 @@ var ChartInternal = /*#__PURE__*/function () {
       subY2: null,
       zoom: null
     };
+    // original values
     this.org = {
       xScale: null,
       xDomain: null
     };
+    // formatter function
     this.color = void 0;
     this.patterns = void 0;
     this.levelColor = void 0;
     this.point = void 0;
     this.brush = void 0;
+    // format function
     this.format = {
       extraLineClasses: null,
       xAxisTick: null,
@@ -35357,7 +35380,6 @@ var ChartInternal = /*#__PURE__*/function () {
       hasPolar = $$.hasType("polar");
     // for arc type, set axes to not be shown
     // $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
-
     if (hasAxis) {
       $$.axis = $$.getAxisInstance();
       config.zoom_enabled && $$.initZoom();
@@ -36798,7 +36820,7 @@ var legend_legend = {
    *    | keys | Object |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
    *    | mimeType | string |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
    *    | names | Object | Same as data.names() |
-   *    | resizeAfter | boolean | Resize after the load. Default value is `true`. This option won't call `onresize` neither `onresized`. |
+   *    | resizeAfter | boolean | Resize after the load. Default value is `false`.<br>- This option won't call `onresize` neither `onresized`.<br>- When set to 'true', will call `.flush(true)` at the end of load. |
    *    | type | string | The type of targets will be updated. |
    *    | types | Object | The types of targets will be updated. |
    *    | unload | Array | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
@@ -36814,7 +36836,7 @@ var legend_legend = {
    *    unload: ["data2", "data3"],
    *    url: "...",
    *    done: function() { ... }
-   *    resizeAfter: false  // will not resize after load
+   *    resizeAfter: true  // will resize after load
    * });
    * @example
    * const chart = bb.generate({
@@ -36944,7 +36966,7 @@ var legend_legend = {
         _newArrowCheck(this, _this);
         // to mitigate improper rendering for multiple consecutive calls
         // https://github.com/naver/billboard.js/issues/2121
-        win.requestIdleCallback(function () {
+        requestIdleCallback(function () {
           _newArrowCheck(this, _this2);
           return $$.loadFromArgs(args);
         }.bind(this));
@@ -36968,7 +36990,7 @@ var legend_legend = {
    *  | --- | --- | --- |
    *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
    *  | done | Fuction | Callback after data is unloaded. |
-   *  | resizeAfter | boolean | Resize after the unload. Default value is `true`. This option won't call `onresize` neither `onresized`. |
+   *  | resizeAfter | boolean | Resize after the unload. Default value is `false`.<br>- This option won't call `onresize` neither `onresized`.<br>- When set to 'true', will call `.flush(true)` at the end of unload. |
    * @example
    *  // Unload data2 and data3
    *  chart.unload({
@@ -36976,7 +36998,7 @@ var legend_legend = {
    *    done: function() {
    *       // called after the unloaded
    *    },
-   *    resizeAfter: false  // will not resize after unload
+   *    resizeAfter: true  // will resize after unload
    *  });
    */
   unload: function unload(argsValue) {
@@ -38489,7 +38511,7 @@ var AxisRendererHelper = /*#__PURE__*/function () {
       size = {
         w: 5.5,
         h: 11.5
-      };
+      }; // default size for one character
     node.empty() || node.select("text").text("0").call(function (el) {
       _newArrowCheck(this, _this);
       try {
@@ -38684,6 +38706,11 @@ var AxisRenderer = /*#__PURE__*/function () {
       axisPx = tickTransform === helper.axisX ? "y" : "x",
       sign = /^(top|left)$/.test(orient) ? -1 : 1,
       rotate = params.tickTextRotate;
+
+    // line/text enter and path update
+
+    // tick text helpers
+
     this.config.range = scale.rangeExtent ? scale.rangeExtent() : helper.scaleExtent((params.orgXScale || scale).range());
     var innerTickSize = config.innerTickSize,
       tickLength = config.tickLength,
@@ -38699,6 +38726,7 @@ var AxisRenderer = /*#__PURE__*/function () {
         tick: axisShow ? params.config[prefix + "_tick_show"] : !1,
         text: axisShow ? params.config[prefix + "_tick_text_show"] : !1
       }; // // get the axis' tick position configuration
+    // tick visiblity
     var $g;
     g.each(function () {
       var _this = this,
@@ -39426,7 +39454,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       tickFormat = forSubchart ? config.subchart_axis_x_tick_format || config.axis_x_tick_format : config.axis_x_tick_format,
       isTimeSeries = this.isTimeSeries(),
       isCategorized = this.isCategorized(),
-      currFormat;
+      currFormat; // enable different tick format for x and subX - subX format defaults to x format if not defined
     if (tickFormat) {
       if (isFunction(tickFormat)) {
         currFormat = tickFormat.bind($$.api);
@@ -40052,7 +40080,8 @@ var Axis_Axis = /*#__PURE__*/function () {
             event.preventDefault();
           }
         }
-      }.bind(this);
+      }.bind(this); // call event.preventDefault()
+    // according 'interaction.inputType.touch.preventDefault' option
     // bind touch events
     eventRect.on("touchstart", function (event) {
       _newArrowCheck(this, _this2);
@@ -40649,7 +40678,7 @@ var src_linear_linear = function (t) {
       flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength),
       translateX,
       orgDomain = x.domain(),
-      domain = $$.updateXDomain(targets, !0, !0);
+      domain = $$.updateXDomain(targets, !0, !0); // update x domain to generate axis elements for flow
     // generate transform to flow
     if (!orgDataCount) {
       // if empty
@@ -40728,6 +40757,9 @@ var src_linear_linear = function (t) {
       y = -Math.max(15, margin.top),
       w = isRotated ? margin.left + 20 : width + 10 + left,
       h = (isRotated ? margin.top + height + 10 : margin.bottom) + 20;
+
+    // less than 20 is not enough to show the axis label 'outer' without legend
+
     node.attr("x", x).attr("y", y).attr("width", w).attr("height", h);
   },
   /**
@@ -44143,6 +44175,7 @@ function getAttrTweenFn(fn) {
       var min = config.gauge_min,
         max = config.gauge_max,
         totalSum = $$.getTotalDataSum(state.rendered); // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
+      // https://github.com/naver/billboard.js/issues/2123
       pie = pie.startAngle(gStart).endAngle(radius * ((totalSum - min) / (max - min)) + gStart);
     }
     pie($$.filterTargetsToShow()).forEach(function (t, i) {
@@ -44991,7 +45024,7 @@ function point_y(p) {
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
         offset = areaOffset(d, i) || y0,
         posX = x(d),
-        value = d.value;
+        value = d.value; // offset is for stacked area chart
       var posY = y(d);
 
       // fix posY not to overflow opposite quadrant
@@ -45155,6 +45188,8 @@ function point_y(p) {
         _newArrowCheck(this, _this4);
         return w * barRadiusRatio;
       }.bind(this) : null;
+    // get the bar radius
+
     return function (d, i) {
       _newArrowCheck(this, _this4);
       // 4 points that make a bar
@@ -45228,6 +45263,7 @@ function point_y(p) {
         _newArrowCheck(this, _this5);
         return v.id;
       }.bind(this)); // Get sorted list
+    // Get sorted Ids. Filter positive or negative values Ids from given value
     // If the given id stays in the last position, then radius should be applied.
     return value !== 0 && sortedIds.indexOf(id) === sortedIds.length - 1;
   },
@@ -45258,6 +45294,9 @@ function point_y(p) {
         isInverted = config["axis_" + $$.axis.getId(id) + "_inverted"],
         value = d.value,
         posX = barX(d);
+
+      // offset is for stacked bar chart
+
       var posY = barY(d);
 
       // fix posY not to overflow opposite quadrant
@@ -45365,7 +45404,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       var points = getPoints(d, i),
         value = $$.getCandlestickData(d),
         isUp = (_value = value) == null ? void 0 : _value._isUp,
-        indexX = +isRotated;
+        indexX = +isRotated; // switch points if axis is rotated, not applicable for sub chart
       if (g.classed) {
         g.classed($CANDLESTICK[isUp ? "valueUp" : "valueDown"], !0);
       }
@@ -45419,7 +45458,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
         offset = shapeOffset(d, i) || y0,
         width = isNumber(barW) ? barW : barW[d.id] || barW._$width,
-        value = $$.getCandlestickData(d);
+        value = $$.getCandlestickData(d); // offset is for stacked bar chart
       var points;
       if (value) {
         var posX = {
@@ -45540,6 +45579,9 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       state = $$.state,
       hasMultiGauge = $$.hasMultiArcGauge(),
       max = hasMultiGauge ? $$.getMinMaxData().max[0].value : $$.getTotalDataSum(state.rendered);
+
+    // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
+
     // if gauge_max less than max, make max to max value
     if (max + config.gauge_min * (config.gauge_min > 0 ? -1 : 1) > config.gauge_max) {
       config.gauge_max = max - config.gauge_min;
@@ -45855,7 +45897,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       xp,
       yp,
       diff,
-      diffx2;
+      diffx2; // default value
     // Check start/end of regions
     if (isDefined(_regions)) {
       var getValue = function (v, def) {
@@ -45911,7 +45953,8 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
       axisType = {
         x: $$.axis.getAxisType("x"),
         y: $$.axis.getAxisType("y")
-      };
+      }; // Define svg generator function for region
+    // Generate
     var path = "";
     for (var _i = 0, data; data = d[_i]; _i++) {
       var prevData = d[_i - 1],
@@ -46322,12 +46365,12 @@ var getTransitionName = function () {
       x = $$.getShapeX(0, lineIndices, isSub),
       y = $$.getShapeY(isSub),
       lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub),
-      yScale = $$.getYScaleById.bind($$);
+      yScale = $$.getYScaleById.bind($$); // partial duplication of generateGetBarPoints
     return function (d, i) {
       _newArrowCheck(this, _this8);
       var y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
         offset = lineOffset(d, i) || y0,
-        posX = x(d);
+        posX = x(d); // offset is for stacked area chart
       var posY = y(d);
 
       // fix posY not to overflow opposite quadrant
@@ -46751,6 +46794,8 @@ var cacheKey = KEY.radarPoints;
         return pos.join(" ");
       }.bind(this)),
       level = radarLevels.selectAll("." + $LEVEL.level).data(levelData);
+    // Generate points
+
     level.exit().remove();
     var levelEnter = level.enter().append("g").attr("class", function (d, i) {
       _newArrowCheck(this, _this6);
@@ -49100,7 +49145,10 @@ var _area = function area() {
       _newArrowCheck(this, _this19);
       return TYPE.TREEMAP;
     }.bind(this))();
-  }.bind(undefined);
+  }.bind(undefined); // Line types
+// Arc types
+// Axis based types
+// Non Axis based types
 ;// CONCATENATED MODULE: ./src/Chart/api/selection.ts
 
 /**
@@ -49921,7 +49969,7 @@ function withinRange(domain, current, range, isInverted) {
   return domain.every(function (v, i) {
     var _this2 = this;
     _newArrowCheck(this, _this);
-    return (i === 0 ? isInverted ? v <= min : v >= min : isInverted ? v >= max : v <= max) && !domain.every(function (v, i) {
+    return (i === 0 ? isInverted ? +v <= min : +v >= min : isInverted ? +v >= max : +v <= max) && !domain.every(function (v, i) {
       _newArrowCheck(this, _this2);
       return v === current[i];
     }.bind(this));
@@ -49986,7 +50034,10 @@ var zoom = function (domainValue) {
         var _d3ZoomIdentity$scale,
           _x = isCategorized ? scale.x.orgScale() : org.xScale || scale.x,
           translate = [-_x(domain[0]), 0],
-          transform = (_d3ZoomIdentity$scale = transform_identity.scale(_x.range()[1] / (_x(domain[1]) - _x(domain[0])))).translate.apply(_d3ZoomIdentity$scale, isRotated ? translate.reverse() : translate);
+          transform = (_d3ZoomIdentity$scale = transform_identity.scale(_x.range()[1] / (_x(domain[1]) - _x(domain[0])))).translate.apply(_d3ZoomIdentity$scale, isRotated ? translate.reverse() : translate); // in case of 'config.zoom_rescale=true', use org.xScale
+        // Get transform from given domain value
+        // https://github.com/d3/d3-zoom/issues/57#issuecomment-246434951
+
         $el.eventRect.call($$.zoom.transform, transform);
       }
       $$.setZoomResetButton();
@@ -50600,6 +50651,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       isRotated = config.axis_rotated,
       initRange = config.subchart_init_range,
       path = isRotated ? ["M 5.2491724,29.749209 a 6,6 0 0 0 -5.50000003,-6.5 H -5.7508276 a 6,6 0 0 0 -6.0000004,6.5 z m -5.00000003,-2 H -6.7508276 m 6.99999997,-2 H -6.7508276Z", "M 5.2491724,23.249172 a 6,-6 0 0 1 -5.50000003,6.5 H -5.7508276 a 6,-6 0 0 1 -6.0000004,-6.5 z m -5.00000003,2 H -6.7508276 m 6.99999997,2 H -6.7508276Z"] : ["M 0 18 A 6 6 0 0 0 -6.5 23.5 V 29 A 6 6 0 0 0 0 35 Z M -2 23 V 30 M -4 23 V 30Z", "M 0 18 A 6 6 0 0 1 6.5 23.5 V 29 A 6 6 0 0 1 0 35 Z M 2 23 V 30 M 4 23 V 30Z"];
+    // brush handle shape's path
+
     $$.brush.handle = brush.selectAll(".handle--custom").data(isRotated ? [{
       type: "n"
     }, {
@@ -50991,7 +51044,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       var zoomDomain = zoom.domain(),
         xDomain = subX.domain(),
         delta = .015,
-        isfullyShown = $$.config.axis_x_inverted ? (zoomDomain[0] >= xDomain[0] || zoomDomain[0] + delta >= xDomain[0]) && (xDomain[1] >= zoomDomain[1] || xDomain[1] >= zoomDomain[1] + delta) : (zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta);
+        isfullyShown = $$.config.axis_x_inverted ? (zoomDomain[0] >= xDomain[0] || zoomDomain[0] + delta >= xDomain[0]) && (xDomain[1] >= zoomDomain[1] || xDomain[1] >= zoomDomain[1] + delta) : (zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta); // arbitrary value
       // check if the zoomed chart is fully shown, then reset scale when zoom is out as initial
       if (force || isfullyShown) {
         $$.axis.x.scale(subX);
@@ -51468,7 +51521,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230331004646
+ * @version 3.7.5-nightly-20230401004631
  */
 var bb = {
   /**
@@ -51478,7 +51531,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.5-nightly-20230331004646",
+  version: "3.7.5-nightly-20230401004631",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
