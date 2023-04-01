@@ -21,9 +21,9 @@ function withinRange(
 
 	return domain.every((v, i) => (
 		i === 0 ? (
-			isInverted ? v <= min : v >= min
+			isInverted ? +v <= min : +v >= min
 		) : (
-			isInverted ? v >= max : v <= max
+			isInverted ? +v >= max : +v <= max
 		)
 	) && !(domain.every((v, i) => v === current[i])));
 }

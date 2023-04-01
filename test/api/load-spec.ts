@@ -861,6 +861,7 @@ describe("API load", function() {
 				   ["www6-abcd-abcd", 600, 200, 150, 300],
 				   ["www7-abcd-abcd", 700, 200, 150, 300]
 				],
+				resizeAfter: true,
 				done: function() {
 					const lastLegend = this.$.legend.select("g:last-child").node();
 					const chartNode = this.$.chart.node();
@@ -889,7 +890,6 @@ describe("API load", function() {
 				   ["www6-abcd-abcd", 600, 200, 150, 300],
 				   ["www7-abcd-abcd", 700, 200, 150, 300]
 				],
-				resizeAfter: false,
 				done: function() {
 					const lastLegend = this.$.legend.select("g:last-child").node();
 					const chartNode = this.$.chart.node();
@@ -919,6 +919,7 @@ describe("API load", function() {
 				done: function() {
 					this.unload({
                         ids: ["www-abcd-abcd", "www2-abcd-abcd", "www3-abcd-abcd"],
+						resizeAfter: true,
 						done: function() {
 							const lastLegend = this.$.legend.select("g:last-child").node();
 							const chartNode = this.$.chart.node();

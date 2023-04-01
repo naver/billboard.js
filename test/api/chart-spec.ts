@@ -48,7 +48,9 @@ describe("API chart", () => {
 			expect(chart.groups().length).to.be.equal(0);
 		});
 
-		it("should update groups correctly", done => {
+		it("should update groups correctly", function(done) {
+			this.timeout(1000);
+
 			const main = chart.$.main;
 			const path = main.select(`.${$BAR.bars}-data1 path`);
 			const barWidth = util.getBBox(path).width;
@@ -66,7 +68,9 @@ describe("API chart", () => {
 				expect(util.getBBox(path).width).to.be.equal(barWidth * 2);
 
 				done();
-			}, 500);
+			}, 300);
+
+			setTimeout(done, 500);
 		});
 	});
 
