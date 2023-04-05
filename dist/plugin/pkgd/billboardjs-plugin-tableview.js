@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230401004631
+ * @version 3.7.5-nightly-20230405004622
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -280,6 +280,7 @@ __webpack_require__(512);
 __webpack_require__(517);
 __webpack_require__(518);
 __webpack_require__(519);
+__webpack_require__(520);
 
 /* unused reexport */ __webpack_require__(82);
 
@@ -1155,10 +1156,10 @@ var store = __webpack_require__(37);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.29.1',
+  version: '3.30.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.29.1/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.30.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -3923,6 +3924,7 @@ var FIND = 'find';
 var SKIPS_HOLES = true;
 
 // Shouldn't skip holes
+// eslint-disable-next-line es/no-array-prototype-find -- testing
 if (FIND in []) Array(1)[FIND](function () { SKIPS_HOLES = false; });
 
 // `Array.prototype.find` method
@@ -3951,6 +3953,7 @@ var FIND_INDEX = 'findIndex';
 var SKIPS_HOLES = true;
 
 // Shouldn't skip holes
+// eslint-disable-next-line es/no-array-prototype-findindex -- testing
 if (FIND_INDEX in []) Array(1)[FIND_INDEX](function () { SKIPS_HOLES = false; });
 
 // `Array.prototype.findIndex` method
@@ -16065,9 +16068,7 @@ module.exports = {
   add: uncurryThis(SetPrototype.add),
   has: uncurryThis(SetPrototype.has),
   remove: uncurryThis(SetPrototype['delete']),
-  proto: SetPrototype,
-  $has: SetPrototype.has,
-  $keys: SetPrototype.keys
+  proto: SetPrototype
 };
 
 
@@ -17842,6 +17843,33 @@ module.exports = {
 /* 517 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
+var $ = __webpack_require__(3);
+var getBuiltIn = __webpack_require__(24);
+var validateArgumentsLength = __webpack_require__(328);
+var toString = __webpack_require__(69);
+
+var URL = getBuiltIn('URL');
+
+// `URL.canParse` method
+// https://url.spec.whatwg.org/#dom-url-canparse
+$({ target: 'URL', stat: true }, {
+  canParse: function canParse(url) {
+    var length = validateArgumentsLength(arguments.length, 1);
+    var urlString = toString(url);
+    var base = length < 2 || arguments[1] === undefined ? undefined : toString(arguments[1]);
+    try {
+      return !!new URL(urlString, base);
+    } catch (error) {
+      return false;
+    }
+  }
+});
+
+
+/***/ }),
+/* 518 */
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
 "use strict";
 
 var $ = __webpack_require__(3);
@@ -17857,7 +17885,7 @@ $({ target: 'URL', proto: true, enumerable: true }, {
 
 
 /***/ }),
-/* 518 */
+/* 519 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's replaced to module below
@@ -17865,7 +17893,7 @@ __webpack_require__(516);
 
 
 /***/ }),
-/* 519 */
+/* 520 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -17893,13 +17921,13 @@ if (DESCRIPTORS && !('size' in URLSearchParamsPrototype)) {
 
 
 /***/ }),
-/* 520 */,
-/* 521 */
+/* 521 */,
+/* 522 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO(Babel 8): Remove this file.
 
-var runtime = __webpack_require__(522)();
+var runtime = __webpack_require__(523)();
 module.exports = runtime;
 
 // Copied from https://github.com/facebook/regenerator/blob/main/packages/runtime/runtime.js#L736=
@@ -17915,10 +17943,10 @@ try {
 
 
 /***/ }),
-/* 522 */
+/* 523 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var _typeof = (__webpack_require__(523)["default"]);
+var _typeof = (__webpack_require__(524)["default"]);
 function _regeneratorRuntime() {
   "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
   module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
@@ -18224,7 +18252,7 @@ function _regeneratorRuntime() {
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-/* 523 */
+/* 524 */
 /***/ (function(module) {
 
 function _typeof(obj) {
@@ -18239,9 +18267,9 @@ function _typeof(obj) {
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-/* 524 */,
 /* 525 */,
-/* 526 */
+/* 526 */,
+/* 527 */
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18397,7 +18425,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.7.5-nightly-20230401004631";
+Plugin.version = "3.7.5-nightly-20230405004622";
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
 /**
@@ -19422,7 +19450,7 @@ function dispatchFunction(type, params) {
   return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(521);
+var regenerator = __webpack_require__(522);
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/iterator.js
 
 var _marked = /*#__PURE__*/regenerator.mark(_callee);
@@ -23081,7 +23109,7 @@ var TableView = /*#__PURE__*/function (_Plugin) {
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module used 'module' so it can't be inlined
 /******/ 	__webpack_require__(0);
-/******/ 	var __webpack_exports__ = __webpack_require__(526);
+/******/ 	var __webpack_exports__ = __webpack_require__(527);
 /******/ 	__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	
 /******/ 	return __webpack_exports__;

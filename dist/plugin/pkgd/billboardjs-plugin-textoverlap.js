@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230401004631
+ * @version 3.7.5-nightly-20230405004622
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -280,6 +280,7 @@ __webpack_require__(512);
 __webpack_require__(517);
 __webpack_require__(518);
 __webpack_require__(519);
+__webpack_require__(520);
 
 /* unused reexport */ __webpack_require__(82);
 
@@ -1155,10 +1156,10 @@ var store = __webpack_require__(37);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.29.1',
+  version: '3.30.0',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.29.1/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.30.0/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -3923,6 +3924,7 @@ var FIND = 'find';
 var SKIPS_HOLES = true;
 
 // Shouldn't skip holes
+// eslint-disable-next-line es/no-array-prototype-find -- testing
 if (FIND in []) Array(1)[FIND](function () { SKIPS_HOLES = false; });
 
 // `Array.prototype.find` method
@@ -3951,6 +3953,7 @@ var FIND_INDEX = 'findIndex';
 var SKIPS_HOLES = true;
 
 // Shouldn't skip holes
+// eslint-disable-next-line es/no-array-prototype-findindex -- testing
 if (FIND_INDEX in []) Array(1)[FIND_INDEX](function () { SKIPS_HOLES = false; });
 
 // `Array.prototype.findIndex` method
@@ -16065,9 +16068,7 @@ module.exports = {
   add: uncurryThis(SetPrototype.add),
   has: uncurryThis(SetPrototype.has),
   remove: uncurryThis(SetPrototype['delete']),
-  proto: SetPrototype,
-  $has: SetPrototype.has,
-  $keys: SetPrototype.keys
+  proto: SetPrototype
 };
 
 
@@ -17842,6 +17843,33 @@ module.exports = {
 /* 517 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
+var $ = __webpack_require__(3);
+var getBuiltIn = __webpack_require__(24);
+var validateArgumentsLength = __webpack_require__(328);
+var toString = __webpack_require__(69);
+
+var URL = getBuiltIn('URL');
+
+// `URL.canParse` method
+// https://url.spec.whatwg.org/#dom-url-canparse
+$({ target: 'URL', stat: true }, {
+  canParse: function canParse(url) {
+    var length = validateArgumentsLength(arguments.length, 1);
+    var urlString = toString(url);
+    var base = length < 2 || arguments[1] === undefined ? undefined : toString(arguments[1]);
+    try {
+      return !!new URL(urlString, base);
+    } catch (error) {
+      return false;
+    }
+  }
+});
+
+
+/***/ }),
+/* 518 */
+/***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
+
 "use strict";
 
 var $ = __webpack_require__(3);
@@ -17857,7 +17885,7 @@ $({ target: 'URL', proto: true, enumerable: true }, {
 
 
 /***/ }),
-/* 518 */
+/* 519 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO: Remove this module from `core-js@4` since it's replaced to module below
@@ -17865,7 +17893,7 @@ __webpack_require__(516);
 
 
 /***/ }),
-/* 519 */
+/* 520 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -17893,13 +17921,13 @@ if (DESCRIPTORS && !('size' in URLSearchParamsPrototype)) {
 
 
 /***/ }),
-/* 520 */,
-/* 521 */
+/* 521 */,
+/* 522 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO(Babel 8): Remove this file.
 
-var runtime = __webpack_require__(522)();
+var runtime = __webpack_require__(523)();
 module.exports = runtime;
 
 // Copied from https://github.com/facebook/regenerator/blob/main/packages/runtime/runtime.js#L736=
@@ -17915,10 +17943,10 @@ try {
 
 
 /***/ }),
-/* 522 */
+/* 523 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var _typeof = (__webpack_require__(523)["default"]);
+var _typeof = (__webpack_require__(524)["default"]);
 function _regeneratorRuntime() {
   "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
   module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
@@ -18224,7 +18252,7 @@ function _regeneratorRuntime() {
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-/* 523 */
+/* 524 */
 /***/ (function(module) {
 
 function _typeof(obj) {
@@ -18239,10 +18267,10 @@ function _typeof(obj) {
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-/* 524 */,
 /* 525 */,
 /* 526 */,
-/* 527 */
+/* 527 */,
+/* 528 */
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -18281,7 +18309,7 @@ function _inheritsLoose(subClass, superClass) {
   _setPrototypeOf(subClass, superClass);
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(521);
+var regenerator = __webpack_require__(522);
 ;// CONCATENATED MODULE: ./node_modules/robust-predicates/esm/util.js
 const epsilon = 1.1102230246251565e-16;
 const splitter = 134217729;
@@ -21176,10 +21204,10 @@ function _readOnlyError(name) {
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-delaunay/src/voronoi.js
 
+
 function _createForOfIteratorHelperLoose(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (it) return (it = it.call(o)).next.bind(it); if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; return function () { if (i >= o.length) return { done: !0 }; return { done: !1, value: o[i++] }; }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-
 
 
 var Voronoi = /*#__PURE__*/function () {
@@ -21208,8 +21236,11 @@ var Voronoi = /*#__PURE__*/function () {
       points = _this$delaunay.points,
       hull = _this$delaunay.hull,
       triangles = _this$delaunay.triangles,
-      vectors = this.vectors,
-      circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2); // Compute circumcenters.
+      vectors = this.vectors;
+    var bx, by; // lazily computed barycenter of the hull
+
+    // Compute circumcenters.
+    var circumcenters = this.circumcenters = this._circumcenters.subarray(0, triangles.length / 3 * 2);
     for (var i = 0, j = 0, n = triangles.length, x, y; i < n; i += 3, j += 2) {
       var t1 = triangles[i] * 2,
         t2 = triangles[i + 1] * 2,
@@ -21226,17 +21257,18 @@ var Voronoi = /*#__PURE__*/function () {
         ey = y3 - _y,
         ab = (dx * ey - dy * ex) * 2;
       if (Math.abs(ab) < 1e-9) {
-        // degenerate case (collinear diagram)
-        // almost equal points (degenerate triangle)
-        // the circumcenter is at the infinity, in a
-        // direction that is:
-        // 1. orthogonal to the halfedge.
-        var a = 1e9;
-        // 2. points away from the center; since the list of triangles starts
-        // in the center, the first point of the first triangle
-        // will be our reference
-        var r = triangles[0] * 2;
-        a *= Math.sign((points[r] - _x) * ey - (points[r + 1] - _y) * ex);
+        // For a degenerate triangle, the circumcenter is at the infinity, in a
+        // direction orthogonal to the halfedge and away from the “center” of
+        // the diagram <bx, by>, defined as the hull’s barycenter.
+        if (bx === undefined) {
+          bx = by = 0;
+          for (var _iterator = _createForOfIteratorHelperLoose(hull), _step; !(_step = _iterator()).done;) {
+            var _i = _step.value;
+            bx += points[_i * 2], by += points[_i * 2 + 1];
+          }
+          bx /= hull.length, by /= hull.length;
+        }
+        var a = 1e9 * Math.sign((bx - _x) * ey - (by - _y) * ex);
         x = (_x + x3) / 2 - a * ey;
         y = (_y + y3) / 2 + a * ex;
       } else {
@@ -21259,8 +21291,8 @@ var Voronoi = /*#__PURE__*/function () {
       y0,
       _y = points[2 * h + 1];
     vectors.fill(0);
-    for (var _i = 0; _i < hull.length; ++_i) {
-      h = hull[_i];
+    for (var _i2 = 0; _i2 < hull.length; ++_i2) {
+      h = hull[_i2];
       p0 = p1, x0 = _x, y0 = _y;
       p1 = h * 4, (points[2 * h], _readOnlyError("x1")), (points[2 * h + 1], _readOnlyError("y1"));
       vectors[p0 + 2] = vectors[p1] = y0 - _y;
@@ -21289,8 +21321,8 @@ var Voronoi = /*#__PURE__*/function () {
     }
     var h0,
       h1 = hull[hull.length - 1];
-    for (var _i2 = 0; _i2 < hull.length; ++_i2) {
-      h0 = h1, h1 = hull[_i2];
+    for (var _i3 = 0; _i3 < hull.length; ++_i3) {
+      h0 = h1, h1 = hull[_i3];
       var t = Math.floor(inedges[h1] / 3) * 2,
         x = circumcenters[t],
         y = circumcenters[t + 1],
@@ -21312,8 +21344,8 @@ var Voronoi = /*#__PURE__*/function () {
     context.moveTo(points[0], points[1]);
     var n = points.length;
     while (points[0] === points[n - 2] && points[1] === points[n - 1] && n > 1) n -= 2;
-    for (var _i3 = 2; _i3 < n; _i3 += 2) {
-      if (points[_i3] !== points[_i3 - 2] || points[_i3 + 1] !== points[_i3 - 1]) context.lineTo(points[_i3], points[_i3 + 1]);
+    for (var _i4 = 2; _i4 < n; _i4 += 2) {
+      if (points[_i4] !== points[_i4 - 2] || points[_i4 + 1] !== points[_i4 - 1]) context.lineTo(points[_i4], points[_i4 + 1]);
     }
     context.closePath();
     return buffer && buffer.value();
@@ -21370,7 +21402,7 @@ var Voronoi = /*#__PURE__*/function () {
     return this.delaunay._step(i, x, y) === i;
   };
   _proto.neighbors = /*#__PURE__*/regenerator.mark(function neighbors(i) {
-    var ci, _iterator, _step, j, cj, ai, li, aj, lj;
+    var ci, _iterator2, _step2, j, cj, ai, li, aj, lj;
     return regenerator.wrap(function (_context2) {
       while (1) switch (_context2.prev = _context2.next) {
         case 0:
@@ -21379,13 +21411,13 @@ var Voronoi = /*#__PURE__*/function () {
             _context2.next = 22;
             break;
           }
-          _iterator = _createForOfIteratorHelperLoose(this.delaunay.neighbors(i));
+          _iterator2 = _createForOfIteratorHelperLoose(this.delaunay.neighbors(i));
         case 3:
-          if ((_step = _iterator()).done) {
+          if ((_step2 = _iterator2()).done) {
             _context2.next = 22;
             break;
           }
-          j = _step.value, cj = this._clip(j);
+          j = _step2.value, cj = this._clip(j);
           if (!cj) {
             _context2.next = 20;
             break;
@@ -26495,7 +26527,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.7.5-nightly-20230401004631";
+Plugin.version = "3.7.5-nightly-20230405004622";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**
@@ -26740,7 +26772,7 @@ var TextOverlap = /*#__PURE__*/function (_Plugin) {
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module used 'module' so it can't be inlined
 /******/ 	__webpack_require__(0);
-/******/ 	var __webpack_exports__ = __webpack_require__(527);
+/******/ 	var __webpack_exports__ = __webpack_require__(528);
 /******/ 	__webpack_exports__ = __webpack_exports__["default"];
 /******/ 	
 /******/ 	return __webpack_exports__;
