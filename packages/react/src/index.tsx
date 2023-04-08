@@ -2,12 +2,12 @@
  * Copyright (c) 2022 ~ present NAVER Corp.
  * @billboard.js/react project is licensed under the MIT license
  */
-import React, {forwardRef, useEffect, useImperativeHandle, useRef} from "react";
+import React, {forwardRef, HTMLProps, useEffect, useImperativeHandle, useRef} from "react";
 import type {bb, Chart, ChartOptions} from "billboard.js";
 
 export {ChartOptions as IChartOptions};
 
-export interface IProp {
+export interface IProp extends Pick<HTMLProps<HTMLDivElement>, "className" | "style"> {
 	bb: typeof bb;
 	options: ChartOptions;
 }
@@ -19,7 +19,7 @@ export interface IChart {
 export default forwardRef<IChart, IProp>((props, ref) => {
 	const container = useRef<HTMLDivElement>(null);
 	const instance = useRef<Chart | null>();
-	const {bb, options: {...options}} = props;
+	const {bb, options: {...options}, ...htmlDivProps} = props;
 
 	// generate chart
 	const generate = () => {
@@ -57,5 +57,5 @@ export default forwardRef<IChart, IProp>((props, ref) => {
 		})
 	);
 
-	return <div ref={container} />;
+	return <div ref={container} {...htmlDivProps} />;
 });
