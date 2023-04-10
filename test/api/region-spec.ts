@@ -90,6 +90,32 @@ describe("API region", function() {
 				done();
 			}, 1000);
 		});
+
+		it("check for <rect> element generation", () => {
+			// when
+			chart.regions.add({
+				axis: "y",
+				start: 150,
+				end: 200,
+				class: "a",
+			});
+
+			chart.regions.add({
+				axis: "y",
+				start: 200,
+				end: 220,
+				class: "b",
+			});
+
+			const regionList = chart.internal.$el.region.list;
+
+			expect(regionList.size()).to.be.equal(4);
+
+			// regions <rect> element should be 1
+			regionList.each(function(d, i) {
+				expect(this.querySelectorAll("rect").length).to.be.equal(1);
+			});
+		});
 	});
 
 	describe("Add regions using regions()", () => {

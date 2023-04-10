@@ -28,26 +28,26 @@ export default {
 
 		// hide if arc type
 		region.main.style("visibility", $$.hasArcType() ? "hidden" : null);
-		// select <g> element
 
-		let list = region.main
+		// select <g> element
+		const regions = region.main
 			.selectAll(`.${$REGION.region}`)
 			.data(config.regions);
 
-		$T(list.exit())
+		$T(regions.exit())
 			.style("opacity", "0")
 			.remove();
 
-		list = list.enter()
-			.append("g")
-			.merge(list)
-			.attr("class", $$.classRegion.bind($$));
+		const regionsEnter = regions.enter()
+			.append("g");
 
-		list
+		regionsEnter
 			.append("rect")
 			.style("fill-opacity", "0");
 
-		region.list = list;
+		region.list = regionsEnter
+			.merge(regions)
+			.attr("class", $$.classRegion.bind($$));
 	},
 
 	redrawRegion(withTransition) {
