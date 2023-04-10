@@ -1,3 +1,16 @@
+# [3.8.0-next.2](https://github.com/naver/billboard.js/compare/3.8.0-next.1...3.8.0-next.2) (2023-04-10)
+
+
+### Bug Fixes
+
+* **grid:** fix redundant <rect> appends ([1039363](https://github.com/naver/billboard.js/commit/1039363a33989665392a249768ee6bc222c3b392)), closes [#3147](https://github.com/naver/billboard.js/issues/3147)
+* **sparkline:** Fix to work point.focus.only option ([65b3c1c](https://github.com/naver/billboard.js/commit/65b3c1c3b8ac707fef4e3391b90dff6d0f7c0ba5)), closes [#3171](https://github.com/naver/billboard.js/issues/3171)
+
+
+### Features
+
+* **package:** extends root div interface for styling ([0a1fe08](https://github.com/naver/billboard.js/commit/0a1fe084c9a6264aba680c8b73da589e457e8baf)), closes [#3162](https://github.com/naver/billboard.js/issues/3162) [#3163](https://github.com/naver/billboard.js/issues/3163)
+
 # [3.8.0-next.1](https://github.com/naver/billboard.js/compare/3.7.5...3.8.0-next.1) (2023-03-31)
 
 
