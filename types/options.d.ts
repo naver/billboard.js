@@ -4,9 +4,6 @@
  */
 import {Axis} from "./axis";
 import {ChartTypes, d3Selection, DataItem, PrimitiveArray} from "./types";
-import Bubblecompare from "./plugin/bubblecompare/index";
-import Stanford from "./plugin/stanford/index";
-import TextOverlap from "./plugin/textoverlap/index";
 import {Chart} from "./chart";
 import {IArcData, IData, IDataRow} from "../src/ChartInternal/data/IData";
 import {
@@ -334,7 +331,7 @@ export interface ChartOptions {
 	/**
 	 * Set plugins
 	 */
-	plugins?: Array<(Bubblecompare | Stanford | TextOverlap)>;
+	plugins?: Array<InstanceType<any>>;
 
 	/**
 	 * Control the render timing

@@ -221,6 +221,11 @@ export default class Sparkline extends Plugin {
 		}
 
 		$$.state.event = e;
+
+		if ($$.config.point_focus_only && d) {
+			$$.showCircleFocus?.([d]);
+		}
+
 		$$.setExpand(index, data.id, true);
 		$$.showTooltip([d], e.target);
 	}
@@ -229,7 +234,10 @@ export default class Sparkline extends Plugin {
 		const {$$} = this;
 
 		$$.state.event = e;
-		$$.unexpandCircles();
+
+		$$.config.point_focus_only ?
+			$$.hideCircleFocus() : $$.unexpandCircles();
+
 		$$.hideTooltip();
 	}
 
