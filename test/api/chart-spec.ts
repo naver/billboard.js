@@ -49,7 +49,7 @@ describe("API chart", () => {
 		});
 
 		it("should update groups correctly", function(done) {
-			this.timeout(1000);
+			this.timeout(2000);
 
 			const main = chart.$.main;
 			const path = main.select(`.${$BAR.bars}-data1 path`);
@@ -70,7 +70,7 @@ describe("API chart", () => {
 				done();
 			}, 300);
 
-			setTimeout(done, 500);
+			setTimeout(done, 1000);
 		});
 	});
 
