@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230408004638
+ * @version 3.7.5-nightly-20230411004649
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -400,7 +400,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.7.5-nightly-20230408004638";
+Plugin.version = "3.7.5-nightly-20230411004649";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**
@@ -1590,13 +1590,16 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
       d.name = d.id;
     }
     $$.state.event = e;
+    if ($$.config.point_focus_only && d) {
+      $$.showCircleFocus == null ? void 0 : $$.showCircleFocus([d]);
+    }
     $$.setExpand(index, data.id, !0);
     $$.showTooltip([d], e.target);
   };
   _proto.outHandler = function outHandler(e) {
     var $$ = this.$$;
     $$.state.event = e;
-    $$.unexpandCircles();
+    $$.config.point_focus_only ? $$.hideCircleFocus() : $$.unexpandCircles();
     $$.hideTooltip();
   };
   _proto.$redraw = function $redraw() {

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230408004638
+ * @version 3.7.5-nightly-20230411004649
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -16279,13 +16279,13 @@ function smoothLines(el, type) {
 
     // hide if arc type
     region.main.style("visibility", $$.hasArcType() ? "hidden" : null);
-    // select <g> element
 
-    var list = region.main.selectAll("." + $REGION.region).data(config.regions);
-    $T(list.exit()).style("opacity", "0").remove();
-    list = list.enter().append("g").merge(list).attr("class", $$.classRegion.bind($$));
-    list.append("rect").style("fill-opacity", "0");
-    region.list = list;
+    // select <g> element
+    var regions = region.main.selectAll("." + $REGION.region).data(config.regions);
+    $T(regions.exit()).style("opacity", "0").remove();
+    var regionsEnter = regions.enter().append("g");
+    regionsEnter.append("rect").style("fill-opacity", "0");
+    region.list = regionsEnter.merge(regions).attr("class", $$.classRegion.bind($$));
   },
   redrawRegion: function redrawRegion(withTransition) {
     var _this = this,
@@ -20493,7 +20493,7 @@ var getTransitionName = function () {
       if (d) {
         circle = circle.filter(function (t) {
           var _this5 = this,
-            data = d.filter(function (v) {
+            data = d.filter == null ? void 0 : d.filter(function (v) {
               _newArrowCheck(this, _this5);
               return v.id === t.id;
             }.bind(this));
@@ -24723,7 +24723,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230408004638
+ * @version 3.7.5-nightly-20230411004649
  */
 var bb = {
   /**
@@ -24733,7 +24733,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.7.5-nightly-20230408004638",
+  version: "3.7.5-nightly-20230411004649",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

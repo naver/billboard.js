@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.5-nightly-20230408004638
+ * @version 3.7.5-nightly-20230411004649
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -278,7 +278,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.7.5-nightly-20230408004638";
+    Plugin.version = "3.7.5-nightly-20230411004649";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -626,7 +626,7 @@ var Sparkline = /** @class */ (function (_super) {
         eventReceiver.rect = e.target.getBoundingClientRect();
     };
     Sparkline.prototype.moveHandler = function (e) {
-        var _a, _b;
+        var _a, _b, _c;
         var $$ = this.$$;
         var index = $$.getDataIndexFromEvent(e);
         var data = (_a = $$.api.data(e.target.__id)) === null || _a === void 0 ? void 0 : _a[0];
@@ -635,13 +635,17 @@ var Sparkline = /** @class */ (function (_super) {
             d.name = d.id;
         }
         $$.state.event = e;
+        if ($$.config.point_focus_only && d) {
+            (_c = $$.showCircleFocus) === null || _c === void 0 ? void 0 : _c.call($$, [d]);
+        }
         $$.setExpand(index, data.id, true);
         $$.showTooltip([d], e.target);
     };
     Sparkline.prototype.outHandler = function (e) {
         var $$ = this.$$;
         $$.state.event = e;
-        $$.unexpandCircles();
+        $$.config.point_focus_only ?
+            $$.hideCircleFocus() : $$.unexpandCircles();
         $$.hideTooltip();
     };
     Sparkline.prototype.$redraw = function () {

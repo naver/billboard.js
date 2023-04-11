@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.7.5-nightly-20230408004638
+ * @version 3.7.5-nightly-20230411004649
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -14436,20 +14436,20 @@ var region = {
         // hide if arc type
         region.main.style("visibility", $$.hasArcType() ? "hidden" : null);
         // select <g> element
-        var list = region.main
+        var regions = region.main
             .selectAll(".".concat($REGION.region))
             .data(config.regions);
-        $T(list.exit())
+        $T(regions.exit())
             .style("opacity", "0")
             .remove();
-        list = list.enter()
-            .append("g")
-            .merge(list)
-            .attr("class", $$.classRegion.bind($$));
-        list
+        var regionsEnter = regions.enter()
+            .append("g");
+        regionsEnter
             .append("rect")
             .style("fill-opacity", "0");
-        region.list = list;
+        region.list = regionsEnter
+            .merge(regions)
+            .attr("class", $$.classRegion.bind($$));
     },
     redrawRegion: function (withTransition) {
         var $$ = this;
@@ -18497,7 +18497,8 @@ var shapePoint = {
             if (d) {
                 circle = circle
                     .filter(function (t) {
-                    var data = d.filter(function (v) { return v.id === t.id; });
+                    var _a;
+                    var data = (_a = d.filter) === null || _a === void 0 ? void 0 : _a.call(d, function (v) { return v.id === t.id; });
                     return data.length ?
                         select(this).datum(data[0]) : false;
                 });
@@ -22264,7 +22265,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.7.5-nightly-20230408004638
+ * @version 3.7.5-nightly-20230411004649
  */
 var bb = {
     /**
@@ -22274,7 +22275,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.7.5-nightly-20230408004638",
+    version: "3.7.5-nightly-20230411004649",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
