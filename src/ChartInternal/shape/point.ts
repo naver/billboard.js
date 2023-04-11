@@ -9,6 +9,7 @@ import {
 import type {d3Selection} from "../../../types/types";
 import {$CIRCLE, $COMMON, $SELECT} from "../../config/classes";
 import {document} from "../../module/browser";
+import type {IDataRow} from "../data/IData";
 import {getBoundingRect, getPointer, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
 
 const getTransitionName = () => getRandom();
@@ -188,7 +189,7 @@ export default {
 	 * @param {object} d Selected data
 	 * @private
 	 */
-	showCircleFocus(d?): void {
+	showCircleFocus(d?: IDataRow[]): void {
 		const $$ = this;
 		const {config, state: {hasRadar, resizing, toggling, transiting}, $el} = $$;
 		let {circle} = $el;
@@ -202,7 +203,7 @@ export default {
 			if (d) {
 				circle = circle
 					.filter(function(t) {
-						const data = d.filter(v => v.id === t.id);
+						const data = d.filter?.(v => v.id === t.id);
 
 						return data.length ?
 							d3Select(this).datum(data[0]) : false;
