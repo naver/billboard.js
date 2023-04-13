@@ -126,3 +126,12 @@ code.html {
 #exportPreserveFontStyle svg {
   font-family: 'Alfa Slab One';
 }
+
+#fitPadding_1 svg {
+  border: 1px dashed blue;
+  margin-bottom: 20px;
+}
+
+#fitPadding_2 svg {
+  border: 1px dashed red;
+}
