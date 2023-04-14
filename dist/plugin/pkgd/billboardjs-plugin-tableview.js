@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.7.5-nightly-20230412004625
+ * @version 3.8.0-nightly-20230414004634
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1156,10 +1156,10 @@ var store = __webpack_require__(37);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.30.0',
+  version: '3.30.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.30.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.30.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -17845,14 +17845,21 @@ module.exports = {
 
 var $ = __webpack_require__(3);
 var getBuiltIn = __webpack_require__(24);
+var fails = __webpack_require__(7);
 var validateArgumentsLength = __webpack_require__(328);
 var toString = __webpack_require__(69);
+var USE_NATIVE_URL = __webpack_require__(514);
 
 var URL = getBuiltIn('URL');
 
+// https://github.com/nodejs/node/issues/47505
+var THROWS_WITHOUT_ARGUMENTS = USE_NATIVE_URL && fails(function () {
+  URL.canParse();
+});
+
 // `URL.canParse` method
 // https://url.spec.whatwg.org/#dom-url-canparse
-$({ target: 'URL', stat: true }, {
+$({ target: 'URL', stat: true, forced: !THROWS_WITHOUT_ARGUMENTS }, {
   canParse: function canParse(url) {
     var length = validateArgumentsLength(arguments.length, 1);
     var urlString = toString(url);
@@ -18425,7 +18432,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.7.5-nightly-20230412004625";
+Plugin.version = "3.8.0-nightly-20230414004634";
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
 /**
