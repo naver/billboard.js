@@ -156,7 +156,7 @@
 		"eslint": "^8.38.0",
 		"eslint-config-naver": "^2.1.0",
 		"eslint-plugin-import": "^2.27.5",
-		"eslint-plugin-jsdoc": "^40.3.0",
+		"eslint-plugin-jsdoc": "^41.1.2",
 		"eslint-webpack-plugin": "^4.0.1",
 		"exports-loader": "^4.0.0",
 		"hammer-simulator": "0.0.1",
