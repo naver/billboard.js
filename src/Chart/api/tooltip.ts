@@ -86,7 +86,7 @@ const tooltip = {
 				eventReceiver.rect = $el.main.select(`${$$.selectorTarget(data.id, undefined, "rect")}`);
 			} else if ($$.isMultipleX()) {
 				// if multiple xs, target point will be determined by mouse
-				mouse = [$$.scale.x(data.x), y];
+				mouse = [$$.xx(data), y];
 			} else {
 				if (!config.tooltip_grouped) {
 					mouse = [0, y];
