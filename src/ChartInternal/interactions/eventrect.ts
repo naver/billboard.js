@@ -32,7 +32,9 @@ export default {
 
 		if ($el.eventRect) {
 			$$.updateEventRect($el.eventRect, true);
-		} else {
+
+		// do not initialize eventRect when data is empty
+		} else if ($$.data.targets.length) {
 			const eventRects = $$.$el.main.select(`.${$EVENT.eventRects}`)
 				.style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (
 					config.axis_rotated ? "ns-resize" : "ew-resize"
@@ -61,6 +63,9 @@ export default {
 			if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
 				$$.bindTouchOnEventRect(isMultipleX);
 			}
+
+			// when initilazed with empty data and data loaded later, need to update eventRect
+			state.rendered && $$.updateEventRect($el.eventRect, true);
 		}
 
 		if (!isMultipleX) {
