@@ -513,6 +513,45 @@ describe("API load", function() {
 				}
 			});
 		});
+
+		it("set options: initialize with empty data", () => {
+			args = {
+				data: {
+					columns: [],
+					type: "area"
+				}
+			};
+		});
+
+		it("check for correct event binding", done => {
+			setTimeout(() => {
+				chart.load({
+					xs: {
+						data: 'dataX'
+					},
+					columns: [
+						["data", 300, 350, 300, 200, 50, 300],
+						["dataX", 1, 2, 3, 4, 5, 6],
+					],
+					done: function() {
+						this.tooltip.show({
+							data: {
+								x: 3,
+								id: "data",
+								value: 300
+							}
+						});
+
+						const {tooltip} = this.$;
+						
+						expect(tooltip.select(".name").text()).to.be.equal("data");
+						expect(+tooltip.select(".value").text()).to.be.equal(300);
+
+						done();
+					}
+				});
+			  }, 1000);
+		});
 	});
 
 	describe("different type loading", () => {
