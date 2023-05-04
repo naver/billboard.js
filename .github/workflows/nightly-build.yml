@@ -26,7 +26,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm config set package-lock false
-          npm install
+          npm install --save --legacy-peer-deps
 
       - name: Deploy
         env:
