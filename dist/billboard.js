@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.8.0-nightly-20230419004646
+ * @version 3.8.1-nightly-20230505004656
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -12394,7 +12394,7 @@ var tooltip_tooltip = {
         eventReceiver.rect = $el.main.select("" + $$.selectorTarget(data.id, undefined, "rect"));
       } else if ($$.isMultipleX()) {
         // if multiple xs, target point will be determined by mouse
-        mouse = [$$.scale.x(data.x), y];
+        mouse = [$$.xx(data), y];
       } else {
         if (!config.tooltip_grouped) {
           mouse = [0, y];
@@ -14997,7 +14997,9 @@ var Axis_Axis = /*#__PURE__*/function () {
       isInverted = config.axis_x_inverted;
     if ($el.eventRect) {
       $$.updateEventRect($el.eventRect, !0);
-    } else {
+
+      // do not initialize eventRect when data is empty
+    } else if ($$.data.targets.length) {
       var eventRects = $$.$el.main.select("." + $EVENT.eventRects).style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed($EVENT.eventRectsMultiple, isMultipleX).classed($EVENT.eventRectsSingle, !isMultipleX),
         eventRectUpdate = eventRects.selectAll("." + $EVENT.eventRect).data([0]).enter().append("rect"); // append event <rect>
       $$.updateEventRect(eventRectUpdate);
@@ -15011,6 +15013,9 @@ var Axis_Axis = /*#__PURE__*/function () {
       if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
         $$.bindTouchOnEventRect(isMultipleX);
       }
+
+      // when initilazed with empty data and data loaded later, need to update eventRect
+      state.rendered && $$.updateEventRect($el.eventRect, !0);
     }
     if (!isMultipleX) {
       // Set data and update eventReceiver.data
@@ -24723,7 +24728,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.8.0-nightly-20230419004646
+ * @version 3.8.1-nightly-20230505004656
  */
 var bb = {
   /**
@@ -24733,7 +24738,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.8.0-nightly-20230419004646",
+  version: "3.8.1-nightly-20230505004656",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

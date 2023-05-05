@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.8.0-nightly-20230419004646
+ * @version 3.8.1-nightly-20230505004656
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -10818,7 +10818,7 @@ var tooltip = {
             }
             else if ($$.isMultipleX()) {
                 // if multiple xs, target point will be determined by mouse
-                mouse = [$$.scale.x(data.x), y];
+                mouse = [$$.xx(data), y];
             }
             else {
                 if (!config.tooltip_grouped) {
@@ -13237,8 +13237,9 @@ var eventrect = {
         var isInverted = config.axis_x_inverted;
         if ($el.eventRect) {
             $$.updateEventRect($el.eventRect, true);
+            // do not initialize eventRect when data is empty
         }
-        else {
+        else if ($$.data.targets.length) {
             var eventRects = $$.$el.main.select(".".concat($EVENT.eventRects))
                 .style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (config.axis_rotated ? "ns-resize" : "ew-resize") : null)
                 .classed($EVENT.eventRectsMultiple, isMultipleX)
@@ -13259,6 +13260,8 @@ var eventrect = {
             if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
                 $$.bindTouchOnEventRect(isMultipleX);
             }
+            // when initilazed with empty data and data loaded later, need to update eventRect
+            state.rendered && $$.updateEventRect($el.eventRect, true);
         }
         if (!isMultipleX) {
             // Set data and update eventReceiver.data
@@ -22265,7 +22268,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.8.0-nightly-20230419004646
+ * @version 3.8.1-nightly-20230505004656
  */
 var bb = {
     /**
@@ -22275,7 +22278,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.8.0-nightly-20230419004646",
+    version: "3.8.1-nightly-20230505004656",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
