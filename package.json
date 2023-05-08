@@ -109,7 +109,7 @@
 		"@babel/preset-env": "^7.21.5",
 		"@babel/preset-typescript": "^7.21.5",
 		"@babel/runtime": "^7.21.5",
-		"@commitlint/cli": "17.6.1",
+		"@commitlint/cli": "17.6.3",
 		"@commitlint/config-conventional": "^17.6.1",
 		"@rollup/plugin-babel": "^6.0.3",
 		"@rollup/plugin-node-resolve": "^15.0.2",
