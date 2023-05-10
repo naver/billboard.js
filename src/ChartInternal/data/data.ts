@@ -930,7 +930,8 @@ export default {
 
 					// otherwise, based on the rendered angle value
 				} else {
-					const gaugeArcLength = config.gauge_fullCircle ? $$.getArcLength() : $$.getStartAngle() * -2;
+					const gaugeArcLength = config.gauge_fullCircle ?
+						$$.getArcLength() : $$.getGaugeStartAngle() * -2;
 					const arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
 
 					ratio = (d.endAngle - d.startAngle) / arcLength;

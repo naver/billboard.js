@@ -16,9 +16,31 @@ export default {
 	 *  - **NOTE:**
 	 * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
 	 * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
+	 * @property {object} [arc.needle] Set needle options.
+	 * @property {boolean} [arc.needle.show=false] Show or hide needle.
+	 * @property {string} [arc.needle.color] Set needle filled color.
+	 * @property {Function} [arc.needle.path] Set custom needle path function.
+	 *  - **NOTE:**
+	 *   - The path should be starting from 0,0 (which is center) to top center coordinate.
+	 *   - The function will receive, `length`{number} parameter which indicating the needle length in pixel relative to radius.
+	 * @property {number} [arc.needle.value] Set needle value.
+	 *  - **NOTE:**
+	 *   - For single gauge chart, needle will point the data value by default, otherwise will point 0(zero).
+	 * @property {number} [arc.needle.length=100] Set needle length in percentages relative to radius.
+	 * @property {object} [arc.needle.top] Set needle top options.
+	 * @property {number} [arc.needle.top.rx=0] Set needle top [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+	 * @property {number} [arc.needle.top.ry=0] Set needle top [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+	 * @property {number} [arc.needle.top.width=0] Set needle top width in pixel.
+	 * @property {object} [arc.needle.bottom] Set needle bottom options.
+	 * @property {number} [arc.needle.bottom.rx=1] Set needle bottom [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+	 * @property {number} [arc.needle.bottom.ry=1] Set needle bottom [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+	 * @property {number} [arc.needle.bottom.width=15] Set needle bottom width in pixel.
+	 * @property {number} [arc.needle.bottom.len=0] Set needle bottom length in pixel. Setting this value, will make bottom larger starting from center.
 	 * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
 	 * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
 	 * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
+	 * @see [Demo: Donut needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
+	 * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/##GaugeChartOptions.GaugeNeedle)
 	 * @example
 	 *  arc: {
 	 *      cornerRadius: 12,
@@ -37,11 +59,61 @@ export default {
 	 *      // set ratio relative of outer radius
 	 *      cornerRadius: {
 	 *          ratio: 0.5
+	 *      },
+	 *
+	 *      needle: {
+	 *       	show: true,
+	 *       	color: "red", // any valid CSS color
+	 *       	path: function(length) {
+	 *       	  const len = length - 20;
+	 *
+	 *       	  // will return upper arrow shape path
+	 *       	  // Note: The path should begun from '0,0' coordinate to top center.
+	 *       	  const path = `M 0 -${len + 20}
+	 *       		L -12 -${len}
+	 *       		L -5 -${len}
+	 *       		L -5 0
+	 *       		A 1 1 0 0 0 5 0
+	 *       		L 5 -${len}
+	 *       		L 12 -${len} Z`;
+	 *
+	 *       	  return path;
+	 *       	},
+	 *       	value: 40,  // will make needle to point value 40.
+	 *       	length: 80, // needle length in percentages relative to radius.
+	 *
+	 *       	top: {
+	 *       	  // rx and ry are the two radii of the ellipse;
+	 *       	  // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+	 *       	  rx: 1,
+	 *       	  ry: 1,
+	 *       	  width: 5
+	 *       	},
+	 *       	bottom: {
+	 *       	  // rx and ry are the two radii of the ellipse;
+	 *       	  // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+	 *       	  rx: 1,
+	 *       	  ry: 1,
+	 *       	  width: 10
+	 *       	  len: 10
+	 *       	}
 	 *      }
 	 *  }
 	 */
 	arc_cornerRadius: <
 		number|((id: string, value: number) => number)
 	> 0,
-	arc_cornerRadius_ratio: 0
+	arc_cornerRadius_ratio: 0,
+	arc_needle_show: false,
+	arc_needle_color: <string|undefined> undefined,
+	arc_needle_value: <number|undefined> undefined,
+	arc_needle_path: undefined,
+	arc_needle_length: 100,
+	arc_needle_top_rx: 0,
+	arc_needle_top_ry: 0,
+	arc_needle_top_width: 0,
+	arc_needle_bottom_rx: 1,
+	arc_needle_bottom_ry: 1,
+	arc_needle_bottom_width: 15,
+	arc_needle_bottom_len: 0
 };

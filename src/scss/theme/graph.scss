@@ -44,6 +44,12 @@ $axis-color: #8c8c8c;
     shape-rendering: crispEdges;
 }
 
+.bb-chart-arcs {
+	.bb-needle {
+		fill: #000;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
     shape-rendering: crispEdges;

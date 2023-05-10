@@ -14,6 +14,78 @@ export interface ArcOptions {
 	cornerRadius?: number | ((id: string, value: number, outerRadius: number) => number) | {
 		ratio?: number
 	};
+
+	/**
+	 * Set needle options.
+	 */
+	needle?: {
+		/**
+		 * Show or hide needle.
+		 */
+		show?: boolean;
+
+		/**
+		 * Set needle filled color.
+		 */
+		color?: string;
+
+		/**
+		 * Set custom needle path function.
+		 *  - **NOTE:**
+		 *   - The path should be starting from 0,0 (which is center) to top center coordinate.
+		 *   - The function will receive, `length`{number} parameter which indicating the needle length in pixel relative to radius.
+		 */
+		path?: string;
+
+		/**
+		 * Set needle value.
+		 *  - **NOTE:**
+		 *   - For single gauge chart, needle will point the data value by default, otherwise will point 0(zero).
+		 */
+		length?: number;
+
+		/**
+		 * Set needle top options.
+		 */
+		top?: {
+			/**
+			 * Set needle top [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+			 */
+			rx?: number;
+
+			/**
+			 * Set needle top [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+			 */
+			ry?: number
+
+			/**
+			 * Set needle top width in pixel.
+			 */
+			width?: number;
+		}
+
+		bottom?: {
+			/**
+			 * Set needle bottom [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+			 */
+			rx?: number;
+
+			/**
+			 * Set needle bottom [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+			 */
+			ry?: number
+
+			/**
+			 * Set needle bottom width in pixel.
+			 */
+			width?: number;
+
+			/**
+			 * Set needle bottom length in pixel. Setting this value, will make bottom larger starting from center.
+			 */
+			len?: number;
+		}
+	};
 }
 
 export interface AreaOptions {
