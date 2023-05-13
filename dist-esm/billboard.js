@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.8.1-nightly-20230505004656
+ * @version 3.8.1-nightly-20230513004707
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -25,6 +25,11 @@ import { zoomIdentity, zoomTransform, zoom as zoom$2 } from 'd3-zoom';
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/**
+ * Window object
+ * @private
+ */
+/* eslint-disable no-new-func, no-undef */
 var win = (function () {
     var root = (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
         (typeof global === "object" && global !== null && global.Object === Object && global) ||
@@ -151,6 +156,8 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
+/* global Reflect, Promise */
+
 var _assign = function __assign() {
   _assign = Object.assign || function (t) {
     for (var s, i = 1, n = arguments.length; i < n; i++) {
@@ -3355,6 +3362,7 @@ function runWorker(useWorker, fn, callback, depsFn) {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/* eslint-disable */
 /***** Functions to be executed on Web Worker *****
  * NOTE: Don't allowed to use
  * - arrow function syntax
@@ -16525,6 +16533,10 @@ var optGrid = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/**
+ * Modules exports for Axis based chart
+ */
+// Chart
 var api = [
     apiAxis,
     apiCategory,
@@ -22268,7 +22280,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.8.1-nightly-20230505004656
+ * @version 3.8.1-nightly-20230513004707
  */
 var bb = {
     /**
@@ -22278,7 +22290,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.8.1-nightly-20230505004656",
+    version: "3.8.1-nightly-20230513004707",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

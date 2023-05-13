@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.8.1-nightly-20230505004656
+ * @version 3.8.1-nightly-20230513004707
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -230,6 +230,11 @@ _assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/**
+ * Window object
+ * @private
+ */
+/* eslint-disable no-new-func, no-undef */
 var win = (function () {
     var root = (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
         (typeof global === "object" && global !== null && global.Object === Object && global) ||
@@ -481,7 +486,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.8.1-nightly-20230505004656";
+    Plugin.version = "3.8.1-nightly-20230513004707";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -744,6 +749,7 @@ function getCentroid(points) {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+// @ts-nocheck
 /**
  * Stanford diagram plugin element class
  * @class ColorScale
