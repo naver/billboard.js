@@ -10,7 +10,7 @@ import {
 import {interpolate as d3Interpolate} from "d3-interpolate";
 import {document} from "../../module/browser";
 import {$ARC, $COMMON, $FOCUS, $GAUGE} from "../../config/classes";
-import {callFn, endall, isFunction, isNumber, isObject, isUndefined, setTextValue} from "../../module/util";
+import {callFn, endall, isDefined, isFunction, isNumber, isObject, isUndefined, setTextValue, tplProcess} from "../../module/util";
 import type {d3Selection} from "../../../types/types";
 import type {IArcData, IArcDataRow, IData} from "../data/IData";
 
@@ -226,7 +226,7 @@ export default {
 		return len * Math.PI;
 	},
 
-	getStartAngle(): number {
+	getGaugeStartAngle(): number {
 		const $$ = this;
 		const {config} = $$;
 		const isFullCircle = config.gauge_fullCircle;
@@ -248,7 +248,7 @@ export default {
 	updateAngle(dValue) {
 		const $$ = this;
 		const {config, state} = $$;
-		let pie = $$.pie;
+		let {pie} = $$;
 		let d = dValue;
 		let found = false;
 
@@ -256,7 +256,7 @@ export default {
 			return null;
 		}
 
-		const gStart = $$.getStartAngle();
+		const gStart = $$.getGaugeStartAngle();
 		const radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
 
 		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
@@ -274,7 +274,7 @@ export default {
 
 		pie($$.filterTargetsToShow())
 			.forEach((t, i) => {
-				if (!found && t.data.id === d.data.id) {
+				if (!found && t.data.id === d.data?.id) {
 					found = true;
 					d = t;
 					d.index = i;
@@ -570,13 +570,6 @@ export default {
 		return isFunction(format) ? format.bind($$.api) : format;
 	},
 
-	getArcTitle(): string {
-		const $$ = this;
-		const type = ($$.hasType("donut") && "donut") || ($$.hasType("gauge") && "gauge");
-
-		return type ? $$.config[`${type}_title`] : "";
-	},
-
 	updateTargetsForArc(targets: IData): void {
 		const $$ = this;
 		const {$el} = $$;
@@ -624,22 +617,65 @@ export default {
 
 	/**
 	 * Set arc title text
+	 * @param {string} str Title text
 	 * @private
 	 */
-	setArcTitle() {
+	setArcTitle(str?: string) {
 		const $$ = this;
-		const title = $$.getArcTitle();
+		const title = str || $$.getArcTitle();
 		const hasGauge = $$.hasType("gauge");
 
 		if (title) {
-			const text = $$.$el.arcs.append("text")
-				.attr("class", hasGauge ? $GAUGE.chartArcsGaugeTitle : $ARC.chartArcsTitle)
-				.style("text-anchor", "middle");
+			const className = hasGauge ? $GAUGE.chartArcsGaugeTitle : $ARC.chartArcsTitle;
+			let text = $$.$el.arcs.select(`.${className}`);
+
+			if (text.empty()) {
+				text = $$.$el.arcs.append("text")
+					.attr("class", className)
+					.style("text-anchor", "middle");
+			}
 
 			hasGauge && text.attr("dy", "-0.3em");
 
 			setTextValue(text, title, hasGauge ? undefined : [-0.6, 1.35], true);
 		}
+	},
+
+	/**
+	 * Return arc title text
+	 * @returns {string} Arc title text
+	 * @private
+	 */
+	getArcTitle(): string {
+		const $$ = this;
+		const type = ($$.hasType("donut") && "donut") || ($$.hasType("gauge") && "gauge");
+
+		return type ? $$.config[`${type}_title`] : "";
+	},
+
+	/**
+	 * Get arc title text with needle value
+	 * @returns {string|boolean} When title contains needle template string will return processed string, otherwise false
+	 * @private
+	 */
+	getArcTitleWithNeedleValue(): string | false {
+		const $$ = this;
+		const {config, state} = $$;
+		const title = $$.getArcTitle();
+
+		if (title && $$.config.arc_needle_show && /{=[A-Z_]+}/.test(title)) {
+			let value = state.current.needle;
+
+			if (!isNumber(value)) {
+				value = config.arc_needle_value;
+			}
+
+			return tplProcess(title, {
+				NEEDLE_VALUE: isNumber(value) ? value : 0
+			});
+		}
+
+		return false;
 	},
 
 	redrawArc(duration: number, durationForExit: number, withTransform?: boolean): void {
@@ -750,7 +786,114 @@ export default {
 		$$.hasType("polar") && $$.redrawPolar();
 		$$.hasType("gauge") && $$.redrawBackgroundArcs();
 
+		config.arc_needle_show && $$.redrawNeedle();
 		$$.redrawArcText(duration);
+	},
+
+	/**
+	 * Update needle element
+	 * @private
+	 */
+	redrawNeedle(): void {
+		const $$ = this;
+		const {$el, config, state: {hiddenTargetIds, radius}} = $$;
+		const length = (radius - 1) / 100 * config.arc_needle_length;
+		const hasDataToShow = hiddenTargetIds.length !== $$.data.targets.length;
+		let needle = $$.$el.arcs.select(`.${$ARC.needle}`);
+
+		// needle options
+		const pathFn = config.arc_needle_path;
+		const baseWidth = config.arc_needle_bottom_width / 2;
+		const topWidth = config.arc_needle_top_width / 2;
+		const topRx = config.arc_needle_top_rx;
+		const topRy = config.arc_needle_top_ry;
+		const bottomLen = config.arc_needle_bottom_len;
+		const bottomRx = config.arc_needle_bottom_rx;
+		const bottomRy = config.arc_needle_bottom_ry;
+		const needleAngle = $$.getNeedleAngle();
+
+		const updateNeedleValue = () => {
+			const title = $$.getArcTitleWithNeedleValue();
+
+			title && $$.setArcTitle(title);
+		};
+
+		updateNeedleValue();
+
+		if (needle.empty()) {
+			needle = $el.arcs
+				.append("path")
+				.classed($ARC.needle, true);
+
+			$el.needle = needle;
+
+			/**
+			 * Function to be exposed as public to facilitate updating needle
+			 * @param {number} v Value to be updated
+			 * @param {boolean} updateConfig Weather update config's value
+			 * @private
+			 */
+			$el.needle.updateHelper = (v: number, updateConfig = false): void => {
+				if ($el.needle.style("display") !== "none") {
+					$$.$T($el.needle)
+						.style("transform", `rotate(${$$.getNeedleAngle(v)}deg)`)
+						.call(endall, () => {
+							updateConfig && (config.arc_needle_value = v);
+							updateNeedleValue();
+						});
+				}
+			};
+		}
+
+		if (hasDataToShow) {
+			const path = isFunction(pathFn) ?
+				pathFn.call($$, length) :
+				`M-${baseWidth} ${bottomLen} A${bottomRx} ${bottomRy} 0 0 0 ${baseWidth} ${bottomLen} L${topWidth} -${length} A${topRx} ${topRy} 0 0 0 -${topWidth} -${length} L-${baseWidth} ${bottomLen} Z`;
+
+			$$.$T(needle)
+				.attr("d", path)
+				.style("fill", config.arc_needle_color)
+				.style("display", null)
+				.style("transform", `rotate(${needleAngle}deg)`);
+		} else {
+			needle.style("display", "none");
+		}
+	},
+
+	/**
+	 * Get needle angle value relative given value
+	 * @param {number} v Value to be calculated angle
+	 * @returns {number} angle value
+	 * @private
+	 */
+	getNeedleAngle(v?: number): number {
+		const $$ = this;
+		const {config, state} = $$;
+		const arcLength = $$.getArcLength();
+		const hasGauge = $$.hasType("gauge");
+		const total = $$.getTotalDataSum(true);
+		let value = isDefined(v) ? v : config.arc_needle_value;
+		let startingAngle = config[`${config.data_type}_startingAngle`] || 0;
+		let radian = 0;
+
+		if (!isNumber(value)) {
+			value = hasGauge && $$.data.targets.length === 1 ? total : 0;
+		}
+
+		state.current.needle = value;
+
+		if (hasGauge) {
+			startingAngle = $$.getGaugeStartAngle();
+
+			const radius = config.gauge_fullCircle ? arcLength : startingAngle * -2;
+			const {gauge_min: min, gauge_max: max} = config;
+
+			radian = radius * ((value - min) / (max - min));
+		} else {
+			radian = arcLength * (value / total);
+		}
+
+		return (startingAngle + radian) * (180 / Math.PI);
 	},
 
 	redrawBackgroundArcs() {
@@ -761,7 +904,7 @@ export default {
 		const showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 &&
 			!!config.data_empty_label_text;
 
-		const startAngle = $$.getStartAngle();
+		const startAngle = $$.getGaugeStartAngle();
 		const endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
 
 		let backgroundArc = $$.$el.arcs.select(

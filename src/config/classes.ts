@@ -22,7 +22,8 @@ export const $ARC = {
 	chartArc: "bb-chart-arc",
 	chartArcs: "bb-chart-arcs",
 	chartArcsBackground: "bb-chart-arcs-background",
-	chartArcsTitle: "bb-chart-arcs-title"
+	chartArcsTitle: "bb-chart-arcs-title",
+	needle: "bb-needle"
 };
 
 export const $AREA = {

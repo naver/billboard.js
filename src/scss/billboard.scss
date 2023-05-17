@@ -26,6 +26,12 @@
 	shape-rendering: crispEdges;
 }
 
+.bb-chart-arcs {
+	.bb-needle {
+		fill: #000;
+	}
+}
+
 .bb-chart-arc {
 	.bb-gauge-value {
 		fill: #000;

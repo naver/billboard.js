@@ -21,6 +21,8 @@ export default {
 	 * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
 	 * @property {number} [donut.width] Set width of donut chart.
 	 * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character for line break.
+	 *  - **NOTE:**
+	 *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
 	 * @property {number} [donut.padAngle=0] Set padding between data.
 	 * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
 	 * @example
@@ -62,6 +64,9 @@ export default {
 	 *      padAngle: 0.2,
 	 *      startingAngle: 1,
 	 *      title: "Donut Title"
+	 *
+	 *      // when 'arc.needle.show=true' is set, can show current needle value.
+	 *      title: "Needle value:\n{=NEEDLE_VALUE}",
 	 *
 	 *      // title with line break
 	 *      title: "Title1\nTitle2"
