@@ -39,6 +39,12 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
     shape-rendering: crispEdges;
 }
 
+.bb-chart-arcs {
+	.bb-needle {
+		fill: #000;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
     shape-rendering: crispEdges;

@@ -59,6 +59,7 @@ export default class State {
 
 				// current used chart type list
 				types: <string[]> [],
+				needle: undefined, // arc needle current value
 			},
 
 			// legend
@@ -111,7 +112,7 @@ export default class State {
 				pathGrid: ""
 			},
 
-			// status
+			// state
 			event: null, // event object
 			dragStart: null,
 			dragging: false,
