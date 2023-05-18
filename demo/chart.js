@@ -386,7 +386,7 @@ var billboardDemo = {
 			.replace("_plugins", "plugins")
 			.replace(new RegExp('"?'+ this.replacer.plugin +'"?', "g"), "");
 
-			if (/(polarChart|multiline)/i.test(options.bindto)) {
+			if (/(polarChart|multiline|gaugeneedle)/i.test(options.bindto)) {
 				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
 					.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n")
 					.replace('+"\\\\n"+', '+"\\n+"');
@@ -485,7 +485,7 @@ var billboardDemo = {
 				code.data.push("\r\n\r\n" + func.toString()
 					.replace(/[\t\s]*function\s*\(chart[\d+]?\) \{[\r\n\t\s]*/, "")
 					.replace(/}$/, "")
-					.replace(/chart.timer = \[[\r\n\t\s]*/, "")
+					.replace(/chart[\d]?.timer = \[[\r\n\t\s]*/, "")
 					.replace(/\t{5}/g, "")
 					.replace(/[\r\n\t\s]*\];?[\r\n\t\s]*$/, "")
 					.replace(/(\d)\),?/g, "$1);"));

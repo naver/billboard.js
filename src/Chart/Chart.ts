@@ -39,6 +39,10 @@ import apiTooltip from "./api/tooltip";
  * @property {d3.selection} $.svg Main svg element
  * @property {d3.selection} $.defs Definition element
  * @property {d3.selection} $.main Main grouping element
+ * @property {d3.selection} $.needle Needle element
+ *  - **NOTE:**
+ *    - The element will have `bb-needle` as class name.
+ *    - Will provide speical helper `.updateHelper(value: number, updateConfig: boolean)` method to facilitate needle position update.
  * @property {d3.selection} $.tooltip Tooltip element
  * @property {d3.selection} $.legend Legend element
  * @property {d3.selection} $.title Title element
@@ -55,10 +59,35 @@ import apiTooltip from "./api/tooltip";
  * @property {d3.selection} $.text.texts Data label text elements
  * @memberof Chart
  * @example
- * var chart = bb.generate({ ... });
+ * const chart = bb.generate({ ... });
  *
  * chart.$.chart; // wrapper element
  * chart.$.line.circles;  // all data point circle elements
+ * @example
+ * // Update arc needle position
+ * const chart = bb.generate({
+ *   data: {
+ *     type: "donut"
+ *   },
+ *   arc: {
+ *     needle: {
+ *       show: true,
+ *       ...
+ *     }
+ *   }
+ * });
+ *
+ * chart.$.needle.updateHelper(70);  // update needle position to point value 70.
+ *
+ * // update needle position to point value 70 and the config value.
+ * // NOTE: updating config value, will update needle pointer initial value too.
+ * chart.$.needle.updateHelper(70, true);
+ *
+ * // update needle point position every 1 second
+ * let i = 0;
+ * setInterval(() => {
+ *   chart.$.needle.updateHelper(i += 10);
+ * }, 1000)
  */
 /**
  * Plugin instance array

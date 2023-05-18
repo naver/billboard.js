@@ -4892,6 +4892,98 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		DonutNeedle: [
+			{
+				options: {
+					title: {
+						text: "Custom Needle"
+					},
+					data: {
+						columns: [
+							["data1", 10],
+							["data2", 10],
+							["data3", 10],
+							["data4", 10],
+							["data5", 10],
+							["data6", 10]
+						],
+						type: "donut"
+					},
+					donut: {
+						title: "( {=NEEDLE_VALUE} )"
+					},
+					arc: {
+						needle: {
+							show: true,
+							value: 13,
+							path: function(length) {
+						const len = length - 20;
+						const path = `M 0 -${len + 20}
+						   L -12 -${len}
+						   L -5 -${len}
+						   L -5 0 
+						   A 1 1 0 0 0 5 0
+						   L 5 -${len}
+						   L 12 -${len} Z`;  
+					
+						   return path;
+						 },
+							length: 55
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 25],
+							["data2", 25],
+							["data3", 25],
+							["data4", 25]
+						],
+						type: "donut"
+					},
+					donut: {
+						title: "{=NEEDLE_VALUE}%"
+					},
+					arc: {
+						needle: {
+							show: true,
+							color: "red",
+							length: 80,
+							top: {
+								width: 5,
+								rx: 1,
+								ry: 1
+							}
+						}
+					}
+				},
+				func: function(chart2) {
+					chart2.timer = [
+						setTimeout(function() {
+	chart2.$.needle.updateHelper(25)
+}, 1000),
+
+setTimeout(function() {
+	chart2.$.needle.updateHelper(50)
+}, 2000),
+
+setTimeout(function() {
+	chart2.$.needle.updateHelper(75)
+}, 3000),
+
+setTimeout(function() {
+	chart2.$.needle.updateHelper(0)
+}, 4000)
+					];
+				},
+				style: [
+					"#donutNeedle_1 .bb-chart-arcs-title, #donutNeedle_2 .bb-chart-arcs-title {font-size: 3em;fill: blue;transform: translateY(40px);}"
+				]
+			}
+		],
 		LabelRatio: {
 			options: {
 				data: {
@@ -5064,6 +5156,85 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		GaugeNeedle: [
+			{
+				options: {
+					data: {
+						columns: [
+							["Poor", 20],
+							["Fair", 20],
+							["Good", 20],
+							["Great", 20],
+							["Excellent", 20]
+						],
+						type: "gauge"
+					},
+					size: {
+						height: 220
+					},
+					interaction: {
+						enabled: false
+					},
+					legend: {
+						show: false
+					},
+					gauge: {
+						width: 10,
+						title: "Total Quality\n{=NEEDLE_VALUE}%",
+						label: {
+							format: function(value, ratio, id) { return id; }
+						}
+					},
+					arc: {
+						needle: {
+							show: true,
+							value: 0
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() { chart.$.needle.updateHelper(77, true); }, 1000),
+					];
+				},
+				style: [
+					"#gaugeNeedle_1 .bb-chart-arcs-gauge-title tspan:first-child { font-size:0.3em;}",
+					"#gaugeNeedle_1 .bb-chart-arcs-gauge-title { transform:translateY(-80px);font-size:4em; }",
+					"#gaugeNeedle_2 .bb-chart-arcs-gauge-title { font-size:3.5em;fill:red;transform:translateY(-40px); }"
+				]
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data", 80]
+						],
+						type: "gauge"
+					},
+					size: {
+						height: 220
+					},
+					arc: {
+						needle: {
+							show: true,
+							length: 80,
+							color: "rgb(2 253 15 / 39%)",
+							top: {
+								width: 5
+							},
+							bottom: {
+								rx: 0,
+								ry: 0,
+								width: 5
+							}
+						}
+					},
+					gauge: {
+						title: "{=NEEDLE_VALUE}%",
+					}
+				}
+			},
+		],
 		GaugeStackData: [
 			{
 				options: {

@@ -46,6 +46,8 @@ export default {
 	 * - 'arcLength < -100' defaults to -100
 	 * - 'arcLength > 100' defaults to 100
 	 * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
+	 *  - **NOTE:**
+	 *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
 	 * @property {string} [gauge.units] Set units of the gauge.
 	 * @property {number} [gauge.width] Set width of gauge chart.
 	 * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
@@ -92,6 +94,10 @@ export default {
 	 *      max: 200,
 	 *      type: "single"  // or 'multi'
 	 *      title: "Title Text",
+	 *
+	 *      // when 'arc.needle.show=true' is set, can show current needle value.
+	 *      title: "Needle value:\n{=NEEDLE_VALUE}",
+	 *
 	 *      units: "%",
 	 *      width: 10,
 	 *      startingAngle: -1 * Math.PI / 2,

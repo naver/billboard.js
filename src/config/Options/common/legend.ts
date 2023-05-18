@@ -39,7 +39,7 @@ export default {
 	 *  - **step**:
 	 *   - defines the max step the legend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
 	 * @property {boolean} [legend.equally=false] Set to all items have same width size.
-	 * @property {boolean} [legend.padding=0] Set padding value
+	 * @property {number} [legend.padding=0] Set padding value
 	 * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
 	 * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
 	 * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
