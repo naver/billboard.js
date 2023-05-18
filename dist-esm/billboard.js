@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.8.1-nightly-20230517004650
+ * @version 3.8.1-nightly-20230518004710
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -915,7 +915,8 @@ var $ARC = {
     chartArc: "bb-chart-arc",
     chartArcs: "bb-chart-arcs",
     chartArcsBackground: "bb-chart-arcs-background",
-    chartArcsTitle: "bb-chart-arcs-title"
+    chartArcsTitle: "bb-chart-arcs-title",
+    needle: "bb-needle"
 };
 var $AREA = {
     area: "bb-area",
@@ -1167,6 +1168,7 @@ var State = /** @class */ (function () {
                 },
                 // current used chart type list
                 types: [],
+                needle: undefined, // arc needle current value
             },
             // legend
             isLegendRight: false,
@@ -1211,7 +1213,7 @@ var State = /** @class */ (function () {
                 pathXAxisTickTexts: "",
                 pathGrid: ""
             },
-            // status
+            // state
             event: null,
             dragStart: null,
             dragging: false,
@@ -2706,7 +2708,7 @@ var legend$2 = {
      *  - **step**:
      *   - defines the max step the legend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
      * @property {boolean} [legend.equally=false] Set to all items have same width size.
-     * @property {boolean} [legend.padding=0] Set padding value
+     * @property {number} [legend.padding=0] Set padding value
      * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
      * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
      * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
@@ -4459,7 +4461,8 @@ var data$1 = {
                     // otherwise, based on the rendered angle value
                 }
                 else {
-                    var gaugeArcLength = config.gauge_fullCircle ? $$.getArcLength() : $$.getStartAngle() * -2;
+                    var gaugeArcLength = config.gauge_fullCircle ?
+                        $$.getArcLength() : $$.getGaugeStartAngle() * -2;
                     var arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
                     ratio = (d.endAngle - d.startAngle) / arcLength;
                 }
@@ -7462,6 +7465,9 @@ var size = {
             xAxisHeight : 30;
         var subchartHeight = config.subchart_show && !isNonAxis ?
             (config.subchart_size_height + subchartXAxisHeight) : 0;
+        // when needle is shown with legend, it need some bottom space to not overlap with legend text
+        var gaugeHeight = $$.hasType("gauge") && config.arc_needle_show &&
+            !config.gauge_fullCircle && !config.gauge_label_show ? 10 : 0;
         var padding = $$.getCurrentPadding();
         // for main
         state.margin = !isNonAxis && isRotated ? {
@@ -7472,7 +7478,7 @@ var size = {
         } : {
             top: (isFitPadding ? 0 : 4) + padding.top,
             right: isNonAxis ? 0 : $$.getCurrentPaddingRight(true),
-            bottom: xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
+            bottom: gaugeHeight + xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
             left: isNonAxis ? 0 : padding.left
         };
         state.margin = $$.getResettedPadding(state.margin);
@@ -9363,7 +9369,8 @@ var ChartInternal = /** @class */ (function () {
      */
     ChartInternal.prototype.setChartElements = function () {
         var $$ = this;
-        var _a = $$.$el, chart = _a.chart, svg = _a.svg, defs = _a.defs, main = _a.main, tooltip = _a.tooltip, legend = _a.legend, title = _a.title, grid = _a.grid, arc = _a.arcs, circles = _a.circle, bars = _a.bar, candlestick = _a.candlestick, lines = _a.line, areas = _a.area, texts = _a.text;
+        var _a = $$.$el, chart = _a.chart, svg = _a.svg, defs = _a.defs, main = _a.main, tooltip = _a.tooltip, legend = _a.legend, title = _a.title, grid = _a.grid, needle = _a.needle, arc = _a.arcs, circles = _a.circle, bars = _a.bar, candlestick = _a.candlestick, lines = _a.line, areas = _a.area, texts = _a.text;
+        // public
         $$.api.$ = {
             chart: chart,
             svg: svg,
@@ -9378,6 +9385,7 @@ var ChartInternal = /** @class */ (function () {
             bar: { bars: bars },
             candlestick: candlestick,
             line: { lines: lines, areas: areas },
+            needle: needle,
             text: { texts: texts }
         };
     };
@@ -10902,6 +10910,10 @@ var apiTooltip = { tooltip: tooltip };
  * @property {d3.selection} $.svg Main svg element
  * @property {d3.selection} $.defs Definition element
  * @property {d3.selection} $.main Main grouping element
+ * @property {d3.selection} $.needle Needle element
+ *  - **NOTE:**
+ *    - The element will have `bb-needle` as class name.
+ *    - Will provide speical helper `.updateHelper(value: number, updateConfig: boolean)` method to facilitate needle position update.
  * @property {d3.selection} $.tooltip Tooltip element
  * @property {d3.selection} $.legend Legend element
  * @property {d3.selection} $.title Title element
@@ -10918,10 +10930,35 @@ var apiTooltip = { tooltip: tooltip };
  * @property {d3.selection} $.text.texts Data label text elements
  * @memberof Chart
  * @example
- * var chart = bb.generate({ ... });
+ * const chart = bb.generate({ ... });
  *
  * chart.$.chart; // wrapper element
  * chart.$.line.circles;  // all data point circle elements
+ * @example
+ * // Update arc needle position
+ * const chart = bb.generate({
+ *   data: {
+ *     type: "donut"
+ *   },
+ *   arc: {
+ *     needle: {
+ *       show: true,
+ *       ...
+ *     }
+ *   }
+ * });
+ *
+ * chart.$.needle.updateHelper(70);  // update needle position to point value 70.
+ *
+ * // update needle position to point value 70 and the config value.
+ * // NOTE: updating config value, will update needle pointer initial value too.
+ * chart.$.needle.updateHelper(70, true);
+ *
+ * // update needle point position every 1 second
+ * let i = 0;
+ * setInterval(() => {
+ *   chart.$.needle.updateHelper(i += 10);
+ * }, 1000)
  */
 /**
  * Plugin instance array
@@ -16735,7 +16772,7 @@ var shapeArc = {
         }
         return len * Math.PI;
     },
-    getStartAngle: function () {
+    getGaugeStartAngle: function () {
         var $$ = this;
         var config = $$.config;
         var isFullCircle = config.gauge_fullCircle;
@@ -16762,7 +16799,7 @@ var shapeArc = {
         if (!config) {
             return null;
         }
-        var gStart = $$.getStartAngle();
+        var gStart = $$.getGaugeStartAngle();
         var radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
         if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
             var min = config.gauge_min, max = config.gauge_max;
@@ -16776,7 +16813,8 @@ var shapeArc = {
         }
         pie($$.filterTargetsToShow())
             .forEach(function (t, i) {
-            if (!found && t.data.id === d.data.id) {
+            var _a;
+            if (!found && t.data.id === ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id)) {
                 found = true;
                 d = t;
                 d.index = i;
@@ -17014,11 +17052,6 @@ var shapeArc = {
         });
         return isFunction(format) ? format.bind($$.api) : format;
     },
-    getArcTitle: function () {
-        var $$ = this;
-        var type = ($$.hasType("donut") && "donut") || ($$.hasType("gauge") && "gauge");
-        return type ? $$.config["".concat(type, "_title")] : "";
-    },
     updateTargetsForArc: function (targets) {
         var $$ = this;
         var $el = $$.$el;
@@ -17057,19 +17090,54 @@ var shapeArc = {
     },
     /**
      * Set arc title text
+     * @param {string} str Title text
      * @private
      */
-    setArcTitle: function () {
+    setArcTitle: function (str) {
         var $$ = this;
-        var title = $$.getArcTitle();
+        var title = str || $$.getArcTitle();
         var hasGauge = $$.hasType("gauge");
         if (title) {
-            var text = $$.$el.arcs.append("text")
-                .attr("class", hasGauge ? $GAUGE.chartArcsGaugeTitle : $ARC.chartArcsTitle)
-                .style("text-anchor", "middle");
+            var className = hasGauge ? $GAUGE.chartArcsGaugeTitle : $ARC.chartArcsTitle;
+            var text = $$.$el.arcs.select(".".concat(className));
+            if (text.empty()) {
+                text = $$.$el.arcs.append("text")
+                    .attr("class", className)
+                    .style("text-anchor", "middle");
+            }
             hasGauge && text.attr("dy", "-0.3em");
             setTextValue(text, title, hasGauge ? undefined : [-0.6, 1.35], true);
         }
+    },
+    /**
+     * Return arc title text
+     * @returns {string} Arc title text
+     * @private
+     */
+    getArcTitle: function () {
+        var $$ = this;
+        var type = ($$.hasType("donut") && "donut") || ($$.hasType("gauge") && "gauge");
+        return type ? $$.config["".concat(type, "_title")] : "";
+    },
+    /**
+     * Get arc title text with needle value
+     * @returns {string|boolean} When title contains needle template string will return processed string, otherwise false
+     * @private
+     */
+    getArcTitleWithNeedleValue: function () {
+        var $$ = this;
+        var config = $$.config, state = $$.state;
+        var title = $$.getArcTitle();
+        if (title && $$.config.arc_needle_show && /{=[A-Z_]+}/.test(title)) {
+            var value = state.current.needle;
+            if (!isNumber(value)) {
+                value = config.arc_needle_value;
+            }
+            return tplProcess(title, {
+                NEEDLE_VALUE: isNumber(value) ? value : 0
+            });
+        }
+        return false;
     },
     redrawArc: function (duration, durationForExit, withTransform) {
         var $$ = this;
@@ -17158,7 +17226,100 @@ var shapeArc = {
         hasInteraction && $$.bindArcEvent(mainArc);
         $$.hasType("polar") && $$.redrawPolar();
         $$.hasType("gauge") && $$.redrawBackgroundArcs();
+        config.arc_needle_show && $$.redrawNeedle();
         $$.redrawArcText(duration);
+    },
+    /**
+     * Update needle element
+     * @private
+     */
+    redrawNeedle: function () {
+        var $$ = this;
+        var $el = $$.$el, config = $$.config, _a = $$.state, hiddenTargetIds = _a.hiddenTargetIds, radius = _a.radius;
+        var length = (radius - 1) / 100 * config.arc_needle_length;
+        var hasDataToShow = hiddenTargetIds.length !== $$.data.targets.length;
+        var needle = $$.$el.arcs.select(".".concat($ARC.needle));
+        // needle options
+        var pathFn = config.arc_needle_path;
+        var baseWidth = config.arc_needle_bottom_width / 2;
+        var topWidth = config.arc_needle_top_width / 2;
+        var topRx = config.arc_needle_top_rx;
+        var topRy = config.arc_needle_top_ry;
+        var bottomLen = config.arc_needle_bottom_len;
+        var bottomRx = config.arc_needle_bottom_rx;
+        var bottomRy = config.arc_needle_bottom_ry;
+        var needleAngle = $$.getNeedleAngle();
+        var updateNeedleValue = function () {
+            var title = $$.getArcTitleWithNeedleValue();
+            title && $$.setArcTitle(title);
+        };
+        updateNeedleValue();
+        if (needle.empty()) {
+            needle = $el.arcs
+                .append("path")
+                .classed($ARC.needle, true);
+            $el.needle = needle;
+            /**
+             * Function to be exposed as public to facilitate updating needle
+             * @param {number} v Value to be updated
+             * @param {boolean} updateConfig Weather update config's value
+             * @private
+             */
+            $el.needle.updateHelper = function (v, updateConfig) {
+                if (updateConfig === void 0) { updateConfig = false; }
+                if ($el.needle.style("display") !== "none") {
+                    $$.$T($el.needle)
+                        .style("transform", "rotate(".concat($$.getNeedleAngle(v), "deg)"))
+                        .call(endall, function () {
+                        updateConfig && (config.arc_needle_value = v);
+                        updateNeedleValue();
+                    });
+                }
+            };
+        }
+        if (hasDataToShow) {
+            var path = isFunction(pathFn) ?
+                pathFn.call($$, length) :
+                "M-".concat(baseWidth, " ").concat(bottomLen, " A").concat(bottomRx, " ").concat(bottomRy, " 0 0 0 ").concat(baseWidth, " ").concat(bottomLen, " L").concat(topWidth, " -").concat(length, " A").concat(topRx, " ").concat(topRy, " 0 0 0 -").concat(topWidth, " -").concat(length, " L-").concat(baseWidth, " ").concat(bottomLen, " Z");
+            $$.$T(needle)
+                .attr("d", path)
+                .style("fill", config.arc_needle_color)
+                .style("display", null)
+                .style("transform", "rotate(".concat(needleAngle, "deg)"));
+        }
+        else {
+            needle.style("display", "none");
+        }
+    },
+    /**
+     * Get needle angle value relative given value
+     * @param {number} v Value to be calculated angle
+     * @returns {number} angle value
+     * @private
+     */
+    getNeedleAngle: function (v) {
+        var $$ = this;
+        var config = $$.config, state = $$.state;
+        var arcLength = $$.getArcLength();
+        var hasGauge = $$.hasType("gauge");
+        var total = $$.getTotalDataSum(true);
+        var value = isDefined(v) ? v : config.arc_needle_value;
+        var startingAngle = config["".concat(config.data_type, "_startingAngle")] || 0;
+        var radian = 0;
+        if (!isNumber(value)) {
+            value = hasGauge && $$.data.targets.length === 1 ? total : 0;
+        }
+        state.current.needle = value;
+        if (hasGauge) {
+            startingAngle = $$.getGaugeStartAngle();
+            var radius = config.gauge_fullCircle ? arcLength : startingAngle * -2;
+            var min = config.gauge_min, max = config.gauge_max;
+            radian = radius * ((value - min) / (max - min));
+        }
+        else {
+            radian = arcLength * (value / total);
+        }
+        return (startingAngle + radian) * (180 / Math.PI);
     },
     redrawBackgroundArcs: function () {
         var $$ = this;
@@ -17167,7 +17328,7 @@ var shapeArc = {
         var isFullCircle = config.gauge_fullCircle;
         var showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 &&
             !!config.data_empty_label_text;
-        var startAngle = $$.getStartAngle();
+        var startAngle = $$.getGaugeStartAngle();
         var endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
         var backgroundArc = $$.$el.arcs.select("".concat(hasMultiArcGauge ? "g" : "", ".").concat($ARC.chartArcsBackground));
         if (hasMultiArcGauge) {
@@ -20039,9 +20200,31 @@ var optArc = {
      *  - **NOTE:**
      * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
      * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
+     * @property {object} [arc.needle] Set needle options.
+     * @property {boolean} [arc.needle.show=false] Show or hide needle.
+     * @property {string} [arc.needle.color] Set needle filled color.
+     * @property {Function} [arc.needle.path] Set custom needle path function.
+     *  - **NOTE:**
+     *   - The path should be starting from 0,0 (which is center) to top center coordinate.
+     *   - The function will receive, `length`{number} parameter which indicating the needle length in pixel relative to radius.
+     * @property {number} [arc.needle.value] Set needle value.
+     *  - **NOTE:**
+     *   - For single gauge chart, needle will point the data value by default, otherwise will point 0(zero).
+     * @property {number} [arc.needle.length=100] Set needle length in percentages relative to radius.
+     * @property {object} [arc.needle.top] Set needle top options.
+     * @property {number} [arc.needle.top.rx=0] Set needle top [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+     * @property {number} [arc.needle.top.ry=0] Set needle top [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+     * @property {number} [arc.needle.top.width=0] Set needle top width in pixel.
+     * @property {object} [arc.needle.bottom] Set needle bottom options.
+     * @property {number} [arc.needle.bottom.rx=1] Set needle bottom [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+     * @property {number} [arc.needle.bottom.ry=1] Set needle bottom [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+     * @property {number} [arc.needle.bottom.width=15] Set needle bottom width in pixel.
+     * @property {number} [arc.needle.bottom.len=0] Set needle bottom length in pixel. Setting this value, will make bottom larger starting from center.
      * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
      * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
      * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
+     * @see [Demo: Donut needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
+     * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/##GaugeChartOptions.GaugeNeedle)
      * @example
      *  arc: {
      *      cornerRadius: 12,
@@ -20060,11 +20243,61 @@ var optArc = {
      *      // set ratio relative of outer radius
      *      cornerRadius: {
      *          ratio: 0.5
+     *      },
+     *
+     *      needle: {
+     *       	show: true,
+     *       	color: "red", // any valid CSS color
+     *       	path: function(length) {
+     *       	  const len = length - 20;
+     *
+     *       	  // will return upper arrow shape path
+     *       	  // Note: The path should begun from '0,0' coordinate to top center.
+     *       	  const path = `M 0 -${len + 20}
+     *       		L -12 -${len}
+     *       		L -5 -${len}
+     *       		L -5 0
+     *       		A 1 1 0 0 0 5 0
+     *       		L 5 -${len}
+     *       		L 12 -${len} Z`;
+     *
+     *       	  return path;
+     *       	},
+     *       	value: 40,  // will make needle to point value 40.
+     *       	length: 80, // needle length in percentages relative to radius.
+     *
+     *       	top: {
+     *       	  // rx and ry are the two radii of the ellipse;
+     *       	  // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+     *       	  rx: 1,
+     *       	  ry: 1,
+     *       	  width: 5
+     *       	},
+     *       	bottom: {
+     *       	  // rx and ry are the two radii of the ellipse;
+     *       	  // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+     *       	  rx: 1,
+     *       	  ry: 1,
+     *       	  width: 10
+     *       	  len: 10
+     *       	}
      *      }
      *  }
      */
     arc_cornerRadius: 0,
-    arc_cornerRadius_ratio: 0
+    arc_cornerRadius_ratio: 0,
+    arc_needle_show: false,
+    arc_needle_color: undefined,
+    arc_needle_value: undefined,
+    arc_needle_path: undefined,
+    arc_needle_length: 100,
+    arc_needle_top_rx: 0,
+    arc_needle_top_ry: 0,
+    arc_needle_top_width: 0,
+    arc_needle_bottom_rx: 1,
+    arc_needle_bottom_ry: 1,
+    arc_needle_bottom_width: 15,
+    arc_needle_bottom_len: 0
 };
 
 /**
@@ -20090,6 +20323,8 @@ var optDonut = {
      * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
      * @property {number} [donut.width] Set width of donut chart.
      * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character for line break.
+     *  - **NOTE:**
+     *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
      * @property {number} [donut.padAngle=0] Set padding between data.
      * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
      * @example
@@ -20131,6 +20366,9 @@ var optDonut = {
      *      padAngle: 0.2,
      *      startingAngle: 1,
      *      title: "Donut Title"
+     *
+     *      // when 'arc.needle.show=true' is set, can show current needle value.
+     *      title: "Needle value:\n{=NEEDLE_VALUE}",
      *
      *      // title with line break
      *      title: "Title1\nTitle2"
@@ -20197,6 +20435,8 @@ var optGauge = {
      * - 'arcLength < -100' defaults to -100
      * - 'arcLength > 100' defaults to 100
      * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
+     *  - **NOTE:**
+     *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
      * @property {string} [gauge.units] Set units of the gauge.
      * @property {number} [gauge.width] Set width of gauge chart.
      * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
@@ -20243,6 +20483,10 @@ var optGauge = {
      *      max: 200,
      *      type: "single"  // or 'multi'
      *      title: "Title Text",
+     *
+     *      // when 'arc.needle.show=true' is set, can show current needle value.
+     *      title: "Needle value:\n{=NEEDLE_VALUE}",
+     *
      *      units: "%",
      *      width: 10,
      *      startingAngle: -1 * Math.PI / 2,
@@ -22280,7 +22524,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.8.1-nightly-20230517004650
+ * @version 3.8.1-nightly-20230518004710
  */
 var bb = {
     /**
@@ -22290,7 +22534,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.8.1-nightly-20230517004650",
+    version: "3.8.1-nightly-20230518004710",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

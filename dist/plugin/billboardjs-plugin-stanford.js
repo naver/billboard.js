@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.8.1-nightly-20230517004650
+ * @version 3.8.1-nightly-20230518004710
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -227,7 +227,8 @@ var $ARC = {
   chartArc: "bb-chart-arc",
   chartArcs: "bb-chart-arcs",
   chartArcsBackground: "bb-chart-arcs-background",
-  chartArcsTitle: "bb-chart-arcs-title"
+  chartArcsTitle: "bb-chart-arcs-title",
+  needle: "bb-needle"
 };
 var $AREA = {
   area: "bb-area",
@@ -1392,7 +1393,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.8.1-nightly-20230517004650";
+Plugin.version = "3.8.1-nightly-20230518004710";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**

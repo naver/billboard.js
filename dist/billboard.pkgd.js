@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.8.1-nightly-20230517004650
+ * @version 3.8.1-nightly-20230518004710
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -17962,7 +17962,7 @@ __webpack_require__.r(__webpack_exports__);
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
-  "bb": function() { return /* reexport */ bb; },
+  bb: function() { return /* reexport */ bb; },
   "default": function() { return /* reexport */ bb; }
 });
 
@@ -17970,33 +17970,33 @@ __webpack_require__.d(__webpack_exports__, {
 var resolver_shape_namespaceObject = {};
 __webpack_require__.r(resolver_shape_namespaceObject);
 __webpack_require__.d(resolver_shape_namespaceObject, {
-  "area": function() { return _area; },
-  "areaLineRange": function() { return areaLineRange; },
-  "areaSpline": function() { return areaSpline; },
-  "areaSplineRange": function() { return areaSplineRange; },
-  "areaStep": function() { return areaStep; },
-  "bar": function() { return resolver_shape_bar; },
-  "bubble": function() { return resolver_shape_bubble; },
-  "candlestick": function() { return resolver_shape_candlestick; },
-  "donut": function() { return shape_donut; },
-  "gauge": function() { return resolver_shape_gauge; },
-  "line": function() { return resolver_shape_line; },
-  "pie": function() { return resolver_shape_pie; },
-  "polar": function() { return resolver_shape_polar; },
-  "radar": function() { return resolver_shape_radar; },
-  "scatter": function() { return shape_scatter; },
-  "spline": function() { return shape_spline; },
-  "step": function() { return shape_step; },
-  "treemap": function() { return resolver_shape_treemap; }
+  area: function() { return _area; },
+  areaLineRange: function() { return areaLineRange; },
+  areaSpline: function() { return areaSpline; },
+  areaSplineRange: function() { return areaSplineRange; },
+  areaStep: function() { return areaStep; },
+  bar: function() { return resolver_shape_bar; },
+  bubble: function() { return resolver_shape_bubble; },
+  candlestick: function() { return resolver_shape_candlestick; },
+  donut: function() { return shape_donut; },
+  gauge: function() { return resolver_shape_gauge; },
+  line: function() { return resolver_shape_line; },
+  pie: function() { return resolver_shape_pie; },
+  polar: function() { return resolver_shape_polar; },
+  radar: function() { return resolver_shape_radar; },
+  scatter: function() { return shape_scatter; },
+  spline: function() { return shape_spline; },
+  step: function() { return shape_step; },
+  treemap: function() { return resolver_shape_treemap; }
 });
 
 // NAMESPACE OBJECT: ./src/config/resolver/interaction.ts
 var resolver_interaction_namespaceObject = {};
 __webpack_require__.r(resolver_interaction_namespaceObject);
 __webpack_require__.d(resolver_interaction_namespaceObject, {
-  "selection": function() { return _selectionModule; },
-  "subchart": function() { return subchartModule; },
-  "zoom": function() { return zoomModule; }
+  selection: function() { return _selectionModule; },
+  subchart: function() { return subchartModule; },
+  zoom: function() { return zoomModule; }
 });
 
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/newArrowCheck.js
@@ -23358,7 +23358,8 @@ var $ARC = {
   chartArc: "bb-chart-arc",
   chartArcs: "bb-chart-arcs",
   chartArcsBackground: "bb-chart-arcs-background",
-  chartArcsTitle: "bb-chart-arcs-title"
+  chartArcsTitle: "bb-chart-arcs-title",
+  needle: "bb-needle"
 };
 var $AREA = {
   area: "bb-area",
@@ -23638,8 +23639,10 @@ var State = function () {
         }
       },
       // current used chart type list
-      types: []
+      types: [],
+      needle: undefined // arc needle current value
     },
+
     // legend
     isLegendRight: !1,
     isLegendInset: !1,
@@ -23691,7 +23694,7 @@ var State = function () {
       pathXAxisTickTexts: "",
       pathGrid: ""
     },
-    // status
+    // state
     event: null,
     // event object
     dragStart: null,
@@ -25215,7 +25218,7 @@ var data_this = undefined;
    *  - **step**:
    *   - defines the max step the legend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
    * @property {boolean} [legend.equally=false] Set to all items have same width size.
-   * @property {boolean} [legend.padding=0] Set padding value
+   * @property {number} [legend.padding=0] Set padding value
    * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
    * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
    * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
@@ -27476,7 +27479,7 @@ function getDataKeyForJson(keysParam, config) {
 
           // otherwise, based on the rendered angle value
         } else {
-          var gaugeArcLength = config.gauge_fullCircle ? $$.getArcLength() : $$.getStartAngle() * -2,
+          var gaugeArcLength = config.gauge_fullCircle ? $$.getArcLength() : $$.getGaugeStartAngle() * -2,
             arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
           ratio = (d.endAngle - d.startAngle) / arcLength;
         }
@@ -33553,7 +33556,8 @@ function stepAfter(context) {
       xAxisHeight = isRotated || isNonAxis ? 0 : $$.getHorizontalAxisHeight("x"),
       subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ? xAxisHeight : 30,
       subchartHeight = config.subchart_show && !isNonAxis ? config.subchart_size_height + subchartXAxisHeight : 0,
-      padding = $$.getCurrentPadding();
+      gaugeHeight = $$.hasType("gauge") && config.arc_needle_show && !config.gauge_fullCircle && !config.gauge_label_show ? 10 : 0,
+      padding = $$.getCurrentPadding(); // when needle is shown with legend, it need some bottom space to not overlap with legend text
     // for main
     state.margin = !isNonAxis && isRotated ? {
       top: $$.getHorizontalAxisHeight("y2") + padding.top,
@@ -33564,7 +33568,7 @@ function stepAfter(context) {
       top: (isFitPadding ? 0 : 4) + padding.top,
       // for top tick text
       right: isNonAxis ? 0 : $$.getCurrentPaddingRight(!0),
-      bottom: xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
+      bottom: gaugeHeight + xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
       left: isNonAxis ? 0 : padding.left
     };
     state.margin = $$.getResettedPadding(state.margin);
@@ -35647,6 +35651,7 @@ var ChartInternal = /*#__PURE__*/function () {
       legend = _$$$$el.legend,
       title = _$$$$el.title,
       grid = _$$$$el.grid,
+      needle = _$$$$el.needle,
       arc = _$$$$el.arcs,
       circles = _$$$$el.circle,
       bars = _$$$$el.bar,
@@ -35654,6 +35659,7 @@ var ChartInternal = /*#__PURE__*/function () {
       lines = _$$$$el.line,
       areas = _$$$$el.area,
       texts = _$$$$el.text;
+    // public
     $$.api.$ = {
       chart: chart,
       svg: svg,
@@ -35673,6 +35679,7 @@ var ChartInternal = /*#__PURE__*/function () {
         lines: lines,
         areas: areas
       },
+      needle: needle,
       text: {
         texts: texts
       }
@@ -37401,6 +37408,10 @@ var tooltip_tooltip = {
  * @property {d3.selection} $.svg Main svg element
  * @property {d3.selection} $.defs Definition element
  * @property {d3.selection} $.main Main grouping element
+ * @property {d3.selection} $.needle Needle element
+ *  - **NOTE:**
+ *    - The element will have `bb-needle` as class name.
+ *    - Will provide speical helper `.updateHelper(value: number, updateConfig: boolean)` method to facilitate needle position update.
  * @property {d3.selection} $.tooltip Tooltip element
  * @property {d3.selection} $.legend Legend element
  * @property {d3.selection} $.title Title element
@@ -37417,10 +37428,35 @@ var tooltip_tooltip = {
  * @property {d3.selection} $.text.texts Data label text elements
  * @memberof Chart
  * @example
- * var chart = bb.generate({ ... });
+ * const chart = bb.generate({ ... });
  *
  * chart.$.chart; // wrapper element
  * chart.$.line.circles;  // all data point circle elements
+ * @example
+ * // Update arc needle position
+ * const chart = bb.generate({
+ *   data: {
+ *     type: "donut"
+ *   },
+ *   arc: {
+ *     needle: {
+ *       show: true,
+ *       ...
+ *     }
+ *   }
+ * });
+ *
+ * chart.$.needle.updateHelper(70);  // update needle position to point value 70.
+ *
+ * // update needle position to point value 70 and the config value.
+ * // NOTE: updating config value, will update needle pointer initial value too.
+ * chart.$.needle.updateHelper(70, true);
+ *
+ * // update needle point position every 1 second
+ * let i = 0;
+ * setInterval(() => {
+ *   chart.$.needle.updateHelper(i += 10);
+ * }, 1000)
  */
 /**
  * Plugin instance array
@@ -44192,7 +44228,7 @@ function getAttrTweenFn(fn) {
     }
     return len * Math.PI;
   },
-  getStartAngle: function getStartAngle() {
+  getGaugeStartAngle: function getGaugeStartAngle() {
     var $$ = this,
       config = $$.config,
       isFullCircle = config.gauge_fullCircle,
@@ -44219,7 +44255,7 @@ function getAttrTweenFn(fn) {
     if (!config) {
       return null;
     }
-    var gStart = $$.getStartAngle(),
+    var gStart = $$.getGaugeStartAngle(),
       radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
     if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
       var min = config.gauge_min,
@@ -44229,8 +44265,9 @@ function getAttrTweenFn(fn) {
       pie = pie.startAngle(gStart).endAngle(radius * ((totalSum - min) / (max - min)) + gStart);
     }
     pie($$.filterTargetsToShow()).forEach(function (t, i) {
+      var _d$data;
       _newArrowCheck(this, _this4);
-      if (!found && t.data.id === d.data.id) {
+      if (!found && t.data.id === ((_d$data = d.data) == null ? void 0 : _d$data.id)) {
         found = !0;
         d = t;
         d.index = i;
@@ -44472,11 +44509,6 @@ function getAttrTweenFn(fn) {
     }.bind(this));
     return isFunction(format) ? format.bind($$.api) : format;
   },
-  getArcTitle: function getArcTitle() {
-    var $$ = this,
-      type = $$.hasType("donut") && "donut" || $$.hasType("gauge") && "gauge";
-    return type ? $$.config[type + "_title"] : "";
-  },
   updateTargetsForArc: function updateTargetsForArc(targets) {
     var _this11 = this,
       $$ = this,
@@ -44505,17 +44537,53 @@ function getAttrTweenFn(fn) {
   },
   /**
    * Set arc title text
+   * @param {string} str Title text
    * @private
    */
-  setArcTitle: function setArcTitle() {
+  setArcTitle: function setArcTitle(str) {
     var $$ = this,
-      title = $$.getArcTitle(),
+      title = str || $$.getArcTitle(),
       hasGauge = $$.hasType("gauge");
     if (title) {
-      var text = $$.$el.arcs.append("text").attr("class", hasGauge ? $GAUGE.chartArcsGaugeTitle : $ARC.chartArcsTitle).style("text-anchor", "middle");
+      var className = hasGauge ? $GAUGE.chartArcsGaugeTitle : $ARC.chartArcsTitle;
+      var text = $$.$el.arcs.select("." + className);
+      if (text.empty()) {
+        text = $$.$el.arcs.append("text").attr("class", className).style("text-anchor", "middle");
+      }
       hasGauge && text.attr("dy", "-0.3em");
       setTextValue(text, title, hasGauge ? undefined : [-.6, 1.35], !0);
     }
+  },
+  /**
+   * Return arc title text
+   * @returns {string} Arc title text
+   * @private
+   */
+  getArcTitle: function getArcTitle() {
+    var $$ = this,
+      type = $$.hasType("donut") && "donut" || $$.hasType("gauge") && "gauge";
+    return type ? $$.config[type + "_title"] : "";
+  },
+  /**
+   * Get arc title text with needle value
+   * @returns {string|boolean} When title contains needle template string will return processed string, otherwise false
+   * @private
+   */
+  getArcTitleWithNeedleValue: function getArcTitleWithNeedleValue() {
+    var $$ = this,
+      config = $$.config,
+      state = $$.state,
+      title = $$.getArcTitle();
+    if (title && $$.config.arc_needle_show && /{=[A-Z_]+}/.test(title)) {
+      var value = state.current.needle;
+      if (!isNumber(value)) {
+        value = config.arc_needle_value;
+      }
+      return tplProcess(title, {
+        NEEDLE_VALUE: isNumber(value) ? value : 0
+      });
+    }
+    return !1;
   },
   redrawArc: function redrawArc(duration, durationForExit, withTransform) {
     var _this12 = this,
@@ -44603,28 +44671,122 @@ function getAttrTweenFn(fn) {
     hasInteraction && $$.bindArcEvent(mainArc);
     $$.hasType("polar") && $$.redrawPolar();
     $$.hasType("gauge") && $$.redrawBackgroundArcs();
+    config.arc_needle_show && $$.redrawNeedle();
     $$.redrawArcText(duration);
   },
-  redrawBackgroundArcs: function redrawBackgroundArcs() {
+  /**
+   * Update needle element
+   * @private
+   */
+  redrawNeedle: function redrawNeedle() {
     var _this14 = this,
+      $$ = this,
+      $el = $$.$el,
+      config = $$.config,
+      _$$$state2 = $$.state,
+      hiddenTargetIds = _$$$state2.hiddenTargetIds,
+      radius = _$$$state2.radius,
+      length = (radius - 1) / 100 * config.arc_needle_length,
+      hasDataToShow = hiddenTargetIds.length !== $$.data.targets.length,
+      needle = $$.$el.arcs.select("." + $ARC.needle),
+      pathFn = config.arc_needle_path,
+      baseWidth = config.arc_needle_bottom_width / 2,
+      topWidth = config.arc_needle_top_width / 2,
+      topRx = config.arc_needle_top_rx,
+      topRy = config.arc_needle_top_ry,
+      bottomLen = config.arc_needle_bottom_len,
+      bottomRx = config.arc_needle_bottom_rx,
+      bottomRy = config.arc_needle_bottom_ry,
+      needleAngle = $$.getNeedleAngle(),
+      updateNeedleValue = function () {
+        _newArrowCheck(this, _this14);
+        var title = $$.getArcTitleWithNeedleValue();
+        title && $$.setArcTitle(title);
+      }.bind(this); // needle options
+    updateNeedleValue();
+    if (needle.empty()) {
+      needle = $el.arcs.append("path").classed($ARC.needle, !0);
+      $el.needle = needle;
+
+      /**
+       * Function to be exposed as public to facilitate updating needle
+       * @param {number} v Value to be updated
+       * @param {boolean} updateConfig Weather update config's value
+       * @private
+       */
+      $el.needle.updateHelper = function (v, updateConfig) {
+        var _this15 = this;
+        if (updateConfig === void 0) {
+          updateConfig = !1;
+        }
+        _newArrowCheck(this, _this14);
+        if ($el.needle.style("display") !== "none") {
+          $$.$T($el.needle).style("transform", "rotate(" + $$.getNeedleAngle(v) + "deg)").call(endall, function () {
+            _newArrowCheck(this, _this15);
+            updateConfig && (config.arc_needle_value = v);
+            updateNeedleValue();
+          }.bind(this));
+        }
+      }.bind(this);
+    }
+    if (hasDataToShow) {
+      var path = isFunction(pathFn) ? pathFn.call($$, length) : "M-" + baseWidth + " " + bottomLen + " A" + bottomRx + " " + bottomRy + " 0 0 0 " + baseWidth + " " + bottomLen + " L" + topWidth + " -" + length + " A" + topRx + " " + topRy + " 0 0 0 -" + topWidth + " -" + length + " L-" + baseWidth + " " + bottomLen + " Z";
+      $$.$T(needle).attr("d", path).style("fill", config.arc_needle_color).style("display", null).style("transform", "rotate(" + needleAngle + "deg)");
+    } else {
+      needle.style("display", "none");
+    }
+  },
+  /**
+   * Get needle angle value relative given value
+   * @param {number} v Value to be calculated angle
+   * @returns {number} angle value
+   * @private
+   */
+  getNeedleAngle: function getNeedleAngle(v) {
+    var $$ = this,
+      config = $$.config,
+      state = $$.state,
+      arcLength = $$.getArcLength(),
+      hasGauge = $$.hasType("gauge"),
+      total = $$.getTotalDataSum(!0);
+    var value = isDefined(v) ? v : config.arc_needle_value,
+      startingAngle = config[config.data_type + "_startingAngle"] || 0,
+      radian = 0;
+    if (!isNumber(value)) {
+      value = hasGauge && $$.data.targets.length === 1 ? total : 0;
+    }
+    state.current.needle = value;
+    if (hasGauge) {
+      startingAngle = $$.getGaugeStartAngle();
+      var _radius = config.gauge_fullCircle ? arcLength : startingAngle * -2,
+        min = config.gauge_min,
+        max = config.gauge_max;
+      radian = _radius * ((value - min) / (max - min));
+    } else {
+      radian = arcLength * (value / total);
+    }
+    return (startingAngle + radian) * (180 / Math.PI);
+  },
+  redrawBackgroundArcs: function redrawBackgroundArcs() {
+    var _this16 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
       hasMultiArcGauge = $$.hasMultiArcGauge(),
       isFullCircle = config.gauge_fullCircle,
       showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 && !!config.data_empty_label_text,
-      startAngle = $$.getStartAngle(),
+      startAngle = $$.getGaugeStartAngle(),
       endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1,
       backgroundArc = $$.$el.arcs.select((hasMultiArcGauge ? "g" : "") + "." + $ARC.chartArcsBackground);
     if (hasMultiArcGauge) {
       var index = 0;
       backgroundArc = backgroundArc.selectAll("path." + $ARC.chartArcsBackground).data($$.data.targets);
       backgroundArc.enter().append("path").attr("class", function (d, i) {
-        _newArrowCheck(this, _this14);
+        _newArrowCheck(this, _this16);
         return $ARC.chartArcsBackground + " " + $ARC.chartArcsBackground + "-" + i;
       }.bind(this)).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", function (_ref2) {
         var id = _ref2.id;
-        _newArrowCheck(this, _this14);
+        _newArrowCheck(this, _this16);
         if (showEmptyTextLabel || state.hiddenTargetIds.indexOf(id) >= 0) {
           return "M 0 0";
         }
@@ -44641,7 +44803,7 @@ function getAttrTweenFn(fn) {
       backgroundArc.exit().remove();
     } else {
       backgroundArc.attr("d", showEmptyTextLabel ? "M 0 0" : function () {
-        _newArrowCheck(this, _this14);
+        _newArrowCheck(this, _this16);
         var d = {
           data: [{
             value: config.gauge_max
@@ -44654,7 +44816,7 @@ function getAttrTweenFn(fn) {
     }
   },
   bindArcEvent: function bindArcEvent(arc) {
-    var _this15 = this,
+    var _this17 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -44702,7 +44864,7 @@ function getAttrTweenFn(fn) {
         selectArc(this, arcData, id);
         $$.setOverOut(!0, arcData);
       }).on("mouseout", function (event, d) {
-        _newArrowCheck(this, _this15);
+        _newArrowCheck(this, _this17);
         if (state.transiting) {
           // skip while transiting
           return;
@@ -44723,7 +44885,7 @@ function getAttrTweenFn(fn) {
     // touch events
     if (isTouch && $$.hasArcType() && !$$.radars) {
       var getEventArc = function (event) {
-        _newArrowCheck(this, _this15);
+        _newArrowCheck(this, _this17);
         var touch = event.changedTouches[0],
           eventArc = src_select(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
         return eventArc;
@@ -44746,7 +44908,7 @@ function getAttrTweenFn(fn) {
     }
   },
   redrawArcText: function redrawArcText(duration) {
-    var _this16 = this,
+    var _this18 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -44759,13 +44921,13 @@ function getAttrTweenFn(fn) {
     // for gauge type, update text when has no title & multi data
     if (!(hasGauge && $$.data.targets.length === 1 && config.gauge_title)) {
       text = main.selectAll("." + $ARC.chartArc).select("text").style("opacity", "0").attr("class", function (d) {
-        _newArrowCheck(this, _this16);
+        _newArrowCheck(this, _this18);
         return $$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null;
       }.bind(this)).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
-        _newArrowCheck(this, _this16);
+        _newArrowCheck(this, _this18);
         return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? Math.round(state.radius / 5) + "px" : null;
       }.bind(this)).transition().duration(duration).style("opacity", function (d) {
-        _newArrowCheck(this, _this16);
+        _newArrowCheck(this, _this18);
         return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0";
       }.bind(this));
       hasMultiArcGauge && text.attr("dy", "-.1em");
@@ -48414,9 +48576,31 @@ function convertDataToTreemapData(data) {
    *  - **NOTE:**
    * 	  - Corner radius can't surpass the `(outerRadius - innerRadius) /2` of indicated shape.
    * @property {number} [arc.cornerRadius.ratio=0] Set ratio relative of outer radius.
+   * @property {object} [arc.needle] Set needle options.
+   * @property {boolean} [arc.needle.show=false] Show or hide needle.
+   * @property {string} [arc.needle.color] Set needle filled color.
+   * @property {Function} [arc.needle.path] Set custom needle path function.
+   *  - **NOTE:**
+   *   - The path should be starting from 0,0 (which is center) to top center coordinate.
+   *   - The function will receive, `length`{number} parameter which indicating the needle length in pixel relative to radius.
+   * @property {number} [arc.needle.value] Set needle value.
+   *  - **NOTE:**
+   *   - For single gauge chart, needle will point the data value by default, otherwise will point 0(zero).
+   * @property {number} [arc.needle.length=100] Set needle length in percentages relative to radius.
+   * @property {object} [arc.needle.top] Set needle top options.
+   * @property {number} [arc.needle.top.rx=0] Set needle top [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+   * @property {number} [arc.needle.top.ry=0] Set needle top [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+   * @property {number} [arc.needle.top.width=0] Set needle top width in pixel.
+   * @property {object} [arc.needle.bottom] Set needle bottom options.
+   * @property {number} [arc.needle.bottom.rx=1] Set needle bottom [rx radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+   * @property {number} [arc.needle.bottom.ry=1] Set needle bottom [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
+   * @property {number} [arc.needle.bottom.width=15] Set needle bottom width in pixel.
+   * @property {number} [arc.needle.bottom.len=0] Set needle bottom length in pixel. Setting this value, will make bottom larger starting from center.
    * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
    * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
    * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
+   * @see [Demo: Donut needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
+   * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/##GaugeChartOptions.GaugeNeedle)
    * @example
    *  arc: {
    *      cornerRadius: 12,
@@ -48435,11 +48619,61 @@ function convertDataToTreemapData(data) {
    *      // set ratio relative of outer radius
    *      cornerRadius: {
    *          ratio: 0.5
+   *      },
+   *
+   *      needle: {
+   *       	show: true,
+   *       	color: "red", // any valid CSS color
+   *       	path: function(length) {
+   *       	  const len = length - 20;
+   *
+   *       	  // will return upper arrow shape path
+   *       	  // Note: The path should begun from '0,0' coordinate to top center.
+   *       	  const path = `M 0 -${len + 20}
+   *       		L -12 -${len}
+   *       		L -5 -${len}
+   *       		L -5 0
+   *       		A 1 1 0 0 0 5 0
+   *       		L 5 -${len}
+   *       		L 12 -${len} Z`;
+   *
+   *       	  return path;
+   *       	},
+   *       	value: 40,  // will make needle to point value 40.
+   *       	length: 80, // needle length in percentages relative to radius.
+   *
+   *       	top: {
+   *       	  // rx and ry are the two radii of the ellipse;
+   *       	  // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+   *       	  rx: 1,
+   *       	  ry: 1,
+   *       	  width: 5
+   *       	},
+   *       	bottom: {
+   *       	  // rx and ry are the two radii of the ellipse;
+   *       	  // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+   *       	  rx: 1,
+   *       	  ry: 1,
+   *       	  width: 10
+   *       	  len: 10
+   *       	}
    *      }
    *  }
    */
   arc_cornerRadius: 0,
-  arc_cornerRadius_ratio: 0
+  arc_cornerRadius_ratio: 0,
+  arc_needle_show: !1,
+  arc_needle_color: undefined,
+  arc_needle_value: undefined,
+  arc_needle_path: undefined,
+  arc_needle_length: 100,
+  arc_needle_top_rx: 0,
+  arc_needle_top_ry: 0,
+  arc_needle_top_width: 0,
+  arc_needle_bottom_rx: 1,
+  arc_needle_bottom_ry: 1,
+  arc_needle_bottom_width: 15,
+  arc_needle_bottom_len: 0
 });
 ;// CONCATENATED MODULE: ./src/config/Options/shape/donut.ts
 /**
@@ -48465,6 +48699,8 @@ function convertDataToTreemapData(data) {
    * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
    * @property {number} [donut.width] Set width of donut chart.
    * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character for line break.
+   *  - **NOTE:**
+   *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
    * @property {number} [donut.padAngle=0] Set padding between data.
    * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
    * @example
@@ -48506,6 +48742,9 @@ function convertDataToTreemapData(data) {
    *      padAngle: 0.2,
    *      startingAngle: 1,
    *      title: "Donut Title"
+   *
+   *      // when 'arc.needle.show=true' is set, can show current needle value.
+   *      title: "Needle value:\n{=NEEDLE_VALUE}",
    *
    *      // title with line break
    *      title: "Title1\nTitle2"
@@ -48572,6 +48811,8 @@ function convertDataToTreemapData(data) {
    * - 'arcLength < -100' defaults to -100
    * - 'arcLength > 100' defaults to 100
    * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character for line break.
+   *  - **NOTE:**
+   *    - When `arc.needle.show=true` is set, special template `{=NEEDLE_VALUE}` can be used inside the title text to show current needle value.
    * @property {string} [gauge.units] Set units of the gauge.
    * @property {number} [gauge.width] Set width of gauge chart.
    * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
@@ -48618,6 +48859,10 @@ function convertDataToTreemapData(data) {
    *      max: 200,
    *      type: "single"  // or 'multi'
    *      title: "Title Text",
+   *
+   *      // when 'arc.needle.show=true' is set, can show current needle value.
+   *      title: "Needle value:\n{=NEEDLE_VALUE}",
+   *
    *      units: "%",
    *      width: 10,
    *      startingAngle: -1 * Math.PI / 2,
@@ -51571,7 +51816,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.8.1-nightly-20230517004650
+ * @version 3.8.1-nightly-20230518004710
  */
 var bb = {
   /**
@@ -51581,7 +51826,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.8.1-nightly-20230517004650",
+  version: "3.8.1-nightly-20230518004710",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
