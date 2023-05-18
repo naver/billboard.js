@@ -208,8 +208,8 @@ export default {
 				.attr("height", height);
 
 			// only for init
-			if (!rendered) {
-				rectElement.attr("class", $EVENT.eventRect);
+			if (!rendered || force) {
+				rectElement.classed($EVENT.eventRect, true);
 			}
 		}
 

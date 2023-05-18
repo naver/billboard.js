@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
-import {$AREA, $AXIS, $COMMON, $CIRCLE, $LEGEND, $LINE} from "../../src/config/classes";
+import {$AREA, $AXIS, $COMMON, $CIRCLE, $EVENT, $LEGEND, $LINE} from "../../src/config/classes";
 import util from "../assets/util";
 
 describe("API load", function() {
@@ -519,6 +519,9 @@ describe("API load", function() {
 				data: {
 					columns: [],
 					type: "area"
+				},
+				background: {
+					color: "red"
 				}
 			};
 		});
@@ -534,6 +537,8 @@ describe("API load", function() {
 						["dataX", 1, 2, 3, 4, 5, 6],
 					],
 					done: function() {
+						expect(this.internal.$el.eventRect.classed($EVENT.eventRect)).to.be.true;						
+
 						this.tooltip.show({
 							data: {
 								x: 3,
@@ -552,6 +557,8 @@ describe("API load", function() {
 				});
 			  }, 1000);
 		});
+
+
 	});
 
 	describe("different type loading", () => {
