@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.8.2-nightly-20230524004710
+ * @version 3.8.2-nightly-20230531004713
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -18643,8 +18643,6 @@ function orient2d(ax, ay, bx, by, cx, cy) {
     const detright = (ax - cx) * (by - cy);
     const det = detleft - detright;
 
-    if (detleft === 0 || detright === 0 || (detleft > 0) !== (detright > 0)) return det;
-
     const detsum = Math.abs(detleft + detright);
     if (Math.abs(det) >= ccwerrboundA * detsum) return det;
 
@@ -20588,39 +20586,30 @@ function insphere(ax, ay, az, bx, by, bz, cx, cy, cz, dx, dy, dz, ex, ey, ez) {
     const dexbey = dex * bey;
     const bd = bexdey - dexbey;
 
-    const abc = aez * bc - bez * ac + cez * ab;
-    const bcd = bez * cd - cez * bd + dez * bc;
-    const cda = cez * da + dez * ac + aez * cd;
-    const dab = dez * ab + aez * bd + bez * da;
-
     const alift = aex * aex + aey * aey + aez * aez;
     const blift = bex * bex + bey * bey + bez * bez;
     const clift = cex * cex + cey * cey + cez * cez;
     const dlift = dex * dex + dey * dey + dez * dez;
 
-    const det = (clift * dab - dlift * abc) + (alift * bcd - blift * cda);
+    const det =
+        (clift * (dez * ab + aez * bd + bez * da) - dlift * (aez * bc - bez * ac + cez * ab)) +
+        (alift * (bez * cd - cez * bd + dez * bc) - blift * (cez * da + dez * ac + aez * cd));
 
     const aezplus = Math.abs(aez);
     const bezplus = Math.abs(bez);
     const cezplus = Math.abs(cez);
     const dezplus = Math.abs(dez);
-    const aexbeyplus = Math.abs(aexbey);
-    const bexaeyplus = Math.abs(bexaey);
-    const bexceyplus = Math.abs(bexcey);
-    const cexbeyplus = Math.abs(cexbey);
-    const cexdeyplus = Math.abs(cexdey);
-    const dexceyplus = Math.abs(dexcey);
-    const dexaeyplus = Math.abs(dexaey);
-    const aexdeyplus = Math.abs(aexdey);
-    const aexceyplus = Math.abs(aexcey);
-    const cexaeyplus = Math.abs(cexaey);
-    const bexdeyplus = Math.abs(bexdey);
-    const dexbeyplus = Math.abs(dexbey);
+    const aexbeyplus = Math.abs(aexbey) + Math.abs(bexaey);
+    const bexceyplus = Math.abs(bexcey) + Math.abs(cexbey);
+    const cexdeyplus = Math.abs(cexdey) + Math.abs(dexcey);
+    const dexaeyplus = Math.abs(dexaey) + Math.abs(aexdey);
+    const aexceyplus = Math.abs(aexcey) + Math.abs(cexaey);
+    const bexdeyplus = Math.abs(bexdey) + Math.abs(dexbey);
     const permanent =
-        ((cexdeyplus + dexceyplus) * bezplus + (dexbeyplus + bexdeyplus) * cezplus + (bexceyplus + cexbeyplus) * dezplus) * alift +
-        ((dexaeyplus + aexdeyplus) * cezplus + (aexceyplus + cexaeyplus) * dezplus + (cexdeyplus + dexceyplus) * aezplus) * blift +
-        ((aexbeyplus + bexaeyplus) * dezplus + (bexdeyplus + dexbeyplus) * aezplus + (dexaeyplus + aexdeyplus) * bezplus) * clift +
-        ((bexceyplus + cexbeyplus) * aezplus + (cexaeyplus + aexceyplus) * bezplus + (aexbeyplus + bexaeyplus) * cezplus) * dlift;
+        (cexdeyplus * bezplus + bexdeyplus * cezplus + bexceyplus * dezplus) * alift +
+        (dexaeyplus * cezplus + aexceyplus * dezplus + cexdeyplus * aezplus) * blift +
+        (aexbeyplus * dezplus + bexdeyplus * aezplus + dexaeyplus * bezplus) * clift +
+        (bexceyplus * aezplus + aexceyplus * bezplus + aexbeyplus * cezplus) * dlift;
 
     const errbound = isperrboundA * permanent;
     if (det > errbound || -det > errbound) {
@@ -26544,7 +26533,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.8.2-nightly-20230524004710";
+Plugin.version = "3.8.2-nightly-20230531004713";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**
