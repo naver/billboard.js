@@ -38,10 +38,8 @@ $axis-color: #8c8c8c;
 .bb-legend-item-title,
 .bb-xgrid-focus,
 .bb-ygrid-focus,
-.bb-ygrid,
-.bb-event-rect,
-.bb-bars path {
-    shape-rendering: crispEdges;
+.bb-ygrid {
+	shape-rendering: crispEdges;
 }
 
 .bb-chart-arcs {
