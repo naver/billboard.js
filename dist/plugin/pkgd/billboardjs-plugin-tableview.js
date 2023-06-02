@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.8.2-nightly-20230531004713
+ * @version 3.8.2-nightly-20230602004733
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -18442,7 +18442,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.8.2-nightly-20230531004713";
+Plugin.version = "3.8.2-nightly-20230602004733";
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
 /**
@@ -22985,7 +22985,7 @@ var TableView = /*#__PURE__*/function (_Plugin) {
       className = _this$config.class,
       selector = _this$config.selector,
       style = _this$config.style,
-      element = document.querySelector(selector || "." + (className || defaultStyle["class"]));
+      element = document.querySelector(selector || "." + (className || defaultStyle.class));
     if (!element) {
       var chart = this.$$.$el.chart.node();
       element = document.createElement("table");
@@ -23004,7 +23004,7 @@ var TableView = /*#__PURE__*/function (_Plugin) {
       s.innerHTML = defaultStyle.rule;
       (document.head || document.getElementsByTagName("head")[0]).appendChild(s);
     }
-    (_element$classList = element.classList).add.apply(_element$classList, [style && defaultStyle["class"], className].filter(Boolean));
+    (_element$classList = element.classList).add.apply(_element$classList, [style && defaultStyle.class, className].filter(Boolean));
     this.element = element;
   }
 
