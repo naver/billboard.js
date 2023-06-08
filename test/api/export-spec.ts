@@ -190,10 +190,18 @@ describe("API export", () => {
 		const expected = [
 			// pattern for local
 			[
-				"7IGcA2HBgMua0IUAC2VboZ",
-				"3amcNi7UuVTxRPSwvAfFB62tT3oGPq19",
-				"txj4AmOudAzWBRz9SPQ4x9bahVff"
+				"C4chWSMAlAu00wVlR2E7+uDROYmcLJ7zYhZwOr4MA7",
+				"uVxYOhqMiQRIoMkEKACbDLjW5ttSANpvP4",
+				"xX4lffYd6UXitkmIX8Q5U4XMz+YN69v91Z"
 			],
+
+			// pattern for local: preserveFontStyle=true
+			[
+				"bfCqV+haAfVT1S93d3ffkA02lUl9X1fP5JpDIpp6BkcA",
+				"CDa8p8AsA/UvgTAruS1ItHO9uWPO4PVwK+VUV4KMAVgKULt",
+				"Qnb7TAAxLMEdeC8tu4K/NMDE0VshaG1lzk/jI"
+			],
+
 			// pattern for CI
 			[
 				"LK8KS5EACZAACZAACfiBAAWgB71YLAC11tnTH8uqY2dn5PWVkaY3jBC8wrz",
