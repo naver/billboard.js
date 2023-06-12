@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import type {ChartTypes} from "../../../../types/types";
+import type {ChartTypes, d3Selection} from "../../../../types/types";
 
 /**
  * data config options
@@ -321,7 +321,7 @@ export default {
 	 * @property {boolean} [data.labels=false] Show or hide labels on each data points
 	 * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
 	 * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
-	 * The formatter function receives 4 arguments such as v, id, i, j and it **must return a string**(`\n` character will be used as line break) that will be shown as the label.<br><br>
+	 * The formatter function receives 4 arguments such as `v, id, i, texts` and it **must return a string** (`\n` character will be used as line break) that will be shown as the label.<br><br>
 	 * The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
 	 *  - `id` is the id of the data where the label is shown.
@@ -330,7 +330,14 @@ export default {
 	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
 	 * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
 	 * @property {string|object|Function} [data.labels.colors] Set label text colors.
-	 * @property {object} [data.labels.position] Set each dataset position, relative the original.
+	 * @property {object|Function} [data.labels.position] Set each dataset position, relative the original.<br><br>
+	 * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
+	 * The arguments are:<br>
+	 *  - `type` coordinate type string, which will be 'x' or 'y'.
+	 *  - `v` is the value of the data point where the label is shown.
+	 *  - `id` is the id of the data where the label is shown.
+	 *  - `i` is the index of the data series point where the label is shown.
+	 *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
 	 * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
 	 * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
 	 * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
@@ -351,7 +358,7 @@ export default {
 	 *
 	 *   // or set specific options
 	 *   labels: {
-	 *     format: function(v, id, i, j) {
+	 *     format: function(v, id, i, texts) {
 	 *         ...
 	 *         // to multiline, return with '\n' character
 	 *         return "Line1\nLine2";
@@ -393,6 +400,13 @@ export default {
 	 *         return d.value > 200 ? "cyan" : color;
 	 *     },
 	 *
+	 *     // return x, y coordinate position
+	 *     // apt to handle each text position manually
+	 *     position: function(type, v, id, i, texts) {
+	 *         ...
+	 *         return type == "x" ? 10 : 20;
+	 *     },
+	 *
 	 *     // set x, y coordinate position
 	 *     position: {
 	 *        x: -10,
@@ -413,9 +427,11 @@ export default {
 	data_labels:
 		<boolean | {
 			centered?: boolean;
-			format?: Function;
+			format?: (v: number, id: string, i: number, texts: d3Selection) => number;
 			colors?: string|{[key: string]: string};
-			position?: {[key: string]: number}|{[key: string]: {x?: number; y?: number;}};
+			position?: (type: "x" | "y", v: number, id: string, i: number, texts: d3Selection) => number |
+				{[key: string]: number} |
+				{[key: string]: {x?: number; y?: number;}};
 			rotate?: number;
 		}> {},
 	data_labels_backgroundColors: <string|{[key: string]: string}|undefined> undefined,
