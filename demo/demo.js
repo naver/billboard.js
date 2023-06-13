@@ -2703,6 +2703,30 @@ var demos = {
 					}
 				}
 			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 150, 240, 400, 350, 300],
+							["data2", 80, 10, 200, 240, 100]
+						],
+						type: "step",
+						labels: {
+							show: true,
+							position: function(type, v, id, i, texts) {
+						let pos = 0;
+						const len = texts.size() / 2 - 1;
+			
+						if (type === "x" && (i === 0 || i === len)) {
+							pos = i === 0 ? 20 : -20;
+						}
+			
+						return pos;
+							}
+						}
+					}
+				}
+			}
 		],
 		DataLabelRotate: {
 			options: {
