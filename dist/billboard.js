@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.8.2-nightly-20230609004733
+ * @version 3.8.2-nightly-20230613004705
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2472,7 +2472,7 @@ var data_this = undefined;
    * @property {boolean} [data.labels=false] Show or hide labels on each data points
    * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
    * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
-   * The formatter function receives 4 arguments such as v, id, i, j and it **must return a string**(`\n` character will be used as line break) that will be shown as the label.<br><br>
+   * The formatter function receives 4 arguments such as `v, id, i, texts` and it **must return a string** (`\n` character will be used as line break) that will be shown as the label.<br><br>
    * The arguments are:<br>
    *  - `v` is the value of the data point where the label is shown.
    *  - `id` is the id of the data where the label is shown.
@@ -2481,7 +2481,14 @@ var data_this = undefined;
    * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
    * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
    * @property {string|object|Function} [data.labels.colors] Set label text colors.
-   * @property {object} [data.labels.position] Set each dataset position, relative the original.
+   * @property {object|Function} [data.labels.position] Set each dataset position, relative the original.<br><br>
+   * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
+   * The arguments are:<br>
+   *  - `type` coordinate type string, which will be 'x' or 'y'.
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data series point where the label is shown.
+   *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
    * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
    * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
    * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
@@ -2502,7 +2509,7 @@ var data_this = undefined;
    *
    *   // or set specific options
    *   labels: {
-   *     format: function(v, id, i, j) {
+   *     format: function(v, id, i, texts) {
    *         ...
    *         // to multiline, return with '\n' character
    *         return "Line1\nLine2";
@@ -2542,6 +2549,13 @@ var data_this = undefined;
    *         // data: ex) {x: 0, value: 200, id: "data3", index: 0}
    *         ....
    *         return d.value > 200 ? "cyan" : color;
+   *     },
+   *
+   *     // return x, y coordinate position
+   *     // apt to handle each text position manually
+   *     position: function(type, v, id, i, texts) {
+   *         ...
+   *         return type == "x" ? 10 : 20;
    *     },
    *
    *     // set x, y coordinate position
@@ -8849,6 +8863,22 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     y: y
   };
 }
+
+/**
+ * Get data.labels.position value
+ * @param {object} d Data object
+ * @param {string} type x | y
+ * @returns {number} Position value
+ * @private
+ */
+function getTextPos(d, type) {
+  var _ref,
+    position = this.config.data_labels_position,
+    id = d.id,
+    index = d.index,
+    value = d.value;
+  return (_ref = isFunction(position) ? position.bind(this.api)(type, value, id, index, this.$el.text) : (id in position ? position[id] : position)[type]) != null ? _ref : 0;
+}
 /* harmony default export */ var internals_text = ({
   opacityForText: function opacityForText(d) {
     var $$ = this;
@@ -8936,8 +8966,8 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     if (isString(labelColors)) {
       color = labelColors;
     } else if (isObject(labelColors)) {
-      var _ref = d.data || d,
-        id = _ref.id;
+      var _ref2 = d.data || d,
+        id = _ref2.id;
       color = labelColors[id];
     } else if (isFunction(labelColors)) {
       color = labelColors.bind($$.api)(defaultColor, d);
@@ -9105,17 +9135,6 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     return 0;
   },
   /**
-   * Get data.labels.position value
-   * @param {string} id Data id value
-   * @param {string} type x | y
-   * @returns {number} Position value
-   * @private
-   */
-  getTextPos: function getTextPos(id, type) {
-    var pos = this.config.data_labels_position;
-    return (id in pos ? pos[id] : pos)[type] || 0;
-  },
-  /**
    * Gets the x coordinate of the text
    * @param {object} points Data points position
    * @param {object} d Data object
@@ -9168,7 +9187,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     if (isRotated || isTreemapType) {
       xPos += $$.getCenteredTextPos(d, points, textElement, "x");
     }
-    return xPos + $$.getTextPos(d.id, "x");
+    return xPos + getTextPos.call(this, d, "x");
   },
   /**
    * Gets the y coordinate of the text
@@ -9242,7 +9261,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     if (!isRotated || isTreemapType) {
       yPos += $$.getCenteredTextPos(d, points, textElement, "y");
     }
-    return yPos + $$.getTextPos(d.id, "y");
+    return yPos + getTextPos.call(this, d, "y");
   },
   /**
    * Calculate if two or more text nodes are overlapping
@@ -9323,7 +9342,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
  * @returns {string|number} text-anchor value or position in pixel
  * @private
  */
-function getTextPos(pos, width) {
+function title_getTextPos(pos, width) {
   if (pos === void 0) {
     pos = "left";
   }
@@ -9349,7 +9368,7 @@ function getTextPos(pos, width) {
       $el = $$.$el;
     if (config.title_text) {
       $el.title = $el.svg.append("g");
-      var text = $el.title.append("text").style("text-anchor", getTextPos(config.title_position)).attr("class", $TEXT.title);
+      var text = $el.title.append("text").style("text-anchor", title_getTextPos(config.title_position)).attr("class", $TEXT.title);
       setTextValue(text, config.title_text, [.3, 1.5]);
     }
   },
@@ -9365,7 +9384,7 @@ function getTextPos(pos, width) {
     if (title) {
       var y = $$.yForTitle.call($$);
       if (/g/i.test(title.node().tagName)) {
-        title.attr("transform", "translate(" + getTextPos(config.title_position, current.width) + ", " + y + ")");
+        title.attr("transform", "translate(" + title_getTextPos(config.title_position, current.width) + ", " + y + ")");
       } else {
         title.attr("x", $$.xForTitle.call($$)).attr("y", y);
       }
@@ -24973,7 +24992,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.8.2-nightly-20230609004733
+ * @version 3.8.2-nightly-20230613004705
  */
 var bb = {
   /**
@@ -24983,7 +25002,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.8.2-nightly-20230609004733",
+  version: "3.8.2-nightly-20230613004705",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

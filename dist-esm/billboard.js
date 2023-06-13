@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.8.2-nightly-20230609004733
+ * @version 3.8.2-nightly-20230613004705
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -2011,7 +2011,7 @@ var data$2 = {
      * @property {boolean} [data.labels=false] Show or hide labels on each data points
      * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
      * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
-     * The formatter function receives 4 arguments such as v, id, i, j and it **must return a string**(`\n` character will be used as line break) that will be shown as the label.<br><br>
+     * The formatter function receives 4 arguments such as `v, id, i, texts` and it **must return a string** (`\n` character will be used as line break) that will be shown as the label.<br><br>
      * The arguments are:<br>
      *  - `v` is the value of the data point where the label is shown.
      *  - `id` is the id of the data where the label is shown.
@@ -2020,7 +2020,14 @@ var data$2 = {
      * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
      * @property {string|object} [data.labels.backgroundColors] Set label text background colors.
      * @property {string|object|Function} [data.labels.colors] Set label text colors.
-     * @property {object} [data.labels.position] Set each dataset position, relative the original.
+     * @property {object|Function} [data.labels.position] Set each dataset position, relative the original.<br><br>
+     * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
+     * The arguments are:<br>
+     *  - `type` coordinate type string, which will be 'x' or 'y'.
+     *  - `v` is the value of the data point where the label is shown.
+     *  - `id` is the id of the data where the label is shown.
+     *  - `i` is the index of the data series point where the label is shown.
+     *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
      * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
      * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
      * @property {object} [data.labels.rotate] Rotate label text. Specify degree value in a range of `0 ~ 360`.
@@ -2041,7 +2048,7 @@ var data$2 = {
      *
      *   // or set specific options
      *   labels: {
-     *     format: function(v, id, i, j) {
+     *     format: function(v, id, i, texts) {
      *         ...
      *         // to multiline, return with '\n' character
      *         return "Line1\nLine2";
@@ -2081,6 +2088,13 @@ var data$2 = {
      *         // data: ex) {x: 0, value: 200, id: "data3", index: 0}
      *         ....
      *         return d.value > 200 ? "cyan" : color;
+     *     },
+     *
+     *     // return x, y coordinate position
+     *     // apt to handle each text position manually
+     *     position: function(type, v, id, i, texts) {
+     *         ...
+     *         return type == "x" ? 10 : 20;
      *     },
      *
      *     // set x, y coordinate position
@@ -7648,6 +7662,21 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
     }
     return { x: x, y: y };
 }
+/**
+ * Get data.labels.position value
+ * @param {object} d Data object
+ * @param {string} type x | y
+ * @returns {number} Position value
+ * @private
+ */
+function getTextPos$1(d, type) {
+    var _a;
+    var position = this.config.data_labels_position;
+    var id = d.id, index = d.index, value = d.value;
+    return (_a = (isFunction(position) ?
+        position.bind(this.api)(type, value, id, index, this.$el.text) :
+        (id in position ? position[id] : position)[type])) !== null && _a !== void 0 ? _a : 0;
+}
 var text = {
     opacityForText: function (d) {
         var $$ = this;
@@ -7930,17 +7959,6 @@ var text = {
         return 0;
     },
     /**
-     * Get data.labels.position value
-     * @param {string} id Data id value
-     * @param {string} type x | y
-     * @returns {number} Position value
-     * @private
-     */
-    getTextPos: function (id, type) {
-        var pos = this.config.data_labels_position;
-        return (id in pos ? pos[id] : pos)[type] || 0;
-    },
-    /**
      * Gets the x coordinate of the text
      * @param {object} points Data points position
      * @param {object} d Data object
@@ -7997,7 +8015,7 @@ var text = {
         if (isRotated || isTreemapType) {
             xPos += $$.getCenteredTextPos(d, points, textElement, "x");
         }
-        return xPos + $$.getTextPos(d.id, "x");
+        return xPos + getTextPos$1.call(this, d, "x");
     },
     /**
      * Gets the y coordinate of the text
@@ -8077,7 +8095,7 @@ var text = {
         if (!isRotated || isTreemapType) {
             yPos += $$.getCenteredTextPos(d, points, textElement, "y");
         }
-        return yPos + $$.getTextPos(d.id, "y");
+        return yPos + getTextPos$1.call(this, d, "y");
     },
     /**
      * Calculate if two or more text nodes are overlapping
@@ -22524,7 +22542,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.8.2-nightly-20230609004733
+ * @version 3.8.2-nightly-20230613004705
  */
 var bb = {
     /**
@@ -22534,7 +22552,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.8.2-nightly-20230609004733",
+    version: "3.8.2-nightly-20230613004705",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
