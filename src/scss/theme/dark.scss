@@ -1,52 +1,57 @@
-/*-- Datalab Theme --*/
+/*-- Dark Theme --*/
 @charset "UTF-8";
 
-$font-family: "Sans Pro",Arial,sans-serif, "nanumgothic", "Dotum";
-$line-stroke-widdth: 0.7px;
-$text-font-size: 11px;
+$font-family: Helvetica, Arial, sans-serif, "nanumgothic", "Dotum";
 
 /*-- Default color pattern --*/
 .bb-color-pattern {
-    background-image: url("#2ac4b3;#feaf29;#ff617b;#73a2ef;#b180d0;#3064cf;#d0a45f;#8aaec7;#ef65a2;#8aaec7;");
+    background-image: url("#4a7fff;#b02c2c;#1ca46c;#b47300;#49baf3;#ed7e13;#cfaa00;#a6cd19;#dccb52;#f5d194;");
 }
 
 /*-- Chart --*/
 .bb {
     svg {
-        font-size: $text-font-size;
+        font-size: 12px;
         font-family: $font-family;
         line-height: 1;
     }
 
     path, line {
         fill: none;
-        stroke: #000;
+        stroke: #8d9cab;
     }
 
     text, .bb-button {
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
-        -webkit-font-smoothing: antialiased;
         user-select: none;
-        fill: #555;
-        font-size: $text-font-size;
+        fill: #8d9cab;
+        font-size: 11px;
     }
+}
+
+.bb-legend-item-title,
+.bb-xgrid-focus,
+.bb-ygrid-focus,
+.bb-ygrid,
+.bb-line {
+    shape-rendering: crispEdges;
 }
 
 .bb-chart-arcs {
 	.bb-needle {
-		fill: #000;
+		fill: #8d9cab;
 	}
 }
 
 /*-- Axis --*/
 .bb-axis {
-    stroke-width: $line-stroke-widdth;
+    shape-rendering: crispEdges;
 }
 
 .bb-axis-y text, .bb-axis-y2 text {
-    fill: #737373;
+    fill: #8d9cab;
 }
 
 .bb-event-rects {
@@ -70,45 +75,55 @@ $text-font-size: 11px;
     pointer-events: none;
 
     line {
-        stroke: #f1f1f1;
+        stroke: #5c666e;
     }
 }
 
 .bb-xgrid-focus line, .bb-ygrid-focus line {
-    stroke: #ddd;
+    stroke: #ccd9e6;
 }
 
 /*-- Text on Chart --*/
 .bb-text {
     &.bb-empty {
-        fill: #767676;
+        fill: #8d9cab;
     }
 }
 
 /*-- Line --*/
 .bb-line {
-    stroke-width: $line-stroke-widdth;
+    stroke-width: 1px;
 }
 
 /*-- Point --*/
 .bb-circle {
-    fill: #fff !important;
+    &._expanded_ {
+        stroke-width: 2px;
+        stroke: 8d9cab;
+    }
 }
 
-.bb-circle {
+rect.bb-circle, use.bb-circle {
   &._expanded_ {
-    stroke-width: 2px;
+    stroke-width: 1px;
   }
 }
 
+/*-- Subchart --*/
+.selection {
+    stroke: none;
+    fill: #ccd9e6;
+}
+
 .bb-selected-circle {
-    fill: white;
+    fill: #ccd9e6;
     stroke-width: 2px;
 }
 
 /*-- Bar --*/
+
 .bb-bar {
-	stroke-width: 1px;
+	stroke-width: 0.5px;
 
 	&._expanded_ {
 		fill-opacity: 0.75;
@@ -137,7 +152,7 @@ $text-font-size: 11px;
     }
 
     &.bb-defocused {
-        opacity: 0.3 !important;
+        opacity: 0.5 !important;
 
         .text-overlapping {
             opacity: .05 !important;
@@ -148,7 +163,7 @@ $text-font-size: 11px;
 /*-- Region --*/
 .bb-region {
     fill: steelblue;
-    fill-opacity: 0.1;
+    fill-opacity: 0.5;
 
     &.selected rect {
         fill: rgb(39, 201, 3);
@@ -157,35 +172,38 @@ $text-font-size: 11px;
 
 /*-- Zoom region --*/
 .bb-zoom-brush {
-    fill-opacity: .1;
+    fill-opacity: .25;
+    fill: #ccd9e6;
 }
 
 /*-- Brush --*/
 .bb-brush {
     .extent {
-        fill-opacity: 0.1;
+        fill-opacity: 0.5;
     }
 }
 
+/*-- Select - Drag --*/
 /*-- Legend --*/
 .bb-legend-item {
     user-select: none;
 
-    line.bb-legend-item-tile {
-        stroke-linecap: round;
-        stroke-width: 8px;
-        transform: translate(7px, 1px);
-        stroke-dasharray: 1 20;
+    line {
+        stroke-width: 10px;
+        stroke-dasharray: 3px;
+    }
+
+    text {
+        transform: translateY(-1px);
     }
 }
 
 .bb-legend-item-hidden {
-    opacity: 0.15;
+    opacity: 0.5;
 }
 
 .bb-legend-background {
     opacity: 0.75;
-    fill: white;
     stroke: lightgray;
     stroke-width: 1;
 }
@@ -197,7 +215,7 @@ $text-font-size: 11px;
 
 /*-- Treemap --*/
 .bb-chart-treemaps rect {
-    stroke: #000;
+    stroke: #8d9cab;
     stroke-width: 1px;
 }
 
@@ -211,21 +229,19 @@ $text-font-size: 11px;
 .bb-tooltip {
     border-collapse: separate;
     border-spacing:0;
-    border-radius: 2px;
     empty-cells:show;
-    border: 1px solid #999;
-    background-color: #fff;
+    border: 1px solid #828181;
+    border-radius: 5px;
+    background-color: #000;
     text-align: left;
     font-size: 11px;
-    -webkit-font-smoothing: antialiased;
+    color: #fff;
 
     th {
-        font-size: 13px;
-        padding: 2px 8px;
+        font-size:12px;
+        padding:4px 8px;
         text-align:left;
-        border-bottom: solid 2px #ff2d2d;
-        background-color: #0b00b1;
-        color: #fffdfd;
+        border-bottom: solid 1px #828181;
     }
 
     td {
@@ -241,11 +257,9 @@ $text-font-size: 11px;
 
         > span, > svg {
             display: inline-block;
-            width: 8px;
-            height: 8px;
-            margin-right: 6px;
-            border: solid 1px #000;
-            border-radius: 3px;
+            width: 7px;
+            height: 7px;
+            margin: -1px 6px 0 0;
             vertical-align: middle;
         }
 
@@ -279,7 +293,7 @@ $text-font-size: 11px;
         .bb-tooltip-value {
             padding-left: 5px;
             font-weight: 800;
-            font-size: $text-font-size;
+            font-size: 12px;
         }
     }
 }
@@ -287,7 +301,7 @@ $text-font-size: 11px;
 /*-- Area --*/
 .bb-area {
     stroke-width: 0;
-    opacity: 0.2;
+    opacity: 0.5;
 }
 
 /*-- Arc --*/
@@ -303,13 +317,13 @@ text.bb-chart-arcs-gauge-title {
 
 .bb-chart-arcs {
     .bb-chart-arcs-background {
-        fill: #e0e0e0;
+        fill: #3f3f3f;
         stroke: none;
     }
 
     .bb-chart-arcs-gauge-unit {
-        fill: #000;
-        font-size: 18px;
+        fill: #828181;
+        font-size: 16px;
     }
 
     .bb-chart-arcs-gauge-min, .bb-chart-arcs-gauge-max {
@@ -317,8 +331,8 @@ text.bb-chart-arcs-gauge-title {
     }
 
     .bb-chart-arcs-title {
-        font-size: 18px !important;
-        fill: #000;
+        font-size: 16px !important;
+        fill: #b6c2ce;
         font-weight: 600;
     }
 
@@ -341,28 +355,19 @@ text.bb-chart-arcs-gauge-title {
 	}
 }
 
-.bb-line {
-	shape-rendering: crispEdges;
-}
-
 .bb-chart-arc {
     .bb-gauge-value {
-        fill: #3b6969;        
-    }
-
-    path {
-        stroke: #000;
-        stroke-width: 0.5px;
+        fill: #b6c2ce;
     }
 
 	rect {
-		stroke: #fff;
+		stroke: #8d9cab;
 		stroke-width: 1;
 	}
 
     text {
         fill: #fff;
-        font-size: 14px;
+        font-size: 13px;
     }
 }
 
@@ -395,7 +400,7 @@ text.bb-chart-arcs-gauge-title {
     .bb-shapes {
         polygon {
             fill-opacity: .2;
-            stroke-width: $line-stroke-widdth;
+            stroke-width: 1px;
         }
     }
 }
@@ -408,7 +413,8 @@ text.bb-chart-arcs-gauge-title {
 
     .bb-zoom-reset {
         border: solid 1px #ccc;
-        background-color: #fff;
+        background-color: #000;
+        color: #fff;
         padding: 5px;
         border-radius: 5px;
         cursor: pointer;
