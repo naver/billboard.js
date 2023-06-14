@@ -67,6 +67,9 @@
 			        }
 		        });
 
+                // add 'dark' classname to body when dark theme is selected
+                document.body.classList[cssFileName.indexOf("dark") > -1 ? "add" : "remove"]("dark");
+
 		        $select.children().toArray()
 			        .forEach(function(v) {
 				        v.selected = cssFileName.indexOf(v.value) > -1;
