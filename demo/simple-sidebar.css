@@ -37,6 +37,11 @@ body {
     transition: all 0.5s ease;
 }
 
+.dark #sidebar-wrapper {
+    filter: invert(1);
+    background-color: #fb3b3b;
+}
+
 #sidebar-wrapper .link {
     font-family: Raleway;
     text-align: center;
@@ -379,5 +384,3 @@ div.row {
 /* Background */
 .myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }
 
-/* FocusedGridLines */
-#focusedGridLines_1 line.bb-xgrid-focus, #focusedGridLines_1 line.bb-ygrid-focus { stroke: blue; stroke-dasharray: 2 2; }

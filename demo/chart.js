@@ -20,6 +20,7 @@ var billboardDemo = {
 		this.$codeArea = document.querySelector(".code");
 		this.$gridArea = document.querySelector(".example-grid");
 		this.$launch = document.getElementById("launch");
+		this.$themeSelect = document.querySelector("#theme select");
 
 		this.$html = document.querySelector("code.html");
 		this.$code = document.querySelector("code.javascript");
@@ -509,10 +510,14 @@ var billboardDemo = {
 	editor: function(bodyCode, type, isOpen) {
 		var id = (bodyCode && bodyCode.match(/bindto: \"#(.*)\"/) || [,"chart"])[1];
 		var html = "<div id='"+ id +"'></div>";
+		var theme = this.$themeSelect.value;
+
+		theme = theme ? "theme/"+ theme :  "billboard"
+
 		var code = {
 			import: [
 				'// base css',
-				'import "billboard.js/dist/theme/insight.css";',
+				'import "billboard.js/dist/'+ theme +'.css";',
 				'import bb from "billboard.js";',
 			].join("\r\n"),
 			body: bodyCode || [

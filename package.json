@@ -18,7 +18,8 @@
 			"import": "./dist-esm/plugin/*.js",
 			"require": "./dist/plugin/pkgd/*.js"
 		},
-		"./dist/*": "./dist/*"
+		"./dist/*": "./dist/*",
+		"./src/Plugin/*": "./src/Plugin/*.js"
 	},
 	"scripts": {
 		"start": "webpack serve --open",
