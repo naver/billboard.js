@@ -273,6 +273,7 @@ export default {
 		const {width, height, current, isLegendRight, inputType, event} = state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const hasTreemap = state.hasTreemap;
+		const isRotated = config.axis_rotated;
 		const svgLeft = $$.getSvgLeft(true);
 		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
 		const chartLeft = $$.getCurrentPaddingLeft(true);
@@ -290,9 +291,9 @@ export default {
 		} else if (!hasTreemap) {
 			const dataScale = scale.x(dataToShow[0].x);
 
-			if (config.axis_rotated) {
+			if (isRotated) {
 				y = dataScale + size;
-				x += svgLeft + 100;
+				x += svgLeft;
 				chartRight -= svgLeft;
 			} else {
 				y -= 5;
@@ -302,7 +303,7 @@ export default {
 
 		// when tooltip left + tWidth > chart's width
 		if ((x + tWidth + 15) > chartRight) {
-			x -= tWidth + (hasTreemap ? 0 : chartLeft);
+			x -= isRotated ? tWidth - chartLeft : tWidth + (hasTreemap ? 0 : chartLeft);
 		}
 
 		if (y + tHeight > current.height) {

@@ -23,6 +23,23 @@ import {
 	TreemapOptions
 } from "./options.shape";
 
+export type FormatFunction = (
+	this: Chart,
+	v: any,
+	id: string,
+	i: number,
+	texts: d3Selection
+) => string;
+
+export type PositionFunction = (
+	this: Chart,
+	type: "x" | "y",
+	v: number,
+	id: string,
+	i: number,
+	texts: d3Selection
+) => number;
+
 export interface ChartOptions {
 	/**
 	 * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.
@@ -1081,10 +1098,18 @@ export interface Data {
 		 */
 		format?: FormatFunction | { [key: string]: FormatFunction };
 
-		position?: {
-			/**
-			 * Set each dataset position, relative the original.
-			 */
+		/**
+		 * Set each dataset position, relative the original.
+		 *
+		 * When function is specified, will receives 5 arguments such as `type, v, id, i, texts` and it must return a position number.<br><br>
+		 * The arguments are:<br>
+		 *  - `type` coordinate type string, which will be 'x' or 'y'.
+		 *  - `v` is the value of the data point where the label is shown.
+		 *  - `id` is the id of the data where the label is shown.
+		 *  - `i` is the index of the data series point where the label is shown.
+		 *  - `texts` is the array of whole corresponding data series' text labels.<br><br>
+		 */
+		position?: PositionFunction | {
 			[key: string]: {
 				/**
 				 * x coordinate position, relative the original.
@@ -1271,11 +1296,3 @@ export interface Data {
 	 */
 	onhidden?(this: Chart, ids: string[]): void;
 }
-
-export type FormatFunction = (
-	this: Chart,
-	v: any,
-	id: string,
-	i: number,
-	texts: SVGTextElement[]
-) => void;

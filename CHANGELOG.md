@@ -1,32 +1,35 @@
-# [3.8.0-next.2](https://github.com/naver/billboard.js/compare/3.8.0-next.1...3.8.0-next.2) (2023-04-10)
+## [3.8.2](https://github.com/naver/billboard.js/compare/3.8.1...3.8.2) (2023-05-18)
 
 
 ### Bug Fixes
 
-* **grid:** fix redundant <rect> appends ([1039363](https://github.com/naver/billboard.js/commit/1039363a33989665392a249768ee6bc222c3b392)), closes [#3147](https://github.com/naver/billboard.js/issues/3147)
-* **sparkline:** Fix to work point.focus.only option ([65b3c1c](https://github.com/naver/billboard.js/commit/65b3c1c3b8ac707fef4e3391b90dff6d0f7c0ba5)), closes [#3171](https://github.com/naver/billboard.js/issues/3171)
+* **api:** fix classname setting for  eventRect element ([0a2fbde](https://github.com/naver/billboard.js/commit/0a2fbde0ac6bb5f207466c13e7ce578f176ff235)), closes [#3203](https://github.com/naver/billboard.js/issues/3203) [#3218](https://github.com/naver/billboard.js/issues/3218)
+
+## [3.8.1](https://github.com/naver/billboard.js/compare/3.8.0...3.8.1) (2023-05-04)
 
 
-### Features
+### Bug Fixes
 
-* **package:** extends root div interface for styling ([0a1fe08](https://github.com/naver/billboard.js/commit/0a1fe084c9a6264aba680c8b73da589e457e8baf)), closes [#3162](https://github.com/naver/billboard.js/issues/3162) [#3163](https://github.com/naver/billboard.js/issues/3163)
+* **api:** fix tooltip work for .load() with xs key ([13b9da7](https://github.com/naver/billboard.js/commit/13b9da7b9e2ad4ef0f2b4d8ad3d0f4770a1e79e4)), closes [#3194](https://github.com/naver/billboard.js/issues/3194)
+* **api:** Fix tooltip.show() to work zoomed with xs option ([cf82289](https://github.com/naver/billboard.js/commit/cf8228987b509b5d636b3c7c5eaa1ad2a5cb836a)), closes [#3187](https://github.com/naver/billboard.js/issues/3187)
 
-# [3.8.0-next.1](https://github.com/naver/billboard.js/compare/3.7.5...3.8.0-next.1) (2023-03-31)
+# [3.8.0](https://github.com/naver/billboard.js/compare/3.7.5...3.8.0) (2023-04-13)
 
 
 ### Bug Fixes
 
 * **data:** fix break when whole dataseries are null ([#3134](https://github.com/naver/billboard.js/issues/3134)) ([5d12c45](https://github.com/naver/billboard.js/commit/5d12c458d96e0346913cdae6e313a18996d92736)), closes [#3124](https://github.com/naver/billboard.js/issues/3124)
+* **grid:** fix redundant <rect> appends ([1039363](https://github.com/naver/billboard.js/commit/1039363a33989665392a249768ee6bc222c3b392)), closes [#3147](https://github.com/naver/billboard.js/issues/3147)
 * **options:** Fix handling for falsy data.types ([5eb731a](https://github.com/naver/billboard.js/commit/5eb731a2c7be81abae9109c1b485cdb6aa673477)), closes [#3125](https://github.com/naver/billboard.js/issues/3125)
+* **sparkline:** Fix to work point.focus.only option ([65b3c1c](https://github.com/naver/billboard.js/commit/65b3c1c3b8ac707fef4e3391b90dff6d0f7c0ba5)), closes [#3171](https://github.com/naver/billboard.js/issues/3171)
 
 
 ### Features
 
 * **api:** Enhance resizeAfter for .load/unload APIs ([33bbca4](https://github.com/naver/billboard.js/commit/33bbca4a82fe18e7824613ae6a2c3ab3b9ba55f9)), closes [#3157](https://github.com/naver/billboard.js/issues/3157)
 * **axis:** Intent to ship axis.x.inverted ([e193c0f](https://github.com/naver/billboard.js/commit/e193c0f712ecca1fa129beaf38b485bb1db1da8c)), closes [#3137](https://github.com/naver/billboard.js/issues/3137)
-* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
+* **package:** extends root div interface for styling ([0a1fe08](https://github.com/naver/billboard.js/commit/0a1fe084c9a6264aba680c8b73da589e457e8baf)), closes [#3162](https://github.com/naver/billboard.js/issues/3162) [#3163](https://github.com/naver/billboard.js/issues/3163)
 * **padding:** Intent to ship padding='fit' ([d760a63](https://github.com/naver/billboard.js/commit/d760a6355cd6c40e09f0833093293de7cdb8e95f)), closes [#3118](https://github.com/naver/billboard.js/issues/3118)
-* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
 
 ## [3.7.5](https://github.com/naver/billboard.js/compare/3.7.4...3.7.5) (2023-03-06)
 

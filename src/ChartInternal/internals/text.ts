@@ -89,6 +89,24 @@ function setRotatePos(
 	return {x, y};
 }
 
+/**
+ * Get data.labels.position value
+ * @param {object} d Data object
+ * @param {string} type x | y
+ * @returns {number} Position value
+ * @private
+ */
+function getTextPos(d, type): number {
+	const position = this.config.data_labels_position;
+	const {id, index, value} = d;
+
+	return (
+		isFunction(position) ?
+			position.bind(this.api)(type, value, id, index, this.$el.text) :
+			(id in position ? position[id] : position)[type]
+	) ?? 0;
+}
+
 export default {
 	opacityForText(d): null | "0" {
 		const $$ = this;
@@ -425,19 +443,6 @@ export default {
 	},
 
 	/**
-	 * Get data.labels.position value
-	 * @param {string} id Data id value
-	 * @param {string} type x | y
-	 * @returns {number} Position value
-	 * @private
-	 */
-	getTextPos(id, type): number {
-		const pos = this.config.data_labels_position;
-
-		return (id in pos ? pos[id] : pos)[type] || 0;
-	},
-
-	/**
 	 * Gets the x coordinate of the text
 	 * @param {object} points Data points position
 	 * @param {object} d Data object
@@ -494,7 +499,7 @@ export default {
 			xPos += $$.getCenteredTextPos(d, points, textElement, "x");
 		}
 
-		return xPos + $$.getTextPos(d.id, "x");
+		return xPos + getTextPos.call(this, d, "x");
 	},
 
 	/**
@@ -582,7 +587,7 @@ export default {
 			yPos += $$.getCenteredTextPos(d, points, textElement, "y");
 		}
 
-		return yPos + $$.getTextPos(d.id, "y");
+		return yPos + getTextPos.call(this, d, "y");
 	},
 
 	/**

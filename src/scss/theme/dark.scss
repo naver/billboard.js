@@ -1,11 +1,11 @@
-/*-- Insight Theme --*/
+/*-- Dark Theme --*/
 @charset "UTF-8";
 
-$font-family: sans-serif, Arial, "nanumgothic", "Dotum";
+$font-family: Helvetica, Arial, sans-serif, "nanumgothic", "Dotum";
 
 /*-- Default color pattern --*/
 .bb-color-pattern {
-    background-image: url("#00c73c;#fa7171;#2ad0ff;#7294ce;#e3e448;#cc7e6e;#fb6ccf;#c98dff;#4aea99;#bbbbbb;");
+    background-image: url("#4a7fff;#b02c2c;#1ca46c;#b47300;#49baf3;#ed7e13;#cfaa00;#a6cd19;#dccb52;#f5d194;");
 }
 
 /*-- Chart --*/
@@ -17,7 +17,8 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
     }
 
     path, line {
-        fill: none; stroke: #c4c4c4;
+        fill: none;
+        stroke: #8d9cab;
     }
 
     text, .bb-button {
@@ -25,7 +26,7 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
         -moz-user-select: none;
         -ms-user-select: none;
         user-select: none;
-        fill: #555;
+        fill: #8d9cab;
         font-size: 11px;
     }
 }
@@ -33,13 +34,14 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
 .bb-legend-item-title,
 .bb-xgrid-focus,
 .bb-ygrid-focus,
-.bb-ygrid {
-	shape-rendering: crispEdges;
+.bb-ygrid,
+.bb-line {
+    shape-rendering: crispEdges;
 }
 
 .bb-chart-arcs {
 	.bb-needle {
-		fill: #000;
+		fill: #8d9cab;
 	}
 }
 
@@ -49,7 +51,7 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
 }
 
 .bb-axis-y text, .bb-axis-y2 text {
-    fill: #737373;
+    fill: #8d9cab;
 }
 
 .bb-event-rects {
@@ -73,18 +75,18 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
     pointer-events: none;
 
     line {
-        stroke: #f1f1f1;
+        stroke: #5c666e;
     }
 }
 
 .bb-xgrid-focus line, .bb-ygrid-focus line {
-    stroke: #ddd;
+    stroke: #ccd9e6;
 }
 
 /*-- Text on Chart --*/
 .bb-text {
     &.bb-empty {
-        fill: #767676;
+        fill: #8d9cab;
     }
 }
 
@@ -96,9 +98,8 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
 /*-- Point --*/
 .bb-circle {
     &._expanded_ {
-        fill: #fff !important;
         stroke-width: 2px;
-        stroke: red;
+        stroke: 8d9cab;
     }
 }
 
@@ -108,14 +109,21 @@ rect.bb-circle, use.bb-circle {
   }
 }
 
+/*-- Subchart --*/
+.selection {
+    stroke: none;
+    fill: #ccd9e6;
+}
+
 .bb-selected-circle {
-    fill: white;
+    fill: #ccd9e6;
     stroke-width: 2px;
 }
 
 /*-- Bar --*/
+
 .bb-bar {
-	stroke-width: 0;
+	stroke-width: 0.5px;
 
 	&._expanded_ {
 		fill-opacity: 0.75;
@@ -144,7 +152,7 @@ rect.bb-circle, use.bb-circle {
     }
 
     &.bb-defocused {
-        opacity: 0.3 !important;
+        opacity: 0.5 !important;
 
         .text-overlapping {
             opacity: .05 !important;
@@ -155,7 +163,7 @@ rect.bb-circle, use.bb-circle {
 /*-- Region --*/
 .bb-region {
     fill: steelblue;
-    fill-opacity: 0.1;
+    fill-opacity: 0.5;
 
     &.selected rect {
         fill: rgb(39, 201, 3);
@@ -164,13 +172,14 @@ rect.bb-circle, use.bb-circle {
 
 /*-- Zoom region --*/
 .bb-zoom-brush {
-    fill-opacity: .1;
+    fill-opacity: .25;
+    fill: #ccd9e6;
 }
 
 /*-- Brush --*/
 .bb-brush {
     .extent {
-        fill-opacity: 0.1;
+        fill-opacity: 0.5;
     }
 }
 
@@ -178,15 +187,23 @@ rect.bb-circle, use.bb-circle {
 /*-- Legend --*/
 .bb-legend-item {
     user-select: none;
+
+    line {
+        stroke-width: 10px;
+        stroke-dasharray: 3px;
+    }
+
+    text {
+        transform: translateY(-1px);
+    }
 }
 
 .bb-legend-item-hidden {
-    opacity: 0.15;
+    opacity: 0.5;
 }
 
 .bb-legend-background {
     opacity: 0.75;
-    fill: white;
     stroke: lightgray;
     stroke-width: 1;
 }
@@ -198,7 +215,7 @@ rect.bb-circle, use.bb-circle {
 
 /*-- Treemap --*/
 .bb-chart-treemaps rect {
-    stroke: #fff;
+    stroke: #8d9cab;
     stroke-width: 1px;
 }
 
@@ -213,22 +230,23 @@ rect.bb-circle, use.bb-circle {
     border-collapse: separate;
     border-spacing:0;
     empty-cells:show;
-    border: 1px solid #999;
-    background-color: #fff;
+    border: 1px solid #828181;
+    border-radius: 5px;
+    background-color: #000;
     text-align: left;
     font-size: 11px;
+    color: #fff;
     white-space: nowrap;
 
     th {
         font-size:12px;
         padding:4px 8px;
         text-align:left;
-        border-bottom: solid 1px #eee;
+        border-bottom: solid 1px #828181;
     }
 
     td {
         padding: 4px 6px;
-        background-color:#fff;
 
         &:first-child {
             padding-left: 8px;
@@ -240,15 +258,15 @@ rect.bb-circle, use.bb-circle {
 
         > span, > svg {
             display: inline-block;
-            width: 10px;
-            height: 10px;
-            margin-right: 6px;
-            border-radius: 5px;
+            width: 7px;
+            height: 7px;
+            margin: -1px 6px 0 0;
             vertical-align: middle;
         }
 
         &.value {
             border-left: 1px solid transparent;
+            text-align: right;
         }
     }
 
@@ -284,7 +302,7 @@ rect.bb-circle, use.bb-circle {
 /*-- Area --*/
 .bb-area {
     stroke-width: 0;
-    opacity: 0.2;
+    opacity: 0.5;
 }
 
 /*-- Arc --*/
@@ -300,12 +318,12 @@ text.bb-chart-arcs-gauge-title {
 
 .bb-chart-arcs {
     .bb-chart-arcs-background {
-        fill: #e0e0e0;
+        fill: #3f3f3f;
         stroke: none;
     }
 
     .bb-chart-arcs-gauge-unit {
-        fill: #000;
+        fill: #828181;
         font-size: 16px;
     }
 
@@ -315,7 +333,7 @@ text.bb-chart-arcs-gauge-title {
 
     .bb-chart-arcs-title {
         font-size: 16px !important;
-        fill: #000;
+        fill: #b6c2ce;
         font-weight: 600;
     }
 
@@ -340,15 +358,11 @@ text.bb-chart-arcs-gauge-title {
 
 .bb-chart-arc {
     .bb-gauge-value {
-        fill: #000;
-    }
-
-    path {
-        stroke: #fff;
+        fill: #b6c2ce;
     }
 
 	rect {
-		stroke: #fff;
+		stroke: #8d9cab;
 		stroke-width: 1;
 	}
 
@@ -400,7 +414,8 @@ text.bb-chart-arcs-gauge-title {
 
     .bb-zoom-reset {
         border: solid 1px #ccc;
-        background-color: #fff;
+        background-color: #000;
+        color: #fff;
         padding: 5px;
         border-radius: 5px;
         cursor: pointer;

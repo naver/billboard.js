@@ -1189,7 +1189,7 @@ describe("TEXT", () => {
 
 			it("newly added text shouldn't be transitioning from the top/left", done => {
 				const main = chart.$.main;
-				const pos = [];
+				const pos: number[] = [];
 				let text;
 				let interval;
 
@@ -1397,6 +1397,56 @@ describe("TEXT", () => {
 					const y = +this.getAttribute("transform").match(/\s(\d+\.\d+)/)[1];
 
 					expect(y).to.be.closeTo(expectedY[i], 2);
+				});
+			});
+		});
+
+		describe("Labels' postion callback", () => {
+			let pos: number[] = [];
+
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 200],
+							["data2", 130, 100, 140]
+						],
+						type: "line",
+						labels: {
+							show: true							
+						}
+					}
+				};
+			});
+
+			it("get normal position", () => {
+				chart.$.text.texts.each(function(d, i) {
+					if (i === 0 || i === 2) {
+						pos.push(+this.getAttribute("x"));
+					}
+				});
+			});
+
+			it("set options data.labels.position", () => {
+				args.data.labels.position = function(type, v, id, i, texts) {
+					let pos = 0;
+					const len = texts.size() / 2 - 1;
+		
+					if (type === "x" && (i === 0 || i === len)) {
+						pos = i === 0 ? 20 : -20;
+					}
+		
+					return pos;
+				}
+			});
+
+			it("position coordinate should specified as callback returns.", () => {
+				chart.$.text.texts.each(function(d, i) {
+					if (i === 0 || i === 2) {
+						expect(+this.getAttribute("x")).to.be.equal(
+							(pos.shift() ?? 0) + (i === 0 ? 20 : -20)
+						);
+					}
 				});
 			});
 		});

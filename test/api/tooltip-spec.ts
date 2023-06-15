@@ -144,6 +144,88 @@ describe("API tooltip", () => {
 			expect(spy2.called).to.be.true;
 			expect(+chart.$.tooltip.select(".value").text()).to.be.equal(value);
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					type: "line",
+					xs: {
+					  "data0": "data0X",
+					  "data1": "data1X",
+					  "data2": "data2X"
+					},
+					columns: [
+						  ["data0X", 1641362431000, 1641362451000],
+						  ["data1X", 1641362431000, 1641362432000],
+						  ["data2X", 1641362432000, 1641362538000],
+						  ["data0", 2, 2],
+						  ["data1", 0, 0],
+						  ["data2", 1, 1]
+					  ]
+				},
+				zoom: {
+					enabled: true,
+					type: "drag"
+				},
+				grid: {
+					x: {
+						show: false
+					},
+					y: {
+						show: true,
+						ticks: 6
+					}
+				},
+				legend: {
+					show: false
+				},
+				axis: {
+				x: {
+					type: "timeseries",
+					tick: {
+						fit: false,
+						format: "%Y-%m-%d %H:%M:%S"
+					}
+				},
+				y: {
+					min: 0,
+					padding: 10
+				}
+				},
+				tooltip: {
+					grouped: false
+				},
+				line: {
+					point: false
+				},
+				point: {
+					show: false,
+					sensitivity: 2
+				},
+				transition: {
+					duration: 0
+				}
+			};
+		});
+
+		it("tooltip.show() should work when zoom in", () => {
+			const {tooltip} = chart.$;
+
+			// when
+			chart.zoom([1641362431000, 1641362451000]);
+
+			chart.tooltip.show({
+				data: {
+					x: 1641362432000,
+					id: "data2",
+					value: 1
+				}
+			});
+
+			expect(tooltip.style("display")).to.be.equal("block");
+			expect(tooltip.select(".name").text()).to.be.equal("data2");
+			expect(+tooltip.select(".value").text()).to.be.equal(1);
+		});
 	});
 
 	describe("for tooltip.grouped=false", () => {

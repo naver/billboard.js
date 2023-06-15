@@ -325,6 +325,10 @@ export default {
 		const subchartHeight = config.subchart_show && !isNonAxis ?
 			(config.subchart_size_height + subchartXAxisHeight) : 0;
 
+		// when needle is shown with legend, it need some bottom space to not overlap with legend text
+		const gaugeHeight = $$.hasType("gauge") && config.arc_needle_show &&
+			!config.gauge_fullCircle && !config.gauge_label_show ? 10 : 0;
+
 		const padding = $$.getCurrentPadding();
 
 		// for main
@@ -336,7 +340,7 @@ export default {
 		} : {
 			top: (isFitPadding ? 0 : 4) + padding.top, // for top tick text
 			right: isNonAxis ? 0 : $$.getCurrentPaddingRight(true),
-			bottom: xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
+			bottom: gaugeHeight + xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
 			left: isNonAxis ? 0 : padding.left
 		};
 
