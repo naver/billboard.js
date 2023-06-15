@@ -310,7 +310,7 @@ describe("TOOLTIP", function() {
 		});
 
 		describe("do not overlap data point", () => {
-			it("should show tooltip on proper position", done => {
+			it("should show tooltip on proper position", () => {
 				const tooltip = chart.$.tooltip;
 				const circles = chart.$.circles;
 				const getCircleRectX = x => circles.filter(`.${$SHAPE.shape}-${x}`)
@@ -610,6 +610,59 @@ describe("TOOLTIP", function() {
 				expect(eventReceiver.currentIdx).to.be.equal(0);
 			});
 
+		});
+
+		describe("on rotated axis", () => {
+			before(() => {
+				args = {
+					data: {
+					  columns: [
+						["Male", -83, -143, -100, -120, -150, -85],
+						["Female", 130, 100, 140, 175, 150, 50]
+					  ],
+					  type: "bar",
+					  groups: [
+						["Male", "Female"]
+					  ],
+					},
+					axis: {
+						rotated: true,
+						x: {
+							show: false
+						}
+					},
+					grid: {
+						y: {
+							show: true,
+							lines: [
+							{
+								value: 0,
+								class: "base-line"
+							}
+							]
+						}
+					}
+				};
+			});
+
+			it("tooltip shoudn't overflow the chart", () => {
+				const {state} = chart.internal;
+				
+				util.hoverChart(chart, "mousemove", {
+					clientX: 628,
+					clientY: 317
+				});
+
+				const tooltip = chart.$.tooltip;
+				const {offsetWidth, offsetHeight} = tooltip.node();
+				const tooltipLeft = util.parseNum(tooltip.style("left")) + offsetWidth;
+
+				// check for tooltip text line break
+				expect(offsetHeight).to.be.lessThan(70);
+
+				// check for tooltip position to not overflow the chart
+				expect(tooltipLeft).to.be.lessThanOrEqual(state.width);				
+			});
 		});
 
 		describe("Narrow width container's tooltip position", () => {
