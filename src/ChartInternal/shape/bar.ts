@@ -14,9 +14,13 @@ export default {
 	initBar(): void {
 		const {$el, config, state: {clip}} = this;
 
-		$el.bar = $el.main.select(`.${$COMMON.chart}`)
-			// should positioned at the beginning of the shape node to not overlap others
-			.insert("g", ":first-child")
+		$el.bar = $el.main.select(`.${$COMMON.chart}`);
+
+		$el.bar = config.bar_front ?
+			$el.bar.append("g") :
+			$el.bar.insert("g", ":first-child");
+
+		$el.bar
 			.attr("class", $BAR.chartBars)
 			.call(this.setCssRule(false, `.${$BAR.chartBars}`, ["pointer-events:none"]));
 
