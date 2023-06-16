@@ -7,7 +7,7 @@
 import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import {$AXIS, $BAR, $COMMON, $EVENT, $SHAPE} from "../../src/config/classes";
+import {$AXIS, $BAR, $COMMON, $EVENT, $LINE, $SHAPE} from "../../src/config/classes";
 
 describe("SHAPE BAR", () => {
 	let chart;
@@ -719,6 +719,32 @@ describe("SHAPE BAR", () => {
 				expect(this.textContent).to.be.equal("0");
 				expect(this.style.opacity).to.be.equal("");
 			});
+		});
+
+		it("set options: bar.front=true", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 230, 180, 250, 270, 220],
+						["data2", 200, 190, 290, 140, 130]
+					],
+					types: {
+						data1: "bar",
+						data2: "area"
+					}
+				},
+				bar: {
+					front: true
+				}
+			};
+		});
+
+		it("check bar element position on DOM hierarchy.", () => {
+			const bars = chart.$.main.select(`.${$COMMON.chart} .${$BAR.chartBars}`).node();
+			
+			// check the bar element position
+			expect(bars.previousSibling.classList.contains($LINE.chartLines)).to.be.true;
+			expect(bars.nextSibling.classList.contains($EVENT.eventRects)).to.be.true;
 		});
 	});
 

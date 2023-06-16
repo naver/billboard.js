@@ -4191,6 +4191,42 @@ d3.select(".chart_area")
 		]
 	},
 	BarChartOptions: {
+		BarFront: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, 180, 250, 270, 220],
+							["data2", 200, 190, 290, 140, 130]
+						],
+						types: {
+							data1: "bar",
+							data2: "area"
+						}
+					},
+					bar: {
+						front: true
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, 180, 250, 270, 220],
+							["data2", 200, 190, 290, 140, 130]
+						],
+						types: {
+							data1: "bar",
+							data2: "area"
+						}
+					},
+					bar: {
+						front: false
+					}
+				}
+			}
+		],
 		BarIndices: [
 			{
 				options: {
