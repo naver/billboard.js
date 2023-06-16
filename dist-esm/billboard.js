@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.8.2-nightly-20230615004730
+ * @version 3.8.2-nightly-20230616004709
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -8470,6 +8470,7 @@ var tooltip$1 = {
         var width = state.width, height = state.height, current = state.current, isLegendRight = state.isLegendRight, inputType = state.inputType, event = state.event;
         var hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
         var hasTreemap = state.hasTreemap;
+        var isRotated = config.axis_rotated;
         var svgLeft = $$.getSvgLeft(true);
         var chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
         var chartLeft = $$.getCurrentPaddingLeft(true);
@@ -8485,9 +8486,9 @@ var tooltip$1 = {
         }
         else if (!hasTreemap) {
             var dataScale = scale.x(dataToShow[0].x);
-            if (config.axis_rotated) {
+            if (isRotated) {
                 y = dataScale + size;
-                x += svgLeft + 100;
+                x += svgLeft;
                 chartRight -= svgLeft;
             }
             else {
@@ -8497,7 +8498,7 @@ var tooltip$1 = {
         }
         // when tooltip left + tWidth > chart's width
         if ((x + tWidth + 15) > chartRight) {
-            x -= tWidth + (hasTreemap ? 0 : chartLeft);
+            x -= isRotated ? tWidth - chartLeft : tWidth + (hasTreemap ? 0 : chartLeft);
         }
         if (y + tHeight > current.height) {
             var gap = hasTreemap ? 0 : 30;
@@ -22542,7 +22543,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.8.2-nightly-20230615004730
+ * @version 3.8.2-nightly-20230616004709
  */
 var bb = {
     /**
@@ -22552,7 +22553,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.8.2-nightly-20230615004730",
+    version: "3.8.2-nightly-20230616004709",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

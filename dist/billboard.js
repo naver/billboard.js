@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.8.2-nightly-20230615004730
+ * @version 3.8.2-nightly-20230616004709
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -9692,6 +9692,7 @@ function title_getTextPos(pos, width) {
       event = _state.event,
       hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle,
       hasTreemap = state.hasTreemap,
+      isRotated = config.axis_rotated,
       svgLeft = $$.getSvgLeft(!0),
       chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(),
       chartLeft = $$.getCurrentPaddingLeft(!0),
@@ -9707,9 +9708,9 @@ function title_getTextPos(pos, width) {
       }
     } else if (!hasTreemap) {
       var dataScale = scale.x(dataToShow[0].x);
-      if (config.axis_rotated) {
+      if (isRotated) {
         y = dataScale + 20;
-        x += svgLeft + 100;
+        x += svgLeft;
         chartRight -= svgLeft;
       } else {
         y -= 5;
@@ -9719,7 +9720,7 @@ function title_getTextPos(pos, width) {
 
     // when tooltip left + tWidth > chart's width
     if (x + tWidth + 15 > chartRight) {
-      x -= tWidth + (hasTreemap ? 0 : chartLeft);
+      x -= isRotated ? tWidth - chartLeft : tWidth + (hasTreemap ? 0 : chartLeft);
     }
     if (y + tHeight > current.height) {
       var gap = hasTreemap ? 0 : 30;
@@ -24992,7 +24993,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.8.2-nightly-20230615004730
+ * @version 3.8.2-nightly-20230616004709
  */
 var bb = {
   /**
@@ -25002,7 +25003,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.8.2-nightly-20230615004730",
+  version: "3.8.2-nightly-20230616004709",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
