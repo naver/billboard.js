@@ -190,9 +190,8 @@
 	background-color:#fff;
 	empty-cells:show;
 	opacity: 0.9;
-	-webkit-box-shadow: 7px 7px 12px -9px rgb(119,119,119);
-	-moz-box-shadow: 7px 7px 12px -9px rgb(119,119,119);
 	box-shadow: 7px 7px 12px -9px rgb(119,119,119);
+	white-space: nowrap;
 
 	tr {
 		border:1px solid #CCC;
