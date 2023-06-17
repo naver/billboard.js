@@ -122,17 +122,22 @@ export interface AreaOptions {
 
 export interface BarOptions {
 	/**
-	 * Set threshold ratio to show/hide labels.
+	 * Set 'bar' to be positioned over(on the top) other shapes elements.
 	 */
-	label?: {
-		threshold?: number;
-	};
+	front?: boolean;
 
 	/**
 	 * Remove nullish data on bar indices positions.
 	 */
 	indices?: {
 		removeNull?: boolean;
+	};
+
+	/**
+	 * Set threshold ratio to show/hide labels.
+	 */
+	label?: {
+		threshold?: number;
 	};
 
 	/**
