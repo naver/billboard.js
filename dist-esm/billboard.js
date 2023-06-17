@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.8.2-nightly-20230616004709
+ * @version 3.8.2-nightly-20230617004655
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -9309,6 +9309,7 @@ var ChartInternal = /** @class */ (function () {
             .classed($COMMON.chart, true)
             .attr("clip-path", hasAxis ? state.clip.path : null);
         $$.callPluginHook("$init");
+        $$.initChartElements();
         if (hasAxis) {
             // Cover whole with rects for events
             hasInteraction && ((_a = $$.initEventRect) === null || _a === void 0 ? void 0 : _a.call($$));
@@ -9317,7 +9318,6 @@ var ChartInternal = /** @class */ (function () {
             // Add Axis here, when clipPath is 'true'
             config.clipPath && ((_b = $$.axis) === null || _b === void 0 ? void 0 : _b.init());
         }
-        $$.initChartElements();
         // Set targets
         $$.updateTargets($$.data.targets);
         // Draw with targets
@@ -9352,7 +9352,11 @@ var ChartInternal = /** @class */ (function () {
         var _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar, hasTreemap = _a.hasTreemap;
         var types = [];
         if (hasAxis) {
-            ["bar", "bubble", "candlestick", "line"].forEach(function (v) {
+            var shapes = ["bar", "bubble", "candlestick", "line"];
+            if ($$.config.bar_front) {
+                shapes.push(shapes.shift());
+            }
+            shapes.forEach(function (v) {
                 var name = capitalize(v);
                 if ((v === "line" && $$.hasTypeOf(name)) || $$.hasType(v)) {
                     types.push(name);
@@ -17676,9 +17680,11 @@ var shapeArea = {
 var shapeBar = {
     initBar: function () {
         var _a = this, $el = _a.$el, config = _a.config, clip = _a.state.clip;
-        $el.bar = $el.main.select(".".concat($COMMON.chart))
-            // should positioned at the beginning of the shape node to not overlap others
-            .insert("g", ":first-child")
+        $el.bar = $el.main.select(".".concat($COMMON.chart));
+        $el.bar = config.bar_front ?
+            $el.bar.append("g") :
+            $el.bar.insert("g", ":first-child");
+        $el.bar
             .attr("class", $BAR.chartBars)
             .call(this.setCssRule(false, ".".concat($BAR.chartBars), ["pointer-events:none"]));
         // set clip-path attribute when condition meet
@@ -19851,6 +19857,7 @@ var optBar = {
      * @memberof Options
      * @type {object}
      * @property {object} bar Bar object
+     * @property {boolean} [bar.front=false] Set 'bar' to be positioned over(on the top) other shapes elements.
      * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
      * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
      * @property {boolean|object} [bar.linearGradient=false] Set the linear gradient on bar.<br><br>
@@ -19873,6 +19880,7 @@ var optBar = {
      * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
      * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
      * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+     * @see [Demo: bar front](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarFront)
      * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
      * @see [Demo: bar overlap](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarOverlap)
      * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
@@ -19881,6 +19889,9 @@ var optBar = {
      * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
      * @example
      *  bar: {
+     *      // make bar shape to be positioned over the other shape elements
+     *      front: true,
+     *
      *      // remove nullish data on bar indices postions
      *      indices: {
      *          removeNull: true
@@ -19951,9 +19962,10 @@ var optBar = {
      *      zerobased: false
      *  }
      */
+    bar_front: false,
+    bar_indices_removeNull: false,
     bar_label_threshold: 0,
     bar_linearGradient: false,
-    bar_indices_removeNull: false,
     bar_overlap: false,
     bar_padding: 0,
     bar_radius: undefined,
@@ -22543,7 +22555,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.8.2-nightly-20230616004709
+ * @version 3.8.2-nightly-20230617004655
  */
 var bb = {
     /**
@@ -22553,7 +22565,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.8.2-nightly-20230616004709",
+    version: "3.8.2-nightly-20230617004655",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

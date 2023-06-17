@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.8.2-nightly-20230616004709
+ * @version 3.8.2-nightly-20230617004655
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -35763,6 +35763,7 @@ var ChartInternal = /*#__PURE__*/function () {
     // Define g for chart area
     main.append("g").classed($COMMON.chart, !0).attr("clip-path", hasAxis ? state.clip.path : null);
     $$.callPluginHook("$init");
+    $$.initChartElements();
     if (hasAxis) {
       var _$$$axis;
       // Cover whole with rects for events
@@ -35774,7 +35775,6 @@ var ChartInternal = /*#__PURE__*/function () {
       // Add Axis here, when clipPath is 'true'
       config.clipPath && ((_$$$axis = $$.axis) == null ? void 0 : _$$$axis.init());
     }
-    $$.initChartElements();
 
     // Set targets
     $$.updateTargets($$.data.targets);
@@ -35819,7 +35819,11 @@ var ChartInternal = /*#__PURE__*/function () {
       hasTreemap = _$$$state.hasTreemap,
       types = [];
     if (hasAxis) {
-      ["bar", "bubble", "candlestick", "line"].forEach(function (v) {
+      var shapes = ["bar", "bubble", "candlestick", "line"];
+      if ($$.config.bar_front) {
+        shapes.push(shapes.shift());
+      }
+      shapes.forEach(function (v) {
         _newArrowCheck(this, _this5);
         var name = capitalize(v);
         if (v === "line" && $$.hasTypeOf(name) || $$.hasType(v)) {
@@ -45478,9 +45482,9 @@ function point_y(p) {
     var $el = this.$el,
       config = this.config,
       clip = this.state.clip;
-    $el.bar = $el.main.select("." + $COMMON.chart)
-    // should positioned at the beginning of the shape node to not overlap others
-    .insert("g", ":first-child").attr("class", $BAR.chartBars).call(this.setCssRule(!1, "." + $BAR.chartBars, ["pointer-events:none"]));
+    $el.bar = $el.main.select("." + $COMMON.chart);
+    $el.bar = config.bar_front ? $el.bar.append("g") : $el.bar.insert("g", ":first-child");
+    $el.bar.attr("class", $BAR.chartBars).call(this.setCssRule(!1, "." + $BAR.chartBars, ["pointer-events:none"]));
 
     // set clip-path attribute when condition meet
     // https://github.com/naver/billboard.js/issues/2421
@@ -48420,6 +48424,7 @@ function convertDataToTreemapData(data) {
    * @memberof Options
    * @type {object}
    * @property {object} bar Bar object
+   * @property {boolean} [bar.front=false] Set 'bar' to be positioned over(on the top) other shapes elements.
    * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
    * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
    * @property {boolean|object} [bar.linearGradient=false] Set the linear gradient on bar.<br><br>
@@ -48442,6 +48447,7 @@ function convertDataToTreemapData(data) {
    * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
    * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
    * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+   * @see [Demo: bar front](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarFront)
    * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
    * @see [Demo: bar overlap](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarOverlap)
    * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
@@ -48450,6 +48456,9 @@ function convertDataToTreemapData(data) {
    * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
    * @example
    *  bar: {
+   *      // make bar shape to be positioned over the other shape elements
+   *      front: true,
+   *
    *      // remove nullish data on bar indices postions
    *      indices: {
    *          removeNull: true
@@ -48520,9 +48529,10 @@ function convertDataToTreemapData(data) {
    *      zerobased: false
    *  }
    */
+  bar_front: !1,
+  bar_indices_removeNull: !1,
   bar_label_threshold: 0,
   bar_linearGradient: !1,
-  bar_indices_removeNull: !1,
   bar_overlap: !1,
   bar_padding: 0,
   bar_radius: undefined,
@@ -52028,7 +52038,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.8.2-nightly-20230616004709
+ * @version 3.8.2-nightly-20230617004655
  */
 var bb = {
   /**
@@ -52038,7 +52048,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.8.2-nightly-20230616004709",
+  version: "3.8.2-nightly-20230617004655",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
