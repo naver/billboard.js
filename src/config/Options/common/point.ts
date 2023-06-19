@@ -2,6 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {IDataPoint} from "../../../ChartInternal/data/IData";
+
 /**
  * point config options
  */
@@ -23,7 +25,20 @@ export default {
 	 * - **NOTE:**
 	 *	- `null` will make to not set inline 'opacity' css prop.
 	 *	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
-	 * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
+	 * @property {number|string|Function} [point.sensitivity=10] The senstivity value for interaction boundary.
+	 * - **Available Values:**
+	 *   - {number}: Absolute sensitivity value which is the distance from the data point in pixel.
+	 *   - "radius": sensitivity based on point's radius
+	 *   - Function: callback for each point to determine the sensitivity<br>
+	 *    	```js
+	 *   	sensitivity: function(d) {
+	 * 	  // ex. of argument d:
+	 * 	  // ==> {x: 2, value: 55, id: 'data3', index: 2, r: 19.820624179302296}
+	 *
+	 * 	  // returning d.r, will make sensitivity same as point's radius value.
+	 *  	  return d.r;
+	 * 	}
+	 * 	```
 	 * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
 	 * @property {string} [point.type="circle"] The type of point to be drawn
 	 * - **NOTE:**
@@ -44,6 +59,7 @@ export default {
 	 *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
 	 * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
 	 * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
+	 * @see [Demo: point sensitivity](https://naver.github.io/billboard.js/demo/#Point.PointSensitivity)
 	 * @example
 	 *  point: {
 	 *      show: false,
@@ -76,6 +92,18 @@ export default {
 	 *      // having lower value, means how closer to be for interaction
 	 *      sensitivity: 3,
 	 *
+	 *      // sensitivity based on point's radius
+	 *      sensitivity: "radius",
+	 *
+	 *      // callback for each point to determine the sensitivity
+	 *      sensitivity: function(d) {
+	 *	// ex. of argument d:
+	 *	// ==> {x: 2, value: 55, id: 'data3', index: 2, r: 19.820624179302296}
+	 *
+	 *	// returning d.r, will make sensitivity same as point's radius value.
+	 *	return d.r;
+	 *      }
+	 *
 	 *      // valid values are "circle" or "rectangle"
 	 *      type: "rectangle",
 	 *
@@ -89,7 +117,7 @@ export default {
 	 */
 	point_show: true,
 	point_r: 2.5,
-	point_sensitivity: 10,
+	point_sensitivity: <number|"radius"|((d: IDataPoint) => number)> 10,
 	point_focus_expand_enabled: true,
 	point_focus_expand_r: <number|undefined> undefined,
 	point_focus_only: false,
