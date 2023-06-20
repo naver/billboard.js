@@ -5,7 +5,7 @@
 import {Axis} from "./axis";
 import {ChartTypes, d3Selection, DataItem, PrimitiveArray} from "./types";
 import {Chart} from "./chart";
-import {IArcData, IData, IDataRow} from "../src/ChartInternal/data/IData";
+import {IArcData, IData, IDataPoint, IDataRow} from "../src/ChartInternal/data/IData";
 import {
 	ArcOptions,
 	AreaOptions,
@@ -835,8 +835,13 @@ export interface PointOptions {
 
 	/**
 	 * The senstivity value for interaction boundary.
+	 *
+	 * - **Available Values:**
+	 *   - {number}: Absolute sensitivity value which is the distance from the data point in pixel.
+	 *   - "radius": sensitivity based on point's radius
+	 *   - Function: callback for each point to determine the sensitivity
 	 */
-	sensitivity?: number;
+	sensitivity?: number | "radius" | ((d: IDataPoint) => number);
 
 	/**
 	 * The type of point to be drawn

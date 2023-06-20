@@ -2747,6 +2747,7 @@ var demos = {
 			}
 		},
 		DataSelection: {
+			description: "For selection, click data point or drag over data points",
 			options: {
 				data: {
 					columns: [
@@ -2759,8 +2760,7 @@ var demos = {
 						draggable: true
 					}
 				}
-			},
-			description: "For selection, click data point or drag over data points"
+			}
 		},
 		DataStackNormalized: [
 			{
@@ -3091,6 +3091,7 @@ var demos = {
 			}
 		},
 		SubChart: {
+			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)",
 			options: {
 				data: {
 					columns: [
@@ -3102,10 +3103,10 @@ var demos = {
 					show: "subchart()",
 					showHandle: true
 				}
-			},
-			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)"
+			}
 		},
 		Zoom: {
+			description: "For zoom, move mouse wheel(desktop) or pinch(mobile) over chart area.<br>When is zoomed, navigate with dragging it.",
 			options: {
 				data: {
 					columns: [
@@ -3116,10 +3117,10 @@ var demos = {
 				zoom: {
 					enabled: "zoom()"
 				}
-			},
-			description: "For zoom, move mouse wheel(desktop) or pinch(mobile) over chart area.<br>When is zoomed, navigate with dragging it."
+			}
 		},
 		DragZoom: {
+			description: "Drag over chart area",
 			options: {
 				data: {
 					columns: [
@@ -3131,11 +3132,9 @@ var demos = {
 					enabled: "zoom()",
 					type: "drag"
 				}
-			},
-			description: "Drag over chart area"
+			}
 		}
 	},
-
 	Legend: {
 		CustomLegend: {
 			options: {
@@ -3665,32 +3664,25 @@ d3.select(".chart_area")
 		}
 	},
 	Point: {
-		RectanglePoints: {
+		CombinationPoints: {
 			options: {
 				data: {
 					columns: [
-						["data1", 100, 200, 1000, 900, 500],
-						["data2", 20, 40, 500, 300, 200]
-					],
-					type: "line"
-				},
-				point: {
-					type: "rectangle"
-				}
-			}
-		},
-		CustomPointsTriangle: {
-			options: {
-				data: {
-					columns: [
-						["data1", 100, 200, 1000, 900, 500],
-						["data2", 20, 40, 500, 300, 200]
+						["data1", 100, 400, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200],
+						["data3", 80, 350, 800, 450, 500],
+						["data4", 150, 240, 300, 700, 300],
+						["data5", 280, 720, 160, 210, 115]
 					],
 					type: "line"
 				},
 				point: {
 					pattern: [
-						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+						"circle",
+						"rectangle",
+						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
+						"<polygon points='2.5 0 0 5 5 5'></polygon>",
+						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
 			}
@@ -3707,38 +3699,6 @@ d3.select(".chart_area")
 				point: {
 					pattern: [
 						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
-					]
-				}
-			}
-		},
-		CustomPointsHearts: {
-			options: {
-				data: {
-					columns: [
-						["data1", 100, 400, 1000, 900, 500],
-						["data2", 20, 40, 500, 300, 200]
-					],
-					type: "line"
-				},
-				point: {
-					pattern: [
-						"<path d='m3.937502,2.348755c1.314192,-3.618047 6.463238,0 0,4.651779c-6.463238,-4.651779 -1.314192,-8.269826 0,-4.651779z' />"
-					]
-				}
-			}
-		},
-		CustomPointsGrouped: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, -150, 250],
-						["data2", 50, 20, 10, 40, 15, 25]
-					],
-					type: "line"
-				},
-				point: {
-					pattern: [
-						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
 			}
@@ -3763,25 +3723,50 @@ d3.select(".chart_area")
 				}
 			}
 		},
-		CombinationPoints: {
+		CustomPointsGrouped: {
 			options: {
 				data: {
 					columns: [
-						["data1", 100, 400, 1000, 900, 500],
-						["data2", 20, 40, 500, 300, 200],
-						["data3", 80, 350, 800, 450, 500],
-						["data4", 150, 240, 300, 700, 300],
-						["data5", 280, 720, 160, 210, 115]
+						["data1", 30, 200, 100, 400, -150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					type: "line"
 				},
 				point: {
 					pattern: [
-						"circle",
-						"rectangle",
-						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
-						"<polygon points='2.5 0 0 5 5 5'></polygon>",
 						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
+					]
+				}
+			}
+		},
+		CustomPointsHearts: {
+			options: {
+				data: {
+					columns: [
+						["data1", 100, 400, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
+					],
+					type: "line"
+				},
+				point: {
+					pattern: [
+						"<path d='m3.937502,2.348755c1.314192,-3.618047 6.463238,0 0,4.651779c-6.463238,-4.651779 -1.314192,-8.269826 0,-4.651779z' />"
+					]
+				}
+			}
+		},
+		CustomPointsTriangle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 100, 200, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
+					],
+					type: "line"
+				},
+				point: {
+					pattern: [
+						"<polygon points='2.5 0 0 5 5 5'></polygon>"
 					]
 				}
 			}
@@ -3808,6 +3793,110 @@ d3.select(".chart_area")
 							values: [0, 100, 200, 300, 400, 500, 600, 700, 800, 900]
 						}
 					}
+				}
+			}
+		},
+		PointSensitivity: [
+			{
+				options: {
+					title: {
+						text: "point.sensitivity=10"
+					},
+					data: {
+						columns: [
+							["data1", 450, 300, 550, 600, 500],
+							["data2", 420, 340, 480, 400, 250]
+						],
+						type: "bubble"
+					},
+					point: {
+						sensitivity: 10
+					},
+					axis: {
+						x: {
+							type: "category"
+						},
+						y: {
+							padding: {
+								top: 70
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "point.sensitivity='radius'"
+					},
+					data: {
+						columns: [
+							["data1", 450, 300, 550, 600, 500],
+							["data2", 420, 340, 480, 400, 250]
+						],
+						type: "bubble"
+					},
+					point: {
+						sensitivity: "radius"
+					},
+					axis: {
+						x: {
+							type: "category"
+						},
+						y: {
+							padding: {
+								top: 70
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "point.sensitivity=Function"
+					},
+					data: {
+						columns: [
+							["data1", 450, 300, 550, 600, 500],
+							["data2", 420, 340, 480, 400, 250]
+						],
+						type: "bubble"
+					},
+					point: {
+						sensitivity: function(d) {
+
+						if (d.id === "data1") {
+						  return d.r;
+						} else {
+						  return d.value > 400 ? d.r : 10;
+						}
+						}
+					},
+					axis: {
+						x: {
+							type: "category"
+						},
+						y: {
+							padding: {
+								top: 70
+							}
+						}
+					}
+				}
+			}
+		],
+		RectanglePoints: {
+			options: {
+				data: {
+					columns: [
+						["data1", 100, 200, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
+					],
+					type: "line"
+				},
+				point: {
+					type: "rectangle"
 				}
 			}
 		}
