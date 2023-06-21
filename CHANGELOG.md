@@ -1,3 +1,11 @@
+# [3.9.0-next.2](https://github.com/naver/billboard.js/compare/3.9.0-next.1...3.9.0-next.2) (2023-06-21)
+
+
+### Features
+
+* **bar:** Intent to ship bar.front ([f7e0d80](https://github.com/naver/billboard.js/commit/f7e0d8023cef4bab0f0895077f819d051738a861)), closes [#2965](https://github.com/naver/billboard.js/issues/2965)
+* **point:** Enhance point.sensitivity ([a537201](https://github.com/naver/billboard.js/commit/a5372013ab3f7d8af49ab82e7c161dbebc34ae97)), closes [#2568](https://github.com/naver/billboard.js/issues/2568)
+
 # [3.9.0-next.1](https://github.com/naver/billboard.js/compare/3.8.2...3.9.0-next.1) (2023-06-15)
 
 
