@@ -204,16 +204,16 @@ describe("API export", () => {
 
 			// pattern for CI
 			[
-				"LK8KS5EACZAACZAACfiBAAWgB71YLAC11tnTH8uqY2dn5PWVkaY3jBC8wrz",
-				"XIn7akz9quVQcDAW9d9BgONwWgqycjBaCr3eMv47RG",
-				"REQAREQAREQAT+PxFHMN6p9sQ/AAAAAElFTkSuQmCC"
+				"daDPbWsKoO5XK5nbkCmMKBwZBTRYACMFXp",
+				"hnPiDAjDxKWaA0xDQof4fQ4NroPhVUwKwio0wx1wmw",
+				"wSmZI62cSue7pG2e4HFtdu18VLgwMyjYGeG3aP"
 			],
 
 			// pattern for CI: preserveFontStyle=true
 			[
-				"r4wAeAVAdoq6ZwHsMIkAfCT496nqdxwTl13tm6jUE08NuNg0KQQoAJOSacZZDQFeD9VQYhs",
-				"XnDi2tmGVc9BHg91EONfUjAbQIUgI7lpyUCsLQIaG6Aj32lv",
-				"DNnaQDLesyYucYI0ADaISgNoB06mChoAEvXggawdHYl5dz01LvS"
+				"YiAZcJUAC6nB361jECvOF1DD0HdpA",
+				"S6iAoAFtNmParEdAFM18H03Uf1P9ktbatrndeA",
+				"ZczoCtPNG8bDXXwJxMJ+4mpIHPBqrpwHz9sXAb"
 			]
 		];
 

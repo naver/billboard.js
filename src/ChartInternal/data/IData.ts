@@ -21,6 +21,11 @@ export interface ITreemapData {
 export interface IDataRow extends TDataRow {
     x: number | string | Date;
 }
+
+export interface IDataPoint extends IDataRow {
+    r: number;
+}
+
 export interface IArcDataRow extends TDataRow {
     ratio: number;
 }

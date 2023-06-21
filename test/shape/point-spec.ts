@@ -7,6 +7,7 @@
 import {expect} from "chai";
 import util from "../assets/util";
 import {$CIRCLE} from "../../src/config/classes";
+import {fireEvent} from "../assets/helper";
 
 describe("SHAPE POINT", () => {
 	let chart;
@@ -189,6 +190,21 @@ describe("SHAPE POINT", () => {
 	});
 
 	describe("point sensitivity", () => {
+		function checkHover(nodes, values, index, sensitivity = 0) {
+			const node = nodes[index];
+			const x = +node.getAttribute("cx");
+			const y = +node.getAttribute("cy");
+			const r = +node.getAttribute("r");
+
+			util.hoverChart(chart, "mousemove", {
+				clientX: x + (sensitivity || r),
+				clientY: y
+			});
+			
+			expect(+chart.$.tooltip.select(".value").text())
+				.to.be.equal(values[index]);
+		}
+
 		before(() => {
 			args = {
 				size: {
@@ -229,6 +245,94 @@ describe("SHAPE POINT", () => {
 			});
 
 			expect(chart.$.tooltip.selectAll(".name").size()).to.be.equal(1);
+		});
+
+		it("set options point.sensitivity='radius'", () => {
+			args = {
+				data: {
+				  columns: [
+					  ["data1", 10, 100, 300]
+				  ],
+				  type: "bubble"
+				},
+				point: {
+					sensitivity: "radius"
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("check when point.sensitivity='radius'", done => {
+			const {circles} = chart.$;
+			const nodes = circles.nodes();
+			const values = chart.data.values("data1");
+
+			new Promise((resolve, reject) => {
+				checkHover(nodes, values, 0);
+
+				setTimeout(resolve, 300);
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					checkHover(nodes, values, 1);
+
+					setTimeout(resolve, 300);
+				});
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					checkHover(nodes, values, 2);
+
+					setTimeout(resolve, 300);
+				});
+			}).then(() => {
+				done();
+			});
+		});
+
+		it("set options point.sensitivity=Function", () => {
+			args.point.sensitivity = function(d) {
+				const {r, value} = d;
+				
+				// check callback call context
+				expect(this === chart).to.be.true;
+
+				if (value === 100) {
+				  return 5;
+				} else if (value === 300) {
+				  return 15;
+				} else {
+					return r;
+				}
+			};
+		});
+
+		it("check when point.sensitivity=Function", done => {
+			const {circles} = chart.$;
+			const nodes = circles.nodes();
+			const values = chart.data.values("data1");
+
+			new Promise((resolve, reject) => {
+				checkHover(nodes, values, 0);
+
+				setTimeout(resolve, 300);
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					checkHover(nodes, values, 1, 5);
+
+					setTimeout(resolve, 300);
+				});
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					checkHover(nodes, values, 2, 15);
+
+					setTimeout(resolve, 300);
+				});
+			}).then(() => {
+				done();
+			});
 		});
 	});
 

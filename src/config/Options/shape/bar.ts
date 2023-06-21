@@ -12,6 +12,7 @@ export default {
 	 * @memberof Options
 	 * @type {object}
 	 * @property {object} bar Bar object
+	 * @property {boolean} [bar.front=false] Set 'bar' to be positioned over(on the top) other shapes elements.
 	 * @property {number} [bar.indices.removeNull=false] Remove nullish data on bar indices positions.
 	 * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
 	 * @property {boolean|object} [bar.linearGradient=false] Set the linear gradient on bar.<br><br>
@@ -34,6 +35,7 @@ export default {
 	 * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
 	 * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
 	 * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+	 * @see [Demo: bar front](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarFront)
 	 * @see [Demo: bar indices](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarIndices)
 	 * @see [Demo: bar overlap](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarOverlap)
 	 * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
@@ -42,6 +44,9 @@ export default {
 	 * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
 	 * @example
 	 *  bar: {
+	 *      // make bar shape to be positioned over the other shape elements
+	 *      front: true,
+	 *
 	 *      // remove nullish data on bar indices postions
 	 *      indices: {
 	 *          removeNull: true
@@ -112,11 +117,12 @@ export default {
 	 *      zerobased: false
 	 *  }
 	 */
+	bar_front: false,
+	bar_indices_removeNull: false,
 	bar_label_threshold: 0,
 	bar_linearGradient: <
 	boolean|{x?: number[]; y?: number[]; stops?: [number, string|Function|null, number]}
 	> false,
-	bar_indices_removeNull: false,
 	bar_overlap: false,
 	bar_padding: 0,
 	bar_radius: <number|{ratio: number}|undefined> undefined,

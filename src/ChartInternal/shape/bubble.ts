@@ -17,7 +17,6 @@ export default {
 		if ($$.hasType("bubble")) {
 			config.point_show = true;
 			config.point_type = "circle";
-			config.point_sensitivity = 25;
 		}
 	},
 
