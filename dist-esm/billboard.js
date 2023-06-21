@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.8.2-nightly-20230617004655
+ * @version 3.8.2-nightly-20230621004650
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4318,7 +4318,17 @@ var data$1 = {
         var $$ = this;
         var config = $$.config, main = $$.$el.main;
         var data = values.filter(function (v) { return v && isValue(v.value); });
-        var minDist = config.point_sensitivity;
+        var getSensitivity = function (d) {
+            var sensitivity = config.point_sensitivity;
+            if (isFunction(sensitivity)) {
+                sensitivity = sensitivity.call($$.api, d);
+            }
+            else if (sensitivity === "radius") {
+                sensitivity = d.r;
+            }
+            return sensitivity;
+        };
+        var minDist;
         var closest;
         // find mouseovering bar/candlestick
         // https://github.com/naver/billboard.js/issues/2434
@@ -4337,6 +4347,7 @@ var data$1 = {
             .filter(function (v) { return !$$.isBarType(v.id) && !$$.isCandlestickType(v.id); })
             .forEach(function (v) {
             var d = $$.dist(v, pos);
+            minDist = getSensitivity(v);
             if (d < minDist) {
                 minDist = d;
                 closest = v;
@@ -4347,8 +4358,8 @@ var data$1 = {
     dist: function (data, pos) {
         var $$ = this;
         var isRotated = $$.config.axis_rotated, scale = $$.scale;
-        var xIndex = isRotated ? 1 : 0;
-        var yIndex = isRotated ? 0 : 1;
+        var xIndex = +isRotated; // true: 1, false: 0
+        var yIndex = +!isRotated; // true: 0, false: 1
         var y = $$.circleY(data, data.index);
         var x = (scale.zoom || scale.x)(data.x);
         return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
@@ -18234,7 +18245,6 @@ var shapeBubble = {
         if ($$.hasType("bubble")) {
             config.point_show = true;
             config.point_type = "circle";
-            config.point_sensitivity = 25;
         }
     },
     /**
@@ -18796,6 +18806,7 @@ var shapePoint = {
         else if (isFunction(pointR)) {
             r = pointR.bind($$.api)(d);
         }
+        d.r = r;
         return r;
     },
     pointExpandedR: function (d) {
@@ -19673,10 +19684,6 @@ var shapeTreemap = {
 };
 
 /**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
  * point config options
  */
 var optPoint = {
@@ -19697,7 +19704,20 @@ var optPoint = {
      * - **NOTE:**
      *	- `null` will make to not set inline 'opacity' css prop.
      *	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
-     * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
+     * @property {number|string|Function} [point.sensitivity=10] The senstivity value for interaction boundary.
+     * - **Available Values:**
+     *   - {number}: Absolute sensitivity value which is the distance from the data point in pixel.
+     *   - "radius": sensitivity based on point's radius
+     *   - Function: callback for each point to determine the sensitivity<br>
+     *    	```js
+     *   	sensitivity: function(d) {
+     * 	  // ex. of argument d:
+     * 	  // ==> {x: 2, value: 55, id: 'data3', index: 2, r: 19.820624179302296}
+     *
+     * 	  // returning d.r, will make sensitivity same as point's radius value.
+     *  	  return d.r;
+     * 	}
+     * 	```
      * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
      * @property {string} [point.type="circle"] The type of point to be drawn
      * - **NOTE:**
@@ -19718,6 +19738,7 @@ var optPoint = {
      *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
      * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
      * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
+     * @see [Demo: point sensitivity](https://naver.github.io/billboard.js/demo/#Point.PointSensitivity)
      * @example
      *  point: {
      *      show: false,
@@ -19749,6 +19770,18 @@ var optPoint = {
      *
      *      // having lower value, means how closer to be for interaction
      *      sensitivity: 3,
+     *
+     *      // sensitivity based on point's radius
+     *      sensitivity: "radius",
+     *
+     *      // callback for each point to determine the sensitivity
+     *      sensitivity: function(d) {
+     *	// ex. of argument d:
+     *	// ==> {x: 2, value: 55, id: 'data3', index: 2, r: 19.820624179302296}
+     *
+     *	// returning d.r, will make sensitivity same as point's radius value.
+     *	return d.r;
+     *      }
      *
      *      // valid values are "circle" or "rectangle"
      *      type: "rectangle",
@@ -22555,7 +22588,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.8.2-nightly-20230617004655
+ * @version 3.8.2-nightly-20230621004650
  */
 var bb = {
     /**
@@ -22565,7 +22598,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.8.2-nightly-20230617004655",
+    version: "3.8.2-nightly-20230621004650",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
