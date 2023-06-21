@@ -4,7 +4,7 @@
  */
 import {$BAR, $CANDLESTICK, $COMMON} from "../../config/classes";
 import {KEY} from "../../module/Cache";
-import type {IData, IDataRow} from "./IData";
+import type {IData, IDataPoint, IDataRow} from "./IData";
 import {
 	findIndex,
 	getUnique,
@@ -730,7 +730,7 @@ export default {
 		return sames;
 	},
 
-	findClosestFromTargets(targets, pos): IDataRow | undefined {
+	findClosestFromTargets(targets, pos: [number, number]): IDataRow | undefined {
 		const $$ = this;
 		const candidates = targets.map(target => $$.findClosest(target.values, pos)); // map to array of closest points of each target
 
@@ -738,11 +738,22 @@ export default {
 		return $$.findClosest(candidates, pos);
 	},
 
-	findClosest(values, pos): IDataRow | undefined {
+	findClosest(values, pos: [number, number]): IDataRow | undefined {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const data = values.filter(v => v && isValue(v.value));
-		let minDist = config.point_sensitivity;
+		const getSensitivity = (d: IDataPoint) => {
+			let sensitivity = config.point_sensitivity;
+
+			if (isFunction(sensitivity)) {
+				sensitivity = sensitivity.call($$.api, d);
+			} else if (sensitivity === "radius") {
+				sensitivity = d.r;
+			}
+
+			return sensitivity;
+		};
+		let minDist;
 		let closest;
 
 		// find mouseovering bar/candlestick
@@ -762,8 +773,10 @@ export default {
 		// find closest point from non-bar/candlestick
 		data
 			.filter(v => !$$.isBarType(v.id) && !$$.isCandlestickType(v.id))
-			.forEach(v => {
+			.forEach((v: IDataPoint) => {
 				const d = $$.dist(v, pos);
+
+				minDist = getSensitivity(v);
 
 				if (d < minDist) {
 					minDist = d;
@@ -774,11 +787,11 @@ export default {
 		return closest;
 	},
 
-	dist(data, pos) {
+	dist(data: IDataPoint, pos: [number, number]) {
 		const $$ = this;
 		const {config: {axis_rotated: isRotated}, scale} = $$;
-		const xIndex = isRotated ? 1 : 0;
-		const yIndex = isRotated ? 0 : 1;
+		const xIndex = +isRotated; // true: 1, false: 0
+		const yIndex = +!isRotated; // true: 0, false: 1
 		const y = $$.circleY(data, data.index);
 		const x = (scale.zoom || scale.x)(data.x);
 

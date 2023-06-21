@@ -320,6 +320,8 @@ export default {
 			r = pointR.bind($$.api)(d);
 		}
 
+		d.r = r;
+
 		return r;
 	},
 

@@ -148,9 +148,9 @@ describe("TOOLTIP", function() {
 
 		it("chart tooltip onshow/onshown/onhide/onhidden functions should be called", () => {
 			const expectedData = JSON.stringify([
-				{x: 6, value: 100, id: 'data1', index: 2, name: 'data1'},
-				{x: 6, value: 10, id: 'data2', index: 2, name: 'data2'},
-				{x: 6, value: 110, id: 'data3', index: 2, name: 'data3'}
+				{x: 6, value: 100, id: 'data1', index: 2, r: 2.5, name: 'data1'},
+				{x: 6, value: 10, id: 'data2', index: 2, r: 2.5, name: 'data2'},
+				{x: 6, value: 110, id: 'data3', index: 2, r: 2.5, name: 'data3'}
 			]);
 
 			checkCallback(chart, true);

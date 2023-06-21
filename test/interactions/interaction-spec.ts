@@ -720,6 +720,9 @@ describe("INTERACTION", () => {
 
 			it("set option data.type='bubble'", () => {
 				args.data.type = "bubble";
+				args.point = {
+					sensitivity: 25
+				};
 				clicked = false;
 				data = null;
 			});
@@ -1399,6 +1402,9 @@ describe("INTERACTION", () => {
 					   ]
 					},
 					type: "bubble"
+				},
+				point: {
+					sensitivity: 25
 				}
 			};
 		});
