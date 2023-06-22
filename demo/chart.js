@@ -157,7 +157,9 @@ var billboardDemo = {
 			.replace(/([A-Z]+)/g, " $1");
 
 		// set description
-		this.$description.innerHTML = demos[type[0]][type[1]].description || "";
+		let desc = demos[type[0]][type[1]];
+		this.$description.innerHTML = desc.description || (Array.isArray(desc) && desc[0].description) || "";
+
 		this.$codeArea.style.display = "block";
 
 		// remove selected class
