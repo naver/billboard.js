@@ -9,6 +9,7 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$FOCUS, $LEGEND} from "../../src/config/classes";
+import {fireEvent} from "../assets/helper";
 
 describe("LEGEND", () => {
 	let chart;
@@ -848,6 +849,30 @@ describe("LEGEND", () => {
 				expect(item.on("mouseout")).to.not.be.undefined;
 
 				expect(item.style("cursor")).to.be.equal("pointer");
+			});
+		});
+
+		it("set options: legend.item.interaction.dblclik=true", () => {
+			args.legend.item.interaction = {
+				dblclick: true
+			};
+		});
+
+		it("check dblclick interaction", () => {
+			const {$: {legend}, internal: {state}} = chart;
+
+			chart.data().forEach(({id}) => {
+				const item = legend.select(`.bb-legend-item-${id}`).node();
+
+				// when double click
+				fireEvent(item, "dblclick", undefined, chart);
+
+				expect(state.hiddenTargetIds.length && state.hiddenTargetIds.indexOf(id) === -1).to.be.true;
+
+				// when double click again, it should return to initial state
+				fireEvent(item, "dblclick", undefined, chart);
+
+				expect(state.hiddenTargetIds).to.be.empty;
 			});
 		});
 	});

@@ -3194,6 +3194,66 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		LegendItemInteraction: [
+			{
+				description: "<b>Single click + AltKey(Win)/optionKey(Mac)</b><br>or <b>Double click</b> legend item to show/hide data series",
+				options: {
+					title: {
+						text: "Single click"
+					},
+					data: {
+						columns: [
+							["data1", 300, 350, 300],
+							["data2", 130, 100, 140],
+							["data3", 230, 200, 240]
+						],
+						type: "line"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Double click"
+					},
+					data: {
+						columns: [
+							["data1", 300, 350, 300],
+							["data2", 130, 100, 140],
+							["data3", 230, 200, 240]
+						],
+						type: "line"
+					},
+					legend: {
+						item: {
+							interaction: {
+								dblclick: true
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Interaction=false"
+					},
+					data: {
+						columns: [
+							["data1", 300, 350, 300],
+							["data2", 130, 100, 140],
+							["data3", 230, 200, 240]
+						],
+						type: "line"
+					},
+					legend: {
+						item: {
+							interaction: false
+						}
+					}
+				}
+			},
+		],
 		LegendItemTileType: [
 			{
 				options: {

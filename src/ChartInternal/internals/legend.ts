@@ -394,7 +394,7 @@ export default {
 		const isTouch = state.inputType === "touch";
 		const hasGauge = $$.hasType("gauge");
 		const useCssRule = config.boost_useCssRule;
-		const hasInteraction = config.legend_item_interaction;
+		const interaction = config.legend_item_interaction;
 
 		item
 			.attr("class", function(id) {
@@ -421,12 +421,21 @@ export default {
 			}
 
 			item
-				.on("click", hasInteraction || isFunction(config.legend_item_onclick) ?
+				.on(interaction.dblclick ? "dblclick" : "click", interaction || isFunction(config.legend_item_onclick) ?
 					function(event, id) {
 						if (!callFn(config.legend_item_onclick, api, id)) {
-							if (event.altKey) {
-								api.hide();
-								api.show(id);
+							const {altKey, target, type} = event;
+
+							if (type === "dblclick" || altKey) {
+								// when focused legend is clicked(with altKey or double clicked), reset all hiding.
+								if (state.hiddenTargetIds.length &&
+									target.parentNode.getAttribute("class").indexOf($LEGEND.legendItemHidden) === -1
+								) {
+									api.show();
+								} else {
+									api.hide();
+									api.show(id);
+								}
 							} else {
 								api.toggle(id);
 
@@ -439,7 +448,7 @@ export default {
 					} : null);
 
 			!isTouch && item
-				.on("mouseout", hasInteraction || isFunction(config.legend_item_onout) ?
+				.on("mouseout", interaction || isFunction(config.legend_item_onout) ?
 					function(event, id) {
 						if (!callFn(config.legend_item_onout, api, id)) {
 							d3Select(this).classed($FOCUS.legendItemFocused, false);
@@ -451,7 +460,7 @@ export default {
 							$$.api.revert();
 						}
 					} : null)
-				.on("mouseover", hasInteraction || isFunction(config.legend_item_onover) ?
+				.on("mouseover", interaction || isFunction(config.legend_item_onover) ?
 					function(event, id) {
 						if (!callFn(config.legend_item_onover, api, id)) {
 							d3Select(this).classed($FOCUS.legendItemFocused, true);

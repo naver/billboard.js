@@ -475,22 +475,38 @@ export interface LegendOptions {
 		 * Set legend item interaction.
 		 *  - **NOTE:**
 		 *    - This setting will not have effect on `.toggle()` method.
-	 	 *    - `legend.item.onXXX` listener options will work if set, regardless of this option value.
+		 *    - `legend.item.onXXX` listener options will work if set, regardless of this option value.
 		 */
-		interaction?: boolean;
+		interaction?: boolean | {
+			/**
+			 * Set legend item to interact on double click.
+			 *  - **NOTE:**
+			 *    - Double clicking will make focused clicked dataseries only, hiding all others.
+			 *      - for single click case, `click + altKey(Win)/optionKey(Mac OS)` to have same effect.
+			 *    - To return initial state(which all dataseries are showing), double click current focused legend item again.
+			 *      - for single click case, `click + altKey(Win)/optionKey(Mac OS)` to have same effect.
+			 *    - In this case, default `click` interaction will be disabled.
+			 */
+			dblclick?: boolean;
+		};
 
 		/**
 		 * Set click event handler to the legend item.
+		 *  - **NOTE:**
+		 *    - When set, default `click` interaction will be disabled.
+		 *    - When `interaction.dblclick=true` is set, will be called on double click.
 		 */
 		onclick?(this: Chart, id: string): void;
 
 		/**
 		 * Set mouseover event handler to the legend item.
+		 *  - **NOTE:** When set, default `mouseover` interaction will be disabled.
 		 */
 		onover?(this: Chart, id: string): void;
 
 		/**
 		 * Set mouseout event handler to the legend item.
+		 *  - **NOTE:** When set, default `mouseout` interaction will be disabled.
 		 */
 		onout?(this: Chart, id: string): void;
 	};
