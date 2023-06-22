@@ -40,6 +40,10 @@ export default {
 	 *   - defines the max step the legend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
 	 * @property {boolean} [legend.equally=false] Set to all items have same width size.
 	 * @property {number} [legend.padding=0] Set padding value
+	 * @property {boolean} [legend.item.interaction=true] Set legend item interaction.<br>
+	 *  - **NOTE:**
+	 *    - This setting will not have effect on `.toggle()` method.
+	 *    - `legend.item.onXXX` listener options will work if set, regardless of this option value.
 	 * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
 	 * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
 	 * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
@@ -85,6 +89,9 @@ export default {
 	 *      equally: false,
 	 *      padding: 10,
 	 *      item: {
+	 *          // will disable default interaction
+	 *          interaction: false,
+	 *
 	 *          onclick: function(id) { ... },
 	 *          onover: function(id) { ... },
 	 *          onout: function(id) { ... },
@@ -105,23 +112,24 @@ export default {
 	 *      usePoint: true
 	 *  }
 	 */
-	legend_show: true,
-	legend_hide: false,
 	legend_contents_bindto: <string|HTMLElement|undefined> undefined,
 	legend_contents_template: <string|(() => string)|undefined> "<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>",
-	legend_position: <"bottom"|"right"|"inset"> "bottom",
+	legend_equally: false,
+	legend_hide: false,
 	legend_inset_anchor: <"top-left"|"top-right"|"bottom-left"|"bottom-right"> "top-left",
 	legend_inset_x: 10,
 	legend_inset_y: 0,
 	legend_inset_step: <number|undefined> undefined,
+	legend_item_interaction: true,
 	legend_item_onclick: <Function|undefined> undefined,
 	legend_item_onover: <Function|undefined> undefined,
 	legend_item_onout: <Function|undefined> undefined,
-	legend_equally: false,
-	legend_padding: 0,
 	legend_item_tile_width: 10,
 	legend_item_tile_height: 10,
 	legend_item_tile_r: 5,
 	legend_item_tile_type: <"rectangle"|"circle"> "rectangle",
+	legend_padding: 0,
+	legend_position: <"bottom"|"right"|"inset"> "bottom",
+	legend_show: true,
 	legend_usePoint: false
 };
