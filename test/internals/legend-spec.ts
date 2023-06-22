@@ -15,7 +15,8 @@ describe("LEGEND", () => {
 	let args;
 
 	after(() => util.destroyAll());
-beforeEach(() => {
+
+	beforeEach(() => {
 		chart = util.generate(args);
 	});
 
@@ -638,7 +639,7 @@ beforeEach(() => {
 		});
 	});
 
-	describe("legend opacity onclcik", () => {
+	describe("legend opacity onclick", () => {
 		before(() => {
 			args = {
 				data: {
@@ -765,6 +766,89 @@ beforeEach(() => {
 			const legendItems = chart.$.legend.selectAll("line");
 
 			expect(legendItems.size()).to.be.equal(chart.data().length);
+		});
+	});
+
+	describe("legend item interaction", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300],
+						["data2", 130, 100, 140]
+					],
+					type: "line"
+				},
+				legend: {
+					item: {
+						interaction: false
+					}
+				}
+			};
+		});
+
+		it("shouldn't be interacted", () => {
+			const {legend} = chart.$;
+
+			chart.data().forEach(({id}) => {
+				const item = legend.select(`.bb-legend-item-${id}`);
+
+				expect(item.on("click mouseover mouseout")).to.be.undefined;
+				expect(item.attr("style")).to.be.null;
+			});
+		});
+
+		it("set options: legend.item.onclick", () => {
+			args.legend.item.onclick = () => {};
+		});
+
+		it("should only 'click' event lister bound", () => {
+			const {legend} = chart.$;
+
+			chart.data().forEach(({id}) => {
+				const item = legend.select(`.bb-legend-item-${id}`);
+
+				expect(item.on("mouseover mouseout")).to.be.undefined;
+				expect(item.on("click")).to.not.be.undefined;
+
+				expect(item.style("cursor")).to.be.equal("pointer");
+			});
+		});
+
+		it("set options: legend.item.onover", () => {
+			delete args.legend.item.onclick;
+			args.legend.item.onover = () => {};
+		});
+
+		it("should only 'mouseover' event lister bound", () => {
+			const {legend} = chart.$;
+
+			chart.data().forEach(({id}) => {
+				const item = legend.select(`.bb-legend-item-${id}`);
+
+				expect(item.on("click mouseout")).to.be.undefined;
+				expect(item.on("mouseover")).to.not.be.undefined;
+
+				expect(item.style("cursor")).to.be.equal("pointer");
+			});
+		});
+
+		it("set options: legend.item.onout", () => {
+			delete args.legend.item.onover;
+			args.legend.item.onout = () => {};
+		});
+
+		it("should only 'mouseout' event lister bound", () => {
+			const {legend} = chart.$;
+
+			chart.data().forEach(({id}) => {
+				const item = legend.select(`.bb-legend-item-${id}`);
+
+				expect(item.on("click mouseover")).to.be.undefined;
+				expect(item.on("mouseout")).to.not.be.undefined;
+
+				expect(item.style("cursor")).to.be.equal("pointer");
+			});
 		});
 	});
 });

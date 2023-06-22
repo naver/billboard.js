@@ -470,6 +470,15 @@ export interface LegendOptions {
 			 */
 			r?: number;
 		};
+
+		/**
+		 * Set legend item interaction.
+		 *  - **NOTE:**
+		 *    - This setting will not have effect on `.toggle()` method.
+	 	 *    - `legend.item.onXXX` listener options will work if set, regardless of this option value.
+		 */
+		interaction?: boolean;
+
 		/**
 		 * Set click event handler to the legend item.
 		 */
