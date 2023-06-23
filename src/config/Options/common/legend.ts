@@ -40,17 +40,34 @@ export default {
 	 *   - defines the max step the legend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
 	 * @property {boolean} [legend.equally=false] Set to all items have same width size.
 	 * @property {number} [legend.padding=0] Set padding value
+	 * @property {boolean} [legend.item.interaction=true] Set legend item interaction.
+	 *  - **NOTE:**
+	 *    - This setting will not have effect on `.toggle()` method.
+	 *    - `legend.item.onXXX` listener options will work if set, regardless of this option value.
+	 * @property {boolean} [legend.item.interaction.dblclick=false] Set legend item to interact on double click.
+	 *  - **NOTE:**
+	 *    - Double clicking will make focused clicked dataseries only, hiding all others.
+	 *      - for single click case, `click + altKey(Win)/optionKey(Mac OS)` to have same effect.
+	 *    - To return initial state(which all dataseries are showing), double click current focused legend item again.
+	 *      - for single click case, `click + altKey(Win)/optionKey(Mac OS)` to have same effect.
+	 *    - In this case, default `click` interaction will be disabled.
 	 * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
+	 *  - **NOTE:**
+	 *    - When set, default `click` interaction will be disabled.
+	 *    - When `interaction.dblclick=true` is set, will be called on double click.
 	 * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
+	 *  - **NOTE:** When set, default `mouseover` interaction will be disabled.
 	 * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
+	 *  - **NOTE:** When set, default `mouseout` interaction will be disabled.
 	 * @property {number} [legend.item.tile.width=10] Set width for 'rectangle' legend item tile element.
-	 * @property {number} [legend.item.tile.height=10] ㄹ
+	 * @property {number} [legend.item.tile.height=10] Set height for 'rectangle' legend item tile element.
 	 * @property {number} [legend.item.tile.r=5] Set the radius for 'circle' legend item tile type.
 	 * @property {string} [legend.item.tile.type="rectangle"] Set legend item shape type.<br>
 	 * - **Available Values:**
 	 *   - circle
 	 *   - rectangle
 	 * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
+	 * @see [Demo: item.interaction](https://naver.github.io/billboard.js/demo/#Legend.LegendItemInteraction)
 	 * @see [Demo: item.tile.type](https://naver.github.io/billboard.js/demo/#Legend.LegendItemTileType)
 	 * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
 	 * @see [Demo: contents.template](https://naver.github.io/billboard.js/demo/#Legend.LegendTemplate1)
@@ -85,6 +102,16 @@ export default {
 	 *      equally: false,
 	 *      padding: 10,
 	 *      item: {
+	 *          // will disable default interaction
+	 *          interaction: false,
+	 *
+	 *          // set legend interact on double click
+	 *          // by double clicking, will make focused clicked dataseries only, hiding all others.
+	 *          interaction: {
+	 *            dblclick: true
+	 *          }
+	 *
+	 *          // when set below callback, will disable corresponding default interactions
 	 *          onclick: function(id) { ... },
 	 *          onover: function(id) { ... },
 	 *          onout: function(id) { ... },
@@ -105,23 +132,27 @@ export default {
 	 *      usePoint: true
 	 *  }
 	 */
-	legend_show: true,
-	legend_hide: false,
 	legend_contents_bindto: <string|HTMLElement|undefined> undefined,
 	legend_contents_template: <string|(() => string)|undefined> "<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>",
-	legend_position: <"bottom"|"right"|"inset"> "bottom",
+	legend_equally: false,
+	legend_hide: false,
 	legend_inset_anchor: <"top-left"|"top-right"|"bottom-left"|"bottom-right"> "top-left",
 	legend_inset_x: 10,
 	legend_inset_y: 0,
 	legend_inset_step: <number|undefined> undefined,
+	legend_item_interaction: <boolean|{
+		dblclick?: boolean;
+	}> true,
+	legend_item_dblclick: false,
 	legend_item_onclick: <Function|undefined> undefined,
 	legend_item_onover: <Function|undefined> undefined,
 	legend_item_onout: <Function|undefined> undefined,
-	legend_equally: false,
-	legend_padding: 0,
 	legend_item_tile_width: 10,
 	legend_item_tile_height: 10,
 	legend_item_tile_r: 5,
 	legend_item_tile_type: <"rectangle"|"circle"> "rectangle",
+	legend_padding: 0,
+	legend_position: <"bottom"|"right"|"inset"> "bottom",
+	legend_show: true,
 	legend_usePoint: false
 };

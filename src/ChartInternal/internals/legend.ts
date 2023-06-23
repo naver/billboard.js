@@ -394,6 +394,7 @@ export default {
 		const isTouch = state.inputType === "touch";
 		const hasGauge = $$.hasType("gauge");
 		const useCssRule = config.boost_useCssRule;
+		const interaction = config.legend_item_interaction;
 
 		item
 			.attr("class", function(id) {
@@ -420,48 +421,63 @@ export default {
 			}
 
 			item
-				.style("cursor", $$.getStylePropValue("pointer"))
-				.on("click", function(event, id) {
-					if (!callFn(config.legend_item_onclick, api, id)) {
-						if (event.altKey) {
-							api.hide();
-							api.show(id);
-						} else {
-							api.toggle(id);
+				.on(interaction.dblclick ? "dblclick" : "click", interaction || isFunction(config.legend_item_onclick) ?
+					function(event, id) {
+						if (!callFn(config.legend_item_onclick, api, id)) {
+							const {altKey, target, type} = event;
 
-							d3Select(this)
-								.classed($FOCUS.legendItemFocused, false);
+							if (type === "dblclick" || altKey) {
+								// when focused legend is clicked(with altKey or double clicked), reset all hiding.
+								if (state.hiddenTargetIds.length &&
+									target.parentNode.getAttribute("class").indexOf($LEGEND.legendItemHidden) === -1
+								) {
+									api.show();
+								} else {
+									api.hide();
+									api.show(id);
+								}
+							} else {
+								api.toggle(id);
+
+								d3Select(this)
+									.classed($FOCUS.legendItemFocused, false);
+							}
 						}
-					}
 
-					isTouch && $$.hideTooltip();
-				});
+						isTouch && $$.hideTooltip();
+					} : null);
 
 			!isTouch && item
-				.on("mouseout", function(event, id) {
-					if (!callFn(config.legend_item_onout, api, id)) {
-						d3Select(this).classed($FOCUS.legendItemFocused, false);
+				.on("mouseout", interaction || isFunction(config.legend_item_onout) ?
+					function(event, id) {
+						if (!callFn(config.legend_item_onout, api, id)) {
+							d3Select(this).classed($FOCUS.legendItemFocused, false);
 
-						if (hasGauge) {
-							$$.undoMarkOverlapped($$, `.${$GAUGE.gaugeValue}`);
+							if (hasGauge) {
+								$$.undoMarkOverlapped($$, `.${$GAUGE.gaugeValue}`);
+							}
+
+							$$.api.revert();
 						}
+					} : null)
+				.on("mouseover", interaction || isFunction(config.legend_item_onover) ?
+					function(event, id) {
+						if (!callFn(config.legend_item_onover, api, id)) {
+							d3Select(this).classed($FOCUS.legendItemFocused, true);
 
-						$$.api.revert();
-					}
-				})
-				.on("mouseover", function(event, id) {
-					if (!callFn(config.legend_item_onover, api, id)) {
-						d3Select(this).classed($FOCUS.legendItemFocused, true);
+							if (hasGauge) {
+								$$.markOverlapped(id, $$, `.${$GAUGE.gaugeValue}`);
+							}
 
-						if (hasGauge) {
-							$$.markOverlapped(id, $$, `.${$GAUGE.gaugeValue}`);
+							if (!state.transiting && $$.isTargetToShow(id)) {
+								api.focus(id);
+							}
 						}
+					} : null);
 
-						if (!state.transiting && $$.isTargetToShow(id)) {
-							api.focus(id);
-						}
-					}
-				});
+			// set cursor when has some interaction
+			!item.empty() && item.on("click mouseout mouseover") &&
+				item.style("cursor", $$.getStylePropValue("pointer"));
 		}
 	},
 
