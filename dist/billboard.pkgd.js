@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.8.2-nightly-20230621004650
+ * @version 3.8.2-nightly-20230623004725
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -25425,17 +25425,34 @@ var data_this = undefined;
    *   - defines the max step the legend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
    * @property {boolean} [legend.equally=false] Set to all items have same width size.
    * @property {number} [legend.padding=0] Set padding value
+   * @property {boolean} [legend.item.interaction=true] Set legend item interaction.
+   *  - **NOTE:**
+   *    - This setting will not have effect on `.toggle()` method.
+   *    - `legend.item.onXXX` listener options will work if set, regardless of this option value.
+   * @property {boolean} [legend.item.interaction.dblclick=false] Set legend item to interact on double click.
+   *  - **NOTE:**
+   *    - Double clicking will make focused clicked dataseries only, hiding all others.
+   *      - for single click case, `click + altKey(Win)/optionKey(Mac OS)` to have same effect.
+   *    - To return initial state(which all dataseries are showing), double click current focused legend item again.
+   *      - for single click case, `click + altKey(Win)/optionKey(Mac OS)` to have same effect.
+   *    - In this case, default `click` interaction will be disabled.
    * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
+   *  - **NOTE:**
+   *    - When set, default `click` interaction will be disabled.
+   *    - When `interaction.dblclick=true` is set, will be called on double click.
    * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
+   *  - **NOTE:** When set, default `mouseover` interaction will be disabled.
    * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
+   *  - **NOTE:** When set, default `mouseout` interaction will be disabled.
    * @property {number} [legend.item.tile.width=10] Set width for 'rectangle' legend item tile element.
-   * @property {number} [legend.item.tile.height=10] ㄹ
+   * @property {number} [legend.item.tile.height=10] Set height for 'rectangle' legend item tile element.
    * @property {number} [legend.item.tile.r=5] Set the radius for 'circle' legend item tile type.
    * @property {string} [legend.item.tile.type="rectangle"] Set legend item shape type.<br>
    * - **Available Values:**
    *   - circle
    *   - rectangle
    * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
+   * @see [Demo: item.interaction](https://naver.github.io/billboard.js/demo/#Legend.LegendItemInteraction)
    * @see [Demo: item.tile.type](https://naver.github.io/billboard.js/demo/#Legend.LegendItemTileType)
    * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
    * @see [Demo: contents.template](https://naver.github.io/billboard.js/demo/#Legend.LegendTemplate1)
@@ -25470,6 +25487,16 @@ var data_this = undefined;
    *      equally: false,
    *      padding: 10,
    *      item: {
+   *          // will disable default interaction
+   *          interaction: false,
+   *
+   *          // set legend interact on double click
+   *          // by double clicking, will make focused clicked dataseries only, hiding all others.
+   *          interaction: {
+   *            dblclick: true
+   *          }
+   *
+   *          // when set below callback, will disable corresponding default interactions
    *          onclick: function(id) { ... },
    *          onover: function(id) { ... },
    *          onout: function(id) { ... },
@@ -25490,24 +25517,26 @@ var data_this = undefined;
    *      usePoint: true
    *  }
    */
-  legend_show: !0,
-  legend_hide: !1,
   legend_contents_bindto: undefined,
   legend_contents_template: "<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>",
-  legend_position: "bottom",
+  legend_equally: !1,
+  legend_hide: !1,
   legend_inset_anchor: "top-left",
   legend_inset_x: 10,
   legend_inset_y: 0,
   legend_inset_step: undefined,
+  legend_item_interaction: !0,
+  legend_item_dblclick: !1,
   legend_item_onclick: undefined,
   legend_item_onover: undefined,
   legend_item_onout: undefined,
-  legend_equally: !1,
-  legend_padding: 0,
   legend_item_tile_width: 10,
   legend_item_tile_height: 10,
   legend_item_tile_r: 5,
   legend_item_tile_type: "rectangle",
+  legend_padding: 0,
+  legend_position: "bottom",
+  legend_show: !0,
   legend_usePoint: !1
 });
 ;// CONCATENATED MODULE: ./src/config/Options/common/title.ts
@@ -29959,7 +29988,8 @@ function getLegendColor(id) {
       state = $$.state,
       isTouch = state.inputType === "touch",
       hasGauge = $$.hasType("gauge"),
-      useCssRule = config.boost_useCssRule;
+      useCssRule = config.boost_useCssRule,
+      interaction = config.legend_item_interaction;
     item.attr("class", function (id) {
       var node = src_select(this),
         itemClass = !node.empty() && node.attr("class") || "";
@@ -29977,19 +30007,27 @@ function getLegendColor(id) {
           $$.setCssRule(!1, selector, [props])($el.legend);
         }.bind(this));
       }
-      item.style("cursor", $$.getStylePropValue("pointer")).on("click", function (event, id) {
+      item.on(interaction.dblclick ? "dblclick" : "click", interaction || isFunction(config.legend_item_onclick) ? function (event, id) {
         if (!callFn(config.legend_item_onclick, api, id)) {
-          if (event.altKey) {
-            api.hide();
-            api.show(id);
+          var altKey = event.altKey,
+            target = event.target,
+            type = event.type;
+          if (type === "dblclick" || altKey) {
+            // when focused legend is clicked(with altKey or double clicked), reset all hiding.
+            if (state.hiddenTargetIds.length && target.parentNode.getAttribute("class").indexOf($LEGEND.legendItemHidden) === -1) {
+              api.show();
+            } else {
+              api.hide();
+              api.show(id);
+            }
           } else {
             api.toggle(id);
             src_select(this).classed($FOCUS.legendItemFocused, !1);
           }
         }
         isTouch && $$.hideTooltip();
-      });
-      isTouch || item.on("mouseout", function (event, id) {
+      } : null);
+      isTouch || item.on("mouseout", interaction || isFunction(config.legend_item_onout) ? function (event, id) {
         if (!callFn(config.legend_item_onout, api, id)) {
           src_select(this).classed($FOCUS.legendItemFocused, !1);
           if (hasGauge) {
@@ -29997,7 +30035,7 @@ function getLegendColor(id) {
           }
           $$.api.revert();
         }
-      }).on("mouseover", function (event, id) {
+      } : null).on("mouseover", interaction || isFunction(config.legend_item_onover) ? function (event, id) {
         if (!callFn(config.legend_item_onover, api, id)) {
           src_select(this).classed($FOCUS.legendItemFocused, !0);
           if (hasGauge) {
@@ -30007,7 +30045,10 @@ function getLegendColor(id) {
             api.focus(id);
           }
         }
-      });
+      } : null);
+
+      // set cursor when has some interaction
+      !item.empty() && item.on("click mouseout mouseover") && item.style("cursor", $$.getStylePropValue("pointer"));
     }
   },
   /**
@@ -52078,7 +52119,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.8.2-nightly-20230621004650
+ * @version 3.8.2-nightly-20230623004725
  */
 var bb = {
   /**
@@ -52088,7 +52129,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.8.2-nightly-20230621004650",
+  version: "3.8.2-nightly-20230623004725",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
