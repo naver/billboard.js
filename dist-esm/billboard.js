@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.8.2-nightly-20230623004725
+ * @version 3.8.2-nightly-20230701004819
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -156,7 +156,7 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
-/* global Reflect, Promise */
+/* global Reflect, Promise, SuppressedError, Symbol */
 
 var _assign = function __assign() {
   _assign = Object.assign || function (t) {
@@ -177,6 +177,10 @@ function __spreadArray(to, from, pack) {
   }
   return to.concat(ar || Array.prototype.slice.call(from));
 }
+typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+  var e = new Error(message);
+  return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+};
 
 var isValue = function (v) { return v || v === 0; };
 var isFunction = function (v) { return typeof v === "function"; };
@@ -22631,7 +22635,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.8.2-nightly-20230623004725
+ * @version 3.8.2-nightly-20230701004819
  */
 var bb = {
     /**
@@ -22641,7 +22645,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.8.2-nightly-20230623004725",
+    version: "3.8.2-nightly-20230701004819",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
