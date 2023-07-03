@@ -2703,6 +2703,30 @@ var demos = {
 					}
 				}
 			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 150, 240, 400, 350, 300],
+							["data2", 80, 10, 200, 240, 100]
+						],
+						type: "step",
+						labels: {
+							show: true,
+							position: function(type, v, id, i, texts) {
+						let pos = 0;
+						const len = texts.size() / 2 - 1;
+			
+						if (type === "x" && (i === 0 || i === len)) {
+							pos = i === 0 ? 20 : -20;
+						}
+			
+						return pos;
+							}
+						}
+					}
+				}
+			}
 		],
 		DataLabelRotate: {
 			options: {
@@ -2723,6 +2747,7 @@ var demos = {
 			}
 		},
 		DataSelection: {
+			description: "For selection, click data point or drag over data points",
 			options: {
 				data: {
 					columns: [
@@ -2735,8 +2760,7 @@ var demos = {
 						draggable: true
 					}
 				}
-			},
-			description: "For selection, click data point or drag over data points"
+			}
 		},
 		DataStackNormalized: [
 			{
@@ -3067,6 +3091,7 @@ var demos = {
 			}
 		},
 		SubChart: {
+			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)",
 			options: {
 				data: {
 					columns: [
@@ -3078,10 +3103,10 @@ var demos = {
 					show: "subchart()",
 					showHandle: true
 				}
-			},
-			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)"
+			}
 		},
 		Zoom: {
+			description: "For zoom, move mouse wheel(desktop) or pinch(mobile) over chart area.<br>When is zoomed, navigate with dragging it.",
 			options: {
 				data: {
 					columns: [
@@ -3092,10 +3117,10 @@ var demos = {
 				zoom: {
 					enabled: "zoom()"
 				}
-			},
-			description: "For zoom, move mouse wheel(desktop) or pinch(mobile) over chart area.<br>When is zoomed, navigate with dragging it."
+			}
 		},
 		DragZoom: {
+			description: "Drag over chart area",
 			options: {
 				data: {
 					columns: [
@@ -3107,11 +3132,9 @@ var demos = {
 					enabled: "zoom()",
 					type: "drag"
 				}
-			},
-			description: "Drag over chart area"
+			}
 		}
 	},
-
 	Legend: {
 		CustomLegend: {
 			options: {
@@ -3171,6 +3194,66 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		LegendItemInteraction: [
+			{
+				description: "<b>Single click + AltKey(Win)/optionKey(Mac)</b><br>or <b>Double click</b> legend item to show/hide data series",
+				options: {
+					title: {
+						text: "Single click"
+					},
+					data: {
+						columns: [
+							["data1", 300, 350, 300],
+							["data2", 130, 100, 140],
+							["data3", 230, 200, 240]
+						],
+						type: "line"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Double click"
+					},
+					data: {
+						columns: [
+							["data1", 300, 350, 300],
+							["data2", 130, 100, 140],
+							["data3", 230, 200, 240]
+						],
+						type: "line"
+					},
+					legend: {
+						item: {
+							interaction: {
+								dblclick: true
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Interaction=false"
+					},
+					data: {
+						columns: [
+							["data1", 300, 350, 300],
+							["data2", 130, 100, 140],
+							["data3", 230, 200, 240]
+						],
+						type: "line"
+					},
+					legend: {
+						item: {
+							interaction: false
+						}
+					}
+				}
+			},
+		],
 		LegendItemTileType: [
 			{
 				options: {
@@ -3641,32 +3724,25 @@ d3.select(".chart_area")
 		}
 	},
 	Point: {
-		RectanglePoints: {
+		CombinationPoints: {
 			options: {
 				data: {
 					columns: [
-						["data1", 100, 200, 1000, 900, 500],
-						["data2", 20, 40, 500, 300, 200]
-					],
-					type: "line"
-				},
-				point: {
-					type: "rectangle"
-				}
-			}
-		},
-		CustomPointsTriangle: {
-			options: {
-				data: {
-					columns: [
-						["data1", 100, 200, 1000, 900, 500],
-						["data2", 20, 40, 500, 300, 200]
+						["data1", 100, 400, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200],
+						["data3", 80, 350, 800, 450, 500],
+						["data4", 150, 240, 300, 700, 300],
+						["data5", 280, 720, 160, 210, 115]
 					],
 					type: "line"
 				},
 				point: {
 					pattern: [
-						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+						"circle",
+						"rectangle",
+						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
+						"<polygon points='2.5 0 0 5 5 5'></polygon>",
+						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
 			}
@@ -3683,38 +3759,6 @@ d3.select(".chart_area")
 				point: {
 					pattern: [
 						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
-					]
-				}
-			}
-		},
-		CustomPointsHearts: {
-			options: {
-				data: {
-					columns: [
-						["data1", 100, 400, 1000, 900, 500],
-						["data2", 20, 40, 500, 300, 200]
-					],
-					type: "line"
-				},
-				point: {
-					pattern: [
-						"<path d='m3.937502,2.348755c1.314192,-3.618047 6.463238,0 0,4.651779c-6.463238,-4.651779 -1.314192,-8.269826 0,-4.651779z' />"
-					]
-				}
-			}
-		},
-		CustomPointsGrouped: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, -150, 250],
-						["data2", 50, 20, 10, 40, 15, 25]
-					],
-					type: "line"
-				},
-				point: {
-					pattern: [
-						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
 			}
@@ -3739,25 +3783,50 @@ d3.select(".chart_area")
 				}
 			}
 		},
-		CombinationPoints: {
+		CustomPointsGrouped: {
 			options: {
 				data: {
 					columns: [
-						["data1", 100, 400, 1000, 900, 500],
-						["data2", 20, 40, 500, 300, 200],
-						["data3", 80, 350, 800, 450, 500],
-						["data4", 150, 240, 300, 700, 300],
-						["data5", 280, 720, 160, 210, 115]
+						["data1", 30, 200, 100, 400, -150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					type: "line"
 				},
 				point: {
 					pattern: [
-						"circle",
-						"rectangle",
-						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
-						"<polygon points='2.5 0 0 5 5 5'></polygon>",
 						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
+					]
+				}
+			}
+		},
+		CustomPointsHearts: {
+			options: {
+				data: {
+					columns: [
+						["data1", 100, 400, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
+					],
+					type: "line"
+				},
+				point: {
+					pattern: [
+						"<path d='m3.937502,2.348755c1.314192,-3.618047 6.463238,0 0,4.651779c-6.463238,-4.651779 -1.314192,-8.269826 0,-4.651779z' />"
+					]
+				}
+			}
+		},
+		CustomPointsTriangle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 100, 200, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
+					],
+					type: "line"
+				},
+				point: {
+					pattern: [
+						"<polygon points='2.5 0 0 5 5 5'></polygon>"
 					]
 				}
 			}
@@ -3784,6 +3853,110 @@ d3.select(".chart_area")
 							values: [0, 100, 200, 300, 400, 500, 600, 700, 800, 900]
 						}
 					}
+				}
+			}
+		},
+		PointSensitivity: [
+			{
+				options: {
+					title: {
+						text: "point.sensitivity=10"
+					},
+					data: {
+						columns: [
+							["data1", 450, 300, 550, 600, 500],
+							["data2", 420, 340, 480, 400, 250]
+						],
+						type: "bubble"
+					},
+					point: {
+						sensitivity: 10
+					},
+					axis: {
+						x: {
+							type: "category"
+						},
+						y: {
+							padding: {
+								top: 70
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "point.sensitivity='radius'"
+					},
+					data: {
+						columns: [
+							["data1", 450, 300, 550, 600, 500],
+							["data2", 420, 340, 480, 400, 250]
+						],
+						type: "bubble"
+					},
+					point: {
+						sensitivity: "radius"
+					},
+					axis: {
+						x: {
+							type: "category"
+						},
+						y: {
+							padding: {
+								top: 70
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "point.sensitivity=Function"
+					},
+					data: {
+						columns: [
+							["data1", 450, 300, 550, 600, 500],
+							["data2", 420, 340, 480, 400, 250]
+						],
+						type: "bubble"
+					},
+					point: {
+						sensitivity: function(d) {
+
+						if (d.id === "data1") {
+						  return d.r;
+						} else {
+						  return d.value > 400 ? d.r : 10;
+						}
+						}
+					},
+					axis: {
+						x: {
+							type: "category"
+						},
+						y: {
+							padding: {
+								top: 70
+							}
+						}
+					}
+				}
+			}
+		],
+		RectanglePoints: {
+			options: {
+				data: {
+					columns: [
+						["data1", 100, 200, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
+					],
+					type: "line"
+				},
+				point: {
+					type: "rectangle"
 				}
 			}
 		}
@@ -4167,6 +4340,42 @@ d3.select(".chart_area")
 		]
 	},
 	BarChartOptions: {
+		BarFront: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, 180, 250, 270, 220],
+							["data2", 200, 190, 290, 140, 130]
+						],
+						types: {
+							data1: "bar",
+							data2: "area"
+						}
+					},
+					bar: {
+						front: true
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, 180, 250, 270, 220],
+							["data2", 200, 190, 290, 140, 130]
+						],
+						types: {
+							data1: "bar",
+							data2: "area"
+						}
+					},
+					bar: {
+						front: false
+					}
+				}
+			}
+		],
 		BarIndices: [
 			{
 				options: {
@@ -4892,6 +5101,98 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		DonutNeedle: [
+			{
+				options: {
+					title: {
+						text: "Custom Needle"
+					},
+					data: {
+						columns: [
+							["data1", 10],
+							["data2", 10],
+							["data3", 10],
+							["data4", 10],
+							["data5", 10],
+							["data6", 10]
+						],
+						type: "donut"
+					},
+					donut: {
+						title: "( {=NEEDLE_VALUE} )"
+					},
+					arc: {
+						needle: {
+							show: true,
+							value: 13,
+							path: function(length) {
+						const len = length - 20;
+						const path = `M 0 -${len + 20}
+						   L -12 -${len}
+						   L -5 -${len}
+						   L -5 0 
+						   A 1 1 0 0 0 5 0
+						   L 5 -${len}
+						   L 12 -${len} Z`;  
+					
+						   return path;
+						 },
+							length: 55
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 25],
+							["data2", 25],
+							["data3", 25],
+							["data4", 25]
+						],
+						type: "donut"
+					},
+					donut: {
+						title: "{=NEEDLE_VALUE}%"
+					},
+					arc: {
+						needle: {
+							show: true,
+							color: "red",
+							length: 80,
+							top: {
+								width: 5,
+								rx: 1,
+								ry: 1
+							}
+						}
+					}
+				},
+				func: function(chart2) {
+					chart2.timer = [
+						setTimeout(function() {
+	chart2.$.needle.updateHelper(25)
+}, 1000),
+
+setTimeout(function() {
+	chart2.$.needle.updateHelper(50)
+}, 2000),
+
+setTimeout(function() {
+	chart2.$.needle.updateHelper(75)
+}, 3000),
+
+setTimeout(function() {
+	chart2.$.needle.updateHelper(0)
+}, 4000)
+					];
+				},
+				style: [
+					"#donutNeedle_1 .bb-chart-arcs-title, #donutNeedle_2 .bb-chart-arcs-title {font-size: 3em;fill: blue;transform: translateY(40px);}"
+				]
+			}
+		],
 		LabelRatio: {
 			options: {
 				data: {
@@ -5064,6 +5365,85 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		GaugeNeedle: [
+			{
+				options: {
+					data: {
+						columns: [
+							["Poor", 20],
+							["Fair", 20],
+							["Good", 20],
+							["Great", 20],
+							["Excellent", 20]
+						],
+						type: "gauge"
+					},
+					size: {
+						height: 220
+					},
+					interaction: {
+						enabled: false
+					},
+					legend: {
+						show: false
+					},
+					gauge: {
+						width: 10,
+						title: "Total Quality\n{=NEEDLE_VALUE}%",
+						label: {
+							format: function(value, ratio, id) { return id; }
+						}
+					},
+					arc: {
+						needle: {
+							show: true,
+							value: 0
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() { chart.$.needle.updateHelper(77, true); }, 1000),
+					];
+				},
+				style: [
+					"#gaugeNeedle_1 .bb-chart-arcs-gauge-title tspan:first-child { font-size:0.3em;}",
+					"#gaugeNeedle_1 .bb-chart-arcs-gauge-title { transform:translateY(-80px);font-size:4em; }",
+					"#gaugeNeedle_2 .bb-chart-arcs-gauge-title { font-size:3.5em;fill:red;transform:translateY(-40px); }"
+				]
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data", 80]
+						],
+						type: "gauge"
+					},
+					size: {
+						height: 220
+					},
+					arc: {
+						needle: {
+							show: true,
+							length: 80,
+							color: "rgb(2 253 15 / 39%)",
+							top: {
+								width: 5
+							},
+							bottom: {
+								rx: 0,
+								ry: 0,
+								width: 5
+							}
+						}
+					},
+					gauge: {
+						title: "{=NEEDLE_VALUE}%",
+					}
+				}
+			},
+		],
 		GaugeStackData: [
 			{
 				options: {

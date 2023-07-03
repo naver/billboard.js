@@ -157,7 +157,9 @@ var billboardDemo = {
 			.replace(/([A-Z]+)/g, " $1");
 
 		// set description
-		this.$description.innerHTML = demos[type[0]][type[1]].description || "";
+		let desc = demos[type[0]][type[1]];
+		this.$description.innerHTML = desc.description || (Array.isArray(desc) && desc[0].description) || "";
+
 		this.$codeArea.style.display = "block";
 
 		// remove selected class
@@ -234,8 +236,8 @@ var billboardDemo = {
 
 		// UMD
 		code.data = code.data.join("")
-		.replace(/"(area|area-line-range|area-spline|area-spline-range|area-step|bar|bubble|candlestick|donut|gauge|line|pie|polar|radar|scatter|spline|step|treemap|selection|subchart|zoom)(\(\))?",?/g, function(match, p1, p2, p3, offset, string) {
-			var module = camelize(p1);
+			.replace(/"(area|area-line-range|area-spline|area-spline-range|area-step|bar|bubble|candlestick|donut|gauge|line|pie|polar|radar|scatter|spline|step|treemap|selection|subchart|zoom)(\(\))?",?/g, function(match, p1, p2, p3, offset, string) {
+				var module = camelize(p1);
 		
 				code.esm.indexOf(module) === -1 &&
 					code.esm.push(module);
@@ -312,6 +314,7 @@ var billboardDemo = {
 			document.body.removeChild(textArea);
 		}
 	},
+
 	showCopyMsg: function() {
 		if (this.timer.btn) {
 			return;
@@ -328,6 +331,7 @@ var billboardDemo = {
 			ctx.timer.btn = null;
 		}, 1000);
 	},
+
 	getLowerFirstCase: function(str) {
 		return /^(JSON)/.test(str) ?
 			str : str.charAt(0).toLowerCase() + str.slice(1);
@@ -385,14 +389,14 @@ var billboardDemo = {
 			.replace("_plugins", "plugins")
 			.replace(new RegExp('"?'+ this.replacer.plugin +'"?', "g"), "");
 
-            if (/(polarChart|multiline)/i.test(options.bindto)) {
-                codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
-                    .replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n")
-                    .replace('+"\\\\n"+', '+"\\n+"');
-            } else {
-                codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
-                    .replace(/\\(u)/g, "\$1");
-            }
+			if (/(polarChart|multiline|gaugeneedle)/i.test(options.bindto)) {
+				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
+					.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n")
+					.replace('+"\\\\n"+', '+"\\n+"');
+			} else {
+				codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
+					.replace(/\\(u)/g, "\$1");
+			}
 
 			codeStr += ");";
 
@@ -484,7 +488,7 @@ var billboardDemo = {
 				code.data.push("\r\n\r\n" + func.toString()
 					.replace(/[\t\s]*function\s*\(chart[\d+]?\) \{[\r\n\t\s]*/, "")
 					.replace(/}$/, "")
-					.replace(/chart.timer = \[[\r\n\t\s]*/, "")
+					.replace(/chart[\d]?.timer = \[[\r\n\t\s]*/, "")
 					.replace(/\t{5}/g, "")
 					.replace(/[\r\n\t\s]*\];?[\r\n\t\s]*$/, "")
 					.replace(/(\d)\),?/g, "$1);"));

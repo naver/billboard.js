@@ -135,3 +135,55 @@ code.html {
 #fitPadding_2 svg {
   border: 1px dashed red;
 }
+
+#donutNeedle_1 .bb-chart-arcs-title, #donutNeedle_2 .bb-chart-arcs-title {
+  font-size: 3em;
+  fill: blue;
+  transform: translateY(40px);
+}
+
+.dark #donutNeedle_1 .bb-chart-arcs-title, .dark #donutNeedle_2 .bb-chart-arcs-title {
+  fill: #828181;
+}
+
+#gaugeNeedle_1 .bb-chart-arcs-gauge-title tspan:first-child {
+  font-size: 0.3em;
+}
+
+#gaugeNeedle_1 .bb-chart-arcs-gauge-title {
+    transform: translateY(-80px);
+    font-size: 4em;
+}
+
+ #gaugeNeedle_2 .bb-chart-arcs-gauge-title {
+  font-size: 3.5em;
+  fill: red;
+  transform: translateY(-20px);
+}
+
+body.dark {
+  background-color: #000;
+  color: #d4d4d4;
+}
+
+.dark .sub_tit {
+  background-color: #03568e;
+}
+
+.dark .code .html {
+  background-color: #ccc;
+  filter: invert(1);
+}
+
+.dark .hljs {
+  background-color: #ccc;
+  filter: invert(1);
+}
+
+.dark .code .button.clipboard {
+  color: #000;
+}
+
+.dark .code .button.clipboard:hover {
+  color: #fff;
+}
