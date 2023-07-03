@@ -1,3 +1,23 @@
+# [3.9.0](https://github.com/naver/billboard.js/compare/3.8.2...3.9.0) (2023-07-03)
+
+
+### Bug Fixes
+
+* **export:** Fix Plugin class import ([24c0976](https://github.com/naver/billboard.js/commit/24c09763be16d15cec0df6159760725075e45a96)), closes [#3221](https://github.com/naver/billboard.js/issues/3221)
+* **shape:** Fix shape rendering issue on Windows ([cf1b484](https://github.com/naver/billboard.js/commit/cf1b484382705c71b5b30f49ee228dc4c92f6564)), closes [#3222](https://github.com/naver/billboard.js/issues/3222)
+* **tooltip:** Fix tooltip overflow when right side edge is hovered ([9ce900d](https://github.com/naver/billboard.js/commit/9ce900d39acd930de9f13920782834ff17e9d1a6)), closes [#3254](https://github.com/naver/billboard.js/issues/3254)
+
+
+### Features
+
+* **arc:** Intent to ship arc.needle ([04e90aa](https://github.com/naver/billboard.js/commit/04e90aac2ed7322be42b38f9bcef46722a1ddf43)), closes [#3205](https://github.com/naver/billboard.js/issues/3205)
+* **bar:** Intent to ship bar.front ([f7e0d80](https://github.com/naver/billboard.js/commit/f7e0d8023cef4bab0f0895077f819d051738a861)), closes [#2965](https://github.com/naver/billboard.js/issues/2965)
+* **data:** Intent to ship data.labels.position function ([59be3ec](https://github.com/naver/billboard.js/commit/59be3ecad45adbf7d044d1c63352ded92221bbe9)), closes [#3237](https://github.com/naver/billboard.js/issues/3237)
+* **legend:** Intent to ship legend.item.interaction.dblclick ([18f5c4a](https://github.com/naver/billboard.js/commit/18f5c4a19478514a473bce86e65e85dc4005e9f1)), closes [#1404](https://github.com/naver/billboard.js/issues/1404)
+* **legend:** Intent to ship legent.item.interaction ([af87d10](https://github.com/naver/billboard.js/commit/af87d10b252c3f573a1d1af5167cc8abb3d6b958)), closes [#1598](https://github.com/naver/billboard.js/issues/1598)
+* **point:** Enhance point.sensitivity ([a537201](https://github.com/naver/billboard.js/commit/a5372013ab3f7d8af49ab82e7c161dbebc34ae97)), closes [#2568](https://github.com/naver/billboard.js/issues/2568)
+* **theme:** Intent to ship dark theme ([252a28e](https://github.com/naver/billboard.js/commit/252a28e62acea92808217a663c00999e6099e1a4)), closes [#3229](https://github.com/naver/billboard.js/issues/3229)
+
 ## [3.8.2](https://github.com/naver/billboard.js/compare/3.8.1...3.8.2) (2023-05-18)
 
 
