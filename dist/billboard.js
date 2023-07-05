@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.0-nightly-20230704004754
+ * @version 3.9.0-nightly-20230705004728
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -24576,9 +24576,9 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       e = event == null ? void 0 : event.sourceEvent,
       isUnZoom = (event == null ? void 0 : event.transform) === external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_.zoomIdentity;
     if (((_startEvent = startEvent) == null ? void 0 : _startEvent.type.indexOf("touch")) > -1) {
-      var _e, _e$changedTouches;
+      var _e;
       startEvent = startEvent.changedTouches[0];
-      e = (_e = e) == null ? void 0 : (_e$changedTouches = _e.changedTouches) == null ? void 0 : _e$changedTouches[0];
+      e = (_e = e) == null || (_e = _e.changedTouches) == null ? void 0 : _e[0];
     }
 
     // if click, do nothing. otherwise, click interaction will be canceled.
@@ -25084,7 +25084,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.0-nightly-20230704004754
+ * @version 3.9.0-nightly-20230705004728
  */
 var bb = {
   /**
@@ -25094,7 +25094,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.0-nightly-20230704004754",
+  version: "3.9.0-nightly-20230705004728",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

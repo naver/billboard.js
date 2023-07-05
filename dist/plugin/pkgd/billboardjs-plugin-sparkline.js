@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.0-nightly-20230704004754
+ * @version 3.9.0-nightly-20230705004728
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -18797,7 +18797,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.0-nightly-20230704004754";
+Plugin.version = "3.9.0-nightly-20230705004728";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**
@@ -23369,7 +23369,7 @@ var Sparkline = /*#__PURE__*/function (_Plugin) {
       $$ = this.$$,
       index = $$.getDataIndexFromEvent(e),
       data = (_$$$api$data = $$.api.data(e.target.__id)) == null ? void 0 : _$$$api$data[0],
-      d = data == null ? void 0 : (_data$values = data.values) == null ? void 0 : _data$values[index];
+      d = data == null || (_data$values = data.values) == null ? void 0 : _data$values[index];
     if (d && !d.name) {
       d.name = d.id;
     }
