@@ -343,6 +343,61 @@ describe("TOOLTIP", function() {
 					util.parseNum(tooltip.style("left")) + util.parseNum(tooltip.style("width"))
 				).to.be.below(getCircleRectX(5));
 			});
+
+			describe("do not overlap data point", () => {
+				let prevArgs = args;
+
+				before(() => {
+					args = {
+						data: {
+							columns: [
+								["data1", 50, 50],
+								["data2", 100, 100],
+							],
+							types: {
+								data1: "spline",
+								data2: "bar"
+							}
+						}
+					};					
+				});
+
+				after(() => {
+					args = prevArgs;
+				});
+
+				it("check if tooltip position updates according mouse pointer moves", done => {
+					const top = {
+						a: 0, b: 0
+					};
+
+					new Promise((res, rej) => {
+						util.hoverChart(chart, "mousemove", {
+							clientX: 500,
+							clientY: 300
+						});
+
+						setTimeout(res, 300);
+					}).then(() => {
+						top.a = util.parseNum(chart.$.tooltip.style("top"));
+
+						new Promise((res, rej) => {
+							util.hoverChart(chart, "mousemove", {
+								clientX: 500,
+								clientY: 400
+							});
+
+							setTimeout(res, 300);
+						})
+					}).then(() => {
+						top.b = util.parseNum(chart.$.tooltip.style("top"));
+
+						expect(top.b).to.be.greaterThan(top.a);
+
+						done();
+					});
+				})
+			});
 		});
 
 		describe("flex display tooltip", () => {
