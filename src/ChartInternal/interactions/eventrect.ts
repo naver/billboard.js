@@ -445,10 +445,11 @@ export default {
 						}
 					}
 
+					const eventOnSameIdx = config.tooltip_grouped && index === eventReceiver.currentIdx;
+
 					// do nothing while dragging/flowing
-					if (state.dragging || state.flowing || $$.hasArcType() ||
-						(config.tooltip_grouped && index === eventReceiver.currentIdx)
-					) {
+					if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
+						eventOnSameIdx && $$.setTooltipPosition();
 						return;
 					}
 

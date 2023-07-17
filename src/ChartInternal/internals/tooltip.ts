@@ -258,19 +258,59 @@ export default {
 	},
 
 	/**
+	 * Update tooltip position coordinate
+	 * @param {object} dataToShow Data object
+	 * @param {SVGElement} eventTarget Event element
+	 * @private
+	 */
+	setTooltipPosition(dataToShow: IDataRow, eventTarget: SVGElement): void {
+		const $$ = this;
+		const {config, scale, state, $el: {eventRect, tooltip}} = $$;
+		const {bindto} = config.tooltip_contents;
+		const datum = tooltip.datum();
+
+		if (!bindto && datum) {
+			const [x, y] = getPointer(state.event, eventTarget ?? eventRect.node()); // get mouse event position
+			const currPos: {x: number, y: number, xAxis?: number} = {x, y};
+
+			if (scale.x && datum && "x" in datum) {
+				currPos.xAxis = scale.x(datum.x);
+			}
+
+			const {width = 0, height = 0} = datum;
+
+			// Get tooltip position
+			const pos = config.tooltip_position?.bind($$.api)(
+				dataToShow ?? JSON.parse(datum.current),
+				width, height, eventRect?.node(), currPos
+			) ?? $$.getTooltipPosition.bind($$)(width, height, currPos);
+
+			["top", "left"].forEach(v => {
+				const value = pos[v];
+
+				tooltip.style(v, `${value}px`);
+
+				// Remember left pos in percentage to be used on resize call
+				if (v === "left" && !datum.xPosInPercent) {
+					datum.xPosInPercent = value / state.current.width * 100;
+				}
+			});
+		}
+	},
+
+	/**
 	 * Returns the position of the tooltip
-	 * @param {object} dataToShow data
 	 * @param {string} tWidth Width value of tooltip element
 	 * @param {string} tHeight Height value of tooltip element
-	 * @param {HTMLElement} element Tooltip element
+	 * @param {object} currPos Current mouse position
 	 * @returns {object} top, left value
 	 * @private
 	 */
-	tooltipPosition(dataToShow, tWidth: number, tHeight: number, element):
+	getTooltipPosition(tWidth: number, tHeight: number, currPos: {[key:string]: number}):
 		{top: number, left: number} {
 		const $$ = this;
 		const {config, scale, state} = $$;
-		const {width, height, current, isLegendRight, inputType, event} = state;
+		const {width, height, current, isLegendRight, inputType} = state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const hasTreemap = state.hasTreemap;
 		const isRotated = config.axis_rotated;
@@ -278,7 +318,7 @@ export default {
 		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
 		const chartLeft = $$.getCurrentPaddingLeft(true);
 		const size = 20;
-		let [x, y] = getPointer(event, element);
+		let {x, y} = currPos;
 
 		// Determine tooltip position
 		if ($$.hasArcType()) {
@@ -289,15 +329,13 @@ export default {
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
 			}
 		} else if (!hasTreemap) {
-			const dataScale = scale.x(dataToShow[0].x);
-
 			if (isRotated) {
-				y = dataScale + size;
+				y = currPos.xAxis + size;
 				x += svgLeft;
 				chartRight -= svgLeft;
 			} else {
 				y -= 5;
-				x = svgLeft + chartLeft + size + (scale.zoom ? x : dataScale);
+				x = svgLeft + chartLeft + size + (scale.zoom ? x : currPos.xAxis);
 			}
 		}
 
@@ -327,13 +365,12 @@ export default {
 	/**
 	 * Show the tooltip
 	 * @param {object} selectedData Data object
-	 * @param {SVGElement} eventRect Event <rect> element
+	 * @param {SVGElement} eventTarget Event element
 	 * @private
 	 */
-	showTooltip(selectedData: IDataRow[], eventRect: SVGElement): void {
+	showTooltip(selectedData: IDataRow[], eventTarget?: SVGElement): void {
 		const $$ = this;
-		const {config, scale, state, $el: {tooltip}} = $$;
-		const {bindto} = config.tooltip_contents;
+		const {config, $el: {tooltip}} = $$;
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 
 		if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
@@ -341,11 +378,10 @@ export default {
 		}
 
 		let datum = tooltip.datum();
-		let {width = 0, height = 0} = datum || {};
 		const dataStr = JSON.stringify(selectedData);
 
 		if (!datum || datum.current !== dataStr) {
-			const index = selectedData.concat().sort()[0].index;
+			const {index, x} = selectedData.concat().sort()[0];
 
 			callFn(config.tooltip_onshow, $$.api, selectedData);
 
@@ -361,39 +397,17 @@ export default {
 				.style("visibility", null) // for IE9
 				.datum(datum = {
 					index,
+					x,
 					current: dataStr,
-					width: width = tooltip.property("offsetWidth"),
-					height: height = tooltip.property("offsetHeight")
+					width: tooltip.property("offsetWidth"),
+					height: tooltip.property("offsetHeight")
 				});
 
 			callFn(config.tooltip_onshown, $$.api, selectedData);
 			$$._handleLinkedCharts(true, index);
 		}
 
-		if (!bindto) {
-			const fnPos = config.tooltip_position?.bind($$.api) || $$.tooltipPosition.bind($$);
-			const [x, y] = getPointer(state.event, eventRect); // get mouse event position
-			const currPos: any = {x, y};
-			const data = selectedData.filter(Boolean)?.shift();
-
-			if (scale.x && data && "x" in data) {
-				currPos.xAxis = scale.x(data.x);
-			}
-
-			// Get tooltip dimensions
-			const pos = fnPos(dataToShow, width, height, eventRect, currPos);
-
-			["top", "left"].forEach(v => {
-				const value = pos[v];
-
-				tooltip.style(v, `${value}px`);
-
-				// Remember left pos in percentage to be used on resize call
-				if (v === "left" && !datum.xPosInPercent) {
-					datum.xPosInPercent = value / state.current.width * 100;
-				}
-			});
-		}
+		$$.setTooltipPosition(dataToShow, eventTarget);
 	},
 
 	/**
