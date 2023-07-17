@@ -789,16 +789,16 @@
     "@babel/helper-plugin-utils" "^7.22.5"
 
 "@babel/plugin-transform-runtime@^7.22.7":
-  version "7.22.7"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.22.7.tgz#eb9094b5fb756cc2d98d398b2c88aeefa9205de9"
-  integrity sha512-o02xM7iY7mSPI+TvaYDH0aYl+lg3+KT7qrD705JlsB/GrZSNaYO/4i+aDFKPiJ7ubq3hgv8NNLCdyB5MFxT8mg==
+  version "7.22.9"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.22.9.tgz#a87b11e170cbbfb018e6a2bf91f5c6e533b9e027"
+  integrity sha512-9KjBH61AGJetCPYp/IEyLEp47SyybZb0nDRpBvmtEkm+rUIwxdlKpyNHI1TmsGkeuLclJdleQHRZ8XLBnnh8CQ==
   dependencies:
     "@babel/helper-module-imports" "^7.22.5"
     "@babel/helper-plugin-utils" "^7.22.5"
-    "@nicolo-ribaudo/semver-v6" "^6.3.3"
     babel-plugin-polyfill-corejs2 "^0.4.4"
     babel-plugin-polyfill-corejs3 "^0.8.2"
     babel-plugin-polyfill-regenerator "^0.5.1"
+    semver "^6.3.1"
 
 "@babel/plugin-transform-shorthand-properties@^7.22.5":
   version "7.22.5"
@@ -12273,7 +12273,7 @@ semver@7.5.2:
   dependencies:
     lru-cache "^6.0.0"
 
-semver@^6.0.0, semver@^6.2.0, semver@^6.3.0:
+semver@^6.0.0, semver@^6.2.0, semver@^6.3.0, semver@^6.3.1:
   version "6.3.1"
   resolved "https://registry.yarnpkg.com/semver/-/semver-6.3.1.tgz#556d2ef8689146e46dcea4bfdd095f3434dffcb4"
   integrity sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==
