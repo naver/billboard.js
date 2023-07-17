@@ -9,7 +9,7 @@ import {
 import type {d3Selection} from "../../../types/types";
 import {$CIRCLE, $COMMON, $SELECT} from "../../config/classes";
 import {document} from "../../module/browser";
-import type {IDataRow} from "../data/IData";
+import type {IDataPoint, IDataRow} from "../data/IData";
 import {getBoundingRect, getPointer, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
 
 const getTransitionName = () => getRandom();
@@ -342,7 +342,7 @@ export default {
 			selectR(d) : (selectR || $$.pointR(d) * 4);
 	},
 
-	isWithinCircle(node, r?: number): boolean {
+	isWithinCircle(node: SVGElement, r?: number): boolean {
 		const mouse = getPointer(this.state.event, node);
 		const element = d3Select(node);
 		const prefix = this.isCirclePoint(node) ? "c" : "";
@@ -360,6 +360,24 @@ export default {
 		return Math.sqrt(
 			Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
 		) < (r || this.config.point_sensitivity);
+	},
+
+	/**
+	 * Get data point sensitivity radius
+	 * @param {object} d Data point object
+	 * @returns {number} return the sensitivity value
+	 */
+	getPointSensitivity(d: IDataPoint) {
+		const $$ = this;
+		let sensitivity = $$.config.point_sensitivity;
+
+		if (isFunction(sensitivity)) {
+			sensitivity = sensitivity.call($$.api, d);
+		} else if (sensitivity === "radius") {
+			sensitivity = d.r;
+		}
+
+		return sensitivity;
 	},
 
 	insertPointInfoDefs(point, id: string): void {
