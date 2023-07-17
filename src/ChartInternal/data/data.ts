@@ -740,19 +740,9 @@ export default {
 
 	findClosest(values, pos: [number, number]): IDataRow | undefined {
 		const $$ = this;
-		const {config, $el: {main}} = $$;
+		const {$el: {main}} = $$;
 		const data = values.filter(v => v && isValue(v.value));
-		const getSensitivity = (d: IDataPoint) => {
-			let sensitivity = config.point_sensitivity;
 
-			if (isFunction(sensitivity)) {
-				sensitivity = sensitivity.call($$.api, d);
-			} else if (sensitivity === "radius") {
-				sensitivity = d.r;
-			}
-
-			return sensitivity;
-		};
 		let minDist;
 		let closest;
 
@@ -776,7 +766,7 @@ export default {
 			.forEach((v: IDataPoint) => {
 				const d = $$.dist(v, pos);
 
-				minDist = getSensitivity(v);
+				minDist = $$.getPointSensitivity(v);
 
 				if (d < minDist) {
 					minDist = d;

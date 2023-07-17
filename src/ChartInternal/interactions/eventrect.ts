@@ -351,8 +351,10 @@ export default {
 		// Show xgrid focus line
 		$$.showGridFocus(selectedData);
 
+		const dist = $$.dist(closest, mouse);
+
 		// Show cursor as pointer if point is close to mouse position
-		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
+		if ($$.isBarType(closest.id) || dist < $$.getPointSensitivity(closest)) {
 			$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", "pointer");
 
 			if (!state.mouseover) {
