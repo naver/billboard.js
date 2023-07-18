@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.0-nightly-20230712004728
+ * @version 3.9.1-nightly-20230718005219
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5111,22 +5111,11 @@ function getDataKeyForJson(keysParam, config) {
   findClosest: function findClosest(values, pos) {
     var _this36 = this,
       $$ = this,
-      config = $$.config,
       main = $$.$el.main,
       data = values.filter(function (v) {
         _newArrowCheck(this, _this36);
         return v && isValue(v.value);
       }.bind(this)),
-      getSensitivity = function (d) {
-        _newArrowCheck(this, _this36);
-        var sensitivity = config.point_sensitivity;
-        if (isFunction(sensitivity)) {
-          sensitivity = sensitivity.call($$.api, d);
-        } else if (sensitivity === "radius") {
-          sensitivity = d.r;
-        }
-        return sensitivity;
-      }.bind(this),
       minDist,
       closest;
     // find mouseovering bar/candlestick
@@ -5149,7 +5138,7 @@ function getDataKeyForJson(keysParam, config) {
     }.bind(this)).forEach(function (v) {
       _newArrowCheck(this, _this36);
       var d = $$.dist(v, pos);
-      minDist = getSensitivity(v);
+      minDist = $$.getPointSensitivity(v);
       if (d < minDist) {
         minDist = d;
         closest = v;
@@ -9723,16 +9712,64 @@ function title_getTextPos(pos, width) {
     return (tplStr || "<table class=\"{=CLASS_TOOLTIP}\"><tbody>\n\t\t\t\t{=TITLE}\n\t\t\t\t{{<tr class=\"{=CLASS_TOOLTIP_NAME}\">\n\t\t\t\t\t<td class=\"name\">" + (this.patterns ? "{=COLOR}" : "<span style=\"background-color:{=COLOR}\"></span>") + "{=NAME}</td>\n\t\t\t\t\t<td class=\"value\">{=VALUE}</td>\n\t\t\t\t</tr>}}\n\t\t\t</tbody></table>").replace(/(\r?\n|\t)/g, "").split(/{{(.*)}}/);
   },
   /**
+   * Update tooltip position coordinate
+   * @param {object} dataToShow Data object
+   * @param {SVGElement} eventTarget Event element
+   * @private
+   */
+  setTooltipPosition: function setTooltipPosition(dataToShow, eventTarget) {
+    var _this4 = this,
+      $$ = this,
+      config = $$.config,
+      scale = $$.scale,
+      state = $$.state,
+      _$$$$el = $$.$el,
+      eventRect = _$$$$el.eventRect,
+      tooltip = _$$$$el.tooltip,
+      bindto = config.tooltip_contents.bindto,
+      datum = tooltip.datum();
+    if (!bindto && datum) {
+      var _config$tooltip_posit,
+        _config$tooltip_posit2,
+        _getPointer = getPointer(state.event, eventTarget != null ? eventTarget : eventRect.node()),
+        x = _getPointer[0],
+        y = _getPointer[1],
+        currPos = {
+          x: x,
+          y: y
+        };
+      // get mouse event position
+
+      if (scale.x && datum && "x" in datum) {
+        currPos.xAxis = scale.x(datum.x);
+      }
+      var _datum$width = datum.width,
+        width = _datum$width === void 0 ? 0 : _datum$width,
+        _datum$height = datum.height,
+        height = _datum$height === void 0 ? 0 : _datum$height,
+        pos = (_config$tooltip_posit = (_config$tooltip_posit2 = config.tooltip_position) == null ? void 0 : _config$tooltip_posit2.bind($$.api)(dataToShow != null ? dataToShow : JSON.parse(datum.current), width, height, eventRect == null ? void 0 : eventRect.node(), currPos)) != null ? _config$tooltip_posit : $$.getTooltipPosition.bind($$)(width, height, currPos); // Get tooltip position
+      ["top", "left"].forEach(function (v) {
+        _newArrowCheck(this, _this4);
+        var value = pos[v];
+        tooltip.style(v, value + "px");
+
+        // Remember left pos in percentage to be used on resize call
+        if (v === "left" && !datum.xPosInPercent) {
+          datum.xPosInPercent = value / state.current.width * 100;
+        }
+      }.bind(this));
+    }
+  },
+  /**
    * Returns the position of the tooltip
-   * @param {object} dataToShow data
    * @param {string} tWidth Width value of tooltip element
    * @param {string} tHeight Height value of tooltip element
-   * @param {HTMLElement} element Tooltip element
+   * @param {object} currPos Current mouse position
    * @returns {object} top, left value
    * @private
    */
-  tooltipPosition: function tooltipPosition(dataToShow, tWidth, tHeight, element) {
-    var _this4 = this,
+  getTooltipPosition: function getTooltipPosition(tWidth, tHeight, currPos) {
+    var _this5 = this,
       $$ = this,
       config = $$.config,
       scale = $$.scale,
@@ -9743,16 +9780,14 @@ function title_getTextPos(pos, width) {
       current = _state.current,
       isLegendRight = _state.isLegendRight,
       inputType = _state.inputType,
-      event = _state.event,
       hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle,
       hasTreemap = state.hasTreemap,
       isRotated = config.axis_rotated,
       svgLeft = $$.getSvgLeft(!0),
       chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(),
       chartLeft = $$.getCurrentPaddingLeft(!0),
-      _getPointer = getPointer(event, element),
-      x = _getPointer[0],
-      y = _getPointer[1];
+      x = currPos.x,
+      y = currPos.y;
     // Determine tooltip position
     if ($$.hasArcType()) {
       var raw = inputType === "touch" || $$.hasType("radar");
@@ -9761,14 +9796,13 @@ function title_getTextPos(pos, width) {
         x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
       }
     } else if (!hasTreemap) {
-      var dataScale = scale.x(dataToShow[0].x);
       if (isRotated) {
-        y = dataScale + 20;
+        y = currPos.xAxis + 20;
         x += svgLeft;
         chartRight -= svgLeft;
       } else {
         y -= 5;
-        x = svgLeft + chartLeft + 20 + (scale.zoom ? x : dataScale);
+        x = svgLeft + chartLeft + 20 + (scale.zoom ? x : currPos.xAxis);
       }
     }
 
@@ -9787,7 +9821,7 @@ function title_getTextPos(pos, width) {
 
     // make sure to not be positioned out of viewport
     Object.keys(pos).forEach(function (v) {
-      _newArrowCheck(this, _this4);
+      _newArrowCheck(this, _this5);
       if (pos[v] < 0) {
         pos[v] = 0;
       }
@@ -9797,33 +9831,27 @@ function title_getTextPos(pos, width) {
   /**
    * Show the tooltip
    * @param {object} selectedData Data object
-   * @param {SVGElement} eventRect Event <rect> element
+   * @param {SVGElement} eventTarget Event element
    * @private
    */
-  showTooltip: function showTooltip(selectedData, eventRect) {
-    var _this5 = this,
+  showTooltip: function showTooltip(selectedData, eventTarget) {
+    var _this6 = this,
       $$ = this,
       config = $$.config,
-      scale = $$.scale,
-      state = $$.state,
       tooltip = $$.$el.tooltip,
-      bindto = config.tooltip_contents.bindto,
       dataToShow = selectedData.filter(function (d) {
-        _newArrowCheck(this, _this5);
+        _newArrowCheck(this, _this6);
         return d && isValue($$.getBaseValue(d));
       }.bind(this));
     if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
       return;
     }
-    var datum = tooltip.datum(),
-      _ref = datum || {},
-      _ref$width = _ref.width,
-      width = _ref$width === void 0 ? 0 : _ref$width,
-      _ref$height = _ref.height,
-      height = _ref$height === void 0 ? 0 : _ref$height;
+    var datum = tooltip.datum();
     var dataStr = JSON.stringify(selectedData);
     if (!datum || datum.current !== dataStr) {
-      var index = selectedData.concat().sort()[0].index;
+      var _selectedData$concat$ = selectedData.concat().sort()[0],
+        index = _selectedData$concat$.index,
+        x = _selectedData$concat$.x;
       callFn(config.tooltip_onshow, $$.api, selectedData);
 
       // set tooltip content
@@ -9837,57 +9865,28 @@ function title_getTextPos(pos, width) {
       )).style("display", null).style("visibility", null) // for IE9
       .datum(datum = {
         index: index,
+        x: x,
         current: dataStr,
-        width: width = tooltip.property("offsetWidth"),
-        height: height = tooltip.property("offsetHeight")
+        width: tooltip.property("offsetWidth"),
+        height: tooltip.property("offsetHeight")
       });
       callFn(config.tooltip_onshown, $$.api, selectedData);
       $$._handleLinkedCharts(!0, index);
     }
-    if (!bindto) {
-      var _config$tooltip_posit,
-        _selectedData$filter,
-        fnPos = ((_config$tooltip_posit = config.tooltip_position) == null ? void 0 : _config$tooltip_posit.bind($$.api)) || $$.tooltipPosition.bind($$),
-        _getPointer2 = getPointer(state.event, eventRect),
-        x = _getPointer2[0],
-        y = _getPointer2[1],
-        currPos = {
-          x: x,
-          y: y
-        },
-        data = (_selectedData$filter = selectedData.filter(Boolean)) == null ? void 0 : _selectedData$filter.shift();
-      // get mouse event position
-
-      if (scale.x && data && "x" in data) {
-        currPos.xAxis = scale.x(data.x);
-      }
-
-      // Get tooltip dimensions
-      var pos = fnPos(dataToShow, width, height, eventRect, currPos);
-      ["top", "left"].forEach(function (v) {
-        _newArrowCheck(this, _this5);
-        var value = pos[v];
-        tooltip.style(v, value + "px");
-
-        // Remember left pos in percentage to be used on resize call
-        if (v === "left" && !datum.xPosInPercent) {
-          datum.xPosInPercent = value / state.current.width * 100;
-        }
-      }.bind(this));
-    }
+    $$.setTooltipPosition(dataToShow, eventTarget);
   },
   /**
    * Adjust tooltip position on resize event
    * @private
    */
   bindTooltipResizePos: function bindTooltipResizePos() {
-    var _this6 = this,
+    var _this7 = this,
       $$ = this,
       resizeFunction = $$.resizeFunction,
       state = $$.state,
       tooltip = $$.$el.tooltip;
     resizeFunction.add(function () {
-      _newArrowCheck(this, _this6);
+      _newArrowCheck(this, _this7);
       if (tooltip.style("display") === "block") {
         var current = state.current,
           _tooltip$datum = tooltip.datum(),
@@ -9931,7 +9930,7 @@ function title_getTextPos(pos, width) {
    * @private
    */
   _handleLinkedCharts: function _handleLinkedCharts(show, index) {
-    var _this7 = this,
+    var _this8 = this,
       $$ = this,
       charts = $$.charts,
       config = $$.config,
@@ -9941,10 +9940,10 @@ function title_getTextPos(pos, width) {
     if (event != null && event.isTrusted && config.tooltip_linked && charts.length > 1) {
       var linkedName = config.tooltip_linked_name;
       charts.filter(function (c) {
-        _newArrowCheck(this, _this7);
+        _newArrowCheck(this, _this8);
         return c !== $$.api;
       }.bind(this)).forEach(function (c) {
-        _newArrowCheck(this, _this7);
+        _newArrowCheck(this, _this8);
         var _c$internal = c.internal,
           config = _c$internal.config,
           $el = _c$internal.$el,
@@ -15401,9 +15400,10 @@ var Axis_Axis = /*#__PURE__*/function () {
 
     // Show xgrid focus line
     $$.showGridFocus(selectedData);
+    var dist = $$.dist(closest, mouse);
 
     // Show cursor as pointer if point is close to mouse position
-    if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
+    if ($$.isBarType(closest.id) || dist < $$.getPointSensitivity(closest)) {
       $$.$el.svg.select("." + $EVENT.eventRect).style("cursor", "pointer");
       if (!state.mouseover) {
         config.data_onover.call($$.api, closest);
@@ -15480,9 +15480,11 @@ var Axis_Axis = /*#__PURE__*/function () {
             index += 1;
           }
         }
+        var eventOnSameIdx = config.tooltip_grouped && index === eventReceiver.currentIdx;
 
         // do nothing while dragging/flowing
-        if (state.dragging || state.flowing || $$.hasArcType() || config.tooltip_grouped && index === eventReceiver.currentIdx) {
+        if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
+          eventOnSameIdx && $$.setTooltipPosition();
           return;
         }
         if (index !== eventReceiver.currentIdx) {
@@ -20865,6 +20867,21 @@ var getTransitionName = function () {
     }
     return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || this.config.point_sensitivity);
   },
+  /**
+   * Get data point sensitivity radius
+   * @param {object} d Data point object
+   * @returns {number} return the sensitivity value
+   */
+  getPointSensitivity: function getPointSensitivity(d) {
+    var $$ = this;
+    var sensitivity = $$.config.point_sensitivity;
+    if (isFunction(sensitivity)) {
+      sensitivity = sensitivity.call($$.api, d);
+    } else if (sensitivity === "radius") {
+      sensitivity = d.r;
+    }
+    return sensitivity;
+  },
   insertPointInfoDefs: function insertPointInfoDefs(point, id) {
     var _this7 = this,
       $$ = this,
@@ -25084,7 +25101,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.0-nightly-20230712004728
+ * @version 3.9.1-nightly-20230718005219
  */
 var bb = {
   /**
@@ -25094,7 +25111,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.0-nightly-20230712004728",
+  version: "3.9.1-nightly-20230718005219",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
