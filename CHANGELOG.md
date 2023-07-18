@@ -1,3 +1,11 @@
+## [3.9.1](https://github.com/naver/billboard.js/compare/3.9.0...3.9.1) (2023-07-17)
+
+
+### Bug Fixes
+
+* **point:** Fix point sensitivity pointe ([a47e091](https://github.com/naver/billboard.js/commit/a47e0913db94ae21b3e36c3ed06346d8d2e5d977)), closes [#3293](https://github.com/naver/billboard.js/issues/3293)
+* **tooltip:** Fix tooltip positioning ([cfec99f](https://github.com/naver/billboard.js/commit/cfec99f715b92abda119b44875591917563e4802)), closes [#3291](https://github.com/naver/billboard.js/issues/3291)
+
 # [3.9.0](https://github.com/naver/billboard.js/compare/3.8.2...3.9.0) (2023-07-03)
 
 
