@@ -65,11 +65,11 @@ describe("SHAPE LINE", () => {
 			args.line.step.type = "step-after";
 		});
 
-		it("should have shape-rendering = crispedges when it's step chart", () => {
+		it("should 'shape-rendering' shouldn't be set 'crispedges' when it's step chart", () => {
 			chart.$.main.selectAll(`.${$LINE.line}`).each(function() {
 				const style = d3Select(this).style("shape-rendering").toLowerCase();
 
-				expect(style).to.be.equal("crispedges");
+				expect(style).to.be.equal("auto");
 			});
 		});
 

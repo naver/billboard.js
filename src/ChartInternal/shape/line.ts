@@ -81,7 +81,6 @@ export default {
 			.style("stroke", $$.color)
 			.merge(line)
 			.style("opacity", $$.initialOpacity.bind($$))
-			.style("shape-rendering", d => ($$.isStepType(d) ? "crispEdges" : ""))
 			.attr("transform", null);
 	},
 
