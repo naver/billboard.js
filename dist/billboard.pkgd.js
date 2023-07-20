@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.1-nightly-20230719005954
+ * @version 3.9.1-nightly-20230720004714
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -46391,10 +46391,7 @@ function candlestick_objectSpread(target) { for (var i = 1, source; i < argument
     $root.line = line.enter().append("path").attr("class", function (d) {
       _newArrowCheck(this, _this2);
       return $$.getClass("line", !0)(d) + " " + (extraLineClasses(d) || "");
-    }.bind(this)).style("stroke", $$.color).merge(line).style("opacity", $$.initialOpacity.bind($$)).style("shape-rendering", function (d) {
-      _newArrowCheck(this, _this2);
-      return $$.isStepType(d) ? "crispEdges" : "";
-    }.bind(this)).attr("transform", null);
+    }.bind(this)).style("stroke", $$.color).merge(line).style("opacity", $$.initialOpacity.bind($$)).attr("transform", null);
   },
   /**
    * Redraw function
@@ -52267,7 +52264,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.1-nightly-20230719005954
+ * @version 3.9.1-nightly-20230720004714
  */
 var bb = {
   /**
@@ -52277,7 +52274,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.1-nightly-20230719005954",
+  version: "3.9.1-nightly-20230720004714",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
