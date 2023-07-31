@@ -6163,9 +6163,9 @@ eslint-plugin-import@^2.14.0, eslint-plugin-import@^2.27.5:
     tsconfig-paths "^3.14.1"
 
 eslint-plugin-jsdoc@^46.4.4:
-  version "46.4.4"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-46.4.4.tgz#cdcf9f59238381e3ee57110ceccefdfef388455d"
-  integrity sha512-D8TGPOkq3bnzmYmA7Q6jdsW+Slx7CunhJk1tlouVq6wJjlP1p6eigZPvxFn7aufud/D66xBsNVMhkDQEuqumMg==
+  version "46.4.5"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-jsdoc/-/eslint-plugin-jsdoc-46.4.5.tgz#f06fd71505d60078a8e4dff792f7cb20261e7e58"
+  integrity sha512-HjTuxqDYplAQFu29F3MHFCDDBgeqOxPXI6TyBhL0u2rr4XntJ0z3C9PmJvpjFscKdHwkZDN/0l1QCG0QwyRi4g==
   dependencies:
     "@es-joy/jsdoccomment" "~0.39.4"
     are-docs-informative "^0.0.2"
@@ -6174,7 +6174,7 @@ eslint-plugin-jsdoc@^46.4.4:
     escape-string-regexp "^4.0.0"
     esquery "^1.5.0"
     is-builtin-module "^3.2.1"
-    semver "^7.5.1"
+    semver "^7.5.4"
     spdx-expression-parse "^3.0.1"
 
 eslint-scope@5.1.1:
@@ -12240,7 +12240,7 @@ semver-regex@^4.0.5:
   resolved "https://registry.yarnpkg.com/semver-regex/-/semver-regex-4.0.5.tgz#fbfa36c7ba70461311f5debcb3928821eb4f9180"
   integrity sha512-hunMQrEy1T6Jr2uEVjrAIqjwWcQTgOAcIM52C8MY1EZSD3DDNft04XzvYKPqjED65bNVVko0YI38nYeEHCX3yw==
 
-"semver@2 >=2.2.1 || 3.x || 4 || 5 || 7", semver@^7.0.0, semver@^7.1.1, semver@^7.1.2, semver@^7.3.2, semver@^7.3.4, semver@^7.3.5, semver@^7.3.7, semver@^7.3.8, semver@^7.5.1, semver@^7.5.3, semver@^7.5.4:
+"semver@2 >=2.2.1 || 3.x || 4 || 5 || 7", semver@^7.0.0, semver@^7.1.1, semver@^7.1.2, semver@^7.3.2, semver@^7.3.4, semver@^7.3.5, semver@^7.3.7, semver@^7.3.8, semver@^7.5.3, semver@^7.5.4:
   version "7.5.4"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.5.4.tgz#483986ec4ed38e1c6c48c34894a9182dbff68a6e"
   integrity sha512-1bCSESV6Pv+i21Hvpxp3Dx+pSD8lIPt8uVjRrxAUt/nbswYc+tK6Y2btiULjd4+fnq15PX+nqQDC7Oft7WkwcA==
