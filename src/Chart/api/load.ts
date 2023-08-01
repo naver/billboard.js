@@ -182,7 +182,7 @@ export default {
 				requestIdleCallback(() => $$.loadFromArgs(args));
 			});
 		} else {
-			$$.api.tooltip.hide();
+			// $$.api.tooltip.hide();
 			$$.loadFromArgs(args);
 		}
 	},
