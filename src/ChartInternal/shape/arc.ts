@@ -694,7 +694,8 @@ export default {
 			.style("opacity", "0")
 			.remove();
 
-		mainArc = mainArc.enter().append("path")
+		mainArc = mainArc.enter()
+			.append("path")
 			.attr("class", $$.getClass("arc", true))
 			.style("fill", d => $$.color(d.data))
 			.style("cursor", d => (isSelectable?.bind?.($$.api)(d) ? "pointer" : null))
@@ -771,7 +772,7 @@ export default {
 			.call(endall, function() {
 				if ($$.levelColor) {
 					const path = d3Select(this);
-					const d: any = path.datum();
+					const d: any = path.datum(this._current);
 
 					$$.updateLegendItemColor(d.data.id, path.style("fill"));
 				}
@@ -1109,5 +1110,22 @@ export default {
 					.text($$.textForGaugeMinMax(config.gauge_max, true));
 			}
 		}
+	},
+
+	/**
+	 * Get Arc element by id or index
+	 * @param {string|number} value id or index of Arc
+	 * @returns {d3Selection} Arc path element
+	 * @private
+	 */
+	getArcElementByIdOrIndex(value: string | number): d3Selection {
+		const $$ = this;
+		const {$el: {arcs}} = $$;
+		const filterFn = isNumber(value) ?
+			d => d.index === value :
+			d => d.data.id === value;
+
+		return arcs?.selectAll(`.${$COMMON.target} path`)
+			.filter(filterFn);
 	}
 };

@@ -201,7 +201,7 @@ describe("SHAPE RADAR", () => {
 	});
 
 	describe("Axis", () => {
-		const textPos = [];
+		const textPos: any = [];
 
 		before(() => {
 			args = {
