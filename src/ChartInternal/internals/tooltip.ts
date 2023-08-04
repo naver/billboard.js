@@ -5,7 +5,7 @@
 import {select as d3Select} from "d3-selection";
 import {document} from "../../module/browser";
 import {$ARC, $TOOLTIP} from "../../config/classes";
-import type {IDataRow} from "../data/IData";
+import type {IArcData, IDataRow} from "../data/IData";
 import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
 
 export default {
@@ -270,7 +270,7 @@ export default {
 		const datum = tooltip.datum();
 
 		if (!bindto && datum) {
-			const [x, y] = getPointer(state.event, eventTarget ?? eventRect.node()); // get mouse event position
+			const [x, y] = getPointer(state.event, eventTarget ?? eventRect?.node()); // get mouse event position
 			const currPos: {x: number, y: number, xAxis?: number} = {x, y};
 
 			if (scale.x && datum && "x" in datum) {
@@ -493,6 +493,62 @@ export default {
 						} catch (e) {}
 					}
 				});
+		}
+	},
+
+	/**
+	 * Update tooltip content on redraw
+	 * - In a situation where tooltip is displayed and data load happens, it should reflect loaded data to tooltip
+	 * @param {d3Selection} context Event rect element
+	 * @param {number} index Data index
+	 * @private
+	 */
+	updateTooltipOnRedraw(context?: SVGRectElement, index?: number): void {
+		const $$ = this;
+		const {
+			config,
+			$el: {eventRect, svg, tooltip},
+			state: {event, hasAxis, hasRadar, hasTreemap}
+		} = $$;
+
+		// Update tooltip, when tooltip is in shown state
+		if (tooltip?.style("display") === "block" && event) {
+			const rect = context ?? (hasRadar ? svg : eventRect)?.node();
+
+			// for Axis based & Radar
+			if (hasAxis || hasRadar) {
+				if ($$.isMultipleX()) {
+					$$.selectRectForMultipleXs(rect, false);
+				} else {
+					const idx = index ?? $$.getDataIndexFromEvent(event);
+
+					if (index === -1) {
+						$$.api.tooltip.hide();
+					} else {
+						$$.selectRectForSingle(rect, idx);
+						$$.setExpand(idx, null, true);
+					}
+				}
+
+			// for Arc & Treemap
+			} else {
+				const {clientX, clientY} = event;
+
+				setTimeout(() => {
+					let target = document.elementFromPoint(clientX, clientY);
+					const data = d3Select(target).datum() as IArcData;
+
+					if (data) {
+						const d = $$.hasArcType() ?
+							$$.convertToArcData($$.updateAngle(data)) : data?.data;
+
+						hasTreemap && (target = svg.node());
+						d && $$.showTooltip([d], target);
+					} else {
+						$$.api.tooltip.hide();
+					}
+				}, config.transition_duration);
+			}
 		}
 	}
 };

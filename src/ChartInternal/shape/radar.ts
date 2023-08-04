@@ -301,22 +301,13 @@ export default {
 
 		if (config.interaction_enabled) {
 			const isMouse = inputType === "mouse";
-			const getIndex = event => {
-				let target = event.target;
 
-				// in case of multilined axis text
-				if (/tspan/i.test(target.tagName)) {
-					target = target.parentNode;
-				}
-
-				const d: any = d3Select(target).datum();
-
-				return d && Object.keys(d).length === 1 ? d.index : undefined;
-			};
 			const hide = event => {
 				state.event = event;
 
-				const index = getIndex(event);
+				// const index = getIndex(event);
+
+				const index = $$.getDataIndexFromEvent(event);
 				const noIndex = isUndefined(index);
 
 				if (isMouse || noIndex) {
@@ -341,9 +332,9 @@ export default {
 					}
 
 					state.event = event;
-					const index = getIndex(event);
+					const index = $$.getDataIndexFromEvent(event);
 
-					$$.selectRectForSingle(svg.node(), null, index);
+					$$.selectRectForSingle(svg.node(), index);
 					isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
 				})
 				.on("mouseout", isMouse ? hide : null);

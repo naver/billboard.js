@@ -1775,5 +1775,5 @@ describe("TOOLTIP", function() {
 				spy.resetHistory();
 			});
 		});
-	});
+	});	
 });
