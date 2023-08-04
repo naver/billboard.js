@@ -1,3 +1,11 @@
+## [3.9.2](https://github.com/naver/billboard.js/compare/3.9.1...3.9.2) (2023-08-04)
+
+
+### Bug Fixes
+
+* **line:** Fix step line path rendering on Windows ([b2633b2](https://github.com/naver/billboard.js/commit/b2633b2d5fa5b722da66edfcde3aece4771a7300)), closes [#3295](https://github.com/naver/billboard.js/issues/3295)
+* **load:** Enhance tooltip update on dynamic load ([1df1bd9](https://github.com/naver/billboard.js/commit/1df1bd94f0eb6a256864a7097663ed76a7f48627)), closes [#3305](https://github.com/naver/billboard.js/issues/3305)
+
 ## [3.9.1](https://github.com/naver/billboard.js/compare/3.9.0...3.9.1) (2023-07-17)
 
 
