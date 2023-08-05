@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {requestIdleCallback} from "../../module/browser";
-import {isString, isArray} from "../../module/util";
+import {isString, isArray, isEmpty} from "../../module/util";
 import {callDone} from "../../ChartInternal/data/load";
 
 export default {
@@ -182,7 +182,6 @@ export default {
 				requestIdleCallback(() => $$.loadFromArgs(args));
 			});
 		} else {
-			// $$.api.tooltip.hide();
 			$$.loadFromArgs(args);
 		}
 	},
@@ -215,6 +214,9 @@ export default {
 	unload(argsValue): void {
 		const $$ = this.internal;
 		let args = argsValue || {};
+
+		// hide possible tooltip display when data is completely unloaded
+		isEmpty(args) && this.tooltip.hide();
 
 		if (isArray(args)) {
 			args = {ids: args};

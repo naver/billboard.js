@@ -26,8 +26,11 @@ export {
  * @param {bb} chart billboard.js instance
  */
 const fireEvent = (element, name, options: any = {}, chart?: Chart) => {
-	const paddingLeft =
-		(chart && chart.$.main.node().transform.baseVal.getItem(0).matrix.e) || 0;
+	let paddingLeft = 0;
+
+	try {
+		paddingLeft = chart.$.main.node().transform.baseVal.getItem(0).matrix.e;
+	} catch (e) {}
 
 	// adjust clientX/Y value
 	"clientX" in options && (options.clientX += paddingLeft);
@@ -59,10 +62,10 @@ const simulator = (el, option = {}, callback) => {
  * @param {Object} [pos={clientX: 100, clientY: 100}]
  * @param {Number} [dataIndex=2]
  */
-const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}) => {
+const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}, target) => {
 	const {eventRect} = hoverChart.internal.$el;
 
-	fireEvent(eventRect.node(), eventName, pos, hoverChart);
+	fireEvent(target ?? eventRect?.node(), eventName, pos, hoverChart);
 };
 
 // do mouse drag selection
