@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.1-nightly-20230802003434
+ * @version 3.9.2-nightly-20230805003715
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -27647,6 +27647,7 @@ function getDataKeyForJson(keysParam, config) {
 
 
 
+
 /* harmony default export */ var ChartInternal_data_data = ({
   isX: function isX(key) {
     var $$ = this,
@@ -28297,16 +28298,26 @@ function getDataKeyForJson(keysParam, config) {
     var $$ = this,
       config = $$.config,
       _$$$state = $$.state,
+      hasRadar = _$$$state.hasRadar,
       inputType = _$$$state.inputType,
       _$$$state$eventReceiv = _$$$state.eventReceiver,
       coords = _$$$state$eventReceiv.coords,
-      rect = _$$$state$eventReceiv.rect,
-      isRotated = config.axis_rotated,
-      e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event,
+      rect = _$$$state$eventReceiv.rect;
+    var index;
+    if (hasRadar) {
+      var target = event.target;
+
+      // in case of multilined axis text
+      if (/tspan/i.test(target.tagName)) {
+        target = target.parentNode;
+      }
+      var d = src_select(target).datum();
+      index = d && Object.keys(d).length === 1 ? d.index : undefined;
+    } else {
+      var isRotated = config.axis_rotated,
+        e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event; // get data based on the mouse coords
       index = findIndex(coords, isRotated ? e.clientY - rect.top : e.clientX - rect.left, 0, coords.length - 1, isRotated);
-
-    // get data based on the mouse coords
-
+    }
     return index;
   },
   getDataLabelLength: function getDataLabelLength(min, max, key) {
@@ -29095,54 +29106,6 @@ function drag_defaultTouchable() {
 
 
 /* harmony default export */ var interactions_interaction = ({
-  selectRectForSingle: function selectRectForSingle(context, eventRect, index) {
-    var _this = this,
-      $$ = this,
-      config = $$.config,
-      _$$$$el = $$.$el,
-      main = _$$$$el.main,
-      circle = _$$$$el.circle,
-      isSelectionEnabled = config.data_selection_enabled,
-      isSelectionGrouped = config.data_selection_grouped,
-      isSelectable = config.data_selection_isselectable,
-      isTooltipGrouped = config.tooltip_grouped,
-      selectedData = $$.getAllValuesOnIndex(index);
-    if (isTooltipGrouped) {
-      $$.showTooltip(selectedData, context);
-      $$.showGridFocus == null ? void 0 : $$.showGridFocus(selectedData);
-      if (!isSelectionEnabled || isSelectionGrouped) {
-        return;
-      }
-    }
-
-    // remove possible previous focused state
-    circle || main.selectAll("." + $COMMON.EXPANDED + ":not(." + $SHAPE.shape + "-" + index + ")").classed($COMMON.EXPANDED, !1);
-    var shapeAtIndex = main.selectAll("." + $SHAPE.shape + "-" + index).classed($COMMON.EXPANDED, !0).style("cursor", isSelectable ? "pointer" : null).filter(function (d) {
-      return $$.isWithinShape(this, d);
-    });
-    if (shapeAtIndex.empty() && !isTooltipGrouped) {
-      $$.hideGridFocus == null ? void 0 : $$.hideGridFocus();
-      $$.hideTooltip();
-      isSelectionGrouped || $$.setExpand(index);
-    }
-    shapeAtIndex.call(function (selected) {
-      var _this2 = this;
-      _newArrowCheck(this, _this);
-      var d = selected.data();
-      if (isSelectionEnabled && (isSelectionGrouped || isSelectable != null && isSelectable.bind($$.api)(d))) {
-        eventRect.style("cursor", "pointer");
-      }
-      if (!isTooltipGrouped) {
-        $$.showTooltip(d, context);
-        $$.showGridFocus == null ? void 0 : $$.showGridFocus(d);
-        $$.unexpandCircles == null ? void 0 : $$.unexpandCircles();
-        selected.each(function (d) {
-          _newArrowCheck(this, _this2);
-          return $$.setExpand(index, d.id);
-        }.bind(this));
-      }
-    }.bind(this));
-  },
   /**
    * Expand data shape/point
    * @param {number} index Index number
@@ -29168,16 +29131,16 @@ function drag_defaultTouchable() {
    * @private
    */
   expandBarTypeShapes: function expandBarTypeShapes(expand, i, id, reset) {
-    var _this3 = this;
+    var _this = this;
     if (expand === void 0) {
       expand = !0;
     }
     var $$ = this;
     ["bar", "candlestick"].filter(function (v) {
-      _newArrowCheck(this, _this3);
+      _newArrowCheck(this, _this);
       return $$.$el[v];
     }.bind(this)).forEach(function (v) {
-      _newArrowCheck(this, _this3);
+      _newArrowCheck(this, _this);
       reset && $$.$el[v].classed($COMMON.EXPANDED, !1);
       $$.getShapeByIndex(v, i, id).classed($COMMON.EXPANDED, expand);
     }.bind(this));
@@ -29189,7 +29152,7 @@ function drag_defaultTouchable() {
    * @private
    */
   setOverOut: function setOverOut(isOver, d) {
-    var _this5 = this,
+    var _this3 = this,
       $$ = this,
       config = $$.config,
       _$$$state = $$.state,
@@ -29210,16 +29173,16 @@ function drag_defaultTouchable() {
             return $$.isWithinShape(this, d);
           }),
           shape = shapesAtIndex.filter(function () {
-            var _this4 = this;
+            var _this2 = this;
             return last.every(function (v) {
-              _newArrowCheck(this, _this4);
+              _newArrowCheck(this, _this2);
               return v !== this;
             }.bind(this));
           }); // select based on the index
         // filter if has new selection
         // call onout callback
         if (!isOver || shapesAtIndex.empty() || last.length === shape.size() && shape.nodes().every(function (v, i) {
-          _newArrowCheck(this, _this5);
+          _newArrowCheck(this, _this3);
           return v !== last[i];
         }.bind(this))) {
           while (last.length) {
@@ -29266,7 +29229,7 @@ function drag_defaultTouchable() {
    * @private
    */
   getDraggableSelection: function getDraggableSelection() {
-    var _this6 = this,
+    var _this4 = this,
       $$ = this,
       config = $$.config,
       state = $$.state;
@@ -29277,11 +29240,11 @@ function drag_defaultTouchable() {
       state.event = event;
       $$.dragstart(getPointer(event, this));
     }).on("end", function (event) {
-      _newArrowCheck(this, _this6);
+      _newArrowCheck(this, _this4);
       state.event = event;
       $$.dragend();
     }.bind(this)) : function () {
-      _newArrowCheck(this, _this6);
+      _newArrowCheck(this, _this4);
     }.bind(this);
   },
   /**
@@ -29293,7 +29256,6 @@ function drag_defaultTouchable() {
    */
   dispatchEvent: function dispatchEvent(type, index, mouse) {
     var _ref,
-      _this7 = this,
       $$ = this,
       config = $$.config,
       _$$$state2 = $$.state,
@@ -29301,15 +29263,11 @@ function drag_defaultTouchable() {
       hasAxis = _$$$state2.hasAxis,
       hasRadar = _$$$state2.hasRadar,
       hasTreemap = _$$$state2.hasTreemap,
-      _$$$$el2 = $$.$el,
-      eventRect = _$$$$el2.eventRect,
-      arcs = _$$$$el2.arcs,
-      radar = _$$$$el2.radar,
-      treemap = _$$$$el2.treemap,
-      element = (_ref = hasTreemap && eventReceiver.rect || hasRadar && radar.axes.select("." + $AXIS.axis + "-" + index + " text") || eventRect || (arcs == null ? void 0 : arcs.selectAll("." + $COMMON.target + " path").filter(function (d, i) {
-        _newArrowCheck(this, _this7);
-        return i === index;
-      }.bind(this)))) == null ? void 0 : _ref.node();
+      _$$$$el = $$.$el,
+      eventRect = _$$$$el.eventRect,
+      radar = _$$$$el.radar,
+      treemap = _$$$$el.treemap,
+      element = (_ref = hasTreemap && eventReceiver.rect || hasRadar && radar.axes.select("." + $AXIS.axis + "-" + index + " text") || eventRect || ($$.getArcElementByIdOrIndex == null ? void 0 : $$.getArcElementByIdOrIndex(index))) == null ? void 0 : _ref.node();
     if (element) {
       var isMultipleX = $$.isMultipleX();
       var _element$getBoundingC = element.getBoundingClientRect(),
@@ -29341,9 +29299,9 @@ function drag_defaultTouchable() {
    */
   unbindZoomEvent: function unbindZoomEvent() {
     var $$ = this,
-      _$$$$el3 = $$.$el,
-      eventRect = _$$$$el3.eventRect,
-      zoomResetBtn = _$$$$el3.zoomResetBtn;
+      _$$$$el2 = $$.$el,
+      eventRect = _$$$$el2.eventRect,
+      zoomResetBtn = _$$$$el2.zoomResetBtn;
     eventRect == null ? void 0 : eventRect.on(".zoom wheel.zoom .drag", null);
     zoomResetBtn == null ? void 0 : zoomResetBtn.on("click", null).style("display", "none");
   },
@@ -29352,19 +29310,19 @@ function drag_defaultTouchable() {
    * @private
    */
   unbindAllEvents: function unbindAllEvents() {
-    var _this8 = this,
+    var _this5 = this,
       $$ = this,
-      _$$$$el4 = $$.$el,
-      arcs = _$$$$el4.arcs,
-      eventRect = _$$$$el4.eventRect,
-      legend = _$$$$el4.legend,
-      region = _$$$$el4.region,
-      svg = _$$$$el4.svg,
-      treemap = _$$$$el4.treemap,
+      _$$$$el3 = $$.$el,
+      arcs = _$$$$el3.arcs,
+      eventRect = _$$$$el3.eventRect,
+      legend = _$$$$el3.legend,
+      region = _$$$$el3.region,
+      svg = _$$$$el3.svg,
+      treemap = _$$$$el3.treemap,
       brush = $$.brush;
     // detach all possible event types
     [svg, eventRect, region == null ? void 0 : region.list, brush == null ? void 0 : brush.getSelection(), arcs == null ? void 0 : arcs.selectAll("path"), legend == null ? void 0 : legend.selectAll("g"), treemap].forEach(function (v) {
-      _newArrowCheck(this, _this8);
+      _newArrowCheck(this, _this5);
       return v == null ? void 0 : v.on("wheel click mouseover mousemove mouseout touchstart touchmove touchend touchstart.eventRect touchmove.eventRect touchend.eventRect .brush .drag .zoom wheel.zoom dblclick.zoom", null);
     }.bind(this));
     $$.unbindZoomEvent == null ? void 0 : $$.unbindZoomEvent();
@@ -31354,6 +31312,7 @@ function getLegendColor(id) {
     $$.redrawTitle == null ? void 0 : $$.redrawTitle();
     initializing && $$.updateTypesElements();
     $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+    $$.updateTooltipOnRedraw();
     $$.callPluginHook("$redraw", options, duration);
   },
   /**
@@ -35690,7 +35649,7 @@ function title_getTextPos(pos, width) {
     if (!bindto && datum) {
       var _config$tooltip_posit,
         _config$tooltip_posit2,
-        _getPointer = getPointer(state.event, eventTarget != null ? eventTarget : eventRect.node()),
+        _getPointer = getPointer(state.event, eventTarget != null ? eventTarget : eventRect == null ? void 0 : eventRect.node()),
         x = _getPointer[0],
         y = _getPointer[1],
         currPos = {
@@ -35919,6 +35878,63 @@ function title_getTextPos(pos, width) {
           } catch (e) {}
         }
       }.bind(this));
+    }
+  },
+  /**
+   * Update tooltip content on redraw
+   * - In a situation where tooltip is displayed and data load happens, it should reflect loaded data to tooltip
+   * @param {d3Selection} context Event rect element
+   * @param {number} index Data index
+   * @private
+   */
+  updateTooltipOnRedraw: function updateTooltipOnRedraw(context, index) {
+    var _this9 = this,
+      $$ = this,
+      config = $$.config,
+      _$$$$el2 = $$.$el,
+      eventRect = _$$$$el2.eventRect,
+      svg = _$$$$el2.svg,
+      tooltip = _$$$$el2.tooltip,
+      _$$$state2 = $$.state,
+      event = _$$$state2.event,
+      hasAxis = _$$$state2.hasAxis,
+      hasRadar = _$$$state2.hasRadar,
+      hasTreemap = _$$$state2.hasTreemap;
+    // Update tooltip, when tooltip is in shown state
+    if ((tooltip == null ? void 0 : tooltip.style("display")) === "block" && event) {
+      var _ref,
+        rect = context != null ? context : (_ref = hasRadar ? svg : eventRect) == null ? void 0 : _ref.node();
+      // for Axis based & Radar
+      if (hasAxis || hasRadar) {
+        if ($$.isMultipleX()) {
+          $$.selectRectForMultipleXs(rect, !1);
+        } else {
+          var idx = index != null ? index : $$.getDataIndexFromEvent(event);
+          if (index === -1) {
+            $$.api.tooltip.hide();
+          } else {
+            $$.selectRectForSingle(rect, idx);
+            $$.setExpand(idx, null, !0);
+          }
+        }
+
+        // for Arc & Treemap
+      } else {
+        var clientX = event.clientX,
+          clientY = event.clientY;
+        setTimeout(function () {
+          _newArrowCheck(this, _this9);
+          var target = browser_doc.elementFromPoint(clientX, clientY);
+          var data = src_select(target).datum();
+          if (data) {
+            var d = $$.hasArcType() ? $$.convertToArcData($$.updateAngle(data)) : data == null ? void 0 : data.data;
+            hasTreemap && (target = svg.node());
+            d && $$.showTooltip([d], target);
+          } else {
+            $$.api.tooltip.hide();
+          }
+        }.bind(this), config.transition_duration);
+      }
     }
   }
 });
@@ -38145,7 +38161,6 @@ var legend_legend = {
         }.bind(this));
       }.bind(this));
     } else {
-      // $$.api.tooltip.hide();
       $$.loadFromArgs(args);
     }
   },
@@ -38178,6 +38193,8 @@ var legend_legend = {
     var _this3 = this,
       $$ = this.internal,
       args = argsValue || {};
+    // hide possible tooltip display when data is completely unloaded
+    isEmpty(args) && this.tooltip.hide();
     if (isArray(args)) {
       args = {
         ids: args
@@ -38395,6 +38412,10 @@ var tooltip_tooltip = {
    *    }
    *  });
    *
+   *  // for Arc types, specify 'id' or 'index'
+   *  chart.tooltip.show({ data: { id: "data2" }});
+   *  chart.tooltip.show({ data: { index: 2 }});
+   *
    *  // when data.xs is used
    *  chart.tooltip.show({
    *    data: {
@@ -38431,18 +38452,20 @@ var tooltip_tooltip = {
 
     // determine focus data
     if (args.data) {
-      var data = args.data,
-        y = $$.getYScaleById(data.id)(data.value);
+      var _$$$getYScaleById,
+        data = args.data,
+        y = (_$$$getYScaleById = $$.getYScaleById(data.id)) == null ? void 0 : _$$$getYScaleById(data.value);
       if (hasTreemap && data.id) {
         eventReceiver.rect = $el.main.select("" + $$.selectorTarget(data.id, undefined, "rect"));
       } else if ($$.isMultipleX()) {
         // if multiple xs, target point will be determined by mouse
         mouse = [$$.xx(data), y];
       } else {
+        var _data$index, _$$$getArcElementById;
         if (!config.tooltip_grouped) {
           mouse = [0, y];
         }
-        index = isValue(data.index) ? data.index : $$.getIndexByX(data.x);
+        index = (_data$index = data.index) != null ? _data$index : $$.hasArcType() && data.id ? (_$$$getArcElementById = $$.getArcElementByIdOrIndex(data.id)) == null ? void 0 : _$$$getArcElementById.datum().index : $$.getIndexByX(data.x);
       }
     } else if (isDefined(args.x)) {
       index = $$.getIndexByX(args.x);
@@ -41217,7 +41240,7 @@ var Axis_Axis = /*#__PURE__*/function () {
       eventRectUpdate.call($$.getDraggableSelection());
       $el.eventRect = eventRectUpdate;
       if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
-        $$.bindTouchOnEventRect(isMultipleX);
+        $$.bindTouchOnEventRect();
       }
 
       // when initilazed with empty data and data loaded later, need to update eventRect
@@ -41241,7 +41264,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     }
     $$.updateEventRectData();
   },
-  bindTouchOnEventRect: function bindTouchOnEventRect(isMultipleX) {
+  bindTouchOnEventRect: function bindTouchOnEventRect() {
     var _this2 = this,
       $$ = this,
       config = $$.config,
@@ -41251,12 +41274,12 @@ var Axis_Axis = /*#__PURE__*/function () {
       svg = _$$$$el.svg,
       selectRect = function (context) {
         _newArrowCheck(this, _this2);
-        if (isMultipleX) {
+        if ($$.isMultipleX()) {
           $$.selectRectForMultipleXs(context);
         } else {
           var index = $$.getDataIndexFromEvent(state.event);
           $$.callOverOutForTouch(index);
-          index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
+          index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, index);
         }
       }.bind(this),
       unselectRect = function () {
@@ -41461,9 +41484,72 @@ var Axis_Axis = /*#__PURE__*/function () {
       };
     }.bind(this));
   },
-  selectRectForMultipleXs: function selectRectForMultipleXs(context) {
+  /**
+   * Seletct rect for single x value
+   * @param {d3Selection} context Event rect element
+   * @param {number} index x Axis index
+   * @private
+   */
+  selectRectForSingle: function selectRectForSingle(context, index) {
     var _this6 = this,
       $$ = this,
+      config = $$.config,
+      _$$$$el2 = $$.$el,
+      main = _$$$$el2.main,
+      circle = _$$$$el2.circle,
+      isSelectionEnabled = config.data_selection_enabled,
+      isSelectionGrouped = config.data_selection_grouped,
+      isSelectable = config.data_selection_isselectable,
+      isTooltipGrouped = config.tooltip_grouped,
+      selectedData = $$.getAllValuesOnIndex(index);
+    if (isTooltipGrouped) {
+      $$.showTooltip(selectedData, context);
+      $$.showGridFocus == null ? void 0 : $$.showGridFocus(selectedData);
+      if (!isSelectionEnabled || isSelectionGrouped) {
+        return;
+      }
+    }
+
+    // remove possible previous focused state
+    circle || main.selectAll("." + $COMMON.EXPANDED + ":not(." + $SHAPE.shape + "-" + index + ")").classed($COMMON.EXPANDED, !1);
+    var shapeAtIndex = main.selectAll("." + $SHAPE.shape + "-" + index).classed($COMMON.EXPANDED, !0).style("cursor", isSelectable ? "pointer" : null).filter(function (d) {
+      return $$.isWithinShape(this, d);
+    });
+    if (shapeAtIndex.empty() && !isTooltipGrouped) {
+      $$.hideGridFocus == null ? void 0 : $$.hideGridFocus();
+      $$.hideTooltip();
+      isSelectionGrouped || $$.setExpand(index);
+    }
+    shapeAtIndex.call(function (selected) {
+      var _this7 = this;
+      _newArrowCheck(this, _this6);
+      var d = selected.data();
+      if (isSelectionEnabled && (isSelectionGrouped || isSelectable != null && isSelectable.bind($$.api)(d))) {
+        context.style.cursor = "pointer";
+      }
+      if (!isTooltipGrouped) {
+        $$.showTooltip(d, context);
+        $$.showGridFocus == null ? void 0 : $$.showGridFocus(d);
+        $$.unexpandCircles == null ? void 0 : $$.unexpandCircles();
+        selected.each(function (d) {
+          _newArrowCheck(this, _this7);
+          return $$.setExpand(index, d.id);
+        }.bind(this));
+      }
+    }.bind(this));
+  },
+  /**
+   * Select rect for multiple x values
+   * @param {d3Selection} context Event rect element
+   * @param {boolean} [triggerEvent=true] Whether trigger event or not
+   * @private
+   */
+  selectRectForMultipleXs: function selectRectForMultipleXs(context, triggerEvent) {
+    var _this8 = this;
+    if (triggerEvent === void 0) {
+      triggerEvent = !0;
+    }
+    var $$ = this,
       config = $$.config,
       state = $$.state,
       targetsToShow = $$.filterTargetsToShow($$.data.targets);
@@ -41473,7 +41559,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     }
     var mouse = getPointer(state.event, context),
       closest = $$.findClosestFromTargets(targetsToShow, mouse);
-    if (state.mouseover && (!closest || closest.id !== state.mouseover.id)) {
+    if (triggerEvent && state.mouseover && (!closest || closest.id !== state.mouseover.id)) {
       config.data_onout.call($$.api, state.mouseover);
       state.mouseover = undefined;
     }
@@ -41483,7 +41569,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     }
     var sameXData = $$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped ? [closest] : $$.filterByX(targetsToShow, closest.x),
       selectedData = sameXData.map(function (d) {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this8);
         return $$.addName(d);
       }.bind(this)); // show tooltip when cursor is close to some point
     $$.showTooltip(selectedData, context);
@@ -41498,7 +41584,7 @@ var Axis_Axis = /*#__PURE__*/function () {
     // Show cursor as pointer if point is close to mouse position
     if ($$.isBarType(closest.id) || dist < $$.getPointSensitivity(closest)) {
       $$.$el.svg.select("." + $EVENT.eventRect).style("cursor", "pointer");
-      if (!state.mouseover) {
+      if (triggerEvent && !state.mouseover) {
         config.data_onover.call($$.api, closest);
         state.mouseover = closest;
       }
@@ -41511,9 +41597,9 @@ var Axis_Axis = /*#__PURE__*/function () {
   unselectRect: function unselectRect() {
     var $$ = this,
       config = $$.config,
-      _$$$$el2 = $$.$el,
-      circle = _$$$$el2.circle,
-      tooltip = _$$$$el2.tooltip;
+      _$$$$el3 = $$.$el,
+      circle = _$$$$el3.circle,
+      tooltip = _$$$$el3.tooltip;
     $$.$el.svg.select("." + $EVENT.eventRect).style("cursor", null);
     $$.hideGridFocus();
     if (tooltip) {
@@ -41531,7 +41617,7 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   generateEventRectsForSingleX: function generateEventRectsForSingleX(eventRectEnter) {
-    var _this7 = this,
+    var _this9 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -41545,12 +41631,12 @@ var Axis_Axis = /*#__PURE__*/function () {
       });
     if (state.inputType === "mouse") {
       var getData = function (event) {
-        _newArrowCheck(this, _this7);
+        _newArrowCheck(this, _this9);
         var index = event ? $$.getDataIndexFromEvent(event) : eventReceiver.currentIdx;
         return index > -1 ? eventReceiver.data[index] : null;
       }.bind(this);
       rect.on("mouseover", function (event) {
-        _newArrowCheck(this, _this7);
+        _newArrowCheck(this, _this9);
         state.event = event;
         $$.updateEventRect();
       }.bind(this)).on("mousemove", function (event) {
@@ -41584,13 +41670,13 @@ var Axis_Axis = /*#__PURE__*/function () {
           $$.setOverOut(!1, eventReceiver.currentIdx);
           eventReceiver.currentIdx = index;
         }
-        index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, rect, index);
+        index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, index);
 
         // As of individual data point(or <path>) element can't bind mouseover/out event
         // to determine current interacting element, so use 'mousemove' event instead.
         $$.setOverOut(index !== -1, index);
       }).on("mouseout", function (event) {
-        _newArrowCheck(this, _this7);
+        _newArrowCheck(this, _this9);
         state.event = event;
 
         // chart is destroyed
@@ -41630,7 +41716,7 @@ var Axis_Axis = /*#__PURE__*/function () {
    * @private
    */
   generateEventRectsForMultipleXs: function generateEventRectsForMultipleXs(eventRectEnter) {
-    var _this8 = this,
+    var _this10 = this,
       $$ = this,
       state = $$.state;
     eventRectEnter.on("click", function (event) {
@@ -41642,7 +41728,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         state.event = event;
         $$.selectRectForMultipleXs(this);
       }).on("mouseout", function (event) {
-        _newArrowCheck(this, _this8);
+        _newArrowCheck(this, _this10);
         state.event = event;
 
         // chart is destroyed
@@ -45784,7 +45870,7 @@ function getAttrTweenFn(fn) {
     .style("opacity", null).call(endall, function () {
       if ($$.levelColor) {
         var path = src_select(this),
-          d = path.datum();
+          d = path.datum(this._current);
         $$.updateLegendItemColor(d.data.id, path.style("fill"));
       }
       state.transiting = !1;
@@ -46069,6 +46155,26 @@ function getAttrTweenFn(fn) {
         isFullCircle || arcs.select("." + $GAUGE.chartArcsGaugeMax).attr("dx", state.innerRadius + (state.radius - state.innerRadius) / 2 + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0));
       }
     }
+  },
+  /**
+   * Get Arc element by id or index
+   * @param {string|number} value id or index of Arc
+   * @returns {d3Selection} Arc path element
+   * @private
+   */
+  getArcElementByIdOrIndex: function getArcElementByIdOrIndex(value) {
+    var _this19 = this,
+      $$ = this,
+      arcs = $$.$el.arcs,
+      filterFn = isNumber(value) ? function (d) {
+        _newArrowCheck(this, _this19);
+        return d.index === value;
+      }.bind(this) : function (d) {
+        _newArrowCheck(this, _this19);
+        return d.data.id === value;
+      }.bind(this),
+      _arcs;
+    return (_arcs = arcs) == null ? void 0 : _arcs.selectAll("." + $COMMON.target + " path").filter(filterFn);
   }
 });
 ;// CONCATENATED MODULE: ./node_modules/d3-shape/src/point.js
@@ -48268,21 +48374,12 @@ var cacheKey = KEY.radarPoints;
       transiting = _state.transiting;
     if (config.interaction_enabled) {
       var isMouse = inputType === "mouse",
-        getIndex = function (event) {
-          _newArrowCheck(this, _this9);
-          var target = event.target;
-
-          // in case of multilined axis text
-          if (/tspan/i.test(target.tagName)) {
-            target = target.parentNode;
-          }
-          var d = src_select(target).datum();
-          return d && Object.keys(d).length === 1 ? d.index : undefined;
-        }.bind(this),
         hide = function (event) {
           _newArrowCheck(this, _this9);
           state.event = event;
-          var index = getIndex(event),
+
+          // const index = getIndex(event);
+          var index = $$.getDataIndexFromEvent(event),
             noIndex = isUndefined(index);
           if (isMouse || noIndex) {
             $$.hideTooltip();
@@ -48301,8 +48398,8 @@ var cacheKey = KEY.radarPoints;
           return;
         }
         state.event = event;
-        var index = getIndex(event);
-        $$.selectRectForSingle(svg.node(), null, index);
+        var index = $$.getDataIndexFromEvent(event);
+        $$.selectRectForSingle(svg.node(), index);
         isMouse ? $$.setOverOut(!0, index) : $$.callOverOutForTouch(index);
       }.bind(this)).on("mouseout", isMouse ? hide : null);
       if (!isMouse) {
@@ -52985,7 +53082,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.1-nightly-20230802003434
+ * @version 3.9.2-nightly-20230805003715
  */
 var bb = {
   /**
@@ -52995,7 +53092,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.1-nightly-20230802003434",
+  version: "3.9.2-nightly-20230805003715",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
