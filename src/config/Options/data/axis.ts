@@ -2,6 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import type {DataRegionsType} from "../../../../types/types";
+
 /**
  * Axis based chart data config options
  */
@@ -128,7 +130,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_regions: <{start?: number; end?: number; style?: {dasharray: string;}}[]> {},
+	data_regions: <DataRegionsType> {},
 
 	/**
 	 * Set the stacking to be normalized

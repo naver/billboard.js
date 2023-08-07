@@ -3993,6 +3993,61 @@ d3.select(".chart_area")
 				]
 			}
 		},
+		RegionLabel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 100, 150, 130, 200, 220, 190],
+					],
+					axes: {
+						data2: "y2",
+					},
+					type: "line",
+					colors: {
+						data1: "#ff0000"
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				regions: [
+					{
+						axis: "x",
+						start: 1,
+						end: 2,
+						class: "regions_class1",
+						label: {
+							text: "Regions 1",
+							color: "red"
+						}
+					},
+					{
+						axis: "y",
+						start: 100,
+						end: 300,
+						class: "regions_class2",
+						label: {
+							text: "Regions 2",
+							x: 50,
+							color: "blue"
+						}
+					},
+					{
+						axis: "y2",
+						start: 200,
+						end: 220,
+						class: "regions_class3",
+						label: {
+							text: "Regions 3",
+							y: 10
+						}
+					}
+				]
+			}
+		},
 		RegionWithTimeseries: {
 			options: {
 				data: {
