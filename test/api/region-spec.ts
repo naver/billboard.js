@@ -7,8 +7,9 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import {$REGION} from "../../src/config/classes";
+import {testRegions} from "../internals/rergions-spec";
 
-describe("API region", function() {
+describe("API regions", function() {
 	let chart;
 	let args;
 
@@ -368,6 +369,97 @@ describe("API region", function() {
 			chart.regions.remove();
 
 			expect(chart.regions().length).to.be.equal(0);
+		});
+	});
+
+	describe("label text", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 100, 150, 130, 200, 220, 190],
+					],
+					axes: {
+						data2: "y2",
+					},
+					type: "line",
+					colors: {
+						data1: "#ff0000"
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				regions: [
+					{
+						axis: "x",
+						start: 1,
+						end: 2,
+						class: "regions_class1",
+						label: {
+							text: "Regions 1",
+							x: 0,
+							y: 0,
+							color: "red"
+						}
+					},
+					{
+						axis: "y",
+						start: 100,
+						end: 300,
+						class: "regions_class3",
+						label: {
+							text: "Regions 3"
+						}
+					},
+					{
+						axis: "y2",
+						start: 200,
+						end: 220,
+						class: "regions_class4",
+						label: {
+							text: "Regions 4"
+						}
+					}
+				]
+			}
+		});
+
+		it("labels are updated correctly?", done => {
+			// when
+			chart.regions([
+				{
+					axis: "y",
+					start: 200,
+					end: 300,
+					label: {
+						text: "1 Regions",
+						x: 150,
+						color: "rgb(0, 0, 255)"
+					}
+				},
+				{
+					axis: "x",
+					start: 2,
+					end: 4,
+					class: "fill_green",
+					label: {
+						text: "2 Region",
+						y: 50,
+						color: "rgb(165, 42, 42)",
+						rotated: true
+					}
+				}
+			]);
+
+			setTimeout(() => {
+				chart.internal.$el.region.list.each(testRegions(chart));
+
+				done();
+			}, 500);
 		});
 	});
 });
