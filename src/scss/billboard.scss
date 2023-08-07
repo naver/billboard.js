@@ -136,8 +136,10 @@
 }
 /*-- Region --*/
 .bb-region {
-	fill: steelblue;
-	fill-opacity: .1;
+	rect {
+		fill: steelblue;
+		fill-opacity: .1;
+	}
 }
 
 /*-- Zoom region --*/

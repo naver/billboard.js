@@ -54,12 +54,26 @@ export interface DataItem<T=number> {
 
 export type DataArray = DataRow[];
 
-export interface RegionsType {
+export interface DataRegionsType {
 	[key: string]: {
 		start?: number;
 		end?: number;
 		style?: {
 			dasharray?: string;
 		}
+	};
+}
+
+export interface RegionsType {
+	axis?: "x" | "y" | "y2";
+	start?: number;
+	end?: number;
+	class?: string;
+	label?: {
+		text: string;
+		x?: number;
+		y?: number;
+		color?: string;
+		rotated?: boolean;
 	};
 }
