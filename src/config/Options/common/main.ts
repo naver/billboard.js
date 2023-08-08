@@ -2,6 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import type {RegionsType} from "../../../../types/types";
+
 /**
  * main config options
  */
@@ -395,15 +397,23 @@ export default {
 	 * @memberof Options
 	 * @type {Array}
 	 * @default []
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Region.RegionLabel)
 	 * @example
 	 *  regions: [
 	 *    {
 	 *      axis: "x",
 	 *      start: 1,
 	 *      end: 4,
-	 *      class: "region-1-4"
+	 *      class: "region-1-4",
+	 *      label: {
+	 *      	text: "Region Text",
+	 *      	x: 5,  // position relative of the initial x coordinate
+	 *      	y: 5,  // position relative of the initial y coordinate
+	 *      	color: "red",  // color string
+	 *      	rotated: true  // make text to show in vertical or horizontal
+	 *      }
 	 *    }
 	 *  ]
 	 */
-	regions: <{axis?: string; start?: number; end?: number; class?: string;}[]> []
+	regions: <RegionsType[]> []
 };
