@@ -161,10 +161,9 @@ describe("API flow", () => {
 				if (translateX < 0) {
 					moved.push(Math.abs(translateX));
 				}				
-			}, 50);
+			}, 100);
 		});
 	});
-
 
 	describe("Indexed and category type axis", () => {
 		it("Indexed axis: should flow without error", done => {
