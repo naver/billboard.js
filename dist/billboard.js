@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.2-nightly-20230805003715
+ * @version 3.9.2-nightly-20230808003859
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1737,6 +1737,7 @@ var Store = /*#__PURE__*/function () {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 /**
  * main config options
  */
@@ -2111,13 +2112,21 @@ var Store = /*#__PURE__*/function () {
    * @memberof Options
    * @type {Array}
    * @default []
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Region.RegionLabel)
    * @example
    *  regions: [
    *    {
    *      axis: "x",
    *      start: 1,
    *      end: 4,
-   *      class: "region-1-4"
+   *      class: "region-1-4",
+   *      label: {
+   *      	text: "Region Text",
+   *      	x: 5,  // position relative of the initial x coordinate
+   *      	y: 5,  // position relative of the initial y coordinate
+   *      	color: "red",  // color string
+   *      	rotated: true  // make text to show in vertical or horizontal
+   *      }
    *    }
    *  ]
    */
@@ -9589,75 +9598,76 @@ function title_getTextPos(pos, width) {
       len = d.length;
     var text, row, param, value, i;
     var _loop = function () {
-      var _this3 = this;
-      row = d[i];
-      if (!row || !(getRowValue(row) || getRowValue(row) === 0)) {
-        return "continue";
-      }
-      if (isUndefined(text)) {
-        var title = (state.hasAxis || state.hasRadar) && sanitise(titleFormat ? titleFormat(row.x) : row.x);
-        text = tplProcess(tpl[0], {
-          CLASS_TOOLTIP: $TOOLTIP.tooltip,
-          TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">" + title + "</th></tr>" : ""
-        });
-      }
-      if (!row.ratio && $el.arcs) {
-        param = ["arc", $$.$el.arcs.select("path." + $ARC.arc + "-" + row.id).data()[0]];
-        row.ratio = $$.getRatio.apply($$, param);
-      }
-      param = [row.ratio, row.id, row.index, d];
-      value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(param)));
-      if ($$.isAreaRangeType(row)) {
-        var _map2 = ["high", "low"].map(function (v) {
-            _newArrowCheck(this, _this3);
-            return sanitise(valueFormat.apply(void 0, [$$.getRangedData(row, v)].concat(param)));
-          }.bind(this)),
-          high = _map2[0],
-          low = _map2[1];
-        value = "<b>Mid:</b> " + value + " <b>High:</b> " + high + " <b>Low:</b> " + low;
-      } else if ($$.isCandlestickType(row)) {
-        var _map3 = ["open", "high", "low", "close", "volume"].map(function (v) {
-            _newArrowCheck(this, _this3);
-            return sanitise(valueFormat.apply(void 0, [$$.getRangedData(row, v, "candlestick")].concat(param)));
-          }.bind(this)),
-          open = _map3[0],
-          _high = _map3[1],
-          _low = _map3[2],
-          close = _map3[3],
-          volume = _map3[4];
-        value = "<b>Open:</b> " + open + " <b>High:</b> " + _high + " <b>Low:</b> " + _low + " <b>Close:</b> " + close + (volume ? " <b>Volume:</b> " + volume : "");
-      } else if ($$.isBarRangeType(row)) {
-        var _row$value = row.value,
-          start = _row$value[0],
-          end = _row$value[1];
-        value = valueFormat(start) + " ~ " + valueFormat(end);
-      }
-      if (value !== undefined) {
-        // Skip elements when their name is set to null
-        if (row.name === null) {
-          return "continue";
+        var _this3 = this;
+        row = d[i];
+        if (!row || !(getRowValue(row) || getRowValue(row) === 0)) {
+          return 0; // continue
         }
-        var name = sanitise(nameFormat.apply(void 0, [row.name].concat(param))),
-          _color = getBgColor(row),
-          contentValue = {
-            CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
-            COLOR: tplStr || !$$.patterns ? _color : "<svg><rect style=\"fill:" + _color + "\" width=\"10\" height=\"10\"></rect></svg>",
-            NAME: name,
-            VALUE: value
-          };
-        if (tplStr && isObject(contents.text)) {
-          var index = targetIds.indexOf(row.id);
-          Object.keys(contents.text).forEach(function (key) {
-            _newArrowCheck(this, _this3);
-            contentValue[key] = contents.text[key][index];
-          }.bind(this));
+        if (isUndefined(text)) {
+          var title = (state.hasAxis || state.hasRadar) && sanitise(titleFormat ? titleFormat(row.x) : row.x);
+          text = tplProcess(tpl[0], {
+            CLASS_TOOLTIP: $TOOLTIP.tooltip,
+            TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">" + title + "</th></tr>" : ""
+          });
         }
-        text += tplProcess(tpl[1], contentValue);
-      }
-    };
+        if (!row.ratio && $el.arcs) {
+          param = ["arc", $$.$el.arcs.select("path." + $ARC.arc + "-" + row.id).data()[0]];
+          row.ratio = $$.getRatio.apply($$, param);
+        }
+        param = [row.ratio, row.id, row.index, d];
+        value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(param)));
+        if ($$.isAreaRangeType(row)) {
+          var _map2 = ["high", "low"].map(function (v) {
+              _newArrowCheck(this, _this3);
+              return sanitise(valueFormat.apply(void 0, [$$.getRangedData(row, v)].concat(param)));
+            }.bind(this)),
+            high = _map2[0],
+            low = _map2[1];
+          value = "<b>Mid:</b> " + value + " <b>High:</b> " + high + " <b>Low:</b> " + low;
+        } else if ($$.isCandlestickType(row)) {
+          var _map3 = ["open", "high", "low", "close", "volume"].map(function (v) {
+              _newArrowCheck(this, _this3);
+              return sanitise(valueFormat.apply(void 0, [$$.getRangedData(row, v, "candlestick")].concat(param)));
+            }.bind(this)),
+            open = _map3[0],
+            _high = _map3[1],
+            _low = _map3[2],
+            close = _map3[3],
+            volume = _map3[4];
+          value = "<b>Open:</b> " + open + " <b>High:</b> " + _high + " <b>Low:</b> " + _low + " <b>Close:</b> " + close + (volume ? " <b>Volume:</b> " + volume : "");
+        } else if ($$.isBarRangeType(row)) {
+          var _row$value = row.value,
+            start = _row$value[0],
+            end = _row$value[1];
+          value = valueFormat(start) + " ~ " + valueFormat(end);
+        }
+        if (value !== undefined) {
+          // Skip elements when their name is set to null
+          if (row.name === null) {
+            return 0; // continue
+          }
+          var name = sanitise(nameFormat.apply(void 0, [row.name].concat(param))),
+            _color = getBgColor(row),
+            contentValue = {
+              CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
+              COLOR: tplStr || !$$.patterns ? _color : "<svg><rect style=\"fill:" + _color + "\" width=\"10\" height=\"10\"></rect></svg>",
+              NAME: name,
+              VALUE: value
+            };
+          if (tplStr && isObject(contents.text)) {
+            var index = targetIds.indexOf(row.id);
+            Object.keys(contents.text).forEach(function (key) {
+              _newArrowCheck(this, _this3);
+              contentValue[key] = contents.text[key][index];
+            }.bind(this));
+          }
+          text += tplProcess(tpl[1], contentValue);
+        }
+      },
+      _ret;
     for (i = 0; i < len; i++) {
-      var _ret = _loop();
-      if (_ret === "continue") continue;
+      _ret = _loop();
+      if (_ret === 0) continue;
     }
     return text + "</table>";
   },
@@ -16493,21 +16503,53 @@ function smoothLines(el, type) {
     var regionsEnter = regions.enter().append("g");
     regionsEnter.append("rect").style("fill-opacity", "0");
     region.list = regionsEnter.merge(regions).attr("class", $$.classRegion.bind($$));
+    region.list.each(function (d) {
+      var _d$label,
+        g = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this);
+      if (g.select("text").size() === 0 && (_d$label = d.label) != null && _d$label.text) {
+        (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this).append("text").style("opacity", "0");
+      }
+    });
   },
   redrawRegion: function redrawRegion(withTransition) {
     var _this = this,
       $$ = this,
       region = $$.$el.region,
       $T = $$.$T,
-      regions = region.list.select("rect");
+      regions = region.list.select("rect"),
+      label = region.list.selectAll("text");
     regions = $T(regions, withTransition).attr("x", $$.regionX.bind($$)).attr("y", $$.regionY.bind($$)).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$));
+    label = $T(label, withTransition).attr("transform", function (d) {
+      var _d$label2;
+      _newArrowCheck(this, _this);
+      var _ref = (_d$label2 = d.label) != null ? _d$label2 : {},
+        _ref$x = _ref.x,
+        x = _ref$x === void 0 ? 0 : _ref$x,
+        _ref$y = _ref.y,
+        y = _ref$y === void 0 ? 0 : _ref$y,
+        _ref$rotated = _ref.rotated,
+        rotated = _ref$rotated === void 0 ? !1 : _ref$rotated;
+      return "translate(" + ($$.regionX.bind($$)(d) + x) + ", " + ($$.regionY.bind($$)(d) + y) + ")" + (rotated ? " rotate(-90)" : "");
+    }.bind(this)).attr("text-anchor", function (d) {
+      var _d$label3;
+      _newArrowCheck(this, _this);
+      return (_d$label3 = d.label) != null && _d$label3.rotated ? "end" : null;
+    }.bind(this)).attr("dy", "1em").style("fill", function (d) {
+      var _d$label$color, _d$label4;
+      _newArrowCheck(this, _this);
+      return (_d$label$color = (_d$label4 = d.label) == null ? void 0 : _d$label4.color) != null ? _d$label$color : null;
+    }.bind(this)).text(function (d) {
+      var _d$label5;
+      _newArrowCheck(this, _this);
+      return (_d$label5 = d.label) == null ? void 0 : _d$label5.text;
+    }.bind(this));
     return [regions.style("fill-opacity", function (d) {
       _newArrowCheck(this, _this);
       return isValue(d.opacity) ? d.opacity : null;
     }.bind(this)).on("end", function () {
       // remove unnecessary rect after transition
       (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(this.parentNode).selectAll("rect:not([x])").remove();
-    })];
+    }), label.style("opacity", null)];
   },
   getRegionXY: function getRegionXY(type, d) {
     var $$ = this,
@@ -16711,6 +16753,7 @@ function smoothLines(el, type) {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 /**
  * Axis based chart data config options
  */
@@ -25195,7 +25238,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.2-nightly-20230805003715
+ * @version 3.9.2-nightly-20230808003859
  */
 var bb = {
   /**
@@ -25205,7 +25248,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.2-nightly-20230805003715",
+  version: "3.9.2-nightly-20230808003859",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

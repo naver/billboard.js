@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.2-nightly-20230805003715
+ * @version 3.9.2-nightly-20230808003859
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1287,10 +1287,6 @@ var Store = /** @class */ (function () {
 }());
 
 /**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
  * main config options
  */
 var main = {
@@ -1664,13 +1660,21 @@ var main = {
      * @memberof Options
      * @type {Array}
      * @default []
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Region.RegionLabel)
      * @example
      *  regions: [
      *    {
      *      axis: "x",
      *      start: 1,
      *      end: 4,
-     *      class: "region-1-4"
+     *      class: "region-1-4",
+     *      label: {
+     *      	text: "Region Text",
+     *      	x: 5,  // position relative of the initial x coordinate
+     *      	y: 5,  // position relative of the initial y coordinate
+     *      	color: "red",  // color string
+     *      	rotated: true  // make text to show in vertical or horizontal
+     *      }
      *    }
      *  ]
      */
@@ -14655,7 +14659,8 @@ var region = {
         $T(regions.exit())
             .style("opacity", "0")
             .remove();
-        var regionsEnter = regions.enter()
+        var regionsEnter = regions
+            .enter()
             .append("g");
         regionsEnter
             .append("rect")
@@ -14663,16 +14668,35 @@ var region = {
         region.list = regionsEnter
             .merge(regions)
             .attr("class", $$.classRegion.bind($$));
+        region.list.each(function (d) {
+            var _a;
+            var g = select(this);
+            if (g.select("text").size() === 0 && ((_a = d.label) === null || _a === void 0 ? void 0 : _a.text)) {
+                select(this).append("text")
+                    .style("opacity", "0");
+            }
+        });
     },
     redrawRegion: function (withTransition) {
         var $$ = this;
         var region = $$.$el.region, $T = $$.$T;
         var regions = region.list.select("rect");
+        var label = region.list.selectAll("text");
         regions = $T(regions, withTransition)
             .attr("x", $$.regionX.bind($$))
             .attr("y", $$.regionY.bind($$))
             .attr("width", $$.regionWidth.bind($$))
             .attr("height", $$.regionHeight.bind($$));
+        label = $T(label, withTransition)
+            .attr("transform", function (d) {
+            var _a;
+            var _b = (_a = d.label) !== null && _a !== void 0 ? _a : {}, _c = _b.x, x = _c === void 0 ? 0 : _c, _d = _b.y, y = _d === void 0 ? 0 : _d, _e = _b.rotated, rotated = _e === void 0 ? false : _e;
+            return "translate(".concat($$.regionX.bind($$)(d) + x, ", ").concat($$.regionY.bind($$)(d) + y, ")").concat(rotated ? " rotate(-90)" : "");
+        })
+            .attr("text-anchor", function (d) { var _a; return (((_a = d.label) === null || _a === void 0 ? void 0 : _a.rotated) ? "end" : null); })
+            .attr("dy", "1em")
+            .style("fill", function (d) { var _a, _b; return (_b = (_a = d.label) === null || _a === void 0 ? void 0 : _a.color) !== null && _b !== void 0 ? _b : null; })
+            .text(function (d) { var _a; return (_a = d.label) === null || _a === void 0 ? void 0 : _a.text; });
         return [
             regions
                 .style("fill-opacity", function (d) { return (isValue(d.opacity) ? d.opacity : null); })
@@ -14681,7 +14705,8 @@ var region = {
                 select(this.parentNode)
                     .selectAll("rect:not([x])")
                     .remove();
-            })
+            }),
+            label.style("opacity", null)
         ];
     },
     getRegionXY: function (type, d) {
@@ -14885,10 +14910,6 @@ var sizeAxis = {
     }
 };
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 /**
  * Axis based chart data config options
  */
@@ -22741,7 +22762,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.2-nightly-20230805003715
+ * @version 3.9.2-nightly-20230808003859
  */
 var bb = {
     /**
@@ -22751,7 +22772,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.2-nightly-20230805003715",
+    version: "3.9.2-nightly-20230808003859",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

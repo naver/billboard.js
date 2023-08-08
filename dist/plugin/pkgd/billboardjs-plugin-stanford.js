@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.2-nightly-20230805003715
+ * @version 3.9.2-nightly-20230808003859
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -19115,7 +19115,10 @@ function _regeneratorRuntime() {
       if ("executing" === state) throw new Error("Generator is already running");
       if ("completed" === state) {
         if ("throw" === method) throw arg;
-        return doneResult();
+        return {
+          value: void 0,
+          done: !0
+        };
       }
       for (context.method = method, context.arg = arg;;) {
         var delegate = context.delegate;
@@ -19168,7 +19171,7 @@ function _regeneratorRuntime() {
     }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
   }
   function values(iterable) {
-    if (iterable) {
+    if (iterable || "" === iterable) {
       var iteratorMethod = iterable[iteratorSymbol];
       if (iteratorMethod) return iteratorMethod.call(iterable);
       if ("function" == typeof iterable.next) return iterable;
@@ -19181,15 +19184,7 @@ function _regeneratorRuntime() {
         return next.next = next;
       }
     }
-    return {
-      next: doneResult
-    };
-  }
-  function doneResult() {
-    return {
-      value: undefined,
-      done: !0
-    };
+    throw new TypeError(_typeof(iterable) + " is not iterable");
   }
   return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
     value: GeneratorFunctionPrototype,
@@ -25136,7 +25131,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.2-nightly-20230805003715";
+Plugin.version = "3.9.2-nightly-20230808003859";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
