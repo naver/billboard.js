@@ -53,7 +53,7 @@ export default {
 		region.list.each(function(d) {
 			const g = d3Select(this);
 
-			if (g.select("text").size() === 0 && d.label?.text) {
+			if (g.select("text").empty() && d.label?.text) {
 				d3Select(this).append("text")
 					.style("opacity", "0");
 			}
