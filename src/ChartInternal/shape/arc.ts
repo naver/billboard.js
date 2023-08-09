@@ -114,14 +114,24 @@ function getRadiusFn(expandRate = 0) {
  */
 function getAttrTweenFn(fn: (d: IArcData) => string) {
 	return function(d: IArcData): (t: number) => string {
-		const interpolate = d3Interpolate(this._current, d);
+		const getAngleKeyValue = ({startAngle = 0, endAngle = 0, padAngle = 0}) => ({
+			startAngle, endAngle, padAngle
+		});
+
+		// d3.interpolate interpolates id value, if id is given as color string(ex. gold, silver, etc)
+		// to avoid unexpected behavior, interpolate only angle values
+		// https://github.com/naver/billboard.js/issues/3321
+		const interpolate = d3Interpolate(
+			getAngleKeyValue(this._current), getAngleKeyValue(d)
+		);
 
 		this._current = d;
 
 		return function(t: number): string {
-			const interpolated = interpolate(t);
+			const interpolated = interpolate(t) as IArcData;
+			const {data, index, value} = d;
 
-			return fn(interpolated);
+			return fn({...interpolated, data, index, value});
 		};
 	};
 }
@@ -310,7 +320,7 @@ export default {
 			.innerRadius(inner)
 			.outerRadius(outer);
 
-		const newArc = function(d, withoutUpdate) {
+		const newArc = function(d: IArcData, withoutUpdate) {
 			let path: string | null = "M 0 0";
 
 			if (d.value || d.data) {

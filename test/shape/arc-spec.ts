@@ -879,5 +879,31 @@ describe("SHAPE ARC", () => {
 				i++;
 			}, 15);
 		});
+
+		it("when colorish string value is used as data name", done => {
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["red", 120]
+					],
+					type: "donut"
+				},
+				onafterinit: function() {
+					setTimeout(() => {
+						this.focus("red");
+					}, 300);
+			
+					setTimeout(() => {
+						const d = this.$.arc.select(".bb-arc-red").attr("d");
+			
+						// shape shouldn't be an empty path
+						expect(d).to.not.be.equal("M 0 0");
+
+						done();
+					}, 500);
+				}
+			});			
+		});
 	});
 });
