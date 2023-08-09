@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.2-nightly-20230808003859
+ * @version 3.9.2-nightly-20230809004510
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -14355,105 +14355,84 @@ var grid = {
         // hide if arc type
         grid.main.style("visibility", $$.hasArcType() ? "hidden" : null);
         $$.hideGridFocus();
-        $$.updateXGridLines();
-        $$.updateYGridLines();
+        $$.updateGridLines("x");
+        $$.updateGridLines("y");
     },
     /**
-     * Update X Grid lines
+     * Update Grid lines
+     * @param {string} type x | y
      * @private
      */
-    updateXGridLines: function () {
+    updateGridLines: function (type) {
         var $$ = this;
         var config = $$.config, _a = $$.$el, gridLines = _a.gridLines, main = _a.main, $T = $$.$T;
         var isRotated = config.axis_rotated;
-        config.grid_x_show && $$.updateXGrid();
-        var xLines = main.select(".".concat($GRID.xgridLines))
-            .selectAll(".".concat($GRID.xgridLine))
-            .data(config.grid_x_lines);
+        var isX = type === "x";
+        config["grid_".concat(type, "_show")] && $$["update".concat(type.toUpperCase(), "Grid")]();
+        var lines = main.select(".".concat($GRID["".concat(type, "gridLines")]))
+            .selectAll(".".concat($GRID["".concat(type, "gridLine")]))
+            .data(config["grid_".concat(type, "_lines")]);
         // exit
-        $T(xLines.exit())
+        $T(lines.exit())
             .style("opacity", "0")
             .remove();
         // enter
-        var xgridLine = xLines.enter().append("g");
-        xgridLine.append("line")
+        var gridLine = lines.enter().append("g");
+        gridLine.append("line")
             .style("opacity", "0");
-        xgridLine.append("text")
-            .attr("transform", isRotated ? null : "rotate(-90)")
-            .attr("dy", -5)
-            .style("opacity", "0");
-        xLines = xgridLine.merge(xLines);
-        $T(xLines
-            .attr("class", function (d) { return "".concat($GRID.xgridLine, " ").concat(d.class || "").trim(); })
+        lines = gridLine.merge(lines);
+        lines.each(function (d) {
+            var g = select(this);
+            if (g.select("text").empty() && d.text) {
+                g.append("text")
+                    .style("opacity", "0");
+            }
+        });
+        $T(lines
+            .attr("class", function (d) { return "".concat($GRID["".concat(type, "gridLine")], " ").concat(d.class || "").trim(); })
             .select("text")
             .attr("text-anchor", getGridTextAnchor)
-            .attr("dx", getGridTextDx))
-            .text(function (d) { return d.text; })
-            .style("opacity", null);
-        gridLines.x = xLines;
-    },
-    /**
-     * Update Y Grid lines
-     * @private
-     */
-    updateYGridLines: function () {
-        var $$ = this;
-        var config = $$.config, _a = $$.state, width = _a.width, height = _a.height, $el = $$.$el, $T = $$.$T;
-        var isRotated = config.axis_rotated;
-        config.grid_y_show && $$.updateYGrid();
-        var ygridLines = $el.main.select(".".concat($GRID.ygridLines))
-            .selectAll(".".concat($GRID.ygridLine))
-            .data(config.grid_y_lines);
-        // exit
-        $T(ygridLines.exit())
-            .style("opacity", "0")
-            .remove();
-        // enter
-        var ygridLine = ygridLines.enter().append("g");
-        ygridLine.append("line")
-            .style("opacity", "0");
-        ygridLine.append("text")
-            .attr("transform", isRotated ? "rotate(-90)" : "")
-            .style("opacity", "0");
-        ygridLines = ygridLine.merge(ygridLines);
-        // update
-        var yv = $$.yv.bind($$);
-        $T(ygridLines
-            .attr("class", function (d) { return "".concat($GRID.ygridLine, " ").concat(d.class || "").trim(); })
-            .select("line"))
-            .attr("x1", isRotated ? yv : 0)
-            .attr("x2", isRotated ? yv : width)
-            .attr("y1", isRotated ? 0 : yv)
-            .attr("y2", isRotated ? height : yv)
-            .style("opacity", null);
-        $T(ygridLines.select("text")
-            .attr("text-anchor", getGridTextAnchor)
-            .attr("dx", getGridTextDx))
-            .attr("dy", -5)
-            .attr("x", getGridTextX(isRotated, width, height))
-            .attr("y", yv)
-            .text(function (d) { return d.text; })
-            .style("opacity", null);
-        $el.gridLines.y = ygridLines;
+            .attr("transform", function () { return (isX ?
+            (isRotated ? null : "rotate(-90)") :
+            (isRotated ? "rotate(-90)" : null)); })
+            .attr("dx", getGridTextDx)
+            .attr("dy", -5))
+            .text(function (d) {
+            var _a;
+            return (_a = d.text) !== null && _a !== void 0 ? _a : this.remove();
+        });
+        gridLines[type] = lines;
     },
     redrawGrid: function (withTransition) {
         var $$ = this;
         var isRotated = $$.config.axis_rotated, _a = $$.state, width = _a.width, height = _a.height, gridLines = $$.$el.gridLines, $T = $$.$T;
         var xv = $$.xv.bind($$);
-        var lines = gridLines.x.select("line");
-        var texts = gridLines.x.select("text");
-        lines = $T(lines, withTransition)
+        var yv = $$.yv.bind($$);
+        var xLines = gridLines.x.select("line");
+        var xTexts = gridLines.x.select("text");
+        var yLines = gridLines.y.select("line");
+        var yTexts = gridLines.y.select("text");
+        xLines = $T(xLines, withTransition)
             .attr("x1", isRotated ? 0 : xv)
             .attr("x2", isRotated ? width : xv)
             .attr("y1", isRotated ? xv : 0)
             .attr("y2", isRotated ? xv : height);
-        texts = $T(texts, withTransition)
+        xTexts = $T(xTexts, withTransition)
             .attr("x", getGridTextX(!isRotated, width, height))
-            .attr("y", xv)
-            .text(function (d) { return d.text; });
+            .attr("y", xv);
+        yLines = $T(yLines, withTransition)
+            .attr("x1", isRotated ? yv : 0)
+            .attr("x2", isRotated ? yv : width)
+            .attr("y1", isRotated ? 0 : yv)
+            .attr("y2", isRotated ? height : yv);
+        yTexts = $T(yTexts, withTransition)
+            .attr("x", getGridTextX(isRotated, width, height))
+            .attr("y", yv);
         return [
-            lines.style("opacity", null),
-            texts.style("opacity", null)
+            xLines.style("opacity", null),
+            xTexts.style("opacity", null),
+            yLines.style("opacity", null),
+            yTexts.style("opacity", null)
         ];
     },
     initFocusGrid: function () {
@@ -14628,7 +14607,7 @@ var grid = {
             .remove();
         var gridLines = "grid_".concat(forX ? "x" : "y", "_lines");
         config[gridLines] = config[gridLines].filter(toShow);
-    },
+    }
 };
 
 /**
@@ -14671,7 +14650,7 @@ var region = {
         region.list.each(function (d) {
             var _a;
             var g = select(this);
-            if (g.select("text").size() === 0 && ((_a = d.label) === null || _a === void 0 ? void 0 : _a.text)) {
+            if (g.select("text").empty() && ((_a = d.label) === null || _a === void 0 ? void 0 : _a.text)) {
                 select(this).append("text")
                     .style("opacity", "0");
             }
@@ -22762,7 +22741,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.2-nightly-20230808003859
+ * @version 3.9.2-nightly-20230809004510
  */
 var bb = {
     /**
@@ -22772,7 +22751,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.2-nightly-20230808003859",
+    version: "3.9.2-nightly-20230809004510",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

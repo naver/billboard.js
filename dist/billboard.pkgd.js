@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.2-nightly-20230808003859
+ * @version 3.9.2-nightly-20230809004510
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -42296,14 +42296,15 @@ function smoothLines(el, type) {
     // hide if arc type
     grid.main.style("visibility", $$.hasArcType() ? "hidden" : null);
     $$.hideGridFocus();
-    $$.updateXGridLines();
-    $$.updateYGridLines();
+    $$.updateGridLines("x");
+    $$.updateGridLines("y");
   },
   /**
-   * Update X Grid lines
+   * Update Grid lines
+   * @param {string} type x | y
    * @private
    */
-  updateXGridLines: function updateXGridLines() {
+  updateGridLines: function updateGridLines(type) {
     var _this9 = this,
       $$ = this,
       config = $$.config,
@@ -42312,82 +42313,53 @@ function smoothLines(el, type) {
       main = _$$$$el4.main,
       $T = $$.$T,
       isRotated = config.axis_rotated;
-    config.grid_x_show && $$.updateXGrid();
-    var xLines = main.select("." + $GRID.xgridLines).selectAll("." + $GRID.xgridLine).data(config.grid_x_lines);
+    config["grid_" + type + "_show"] && $$["update" + type.toUpperCase() + "Grid"]();
+    var lines = main.select("." + $GRID[type + "gridLines"]).selectAll("." + $GRID[type + "gridLine"]).data(config["grid_" + type + "_lines"]);
 
     // exit
-    $T(xLines.exit()).style("opacity", "0").remove();
+    $T(lines.exit()).style("opacity", "0").remove();
 
     // enter
-    var xgridLine = xLines.enter().append("g");
-    xgridLine.append("line").style("opacity", "0");
-    xgridLine.append("text").attr("transform", isRotated ? null : "rotate(-90)").attr("dy", -5).style("opacity", "0");
-    xLines = xgridLine.merge(xLines);
-    $T(xLines.attr("class", function (d) {
+    var gridLine = lines.enter().append("g");
+    gridLine.append("line").style("opacity", "0");
+    lines = gridLine.merge(lines);
+    lines.each(function (d) {
+      var g = src_select(this);
+      if (g.select("text").empty() && d.text) {
+        g.append("text").style("opacity", "0");
+      }
+    });
+    $T(lines.attr("class", function (d) {
       _newArrowCheck(this, _this9);
-      return ($GRID.xgridLine + " " + (d.class || "")).trim();
-    }.bind(this)).select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx)).text(function (d) {
+      return ($GRID[type + "gridLine"] + " " + (d.class || "")).trim();
+    }.bind(this)).select("text").attr("text-anchor", getGridTextAnchor).attr("transform", function () {
       _newArrowCheck(this, _this9);
-      return d.text;
-    }.bind(this)).style("opacity", null);
-    gridLines.x = xLines;
+      return type === "x" ? isRotated ? null : "rotate(-90)" : isRotated ? "rotate(-90)" : null;
+    }.bind(this)).attr("dx", getGridTextDx).attr("dy", -5)).text(function (d) {
+      var _d$text;
+      return (_d$text = d.text) != null ? _d$text : this.remove();
+    });
+    gridLines[type] = lines;
   },
-  /**
-   * Update Y Grid lines
-   * @private
-   */
-  updateYGridLines: function updateYGridLines() {
-    var _this10 = this,
-      $$ = this,
-      config = $$.config,
+  redrawGrid: function redrawGrid(withTransition) {
+    var $$ = this,
+      isRotated = $$.config.axis_rotated,
       _$$$state = $$.state,
       width = _$$$state.width,
       height = _$$$state.height,
-      $el = $$.$el,
-      $T = $$.$T,
-      isRotated = config.axis_rotated;
-    config.grid_y_show && $$.updateYGrid();
-    var ygridLines = $el.main.select("." + $GRID.ygridLines).selectAll("." + $GRID.ygridLine).data(config.grid_y_lines);
-
-    // exit
-    $T(ygridLines.exit()).style("opacity", "0").remove();
-
-    // enter
-    var ygridLine = ygridLines.enter().append("g");
-    ygridLine.append("line").style("opacity", "0");
-    ygridLine.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", "0");
-    ygridLines = ygridLine.merge(ygridLines);
-
-    // update
-    var yv = $$.yv.bind($$);
-    $T(ygridLines.attr("class", function (d) {
-      _newArrowCheck(this, _this10);
-      return ($GRID.ygridLine + " " + (d.class || "")).trim();
-    }.bind(this)).select("line")).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? height : yv).style("opacity", null);
-    $T(ygridLines.select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx)).attr("dy", -5).attr("x", getGridTextX(isRotated, width, height)).attr("y", yv).text(function (d) {
-      _newArrowCheck(this, _this10);
-      return d.text;
-    }.bind(this)).style("opacity", null);
-    $el.gridLines.y = ygridLines;
-  },
-  redrawGrid: function redrawGrid(withTransition) {
-    var _this11 = this,
-      $$ = this,
-      isRotated = $$.config.axis_rotated,
-      _$$$state2 = $$.state,
-      width = _$$$state2.width,
-      height = _$$$state2.height,
       gridLines = $$.$el.gridLines,
       $T = $$.$T,
       xv = $$.xv.bind($$),
-      lines = gridLines.x.select("line"),
-      texts = gridLines.x.select("text");
-    lines = $T(lines, withTransition).attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? width : xv).attr("y1", isRotated ? xv : 0).attr("y2", isRotated ? xv : height);
-    texts = $T(texts, withTransition).attr("x", getGridTextX(!isRotated, width, height)).attr("y", xv).text(function (d) {
-      _newArrowCheck(this, _this11);
-      return d.text;
-    }.bind(this));
-    return [lines.style("opacity", null), texts.style("opacity", null)];
+      yv = $$.yv.bind($$);
+    var xLines = gridLines.x.select("line"),
+      xTexts = gridLines.x.select("text"),
+      yLines = gridLines.y.select("line"),
+      yTexts = gridLines.y.select("text");
+    xLines = $T(xLines, withTransition).attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? width : xv).attr("y1", isRotated ? xv : 0).attr("y2", isRotated ? xv : height);
+    xTexts = $T(xTexts, withTransition).attr("x", getGridTextX(!isRotated, width, height)).attr("y", xv);
+    yLines = $T(yLines, withTransition).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? height : yv);
+    yTexts = $T(yTexts, withTransition).attr("x", getGridTextX(isRotated, width, height)).attr("y", yv);
+    return [xLines.style("opacity", null), xTexts.style("opacity", null), yLines.style("opacity", null), yTexts.style("opacity", null)];
   },
   initFocusGrid: function initFocusGrid() {
     var $$ = this,
@@ -42415,16 +42387,16 @@ function smoothLines(el, type) {
    * @private
    */
   showGridFocus: function showGridFocus(data) {
-    var _this12 = this,
+    var _this10 = this,
       $$ = this,
       config = $$.config,
-      _$$$state3 = $$.state,
-      width = _$$$state3.width,
-      height = _$$$state3.height,
+      _$$$state2 = $$.state,
+      width = _$$$state2.width,
+      height = _$$$state2.height,
       isRotated = config.axis_rotated,
       focusEl = $$.$el.main.selectAll("line." + $FOCUS.xgridFocus + ", line." + $FOCUS.ygridFocus),
       dataToShow = (data || [focusEl.datum()]).filter(function (d) {
-        _newArrowCheck(this, _this12);
+        _newArrowCheck(this, _this10);
         return d && isValue($$.getBaseValue(d));
       }.bind(this));
     // Hide when bubble/scatter/stanford plot exists
@@ -42434,7 +42406,7 @@ function smoothLines(el, type) {
     var isEdge = config.grid_focus_edge && !config.tooltip_grouped,
       xx = $$.xx.bind($$);
     focusEl.style("visibility", null).data(dataToShow.concat(dataToShow)).each(function (d) {
-      var _this13 = this,
+      var _this11 = this,
         el = src_select(this),
         pos = {
           x: xx(d),
@@ -42463,7 +42435,7 @@ function smoothLines(el, type) {
         ] : [isEdge && isY2 ? pos.x : null, pos.y, isEdge && !isY2 ? pos.x : width, pos.y];
       }
       ["x1", "y1", "x2", "y2"].forEach(function (v, i) {
-        _newArrowCheck(this, _this13);
+        _newArrowCheck(this, _this11);
         return el.attr(v, xy[i]);
       }.bind(this));
     });
@@ -42472,9 +42444,9 @@ function smoothLines(el, type) {
   },
   hideGridFocus: function hideGridFocus() {
     var $$ = this,
-      _$$$state4 = $$.state,
-      inputType = _$$$state4.inputType,
-      resizing = _$$$state4.resizing,
+      _$$$state3 = $$.state,
+      inputType = _$$$state3.inputType,
+      resizing = _$$$state3.resizing,
       main = $$.$el.main;
     if (inputType === "mouse" || !resizing) {
       main.selectAll("line." + $FOCUS.xgridFocus + ", line." + $FOCUS.ygridFocus).style("visibility", "hidden");
@@ -42483,11 +42455,11 @@ function smoothLines(el, type) {
   },
   updateGridFocus: function updateGridFocus() {
     var $$ = this,
-      _$$$state5 = $$.state,
-      inputType = _$$$state5.inputType,
-      width = _$$$state5.width,
-      height = _$$$state5.height,
-      resizing = _$$$state5.resizing,
+      _$$$state4 = $$.state,
+      inputType = _$$$state4.inputType,
+      width = _$$$state4.width,
+      height = _$$$state4.height,
+      resizing = _$$$state4.resizing,
       grid = $$.$el.grid,
       xgridFocus = grid.main.select("line." + $FOCUS.xgridFocus);
     if (inputType === "touch") {
@@ -42506,14 +42478,14 @@ function smoothLines(el, type) {
     return !0;
   },
   generateGridData: function generateGridData(type, scale) {
-    var _this14 = this,
+    var _this12 = this,
       $$ = this,
       tickNum = $$.$el.main.select("." + $AXIS.axisX).selectAll(".tick").size(),
       gridData = [];
     if (type === "year") {
       var xDomain = $$.getXDomain(),
         _xDomain$map = xDomain.map(function (v) {
-          _newArrowCheck(this, _this14);
+          _newArrowCheck(this, _this12);
           return v.getFullYear();
         }.bind(this)),
         firstYear = _xDomain$map[0],
@@ -42526,7 +42498,7 @@ function smoothLines(el, type) {
       if (gridData.length > tickNum) {
         // use only int
         gridData = gridData.filter(function (d) {
-          _newArrowCheck(this, _this14);
+          _newArrowCheck(this, _this12);
           return (d + "").indexOf(".") < 0;
         }.bind(this));
       }
@@ -42534,31 +42506,31 @@ function smoothLines(el, type) {
     return gridData;
   },
   getGridFilterToRemove: function getGridFilterToRemove(params) {
-    var _this15 = this;
+    var _this13 = this;
     return params ? function (line) {
-      var _this16 = this;
-      _newArrowCheck(this, _this15);
+      var _this14 = this;
+      _newArrowCheck(this, _this13);
       var found = !1;
       (isArray(params) ? params.concat() : [params]).forEach(function (param) {
-        _newArrowCheck(this, _this16);
+        _newArrowCheck(this, _this14);
         if ("value" in param && line.value === param.value || "class" in param && line.class === param.class) {
           found = !0;
         }
       }.bind(this));
       return found;
     }.bind(this) : function () {
-      _newArrowCheck(this, _this15);
+      _newArrowCheck(this, _this13);
       return !0;
     }.bind(this);
   },
   removeGridLines: function removeGridLines(params, forX) {
-    var _this17 = this,
+    var _this15 = this,
       $$ = this,
       config = $$.config,
       $T = $$.$T,
       toRemove = $$.getGridFilterToRemove(params),
       toShow = function (line) {
-        _newArrowCheck(this, _this17);
+        _newArrowCheck(this, _this15);
         return !toRemove(line);
       }.bind(this),
       classLines = forX ? $GRID.xgridLines : $GRID.ygridLines,
@@ -42604,7 +42576,7 @@ function smoothLines(el, type) {
     region.list.each(function (d) {
       var _d$label,
         g = src_select(this);
-      if (g.select("text").size() === 0 && (_d$label = d.label) != null && _d$label.text) {
+      if (g.select("text").empty() && (_d$label = d.label) != null && _d$label.text) {
         src_select(this).append("text").style("opacity", "0");
       }
     });
@@ -53125,7 +53097,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.2-nightly-20230808003859
+ * @version 3.9.2-nightly-20230809004510
  */
 var bb = {
   /**
@@ -53135,7 +53107,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.2-nightly-20230808003859",
+  version: "3.9.2-nightly-20230809004510",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
