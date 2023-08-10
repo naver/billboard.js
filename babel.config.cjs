@@ -4,7 +4,7 @@ module.exports = function(api) {
 	const presets = [
 		"@babel/typescript",
 		[
-			"@babel/env", {
+			"@babel/preset-env", {
 				"targets": {
 					"browsers": [
 						"last 2 versions",
@@ -20,11 +20,8 @@ module.exports = function(api) {
 	];
 
 	const plugins = [
+		["@babel/plugin-transform-runtime"],
 		[
-			"@babel/plugin-transform-runtime", {
-				"useESModules": true
-			}
-		], [
 			"@babel/plugin-proposal-class-properties", {
 				"loose": true
 			}

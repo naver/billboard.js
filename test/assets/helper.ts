@@ -62,7 +62,7 @@ const simulator = (el, option = {}, callback) => {
  * @param {Object} [pos={clientX: 100, clientY: 100}]
  * @param {Number} [dataIndex=2]
  */
-const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}, target) => {
+const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}, target?: SVGElement) => {
 	const {eventRect} = hoverChart.internal.$el;
 
 	fireEvent(target ?? eventRect?.node(), eventName, pos, hoverChart);
