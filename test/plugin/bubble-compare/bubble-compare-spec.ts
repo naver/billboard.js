@@ -36,7 +36,13 @@ describe("PLUGIN: BUBBLE-COMPARE", () => {
 				["Andorra", {"y": 464, "z": 76177}],
 			]
 		},
-		plugins: [new BubbleCompare({minR: 11, maxR: 74, expandScale: 1.1})]
+		plugins: [
+			new BubbleCompare({
+				minR: 11,
+				maxR: 74,
+				expandScale: 1.1
+			})
+		]
 	};
 
 	beforeEach(() => {
@@ -44,12 +50,37 @@ describe("PLUGIN: BUBBLE-COMPARE", () => {
 	});
 
 	it("Every bubble radius should be in given radius range", () => {
-		chart.$.main.selectAll("circle").each(function() {
+		chart.$.circles.each(function() {
 			const circle = d3Select(this);
 			const {minR, maxR} = chart.plugins[0].options;
 			const circleRadius = parseInt(circle.attr("r"), 10);
 
 			expect(circleRadius).to.be.within(minR, maxR);
 		});
+	});
+
+	it("check min and max radius", () => {
+		const {circles} = chart.$;
+		const {minR, maxR} = chart.plugins[0].options;
+
+		const max = Math.floor(circles.filter(d => d.id === "United States").attr("r"));
+		const min = Math.floor(circles.filter(d => d.id === "Andorra").attr("r"));
+
+		expect(max).to.be.equal(maxR);
+		expect(min).to.be.equal(minR);
+	});
+
+	it("check when bubble is expanded", () => {
+		const {$: {circles}, internal: {$el}} = chart;
+		const {expandScale} = chart.plugins[0].options;
+
+		// when	
+		util.hoverChart(chart, "mousemove", {clientX: 50, clientY: 70});
+		
+		const r = circles.filter(d => d.id === "United States").attr("r");
+		
+		// bubble radius should be expanded
+		expect(+r).to.be.equal(74 * expandScale);
+		expect($el.eventRect.style("cursor")).to.be.equal("pointer");
 	});
 });

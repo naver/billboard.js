@@ -166,7 +166,7 @@ export default {
 	 * @param {number} index Index of eventRect
 	 * @param {Array} mouse x and y coordinate value
 	 */
-	dispatchEvent(type: string, index: number, mouse): void {
+	dispatchEvent(type: string, index: number, mouse: [number, number]): void {
 		const $$ = this;
 		const {config, state: {
 			eventReceiver, hasAxis, hasRadar, hasTreemap
