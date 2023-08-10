@@ -1,3 +1,10 @@
+## [3.9.3](https://github.com/naver/billboard.js/compare/3.9.2...3.9.3) (2023-08-09)
+
+
+### Bug Fixes
+
+* **arc:** Fix shape rendering when data id equivalent of color string ([047d1db](https://github.com/naver/billboard.js/commit/047d1db68bd75efd8402a7a83aa7a04405745880)), closes [#3321](https://github.com/naver/billboard.js/issues/3321)
+
 ## [3.9.2](https://github.com/naver/billboard.js/compare/3.9.1...3.9.2) (2023-08-04)
 
 
