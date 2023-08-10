@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.2-nightly-20230809004510
+ * @version 3.9.3-nightly-20230810003608
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -16764,10 +16764,6 @@ var options = [
 ];
 
 /**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
  * Get radius functions
  * @param {number} expandRate Expand rate number.
  *   - If 0, means for "normal" radius.
@@ -16852,11 +16848,23 @@ function getRadiusFn(expandRate) {
  */
 function getAttrTweenFn(fn) {
     return function (d) {
-        var interpolate$1 = interpolate(this._current, d);
+        var getAngleKeyValue = function (_a) {
+            var _b = _a.startAngle, startAngle = _b === void 0 ? 0 : _b, _c = _a.endAngle, endAngle = _c === void 0 ? 0 : _c, _d = _a.padAngle, padAngle = _d === void 0 ? 0 : _d;
+            return ({
+                startAngle: startAngle,
+                endAngle: endAngle,
+                padAngle: padAngle
+            });
+        };
+        // d3.interpolate interpolates id value, if id is given as color string(ex. gold, silver, etc)
+        // to avoid unexpected behavior, interpolate only angle values
+        // https://github.com/naver/billboard.js/issues/3321
+        var interpolate$1 = interpolate(getAngleKeyValue(this._current), getAngleKeyValue(d));
         this._current = d;
         return function (t) {
             var interpolated = interpolate$1(t);
-            return fn(interpolated);
+            var data = d.data, index = d.index, value = d.value;
+            return fn(_assign(_assign({}, interpolated), { data: data, index: index, value: value }));
         };
     };
 }
@@ -22741,7 +22749,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.2-nightly-20230809004510
+ * @version 3.9.3-nightly-20230810003608
  */
 var bb = {
     /**
@@ -22751,7 +22759,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.2-nightly-20230809004510",
+    version: "3.9.3-nightly-20230810003608",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

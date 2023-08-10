@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.2-nightly-20230809004510
+ * @version 3.9.3-nightly-20230810003608
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -18633,6 +18633,9 @@ var options = [data_axis, axis_axis, common_grid];
 var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(12);
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
 
+
+function arc_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+function arc_objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? arc_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : arc_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -18732,17 +18735,43 @@ function getRadiusFn(expandRate) {
  */
 function getAttrTweenFn(fn) {
   return function (d) {
-    var interpolate = (0,external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_.interpolate)(this._current, d);
+    var _this2 = this,
+      getAngleKeyValue = function (_ref) {
+        var _ref$startAngle = _ref.startAngle,
+          startAngle = _ref$startAngle === void 0 ? 0 : _ref$startAngle,
+          _ref$endAngle = _ref.endAngle,
+          endAngle = _ref$endAngle === void 0 ? 0 : _ref$endAngle,
+          _ref$padAngle = _ref.padAngle,
+          padAngle = _ref$padAngle === void 0 ? 0 : _ref$padAngle;
+        _newArrowCheck(this, _this2);
+        return {
+          startAngle: startAngle,
+          endAngle: endAngle,
+          padAngle: padAngle
+        };
+      }.bind(this),
+      interpolate = (0,external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_.interpolate)(getAngleKeyValue(this._current), getAngleKeyValue(d));
+    // d3.interpolate interpolates id value, if id is given as color string(ex. gold, silver, etc)
+    // to avoid unexpected behavior, interpolate only angle values
+    // https://github.com/naver/billboard.js/issues/3321
+
     this._current = d;
     return function (t) {
-      var interpolated = interpolate(t);
-      return fn(interpolated);
+      var interpolated = interpolate(t),
+        data = d.data,
+        index = d.index,
+        value = d.value;
+      return fn(arc_objectSpread(arc_objectSpread({}, interpolated), {}, {
+        data: data,
+        index: index,
+        value: value
+      }));
     };
   };
 }
 /* harmony default export */ var arc = ({
   initPie: function initPie() {
-    var _this2 = this,
+    var _this3 = this,
       $$ = this,
       config = $$.config,
       dataType = config.data_type,
@@ -18750,10 +18779,10 @@ function getAttrTweenFn(fn) {
       startingAngle = config[dataType + "_startingAngle"] || 0,
       padAngle = (padding ? padding * .01 : config[dataType + "_padAngle"]) || 0;
     $$.pie = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.pie)().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).value(function (d) {
-      var _this3 = this;
-      _newArrowCheck(this, _this2);
+      var _this4 = this;
+      _newArrowCheck(this, _this3);
       return d.values.reduce(function (a, b) {
-        _newArrowCheck(this, _this3);
+        _newArrowCheck(this, _this4);
         return a + b.value;
       }.bind(this), 0);
     }.bind(this)).sort($$.getSortCompareFn.bind($$)(!0));
@@ -18837,7 +18866,7 @@ function getAttrTweenFn(fn) {
     return startAngle;
   },
   updateAngle: function updateAngle(dValue) {
-    var _this4 = this,
+    var _this5 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -18858,7 +18887,7 @@ function getAttrTweenFn(fn) {
     }
     pie($$.filterTargetsToShow()).forEach(function (t, i) {
       var _d$data;
-      _newArrowCheck(this, _this4);
+      _newArrowCheck(this, _this5);
       if (!found && t.data.id === ((_d$data = d.data) == null ? void 0 : _d$data.id)) {
         found = !0;
         d = t;
@@ -18909,7 +18938,7 @@ function getAttrTweenFn(fn) {
    * @private
    */
   getSvgArcExpanded: function getSvgArcExpanded(rate) {
-    var _this5 = this;
+    var _this6 = this;
     if (rate === void 0) {
       rate = 1;
     }
@@ -18920,7 +18949,7 @@ function getAttrTweenFn(fn) {
       corner = _getRadiusFn$call2.corner,
       arc = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.arc)().innerRadius(inner).outerRadius(outer);
     return function (d) {
-      _newArrowCheck(this, _this5);
+      _newArrowCheck(this, _this6);
       var updated = $$.updateAngle(d),
         outerR = outer(updated);
       var cornerR = 0;
@@ -18940,7 +18969,7 @@ function getAttrTweenFn(fn) {
    * @private
    */
   transformForArcLabel: function transformForArcLabel(d) {
-    var _this6 = this,
+    var _this7 = this,
       $$ = this,
       config = $$.config,
       radiusExpanded = $$.state.radiusExpanded,
@@ -18961,14 +18990,14 @@ function getAttrTweenFn(fn) {
         }
         var c = this.svgArc.centroid(updated),
           _c$map = c.map(function (v) {
-            _newArrowCheck(this, _this6);
+            _newArrowCheck(this, _this7);
             return isNaN(v) ? 0 : v;
           }.bind(this)),
           x = _c$map[0],
           y = _c$map[1],
           h = Math.sqrt(x * x + y * y);
         var ratio = (_filter$map = ["donut", "pie", "polar"].filter($$.hasType.bind($$)).map(function (v) {
-          _newArrowCheck(this, _this6);
+          _newArrowCheck(this, _this7);
           return config[v + "_label_ratio"];
         }.bind(this))) == null ? void 0 : _filter$map[0];
         if (ratio) {
@@ -19010,14 +19039,14 @@ function getAttrTweenFn(fn) {
     }
   },
   expandArc: function expandArc(targetIds) {
-    var _this7 = this,
+    var _this8 = this,
       $$ = this,
       transiting = $$.state.transiting,
       $el = $$.$el;
     // MEMO: avoid to cancel transition
     if (transiting) {
       var interval = setInterval(function () {
-        _newArrowCheck(this, _this7);
+        _newArrowCheck(this, _this8);
         if (!transiting) {
           clearInterval(interval);
           $el.legend.selectAll("." + $FOCUS.legendItemFocused).size() > 0 && $$.expandArc(targetIds);
@@ -19036,7 +19065,7 @@ function getAttrTweenFn(fn) {
     });
   },
   unexpandArc: function unexpandArc(targetIds) {
-    var _this8 = this,
+    var _this9 = this,
       $$ = this,
       transiting = $$.state.transiting,
       svg = $$.$el.svg;
@@ -19045,7 +19074,7 @@ function getAttrTweenFn(fn) {
     }
     var newTargetIds = $$.mapToTargetIds(targetIds);
     svg.selectAll($$.selectorTargets(newTargetIds, "." + $ARC.chartArc)).selectAll("path").transition().duration(function (d) {
-      _newArrowCheck(this, _this8);
+      _newArrowCheck(this, _this9);
       return $$.getExpandConfig(d.data.id, "duration");
     }.bind(this)).attrTween("d", getAttrTweenFn($$.svgArc.bind($$)));
     svg.selectAll("" + $ARC.arc).style("opacity", null);
@@ -19079,30 +19108,30 @@ function getAttrTweenFn(fn) {
     return $$.isDonutType(id) && config.donut_expand || $$.isGaugeType(id) && config.gauge_expand || $$.isPieType(id) && config.pie_expand;
   },
   shouldShowArcLabel: function shouldShowArcLabel() {
-    var _this9 = this,
+    var _this10 = this,
       $$ = this,
       config = $$.config;
     return ["donut", "gauge", "pie", "polar"].some(function (v) {
-      _newArrowCheck(this, _this9);
+      _newArrowCheck(this, _this10);
       return $$.hasType(v) && config[v + "_label_show"];
     }.bind(this));
   },
   getArcLabelFormat: function getArcLabelFormat() {
-    var _this10 = this,
+    var _this11 = this,
       $$ = this,
       config = $$.config,
       format = function (v) {
-        _newArrowCheck(this, _this10);
+        _newArrowCheck(this, _this11);
         return v;
       }.bind(this);
     ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).forEach(function (v) {
-      _newArrowCheck(this, _this10);
+      _newArrowCheck(this, _this11);
       format = config[v + "_label_format"];
     }.bind(this));
     return isFunction(format) ? format.bind($$.api) : format;
   },
   updateTargetsForArc: function updateTargetsForArc(targets) {
-    var _this11 = this,
+    var _this12 = this,
       $$ = this,
       $el = $$.$el,
       hasGauge = $$.hasType("gauge"),
@@ -19111,7 +19140,7 @@ function getAttrTweenFn(fn) {
       classFocus = $$.classFocus.bind($$),
       chartArcs = $el.main.select("." + $ARC.chartArcs),
       mainPieUpdate = chartArcs.selectAll("." + $ARC.chartArc).data($$.pie(targets)).attr("class", function (d) {
-        _newArrowCheck(this, _this11);
+        _newArrowCheck(this, _this12);
         return classChartArc(d) + classFocus(d.data);
       }.bind(this)),
       mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc).call(this.setCssRule(!1, "." + $ARC.chartArcs + " text", ["pointer-events:none", "text-anchor:middle"]));
@@ -19178,7 +19207,7 @@ function getAttrTweenFn(fn) {
     return !1;
   },
   redrawArc: function redrawArc(duration, durationForExit, withTransform) {
-    var _this12 = this,
+    var _this13 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -19188,10 +19217,10 @@ function getAttrTweenFn(fn) {
       mainArc = main.selectAll("." + $ARC.arcs).selectAll("." + $ARC.arc).data($$.arcData.bind($$));
     mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove();
     mainArc = mainArc.enter().append("path").attr("class", $$.getClass("arc", !0)).style("fill", function (d) {
-      _newArrowCheck(this, _this12);
+      _newArrowCheck(this, _this13);
       return $$.color(d.data);
     }.bind(this)).style("cursor", function (d) {
-      _newArrowCheck(this, _this12);
+      _newArrowCheck(this, _this13);
       return isSelectable != null && isSelectable.bind != null && isSelectable.bind($$.api)(d) ? "pointer" : null;
     }.bind(this)).style("opacity", "0").each(function (d) {
       if ($$.isGaugeType(d.data)) {
@@ -19205,19 +19234,19 @@ function getAttrTweenFn(fn) {
       $$.hasMultiArcGauge() && $$.redrawMultiArcGauge();
     }
     mainArc.attr("transform", function (d) {
-      _newArrowCheck(this, _this12);
+      _newArrowCheck(this, _this13);
       return !$$.isGaugeType(d.data) && withTransform ? "scale(0)" : "";
     }.bind(this)).style("opacity", function (d) {
       return d === this._current ? "0" : null;
     }).each(function () {
-      _newArrowCheck(this, _this12);
+      _newArrowCheck(this, _this13);
       state.transiting = !0;
     }.bind(this)).transition().duration(duration).attrTween("d", function (d) {
-      var _this13 = this,
+      var _this14 = this,
         updated = $$.updateAngle(d);
       if (!updated) {
         return function () {
-          _newArrowCheck(this, _this13);
+          _newArrowCheck(this, _this14);
           return "M 0 0";
         }.bind(this);
       }
@@ -19236,7 +19265,7 @@ function getAttrTweenFn(fn) {
         return $$.getArc(interpolated, !0);
       };
     }).attr("transform", withTransform ? "scale(1)" : "").style("fill", function (d) {
-      _newArrowCheck(this, _this12);
+      _newArrowCheck(this, _this13);
       var color;
       if ($$.levelColor) {
         color = $$.levelColor(d.data.values[0].value);
@@ -19271,7 +19300,7 @@ function getAttrTweenFn(fn) {
    * @private
    */
   redrawNeedle: function redrawNeedle() {
-    var _this14 = this,
+    var _this15 = this,
       $$ = this,
       $el = $$.$el,
       config = $$.config,
@@ -19291,7 +19320,7 @@ function getAttrTweenFn(fn) {
       bottomRy = config.arc_needle_bottom_ry,
       needleAngle = $$.getNeedleAngle(),
       updateNeedleValue = function () {
-        _newArrowCheck(this, _this14);
+        _newArrowCheck(this, _this15);
         var title = $$.getArcTitleWithNeedleValue();
         title && $$.setArcTitle(title);
       }.bind(this); // needle options
@@ -19307,14 +19336,14 @@ function getAttrTweenFn(fn) {
        * @private
        */
       $el.needle.updateHelper = function (v, updateConfig) {
-        var _this15 = this;
+        var _this16 = this;
         if (updateConfig === void 0) {
           updateConfig = !1;
         }
-        _newArrowCheck(this, _this14);
+        _newArrowCheck(this, _this15);
         if ($el.needle.style("display") !== "none") {
           $$.$T($el.needle).style("transform", "rotate(" + $$.getNeedleAngle(v) + "deg)").call(endall, function () {
-            _newArrowCheck(this, _this15);
+            _newArrowCheck(this, _this16);
             updateConfig && (config.arc_needle_value = v);
             updateNeedleValue();
           }.bind(this));
@@ -19360,7 +19389,7 @@ function getAttrTweenFn(fn) {
     return (startingAngle + radian) * (180 / Math.PI);
   },
   redrawBackgroundArcs: function redrawBackgroundArcs() {
-    var _this16 = this,
+    var _this17 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -19374,11 +19403,11 @@ function getAttrTweenFn(fn) {
       var index = 0;
       backgroundArc = backgroundArc.selectAll("path." + $ARC.chartArcsBackground).data($$.data.targets);
       backgroundArc.enter().append("path").attr("class", function (d, i) {
-        _newArrowCheck(this, _this16);
+        _newArrowCheck(this, _this17);
         return $ARC.chartArcsBackground + " " + $ARC.chartArcsBackground + "-" + i;
-      }.bind(this)).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", function (_ref2) {
-        var id = _ref2.id;
-        _newArrowCheck(this, _this16);
+      }.bind(this)).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", function (_ref3) {
+        var id = _ref3.id;
+        _newArrowCheck(this, _this17);
         if (showEmptyTextLabel || state.hiddenTargetIds.indexOf(id) >= 0) {
           return "M 0 0";
         }
@@ -19395,7 +19424,7 @@ function getAttrTweenFn(fn) {
       backgroundArc.exit().remove();
     } else {
       backgroundArc.attr("d", showEmptyTextLabel ? "M 0 0" : function () {
-        _newArrowCheck(this, _this16);
+        _newArrowCheck(this, _this17);
         var d = {
           data: [{
             value: config.gauge_max
@@ -19408,7 +19437,7 @@ function getAttrTweenFn(fn) {
     }
   },
   bindArcEvent: function bindArcEvent(arc) {
-    var _this17 = this,
+    var _this18 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -19456,7 +19485,7 @@ function getAttrTweenFn(fn) {
         selectArc(this, arcData, id);
         $$.setOverOut(!0, arcData);
       }).on("mouseout", function (event, d) {
-        _newArrowCheck(this, _this17);
+        _newArrowCheck(this, _this18);
         if (state.transiting) {
           // skip while transiting
           return;
@@ -19477,7 +19506,7 @@ function getAttrTweenFn(fn) {
     // touch events
     if (isTouch && $$.hasArcType() && !$$.radars) {
       var getEventArc = function (event) {
-        _newArrowCheck(this, _this17);
+        _newArrowCheck(this, _this18);
         var touch = event.changedTouches[0],
           eventArc = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
         return eventArc;
@@ -19500,7 +19529,7 @@ function getAttrTweenFn(fn) {
     }
   },
   redrawArcText: function redrawArcText(duration) {
-    var _this18 = this,
+    var _this19 = this,
       $$ = this,
       config = $$.config,
       state = $$.state,
@@ -19513,13 +19542,13 @@ function getAttrTweenFn(fn) {
     // for gauge type, update text when has no title & multi data
     if (!(hasGauge && $$.data.targets.length === 1 && config.gauge_title)) {
       text = main.selectAll("." + $ARC.chartArc).select("text").style("opacity", "0").attr("class", function (d) {
-        _newArrowCheck(this, _this18);
+        _newArrowCheck(this, _this19);
         return $$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null;
       }.bind(this)).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
-        _newArrowCheck(this, _this18);
+        _newArrowCheck(this, _this19);
         return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? Math.round(state.radius / 5) + "px" : null;
       }.bind(this)).transition().duration(duration).style("opacity", function (d) {
-        _newArrowCheck(this, _this18);
+        _newArrowCheck(this, _this19);
         return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0";
       }.bind(this));
       hasMultiArcGauge && text.attr("dy", "-.1em");
@@ -19545,14 +19574,14 @@ function getAttrTweenFn(fn) {
    * @private
    */
   getArcElementByIdOrIndex: function getArcElementByIdOrIndex(value) {
-    var _this19 = this,
+    var _this20 = this,
       $$ = this,
       arcs = $$.$el.arcs,
       filterFn = isNumber(value) ? function (d) {
-        _newArrowCheck(this, _this19);
+        _newArrowCheck(this, _this20);
         return d.index === value;
       }.bind(this) : function (d) {
-        _newArrowCheck(this, _this19);
+        _newArrowCheck(this, _this20);
         return d.data.id === value;
       }.bind(this),
       _arcs;
@@ -25210,7 +25239,7 @@ var _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.2-nightly-20230809004510
+ * @version 3.9.3-nightly-20230810003608
  */
 var bb = {
   /**
@@ -25220,7 +25249,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.2-nightly-20230809004510",
+  version: "3.9.3-nightly-20230810003608",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
