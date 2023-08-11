@@ -33,7 +33,7 @@
 		"build:theme": "cross-env NODE_ENV=theme webpack",
 		"build:production:analyzer": "cross-env ANALYZER=true npm run build:production",
 		"build:packaged:analyzer": "cross-env ANALYZER=true npm run build:packaged",
-		"build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MODE=min webpack && cross-env NODE_ENV=plugin MODE=pkgd webpack",
+		"build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MODE=min webpack && cross-env NODE_ENV=plugin MODE=pkgd webpack && cross-env NODE_ENV=plugin MODE=pkgd-min webpack",
 		"build:plugin:types": "node ./config/type.d-plugin.js",
 		"release": "semantic-release",
 		"lint": "npm run lint:types && eslint src --ext .ts",

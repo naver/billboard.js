@@ -51,7 +51,8 @@ module.exports = function(config) {
 						test: /(\.[jt]s)$/,
 						loader: "babel-loader",
 						exclude: {
-							and: [/node_modules/]
+							and: [/node_modules/],
+							not: [/(d3\-.*)$/, /internmap/]
 						}
 					}
 				]
