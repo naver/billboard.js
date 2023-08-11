@@ -76,7 +76,7 @@ export default class BubbleCompare extends Plugin {
 	}
 
 	changeCursorPoint(): void {
-		this.$$.$el.svg.select(`.bb-event-rect`).style("cursor", "pointer");
+		this.$$.$el.eventRect.style("cursor", "pointer");
 	}
 
 	findClosest(values, pos): number {
