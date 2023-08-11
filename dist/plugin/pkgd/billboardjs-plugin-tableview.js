@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230810003608
+ * @version 3.9.3-nightly-20230811004550
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -19481,7 +19481,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.3-nightly-20230810003608";
+Plugin.version = "3.9.3-nightly-20230811004550";
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
 /**
@@ -24101,7 +24101,8 @@ var TableView = /*#__PURE__*/function (_Plugin) {
     doNotUpdate || this.generateTable();
   };
   _proto.$willDestroy = function $willDestroy() {
-    this.element.parentNode.removeChild(this.element);
+    var _this$element$parentN;
+    (_this$element$parentN = this.element.parentNode) == null ? void 0 : _this$element$parentN.removeChild(this.element);
 
     // remove default css style when left one chart instance
     if (this.$$.charts.length === 1) {
