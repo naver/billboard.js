@@ -14,7 +14,8 @@ module.exports = function(api) {
 				},
 				"modules": false,
 				"loose": true,
-				"useBuiltIns": false
+				"useBuiltIns": false,
+				exclude: ["@babel/plugin-transform-block-scoping"]
 			}
 		]
 	];
