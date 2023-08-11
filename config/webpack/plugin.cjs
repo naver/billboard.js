@@ -40,9 +40,9 @@ const config = {
 };
 
 module.exports = (common, env) => {
-	const {MODE} = env;
+	const mode = env?.MODE;
 
-	if (env && /^pkgd/.test(MODE)) {
+	if (env && /^pkgd/.test(mode)) {
 		delete common.externals;
 
 		config.output.path = `${distPath}/pkgd`;
@@ -51,7 +51,7 @@ module.exports = (common, env) => {
 			config.entry[`${key}.pkgd`] = ["core-js/stable", config.entry[key]];
 			delete config.entry[key];
 		}
-	} else if (!MODE) {
+	} else if (!mode) {
 		config.plugins.push(new CleanWebpackPlugin({
 			cleanOnceBeforeBuildPatterns: [distPath],
 			verbose: true,
@@ -61,7 +61,7 @@ module.exports = (common, env) => {
 	}
 
 	// minify for plugin & plugin pkgd
-	if (/min$/.test(MODE)) {
+	if (/min$/.test(mode)) {
 		config.mode = "production";
 		config.output.filename = config.output.filename.replace(".js", ".min.js");
 
