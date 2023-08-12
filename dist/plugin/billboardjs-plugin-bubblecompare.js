@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230811004550
+ * @version 3.9.3-nightly-20230812004619
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -132,7 +132,7 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
  * @example
  *   bb.plugin.stanford.version;  // ex) 1.9.0
  */
-var Plugin = /*#__PURE__*/function () {
+let Plugin = /*#__PURE__*/function () {
   /**
    * Constructor
    * @param {Any} options config option object
@@ -186,7 +186,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.3-nightly-20230811004550";
+Plugin.version = "3.9.3-nightly-20230812004619";
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
 
@@ -236,7 +236,7 @@ Plugin.version = "3.9.3-nightly-20230811004550";
  *     ]
  * })
  */
-var BubbleCompare = /*#__PURE__*/function (_Plugin) {
+let BubbleCompare = /*#__PURE__*/function (_Plugin) {
   _inheritsLoose(BubbleCompare, _Plugin);
   function BubbleCompare(options) {
     var _this = _Plugin.call(this, options) || this;
@@ -245,13 +245,13 @@ var BubbleCompare = /*#__PURE__*/function (_Plugin) {
   }
   var _proto = BubbleCompare.prototype;
   _proto.$init = function $init() {
-    var $$ = this.$$;
+    const $$ = this.$$;
     $$.findClosest = this.findClosest.bind(this);
     $$.getBubbleR = this.getBubbleR.bind(this);
     $$.pointExpandedR = this.pointExpandedR.bind(this);
   };
   _proto.pointExpandedR = function pointExpandedR(d) {
-    var baseR = this.getBubbleR(d),
+    const baseR = this.getBubbleR(d),
       _this$options$expandS = this.options.expandScale,
       expandScale = _this$options$expandS === void 0 ? 1 : _this$options$expandS;
     BubbleCompare.raiseFocusedBubbleLayer(d);
@@ -265,29 +265,29 @@ var BubbleCompare = /*#__PURE__*/function (_Plugin) {
     this.$$.$el.eventRect.style("cursor", "pointer");
   };
   _proto.findClosest = function findClosest(values, pos) {
-    var _this2 = this,
-      $$ = this.$$;
+    var _this2 = this;
+    const $$ = this.$$;
     return values.filter(function (v) {
       _newArrowCheck(this, _this2);
       return v && !$$.isBarType(v.id);
     }.bind(this)).reduce(function (acc, cur) {
       _newArrowCheck(this, _this2);
-      var d = $$.dist(cur, pos);
+      const d = $$.dist(cur, pos);
       return d < this.getBubbleR(cur) ? cur : acc;
     }.bind(this), 0);
   };
   _proto.getBubbleR = function getBubbleR(d) {
-    var _this3 = this,
-      _this$options = this.options,
+    var _this3 = this;
+    const _this$options = this.options,
       minR = _this$options.minR,
       maxR = _this$options.maxR,
       curVal = this.getZData(d);
     if (!curVal) return minR;
-    var _this$$$$data$targets = this.$$.data.targets.reduce(function (_ref, cur) {
-        var accMin = _ref[0],
+    const _this$$$$data$targets = this.$$.data.targets.reduce(function (_ref, cur) {
+        let accMin = _ref[0],
           accMax = _ref[1];
         _newArrowCheck(this, _this3);
-        var val = this.getZData(cur.values[0]);
+        const val = this.getZData(cur.values[0]);
         return [Math.min(accMin, val), Math.max(accMax, val)];
       }.bind(this), [1e4, 0]),
       min = _this$$$$data$targets[0],

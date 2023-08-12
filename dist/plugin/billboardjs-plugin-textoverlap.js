@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230811004550
+ * @version 3.9.3-nightly-20230812004619
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -199,9 +199,9 @@ var _this = undefined;
  */
 /* eslint-disable no-new-func, no-undef */
 
-var win = function () {
+const win = function () {
     _newArrowCheck(this, _this);
-    var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
+    const root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
     return root || Function("return this")();
   }.bind(undefined)(),
   hasRAF = typeof win.requestAnimationFrame === "function",
@@ -234,7 +234,7 @@ function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i
 
 
 
-var isValue = function (v) {
+const isValue = function (v) {
     _newArrowCheck(this, util_this);
     return v || v === 0;
   }.bind(undefined),
@@ -327,8 +327,8 @@ function getOption(options, key, defaultValue) {
  * @private
  */
 function hasValue(dict, value) {
-  var _this2 = this,
-    found = !1;
+  var _this2 = this;
+  let found = !1;
   Object.keys(dict).forEach(function (key) {
     _newArrowCheck(this, _this2);
     return dict[key] === value && (found = !0);
@@ -345,7 +345,7 @@ function hasValue(dict, value) {
  * @private
  */
 function callFn(fn, thisArg) {
-  var isFn = isFunction(fn);
+  const isFn = isFunction(fn);
   for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     args[_key - 2] = arguments[_key];
   }
@@ -360,14 +360,15 @@ function callFn(fn, thisArg) {
  * @private
  */
 function endall(transition, cb) {
-  var _this3 = this,
-    n = 0,
-    end = function () {
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-      --n || cb.apply.apply(cb, [this].concat(args));
-    };
+  var _this3 = this;
+  let n = 0;
+  const end = function () {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+    --n || cb.apply.apply(cb, [this].concat(args));
+  };
+
   // if is transition selection
   if ("duration" in transition) {
     transition.each(function () {
@@ -412,12 +413,12 @@ function setTextValue(node, text, dy, toMiddle) {
   if (text.indexOf("\n") === -1) {
     node.text(text);
   } else {
-    var diff = [node.text(), text].map(function (v) {
+    const diff = [node.text(), text].map(function (v) {
       _newArrowCheck(this, _this4);
       return v.replace(/[\s\n]/g, "");
     }.bind(this));
     if (diff[0] !== diff[1]) {
-      var multiline = text.split("\n"),
+      const multiline = text.split("\n"),
         len = toMiddle ? multiline.length - 1 : 1;
       // reset possible text
       node.html("");
@@ -443,7 +444,7 @@ function getRectSegList(path) {
    *   |               |
    * seg0 ---------- seg3
    * */
-  var _path$getBBox = path.getBBox(),
+  const _path$getBBox = path.getBBox(),
     x = _path$getBBox.x,
     y = _path$getBBox.y,
     width = _path$getBBox.width,
@@ -477,7 +478,7 @@ function getRectSegList(path) {
  * @private
  */
 function getPathBox(path) {
-  var _path$getBoundingClie = path.getBoundingClientRect(),
+  const _path$getBoundingClie = path.getBoundingClientRect(),
     width = _path$getBoundingClie.width,
     height = _path$getBoundingClie.height,
     items = getRectSegList(path),
@@ -500,9 +501,9 @@ function getPathBox(path) {
  */
 function getPointer(event, element) {
   var _ref,
-    touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
-    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element),
     _this5 = this;
+  const touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
+    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
   return pointer.map(function (v) {
     _newArrowCheck(this, _this5);
     return isNaN(v) ? 0 : v;
@@ -516,10 +517,10 @@ function getPointer(event, element) {
  * @private
  */
 function getBrushSelection(ctx) {
-  var event = ctx.event,
+  const event = ctx.event,
     $el = ctx.$el,
     main = $el.subchart.main || $el.main;
-  var selection;
+  let selection;
 
   // check from event
   if (event && event.type === "brush") {
@@ -539,7 +540,7 @@ function getBrushSelection(ctx) {
  * @private
  */
 function getBoundingRect(node) {
-  var needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
+  const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
   return needEvaluate ? node.rect = node.getBoundingClientRect() : node.rect;
 }
 
@@ -561,7 +562,7 @@ function getRandom(asStr, min, max) {
   if (max === void 0) {
     max = 1e4;
   }
-  var crpt = win.crypto || win.msCrypto,
+  const crpt = win.crypto || win.msCrypto,
     rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
   return asStr ? rand + "" : rand;
 }
@@ -580,8 +581,8 @@ function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
     return -1;
   }
-  var mid = Math.floor((start + end) / 2);
-  var _arr$mid = arr[mid],
+  const mid = Math.floor((start + end) / 2);
+  let _arr$mid = arr[mid],
     x = _arr$mid.x,
     _arr$mid$w = _arr$mid.w,
     w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
@@ -602,7 +603,7 @@ function findIndex(arr, v, start, end, isRotated) {
  * @private
  */
 function brushEmpty(ctx) {
-  var selection = getBrushSelection(ctx);
+  const selection = getBrushSelection(ctx);
   if (selection) {
     // brush selected area
     // two-dimensional: [[x0, y0], [x1, y1]]
@@ -619,17 +620,19 @@ function brushEmpty(ctx) {
  * @private
  */
 function deepClone() {
-  for (var _this6 = this, _clone = function clone(v) {
-      _newArrowCheck(this, _this6);
-      if (isObject(v) && v.constructor) {
-        var r = new v.constructor();
-        for (var k in v) {
-          r[k] = _clone(v[k]);
-        }
-        return r;
+  var _this6 = this;
+  const _clone = function clone(v) {
+    _newArrowCheck(this, _this6);
+    if (isObject(v) && v.constructor) {
+      const r = new v.constructor();
+      for (const k in v) {
+        r[k] = _clone(v[k]);
       }
-      return v;
-    }.bind(this), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      return r;
+    }
+    return v;
+  }.bind(this);
+  for (var _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
     objectN[_key3] = arguments[_key3];
   }
   return objectN.map(function (v) {
@@ -661,7 +664,7 @@ function extend(target, source) {
   }
 
   // exclude name with only numbers
-  for (var p in source) {
+  for (const p in source) {
     if (/^\d+$/.test(p) || p in target) {
       continue;
     }
@@ -676,7 +679,7 @@ function extend(target, source) {
  * @returns {string} capitalized string
  * @private
  */
-var capitalize = function (str) {
+const capitalize = function (str) {
   _newArrowCheck(this, util_this);
   return str.charAt(0).toUpperCase() + str.slice(1);
 }.bind(undefined);
@@ -705,7 +708,7 @@ function camelize(str, separator) {
  * @returns {Array}
  * @private
  */
-var toArray = function (v) {
+const toArray = function (v) {
   _newArrowCheck(this, util_this);
   return [].slice.call(v);
 }.bind(undefined);
@@ -719,8 +722,8 @@ var toArray = function (v) {
  * @private
  */
 function addCssRules(style, selector, prop) {
-  var _this9 = this,
-    rootSelctor = style.rootSelctor,
+  var _this9 = this;
+  const rootSelctor = style.rootSelctor,
     sheet = style.sheet,
     getSelector = function (s) {
       _newArrowCheck(this, _this9);
@@ -737,8 +740,8 @@ function addCssRules(style, selector, prop) {
  * @private
  */
 function getCssRules(styleSheets) {
-  var _this10 = this,
-    rules = [];
+  var _this10 = this;
+  let rules = [];
   styleSheets.forEach(function (sheet) {
     _newArrowCheck(this, _this10);
     try {
@@ -760,7 +763,7 @@ function getCssRules(styleSheets) {
  * @private
  */
 function getTranslation(node) {
-  var transform = node ? node.transform : null,
+  const transform = node ? node.transform : null,
     baseVal = transform && transform.baseVal;
   return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
     a: 0,
@@ -779,8 +782,8 @@ function getTranslation(node) {
  * @private
  */
 function getUnique(data) {
-  var _this11 = this,
-    isDate = data[0] instanceof Date,
+  var _this11 = this;
+  const isDate = data[0] instanceof Date,
     d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
       _newArrowCheck(this, _this11);
       return self.indexOf(v) === i;
@@ -819,11 +822,11 @@ function mergeObj(target) {
   if (!objectN.length || objectN.length === 1 && !objectN[0]) {
     return target;
   }
-  var source = objectN.shift();
+  const source = objectN.shift();
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach(function (key) {
       _newArrowCheck(this, _this13);
-      var value = source[key];
+      const value = source[key];
       if (isObject(value)) {
         target[key] || (target[key] = {});
         target[key] = mergeObj(target[key], value);
@@ -847,7 +850,7 @@ function sortValue(data, isAsc) {
   if (isAsc === void 0) {
     isAsc = !0;
   }
-  var fn;
+  let fn;
   if (data[0] instanceof Date) {
     fn = isAsc ? function (a, b) {
       _newArrowCheck(this, _this14);
@@ -880,11 +883,11 @@ function sortValue(data, isAsc) {
  * @private
  */
 function getMinMax(type, data) {
-  var _this15 = this,
-    res = data.filter(function (v) {
-      _newArrowCheck(this, _this15);
-      return notEmpty(v);
-    }.bind(this));
+  var _this15 = this;
+  let res = data.filter(function (v) {
+    _newArrowCheck(this, _this15);
+    return notEmpty(v);
+  }.bind(this));
   if (res.length) {
     if (isNumber(res[0])) {
       res = Math[type].apply(Math, res);
@@ -905,14 +908,14 @@ function getMinMax(type, data) {
  * @returns {Array}
  * @private
  */
-var getRange = function (start, end, step) {
+const getRange = function (start, end, step) {
     if (step === void 0) {
       step = 1;
     }
     _newArrowCheck(this, util_this);
-    var res = [],
+    const res = [],
       n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-    for (var i = start; i < n; i++) {
+    for (let i = start; i < n; i++) {
       res.push(start + i * step);
     }
     return res;
@@ -921,7 +924,7 @@ var getRange = function (start, end, step) {
     mouse: function () {
       var _this16 = this;
       _newArrowCheck(this, util_this);
-      var getParams = function () {
+      const getParams = function () {
         _newArrowCheck(this, _this16);
         return {
           bubbles: !1,
@@ -949,7 +952,7 @@ var getRange = function (start, end, step) {
             params = getParams();
           }
           _newArrowCheck(this, _this16);
-          var mouseEvent = doc.createEvent("MouseEvent");
+          const mouseEvent = doc.createEvent("MouseEvent");
 
           // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
           mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0,
@@ -961,7 +964,7 @@ var getRange = function (start, end, step) {
     }.bind(undefined)(),
     touch: function touch(el, eventType, params) {
       _newArrowCheck(this, util_this);
-      var touchObj = new Touch(mergeObj({
+      const touchObj = new Touch(mergeObj({
         identifier: Date.now(),
         target: el,
         radiusX: 2.5,
@@ -987,8 +990,8 @@ var getRange = function (start, end, step) {
  * @private
  */
 function tplProcess(tpl, data) {
-  var res = tpl;
-  for (var x in data) {
+  let res = tpl;
+  for (const x in data) {
     res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
   }
   return res;
@@ -1002,13 +1005,14 @@ function tplProcess(tpl, data) {
  * @private
  */
 function parseDate(date) {
-  var parsedDate;
+  let parsedDate;
   if (date instanceof Date) {
     parsedDate = date;
   } else if (isString(date)) {
-    var _format$dataTime,
-      config = this.config,
+    var _format$dataTime;
+    const config = this.config,
       format = this.format;
+
     // if fails to parse, try by new Date()
     // https://github.com/naver/billboard.js/issues/1714
     parsedDate = (_format$dataTime = format.dataTime(config.data_xFormat)(date)) != null ? _format$dataTime : new Date(date);
@@ -1038,11 +1042,11 @@ function isTabVisible() {
  * @private
  */
 function convertInputType(mouse, touch) {
-  var _this17 = this,
-    DocumentTouch = win.DocumentTouch,
+  var _this17 = this;
+  const DocumentTouch = win.DocumentTouch,
     matchMedia = win.matchMedia,
-    navigator = win.navigator,
-    hasTouch = !1;
+    navigator = win.navigator;
+  let hasTouch = !1;
   if (touch) {
     // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
     if (navigator && "maxTouchPoints" in navigator) {
@@ -1058,7 +1062,7 @@ function convertInputType(mouse, touch) {
         hasTouch = !0;
       } else {
         // Only as a last resort, fall back to user agent sniffing
-        var UA = navigator.userAgent;
+        const UA = navigator.userAgent;
         hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
       }
     }
@@ -1067,7 +1071,7 @@ function convertInputType(mouse, touch) {
   // Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
   // https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
   // Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
-  var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
+  const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
     _newArrowCheck(this, _this17);
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
   }.bind(this));
@@ -1106,22 +1110,20 @@ function runUntil(fn, conditionFn) {
  * @private
  */
 function loadConfig(config) {
-  var _this = this,
-    thisConfig = this.config,
-    target,
-    keys,
-    read,
-    _find = function find() {
-      _newArrowCheck(this, _this);
-      var key = keys.shift();
-      if (key && target && isObjectType(target) && key in target) {
-        target = target[key];
-        return _find();
-      } else if (!key) {
-        return target;
-      }
-      return undefined;
-    }.bind(this);
+  var _this = this;
+  const thisConfig = this.config;
+  let target, keys, read;
+  const _find = function find() {
+    _newArrowCheck(this, _this);
+    const key = keys.shift();
+    if (key && target && isObjectType(target) && key in target) {
+      target = target[key];
+      return _find();
+    } else if (!key) {
+      return target;
+    }
+    return undefined;
+  }.bind(this);
   Object.keys(thisConfig).forEach(function (key) {
     _newArrowCheck(this, _this);
     target = config;
@@ -1156,7 +1158,7 @@ function loadConfig(config) {
  * @example
  *   bb.plugin.stanford.version;  // ex) 1.9.0
  */
-var Plugin = /*#__PURE__*/function () {
+let Plugin = /*#__PURE__*/function () {
   /**
    * Constructor
    * @param {Any} options config option object
@@ -1210,7 +1212,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.3-nightly-20230811004550";
+Plugin.version = "3.9.3-nightly-20230812004619";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**
@@ -1225,7 +1227,7 @@ Plugin.version = "3.9.3-nightly-20230811004550";
  * @returns {TextOverlapOptions}
  * @private
  */
-var Options = function () {
+let Options = function () {
   return {
     /**
      * Selector string for target text nodes within chart element.
@@ -1320,7 +1322,7 @@ var Options = function () {
  *     ]
  * })
  */
-var TextOverlap = /*#__PURE__*/function (_Plugin) {
+let TextOverlap = /*#__PURE__*/function (_Plugin) {
   _inheritsLoose(TextOverlap, _Plugin);
   function TextOverlap(options) {
     var _this = _Plugin.call(this, options) || this;
@@ -1333,7 +1335,7 @@ var TextOverlap = /*#__PURE__*/function (_Plugin) {
     loadConfig.call(this, this.options);
   };
   _proto.$redraw = function $redraw() {
-    var $el = this.$$.$el,
+    const $el = this.$$.$el,
       selector = this.config.selector,
       text = selector ? $el.main.selectAll(selector) : $el.text;
     text.empty() || this.preventLabelOverlap(text);
@@ -1346,16 +1348,16 @@ var TextOverlap = /*#__PURE__*/function (_Plugin) {
    * @private
    */;
   _proto.generateVoronoi = function generateVoronoi(points) {
-    var _this2 = this,
-      $$ = this.$$,
+    var _this2 = this;
+    const $$ = this.$$,
       scale = $$.scale,
       _map = ["x", "y"].map(function (v) {
         _newArrowCheck(this, _this2);
         return scale[v].domain();
       }.bind(this)),
       min = _map[0],
-      max = _map[1],
-      _ref = [max[0], min[1]];
+      max = _map[1];
+    var _ref = [max[0], min[1]];
     min[1] = _ref[0];
     max[0] = _ref[1];
     return external_commonjs_d3_delaunay_commonjs2_d3_delaunay_amd_d3_delaunay_root_d3_.Delaunay.from(points).voronoi([].concat(min, max)); // bounds = [xmin, ymin, xmax, ymax], default value: [0, 0, 960, 500]
@@ -1367,20 +1369,20 @@ var TextOverlap = /*#__PURE__*/function (_Plugin) {
    * @private
    */;
   _proto.preventLabelOverlap = function preventLabelOverlap(text) {
-    var _this3 = this,
-      _this$config = this.config,
+    var _this3 = this;
+    const _this$config = this.config,
       extent = _this$config.extent,
       area = _this$config.area,
       points = text.data().map(function (v) {
         _newArrowCheck(this, _this3);
         return [v.index, v.value];
       }.bind(this)),
-      voronoi = this.generateVoronoi(points),
-      i = 0;
+      voronoi = this.generateVoronoi(points);
+    let i = 0;
     text.each(function () {
-      var cell = voronoi.cellPolygon(i);
+      const cell = voronoi.cellPolygon(i);
       if (cell && this) {
-        var _points$i = points[i],
+        const _points$i = points[i],
           x = _points$i[0],
           y = _points$i[1],
           _d3PolygonCentroid = (0,external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_.polygonCentroid)(cell),

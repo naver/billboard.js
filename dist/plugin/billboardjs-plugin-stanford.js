@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230811004550
+ * @version 3.9.3-nightly-20230812004619
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -212,7 +212,7 @@ function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i
  * CSS class names definition
  * @private
  */
-var $COMMON = {
+const $COMMON = {
   button: "bb-button",
   chart: "bb-chart",
   empty: "bb-empty",
@@ -220,7 +220,7 @@ var $COMMON = {
   target: "bb-target",
   EXPANDED: "_expanded_"
 };
-var $ARC = {
+const $ARC = {
   arc: "bb-arc",
   arcLabelLine: "bb-arc-label-line",
   arcs: "bb-arcs",
@@ -230,11 +230,11 @@ var $ARC = {
   chartArcsTitle: "bb-chart-arcs-title",
   needle: "bb-needle"
 };
-var $AREA = {
+const $AREA = {
   area: "bb-area",
   areas: "bb-areas"
 };
-var $AXIS = {
+const $AXIS = {
   axis: "bb-axis",
   axisX: "bb-axis-x",
   axisXLabel: "bb-axis-x-label",
@@ -243,13 +243,13 @@ var $AXIS = {
   axisY2Label: "bb-axis-y2-label",
   axisYLabel: "bb-axis-y-label"
 };
-var $BAR = {
+const $BAR = {
   bar: "bb-bar",
   bars: "bb-bars",
   chartBar: "bb-chart-bar",
   chartBars: "bb-chart-bars"
 };
-var $CANDLESTICK = {
+const $CANDLESTICK = {
   candlestick: "bb-candlestick",
   candlesticks: "bb-candlesticks",
   chartCandlestick: "bb-chart-candlestick",
@@ -257,27 +257,27 @@ var $CANDLESTICK = {
   valueDown: "bb-value-down",
   valueUp: "bb-value-up"
 };
-var $CIRCLE = {
+const $CIRCLE = {
   chartCircles: "bb-chart-circles",
   circle: "bb-circle",
   circles: "bb-circles"
 };
-var $COLOR = {
+const $COLOR = {
   colorPattern: "bb-color-pattern",
   colorScale: "bb-colorscale"
 };
-var $DRAG = {
+const $DRAG = {
   dragarea: "bb-dragarea",
   INCLUDED: "_included_"
 };
-var $GAUGE = {
+const $GAUGE = {
   chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
   chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
   chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
   chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
   gaugeValue: "bb-gauge-value"
 };
-var $LEGEND = {
+const $LEGEND = {
   legend: "bb-legend",
   legendBackground: "bb-legend-background",
   legendItem: "bb-legend-item",
@@ -286,26 +286,26 @@ var $LEGEND = {
   legendItemPoint: "bb-legend-item-point",
   legendItemTile: "bb-legend-item-tile"
 };
-var $LINE = {
+const $LINE = {
   chartLine: "bb-chart-line",
   chartLines: "bb-chart-lines",
   line: "bb-line",
   lines: "bb-lines"
 };
-var $EVENT = {
+const $EVENT = {
   eventRect: "bb-event-rect",
   eventRects: "bb-event-rects",
   eventRectsMultiple: "bb-event-rects-multiple",
   eventRectsSingle: "bb-event-rects-single"
 };
-var $FOCUS = {
+const $FOCUS = {
   focused: "bb-focused",
   defocused: "bb-defocused",
   legendItemFocused: "bb-legend-item-focused",
   xgridFocus: "bb-xgrid-focus",
   ygridFocus: "bb-ygrid-focus"
 };
-var $GRID = {
+const $GRID = {
   grid: "bb-grid",
   gridLines: "bb-grid-lines",
   xgrid: "bb-xgrid",
@@ -317,32 +317,32 @@ var $GRID = {
   ygridLines: "bb-ygrid-lines",
   ygrids: "bb-ygrids"
 };
-var $LEVEL = {
+const $LEVEL = {
   level: "bb-level",
   levels: "bb-levels"
 };
-var $RADAR = {
+const $RADAR = {
   chartRadar: "bb-chart-radar",
   chartRadars: "bb-chart-radars"
 };
-var $REGION = {
+const $REGION = {
   region: "bb-region",
   regions: "bb-regions"
 };
-var $SELECT = {
+const $SELECT = {
   selectedCircle: "bb-selected-circle",
   selectedCircles: "bb-selected-circles",
   SELECTED: "_selected_"
 };
-var $SHAPE = {
+const $SHAPE = {
   shape: "bb-shape",
   shapes: "bb-shapes"
 };
-var $SUBCHART = {
+const $SUBCHART = {
   brush: "bb-brush",
   subchart: "bb-subchart"
 };
-var $TEXT = {
+const $TEXT = {
   chartText: "bb-chart-text",
   chartTexts: "bb-chart-texts",
   text: "bb-text",
@@ -350,17 +350,17 @@ var $TEXT = {
   title: "bb-title",
   TextOverlapping: "text-overlapping"
 };
-var $TOOLTIP = {
+const $TOOLTIP = {
   tooltip: "bb-tooltip",
   tooltipContainer: "bb-tooltip-container",
   tooltipName: "bb-tooltip-name"
 };
-var $TREEMAP = {
+const $TREEMAP = {
   treemap: "bb-treemap",
   chartTreemap: "bb-chart-treemap",
   chartTreemaps: "bb-chart-treemaps"
 };
-var $ZOOM = {
+const $ZOOM = {
   buttonZoomReset: "bb-zoom-reset",
   zoomBrush: "bb-zoom-brush"
 };
@@ -382,9 +382,9 @@ var _this = undefined;
  */
 /* eslint-disable no-new-func, no-undef */
 
-var win = function () {
+const win = function () {
     _newArrowCheck(this, _this);
-    var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
+    const root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
     return root || Function("return this")();
   }.bind(undefined)(),
   hasRAF = typeof win.requestAnimationFrame === "function",
@@ -417,7 +417,7 @@ function util_objectSpread(target) { for (var i = 1, source; i < arguments.lengt
 
 
 
-var isValue = function (v) {
+const isValue = function (v) {
     _newArrowCheck(this, util_this);
     return v || v === 0;
   }.bind(undefined),
@@ -510,8 +510,8 @@ function getOption(options, key, defaultValue) {
  * @private
  */
 function hasValue(dict, value) {
-  var _this2 = this,
-    found = !1;
+  var _this2 = this;
+  let found = !1;
   Object.keys(dict).forEach(function (key) {
     _newArrowCheck(this, _this2);
     return dict[key] === value && (found = !0);
@@ -528,7 +528,7 @@ function hasValue(dict, value) {
  * @private
  */
 function callFn(fn, thisArg) {
-  var isFn = isFunction(fn);
+  const isFn = isFunction(fn);
   for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     args[_key - 2] = arguments[_key];
   }
@@ -543,14 +543,15 @@ function callFn(fn, thisArg) {
  * @private
  */
 function endall(transition, cb) {
-  var _this3 = this,
-    n = 0,
-    end = function () {
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-      --n || cb.apply.apply(cb, [this].concat(args));
-    };
+  var _this3 = this;
+  let n = 0;
+  const end = function () {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+    --n || cb.apply.apply(cb, [this].concat(args));
+  };
+
   // if is transition selection
   if ("duration" in transition) {
     transition.each(function () {
@@ -595,12 +596,12 @@ function setTextValue(node, text, dy, toMiddle) {
   if (text.indexOf("\n") === -1) {
     node.text(text);
   } else {
-    var diff = [node.text(), text].map(function (v) {
+    const diff = [node.text(), text].map(function (v) {
       _newArrowCheck(this, _this4);
       return v.replace(/[\s\n]/g, "");
     }.bind(this));
     if (diff[0] !== diff[1]) {
-      var multiline = text.split("\n"),
+      const multiline = text.split("\n"),
         len = toMiddle ? multiline.length - 1 : 1;
       // reset possible text
       node.html("");
@@ -626,7 +627,7 @@ function getRectSegList(path) {
    *   |               |
    * seg0 ---------- seg3
    * */
-  var _path$getBBox = path.getBBox(),
+  const _path$getBBox = path.getBBox(),
     x = _path$getBBox.x,
     y = _path$getBBox.y,
     width = _path$getBBox.width,
@@ -660,7 +661,7 @@ function getRectSegList(path) {
  * @private
  */
 function getPathBox(path) {
-  var _path$getBoundingClie = path.getBoundingClientRect(),
+  const _path$getBoundingClie = path.getBoundingClientRect(),
     width = _path$getBoundingClie.width,
     height = _path$getBoundingClie.height,
     items = getRectSegList(path),
@@ -683,9 +684,9 @@ function getPathBox(path) {
  */
 function getPointer(event, element) {
   var _ref,
-    touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
-    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element),
     _this5 = this;
+  const touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
+    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
   return pointer.map(function (v) {
     _newArrowCheck(this, _this5);
     return isNaN(v) ? 0 : v;
@@ -699,10 +700,10 @@ function getPointer(event, element) {
  * @private
  */
 function getBrushSelection(ctx) {
-  var event = ctx.event,
+  const event = ctx.event,
     $el = ctx.$el,
     main = $el.subchart.main || $el.main;
-  var selection;
+  let selection;
 
   // check from event
   if (event && event.type === "brush") {
@@ -722,7 +723,7 @@ function getBrushSelection(ctx) {
  * @private
  */
 function getBoundingRect(node) {
-  var needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
+  const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
   return needEvaluate ? node.rect = node.getBoundingClientRect() : node.rect;
 }
 
@@ -744,7 +745,7 @@ function getRandom(asStr, min, max) {
   if (max === void 0) {
     max = 1e4;
   }
-  var crpt = win.crypto || win.msCrypto,
+  const crpt = win.crypto || win.msCrypto,
     rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
   return asStr ? rand + "" : rand;
 }
@@ -763,8 +764,8 @@ function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
     return -1;
   }
-  var mid = Math.floor((start + end) / 2);
-  var _arr$mid = arr[mid],
+  const mid = Math.floor((start + end) / 2);
+  let _arr$mid = arr[mid],
     x = _arr$mid.x,
     _arr$mid$w = _arr$mid.w,
     w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
@@ -785,7 +786,7 @@ function findIndex(arr, v, start, end, isRotated) {
  * @private
  */
 function brushEmpty(ctx) {
-  var selection = getBrushSelection(ctx);
+  const selection = getBrushSelection(ctx);
   if (selection) {
     // brush selected area
     // two-dimensional: [[x0, y0], [x1, y1]]
@@ -802,17 +803,19 @@ function brushEmpty(ctx) {
  * @private
  */
 function deepClone() {
-  for (var _this6 = this, _clone = function clone(v) {
-      _newArrowCheck(this, _this6);
-      if (isObject(v) && v.constructor) {
-        var r = new v.constructor();
-        for (var k in v) {
-          r[k] = _clone(v[k]);
-        }
-        return r;
+  var _this6 = this;
+  const _clone = function clone(v) {
+    _newArrowCheck(this, _this6);
+    if (isObject(v) && v.constructor) {
+      const r = new v.constructor();
+      for (const k in v) {
+        r[k] = _clone(v[k]);
       }
-      return v;
-    }.bind(this), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      return r;
+    }
+    return v;
+  }.bind(this);
+  for (var _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
     objectN[_key3] = arguments[_key3];
   }
   return objectN.map(function (v) {
@@ -844,7 +847,7 @@ function extend(target, source) {
   }
 
   // exclude name with only numbers
-  for (var p in source) {
+  for (const p in source) {
     if (/^\d+$/.test(p) || p in target) {
       continue;
     }
@@ -859,7 +862,7 @@ function extend(target, source) {
  * @returns {string} capitalized string
  * @private
  */
-var capitalize = function (str) {
+const capitalize = function (str) {
   _newArrowCheck(this, util_this);
   return str.charAt(0).toUpperCase() + str.slice(1);
 }.bind(undefined);
@@ -888,7 +891,7 @@ function camelize(str, separator) {
  * @returns {Array}
  * @private
  */
-var toArray = function (v) {
+const toArray = function (v) {
   _newArrowCheck(this, util_this);
   return [].slice.call(v);
 }.bind(undefined);
@@ -902,8 +905,8 @@ var toArray = function (v) {
  * @private
  */
 function addCssRules(style, selector, prop) {
-  var _this9 = this,
-    rootSelctor = style.rootSelctor,
+  var _this9 = this;
+  const rootSelctor = style.rootSelctor,
     sheet = style.sheet,
     getSelector = function (s) {
       _newArrowCheck(this, _this9);
@@ -920,8 +923,8 @@ function addCssRules(style, selector, prop) {
  * @private
  */
 function getCssRules(styleSheets) {
-  var _this10 = this,
-    rules = [];
+  var _this10 = this;
+  let rules = [];
   styleSheets.forEach(function (sheet) {
     _newArrowCheck(this, _this10);
     try {
@@ -943,7 +946,7 @@ function getCssRules(styleSheets) {
  * @private
  */
 function getTranslation(node) {
-  var transform = node ? node.transform : null,
+  const transform = node ? node.transform : null,
     baseVal = transform && transform.baseVal;
   return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
     a: 0,
@@ -962,8 +965,8 @@ function getTranslation(node) {
  * @private
  */
 function getUnique(data) {
-  var _this11 = this,
-    isDate = data[0] instanceof Date,
+  var _this11 = this;
+  const isDate = data[0] instanceof Date,
     d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
       _newArrowCheck(this, _this11);
       return self.indexOf(v) === i;
@@ -1002,11 +1005,11 @@ function mergeObj(target) {
   if (!objectN.length || objectN.length === 1 && !objectN[0]) {
     return target;
   }
-  var source = objectN.shift();
+  const source = objectN.shift();
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach(function (key) {
       _newArrowCheck(this, _this13);
-      var value = source[key];
+      const value = source[key];
       if (isObject(value)) {
         target[key] || (target[key] = {});
         target[key] = mergeObj(target[key], value);
@@ -1030,7 +1033,7 @@ function sortValue(data, isAsc) {
   if (isAsc === void 0) {
     isAsc = !0;
   }
-  var fn;
+  let fn;
   if (data[0] instanceof Date) {
     fn = isAsc ? function (a, b) {
       _newArrowCheck(this, _this14);
@@ -1063,11 +1066,11 @@ function sortValue(data, isAsc) {
  * @private
  */
 function getMinMax(type, data) {
-  var _this15 = this,
-    res = data.filter(function (v) {
-      _newArrowCheck(this, _this15);
-      return notEmpty(v);
-    }.bind(this));
+  var _this15 = this;
+  let res = data.filter(function (v) {
+    _newArrowCheck(this, _this15);
+    return notEmpty(v);
+  }.bind(this));
   if (res.length) {
     if (isNumber(res[0])) {
       res = Math[type].apply(Math, res);
@@ -1088,14 +1091,14 @@ function getMinMax(type, data) {
  * @returns {Array}
  * @private
  */
-var getRange = function (start, end, step) {
+const getRange = function (start, end, step) {
     if (step === void 0) {
       step = 1;
     }
     _newArrowCheck(this, util_this);
-    var res = [],
+    const res = [],
       n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-    for (var i = start; i < n; i++) {
+    for (let i = start; i < n; i++) {
       res.push(start + i * step);
     }
     return res;
@@ -1104,7 +1107,7 @@ var getRange = function (start, end, step) {
     mouse: function () {
       var _this16 = this;
       _newArrowCheck(this, util_this);
-      var getParams = function () {
+      const getParams = function () {
         _newArrowCheck(this, _this16);
         return {
           bubbles: !1,
@@ -1132,7 +1135,7 @@ var getRange = function (start, end, step) {
             params = getParams();
           }
           _newArrowCheck(this, _this16);
-          var mouseEvent = doc.createEvent("MouseEvent");
+          const mouseEvent = doc.createEvent("MouseEvent");
 
           // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
           mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0,
@@ -1144,7 +1147,7 @@ var getRange = function (start, end, step) {
     }.bind(undefined)(),
     touch: function touch(el, eventType, params) {
       _newArrowCheck(this, util_this);
-      var touchObj = new Touch(mergeObj({
+      const touchObj = new Touch(mergeObj({
         identifier: Date.now(),
         target: el,
         radiusX: 2.5,
@@ -1170,8 +1173,8 @@ var getRange = function (start, end, step) {
  * @private
  */
 function tplProcess(tpl, data) {
-  var res = tpl;
-  for (var x in data) {
+  let res = tpl;
+  for (const x in data) {
     res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
   }
   return res;
@@ -1185,13 +1188,14 @@ function tplProcess(tpl, data) {
  * @private
  */
 function parseDate(date) {
-  var parsedDate;
+  let parsedDate;
   if (date instanceof Date) {
     parsedDate = date;
   } else if (isString(date)) {
-    var _format$dataTime,
-      config = this.config,
+    var _format$dataTime;
+    const config = this.config,
       format = this.format;
+
     // if fails to parse, try by new Date()
     // https://github.com/naver/billboard.js/issues/1714
     parsedDate = (_format$dataTime = format.dataTime(config.data_xFormat)(date)) != null ? _format$dataTime : new Date(date);
@@ -1221,11 +1225,11 @@ function isTabVisible() {
  * @private
  */
 function convertInputType(mouse, touch) {
-  var _this17 = this,
-    DocumentTouch = win.DocumentTouch,
+  var _this17 = this;
+  const DocumentTouch = win.DocumentTouch,
     matchMedia = win.matchMedia,
-    navigator = win.navigator,
-    hasTouch = !1;
+    navigator = win.navigator;
+  let hasTouch = !1;
   if (touch) {
     // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
     if (navigator && "maxTouchPoints" in navigator) {
@@ -1241,7 +1245,7 @@ function convertInputType(mouse, touch) {
         hasTouch = !0;
       } else {
         // Only as a last resort, fall back to user agent sniffing
-        var UA = navigator.userAgent;
+        const UA = navigator.userAgent;
         hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
       }
     }
@@ -1250,7 +1254,7 @@ function convertInputType(mouse, touch) {
   // Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
   // https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
   // Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
-  var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
+  const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
     _newArrowCheck(this, _this17);
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
   }.bind(this));
@@ -1289,22 +1293,20 @@ function runUntil(fn, conditionFn) {
  * @private
  */
 function loadConfig(config) {
-  var _this = this,
-    thisConfig = this.config,
-    target,
-    keys,
-    read,
-    _find = function find() {
-      _newArrowCheck(this, _this);
-      var key = keys.shift();
-      if (key && target && isObjectType(target) && key in target) {
-        target = target[key];
-        return _find();
-      } else if (!key) {
-        return target;
-      }
-      return undefined;
-    }.bind(this);
+  var _this = this;
+  const thisConfig = this.config;
+  let target, keys, read;
+  const _find = function find() {
+    _newArrowCheck(this, _this);
+    const key = keys.shift();
+    if (key && target && isObjectType(target) && key in target) {
+      target = target[key];
+      return _find();
+    } else if (!key) {
+      return target;
+    }
+    return undefined;
+  }.bind(this);
   Object.keys(thisConfig).forEach(function (key) {
     _newArrowCheck(this, _this);
     target = config;
@@ -1339,7 +1341,7 @@ function loadConfig(config) {
  * @example
  *   bb.plugin.stanford.version;  // ex) 1.9.0
  */
-var Plugin = /*#__PURE__*/function () {
+let Plugin = /*#__PURE__*/function () {
   /**
    * Constructor
    * @param {Any} options config option object
@@ -1393,7 +1395,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.3-nightly-20230811004550";
+Plugin.version = "3.9.3-nightly-20230812004619";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
@@ -1408,7 +1410,7 @@ Plugin.version = "3.9.3-nightly-20230811004550";
  * @returns {StanfordOptions}
  * @private
  */
-var Options = function () {
+let Options = function () {
   return {
     /**
      * Set the color of the color scale. This function receives a value between 0 and 1, and should return a color.
@@ -1575,16 +1577,15 @@ function pointInRegion(point, region) {
   // thanks to: http://bl.ocks.org/bycoffe/5575904
   // ray-casting algorithm based on
   // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-  var x = point.x,
+  const x = point.x,
     y = point.value;
-  var inside = !1;
-  for (var i = 0, j = region.length - 1; i < region.length; j = i++) {
-    var xi = region[i].x,
+  let inside = !1;
+  for (let i = 0, j = region.length - 1; i < region.length; j = i++) {
+    const xi = region[i].x,
       yi = region[i].y,
       xj = region[j].x,
-      yj = region[j].y,
-      intersect = yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi;
-    if (intersect) {
+      yj = region[j].y;
+    if (yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi) {
       inside = !inside;
     }
   }
@@ -1616,10 +1617,10 @@ function compareEpochs(a, b) {
  */
 function getRegionArea(points) {
   // thanks to: https://stackoverflow.com/questions/16282330/find-centerpoint-of-polygon-in-javascript
-  var area = 0,
+  let area = 0,
     point1,
     point2;
-  for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+  for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
     point1 = points[i];
     point2 = points[j];
     area += point1.x * point2.y;
@@ -1636,12 +1637,12 @@ function getRegionArea(points) {
  * @private
  */
 function getCentroid(points) {
-  var area = getRegionArea(points);
-  var x = 0,
+  const area = getRegionArea(points);
+  let x = 0,
     y = 0,
     f;
-  for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
-    var point1 = points[i],
+  for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+    const point1 = points[i],
       point2 = points[j];
     f = point1.x * point2.y - point2.x * point1.y;
     x += (point1.x + point2.x) * f;
@@ -1670,33 +1671,34 @@ function getCentroid(points) {
  * @param {Stanford} owner Stanford instance
  * @private
  */
-var Elements = /*#__PURE__*/function () {
+let Elements = /*#__PURE__*/function () {
   function Elements(owner) {
     this.owner = void 0;
     this.owner = owner;
 
     // MEMO: Avoid blocking eventRect
-    var elements = owner.$$.$el.main.select(".bb-chart").append("g").attr("class", stanford_classes.stanfordElements);
+    const elements = owner.$$.$el.main.select(".bb-chart").append("g").attr("class", stanford_classes.stanfordElements);
     elements.append("g").attr("class", stanford_classes.stanfordLines);
     elements.append("g").attr("class", stanford_classes.stanfordRegions);
   }
   var _proto = Elements.prototype;
   _proto.updateStanfordLines = function updateStanfordLines(duration) {
-    var _this = this,
-      $$ = this.owner.$$,
+    var _this = this;
+    const $$ = this.owner.$$,
       config = $$.config,
       main = $$.$el.main,
       isRotated = config.axis_rotated,
       xvCustom = this.xvCustom.bind($$),
       yvCustom = this.yvCustom.bind($$),
       stanfordLine = main.select("." + stanford_classes.stanfordLines).style("shape-rendering", "geometricprecision").selectAll("." + stanford_classes.stanfordLine).data(this.owner.config.lines);
+
     // Stanford-Lines
 
     // exit
     stanfordLine.exit().transition().duration(duration).style("opacity", "0").remove();
 
     // enter
-    var stanfordLineEnter = stanfordLine.enter().append("g");
+    const stanfordLineEnter = stanfordLine.enter().append("g");
     stanfordLineEnter.append("line").style("opacity", "0");
     stanfordLineEnter.merge(stanfordLine).attr("class", function (d) {
       _newArrowCheck(this, _this);
@@ -1716,20 +1718,22 @@ var Elements = /*#__PURE__*/function () {
     }.bind(this)).transition().style("opacity", null);
   };
   _proto.updateStanfordRegions = function updateStanfordRegions(duration) {
-    var _this2 = this,
-      $$ = this.owner.$$,
+    var _this2 = this;
+    const $$ = this.owner.$$,
       config = $$.config,
       main = $$.$el.main,
       isRotated = config.axis_rotated,
       xvCustom = this.xvCustom.bind($$),
       yvCustom = this.yvCustom.bind($$),
-      countPointsInRegion = this.owner.countEpochsInRegion.bind($$),
-      stanfordRegion = main.select("." + stanford_classes.stanfordRegions).selectAll("." + stanford_classes.stanfordRegion).data(this.owner.config.regions); // Stanford-Regions
+      countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
+    // Stanford-Regions
+    let stanfordRegion = main.select("." + stanford_classes.stanfordRegions).selectAll("." + stanford_classes.stanfordRegion).data(this.owner.config.regions);
+
     // exit
     stanfordRegion.exit().transition().duration(duration).style("opacity", "0").remove();
 
     // enter
-    var stanfordRegionEnter = stanfordRegion.enter().append("g");
+    const stanfordRegionEnter = stanfordRegion.enter().append("g");
     stanfordRegionEnter.append("polygon").style("opacity", "0");
     stanfordRegionEnter.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", "0");
     stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
@@ -1758,7 +1762,7 @@ var Elements = /*#__PURE__*/function () {
     }.bind(this)).text(function (d) {
       _newArrowCheck(this, _this2);
       if (d.text) {
-        var _countPointsInRegion = countPointsInRegion(d.points),
+        const _countPointsInRegion = countPointsInRegion(d.points),
           value = _countPointsInRegion.value,
           percentage = _countPointsInRegion.percentage;
         return d.text(value, percentage);
@@ -1774,10 +1778,10 @@ var Elements = /*#__PURE__*/function () {
     this.updateStanfordRegions(duration);
   };
   _proto.xvCustom = function xvCustom(d, xyValue) {
-    var $$ = this,
+    const $$ = this,
       axis = $$.axis,
       config = $$.config;
-    var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+    let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     if (axis.isTimeSeries()) {
       value = parseDate.call($$, value);
     } else if (axis.isCategorized() && isString(value)) {
@@ -1786,7 +1790,7 @@ var Elements = /*#__PURE__*/function () {
     return Math.ceil($$.scale.x(value));
   };
   _proto.yvCustom = function yvCustom(d, xyValue) {
-    var $$ = this,
+    const $$ = this,
       yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y,
       value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     return Math.ceil(yScale(value));
@@ -1816,7 +1820,7 @@ var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __w
  * @param {Stanford} owner Stanford instance
  * @private
  */
-var ColorScale = /*#__PURE__*/function () {
+let ColorScale = /*#__PURE__*/function () {
   function ColorScale(owner) {
     this.owner = void 0;
     this.colorScale = void 0;
@@ -1824,8 +1828,8 @@ var ColorScale = /*#__PURE__*/function () {
   }
   var _proto = ColorScale.prototype;
   _proto.drawColorScale = function drawColorScale() {
-    var _this = this,
-      _this$owner = this.owner,
+    var _this = this;
+    const _this$owner = this.owner,
       $$ = _this$owner.$$,
       config = _this$owner.config,
       target = $$.data.targets[0],
@@ -1846,7 +1850,7 @@ var ColorScale = /*#__PURE__*/function () {
     }.bind(this));
 
     // Legend Axis
-    var axisScale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSymlog)().domain([target.minEpochs, target.maxEpochs]).range([points[0] + config.padding_top + points[points.length - 1] + 5 - 1, points[0] + config.padding_top]),
+    const axisScale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSymlog)().domain([target.minEpochs, target.maxEpochs]).range([points[0] + config.padding_top + points[points.length - 1] + 5 - 1, points[0] + config.padding_top]),
       legendAxis = (0,external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisRight)(axisScale),
       scaleFormat = config.scale_format;
     if (scaleFormat === "pow10") {
@@ -1858,7 +1862,7 @@ var ColorScale = /*#__PURE__*/function () {
     }
 
     // Draw Axis
-    var axis = this.colorScale.append("g").attr("class", "legend axis").attr("transform", "translate(" + barWidth + ",0)").call(legendAxis);
+    const axis = this.colorScale.append("g").attr("class", "legend axis").attr("transform", "translate(" + barWidth + ",0)").call(legendAxis);
     if (scaleFormat === "pow10") {
       axis.selectAll(".tick text").text(null).filter(function (d) {
         _newArrowCheck(this, _this);
@@ -1986,7 +1990,7 @@ var ColorScale = /*#__PURE__*/function () {
  *     ]
  * })
  */
-var Stanford = /*#__PURE__*/function (_Plugin) {
+let Stanford = /*#__PURE__*/function (_Plugin) {
   _inheritsLoose(Stanford, _Plugin);
   function Stanford(options) {
     var _this = _Plugin.call(this, options) || this;
@@ -1998,8 +2002,9 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
   }
   var _proto = Stanford.prototype;
   _proto.$beforeInit = function $beforeInit() {
-    var _this2 = this,
-      $$ = this.$$;
+    var _this2 = this;
+    const $$ = this.$$;
+
     // override on config values & methods
     $$.config.data_xSort = !1;
     $$.isMultipleX = function () {
@@ -2017,14 +2022,14 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
       _newArrowCheck(this, _this2);
       return 1;
     }.bind(this);
-    var getCurrentPaddingRight = $$.getCurrentPaddingRight.bind($$);
+    const getCurrentPaddingRight = $$.getCurrentPaddingRight.bind($$);
     $$.getCurrentPaddingRight = function () {
       _newArrowCheck(this, _this2);
       return getCurrentPaddingRight() + (this.colorScale ? this.colorScale.getColorScalePadding() : 0);
     }.bind(this);
   };
   _proto.$init = function $init() {
-    var $$ = this.$$;
+    const $$ = this.$$;
     loadConfig.call(this, this.options);
     $$.color = this.getStanfordPointColor.bind($$);
     this.colorScale = new ColorScale(this);
@@ -2044,8 +2049,8 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
     return new Options();
   };
   _proto.convertData = function convertData() {
-    var _this3 = this,
-      data = this.$$.data.targets,
+    var _this3 = this;
+    const data = this.$$.data.targets,
       epochs = this.options.epochs;
     data.forEach(function (d) {
       var _this4 = this;
@@ -2061,10 +2066,10 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
     }.bind(this));
   };
   _proto.xvCustom = function xvCustom(d, xyValue) {
-    var $$ = this,
+    const $$ = this,
       axis = $$.axis,
       config = $$.config;
-    var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+    let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     if (axis.isTimeSeries()) {
       value = parseDate.call($$, value);
     } else if (axis.isCategorized() && isString(value)) {
@@ -2073,22 +2078,22 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
     return Math.ceil($$.scale.x(value));
   };
   _proto.yvCustom = function yvCustom(d, xyValue) {
-    var $$ = this,
+    const $$ = this,
       scale = $$.scale,
       yScale = d.axis && d.axis === "y2" ? scale.y2 : scale.y,
       value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     return Math.ceil(yScale(value));
   };
   _proto.initStanfordData = function initStanfordData() {
-    var _this5 = this,
-      config = this.config,
+    var _this5 = this;
+    const config = this.config,
       target = this.$$.data.targets[0];
     // TODO STANFORD see if (data.js -> orderTargets)+ can be used instead
     // Make larger values appear on top
     target.values.sort(compareEpochs);
 
     // Get array of epochs
-    var epochs = target.values.map(function (a) {
+    const epochs = target.values.map(function (a) {
       _newArrowCheck(this, _this5);
       return a.epochs;
     }.bind(this));
@@ -2098,19 +2103,19 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
     target.colorscale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSequentialLog)(target.colors).domain([target.minEpochs, target.maxEpochs]);
   };
   _proto.getStanfordPointColor = function getStanfordPointColor(d) {
-    var target = this.data.targets[0];
+    const target = this.data.targets[0];
     return target.colorscale(d.epochs);
   };
   _proto.setStanfordTooltip = function setStanfordTooltip() {
-    var config = this.$$.config;
+    const config = this.$$.config;
     if (isEmpty(config.tooltip_contents)) {
       config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
-        var _this6 = this,
-          data_x = config.data_x,
-          html = "<table class=\"" + $TOOLTIP.tooltip + "\"><tbody>";
+        var _this6 = this;
+        const data_x = config.data_x;
+        let html = "<table class=\"" + $TOOLTIP.tooltip + "\"><tbody>";
         d.forEach(function (v) {
           _newArrowCheck(this, _this6);
-          var _v$id = v.id,
+          const _v$id = v.id,
             id = _v$id === void 0 ? "" : _v$id,
             _v$value = v.value,
             value = _v$value === void 0 ? 0 : _v$value,
@@ -2125,8 +2130,8 @@ var Stanford = /*#__PURE__*/function (_Plugin) {
     }
   };
   _proto.countEpochsInRegion = function countEpochsInRegion(region) {
-    var _this7 = this,
-      $$ = this,
+    var _this7 = this;
+    const $$ = this,
       target = $$.data.targets[0],
       total = target.values.reduce(function (accumulator, currentValue) {
         _newArrowCheck(this, _this7);

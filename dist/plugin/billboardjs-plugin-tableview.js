@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230811004550
+ * @version 3.9.3-nightly-20230812004619
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -182,7 +182,7 @@ function _inheritsLoose(subClass, superClass) {
  * @example
  *   bb.plugin.stanford.version;  // ex) 1.9.0
  */
-var Plugin = /*#__PURE__*/function () {
+let Plugin = /*#__PURE__*/function () {
   /**
    * Constructor
    * @param {Any} options config option object
@@ -236,7 +236,7 @@ var Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.3-nightly-20230811004550";
+Plugin.version = "3.9.3-nightly-20230812004619";
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
 /**
@@ -251,7 +251,7 @@ Plugin.version = "3.9.3-nightly-20230811004550";
  * @returns {TableviewOptions}
  * @private
  */
-var Options = function () {
+let Options = function () {
   return {
     /**
      * Set tableview holder selector.
@@ -285,7 +285,7 @@ var Options = function () {
      *   categoryFormat: "#table-holder"
      */
     categoryFormat: function categoryFormat(v) {
-      var category = v;
+      let category = v;
       if (this.$$.axis.isCategorized()) {
         category = this.$$.categoryName(v);
       } else if (this.$$.axis.isTimeSeries()) {
@@ -347,7 +347,7 @@ var Options = function () {
  * @ignore
  */
 
-var defaultStyle = {
+const defaultStyle = {
     id: "__tableview-style__",
     class: "bb-tableview",
     rule: ".bb-tableview {\n\t\tborder-collapse:collapse;\n\t\tborder-spacing:0;\n\t\tbackground:#fff;\n\t\tmin-width:100%;\n\t\tmargin-top:10px;\n\t\tfont-family:sans-serif;\n\t\tfont-size:.9em;\n\t}\n\t.bb-tableview tr:hover {\n\t\tbackground:#eef7ff;\n\t}\n\t.bb-tableview thead tr {\n\t\tbackground:#f8f8f8;\n\t}\n\t.bb-tableview caption,.bb-tableview td,.bb-tableview th {\n\t\ttext-align: center;\n\t\tborder:1px solid silver;\n\t\tpadding:.5em;\n\t}\n\t.bb-tableview caption {\n\t\tfont-size:1.1em;\n\t\tfont-weight:700;\n\t\tmargin-bottom: -1px;\n\t}"
@@ -375,9 +375,9 @@ var _this = undefined;
  */
 /* eslint-disable no-new-func, no-undef */
 
-var win = function () {
+const win = function () {
     _newArrowCheck(this, _this);
-    var root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
+    const root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
     return root || Function("return this")();
   }.bind(undefined)(),
   hasRAF = typeof win.requestAnimationFrame === "function",
@@ -410,7 +410,7 @@ function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i
 
 
 
-var isValue = function (v) {
+const isValue = function (v) {
     _newArrowCheck(this, util_this);
     return v || v === 0;
   }.bind(undefined),
@@ -503,8 +503,8 @@ function getOption(options, key, defaultValue) {
  * @private
  */
 function hasValue(dict, value) {
-  var _this2 = this,
-    found = !1;
+  var _this2 = this;
+  let found = !1;
   Object.keys(dict).forEach(function (key) {
     _newArrowCheck(this, _this2);
     return dict[key] === value && (found = !0);
@@ -521,7 +521,7 @@ function hasValue(dict, value) {
  * @private
  */
 function callFn(fn, thisArg) {
-  var isFn = isFunction(fn);
+  const isFn = isFunction(fn);
   for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
     args[_key - 2] = arguments[_key];
   }
@@ -536,14 +536,15 @@ function callFn(fn, thisArg) {
  * @private
  */
 function endall(transition, cb) {
-  var _this3 = this,
-    n = 0,
-    end = function () {
-      for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
-      }
-      --n || cb.apply.apply(cb, [this].concat(args));
-    };
+  var _this3 = this;
+  let n = 0;
+  const end = function () {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+      args[_key2] = arguments[_key2];
+    }
+    --n || cb.apply.apply(cb, [this].concat(args));
+  };
+
   // if is transition selection
   if ("duration" in transition) {
     transition.each(function () {
@@ -588,12 +589,12 @@ function setTextValue(node, text, dy, toMiddle) {
   if (text.indexOf("\n") === -1) {
     node.text(text);
   } else {
-    var diff = [node.text(), text].map(function (v) {
+    const diff = [node.text(), text].map(function (v) {
       _newArrowCheck(this, _this4);
       return v.replace(/[\s\n]/g, "");
     }.bind(this));
     if (diff[0] !== diff[1]) {
-      var multiline = text.split("\n"),
+      const multiline = text.split("\n"),
         len = toMiddle ? multiline.length - 1 : 1;
       // reset possible text
       node.html("");
@@ -619,7 +620,7 @@ function getRectSegList(path) {
    *   |               |
    * seg0 ---------- seg3
    * */
-  var _path$getBBox = path.getBBox(),
+  const _path$getBBox = path.getBBox(),
     x = _path$getBBox.x,
     y = _path$getBBox.y,
     width = _path$getBBox.width,
@@ -653,7 +654,7 @@ function getRectSegList(path) {
  * @private
  */
 function getPathBox(path) {
-  var _path$getBoundingClie = path.getBoundingClientRect(),
+  const _path$getBoundingClie = path.getBoundingClientRect(),
     width = _path$getBoundingClie.width,
     height = _path$getBoundingClie.height,
     items = getRectSegList(path),
@@ -676,9 +677,9 @@ function getPathBox(path) {
  */
 function getPointer(event, element) {
   var _ref,
-    touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
-    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element),
     _this5 = this;
+  const touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
+    pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
   return pointer.map(function (v) {
     _newArrowCheck(this, _this5);
     return isNaN(v) ? 0 : v;
@@ -692,10 +693,10 @@ function getPointer(event, element) {
  * @private
  */
 function getBrushSelection(ctx) {
-  var event = ctx.event,
+  const event = ctx.event,
     $el = ctx.$el,
     main = $el.subchart.main || $el.main;
-  var selection;
+  let selection;
 
   // check from event
   if (event && event.type === "brush") {
@@ -715,7 +716,7 @@ function getBrushSelection(ctx) {
  * @private
  */
 function getBoundingRect(node) {
-  var needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
+  const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
   return needEvaluate ? node.rect = node.getBoundingClientRect() : node.rect;
 }
 
@@ -737,7 +738,7 @@ function getRandom(asStr, min, max) {
   if (max === void 0) {
     max = 1e4;
   }
-  var crpt = win.crypto || win.msCrypto,
+  const crpt = win.crypto || win.msCrypto,
     rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
   return asStr ? rand + "" : rand;
 }
@@ -756,8 +757,8 @@ function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
     return -1;
   }
-  var mid = Math.floor((start + end) / 2);
-  var _arr$mid = arr[mid],
+  const mid = Math.floor((start + end) / 2);
+  let _arr$mid = arr[mid],
     x = _arr$mid.x,
     _arr$mid$w = _arr$mid.w,
     w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
@@ -778,7 +779,7 @@ function findIndex(arr, v, start, end, isRotated) {
  * @private
  */
 function brushEmpty(ctx) {
-  var selection = getBrushSelection(ctx);
+  const selection = getBrushSelection(ctx);
   if (selection) {
     // brush selected area
     // two-dimensional: [[x0, y0], [x1, y1]]
@@ -795,17 +796,19 @@ function brushEmpty(ctx) {
  * @private
  */
 function deepClone() {
-  for (var _this6 = this, _clone = function clone(v) {
-      _newArrowCheck(this, _this6);
-      if (isObject(v) && v.constructor) {
-        var r = new v.constructor();
-        for (var k in v) {
-          r[k] = _clone(v[k]);
-        }
-        return r;
+  var _this6 = this;
+  const _clone = function clone(v) {
+    _newArrowCheck(this, _this6);
+    if (isObject(v) && v.constructor) {
+      const r = new v.constructor();
+      for (const k in v) {
+        r[k] = _clone(v[k]);
       }
-      return v;
-    }.bind(this), _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      return r;
+    }
+    return v;
+  }.bind(this);
+  for (var _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
     objectN[_key3] = arguments[_key3];
   }
   return objectN.map(function (v) {
@@ -837,7 +840,7 @@ function extend(target, source) {
   }
 
   // exclude name with only numbers
-  for (var p in source) {
+  for (const p in source) {
     if (/^\d+$/.test(p) || p in target) {
       continue;
     }
@@ -852,7 +855,7 @@ function extend(target, source) {
  * @returns {string} capitalized string
  * @private
  */
-var capitalize = function (str) {
+const capitalize = function (str) {
   _newArrowCheck(this, util_this);
   return str.charAt(0).toUpperCase() + str.slice(1);
 }.bind(undefined);
@@ -881,7 +884,7 @@ function camelize(str, separator) {
  * @returns {Array}
  * @private
  */
-var toArray = function (v) {
+const toArray = function (v) {
   _newArrowCheck(this, util_this);
   return [].slice.call(v);
 }.bind(undefined);
@@ -895,8 +898,8 @@ var toArray = function (v) {
  * @private
  */
 function addCssRules(style, selector, prop) {
-  var _this9 = this,
-    rootSelctor = style.rootSelctor,
+  var _this9 = this;
+  const rootSelctor = style.rootSelctor,
     sheet = style.sheet,
     getSelector = function (s) {
       _newArrowCheck(this, _this9);
@@ -913,8 +916,8 @@ function addCssRules(style, selector, prop) {
  * @private
  */
 function getCssRules(styleSheets) {
-  var _this10 = this,
-    rules = [];
+  var _this10 = this;
+  let rules = [];
   styleSheets.forEach(function (sheet) {
     _newArrowCheck(this, _this10);
     try {
@@ -936,7 +939,7 @@ function getCssRules(styleSheets) {
  * @private
  */
 function getTranslation(node) {
-  var transform = node ? node.transform : null,
+  const transform = node ? node.transform : null,
     baseVal = transform && transform.baseVal;
   return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
     a: 0,
@@ -955,8 +958,8 @@ function getTranslation(node) {
  * @private
  */
 function getUnique(data) {
-  var _this11 = this,
-    isDate = data[0] instanceof Date,
+  var _this11 = this;
+  const isDate = data[0] instanceof Date,
     d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
       _newArrowCheck(this, _this11);
       return self.indexOf(v) === i;
@@ -995,11 +998,11 @@ function mergeObj(target) {
   if (!objectN.length || objectN.length === 1 && !objectN[0]) {
     return target;
   }
-  var source = objectN.shift();
+  const source = objectN.shift();
   if (isObject(target) && isObject(source)) {
     Object.keys(source).forEach(function (key) {
       _newArrowCheck(this, _this13);
-      var value = source[key];
+      const value = source[key];
       if (isObject(value)) {
         target[key] || (target[key] = {});
         target[key] = mergeObj(target[key], value);
@@ -1023,7 +1026,7 @@ function sortValue(data, isAsc) {
   if (isAsc === void 0) {
     isAsc = !0;
   }
-  var fn;
+  let fn;
   if (data[0] instanceof Date) {
     fn = isAsc ? function (a, b) {
       _newArrowCheck(this, _this14);
@@ -1056,11 +1059,11 @@ function sortValue(data, isAsc) {
  * @private
  */
 function getMinMax(type, data) {
-  var _this15 = this,
-    res = data.filter(function (v) {
-      _newArrowCheck(this, _this15);
-      return notEmpty(v);
-    }.bind(this));
+  var _this15 = this;
+  let res = data.filter(function (v) {
+    _newArrowCheck(this, _this15);
+    return notEmpty(v);
+  }.bind(this));
   if (res.length) {
     if (isNumber(res[0])) {
       res = Math[type].apply(Math, res);
@@ -1081,14 +1084,14 @@ function getMinMax(type, data) {
  * @returns {Array}
  * @private
  */
-var getRange = function (start, end, step) {
+const getRange = function (start, end, step) {
     if (step === void 0) {
       step = 1;
     }
     _newArrowCheck(this, util_this);
-    var res = [],
+    const res = [],
       n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-    for (var i = start; i < n; i++) {
+    for (let i = start; i < n; i++) {
       res.push(start + i * step);
     }
     return res;
@@ -1097,7 +1100,7 @@ var getRange = function (start, end, step) {
     mouse: function () {
       var _this16 = this;
       _newArrowCheck(this, util_this);
-      var getParams = function () {
+      const getParams = function () {
         _newArrowCheck(this, _this16);
         return {
           bubbles: !1,
@@ -1125,7 +1128,7 @@ var getRange = function (start, end, step) {
             params = getParams();
           }
           _newArrowCheck(this, _this16);
-          var mouseEvent = doc.createEvent("MouseEvent");
+          const mouseEvent = doc.createEvent("MouseEvent");
 
           // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
           mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0,
@@ -1137,7 +1140,7 @@ var getRange = function (start, end, step) {
     }.bind(undefined)(),
     touch: function touch(el, eventType, params) {
       _newArrowCheck(this, util_this);
-      var touchObj = new Touch(mergeObj({
+      const touchObj = new Touch(mergeObj({
         identifier: Date.now(),
         target: el,
         radiusX: 2.5,
@@ -1163,8 +1166,8 @@ var getRange = function (start, end, step) {
  * @private
  */
 function tplProcess(tpl, data) {
-  var res = tpl;
-  for (var x in data) {
+  let res = tpl;
+  for (const x in data) {
     res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
   }
   return res;
@@ -1178,13 +1181,14 @@ function tplProcess(tpl, data) {
  * @private
  */
 function parseDate(date) {
-  var parsedDate;
+  let parsedDate;
   if (date instanceof Date) {
     parsedDate = date;
   } else if (isString(date)) {
-    var _format$dataTime,
-      config = this.config,
+    var _format$dataTime;
+    const config = this.config,
       format = this.format;
+
     // if fails to parse, try by new Date()
     // https://github.com/naver/billboard.js/issues/1714
     parsedDate = (_format$dataTime = format.dataTime(config.data_xFormat)(date)) != null ? _format$dataTime : new Date(date);
@@ -1214,11 +1218,11 @@ function isTabVisible() {
  * @private
  */
 function convertInputType(mouse, touch) {
-  var _this17 = this,
-    DocumentTouch = win.DocumentTouch,
+  var _this17 = this;
+  const DocumentTouch = win.DocumentTouch,
     matchMedia = win.matchMedia,
-    navigator = win.navigator,
-    hasTouch = !1;
+    navigator = win.navigator;
+  let hasTouch = !1;
   if (touch) {
     // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
     if (navigator && "maxTouchPoints" in navigator) {
@@ -1234,7 +1238,7 @@ function convertInputType(mouse, touch) {
         hasTouch = !0;
       } else {
         // Only as a last resort, fall back to user agent sniffing
-        var UA = navigator.userAgent;
+        const UA = navigator.userAgent;
         hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
       }
     }
@@ -1243,7 +1247,7 @@ function convertInputType(mouse, touch) {
   // Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
   // https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
   // Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
-  var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
+  const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
     _newArrowCheck(this, _this17);
     return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
   }.bind(this));
@@ -1282,22 +1286,20 @@ function runUntil(fn, conditionFn) {
  * @private
  */
 function loadConfig(config) {
-  var _this = this,
-    thisConfig = this.config,
-    target,
-    keys,
-    read,
-    _find = function find() {
-      _newArrowCheck(this, _this);
-      var key = keys.shift();
-      if (key && target && isObjectType(target) && key in target) {
-        target = target[key];
-        return _find();
-      } else if (!key) {
-        return target;
-      }
-      return undefined;
-    }.bind(this);
+  var _this = this;
+  const thisConfig = this.config;
+  let target, keys, read;
+  const _find = function find() {
+    _newArrowCheck(this, _this);
+    const key = keys.shift();
+    if (key && target && isObjectType(target) && key in target) {
+      target = target[key];
+      return _find();
+    } else if (!key) {
+      return target;
+    }
+    return undefined;
+  }.bind(this);
   Object.keys(thisConfig).forEach(function (key) {
     _newArrowCheck(this, _this);
     target = config;
@@ -1373,7 +1375,7 @@ function tableview_objectSpread(target) { for (var i = 1, source; i < arguments.
  *     ]
  * })
  */
-var TableView = /*#__PURE__*/function (_Plugin) {
+let TableView = /*#__PURE__*/function (_Plugin) {
   _inheritsLoose(TableView, _Plugin);
   function TableView(options) {
     var _this = _Plugin.call(this, options) || this;
@@ -1387,26 +1389,26 @@ var TableView = /*#__PURE__*/function (_Plugin) {
     loadConfig.call(this, this.options);
   };
   _proto.$init = function $init() {
-    var _element$classList,
-      _this$config = this.config,
+    var _element$classList;
+    const _this$config = this.config,
       className = _this$config.class,
       selector = _this$config.selector,
-      style = _this$config.style,
-      element = document.querySelector(selector || "." + (className || defaultStyle.class));
+      style = _this$config.style;
+    let element = document.querySelector(selector || "." + (className || defaultStyle.class));
     if (!element) {
-      var chart = this.$$.$el.chart.node();
+      const chart = this.$$.$el.chart.node();
       element = document.createElement("table");
       chart.parentNode.insertBefore(element, chart.nextSibling);
     }
     if (element.tagName !== "TABLE") {
-      var table = document.createElement("table");
+      const table = document.createElement("table");
       element.appendChild(table);
       element = table;
     }
 
     // append default css style
     if (style && !document.getElementById(defaultStyle.id)) {
-      var s = document.createElement("style");
+      const s = document.createElement("style");
       s.id = defaultStyle.id;
       s.innerHTML = defaultStyle.rule;
       (document.head || document.getElementsByTagName("head")[0]).appendChild(s);
@@ -1420,16 +1422,16 @@ var TableView = /*#__PURE__*/function (_Plugin) {
    * @private
    */;
   _proto.generateTable = function generateTable() {
-    var _this2 = this,
-      $$ = this.$$,
+    var _this2 = this;
+    const $$ = this.$$,
       config = this.config,
       element = this.element,
-      dataToShow = $$.filterTargetsToShow($$.data.targets),
-      thead = tplProcess(tpl.thead, {
+      dataToShow = $$.filterTargetsToShow($$.data.targets);
+    let thead = tplProcess(tpl.thead, {
         title: dataToShow.length ? this.config.categoryTitle : ""
       }),
-      tbody = "",
-      rows = [];
+      tbody = "";
+    const rows = [];
     dataToShow.forEach(function (v) {
       var _this3 = this;
       _newArrowCheck(this, _this2);
@@ -1456,7 +1458,7 @@ var TableView = /*#__PURE__*/function (_Plugin) {
         });
       }.bind(this)).join("") + "</tr>";
     }.bind(this));
-    var r = tplProcess(tpl.body, tableview_objectSpread(tableview_objectSpread({}, config), {}, {
+    const r = tplProcess(tpl.body, tableview_objectSpread(tableview_objectSpread({}, config), {}, {
       title: config.title || $$.config.title_text || "",
       thead: thead,
       tbody: tbody
@@ -1464,7 +1466,7 @@ var TableView = /*#__PURE__*/function (_Plugin) {
     element.innerHTML = r;
   };
   _proto.$redraw = function $redraw() {
-    var state = this.$$.state,
+    const state = this.$$.state,
       doNotUpdate = state.resizing || !this.config.updateOnToggle && state.toggling;
     doNotUpdate || this.generateTable();
   };
@@ -1474,8 +1476,8 @@ var TableView = /*#__PURE__*/function (_Plugin) {
 
     // remove default css style when left one chart instance
     if (this.$$.charts.length === 1) {
-      var _s$parentNode,
-        s = document.getElementById(defaultStyle.id);
+      var _s$parentNode;
+      const s = document.getElementById(defaultStyle.id);
       s == null || (_s$parentNode = s.parentNode) == null ? void 0 : _s$parentNode.removeChild(s);
     }
   };
