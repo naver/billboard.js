@@ -150,9 +150,21 @@ describe("PLUGIN: TABLE-VIEW", () => {
 			// reset body width
 			document.body.style.width = ``;
 		});
+
+		it("set options", () => {
+			pluginArgs.categoryTitle = "<img src=''>MyCategory";
+			pluginArgs.title = '<SCRIPT >alert(1)<\/SCRIPT>어쩌고 저쩌고222';
+		});
+
+		it("check if 'title' and 'categoryTitle' are escaped", () => {
+			const table = document.querySelector(`table.${pluginArgs.class}`) as HTMLTableElement;
+
+			expect(table.querySelector("caption")?.innerHTML).to.not.include("script");
+			expect(table.querySelector("thead th")?.innerHTML).to.not.include("img");
+		});
 	});
 
-	describe("", () => { 
+	describe("Specify non table element as target", () => {
 		const divId = "tableView_div_wrapper";
 
 		before(() => {

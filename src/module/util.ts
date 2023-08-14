@@ -53,7 +53,7 @@ export {
 	notEmpty,
 	parseDate,
 	runUntil,
-	sanitise,
+	sanitize,
 	setTextValue,
 	sortValue,
 	toArray,
@@ -168,9 +168,9 @@ function endall(transition, cb: Function): void {
  * @returns {string}
  * @private
  */
-function sanitise(str: string): string {
+function sanitize(str: string): string {
 	return isString(str) ?
-		str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
+		str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") : str;
 }
 
 /**

@@ -52,7 +52,7 @@ export const {
 	notEmpty,
 	parseDate,
 	runUntil,
-	sanitise,
+	sanitize,
 	setTextValue,
 	sortValue,
 	toArray,

@@ -139,7 +139,7 @@ export default class TableView extends Plugin {
 			}</tr>`;
 		});
 
-		const rx = /<[^>]+><\/[^>]+>/g;
+		const rx = /(<\/?(script|img)[^>]*>|<[^>]+><\/[^>]+>)/ig;
 		const r = tplProcess(tpl.body, {
 			...config,
 			title: config.title || $$.config.title_text || "",

@@ -6,7 +6,7 @@ import {select as d3Select} from "d3-selection";
 import {document} from "../../module/browser";
 import {$ARC, $TOOLTIP} from "../../config/classes";
 import type {IArcData, IDataRow} from "../data/IData";
-import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
+import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitize, tplProcess, isUndefined, parseDate} from "../../module/util";
 
 export default {
 	/**
@@ -173,7 +173,7 @@ export default {
 
 			if (isUndefined(text)) {
 				const title = (state.hasAxis || state.hasRadar) &&
-					sanitise(titleFormat ? titleFormat(row.x) : row.x);
+					sanitize(titleFormat ? titleFormat(row.x) : row.x);
 
 				text = tplProcess(tpl[0], {
 					CLASS_TOOLTIP: $TOOLTIP.tooltip,
@@ -189,16 +189,16 @@ export default {
 			}
 
 			param = [row.ratio, row.id, row.index, d];
-			value = sanitise(valueFormat(getRowValue(row), ...param));
+			value = sanitize(valueFormat(getRowValue(row), ...param));
 
 			if ($$.isAreaRangeType(row)) {
-				const [high, low] = ["high", "low"].map(v => sanitise(
+				const [high, low] = ["high", "low"].map(v => sanitize(
 					valueFormat($$.getRangedData(row, v), ...param)
 				));
 
 				value = `<b>Mid:</b> ${value} <b>High:</b> ${high} <b>Low:</b> ${low}`;
 			} else if ($$.isCandlestickType(row)) {
-				const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"].map(v => sanitise(
+				const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"].map(v => sanitize(
 					valueFormat($$.getRangedData(row, v, "candlestick"), ...param)
 				));
 
@@ -215,7 +215,7 @@ export default {
 					continue;
 				}
 
-				const name = sanitise(nameFormat(row.name, ...param));
+				const name = sanitize(nameFormat(row.name, ...param));
 				const color = getBgColor(row);
 				const contentValue = {
 					CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),

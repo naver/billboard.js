@@ -356,7 +356,7 @@ var billboardDemo = {
 				plugins += "new bb.plugin."+ key +"({ // for ESM specify as: new "+ key +"()";
 				plugins += JSON.stringify(p[key], function(k, v) {
 					return typeof v === "function" ? v.toString() : v;
-				}, 5).replace(/\\n/g, "\n").replace(/}$/, "    }").replace(/{/, "");
+				}, 5).replace(/\\n/g, "\n").replace(/}$/g, "    }").replace(/{/g, "");
 				plugins += "),";
 			})
 		});
@@ -379,7 +379,7 @@ var billboardDemo = {
 						.replace(/(\"|\d),/g, "$1, ");
 
 					return k === "json" ?
-						str.replace(/{/, "{\r\n\t").replace(/}/, "\r\n    }") : str;
+						str.replace(/{/g, "{\r\n\t").replace(/}/g, "\r\n    }") : str;
 				} else if (k === "_plugins") {
 					return [self.getPluginsCodeStr(v)];
 				}
