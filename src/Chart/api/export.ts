@@ -87,8 +87,7 @@ function nodeToSvgDataUrl(node, option: TExportOption, orgSize: TSize) {
 			<foreignObject width="100%" height="100%">
 				${styleXml}
 				${nodeXml.replace(/(url\()[^#]+/g, "$1")}
-			</foreignObject></svg>`
-		.replace("/\n/g", "%0A");
+			</foreignObject></svg>`;
 
 	return `data:image/svg+xml;base64,${b64EncodeUnicode(dataStr)}`;
 }
