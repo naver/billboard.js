@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230812004619
+ * @version 3.9.3-nightly-20230815004621
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -531,8 +531,8 @@ function endall(transition, cb) {
  * @returns {string}
  * @private
  */
-function sanitise(str) {
-  return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
+function sanitize(str) {
+  return isString(str) ? str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") : str;
 }
 
 /**
@@ -9609,7 +9609,7 @@ function title_getTextPos(pos, width) {
         continue;
       }
       if (isUndefined(text)) {
-        const title = (state.hasAxis || state.hasRadar) && sanitise(titleFormat ? titleFormat(row.x) : row.x);
+        const title = (state.hasAxis || state.hasRadar) && sanitize(titleFormat ? titleFormat(row.x) : row.x);
         text = tplProcess(tpl[0], {
           CLASS_TOOLTIP: $TOOLTIP.tooltip,
           TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">" + title + "</th></tr>" : ""
@@ -9620,11 +9620,11 @@ function title_getTextPos(pos, width) {
         row.ratio = $$.getRatio.apply($$, param);
       }
       param = [row.ratio, row.id, row.index, d];
-      value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(param)));
+      value = sanitize(valueFormat.apply(void 0, [getRowValue(row)].concat(param)));
       if ($$.isAreaRangeType(row)) {
         const _map2 = ["high", "low"].map(function (v) {
             _newArrowCheck(this, _this2);
-            return sanitise(valueFormat.apply(void 0, [$$.getRangedData(row, v)].concat(param)));
+            return sanitize(valueFormat.apply(void 0, [$$.getRangedData(row, v)].concat(param)));
           }.bind(this)),
           high = _map2[0],
           low = _map2[1];
@@ -9632,7 +9632,7 @@ function title_getTextPos(pos, width) {
       } else if ($$.isCandlestickType(row)) {
         const _map3 = ["open", "high", "low", "close", "volume"].map(function (v) {
             _newArrowCheck(this, _this2);
-            return sanitise(valueFormat.apply(void 0, [$$.getRangedData(row, v, "candlestick")].concat(param)));
+            return sanitize(valueFormat.apply(void 0, [$$.getRangedData(row, v, "candlestick")].concat(param)));
           }.bind(this)),
           open = _map3[0],
           high = _map3[1],
@@ -9651,7 +9651,7 @@ function title_getTextPos(pos, width) {
         if (row.name === null) {
           continue;
         }
-        const name = sanitise(nameFormat.apply(void 0, [row.name].concat(param))),
+        const name = sanitize(nameFormat.apply(void 0, [row.name].concat(param))),
           color = getBgColor(row),
           contentValue = {
             CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
@@ -11591,7 +11591,7 @@ function nodeToSvgDataUrl(node, option, orgSize) {
     style = browser_doc.createElement("style"); // escape css for XML
   style.appendChild(browser_doc.createTextNode(cssText.join("\n")));
   const styleXml = serializer.serializeToString(style),
-    dataStr = ("<svg xmlns=\"" + external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg + "\" width=\"" + width + "\" height=\"" + height + "\" \n\t\tviewBox=\"0 0 " + orgSize.width + " " + orgSize.height + "\" \n\t\tpreserveAspectRatio=\"" + ((option == null ? void 0 : option.preserveAspectRatio) === !1 ? "none" : "xMinYMid meet") + "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t" + styleXml + "\n\t\t\t\t" + nodeXml.replace(/(url\()[^#]+/g, "$1") + "\n\t\t\t</foreignObject></svg>").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
+    dataStr = "<svg xmlns=\"" + external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.namespaces.svg + "\" width=\"" + width + "\" height=\"" + height + "\" \n\t\tviewBox=\"0 0 " + orgSize.width + " " + orgSize.height + "\" \n\t\tpreserveAspectRatio=\"" + ((option == null ? void 0 : option.preserveAspectRatio) === !1 ? "none" : "xMinYMid meet") + "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t" + styleXml + "\n\t\t\t\t" + nodeXml.replace(/(url\()[^#]+/g, "$1") + "\n\t\t\t</foreignObject></svg>"; // foreignObject not supported in IE11 and below
   // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
   return "data:image/svg+xml;base64," + b64EncodeUnicode(dataStr);
 }
@@ -25239,7 +25239,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230812004619
+ * @version 3.9.3-nightly-20230815004621
  */
 const bb = {
   /**
@@ -25249,7 +25249,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230812004619",
+  version: "3.9.3-nightly-20230815004621",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

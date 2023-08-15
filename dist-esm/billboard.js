@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230812004619
+ * @version 3.9.3-nightly-20230815004621
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -285,9 +285,9 @@ function endall(transition, cb) {
  * @returns {string}
  * @private
  */
-function sanitise(str) {
+function sanitize(str) {
     return isString(str) ?
-        str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
+        str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") : str;
 }
 /**
  * Set text value. If there's multiline add nodes.
@@ -8413,7 +8413,7 @@ var tooltip$1 = {
             }
             if (isUndefined(text)) {
                 var title = (state.hasAxis || state.hasRadar) &&
-                    sanitise(titleFormat ? titleFormat(row.x) : row.x);
+                    sanitize(titleFormat ? titleFormat(row.x) : row.x);
                 text = tplProcess(tpl[0], {
                     CLASS_TOOLTIP: $TOOLTIP.tooltip,
                     TITLE: isValue(title) ? (tplStr ? title : "<tr><th colspan=\"2\">".concat(title, "</th></tr>")) : ""
@@ -8424,13 +8424,13 @@ var tooltip$1 = {
                 row.ratio = $$.getRatio.apply($$, param);
             }
             param = [row.ratio, row.id, row.index, d];
-            value = sanitise(valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param, false)));
+            value = sanitize(valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param, false)));
             if ($$.isAreaRangeType(row)) {
-                var _b = ["high", "low"].map(function (v) { return sanitise(valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v)], param, false))); }), high = _b[0], low = _b[1];
+                var _b = ["high", "low"].map(function (v) { return sanitize(valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v)], param, false))); }), high = _b[0], low = _b[1];
                 value = "<b>Mid:</b> ".concat(value, " <b>High:</b> ").concat(high, " <b>Low:</b> ").concat(low);
             }
             else if ($$.isCandlestickType(row)) {
-                var _c = ["open", "high", "low", "close", "volume"].map(function (v) { return sanitise(valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v, "candlestick")], param, false))); }), open_1 = _c[0], high = _c[1], low = _c[2], close_1 = _c[3], volume = _c[4];
+                var _c = ["open", "high", "low", "close", "volume"].map(function (v) { return sanitize(valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v, "candlestick")], param, false))); }), open_1 = _c[0], high = _c[1], low = _c[2], close_1 = _c[3], volume = _c[4];
                 value = "<b>Open:</b> ".concat(open_1, " <b>High:</b> ").concat(high, " <b>Low:</b> ").concat(low, " <b>Close:</b> ").concat(close_1).concat(volume ? " <b>Volume:</b> ".concat(volume) : "");
             }
             else if ($$.isBarRangeType(row)) {
@@ -8442,7 +8442,7 @@ var tooltip$1 = {
                 if (row.name === null) {
                     return "continue";
                 }
-                var name_1 = sanitise(nameFormat.apply(void 0, __spreadArray([row.name], param, false)));
+                var name_1 = sanitize(nameFormat.apply(void 0, __spreadArray([row.name], param, false)));
                 var color_1 = getBgColor(row);
                 var contentValue_1 = {
                     CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
@@ -10142,8 +10142,7 @@ function nodeToSvgDataUrl(node, option, orgSize) {
     var styleXml = serializer.serializeToString(style);
     // foreignObject not supported in IE11 and below
     // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
-    var dataStr = "<svg xmlns=\"".concat(namespaces.svg, "\" width=\"").concat(width, "\" height=\"").concat(height, "\" \n\t\tviewBox=\"0 0 ").concat(orgSize.width, " ").concat(orgSize.height, "\" \n\t\tpreserveAspectRatio=\"").concat((option === null || option === void 0 ? void 0 : option.preserveAspectRatio) === false ? "none" : "xMinYMid meet", "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t").concat(styleXml, "\n\t\t\t\t").concat(nodeXml.replace(/(url\()[^#]+/g, "$1"), "\n\t\t\t</foreignObject></svg>")
-        .replace("/\n/g", "%0A");
+    var dataStr = "<svg xmlns=\"".concat(namespaces.svg, "\" width=\"").concat(width, "\" height=\"").concat(height, "\" \n\t\tviewBox=\"0 0 ").concat(orgSize.width, " ").concat(orgSize.height, "\" \n\t\tpreserveAspectRatio=\"").concat((option === null || option === void 0 ? void 0 : option.preserveAspectRatio) === false ? "none" : "xMinYMid meet", "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t").concat(styleXml, "\n\t\t\t\t").concat(nodeXml.replace(/(url\()[^#]+/g, "$1"), "\n\t\t\t</foreignObject></svg>");
     return "data:image/svg+xml;base64,".concat(b64EncodeUnicode(dataStr));
 }
 /**
@@ -22749,7 +22748,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230812004619
+ * @version 3.9.3-nightly-20230815004621
  */
 var bb = {
     /**
@@ -22759,7 +22758,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.3-nightly-20230812004619",
+    version: "3.9.3-nightly-20230815004621",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
