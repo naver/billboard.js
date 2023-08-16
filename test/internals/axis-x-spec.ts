@@ -207,7 +207,7 @@ describe("X AXIS", function() {
 				}
 			});
 
-			it("shoud zoom & unzoomed.", () => {
+			it("should zoom & unzoomed.", () => {
 				const {line: {lines}} = chart.$;
 				const initialPath = lines.attr("d");
 

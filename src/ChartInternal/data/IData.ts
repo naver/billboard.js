@@ -10,6 +10,9 @@ type TDataRow = {
     name?: string;
 };
 
+export type TDomain = Date | number;
+export type TDomainRange = [TDomain, TDomain];
+
 export interface ITreemapData {
     name: string;
     id?: string; // for compatibility
@@ -19,7 +22,7 @@ export interface ITreemapData {
 }
 
 export interface IDataRow extends TDataRow {
-    x: number | string | Date;
+    x: TDomain & string;
 }
 
 export interface IDataPoint extends IDataRow {

@@ -252,6 +252,12 @@ export interface Chart {
 
 	subchart: {
 		/**
+		 * Select subchart by giving x domain range.
+		 * @param domain If domain range is given, the subchart will be seleted to the given domain. If no argument is given, the current subchart selection domain will be returned.
+		 */
+		(domain?: Array<Date|number|string>): Array<Date|number>;
+
+		/**
 		 * Hide generated subchart
 		 * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
 		 */
@@ -268,6 +274,11 @@ export interface Chart {
 		 * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
 		 */
 		toggle(): void;
+
+		/**
+		 * Reset subchart selection
+		 */
+		reset(): void;
 	};
 
 	tooltip: {

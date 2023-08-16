@@ -177,4 +177,109 @@ describe("API subchart", () => {
 			expect(spy.calledOnce).to.be.false;
 		});
 	});
+
+	describe(".subchart() / .subchart.reset()", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250]
+					],
+					type: "line"
+				},
+				subchart: {
+					show: true,
+					showHandle: true
+				}
+			};
+		});
+
+		it("check subchart selection and reset", () => {
+			const {brush, scale: {x, subX}} = chart.internal;
+			const range = [1, 3];
+
+			// when
+			chart.subchart(range);
+
+			const selection = brush.getSelection().select(".selection");
+			const posX = +selection.attr("x");
+			const width = +selection.attr("width");
+
+			expect(posX).to.be.equal(subX(range[0]));
+			expect(posX + width).to.be.closeTo(subX(range[1]), 1);
+
+			// when
+			chart.subchart.reset();
+
+			expect(selection.attr("width")).to.be.null;
+			expect(x.domain()).to.be.deep.equal(subX.domain());
+		});
+
+		it("when trying to give out of bounds data.", () => {
+			const {brush, scale: {x, subX}} = chart.internal;
+			const selection = brush.getSelection().select(".selection");
+
+			// when
+			chart.subchart([100, 200]);
+
+			expect(selection.attr("width")).to.be.null;
+			expect(x.domain()).to.be.deep.equal(subX.domain());
+
+			// when
+			chart.subchart([3, 1]);
+
+			expect(selection.attr("width")).to.be.null;
+			expect(x.domain()).to.be.deep.equal(subX.domain());
+
+			// when
+			chart.subchart([2, 2]);
+
+			expect(selection.attr("width")).to.be.null;
+			expect(x.domain()).to.be.deep.equal(subX.domain());
+		});
+
+		it("set options: axis.x.type='timeseries'", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", '2023-08-01', '2023-08-02', '2023-08-03', '2023-08-04', '2023-08-05'],
+						["data1", 30, 200, 100, 170, 150],
+					],
+					type: "line"
+				  },
+				axis: {
+					x: {
+						type: "timeseries"
+					}
+				},
+				subchart: {
+					show: true,
+					showHandle: true
+				}
+			};
+		});
+
+		it("when x is timeseries", () => {
+			const {brush, scale: {x, subX}} = chart.internal;
+			const range = ["2023-08-03", "2023-08-05"];
+			const rangeParsed = range.map(v => new Date(`${v} 00:00`));
+
+			// when
+			chart.subchart(range);
+
+			const selection = brush.getSelection().select(".selection");
+			const posX = +selection.attr("x");
+			const width = +selection.attr("width");
+
+			expect(posX).to.be.equal(subX(rangeParsed[0]));
+			expect(posX + width).to.be.closeTo(subX(rangeParsed[1]), 1);
+
+			// when
+			chart.subchart.reset();
+
+			expect(selection.attr("width")).to.be.null;
+			expect(x.domain()).to.be.deep.equal(subX.domain());
+		});
+	});
 });
