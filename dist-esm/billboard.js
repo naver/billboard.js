@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230815004621
+ * @version 3.9.3-nightly-20230817004550
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -5572,19 +5572,25 @@ var domain = {
         return domain;
     },
     /**
-     * Get zoom domain
+     * Get subchart/zoom domain
+     * @param {string} type "subX" or "zoom"
+     * @param {boolean} getCurrent Get current domain if true
      * @returns {Array} zoom domain
      * @private
      */
-    getZoomDomain: function () {
+    getZoomDomain: function (type, getCurrent) {
+        if (type === void 0) { type = "zoom"; }
+        if (getCurrent === void 0) { getCurrent = false; }
         var $$ = this;
-        var config = $$.config, org = $$.org;
-        var _a = org.xDomain, min = _a[0], max = _a[1];
-        if (isDefined(config.zoom_x_min)) {
-            min = getMinMax$1("min", [min, config.zoom_x_min]);
-        }
-        if (isDefined(config.zoom_x_max)) {
-            max = getMinMax$1("max", [max, config.zoom_x_max]);
+        var config = $$.config, scale = $$.scale, org = $$.org;
+        var _a = getCurrent && scale[type] ? scale[type].domain() : org.xDomain, min = _a[0], max = _a[1];
+        if (type === "zoom") {
+            if (isDefined(config.zoom_x_min)) {
+                min = getMinMax$1("min", [min, config.zoom_x_min]);
+            }
+            if (isDefined(config.zoom_x_max)) {
+                max = getMinMax$1("max", [max, config.zoom_x_max]);
+            }
         }
         return [min, max];
     },
@@ -5608,6 +5614,27 @@ var domain = {
             length = isRotated ? "width" : "height";
         }
         return domainLength * (pixels / state[length]);
+    },
+    /**
+     * Check if the given domain is within subchart/zoom range
+     * @param {Array} domain Target domain value
+     * @param {Array} current Current subchart/zoom domain value
+     * @param {Array} range subchart/zoom range value
+     * @returns {boolean}
+     * @private
+     */
+    withinRange: function (domain, current, range) {
+        var $$ = this;
+        var isInverted = $$.config.axis_x_inverted;
+        var _a = range, min = _a[0], max = _a[1];
+        if (Array.isArray(domain)) {
+            var target = __spreadArray([], domain, true);
+            isInverted && target.reverse();
+            if (target[0] < target[1]) {
+                return domain.every(function (v, i) { return (i === 0 ? (isInverted ? +v <= min : +v >= min) : (isInverted ? +v >= max : +v <= max)) && !(domain.every(function (v, i) { return v === current[i]; })); });
+            }
+        }
+        return false;
     }
 };
 
@@ -21243,108 +21270,140 @@ var apiSelection = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-var apiSubchart = {
-    subchart: {
-        /**
-         * Show subchart
-         * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
-         * @function subchart․show
-         * @instance
-         * @memberof Chart
-         * @example
-         * // for ESM imports, needs to import 'subchart' and must be instantiated first to enable subchart's API.
-         * import {subchart} from "billboard.js";
-         *
-         * const chart = bb.generate({
-         *   ...
-         *   subchart: {
-         *     // need to be instantiated by calling 'subchart()'
-         *     enabled: subchart()
-         *
-         *     // in case don't want subchart to be shown at initialization, instantiate with '!subchart()'
-         *     enabled: !subchart()
-         *     }
-         * });
-         *
-         * chart.subchart.show();
-         */
-        show: function () {
-            var _a, _b;
-            var $$ = this.internal;
-            var subchart = $$.$el.subchart, config = $$.config;
-            var show = config.subchart_show;
-            if (!show) {
-                // unbind zoom event bound to chart rect area
-                $$.unbindZoomEvent();
-                config.subchart_show = !show;
-                !subchart.main && $$.initSubchart();
-                var $target = subchart.main.selectAll(".".concat($COMMON.target));
-                // need to cover when new data has been loaded
-                if ($$.data.targets.length !== $target.size()) {
-                    $$.updateSizes();
-                    $$.updateTargetsForSubchart($$.data.targets);
-                    $target = (_a = subchart.main) === null || _a === void 0 ? void 0 : _a.selectAll(".".concat($COMMON.target));
-                }
-                $target === null || $target === void 0 ? void 0 : $target.style("opacity", null);
-                (_b = subchart.main) === null || _b === void 0 ? void 0 : _b.style("display", null);
-                this.resize();
-            }
-        },
-        /**
-         * Hide generated subchart
-         * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
-         * @function subchart․hide
-         * @instance
-         * @memberof Chart
-         * @example
-         *  chart.subchart.hide();
-         */
-        hide: function () {
-            var $$ = this.internal;
-            var main = $$.$el.subchart.main, config = $$.config;
-            if (config.subchart_show && (main === null || main === void 0 ? void 0 : main.style("display")) !== "none") {
-                config.subchart_show = false;
-                main.style("display", "none");
-                this.resize();
-            }
-        },
-        /**
-         * Toggle the visiblity of subchart
-         * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
-         * @function subchart․toggle
-         * @instance
-         * @memberof Chart
-         * @example
-         * // When subchart is hidden, will be shown
-         * // When subchart is shown, will be hidden
-         * chart.subchart.toggle();
-         */
-        toggle: function () {
-            var $$ = this.internal;
-            var config = $$.config;
-            this.subchart[config.subchart_show ? "hide" : "show"]();
+/**
+ * Select subchart by giving x domain range.
+ * @function subchart
+ * @instance
+ * @memberof Chart
+ * @param {Array} domainValue If domain range is given, the subchart will be seleted to the given domain. If no argument is given, the current subchart selection domain will be returned.
+ * @returns {Array} domain value in array
+ * @example
+ *  // Specify domain for subchart selection
+ *  chart.subchart([1, 2]);
+ *
+ *  // Get the current subchart selection domain range
+ *  chart.subchart();
+ */
+// NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
+var subchart$1 = function (domainValue) {
+    var $$ = this.internal;
+    var axis = $$.axis, brush = $$.brush, config = $$.config, _a = $$.scale, x = _a.x, subX = _a.subX;
+    var domain = domainValue;
+    if (config.subchart_show && Array.isArray(domain)) {
+        if (axis.isTimeSeries()) {
+            domain = domain.map(function (x) { return parseDate.bind($$)(x); });
         }
+        var isWithinRange = $$.withinRange(domain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"));
+        isWithinRange && brush.move(brush.getSelection(), domain.map(subX));
     }
+    else {
+        domain = x.orgDomain();
+    }
+    return domain;
+};
+extend(subchart$1, {
+    /**
+     * Show subchart
+     * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+     * @function subchart․show
+     * @instance
+     * @memberof Chart
+     * @example
+     * // for ESM imports, needs to import 'subchart' and must be instantiated first to enable subchart's API.
+     * import {subchart} from "billboard.js";
+     *
+     * const chart = bb.generate({
+     *   ...
+     *   subchart: {
+     *      // need to be instantiated by calling 'subchart()'
+     *      enabled: subchart()
+     *
+     *      // in case don't want subchart to be shown at initialization, instantiate with '!subchart()'
+     *      enabled: !subchart()
+     *   }
+     * });
+     *
+     * chart.subchart.show();
+     */
+    show: function () {
+        var _a, _b;
+        var $$ = this.internal;
+        var subchart = $$.$el.subchart, config = $$.config;
+        var show = config.subchart_show;
+        if (!show) {
+            // unbind zoom event bound to chart rect area
+            $$.unbindZoomEvent();
+            config.subchart_show = !show;
+            !subchart.main && $$.initSubchart();
+            var $target = subchart.main.selectAll(".".concat($COMMON.target));
+            // need to cover when new data has been loaded
+            if ($$.data.targets.length !== $target.size()) {
+                $$.updateSizes();
+                $$.updateTargetsForSubchart($$.data.targets);
+                $target = (_a = subchart.main) === null || _a === void 0 ? void 0 : _a.selectAll(".".concat($COMMON.target));
+            }
+            $target === null || $target === void 0 ? void 0 : $target.style("opacity", null);
+            (_b = subchart.main) === null || _b === void 0 ? void 0 : _b.style("display", null);
+            this.resize();
+        }
+    },
+    /**
+     * Hide generated subchart
+     * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+     * @function subchart․hide
+     * @instance
+     * @memberof Chart
+     * @example
+     *  chart.subchart.hide();
+     */
+    hide: function () {
+        var $$ = this.internal;
+        var main = $$.$el.subchart.main, config = $$.config;
+        if (config.subchart_show && (main === null || main === void 0 ? void 0 : main.style("display")) !== "none") {
+            config.subchart_show = false;
+            main.style("display", "none");
+            this.resize();
+        }
+    },
+    /**
+     * Toggle the visiblity of subchart
+     * - **NOTE:** for ESM imports, needs to import 'subchart' exports and instantiate it by calling `subchart()`.
+     * @function subchart․toggle
+     * @instance
+     * @memberof Chart
+     * @example
+     * // When subchart is hidden, will be shown
+     * // When subchart is shown, will be hidden
+     * chart.subchart.toggle();
+     */
+    toggle: function () {
+        var $$ = this.internal;
+        var config = $$.config;
+        this.subchart[config.subchart_show ? "hide" : "show"]();
+    },
+    /**
+     * Reset subchart selection
+     * @function subchart․reset
+     * @instance
+     * @memberof Chart
+     * @example
+     * // Reset subchart selection
+     * chart.subchart.reset();
+     */
+    reset: function () {
+        var $$ = this.internal;
+        var brush = $$.brush;
+        brush.clear(brush.getSelection());
+    }
+});
+var apiSubchart = {
+    subchart: subchart$1
 };
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/**
- * Check if the given domain is within zoom range
- * @param {Array} domain Target domain value
- * @param {Array} current Current zoom domain value
- * @param {Array} range Zoom range value
- * @param {boolean} isInverted Whether the axis is inverted or not
- * @returns {boolean}
- * @private
- */
-function withinRange(domain, current, range, isInverted) {
-    if (isInverted === void 0) { isInverted = false; }
-    var min = range[0], max = range[1];
-    return domain.every(function (v, i) { return (i === 0 ? (isInverted ? +v <= min : +v >= min) : (isInverted ? +v >= max : +v <= max)) && !(domain.every(function (v, i) { return v === current[i]; })); });
-}
 /**
  * Zoom by giving x domain range.
  * - **NOTE:**
@@ -21365,19 +21424,20 @@ function withinRange(domain, current, range, isInverted) {
  *  // Get the current zoomed domain range
  *  chart.zoom();
  */
+// NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
 var zoom$1 = function (domainValue) {
     var _a;
+    var _b, _c;
     var $$ = this.internal;
     var $el = $$.$el, axis = $$.axis, config = $$.config, org = $$.org, scale = $$.scale;
     var isRotated = config.axis_rotated;
-    var isInverted = config.axis_x_inverted;
     var isCategorized = axis.isCategorized();
     var domain = domainValue;
-    if (config.zoom_enabled && domain) {
+    if (config.zoom_enabled && Array.isArray(domain)) {
         if (axis.isTimeSeries()) {
             domain = domain.map(function (x) { return parseDate.bind($$)(x); });
         }
-        var isWithinRange = withinRange(domain, $$.getZoomDomain(true), $$.getZoomDomain(), isInverted);
+        var isWithinRange = $$.withinRange(domain, $$.getZoomDomain("zoom", true), $$.getZoomDomain("zoom"));
         if (isWithinRange) {
             if (isCategorized) {
                 domain = domain.map(function (v, i) { return Number(v) + (i === 0 ? 0 : 1); });
@@ -21405,8 +21465,7 @@ var zoom$1 = function (domainValue) {
         }
     }
     else {
-        domain = scale.zoom ?
-            scale.zoom.domain() : scale.x.orgDomain();
+        domain = (_c = (_b = scale.zoom) === null || _b === void 0 ? void 0 : _b.domain()) !== null && _c !== void 0 ? _c : scale.x.orgDomain();
     }
     return domain;
 };
@@ -22748,7 +22807,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230815004621
+ * @version 3.9.3-nightly-20230817004550
  */
 var bb = {
     /**
@@ -22758,7 +22817,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.3-nightly-20230815004621",
+    version: "3.9.3-nightly-20230817004550",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
