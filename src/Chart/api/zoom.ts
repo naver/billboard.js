@@ -4,29 +4,7 @@
  */
 import {zoomIdentity as d3ZoomIdentity, zoomTransform as d3ZoomTransform} from "d3-zoom";
 import {extend, getMinMax, isDefined, isObject, parseDate} from "../../module/util";
-
-/**
- * Check if the given domain is within zoom range
- * @param {Array} domain Target domain value
- * @param {Array} current Current zoom domain value
- * @param {Array} range Zoom range value
- * @param {boolean} isInverted Whether the axis is inverted or not
- * @returns {boolean}
- * @private
- */
-function withinRange(
-	domain: (number|Date)[], current, range: number[], isInverted = false
-): boolean {
-	const [min, max] = range;
-
-	return domain.every((v, i) => (
-		i === 0 ? (
-			isInverted ? +v <= min : +v >= min
-		) : (
-			isInverted ? +v >= max : +v <= max
-		)
-	) && !(domain.every((v, i) => v === current[i])));
-}
+import type {TDomainRange} from "../../ChartInternal/data/IData";
 
 /**
  * Zoom by giving x domain range.
@@ -48,29 +26,28 @@ function withinRange(
  *  // Get the current zoomed domain range
  *  chart.zoom();
  */
-const zoom = function(domainValue?: (Date|number|string)[]): (Date|number)[]|undefined {
+// NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
+const zoom = function<T = TDomainRange>(domainValue?: T): T | undefined {
 	const $$ = this.internal;
 	const {$el, axis, config, org, scale} = $$;
 	const isRotated = config.axis_rotated;
-	const isInverted = config.axis_x_inverted;
 	const isCategorized = axis.isCategorized();
-	let domain = domainValue;
+	let domain: any = domainValue;
 
-	if (config.zoom_enabled && domain) {
+	if (config.zoom_enabled && Array.isArray(domain)) {
 		if (axis.isTimeSeries()) {
 			domain = domain.map(x => parseDate.bind($$)(x));
 		}
 
-		const isWithinRange = withinRange(
-			domain as (number|Date)[],
-			$$.getZoomDomain(true),
-			$$.getZoomDomain(),
-			isInverted
+		const isWithinRange = $$.withinRange(
+			domain,
+			$$.getZoomDomain("zoom", true),
+			$$.getZoomDomain("zoom")
 		);
 
 		if (isWithinRange) {
 			if (isCategorized) {
-				domain = domain.map((v, i) => Number(v) + (i === 0 ? 0 : 1));
+				domain = domain.map((v, i) => Number(v) + (i === 0 ? 0 : 1)) as T;
 			}
 
 			// hide any possible tooltip show before the zoom
@@ -103,11 +80,10 @@ const zoom = function(domainValue?: (Date|number|string)[]): (Date|number)[]|und
 			$$.setZoomResetButton();
 		}
 	} else {
-		domain = scale.zoom ?
-			scale.zoom.domain() : scale.x.orgDomain();
+		domain = scale.zoom?.domain() ?? scale.x.orgDomain();
 	}
 
-	return domain as (Date|number)[];
+	return domain;
 };
 
 extend(zoom, {
@@ -129,7 +105,7 @@ extend(zoom, {
 	 *  // Disable zooming
 	 *  chart.zoom.enable(false);
 	 */
-	enable: function(enabled: boolean | "wheel" | "drag" | any): void {
+	enable(enabled: boolean | "wheel" | "drag" | any): void {
 		const $$ = this.internal;
 		const {config} = $$;
 
@@ -160,7 +136,7 @@ extend(zoom, {
 	 *  // Set maximum range value
 	 *  chart.zoom.max(20);
 	 */
-	max: function(max?: number): number {
+	max(max?: number): number {
 		const $$ = this.internal;
 		const {config, org: {xDomain}} = $$;
 
@@ -182,7 +158,7 @@ extend(zoom, {
 	 *  // Set minimum range value
 	 *  chart.zoom.min(-1);
 	 */
-	min: function(min?: number): number {
+	min(min?: number): number {
 		const $$ = this.internal;
 		const {config, org: {xDomain}} = $$;
 
@@ -210,7 +186,7 @@ extend(zoom, {
 	 *      max: 100
 	 *  });
 	 */
-	range: function(range): {min: (number|undefined)[], max: (number|undefined)[]} {
+	range(range): {min: (number|undefined)[], max: (number|undefined)[]} {
 		const zoom = this.zoom;
 
 		if (isObject(range)) {
