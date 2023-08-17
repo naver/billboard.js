@@ -72,7 +72,7 @@ const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, cl
 const doDrag = (el, from = {clientX: 100, clientY: 100}, to = {clientX: 200, clientY: 200}, chart?) => {
 	fireEvent(el, "mousedown", from, chart);
 	fireEvent(el, "mousemove", to, chart);
-	fireEvent(el, "mouseup", from, chart);
+	fireEvent(el, "mouseup", to, chart);
 };
 
 /**

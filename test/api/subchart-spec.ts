@@ -179,6 +179,8 @@ describe("API subchart", () => {
 	});
 
 	describe(".subchart() / .subchart.reset()", () => {
+		const spy = sinon.spy();
+
 		before(() => {
 			args = {
 				data: {
@@ -186,6 +188,11 @@ describe("API subchart", () => {
 						["sample", 30, 200, 100, 400, 150, 250]
 					],
 					type: "line"
+				},
+				axis: {
+					y: {
+						show: false
+					}
 				},
 				subchart: {
 					show: true,
@@ -200,6 +207,8 @@ describe("API subchart", () => {
 
 			// when
 			chart.subchart(range);
+
+			expect(chart.subchart()).to.deep.equal(range);		
 
 			const selection = brush.getSelection().select(".selection");
 			const posX = +selection.attr("x");
@@ -218,10 +227,12 @@ describe("API subchart", () => {
 		it("when trying to give out of bounds data.", () => {
 			const {brush, scale: {x, subX}} = chart.internal;
 			const selection = brush.getSelection().select(".selection");
+			const range = [100, 200];
 
 			// when
-			chart.subchart([100, 200]);
+			chart.subchart(range);
 
+			expect(chart.subchart()).to.deep.equal(x.orgDomain());
 			expect(selection.attr("width")).to.be.null;
 			expect(x.domain()).to.be.deep.equal(subX.domain());
 
@@ -236,6 +247,23 @@ describe("API subchart", () => {
 
 			expect(selection.attr("width")).to.be.null;
 			expect(x.domain()).to.be.deep.equal(subX.domain());
+		});
+
+		it("set options: subchart.onbrush", () => {
+			args.subchart.onbrush = spy;
+		});
+
+		it("onbrush callback should be called once.", () => {
+			const range = [1, 2.5];
+
+			expect(spy.callCount).to.be.equal(0);
+
+			// when
+			chart.subchart(range);
+
+			expect(spy.callCount).to.be.equal(1);
+			expect(spy.args[0][0]).to.be.deep.equal(range);
+			
 		});
 
 		it("set options: axis.x.type='timeseries'", () => {

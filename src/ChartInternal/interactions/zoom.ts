@@ -125,7 +125,7 @@ export default {
 		 * @private
 		 */
 		// @ts-ignore
-		zoom.getDomain = (): number|Date[] => {
+		zoom.getDomain = (): (number | Date)[] => {
 			const domain = scale[scale.zoom ? "zoom" : "subX"].domain();
 			const isCategorized = $$.axis.isCategorized();
 
@@ -135,6 +135,7 @@ export default {
 
 			return domain;
 		};
+
 		$$.zoom = zoom;
 	},
 
@@ -175,6 +176,7 @@ export default {
 
 		if (event.sourceEvent) {
 			state.zooming = true;
+			state.domain = undefined;
 		}
 
 		const isMousemove = sourceEvent?.type === "mousemove";
@@ -206,7 +208,11 @@ export default {
 		$$.state.cancelClick = isMousemove;
 
 		// do not call event cb when is .unzoom() is called
-		!isUnZoom && callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
+		!isUnZoom && callFn(
+			config.zoom_onzoom,
+			$$.api,
+			$$.state.domain ?? $$.zoom.getDomain()
+		);
 	},
 
 	/**
@@ -239,7 +245,11 @@ export default {
 		state.zooming = false;
 
 		// do not call event cb when is .unzoom() is called
-		!isUnZoom && (e || state.dragging) && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain());
+		!isUnZoom && (e || state.dragging) && callFn(
+			config.zoom_onzoomend,
+			$$.api,
+			$$.state.domain ?? $$.zoom.getDomain()
+		);
 	},
 
 	/**

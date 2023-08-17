@@ -1452,7 +1452,7 @@ describe("TEXT", () => {
 		});
 
 		describe("labels.colors callback", () => {
-			let ctx = [];
+			let ctx: any = [];
 
 			before(() => {
 				args = {
@@ -1593,7 +1593,7 @@ describe("TEXT", () => {
 				];
 
                 chart.$.text.texts.each(function() {
-					const expected = expectedPos.shift();
+					const expected = expectedPos.shift() as number[];
 
 					expect(+this.getAttribute("x")).to.be.closeTo(expected[0], 1);
 					expect(+this.getAttribute("y")).to.be.closeTo(expected[1], 2);

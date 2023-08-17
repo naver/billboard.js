@@ -39,6 +39,8 @@ describe("API zoom", function() {
 
 			chart.zoom(target);
 
+			expect(chart.zoom()).to.deep.equal(target);
+
 			setTimeout(() => {
 				const domain = chart.internal.scale.zoom.domain().map(Math.round);
 
@@ -112,6 +114,8 @@ describe("API zoom", function() {
 
 			chart.zoom(target);
 
+			expect(chart.zoom()).to.deep.equal(target);			
+
 			setTimeout(() => {
 				const domain = chart.internal.scale.zoom.domain();
 
@@ -174,6 +178,8 @@ describe("API zoom", function() {
 			const target = [1,2];
 
 			chart.zoom(target);
+
+			expect(chart.zoom()).to.deep.equal(target);
 
 			setTimeout(() => {
 				const {internal} = chart;
@@ -314,9 +320,7 @@ describe("API zoom", function() {
 			});
 
 			// check the returned domain value
-			chart.zoom(domain).map(Math.round).forEach((v, i) => {
-				expect(v).to.not.equal(domain[i]);
-			});
+			expect(chart.zoom(domain)).to.be.undefined;
 
 			expect(coords[1].x).to.be.equal(xValue);
 

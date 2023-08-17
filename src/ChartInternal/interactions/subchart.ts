@@ -18,9 +18,10 @@ export default {
 	 */
 	initBrush(): void {
 		const $$ = this;
-		const {config, scale, $el: {subchart}} = $$;
+		const {config, scale, $el: {subchart}, state} = $$;
 		const isRotated = config.axis_rotated;
 		let lastDomain;
+		let lastSelection;
 		let timeout;
 
 		// set the brush
@@ -42,14 +43,25 @@ export default {
 
 		// bind brush event
 		$$.brush.on("start brush end", event => {
-			const {selection, target, type} = event;
+			const {selection, sourceEvent, target, type} = event;
 
 			if (type === "start") {
 				$$.state.inputType === "touch" && $$.hideTooltip();
+				lastSelection = sourceEvent ? selection : null;
+				// sourceEvent && (state.domain = null);
 			}
 
+			// if (type === "brush") {
 			if (/(start|brush)/.test(type)) {
-				$$.redrawForBrush();
+				// when brush selection updates happens on one edge, update only chainging edge and
+				// is only for adjustment of given domain range to be used to return current domain range.
+				type === "brush" && sourceEvent && state.domain && lastSelection?.forEach((v, i) => {
+					if (v !== selection[i]) {
+						state.domain[i] = scale.x.orgDomain()[i];
+					}
+				});
+
+				$$.redrawForBrush(type !== "start");
 			}
 
 			if (type === "end") {
@@ -320,23 +332,28 @@ export default {
 					$$.redrawCircle(cx, cy, withTransition, undefined, true);
 				}
 
-				!state.rendered && initRange && $$.brush.move(
-					$$.brush.getSelection(),
-					initRange.map($$.scale.x)
-				);
+				if (!state.rendered && initRange) {
+					state.domain = initRange;
+
+					$$.brush.move(
+						$$.brush.getSelection(),
+						initRange.map($$.scale.x)
+					);
+				}
 			}
 		}
 	},
 
 	/**
 	 * Redraw the brush.
+	 * @param {boolean} [callCallbck=true] Call 'onbrush' callback or not.
 	 * @private
 	 */
-	redrawForBrush() {
+	redrawForBrush(callCallbck = true): void {
 		const $$ = this;
 		const {config: {
 			subchart_onbrush: onBrush, zoom_rescale: withY
-		}, scale} = $$;
+		}, scale, state} = $$;
 
 		$$.redraw({
 			withTransition: false,
@@ -346,7 +363,8 @@ export default {
 			withDimension: false
 		});
 
-		onBrush.bind($$.api)(scale.x.orgDomain());
+		callCallbck && state.rendered &&
+			onBrush.bind($$.api)(state.domain ?? scale.x.orgDomain());
 	},
 
 	/**
