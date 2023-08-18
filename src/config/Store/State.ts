@@ -46,6 +46,9 @@ export default class State {
 			cssRule: {},
 
 			current: {
+				// current domain value. Assigned when is zoom is called
+				domain: undefined,
+
 				// chart whole dimension
 				width: 0,
 				height: 0,
