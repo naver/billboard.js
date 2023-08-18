@@ -77,7 +77,7 @@ describe("ZOOM", function() {
 		const spyOnZoom = sinon.spy(domain => (zoomDomain = domain));
 		const spyOnZoomEnd = sinon.spy(domain => (zoomDomain = domain));
 		let zoomDomain;
-		let eventOrder = [];
+		let eventOrder: string[] = [];
 
 		before(() => {
 			args = {
@@ -1197,7 +1197,7 @@ describe("ZOOM", function() {
 
 		it("check bar's width during wheel zoom in/out", () => {
 			const {$: {bar}, internal: {$el: {eventRect}}} = chart;
-			const len = [];
+			const len: number[] = [];
 
 			bar.bars.each(function() {
 				len.push(this.getBoundingClientRect().width);
@@ -1249,7 +1249,7 @@ describe("ZOOM", function() {
 
 		it("bar width should scales as zoom scales", done => {
 			const {bars} = chart.$.bar;
-			const width = [];
+			const width: number[] = [];
 
 			bars.each(function() {
 				width.push(this.getBoundingClientRect().width);

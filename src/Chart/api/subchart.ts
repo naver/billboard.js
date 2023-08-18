@@ -8,6 +8,8 @@ import type {TDomain} from "../../ChartInternal/data/IData";
 
 /**
  * Select subchart by giving x domain range.
+ * - **ℹ️ NOTE:**
+ *  - Due to the limitations of floating point precision, domain value may not be exact returning approximately values.
  * @function subchart
  * @instance
  * @memberof Chart
@@ -18,31 +20,40 @@ import type {TDomain} from "../../ChartInternal/data/IData";
  *  chart.subchart([1, 2]);
  *
  *  // Get the current subchart selection domain range
+ *  // Domain value may not be exact returning approximately values.
  *  chart.subchart();
  */
 // NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
 const subchart = function<T = TDomain[]>(domainValue?: T): T | undefined {
 	const $$ = this.internal;
-	const {axis, brush, config, scale: {x, subX}} = $$;
-	let domain: any = domainValue;
+	const {axis, brush, config, scale: {x, subX}, state} = $$;
+	let domain;
 
-	if (config.subchart_show && Array.isArray(domain)) {
-		if (axis.isTimeSeries()) {
-			domain = domain.map(x => parseDate.bind($$)(x));
+	if (config.subchart_show) {
+		domain = domainValue;
+
+		if (Array.isArray(domain)) {
+			if (axis.isTimeSeries()) {
+				domain = domain.map(x => parseDate.bind($$)(x));
+			}
+
+			const isWithinRange = $$.withinRange(
+				domain,
+				$$.getZoomDomain("subX", true),
+				$$.getZoomDomain("subX")
+			);
+
+			if (isWithinRange) {
+				state.domain = domain;
+
+				brush.move(
+					brush.getSelection(),
+					domain.map(subX)
+				);
+			}
+		} else {
+			domain = state.domain ?? x.orgDomain();
 		}
-
-		const isWithinRange = $$.withinRange(
-			domain,
-			$$.getZoomDomain("subX", true),
-			$$.getZoomDomain("subX")
-		);
-
-		isWithinRange && brush.move(
-			brush.getSelection(),
-			domain.map(subX)
-		);
-	} else {
-		domain = x.orgDomain();
 	}
 
 	return domain as T;

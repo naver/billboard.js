@@ -8,9 +8,11 @@ import type {TDomainRange} from "../../ChartInternal/data/IData";
 
 /**
  * Zoom by giving x domain range.
- * - **NOTE:**
+ * - **ℹ️ NOTE:**
  *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain range. To get the initial state, [.unzoom()](#unzoom) should be called.
  *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
+ *  - When x axis type is `category`, domain range should be specified as index numbers.
+ *  - Due to the limitations of floating point precision, domain value may not be exact returning approximately values.
  * @function zoom
  * @instance
  * @memberof Chart
@@ -20,70 +22,80 @@ import type {TDomainRange} from "../../ChartInternal/data/IData";
  *  // Zoom to specified domain range
  *  chart.zoom([10, 20]);
  *
- *  // For timeseries, the domain value can be string, but the format should match with the 'data.xFormat' option.
+ *  // For timeseries x axis, the domain value can be string, but the format should match with the 'data.xFormat' option.
  *  chart.zoom(["2021-02-03", "2021-02-08"]);
  *
+ *  // For category x axis, the domain value should be index number.
+ *  chart.zoom([0, 3]);
+ *
  *  // Get the current zoomed domain range
+ *  // Domain value may not be exact returning approximately values.
  *  chart.zoom();
  */
 // NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
 const zoom = function<T = TDomainRange>(domainValue?: T): T | undefined {
 	const $$ = this.internal;
-	const {$el, axis, config, org, scale} = $$;
+	const {$el, axis, config, org, scale, state} = $$;
 	const isRotated = config.axis_rotated;
 	const isCategorized = axis.isCategorized();
-	let domain: any = domainValue;
+	let domain;
 
-	if (config.zoom_enabled && Array.isArray(domain)) {
-		if (axis.isTimeSeries()) {
-			domain = domain.map(x => parseDate.bind($$)(x));
-		}
+	if (config.zoom_enabled) {
+		domain = domainValue;
 
-		const isWithinRange = $$.withinRange(
-			domain,
-			$$.getZoomDomain("zoom", true),
-			$$.getZoomDomain("zoom")
-		);
-
-		if (isWithinRange) {
-			if (isCategorized) {
-				domain = domain.map((v, i) => Number(v) + (i === 0 ? 0 : 1)) as T;
+		if (Array.isArray(domain)) {
+			if (axis.isTimeSeries()) {
+				domain = domain.map(x => parseDate.bind($$)(x));
 			}
 
-			// hide any possible tooltip show before the zoom
-			$$.api.tooltip.hide();
+			const isWithinRange = $$.withinRange(
+				domain,
+				$$.getZoomDomain("zoom", true),
+				$$.getZoomDomain("zoom")
+			);
 
-			if (config.subchart_show) {
-				const x = scale.zoom || scale.x;
+			if (isWithinRange) {
+				state.domain = domain;
 
-				$$.brush.getSelection().call($$.brush.move, domain.map(x));
-				// resultDomain = domain;
-			} else {
-				// in case of 'config.zoom_rescale=true', use org.xScale
-				const x = isCategorized ? scale.x.orgScale() : (org.xScale || scale.x);
+				if (isCategorized) {
+					domain = domain.map((v, i) => Number(v) + (i === 0 ? 0 : 1));
+				}
 
-				// Get transform from given domain value
-				// https://github.com/d3/d3-zoom/issues/57#issuecomment-246434951
-				const translate = [-x(domain[0]), 0];
-				const transform = d3ZoomIdentity
-					.scale(x.range()[1] / (
-						x(domain[1]) - x(domain[0])
-					))
-					.translate(
-						...(isRotated ? translate.reverse() : translate) as [number, number]
-					);
+				// hide any possible tooltip show before the zoom
+				$$.api.tooltip.hide();
 
-				$el.eventRect
-					.call($$.zoom.transform, transform);
+				if (config.subchart_show) {
+					const x = scale.zoom || scale.x;
+
+					$$.brush.getSelection().call($$.brush.move, domain.map(x));
+					// resultDomain = domain;
+				} else {
+					// in case of 'config.zoom_rescale=true', use org.xScale
+					const x = isCategorized ? scale.x.orgScale() : (org.xScale || scale.x);
+
+					// Get transform from given domain value
+					// https://github.com/d3/d3-zoom/issues/57#issuecomment-246434951
+					const translate = [-x(domain[0]), 0];
+					const transform = d3ZoomIdentity
+						.scale(x.range()[1] / (
+							x(domain[1]) - x(domain[0])
+						))
+						.translate(
+							...(isRotated ? translate.reverse() : translate) as [number, number]
+						);
+
+					$el.eventRect
+						.call($$.zoom.transform, transform);
+				}
+
+				$$.setZoomResetButton();
 			}
-
-			$$.setZoomResetButton();
+		} else {
+			domain = $$.zoom.getDomain();
 		}
-	} else {
-		domain = scale.zoom?.domain() ?? scale.x.orgDomain();
 	}
 
-	return domain;
+	return state.domain ?? domain;
 };
 
 extend(zoom, {
@@ -217,7 +229,7 @@ export default {
 	 */
 	unzoom(): void {
 		const $$ = this.internal;
-		const {config, $el: {eventRect, zoomResetBtn}} = $$;
+		const {config, $el: {eventRect, zoomResetBtn}, state} = $$;
 
 		if ($$.scale.zoom) {
 			config.subchart_show ?
@@ -231,6 +243,8 @@ export default {
 			if (d3ZoomTransform(eventRect.node()) !== d3ZoomIdentity) {
 				$$.zoom.transform(eventRect, d3ZoomIdentity);
 			}
+
+			state.domain = undefined;
 		}
 	}
 };
