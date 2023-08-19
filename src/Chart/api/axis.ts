@@ -77,6 +77,7 @@ function getMinMax($$, type: "min" | "max"): {x: number, y: number, y2: number} 
 const axis = {
 	/**
 	 * Get and set axis labels.
+	 * - **NOTE:** Only applicable for chart types which has x and y axes.
 	 * @function axis․labels
 	 * @instance
 	 * @memberof Chart
@@ -126,6 +127,7 @@ const axis = {
 
 	/**
 	 * Get and set axis min value.
+	 * - **NOTE:** Only applicable for chart types which has x and y axes.
 	 * @function axis․min
 	 * @instance
 	 * @memberof Chart
@@ -163,6 +165,7 @@ const axis = {
 
 	/**
 	 * Get and set axis max value.
+	 * - **NOTE:** Only applicable for chart types which has x and y axes.
 	 * @function axis․max
 	 * @instance
 	 * @memberof Chart
@@ -200,6 +203,7 @@ const axis = {
 
 	/**
 	 * Get and set axis min and max value.
+	 * - **NOTE:** Only applicable for chart types which has x and y axes.
 	 * @function axis․range
 	 * @instance
 	 * @memberof Chart
