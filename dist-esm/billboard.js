@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230817004550
+ * @version 3.9.3-nightly-20230819004547
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1161,6 +1161,8 @@ var State = /** @class */ (function () {
             // for data CSS rule index (used when boost.useCssRule is true)
             cssRule: {},
             current: {
+                // current domain value. Assigned when is zoom is called
+                domain: undefined,
                 // chart whole dimension
                 width: 0,
                 height: 0,
@@ -11212,6 +11214,7 @@ function getMinMax($$, type) {
 var axis$1 = {
     /**
      * Get and set axis labels.
+     * - **NOTE:** Only applicable for chart types which has x and y axes.
      * @function axis․labels
      * @instance
      * @memberof Chart
@@ -11255,6 +11258,7 @@ var axis$1 = {
     },
     /**
      * Get and set axis min value.
+     * - **NOTE:** Only applicable for chart types which has x and y axes.
      * @function axis․min
      * @instance
      * @memberof Chart
@@ -11290,6 +11294,7 @@ var axis$1 = {
     },
     /**
      * Get and set axis max value.
+     * - **NOTE:** Only applicable for chart types which has x and y axes.
      * @function axis․max
      * @instance
      * @memberof Chart
@@ -11325,6 +11330,7 @@ var axis$1 = {
     },
     /**
      * Get and set axis min and max value.
+     * - **NOTE:** Only applicable for chart types which has x and y axes.
      * @function axis․range
      * @instance
      * @memberof Chart
@@ -21272,6 +21278,8 @@ var apiSelection = {
  */
 /**
  * Select subchart by giving x domain range.
+ * - **ℹ️ NOTE:**
+ *  - Due to the limitations of floating point precision, domain value may not be exact returning approximately values.
  * @function subchart
  * @instance
  * @memberof Chart
@@ -21282,22 +21290,30 @@ var apiSelection = {
  *  chart.subchart([1, 2]);
  *
  *  // Get the current subchart selection domain range
+ *  // Domain value may not be exact returning approximately values.
  *  chart.subchart();
  */
 // NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
 var subchart$1 = function (domainValue) {
+    var _a;
     var $$ = this.internal;
-    var axis = $$.axis, brush = $$.brush, config = $$.config, _a = $$.scale, x = _a.x, subX = _a.subX;
-    var domain = domainValue;
-    if (config.subchart_show && Array.isArray(domain)) {
-        if (axis.isTimeSeries()) {
-            domain = domain.map(function (x) { return parseDate.bind($$)(x); });
+    var axis = $$.axis, brush = $$.brush, config = $$.config, _b = $$.scale, x = _b.x, subX = _b.subX, state = $$.state;
+    var domain;
+    if (config.subchart_show) {
+        domain = domainValue;
+        if (Array.isArray(domain)) {
+            if (axis.isTimeSeries()) {
+                domain = domain.map(function (x) { return parseDate.bind($$)(x); });
+            }
+            var isWithinRange = $$.withinRange(domain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"));
+            if (isWithinRange) {
+                state.domain = domain;
+                brush.move(brush.getSelection(), domain.map(subX));
+            }
         }
-        var isWithinRange = $$.withinRange(domain, $$.getZoomDomain("subX", true), $$.getZoomDomain("subX"));
-        isWithinRange && brush.move(brush.getSelection(), domain.map(subX));
-    }
-    else {
-        domain = x.orgDomain();
+        else {
+            domain = (_a = state.domain) !== null && _a !== void 0 ? _a : x.orgDomain();
+        }
     }
     return domain;
 };
@@ -21406,9 +21422,11 @@ var apiSubchart = {
  */
 /**
  * Zoom by giving x domain range.
- * - **NOTE:**
+ * - **ℹ️ NOTE:**
  *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain range. To get the initial state, [.unzoom()](#unzoom) should be called.
  *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
+ *  - When x axis type is `category`, domain range should be specified as index numbers.
+ *  - Due to the limitations of floating point precision, domain value may not be exact returning approximately values.
  * @function zoom
  * @instance
  * @memberof Chart
@@ -21418,56 +21436,64 @@ var apiSubchart = {
  *  // Zoom to specified domain range
  *  chart.zoom([10, 20]);
  *
- *  // For timeseries, the domain value can be string, but the format should match with the 'data.xFormat' option.
+ *  // For timeseries x axis, the domain value can be string, but the format should match with the 'data.xFormat' option.
  *  chart.zoom(["2021-02-03", "2021-02-08"]);
  *
+ *  // For category x axis, the domain value should be index number.
+ *  chart.zoom([0, 3]);
+ *
  *  // Get the current zoomed domain range
+ *  // Domain value may not be exact returning approximately values.
  *  chart.zoom();
  */
 // NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
 var zoom$1 = function (domainValue) {
     var _a;
-    var _b, _c;
+    var _b;
     var $$ = this.internal;
-    var $el = $$.$el, axis = $$.axis, config = $$.config, org = $$.org, scale = $$.scale;
+    var $el = $$.$el, axis = $$.axis, config = $$.config, org = $$.org, scale = $$.scale, state = $$.state;
     var isRotated = config.axis_rotated;
     var isCategorized = axis.isCategorized();
-    var domain = domainValue;
-    if (config.zoom_enabled && Array.isArray(domain)) {
-        if (axis.isTimeSeries()) {
-            domain = domain.map(function (x) { return parseDate.bind($$)(x); });
+    var domain;
+    if (config.zoom_enabled) {
+        domain = domainValue;
+        if (Array.isArray(domain)) {
+            if (axis.isTimeSeries()) {
+                domain = domain.map(function (x) { return parseDate.bind($$)(x); });
+            }
+            var isWithinRange = $$.withinRange(domain, $$.getZoomDomain("zoom", true), $$.getZoomDomain("zoom"));
+            if (isWithinRange) {
+                state.domain = domain;
+                if (isCategorized) {
+                    domain = domain.map(function (v, i) { return Number(v) + (i === 0 ? 0 : 1); });
+                }
+                // hide any possible tooltip show before the zoom
+                $$.api.tooltip.hide();
+                if (config.subchart_show) {
+                    var x = scale.zoom || scale.x;
+                    $$.brush.getSelection().call($$.brush.move, domain.map(x));
+                    // resultDomain = domain;
+                }
+                else {
+                    // in case of 'config.zoom_rescale=true', use org.xScale
+                    var x = isCategorized ? scale.x.orgScale() : (org.xScale || scale.x);
+                    // Get transform from given domain value
+                    // https://github.com/d3/d3-zoom/issues/57#issuecomment-246434951
+                    var translate = [-x(domain[0]), 0];
+                    var transform = (_a = zoomIdentity
+                        .scale(x.range()[1] / (x(domain[1]) - x(domain[0]))))
+                        .translate.apply(_a, (isRotated ? translate.reverse() : translate));
+                    $el.eventRect
+                        .call($$.zoom.transform, transform);
+                }
+                $$.setZoomResetButton();
+            }
         }
-        var isWithinRange = $$.withinRange(domain, $$.getZoomDomain("zoom", true), $$.getZoomDomain("zoom"));
-        if (isWithinRange) {
-            if (isCategorized) {
-                domain = domain.map(function (v, i) { return Number(v) + (i === 0 ? 0 : 1); });
-            }
-            // hide any possible tooltip show before the zoom
-            $$.api.tooltip.hide();
-            if (config.subchart_show) {
-                var x = scale.zoom || scale.x;
-                $$.brush.getSelection().call($$.brush.move, domain.map(x));
-                // resultDomain = domain;
-            }
-            else {
-                // in case of 'config.zoom_rescale=true', use org.xScale
-                var x = isCategorized ? scale.x.orgScale() : (org.xScale || scale.x);
-                // Get transform from given domain value
-                // https://github.com/d3/d3-zoom/issues/57#issuecomment-246434951
-                var translate = [-x(domain[0]), 0];
-                var transform = (_a = zoomIdentity
-                    .scale(x.range()[1] / (x(domain[1]) - x(domain[0]))))
-                    .translate.apply(_a, (isRotated ? translate.reverse() : translate));
-                $el.eventRect
-                    .call($$.zoom.transform, transform);
-            }
-            $$.setZoomResetButton();
+        else {
+            domain = $$.zoom.getDomain();
         }
     }
-    else {
-        domain = (_c = (_b = scale.zoom) === null || _b === void 0 ? void 0 : _b.domain()) !== null && _c !== void 0 ? _c : scale.x.orgDomain();
-    }
-    return domain;
+    return (_b = state.domain) !== null && _b !== void 0 ? _b : domain;
 };
 extend(zoom$1, {
     /**
@@ -21585,7 +21611,7 @@ var apiZoom = {
      */
     unzoom: function () {
         var $$ = this.internal;
-        var config = $$.config, _a = $$.$el, eventRect = _a.eventRect, zoomResetBtn = _a.zoomResetBtn;
+        var config = $$.config, _a = $$.$el, eventRect = _a.eventRect, zoomResetBtn = _a.zoomResetBtn, state = $$.state;
         if ($$.scale.zoom) {
             config.subchart_show ?
                 $$.brush.getSelection().call($$.brush.move, null) :
@@ -21596,6 +21622,7 @@ var apiZoom = {
             if (zoomTransform(eventRect.node()) !== zoomIdentity) {
                 $$.zoom.transform(eventRect, zoomIdentity);
             }
+            state.domain = undefined;
         }
     }
 };
@@ -21868,9 +21895,10 @@ var subchart = {
      */
     initBrush: function () {
         var $$ = this;
-        var config = $$.config, scale = $$.scale, subchart = $$.$el.subchart;
+        var config = $$.config, scale = $$.scale, subchart = $$.$el.subchart, state = $$.state;
         var isRotated = config.axis_rotated;
         var lastDomain;
+        var lastSelection;
         var timeout;
         // set the brush
         $$.brush = (isRotated ? brushY() : brushX()).handleSize(5);
@@ -21885,12 +21913,22 @@ var subchart = {
         };
         // bind brush event
         $$.brush.on("start brush end", function (event) {
-            var selection = event.selection, target = event.target, type = event.type;
+            var selection = event.selection, sourceEvent = event.sourceEvent, target = event.target, type = event.type;
             if (type === "start") {
                 $$.state.inputType === "touch" && $$.hideTooltip();
+                lastSelection = sourceEvent ? selection : null;
+                // sourceEvent && (state.domain = null);
             }
+            // if (type === "brush") {
             if (/(start|brush)/.test(type)) {
-                $$.redrawForBrush();
+                // when brush selection updates happens on one edge, update only chainging edge and
+                // is only for adjustment of given domain range to be used to return current domain range.
+                type === "brush" && sourceEvent && state.domain && (lastSelection === null || lastSelection === void 0 ? void 0 : lastSelection.forEach(function (v, i) {
+                    if (v !== selection[i]) {
+                        state.domain[i] = scale.x.orgDomain()[i];
+                    }
+                }));
+                $$.redrawForBrush(type !== "start");
             }
             if (type === "end") {
                 lastDomain = scale.x.orgDomain();
@@ -22116,17 +22154,23 @@ var subchart = {
                     $$.updateCircle(true);
                     $$.redrawCircle(cx, cy, withTransition, undefined, true);
                 }
-                !state.rendered && initRange && $$.brush.move($$.brush.getSelection(), initRange.map($$.scale.x));
+                if (!state.rendered && initRange) {
+                    state.domain = initRange;
+                    $$.brush.move($$.brush.getSelection(), initRange.map($$.scale.x));
+                }
             }
         }
     },
     /**
      * Redraw the brush.
+     * @param {boolean} [callCallbck=true] Call 'onbrush' callback or not.
      * @private
      */
-    redrawForBrush: function () {
+    redrawForBrush: function (callCallbck) {
+        var _a;
+        if (callCallbck === void 0) { callCallbck = true; }
         var $$ = this;
-        var _a = $$.config, onBrush = _a.subchart_onbrush, withY = _a.zoom_rescale, scale = $$.scale;
+        var _b = $$.config, onBrush = _b.subchart_onbrush, withY = _b.zoom_rescale, scale = $$.scale, state = $$.state;
         $$.redraw({
             withTransition: false,
             withY: withY,
@@ -22134,7 +22178,8 @@ var subchart = {
             withUpdateXDomain: true,
             withDimension: false
         });
-        onBrush.bind($$.api)(scale.x.orgDomain());
+        callCallbck && state.rendered &&
+            onBrush.bind($$.api)((_a = state.domain) !== null && _a !== void 0 ? _a : scale.x.orgDomain());
     },
     /**
      * Transform context
@@ -22304,6 +22349,7 @@ var zoom = {
      * @private
      */
     onZoom: function (event) {
+        var _a;
         var $$ = this;
         var config = $$.config, scale = $$.scale, state = $$.state, org = $$.org;
         var sourceEvent = event.sourceEvent;
@@ -22315,6 +22361,7 @@ var zoom = {
         }
         if (event.sourceEvent) {
             state.zooming = true;
+            state.domain = undefined;
         }
         var isMousemove = (sourceEvent === null || sourceEvent === void 0 ? void 0 : sourceEvent.type) === "mousemove";
         var isZoomOut = (sourceEvent === null || sourceEvent === void 0 ? void 0 : sourceEvent.wheelDelta) < 0;
@@ -22337,7 +22384,7 @@ var zoom = {
         });
         $$.state.cancelClick = isMousemove;
         // do not call event cb when is .unzoom() is called
-        !isUnZoom && callFn(config.zoom_onzoom, $$.api, $$.zoom.getDomain());
+        !isUnZoom && callFn(config.zoom_onzoom, $$.api, (_a = $$.state.domain) !== null && _a !== void 0 ? _a : $$.zoom.getDomain());
     },
     /**
      * 'end' event listener
@@ -22345,7 +22392,7 @@ var zoom = {
      * @private
      */
     onZoomEnd: function (event) {
-        var _a;
+        var _a, _b;
         var $$ = this;
         var config = $$.config, state = $$.state;
         var startEvent = $$.zoom.startEvent;
@@ -22363,7 +22410,7 @@ var zoom = {
         $$.updateZoom();
         state.zooming = false;
         // do not call event cb when is .unzoom() is called
-        !isUnZoom && (e || state.dragging) && callFn(config.zoom_onzoomend, $$.api, $$.zoom.getDomain());
+        !isUnZoom && (e || state.dragging) && callFn(config.zoom_onzoomend, $$.api, (_b = $$.state.domain) !== null && _b !== void 0 ? _b : $$.zoom.getDomain());
     },
     /**
      * Update zoom
@@ -22807,7 +22854,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230817004550
+ * @version 3.9.3-nightly-20230819004547
  */
 var bb = {
     /**
@@ -22817,7 +22864,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.3-nightly-20230817004550",
+    version: "3.9.3-nightly-20230819004547",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
