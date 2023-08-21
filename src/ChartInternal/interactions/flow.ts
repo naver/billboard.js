@@ -170,10 +170,7 @@ export default {
 					const xFunc = d => cx(d) - config.point_r;
 					const yFunc = d => cy(d) - config.point_r;
 
-					n.attr("x", xFunc)
-						.attr("y", yFunc)
-						.attr("cx", cx) // when pattern is used, it possibly contain 'circle' also.
-						.attr("cy", cy);
+					n.attr("x", xFunc).attr("y", yFunc);
 				}
 			} else if (v === "region.list") {
 				n.select("rect").filter($$.isRegionOnX)

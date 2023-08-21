@@ -173,7 +173,6 @@ export default {
 
 		svg.on("touchstart", event => {
 			state.event = event;
-
 			const {target} = event;
 
 			if (target && target !== eventRect.node()) {

@@ -185,9 +185,15 @@ export default {
 			if (hasAxis && !hasRadar && !isMultipleX) {
 				const coords = eventReceiver.coords[index];
 
-				width = coords.w;
-				left += coords.x;
-				top += coords.y;
+				if (coords) {
+					width = coords.w;
+					left += coords.x;
+					top += coords.y;
+				} else {
+					width = 0;
+					left = 0;
+					top = 0;
+				}
 			}
 
 			const x = left + (mouse ? mouse[0] : 0) + (

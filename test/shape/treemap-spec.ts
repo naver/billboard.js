@@ -7,7 +7,6 @@
 import {expect} from "chai";
 import util from "../assets/util";
 import {parseNum} from "../assets/helper";
-import x from "../../src/Chart/api/x";
 
 describe("TREEMAP", () => {
 	let chart;
@@ -159,6 +158,36 @@ describe("TREEMAP", () => {
 			expect(xRange[1]).to.be.equal(+svg.attr("width") - args.padding.right);
 			expect(yRange[0]).to.be.equal(args.padding.top);
 			expect(yRange[1]).to.be.equal(+svg.attr("height") -args.padding.bottom);
+		});
+		
+		it("generate from JSON data", () => {
+			const param = {
+				data: {
+					json: [
+						{name: "a", upload: 200, download: 200},
+						{name: "b", upload: 190, download: 230},
+					],
+					keys: {
+						value: ["upload", "download"]
+					},
+					type: "treemap",
+					labels: {
+						colors: "#000",
+						centered: true
+					}
+				}
+			};
+			const treemap = util.generate(param);
+
+			const data = treemap.data();
+
+			expect(data.length).to.be.equal(2);
+
+			data.forEach((v, i) => {
+				expect(v.id).to.be.equal(param.data.keys.value[i]);
+			});
+
+			treemap.destroy();
 		});
 	});
 
