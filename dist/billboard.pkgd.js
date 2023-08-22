@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230819004547
+ * @version 3.9.3-nightly-20230822004557
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -28042,7 +28042,7 @@ function getDataKeyForJson(keysParam, config) {
     return Math.max.apply(Math, this.data.targets.map(function (t) {
       _newArrowCheck(this, _this17);
       return t.values.length;
-    }.bind(this)));
+    }.bind(this)).concat([0]));
   },
   getMaxDataCountTarget: function getMaxDataCountTarget() {
     var _this18 = this;
@@ -53263,7 +53263,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230819004547
+ * @version 3.9.3-nightly-20230822004557
  */
 const bb = {
   /**
@@ -53273,7 +53273,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230819004547",
+  version: "3.9.3-nightly-20230822004557",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
