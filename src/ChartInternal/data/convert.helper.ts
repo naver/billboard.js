@@ -11,7 +11,7 @@ import {
 	tsvParseRows as d3TsvParseRows,
 } from "d3-dsv";
 
-export {columns, json, jsonTreemap, rows, url, csv, tsv};
+export {columns, json, rows, url, csv, tsv};
 
 /***** Functions to be executed on Web Worker *****
  * NOTE: Don't allowed to use
@@ -144,20 +144,6 @@ function json(json, keysParam) {
     }
 
     return data;
-}
-
-function jsonTreemap(json) {
-	const convertKey = v => {
-		if (v.children) {
-			v.children.forEach(convertKey);
-		}
-
-		v.name = v.id;
-	}
-
-	json.forEach(convertKey);
-
-	return json;
 }
 
 /***** Functions can't be executed on Web Worker *****/
