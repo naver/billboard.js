@@ -131,10 +131,6 @@ describe("API flow", () => {
 			chart = util.generate(args);
 		});
 
-		after(() => {
-			chart.destroy();
-		});
-
 		it("ticks should translate", done => {
 			const moved: number[] = [];
 			let interval;
