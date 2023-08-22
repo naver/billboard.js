@@ -392,7 +392,7 @@ export default {
 	 * @private
 	 */
 	getMaxDataCount(): number {
-		return Math.max(...this.data.targets.map(t => t.values.length));
+		return Math.max(...this.data.targets.map(t => t.values.length), 0);
 	},
 
 	getMaxDataCountTarget() {

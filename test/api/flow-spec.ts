@@ -11,7 +11,7 @@ import {window} from "../../src/module/browser";
 
 describe("API flow", () => {
 	let chart;
-	let args = {
+	let args: any = {
 		data: {
 			x: "x",
 			columns: [
@@ -31,9 +31,13 @@ describe("API flow", () => {
 		}
 	};
 
-	describe("basic functionality", () => {
+	describe("basic functionality #1", () => {
 		before(()=> {
 			chart = util.generate(args);
+		});
+
+		after(() => {
+			chart.destroy();
 		});
 
 		it("should flow updating the data", done => {
@@ -44,7 +48,7 @@ describe("API flow", () => {
 					["data2", 100, 300],
 					["data3", 200, 120]
 				],
-				done: function () {
+				done() {
 					const lineSize = this.internal.$el.main.selectAll(`.${$LINE.chartLines} > g`).size();
 
 					expect(lineSize).to.be.equal(this.data().length);
@@ -101,7 +105,7 @@ describe("API flow", () => {
 		});
 	});
 
-	describe("basic functionality", () => {
+	describe("basic functionality #2", () => {
 		before(()=> {
 			args = {
 				data: {
@@ -127,8 +131,12 @@ describe("API flow", () => {
 			chart = util.generate(args);
 		});
 
+		after(() => {
+			chart.destroy();
+		});
+
 		it("ticks should translate", done => {
-			const moved = [];
+			const moved: number[] = [];
 			let interval;
 
 			chart.flow({
@@ -179,8 +187,10 @@ describe("API flow", () => {
 				columns: [
 					["data", 50, 60]
 				],
-				done: function() {
+				done() {
 					expect(true).to.be.true;
+					this.destroy();
+
 					done();
 				}
 			});
@@ -207,8 +217,123 @@ describe("API flow", () => {
 					["x", "d", "e"],
 					["data", 50, 60]
 				],
-				done: function() {
+				done() {
 					expect(true).to.be.true;
+					this.destroy();
+
+					done();
+				}
+			});
+		});
+	});
+
+	describe("check options", () => {
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
+
+		afterEach(() => {
+			chart?.destroy();
+		});
+
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2017-01-11", "2017-01-21", "2017-01-25"],
+						["data1", 130, 140, 130],
+						["data2", 150, 160, 145]
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%y/%m/%d"
+						}
+					}
+				}
+			};
+		});
+
+		it("should flow not surpassing indicated 'to' option value.", done => {
+			chart.flow({
+				columns: [
+					["x", '2017-02-01', '2017-02-10'],
+					["data1", 500, 200]
+		
+				],
+				to: "2017-01-11",
+				duration: 500,
+				done() {
+					const tick = this.internal.$el.axis.x.select(".tick");
+
+					expect(tick.text()).to.be.equal("17/01/11");
+					expect(tick.attr("transform")).to.be.equal("translate(6,0)");
+
+					done();
+				}
+			})
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				}
+			};
+		});
+
+		it("when flows from timeseries x axis empty data", done => {
+			chart.flow({
+				columns: [
+					["x", '2017-02-01', '2017-02-10'],
+					["data1", 100, 200]
+		
+				],
+				duration: 500,
+				done() {
+					const tick = this.internal.$el.axis.x.select(".tick");
+
+					expect(tick.text()).to.be.equal("2017-02-01");
+					done();
+				}
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [],
+					type: "line"
+				}
+			};
+		});
+
+		it("when flows from indexed x axis empty data", done => {
+			chart.flow({
+				columns: [
+					["data1", 100, 200]
+		
+				],
+				duration: 700,
+				done() {
+					const tick = this.internal.$el.axis.x.select(".tick");
+
+					expect(tick.text()).to.be.equal("0");
+
 					done();
 				}
 			});
