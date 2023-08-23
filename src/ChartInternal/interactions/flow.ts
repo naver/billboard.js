@@ -150,9 +150,6 @@ export default {
 			} else if (v === "gridLines.x") {
 				n.attr("x1", isRotated ? 0 : xv)
 					.attr("x2", isRotated ? state.width : xv);
-			} else if (v === "gridLines.x") {
-				n.select("line").attr("x1", isRotated ? 0 : xv)
-					.attr("x2", isRotated ? state.width : xv);
 
 				n.select("text")
 					.attr("x", isRotated ? state.width : 0)
