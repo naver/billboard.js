@@ -144,10 +144,6 @@ describe("API grid", function() {
 			});
 		});
 
-		after(() => {
-			chart.destroy();	
-		});
-
 		it("should update x grids", () => {
 			const gridData = {
 				value: 2, text: "grid text", position: "middle", class:"some-class"

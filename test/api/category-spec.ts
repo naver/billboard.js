@@ -10,26 +10,51 @@ import {$AXIS} from "../../src/config/classes";
 
 describe("API category", () => {
 	let chart;
+	let args;
+
+	beforeEach(() => {
+		chart = util.generate(args);
+	});
+
+	afterEach(() => {
+		chart.destroy();
+	});
 
 	before(() => {
-		return new Promise((resolve) => {
-			chart = util.generate({
-				data: {
-					x: "x",
-					columns: [
-						["x", "a", "b", "c", "d", "e"],
-						["data1", 30, 200, 100, 400, 150],
-						["data2", 5000, 2000, 1000, 4000, 1500]
-					]
-				},
-				axis: {
-					x: {
-						type: "category"
-					}
-				},
-				onrendered: resolve
-			});
-		});
+		args = {
+			data: {
+				x: "x",
+				columns: [
+					["x", "a", "b", "c", "d", "e"],
+					["data1", 30, 200, 100, 400, 150],
+					["data2", 5000, 2000, 1000, 4000, 1500]
+				]
+			},
+			axis: {
+				x: {
+					type: "category"
+				}
+			}
+		};
+
+		// return new Promise((resolve) => {
+		// 	chart = util.generate({
+		// 		data: {
+		// 			x: "x",
+		// 			columns: [
+		// 				["x", "a", "b", "c", "d", "e"],
+		// 				["data1", 30, 200, 100, 400, 150],
+		// 				["data2", 5000, 2000, 1000, 4000, 1500]
+		// 			]
+		// 		},
+		// 		axis: {
+		// 			x: {
+		// 				type: "category"
+		// 			}
+		// 		},
+		// 		onrendered: resolve
+		// 	});
+		// });
 	});
 
 	it("should return category names", () => {
@@ -65,5 +90,34 @@ describe("API category", () => {
 		chart.$.main.selectAll(`.${$AXIS.axisX} tspan`).each(function(d, i) {
 			expect(d3Select(this).text()).to.be.equal(name[i]);
 		});
+	});
+
+	it("set options: set categories by axis.x.catgories option", () => {
+		args = {
+			data: {
+				columns: [
+					["download", 30, 200, 100, 400],
+					["loading", 90, 100, 140, 200]
+				],
+				type: "bar"
+			  },
+			axis: {
+				x: {
+					type: "category",
+					categories: ["www.site1.com", "www.site2.com", "www.site3.com", "www.site4.com"],
+				}
+			}
+		};
+	});
+
+	it("should return categories correctly.", () => {
+		const categories = chart.categories();
+
+		expect(categories).to.deep.equal(args.axis.x.categories);
+
+		// when give out of range x axis value
+		chart.tooltip.show({x: 2000});
+
+		expect(chart.$.tooltip.html()).to.be.empty;
 	});
 });

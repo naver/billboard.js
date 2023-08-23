@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import sinon from "sinon";
 import util from "../assets/util";
-import {$AXIS, $LINE} from "../../src/config/classes";
+import {$AXIS, $GRID, $LINE, $TEXT} from "../../src/config/classes";
 import {window} from "../../src/module/browser";
 
 describe("API flow", () => {
@@ -129,10 +129,6 @@ describe("API flow", () => {
 			};
 
 			chart = util.generate(args);
-		});
-
-		after(() => {
-			chart.destroy();
 		});
 
 		it("ticks should translate", done => {
@@ -322,13 +318,13 @@ describe("API flow", () => {
 			};
 		});
 
-		it("when flows from indexed x axis empty data", done => {
+		it("indexed axis: when flows from indexed x axis empty data", done => {
 			chart.flow({
 				columns: [
-					["data1", 100, 200]
+					["data1", 100]
 		
 				],
-				duration: 700,
+				duration: 500,
 				done() {
 					const tick = this.internal.$el.axis.x.select(".tick");
 
@@ -337,6 +333,104 @@ describe("API flow", () => {
 					done();
 				}
 			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [			
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				}
+			};
+		});
+
+		it("timeseires axis: when flows from indexed x axis empty data", done => {
+			chart.flow({
+				columns: [
+					["x", "2023-08-25"],
+					["data1", 100]
+		
+				],
+				duration: 500,
+				done() {
+					const tick = this.internal.$el.axis.x.select(".tick");
+
+					expect(tick.text()).to.be.equal("2023-08-25");
+
+					done();
+				}
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 10, 12, 11]
+					],
+					type: "line",
+					labels: true
+				},
+				grid: {
+					x: {
+						show: true,
+						lines: [
+							{value: 2, text: "Label on 2"},
+						]
+					}
+				},
+				regions: [
+					{
+						axis: "x",
+						start: 0,
+						end: 1,
+						class: "region-1-4"
+					}
+				]
+			};
+		});
+
+		it("grid & regions should flow", done => {
+			chart.flow({
+				columns: [
+					["data1", 200]
+			
+				],
+				duration: 300,
+				done() {
+					const {$el} = this.internal;
+				
+					// grids
+					const xgrids = $el.grid.main.selectAll(`.${$GRID.xgrids} line`);
+
+					expect(xgrids.size()).to.be.equal(2);
+
+					// region
+					const regionRect = $el.region.list.select("rect").node().getBoundingClientRect();
+
+					expect(regionRect.x).to.be.below(-240);
+					
+					// data label text
+					const text = $el.main.selectAll(`.${$TEXT.chartText} text`);
+
+					text.each(function(d, i) {
+						expect(+this.textContent).to.be.equal(d.value);						
+					});
+
+					done();
+				}
+			});
+
 		});
 	});
 });

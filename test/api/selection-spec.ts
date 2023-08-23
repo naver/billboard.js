@@ -31,10 +31,6 @@ describe("API select", () => {
 			main = chart.$.main;
 		});
 
-		after(() => {
-			chart.destroy();
-		});
-
 		it("should select all data points", () => {
 			chart.select();
 
@@ -104,10 +100,6 @@ describe("API select", () => {
 			args.data.type = "bar";
 			chart = util.generate(args);
 			main = chart.$.main;
-		});
-
-		after(() => {
-			chart.destroy();
 		});
 
 		it("should select all data points", () => {
