@@ -146,14 +146,14 @@ describe("DRAG", function() {
 			}, 500);
 		});
 
-		it("set options: data.type='bar'", () => {
-			args.data.type = "pie";
+		it("set options: data.selection.enabled=fasle", () => {
+			args.data.selection.enabled = false;
 		});
 
-		it("pie shouldn't be selected by drag", done => {
+		it("shouldn't be selected by drag", done => {
 			const {internal: {$el}} = chart;
 
-			util.doDrag($el.arcs.node(), {
+			util.doDrag($el.eventRect.node(), {
 				clientX: 34.5,
 				clientY: 20
 			}, {

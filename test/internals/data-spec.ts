@@ -1129,8 +1129,6 @@ describe("DATA", () => {
 		afterEach(() => {
 			spyHidden.resetHistory();
 			spyShown.resetHistory();
-
-			chart.destroy();
 		});
 
 		it("check on continuous .hide()/.show() APIs.", function(done) {
