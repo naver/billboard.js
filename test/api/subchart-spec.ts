@@ -266,6 +266,21 @@ describe("API subchart", () => {
 			
 		});
 
+		it("only first range value is updated?", () => {
+			const range = [0, 1];
+
+			// when
+			chart.subchart(range);
+
+			const handlebar = chart.internal.brush.getSelection()
+				.selectAll(".handle--custom"); // .filter(":last-child").node();
+
+			// when
+			util.doDrag(handlebar.node(), {clientX: 100, clientY: 0}, {clientX: 150, clientY: 0}, chart);
+
+			expect(chart.subchart()[1]).to.be.equal(range[1]);
+		});
+
 		it("set options: axis.x.type='timeseries'", () => {
 			args = {
 				data: {
