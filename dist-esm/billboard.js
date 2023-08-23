@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230822004557
+ * @version 3.9.3-nightly-20230823004556
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -2334,7 +2334,11 @@ var data$2 = {
      *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
      *     ],
      *     keys: {
-     *       // x: "name", // it's possible to specify 'x' when category axis
+     *       // case 1: specify 'x' key for category axis
+     *       x: "name", // 'name' key will be used as category x axis values
+     *       value: ["upload", "download"]
+     *
+     *       // case 2: without 'x' key for non-category axis
      *       value: ["upload", "download"]
      *     }
      * }
@@ -2532,7 +2536,11 @@ var data$2 = {
      *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
      *     ],
      *     keys: {
-     *       // x: "name", // it's possible to specify 'x' when category axis
+     *       // case 1: specify 'x' key for category axis
+     *       x: "name", // 'name' key will be used as category x axis values
+     *       value: ["upload", "download"]
+     *
+     *       // case 2: without 'x' key for non-category axis
      *       value: ["upload", "download"]
      *     }
      * }
@@ -4886,9 +4894,16 @@ var interaction = {
             var _e = element.getBoundingClientRect(), width = _e.width, left = _e.left, top_1 = _e.top;
             if (hasAxis && !hasRadar && !isMultipleX) {
                 var coords = eventReceiver.coords[index];
-                width = coords.w;
-                left += coords.x;
-                top_1 += coords.y;
+                if (coords) {
+                    width = coords.w;
+                    left += coords.x;
+                    top_1 += coords.y;
+                }
+                else {
+                    width = 0;
+                    left = 0;
+                    top_1 = 0;
+                }
             }
             var x = left + (mouse ? mouse[0] : 0) + (isMultipleX || config.axis_rotated ? 0 : (width / 2));
             var y = top_1 + (mouse ? mouse[1] : 0);
@@ -12137,14 +12152,6 @@ var AxisRendererHelper = /** @class */ (function () {
                 return r;
             });
         }
-        else {
-            for (var i = Math.ceil(start); i < end; i++) {
-                ticks.push(i);
-            }
-            if (ticks.length > 0 && ticks[0] > 0) {
-                ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
-            }
-        }
         return ticks;
     };
     AxisRendererHelper.prototype.copyScale = function () {
@@ -14070,10 +14077,7 @@ var flow = {
                 else {
                     var xFunc = function (d) { return cx(d) - config.point_r; };
                     var yFunc = function (d) { return cy(d) - config.point_r; };
-                    n.attr("x", xFunc)
-                        .attr("y", yFunc)
-                        .attr("cx", cx) // when pattern is used, it possibly contain 'circle' also.
-                        .attr("cy", cy);
+                    n.attr("x", xFunc).attr("y", yFunc);
                 }
             }
             else if (v === "region.list") {
@@ -21897,20 +21901,12 @@ var subchart = {
         var $$ = this;
         var config = $$.config, scale = $$.scale, subchart = $$.$el.subchart, state = $$.state;
         var isRotated = config.axis_rotated;
+        var height = config.subchart_size_height;
         var lastDomain;
         var lastSelection;
         var timeout;
         // set the brush
         $$.brush = (isRotated ? brushY() : brushX()).handleSize(5);
-        var getBrushSize = function () {
-            var brush = $$.$el.svg.select(".".concat(CLASS.brush, " .overlay"));
-            var brushSize = { width: 0, height: 0 };
-            if (brush.size()) {
-                brushSize.width = +brush.attr("width");
-                brushSize.height = +brush.attr("height");
-            }
-            return brushSize[isRotated ? "width" : "height"];
-        };
         // bind brush event
         $$.brush.on("start brush end", function (event) {
             var selection = event.selection, sourceEvent = event.sourceEvent, target = event.target, type = event.type;
@@ -21941,9 +21937,8 @@ var subchart = {
                 else {
                     $$.brush.handle.attr("display", null)
                         .attr("transform", function (d, i) {
-                        var pos = isRotated ?
-                            [33, selection[i] - (i === 0 ? 30 : 24)] : [selection[i], 3];
-                        return "translate(".concat(pos, ")");
+                        var pos = [selection[i], height / 2];
+                        return "translate(".concat(isRotated ? pos.reverse() : pos, ")");
                     });
                 }
             }
@@ -21967,7 +21962,7 @@ var subchart = {
         };
         // set the brush extent
         $$.brush.scale = function (scale) {
-            var h = config.subchart_size_height || getBrushSize();
+            var h = config.subchart_size_height;
             var extent = $$.getExtent();
             if (!extent && scale.range) {
                 extent = [[0, 0], [scale.range()[1], h]];
@@ -22052,11 +22047,11 @@ var subchart = {
         var customHandleClass = "handle--custom";
         // brush handle shape's path
         var path = isRotated ? [
-            "M 5.2491724,29.749209 a 6,6 0 0 0 -5.50000003,-6.5 H -5.7508276 a 6,6 0 0 0 -6.0000004,6.5 z m -5.00000003,-2 H -6.7508276 m 6.99999997,-2 H -6.7508276Z",
-            "M 5.2491724,23.249172 a 6,-6 0 0 1 -5.50000003,6.5 H -5.7508276 a 6,-6 0 0 1 -6.0000004,-6.5 z m -5.00000003,2 H -6.7508276 m 6.99999997,2 H -6.7508276Z"
+            "M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
+            "M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
         ] : [
-            "M 0 18 A 6 6 0 0 0 -6.5 23.5 V 29 A 6 6 0 0 0 0 35 Z M -2 23 V 30 M -4 23 V 30Z",
-            "M 0 18 A 6 6 0 0 1 6.5 23.5 V 29 A 6 6 0 0 1 0 35 Z M 2 23 V 30 M 4 23 V 30Z"
+            "M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
+            "M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
         ];
         $$.brush.handle = brush.selectAll(".".concat(customHandleClass))
             .data(isRotated ?
@@ -22854,7 +22849,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230822004557
+ * @version 3.9.3-nightly-20230823004556
  */
 var bb = {
     /**
@@ -22864,7 +22859,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.3-nightly-20230822004557",
+    version: "3.9.3-nightly-20230823004556",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

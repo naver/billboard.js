@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230822004557
+ * @version 3.9.3-nightly-20230823004556
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -25917,7 +25917,11 @@ var data_this = undefined;
    *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
    *     ],
    *     keys: {
-   *       // x: "name", // it's possible to specify 'x' when category axis
+   *       // case 1: specify 'x' key for category axis
+   *       x: "name", // 'name' key will be used as category x axis values
+   *       value: ["upload", "download"]
+   *
+   *       // case 2: without 'x' key for non-category axis
    *       value: ["upload", "download"]
    *     }
    * }
@@ -26115,7 +26119,11 @@ var data_this = undefined;
    *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
    *     ],
    *     keys: {
-   *       // x: "name", // it's possible to specify 'x' when category axis
+   *       // case 1: specify 'x' key for category axis
+   *       x: "name", // 'name' key will be used as category x axis values
+   *       value: ["upload", "download"]
+   *
+   *       // case 2: without 'x' key for non-category axis
    *       value: ["upload", "download"]
    *     }
    * }
@@ -27361,18 +27369,6 @@ function json(json, keysParam) {
   }
   return data;
 }
-function jsonTreemap(json) {
-  var _this = this;
-  const _convertKey = function convertKey(v) {
-    _newArrowCheck(this, _this);
-    if (v.children) {
-      v.children.forEach(_convertKey);
-    }
-    v.name = v.id;
-  }.bind(this);
-  json.forEach(_convertKey);
-  return json;
-}
 
 /***** Functions can't be executed on Web Worker *****/
 /**
@@ -27421,13 +27417,13 @@ function url(url, mimeType, headers, keys, done) {
  * @private
  */
 function convertCsvTsvToData(parser, xsv) {
-  var _this2 = this;
+  var _this = this;
   const rows = parser.rows(xsv);
   let d;
   if (rows.length === 1) {
     d = [{}];
     rows[0].forEach(function (id) {
-      _newArrowCheck(this, _this2);
+      _newArrowCheck(this, _this);
       d[0][id] = null;
     }.bind(this));
   } else {
@@ -29314,9 +29310,15 @@ function drag_defaultTouchable() {
         top = _element$getBoundingC.top;
       if (hasAxis && !hasRadar && !isMultipleX) {
         const coords = eventReceiver.coords[index];
-        width = coords.w;
-        left += coords.x;
-        top += coords.y;
+        if (coords) {
+          width = coords.w;
+          left += coords.x;
+          top += coords.y;
+        } else {
+          width = 0;
+          left = 0;
+          top = 0;
+        }
       }
       const x = left + (mouse ? mouse[0] : 0) + (isMultipleX || config.axis_rotated ? 0 : width / 2),
         y = top + (mouse ? mouse[1] : 0);
@@ -39908,13 +39910,6 @@ let AxisRendererHelper = /*#__PURE__*/function () {
         const r = isString(v) && isNumber(v) && !isNaN(v) && Math.round(v * 10) / 10 || v;
         return r;
       }.bind(this));
-    } else {
-      for (let i = Math.ceil(start); i < end; i++) {
-        ticks.push(i);
-      }
-      if (ticks.length > 0 && ticks[0] > 0) {
-        ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
-      }
     }
     return ticks;
   };
@@ -42023,8 +42018,7 @@ const src_linear_linear = function (t) {
               _newArrowCheck(this, _this5);
               return cy(d) - config.point_r;
             }.bind(this);
-          n.attr("x", xFunc).attr("y", yFunc).attr("cx", cx) // when pattern is used, it possibly contain 'circle' also.
-          .attr("cy", cy);
+          n.attr("x", xFunc).attr("y", yFunc);
         }
       } else if (v === "region.list") {
         n.select("rect").filter($$.isRegionOnX).attr("x", $$.regionX.bind($$)).attr("width", $$.regionWidth.bind($$));
@@ -52201,23 +52195,11 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       scale = $$.scale,
       subchart = $$.$el.subchart,
       state = $$.state,
-      isRotated = config.axis_rotated;
+      isRotated = config.axis_rotated,
+      height = config.subchart_size_height;
     let lastDomain, lastSelection, timeout;
     // set the brush
     $$.brush = (isRotated ? brushY() : brushX()).handleSize(5);
-    const getBrushSize = function () {
-      _newArrowCheck(this, _this);
-      const brush = $$.$el.svg.select("." + classes.brush + " .overlay"),
-        brushSize = {
-          width: 0,
-          height: 0
-        };
-      if (brush.size()) {
-        brushSize.width = +brush.attr("width");
-        brushSize.height = +brush.attr("height");
-      }
-      return brushSize[isRotated ? "width" : "height"];
-    }.bind(this);
 
     // bind brush event
     $$.brush.on("start brush end", function (event) {
@@ -52257,8 +52239,8 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         } else {
           $$.brush.handle.attr("display", null).attr("transform", function (d, i) {
             _newArrowCheck(this, _this2);
-            const pos = isRotated ? [33, selection[i] - (i === 0 ? 30 : 24)] : [selection[i], 3];
-            return "translate(" + pos + ")";
+            const pos = [selection[i], height / 2];
+            return "translate(" + (isRotated ? pos.reverse() : pos) + ")";
           }.bind(this));
         }
       }
@@ -52288,7 +52270,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
     // set the brush extent
     $$.brush.scale = function (scale) {
       var _this5 = this;
-      const h = config.subchart_size_height || getBrushSize();
+      const h = config.subchart_size_height;
       let extent = $$.getExtent();
       if (!extent && scale.range) {
         extent = [[0, 0], [scale.range()[1], h]];
@@ -52380,7 +52362,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       config = $$.config,
       isRotated = config.axis_rotated,
       initRange = config.subchart_init_range,
-      path = isRotated ? ["M 5.2491724,29.749209 a 6,6 0 0 0 -5.50000003,-6.5 H -5.7508276 a 6,6 0 0 0 -6.0000004,6.5 z m -5.00000003,-2 H -6.7508276 m 6.99999997,-2 H -6.7508276Z", "M 5.2491724,23.249172 a 6,-6 0 0 1 -5.50000003,6.5 H -5.7508276 a 6,-6 0 0 1 -6.0000004,-6.5 z m -5.00000003,2 H -6.7508276 m 6.99999997,2 H -6.7508276Z"] : ["M 0 18 A 6 6 0 0 0 -6.5 23.5 V 29 A 6 6 0 0 0 0 35 Z M -2 23 V 30 M -4 23 V 30Z", "M 0 18 A 6 6 0 0 1 6.5 23.5 V 29 A 6 6 0 0 1 0 35 Z M 2 23 V 30 M 4 23 V 30Z"];
+      path = isRotated ? ["M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z", "M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"] : ["M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z", "M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"];
 
     // brush handle shape's path
 
@@ -53263,7 +53245,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230822004557
+ * @version 3.9.3-nightly-20230823004556
  */
 const bb = {
   /**
@@ -53273,7 +53255,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230822004557",
+  version: "3.9.3-nightly-20230823004556",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
