@@ -646,14 +646,14 @@ export interface TooltipOptions {
 		/**
 		 * Set x Axis index to be shown at the initialization.
 		 */
-		x?: number;
+		x?: number | string;
 
 		/**
 		 * Set the position of tooltip at the initialization.
 		 */
 		position?: {
-			top?: string;
-			left?: string;
+			top?: number | string;
+			left?: number | string;
 		}
 	};
 

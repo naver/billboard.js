@@ -291,9 +291,6 @@ export default {
 		const anchorString = getRotateAnchor(angle);
 		const rotateString = angle ? `rotate(${angle})` : "";
 
-
-		// $$.meetsLabelThreshold(ratio,
-
 		$$.$el.text
 			.style("fill", $$.getStylePropValue($$.updateTextColor))
 			.attr("filter", $$.updateTextBacgroundColor.bind($$))
@@ -452,7 +449,7 @@ export default {
 	 */
 	getXForText(points, d: IDataRow, textElement): number {
 		const $$ = this;
-		const {config, state} = $$;
+		const {config} = $$;
 		const isRotated = config.axis_rotated;
 		const isTreemapType = $$.isTreemapType(d);
 		let xPos = points[0][0];
@@ -481,17 +478,6 @@ export default {
 				}
 			} else {
 				xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
-			}
-		}
-
-		// show labels regardless of the domain if value is null
-		if (d.value === null) {
-			if (xPos > state.width) {
-				const {width} = getBoundingRect(textElement);
-
-				xPos = state.width - width;
-			} else if (xPos < 0) {
-				xPos = 4;
 			}
 		}
 
@@ -569,17 +555,6 @@ export default {
 
 					yPos += diff;
 				}
-			}
-		}
-
-		// show labels regardless of the domain if value is null
-		if (d.value === null && !isRotated) {
-			const boxHeight = rect.height;
-
-			if (yPos < boxHeight) {
-				yPos = boxHeight;
-			} else if (yPos > state.height) {
-				yPos = state.height - 4;
 			}
 		}
 
