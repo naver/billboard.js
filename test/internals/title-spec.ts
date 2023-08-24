@@ -96,6 +96,14 @@ describe("TITLE", () => {
 						args.title.padding.top + height + args.title.padding.bottom
 					);
 				});
+
+				it("check x axis <clipPath>'s height", () => {
+					const {internal: {state}, $: {svg}} = chart;
+					const xClipPath = svg.select(`#${state.clip.idXAxis} rect`).node();
+
+					expect(Math.abs(+xClipPath.getAttribute("y"))).to.be.below(100);
+					
+				});
 			});
 
 			describe("and position left", () => {
