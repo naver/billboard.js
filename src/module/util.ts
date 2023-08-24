@@ -266,7 +266,11 @@ function getPathBox(
  */
 function getPointer(event, element?: Element): number[] {
 	const touches = event && (event.touches || (event.sourceEvent && event.sourceEvent.touches))?.[0];
-	const pointer = d3Pointer(touches || event, element);
+	let pointer = [0, 0];
+
+	try {
+		pointer = d3Pointer(touches || event, element);
+	} catch (e) {}
 
 	return pointer.map(v => (isNaN(v) ? 0 : v));
 }
