@@ -36,13 +36,15 @@ describe("TITLE", () => {
 		describe("with no padding and no position", () => {
 			it("renders the title at the default config position", () => {
 				const title = chart.$.svg.select(".bb-title").node();
+				const titleRect = title.getBoundingClientRect();
 				const [x, y] = title.parentNode
 					.getAttribute("transform")
 					.split(",")
 					.map(v => util.parseNum(v));
 
 				expect(x).to.be.equal(chart.internal.state.current.width / 2);
-				expect(y).to.be.equal(title.getBBox().height);
+				expect(y).to.be.equal(titleRect.height);
+				expect(title.style.textAnchor).to.be.equal("middle");
 			});
 
 			it("renders the title text", () => {
@@ -76,13 +78,15 @@ describe("TITLE", () => {
 			describe("and position center", () => {
 				it("renders the title at the default config position", () => {
 					const title = chart.$.svg.select(".bb-title").node();
+					const titleRect = title.getBoundingClientRect();
 					const [x, y] = title.parentNode
 						.getAttribute("transform")
 						.split(",")
 						.map(v => util.parseNum(v));
 	
 					expect(x).to.be.equal(chart.internal.state.current.width / 2);
-					expect(y).to.be.equal(title.getBBox().height + args.title.padding.top);
+					expect(y).to.be.equal(titleRect.height + args.title.padding.top);
+					expect(title.style.textAnchor).to.be.equal("middle");
 				});
 
 				it("adds the correct amount of padding to fit the title", () => {
