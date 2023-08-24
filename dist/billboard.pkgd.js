@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3
+ * @version 3.9.3-nightly-20230824004559
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -41999,8 +41999,6 @@ const src_linear_linear = function (t) {
         n.attr(state.xgridAttr);
       } else if (v === "gridLines.x") {
         n.attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? state.width : xv);
-      } else if (v === "gridLines.x") {
-        n.select("line").attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? state.width : xv);
         n.select("text").attr("x", isRotated ? state.width : 0).attr("y", xv);
       } else if (/^(area|bar|line)$/.test(v)) {
         n.attr("d", shape.type[v]);
@@ -53245,7 +53243,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3
+ * @version 3.9.3-nightly-20230824004559
  */
 const bb = {
   /**
@@ -53255,7 +53253,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3",
+  version: "3.9.3-nightly-20230824004559",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

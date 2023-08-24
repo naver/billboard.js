@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3
+ * @version 3.9.3-nightly-20230824004559
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -14054,10 +14054,6 @@ var flow = {
             else if (v === "gridLines.x") {
                 n.attr("x1", isRotated ? 0 : xv)
                     .attr("x2", isRotated ? state.width : xv);
-            }
-            else if (v === "gridLines.x") {
-                n.select("line").attr("x1", isRotated ? 0 : xv)
-                    .attr("x2", isRotated ? state.width : xv);
                 n.select("text")
                     .attr("x", isRotated ? state.width : 0)
                     .attr("y", xv);
@@ -22849,7 +22845,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.3
+ * @version 3.9.3-nightly-20230824004559
  */
 var bb = {
     /**
@@ -22859,7 +22855,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.3",
+    version: "3.9.3-nightly-20230824004559",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
