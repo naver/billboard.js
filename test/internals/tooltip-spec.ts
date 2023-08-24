@@ -1153,18 +1153,13 @@ describe("TOOLTIP", function() {
 						["data3", 150, 120, 110, 140, 115, 125]
 					]
 				},
-				interaction: {
-					inputType: {
-						touch: true
-					}
-				},
 				tooltip: {
 					init: {
 						show: true,
 						x: 1,
 						position: {
-							left: "100px",
-							top: "30px"
+							left: 100,
+							top: 30
 						}
 					}
 				}
@@ -1177,11 +1172,83 @@ describe("TOOLTIP", function() {
 				left: tooltip.style("left"),
 				top: tooltip.style("top")
 			};
+			const dataLen = chart.data().length;
+			const name = tooltip.selectAll(".name");
+			const value = tooltip.selectAll(".value");
 
 			expect(tooltip.style("display")).to.be.equal("block");
 
-			expect(pos.left).to.be.equal(args.tooltip.init.position.left);
-			expect(pos.top).to.be.equal(args.tooltip.init.position.top);
+			expect(pos.left).to.be.equal(args.tooltip.init.position.left + "px");
+			expect(pos.top).to.be.equal(args.tooltip.init.position.top + "px");
+
+			expect(name.size()).to.be.equal(dataLen);
+			expect(value.size()).to.be.equal(dataLen);
+			expect(+tooltip.select("th").text()).to.be.equal(args.tooltip.init.x);
+		});
+
+		it("set options: data.type='pie'", () => {
+			args.data.type = "pie";
+		});
+
+		it("check if tooltip shows correct data values for pie", () => {
+			const tooltip = chart.$.tooltip;			
+			const name = tooltip.selectAll(".name");
+			const value = tooltip.selectAll(".value");
+
+			expect(name.size()).to.be.equal(1);
+			expect(value.size()).to.be.equal(1);
+
+			expect(name.text()).to.be.equal("data3");
+			expect(value.text()).to.be.equal("37.1%");
+		});
+
+		it("set options: timeseries x axis", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2023-08-24", "2023-08-25", "2023-08-26", "2023-08-27", "2023-08-28", "2023-08-29"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", 150, 120, 110, 140, 115, 125]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				},
+				tooltip: {
+					init: {
+						show: true,
+						x: "2023-08-28"			
+					}
+				}
+			};
+		});
+
+		it("check if tooltip shows correct data values", () => {
+			const tooltip = chart.$.tooltip;
+			const dataLen = chart.data().length;
+			const name = tooltip.selectAll(".name");
+			const value = tooltip.selectAll(".value");
+
+			const valueAtIndex = chart.data().map(v => {
+				return v.values[4].value
+			});
+
+			// is has correct data values?
+			value.each(function(d, i) {
+				expect(+this.textContent).to.be.equal(valueAtIndex[i]);
+			});
+
+			expect(tooltip.node().getBoundingClientRect().x).to.be.closeTo(405, 5);
+			expect(name.size()).to.be.equal(dataLen);
+			expect(value.size()).to.be.equal(dataLen);
+			expect(tooltip.select("th").text()).to.be.equal(args.tooltip.init.x);
 		});
 	});
 
