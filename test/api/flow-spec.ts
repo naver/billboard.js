@@ -381,6 +381,9 @@ describe("API flow", () => {
 					type: "line",
 					labels: true
 				},
+				point: {
+					type: "rectangle"
+				},
 				grid: {
 					x: {
 						show: true,
