@@ -12,7 +12,7 @@ import {$TEXT} from "../../config/classes";
  * @returns {string|number} text-anchor value or position in pixel
  * @private
  */
-function getTextPos(pos = "left", width?: number | any): number | "start" | "middle" | "end" {
+function getTextXPos(pos = "left", width?: number | any): number | "start" | "middle" | "end" {
 	const isNum = isNumber(width);
 	let position;
 
@@ -41,7 +41,7 @@ export default {
 
 			const text = $el.title
 				.append("text")
-				.style("text-anchor", getTextPos(config.title_position))
+				.style("text-anchor", getTextXPos(config.title_position))
 				.attr("class", $TEXT.title);
 
 			setTextValue(text, config.title_text, [0.3, 1.5]);
@@ -57,53 +57,12 @@ export default {
 		const {config, state: {current}, $el: {title}} = $$;
 
 		if (title) {
-			const y = $$.yForTitle.call($$);
+			const x = getTextXPos(config.title_position, current.width);
+			const y = (config.title_padding.top || 0) +
+				$$.getTextRect($$.$el.title, $TEXT.title).height;
 
-			if (/g/i.test(title.node().tagName)) {
-				title.attr("transform", `translate(${getTextPos(config.title_position, current.width)}, ${y})`);
-			} else {
-				title.attr("x", $$.xForTitle.call($$)).attr("y", y);
-			}
+			title.attr("transform", `translate(${x}, ${y})`);
 		}
-	},
-
-	/**
-	 * Returns the x attribute value of the title
-	 * @returns {number} x attribute value
-	 * @private
-	 */
-	xForTitle(): number {
-		const $$ = this;
-		const {config, state: {current}} = $$;
-		const position = config.title_position || "left";
-		const textRectWidth = $$.getTextRect($$.$el.title, $TEXT.title).width;
-		let x;
-
-		if (/(right|center)/.test(position)) {
-			x = current.width - textRectWidth;
-
-			if (position.indexOf("right") >= 0) {
-				x = current.width - textRectWidth - config.title_padding.right;
-			} else if (position.indexOf("center") >= 0) {
-				x = (current.width - textRectWidth) / 2;
-			}
-		} else { // left
-			x = (config.title_padding.left || 0);
-		}
-
-		return x;
-	},
-
-	/**
-	 * Returns the y attribute value of the title
-	 * @returns {number} y attribute value
-	 * @private
-	 */
-	yForTitle(): number {
-		const $$ = this;
-
-		return ($$.config.title_padding.top || 0) +
-			$$.getTextRect($$.$el.title, $TEXT.title).height;
 	},
 
 	/**
@@ -113,7 +72,10 @@ export default {
 	 */
 	getTitlePadding(): number {
 		const $$ = this;
+		const {$el, config} = $$;
 
-		return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
+		return (config.title_padding.top || 0) +
+			$$.getTextRect($el.title, $TEXT.title).height +
+			(config.title_padding.bottom || 0);
 	},
 };
