@@ -16,10 +16,6 @@ describe("API category", () => {
 		chart = util.generate(args);
 	});
 
-	afterEach(() => {
-		chart.destroy();
-	});
-
 	before(() => {
 		args = {
 			data: {
