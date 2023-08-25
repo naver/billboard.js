@@ -19,6 +19,10 @@ describe("TEXT", () => {
 		chart = util.generate(args);
 	});
 
+	afterEach(() => {
+		chart.destroy();
+	});
+
     const checkXY = function(x, y, prefix = "c", delta: any = {x: 1, y: 1}) {
 		if (isNumber(delta)) {
 			delta = {x: delta, y: delta};
