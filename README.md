@@ -285,7 +285,7 @@ THE SOFTWARE.
 [badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
 [badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
 [badge-ci-status]: https://github.com/naver/billboard.js/workflows/CI/badge.svg
-[badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
+[badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg?branch=master
 [badge-snyk]: https://snyk.io/test/github/naver/billboard.js/badge.svg?targetFile=package.json
 [badge-gzip-size]: https://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
 [badge-latest]: https://img.shields.io/npm/v/billboard.js/latest.svg
