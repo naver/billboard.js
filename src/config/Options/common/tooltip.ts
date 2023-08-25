@@ -63,7 +63,7 @@ export default {
 	 *    - The value array length should match with the data length
 	 * @property {boolean} [tooltip.init.show=false] Show tooltip at the initialization.
 	 * @property {number} [tooltip.init.x=0] Set x Axis index(or index for Arc(donut, gauge, pie) types) to be shown at the initialization.
-	 * @property {object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
+	 * @property {object} [tooltip.init.position] Set the position of tooltip at the initialization.
 	 * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
 	 * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
 	 * @property {Function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
@@ -155,10 +155,10 @@ export default {
 	 *      // show at the initialization
 	 *      init: {
 	 *          show: true,
-	 *          x: 2, // x Axis index(or index for Arc(donut, gauge, pie) types)
+	 *          x: 2, // x Axis index (or index for Arc(donut, gauge, pie) types)
 	 *          position: {
-	 *              top: "150px",
-	 *              left: "250px"
+	 *              top: "150px",  // specify as number or as string with 'px' unit string
+	 *              left: 250  // specify as number or as string with 'px' unit string
 	 *          }
 	 *      },
 	 *
@@ -212,10 +212,7 @@ export default {
 		> {},
 	tooltip_init_show: false,
 	tooltip_init_x: 0,
-	tooltip_init_position: {
-		top: "0px",
-		left: "50px"
-	},
+	tooltip_init_position: undefined,
 	tooltip_linked: false,
 	tooltip_linked_name: "",
 	tooltip_onshow: () => {},

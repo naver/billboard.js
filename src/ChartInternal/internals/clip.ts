@@ -57,12 +57,12 @@ export default {
 		const isRotated = config.axis_rotated;
 		const left = Math.max(30, margin.left) - (isRotated ? 0 : 20);
 
-		const x = isRotated ? -(1 + left) : -(left - 1);
-		const y = -Math.max(15, margin.top);
-		const w = isRotated ? margin.left + 20 : width + 10 + left;
-
 		// less than 20 is not enough to show the axis label 'outer' without legend
 		const h = (isRotated ? (margin.top + height) + 10 : margin.bottom) + 20;
+
+		const x = isRotated ? -(1 + left) : -(left - 1);
+		const y = -Math.max(15, margin.bottom);
+		const w = isRotated ? margin.left + 20 : width + 10 + left;
 
 		node
 			.attr("x", x)

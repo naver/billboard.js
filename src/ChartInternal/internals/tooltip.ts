@@ -6,7 +6,7 @@ import {select as d3Select} from "d3-selection";
 import {document} from "../../module/browser";
 import {$ARC, $TOOLTIP} from "../../config/classes";
 import type {IArcData, IDataRow} from "../data/IData";
-import {getPointer, isFunction, isObject, isString, isValue, callFn, sanitize, tplProcess, isUndefined, parseDate} from "../../module/util";
+import {getPointer, isEmpty, isFunction, isObject, isString, isValue, callFn, sanitize, tplProcess, isUndefined, parseDate} from "../../module/util";
 
 export default {
 	/**
@@ -31,50 +31,36 @@ export default {
 		$$.bindTooltipResizePos();
 	},
 
+	/**
+	 * Show tooltip at initialization.
+	 * Is called only when tooltip.init.show=true option is set
+	 * @private
+	 */
 	initShowTooltip(): void {
 		const $$ = this;
 		const {config, $el, state: {hasAxis, hasRadar}} = $$;
 
 		// Show tooltip if needed
 		if (config.tooltip_init_show) {
-			const isArc = !(hasAxis && hasRadar);
+			const isArc = !(hasAxis || hasRadar);
 
 			if ($$.axis?.isTimeSeries() && isString(config.tooltip_init_x)) {
-				const targets = $$.data.targets[0];
-				let i;
-				let val;
-
 				config.tooltip_init_x = parseDate.call($$, config.tooltip_init_x);
-
-				for (i = 0; (val = targets.values[i]); i++) {
-					if ((val.x - config.tooltip_init_x) === 0) {
-						break;
-					}
-				}
-
-				config.tooltip_init_x = i;
 			}
 
-			let data = $$.data.targets.map(d => {
-				const x = isArc ? 0 : config.tooltip_init_x;
-
-				return $$.addName(d.values[x]);
+			$$.api.tooltip.show({
+				data: {
+					[isArc ? "index" : "x"]: config.tooltip_init_x
+				}
 			});
 
-			if (isArc) {
-				data = [data[config.tooltip_init_x]];
-			}
+			const position = config.tooltip_init_position;
 
-			$el.tooltip.html($$.getTooltipHTML(
-				data,
-				$$.axis?.getXAxisTickFormat(),
-				$$.getDefaultValueFormat(),
-				$$.color
-			));
+			if (!config.tooltip_contents.bindto && !isEmpty(position)) {
+				const {top = 0, left = 50} = position;
 
-			if (!config.tooltip_contents.bindto) {
-				$el.tooltip.style("top", config.tooltip_init_position.top)
-					.style("left", config.tooltip_init_position.left)
+				$el.tooltip.style("top", isString(top) ? top : `${top}px`)
+					.style("left", isString(left) ? left : `${left}px`)
 					.style("display", null);
 			}
 		}
@@ -368,7 +354,7 @@ export default {
 	 * @param {SVGElement} eventTarget Event element
 	 * @private
 	 */
-	showTooltip(selectedData: IDataRow[], eventTarget?: SVGElement): void {
+	showTooltip(selectedData: IDataRow[], eventTarget: SVGElement): void {
 		const $$ = this;
 		const {config, $el: {tooltip}} = $$;
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));

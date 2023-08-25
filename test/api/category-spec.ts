@@ -120,4 +120,23 @@ describe("API category", () => {
 
 		expect(chart.$.tooltip.html()).to.be.empty;
 	});
+
+	it("set options", () => {
+		args = {
+			data: {
+				columns: [
+					["data1", 100, 99, 98]
+				],
+			},
+			axis: {
+				x: {
+					type: "category"
+				}
+			}
+		};
+	});
+
+	it("check for indexed categories", () => {
+		expect(chart.categories()).to.deep.equal([0,1,2]);
+	});
 });
