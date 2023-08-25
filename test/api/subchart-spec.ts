@@ -16,6 +16,10 @@ describe("API subchart", () => {
 		chart = util.generate(args);
 	});
 
+	afterEach(() => {
+		chart.destroy();
+	});
+
 	describe("Initialization", () => {
 		before(() => {
 			args = {

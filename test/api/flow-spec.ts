@@ -36,6 +36,10 @@ describe("API flow", () => {
 			chart = util.generate(args);
 		});
 
+		after(() => {
+			chart.destroy();
+		});
+
 		it("should flow updating the data", done => {
 			chart.flow({
 				columns: [

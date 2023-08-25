@@ -155,6 +155,10 @@ describe("API select", () => {
 			main = chart.$.main;
 		});
 
+		after(() => {
+			chart.destroy();
+		});
+
 		it("the call of .select() should not select.", () => {
 			// when
 			chart.select();
