@@ -257,6 +257,34 @@ describe("SHAPE LINE", () => {
 
 			expect(to).to.be.equal(d3CurveStepBefore);
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100]
+					],
+					type: "step"
+				},
+				point: {
+					pattern: [
+						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
+					]
+				},
+				tooltip: {
+					grouped: false
+				}
+			};
+		});
+
+		it("should correctly show tooltip with tooltip.grouped=false.", () => {
+			// when
+			chart.tooltip.show({
+				data: {id:"data1", value: 200, x: 1}
+			});
+
+			expect(+chart.$.tooltip.select(".value").text()).to.be.equal(chart.data.values("data1")[1])
+		});
 	});
 
 	describe("step type: category axis & line.ConnectNull", () => {

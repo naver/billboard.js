@@ -247,5 +247,36 @@ describe("TREEMAP", () => {
 
 			expect(chart.$.tooltip.style("display")).to.be.equal("none");
 		});
+
+		it("set options: set inputType='touch'", () => {
+			args = {
+				data: {
+					rows: [
+						["data1", "data2", "data3", "data4"],
+						[300, 200, 500, 380]
+					],
+					type: "treemap",
+					labels: true
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				},
+				treemap: {
+					tile: "dice"
+				}
+			}
+		});
+
+		it("should show tooltip with touch input.", () => {
+			const id = "data3";
+			const treemap =  chart.internal.$el.treemap.node();
+
+			// when
+			chart.tooltip.show({data: {id}})
+
+			expect(chart.$.tooltip.select(".name").text()).to.be.equal(id);
+		});
 	});
 });
