@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230824004559
+ * @version 3.9.3-nightly-20230825004620
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -20958,14 +20958,14 @@ const TYPE_BY_CATEGORY = {
   Spline: [TYPE.SPLINE, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE]
 };
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
-function _typeof(obj) {
+function _typeof(o) {
   "@babel/helpers - typeof";
 
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  }, _typeof(obj);
+  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+  }, _typeof(o);
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPrimitive.js
 
@@ -23479,8 +23479,8 @@ function brush_brush(dim) {
 
 
 var util_this = undefined;
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -23758,8 +23758,11 @@ function getPathBox(path) {
 function getPointer(event, element) {
   var _ref,
     _this5 = this;
-  const touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]),
+  const touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]);
+  let pointer = [0, 0];
+  try {
     pointer = src_pointer(touches || event, element);
+  } catch (e) {}
   return pointer.map(function (v) {
     _newArrowCheck(this, _this5);
     return isNaN(v) ? 0 : v;
@@ -24006,7 +24009,7 @@ function getCssRules(styleSheets) {
       }
     } catch (e) {
       var _window$console;
-      (_window$console = win.console) == null ? void 0 : _window$console.warn("Error while reading rules from " + sheet.href + ": " + e.toString());
+      (_window$console = win.console) == null || _window$console.warn("Error while reading rules from " + sheet.href + ": " + e.toString());
     }
   }.bind(this));
   return rules;
@@ -24405,8 +24408,8 @@ function logError(head, tail) {
 }
 ;// CONCATENATED MODULE: ./src/config/classes.ts
 
-function classes_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function classes_objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? classes_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : classes_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function classes_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function classes_objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = null != arguments[r] ? arguments[r] : {}; r % 2 ? classes_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : classes_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -26553,7 +26556,7 @@ var tooltip_this = undefined;
    *    - The value array length should match with the data length
    * @property {boolean} [tooltip.init.show=false] Show tooltip at the initialization.
    * @property {number} [tooltip.init.x=0] Set x Axis index(or index for Arc(donut, gauge, pie) types) to be shown at the initialization.
-   * @property {object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
+   * @property {object} [tooltip.init.position] Set the position of tooltip at the initialization.
    * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
    * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
    * @property {Function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
@@ -26645,10 +26648,10 @@ var tooltip_this = undefined;
    *      // show at the initialization
    *      init: {
    *          show: true,
-   *          x: 2, // x Axis index(or index for Arc(donut, gauge, pie) types)
+   *          x: 2, // x Axis index (or index for Arc(donut, gauge, pie) types)
    *          position: {
-   *              top: "150px",
-   *              left: "250px"
+   *              top: "150px",  // specify as number or as string with 'px' unit string
+   *              left: 250  // specify as number or as string with 'px' unit string
    *          }
    *      },
    *
@@ -26700,10 +26703,7 @@ var tooltip_this = undefined;
   tooltip_contents: {},
   tooltip_init_show: !1,
   tooltip_init_x: 0,
-  tooltip_init_position: {
-    top: "0px",
-    left: "50px"
-  },
+  tooltip_init_position: undefined,
   tooltip_linked: !1,
   tooltip_linked_name: "",
   tooltip_onshow: function tooltip_onshow() {
@@ -26723,8 +26723,8 @@ var tooltip_this = undefined;
 ;// CONCATENATED MODULE: ./src/config/Options/Options.ts
 
 
-function Options_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function Options_objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? Options_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : Options_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function Options_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function Options_objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = null != arguments[r] ? arguments[r] : {}; r % 2 ? Options_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : Options_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -26989,7 +26989,7 @@ function generateWait() {
     }
     runUntil(function () {
       _newArrowCheck(this, _this5);
-      callback == null ? void 0 : callback();
+      callback == null || callback();
     }.bind(this), loop);
   };
   f.add = function (t) {
@@ -27362,7 +27362,7 @@ function json(json, keysParam) {
   } else {
     Object.keys(json).forEach(function (key) {
       const tmp = json[key].concat();
-      tmp.unshift == null ? void 0 : tmp.unshift(key);
+      tmp.unshift == null || tmp.unshift(key);
       newRows.push(tmp);
     });
     data = columns(newRows);
@@ -27646,7 +27646,7 @@ function getDataKeyForJson(keysParam, config) {
       }.bind(this));
 
       // this needs to be sorted because its index and value.index is identical
-      (_$$$data$xs$t$id = $$.data.xs[t.id]) == null ? void 0 : _$$$data$xs$t$id.sort(function (v1, v2) {
+      (_$$$data$xs$t$id = $$.data.xs[t.id]) == null || _$$$data$xs$t$id.sort(function (v1, v2) {
         _newArrowCheck(this, _this5);
         return v1 - v2;
       }.bind(this));
@@ -28740,7 +28740,7 @@ function callDone(fn, resizeAfter) {
   const $$ = this,
     api = $$.api;
   resizeAfter && $$.api.flush(!0);
-  fn == null ? void 0 : fn.call(api);
+  fn == null || fn.call(api);
 }
 /* harmony default export */ var load = ({
   load: function load(rawTargets, args) {
@@ -29342,8 +29342,8 @@ function drag_defaultTouchable() {
       _$$$$el2 = $$.$el,
       eventRect = _$$$$el2.eventRect,
       zoomResetBtn = _$$$$el2.zoomResetBtn;
-    eventRect == null ? void 0 : eventRect.on(".zoom wheel.zoom .drag", null);
-    zoomResetBtn == null ? void 0 : zoomResetBtn.on("click", null).style("display", "none");
+    eventRect == null || eventRect.on(".zoom wheel.zoom .drag", null);
+    zoomResetBtn == null || zoomResetBtn.on("click", null).style("display", "none");
   },
   /**
    * Unbind all attached events
@@ -29365,7 +29365,7 @@ function drag_defaultTouchable() {
       _newArrowCheck(this, _this5);
       return v == null ? void 0 : v.on("wheel click mouseover mousemove mouseout touchstart touchmove touchend touchstart.eventRect touchmove.eventRect touchend.eventRect .brush .drag .zoom wheel.zoom dblclick.zoom", null);
     }.bind(this));
-    $$.unbindZoomEvent == null ? void 0 : $$.unbindZoomEvent();
+    $$.unbindZoomEvent == null || $$.unbindZoomEvent();
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/class.ts
@@ -30333,7 +30333,7 @@ const schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
       org.xDomain = x.domain();
       zoomEnabled && $$.zoom.updateScaleExtent();
       subX.domain(x.domain());
-      (_$$$brush = $$.brush) == null ? void 0 : _$$$brush.scale(subX);
+      (_$$$brush = $$.brush) == null || _$$$brush.scale(subX);
     }
     if (withUpdateXDomain) {
       const domainValue = domain || !$$.brush || brushEmpty($$) ? org.xDomain : getBrushSelection($$).map(subX.invert);
@@ -30606,7 +30606,7 @@ function getLegendColor(id) {
     }
 
     // toggle legend state
-    (_$el$legend = $el.legend) == null ? void 0 : _$el$legend.selectAll("." + $LEGEND.legendItem).classed($LEGEND.legendItemHidden, function (id) {
+    (_$el$legend = $el.legend) == null || _$el$legend.selectAll("." + $LEGEND.legendItem).classed($LEGEND.legendItemHidden, function (id) {
       const hide = !$$.isTargetToShow(id);
       if (hide) {
         this.style.opacity = null;
@@ -31371,7 +31371,7 @@ function getLegendColor(id) {
       // event rects will redrawn when flow called
       if (config.interaction_enabled && !flow && wth.EventRect) {
         $$.redrawEventRect();
-        $$.bindZoomEvent == null ? void 0 : $$.bindZoomEvent();
+        $$.bindZoomEvent == null || $$.bindZoomEvent();
       }
     } else {
       // arc
@@ -31396,7 +31396,7 @@ function getLegendColor(id) {
     $$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText();
 
     // title
-    $$.redrawTitle == null ? void 0 : $$.redrawTitle();
+    $$.redrawTitle == null || $$.redrawTitle();
     initializing && $$.updateTypesElements();
     $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
     $$.updateTooltipOnRedraw();
@@ -32993,7 +32993,7 @@ function getScale(type, min, max) {
       scale.y = linear_linear().rangeRound([padding.top, current.height - padding.bottom]);
     } else {
       // update for arc
-      $$.updateArc == null ? void 0 : $$.updateArc();
+      $$.updateArc == null || $$.updateArc();
     }
   },
   /**
@@ -34610,7 +34610,7 @@ function stepAfter(context) {
       $el = $$.$el;
     if (hasAxis && !withoutAxis && $$.axis.x && config.axis_rotated) {
       var _$$$axis$subX;
-      (_$$$axis$subX = $$.axis.subX) == null ? void 0 : _$$$axis$subX.create($el.axis.subX);
+      (_$$$axis$subX = $$.axis.subX) == null || _$$$axis$subX.create($el.axis.subX);
     }
 
     // pass 'withoutAxis' param to not animate at the init rendering
@@ -34740,7 +34740,7 @@ function stepAfter(context) {
       bottom: 0,
       left: 0
     };
-    $$.updateSizeForLegend == null ? void 0 : $$.updateSizeForLegend(currLegend);
+    $$.updateSizeForLegend == null || $$.updateSizeForLegend(currLegend);
     state.width = state.current.width - state.margin.left - state.margin.right;
     state.height = state.current.height - state.margin.top - state.margin.bottom;
     if (state.width < 0) {
@@ -34767,7 +34767,7 @@ function stepAfter(context) {
       if (hasGauge && !config.gauge_fullCircle) {
         state.arcHeight += state.height - $$.getPaddingBottomForGauge();
       }
-      $$.updateRadius == null ? void 0 : $$.updateRadius();
+      $$.updateRadius == null || $$.updateRadius();
     }
     if (state.isLegendRight && isNonAxis) {
       state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
@@ -35071,8 +35071,6 @@ function getTextPos(d, type) {
       angle = config.data_labels.rotate,
       anchorString = getRotateAnchor(angle),
       rotateString = angle ? "rotate(" + angle + ")" : "";
-    // $$.meetsLabelThreshold(ratio,
-
     $$.$el.text.style("fill", $$.getStylePropValue($$.updateTextColor)).attr("filter", $$.updateTextBacgroundColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
       // do not apply transition for newly added text elements
       const node = $T(hasTreemap && this.childElementCount ? this.parentNode : this, !!(withTransition && this.getAttribute("x")), t),
@@ -35194,7 +35192,6 @@ function getTextPos(d, type) {
   getXForText: function getXForText(points, d, textElement) {
     const $$ = this,
       config = $$.config,
-      state = $$.state,
       isRotated = config.axis_rotated,
       isTreemapType = $$.isTreemapType(d);
     let xPos = points[0][0];
@@ -35220,17 +35217,6 @@ function getTextPos(d, type) {
         }
       } else {
         xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
-      }
-    }
-
-    // show labels regardless of the domain if value is null
-    if (d.value === null) {
-      if (xPos > state.width) {
-        const _getBoundingRect = getBoundingRect(textElement),
-          width = _getBoundingRect.width;
-        xPos = state.width - width;
-      } else if (xPos < 0) {
-        xPos = 4;
       }
     }
     if (isRotated || isTreemapType) {
@@ -35295,16 +35281,6 @@ function getTextPos(d, type) {
           }
           yPos += diff;
         }
-      }
-    }
-
-    // show labels regardless of the domain if value is null
-    if (d.value === null && !isRotated) {
-      const boxHeight = rect.height;
-      if (yPos < boxHeight) {
-        yPos = boxHeight;
-      } else if (yPos > state.height) {
-        yPos = state.height - 4;
       }
     }
     if (!isRotated || isTreemapType) {
@@ -35389,7 +35365,7 @@ function getTextPos(d, type) {
  * @returns {string|number} text-anchor value or position in pixel
  * @private
  */
-function title_getTextPos(pos, width) {
+function getTextXPos(pos, width) {
   if (pos === void 0) {
     pos = "left";
   }
@@ -35415,7 +35391,7 @@ function title_getTextPos(pos, width) {
       $el = $$.$el;
     if (config.title_text) {
       $el.title = $el.svg.append("g");
-      const text = $el.title.append("text").style("text-anchor", title_getTextPos(config.title_position)).attr("class", $TEXT.title);
+      const text = $el.title.append("text").style("text-anchor", getTextXPos(config.title_position)).attr("class", $TEXT.title);
       setTextValue(text, config.title_text, [.3, 1.5]);
     }
   },
@@ -35429,47 +35405,10 @@ function title_getTextPos(pos, width) {
       current = $$.state.current,
       title = $$.$el.title;
     if (title) {
-      const y = $$.yForTitle.call($$);
-      if (/g/i.test(title.node().tagName)) {
-        title.attr("transform", "translate(" + title_getTextPos(config.title_position, current.width) + ", " + y + ")");
-      } else {
-        title.attr("x", $$.xForTitle.call($$)).attr("y", y);
-      }
+      const x = getTextXPos(config.title_position, current.width),
+        y = (config.title_padding.top || 0) + $$.getTextRect($$.$el.title, $TEXT.title).height;
+      title.attr("transform", "translate(" + x + ", " + y + ")");
     }
-  },
-  /**
-   * Returns the x attribute value of the title
-   * @returns {number} x attribute value
-   * @private
-   */
-  xForTitle: function xForTitle() {
-    const $$ = this,
-      config = $$.config,
-      current = $$.state.current,
-      position = config.title_position || "left",
-      textRectWidth = $$.getTextRect($$.$el.title, $TEXT.title).width;
-    let x;
-    if (/(right|center)/.test(position)) {
-      x = current.width - textRectWidth;
-      if (position.indexOf("right") >= 0) {
-        x = current.width - textRectWidth - config.title_padding.right;
-      } else if (position.indexOf("center") >= 0) {
-        x = (current.width - textRectWidth) / 2;
-      }
-    } else {
-      // left
-      x = config.title_padding.left || 0;
-    }
-    return x;
-  },
-  /**
-   * Returns the y attribute value of the title
-   * @returns {number} y attribute value
-   * @private
-   */
-  yForTitle: function yForTitle() {
-    const $$ = this;
-    return ($$.config.title_padding.top || 0) + $$.getTextRect($$.$el.title, $TEXT.title).height;
   },
   /**
    * Get title padding
@@ -35477,8 +35416,10 @@ function title_getTextPos(pos, width) {
    * @private
    */
   getTitlePadding: function getTitlePadding() {
-    const $$ = this;
-    return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
+    const $$ = this,
+      $el = $$.$el,
+      config = $$.config;
+    return (config.title_padding.top || 0) + $$.getTextRect($el.title, $TEXT.title).height + (config.title_padding.bottom || 0);
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/tooltip.ts
@@ -35506,8 +35447,12 @@ function title_getTextPos(pos, width) {
     }
     $$.bindTooltipResizePos();
   },
+  /**
+   * Show tooltip at initialization.
+   * Is called only when tooltip.init.show=true option is set
+   * @private
+   */
   initShowTooltip: function initShowTooltip() {
-    var _this = this;
     const $$ = this,
       config = $$.config,
       $el = $$.$el,
@@ -35516,30 +35461,20 @@ function title_getTextPos(pos, width) {
       hasRadar = _$$$state.hasRadar;
     // Show tooltip if needed
     if (config.tooltip_init_show) {
-      var _$$$axis, _$$$axis2;
-      const isArc = !(hasAxis && hasRadar);
+      var _$$$axis, _data;
       if ((_$$$axis = $$.axis) != null && _$$$axis.isTimeSeries() && isString(config.tooltip_init_x)) {
-        const targets = $$.data.targets[0];
-        let i, val;
         config.tooltip_init_x = parseDate.call($$, config.tooltip_init_x);
-        for (i = 0; val = targets.values[i]; i++) {
-          if (val.x - config.tooltip_init_x === 0) {
-            break;
-          }
-        }
-        config.tooltip_init_x = i;
       }
-      let data = $$.data.targets.map(function (d) {
-        _newArrowCheck(this, _this);
-        const x = isArc ? 0 : config.tooltip_init_x;
-        return $$.addName(d.values[x]);
-      }.bind(this));
-      if (isArc) {
-        data = [data[config.tooltip_init_x]];
-      }
-      $el.tooltip.html($$.getTooltipHTML(data, (_$$$axis2 = $$.axis) == null ? void 0 : _$$$axis2.getXAxisTickFormat(), $$.getDefaultValueFormat(), $$.color));
-      if (!config.tooltip_contents.bindto) {
-        $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", null);
+      $$.api.tooltip.show({
+        data: (_data = {}, _data[!(hasAxis || hasRadar) ? "index" : "x"] = config.tooltip_init_x, _data)
+      });
+      const position = config.tooltip_init_position;
+      if (!config.tooltip_contents.bindto && !isEmpty(position)) {
+        const _position$top = position.top,
+          top = _position$top === void 0 ? 0 : _position$top,
+          _position$left = position.left,
+          left = _position$left === void 0 ? 50 : _position$left;
+        $el.tooltip.style("top", isString(top) ? top : top + "px").style("left", isString(left) ? left : left + "px").style("display", null);
       }
     }
   },
@@ -35565,14 +35500,14 @@ function title_getTextPos(pos, width) {
    * @private
    */
   getTooltipContent: function getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
-    var _this2 = this;
+    var _this = this;
     const $$ = this,
       api = $$.api,
       config = $$.config,
       state = $$.state,
       $el = $$.$el;
     let _map = ["title", "name", "value"].map(function (v) {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this);
         const fn = config["tooltip_format_" + v];
         return isFunction(fn) ? fn.bind(api) : fn;
       }.bind(this)),
@@ -35581,23 +35516,23 @@ function title_getTextPos(pos, width) {
       valueFormat = _map[2];
     titleFormat = titleFormat || defaultTitleFormat;
     nameFormat = nameFormat || function (name) {
-      _newArrowCheck(this, _this2);
+      _newArrowCheck(this, _this);
       return name;
     }.bind(this);
     valueFormat = valueFormat || (state.hasTreemap || $$.isStackNormalized() ? function (v, ratio) {
-      _newArrowCheck(this, _this2);
+      _newArrowCheck(this, _this);
       return (ratio * 100).toFixed(2) + "%";
     }.bind(this) : defaultValueFormat);
     const order = config.tooltip_order,
       getRowValue = function (row) {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this);
         return $$.axis && $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row);
       }.bind(this),
       getBgColor = $$.levelColor ? function (row) {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this);
         return $$.levelColor(row.value);
       }.bind(this) : function (row) {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this);
         return color(row);
       }.bind(this),
       contents = config.tooltip_contents,
@@ -35606,11 +35541,11 @@ function title_getTextPos(pos, width) {
     if (order === null && config.data_groups.length) {
       // for stacked data, order should aligned with the visually displayed data
       const ids = $$.orderTargets($$.data.targets).map(function (i2) {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this);
         return i2.id;
       }.bind(this)).reverse();
       d.sort(function (a, b) {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this);
         let v1 = a ? a.value : null,
           v2 = b ? b.value : null;
         if (v1 > 0 && v2 > 0) {
@@ -35621,7 +35556,7 @@ function title_getTextPos(pos, width) {
       }.bind(this));
     } else if (/^(asc|desc)$/.test(order)) {
       d.sort(function (a, b) {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this);
         const v1 = a ? getRowValue(a) : null,
           v2 = b ? getRowValue(b) : null;
         return order === "asc" ? v1 - v2 : v2 - v1;
@@ -35652,7 +35587,7 @@ function title_getTextPos(pos, width) {
       value = sanitize(valueFormat.apply(void 0, [getRowValue(row)].concat(param)));
       if ($$.isAreaRangeType(row)) {
         const _map2 = ["high", "low"].map(function (v) {
-            _newArrowCheck(this, _this2);
+            _newArrowCheck(this, _this);
             return sanitize(valueFormat.apply(void 0, [$$.getRangedData(row, v)].concat(param)));
           }.bind(this)),
           high = _map2[0],
@@ -35660,7 +35595,7 @@ function title_getTextPos(pos, width) {
         value = "<b>Mid:</b> " + value + " <b>High:</b> " + high + " <b>Low:</b> " + low;
       } else if ($$.isCandlestickType(row)) {
         const _map3 = ["open", "high", "low", "close", "volume"].map(function (v) {
-            _newArrowCheck(this, _this2);
+            _newArrowCheck(this, _this);
             return sanitize(valueFormat.apply(void 0, [$$.getRangedData(row, v, "candlestick")].concat(param)));
           }.bind(this)),
           open = _map3[0],
@@ -35691,7 +35626,7 @@ function title_getTextPos(pos, width) {
         if (tplStr && isObject(contents.text)) {
           const index = targetIds.indexOf(row.id);
           Object.keys(contents.text).forEach(function (key) {
-            _newArrowCheck(this, _this2);
+            _newArrowCheck(this, _this);
             contentValue[key] = contents.text[key][index];
           }.bind(this));
         }
@@ -35716,7 +35651,7 @@ function title_getTextPos(pos, width) {
    * @private
    */
   setTooltipPosition: function setTooltipPosition(dataToShow, eventTarget) {
-    var _this3 = this;
+    var _this2 = this;
     const $$ = this,
       config = $$.config,
       scale = $$.scale,
@@ -35744,7 +35679,7 @@ function title_getTextPos(pos, width) {
         height = _datum$height === void 0 ? 0 : _datum$height,
         pos = (_config$tooltip_posit = (_config$tooltip_posit2 = config.tooltip_position) == null ? void 0 : _config$tooltip_posit2.bind($$.api)(dataToShow != null ? dataToShow : JSON.parse(datum.current), width, height, eventRect == null ? void 0 : eventRect.node(), currPos)) != null ? _config$tooltip_posit : $$.getTooltipPosition.bind($$)(width, height, currPos); // Get tooltip position
       ["top", "left"].forEach(function (v) {
-        _newArrowCheck(this, _this3);
+        _newArrowCheck(this, _this2);
         const value = pos[v];
         tooltip.style(v, value + "px");
 
@@ -35764,7 +35699,7 @@ function title_getTextPos(pos, width) {
    * @private
    */
   getTooltipPosition: function getTooltipPosition(tWidth, tHeight, currPos) {
-    var _this4 = this;
+    var _this3 = this;
     const $$ = this,
       config = $$.config,
       scale = $$.scale,
@@ -35818,7 +35753,7 @@ function title_getTextPos(pos, width) {
 
     // make sure to not be positioned out of viewport
     Object.keys(pos).forEach(function (v) {
-      _newArrowCheck(this, _this4);
+      _newArrowCheck(this, _this3);
       if (pos[v] < 0) {
         pos[v] = 0;
       }
@@ -35832,12 +35767,12 @@ function title_getTextPos(pos, width) {
    * @private
    */
   showTooltip: function showTooltip(selectedData, eventTarget) {
-    var _this5 = this;
+    var _this4 = this;
     const $$ = this,
       config = $$.config,
       tooltip = $$.$el.tooltip,
       dataToShow = selectedData.filter(function (d) {
-        _newArrowCheck(this, _this5);
+        _newArrowCheck(this, _this4);
         return d && isValue($$.getBaseValue(d));
       }.bind(this));
     if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
@@ -35877,13 +35812,13 @@ function title_getTextPos(pos, width) {
    * @private
    */
   bindTooltipResizePos: function bindTooltipResizePos() {
-    var _this6 = this;
+    var _this5 = this;
     const $$ = this,
       resizeFunction = $$.resizeFunction,
       state = $$.state,
       tooltip = $$.$el.tooltip;
     resizeFunction.add(function () {
-      _newArrowCheck(this, _this6);
+      _newArrowCheck(this, _this5);
       if (tooltip.style("display") === "block") {
         const current = state.current,
           _tooltip$datum = tooltip.datum(),
@@ -35927,7 +35862,7 @@ function title_getTextPos(pos, width) {
    * @private
    */
   _handleLinkedCharts: function _handleLinkedCharts(show, index) {
-    var _this7 = this;
+    var _this6 = this;
     const $$ = this,
       charts = $$.charts,
       config = $$.config,
@@ -35937,10 +35872,10 @@ function title_getTextPos(pos, width) {
     if (event != null && event.isTrusted && config.tooltip_linked && charts.length > 1) {
       const linkedName = config.tooltip_linked_name;
       charts.filter(function (c) {
-        _newArrowCheck(this, _this7);
+        _newArrowCheck(this, _this6);
         return c !== $$.api;
       }.bind(this)).forEach(function (c) {
-        _newArrowCheck(this, _this7);
+        _newArrowCheck(this, _this6);
         const _c$internal = c.internal,
           config = _c$internal.config,
           $el = _c$internal.$el,
@@ -35967,7 +35902,7 @@ function title_getTextPos(pos, width) {
    * @private
    */
   updateTooltipOnRedraw: function updateTooltipOnRedraw(context, index) {
-    var _this8 = this;
+    var _this7 = this;
     const $$ = this,
       config = $$.config,
       _$$$$el2 = $$.$el,
@@ -36003,7 +35938,7 @@ function title_getTextPos(pos, width) {
         const clientX = event.clientX,
           clientY = event.clientY;
         setTimeout(function () {
-          _newArrowCheck(this, _this8);
+          _newArrowCheck(this, _this7);
           let target = browser_doc.elementFromPoint(clientX, clientY);
           const data = src_select(target).datum();
           if (data) {
@@ -36970,7 +36905,7 @@ let ChartInternal = /*#__PURE__*/function () {
     // Point types
     const hasPointType = $$.hasType("bubble") || $$.hasType("scatter");
     if (hasPointType) {
-      $$.updateTargetForCircle == null ? void 0 : $$.updateTargetForCircle();
+      $$.updateTargetForCircle == null || $$.updateTargetForCircle();
     }
 
     // Fade-in each chart
@@ -37199,16 +37134,16 @@ function loadConfig(config) {
       if (state.resizing) {
         var _$$$brush;
         // arguments[1] is given when is called from resize
-        (_$$$brush = $$.brush) == null ? void 0 : _$$$brush.updateResize();
+        (_$$$brush = $$.brush) == null || _$$$brush.updateResize();
       } else {
         var _$$$axis;
         // re-update config info
-        (_$$$axis = $$.axis) == null ? void 0 : _$$$axis.setOrient();
+        (_$$$axis = $$.axis) == null || _$$$axis.setOrient();
       }
 
       // hide possible reset zoom button
       // https://github.com/naver/billboard.js/issues/2201
-      zoomResetBtn == null ? void 0 : zoomResetBtn.style("display", "none");
+      zoomResetBtn == null || zoomResetBtn.style("display", "none");
       $$.scale.zoom = null;
       soft ? $$.redraw({
         withTransform: !0,
@@ -38580,9 +38515,9 @@ const tooltip_tooltip = {
     // reset last touch point index
     inputType === "touch" && $$.callOverOutForTouch();
     $$.hideTooltip(!0);
-    $$.hideGridFocus == null ? void 0 : $$.hideGridFocus();
-    $$.unexpandCircles == null ? void 0 : $$.unexpandCircles();
-    $$.expandBarTypeShapes == null ? void 0 : $$.expandBarTypeShapes(!1);
+    $$.hideGridFocus == null || $$.hideGridFocus();
+    $$.unexpandCircles == null || $$.unexpandCircles();
+    $$.expandBarTypeShapes == null || $$.expandBarTypeShapes(!1);
   }
 };
 /* harmony default export */ var api_tooltip = ({
@@ -38973,6 +38908,7 @@ const axis = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 /* harmony default export */ var api_category = ({
   /**
    * Set specified category name on category axis.
@@ -38995,7 +38931,7 @@ const axis = {
     return config.axis_x_categories[i];
   },
   /**
-   * Set category names on category axis.
+   * Set or get category names on category axis.
    * @function categories
    * @instance
    * @memberof Chart
@@ -39009,8 +38945,9 @@ const axis = {
   categories: function categories(_categories) {
     const $$ = this.internal,
       config = $$.config;
-    if (!arguments.length) {
-      return config.axis_x_categories;
+    if (!_categories || !Array.isArray(_categories)) {
+      const cat = config.axis_x_categories;
+      return isEmpty(cat) ? Object.values($$.data.xs)[0] : cat;
     }
     config.axis_x_categories = _categories;
     $$.redraw();
@@ -40732,7 +40669,7 @@ let Axis_Axis = /*#__PURE__*/function () {
     } else if (this.x) {
       var _this$subX;
       this.x.tickValues(values);
-      (_this$subX = this.subX) == null ? void 0 : _this$subX.tickValues(values);
+      (_this$subX = this.subX) == null || _this$subX.tickValues(values);
     }
     return values;
   };
@@ -41173,7 +41110,7 @@ let Axis_Axis = /*#__PURE__*/function () {
     } else if (this.x) {
       var _this$subX2;
       this.x.tickValues([]);
-      (_this$subX2 = this.subX) == null ? void 0 : _this$subX2.tickValues([]);
+      (_this$subX2 = this.subX) == null || _this$subX2.tickValues([]);
     }
     if (config.zoom_rescale && !flow) {
       xDomainForZoom = scale.x.orgDomain();
@@ -41212,8 +41149,8 @@ let Axis_Axis = /*#__PURE__*/function () {
     // Update sub domain
     if (wth.Y) {
       var _scale$subY, _scale$subY2;
-      (_scale$subY = scale.subY) == null ? void 0 : _scale$subY.domain($$.getYDomain(targetsToShow, "y"));
-      (_scale$subY2 = scale.subY2) == null ? void 0 : _scale$subY2.domain($$.getYDomain(targetsToShow, "y2"));
+      (_scale$subY = scale.subY) == null || _scale$subY.domain($$.getYDomain(targetsToShow, "y"));
+      (_scale$subY2 = scale.subY2) == null || _scale$subY2.domain($$.getYDomain(targetsToShow, "y2"));
     }
   }
 
@@ -41334,7 +41271,7 @@ let Axis_Axis = /*#__PURE__*/function () {
       // update data's index value to be alinged with the x Axis
       $$.updateDataIndexByX(xAxisTickValues);
       $$.updateXs(xAxisTickValues);
-      $$.updatePointClass == null ? void 0 : $$.updatePointClass(!0);
+      $$.updatePointClass == null || $$.updatePointClass(!0);
       state.eventReceiver.data = xAxisTickValues;
     }
     $$.updateEventRectData();
@@ -41580,7 +41517,7 @@ let Axis_Axis = /*#__PURE__*/function () {
       selectedData = $$.getAllValuesOnIndex(index);
     if (isTooltipGrouped) {
       $$.showTooltip(selectedData, context);
-      $$.showGridFocus == null ? void 0 : $$.showGridFocus(selectedData);
+      $$.showGridFocus == null || $$.showGridFocus(selectedData);
       if (!isSelectionEnabled || isSelectionGrouped) {
         return;
       }
@@ -41592,7 +41529,7 @@ let Axis_Axis = /*#__PURE__*/function () {
       return $$.isWithinShape(this, d);
     });
     if (shapeAtIndex.empty() && !isTooltipGrouped) {
-      $$.hideGridFocus == null ? void 0 : $$.hideGridFocus();
+      $$.hideGridFocus == null || $$.hideGridFocus();
       $$.hideTooltip();
       isSelectionGrouped || $$.setExpand(index);
     }
@@ -41605,8 +41542,8 @@ let Axis_Axis = /*#__PURE__*/function () {
       }
       if (!isTooltipGrouped) {
         $$.showTooltip(d, context);
-        $$.showGridFocus == null ? void 0 : $$.showGridFocus(d);
-        $$.unexpandCircles == null ? void 0 : $$.unexpandCircles();
+        $$.showGridFocus == null || $$.showGridFocus(d);
+        $$.unexpandCircles == null || $$.unexpandCircles();
         selected.each(function (d) {
           _newArrowCheck(this, _this7);
           return $$.setExpand(index, d.id);
@@ -41780,7 +41717,7 @@ let Axis_Axis = /*#__PURE__*/function () {
     const index = d.index;
     main.selectAll("." + $SHAPE.shape + "-" + index).each(function (d2) {
       if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
-        $$.toggleShape == null ? void 0 : $$.toggleShape(this, d2, index);
+        $$.toggleShape == null || $$.toggleShape(this, d2, index);
         config.data_onclick.bind($$.api)(d2, this);
       }
     });
@@ -41833,7 +41770,7 @@ let Axis_Axis = /*#__PURE__*/function () {
     if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
       $$.$el.main.selectAll("." + $SHAPE.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll("." + $SHAPE.shape + "-" + closest.index).each(function () {
         if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
-          $$.toggleShape == null ? void 0 : $$.toggleShape(this, closest, closest.index);
+          $$.toggleShape == null || $$.toggleShape(this, closest, closest.index);
           config.data_onclick.bind($$.api)(closest, this);
         }
       });
@@ -42123,10 +42060,10 @@ const src_linear_linear = function (t) {
       height = _$$$state2.height,
       isRotated = config.axis_rotated,
       left = Math.max(30, margin.left) - (isRotated ? 0 : 20),
+      h = (isRotated ? margin.top + height + 10 : margin.bottom) + 20,
       x = isRotated ? -(1 + left) : -(left - 1),
-      y = -Math.max(15, margin.top),
-      w = isRotated ? margin.left + 20 : width + 10 + left,
-      h = (isRotated ? margin.top + height + 10 : margin.bottom) + 20;
+      y = -Math.max(15, margin.bottom),
+      w = isRotated ? margin.left + 20 : width + 10 + left;
 
     // less than 20 is not enough to show the axis label 'outer' without legend
 
@@ -42504,7 +42441,7 @@ function smoothLines(el, type) {
       }.bind(this));
     });
     smoothLines(focusEl, "grid");
-    $$.showCircleFocus == null ? void 0 : $$.showCircleFocus(data);
+    $$.showCircleFocus == null || $$.showCircleFocus(data);
   },
   hideGridFocus: function hideGridFocus() {
     const $$ = this,
@@ -42514,7 +42451,7 @@ function smoothLines(el, type) {
       main = $$.$el.main;
     if (inputType === "mouse" || !resizing) {
       main.selectAll("line." + $FOCUS.xgridFocus + ", line." + $FOCUS.ygridFocus).style("visibility", "hidden");
-      $$.hideCircleFocus == null ? void 0 : $$.hideCircleFocus();
+      $$.hideCircleFocus == null || $$.hideCircleFocus();
     }
   },
   updateGridFocus: function updateGridFocus() {
@@ -43075,6 +43012,7 @@ function smoothLines(el, type) {
    * - **log** type:
    *   - the x values specified by [`data.x`](#.data%25E2%2580%25A4x)(or by any equivalent option), must be exclusively-positive.
    *   - x axis min value should be >= 0.
+   *   - for 'category' type, `data.xs` option isn't supported.
    *
    * @name axis․x․type
    * @memberof Options
@@ -44649,8 +44587,8 @@ function smoothLines(el, type) {
 });
 ;// CONCATENATED MODULE: ./src/config/Options/axis/axis.ts
 
-function axis_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function axis_objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? axis_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : axis_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function axis_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function axis_objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = null != arguments[r] ? arguments[r] : {}; r % 2 ? axis_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : axis_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -45316,8 +45254,8 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
 
 
-function arc_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function arc_objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? arc_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : arc_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function arc_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function arc_objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = null != arguments[r] ? arguments[r] : {}; r % 2 ? arc_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : arc_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -46147,7 +46085,7 @@ function getAttrTweenFn(fn) {
       let arcData;
       if (updated) {
         arcData = $$.convertToArcData(updated);
-        $$.toggleShape == null ? void 0 : $$.toggleShape(this, arcData, i);
+        $$.toggleShape == null || $$.toggleShape(this, arcData, i);
         config.data_onclick.bind($$.api)(arcData, this);
       }
     });
@@ -46852,8 +46790,8 @@ function point_y(p) {
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/candlestick.ts
 
 
-function candlestick_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function candlestick_objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? candlestick_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : candlestick_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function candlestick_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = null != arguments[r] ? arguments[r] : {}; r % 2 ? candlestick_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : candlestick_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -51041,8 +50979,8 @@ util_extend(subchart, {
         $$.updateTargetsForSubchart($$.data.targets);
         $target = (_subchart$main = subchart.main) == null ? void 0 : _subchart$main.selectAll("." + $COMMON.target);
       }
-      (_$target = $target) == null ? void 0 : _$target.style("opacity", null);
-      (_subchart$main2 = subchart.main) == null ? void 0 : _subchart$main2.style("display", null);
+      (_$target = $target) == null || _$target.style("opacity", null);
+      (_subchart$main2 = subchart.main) == null || _subchart$main2.style("display", null);
       this.resize();
     }
   },
@@ -51879,7 +51817,7 @@ util_extend(zoom, {
     if ($$.scale.zoom) {
       config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(transform_identity);
       $$.updateZoom(!0);
-      zoomResetBtn == null ? void 0 : zoomResetBtn.style("display", "none");
+      zoomResetBtn == null || zoomResetBtn.style("display", "none");
 
       // reset transform
       if (transform_transform(eventRect.node()) !== transform_identity) {
@@ -52013,8 +51951,8 @@ util_extend(zoom, {
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/selection.ts
 
 
-function selection_ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function selection_objectSpread(target) { for (var i = 1, source; i < arguments.length; i++) { source = null != arguments[i] ? arguments[i] : {}; i % 2 ? selection_ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : selection_ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function selection_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function selection_objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = null != arguments[r] ? arguments[r] : {}; r % 2 ? selection_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : selection_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -52260,7 +52198,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
         return isNaN(v);
       }.bind(this)).length === 0) {
         var _subchart$main;
-        (_subchart$main = subchart.main) == null ? void 0 : _subchart$main.select("." + classes.brush).call(this);
+        (_subchart$main = subchart.main) == null || _subchart$main.select("." + classes.brush).call(this);
       }
       return this;
     };
@@ -52613,7 +52551,7 @@ function selection_objectSpread(target) { for (var i = 1, source; i < arguments.
       const isRotated = config.axis_rotated;
 
       // in case of resize, update range of orgXScale
-      (_org$xScale = org.xScale) == null ? void 0 : _org$xScale.range(scale.x.range());
+      (_org$xScale = org.xScale) == null || _org$xScale.range(scale.x.range());
 
       // rescale from the original scale
       const newScale = transform[isRotated ? "rescaleY" : "rescaleX"](org.xScale || scale.x),
@@ -53243,7 +53181,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230824004559
+ * @version 3.9.3-nightly-20230825004620
  */
 const bb = {
   /**
@@ -53253,7 +53191,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230824004559",
+  version: "3.9.3-nightly-20230825004620",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -53433,299 +53371,304 @@ var _typeof = (__webpack_require__(529)["default"]);
 function _regeneratorRuntime() {
   "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
   module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
-    return exports;
+    return e;
   }, module.exports.__esModule = true, module.exports["default"] = module.exports;
-  var exports = {},
-    Op = Object.prototype,
-    hasOwn = Op.hasOwnProperty,
-    defineProperty = Object.defineProperty || function (obj, key, desc) {
-      obj[key] = desc.value;
+  var t,
+    e = {},
+    r = Object.prototype,
+    n = r.hasOwnProperty,
+    o = Object.defineProperty || function (t, e, r) {
+      t[e] = r.value;
     },
-    $Symbol = "function" == typeof Symbol ? Symbol : {},
-    iteratorSymbol = $Symbol.iterator || "@@iterator",
-    asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator",
-    toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-  function define(obj, key, value) {
-    return Object.defineProperty(obj, key, {
-      value: value,
+    i = "function" == typeof Symbol ? Symbol : {},
+    a = i.iterator || "@@iterator",
+    c = i.asyncIterator || "@@asyncIterator",
+    u = i.toStringTag || "@@toStringTag";
+  function define(t, e, r) {
+    return Object.defineProperty(t, e, {
+      value: r,
       enumerable: !0,
       configurable: !0,
       writable: !0
-    }), obj[key];
+    }), t[e];
   }
   try {
     define({}, "");
-  } catch (err) {
-    define = function define(obj, key, value) {
-      return obj[key] = value;
+  } catch (t) {
+    define = function define(t, e, r) {
+      return t[e] = r;
     };
   }
-  function wrap(innerFn, outerFn, self, tryLocsList) {
-    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator,
-      generator = Object.create(protoGenerator.prototype),
-      context = new Context(tryLocsList || []);
-    return defineProperty(generator, "_invoke", {
-      value: makeInvokeMethod(innerFn, self, context)
-    }), generator;
+  function wrap(t, e, r, n) {
+    var i = e && e.prototype instanceof Generator ? e : Generator,
+      a = Object.create(i.prototype),
+      c = new Context(n || []);
+    return o(a, "_invoke", {
+      value: makeInvokeMethod(t, r, c)
+    }), a;
   }
-  function tryCatch(fn, obj, arg) {
+  function tryCatch(t, e, r) {
     try {
       return {
         type: "normal",
-        arg: fn.call(obj, arg)
+        arg: t.call(e, r)
       };
-    } catch (err) {
+    } catch (t) {
       return {
         type: "throw",
-        arg: err
+        arg: t
       };
     }
   }
-  exports.wrap = wrap;
-  var ContinueSentinel = {};
+  e.wrap = wrap;
+  var h = "suspendedStart",
+    l = "suspendedYield",
+    f = "executing",
+    s = "completed",
+    y = {};
   function Generator() {}
   function GeneratorFunction() {}
   function GeneratorFunctionPrototype() {}
-  var IteratorPrototype = {};
-  define(IteratorPrototype, iteratorSymbol, function () {
+  var p = {};
+  define(p, a, function () {
     return this;
   });
-  var getProto = Object.getPrototypeOf,
-    NativeIteratorPrototype = getProto && getProto(getProto(values([])));
-  NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol) && (IteratorPrototype = NativeIteratorPrototype);
-  var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
-  function defineIteratorMethods(prototype) {
-    ["next", "throw", "return"].forEach(function (method) {
-      define(prototype, method, function (arg) {
-        return this._invoke(method, arg);
+  var d = Object.getPrototypeOf,
+    v = d && d(d(values([])));
+  v && v !== r && n.call(v, a) && (p = v);
+  var g = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(p);
+  function defineIteratorMethods(t) {
+    ["next", "throw", "return"].forEach(function (e) {
+      define(t, e, function (t) {
+        return this._invoke(e, t);
       });
     });
   }
-  function AsyncIterator(generator, PromiseImpl) {
-    function invoke(method, arg, resolve, reject) {
-      var record = tryCatch(generator[method], generator, arg);
-      if ("throw" !== record.type) {
-        var result = record.arg,
-          value = result.value;
-        return value && "object" == _typeof(value) && hasOwn.call(value, "__await") ? PromiseImpl.resolve(value.__await).then(function (value) {
-          invoke("next", value, resolve, reject);
-        }, function (err) {
-          invoke("throw", err, resolve, reject);
-        }) : PromiseImpl.resolve(value).then(function (unwrapped) {
-          result.value = unwrapped, resolve(result);
-        }, function (error) {
-          return invoke("throw", error, resolve, reject);
+  function AsyncIterator(t, e) {
+    function invoke(r, o, i, a) {
+      var c = tryCatch(t[r], t, o);
+      if ("throw" !== c.type) {
+        var u = c.arg,
+          h = u.value;
+        return h && "object" == _typeof(h) && n.call(h, "__await") ? e.resolve(h.__await).then(function (t) {
+          invoke("next", t, i, a);
+        }, function (t) {
+          invoke("throw", t, i, a);
+        }) : e.resolve(h).then(function (t) {
+          u.value = t, i(u);
+        }, function (t) {
+          return invoke("throw", t, i, a);
         });
       }
-      reject(record.arg);
+      a(c.arg);
     }
-    var previousPromise;
-    defineProperty(this, "_invoke", {
-      value: function value(method, arg) {
+    var r;
+    o(this, "_invoke", {
+      value: function value(t, n) {
         function callInvokeWithMethodAndArg() {
-          return new PromiseImpl(function (resolve, reject) {
-            invoke(method, arg, resolve, reject);
+          return new e(function (e, r) {
+            invoke(t, n, e, r);
           });
         }
-        return previousPromise = previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
+        return r = r ? r.then(callInvokeWithMethodAndArg, callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
       }
     });
   }
-  function makeInvokeMethod(innerFn, self, context) {
-    var state = "suspendedStart";
-    return function (method, arg) {
-      if ("executing" === state) throw new Error("Generator is already running");
-      if ("completed" === state) {
-        if ("throw" === method) throw arg;
+  function makeInvokeMethod(e, r, n) {
+    var o = h;
+    return function (i, a) {
+      if (o === f) throw new Error("Generator is already running");
+      if (o === s) {
+        if ("throw" === i) throw a;
         return {
-          value: void 0,
+          value: t,
           done: !0
         };
       }
-      for (context.method = method, context.arg = arg;;) {
-        var delegate = context.delegate;
-        if (delegate) {
-          var delegateResult = maybeInvokeDelegate(delegate, context);
-          if (delegateResult) {
-            if (delegateResult === ContinueSentinel) continue;
-            return delegateResult;
+      for (n.method = i, n.arg = a;;) {
+        var c = n.delegate;
+        if (c) {
+          var u = maybeInvokeDelegate(c, n);
+          if (u) {
+            if (u === y) continue;
+            return u;
           }
         }
-        if ("next" === context.method) context.sent = context._sent = context.arg;else if ("throw" === context.method) {
-          if ("suspendedStart" === state) throw state = "completed", context.arg;
-          context.dispatchException(context.arg);
-        } else "return" === context.method && context.abrupt("return", context.arg);
-        state = "executing";
-        var record = tryCatch(innerFn, self, context);
-        if ("normal" === record.type) {
-          if (state = context.done ? "completed" : "suspendedYield", record.arg === ContinueSentinel) continue;
+        if ("next" === n.method) n.sent = n._sent = n.arg;else if ("throw" === n.method) {
+          if (o === h) throw o = s, n.arg;
+          n.dispatchException(n.arg);
+        } else "return" === n.method && n.abrupt("return", n.arg);
+        o = f;
+        var p = tryCatch(e, r, n);
+        if ("normal" === p.type) {
+          if (o = n.done ? s : l, p.arg === y) continue;
           return {
-            value: record.arg,
-            done: context.done
+            value: p.arg,
+            done: n.done
           };
         }
-        "throw" === record.type && (state = "completed", context.method = "throw", context.arg = record.arg);
+        "throw" === p.type && (o = s, n.method = "throw", n.arg = p.arg);
       }
     };
   }
-  function maybeInvokeDelegate(delegate, context) {
-    var methodName = context.method,
-      method = delegate.iterator[methodName];
-    if (undefined === method) return context.delegate = null, "throw" === methodName && delegate.iterator["return"] && (context.method = "return", context.arg = undefined, maybeInvokeDelegate(delegate, context), "throw" === context.method) || "return" !== methodName && (context.method = "throw", context.arg = new TypeError("The iterator does not provide a '" + methodName + "' method")), ContinueSentinel;
-    var record = tryCatch(method, delegate.iterator, context.arg);
-    if ("throw" === record.type) return context.method = "throw", context.arg = record.arg, context.delegate = null, ContinueSentinel;
-    var info = record.arg;
-    return info ? info.done ? (context[delegate.resultName] = info.value, context.next = delegate.nextLoc, "return" !== context.method && (context.method = "next", context.arg = undefined), context.delegate = null, ContinueSentinel) : info : (context.method = "throw", context.arg = new TypeError("iterator result is not an object"), context.delegate = null, ContinueSentinel);
+  function maybeInvokeDelegate(e, r) {
+    var n = r.method,
+      o = e.iterator[n];
+    if (o === t) return r.delegate = null, "throw" === n && e.iterator["return"] && (r.method = "return", r.arg = t, maybeInvokeDelegate(e, r), "throw" === r.method) || "return" !== n && (r.method = "throw", r.arg = new TypeError("The iterator does not provide a '" + n + "' method")), y;
+    var i = tryCatch(o, e.iterator, r.arg);
+    if ("throw" === i.type) return r.method = "throw", r.arg = i.arg, r.delegate = null, y;
+    var a = i.arg;
+    return a ? a.done ? (r[e.resultName] = a.value, r.next = e.nextLoc, "return" !== r.method && (r.method = "next", r.arg = t), r.delegate = null, y) : a : (r.method = "throw", r.arg = new TypeError("iterator result is not an object"), r.delegate = null, y);
   }
-  function pushTryEntry(locs) {
-    var entry = {
-      tryLoc: locs[0]
+  function pushTryEntry(t) {
+    var e = {
+      tryLoc: t[0]
     };
-    1 in locs && (entry.catchLoc = locs[1]), 2 in locs && (entry.finallyLoc = locs[2], entry.afterLoc = locs[3]), this.tryEntries.push(entry);
+    1 in t && (e.catchLoc = t[1]), 2 in t && (e.finallyLoc = t[2], e.afterLoc = t[3]), this.tryEntries.push(e);
   }
-  function resetTryEntry(entry) {
-    var record = entry.completion || {};
-    record.type = "normal", delete record.arg, entry.completion = record;
+  function resetTryEntry(t) {
+    var e = t.completion || {};
+    e.type = "normal", delete e.arg, t.completion = e;
   }
-  function Context(tryLocsList) {
+  function Context(t) {
     this.tryEntries = [{
       tryLoc: "root"
-    }], tryLocsList.forEach(pushTryEntry, this), this.reset(!0);
+    }], t.forEach(pushTryEntry, this), this.reset(!0);
   }
-  function values(iterable) {
-    if (iterable || "" === iterable) {
-      var iteratorMethod = iterable[iteratorSymbol];
-      if (iteratorMethod) return iteratorMethod.call(iterable);
-      if ("function" == typeof iterable.next) return iterable;
-      if (!isNaN(iterable.length)) {
-        var i = -1,
-          next = function next() {
-            for (; ++i < iterable.length;) if (hasOwn.call(iterable, i)) return next.value = iterable[i], next.done = !1, next;
-            return next.value = undefined, next.done = !0, next;
+  function values(e) {
+    if (e || "" === e) {
+      var r = e[a];
+      if (r) return r.call(e);
+      if ("function" == typeof e.next) return e;
+      if (!isNaN(e.length)) {
+        var o = -1,
+          i = function next() {
+            for (; ++o < e.length;) if (n.call(e, o)) return next.value = e[o], next.done = !1, next;
+            return next.value = t, next.done = !0, next;
           };
-        return next.next = next;
+        return i.next = i;
       }
     }
-    throw new TypeError(_typeof(iterable) + " is not iterable");
+    throw new TypeError(_typeof(e) + " is not iterable");
   }
-  return GeneratorFunction.prototype = GeneratorFunctionPrototype, defineProperty(Gp, "constructor", {
+  return GeneratorFunction.prototype = GeneratorFunctionPrototype, o(g, "constructor", {
     value: GeneratorFunctionPrototype,
     configurable: !0
-  }), defineProperty(GeneratorFunctionPrototype, "constructor", {
+  }), o(GeneratorFunctionPrototype, "constructor", {
     value: GeneratorFunction,
     configurable: !0
-  }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, toStringTagSymbol, "GeneratorFunction"), exports.isGeneratorFunction = function (genFun) {
-    var ctor = "function" == typeof genFun && genFun.constructor;
-    return !!ctor && (ctor === GeneratorFunction || "GeneratorFunction" === (ctor.displayName || ctor.name));
-  }, exports.mark = function (genFun) {
-    return Object.setPrototypeOf ? Object.setPrototypeOf(genFun, GeneratorFunctionPrototype) : (genFun.__proto__ = GeneratorFunctionPrototype, define(genFun, toStringTagSymbol, "GeneratorFunction")), genFun.prototype = Object.create(Gp), genFun;
-  }, exports.awrap = function (arg) {
+  }), GeneratorFunction.displayName = define(GeneratorFunctionPrototype, u, "GeneratorFunction"), e.isGeneratorFunction = function (t) {
+    var e = "function" == typeof t && t.constructor;
+    return !!e && (e === GeneratorFunction || "GeneratorFunction" === (e.displayName || e.name));
+  }, e.mark = function (t) {
+    return Object.setPrototypeOf ? Object.setPrototypeOf(t, GeneratorFunctionPrototype) : (t.__proto__ = GeneratorFunctionPrototype, define(t, u, "GeneratorFunction")), t.prototype = Object.create(g), t;
+  }, e.awrap = function (t) {
     return {
-      __await: arg
+      __await: t
     };
-  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, asyncIteratorSymbol, function () {
+  }, defineIteratorMethods(AsyncIterator.prototype), define(AsyncIterator.prototype, c, function () {
     return this;
-  }), exports.AsyncIterator = AsyncIterator, exports.async = function (innerFn, outerFn, self, tryLocsList, PromiseImpl) {
-    void 0 === PromiseImpl && (PromiseImpl = Promise);
-    var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList), PromiseImpl);
-    return exports.isGeneratorFunction(outerFn) ? iter : iter.next().then(function (result) {
-      return result.done ? result.value : iter.next();
+  }), e.AsyncIterator = AsyncIterator, e.async = function (t, r, n, o, i) {
+    void 0 === i && (i = Promise);
+    var a = new AsyncIterator(wrap(t, r, n, o), i);
+    return e.isGeneratorFunction(r) ? a : a.next().then(function (t) {
+      return t.done ? t.value : a.next();
     });
-  }, defineIteratorMethods(Gp), define(Gp, toStringTagSymbol, "Generator"), define(Gp, iteratorSymbol, function () {
+  }, defineIteratorMethods(g), define(g, u, "Generator"), define(g, a, function () {
     return this;
-  }), define(Gp, "toString", function () {
+  }), define(g, "toString", function () {
     return "[object Generator]";
-  }), exports.keys = function (val) {
-    var object = Object(val),
-      keys = [];
-    for (var key in object) keys.push(key);
-    return keys.reverse(), function next() {
-      for (; keys.length;) {
-        var key = keys.pop();
-        if (key in object) return next.value = key, next.done = !1, next;
+  }), e.keys = function (t) {
+    var e = Object(t),
+      r = [];
+    for (var n in e) r.push(n);
+    return r.reverse(), function next() {
+      for (; r.length;) {
+        var t = r.pop();
+        if (t in e) return next.value = t, next.done = !1, next;
       }
       return next.done = !0, next;
     };
-  }, exports.values = values, Context.prototype = {
+  }, e.values = values, Context.prototype = {
     constructor: Context,
-    reset: function reset(skipTempReset) {
-      if (this.prev = 0, this.next = 0, this.sent = this._sent = undefined, this.done = !1, this.delegate = null, this.method = "next", this.arg = undefined, this.tryEntries.forEach(resetTryEntry), !skipTempReset) for (var name in this) "t" === name.charAt(0) && hasOwn.call(this, name) && !isNaN(+name.slice(1)) && (this[name] = undefined);
+    reset: function reset(e) {
+      if (this.prev = 0, this.next = 0, this.sent = this._sent = t, this.done = !1, this.delegate = null, this.method = "next", this.arg = t, this.tryEntries.forEach(resetTryEntry), !e) for (var r in this) "t" === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t);
     },
     stop: function stop() {
       this.done = !0;
-      var rootRecord = this.tryEntries[0].completion;
-      if ("throw" === rootRecord.type) throw rootRecord.arg;
+      var t = this.tryEntries[0].completion;
+      if ("throw" === t.type) throw t.arg;
       return this.rval;
     },
-    dispatchException: function dispatchException(exception) {
-      if (this.done) throw exception;
-      var context = this;
-      function handle(loc, caught) {
-        return record.type = "throw", record.arg = exception, context.next = loc, caught && (context.method = "next", context.arg = undefined), !!caught;
+    dispatchException: function dispatchException(e) {
+      if (this.done) throw e;
+      var r = this;
+      function handle(n, o) {
+        return a.type = "throw", a.arg = e, r.next = n, o && (r.method = "next", r.arg = t), !!o;
       }
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i],
-          record = entry.completion;
-        if ("root" === entry.tryLoc) return handle("end");
-        if (entry.tryLoc <= this.prev) {
-          var hasCatch = hasOwn.call(entry, "catchLoc"),
-            hasFinally = hasOwn.call(entry, "finallyLoc");
-          if (hasCatch && hasFinally) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
-          } else if (hasCatch) {
-            if (this.prev < entry.catchLoc) return handle(entry.catchLoc, !0);
+      for (var o = this.tryEntries.length - 1; o >= 0; --o) {
+        var i = this.tryEntries[o],
+          a = i.completion;
+        if ("root" === i.tryLoc) return handle("end");
+        if (i.tryLoc <= this.prev) {
+          var c = n.call(i, "catchLoc"),
+            u = n.call(i, "finallyLoc");
+          if (c && u) {
+            if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
+            if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
+          } else if (c) {
+            if (this.prev < i.catchLoc) return handle(i.catchLoc, !0);
           } else {
-            if (!hasFinally) throw new Error("try statement without catch or finally");
-            if (this.prev < entry.finallyLoc) return handle(entry.finallyLoc);
+            if (!u) throw new Error("try statement without catch or finally");
+            if (this.prev < i.finallyLoc) return handle(i.finallyLoc);
           }
         }
       }
     },
-    abrupt: function abrupt(type, arg) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
-          var finallyEntry = entry;
+    abrupt: function abrupt(t, e) {
+      for (var r = this.tryEntries.length - 1; r >= 0; --r) {
+        var o = this.tryEntries[r];
+        if (o.tryLoc <= this.prev && n.call(o, "finallyLoc") && this.prev < o.finallyLoc) {
+          var i = o;
           break;
         }
       }
-      finallyEntry && ("break" === type || "continue" === type) && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc && (finallyEntry = null);
-      var record = finallyEntry ? finallyEntry.completion : {};
-      return record.type = type, record.arg = arg, finallyEntry ? (this.method = "next", this.next = finallyEntry.finallyLoc, ContinueSentinel) : this.complete(record);
+      i && ("break" === t || "continue" === t) && i.tryLoc <= e && e <= i.finallyLoc && (i = null);
+      var a = i ? i.completion : {};
+      return a.type = t, a.arg = e, i ? (this.method = "next", this.next = i.finallyLoc, y) : this.complete(a);
     },
-    complete: function complete(record, afterLoc) {
-      if ("throw" === record.type) throw record.arg;
-      return "break" === record.type || "continue" === record.type ? this.next = record.arg : "return" === record.type ? (this.rval = this.arg = record.arg, this.method = "return", this.next = "end") : "normal" === record.type && afterLoc && (this.next = afterLoc), ContinueSentinel;
+    complete: function complete(t, e) {
+      if ("throw" === t.type) throw t.arg;
+      return "break" === t.type || "continue" === t.type ? this.next = t.arg : "return" === t.type ? (this.rval = this.arg = t.arg, this.method = "return", this.next = "end") : "normal" === t.type && e && (this.next = e), y;
     },
-    finish: function finish(finallyLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.finallyLoc === finallyLoc) return this.complete(entry.completion, entry.afterLoc), resetTryEntry(entry), ContinueSentinel;
+    finish: function finish(t) {
+      for (var e = this.tryEntries.length - 1; e >= 0; --e) {
+        var r = this.tryEntries[e];
+        if (r.finallyLoc === t) return this.complete(r.completion, r.afterLoc), resetTryEntry(r), y;
       }
     },
-    "catch": function _catch(tryLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc === tryLoc) {
-          var record = entry.completion;
-          if ("throw" === record.type) {
-            var thrown = record.arg;
-            resetTryEntry(entry);
+    "catch": function _catch(t) {
+      for (var e = this.tryEntries.length - 1; e >= 0; --e) {
+        var r = this.tryEntries[e];
+        if (r.tryLoc === t) {
+          var n = r.completion;
+          if ("throw" === n.type) {
+            var o = n.arg;
+            resetTryEntry(r);
           }
-          return thrown;
+          return o;
         }
       }
       throw new Error("illegal catch attempt");
     },
-    delegateYield: function delegateYield(iterable, resultName, nextLoc) {
+    delegateYield: function delegateYield(e, r, n) {
       return this.delegate = {
-        iterator: values(iterable),
-        resultName: resultName,
-        nextLoc: nextLoc
-      }, "next" === this.method && (this.arg = undefined), ContinueSentinel;
+        iterator: values(e),
+        resultName: r,
+        nextLoc: n
+      }, "next" === this.method && (this.arg = t), y;
     }
-  }, exports;
+  }, e;
 }
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
@@ -53733,14 +53676,14 @@ module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.e
 /* 529 */
 /***/ (function(module) {
 
-function _typeof(obj) {
+function _typeof(o) {
   "@babel/helpers - typeof";
 
-  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) {
-    return typeof obj;
-  } : function (obj) {
-    return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
-  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(obj);
+  return (module.exports = _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
+    return typeof o;
+  } : function (o) {
+    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
+  }, module.exports.__esModule = true, module.exports["default"] = module.exports), _typeof(o);
 }
 module.exports = _typeof, module.exports.__esModule = true, module.exports["default"] = module.exports;
 

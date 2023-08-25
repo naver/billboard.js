@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230824004559
+ * @version 3.9.3-nightly-20230825004620
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -372,7 +372,11 @@ function getPathBox(path) {
 function getPointer(event, element) {
     var _a;
     var touches = event && ((_a = (event.touches || (event.sourceEvent && event.sourceEvent.touches))) === null || _a === void 0 ? void 0 : _a[0]);
-    var pointer$1 = pointer(touches || event, element);
+    var pointer$1 = [0, 0];
+    try {
+        pointer$1 = pointer(touches || event, element);
+    }
+    catch (e) { }
     return pointer$1.map(function (v) { return (isNaN(v) ? 0 : v); });
 }
 /**
@@ -2968,7 +2972,7 @@ var tooltip$2 = {
      *    - The value array length should match with the data length
      * @property {boolean} [tooltip.init.show=false] Show tooltip at the initialization.
      * @property {number} [tooltip.init.x=0] Set x Axis index(or index for Arc(donut, gauge, pie) types) to be shown at the initialization.
-     * @property {object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
+     * @property {object} [tooltip.init.position] Set the position of tooltip at the initialization.
      * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
      * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
      * @property {Function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
@@ -3060,10 +3064,10 @@ var tooltip$2 = {
      *      // show at the initialization
      *      init: {
      *          show: true,
-     *          x: 2, // x Axis index(or index for Arc(donut, gauge, pie) types)
+     *          x: 2, // x Axis index (or index for Arc(donut, gauge, pie) types)
      *          position: {
-     *              top: "150px",
-     *              left: "250px"
+     *              top: "150px",  // specify as number or as string with 'px' unit string
+     *              left: 250  // specify as number or as string with 'px' unit string
      *          }
      *      },
      *
@@ -3115,10 +3119,7 @@ var tooltip$2 = {
     tooltip_contents: {},
     tooltip_init_show: false,
     tooltip_init_x: 0,
-    tooltip_init_position: {
-        top: "0px",
-        left: "50px"
-    },
+    tooltip_init_position: undefined,
     tooltip_linked: false,
     tooltip_linked_name: "",
     tooltip_onshow: function () { },
@@ -7733,7 +7734,7 @@ function setRotatePos(d, pos, anchor, isRotated, isInverted) {
  * @returns {number} Position value
  * @private
  */
-function getTextPos$1(d, type) {
+function getTextPos(d, type) {
     var _a;
     var position = this.config.data_labels_position;
     var id = d.id, index = d.index, value = d.value;
@@ -7896,7 +7897,6 @@ var text = {
         var angle = config.data_labels.rotate;
         var anchorString = getRotateAnchor(angle);
         var rotateString = angle ? "rotate(".concat(angle, ")") : "";
-        // $$.meetsLabelThreshold(ratio,
         $$.$el.text
             .style("fill", $$.getStylePropValue($$.updateTextColor))
             .attr("filter", $$.updateTextBacgroundColor.bind($$))
@@ -8033,7 +8033,7 @@ var text = {
     getXForText: function (points, d, textElement) {
         var _a;
         var $$ = this;
-        var config = $$.config, state = $$.state;
+        var config = $$.config;
         var isRotated = config.axis_rotated;
         var isTreemapType = $$.isTreemapType(d);
         var xPos = points[0][0];
@@ -8066,20 +8066,10 @@ var text = {
                 xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : xPos;
             }
         }
-        // show labels regardless of the domain if value is null
-        if (d.value === null) {
-            if (xPos > state.width) {
-                var width = getBoundingRect(textElement).width;
-                xPos = state.width - width;
-            }
-            else if (xPos < 0) {
-                xPos = 4;
-            }
-        }
         if (isRotated || isTreemapType) {
             xPos += $$.getCenteredTextPos(d, points, textElement, "x");
         }
-        return xPos + getTextPos$1.call(this, d, "x");
+        return xPos + getTextPos.call(this, d, "x");
     },
     /**
      * Gets the y coordinate of the text
@@ -8146,20 +8136,10 @@ var text = {
                 }
             }
         }
-        // show labels regardless of the domain if value is null
-        if (d.value === null && !isRotated) {
-            var boxHeight = rect.height;
-            if (yPos < boxHeight) {
-                yPos = boxHeight;
-            }
-            else if (yPos > state.height) {
-                yPos = state.height - 4;
-            }
-        }
         if (!isRotated || isTreemapType) {
             yPos += $$.getCenteredTextPos(d, points, textElement, "y");
         }
-        return yPos + getTextPos$1.call(this, d, "y");
+        return yPos + getTextPos.call(this, d, "y");
     },
     /**
      * Calculate if two or more text nodes are overlapping
@@ -8229,7 +8209,7 @@ var text = {
  * @returns {string|number} text-anchor value or position in pixel
  * @private
  */
-function getTextPos(pos, width) {
+function getTextXPos(pos, width) {
     if (pos === void 0) { pos = "left"; }
     var isNum = isNumber(width);
     var position;
@@ -8256,7 +8236,7 @@ var title = {
             $el.title = $el.svg.append("g");
             var text = $el.title
                 .append("text")
-                .style("text-anchor", getTextPos(config.title_position))
+                .style("text-anchor", getTextXPos(config.title_position))
                 .attr("class", $TEXT.title);
             setTextValue(text, config.title_text, [0.3, 1.5]);
         }
@@ -8269,49 +8249,11 @@ var title = {
         var $$ = this;
         var config = $$.config, current = $$.state.current, title = $$.$el.title;
         if (title) {
-            var y = $$.yForTitle.call($$);
-            if (/g/i.test(title.node().tagName)) {
-                title.attr("transform", "translate(".concat(getTextPos(config.title_position, current.width), ", ").concat(y, ")"));
-            }
-            else {
-                title.attr("x", $$.xForTitle.call($$)).attr("y", y);
-            }
+            var x = getTextXPos(config.title_position, current.width);
+            var y = (config.title_padding.top || 0) +
+                $$.getTextRect($$.$el.title, $TEXT.title).height;
+            title.attr("transform", "translate(".concat(x, ", ").concat(y, ")"));
         }
-    },
-    /**
-     * Returns the x attribute value of the title
-     * @returns {number} x attribute value
-     * @private
-     */
-    xForTitle: function () {
-        var $$ = this;
-        var config = $$.config, current = $$.state.current;
-        var position = config.title_position || "left";
-        var textRectWidth = $$.getTextRect($$.$el.title, $TEXT.title).width;
-        var x;
-        if (/(right|center)/.test(position)) {
-            x = current.width - textRectWidth;
-            if (position.indexOf("right") >= 0) {
-                x = current.width - textRectWidth - config.title_padding.right;
-            }
-            else if (position.indexOf("center") >= 0) {
-                x = (current.width - textRectWidth) / 2;
-            }
-        }
-        else { // left
-            x = (config.title_padding.left || 0);
-        }
-        return x;
-    },
-    /**
-     * Returns the y attribute value of the title
-     * @returns {number} y attribute value
-     * @private
-     */
-    yForTitle: function () {
-        var $$ = this;
-        return ($$.config.title_padding.top || 0) +
-            $$.getTextRect($$.$el.title, $TEXT.title).height;
     },
     /**
      * Get title padding
@@ -8320,7 +8262,10 @@ var title = {
      */
     getTitlePadding: function () {
         var $$ = this;
-        return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
+        var $el = $$.$el, config = $$.config;
+        return (config.title_padding.top || 0) +
+            $$.getTextRect($el.title, $TEXT.title).height +
+            (config.title_padding.bottom || 0);
     },
 };
 
@@ -8343,36 +8288,32 @@ var tooltip$1 = {
         }
         $$.bindTooltipResizePos();
     },
+    /**
+     * Show tooltip at initialization.
+     * Is called only when tooltip.init.show=true option is set
+     * @private
+     */
     initShowTooltip: function () {
-        var _a, _b;
+        var _a;
+        var _b;
         var $$ = this;
         var config = $$.config, $el = $$.$el, _c = $$.state, hasAxis = _c.hasAxis, hasRadar = _c.hasRadar;
         // Show tooltip if needed
         if (config.tooltip_init_show) {
-            var isArc_1 = !(hasAxis && hasRadar);
-            if (((_a = $$.axis) === null || _a === void 0 ? void 0 : _a.isTimeSeries()) && isString(config.tooltip_init_x)) {
-                var targets = $$.data.targets[0];
-                var i = void 0;
-                var val = void 0;
+            var isArc = !(hasAxis || hasRadar);
+            if (((_b = $$.axis) === null || _b === void 0 ? void 0 : _b.isTimeSeries()) && isString(config.tooltip_init_x)) {
                 config.tooltip_init_x = parseDate.call($$, config.tooltip_init_x);
-                for (i = 0; (val = targets.values[i]); i++) {
-                    if ((val.x - config.tooltip_init_x) === 0) {
-                        break;
-                    }
-                }
-                config.tooltip_init_x = i;
             }
-            var data = $$.data.targets.map(function (d) {
-                var x = isArc_1 ? 0 : config.tooltip_init_x;
-                return $$.addName(d.values[x]);
+            $$.api.tooltip.show({
+                data: (_a = {},
+                    _a[isArc ? "index" : "x"] = config.tooltip_init_x,
+                    _a)
             });
-            if (isArc_1) {
-                data = [data[config.tooltip_init_x]];
-            }
-            $el.tooltip.html($$.getTooltipHTML(data, (_b = $$.axis) === null || _b === void 0 ? void 0 : _b.getXAxisTickFormat(), $$.getDefaultValueFormat(), $$.color));
-            if (!config.tooltip_contents.bindto) {
-                $el.tooltip.style("top", config.tooltip_init_position.top)
-                    .style("left", config.tooltip_init_position.left)
+            var position = config.tooltip_init_position;
+            if (!config.tooltip_contents.bindto && !isEmpty(position)) {
+                var _d = position.top, top_1 = _d === void 0 ? 0 : _d, _e = position.left, left = _e === void 0 ? 50 : _e;
+                $el.tooltip.style("top", isString(top_1) ? top_1 : "".concat(top_1, "px"))
+                    .style("left", isString(left) ? left : "".concat(left, "px"))
                     .style("display", null);
             }
         }
@@ -11430,7 +11371,7 @@ var apiCategory = {
         return config.axis_x_categories[i];
     },
     /**
-     * Set category names on category axis.
+     * Set or get category names on category axis.
      * @function categories
      * @instance
      * @memberof Chart
@@ -11444,8 +11385,9 @@ var apiCategory = {
     categories: function (categories) {
         var $$ = this.internal;
         var config = $$.config;
-        if (!arguments.length) {
-            return config.axis_x_categories;
+        if (!categories || !Array.isArray(categories)) {
+            var cat = config.axis_x_categories;
+            return isEmpty(cat) ? Object.values($$.data.xs)[0] : cat;
         }
         config.axis_x_categories = categories;
         $$.redraw();
@@ -14182,11 +14124,11 @@ var clip = {
         var config = $$.config, _a = $$.state, margin = _a.margin, width = _a.width, height = _a.height;
         var isRotated = config.axis_rotated;
         var left = Math.max(30, margin.left) - (isRotated ? 0 : 20);
-        var x = isRotated ? -(1 + left) : -(left - 1);
-        var y = -Math.max(15, margin.top);
-        var w = isRotated ? margin.left + 20 : width + 10 + left;
         // less than 20 is not enough to show the axis label 'outer' without legend
         var h = (isRotated ? (margin.top + height) + 10 : margin.bottom) + 20;
+        var x = isRotated ? -(1 + left) : -(left - 1);
+        var y = -Math.max(15, margin.bottom);
+        var w = isRotated ? margin.left + 20 : width + 10 + left;
         node
             .attr("x", x)
             .attr("y", y)
@@ -15110,6 +15052,7 @@ var x = {
      * - **log** type:
      *   - the x values specified by [`data.x`](#.data%25E2%2580%25A4x)(or by any equivalent option), must be exclusively-positive.
      *   - x axis min value should be >= 0.
+     *   - for 'category' type, `data.xs` option isn't supported.
      *
      * @name axis․x․type
      * @memberof Options
@@ -22845,7 +22788,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230824004559
+ * @version 3.9.3-nightly-20230825004620
  */
 var bb = {
     /**
@@ -22855,7 +22798,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.3-nightly-20230824004559",
+    version: "3.9.3-nightly-20230825004620",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
