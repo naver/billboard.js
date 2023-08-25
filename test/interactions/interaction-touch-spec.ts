@@ -6,12 +6,10 @@
 // @ts-nocheck
 /* global describe, beforeEach, it, expect */
 import {expect} from "chai";
-import sinon from "sinon";
-import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
-import {$ARC, $AXIS, $BAR, $CIRCLE, $COMMON, $FOCUS, $EVENT, $SELECT, $SHAPE} from "../../src/config/classes";
+import {fireEvent} from "../assets/helper";
 
-describe("INTERACTION", () => {
+describe("INTERACTION: touch", () => {
 	let chart;
 	let args;
 
@@ -96,6 +94,40 @@ describe("INTERACTION", () => {
 
 			expect(tooltip.select(".name").text()).to.be.equal(data.id);
 			expect(+tooltip.select(".value").text()).to.be.equal(data.value)
+		});
+	});
+
+	describe("arc type", () => {
+		const spy = sinon.spy();
+
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 50],
+						["data2", 50]
+					],
+					type: "pie",
+					onclick: spy
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				}
+			};
+		});
+
+		it("should touch event bound to pie", () => {
+			const path =  chart.$.arc.select("path").node();
+			const rect = path.getBoundingClientRect();
+
+			fireEvent(path, "click", {
+				clientX: rect.x + 10,
+				clientY: rect.y
+			}, chart);
+
+			expect(spy.calledOnce).to.be.true;
 		});
 	});
 });
