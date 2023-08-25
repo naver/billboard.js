@@ -986,6 +986,29 @@ describe("TOOLTIP", function() {
 			expect(args.tooltip.onshow.called).to.be.false;
 			expect(args2.tooltip.onshow.called).to.be.true;
 		});
+
+		it("should linked tooltip target instance differs than the originated chart.", () => {
+			const {$el: {eventRect, tooltip}, state} = chart.internal;
+			state.event = {
+				isTrusted: true,
+				currentTarget: eventRect.node(),
+				target: eventRect.node(),
+				clientX: 147,
+				clientY: 14
+			};
+			const index = 4;
+
+			// when
+			chart.internal._handleLinkedCharts(true, index);
+
+			const name = chart2.$.tooltip.selectAll(".name").nodes().map(v => v.textContent);
+			const value = chart2.$.tooltip.selectAll(".value").nodes().map(v => +v.textContent);
+
+			chart2.data().forEach((v, i) => {
+				expect(v.id).to.be.equal(name[i]);
+				expect(v.values[index].value).to.be.equal(value[i]);
+			});
+		});
 	});
 
 	describe("linked tooltip positionFunction", () => {
