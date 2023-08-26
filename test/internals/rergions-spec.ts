@@ -58,6 +58,10 @@ describe("REGIONS", function() {
 		chart = util.generate(args);
 	});
 
+	afterEach(() => {
+		chart.destroy();
+	});
+
 	describe("regions", () => {
 		before(() => {
 			args = {
@@ -165,6 +169,43 @@ describe("REGIONS", function() {
 				
 				done();
 			}, 300);
+		});
+	});
+
+	describe("regions", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2023-08-25", "2023-08-26", "2023-08-27"],
+						["data1", 50, 20, 10]
+					],
+					regions: {
+						data1: [{
+							start: "2023-08-26",
+							end: "2023-08-27",
+							style: {
+								dasharray: "5 2"
+							}
+						}]
+					}
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d",
+						}
+					}
+				}
+			};
+		});
+
+		it("should regions applied for timeseries chart.", () => {
+			const lCnt = chart.$.line.lines.attr("d").split("L").length;
+
+			expect(lCnt).to.be.above(30);
 		});
 	});
 });

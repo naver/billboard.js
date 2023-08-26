@@ -262,4 +262,48 @@ describe("SHAPE CANDLESTICK", () => {
 			})
 		});
 	});
+
+	describe("dynamic load", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [],
+					labels: true
+				},
+			};
+		});
+
+		it("should generate candlestick from empty chart", done => {
+			const data = [					
+					["data1",
+						{open: 100, high: 130, low: 5, close: 30, volume: 100},
+						[30, 200, 5, 150, 200],
+					]
+				];
+
+			// when
+			chart.load({
+				columns: data,
+				type: "candlestick",
+				done() {
+					const {$el: {candlestick, tooltip}} = this.internal;
+
+					expect(candlestick.size()).to.be.equal(2);
+
+					// when
+					this.tooltip.show({x: 0});
+
+					// check if tooltip content shows correct data
+					const str = JSON.stringify(data[0][1])
+						.replace(/[{}\",]/g, "")
+						.replace(/(\d)(?=[a-z])/g, "$1 ")
+						.replace(/(:)(\d)/g, "$1 $2");
+
+					expect(str).to.be.equal(tooltip.select(".value").text().toLowerCase());
+
+					done();
+				}
+			});
+		});
+	});
 });

@@ -16,10 +16,6 @@ describe("SUBCHART", () => {
 		chart = util.generate(args);
 	});
 
-	afterEach(() => {
-		chart.destroy();
-	});
-
 	describe("generate subchart", () => {
 		before(() => {
 			args = {

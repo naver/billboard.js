@@ -16,10 +16,6 @@ describe("API category", () => {
 		chart = util.generate(args);
 	});
 
-	afterEach(() => {
-		chart.destroy();
-	});
-
 	before(() => {
 		args = {
 			data: {
@@ -139,4 +135,31 @@ describe("API category", () => {
 	it("check for indexed categories", () => {
 		expect(chart.categories()).to.deep.equal([0,1,2]);
 	});
+
+	it("set options", () => {
+		args = {
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150],
+					["data2", 5000, 2000, 1000, 4000, 1500]
+				]
+			},
+			axis: {
+				x: {
+					type: "category",
+					tick: {
+						format: function(x) {
+							return `Type ${x}`;
+						}
+					}
+				}
+			}
+		};
+	});
+
+	it("should indexed category formatted correctly?", () => {
+		chart.internal.$el.axis.x.selectAll(".tick").each(function(d, i) {
+			expect(this.textContent).to.be.equal(args.axis.x.tick.format(i));
+		})
+	})
 });
