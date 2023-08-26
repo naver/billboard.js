@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230825004620
+ * @version 3.9.3-nightly-20230826004608
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.5
@@ -29492,8 +29492,9 @@ function drag_defaultTouchable() {
    * @private
    */
   categoryName: function categoryName(i) {
-    const categories = this.config.axis_x_categories;
-    return i < (categories == null ? void 0 : categories.length) ? categories[i] : i;
+    const _this$config$axis_x_c = this.config.axis_x_categories,
+      categories = _this$config$axis_x_c === void 0 ? [] : _this$config$axis_x_c;
+    return i < categories.length ? categories[i] : i;
   }
 });
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
@@ -53181,7 +53182,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230825004620
+ * @version 3.9.3-nightly-20230826004608
  */
 const bb = {
   /**
@@ -53191,7 +53192,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230825004620",
+  version: "3.9.3-nightly-20230826004608",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

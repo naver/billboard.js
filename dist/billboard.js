@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230825004620
+ * @version 3.9.3-nightly-20230826004608
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5961,8 +5961,9 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @private
    */
   categoryName: function categoryName(i) {
-    const categories = this.config.axis_x_categories;
-    return i < (categories == null ? void 0 : categories.length) ? categories[i] : i;
+    const _this$config$axis_x_c = this.config.axis_x_categories,
+      categories = _this$config$axis_x_c === void 0 ? [] : _this$config$axis_x_c;
+    return i < categories.length ? categories[i] : i;
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
@@ -25283,7 +25284,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230825004620
+ * @version 3.9.3-nightly-20230826004608
  */
 const bb = {
   /**
@@ -25293,7 +25294,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230825004620",
+  version: "3.9.3-nightly-20230826004608",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
