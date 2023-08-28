@@ -12,7 +12,7 @@ import Plugin from "../Plugin";
 import Options from "./Options";
 import Elements from "./Elements";
 import ColorScale from "./ColorScale";
-import {compareEpochs, isEmpty, isFunction, isString, parseDate, pointInRegion} from "./util";
+import {compareEpochs, isEmpty, isFunction, pointInRegion} from "./util";
 
 /**
  * Stanford diagram plugin
@@ -171,29 +171,6 @@ export default class Stanford extends Plugin {
 			d.colors = undefined;
 			d.colorscale = undefined;
 		});
-	}
-
-	xvCustom(d, xyValue): number {
-		const $$ = this;
-		const {axis, config} = $$;
-		let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-
-		if (axis.isTimeSeries()) {
-			value = parseDate.call($$, value);
-		} else if (axis.isCategorized() && isString(value)) {
-			value = config.axis_x_categories.indexOf(d.value);
-		}
-
-		return Math.ceil($$.scale.x(value));
-	}
-
-	yvCustom(d, xyValue): number {
-		const $$ = this;
-		const {scale} = $$;
-		const yScale = d.axis && d.axis === "y2" ? scale.y2 : scale.y;
-		const value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-
-		return Math.ceil(yScale(value));
 	}
 
 	initStanfordData(): void {

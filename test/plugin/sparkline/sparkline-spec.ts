@@ -10,7 +10,7 @@ import util from "../../assets/util";
 
 describe("PLUGIN: SPARKLINE", () => {
 	let chart;
-	const selector = ".sparkline";
+	let selector = ".sparkline";
 	let args: any = {
 		size: {
 			width: 150,
@@ -29,6 +29,11 @@ describe("PLUGIN: SPARKLINE", () => {
 		padding: {},
 		tooltip: {
 			show: true
+		},
+		point: {
+			focus: {
+				only: true
+			}
 		},
 		plugins: [
 			new Sparkline({
@@ -60,9 +65,21 @@ describe("PLUGIN: SPARKLINE", () => {
 		});
 
 		it("check for tooltip interaction", () => {
+			const {state: {eventReceiver}} = chart.internal;
 			const el = chart.plugins[0].element[0];
 			const {tooltip} = chart.$;
 			const svg = el.querySelector("svg");
+
+			const eventWidth = eventReceiver.rect.width;
+
+			// when
+			util.fireEvent(svg, "mouseover", {
+				clientX: 10,
+				clientY: 10
+			}, chart);
+
+			expect(eventReceiver !== eventReceiver.rect.width).to.be.true;
+			
 
 			// hover 1st chart element
 			util.fireEvent(svg, "mousemove", {
@@ -105,6 +122,119 @@ describe("PLUGIN: SPARKLINE", () => {
 			// tooltip element shouldn't be added to the DOM
 			expect(chart.$.tooltip).to.be.null;
 		});
+
+		it("set options: axis padding", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 20, 50],
+						["data2", 200, 130, 90],
+						["data3", 300, 200, 160]
+					],
+					types: {
+						data2: "bar",
+						data3: "area"
+					}
+				},
+				padding: {},
+				tooltip: {
+					show: true
+				},
+				point: {
+					focus: {
+						only: true
+					}
+				},
+				axis: {
+					x: {
+						padding: {
+							left: 10,
+							right: 20
+						}
+					},
+					y: {
+						padding: {
+							top: 10
+						}
+					}
+				},
+				plugins: [
+					new Sparkline({
+						selector
+					})
+				]
+			}
+		});
+
+		it("padding value should be overriden", () => {
+			expect(chart.config("axis.x.padding")).to.be.deep.equal({
+				left: 15,
+				right: 15,
+				unit: "px"
+			});
+			
+			expect(chart.config("axis.y.padding")).to.be.deep.equal(5);
+		});
+	});
+
+	describe("check initialization", () => {
+		it("when wrong holder selector is given", () => {
+			try {
+				util.generate({
+					data: {
+						columns: [
+							["data1", 30, 20, 50],
+							["data2", 200, 130, 90],
+							["data3", 300, 200, 160]
+						],
+						types: {
+							data3: "area"
+						}
+					},
+					padding: {},
+					tooltip: {
+						show: true
+					},
+					plugins: [
+						new Sparkline({
+							selector: "#no-chart"
+						})
+					]
+				});
+			} catch(e) {
+				expect(e.message.indexOf("No holder elements found") >-1).to.be.true;
+			}
+		});
+
+		it("when scatter type is found", () => {
+			try {
+				util.generate({
+					data: {
+						columns: [
+							["data1", 30, 20, 50],
+							["data2", 200, 130, 90],
+							["data3", 300, 200, 160]
+						],
+						types: {
+							data2: "bar",
+							data3: "scatter"
+						}
+					},
+					padding: {},
+					tooltip: {
+						show: true
+					},
+					plugins: [
+						new Sparkline({
+							selector
+						})
+					]
+				});
+			} catch(e) {
+				expect(e.message.indexOf("Contains non supported chart types") >-1).to.be.true;
+			}
+		});
+
 	});
 
 	describe("point option", () => {
