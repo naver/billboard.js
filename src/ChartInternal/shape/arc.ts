@@ -1041,8 +1041,8 @@ export default {
 		// touch events
 		if (isTouch && $$.hasArcType() && !$$.radars) {
 			const getEventArc = event => {
-				const touch = event.changedTouches[0];
-				const eventArc = d3Select(document.elementFromPoint(touch.clientX, touch.clientY));
+				const {clientX, clientY} = event.changedTouches?.[0] ?? {clientX: 0, clientY: 0};
+				const eventArc = d3Select(document.elementFromPoint(clientX, clientY));
 
 				return eventArc;
 			};
