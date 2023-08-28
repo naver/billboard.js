@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isValue, toArray} from "./util";
+import {isString, isValue} from "./util";
 import type {DataRow} from "../../types/types";
 
 /**
@@ -45,7 +45,8 @@ export default class Cache {
 	 * @private
 	 */
 	remove(key: string | string[]) {
-		toArray(key).forEach(v => delete this.cache[v]);
+		(isString(key) ? [key] : key)
+			.forEach(v => delete this.cache[v]);
 	}
 
 	/**
@@ -55,8 +56,9 @@ export default class Cache {
 	 * @returns {*}
 	 * @private
 	 */
-	get(key: string, isDataType = false): any | null {
-		if (isDataType) {
+	get(key: string|string[], isDataType = false): any | null {
+		// when is isDataType, key should be string array
+		if (isDataType && Array.isArray(key)) {
 			const targets: any[] = [];
 
 			for (let i = 0, id; (id = key[i]); i++) {
@@ -67,7 +69,7 @@ export default class Cache {
 
 			return targets;
 		} else {
-			const value = this.cache[key];
+			const value = this.cache[key as string];
 
 			return isValue(value) ? value : null;
 		}
