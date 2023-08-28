@@ -35,7 +35,6 @@ export default {
 		const $$ = this;
 		const {$el} = $$;
 		const classChart = $$.getChartClass("Candlestick");
-		const classFocus = $$.classFocus.bind($$);
 
 		if (!$el.candlestick) {
 			$$.initCandlestick();
@@ -43,8 +42,7 @@ export default {
 
 		const mainUpdate = $$.$el.main.select(`.${$CANDLESTICK.chartCandlesticks}`)
 			.selectAll(`.${$CANDLESTICK.chartCandlestick}`)
-			.data(targets)
-			.attr("class", d => classChart(d) + classFocus(d));
+			.data(targets);
 
 		mainUpdate.enter().append("g")
 			.attr("class", classChart)
@@ -174,7 +172,7 @@ export default {
 			const value = $$.getCandlestickData(d);
 			let points;
 
-			if (value) {
+			if (value && isNumber(value.open) && isNumber(value.close)) {
 				const posX = {
 					start: x(d),
 					end: 0

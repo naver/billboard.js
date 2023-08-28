@@ -431,5 +431,37 @@ describe("API flow", () => {
 			});
 
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 20, 30, 40]
+					]
+				}
+			}
+		});
+
+		it("should flow correctly with newly added data", done => {
+			chart.flow({
+				columns: [
+					["data1", 50, 60],
+					["data2", 20, 30]
+				],
+				done() {
+					this.$.main.selectAll(`.${$LINE.chartLine} path`).each(function(d, i) {
+						const rect = this.getBoundingClientRect();
+						const expected = {
+							data1: [588, 46.5],
+							data2: [294, 340.5]
+						};
+
+						expect([rect.width, rect.x]).to.be.deep.equal(expected[d.id]);
+					});
+
+					done();
+				}
+			});
+		})
 	});
 });
