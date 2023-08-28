@@ -21,6 +21,30 @@ describe("ESM-ERROR check", function() {
         onbeforeinit: function() {}
     };
 
+    it("when initializes wihtout specifying types, it default to 'line', but as isn't esm import usage, should throw error", () => {
+        let fn;
+        let proto;
+
+        try {
+            args.onbeforeinit = function() {
+                proto = Object.getPrototypeOf(this.internal);
+
+                fn = proto[TYPE_METHOD_NEEDED.LINE];
+                delete proto[TYPE_METHOD_NEEDED.LINE];
+            };
+
+            bb.generate(args);        
+        } catch(e) {
+            const {message} = e;
+            const type = "line";
+
+            expect(message.indexOf("[billboard.js]") > -1).to.be.true;
+            expect(message.indexOf(type) > -1).to.be.true;
+
+            proto[TYPE_METHOD_NEEDED.LINE] = fn;
+        }
+    });
+
     it("should throw error when needed internal method is missing.", () => {
         const types = Object.keys(TYPE);
         let fn;
