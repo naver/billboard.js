@@ -19,10 +19,6 @@ describe("TEXT", () => {
 		chart = util.generate(args);
 	});
 
-	afterEach(() => {
-		chart.destroy();
-	});
-
     const checkXY = function(x, y, prefix = "c", delta: any = {x: 1, y: 1}) {
 		if (isNumber(delta)) {
 			delta = {x: delta, y: delta};
@@ -1238,6 +1234,9 @@ describe("TEXT", () => {
 							["data2", 130, 100, 140]
 						],
 						labels: true
+					},
+					transition: {
+						duration: 200
 					}
 				};
 			});
@@ -1247,30 +1246,34 @@ describe("TEXT", () => {
 				const pos: number[] = [];
 				let text;
 				let interval;
+				let cnt = 0;
 
-				setTimeout(() => {
-					interval = setInterval(() => {
-						text = main.select(`.${$TEXT.texts}-data2 .${$TEXT.text}-3`);
+				chart.load({
+					columns: [
+						["data2", 44, 134, 98, 170]
+					],
+					done: function () {
+						setTimeout(() => {
+							interval && clearInterval(interval);
+							const currPos = +text.attr("x");
+
+							expect(Math.round(pos[0])).to.not.equal(0);
+							expect(pos.every(v => v === currPos)).to.be.true;
+
+							done();
+						}, 500);
+					}
+				});
+
+				interval = setInterval(() => {
+					text = main.select(`.${$TEXT.texts}-data2 .${$TEXT.text}-3`);
+
+					if (text.size()) {
 						pos.push(+text.attr("x"));
-					}, 100);
+						clearInterval(interval);
+					}
+				}, 80);
 
-					chart.load({
-						columns: [
-							["data2", 44, 134, 98, 170]
-						],
-						done: function () {
-							setTimeout(() => {
-								clearInterval(interval);
-								const currPos = +text.attr("x");
-
-								expect(Math.round(pos[0])).to.not.equal(0);
-								expect(pos.every(v => v === currPos)).to.be.true;
-
-								done();
-							}, 500);
-						}
-					});
-				}, 500);
 			});
 		});
 
