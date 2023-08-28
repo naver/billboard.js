@@ -192,7 +192,7 @@
 		"taffydb": "^2.7.3",
 		"terser-webpack-plugin": "^5.3.9",
 		"tslib": "^2.6.2",
-		"typescript": "5.1.6",
+		"typescript": "5.2.2",
 		"webpack": "^5.88.2",
 		"webpack-bundle-analyzer": "^4.9.0",
 		"webpack-clean": "^1.2.5",
