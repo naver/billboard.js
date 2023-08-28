@@ -12200,9 +12200,9 @@ selfsigned@^2.1.1:
     node-forge "^1"
 
 semantic-release@^21.0.9:
-  version "21.0.9"
-  resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-21.0.9.tgz#c92a936ff71faea0aeb8e57816016d3f43a90151"
-  integrity sha512-EnylO0+UcKbVFaHeMbCjJpxqpgJPnze4zoOwmj34Kv4GnuyTV9MkNKrwmdZPFbmom9PpMj+9JN/8eyZzKkKyZQ==
+  version "21.1.1"
+  resolved "https://registry.yarnpkg.com/semantic-release/-/semantic-release-21.1.1.tgz#b1a0735fe5037699b26f81ec9e7e8a2fb89d5972"
+  integrity sha512-OCIazQnaCHdq1F6zfmKS0P7jZakYq0weiqW2mxUWo4H2CDnxelUoa/0Bs/dQatoHc6JFh6lG2HWpusdl93bFcw==
   dependencies:
     "@semantic-release/commit-analyzer" "^10.0.0"
     "@semantic-release/error" "^4.0.0"
