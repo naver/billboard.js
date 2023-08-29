@@ -285,7 +285,7 @@ THE SOFTWARE.
 [badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
 [badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
 [badge-ci-status]: https://github.com/naver/billboard.js/workflows/CI/badge.svg
-[badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg?branch=master
+[badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg?branch=master&v1
 [badge-snyk]: https://snyk.io/test/github/naver/billboard.js/badge.svg?targetFile=package.json
 [badge-gzip-size]: https://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
 [badge-latest]: https://img.shields.io/npm/v/billboard.js/latest.svg
@@ -298,7 +298,7 @@ THE SOFTWARE.
 [link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
 [link-jsDelivr]: https://www.jsdelivr.com/package/npm/billboard.js
 [link-version]: https://www.npmjs.com/package/billboard.js
-[link-coverage]: https://coveralls.io/github/naver/billboard.js
+[link-coverage]: https://coveralls.io/github/naver/billboard.js?branch=master
 [link-snyk]: https://snyk.io/test/github/naver/billboard.js?targetFile=package.json
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
 [link-semantic-release]: https://github.com/semantic-release/semantic-release
