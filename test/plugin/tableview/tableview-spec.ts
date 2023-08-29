@@ -260,9 +260,11 @@ describe("PLUGIN: TABLE-VIEW", () => {
 		});
 
 		it("when chart is destroyed, table also should destroyed.", () => {
+			chart.internal.charts.length = 1;  // force to make remove style also
 			chart.destroy();
 
 			expect(document.querySelector(".bb-tableview")).to.be.null;
+			expect(document.querySelector(`#${defaultStyle.id}`)).to.be.null;
 		});
 	});
 });

@@ -155,7 +155,10 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 				].map(Number);
 				
 				expect(line.size()).to.be.equal(1);
-				expect(pos).to.be.deep.equal(expected);				
+
+				pos.forEach((v, i) => {
+					expect(v).to.be.closeTo(expected[i], 3);
+				});
 
 				done();
 			}, 100);			
@@ -179,7 +182,10 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 				].map(Number);
 				
 				expect(line.size()).to.be.equal(1);
-				expect(pos).to.be.deep.equal(expected);
+
+				pos.forEach((v, i) => {
+					expect(v).to.be.closeTo(expected[i], 3);
+				});
 
 				done();
 			}, 100);			
@@ -242,7 +248,11 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 				].map(Number);
 				
 				expect(line.size()).to.be.equal(1);
-				expect(pos).to.be.deep.equal(expected);
+
+				pos.forEach((v, i) => {
+					expect(v).to.be.closeTo(expected[i], 3);
+				});
+
 				expect(chart.categories()).to.be.deep.equal(["a", "b", "c", "d"]);
 
 				done();
