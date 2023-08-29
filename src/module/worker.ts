@@ -81,7 +81,8 @@ export function runWorker(
 
 			// handle error
 			worker.onerror = function(e) {
-				console.error(e);
+				// eslint-disable-next-line no-console
+				console.error ? console.error(e) : console.log(e);
 			};
 
 			// return new Promise((resolve, reject) => {
