@@ -58,9 +58,17 @@ export default class Elements {
 			.select("line")
 			.transition()
 			.duration(duration)
-			.attr("x1", d => (isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1")))
+			.attr("x1", d => {
+				const v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
+
+				return v;
+			})
 			.attr("x2", d => (isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2")))
-			.attr("y1", d => (isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1")))
+			.attr("y1", d => {
+				const v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
+
+				return v;
+			})
 			.attr("y2", d => (isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")))
 			.transition()
 			.style("opacity", null);
