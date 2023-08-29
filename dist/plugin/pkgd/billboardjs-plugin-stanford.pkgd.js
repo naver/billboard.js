@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230826004608
+ * @version 3.9.3-nightly-20230829004606
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -25165,7 +25165,7 @@ let Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.3-nightly-20230826004608";
+Plugin.version = "3.9.3-nightly-20230829004606";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
@@ -25966,25 +25966,6 @@ let Stanford = /*#__PURE__*/function (_Plugin) {
       d.colors = undefined;
       d.colorscale = undefined;
     }.bind(this));
-  };
-  _proto.xvCustom = function xvCustom(d, xyValue) {
-    const $$ = this,
-      axis = $$.axis,
-      config = $$.config;
-    let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-    if (axis.isTimeSeries()) {
-      value = parseDate.call($$, value);
-    } else if (axis.isCategorized() && isString(value)) {
-      value = config.axis_x_categories.indexOf(d.value);
-    }
-    return Math.ceil($$.scale.x(value));
-  };
-  _proto.yvCustom = function yvCustom(d, xyValue) {
-    const $$ = this,
-      scale = $$.scale,
-      yScale = d.axis && d.axis === "y2" ? scale.y2 : scale.y,
-      value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-    return Math.ceil(yScale(value));
   };
   _proto.initStanfordData = function initStanfordData() {
     var _this5 = this;

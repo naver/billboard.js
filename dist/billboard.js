@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230826004608
+ * @version 3.9.3-nightly-20230829004606
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3701,7 +3701,7 @@ let Cache = /*#__PURE__*/function () {
    */;
   _proto.remove = function remove(key) {
     var _this = this;
-    toArray(key).forEach(function (v) {
+    (isString(key) ? [key] : key).forEach(function (v) {
       _newArrowCheck(this, _this);
       return delete this.cache[v];
     }.bind(this));
@@ -3718,7 +3718,8 @@ let Cache = /*#__PURE__*/function () {
     if (isDataType === void 0) {
       isDataType = !1;
     }
-    if (isDataType) {
+    // when is isDataType, key should be string array
+    if (isDataType && Array.isArray(key)) {
       const targets = [];
       for (let i = 0, id; id = key[i]; i++) {
         if (id in this.cache) {
@@ -5961,9 +5962,10 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @private
    */
   categoryName: function categoryName(i) {
+    var _categories$i;
     const _this$config$axis_x_c = this.config.axis_x_categories,
       categories = _this$config$axis_x_c === void 0 ? [] : _this$config$axis_x_c;
-    return i < categories.length ? categories[i] : i;
+    return (_categories$i = categories[i]) != null ? _categories$i : i;
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
@@ -19483,9 +19485,15 @@ function getAttrTweenFn(fn) {
     // touch events
     if (isTouch && $$.hasArcType() && !$$.radars) {
       const getEventArc = function (event) {
+        var _event$changedTouches, _event$changedTouches2;
         _newArrowCheck(this, _this18);
-        const touch = event.changedTouches[0],
-          eventArc = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
+        const _ref4 = (_event$changedTouches = (_event$changedTouches2 = event.changedTouches) == null ? void 0 : _event$changedTouches2[0]) != null ? _event$changedTouches : {
+            clientX: 0,
+            clientY: 0
+          },
+          clientX = _ref4.clientX,
+          clientY = _ref4.clientY,
+          eventArc = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(browser_doc.elementFromPoint(clientX, clientY));
         return eventArc;
       }.bind(this);
       $$.$el.svg.on("touchstart touchmove", function (event) {
@@ -20025,18 +20033,13 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
    * @private
    */
   updateTargetsForCandlestick: function updateTargetsForCandlestick(targets) {
-    var _this = this;
     const $$ = this,
       $el = $$.$el,
-      classChart = $$.getChartClass("Candlestick"),
-      classFocus = $$.classFocus.bind($$);
+      classChart = $$.getChartClass("Candlestick");
     if (!$el.candlestick) {
       $$.initCandlestick();
     }
-    const mainUpdate = $$.$el.main.select("." + $CANDLESTICK.chartCandlesticks).selectAll("." + $CANDLESTICK.chartCandlestick).data(targets).attr("class", function (d) {
-      _newArrowCheck(this, _this);
-      return classChart(d) + classFocus(d);
-    }.bind(this));
+    const mainUpdate = $$.$el.main.select("." + $CANDLESTICK.chartCandlesticks).selectAll("." + $CANDLESTICK.chartCandlestick).data(targets);
     mainUpdate.enter().append("g").attr("class", classChart).style("pointer-events", "none");
   },
   /**
@@ -20046,7 +20049,7 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
    * @private
    */
   updateCandlestick: function updateCandlestick(withTransition, isSub) {
-    var _this2 = this;
+    var _this = this;
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -20059,7 +20062,7 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
       candlestick = $root.main.selectAll("." + $CANDLESTICK.chartCandlestick).selectAll("." + $CANDLESTICK.candlestick).data($$.labelishData.bind($$));
     $T(candlestick.exit(), withTransition).style("opacity", "0").remove();
     const candlestickEnter = candlestick.enter().filter(function (d) {
-      _newArrowCheck(this, _this2);
+      _newArrowCheck(this, _this);
       return d.value;
     }.bind(this)).append("g").attr("class", classSetter);
     candlestickEnter.append("line");
@@ -20077,7 +20080,7 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
    * @private
    */
   generateDrawCandlestick: function generateDrawCandlestick(indices, isSub) {
-    var _this3 = this;
+    var _this2 = this;
     const $$ = this,
       config = $$.config,
       getPoints = $$.generateGetCandlestickPoints(indices, isSub),
@@ -20085,8 +20088,8 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
       downColor = config.candlestick_color_down;
     return function (d, i, g) {
       var _value,
-        _this4 = this;
-      _newArrowCheck(this, _this3);
+        _this3 = this;
+      _newArrowCheck(this, _this2);
       const points = getPoints(d, i),
         value = $$.getCandlestickData(d),
         isUp = (_value = value) == null ? void 0 : _value._isUp,
@@ -20096,7 +20099,7 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
       }
       const path = isRotated ? "H" + points[1][1] + " V" + points[1][0] + " H" + points[0][1] : "V" + points[1][1] + " H" + points[1][0] + " V" + points[0][1];
       g.select("path").attr("d", "M" + points[0][indexX] + "," + points[0][+!indexX] + path + "z").style("fill", function (d) {
-        _newArrowCheck(this, _this4);
+        _newArrowCheck(this, _this3);
         const color = isUp ? $$.color(d) : isObject(downColor) ? downColor[d.id] : downColor;
         return color || $$.color(d);
       }.bind(this));
@@ -20126,7 +20129,7 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
    * @returns {Function}
    */
   generateGetCandlestickPoints: function generateGetCandlestickPoints(indices, isSub) {
-    var _this5 = this;
+    var _this4 = this;
     if (isSub === void 0) {
       isSub = !1;
     }
@@ -20140,13 +20143,13 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
       shapeOffset = $$.getShapeOffset($$.isBarType, indices, !!isSub),
       yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
-      _newArrowCheck(this, _this5);
+      _newArrowCheck(this, _this4);
       const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
         offset = shapeOffset(d, i) || y0,
         width = isNumber(barW) ? barW : barW[d.id] || barW._$width,
         value = $$.getCandlestickData(d); // offset is for stacked bar chart
       let points;
-      if (value) {
+      if (value && isNumber(value.open) && isNumber(value.close)) {
         const posX = {
           start: x(d),
           end: 0
@@ -21802,12 +21805,12 @@ function convertDataToTreemapData(data) {
       }.bind(this);
     if (config.interaction_enabled) {
       const isTouch = state.inputType === "touch";
-      $el.treemap.on(isTouch ? "touchstart" : "mousemove", function (event) {
+      $el.treemap.on(isTouch ? "touchstart" : "mouseover mousemove", function (event) {
         _newArrowCheck(this, _this5);
         const data = getTarget(event);
         if (data) {
           $$.showTooltip([data], event.currentTarget);
-          event.type === "mouseover" && $$.setOverOut(!0, data);
+          /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(!0, data);
         }
       }.bind(this)).on(isTouch ? "touchend" : "mouseout", function (event) {
         _newArrowCheck(this, _this5);
@@ -25284,7 +25287,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230826004608
+ * @version 3.9.3-nightly-20230829004606
  */
 const bb = {
   /**
@@ -25294,7 +25297,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230826004608",
+  version: "3.9.3-nightly-20230829004606",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

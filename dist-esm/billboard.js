@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230826004608
+ * @version 3.9.3-nightly-20230829004606
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3192,7 +3192,8 @@ var Cache = /** @class */ (function () {
      */
     Cache.prototype.remove = function (key) {
         var _this = this;
-        toArray(key).forEach(function (v) { return delete _this.cache[v]; });
+        (isString(key) ? [key] : key)
+            .forEach(function (v) { return delete _this.cache[v]; });
     };
     /**
      * Get cahce
@@ -3203,7 +3204,8 @@ var Cache = /** @class */ (function () {
      */
     Cache.prototype.get = function (key, isDataType) {
         if (isDataType === void 0) { isDataType = false; }
-        if (isDataType) {
+        // when is isDataType, key should be string array
+        if (isDataType && Array.isArray(key)) {
             var targets = [];
             for (var i = 0, id = void 0; (id = key[i]); i++) {
                 if (id in this.cache) {
@@ -5071,8 +5073,9 @@ var category = {
      * @private
      */
     categoryName: function (i) {
-        var _a = this.config.axis_x_categories, categories = _a === void 0 ? [] : _a;
-        return i < categories.length ? categories[i] : i;
+        var _a;
+        var _b = this.config.axis_x_categories, categories = _b === void 0 ? [] : _b;
+        return (_a = categories[i]) !== null && _a !== void 0 ? _a : i;
     },
 };
 
@@ -17582,8 +17585,9 @@ var shapeArc = {
         // touch events
         if (isTouch && $$.hasArcType() && !$$.radars) {
             var getEventArc_1 = function (event) {
-                var touch = event.changedTouches[0];
-                var eventArc = select(doc.elementFromPoint(touch.clientX, touch.clientY));
+                var _a, _b;
+                var _c = (_b = (_a = event.changedTouches) === null || _a === void 0 ? void 0 : _a[0]) !== null && _b !== void 0 ? _b : { clientX: 0, clientY: 0 }, clientX = _c.clientX, clientY = _c.clientY;
+                var eventArc = select(doc.elementFromPoint(clientX, clientY));
                 return eventArc;
             };
             $$.$el.svg
@@ -18067,14 +18071,12 @@ var shapeCandlestick = {
         var $$ = this;
         var $el = $$.$el;
         var classChart = $$.getChartClass("Candlestick");
-        var classFocus = $$.classFocus.bind($$);
         if (!$el.candlestick) {
             $$.initCandlestick();
         }
         var mainUpdate = $$.$el.main.select(".".concat($CANDLESTICK.chartCandlesticks))
             .selectAll(".".concat($CANDLESTICK.chartCandlestick))
-            .data(targets)
-            .attr("class", function (d) { return classChart(d) + classFocus(d); });
+            .data(targets);
         mainUpdate.enter().append("g")
             .attr("class", classChart)
             .style("pointer-events", "none");
@@ -18183,7 +18185,7 @@ var shapeCandlestick = {
             var width = isNumber(barW) ? barW : barW[d.id] || barW._$width;
             var value = $$.getCandlestickData(d);
             var points;
-            if (value) {
+            if (value && isNumber(value.open) && isNumber(value.close)) {
                 var posX = {
                     start: x(d),
                     end: 0
@@ -19671,11 +19673,11 @@ var shapeTreemap = {
         if (config.interaction_enabled) {
             var isTouch = state.inputType === "touch";
             $el.treemap
-                .on(isTouch ? "touchstart" : "mousemove", function (event) {
+                .on(isTouch ? "touchstart" : "mouseover mousemove", function (event) {
                 var data = getTarget(event);
                 if (data) {
                     $$.showTooltip([data], event.currentTarget);
-                    event.type === "mouseover" && $$.setOverOut(true, data);
+                    /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
                 }
             })
                 .on(isTouch ? "touchend" : "mouseout", function (event) {
@@ -22788,7 +22790,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230826004608
+ * @version 3.9.3-nightly-20230829004606
  */
 var bb = {
     /**
@@ -22798,7 +22800,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.3-nightly-20230826004608",
+    version: "3.9.3-nightly-20230829004606",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
