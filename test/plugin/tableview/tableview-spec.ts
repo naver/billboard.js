@@ -27,10 +27,6 @@ describe("PLUGIN: TABLE-VIEW", () => {
 		chart = util.generate(args);
 	});
 
-	after(() => {
-		util.destroyAll();
-	});
-
 	describe("default style", () => {
 		let spy;
 
@@ -261,6 +257,12 @@ describe("PLUGIN: TABLE-VIEW", () => {
 			table.querySelectorAll("th[scope=row]").forEach((th, i) => {
 				expect(th.textContent).to.be.equal(dates[i]);
 			});
+		});
+
+		it("when chart is destroyed, table also should destroyed.", () => {
+			chart.destroy();
+
+			expect(document.querySelector(".bb-tableview")).to.be.null;
 		});
 	});
 });

@@ -19,10 +19,6 @@ describe("TEXT", () => {
 		chart = util.generate(args);
 	});
 
-	afterEach(() => {
-		chart.destroy();
-	});
-
     const checkXY = function(x, y, prefix = "c", delta: any = {x: 1, y: 1}) {
 		if (isNumber(delta)) {
 			delta = {x: delta, y: delta};
@@ -318,73 +314,6 @@ describe("TEXT", () => {
 			});
 		});
 
-		describe("on area chart", () => {
-			before(() => {
-				args = {
-					padding: {
-						left: 50
-					},
-					data: {
-						columns: [
-							["data1", 1030, 2200, 2100],
-							["data2", 1150, 2010, 1200],
-							["data3", -1150, -2010, -1200],
-							["data4", -1030, -2200, -2100],
-						],
-						type: "area",
-						labels: true
-					}
-				};
-			});
-
-			it("should locate data labels in correct position", () => {
-				const expectedTextY = {
-					data1: [129, 40, 48],
-					data2: [120, 55, 116],
-					data3: [314, 379, 318],
-					data4: [305, 394, 386],
-				};
-				const expectedTextX = {
-					data1: [6, 294, 583],
-					data2: [6, 294, 583],
-					data3: [6, 294, 583],
-					data4: [6, 294, 583]
-				};
-
-				Object.keys(expectedTextY).forEach(key => {
-					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`)
-						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
-				});
-			});
-
-			it("set options data.groups to be stacked", () => {
-				args.data.groups = [
-					["data1", "data2"],
-					["data3", "data4"]
-				];
-			});
-
-			it("should locate data labels in correct position", () => {
-				const expectedTextY = {
-					data1: [121, 40, 76],
-					data2: [161, 127, 159],
-					data3: [272.5, 306.5, 274.5],
-					data4: [313, 394, 358]
-				};
-				const expectedTextX = {
-					data1: [6, 294, 583],
-					data2: [6, 294, 583],
-					data3: [6, 294, 583],
-					data4: [6, 294, 583]
-				};
-
-				Object.keys(expectedTextY).forEach(key => {
-					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`)
-						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 4));
-				});
-			});
-		});
-
 		describe("on bar chart", () => {
 			before(() => {
 				args = {
@@ -524,6 +453,73 @@ describe("TEXT", () => {
 
 				main.selectAll(`.${$TEXT.texts}-data3 text`).each(function(d, i) {
 					expect(d3Select(this).text()).to.equal(`${args.data.columns[2][i + 1]}`);
+				});
+			});
+		});
+
+		describe("on area chart", () => {
+			before(() => {
+				args = {
+					padding: {
+						left: 50
+					},
+					data: {
+						columns: [
+							["data1", 1030, 2200, 2100],
+							["data2", 1150, 2010, 1200],
+							["data3", -1150, -2010, -1200],
+							["data4", -1030, -2200, -2100],
+						],
+						type: "area",
+						labels: true
+					}
+				};
+			});
+
+			it("should locate data labels in correct position", () => {
+				const expectedTextY = {
+					data1: [129, 40, 48],
+					data2: [120, 55, 116],
+					data3: [314, 379, 318],
+					data4: [305, 394, 386],
+				};
+				const expectedTextX = {
+					data1: [6, 294, 583],
+					data2: [6, 294, 583],
+					data3: [6, 294, 583],
+					data4: [6, 294, 583]
+				};
+
+				Object.keys(expectedTextY).forEach(key => {
+					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`)
+						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
+				});
+			});
+
+			it("set options data.groups to be stacked", () => {
+				args.data.groups = [
+					["data1", "data2"],
+					["data3", "data4"]
+				];
+			});
+
+			it("should locate data labels in correct position", () => {
+				const expectedTextY = {
+					data1: [121, 40, 76],
+					data2: [161, 127, 159],
+					data3: [272.5, 306.5, 274.5],
+					data4: [313, 394, 358]
+				};
+				const expectedTextX = {
+					data1: [6, 294, 583],
+					data2: [6, 294, 583],
+					data3: [6, 294, 583],
+					data4: [6, 294, 583]
+				};
+
+				Object.keys(expectedTextY).forEach(key => {
+					chart.$.main.selectAll(`.${$TEXT.texts}-${key} text.${$TEXT.text}`)
+						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 4));
 				});
 			});
 		});
@@ -1144,6 +1140,8 @@ describe("TEXT", () => {
 				tickNodes.each(function(d, i) {
 					expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 1);
 				});
+
+				chart.destroy();
 			});
 
 			it("should not be zerobased", () => {
@@ -1156,6 +1154,8 @@ describe("TEXT", () => {
 				tickNodes.each(function(d, i) {
 					expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 1);
 				});
+
+				chart.destroy();
 			});
 		});
 
@@ -1234,6 +1234,9 @@ describe("TEXT", () => {
 							["data2", 130, 100, 140]
 						],
 						labels: true
+					},
+					transition: {
+						duration: 200
 					}
 				};
 			});
@@ -1243,30 +1246,34 @@ describe("TEXT", () => {
 				const pos: number[] = [];
 				let text;
 				let interval;
+				let cnt = 0;
 
-				setTimeout(() => {
-					interval = setInterval(() => {
-						text = main.select(`.${$TEXT.texts}-data2 .${$TEXT.text}-3`);
+				chart.load({
+					columns: [
+						["data2", 44, 134, 98, 170]
+					],
+					done: function () {
+						setTimeout(() => {
+							interval && clearInterval(interval);
+							const currPos = +text.attr("x");
+
+							expect(Math.round(pos[0])).to.not.equal(0);
+							expect(pos.every(v => v === currPos)).to.be.true;
+
+							done();
+						}, 500);
+					}
+				});
+
+				interval = setInterval(() => {
+					text = main.select(`.${$TEXT.texts}-data2 .${$TEXT.text}-3`);
+
+					if (text.size()) {
 						pos.push(+text.attr("x"));
-					}, 20);
+						clearInterval(interval);
+					}
+				}, 80);
 
-					chart.load({
-						columns: [
-							["data2", 44, 134, 98, 170]
-						],
-						done: function () {
-							setTimeout(() => {
-								clearInterval(interval);
-								const currPos = +text.attr("x");
-
-								expect(Math.round(pos[0])).to.not.equal(0);
-								expect(pos.every(v => v === currPos)).to.be.true;
-
-								done();
-							}, 500);
-						}
-					});
-				}, 500);
 			});
 		});
 

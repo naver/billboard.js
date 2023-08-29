@@ -131,6 +131,26 @@ describe("SHAPE CANDLESTICK", () => {
 				expect(hasExpandedClass).to.be.false;
 			});
 		});
+
+		it("set options: with wrong nullish data", () => {
+			args = {
+				data: {
+					columns: [
+						["data1",
+							{open: 100, high: 130, low: 5, close: 30, volume: 100},
+							[10,20,null, null, 10],
+						]
+					],
+					type: "candlestick"
+				}
+			};
+		});
+
+		it("for wrong data, path shouldn't render.", () => {
+			const d = chart.internal.$el.main.selectAll(".bb-shape:last-child path").attr("d");
+
+			expect(d).to.be.equal("M0,0V0 H0 V0z");			
+		});
 	});
 
 	describe("candlestick + combination", () => {
