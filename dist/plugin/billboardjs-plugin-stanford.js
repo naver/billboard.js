@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230829004606
+ * @version 3.9.3-nightly-20230830004619
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1398,7 +1398,7 @@ let Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.3-nightly-20230829004606";
+Plugin.version = "3.9.3-nightly-20230830004619";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
@@ -1708,13 +1708,15 @@ let Elements = /*#__PURE__*/function () {
       return stanford_classes.stanfordLine + (d.class ? " " + d.class : "");
     }.bind(this)).select("line").transition().duration(duration).attr("x1", function (d) {
       _newArrowCheck(this, _this);
-      return isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
+      const v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
+      return v;
     }.bind(this)).attr("x2", function (d) {
       _newArrowCheck(this, _this);
       return isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2");
     }.bind(this)).attr("y1", function (d) {
       _newArrowCheck(this, _this);
-      return isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
+      const v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
+      return v;
     }.bind(this)).attr("y2", function (d) {
       _newArrowCheck(this, _this);
       return isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2");

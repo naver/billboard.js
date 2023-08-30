@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230829004606
+ * @version 3.9.3-nightly-20230830004619
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -487,7 +487,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.9.3-nightly-20230829004606";
+    Plugin.version = "3.9.3-nightly-20230830004619";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -793,9 +793,15 @@ var Elements = /** @class */ (function () {
             .select("line")
             .transition()
             .duration(duration)
-            .attr("x1", function (d) { return (isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1")); })
+            .attr("x1", function (d) {
+            var v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
+            return v;
+        })
             .attr("x2", function (d) { return (isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2")); })
-            .attr("y1", function (d) { return (isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1")); })
+            .attr("y1", function (d) {
+            var v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
+            return v;
+        })
             .attr("y2", function (d) { return (isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")); })
             .transition()
             .style("opacity", null);
