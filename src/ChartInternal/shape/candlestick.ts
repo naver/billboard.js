@@ -78,10 +78,6 @@ export default {
 		candlestickEnter.append("line");
 		candlestickEnter.append("path");
 
-		if (!$root.candlestick) {
-			$root.candlestick = {};
-		}
-
 		$root.candlestick = candlestick.merge(candlestickEnter)
 			.style("opacity", initialOpacity);
 	},
@@ -155,8 +151,6 @@ export default {
 	 */
 	generateGetCandlestickPoints(indices, isSub = false): (d, i) => number[][] {
 		const $$ = this;
-		const {config} = $$;
-
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
 		const targetsNum = $$.getIndicesMax(indices) + 1;
 		const barW: IOffset = $$.getBarW("candlestick", axis, targetsNum);
@@ -189,13 +183,6 @@ export default {
 					high: y(value.high),
 					low: y(value.low)
 				};
-
-				// fix posY not to overflow opposite quadrant
-				if (config.axis_rotated && (
-					(d.value > 0 && posY.start < y0) || (d.value < 0 && y0 < posY.start)
-				)) {
-					posY.start = y0;
-				}
 
 				posY.start -= (y0 - offset);
 
