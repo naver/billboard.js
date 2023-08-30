@@ -8,6 +8,8 @@ import {expect} from "chai";
 import util from "../assets/util";
 import {isArray} from "../../src/module/util";
 import {$CANDLESTICK, $COMMON} from "../../src/config/classes";
+import { line } from "d3-shape";
+import { brushY } from "d3-brush";
 
 describe("SHAPE CANDLESTICK", () => {
 	let chart;
@@ -150,6 +152,49 @@ describe("SHAPE CANDLESTICK", () => {
 			const d = chart.internal.$el.main.selectAll(".bb-shape:last-child path").attr("d");
 
 			expect(d).to.be.equal("M0,0V0 H0 V0z");			
+		});
+	});
+
+	describe("rotated axis", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1",
+							{open: 100, high: 140, low: -40, close: -20}
+						]
+					],
+					type: "candlestick",
+					labels: true
+				},
+				axis: {
+					rotated: true,
+					x: {
+						type: "category"
+					}
+				},
+				grid: {
+					y: {
+						show: true
+					}
+				}
+			};
+		});
+
+		it("should rendered correctly.", () => {
+			const {$el: {candlestick}, scale: {y}} = chart.internal;
+			const data = chart.data("data1")[0].values[0].value;
+
+			const line = candlestick.select("line");
+			const path = candlestick.select("path").attr("d");
+
+			// check line position
+			expect(+line.attr("x1")).to.be.equal(y(data.low));
+			expect(+line.attr("x2")).to.be.equal(y(data.high));
+
+			// check path position
+			expect(path.indexOf(y(data.close)) > -1).to.be.true;
+			expect(path.indexOf(y(data.open)) > -1).to.be.true;
 		});
 	});
 
