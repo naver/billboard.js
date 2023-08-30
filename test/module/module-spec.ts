@@ -7,7 +7,8 @@
 import {expect} from "chai";
 import sinon from "sinon";
 import util from "../assets/util";
-import {window, document, requestAnimationFrame, cancelAnimationFrame, requestIdleCallback, cancelIdleCallback} from "../../src/module/browser";
+import {getGlobal, getFallback} from "../../src/module/browser";
+import {getWorker} from "../../src/module/worker";
 
 describe("MODULE", function() {
     let chart;
@@ -21,7 +22,7 @@ describe("MODULE", function() {
         chart.destroy();
     });
 
-    describe("Cache", () => { 
+    describe("Cache", () => {
         before(() => {
             args = {
                 data: {
@@ -65,6 +66,59 @@ describe("MODULE", function() {
             cache.remove(["data1"]);
 
             expect(cache.get([rowData.id], true)).to.be.empty;
+        });
+    });
+
+    describe("Browser", () => { 
+        it("check global & fallback returns correctly when no default param is given.", () => {
+            // set nullish value for test
+            globalThis = global = self = null;
+
+            const win = getGlobal();
+
+            expect(win.document).to.be.ok;
+
+            // restore global
+            globalThis = global = self = window;
+        });
+
+        it("check fallback", done => {
+            const spy = sinon.spy();
+
+            const [
+                requestAnimationFrame,
+                cancelAnimationFrame,
+                requestIdleCallback,
+                cancelIdleCallback
+             ] = getFallback();
+            
+            const raf = requestAnimationFrame(spy);
+            const ric = requestIdleCallback(spy);
+
+            expect(raf > 0).to.be.true;
+            expect(ric > 0).to.be.true;
+
+            setTimeout(() => {
+                cancelAnimationFrame(raf);
+                cancelIdleCallback(ric);
+
+                expect(spy.callCount).to.be.equal(2);
+
+                done();
+            }, 100);
+        });
+    });
+
+    describe("Worker", () => { 
+        it("check worker onerror handler call.", () => {
+            const worker = getWorker("test");
+            const errorStub = sinon.stub(console, "error");
+
+            worker.onerror({e: {message: "ERR MSG"}});
+
+            expect(errorStub.called).to.be.true;
+
+            errorStub.restore();
         });
     });
 });
