@@ -527,6 +527,6 @@ describe("PLUGIN: STANFORD", () => {
 			const lines = chart.$.main.selectAll(".bb-stanford-lines line");
 
 			expect(lines.size()).to.be.equal(3);
-		})
+		});
 	});
 });
