@@ -28,7 +28,7 @@ describe("API category", () => {
 			},
 			axis: {
 				x: {
-					type: "category"
+					type: "category",
 				}
 			}
 		};
@@ -115,6 +115,30 @@ describe("API category", () => {
 		chart.tooltip.show({x: 2000});
 
 		expect(chart.$.tooltip.html()).to.be.empty;
+	});
+
+	it("set options: axis.x.categories=[]", () => {
+		args.axis.x.categories = [];
+	});
+
+	it("should return categories correctly.", () => {
+		const indexed = chart.data.values("loading").map((v, i) => i);
+
+		expect(chart.categories()).to.be.deep.equal(indexed);
+
+	});
+
+	it("should load without error when categories=null is given.", done => {
+		chart.load({
+			columns: [
+				["data1", 20,30,33, 22]
+			],
+			categories: null,
+			done() {
+				expect(true).to.be.ok;
+				done();
+			}
+		});
 	});
 
 	it("set options", () => {
