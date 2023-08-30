@@ -16,7 +16,6 @@ export {
 
 /**
  * Get global object
- * @param {Array} g global object candidates
  * @returns {object} window object
  * @private
  */
