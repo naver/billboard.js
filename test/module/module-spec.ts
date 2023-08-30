@@ -8,7 +8,7 @@ import {expect} from "chai";
 import sinon from "sinon";
 import util from "../assets/util";
 import {getGlobal, getFallback} from "../../src/module/browser";
-import {getWorker} from "../../src/module/worker";
+import {getWorker, runWorker} from "../../src/module/worker";
 
 describe("MODULE", function() {
     let chart;
@@ -71,12 +71,20 @@ describe("MODULE", function() {
 
     describe("Browser", () => { 
         it("check global & fallback returns correctly when no default param is given.", () => {
-            // set nullish value for test
-            globalThis = global = self = null;
+            // test for global global
+            global = self = window;
+            
+            // will return from 'global'
+            globalThis = null;
+            expect(getGlobal().document).to.be.ok;
 
-            const win = getGlobal();
+            // will return from 'self'
+            global = null;
+            expect(getGlobal().document).to.be.ok;
 
-            expect(win.document).to.be.ok;
+            // will return from Function('return this')()
+            self = null;
+            expect(getGlobal().document).to.be.ok;
 
             // restore global
             globalThis = global = self = window;
@@ -119,6 +127,34 @@ describe("MODULE", function() {
             expect(errorStub.called).to.be.true;
 
             errorStub.restore();
+            
+            const error = console.error;
+
+            console.error = null;
+            const logStub = sinon.stub(console, "log");
+
+            worker.onerror({e: {message: "ERR MSG"}});
+
+            expect(logStub.called).to.be.true;
+
+            logStub.restore();
+            console.error = error;
         });
+
+        it("check with dependency function", done => {
+            function depsFn() {
+                return 1234;
+            }
+
+            runWorker(
+                true,
+                function() { return depsFn(); },
+                function(res) {
+                    expect(res).to.be.equal(1234);
+                    done();
+                },
+                [depsFn]
+            )();
+        })
     });
 });
