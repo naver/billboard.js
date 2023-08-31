@@ -22,9 +22,9 @@ export default {
 	 *  Specified function receives x of the data point to show.
 	 * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
 	 *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-	 * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip. If undefined returned, the row of that value will be skipped to be called.
+	 * @property {Function} [tooltip.format.value] Set format for the value of each data value in tooltip. If undefined returned, the row of that value will be skipped to be called.
 	 *  - Will pass following arguments to the given function:
-	 *    - `value {string}`: Value of the data point
+	 *    - `value {string}`: Value of the data point. If data row contains multiple or ranged(ex. candlestick, area range, etc.) value, formatter will be called as value length.
 	 *    - `ratio {number}`: Ratio of the data point in the `pie/donut/gauge` and `area/bar` when contains grouped data. Otherwise is `undefined`.
 	 *    - `id {string}`: id of the data point
 	 *    - `index {number}`: Index of the data point
@@ -89,6 +89,9 @@ export default {
 	 *      format: {
 	 *          title: function(x) { return "Data " + x; },
 	 *          name: function(name, ratio, id, index) { return name; },
+	 *
+	 *          // If data row contains multiple or ranged(ex. candlestick, area range, etc.) value,
+	 *          // formatter will be called as value length times.
 	 *          value: function(value, ratio, id, index) { return ratio; }
 	 *      },
 	 *      position: function(data, width, height, element, pos) {
