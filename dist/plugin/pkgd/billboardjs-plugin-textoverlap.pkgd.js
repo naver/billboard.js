@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230830004619
+ * @version 3.9.3-nightly-20230831004604
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -26571,7 +26571,6 @@ function brush_brush(dim) {
 
 ;// CONCATENATED MODULE: ./src/module/browser.ts
 
-var browser_this = undefined;
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -26582,26 +26581,41 @@ var browser_this = undefined;
  */
 /* eslint-disable no-new-func, no-undef */
 
-const win = function () {
-    _newArrowCheck(this, browser_this);
-    const root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
-    return root || Function("return this")();
-  }.bind(undefined)(),
-  hasRAF = typeof win.requestAnimationFrame === "function",
-  hasRIC = typeof win.requestIdleCallback === "function",
-  requestAnimationFrame = hasRAF ? win.requestAnimationFrame : function (cb) {
-    _newArrowCheck(this, browser_this);
+
+/**
+ * Get global object
+ * @returns {object} window object
+ * @private
+ */
+function getGlobal() {
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
+}
+
+/**
+ * Get fallback object
+ * @param {object} w global object
+ * @returns {Array} fallback object array
+ * @private
+ */
+function getFallback(w) {
+  var _this = this;
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function",
+    hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function";
+  return [hasRAF ? w.requestAnimationFrame : function (cb) {
+    _newArrowCheck(this, _this);
     return setTimeout(cb, 1);
-  }.bind(undefined),
-  cancelAnimationFrame = hasRAF ? win.cancelAnimationFrame : function (id) {
-    _newArrowCheck(this, browser_this);
+  }.bind(this), hasRAF ? w.cancelAnimationFrame : function (id) {
+    _newArrowCheck(this, _this);
     return clearTimeout(id);
-  }.bind(undefined),
-  requestIdleCallback = hasRIC ? win.requestIdleCallback : requestAnimationFrame,
-  cancelIdleCallback = hasRIC ? win.cancelIdleCallback : cancelAnimationFrame,
-  doc = win == null ? void 0 : win.document;
-/* eslint-enable no-new-func, no-undef */
-// fallback for non-supported environments
+  }.bind(this), hasRIC ? w.requestIdleCallback : requestAnimationFrame, hasRIC ? w.cancelIdleCallback : cancelAnimationFrame];
+}
+const win = getGlobal(),
+  doc = win == null ? void 0 : win.document,
+  _getFallback = getFallback(win),
+  requestAnimationFrame = _getFallback[0],
+  cancelAnimationFrame = _getFallback[1],
+  requestIdleCallback = _getFallback[2],
+  cancelIdleCallback = _getFallback[3];
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 
@@ -27598,7 +27612,7 @@ let Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.3-nightly-20230830004619";
+Plugin.version = "3.9.3-nightly-20230831004604";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**

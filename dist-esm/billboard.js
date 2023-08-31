@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230830004619
+ * @version 3.9.3-nightly-20230831004604
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -30,21 +30,36 @@ import { zoomIdentity, zoomTransform, zoom as zoom$2 } from 'd3-zoom';
  * @private
  */
 /* eslint-disable no-new-func, no-undef */
-var win = (function () {
-    var root = (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
+/**
+ * Get global object
+ * @returns {object} window object
+ * @private
+ */
+function getGlobal() {
+    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
         (typeof global === "object" && global !== null && global.Object === Object && global) ||
-        (typeof self === "object" && self !== null && self.Object === Object && self);
-    return root || Function("return this")();
-})();
-/* eslint-enable no-new-func, no-undef */
-// fallback for non-supported environments
-var hasRAF = typeof win.requestAnimationFrame === "function";
-var hasRIC = typeof win.requestIdleCallback === "function";
-var requestAnimationFrame = hasRAF ? win.requestAnimationFrame : (function (cb) { return setTimeout(cb, 1); });
-var cancelAnimationFrame = hasRAF ? win.cancelAnimationFrame : (function (id) { return clearTimeout(id); });
-var requestIdleCallback = hasRIC ? win.requestIdleCallback : requestAnimationFrame;
-hasRIC ? win.cancelIdleCallback : cancelAnimationFrame;
+        (typeof self === "object" && self !== null && self.Object === Object && self) ||
+        Function("return this")();
+}
+/**
+ * Get fallback object
+ * @param {object} w global object
+ * @returns {Array} fallback object array
+ * @private
+ */
+function getFallback(w) {
+    var hasRAF = typeof (w === null || w === void 0 ? void 0 : w.requestAnimationFrame) === "function";
+    var hasRIC = typeof (w === null || w === void 0 ? void 0 : w.requestIdleCallback) === "function";
+    return [
+        hasRAF ? w.requestAnimationFrame : (function (cb) { return setTimeout(cb, 1); }),
+        hasRAF ? w.cancelAnimationFrame : (function (id) { return clearTimeout(id); }),
+        hasRIC ? w.requestIdleCallback : requestAnimationFrame,
+        hasRIC ? w.cancelIdleCallback : cancelAnimationFrame
+    ];
+}
+var win = getGlobal();
 var doc = win === null || win === void 0 ? void 0 : win.document;
+var _a = getFallback(win), requestAnimationFrame = _a[0], cancelAnimationFrame = _a[1], requestIdleCallback = _a[2];
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -3360,6 +3375,21 @@ function getObjectURL(fn, depsFn) {
     return win.URL.createObjectURL(blob[key]);
 }
 /**
+ * Get WebWorker instance
+ * @param {string} src URL object as string
+ * @returns {object} WebWorker instance
+ * @private
+ */
+function getWorker(src) {
+    var worker = new win.Worker(src);
+    // handle error
+    worker.onerror = function (e) {
+        // eslint-disable-next-line no-console
+        console.error ? console.error(e) : console.log(e);
+    };
+    return worker;
+}
+/**
  * Create and run on Web Worker
  * @param {boolean} useWorker Use Web Worker
  * @param {Function} fn Function to be executed in worker
@@ -3384,10 +3414,17 @@ function getObjectURL(fn, depsFn) {
  */
 function runWorker(useWorker, fn, callback, depsFn) {
     if (useWorker === void 0) { useWorker = true; }
-    var runFn;
+    var runFn = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        var res = fn.apply(void 0, args);
+        callback(res);
+    };
     if (win.Worker && useWorker) {
         var src_1 = getObjectURL(fn, depsFn);
-        var worker_1 = new win.Worker(src_1);
+        var worker_1 = getWorker(src_1);
         runFn = function () {
             var args = [];
             for (var _i = 0; _i < arguments.length; _i++) {
@@ -3401,25 +3438,10 @@ function runWorker(useWorker, fn, callback, depsFn) {
                 win.URL.revokeObjectURL(src_1);
                 return callback(e.data);
             };
-            // handle error
-            worker_1.onerror = function (e) {
-                // eslint-disable-next-line no-console
-                console.error ? console.error(e) : console.log(e);
-            };
             // return new Promise((resolve, reject) => {
             // 	worker.onmessage = ({data}) => resolve(data);
             // 	worker.onerror = reject;
             // });
-        };
-    }
-    else {
-        runFn = function () {
-            var args = [];
-            for (var _i = 0; _i < arguments.length; _i++) {
-                args[_i] = arguments[_i];
-            }
-            var res = fn.apply(void 0, args);
-            callback(res);
         };
     }
     return runFn;
@@ -5075,8 +5097,8 @@ var category = {
      */
     categoryName: function (i) {
         var _a;
-        var _b = this.config.axis_x_categories, categories = _b === void 0 ? [] : _b;
-        return (_a = categories[i]) !== null && _a !== void 0 ? _a : i;
+        var axis_x_categories = this.config.axis_x_categories;
+        return (_a = axis_x_categories === null || axis_x_categories === void 0 ? void 0 : axis_x_categories[i]) !== null && _a !== void 0 ? _a : i;
     },
 };
 
@@ -18107,9 +18129,6 @@ var shapeCandlestick = {
             .attr("class", classSetter);
         candlestickEnter.append("line");
         candlestickEnter.append("path");
-        if (!$root.candlestick) {
-            $root.candlestick = {};
-        }
         $root.candlestick = candlestick.merge(candlestickEnter)
             .style("opacity", initialOpacity);
     },
@@ -18172,7 +18191,6 @@ var shapeCandlestick = {
     generateGetCandlestickPoints: function (indices, isSub) {
         if (isSub === void 0) { isSub = false; }
         var $$ = this;
-        var config = $$.config;
         var axis = isSub ? $$.axis.subX : $$.axis.x;
         var targetsNum = $$.getIndicesMax(indices) + 1;
         var barW = $$.getBarW("candlestick", axis, targetsNum);
@@ -18201,10 +18219,6 @@ var shapeCandlestick = {
                     high: y(value.high),
                     low: y(value.low)
                 };
-                // fix posY not to overflow opposite quadrant
-                if (config.axis_rotated && ((d.value > 0 && posY.start < y0) || (d.value < 0 && y0 < posY.start))) {
-                    posY.start = y0;
-                }
                 posY.start -= (y0 - offset);
                 points = [
                     [posX.start, posY.start],
@@ -22791,7 +22805,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230830004619
+ * @version 3.9.3-nightly-20230831004604
  */
 var bb = {
     /**
@@ -22801,7 +22815,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.3-nightly-20230830004619",
+    version: "3.9.3-nightly-20230831004604",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

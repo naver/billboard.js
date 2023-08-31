@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230830004619
+ * @version 3.9.3-nightly-20230831004604
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -188,7 +188,6 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
 
-var _this = undefined;
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -199,30 +198,45 @@ var _this = undefined;
  */
 /* eslint-disable no-new-func, no-undef */
 
-const win = function () {
-    _newArrowCheck(this, _this);
-    const root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
-    return root || Function("return this")();
-  }.bind(undefined)(),
-  hasRAF = typeof win.requestAnimationFrame === "function",
-  hasRIC = typeof win.requestIdleCallback === "function",
-  requestAnimationFrame = hasRAF ? win.requestAnimationFrame : function (cb) {
+
+/**
+ * Get global object
+ * @returns {object} window object
+ * @private
+ */
+function getGlobal() {
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
+}
+
+/**
+ * Get fallback object
+ * @param {object} w global object
+ * @returns {Array} fallback object array
+ * @private
+ */
+function getFallback(w) {
+  var _this = this;
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function",
+    hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function";
+  return [hasRAF ? w.requestAnimationFrame : function (cb) {
     _newArrowCheck(this, _this);
     return setTimeout(cb, 1);
-  }.bind(undefined),
-  cancelAnimationFrame = hasRAF ? win.cancelAnimationFrame : function (id) {
+  }.bind(this), hasRAF ? w.cancelAnimationFrame : function (id) {
     _newArrowCheck(this, _this);
     return clearTimeout(id);
-  }.bind(undefined),
-  requestIdleCallback = hasRIC ? win.requestIdleCallback : requestAnimationFrame,
-  cancelIdleCallback = hasRIC ? win.cancelIdleCallback : cancelAnimationFrame,
-  doc = win == null ? void 0 : win.document;
-/* eslint-enable no-new-func, no-undef */
-// fallback for non-supported environments
+  }.bind(this), hasRIC ? w.requestIdleCallback : requestAnimationFrame, hasRIC ? w.cancelIdleCallback : cancelAnimationFrame];
+}
+const win = getGlobal(),
+  doc = win == null ? void 0 : win.document,
+  _getFallback = getFallback(win),
+  requestAnimationFrame = _getFallback[0],
+  cancelAnimationFrame = _getFallback[1],
+  requestIdleCallback = _getFallback[2],
+  cancelIdleCallback = _getFallback[3];
 ;// CONCATENATED MODULE: ./src/module/util.ts
 
 
-var util_this = undefined;
+var _this = undefined;
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 /**
@@ -235,63 +249,63 @@ function _objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = 
 
 
 const isValue = function (v) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return v || v === 0;
   }.bind(undefined),
   isFunction = function (v) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return typeof v === "function";
   }.bind(undefined),
   isString = function (v) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return typeof v === "string";
   }.bind(undefined),
   isNumber = function (v) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return typeof v === "number";
   }.bind(undefined),
   isUndefined = function (v) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return typeof v === "undefined";
   }.bind(undefined),
   isDefined = function (v) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return typeof v !== "undefined";
   }.bind(undefined),
   isboolean = function (v) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return typeof v === "boolean";
   }.bind(undefined),
   ceil10 = function (v) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return Math.ceil(v / 10) * 10;
   }.bind(undefined),
   asHalfPixel = function (n) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return Math.ceil(n) + .5;
   }.bind(undefined),
   diffDomain = function (d) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return d[1] - d[0];
   }.bind(undefined),
   isObjectType = function (v) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return typeof v === "object";
   }.bind(undefined),
   isEmpty = function (o) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
   }.bind(undefined),
   notEmpty = function (o) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return !isEmpty(o);
   }.bind(undefined),
   isArray = function (arr) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return Array.isArray(arr);
   }.bind(undefined),
   isObject = function (obj) {
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
   }.bind(undefined);
 /**
@@ -683,7 +697,7 @@ function extend(target, source) {
  * @private
  */
 const capitalize = function (str) {
-  _newArrowCheck(this, util_this);
+  _newArrowCheck(this, _this);
   return str.charAt(0).toUpperCase() + str.slice(1);
 }.bind(undefined);
 
@@ -712,7 +726,7 @@ function camelize(str, separator) {
  * @private
  */
 const toArray = function (v) {
-  _newArrowCheck(this, util_this);
+  _newArrowCheck(this, _this);
   return [].slice.call(v);
 }.bind(undefined);
 
@@ -915,7 +929,7 @@ const getRange = function (start, end, step) {
     if (step === void 0) {
       step = 1;
     }
-    _newArrowCheck(this, util_this);
+    _newArrowCheck(this, _this);
     const res = [],
       n = Math.max(0, Math.ceil((end - start) / step)) | 0;
     for (let i = start; i < n; i++) {
@@ -926,7 +940,7 @@ const getRange = function (start, end, step) {
   emulateEvent = {
     mouse: function () {
       var _this16 = this;
-      _newArrowCheck(this, util_this);
+      _newArrowCheck(this, _this);
       const getParams = function () {
         _newArrowCheck(this, _this16);
         return {
@@ -966,7 +980,7 @@ const getRange = function (start, end, step) {
       }
     }.bind(undefined)(),
     touch: function touch(el, eventType, params) {
-      _newArrowCheck(this, util_this);
+      _newArrowCheck(this, _this);
       const touchObj = new Touch(mergeObj({
         identifier: Date.now(),
         target: el,
@@ -1215,7 +1229,7 @@ let Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.3-nightly-20230830004619";
+Plugin.version = "3.9.3-nightly-20230831004604";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**

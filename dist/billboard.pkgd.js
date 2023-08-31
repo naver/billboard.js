@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230830004619
+ * @version 3.9.3-nightly-20230831004604
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.6
@@ -20859,7 +20859,6 @@ Selection.prototype = selection.prototype = (_selection$prototype = {
 }
 ;// CONCATENATED MODULE: ./src/module/browser.ts
 
-var browser_this = undefined;
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -20870,26 +20869,41 @@ var browser_this = undefined;
  */
 /* eslint-disable no-new-func, no-undef */
 
-const win = function () {
-    _newArrowCheck(this, browser_this);
-    const root = typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self;
-    return root || Function("return this")();
-  }.bind(undefined)(),
-  hasRAF = typeof win.requestAnimationFrame === "function",
-  hasRIC = typeof win.requestIdleCallback === "function",
-  requestAnimationFrame = hasRAF ? win.requestAnimationFrame : function (cb) {
-    _newArrowCheck(this, browser_this);
+
+/**
+ * Get global object
+ * @returns {object} window object
+ * @private
+ */
+function getGlobal() {
+  return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
+}
+
+/**
+ * Get fallback object
+ * @param {object} w global object
+ * @returns {Array} fallback object array
+ * @private
+ */
+function getFallback(w) {
+  var _this = this;
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function",
+    hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function";
+  return [hasRAF ? w.requestAnimationFrame : function (cb) {
+    _newArrowCheck(this, _this);
     return setTimeout(cb, 1);
-  }.bind(undefined),
-  cancelAnimationFrame = hasRAF ? win.cancelAnimationFrame : function (id) {
-    _newArrowCheck(this, browser_this);
+  }.bind(this), hasRAF ? w.cancelAnimationFrame : function (id) {
+    _newArrowCheck(this, _this);
     return clearTimeout(id);
-  }.bind(undefined),
-  requestIdleCallback = hasRIC ? win.requestIdleCallback : requestAnimationFrame,
-  cancelIdleCallback = hasRIC ? win.cancelIdleCallback : cancelAnimationFrame,
-  browser_doc = win == null ? void 0 : win.document;
-/* eslint-enable no-new-func, no-undef */
-// fallback for non-supported environments
+  }.bind(this), hasRIC ? w.requestIdleCallback : requestAnimationFrame, hasRIC ? w.cancelIdleCallback : cancelAnimationFrame];
+}
+const win = getGlobal(),
+  browser_doc = win == null ? void 0 : win.document,
+  _getFallback = getFallback(win),
+  requestAnimationFrame = _getFallback[0],
+  cancelAnimationFrame = _getFallback[1],
+  requestIdleCallback = _getFallback[2],
+  cancelIdleCallback = _getFallback[3];
 ;// CONCATENATED MODULE: ./src/config/const.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -27029,6 +27043,23 @@ function getObjectURL(fn, depsFn) {
 }
 
 /**
+ * Get WebWorker instance
+ * @param {string} src URL object as string
+ * @returns {object} WebWorker instance
+ * @private
+ */
+function getWorker(src) {
+  const worker = new win.Worker(src);
+
+  // handle error
+  worker.onerror = function (e) {
+    // eslint-disable-next-line no-console
+    console.error ? console.error(e) : console.log(e);
+  };
+  return worker;
+}
+
+/**
  * Create and run on Web Worker
  * @param {boolean} useWorker Use Web Worker
  * @param {Function} fn Function to be executed in worker
@@ -27055,10 +27086,13 @@ function runWorker(useWorker, fn, callback, depsFn) {
   if (useWorker === void 0) {
     useWorker = !0;
   }
-  let runFn;
+  let runFn = function () {
+    const res = fn.apply(void 0, arguments);
+    callback(res);
+  };
   if (win.Worker && useWorker) {
     const src = getObjectURL(fn, depsFn),
-      worker = new win.Worker(src);
+      worker = getWorker(src);
     runFn = function () {
       for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
         args[_key] = arguments[_key];
@@ -27073,23 +27107,13 @@ function runWorker(useWorker, fn, callback, depsFn) {
         return callback(e.data);
       };
 
-      // handle error
-      worker.onerror = function (e) {
-        // eslint-disable-next-line no-console
-        console.error ? console.error(e) : console.log(e);
-      };
-
       // return new Promise((resolve, reject) => {
       // 	worker.onmessage = ({data}) => resolve(data);
       // 	worker.onerror = reject;
       // });
     };
-  } else {
-    runFn = function () {
-      const res = fn.apply(void 0, arguments);
-      callback(res);
-    };
   }
+
   return runFn;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-dsv/src/dsv.js
@@ -29494,10 +29518,9 @@ function drag_defaultTouchable() {
    * @private
    */
   categoryName: function categoryName(i) {
-    var _categories$i;
-    const _this$config$axis_x_c = this.config.axis_x_categories,
-      categories = _this$config$axis_x_c === void 0 ? [] : _this$config$axis_x_c;
-    return (_categories$i = categories[i]) != null ? _categories$i : i;
+    var _axis_x_categories$i;
+    const axis_x_categories = this.config.axis_x_categories;
+    return (_axis_x_categories$i = axis_x_categories == null ? void 0 : axis_x_categories[i]) != null ? _axis_x_categories$i : i;
   }
 });
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
@@ -46857,9 +46880,6 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
     }.bind(this)).append("g").attr("class", classSetter);
     candlestickEnter.append("line");
     candlestickEnter.append("path");
-    if (!$root.candlestick) {
-      $root.candlestick = {};
-    }
     $root.candlestick = candlestick.merge(candlestickEnter).style("opacity", initialOpacity);
   },
   /**
@@ -46924,7 +46944,6 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
       isSub = !1;
     }
     const $$ = this,
-      config = $$.config,
       axis = isSub ? $$.axis.subX : $$.axis.x,
       targetsNum = $$.getIndicesMax(indices) + 1,
       barW = $$.getBarW("candlestick", axis, targetsNum),
@@ -46954,10 +46973,6 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
             high: y(value.high),
             low: y(value.low)
           };
-        // fix posY not to overflow opposite quadrant
-        if (config.axis_rotated && (d.value > 0 && posY.start < y0 || d.value < 0 && y0 < posY.start)) {
-          posY.start = y0;
-        }
         posY.start -= y0 - offset;
         points = [[posX.start, posY.start], [posX.end, posY.end], [posLine.x, posLine.low, posLine.high]];
       } else {
@@ -53186,7 +53201,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230830004619
+ * @version 3.9.3-nightly-20230831004604
  */
 const bb = {
   /**
@@ -53196,7 +53211,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230830004619",
+  version: "3.9.3-nightly-20230831004604",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

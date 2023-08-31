@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230830004619
+ * @version 3.9.3-nightly-20230831004604
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -236,12 +236,18 @@ _assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(
  * @private
  */
 /* eslint-disable no-new-func, no-undef */
-var win = (function () {
-    var root = (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
+/**
+ * Get global object
+ * @returns {object} window object
+ * @private
+ */
+function getGlobal() {
+    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
         (typeof global === "object" && global !== null && global.Object === Object && global) ||
-        (typeof self === "object" && self !== null && self.Object === Object && self);
-    return root || Function("return this")();
-})();
+        (typeof self === "object" && self !== null && self.Object === Object && self) ||
+        Function("return this")();
+}
+var win = getGlobal();
 var doc = win === null || win === void 0 ? void 0 : win.document;
 
 var isFunction = function (v) { return typeof v === "function"; };
@@ -487,7 +493,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.9.3-nightly-20230830004619";
+    Plugin.version = "3.9.3-nightly-20230831004604";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
