@@ -12,6 +12,7 @@ import {
 } from "d3-selection";
 import util from "../assets/util";
 import {$SHAPE, $TOOLTIP} from "../../src/config/classes";
+import {isNumber, isUndefined, isString} from "../../src/module/util";
 
 describe("TOOLTIP", function() {
 	let chart;
@@ -1834,6 +1835,12 @@ describe("TOOLTIP", function() {
 				chart.tooltip.show({x: i});
 
 				expect(spy.callCount).to.be.equal(args.data.columns.length);
+				expect(spy.args.every(v => v.length === 4)).to.be.true;
+				expect(spy.args.every(v => {
+					const [value, ratio, id, index]= v;
+	
+					return isNumber(value) && isNumber(ratio) && isString(id) && isNumber(index);
+				})).to.be.true;
 
 				// check ratio
 				expect(spy.returnValues.reduce((p, a) => p?.[1] ?? p + a[1], 0)).to.be.equal(1);
@@ -1857,6 +1864,13 @@ describe("TOOLTIP", function() {
 				chart.tooltip.show({x: i});
 
 				expect(spy.callCount).to.be.equal(args.data.columns.length);
+				
+				expect(spy.args.every(v => v.length === 4)).to.be.true;
+				expect(spy.args.every(v => {
+					const [value, ratio, id, index]= v;
+	
+					return isNumber(value) && isNumber(ratio) && isString(id) && isNumber(index);
+				})).to.be.true;
 
 				// check ratio
 				expect(spy.returnValues.reduce((p, a) => p?.[1] ?? p + a[1], 0)).to.be.equal(1);
@@ -1906,6 +1920,13 @@ describe("TOOLTIP", function() {
 
 			expect(spy.callCount).to.be.equal(2);
 
+			expect(spy.args.every(v => v.length === 4)).to.be.true;
+			expect(spy.args.every(v => {
+				const [value, ratio, id, index]= v;
+
+				return isNumber(value) && isUndefined(ratio) && isString(id) && isNumber(index);
+			})).to.be.true;
+
 			spy.resetHistory();
 
 			// when
@@ -1937,6 +1958,12 @@ describe("TOOLTIP", function() {
 			chart.tooltip.show({x: 2});
 
 			expect(spy.callCount).to.be.equal(3);
+			expect(spy.args.every(v => v.length === 4)).to.be.true;
+			expect(spy.args.every(v => {
+				const [value, ratio, id, index]= v;
+
+				return isNumber(value) && isUndefined(ratio) && isString(id) && isNumber(index);
+			})).to.be.true;
 			spy.resetHistory();
 
 			// when
@@ -1974,6 +2001,13 @@ describe("TOOLTIP", function() {
 			chart.tooltip.show({x: 2});
 
 			expect(spy.callCount).to.be.equal(data[2].length);
+			expect(spy.args.every(v => v.length === 4)).to.be.true;
+			expect(spy.args.every(v => {
+				const [value, ratio, id, index]= v;
+
+				return isNumber(value) && isUndefined(ratio) && isString(id) && isNumber(index);
+			})).to.be.true;
+
 			spy.resetHistory();
 
 			// when
@@ -2006,6 +2040,13 @@ describe("TOOLTIP", function() {
 			chart.tooltip.show({data: {index: 1}});
 
 			expect(spy.callCount).to.be.equal(1);
+			expect(spy.args.every(v => v.length === 4)).to.be.true;
+			expect(spy.args.every(v => {
+				const [value, ratio, id, index]= v;
+
+				return isNumber(value) && isNumber(ratio) && isString(id) && isNumber(index);
+			})).to.be.true;
+
 			spy.resetHistory();
 		});
 	});	

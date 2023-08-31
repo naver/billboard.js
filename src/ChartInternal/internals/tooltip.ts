@@ -179,7 +179,8 @@ export default {
 				row.ratio = $$.getRatio(...param);
 			}
 
-			param = [row.ratio, row.id, row.index, d];
+			// arrange param to be passed to formatter
+			param = [row.ratio, row.id, row.index];
 
 			if ($$.isAreaRangeType(row)) {
 				const [high, low] = ["high", "low"].map(v => valueFormat($$.getRangedData(row, v), ...param));
