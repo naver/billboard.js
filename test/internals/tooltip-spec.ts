@@ -12,6 +12,7 @@ import {
 } from "d3-selection";
 import util from "../assets/util";
 import {$SHAPE, $TOOLTIP} from "../../src/config/classes";
+import {isNumber, isUndefined, isString} from "../../src/module/util";
 
 describe("TOOLTIP", function() {
 	let chart;
@@ -1795,6 +1796,8 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip: format", () => {
+		const spyTitle = sinon.spy();
+		const spyName = sinon.spy();
 		const spy = sinon.spy(function(value, ratio, id, index) {
 			return [value, ratio, id, index];
 		});
@@ -1813,10 +1816,18 @@ describe("TOOLTIP", function() {
 				},
 				tooltip: {
 					format: {
+						title: spyTitle,
+						name: spyName,
 						value: spy
 					}
 				}
 			};
+		});
+
+		after(() => {
+			spyTitle.resetHistory();
+			spyName.resetHistory();
+			spy.resetHistory();
 		});
 	
 		it("check if ratio value is given to format function for 'bar' type.", () => {
@@ -1824,9 +1835,21 @@ describe("TOOLTIP", function() {
 				chart.tooltip.show({x: i});
 
 				expect(spy.callCount).to.be.equal(args.data.columns.length);
+				expect(spy.args.every(v => v.length === 4)).to.be.true;
+				expect(spy.args.every(v => {
+					const [value, ratio, id, index]= v;
+	
+					return isNumber(value) && isNumber(ratio) && isString(id) && isNumber(index);
+				})).to.be.true;
 
 				// check ratio
 				expect(spy.returnValues.reduce((p, a) => p?.[1] ?? p + a[1], 0)).to.be.equal(1);
+				
+				// title formatter should be called only once
+				expect(spyTitle.callCount).to.be.equal(i + 1);				
+
+				// name formatter should be called as row's data length times
+				expect(spyName.callCount).to.be.equal((i + 1) * 2);
 
 				spy.resetHistory();
 			});
@@ -1841,6 +1864,13 @@ describe("TOOLTIP", function() {
 				chart.tooltip.show({x: i});
 
 				expect(spy.callCount).to.be.equal(args.data.columns.length);
+				
+				expect(spy.args.every(v => v.length === 4)).to.be.true;
+				expect(spy.args.every(v => {
+					const [value, ratio, id, index]= v;
+	
+					return isNumber(value) && isNumber(ratio) && isString(id) && isNumber(index);
+				})).to.be.true;
 
 				// check ratio
 				expect(spy.returnValues.reduce((p, a) => p?.[1] ?? p + a[1], 0)).to.be.equal(1);
@@ -1864,6 +1894,160 @@ describe("TOOLTIP", function() {
 
 				spy.resetHistory();
 			});
+		});
+
+		it("set options", () => {
+			spy.resetHistory();
+
+			args = {
+				data: {
+					columns: [
+						["data1", [0, 100], [100, 250], 30]
+					],
+					type: "bar"
+			  },
+			  tooltip: {
+				format: {
+				  value: spy
+				}
+			  }
+			};
+		});
+
+		it("check bar ranged data", () => {
+			// when
+			chart.tooltip.show({x: 1});
+
+			expect(spy.callCount).to.be.equal(2);
+
+			expect(spy.args.every(v => v.length === 4)).to.be.true;
+			expect(spy.args.every(v => {
+				const [value, ratio, id, index]= v;
+
+				return isNumber(value) && isUndefined(ratio) && isString(id) && isNumber(index);
+			})).to.be.true;
+
+			spy.resetHistory();
+
+			// when
+			chart.tooltip.show({x: 2});
+
+			expect(spy.callCount).to.be.equal(1);
+		});
+
+		it("set options: area-line-range type", () => {
+			spy.resetHistory();
+
+			args = {
+				data: {
+					columns: [
+						["data1", [199, 160, 125], [180, 150, 130], [135, 120, 110]]
+					],
+					type: "area-line-range"
+			  	},
+				tooltip: {
+					format: {
+						value: spy
+					}
+				}
+			};
+		});
+
+		it("check for area-line-range data", () => {
+			// when
+			chart.tooltip.show({x: 2});
+
+			expect(spy.callCount).to.be.equal(3);
+			expect(spy.args.every(v => v.length === 4)).to.be.true;
+			expect(spy.args.every(v => {
+				const [value, ratio, id, index]= v;
+
+				return isNumber(value) && isUndefined(ratio) && isString(id) && isNumber(index);
+			})).to.be.true;
+			spy.resetHistory();
+
+			// when
+			chart.tooltip.show({x: 1});
+
+			expect(spy.callCount).to.be.equal(3);
+		});
+
+		it("set options: candlestick type", () => {
+			spy.resetHistory();
+
+			args = {
+				data: {
+					columns: [
+						["data1", 
+							[1327, 1369, 1289, 1348],
+							[1348, 1371, 1314, 1320],
+							[1320, 1412, 1314, 1394, 500]
+						]
+					],
+					type: "candlestick"
+			  	},
+				tooltip: {
+					format: {
+						value: spy
+					}
+				}
+			};
+		});
+
+		it("check for candlestick data", () => {
+			const data = chart.data.values("data1");
+
+			// when data contains volume data
+			chart.tooltip.show({x: 2});
+
+			expect(spy.callCount).to.be.equal(data[2].length);
+			expect(spy.args.every(v => v.length === 4)).to.be.true;
+			expect(spy.args.every(v => {
+				const [value, ratio, id, index]= v;
+
+				return isNumber(value) && isUndefined(ratio) && isString(id) && isNumber(index);
+			})).to.be.true;
+
+			spy.resetHistory();
+
+			// when
+			chart.tooltip.show({x: 1});
+
+			expect(spy.callCount).to.be.equal(data[1].length);
+		});
+
+		it("set options: pie type", () => {
+			spy.resetHistory();
+
+			args = {
+				data: {
+					columns: [
+						["data1", 50],
+						["data2", 50],
+					],
+					type: "pie"
+			  	},
+				tooltip: {
+					format: {
+						value: spy
+					}
+				}
+			};
+		});
+
+		it("check for pie data", () => {
+			// when
+			chart.tooltip.show({data: {index: 1}});
+
+			expect(spy.callCount).to.be.equal(1);
+			expect(spy.args.every(v => v.length === 4)).to.be.true;
+			expect(spy.args.every(v => {
+				const [value, ratio, id, index]= v;
+
+				return isNumber(value) && isNumber(ratio) && isString(id) && isNumber(index);
+			})).to.be.true;
+
+			spy.resetHistory();
 		});
 	});	
 });

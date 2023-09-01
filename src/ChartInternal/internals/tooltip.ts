@@ -93,17 +93,23 @@ export default {
 		const $$ = this;
 		const {api, config, state, $el} = $$;
 
-		let [titleFormat, nameFormat, valueFormat] = ["title", "name", "value"].map(v => {
+		// get formatter function
+		const [titleFn, nameFn, valueFn] = ["title", "name", "value"].map(v => {
 			const fn = config[`tooltip_format_${v}`];
 
 			return isFunction(fn) ? fn.bind(api) : fn;
 		});
 
-		titleFormat = titleFormat || defaultTitleFormat;
-		nameFormat = nameFormat || (name => name);
-		valueFormat = valueFormat || (
-			state.hasTreemap || $$.isStackNormalized() ? (v, ratio) => `${(ratio * 100).toFixed(2)}%` : defaultValueFormat
-		);
+		// determine fotmatter function with sanitization
+		const titleFormat = (...arg) => sanitize((titleFn || defaultTitleFormat)(...arg));
+		const nameFormat = (...arg) => sanitize((nameFn || (name => name))(...arg));
+		const valueFormat = (...arg) => {
+			const fn = valueFn || (
+				state.hasTreemap || $$.isStackNormalized() ? (v, ratio) => `${(ratio * 100).toFixed(2)}%` : defaultValueFormat
+			);
+
+			return sanitize(fn(...arg));
+		};
 
 		const order = config.tooltip_order;
 		const getRowValue = row => ($$.axis && $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row));
@@ -158,8 +164,7 @@ export default {
 			}
 
 			if (isUndefined(text)) {
-				const title = (state.hasAxis || state.hasRadar) &&
-					sanitize(titleFormat ? titleFormat(row.x) : row.x);
+				const title = (state.hasAxis || state.hasRadar) && titleFormat(row.x);
 
 				text = tplProcess(tpl[0], {
 					CLASS_TOOLTIP: $TOOLTIP.tooltip,
@@ -174,25 +179,30 @@ export default {
 				row.ratio = $$.getRatio(...param);
 			}
 
-			param = [row.ratio, row.id, row.index, d];
-			value = sanitize(valueFormat(getRowValue(row), ...param));
+			// arrange param to be passed to formatter
+			param = [row.ratio, row.id, row.index];
 
 			if ($$.isAreaRangeType(row)) {
-				const [high, low] = ["high", "low"].map(v => sanitize(
-					valueFormat($$.getRangedData(row, v), ...param)
-				));
+				const [high, low] = ["high", "low"].map(v => valueFormat($$.getRangedData(row, v), ...param));
+				const mid = valueFormat(getRowValue(row), ...param);
 
-				value = `<b>Mid:</b> ${value} <b>High:</b> ${high} <b>Low:</b> ${low}`;
+				value = `<b>Mid:</b> ${mid} <b>High:</b> ${high} <b>Low:</b> ${low}`;
 			} else if ($$.isCandlestickType(row)) {
-				const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"].map(v => sanitize(
-					valueFormat($$.getRangedData(row, v, "candlestick"), ...param)
-				));
+				const [open, high, low, close, volume] = ["open", "high", "low", "close", "volume"].map(v => {
+					const value = $$.getRangedData(row, v, "candlestick");
+
+					return value ? valueFormat(
+						$$.getRangedData(row, v, "candlestick"), ...param
+					) : undefined;
+				});
 
 				value = `<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${volume ? ` <b>Volume:</b> ${volume}` : ""}`;
 			} else if ($$.isBarRangeType(row)) {
-				const [start, end] = row.value;
+				const {value: [start, end], id, index} = row;
 
-				value = `${valueFormat(start)} ~ ${valueFormat(end)}`;
+				value = `${valueFormat(start, undefined, id, index)} ~ ${valueFormat(end, undefined, id, index)}`;
+			} else {
+				value = valueFormat(getRowValue(row), ...param);
 			}
 
 			if (value !== undefined) {
@@ -201,7 +211,7 @@ export default {
 					continue;
 				}
 
-				const name = sanitize(nameFormat(row.name, ...param));
+				const name = nameFormat(row.name, ...param);
 				const color = getBgColor(row);
 				const contentValue = {
 					CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
