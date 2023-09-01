@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230831004604
+ * @version 3.9.3-nightly-20230901004612
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.6
@@ -26529,9 +26529,9 @@ var tooltip_this = undefined;
    *  Specified function receives x of the data point to show.
    * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
    *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-   * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip. If undefined returned, the row of that value will be skipped to be called.
+   * @property {Function} [tooltip.format.value] Set format for the value of each data value in tooltip. If undefined returned, the row of that value will be skipped to be called.
    *  - Will pass following arguments to the given function:
-   *    - `value {string}`: Value of the data point
+   *    - `value {string}`: Value of the data point. If data row contains multiple or ranged(ex. candlestick, area range, etc.) value, formatter will be called as value length.
    *    - `ratio {number}`: Ratio of the data point in the `pie/donut/gauge` and `area/bar` when contains grouped data. Otherwise is `undefined`.
    *    - `id {string}`: id of the data point
    *    - `index {number}`: Index of the data point
@@ -26596,6 +26596,9 @@ var tooltip_this = undefined;
    *      format: {
    *          title: function(x) { return "Data " + x; },
    *          name: function(name, ratio, id, index) { return name; },
+   *
+   *          // If data row contains multiple or ranged(ex. candlestick, area range, etc.) value,
+   *          // formatter will be called as value length times.
    *          value: function(value, ratio, id, index) { return ratio; }
    *      },
    *      position: function(data, width, height, element, pos) {
@@ -35532,25 +35535,37 @@ function getTextXPos(pos, width) {
       api = $$.api,
       config = $$.config,
       state = $$.state,
-      $el = $$.$el;
-    let _map = ["title", "name", "value"].map(function (v) {
+      $el = $$.$el,
+      _map = ["title", "name", "value"].map(function (v) {
         _newArrowCheck(this, _this);
         const fn = config["tooltip_format_" + v];
         return isFunction(fn) ? fn.bind(api) : fn;
       }.bind(this)),
-      titleFormat = _map[0],
-      nameFormat = _map[1],
-      valueFormat = _map[2];
-    titleFormat = titleFormat || defaultTitleFormat;
-    nameFormat = nameFormat || function (name) {
-      _newArrowCheck(this, _this);
-      return name;
-    }.bind(this);
-    valueFormat = valueFormat || (state.hasTreemap || $$.isStackNormalized() ? function (v, ratio) {
-      _newArrowCheck(this, _this);
-      return (ratio * 100).toFixed(2) + "%";
-    }.bind(this) : defaultValueFormat);
-    const order = config.tooltip_order,
+      titleFn = _map[0],
+      nameFn = _map[1],
+      valueFn = _map[2],
+      titleFormat = function () {
+        _newArrowCheck(this, _this);
+        return sanitize((titleFn || defaultTitleFormat).apply(void 0, arguments));
+      }.bind(this),
+      nameFormat = function () {
+        var _this2 = this;
+        _newArrowCheck(this, _this);
+        return sanitize((nameFn || function (name) {
+          _newArrowCheck(this, _this2);
+          return name;
+        }.bind(this)).apply(void 0, arguments));
+      }.bind(this),
+      valueFormat = function () {
+        var _this3 = this;
+        _newArrowCheck(this, _this);
+        const fn = valueFn || (state.hasTreemap || $$.isStackNormalized() ? function (v, ratio) {
+          _newArrowCheck(this, _this3);
+          return (ratio * 100).toFixed(2) + "%";
+        }.bind(this) : defaultValueFormat);
+        return sanitize(fn.apply(void 0, arguments));
+      }.bind(this),
+      order = config.tooltip_order,
       getRowValue = function (row) {
         _newArrowCheck(this, _this);
         return $$.axis && $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row);
@@ -35565,6 +35580,11 @@ function getTextXPos(pos, width) {
       contents = config.tooltip_contents,
       tplStr = contents.template,
       targetIds = $$.mapToTargetIds();
+
+    // get formatter function
+
+    // determine fotmatter function with sanitization
+
     if (order === null && config.data_groups.length) {
       // for stacked data, order should aligned with the visually displayed data
       const ids = $$.orderTargets($$.data.targets).map(function (i2) {
@@ -35600,7 +35620,7 @@ function getTextXPos(pos, width) {
         continue;
       }
       if (isUndefined(text)) {
-        const title = (state.hasAxis || state.hasRadar) && sanitize(titleFormat ? titleFormat(row.x) : row.x);
+        const title = (state.hasAxis || state.hasRadar) && titleFormat(row.x);
         text = tplProcess(tpl[0], {
           CLASS_TOOLTIP: $TOOLTIP.tooltip,
           TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">" + title + "</th></tr>" : ""
@@ -35610,20 +35630,23 @@ function getTextXPos(pos, width) {
         param = ["arc", $$.$el.arcs.select("path." + $ARC.arc + "-" + row.id).data()[0]];
         row.ratio = $$.getRatio.apply($$, param);
       }
-      param = [row.ratio, row.id, row.index, d];
-      value = sanitize(valueFormat.apply(void 0, [getRowValue(row)].concat(param)));
+
+      // arrange param to be passed to formatter
+      param = [row.ratio, row.id, row.index];
       if ($$.isAreaRangeType(row)) {
         const _map2 = ["high", "low"].map(function (v) {
             _newArrowCheck(this, _this);
-            return sanitize(valueFormat.apply(void 0, [$$.getRangedData(row, v)].concat(param)));
+            return valueFormat.apply(void 0, [$$.getRangedData(row, v)].concat(param));
           }.bind(this)),
           high = _map2[0],
-          low = _map2[1];
-        value = "<b>Mid:</b> " + value + " <b>High:</b> " + high + " <b>Low:</b> " + low;
+          low = _map2[1],
+          mid = valueFormat.apply(void 0, [getRowValue(row)].concat(param));
+        value = "<b>Mid:</b> " + mid + " <b>High:</b> " + high + " <b>Low:</b> " + low;
       } else if ($$.isCandlestickType(row)) {
         const _map3 = ["open", "high", "low", "close", "volume"].map(function (v) {
             _newArrowCheck(this, _this);
-            return sanitize(valueFormat.apply(void 0, [$$.getRangedData(row, v, "candlestick")].concat(param)));
+            const value = $$.getRangedData(row, v, "candlestick");
+            return value ? valueFormat.apply(void 0, [$$.getRangedData(row, v, "candlestick")].concat(param)) : undefined;
           }.bind(this)),
           open = _map3[0],
           high = _map3[1],
@@ -35632,17 +35655,22 @@ function getTextXPos(pos, width) {
           volume = _map3[4];
         value = "<b>Open:</b> " + open + " <b>High:</b> " + high + " <b>Low:</b> " + low + " <b>Close:</b> " + close + (volume ? " <b>Volume:</b> " + volume : "");
       } else if ($$.isBarRangeType(row)) {
-        const _row$value = row.value,
+        const _row = row,
+          _row$value = _row.value,
           start = _row$value[0],
-          end = _row$value[1];
-        value = valueFormat(start) + " ~ " + valueFormat(end);
+          end = _row$value[1],
+          id = _row.id,
+          index = _row.index;
+        value = valueFormat(start, undefined, id, index) + " ~ " + valueFormat(end, undefined, id, index);
+      } else {
+        value = valueFormat.apply(void 0, [getRowValue(row)].concat(param));
       }
       if (value !== undefined) {
         // Skip elements when their name is set to null
         if (row.name === null) {
           continue;
         }
-        const name = sanitize(nameFormat.apply(void 0, [row.name].concat(param))),
+        const name = nameFormat.apply(void 0, [row.name].concat(param)),
           color = getBgColor(row),
           contentValue = {
             CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
@@ -35678,7 +35706,7 @@ function getTextXPos(pos, width) {
    * @private
    */
   setTooltipPosition: function setTooltipPosition(dataToShow, eventTarget) {
-    var _this2 = this;
+    var _this4 = this;
     const $$ = this,
       config = $$.config,
       scale = $$.scale,
@@ -35706,7 +35734,7 @@ function getTextXPos(pos, width) {
         height = _datum$height === void 0 ? 0 : _datum$height,
         pos = (_config$tooltip_posit = (_config$tooltip_posit2 = config.tooltip_position) == null ? void 0 : _config$tooltip_posit2.bind($$.api)(dataToShow != null ? dataToShow : JSON.parse(datum.current), width, height, eventRect == null ? void 0 : eventRect.node(), currPos)) != null ? _config$tooltip_posit : $$.getTooltipPosition.bind($$)(width, height, currPos); // Get tooltip position
       ["top", "left"].forEach(function (v) {
-        _newArrowCheck(this, _this2);
+        _newArrowCheck(this, _this4);
         const value = pos[v];
         tooltip.style(v, value + "px");
 
@@ -35726,7 +35754,7 @@ function getTextXPos(pos, width) {
    * @private
    */
   getTooltipPosition: function getTooltipPosition(tWidth, tHeight, currPos) {
-    var _this3 = this;
+    var _this5 = this;
     const $$ = this,
       config = $$.config,
       scale = $$.scale,
@@ -35780,7 +35808,7 @@ function getTextXPos(pos, width) {
 
     // make sure to not be positioned out of viewport
     Object.keys(pos).forEach(function (v) {
-      _newArrowCheck(this, _this3);
+      _newArrowCheck(this, _this5);
       if (pos[v] < 0) {
         pos[v] = 0;
       }
@@ -35794,12 +35822,12 @@ function getTextXPos(pos, width) {
    * @private
    */
   showTooltip: function showTooltip(selectedData, eventTarget) {
-    var _this4 = this;
+    var _this6 = this;
     const $$ = this,
       config = $$.config,
       tooltip = $$.$el.tooltip,
       dataToShow = selectedData.filter(function (d) {
-        _newArrowCheck(this, _this4);
+        _newArrowCheck(this, _this6);
         return d && isValue($$.getBaseValue(d));
       }.bind(this));
     if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
@@ -35839,13 +35867,13 @@ function getTextXPos(pos, width) {
    * @private
    */
   bindTooltipResizePos: function bindTooltipResizePos() {
-    var _this5 = this;
+    var _this7 = this;
     const $$ = this,
       resizeFunction = $$.resizeFunction,
       state = $$.state,
       tooltip = $$.$el.tooltip;
     resizeFunction.add(function () {
-      _newArrowCheck(this, _this5);
+      _newArrowCheck(this, _this7);
       if (tooltip.style("display") === "block") {
         const current = state.current,
           _tooltip$datum = tooltip.datum(),
@@ -35889,7 +35917,7 @@ function getTextXPos(pos, width) {
    * @private
    */
   _handleLinkedCharts: function _handleLinkedCharts(show, index) {
-    var _this6 = this;
+    var _this8 = this;
     const $$ = this,
       charts = $$.charts,
       config = $$.config,
@@ -35899,10 +35927,10 @@ function getTextXPos(pos, width) {
     if (event != null && event.isTrusted && config.tooltip_linked && charts.length > 1) {
       const linkedName = config.tooltip_linked_name;
       charts.filter(function (c) {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this8);
         return c !== $$.api;
       }.bind(this)).forEach(function (c) {
-        _newArrowCheck(this, _this6);
+        _newArrowCheck(this, _this8);
         const _c$internal = c.internal,
           config = _c$internal.config,
           $el = _c$internal.$el,
@@ -35929,7 +35957,7 @@ function getTextXPos(pos, width) {
    * @private
    */
   updateTooltipOnRedraw: function updateTooltipOnRedraw(context, index) {
-    var _this7 = this;
+    var _this9 = this;
     const $$ = this,
       config = $$.config,
       _$$$$el2 = $$.$el,
@@ -35965,7 +35993,7 @@ function getTextXPos(pos, width) {
         const clientX = event.clientX,
           clientY = event.clientY;
         setTimeout(function () {
-          _newArrowCheck(this, _this7);
+          _newArrowCheck(this, _this9);
           let target = browser_doc.elementFromPoint(clientX, clientY);
           const data = src_select(target).datum();
           if (data) {
@@ -53201,7 +53229,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230831004604
+ * @version 3.9.3-nightly-20230901004612
  */
 const bb = {
   /**
@@ -53211,7 +53239,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230831004604",
+  version: "3.9.3-nightly-20230901004612",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

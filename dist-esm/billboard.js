@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230831004604
+ * @version 3.9.3-nightly-20230901004612
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -2946,9 +2946,9 @@ var tooltip$2 = {
      *  Specified function receives x of the data point to show.
      * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
      *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-     * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip. If undefined returned, the row of that value will be skipped to be called.
+     * @property {Function} [tooltip.format.value] Set format for the value of each data value in tooltip. If undefined returned, the row of that value will be skipped to be called.
      *  - Will pass following arguments to the given function:
-     *    - `value {string}`: Value of the data point
+     *    - `value {string}`: Value of the data point. If data row contains multiple or ranged(ex. candlestick, area range, etc.) value, formatter will be called as value length.
      *    - `ratio {number}`: Ratio of the data point in the `pie/donut/gauge` and `area/bar` when contains grouped data. Otherwise is `undefined`.
      *    - `id {string}`: id of the data point
      *    - `index {number}`: Index of the data point
@@ -3013,6 +3013,9 @@ var tooltip$2 = {
      *      format: {
      *          title: function(x) { return "Data " + x; },
      *          name: function(name, ratio, id, index) { return name; },
+     *
+     *          // If data row contains multiple or ranged(ex. candlestick, area range, etc.) value,
+     *          // formatter will be called as value length times.
      *          value: function(value, ratio, id, index) { return ratio; }
      *      },
      *      position: function(data, width, height, element, pos) {
@@ -8371,13 +8374,34 @@ var tooltip$1 = {
     getTooltipContent: function (d, defaultTitleFormat, defaultValueFormat, color) {
         var $$ = this;
         var api = $$.api, config = $$.config, state = $$.state, $el = $$.$el;
+        // get formatter function
         var _a = ["title", "name", "value"].map(function (v) {
             var fn = config["tooltip_format_".concat(v)];
             return isFunction(fn) ? fn.bind(api) : fn;
-        }), titleFormat = _a[0], nameFormat = _a[1], valueFormat = _a[2];
-        titleFormat = titleFormat || defaultTitleFormat;
-        nameFormat = nameFormat || (function (name) { return name; });
-        valueFormat = valueFormat || (state.hasTreemap || $$.isStackNormalized() ? function (v, ratio) { return "".concat((ratio * 100).toFixed(2), "%"); } : defaultValueFormat);
+        }), titleFn = _a[0], nameFn = _a[1], valueFn = _a[2];
+        // determine fotmatter function with sanitization
+        var titleFormat = function () {
+            var arg = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                arg[_i] = arguments[_i];
+            }
+            return sanitize((titleFn || defaultTitleFormat).apply(void 0, arg));
+        };
+        var nameFormat = function () {
+            var arg = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                arg[_i] = arguments[_i];
+            }
+            return sanitize((nameFn || (function (name) { return name; })).apply(void 0, arg));
+        };
+        var valueFormat = function () {
+            var arg = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                arg[_i] = arguments[_i];
+            }
+            var fn = valueFn || (state.hasTreemap || $$.isStackNormalized() ? function (v, ratio) { return "".concat((ratio * 100).toFixed(2), "%"); } : defaultValueFormat);
+            return sanitize(fn.apply(void 0, arg));
+        };
         var order = config.tooltip_order;
         var getRowValue = function (row) { return ($$.axis && $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row)); };
         var getBgColor = $$.levelColor ? function (row) { return $$.levelColor(row.value); } : function (row) { return color(row); };
@@ -8423,8 +8447,7 @@ var tooltip$1 = {
                 return "continue";
             }
             if (isUndefined(text)) {
-                var title = (state.hasAxis || state.hasRadar) &&
-                    sanitize(titleFormat ? titleFormat(row.x) : row.x);
+                var title = (state.hasAxis || state.hasRadar) && titleFormat(row.x);
                 text = tplProcess(tpl[0], {
                     CLASS_TOOLTIP: $TOOLTIP.tooltip,
                     TITLE: isValue(title) ? (tplStr ? title : "<tr><th colspan=\"2\">".concat(title, "</th></tr>")) : ""
@@ -8434,26 +8457,33 @@ var tooltip$1 = {
                 param = ["arc", $$.$el.arcs.select("path.".concat($ARC.arc, "-").concat(row.id)).data()[0]];
                 row.ratio = $$.getRatio.apply($$, param);
             }
-            param = [row.ratio, row.id, row.index, d];
-            value = sanitize(valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param, false)));
+            // arrange param to be passed to formatter
+            param = [row.ratio, row.id, row.index];
             if ($$.isAreaRangeType(row)) {
-                var _b = ["high", "low"].map(function (v) { return sanitize(valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v)], param, false))); }), high = _b[0], low = _b[1];
-                value = "<b>Mid:</b> ".concat(value, " <b>High:</b> ").concat(high, " <b>Low:</b> ").concat(low);
+                var _b = ["high", "low"].map(function (v) { return valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v)], param, false)); }), high = _b[0], low = _b[1];
+                var mid = valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param, false));
+                value = "<b>Mid:</b> ".concat(mid, " <b>High:</b> ").concat(high, " <b>Low:</b> ").concat(low);
             }
             else if ($$.isCandlestickType(row)) {
-                var _c = ["open", "high", "low", "close", "volume"].map(function (v) { return sanitize(valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v, "candlestick")], param, false))); }), open_1 = _c[0], high = _c[1], low = _c[2], close_1 = _c[3], volume = _c[4];
+                var _c = ["open", "high", "low", "close", "volume"].map(function (v) {
+                    var value = $$.getRangedData(row, v, "candlestick");
+                    return value ? valueFormat.apply(void 0, __spreadArray([$$.getRangedData(row, v, "candlestick")], param, false)) : undefined;
+                }), open_1 = _c[0], high = _c[1], low = _c[2], close_1 = _c[3], volume = _c[4];
                 value = "<b>Open:</b> ".concat(open_1, " <b>High:</b> ").concat(high, " <b>Low:</b> ").concat(low, " <b>Close:</b> ").concat(close_1).concat(volume ? " <b>Volume:</b> ".concat(volume) : "");
             }
             else if ($$.isBarRangeType(row)) {
-                var _d = row.value, start = _d[0], end = _d[1];
-                value = "".concat(valueFormat(start), " ~ ").concat(valueFormat(end));
+                var _d = row.value, start = _d[0], end = _d[1], id = row.id, index = row.index;
+                value = "".concat(valueFormat(start, undefined, id, index), " ~ ").concat(valueFormat(end, undefined, id, index));
+            }
+            else {
+                value = valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param, false));
             }
             if (value !== undefined) {
                 // Skip elements when their name is set to null
                 if (row.name === null) {
                     return "continue";
                 }
-                var name_1 = sanitize(nameFormat.apply(void 0, __spreadArray([row.name], param, false)));
+                var name_1 = nameFormat.apply(void 0, __spreadArray([row.name], param, false));
                 var color_1 = getBgColor(row);
                 var contentValue_1 = {
                     CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
@@ -22805,7 +22835,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230831004604
+ * @version 3.9.3-nightly-20230901004612
  */
 var bb = {
     /**
@@ -22815,7 +22845,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.3-nightly-20230831004604",
+    version: "3.9.3-nightly-20230901004612",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
