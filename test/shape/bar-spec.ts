@@ -497,8 +497,8 @@ describe("SHAPE BAR", () => {
 					type: "bar",
 					columns: [
 						["x1", "05"],
-						["Sep", 2],
 						["x2", "01", "08", "29"],
+						["Sep", 2],
 						["Jul", 1, 1, 1],
 						["Aug", 2, 2, 2]
 					],
@@ -549,6 +549,66 @@ describe("SHAPE BAR", () => {
 
 			chart.$.bar.bars.each(function() {
 				expect(this.getAttribute("d")).to.be.equal(expectedPath.shift());
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					xs: { 
+						"Buy": "x1",
+						"Sell": "x2"
+					},
+					columns: [
+						["x1", "2018-07-05", "2018-07-11"],
+						["x2","2018-07-02","2018-07-05"],
+						["Buy", 33, 3],
+						["Sell", 7, 33]
+					],
+					type: "bar", 
+					groups: [[ "Buy", "Sell"]]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%y-%m-%d"
+						},
+					}
+				}
+			}
+		});
+
+		it("should stack bars, form same multiple xs.", () => {
+			const {bars} = chart.$.bar;
+			const expectedPath = {
+				Buy: [
+					[219, 426],
+					[419, 426]
+				],
+				Sell: [
+					[119, 426],
+					[219, 232]
+				]
+			}
+
+			const getStartPoint = str => str.replace(/^M([^V]+)V.*/, "$1").split(",").map(Math.floor);
+
+			bars.filter(d => d.id === "Buy").each(function(d, i) {
+				const expected = expectedPath[d.id][i];
+
+				getStartPoint(this.getAttribute("d")).forEach((v, j) => {
+					expect(v).to.be.closeTo(expected[j], 1);
+				});
+			});
+
+
+			bars.filter(d => d.id === "Sell").each(function(d, i) {
+				const expected = expectedPath[d.id][i];
+
+				getStartPoint(this.getAttribute("d")).forEach((v, j) => {
+					expect(v).to.be.closeTo(expected[j], 1);
+				});
 			});
 		});
 	});

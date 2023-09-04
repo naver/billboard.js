@@ -87,7 +87,7 @@ export default {
 	},
 
 	/**
-	 * Get shape's indices according it's position
+	 * Get shape's indices according it's position within each axis tick.
 	 *
 	 * From the below example, indices will be:
 	 * ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
@@ -125,10 +125,15 @@ export default {
 						continue;
 					}
 
-					for (let k = 0, row; (row = groups[k]); k++) {
-						if (row in ind) {
-							ind[d.id] = ind[row];
+					for (let k = 0, key; (key = groups[k]); k++) {
+						if (key in ind) {
+							ind[d.id] = ind[key];
 							break;
+						}
+
+						// for same grouped data, add other data to same indices
+						if (d.id !== key && xKey) {
+							ind[key] = ind[d.id] ?? i[xKey];
 						}
 					}
 				}
