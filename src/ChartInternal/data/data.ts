@@ -46,7 +46,13 @@ export default {
 		return !!(config.data_stack_normalize && config.data_groups.length);
 	},
 
-	isGrouped(id) {
+	/**
+	 * Check if given id is grouped data or has grouped data
+	 * @param {string} id Data id value
+	 * @returns {boolean} is grouped data or has grouped data
+	 * @private
+	 */
+	isGrouped(id?: string): boolean {
 		const groups = this.config.data_groups;
 
 		return id ?
