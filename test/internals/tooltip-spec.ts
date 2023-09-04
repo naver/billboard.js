@@ -1763,7 +1763,7 @@ describe("TOOLTIP", function() {
 					x: {
 						type: "timeseries",
 						tick: {
-						format: "%Y-%m-%d",
+							format: "%Y-%m-%d",
 						}
 					}
 				}
