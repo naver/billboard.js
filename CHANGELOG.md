@@ -1,3 +1,10 @@
+## [3.9.4](https://github.com/naver/billboard.js/compare/3.9.3...3.9.4) (2023-09-04)
+
+
+### Bug Fixes
+
+* **tooltip:** Fix error throw when tooltip.show=false is set ([4081a90](https://github.com/naver/billboard.js/commit/4081a9002af565ed1e8bc8c2435dadc78b4db1f8)), closes [#3396](https://github.com/naver/billboard.js/issues/3396)
+
 ## [3.9.3](https://github.com/naver/billboard.js/compare/3.9.2...3.9.3) (2023-08-09)
 
 
