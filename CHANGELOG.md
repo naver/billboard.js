@@ -18,8 +18,6 @@
 ### Features
 
 * **api:** Intent to ship subchart method ([976f04a](https://github.com/naver/billboard.js/commit/976f04a93df40bb756bba87c0f0afa5411ac12ba)), closes [#3342](https://github.com/naver/billboard.js/issues/3342)
-* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
-* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
 * **regions:** Intent to ship regions.label ([b4e3bc2](https://github.com/naver/billboard.js/commit/b4e3bc29f2e78d6547ce695f9ecc6aadf90c22a9)), closes [#3319](https://github.com/naver/billboard.js/issues/3319)
 
 ## [3.9.3](https://github.com/naver/billboard.js/compare/3.9.2...3.9.3) (2023-08-09)
