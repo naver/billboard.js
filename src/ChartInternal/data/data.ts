@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {select as d3Select} from "d3-selection";
 import {$BAR, $CANDLESTICK, $COMMON} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import type {IData, IDataPoint, IDataRow} from "./IData";
@@ -45,7 +46,13 @@ export default {
 		return !!(config.data_stack_normalize && config.data_groups.length);
 	},
 
-	isGrouped(id) {
+	/**
+	 * Check if given id is grouped data or has grouped data
+	 * @param {string} id Data id value
+	 * @returns {boolean} is grouped data or has grouped data
+	 * @private
+	 */
+	isGrouped(id?: string): boolean {
 		const groups = this.config.data_groups;
 
 		return id ?
@@ -391,7 +398,7 @@ export default {
 	 * @private
 	 */
 	getMaxDataCount(): number {
-		return Math.max(...this.data.targets.map(t => t.values.length));
+		return Math.max(...this.data.targets.map(t => t.values.length), 0);
 	},
 
 	getMaxDataCountTarget() {
@@ -664,18 +671,34 @@ export default {
 	 */
 	getDataIndexFromEvent(event): number {
 		const $$ = this;
-		const {config, state: {inputType, eventReceiver: {coords, rect}}} = $$;
-		const isRotated = config.axis_rotated;
+		const {config, state: {hasRadar, inputType, eventReceiver: {coords, rect}}} = $$;
+		let index;
 
-		// get data based on the mouse coords
-		const e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
-		const index = findIndex(
-			coords,
-			isRotated ? e.clientY - rect.top : e.clientX - rect.left,
-			0,
-			coords.length - 1,
-			isRotated
-		);
+		if (hasRadar) {
+			let target = event.target;
+
+			// in case of multilined axis text
+			if (/tspan/i.test(target.tagName)) {
+				target = target.parentNode;
+			}
+
+			const d: any = d3Select(target).datum();
+
+			index = d && Object.keys(d).length === 1 ? d.index : undefined;
+		} else {
+			const isRotated = config.axis_rotated;
+
+			// get data based on the mouse coords
+			const e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
+
+			index = findIndex(
+				coords,
+				isRotated ? e.clientY - rect.top : e.clientX - rect.left,
+				0,
+				coords.length - 1,
+				isRotated
+			);
+		}
 
 		return index;
 	},
@@ -740,19 +763,9 @@ export default {
 
 	findClosest(values, pos: [number, number]): IDataRow | undefined {
 		const $$ = this;
-		const {config, $el: {main}} = $$;
+		const {$el: {main}} = $$;
 		const data = values.filter(v => v && isValue(v.value));
-		const getSensitivity = (d: IDataPoint) => {
-			let sensitivity = config.point_sensitivity;
 
-			if (isFunction(sensitivity)) {
-				sensitivity = sensitivity.call($$.api, d);
-			} else if (sensitivity === "radius") {
-				sensitivity = d.r;
-			}
-
-			return sensitivity;
-		};
 		let minDist;
 		let closest;
 
@@ -776,7 +789,7 @@ export default {
 			.forEach((v: IDataPoint) => {
 				const d = $$.dist(v, pos);
 
-				minDist = getSensitivity(v);
+				minDist = $$.getPointSensitivity(v);
 
 				if (d < minDist) {
 					minDist = d;

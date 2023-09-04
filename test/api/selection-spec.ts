@@ -19,6 +19,9 @@ describe("API select", () => {
 			selection: {
 				enabled: true
 			}
+		},
+		transition: {
+			duration: 0
 		}
 	};
 
@@ -37,48 +40,58 @@ describe("API select", () => {
 			expect(selected.size()).to.be.equal(dataLen);
 		});
 
-		it("should unselect indice '1' data point", done => {
+		it("should unselect indice '1' data point", () => {
 			const indice = 1;
 
 			chart.unselect(["data1", "data2"], [indice]);
 
-			setTimeout(() => {
-				const unselected = main.selectAll(`.${$SELECT.selectedCircle}`)
-					.filter(`.${$SELECT.selectedCircle}-${indice}`);
+			const unselected = main.selectAll(`.${$SELECT.selectedCircle}`)
+				.filter(`.${$SELECT.selectedCircle}-${indice}`);
 
-				expect(unselected.empty()).to.be.ok;
-
-				done();
-			}, 500);
+			expect(unselected.empty()).to.be.ok;
+		});
+		
+		it("should select some portion of data points", () => {
+			const indice = [1, 3];
+			
+			chart.select("data1", indice, true);
+			
+			const selected = chart.selected();
+			
+			main.selectAll(`.${$SELECT.selectedCircles}-data1 circle`).each((v, i) => {
+				expect(v).to.be.equal(selected[i]);
+				expect(v.index).to.be.equal(indice[i]);
+			});
 		});
 
-		it("should unselect all data points", done => {
+		it("should unselect all data points", () => {
 			chart.unselect();
 
-			setTimeout(() => {
-				const unselected = main.selectAll(`.${$SELECT.selectedCircle}`);
+			const unselected = main.selectAll(`.${$SELECT.selectedCircle}`);
 
-				expect(unselected.empty()).to.be.ok;
-
-				done();
-			}, 500);
+			expect(unselected.empty()).to.be.ok;
 		});
 
-		it("should select some portion of data points", done => {
-			const indice = [1, 3];
+		it("with reset option", () => {
+			const target = [1, 3];
 
-			chart.select("data1", indice, true);
+			// when
+			chart.select("data1", target);
 
-			const selected = chart.selected();
+			let selected = main.selectAll(`.${$SELECT.selectedCircle}`);
 
-			setTimeout(() => {
-				main.selectAll(`.${$SELECT.selectedCircles}-data1 circle`).each((v, i) => {
-					expect(v).to.be.equal(selected[i]);
-					expect(v.index).to.be.equal(indice[i]);
-				});
+			expect(selected.size()).to.be.equal(2);
 
-				done();
-			}, 500);
+			selected.each(function(d, i) {
+				expect(d.index).to.be.equal(target[i]);
+			});
+
+			// when select again with reset option, should be unselected
+			chart.select("data1", target, true);
+
+			selected = main.selectAll(`.${$SELECT.selectedCircle}`);
+
+			expect(selected.size()).to.be.equal(0);
 		});
 	});
 
@@ -98,34 +111,26 @@ describe("API select", () => {
 			expect(selected.size()).to.be.equal(dataLen);
 		});
 
-		it("should unselect indice '1' data point", done => {
+		it("should unselect indice '1' data point", () => {
 			const indice = 1;
 
 			chart.unselect(["data1", "data2"], [indice]);
 
-			setTimeout(() => {
-				const unselected = main.selectAll(`.${$SELECT.SELECTED}`)
-					.filter(`.${$BAR.bar}-${indice}`);
+			const unselected = main.selectAll(`.${$SELECT.SELECTED}`)
+				.filter(`.${$BAR.bar}-${indice}`);
 
-				expect(unselected.empty()).to.be.ok;
-
-				done();
-			}, 500);
+			expect(unselected.empty()).to.be.ok;
 		});
 
-		it("should unselect all data points", done => {
+		it("should unselect all data points", () => {
 			chart.unselect();
 
-			setTimeout(() => {
-				const unselected = main.selectAll(`.${$SELECT.SELECTED}`);
+			const unselected = main.selectAll(`.${$SELECT.SELECTED}`);
 
-				expect(unselected.empty()).to.be.ok;
-
-				done();
-			}, 500);
+			expect(unselected.empty()).to.be.ok;
 		});
 
-		it("should select some portion of data points", done => {
+		it("should select some portion of data points", () => {
 			const indice = [1, 3];
 			const color = chart.color("data1");
 
@@ -133,17 +138,30 @@ describe("API select", () => {
 
 			const selected = chart.selected();
 
-			setTimeout(() => {
-				main.selectAll(`.${$SHAPE.shapes}-data1 path.${$SELECT.SELECTED}`).each(function(v, i) {
-					expect(v).to.be.equal(selected[i]);
-					expect(v.index).to.be.equal(indice[i]);
+			main.selectAll(`.${$SHAPE.shapes}-data1 path.${$SELECT.SELECTED}`).each(function(v, i) {
+				expect(v).to.be.equal(selected[i]);
+				expect(v.index).to.be.equal(indice[i]);
 
-					// check for the selected color
-					expect(this.style.filter).to.be.equal("brightness(1.25)");
-				});
+				// check for the selected color
+				expect(this.style.filter).to.be.equal("brightness(1.25)");
+			});
+		});
+	});
 
-				done();
-			}, 500);
+	describe("when selection is disabled", () => {
+		before(() => {
+			args.data.selection = false;
+			chart = util.generate(args);
+			main = chart.$.main;
+		});
+
+		it("the call of .select() should not select.", () => {
+			// when
+			chart.select();
+
+			const selected = main.selectAll(`.${$SELECT.SELECTED}`);
+
+			expect(selected.size()).to.be.equal(0);			
 		});
 	});
 });

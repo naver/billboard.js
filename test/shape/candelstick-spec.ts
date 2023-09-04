@@ -8,6 +8,8 @@ import {expect} from "chai";
 import util from "../assets/util";
 import {isArray} from "../../src/module/util";
 import {$CANDLESTICK, $COMMON} from "../../src/config/classes";
+import { line } from "d3-shape";
+import { brushY } from "d3-brush";
 
 describe("SHAPE CANDLESTICK", () => {
 	let chart;
@@ -130,6 +132,69 @@ describe("SHAPE CANDLESTICK", () => {
 
 				expect(hasExpandedClass).to.be.false;
 			});
+		});
+
+		it("set options: with wrong nullish data", () => {
+			args = {
+				data: {
+					columns: [
+						["data1",
+							{open: 100, high: 130, low: 5, close: 30, volume: 100},
+							[10,20,null, null, 10],
+						]
+					],
+					type: "candlestick"
+				}
+			};
+		});
+
+		it("for wrong data, path shouldn't render.", () => {
+			const d = chart.internal.$el.main.selectAll(".bb-shape:last-child path").attr("d");
+
+			expect(d).to.be.equal("M0,0V0 H0 V0z");			
+		});
+	});
+
+	describe("rotated axis", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1",
+							{open: 100, high: 140, low: -40, close: -20}
+						]
+					],
+					type: "candlestick",
+					labels: true
+				},
+				axis: {
+					rotated: true,
+					x: {
+						type: "category"
+					}
+				},
+				grid: {
+					y: {
+						show: true
+					}
+				}
+			};
+		});
+
+		it("should rendered correctly.", () => {
+			const {$el: {candlestick}, scale: {y}} = chart.internal;
+			const data = chart.data("data1")[0].values[0].value;
+
+			const line = candlestick.select("line");
+			const path = candlestick.select("path").attr("d");
+
+			// check line position
+			expect(+line.attr("x1")).to.be.equal(y(data.low));
+			expect(+line.attr("x2")).to.be.equal(y(data.high));
+
+			// check path position
+			expect(path.indexOf(y(data.close)) > -1).to.be.true;
+			expect(path.indexOf(y(data.open)) > -1).to.be.true;
 		});
 	});
 
@@ -260,6 +325,50 @@ describe("SHAPE CANDLESTICK", () => {
 			chart.$.line.lines.each(function(d, i) {
 				expect(expectedLine[d.id].test(this.getAttribute("d"))).to.be.true;
 			})
+		});
+	});
+
+	describe("dynamic load", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [],
+					labels: true
+				},
+			};
+		});
+
+		it("should generate candlestick from empty chart", done => {
+			const data = [					
+					["data1",
+						{open: 100, high: 130, low: 5, close: 30, volume: 100},
+						[30, 200, 5, 150, 200],
+					]
+				];
+
+			// when
+			chart.load({
+				columns: data,
+				type: "candlestick",
+				done() {
+					const {$el: {candlestick, tooltip}} = this.internal;
+
+					expect(candlestick.size()).to.be.equal(2);
+
+					// when
+					this.tooltip.show({x: 0});
+
+					// check if tooltip content shows correct data
+					const str = JSON.stringify(data[0][1])
+						.replace(/[{}\",]/g, "")
+						.replace(/(\d)(?=[a-z])/g, "$1 ")
+						.replace(/(:)(\d)/g, "$1 $2");
+
+					expect(str).to.be.equal(tooltip.select(".value").text().toLowerCase());
+
+					done();
+				}
+			});
 		});
 	});
 });

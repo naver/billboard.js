@@ -7,7 +7,6 @@
 import {expect} from "chai";
 import util from "../assets/util";
 import {$CIRCLE} from "../../src/config/classes";
-import {fireEvent} from "../assets/helper";
 
 describe("SHAPE POINT", () => {
 	let chart;
@@ -190,8 +189,8 @@ describe("SHAPE POINT", () => {
 	});
 
 	describe("point sensitivity", () => {
-		function checkHover(nodes, values, index, sensitivity = 0) {
-			const node = nodes[index];
+		function checkHover({circle, eventRect}, values, index, sensitivity = 0) {
+			const node = circle.nodes()[index];
 			const x = +node.getAttribute("cx");
 			const y = +node.getAttribute("cy");
 			const r = +node.getAttribute("r");
@@ -200,9 +199,11 @@ describe("SHAPE POINT", () => {
 				clientX: x + (sensitivity || r),
 				clientY: y
 			});
-			
+
 			expect(+chart.$.tooltip.select(".value").text())
 				.to.be.equal(values[index]);
+
+			expect(eventRect.style("cursor")).to.be.equal("pointer");
 		}
 
 		before(() => {
@@ -267,23 +268,22 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("check when point.sensitivity='radius'", done => {
-			const {circles} = chart.$;
-			const nodes = circles.nodes();
+			const {$el} = chart.internal;
 			const values = chart.data.values("data1");
 
 			new Promise((resolve, reject) => {
-				checkHover(nodes, values, 0);
+				checkHover($el, values, 0);
 
 				setTimeout(resolve, 300);
 			}).then(() => {
 				return new Promise((resolve, reject) => {
-					checkHover(nodes, values, 1);
+					checkHover($el, values, 1);
 
 					setTimeout(resolve, 300);
 				});
 			}).then(() => {
 				return new Promise((resolve, reject) => {
-					checkHover(nodes, values, 2);
+					checkHover($el, values, 2);
 
 					setTimeout(resolve, 300);
 				});
@@ -310,23 +310,22 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("check when point.sensitivity=Function", done => {
-			const {circles} = chart.$;
-			const nodes = circles.nodes();
+			const {$el} = chart.internal;
 			const values = chart.data.values("data1");
 
 			new Promise((resolve, reject) => {
-				checkHover(nodes, values, 0);
+				checkHover($el, values, 0);
 
 				setTimeout(resolve, 300);
 			}).then(() => {
 				return new Promise((resolve, reject) => {
-					checkHover(nodes, values, 1, 5);
+					checkHover($el, values, 1, 5);
 
 					setTimeout(resolve, 300);
 				});
 			}).then(() => {
 				return new Promise((resolve, reject) => {
-					checkHover(nodes, values, 2, 15);
+					checkHover($el, values, 2, 15);
 
 					setTimeout(resolve, 300);
 				});

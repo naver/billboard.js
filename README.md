@@ -40,7 +40,7 @@ If you have any questions, checkout the previous posts or create a new one at:
 - [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
 
 ## Supported chart types
-<img src="https://naver.github.io/billboard.js/img/chart-types.png?v=10" width=800>
+<img src="https://naver.github.io/billboard.js/img/chart-types.png?v=11" width=800>
 
 ## Download and Installation
 
@@ -98,6 +98,10 @@ You can download the compressed files for production
 - https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.css
 - https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.min.css
 
+
+#### dark
+- https://naver.github.io/billboard.js/release/latest/dist/theme/dark.css
+- https://naver.github.io/billboard.js/release/latest/dist/theme/dark.min.css
 
 #### insight
 - https://naver.github.io/billboard.js/release/latest/dist/theme/insight.css
@@ -281,7 +285,7 @@ THE SOFTWARE.
 [badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
 [badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
 [badge-ci-status]: https://github.com/naver/billboard.js/workflows/CI/badge.svg
-[badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
+[badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg?branch=master&v1
 [badge-snyk]: https://snyk.io/test/github/naver/billboard.js/badge.svg?targetFile=package.json
 [badge-gzip-size]: https://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
 [badge-latest]: https://img.shields.io/npm/v/billboard.js/latest.svg
@@ -294,7 +298,7 @@ THE SOFTWARE.
 [link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
 [link-jsDelivr]: https://www.jsdelivr.com/package/npm/billboard.js
 [link-version]: https://www.npmjs.com/package/billboard.js
-[link-coverage]: https://coveralls.io/github/naver/billboard.js
+[link-coverage]: https://coveralls.io/github/naver/billboard.js?branch=master
 [link-snyk]: https://snyk.io/test/github/naver/billboard.js?targetFile=package.json
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
 [link-semantic-release]: https://github.com/semantic-release/semantic-release

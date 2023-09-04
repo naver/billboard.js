@@ -655,7 +655,11 @@ export default {
 	 *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
 	 *     ],
 	 *     keys: {
-	 *       // x: "name", // it's possible to specify 'x' when category axis
+	 *       // case 1: specify 'x' key for category axis
+	 *       x: "name", // 'name' key will be used as category x axis values
+	 *       value: ["upload", "download"]
+	 *
+	 *       // case 2: without 'x' key for non-category axis
 	 *       value: ["upload", "download"]
 	 *     }
 	 * }
@@ -857,7 +861,11 @@ export default {
 	 *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
 	 *     ],
 	 *     keys: {
-	 *       // x: "name", // it's possible to specify 'x' when category axis
+	 *       // case 1: specify 'x' key for category axis
+	 *       x: "name", // 'name' key will be used as category x axis values
+	 *       value: ["upload", "download"]
+	 *
+	 *       // case 2: without 'x' key for non-category axis
 	 *       value: ["upload", "download"]
 	 *     }
 	 * }

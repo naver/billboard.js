@@ -133,14 +133,6 @@ export default class AxisRendererHelper {
 
 					return r;
 				});
-		} else {
-			for (let i = Math.ceil(start); i < end; i++) {
-				ticks.push(i);
-			}
-
-			if (ticks.length > 0 && ticks[0] > 0) {
-				ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
-			}
 		}
 
 		return ticks;

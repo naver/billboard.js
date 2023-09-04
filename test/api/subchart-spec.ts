@@ -177,4 +177,152 @@ describe("API subchart", () => {
 			expect(spy.calledOnce).to.be.false;
 		});
 	});
+
+	describe(".subchart() / .subchart.reset()", () => {
+		const spy = sinon.spy();
+
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250]
+					],
+					type: "line"
+				},
+				axis: {
+					y: {
+						show: false
+					}
+				},
+				subchart: {
+					show: true,
+					showHandle: true
+				}
+			};
+		});
+
+		it("check subchart selection and reset", () => {
+			const {brush, scale: {x, subX}} = chart.internal;
+			const range = [1, 3];
+
+			// when
+			chart.subchart(range);
+
+			expect(chart.subchart()).to.deep.equal(range);		
+
+			const selection = brush.getSelection().select(".selection");
+			const posX = +selection.attr("x");
+			const width = +selection.attr("width");
+
+			expect(posX).to.be.equal(subX(range[0]));
+			expect(posX + width).to.be.closeTo(subX(range[1]), 1);
+
+			// when
+			chart.subchart.reset();
+
+			expect(selection.attr("width")).to.be.null;
+			expect(x.domain()).to.be.deep.equal(subX.domain());
+		});
+
+		it("when trying to give out of bounds data.", () => {
+			const {brush, scale: {x, subX}} = chart.internal;
+			const selection = brush.getSelection().select(".selection");
+			const range = [100, 200];
+
+			// when
+			chart.subchart(range);
+
+			expect(chart.subchart()).to.deep.equal(x.orgDomain());
+			expect(selection.attr("width")).to.be.null;
+			expect(x.domain()).to.be.deep.equal(subX.domain());
+
+			// when
+			chart.subchart([3, 1]);
+
+			expect(selection.attr("width")).to.be.null;
+			expect(x.domain()).to.be.deep.equal(subX.domain());
+
+			// when
+			chart.subchart([2, 2]);
+
+			expect(selection.attr("width")).to.be.null;
+			expect(x.domain()).to.be.deep.equal(subX.domain());
+		});
+
+		it("set options: subchart.onbrush", () => {
+			args.subchart.onbrush = spy;
+		});
+
+		it("onbrush callback should be called once.", () => {
+			const range = [1, 2.5];
+
+			expect(spy.callCount).to.be.equal(0);
+
+			// when
+			chart.subchart(range);
+
+			expect(spy.callCount).to.be.equal(1);
+			expect(spy.args[0][0]).to.be.deep.equal(range);
+			
+		});
+
+		it("only first range value is updated?", () => {
+			const range = [0, 1];
+
+			// when
+			chart.subchart(range);
+
+			const handlebar = chart.internal.brush.getSelection()
+				.selectAll(".handle--custom"); // .filter(":last-child").node();
+
+			// when
+			util.doDrag(handlebar.node(), {clientX: 100, clientY: 0}, {clientX: 150, clientY: 0}, chart);
+
+			expect(chart.subchart()[1]).to.be.equal(range[1]);
+		});
+
+		it("set options: axis.x.type='timeseries'", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", '2023-08-01', '2023-08-02', '2023-08-03', '2023-08-04', '2023-08-05'],
+						["data1", 30, 200, 100, 170, 150],
+					],
+					type: "line"
+				  },
+				axis: {
+					x: {
+						type: "timeseries"
+					}
+				},
+				subchart: {
+					show: true,
+					showHandle: true
+				}
+			};
+		});
+
+		it("when x is timeseries", () => {
+			const {brush, scale: {x, subX}} = chart.internal;
+			const range = ["2023-08-03", "2023-08-05"];
+			const rangeParsed = range.map(v => new Date(`${v} 00:00`));
+
+			// when
+			chart.subchart(range);
+
+			const selection = brush.getSelection().select(".selection");
+			const posX = +selection.attr("x");
+			const width = +selection.attr("width");
+
+			expect(posX).to.be.equal(subX(rangeParsed[0]));
+			expect(posX + width).to.be.closeTo(subX(rangeParsed[1]), 1);
+
+			// when
+			chart.subchart.reset();
+
+			expect(selection.attr("width")).to.be.null;
+			expect(x.domain()).to.be.deep.equal(subX.domain());
+		});
+	});
 });

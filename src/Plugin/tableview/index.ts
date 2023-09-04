@@ -139,7 +139,7 @@ export default class TableView extends Plugin {
 			}</tr>`;
 		});
 
-		const rx = /<[^>]+><\/[^>]+>/g;
+		const rx = /(<\/?(script|img)[^>]*>|<[^>]+><\/[^>]+>)/ig;
 		const r = tplProcess(tpl.body, {
 			...config,
 			title: config.title || $$.config.title_text || "",
@@ -158,7 +158,7 @@ export default class TableView extends Plugin {
 	}
 
 	$willDestroy(): void {
-		this.element.parentNode.removeChild(this.element);
+		this.element.parentNode?.removeChild(this.element);
 
 		// remove default css style when left one chart instance
 		if (this.$$.charts.length === 1) {

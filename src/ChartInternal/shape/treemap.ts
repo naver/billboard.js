@@ -122,12 +122,12 @@ export default {
 			const isTouch = state.inputType === "touch";
 
 			$el.treemap
-				.on(isTouch ? "touchstart" : "mousemove", event => {
+				.on(isTouch ? "touchstart" : "mouseover mousemove", event => {
 					const data = getTarget(event);
 
 					if (data) {
 						$$.showTooltip([data], event.currentTarget);
-						event.type === "mouseover" && $$.setOverOut(true, data);
+						/^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
 					}
 				})
 				.on(isTouch ? "touchend" : "mouseout", event => {

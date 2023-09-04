@@ -3194,6 +3194,66 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		LegendItemInteraction: [
+			{
+				description: "<b>Single click + AltKey(Win)/optionKey(Mac)</b><br>or <b>Double click</b> legend item to show/hide data series",
+				options: {
+					title: {
+						text: "Single click"
+					},
+					data: {
+						columns: [
+							["data1", 300, 350, 300],
+							["data2", 130, 100, 140],
+							["data3", 230, 200, 240]
+						],
+						type: "line"
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Double click"
+					},
+					data: {
+						columns: [
+							["data1", 300, 350, 300],
+							["data2", 130, 100, 140],
+							["data3", 230, 200, 240]
+						],
+						type: "line"
+					},
+					legend: {
+						item: {
+							interaction: {
+								dblclick: true
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Interaction=false"
+					},
+					data: {
+						columns: [
+							["data1", 300, 350, 300],
+							["data2", 130, 100, 140],
+							["data3", 230, 200, 240]
+						],
+						type: "line"
+					},
+					legend: {
+						item: {
+							interaction: false
+						}
+					}
+				}
+			},
+		],
 		LegendItemTileType: [
 			{
 				options: {
@@ -3930,6 +3990,61 @@ d3.select(".chart_area")
 					{axis: "y2", end: 900, class: "regionY2"},
 					{axis: "y2", start: 1150, end: 1250, class: "regionY2"},
 					{axis: "y2", start: 1300, class: "regionY2"}
+				]
+			}
+		},
+		RegionLabel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 100, 150, 130, 200, 220, 190],
+					],
+					axes: {
+						data2: "y2",
+					},
+					type: "line",
+					colors: {
+						data1: "#ff0000"
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				regions: [
+					{
+						axis: "x",
+						start: 1,
+						end: 2,
+						class: "regions_class1",
+						label: {
+							text: "Regions 1",
+							color: "red"
+						}
+					},
+					{
+						axis: "y",
+						start: 100,
+						end: 300,
+						class: "regions_class2",
+						label: {
+							text: "Regions 2",
+							x: 50,
+							color: "blue"
+						}
+					},
+					{
+						axis: "y2",
+						start: 200,
+						end: 220,
+						class: "regions_class3",
+						label: {
+							text: "Regions 3",
+							y: 10
+						}
+					}
 				]
 			}
 		},

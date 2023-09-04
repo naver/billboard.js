@@ -10,8 +10,8 @@ export default {
 	 * @private
 	 */
 	categoryName(i: number): string {
-		const {axis_x_categories: categories} = this.config;
+		const {axis_x_categories} = this.config;
 
-		return i < categories?.length ? categories[i] : i;
+		return axis_x_categories?.[i] ?? i;
 	},
 };

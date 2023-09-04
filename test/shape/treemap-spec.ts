@@ -7,7 +7,6 @@
 import {expect} from "chai";
 import util from "../assets/util";
 import {parseNum} from "../assets/helper";
-import x from "../../src/Chart/api/x";
 
 describe("TREEMAP", () => {
 	let chart;
@@ -160,6 +159,36 @@ describe("TREEMAP", () => {
 			expect(yRange[0]).to.be.equal(args.padding.top);
 			expect(yRange[1]).to.be.equal(+svg.attr("height") -args.padding.bottom);
 		});
+		
+		it("generate from JSON data", () => {
+			const param = {
+				data: {
+					json: [
+						{name: "a", upload: 200, download: 200},
+						{name: "b", upload: 190, download: 230},
+					],
+					keys: {
+						value: ["upload", "download"]
+					},
+					type: "treemap",
+					labels: {
+						colors: "#000",
+						centered: true
+					}
+				}
+			};
+			const treemap = util.generate(param);
+
+			const data = treemap.data();
+
+			expect(data.length).to.be.equal(2);
+
+			data.forEach((v, i) => {
+				expect(v.id).to.be.equal(param.data.keys.value[i]);
+			});
+
+			treemap.destroy();
+		});
 	});
 
 	describe("label options", () => {
@@ -217,6 +246,37 @@ describe("TREEMAP", () => {
 			chart.tooltip.hide();
 
 			expect(chart.$.tooltip.style("display")).to.be.equal("none");
+		});
+
+		it("set options: set inputType='touch'", () => {
+			args = {
+				data: {
+					rows: [
+						["data1", "data2", "data3", "data4"],
+						[300, 200, 500, 380]
+					],
+					type: "treemap",
+					labels: true
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				},
+				treemap: {
+					tile: "dice"
+				}
+			}
+		});
+
+		it("should show tooltip with touch input.", () => {
+			const id = "data3";
+			const treemap =  chart.internal.$el.treemap.node();
+
+			// when
+			chart.tooltip.show({data: {id}})
+
+			expect(chart.$.tooltip.select(".name").text()).to.be.equal(id);
 		});
 	});
 });

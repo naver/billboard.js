@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
-import type {IData} from "../data/IData";
+import type {IData, TDomainRange} from "../data/IData";
 import {brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain, parseDate, sortValue} from "../../module/util";
 
 export default {
@@ -368,21 +368,25 @@ export default {
 	},
 
 	/**
-	 * Get zoom domain
+	 * Get subchart/zoom domain
+	 * @param {string} type "subX" or "zoom"
+	 * @param {boolean} getCurrent Get current domain if true
 	 * @returns {Array} zoom domain
 	 * @private
 	 */
-	getZoomDomain(): [number|Date, number|Date] {
+	getZoomDomain(type: "subX" | "zoom" = "zoom", getCurrent = false): TDomainRange {
 		const $$ = this;
-		const {config, org} = $$;
-		let [min, max] = org.xDomain;
+		const {config, scale, org} = $$;
+		let [min, max] = getCurrent && scale[type] ? scale[type].domain() : org.xDomain;
 
-		if (isDefined(config.zoom_x_min)) {
-			min = getMinMax("min", [min, config.zoom_x_min]);
-		}
+		if (type === "zoom") {
+			if (isDefined(config.zoom_x_min)) {
+				min = getMinMax("min", [min, config.zoom_x_min]);
+			}
 
-		if (isDefined(config.zoom_x_max)) {
-			max = getMinMax("max", [max, config.zoom_x_max]);
+			if (isDefined(config.zoom_x_max)) {
+				max = getMinMax("max", [max, config.zoom_x_max]);
+			}
 		}
 
 		return [min, max];
@@ -409,5 +413,37 @@ export default {
 		}
 
 		return domainLength * (pixels / state[length]);
+	},
+
+	/**
+	 * Check if the given domain is within subchart/zoom range
+	 * @param {Array} domain Target domain value
+	 * @param {Array} current Current subchart/zoom domain value
+	 * @param {Array} range subchart/zoom range value
+	 * @returns {boolean}
+	 * @private
+	 */
+	withinRange<T = TDomainRange>(domain: T, current: T, range: T): boolean {
+		const $$ = this;
+		const isInverted = $$.config.axis_x_inverted;
+		const [min, max] = range as number[];
+
+		if (Array.isArray(domain)) {
+			const target = [...domain];
+
+			isInverted && target.reverse();
+
+			if (target[0] < target[1]) {
+				return domain.every((v, i) => (
+					i === 0 ? (
+						isInverted ? +v <= min : +v >= min
+					) : (
+						isInverted ? +v >= max : +v <= max
+					)
+				) && !(domain.every((v, i) => v === current[i])));
+			}
+		}
+
+		return false;
 	}
 };

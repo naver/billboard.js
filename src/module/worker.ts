@@ -36,6 +36,24 @@ function getObjectURL(fn: Function, depsFn?: Function[]): string {
 }
 
 /**
+ * Get WebWorker instance
+ * @param {string} src URL object as string
+ * @returns {object} WebWorker instance
+ * @private
+ */
+function getWorker(src) {
+	const worker = new window.Worker(src);
+
+	// handle error
+	worker.onerror = function(e) {
+		// eslint-disable-next-line no-console
+		console.error ? console.error(e) : console.log(e);
+	};
+
+	return worker;
+}
+
+/**
  * Create and run on Web Worker
  * @param {boolean} useWorker Use Web Worker
  * @param {Function} fn Function to be executed in worker
@@ -61,11 +79,15 @@ function getObjectURL(fn: Function, depsFn?: Function[]): string {
 export function runWorker(
 	useWorker = true, fn: Function, callback: Function, depsFn?: Function[]
 ): Function {
-	let runFn;
+	let runFn = function(...args) {
+		const res = fn(...args);
+
+		callback(res);
+	};
 
 	if (window.Worker && useWorker) {
 		const src = getObjectURL(fn, depsFn);
-		const worker = new window.Worker(src);
+		const worker = getWorker(src);
 
 		runFn = function(...args) {
 			// trigger worker
@@ -79,21 +101,10 @@ export function runWorker(
 				return callback(e.data);
 			};
 
-			// handle error
-			worker.onerror = function(e) {
-				console.error(e);
-			};
-
 			// return new Promise((resolve, reject) => {
 			// 	worker.onmessage = ({data}) => resolve(data);
 			// 	worker.onerror = reject;
 			// });
-		};
-	} else {
-		runFn = function(...args) {
-			const res = fn(...args);
-
-			callback(res);
 		};
 	}
 

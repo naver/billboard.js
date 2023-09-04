@@ -114,14 +114,24 @@ function getRadiusFn(expandRate = 0) {
  */
 function getAttrTweenFn(fn: (d: IArcData) => string) {
 	return function(d: IArcData): (t: number) => string {
-		const interpolate = d3Interpolate(this._current, d);
+		const getAngleKeyValue = ({startAngle = 0, endAngle = 0, padAngle = 0}) => ({
+			startAngle, endAngle, padAngle
+		});
+
+		// d3.interpolate interpolates id value, if id is given as color string(ex. gold, silver, etc)
+		// to avoid unexpected behavior, interpolate only angle values
+		// https://github.com/naver/billboard.js/issues/3321
+		const interpolate = d3Interpolate(
+			getAngleKeyValue(this._current), getAngleKeyValue(d)
+		);
 
 		this._current = d;
 
 		return function(t: number): string {
-			const interpolated = interpolate(t);
+			const interpolated = interpolate(t) as IArcData;
+			const {data, index, value} = d;
 
-			return fn(interpolated);
+			return fn({...interpolated, data, index, value});
 		};
 	};
 }
@@ -310,7 +320,7 @@ export default {
 			.innerRadius(inner)
 			.outerRadius(outer);
 
-		const newArc = function(d, withoutUpdate) {
+		const newArc = function(d: IArcData, withoutUpdate) {
 			let path: string | null = "M 0 0";
 
 			if (d.value || d.data) {
@@ -694,7 +704,8 @@ export default {
 			.style("opacity", "0")
 			.remove();
 
-		mainArc = mainArc.enter().append("path")
+		mainArc = mainArc.enter()
+			.append("path")
 			.attr("class", $$.getClass("arc", true))
 			.style("fill", d => $$.color(d.data))
 			.style("cursor", d => (isSelectable?.bind?.($$.api)(d) ? "pointer" : null))
@@ -771,7 +782,7 @@ export default {
 			.call(endall, function() {
 				if ($$.levelColor) {
 					const path = d3Select(this);
-					const d: any = path.datum();
+					const d: any = path.datum(this._current);
 
 					$$.updateLegendItemColor(d.data.id, path.style("fill"));
 				}
@@ -1030,8 +1041,8 @@ export default {
 		// touch events
 		if (isTouch && $$.hasArcType() && !$$.radars) {
 			const getEventArc = event => {
-				const touch = event.changedTouches[0];
-				const eventArc = d3Select(document.elementFromPoint(touch.clientX, touch.clientY));
+				const {clientX, clientY} = event.changedTouches?.[0] ?? {clientX: 0, clientY: 0};
+				const eventArc = d3Select(document.elementFromPoint(clientX, clientY));
 
 				return eventArc;
 			};
@@ -1109,5 +1120,22 @@ export default {
 					.text($$.textForGaugeMinMax(config.gauge_max, true));
 			}
 		}
+	},
+
+	/**
+	 * Get Arc element by id or index
+	 * @param {string|number} value id or index of Arc
+	 * @returns {d3Selection} Arc path element
+	 * @private
+	 */
+	getArcElementByIdOrIndex(value: string | number): d3Selection {
+		const $$ = this;
+		const {$el: {arcs}} = $$;
+		const filterFn = isNumber(value) ?
+			d => d.index === value :
+			d => d.data.id === value;
+
+		return arcs?.selectAll(`.${$COMMON.target} path`)
+			.filter(filterFn);
 	}
 };

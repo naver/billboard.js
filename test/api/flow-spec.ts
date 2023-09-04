@@ -6,12 +6,12 @@
 import {expect} from "chai";
 import sinon from "sinon";
 import util from "../assets/util";
-import {$AXIS, $LINE} from "../../src/config/classes";
+import {$AXIS, $GRID, $LINE, $TEXT} from "../../src/config/classes";
 import {window} from "../../src/module/browser";
 
 describe("API flow", () => {
 	let chart;
-	let args = {
+	let args: any = {
 		data: {
 			x: "x",
 			columns: [
@@ -31,7 +31,7 @@ describe("API flow", () => {
 		}
 	};
 
-	describe("basic functionality", () => {
+	describe("basic functionality #1", () => {
 		before(()=> {
 			chart = util.generate(args);
 		});
@@ -44,7 +44,7 @@ describe("API flow", () => {
 					["data2", 100, 300],
 					["data3", 200, 120]
 				],
-				done: function () {
+				done() {
 					const lineSize = this.internal.$el.main.selectAll(`.${$LINE.chartLines} > g`).size();
 
 					expect(lineSize).to.be.equal(this.data().length);
@@ -101,7 +101,7 @@ describe("API flow", () => {
 		});
 	});
 
-	describe("basic functionality", () => {
+	describe("basic functionality #2", () => {
 		before(()=> {
 			args = {
 				data: {
@@ -128,7 +128,7 @@ describe("API flow", () => {
 		});
 
 		it("ticks should translate", done => {
-			const moved = [];
+			const moved: number[] = [];
 			let interval;
 
 			chart.flow({
@@ -161,10 +161,9 @@ describe("API flow", () => {
 				if (translateX < 0) {
 					moved.push(Math.abs(translateX));
 				}				
-			}, 50);
+			}, 100);
 		});
 	});
-
 
 	describe("Indexed and category type axis", () => {
 		it("Indexed axis: should flow without error", done => {
@@ -180,8 +179,10 @@ describe("API flow", () => {
 				columns: [
 					["data", 50, 60]
 				],
-				done: function() {
+				done() {
 					expect(true).to.be.true;
+					this.destroy();
+
 					done();
 				}
 			});
@@ -208,11 +209,259 @@ describe("API flow", () => {
 					["x", "d", "e"],
 					["data", 50, 60]
 				],
-				done: function() {
+				done() {
 					expect(true).to.be.true;
+					this.destroy();
+
 					done();
 				}
 			});
 		});
+	});
+
+	describe("check options", () => {
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
+
+		afterEach(() => {
+			chart?.destroy();
+		});
+
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2017-01-11", "2017-01-21", "2017-01-25"],
+						["data1", 130, 140, 130],
+						["data2", 150, 160, 145]
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%y/%m/%d"
+						}
+					}
+				}
+			};
+		});
+
+		it("should flow not surpassing indicated 'to' option value.", done => {
+			chart.flow({
+				columns: [
+					["x", '2017-02-01', '2017-02-10'],
+					["data1", 500, 200]
+		
+				],
+				to: "2017-01-11",
+				duration: 500,
+				done() {
+					const tick = this.internal.$el.axis.x.select(".tick");
+
+					expect(tick.text()).to.be.equal("17/01/11");
+					expect(tick.attr("transform")).to.be.equal("translate(6,0)");
+
+					done();
+				}
+			})
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				}
+			};
+		});
+
+		it("when flows from timeseries x axis empty data", done => {
+			chart.flow({
+				columns: [
+					["x", '2017-02-01', '2017-02-10'],
+					["data1", 100, 200]
+		
+				],
+				duration: 500,
+				done() {
+					const tick = this.internal.$el.axis.x.select(".tick");
+
+					expect(tick.text()).to.be.equal("2017-02-01");
+					done();
+				}
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [],
+					type: "line"
+				}
+			};
+		});
+
+		it("indexed axis: when flows from indexed x axis empty data", done => {
+			chart.flow({
+				columns: [
+					["data1", 100]
+		
+				],
+				duration: 500,
+				done() {
+					const tick = this.internal.$el.axis.x.select(".tick");
+
+					expect(tick.text()).to.be.equal("0");
+
+					done();
+				}
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [			
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				}
+			};
+		});
+
+		it("timeseires axis: when flows from indexed x axis empty data", done => {
+			chart.flow({
+				columns: [
+					["x", "2023-08-25"],
+					["data1", 100]
+		
+				],
+				duration: 500,
+				done() {
+					const tick = this.internal.$el.axis.x.select(".tick");
+
+					expect(tick.text()).to.be.equal("2023-08-25");
+
+					done();
+				}
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 10, 12, 11]
+					],
+					type: "line",
+					labels: true
+				},
+				point: {
+					type: "rectangle"
+				},
+				grid: {
+					x: {
+						show: true,
+						lines: [
+							{value: 2, text: "Label on 2"},
+						]
+					}
+				},
+				regions: [
+					{
+						axis: "x",
+						start: 0,
+						end: 1,
+						class: "region-1-4"
+					}
+				]
+			};
+		});
+
+		it("grid & regions should flow", done => {
+			chart.flow({
+				columns: [
+					["data1", 200]
+			
+				],
+				duration: 300,
+				done() {
+					const {$el} = this.internal;
+				
+					// grids
+					const xgrids = $el.grid.main.selectAll(`.${$GRID.xgrids} line`);
+
+					expect(xgrids.size()).to.be.equal(2);
+
+					// region
+					const regionRect = $el.region.list.select("rect").node().getBoundingClientRect();
+
+					expect(regionRect.x).to.be.below(-240);
+					
+					// data label text
+					const text = $el.main.selectAll(`.${$TEXT.chartText} text`);
+
+					text.each(function(d, i) {
+						expect(+this.textContent).to.be.equal(d.value);						
+					});
+
+					done();
+				}
+			});
+
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 20, 30, 40]
+					]
+				}
+			}
+		});
+
+		it("should flow correctly with newly added data", done => {
+			chart.flow({
+				columns: [
+					["data1", 50, 60],
+					["data2", 20, 30]
+				],
+				done() {
+					this.$.main.selectAll(`.${$LINE.chartLine} path`).each(function(d, i) {
+						const rect = this.getBoundingClientRect();
+						const expected = {
+							data1: [588, 46.5],
+							data2: [294, 340.5]
+						};
+
+						expect([rect.width, rect.x]).to.be.deep.equal(expected[d.id]);
+					});
+
+					done();
+				}
+			});
+		})
 	});
 });

@@ -61,7 +61,7 @@ export default {
 			$el.eventRect = eventRectUpdate;
 
 			if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
-				$$.bindTouchOnEventRect(isMultipleX);
+				$$.bindTouchOnEventRect();
 			}
 
 			// when initilazed with empty data and data loaded later, need to update eventRect
@@ -87,12 +87,12 @@ export default {
 		$$.updateEventRectData();
 	},
 
-	bindTouchOnEventRect(isMultipleX: boolean): void {
+	bindTouchOnEventRect(): void {
 		const $$ = this;
 		const {config, state, $el: {eventRect, svg}} = $$;
 
 		const selectRect = context => {
-			if (isMultipleX) {
+			if ($$.isMultipleX()) {
 				$$.selectRectForMultipleXs(context);
 			} else {
 				const index = $$.getDataIndexFromEvent(state.event);
@@ -101,7 +101,7 @@ export default {
 
 				index === -1 ?
 					$$.unselectRect() :
-					$$.selectRectForSingle(context, eventRect, index);
+					$$.selectRectForSingle(context, index);
 			}
 		};
 
@@ -173,7 +173,6 @@ export default {
 
 		svg.on("touchstart", event => {
 			state.event = event;
-
 			const {target} = event;
 
 			if (target && target !== eventRect.node()) {
@@ -313,7 +312,74 @@ export default {
 		});
 	},
 
-	selectRectForMultipleXs(context): void {
+	/**
+	 * Seletct rect for single x value
+	 * @param {d3Selection} context Event rect element
+	 * @param {number} index x Axis index
+	 * @private
+	 */
+	selectRectForSingle(context: SVGRectElement, index: number): void {
+		const $$ = this;
+		const {config, $el: {main, circle}} = $$;
+		const isSelectionEnabled = config.data_selection_enabled;
+		const isSelectionGrouped = config.data_selection_grouped;
+		const isSelectable = config.data_selection_isselectable;
+		const isTooltipGrouped = config.tooltip_grouped;
+		const selectedData = $$.getAllValuesOnIndex(index);
+
+		if (isTooltipGrouped) {
+			$$.showTooltip(selectedData, context);
+			$$.showGridFocus?.(selectedData);
+
+			if (!isSelectionEnabled || isSelectionGrouped) {
+				return;
+			}
+		}
+
+		// remove possible previous focused state
+		!circle && main.selectAll(`.${$COMMON.EXPANDED}:not(.${$SHAPE.shape}-${index})`).classed($COMMON.EXPANDED, false);
+
+		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
+			.classed($COMMON.EXPANDED, true)
+			.style("cursor", isSelectable ? "pointer" : null)
+			.filter(function(d) {
+				return $$.isWithinShape(this, d);
+			});
+
+		if (shapeAtIndex.empty() && !isTooltipGrouped) {
+			$$.hideGridFocus?.();
+			$$.hideTooltip();
+
+			!isSelectionGrouped && $$.setExpand(index);
+		}
+
+		shapeAtIndex
+			.call(selected => {
+				const d = selected.data();
+
+				if (isSelectionEnabled &&
+					(isSelectionGrouped || isSelectable?.bind($$.api)(d))
+				) {
+					context.style.cursor = "pointer";
+				}
+
+				if (!isTooltipGrouped) {
+					$$.showTooltip(d, context);
+					$$.showGridFocus?.(d);
+					$$.unexpandCircles?.();
+
+					selected.each(d => $$.setExpand(index, d.id));
+				}
+			});
+	},
+
+	/**
+	 * Select rect for multiple x values
+	 * @param {d3Selection} context Event rect element
+	 * @param {boolean} [triggerEvent=true] Whether trigger event or not
+	 * @private
+	 */
+	selectRectForMultipleXs(context: SVGRectElement, triggerEvent = true): void {
 		const $$ = this;
 		const {config, state} = $$;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
@@ -326,7 +392,7 @@ export default {
 		const mouse = getPointer(state.event, context);
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
 
-		if (state.mouseover && (!closest || closest.id !== state.mouseover.id)) {
+		if (triggerEvent && state.mouseover && (!closest || closest.id !== state.mouseover.id)) {
 			config.data_onout.call($$.api, state.mouseover);
 			state.mouseover = undefined;
 		}
@@ -351,11 +417,13 @@ export default {
 		// Show xgrid focus line
 		$$.showGridFocus(selectedData);
 
+		const dist = $$.dist(closest, mouse);
+
 		// Show cursor as pointer if point is close to mouse position
-		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
+		if ($$.isBarType(closest.id) || dist < $$.getPointSensitivity(closest)) {
 			$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", "pointer");
 
-			if (!state.mouseover) {
+			if (triggerEvent && !state.mouseover) {
 				config.data_onover.call($$.api, closest);
 				state.mouseover = closest;
 			}
@@ -445,10 +513,11 @@ export default {
 						}
 					}
 
+					const eventOnSameIdx = config.tooltip_grouped && index === eventReceiver.currentIdx;
+
 					// do nothing while dragging/flowing
-					if (state.dragging || state.flowing || $$.hasArcType() ||
-						(config.tooltip_grouped && index === eventReceiver.currentIdx)
-					) {
+					if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
+						eventOnSameIdx && $$.setTooltipPosition();
 						return;
 					}
 
@@ -458,7 +527,7 @@ export default {
 					}
 
 					index === -1 ?
-						$$.unselectRect() : $$.selectRectForSingle(this, rect, index);
+						$$.unselectRect() : $$.selectRectForSingle(this, index);
 
 					// As of individual data point(or <path>) element can't bind mouseover/out event
 					// to determine current interacting element, so use 'mousemove' event instead.

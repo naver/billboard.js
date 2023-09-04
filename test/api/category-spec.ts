@@ -10,26 +10,47 @@ import {$AXIS} from "../../src/config/classes";
 
 describe("API category", () => {
 	let chart;
+	let args;
+
+	beforeEach(() => {
+		chart = util.generate(args);
+	});
 
 	before(() => {
-		return new Promise((resolve) => {
-			chart = util.generate({
-				data: {
-					x: "x",
-					columns: [
-						["x", "a", "b", "c", "d", "e"],
-						["data1", 30, 200, 100, 400, 150],
-						["data2", 5000, 2000, 1000, 4000, 1500]
-					]
-				},
-				axis: {
-					x: {
-						type: "category"
-					}
-				},
-				onrendered: resolve
-			});
-		});
+		args = {
+			data: {
+				x: "x",
+				columns: [
+					["x", "a", "b", "c", "d", "e"],
+					["data1", 30, 200, 100, 400, 150],
+					["data2", 5000, 2000, 1000, 4000, 1500]
+				]
+			},
+			axis: {
+				x: {
+					type: "category",
+				}
+			}
+		};
+
+		// return new Promise((resolve) => {
+		// 	chart = util.generate({
+		// 		data: {
+		// 			x: "x",
+		// 			columns: [
+		// 				["x", "a", "b", "c", "d", "e"],
+		// 				["data1", 30, 200, 100, 400, 150],
+		// 				["data2", 5000, 2000, 1000, 4000, 1500]
+		// 			]
+		// 		},
+		// 		axis: {
+		// 			x: {
+		// 				type: "category"
+		// 			}
+		// 		},
+		// 		onrendered: resolve
+		// 	});
+		// });
 	});
 
 	it("should return category names", () => {
@@ -66,4 +87,103 @@ describe("API category", () => {
 			expect(d3Select(this).text()).to.be.equal(name[i]);
 		});
 	});
+
+	it("set options: set categories by axis.x.catgories option", () => {
+		args = {
+			data: {
+				columns: [
+					["download", 30, 200, 100, 400],
+					["loading", 90, 100, 140, 200]
+				],
+				type: "bar"
+			  },
+			axis: {
+				x: {
+					type: "category",
+					categories: ["www.site1.com", "www.site2.com", "www.site3.com", "www.site4.com"],
+				}
+			}
+		};
+	});
+
+	it("should return categories correctly.", () => {
+		const categories = chart.categories();
+
+		expect(categories).to.deep.equal(args.axis.x.categories);
+
+		// when give out of range x axis value
+		chart.tooltip.show({x: 2000});
+
+		expect(chart.$.tooltip.html()).to.be.empty;
+	});
+
+	it("set options: axis.x.categories=[]", () => {
+		args.axis.x.categories = [];
+	});
+
+	it("should return categories correctly.", () => {
+		const indexed = chart.data.values("loading").map((v, i) => i);
+
+		expect(chart.categories()).to.be.deep.equal(indexed);
+
+	});
+
+	it("should load without error when categories=null is given.", done => {
+		chart.load({
+			columns: [
+				["data1", 20,30,33, 22]
+			],
+			categories: null,
+			done() {
+				expect(true).to.be.ok;
+				done();
+			}
+		});
+	});
+
+	it("set options", () => {
+		args = {
+			data: {
+				columns: [
+					["data1", 100, 99, 98]
+				],
+			},
+			axis: {
+				x: {
+					type: "category"
+				}
+			}
+		};
+	});
+
+	it("check for indexed categories", () => {
+		expect(chart.categories()).to.deep.equal([0,1,2]);
+	});
+
+	it("set options", () => {
+		args = {
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150],
+					["data2", 5000, 2000, 1000, 4000, 1500]
+				]
+			},
+			axis: {
+				x: {
+					type: "category",
+					tick: {
+						format: function(x) {
+							return `Type ${x}`;
+						}
+					}
+				}
+			}
+		};
+	});
+
+	it("should indexed category formatted correctly?", () => {
+		chart.internal.$el.axis.x.selectAll(".tick").each(function(d, i) {
+			expect(this.textContent).to.be.equal(args.axis.x.tick.format(i));
+		})
+	})
 });

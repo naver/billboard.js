@@ -13,23 +13,27 @@ import {compareEpochs, getCentroid, getRegionArea, pointInRegion} from "../../..
 describe("PLUGIN: STANFORD", () => {
 	let chart;
 	let stanford = new Stanford({ epochs: [30, 35] });
-	let args: any = {
-		data: {
-			x: "x",
-			columns: [
-				["x", 25, 35],
-				["y", 25, 33]
-			],
-			type: "scatter"
-		},
-		plugins: [stanford]
-	};
+	let args;
 
 	beforeEach(() => {
 		chart = util.generate(args);
 	});
 
 	describe("countEpochsInRegion", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", 25, 35],
+						["y", 25, 33]
+					],
+					type: "scatter"
+				},
+				plugins: [stanford]
+			};
+		})
+
 		it("should return 0 if the region has no epochs", () => {
 			const region = [
 				{x: 0, y: 0},
@@ -285,6 +289,244 @@ describe("PLUGIN: STANFORD", () => {
 			chart.$.svg.selectAll(`.${CLASS.colorScale} .tick text`).each(function(d, i) {
 				expect(this.textContent).to.be.equal(`10${i}`);
 			});
+		});
+	});
+
+	describe("check options", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "HPE",
+					columns: [
+						["HPE", 2.5, 2.5, 3.5, 3.5, 4, 4, 4.5, 5],
+						["HPL", 24.5, 24, 67.5, 56.5, 26.5, 26, 30, 28]
+					],
+					type: "scatter"
+				},
+				plugins: [
+					new Stanford({
+					epochs: [
+						1,
+						12,
+						32,
+						103,
+						200,
+						124,
+						234,
+						300
+					],
+					scale: {
+						min: 1,
+						max: 10000,
+						format: "pow10"
+					},
+					padding: {
+						top: 15,
+						right: 0,
+						bottom: 0,
+						left: 0
+					},
+					regions: [
+						{
+							points: [
+									{
+										x: 0,
+										y: 0
+									},
+									{
+										x: 40,
+										y: 40
+									},
+									{
+										x: 0,
+										y: 40
+									}
+							],
+							text: function (value, percentage) {
+								return "Normal Operations: "+ value +" "+ percentage +"%";
+							},
+							opacity: 0.2,
+							class: "test-polygon1"
+						},
+						{
+							points: [
+								{
+									x: 0,
+									y: 0
+								},
+								{
+									x: 40,
+									y: 0
+								},
+								{
+									x: 40,
+									y: 40
+								}
+							],
+							text: function (value, percentage) {
+								return "MI: "+ value +" "+ percentage +"%";
+							},
+							opacity: 0.2,
+							class: "test-polygon2"
+						},
+						{
+							points: [
+									{
+										x: 40,
+										y: 0
+									},
+									{
+										x: 65,
+										y: 0
+									},
+									{
+										x: 65,
+										y: 40
+									},
+									{
+										x: 40,
+										y: 40
+									}
+							],
+							text: function (value, percentage) {
+								return "HMI: "+ value +" "+ percentage +"%";
+							},
+							opacity: 0.2,
+							class: "test-polygon3"
+						},
+						{
+							points: [
+									{
+										x: 0,
+										y: 40
+									},
+									{
+										x: 40,
+										y: 40
+									},
+									{
+										x: 65,
+										y: 65
+									},
+									{
+										x: 0,
+										y: 65
+									}
+							],
+							text: function (value, percentage) {
+								return "Unavailable Epochs: "+ value +" "+ percentage +"%";
+							},
+							opacity: 0.2,
+							class: "test-polygon4"
+						},
+						{
+							points: [
+									{
+										x: 40,
+										y: 40
+									},
+									{
+										x: 65,
+										y: 40
+									},
+									{
+										x: 65,
+										y: 65
+									}
+							],
+							text: function (value, percentage) {
+								return "MI: "+ value +" "+ percentage +"%";
+							},
+							opacity: 0.2,
+							class: "test-polygon5"
+						}
+					],
+					lines: [
+						{
+							x1: 0,
+							y1: 0,
+							x2: 65,
+							y2: 65,
+							class: "line"
+						},
+						{
+							x1: 0,
+							x2: 65,
+							y1: 40,
+							y2: 40,
+							class: "line"
+						},
+						{
+							x1: 40,
+							x2: 40,
+							y1: 0,
+							y2: 40,
+							class: "line"
+						}
+					]
+					}),
+				],
+				legend: {
+					show: false
+				},
+				axis: {
+					x: {
+					label: {
+						text: "HPE",
+						position: "outer-center"
+					},
+					min: 0,
+					max: 60,
+					padding: {
+						left: 0
+					},
+					tick: {
+						values: [
+						0,
+						10,
+						20,
+						30,
+						40,
+						50,
+						60
+						]
+					}
+					},
+					y: {
+					label: {
+						text: "HPL",
+						position: "outer-middle"
+					},
+					min: 0,
+					max: 60,
+					tick: {
+						values: [
+						0,
+						10,
+						20,
+						30,
+						40,
+						50,
+						60
+						]
+					},
+					padding: {
+						top: 5,
+						bottom: 0
+					}
+					}
+				},
+				point: {
+					r: 1.5,
+					type: "rectangle"
+				}
+			};
+		});
+
+		it("lines should be generated", () => {
+			const lines = chart.$.main.selectAll(".bb-stanford-lines line");
+
+			expect(lines.size()).to.be.equal(3);
 		});
 	});
 });

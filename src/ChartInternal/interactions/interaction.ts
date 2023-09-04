@@ -10,61 +10,6 @@ import {emulateEvent, getPointer, isNumber, isObject} from "../../module/util";
 import type {IArcDataRow} from "../data/IData";
 
 export default {
-	selectRectForSingle(context, eventRect, index: number): void {
-		const $$ = this;
-		const {config, $el: {main, circle}} = $$;
-		const isSelectionEnabled = config.data_selection_enabled;
-		const isSelectionGrouped = config.data_selection_grouped;
-		const isSelectable = config.data_selection_isselectable;
-		const isTooltipGrouped = config.tooltip_grouped;
-		const selectedData = $$.getAllValuesOnIndex(index);
-
-		if (isTooltipGrouped) {
-			$$.showTooltip(selectedData, context);
-			$$.showGridFocus?.(selectedData);
-
-			if (!isSelectionEnabled || isSelectionGrouped) {
-				return;
-			}
-		}
-
-		// remove possible previous focused state
-		!circle && main.selectAll(`.${$COMMON.EXPANDED}:not(.${$SHAPE.shape}-${index})`).classed($COMMON.EXPANDED, false);
-
-		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
-			.classed($COMMON.EXPANDED, true)
-			.style("cursor", isSelectable ? "pointer" : null)
-			.filter(function(d) {
-				return $$.isWithinShape(this, d);
-			});
-
-		if (shapeAtIndex.empty() && !isTooltipGrouped) {
-			$$.hideGridFocus?.();
-			$$.hideTooltip();
-
-			!isSelectionGrouped && $$.setExpand(index);
-		}
-
-		shapeAtIndex
-			.call(selected => {
-				const d = selected.data();
-
-				if (isSelectionEnabled &&
-					(isSelectionGrouped || isSelectable?.bind($$.api)(d))
-				) {
-					eventRect.style("cursor", "pointer");
-				}
-
-				if (!isTooltipGrouped) {
-					$$.showTooltip(d, context);
-					$$.showGridFocus?.(d);
-					$$.unexpandCircles?.();
-
-					selected.each(d => $$.setExpand(index, d.id));
-				}
-			});
-	},
-
 	/**
 	 * Expand data shape/point
 	 * @param {number} index Index number
@@ -221,15 +166,15 @@ export default {
 	 * @param {number} index Index of eventRect
 	 * @param {Array} mouse x and y coordinate value
 	 */
-	dispatchEvent(type: string, index: number, mouse): void {
+	dispatchEvent(type: string, index: number, mouse: [number, number]): void {
 		const $$ = this;
 		const {config, state: {
 			eventReceiver, hasAxis, hasRadar, hasTreemap
-		}, $el: {eventRect, arcs, radar, treemap}} = $$;
+		}, $el: {eventRect, radar, treemap}} = $$;
 		const element = (
 			(hasTreemap && eventReceiver.rect) ||
 			(hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`)) || (
-				eventRect || arcs?.selectAll(`.${$COMMON.target} path`).filter((d, i) => i === index)
+				eventRect || $$.getArcElementByIdOrIndex?.(index)
 			)
 		)?.node();
 
@@ -240,9 +185,15 @@ export default {
 			if (hasAxis && !hasRadar && !isMultipleX) {
 				const coords = eventReceiver.coords[index];
 
-				width = coords.w;
-				left += coords.x;
-				top += coords.y;
+				if (coords) {
+					width = coords.w;
+					left += coords.x;
+					top += coords.y;
+				} else {
+					width = 0;
+					left = 0;
+					top = 0;
+				}
 			}
 
 			const x = left + (mouse ? mouse[0] : 0) + (

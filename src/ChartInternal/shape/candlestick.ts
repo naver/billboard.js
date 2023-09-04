@@ -35,7 +35,6 @@ export default {
 		const $$ = this;
 		const {$el} = $$;
 		const classChart = $$.getChartClass("Candlestick");
-		const classFocus = $$.classFocus.bind($$);
 
 		if (!$el.candlestick) {
 			$$.initCandlestick();
@@ -43,8 +42,7 @@ export default {
 
 		const mainUpdate = $$.$el.main.select(`.${$CANDLESTICK.chartCandlesticks}`)
 			.selectAll(`.${$CANDLESTICK.chartCandlestick}`)
-			.data(targets)
-			.attr("class", d => classChart(d) + classFocus(d));
+			.data(targets);
 
 		mainUpdate.enter().append("g")
 			.attr("class", classChart)
@@ -79,10 +77,6 @@ export default {
 
 		candlestickEnter.append("line");
 		candlestickEnter.append("path");
-
-		if (!$root.candlestick) {
-			$root.candlestick = {};
-		}
 
 		$root.candlestick = candlestick.merge(candlestickEnter)
 			.style("opacity", initialOpacity);
@@ -157,8 +151,6 @@ export default {
 	 */
 	generateGetCandlestickPoints(indices, isSub = false): (d, i) => number[][] {
 		const $$ = this;
-		const {config} = $$;
-
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
 		const targetsNum = $$.getIndicesMax(indices) + 1;
 		const barW: IOffset = $$.getBarW("candlestick", axis, targetsNum);
@@ -174,7 +166,7 @@ export default {
 			const value = $$.getCandlestickData(d);
 			let points;
 
-			if (value) {
+			if (value && isNumber(value.open) && isNumber(value.close)) {
 				const posX = {
 					start: x(d),
 					end: 0
@@ -191,13 +183,6 @@ export default {
 					high: y(value.high),
 					low: y(value.low)
 				};
-
-				// fix posY not to overflow opposite quadrant
-				if (config.axis_rotated && (
-					(d.value > 0 && posY.start < y0) || (d.value < 0 && y0 < posY.start)
-				)) {
-					posY.start = y0;
-				}
 
 				posY.start -= (y0 - offset);
 

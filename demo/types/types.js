@@ -25,6 +25,8 @@ const Types = {
         "pie-inner-radius",
         "pie-outer-radius",
         "pie-corner-radius",
+        "gauge-needle",
+        "donut-needle",
         "normalized",
         "combination",
         "multi-axes",
@@ -251,7 +253,82 @@ const Types = {
                     ["data5", 15],
                     ["data6", 35]
                 ];
+            } else if (type === "gauge-needle") {
+                type = "gauge";
 
+                options.data.columns = [
+                    ["a", 20],
+                    ["b", 20],
+                    ["c", 20],
+                    ["d", 20],
+                    ["e", 20]
+                ];
+
+                options.arc = {
+                    needle: {
+                        show: true,
+                        length: 80,
+                        value: 83,
+                        top: {
+                            // rx and ry are the two radii of the ellipse;
+                            // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+                            rx: 1,
+                            ry: 1,
+                            width: 1
+                          },
+                          bottom: {
+                            // rx and ry are the two radii of the ellipse;
+                            // https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+                            rx: 1,
+                            ry: 1,
+                            width: 10,
+                            len: 10
+                        }
+                    }
+                };
+
+                options.gauge = {
+                    width: 10,
+                    title: "{=NEEDLE_VALUE}%\n",
+                    label: {
+                      format: function(value, ratio, id) { return id; }
+                    }
+                };
+
+            } else if (type === "donut-needle") {
+                type = "donut";
+
+                options.data.columns = [
+                   	["data1", 10],
+                    ["data2", 10],
+                    ["data3", 10],
+                    ["data4", 10],
+                    ["data5", 10],
+                    ["data6", 10]
+                ];
+
+                options.arc = {
+                    needle: {
+                        show: true,
+                        length: 80,
+                        value: 35,
+                        color: "grey",
+                        path: function(length) {
+                            const len = length - 20;
+                            const width = 3;
+                            const path = `M 0 -${len + 20}
+                                L -10 -${len}
+                                L -${width} -${len}
+                                L -${width} 0 
+                                A 0 1 0 0 0 ${width} 0
+                                L ${width} -${len}
+                                L 10 -${len} Z`;
+
+                            return path;
+                        }
+                    }
+                };
+                
             } else if (type === "combination") {
                 options.data.types = {
                     data0: "bar",

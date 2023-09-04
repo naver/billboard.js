@@ -76,6 +76,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 
 		it(".updateHelper()", done => {
 			const {$el: {arcs, needle}} = chart.internal;
+			const getRotate = transform => +transform.replace(/rotate\((\d+\.?\d+?)deg\).*/, "$1");
 
 			new Promise((resolve) => {
 				needle.updateHelper(70);
@@ -85,7 +86,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 					expect(+arcs.select(`.${$ARC.chartArcsTitle}`).text()).to.be.equal(70);
 
 					// needle has been updated?
-					expect(util.parseNum(needle.style("transform"))).to.be.equal(252);
+					expect(getRotate(needle.style("transform"))).to.be.equal(252);
 
 					resolve();
 				}, 500);
@@ -98,7 +99,7 @@ describe("SHAPE ARC: NEEDLE option", () => {
 						// title text value should be equal as the initial value
 						expect(+arcs.select(`.${$ARC.chartArcsTitle}`).text()).to.be.equal(args.arc.needle.value);
 						
-						expect(util.parseNum(needle.style("transform"))).to.be.equal(158.4);
+						expect(getRotate(needle.style("transform"))).to.be.equal(158.4);
 						
 						// show 'data1'
 						chart.toggle("data1");		

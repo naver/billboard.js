@@ -159,7 +159,11 @@ describe("API export", () => {
 						data1: "bar",
 						data2: "area"
 					},
-					labels: true
+					labels: {
+						format: function(v, id, i, texts) {
+							return v > 4000 ? `${v}\nValue` : v;
+						}
+					}
 				},
 				grid: {
 					x: {
@@ -197,9 +201,9 @@ describe("API export", () => {
 
 			// pattern for local: preserveFontStyle=true
 			[
-				"bfCqV+haAfVT1S93d3ffkA02lUl9X1fP5JpDIpp6BkcA",
-				"CDa8p8AsA/UvgTAruS1ItHO9uWPO4PVwK+VUV4KMAVgKULt",
-				"Qnb7TAAxLMEdeC8tu4K/NMDE0VshaG1lzk/jI"
+				"RIYJUAB6NhIiLgAtL/ub4XqgdKfecox9OPcoQB0OTv0bSIB7e3qA0Y2gY",
+				"AgBISAEhIAQKGoCJp0CLmrQKTTueAADAfQE8BWAp93Lr/UvPgn5IaAPIOm3z",
+				"KxX72Ifp34GYBSAiQB6A9ArZNWuoLwQwFr3EfDLeRCA2wB4CMCu7srkyBgBqFcq"
 			],
 
 			// pattern for CI
@@ -211,9 +215,9 @@ describe("API export", () => {
 
 			// pattern for CI: preserveFontStyle=true
 			[
-				"YiAZcJUAC6nB361jECvOF1DD0HdpA",
-				"S6iAoAFtNmParEdAFM18H03Uf1P9ktbatrndeA",
-				"ZczoCtPNG8bDXXwJxMJ+4mpIHPBqrpwHz9sXAb"
+				"4U0OAAjDiVKvfuQsCnLC2WblfcoXb1MeG0MxJUOwFwMDoI1ghV8nCgt0UG83WRxx",
+				"AKOiTTutIKA9XRdAgo0QBNe1wn41m04KQJg3wOB86SvuWs1/1pMACaxNoF4Bu",
+				"H8wWyLdFr4gZWYBnbtoAO2SzOhhNr41l9l0NbArPEZDAiSQQAJmLWYTg"
 			]
 		];
 

@@ -14,22 +14,42 @@ export {
 	requestIdleCallback, cancelIdleCallback
 };
 
-const win = (() => {
-	const root = (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
+/**
+ * Get global object
+ * @returns {object} window object
+ * @private
+ */
+function getGlobal() {
+	return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
 		(typeof global === "object" && global !== null && global.Object === Object && global) ||
-		(typeof self === "object" && self !== null && self.Object === Object && self);
+		(typeof self === "object" && self !== null && self.Object === Object && self) ||
+		Function("return this")();
+}
 
-	return root || Function("return this")();
-})();
-/* eslint-enable no-new-func, no-undef */
+/**
+ * Get fallback object
+ * @param {object} w global object
+ * @returns {Array} fallback object array
+ * @private
+ */
+function getFallback(w) {
+	const hasRAF = typeof w?.requestAnimationFrame === "function";
+	const hasRIC = typeof w?.requestIdleCallback === "function";
 
-// fallback for non-supported environments
-const hasRAF = typeof win.requestAnimationFrame === "function";
-const hasRIC = typeof win.requestIdleCallback === "function";
+	return [
+		hasRAF ? w.requestAnimationFrame : (cb => setTimeout(cb, 1)),
+		hasRAF ? w.cancelAnimationFrame : (id => clearTimeout(id)),
+		hasRIC ? w.requestIdleCallback : requestAnimationFrame,
+		hasRIC ? w.cancelIdleCallback : cancelAnimationFrame
+	];
+}
 
-const requestAnimationFrame = hasRAF ? win.requestAnimationFrame : (cb => setTimeout(cb, 1));
-const cancelAnimationFrame = hasRAF ? win.cancelAnimationFrame : (id => clearTimeout(id));
-const requestIdleCallback = hasRIC ? win.requestIdleCallback : requestAnimationFrame;
-const cancelIdleCallback = hasRIC ? win.cancelIdleCallback : cancelAnimationFrame;
-
+const win = getGlobal();
 const doc = win?.document;
+
+const [
+	requestAnimationFrame,
+	cancelAnimationFrame,
+	requestIdleCallback,
+	cancelIdleCallback
+] = getFallback(win);

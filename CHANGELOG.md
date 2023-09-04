@@ -1,12 +1,27 @@
-# [3.9.0-next.2](https://github.com/naver/billboard.js/compare/3.9.0-next.1...3.9.0-next.2) (2023-06-21)
+## [3.9.3](https://github.com/naver/billboard.js/compare/3.9.2...3.9.3) (2023-08-09)
 
 
-### Features
+### Bug Fixes
 
-* **bar:** Intent to ship bar.front ([f7e0d80](https://github.com/naver/billboard.js/commit/f7e0d8023cef4bab0f0895077f819d051738a861)), closes [#2965](https://github.com/naver/billboard.js/issues/2965)
-* **point:** Enhance point.sensitivity ([a537201](https://github.com/naver/billboard.js/commit/a5372013ab3f7d8af49ab82e7c161dbebc34ae97)), closes [#2568](https://github.com/naver/billboard.js/issues/2568)
+* **arc:** Fix shape rendering when data id equivalent of color string ([047d1db](https://github.com/naver/billboard.js/commit/047d1db68bd75efd8402a7a83aa7a04405745880)), closes [#3321](https://github.com/naver/billboard.js/issues/3321)
 
-# [3.9.0-next.1](https://github.com/naver/billboard.js/compare/3.8.2...3.9.0-next.1) (2023-06-15)
+## [3.9.2](https://github.com/naver/billboard.js/compare/3.9.1...3.9.2) (2023-08-04)
+
+
+### Bug Fixes
+
+* **line:** Fix step line path rendering on Windows ([b2633b2](https://github.com/naver/billboard.js/commit/b2633b2d5fa5b722da66edfcde3aece4771a7300)), closes [#3295](https://github.com/naver/billboard.js/issues/3295)
+* **load:** Enhance tooltip update on dynamic load ([1df1bd9](https://github.com/naver/billboard.js/commit/1df1bd94f0eb6a256864a7097663ed76a7f48627)), closes [#3305](https://github.com/naver/billboard.js/issues/3305)
+
+## [3.9.1](https://github.com/naver/billboard.js/compare/3.9.0...3.9.1) (2023-07-17)
+
+
+### Bug Fixes
+
+* **point:** Fix point sensitivity pointe ([a47e091](https://github.com/naver/billboard.js/commit/a47e0913db94ae21b3e36c3ed06346d8d2e5d977)), closes [#3293](https://github.com/naver/billboard.js/issues/3293)
+* **tooltip:** Fix tooltip positioning ([cfec99f](https://github.com/naver/billboard.js/commit/cfec99f715b92abda119b44875591917563e4802)), closes [#3291](https://github.com/naver/billboard.js/issues/3291)
+
+# [3.9.0](https://github.com/naver/billboard.js/compare/3.8.2...3.9.0) (2023-07-03)
 
 
 ### Bug Fixes
@@ -19,9 +34,11 @@
 ### Features
 
 * **arc:** Intent to ship arc.needle ([04e90aa](https://github.com/naver/billboard.js/commit/04e90aac2ed7322be42b38f9bcef46722a1ddf43)), closes [#3205](https://github.com/naver/billboard.js/issues/3205)
+* **bar:** Intent to ship bar.front ([f7e0d80](https://github.com/naver/billboard.js/commit/f7e0d8023cef4bab0f0895077f819d051738a861)), closes [#2965](https://github.com/naver/billboard.js/issues/2965)
 * **data:** Intent to ship data.labels.position function ([59be3ec](https://github.com/naver/billboard.js/commit/59be3ecad45adbf7d044d1c63352ded92221bbe9)), closes [#3237](https://github.com/naver/billboard.js/issues/3237)
-* **module:** Support dual CJS/ESM package ([437c007](https://github.com/naver/billboard.js/commit/437c007eabc7c7f82ce35eb7f3a2f6bb44438409)), closes [#2202](https://github.com/naver/billboard.js/issues/2202)
-* **plugin:** Intent to ship TableView plugin ([215b611](https://github.com/naver/billboard.js/commit/215b611fe68ea37360e8939e9902d489aa502b75)), closes [#1873](https://github.com/naver/billboard.js/issues/1873)
+* **legend:** Intent to ship legend.item.interaction.dblclick ([18f5c4a](https://github.com/naver/billboard.js/commit/18f5c4a19478514a473bce86e65e85dc4005e9f1)), closes [#1404](https://github.com/naver/billboard.js/issues/1404)
+* **legend:** Intent to ship legent.item.interaction ([af87d10](https://github.com/naver/billboard.js/commit/af87d10b252c3f573a1d1af5167cc8abb3d6b958)), closes [#1598](https://github.com/naver/billboard.js/issues/1598)
+* **point:** Enhance point.sensitivity ([a537201](https://github.com/naver/billboard.js/commit/a5372013ab3f7d8af49ab82e7c161dbebc34ae97)), closes [#2568](https://github.com/naver/billboard.js/issues/2568)
 * **theme:** Intent to ship dark theme ([252a28e](https://github.com/naver/billboard.js/commit/252a28e62acea92808217a663c00999e6099e1a4)), closes [#3229](https://github.com/naver/billboard.js/issues/3229)
 
 ## [3.8.2](https://github.com/naver/billboard.js/compare/3.8.1...3.8.2) (2023-05-18)

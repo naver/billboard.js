@@ -641,6 +641,26 @@ describe("SUBCHART", () => {
 			expect(chart.internal.scale.x.domain()).to.be.not.deep.equal(currDomain);
 		});
 
+		it("set options: subchart.size.height", () => {
+			args.subchart.size = {
+				height: 100
+			};
+		});
+
+		it("handlebar should be positioned at the verrical center?", () => {
+			const handlebar = chart.internal.brush.getSelection()
+				.selectAll(".handle--custom");
+
+			// when
+			util.doDrag(handlebar.filter(":last-child").node(), undefined, {clientX: 400, clientY: 100}, chart);
+
+			handlebar.each(function(d, i) {
+				const y = +this.getAttribute("transform").replace(/[^,]*,(\d+)\)/g, "$1");
+				
+				expect(y).to.be.equal(args.subchart.size.height / 2);
+			});
+		});
+
 		it("set options axis.rotated=true", () => {
 			args.axis = {
 				rotated: true
@@ -660,6 +680,20 @@ describe("SUBCHART", () => {
 			util.doDrag(handlebar.node(), undefined, {clientX: 100, clientY: 0}, chart);
 
 			expect(chart.internal.scale.x.domain()).to.be.not.deep.equal(currDomain);
+		});
+
+		it("handlebar should be positioned at the horizontal center?", () => {
+			const handlebar = chart.internal.brush.getSelection()
+				.selectAll(".handle--custom");
+
+			// when
+			util.doDrag(handlebar.filter(":last-child").node(), undefined, {clientX: 100, clientY: 0}, chart);
+
+			handlebar.each(function(d, i) {
+				const y = +this.getAttribute("transform").replace(/[^()]*\((\d+).*/g, "$1");
+				
+				expect(y).to.be.equal(args.subchart.size.height / 2);
+			});
 		});
 	});
 });

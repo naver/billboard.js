@@ -65,11 +65,11 @@ describe("SHAPE LINE", () => {
 			args.line.step.type = "step-after";
 		});
 
-		it("should have shape-rendering = crispedges when it's step chart", () => {
+		it("should 'shape-rendering' shouldn't be set 'crispedges' when it's step chart", () => {
 			chart.$.main.selectAll(`.${$LINE.line}`).each(function() {
 				const style = d3Select(this).style("shape-rendering").toLowerCase();
 
-				expect(style).to.be.equal("crispedges");
+				expect(style).to.be.equal("auto");
 			});
 		});
 
@@ -256,6 +256,34 @@ describe("SHAPE LINE", () => {
 			const to = chart.internal.getInterpolate(chart.data()[0]);
 
 			expect(to).to.be.equal(d3CurveStepBefore);
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100]
+					],
+					type: "step"
+				},
+				point: {
+					pattern: [
+						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
+					]
+				},
+				tooltip: {
+					grouped: false
+				}
+			};
+		});
+
+		it("should correctly show tooltip with tooltip.grouped=false.", () => {
+			// when
+			chart.tooltip.show({
+				data: {id:"data1", value: 200, x: 1}
+			});
+
+			expect(+chart.$.tooltip.select(".value").text()).to.be.equal(chart.data.values("data1")[1])
 		});
 	});
 

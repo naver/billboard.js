@@ -18,9 +18,11 @@ export default {
 	 */
 	initBrush(): void {
 		const $$ = this;
-		const {config, scale, $el: {subchart}} = $$;
+		const {config, scale, $el: {subchart}, state} = $$;
 		const isRotated = config.axis_rotated;
+		const height = config.subchart_size_height;
 		let lastDomain;
+		let lastSelection;
 		let timeout;
 
 		// set the brush
@@ -28,28 +30,27 @@ export default {
 			isRotated ? d3BrushY() : d3BrushX()
 		).handleSize(5);
 
-		const getBrushSize = () => {
-			const brush = $$.$el.svg.select(`.${CLASS.brush} .overlay`);
-			const brushSize = {width: 0, height: 0};
-
-			if (brush.size()) {
-				brushSize.width = +brush.attr("width");
-				brushSize.height = +brush.attr("height");
-			}
-
-			return brushSize[isRotated ? "width" : "height"];
-		};
-
 		// bind brush event
 		$$.brush.on("start brush end", event => {
-			const {selection, target, type} = event;
+			const {selection, sourceEvent, target, type} = event;
 
 			if (type === "start") {
 				$$.state.inputType === "touch" && $$.hideTooltip();
+				lastSelection = sourceEvent ? selection : null;
+				// sourceEvent && (state.domain = null);
 			}
 
+			// if (type === "brush") {
 			if (/(start|brush)/.test(type)) {
-				$$.redrawForBrush();
+				// when brush selection updates happens on one edge, update only chainging edge and
+				// is only for adjustment of given domain range to be used to return current domain range.
+				type === "brush" && sourceEvent && state.domain && lastSelection?.forEach((v, i) => {
+					if (v !== selection[i]) {
+						state.domain[i] = scale.x.orgDomain()[i];
+					}
+				});
+
+				$$.redrawForBrush(type !== "start");
 			}
 
 			if (type === "end") {
@@ -63,10 +64,9 @@ export default {
 				} else {
 					$$.brush.handle.attr("display", null)
 						.attr("transform", (d, i) => {
-							const pos = isRotated ?
-								[33, selection[i] - (i === 0 ? 30 : 24)] : [selection[i], 3];
+							const pos = [selection[i], height / 2];
 
-							return `translate(${pos})`;
+							return `translate(${isRotated ? pos.reverse() : pos})`;
 						});
 				}
 			}
@@ -94,7 +94,7 @@ export default {
 
 		// set the brush extent
 		$$.brush.scale = function(scale) {
-			const h = config.subchart_size_height || getBrushSize();
+			const h = config.subchart_size_height;
 			let extent = $$.getExtent();
 
 			if (!extent && scale.range) {
@@ -199,11 +199,11 @@ export default {
 
 		// brush handle shape's path
 		const path = isRotated ? [
-			"M 5.2491724,29.749209 a 6,6 0 0 0 -5.50000003,-6.5 H -5.7508276 a 6,6 0 0 0 -6.0000004,6.5 z m -5.00000003,-2 H -6.7508276 m 6.99999997,-2 H -6.7508276Z",
-			"M 5.2491724,23.249172 a 6,-6 0 0 1 -5.50000003,6.5 H -5.7508276 a 6,-6 0 0 1 -6.0000004,-6.5 z m -5.00000003,2 H -6.7508276 m 6.99999997,2 H -6.7508276Z"
+			"M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
+			"M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
 		] : [
-			"M 0 18 A 6 6 0 0 0 -6.5 23.5 V 29 A 6 6 0 0 0 0 35 Z M -2 23 V 30 M -4 23 V 30Z",
-			"M 0 18 A 6 6 0 0 1 6.5 23.5 V 29 A 6 6 0 0 1 0 35 Z M 2 23 V 30 M 4 23 V 30Z"
+			"M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
+			"M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
 		];
 
 		$$.brush.handle = brush.selectAll(`.${customHandleClass}`)
@@ -320,23 +320,28 @@ export default {
 					$$.redrawCircle(cx, cy, withTransition, undefined, true);
 				}
 
-				!state.rendered && initRange && $$.brush.move(
-					$$.brush.getSelection(),
-					initRange.map($$.scale.x)
-				);
+				if (!state.rendered && initRange) {
+					state.domain = initRange;
+
+					$$.brush.move(
+						$$.brush.getSelection(),
+						initRange.map($$.scale.x)
+					);
+				}
 			}
 		}
 	},
 
 	/**
 	 * Redraw the brush.
+	 * @param {boolean} [callCallbck=true] Call 'onbrush' callback or not.
 	 * @private
 	 */
-	redrawForBrush() {
+	redrawForBrush(callCallbck = true): void {
 		const $$ = this;
 		const {config: {
 			subchart_onbrush: onBrush, zoom_rescale: withY
-		}, scale} = $$;
+		}, scale, state} = $$;
 
 		$$.redraw({
 			withTransition: false,
@@ -346,7 +351,8 @@ export default {
 			withDimension: false
 		});
 
-		onBrush.bind($$.api)(scale.x.orgDomain());
+		callCallbck && state.rendered &&
+			onBrush.bind($$.api)(state.domain ?? scale.x.orgDomain());
 	},
 
 	/**

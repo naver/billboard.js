@@ -150,9 +150,6 @@ export default {
 			} else if (v === "gridLines.x") {
 				n.attr("x1", isRotated ? 0 : xv)
 					.attr("x2", isRotated ? state.width : xv);
-			} else if (v === "gridLines.x") {
-				n.select("line").attr("x1", isRotated ? 0 : xv)
-					.attr("x2", isRotated ? state.width : xv);
 
 				n.select("text")
 					.attr("x", isRotated ? state.width : 0)
@@ -170,10 +167,7 @@ export default {
 					const xFunc = d => cx(d) - config.point_r;
 					const yFunc = d => cy(d) - config.point_r;
 
-					n.attr("x", xFunc)
-						.attr("y", yFunc)
-						.attr("cx", cx) // when pattern is used, it possibly contain 'circle' also.
-						.attr("cy", cy);
+					n.attr("x", xFunc).attr("y", yFunc);
 				}
 			} else if (v === "region.list") {
 				n.select("rect").filter($$.isRegionOnX)

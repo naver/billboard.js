@@ -908,12 +908,17 @@ describe("INTERACTION", () => {
 
 					chart = util.generate(args);
 				}).then(() => {
-					const path = chart.$.arc.select("path.bb-arc-data2").node();
+					const path = chart.$.arc.select(`path.${$ARC.arc}-data2`).node();
+
+					util.fireEvent(path, "click", {
+						clientX: 50,
+						clientY: 100
+					}, chart);
 
 					// when
-					util.fireEvent(path, "click", {
-						clientX: 400,
-						clientY: 500
+					util.fireEvent(path, "touchstart", {
+						clientX: 50,
+						clientY: 100
 					}, chart);
 
 					expect(clicked).to.be.true;

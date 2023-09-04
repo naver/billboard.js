@@ -35,11 +35,6 @@ export default {
 			$$.updateDimension(true);
 		}
 
-		// update circleY based on updated parameters
-		if (!treemap && (!$$.hasArcType() || state.hasRadar)) {
-			$$.updateCircleY && ($$.circleY = $$.updateCircleY());
-		}
-
 		// Data empty label positioning and text.
 		config.data_empty_label_text && main.select(`text.${$TEXT.text}.${$COMMON.empty}`)
 			.attr("x", state.width / 2)
@@ -105,6 +100,8 @@ export default {
 		initializing && $$.updateTypesElements();
 
 		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+		$$.updateTooltipOnRedraw();
+
 		$$.callPluginHook("$redraw", options, duration);
 	},
 

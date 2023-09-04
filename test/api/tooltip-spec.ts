@@ -312,16 +312,33 @@ describe("API tooltip", () => {
 						["data4", 20]
 					],
 					type: "pie",
+				},
+				transition: {
+					duration: 0
 				}
 			};
 		});
 
-		it("should show tooltip correctly", done => {
+		it("should show tooltip correctly using 'index'?", done => {
 			setTimeout(() => {
 				const {tooltip} = chart.$;
 
 				// when
 				chart.tooltip.show({index:2});
+
+				expect(tooltip.select(".name").text()).to.be.equal("data3");
+				expect(tooltip.select(".value").text()).to.be.equal("19.2%");
+
+				done();
+			}, 500);
+		});
+
+		it("should show tooltip correctly using 'id'?", done => {
+			setTimeout(() => {
+				const {tooltip} = chart.$;
+
+				// when
+				chart.tooltip.show({data: {id: "data3"}});
 
 				expect(tooltip.select(".name").text()).to.be.equal("data3");
 				expect(tooltip.select(".value").text()).to.be.equal("19.2%");
