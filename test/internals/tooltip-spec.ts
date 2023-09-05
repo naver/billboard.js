@@ -2061,11 +2061,6 @@ describe("TOOLTIP", function() {
 					],
 					type: "bar"
 				},
-				bar: {
-					width: {
-						ratio: 0.5
-					}
-				},
 				tooltip: {
 					show: false
 				}
@@ -2079,6 +2074,11 @@ describe("TOOLTIP", function() {
 			});
 
 			expect(chart.$.tooltip).to.be.null;
+
+			// check exception when tooltip.show=false
+			expect(
+				chart.internal.setTooltipPosition()
+			).to.not.throw;
 		});
 	});
 });
