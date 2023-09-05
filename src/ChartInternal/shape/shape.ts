@@ -28,6 +28,26 @@ import CLASS from "../../config/classes";
 import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
 import type {IDataRow, IDataIndice, TIndices} from "../data/IData";
 
+/**
+ * Get grouped data point function for y coordinate
+ * - Note: Grouped(stacking) works only for line and bar types
+ * @param {object} d data vlaue
+ * @returns {Function|undefined}
+ * @private
+ */
+function getGroupedDataPointsFn(d) {
+	const $$ = this;
+	let fn;
+
+	if ($$.isLineType(d)) {
+		fn = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType));
+	} else if ($$.isBarType(d)) {
+		fn = $$.generateGetBarPoints($$.getShapeIndices($$.isBarType));
+	}
+
+	return fn;
+}
+
 export interface IOffset {
 	_$width: number;
 	_$total: number[]
@@ -87,7 +107,7 @@ export default {
 	},
 
 	/**
-	 * Get shape's indices according it's position
+	 * Get shape's indices according it's position within each axis tick.
 	 *
 	 * From the below example, indices will be:
 	 * ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
@@ -125,10 +145,15 @@ export default {
 						continue;
 					}
 
-					for (let k = 0, row; (row = groups[k]); k++) {
-						if (row in ind) {
-							ind[d.id] = ind[row];
+					for (let k = 0, key; (key = groups[k]); k++) {
+						if (key in ind) {
+							ind[d.id] = ind[key];
 							break;
+						}
+
+						// for same grouped data, add other data to same indices
+						if (d.id !== key && xKey) {
+							ind[key] = ind[d.id] ?? i[xKey];
 						}
 					}
 				}
@@ -369,6 +394,27 @@ export default {
 
 			return offset;
 		};
+	},
+
+	/**
+	 * Get data's y coordinate
+	 * @param {object} d Target data
+	 * @param {number} i Index number
+	 * @returns {number} y coordinate
+	 * @private
+	 */
+	circleY(d: IDataRow, i: number): number {
+		const $$ = this;
+		const id = d.id;
+		let points;
+
+		if ($$.isGrouped(id)) {
+			points = getGroupedDataPointsFn.bind($$)(d);
+		}
+
+		return points ?
+			points(d, i)[0][1] :
+			$$.getYScaleById(id)($$.getBaseValue(d));
 	},
 
 	getBarW(type, axis, targetsNum: number): number | IOffset {
