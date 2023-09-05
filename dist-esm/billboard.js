@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.3-nightly-20230901004612
+ * @version 3.9.3-nightly-20230905004617
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3832,6 +3832,12 @@ var data$1 = {
         var config = this.config;
         return !!(config.data_stack_normalize && config.data_groups.length);
     },
+    /**
+     * Check if given id is grouped data or has grouped data
+     * @param {string} id Data id value
+     * @returns {boolean} is grouped data or has grouped data
+     * @private
+     */
     isGrouped: function (id) {
         var groups = this.config.data_groups;
         return id ?
@@ -6518,10 +6524,6 @@ var redraw = {
             // no need to update axis in it because they will be updated in redraw()
             $$.updateDimension(true);
         }
-        // update circleY based on updated parameters
-        if (!treemap && (!$$.hasArcType() || state.hasRadar)) {
-            $$.updateCircleY && ($$.circleY = $$.updateCircleY());
-        }
         // Data empty label positioning and text.
         config.data_empty_label_text && main.select("text.".concat($TEXT.text, ".").concat($COMMON.empty))
             .attr("x", state.width / 2)
@@ -6906,6 +6908,24 @@ var scale = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+/**
+ * Get grouped data point function for y coordinate
+ * - Note: Grouped(stacking) works only for line and bar types
+ * @param {object} d data vlaue
+ * @returns {Function|undefined}
+ * @private
+ */
+function getGroupedDataPointsFn(d) {
+    var $$ = this;
+    var fn;
+    if ($$.isLineType(d)) {
+        fn = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType));
+    }
+    else if ($$.isBarType(d)) {
+        fn = $$.generateGetBarPoints($$.getShapeIndices($$.isBarType));
+    }
+    return fn;
+}
 var shape = {
     /**
      * Get the shape draw function
@@ -6944,7 +6964,7 @@ var shape = {
         return shape;
     },
     /**
-     * Get shape's indices according it's position
+     * Get shape's indices according it's position within each axis tick.
      *
      * From the below example, indices will be:
      * ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
@@ -6972,16 +6992,21 @@ var shape = {
         }
         $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
             .forEach(function (d) {
+            var _a;
             var xKey = d.id in xs ? xs[d.id] : "";
             var ind = xKey ? indices[xKey] : indices;
             for (var j = 0, groups = void 0; (groups = config.data_groups[j]); j++) {
                 if (groups.indexOf(d.id) < 0) {
                     continue;
                 }
-                for (var k = 0, row = void 0; (row = groups[k]); k++) {
-                    if (row in ind) {
-                        ind[d.id] = ind[row];
+                for (var k = 0, key = void 0; (key = groups[k]); k++) {
+                    if (key in ind) {
+                        ind[d.id] = ind[key];
                         break;
+                    }
+                    // for same grouped data, add other data to same indices
+                    if (d.id !== key && xKey) {
+                        ind[key] = (_a = ind[d.id]) !== null && _a !== void 0 ? _a : i[xKey];
                     }
                 }
             }
@@ -7181,6 +7206,24 @@ var shape = {
             });
             return offset;
         };
+    },
+    /**
+     * Get data's y coordinate
+     * @param {object} d Target data
+     * @param {number} i Index number
+     * @returns {number} y coordinate
+     * @private
+     */
+    circleY: function (d, i) {
+        var $$ = this;
+        var id = d.id;
+        var points;
+        if ($$.isGrouped(id)) {
+            points = getGroupedDataPointsFn.bind($$)(d);
+        }
+        return points ?
+            points(d, i)[0][1] :
+            $$.getYScaleById(id)($$.getBaseValue(d));
     },
     getBarW: function (type, axis, targetsNum) {
         var $$ = this;
@@ -22835,7 +22878,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230901004612
+ * @version 3.9.3-nightly-20230905004617
  */
 var bb = {
     /**
@@ -22845,7 +22888,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.3-nightly-20230901004612",
+    version: "3.9.3-nightly-20230905004617",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

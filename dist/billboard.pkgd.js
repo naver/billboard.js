@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230901004612
+ * @version 3.9.3-nightly-20230905004617
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.6
@@ -27727,6 +27727,12 @@ function getDataKeyForJson(keysParam, config) {
     const config = this.config;
     return !!(config.data_stack_normalize && config.data_groups.length);
   },
+  /**
+   * Check if given id is grouped data or has grouped data
+   * @param {string} id Data id value
+   * @returns {boolean} is grouped data or has grouped data
+   * @private
+   */
   isGrouped: function isGrouped(id) {
     var _this = this;
     const groups = this.config.data_groups;
@@ -31369,11 +31375,6 @@ function getLegendColor(id) {
       $$.updateDimension(!0);
     }
 
-    // update circleY based on updated parameters
-    if (!treemap && (!$$.hasArcType() || state.hasRadar)) {
-      $$.updateCircleY && ($$.circleY = $$.updateCircleY());
-    }
-
     // Data empty label positioning and text.
     config.data_empty_label_text && main.select("text." + $TEXT.text + "." + $COMMON.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null);
 
@@ -34014,6 +34015,23 @@ function stepAfter(context) {
 
 
 
+/**
+ * Get grouped data point function for y coordinate
+ * - Note: Grouped(stacking) works only for line and bar types
+ * @param {object} d data vlaue
+ * @returns {Function|undefined}
+ * @private
+ */
+function getGroupedDataPointsFn(d) {
+  const $$ = this;
+  let fn;
+  if ($$.isLineType(d)) {
+    fn = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType));
+  } else if ($$.isBarType(d)) {
+    fn = $$.generateGetBarPoints($$.getShapeIndices($$.isBarType));
+  }
+  return fn;
+}
 /* harmony default export */ var shape = ({
   /**
    * Get the shape draw function
@@ -34059,7 +34077,7 @@ function stepAfter(context) {
     return shape;
   },
   /**
-   * Get shape's indices according it's position
+   * Get shape's indices according it's position within each axis tick.
    *
    * From the below example, indices will be:
    * ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
@@ -34097,10 +34115,16 @@ function stepAfter(context) {
         if (groups.indexOf(d.id) < 0) {
           continue;
         }
-        for (let k = 0, row; row = groups[k]; k++) {
-          if (row in ind) {
-            ind[d.id] = ind[row];
+        for (let k = 0, key; key = groups[k]; k++) {
+          if (key in ind) {
+            ind[d.id] = ind[key];
             break;
+          }
+
+          // for same grouped data, add other data to same indices
+          if (d.id !== key && xKey) {
+            var _ind$d$id;
+            ind[key] = (_ind$d$id = ind[d.id]) != null ? _ind$d$id : i[xKey];
           }
         }
       }
@@ -34336,6 +34360,22 @@ function stepAfter(context) {
       }.bind(this));
       return offset;
     }.bind(this);
+  },
+  /**
+   * Get data's y coordinate
+   * @param {object} d Target data
+   * @param {number} i Index number
+   * @returns {number} y coordinate
+   * @private
+   */
+  circleY: function circleY(d, i) {
+    const $$ = this,
+      id = d.id;
+    let points;
+    if ($$.isGrouped(id)) {
+      points = getGroupedDataPointsFn.bind($$)(d);
+    }
+    return points ? points(d, i)[0][1] : $$.getYScaleById(id)($$.getBaseValue(d));
   },
   getBarW: function getBarW(type, axis, targetsNum) {
     var _this11 = this;
@@ -53229,7 +53269,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230901004612
+ * @version 3.9.3-nightly-20230905004617
  */
 const bb = {
   /**
@@ -53239,7 +53279,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230901004612",
+  version: "3.9.3-nightly-20230905004617",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
