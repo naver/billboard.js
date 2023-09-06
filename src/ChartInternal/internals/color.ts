@@ -204,7 +204,9 @@ export default {
 	},
 
 	/**
-	 * Update linear gradient definition (for area & bar only)
+	 * Update linear/radial gradient definition
+	 * - linear: area & bar only
+	 * - radial: type which has data points only
 	 * @private
 	 */
 	updateLinearGradient(): void {
@@ -213,31 +215,55 @@ export default {
 
 		targets.forEach(d => {
 			const id = `${datetimeId}-gradient${$$.getTargetSelectorSuffix(d.id)}`;
+			const radialGradient = $$.hasPointType() && config.point_radialGradient;
 			const supportedType = ($$.isAreaType(d) && "area") || ($$.isBarType(d) && "bar");
-			const isRotated = config.axis_rotated;
 
-			if (supportedType && defs.select(`#${id}`).empty()) {
+			if ((radialGradient || supportedType) && defs.select(`#${id}`).empty()) {
 				const color = $$.color(d);
-				const {
-					x = isRotated ? [1, 0] : [0, 0],
-					y = isRotated ? [0, 0] : [0, 1],
-					stops = [[0, color, 1], [1, color, 0]]
-				} = config[`${supportedType}_linearGradient`];
+				const gradient = {
+					defs: <null|d3Selection>null,
+					stops: <[number, string|Function|null, number][]>[]
+				};
 
-				const linearGradient = defs.append("linearGradient")
-					.attr("id", `${id}`)
-					.attr("x1", x[0])
-					.attr("x2", x[1])
-					.attr("y1", y[0])
-					.attr("y2", y[1]);
+				if (radialGradient) {
+					const {
+						cx = 0.3,
+						cy = 0.3,
+						r = 0.7,
+						stops = [[0.1, color, 0], [0.9, color, 1]]
+					} = radialGradient;
 
-				stops.forEach(v => {
-					const stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
+					gradient.stops = stops;
+					gradient.defs = defs.append("radialGradient")
+						.attr("id", `${id}`)
+						.attr("cx", cx)
+						.attr("cy", cy)
+						.attr("r", r);
+				} else {
+					const isRotated = config.axis_rotated;
+					const {
+						x = isRotated ? [1, 0] : [0, 0],
+						y = isRotated ? [0, 0] : [0, 1],
+						stops = [[0, color, 1], [1, color, 0]]
+					} = config[`${supportedType}_linearGradient`];
 
-					linearGradient.append("stop")
-						.attr("offset", v[0])
-						.attr("stop-color", stopColor || color)
-						.attr("stop-opacity", v[2]);
+					gradient.stops = stops;
+					gradient.defs = defs.append("linearGradient")
+						.attr("id", `${id}`)
+						.attr("x1", x[0])
+						.attr("x2", x[1])
+						.attr("y1", y[0])
+						.attr("y2", y[1]);
+				}
+
+				gradient.stops.forEach((v: [number, string|Function|null, number]) => {
+					const [offset, stopColor, stopOpacity] = v;
+					const colorValue = isFunction(stopColor) ? stopColor.bind($$.api)(d.id) : stopColor;
+
+					gradient.defs && gradient.defs.append("stop")
+						.attr("offset", offset)
+						.attr("stop-color", colorValue || color)
+						.attr("stop-opacity", stopOpacity);
 				});
 			}
 		});

@@ -3946,6 +3946,71 @@ d3.select(".chart_area")
 				}
 			}
 		],
+		RadialGradientPoint: [			
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 100, 250],
+							["data2", 130, 100, 130, 200, 150, 50]
+						],
+						type: "scatter"
+					},
+					point: {
+						r: 20,
+						radialGradient: true,
+						opacity: 1,
+						sensitivity: "radius"
+					},
+					axis: {
+						x: {
+							type: "category"
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 100, 250],
+							["data2", 130, 100, 130, 200, 150, 50]
+						],
+						type: "bubble"
+					},
+					point: {
+						r: 10,
+						radialGradient: {
+							cx: 0.5,
+							cy: 0.5,
+							r: 0.5,
+							stops: [
+								[0.3, "#fff", 0.8],
+								[0.6, "green", 0.35],
+								[1, null, 1]
+							]
+						},
+						opacity: 1,
+						sensitivity: "radius"
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 100, 250],
+							["data2", 130, 100, 130, 200, 150, 50]
+						],
+						type: "line"
+					},
+					point: {
+						r: 7,
+						radialGradient: true,
+					}
+				}
+			}
+		],
 		RectanglePoints: {
 			options: {
 				data: {

@@ -18,6 +18,7 @@ import {
 	PieOptions,
 	PolarOptions,
 	RadarOptions,
+	RadialGradientOptions,
 	ScatterOptions,
 	SplineOptions,
 	TreemapOptions
@@ -850,6 +851,11 @@ export interface PointOptions {
 	 * Set point opacity value.
 	 */
 	opacity?: number | null;
+
+	/**
+	 * Set the radial gradient on point.
+	 */
+	radialGradient?: RadialGradientOptions;
 
 	select?: {
 		/**
