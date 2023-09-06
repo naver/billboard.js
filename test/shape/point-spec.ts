@@ -473,6 +473,38 @@ describe("SHAPE POINT", () => {
 				done();
 			});
 		});
+
+		it("set option: data.type=bubble", () => {
+			args.data.type = "bubble";
+		});
+
+		it("should render bubble circles", done => {
+			setTimeout(() => {
+				chart.$.circles.each(function() {
+					expect(+this.style.opacity).to.not.be.equal(0);
+					expect(+this.getAttribute("cx") > 0).to.be.true;
+					expect(+this.getAttribute("cy") > 0).to.be.true;
+				});
+
+				done();
+			}, 500);
+		});
+
+		it("set option: data.type=scatter", () => {
+			args.data.type = "scatter";
+		});
+
+		it("should render scatter circles", done => {
+			setTimeout(() => {
+				chart.$.circles.each(function() {
+					expect(+this.style.opacity).to.not.be.equal(0);
+					expect(+this.getAttribute("cx") > 0).to.be.true;
+					expect(+this.getAttribute("cy") > 0).to.be.true;
+				});
+
+				done();
+			}, 500);
+		});
 	});
 
 	describe("point.opacity", () => {

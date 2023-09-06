@@ -43,7 +43,7 @@ export default {
 		let opacity = config.point_opacity;
 
 		if (isUndefined(opacity)) {
-			opacity = config.point_show && !config.point_focus_only ? null : "0";
+			opacity = config.point_show && !this.isPointFocusOnly() ? null : "0";
 
 			opacity = isValue(this.getBaseValue(d)) ?
 				(this.isBubbleType(d) || this.isScatterType(d) ?
@@ -126,7 +126,7 @@ export default {
 	updateCircle(isSub = false): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
-		const focusOnly = config.point_focus_only;
+		const focusOnly = $$.isPointFocusOnly();
 		const $root = isSub ? $el.subchart : $el;
 
 		if (config.point_show && !state.toggling) {
@@ -191,10 +191,10 @@ export default {
 	 */
 	showCircleFocus(d?: IDataRow[]): void {
 		const $$ = this;
-		const {config, state: {hasRadar, resizing, toggling, transiting}, $el} = $$;
+		const {state: {hasRadar, resizing, toggling, transiting}, $el} = $$;
 		let {circle} = $el;
 
-		if (transiting === false && config.point_focus_only && circle) {
+		if (transiting === false && $$.isPointFocusOnly() && circle) {
 			const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
 			const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
 			const withTransition = toggling || isUndefined(d);
@@ -234,9 +234,9 @@ export default {
 	 */
 	hideCircleFocus(): void {
 		const $$ = this;
-		const {config, $el: {circle}} = $$;
+		const {$el: {circle}} = $$;
 
-		if (config.point_focus_only && circle) {
+		if ($$.isPointFocusOnly() && circle) {
 			$$.unexpandCircles();
 			circle.style("visibility", "hidden");
 		}
@@ -340,6 +340,18 @@ export default {
 
 		return isFunction(selectR) ?
 			selectR(d) : (selectR || $$.pointR(d) * 4);
+	},
+
+	/**
+	 * Check if point.focus.only option can be applied.
+	 * @returns {boolean}
+	 * @private
+	 */
+	isPointFocusOnly(): boolean {
+		const $$ = this;
+
+		return $$.config.point_focus_only &&
+			!$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
 	},
 
 	isWithinCircle(node: SVGElement, r?: number): boolean {
