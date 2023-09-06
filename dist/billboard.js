@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.3-nightly-20230905004617
+ * @version 3.9.4-nightly-20230906004621
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -9772,7 +9772,7 @@ function getTextXPos(pos, width) {
       eventRect = _$$$$el.eventRect,
       tooltip = _$$$$el.tooltip,
       bindto = config.tooltip_contents.bindto,
-      datum = tooltip.datum();
+      datum = tooltip == null || tooltip.datum == null ? void 0 : tooltip.datum();
     if (!bindto && datum) {
       var _config$tooltip_posit, _config$tooltip_posit2;
       const _getPointer = getPointer(state.event, eventTarget != null ? eventTarget : eventRect == null ? void 0 : eventRect.node()),
@@ -9890,7 +9890,7 @@ function getTextXPos(pos, width) {
     if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
       return;
     }
-    let datum = tooltip.datum();
+    let datum = tooltip == null || tooltip.datum == null ? void 0 : tooltip.datum();
     const dataStr = JSON.stringify(selectedData);
     if (!datum || datum.current !== dataStr) {
       const _selectedData$concat$ = selectedData.concat().sort()[0],
@@ -9958,7 +9958,8 @@ function getTextXPos(pos, width) {
       config = $$.config,
       tooltip = $$.$el.tooltip;
     if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
-      const selectedData = JSON.parse(tooltip.datum().current);
+      var _tooltip$datum$curren;
+      const selectedData = JSON.parse((_tooltip$datum$curren = tooltip == null || tooltip.datum == null ? void 0 : tooltip.datum().current) != null ? _tooltip$datum$curren : {});
       callFn(config.tooltip_onhide, api, selectedData);
 
       // hide tooltip
@@ -15654,7 +15655,7 @@ let Axis_Axis = /*#__PURE__*/function () {
 
         // do nothing while dragging/flowing
         if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
-          eventOnSameIdx && $$.setTooltipPosition();
+          config.tooltip_show && eventOnSameIdx && $$.setTooltipPosition();
           return;
         }
         if (index !== eventReceiver.currentIdx) {
@@ -25371,7 +25372,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.3-nightly-20230905004617
+ * @version 3.9.4-nightly-20230906004621
  */
 const bb = {
   /**
@@ -25381,7 +25382,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.3-nightly-20230905004617",
+  version: "3.9.4-nightly-20230906004621",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
