@@ -517,7 +517,7 @@ export default {
 
 					// do nothing while dragging/flowing
 					if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
-						eventOnSameIdx && $$.setTooltipPosition();
+						config.tooltip_show && eventOnSameIdx && $$.setTooltipPosition();
 						return;
 					}
 

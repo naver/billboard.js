@@ -263,7 +263,7 @@ export default {
 		const $$ = this;
 		const {config, scale, state, $el: {eventRect, tooltip}} = $$;
 		const {bindto} = config.tooltip_contents;
-		const datum = tooltip.datum();
+		const datum = tooltip?.datum?.();
 
 		if (!bindto && datum) {
 			const [x, y] = getPointer(state.event, eventTarget ?? eventRect?.node()); // get mouse event position
@@ -373,7 +373,7 @@ export default {
 			return;
 		}
 
-		let datum = tooltip.datum();
+		let datum = tooltip?.datum?.();
 		const dataStr = JSON.stringify(selectedData);
 
 		if (!datum || datum.current !== dataStr) {
@@ -441,7 +441,7 @@ export default {
 		const {api, config, $el: {tooltip}} = $$;
 
 		if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
-			const selectedData = JSON.parse(tooltip.datum().current);
+			const selectedData = JSON.parse(tooltip?.datum?.().current ?? {});
 
 			callFn(config.tooltip_onhide, api, selectedData);
 
