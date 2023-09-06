@@ -201,7 +201,7 @@ export default {
 				list.push($$.redrawText(xForText, yForText, flow, withTransition));
 		}
 
-		if (($$.hasPointType() || hasRadar) && !config.point_focus_only) {
+		if (($$.hasPointType() || hasRadar) && !$$.isPointFocusOnly()) {
 			$$.redrawCircle && list.push($$.redrawCircle(cx, cy, withTransition, flowFn));
 		}
 
