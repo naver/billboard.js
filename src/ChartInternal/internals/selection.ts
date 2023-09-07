@@ -160,7 +160,7 @@ export default {
 			let toggledShape;
 
 			if (!config.data_selection_multiple) {
-				const focusOnly = config.point_focus_only;
+				const focusOnly = $$.isPointFocusOnly();
 				let selector = `.${focusOnly ? $SELECT.selectedCircles : $SHAPE.shapes}`;
 
 				if (config.data_selection_grouped) {
