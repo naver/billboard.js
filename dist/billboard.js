@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.4-nightly-20230906004621
+ * @version 3.9.4-nightly-20230907004611
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5739,7 +5739,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         $$.cache.add(KEY.setOverOut, last);
       } else {
         if (isOver) {
-          config.point_focus_only && hasRadar ? $$.showCircleFocus($$.getAllValuesOnIndex(d, !0)) : $$.setExpand(d, null, !0);
+          $$.isPointFocusOnly() && hasRadar ? $$.showCircleFocus($$.getAllValuesOnIndex(d, !0)) : $$.setExpand(d, null, !0);
         }
         $$.isMultipleX() || main.selectAll("." + $SHAPE.shape + "-" + d).each(function (d) {
           callback(d, this);
@@ -7727,7 +7727,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
     if (!$$.hasArcType() || hasRadar) {
       notEmpty(config.data_labels) && config.data_labels !== !1 && list.push($$.redrawText(xForText, yForText, flow, withTransition));
     }
-    if (($$.hasPointType() || hasRadar) && !config.point_focus_only) {
+    if (($$.hasPointType() || hasRadar) && !$$.isPointFocusOnly()) {
       $$.redrawCircle && list.push($$.redrawCircle(cx, cy, withTransition, flowFn));
     }
     if (hasTreemap) {
@@ -15588,7 +15588,6 @@ let Axis_Axis = /*#__PURE__*/function () {
    */
   unselectRect: function unselectRect() {
     const $$ = this,
-      config = $$.config,
       _$$$$el3 = $$.$el,
       circle = _$$$$el3.circle,
       tooltip = _$$$$el3.tooltip;
@@ -15598,7 +15597,7 @@ let Axis_Axis = /*#__PURE__*/function () {
       $$.hideTooltip();
       $$._handleLinkedCharts(!1);
     }
-    circle && !config.point_focus_only && $$.unexpandCircles();
+    circle && !$$.isPointFocusOnly() && $$.unexpandCircles();
     $$.expandBarTypeShapes(!1);
   },
   /**
@@ -20817,7 +20816,7 @@ const getTransitionName = function () {
     const config = this.config;
     let opacity = config.point_opacity;
     if (isUndefined(opacity)) {
-      opacity = config.point_show && !config.point_focus_only ? null : "0";
+      opacity = config.point_show && !this.isPointFocusOnly() ? null : "0";
       opacity = isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
     }
     return opacity;
@@ -20891,7 +20890,7 @@ const getTransitionName = function () {
       config = $$.config,
       state = $$.state,
       $el = $$.$el,
-      focusOnly = config.point_focus_only,
+      focusOnly = $$.isPointFocusOnly(),
       $root = isSub ? $el.subchart : $el;
     if (config.point_show && !state.toggling) {
       const circles = $root.main.selectAll("." + $CIRCLE.circles).selectAll("." + $CIRCLE.circle).data(function (d) {
@@ -20935,7 +20934,6 @@ const getTransitionName = function () {
    */
   showCircleFocus: function showCircleFocus(d) {
     const $$ = this,
-      config = $$.config,
       _$$$state = $$.state,
       hasRadar = _$$$state.hasRadar,
       resizing = _$$$state.resizing,
@@ -20943,7 +20941,7 @@ const getTransitionName = function () {
       transiting = _$$$state.transiting,
       $el = $$.$el;
     let circle = $el.circle;
-    if (transiting === !1 && config.point_focus_only && circle) {
+    if (transiting === !1 && $$.isPointFocusOnly() && circle) {
       const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$),
         cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$),
         withTransition = toggling || isUndefined(d),
@@ -20978,9 +20976,8 @@ const getTransitionName = function () {
    */
   hideCircleFocus: function hideCircleFocus() {
     const $$ = this,
-      config = $$.config,
       circle = $$.$el.circle;
-    if (config.point_focus_only && circle) {
+    if ($$.isPointFocusOnly() && circle) {
       $$.unexpandCircles();
       circle.style("visibility", "hidden");
     }
@@ -21062,6 +21059,15 @@ const getTransitionName = function () {
     const $$ = this,
       selectR = $$.config.point_select_r;
     return isFunction(selectR) ? selectR(d) : selectR || $$.pointR(d) * 4;
+  },
+  /**
+   * Check if point.focus.only option can be applied.
+   * @returns {boolean}
+   * @private
+   */
+  isPointFocusOnly: function isPointFocusOnly() {
+    const $$ = this;
+    return $$.config.point_focus_only && !$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
   },
   isWithinCircle: function isWithinCircle(node, r) {
     const mouse = getPointer(this.state.event, node),
@@ -21702,7 +21708,7 @@ const cacheKey = KEY.radarPoints;
       _$$$$el2 = $$.$el,
       radar = _$$$$el2.radar,
       svg = _$$$$el2.svg,
-      focusOnly = config.point_focus_only,
+      focusOnly = $$.isPointFocusOnly(),
       _state = state,
       inputType = _state.inputType,
       transiting = _state.transiting;
@@ -24282,7 +24288,7 @@ function selection_objectSpread(e) { for (var r = 1, t; r < arguments.length; r+
         toggle = $$.getToggle(that, d).bind($$);
       let toggledShape;
       if (!config.data_selection_multiple) {
-        const focusOnly = config.point_focus_only;
+        const focusOnly = $$.isPointFocusOnly();
         let selector = "." + (focusOnly ? $SELECT.selectedCircles : $SHAPE.shapes);
         if (config.data_selection_grouped) {
           selector += $$.getTargetSelectorSuffix(d.id);
@@ -25372,7 +25378,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20230906004621
+ * @version 3.9.4-nightly-20230907004611
  */
 const bb = {
   /**
@@ -25382,7 +25388,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.4-nightly-20230906004621",
+  version: "3.9.4-nightly-20230907004611",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

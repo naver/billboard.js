@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.4-nightly-20230906004621
+ * @version 3.9.4-nightly-20230907004611
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4863,7 +4863,7 @@ var interaction = {
             }
             else {
                 if (isOver) {
-                    config.point_focus_only && hasRadar ?
+                    $$.isPointFocusOnly() && hasRadar ?
                         $$.showCircleFocus($$.getAllValuesOnIndex(d, true)) :
                         $$.setExpand(d, null, true);
                 }
@@ -6659,7 +6659,7 @@ var redraw = {
             notEmpty(config.data_labels) && config.data_labels !== false &&
                 list.push($$.redrawText(xForText, yForText, flow, withTransition));
         }
-        if (($$.hasPointType() || hasRadar) && !config.point_focus_only) {
+        if (($$.hasPointType() || hasRadar) && !$$.isPointFocusOnly()) {
             $$.redrawCircle && list.push($$.redrawCircle(cx, cy, withTransition, flowFn));
         }
         if (hasTreemap) {
@@ -13815,14 +13815,14 @@ var eventrect = {
      */
     unselectRect: function () {
         var $$ = this;
-        var config = $$.config, _a = $$.$el, circle = _a.circle, tooltip = _a.tooltip;
+        var _a = $$.$el, circle = _a.circle, tooltip = _a.tooltip;
         $$.$el.svg.select(".".concat($EVENT.eventRect)).style("cursor", null);
         $$.hideGridFocus();
         if (tooltip) {
             $$.hideTooltip();
             $$._handleLinkedCharts(false);
         }
-        circle && !config.point_focus_only && $$.unexpandCircles();
+        circle && !$$.isPointFocusOnly() && $$.unexpandCircles();
         $$.expandBarTypeShapes(false);
     },
     /**
@@ -18799,7 +18799,7 @@ var shapePoint = {
         var config = this.config;
         var opacity = config.point_opacity;
         if (isUndefined(opacity)) {
-            opacity = config.point_show && !config.point_focus_only ? null : "0";
+            opacity = config.point_show && !this.isPointFocusOnly() ? null : "0";
             opacity = isValue(this.getBaseValue(d)) ?
                 (this.isBubbleType(d) || this.isScatterType(d) ?
                     "0.5" : opacity) : "0";
@@ -18867,7 +18867,7 @@ var shapePoint = {
         if (isSub === void 0) { isSub = false; }
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
-        var focusOnly = config.point_focus_only;
+        var focusOnly = $$.isPointFocusOnly();
         var $root = isSub ? $el.subchart : $el;
         if (config.point_show && !state.toggling) {
             var circles = $root.main.selectAll(".".concat($CIRCLE.circles))
@@ -18918,9 +18918,9 @@ var shapePoint = {
      */
     showCircleFocus: function (d) {
         var $$ = this;
-        var config = $$.config, _a = $$.state, hasRadar = _a.hasRadar, resizing = _a.resizing, toggling = _a.toggling, transiting = _a.transiting, $el = $$.$el;
+        var _a = $$.state, hasRadar = _a.hasRadar, resizing = _a.resizing, toggling = _a.toggling, transiting = _a.transiting, $el = $$.$el;
         var circle = $el.circle;
-        if (transiting === false && config.point_focus_only && circle) {
+        if (transiting === false && $$.isPointFocusOnly() && circle) {
             var cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
             var cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
             var withTransition = toggling || isUndefined(d);
@@ -18955,8 +18955,8 @@ var shapePoint = {
      */
     hideCircleFocus: function () {
         var $$ = this;
-        var config = $$.config, circle = $$.$el.circle;
-        if (config.point_focus_only && circle) {
+        var circle = $$.$el.circle;
+        if ($$.isPointFocusOnly() && circle) {
             $$.unexpandCircles();
             circle.style("visibility", "hidden");
         }
@@ -19041,6 +19041,16 @@ var shapePoint = {
         var selectR = $$.config.point_select_r;
         return isFunction(selectR) ?
             selectR(d) : (selectR || $$.pointR(d) * 4);
+    },
+    /**
+     * Check if point.focus.only option can be applied.
+     * @returns {boolean}
+     * @private
+     */
+    isPointFocusOnly: function () {
+        var $$ = this;
+        return $$.config.point_focus_only &&
+            !$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
     },
     isWithinCircle: function (node, r) {
         var mouse = getPointer(this.state.event, node);
@@ -19604,7 +19614,7 @@ var shapeRadar = {
     bindRadarEvent: function () {
         var $$ = this;
         var config = $$.config, state = $$.state, _a = $$.$el, radar = _a.radar, svg = _a.svg;
-        var focusOnly = config.point_focus_only;
+        var focusOnly = $$.isPointFocusOnly();
         var inputType = state.inputType, transiting = state.transiting;
         if (config.interaction_enabled) {
             var isMouse_1 = inputType === "mouse";
@@ -21898,7 +21908,7 @@ var selection = _assign(_assign({}, drag), {
             var toggle_1 = $$.getToggle(that, d).bind($$);
             var toggledShape_1;
             if (!config.data_selection_multiple) {
-                var focusOnly = config.point_focus_only;
+                var focusOnly = $$.isPointFocusOnly();
                 var selector = ".".concat(focusOnly ? $SELECT.selectedCircles : $SHAPE.shapes);
                 if (config.data_selection_grouped) {
                     selector += $$.getTargetSelectorSuffix(d.id);
@@ -22880,7 +22890,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20230906004621
+ * @version 3.9.4-nightly-20230907004611
  */
 var bb = {
     /**
@@ -22890,7 +22900,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.4-nightly-20230906004621",
+    version: "3.9.4-nightly-20230907004611",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
