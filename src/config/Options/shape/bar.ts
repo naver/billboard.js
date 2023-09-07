@@ -17,9 +17,10 @@ export default {
 	 * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
 	 * @property {boolean|object} [bar.linearGradient=false] Set the linear gradient on bar.<br><br>
 	 * Or customize by giving below object value:
-	 *  - x {Array}: `x1`, `x2` value
-	 *  - y {Array}: `y1`, `y2` value
+	 *  - x {Array}: `x1`, `x2` value (default: `[0, 0]`)
+	 *  - y {Array}: `y1`, `y2` value (default: `[0, 1]`)
 	 *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+	 *    - (default: `[[0, $DATA_COLOR, 1], [1, $DATA_COLOR, 0]]`)
 	 * @property {boolean} [bar.overlap=false] Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
 	 * @property {number} [bar.padding=0] The padding pixel value between each bar.
 	 * @property {number} [bar.radius] Set the radius of bar edge in pixel.
@@ -53,6 +54,7 @@ export default {
 	 *      },
 	 *
 	 *      // will generate follwing linearGradient:
+	 *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
 	 *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
 	 *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
 	 *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
@@ -121,8 +123,12 @@ export default {
 	bar_indices_removeNull: false,
 	bar_label_threshold: 0,
 	bar_linearGradient: <
-	boolean|{x?: number[]; y?: number[]; stops?: [number, string|Function|null, number]}
-	> false,
+			boolean | {
+				x?: [number, number];
+				y?:[number, number];
+				stops?: [number, string | null | Function, number]
+			}
+		> false,
 	bar_overlap: false,
 	bar_padding: 0,
 	bar_radius: <number|{ratio: number}|undefined> undefined,

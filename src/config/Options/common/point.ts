@@ -17,6 +17,13 @@ export default {
 	 * @property {boolean} [point.show=true] Whether to show each point in line.
 	 * @property {number|Function} [point.r=2.5] The radius size of each point.
 	 *  - **NOTE:** Disabled for 'bubble' type
+	 * @property {boolean|object} [point.radialGradient=false] Set the radial gradient on point.<br><br>
+	 * Or customize by giving below object value:
+	 *  - cx {number}: `cx` value (default: `0.3`)
+	 *  - cy {number}: `cy` value (default: `0.3`)
+	 *  - r {number}: `r` value (default: `0.7`)
+	 *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+	 *    - (default: `[[0.1, $DATA_COLOR, 1], [0.9, $DATA_COLOR, 0]]`)
 	 * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
 	 * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
 	 *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
@@ -59,6 +66,7 @@ export default {
 	 *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
 	 * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
 	 * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
+	 * @see [Demo: point radialGradient](https://naver.github.io/billboard.js/demo/#Point.RadialGradientPoint)
 	 * @see [Demo: point sensitivity](https://naver.github.io/billboard.js/demo/#Point.PointSensitivity)
 	 * @example
 	 *  point: {
@@ -69,6 +77,32 @@ export default {
 	 *      r: function(d) {
 	 *          ...
 	 *          return r;
+	 *      },
+	 *
+	 *      // will generate follwing radialGradient:
+	 *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/radialGradient
+	 *      // <radualGradient cx="0.3" cy="0.3" r="0.7">
+	 *      //    <stop offset="0.1" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+	 *      //    <stop offset="0.9" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+	 *      // </radialrGradient>
+	 *      radialGradient: true,
+	 *
+	 *      // Or customized gradient
+	 *      radialGradient: {
+	 *      	cx: 0.3,  // cx attributes
+	 *      	cy: 0.5,  // cy attributes
+	 *      	r: 0.7,  // r attributes
+	 *      	stops: [
+	 *      	  // offset, stop-color, stop-opacity
+	 *      	  [0, "#7cb5ec", 1],
+	 *
+	 *      	  // setting 'null' for stop-color, will set its original data color
+	 *      	  [0.5, null, 0],
+	 *
+	 *      	  // setting 'function' for stop-color, will pass data id as argument.
+	 *      	  // It should return color string or null value
+	 *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+	 *      	]
 	 *      },
 	 *
 	 *      focus: {
@@ -117,6 +151,13 @@ export default {
 	 */
 	point_show: true,
 	point_r: 2.5,
+	point_radialGradient: <
+		boolean | {
+			cx?: number;
+			cy?: number;
+			r?: number;
+			stops?: [number, string | null | Function, number]
+		}> false,
 	point_sensitivity: <number|"radius"|((d: IDataPoint) => number)> 10,
 	point_focus_expand_enabled: true,
 	point_focus_expand_r: <number|undefined> undefined,

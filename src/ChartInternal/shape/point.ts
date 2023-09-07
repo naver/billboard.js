@@ -130,6 +130,8 @@ export default {
 		const $root = isSub ? $el.subchart : $el;
 
 		if (config.point_show && !state.toggling) {
+			config.point_radialGradient && $$.updateLinearGradient();
+
 			const circles = $root.main.selectAll(`.${$CIRCLE.circles}`)
 				.selectAll(`.${$CIRCLE.circle}`)
 				.data(d => (
@@ -142,12 +144,26 @@ export default {
 
 			circles.enter()
 				.filter(Boolean)
-				.append($$.point("create", this, $$.pointR.bind($$), $$.getStylePropValue($$.color)));
+				.append($$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$)));
 
 			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
 				.style("stroke", $$.getStylePropValue($$.color))
 				.style("opacity", $$.initialOpacityForCircle.bind($$));
 		}
+	},
+
+	/**
+	 * Update circle color
+	 * @param {object} d Data object
+	 * @returns {string} Color string
+	 * @private
+	 */
+	updateCircleColor(d: IDataRow): string {
+		const $$ = this;
+		const fn = $$.getStylePropValue($$.color);
+
+		return $$.config.point_radialGradient ?
+			$$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
 	},
 
 	redrawCircle(cx: Function, cy: Function, withTransition: boolean, flow, isSub = false) {
@@ -160,7 +176,7 @@ export default {
 			return [];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), withTransition, flow, selectedCircles);
+		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition, flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
 		const t = getRandom();

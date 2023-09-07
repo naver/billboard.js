@@ -18,9 +18,10 @@ export default {
 	 * @property {boolean} [area.front=true] Set area node to be positioned over line node.
 	 * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
 	 * Or customize by giving below object value:
-	 *  - x {Array}: `x1`, `x2` value
-	 *  - y {Array}: `y1`, `y2` value
+	 *  - x {Array}: `x1`, `x2` value (default: `[0, 0]`)
+	 *  - y {Array}: `y1`, `y2` value (default: `[0, 1]`)
 	 *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+	 *    - (default: `[[0, $DATA_COLOR, 1], [1, $DATA_COLOR, 0]]`)
 	 * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
 	 * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
@@ -37,6 +38,7 @@ export default {
 	 *      front: false,
 	 *
 	 *      // will generate follwing linearGradient:
+	 *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
 	 *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
 	 *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
 	 *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
@@ -65,7 +67,11 @@ export default {
 	area_below: false,
 	area_front: true,
 	area_linearGradient: <
-	boolean|{x?: number[]; y?: number[]; stops?: [number, string|Function|null, number]}
-	> false,
+			boolean | {
+				x?: [number, number];
+				y?:[number, number];
+				stops?: [number, string | null | Function, number]
+			}
+		> false,
 	area_zerobased: true
 };
