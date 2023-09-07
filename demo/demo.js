@@ -3383,8 +3383,8 @@ d3.select(".chart_area")
 					pattern: [
 						"circle",
 						"rectangle",
-						"<polygon points='2.5 0 0 5 5 5'></polygon>",
-						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
+						"<polygon points='4 0 0 8 8 8'></polygon>",
+						"<polygon points='4 0 0 4 4 8 8 4 4 0'></polygon>"
 					]
 				},
 				legend: {
@@ -3740,8 +3740,8 @@ d3.select(".chart_area")
 					pattern: [
 						"circle",
 						"rectangle",
-						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
-						"<polygon points='2.5 0 0 5 5 5'></polygon>",
+						"<polygon points='5 0 0 5 5 10 10 5 5 0'></polygon>",
+						"<polygon points='5 0 0 10 10 10'></polygon>",
 						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
@@ -3758,7 +3758,7 @@ d3.select(".chart_area")
 				},
 				point: {
 					pattern: [
-						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
+						"<polygon points='5 0 0 5 5 10 10 5 5 0'></polygon>"
 					]
 				}
 			}
@@ -3810,7 +3810,7 @@ d3.select(".chart_area")
 				},
 				point: {
 					pattern: [
-						"<path d='m3.937502,2.348755c1.314192,-3.618047 6.463238,0 0,4.651779c-6.463238,-4.651779 -1.314192,-8.269826 0,-4.651779z' />"
+						"<path d='m4 3 c3 -5 8 1 0 5 c-8 -4 -3 -10 0 -5z' />"
 					]
 				}
 			}
@@ -3826,7 +3826,7 @@ d3.select(".chart_area")
 				},
 				point: {
 					pattern: [
-						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+						"<polygon points='5 0 0 10 10 10'></polygon>"
 					]
 				}
 			}
