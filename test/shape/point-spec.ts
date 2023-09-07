@@ -473,6 +473,38 @@ describe("SHAPE POINT", () => {
 				done();
 			});
 		});
+
+		it("set option: data.type=bubble", () => {
+			args.data.type = "bubble";
+		});
+
+		it("should render bubble circles", done => {
+			setTimeout(() => {
+				chart.$.circles.each(function() {
+					expect(+this.style.opacity).to.not.be.equal(0);
+					expect(+this.getAttribute("cx") > 0).to.be.true;
+					expect(+this.getAttribute("cy") > 0).to.be.true;
+				});
+
+				done();
+			}, 500);
+		});
+
+		it("set option: data.type=scatter", () => {
+			args.data.type = "scatter";
+		});
+
+		it("should render scatter circles", done => {
+			setTimeout(() => {
+				chart.$.circles.each(function() {
+					expect(+this.style.opacity).to.not.be.equal(0);
+					expect(+this.getAttribute("cx") > 0).to.be.true;
+					expect(+this.getAttribute("cy") > 0).to.be.true;
+				});
+
+				done();
+			}, 500);
+		});
 	});
 
 	describe("point.opacity", () => {
@@ -548,4 +580,119 @@ describe("SHAPE POINT", () => {
 			});
 		});
 	});
+
+	describe("point radialGradient", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 100, 250],
+						["data2", 130, 100, 130, 200, 150, 50]
+					],
+					type: "scatter"
+				},
+				point: {
+					r: 20,
+					radialGradient: true,
+					opacity: 1,
+					sensitivity: "radius"
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("should defs correctly generated", () => {
+			const {$: {circles}, internal: {$el}} = chart;
+			const radialGradientDefs = $el.defs.selectAll("radialGradient");
+			const ids = chart.data().map(v => v.id);
+			const rx = /.+-(\w+\d+)$/;
+			const radialGradientIds: string[] = [];
+
+			radialGradientDefs.each(function(d, i) {
+				const id = this.id.replace(rx, "$1");
+
+				radialGradientIds.push(this.id);
+
+				expect(id).to.be.equal(ids[i]);
+				expect(this.querySelectorAll("stop").length).to.be.equal(2);				
+			});
+
+			ids.forEach((id, i) => {
+				const radialId = radialGradientIds[i];
+
+				circles.filter(d => d.id === id).each(function() {
+					expect(this.style.fill.indexOf(radialId) > -1).to.be.true;					
+				});
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 100, 250],
+						["data2", 130, 100, 130, 200, 150, 50]
+					],
+					type: "bubble"
+				},
+				point: {
+					r: 10,
+					radialGradient: {
+						cx: 0.5,
+						cy: 0.5,
+						r: 0.5,
+						stops: [
+							[0.3, "#fff", 0.8],
+							[0.6, function(id) { return id === "data1" ? this.color(id) : "green"; }, 0.35],
+							[1, null, 1]
+						]
+					},
+					opacity: 1,
+					sensitivity: "radius"
+				}
+			};
+		});
+
+		it("should radialGradient options are correctly specified.", () => {
+			const {$: {circles}, internal: {$el}} = chart;
+			const radialGradientDefs = $el.defs.selectAll("radialGradient");
+			const ids = chart.data().map(v => v.id);
+			const rx = /.+-(\w+\d+)$/;
+			const radialGradientIds: string[] = [];
+			const options = args.point.radialGradient;
+
+			radialGradientDefs.each(function(d, i) {
+				const id = this.id.replace(rx, "$1");
+
+				radialGradientIds.push(this.id);
+
+				expect(id).to.be.equal(ids[i]);
+
+				expect(+this.getAttribute("cx")).to.be.equal(options.cx);
+				expect(+this.getAttribute("cy")).to.be.equal(options.cy);
+				expect(+this.getAttribute("r")).to.be.equal(options.r);
+				
+				this.querySelectorAll("stop").forEach((stop, i) => {
+					const [offset, color, opacity] = options.stops[i];
+
+					expect(+stop.getAttribute("offset")).to.be.equal(offset);
+					expect(stop.getAttribute("stop-color")).to.be.equal(typeof color === "function" ? color.bind(chart)(id) : color ?? chart.color(id));
+					expect(+stop.getAttribute("stop-opacity")).to.be.equal(opacity);
+				});
+			});
+
+			ids.forEach((id, i) => {
+				const radialId = radialGradientIds[i];
+
+				circles.filter(d => d.id === id).each(function() {
+					expect(this.style.fill.indexOf(radialId) > -1).to.be.true;
+				});
+			});
+		});
+	});
 });
+0

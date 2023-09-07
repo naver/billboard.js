@@ -227,5 +227,39 @@ describe("X AXIS", function() {
 				expect(lines.attr("d")).to.be.equal(initialPath);
 			});
 		});
+
+		describe("", () => {
+			before(() => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", "www.somesitename1.com", "www.somesitename2.com", "www.somesitename3.com", "www.somesitename4.com", "www.somesitename5.com", "www.somesitename6.com", "www.somesitename7.com", "www.somesitename8.com", "www.somesitename9.com", "www.somesitename10.com", "www.somesitename11.com", "www.somesitename12.com"],
+							["pv", 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400]
+						],
+						type: "bar"
+					},
+					axis: {
+						x: {
+							type: "category",
+							tick: {
+							rotate: 75,
+							multiline: false,
+							tooltip: true
+							},
+							height: 130
+						}
+					}
+				};
+			});
+
+			it("should clipPath for x axis size defined as x Axis' dimension.", () => {
+				const clipRect = chart.internal.$el.defs.select("[id$=xaxis] rect");
+				const axisRect = chart.$.main.select(`.${$AXIS.axisX}`).node().getBoundingClientRect();
+
+				expect(axisRect.height).to.be.below(+clipRect.attr("height"));		
+				expect(+clipRect.attr("y") > -50).to.be.be.ok;
+			});
+		});
 	});
 });

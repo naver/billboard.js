@@ -296,7 +296,7 @@ export default {
 	bindRadarEvent(): void {
 		const $$ = this;
 		const {config, state, $el: {radar, svg}} = $$;
-		const focusOnly = config.point_focus_only;
+		const focusOnly = $$.isPointFocusOnly();
 		const {inputType, transiting} = state;
 
 		if (config.interaction_enabled) {

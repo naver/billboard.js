@@ -2050,4 +2050,35 @@ describe("TOOLTIP", function() {
 			spy.resetHistory();
 		});
 	});	
+
+	describe("tooltip: show", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+					  ["data1", 30, 200, 100, 400, 150, 250],
+					  ["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "bar"
+				},
+				tooltip: {
+					show: false
+				}
+			};
+		});
+
+		it("tooltip element should be null", () => {
+			util.hoverChart(chart, "mouseover", {
+				clientX: 360,
+				clientY: 300
+			});
+
+			expect(chart.$.tooltip).to.be.null;
+
+			// check exception when tooltip.show=false
+			expect(
+				chart.internal.setTooltipPosition()
+			).to.not.throw;
+		});
+	});
 });
