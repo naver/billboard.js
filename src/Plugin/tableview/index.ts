@@ -136,7 +136,7 @@ export default class TableView extends Plugin {
 					value: i === 0 ?
 						config.categoryFormat.bind(this)(d) :
 						(isNumber(d) ? d.toLocaleString() :
-						config.showNulls ? "X" : "")
+							config.showNulls ? "X" : "")
 				})).join("")
 			}</tr>`;
 		});
