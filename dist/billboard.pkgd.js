@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.4-nightly-20230907004611
+ * @version 3.9.4-nightly-20230908004622
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.6
@@ -1248,10 +1248,10 @@ var store = __webpack_require__(37);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.32.1',
+  version: '3.32.2',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.32.1/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.32.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -4605,7 +4605,9 @@ try {
 } catch (error) { /* empty */ }
 
 module.exports = function (exec, SKIP_CLOSING) {
-  if (!SKIP_CLOSING && !SAFE_CLOSING) return false;
+  try {
+    if (!SKIP_CLOSING && !SAFE_CLOSING) return false;
+  } catch (error) { return false; } // workaround of old WebKit + `eval` bug
   var ITERATION_SUPPORT = false;
   try {
     var object = {};
@@ -4804,12 +4806,15 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
 
   var getIterationMethod = function (KIND) {
     if (KIND === DEFAULT && defaultIterator) return defaultIterator;
-    if (!BUGGY_SAFARI_ITERATORS && KIND in IterablePrototype) return IterablePrototype[KIND];
+    if (!BUGGY_SAFARI_ITERATORS && KIND && KIND in IterablePrototype) return IterablePrototype[KIND];
+
     switch (KIND) {
       case KEYS: return function keys() { return new IteratorConstructor(this, KIND); };
       case VALUES: return function values() { return new IteratorConstructor(this, KIND); };
       case ENTRIES: return function entries() { return new IteratorConstructor(this, KIND); };
-    } return function () { return new IteratorConstructor(this); };
+    }
+
+    return function () { return new IteratorConstructor(this); };
   };
 
   var TO_STRING_TAG = NAME + ' Iterator';
@@ -6410,7 +6415,7 @@ var pack = function (number, mantissaLength, bytes) {
       exponent = eMax;
     } else if (exponent + eBias >= 1) {
       mantissa = roundToEven((number * c - 1) * pow(2, mantissaLength));
-      exponent = exponent + eBias;
+      exponent += eBias;
     } else {
       mantissa = roundToEven(number * pow(2, eBias - 1) * pow(2, mantissaLength));
       exponent = 0;
@@ -6459,8 +6464,8 @@ var unpack = function (buffer, mantissaLength) {
   } else if (exponent === eMax) {
     return mantissa ? NaN : s ? -Infinity : Infinity;
   } else {
-    mantissa = mantissa + pow(2, mantissaLength);
-    exponent = exponent - eBias;
+    mantissa += pow(2, mantissaLength);
+    exponent -= eBias;
   } return (s ? -1 : 1) * mantissa * pow(2, exponent - mantissaLength);
 };
 
@@ -8035,6 +8040,7 @@ var exp = Math.exp;
 // https://tc39.es/ecma262/#sec-math.expm1
 module.exports = (!$expm1
   // Old FF bug
+  // eslint-disable-next-line no-loss-of-precision -- required for old engines
   || $expm1(10) > 22025.465794806719 || $expm1(10) < 22025.4657948067165168
   // Tor Browser bug
   || $expm1(-2e-17) !== -2e-17
@@ -8400,9 +8406,20 @@ var toNumber = function (argument) {
       if (third === 88 || third === 120) return NaN; // Number('+0x1') should be NaN, old V8 fix
     } else if (first === 48) {
       switch (charCodeAt(it, 1)) {
-        case 66: case 98: radix = 2; maxCode = 49; break; // fast equal of /^0b[01]+$/i
-        case 79: case 111: radix = 8; maxCode = 55; break; // fast equal of /^0o[0-7]+$/i
-        default: return +it;
+        // fast equal of /^0b[01]+$/i
+        case 66:
+        case 98:
+          radix = 2;
+          maxCode = 49;
+          break;
+        // fast equal of /^0o[0-7]+$/i
+        case 79:
+        case 111:
+          radix = 8;
+          maxCode = 55;
+          break;
+        default:
+          return +it;
       }
       digits = stringSlice(it, 2);
       length = digits.length;
@@ -11461,7 +11478,7 @@ var handleNCG = function (string) {
   for (; index <= length; index++) {
     chr = charAt(string, index);
     if (chr === '\\') {
-      chr = chr + charAt(string, ++index);
+      chr += charAt(string, ++index);
     } else if (chr === ']') {
       brackets = false;
     } else if (!brackets) switch (true) {
@@ -12492,7 +12509,10 @@ module.exports = function (KEY, exec, FORCED, SHAM) {
       re[SYMBOL] = /./[SYMBOL];
     }
 
-    re.exec = function () { execCalled = true; return null; };
+    re.exec = function () {
+      execCalled = true;
+      return null;
+    };
 
     re[SYMBOL]('');
     return !execCalled;
@@ -16421,7 +16441,7 @@ var checkBasicSemantic = function (structuredCloneImplementation) {
     var set1 = new global.Set([7]);
     var set2 = structuredCloneImplementation(set1);
     var number = structuredCloneImplementation(Object(7));
-    return set2 === set1 || !set2.has(7) || typeof number != 'object' || number !== 7;
+    return set2 === set1 || !set2.has(7) || typeof number != 'object' || +number !== 7;
   }) && structuredCloneImplementation;
 };
 
@@ -18381,7 +18401,7 @@ var encode = function (input) {
         var q = delta;
         var k = base;
         while (true) {
-          var t = k <= bias ? tMin : (k >= bias + tMax ? tMax : k - bias);
+          var t = k <= bias ? tMin : k >= bias + tMax ? tMax : k - bias;
           if (q < t) break;
           var qMinusT = q - t;
           var baseMinusT = base - t;
@@ -29978,7 +29998,9 @@ const schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
     return "url(#" + this.state.datetimeId + "-gradient" + this.getTargetSelectorSuffix(id) + ")";
   },
   /**
-   * Update linear gradient definition (for area & bar only)
+   * Update linear/radial gradient definition
+   * - linear: area & bar only
+   * - radial: type which has data points only
    * @private
    */
   updateLinearGradient: function updateLinearGradient() {
@@ -29992,22 +30014,45 @@ const schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
       var _this6 = this;
       _newArrowCheck(this, _this5);
       const id = datetimeId + "-gradient" + $$.getTargetSelectorSuffix(d.id),
-        supportedType = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar",
-        isRotated = config.axis_rotated;
-      if (supportedType && defs.select("#" + id).empty()) {
+        radialGradient = $$.hasPointType() && config.point_radialGradient,
+        supportedType = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar";
+      if ((radialGradient || supportedType) && defs.select("#" + id).empty()) {
         const color = $$.color(d),
-          _config = config[supportedType + "_linearGradient"],
-          _config$x = _config.x,
-          x = _config$x === void 0 ? isRotated ? [1, 0] : [0, 0] : _config$x,
-          _config$y = _config.y,
-          y = _config$y === void 0 ? isRotated ? [0, 0] : [0, 1] : _config$y,
-          _config$stops = _config.stops,
-          stops = _config$stops === void 0 ? [[0, color, 1], [1, color, 0]] : _config$stops,
-          linearGradient = defs.append("linearGradient").attr("id", "" + id).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
-        stops.forEach(function (v) {
+          gradient = {
+            defs: null,
+            stops: []
+          };
+        if (radialGradient) {
+          const _radialGradient = radialGradient,
+            _radialGradient$cx = _radialGradient.cx,
+            cx = _radialGradient$cx === void 0 ? .3 : _radialGradient$cx,
+            _radialGradient$cy = _radialGradient.cy,
+            cy = _radialGradient$cy === void 0 ? .3 : _radialGradient$cy,
+            _radialGradient$r = _radialGradient.r,
+            r = _radialGradient$r === void 0 ? .7 : _radialGradient$r,
+            _radialGradient$stops = _radialGradient.stops,
+            stops = _radialGradient$stops === void 0 ? [[.1, color, 0], [.9, color, 1]] : _radialGradient$stops;
+          gradient.stops = stops;
+          gradient.defs = defs.append("radialGradient").attr("id", "" + id).attr("cx", cx).attr("cy", cy).attr("r", r);
+        } else {
+          const isRotated = config.axis_rotated,
+            _config = config[supportedType + "_linearGradient"],
+            _config$x = _config.x,
+            x = _config$x === void 0 ? isRotated ? [1, 0] : [0, 0] : _config$x,
+            _config$y = _config.y,
+            y = _config$y === void 0 ? isRotated ? [0, 0] : [0, 1] : _config$y,
+            _config$stops = _config.stops,
+            stops = _config$stops === void 0 ? [[0, color, 1], [1, color, 0]] : _config$stops;
+          gradient.stops = stops;
+          gradient.defs = defs.append("linearGradient").attr("id", "" + id).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
+        }
+        gradient.stops.forEach(function (v) {
           _newArrowCheck(this, _this6);
-          const stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
-          linearGradient.append("stop").attr("offset", v[0]).attr("stop-color", stopColor || color).attr("stop-opacity", v[2]);
+          const offset = v[0],
+            stopColor = v[1],
+            stopOpacity = v[2],
+            colorValue = isFunction(stopColor) ? stopColor.bind($$.api)(d.id) : stopColor;
+          gradient.defs && gradient.defs.append("stop").attr("offset", offset).attr("stop-color", colorValue || color).attr("stop-opacity", stopOpacity);
         }.bind(this));
       }
     }.bind(this));
@@ -42157,12 +42202,11 @@ const src_linear_linear = function (t) {
       left = Math.max(30, margin.left) - (isRotated ? 0 : 20),
       h = (isRotated ? margin.top + height + 10 : margin.bottom) + 20,
       x = isRotated ? -(1 + left) : -(left - 1),
-      y = -Math.max(15, margin.bottom),
       w = isRotated ? margin.left + 20 : width + 10 + left;
 
     // less than 20 is not enough to show the axis label 'outer' without legend
 
-    node.attr("x", x).attr("y", y).attr("width", w).attr("height", h);
+    node.attr("x", x).attr("y", -2).attr("width", w).attr("height", h);
   },
   /**
    * Set y Axis clipPath dimension
@@ -47682,14 +47726,26 @@ const getTransitionName = function () {
       focusOnly = $$.isPointFocusOnly(),
       $root = isSub ? $el.subchart : $el;
     if (config.point_show && !state.toggling) {
+      config.point_radialGradient && $$.updateLinearGradient();
       const circles = $root.main.selectAll("." + $CIRCLE.circles).selectAll("." + $CIRCLE.circle).data(function (d) {
         _newArrowCheck(this, _this4);
         return $$.isLineType(d) && $$.shouldDrawPointsForLine(d) || $$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ? focusOnly ? [d.values[0]] : d.values : [];
       }.bind(this));
       circles.exit().remove();
-      circles.enter().filter(Boolean).append($$.point("create", this, $$.pointR.bind($$), $$.getStylePropValue($$.color)));
+      circles.enter().filter(Boolean).append($$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$)));
       $root.circle = $root.main.selectAll("." + $CIRCLE.circles + " ." + $CIRCLE.circle).style("stroke", $$.getStylePropValue($$.color)).style("opacity", $$.initialOpacityForCircle.bind($$));
     }
+  },
+  /**
+   * Update circle color
+   * @param {object} d Data object
+   * @returns {string} Color string
+   * @private
+   */
+  updateCircleColor: function updateCircleColor(d) {
+    const $$ = this,
+      fn = $$.getStylePropValue($$.color);
+    return $$.config.point_radialGradient ? $$.getGradienColortUrl(d.id) : fn ? fn(d) : null;
   },
   redrawCircle: function redrawCircle(cx, cy, withTransition, flow, isSub) {
     if (isSub === void 0) {
@@ -47704,7 +47760,7 @@ const getTransitionName = function () {
     if (!$$.config.point_show) {
       return [];
     }
-    const fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), withTransition, flow, selectedCircles),
+    const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition, flow, selectedCircles),
       posAttr = $$.isCirclePoint() ? "c" : "",
       t = getRandom(),
       opacityStyleFn = $$.opacityForCircle.bind($$),
@@ -49403,6 +49459,13 @@ function convertDataToTreemapData(data) {
    * @property {boolean} [point.show=true] Whether to show each point in line.
    * @property {number|Function} [point.r=2.5] The radius size of each point.
    *  - **NOTE:** Disabled for 'bubble' type
+   * @property {boolean|object} [point.radialGradient=false] Set the radial gradient on point.<br><br>
+   * Or customize by giving below object value:
+   *  - cx {number}: `cx` value (default: `0.3`)
+   *  - cy {number}: `cy` value (default: `0.3`)
+   *  - r {number}: `r` value (default: `0.7`)
+   *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+   *    - (default: `[[0.1, $DATA_COLOR, 1], [0.9, $DATA_COLOR, 0]]`)
    * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
    * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
    *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
@@ -49445,6 +49508,7 @@ function convertDataToTreemapData(data) {
    *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
    * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
    * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
+   * @see [Demo: point radialGradient](https://naver.github.io/billboard.js/demo/#Point.RadialGradientPoint)
    * @see [Demo: point sensitivity](https://naver.github.io/billboard.js/demo/#Point.PointSensitivity)
    * @example
    *  point: {
@@ -49455,6 +49519,32 @@ function convertDataToTreemapData(data) {
    *      r: function(d) {
    *          ...
    *          return r;
+   *      },
+   *
+   *      // will generate follwing radialGradient:
+   *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/radialGradient
+   *      // <radualGradient cx="0.3" cy="0.3" r="0.7">
+   *      //    <stop offset="0.1" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+   *      //    <stop offset="0.9" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+   *      // </radialrGradient>
+   *      radialGradient: true,
+   *
+   *      // Or customized gradient
+   *      radialGradient: {
+   *      	cx: 0.3,  // cx attributes
+   *      	cy: 0.5,  // cy attributes
+   *      	r: 0.7,  // r attributes
+   *      	stops: [
+   *      	  // offset, stop-color, stop-opacity
+   *      	  [0, "#7cb5ec", 1],
+   *
+   *      	  // setting 'null' for stop-color, will set its original data color
+   *      	  [0.5, null, 0],
+   *
+   *      	  // setting 'function' for stop-color, will pass data id as argument.
+   *      	  // It should return color string or null value
+   *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+   *      	]
    *      },
    *
    *      focus: {
@@ -49503,6 +49593,7 @@ function convertDataToTreemapData(data) {
    */
   point_show: !0,
   point_r: 2.5,
+  point_radialGradient: !1,
   point_sensitivity: 10,
   point_focus_expand_enabled: !0,
   point_focus_expand_r: undefined,
@@ -49533,9 +49624,10 @@ function convertDataToTreemapData(data) {
    * @property {boolean} [area.front=true] Set area node to be positioned over line node.
    * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
    * Or customize by giving below object value:
-   *  - x {Array}: `x1`, `x2` value
-   *  - y {Array}: `y1`, `y2` value
+   *  - x {Array}: `x1`, `x2` value (default: `[0, 0]`)
+   *  - y {Array}: `y1`, `y2` value (default: `[0, 1]`)
    *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+   *    - (default: `[[0, $DATA_COLOR, 1], [1, $DATA_COLOR, 0]]`)
    * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
    * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
@@ -49552,6 +49644,7 @@ function convertDataToTreemapData(data) {
    *      front: false,
    *
    *      // will generate follwing linearGradient:
+   *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
    *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
    *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
    *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
@@ -49602,9 +49695,10 @@ function convertDataToTreemapData(data) {
    * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
    * @property {boolean|object} [bar.linearGradient=false] Set the linear gradient on bar.<br><br>
    * Or customize by giving below object value:
-   *  - x {Array}: `x1`, `x2` value
-   *  - y {Array}: `y1`, `y2` value
+   *  - x {Array}: `x1`, `x2` value (default: `[0, 0]`)
+   *  - y {Array}: `y1`, `y2` value (default: `[0, 1]`)
    *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+   *    - (default: `[[0, $DATA_COLOR, 1], [1, $DATA_COLOR, 0]]`)
    * @property {boolean} [bar.overlap=false] Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
    * @property {number} [bar.padding=0] The padding pixel value between each bar.
    * @property {number} [bar.radius] Set the radius of bar edge in pixel.
@@ -49638,6 +49732,7 @@ function convertDataToTreemapData(data) {
    *      },
    *
    *      // will generate follwing linearGradient:
+   *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
    *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
    *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
    *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
@@ -53276,7 +53371,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20230907004611
+ * @version 3.9.4-nightly-20230908004622
  */
 const bb = {
   /**
@@ -53286,7 +53381,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.4-nightly-20230907004611",
+  version: "3.9.4-nightly-20230908004622",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

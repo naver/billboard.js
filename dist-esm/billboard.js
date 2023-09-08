@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.4-nightly-20230907004611
+ * @version 3.9.4-nightly-20230908004622
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -5277,7 +5277,9 @@ var color = {
         return "url(#".concat(this.state.datetimeId, "-gradient").concat(this.getTargetSelectorSuffix(id), ")");
     },
     /**
-     * Update linear gradient definition (for area & bar only)
+     * Update linear/radial gradient definition
+     * - linear: area & bar only
+     * - radial: type which has data points only
      * @private
      */
     updateLinearGradient: function () {
@@ -5285,23 +5287,41 @@ var color = {
         var config = $$.config, targets = $$.data.targets, datetimeId = $$.state.datetimeId, defs = $$.$el.defs;
         targets.forEach(function (d) {
             var id = "".concat(datetimeId, "-gradient").concat($$.getTargetSelectorSuffix(d.id));
+            var radialGradient = $$.hasPointType() && config.point_radialGradient;
             var supportedType = ($$.isAreaType(d) && "area") || ($$.isBarType(d) && "bar");
-            var isRotated = config.axis_rotated;
-            if (supportedType && defs.select("#".concat(id)).empty()) {
+            if ((radialGradient || supportedType) && defs.select("#".concat(id)).empty()) {
                 var color_1 = $$.color(d);
-                var _a = config["".concat(supportedType, "_linearGradient")], _b = _a.x, x = _b === void 0 ? isRotated ? [1, 0] : [0, 0] : _b, _c = _a.y, y = _c === void 0 ? isRotated ? [0, 0] : [0, 1] : _c, _d = _a.stops, stops = _d === void 0 ? [[0, color_1, 1], [1, color_1, 0]] : _d;
-                var linearGradient_1 = defs.append("linearGradient")
-                    .attr("id", "".concat(id))
-                    .attr("x1", x[0])
-                    .attr("x2", x[1])
-                    .attr("y1", y[0])
-                    .attr("y2", y[1]);
-                stops.forEach(function (v) {
-                    var stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
-                    linearGradient_1.append("stop")
-                        .attr("offset", v[0])
-                        .attr("stop-color", stopColor || color_1)
-                        .attr("stop-opacity", v[2]);
+                var gradient_1 = {
+                    defs: null,
+                    stops: []
+                };
+                if (radialGradient) {
+                    var _a = radialGradient.cx, cx = _a === void 0 ? 0.3 : _a, _b = radialGradient.cy, cy = _b === void 0 ? 0.3 : _b, _c = radialGradient.r, r = _c === void 0 ? 0.7 : _c, _d = radialGradient.stops, stops = _d === void 0 ? [[0.1, color_1, 0], [0.9, color_1, 1]] : _d;
+                    gradient_1.stops = stops;
+                    gradient_1.defs = defs.append("radialGradient")
+                        .attr("id", "".concat(id))
+                        .attr("cx", cx)
+                        .attr("cy", cy)
+                        .attr("r", r);
+                }
+                else {
+                    var isRotated = config.axis_rotated;
+                    var _e = config["".concat(supportedType, "_linearGradient")], _f = _e.x, x = _f === void 0 ? isRotated ? [1, 0] : [0, 0] : _f, _g = _e.y, y = _g === void 0 ? isRotated ? [0, 0] : [0, 1] : _g, _h = _e.stops, stops = _h === void 0 ? [[0, color_1, 1], [1, color_1, 0]] : _h;
+                    gradient_1.stops = stops;
+                    gradient_1.defs = defs.append("linearGradient")
+                        .attr("id", "".concat(id))
+                        .attr("x1", x[0])
+                        .attr("x2", x[1])
+                        .attr("y1", y[0])
+                        .attr("y2", y[1]);
+                }
+                gradient_1.stops.forEach(function (v) {
+                    var offset = v[0], stopColor = v[1], stopOpacity = v[2];
+                    var colorValue = isFunction(stopColor) ? stopColor.bind($$.api)(d.id) : stopColor;
+                    gradient_1.defs && gradient_1.defs.append("stop")
+                        .attr("offset", offset)
+                        .attr("stop-color", colorValue || color_1)
+                        .attr("stop-opacity", stopOpacity);
                 });
             }
         });
@@ -14228,11 +14248,10 @@ var clip = {
         // less than 20 is not enough to show the axis label 'outer' without legend
         var h = (isRotated ? (margin.top + height) + 10 : margin.bottom) + 20;
         var x = isRotated ? -(1 + left) : -(left - 1);
-        var y = -Math.max(15, margin.bottom);
         var w = isRotated ? margin.left + 20 : width + 10 + left;
         node
             .attr("x", x)
-            .attr("y", y)
+            .attr("y", -2)
             .attr("width", w)
             .attr("height", h);
     },
@@ -18870,6 +18889,7 @@ var shapePoint = {
         var focusOnly = $$.isPointFocusOnly();
         var $root = isSub ? $el.subchart : $el;
         if (config.point_show && !state.toggling) {
+            config.point_radialGradient && $$.updateLinearGradient();
             var circles = $root.main.selectAll(".".concat($CIRCLE.circles))
                 .selectAll(".".concat($CIRCLE.circle))
                 .data(function (d) { return (($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
@@ -18878,11 +18898,23 @@ var shapePoint = {
             circles.exit().remove();
             circles.enter()
                 .filter(Boolean)
-                .append($$.point("create", this, $$.pointR.bind($$), $$.getStylePropValue($$.color)));
+                .append($$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$)));
             $root.circle = $root.main.selectAll(".".concat($CIRCLE.circles, " .").concat($CIRCLE.circle))
                 .style("stroke", $$.getStylePropValue($$.color))
                 .style("opacity", $$.initialOpacityForCircle.bind($$));
         }
+    },
+    /**
+     * Update circle color
+     * @param {object} d Data object
+     * @returns {string} Color string
+     * @private
+     */
+    updateCircleColor: function (d) {
+        var $$ = this;
+        var fn = $$.getStylePropValue($$.color);
+        return $$.config.point_radialGradient ?
+            $$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
     },
     redrawCircle: function (cx, cy, withTransition, flow, isSub) {
         if (isSub === void 0) { isSub = false; }
@@ -18893,7 +18925,7 @@ var shapePoint = {
         if (!$$.config.point_show) {
             return [];
         }
-        var fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), withTransition, flow, selectedCircles);
+        var fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition, flow, selectedCircles);
         var posAttr = $$.isCirclePoint() ? "c" : "";
         var t = getRandom();
         var opacityStyleFn = $$.opacityForCircle.bind($$);
@@ -19934,6 +19966,13 @@ var optPoint = {
      * @property {boolean} [point.show=true] Whether to show each point in line.
      * @property {number|Function} [point.r=2.5] The radius size of each point.
      *  - **NOTE:** Disabled for 'bubble' type
+     * @property {boolean|object} [point.radialGradient=false] Set the radial gradient on point.<br><br>
+     * Or customize by giving below object value:
+     *  - cx {number}: `cx` value (default: `0.3`)
+     *  - cy {number}: `cy` value (default: `0.3`)
+     *  - r {number}: `r` value (default: `0.7`)
+     *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+     *    - (default: `[[0.1, $DATA_COLOR, 1], [0.9, $DATA_COLOR, 0]]`)
      * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
      * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
      *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
@@ -19976,6 +20015,7 @@ var optPoint = {
      *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
      * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
      * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
+     * @see [Demo: point radialGradient](https://naver.github.io/billboard.js/demo/#Point.RadialGradientPoint)
      * @see [Demo: point sensitivity](https://naver.github.io/billboard.js/demo/#Point.PointSensitivity)
      * @example
      *  point: {
@@ -19986,6 +20026,32 @@ var optPoint = {
      *      r: function(d) {
      *          ...
      *          return r;
+     *      },
+     *
+     *      // will generate follwing radialGradient:
+     *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/radialGradient
+     *      // <radualGradient cx="0.3" cy="0.3" r="0.7">
+     *      //    <stop offset="0.1" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+     *      //    <stop offset="0.9" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+     *      // </radialrGradient>
+     *      radialGradient: true,
+     *
+     *      // Or customized gradient
+     *      radialGradient: {
+     *      	cx: 0.3,  // cx attributes
+     *      	cy: 0.5,  // cy attributes
+     *      	r: 0.7,  // r attributes
+     *      	stops: [
+     *      	  // offset, stop-color, stop-opacity
+     *      	  [0, "#7cb5ec", 1],
+     *
+     *      	  // setting 'null' for stop-color, will set its original data color
+     *      	  [0.5, null, 0],
+     *
+     *      	  // setting 'function' for stop-color, will pass data id as argument.
+     *      	  // It should return color string or null value
+     *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+     *      	]
      *      },
      *
      *      focus: {
@@ -20034,6 +20100,7 @@ var optPoint = {
      */
     point_show: true,
     point_r: 2.5,
+    point_radialGradient: false,
     point_sensitivity: 10,
     point_focus_expand_enabled: true,
     point_focus_expand_r: undefined,
@@ -20064,9 +20131,10 @@ var optArea = {
      * @property {boolean} [area.front=true] Set area node to be positioned over line node.
      * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
      * Or customize by giving below object value:
-     *  - x {Array}: `x1`, `x2` value
-     *  - y {Array}: `y1`, `y2` value
+     *  - x {Array}: `x1`, `x2` value (default: `[0, 0]`)
+     *  - y {Array}: `y1`, `y2` value (default: `[0, 1]`)
      *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+     *    - (default: `[[0, $DATA_COLOR, 1], [1, $DATA_COLOR, 0]]`)
      * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
      * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
@@ -20083,6 +20151,7 @@ var optArea = {
      *      front: false,
      *
      *      // will generate follwing linearGradient:
+     *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
      *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
      *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
      *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
@@ -20133,9 +20202,10 @@ var optBar = {
      * @property {number} [bar.label.threshold=0] Set threshold ratio to show/hide labels.
      * @property {boolean|object} [bar.linearGradient=false] Set the linear gradient on bar.<br><br>
      * Or customize by giving below object value:
-     *  - x {Array}: `x1`, `x2` value
-     *  - y {Array}: `y1`, `y2` value
+     *  - x {Array}: `x1`, `x2` value (default: `[0, 0]`)
+     *  - y {Array}: `y1`, `y2` value (default: `[0, 1]`)
      *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+     *    - (default: `[[0, $DATA_COLOR, 1], [1, $DATA_COLOR, 0]]`)
      * @property {boolean} [bar.overlap=false] Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
      * @property {number} [bar.padding=0] The padding pixel value between each bar.
      * @property {number} [bar.radius] Set the radius of bar edge in pixel.
@@ -20169,6 +20239,7 @@ var optBar = {
      *      },
      *
      *      // will generate follwing linearGradient:
+     *      // for more info: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient
      *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
      *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
      *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
@@ -22890,7 +22961,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20230907004611
+ * @version 3.9.4-nightly-20230908004622
  */
 var bb = {
     /**
@@ -22900,7 +22971,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.4-nightly-20230907004611",
+    version: "3.9.4-nightly-20230908004622",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
