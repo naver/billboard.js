@@ -36,7 +36,8 @@ import {isNumber, tplProcess} from "../../module/util";
  *          class: "my-class-name",
  *          style: true,
  *          title: "My Data List",
- *          updateOnToggle: false
+ *          updateOnToggle: false,
+ *          showNulls: false,
  *        }),
  *     ]
  *  });
@@ -134,7 +135,8 @@ export default class TableView extends Plugin {
 				v.map((d, i) => tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
 					value: i === 0 ?
 						config.categoryFormat.bind(this)(d) :
-						(isNumber(d) ? d.toLocaleString() : "")
+						(isNumber(d) ? d.toLocaleString() :
+						config.showNulls ? "X" : "")
 				})).join("")
 			}</tr>`;
 		});

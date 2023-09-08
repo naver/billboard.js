@@ -101,7 +101,18 @@ export default class Options {
 			 * @example
 			 *   legendToggleUpdate: false
 			 */
-			updateOnToggle: true
+			updateOnToggle: true,
+
+			/**
+			 * Shows null values as X in the table
+			 * @name showNulls
+			 * @memberof plugin-tableview
+			 * @type {boolean}
+			 * @default false
+			 * @example
+			 *   showNulls: false
+			 */
+			showNulls: false
 		};
 	}
 }
