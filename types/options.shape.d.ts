@@ -709,6 +709,32 @@ export interface LinearGradientOptions {
 	stops?: Array<[number, string | null | ((this: Chart, id: string) => string), number]>;
 }
 
+export interface RadialGradientOptions {
+	/**
+	 * cx attribute
+	 */
+	cx?: number;
+
+	/**
+	 * cy attribute
+	 */
+	cy?: number;
+
+	/**
+	 * r attribute
+	 */
+	r?: number;
+
+	/**
+	 * The ramp of colors to use on a gradient
+	 *
+	 * offset, stop-color, stop-opacity
+	 * - setting 'null' for stop-color, will set its original data color
+	 * - setting 'function' for stop-color, will pass data id as argument. It should return color string or null value
+	 */
+	stops?: Array<[number, string | null | ((this: Chart, id: string) => string), number]>;
+}
+
 export interface TreemapOptions {
 	/**
 	 * Treemap tile type
