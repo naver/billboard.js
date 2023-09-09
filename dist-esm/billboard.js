@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.4-nightly-20230908004622
+ * @version 3.9.4-nightly-20230909004617
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -8586,20 +8586,20 @@ var tooltip$1 = {
      * @private
      */
     setTooltipPosition: function (dataToShow, eventTarget) {
-        var _a, _b, _c;
+        var _a, _b;
         var $$ = this;
-        var config = $$.config, scale = $$.scale, state = $$.state, _d = $$.$el, eventRect = _d.eventRect, tooltip = _d.tooltip;
+        var config = $$.config, scale = $$.scale, state = $$.state, _c = $$.$el, eventRect = _c.eventRect, tooltip = _c.tooltip;
         var bindto = config.tooltip_contents.bindto;
-        var datum = (_a = tooltip === null || tooltip === void 0 ? void 0 : tooltip.datum) === null || _a === void 0 ? void 0 : _a.call(tooltip);
+        var datum = tooltip === null || tooltip === void 0 ? void 0 : tooltip.datum();
         if (!bindto && datum) {
-            var _e = getPointer(state.event, eventTarget !== null && eventTarget !== void 0 ? eventTarget : eventRect === null || eventRect === void 0 ? void 0 : eventRect.node()), x = _e[0], y = _e[1]; // get mouse event position
+            var _d = getPointer(state.event, eventTarget !== null && eventTarget !== void 0 ? eventTarget : eventRect === null || eventRect === void 0 ? void 0 : eventRect.node()), x = _d[0], y = _d[1]; // get mouse event position
             var currPos = { x: x, y: y };
             if (scale.x && datum && "x" in datum) {
                 currPos.xAxis = scale.x(datum.x);
             }
-            var _f = datum.width, width = _f === void 0 ? 0 : _f, _g = datum.height, height = _g === void 0 ? 0 : _g;
+            var _e = datum.width, width = _e === void 0 ? 0 : _e, _f = datum.height, height = _f === void 0 ? 0 : _f;
             // Get tooltip position
-            var pos_1 = (_c = (_b = config.tooltip_position) === null || _b === void 0 ? void 0 : _b.bind($$.api)(dataToShow !== null && dataToShow !== void 0 ? dataToShow : JSON.parse(datum.current), width, height, eventRect === null || eventRect === void 0 ? void 0 : eventRect.node(), currPos)) !== null && _c !== void 0 ? _c : $$.getTooltipPosition.bind($$)(width, height, currPos);
+            var pos_1 = (_b = (_a = config.tooltip_position) === null || _a === void 0 ? void 0 : _a.bind($$.api)(dataToShow !== null && dataToShow !== void 0 ? dataToShow : JSON.parse(datum.current), width, height, eventRect === null || eventRect === void 0 ? void 0 : eventRect.node(), currPos)) !== null && _b !== void 0 ? _b : $$.getTooltipPosition.bind($$)(width, height, currPos);
             ["top", "left"].forEach(function (v) {
                 var value = pos_1[v];
                 tooltip.style(v, "".concat(value, "px"));
@@ -8673,17 +8673,16 @@ var tooltip$1 = {
      * @private
      */
     showTooltip: function (selectedData, eventTarget) {
-        var _a;
         var $$ = this;
         var config = $$.config, tooltip = $$.$el.tooltip;
         var dataToShow = selectedData.filter(function (d) { return d && isValue($$.getBaseValue(d)); });
         if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
             return;
         }
-        var datum = (_a = tooltip === null || tooltip === void 0 ? void 0 : tooltip.datum) === null || _a === void 0 ? void 0 : _a.call(tooltip);
+        var datum = tooltip.datum();
         var dataStr = JSON.stringify(selectedData);
         if (!datum || datum.current !== dataStr) {
-            var _b = selectedData.concat().sort()[0], index = _b.index, x = _b.x;
+            var _a = selectedData.concat().sort()[0], index = _a.index, x = _a.x;
             callFn(config.tooltip_onshow, $$.api, selectedData);
             // set tooltip content
             tooltip
@@ -8733,11 +8732,11 @@ var tooltip$1 = {
      * @private
      */
     hideTooltip: function (force) {
-        var _a, _b;
+        var _a;
         var $$ = this;
         var api = $$.api, config = $$.config, tooltip = $$.$el.tooltip;
         if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
-            var selectedData = JSON.parse((_b = (_a = tooltip === null || tooltip === void 0 ? void 0 : tooltip.datum) === null || _a === void 0 ? void 0 : _a.call(tooltip).current) !== null && _b !== void 0 ? _b : {});
+            var selectedData = JSON.parse((_a = tooltip.datum().current) !== null && _a !== void 0 ? _a : {});
             callFn(config.tooltip_onhide, api, selectedData);
             // hide tooltip
             tooltip
@@ -22961,7 +22960,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20230908004622
+ * @version 3.9.4-nightly-20230909004617
  */
 var bb = {
     /**
@@ -22971,7 +22970,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.4-nightly-20230908004622",
+    version: "3.9.4-nightly-20230909004617",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

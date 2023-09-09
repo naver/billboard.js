@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.4-nightly-20230908004622
+ * @version 3.9.4-nightly-20230909004617
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -9797,7 +9797,7 @@ function getTextXPos(pos, width) {
       eventRect = _$$$$el.eventRect,
       tooltip = _$$$$el.tooltip,
       bindto = config.tooltip_contents.bindto,
-      datum = tooltip == null || tooltip.datum == null ? void 0 : tooltip.datum();
+      datum = tooltip == null ? void 0 : tooltip.datum();
     if (!bindto && datum) {
       var _config$tooltip_posit, _config$tooltip_posit2;
       const _getPointer = getPointer(state.event, eventTarget != null ? eventTarget : eventRect == null ? void 0 : eventRect.node()),
@@ -9915,7 +9915,7 @@ function getTextXPos(pos, width) {
     if (!tooltip || dataToShow.length === 0 || !config.tooltip_show) {
       return;
     }
-    let datum = tooltip == null || tooltip.datum == null ? void 0 : tooltip.datum();
+    let datum = tooltip.datum();
     const dataStr = JSON.stringify(selectedData);
     if (!datum || datum.current !== dataStr) {
       const _selectedData$concat$ = selectedData.concat().sort()[0],
@@ -9984,7 +9984,7 @@ function getTextXPos(pos, width) {
       tooltip = $$.$el.tooltip;
     if (tooltip && tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
       var _tooltip$datum$curren;
-      const selectedData = JSON.parse((_tooltip$datum$curren = tooltip == null || tooltip.datum == null ? void 0 : tooltip.datum().current) != null ? _tooltip$datum$curren : {});
+      const selectedData = JSON.parse((_tooltip$datum$curren = tooltip.datum().current) != null ? _tooltip$datum$curren : {});
       callFn(config.tooltip_onhide, api, selectedData);
 
       // hide tooltip
@@ -25453,7 +25453,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20230908004622
+ * @version 3.9.4-nightly-20230909004617
  */
 const bb = {
   /**
@@ -25463,7 +25463,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.4-nightly-20230908004622",
+  version: "3.9.4-nightly-20230909004617",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
