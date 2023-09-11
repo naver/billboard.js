@@ -355,8 +355,8 @@ export default {
 		const [min, max] = zoomDomain;
 
 		if (isInverted ? domain[0] >= min : domain[0] <= min) {
-			domain[0] = min;
 			domain[1] = +domain[1] + (min - domain[0]);
+			domain[0] = min;
 		}
 
 		if (isInverted ? domain[1] <= max : domain[1] >= max) {
