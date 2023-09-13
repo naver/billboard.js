@@ -377,4 +377,36 @@ describe("DOMAIN", function() {
 			expect(y2.domain()).to.be.deep.equal(domain);
 		});
 	});
+
+	describe("trimXDomain", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 150],
+					],
+					type: "line",
+				},
+				zoom: {
+					enabled: true,
+				},
+			}
+		});
+
+		it("test pan left gets trimmed", () => {
+			const domain = chart.internal.scale.x.domain();
+			const trimmed = chart.internal.trimXDomain(domain.map((x: number) => x - 10));
+
+			expect(trimmed[0]).to.approximately(domain[0], 0.1);
+			expect(trimmed[1]).to.approximately(domain[1], 0.1);
+		});
+
+		it("test pan right gets trimmed", () => {
+			const domain = chart.internal.scale.x.domain();
+			const trimmed = chart.internal.trimXDomain(domain.map((x: number) => x + 5));
+
+			expect(trimmed[0]).to.approximately(domain[0], 0.1);
+			expect(trimmed[1]).to.approximately(domain[1], 0.1);
+		});
+	});
 });
