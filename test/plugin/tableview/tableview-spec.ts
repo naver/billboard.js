@@ -267,4 +267,66 @@ describe("PLUGIN: TABLE-VIEW", () => {
 			expect(document.querySelector(`#${defaultStyle.id}`)).to.be.null;
 		});
 	});
+
+	describe("nullString option", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2023", "2024", "2025", "2026"],
+						["data1", 1230, null, null, 1238],
+						["data2", 500, 120, 100, null]
+					],
+				},
+				axis: {
+					x: {
+					  type: "category"
+					}
+				},
+				plugins: [
+					new TableView({
+						title: "My Yearly Data List",
+						categoryTitle: "Year",
+						style: true
+					})
+				]
+			};
+		});
+
+		it("check default nullString value: '-'", () => {
+			const tr = document.querySelectorAll(".bb-tableview tr");
+
+			[].slice.call(tr).forEach(v => {
+				const x = v.querySelector("th").textContent;
+
+				if (/202(4|5|6)/.test(x)) {
+					expect(v.querySelectorAll("td")[x === "2026" ? 1 : 0].textContent).to.be.equal("-");
+				}
+			});
+		});
+
+		it("set options: nullString='N/A'", () => {
+			args.plugins = [
+				new TableView({
+					title: "My Yearly Data List",
+					categoryTitle: "Year",
+					style: true,
+					nullString: "N/A"
+				})
+			];
+		});
+
+		it("when nullString value is specified: 'N/A'", () => {
+			const tr = document.querySelectorAll(".bb-tableview tr");
+
+			[].slice.call(tr).forEach(v => {
+				const x = v.querySelector("th").textContent;
+
+				if (/202(4|5|6)/.test(x)) {
+					expect(v.querySelectorAll("td")[x === "2026" ? 1 : 0].textContent).to.be.equal("N/A");
+				}
+			});
+		});
+	});
 });

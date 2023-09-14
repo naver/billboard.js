@@ -35,4 +35,9 @@ export interface TableViewOptions {
 	 * Update tableview from data visibility update(ex. legend toggle).
 	 */
 	updateOnToggle?: boolean;
+
+	/**
+	 * Set how null value to be shown.
+	 */
+	nullString?: string;
 }
