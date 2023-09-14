@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.4-nightly-20230913004703
+ * @version 3.9.4-nightly-20230914004557
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -236,7 +236,7 @@ let Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.4-nightly-20230913004703";
+Plugin.version = "3.9.4-nightly-20230914004557";
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
 /**
@@ -333,7 +333,17 @@ let Options = function () {
      * @example
      *   legendToggleUpdate: false
      */
-    updateOnToggle: !0
+    updateOnToggle: !0,
+    /**
+     * Set how null value to be shown.
+     * @name showNulls
+     * @memberof plugin-tableview
+     * @type {string}
+     * @default "-"
+     * @example
+     *   nullString: "N/A"
+     */
+    nullString: "-"
   };
 };
 
@@ -1377,7 +1387,8 @@ function tableview_objectSpread(e) { for (var r = 1, t; r < arguments.length; r+
  *          class: "my-class-name",
  *          style: true,
  *          title: "My Data List",
- *          updateOnToggle: false
+ *          updateOnToggle: false,
+ *          nullString: "N/A"
  *        }),
  *     ]
  *  });
@@ -1471,7 +1482,7 @@ let TableView = /*#__PURE__*/function (_Plugin) {
       tbody += "<tr>" + v.map(function (d, i) {
         _newArrowCheck(this, _this4);
         return tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
-          value: i === 0 ? config.categoryFormat.bind(this)(d) : isNumber(d) ? d.toLocaleString() : ""
+          value: i === 0 ? config.categoryFormat.bind(this)(d) : isNumber(d) ? d.toLocaleString() : config.nullString
         });
       }.bind(this)).join("") + "</tr>";
     }.bind(this));
