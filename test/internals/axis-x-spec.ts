@@ -228,7 +228,7 @@ describe("X AXIS", function() {
 			});
 		});
 
-		describe("", () => {
+		describe("x Axis dimension", () => {
 			before(() => {
 				args = {
 					data: {
@@ -243,9 +243,9 @@ describe("X AXIS", function() {
 						x: {
 							type: "category",
 							tick: {
-							rotate: 75,
-							multiline: false,
-							tooltip: true
+								rotate: 75,
+								multiline: false,
+								tooltip: true
 							},
 							height: 130
 						}
@@ -259,6 +259,33 @@ describe("X AXIS", function() {
 
 				expect(axisRect.height).to.be.below(+clipRect.attr("height"));		
 				expect(+clipRect.attr("y") > -50).to.be.be.ok;
+			});
+
+			it("set options", () => {
+				args = {
+					data: {
+						columns: [
+							["pv", 90, 100, 140]
+						],
+						type: "bar"
+					},
+					legend: {
+						show: false
+					},
+					axis: {
+						x: {
+							height: 0
+						}
+					}
+				};
+			});
+
+			it("x axis height option should be applied", () => {
+				const {$: {main}, internal: {state}} = chart;
+				
+				expect(
+					main.select(`.${$AXIS.axisX}`).node().getBoundingClientRect().y
+				).to.be.above(state.height);
 			});
 		});
 	});
