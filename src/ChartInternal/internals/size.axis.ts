@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {isNumber} from "../../module/util";
 import type {AxisType} from "../../../types/types";
 
 export default {
@@ -52,7 +53,7 @@ export default {
 			return 8;
 		}
 
-		if (id === "x" && config.axis_x_height) {
+		if (id === "x" && isNumber(config.axis_x_height)) {
 			return config.axis_x_height;
 		}
 

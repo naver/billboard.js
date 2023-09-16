@@ -322,7 +322,7 @@ export default {
 			x.domain(domain || sortValue($$.getXDomain(targets), !config.axis_x_inverted));
 			org.xDomain = x.domain();
 
-			zoomEnabled && $$.zoom.updateScaleExtent();
+			// zoomEnabled && $$.zoom.updateScaleExtent();
 
 			subX.domain(x.domain());
 			$$.brush?.scale(subX);
@@ -333,6 +333,10 @@ export default {
 				org.xDomain : getBrushSelection($$).map(subX.invert);
 
 			x.domain(domainValue);
+			// zoomEnabled && $$.zoom.updateScaleExtent();
+		}
+
+		if (withUpdateOrgXDomain || withUpdateXDomain) {
 			zoomEnabled && $$.zoom.updateScaleExtent();
 		}
 
