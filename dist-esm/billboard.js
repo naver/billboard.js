@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.4-nightly-20230914004557
+ * @version 3.9.4-nightly-20230916004621
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -5609,7 +5609,7 @@ var domain = {
         if (withUpdateOrgXDomain) {
             x.domain(domain || sortValue($$.getXDomain(targets), !config.axis_x_inverted));
             org.xDomain = x.domain();
-            zoomEnabled && $$.zoom.updateScaleExtent();
+            // zoomEnabled && $$.zoom.updateScaleExtent();
             subX.domain(x.domain());
             (_a = $$.brush) === null || _a === void 0 ? void 0 : _a.scale(subX);
         }
@@ -5617,6 +5617,9 @@ var domain = {
             var domainValue = domain || (!$$.brush || brushEmpty($$)) ?
                 org.xDomain : getBrushSelection($$).map(subX.invert);
             x.domain(domainValue);
+            // zoomEnabled && $$.zoom.updateScaleExtent();
+        }
+        if (withUpdateOrgXDomain || withUpdateXDomain) {
             zoomEnabled && $$.zoom.updateScaleExtent();
         }
         // Trim domain when too big by zoom mousemove event
@@ -14845,6 +14848,10 @@ var region = {
     },
 };
 
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 var sizeAxis = {
     /**
      * Get Axis size according its position
@@ -14887,7 +14894,7 @@ var sizeAxis = {
         if (id === "x" && !config.axis_x_show) {
             return 8;
         }
-        if (id === "x" && config.axis_x_height) {
+        if (id === "x" && isNumber(config.axis_x_height)) {
             return config.axis_x_height;
         }
         if (id === "y" && !config.axis_y_show) {
@@ -22960,7 +22967,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20230914004557
+ * @version 3.9.4-nightly-20230916004621
  */
 var bb = {
     /**
@@ -22970,7 +22977,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.4-nightly-20230914004557",
+    version: "3.9.4-nightly-20230916004621",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

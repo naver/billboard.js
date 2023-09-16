@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.4-nightly-20230914004557
+ * @version 3.9.4-nightly-20230916004621
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6584,13 +6584,19 @@ const schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
       var _$$$brush;
       x.domain(domain || sortValue($$.getXDomain(targets), !config.axis_x_inverted));
       org.xDomain = x.domain();
-      zoomEnabled && $$.zoom.updateScaleExtent();
+
+      // zoomEnabled && $$.zoom.updateScaleExtent();
+
       subX.domain(x.domain());
       (_$$$brush = $$.brush) == null || _$$$brush.scale(subX);
     }
     if (withUpdateXDomain) {
       const domainValue = domain || !$$.brush || brushEmpty($$) ? org.xDomain : getBrushSelection($$).map(subX.invert);
       x.domain(domainValue);
+      // zoomEnabled && $$.zoom.updateScaleExtent();
+    }
+
+    if (withUpdateOrgXDomain || withUpdateXDomain) {
       zoomEnabled && $$.zoom.updateScaleExtent();
     }
 
@@ -16731,7 +16737,7 @@ function smoothLines(el, type) {
     if (id === "x" && !config.axis_x_show) {
       return 8;
     }
-    if (id === "x" && config.axis_x_height) {
+    if (id === "x" && isNumber(config.axis_x_height)) {
       return config.axis_x_height;
     }
     if (id === "y" && !config.axis_y_show) {
@@ -25453,7 +25459,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20230914004557
+ * @version 3.9.4-nightly-20230916004621
  */
 const bb = {
   /**
@@ -25463,7 +25469,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.4-nightly-20230914004557",
+  version: "3.9.4-nightly-20230916004621",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
