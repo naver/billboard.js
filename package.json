@@ -186,7 +186,7 @@
 		"sass-loader": "^13.3.2",
 		"semantic-release": "^21.1.1",
 		"simulant": "^0.2.2",
-		"sinon": "^15.2.0",
+		"sinon": "^16.0.0",
 		"string-replace-loader": "^3.1.0",
 		"style-loader": "^3.3.3",
 		"taffydb": "^2.7.3",
