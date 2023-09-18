@@ -184,7 +184,7 @@
 		"rollup": "^3.29.1",
 		"rollup-plugin-delete": "^2.0.0",
 		"sass-loader": "^13.3.2",
-		"semantic-release": "^21.1.1",
+		"semantic-release": "^22.0.0",
 		"simulant": "^0.2.2",
 		"sinon": "^15.2.0",
 		"string-replace-loader": "^3.1.0",
