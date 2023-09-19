@@ -159,7 +159,7 @@ export default {
 		const $$ = this;
 		const {state: {axis, current}} = $$;
 		const xAxisLength = current.width -
-			$$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight();
+			$$.getCurrentPaddingByDirection("left") - $$.getCurrentPaddingByDirection("right");
 		const tickCountWithPadding = axis.x.tickCount +
 			axis.x.padding.left + axis.x.padding.right;
 

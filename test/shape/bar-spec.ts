@@ -643,6 +643,8 @@ describe("SHAPE BAR", () => {
 
 			// check the path from the third data value
 			main.selectAll(`.${$SHAPE.shape}.${$BAR.bar}-2`).each(function(d, i) {
+				console.log(removeSpace(this.getAttribute("d")))
+				console.log(2, removeSpace(path[i]))
 				expect(removeSpace(this.getAttribute("d"))).to.be.equal(removeSpace(path[i]));
 			})
 		};

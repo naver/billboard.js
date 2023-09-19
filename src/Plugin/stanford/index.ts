@@ -121,13 +121,15 @@ export default class Stanford extends Plugin {
 		$$.labelishData = d => d.values;
 		$$.opacityForCircle = () => 1;
 
-		const getCurrentPaddingRight = $$.getCurrentPaddingRight.bind($$);
+		const getCurrentPadding = $$.getCurrentPadding.bind($$);
 
-		$$.getCurrentPaddingRight = () => (
-			getCurrentPaddingRight() + (
-				this.colorScale ? this.colorScale.getColorScalePadding() : 0
-			)
-		);
+		$$.getCurrentPadding = () => {
+			const padding = getCurrentPadding();
+
+			padding.right += this.colorScale ? this.colorScale.getColorScalePadding() : 0;
+
+			return padding;
+		};
 	}
 
 	$init(): void {
@@ -143,6 +145,8 @@ export default class Stanford extends Plugin {
 		this.initStanfordData();
 		this.setStanfordTooltip();
 		this.colorScale.drawColorScale();
+
+		$$.right += this.colorScale ? this.colorScale.getColorScalePadding() : 0;
 
 		this.$redraw();
 	}

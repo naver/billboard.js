@@ -7,6 +7,19 @@
  */
 export default {
 	/**
+	 * Set clip-path attribute for y2 axis element
+	 * - **NOTE**: `clip-path` attribute for y2 Axis is set only when `axis.y2.inner` option is true.
+	 * @name axis․y2․clipPath
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default true
+	 * @example
+	 * // don't set 'clip-path' attribute
+	 * clipPath: false
+	 */
+	axis_y2_clipPath: true,
+
+	/**
 	 * Show or hide y2 axis.
 	 * - **NOTE**:
 	 *   - When set to `false` will not generate y2 axis node. In this case, all 'y2' axis related functionality won't work properly.
