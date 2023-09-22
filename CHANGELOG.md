@@ -1,3 +1,17 @@
+# [3.10.0-next.3](https://github.com/naver/billboard.js/compare/3.10.0-next.2...3.10.0-next.3) (2023-09-22)
+
+
+### Bug Fixes
+
+* **axis:** Fix axis.x.height=0 to be applied ([0c562c3](https://github.com/naver/billboard.js/commit/0c562c30fc301b6989dd65fae6372e724caf3bb7)), closes [#3424](https://github.com/naver/billboard.js/issues/3424)
+* **domain:** fix trimXDomain not trimming min ([bacc287](https://github.com/naver/billboard.js/commit/bacc28735e9397114b75c5230e6c99b854c8993e)), closes [#3420](https://github.com/naver/billboard.js/issues/3420)
+* **option:** Fix inconsistency of padding ([0c1ce81](https://github.com/naver/billboard.js/commit/0c1ce8180122b51924077039d928bdbbf677ff87)), closes [#3426](https://github.com/naver/billboard.js/issues/3426)
+
+
+### Features
+
+* **plugin:** Add nullString option ([29bdb0c](https://github.com/naver/billboard.js/commit/29bdb0cede20052d3511c1fcf593b015ea527916)), closes [#3412](https://github.com/naver/billboard.js/issues/3412) [#3413](https://github.com/naver/billboard.js/issues/3413)
+
 # [3.10.0-next.2](https://github.com/naver/billboard.js/compare/3.10.0-next.1...3.10.0-next.2) (2023-09-08)
 
 
