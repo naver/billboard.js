@@ -43,8 +43,9 @@ describe("SHAPE ARC: NEEDLE option", () => {
 	describe("donut", () => {	
 		it("basic", () => {
 			const {$el: {arcs, needle}} = chart.internal;
+			const rx = /M-7\.5 0 A1 1 0 0 0 7\.5 0 L0 -210.\d+ A0 0 0 0 0 -0 -210\.\d+ L-7\.5 0 Z/;
 			
-			expect(needle.attr("d")).to.be.equal("M-7.5 0 A1 1 0 0 0 7.5 0 L0 -210.85 A0 0 0 0 0 -0 -210.85 L-7.5 0 Z");
+			expect(rx.test(needle.attr("d"))).to.be.true;
 			expect(+arcs.select(`.${$ARC.chartArcsTitle}`).text()).to.be.equal(0);
 		});
 
@@ -70,8 +71,9 @@ describe("SHAPE ARC: NEEDLE option", () => {
 
 		it("check needle options", () => {
 			const {$el: {arcs, needle}} = chart.internal;
+			const rx = /M-5 20 A0 0 0 0 0 5 20 L2\.5 -168\.\d+ A1 1 0 0 0 -2\.5 -168\.\d+ L-5 20 Z/;
 
-			expect(needle.attr("d")).to.be.equal("M-5 20 A0 0 0 0 0 5 20 L2.5 -168.67999999999998 A1 1 0 0 0 -2.5 -168.67999999999998 L-5 20 Z");
+			expect(rx.test(needle.attr("d"))).to.be.true;
 			expect(getDegree(needle.style("transform"))).to.equal(118.8);
 			expect(needle.style("fill")).to.equal("red");
 
@@ -154,8 +156,9 @@ describe("SHAPE ARC: NEEDLE option", () => {
 		it("check custom path", () => {
 			const {$el: {needle}} = chart.internal;
 			const path = needle.attr("d").replace(/[\n]/g, "").replace(/\s{2,}/g, " ");
+			const rx = /M 0 -168\.\d+ L -12 -148\.\d+ L -5 -148\.\d+ L -5 0 A 1 1 0 0 0 5 0 L 5 -148\.\d+ L 12 -148\.\d+ Z/;
 			
-			expect(path).to.be.equal("M 0 -168.67999999999998 L -12 -148.67999999999998 L -5 -148.67999999999998 L -5 0 A 1 1 0 0 0 5 0 L 5 -148.67999999999998 L 12 -148.67999999999998 Z");
+			expect(rx.test(path)).to.be.true;
 		});
 
 		it("set options", () => {

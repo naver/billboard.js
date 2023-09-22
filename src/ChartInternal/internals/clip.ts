@@ -61,24 +61,26 @@ export default {
 		const h = (isRotated ? (margin.top + height) + 10 : margin.bottom) + 20;
 
 		const x = isRotated ? -(1 + left) : -(left - 1);
+		const y = -15; // -Math.max(15, margin.top);
 		const w = isRotated ? margin.left + 20 : width + 10 + left;
 
 		node
 			.attr("x", x)
-			.attr("y", -2)
+			.attr("y", y)
 			.attr("width", w)
 			.attr("height", h);
 	},
 
 	/**
 	 * Set y Axis clipPath dimension
-	 * @param {d3Selecton} node clipPath <rect> selection
+	 * @param {d3Selection} node clipPath <rect> selection
 	 * @private
 	 */
 	setYAxisClipPath(node): void {
 		const $$ = this;
 		const {config, state: {margin, width, height}} = $$;
 		const isRotated = config.axis_rotated;
+
 		const left = Math.max(30, margin.left) - (isRotated ? 20 : 0);
 		const isInner = config.axis_y_inner;
 
