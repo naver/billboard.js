@@ -108,6 +108,7 @@ export default {
 
 	/**
 	 * The padding of the chart element.
+	 * - **NOTE:** for more information, see the "[`Understanding padding`](https://github.com/naver/billboard.js/wiki/Understanding-padding)"" wiki documentaion.
 	 * @name padding
 	 * @memberof Options
 	 * @type {object}

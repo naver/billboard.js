@@ -311,8 +311,8 @@ export default {
 		const hasTreemap = state.hasTreemap;
 		const isRotated = config.axis_rotated;
 		const svgLeft = $$.getSvgLeft(true);
-		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
-		const chartLeft = $$.getCurrentPaddingLeft(true);
+		let chartRight = svgLeft + current.width - $$.getCurrentPaddingByDirection("right");
+		const chartLeft = $$.getCurrentPaddingByDirection("left", true);
 		const size = 20;
 		let {x, y} = currPos;
 

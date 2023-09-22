@@ -159,11 +159,11 @@ export default {
 
 		const insetLegendPosition = {
 			top: isLegendTop ?
-				$$.getCurrentPaddingTop() + config.legend_inset_y + 5.5 :
-				current.height - height - $$.getCurrentPaddingBottom() - config.legend_inset_y,
+				$$.getCurrentPaddingByDirection("top") + config.legend_inset_y + 5.5 :
+				current.height - height - $$.getCurrentPaddingByDirection("bottom") - config.legend_inset_y,
 			left: isLegendLeft ?
-				$$.getCurrentPaddingLeft() + config.legend_inset_x + 0.5 :
-				current.width - width - $$.getCurrentPaddingRight() - config.legend_inset_x + 0.5
+				$$.getCurrentPaddingByDirection("left") + config.legend_inset_x + 0.5 :
+				current.width - width - $$.getCurrentPaddingByDirection("right") - config.legend_inset_x + 0.5
 		};
 
 		$$.state.margin3 = {

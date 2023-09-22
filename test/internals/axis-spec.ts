@@ -1829,7 +1829,7 @@ describe("AXIS", function() {
 			});
 
 			it("should not have inner y axis", () => {
-				const paddingLeft = chart.internal.getCurrentPaddingLeft();
+				const paddingLeft = chart.internal.getCurrentPaddingByDirection("left")
 				const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY} g.tick text`);
 
 				expect(paddingLeft).to.be.above(19);
@@ -1844,7 +1844,7 @@ describe("AXIS", function() {
 			});
 
 			it("should have inner y axis", () => {
-				const paddingLeft = chart.internal.getCurrentPaddingLeft();
+				const paddingLeft = chart.internal.getCurrentPaddingByDirection("left");
 				const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY} g.tick text`);
 
 				expect(paddingLeft).to.be.equal(0);
@@ -1875,7 +1875,7 @@ describe("AXIS", function() {
 			});
 
 			it("should not have inner y axis", () => {
-				const paddingRight = chart.internal.getCurrentPaddingRight();
+				const paddingRight = chart.internal.getCurrentPaddingByDirection("right");
 				const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick text`);
 
 				expect(paddingRight).to.be.above(19);
@@ -1889,8 +1889,8 @@ describe("AXIS", function() {
 				args.axis.y2.inner = true;
 			});
 
-			it("should have inner y axis", () => {
-				const paddingRight = chart.internal.getCurrentPaddingRight();
+			it("should have inner y2 axis", () => {
+				const paddingRight = chart.internal.getCurrentPaddingByDirection("right");
 				const tickTexts = chart.$.main.selectAll(`.${$AXIS.axisY2} g.tick text`);
 
 				expect(paddingRight).to.be.equal(1);

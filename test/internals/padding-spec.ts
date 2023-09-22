@@ -8,7 +8,7 @@ import sinon from "sinon";
 import util from "../assets/util";
 import {$AXIS} from "../../src/config/classes";
 
-describe("PADDING", function() {
+describe("PADDING", () => {
 	let chart;
 	let args: any = {
 		svg: {
@@ -26,7 +26,7 @@ describe("PADDING", function() {
 	const deepEqual = (val, print=false) => {
 		const {margin} = chart.internal.state;
 		
-		print && console.log(margin);
+		print && console.log(`val: ${JSON.stringify(val)}`, `margin: ${JSON.stringify(margin)}`);
 		expect(margin).to.deep.equal(val);
 	};
 
@@ -320,6 +320,18 @@ describe("PADDING", function() {
 			it("when legend is hidden", () => {
 				deepEqual({top: 4, right: 21, bottom: 30, left: 20});
 			});
+
+			it("set options: padding.bottom=0", () => {
+				args.padding = {
+					bottom: 0
+				};
+			});
+
+			it("bottom x axis won't be shown", () => {
+				deepEqual({top: 4, right: 21, bottom: 0, left: 20});	
+				
+				args.padding = {};
+			});
 		});
 
 		//----- rotated axis
@@ -440,7 +452,7 @@ describe("PADDING", function() {
 			});
 
 			it("inner y2 axis with outer label text", () => {
-				deepEqual({top: 0, right: 21, bottom: 30, left: 20});
+				deepEqual({top: 0, right: 22, bottom: 30, left: 20});
 			});
 
 			it("set options: axis.y.label = {}", () => {
@@ -448,7 +460,7 @@ describe("PADDING", function() {
 			});
 
 			it("inner y axis without outer label text", () => {
-				deepEqual({top: 0, right: 21, bottom: 30, left: 0});
+				deepEqual({top: 0, right: 22, bottom: 30, left: 0});
 			});
 
 			it("set options: axis.y2.label = {}", () => {
@@ -456,7 +468,7 @@ describe("PADDING", function() {
 			});
 
 			it("inner y/y2 axes without outer label text", () => {
-				deepEqual({top: 0, right: 1, bottom: 30, left: 0});
+				deepEqual({top: 0, right: 2, bottom: 30, left: 0});
 			});
 
 			it("set options: legend.show=false", () => {
@@ -464,12 +476,12 @@ describe("PADDING", function() {
 			});
 
 			it("inner y/y2 axes without outer label text and without legend", () => {
-				deepEqual({top: 0, right: 1, bottom: 20, left: 0});
+				deepEqual({top: 0, right: 2, bottom: 20, left: 0});
 			});
 
 			it("set options: padding", () => {
 				temp = chart.internal.state.margin;
-
+				
 				args.padding = {
 					mode: "fit",
 					top: 0,
@@ -478,9 +490,11 @@ describe("PADDING", function() {
 					right: 0
 				};
 			});
-
+			
 			it("specifying padding should be relative.", () => {
-				expect(chart.internal.state.margin).to.deep.equal(temp);
+				const {state: {margin}} = chart.internal;
+
+				expect(margin).to.deep.equal(temp);
 			});
 
 			it("set options", () => {

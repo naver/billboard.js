@@ -92,7 +92,7 @@ describe("TITLE", () => {
 				it("adds the correct amount of padding to fit the title", () => {
 					const height = chart.$.svg.select(".bb-title").node().getBBox().height;
 
-					expect(chart.internal.getCurrentPaddingTop()).to.equal(
+					expect(chart.internal.getCurrentPaddingByDirection("top")).to.equal(
 						args.title.padding.top + height + args.title.padding.bottom
 					);
 				});
