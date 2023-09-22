@@ -37,7 +37,7 @@ export default {
 			y = isRotated ? state.height + padding : 0;
 		} else if (target === "y2") {
 			x = isRotated ? 0 : state.width + padding;
-			y = isRotated && padding ? 1 - padding : 0;
+			y = isRotated ? 1 - padding : 0;
 		} else if (target === "subX") {
 			x = 0;
 			y = isRotated ? 0 : state.height2;

@@ -269,7 +269,7 @@ describe("SHAPE AREA", () => {
 			const path = chart.$.main.selectAll(`.${$COMMON.target}-data1 path`);
 
 			path.each(function(v, i) {
-				expect(this.getAttribute("d").indexOf(pathData[i ? "area" : "line"]) > -1).to.be.ok;
+								expect(this.getAttribute("d").indexOf(pathData[i ? "area" : "line"]) > -1).to.be.ok;
 			});
 		}
 
