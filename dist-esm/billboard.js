@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.4-nightly-20230921004601
+ * @version 3.9.4-nightly-20230923004612
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -1406,6 +1406,7 @@ var main = {
     size_height: undefined,
     /**
      * The padding of the chart element.
+     * - **NOTE:** for more information, see the "[`Understanding padding`](https://github.com/naver/billboard.js/wiki/Understanding-padding)"" wiki documentaion.
      * @name padding
      * @memberof Options
      * @type {object}
@@ -5909,11 +5910,11 @@ var legend$1 = {
         var width = size.width, height = size.height;
         var insetLegendPosition = {
             top: isLegendTop ?
-                $$.getCurrentPaddingTop() + config.legend_inset_y + 5.5 :
-                current.height - height - $$.getCurrentPaddingBottom() - config.legend_inset_y,
+                $$.getCurrentPaddingByDirection("top") + config.legend_inset_y + 5.5 :
+                current.height - height - $$.getCurrentPaddingByDirection("bottom") - config.legend_inset_y,
             left: isLegendLeft ?
-                $$.getCurrentPaddingLeft() + config.legend_inset_x + 0.5 :
-                current.width - width - $$.getCurrentPaddingRight() - config.legend_inset_x + 0.5
+                $$.getCurrentPaddingByDirection("left") + config.legend_inset_x + 0.5 :
+                current.width - width - $$.getCurrentPaddingByDirection("right") - config.legend_inset_x + 0.5
         };
         $$.state.margin3 = {
             top: isLegendRight ?
@@ -7399,90 +7400,6 @@ var size = {
         var h = config.size_height || $$.getParentHeight();
         return h > 0 ? h : 320 / ($$.hasType("gauge") && !config.gauge_fullCircle ? 2 : 1);
     },
-    getCurrentPaddingTop: function () {
-        var $$ = this;
-        var config = $$.config, hasAxis = $$.state.hasAxis, $el = $$.$el;
-        var axesLen = hasAxis ? config.axis_y2_axes.length : 0;
-        var padding = isValue(config.padding_top) ?
-            config.padding_top : 0;
-        if ($el.title && $el.title.node()) {
-            padding += $$.getTitlePadding();
-        }
-        if (axesLen && config.axis_rotated) {
-            padding += $$.getHorizontalAxisHeight("y2") * axesLen;
-        }
-        return padding;
-    },
-    getCurrentPaddingBottom: function () {
-        var $$ = this;
-        var config = $$.config, hasAxis = $$.state.hasAxis;
-        var axisId = config.axis_rotated ? "y" : "x";
-        var axesLen = hasAxis ? config["axis_".concat(axisId, "_axes")].length : 0;
-        var padding = isValue(config.padding_bottom) ?
-            config.padding_bottom : 0;
-        return padding + (axesLen ? $$.getHorizontalAxisHeight(axisId) * axesLen : 0);
-    },
-    getCurrentPaddingLeft: function (withoutRecompute) {
-        var _a;
-        var $$ = this;
-        var config = $$.config, hasAxis = $$.state.hasAxis;
-        var isRotated = config.axis_rotated;
-        var isFitPadding = ((_a = config.padding) === null || _a === void 0 ? void 0 : _a.mode) === "fit";
-        var axisId = isRotated ? "x" : "y";
-        var axesLen = hasAxis ? config["axis_".concat(axisId, "_axes")].length : 0;
-        var axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
-        if (!isFitPadding) {
-            axisWidth = ceil10(axisWidth);
-        }
-        var padding = config["axis_".concat(axisId, "_inner")] || !config["axis_".concat(axisId, "_show")] ? 0 : axisWidth;
-        if (isValue(config.padding_left)) {
-            padding = config.padding_left + (isFitPadding && isRotated ? axisWidth : 0);
-        }
-        else if (hasAxis && isRotated) {
-            padding = !config.axis_x_show ?
-                1 : (isFitPadding ? axisWidth : Math.max(axisWidth, 40));
-        }
-        if (hasAxis && (isFitPadding || config["axis_".concat(axisId, "_inner")]) && config["axis_".concat(axisId, "_label")].text) {
-            padding += $$.axis.getAxisLabelPosition("y").isOuter ? 20 : 0;
-        }
-        return padding + (axisWidth * axesLen);
-    },
-    getCurrentPaddingRight: function (withXAxisTickTextOverflow) {
-        var _a, _b;
-        if (withXAxisTickTextOverflow === void 0) { withXAxisTickTextOverflow = false; }
-        var $$ = this;
-        var config = $$.config, hasAxis = $$.state.hasAxis;
-        var isRotated = config.axis_rotated;
-        var isFitPadding = ((_a = config.padding) === null || _a === void 0 ? void 0 : _a.mode) === "fit";
-        var defaultPadding = isFitPadding ? 2 : 10;
-        var legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
-        var axesLen = hasAxis ? config.axis_y2_axes.length : 0;
-        var axisLabelWidth = ((_b = $$.axis) === null || _b === void 0 ? void 0 : _b.getAxisLabelPosition("y2").isOuter) ? 20 : 0;
-        var xAxisTickTextOverflow = withXAxisTickTextOverflow ?
-            $$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
-        var axisWidth = hasAxis && !config.axis_y2_inner ? $$.getAxisWidthByAxisId("y2") : 1;
-        if (!isFitPadding) {
-            axisWidth = ceil10(axisWidth);
-        }
-        var padding = isRotated ? 0 : Math.max(axisWidth + legendWidthOnRight, xAxisTickTextOverflow);
-        if (isValue(config.padding_right)) {
-            // padding = config.padding_right + (hasAxis ? 1 : 0); // 1 is needed not to hide tick line
-            padding = config.padding_right +
-                (isFitPadding && (isRotated || !config.axis_y2_show ? defaultPadding : padding)) +
-                (hasAxis && !isFitPadding ? 1 : 0); // 1 is needed not to hide tick line
-        }
-        else if ($$.axis && isRotated) {
-            padding = defaultPadding + legendWidthOnRight;
-        }
-        else if ($$.axis && (!config.axis_y2_show || config.axis_y2_inner)) {
-            padding = Math.max((isFitPadding && !config.axis_y2_show ? 2 : 1) + legendWidthOnRight + axisLabelWidth, xAxisTickTextOverflow);
-        }
-        if (hasAxis && !isRotated && isFitPadding &&
-            config.axis_y2_show && !config.axis_y2_inner && config.axis_y2_label.text) {
-            padding += axisLabelWidth;
-        }
-        return padding + (axisWidth * axesLen);
-    },
     /**
      * Get the parent rect element's size
      * @param {string} key property/attribute name
@@ -7535,7 +7452,7 @@ var size = {
         var chartRect = $el.chart.node().getBoundingClientRect();
         var hasArc = $$.hasArcType();
         var svgLeft = svgRect.right - chartRect.left -
-            (hasArc ? 0 : $$.getCurrentPaddingLeft(withoutRecompute));
+            (hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
         return svgLeft > 0 ? svgLeft : 0;
     },
     updateDimension: function (withoutAxis) {
@@ -7579,14 +7496,70 @@ var size = {
                 .attr("height", brushSize.height);
         }
     },
+    /**
+     * Get padding by the direction.
+     * @param {string} type "top" | "bottom" | "left" | "right"
+     * @param {boolean} [withoutRecompute=false] If set true, do not recompute the padding value.
+     * @returns {number} padding value
+     * @private
+     */
+    getCurrentPaddingByDirection: function (type, withoutRecompute) {
+        var _a;
+        if (withoutRecompute === void 0) { withoutRecompute = false; }
+        var $$ = this;
+        var config = $$.config, $el = $$.$el, hasAxis = $$.state.hasAxis;
+        var isRotated = config.axis_rotated;
+        var isFitPadding = ((_a = config.padding) === null || _a === void 0 ? void 0 : _a.mode) === "fit";
+        var paddingOption = isNumber(config["padding_".concat(type)]) ? config["padding_".concat(type)] : undefined;
+        var axisId = hasAxis ? {
+            top: isRotated ? "y2" : null,
+            bottom: isRotated ? "y" : "x",
+            left: isRotated ? "x" : "y",
+            right: isRotated ? null : "y2"
+        }[type] : null;
+        var isLeftRight = /^(left|right)$/.test(type);
+        var isAxisInner = axisId && config["axis_".concat(axisId, "_inner")];
+        var isAxisShow = axisId && config["axis_".concat(axisId, "_show")];
+        var axesLen = axisId ? config["axis_".concat(axisId, "_axes")].length : 0;
+        var axisSize = axisId ? (isLeftRight ?
+            $$.getAxisWidthByAxisId(axisId, withoutRecompute) :
+            $$.getHorizontalAxisHeight(axisId)) : 0;
+        var defaultPadding = 20;
+        var gap = 0;
+        if (!isFitPadding && isLeftRight) {
+            axisSize = ceil10(axisSize);
+        }
+        var padding = hasAxis && isLeftRight && (isAxisInner || (isUndefined(paddingOption) && !isAxisShow)) ? 0 : (isFitPadding ? (isAxisShow ? axisSize : 0) + (paddingOption !== null && paddingOption !== void 0 ? paddingOption : 0) : (isUndefined(paddingOption) ? axisSize : paddingOption));
+        if (isLeftRight && hasAxis) {
+            if (axisId && (isFitPadding || isAxisInner) && config["axis_".concat(axisId, "_label")].text) {
+                padding += $$.axis.getAxisLabelPosition(axisId).isOuter ? defaultPadding : 0;
+            }
+            if (type === "right") {
+                padding += isRotated ? (!isFitPadding && isUndefined(paddingOption) ? 10 : 2) : !isAxisShow || isAxisInner ? (isFitPadding ? 2 : 1) : 0;
+            }
+            else if (type === "left" && isRotated) {
+                padding = !config.axis_x_show ?
+                    1 : (isFitPadding ? axisSize : Math.max(axisSize, 40));
+            }
+        }
+        else {
+            if (type === "top") {
+                if ($el.title && $el.title.node()) {
+                    padding += $$.getTitlePadding();
+                }
+                gap = isRotated && !isAxisInner ? axesLen : 0;
+            }
+            else if (type === "bottom" && hasAxis && isRotated && !isAxisShow) {
+                padding += 1;
+            }
+        }
+        return padding + (axisSize * axesLen) - gap;
+    },
     getCurrentPadding: function () {
         var $$ = this;
-        return {
-            top: $$.getCurrentPaddingTop(),
-            bottom: $$.getCurrentPaddingBottom(),
-            left: $$.getCurrentPaddingLeft(),
-            right: $$.getCurrentPaddingRight()
-        };
+        var _a = ["top", "bottom", "left", "right"]
+            .map(function (v) { return $$.getCurrentPaddingByDirection(v); }), top = _a[0], bottom = _a[1], left = _a[2], right = _a[3];
+        return { top: top, bottom: bottom, left: left, right: right };
     },
     /**
      * Get resetted padding values when 'padding=false' option is set
@@ -7633,7 +7606,10 @@ var size = {
         if (!isNonAxis && config.axis_x_show && config.axis_x_tick_autorotate) {
             $$.updateXAxisTickClip();
         }
-        var legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height;
+        var legendSize = {
+            right: config.legend_show && state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
+            bottom: !config.legend_show || state.isLegendRight || state.isLegendInset ? 0 : currLegend.height
+        };
         var xAxisHeight = isRotated || isNonAxis ? 0 : $$.getHorizontalAxisHeight("x");
         var subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ?
             xAxisHeight : 30;
@@ -7645,14 +7621,14 @@ var size = {
         var padding = $$.getCurrentPadding();
         // for main
         state.margin = !isNonAxis && isRotated ? {
-            top: $$.getHorizontalAxisHeight("y2") + padding.top,
-            right: isNonAxis ? 0 : $$.getCurrentPaddingRight(true),
-            bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + padding.bottom,
+            top: padding.top,
+            right: isNonAxis ? 0 : padding.right + legendSize.right,
+            bottom: legendSize.bottom + padding.bottom,
             left: subchartHeight + (isNonAxis ? 0 : padding.left)
         } : {
             top: (isFitPadding ? 0 : 4) + padding.top,
-            right: isNonAxis ? 0 : $$.getCurrentPaddingRight(true),
-            bottom: gaugeHeight + xAxisHeight + subchartHeight + legendHeightForBottom + padding.bottom,
+            right: isNonAxis ? 0 : padding.right + legendSize.right,
+            bottom: gaugeHeight + subchartHeight + legendSize.bottom + padding.bottom,
             left: isNonAxis ? 0 : padding.left
         };
         state.margin = $$.getResettedPadding(state.margin);
@@ -7660,12 +7636,12 @@ var size = {
         state.margin2 = isRotated ? {
             top: state.margin.top,
             right: NaN,
-            bottom: 20 + legendHeightForBottom,
+            bottom: 20 + legendSize.bottom,
             left: $$.state.rotatedPadding.left
         } : {
-            top: state.current.height - subchartHeight - legendHeightForBottom,
+            top: state.current.height - subchartHeight - legendSize.bottom,
             right: NaN,
-            bottom: subchartXAxisHeight + legendHeightForBottom,
+            bottom: subchartXAxisHeight + legendSize.bottom,
             left: state.margin.left
         };
         // for legend
@@ -8629,8 +8605,8 @@ var tooltip$1 = {
         var hasTreemap = state.hasTreemap;
         var isRotated = config.axis_rotated;
         var svgLeft = $$.getSvgLeft(true);
-        var chartRight = svgLeft + current.width - $$.getCurrentPaddingRight();
-        var chartLeft = $$.getCurrentPaddingLeft(true);
+        var chartRight = svgLeft + current.width - $$.getCurrentPaddingByDirection("right");
+        var chartLeft = $$.getCurrentPaddingByDirection("left", true);
         var size = 20;
         var x = currPos.x, y = currPos.y;
         // Determine tooltip position
@@ -8869,7 +8845,7 @@ var transform = {
         }
         else if (target === "y2") {
             x = isRotated ? 0 : state.width + padding;
-            y = isRotated && padding ? 1 - padding : 0;
+            y = isRotated ? 1 - padding : 0;
         }
         else if (target === "subX") {
             x = 0;
@@ -12769,7 +12745,7 @@ var Axis = /** @class */ (function () {
                 if (v === "x") {
                     res = clip.pathXAxis;
                 }
-                else if (v === "y") { // && config.axis_y_inner) {
+                else if (v === "y") { // || v === "y2") {
                     res = clip.pathYAxis;
                 }
                 return res;
@@ -13216,7 +13192,7 @@ var Axis = /** @class */ (function () {
             !config.axis_x_tick_culling &&
             !config.axis_x_tick_multiline &&
             positiveRotation) {
-            var widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingLeft();
+            var widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingByDirection("left");
             var maxOverflow = this.getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding);
             var xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
                 defaultPadding; // for display inconsistencies between browsers
@@ -14250,16 +14226,17 @@ var clip = {
         // less than 20 is not enough to show the axis label 'outer' without legend
         var h = (isRotated ? (margin.top + height) + 10 : margin.bottom) + 20;
         var x = isRotated ? -(1 + left) : -(left - 1);
+        var y = -15; // -Math.max(15, margin.top);
         var w = isRotated ? margin.left + 20 : width + 10 + left;
         node
             .attr("x", x)
-            .attr("y", -2)
+            .attr("y", y)
             .attr("width", w)
             .attr("height", h);
     },
     /**
      * Set y Axis clipPath dimension
-     * @param {d3Selecton} node clipPath <rect> selection
+     * @param {d3Selection} node clipPath <rect> selection
      * @private
      */
     setYAxisClipPath: function (node) {
@@ -14980,7 +14957,7 @@ var sizeAxis = {
         var $$ = this;
         var _a = $$.state, axis = _a.axis, current = _a.current;
         var xAxisLength = current.width -
-            $$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight();
+            $$.getCurrentPaddingByDirection("left") - $$.getCurrentPaddingByDirection("right");
         var tickCountWithPadding = axis.x.tickCount +
             axis.x.padding.left + axis.x.padding.right;
         var maxTickWidth = $$.axis.getMaxTickWidth("x");
@@ -22967,7 +22944,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20230921004601
+ * @version 3.9.4-nightly-20230923004612
  */
 var bb = {
     /**
@@ -22977,7 +22954,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.4-nightly-20230921004601",
+    version: "3.9.4-nightly-20230923004612",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

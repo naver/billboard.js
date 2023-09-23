@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.4-nightly-20230921004601
+ * @version 3.9.4-nightly-20230923004612
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -493,7 +493,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.9.4-nightly-20230921004601";
+    Plugin.version = "3.9.4-nightly-20230923004612";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -1079,8 +1079,12 @@ var Stanford = /** @class */ (function (_super) {
         $$.showGridFocus = function () { };
         $$.labelishData = function (d) { return d.values; };
         $$.opacityForCircle = function () { return 1; };
-        var getCurrentPaddingRight = $$.getCurrentPaddingRight.bind($$);
-        $$.getCurrentPaddingRight = function () { return (getCurrentPaddingRight() + (_this.colorScale ? _this.colorScale.getColorScalePadding() : 0)); };
+        var getCurrentPadding = $$.getCurrentPadding.bind($$);
+        $$.getCurrentPadding = function () {
+            var padding = getCurrentPadding();
+            padding.right += _this.colorScale ? _this.colorScale.getColorScalePadding() : 0;
+            return padding;
+        };
     };
     Stanford.prototype.$init = function () {
         var $$ = this.$$;
@@ -1092,6 +1096,7 @@ var Stanford = /** @class */ (function (_super) {
         this.initStanfordData();
         this.setStanfordTooltip();
         this.colorScale.drawColorScale();
+        $$.right += this.colorScale ? this.colorScale.getColorScalePadding() : 0;
         this.$redraw();
     };
     Stanford.prototype.$redraw = function (duration) {
