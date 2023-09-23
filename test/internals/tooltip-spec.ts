@@ -727,7 +727,7 @@ describe("TOOLTIP", function() {
 			before(() => {
 				args = {
 					"transition":{
-						"duration":0
+						"duration": 0
 					  },
 					  "axis":{
 						"x":{

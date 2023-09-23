@@ -678,18 +678,19 @@ describe("TEXT", () => {
 					args.axis = {
 						rotated: true
 					};
+					args.data.labels = true;
 				});
 
 				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.scale.y.domain();
 
 					expect(domain[0]).to.be.closeTo(0, 1);
-					expect(domain[1]).to.be.closeTo(231.5, 1);
+					expect(domain[1]).to.be.closeTo(228, 1);
 				});
 
 				it("should locate labels above each data point", () => {
-					const expectedYs = [51, 145, 235, 327];
-					const expectedXs = [488.5, 514, 488.5, 4];
+					const expectedXs = [495.5, 520, 495, 4];
+					const expectedYs = [55, 155, 256, 327];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 4));
@@ -707,8 +708,8 @@ describe("TEXT", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const expectedYs = [9, 130, 249, 370];
-					const expectedXs = [76, 526, 76, 4];
+					const expectedXs = [72, 530, 72, 4];
+					const expectedYs = [9, 140, 272, 370];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 4));
@@ -791,8 +792,8 @@ describe("TEXT", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const expectedYs = [57, 162, 269, 375];
-					const expectedXs = [80, 584, 80, 514];
+					const expectedXs = [80, 584, 83, 514];
+					const expectedYs = [57, 174, 287, 375];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 10, y: 5}));
@@ -812,8 +813,8 @@ describe("TEXT", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const expectedYs = [9, 147, 286, 424];
-					const expectedXs = [69, 527, 69, 527]; // 72.50132230092231
+					const expectedXs = [72, 537, 72, 527]; // 72.50132230092231
+					const expectedYs = [9, 157, 305, 434];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));

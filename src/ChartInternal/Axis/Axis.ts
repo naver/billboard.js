@@ -109,7 +109,7 @@ class Axis {
 
 					if (v === "x") {
 						res = clip.pathXAxis;
-					} else if (v === "y") { // && config.axis_y_inner) {
+					} else if (v === "y") { // || v === "y2") {
 						res = clip.pathYAxis;
 					}
 
@@ -670,7 +670,7 @@ class Axis {
 			!config.axis_x_tick_multiline &&
 			positiveRotation
 		) {
-			const widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingLeft();
+			const widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingByDirection("left");
 			const maxOverflow = this.getXAxisTickMaxOverflow(
 				xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding
 			);
