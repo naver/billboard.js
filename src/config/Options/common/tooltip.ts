@@ -80,6 +80,7 @@ export default {
 	 * @see [Demo: Tooltip Grouping](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipGrouping)
 	 * @see [Demo: Tooltip Format](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipFormat)
 	 * @see [Demo: Linked Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.LinkedTooltips)
+	 * @see [Demo: Tooltip Position](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipPosition)
 	 * @see [Demo: Tooltip Template](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipTemplate)
 	 * @example
 	 *  tooltip: {
@@ -103,8 +104,31 @@ export default {
 	 *          //   x: Current mouse event x position,
 	 *          //   y: Current mouse event y position,
 	 *          //   xAxis: Current x Axis position (the value is given for axis based chart type only)
+	 *          //   yAxis: Current y Axis position value or function(the value is given for axis based chart type only)
 	 *          // }
-	 *          return {top: 0, left: 0}
+	 *
+	 *          // yAxis will work differently per data lenghts
+	 *          // - a) Single data: `yAxis` will return `number` value
+	 *          // - b) Multiple data: `yAxis` will return a function with property value
+	 *
+	 *          // a) Single data:
+	 *          // Get y coordinate
+	 *          pos.yAxis; // y axis coordinate value of current data point
+	 *
+	 *          // b) Multiple data:
+	 *          // Get y coordinate of value 500, where 'data1' scales(y or y2).
+	 *          // When 'data.axes' option is used, data can bound to different axes.
+	 *          // - when "data.axes={data1: 'y'}", wil return y value from y axis scale.
+	 *          // - when "data.axes={data1: 'y2'}", wil return y value from y2 axis scale.
+	 *          pos.yAxis(500, "data1"); // will return y coordinate value of data1
+	 *
+	 *          pos.yAxis(500); // get y coordinate with value of 500, using y axis scale
+	 *          pos.yAxis(500, null, "y2"); // get y coordinate with value of 500, using y2 axis scale
+	 *
+	 *          return {
+	 *            top: 0,
+	 *            left: 0
+	 *          }
 	 *      },
 	 *
 	 *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
