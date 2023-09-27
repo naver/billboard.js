@@ -1,3 +1,15 @@
+# [3.10.0-next.4](https://github.com/naver/billboard.js/compare/3.10.0-next.3...3.10.0-next.4) (2023-09-27)
+
+
+### Bug Fixes
+
+* **option:** Fix inconsistency of padding ([694aa34](https://github.com/naver/billboard.js/commit/694aa34f61475e8f77f07610f90063aeefc7e527)), closes [#3426](https://github.com/naver/billboard.js/issues/3426)
+
+
+### Features
+
+* **tooltip:** Provide y position for tooltip position callback ([a793a2e](https://github.com/naver/billboard.js/commit/a793a2e5304ea98ad974b0e01c2b3b917e5ed978)), closes [#3434](https://github.com/naver/billboard.js/issues/3434)
+
 # [3.10.0-next.3](https://github.com/naver/billboard.js/compare/3.10.0-next.2...3.10.0-next.3) (2023-09-22)
 
 
