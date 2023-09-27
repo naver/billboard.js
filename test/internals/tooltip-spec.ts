@@ -312,8 +312,7 @@ describe("TOOLTIP", function() {
 
 		describe("do not overlap data point", () => {
 			it("should show tooltip on proper position", () => {
-				const tooltip = chart.$.tooltip;
-				const circles = chart.$.circles;
+				const {circles, tooltip} = chart.$;
 				const getCircleRectX = x => circles.filter(`.${$SHAPE.shape}-${x}`)
 					.node().getBoundingClientRect().x;
 
@@ -838,10 +837,40 @@ describe("TOOLTIP", function() {
 		});
 
 		it("set option tooltip.position", () => {
+			args.data.axes = {
+				data3: "y2"
+			};
+			args.axis = {
+				y2: {
+					show: true
+				}
+			}
+
 			args.tooltip.position = function(data, width, height, element, pos) {
+				const {scale: {y, y2}, state: {margin}} = this.internal;
+
 				expect(pos.x).to.be.equal(99.5);
 				expect(pos.y).to.be.equal(100.5);
-				expect(pos.xAxis).to.be.equal(this.internal.scale.x(data[0].x));
+
+				expect(pos.xAxis).to.be.equal(
+					this.internal.scale.x(data[0].x) + margin.left
+				);
+
+				data.forEach(({id, value}) => {
+					const isY2 = id === "data3";
+					const scale = isY2 ? y2 : y;
+
+					expect(pos.yAxis(value, id)).to.be.equal(
+						scale(value) + this.internal.state.margin.top
+					);
+
+					if (isY2) {
+						expect(y2(value) + margin.top).to.be.equal(pos.yAxis(value, null, "y2"));
+					} else {
+						expect(y(value) + margin.top).to.be.equal(pos.yAxis(value, null, "y"));
+					}
+					
+				})
 
 				return {
 					top: 50, left: 300
@@ -866,6 +895,10 @@ describe("TOOLTIP", function() {
 				done();
 			}, 200);
 		});
+
+		it("", () => {
+
+		})
 	});
 
 	describe("tooltip order", () => {

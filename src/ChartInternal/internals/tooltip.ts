@@ -259,25 +259,45 @@ export default {
 	 * @param {SVGElement} eventTarget Event element
 	 * @private
 	 */
-	setTooltipPosition(dataToShow: IDataRow, eventTarget: SVGElement): void {
+	setTooltipPosition(dataToShow: IDataRow[], eventTarget: SVGElement): void {
 		const $$ = this;
 		const {config, scale, state, $el: {eventRect, tooltip}} = $$;
 		const {bindto} = config.tooltip_contents;
+		const isRotated = config.axis_rotated;
 		const datum = tooltip?.datum();
 
 		if (!bindto && datum) {
+			const data = dataToShow ?? JSON.parse(datum.current);
 			const [x, y] = getPointer(state.event, eventTarget ?? eventRect?.node()); // get mouse event position
-			const currPos: {x: number, y: number, xAxis?: number} = {x, y};
+			const currPos: {
+				x: number, y: number, xAxis?: number, yAxis?: number | (
+					(value: number, id?: string, axisId?: string) => number
+				)} = {x, y};
 
-			if (scale.x && datum && "x" in datum) {
-				currPos.xAxis = scale.x(datum.x);
+			if (state.hasAxis && scale.x && datum && "x" in datum) {
+				const getYPos = (value = 0, id?: string, axisId = "y"): number => {
+					const scaleFn = scale[id ? $$.axis?.getId(id) : axisId];
+
+					return scaleFn ? scaleFn(value) + (isRotated ? state.margin.left : state.margin.top) : 0;
+				};
+
+				currPos.xAxis = scale.x(datum.x) + (
+					// add margin only when user specified tooltip.position function
+					config.tooltip_position ? (isRotated ? state.margin.top : state.margin.left) : 0
+				);
+
+				if (data.length === 1) {
+					currPos.yAxis = getYPos(data[0].value as number, data[0].id);
+				} else {
+					currPos.yAxis = getYPos;
+				}
 			}
 
 			const {width = 0, height = 0} = datum;
 
 			// Get tooltip position
 			const pos = config.tooltip_position?.bind($$.api)(
-				dataToShow ?? JSON.parse(datum.current),
+				data,
 				width, height, eventRect?.node(), currPos
 			) ?? $$.getTooltipPosition.bind($$)(width, height, currPos);
 
