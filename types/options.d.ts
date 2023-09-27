@@ -598,6 +598,7 @@ export interface TooltipOptions {
 			x: number;
 			y: number;
 			xAxis?: number;
+			yAxis?: number | ((value: number, id?: string, axisId?: string) => number);
 		}
 	) => { top: number; left: number });
 
