@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.4-nightly-20230923004612
+ * @version 3.9.4-nightly-20230928004632
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3005,6 +3005,7 @@ var tooltip$2 = {
      * @see [Demo: Tooltip Grouping](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipGrouping)
      * @see [Demo: Tooltip Format](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipFormat)
      * @see [Demo: Linked Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.LinkedTooltips)
+     * @see [Demo: Tooltip Position](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipPosition)
      * @see [Demo: Tooltip Template](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipTemplate)
      * @example
      *  tooltip: {
@@ -3028,8 +3029,31 @@ var tooltip$2 = {
      *          //   x: Current mouse event x position,
      *          //   y: Current mouse event y position,
      *          //   xAxis: Current x Axis position (the value is given for axis based chart type only)
+     *          //   yAxis: Current y Axis position value or function(the value is given for axis based chart type only)
      *          // }
-     *          return {top: 0, left: 0}
+     *
+     *          // yAxis will work differently per data lenghts
+     *          // - a) Single data: `yAxis` will return `number` value
+     *          // - b) Multiple data: `yAxis` will return a function with property value
+     *
+     *          // a) Single data:
+     *          // Get y coordinate
+     *          pos.yAxis; // y axis coordinate value of current data point
+     *
+     *          // b) Multiple data:
+     *          // Get y coordinate of value 500, where 'data1' scales(y or y2).
+     *          // When 'data.axes' option is used, data can bound to different axes.
+     *          // - when "data.axes={data1: 'y'}", wil return y value from y axis scale.
+     *          // - when "data.axes={data1: 'y2'}", wil return y value from y2 axis scale.
+     *          pos.yAxis(500, "data1"); // will return y coordinate value of data1
+     *
+     *          pos.yAxis(500); // get y coordinate with value of 500, using y axis scale
+     *          pos.yAxis(500, null, "y2"); // get y coordinate with value of 500, using y2 axis scale
+     *
+     *          return {
+     *            top: 0,
+     *            left: 0
+     *          }
      *      },
      *
      *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
@@ -8569,16 +8593,33 @@ var tooltip$1 = {
         var $$ = this;
         var config = $$.config, scale = $$.scale, state = $$.state, _c = $$.$el, eventRect = _c.eventRect, tooltip = _c.tooltip;
         var bindto = config.tooltip_contents.bindto;
+        var isRotated = config.axis_rotated;
         var datum = tooltip === null || tooltip === void 0 ? void 0 : tooltip.datum();
         if (!bindto && datum) {
+            var data = dataToShow !== null && dataToShow !== void 0 ? dataToShow : JSON.parse(datum.current);
             var _d = getPointer(state.event, eventTarget !== null && eventTarget !== void 0 ? eventTarget : eventRect === null || eventRect === void 0 ? void 0 : eventRect.node()), x = _d[0], y = _d[1]; // get mouse event position
             var currPos = { x: x, y: y };
-            if (scale.x && datum && "x" in datum) {
-                currPos.xAxis = scale.x(datum.x);
+            if (state.hasAxis && scale.x && datum && "x" in datum) {
+                var getYPos = function (value, id, axisId) {
+                    var _a;
+                    if (value === void 0) { value = 0; }
+                    if (axisId === void 0) { axisId = "y"; }
+                    var scaleFn = scale[id ? (_a = $$.axis) === null || _a === void 0 ? void 0 : _a.getId(id) : axisId];
+                    return scaleFn ? scaleFn(value) + (isRotated ? state.margin.left : state.margin.top) : 0;
+                };
+                currPos.xAxis = scale.x(datum.x) + (
+                // add margin only when user specified tooltip.position function
+                config.tooltip_position ? (isRotated ? state.margin.top : state.margin.left) : 0);
+                if (data.length === 1) {
+                    currPos.yAxis = getYPos(data[0].value, data[0].id);
+                }
+                else {
+                    currPos.yAxis = getYPos;
+                }
             }
             var _e = datum.width, width = _e === void 0 ? 0 : _e, _f = datum.height, height = _f === void 0 ? 0 : _f;
             // Get tooltip position
-            var pos_1 = (_b = (_a = config.tooltip_position) === null || _a === void 0 ? void 0 : _a.bind($$.api)(dataToShow !== null && dataToShow !== void 0 ? dataToShow : JSON.parse(datum.current), width, height, eventRect === null || eventRect === void 0 ? void 0 : eventRect.node(), currPos)) !== null && _b !== void 0 ? _b : $$.getTooltipPosition.bind($$)(width, height, currPos);
+            var pos_1 = (_b = (_a = config.tooltip_position) === null || _a === void 0 ? void 0 : _a.bind($$.api)(data, width, height, eventRect === null || eventRect === void 0 ? void 0 : eventRect.node(), currPos)) !== null && _b !== void 0 ? _b : $$.getTooltipPosition.bind($$)(width, height, currPos);
             ["top", "left"].forEach(function (v) {
                 var value = pos_1[v];
                 tooltip.style(v, "".concat(value, "px"));
@@ -22944,7 +22985,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20230923004612
+ * @version 3.9.4-nightly-20230928004632
  */
 var bb = {
     /**
@@ -22954,7 +22995,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.4-nightly-20230923004612",
+    version: "3.9.4-nightly-20230928004632",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
