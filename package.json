@@ -181,7 +181,7 @@
 		"mocha": "^10.2.0",
 		"node-sass": "^9.0.0",
 		"regenerator-runtime": "^0.14.0",
-		"rollup": "^3.29.4",
+		"rollup": "^4.0.2",
 		"rollup-plugin-delete": "^2.0.0",
 		"sass-loader": "^13.3.2",
 		"semantic-release": "^22.0.5",
