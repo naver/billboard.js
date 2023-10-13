@@ -1,3 +1,11 @@
+# [3.10.0-next.5](https://github.com/naver/billboard.js/compare/3.10.0-next.4...3.10.0-next.5) (2023-10-13)
+
+
+### Bug Fixes
+
+* **labels:** Fix index argument for nullish value ([13d1077](https://github.com/naver/billboard.js/commit/13d1077e8848f399ec7bac685364a6758017b557)), closes [#3547](https://github.com/naver/billboard.js/issues/3547)
+* **point:** Fix pointFucusOnly check error ([f9b65ac](https://github.com/naver/billboard.js/commit/f9b65ac455f0a6da2228e15f45f346ec3a513062)), closes [#3407](https://github.com/naver/billboard.js/issues/3407) [#3456](https://github.com/naver/billboard.js/issues/3456)
+
 # [3.10.0-next.4](https://github.com/naver/billboard.js/compare/3.10.0-next.3...3.10.0-next.4) (2023-09-27)
 
 
