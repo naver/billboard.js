@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.4-nightly-20231004004624
+ * @version 3.9.4-nightly-20231013004606
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.7
@@ -29469,7 +29469,7 @@ function drag_defaultTouchable() {
         $$.cache.add(KEY.setOverOut, last);
       } else {
         if (isOver) {
-          $$.isPointFocusOnly() && hasRadar ? $$.showCircleFocus($$.getAllValuesOnIndex(d, !0)) : $$.setExpand(d, null, !0);
+          hasRadar && $$.isPointFocusOnly() ? $$.showCircleFocus($$.getAllValuesOnIndex(d, !0)) : $$.setExpand(d, null, !0);
         }
         $$.isMultipleX() || main.selectAll("." + $SHAPE.shape + "-" + d).each(function (d) {
           callback(d, this);
@@ -29762,7 +29762,11 @@ function _getPrototypeOf(o) {
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/isNativeFunction.js
 function _isNativeFunction(fn) {
-  return Function.toString.call(fn).indexOf("[native code]") !== -1;
+  try {
+    return Function.toString.call(fn).indexOf("[native code]") !== -1;
+  } catch (e) {
+    return typeof fn === "function";
+  }
 }
 ;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/isNativeReflectConstruct.js
 function _isNativeReflectConstruct() {
@@ -35284,7 +35288,7 @@ function getTextPos(d, type) {
           value = data.close;
         }
       }
-      value = $$.isTreemapType(d) ? $$.treemapDataLabelFormat(d)(node) : $$.dataLabelFormat(d.id)(value, d.id, i, texts);
+      value = $$.isTreemapType(d) ? $$.treemapDataLabelFormat(d)(node) : $$.dataLabelFormat(d.id)(value, d.id, d.index, texts);
       if (isNumber(value)) {
         this.textContent = value;
       } else {
@@ -47845,7 +47849,8 @@ const getTransitionName = function () {
     const config = this.config;
     let opacity = config.point_opacity;
     if (isUndefined(opacity)) {
-      opacity = config.point_show && !this.isPointFocusOnly() ? null : "0";
+      var _this$isPointFocusOnl;
+      opacity = config.point_show && !((_this$isPointFocusOnl = this.isPointFocusOnly) != null && _this$isPointFocusOnl.call(this)) ? null : "0";
       opacity = isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
     }
     return opacity;
@@ -47982,7 +47987,7 @@ const getTransitionName = function () {
       transiting = _$$$state.transiting,
       $el = $$.$el;
     let circle = $el.circle;
-    if (transiting === !1 && $$.isPointFocusOnly() && circle) {
+    if (transiting === !1 && circle && $$.isPointFocusOnly()) {
       const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$),
         cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$),
         withTransition = toggling || isUndefined(d),
@@ -52477,7 +52482,7 @@ function selection_objectSpread(e) { for (var r = 1, t; r < arguments.length; r+
         toggle = $$.getToggle(that, d).bind($$);
       let toggledShape;
       if (!config.data_selection_multiple) {
-        const focusOnly = $$.isPointFocusOnly();
+        const focusOnly = $$.isPointFocusOnly == null ? void 0 : $$.isPointFocusOnly();
         let selector = "." + (focusOnly ? $SELECT.selectedCircles : $SHAPE.shapes);
         if (config.data_selection_grouped) {
           selector += $$.getTargetSelectorSuffix(d.id);
@@ -53567,7 +53572,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20231004004624
+ * @version 3.9.4-nightly-20231013004606
  */
 const bb = {
   /**
@@ -53577,7 +53582,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.4-nightly-20231004004624",
+  version: "3.9.4-nightly-20231013004606",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
