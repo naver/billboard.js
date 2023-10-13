@@ -104,7 +104,7 @@ export default {
 				$$.cache.add(KEY.setOverOut, last);
 			} else {
 				if (isOver) {
-					$$.isPointFocusOnly() && hasRadar ?
+					hasRadar && $$.isPointFocusOnly() ?
 						$$.showCircleFocus($$.getAllValuesOnIndex(d, true)) :
 						$$.setExpand(d, null, true);
 				}

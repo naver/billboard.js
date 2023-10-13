@@ -208,7 +208,7 @@ export default {
 				}
 
 				value = $$.isTreemapType(d) ? $$.treemapDataLabelFormat(d)(node) :
-					$$.dataLabelFormat(d.id)(value, d.id, i, texts);
+					$$.dataLabelFormat(d.id)(value, d.id, d.index, texts);
 
 				if (isNumber(value)) {
 					this.textContent = value;

@@ -43,7 +43,7 @@ export default {
 		let opacity = config.point_opacity;
 
 		if (isUndefined(opacity)) {
-			opacity = config.point_show && !this.isPointFocusOnly() ? null : "0";
+			opacity = config.point_show && !this.isPointFocusOnly?.() ? null : "0";
 
 			opacity = isValue(this.getBaseValue(d)) ?
 				(this.isBubbleType(d) || this.isScatterType(d) ?
@@ -210,7 +210,7 @@ export default {
 		const {state: {hasRadar, resizing, toggling, transiting}, $el} = $$;
 		let {circle} = $el;
 
-		if (transiting === false && $$.isPointFocusOnly() && circle) {
+		if (transiting === false && circle && $$.isPointFocusOnly()) {
 			const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
 			const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
 			const withTransition = toggling || isUndefined(d);
