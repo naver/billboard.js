@@ -222,7 +222,7 @@ export default class Sparkline extends Plugin {
 
 		$$.state.event = e;
 
-		if ($$.isPointFocusOnly() && d) {
+		if ($$.isPointFocusOnly?.() && d) {
 			$$.showCircleFocus?.([d]);
 		}
 

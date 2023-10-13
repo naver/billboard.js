@@ -111,5 +111,20 @@ describe("ESM bar", function() {
 
            proto.showCircleFocus = fn;
         });
+
+        it("shoudn't throw error on tooltip show", () => {
+            const proto = Object.getPrototypeOf(chart.internal);
+            const {isPointFocusOnly} = proto;
+
+            // delete temporarly for test
+            delete proto.isPointFocusOnly;
+
+            expect(
+                chart.tooltip.show({x: 2})
+            ).to.not.throw;
+
+            // restore
+            proto.isPointFocusOnly = isPointFocusOnly;
+        });
 	});
 });
