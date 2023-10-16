@@ -175,7 +175,7 @@
 		"karma-sinon": "^1.0.5",
 		"karma-sourcemap-loader": "^0.4.0",
 		"karma-webpack": "^5.0.0",
-		"lint-staged": "^14.0.1",
+		"lint-staged": "^15.0.1",
 		"lite-fixture": "^1.0.2",
 		"mini-css-extract-plugin": "^2.7.6",
 		"mocha": "^10.2.0",
