@@ -1,0 +1,432 @@
+/*-- Insight Theme --*/
+@charset "UTF-8";
+
+$font-family: -apple-system, "system-ui", "Noto Sans", "Malgun Gothic", "맑은 고딕", helvetica, "Apple SD Gothic Neo", sans-serif;
+$button-bg: #404244;
+
+
+/*-- Default color pattern --*/
+.bb-color-pattern {
+    background-image: url("#7ea9fa;#ffcd1e;#d33043;#41c464;#c86b74;#006bc2;#2a7e41;#f27c00;#c159ff;#bed017;");
+}
+
+/*-- Chart --*/
+.bb {
+    svg {
+        font-size: 12px;
+        font-family: $font-family;
+        line-height: 1;
+    }
+
+    path, line {
+        fill: none;
+        stroke: #cecece;
+    }
+
+    text, .bb-button {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+        fill: #555;
+        font-size: 10.5px;
+    }
+}
+
+.bb-legend-item-title,
+.bb-xgrid-focus,
+.bb-ygrid-focus,
+.bb-ygrid {
+	shape-rendering: crispEdges;
+}
+
+.bb-chart-arcs {
+	.bb-needle {
+		fill: #000;
+	}
+}
+
+/*-- Axis --*/
+.bb-axis {
+    shape-rendering: crispEdges;
+}
+
+.bb-axis-y text, .bb-axis-y2 text {
+    fill: #737373;
+}
+
+.bb-event-rects {
+    fill-opacity: 1 !important;
+
+    .bb-event-rect {
+        fill: transparent;
+    }
+
+    .bb-event-rect._active_ {
+        fill: rgba(39, 201, 3, 0.05);
+    }
+}
+
+.tick._active_ text {
+    fill: #00c83c !important;
+}
+
+/*-- Grid --*/
+.bb-grid {
+    pointer-events: none;
+
+    line {
+        stroke: #f1f1f1;
+    }
+}
+
+.bb-xgrid-focus line, .bb-ygrid-focus line {
+    stroke: #d2bad8;
+}
+
+/*-- Text on Chart --*/
+.bb-text {
+    &.bb-empty {
+        fill: #767676;
+    }
+}
+
+/*-- Line --*/
+.bb-line {
+    stroke-width: 1px;
+}
+
+/*-- Point --*/
+.bb-circle {
+    &._expanded_ {
+        stroke-width: 2px;
+        stroke: red;
+    }
+}
+
+rect.bb-circle, use.bb-circle {
+  &._expanded_ {
+    stroke-width: 1px;
+  }
+}
+
+.bb-selected-circle {
+    fill: white;
+    stroke-width: 2px;
+}
+
+/*-- Bar --*/
+.bb-bar {
+	stroke-width: 0;
+
+	&._expanded_ {
+		fill-opacity: 0.75;
+	}
+}
+
+/*-- Candlestick --*/
+.bb-candlestick {
+	stroke-width: 1px;
+
+	&._expanded_ {
+		fill-opacity: 0.75;
+	}
+}
+
+/*-- Focus --*/
+.bb-target, .bb-circles {
+    &.bb-focused {
+        opacity: 1;
+
+        path {
+            &.bb-line, &.bb-step {
+                stroke-width: 2px;
+            }
+        }
+    }
+
+    &.bb-defocused {
+        opacity: 0.3 !important;
+
+        .text-overlapping {
+            opacity: .05 !important;
+        }
+    }
+}
+
+/*-- Region --*/
+.bb-region {
+    rect {
+        fill: #71808d;
+        fill-opacity: 0.1;
+    }
+
+    &.selected rect {
+        fill: rgb(39, 201, 3);
+    }
+}
+
+/*-- Zoom region --*/
+.bb-zoom-brush {
+    fill-opacity: .1;
+    fill: #838181;
+}
+
+/*-- Brush --*/
+.bb-brush {
+    .extent {
+        fill-opacity: 0.1;
+    }
+
+    .selection { 
+        fill: #838181;
+        fill-opacity: 0.2;
+    }
+
+    path {
+        stroke: #838181;
+    }
+}
+
+/*-- Select - Drag --*/
+/*-- Legend --*/
+.bb-legend-item {
+    user-select: none;
+
+    line.bb-legend-item-tile {
+        stroke-linecap: round;
+        transform: translate(7px, 1px);
+        stroke-dasharray: 1 20;
+    }
+}
+
+.bb-legend-item-hidden {
+    opacity: 0.15;
+}
+
+.bb-legend-background {
+    opacity: 0.75;
+    fill: white;
+    stroke: lightgray;
+    stroke-width: 1;
+}
+
+/*-- Title --*/
+.bb-title {
+    font-size: 14px;
+}
+
+/*-- Treemap --*/
+.bb-chart-treemaps rect {
+    stroke: #000;
+    stroke-width: 0.5px;
+}
+
+/*-- Tooltip --*/
+.bb-tooltip-container {
+    z-index: 10;
+    font-family: $font-family;
+	user-select: none;
+}
+
+.bb-tooltip {
+    border-collapse: separate;
+    border-spacing:0;
+    empty-cells:show;
+    border: 1px solid #999;
+    color: #fff;
+    border-radius: 5px;
+    background-color: $button-bg;
+    text-align: left;
+    font-size: 11px;
+    white-space: nowrap;
+    opacity: 0.9;
+
+    th {
+        font-size: 11px;
+        padding: 3px 6px 0 6px;
+        text-align: left;
+    }
+
+    td {
+        padding: 3px;
+
+        &:first-child {
+            padding-left: 7px;
+        }
+
+        &:last-child {
+            padding-right:8px;
+        }
+
+        > span, > svg {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            margin-right: 6px;
+            border-radius: 5px;
+            vertical-align: middle;
+        }
+
+        &.value {
+            border-left: 1px solid transparent;
+            text-align: right;
+        }
+    }
+
+    .bb-tooltip-title {
+        display: inline-block;
+        color: #aaa;
+        line-height: 20px;
+    }
+
+    .bb-tooltip-detail {
+        table {
+            border-collapse: collapse;
+            border-spacing: 0;
+        }
+
+        .bb-tooltip-name, .bb-tooltip-value {
+            font-size: 11px;
+            line-height: 13px;
+            padding: 4px 0 3px;
+            color: #444;
+            text-align: left;
+            font-weight: normal;
+        }
+
+        .bb-tooltip-value {
+            padding-left: 5px;
+            font-weight: 800;
+            font-size: 12px;
+        }
+    }
+}
+
+/*-- Area --*/
+.bb-area {
+    stroke-width: 0;
+    opacity: 0.2;
+}
+
+/*-- Arc --*/
+.bb-chart-arcs-title {
+    dominant-baseline: middle;
+    font-size: 1.3em;
+}
+
+text.bb-chart-arcs-gauge-title {
+    dominant-baseline: middle;
+    font-size: 2.7em;
+}
+
+.bb-chart-arcs {
+    .bb-chart-arcs-background {
+        fill: #e0e0e0;
+        stroke: #ccc;
+    }
+
+    .bb-chart-arcs-gauge-unit {
+        fill: #000;
+        font-size: 16px;
+    }
+
+    .bb-chart-arcs-gauge-min, .bb-chart-arcs-gauge-max {
+        fill: #777;
+    }
+
+    .bb-chart-arcs-title {
+        font-size: 1.8em;
+        fill: #000;
+        font-weight: 600;
+    }
+
+    path.empty {
+        fill: #eaeaea;
+        stroke-width: 0;
+    }
+
+	/*-- Polar --*/
+	.bb-levels {
+		circle {
+			fill: none;
+			stroke: #cecece;
+			stroke-width: .5px;
+		}
+
+		text {
+			fill: #848282;
+		}
+	}
+}
+
+.bb-chart-arc {
+    .bb-gauge-value {
+        fill: #000;
+    }
+
+    path {
+        stroke: #fff;
+    }
+
+	rect {
+		stroke: #fff;
+		stroke-width: 1;
+	}
+
+    text {
+        fill: #fff;
+        font-size: 11px;
+    }
+}
+
+/*-- Radar --*/
+.bb-chart-radars {
+    .bb-levels {
+        polygon {
+            fill: none;
+            stroke: #cecece;
+            stroke-width: .5px;
+        }
+
+        text {
+            fill: #848282;
+        }
+    }
+
+    .bb-axis {
+        line {
+            stroke: #cecece;
+            stroke-width: .5px;
+        }
+
+        text {
+            font-size: 1.15em;
+            cursor: default;
+        }
+    }
+
+    .bb-shapes {
+        polygon {
+            fill-opacity: .2;
+            stroke-width: 1px;
+        }
+    }
+}
+
+/*-- Button --*/
+.bb-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    .bb-zoom-reset {
+        border: 1px solid #999;
+        background-color: $button-bg;
+        color: #fff;
+        opacity: 0.9;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+}
