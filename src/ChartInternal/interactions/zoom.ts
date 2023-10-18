@@ -298,8 +298,7 @@ export default {
 		// Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
 		$$.$el.svg.on("wheel", () => {});
 
-		eventRect
-			.call(behaviour)
+		eventRect?.call(behaviour)
 			.on("dblclick.zoom", null);
 	},
 
