@@ -632,6 +632,26 @@ describe("INTERACTION", () => {
 				expect(clicked).to.be.true;
 				expect(data.value).to.be.equal(10);
 			});
+			
+			it("set option point.sensitivity='radius'", () => {
+				args.point.sensitivity = "radius";
+			});
+
+			it("check for data click for line: when point.senstivity='radius'", () => {
+				const main = chart.$.main;
+				const {eventRect} = chart.internal.$el;
+				const circle = util.getBBox(main.select(`.${$CIRCLE.circles}-data1 circle`));
+
+				util.fireEvent(eventRect.node(), "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
+
+				delete args.point.sensitivity;
+			});
 
 			it("set option point.type='rectangle'", () => {
 				args.point.pattern = ["rectangle"];
