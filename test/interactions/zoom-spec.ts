@@ -49,9 +49,7 @@ describe("ZOOM", function() {
 				expect(yDomain[0]).to.be.equal(expectedYDomain[0]);
 				expect(yDomain[1]).to.be.equal(expectedYDomain[1]);
 			});
-		});
 
-		describe("main chart domain", () => {
 			it("should have original y domain in subchart", () => {
 				const yDomain = chart.internal.scale.y.domain();
 				const subYDomain = chart.internal.scale.subY.domain();
@@ -59,15 +57,28 @@ describe("ZOOM", function() {
 				expect(subYDomain[0]).to.be.equal(yDomain[0]);
 				expect(subYDomain[1]).to.be.equal(yDomain[1]);
 			});
-		});
 
-		describe("main chart domain", () => {
 			it("should have specified brush extent", () => {
 				const brushExtent = chart.internal.brush.extent()();
 				const expectedBrushExtent = [[1, 0], [2, 60]];
 
 				expect(brushExtent[0][1]).to.be.equal(expectedBrushExtent[0][1]);
 				expect(brushExtent[1][1]).to.be.equal(expectedBrushExtent[1][1]);
+			});
+
+			it("initialization with empty data", () => {
+				expect(
+					util.generate({
+						data: {
+							x: "x",
+							columns: [],
+							type: "line"
+						},
+						zoom: {
+							enabled: true
+						}
+					})
+				).to.not.throw;
 			});
 		});
 	});

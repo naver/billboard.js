@@ -4,10 +4,11 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import sinon from "sinon";
 import {expect} from "chai";
-import {window} from "../../src/module/browser"
 import util from "../assets/util";
 import {$CIRCLE} from "../../src/config/classes";
+import {fireEvent} from "../assets/helper";
 
 describe("SHAPE POINT", () => {
 	let chart;
@@ -228,21 +229,35 @@ describe("SHAPE POINT", () => {
 	});
 
 	describe("point sensitivity", () => {
+		const spy = sinon.spy();
+
 		function checkHover({circle, eventRect}, values, index, sensitivity = 0) {
 			const node = circle.nodes()[index];
 			const x = +node.getAttribute("cx");
 			const y = +node.getAttribute("cy");
 			const r = +node.getAttribute("r");
 
+			const clientX = x + (sensitivity || r);
+			const clientY = y;
+
 			util.hoverChart(chart, "mousemove", {
-				clientX: x + (sensitivity || r),
-				clientY: y
+				clientX, clientY
 			});
 
 			expect(+chart.$.tooltip.select(".value").text())
 				.to.be.equal(values[index]);
 
 			expect(eventRect.style("cursor")).to.be.equal("pointer");
+
+			if (chart.config("point.sensitivity") === "radius") {
+				fireEvent(eventRect.node(), "click", {
+					clientX, clientY
+				}, chart);
+
+				expect(spy.calledOnce).to.be.true;
+
+				spy.resetHistory();
+			}
 		}
 
 		before(() => {
@@ -293,7 +308,8 @@ describe("SHAPE POINT", () => {
 				  columns: [
 					  ["data1", 10, 100, 300]
 				  ],
-				  type: "bubble"
+				  type: "bubble",
+				  onclick: spy
 				},
 				point: {
 					sensitivity: "radius"

@@ -619,13 +619,14 @@ export default {
 
 		const mouse = getPointer(state.event, this);
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
+		const sensitivity = config.point_sensitivity === "radius" ? closest.r : config.point_sensitivity;
 
 		if (!closest) {
 			return;
 		}
 
 		// select if selection enabled
-		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
+		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < sensitivity) {
 			$$.$el.main.selectAll(`.${$SHAPE.shapes}${$$.getTargetSelectorSuffix(closest.id)}`)
 				.selectAll(`.${$SHAPE.shape}-${closest.index}`)
 				.each(function() {
