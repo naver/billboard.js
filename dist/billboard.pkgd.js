@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.4-nightly-20231013004606
+ * @version 3.9.4-nightly-20231019004627
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.7
@@ -42099,13 +42099,14 @@ let Axis_Axis = /*#__PURE__*/function () {
       return;
     }
     const mouse = getPointer(state.event, this),
-      closest = $$.findClosestFromTargets(targetsToShow, mouse);
+      closest = $$.findClosestFromTargets(targetsToShow, mouse),
+      sensitivity = config.point_sensitivity === "radius" ? closest.r : config.point_sensitivity;
     if (!closest) {
       return;
     }
 
     // select if selection enabled
-    if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
+    if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < sensitivity) {
       $$.$el.main.selectAll("." + $SHAPE.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll("." + $SHAPE.shape + "-" + closest.index).each(function () {
         if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
           $$.toggleShape == null || $$.toggleShape(this, closest, closest.index);
@@ -48116,9 +48117,12 @@ const getTransitionName = function () {
     return $$.config.point_focus_only && !$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
   },
   isWithinCircle: function isWithinCircle(node, r) {
-    const mouse = getPointer(this.state.event, node),
+    const config = this.config,
+      state = this.state,
+      mouse = getPointer(state.event, node),
       element = src_select(node),
-      prefix = this.isCirclePoint(node) ? "c" : "";
+      prefix = this.isCirclePoint(node) ? "c" : "",
+      sensitivity = config.point_sensitivity === "radius" ? node.getAttribute("r") : config.point_sensitivity;
     let cx = +element.attr(prefix + "x"),
       cy = +element.attr(prefix + "y");
     // if node don't have cx/y or x/y attribute value
@@ -48129,7 +48133,7 @@ const getTransitionName = function () {
       cx = x;
       cy = y;
     }
-    return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || this.config.point_sensitivity);
+    return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || sensitivity);
   },
   /**
    * Get data point sensitivity radius
@@ -53119,7 +53123,7 @@ function selection_objectSpread(e) { for (var r = 1, t; r < arguments.length; r+
     $$.$el.svg.on("wheel", function () {
       _newArrowCheck(this, _this3);
     }.bind(this));
-    eventRect.call(behaviour).on("dblclick.zoom", null);
+    eventRect == null || eventRect.call(behaviour).on("dblclick.zoom", null);
   },
   /**
    * Initialize the drag behaviour used for zooming.
@@ -53572,7 +53576,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20231013004606
+ * @version 3.9.4-nightly-20231019004627
  */
 const bb = {
   /**
@@ -53582,7 +53586,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.4-nightly-20231013004606",
+  version: "3.9.4-nightly-20231019004627",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

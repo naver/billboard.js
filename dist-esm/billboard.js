@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.4-nightly-20231013004606
+ * @version 3.9.4-nightly-20231019004627
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -14000,11 +14000,12 @@ var eventrect = {
         }
         var mouse = getPointer(state.event, this);
         var closest = $$.findClosestFromTargets(targetsToShow, mouse);
+        var sensitivity = config.point_sensitivity === "radius" ? closest.r : config.point_sensitivity;
         if (!closest) {
             return;
         }
         // select if selection enabled
-        if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
+        if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < sensitivity) {
             $$.$el.main.selectAll(".".concat($SHAPE.shapes).concat($$.getTargetSelectorSuffix(closest.id)))
                 .selectAll(".".concat($SHAPE.shape, "-").concat(closest.index))
                 .each(function () {
@@ -19110,18 +19111,20 @@ var shapePoint = {
             !$$.hasType("bubble") && !$$.hasType("scatter") && !$$.hasArcType(null, ["radar"]);
     },
     isWithinCircle: function (node, r) {
-        var mouse = getPointer(this.state.event, node);
+        var _a = this, config = _a.config, state = _a.state;
+        var mouse = getPointer(state.event, node);
         var element = select(node);
         var prefix = this.isCirclePoint(node) ? "c" : "";
+        var sensitivity = config.point_sensitivity === "radius" ? node.getAttribute("r") : config.point_sensitivity;
         var cx = +element.attr("".concat(prefix, "x"));
         var cy = +element.attr("".concat(prefix, "y"));
         // if node don't have cx/y or x/y attribute value
         if (!(cx || cy) && node.nodeType === 1) {
-            var _a = getBoundingRect(node), x = _a.x, y = _a.y;
+            var _b = getBoundingRect(node), x = _b.x, y = _b.y;
             cx = x;
             cy = y;
         }
-        return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || this.config.point_sensitivity);
+        return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || sensitivity);
     },
     /**
      * Get data point sensitivity radius
@@ -22577,9 +22580,7 @@ var zoom = {
         // Since Chrome 89, wheel zoom not works properly
         // Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
         $$.$el.svg.on("wheel", function () { });
-        eventRect
-            .call(behaviour)
-            .on("dblclick.zoom", null);
+        eventRect === null || eventRect === void 0 ? void 0 : eventRect.call(behaviour).on("dblclick.zoom", null);
     },
     /**
      * Initialize the drag behaviour used for zooming.
@@ -22987,7 +22988,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20231013004606
+ * @version 3.9.4-nightly-20231019004627
  */
 var bb = {
     /**
@@ -22997,7 +22998,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.4-nightly-20231013004606",
+    version: "3.9.4-nightly-20231019004627",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
