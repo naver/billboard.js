@@ -42,6 +42,10 @@ module.exports = (common, env) => {
 		config.entry = plugin.entry;
 		config.output = plugin.output;
 		config.externals = plugin.externals;
+	} else {
+		config.entry = {
+			billboard: "./src/index.ts"
+		};
 	}
 
 	return env.PLUGIN ? mergeWithCustomize({

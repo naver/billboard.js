@@ -98,7 +98,6 @@ You can download the compressed files for production
 - https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.css
 - https://naver.github.io/billboard.js/release/latest/dist/theme/datalab.min.css
 
-
 #### dark
 - https://naver.github.io/billboard.js/release/latest/dist/theme/dark.css
 - https://naver.github.io/billboard.js/release/latest/dist/theme/dark.min.css
@@ -110,6 +109,10 @@ You can download the compressed files for production
 #### graph
 - https://naver.github.io/billboard.js/release/latest/dist/theme/graph.css
 - https://naver.github.io/billboard.js/release/latest/dist/theme/graph.min.css
+
+#### modern
+- https://naver.github.io/billboard.js/release/latest/dist/theme/modern.css
+- https://naver.github.io/billboard.js/release/latest/dist/theme/modern.min.css
 
 </details>
 
