@@ -1666,8 +1666,7 @@ var demos = {
 							rotate: 75,
 							multiline: false,
 							tooltip: true
-						},
-						height: 130
+						}
 					}
 				}
 			}
