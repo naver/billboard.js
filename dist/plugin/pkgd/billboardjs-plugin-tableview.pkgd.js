@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.4-nightly-20231020004623
+ * @version 3.9.4-nightly-20231021004608
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -480,14 +480,15 @@ if (!NATIVE_SYMBOL) {
     var description = !arguments.length || arguments[0] === undefined ? undefined : $toString(arguments[0]);
     var tag = uid(description);
     var setter = function (value) {
-      if (this === ObjectPrototype) call(setter, ObjectPrototypeSymbols, value);
-      if (hasOwn(this, HIDDEN) && hasOwn(this[HIDDEN], tag)) this[HIDDEN][tag] = false;
+      var $this = this === undefined ? global : this;
+      if ($this === ObjectPrototype) call(setter, ObjectPrototypeSymbols, value);
+      if (hasOwn($this, HIDDEN) && hasOwn($this[HIDDEN], tag)) $this[HIDDEN][tag] = false;
       var descriptor = createPropertyDescriptor(1, value);
       try {
-        setSymbolDescriptor(this, tag, descriptor);
+        setSymbolDescriptor($this, tag, descriptor);
       } catch (error) {
         if (!(error instanceof RangeError)) throw error;
-        fallbackDefineProperty(this, tag, descriptor);
+        fallbackDefineProperty($this, tag, descriptor);
       }
     };
     if (DESCRIPTORS && USE_SETTER) setSymbolDescriptor(ObjectPrototype, tag, { configurable: true, set: setter });
@@ -1242,10 +1243,10 @@ var store = __webpack_require__(37);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.33.0',
+  version: '3.33.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.33.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.33.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -3517,7 +3518,6 @@ if (ErrorPrototype.toString !== errorToString) {
 var DESCRIPTORS = __webpack_require__(6);
 var fails = __webpack_require__(7);
 var anObject = __webpack_require__(47);
-var create = __webpack_require__(72);
 var normalizeStringArgument = __webpack_require__(121);
 
 var nativeErrorToString = Error.prototype.toString;
@@ -3525,8 +3525,8 @@ var nativeErrorToString = Error.prototype.toString;
 var INCORRECT_TO_STRING = fails(function () {
   if (DESCRIPTORS) {
     // Chrome 32- incorrectly call accessor
-    // eslint-disable-next-line es/no-object-defineproperty -- safe
-    var object = create(Object.defineProperty({}, 'name', { get: function () {
+    // eslint-disable-next-line es/no-object-create, es/no-object-defineproperty -- safe
+    var object = Object.create(Object.defineProperty({}, 'name', { get: function () {
       return this === object;
     } }));
     if (nativeErrorToString.call(object) !== 'true') return true;
@@ -4736,13 +4736,12 @@ module.exports = defineIterator(Array, 'Array', function (iterated, kind) {
 }, function () {
   var state = getInternalState(this);
   var target = state.target;
-  var kind = state.kind;
   var index = state.index++;
   if (!target || index >= target.length) {
     state.target = undefined;
     return createIterResultObject(undefined, true);
   }
-  switch (kind) {
+  switch (state.kind) {
     case 'keys': return createIterResultObject(index, false);
     case 'values': return createIterResultObject(target[index], false);
   } return createIterResultObject([index, target[index]], false);
@@ -5767,11 +5766,11 @@ var uncurryThis = __webpack_require__(14);
 var aCallable = __webpack_require__(31);
 var toIndexedObject = __webpack_require__(12);
 var arrayFromConstructorAndList = __webpack_require__(199);
-var getVirtual = __webpack_require__(200);
+var getBuiltInPrototypeMethod = __webpack_require__(200);
 var addToUnscopables = __webpack_require__(140);
 
 var $Array = Array;
-var sort = uncurryThis(getVirtual('Array').sort);
+var sort = uncurryThis(getBuiltInPrototypeMethod('Array', 'sort'));
 
 // `Array.prototype.toSorted` method
 // https://tc39.es/ecma262/#sec-array.prototype.tosorted
@@ -5812,8 +5811,8 @@ module.exports = function (Constructor, list) {
 
 var global = __webpack_require__(4);
 
-module.exports = function (CONSTRUCTOR) {
-  return global[CONSTRUCTOR].prototype;
+module.exports = function (CONSTRUCTOR, METHOD) {
+  return global[CONSTRUCTOR].prototype[METHOD];
 };
 
 
@@ -18606,6 +18605,7 @@ var create = __webpack_require__(72);
 var createPropertyDescriptor = __webpack_require__(11);
 var getIterator = __webpack_require__(135);
 var getIteratorMethod = __webpack_require__(136);
+var createIterResultObject = __webpack_require__(173);
 var validateArgumentsLength = __webpack_require__(329);
 var wellKnownSymbol = __webpack_require__(34);
 var arraySort = __webpack_require__(189);
@@ -18694,17 +18694,23 @@ var serialize = function (it) {
 var URLSearchParamsIterator = createIteratorConstructor(function Iterator(params, kind) {
   setInternalState(this, {
     type: URL_SEARCH_PARAMS_ITERATOR,
-    iterator: getIterator(getInternalParamsState(params).entries),
+    target: getInternalParamsState(params).entries,
+    index: 0,
     kind: kind
   });
-}, 'Iterator', function next() {
+}, URL_SEARCH_PARAMS, function next() {
   var state = getInternalIteratorState(this);
-  var kind = state.kind;
-  var step = state.iterator.next();
-  var entry = step.value;
-  if (!step.done) {
-    step.value = kind === 'keys' ? entry.key : kind === 'values' ? entry.value : [entry.key, entry.value];
-  } return step;
+  var target = state.target;
+  var index = state.index++;
+  if (!target || index >= target.length) {
+    state.target = undefined;
+    return createIterResultObject(undefined, true);
+  }
+  var entry = target[index];
+  switch (state.kind) {
+    case 'keys': return createIterResultObject(entry.key, false);
+    case 'values': return createIterResultObject(entry.value, false);
+  } return createIterResultObject([entry.key, entry.value], false);
 }, true);
 
 var URLSearchParamsState = function (init) {
@@ -18724,6 +18730,7 @@ URLSearchParamsState.prototype = {
     this.update();
   },
   parseObject: function (object) {
+    var entries = this.entries;
     var iteratorMethod = getIteratorMethod(object);
     var iterator, next, step, entryIterator, entryNext, first, second;
 
@@ -18738,14 +18745,15 @@ URLSearchParamsState.prototype = {
           (second = call(entryNext, entryIterator)).done ||
           !call(entryNext, entryIterator).done
         ) throw new TypeError('Expected sequence with length 2');
-        push(this.entries, { key: $toString(first.value), value: $toString(second.value) });
+        push(entries, { key: $toString(first.value), value: $toString(second.value) });
       }
     } else for (var key in object) if (hasOwn(object, key)) {
-      push(this.entries, { key: key, value: $toString(object[key]) });
+      push(entries, { key: key, value: $toString(object[key]) });
     }
   },
   parseQuery: function (query) {
     if (query) {
+      var entries = this.entries;
       var attributes = split(query, '&');
       var index = 0;
       var attribute, entry;
@@ -18753,7 +18761,7 @@ URLSearchParamsState.prototype = {
         attribute = attributes[index++];
         if (attribute.length) {
           entry = split(attribute, '=');
-          push(this.entries, {
+          push(entries, {
             key: deserialize(shift(entry)),
             value: deserialize(join(entry, '='))
           });
@@ -19685,7 +19693,7 @@ let Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.9.4-nightly-20231020004623";
+Plugin.version = "3.9.4-nightly-20231021004608";
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
 /**
