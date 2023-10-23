@@ -2328,9 +2328,9 @@
   integrity sha512-HNB/9GHqu7Fo8AQiugyJbv6ZxYz58wef0esl4Mv828w1ZKpAshw/uFWVDUcIB9KKFeFKoxS3cHY07FFgtTRZ1g==
 
 "@types/d3-transition@*", "@types/d3-transition@^3.0.5":
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/@types/d3-transition/-/d3-transition-3.0.5.tgz#354e8c60650c76c2249cd7b99055b344672c71aa"
-  integrity sha512-dcfjP6prFxj3ziFOJrnt4W2P0oXNj/sGxsJXH8286sHtVZ4qWGbjuZj+RRCYx4YZ4C0izpeE8OqXVCtoWEtzYg==
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/@types/d3-transition/-/d3-transition-3.0.6.tgz#141684ef8046f4dc5da2d5b015c497513eba541c"
+  integrity sha512-K0To23B5UxNwFtKORnS5JoNYvw/DnknU5MzhHIS9czJ/lTqFFDeU6w9lArOdoTl0cZFNdNrMJSFCbRCEHccH2w==
   dependencies:
     "@types/d3-selection" "*"
 
