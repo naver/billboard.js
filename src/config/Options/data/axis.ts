@@ -46,7 +46,7 @@ export default {
 	 *        type: "timeseries"
 	 *    }
 	 * }
-	 * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
+	 * @see [D3's time specifier](https://d3js.org/d3-time-format#locale_format)
 	 */
 	data_xFormat: "%Y-%m-%d",
 
