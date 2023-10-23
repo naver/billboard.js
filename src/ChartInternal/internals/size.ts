@@ -4,7 +4,7 @@
  */
 import {document} from "../../module/browser";
 import {$AXIS, $SUBCHART} from "../../config/classes";
-import {ceil10, capitalize, isNumber, isEmpty, isUndefined} from "../../module/util";
+import {ceil10, capitalize, isNumber, isEmpty, isString, isUndefined} from "../../module/util";
 
 export default {
 	/**
@@ -87,13 +87,26 @@ export default {
 	getSvgLeft(withoutRecompute?: boolean): number {
 		const $$ = this;
 		const {config, $el} = $$;
-		const hasLeftAxisRect = config.axis_rotated || (!config.axis_rotated && !config.axis_y_inner);
-		const leftAxisClass = config.axis_rotated ? $AXIS.axisX : $AXIS.axisY;
+		const isRotated = config.axis_rotated;
+		const hasLeftAxisRect = isRotated || (!isRotated && !config.axis_y_inner);
+		const leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
 		const leftAxis = $el.main.select(`.${leftAxisClass}`).node();
+		const leftLabel = config[`axis_${isRotated ? "x" : "y"}_label`];
+		let labelWidth = 0;
+
+		// if axis label position set to inner, exclude from the value
+		if (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel?.position)) {
+			const label = $el.main.select(`.${leftAxisClass}-label`);
+
+			if (!label.empty()) {
+				labelWidth = label.node().getBoundingClientRect().left;
+			}
+		}
+
 		const svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : {right: 0};
-		const chartRect = $el.chart.node().getBoundingClientRect();
+		const chartRectLeft = $el.chart.node().getBoundingClientRect().left + labelWidth;
 		const hasArc = $$.hasArcType();
-		const svgLeft = svgRect.right - chartRect.left -
+		const svgLeft = svgRect.right - chartRectLeft -
 			(hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
 
 		return svgLeft > 0 ? svgLeft : 0;
@@ -204,7 +217,7 @@ export default {
 				padding += isRotated ? (
 					!isFitPadding && isUndefined(paddingOption) ? 10 : 2
 				) : !isAxisShow || isAxisInner ? (isFitPadding ? 2 : 1) : 0;
-			} else if (type === "left" && isRotated) {
+			} else if (type === "left" && isRotated && isUndefined(paddingOption)) {
 				padding = !config.axis_x_show ?
 					1 : (isFitPadding ? axisSize : Math.max(axisSize, 40));
 			}
