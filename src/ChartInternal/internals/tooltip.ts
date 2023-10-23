@@ -330,34 +330,39 @@ export default {
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const hasTreemap = state.hasTreemap;
 		const isRotated = config.axis_rotated;
+		const hasArcType = $$.hasArcType();
 		const svgLeft = $$.getSvgLeft(true);
 		let chartRight = svgLeft + current.width - $$.getCurrentPaddingByDirection("right");
-		const chartLeft = $$.getCurrentPaddingByDirection("left", true);
 		const size = 20;
 		let {x, y} = currPos;
 
 		// Determine tooltip position
-		if ($$.hasArcType()) {
+		if (hasArcType) {
 			const raw = inputType === "touch" || $$.hasType("radar");
 
 			if (!raw) {
-				y += hasGauge ? height : height / 2;
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
+				y += hasGauge ? height : height / 2;
 			}
 		} else if (!hasTreemap) {
+			const padding = {
+				top: $$.getCurrentPaddingByDirection("top", true),
+				left: $$.getCurrentPaddingByDirection("left", true)
+			};
+
 			if (isRotated) {
-				y = currPos.xAxis + size;
-				x += svgLeft;
+				x += svgLeft + padding.left + size;
+				y = padding.top + currPos.xAxis + size;
 				chartRight -= svgLeft;
 			} else {
-				y -= 5;
-				x = svgLeft + chartLeft + size + (scale.zoom ? x : currPos.xAxis);
+				x = svgLeft + padding.left + size + (scale.zoom ? x : currPos.xAxis);
+				y += padding.top - 5;
 			}
 		}
 
 		// when tooltip left + tWidth > chart's width
 		if ((x + tWidth + 15) > chartRight) {
-			x -= isRotated ? tWidth - chartLeft : tWidth + (hasTreemap ? 0 : chartLeft);
+			x -= tWidth + (hasTreemap || hasArcType ? 0 : (isRotated ? size * 2 : 38));
 		}
 
 		if (y + tHeight > current.height) {

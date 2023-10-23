@@ -120,7 +120,7 @@ export default {
 	 * @memberof Options
 	 * @type {Function|string}
 	 * @default undefined
-	 * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
+	 * @see [D3's time specifier](https://d3js.org/d3-time-format#locale_format)
 	 * @example
 	 * axis: {
 	 *   x: {

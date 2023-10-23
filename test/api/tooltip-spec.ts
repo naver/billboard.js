@@ -363,4 +363,76 @@ describe("API tooltip", () => {
 			expect(tooltip.select(".value").text()).to.be.equal("34.6%");
 		});
 	});
+
+	describe("on rotated axis", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 150, 140, 110, 100, 300],
+						["data1", 30, 200, 100, 400, 150],
+						["data2", 130, 340, 200, 500, 250]
+					],
+					type: "line"
+				},
+				axis: {
+					rotated: true
+				}
+			};
+		});
+
+		function checkTooltip(x, categoryName?) {
+			const type = chart.config("axis.x.type");
+			let value = x;
+
+			// when
+			chart.tooltip.show({x});
+
+			let th = chart.$.tooltip.select("th").text();
+
+			if (type === "timeseries") {
+				value = chart.internal.format.xAxisTick(x);
+			}
+
+			expect(isNaN(th) ? th : +th).to.be.equal(categoryName ?? value);
+		}
+
+		it("check for indexed x axis type", () => {
+			chart.xs().data1.forEach(v => {
+				checkTooltip(v);
+			});
+		});
+
+		it("set options", () => {
+			args.data.x = "x";
+			args.data.columns.unshift(
+				["x", "2023-01-01", "2023-01-02", "2023-01-03", "2023-01-04", "2023-01-05"]
+			);
+			args.axis.x = {
+				type: "timeseries",
+				tick: {
+					format: "%Y-%m-%d"
+				}
+			};
+		});
+
+		it("check for timeseries x axis type", () => {
+			chart.xs().data1.forEach(v => {
+				checkTooltip(+v);
+			});
+		});
+
+		it("set options", () => {
+			args.data.columns[0] = ["x", "a", "b", "c", "d", "e"];
+			args.axis.x = {
+				type: "category"
+			};
+		});
+
+		it("check for category x axis type", () => {
+			chart.categories().forEach((v, i) => {
+				checkTooltip(i, v);
+			});
+		});
+	});
 });
