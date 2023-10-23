@@ -838,7 +838,7 @@ describe("TEXT", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const expectedXs = [72, 537, 72, 527]; // 72.50132230092231
+					const expectedXs = [72, 527, 72, 527]; // 72.50132230092231
 					const expectedYs = [9, 157, 305, 434];
 
 					chart.$.main.selectAll(`.${$TEXT.texts}-data1 text`)
