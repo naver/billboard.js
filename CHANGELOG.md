@@ -1,3 +1,18 @@
+# [3.10.0-next.6](https://github.com/naver/billboard.js/compare/3.10.0-next.5...3.10.0-next.6) (2023-10-23)
+
+
+### Bug Fixes
+
+* **point:** Fix data.onclick not called when point.senstivity is radius ([83b0206](https://github.com/naver/billboard.js/commit/83b020607f52dd99a2cbe32b7d36f50ec0cb6654)), closes [#3466](https://github.com/naver/billboard.js/issues/3466)
+* **tooltip:** Fix wrong .tooltip.show() on rotated axis ([9b90c81](https://github.com/naver/billboard.js/commit/9b90c81845cc1b3e312d7fa0b2427cda8ec1ddd4)), closes [#3476](https://github.com/naver/billboard.js/issues/3476)
+* **tooltip:** Fix wrong tooltip position with padding option ([041e144](https://github.com/naver/billboard.js/commit/041e144a57cb7d874a49d834abc85d0bd87747f4)), closes [#3473](https://github.com/naver/billboard.js/issues/3473)
+* **zoom:** Fix initial error empty data with zoom ([a94d09c](https://github.com/naver/billboard.js/commit/a94d09caddb6f4c51767578d46e97bb40a07197d)), closes [#3470](https://github.com/naver/billboard.js/issues/3470)
+
+
+### Features
+
+* **theme:** Add new modern theme ([b0f1aa7](https://github.com/naver/billboard.js/commit/b0f1aa79f2b239832668da1607355b5cd5030402))
+
 # [3.10.0-next.5](https://github.com/naver/billboard.js/compare/3.10.0-next.4...3.10.0-next.5) (2023-10-13)
 
 
