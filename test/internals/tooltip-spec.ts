@@ -1887,7 +1887,7 @@ describe("TOOLTIP", function() {
 			chart.$.chart.style("margin-top", "100px");
 			chart.tooltip.show({index:1});
 
-			expect(chart.$.tooltip.select("th").text()).to.be.equal("0");
+			expect(chart.$.tooltip.select("th").text()).to.be.equal("1");
 
 			chart.$.chart.style("margin-top", null);
 		});

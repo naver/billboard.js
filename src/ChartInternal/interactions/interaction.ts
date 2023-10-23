@@ -180,6 +180,7 @@ export default {
 
 		if (element) {
 			const isMultipleX = $$.isMultipleX();
+			const isRotated = config.axis_rotated;
 			let {width, left, top} = element.getBoundingClientRect();
 
 			if (hasAxis && !hasRadar && !isMultipleX) {
@@ -197,9 +198,11 @@ export default {
 			}
 
 			const x = left + (mouse ? mouse[0] : 0) + (
-				isMultipleX || config.axis_rotated ? 0 : (width / 2)
+				isMultipleX || isRotated ? 0 : (width / 2)
 			);
-			const y = top + (mouse ? mouse[1] : 0);
+
+			// value 4, is to adjust coordinate value set from: scale.ts - updateScales(): $$.getResettedPadding(1)
+			const y = top + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0);
 			const params = {
 				screenX: x,
 				screenY: y,
