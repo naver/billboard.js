@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.4-nightly-20231021004608
+ * @version 3.9.4-nightly-20231024004632
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4951,6 +4951,7 @@ var interaction = {
             (hasRadar && radar.axes.select(".".concat($AXIS.axis, "-").concat(index, " text"))) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) === null || _a === void 0 ? void 0 : _a.call($$, index))))) === null || _b === void 0 ? void 0 : _b.node();
         if (element) {
             var isMultipleX = $$.isMultipleX();
+            var isRotated = config.axis_rotated;
             var _e = element.getBoundingClientRect(), width = _e.width, left = _e.left, top_1 = _e.top;
             if (hasAxis && !hasRadar && !isMultipleX) {
                 var coords = eventReceiver.coords[index];
@@ -4965,8 +4966,9 @@ var interaction = {
                     top_1 = 0;
                 }
             }
-            var x = left + (mouse ? mouse[0] : 0) + (isMultipleX || config.axis_rotated ? 0 : (width / 2));
-            var y = top_1 + (mouse ? mouse[1] : 0);
+            var x = left + (mouse ? mouse[0] : 0) + (isMultipleX || isRotated ? 0 : (width / 2));
+            // value 4, is to adjust coordinate value set from: scale.ts - updateScales(): $$.getResettedPadding(1)
+            var y = top_1 + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0);
             var params = {
                 screenX: x,
                 screenY: y,
@@ -7469,13 +7471,23 @@ var size = {
     getSvgLeft: function (withoutRecompute) {
         var $$ = this;
         var config = $$.config, $el = $$.$el;
-        var hasLeftAxisRect = config.axis_rotated || (!config.axis_rotated && !config.axis_y_inner);
-        var leftAxisClass = config.axis_rotated ? $AXIS.axisX : $AXIS.axisY;
+        var isRotated = config.axis_rotated;
+        var hasLeftAxisRect = isRotated || (!isRotated && !config.axis_y_inner);
+        var leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
         var leftAxis = $el.main.select(".".concat(leftAxisClass)).node();
+        var leftLabel = config["axis_".concat(isRotated ? "x" : "y", "_label")];
+        var labelWidth = 0;
+        // if axis label position set to inner, exclude from the value
+        if (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel === null || leftLabel === void 0 ? void 0 : leftLabel.position)) {
+            var label = $el.main.select(".".concat(leftAxisClass, "-label"));
+            if (!label.empty()) {
+                labelWidth = label.node().getBoundingClientRect().left;
+            }
+        }
         var svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : { right: 0 };
-        var chartRect = $el.chart.node().getBoundingClientRect();
+        var chartRectLeft = $el.chart.node().getBoundingClientRect().left + labelWidth;
         var hasArc = $$.hasArcType();
-        var svgLeft = svgRect.right - chartRect.left -
+        var svgLeft = svgRect.right - chartRectLeft -
             (hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
         return svgLeft > 0 ? svgLeft : 0;
     },
@@ -7561,7 +7573,7 @@ var size = {
             if (type === "right") {
                 padding += isRotated ? (!isFitPadding && isUndefined(paddingOption) ? 10 : 2) : !isAxisShow || isAxisInner ? (isFitPadding ? 2 : 1) : 0;
             }
-            else if (type === "left" && isRotated) {
+            else if (type === "left" && isRotated && isUndefined(paddingOption)) {
                 padding = !config.axis_x_show ?
                     1 : (isFitPadding ? axisSize : Math.max(axisSize, 40));
             }
@@ -8645,33 +8657,37 @@ var tooltip$1 = {
         var hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
         var hasTreemap = state.hasTreemap;
         var isRotated = config.axis_rotated;
+        var hasArcType = $$.hasArcType();
         var svgLeft = $$.getSvgLeft(true);
         var chartRight = svgLeft + current.width - $$.getCurrentPaddingByDirection("right");
-        var chartLeft = $$.getCurrentPaddingByDirection("left", true);
         var size = 20;
         var x = currPos.x, y = currPos.y;
         // Determine tooltip position
-        if ($$.hasArcType()) {
+        if (hasArcType) {
             var raw = inputType === "touch" || $$.hasType("radar");
             if (!raw) {
-                y += hasGauge ? height : height / 2;
                 x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
+                y += hasGauge ? height : height / 2;
             }
         }
         else if (!hasTreemap) {
+            var padding = {
+                top: $$.getCurrentPaddingByDirection("top", true),
+                left: $$.getCurrentPaddingByDirection("left", true)
+            };
             if (isRotated) {
-                y = currPos.xAxis + size;
-                x += svgLeft;
+                x += svgLeft + padding.left + size;
+                y = padding.top + currPos.xAxis + size;
                 chartRight -= svgLeft;
             }
             else {
-                y -= 5;
-                x = svgLeft + chartLeft + size + (scale.zoom ? x : currPos.xAxis);
+                x = svgLeft + padding.left + size + (scale.zoom ? x : currPos.xAxis);
+                y += padding.top - 5;
             }
         }
         // when tooltip left + tWidth > chart's width
         if ((x + tWidth + 15) > chartRight) {
-            x -= isRotated ? tWidth - chartLeft : tWidth + (hasTreemap ? 0 : chartLeft);
+            x -= tWidth + (hasTreemap || hasArcType ? 0 : (isRotated ? size * 2 : 38));
         }
         if (y + tHeight > current.height) {
             var gap = hasTreemap ? 0 : 30;
@@ -15049,7 +15065,7 @@ var optDataAxis = {
      *        type: "timeseries"
      *    }
      * }
-     * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
+     * @see [D3's time specifier](https://d3js.org/d3-time-format#locale_format)
      */
     data_xFormat: "%Y-%m-%d",
     /**
@@ -15267,7 +15283,7 @@ var x = {
      * @memberof Options
      * @type {Function|string}
      * @default undefined
-     * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
+     * @see [D3's time specifier](https://d3js.org/d3-time-format#locale_format)
      * @example
      * axis: {
      *   x: {
@@ -22988,7 +23004,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20231021004608
+ * @version 3.9.4-nightly-20231024004632
  */
 var bb = {
     /**
@@ -22998,7 +23014,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.9.4-nightly-20231021004608",
+    version: "3.9.4-nightly-20231024004632",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

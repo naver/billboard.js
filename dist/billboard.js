@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.4-nightly-20231021004608
+ * @version 3.9.4-nightly-20231024004632
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5832,7 +5832,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
       treemap = _$$$$el.treemap,
       element = (_ref = hasTreemap && eventReceiver.rect || hasRadar && radar.axes.select("." + $AXIS.axis + "-" + index + " text") || eventRect || ($$.getArcElementByIdOrIndex == null ? void 0 : $$.getArcElementByIdOrIndex(index))) == null ? void 0 : _ref.node();
     if (element) {
-      const isMultipleX = $$.isMultipleX();
+      const isMultipleX = $$.isMultipleX(),
+        isRotated = config.axis_rotated;
       let _element$getBoundingC = element.getBoundingClientRect(),
         width = _element$getBoundingC.width,
         left = _element$getBoundingC.left,
@@ -5849,8 +5850,8 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
           top = 0;
         }
       }
-      const x = left + (mouse ? mouse[0] : 0) + (isMultipleX || config.axis_rotated ? 0 : width / 2),
-        y = top + (mouse ? mouse[1] : 0);
+      const x = left + (mouse ? mouse[0] : 0) + (isMultipleX || isRotated ? 0 : width / 2),
+        y = top + (mouse ? mouse[1] : 0) + (isRotated ? 4 : 0); // value 4, is to adjust coordinate value set from: scale.ts - updateScales(): $$.getResettedPadding(1)
       emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](hasTreemap ? treemap.node() : element, type, {
         screenX: x,
         screenY: y,
@@ -8659,15 +8660,26 @@ function getGroupedDataPointsFn(d) {
     const $$ = this,
       config = $$.config,
       $el = $$.$el,
-      hasLeftAxisRect = config.axis_rotated || !config.axis_rotated && !config.axis_y_inner,
-      leftAxisClass = config.axis_rotated ? $AXIS.axisX : $AXIS.axisY,
+      isRotated = config.axis_rotated,
+      hasLeftAxisRect = isRotated || !isRotated && !config.axis_y_inner,
+      leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY,
       leftAxis = $el.main.select("." + leftAxisClass).node(),
-      svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : {
+      leftLabel = config["axis_" + (isRotated ? "x" : "y") + "_label"];
+    let labelWidth = 0;
+
+    // if axis label position set to inner, exclude from the value
+    if (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel == null ? void 0 : leftLabel.position)) {
+      const label = $el.main.select("." + leftAxisClass + "-label");
+      if (!label.empty()) {
+        labelWidth = label.node().getBoundingClientRect().left;
+      }
+    }
+    const svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : {
         right: 0
       },
-      chartRect = $el.chart.node().getBoundingClientRect(),
+      chartRectLeft = $el.chart.node().getBoundingClientRect().left + labelWidth,
       hasArc = $$.hasArcType(),
-      svgLeft = svgRect.right - chartRect.left - (hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
+      svgLeft = svgRect.right - chartRectLeft - (hasArc ? 0 : $$.getCurrentPaddingByDirection("left", withoutRecompute));
     return svgLeft > 0 ? svgLeft : 0;
   },
   updateDimension: function updateDimension(withoutAxis) {
@@ -8752,7 +8764,7 @@ function getGroupedDataPointsFn(d) {
       }
       if (type === "right") {
         padding += isRotated ? !isFitPadding && isUndefined(paddingOption) ? 10 : 2 : !isAxisShow || isAxisInner ? isFitPadding ? 2 : 1 : 0;
-      } else if (type === "left" && isRotated) {
+      } else if (type === "left" && isRotated && isUndefined(paddingOption)) {
         padding = !config.axis_x_show ? 1 : isFitPadding ? axisSize : Math.max(axisSize, 40);
       }
     } else {
@@ -9890,34 +9902,38 @@ function getTextXPos(pos, width) {
       hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle,
       hasTreemap = state.hasTreemap,
       isRotated = config.axis_rotated,
+      hasArcType = $$.hasArcType(),
       svgLeft = $$.getSvgLeft(!0);
     let chartRight = svgLeft + current.width - $$.getCurrentPaddingByDirection("right");
-    const chartLeft = $$.getCurrentPaddingByDirection("left", !0),
-      size = 20;
+    const size = 20;
     let x = currPos.x,
       y = currPos.y;
 
     // Determine tooltip position
-    if ($$.hasArcType()) {
+    if (hasArcType) {
       const raw = inputType === "touch" || $$.hasType("radar");
       if (!raw) {
-        y += hasGauge ? height : height / 2;
         x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
+        y += hasGauge ? height : height / 2;
       }
     } else if (!hasTreemap) {
+      const padding = {
+        top: $$.getCurrentPaddingByDirection("top", !0),
+        left: $$.getCurrentPaddingByDirection("left", !0)
+      };
       if (isRotated) {
-        y = currPos.xAxis + size;
-        x += svgLeft;
+        x += svgLeft + padding.left + size;
+        y = padding.top + currPos.xAxis + size;
         chartRight -= svgLeft;
       } else {
-        y -= 5;
-        x = svgLeft + chartLeft + size + (scale.zoom ? x : currPos.xAxis);
+        x = svgLeft + padding.left + size + (scale.zoom ? x : currPos.xAxis);
+        y += padding.top - 5;
       }
     }
 
     // when tooltip left + tWidth > chart's width
     if (x + tWidth + 15 > chartRight) {
-      x -= isRotated ? tWidth - chartLeft : tWidth + (hasTreemap ? 0 : chartLeft);
+      x -= tWidth + (hasTreemap || hasArcType ? 0 : isRotated ? 40 : 38);
     }
     if (y + tHeight > current.height) {
       const gap = hasTreemap ? 0 : 30;
@@ -16904,7 +16920,7 @@ function smoothLines(el, type) {
    *        type: "timeseries"
    *    }
    * }
-   * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
+   * @see [D3's time specifier](https://d3js.org/d3-time-format#locale_format)
    */
   data_xFormat: "%Y-%m-%d",
   /**
@@ -17122,7 +17138,7 @@ function smoothLines(el, type) {
    * @memberof Options
    * @type {Function|string}
    * @default undefined
-   * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
+   * @see [D3's time specifier](https://d3js.org/d3-time-format#locale_format)
    * @example
    * axis: {
    *   x: {
@@ -25500,7 +25516,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20231021004608
+ * @version 3.9.4-nightly-20231024004632
  */
 const bb = {
   /**
@@ -25510,7 +25526,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.4-nightly-20231021004608",
+  version: "3.9.4-nightly-20231024004632",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
