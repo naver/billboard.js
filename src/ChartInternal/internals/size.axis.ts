@@ -26,7 +26,7 @@ export default {
 
 		if ($$.axis) {
 			const position = $$.axis?.getLabelPositionById(id);
-			const width = $$.axis.getMaxTickWidth(id, withoutRecompute);
+			const {width} = $$.axis.getMaxTickSize(id, withoutRecompute);
 			const gap = width === 0 ? 0.5 : 0;
 
 			return width + (
@@ -47,7 +47,9 @@ export default {
 		const isFitPadding = config.padding?.mode === "fit";
 		const isInner = config[`axis_${id}_inner`];
 		const hasLabelText = config[`axis_${id}_label`].text;
+		const defaultHeight = 13;
 		let h = config.padding?.mode === "fit" ? (isInner && !hasLabelText ? (id === "y" ? 1 : 0) : 20) : 30;
+
 
 		if (id === "x" && !config.axis_x_show) {
 			return 8;
@@ -67,14 +69,14 @@ export default {
 			return isFitPadding ? 0 : rotatedPadding.top;
 		}
 
+		const maxtickSize = $$.axis.getMaxTickSize(id);
 		const rotate = $$.getAxisTickRotate(id);
 
 		// Calculate x/y axis height when tick rotated
 		if (
 			((id === "x" && !isRotated) || (/y2?/.test(id) && isRotated)) && rotate
 		) {
-			h = 30 +
-				$$.axis.getMaxTickWidth(id) *
+			h += maxtickSize.width *
 				Math.cos(Math.PI * (90 - Math.abs(rotate)) / 180);
 
 			if (!config.axis_x_tick_multiline && current.height) {
@@ -82,6 +84,8 @@ export default {
 					h = current.height / 2;
 				}
 			}
+		} else if (maxtickSize.height > defaultHeight && config.legend_show) {
+			h += maxtickSize.height - defaultHeight;
 		}
 
 		return h +
@@ -114,7 +118,7 @@ export default {
 
 			if (config.axis_x_tick_fit && allowedXAxisTypes) {
 				const xTickCount = config.axis_x_tick_count;
-				const currentXTicksLength = state.current.maxTickWidths.x.ticks.length;
+				const currentXTicksLength = state.current.maxTickSize.x.ticks.length;
 				let tickCount = 0;
 
 				if (xTickCount) {
@@ -163,9 +167,9 @@ export default {
 		const tickCountWithPadding = axis.x.tickCount +
 			axis.x.padding.left + axis.x.padding.right;
 
-		const maxTickWidth = $$.axis.getMaxTickWidth("x");
+		const {width} = $$.axis.getMaxTickSize("x");
 		const tickLength = tickCountWithPadding ? xAxisLength / tickCountWithPadding : 0;
 
-		return maxTickWidth > tickLength;
+		return width > tickLength;
 	}
 };
