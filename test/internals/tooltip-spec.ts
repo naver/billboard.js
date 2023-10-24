@@ -11,7 +11,7 @@ import {
 	namespaces as d3Namespaces
 } from "d3-selection";
 import util from "../assets/util";
-import {$SHAPE, $TOOLTIP} from "../../src/config/classes";
+import {$CIRCLE, $SHAPE, $TOOLTIP} from "../../src/config/classes";
 import {isNumber, isUndefined, isString} from "../../src/module/util";
 
 describe("TOOLTIP", function() {
@@ -665,6 +665,135 @@ describe("TOOLTIP", function() {
 				expect(eventReceiver.currentIdx).to.be.equal(0);
 			});
 
+		});
+
+		describe("with padding", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 130, 340, 200, 500, 250, 350]
+						],
+						type: "line"
+					},
+					padding: {
+						left: 400
+					},
+					axis: {
+						rotated: false,
+						y: {
+							label: "y axis label"
+						}
+					}
+				}
+			});
+
+			it("should displayed in correct position with padding.left", () => {
+				const x = 4;
+
+				// when
+				chart.tooltip.show({x});
+
+				const tooltip = chart.$.tooltip.node().getBoundingClientRect();
+				const pointLeft = chart.$.circles.filter(`.${$CIRCLE.circle}-${x}`).node().getBoundingClientRect().left;
+
+				expect(tooltip.left + tooltip.width).to.be.below(pointLeft);
+				expect(tooltip.left + tooltip.width).to.be.closeTo(pointLeft, 15);
+			});
+
+			it("set options: axis.y.label", () => {
+				args.axis.y.label = {
+					text: "y axis label"
+				};
+			});
+
+			it("should displayed in correct position with padding.left", () => {
+				const x = 4;
+
+				// when
+				chart.tooltip.show({x});
+
+				const tooltip = chart.$.tooltip.node().getBoundingClientRect();
+				const pointLeft = chart.$.circles.filter(`.${$CIRCLE.circle}-${x}`).node().getBoundingClientRect().left;
+
+				expect(tooltip.left + tooltip.width).to.be.below(pointLeft);
+				expect(tooltip.left + tooltip.width).to.be.closeTo(pointLeft, 15);
+			});
+
+			it("set options: axis.y.label", () => {
+				args.axis.y.label = {
+					text: "y axis label",
+					position: "inner-middle"
+				};
+			});
+
+			it("should displayed in correct position with padding.left", () => {
+				const x = 4;
+
+				// when
+				chart.tooltip.show({x});
+
+				const tooltip = chart.$.tooltip.node().getBoundingClientRect();
+				const pointLeft = chart.$.circles.filter(`.${$CIRCLE.circle}-${x}`).node().getBoundingClientRect().left;
+
+				expect(tooltip.left + tooltip.width).to.be.below(pointLeft);
+				expect(tooltip.left + tooltip.width).to.be.closeTo(pointLeft, 15);
+			});
+
+			it("set options: axis.rotated=true", () => {
+				args.axis.rotated = true;
+			});
+
+			it("should displayed in correct position with padding.left on rotated axis", () => {
+				const x = 2;
+
+				// when
+				util.hoverChart(chart, "mousemove", {clientX: 0, clientY: 200});
+
+				const tooltip = chart.$.tooltip.node().getBoundingClientRect();
+				const pointLeft = chart.$.circles.filter(`.${$CIRCLE.circle}-${x}`).node().getBoundingClientRect().left;
+
+				expect(pointLeft).to.be.below(tooltip.left + tooltip.width);
+				expect(tooltip.left).to.be.closeTo(pointLeft, 30);
+			});
+
+			it("set options: axis.rotated=true", () => {
+				args.axis.rotated = false;
+				args.padding = {
+					top: 100
+				};
+			});
+
+			it("should displayed in correct position with padding.top", () => {
+				const x = 3;
+
+				// when
+				chart.tooltip.show({x});
+
+				const tooltip = chart.$.tooltip.node().getBoundingClientRect();
+				const pointTop = chart.$.circles.filter(`.${$CIRCLE.circle}-${x}`).node().getBoundingClientRect().top;
+
+				expect(tooltip.top).to.be.below(pointTop);
+				expect(tooltip.top + tooltip.height).to.be.closeTo(pointTop, 30);
+			});
+
+			it("set options: axis.rotated=true", () => {
+				args.axis.rotated = true;
+			});
+
+			it("should displayed in correct position with padding.top on rotated axis", () => {
+				const x = 2;
+
+				// when
+				util.hoverChart(chart, "mousemove", {clientX: 0, clientY: 250});
+
+				const tooltip = chart.$.tooltip.node().getBoundingClientRect();
+				const pointTop = chart.$.circles.filter(`.${$CIRCLE.circle}-${x}`).node().getBoundingClientRect().top;
+
+				expect(pointTop).to.be.below(tooltip.top + tooltip.height);
+				expect(tooltip.top).to.be.closeTo(pointTop, 30);
+			});
 		});
 
 		describe("on rotated axis", () => {
@@ -1758,7 +1887,7 @@ describe("TOOLTIP", function() {
 			chart.$.chart.style("margin-top", "100px");
 			chart.tooltip.show({index:1});
 
-			expect(chart.$.tooltip.select("th").text()).to.be.equal("0");
+			expect(chart.$.tooltip.select("th").text()).to.be.equal("1");
 
 			chart.$.chart.style("margin-top", null);
 		});
