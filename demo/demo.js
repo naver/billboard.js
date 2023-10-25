@@ -1666,8 +1666,7 @@ var demos = {
 							rotate: 75,
 							multiline: false,
 							tooltip: true
-						},
-						height: 130
+						}
 					}
 				}
 			}
@@ -3383,8 +3382,8 @@ d3.select(".chart_area")
 					pattern: [
 						"circle",
 						"rectangle",
-						"<polygon points='2.5 0 0 5 5 5'></polygon>",
-						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
+						"<polygon points='4 0 0 8 8 8'></polygon>",
+						"<polygon points='4 0 0 4 4 8 8 4 4 0'></polygon>"
 					]
 				},
 				legend: {
@@ -3740,8 +3739,8 @@ d3.select(".chart_area")
 					pattern: [
 						"circle",
 						"rectangle",
-						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
-						"<polygon points='2.5 0 0 5 5 5'></polygon>",
+						"<polygon points='5 0 0 5 5 10 10 5 5 0'></polygon>",
+						"<polygon points='5 0 0 10 10 10'></polygon>",
 						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
@@ -3758,7 +3757,7 @@ d3.select(".chart_area")
 				},
 				point: {
 					pattern: [
-						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
+						"<polygon points='5 0 0 5 5 10 10 5 5 0'></polygon>"
 					]
 				}
 			}
@@ -3810,7 +3809,7 @@ d3.select(".chart_area")
 				},
 				point: {
 					pattern: [
-						"<path d='m3.937502,2.348755c1.314192,-3.618047 6.463238,0 0,4.651779c-6.463238,-4.651779 -1.314192,-8.269826 0,-4.651779z' />"
+						"<path d='m4 3 c3 -5 8 1 0 5 c-8 -4 -3 -10 0 -5z' />"
 					]
 				}
 			}
@@ -3826,7 +3825,7 @@ d3.select(".chart_area")
 				},
 				point: {
 					pattern: [
-						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+						"<polygon points='5 0 0 10 10 10'></polygon>"
 					]
 				}
 			}
@@ -3946,6 +3945,71 @@ d3.select(".chart_area")
 				}
 			}
 		],
+RadialGradientPoint: [			
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 100, 250],
+							["data2", 130, 100, 130, 200, 150, 50]
+						],
+						type: "scatter"
+					},
+					point: {
+						r: 20,
+						radialGradient: true,
+						opacity: 1,
+						sensitivity: "radius"
+					},
+					axis: {
+						x: {
+							type: "category"
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 100, 250],
+							["data2", 130, 100, 130, 200, 150, 50]
+						],
+						type: "bubble"
+					},
+					point: {
+						r: 10,
+						radialGradient: {
+							cx: 0.5,
+							cy: 0.5,
+							r: 0.5,
+							stops: [
+								[0.3, "#fff", 0.8],
+								[0.6, "green", 0.35],
+								[1, null, 1]
+							]
+						},
+						opacity: 1,
+						sensitivity: "radius"
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 100, 250],
+							["data2", 130, 100, 130, 200, 150, 50]
+						],
+						type: "line"
+					},
+					point: {
+						r: 7,
+						radialGradient: true,
+					}
+				}
+			}
+		],
 		RectanglePoints: {
 			options: {
 				data: {
@@ -3990,6 +4054,61 @@ d3.select(".chart_area")
 					{axis: "y2", end: 900, class: "regionY2"},
 					{axis: "y2", start: 1150, end: 1250, class: "regionY2"},
 					{axis: "y2", start: 1300, class: "regionY2"}
+				]
+			}
+		},
+RegionLabel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 100, 150, 130, 200, 220, 190],
+					],
+					axes: {
+						data2: "y2",
+					},
+					type: "line",
+					colors: {
+						data1: "#ff0000"
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				regions: [
+					{
+						axis: "x",
+						start: 1,
+						end: 2,
+						class: "regions_class1",
+						label: {
+							text: "Regions 1",
+							color: "red"
+						}
+					},
+					{
+						axis: "y",
+						start: 100,
+						end: 300,
+						class: "regions_class2",
+						label: {
+							text: "Regions 2",
+							x: 50,
+							color: "blue"
+						}
+					},
+					{
+						axis: "y2",
+						start: 200,
+						end: 220,
+						class: "regions_class3",
+						label: {
+							text: "Regions 3",
+							y: 10
+						}
+					}
 				]
 			}
 		},
@@ -4164,6 +4283,103 @@ d3.select(".chart_area")
 				}
 			}
 		},
+TooltipPosition: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 200, 400, 150, 250]
+						],
+						type: "area"
+					},
+					padding: {
+						top: 35
+					},
+					axis: {
+						x: {
+							padding: {
+								left: 15,
+								right: 15,
+								unit: "px"
+							}
+						},
+						y2: {
+							show: true
+						}
+					},
+					tooltip: {
+						position: function(data, width, height, element, pos) {
+						  // when has single dataseries, 'pos.yAxis' is number value
+						  return {
+							top: pos.yAxis - (height + 10),
+							left: pos.xAxis - (width / 2)
+						  };
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 200, 400, 150, 250],
+							["data2", 130, 100, 100, 200, 150, 50],
+							["data3", 230, 200, 200, 300, 250, 250]
+						],
+						type: "bar",
+						groups: [
+						  ["data1", "data2", "data3"]
+						]
+					},
+					axis: {
+						rotated: false,
+						y2: {
+							show: true
+						}
+					},
+					tooltip: {
+						position: function(data, width, height, element, pos) {
+						  const total = data.reduce((a, {value}) => a + value, 0);
+					
+						  // when has multiple dataseries, 'pos.yAxis' is function
+						  return this.config("axis.rotated") ? {
+							top: pos.xAxis - (width / 2),
+							left: pos.yAxis(total)
+						  } : {
+							top: pos.yAxis(total) - height,
+							left: pos.xAxis - (width / 2)
+						  };
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 200, 400, 150, 250]
+						],
+						type: "bar"
+					},
+					padding: {
+						right: 80
+					},
+					axis: {
+						rotated: true
+					},
+					tooltip: {
+						position: function(data, width, height, element, pos) {
+						  const total = data.reduce((a, {value}) => a + value, 0);
+					
+						  return {
+							top: pos.xAxis - (height / 2),
+							left: pos.yAxis + 10
+						  }
+						}
+					}
+				}
+			}
+		],
 		TooltipTemplate: {
 			options: {
 				data: {
