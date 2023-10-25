@@ -5,11 +5,11 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.9.4-nightly-20231024004632
+ * @version 3.9.4-nightly-20231025004610
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
- * - @types/d3-selection ^3.0.7
- * - @types/d3-transition ^3.0.5
+ * - @types/d3-selection ^3.0.8
+ * - @types/d3-transition ^3.0.6
  * - d3-axis ^3.0.0
  * - d3-brush ^3.0.0
  * - d3-drag ^3.0.0
@@ -24895,19 +24895,22 @@ let State = function () {
       width: 0,
       height: 0,
       dataMax: 0,
-      maxTickWidths: {
+      maxTickSize: {
         x: {
-          size: 0,
+          width: 0,
+          height: 0,
           ticks: [],
           clipPath: 0,
           domain: ""
         },
         y: {
-          size: 0,
+          width: 0,
+          height: 0,
           domain: ""
         },
         y2: {
-          size: 0,
+          width: 0,
+          height: 0,
           domain: ""
         }
       },
@@ -40944,7 +40947,7 @@ let Axis_Axis = /*#__PURE__*/function () {
     id === "x" && ($$.scale.zoom || $$.config.subchart_show || $$.state.resizing) ? !0 : noTransition);
   }
 
-  // called from : getMaxTickWidth()
+  // called from : getMaxTickSize()
   ;
   _proto.getAxis = function getAxis(id, scale, outerTick, noTransition, noTickTextRotate) {
     var _this8 = this;
@@ -41171,7 +41174,8 @@ let Axis_Axis = /*#__PURE__*/function () {
       isRotated = config.axis_rotated,
       isInner = this.getAxisLabelPosition(id).isInner,
       tickRotate = config["axis_" + id + "_tick_rotate"] ? $$.getHorizontalAxisHeight(id) : 0,
-      maxTickWidth = this.getMaxTickWidth(id);
+      _this$getMaxTickSize = this.getMaxTickSize(id),
+      maxTickWidth = _this$getMaxTickSize.width;
     let dy;
     if (id === "x") {
       const xHeight = config.axis_x_height;
@@ -41204,8 +41208,16 @@ let Axis_Axis = /*#__PURE__*/function () {
       }
     }
     return dy;
-  };
-  _proto.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
+  }
+
+  /**
+   * Get max tick size
+   * @param {string} id axis id string
+   * @param {boolean} withoutRecompute wheather or not to recompute
+   * @returns {object} {width, height}
+   * @private
+   */;
+  _proto.getMaxTickSize = function getMaxTickSize(id, withoutRecompute) {
     var _this11 = this;
     const $$ = this.owner,
       config = $$.config,
@@ -41213,10 +41225,13 @@ let Axis_Axis = /*#__PURE__*/function () {
       _$$$$el2 = $$.$el,
       svg = _$$$$el2.svg,
       chart = _$$$$el2.chart,
-      currentTickMax = current.maxTickWidths[id];
-    let maxWidth = 0;
-    if (withoutRecompute || !config["axis_" + id + "_show"] || currentTickMax.size > 0 && $$.filterTargetsToShow().length === 0) {
-      return currentTickMax.size;
+      currentTickMax = current.maxTickSize[id],
+      max = {
+        width: 0,
+        height: 0
+      };
+    if (withoutRecompute || !config["axis_" + id + "_show"] || currentTickMax.width > 0 && $$.filterTargetsToShow().length === 0) {
+      return currentTickMax;
     }
     if (svg) {
       const isYAxis = /^y2?$/.test(id),
@@ -41256,19 +41271,26 @@ let Axis_Axis = /*#__PURE__*/function () {
       const dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0").style("left", "0");
       axis.create(dummy);
       dummy.selectAll("text").each(function (d, i) {
-        const currentTextWidth = this.getBoundingClientRect().width;
-        maxWidth = Math.max(maxWidth, currentTextWidth);
+        const _this$getBoundingClie = this.getBoundingClientRect(),
+          width = _this$getBoundingClie.width,
+          height = _this$getBoundingClie.height;
+        max.width = Math.max(max.width, width);
+        max.height = Math.max(max.height, height);
+
         // cache tick text width for getXAxisTickTextY2Overflow()
         if (!isYAxis) {
-          currentTickMax.ticks[i] = currentTextWidth;
+          currentTickMax.ticks[i] = width;
         }
       });
       dummy.remove();
     }
-    if (maxWidth > 0) {
-      currentTickMax.size = maxWidth;
-    }
-    return currentTickMax.size;
+    Object.keys(max).forEach(function (key) {
+      _newArrowCheck(this, _this11);
+      if (max[key] > 0) {
+        currentTickMax[key] = max[key];
+      }
+    }.bind(this));
+    return currentTickMax;
   };
   _proto.getXAxisTickTextY2Overflow = function getXAxisTickTextY2Overflow(defaultPadding) {
     const $$ = this.owner,
@@ -41292,7 +41314,7 @@ let Axis_Axis = /*#__PURE__*/function () {
       config = $$.config,
       state = $$.state,
       isTimeSeries = axis.isTimeSeries(),
-      tickTextWidths = state.current.maxTickWidths.x.ticks,
+      tickTextWidths = state.current.maxTickSize.x.ticks,
       tickCount = tickTextWidths.length,
       _state$axis$x$padding = state.axis.x.padding,
       left = _state$axis$x$padding.left,
@@ -41561,7 +41583,7 @@ let Axis_Axis = /*#__PURE__*/function () {
 
         // set/unset x_axis_tick_clippath
         if (type === "x") {
-          const clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
+          const clipPath = current.maxTickSize.x.clipPath ? clip.pathXAxisTickTexts : null;
           $el.svg.selectAll("." + $AXIS.axisX + " .tick text").attr("clip-path", clipPath);
         }
       }
@@ -42478,13 +42500,13 @@ const src_linear_linear = function (t) {
   setXAxisTickClipWidth: function setXAxisTickClipWidth() {
     const $$ = this,
       config = $$.config,
-      maxTickWidths = $$.state.current.maxTickWidths,
+      maxTickSize = $$.state.current.maxTickSize,
       xAxisTickRotate = $$.getAxisTickRotate("x");
     if (!config.axis_x_tick_multiline && xAxisTickRotate) {
       const sinRotation = Math.sin(Math.PI / 180 * Math.abs(xAxisTickRotate));
-      maxTickWidths.x.clipPath = ($$.getHorizontalAxisHeight("x") - 20) / sinRotation;
+      maxTickSize.x.clipPath = ($$.getHorizontalAxisHeight("x") - 20) / sinRotation;
     } else {
-      maxTickWidths.x.clipPath = null;
+      maxTickSize.x.clipPath = null;
     }
   },
   setXAxisTickTextClipPathWidth: function setXAxisTickTextClipPathWidth() {
@@ -42494,7 +42516,7 @@ const src_linear_linear = function (t) {
       current = _$$$state5.current,
       svg = $$.$el.svg;
     if (svg) {
-      svg.select("#" + clip.idXAxisTickTexts + " rect").attr("width", current.maxTickWidths.x.clipPath).attr("height", 30);
+      svg.select("#" + clip.idXAxisTickTexts + " rect").attr("width", current.maxTickSize.x.clipPath).attr("height", 30);
     }
   }
 });
@@ -43073,7 +43095,8 @@ function smoothLines(el, type) {
     if ($$.axis) {
       var _$$$axis, _$$$config$padding;
       const position = (_$$$axis = $$.axis) == null ? void 0 : _$$$axis.getLabelPositionById(id),
-        width = $$.axis.getMaxTickWidth(id, withoutRecompute),
+        _$$$axis$getMaxTickSi = $$.axis.getMaxTickSize(id, withoutRecompute),
+        width = _$$$axis$getMaxTickSi.width,
         gap = width === 0 ? .5 : 0;
       return width + (((_$$$config$padding = $$.config.padding) == null ? void 0 : _$$$config$padding.mode) === "fit" ? position.isInner ? 10 + gap : 10 : position.isInner ? 20 + gap : 40);
     } else {
@@ -43107,16 +43130,18 @@ function smoothLines(el, type) {
     if (id === "y2" && !config.axis_y2_show) {
       return isFitPadding ? 0 : rotatedPadding.top;
     }
-    const rotate = $$.getAxisTickRotate(id);
-
+    const maxtickSize = $$.axis.getMaxTickSize(id),
+      rotate = $$.getAxisTickRotate(id);
     // Calculate x/y axis height when tick rotated
     if ((id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate) {
-      h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - Math.abs(rotate)) / 180);
+      h += maxtickSize.width * Math.cos(Math.PI * (90 - Math.abs(rotate)) / 180);
       if (!config.axis_x_tick_multiline && current.height) {
         if (h > current.height / 2) {
           h = current.height / 2;
         }
       }
+    } else if (maxtickSize.height > 13 && config.legend_show) {
+      h += maxtickSize.height - 13;
     }
     return h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id === "y2" && !isRotated ? -10 : 0);
   },
@@ -43145,7 +43170,7 @@ function smoothLines(el, type) {
       const allowedXAxisTypes = axis.isCategorized() || axis.isTimeSeries();
       if (config.axis_x_tick_fit && allowedXAxisTypes) {
         const xTickCount = config.axis_x_tick_count,
-          currentXTicksLength = state.current.maxTickWidths.x.ticks.length;
+          currentXTicksLength = state.current.maxTickSize.x.ticks.length;
         let tickCount = 0;
         if (xTickCount) {
           tickCount = xTickCount > currentXTicksLength ? currentXTicksLength : xTickCount;
@@ -43176,9 +43201,10 @@ function smoothLines(el, type) {
       current = _$$$state.current,
       xAxisLength = current.width - $$.getCurrentPaddingByDirection("left") - $$.getCurrentPaddingByDirection("right"),
       tickCountWithPadding = axis.x.tickCount + axis.x.padding.left + axis.x.padding.right,
-      maxTickWidth = $$.axis.getMaxTickWidth("x"),
+      _$$$axis$getMaxTickSi2 = $$.axis.getMaxTickSize("x"),
+      width = _$$$axis$getMaxTickSi2.width,
       tickLength = tickCountWithPadding ? xAxisLength / tickCountWithPadding : 0;
-    return maxTickWidth > tickLength;
+    return width > tickLength;
   }
 });
 ;// CONCATENATED MODULE: ./src/config/Options/data/axis.ts
@@ -53600,7 +53626,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.9.4-nightly-20231024004632
+ * @version 3.9.4-nightly-20231025004610
  */
 const bb = {
   /**
@@ -53610,7 +53636,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.9.4-nightly-20231024004632",
+  version: "3.9.4-nightly-20231025004610",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
