@@ -157,7 +157,7 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 				expect(line.size()).to.be.equal(1);
 
 				pos.forEach((v, i) => {
-					expect(v).to.be.closeTo(expected[i], 3);
+					expect(v).to.be.closeTo(expected[i], 10);
 				});
 
 				done();

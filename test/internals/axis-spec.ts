@@ -1061,6 +1061,81 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("axis x height", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					xFormat: "%Y",
+					columns: [
+						["x", "2010", "2011", "2012", "2013", "2014", "2015"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 340, 200, 500, 250, 350]
+					],
+					type: "line"
+				  },
+				  axis: {
+					x: {
+					  type: "timeseries",
+					  localtime: false,
+					  tick: {
+						format: "%Y-%m-%d %H:%M:%S"
+					  }
+					}
+				}
+			}
+		});
+
+		it("shouldn't overlap x Axis tick text with legend", () => {
+			const {axis: {x}, legend} = chart.internal.$el;
+
+			const xBottom = x.node().getBoundingClientRect().bottom;
+			const legendTop = legend.node().getBoundingClientRect().top;
+
+			expect(legendTop > xBottom).to.be.true;			
+		});
+
+		it("set option: legend.show=false", () => {
+			args.legend = {
+				show: false
+			};
+		});
+
+		it("x Axis tick text should stay within container", () => {
+			const {$el: {axis: {x}}, state} = chart.internal;
+			const xBottom = x.node().getBoundingClientRect().bottom;
+
+			expect(xBottom).to.be.closeTo(state.current.height, 5);
+		});
+
+		it("set option: legend.show=false", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "First Q\n2018", "Second\nQ 2018", "3Q\nYear\n2018", "Forth\nQuarter\n2018"],
+						["data", 30, 100, 400, 150]
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("shouldn't overlap x Axis tick text with legend", () => {
+			const {axis: {x}, legend} = chart.internal.$el;
+
+			const xBottom = x.node().getBoundingClientRect().bottom;
+			const legendTop = legend.node().getBoundingClientRect().top;
+
+			expect(legendTop > xBottom).to.be.true;			
+		});
+	});
+
 	describe("axis.x.tick.tooltip", () => {
 		before(() => {
 			args = {
@@ -3188,12 +3263,12 @@ describe("AXIS", function() {
 		});
 
 		it("x Axis tick width should be evaluated correctly", () => {
-			const {state: {current}} = chart.internal;
+			const {state: {current: {maxTickSize}}} = chart.internal;
 
-			const maxTickWidth = current.maxTickWidths.x.size;
+			const {width} = maxTickSize.x;
 			const tickWdith = chart.$.main.select(`.${$AXIS.axisX} tspan`).node().getBoundingClientRect().width;
 
-			expect(maxTickWidth).to.be.equal(tickWdith);
+			expect(width).to.be.equal(tickWdith);
 		});
 	});
 

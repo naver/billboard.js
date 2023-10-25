@@ -12,6 +12,7 @@ import AxisRenderer from "./AxisRenderer";
 import {getScale} from "../internals/scale";
 import {$AXIS} from "../../config/classes";
 import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, notEmpty, parseDate, sortValue} from "../../module/util";
+import type {AxisType} from "../../../types/types";
 
 export default {
 	getAxisInstance: function() {
@@ -260,7 +261,7 @@ class Axis {
 		);
 	}
 
-	// called from : getMaxTickWidth()
+	// called from : getMaxTickSize()
 	getAxis(id, scale, outerTick, noTransition, noTickTextRotate): AxisRenderer {
 		const $$ = this.owner;
 		const {config} = $$;
@@ -525,13 +526,13 @@ class Axis {
 		return anchor;
 	}
 
-	dyForAxisLabel(id: string) {
+	dyForAxisLabel(id: AxisType) {
 		const $$ = this.owner;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
 		const isInner = this.getAxisLabelPosition(id).isInner;
 		const tickRotate = config[`axis_${id}_tick_rotate`] ? $$.getHorizontalAxisHeight(id) : 0;
-		const maxTickWidth = this.getMaxTickWidth(id);
+		const {width: maxTickWidth} = this.getMaxTickSize(id);
 		let dy;
 
 		if (id === "x") {
@@ -575,14 +576,26 @@ class Axis {
 		return dy;
 	}
 
-	getMaxTickWidth(id: string, withoutRecompute?: boolean): number {
+	/**
+	 * Get max tick size
+	 * @param {string} id axis id string
+	 * @param {boolean} withoutRecompute wheather or not to recompute
+	 * @returns {object} {width, height}
+	 * @private
+	 */
+	getMaxTickSize(id: AxisType, withoutRecompute?: boolean): {width: number, height: number} {
 		const $$ = this.owner;
 		const {config, state: {current}, $el: {svg, chart}} = $$;
-		const currentTickMax = current.maxTickWidths[id];
-		let maxWidth = 0;
+		const currentTickMax = current.maxTickSize[id];
+		const max = {
+			width: 0,
+			height: 0
+		};
 
-		if (withoutRecompute || !config[`axis_${id}_show`] || (currentTickMax.size > 0 && $$.filterTargetsToShow().length === 0)) {
-			return currentTickMax.size;
+		if (withoutRecompute || !config[`axis_${id}_show`] || (
+			currentTickMax.width > 0 && $$.filterTargetsToShow().length === 0
+		)) {
+			return currentTickMax;
 		}
 
 		if (svg) {
@@ -639,23 +652,27 @@ class Axis {
 
 			dummy.selectAll("text")
 				.each(function(d, i) {
-					const currentTextWidth = this.getBoundingClientRect().width;
+					const {width, height} = this.getBoundingClientRect();
 
-					maxWidth = Math.max(maxWidth, currentTextWidth);
+					max.width = Math.max(max.width, width);
+					max.height = Math.max(max.height, height);
+
 					// cache tick text width for getXAxisTickTextY2Overflow()
 					if (!isYAxis) {
-						currentTickMax.ticks[i] = currentTextWidth;
+						currentTickMax.ticks[i] = width;
 					}
 				});
 
 			dummy.remove();
 		}
 
-		if (maxWidth > 0) {
-			currentTickMax.size = maxWidth;
-		}
+		Object.keys(max).forEach(key => {
+			if (max[key] > 0) {
+				currentTickMax[key] = max[key];
+			}
+		});
 
-		return currentTickMax.size;
+		return currentTickMax;
 	}
 
 	getXAxisTickTextY2Overflow(defaultPadding) {
@@ -688,7 +705,7 @@ class Axis {
 		const {axis, config, state} = $$;
 		const isTimeSeries = axis.isTimeSeries();
 
-		const tickTextWidths = state.current.maxTickWidths.x.ticks;
+		const tickTextWidths = state.current.maxTickSize.x.ticks;
 		const tickCount = tickTextWidths.length;
 		const {left, right} = state.axis.x.padding;
 		let maxOverflow = 0;
@@ -746,7 +763,7 @@ class Axis {
 		};
 
 		Object.keys(labels).filter(id => !labels[id].empty())
-			.forEach(v => {
+			.forEach((v: AxisType) => {
 				const node = labels[v];
 
 				// @check $$.$T(node, withTransition)
@@ -982,7 +999,7 @@ class Axis {
 
 				// set/unset x_axis_tick_clippath
 				if (type === "x") {
-					const clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
+					const clipPath = current.maxTickSize.x.clipPath ? clip.pathXAxisTickTexts : null;
 
 					$el.svg.selectAll(`.${$AXIS.axisX} .tick text`)
 						.attr("clip-path", clipPath);
