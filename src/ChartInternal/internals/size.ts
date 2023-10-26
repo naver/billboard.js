@@ -86,16 +86,18 @@ export default {
 
 	getSvgLeft(withoutRecompute?: boolean): number {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, state: {hasAxis}, $el} = $$;
 		const isRotated = config.axis_rotated;
 		const hasLeftAxisRect = isRotated || (!isRotated && !config.axis_y_inner);
 		const leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
 		const leftAxis = $el.main.select(`.${leftAxisClass}`).node();
-		const leftLabel = config[`axis_${isRotated ? "x" : "y"}_label`];
+		const leftLabel = hasAxis && config[`axis_${isRotated ? "x" : "y"}_label`];
 		let labelWidth = 0;
 
 		// if axis label position set to inner, exclude from the value
-		if (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel?.position)) {
+		if (hasAxis && (
+			isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel?.position)
+		)) {
 			const label = $el.main.select(`.${leftAxisClass}-label`);
 
 			if (!label.empty()) {
