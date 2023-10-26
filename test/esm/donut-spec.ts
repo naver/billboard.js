@@ -43,4 +43,14 @@ describe("ESM donut", function() {
             done();
         }, 500);        
     });
+
+    it("shouldn't throw error on call of tooltip API.", () => {
+        delete chart.internal.config.axis_y_label;
+
+        expect(
+            chart.tooltip.show({x:0})
+        ).to.not.throw;
+
+        chart.internal.config.axis_y_label = {};
+    });
 });
