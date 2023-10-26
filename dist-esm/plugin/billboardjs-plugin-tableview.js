@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.9.4-nightly-20231025004610
+ * @version 3.10.0-nightly-20231026004618
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -121,7 +121,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.9.4-nightly-20231025004610";
+    Plugin.version = "3.10.0-nightly-20231026004618";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -225,7 +225,7 @@ var Options = /** @class */ (function () {
             updateOnToggle: true,
             /**
              * Set how null value to be shown.
-             * @name showNulls
+             * @name nullString
              * @memberof plugin-tableview
              * @type {string}
              * @default "-"
