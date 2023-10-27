@@ -1,3 +1,10 @@
+## [3.10.2](https://github.com/naver/billboard.js/compare/3.10.1...3.10.2) (2023-10-27)
+
+
+### Bug Fixes
+
+* **module:** Fix getFallback() uninitialized variable ([57c140d](https://github.com/naver/billboard.js/commit/57c140d899063392cb0c0bb0e23fb46b0cbf9e2b)), closes [#3489](https://github.com/naver/billboard.js/issues/3489)
+
 ## [3.10.1](https://github.com/naver/billboard.js/compare/3.10.0...3.10.1) (2023-10-26)
 
 
