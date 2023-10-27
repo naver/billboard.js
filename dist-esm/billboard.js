@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.0-nightly-20231026004618
+ * @version 3.10.0-nightly-20231027004619
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -7470,15 +7470,15 @@ var size = {
     },
     getSvgLeft: function (withoutRecompute) {
         var $$ = this;
-        var config = $$.config, $el = $$.$el;
+        var config = $$.config, hasAxis = $$.state.hasAxis, $el = $$.$el;
         var isRotated = config.axis_rotated;
         var hasLeftAxisRect = isRotated || (!isRotated && !config.axis_y_inner);
         var leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
         var leftAxis = $el.main.select(".".concat(leftAxisClass)).node();
-        var leftLabel = config["axis_".concat(isRotated ? "x" : "y", "_label")];
+        var leftLabel = hasAxis && config["axis_".concat(isRotated ? "x" : "y", "_label")];
         var labelWidth = 0;
         // if axis label position set to inner, exclude from the value
-        if (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel === null || leftLabel === void 0 ? void 0 : leftLabel.position)) {
+        if (hasAxis && (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel === null || leftLabel === void 0 ? void 0 : leftLabel.position))) {
             var label = $el.main.select(".".concat(leftAxisClass, "-label"));
             if (!label.empty()) {
                 labelWidth = label.node().getBoundingClientRect().left;
@@ -23021,7 +23021,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.0-nightly-20231026004618
+ * @version 3.10.0-nightly-20231027004619
  */
 var bb = {
     /**
@@ -23031,7 +23031,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.0-nightly-20231026004618",
+    version: "3.10.0-nightly-20231027004619",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

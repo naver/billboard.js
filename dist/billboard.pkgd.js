@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.0-nightly-20231026004618
+ * @version 3.10.0-nightly-20231027004619
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.8
@@ -34825,16 +34825,17 @@ function getGroupedDataPointsFn(d) {
   getSvgLeft: function getSvgLeft(withoutRecompute) {
     const $$ = this,
       config = $$.config,
+      hasAxis = $$.state.hasAxis,
       $el = $$.$el,
       isRotated = config.axis_rotated,
       hasLeftAxisRect = isRotated || !isRotated && !config.axis_y_inner,
       leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY,
       leftAxis = $el.main.select("." + leftAxisClass).node(),
-      leftLabel = config["axis_" + (isRotated ? "x" : "y") + "_label"];
+      leftLabel = hasAxis && config["axis_" + (isRotated ? "x" : "y") + "_label"];
     let labelWidth = 0;
 
     // if axis label position set to inner, exclude from the value
-    if (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel == null ? void 0 : leftLabel.position)) {
+    if (hasAxis && (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel == null ? void 0 : leftLabel.position))) {
       const label = $el.main.select("." + leftAxisClass + "-label");
       if (!label.empty()) {
         labelWidth = label.node().getBoundingClientRect().left;
@@ -53626,7 +53627,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.0-nightly-20231026004618
+ * @version 3.10.0-nightly-20231027004619
  */
 const bb = {
   /**
@@ -53636,7 +53637,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.0-nightly-20231026004618",
+  version: "3.10.0-nightly-20231027004619",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
