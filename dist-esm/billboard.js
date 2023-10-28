@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.0-nightly-20231027004619
+ * @version 3.10.2-nightly-20231028004619
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -48,18 +48,20 @@ function getGlobal() {
  * @private
  */
 function getFallback(w) {
-    var hasRAF = typeof (w === null || w === void 0 ? void 0 : w.requestAnimationFrame) === "function";
-    var hasRIC = typeof (w === null || w === void 0 ? void 0 : w.requestIdleCallback) === "function";
+    var hasRAF = typeof (w === null || w === void 0 ? void 0 : w.requestAnimationFrame) === "function" && typeof (w === null || w === void 0 ? void 0 : w.cancelAnimationFrame) === "function";
+    var hasRIC = typeof (w === null || w === void 0 ? void 0 : w.requestIdleCallback) === "function" && typeof (w === null || w === void 0 ? void 0 : w.cancelIdleCallback) === "function";
+    var request = function (cb) { return setTimeout(cb, 1); };
+    var cancel = function (id) { return clearTimeout(id); };
     return [
-        hasRAF ? w.requestAnimationFrame : (function (cb) { return setTimeout(cb, 1); }),
-        hasRAF ? w.cancelAnimationFrame : (function (id) { return clearTimeout(id); }),
-        hasRIC ? w.requestIdleCallback : requestAnimationFrame,
-        hasRIC ? w.cancelIdleCallback : cancelAnimationFrame
+        hasRAF ? w.requestAnimationFrame : request,
+        hasRAF ? w.cancelAnimationFrame : cancel,
+        hasRIC ? w.requestIdleCallback : request,
+        hasRIC ? w.cancelIdleCallback : cancel
     ];
 }
 var win = getGlobal();
 var doc = win === null || win === void 0 ? void 0 : win.document;
-var _a = getFallback(win), requestAnimationFrame = _a[0], cancelAnimationFrame = _a[1], requestIdleCallback = _a[2];
+var _a = getFallback(win), requestAnimationFrame = _a[0], requestIdleCallback = _a[2];
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -23021,7 +23023,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.0-nightly-20231027004619
+ * @version 3.10.2-nightly-20231028004619
  */
 var bb = {
     /**
@@ -23031,7 +23033,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.0-nightly-20231027004619",
+    version: "3.10.2-nightly-20231028004619",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

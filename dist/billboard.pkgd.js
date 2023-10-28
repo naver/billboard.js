@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.0-nightly-20231027004619
+ * @version 3.10.2-nightly-20231028004619
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.8
@@ -21069,15 +21069,17 @@ function getGlobal() {
  */
 function getFallback(w) {
   var _this = this;
-  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function",
-    hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function";
-  return [hasRAF ? w.requestAnimationFrame : function (cb) {
-    _newArrowCheck(this, _this);
-    return setTimeout(cb, 1);
-  }.bind(this), hasRAF ? w.cancelAnimationFrame : function (id) {
-    _newArrowCheck(this, _this);
-    return clearTimeout(id);
-  }.bind(this), hasRIC ? w.requestIdleCallback : requestAnimationFrame, hasRIC ? w.cancelIdleCallback : cancelAnimationFrame];
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function",
+    hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function",
+    request = function (cb) {
+      _newArrowCheck(this, _this);
+      return setTimeout(cb, 1);
+    }.bind(this),
+    cancel = function (id) {
+      _newArrowCheck(this, _this);
+      return clearTimeout(id);
+    }.bind(this);
+  return [hasRAF ? w.requestAnimationFrame : request, hasRAF ? w.cancelAnimationFrame : cancel, hasRIC ? w.requestIdleCallback : request, hasRIC ? w.cancelIdleCallback : cancel];
 }
 const win = getGlobal(),
   browser_doc = win == null ? void 0 : win.document,
@@ -53627,7 +53629,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.0-nightly-20231027004619
+ * @version 3.10.2-nightly-20231028004619
  */
 const bb = {
   /**
@@ -53637,7 +53639,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.0-nightly-20231027004619",
+  version: "3.10.2-nightly-20231028004619",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

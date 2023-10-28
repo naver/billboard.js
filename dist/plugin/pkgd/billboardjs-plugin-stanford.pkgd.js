@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.0-nightly-20231027004619
+ * @version 3.10.2-nightly-20231028004619
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -24348,15 +24348,17 @@ function getGlobal() {
  */
 function getFallback(w) {
   var _this = this;
-  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function",
-    hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function";
-  return [hasRAF ? w.requestAnimationFrame : function (cb) {
-    _newArrowCheck(this, _this);
-    return setTimeout(cb, 1);
-  }.bind(this), hasRAF ? w.cancelAnimationFrame : function (id) {
-    _newArrowCheck(this, _this);
-    return clearTimeout(id);
-  }.bind(this), hasRIC ? w.requestIdleCallback : requestAnimationFrame, hasRIC ? w.cancelIdleCallback : cancelAnimationFrame];
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function",
+    hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function",
+    request = function (cb) {
+      _newArrowCheck(this, _this);
+      return setTimeout(cb, 1);
+    }.bind(this),
+    cancel = function (id) {
+      _newArrowCheck(this, _this);
+      return clearTimeout(id);
+    }.bind(this);
+  return [hasRAF ? w.requestAnimationFrame : request, hasRAF ? w.cancelAnimationFrame : cancel, hasRIC ? w.requestIdleCallback : request, hasRIC ? w.cancelIdleCallback : cancel];
 }
 const win = getGlobal(),
   doc = win == null ? void 0 : win.document,
@@ -25361,7 +25363,7 @@ let Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.10.0-nightly-20231027004619";
+Plugin.version = "3.10.2-nightly-20231028004619";
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 /**
