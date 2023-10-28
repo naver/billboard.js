@@ -1,3 +1,17 @@
+## [3.10.2](https://github.com/naver/billboard.js/compare/3.10.1...3.10.2) (2023-10-27)
+
+
+### Bug Fixes
+
+* **module:** Fix getFallback() uninitialized variable ([57c140d](https://github.com/naver/billboard.js/commit/57c140d899063392cb0c0bb0e23fb46b0cbf9e2b)), closes [#3489](https://github.com/naver/billboard.js/issues/3489)
+
+## [3.10.1](https://github.com/naver/billboard.js/compare/3.10.0...3.10.1) (2023-10-26)
+
+
+### Bug Fixes
+
+* **tooltip:** Fix tooltip error on Arc type ([5e80d9d](https://github.com/naver/billboard.js/commit/5e80d9d2fa39f6d79635c4efb6017f169c44dbca)), closes [#3475](https://github.com/naver/billboard.js/issues/3475) [/github.com/naver/billboard.js/issues/3473#issuecomment-1781091685](https://github.com//github.com/naver/billboard.js/issues/3473/issues/issuecomment-1781091685)
+
 # [3.10.0](https://github.com/naver/billboard.js/compare/3.9.4...3.10.0) (2023-10-25)
 
 

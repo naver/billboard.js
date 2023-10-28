@@ -33,14 +33,16 @@ function getGlobal() {
  * @private
  */
 function getFallback(w) {
-	const hasRAF = typeof w?.requestAnimationFrame === "function";
-	const hasRIC = typeof w?.requestIdleCallback === "function";
+	const hasRAF = typeof w?.requestAnimationFrame === "function" && typeof w?.cancelAnimationFrame === "function";
+	const hasRIC = typeof w?.requestIdleCallback === "function" && typeof w?.cancelIdleCallback === "function";
+	const request = cb => setTimeout(cb, 1);
+	const cancel = id => clearTimeout(id);
 
 	return [
-		hasRAF ? w.requestAnimationFrame : (cb => setTimeout(cb, 1)),
-		hasRAF ? w.cancelAnimationFrame : (id => clearTimeout(id)),
-		hasRIC ? w.requestIdleCallback : requestAnimationFrame,
-		hasRIC ? w.cancelIdleCallback : cancelAnimationFrame
+		hasRAF ? w.requestAnimationFrame : request,
+		hasRAF ? w.cancelAnimationFrame : cancel,
+		hasRIC ? w.requestIdleCallback : request,
+		hasRIC ? w.cancelIdleCallback : cancel
 	];
 }
 
