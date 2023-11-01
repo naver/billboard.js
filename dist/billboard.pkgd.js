@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.2-nightly-20231028004619
+ * @version 3.10.2-nightly-20231101004623
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.8
@@ -294,14 +294,14 @@ __webpack_require__(502);
 __webpack_require__(507);
 __webpack_require__(508);
 __webpack_require__(509);
-__webpack_require__(517);
-__webpack_require__(520);
+__webpack_require__(516);
+__webpack_require__(519);
+__webpack_require__(524);
 __webpack_require__(525);
 __webpack_require__(526);
 __webpack_require__(527);
 __webpack_require__(528);
 __webpack_require__(529);
-__webpack_require__(530);
 
 /* unused reexport */ __webpack_require__(82);
 
@@ -1258,10 +1258,10 @@ var store = __webpack_require__(37);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.33.1',
+  version: '3.33.2',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.33.1/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.33.2/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -5827,7 +5827,9 @@ module.exports = function (Constructor, list) {
 var global = __webpack_require__(4);
 
 module.exports = function (CONSTRUCTOR, METHOD) {
-  return global[CONSTRUCTOR].prototype[METHOD];
+  var Constructor = global[CONSTRUCTOR];
+  var Prototype = Constructor && Constructor.prototype;
+  return Prototype && Prototype[METHOD];
 };
 
 
@@ -16394,7 +16396,7 @@ try {
 var IS_PURE = __webpack_require__(36);
 var $ = __webpack_require__(3);
 var global = __webpack_require__(4);
-var getBuiltin = __webpack_require__(24);
+var getBuiltIn = __webpack_require__(24);
 var uncurryThis = __webpack_require__(14);
 var fails = __webpack_require__(7);
 var uid = __webpack_require__(41);
@@ -16414,33 +16416,26 @@ var validateArgumentsLength = __webpack_require__(329);
 var getRegExpFlags = __webpack_require__(369);
 var MapHelpers = __webpack_require__(510);
 var SetHelpers = __webpack_require__(511);
-var arrayBufferTransfer = __webpack_require__(512);
+var setIterate = __webpack_require__(512);
+var detachTransferable = __webpack_require__(514);
 var ERROR_STACK_INSTALLABLE = __webpack_require__(125);
-var PROPER_STRUCTURED_CLONE_TRANSFER = __webpack_require__(516);
+var PROPER_STRUCTURED_CLONE_TRANSFER = __webpack_require__(515);
 
 var Object = global.Object;
 var Array = global.Array;
 var Date = global.Date;
 var Error = global.Error;
-var EvalError = global.EvalError;
-var RangeError = global.RangeError;
-var ReferenceError = global.ReferenceError;
-var SyntaxError = global.SyntaxError;
 var TypeError = global.TypeError;
-var URIError = global.URIError;
 var PerformanceMark = global.PerformanceMark;
-var WebAssembly = global.WebAssembly;
-var CompileError = WebAssembly && WebAssembly.CompileError || Error;
-var LinkError = WebAssembly && WebAssembly.LinkError || Error;
-var RuntimeError = WebAssembly && WebAssembly.RuntimeError || Error;
-var DOMException = getBuiltin('DOMException');
+var DOMException = getBuiltIn('DOMException');
 var Map = MapHelpers.Map;
 var mapHas = MapHelpers.has;
 var mapGet = MapHelpers.get;
 var mapSet = MapHelpers.set;
 var Set = SetHelpers.Set;
 var setAdd = SetHelpers.add;
-var objectKeys = getBuiltin('Object', 'keys');
+var setHas = SetHelpers.has;
+var objectKeys = getBuiltIn('Object', 'keys');
 var push = uncurryThis([].push);
 var thisBooleanValue = uncurryThis(true.valueOf);
 var thisNumberValue = uncurryThis(1.0.valueOf);
@@ -16455,7 +16450,7 @@ var checkBasicSemantic = function (structuredCloneImplementation) {
     var set1 = new global.Set([7]);
     var set2 = structuredCloneImplementation(set1);
     var number = structuredCloneImplementation(Object(7));
-    return set2 === set1 || !set2.has(7) || typeof number != 'object' || +number !== 7;
+    return set2 === set1 || !set2.has(7) || !isObject(number) || +number !== 7;
   }) && structuredCloneImplementation;
 };
 
@@ -16551,10 +16546,10 @@ var cloneBuffer = function (value, map, $type) {
 
     // `ArrayBuffer#slice` is not available in IE10
     // `ArrayBuffer#slice` and `DataView` are not available in old FF
-    if (!DataView && typeof value.slice != 'function') throwUnpolyfillable('ArrayBuffer');
+    if (!DataView && !isCallable(value.slice)) throwUnpolyfillable('ArrayBuffer');
     // detached buffers throws in `DataView` and `.slice`
     try {
-      if (typeof value.slice == 'function' && !value.resizable) {
+      if (isCallable(value.slice) && !value.resizable) {
         clone = value.slice(0);
       } else {
         length = value.byteLength;
@@ -16584,13 +16579,7 @@ var cloneView = function (value, type, offset, length, map) {
   return new C(cloneBuffer(value.buffer, map), offset, length);
 };
 
-var Placeholder = function (object, type, metadata) {
-  this.object = object;
-  this.type = type;
-  this.metadata = metadata;
-};
-
-var structuredCloneInternal = function (value, map, transferredBuffers) {
+var structuredCloneInternal = function (value, map) {
   if (isSymbol(value)) throwUncloneable('Symbol');
   if (!isObject(value)) return value;
   // effectively preserves circular references
@@ -16623,34 +16612,21 @@ var structuredCloneInternal = function (value, map, transferredBuffers) {
       name = value.name;
       switch (name) {
         case 'AggregateError':
-          cloned = new (getBuiltin('AggregateError'))([]);
+          cloned = new (getBuiltIn(name))([]);
           break;
         case 'EvalError':
-          cloned = new EvalError();
-          break;
         case 'RangeError':
-          cloned = new RangeError();
-          break;
         case 'ReferenceError':
-          cloned = new ReferenceError();
-          break;
+        case 'SuppressedError':
         case 'SyntaxError':
-          cloned = new SyntaxError();
-          break;
         case 'TypeError':
-          cloned = new TypeError();
-          break;
         case 'URIError':
-          cloned = new URIError();
+          cloned = new (getBuiltIn(name))();
           break;
         case 'CompileError':
-          cloned = new CompileError();
-          break;
         case 'LinkError':
-          cloned = new LinkError();
-          break;
         case 'RuntimeError':
-          cloned = new RuntimeError();
+          cloned = new (getBuiltIn('WebAssembly', name))();
           break;
         default:
           cloned = new Error();
@@ -16661,9 +16637,7 @@ var structuredCloneInternal = function (value, map, transferredBuffers) {
       break;
     case 'ArrayBuffer':
     case 'SharedArrayBuffer':
-      cloned = transferredBuffers
-        ? new Placeholder(value, type)
-        : cloneBuffer(value, map, type);
+      cloned = cloneBuffer(value, map, type);
       break;
     case 'DataView':
     case 'Int8Array':
@@ -16679,17 +16653,15 @@ var structuredCloneInternal = function (value, map, transferredBuffers) {
     case 'BigInt64Array':
     case 'BigUint64Array':
       length = type === 'DataView' ? value.byteLength : value.length;
-      cloned = transferredBuffers
-        ? new Placeholder(value, type, { offset: value.byteOffset, length: length })
-        : cloneView(value, type, value.byteOffset, length, map);
+      cloned = cloneView(value, type, value.byteOffset, length, map);
       break;
     case 'DOMQuad':
       try {
         cloned = new DOMQuad(
-          structuredCloneInternal(value.p1, map, transferredBuffers),
-          structuredCloneInternal(value.p2, map, transferredBuffers),
-          structuredCloneInternal(value.p3, map, transferredBuffers),
-          structuredCloneInternal(value.p4, map, transferredBuffers)
+          structuredCloneInternal(value.p1, map),
+          structuredCloneInternal(value.p2, map),
+          structuredCloneInternal(value.p3, map),
+          structuredCloneInternal(value.p4, map)
         );
       } catch (error) {
         cloned = tryNativeRestrictedStructuredClone(value, type);
@@ -16710,7 +16682,7 @@ var structuredCloneInternal = function (value, map, transferredBuffers) {
       dataTransfer = createDataTransfer();
       if (dataTransfer) {
         for (i = 0, length = lengthOfArrayLike(value); i < length; i++) {
-          dataTransfer.items.add(structuredCloneInternal(value[i], map, transferredBuffers));
+          dataTransfer.items.add(structuredCloneInternal(value[i], map));
         }
         cloned = dataTransfer.files;
       } else cloned = tryNativeRestrictedStructuredClone(value, type);
@@ -16719,7 +16691,7 @@ var structuredCloneInternal = function (value, map, transferredBuffers) {
       // Safari 9 ImageData is a constructor, but typeof ImageData is 'object'
       try {
         cloned = new ImageData(
-          structuredCloneInternal(value.data, map, transferredBuffers),
+          structuredCloneInternal(value.data, map),
           value.width,
           value.height,
           { colorSpace: value.colorSpace }
@@ -16816,103 +16788,36 @@ var structuredCloneInternal = function (value, map, transferredBuffers) {
       keys = objectKeys(value);
       for (i = 0, length = lengthOfArrayLike(keys); i < length; i++) {
         key = keys[i];
-        createProperty(cloned, key, structuredCloneInternal(value[key], map, transferredBuffers));
+        createProperty(cloned, key, structuredCloneInternal(value[key], map));
       } break;
     case 'Map':
       value.forEach(function (v, k) {
-        mapSet(cloned, structuredCloneInternal(k, map, transferredBuffers), structuredCloneInternal(v, map, transferredBuffers));
+        mapSet(cloned, structuredCloneInternal(k, map), structuredCloneInternal(v, map));
       });
       break;
     case 'Set':
       value.forEach(function (v) {
-        setAdd(cloned, structuredCloneInternal(v, map, transferredBuffers));
+        setAdd(cloned, structuredCloneInternal(v, map));
       });
       break;
     case 'Error':
-      createNonEnumerableProperty(cloned, 'message', structuredCloneInternal(value.message, map, transferredBuffers));
+      createNonEnumerableProperty(cloned, 'message', structuredCloneInternal(value.message, map));
       if (hasOwn(value, 'cause')) {
-        createNonEnumerableProperty(cloned, 'cause', structuredCloneInternal(value.cause, map, transferredBuffers));
+        createNonEnumerableProperty(cloned, 'cause', structuredCloneInternal(value.cause, map));
       }
       if (name === 'AggregateError') {
-        cloned.errors = structuredCloneInternal(value.errors, map, transferredBuffers);
+        cloned.errors = structuredCloneInternal(value.errors, map);
+      } else if (name === 'SuppressedError') {
+        cloned.error = structuredCloneInternal(value.error, map);
+        cloned.suppressed = structuredCloneInternal(value.suppressed, map);
       } // break omitted
     case 'DOMException':
       if (ERROR_STACK_INSTALLABLE) {
-        createNonEnumerableProperty(cloned, 'stack', structuredCloneInternal(value.stack, map, transferredBuffers));
+        createNonEnumerableProperty(cloned, 'stack', structuredCloneInternal(value.stack, map));
       }
   }
 
   return cloned;
-};
-
-var replacePlaceholders = function (value, map) {
-  if (!isObject(value)) return value;
-  if (mapHas(map, value)) return mapGet(map, value);
-
-  var type, object, metadata, i, length, keys, key, replacement;
-
-  if (value instanceof Placeholder) {
-    type = value.type;
-    object = value.object;
-
-    switch (type) {
-      case 'ArrayBuffer':
-      case 'SharedArrayBuffer':
-        replacement = cloneBuffer(object, map, type);
-        break;
-      case 'DataView':
-      case 'Int8Array':
-      case 'Uint8Array':
-      case 'Uint8ClampedArray':
-      case 'Int16Array':
-      case 'Uint16Array':
-      case 'Int32Array':
-      case 'Uint32Array':
-      case 'Float16Array':
-      case 'Float32Array':
-      case 'Float64Array':
-      case 'BigInt64Array':
-      case 'BigUint64Array':
-        metadata = value.metadata;
-        replacement = cloneView(object, type, metadata.offset, metadata.length, map);
-    }
-  } else switch (classof(value)) {
-    case 'Array':
-    case 'Object':
-      keys = objectKeys(value);
-      for (i = 0, length = lengthOfArrayLike(keys); i < length; i++) {
-        key = keys[i];
-        value[key] = replacePlaceholders(value[key], map);
-      } break;
-    case 'Map':
-      replacement = new Map();
-      value.forEach(function (v, k) {
-        mapSet(replacement, replacePlaceholders(k, map), replacePlaceholders(v, map));
-      });
-      break;
-    case 'Set':
-      replacement = new Set();
-      value.forEach(function (v) {
-        setAdd(replacement, replacePlaceholders(v, map));
-      });
-      break;
-    case 'Error':
-      value.message = replacePlaceholders(value.message, map);
-      if (hasOwn(value, 'cause')) {
-        value.cause = replacePlaceholders(value.cause, map);
-      }
-      if (value.name === 'AggregateError') {
-        value.errors = replacePlaceholders(value.errors, map);
-      } // break omitted
-    case 'DOMException':
-      if (ERROR_STACK_INSTALLABLE) {
-        value.stack = replacePlaceholders(value.stack, map);
-      }
-  }
-
-  mapSet(map, value, replacement || value);
-
-  return replacement || value;
 };
 
 var tryToTransfer = function (rawTransfer, map) {
@@ -16926,7 +16831,7 @@ var tryToTransfer = function (rawTransfer, map) {
 
   var i = 0;
   var length = lengthOfArrayLike(transfer);
-  var buffers = [];
+  var buffers = new Set();
   var value, type, C, transferred, canvas, context;
 
   while (i < length) {
@@ -16934,12 +16839,14 @@ var tryToTransfer = function (rawTransfer, map) {
 
     type = classof(value);
 
-    if (type === 'ArrayBuffer') {
-      push(buffers, value);
-      continue;
+    if (type === 'ArrayBuffer' ? setHas(buffers, value) : mapHas(map, value)) {
+      throw new DOMException('Duplicate transferable', DATA_CLONE_ERROR);
     }
 
-    if (mapHas(map, value)) throw new DOMException('Duplicate transferable', DATA_CLONE_ERROR);
+    if (type === 'ArrayBuffer') {
+      setAdd(buffers, value);
+      continue;
+    }
 
     if (PROPER_STRUCTURED_CLONE_TRANSFER) {
       transferred = nativeStructuredClone(value, { transfer: [value] });
@@ -16979,25 +16886,18 @@ var tryToTransfer = function (rawTransfer, map) {
   return buffers;
 };
 
-var tryToTransferBuffers = function (transfer, map) {
-  var i = 0;
-  var length = lengthOfArrayLike(transfer);
-  var value, transferred;
-
-  while (i < length) {
-    value = transfer[i++];
-
-    if (mapHas(map, value)) throw new DOMException('Duplicate transferable', DATA_CLONE_ERROR);
-
-    if (arrayBufferTransfer) {
-      transferred = arrayBufferTransfer(value, undefined, true);
+var detachBuffers = function (buffers) {
+  setIterate(buffers, function (buffer) {
+    if (PROPER_STRUCTURED_CLONE_TRANSFER) {
+      nativeRestrictedStructuredClone(buffer, { transfer: [buffer] });
+    } else if (isCallable(buffer.transfer)) {
+      buffer.transfer();
+    } else if (detachTransferable) {
+      detachTransferable(buffer);
     } else {
-      if (!isCallable(value.transfer)) throwUnpolyfillable('ArrayBuffer', TRANSFERRING);
-      transferred = value.transfer();
+      throwUnpolyfillable('ArrayBuffer', TRANSFERRING);
     }
-
-    mapSet(map, value, transferred);
-  }
+  });
 };
 
 // `structuredClone` method
@@ -17006,24 +16906,18 @@ $({ global: true, enumerable: true, sham: !PROPER_STRUCTURED_CLONE_TRANSFER, for
   structuredClone: function structuredClone(value /* , { transfer } */) {
     var options = validateArgumentsLength(arguments.length, 1) > 1 && !isNullOrUndefined(arguments[1]) ? anObject(arguments[1]) : undefined;
     var transfer = options ? options.transfer : undefined;
-    var transferredBuffers = false;
     var map, buffers;
 
     if (transfer !== undefined) {
       map = new Map();
       buffers = tryToTransfer(transfer, map);
-      transferredBuffers = !!lengthOfArrayLike(buffers);
     }
 
-    var clone = structuredCloneInternal(value, map, transferredBuffers);
+    var clone = structuredCloneInternal(value, map);
 
-    // since of an issue with cloning views of transferred buffers, we a forced to transfer / clone them in 2 steps
+    // since of an issue with cloning views of transferred buffers, we a forced to detach them later
     // https://github.com/zloirock/core-js/issues/1265
-    if (transferredBuffers) {
-      map = new Map();
-      tryToTransferBuffers(transfer, map);
-      clone = replacePlaceholders(clone, map);
-    }
+    if (buffers) detachBuffers(buffers);
 
     return clone;
   }
@@ -17079,50 +16973,18 @@ module.exports = {
 
 "use strict";
 
-var global = __webpack_require__(4);
 var uncurryThis = __webpack_require__(14);
-var uncurryThisAccessor = __webpack_require__(117);
-var toIndex = __webpack_require__(212);
-var isDetached = __webpack_require__(513);
-var arrayBufferByteLength = __webpack_require__(514);
-var detachTransferable = __webpack_require__(515);
-var PROPER_STRUCTURED_CLONE_TRANSFER = __webpack_require__(516);
+var iterateSimple = __webpack_require__(513);
+var SetHelpers = __webpack_require__(511);
 
-var structuredClone = global.structuredClone;
-var ArrayBuffer = global.ArrayBuffer;
-var DataView = global.DataView;
-var TypeError = global.TypeError;
-var min = Math.min;
-var ArrayBufferPrototype = ArrayBuffer.prototype;
-var DataViewPrototype = DataView.prototype;
-var slice = uncurryThis(ArrayBufferPrototype.slice);
-var isResizable = uncurryThisAccessor(ArrayBufferPrototype, 'resizable', 'get');
-var maxByteLength = uncurryThisAccessor(ArrayBufferPrototype, 'maxByteLength', 'get');
-var getInt8 = uncurryThis(DataViewPrototype.getInt8);
-var setInt8 = uncurryThis(DataViewPrototype.setInt8);
+var Set = SetHelpers.Set;
+var SetPrototype = SetHelpers.proto;
+var forEach = uncurryThis(SetPrototype.forEach);
+var keys = uncurryThis(SetPrototype.keys);
+var next = keys(new Set()).next;
 
-module.exports = (PROPER_STRUCTURED_CLONE_TRANSFER || detachTransferable) && function (arrayBuffer, newLength, preserveResizability) {
-  var byteLength = arrayBufferByteLength(arrayBuffer);
-  var newByteLength = newLength === undefined ? byteLength : toIndex(newLength);
-  var fixedLength = !isResizable || !isResizable(arrayBuffer);
-  var newBuffer;
-  if (isDetached(arrayBuffer)) throw new TypeError('ArrayBuffer is detached');
-  if (PROPER_STRUCTURED_CLONE_TRANSFER) {
-    arrayBuffer = structuredClone(arrayBuffer, { transfer: [arrayBuffer] });
-    if (byteLength === newByteLength && (preserveResizability || fixedLength)) return arrayBuffer;
-  }
-  if (byteLength >= newByteLength && (!preserveResizability || fixedLength)) {
-    newBuffer = slice(arrayBuffer, 0, newByteLength);
-  } else {
-    var options = preserveResizability && !fixedLength && maxByteLength ? { maxByteLength: maxByteLength(arrayBuffer) } : undefined;
-    newBuffer = new ArrayBuffer(newByteLength, options);
-    var a = new DataView(arrayBuffer);
-    var b = new DataView(newBuffer);
-    var copyLength = min(newByteLength, byteLength);
-    for (var i = 0; i < copyLength; i++) setInt8(b, i, getInt8(a, i));
-  }
-  if (!PROPER_STRUCTURED_CLONE_TRANSFER) detachTransferable(arrayBuffer);
-  return newBuffer;
+module.exports = function (set, fn, interruptible) {
+  return interruptible ? iterateSimple({ iterator: keys(set), next: next }, fn) : forEach(set, fn);
 };
 
 
@@ -17132,18 +16994,15 @@ module.exports = (PROPER_STRUCTURED_CLONE_TRANSFER || detachTransferable) && fun
 
 "use strict";
 
-var uncurryThis = __webpack_require__(14);
-var arrayBufferByteLength = __webpack_require__(514);
+var call = __webpack_require__(8);
 
-var slice = uncurryThis(ArrayBuffer.prototype.slice);
-
-module.exports = function (O) {
-  if (arrayBufferByteLength(O) !== 0) return false;
-  try {
-    slice(O, 0, 0);
-    return false;
-  } catch (error) {
-    return true;
+module.exports = function (record, fn, ITERATOR_INSTEAD_OF_RECORD) {
+  var iterator = ITERATOR_INSTEAD_OF_RECORD ? record : record.iterator;
+  var next = record.next;
+  var step, result;
+  while (!(step = call(next, iterator)).done) {
+    result = fn(step.value);
+    if (result !== undefined) return result;
   }
 };
 
@@ -17154,29 +17013,9 @@ module.exports = function (O) {
 
 "use strict";
 
-var uncurryThisAccessor = __webpack_require__(117);
-var classof = __webpack_require__(15);
-
-var $TypeError = TypeError;
-
-// Includes
-// - Perform ? RequireInternalSlot(O, [[ArrayBufferData]]).
-// - If IsSharedArrayBuffer(O) is true, throw a TypeError exception.
-module.exports = uncurryThisAccessor(ArrayBuffer.prototype, 'byteLength', 'get') || function (O) {
-  if (classof(O) !== 'ArrayBuffer') throw new $TypeError('ArrayBuffer expected');
-  return O.byteLength;
-};
-
-
-/***/ }),
-/* 515 */
-/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
-
-"use strict";
-
 var global = __webpack_require__(4);
 var tryNodeRequire = __webpack_require__(498);
-var PROPER_STRUCTURED_CLONE_TRANSFER = __webpack_require__(516);
+var PROPER_STRUCTURED_CLONE_TRANSFER = __webpack_require__(515);
 
 var structuredClone = global.structuredClone;
 var $ArrayBuffer = global.ArrayBuffer;
@@ -17213,7 +17052,7 @@ module.exports = detach;
 
 
 /***/ }),
-/* 516 */
+/* 515 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -17238,18 +17077,18 @@ module.exports = !!structuredClone && !fails(function () {
 
 
 /***/ }),
-/* 517 */
+/* 516 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
 // TODO: Remove this module from `core-js@4` since it's split to modules listed below
+__webpack_require__(517);
 __webpack_require__(518);
-__webpack_require__(519);
 
 
 /***/ }),
-/* 518 */
+/* 517 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -17268,7 +17107,7 @@ $({ global: true, bind: true, forced: global.setInterval !== setInterval }, {
 
 
 /***/ }),
-/* 519 */
+/* 518 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -17287,17 +17126,17 @@ $({ global: true, bind: true, forced: global.setTimeout !== setTimeout }, {
 
 
 /***/ }),
-/* 520 */
+/* 519 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
 // TODO: Remove this module from `core-js@4` since it's replaced to module below
-__webpack_require__(521);
+__webpack_require__(520);
 
 
 /***/ }),
-/* 521 */
+/* 520 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -17306,7 +17145,7 @@ __webpack_require__(521);
 __webpack_require__(392);
 var $ = __webpack_require__(3);
 var DESCRIPTORS = __webpack_require__(6);
-var USE_NATIVE_URL = __webpack_require__(522);
+var USE_NATIVE_URL = __webpack_require__(521);
 var global = __webpack_require__(4);
 var bind = __webpack_require__(86);
 var uncurryThis = __webpack_require__(14);
@@ -17318,11 +17157,11 @@ var assign = __webpack_require__(293);
 var arrayFrom = __webpack_require__(163);
 var arraySlice = __webpack_require__(77);
 var codeAt = (__webpack_require__(385).codeAt);
-var toASCII = __webpack_require__(523);
+var toASCII = __webpack_require__(522);
 var $toString = __webpack_require__(69);
 var setToStringTag = __webpack_require__(84);
 var validateArgumentsLength = __webpack_require__(329);
-var URLSearchParamsModule = __webpack_require__(524);
+var URLSearchParamsModule = __webpack_require__(523);
 var InternalStateModule = __webpack_require__(52);
 
 var setInternalState = InternalStateModule.set;
@@ -18352,7 +18191,7 @@ $({ global: true, constructor: true, forced: !USE_NATIVE_URL, sham: !DESCRIPTORS
 
 
 /***/ }),
-/* 522 */
+/* 521 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -18401,7 +18240,7 @@ module.exports = !fails(function () {
 
 
 /***/ }),
-/* 523 */
+/* 522 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -18589,7 +18428,7 @@ module.exports = function (input) {
 
 
 /***/ }),
-/* 524 */
+/* 523 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -18601,7 +18440,7 @@ var global = __webpack_require__(4);
 var call = __webpack_require__(8);
 var uncurryThis = __webpack_require__(14);
 var DESCRIPTORS = __webpack_require__(6);
-var USE_NATIVE_URL = __webpack_require__(522);
+var USE_NATIVE_URL = __webpack_require__(521);
 var defineBuiltIn = __webpack_require__(48);
 var defineBuiltInAccessor = __webpack_require__(79);
 var defineBuiltIns = __webpack_require__(210);
@@ -19020,7 +18859,7 @@ module.exports = {
 
 
 /***/ }),
-/* 525 */
+/* 524 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -19030,7 +18869,7 @@ var getBuiltIn = __webpack_require__(24);
 var fails = __webpack_require__(7);
 var validateArgumentsLength = __webpack_require__(329);
 var toString = __webpack_require__(69);
-var USE_NATIVE_URL = __webpack_require__(522);
+var USE_NATIVE_URL = __webpack_require__(521);
 
 var URL = getBuiltIn('URL');
 
@@ -19057,7 +18896,7 @@ $({ target: 'URL', stat: true, forced: !THROWS_WITHOUT_ARGUMENTS }, {
 
 
 /***/ }),
-/* 526 */
+/* 525 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -19075,17 +18914,17 @@ $({ target: 'URL', proto: true, enumerable: true }, {
 
 
 /***/ }),
-/* 527 */
+/* 526 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
 
 // TODO: Remove this module from `core-js@4` since it's replaced to module below
-__webpack_require__(524);
+__webpack_require__(523);
 
 
 /***/ }),
-/* 528 */
+/* 527 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -19141,7 +18980,7 @@ if (params + '' !== 'a=2') {
 
 
 /***/ }),
-/* 529 */
+/* 528 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -19176,7 +19015,7 @@ if (params.has('a', 2) || !params.has('a', undefined)) {
 
 
 /***/ }),
-/* 530 */
+/* 529 */
 /***/ (function(__unused_webpack_module, __unused_webpack_exports, __webpack_require__) {
 
 "use strict";
@@ -19204,7 +19043,7 @@ if (DESCRIPTORS && !('size' in URLSearchParamsPrototype)) {
 
 
 /***/ }),
-/* 531 */
+/* 530 */
 /***/ (function(__unused_webpack_module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20908,7 +20747,7 @@ function dispatchFunction(type, params) {
   return this.each((typeof params === "function" ? dispatchFunction : dispatchConstant)(type, params));
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(532);
+var regenerator = __webpack_require__(531);
 ;// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/iterator.js
 
 var _marked = /*#__PURE__*/regenerator.mark(_callee);
@@ -53629,7 +53468,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.2-nightly-20231028004619
+ * @version 3.10.2-nightly-20231101004623
  */
 const bb = {
   /**
@@ -53639,7 +53478,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.2-nightly-20231028004619",
+  version: "3.10.2-nightly-20231101004623",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -53791,12 +53630,12 @@ Object.keys(resolver_interaction_namespaceObject).forEach(function (v) {
 
 
 /***/ }),
-/* 532 */
+/* 531 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
 // TODO(Babel 8): Remove this file.
 
-var runtime = __webpack_require__(533)();
+var runtime = __webpack_require__(532)();
 module.exports = runtime;
 
 // Copied from https://github.com/facebook/regenerator/blob/main/packages/runtime/runtime.js#L736=
@@ -53812,10 +53651,10 @@ try {
 
 
 /***/ }),
-/* 533 */
+/* 532 */
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
-var _typeof = (__webpack_require__(534)["default"]);
+var _typeof = (__webpack_require__(533)["default"]);
 function _regeneratorRuntime() {
   "use strict"; /*! regenerator-runtime -- Copyright (c) 2014-present, Facebook, Inc. -- license (MIT): https://github.com/facebook/regenerator/blob/main/LICENSE */
   module.exports = _regeneratorRuntime = function _regeneratorRuntime() {
@@ -54121,7 +53960,7 @@ function _regeneratorRuntime() {
 module.exports = _regeneratorRuntime, module.exports.__esModule = true, module.exports["default"] = module.exports;
 
 /***/ }),
-/* 534 */
+/* 533 */
 /***/ (function(module) {
 
 function _typeof(o) {
@@ -54197,7 +54036,7 @@ module.exports = _typeof, module.exports.__esModule = true, module.exports["defa
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module used 'module' so it can't be inlined
 /******/ 	__webpack_require__(0);
-/******/ 	var __webpack_exports__ = __webpack_require__(531);
+/******/ 	var __webpack_exports__ = __webpack_require__(530);
 /******/ 	
 /******/ 	return __webpack_exports__;
 /******/ })()
