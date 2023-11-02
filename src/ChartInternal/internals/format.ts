@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isValue, isFunction, isObjectType} from "../../module/util";
+import {isArray, isValue, isFunction, isObjectType} from "../../module/util";
 import type {AxisType} from "../../../types/types";
 
 /**
@@ -65,7 +65,7 @@ export default {
 	dataLabelFormat(targetId: string): Function {
 		const $$ = this;
 		const dataLabels = $$.config.data_labels;
-		const defaultFormat = v => (isValue(v) ? +v : "");
+		const defaultFormat = v => (isArray(v) ? v.join("~") : (isValue(v) ? +v : ""));
 		let format = defaultFormat;
 
 		// find format according to axis id

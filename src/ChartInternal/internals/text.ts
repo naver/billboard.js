@@ -255,7 +255,7 @@ export default {
 	 * @returns {string|null}
 	 * @private
 	 */
-	updateTextBacgroundColor(d: IDataRow | IArcData): string | null {
+	updateTextBackgroundColor(d: IDataRow | IArcData): string | null {
 		const $$ = this;
 		const {$el, config} = $$;
 		const backgroundColor = config.data_labels_backgroundColors;
@@ -293,7 +293,7 @@ export default {
 
 		$$.$el.text
 			.style("fill", $$.getStylePropValue($$.updateTextColor))
-			.attr("filter", $$.updateTextBacgroundColor.bind($$))
+			.attr("filter", $$.updateTextBackgroundColor.bind($$))
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
 			.each(function(d: IDataRow, i: number) {
 				// do not apply transition for newly added text elements
@@ -410,7 +410,7 @@ export default {
 			const rect = getBoundingRect(textElement);
 
 			if (isBarType) {
-				const isPositive = d.value >= 0;
+				const isPositive = $$.getRangedData(d, null, "bar") >= 0;
 
 				if (isRotated) {
 					const w = (
