@@ -440,7 +440,7 @@ export default {
 		if ($$.shouldShowArcLabel()) {
 			selection
 				.style("fill", $$.updateTextColor.bind($$))
-				.attr("filter", $$.updateTextBacgroundColor.bind($$))
+				.attr("filter", $$.updateTextBackgroundColor.bind($$))
 				.each(function(d) {
 					const node = d3Select(this);
 					const updated = $$.updateAngle(d);
