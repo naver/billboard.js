@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.2-nightly-20231101004623
+ * @version 3.10.2-nightly-20231103004627
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.8
@@ -28628,6 +28628,7 @@ function getDataKeyForJson(keysParam, config) {
     return current;
   },
   getRangedData: function getRangedData(d, key, type) {
+    var _this39 = this;
     if (key === void 0) {
       key = "";
     }
@@ -28636,13 +28637,20 @@ function getDataKeyForJson(keysParam, config) {
     }
     const value = d == null ? void 0 : d.value;
     if (isArray(value)) {
-      // @ts-ignore
-      const index = {
-        areaRange: ["high", "mid", "low"],
-        candlestick: ["open", "high", "low", "close", "volume"]
-      }[type].indexOf(key);
-      return index >= 0 && value ? value[index] : undefined;
-    } else if (value) {
+      if (type === "bar") {
+        return value.reduce(function (a, c) {
+          _newArrowCheck(this, _this39);
+          return c - a;
+        }.bind(this));
+      } else {
+        // @ts-ignore
+        const index = {
+          areaRange: ["high", "mid", "low"],
+          candlestick: ["open", "high", "low", "close", "volume"]
+        }[type].indexOf(key);
+        return index >= 0 && value ? value[index] : undefined;
+      }
+    } else if (value && key) {
       return value[key];
     }
     return value;
@@ -28653,20 +28661,20 @@ function getDataKeyForJson(keysParam, config) {
    * @private
    */
   setRatioForGroupedData: function setRatioForGroupedData(data) {
-    var _this39 = this;
+    var _this40 = this;
     const $$ = this,
       config = $$.config;
     // calculate ratio if grouped data exists
     if (config.data_groups.length && data.some(function (d) {
-      _newArrowCheck(this, _this39);
+      _newArrowCheck(this, _this40);
       return $$.isGrouped(d.id);
     }.bind(this))) {
       const setter = function (d) {
-        _newArrowCheck(this, _this39);
+        _newArrowCheck(this, _this40);
         return $$.getRatio("index", d, !0);
       }.bind(this);
       data.forEach(function (v) {
-        _newArrowCheck(this, _this39);
+        _newArrowCheck(this, _this40);
         "values" in v ? v.values.forEach(setter) : setter(v);
       }.bind(this));
     }
@@ -28680,7 +28688,7 @@ function getDataKeyForJson(keysParam, config) {
    * @private
    */
   getRatio: function getRatio(type, d, asPercent) {
-    var _this40 = this;
+    var _this41 = this;
     if (asPercent === void 0) {
       asPercent = !1;
     }
@@ -28709,15 +28717,15 @@ function getDataKeyForJson(keysParam, config) {
           let hiddenSum = dataValues(state.hiddenTargetIds, !1);
           if (hiddenSum.length) {
             hiddenSum = hiddenSum.reduce(function (acc, curr) {
-              var _this41 = this;
-              _newArrowCheck(this, _this40);
+              var _this42 = this;
+              _newArrowCheck(this, _this41);
               return acc.map(function (v, i) {
-                _newArrowCheck(this, _this41);
+                _newArrowCheck(this, _this42);
                 return (isNumber(v) ? v : 0) + curr[i];
               }.bind(this));
             }.bind(this));
             total = total.map(function (v, i) {
-              _newArrowCheck(this, _this40);
+              _newArrowCheck(this, _this41);
               return v - hiddenSum[i];
             }.bind(this));
           }
@@ -28730,11 +28738,11 @@ function getDataKeyForJson(keysParam, config) {
       } else if (type === "bar") {
         const yScale = $$.getYScaleById.bind($$)(d.id),
           max = yScale.domain().reduce(function (a, c) {
-            _newArrowCheck(this, _this40);
+            _newArrowCheck(this, _this41);
             return c - a;
           }.bind(this));
         // when all data are 0, return 0
-        ratio = max === 0 ? 0 : Math.abs(d.value) / max;
+        ratio = max === 0 ? 0 : Math.abs($$.getRangedData(d, null, type) / max);
       } else if (type === "treemap") {
         ratio /= $$.getTotalDataSum(!0);
       }
@@ -28747,18 +28755,18 @@ function getDataKeyForJson(keysParam, config) {
    * @private
    */
   updateDataIndexByX: function updateDataIndexByX(tickValues) {
-    var _this42 = this;
+    var _this43 = this;
     const $$ = this,
       tickValueMap = tickValues.reduce(function (out, tick, index) {
-        _newArrowCheck(this, _this42);
+        _newArrowCheck(this, _this43);
         out[+tick.x] = index;
         return out;
       }.bind(this), {});
     $$.data.targets.forEach(function (t) {
-      var _this43 = this;
-      _newArrowCheck(this, _this42);
+      var _this44 = this;
+      _newArrowCheck(this, _this43);
       t.values.forEach(function (value, valueIndex) {
-        _newArrowCheck(this, _this43);
+        _newArrowCheck(this, _this44);
         let index = tickValueMap[+value.x];
         if (index === undefined) {
           index = valueIndex;
@@ -28784,11 +28792,11 @@ function getDataKeyForJson(keysParam, config) {
    * @private
    */
   isBarRangeType: function isBarRangeType(d) {
-    var _this44 = this;
+    var _this45 = this;
     const $$ = this,
       value = d.value;
     return $$.isBarType(d) && isArray(value) && value.length >= 2 && value.every(function (v) {
-      _newArrowCheck(this, _this44);
+      _newArrowCheck(this, _this45);
       return isNumber(v);
     }.bind(this));
   },
@@ -30634,7 +30642,7 @@ function getFormat($$, typeValue, v) {
       dataLabels = $$.config.data_labels,
       defaultFormat = function (v) {
         _newArrowCheck(this, _this);
-        return isValue(v) ? +v : "";
+        return isArray(v) ? v.join("~") : isValue(v) ? +v : "";
       }.bind(this);
     let format = defaultFormat;
 
@@ -34325,6 +34333,8 @@ function getGroupedDataPointsFn(d) {
       let value = d.value;
       if (isNumber(d)) {
         value = d;
+      } else if ($$.isAreaRangeType(d)) {
+        value = $$.getBaseValue(d, "mid");
       } else if (isStackNormalized) {
         value = $$.getRatio("index", d, !0);
       } else if ($$.isBubbleZType(d)) {
@@ -35191,7 +35201,7 @@ function getTextPos(d, type) {
    * @returns {string|null}
    * @private
    */
-  updateTextBacgroundColor: function updateTextBacgroundColor(d) {
+  updateTextBackgroundColor: function updateTextBackgroundColor(d) {
     const $$ = this,
       $el = $$.$el,
       config = $$.config,
@@ -35226,7 +35236,7 @@ function getTextPos(d, type) {
       angle = config.data_labels.rotate,
       anchorString = getRotateAnchor(angle),
       rotateString = angle ? "rotate(" + angle + ")" : "";
-    $$.$el.text.style("fill", $$.getStylePropValue($$.updateTextColor)).attr("filter", $$.updateTextBacgroundColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
+    $$.$el.text.style("fill", $$.getStylePropValue($$.updateTextColor)).attr("filter", $$.updateTextBackgroundColor.bind($$)).style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$)).each(function (d, i) {
       // do not apply transition for newly added text elements
       const node = $T(hasTreemap && this.childElementCount ? this.parentNode : this, !!(withTransition && this.getAttribute("x")), t),
         isInverted = config["axis_" + (axis == null ? void 0 : axis.getId(d.id)) + "_inverted"];
@@ -35322,7 +35332,7 @@ function getTextPos(d, type) {
     if (config.data_labels.centered && (isBarType || isTreemapType)) {
       const rect = getBoundingRect(textElement);
       if (isBarType) {
-        const isPositive = d.value >= 0;
+        const isPositive = $$.getRangedData(d, null, "bar") >= 0;
         if (isRotated) {
           const w = (isPositive ? points[1][1] - points[0][1] : points[0][1] - points[1][1]) / 2 + rect.width / 2;
           return isPositive ? -w - 3 : w + 2;
@@ -45872,7 +45882,7 @@ function getAttrTweenFn(fn) {
     const $$ = this,
       hasGauge = $$.hasType("gauge");
     if ($$.shouldShowArcLabel()) {
-      selection.style("fill", $$.updateTextColor.bind($$)).attr("filter", $$.updateTextBacgroundColor.bind($$)).each(function (d) {
+      selection.style("fill", $$.updateTextColor.bind($$)).attr("filter", $$.updateTextBackgroundColor.bind($$)).each(function (d) {
         var _filter;
         const node = src_select(this),
           updated = $$.updateAngle(d),
@@ -53468,7 +53478,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.2-nightly-20231101004623
+ * @version 3.10.2-nightly-20231103004627
  */
 const bb = {
   /**
@@ -53478,7 +53488,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.2-nightly-20231101004623",
+  version: "3.10.2-nightly-20231103004627",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

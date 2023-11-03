@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.2-nightly-20231101004623
+ * @version 3.10.2-nightly-20231103004627
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4546,14 +4546,19 @@ var data$1 = {
         if (type === void 0) { type = "areaRange"; }
         var value = d === null || d === void 0 ? void 0 : d.value;
         if (isArray(value)) {
-            // @ts-ignore
-            var index = {
-                areaRange: ["high", "mid", "low"],
-                candlestick: ["open", "high", "low", "close", "volume"]
-            }[type].indexOf(key);
-            return index >= 0 && value ? value[index] : undefined;
+            if (type === "bar") {
+                return value.reduce(function (a, c) { return c - a; });
+            }
+            else {
+                // @ts-ignore
+                var index = {
+                    areaRange: ["high", "mid", "low"],
+                    candlestick: ["open", "high", "low", "close", "volume"]
+                }[type].indexOf(key);
+                return index >= 0 && value ? value[index] : undefined;
+            }
         }
-        else if (value) {
+        else if (value && key) {
             return value[key];
         }
         return value;
@@ -4626,7 +4631,7 @@ var data$1 = {
                 var yScale = $$.getYScaleById.bind($$)(d.id);
                 var max = yScale.domain().reduce(function (a, c) { return c - a; });
                 // when all data are 0, return 0
-                ratio = max === 0 ? 0 : Math.abs(d.value) / max;
+                ratio = max === 0 ? 0 : Math.abs($$.getRangedData(d, null, type) / max);
             }
             else if (type === "treemap") {
                 ratio /= $$.getTotalDataSum(true);
@@ -5795,7 +5800,7 @@ var format = {
     dataLabelFormat: function (targetId) {
         var $$ = this;
         var dataLabels = $$.config.data_labels;
-        var defaultFormat = function (v) { return (isValue(v) ? +v : ""); };
+        var defaultFormat = function (v) { return (isArray(v) ? v.join("~") : (isValue(v) ? +v : "")); };
         var format = defaultFormat;
         // find format according to axis id
         if (isFunction(dataLabels.format)) {
@@ -7157,6 +7162,9 @@ var shape = {
             if (isNumber(d)) {
                 value = d;
             }
+            else if ($$.isAreaRangeType(d)) {
+                value = $$.getBaseValue(d, "mid");
+            }
             else if (isStackNormalized) {
                 value = $$.getRatio("index", d, true);
             }
@@ -7975,7 +7983,7 @@ var text = {
      * @returns {string|null}
      * @private
      */
-    updateTextBacgroundColor: function (d) {
+    updateTextBackgroundColor: function (d) {
         var $$ = this;
         var $el = $$.$el, config = $$.config;
         var backgroundColor = config.data_labels_backgroundColors;
@@ -8008,7 +8016,7 @@ var text = {
         var rotateString = angle ? "rotate(".concat(angle, ")") : "";
         $$.$el.text
             .style("fill", $$.getStylePropValue($$.updateTextColor))
-            .attr("filter", $$.updateTextBacgroundColor.bind($$))
+            .attr("filter", $$.updateTextBackgroundColor.bind($$))
             .style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
             .each(function (d, i) {
             // do not apply transition for newly added text elements
@@ -8109,7 +8117,7 @@ var text = {
         if (config.data_labels.centered && (isBarType || isTreemapType)) {
             var rect = getBoundingRect(textElement);
             if (isBarType) {
-                var isPositive = d.value >= 0;
+                var isPositive = $$.getRangedData(d, null, "bar") >= 0;
                 if (isRotated) {
                     var w = (isPositive ?
                         points[1][1] - points[0][1] :
@@ -17266,7 +17274,7 @@ var shapeArc = {
         if ($$.shouldShowArcLabel()) {
             selection
                 .style("fill", $$.updateTextColor.bind($$))
-                .attr("filter", $$.updateTextBacgroundColor.bind($$))
+                .attr("filter", $$.updateTextBackgroundColor.bind($$))
                 .each(function (d) {
                 var _a;
                 var node = select(this);
@@ -23023,7 +23031,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.2-nightly-20231101004623
+ * @version 3.10.2-nightly-20231103004627
  */
 var bb = {
     /**
@@ -23033,7 +23041,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.2-nightly-20231101004623",
+    version: "3.10.2-nightly-20231103004627",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
