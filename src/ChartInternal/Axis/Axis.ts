@@ -587,12 +587,13 @@ class Axis {
 		const $$ = this.owner;
 		const {config, state: {current}, $el: {svg, chart}} = $$;
 		const currentTickMax = current.maxTickSize[id];
+		const configPrefix = `axis_${id}`;
 		const max = {
 			width: 0,
 			height: 0
 		};
 
-		if (withoutRecompute || !config[`axis_${id}_show`] || (
+		if (withoutRecompute || !config[`${configPrefix}_show`] || (
 			currentTickMax.width > 0 && $$.filterTargetsToShow().length === 0
 		)) {
 			return currentTickMax;
@@ -624,8 +625,9 @@ class Axis {
 			}
 
 			const axis = this.getAxis(id, scale, false, false, true);
-			const tickCount = config[`axis_${id}_tick_count`];
-			const tickValues = config[`axis_${id}_tick_values`];
+			const tickRotate = config[`${configPrefix}_tick_rotate`];
+			const tickCount = config[`${configPrefix}_tick_count`];
+			const tickValues = config[`${configPrefix}_tick_values`];
 
 			// Make to generate the final tick text to be rendered
 			// https://github.com/naver/billboard.js/issues/920
@@ -651,6 +653,7 @@ class Axis {
 			axis.create(dummy);
 
 			dummy.selectAll("text")
+				.attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null)
 				.each(function(d, i) {
 					const {width, height} = this.getBoundingClientRect();
 
@@ -683,7 +686,7 @@ class Axis {
 
 		if ((axis.isCategorized() || axis.isTimeSeries()) &&
 			config.axis_x_tick_fit &&
-			!config.axis_x_tick_culling &&
+			(!config.axis_x_tick_culling || isEmpty(config.axis_x_tick_culling)) &&
 			!config.axis_x_tick_multiline &&
 			positiveRotation
 		) {

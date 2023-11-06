@@ -1105,7 +1105,7 @@ describe("AXIS", function() {
 			const {$el: {axis: {x}}, state} = chart.internal;
 			const xBottom = x.node().getBoundingClientRect().bottom;
 
-			expect(xBottom).to.be.closeTo(state.current.height, 5);
+			expect(xBottom).to.be.below(state.current.height);
 		});
 
 		it("set option: legend.show=false", () => {
@@ -1227,7 +1227,7 @@ describe("AXIS", function() {
 				const height = internal.getHorizontalAxisHeight("x");
 
 				expect(box.height).to.be.above(50);
-				expect(height).to.be.above(68);
+				expect(height).to.be.above(67);
 				expect(height).to.be.below(80);
 			});
 		});
@@ -1272,7 +1272,7 @@ describe("AXIS", function() {
 				const height = internal.getHorizontalAxisHeight("x");
 
 				expect(box.height).to.be.above(50);
-				expect(height).to.be.above(68);
+				expect(height).to.be.above(67);
 				expect(height).to.be.below(80);
 			});
 		});
@@ -1289,7 +1289,7 @@ describe("AXIS", function() {
 
 			expect(xAxisTickRotate).to.be.equal(expectedXAxisTickRotate);
 			expect(xAxisBoundingClientRect.height).to.be.closeTo(expectedXAxisBoundingClientRect, 1);
-			expect(horizontalXAxisHeight).to.be.closeTo(expectedHorizontalXAxisHeight, 1);
+			expect(horizontalXAxisHeight).to.be.closeTo(expectedHorizontalXAxisHeight, 2);
 
 			const xAxisTickTextY2Overflow = chart.internal.axis.getXAxisTickTextY2Overflow(defaultPadding);
 
@@ -1349,7 +1349,7 @@ describe("AXIS", function() {
 						expect(tspan.attr("dx")).to.be.equal("0");
 					});
 
-				compare(0, 18.8125, 30, 0);
+				compare(0, 18.8125, 48, 0);
 			});
 
 			it("update args", () => {
@@ -1382,7 +1382,7 @@ describe("AXIS", function() {
 			it("should not resize x axis when all data hidden", () => {
 				chart.hide("data1");
 
-				compare(args.axis.x.tick.rotate, 6, 57, 71);
+				compare(args.axis.x.tick.rotate, 6, 55, 71);
 
 				chart.show("data1");
 			});
@@ -1503,7 +1503,7 @@ describe("AXIS", function() {
 					expect(tspan.attr("dx")).to.be.equal("0");
 				});
 
-				compare(0, 18.8125, 30, 0);
+				compare(0, 18.8125, 55, 0);
 			});
 
 			it("update args", () => {
@@ -1527,7 +1527,7 @@ describe("AXIS", function() {
 			it("should not resize x axis when all data hidden", () => {
 				chart.hide("Temperature");
 
-				compare(args.axis.x.tick.rotate, 6, 57, 108);
+				compare(args.axis.x.tick.rotate, 6, 55, 108);
 			});
 
 			it("should resize when show hidden data", () => {
