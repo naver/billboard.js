@@ -169,10 +169,11 @@ export default {
 	 * Get padding by the direction.
 	 * @param {string} type "top" | "bottom" | "left" | "right"
 	 * @param {boolean} [withoutRecompute=false] If set true, do not recompute the padding value.
+	 * @param {boolean} [withXAxisTickTextOverflow=false] If set true, calculate x axis tick text overflow.
 	 * @returns {number} padding value
 	 * @private
 	 */
-	getCurrentPaddingByDirection(type: "top" | "bottom" | "left" | "right", withoutRecompute = false): number {
+	getCurrentPaddingByDirection(type: "top" | "bottom" | "left" | "right", withoutRecompute = false, withXAxisTickTextOverflow = false): number {
 		const $$ = this;
 		const {config, $el, state: {hasAxis}} = $$;
 		const isRotated = config.axis_rotated;
@@ -219,6 +220,8 @@ export default {
 				padding += isRotated ? (
 					!isFitPadding && isUndefined(paddingOption) ? 10 : 2
 				) : !isAxisShow || isAxisInner ? (isFitPadding ? 2 : 1) : 0;
+
+				padding += withXAxisTickTextOverflow ? $$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
 			} else if (type === "left" && isRotated && isUndefined(paddingOption)) {
 				padding = !config.axis_x_show ?
 					1 : (isFitPadding ? axisSize : Math.max(axisSize, 40));
@@ -238,10 +241,12 @@ export default {
 		return padding + (axisSize * axesLen) - gap;
 	},
 
-	getCurrentPadding(): {top: number, bottom: number, left: number, right: number} {
+	getCurrentPadding(withXAxisTickTextOverflow = false): {
+		top: number, bottom: number, left: number, right: number
+	} {
 		const $$ = this;
 		const [top, bottom, left, right] = ["top", "bottom", "left", "right"]
-			.map(v => $$.getCurrentPaddingByDirection(v));
+			.map(v => $$.getCurrentPaddingByDirection(v, null, withXAxisTickTextOverflow));
 
 		return {top, bottom, left, right};
 	},
@@ -314,7 +319,7 @@ export default {
 		const gaugeHeight = $$.hasType("gauge") && config.arc_needle_show &&
 			!config.gauge_fullCircle && !config.gauge_label_show ? 10 : 0;
 
-		const padding = $$.getCurrentPadding();
+		const padding = $$.getCurrentPadding(true);
 
 		// for main
 		state.margin = !isNonAxis && isRotated ? {
