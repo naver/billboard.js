@@ -9,7 +9,7 @@ import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
 import util from "../assets/util";
 import {$AXIS, $SHAPE, $TEXT} from "../../src/config/classes";
-import {isArray, isNumber} from "../../src/module/util";
+import {isArray, isNumber, isObject} from "../../src/module/util";
 
 describe("TEXT", () => {
 	let chart;
@@ -436,11 +436,17 @@ describe("TEXT", () => {
 								[155, 130, 115],
 								[160, 135, 120],
 							],
-							["data2", [230, 340], 200, [-100, -50]]
+							["data2", [230, 340], 200, [-100, -50]],
+							["data3",
+								{high: 155, low: 145, mid: 150},
+								{high: 200, mid: 190, low: 150},
+								{high: 230, mid: 215, low: 200}
+							]
 						],
 						types: {
 							data1: "area-line-range",
-							data2: "bar"
+							data2: "bar",
+							data3: "area-line-range"
 						},
 						labels: {
 							colors: "black"
@@ -449,9 +455,15 @@ describe("TEXT", () => {
 				};
 			});
 
-			it("should locate data labels in correct position", () => {
+			it("should data labels rendered correctly", () => {
 				chart.$.text.texts.each(function(d) {
-					const text = isArray(d.value) ? d.value.join("~") : String(d.value);
+					let text = String(d.value);
+
+					if (isArray(d.value)) {
+						text = d.value.join("~");
+					} else if (isObject(d.value)) {
+						text = Object.values(d.value).join("~");
+					}
 
 					expect(this.textContent).to.be.equal(text);
 				});
@@ -461,16 +473,32 @@ describe("TEXT", () => {
 				args.data.labels.centered = true;
 
 				args.data.labels.format = function(value, id, index) {
-					return Array.isArray(value) ? value.join("-") : value;
+					let v = value;
+					const delimiter = "/";
+	
+					if (Array.isArray(value)) {
+						v = value.join(delimiter);
+					} else if (typeof value === "object") {
+						v = Object.values(v).join(delimiter);
+					}
+	
+					return v;
 				};
 			});
 
-			it("should locate data labels in correct position", () => {
+			it("should locate data labels in correct position and formatted correctly", () => {
 				const {$: {bar, text}} = chart;
 				const barText: number[] = [];
+				const delimiter = "/";
 
 				text.texts.each(function(d) {
-					const text = isArray(d.value) ? d.value.join("-") : String(d.value);
+					let text = String(d.value);
+
+					if (isArray(d.value)) {
+						text = d.value.join(delimiter);
+					} else if (isObject(d.value)) {
+						text = Object.values(d.value).join(delimiter);
+					}
 
 					expect(this.textContent).to.be.equal(text);
 
