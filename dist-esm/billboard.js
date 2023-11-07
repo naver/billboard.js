@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.2-nightly-20231103004627
+ * @version 3.10.2-nightly-20231107004654
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -7546,12 +7546,14 @@ var size = {
      * Get padding by the direction.
      * @param {string} type "top" | "bottom" | "left" | "right"
      * @param {boolean} [withoutRecompute=false] If set true, do not recompute the padding value.
+     * @param {boolean} [withXAxisTickTextOverflow=false] If set true, calculate x axis tick text overflow.
      * @returns {number} padding value
      * @private
      */
-    getCurrentPaddingByDirection: function (type, withoutRecompute) {
+    getCurrentPaddingByDirection: function (type, withoutRecompute, withXAxisTickTextOverflow) {
         var _a;
         if (withoutRecompute === void 0) { withoutRecompute = false; }
+        if (withXAxisTickTextOverflow === void 0) { withXAxisTickTextOverflow = false; }
         var $$ = this;
         var config = $$.config, $el = $$.$el, hasAxis = $$.state.hasAxis;
         var isRotated = config.axis_rotated;
@@ -7582,6 +7584,7 @@ var size = {
             }
             if (type === "right") {
                 padding += isRotated ? (!isFitPadding && isUndefined(paddingOption) ? 10 : 2) : !isAxisShow || isAxisInner ? (isFitPadding ? 2 : 1) : 0;
+                padding += withXAxisTickTextOverflow ? $$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
             }
             else if (type === "left" && isRotated && isUndefined(paddingOption)) {
                 padding = !config.axis_x_show ?
@@ -7601,10 +7604,11 @@ var size = {
         }
         return padding + (axisSize * axesLen) - gap;
     },
-    getCurrentPadding: function () {
+    getCurrentPadding: function (withXAxisTickTextOverflow) {
+        if (withXAxisTickTextOverflow === void 0) { withXAxisTickTextOverflow = false; }
         var $$ = this;
         var _a = ["top", "bottom", "left", "right"]
-            .map(function (v) { return $$.getCurrentPaddingByDirection(v); }), top = _a[0], bottom = _a[1], left = _a[2], right = _a[3];
+            .map(function (v) { return $$.getCurrentPaddingByDirection(v, null, withXAxisTickTextOverflow); }), top = _a[0], bottom = _a[1], left = _a[2], right = _a[3];
         return { top: top, bottom: bottom, left: left, right: right };
     },
     /**
@@ -7664,7 +7668,7 @@ var size = {
         // when needle is shown with legend, it need some bottom space to not overlap with legend text
         var gaugeHeight = $$.hasType("gauge") && config.arc_needle_show &&
             !config.gauge_fullCircle && !config.gauge_label_show ? 10 : 0;
-        var padding = $$.getCurrentPadding();
+        var padding = $$.getCurrentPadding(true);
         // for main
         state.margin = !isNonAxis && isRotated ? {
             top: padding.top,
@@ -13199,11 +13203,12 @@ var Axis = /** @class */ (function () {
         var $$ = this.owner;
         var config = $$.config, current = $$.state.current, _a = $$.$el, svg = _a.svg, chart = _a.chart;
         var currentTickMax = current.maxTickSize[id];
+        var configPrefix = "axis_".concat(id);
         var max = {
             width: 0,
             height: 0
         };
-        if (withoutRecompute || !config["axis_".concat(id, "_show")] || (currentTickMax.width > 0 && $$.filterTargetsToShow().length === 0)) {
+        if (withoutRecompute || !config["".concat(configPrefix, "_show")] || (currentTickMax.width > 0 && $$.filterTargetsToShow().length === 0)) {
             return currentTickMax;
         }
         if (svg) {
@@ -13227,8 +13232,9 @@ var Axis = /** @class */ (function () {
                 currentTickMax.ticks.splice(0);
             }
             var axis = this.getAxis(id, scale, false, false, true);
-            var tickCount = config["axis_".concat(id, "_tick_count")];
-            var tickValues = config["axis_".concat(id, "_tick_values")];
+            var tickRotate = config["".concat(configPrefix, "_tick_rotate")];
+            var tickCount = config["".concat(configPrefix, "_tick_count")];
+            var tickValues = config["".concat(configPrefix, "_tick_values")];
             // Make to generate the final tick text to be rendered
             // https://github.com/naver/billboard.js/issues/920
             // Do not generate if 'tick values' option is given
@@ -13244,6 +13250,7 @@ var Axis = /** @class */ (function () {
                 .style("left", "0");
             axis.create(dummy);
             dummy.selectAll("text")
+                .attr("transform", isNumber(tickRotate) ? "rotate(".concat(tickRotate, ")") : null)
                 .each(function (d, i) {
                 var _a = this.getBoundingClientRect(), width = _a.width, height = _a.height;
                 max.width = Math.max(max.width, width);
@@ -13269,7 +13276,7 @@ var Axis = /** @class */ (function () {
         var positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
         if ((axis.isCategorized() || axis.isTimeSeries()) &&
             config.axis_x_tick_fit &&
-            !config.axis_x_tick_culling &&
+            (!config.axis_x_tick_culling || isEmpty(config.axis_x_tick_culling)) &&
             !config.axis_x_tick_multiline &&
             positiveRotation) {
             var widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingByDirection("left");
@@ -14943,7 +14950,7 @@ var sizeAxis = {
         var _a, _b;
         var $$ = this;
         var config = $$.config, state = $$.state;
-        var current = state.current, rotatedPadding = state.rotatedPadding, isLegendRight = state.isLegendRight, isLegendInset = state.isLegendInset;
+        var rotatedPadding = state.rotatedPadding, isLegendRight = state.isLegendRight, isLegendInset = state.isLegendInset;
         var isRotated = config.axis_rotated;
         var isFitPadding = ((_a = config.padding) === null || _a === void 0 ? void 0 : _a.mode) === "fit";
         var isInner = config["axis_".concat(id, "_inner")];
@@ -14965,18 +14972,7 @@ var sizeAxis = {
             return isFitPadding ? 0 : rotatedPadding.top;
         }
         var maxtickSize = $$.axis.getMaxTickSize(id);
-        var rotate = $$.getAxisTickRotate(id);
-        // Calculate x/y axis height when tick rotated
-        if (((id === "x" && !isRotated) || (/y2?/.test(id) && isRotated)) && rotate) {
-            h += maxtickSize.width *
-                Math.cos(Math.PI * (90 - Math.abs(rotate)) / 180);
-            if (!config.axis_x_tick_multiline && current.height) {
-                if (h > current.height / 2) {
-                    h = current.height / 2;
-                }
-            }
-        }
-        else if (maxtickSize.height > defaultHeight && config.legend_show) {
+        if (maxtickSize.height > defaultHeight) {
             h += maxtickSize.height - defaultHeight;
         }
         return h +
@@ -15022,10 +15018,10 @@ var sizeAxis = {
                 state.axis.x.tickCount = tickCount;
             }
             if ($el.svg &&
+                config.axis_x_tick_autorotate &&
                 config.axis_x_tick_fit &&
                 !config.axis_x_tick_multiline &&
                 !config.axis_x_tick_culling &&
-                config.axis_x_tick_autorotate &&
                 allowedXAxisTypes) {
                 rotate = $$.needToRotateXAxisTickTexts() ?
                     config.axis_x_tick_rotate : 0;
@@ -23031,7 +23027,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.2-nightly-20231103004627
+ * @version 3.10.2-nightly-20231107004654
  */
 var bb = {
     /**
@@ -23041,7 +23037,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.2-nightly-20231103004627",
+    version: "3.10.2-nightly-20231107004654",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
