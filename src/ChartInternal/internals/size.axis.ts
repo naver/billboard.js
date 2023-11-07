@@ -42,7 +42,7 @@ export default {
 	getHorizontalAxisHeight(id: AxisType): number {
 		const $$ = this;
 		const {config, state} = $$;
-		const {current, rotatedPadding, isLegendRight, isLegendInset} = state;
+		const {rotatedPadding, isLegendRight, isLegendInset} = state;
 		const isRotated = config.axis_rotated;
 		const isFitPadding = config.padding?.mode === "fit";
 		const isInner = config[`axis_${id}_inner`];
@@ -70,21 +70,8 @@ export default {
 		}
 
 		const maxtickSize = $$.axis.getMaxTickSize(id);
-		const rotate = $$.getAxisTickRotate(id);
 
-		// Calculate x/y axis height when tick rotated
-		if (
-			((id === "x" && !isRotated) || (/y2?/.test(id) && isRotated)) && rotate
-		) {
-			h += maxtickSize.width *
-				Math.cos(Math.PI * (90 - Math.abs(rotate)) / 180);
-
-			if (!config.axis_x_tick_multiline && current.height) {
-				if (h > current.height / 2) {
-					h = current.height / 2;
-				}
-			}
-		} else if (maxtickSize.height > defaultHeight && config.legend_show) {
+		if (maxtickSize.height > defaultHeight) {
 			h += maxtickSize.height - defaultHeight;
 		}
 
@@ -140,10 +127,10 @@ export default {
 			}
 
 			if ($el.svg &&
+				config.axis_x_tick_autorotate &&
 				config.axis_x_tick_fit &&
 				!config.axis_x_tick_multiline &&
 				!config.axis_x_tick_culling &&
-				config.axis_x_tick_autorotate &&
 				allowedXAxisTypes
 			) {
 				rotate = $$.needToRotateXAxisTickTexts() ?
