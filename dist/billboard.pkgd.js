@@ -5,11 +5,11 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.2-nightly-20231107004654
+ * @version 3.10.2-nightly-20231108004613
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
- * - @types/d3-selection ^3.0.8
- * - @types/d3-transition ^3.0.6
+ * - @types/d3-selection ^3.0.9
+ * - @types/d3-transition ^3.0.7
  * - d3-axis ^3.0.0
  * - d3-brush ^3.0.0
  * - d3-drag ^3.0.0
@@ -30642,7 +30642,14 @@ function getFormat($$, typeValue, v) {
       dataLabels = $$.config.data_labels,
       defaultFormat = function (v) {
         _newArrowCheck(this, _this);
-        return isArray(v) ? v.join("~") : isValue(v) ? +v : "";
+        const delimiter = "~";
+        let res = v;
+        if (isArray(v)) {
+          res = v.join(delimiter);
+        } else if (isObject(v)) {
+          res = Object.values(v).join(delimiter);
+        }
+        return res;
       }.bind(this);
     let format = defaultFormat;
 
@@ -53479,7 +53486,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.2-nightly-20231107004654
+ * @version 3.10.2-nightly-20231108004613
  */
 const bb = {
   /**
@@ -53489,7 +53496,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.2-nightly-20231107004654",
+  version: "3.10.2-nightly-20231108004613",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.2-nightly-20231107004654
+ * @version 3.10.2-nightly-20231108004613
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -5800,7 +5800,17 @@ var format = {
     dataLabelFormat: function (targetId) {
         var $$ = this;
         var dataLabels = $$.config.data_labels;
-        var defaultFormat = function (v) { return (isArray(v) ? v.join("~") : (isValue(v) ? +v : "")); };
+        var defaultFormat = function (v) {
+            var delimiter = "~";
+            var res = v;
+            if (isArray(v)) {
+                res = v.join(delimiter);
+            }
+            else if (isObject(v)) {
+                res = Object.values(v).join(delimiter);
+            }
+            return res;
+        };
         var format = defaultFormat;
         // find format according to axis id
         if (isFunction(dataLabels.format)) {
@@ -23027,7 +23037,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.2-nightly-20231107004654
+ * @version 3.10.2-nightly-20231108004613
  */
 var bb = {
     /**
@@ -23037,7 +23047,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.2-nightly-20231107004654",
+    version: "3.10.2-nightly-20231108004613",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
