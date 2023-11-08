@@ -369,6 +369,38 @@ describe("PADDING", () => {
 			it("rotated axis: outer y axis only without axis label text", () => {
 				deepEqual({top: 5, right: 10, bottom: 30, left: 40});
 			});
+
+			it("set options: padding.top=0, padding.bottom=0", () => {
+				args.axis.y2.show = true;
+				args.legend.show = false;
+				args.padding = {
+					top: 0,
+					bottom: 0
+				};
+			});
+
+			it("rotated axis: y & y2 axes should be hidden", () => {
+				const {$el} = chart.internal;
+				const chartRect = $el.chart.node().getBoundingClientRect();
+
+				expect(chartRect.top).to.be.above($el.axis.y2.node().getBoundingClientRect().bottom);
+				expect(chartRect.bottom).to.be.below($el.axis.y.node().getBoundingClientRect().top);
+			});
+
+			it("set options: padding.top=1, padding.bottom=1", () => {
+				args.padding = {
+					top: 1,
+					bottom: 1
+				};
+			});
+
+			it("rotated axis: y & y2 axes should show axes line within 1px range", () => {
+				const {$el} = chart.internal;
+				const chartRect = $el.chart.node().getBoundingClientRect();
+
+				expect(chartRect.top).to.be.closeTo($el.axis.y2.node().getBoundingClientRect().bottom, 1);
+				expect(chartRect.bottom).to.be.closeTo($el.axis.y.node().getBoundingClientRect().top, 1);
+			});
 		});
 	});
 
@@ -516,7 +548,39 @@ describe("PADDING", () => {
 
 			it("when y is shown, y2 hidden and padding.right=0", () => {
 				deepEqual({top: 0, right: 2, bottom: 30, left: 28.359375});
+			});
 
+			it("set options", () => {
+				args = {
+					data: {
+						columns: [
+							["data1", 51130, 12300, 23140]
+						],
+						type: "bar"
+					  },
+					padding: {
+						mode: "fit",
+						right: 0
+					},
+					legend: {
+						position: "right"
+					},
+					axis: {    
+						y2: {
+							show: true
+						}
+					}
+				}
+			});
+
+			it("legend in right position, shouldn't have gap with y2 axis in 'fit' mode", () => {
+				const {$el: {axis, legend}} = chart.internal;
+
+				const y2Right = axis.y2.node().getBoundingClientRect().right;
+				const legendLeft = legend.node().getBoundingClientRect().left + 2;
+
+				expect(legendLeft).to.be.closeTo(y2Right, 0.5);
+				
 				// restore args
 				args = temp;
 			});
