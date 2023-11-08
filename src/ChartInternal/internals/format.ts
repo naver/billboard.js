@@ -50,8 +50,8 @@ export default {
 		};
 	},
 
-	defaultValueFormat(v): number|string {
-		return isValue(v) ? +v : "";
+	defaultValueFormat(v: number|number[]): number|string {
+		return isArray(v) ? v.join("~") : (isValue(v) ? +v : "");
 	},
 
 	defaultArcValueFormat(v, ratio): string {
