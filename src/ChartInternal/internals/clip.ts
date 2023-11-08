@@ -59,7 +59,6 @@ export default {
 
 		// less than 20 is not enough to show the axis label 'outer' without legend
 		const h = (isRotated ? (margin.top + height) + 10 : margin.bottom) + 20;
-
 		const x = isRotated ? -(1 + left) : -(left - 1);
 		const y = -15; // -Math.max(15, margin.top);
 		const w = isRotated ? margin.left + 20 : width + 10 + left;
@@ -88,7 +87,7 @@ export default {
 			(isRotated ? -(1 + left) : -(left - 1));
 		const y = -(isRotated ? 20 : margin.top);
 		const w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0);
-		const h = (isRotated ? margin.bottom + (config.padding?.mode === "fit" ? 10 : 0) : (margin.top + height)) + 10;
+		const h = (isRotated ? margin.bottom + 10 : (margin.top + height)) + 10;
 
 		node
 			.attr("x", x)
