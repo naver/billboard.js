@@ -1,3 +1,13 @@
+## [3.10.3](https://github.com/naver/billboard.js/compare/3.10.2...3.10.3) (2023-11-08)
+
+
+### Bug Fixes
+
+* **axis:** Fix x axis autorotate option applies ([e45eaf7](https://github.com/naver/billboard.js/commit/e45eaf7df1c6cf96386a00e3aba6c42e991650f5)), closes [#3433](https://github.com/naver/billboard.js/issues/3433) [#3499](https://github.com/naver/billboard.js/issues/3499)
+* **labels:** Fix data.labels rendering for ranged data ([a8ebdef](https://github.com/naver/billboard.js/commit/a8ebdef220c80a00aa91dcc2153bb39eaccd0d4f)), closes [#3495](https://github.com/naver/billboard.js/issues/3495)
+* **option:** Fix rotated top padding  ([048c4e2](https://github.com/naver/billboard.js/commit/048c4e26ffa06522476b0931098302139c20da4f)), closes [#3433](https://github.com/naver/billboard.js/issues/3433)
+* **tooltip:** Fix tooltip.format.value arg for bar range data ([c0f445e](https://github.com/naver/billboard.js/commit/c0f445efcb57a8be97dbee349f24c94e8113752e)), closes [#3507](https://github.com/naver/billboard.js/issues/3507)
+
 ## [3.10.2](https://github.com/naver/billboard.js/compare/3.10.1...3.10.2) (2023-10-27)
 
 
