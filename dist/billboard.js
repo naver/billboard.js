@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.2-nightly-20231108004613
+ * @version 3.10.3-nightly-20231109004601
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6795,7 +6795,7 @@ function getFormat($$, typeValue, v) {
     };
   },
   defaultValueFormat: function defaultValueFormat(v) {
-    return isValue(v) ? +v : "";
+    return isArray(v) ? v.join("~") : isValue(v) ? +v : "";
   },
   defaultArcValueFormat: function defaultArcValueFormat(v, ratio) {
     return (ratio * 100).toFixed(1) + "%";
@@ -8876,7 +8876,7 @@ function getGroupedDataPointsFn(d) {
       $$.updateXAxisTickClip();
     }
     const legendSize = {
-        right: config.legend_show && state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
+        right: config.legend_show && state.isLegendRight ? $$.getLegendWidth() + (isFitPadding ? 0 : 20) : 0,
         bottom: !config.legend_show || state.isLegendRight || state.isLegendInset ? 0 : currLegend.height
       },
       xAxisHeight = isRotated || isNonAxis ? 0 : $$.getHorizontalAxisHeight("x"),
@@ -9799,12 +9799,10 @@ function getTextXPos(pos, width) {
         value = "<b>Open:</b> " + open + " <b>High:</b> " + high + " <b>Low:</b> " + low + " <b>Close:</b> " + close + (volume ? " <b>Volume:</b> " + volume : "");
       } else if ($$.isBarRangeType(row)) {
         const _row = row,
-          _row$value = _row.value,
-          start = _row$value[0],
-          end = _row$value[1],
+          rangeValue = _row.value,
           id = _row.id,
           index = _row.index;
-        value = valueFormat(start, undefined, id, index) + " ~ " + valueFormat(end, undefined, id, index);
+        value = "" + valueFormat(rangeValue, undefined, id, index);
       } else {
         value = valueFormat.apply(void 0, [getRowValue(row)].concat(param));
       }
@@ -10218,7 +10216,7 @@ function getTextXPos(pos, width) {
       y = isRotated ? state.height + padding : 0;
     } else if (target === "y2") {
       x = isRotated ? 0 : state.width + padding;
-      y = isRotated ? 1 - padding : 0;
+      y = isRotated ? -padding - 1 : 0;
     } else if (target === "subX") {
       x = 0;
       y = isRotated ? 0 : state.height2;
@@ -16184,7 +16182,6 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * @private
    */
   setYAxisClipPath: function setYAxisClipPath(node) {
-    var _config$padding;
     const $$ = this,
       config = $$.config,
       _$$$state3 = $$.state,
@@ -16197,7 +16194,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
       x = isInner && !isRotated ? config.axis_y_label.text ? -20 : -1 : isRotated ? -(1 + left) : -(left - 1),
       y = -(isRotated ? 20 : margin.top),
       w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0),
-      h = (isRotated ? margin.bottom + (((_config$padding = config.padding) == null ? void 0 : _config$padding.mode) === "fit" ? 10 : 0) : margin.top + height) + 10;
+      h = (isRotated ? margin.bottom + 10 : margin.top + height) + 10;
     node.attr("x", x).attr("y", y).attr("width", w).attr("height", h);
   },
   updateXAxisTickClip: function updateXAxisTickClip() {
@@ -25563,7 +25560,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.2-nightly-20231108004613
+ * @version 3.10.3-nightly-20231109004601
  */
 const bb = {
   /**
@@ -25573,7 +25570,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.2-nightly-20231108004613",
+  version: "3.10.3-nightly-20231109004601",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

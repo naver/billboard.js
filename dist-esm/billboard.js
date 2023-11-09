@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.2-nightly-20231108004613
+ * @version 3.10.3-nightly-20231109004601
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -5789,7 +5789,7 @@ var format = {
         };
     },
     defaultValueFormat: function (v) {
-        return isValue(v) ? +v : "";
+        return isArray(v) ? v.join("~") : (isValue(v) ? +v : "");
     },
     defaultArcValueFormat: function (v, ratio) {
         return "".concat((ratio * 100).toFixed(1), "%");
@@ -7667,7 +7667,8 @@ var size = {
             $$.updateXAxisTickClip();
         }
         var legendSize = {
-            right: config.legend_show && state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
+            right: config.legend_show && state.isLegendRight ?
+                $$.getLegendWidth() + (isFitPadding ? 0 : 20) : 0,
             bottom: !config.legend_show || state.isLegendRight || state.isLegendInset ? 0 : currLegend.height
         };
         var xAxisHeight = isRotated || isNonAxis ? 0 : $$.getHorizontalAxisHeight("x");
@@ -8574,8 +8575,8 @@ var tooltip$1 = {
                 value = "<b>Open:</b> ".concat(open_1, " <b>High:</b> ").concat(high, " <b>Low:</b> ").concat(low, " <b>Close:</b> ").concat(close_1).concat(volume ? " <b>Volume:</b> ".concat(volume) : "");
             }
             else if ($$.isBarRangeType(row)) {
-                var _d = row.value, start = _d[0], end = _d[1], id = row.id, index = row.index;
-                value = "".concat(valueFormat(start, undefined, id, index), " ~ ").concat(valueFormat(end, undefined, id, index));
+                var rangeValue = row.value, id = row.id, index = row.index;
+                value = "".concat(valueFormat(rangeValue, undefined, id, index));
             }
             else {
                 value = valueFormat.apply(void 0, __spreadArray([getRowValue(row)], param, false));
@@ -8926,7 +8927,7 @@ var transform = {
         }
         else if (target === "y2") {
             x = isRotated ? 0 : state.width + padding;
-            y = isRotated ? 1 - padding : 0;
+            y = isRotated ? -padding - 1 : 0;
         }
         else if (target === "subX") {
             x = 0;
@@ -14338,9 +14339,8 @@ var clip = {
      * @private
      */
     setYAxisClipPath: function (node) {
-        var _a;
         var $$ = this;
-        var config = $$.config, _b = $$.state, margin = _b.margin, width = _b.width, height = _b.height;
+        var config = $$.config, _a = $$.state, margin = _a.margin, width = _a.width, height = _a.height;
         var isRotated = config.axis_rotated;
         var left = Math.max(30, margin.left) - (isRotated ? 20 : 0);
         var isInner = config.axis_y_inner;
@@ -14348,7 +14348,7 @@ var clip = {
             (isRotated ? -(1 + left) : -(left - 1));
         var y = -(isRotated ? 20 : margin.top);
         var w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0);
-        var h = (isRotated ? margin.bottom + (((_a = config.padding) === null || _a === void 0 ? void 0 : _a.mode) === "fit" ? 10 : 0) : (margin.top + height)) + 10;
+        var h = (isRotated ? margin.bottom + 10 : (margin.top + height)) + 10;
         node
             .attr("x", x)
             .attr("y", y)
@@ -23037,7 +23037,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.2-nightly-20231108004613
+ * @version 3.10.3-nightly-20231109004601
  */
 var bb = {
     /**
@@ -23047,7 +23047,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.2-nightly-20231108004613",
+    version: "3.10.3-nightly-20231109004601",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
