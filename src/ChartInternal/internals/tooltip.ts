@@ -198,9 +198,9 @@ export default {
 
 				value = `<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${volume ? ` <b>Volume:</b> ${volume}` : ""}`;
 			} else if ($$.isBarRangeType(row)) {
-				const {value: [start, end], id, index} = row;
+				const {value: rangeValue, id, index} = row;
 
-				value = `${valueFormat(start, undefined, id, index)} ~ ${valueFormat(end, undefined, id, index)}`;
+				value = `${valueFormat(rangeValue, undefined, id, index)}`;
 			} else {
 				value = valueFormat(getRowValue(row), ...param);
 			}

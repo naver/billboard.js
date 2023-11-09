@@ -304,7 +304,8 @@ export default {
 		}
 
 		const legendSize = {
-			right: config.legend_show && state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
+			right: config.legend_show && state.isLegendRight ?
+				$$.getLegendWidth() + (isFitPadding ? 0 : 20) : 0,
 			bottom: !config.legend_show || state.isLegendRight || state.isLegendInset ? 0 : currLegend.height
 		};
 

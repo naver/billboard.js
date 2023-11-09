@@ -1953,7 +1953,7 @@ describe("TOOLTIP", function() {
 			util.hoverChart(chart, "mousemove", {clientX: 180, clientY: 130});
 
 			expect(chart.$.tooltip.select(".value").html())
-				.to.be.equal("1300 ~ 1339");
+				.to.be.equal("1300~1339");
 		});
 	});
 
@@ -2080,13 +2080,12 @@ describe("TOOLTIP", function() {
 			// when
 			chart.tooltip.show({x: 1});
 
-			expect(spy.callCount).to.be.equal(2);
-
+			expect(spy.callCount).to.be.equal(1);
 			expect(spy.args.every(v => v.length === 4)).to.be.true;
 			expect(spy.args.every(v => {
 				const [value, ratio, id, index]= v;
 
-				return isNumber(value) && isUndefined(ratio) && isString(id) && isNumber(index);
+				return Array.isArray(value) && isUndefined(ratio) && isString(id) && isNumber(index);
 			})).to.be.true;
 
 			spy.resetHistory();
