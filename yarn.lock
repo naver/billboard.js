@@ -774,9 +774,9 @@
     "@babel/helper-plugin-utils" "^7.22.5"
 
 "@babel/plugin-transform-runtime@^7.23.2":
-  version "7.23.2"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.23.2.tgz#c956a3f8d1aa50816ff6c30c6288d66635c12990"
-  integrity sha512-XOntj6icgzMS58jPVtQpiuF6ZFWxQiJavISGx5KGjRj+3gqZr8+N6Kx+N9BApWzgS+DOjIZfXXj0ZesenOWDyA==
+  version "7.23.3"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.23.3.tgz#0aa7485862b0b5cb0559c1a5ec08b4923743ee3b"
+  integrity sha512-XcQ3X58CKBdBnnZpPaQjgVMePsXtSZzHoku70q9tUAQp02ggPQNM04BF3RvlW1GSM/McbSOQAzEK4MXbS7/JFg==
   dependencies:
     "@babel/helper-module-imports" "^7.22.15"
     "@babel/helper-plugin-utils" "^7.22.5"
