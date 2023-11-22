@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20231117004609
+ * @version 3.10.3-nightly-20231122004620
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -355,9 +355,9 @@ function getRectSegList(path) {
      * */
     var _a = path.getBBox(), x = _a.x, y = _a.y, width = _a.width, height = _a.height;
     return [
-        { x: x, y: y + height },
-        { x: x, y: y },
-        { x: x + width, y: y },
+        { x: x, y: y + height }, // seg0
+        { x: x, y: y }, // seg1
+        { x: x + width, y: y }, // seg2
         { x: x + width, y: y + height } // seg3
     ];
 }
@@ -1102,31 +1102,31 @@ var Element = /** @class */ (function () {
             legend: null,
             title: null,
             subchart: {
-                main: null,
-                bar: null,
-                line: null,
+                main: null, // $$.context
+                bar: null, // $$.contextBar
+                line: null, // $$.contextLine
                 area: null // $$.contextArea
             },
             arcs: null,
-            bar: null,
+            bar: null, // mainBar,
             candlestick: null,
-            line: null,
-            area: null,
-            circle: null,
+            line: null, // mainLine,
+            area: null, // mainArea,
+            circle: null, // mainCircle,
             radar: null,
-            text: null,
+            text: null, // mainText,
             grid: {
-                main: null,
-                x: null,
+                main: null, // grid (also focus)
+                x: null, // xgrid,
                 y: null, // ygrid,
             },
             gridLines: {
-                main: null,
-                x: null,
+                main: null, // gridLines
+                x: null, // xgridLines,
                 y: null, // ygridLines
             },
             region: {
-                main: null,
+                main: null, // region
                 list: null // mainRegion
             },
             eventRect: null,
@@ -1207,9 +1207,9 @@ var State = /** @class */ (function () {
             legendItemHeight: 0,
             legendHasRendered: false,
             eventReceiver: {
-                currentIdx: -1,
-                rect: {},
-                data: [],
+                currentIdx: -1, // current event interaction index
+                rect: {}, // event rect's clientBoundingRect
+                data: [], // event data bound of previoous eventRect
                 coords: [] // coordination value of previous eventRect
             },
             axis: {
@@ -1233,7 +1233,7 @@ var State = /** @class */ (function () {
                 idYAxis: "",
                 idXAxisTickTexts: "",
                 idGrid: "",
-                idSubchart: "",
+                idSubchart: "", // clipIdForSubchart
                 path: "",
                 pathXAxis: "",
                 pathYAxis: "",
@@ -1241,7 +1241,7 @@ var State = /** @class */ (function () {
                 pathGrid: ""
             },
             // state
-            event: null,
+            event: null, // event object
             dragStart: null,
             dragging: false,
             flowing: false,
@@ -1249,14 +1249,14 @@ var State = /** @class */ (function () {
             mouseover: false,
             rendered: false,
             transiting: false,
-            redrawing: false,
-            resizing: false,
-            toggling: false,
+            redrawing: false, // if redraw() is on process
+            resizing: false, // resize event called
+            toggling: false, // legend toggle
             zooming: false,
             hasNegativeValue: false,
             hasPositiveValue: true,
             orgAreaOpacity: "0.2",
-            orgConfig: {},
+            orgConfig: {}, // user original genration config
             // ID strings
             hiddenTargetIds: [],
             hiddenLegendIds: [],
@@ -7687,7 +7687,7 @@ var size = {
             bottom: legendSize.bottom + padding.bottom,
             left: subchartHeight + (isNonAxis ? 0 : padding.left)
         } : {
-            top: (isFitPadding ? 0 : 4) + padding.top,
+            top: (isFitPadding ? 0 : 4) + padding.top, // for top tick text
             right: isNonAxis ? 0 : padding.right + legendSize.right,
             bottom: gaugeHeight + subchartHeight + legendSize.bottom + padding.bottom,
             left: isNonAxis ? 0 : padding.left
@@ -9264,8 +9264,8 @@ var ChartInternal = /** @class */ (function () {
         this.format = {
             extraLineClasses: null,
             xAxisTick: null,
-            dataTime: null,
-            defaultAxisTime: null,
+            dataTime: null, // dataTimeFormat
+            defaultAxisTime: null, // defaultAxisTimeFormat
             axisTime: null // axisTimeFormat
         };
         var $$ = this;
@@ -14665,9 +14665,9 @@ var grid = {
                 // will contain 'x1, y1, x2, y2' order
                 xy = isRotated ?
                     [
-                        null,
-                        pos.x,
-                        isEdge ? pos.y : width,
+                        null, // x1
+                        pos.x, // y1
+                        isEdge ? pos.y : width, // x2
                         pos.x // y2
                     ] : [
                     pos.x,
@@ -14680,9 +14680,9 @@ var grid = {
                 var isY2 = $$.axis.getId(d.id) === "y2";
                 xy = isRotated ?
                     [
-                        pos.y,
-                        isEdge && !isY2 ? pos.x : null,
-                        pos.y,
+                        pos.y, // x1
+                        isEdge && !isY2 ? pos.x : null, // y1
+                        pos.y, // x2
                         isEdge && isY2 ? pos.x : height // y2
                     ] : [
                     isEdge && isY2 ? pos.x : null,
@@ -18005,7 +18005,7 @@ var shapeArea = {
             return [
                 [posX, offset],
                 [posX, posY - (y0 - offset)],
-                [posX, posY - (y0 - offset)],
+                [posX, posY - (y0 - offset)], // needed for compatibility
                 [posX, offset] // needed for compatibility
             ];
         };
@@ -19260,7 +19260,7 @@ var shapePoint = {
             var point = [posX, posY - (y0 - offset)];
             return [
                 point,
-                point,
+                point, // from here and below, needed for compatibility
                 point,
                 point
             ];
@@ -19832,7 +19832,7 @@ function convertDataToTreemapData(data) {
         var value = values[0].value;
         return {
             name: id,
-            id: id,
+            id: id, // needed to keep compatibility on whole code logic
             value: value,
             ratio: $$.getRatio("treemap", values[0])
         };
@@ -23037,7 +23037,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231117004609
+ * @version 3.10.3-nightly-20231122004620
  */
 var bb = {
     /**
@@ -23047,7 +23047,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20231117004609",
+    version: "3.10.3-nightly-20231122004620",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
