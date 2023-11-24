@@ -876,4 +876,51 @@ describe("LEGEND", () => {
 			});
 		});
 	});
+
+	describe("legend format", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1 data1 data1 data1 data1 data1 ", 2, 3, 5],
+						["data2 data1 data1 data1 data1 data1", 1, 2, 2],
+					],
+					type: "line"
+				},
+				legend: {
+					format: function(id) {
+						if (id.length > 5) {
+							id = id.substr(0, 5) + "...";
+						}
+			
+						return id;
+					}
+				}
+			};
+		});
+
+		it("legend text are formatted correctly?", () => {
+			const formatted = chart.data().map(v => {
+				return args.legend.format(v.id);
+			});
+
+			const legendText = chart.$.legend
+				.selectAll("text").nodes()
+				.map(v => v.textContent);
+
+			expect(formatted).to.be.deep.equal(legendText);
+			expect(chart.$.legend.selectAll("title").empty()).to.be.true;
+		});
+
+		it("set options: legend.format.tooltip=true", () => {
+			args.legend.tooltip = true;
+		});
+
+		it("legend text title are set correctly?", () => {
+			const dataIds = chart.data().map(v => v.id);
+			const legendTitle = chart.$.legend.selectAll("title").nodes().map(v => v.textContent);
+
+			expect(dataIds).to.be.deep.equal(legendTitle);
+		});
+	});
 });

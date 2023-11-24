@@ -444,7 +444,7 @@ export default {
 	axis_x_tick_width: <number|null> null,
 
 	/**
-	 * Set to display system tooltip(via 'title' attribute) for tick text
+	 * Set to display system tooltip(via `<title>` element) for tick text
 	 * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
 	 * @name axis․x․tick․tooltip
 	 * @memberof Options
