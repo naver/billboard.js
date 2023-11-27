@@ -66,7 +66,12 @@ export default {
 	 * - **Available Values:**
 	 *   - circle
 	 *   - rectangle
+	 * @property {boolean} [legend.format] Set formatter function for legend text.
+	 * The argument:<br>
+	 *  - `id`: legend text(which is data id) value
+	 * @property {boolean} [legend.tooltip=false] Show full legend text value using system tooltip(via `<title>` element).
 	 * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
+	 * @see [Demo: format](https://naver.github.io/billboard.js/demo/#Legend.LegendFormat)
 	 * @see [Demo: item.interaction](https://naver.github.io/billboard.js/demo/#Legend.LegendItemInteraction)
 	 * @see [Demo: item.tile.type](https://naver.github.io/billboard.js/demo/#Legend.LegendItemTileType)
 	 * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
@@ -129,6 +134,16 @@ export default {
 	 *              r: 10
 	 *          }
 	 *      },
+	 *      format: function(id) {
+	 *          // set ellipsis string when length is > 5
+	 *          // to get full legend value, combine with 'legend.tooltip=true'
+	 *          if (id.length > 5) {
+	 *            	id = id.substr(0, 5) + "...";
+	 *          }
+	 *
+	 *          return id;
+	 *      },
+	 *      tooltip: true,
 	 *      usePoint: true
 	 *  }
 	 */
@@ -151,8 +166,10 @@ export default {
 	legend_item_tile_height: 10,
 	legend_item_tile_r: 5,
 	legend_item_tile_type: <"rectangle"|"circle"> "rectangle",
+	legend_format: <Function|undefined> undefined,
 	legend_padding: 0,
 	legend_position: <"bottom"|"right"|"inset"> "bottom",
 	legend_show: true,
+	legend_tooltip: false,
 	legend_usePoint: false
 };
