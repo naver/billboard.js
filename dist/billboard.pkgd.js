@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20231122004620
+ * @version 3.10.3-nightly-20231128004611
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -26394,7 +26394,12 @@ var data_this = undefined;
    * - **Available Values:**
    *   - circle
    *   - rectangle
+   * @property {boolean} [legend.format] Set formatter function for legend text.
+   * The argument:<br>
+   *  - `id`: legend text(which is data id) value
+   * @property {boolean} [legend.tooltip=false] Show full legend text value using system tooltip(via `<title>` element).
    * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
+   * @see [Demo: format](https://naver.github.io/billboard.js/demo/#Legend.LegendFormat)
    * @see [Demo: item.interaction](https://naver.github.io/billboard.js/demo/#Legend.LegendItemInteraction)
    * @see [Demo: item.tile.type](https://naver.github.io/billboard.js/demo/#Legend.LegendItemTileType)
    * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
@@ -26457,6 +26462,16 @@ var data_this = undefined;
    *              r: 10
    *          }
    *      },
+   *      format: function(id) {
+   *          // set ellipsis string when length is > 5
+   *          // to get full legend value, combine with 'legend.tooltip=true'
+   *          if (id.length > 5) {
+   *            	id = id.substr(0, 5) + "...";
+   *          }
+   *
+   *          return id;
+   *      },
+   *      tooltip: true,
    *      usePoint: true
    *  }
    */
@@ -26477,9 +26492,11 @@ var data_this = undefined;
   legend_item_tile_height: 10,
   legend_item_tile_r: 5,
   legend_item_tile_type: "rectangle",
+  legend_format: undefined,
   legend_padding: 0,
   legend_position: "bottom",
   legend_show: !0,
+  legend_tooltip: !1,
   legend_usePoint: !1
 });
 ;// CONCATENATED MODULE: ./src/config/Options/common/title.ts
@@ -30693,6 +30710,21 @@ function getLegendColor(id) {
     color = $$.levelColor ? $$.levelColor(data.values[0].value) : $$.color(data);
   return color;
 }
+
+/**
+ * Get formatted text value
+ * @param {string} id Legend text id
+ * @returns {string} Formatted legend text
+ */
+function getFormattedText(id) {
+  var _config$data_names$id;
+  const config = this.config;
+  let text = (_config$data_names$id = config.data_names[id]) != null ? _config$data_names$id : id;
+  if (isFunction(config.legend_format)) {
+    text = config.legend_format(text);
+  }
+  return text;
+}
 /* harmony default export */ var internals_legend = ({
   /**
    * Initialize the legend.
@@ -31190,10 +31222,13 @@ function getLegendColor(id) {
     if (state.isLegendInset && dimension.max.width > 0 && background.size() === 0) {
       background = legend.insert("g", "." + $LEGEND.legendItem).attr("class", $LEGEND.legendBackground).append("rect");
     }
-    const texts = legend.selectAll("text").data(targetIdz).text(function (id) {
-      _newArrowCheck(this, _this4);
-      return isDefined(config.data_names[id]) ? config.data_names[id] : id;
-    }.bind(this)) // MEMO: needed for update
+    if (config.legend_tooltip) {
+      legend.selectAll("title").data(targetIdz).text(function (id) {
+        _newArrowCheck(this, _this4);
+        return id;
+      }.bind(this));
+    }
+    const texts = legend.selectAll("text").data(targetIdz).text(getFormattedText.bind($$)) // MEMO: needed for update
     .each(function (id, i) {
       updatePositions(this, id, i);
     });
@@ -31328,10 +31363,13 @@ function getLegendColor(id) {
     // Define g for legend area
 
     $$.setLegendItem(l);
-    l.append("text").text(function (id) {
-      _newArrowCheck(this, _this6);
-      return isDefined(config.data_names[id]) ? config.data_names[id] : id;
-    }.bind(this)).each(function (id, i) {
+    if (config.legend_tooltip) {
+      l.append("title").text(function (id) {
+        _newArrowCheck(this, _this6);
+        return id;
+      }.bind(this));
+    }
+    l.append("text").text(getFormattedText.bind($$)).each(function (id, i) {
       updatePositions(this, id, i);
     }).style("pointer-events", $$.getStylePropValue("none")).attr("x", isLegendRightOrInset ? posFn.xText : -200).attr("y", isLegendRightOrInset ? -200 : posFn.yText);
     l.append("rect").attr("class", $LEGEND.legendItemEvent).style("fill-opacity", $$.getStylePropValue("0")).attr("x", isLegendRightOrInset ? posFn.xRect : -200).attr("y", isLegendRightOrInset ? -200 : posFn.yRect);
@@ -43640,7 +43678,7 @@ function smoothLines(el, type) {
    */
   axis_x_tick_width: null,
   /**
-   * Set to display system tooltip(via 'title' attribute) for tick text
+   * Set to display system tooltip(via `<title>` element) for tick text
    * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
    * @name axis․x․tick․tooltip
    * @memberof Options
@@ -53483,7 +53521,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231122004620
+ * @version 3.10.3-nightly-20231128004611
  */
 const bb = {
   /**
@@ -53493,7 +53531,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20231122004620",
+  version: "3.10.3-nightly-20231128004611",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

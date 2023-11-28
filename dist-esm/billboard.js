@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20231122004620
+ * @version 3.10.3-nightly-20231128004611
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -2789,7 +2789,12 @@ var legend$2 = {
      * - **Available Values:**
      *   - circle
      *   - rectangle
+     * @property {boolean} [legend.format] Set formatter function for legend text.
+     * The argument:<br>
+     *  - `id`: legend text(which is data id) value
+     * @property {boolean} [legend.tooltip=false] Show full legend text value using system tooltip(via `<title>` element).
      * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
+     * @see [Demo: format](https://naver.github.io/billboard.js/demo/#Legend.LegendFormat)
      * @see [Demo: item.interaction](https://naver.github.io/billboard.js/demo/#Legend.LegendItemInteraction)
      * @see [Demo: item.tile.type](https://naver.github.io/billboard.js/demo/#Legend.LegendItemTileType)
      * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
@@ -2852,6 +2857,16 @@ var legend$2 = {
      *              r: 10
      *          }
      *      },
+     *      format: function(id) {
+     *          // set ellipsis string when length is > 5
+     *          // to get full legend value, combine with 'legend.tooltip=true'
+     *          if (id.length > 5) {
+     *            	id = id.substr(0, 5) + "...";
+     *          }
+     *
+     *          return id;
+     *      },
+     *      tooltip: true,
      *      usePoint: true
      *  }
      */
@@ -2872,9 +2887,11 @@ var legend$2 = {
     legend_item_tile_height: 10,
     legend_item_tile_r: 5,
     legend_item_tile_type: "rectangle",
+    legend_format: undefined,
     legend_padding: 0,
     legend_position: "bottom",
     legend_show: true,
+    legend_tooltip: false,
     legend_usePoint: false
 };
 
@@ -5847,6 +5864,20 @@ function getLegendColor(id) {
         $$.color(data);
     return color;
 }
+/**
+ * Get formatted text value
+ * @param {string} id Legend text id
+ * @returns {string} Formatted legend text
+ */
+function getFormattedText(id) {
+    var _a;
+    var config = this.config;
+    var text = (_a = config.data_names[id]) !== null && _a !== void 0 ? _a : id;
+    if (isFunction(config.legend_format)) {
+        text = config.legend_format(text);
+    }
+    return text;
+}
 var legend$1 = {
     /**
      * Initialize the legend.
@@ -6299,9 +6330,14 @@ var legend$1 = {
                 .attr("class", $LEGEND.legendBackground)
                 .append("rect");
         }
+        if (config.legend_tooltip) {
+            legend.selectAll("title")
+                .data(targetIdz)
+                .text(function (id) { return id; });
+        }
         var texts = legend.selectAll("text")
             .data(targetIdz)
-            .text(function (id) { return (isDefined(config.data_names[id]) ? config.data_names[id] : id); }) // MEMO: needed for update
+            .text(getFormattedText.bind($$)) // MEMO: needed for update
             .each(function (id, i) {
             updatePositions(this, id, i);
         });
@@ -6427,8 +6463,11 @@ var legend$1 = {
             .enter()
             .append("g");
         $$.setLegendItem(l);
+        if (config.legend_tooltip) {
+            l.append("title").text(function (id) { return id; });
+        }
         l.append("text")
-            .text(function (id) { return (isDefined(config.data_names[id]) ? config.data_names[id] : id); })
+            .text(getFormattedText.bind($$))
             .each(function (id, i) {
             updatePositions(this, id, i);
         })
@@ -15624,7 +15663,7 @@ var x = {
      */
     axis_x_tick_width: null,
     /**
-     * Set to display system tooltip(via 'title' attribute) for tick text
+     * Set to display system tooltip(via `<title>` element) for tick text
      * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
      * @name axis․x․tick․tooltip
      * @memberof Options
@@ -23037,7 +23076,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231122004620
+ * @version 3.10.3-nightly-20231128004611
  */
 var bb = {
     /**
@@ -23047,7 +23086,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20231122004620",
+    version: "3.10.3-nightly-20231128004611",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
