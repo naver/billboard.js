@@ -51,6 +51,8 @@ export default {
 				.attr("class", $SHAPE.shapes);
 
 			current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
+
+			config.interaction_enabled && config.radar_axis_text_show && $$.bindRadarEvent();
 		}
 	},
 
@@ -289,59 +291,54 @@ export default {
 					return `translate(${posX} ${posY})`;
 				});
 		}
-
-		$$.bindRadarEvent();
 	},
 
 	bindRadarEvent(): void {
 		const $$ = this;
-		const {config, state, $el: {radar, svg}} = $$;
+		const {state, $el: {radar, svg}} = $$;
 		const focusOnly = $$.isPointFocusOnly();
 		const {inputType, transiting} = state;
+		const isMouse = inputType === "mouse";
 
-		if (config.interaction_enabled) {
-			const isMouse = inputType === "mouse";
+		const hide = event => {
+			state.event = event;
 
-			const hide = event => {
-				state.event = event;
+			// const index = getIndex(event);
 
-				// const index = getIndex(event);
+			const index = $$.getDataIndexFromEvent(event);
+			const noIndex = isUndefined(index);
 
-				const index = $$.getDataIndexFromEvent(event);
-				const noIndex = isUndefined(index);
+			if (isMouse || noIndex) {
+				$$.hideTooltip();
 
-				if (isMouse || noIndex) {
-					$$.hideTooltip();
+				focusOnly ?
+					$$.hideCircleFocus() :
+					$$.unexpandCircles();
 
-					focusOnly ?
-						$$.hideCircleFocus() :
-						$$.unexpandCircles();
-
-					if (isMouse) {
-						$$.setOverOut(false, index);
-					} else if (noIndex) {
-						$$.callOverOutForTouch();
-					}
+				if (isMouse) {
+					$$.setOverOut(false, index);
+				} else if (noIndex) {
+					$$.callOverOutForTouch();
 				}
-			};
-
-			radar.axes.selectAll("text")
-				.on(isMouse ? "mouseover " : "touchstart", event => {
-					if (transiting) { // skip while transiting
-						return;
-					}
-
-					state.event = event;
-					const index = $$.getDataIndexFromEvent(event);
-
-					$$.selectRectForSingle(svg.node(), index);
-					isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
-				})
-				.on("mouseout", isMouse ? hide : null);
-
-			if (!isMouse) {
-				svg.on("touchstart", hide);
 			}
+		};
+
+		radar.axes
+			.on(isMouse ? "mouseover " : "touchstart", event => {
+				if (transiting) { // skip while transiting
+					return;
+				}
+
+				state.event = event;
+				const index = $$.getDataIndexFromEvent(event);
+
+				$$.selectRectForSingle(svg.node(), index);
+				isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
+			})
+			.on("mouseout", isMouse ? hide : null);
+
+		if (!isMouse) {
+			svg.on("touchstart", hide);
 		}
 	},
 
