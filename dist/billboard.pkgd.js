@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20231129004600
+ * @version 3.10.3-nightly-20231201004623
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -24644,7 +24644,6 @@ let Element = function () {
       // $$.contextLine
       area: null // $$.contextArea
     },
-
     arcs: null,
     bar: null,
     // mainBar,
@@ -24665,7 +24664,6 @@ let Element = function () {
       // xgrid,
       y: null // ygrid,
     },
-
     gridLines: {
       main: null,
       // gridLines
@@ -24673,13 +24671,11 @@ let Element = function () {
       // xgridLines,
       y: null // ygridLines
     },
-
     region: {
       main: null,
       // region
       list: null // mainRegion
     },
-
     eventRect: null,
     zoomResetBtn: null // drag zoom reset button
   };
@@ -24759,7 +24755,6 @@ let State = function () {
       types: [],
       needle: undefined // arc needle current value
     },
-
     // legend
     isLegendRight: !1,
     isLegendInset: !1,
@@ -24778,7 +24773,6 @@ let State = function () {
       // event data bound of previoous eventRect
       coords: [] // coordination value of previous eventRect
     },
-
     axis: {
       x: {
         padding: {
@@ -27184,7 +27178,6 @@ function runWorker(useWorker, fn, callback, depsFn) {
       // });
     };
   }
-
   return runFn;
 }
 ;// CONCATENATED MODULE: ./node_modules/d3-dsv/src/dsv.js
@@ -28501,6 +28494,7 @@ function getDataKeyForJson(keysParam, config) {
         return $$.findClosest(target.values, pos);
       }.bind(this));
     // map to array of closest points of each target
+
     // decide closest point and return
     return $$.findClosest(candidates, pos);
   },
@@ -30484,7 +30478,6 @@ const schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
       x.domain(domainValue);
       // zoomEnabled && $$.zoom.updateScaleExtent();
     }
-
     if (withUpdateOrgXDomain || withUpdateXDomain) {
       zoomEnabled && $$.zoom.updateScaleExtent();
     }
@@ -36647,7 +36640,6 @@ let ChartInternal = /*#__PURE__*/function () {
       // defaultAxisTimeFormat
       axisTime: null // axisTimeFormat
     };
-
     const $$ = this;
     $$.api = api; // Chart class instance alias
     $$.config = new Options();
@@ -36847,6 +36839,7 @@ let ChartInternal = /*#__PURE__*/function () {
       hasPolar = $$.hasType("polar");
     // for arc type, set axes to not be shown
     // $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
+
     if (hasAxis) {
       $$.axis = $$.getAxisInstance();
       config.zoom_enabled && $$.initZoom();
@@ -36957,7 +36950,6 @@ let ChartInternal = /*#__PURE__*/function () {
       main.append("text").attr("class", $TEXT.text + " " + $COMMON.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
       .attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
     }
-
     if (hasAxis) {
       // Regions
       config.regions.length && $$.initRegion();
@@ -45310,7 +45302,6 @@ function arcEndAngle(d) {
 function arcPadAngle(d) {
   return d && d.padAngle; // Note: optional!
 }
-
 function intersect(x0, y0, x1, y1, x2, y2, x3, y3) {
   var x10 = x1 - x0,
     y10 = y1 - y0,
@@ -51242,7 +51233,8 @@ function setSelection(isSelection, ids, indices, resetOther) {
  *  // Get the current subchart selection domain range
  *  // Domain value may not be exact returning approximately values.
  *  chart.subchart();
- */ // NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
+ */
+// NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
 const subchart = function (domainValue) {
   var _this = this;
   const $$ = this.internal,
@@ -51975,7 +51967,8 @@ function defaultConstrain(transform, extent, translateExtent) {
  *  // Get the current zoomed domain range
  *  // Domain value may not be exact returning approximately values.
  *  chart.zoom();
- */ // NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
+ */
+// NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
 const zoom = function (domainValue) {
   var _this = this,
     _state$domain;
@@ -53521,7 +53514,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231129004600
+ * @version 3.10.3-nightly-20231201004623
  */
 const bb = {
   /**
@@ -53531,7 +53524,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20231129004600",
+  version: "3.10.3-nightly-20231201004623",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
