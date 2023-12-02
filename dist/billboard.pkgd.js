@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20231201004623
+ * @version 3.10.3-nightly-20231202004611
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -29432,7 +29432,8 @@ function drag_defaultTouchable() {
         screenX: x,
         screenY: y,
         clientX: x,
-        clientY: y
+        clientY: y,
+        bubbles: hasRadar // radar type needs to bubble up event
       });
     }
   },
@@ -48448,6 +48449,7 @@ const cacheKey = KEY.radarPoints;
       // shapes
       $el.radar.shapes = $el.radar.append("g").attr("class", $SHAPE.shapes);
       current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
+      config.interaction_enabled && config.radar_axis_text_show && $$.bindRadarEvent();
     }
   },
   getRadarSize: function getRadarSize() {
@@ -48684,12 +48686,10 @@ const cacheKey = KEY.radarPoints;
         return "translate(" + posX + " " + posY + ")";
       });
     }
-    $$.bindRadarEvent();
   },
   bindRadarEvent: function bindRadarEvent() {
     var _this9 = this;
     const $$ = this,
-      config = $$.config,
       state = $$.state,
       _$$$$el2 = $$.$el,
       radar = _$$$$el2.radar,
@@ -48697,40 +48697,38 @@ const cacheKey = KEY.radarPoints;
       focusOnly = $$.isPointFocusOnly(),
       _state = state,
       inputType = _state.inputType,
-      transiting = _state.transiting;
-    if (config.interaction_enabled) {
-      const isMouse = inputType === "mouse",
-        hide = function (event) {
-          _newArrowCheck(this, _this9);
-          state.event = event;
-
-          // const index = getIndex(event);
-          const index = $$.getDataIndexFromEvent(event),
-            noIndex = isUndefined(index);
-          if (isMouse || noIndex) {
-            $$.hideTooltip();
-            focusOnly ? $$.hideCircleFocus() : $$.unexpandCircles();
-            if (isMouse) {
-              $$.setOverOut(!1, index);
-            } else if (noIndex) {
-              $$.callOverOutForTouch();
-            }
-          }
-        }.bind(this);
-      radar.axes.selectAll("text").on(isMouse ? "mouseover " : "touchstart", function (event) {
+      transiting = _state.transiting,
+      isMouse = inputType === "mouse",
+      hide = function (event) {
         _newArrowCheck(this, _this9);
-        if (transiting) {
-          // skip while transiting
-          return;
-        }
         state.event = event;
-        const index = $$.getDataIndexFromEvent(event);
-        $$.selectRectForSingle(svg.node(), index);
-        isMouse ? $$.setOverOut(!0, index) : $$.callOverOutForTouch(index);
-      }.bind(this)).on("mouseout", isMouse ? hide : null);
-      if (!isMouse) {
-        svg.on("touchstart", hide);
+
+        // const index = getIndex(event);
+        const index = $$.getDataIndexFromEvent(event),
+          noIndex = isUndefined(index);
+        if (isMouse || noIndex) {
+          $$.hideTooltip();
+          focusOnly ? $$.hideCircleFocus() : $$.unexpandCircles();
+          if (isMouse) {
+            $$.setOverOut(!1, index);
+          } else if (noIndex) {
+            $$.callOverOutForTouch();
+          }
+        }
+      }.bind(this);
+    radar.axes.on(isMouse ? "mouseover " : "touchstart", function (event) {
+      _newArrowCheck(this, _this9);
+      if (transiting) {
+        // skip while transiting
+        return;
       }
+      state.event = event;
+      const index = $$.getDataIndexFromEvent(event);
+      $$.selectRectForSingle(svg.node(), index);
+      isMouse ? $$.setOverOut(!0, index) : $$.callOverOutForTouch(index);
+    }.bind(this)).on("mouseout", isMouse ? hide : null);
+    if (!isMouse) {
+      svg.on("touchstart", hide);
     }
   },
   updateRadarShape: function updateRadarShape() {
@@ -53514,7 +53512,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231201004623
+ * @version 3.10.3-nightly-20231202004611
  */
 const bb = {
   /**
@@ -53524,7 +53522,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20231201004623",
+  version: "3.10.3-nightly-20231202004611",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20231201004623
+ * @version 3.10.3-nightly-20231202004611
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4997,7 +4997,8 @@ var interaction = {
                 screenX: x,
                 screenY: y,
                 clientX: x,
-                clientY: y
+                clientY: y,
+                bubbles: hasRadar // radar type needs to bubble up event
             };
             emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](hasTreemap ? treemap.node() : element, type, params);
         }
@@ -19575,6 +19576,7 @@ var shapeRadar = {
             $el.radar.shapes = $el.radar.append("g")
                 .attr("class", $SHAPE.shapes);
             current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
+            config.interaction_enabled && config.radar_axis_text_show && $$.bindRadarEvent();
         }
     },
     getRadarSize: function () {
@@ -19757,47 +19759,44 @@ var shapeRadar = {
                 return "translate(".concat(posX, " ").concat(posY, ")");
             });
         }
-        $$.bindRadarEvent();
     },
     bindRadarEvent: function () {
         var $$ = this;
-        var config = $$.config, state = $$.state, _a = $$.$el, radar = _a.radar, svg = _a.svg;
+        var state = $$.state, _a = $$.$el, radar = _a.radar, svg = _a.svg;
         var focusOnly = $$.isPointFocusOnly();
         var inputType = state.inputType, transiting = state.transiting;
-        if (config.interaction_enabled) {
-            var isMouse_1 = inputType === "mouse";
-            var hide = function (event) {
-                state.event = event;
-                // const index = getIndex(event);
-                var index = $$.getDataIndexFromEvent(event);
-                var noIndex = isUndefined(index);
-                if (isMouse_1 || noIndex) {
-                    $$.hideTooltip();
-                    focusOnly ?
-                        $$.hideCircleFocus() :
-                        $$.unexpandCircles();
-                    if (isMouse_1) {
-                        $$.setOverOut(false, index);
-                    }
-                    else if (noIndex) {
-                        $$.callOverOutForTouch();
-                    }
+        var isMouse = inputType === "mouse";
+        var hide = function (event) {
+            state.event = event;
+            // const index = getIndex(event);
+            var index = $$.getDataIndexFromEvent(event);
+            var noIndex = isUndefined(index);
+            if (isMouse || noIndex) {
+                $$.hideTooltip();
+                focusOnly ?
+                    $$.hideCircleFocus() :
+                    $$.unexpandCircles();
+                if (isMouse) {
+                    $$.setOverOut(false, index);
                 }
-            };
-            radar.axes.selectAll("text")
-                .on(isMouse_1 ? "mouseover " : "touchstart", function (event) {
-                if (transiting) { // skip while transiting
-                    return;
+                else if (noIndex) {
+                    $$.callOverOutForTouch();
                 }
-                state.event = event;
-                var index = $$.getDataIndexFromEvent(event);
-                $$.selectRectForSingle(svg.node(), index);
-                isMouse_1 ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
-            })
-                .on("mouseout", isMouse_1 ? hide : null);
-            if (!isMouse_1) {
-                svg.on("touchstart", hide);
             }
+        };
+        radar.axes
+            .on(isMouse ? "mouseover " : "touchstart", function (event) {
+            if (transiting) { // skip while transiting
+                return;
+            }
+            state.event = event;
+            var index = $$.getDataIndexFromEvent(event);
+            $$.selectRectForSingle(svg.node(), index);
+            isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
+        })
+            .on("mouseout", isMouse ? hide : null);
+        if (!isMouse) {
+            svg.on("touchstart", hide);
         }
     },
     updateRadarShape: function () {
@@ -23076,7 +23075,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231201004623
+ * @version 3.10.3-nightly-20231202004611
  */
 var bb = {
     /**
@@ -23086,7 +23085,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20231201004623",
+    version: "3.10.3-nightly-20231202004611",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
