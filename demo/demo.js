@@ -1663,7 +1663,7 @@ var demos = {
 					x: {
 						type: "category",
 						tick: {
-							rotate: 75,
+							rotate: -70,
 							multiline: false,
 							tooltip: true
 						}
