@@ -4,6 +4,7 @@
  */
 import {document} from "../../module/browser";
 import {$AXIS, $SUBCHART} from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {ceil10, capitalize, isNumber, isEmpty, isString, isUndefined} from "../../module/util";
 
 export default {
@@ -389,8 +390,9 @@ export default {
 		if ($$.hasArcType()) {
 			const hasGauge = $$.hasType("gauge");
 			const isLegendRight = config.legend_show && state.isLegendRight;
+			const textWidth = (state.hasRadar && $$.cache.get(KEY.radarTextWidth)) ?? 0;
 
-			state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
+			state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0) - textWidth;
 			state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
 
 			if (hasGauge && !config.gauge_fullCircle) {

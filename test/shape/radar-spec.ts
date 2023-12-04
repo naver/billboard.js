@@ -389,4 +389,36 @@ describe("SHAPE RADAR", () => {
 			}).size()).to.be.equal(chart.data().length);
 		});
 	});
+
+	describe("size & position", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Data A", "Data B", "Data C", "Data D", "Data E"],
+						["data1", 330, 350, 200, 380, 150],
+						["data2", 130, 100, null, 200, 80],
+						["data3", 230, 153, 85, 300, 250]
+					],
+					type: "radar"
+				}
+			};
+		});
+
+		it("should resize with axes texts", done => {
+			const {$el: {radar}, state} = chart.internal;
+			const yPos = util.parseNum(radar.attr("transform").replace(/[^,]+/, ""));
+
+			// when
+			chart.resize({width: 300});
+
+			setTimeout(() => {
+				expect(util.parseNum(radar.attr("transform").replace(/[^,]+/, ""))).to.be.greaterThan(yPos);
+				expect(radar.node().getBoundingClientRect().width).to.be.below(state.width);
+
+				done();
+			}, 300);
+		});
+	});
 });

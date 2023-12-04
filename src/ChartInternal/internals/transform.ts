@@ -48,10 +48,10 @@ export default {
 			x = state.arcWidth / 2;
 			y = state.arcHeight / 2;
 		} else if (target === "radar") {
-			const [width] = $$.getRadarSize();
+			const [width, height] = $$.getRadarSize();
 
 			x = state.width / 2 - width;
-			y = asHalfPixel(state.margin.top);
+			y = state.height / 2 - height;
 		}
 
 		return `translate(${x}, ${y})`;

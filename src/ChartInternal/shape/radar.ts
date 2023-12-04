@@ -5,7 +5,7 @@
 import {select as d3Select} from "d3-selection";
 import {KEY} from "../../module/Cache";
 import {$AXIS, $COMMON, $LEVEL, $RADAR, $SHAPE, $TEXT} from "../../config/classes";
-import {getMinMax, getRange, isDefined, isEmpty, isNumber, isUndefined, setTextValue, toArray} from "../../module/util";
+import {getMinMax, getPathBox, getRange, isDefined, isEmpty, isNumber, isUndefined, setTextValue, toArray} from "../../module/util";
 
 /**
  * Get the position value
@@ -27,7 +27,8 @@ function getPosition(isClockwise: boolean, type: "x" | "y", edge: number, pos: n
 }
 
 // cache key
-const cacheKey = KEY.radarPoints;
+const cacheKeyPoints = KEY.radarPoints;
+const cacheKeyTextWidth = KEY.radarTextWidth;
 
 export default {
 	initRadar(): void {
@@ -52,7 +53,13 @@ export default {
 
 			current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
 
-			config.interaction_enabled && config.radar_axis_text_show && $$.bindRadarEvent();
+			if (config.radar_axis_text_show) {
+				config.interaction_enabled && $$.bindRadarEvent();
+
+				// it needs to calculate dimension at the initialization
+				$$.updateRadarLevel();
+				$$.updateRadarAxes();
+			}
 		}
 	},
 
@@ -60,7 +67,7 @@ export default {
 		const $$ = this;
 		const {config, state: {arcWidth, arcHeight}} = $$;
 		const padding = config.axis_x_categories.length < 4 ? -20 : 10;
-		const size = (Math.min(arcWidth, arcHeight) - padding) / 2;
+		const size = ((Math.min(arcWidth, arcHeight) - padding) / 2);
 
 		return [size, size];
 	},
@@ -104,7 +111,7 @@ export default {
 		const targets = $$.data.targets;
 
 		const [width, height] = $$.getRadarSize();
-		const points = $$.cache.get(cacheKey) || {};
+		const points = $$.cache.get(cacheKeyPoints) || {};
 		const size = points._size;
 
 		// recalculate position only when the previous dimension has been changed
@@ -116,7 +123,7 @@ export default {
 			});
 
 			points._size = {width, height};
-			$$.cache.add(cacheKey, points);
+			$$.cache.add(cacheKeyPoints, points);
 		}
 	},
 
@@ -138,7 +145,7 @@ export default {
 	},
 
 	generateGetRadarPoints(): Function {
-		const points = this.cache.get(cacheKey);
+		const points = this.cache.get(cacheKeyPoints);
 
 		return (d, i) => {
 			const point = points[d.id][i];
@@ -252,6 +259,7 @@ export default {
 		// axis text
 		if (config.radar_axis_text_show) {
 			const {x = 0, y = 0} = config.radar_axis_text_position;
+			const textWidth = $$.cache.get(cacheKeyTextWidth) || 0;
 
 			axis.select("text")
 				.style("text-anchor", "middle")
@@ -290,6 +298,14 @@ export default {
 
 					return `translate(${posX} ${posY})`;
 				});
+
+			if (!textWidth) {
+				const widths = [radar.axes, radar.levels].map(v => getPathBox(v.node()).width);
+
+				if (widths.every(v => v > 0)) {
+					$$.cache.add(cacheKeyTextWidth, widths[0] - widths[1]);
+				}
+			}
 		}
 	},
 
@@ -345,7 +361,7 @@ export default {
 	updateRadarShape(): void {
 		const $$ = this;
 		const targets = $$.data.targets.filter(d => $$.isRadarType(d));
-		const points = $$.cache.get(cacheKey);
+		const points = $$.cache.get(cacheKeyPoints);
 
 		const areas = $$.$el.radar.shapes
 			.selectAll("polygon")
@@ -374,7 +390,7 @@ export default {
 	 * @private
 	 */
 	radarCircleX(d): number {
-		return this.cache.get(cacheKey)[d.id][d.index][0];
+		return this.cache.get(cacheKeyPoints)[d.id][d.index][0];
 	},
 
 	/**
@@ -384,6 +400,6 @@ export default {
 	 * @private
 	 */
 	radarCircleY(d): number {
-		return this.cache.get(cacheKey)[d.id][d.index][1];
+		return this.cache.get(cacheKeyPoints)[d.id][d.index][1];
 	}
 };
