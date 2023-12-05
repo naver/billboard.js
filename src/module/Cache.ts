@@ -18,6 +18,7 @@ export const KEY = {
 	dataTotalPerIndex: "$totalPerIndex",
 	legendItemTextBox: "legendItemTextBox",
 	radarPoints: "$radarPoints",
+	radarTextWidth: "$radarTextWidth",
 	setOverOut: "setOverOut",
 	callOverOutForTouch: "callOverOutForTouch",
 	textRect: "textRect"
