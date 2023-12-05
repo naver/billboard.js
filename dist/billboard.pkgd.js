@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20231202004611
+ * @version 3.10.3-nightly-20231205004609
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -26860,6 +26860,7 @@ const KEY = {
   dataTotalPerIndex: "$totalPerIndex",
   legendItemTextBox: "legendItemTextBox",
   radarPoints: "$radarPoints",
+  radarTextWidth: "$radarTextWidth",
   setOverOut: "setOverOut",
   callOverOutForTouch: "callOverOutForTouch",
   textRect: "textRect"
@@ -34651,6 +34652,7 @@ function getGroupedDataPointsFn(d) {
 
 
 
+
 /* harmony default export */ var internals_size = ({
   /**
    * Update container size
@@ -34973,9 +34975,11 @@ function getGroupedDataPointsFn(d) {
 
     // for arc
     if ($$.hasArcType()) {
+      var _ref;
       const hasGauge = $$.hasType("gauge"),
-        isLegendRight = config.legend_show && state.isLegendRight;
-      state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
+        isLegendRight = config.legend_show && state.isLegendRight,
+        textWidth = (_ref = state.hasRadar && $$.cache.get(KEY.radarTextWidth)) != null ? _ref : 0;
+      state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0) - textWidth;
       state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
       if (hasGauge && !config.gauge_fullCircle) {
         state.arcHeight += state.height - $$.getPaddingBottomForGauge();
@@ -36268,9 +36272,10 @@ function getTextXPos(pos, width) {
       y = state.arcHeight / 2;
     } else if (target === "radar") {
       const _$$$getRadarSize = $$.getRadarSize(),
-        width = _$$$getRadarSize[0];
+        width = _$$$getRadarSize[0],
+        height = _$$$getRadarSize[1];
       x = state.width / 2 - width;
-      y = asHalfPixel(state.margin.top);
+      y = state.height / 2 - height;
     }
     return "translate(" + x + ", " + y + ")";
   },
@@ -48430,7 +48435,8 @@ function getPosition(isClockwise, type, edge, pos, range, ratio) {
 }
 
 // cache key
-const cacheKey = KEY.radarPoints;
+const cacheKeyPoints = KEY.radarPoints,
+  cacheKeyTextWidth = KEY.radarTextWidth;
 /* harmony default export */ var radar = ({
   initRadar: function initRadar() {
     const $$ = this,
@@ -48449,7 +48455,13 @@ const cacheKey = KEY.radarPoints;
       // shapes
       $el.radar.shapes = $el.radar.append("g").attr("class", $SHAPE.shapes);
       current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
-      config.interaction_enabled && config.radar_axis_text_show && $$.bindRadarEvent();
+      if (config.radar_axis_text_show) {
+        config.interaction_enabled && $$.bindRadarEvent();
+
+        // it needs to calculate dimension at the initialization
+        $$.updateRadarLevel();
+        $$.updateRadarAxes();
+      }
     }
   },
   getRadarSize: function getRadarSize() {
@@ -48500,7 +48512,7 @@ const cacheKey = KEY.radarPoints;
       _$$$getRadarSize2 = $$.getRadarSize(),
       width = _$$$getRadarSize2[0],
       height = _$$$getRadarSize2[1],
-      points = $$.cache.get(cacheKey) || {},
+      points = $$.cache.get(cacheKeyPoints) || {},
       size = points._size;
     // recalculate position only when the previous dimension has been changed
     if (!size || size.width !== width && size.height !== height) {
@@ -48516,7 +48528,7 @@ const cacheKey = KEY.radarPoints;
         width: width,
         height: height
       };
-      $$.cache.add(cacheKey, points);
+      $$.cache.add(cacheKeyPoints, points);
     }
   },
   redrawRadar: function redrawRadar() {
@@ -48537,7 +48549,7 @@ const cacheKey = KEY.radarPoints;
   },
   generateGetRadarPoints: function generateGetRadarPoints() {
     var _this5 = this;
-    const points = this.cache.get(cacheKey);
+    const points = this.cache.get(cacheKeyPoints);
     return function (d, i) {
       _newArrowCheck(this, _this5);
       const point = points[d.id][i];
@@ -48651,7 +48663,8 @@ const cacheKey = KEY.radarPoints;
         _config$radar_axis_te2 = _config$radar_axis_te.x,
         x = _config$radar_axis_te2 === void 0 ? 0 : _config$radar_axis_te2,
         _config$radar_axis_te3 = _config$radar_axis_te.y,
-        y = _config$radar_axis_te3 === void 0 ? 0 : _config$radar_axis_te3;
+        y = _config$radar_axis_te3 === void 0 ? 0 : _config$radar_axis_te3,
+        textWidth = $$.cache.get(cacheKeyTextWidth) || 0;
       axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
         _newArrowCheck(this, _this8);
         selection.each(function (d) {
@@ -48685,6 +48698,18 @@ const cacheKey = KEY.radarPoints;
         }
         return "translate(" + posX + " " + posY + ")";
       });
+      if (!textWidth) {
+        const widths = [radar.axes, radar.levels].map(function (v) {
+          _newArrowCheck(this, _this8);
+          return getPathBox(v.node()).width;
+        }.bind(this));
+        if (widths.every(function (v) {
+          _newArrowCheck(this, _this8);
+          return v > 0;
+        }.bind(this))) {
+          $$.cache.add(cacheKeyTextWidth, widths[0] - widths[1]);
+        }
+      }
     }
   },
   bindRadarEvent: function bindRadarEvent() {
@@ -48738,7 +48763,7 @@ const cacheKey = KEY.radarPoints;
         _newArrowCheck(this, _this10);
         return $$.isRadarType(d);
       }.bind(this)),
-      points = $$.cache.get(cacheKey),
+      points = $$.cache.get(cacheKeyPoints),
       areas = $$.$el.radar.shapes.selectAll("polygon").data(targets),
       areasEnter = areas.enter().append("g").attr("class", $$.getChartClass("Radar"));
     $$.$T(areas.exit()).remove();
@@ -48755,7 +48780,7 @@ const cacheKey = KEY.radarPoints;
    * @private
    */
   radarCircleX: function radarCircleX(d) {
-    return this.cache.get(cacheKey)[d.id][d.index][0];
+    return this.cache.get(cacheKeyPoints)[d.id][d.index][0];
   },
   /**
    * Get data point y coordinate
@@ -48764,7 +48789,7 @@ const cacheKey = KEY.radarPoints;
    * @private
    */
   radarCircleY: function radarCircleY(d) {
-    return this.cache.get(cacheKey)[d.id][d.index][1];
+    return this.cache.get(cacheKeyPoints)[d.id][d.index][1];
   }
 });
 ;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/round.js
@@ -53512,7 +53537,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231202004611
+ * @version 3.10.3-nightly-20231205004609
  */
 const bb = {
   /**
@@ -53522,7 +53547,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20231202004611",
+  version: "3.10.3-nightly-20231205004609",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

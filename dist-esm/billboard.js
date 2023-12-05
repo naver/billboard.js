@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20231202004611
+ * @version 3.10.3-nightly-20231205004609
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3226,6 +3226,7 @@ var KEY = {
     dataTotalPerIndex: "$totalPerIndex",
     legendItemTextBox: "legendItemTextBox",
     radarPoints: "$radarPoints",
+    radarTextWidth: "$radarTextWidth",
     setOverOut: "setOverOut",
     callOverOutForTouch: "callOverOutForTouch",
     textRect: "textRect"
@@ -7692,7 +7693,7 @@ var size = {
      * @private
      */
     updateSizes: function (isInit) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         var $$ = this;
         var config = $$.config, state = $$.state, legend = $$.$el.legend;
         var isRotated = config.axis_rotated;
@@ -7775,12 +7776,13 @@ var size = {
         if ($$.hasArcType()) {
             var hasGauge = $$.hasType("gauge");
             var isLegendRight = config.legend_show && state.isLegendRight;
-            state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
+            var textWidth = (_c = (state.hasRadar && $$.cache.get(KEY.radarTextWidth))) !== null && _c !== void 0 ? _c : 0;
+            state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0) - textWidth;
             state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
             if (hasGauge && !config.gauge_fullCircle) {
                 state.arcHeight += state.height - $$.getPaddingBottomForGauge();
             }
-            (_c = $$.updateRadius) === null || _c === void 0 ? void 0 : _c.call($$);
+            (_d = $$.updateRadius) === null || _d === void 0 ? void 0 : _d.call($$);
         }
         if (state.isLegendRight && isNonAxis) {
             state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
@@ -8982,9 +8984,9 @@ var transform = {
             y = state.arcHeight / 2;
         }
         else if (target === "radar") {
-            var width = $$.getRadarSize()[0];
+            var _a = $$.getRadarSize(), width = _a[0], height = _a[1];
             x = state.width / 2 - width;
-            y = asHalfPixel(state.margin.top);
+            y = state.height / 2 - height;
         }
         return "translate(".concat(x, ", ").concat(y, ")");
     },
@@ -19558,7 +19560,8 @@ function getPosition(isClockwise, type, edge, pos, range, ratio) {
     return range * (1 - ratio * func(index * r / edge));
 }
 // cache key
-var cacheKey = KEY.radarPoints;
+var cacheKeyPoints = KEY.radarPoints;
+var cacheKeyTextWidth = KEY.radarTextWidth;
 var shapeRadar = {
     initRadar: function () {
         var $$ = this;
@@ -19576,14 +19579,19 @@ var shapeRadar = {
             $el.radar.shapes = $el.radar.append("g")
                 .attr("class", $SHAPE.shapes);
             current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
-            config.interaction_enabled && config.radar_axis_text_show && $$.bindRadarEvent();
+            if (config.radar_axis_text_show) {
+                config.interaction_enabled && $$.bindRadarEvent();
+                // it needs to calculate dimension at the initialization
+                $$.updateRadarLevel();
+                $$.updateRadarAxes();
+            }
         }
     },
     getRadarSize: function () {
         var $$ = this;
         var config = $$.config, _a = $$.state, arcWidth = _a.arcWidth, arcHeight = _a.arcHeight;
         var padding = config.axis_x_categories.length < 4 ? -20 : 10;
-        var size = (Math.min(arcWidth, arcHeight) - padding) / 2;
+        var size = ((Math.min(arcWidth, arcHeight) - padding) / 2);
         return [size, size];
     },
     updateTargetsForRadar: function (targets) {
@@ -19611,7 +19619,7 @@ var shapeRadar = {
         var $$ = this;
         var targets = $$.data.targets;
         var _a = $$.getRadarSize(), width = _a[0], height = _a[1];
-        var points = $$.cache.get(cacheKey) || {};
+        var points = $$.cache.get(cacheKeyPoints) || {};
         var size = points._size;
         // recalculate position only when the previous dimension has been changed
         if (!size || (size.width !== width && size.height !== height)) {
@@ -19619,7 +19627,7 @@ var shapeRadar = {
                 points[d.id] = d.values.map(function (v, i) { return ($$.getRadarPosition(["x", "y"], i, undefined, $$.getRatio("radar", v))); });
             });
             points._size = { width: width, height: height };
-            $$.cache.add(cacheKey, points);
+            $$.cache.add(cacheKeyPoints, points);
         }
     },
     redrawRadar: function () {
@@ -19637,7 +19645,7 @@ var shapeRadar = {
         }
     },
     generateGetRadarPoints: function () {
-        var points = this.cache.get(cacheKey);
+        var points = this.cache.get(cacheKeyPoints);
         return function (d, i) {
             var point = points[d.id][i];
             return [
@@ -19724,6 +19732,7 @@ var shapeRadar = {
         // axis text
         if (config.radar_axis_text_show) {
             var _b = config.radar_axis_text_position, _c = _b.x, x_1 = _c === void 0 ? 0 : _c, _d = _b.y, y_1 = _d === void 0 ? 0 : _d;
+            var textWidth = $$.cache.get(cacheKeyTextWidth) || 0;
             axis.select("text")
                 .style("text-anchor", "middle")
                 .attr("dy", ".5em")
@@ -19758,6 +19767,12 @@ var shapeRadar = {
                 }
                 return "translate(".concat(posX, " ").concat(posY, ")");
             });
+            if (!textWidth) {
+                var widths = [radar.axes, radar.levels].map(function (v) { return getPathBox(v.node()).width; });
+                if (widths.every(function (v) { return v > 0; })) {
+                    $$.cache.add(cacheKeyTextWidth, widths[0] - widths[1]);
+                }
+            }
         }
     },
     bindRadarEvent: function () {
@@ -19802,7 +19817,7 @@ var shapeRadar = {
     updateRadarShape: function () {
         var $$ = this;
         var targets = $$.data.targets.filter(function (d) { return $$.isRadarType(d); });
-        var points = $$.cache.get(cacheKey);
+        var points = $$.cache.get(cacheKeyPoints);
         var areas = $$.$el.radar.shapes
             .selectAll("polygon")
             .data(targets);
@@ -19825,7 +19840,7 @@ var shapeRadar = {
      * @private
      */
     radarCircleX: function (d) {
-        return this.cache.get(cacheKey)[d.id][d.index][0];
+        return this.cache.get(cacheKeyPoints)[d.id][d.index][0];
     },
     /**
      * Get data point y coordinate
@@ -19834,7 +19849,7 @@ var shapeRadar = {
      * @private
      */
     radarCircleY: function (d) {
-        return this.cache.get(cacheKey)[d.id][d.index][1];
+        return this.cache.get(cacheKeyPoints)[d.id][d.index][1];
     }
 };
 
@@ -23075,7 +23090,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231202004611
+ * @version 3.10.3-nightly-20231205004609
  */
 var bb = {
     /**
@@ -23085,7 +23100,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20231202004611",
+    version: "3.10.3-nightly-20231205004609",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
