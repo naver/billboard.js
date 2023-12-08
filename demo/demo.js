@@ -1867,6 +1867,103 @@ var demos = {
 				}
 			}
 		},
+		XAxisTickInner: [
+			{
+				options: {
+					data: {
+						x: "x",
+						xFormat: "%Y",
+						columns: [
+							["x", "2020", "2021", "2022", "2023", "2024"],
+							["data1", 30, 200, 100, 400, 150],
+							["data2", 130, 340, 200, 500, 250]
+						],
+						type: "line"
+				  },
+				  axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d %H:%M:%S"
+						}
+					}, 
+					y: {
+						show: false
+					}
+				  }
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "axis.x.tick.text.inner = true",
+						padding: {
+							top: 20
+						}
+					},
+					data: {
+						x: "x",
+						xFormat: "%Y",
+						columns: [
+							["x", "2020", "2021", "2022", "2023", "2024"],
+							["data1", 30, 200, 100, 400, 150],
+							["data2", 130, 340, 200, 500, 250]
+						],
+						type: "line"
+				  },
+				  axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							text: {
+								inner: true
+							},
+							format: "%Y-%m-%d %H:%M:%S"
+						}
+					}, 
+					y: {
+						show: false
+					}
+				  }
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "axis.x.tick.text.inner.last = true",
+						padding: {
+							top: 20
+						}
+					},
+					data: {
+						x: "x",
+						xFormat: "%Y",
+						columns: [
+							["x", "2020", "2021", "2022", "2023", "2024"],
+							["data1", 30, 200, 100, 400, 150],
+							["data2", 130, 340, 200, 500, 250]
+						],
+						type: "line"
+				  },
+				  axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							text: {
+								inner: {
+									last: true
+								}
+							},
+							format: "%Y-%m-%d %H:%M:%S"
+						}
+					}, 
+					y: {
+						show: false
+					}
+				  }
+				}
+			}
+		],
 		XAxisTickMultiline: {
 			options: {
 				data: {
