@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20231206004623
+ * @version 3.10.3-nightly-20231209004605
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -12595,6 +12595,7 @@ var AxisRenderer = /** @class */ (function () {
             var r2 = r / (orient === "bottom" ? 15 : 23);
             return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
         };
+        var _b = this.params.owner.config, isRotated = _b.axis_rotated, inner = _b.axis_x_tick_text_inner;
         switch (orient) {
             case "bottom":
                 lineUpdate
@@ -12605,6 +12606,16 @@ var AxisRenderer = /** @class */ (function () {
                     .attr("x", 0)
                     .attr("y", yForText(rotate))
                     .style("text-anchor", textAnchorForText(rotate))
+                    .style("text-anchor", function (d, i, _a) {
+                    var length = _a.length;
+                    if (!isRotated && i === 0 && (inner === true || inner.first)) {
+                        return "start";
+                    }
+                    else if (!isRotated && i === length - 1 && (inner === true || inner.last)) {
+                        return "end";
+                    }
+                    return textAnchorForText(rotate);
+                })
                     .attr("transform", textTransform(rotate));
                 break;
             case "top":
@@ -15490,6 +15501,31 @@ var x = {
      * }
      */
     axis_x_tick_text_show: true,
+    /**
+     * Set the first/last axis tick text to be positioned inside of the chart on non-rotated axis.
+     * @name axis․x․tick․text․inner
+     * @memberof Options
+     * @type {boolean|object}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickInner)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       text: {
+     *          inner: true,
+     *
+     *          // or specify each position of the first and last tick text
+     *          inner: {
+     *       	   first: true,
+     *       	   last: true
+     *       	}
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_text_inner: false,
     /**
      * Set the x Axis tick text's position relatively its original position
      * @name axis․x․tick․text․position
@@ -23090,7 +23126,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231206004623
+ * @version 3.10.3-nightly-20231209004605
  */
 var bb = {
     /**
@@ -23100,7 +23136,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20231206004623",
+    version: "3.10.3-nightly-20231209004605",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

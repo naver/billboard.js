@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20231206004623
+ * @version 3.10.3-nightly-20231209004605
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -40555,11 +40555,23 @@ let AxisRenderer = /*#__PURE__*/function () {
         _newArrowCheck(this, _this4);
         const r2 = r / (orient === "bottom" ? 15 : 23);
         return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
-      }.bind(this);
+      }.bind(this),
+      _this$params$owner$co = this.params.owner.config,
+      isRotated = _this$params$owner$co.axis_rotated,
+      inner = _this$params$owner$co.axis_x_tick_text_inner;
     switch (orient) {
       case "bottom":
         lineUpdate.attr("x1", tickPos.x).attr("x2", tickPos.x).attr("y2", this.getTickSize.bind(this));
-        textUpdate.attr("x", 0).attr("y", yForText(rotate)).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate));
+        textUpdate.attr("x", 0).attr("y", yForText(rotate)).style("text-anchor", textAnchorForText(rotate)).style("text-anchor", function (d, i, _ref) {
+          let length = _ref.length;
+          _newArrowCheck(this, _this4);
+          if (!isRotated && i === 0 && (inner === !0 || inner.first)) {
+            return "start";
+          } else if (!isRotated && i === length - 1 && (inner === !0 || inner.last)) {
+            return "end";
+          }
+          return textAnchorForText(rotate);
+        }.bind(this)).attr("transform", textTransform(rotate));
         break;
       case "top":
         lineUpdate.attr("x2", 0).attr("y2", -innerTickSize);
@@ -43615,6 +43627,31 @@ function smoothLines(el, type) {
    * }
    */
   axis_x_tick_text_show: !0,
+  /**
+   * Set the first/last axis tick text to be positioned inside of the chart on non-rotated axis.
+   * @name axis․x․tick․text․inner
+   * @memberof Options
+   * @type {boolean|object}
+   * @default false
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickInner)
+   * @example
+   * axis: {
+   *   x: {
+   *     tick: {
+   *       text: {
+   *          inner: true,
+   *
+   *          // or specify each position of the first and last tick text
+   *          inner: {
+   *       	   first: true,
+   *       	   last: true
+   *       	}
+   *       }
+   *     }
+   *   }
+   * }
+   */
+  axis_x_tick_text_inner: !1,
   /**
    * Set the x Axis tick text's position relatively its original position
    * @name axis․x․tick․text․position
@@ -53655,7 +53692,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231206004623
+ * @version 3.10.3-nightly-20231209004605
  */
 const bb = {
   /**
@@ -53665,7 +53702,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20231206004623",
+  version: "3.10.3-nightly-20231209004605",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
