@@ -201,9 +201,9 @@ describe("API export", () => {
 
 			// pattern for local: preserveFontStyle=true
 			[
-				"RIYJUAB6NhIiLgAtL/ub4XqgdKfecox9OPcoQB0OTv0bSIB7e3qA0Y2gY",
-				"AgBISAEhIAQKGoCJp0CLmrQKTTueAADAfQE8BWAp93Lr/UvPgn5IaAPIOm3z",
-				"KxX72Ifp34GYBSAiQB6A9ArZNWuoLwQwFr3EfDLeRCA2wB4CMCu7srkyBgBqFcq"
+				"fvvffeIxM58XrgmUMC0SNAARi9nDKiAAjwhhcARJoIHYFUKvVBAE8WOPZ7AO",
+				"bMh8hbpc48ut3UqlbpHVTcVEV1rrbX2nj17NreBKRce69VEQHtib0KH9wfMuHmnNRmtc",
+				"FIFP52aPiu66mVdn4sl1yFwBoCIgBLrzXo5SlXNQwb9Cn1PKYRZRvpGmo"
 			],
 
 			// pattern for CI

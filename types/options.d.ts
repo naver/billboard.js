@@ -747,6 +747,14 @@ export interface SubchartOptions {
 					 * Show or hide x axis tick text.
 					 */
 					show?: boolean;
+
+					/**
+					 * 	 * Set the first/last axis tick text to be positioned inside of the chart on non-rotated axis.
+					 */
+					inner?: boolean | {
+						first?: boolean;
+						last?: boolean;
+					}
 				};
 			};
 		};

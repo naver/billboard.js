@@ -313,6 +313,11 @@ export default class AxisRenderer {
 			return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
 		};
 
+		const {config: {
+			axis_rotated: isRotated,
+			axis_x_tick_text_inner: inner
+		}} = this.params.owner;
+
 		switch (orient) {
 			case "bottom":
 				lineUpdate
@@ -324,6 +329,15 @@ export default class AxisRenderer {
 					.attr("x", 0)
 					.attr("y", yForText(rotate))
 					.style("text-anchor", textAnchorForText(rotate))
+					.style("text-anchor", (d, i, {length}) => {
+						if (!isRotated && i === 0 && (inner === true || inner.first)) {
+							return "start";
+						} else if (!isRotated && i === length - 1 && (inner === true || inner.last)) {
+							return "end";
+						}
+
+						return textAnchorForText(rotate);
+					})
 					.attr("transform", textTransform(rotate));
 				break;
 			case "top":
