@@ -3820,9 +3820,9 @@ before-after-hook@^2.2.0:
   integrity sha512-NzUnlZexiaH/46WDhANlyR2bXRopNg4F/zuSA3OpZnllCUgRaOF2znDioDWrmbNVsuZk6l9pMquQB38cfBZwkQ==
 
 better-docs@^2.7.2:
-  version "2.7.2"
-  resolved "https://registry.yarnpkg.com/better-docs/-/better-docs-2.7.2.tgz#fe0b54fca8a904fe050586aa819263195e5eb948"
-  integrity sha512-aIOsGhhcTIDAJfBTABIPDs3q98dfNF85yUwmKShXb3ZG6e7s+ojBePiDqvFwy/MpnjYwuSbuzkbEv4iPWcSuTQ==
+  version "2.7.3"
+  resolved "https://registry.yarnpkg.com/better-docs/-/better-docs-2.7.3.tgz#bdeec1b24514bc22562af2a277c2cf527abbe726"
+  integrity sha512-OEk9e7RQUQbo1DmVo0mdsALZ+mT0SwIen7/DGnN4xKNktXKgz1j7+KQ2pObNHHVSFGu8YMQW/Ig1v6eiTkdnbw==
   dependencies:
     brace "^0.11.1"
     react-ace "^9.5.0"
