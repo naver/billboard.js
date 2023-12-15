@@ -831,6 +831,172 @@ describe("API load", function() {
 		});
 	});
 
+	describe("Append data loading with zoom-in state", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150],
+					],
+					type: "line"
+				},
+				zoom: {
+					enabled: true
+				},
+				transition: {
+					duration: 0
+				}
+			};
+		});
+
+		it("indexed axis type", done => {
+			const {$el, scale} = chart.internal;
+			const zoomDomain = [1, 2];
+			const orgDomain = scale.x.orgDomain().map(Math.abs);
+
+			// when
+			chart.zoom(zoomDomain);
+
+			chart.load({
+				columns: [['sample', 130, 150]],
+				append: true,
+				done() {
+					// zoom state shoud persist
+					expect(this.zoom()).to.deep.equal(zoomDomain);
+					
+					// zoom domain range should be increased
+					expect(
+						scale.x.orgDomain()
+							.map(Math.abs)
+							.every((v, i) => v > orgDomain[i])
+					).to.be.true;
+
+					// when
+					chart.unzoom();
+					
+					const values = chart.data.values("sample");
+					const ticks = $el.axis.x.selectAll(".tick:first-of-type, .tick:last-of-type")
+						.nodes().map(v => +v.textContent);
+
+					expect(ticks).to.be.deep.equal([0, values.length - 1]);
+
+					done();
+				}
+			});
+		});
+		
+		it("set options: axis.x.type='category", () => {
+			args.axis = {
+				x: {
+					type: "category"
+				}
+			};
+		});
+
+		it("category axis type", done => {
+			const {$el, scale} = chart.internal;
+			const zoomDomain = [1, 2];
+			const orgDomain = scale.x.orgDomain().map(Math.abs);
+
+			// when
+			chart.zoom(zoomDomain);
+
+			chart.load({
+				columns: [['sample', 130, 150]],
+				append: true,
+				done() {
+					// zoom state shoud persist
+					expect(this.zoom()).to.deep.equal(zoomDomain);
+
+					// zoom domain range should be increased
+					expect(
+						scale.x.orgDomain()
+							.map(Math.abs)
+							.some((v, i) => v > orgDomain[i])
+					).to.be.true;
+
+					// when
+					chart.unzoom();
+					
+					const values = chart.data.values("sample");
+					const ticks = $el.axis.x.selectAll(".tick:first-of-type, .tick:last-of-type")
+						.nodes().map(v => +v.textContent);
+
+					expect(ticks).to.be.deep.equal([0, values.length - 1]);
+
+					done();
+				}
+			});
+		});
+
+		it("set options: axis.x.type='timeseries", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2023-10-01", "2023-10-02", "2023-10-03", "2023-10-04", "2023-10-05"],
+						['sample', 30, 200, 100, 400, 150],
+					],
+					type: "line",
+				},
+				zoom: {
+					enabled: true,
+				},
+				transition: {
+					duration: 0,
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				}
+			};
+		});
+
+		it("timeseires axis type", done => {
+			const {$el, scale} = chart.internal;
+			const orgDomain = scale.x.orgDomain().map(Number);
+			let zoomDomain = ["2023-10-2", "2023-10-3"];
+
+			// when
+			chart.zoom(zoomDomain);
+
+			zoomDomain = scale.zoom.domain().map(Number);
+
+			chart.load({
+				columns: [
+					["x", "2023-10-06", "2023-10-07"],
+					['sample', 130, 150]
+				],
+				append: true,
+				done() {
+					// zoom state shoud persist
+					expect(scale.zoom.domain().map(Number)).to.deep.equal(zoomDomain);
+
+					// zoom domain range should be increased
+					expect(
+						scale.x.orgDomain()
+							.map(Number)
+							.some((v, i) => v > orgDomain[i])
+					).to.be.true;
+
+					// when
+					chart.unzoom();
+					
+					const values = chart.data.values("sample");
+					const ticks = $el.axis.x.selectAll(".tick:first-of-type, .tick:last-of-type")
+						.nodes().map(v => +new Date(v.textContent));
+
+					expect(ticks).to.be.deep.equal(["2023-10-01", "2023-10-07"].map(v => +new Date(v)));
+					done();
+				}
+			});
+		});
+	});
+
 	describe("Multiple consecutive load call", () => {
 		before(() => {
 			args = {

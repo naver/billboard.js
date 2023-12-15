@@ -39,8 +39,8 @@ export function getScale(type = "linear", min = 0, max = 1): any {
 export default {
 	/**
 	 * Get x Axis scale function
-	 * @param {number} min Min value
-	 * @param {number} max Max value
+	 * @param {number} min Min range value
+	 * @param {number} max Max range value
 	 * @param {Array} domain Domain value
 	 * @param {Function} offset The offset getter to be sum
 	 * @returns {Function} scale
@@ -48,7 +48,7 @@ export default {
 	 */
 	getXScale(min: number, max: number, domain: number[], offset: Function) {
 		const $$ = this;
-		const scale = $$.scale.zoom || getScale($$.axis.getAxisType("x"), min, max);
+		const scale = ($$.state.loading !== "append" && $$.scale.zoom) || getScale($$.axis.getAxisType("x"), min, max);
 
 		return $$.getCustomizedXScale(
 			domain ? scale.domain(domain) : scale,
