@@ -1381,7 +1381,7 @@ describe("AXIS", function() {
 					expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
 				});
 
-				compare(15, 45, 56, 71)
+				compare(15, 43, 53, 10)
 			});
 
 			it("update args", () => {
@@ -1408,13 +1408,13 @@ describe("AXIS", function() {
 						expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
 					});
 
-				compare(15, 45, 56, 71)
+				compare(15, 45, 56, 18)
 			});
 
 			it("should not resize x axis when all data hidden", () => {
 				chart.hide("data1");
 
-				compare(args.axis.x.tick.rotate, 6, 55, 71);
+				compare(args.axis.x.tick.rotate, 6, 55, 18);
 
 				chart.show("data1");
 			});
@@ -1454,7 +1454,7 @@ describe("AXIS", function() {
 				});
 
 				it("should be above 0 if rotated", () => {
-					compareOverflow(71);
+					compareOverflow(18);
 				});
 
 				it("update config", () => {
@@ -1470,7 +1470,7 @@ describe("AXIS", function() {
 				});
 
 				it("should be above defaultPadding if padding left is set", () => {
-					compareOverflow( 80);
+					compareOverflow( 27);
 				});
 
 				it("update config", () => {

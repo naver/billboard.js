@@ -690,10 +690,12 @@ class Axis {
 			!config.axis_x_tick_multiline &&
 			positiveRotation
 		) {
+			const y2AxisWidth = (state.orgConfig.axis?.y2?.show && state.current.maxTickSize.y2.width) || 0;
+			const legendWidth = (state.isLegendRight && state.legendItemWidth) || 0;
 			const widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingByDirection("left");
 			const maxOverflow = this.getXAxisTickMaxOverflow(
 				xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding
-			);
+			) - y2AxisWidth - legendWidth;
 			const xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
 				defaultPadding; // for display inconsistencies between browsers
 
