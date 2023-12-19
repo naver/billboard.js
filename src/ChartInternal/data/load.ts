@@ -22,8 +22,13 @@ export function callDone(fn, resizeAfter = false) {
 export default {
 	load(rawTargets, args): void {
 		const $$ = this;
-		const {data} = $$;
+		const {axis, data, org, scale} = $$;
 		const {append} = args;
+		const zoomState = {
+			domain: <any> null,
+			currentDomain: <any> null,
+			x: <any> null
+		};
 		let targets = rawTargets;
 
 		if (targets) {
@@ -60,12 +65,43 @@ export default {
 		// Set targets
 		$$.updateTargets(data.targets);
 
+		if (scale.zoom) {
+			zoomState.x = axis.isCategorized() ? scale.x.orgScale() : (org.xScale || scale.x).copy();
+			zoomState.domain = $$.getXDomain(data.targets); // get updated xDomain
+
+			zoomState.x.domain(zoomState.domain);
+			zoomState.currentDomain = $$.zoom.getDomain(); // current zoomed domain
+
+			// reset zoom state when new data loaded is out of range
+			if (!$$.withinRange(zoomState.currentDomain, undefined, zoomState.domain)) {
+				scale.x.domain(zoomState.domain);
+				scale.zoom = null;
+				$$.$el.eventRect.property("__zoom", null);
+			}
+		}
+
 		// Redraw with new targets
 		$$.redraw({
 			withUpdateOrgXDomain: true,
 			withUpdateXDomain: true,
 			withLegend: true
 		});
+
+		// when load happens on zoom state
+		if (scale.zoom) {
+			// const x = (axis.isCategorized() ? scale.x.orgScale() : (org.xScale || scale.x)).copy();
+
+			org.xDomain = zoomState.domain;
+			org.xScale = zoomState.x;
+
+			if (axis.isCategorized()) {
+				zoomState.currentDomain = $$.getZoomDomainValue(zoomState.currentDomain);
+				org.xDomain = $$.getZoomDomainValue(org.xDomain);
+				org.xScale = zoomState.x.domain(org.xDomain);
+			}
+
+			$$.updateCurrentZoomTransform(zoomState.x, zoomState.currentDomain);
+		}
 
 		// Update current state chart type and elements list after redraw
 		$$.updateTypesElements();
