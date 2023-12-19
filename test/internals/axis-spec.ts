@@ -1353,6 +1353,38 @@ describe("AXIS", function() {
 			});
 
 			it("update args", () => {
+				args = {
+					...args,
+					legend: {
+						position: "right"
+					}
+				};
+				args.data.columns[0] = [
+					"x",
+					"categoryname1111",
+					"categoryname2222",
+					"categoryname3333",
+					"categoryname4444",
+					"categoryname5555",
+					"categoryname6666"
+				]
+			});
+
+			it("should rotate tick texts if there is not enough space between ticks and legend is right", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisX} g.tick`).each(function() {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					expect(text.attr("transform")).to.be.equal("rotate(15)");
+					expect(text.attr("y")).to.be.equal("9");
+					expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
+				});
+
+				compare(15, 43, 53, 10)
+			});
+
+			it("update args", () => {
 				args.data.columns[0] = [
 					"x",
 					"somecategoryname1",
@@ -1376,13 +1408,13 @@ describe("AXIS", function() {
 						expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
 					});
 
-				compare(15, 45, 56, 71)
+				compare(15, 45, 56, 18)
 			});
 
 			it("should not resize x axis when all data hidden", () => {
 				chart.hide("data1");
 
-				compare(args.axis.x.tick.rotate, 6, 55, 71);
+				compare(args.axis.x.tick.rotate, 6, 55, 18);
 
 				chart.show("data1");
 			});
@@ -1422,7 +1454,7 @@ describe("AXIS", function() {
 				});
 
 				it("should be above 0 if rotated", () => {
-					compareOverflow(71);
+					compareOverflow(18);
 				});
 
 				it("update config", () => {
@@ -1438,7 +1470,7 @@ describe("AXIS", function() {
 				});
 
 				it("should be above defaultPadding if padding left is set", () => {
-					compareOverflow( 80);
+					compareOverflow( 27);
 				});
 
 				it("update config", () => {
