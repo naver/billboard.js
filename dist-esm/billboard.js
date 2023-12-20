@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20231213004621
+ * @version 3.10.3-nightly-20231220004532
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -4733,8 +4733,13 @@ function callDone(fn, resizeAfter) {
 var dataLoad = {
     load: function (rawTargets, args) {
         var $$ = this;
-        var data = $$.data;
+        var axis = $$.axis, data = $$.data, org = $$.org, scale = $$.scale;
         var append = args.append;
+        var zoomState = {
+            domain: null,
+            currentDomain: null,
+            x: null
+        };
         var targets = rawTargets;
         if (targets) {
             // filter loading targets if needed
@@ -4764,12 +4769,36 @@ var dataLoad = {
         }
         // Set targets
         $$.updateTargets(data.targets);
+        if (scale.zoom) {
+            zoomState.x = axis.isCategorized() ? scale.x.orgScale() : (org.xScale || scale.x).copy();
+            zoomState.domain = $$.getXDomain(data.targets); // get updated xDomain
+            zoomState.x.domain(zoomState.domain);
+            zoomState.currentDomain = $$.zoom.getDomain(); // current zoomed domain
+            // reset zoom state when new data loaded is out of range
+            if (!$$.withinRange(zoomState.currentDomain, undefined, zoomState.domain)) {
+                scale.x.domain(zoomState.domain);
+                scale.zoom = null;
+                $$.$el.eventRect.property("__zoom", null);
+            }
+        }
         // Redraw with new targets
         $$.redraw({
             withUpdateOrgXDomain: true,
             withUpdateXDomain: true,
             withLegend: true
         });
+        // when load happens on zoom state
+        if (scale.zoom) {
+            // const x = (axis.isCategorized() ? scale.x.orgScale() : (org.xScale || scale.x)).copy();
+            org.xDomain = zoomState.domain;
+            org.xScale = zoomState.x;
+            if (axis.isCategorized()) {
+                zoomState.currentDomain = $$.getZoomDomainValue(zoomState.currentDomain);
+                org.xDomain = $$.getZoomDomainValue(org.xDomain);
+                org.xScale = zoomState.x.domain(org.xDomain);
+            }
+            $$.updateCurrentZoomTransform(zoomState.x, zoomState.currentDomain);
+        }
         // Update current state chart type and elements list after redraw
         $$.updateTypesElements();
         callDone.call($$, args.done, args.resizeAfter);
@@ -5724,6 +5753,24 @@ var domain = {
         return [min, max];
     },
     /**
+     * Return zoom domain from given domain
+     * - 'category' type need to add offset to original value
+     * @param {Array} domainValue domain value
+     * @returns {Array} Zoom domain
+     * @private
+     */
+    getZoomDomainValue: function (domainValue) {
+        var $$ = this;
+        var config = $$.config, axis = $$.axis;
+        if (axis.isCategorized() && Array.isArray(domainValue)) {
+            var isInverted_1 = config.axis_x_inverted;
+            // need to add offset to original value for 'category' type
+            var domain = domainValue.map(function (v, i) { return Number(v) + (i === 0 ? +isInverted_1 : +!isInverted_1); });
+            return domain;
+        }
+        return domainValue;
+    },
+    /**
      * Converts pixels to axis' scale values
      * @param {string} type Axis type
      * @param {number} pixels Pixels
@@ -5753,6 +5800,7 @@ var domain = {
      * @private
      */
     withinRange: function (domain, current, range) {
+        if (current === void 0) { current = [0, 0]; }
         var $$ = this;
         var isInverted = $$.config.axis_x_inverted;
         var _a = range, min = _a[0], max = _a[1];
@@ -6835,8 +6883,8 @@ function getScale(type, min, max) {
 var scale = {
     /**
      * Get x Axis scale function
-     * @param {number} min Min value
-     * @param {number} max Max value
+     * @param {number} min Min range value
+     * @param {number} max Max range value
      * @param {Array} domain Domain value
      * @param {Function} offset The offset getter to be sum
      * @returns {Function} scale
@@ -6844,7 +6892,7 @@ var scale = {
      */
     getXScale: function (min, max, domain, offset) {
         var $$ = this;
-        var scale = $$.scale.zoom || getScale($$.axis.getAxisType("x"), min, max);
+        var scale = ($$.state.loading !== "append" && $$.scale.zoom) || getScale($$.axis.getAxisType("x"), min, max);
         return $$.getCustomizedXScale(domain ? scale.domain(domain) : scale, offset);
     },
     /**
@@ -21731,10 +21779,8 @@ var apiSubchart = {
 // NOTE: declared funciton assigning to variable to prevent duplicated method generation in JSDoc.
 var zoom$1 = function (domainValue) {
     var _a;
-    var _b;
     var $$ = this.internal;
-    var $el = $$.$el, axis = $$.axis, config = $$.config, org = $$.org, scale = $$.scale, state = $$.state;
-    var isRotated = config.axis_rotated;
+    var axis = $$.axis, config = $$.config, org = $$.org, scale = $$.scale, state = $$.state;
     var isCategorized = axis.isCategorized();
     var domain;
     if (config.zoom_enabled) {
@@ -21746,9 +21792,7 @@ var zoom$1 = function (domainValue) {
             var isWithinRange = $$.withinRange(domain, $$.getZoomDomain("zoom", true), $$.getZoomDomain("zoom"));
             if (isWithinRange) {
                 state.domain = domain;
-                if (isCategorized) {
-                    domain = domain.map(function (v, i) { return Number(v) + (i === 0 ? 0 : 1); });
-                }
+                domain = $$.getZoomDomainValue(domain);
                 // hide any possible tooltip show before the zoom
                 $$.api.tooltip.hide();
                 if (config.subchart_show) {
@@ -21759,14 +21803,7 @@ var zoom$1 = function (domainValue) {
                 else {
                     // in case of 'config.zoom_rescale=true', use org.xScale
                     var x = isCategorized ? scale.x.orgScale() : (org.xScale || scale.x);
-                    // Get transform from given domain value
-                    // https://github.com/d3/d3-zoom/issues/57#issuecomment-246434951
-                    var translate = [-x(domain[0]), 0];
-                    var transform = (_a = zoomIdentity
-                        .scale(x.range()[1] / (x(domain[1]) - x(domain[0]))))
-                        .translate.apply(_a, (isRotated ? translate.reverse() : translate));
-                    $el.eventRect
-                        .call($$.zoom.transform, transform);
+                    $$.updateCurrentZoomTransform(x, domain);
                 }
                 $$.setZoomResetButton();
             }
@@ -21775,7 +21812,7 @@ var zoom$1 = function (domainValue) {
             domain = $$.zoom.getDomain();
         }
     }
-    return (_b = state.domain) !== null && _b !== void 0 ? _b : domain;
+    return (_a = state.domain) !== null && _a !== void 0 ? _a : domain;
 };
 extend(zoom$1, {
     /**
@@ -21893,8 +21930,8 @@ var apiZoom = {
      */
     unzoom: function () {
         var $$ = this.internal;
-        var config = $$.config, _a = $$.$el, eventRect = _a.eventRect, zoomResetBtn = _a.zoomResetBtn, state = $$.state;
-        if ($$.scale.zoom) {
+        var config = $$.config, _a = $$.$el, eventRect = _a.eventRect, zoomResetBtn = _a.zoomResetBtn, zoom = $$.scale.zoom, state = $$.state;
+        if (zoom) {
             config.subchart_show ?
                 $$.brush.getSelection().call($$.brush.move, null) :
                 $$.zoom.updateTransformScale(zoomIdentity);
@@ -22586,6 +22623,10 @@ var zoom = {
                 !org.xScale && (org.xScale = scale.x.copy());
                 scale.x.domain(domain);
             }
+            else if (org.xScale) {
+                scale.x.domain(org.xScale.domain());
+                org.xScale = null;
+            }
         };
         /**
          * Get zoom domain
@@ -22706,6 +22747,25 @@ var zoom = {
                 $$.scale.zoom = null;
             }
         }
+    },
+    /**
+     * Set zoom transform to event rect
+     * @param {Function} x x Axis scale function
+     * @param {Array} domain Domain value to be set
+     * @private
+     */
+    updateCurrentZoomTransform: function (x, domain) {
+        var _a;
+        var $$ = this;
+        var eventRect = $$.$el.eventRect, config = $$.config;
+        var isRotated = config.axis_rotated;
+        // Get transform from given domain value
+        // https://github.com/d3/d3-zoom/issues/57#issuecomment-246434951
+        var translate = [-x(domain[0]), 0];
+        var transform = (_a = zoomIdentity
+            .scale(x.range()[1] / (x(domain[1]) - x(domain[0]))))
+            .translate.apply(_a, (isRotated ? translate.reverse() : translate));
+        eventRect.call($$.zoom.transform, transform);
     },
     /**
      * Attach zoom event on <rect>
@@ -23126,7 +23186,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231213004621
+ * @version 3.10.3-nightly-20231220004532
  */
 var bb = {
     /**
@@ -23136,7 +23196,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20231213004621",
+    version: "3.10.3-nightly-20231220004532",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
