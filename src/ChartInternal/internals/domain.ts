@@ -397,6 +397,29 @@ export default {
 	},
 
 	/**
+	 * Return zoom domain from given domain
+	 * - 'category' type need to add offset to original value
+	 * @param {Array} domainValue domain value
+	 * @returns {Array} Zoom domain
+	 * @private
+	 */
+	getZoomDomainValue<T = TDomainRange>(domainValue: T): T | undefined {
+		const $$ = this;
+		const {config, axis} = $$;
+
+		if (axis.isCategorized() && Array.isArray(domainValue)) {
+			const isInverted = config.axis_x_inverted;
+
+			// need to add offset to original value for 'category' type
+			const domain = domainValue.map((v, i) => Number(v) + (i === 0 ? +isInverted : +!isInverted));
+
+			return domain as T;
+		}
+
+		return domainValue;
+	},
+
+	/**
 	 * Converts pixels to axis' scale values
 	 * @param {string} type Axis type
 	 * @param {number} pixels Pixels
@@ -427,7 +450,7 @@ export default {
 	 * @returns {boolean}
 	 * @private
 	 */
-	withinRange<T = TDomainRange>(domain: T, current: T, range: T): boolean {
+	withinRange<T = TDomainRange>(domain: T, current = [0, 0], range: T): boolean {
 		const $$ = this;
 		const isInverted = $$.config.axis_x_inverted;
 		const [min, max] = range as number[];
