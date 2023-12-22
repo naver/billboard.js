@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20231220004532
+ * @version 3.10.3-nightly-20231222004600
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -41391,11 +41391,15 @@ let Axis_Axis = /*#__PURE__*/function () {
     const $$ = this.owner,
       axis = $$.axis,
       config = $$.config,
-      state = $$.state,
+      _$$$state2 = $$.state,
+      current = _$$$state2.current,
+      isLegendRight = _$$$state2.isLegendRight,
+      legendItemWidth = _$$$state2.legendItemWidth,
       xAxisTickRotate = $$.getAxisTickRotate("x");
     if ((axis.isCategorized() || axis.isTimeSeries()) && config.axis_x_tick_fit && (!config.axis_x_tick_culling || isEmpty(config.axis_x_tick_culling)) && !config.axis_x_tick_multiline && xAxisTickRotate > 0 && xAxisTickRotate < 90) {
-      const widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingByDirection("left"),
-        maxOverflow = this.getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding),
+      const y2AxisWidth = config.axis_y2_show && current.maxTickSize.y2.width || 0,
+        widthWithoutCurrentPaddingLeft = current.width - $$.getCurrentPaddingByDirection("left"),
+        maxOverflow = this.getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding) - y2AxisWidth - (isLegendRight && legendItemWidth || 0),
         xAxisTickTextY2Overflow = Math.max(0, maxOverflow) + defaultPadding;
       // for display inconsistencies between browsers
 
@@ -41642,9 +41646,9 @@ let Axis_Axis = /*#__PURE__*/function () {
     var _this19 = this;
     const $$ = this.owner,
       config = $$.config,
-      _$$$state2 = $$.state,
-      clip = _$$$state2.clip,
-      current = _$$$state2.current,
+      _$$$state3 = $$.state,
+      clip = _$$$state3.clip,
+      current = _$$$state3.current,
       $el = $$.$el;
     ["subX", "x", "y", "y2"].forEach(function (type) {
       _newArrowCheck(this, _this19);
@@ -43283,7 +43287,9 @@ function smoothLines(el, type) {
       _$$$state = $$.state,
       axis = _$$$state.axis,
       current = _$$$state.current,
-      xAxisLength = current.width - $$.getCurrentPaddingByDirection("left") - $$.getCurrentPaddingByDirection("right"),
+      isLegendRight = _$$$state.isLegendRight,
+      legendItemWidth = _$$$state.legendItemWidth,
+      xAxisLength = current.width - (isLegendRight && legendItemWidth) - $$.getCurrentPaddingByDirection("left") - $$.getCurrentPaddingByDirection("right"),
       tickCountWithPadding = axis.x.tickCount + axis.x.padding.left + axis.x.padding.right,
       _$$$axis$getMaxTickSi2 = $$.axis.getMaxTickSize("x"),
       width = _$$$axis$getMaxTickSi2.width,
@@ -53766,7 +53772,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20231220004532
+ * @version 3.10.3-nightly-20231222004600
  */
 const bb = {
   /**
@@ -53776,7 +53782,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20231220004532",
+  version: "3.10.3-nightly-20231222004600",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
