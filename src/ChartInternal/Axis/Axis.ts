@@ -680,7 +680,7 @@ class Axis {
 
 	getXAxisTickTextY2Overflow(defaultPadding) {
 		const $$ = this.owner;
-		const {axis, config, state} = $$;
+		const {axis, config, state: {current, isLegendRight, legendItemWidth}} = $$;
 		const xAxisTickRotate = $$.getAxisTickRotate("x");
 		const positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
 
@@ -690,10 +690,12 @@ class Axis {
 			!config.axis_x_tick_multiline &&
 			positiveRotation
 		) {
-			const widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingByDirection("left");
+			const y2AxisWidth = (config.axis_y2_show && current.maxTickSize.y2.width) || 0;
+			const legendWidth = (isLegendRight && legendItemWidth) || 0;
+			const widthWithoutCurrentPaddingLeft = current.width - $$.getCurrentPaddingByDirection("left");
 			const maxOverflow = this.getXAxisTickMaxOverflow(
 				xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding
-			);
+			) - y2AxisWidth - legendWidth;
 			const xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
 				defaultPadding; // for display inconsistencies between browsers
 

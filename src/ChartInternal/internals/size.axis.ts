@@ -148,8 +148,9 @@ export default {
 	 */
 	needToRotateXAxisTickTexts(): boolean {
 		const $$ = this;
-		const {state: {axis, current}} = $$;
-		const xAxisLength = current.width -
+		const {state: {axis, current, isLegendRight, legendItemWidth}} = $$;
+		const legendWidth = isLegendRight && legendItemWidth;
+		const xAxisLength = current.width - legendWidth -
 			$$.getCurrentPaddingByDirection("left") - $$.getCurrentPaddingByDirection("right");
 		const tickCountWithPadding = axis.x.tickCount +
 			axis.x.padding.left + axis.x.padding.right;
