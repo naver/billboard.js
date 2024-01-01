@@ -783,15 +783,15 @@
     "@babel/helper-plugin-utils" "^7.22.5"
 
 "@babel/plugin-transform-runtime@^7.23.6":
-  version "7.23.6"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.23.6.tgz#bf853cd0a675c16ee33e6ba2a63b536e75e5d754"
-  integrity sha512-kF1Zg62aPseQ11orDhFRw+aPG/eynNQtI+TyY+m33qJa2cJ5EEvza2P2BNTIA9E5MyqFABHEyY6CPHwgdy9aNg==
+  version "7.23.7"
+  resolved "https://registry.yarnpkg.com/@babel/plugin-transform-runtime/-/plugin-transform-runtime-7.23.7.tgz#52bbd20054855beb9deae3bee9ceb05289c343e6"
+  integrity sha512-fa0hnfmiXc9fq/weK34MUV0drz2pOL/vfKWvN7Qw127hiUPabFCUMgAbYWcchRzMJit4o5ARsK/s+5h0249pLw==
   dependencies:
     "@babel/helper-module-imports" "^7.22.15"
     "@babel/helper-plugin-utils" "^7.22.5"
-    babel-plugin-polyfill-corejs2 "^0.4.6"
-    babel-plugin-polyfill-corejs3 "^0.8.5"
-    babel-plugin-polyfill-regenerator "^0.5.3"
+    babel-plugin-polyfill-corejs2 "^0.4.7"
+    babel-plugin-polyfill-corejs3 "^0.8.7"
+    babel-plugin-polyfill-regenerator "^0.5.4"
     semver "^6.3.1"
 
 "@babel/plugin-transform-shorthand-properties@^7.23.3":
@@ -3627,7 +3627,7 @@ babel-plugin-minify-type-constructors@^0.4.3:
   dependencies:
     babel-helper-is-void-0 "^0.4.3"
 
-babel-plugin-polyfill-corejs2@^0.4.6:
+babel-plugin-polyfill-corejs2@^0.4.6, babel-plugin-polyfill-corejs2@^0.4.7:
   version "0.4.7"
   resolved "https://registry.yarnpkg.com/babel-plugin-polyfill-corejs2/-/babel-plugin-polyfill-corejs2-0.4.7.tgz#679d1b94bf3360f7682e11f2cb2708828a24fe8c"
   integrity sha512-LidDk/tEGDfuHW2DWh/Hgo4rmnw3cduK6ZkOI1NPFceSK3n/yAGeOsNT7FLnSGHkXj3RHGSEVkN3FsCTY6w2CQ==
@@ -3636,7 +3636,7 @@ babel-plugin-polyfill-corejs2@^0.4.6:
     "@babel/helper-define-polyfill-provider" "^0.4.4"
     semver "^6.3.1"
 
-babel-plugin-polyfill-corejs3@^0.8.5:
+babel-plugin-polyfill-corejs3@^0.8.5, babel-plugin-polyfill-corejs3@^0.8.7:
   version "0.8.7"
   resolved "https://registry.yarnpkg.com/babel-plugin-polyfill-corejs3/-/babel-plugin-polyfill-corejs3-0.8.7.tgz#941855aa7fdaac06ed24c730a93450d2b2b76d04"
   integrity sha512-KyDvZYxAzkC0Aj2dAPyDzi2Ym15e5JKZSK+maI7NAwSqofvuFglbSsxE7wUOvTg9oFVnHMzVzBKcqEb4PJgtOA==
@@ -3644,7 +3644,7 @@ babel-plugin-polyfill-corejs3@^0.8.5:
     "@babel/helper-define-polyfill-provider" "^0.4.4"
     core-js-compat "^3.33.1"
 
-babel-plugin-polyfill-regenerator@^0.5.3:
+babel-plugin-polyfill-regenerator@^0.5.3, babel-plugin-polyfill-regenerator@^0.5.4:
   version "0.5.4"
   resolved "https://registry.yarnpkg.com/babel-plugin-polyfill-regenerator/-/babel-plugin-polyfill-regenerator-0.5.4.tgz#c6fc8eab610d3a11eb475391e52584bacfc020f4"
   integrity sha512-S/x2iOCvDaCASLYsOOgWOq4bCfKYVqvO/uxjkaYyZ3rVsVE3CeAI/c84NpyuBBymEgNvHgjEot3a9/Z/kXvqsg==
