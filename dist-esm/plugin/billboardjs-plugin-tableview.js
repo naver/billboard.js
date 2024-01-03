@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20231229004528
+ * @version 3.10.3-nightly-20240103004607
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -121,7 +121,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.10.3-nightly-20231229004528";
+    Plugin.version = "3.10.3-nightly-20240103004607";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -237,7 +237,6 @@ var Options = /** @class */ (function () {
     }
     return Options;
 }());
-var Options$1 = Options;
 
 /**
  * Copyright (c) 2021 ~ present NAVER Corp.
@@ -478,7 +477,7 @@ var TableView = /** @class */ (function (_super) {
     __extends(TableView, _super);
     function TableView(options) {
         var _this = _super.call(this, options) || this;
-        _this.config = new Options$1();
+        _this.config = new Options();
         return _this;
     }
     TableView.prototype.$beforeInit = function () {
