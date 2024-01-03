@@ -796,6 +796,138 @@ describe("TOOLTIP", function() {
 			});
 		});
 
+		describe("check interference", () => {
+			before(() => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Data A", "Data B", "Data C", "Data D", "Data E"],
+							["data1", 330, 350, 200, 380, 150],
+							["data2", 130, 100, 30, 200, 80],
+							["data3", 230, 153, 85, 300, 250]
+						],
+						type: "radar"
+					},
+					radar: {
+						direction: {
+							clockwise: true
+						}
+					}
+				};
+			});
+
+			const checkPos = (tooltip, expected) => {
+				const left = util.parseNum(tooltip.style("left"));
+				const top = util.parseNum(tooltip.style("top"));
+
+				[top, left].forEach((v, i) => {
+					expect(v).to.be.closeTo(expected[i], 2);
+				});
+			};
+
+			it("check radar's tooltip position.", () => {
+				const {$: {tooltip}} = chart;
+
+				// when
+				chart.tooltip.show({x:0});
+				checkPos(tooltip, [24, 335]);
+
+				// when
+				chart.tooltip.show({x:1});
+				checkPos(tooltip, [175, 469]);
+
+				// when
+				chart.tooltip.show({x:2});
+				checkPos(tooltip, [300, 481]);
+
+				// when
+				chart.tooltip.show({x:3});
+				checkPos(tooltip, [300, 68]);
+
+				// when
+				chart.tooltip.show({x:4});
+				checkPos(tooltip, [175, 0]);
+			});
+
+			it("set options: data.type='pie'", () => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 120]
+						],
+						type: "pie",
+					},
+					legend: {
+						show: false
+					},
+					transition: {
+						duration: 0
+					}
+				};
+			});
+
+			it("check pie's tooltip position.", done => {
+				const {$: {arc, tooltip}} = chart;
+				const path = arc.select(".bb-shapes-data2 path").node();
+				
+				setTimeout(() => {
+					util.hoverChart(chart, "mousemove", {clientX: 250, clientY: 170}, path);
+					checkPos(tooltip, [198.5, 249.5]);
+
+					util.hoverChart(chart, "mousemove", {clientX: 630, clientY: 470}, path);
+					checkPos(tooltip, [445.5, 524.5]);
+
+					done();
+				}, 300)
+			});
+
+			it("set options: data.type='treemap'", () => {
+				args = {
+					data: {
+						columns: [
+							["data1", 1300],
+							["data2", 200],
+							["data3", 500],
+							["data4", 50],
+							["data5", 100],
+							["data6", 70],
+							["data7", 200],
+							["data8", 133],
+							["data9", 220],
+							["data10", 15]
+						],
+						type: "treemap",
+						labels: {
+							colors: "#fff"
+						}
+					},
+					treemap: {
+						label: {
+							threshold: 0.03
+						}
+					}
+				};
+			});
+
+			it("check treemap's tooltip position.", () => {
+				const {$: {tooltip}, internal: {$el: {treemap}}} = chart;
+
+				chart.tooltip.show({
+					data: {
+						id: "data1"
+					}
+				  });
+
+				util.hoverChart(chart, "mousemove", {clientX: 100, clientY: 170}, treemap.node());
+				checkPos(tooltip, [198, 100]);
+
+				util.hoverChart(chart, "mousemove", {clientX: 100, clientY: 470}, treemap.node());
+				checkPos(tooltip, [442, 100]);
+			});
+		});
+
 		describe("on rotated axis", () => {
 			before(() => {
 				args = {
