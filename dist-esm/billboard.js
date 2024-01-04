@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20240103004607
+ * @version 3.10.3-nightly-20240104004616
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -8771,6 +8771,7 @@ var tooltip$1 = {
         var width = state.width, height = state.height, current = state.current, isLegendRight = state.isLegendRight, inputType = state.inputType;
         var hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
         var hasTreemap = state.hasTreemap;
+        var hasRadar = state.hasRadar;
         var isRotated = config.axis_rotated;
         var hasArcType = $$.hasArcType();
         var svgLeft = $$.getSvgLeft(true);
@@ -8778,14 +8779,21 @@ var tooltip$1 = {
         var size = 20;
         var x = currPos.x, y = currPos.y;
         // Determine tooltip position
-        if (hasArcType) {
-            var raw = inputType === "touch" || $$.hasType("radar");
+        if (hasRadar) {
+            x += x >= (width / 2) ? 15 : -(tWidth + 15);
+            y += 15;
+        }
+        else if (hasArcType) {
+            var raw = inputType === "touch";
             if (!raw) {
                 x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-                y += hasGauge ? height : height / 2;
+                y += hasGauge ? height : (height / 2) + tHeight;
             }
         }
-        else if (!hasTreemap) {
+        else if (hasTreemap) {
+            y += tHeight;
+        }
+        else {
             var padding = {
                 top: $$.getCurrentPaddingByDirection("top", true),
                 left: $$.getCurrentPaddingByDirection("left", true)
@@ -8805,8 +8813,8 @@ var tooltip$1 = {
             x -= tWidth + (hasTreemap || hasArcType ? 0 : (isRotated ? size * 2 : 38));
         }
         if (y + tHeight > current.height) {
-            var gap = hasTreemap ? 0 : 30;
-            y -= hasGauge ? tHeight * 3 : tHeight + gap;
+            var gap = hasTreemap ? tHeight + 10 : 30;
+            y -= hasGauge ? tHeight * 1.5 : tHeight + gap;
         }
         var pos = { top: y, left: x };
         // make sure to not be positioned out of viewport
@@ -9179,8 +9187,9 @@ var typeInternals = {
      * @private
      */
     isTypeOf: function (d, type) {
+        var _a, _b;
         var id = isString(d) ? d : d.id;
-        var dataType = this.config.data_types[id] || this.config.data_type;
+        var dataType = ((_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.data_types) === null || _b === void 0 ? void 0 : _b[id]) || this.config.data_type;
         return isArray(type) ?
             type.indexOf(dataType) >= 0 : dataType === type;
     },
@@ -23189,7 +23198,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240103004607
+ * @version 3.10.3-nightly-20240104004616
  */
 var bb = {
     /**
@@ -23199,7 +23208,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20240103004607",
+    version: "3.10.3-nightly-20240104004616",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

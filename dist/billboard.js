@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240103004607
+ * @version 3.10.3-nightly-20240104004616
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10028,6 +10028,7 @@ function getTextXPos(pos, width) {
       inputType = _state.inputType,
       hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle,
       hasTreemap = state.hasTreemap,
+      hasRadar = state.hasRadar,
       isRotated = config.axis_rotated,
       hasArcType = $$.hasArcType(),
       svgLeft = $$.getSvgLeft(!0);
@@ -10037,13 +10038,17 @@ function getTextXPos(pos, width) {
       y = currPos.y;
 
     // Determine tooltip position
-    if (hasArcType) {
-      const raw = inputType === "touch" || $$.hasType("radar");
-      if (!raw) {
+    if (hasRadar) {
+      x += x >= width / 2 ? 15 : -(tWidth + 15);
+      y += 15;
+    } else if (hasArcType) {
+      if (!(inputType === "touch")) {
         x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-        y += hasGauge ? height : height / 2;
+        y += hasGauge ? height : height / 2 + tHeight;
       }
-    } else if (!hasTreemap) {
+    } else if (hasTreemap) {
+      y += tHeight;
+    } else {
       const padding = {
         top: $$.getCurrentPaddingByDirection("top", !0),
         left: $$.getCurrentPaddingByDirection("left", !0)
@@ -10063,8 +10068,8 @@ function getTextXPos(pos, width) {
       x -= tWidth + (hasTreemap || hasArcType ? 0 : isRotated ? 40 : 38);
     }
     if (y + tHeight > current.height) {
-      const gap = hasTreemap ? 0 : 30;
-      y -= hasGauge ? tHeight * 3 : tHeight + gap;
+      const gap = hasTreemap ? tHeight + 10 : 30;
+      y -= hasGauge ? tHeight * 1.5 : tHeight + gap;
     }
     const pos = {
       top: y,
@@ -10486,8 +10491,9 @@ function getTextXPos(pos, width) {
    * @private
    */
   isTypeOf: function isTypeOf(d, type) {
+    var _this$config;
     const id = isString(d) ? d : d.id,
-      dataType = this.config.data_types[id] || this.config.data_type;
+      dataType = ((_this$config = this.config) == null || (_this$config = _this$config.data_types) == null ? void 0 : _this$config[id]) || this.config.data_type;
     return isArray(type) ? type.indexOf(dataType) >= 0 : dataType === type;
   },
   hasPointType: function hasPointType() {
@@ -25732,7 +25738,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240103004607
+ * @version 3.10.3-nightly-20240104004616
  */
 const bb = {
   /**
@@ -25742,7 +25748,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20240103004607",
+  version: "3.10.3-nightly-20240104004616",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
