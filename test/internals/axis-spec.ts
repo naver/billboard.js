@@ -1349,7 +1349,21 @@ describe("AXIS", function() {
 						expect(tspan.attr("dx")).to.be.equal("0");
 					});
 
-				compare(0, 18.8125, 48, 0);
+				compare(0, 18.8125, 30, 0);
+			});
+
+			it("should not use the height of the longest tick text when ticks are not rotated", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisX} g.tick`).each(function() {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					expect(text.attr("transform")).to.be.null;
+					expect(text.attr("y")).to.be.equal("9");
+					expect(tspan.attr("dx")).to.be.equal("0");
+				});
+
+				compare(0, 18.8125, 30, 0);
 			});
 
 			it("update args", () => {
@@ -1535,7 +1549,21 @@ describe("AXIS", function() {
 					expect(tspan.attr("dx")).to.be.equal("0");
 				});
 
-				compare(0, 18.8125, 55, 0);
+				compare(0, 18.8125, 30, 0);
+			});
+
+			it("should not use the height of the longest tick text when ticks are not rotated", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisX} g.tick`).each(function() {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					expect(text.attr("transform")).to.be.null;
+					expect(text.attr("y")).to.be.equal("9");
+					expect(tspan.attr("dx")).to.be.equal("0");
+				});
+
+				compare(0, 18.8125, 30, 0);
 			});
 
 			it("update args", () => {
