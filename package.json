@@ -137,7 +137,7 @@
 		"babel-plugin-transform-merge-sibling-variables": "^6.9.5",
 		"babel-plugin-transform-minify-booleans": "^6.9.4",
 		"better-docs": "^2.7.3",
-		"chai": "^4.3.10",
+		"chai": "^5.0.0",
 		"clean-webpack-plugin": "^4.0.0",
 		"cloc": "^2.11.0",
 		"core-js": "^3.35.0",
