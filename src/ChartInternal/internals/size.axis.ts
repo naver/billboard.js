@@ -71,7 +71,11 @@ export default {
 
 		const maxtickSize = $$.axis.getMaxTickSize(id);
 
-		if (maxtickSize.height > defaultHeight) {
+		const isXAxisTickRotated = config.axis_x_tick_rotate > 0 && (
+			!config.axis_x_tick_autorotate || $$.needToRotateXAxisTickTexts()
+		);
+
+		if ((config.axis_x_tick_multiline || isXAxisTickRotated) && maxtickSize.height > defaultHeight) {
 			h += maxtickSize.height - defaultHeight;
 		}
 
