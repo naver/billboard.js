@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240111004607
+ * @version 3.10.3-nightly-20240112004606
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -43163,8 +43163,9 @@ function smoothLines(el, type) {
     if (id === "y2" && !config.axis_y2_show) {
       return isFitPadding ? 0 : rotatedPadding.top;
     }
-    const maxtickSize = $$.axis.getMaxTickSize(id);
-    if (maxtickSize.height > 13) {
+    const maxtickSize = $$.axis.getMaxTickSize(id),
+      isXAxisTickRotated = config.axis_x_tick_rotate > 0 && (!config.axis_x_tick_autorotate || $$.needToRotateXAxisTickTexts());
+    if ((config.axis_x_tick_multiline || isXAxisTickRotated) && maxtickSize.height > 13) {
       h += maxtickSize.height - 13;
     }
     return h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id === "y2" && !isRotated ? -10 : 0);
@@ -53708,7 +53709,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240111004607
+ * @version 3.10.3-nightly-20240112004606
  */
 const bb = {
   /**
@@ -53718,7 +53719,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20240111004607",
+  version: "3.10.3-nightly-20240112004606",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
