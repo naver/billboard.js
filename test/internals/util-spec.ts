@@ -79,7 +79,7 @@ describe("UTIL", function() {
 
 	describe("getPathBox", () => {
 		it("should return element's path box value", () => {
-			const pathBox = getPathBox(document.body.querySelector("svg"));
+			const pathBox = getPathBox(document.body.querySelector("svg") as SVGGraphicsElement);
 
 			for (let x in pathBox) {
 				expect(isNumber(pathBox[x])).to.be.true;

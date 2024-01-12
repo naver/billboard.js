@@ -33,6 +33,7 @@ export const {
 	getRandom,
 	getRange,
 	getRectSegList,
+	getScrollPosition,
 	getTranslation,
 	getUnique,
 	hasValue,
