@@ -180,7 +180,7 @@
 		"rollup": "^4.9.4",
 		"rollup-plugin-delete": "^2.0.0",
 		"sass-loader": "^13.3.3",
-		"semantic-release": "^22.0.12",
+		"semantic-release": "^23.0.0",
 		"simulant": "^0.2.2",
 		"sinon": "^17.0.1",
 		"string-replace-loader": "^3.1.0",
