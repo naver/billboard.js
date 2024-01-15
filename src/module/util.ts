@@ -33,6 +33,7 @@ export {
 	getRandom,
 	getRange,
 	getRectSegList,
+	getScrollPosition,
 	getTranslation,
 	getUnique,
 	hasValue,
@@ -509,6 +510,19 @@ function getCssRules(styleSheets: any[]) {
 	});
 
 	return rules;
+}
+
+/**
+ * Get current window and container scroll position
+ * @param {HTMLElement} node Target element
+ * @returns {object} window scroll position
+ * @private
+ */
+function getScrollPosition(node: HTMLElement) {
+	return {
+		x: (window.pageXOffset ?? window.scrollX ?? 0) + node.scrollLeft ?? 0,
+		y: (window.pageYOffset ?? window.scrollY ?? 0) + node.scrollTop ?? 0
+	};
 }
 
 /**

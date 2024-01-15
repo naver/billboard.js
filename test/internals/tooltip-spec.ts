@@ -796,6 +796,110 @@ describe("TOOLTIP", function() {
 			});
 		});
 
+		describe("when document or container element is scrolled", () => {
+			before(() => {
+				args = {
+					size: {
+						width: 640,
+						height: 480
+					},
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 10, 190, 95, 40, 15, 25]
+						]
+					},
+					axis: {
+						rotated: false
+					}
+				};
+			});
+	
+			it("tooltip correctly showed?", function(done) {
+				chart.$.chart.attr("style", "position: relative; top: 0px; left: 0px; width:300px;height:400px;overflow:scroll;");
+	
+				const top = chart.$.chart.node().getBoundingClientRect().top;
+				const {tooltip} = chart.$;
+				const index = [];
+	
+				new Promise(resolve => {
+					util.hoverChart(chart, "mousemove", {
+						clientX: 50,
+						clientY: top + 50
+					});
+	
+					index.push(+tooltip.select("th").text());
+	
+					setTimeout(() => {
+						chart.$.chart.node().scrollTo(500, 0);
+						resolve();
+					}, 300);
+				}).then(() => {
+					new Promise(resolve => {
+						util.hoverChart(chart, "mousemove", {
+							clientX: 200,
+							clientY: top + 50
+						});
+	
+						setTimeout(resolve, 300);
+					});
+				}).then(() => {
+					index.push(+tooltip.select("th").text());
+	
+					expect(index).to.be.deep.equal([0, 5]);
+	
+					chart.$.chart.node().scrollTo(0, 0);
+					done();
+				});
+			});
+	
+			it("set option: axis.rotated=true", () => {
+				args.size = {
+					width: 480,
+					height: 640
+				};
+	
+				args.axis.rotated = true;
+			});
+	
+			it("tooltip correctly showed on rotated axis?", function(done) {
+				chart.$.chart.attr("style", "position: relative; top: 0px; left: 0px; width:480px;height:640px;overflow:scroll;");
+				const {tooltip} = chart.$;
+				const index = [];
+	
+				new Promise(resolve => {
+					util.hoverChart(chart, "mousemove", {
+						clientX: 100,
+						clientY: 50
+					});
+	
+					index.push(+tooltip.select("th").text());
+	
+					setTimeout(() => {
+						chart.$.chart.node().scrollTo(0, 500);
+						resolve();
+					}, 300);
+				}).then(() => {
+					new Promise(resolve => {
+						util.hoverChart(chart, "mousemove", {
+							clientX: 100,
+							clientY: 550
+						});
+	
+						setTimeout(resolve, 300);
+					});
+				}).then(() => {
+					index.push(+tooltip.select("th").text());
+	
+					expect(index).to.be.deep.equal([0, 5]);
+	
+					chart.$.chart.attr("style", "position: relative; top: 0px; left: 0px; width:640px;height:480px;");
+	
+					done();
+				});
+			});
+		});
+
 		describe("check interference", () => {
 			before(() => {
 				args = {
@@ -978,7 +1082,7 @@ describe("TOOLTIP", function() {
 
 				// check for tooltip position to not overflow the chart
 				expect(tooltipLeft).to.be.lessThanOrEqual(state.width);				
-			});
+			});			
 		});
 
 		describe("Narrow width container's tooltip position", () => {
