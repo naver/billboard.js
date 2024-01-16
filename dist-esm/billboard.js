@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20240112004606
+ * @version 3.10.3-nightly-20240116004618
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -597,6 +597,19 @@ function getCssRules(styleSheets) {
         }
     });
     return rules;
+}
+/**
+ * Get current window and container scroll position
+ * @param {HTMLElement} node Target element
+ * @returns {object} window scroll position
+ * @private
+ */
+function getScrollPosition(node) {
+    var _a, _b, _c, _d, _e, _f;
+    return {
+        x: (_c = ((_b = (_a = win.pageXOffset) !== null && _a !== void 0 ? _a : win.scrollX) !== null && _b !== void 0 ? _b : 0) + node.scrollLeft) !== null && _c !== void 0 ? _c : 0,
+        y: (_f = ((_e = (_d = win.pageYOffset) !== null && _d !== void 0 ? _d : win.scrollY) !== null && _e !== void 0 ? _e : 0) + node.scrollTop) !== null && _f !== void 0 ? _f : 0
+    };
 }
 /**
  * Gets the SVGMatrix of an SVGGElement
@@ -4389,7 +4402,7 @@ var data$1 = {
      */
     getDataIndexFromEvent: function (event) {
         var $$ = this;
-        var config = $$.config, _a = $$.state, hasRadar = _a.hasRadar, inputType = _a.inputType, _b = _a.eventReceiver, coords = _b.coords, rect = _b.rect;
+        var $el = $$.$el, config = $$.config, _a = $$.state, hasRadar = _a.hasRadar, inputType = _a.inputType, _b = _a.eventReceiver, coords = _b.coords, rect = _b.rect;
         var index;
         if (hasRadar) {
             var target = event.target;
@@ -4402,9 +4415,12 @@ var data$1 = {
         }
         else {
             var isRotated = config.axis_rotated;
+            var scrollPos = getScrollPosition($el.chart.node());
             // get data based on the mouse coords
             var e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
-            index = findIndex(coords, isRotated ? e.clientY - rect.top : e.clientX - rect.left, 0, coords.length - 1, isRotated);
+            index = findIndex(coords, isRotated ?
+                e.clientY + scrollPos.y - rect.top :
+                e.clientX + scrollPos.x - rect.left, 0, coords.length - 1, isRotated);
         }
         return index;
     },
@@ -9187,9 +9203,9 @@ var typeInternals = {
      * @private
      */
     isTypeOf: function (d, type) {
-        var _a, _b;
+        var _a;
         var id = isString(d) ? d : d.id;
-        var dataType = ((_b = (_a = this.config) === null || _a === void 0 ? void 0 : _a.data_types) === null || _b === void 0 ? void 0 : _b[id]) || this.config.data_type;
+        var dataType = this.config && (((_a = this.config.data_types) === null || _a === void 0 ? void 0 : _a[id]) || this.config.data_type);
         return isArray(type) ?
             type.indexOf(dataType) >= 0 : dataType === type;
     },
@@ -13816,7 +13832,14 @@ var eventrect = {
         var eventReceiver = state.eventReceiver, width = state.width, height = state.height, rendered = state.rendered, resizing = state.resizing;
         var rectElement = eventRect || $el.eventRect;
         var updateClientRect = function () {
-            eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
+            if (eventReceiver) {
+                var scrollPos = getScrollPosition($el.chart.node());
+                eventReceiver.rect = rectElement.node()
+                    .getBoundingClientRect()
+                    .toJSON();
+                eventReceiver.rect.top += scrollPos.y;
+                eventReceiver.rect.left += scrollPos.x;
+            }
         };
         if (!rendered || resizing || force) {
             rectElement
@@ -23199,7 +23222,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240112004606
+ * @version 3.10.3-nightly-20240116004618
  */
 var bb = {
     /**
@@ -23209,7 +23232,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20240112004606",
+    version: "3.10.3-nightly-20240116004618",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

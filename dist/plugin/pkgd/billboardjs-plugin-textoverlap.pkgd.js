@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240112004606
+ * @version 3.10.3-nightly-20240116004618
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -27241,6 +27241,20 @@ function getCssRules(styleSheets) {
 }
 
 /**
+ * Get current window and container scroll position
+ * @param {HTMLElement} node Target element
+ * @returns {object} window scroll position
+ * @private
+ */
+function getScrollPosition(node) {
+  var _ref2, _ref3, _window$pageXOffset, _ref4, _ref5, _window$pageYOffset;
+  return {
+    x: (_ref2 = ((_ref3 = (_window$pageXOffset = win.pageXOffset) != null ? _window$pageXOffset : win.scrollX) != null ? _ref3 : 0) + node.scrollLeft) != null ? _ref2 : 0,
+    y: (_ref4 = ((_ref5 = (_window$pageYOffset = win.pageYOffset) != null ? _window$pageYOffset : win.scrollY) != null ? _ref5 : 0) + node.scrollTop) != null ? _ref4 : 0
+  };
+}
+
+/**
  * Gets the SVGMatrix of an SVGGElement
  * @param {SVGElement} node Node element
  * @returns {SVGMatrix} matrix
@@ -27696,7 +27710,7 @@ let Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.10.3-nightly-20240112004606";
+Plugin.version = "3.10.3-nightly-20240116004618";
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 /**

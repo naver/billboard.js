@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240112004606
+ * @version 3.10.3-nightly-20240116004618
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^3.0.0
@@ -24112,6 +24112,20 @@ function getCssRules(styleSheets) {
 }
 
 /**
+ * Get current window and container scroll position
+ * @param {HTMLElement} node Target element
+ * @returns {object} window scroll position
+ * @private
+ */
+function getScrollPosition(node) {
+  var _ref2, _ref3, _window$pageXOffset, _ref4, _ref5, _window$pageYOffset;
+  return {
+    x: (_ref2 = ((_ref3 = (_window$pageXOffset = win.pageXOffset) != null ? _window$pageXOffset : win.scrollX) != null ? _ref3 : 0) + node.scrollLeft) != null ? _ref2 : 0,
+    y: (_ref4 = ((_ref5 = (_window$pageYOffset = win.pageYOffset) != null ? _window$pageYOffset : win.scrollY) != null ? _ref5 : 0) + node.scrollTop) != null ? _ref4 : 0
+  };
+}
+
+/**
  * Gets the SVGMatrix of an SVGGElement
  * @param {SVGElement} node Node element
  * @returns {SVGMatrix} matrix
@@ -28486,6 +28500,7 @@ function getDataKeyForJson(keysParam, config) {
    */
   getDataIndexFromEvent: function getDataIndexFromEvent(event) {
     const $$ = this,
+      $el = $$.$el,
       config = $$.config,
       _$$$state = $$.state,
       hasRadar = _$$$state.hasRadar,
@@ -28505,8 +28520,9 @@ function getDataKeyForJson(keysParam, config) {
       index = d && Object.keys(d).length === 1 ? d.index : undefined;
     } else {
       const isRotated = config.axis_rotated,
+        scrollPos = getScrollPosition($el.chart.node()),
         e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event; // get data based on the mouse coords
-      index = findIndex(coords, isRotated ? e.clientY - rect.top : e.clientX - rect.left, 0, coords.length - 1, isRotated);
+      index = findIndex(coords, isRotated ? e.clientY + scrollPos.y - rect.top : e.clientX + scrollPos.x - rect.left, 0, coords.length - 1, isRotated);
     }
     return index;
   },
@@ -36547,9 +36563,9 @@ function getTextXPos(pos, width) {
    * @private
    */
   isTypeOf: function isTypeOf(d, type) {
-    var _this$config;
+    var _this$config$data_typ;
     const id = isString(d) ? d : d.id,
-      dataType = ((_this$config = this.config) == null || (_this$config = _this$config.data_types) == null ? void 0 : _this$config[id]) || this.config.data_type;
+      dataType = this.config && (((_this$config$data_typ = this.config.data_types) == null ? void 0 : _this$config$data_typ[id]) || this.config.data_type);
     return isArray(type) ? type.indexOf(dataType) >= 0 : dataType === type;
   },
   hasPointType: function hasPointType() {
@@ -41807,7 +41823,12 @@ let Axis_Axis = /*#__PURE__*/function () {
       rectElement = eventRect || $el.eventRect,
       updateClientRect = function () {
         _newArrowCheck(this, _this3);
-        eventReceiver && (eventReceiver.rect = rectElement.node().getBoundingClientRect());
+        if (eventReceiver) {
+          const scrollPos = getScrollPosition($el.chart.node());
+          eventReceiver.rect = rectElement.node().getBoundingClientRect().toJSON();
+          eventReceiver.rect.top += scrollPos.y;
+          eventReceiver.rect.left += scrollPos.x;
+        }
       }.bind(this);
     if (!rendered || resizing || force) {
       rectElement.attr("x", 0).attr("y", 0).attr("width", width).attr("height", height);
@@ -53709,7 +53730,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240112004606
+ * @version 3.10.3-nightly-20240116004618
  */
 const bb = {
   /**
@@ -53719,7 +53740,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20240112004606",
+  version: "3.10.3-nightly-20240116004618",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
