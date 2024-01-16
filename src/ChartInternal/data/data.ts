@@ -9,6 +9,7 @@ import type {IData, IDataPoint, IDataRow} from "./IData";
 import {
 	findIndex,
 	getUnique,
+	getScrollPosition,
 	hasValue,
 	isArray,
 	isboolean,
@@ -671,7 +672,7 @@ export default {
 	 */
 	getDataIndexFromEvent(event): number {
 		const $$ = this;
-		const {config, state: {hasRadar, inputType, eventReceiver: {coords, rect}}} = $$;
+		const {$el, config, state: {hasRadar, inputType, eventReceiver: {coords, rect}}} = $$;
 		let index;
 
 		if (hasRadar) {
@@ -687,13 +688,16 @@ export default {
 			index = d && Object.keys(d).length === 1 ? d.index : undefined;
 		} else {
 			const isRotated = config.axis_rotated;
+			const scrollPos = getScrollPosition($el.chart.node());
 
 			// get data based on the mouse coords
 			const e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
 
 			index = findIndex(
 				coords,
-				isRotated ? e.clientY - rect.top : e.clientX - rect.left,
+				isRotated ?
+					e.clientY + scrollPos.y - rect.top :
+					e.clientX + scrollPos.x - rect.left,
 				0,
 				coords.length - 1,
 				isRotated
