@@ -27,6 +27,22 @@ function getLegendColor(id: string): string {
 	return color;
 }
 
+/**
+ * Get formatted text value
+ * @param {string} id Legend text id
+ * @returns {string} Formatted legend text
+ */
+function getFormattedText<T = string>(id: T): T {
+	const {config} = this;
+	let text = config.data_names[id] ?? id;
+
+	if (isFunction(config.legend_format)) {
+		text = config.legend_format(text);
+	}
+
+	return text;
+}
+
 export default {
 	/**
 	 * Initialize the legend.
@@ -570,9 +586,15 @@ export default {
 				.append("rect");
 		}
 
+		if (config.legend_tooltip) {
+			legend.selectAll("title")
+				.data(targetIdz)
+				.text(id => id);
+		}
+
 		const texts = legend.selectAll("text")
 			.data(targetIdz)
-			.text(id => (isDefined(config.data_names[id]) ? config.data_names[id] : id)) // MEMO: needed for update
+			.text(getFormattedText.bind($$)) // MEMO: needed for update
 			.each(function(id, i) {
 				updatePositions(this, id, i);
 			});
@@ -722,8 +744,12 @@ export default {
 
 		$$.setLegendItem(l);
 
+		if (config.legend_tooltip) {
+			l.append("title").text(id => id);
+		}
+
 		l.append("text")
-			.text(id => (isDefined(config.data_names[id]) ? config.data_names[id] : id))
+			.text(getFormattedText.bind($$))
 			.each(function(id, i) {
 				updatePositions(this, id, i);
 			})

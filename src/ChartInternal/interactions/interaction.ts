@@ -207,7 +207,8 @@ export default {
 				screenX: x,
 				screenY: y,
 				clientX: x,
-				clientY: y
+				clientY: y,
+				bubbles: hasRadar // radar type needs to bubble up event
 			};
 
 			emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](

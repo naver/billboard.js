@@ -105,7 +105,7 @@ export default class Options {
 
 			/**
 			 * Set how null value to be shown.
-			 * @name showNulls
+			 * @name nullString
 			 * @memberof plugin-tableview
 			 * @type {string}
 			 * @default "-"

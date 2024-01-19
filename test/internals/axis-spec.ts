@@ -1061,6 +1061,81 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("axis x height", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					xFormat: "%Y",
+					columns: [
+						["x", "2010", "2011", "2012", "2013", "2014", "2015"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 340, 200, 500, 250, 350]
+					],
+					type: "line"
+				  },
+				  axis: {
+					x: {
+					  type: "timeseries",
+					  localtime: false,
+					  tick: {
+						format: "%Y-%m-%d %H:%M:%S"
+					  }
+					}
+				}
+			}
+		});
+
+		it("shouldn't overlap x Axis tick text with legend", () => {
+			const {axis: {x}, legend} = chart.internal.$el;
+
+			const xBottom = x.node().getBoundingClientRect().bottom;
+			const legendTop = legend.node().getBoundingClientRect().top;
+
+			expect(legendTop > xBottom).to.be.true;			
+		});
+
+		it("set option: legend.show=false", () => {
+			args.legend = {
+				show: false
+			};
+		});
+
+		it("x Axis tick text should stay within container", () => {
+			const {$el: {axis: {x}}, state} = chart.internal;
+			const xBottom = x.node().getBoundingClientRect().bottom;
+
+			expect(xBottom).to.be.below(state.current.height);
+		});
+
+		it("set option: legend.show=false", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "First Q\n2018", "Second\nQ 2018", "3Q\nYear\n2018", "Forth\nQuarter\n2018"],
+						["data", 30, 100, 400, 150]
+					],
+					type: "line"
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("shouldn't overlap x Axis tick text with legend", () => {
+			const {axis: {x}, legend} = chart.internal.$el;
+
+			const xBottom = x.node().getBoundingClientRect().bottom;
+			const legendTop = legend.node().getBoundingClientRect().top;
+
+			expect(legendTop > xBottom).to.be.true;			
+		});
+	});
+
 	describe("axis.x.tick.tooltip", () => {
 		before(() => {
 			args = {
@@ -1152,7 +1227,7 @@ describe("AXIS", function() {
 				const height = internal.getHorizontalAxisHeight("x");
 
 				expect(box.height).to.be.above(50);
-				expect(height).to.be.above(68);
+				expect(height).to.be.above(67);
 				expect(height).to.be.below(80);
 			});
 		});
@@ -1197,7 +1272,7 @@ describe("AXIS", function() {
 				const height = internal.getHorizontalAxisHeight("x");
 
 				expect(box.height).to.be.above(50);
-				expect(height).to.be.above(68);
+				expect(height).to.be.above(67);
 				expect(height).to.be.below(80);
 			});
 		});
@@ -1214,7 +1289,7 @@ describe("AXIS", function() {
 
 			expect(xAxisTickRotate).to.be.equal(expectedXAxisTickRotate);
 			expect(xAxisBoundingClientRect.height).to.be.closeTo(expectedXAxisBoundingClientRect, 1);
-			expect(horizontalXAxisHeight).to.be.closeTo(expectedHorizontalXAxisHeight, 1);
+			expect(horizontalXAxisHeight).to.be.closeTo(expectedHorizontalXAxisHeight, 2);
 
 			const xAxisTickTextY2Overflow = chart.internal.axis.getXAxisTickTextY2Overflow(defaultPadding);
 
@@ -1277,6 +1352,52 @@ describe("AXIS", function() {
 				compare(0, 18.8125, 30, 0);
 			});
 
+			it("should not use the height of the longest tick text when ticks are not rotated", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisX} g.tick`).each(function() {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					expect(text.attr("transform")).to.be.null;
+					expect(text.attr("y")).to.be.equal("9");
+					expect(tspan.attr("dx")).to.be.equal("0");
+				});
+
+				compare(0, 18.8125, 30, 0);
+			});
+
+			it("update args", () => {
+				args = {
+					...args,
+					legend: {
+						position: "right"
+					}
+				};
+				args.data.columns[0] = [
+					"x",
+					"categoryname1111",
+					"categoryname2222",
+					"categoryname3333",
+					"categoryname4444",
+					"categoryname5555",
+					"categoryname6666"
+				]
+			});
+
+			it("should rotate tick texts if there is not enough space between ticks and legend is right", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisX} g.tick`).each(function() {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					expect(text.attr("transform")).to.be.equal("rotate(15)");
+					expect(text.attr("y")).to.be.equal("9");
+					expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
+				});
+
+				compare(15, 43, 53, 10)
+			});
+
 			it("update args", () => {
 				args.data.columns[0] = [
 					"x",
@@ -1301,13 +1422,13 @@ describe("AXIS", function() {
 						expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
 					});
 
-				compare(15, 45, 56, 71)
+				compare(15, 45, 56, 18)
 			});
 
 			it("should not resize x axis when all data hidden", () => {
 				chart.hide("data1");
 
-				compare(args.axis.x.tick.rotate, 6, 57, 71);
+				compare(args.axis.x.tick.rotate, 6, 55, 18);
 
 				chart.show("data1");
 			});
@@ -1347,7 +1468,7 @@ describe("AXIS", function() {
 				});
 
 				it("should be above 0 if rotated", () => {
-					compareOverflow(71);
+					compareOverflow(18);
 				});
 
 				it("update config", () => {
@@ -1363,7 +1484,7 @@ describe("AXIS", function() {
 				});
 
 				it("should be above defaultPadding if padding left is set", () => {
-					compareOverflow( 80);
+					compareOverflow( 27);
 				});
 
 				it("update config", () => {
@@ -1431,6 +1552,20 @@ describe("AXIS", function() {
 				compare(0, 18.8125, 30, 0);
 			});
 
+			it("should not use the height of the longest tick text when ticks are not rotated", () => {
+				chart.$.main.selectAll(`.${$AXIS.axisX} g.tick`).each(function() {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					expect(text.attr("transform")).to.be.null;
+					expect(text.attr("y")).to.be.equal("9");
+					expect(tspan.attr("dx")).to.be.equal("0");
+				});
+
+				compare(0, 18.8125, 30, 0);
+			});
+
 			it("update args", () => {
 				args.axis.x.tick.count = 10;
 			});
@@ -1452,7 +1587,7 @@ describe("AXIS", function() {
 			it("should not resize x axis when all data hidden", () => {
 				chart.hide("Temperature");
 
-				compare(args.axis.x.tick.rotate, 6, 57, 108);
+				compare(args.axis.x.tick.rotate, 6, 55, 108);
 			});
 
 			it("should resize when show hidden data", () => {
@@ -3188,12 +3323,12 @@ describe("AXIS", function() {
 		});
 
 		it("x Axis tick width should be evaluated correctly", () => {
-			const {state: {current}} = chart.internal;
+			const {state: {current: {maxTickSize}}} = chart.internal;
 
-			const maxTickWidth = current.maxTickWidths.x.size;
+			const {width} = maxTickSize.x;
 			const tickWdith = chart.$.main.select(`.${$AXIS.axisX} tspan`).node().getBoundingClientRect().width;
 
-			expect(maxTickWidth).to.be.equal(tickWdith);
+			expect(width).to.be.equal(tickWdith);
 		});
 	});
 

@@ -12,6 +12,7 @@ import AxisRenderer from "./AxisRenderer";
 import {getScale} from "../internals/scale";
 import {$AXIS} from "../../config/classes";
 import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, notEmpty, parseDate, sortValue} from "../../module/util";
+import type {AxisType} from "../../../types/types";
 
 export default {
 	getAxisInstance: function() {
@@ -260,7 +261,7 @@ class Axis {
 		);
 	}
 
-	// called from : getMaxTickWidth()
+	// called from : getMaxTickSize()
 	getAxis(id, scale, outerTick, noTransition, noTickTextRotate): AxisRenderer {
 		const $$ = this.owner;
 		const {config} = $$;
@@ -525,13 +526,13 @@ class Axis {
 		return anchor;
 	}
 
-	dyForAxisLabel(id: string) {
+	dyForAxisLabel(id: AxisType) {
 		const $$ = this.owner;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
 		const isInner = this.getAxisLabelPosition(id).isInner;
 		const tickRotate = config[`axis_${id}_tick_rotate`] ? $$.getHorizontalAxisHeight(id) : 0;
-		const maxTickWidth = this.getMaxTickWidth(id);
+		const {width: maxTickWidth} = this.getMaxTickSize(id);
 		let dy;
 
 		if (id === "x") {
@@ -575,14 +576,27 @@ class Axis {
 		return dy;
 	}
 
-	getMaxTickWidth(id: string, withoutRecompute?: boolean): number {
+	/**
+	 * Get max tick size
+	 * @param {string} id axis id string
+	 * @param {boolean} withoutRecompute wheather or not to recompute
+	 * @returns {object} {width, height}
+	 * @private
+	 */
+	getMaxTickSize(id: AxisType, withoutRecompute?: boolean): {width: number, height: number} {
 		const $$ = this.owner;
 		const {config, state: {current}, $el: {svg, chart}} = $$;
-		const currentTickMax = current.maxTickWidths[id];
-		let maxWidth = 0;
+		const currentTickMax = current.maxTickSize[id];
+		const configPrefix = `axis_${id}`;
+		const max = {
+			width: 0,
+			height: 0
+		};
 
-		if (withoutRecompute || !config[`axis_${id}_show`] || (currentTickMax.size > 0 && $$.filterTargetsToShow().length === 0)) {
-			return currentTickMax.size;
+		if (withoutRecompute || !config[`${configPrefix}_show`] || (
+			currentTickMax.width > 0 && $$.filterTargetsToShow().length === 0
+		)) {
+			return currentTickMax;
 		}
 
 		if (svg) {
@@ -611,8 +625,9 @@ class Axis {
 			}
 
 			const axis = this.getAxis(id, scale, false, false, true);
-			const tickCount = config[`axis_${id}_tick_count`];
-			const tickValues = config[`axis_${id}_tick_values`];
+			const tickRotate = config[`${configPrefix}_tick_rotate`];
+			const tickCount = config[`${configPrefix}_tick_count`];
+			const tickValues = config[`${configPrefix}_tick_values`];
 
 			// Make to generate the final tick text to be rendered
 			// https://github.com/naver/billboard.js/issues/920
@@ -638,42 +653,49 @@ class Axis {
 			axis.create(dummy);
 
 			dummy.selectAll("text")
+				.attr("transform", isNumber(tickRotate) ? `rotate(${tickRotate})` : null)
 				.each(function(d, i) {
-					const currentTextWidth = this.getBoundingClientRect().width;
+					const {width, height} = this.getBoundingClientRect();
 
-					maxWidth = Math.max(maxWidth, currentTextWidth);
+					max.width = Math.max(max.width, width);
+					max.height = Math.max(max.height, height);
+
 					// cache tick text width for getXAxisTickTextY2Overflow()
 					if (!isYAxis) {
-						currentTickMax.ticks[i] = currentTextWidth;
+						currentTickMax.ticks[i] = width;
 					}
 				});
 
 			dummy.remove();
 		}
 
-		if (maxWidth > 0) {
-			currentTickMax.size = maxWidth;
-		}
+		Object.keys(max).forEach(key => {
+			if (max[key] > 0) {
+				currentTickMax[key] = max[key];
+			}
+		});
 
-		return currentTickMax.size;
+		return currentTickMax;
 	}
 
 	getXAxisTickTextY2Overflow(defaultPadding) {
 		const $$ = this.owner;
-		const {axis, config, state} = $$;
+		const {axis, config, state: {current, isLegendRight, legendItemWidth}} = $$;
 		const xAxisTickRotate = $$.getAxisTickRotate("x");
 		const positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
 
 		if ((axis.isCategorized() || axis.isTimeSeries()) &&
 			config.axis_x_tick_fit &&
-			!config.axis_x_tick_culling &&
+			(!config.axis_x_tick_culling || isEmpty(config.axis_x_tick_culling)) &&
 			!config.axis_x_tick_multiline &&
 			positiveRotation
 		) {
-			const widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingByDirection("left");
+			const y2AxisWidth = (config.axis_y2_show && current.maxTickSize.y2.width) || 0;
+			const legendWidth = (isLegendRight && legendItemWidth) || 0;
+			const widthWithoutCurrentPaddingLeft = current.width - $$.getCurrentPaddingByDirection("left");
 			const maxOverflow = this.getXAxisTickMaxOverflow(
 				xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding
-			);
+			) - y2AxisWidth - legendWidth;
 			const xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
 				defaultPadding; // for display inconsistencies between browsers
 
@@ -688,7 +710,7 @@ class Axis {
 		const {axis, config, state} = $$;
 		const isTimeSeries = axis.isTimeSeries();
 
-		const tickTextWidths = state.current.maxTickWidths.x.ticks;
+		const tickTextWidths = state.current.maxTickSize.x.ticks;
 		const tickCount = tickTextWidths.length;
 		const {left, right} = state.axis.x.padding;
 		let maxOverflow = 0;
@@ -746,7 +768,7 @@ class Axis {
 		};
 
 		Object.keys(labels).filter(id => !labels[id].empty())
-			.forEach(v => {
+			.forEach((v: AxisType) => {
 				const node = labels[v];
 
 				// @check $$.$T(node, withTransition)
@@ -982,7 +1004,7 @@ class Axis {
 
 				// set/unset x_axis_tick_clippath
 				if (type === "x") {
-					const clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
+					const clipPath = current.maxTickSize.x.clipPath ? clip.pathXAxisTickTexts : null;
 
 					$el.svg.selectAll(`.${$AXIS.axisX} .tick text`)
 						.attr("clip-path", clipPath);

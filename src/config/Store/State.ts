@@ -54,10 +54,10 @@ export default class State {
 				height: 0,
 				dataMax: 0,
 
-				maxTickWidths: {
-					x: {size: 0, ticks: <number[]> [], clipPath: 0, domain: ""},
-					y: {size: 0, domain: ""},
-					y2: {size: 0, domain: ""}
+				maxTickSize: {
+					x: {width: 0, height: 0, ticks: <number[]> [], clipPath: 0, domain: ""},
+					y: {width: 0, height: 0, domain: ""},
+					y2: {width: 0, height: 0, domain: ""}
 				},
 
 				// current used chart type list

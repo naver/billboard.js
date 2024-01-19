@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 // @ts-nocheck
-import {window} from "../../src/module/browser";
+import {window} from "./browser";
 
 // fake module replaced during test build to '/src/module/util.ts' by webpack.NormalModuleReplacementPlugin
 import * as orgUtil from "../../test/assets/module/fake";
@@ -33,6 +33,7 @@ export const {
 	getRandom,
 	getRange,
 	getRectSegList,
+	getScrollPosition,
 	getTranslation,
 	getUnique,
 	hasValue,

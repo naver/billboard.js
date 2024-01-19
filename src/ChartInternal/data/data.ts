@@ -9,6 +9,7 @@ import type {IData, IDataPoint, IDataRow} from "./IData";
 import {
 	findIndex,
 	getUnique,
+	getScrollPosition,
 	hasValue,
 	isArray,
 	isboolean,
@@ -671,7 +672,7 @@ export default {
 	 */
 	getDataIndexFromEvent(event): number {
 		const $$ = this;
-		const {config, state: {hasRadar, inputType, eventReceiver: {coords, rect}}} = $$;
+		const {$el, config, state: {hasRadar, inputType, eventReceiver: {coords, rect}}} = $$;
 		let index;
 
 		if (hasRadar) {
@@ -687,13 +688,16 @@ export default {
 			index = d && Object.keys(d).length === 1 ? d.index : undefined;
 		} else {
 			const isRotated = config.axis_rotated;
+			const scrollPos = getScrollPosition($el.chart.node());
 
 			// get data based on the mouse coords
 			const e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
 
 			index = findIndex(
 				coords,
-				isRotated ? e.clientY - rect.top : e.clientX - rect.left,
+				isRotated ?
+					e.clientY + scrollPos.y - rect.top :
+					e.clientX + scrollPos.x - rect.left,
 				0,
 				coords.length - 1,
 				isRotated
@@ -899,14 +903,18 @@ export default {
 		const value = d?.value;
 
 		if (isArray(value)) {
-			// @ts-ignore
-			const index = {
-				areaRange: ["high", "mid", "low"],
-				candlestick: ["open", "high", "low", "close", "volume"]
-			}[type].indexOf(key);
+			if (type === "bar") {
+				return value.reduce((a, c) => c - a);
+			} else {
+				// @ts-ignore
+				const index = {
+					areaRange: ["high", "mid", "low"],
+					candlestick: ["open", "high", "low", "close", "volume"]
+				}[type].indexOf(key);
 
-			return index >= 0 && value ? value[index] : undefined;
-		} else if (value) {
+				return index >= 0 && value ? value[index] : undefined;
+			}
+		} else if (value && key) {
 			return value[key];
 		}
 
@@ -992,7 +1000,9 @@ export default {
 				const max = yScale.domain().reduce((a, c) => c - a);
 
 				// when all data are 0, return 0
-				ratio = max === 0 ? 0 : Math.abs(d.value) / max;
+				ratio = max === 0 ? 0 : Math.abs(
+					$$.getRangedData(d, null, type) / max
+				);
 			} else if (type === "treemap") {
 				ratio /= $$.getTotalDataSum(true);
 			}

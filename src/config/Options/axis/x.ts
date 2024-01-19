@@ -260,6 +260,32 @@ export default {
 	axis_x_tick_text_show: true,
 
 	/**
+	 * Set the first/last axis tick text to be positioned inside of the chart on non-rotated axis.
+	 * @name axis․x․tick․text․inner
+	 * @memberof Options
+	 * @type {boolean|object}
+	 * @default false
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickInner)
+	 * @example
+	 * axis: {
+	 *   x: {
+	 *     tick: {
+	 *       text: {
+	 *          inner: true,
+	 *
+	 *          // or specify each position of the first and last tick text
+	 *          inner: {
+	 *       	   first: true,
+	 *       	   last: true
+	 *       	}
+	 *       }
+	 *     }
+	 *   }
+	 * }
+	 */
+	axis_x_tick_text_inner: <{first?: boolean, last?: boolean}|boolean> false,
+
+	/**
 	 * Set the x Axis tick text's position relatively its original position
 	 * @name axis․x․tick․text․position
 	 * @memberof Options
@@ -444,7 +470,7 @@ export default {
 	axis_x_tick_width: <number|null> null,
 
 	/**
-	 * Set to display system tooltip(via 'title' attribute) for tick text
+	 * Set to display system tooltip(via `<title>` element) for tick text
 	 * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
 	 * @name axis․x․tick․tooltip
 	 * @memberof Options

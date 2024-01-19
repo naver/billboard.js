@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {$COMMON, $EVENT, $SHAPE} from "../../config/classes";
-import {isboolean, getPointer, isFunction} from "../../module/util";
+import {isboolean, getPointer, getScrollPosition, isFunction} from "../../module/util";
 
 export default {
 	/**
@@ -194,9 +194,16 @@ export default {
 		const rectElement = eventRect || $el.eventRect;
 
 		const updateClientRect = (): void => {
-			eventReceiver && (
-				eventReceiver.rect = rectElement.node().getBoundingClientRect()
-			);
+			if (eventReceiver) {
+				const scrollPos = getScrollPosition($el.chart.node());
+
+				eventReceiver.rect = rectElement.node()
+					.getBoundingClientRect()
+					.toJSON();
+
+				eventReceiver.rect.top += scrollPos.y;
+				eventReceiver.rect.left += scrollPos.x;
+			}
 		};
 
 		if (!rendered || resizing || force) {

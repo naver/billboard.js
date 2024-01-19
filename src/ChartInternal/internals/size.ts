@@ -4,6 +4,7 @@
  */
 import {document} from "../../module/browser";
 import {$AXIS, $SUBCHART} from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {ceil10, capitalize, isNumber, isEmpty, isString, isUndefined} from "../../module/util";
 
 export default {
@@ -86,16 +87,18 @@ export default {
 
 	getSvgLeft(withoutRecompute?: boolean): number {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, state: {hasAxis}, $el} = $$;
 		const isRotated = config.axis_rotated;
 		const hasLeftAxisRect = isRotated || (!isRotated && !config.axis_y_inner);
 		const leftAxisClass = isRotated ? $AXIS.axisX : $AXIS.axisY;
 		const leftAxis = $el.main.select(`.${leftAxisClass}`).node();
-		const leftLabel = config[`axis_${isRotated ? "x" : "y"}_label`];
+		const leftLabel = hasAxis && config[`axis_${isRotated ? "x" : "y"}_label`];
 		let labelWidth = 0;
 
 		// if axis label position set to inner, exclude from the value
-		if (isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel?.position)) {
+		if (hasAxis && (
+			isString(leftLabel) || isString(leftLabel.text) || /^inner-/.test(leftLabel?.position)
+		)) {
 			const label = $el.main.select(`.${leftAxisClass}-label`);
 
 			if (!label.empty()) {
@@ -167,10 +170,11 @@ export default {
 	 * Get padding by the direction.
 	 * @param {string} type "top" | "bottom" | "left" | "right"
 	 * @param {boolean} [withoutRecompute=false] If set true, do not recompute the padding value.
+	 * @param {boolean} [withXAxisTickTextOverflow=false] If set true, calculate x axis tick text overflow.
 	 * @returns {number} padding value
 	 * @private
 	 */
-	getCurrentPaddingByDirection(type: "top" | "bottom" | "left" | "right", withoutRecompute = false): number {
+	getCurrentPaddingByDirection(type: "top" | "bottom" | "left" | "right", withoutRecompute = false, withXAxisTickTextOverflow = false): number {
 		const $$ = this;
 		const {config, $el, state: {hasAxis}} = $$;
 		const isRotated = config.axis_rotated;
@@ -217,6 +221,8 @@ export default {
 				padding += isRotated ? (
 					!isFitPadding && isUndefined(paddingOption) ? 10 : 2
 				) : !isAxisShow || isAxisInner ? (isFitPadding ? 2 : 1) : 0;
+
+				padding += withXAxisTickTextOverflow ? $$.axis.getXAxisTickTextY2Overflow(defaultPadding) : 0;
 			} else if (type === "left" && isRotated && isUndefined(paddingOption)) {
 				padding = !config.axis_x_show ?
 					1 : (isFitPadding ? axisSize : Math.max(axisSize, 40));
@@ -236,10 +242,12 @@ export default {
 		return padding + (axisSize * axesLen) - gap;
 	},
 
-	getCurrentPadding(): {top: number, bottom: number, left: number, right: number} {
+	getCurrentPadding(withXAxisTickTextOverflow = false): {
+		top: number, bottom: number, left: number, right: number
+	} {
 		const $$ = this;
 		const [top, bottom, left, right] = ["top", "bottom", "left", "right"]
-			.map(v => $$.getCurrentPaddingByDirection(v));
+			.map(v => $$.getCurrentPaddingByDirection(v, null, withXAxisTickTextOverflow));
 
 		return {top, bottom, left, right};
 	},
@@ -297,7 +305,8 @@ export default {
 		}
 
 		const legendSize = {
-			right: config.legend_show && state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
+			right: config.legend_show && state.isLegendRight ?
+				$$.getLegendWidth() + (isFitPadding ? 0 : 20) : 0,
 			bottom: !config.legend_show || state.isLegendRight || state.isLegendInset ? 0 : currLegend.height
 		};
 
@@ -312,7 +321,7 @@ export default {
 		const gaugeHeight = $$.hasType("gauge") && config.arc_needle_show &&
 			!config.gauge_fullCircle && !config.gauge_label_show ? 10 : 0;
 
-		const padding = $$.getCurrentPadding();
+		const padding = $$.getCurrentPadding(true);
 
 		// for main
 		state.margin = !isNonAxis && isRotated ? {
@@ -381,8 +390,9 @@ export default {
 		if ($$.hasArcType()) {
 			const hasGauge = $$.hasType("gauge");
 			const isLegendRight = config.legend_show && state.isLegendRight;
+			const textWidth = (state.hasRadar && $$.cache.get(KEY.radarTextWidth)) ?? 0;
 
-			state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0);
+			state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0) - textWidth;
 			state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
 
 			if (hasGauge && !config.gauge_fullCircle) {

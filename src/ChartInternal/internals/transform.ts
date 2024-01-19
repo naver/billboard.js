@@ -37,7 +37,7 @@ export default {
 			y = isRotated ? state.height + padding : 0;
 		} else if (target === "y2") {
 			x = isRotated ? 0 : state.width + padding;
-			y = isRotated ? 1 - padding : 0;
+			y = isRotated ? -padding - 1 : 0;
 		} else if (target === "subX") {
 			x = 0;
 			y = isRotated ? 0 : state.height2;
@@ -48,10 +48,10 @@ export default {
 			x = state.arcWidth / 2;
 			y = state.arcHeight / 2;
 		} else if (target === "radar") {
-			const [width] = $$.getRadarSize();
+			const [width, height] = $$.getRadarSize();
 
 			x = state.width / 2 - width;
-			y = asHalfPixel(state.margin.top);
+			y = state.height / 2 - height;
 		}
 
 		return `translate(${x}, ${y})`;

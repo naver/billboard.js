@@ -1,5 +1,9 @@
 {
     "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "warnOnUnsupportedTypeScriptVersion": false
+    },
+    "root": true,
     "plugins": [
         "jsdoc",
         "@typescript-eslint"

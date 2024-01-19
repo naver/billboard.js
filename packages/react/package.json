@@ -1,12 +1,13 @@
 {
 	"name": "@billboard.js/react",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "React component for billboard.js",
 	"main": "dist/billboardjs-react.js",
 	"types": "dist/types/index.d.ts",
 	"type": "module",
 	"exports": {
 		".": {
+			"types": "./dist/types/index.d.ts",
 			"import": "./dist/billboardjs-react.js",
 			"require": "./dist/billboardjs-react.cjs"
 		}

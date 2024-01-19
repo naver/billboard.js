@@ -288,5 +288,74 @@ describe("X AXIS", function() {
 				).to.be.above(state.height);
 			});
 		});
+
+		describe("tick.text.inner", () => {
+			before(() => {
+				args = {
+					data: {
+						x: "x",
+						xFormat: "%Y",
+						columns: [
+							["x", "2020", "2021", "2022", "2023", "2024"],
+							["data1", 30, 200, 100, 400, 150],
+							["data2", 130, 340, 200, 500, 250]
+						],
+						type: "line"
+					},
+					axis: {
+						x: {
+							type: "timeseries",
+							tick: {
+								format: "%Y-%m-%d %H:%M:%S",
+								text: {
+									inner: true
+								}
+							}
+						}
+					}
+				};
+			});
+
+			it("should first & last tick text to be positioned at inner.", () => {
+				chart.internal.$el.axis.x
+					.selectAll(".tick:first-of-type > text, .tick:last-of-type > text").each(function(d, i) {
+						const anchor = this.style.textAnchor;
+
+						expect(anchor).to.be.equal(i === 0 ? "start" : "end");
+					});
+			});
+
+			it("set options: axis.x.tick.text.inner={first:true, last:false}", () => {
+				args.axis.x.tick.text.inner = {
+					first: true,
+					last: false
+				};	
+			});
+
+			it("should first tick text to be positioned at inner.", () => {
+				chart.internal.$el.axis.x
+					.selectAll(".tick:first-of-type > text, .tick:last-of-type > text").each(function(d, i) {
+						const anchor = this.style.textAnchor;
+
+						expect(anchor).to.be.equal(i === 0 ? "start" : "middle");
+					});
+			});
+
+			it("set options: axis.x.tick.text.inner={first:false, last:true}", () => {
+				args.axis.x.tick.text.inner = {
+					first: false,
+					last: true
+				};	
+			});
+
+			it("should last tick text to be positioned at inner.", () => {
+				chart.internal.$el.axis.x
+					.selectAll(".tick:first-of-type > text, .tick:last-of-type > text").each(function(d, i) {
+						const anchor = this.style.textAnchor;
+
+						expect(anchor).to.be.equal(i === 0 ? "middle" : "end");
+					});
+			});
+		});
 	});
 });

@@ -198,9 +198,9 @@ export default {
 
 				value = `<b>Open:</b> ${open} <b>High:</b> ${high} <b>Low:</b> ${low} <b>Close:</b> ${close}${volume ? ` <b>Volume:</b> ${volume}` : ""}`;
 			} else if ($$.isBarRangeType(row)) {
-				const {value: [start, end], id, index} = row;
+				const {value: rangeValue, id, index} = row;
 
-				value = `${valueFormat(start, undefined, id, index)} ~ ${valueFormat(end, undefined, id, index)}`;
+				value = `${valueFormat(rangeValue, undefined, id, index)}`;
 			} else {
 				value = valueFormat(getRowValue(row), ...param);
 			}
@@ -329,6 +329,7 @@ export default {
 		const {width, height, current, isLegendRight, inputType} = state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const hasTreemap = state.hasTreemap;
+		const hasRadar = state.hasRadar;
 		const isRotated = config.axis_rotated;
 		const hasArcType = $$.hasArcType();
 		const svgLeft = $$.getSvgLeft(true);
@@ -337,14 +338,19 @@ export default {
 		let {x, y} = currPos;
 
 		// Determine tooltip position
-		if (hasArcType) {
-			const raw = inputType === "touch" || $$.hasType("radar");
+		if (hasRadar) {
+			x += x >= (width / 2) ? 15 : -(tWidth + 15);
+			y += 15;
+		} else if (hasArcType) {
+			const raw = inputType === "touch";
 
 			if (!raw) {
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-				y += hasGauge ? height : height / 2;
+				y += hasGauge ? height : (height / 2) + tHeight;
 			}
-		} else if (!hasTreemap) {
+		} else if (hasTreemap) {
+			y += tHeight;
+		} else {
 			const padding = {
 				top: $$.getCurrentPaddingByDirection("top", true),
 				left: $$.getCurrentPaddingByDirection("left", true)
@@ -366,9 +372,9 @@ export default {
 		}
 
 		if (y + tHeight > current.height) {
-			const gap = hasTreemap ? 0 : 30;
+			const gap = hasTreemap ? tHeight + 10 : 30;
 
-			y -= hasGauge ? tHeight * 3 : tHeight + gap;
+			y -= hasGauge ? tHeight * 1.5 : tHeight + gap;
 		}
 
 		const pos = {top: y, left: x};

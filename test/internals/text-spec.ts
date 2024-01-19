@@ -9,7 +9,7 @@ import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
 import util from "../assets/util";
 import {$AXIS, $SHAPE, $TEXT} from "../../src/config/classes";
-import {isNumber} from "../../src/module/util";
+import {isArray, isNumber, isObject} from "../../src/module/util";
 
 describe("TEXT", () => {
 	let chart;
@@ -422,6 +422,97 @@ describe("TEXT", () => {
 					expect(
 						(barRect.width / 2) - (textRect.x - barRect.x)
 					).to.be.closeTo(textRect.width / 2, 3);
+				});
+			});
+		});
+
+		describe("on ranged value(AreaRange/Bar range) chart", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 
+								[150, 140, 110],
+								[155, 130, 115],
+								[160, 135, 120],
+							],
+							["data2", [230, 340], 200, [-100, -50]],
+							["data3",
+								{high: 155, low: 145, mid: 150},
+								{high: 200, mid: 190, low: 150},
+								{high: 230, mid: 215, low: 200}
+							]
+						],
+						types: {
+							data1: "area-line-range",
+							data2: "bar",
+							data3: "area-line-range"
+						},
+						labels: {
+							colors: "black"
+						}
+					}
+				};
+			});
+
+			it("should data labels rendered correctly", () => {
+				chart.$.text.texts.each(function(d) {
+					let text = String(d.value);
+
+					if (isArray(d.value)) {
+						text = d.value.join("~");
+					} else if (isObject(d.value)) {
+						text = Object.values(d.value).join("~");
+					}
+
+					expect(this.textContent).to.be.equal(text);
+				});
+			});
+
+			it("set option: data.labels.centered=true / data.labels.format", () => {
+				args.data.labels.centered = true;
+
+				args.data.labels.format = function(value, id, index) {
+					let v = value;
+					const delimiter = "/";
+	
+					if (Array.isArray(value)) {
+						v = value.join(delimiter);
+					} else if (typeof value === "object") {
+						v = Object.values(v).join(delimiter);
+					}
+	
+					return v;
+				};
+			});
+
+			it("should locate data labels in correct position and formatted correctly", () => {
+				const {$: {bar, text}} = chart;
+				const barText: number[] = [];
+				const delimiter = "/";
+
+				text.texts.each(function(d) {
+					let text = String(d.value);
+
+					if (isArray(d.value)) {
+						text = d.value.join(delimiter);
+					} else if (isObject(d.value)) {
+						text = Object.values(d.value).join(delimiter);
+					}
+
+					expect(this.textContent).to.be.equal(text);
+
+					if (d.id === "data2") {
+						barText.push(+this.getAttribute("y"));
+					}
+				});
+
+				// check labels centered
+				bar.bars.each(function(d, i) {
+					const rect = this.getBoundingClientRect();
+
+					expect(barText[i]).to.be.closeTo((rect.height / 2) + rect.top, 2);
+
 				});
 			});
 		});
