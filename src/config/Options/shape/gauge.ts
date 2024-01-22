@@ -25,6 +25,9 @@ export default {
 	 * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
 	 * @property {number} [gauge.expand.rate=0.98] Set expand rate.
 	 * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
+	 * @property {boolean} [gauge.enforceMinMax=false] Enforce to given min/max value.
+	 * - When `gauge.min=50` and given value is `30`, gauge will render as empty value.
+	 * - When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
 	 * @property {number} [gauge.min=0] Set min value of the gauge.
 	 * @property {number} [gauge.max=100] Set max value of the gauge.
 	 * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
@@ -55,6 +58,7 @@ export default {
 	 * - single
 	 * - multi
 	 * @property {number} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+	 * @see [Demo: enforceMinMax, min/max](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeMinMax)
 	 * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
 	 * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
 	 * @example
@@ -90,6 +94,11 @@ export default {
 	 *          rate: 1
 	 *      },
 	 *
+	 *      // enforce min/max value.
+	 * 		// when given value < min, will render as empty value.
+	 * 		// when value > max, will render to given max value not surpassing it.
+	 *      enforceMinMax: true,
+	 *
 	 *      min: -100,
 	 *      max: 200,
 	 *      type: "single"  // or 'multi'
@@ -113,6 +122,7 @@ export default {
 	gauge_label_format: <(() => string)|undefined> undefined,
 	gauge_label_extents: <(() => string)|undefined> undefined,
 	gauge_label_threshold: 0,
+	gauge_enforceMinMax: false,
 	gauge_min: 0,
 	gauge_max: 100,
 	gauge_type: "single",
