@@ -144,7 +144,7 @@
 		"coveralls": "^3.1.1",
 		"cross-env": "^7.0.3",
 		"css-loader": "^6.9.0",
-		"css-minimizer-webpack-plugin": "^5.0.1",
+		"css-minimizer-webpack-plugin": "^6.0.0",
 		"d3-color": "^3.1.0",
 		"d3-delaunay": "^6.0.4",
 		"d3-format": "^3.1.0",
