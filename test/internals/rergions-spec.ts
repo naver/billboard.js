@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 import {expect} from "chai";
+import {window} from "../../src/module/browser";
 import util from "../assets/util";
 
 // exported to be used from /test/api/region-spec.ts
@@ -131,12 +132,19 @@ describe("REGIONS", function() {
 			const {$el, scale} = chart.internal;
 			
 			setTimeout(() => {
-				$el.region.list.each(function(d) {
+				$el.region.list.each(function(d, i) {
 					const axis = scale[d.axis];
 					const isX = d.axis === "x";
 					const rect = this.querySelector("rect");
 					const start = +rect.getAttribute(isX ? "x" : "y");
 					const size = +rect.getAttribute(isX ? "width" : "height");
+
+					// first <rect> should apply .regions_class1 rule
+					if (i === 0) {
+						const {fill} = window.getComputedStyle(this.querySelector("rect"));
+
+						expect(fill).to.be.equal("rgb(255, 0, 0)");
+					}
 
 					// check the diemsion
 					expect(start).to.be.equal(axis(isX ? d.start : d.end));
