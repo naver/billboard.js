@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240120004615
+ * @version 3.10.3-nightly-20240123004619
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -617,7 +617,7 @@ module.exports = function (options, source) {
   } else if (STATIC) {
     target = global[TARGET] || defineGlobalProperty(TARGET, {});
   } else {
-    target = (global[TARGET] || {}).prototype;
+    target = global[TARGET] && global[TARGET].prototype;
   }
   if (target) for (key in source) {
     sourceProperty = source[key];
@@ -1224,10 +1224,10 @@ var store = __webpack_require__(36);
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.35.0',
+  version: '3.35.1',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2014-2023 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.35.0/LICENSE',
+  copyright: '© 2014-2024 Denis Pushkarev (zloirock.ru)',
+  license: 'https://github.com/zloirock/core-js/blob/v3.35.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -1540,7 +1540,7 @@ var TEMPLATE = String(String).split('String');
 
 var makeBuiltIn = module.exports = function (value, name, options) {
   if (stringSlice($String(name), 0, 7) === 'Symbol(') {
-    name = '[' + replace($String(name), /^Symbol\(([^)]*)\)/, '$1') + ']';
+    name = '[' + replace($String(name), /^Symbol\(([^)]*)\).*$/, '$1') + ']';
   }
   if (options && options.getter) name = 'get ' + name;
   if (options && options.setter) name = 'set ' + name;
@@ -1950,7 +1950,8 @@ var min = Math.min;
 // `ToLength` abstract operation
 // https://tc39.es/ecma262/#sec-tolength
 module.exports = function (argument) {
-  return argument > 0 ? min(toIntegerOrInfinity(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
+  var len = toIntegerOrInfinity(argument);
+  return len > 0 ? min(len, 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
 };
 
 
@@ -2569,7 +2570,6 @@ var getBuiltIn = __webpack_require__(23);
 var inspectSource = __webpack_require__(50);
 
 var noop = function () { /* empty */ };
-var empty = [];
 var construct = getBuiltIn('Reflect', 'construct');
 var constructorRegExp = /^\s*(?:class|function)\b/;
 var exec = uncurryThis(constructorRegExp.exec);
@@ -2578,7 +2578,7 @@ var INCORRECT_TO_STRING = !constructorRegExp.test(noop);
 var isConstructorModern = function isConstructor(argument) {
   if (!isCallable(argument)) return false;
   try {
-    construct(noop, empty, argument);
+    construct(noop, [], argument);
     return true;
   } catch (error) {
     return false;
@@ -12567,7 +12567,7 @@ fixRegExpWellKnownSymbolLogic('match', function (MATCH, nativeMatch, maybeCallNa
 
 // TODO: Remove from `core-js@4` since it's moved to entry points
 __webpack_require__(379);
-var uncurryThis = __webpack_require__(85);
+var call = __webpack_require__(8);
 var defineBuiltIn = __webpack_require__(47);
 var regexpExec = __webpack_require__(380);
 var fails = __webpack_require__(7);
@@ -12581,7 +12581,7 @@ module.exports = function (KEY, exec, FORCED, SHAM) {
   var SYMBOL = wellKnownSymbol(KEY);
 
   var DELEGATES_TO_SYMBOL = !fails(function () {
-    // String methods call symbol-named RegEp methods
+    // String methods call symbol-named RegExp methods
     var O = {};
     O[SYMBOL] = function () { return 7; };
     return ''[KEY](O) !== 7;
@@ -12619,18 +12619,17 @@ module.exports = function (KEY, exec, FORCED, SHAM) {
     !DELEGATES_TO_EXEC ||
     FORCED
   ) {
-    var uncurriedNativeRegExpMethod = uncurryThis(/./[SYMBOL]);
+    var nativeRegExpMethod = /./[SYMBOL];
     var methods = exec(SYMBOL, ''[KEY], function (nativeMethod, regexp, str, arg2, forceStringMethod) {
-      var uncurriedNativeMethod = uncurryThis(nativeMethod);
       var $exec = regexp.exec;
       if ($exec === regexpExec || $exec === RegExpPrototype.exec) {
         if (DELEGATES_TO_SYMBOL && !forceStringMethod) {
           // The native String method already delegates to @@method (this
           // polyfilled function), leasing to infinite recursion.
           // We avoid it by directly calling the native @@method method.
-          return { done: true, value: uncurriedNativeRegExpMethod(regexp, str, arg2) };
+          return { done: true, value: call(nativeRegExpMethod, regexp, str, arg2) };
         }
-        return { done: true, value: uncurriedNativeMethod(str, regexp, arg2) };
+        return { done: true, value: call(nativeMethod, str, regexp, arg2) };
       }
       return { done: false };
     });
@@ -13125,12 +13124,6 @@ var replace = uncurryThis(''.replace);
 var stringSlice = uncurryThis(''.slice);
 var max = Math.max;
 
-var stringIndexOf = function (string, searchValue, fromIndex) {
-  if (fromIndex > string.length) return -1;
-  if (searchValue === '') return fromIndex;
-  return indexOf(string, searchValue, fromIndex);
-};
-
 // `String.prototype.replaceAll` method
 // https://tc39.es/ecma262/#sec-string.prototype.replaceall
 $({ target: 'String', proto: true }, {
@@ -13159,14 +13152,14 @@ $({ target: 'String', proto: true }, {
     if (!functionalReplace) replaceValue = toString(replaceValue);
     searchLength = searchString.length;
     advanceBy = max(1, searchLength);
-    position = stringIndexOf(string, searchString, 0);
+    position = indexOf(string, searchString);
     while (position !== -1) {
       replacement = functionalReplace
         ? toString(replaceValue(searchString, position, string))
         : getSubstitution(searchString, string, position, [], undefined, replaceValue);
       result += stringSlice(string, endOfLastMatch, position) + replacement;
       endOfLastMatch = position + searchLength;
-      position = stringIndexOf(string, searchString, position + advanceBy);
+      position = position + advanceBy > string.length ? -1 : indexOf(string, searchString, position + advanceBy);
     }
     if (endOfLastMatch < string.length) {
       result += stringSlice(string, endOfLastMatch);
@@ -13227,31 +13220,25 @@ fixRegExpWellKnownSymbolLogic('search', function (SEARCH, nativeSearch, maybeCal
 
 "use strict";
 
-var apply = __webpack_require__(94);
 var call = __webpack_require__(8);
 var uncurryThis = __webpack_require__(14);
 var fixRegExpWellKnownSymbolLogic = __webpack_require__(398);
 var anObject = __webpack_require__(46);
 var isNullOrUndefined = __webpack_require__(17);
-var isRegExp = __webpack_require__(372);
 var requireObjectCoercible = __webpack_require__(16);
 var speciesConstructor = __webpack_require__(219);
 var advanceStringIndex = __webpack_require__(399);
 var toLength = __webpack_require__(64);
 var toString = __webpack_require__(68);
 var getMethod = __webpack_require__(29);
-var arraySlice = __webpack_require__(76);
-var callRegExpExec = __webpack_require__(400);
-var regexpExec = __webpack_require__(380);
+var regExpExec = __webpack_require__(400);
 var stickyHelpers = __webpack_require__(375);
 var fails = __webpack_require__(7);
 
 var UNSUPPORTED_Y = stickyHelpers.UNSUPPORTED_Y;
 var MAX_UINT32 = 0xFFFFFFFF;
 var min = Math.min;
-var $push = [].push;
-var exec = uncurryThis(/./.exec);
-var push = uncurryThis($push);
+var push = uncurryThis([].push);
 var stringSlice = uncurryThis(''.slice);
 
 // Chrome 51 has a buggy "split" implementation when RegExp#exec !== nativeExec
@@ -13265,60 +13252,20 @@ var SPLIT_WORKS_WITH_OVERWRITTEN_EXEC = !fails(function () {
   return result.length !== 2 || result[0] !== 'a' || result[1] !== 'b';
 });
 
+var BUGGY = 'abbc'.split(/(b)*/)[1] === 'c' ||
+  // eslint-disable-next-line regexp/no-empty-group -- required for testing
+  'test'.split(/(?:)/, -1).length !== 4 ||
+  'ab'.split(/(?:ab)*/).length !== 2 ||
+  '.'.split(/(.?)(.?)/).length !== 4 ||
+  // eslint-disable-next-line regexp/no-empty-capturing-group, regexp/no-empty-group -- required for testing
+  '.'.split(/()()/).length > 1 ||
+  ''.split(/.?/).length;
+
 // @@split logic
 fixRegExpWellKnownSymbolLogic('split', function (SPLIT, nativeSplit, maybeCallNative) {
-  var internalSplit;
-  if (
-    'abbc'.split(/(b)*/)[1] === 'c' ||
-    // eslint-disable-next-line regexp/no-empty-group -- required for testing
-    'test'.split(/(?:)/, -1).length !== 4 ||
-    'ab'.split(/(?:ab)*/).length !== 2 ||
-    '.'.split(/(.?)(.?)/).length !== 4 ||
-    // eslint-disable-next-line regexp/no-empty-capturing-group, regexp/no-empty-group -- required for testing
-    '.'.split(/()()/).length > 1 ||
-    ''.split(/.?/).length
-  ) {
-    // based on es5-shim implementation, need to rework it
-    internalSplit = function (separator, limit) {
-      var string = toString(requireObjectCoercible(this));
-      var lim = limit === undefined ? MAX_UINT32 : limit >>> 0;
-      if (lim === 0) return [];
-      if (separator === undefined) return [string];
-      // If `separator` is not a regex, use native split
-      if (!isRegExp(separator)) {
-        return call(nativeSplit, string, separator, lim);
-      }
-      var output = [];
-      var flags = (separator.ignoreCase ? 'i' : '') +
-                  (separator.multiline ? 'm' : '') +
-                  (separator.unicode ? 'u' : '') +
-                  (separator.sticky ? 'y' : '');
-      var lastLastIndex = 0;
-      // Make `global` and avoid `lastIndex` issues by working with a copy
-      var separatorCopy = new RegExp(separator.source, flags + 'g');
-      var match, lastIndex, lastLength;
-      while (match = call(regexpExec, separatorCopy, string)) {
-        lastIndex = separatorCopy.lastIndex;
-        if (lastIndex > lastLastIndex) {
-          push(output, stringSlice(string, lastLastIndex, match.index));
-          if (match.length > 1 && match.index < string.length) apply($push, output, arraySlice(match, 1));
-          lastLength = match[0].length;
-          lastLastIndex = lastIndex;
-          if (output.length >= lim) break;
-        }
-        if (separatorCopy.lastIndex === match.index) separatorCopy.lastIndex++; // Avoid an infinite loop
-      }
-      if (lastLastIndex === string.length) {
-        if (lastLength || !exec(separatorCopy, '')) push(output, '');
-      } else push(output, stringSlice(string, lastLastIndex));
-      return output.length > lim ? arraySlice(output, 0, lim) : output;
-    };
-  // Chakra, V8
-  } else if ('0'.split(undefined, 0).length) {
-    internalSplit = function (separator, limit) {
-      return separator === undefined && limit === 0 ? [] : call(nativeSplit, this, separator, limit);
-    };
-  } else internalSplit = nativeSplit;
+  var internalSplit = '0'.split(undefined, 0).length ? function (separator, limit) {
+    return separator === undefined && limit === 0 ? [] : call(nativeSplit, this, separator, limit);
+  } : nativeSplit;
 
   return [
     // `String.prototype.split` method
@@ -13338,30 +13285,30 @@ fixRegExpWellKnownSymbolLogic('split', function (SPLIT, nativeSplit, maybeCallNa
     function (string, limit) {
       var rx = anObject(this);
       var S = toString(string);
-      var res = maybeCallNative(internalSplit, rx, S, limit, internalSplit !== nativeSplit);
 
-      if (res.done) return res.value;
+      if (!BUGGY) {
+        var res = maybeCallNative(internalSplit, rx, S, limit, internalSplit !== nativeSplit);
+        if (res.done) return res.value;
+      }
 
       var C = speciesConstructor(rx, RegExp);
-
       var unicodeMatching = rx.unicode;
       var flags = (rx.ignoreCase ? 'i' : '') +
                   (rx.multiline ? 'm' : '') +
                   (rx.unicode ? 'u' : '') +
                   (UNSUPPORTED_Y ? 'g' : 'y');
-
       // ^(? + rx + ) is needed, in combination with some S slicing, to
       // simulate the 'y' flag.
       var splitter = new C(UNSUPPORTED_Y ? '^(?:' + rx.source + ')' : rx, flags);
       var lim = limit === undefined ? MAX_UINT32 : limit >>> 0;
       if (lim === 0) return [];
-      if (S.length === 0) return callRegExpExec(splitter, S) === null ? [S] : [];
+      if (S.length === 0) return regExpExec(splitter, S) === null ? [S] : [];
       var p = 0;
       var q = 0;
       var A = [];
       while (q < S.length) {
         splitter.lastIndex = UNSUPPORTED_Y ? 0 : q;
-        var z = callRegExpExec(splitter, UNSUPPORTED_Y ? stringSlice(S, q) : S);
+        var z = regExpExec(splitter, UNSUPPORTED_Y ? stringSlice(S, q) : S);
         var e;
         if (
           z === null ||
@@ -13382,7 +13329,7 @@ fixRegExpWellKnownSymbolLogic('split', function (SPLIT, nativeSplit, maybeCallNa
       return A;
     }
   ];
-}, !SPLIT_WORKS_WITH_OVERWRITTEN_EXEC, UNSUPPORTED_Y);
+}, BUGGY || !SPLIT_WORKS_WITH_OVERWRITTEN_EXEC, UNSUPPORTED_Y);
 
 
 /***/ }),
@@ -19756,7 +19703,7 @@ let Plugin = /*#__PURE__*/function () {
   };
   return Plugin;
 }();
-Plugin.version = "3.10.3-nightly-20240120004615";
+Plugin.version = "3.10.3-nightly-20240123004619";
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 /**

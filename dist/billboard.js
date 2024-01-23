@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240120004615
+ * @version 3.10.3-nightly-20240123004619
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -19264,7 +19264,7 @@ function getAttrTweenFn(fn) {
     if (isNaN(d.endAngle)) {
       d.endAngle = d.startAngle;
     }
-    if (d.data && $$.hasMultiArcGauge()) {
+    if (d.data && (config.gauge_enforceMinMax || $$.hasMultiArcGauge())) {
       const gMin = config.gauge_min,
         gMax = config.gauge_max,
         gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : gMax - gMin;
@@ -20651,7 +20651,7 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
     // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
 
     // if gauge_max less than max, make max to max value
-    if (max + config.gauge_min * (config.gauge_min > 0 ? -1 : 1) > config.gauge_max) {
+    if (!config.gauge_enforceMinMax && max + config.gauge_min * (config.gauge_min > 0 ? -1 : 1) > config.gauge_max) {
       config.gauge_max = max - config.gauge_min;
     }
   },
@@ -23217,6 +23217,9 @@ function convertDataToTreemapData(data) {
    * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
    * @property {number} [gauge.expand.rate=0.98] Set expand rate.
    * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
+   * @property {boolean} [gauge.enforceMinMax=false] Enforce to given min/max value.
+   * - When `gauge.min=50` and given value is `30`, gauge will render as empty value.
+   * - When `gauge.max=100` and given value is `120`, gauge will render till 100, not surpassing max value.
    * @property {number} [gauge.min=0] Set min value of the gauge.
    * @property {number} [gauge.max=100] Set max value of the gauge.
    * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
@@ -23247,6 +23250,7 @@ function convertDataToTreemapData(data) {
    * - single
    * - multi
    * @property {number} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+   * @see [Demo: enforceMinMax, min/max](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeMinMax)
    * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
    * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
    * @example
@@ -23282,6 +23286,11 @@ function convertDataToTreemapData(data) {
    *          rate: 1
    *      },
    *
+   *      // enforce min/max value.
+   * 		// when given value < min, will render as empty value.
+   * 		// when value > max, will render to given max value not surpassing it.
+   *      enforceMinMax: true,
+   *
    *      min: -100,
    *      max: 200,
    *      type: "single"  // or 'multi'
@@ -23305,6 +23314,7 @@ function convertDataToTreemapData(data) {
   gauge_label_format: undefined,
   gauge_label_extents: undefined,
   gauge_label_threshold: 0,
+  gauge_enforceMinMax: !1,
   gauge_min: 0,
   gauge_max: 100,
   gauge_type: "single",
@@ -25760,7 +25770,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240120004615
+ * @version 3.10.3-nightly-20240123004619
  */
 const bb = {
   /**
@@ -25770,7 +25780,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20240120004615",
+  version: "3.10.3-nightly-20240123004619",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
