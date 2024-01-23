@@ -147,8 +147,9 @@ $text-font-size: 11px;
 
 /*-- Region --*/
 .bb-region {
+    fill: steelblue;
+
     rect {
-        fill: steelblue;
         fill-opacity: 0.1;
     }
 

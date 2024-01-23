@@ -437,6 +437,72 @@ describe("SHAPE GAUGE", () => {
 		});
 	});
 
+	describe("min/max", () => {
+		let args = {
+			data: {
+				columns: [
+					["data1", 30]
+				],
+				type: "gauge"
+			},
+			gauge: {
+				type: "single",
+				enforceMinMax: true,
+				min: 50,
+				max: 100
+			}
+		};
+		let chart;
+
+		beforeEach(() => {
+			chart = util.generate(args);
+			//console.log(JSON.stringify(args));
+		});
+
+		it("shoudn't render data when given value is less than min.", () => {
+			const length = chart.$.arc.select(".bb-shapes path").node().getTotalLength();
+
+			expect(length < 100).to.be.true;
+		});
+
+		it("set options: gauge.type='multi'", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 75],
+						["data3", 130],
+					],
+					type: "gauge"
+				},
+				gauge: {
+					type: "multi",
+					enforceMinMax: true,
+					min: 50,
+					max: 100
+				}
+			}
+		});
+
+		it("shoud render data shape in a range of min/max value.", done => {
+			const expected = [
+				{value: 0, length: 70},
+				{value: 50, length: 720},
+				{value: 100, length: 1560}
+			];
+
+			setTimeout(() => {
+				
+				chart.$.arc.selectAll(".bb-shapes").each(function(d, i) {
+					expect(parseInt(this.nextSibling.textContent)).to.be.equal(expected[i].value);
+					expect(this.querySelector("path").getTotalLength() < expected[i].length).to.be
+				});
+
+				done();
+			}, 300);
+		});
+	});
+
 	describe("show multi-arc-gauge", () => {
 		const args = {
 			data: {
