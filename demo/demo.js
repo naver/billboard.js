@@ -5684,6 +5684,50 @@ setTimeout(function() {
 				}
 			}
 		},
+		GaugeMinMax: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 60]
+						],
+						type: "gauge"
+					},
+					gauge: {
+						min: 30,
+						max: 90
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30]
+						],
+						type: "gauge"
+					},
+					gauge: {
+						enforceMinMax: true,
+						min: 50
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 120]
+						],
+						type: "gauge"
+					},
+					gauge: {
+						enforceMinMax: true,
+						max: 100
+					}
+				}
+			},
+		],
 		GaugeLabelMultiline: {
 			options: {
 				data: {

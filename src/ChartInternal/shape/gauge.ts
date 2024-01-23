@@ -43,7 +43,9 @@ export default {
 			$$.getMinMaxData().max[0].value : $$.getTotalDataSum(state.rendered);
 
 		// if gauge_max less than max, make max to max value
-		if (max + config.gauge_min * (config.gauge_min > 0 ? -1 : 1) > config.gauge_max) {
+		if (!config.gauge_enforceMinMax && (
+			max + config.gauge_min * (config.gauge_min > 0 ? -1 : 1) > config.gauge_max
+		)) {
 			config.gauge_max = max - config.gauge_min;
 		}
 	},

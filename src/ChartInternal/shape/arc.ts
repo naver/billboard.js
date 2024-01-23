@@ -299,7 +299,7 @@ export default {
 			d.endAngle = d.startAngle;
 		}
 
-		if (d.data && $$.hasMultiArcGauge()) {
+		if (d.data && (config.gauge_enforceMinMax || $$.hasMultiArcGauge())) {
 			const gMin = config.gauge_min;
 			const gMax = config.gauge_max;
 			const gTic = radius / (gMax - gMin);
