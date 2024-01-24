@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20240123004619
+ * @version 3.10.3-nightly-20240124004639
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -570,11 +570,11 @@ var toArray = function (v) { return [].slice.call(v); };
  * @private
  */
 function addCssRules(style, selector, prop) {
-    var rootSelctor = style.rootSelctor, sheet = style.sheet;
+    var _a = style.rootSelector, rootSelector = _a === void 0 ? "" : _a, sheet = style.sheet;
     var getSelector = function (s) { return s
         .replace(/\s?(bb-)/g, ".$1")
         .replace(/\.+/g, "."); };
-    var rule = "".concat(rootSelctor, " ").concat(getSelector(selector), " {").concat(prop.join(";"), "}");
+    var rule = "".concat(rootSelector, " ").concat(getSelector(selector), " {").concat(prop.join(";"), "}");
     return sheet[sheet.insertRule ? "insertRule" : "addRule"](rule, sheet.cssRules.length);
 }
 /**
@@ -23232,7 +23232,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240123004619
+ * @version 3.10.3-nightly-20240124004639
  */
 var bb = {
     /**
@@ -23242,7 +23242,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20240123004619",
+    version: "3.10.3-nightly-20240124004639",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

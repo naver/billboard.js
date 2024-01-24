@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240123004619
+ * @version 3.10.3-nightly-20240124004639
  */
 /*-- Dark Theme --*/
 /*-- Default color pattern --*/
@@ -115,12 +115,12 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
     opacity: .05 !important; }
 
 /*-- Region --*/
-.bb-region rect {
-  fill: steelblue;
-  fill-opacity: 0.5; }
-
-.bb-region.selected rect {
-  fill: #27c903; }
+.bb-region {
+  fill: steelblue; }
+  .bb-region rect {
+    fill-opacity: 0.5; }
+  .bb-region.selected rect {
+    fill: #27c903; }
 
 /*-- Zoom region --*/
 .bb-zoom-brush {

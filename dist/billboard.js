@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240123004619
+ * @version 3.10.3-nightly-20240124004639
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -886,13 +886,14 @@ const toArray = function (v) {
  */
 function addCssRules(style, selector, prop) {
   var _this9 = this;
-  const rootSelctor = style.rootSelctor,
+  const _style$rootSelector = style.rootSelector,
+    rootSelector = _style$rootSelector === void 0 ? "" : _style$rootSelector,
     sheet = style.sheet,
     getSelector = function (s) {
       _newArrowCheck(this, _this9);
       return s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
     }.bind(this),
-    rule = rootSelctor + " " + getSelector(selector) + " {" + prop.join(";") + "}";
+    rule = rootSelector + " " + getSelector(selector) + " {" + prop.join(";") + "}";
   return sheet[sheet.insertRule ? "insertRule" : "addRule"](rule, sheet.cssRules.length);
 }
 
@@ -25770,7 +25771,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240123004619
+ * @version 3.10.3-nightly-20240124004639
  */
 const bb = {
   /**
@@ -25780,7 +25781,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20240123004619",
+  version: "3.10.3-nightly-20240124004639",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
