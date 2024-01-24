@@ -477,12 +477,12 @@ const toArray = (v: CSSStyleDeclaration | any): any => [].slice.call(v);
  * @private
  */
 function addCssRules(style, selector: string, prop: string[]): number {
-	const {rootSelctor, sheet} = style;
+	const {rootSelector = "", sheet} = style;
 	const getSelector = s => s
 		.replace(/\s?(bb-)/g, ".$1")
 		.replace(/\.+/g, ".");
 
-	const rule = `${rootSelctor} ${getSelector(selector)} {${prop.join(";")}}`;
+	const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
 
 	return sheet[sheet.insertRule ? "insertRule" : "addRule"](
 		rule,

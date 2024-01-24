@@ -156,8 +156,9 @@ rect.bb-circle, use.bb-circle {
 
 /*-- Region --*/
 .bb-region {
+    fill: #71808d;
+
     rect {
-        fill: #71808d;
         fill-opacity: 0.1;
     }
 
