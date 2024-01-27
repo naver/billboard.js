@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20240124004639
+ * @version 3.10.3-nightly-20240127004548
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -3013,6 +3013,7 @@ var tooltip$2 = {
      *    - **{=CLASS_TOOLTIP_NAME}**: default tooltip data class name (ex. `bb-tooltip-name-data1`)
      *    - **{=TITLE}**: title value.
      *    - **{=COLOR}**: data color.
+     *    - **{=NAME}**: data id value.
      *    - **{=VALUE}**: data value.
      * @property {object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
      *  - **NOTE:** It should contain `{ key: Array, ... }` value
@@ -23232,7 +23233,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240124004639
+ * @version 3.10.3-nightly-20240127004548
  */
 var bb = {
     /**
@@ -23242,7 +23243,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20240124004639",
+    version: "3.10.3-nightly-20240127004548",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
