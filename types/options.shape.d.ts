@@ -342,6 +342,11 @@ export interface GaugeOptions {
 		extents?(this: Chart, value: number, isMax: boolean): string | number;
 
 		/**
+		 * Set ratio of labels position.
+		 */
+		ratio?: ((this: Chart, d: DataItem, radius: number, h: number) => void) | number
+
+		/**
 		 * Set threshold ratio to show/hide labels.
 		 */
 		threshold?: number;
