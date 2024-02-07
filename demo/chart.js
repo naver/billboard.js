@@ -133,10 +133,6 @@ var billboardDemo = {
 	 * @param {String} type
 	 */
 	showDemo: function(type) {
-		if (!type) {
-			return;
-		}
-
 		// remove legend
 		var $legend = document.querySelector(".legend");
 		$legend && $legend.parentNode.removeChild($legend);
@@ -158,6 +154,11 @@ var billboardDemo = {
 
 		// set description
 		let desc = demos[type[0]][type[1]];
+		
+		if (!type || !desc) {
+			return;
+		}
+
 		this.$description.innerHTML = desc.description || (Array.isArray(desc) && desc[0].description) || "";
 
 		this.$codeArea.style.display = "block";
