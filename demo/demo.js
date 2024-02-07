@@ -5744,6 +5744,79 @@ setTimeout(function() {
 				}
 			}
 		},
+		GaugeLabelRatio: [
+			{
+				options: {
+					title: {
+						text: "Default label ratio"
+					},
+					size: {
+						height: 200
+					},
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 70],
+							["data3", 30]
+						],
+						type: "gauge",
+					},
+					gauge: {
+						width: 80
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "To make label text centered"
+					},
+					size: {
+						height: 200
+					},
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 70],
+							["data3", 30]
+						],
+						type: "gauge",
+					},
+					gauge: {
+						width: 80,
+						label: {
+							ratio: 1
+						}
+					}
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Customize label ratio by function"
+					},
+					size: {
+						height: 200
+					},
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 70],
+							["data3", 30]
+						],
+						type: "gauge",
+					},
+					gauge: {
+						width: 80,
+						label: {
+							ratio: function(d, radius, h) {
+								return d.value >= 100 ? 0.6 : 1.3;
+							}
+						}
+					}
+				}
+			}
+		],
 		GaugeNeedle: [
 			{
 				options: {
