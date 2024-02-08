@@ -15,12 +15,13 @@ export default {
 	 * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
 	 * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
 	 * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
+	 * @property {Function} [gauge.label.extents] Set customized min/max label text.
 	 * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
 	 * Will pass following arguments to the given function:
 	 * - value {number}: absolute value
 	 * - ratio {number}: value's ratio
 	 * - id {string}: data's id value
-	 * @property {Function} [gauge.label.extents] Set customized min/max label text.
+	 * @property {number|Function} [gauge.label.ratio=undefined] Set ratio of labels position.
 	 * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
 	 * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
 	 * @property {number} [gauge.expand.rate=0.98] Set expand rate.
@@ -61,6 +62,7 @@ export default {
 	 * @see [Demo: enforceMinMax, min/max](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeMinMax)
 	 * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
 	 * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
+	 * @see [Demo: labelRatio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
 	 * @example
 	 *  gauge: {
 	 *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
@@ -81,6 +83,14 @@ export default {
 	 *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
 	 *          // if data value is below than 0.1, text label will be hidden.
 	 *          threshold: 0.1,
+	 *
+	 *          // set ratio callback. Should return ratio value
+	 *          ratio: function(d, radius, h) {
+	 *              ...
+	 *              return ratio;
+	 *          },
+	 *          // or set ratio number
+	 *          ratio: 0.5
 	 *      },
 	 *
 	 *      // disable expand transition for interaction
@@ -119,8 +129,9 @@ export default {
 	gauge_background: "",
 	gauge_fullCircle: false,
 	gauge_label_show: true,
-	gauge_label_format: <(() => string)|undefined> undefined,
 	gauge_label_extents: <(() => string)|undefined> undefined,
+	gauge_label_format: <(() => string)|undefined> undefined,
+	gauge_label_ratio: <(() => number)|undefined> undefined,
 	gauge_label_threshold: 0,
 	gauge_enforceMinMax: false,
 	gauge_min: 0,

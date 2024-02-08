@@ -405,7 +405,7 @@ export default {
 				const [x, y] = c.map(v => (isNaN(v) ? 0 : v));
 				const h = Math.sqrt(x * x + y * y);
 
-				let ratio = ["donut", "pie", "polar"]
+				let ratio = ["donut", "gauge", "pie", "polar"]
 					.filter($$.hasType.bind($$))
 					.map(v => config[`${v}_label_ratio`])?.[0];
 

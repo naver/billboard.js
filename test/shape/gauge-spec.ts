@@ -950,4 +950,82 @@ describe("SHAPE GAUGE", () => {
 			}
 		});
 	});
+
+	describe("gauge label", () => {
+		type TPos = [number,number][];
+		let args: any = {
+			data: {
+				columns: [
+					["data1", 100],
+					["data2", 70],
+					["data3", 30]
+				],
+				type: "gauge",
+				order: "desc"
+			},
+			legend: {
+				show: false
+			},
+			gauge: {
+				width: 150
+			}
+		};
+		let chart;
+		let pos:TPos;
+
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
+
+		function getLabelPos(ctx): TPos {
+			const currPos: TPos = [];
+
+			ctx.$.text.texts.each(function(v) {
+				const pos = this.getAttribute("transform").split(",").map(util.parseNum);
+
+				currPos.push(pos);
+			});
+
+			return currPos;
+		}
+
+		it("should ratio applied correctly?", () => {
+			pos = getLabelPos(chart);
+
+			// update label ratio
+			chart.config("gauge.label.ratio", 1, true);
+
+			const newPos = getLabelPos(chart);
+
+			pos.forEach((v, i) => {
+				const [x, y] = v.map(Math.abs);
+				const [nx, ny] = newPos[i].map(Math.abs);
+
+				expect(x > nx && y > ny).to.be.true;
+			});
+		});
+
+		it("set options: gauge.label.ratio", () => {
+			args.gauge.label = {
+				ratio: function(d, radius, h) {
+					return d.value > 90 ? 1.2 : 1;
+				}
+			};				
+		});
+
+		it("should ratio applied correctly?", () => {
+			const newPos = getLabelPos(chart);
+
+			pos.forEach((v, i) => {
+				const [x, y] = v.map(Math.abs);
+				const [nx, ny] = newPos[i].map(Math.abs);
+
+				if (i === 0) {
+					 expect(x < nx && y < ny).to.be.true;
+				} else {
+					expect(x > nx && y > ny).to.be.true;
+				}
+			});
+		});
+	});
 });
