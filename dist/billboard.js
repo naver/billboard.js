@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240207004551
+ * @version 3.10.3-nightly-20240208004548
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -19362,7 +19362,7 @@ function getAttrTweenFn(fn) {
           x = _c$map[0],
           y = _c$map[1],
           h = Math.sqrt(x * x + y * y);
-        let ratio = (_filter$map = ["donut", "pie", "polar"].filter($$.hasType.bind($$)).map(function (v) {
+        let ratio = (_filter$map = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).map(function (v) {
           _newArrowCheck(this, _this7);
           return config[v + "_label_ratio"];
         }.bind(this))) == null ? void 0 : _filter$map[0];
@@ -23209,12 +23209,13 @@ function convertDataToTreemapData(data) {
    * @property {boolean} [gauge.background=""] Set background color. (The `.bb-chart-arcs-background` element)
    * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
    * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
+   * @property {Function} [gauge.label.extents] Set customized min/max label text.
    * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.<br>
    * Will pass following arguments to the given function:
    * - value {number}: absolute value
    * - ratio {number}: value's ratio
    * - id {string}: data's id value
-   * @property {Function} [gauge.label.extents] Set customized min/max label text.
+   * @property {number|Function} [gauge.label.ratio=undefined] Set ratio of labels position.
    * @property {number} [gauge.label.threshold=0] Set threshold ratio to show/hide labels.
    * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
    * @property {number} [gauge.expand.rate=0.98] Set expand rate.
@@ -23255,6 +23256,7 @@ function convertDataToTreemapData(data) {
    * @see [Demo: enforceMinMax, min/max](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeMinMax)
    * @see [Demo: archLength](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeArcLength)
    * @see [Demo: startingAngle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeStartingAngle)
+   * @see [Demo: labelRatio](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeLabelRatio)
    * @example
    *  gauge: {
    *      background: "#eee", // will set 'fill' css prop for '.bb-chart-arcs-background' classed element.
@@ -23275,6 +23277,14 @@ function convertDataToTreemapData(data) {
    *          // 0.1(10%) ratio value means, the minimum ratio to show text label relative to the total value.
    *          // if data value is below than 0.1, text label will be hidden.
    *          threshold: 0.1,
+   *
+   *          // set ratio callback. Should return ratio value
+   *          ratio: function(d, radius, h) {
+   *              ...
+   *              return ratio;
+   *          },
+   *          // or set ratio number
+   *          ratio: 0.5
    *      },
    *
    *      // disable expand transition for interaction
@@ -23313,8 +23323,9 @@ function convertDataToTreemapData(data) {
   gauge_background: "",
   gauge_fullCircle: !1,
   gauge_label_show: !0,
-  gauge_label_format: undefined,
   gauge_label_extents: undefined,
+  gauge_label_format: undefined,
+  gauge_label_ratio: undefined,
   gauge_label_threshold: 0,
   gauge_enforceMinMax: !1,
   gauge_min: 0,
@@ -23347,8 +23358,8 @@ function convertDataToTreemapData(data) {
    * @property {object} pie Pie object
    * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
    * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
-   * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
    * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
+   * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
    * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
    * @property {number} [pie.expand.rate=0.98] Set expand rate.
    * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
@@ -23419,8 +23430,8 @@ function convertDataToTreemapData(data) {
    */
   pie_label_show: !0,
   pie_label_format: undefined,
-  pie_label_threshold: .05,
   pie_label_ratio: undefined,
+  pie_label_threshold: .05,
   pie_expand: {},
   pie_expand_rate: .98,
   pie_expand_duration: 50,
@@ -25772,7 +25783,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240207004551
+ * @version 3.10.3-nightly-20240208004548
  */
 const bb = {
   /**
@@ -25782,7 +25793,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20240207004551",
+  version: "3.10.3-nightly-20240208004548",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
