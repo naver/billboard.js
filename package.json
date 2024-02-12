@@ -194,7 +194,7 @@
 		"webpack-clean": "^1.2.5",
 		"webpack-cli": "^5.1.4",
 		"webpack-common-shake": "^2.1.0",
-		"webpack-dev-server": "^4.15.1",
+		"webpack-dev-server": "^5.0.0",
 		"webpack-merge": "^5.10.0",
 		"webpackbar": "^6.0.0",
 		"write-file-webpack-plugin": "^4.5.1"
