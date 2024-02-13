@@ -492,7 +492,6 @@ describe("SHAPE GAUGE", () => {
 			];
 
 			setTimeout(() => {
-				
 				chart.$.arc.selectAll(".bb-shapes").each(function(d, i) {
 					expect(parseInt(this.nextSibling.textContent)).to.be.equal(expected[i].value);
 					expect(this.querySelector("path").getTotalLength() < expected[i].length).to.be

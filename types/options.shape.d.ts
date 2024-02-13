@@ -86,6 +86,38 @@ export interface ArcOptions {
 			len?: number;
 		}
 	};
+
+	/**
+	 * Set range text options.
+	 */
+	rangeText?: {
+		/**
+		 * Set range text values to be shown around Arc.
+		 * - When `unit: 'absolute'`: Given values are treated as absolute values.
+		 * - When `unit: '%'`: Given values are treated as percentages.
+		 */
+		values?: number[];
+
+		/**
+		 * Specify the range text unit.
+		 */
+		unit?: "absolute" | "%";
+
+		/**
+		 * Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
+		 */
+		fixed?: boolean;
+
+		/**
+		 * Set format function for the range text.
+		 */
+		format?: (v: number) => number;
+
+		/**
+		 * Set position function or object for the range text.
+		 */
+		position?: ((v: number) => {x?: number; y?: number})|{x?: number, y?: number};
+	}
 }
 
 export interface AreaOptions {

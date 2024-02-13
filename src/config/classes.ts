@@ -18,6 +18,7 @@ export const $COMMON = {
 export const $ARC = {
 	arc: "bb-arc",
 	arcLabelLine: "bb-arc-label-line",
+	arcRange: "bb-arc-range",
 	arcs: "bb-arcs",
 	chartArc: "bb-chart-arc",
 	chartArcs: "bb-chart-arcs",
