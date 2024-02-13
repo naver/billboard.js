@@ -626,10 +626,13 @@ export default {
 
 		if (orderAsc || orderDesc) {
 			const reducer = (p, c) => p + Math.abs(c.value);
+			const sum = v => (isNumber(v) ? v : (
+				"values" in v ? v.values.reduce(reducer, 0) : v.value)
+			);
 
 			fn = (t1: IData | IDataRow, t2: IData | IDataRow) => {
-				const t1Sum = "values" in t1 ? t1.values.reduce(reducer, 0) : t1.value;
-				const t2Sum = "values" in t2 ? t2.values.reduce(reducer, 0) : t2.value;
+				const t1Sum = sum(t1);
+				const t2Sum = sum(t2);
 
 				return isReversed ?
 					(orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
@@ -965,7 +968,7 @@ export default {
 					// otherwise, based on the rendered angle value
 				} else {
 					const gaugeArcLength = config.gauge_fullCircle ?
-						$$.getArcLength() : $$.getGaugeStartAngle() * -2;
+						$$.getArcLength() : $$.getStartingAngle() * -2;
 					const arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
 
 					ratio = (d.endAngle - d.startAngle) / arcLength;

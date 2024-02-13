@@ -5528,6 +5528,57 @@ setTimeout(function() {
 				]
 			}
 		],
+DonutRangeText: [{
+			options: {
+				title: {
+					text: "Range text in 'absolute' value"
+				},
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 50]
+					],
+					type: "donut"
+				},
+				arc: {
+					rangeText: {
+						values: [15, 50, 70, 110, 160, 195],
+						unit: "absolute",
+						format: function(v) {
+							return v === 50 ? "Fifty" : v;
+						}
+					}
+				}
+			}
+		}, {
+			options: {
+				title: {
+					text: "Range text in 'percent' value"
+				},
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 50]
+					],
+					type: "donut"
+				},
+				arc: {
+					rangeText: {
+						values: [15, 25, 40, 50, 63, 70, 80, 99],
+						unit: "%",
+						position: function(v) {
+						if (v === 25) {
+						  return {
+						    y: -30
+						  }
+						}
+					      }
+					}
+				}
+			}
+		}],
 		LabelRatio: {
 			options: {
 				data: {
@@ -5896,6 +5947,95 @@ setTimeout(function() {
 				}
 			},
 		],
+		GaugeRangeText: [{
+			options: {
+				title: {
+					text: "Range text in 'absolute' value"
+				},
+				size: {
+					height: 220
+				},
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 50]
+					],
+					type: "gauge"
+				},
+				arc: {
+					rangeText: {
+						values: [15, 50, 70, 110, 160, 195],
+						unit: "absolute"
+					}
+				},
+				gauge: {
+					label: {
+						format: function(value, ratio) { return value; },
+						extents: function() { return ""; }
+					}
+				},
+				
+			}
+		}, {
+			options: {
+				title: {
+					text: "Range text in 'percent' value"
+				},
+				size: {
+					height: 220
+				},
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 50]
+					],
+					type: "gauge"
+				},
+				arc: {
+					rangeText: {
+						values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+						unit: "%"
+					}
+				},
+				gauge: {
+					label: {
+						extents: function() { return ""; }
+					}
+				}
+			}
+		},
+		{
+			options: {
+				title: {
+					text: "Fixed range text in 'percent' value"
+				},
+				size: {
+					height: 220
+				},
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 120],
+						["data3", 50]
+					],
+					type: "gauge"
+				},
+				arc: {
+					rangeText: {
+						values: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+						unit: "%",
+						fixed: true
+					}
+				},
+				gauge: {
+					label: {
+						extents: function() { return ""; }
+					}
+				}
+			}
+		}],
 		GaugeStackData: [
 			{
 				options: {
