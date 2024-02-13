@@ -56,6 +56,7 @@ export default {
 	 *    - **{=CLASS_TOOLTIP_NAME}**: default tooltip data class name (ex. `bb-tooltip-name-data1`)
 	 *    - **{=TITLE}**: title value.
 	 *    - **{=COLOR}**: data color.
+	 *    - **{=NAME}**: data id value.
 	 *    - **{=VALUE}**: data value.
 	 * @property {object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
 	 *  - **NOTE:** It should contain `{ key: Array, ... }` value

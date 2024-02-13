@@ -14,8 +14,8 @@ export default {
 	 * @property {object} pie Pie object
 	 * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
 	 * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
-	 * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
 	 * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
+	 * @property {number} [pie.label.threshold=0.05] Set threshold ratio to show/hide labels.
 	 * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
 	 * @property {number} [pie.expand.rate=0.98] Set expand rate.
 	 * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
@@ -86,8 +86,8 @@ export default {
 	 */
 	pie_label_show: true,
 	pie_label_format: <(() => number|string)|undefined> undefined,
-	pie_label_threshold: 0.05,
 	pie_label_ratio: <(() => number)|undefined> undefined,
+	pie_label_threshold: 0.05,
 	pie_expand: <boolean|{rate?: number; duration?: number;}> {},
 	pie_expand_rate: 0.98,
 	pie_expand_duration: 50,

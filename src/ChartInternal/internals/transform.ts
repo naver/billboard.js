@@ -44,6 +44,10 @@ export default {
 		} else if (target === "arc") {
 			x = state.arcWidth / 2;
 			y = state.arcHeight / 2;
+
+			if (config.arc_rangeText_values?.length) {
+				y += 5 + ($$.hasType("gauge") && config.title_text ? 10 : 0);
+			}
 		} else if (target === "polar") {
 			x = state.arcWidth / 2;
 			y = state.arcHeight / 2;
