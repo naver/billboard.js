@@ -1275,6 +1275,18 @@ describe("AXIS", function() {
 				expect(height).to.be.above(67);
 				expect(height).to.be.below(80);
 			});
+
+			it("set options: axis.x.tick.multiline=false", () => {
+				args.axis.x.tick.multiline = false;
+			});
+
+			it("x Axis shouldn't be overlapped with the legend", () => {
+				const {legend, main} = chart.$;
+				const legendRect = legend.node().getBoundingClientRect();
+				const xAxisRect = main.selectAll(`.${$AXIS.axisX}`).node().getBoundingClientRect();
+				
+				expect(legendRect.top > xAxisRect.bottom).to.be.true;
+			});
 		});
 	});
 
