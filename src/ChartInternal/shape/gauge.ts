@@ -10,11 +10,12 @@ export default {
 	initGauge(): void {
 		const $$ = this;
 		const {config, $el: {arcs}} = $$;
-		const appendText = className => {
+		const appendText = (className = <null|string>null, value = "") => {
 			arcs.append("text")
 				.attr("class", className)
 				.style("text-anchor", "middle")
-				.style("pointer-events", "none");
+				.style("pointer-events", "none")
+				.text(value);
 		};
 
 		if ($$.hasType("gauge")) {
@@ -26,6 +27,7 @@ export default {
 
 			config.gauge_units && appendText($GAUGE.chartArcsGaugeUnit);
 
+			// append min/max value text
 			if (config.gauge_label_show) {
 				appendText($GAUGE.chartArcsGaugeMin);
 				!config.gauge_fullCircle && appendText($GAUGE.chartArcsGaugeMax);
@@ -50,7 +52,7 @@ export default {
 		}
 	},
 
-	redrawMultiArcGauge(): void {
+	redrawArcGaugeLine(): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
 		const {hiddenTargetIds} = $$.state;

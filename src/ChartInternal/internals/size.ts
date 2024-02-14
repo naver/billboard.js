@@ -395,6 +395,17 @@ export default {
 			state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0) - textWidth;
 			state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
 
+			if (config.arc_rangeText_values?.length) {
+				if (hasGauge) {
+					state.arcWidth -= 25;
+					state.arcHeight -= 10;
+					state.margin.left += 10;
+				} else {
+					state.arcHeight -= 20;
+					state.margin.top += 10;
+				}
+			}
+
 			if (hasGauge && !config.gauge_fullCircle) {
 				state.arcHeight += state.height - $$.getPaddingBottomForGauge();
 			}

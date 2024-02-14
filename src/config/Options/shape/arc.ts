@@ -36,11 +36,23 @@ export default {
 	 * @property {number} [arc.needle.bottom.ry=1] Set needle bottom [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
 	 * @property {number} [arc.needle.bottom.width=15] Set needle bottom width in pixel.
 	 * @property {number} [arc.needle.bottom.len=0] Set needle bottom length in pixel. Setting this value, will make bottom larger starting from center.
+	 * @property {object} [arc.rangeText] Set rangeText options.
+	 * @property {Array} [arc.rangeText.values] Set range text values to be shown around Arc.
+	 * - When `unit: 'absolute'`: Given values are treated as absolute values.
+	 * - When `unit: '%'`: Given values are treated as percentages.
+	 * @property {string} [arc.rangeText.unit="absolute"] Specify the range text unit.
+	 * - "absolute": Show absolute value
+	 * - "%": Show percentage value
+	 * @property {boolean} [arc.rangeText.fiexed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
+	 * @property {Function} [arc.rangeText.format] Set format function for the range text.
+	 * @property {number} [arc.rangeText.position] Set position function or object for the range text.
 	 * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
-	 * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
 	 * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
 	 * @see [Demo: Donut needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
-	 * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/##GaugeChartOptions.GaugeNeedle)
+	 * @see [Demo: Donut RangeText](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutRangeText)
+	 * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
+	 * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeNeedle)
+	 * @see [Demo: Gauge RangeText](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeRangeText)
 	 * @example
 	 *  arc: {
 	 *      cornerRadius: 12,
@@ -97,6 +109,21 @@ export default {
 	 *       	  width: 10
 	 *       	  len: 10
 	 *       	}
+	 *      },
+	 *
+	 *      rangeText: {
+	 *       	values: [15, 30, 50, 75, 95],
+	 *       	unit: "%",
+	 *       	fixed: false, // only available for gauge chart
+	 *       	format: function(v) {
+	 *       	  return v === 15 ? "Fifteen" : v;
+	 *       	},
+	 *
+	 *       	position: function(v) {
+	 *       	  return v === 15 ? {x: 20, y: 10} : null; // can return one props value also.
+	 *       	},
+	 *       	position: {x: 10, y: 15},
+	 *       	position: {x: 10}
 	 *      }
 	 *  }
 	 */
@@ -115,5 +142,15 @@ export default {
 	arc_needle_bottom_rx: 1,
 	arc_needle_bottom_ry: 1,
 	arc_needle_bottom_width: 15,
-	arc_needle_bottom_len: 0
+	arc_needle_bottom_len: 0,
+	arc_rangeText_values: <number[]|undefined> undefined,
+	arc_rangeText_unit: <"absolute"|"%"> "absolute",
+	arc_rangeText_fixed: false,
+	arc_rangeText_format: <
+		((v: number) => number)|undefined
+	> undefined,
+	arc_rangeText_position: <
+		((v: number) => {x?: number; y?: number})|
+		{x?: number, y?: number}|undefined
+	> undefined
 };

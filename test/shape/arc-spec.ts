@@ -19,9 +19,9 @@ describe("SHAPE ARC", () => {
 		shape: `path.${$SHAPE.shape}.${$ARC.arc}.${$ARC.arc}`
 	};
 
-	after(() => {
-		util.destroyAll();
-	});
+	// after(() => {
+	// 	util.destroyAll();
+	// });
 
 	describe("show pie chart", () => {
 		let instChart;
