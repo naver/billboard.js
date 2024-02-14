@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.10.3-nightly-20240208004548
+ * @version 3.10.3-nightly-20240214004603
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -949,6 +949,7 @@ var $COMMON = {
 var $ARC = {
     arc: "bb-arc",
     arcLabelLine: "bb-arc-label-line",
+    arcRange: "bb-arc-range",
     arcs: "bb-arcs",
     chartArc: "bb-chart-arc",
     chartArcs: "bb-chart-arcs",
@@ -4364,9 +4365,10 @@ var data$1 = {
         var fn;
         if (orderAsc || orderDesc) {
             var reducer_1 = function (p, c) { return p + Math.abs(c.value); };
+            var sum_1 = function (v) { return (isNumber(v) ? v : ("values" in v ? v.values.reduce(reducer_1, 0) : v.value)); };
             fn = function (t1, t2) {
-                var t1Sum = "values" in t1 ? t1.values.reduce(reducer_1, 0) : t1.value;
-                var t2Sum = "values" in t2 ? t2.values.reduce(reducer_1, 0) : t2.value;
+                var t1Sum = sum_1(t1);
+                var t2Sum = sum_1(t2);
                 return isReversed ?
                     (orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum) :
                     (orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum);
@@ -4638,7 +4640,7 @@ var data$1 = {
                 }
                 else {
                     var gaugeArcLength = config.gauge_fullCircle ?
-                        $$.getArcLength() : $$.getGaugeStartAngle() * -2;
+                        $$.getArcLength() : $$.getStartingAngle() * -2;
                     var arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
                     ratio = (d.endAngle - d.startAngle) / arcLength;
                 }
@@ -7758,7 +7760,7 @@ var size = {
      * @private
      */
     updateSizes: function (isInit) {
-        var _a, _b, _c, _d;
+        var _a, _b, _c, _d, _e;
         var $$ = this;
         var config = $$.config, state = $$.state, legend = $$.$el.legend;
         var isRotated = config.axis_rotated;
@@ -7844,10 +7846,21 @@ var size = {
             var textWidth = (_c = (state.hasRadar && $$.cache.get(KEY.radarTextWidth))) !== null && _c !== void 0 ? _c : 0;
             state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0) - textWidth;
             state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
+            if ((_d = config.arc_rangeText_values) === null || _d === void 0 ? void 0 : _d.length) {
+                if (hasGauge) {
+                    state.arcWidth -= 25;
+                    state.arcHeight -= 10;
+                    state.margin.left += 10;
+                }
+                else {
+                    state.arcHeight -= 20;
+                    state.margin.top += 10;
+                }
+            }
             if (hasGauge && !config.gauge_fullCircle) {
                 state.arcHeight += state.height - $$.getPaddingBottomForGauge();
             }
-            (_d = $$.updateRadius) === null || _d === void 0 ? void 0 : _d.call($$);
+            (_e = $$.updateRadius) === null || _e === void 0 ? void 0 : _e.call($$);
         }
         if (state.isLegendRight && isNonAxis) {
             state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
@@ -9010,6 +9023,7 @@ var tooltip$1 = {
  */
 var transform = {
     getTranslate: function (target, index) {
+        var _a;
         if (index === void 0) { index = 0; }
         var $$ = this;
         var config = $$.config, state = $$.state;
@@ -9051,13 +9065,16 @@ var transform = {
         else if (target === "arc") {
             x = state.arcWidth / 2;
             y = state.arcHeight / 2;
+            if ((_a = config.arc_rangeText_values) === null || _a === void 0 ? void 0 : _a.length) {
+                y += 5 + ($$.hasType("gauge") && config.title_text ? 10 : 0);
+            }
         }
         else if (target === "polar") {
             x = state.arcWidth / 2;
             y = state.arcHeight / 2;
         }
         else if (target === "radar") {
-            var _a = $$.getRadarSize(), width = _a[0], height = _a[1];
+            var _b = $$.getRadarSize(), width = _b[0], height = _b[1];
             x = state.width / 2 - width;
             y = state.height / 2 - height;
         }
@@ -17213,7 +17230,7 @@ var shapeArc = {
             .startAngle(startingAngle)
             .endAngle(startingAngle + (2 * Math.PI))
             .padAngle(padAngle)
-            .value(function (d) { return d.values.reduce(function (a, b) { return a + b.value; }, 0); })
+            .value(function (d) { var _a, _b; return (_b = (_a = d.values) === null || _a === void 0 ? void 0 : _a.reduce(function (a, b) { return a + b.value; }, 0)) !== null && _b !== void 0 ? _b : d; })
             .sort($$.getSortCompareFn.bind($$)(true));
     },
     updateRadius: function () {
@@ -17277,13 +17294,14 @@ var shapeArc = {
         }
         return len * Math.PI;
     },
-    getGaugeStartAngle: function () {
+    getStartingAngle: function () {
         var $$ = this;
         var config = $$.config;
-        var isFullCircle = config.gauge_fullCircle;
+        var dataType = config.data_type;
+        var isFullCircle = $$.hasType("gauge") ? config.gauge_fullCircle : false;
         var defaultStartAngle = -1 * Math.PI / 2;
         var defaultEndAngle = Math.PI / 2;
-        var startAngle = config.gauge_startingAngle;
+        var startAngle = config["".concat(dataType, "_startingAngle")] || 0;
         if (!isFullCircle && startAngle <= defaultStartAngle) {
             startAngle = defaultStartAngle;
         }
@@ -17295,51 +17313,67 @@ var shapeArc = {
         }
         return startAngle;
     },
-    updateAngle: function (dValue) {
+    /**
+     * Update angle data
+     * @param {object} dValue Data object
+     * @param {boolean} forRange Weather is for ranged text option(arc.rangeText.values)
+     * @returns {object|null} Updated angle data
+     * @private
+     */
+    updateAngle: function (dValue, forRange) {
+        var _a;
+        if (forRange === void 0) { forRange = false; }
         var $$ = this;
         var config = $$.config, state = $$.state;
+        var hasGauge = forRange && $$.hasType("gauge");
+        // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
+        // const totalSum = $$.getTotalDataSum(state.rendered);
         var pie = $$.pie;
         var d = dValue;
         var found = false;
         if (!config) {
             return null;
         }
-        var gStart = $$.getGaugeStartAngle();
-        var radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
+        var gStart = $$.getStartingAngle();
+        var radius = config.gauge_fullCircle || (forRange && !hasGauge) ?
+            $$.getArcLength() : gStart * -2;
         if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
-            var min = config.gauge_min, max = config.gauge_max;
+            var gMin = config.gauge_min, gMax = config.gauge_max;
             // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
             var totalSum = $$.getTotalDataSum(state.rendered);
             // https://github.com/naver/billboard.js/issues/2123
-            var gEnd = radius * ((totalSum - min) / (max - min));
+            var gEnd = radius * ((totalSum - gMin) / (gMax - gMin));
             pie = pie
                 .startAngle(gStart)
                 .endAngle(gEnd + gStart);
         }
-        pie($$.filterTargetsToShow())
-            .forEach(function (t, i) {
-            var _a;
-            if (!found && t.data.id === ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id)) {
-                found = true;
-                d = t;
-                d.index = i;
-            }
-        });
+        if (forRange === false) {
+            pie($$.filterTargetsToShow())
+                .forEach(function (t, i) {
+                var _a;
+                if (!found && t.data.id === ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id)) {
+                    found = true;
+                    d = t;
+                    d.index = i;
+                }
+            });
+        }
         if (isNaN(d.startAngle)) {
             d.startAngle = 0;
         }
         if (isNaN(d.endAngle)) {
             d.endAngle = d.startAngle;
         }
-        if (d.data && (config.gauge_enforceMinMax || $$.hasMultiArcGauge())) {
-            var gMin = config.gauge_min;
-            var gMax = config.gauge_max;
-            var gTic = radius / (gMax - gMin);
-            var gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : (gMax - gMin);
+        if (forRange || (d.data && (config.gauge_enforceMinMax || $$.hasMultiArcGauge()))) {
+            var gMin = config.gauge_min, gMax = config.gauge_max;
+            var max = forRange && !hasGauge ? $$.getTotalDataSum(state.rendered) : gMax;
+            var gTic = radius / (max - gMin);
+            var value = (_a = d.value) !== null && _a !== void 0 ? _a : 0;
+            var gValue = value < gMin ? 0 : value < max ? value - gMin : (max - gMin);
             d.startAngle = gStart;
             d.endAngle = gStart + gTic * gValue;
         }
-        return found ? d : null;
+        return found || forRange ? d : null;
     },
     getSvgArc: function () {
         var $$ = this;
@@ -17389,22 +17423,69 @@ var shapeArc = {
         return force || this.isArcType(d.data) ? this.svgArc(d, withoutUpdate) : "M 0 0";
     },
     /**
+     * Render range value text
+     * @private
+     */
+    redrawArcRangeText: function () {
+        var $$ = this;
+        var config = $$.config, arcs = $$.$el.arcs, state = $$.state, $T = $$.$T;
+        var format = config.arc_rangeText_format;
+        var fixed = $$.hasType("gauge") && config.arc_rangeText_fixed;
+        var values = config.arc_rangeText_values;
+        if (values === null || values === void 0 ? void 0 : values.length) {
+            var isPercent_1 = config.arc_rangeText_unit === "%";
+            var totalSum_1 = $$.getTotalDataSum(state.rendered);
+            if (isPercent_1) {
+                values = values.map(function (v) { return totalSum_1 / 100 * v; });
+            }
+            var pieData_1 = $$.pie(values).map(function (d, i) { return ((d.index = i), d); });
+            var rangeText = arcs.selectAll(".".concat($ARC.arcRange))
+                .data(values);
+            rangeText.exit();
+            rangeText = $T(rangeText.enter()
+                .append("text")
+                .attr("class", $ARC.arcRange)
+                .style("text-anchor", "middle")
+                .style("pointer-events", "none")
+                .style("opacity", "0")
+                .text(function (v) {
+                var range = isPercent_1 ? (v / totalSum_1 * 100) : v;
+                return isFunction(format) ? format(range) : ("".concat(range).concat(isPercent_1 ? "%" : ""));
+            })
+                .merge(rangeText));
+            if ((!state.rendered || (state.rendered && !fixed)) && totalSum_1 > 0) {
+                rangeText.attr("transform", function (d, i) { return $$.transformForArcLabel(pieData_1[i], true); });
+            }
+            rangeText.style("opacity", function (d) { return (!fixed && (d > totalSum_1 || totalSum_1 === 0) ? "0" : null); });
+        }
+    },
+    /**
      * Set transform attributes to arc label text
      * @param {object} d Data object
+     * @param {boolean} forRange Weather is for ranged text option(arc.rangeText.values)
      * @returns {string} Translate attribute string
      * @private
      */
-    transformForArcLabel: function (d) {
-        var _a;
+    transformForArcLabel: function (d, forRange) {
+        var _a, _b, _c;
+        if (forRange === void 0) { forRange = false; }
         var $$ = this;
         var config = $$.config, radiusExpanded = $$.state.radiusExpanded;
-        var updated = $$.updateAngle(d);
+        var updated = $$.updateAngle(d, forRange);
         var translate = "";
         if (updated) {
-            if ($$.hasMultiArcGauge()) {
+            if (forRange || $$.hasMultiArcGauge()) {
                 var y1 = Math.sin(updated.endAngle - Math.PI / 2);
-                var x = Math.cos(updated.endAngle - Math.PI / 2) * (radiusExpanded + 25);
+                var rangeTextPosition = config.arc_rangeText_position;
+                var x = Math.cos(updated.endAngle - Math.PI / 2) * (radiusExpanded + (forRange ? 5 : 25));
                 var y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
+                if (forRange && rangeTextPosition) {
+                    var rangeValues = config.arc_rangeText_values;
+                    var pos = isFunction(rangeTextPosition) ?
+                        rangeTextPosition(rangeValues[d.index]) : rangeTextPosition;
+                    x += (_a = pos === null || pos === void 0 ? void 0 : pos.x) !== null && _a !== void 0 ? _a : 0;
+                    y += (_b = pos === null || pos === void 0 ? void 0 : pos.y) !== null && _b !== void 0 ? _b : 0;
+                }
                 translate = "translate(".concat(x, ",").concat(y, ")");
             }
             else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
@@ -17413,11 +17494,11 @@ var shapeArc = {
                     outerRadius = $$.getPolarOuterRadius(d, outerRadius);
                 }
                 var c = this.svgArc.centroid(updated);
-                var _b = c.map(function (v) { return (isNaN(v) ? 0 : v); }), x = _b[0], y = _b[1];
+                var _d = c.map(function (v) { return (isNaN(v) ? 0 : v); }), x = _d[0], y = _d[1];
                 var h = Math.sqrt(x * x + y * y);
-                var ratio = (_a = ["donut", "gauge", "pie", "polar"]
+                var ratio = (_c = ["donut", "gauge", "pie", "polar"]
                     .filter($$.hasType.bind($$))
-                    .map(function (v) { return config["".concat(v, "_label_ratio")]; })) === null || _a === void 0 ? void 0 : _a[0];
+                    .map(function (v) { return config["".concat(v, "_label_ratio")]; })) === null || _c === void 0 ? void 0 : _c[0];
                 if (ratio) {
                     ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
                 }
@@ -17673,7 +17754,7 @@ var shapeArc = {
             .merge(mainArc);
         if ($$.hasType("gauge")) {
             $$.updateGaugeMax();
-            $$.hasMultiArcGauge() && $$.redrawMultiArcGauge();
+            $$.hasMultiArcGauge() && $$.redrawArcGaugeLine();
         }
         mainArc
             .attr("transform", function (d) { return (!$$.isGaugeType(d.data) && withTransform ? "scale(0)" : ""); })
@@ -17734,6 +17815,7 @@ var shapeArc = {
         $$.hasType("gauge") && $$.redrawBackgroundArcs();
         config.arc_needle_show && $$.redrawNeedle();
         $$.redrawArcText(duration);
+        $$.redrawArcRangeText();
     },
     /**
      * Update needle element
@@ -17817,7 +17899,7 @@ var shapeArc = {
         }
         state.current.needle = value;
         if (hasGauge) {
-            startingAngle = $$.getGaugeStartAngle();
+            startingAngle = $$.getStartingAngle();
             var radius = config.gauge_fullCircle ? arcLength : startingAngle * -2;
             var min = config.gauge_min, max = config.gauge_max;
             radian = radius * ((value - min) / (max - min));
@@ -17834,7 +17916,7 @@ var shapeArc = {
         var isFullCircle = config.gauge_fullCircle;
         var showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 &&
             !!config.data_empty_label_text;
-        var startAngle = $$.getGaugeStartAngle();
+        var startAngle = $$.getStartingAngle();
         var endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
         var backgroundArc = $$.$el.arcs.select("".concat(hasMultiArcGauge ? "g" : "", ".").concat($ARC.chartArcsBackground));
         if (hasMultiArcGauge) {
@@ -17974,7 +18056,7 @@ var shapeArc = {
                 .style("opacity", "0")
                 .attr("class", function (d) { return ($$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null); })
                 .call($$.textForArcLabel.bind($$))
-                .attr("transform", $$.transformForArcLabel.bind($$))
+                .attr("transform", function (d) { return $$.transformForArcLabel.bind($$)(d); })
                 .style("font-size", function (d) { return ($$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ?
                 "".concat(Math.round(state.radius / 5), "px") : null); })
                 .transition()
@@ -18620,11 +18702,14 @@ var shapeGauge = {
     initGauge: function () {
         var $$ = this;
         var config = $$.config, arcs = $$.$el.arcs;
-        var appendText = function (className) {
+        var appendText = function (className, value) {
+            if (className === void 0) { className = null; }
+            if (value === void 0) { value = ""; }
             arcs.append("text")
                 .attr("class", className)
                 .style("text-anchor", "middle")
-                .style("pointer-events", "none");
+                .style("pointer-events", "none")
+                .text(value);
         };
         if ($$.hasType("gauge")) {
             var hasMulti = $$.hasMultiArcGauge();
@@ -18632,6 +18717,7 @@ var shapeGauge = {
                 .attr("class", $ARC.chartArcsBackground)
                 .style("fill", (!hasMulti && config.gauge_background) || null);
             config.gauge_units && appendText($GAUGE.chartArcsGaugeUnit);
+            // append min/max value text
             if (config.gauge_label_show) {
                 appendText($GAUGE.chartArcsGaugeMin);
                 !config.gauge_fullCircle && appendText($GAUGE.chartArcsGaugeMax);
@@ -18650,7 +18736,7 @@ var shapeGauge = {
             config.gauge_max = max - config.gauge_min;
         }
     },
-    redrawMultiArcGauge: function () {
+    redrawArcGaugeLine: function () {
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
         var hiddenTargetIds = $$.state.hiddenTargetIds;
@@ -20844,11 +20930,23 @@ var optArc = {
      * @property {number} [arc.needle.bottom.ry=1] Set needle bottom [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
      * @property {number} [arc.needle.bottom.width=15] Set needle bottom width in pixel.
      * @property {number} [arc.needle.bottom.len=0] Set needle bottom length in pixel. Setting this value, will make bottom larger starting from center.
+     * @property {object} [arc.rangeText] Set rangeText options.
+     * @property {Array} [arc.rangeText.values] Set range text values to be shown around Arc.
+     * - When `unit: 'absolute'`: Given values are treated as absolute values.
+     * - When `unit: '%'`: Given values are treated as percentages.
+     * @property {string} [arc.rangeText.unit="absolute"] Specify the range text unit.
+     * - "absolute": Show absolute value
+     * - "%": Show percentage value
+     * @property {boolean} [arc.rangeText.fiexed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
+     * @property {Function} [arc.rangeText.format] Set format function for the range text.
+     * @property {number} [arc.rangeText.position] Set position function or object for the range text.
      * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
-     * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
      * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
      * @see [Demo: Donut needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
-     * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/##GaugeChartOptions.GaugeNeedle)
+     * @see [Demo: Donut RangeText](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutRangeText)
+     * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
+     * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeNeedle)
+     * @see [Demo: Gauge RangeText](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeRangeText)
      * @example
      *  arc: {
      *      cornerRadius: 12,
@@ -20905,6 +21003,21 @@ var optArc = {
      *       	  width: 10
      *       	  len: 10
      *       	}
+     *      },
+     *
+     *      rangeText: {
+     *       	values: [15, 30, 50, 75, 95],
+     *       	unit: "%",
+     *       	fixed: false, // only available for gauge chart
+     *       	format: function(v) {
+     *       	  return v === 15 ? "Fifteen" : v;
+     *       	},
+     *
+     *       	position: function(v) {
+     *       	  return v === 15 ? {x: 20, y: 10} : null; // can return one props value also.
+     *       	},
+     *       	position: {x: 10, y: 15},
+     *       	position: {x: 10}
      *      }
      *  }
      */
@@ -20921,7 +21034,12 @@ var optArc = {
     arc_needle_bottom_rx: 1,
     arc_needle_bottom_ry: 1,
     arc_needle_bottom_width: 15,
-    arc_needle_bottom_len: 0
+    arc_needle_bottom_len: 0,
+    arc_rangeText_values: undefined,
+    arc_rangeText_unit: "absolute",
+    arc_rangeText_fixed: false,
+    arc_rangeText_format: undefined,
+    arc_rangeText_position: undefined
 };
 
 /**
@@ -23244,7 +23362,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240208004548
+ * @version 3.10.3-nightly-20240214004603
  */
 var bb = {
     /**
@@ -23254,7 +23372,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.10.3-nightly-20240208004548",
+    version: "3.10.3-nightly-20240214004603",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

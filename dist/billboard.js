@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240208004548
+ * @version 3.10.3-nightly-20240214004603
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1348,6 +1348,7 @@ const $COMMON = {
 const $ARC = {
   arc: "bb-arc",
   arcLabelLine: "bb-arc-label-line",
+  arcRange: "bb-arc-range",
   arcs: "bb-arcs",
   chartArc: "bb-chart-arc",
   chartArcs: "bb-chart-arcs",
@@ -5092,13 +5093,17 @@ function getDataKeyForJson(keysParam, config) {
     let fn;
     if (orderAsc || orderDesc) {
       const reducer = function (p, c) {
-        _newArrowCheck(this, _this29);
-        return p + Math.abs(c.value);
-      }.bind(this);
+          _newArrowCheck(this, _this29);
+          return p + Math.abs(c.value);
+        }.bind(this),
+        sum = function (v) {
+          _newArrowCheck(this, _this29);
+          return isNumber(v) ? v : "values" in v ? v.values.reduce(reducer, 0) : v.value;
+        }.bind(this);
       fn = function (t1, t2) {
         _newArrowCheck(this, _this29);
-        const t1Sum = "values" in t1 ? t1.values.reduce(reducer, 0) : t1.value,
-          t2Sum = "values" in t2 ? t2.values.reduce(reducer, 0) : t2.value;
+        const t1Sum = sum(t1),
+          t2Sum = sum(t2);
         return isReversed ? orderAsc ? t1Sum - t2Sum : t2Sum - t1Sum : orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
       }.bind(this);
     } else if (isFunction(order)) {
@@ -5442,7 +5447,7 @@ function getDataKeyForJson(keysParam, config) {
 
           // otherwise, based on the rendered angle value
         } else {
-          const gaugeArcLength = config.gauge_fullCircle ? $$.getArcLength() : $$.getGaugeStartAngle() * -2,
+          const gaugeArcLength = config.gauge_fullCircle ? $$.getArcLength() : $$.getStartingAngle() * -2,
             arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
           ratio = (d.endAngle - d.startAngle) / arcLength;
         }
@@ -9052,12 +9057,22 @@ function getGroupedDataPointsFn(d) {
 
     // for arc
     if ($$.hasArcType()) {
-      var _ref;
+      var _ref, _config$arc_rangeText;
       const hasGauge = $$.hasType("gauge"),
         isLegendRight = config.legend_show && state.isLegendRight,
         textWidth = (_ref = state.hasRadar && $$.cache.get(KEY.radarTextWidth)) != null ? _ref : 0;
       state.arcWidth = state.width - (isLegendRight ? currLegend.width + 10 : 0) - textWidth;
       state.arcHeight = state.height - (isLegendRight && !hasGauge ? 0 : 10);
+      if ((_config$arc_rangeText = config.arc_rangeText_values) != null && _config$arc_rangeText.length) {
+        if (hasGauge) {
+          state.arcWidth -= 25;
+          state.arcHeight -= 10;
+          state.margin.left += 10;
+        } else {
+          state.arcHeight -= 20;
+          state.margin.top += 10;
+        }
+      }
       if (hasGauge && !config.gauge_fullCircle) {
         state.arcHeight += state.height - $$.getPaddingBottomForGauge();
       }
@@ -10341,8 +10356,12 @@ function getTextXPos(pos, width) {
       x = 0;
       y = isRotated ? 0 : state.height2;
     } else if (target === "arc") {
+      var _config$arc_rangeText;
       x = state.arcWidth / 2;
       y = state.arcHeight / 2;
+      if ((_config$arc_rangeText = config.arc_rangeText_values) != null && _config$arc_rangeText.length) {
+        y += 5 + ($$.hasType("gauge") && config.title_text ? 10 : 0);
+      }
     } else if (target === "polar") {
       x = state.arcWidth / 2;
       y = state.arcHeight / 2;
@@ -19145,12 +19164,14 @@ function getAttrTweenFn(fn) {
       startingAngle = config[dataType + "_startingAngle"] || 0,
       padAngle = (padding ? padding * .01 : config[dataType + "_padAngle"]) || 0;
     $$.pie = (0,external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_.pie)().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).value(function (d) {
-      var _this4 = this;
+      var _d$values$reduce,
+        _d$values,
+        _this4 = this;
       _newArrowCheck(this, _this3);
-      return d.values.reduce(function (a, b) {
+      return (_d$values$reduce = (_d$values = d.values) == null ? void 0 : _d$values.reduce(function (a, b) {
         _newArrowCheck(this, _this4);
         return a + b.value;
-      }.bind(this), 0);
+      }.bind(this), 0)) != null ? _d$values$reduce : d;
     }.bind(this)).sort($$.getSortCompareFn.bind($$)(!0));
   },
   updateRadius: function updateRadius() {
@@ -19215,13 +19236,14 @@ function getAttrTweenFn(fn) {
     }
     return len * Math.PI;
   },
-  getGaugeStartAngle: function getGaugeStartAngle() {
+  getStartingAngle: function getStartingAngle() {
     const $$ = this,
       config = $$.config,
-      isFullCircle = config.gauge_fullCircle,
+      dataType = config.data_type,
+      isFullCircle = $$.hasType("gauge") ? config.gauge_fullCircle : !1,
       defaultStartAngle = -1 * Math.PI / 2,
       defaultEndAngle = Math.PI / 2;
-    let startAngle = config.gauge_startingAngle;
+    let startAngle = config[dataType + "_startingAngle"] || 0;
     if (!isFullCircle && startAngle <= defaultStartAngle) {
       startAngle = defaultStartAngle;
     } else if (!isFullCircle && startAngle >= defaultEndAngle) {
@@ -19231,49 +19253,67 @@ function getAttrTweenFn(fn) {
     }
     return startAngle;
   },
-  updateAngle: function updateAngle(dValue) {
+  /**
+   * Update angle data
+   * @param {object} dValue Data object
+   * @param {boolean} forRange Weather is for ranged text option(arc.rangeText.values)
+   * @returns {object|null} Updated angle data
+   * @private
+   */
+  updateAngle: function updateAngle(dValue, forRange) {
     var _this5 = this;
+    if (forRange === void 0) {
+      forRange = !1;
+    }
     const $$ = this,
       config = $$.config,
-      state = $$.state;
+      state = $$.state,
+      hasGauge = forRange && $$.hasType("gauge");
+    // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
+    // const totalSum = $$.getTotalDataSum(state.rendered);
     let pie = $$.pie,
       d = dValue,
       found = !1;
     if (!config) {
       return null;
     }
-    const gStart = $$.getGaugeStartAngle(),
-      radius = config.gauge_fullCircle ? $$.getArcLength() : gStart * -2;
+    const gStart = $$.getStartingAngle(),
+      radius = config.gauge_fullCircle || forRange && !hasGauge ? $$.getArcLength() : gStart * -2;
     if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
-      const min = config.gauge_min,
-        max = config.gauge_max,
+      const gMin = config.gauge_min,
+        gMax = config.gauge_max,
         totalSum = $$.getTotalDataSum(state.rendered); // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
       // https://github.com/naver/billboard.js/issues/2123
-      pie = pie.startAngle(gStart).endAngle(radius * ((totalSum - min) / (max - min)) + gStart);
+      pie = pie.startAngle(gStart).endAngle(radius * ((totalSum - gMin) / (gMax - gMin)) + gStart);
     }
-    pie($$.filterTargetsToShow()).forEach(function (t, i) {
-      var _d$data;
-      _newArrowCheck(this, _this5);
-      if (!found && t.data.id === ((_d$data = d.data) == null ? void 0 : _d$data.id)) {
-        found = !0;
-        d = t;
-        d.index = i;
-      }
-    }.bind(this));
+    if (forRange === !1) {
+      pie($$.filterTargetsToShow()).forEach(function (t, i) {
+        var _d$data;
+        _newArrowCheck(this, _this5);
+        if (!found && t.data.id === ((_d$data = d.data) == null ? void 0 : _d$data.id)) {
+          found = !0;
+          d = t;
+          d.index = i;
+        }
+      }.bind(this));
+    }
     if (isNaN(d.startAngle)) {
       d.startAngle = 0;
     }
     if (isNaN(d.endAngle)) {
       d.endAngle = d.startAngle;
     }
-    if (d.data && (config.gauge_enforceMinMax || $$.hasMultiArcGauge())) {
+    if (forRange || d.data && (config.gauge_enforceMinMax || $$.hasMultiArcGauge())) {
+      var _d$value;
       const gMin = config.gauge_min,
         gMax = config.gauge_max,
-        gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : gMax - gMin;
+        max = forRange && !hasGauge ? $$.getTotalDataSum(state.rendered) : gMax,
+        value = (_d$value = d.value) != null ? _d$value : 0,
+        gValue = value < gMin ? 0 : value < max ? value - gMin : max - gMin;
       d.startAngle = gStart;
-      d.endAngle = gStart + radius / (gMax - gMin) * gValue;
+      d.endAngle = gStart + radius / (max - gMin) * gValue;
     }
-    return found ? d : null;
+    return found || forRange ? d : null;
   },
   getSvgArc: function getSvgArc() {
     const $$ = this,
@@ -19329,23 +19369,82 @@ function getAttrTweenFn(fn) {
     return force || this.isArcType(d.data) ? this.svgArc(d, withoutUpdate) : "M 0 0";
   },
   /**
+   * Render range value text
+   * @private
+   */
+  redrawArcRangeText: function redrawArcRangeText() {
+    var _values,
+      _this7 = this;
+    const $$ = this,
+      config = $$.config,
+      arcs = $$.$el.arcs,
+      state = $$.state,
+      $T = $$.$T,
+      format = config.arc_rangeText_format,
+      fixed = $$.hasType("gauge") && config.arc_rangeText_fixed;
+    let values = config.arc_rangeText_values;
+    if ((_values = values) != null && _values.length) {
+      const isPercent = config.arc_rangeText_unit === "%",
+        totalSum = $$.getTotalDataSum(state.rendered);
+      if (isPercent) {
+        values = values.map(function (v) {
+          _newArrowCheck(this, _this7);
+          return totalSum / 100 * v;
+        }.bind(this));
+      }
+      const pieData = $$.pie(values).map(function (d, i) {
+        _newArrowCheck(this, _this7);
+        return d.index = i, d;
+      }.bind(this));
+      let rangeText = arcs.selectAll("." + $ARC.arcRange).data(values);
+      rangeText.exit();
+      rangeText = $T(rangeText.enter().append("text").attr("class", $ARC.arcRange).style("text-anchor", "middle").style("pointer-events", "none").style("opacity", "0").text(function (v) {
+        _newArrowCheck(this, _this7);
+        const range = isPercent ? v / totalSum * 100 : v;
+        return isFunction(format) ? format(range) : "" + range + (isPercent ? "%" : "");
+      }.bind(this)).merge(rangeText));
+      if ((!state.rendered || state.rendered && !fixed) && totalSum > 0) {
+        rangeText.attr("transform", function (d, i) {
+          _newArrowCheck(this, _this7);
+          return $$.transformForArcLabel(pieData[i], !0);
+        }.bind(this));
+      }
+      rangeText.style("opacity", function (d) {
+        _newArrowCheck(this, _this7);
+        return !fixed && (d > totalSum || totalSum === 0) ? "0" : null;
+      }.bind(this));
+    }
+  },
+  /**
    * Set transform attributes to arc label text
    * @param {object} d Data object
+   * @param {boolean} forRange Weather is for ranged text option(arc.rangeText.values)
    * @returns {string} Translate attribute string
    * @private
    */
-  transformForArcLabel: function transformForArcLabel(d) {
-    var _this7 = this;
+  transformForArcLabel: function transformForArcLabel(d, forRange) {
+    var _this8 = this;
+    if (forRange === void 0) {
+      forRange = !1;
+    }
     const $$ = this,
       config = $$.config,
       radiusExpanded = $$.state.radiusExpanded,
-      updated = $$.updateAngle(d);
+      updated = $$.updateAngle(d, forRange);
     let translate = "";
     if (updated) {
-      if ($$.hasMultiArcGauge()) {
+      if (forRange || $$.hasMultiArcGauge()) {
         const y1 = Math.sin(updated.endAngle - Math.PI / 2),
-          x = Math.cos(updated.endAngle - Math.PI / 2) * (radiusExpanded + 25),
+          rangeTextPosition = config.arc_rangeText_position;
+        let x = Math.cos(updated.endAngle - Math.PI / 2) * (radiusExpanded + (forRange ? 5 : 25)),
           y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
+        if (forRange && rangeTextPosition) {
+          var _pos$x, _pos, _pos$y, _pos2;
+          const rangeValues = config.arc_rangeText_values,
+            pos = isFunction(rangeTextPosition) ? rangeTextPosition(rangeValues[d.index]) : rangeTextPosition;
+          x += (_pos$x = (_pos = pos) == null ? void 0 : _pos.x) != null ? _pos$x : 0;
+          y += (_pos$y = (_pos2 = pos) == null ? void 0 : _pos2.y) != null ? _pos$y : 0;
+        }
         translate = "translate(" + x + "," + y + ")";
       } else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
         var _filter$map;
@@ -19356,14 +19455,14 @@ function getAttrTweenFn(fn) {
         }
         const c = this.svgArc.centroid(updated),
           _c$map = c.map(function (v) {
-            _newArrowCheck(this, _this7);
+            _newArrowCheck(this, _this8);
             return isNaN(v) ? 0 : v;
           }.bind(this)),
           x = _c$map[0],
           y = _c$map[1],
           h = Math.sqrt(x * x + y * y);
         let ratio = (_filter$map = ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).map(function (v) {
-          _newArrowCheck(this, _this7);
+          _newArrowCheck(this, _this8);
           return config[v + "_label_ratio"];
         }.bind(this))) == null ? void 0 : _filter$map[0];
         if (ratio) {
@@ -19405,14 +19504,14 @@ function getAttrTweenFn(fn) {
     }
   },
   expandArc: function expandArc(targetIds) {
-    var _this8 = this;
+    var _this9 = this;
     const $$ = this,
       transiting = $$.state.transiting,
       $el = $$.$el;
     // MEMO: avoid to cancel transition
     if (transiting) {
       const interval = setInterval(function () {
-        _newArrowCheck(this, _this8);
+        _newArrowCheck(this, _this9);
         if (!transiting) {
           clearInterval(interval);
           $el.legend.selectAll("." + $FOCUS.legendItemFocused).size() > 0 && $$.expandArc(targetIds);
@@ -19431,7 +19530,7 @@ function getAttrTweenFn(fn) {
     });
   },
   unexpandArc: function unexpandArc(targetIds) {
-    var _this9 = this;
+    var _this10 = this;
     const $$ = this,
       transiting = $$.state.transiting,
       svg = $$.$el.svg;
@@ -19440,7 +19539,7 @@ function getAttrTweenFn(fn) {
     }
     const newTargetIds = $$.mapToTargetIds(targetIds);
     svg.selectAll($$.selectorTargets(newTargetIds, "." + $ARC.chartArc)).selectAll("path").transition().duration(function (d) {
-      _newArrowCheck(this, _this9);
+      _newArrowCheck(this, _this10);
       return $$.getExpandConfig(d.data.id, "duration");
     }.bind(this)).attrTween("d", getAttrTweenFn($$.svgArc.bind($$)));
     svg.selectAll("" + $ARC.arc).style("opacity", null);
@@ -19474,30 +19573,30 @@ function getAttrTweenFn(fn) {
     return $$.isDonutType(id) && config.donut_expand || $$.isGaugeType(id) && config.gauge_expand || $$.isPieType(id) && config.pie_expand;
   },
   shouldShowArcLabel: function shouldShowArcLabel() {
-    var _this10 = this;
+    var _this11 = this;
     const $$ = this,
       config = $$.config;
     return ["donut", "gauge", "pie", "polar"].some(function (v) {
-      _newArrowCheck(this, _this10);
+      _newArrowCheck(this, _this11);
       return $$.hasType(v) && config[v + "_label_show"];
     }.bind(this));
   },
   getArcLabelFormat: function getArcLabelFormat() {
-    var _this11 = this;
+    var _this12 = this;
     const $$ = this,
       config = $$.config;
     let format = function (v) {
-      _newArrowCheck(this, _this11);
+      _newArrowCheck(this, _this12);
       return v;
     }.bind(this);
     ["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$)).forEach(function (v) {
-      _newArrowCheck(this, _this11);
+      _newArrowCheck(this, _this12);
       format = config[v + "_label_format"];
     }.bind(this));
     return isFunction(format) ? format.bind($$.api) : format;
   },
   updateTargetsForArc: function updateTargetsForArc(targets) {
-    var _this12 = this;
+    var _this13 = this;
     const $$ = this,
       $el = $$.$el,
       hasGauge = $$.hasType("gauge"),
@@ -19506,7 +19605,7 @@ function getAttrTweenFn(fn) {
       classFocus = $$.classFocus.bind($$),
       chartArcs = $el.main.select("." + $ARC.chartArcs),
       mainPieUpdate = chartArcs.selectAll("." + $ARC.chartArc).data($$.pie(targets)).attr("class", function (d) {
-        _newArrowCheck(this, _this12);
+        _newArrowCheck(this, _this13);
         return classChartArc(d) + classFocus(d.data);
       }.bind(this)),
       mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc).call(this.setCssRule(!1, "." + $ARC.chartArcs + " text", ["pointer-events:none", "text-anchor:middle"]));
@@ -19573,7 +19672,7 @@ function getAttrTweenFn(fn) {
     return !1;
   },
   redrawArc: function redrawArc(duration, durationForExit, withTransform) {
-    var _this13 = this;
+    var _this14 = this;
     const $$ = this,
       config = $$.config,
       state = $$.state,
@@ -19583,10 +19682,10 @@ function getAttrTweenFn(fn) {
     let mainArc = main.selectAll("." + $ARC.arcs).selectAll("." + $ARC.arc).data($$.arcData.bind($$));
     mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove();
     mainArc = mainArc.enter().append("path").attr("class", $$.getClass("arc", !0)).style("fill", function (d) {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this14);
       return $$.color(d.data);
     }.bind(this)).style("cursor", function (d) {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this14);
       return isSelectable != null && isSelectable.bind != null && isSelectable.bind($$.api)(d) ? "pointer" : null;
     }.bind(this)).style("opacity", "0").each(function (d) {
       if ($$.isGaugeType(d.data)) {
@@ -19597,22 +19696,22 @@ function getAttrTweenFn(fn) {
     }).merge(mainArc);
     if ($$.hasType("gauge")) {
       $$.updateGaugeMax();
-      $$.hasMultiArcGauge() && $$.redrawMultiArcGauge();
+      $$.hasMultiArcGauge() && $$.redrawArcGaugeLine();
     }
     mainArc.attr("transform", function (d) {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this14);
       return !$$.isGaugeType(d.data) && withTransform ? "scale(0)" : "";
     }.bind(this)).style("opacity", function (d) {
       return d === this._current ? "0" : null;
     }).each(function () {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this14);
       state.transiting = !0;
     }.bind(this)).transition().duration(duration).attrTween("d", function (d) {
-      var _this14 = this;
+      var _this15 = this;
       const updated = $$.updateAngle(d);
       if (!updated) {
         return function () {
-          _newArrowCheck(this, _this14);
+          _newArrowCheck(this, _this15);
           return "M 0 0";
         }.bind(this);
       }
@@ -19631,7 +19730,7 @@ function getAttrTweenFn(fn) {
         return $$.getArc(interpolated, !0);
       };
     }).attr("transform", withTransform ? "scale(1)" : "").style("fill", function (d) {
-      _newArrowCheck(this, _this13);
+      _newArrowCheck(this, _this14);
       let color;
       if ($$.levelColor) {
         color = $$.levelColor(d.data.values[0].value);
@@ -19660,13 +19759,14 @@ function getAttrTweenFn(fn) {
     $$.hasType("gauge") && $$.redrawBackgroundArcs();
     config.arc_needle_show && $$.redrawNeedle();
     $$.redrawArcText(duration);
+    $$.redrawArcRangeText();
   },
   /**
    * Update needle element
    * @private
    */
   redrawNeedle: function redrawNeedle() {
-    var _this15 = this;
+    var _this16 = this;
     const $$ = this,
       $el = $$.$el,
       config = $$.config,
@@ -19688,7 +19788,7 @@ function getAttrTweenFn(fn) {
       bottomRy = config.arc_needle_bottom_ry,
       needleAngle = $$.getNeedleAngle(),
       updateNeedleValue = function () {
-        _newArrowCheck(this, _this15);
+        _newArrowCheck(this, _this16);
         const title = $$.getArcTitleWithNeedleValue();
         title && $$.setArcTitle(title);
       }.bind(this);
@@ -19704,14 +19804,14 @@ function getAttrTweenFn(fn) {
        * @private
        */
       $el.needle.updateHelper = function (v, updateConfig) {
-        var _this16 = this;
+        var _this17 = this;
         if (updateConfig === void 0) {
           updateConfig = !1;
         }
-        _newArrowCheck(this, _this15);
+        _newArrowCheck(this, _this16);
         if ($el.needle.style("display") !== "none") {
           $$.$T($el.needle).style("transform", "rotate(" + $$.getNeedleAngle(v) + "deg)").call(endall, function () {
-            _newArrowCheck(this, _this16);
+            _newArrowCheck(this, _this17);
             updateConfig && (config.arc_needle_value = v);
             updateNeedleValue();
           }.bind(this));
@@ -19746,7 +19846,7 @@ function getAttrTweenFn(fn) {
     }
     state.current.needle = value;
     if (hasGauge) {
-      startingAngle = $$.getGaugeStartAngle();
+      startingAngle = $$.getStartingAngle();
       const radius = config.gauge_fullCircle ? arcLength : startingAngle * -2,
         min = config.gauge_min,
         max = config.gauge_max;
@@ -19757,25 +19857,25 @@ function getAttrTweenFn(fn) {
     return (startingAngle + radian) * (180 / Math.PI);
   },
   redrawBackgroundArcs: function redrawBackgroundArcs() {
-    var _this17 = this;
+    var _this18 = this;
     const $$ = this,
       config = $$.config,
       state = $$.state,
       hasMultiArcGauge = $$.hasMultiArcGauge(),
       isFullCircle = config.gauge_fullCircle,
       showEmptyTextLabel = $$.filterTargetsToShow($$.data.targets).length === 0 && !!config.data_empty_label_text,
-      startAngle = $$.getGaugeStartAngle(),
+      startAngle = $$.getStartingAngle(),
       endAngle = isFullCircle ? startAngle + $$.getArcLength() : startAngle * -1;
     let backgroundArc = $$.$el.arcs.select((hasMultiArcGauge ? "g" : "") + "." + $ARC.chartArcsBackground);
     if (hasMultiArcGauge) {
       let index = 0;
       backgroundArc = backgroundArc.selectAll("path." + $ARC.chartArcsBackground).data($$.data.targets);
       backgroundArc.enter().append("path").attr("class", function (d, i) {
-        _newArrowCheck(this, _this17);
+        _newArrowCheck(this, _this18);
         return $ARC.chartArcsBackground + " " + $ARC.chartArcsBackground + "-" + i;
       }.bind(this)).merge(backgroundArc).style("fill", config.gauge_background || null).attr("d", function (_ref3) {
         let id = _ref3.id;
-        _newArrowCheck(this, _this17);
+        _newArrowCheck(this, _this18);
         if (showEmptyTextLabel || state.hiddenTargetIds.indexOf(id) >= 0) {
           return "M 0 0";
         }
@@ -19792,7 +19892,7 @@ function getAttrTweenFn(fn) {
       backgroundArc.exit().remove();
     } else {
       backgroundArc.attr("d", showEmptyTextLabel ? "M 0 0" : function () {
-        _newArrowCheck(this, _this17);
+        _newArrowCheck(this, _this18);
         const d = {
           data: [{
             value: config.gauge_max
@@ -19805,7 +19905,7 @@ function getAttrTweenFn(fn) {
     }
   },
   bindArcEvent: function bindArcEvent(arc) {
-    var _this18 = this;
+    var _this19 = this;
     const $$ = this,
       config = $$.config,
       state = $$.state,
@@ -19853,7 +19953,7 @@ function getAttrTweenFn(fn) {
         selectArc(this, arcData, id);
         $$.setOverOut(!0, arcData);
       }).on("mouseout", function (event, d) {
-        _newArrowCheck(this, _this18);
+        _newArrowCheck(this, _this19);
         if (state.transiting) {
           // skip while transiting
           return;
@@ -19875,7 +19975,7 @@ function getAttrTweenFn(fn) {
     if (isTouch && $$.hasArcType() && !$$.radars) {
       const getEventArc = function (event) {
         var _event$changedTouches, _event$changedTouches2;
-        _newArrowCheck(this, _this18);
+        _newArrowCheck(this, _this19);
         const _ref4 = (_event$changedTouches = (_event$changedTouches2 = event.changedTouches) == null ? void 0 : _event$changedTouches2[0]) != null ? _event$changedTouches : {
             clientX: 0,
             clientY: 0
@@ -19903,7 +20003,7 @@ function getAttrTweenFn(fn) {
     }
   },
   redrawArcText: function redrawArcText(duration) {
-    var _this19 = this;
+    var _this20 = this;
     const $$ = this,
       config = $$.config,
       state = $$.state,
@@ -19917,13 +20017,16 @@ function getAttrTweenFn(fn) {
     // for gauge type, update text when has no title & multi data
     if (!(hasGauge && $$.data.targets.length === 1 && config.gauge_title)) {
       text = main.selectAll("." + $ARC.chartArc).select("text").style("opacity", "0").attr("class", function (d) {
-        _newArrowCheck(this, _this19);
+        _newArrowCheck(this, _this20);
         return $$.isGaugeType(d.data) ? $GAUGE.gaugeValue : null;
-      }.bind(this)).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
-        _newArrowCheck(this, _this19);
+      }.bind(this)).call($$.textForArcLabel.bind($$)).attr("transform", function (d) {
+        _newArrowCheck(this, _this20);
+        return $$.transformForArcLabel.bind($$)(d);
+      }.bind(this)).style("font-size", function (d) {
+        _newArrowCheck(this, _this20);
         return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? Math.round(state.radius / 5) + "px" : null;
       }.bind(this)).transition().duration(duration).style("opacity", function (d) {
-        _newArrowCheck(this, _this19);
+        _newArrowCheck(this, _this20);
         return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0";
       }.bind(this));
       hasMultiArcGauge && text.attr("dy", "-.1em");
@@ -19949,14 +20052,14 @@ function getAttrTweenFn(fn) {
    * @private
    */
   getArcElementByIdOrIndex: function getArcElementByIdOrIndex(value) {
-    var _this20 = this;
+    var _this21 = this;
     const $$ = this,
       arcs = $$.$el.arcs,
       filterFn = isNumber(value) ? function (d) {
-        _newArrowCheck(this, _this20);
+        _newArrowCheck(this, _this21);
         return d.index === value;
       }.bind(this) : function (d) {
-        _newArrowCheck(this, _this20);
+        _newArrowCheck(this, _this21);
         return d.data.id === value;
       }.bind(this);
     return arcs == null ? void 0 : arcs.selectAll("." + $COMMON.target + " path").filter(filterFn);
@@ -20629,14 +20732,22 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
     const $$ = this,
       config = $$.config,
       arcs = $$.$el.arcs,
-      appendText = function (className) {
+      appendText = function (className, value) {
+        if (className === void 0) {
+          className = null;
+        }
+        if (value === void 0) {
+          value = "";
+        }
         _newArrowCheck(this, _this);
-        arcs.append("text").attr("class", className).style("text-anchor", "middle").style("pointer-events", "none");
+        arcs.append("text").attr("class", className).style("text-anchor", "middle").style("pointer-events", "none").text(value);
       }.bind(this);
     if ($$.hasType("gauge")) {
       const hasMulti = $$.hasMultiArcGauge();
       arcs.append(hasMulti ? "g" : "path").attr("class", $ARC.chartArcsBackground).style("fill", !hasMulti && config.gauge_background || null);
       config.gauge_units && appendText($GAUGE.chartArcsGaugeUnit);
+
+      // append min/max value text
       if (config.gauge_label_show) {
         appendText($GAUGE.chartArcsGaugeMin);
         config.gauge_fullCircle || appendText($GAUGE.chartArcsGaugeMax);
@@ -20657,7 +20768,7 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
       config.gauge_max = max - config.gauge_min;
     }
   },
-  redrawMultiArcGauge: function redrawMultiArcGauge() {
+  redrawArcGaugeLine: function redrawArcGaugeLine() {
     var _this2 = this;
     const $$ = this,
       config = $$.config,
@@ -23025,11 +23136,23 @@ function convertDataToTreemapData(data) {
    * @property {number} [arc.needle.bottom.ry=1] Set needle bottom [ry radius value](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve).
    * @property {number} [arc.needle.bottom.width=15] Set needle bottom width in pixel.
    * @property {number} [arc.needle.bottom.len=0] Set needle bottom length in pixel. Setting this value, will make bottom larger starting from center.
+   * @property {object} [arc.rangeText] Set rangeText options.
+   * @property {Array} [arc.rangeText.values] Set range text values to be shown around Arc.
+   * - When `unit: 'absolute'`: Given values are treated as absolute values.
+   * - When `unit: '%'`: Given values are treated as percentages.
+   * @property {string} [arc.rangeText.unit="absolute"] Specify the range text unit.
+   * - "absolute": Show absolute value
+   * - "%": Show percentage value
+   * @property {boolean} [arc.rangeText.fiexed=false] Set if range text shown will be fixed w/o data toggle update. Only available for gauge chart.
+   * @property {Function} [arc.rangeText.format] Set format function for the range text.
+   * @property {number} [arc.rangeText.position] Set position function or object for the range text.
    * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutCornerRadius)
-   * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
    * @see [Demo: Donut corner radius](https://naver.github.io/billboard.js/demo/#PieChartOptions.CornerRadius)
    * @see [Demo: Donut needle](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutNeedle)
-   * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/##GaugeChartOptions.GaugeNeedle)
+   * @see [Demo: Donut RangeText](https://naver.github.io/billboard.js/demo/#DonutChartOptions.DonutRangeText)
+   * @see [Demo: Gauge corner radius](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeCornerRadius)
+   * @see [Demo: Gauge needle](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeNeedle)
+   * @see [Demo: Gauge RangeText](https://naver.github.io/billboard.js/demo/#GaugeChartOptions.GaugeRangeText)
    * @example
    *  arc: {
    *      cornerRadius: 12,
@@ -23086,6 +23209,21 @@ function convertDataToTreemapData(data) {
    *       	  width: 10
    *       	  len: 10
    *       	}
+   *      },
+   *
+   *      rangeText: {
+   *       	values: [15, 30, 50, 75, 95],
+   *       	unit: "%",
+   *       	fixed: false, // only available for gauge chart
+   *       	format: function(v) {
+   *       	  return v === 15 ? "Fifteen" : v;
+   *       	},
+   *
+   *       	position: function(v) {
+   *       	  return v === 15 ? {x: 20, y: 10} : null; // can return one props value also.
+   *       	},
+   *       	position: {x: 10, y: 15},
+   *       	position: {x: 10}
    *      }
    *  }
    */
@@ -23102,7 +23240,12 @@ function convertDataToTreemapData(data) {
   arc_needle_bottom_rx: 1,
   arc_needle_bottom_ry: 1,
   arc_needle_bottom_width: 15,
-  arc_needle_bottom_len: 0
+  arc_needle_bottom_len: 0,
+  arc_rangeText_values: undefined,
+  arc_rangeText_unit: "absolute",
+  arc_rangeText_fixed: !1,
+  arc_rangeText_format: undefined,
+  arc_rangeText_position: undefined
 });
 ;// CONCATENATED MODULE: ./src/config/Options/shape/donut.ts
 /**
@@ -25783,7 +25926,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240208004548
+ * @version 3.10.3-nightly-20240214004603
  */
 const bb = {
   /**
@@ -25793,7 +25936,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20240208004548",
+  version: "3.10.3-nightly-20240214004603",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
