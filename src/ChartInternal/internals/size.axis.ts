@@ -71,7 +71,7 @@ export default {
 
 		const maxtickSize = $$.axis.getMaxTickSize(id);
 
-		const isXAxisTickRotated = config.axis_x_tick_rotate > 0 && (
+		const isXAxisTickRotated = Math.abs(config.axis_x_tick_rotate) > 0 && (
 			!config.axis_x_tick_autorotate || $$.needToRotateXAxisTickTexts()
 		);
 
