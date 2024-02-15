@@ -40,6 +40,12 @@ g > text.bb-title {
   font-weight: bold;
 }
 
+g > text.bb-title {
+  font-size: 1.3em;
+  stroke-width: 2px;
+  font-weight: bold;
+}
+
 @media (min-width: 1200px) {
   .example-grid:has(.chart_area div) {
     display: grid;
@@ -51,7 +57,7 @@ g > text.bb-title {
     margin-top: 0;
   }
 
-  .code {
+.code {
     margin:0;
   }
   
@@ -90,7 +96,7 @@ pre code {
   line-height: 1.3;
   border: 1px solid #ccc;
   padding: 10px;
-  overscroll-behavior: contain;
+overscroll-behavior: contain;
 }
 
 code.html {

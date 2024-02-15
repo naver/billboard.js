@@ -133,11 +133,7 @@ var billboardDemo = {
 	 * @param {String} type
 	 */
 	showDemo: function(type) {
-		if (!type) {
-			return;
-		}
-
-		// remove legend
+				// remove legend
 		var $legend = document.querySelector(".legend");
 		$legend && $legend.parentNode.removeChild($legend);
 
@@ -158,6 +154,11 @@ var billboardDemo = {
 
 		// set description
 		let desc = demos[type[0]][type[1]];
+
+		if (!type || !desc) {
+			return;
+		}
+
 		this.$description.innerHTML = desc.description || (Array.isArray(desc) && desc[0].description) || "";
 
 		this.$codeArea.style.display = "block";
@@ -356,7 +357,7 @@ var billboardDemo = {
 				plugins += "new bb.plugin."+ key +"({ // for ESM specify as: new "+ key +"()";
 				plugins += JSON.stringify(p[key], function(k, v) {
 					return typeof v === "function" ? v.toString() : v;
-				}, 5).replace(/\\n/g, "\n").replace(/}$/, "    }").replace(/{/, "");
+				}, 5).replace(/\\n/g, "\n").replace(/}$/g, "    }").replace(/{/g, "");
 				plugins += "),";
 			})
 		});
@@ -379,7 +380,7 @@ var billboardDemo = {
 						.replace(/(\"|\d),/g, "$1, ");
 
 					return k === "json" ?
-						str.replace(/{/, "{\r\n\t").replace(/}/, "\r\n    }") : str;
+						str.replace(/{/g, "{\r\n\t").replace(/}/g, "\r\n    }") : str;
 				} else if (k === "_plugins") {
 					return [self.getPluginsCodeStr(v)];
 				}
@@ -424,6 +425,7 @@ var billboardDemo = {
 				this.$chartArea.innerHTML = "";
 			}
 
+			index > 1 && this.$chartArea.appendChild(document.createElement("hr"));
 			this.$chartArea.appendChild($el);
 
 			if (/^(legend|tooltip)Template/.test(key) || /(sparkline)/.test(key)) {
