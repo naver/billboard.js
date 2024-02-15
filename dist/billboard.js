@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.10.3-nightly-20240214004603
+ * @version 3.10.3-nightly-20240215004559
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -17011,7 +17011,7 @@ function smoothLines(el, type) {
       return isFitPadding ? 0 : rotatedPadding.top;
     }
     const maxtickSize = $$.axis.getMaxTickSize(id),
-      isXAxisTickRotated = config.axis_x_tick_rotate > 0 && (!config.axis_x_tick_autorotate || $$.needToRotateXAxisTickTexts());
+      isXAxisTickRotated = Math.abs(config.axis_x_tick_rotate) > 0 && (!config.axis_x_tick_autorotate || $$.needToRotateXAxisTickTexts());
     if ((config.axis_x_tick_multiline || isXAxisTickRotated) && maxtickSize.height > 13) {
       h += maxtickSize.height - 13;
     }
@@ -25926,7 +25926,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.10.3-nightly-20240214004603
+ * @version 3.10.3-nightly-20240215004559
  */
 const bb = {
   /**
@@ -25936,7 +25936,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.10.3-nightly-20240214004603",
+  version: "3.10.3-nightly-20240215004559",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
