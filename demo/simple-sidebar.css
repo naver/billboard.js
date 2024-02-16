@@ -150,6 +150,7 @@ pre {
 
 .code {
     display: none;
+    margin-top: 20px;
 }
 
 .code p {
@@ -422,8 +423,12 @@ div.row {
 /* Background */
 .myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }
 
+.chart_area hr {
+    margin: 10px auto 15px auto;
+    border-top: 1px dotted #a7a7a7;
+}
 
-div[id$="_2"], div[id$="_3"], div[id$="_4"], div[id$="_5"] {
+/* div[id$="_2"], div[id$="_3"], div[id$="_4"], div[id$="_5"] {
     margin: 20px 0;
     box-shadow: 0 -1px 0 #ccc;
-}
+} */
