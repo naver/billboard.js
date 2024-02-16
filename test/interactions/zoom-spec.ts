@@ -1286,6 +1286,121 @@ describe("ZOOM", function() {
 		});
 	});
 
+	describe("bar's width with x Axis min/max", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2022-08-01", "2022-08-02", "2022-08-03", "2022-08-04", "2022-08-05", "2022-08-06"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "bar",
+					groups: [["data1", "data2"]]
+				},
+				axis: {
+					x: {
+					  type: "timeseries",
+					  min: "2022-08-01",
+					  max: "2022-08-26"
+					}
+				},
+				zoom: {
+					enabled: true
+				}
+			};
+		});
+
+		it("check bar's width during zoom in/out: timeseries", done => {
+			const width: number[] = [];
+			const {bar: {bars}} = chart.$;
+
+			bars.each(function() {
+				width.push(this.getBoundingClientRect().width);
+			});
+
+			new Promise(resolve => {
+				// when
+				chart.zoom(["2022-08-01", "2022-08-08"]);
+				
+				setTimeout(resolve, 300);
+			}).then(() => {
+				return new Promise(resolve => {
+					bars.each(function(d, i) {
+						expect(this.getBoundingClientRect().width > width[i]).to.be.true;
+					});
+
+					// when
+					chart.unzoom();
+
+					setTimeout(resolve, 300);
+				});
+			}).then(() => {
+				bars.each(function(d, i) {
+					expect(this.getBoundingClientRect().width).to.be.equal(width[i]);
+				});
+
+				done();
+			});
+		});
+
+		it("set options: axis.x.type='indexed'", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "bar",
+					groups: [["data1", "data2"]]
+				},
+				axis: {
+					x: {
+						min: -2,
+						max: 30
+					}
+				},
+				zoom: {
+					enabled: true
+				}
+			}
+		});
+
+		it("check bar's width during zoom in/out: indexed", done => {
+			const width: number[] = [];
+			const {bar: {bars}} = chart.$;
+
+			bars.each(function() {
+				width.push(this.getBoundingClientRect().width);
+			});
+
+			new Promise(resolve => {
+				// when
+				chart.zoom([1, 3]);
+				
+				setTimeout(resolve, 300);
+			}).then(() => {
+				return new Promise(resolve => {
+					bars.each(function(d, i) {
+						expect(this.getBoundingClientRect().width > width[i]).to.be.true;
+					});
+
+					// when
+					chart.unzoom();
+
+					setTimeout(resolve, 300);
+				});
+			}).then(() => {
+				bars.each(function(d, i) {
+					expect(this.getBoundingClientRect().width).to.be.equal(width[i]);
+				});
+
+				done();
+			});
+		});
+	});
+
 	describe("Multiple Xs zooming", () => {
 		before(() => {
 			args = {
