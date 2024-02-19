@@ -505,6 +505,7 @@ export default class AxisRenderer {
 		if (this.params.isCategory) {
 			interval = tickOffset * 2;
 		} else {
+			const scale = this.params.owner.scale.zoom ?? this.helper.scale;
 			const length = this.g.select("path.domain")
 				.node()
 				.getTotalLength() - outerTickSize * 2;
@@ -517,7 +518,7 @@ export default class AxisRenderer {
 					const next = i + 1;
 
 					return next < arr.length ?
-						this.helper.scale(arr[next]) - this.helper.scale(v) : null;
+						scale(arr[next]) - scale(v) : null;
 				}).filter(Boolean) : [];
 
 			interval = Math.min(...intervalByValue, interval);
