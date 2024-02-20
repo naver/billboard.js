@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.0-nightly-20240218004615
+ * @version 3.11.0-nightly-20240220004553
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -34756,29 +34756,43 @@ function getGroupedDataPointsFn(d) {
     return points ? points(d, i)[0][1] : $$.getYScaleById(id)($$.getBaseValue(d));
   },
   getBarW: function getBarW(type, axis, targetsNum) {
-    var _this11 = this;
+    var _config$data_groups,
+      _config$axis_x_min,
+      _config$axis_x_max,
+      _this11 = this;
     const $$ = this,
       config = $$.config,
       org = $$.org,
       scale = $$.scale,
       maxDataCount = $$.getMaxDataCount(),
-      isGrouped = type === "bar" && config.data_groups.length,
+      isGrouped = type === "bar" && ((_config$data_groups = config.data_groups) == null ? void 0 : _config$data_groups.length),
       configName = type + "_width",
-      tickInterval = scale.zoom && !$$.axis.isCategorized() ? org.xDomain.map(function (v) {
+      _$$$getZoomTransform = $$.getZoomTransform(),
+      k = _$$$getZoomTransform.k,
+      xMinMax = [(_config$axis_x_min = config.axis_x_min) != null ? _config$axis_x_min : org.xDomain[0], (_config$axis_x_max = config.axis_x_max) != null ? _config$axis_x_max : org.xDomain[1]].map($$.axis.isTimeSeries() ? parseDate.bind($$) : Number);
+    let tickInterval = axis.tickInterval(maxDataCount);
+    if (scale.zoom && !$$.axis.isCategorized() && k > 1) {
+      const isSameMinMax = xMinMax.every(function (v, i) {
         _newArrowCheck(this, _this11);
-        return scale.zoom(v);
+        return v === org.xDomain[i];
+      }.bind(this));
+      tickInterval = org.xDomain.map(function (v, i) {
+        _newArrowCheck(this, _this11);
+        const value = isSameMinMax ? v : v - Math.abs(xMinMax[i]);
+        return scale.zoom(value);
       }.bind(this)).reduce(function (a, c) {
         _newArrowCheck(this, _this11);
         return Math.abs(a) + c;
-      }.bind(this)) / maxDataCount : axis.tickInterval(maxDataCount),
-      getWidth = function (id) {
-        _newArrowCheck(this, _this11);
-        const width = id ? config[configName][id] : config[configName],
-          ratio = id ? width.ratio : config[configName + "_ratio"],
-          max = id ? width.max : config[configName + "_max"],
-          w = isNumber(width) ? width : targetsNum ? tickInterval * ratio / targetsNum : 0;
-        return max && w > max ? max : w;
-      }.bind(this);
+      }.bind(this)) / maxDataCount;
+    }
+    const getWidth = function (id) {
+      _newArrowCheck(this, _this11);
+      const width = id ? config[configName][id] : config[configName],
+        ratio = id ? width.ratio : config[configName + "_ratio"],
+        max = id ? width.max : config[configName + "_max"],
+        w = isNumber(width) ? width : targetsNum ? tickInterval * ratio / targetsNum : 0;
+      return max && w > max ? max : w;
+    }.bind(this);
     let result = getWidth();
     if (!isGrouped && isObjectType(config[configName])) {
       result = {
@@ -40829,14 +40843,16 @@ let AxisRenderer = /*#__PURE__*/function () {
     if (this.params.isCategory) {
       interval = tickOffset * 2;
     } else {
-      const length = this.g.select("path.domain").node().getTotalLength() - outerTickSize * 2;
+      var _this$params$owner$sc;
+      const scale = (_this$params$owner$sc = this.params.owner.scale.zoom) != null ? _this$params$owner$sc : this.helper.scale,
+        length = this.g.select("path.domain").node().getTotalLength() - outerTickSize * 2;
       interval = length / (size || this.g.selectAll("line").size());
 
       // get the interval by its values
       const intervalByValue = tickValues ? tickValues.map(function (v, i, arr) {
         _newArrowCheck(this, _this5);
         const next = i + 1;
-        return next < arr.length ? this.helper.scale(arr[next]) - this.helper.scale(v) : null;
+        return next < arr.length ? scale(arr[next]) - scale(v) : null;
       }.bind(this)).filter(Boolean) : [];
       interval = Math.min.apply(Math, intervalByValue.concat([interval]));
     }
@@ -53486,9 +53502,9 @@ function selection_objectSpread(e) { for (var r = 1, t; r < arguments.length; r+
     if (config.zoom_type === "drag" && e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY) {
       return;
     }
+    state.zooming = !1;
     $$.redrawEventRect();
     $$.updateZoom();
-    state.zooming = !1;
 
     // do not call event cb when is .unzoom() is called
     !isUnZoom && (e || state.dragging) && callFn(config.zoom_onzoomend, $$.api, (_$$$state$domain2 = $$.state.domain) != null ? _$$$state$domain2 : $$.zoom.getDomain());
@@ -53625,6 +53641,13 @@ function selection_objectSpread(e) { for (var r = 1, t; r < arguments.length; r+
         $el.zoomResetBtn.style("display", null);
       }
     }
+  },
+  getZoomTransform: function getZoomTransform() {
+    const $$ = this,
+      eventRect = $$.$el.eventRect;
+    return eventRect != null && eventRect.node() ? transform_transform(eventRect.node()) : {
+      k: 1
+    };
   }
 });
 ;// CONCATENATED MODULE: ./src/config/Options/data/selection.ts
@@ -54005,7 +54028,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.11.0-nightly-20240218004615
+ * @version 3.11.0-nightly-20240220004553
  */
 const bb = {
   /**
@@ -54015,7 +54038,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.0-nightly-20240218004615",
+  version: "3.11.0-nightly-20240220004553",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

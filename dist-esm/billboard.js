@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.0-nightly-20240218004615
+ * @version 3.11.0-nightly-20240220004553
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -7404,14 +7404,25 @@ var shape = {
             $$.getYScaleById(id)($$.getBaseValue(d));
     },
     getBarW: function (type, axis, targetsNum) {
+        var _a, _b, _c;
         var $$ = this;
         var config = $$.config, org = $$.org, scale = $$.scale;
         var maxDataCount = $$.getMaxDataCount();
-        var isGrouped = type === "bar" && config.data_groups.length;
+        var isGrouped = type === "bar" && ((_a = config.data_groups) === null || _a === void 0 ? void 0 : _a.length);
         var configName = "".concat(type, "_width");
-        var tickInterval = scale.zoom && !$$.axis.isCategorized() ?
-            (org.xDomain.map(function (v) { return scale.zoom(v); })
-                .reduce(function (a, c) { return Math.abs(a) + c; }) / maxDataCount) : axis.tickInterval(maxDataCount);
+        var k = $$.getZoomTransform().k;
+        var xMinMax = [
+            (_b = config.axis_x_min) !== null && _b !== void 0 ? _b : org.xDomain[0],
+            (_c = config.axis_x_max) !== null && _c !== void 0 ? _c : org.xDomain[1]
+        ].map($$.axis.isTimeSeries() ? parseDate.bind($$) : Number);
+        var tickInterval = axis.tickInterval(maxDataCount);
+        if (scale.zoom && !$$.axis.isCategorized() && k > 1) {
+            var isSameMinMax_1 = xMinMax.every(function (v, i) { return v === org.xDomain[i]; });
+            tickInterval = org.xDomain.map(function (v, i) {
+                var value = isSameMinMax_1 ? v : v - Math.abs(xMinMax[i]);
+                return scale.zoom(value);
+            }).reduce(function (a, c) { return Math.abs(a) + c; }) / maxDataCount;
+        }
         var getWidth = function (id) {
             var width = id ? config[configName][id] : config[configName];
             var ratio = id ? width.ratio : config["".concat(configName, "_ratio")];
@@ -12829,13 +12840,14 @@ var AxisRenderer = /** @class */ (function () {
      * @returns {number}
      */
     AxisRenderer.prototype.tickInterval = function (size) {
-        var _this = this;
-        var _a = this.config, outerTickSize = _a.outerTickSize, tickOffset = _a.tickOffset, tickValues = _a.tickValues;
+        var _a;
+        var _b = this.config, outerTickSize = _b.outerTickSize, tickOffset = _b.tickOffset, tickValues = _b.tickValues;
         var interval;
         if (this.params.isCategory) {
             interval = tickOffset * 2;
         }
         else {
+            var scale_1 = (_a = this.params.owner.scale.zoom) !== null && _a !== void 0 ? _a : this.helper.scale;
             var length_1 = this.g.select("path.domain")
                 .node()
                 .getTotalLength() - outerTickSize * 2;
@@ -12845,7 +12857,7 @@ var AxisRenderer = /** @class */ (function () {
                 .map(function (v, i, arr) {
                 var next = i + 1;
                 return next < arr.length ?
-                    _this.helper.scale(arr[next]) - _this.helper.scale(v) : null;
+                    scale_1(arr[next]) - scale_1(v) : null;
             }).filter(Boolean) : [];
             interval = Math.min.apply(Math, __spreadArray(__spreadArray([], intervalByValue, false), [interval], false));
         }
@@ -22897,9 +22909,9 @@ var zoom = {
         if (config.zoom_type === "drag" && (e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY)) {
             return;
         }
+        state.zooming = false;
         $$.redrawEventRect();
         $$.updateZoom();
-        state.zooming = false;
         // do not call event cb when is .unzoom() is called
         !isUnZoom && (e || state.dragging) && callFn(config.zoom_onzoomend, $$.api, (_b = $$.state.domain) !== null && _b !== void 0 ? _b : $$.zoom.getDomain());
     },
@@ -23038,6 +23050,11 @@ var zoom = {
                 $el.zoomResetBtn.style("display", null);
             }
         }
+    },
+    getZoomTransform: function () {
+        var $$ = this;
+        var eventRect = $$.$el.eventRect;
+        return (eventRect === null || eventRect === void 0 ? void 0 : eventRect.node()) ? zoomTransform(eventRect.node()) : { k: 1 };
     }
 };
 
@@ -23362,7 +23379,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.0-nightly-20240218004615
+ * @version 3.11.0-nightly-20240220004553
  */
 var bb = {
     /**
@@ -23372,7 +23389,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.0-nightly-20240218004615",
+    version: "3.11.0-nightly-20240220004553",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
