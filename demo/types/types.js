@@ -27,9 +27,11 @@ const Types = {
         "pie-corner-radius",
         "gauge-needle",
         "donut-needle",
+        "range-text-donut",
+        "range-text-gauge",
         "normalized",
         "combination",
-        "multi-axes",
+        "multi-axes"
     ],
     getRandom(min = 100, max = 1000) {
         return Math.random() * (max - min) + min;
@@ -70,6 +72,9 @@ const Types = {
     },
     getOptions: function() {
         return {
+            size: {
+                height: 130
+            },
             data: {
                 columns: []
             },
@@ -328,7 +333,44 @@ const Types = {
                         }
                     }
                 };
-                
+
+            } else if (type === "range-text-donut") {
+                type = "donut";
+
+                options.data.columns = [
+                    ["data1", 30],
+                    ["data2", 20],
+                    ["data3", 50]
+                ];
+
+                options.arc = {
+                    rangeText: {
+                        values: [25, 50, 75, 100],
+                        unit: "%"
+                    }
+                };
+
+            } else if (type === "range-text-gauge") {
+                type = "gauge";
+
+                options.data.columns = [
+                    ["data1", 30],
+                    ["data2", 20],
+                    ["data3", 50]
+                ];
+
+                options.arc = {
+                    rangeText: {
+                        values: [5, 10, 30, 50, 70, 83, 100],
+                    }
+                };
+                options.gauge = {
+                    label: {
+                        format: function(value, ratio) { return value; },
+                        extents: function() { return ""; }
+                    }
+                };
+
             } else if (type === "combination") {
                 options.data.types = {
                     data0: "bar",

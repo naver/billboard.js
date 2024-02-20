@@ -25,7 +25,7 @@ import {
 import {select as d3Select} from "d3-selection";
 import type {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
-import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty} from "../../module/util";
+import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty, parseDate} from "../../module/util";
 import type {IDataRow, IDataIndice, TIndices} from "../data/IData";
 
 /**
@@ -423,13 +423,25 @@ export default {
 		const $$ = this;
 		const {config, org, scale} = $$;
 		const maxDataCount = $$.getMaxDataCount();
-		const isGrouped = type === "bar" && config.data_groups.length;
+		const isGrouped = type === "bar" && config.data_groups?.length;
 		const configName = `${type}_width`;
+		const {k} = $$.getZoomTransform();
+		const xMinMax = <[number, number]>[
+			config.axis_x_min ?? org.xDomain[0],
+			config.axis_x_max ?? org.xDomain[1]
+		].map($$.axis.isTimeSeries() ? parseDate.bind($$) : Number);
 
-		const tickInterval = scale.zoom && !$$.axis.isCategorized() ?
-			(org.xDomain.map(v => scale.zoom(v))
-				.reduce((a, c) => Math.abs(a) + c) / maxDataCount
-			) : axis.tickInterval(maxDataCount);
+		let tickInterval = axis.tickInterval(maxDataCount);
+
+		if (scale.zoom && !$$.axis.isCategorized() && k > 1) {
+			const isSameMinMax = xMinMax.every((v, i) => v === org.xDomain[i]);
+
+			tickInterval = org.xDomain.map((v, i) => {
+				const value = isSameMinMax ? v : v - Math.abs(xMinMax[i]);
+
+				return scale.zoom(value);
+			}).reduce((a, c) => Math.abs(a) + c) / maxDataCount;
+		}
 
 		const getWidth = (id?: string) => {
 			const width = id ? config[configName][id] : config[configName];

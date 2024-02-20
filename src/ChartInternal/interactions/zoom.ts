@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {drag as d3Drag} from "d3-drag";
-import {zoomIdentity as d3ZoomIdentity, zoom as d3Zoom, ZoomTransform as d3ZoomTransform} from "d3-zoom";
+import {zoomIdentity as d3ZoomIdentity, zoom as d3Zoom, zoomTransform as d3ZoomTransform} from "d3-zoom";
 import {$COMMON, $ZOOM} from "../../config/classes";
 import {callFn, diffDomain, getPointer, isFunction} from "../../module/util";
 
@@ -242,10 +242,9 @@ export default {
 			return;
 		}
 
+		state.zooming = false;
 		$$.redrawEventRect();
 		$$.updateZoom();
-
-		state.zooming = false;
 
 		// do not call event cb when is .unzoom() is called
 		!isUnZoom && (e || state.dragging) && callFn(
@@ -425,5 +424,12 @@ export default {
 				$el.zoomResetBtn.style("display", null);
 			}
 		}
+	},
+
+	getZoomTransform() {
+		const $$ = this;
+		const {$el: {eventRect}} = $$;
+
+		return eventRect?.node() ? d3ZoomTransform(eventRect.node()) : {k: 1};
 	}
 };
