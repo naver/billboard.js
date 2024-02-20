@@ -346,7 +346,7 @@ export default {
 
 			if (!raw) {
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-				y += hasGauge ? height : (height / 2) + tHeight;
+				y += (hasGauge ? height : (height / 2) + tHeight) + ($$.getTitlePadding?.() ?? 0);
 			}
 		} else if (hasTreemap) {
 			y += tHeight;
