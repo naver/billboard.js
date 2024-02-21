@@ -72,10 +72,10 @@ export default {
 	 */
 	getTitlePadding(): number {
 		const $$ = this;
-		const {$el, config} = $$;
+		const {$el: {title}, config} = $$;
 
 		return (config.title_padding.top || 0) +
-			$$.getTextRect($el.title, $TEXT.title).height +
+			(title ? $$.getTextRect(title, $TEXT.title).height : 0) +
 			(config.title_padding.bottom || 0);
 	},
 };
