@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.0-nightly-20240220004553
+ * @version 3.11.0-nightly-20240221004614
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -35899,9 +35899,9 @@ function getTextXPos(pos, width) {
    */
   getTitlePadding: function getTitlePadding() {
     const $$ = this,
-      $el = $$.$el,
+      title = $$.$el.title,
       config = $$.config;
-    return (config.title_padding.top || 0) + $$.getTextRect($el.title, $TEXT.title).height + (config.title_padding.bottom || 0);
+    return (config.title_padding.top || 0) + (title ? $$.getTextRect(title, $TEXT.title).height : 0) + (config.title_padding.bottom || 0);
   }
 });
 ;// CONCATENATED MODULE: ./src/ChartInternal/internals/tooltip.ts
@@ -36255,8 +36255,9 @@ function getTextXPos(pos, width) {
       y += 15;
     } else if (hasArcType) {
       if (!(inputType === "touch")) {
+        var _$$$getTitlePadding;
         x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-        y += hasGauge ? height : height / 2 + tHeight;
+        y += (hasGauge ? height : height / 2 + tHeight) + ((_$$$getTitlePadding = $$.getTitlePadding == null ? void 0 : $$.getTitlePadding()) != null ? _$$$getTitlePadding : 0);
       }
     } else if (hasTreemap) {
       y += tHeight;
@@ -54028,7 +54029,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.11.0-nightly-20240220004553
+ * @version 3.11.0-nightly-20240221004614
  */
 const bb = {
   /**
@@ -54038,7 +54039,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.0-nightly-20240220004553",
+  version: "3.11.0-nightly-20240221004614",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

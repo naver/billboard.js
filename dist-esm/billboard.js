@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.0-nightly-20240220004553
+ * @version 3.11.0-nightly-20240221004614
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -8525,9 +8525,9 @@ var title = {
      */
     getTitlePadding: function () {
         var $$ = this;
-        var $el = $$.$el, config = $$.config;
+        var title = $$.$el.title, config = $$.config;
         return (config.title_padding.top || 0) +
-            $$.getTextRect($el.title, $TEXT.title).height +
+            (title ? $$.getTextRect(title, $TEXT.title).height : 0) +
             (config.title_padding.bottom || 0);
     },
 };
@@ -8807,6 +8807,7 @@ var tooltip$1 = {
      * @private
      */
     getTooltipPosition: function (tWidth, tHeight, currPos) {
+        var _a, _b;
         var $$ = this;
         var config = $$.config, scale = $$.scale, state = $$.state;
         var width = state.width, height = state.height, current = state.current, isLegendRight = state.isLegendRight, inputType = state.inputType;
@@ -8828,7 +8829,7 @@ var tooltip$1 = {
             var raw = inputType === "touch";
             if (!raw) {
                 x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-                y += hasGauge ? height : (height / 2) + tHeight;
+                y += (hasGauge ? height : (height / 2) + tHeight) + ((_b = (_a = $$.getTitlePadding) === null || _a === void 0 ? void 0 : _a.call($$)) !== null && _b !== void 0 ? _b : 0);
             }
         }
         else if (hasTreemap) {
@@ -23379,7 +23380,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.0-nightly-20240220004553
+ * @version 3.11.0-nightly-20240221004614
  */
 var bb = {
     /**
@@ -23389,7 +23390,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.0-nightly-20240220004553",
+    version: "3.11.0-nightly-20240221004614",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
