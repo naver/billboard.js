@@ -1,3 +1,11 @@
+## [3.11.1](https://github.com/naver/billboard.js/compare/3.11.0...3.11.1) (2024-02-22)
+
+
+### Bug Fixes
+
+* **bar:** Fix bar's width update with x axis min/max ([170d836](https://github.com/naver/billboard.js/commit/170d836f374e08fd7d33be91892da39debde201a)), closes [#3636](https://github.com/naver/billboard.js/issues/3636)
+* **types:** Specify d3 types as dependency ([dc381ea](https://github.com/naver/billboard.js/commit/dc381eafb7bc762e72311aa598a87e5d6b240a74)), closes [#2954](https://github.com/naver/billboard.js/issues/2954) [#issuecomment-1949187551](https://github.com/naver/billboard.js/issues/issuecomment-1949187551)
+
 # [3.11.0](https://github.com/naver/billboard.js/compare/3.10.3...3.11.0) (2024-02-15)
 
 
