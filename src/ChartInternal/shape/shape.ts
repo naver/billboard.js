@@ -425,7 +425,7 @@ export default {
 		const maxDataCount = $$.getMaxDataCount();
 		const isGrouped = type === "bar" && config.data_groups?.length;
 		const configName = `${type}_width`;
-		const {k} = $$.getZoomTransform();
+		const {k} = $$.getZoomTransform?.() ?? {k: 1};
 		const xMinMax = <[number, number]>[
 			config.axis_x_min ?? org.xDomain[0],
 			config.axis_x_max ?? org.xDomain[1]

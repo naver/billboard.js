@@ -17,6 +17,14 @@ describe("ESM donut", function() {
                 ["data2", 120]
             ],
             type: donut()
+        },
+        point: {
+            pattern: [
+              '<rect width="15" height="15" rx="5" ry="5" ></rect>',
+            ]
+        },
+        legend: {
+            usePoint: true
         }
     };
     
@@ -52,5 +60,11 @@ describe("ESM donut", function() {
         ).to.not.throw;
 
         chart.internal.config.axis_y_label = {};
+    });
+
+    it("should point.pattern def element appended.", () => {
+        const defs = chart.internal.$el.defs.selectAll("[id*=point-data]");
+
+        expect(defs.size()).to.be.equal(chart.data().length);
     });
 });

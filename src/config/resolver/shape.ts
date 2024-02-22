@@ -23,6 +23,7 @@ import shapeCandlestick from "../../ChartInternal/shape/candlestick";
 import shapeGauge from "../../ChartInternal/shape/gauge";
 import shapeBubble from "../../ChartInternal/shape/bubble";
 import shapeLine from "../../ChartInternal/shape/line";
+import shapePointCommon from "../../ChartInternal/shape/point.common";
 import shapePoint from "../../ChartInternal/shape/point";
 import shapePolar from "../../ChartInternal/shape/polar";
 import shapeRadar from "../../ChartInternal/shape/radar";
@@ -87,7 +88,7 @@ function extendAxis(module, option?): void {
  * @private
  */
 function extendLine(module?, option?): void {
-	extendAxis([shapePoint, shapeLine].concat(module || []));
+	extendAxis([shapePointCommon, shapePoint, shapeLine].concat(module || []));
 	Options.setOptions([optPoint, optLine].concat(option || []));
 }
 
@@ -98,8 +99,8 @@ function extendLine(module?, option?): void {
  * @private
  */
 function extendArc(module?, option?): void {
-	extend(ChartInternal.prototype, [shapeArc].concat(module || []));
-	Options.setOptions(option);
+	extend(ChartInternal.prototype, [shapeArc, shapePointCommon].concat(module || []));
+	Options.setOptions([optPoint].concat(option || []));
 }
 
 // Area types
@@ -142,15 +143,23 @@ let radar = (): string => (
 );
 
 // Axis based types
-let bar = (): string => (extendAxis([shapeBar], optBar), (bar = () => TYPE.BAR)());
+let bar = (): string => (
+	extendAxis([shapeBar, shapePointCommon], [optBar, optPoint]), (bar = () => TYPE.BAR)()
+);
 let bubble = (): string => (
-	extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), (bubble = () => TYPE.BUBBLE)()
+	extendAxis(
+		[shapePointCommon, shapePoint, shapeBubble], [optBubble, optPoint]
+	), (bubble = () => TYPE.BUBBLE)()
 );
 let candlestick = (): string => (
-	extendAxis([shapeCandlestick], [optCandlestick]), (candlestick = () => TYPE.CANDLESTICK)()
+	extendAxis(
+		[shapeCandlestick, shapePointCommon], [optCandlestick, optPoint]
+	), (candlestick = () => TYPE.CANDLESTICK)()
 );
 let scatter = (): string => (
-	extendAxis([shapePoint], [optPoint, optScatter]), (scatter = () => TYPE.SCATTER)()
+	extendAxis(
+		[shapePointCommon, shapePoint], [optPoint, optScatter]
+	), (scatter = () => TYPE.SCATTER)()
 );
 
 // Non Axis based types

@@ -451,7 +451,7 @@ export default {
 		return this.state.hiddenLegendIds.indexOf(targetId) < 0;
 	},
 
-	filterTargetsToShow(targets) {
+	filterTargetsToShow(targets?) {
 		const $$ = this;
 
 		return (targets || $$.data.targets).filter(t => $$.isTargetToShow(t.id));
