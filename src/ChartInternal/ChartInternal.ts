@@ -281,7 +281,7 @@ export default class ChartInternal {
 			config.subchart_show = false;
 		}
 
-		if ($$.hasPointType()) {
+		if ($$.hasPointType() || $$.hasLegendDefsPoint?.()) {
 			$$.point = $$.generatePoint();
 		}
 
@@ -416,7 +416,7 @@ export default class ChartInternal {
 		const hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
 
 		if (hasAxis || hasColorPatterns || hasPolar || hasTreemap ||
-			config.data_labels_backgroundColors) {
+			config.data_labels_backgroundColors || $$.hasLegendDefsPoint?.()) {
 			$el.defs = $el.svg.append("defs");
 
 			if (hasAxis) {

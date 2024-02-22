@@ -86,9 +86,10 @@ export default {
 			treemap && $$.updateTreemap(durationForExit);
 		}
 
-		// @TODO: Axis & Radar type
 		if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
 			$$.updateCircle();
+		} else if ($$.hasLegendDefsPoint?.()) {
+			$$.data.targets.forEach($$.point("create", this));
 		}
 
 		// text
