@@ -131,6 +131,7 @@ export default {
 	unload(rawTargetIds, customDoneCb): void {
 		const $$ = this;
 		const {state, $el, $T} = $$;
+		const hasLegendDefsPoint = !!$$.hasLegendDefsPoint?.();
 		let done = customDoneCb;
 		let targetIds = rawTargetIds;
 
@@ -158,16 +159,21 @@ export default {
 			.call(endall, done);
 
 		targetIds.forEach(id => {
+			const suffixId = $$.getTargetSelectorSuffix(id);
+
 			// Reset fadein for future load
 			state.withoutFadeIn[id] = false;
 
 			// Remove target's elements
 			if ($el.legend) {
-				$el.legend.selectAll(`.${$LEGEND.legendItem}${$$.getTargetSelectorSuffix(id)}`).remove();
+				$el.legend.selectAll(`.${$LEGEND.legendItem}${suffixId}`).remove();
 			}
 
 			// Remove target
 			$$.data.targets = $$.data.targets.filter(t => t.id !== id);
+
+			// Remove custom point def element
+			hasLegendDefsPoint && $el.defs?.select(`#${$$.getDefsPointId(suffixId)}`).remove();
 		});
 
 		// since treemap uses different data types, it needs to be transformed

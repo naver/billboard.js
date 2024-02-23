@@ -84,6 +84,12 @@ export default {
 		return config.legend_show && config.point_pattern?.length && config.legend_usePoint;
 	},
 
+	getDefsPointId(id: string): string {
+		const {state: {datetimeId}} = this;
+
+		return `${datetimeId}-point${id}`;
+	},
+
 	/**
 	 * Get generate point function
 	 * @returns {Function}
@@ -91,7 +97,7 @@ export default {
 	 */
 	generatePoint(): Function {
 		const $$ = this;
-		const {$el, config, state: {datetimeId}} = $$;
+		const {$el, config} = $$;
 		const ids: string[] = [];
 		const pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
 
@@ -107,7 +113,7 @@ export default {
 				if ($$.hasValidPointType(point)) {
 					point = $$[point];
 				} else if (!hasValidPointDrawMethods(point || config.point_type)) {
-					const pointId = `${datetimeId}-point${id}`;
+					const pointId = $$.getDefsPointId(id);
 					const defsPoint = $el.defs.select(`#${pointId}`);
 
 					if (defsPoint.size() < 1) {
