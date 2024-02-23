@@ -39,7 +39,7 @@ export const api = [
 	apiX
 ];
 
-export const internal = [
+export const internal = {
 	axis,
 	clip,
 	eventrect,
@@ -47,10 +47,10 @@ export const internal = [
 	grid,
 	region,
 	sizeAxis,
-];
+};
 
-export const options = [
+export const options = {
 	optDataAxis,
 	optAxis,
 	optGrid,
-];
+};

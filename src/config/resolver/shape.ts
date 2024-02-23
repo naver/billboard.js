@@ -76,9 +76,9 @@ export {
  * @private
  */
 function extendAxis(module, option?): void {
-	extend(ChartInternal.prototype, axisInternal.concat(module));
+	extend(ChartInternal.prototype, Object.values(axisInternal).concat(module));
 	extend(Chart.prototype, axisAPI);
-	Options.setOptions(axisOptions.concat(option || []));
+	Options.setOptions(Object.values(axisOptions).concat(option || []));
 }
 
 /**
@@ -139,7 +139,10 @@ let polar = (): string => (
 	extendArc([shapePolar], [optArc, optPolar]), (polar = () => TYPE.POLAR)()
 );
 let radar = (): string => (
-	extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), (radar = () => TYPE.RADAR)()
+	extendArc(
+		[axisInternal.eventrect, shapePoint, shapeRadar],
+		[optPoint, optRadar, {axis_x_categories: axisOptions.optAxis.axis_x_categories}]
+	), (radar = () => TYPE.RADAR)()
 );
 
 // Axis based types
