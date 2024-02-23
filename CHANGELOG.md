@@ -1,3 +1,12 @@
+## [3.11.2](https://github.com/naver/billboard.js/compare/3.11.1...3.11.2) (2024-02-23)
+
+
+### Bug Fixes
+
+* **legend:** Remove def element added on unload ([cd79502](https://github.com/naver/billboard.js/commit/cd795022153239fc5021e32fe4fb254208b8d877)), closes [#3660](https://github.com/naver/billboard.js/issues/3660)
+* **point:** Make point.pattern legend available for any chart type ([143282b](https://github.com/naver/billboard.js/commit/143282b740ed799af2433b0c94c9212e015977fe)), closes [#3653](https://github.com/naver/billboard.js/issues/3653)
+* **radar:** Fix working on esm ([5104d9c](https://github.com/naver/billboard.js/commit/5104d9c4ff3e9605c73c21350d2220bc04eeba42)), closes [#3658](https://github.com/naver/billboard.js/issues/3658)
+
 ## [3.11.1](https://github.com/naver/billboard.js/compare/3.11.0...3.11.1) (2024-02-22)
 
 
