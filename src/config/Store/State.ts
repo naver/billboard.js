@@ -55,7 +55,7 @@ export default class State {
 				dataMax: 0,
 
 				maxTickSize: {
-					x: {width: 0, height: 0, ticks: <number[]> [], clipPath: 0, domain: ""},
+					x: {width: 0, height: 0, ticks: <(number|string)[]> [], clipPath: 0, domain: ""},
 					y: {width: 0, height: 0, domain: ""},
 					y2: {width: 0, height: 0, domain: ""}
 				},
