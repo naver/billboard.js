@@ -2,30 +2,15 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	namespaces as d3Namespaces,
-	select as d3Select
-} from "d3-selection";
-import type {d3Selection} from "../../../types/types";
+import {select as d3Select} from "d3-selection";
 import {$CIRCLE, $COMMON, $SELECT} from "../../config/classes";
-import {document} from "../../module/browser";
+import {getBoundingRect, getPointer, getRandom, isFunction, isObject, isUndefined, isValue} from "../../module/util";
+import type {d3Selection} from "../../../types/types";
 import type {IDataPoint, IDataRow} from "../data/IData";
-import {getBoundingRect, getPointer, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
 
 const getTransitionName = () => getRandom();
 
 export default {
-	hasValidPointType(type?: string): boolean {
-		return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
-	},
-
-	hasValidPointDrawMethods(type?: string): boolean {
-		const pointType = type || this.config.point_type;
-
-		return isObjectType(pointType) &&
-			isFunction(pointType.create) && isFunction(pointType.update);
-	},
-
 	initialOpacityForCircle(d): string | number | null {
 		const {config, state: {withoutFadeIn}} = this;
 		let opacity = config.point_opacity;
@@ -410,46 +395,6 @@ export default {
 		return sensitivity;
 	},
 
-	insertPointInfoDefs(point, id: string): void {
-		const $$ = this;
-		const copyAttr = (from, target) => {
-			const attribs = from.attributes;
-
-			for (let i = 0, name; (name = attribs[i]); i++) {
-				name = name.name;
-				target.setAttribute(name, from.getAttribute(name));
-			}
-		};
-
-		const doc = new DOMParser().parseFromString(point, "image/svg+xml");
-		const node = doc.documentElement;
-		const clone = document.createElementNS(d3Namespaces.svg, node.nodeName.toLowerCase());
-
-		clone.id = id;
-		clone.style.fill = "inherit";
-		clone.style.stroke = "inherit";
-
-		copyAttr(node, clone);
-
-		if (node.childNodes?.length) {
-			const parent = d3Select(clone);
-
-			if ("innerHTML" in clone) {
-				parent.html(node.innerHTML);
-			} else {
-				toArray(node.childNodes).forEach(v => {
-					copyAttr(v, parent.append(v.tagName).node());
-				});
-			}
-		}
-
-		$$.$el.defs.node().appendChild(clone);
-	},
-
-	pointFromDefs(id: string) {
-		return this.$el.defs.select(`#${id}`);
-	},
-
 	updatePointClass(d) {
 		const $$ = this;
 		const {circle} = $$.$el;
@@ -501,43 +446,6 @@ export default {
 				point,
 				point
 			];
-		};
-	},
-
-	generatePoint(): Function {
-		const $$ = this;
-		const {config, state: {datetimeId}} = $$;
-		const ids: string[] = [];
-		const pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
-
-		return function(method, context, ...args) {
-			return function(d) {
-				const id: string = $$.getTargetSelectorSuffix(d.id || d.data?.id || d);
-				const element = d3Select(this);
-
-				ids.indexOf(id) < 0 && ids.push(id);
-
-				let point = pattern[ids.indexOf(id) % pattern.length];
-
-				if ($$.hasValidPointType(point)) {
-					point = $$[point];
-				} else if (!$$.hasValidPointDrawMethods(point)) {
-					const pointId = `${datetimeId}-point${id}`;
-					const pointFromDefs = $$.pointFromDefs(pointId);
-
-					if (pointFromDefs.size() < 1) {
-						$$.insertPointInfoDefs(point, pointId);
-					}
-
-					if (method === "create") {
-						return $$.custom.create.bind(context)(element, pointId, ...args);
-					} else if (method === "update") {
-						return $$.custom.update.bind(context)(element, ...args);
-					}
-				}
-
-				return point[method].bind(context)(element, ...args);
-			};
 		};
 	},
 
