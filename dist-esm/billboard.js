@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.0-nightly-20240222004603
+ * @version 3.11.1-nightly-20240223004554
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -6675,7 +6675,7 @@ var legend$1 = {
  */
 var redraw = {
     redraw: function (options) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         if (options === void 0) { options = {}; }
         var $$ = this;
         var config = $$.config, state = $$.state, $el = $$.$el;
@@ -6740,14 +6740,16 @@ var redraw = {
             // treemap
             treemap && $$.updateTreemap(durationForExit);
         }
-        // @TODO: Axis & Radar type
         if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
             $$.updateCircle();
+        }
+        else if ((_c = $$.hasLegendDefsPoint) === null || _c === void 0 ? void 0 : _c.call($$)) {
+            $$.data.targets.forEach($$.point("create", this));
         }
         // text
         $$.hasDataLabel() && !$$.hasArcType(null, ["radar"]) && $$.updateText();
         // title
-        (_c = $$.redrawTitle) === null || _c === void 0 ? void 0 : _c.call($$);
+        (_d = $$.redrawTitle) === null || _d === void 0 ? void 0 : _d.call($$);
         initializing && $$.updateTypesElements();
         $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
         $$.updateTooltipOnRedraw();
@@ -7404,16 +7406,16 @@ var shape = {
             $$.getYScaleById(id)($$.getBaseValue(d));
     },
     getBarW: function (type, axis, targetsNum) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d, _e;
         var $$ = this;
         var config = $$.config, org = $$.org, scale = $$.scale;
         var maxDataCount = $$.getMaxDataCount();
         var isGrouped = type === "bar" && ((_a = config.data_groups) === null || _a === void 0 ? void 0 : _a.length);
         var configName = "".concat(type, "_width");
-        var k = $$.getZoomTransform().k;
+        var k = ((_c = (_b = $$.getZoomTransform) === null || _b === void 0 ? void 0 : _b.call($$)) !== null && _c !== void 0 ? _c : { k: 1 }).k;
         var xMinMax = [
-            (_b = config.axis_x_min) !== null && _b !== void 0 ? _b : org.xDomain[0],
-            (_c = config.axis_x_max) !== null && _c !== void 0 ? _c : org.xDomain[1]
+            (_d = config.axis_x_min) !== null && _d !== void 0 ? _d : org.xDomain[0],
+            (_e = config.axis_x_max) !== null && _e !== void 0 ? _e : org.xDomain[1]
         ].map($$.axis.isTimeSeries() ? parseDate.bind($$) : Number);
         var tickInterval = axis.tickInterval(maxDataCount);
         if (scale.zoom && !$$.axis.isCategorized() && k > 1) {
@@ -9540,6 +9542,7 @@ var ChartInternal = /** @class */ (function () {
         }
     };
     ChartInternal.prototype.initParams = function () {
+        var _a;
         var $$ = this;
         var config = $$.config, format = $$.format, state = $$.state;
         var isRotated = config.axis_rotated;
@@ -9553,7 +9556,7 @@ var ChartInternal = /** @class */ (function () {
             config.axis_y2_show = false;
             config.subchart_show = false;
         }
-        if ($$.hasPointType()) {
+        if ($$.hasPointType() || ((_a = $$.hasLegendDefsPoint) === null || _a === void 0 ? void 0 : _a.call($$))) {
             $$.point = $$.generatePoint();
         }
         if (state.hasAxis) {
@@ -9587,7 +9590,7 @@ var ChartInternal = /** @class */ (function () {
         state.inputType = convertInputType(config.interaction_inputType_mouse, config.interaction_inputType_touch);
     };
     ChartInternal.prototype.initWithData = function (data) {
-        var _a, _b;
+        var _a, _b, _c;
         var $$ = this;
         var config = $$.config, scale = $$.scale, state = $$.state, $el = $$.$el, org = $$.org;
         var hasAxis = state.hasAxis, hasTreemap = state.hasTreemap;
@@ -9652,7 +9655,7 @@ var ChartInternal = /** @class */ (function () {
         // Define defs
         var hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
         if (hasAxis || hasColorPatterns || hasPolar || hasTreemap ||
-            config.data_labels_backgroundColors) {
+            config.data_labels_backgroundColors || ((_a = $$.hasLegendDefsPoint) === null || _a === void 0 ? void 0 : _a.call($$))) {
             $el.defs = $el.svg.append("defs");
             if (hasAxis) {
                 ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
@@ -9701,11 +9704,11 @@ var ChartInternal = /** @class */ (function () {
         $$.initChartElements();
         if (hasAxis) {
             // Cover whole with rects for events
-            hasInteraction && ((_a = $$.initEventRect) === null || _a === void 0 ? void 0 : _a.call($$));
+            hasInteraction && ((_b = $$.initEventRect) === null || _b === void 0 ? void 0 : _b.call($$));
             // Grids
             $$.initGrid();
             // Add Axis here, when clipPath is 'true'
-            config.clipPath && ((_b = $$.axis) === null || _b === void 0 ? void 0 : _b.init());
+            config.clipPath && ((_c = $$.axis) === null || _c === void 0 ? void 0 : _c.init());
         }
         // Set targets
         $$.updateTargets($$.data.targets);
@@ -19131,16 +19134,121 @@ var shapeLine = {
     },
 };
 
-var getTransitionName = function () { return getRandom(); };
-var shapePoint = {
+/**
+ * Check if point draw methods are valid
+ * @param {string} point point type
+ * @returns {boolean}
+ * @private
+ */
+function hasValidPointDrawMethods(point) {
+    return isObjectType(point) &&
+        isFunction(point.create) && isFunction(point.update);
+}
+/**
+ * Insert point info defs element
+ * @param {string} point Point element
+ * @param {string} id Point id
+ * @private
+ */
+function insertPointInfoDefs(point, id) {
+    var _a;
+    var $$ = this;
+    var copyAttr = function (from, target) {
+        var attribs = from.attributes;
+        for (var i = 0, name_1; (name_1 = attribs[i]); i++) {
+            name_1 = name_1.name;
+            target.setAttribute(name_1, from.getAttribute(name_1));
+        }
+    };
+    var doc$1 = new DOMParser().parseFromString(point, "image/svg+xml");
+    var node = doc$1.documentElement;
+    var clone = doc.createElementNS(namespaces.svg, node.nodeName.toLowerCase());
+    clone.id = id;
+    clone.style.fill = "inherit";
+    clone.style.stroke = "inherit";
+    copyAttr(node, clone);
+    if ((_a = node.childNodes) === null || _a === void 0 ? void 0 : _a.length) {
+        var parent_1 = select(clone);
+        if ("innerHTML" in clone) {
+            parent_1.html(node.innerHTML);
+        }
+        else {
+            toArray(node.childNodes).forEach(function (v) {
+                copyAttr(v, parent_1.append(v.tagName).node());
+            });
+        }
+    }
+    $$.$el.defs.node().appendChild(clone);
+}
+var shapePointCommon = {
+    /**
+     * Check if point type option is valid
+     * @param {string} type point type
+     * @returns {boolean}
+     * @private
+     */
     hasValidPointType: function (type) {
         return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
     },
-    hasValidPointDrawMethods: function (type) {
-        var pointType = type || this.config.point_type;
-        return isObjectType(pointType) &&
-            isFunction(pointType.create) && isFunction(pointType.update);
+    /**
+     * Check if pattern point is set to be used on legend
+     * @returns {boolean}
+     * @private
+     */
+    hasLegendDefsPoint: function () {
+        var _a;
+        var config = this.config;
+        return config.legend_show && ((_a = config.point_pattern) === null || _a === void 0 ? void 0 : _a.length) && config.legend_usePoint;
     },
+    /**
+     * Get generate point function
+     * @returns {Function}
+     * @private
+     */
+    generatePoint: function () {
+        var $$ = this;
+        var $el = $$.$el, config = $$.config, datetimeId = $$.state.datetimeId;
+        var ids = [];
+        var pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
+        return function (method, context) {
+            var args = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                args[_i - 2] = arguments[_i];
+            }
+            return function (d) {
+                var _a, _b, _c, _d;
+                var id = $$.getTargetSelectorSuffix(d.id || ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id) || d);
+                var element = select(this);
+                ids.indexOf(id) < 0 && ids.push(id);
+                var point = pattern[ids.indexOf(id) % pattern.length];
+                if ($$.hasValidPointType(point)) {
+                    point = $$[point];
+                }
+                else if (!hasValidPointDrawMethods(point || config.point_type)) {
+                    var pointId = "".concat(datetimeId, "-point").concat(id);
+                    var defsPoint = $el.defs.select("#".concat(pointId));
+                    if (defsPoint.size() < 1) {
+                        insertPointInfoDefs.bind($$)(point, pointId);
+                    }
+                    if (method === "create") {
+                        return (_b = $$.custom) === null || _b === void 0 ? void 0 : _b.create.bind(context).apply(void 0, __spreadArray([element, pointId], args, false));
+                    }
+                    else if (method === "update") {
+                        return (_c = $$.custom) === null || _c === void 0 ? void 0 : _c.update.bind(context).apply(void 0, __spreadArray([element], args, false));
+                    }
+                }
+                return (_d = point[method]) === null || _d === void 0 ? void 0 : _d.bind(context).apply(void 0, __spreadArray([element], args, false));
+            };
+        };
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var getTransitionName = function () { return getRandom(); };
+var shapePoint = {
     initialOpacityForCircle: function (d) {
         var _a = this, config = _a.config, withoutFadeIn = _a.state.withoutFadeIn;
         var opacity = config.point_opacity;
@@ -19453,39 +19561,6 @@ var shapePoint = {
         }
         return sensitivity;
     },
-    insertPointInfoDefs: function (point, id) {
-        var _a;
-        var $$ = this;
-        var copyAttr = function (from, target) {
-            var attribs = from.attributes;
-            for (var i = 0, name_1; (name_1 = attribs[i]); i++) {
-                name_1 = name_1.name;
-                target.setAttribute(name_1, from.getAttribute(name_1));
-            }
-        };
-        var doc$1 = new DOMParser().parseFromString(point, "image/svg+xml");
-        var node = doc$1.documentElement;
-        var clone = doc.createElementNS(namespaces.svg, node.nodeName.toLowerCase());
-        clone.id = id;
-        clone.style.fill = "inherit";
-        clone.style.stroke = "inherit";
-        copyAttr(node, clone);
-        if ((_a = node.childNodes) === null || _a === void 0 ? void 0 : _a.length) {
-            var parent_1 = select(clone);
-            if ("innerHTML" in clone) {
-                parent_1.html(node.innerHTML);
-            }
-            else {
-                toArray(node.childNodes).forEach(function (v) {
-                    copyAttr(v, parent_1.append(v.tagName).node());
-                });
-            }
-        }
-        $$.$el.defs.node().appendChild(clone);
-    },
-    pointFromDefs: function (id) {
-        return this.$el.defs.select("#".concat(id));
-    },
     updatePointClass: function (d) {
         var $$ = this;
         var circle = $$.$el.circle;
@@ -19526,42 +19601,6 @@ var shapePoint = {
                 point,
                 point
             ];
-        };
-    },
-    generatePoint: function () {
-        var $$ = this;
-        var config = $$.config, datetimeId = $$.state.datetimeId;
-        var ids = [];
-        var pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
-        return function (method, context) {
-            var args = [];
-            for (var _i = 2; _i < arguments.length; _i++) {
-                args[_i - 2] = arguments[_i];
-            }
-            return function (d) {
-                var _a;
-                var id = $$.getTargetSelectorSuffix(d.id || ((_a = d.data) === null || _a === void 0 ? void 0 : _a.id) || d);
-                var element = select(this);
-                ids.indexOf(id) < 0 && ids.push(id);
-                var point = pattern[ids.indexOf(id) % pattern.length];
-                if ($$.hasValidPointType(point)) {
-                    point = $$[point];
-                }
-                else if (!$$.hasValidPointDrawMethods(point)) {
-                    var pointId = "".concat(datetimeId, "-point").concat(id);
-                    var pointFromDefs = $$.pointFromDefs(pointId);
-                    if (pointFromDefs.size() < 1) {
-                        $$.insertPointInfoDefs(point, pointId);
-                    }
-                    if (method === "create") {
-                        return $$.custom.create.bind(context).apply(void 0, __spreadArray([element, pointId], args, false));
-                    }
-                    else if (method === "update") {
-                        return $$.custom.update.bind(context).apply(void 0, __spreadArray([element], args, false));
-                    }
-                }
-                return point[method].bind(context).apply(void 0, __spreadArray([element], args, false));
-            };
         };
     },
     custom: {
@@ -21626,7 +21665,7 @@ function extendAxis(module, option) {
  * @private
  */
 function extendLine(module, option) {
-    extendAxis([shapePoint, shapeLine].concat(module || []));
+    extendAxis([shapePointCommon, shapePoint, shapeLine].concat(module || []));
     Options.setOptions([optPoint, optLine].concat(option || []));
 }
 /**
@@ -21636,8 +21675,8 @@ function extendLine(module, option) {
  * @private
  */
 function extendArc(module, option) {
-    extend(ChartInternal.prototype, [shapeArc].concat(module || []));
-    Options.setOptions(option);
+    extend(ChartInternal.prototype, [shapeArc, shapePointCommon].concat(module || []));
+    Options.setOptions([optPoint].concat(option || []));
 }
 // Area types
 var area = function () { return (extendLine(shapeArea, [optArea]), (area = function () { return TYPE.AREA; })()); };
@@ -21656,10 +21695,10 @@ var pie = function () { return (extendArc(undefined, [optArc, optPie]), (pie = f
 var polar = function () { return (extendArc([shapePolar], [optArc, optPolar]), (polar = function () { return TYPE.POLAR; })()); };
 var radar = function () { return (extendArc([shapePoint, shapeRadar], [optPoint, optRadar]), (radar = function () { return TYPE.RADAR; })()); };
 // Axis based types
-var bar = function () { return (extendAxis([shapeBar], optBar), (bar = function () { return TYPE.BAR; })()); };
-var bubble = function () { return (extendAxis([shapePoint, shapeBubble], [optBubble, optPoint]), (bubble = function () { return TYPE.BUBBLE; })()); };
-var candlestick = function () { return (extendAxis([shapeCandlestick], [optCandlestick]), (candlestick = function () { return TYPE.CANDLESTICK; })()); };
-var scatter = function () { return (extendAxis([shapePoint], [optPoint, optScatter]), (scatter = function () { return TYPE.SCATTER; })()); };
+var bar = function () { return (extendAxis([shapeBar, shapePointCommon], [optBar, optPoint]), (bar = function () { return TYPE.BAR; })()); };
+var bubble = function () { return (extendAxis([shapePointCommon, shapePoint, shapeBubble], [optBubble, optPoint]), (bubble = function () { return TYPE.BUBBLE; })()); };
+var candlestick = function () { return (extendAxis([shapeCandlestick, shapePointCommon], [optCandlestick, optPoint]), (candlestick = function () { return TYPE.CANDLESTICK; })()); };
+var scatter = function () { return (extendAxis([shapePointCommon, shapePoint], [optPoint, optScatter]), (scatter = function () { return TYPE.SCATTER; })()); };
 // Non Axis based types
 var treemap = function () { return (extendAxis([shapeTreemap], [optTreemap]), (treemap = function () { return TYPE.TREEMAP; })()); };
 
@@ -23380,7 +23419,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.0-nightly-20240222004603
+ * @version 3.11.1-nightly-20240223004554
  */
 var bb = {
     /**
@@ -23390,7 +23429,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.0-nightly-20240222004603",
+    version: "3.11.1-nightly-20240223004554",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.0-nightly-20240222004603
+ * @version 3.11.1-nightly-20240223004554
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -31793,10 +31793,10 @@ function getFormattedText(id) {
       // treemap
       treemap && $$.updateTreemap(durationForExit);
     }
-
-    // @TODO: Axis & Radar type
     if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
       $$.updateCircle();
+    } else if ($$.hasLegendDefsPoint != null && $$.hasLegendDefsPoint()) {
+      $$.data.targets.forEach($$.point("create", this));
     }
 
     // text
@@ -34757,6 +34757,7 @@ function getGroupedDataPointsFn(d) {
   },
   getBarW: function getBarW(type, axis, targetsNum) {
     var _config$data_groups,
+      _$$$getZoomTransform,
       _config$axis_x_min,
       _config$axis_x_max,
       _this11 = this;
@@ -34767,8 +34768,10 @@ function getGroupedDataPointsFn(d) {
       maxDataCount = $$.getMaxDataCount(),
       isGrouped = type === "bar" && ((_config$data_groups = config.data_groups) == null ? void 0 : _config$data_groups.length),
       configName = type + "_width",
-      _$$$getZoomTransform = $$.getZoomTransform(),
-      k = _$$$getZoomTransform.k,
+      _ref2 = (_$$$getZoomTransform = $$.getZoomTransform == null ? void 0 : $$.getZoomTransform()) != null ? _$$$getZoomTransform : {
+        k: 1
+      },
+      k = _ref2.k,
       xMinMax = [(_config$axis_x_min = config.axis_x_min) != null ? _config$axis_x_min : org.xDomain[0], (_config$axis_x_max = config.axis_x_max) != null ? _config$axis_x_max : org.xDomain[1]].map($$.axis.isTimeSeries() ? parseDate.bind($$) : Number);
     let tickInterval = axis.tickInterval(maxDataCount);
     if (scale.zoom && !$$.axis.isCategorized() && k > 1) {
@@ -37079,7 +37082,7 @@ let ChartInternal = /*#__PURE__*/function () {
       config.axis_y2_show = !1;
       config.subchart_show = !1;
     }
-    if ($$.hasPointType()) {
+    if ($$.hasPointType() || $$.hasLegendDefsPoint != null && $$.hasLegendDefsPoint()) {
       $$.point = $$.generatePoint();
     }
     if (state.hasAxis) {
@@ -37186,7 +37189,7 @@ let ChartInternal = /*#__PURE__*/function () {
 
     // Define defs
     const hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
-    if (hasAxis || hasColorPatterns || hasPolar || hasTreemap || config.data_labels_backgroundColors) {
+    if (hasAxis || hasColorPatterns || hasPolar || hasTreemap || config.data_labels_backgroundColors || $$.hasLegendDefsPoint != null && $$.hasLegendDefsPoint()) {
       $el.defs = $el.svg.append("defs");
       if (hasAxis) {
         ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
@@ -48175,6 +48178,127 @@ function candlestick_objectSpread(e) { for (var r = 1, t; r < arguments.length; 
     return linePoint === !0 || isArray(linePoint) && linePoint.indexOf(d.id) !== -1;
   }
 });
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/point.common.ts
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+
+/**
+ * Check if point draw methods are valid
+ * @param {string} point point type
+ * @returns {boolean}
+ * @private
+ */
+function hasValidPointDrawMethods(point) {
+  return isObjectType(point) && isFunction(point.create) && isFunction(point.update);
+}
+
+/**
+ * Insert point info defs element
+ * @param {string} point Point element
+ * @param {string} id Point id
+ * @private
+ */
+function insertPointInfoDefs(point, id) {
+  var _this = this,
+    _node$childNodes;
+  const $$ = this,
+    copyAttr = function (from, target) {
+      _newArrowCheck(this, _this);
+      const attribs = from.attributes;
+      for (let i = 0, name; name = attribs[i]; i++) {
+        name = name.name;
+        target.setAttribute(name, from.getAttribute(name));
+      }
+    }.bind(this),
+    doc = new DOMParser().parseFromString(point, "image/svg+xml"),
+    node = doc.documentElement,
+    clone = browser_doc.createElementNS(namespaces.svg, node.nodeName.toLowerCase());
+  clone.id = id;
+  clone.style.fill = "inherit";
+  clone.style.stroke = "inherit";
+  copyAttr(node, clone);
+  if ((_node$childNodes = node.childNodes) != null && _node$childNodes.length) {
+    const parent = src_select(clone);
+    if ("innerHTML" in clone) {
+      parent.html(node.innerHTML);
+    } else {
+      toArray(node.childNodes).forEach(function (v) {
+        _newArrowCheck(this, _this);
+        copyAttr(v, parent.append(v.tagName).node());
+      }.bind(this));
+    }
+  }
+  $$.$el.defs.node().appendChild(clone);
+}
+/* harmony default export */ var point_common = ({
+  /**
+   * Check if point type option is valid
+   * @param {string} type point type
+   * @returns {boolean}
+   * @private
+   */
+  hasValidPointType: function hasValidPointType(type) {
+    return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
+  },
+  /**
+   * Check if pattern point is set to be used on legend
+   * @returns {boolean}
+   * @private
+   */
+  hasLegendDefsPoint: function hasLegendDefsPoint() {
+    var _config$point_pattern;
+    const config = this.config;
+    return config.legend_show && ((_config$point_pattern = config.point_pattern) == null ? void 0 : _config$point_pattern.length) && config.legend_usePoint;
+  },
+  /**
+   * Get generate point function
+   * @returns {Function}
+   * @private
+   */
+  generatePoint: function generatePoint() {
+    const $$ = this,
+      $el = $$.$el,
+      config = $$.config,
+      datetimeId = $$.state.datetimeId,
+      ids = [],
+      pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
+    return function (method, context) {
+      for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+        args[_key - 2] = arguments[_key];
+      }
+      return function (d) {
+        var _d$data, _point$method;
+        const id = $$.getTargetSelectorSuffix(d.id || ((_d$data = d.data) == null ? void 0 : _d$data.id) || d),
+          element = src_select(this);
+        ids.indexOf(id) < 0 && ids.push(id);
+        let point = pattern[ids.indexOf(id) % pattern.length];
+        if ($$.hasValidPointType(point)) {
+          point = $$[point];
+        } else if (!hasValidPointDrawMethods(point || config.point_type)) {
+          const pointId = datetimeId + "-point" + id,
+            defsPoint = $el.defs.select("#" + pointId);
+          if (defsPoint.size() < 1) {
+            insertPointInfoDefs.bind($$)(point, pointId);
+          }
+          if (method === "create") {
+            var _$$$custom;
+            return (_$$$custom = $$.custom) == null ? void 0 : _$$$custom.create.bind(context).apply(void 0, [element, pointId].concat(args));
+          } else if (method === "update") {
+            var _$$$custom2;
+            return (_$$$custom2 = $$.custom) == null ? void 0 : _$$$custom2.update.bind(context).apply(void 0, [element].concat(args));
+          }
+        }
+        return (_point$method = point[method]) == null ? void 0 : _point$method.bind(context).apply(void 0, [element].concat(args));
+      };
+    };
+  }
+});
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/point.ts
 
 var point_this = undefined;
@@ -48185,19 +48309,11 @@ var point_this = undefined;
 
 
 
-
 const getTransitionName = function () {
   _newArrowCheck(this, point_this);
   return getRandom();
 }.bind(undefined);
 /* harmony default export */ var point = ({
-  hasValidPointType: function hasValidPointType(type) {
-    return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
-  },
-  hasValidPointDrawMethods: function hasValidPointDrawMethods(type) {
-    const pointType = type || this.config.point_type;
-    return isObjectType(pointType) && isFunction(pointType.create) && isFunction(pointType.update);
-  },
   initialOpacityForCircle: function initialOpacityForCircle(d) {
     const config = this.config,
       withoutFadeIn = this.state.withoutFadeIn;
@@ -48511,41 +48627,6 @@ const getTransitionName = function () {
     }
     return sensitivity;
   },
-  insertPointInfoDefs: function insertPointInfoDefs(point, id) {
-    var _this7 = this,
-      _node$childNodes;
-    const $$ = this,
-      copyAttr = function (from, target) {
-        _newArrowCheck(this, _this7);
-        const attribs = from.attributes;
-        for (let i = 0, name; name = attribs[i]; i++) {
-          name = name.name;
-          target.setAttribute(name, from.getAttribute(name));
-        }
-      }.bind(this),
-      doc = new DOMParser().parseFromString(point, "image/svg+xml"),
-      node = doc.documentElement,
-      clone = browser_doc.createElementNS(namespaces.svg, node.nodeName.toLowerCase());
-    clone.id = id;
-    clone.style.fill = "inherit";
-    clone.style.stroke = "inherit";
-    copyAttr(node, clone);
-    if ((_node$childNodes = node.childNodes) != null && _node$childNodes.length) {
-      const parent = src_select(clone);
-      if ("innerHTML" in clone) {
-        parent.html(node.innerHTML);
-      } else {
-        toArray(node.childNodes).forEach(function (v) {
-          _newArrowCheck(this, _this7);
-          copyAttr(v, parent.append(v.tagName).node());
-        }.bind(this));
-      }
-    }
-    $$.$el.defs.node().appendChild(clone);
-  },
-  pointFromDefs: function pointFromDefs(id) {
-    return this.$el.defs.select("#" + id);
-  },
   updatePointClass: function updatePointClass(d) {
     const $$ = this,
       circle = $$.$el.circle;
@@ -48562,7 +48643,7 @@ const getTransitionName = function () {
     return pointClass;
   },
   generateGetLinePoints: function generateGetLinePoints(lineIndices, isSub) {
-    var _this8 = this;
+    var _this7 = this;
     // partial duplication of generateGetBarPoints
     const $$ = this,
       config = $$.config,
@@ -48571,7 +48652,7 @@ const getTransitionName = function () {
       lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub),
       yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
-      _newArrowCheck(this, _this8);
+      _newArrowCheck(this, _this7);
       const y0 = yScale.call($$, d.id, isSub)($$.getShapeYMin(d.id)),
         offset = lineOffset(d, i) || y0,
         posX = x(d); // offset is for stacked area chart
@@ -48589,56 +48670,22 @@ const getTransitionName = function () {
       point, point];
     }.bind(this);
   },
-  generatePoint: function generatePoint() {
-    const $$ = this,
-      config = $$.config,
-      datetimeId = $$.state.datetimeId,
-      ids = [],
-      pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
-    return function (method, context) {
-      for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-        args[_key - 2] = arguments[_key];
-      }
-      return function (d) {
-        var _d$data;
-        const id = $$.getTargetSelectorSuffix(d.id || ((_d$data = d.data) == null ? void 0 : _d$data.id) || d),
-          element = src_select(this);
-        ids.indexOf(id) < 0 && ids.push(id);
-        let point = pattern[ids.indexOf(id) % pattern.length];
-        if ($$.hasValidPointType(point)) {
-          point = $$[point];
-        } else if (!$$.hasValidPointDrawMethods(point)) {
-          const pointId = datetimeId + "-point" + id,
-            pointFromDefs = $$.pointFromDefs(pointId);
-          if (pointFromDefs.size() < 1) {
-            $$.insertPointInfoDefs(point, pointId);
-          }
-          if (method === "create") {
-            return $$.custom.create.bind(context).apply(void 0, [element, pointId].concat(args));
-          } else if (method === "update") {
-            return $$.custom.update.bind(context).apply(void 0, [element].concat(args));
-          }
-        }
-        return point[method].bind(context).apply(void 0, [element].concat(args));
-      };
-    };
-  },
   custom: {
     create: function create(element, id, fillStyleFn) {
       return element.append("use").attr("xlink:href", "#" + id).attr("class", this.updatePointClass.bind(this)).style("fill", fillStyleFn).node();
     },
     update: function update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-      var _this9 = this;
+      var _this8 = this;
       const $$ = this,
         _element$node$getBBox = element.node().getBBox(),
         width = _element$node$getBBox.width,
         height = _element$node$getBBox.height,
         xPosFn2 = function (d) {
-          _newArrowCheck(this, _this9);
+          _newArrowCheck(this, _this8);
           return isValue(d.value) ? xPosFn(d) - width / 2 : 0;
         }.bind(this),
         yPosFn2 = function (d) {
-          _newArrowCheck(this, _this9);
+          _newArrowCheck(this, _this8);
           return isValue(d.value) ? yPosFn(d) - height / 2 : 0;
         }.bind(this);
       let mainCircles = element;
@@ -48676,23 +48723,23 @@ const getTransitionName = function () {
   // 'rectangle' data point
   rectangle: {
     create: function create(element, sizeFn, fillStyleFn) {
-      var _this10 = this;
+      var _this9 = this;
       const rectSizeFn = function (d) {
-        _newArrowCheck(this, _this10);
+        _newArrowCheck(this, _this9);
         return sizeFn(d) * 2;
       }.bind(this);
       return element.append("rect").attr("class", this.updatePointClass.bind(this)).attr("width", rectSizeFn).attr("height", rectSizeFn).style("fill", fillStyleFn).node();
     },
     update: function update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-      var _this11 = this;
+      var _this10 = this;
       const $$ = this,
         r = $$.config.point_r,
         rectXPosFn = function (d) {
-          _newArrowCheck(this, _this11);
+          _newArrowCheck(this, _this10);
           return xPosFn(d) - r;
         }.bind(this),
         rectYPosFn = function (d) {
-          _newArrowCheck(this, _this11);
+          _newArrowCheck(this, _this10);
           return yPosFn(d) - r;
         }.bind(this);
       let mainCircles = element;
@@ -51368,6 +51415,7 @@ var shape_this = undefined;
 
 
 
+
 // Options
 
 
@@ -51407,7 +51455,7 @@ function extendAxis(module, option) {
  * @private
  */
 function extendLine(module, option) {
-  extendAxis([point, line].concat(module || []));
+  extendAxis([point_common, point, line].concat(module || []));
   Options.setOptions([common_point, shape_line].concat(option || []));
 }
 
@@ -51418,8 +51466,8 @@ function extendLine(module, option) {
  * @private
  */
 function extendArc(module, option) {
-  util_extend(ChartInternal.prototype, [arc].concat(module || []));
-  Options.setOptions(option);
+  util_extend(ChartInternal.prototype, [arc, point_common].concat(module || []));
+  Options.setOptions([common_point].concat(option || []));
 }
 
 // Area types
@@ -51530,7 +51578,7 @@ let _area = function area() {
   resolver_shape_bar = function () {
     var _this15 = this;
     _newArrowCheck(this, shape_this);
-    return extendAxis([bar], shape_bar), (resolver_shape_bar = function () {
+    return extendAxis([bar, point_common], [shape_bar, common_point]), (resolver_shape_bar = function () {
       _newArrowCheck(this, _this15);
       return TYPE.BAR;
     }.bind(this))();
@@ -51538,7 +51586,7 @@ let _area = function area() {
   resolver_shape_bubble = function () {
     var _this16 = this;
     _newArrowCheck(this, shape_this);
-    return extendAxis([point, bubble], [shape_bubble, common_point]), (resolver_shape_bubble = function () {
+    return extendAxis([point_common, point, bubble], [shape_bubble, common_point]), (resolver_shape_bubble = function () {
       _newArrowCheck(this, _this16);
       return TYPE.BUBBLE;
     }.bind(this))();
@@ -51546,7 +51594,7 @@ let _area = function area() {
   resolver_shape_candlestick = function () {
     var _this17 = this;
     _newArrowCheck(this, shape_this);
-    return extendAxis([candlestick], [shape_candlestick]), (resolver_shape_candlestick = function () {
+    return extendAxis([candlestick, point_common], [shape_candlestick, common_point]), (resolver_shape_candlestick = function () {
       _newArrowCheck(this, _this17);
       return TYPE.CANDLESTICK;
     }.bind(this))();
@@ -51554,7 +51602,7 @@ let _area = function area() {
   shape_scatter = function () {
     var _this18 = this;
     _newArrowCheck(this, shape_this);
-    return extendAxis([point], [common_point, scatter]), (shape_scatter = function () {
+    return extendAxis([point_common, point], [common_point, scatter]), (shape_scatter = function () {
       _newArrowCheck(this, _this18);
       return TYPE.SCATTER;
     }.bind(this))();
@@ -54029,7 +54077,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.11.0-nightly-20240222004603
+ * @version 3.11.1-nightly-20240223004554
  */
 const bb = {
   /**
@@ -54039,7 +54087,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.0-nightly-20240222004603",
+  version: "3.11.1-nightly-20240223004554",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
