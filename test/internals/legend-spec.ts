@@ -531,6 +531,23 @@ describe("LEGEND", () => {
 
 			expect(nodes.size()).to.be.equal(chart.data().length);
 		});
+
+		it("should defs element added removed on unload?", done => {
+			const {$el: {defs}} = chart.internal;
+			const selector = "[id$=data-3]";
+			const hasDefPoint = !defs.select(selector).empty();
+
+			// when
+			chart.unload({
+				ids: ["data_3"],
+				done() {
+					expect(hasDefPoint).to.be.true;
+					expect(defs.select(selector).empty()).to.be.true;
+
+					done();
+				}
+			});
+		});
 	});
 
 	describe("legend item tile coloring with color_treshold", () => {
