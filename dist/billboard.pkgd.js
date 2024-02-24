@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.1-nightly-20240223004554
+ * @version 3.11.2-nightly-20240224004540
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -29149,7 +29149,8 @@ function callDone(fn, resizeAfter) {
     const $$ = this,
       state = $$.state,
       $el = $$.$el,
-      $T = $$.$T;
+      $T = $$.$T,
+      hasLegendDefsPoint = !!($$.hasLegendDefsPoint != null && $$.hasLegendDefsPoint());
     let done = customDoneCb,
       targetIds = rawTargetIds;
     // reset internally cached data
@@ -29177,14 +29178,17 @@ function callDone(fn, resizeAfter) {
     }.bind(this)));
     $T(targets).style("opacity", "0").remove().call(endall, done);
     targetIds.forEach(function (id) {
-      var _this4 = this;
+      var _this4 = this,
+        _$el$defs;
       _newArrowCheck(this, _this3);
+      const suffixId = $$.getTargetSelectorSuffix(id);
+
       // Reset fadein for future load
       state.withoutFadeIn[id] = !1;
 
       // Remove target's elements
       if ($el.legend) {
-        $el.legend.selectAll("." + $LEGEND.legendItem + $$.getTargetSelectorSuffix(id)).remove();
+        $el.legend.selectAll("." + $LEGEND.legendItem + suffixId).remove();
       }
 
       // Remove target
@@ -29192,6 +29196,9 @@ function callDone(fn, resizeAfter) {
         _newArrowCheck(this, _this4);
         return t.id !== id;
       }.bind(this));
+
+      // Remove custom point def element
+      hasLegendDefsPoint && ((_$el$defs = $el.defs) == null ? void 0 : _$el$defs.select("#" + $$.getDefsPointId(suffixId)).remove());
     }.bind(this));
 
     // since treemap uses different data types, it needs to be transformed
@@ -45338,8 +45345,20 @@ function axis_objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { 
 
 
 const api = [api_axis, api_category, flow, api_grid, group, api_regions, x];
-const internal = [Axis, clip, eventrect, interactions_flow, internals_grid, region, size_axis];
-const options = [data_axis, Options_axis_axis, common_grid];
+const internal = {
+  axis: Axis,
+  clip: clip,
+  eventrect: eventrect,
+  flow: interactions_flow,
+  grid: internals_grid,
+  region: region,
+  sizeAxis: size_axis
+};
+const options = {
+  optDataAxis: data_axis,
+  optAxis: Options_axis_axis,
+  optGrid: common_grid
+};
 ;// CONCATENATED MODULE: ./node_modules/d3-shape/src/array.js
 var slice = Array.prototype.slice;
 /* harmony default export */ function d3_shape_src_array(x) {
@@ -48256,6 +48275,10 @@ function insertPointInfoDefs(point, id) {
     const config = this.config;
     return config.legend_show && ((_config$point_pattern = config.point_pattern) == null ? void 0 : _config$point_pattern.length) && config.legend_usePoint;
   },
+  getDefsPointId: function getDefsPointId(id) {
+    const datetimeId = this.state.datetimeId;
+    return datetimeId + "-point" + id;
+  },
   /**
    * Get generate point function
    * @returns {Function}
@@ -48265,7 +48288,6 @@ function insertPointInfoDefs(point, id) {
     const $$ = this,
       $el = $$.$el,
       config = $$.config,
-      datetimeId = $$.state.datetimeId,
       ids = [],
       pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
     return function (method, context) {
@@ -48281,7 +48303,7 @@ function insertPointInfoDefs(point, id) {
         if ($$.hasValidPointType(point)) {
           point = $$[point];
         } else if (!hasValidPointDrawMethods(point || config.point_type)) {
-          const pointId = datetimeId + "-point" + id,
+          const pointId = $$.getDefsPointId(id),
             defsPoint = $el.defs.select("#" + pointId);
           if (defsPoint.size() < 1) {
             insertPointInfoDefs.bind($$)(point, pointId);
@@ -51443,9 +51465,9 @@ var shape_this = undefined;
  * @private
  */
 function extendAxis(module, option) {
-  util_extend(ChartInternal.prototype, internal.concat(module));
+  util_extend(ChartInternal.prototype, Object.values(internal).concat(module));
   util_extend(Chart.prototype, api);
-  Options.setOptions(options.concat(option || []));
+  Options.setOptions(Object.values(options).concat(option || []));
 }
 
 /**
@@ -51570,7 +51592,9 @@ let _area = function area() {
   resolver_shape_radar = function () {
     var _this14 = this;
     _newArrowCheck(this, shape_this);
-    return extendArc([point, radar], [common_point, shape_radar]), (resolver_shape_radar = function () {
+    return extendArc([internal.eventrect, point, radar], [common_point, shape_radar, {
+      axis_x_categories: options.optAxis.axis_x_categories
+    }]), (resolver_shape_radar = function () {
       _newArrowCheck(this, _this14);
       return TYPE.RADAR;
     }.bind(this))();
@@ -54077,7 +54101,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.11.1-nightly-20240223004554
+ * @version 3.11.2-nightly-20240224004540
  */
 const bb = {
   /**
@@ -54087,7 +54111,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.1-nightly-20240223004554",
+  version: "3.11.2-nightly-20240224004540",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
