@@ -939,5 +939,32 @@ describe("LEGEND", () => {
 
 			expect(dataIds).to.be.deep.equal(legendTitle);
 		});
+
+		it("set options: data.names", () => {
+			args = {
+				data: {
+					names: {
+					  "data1": "Detailed Name",
+					  "data2": "Name Detailed"
+					},
+					columns: [
+					  ["data1", 71.4],
+					  ["data2", 10],
+					],
+					type: "gauge"
+				},
+				legend: {
+					format: id => id.substr(0, 2) + "...",
+					tooltip: true
+				}
+			}
+		});
+
+		it("should legend title show data.names values.", () => {
+			const legendTitle = chart.$.legend.selectAll("title").nodes().map(v => v.textContent);
+			const dataNames = Object.values(chart.data.names());
+
+			expect(legendTitle).to.be.deep.equal(dataNames);
+		});
 	});
 });

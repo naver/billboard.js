@@ -30,13 +30,14 @@ function getLegendColor(id: string): string {
 /**
  * Get formatted text value
  * @param {string} id Legend text id
+ * @param {boolean} formatted Whether or not to format the text
  * @returns {string} Formatted legend text
  */
-function getFormattedText<T = string>(id: T): T {
+function getFormattedText<T = string>(id: T, formatted = true): T {
 	const {config} = this;
 	let text = config.data_names[id] ?? id;
 
-	if (isFunction(config.legend_format)) {
+	if (formatted && isFunction(config.legend_format)) {
 		text = config.legend_format(text);
 	}
 
@@ -589,12 +590,12 @@ export default {
 		if (config.legend_tooltip) {
 			legend.selectAll("title")
 				.data(targetIdz)
-				.text(id => id);
+				.text(id => getFormattedText.bind($$)(id, false));
 		}
 
 		const texts = legend.selectAll("text")
 			.data(targetIdz)
-			.text(getFormattedText.bind($$)) // MEMO: needed for update
+			.text(id => getFormattedText.bind($$)(id)) // MEMO: needed for update
 			.each(function(id, i) {
 				updatePositions(this, id, i);
 			});
@@ -749,7 +750,7 @@ export default {
 		}
 
 		l.append("text")
-			.text(getFormattedText.bind($$))
+			.text(id => getFormattedText.bind($$)(id))
 			.each(function(id, i) {
 				updatePositions(this, id, i);
 			})
