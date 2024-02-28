@@ -50,8 +50,8 @@ export interface IArcData {
 
 export interface IGridData {
     axis?: string;
-	text: string;
-	value: number;
+    text: string;
+    value: number;
 }
 
 export interface IDataIndice {
