@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.2-nightly-20240228004553
+ * @version 3.11.2-nightly-20240229004549
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -2805,7 +2805,7 @@ var legend$2 = {
      *   - rectangle
      * @property {boolean} [legend.format] Set formatter function for legend text.
      * The argument:<br>
-     *  - `id`: legend text(which is data id) value
+     *  - `id`: legend text value. When `data.names` is specified, will pass from it, otherwise will pass data id.
      * @property {boolean} [legend.tooltip=false] Show full legend text value using system tooltip(via `<title>` element).
      * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
      * @see [Demo: format](https://naver.github.io/billboard.js/demo/#Legend.LegendFormat)
@@ -5942,13 +5942,15 @@ function getLegendColor(id) {
 /**
  * Get formatted text value
  * @param {string} id Legend text id
+ * @param {boolean} formatted Whether or not to format the text
  * @returns {string} Formatted legend text
  */
-function getFormattedText(id) {
+function getFormattedText(id, formatted) {
     var _a;
+    if (formatted === void 0) { formatted = true; }
     var config = this.config;
     var text = (_a = config.data_names[id]) !== null && _a !== void 0 ? _a : id;
-    if (isFunction(config.legend_format)) {
+    if (formatted && isFunction(config.legend_format)) {
         text = config.legend_format(text);
     }
     return text;
@@ -6408,11 +6410,11 @@ var legend$1 = {
         if (config.legend_tooltip) {
             legend.selectAll("title")
                 .data(targetIdz)
-                .text(function (id) { return id; });
+                .text(function (id) { return getFormattedText.bind($$)(id, false); });
         }
         var texts = legend.selectAll("text")
             .data(targetIdz)
-            .text(getFormattedText.bind($$)) // MEMO: needed for update
+            .text(function (id) { return getFormattedText.bind($$)(id); }) // MEMO: needed for update
             .each(function (id, i) {
             updatePositions(this, id, i);
         });
@@ -6542,7 +6544,7 @@ var legend$1 = {
             l.append("title").text(function (id) { return id; });
         }
         l.append("text")
-            .text(getFormattedText.bind($$))
+            .text(function (id) { return getFormattedText.bind($$)(id); })
             .each(function (id, i) {
             updatePositions(this, id, i);
         })
@@ -23429,7 +23431,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.2-nightly-20240228004553
+ * @version 3.11.2-nightly-20240229004549
  */
 var bb = {
     /**
@@ -23439,7 +23441,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.2-nightly-20240228004553",
+    version: "3.11.2-nightly-20240229004549",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

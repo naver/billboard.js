@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.2-nightly-20240228004553
+ * @version 3.11.2-nightly-20240229004549
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3273,7 +3273,7 @@ var data_this = undefined;
    *   - rectangle
    * @property {boolean} [legend.format] Set formatter function for legend text.
    * The argument:<br>
-   *  - `id`: legend text(which is data id) value
+   *  - `id`: legend text value. When `data.names` is specified, will pass from it, otherwise will pass data id.
    * @property {boolean} [legend.tooltip=false] Show full legend text value using system tooltip(via `<title>` element).
    * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
    * @see [Demo: format](https://naver.github.io/billboard.js/demo/#Legend.LegendFormat)
@@ -6967,13 +6967,17 @@ function getLegendColor(id) {
 /**
  * Get formatted text value
  * @param {string} id Legend text id
+ * @param {boolean} formatted Whether or not to format the text
  * @returns {string} Formatted legend text
  */
-function getFormattedText(id) {
+function getFormattedText(id, formatted) {
   var _config$data_names$id;
+  if (formatted === void 0) {
+    formatted = !0;
+  }
   const config = this.config;
   let text = (_config$data_names$id = config.data_names[id]) != null ? _config$data_names$id : id;
-  if (isFunction(config.legend_format)) {
+  if (formatted && isFunction(config.legend_format)) {
     text = config.legend_format(text);
   }
   return text;
@@ -7478,10 +7482,13 @@ function getFormattedText(id) {
     if (config.legend_tooltip) {
       legend.selectAll("title").data(targetIdz).text(function (id) {
         _newArrowCheck(this, _this4);
-        return id;
+        return getFormattedText.bind($$)(id, !1);
       }.bind(this));
     }
-    const texts = legend.selectAll("text").data(targetIdz).text(getFormattedText.bind($$)) // MEMO: needed for update
+    const texts = legend.selectAll("text").data(targetIdz).text(function (id) {
+      _newArrowCheck(this, _this4);
+      return getFormattedText.bind($$)(id);
+    }.bind(this)) // MEMO: needed for update
     .each(function (id, i) {
       updatePositions(this, id, i);
     });
@@ -7622,7 +7629,10 @@ function getFormattedText(id) {
         return id;
       }.bind(this));
     }
-    l.append("text").text(getFormattedText.bind($$)).each(function (id, i) {
+    l.append("text").text(function (id) {
+      _newArrowCheck(this, _this6);
+      return getFormattedText.bind($$)(id);
+    }.bind(this)).each(function (id, i) {
       updatePositions(this, id, i);
     }).style("pointer-events", $$.getStylePropValue("none")).attr("x", isLegendRightOrInset ? posFn.xText : -200).attr("y", isLegendRightOrInset ? -200 : posFn.yText);
     l.append("rect").attr("class", $LEGEND.legendItemEvent).style("fill-opacity", $$.getStylePropValue("0")).attr("x", isLegendRightOrInset ? posFn.xRect : -200).attr("y", isLegendRightOrInset ? -200 : posFn.yRect);
@@ -26022,7 +26032,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.11.2-nightly-20240228004553
+ * @version 3.11.2-nightly-20240229004549
  */
 const bb = {
   /**
@@ -26032,7 +26042,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.2-nightly-20240228004553",
+  version: "3.11.2-nightly-20240229004549",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
