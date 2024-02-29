@@ -68,7 +68,7 @@ export default {
 	 *   - rectangle
 	 * @property {boolean} [legend.format] Set formatter function for legend text.
 	 * The argument:<br>
-	 *  - `id`: legend text(which is data id) value
+	 *  - `id`: legend text value. When `data.names` is specified, will pass from it, otherwise will pass data id.
 	 * @property {boolean} [legend.tooltip=false] Show full legend text value using system tooltip(via `<title>` element).
 	 * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
 	 * @see [Demo: format](https://naver.github.io/billboard.js/demo/#Legend.LegendFormat)
