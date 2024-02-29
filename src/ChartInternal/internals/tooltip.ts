@@ -326,10 +326,8 @@ export default {
 		{top: number, left: number} {
 		const $$ = this;
 		const {config, scale, state} = $$;
-		const {width, height, current, isLegendRight, inputType} = state;
+		const {width, height, current, hasRadar, hasTreemap, isLegendRight, inputType} = state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
-		const hasTreemap = state.hasTreemap;
-		const hasRadar = state.hasRadar;
 		const isRotated = config.axis_rotated;
 		const hasArcType = $$.hasArcType();
 		const svgLeft = $$.getSvgLeft(true);
@@ -342,11 +340,17 @@ export default {
 			x += x >= (width / 2) ? 15 : -(tWidth + 15);
 			y += 15;
 		} else if (hasArcType) {
-			const raw = inputType === "touch";
+			const notTouch = inputType !== "touch";
 
-			if (!raw) {
+			if (notTouch) {
+				let titlePadding = $$.getTitlePadding?.() ?? 0;
+
+				if (titlePadding && hasGauge && config.arc_rangeText_values?.length) {
+					titlePadding += 10;
+				}
+
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-				y += (hasGauge ? height : (height / 2) + tHeight) + ($$.getTitlePadding?.() ?? 0);
+				y += (hasGauge ? height : (height / 2) + tHeight) + titlePadding;
 			}
 		} else if (hasTreemap) {
 			y += tHeight;
