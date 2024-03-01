@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.2-nightly-20240229004549
+ * @version 3.11.2-nightly-20240301004613
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -8817,13 +8817,11 @@ var tooltip$1 = {
      * @private
      */
     getTooltipPosition: function (tWidth, tHeight, currPos) {
-        var _a, _b;
+        var _a, _b, _c;
         var $$ = this;
         var config = $$.config, scale = $$.scale, state = $$.state;
-        var width = state.width, height = state.height, current = state.current, isLegendRight = state.isLegendRight, inputType = state.inputType;
+        var width = state.width, height = state.height, current = state.current, hasRadar = state.hasRadar, hasTreemap = state.hasTreemap, isLegendRight = state.isLegendRight, inputType = state.inputType;
         var hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
-        var hasTreemap = state.hasTreemap;
-        var hasRadar = state.hasRadar;
         var isRotated = config.axis_rotated;
         var hasArcType = $$.hasArcType();
         var svgLeft = $$.getSvgLeft(true);
@@ -8836,10 +8834,14 @@ var tooltip$1 = {
             y += 15;
         }
         else if (hasArcType) {
-            var raw = inputType === "touch";
-            if (!raw) {
+            var notTouch = inputType !== "touch";
+            if (notTouch) {
+                var titlePadding = (_b = (_a = $$.getTitlePadding) === null || _a === void 0 ? void 0 : _a.call($$)) !== null && _b !== void 0 ? _b : 0;
+                if (titlePadding && hasGauge && ((_c = config.arc_rangeText_values) === null || _c === void 0 ? void 0 : _c.length)) {
+                    titlePadding += 10;
+                }
                 x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-                y += (hasGauge ? height : (height / 2) + tHeight) + ((_b = (_a = $$.getTitlePadding) === null || _a === void 0 ? void 0 : _a.call($$)) !== null && _b !== void 0 ? _b : 0);
+                y += (hasGauge ? height : (height / 2) + tHeight) + titlePadding;
             }
         }
         else if (hasTreemap) {
@@ -23431,7 +23433,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.2-nightly-20240229004549
+ * @version 3.11.2-nightly-20240301004613
  */
 var bb = {
     /**
@@ -23441,7 +23443,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.2-nightly-20240229004549",
+    version: "3.11.2-nightly-20240301004613",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

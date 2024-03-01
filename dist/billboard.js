@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.2-nightly-20240229004549
+ * @version 3.11.2-nightly-20240301004613
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10091,11 +10091,11 @@ function getTextXPos(pos, width) {
       width = _state.width,
       height = _state.height,
       current = _state.current,
+      hasRadar = _state.hasRadar,
+      hasTreemap = _state.hasTreemap,
       isLegendRight = _state.isLegendRight,
       inputType = _state.inputType,
       hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle,
-      hasTreemap = state.hasTreemap,
-      hasRadar = state.hasRadar,
       isRotated = config.axis_rotated,
       hasArcType = $$.hasArcType(),
       svgLeft = $$.getSvgLeft(!0);
@@ -10109,10 +10109,14 @@ function getTextXPos(pos, width) {
       x += x >= width / 2 ? 15 : -(tWidth + 15);
       y += 15;
     } else if (hasArcType) {
-      if (!(inputType === "touch")) {
-        var _$$$getTitlePadding;
+      if (inputType !== "touch") {
+        var _$$$getTitlePadding, _config$arc_rangeText;
+        let titlePadding = (_$$$getTitlePadding = $$.getTitlePadding == null ? void 0 : $$.getTitlePadding()) != null ? _$$$getTitlePadding : 0;
+        if (titlePadding && hasGauge && (_config$arc_rangeText = config.arc_rangeText_values) != null && _config$arc_rangeText.length) {
+          titlePadding += 10;
+        }
         x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
-        y += (hasGauge ? height : height / 2 + tHeight) + ((_$$$getTitlePadding = $$.getTitlePadding == null ? void 0 : $$.getTitlePadding()) != null ? _$$$getTitlePadding : 0);
+        y += (hasGauge ? height : height / 2 + tHeight) + titlePadding;
       }
     } else if (hasTreemap) {
       y += tHeight;
@@ -26032,7 +26036,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.11.2-nightly-20240229004549
+ * @version 3.11.2-nightly-20240301004613
  */
 const bb = {
   /**
@@ -26042,7 +26046,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.2-nightly-20240229004549",
+  version: "3.11.2-nightly-20240301004613",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
