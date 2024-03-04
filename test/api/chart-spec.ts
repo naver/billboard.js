@@ -111,7 +111,7 @@ describe("API chart", () => {
 			// all methods should be ressetted
 			Object.keys(chart).forEach(key => {
 				expect(chart[key]()).to.be.undefined;
-				expect(/^function()/.test(chart[key].toString())).to.be.true;
+				expect(/^\(\)\s?=\>\s?\{/.test(chart[key].toString())).to.be.true;
 			});
 
 			expect(bb.instance.indexOf(chart) === -1).to.be.true;

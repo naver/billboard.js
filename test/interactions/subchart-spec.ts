@@ -581,6 +581,8 @@ describe("SUBCHART", () => {
 					expect(
 						this.internal.$el.subchart.main.selectAll(`.${$LINE.line}-data1`).size()
 					).to.be.equal(1);
+
+					done();
 				}
 			});
 		});
@@ -602,6 +604,8 @@ describe("SUBCHART", () => {
 					expect(
 						main.selectAll(`.${$LINE.line}-data2`).size()
 					).to.be.equal(1);
+
+					done();
 				}
 			});
 		});
