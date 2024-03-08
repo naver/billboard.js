@@ -16,6 +16,10 @@ h1 {margin: 10px 0}
 	border-bottom: dotted 1px var(--border-color);
 }
 
+.bb-chart-arc text {
+	font-size: 12px;
+}
+
 .title {
 	font-family: 'Raleway', sans-serif;
 	font-size: 15px;
