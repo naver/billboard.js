@@ -73,7 +73,7 @@ const Types = {
     getOptions: function() {
         return {
             size: {
-                height: 130
+                height: 150
             },
             data: {
                 columns: []
@@ -93,10 +93,10 @@ const Types = {
                 show: false
             },
             padding: {
-                top: 30,
+                mode: "fit",
+                left: 10,
                 right: 10,
-                bottom: 5,
-                left: 10
+                top: 35
             },
             point: {
                 r: 3.5
@@ -107,7 +107,8 @@ const Types = {
             gauge: {
                 title: "100%",
                 label: {
-                    extents: v => Math.round(v)
+                    extents: v => Math.round(v),
+                    ratio: 1
                 }
             },
             donut: {
@@ -118,7 +119,9 @@ const Types = {
             pie: {
                 innerRadius: {},
                 outerRadius: {},
-                label: {}
+                label: {
+                    ratio: 1
+                }
             },
             polar: {
                 label: {
@@ -366,8 +369,8 @@ const Types = {
                 };
                 options.gauge = {
                     label: {
-                        format: function(value, ratio) { return value; },
-                        extents: function() { return ""; }
+                        format: () => "",
+                        extents: () => ""
                     }
                 };
 
