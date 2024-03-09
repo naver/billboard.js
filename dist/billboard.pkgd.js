@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.2-nightly-20240308004554
+ * @version 3.11.2-nightly-20240309004612
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -54115,7 +54115,7 @@ let _defaults = {};
 
 /**
  * @namespace bb
- * @version 3.11.2-nightly-20240308004554
+ * @version 3.11.2-nightly-20240309004612
  */
 const bb = {
   /**
@@ -54125,7 +54125,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.2-nightly-20240308004554",
+  version: "3.11.2-nightly-20240309004612",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
