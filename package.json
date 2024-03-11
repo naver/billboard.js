@@ -190,7 +190,7 @@
 		"taffydb": "^2.7.3",
 		"terser-webpack-plugin": "^5.3.10",
 		"tslib": "^2.6.2",
-		"typescript": "5.3.3",
+		"typescript": "5.4.2",
 		"webpack": "^5.90.3",
 		"webpack-bundle-analyzer": "^4.10.1",
 		"webpack-clean": "^1.2.5",
