@@ -337,9 +337,9 @@ describe("CORE", function() {
 		});
 
 		it("chart should have clip-path property", () => {
-			const main = chart.$.main.select(`.${$COMMON.chart}`);
+			const clipPath = chart.$.main.select(`.${$COMMON.chart}`)?.attr("clip-path");
 
-			expect(main.attr("clip-path")).to.not.be.null;
+			expect(/url\(#bb-\d+-clip\)/.test(clipPath)).to.be.true;
 		});
 
 		it("set option: axis.y2.show=true", () => {

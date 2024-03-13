@@ -2,7 +2,6 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {document, window} from "../../module/browser";
 
 export default {
 	initClip(): void {
@@ -33,11 +32,7 @@ export default {
 			return null;
 		}
 
-		const isIE9 = window.navigator ?
-			window.navigator.appVersion
-				.toLowerCase().indexOf("msie 9.") >= 0 : false;
-
-		return `url(${(isIE9 ? "" : document.URL.split("#")[0])}#${id})`;
+		return `url(#${id})`;
 	},
 
 	appendClip(parent, id: string): void {
