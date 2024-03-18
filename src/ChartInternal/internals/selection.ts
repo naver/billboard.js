@@ -3,9 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import drag from "../interactions/drag";
 import {$SELECT, $SHAPE} from "../../config/classes";
 import {callFn} from "../../module/util";
+import drag from "../interactions/drag";
 
 export default {
 	...drag,
@@ -37,8 +37,7 @@ export default {
 			.attr("cx", cx)
 			.attr("cy", cy)
 			.attr("stroke", $$.color)
-			.attr("r", d2 => $$.pointSelectR(d2) * 1.4)
-		).attr("r", r);
+			.attr("r", d2 => $$.pointSelectR(d2) * 1.4)).attr("r", r);
 	},
 
 	/**
@@ -56,8 +55,7 @@ export default {
 
 		// remove selected-circle from low layer g
 		$T(main.select(`.${$SELECT.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
-			.selectAll(`.${$SELECT.selectedCircle}-${i}`)
-		)
+			.selectAll(`.${$SELECT.selectedCircle}-${i}`))
 			.attr("r", 0)
 			.remove();
 	},
@@ -134,12 +132,11 @@ export default {
 	getToggle(that, d): Function {
 		const $$ = this;
 
-		return that.nodeName === "path" ?
-			$$.togglePath : (
-				$$.isStepType(d) ?
-					() => {} : // circle is hidden in step chart, so treat as within the click area
-					$$.togglePoint
-			);
+		return that.nodeName === "path" ? $$.togglePath : (
+			$$.isStepType(d) ?
+				() => {} : // circle is hidden in step chart, so treat as within the click area
+				$$.togglePoint
+		);
 	},
 
 	/**
@@ -168,7 +165,11 @@ export default {
 				}
 
 				main.selectAll(selector)
-					.selectAll(focusOnly ? `.${$SELECT.selectedCircle}` : `.${$SHAPE.shape}.${$SELECT.SELECTED}`)
+					.selectAll(
+						focusOnly ?
+							`.${$SELECT.selectedCircle}` :
+							`.${$SHAPE.shape}.${$SELECT.SELECTED}`
+					)
 					.classed($SELECT.SELECTED, false)
 					.each(function(d) {
 						const shape = d3Select(this);
@@ -183,5 +184,5 @@ export default {
 				toggle(!isSelected, shape, d, i);
 			}
 		}
-	},
+	}
 };

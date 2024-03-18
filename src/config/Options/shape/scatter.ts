@@ -31,5 +31,5 @@ export default {
 	 *      zerobased: false
 	 *  }
 	 */
-	scatter_zerobased: false,
+	scatter_zerobased: false
 };

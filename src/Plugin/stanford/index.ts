@@ -3,15 +3,15 @@
  * billboard.js project is licensed under the MIT license
  */
 // @ts-nocheck
-import {interpolateHslLong as d3InterpolateHslLong} from "d3-interpolate";
 import {hsl as d3Hsl} from "d3-color";
+import {interpolateHslLong as d3InterpolateHslLong} from "d3-interpolate";
 import {scaleSequentialLog as d3ScaleSequentialLog} from "d3-scale";
 import {$TOOLTIP} from "../../config/classes";
 import {loadConfig} from "../../config/config";
 import Plugin from "../Plugin";
-import Options from "./Options";
-import Elements from "./Elements";
 import ColorScale from "./ColorScale";
+import Elements from "./Elements";
+import Options from "./Options";
 import {compareEpochs, isEmpty, isFunction, pointInRegion} from "./util";
 
 /**
@@ -90,7 +90,7 @@ import {compareEpochs, isEmpty, isFunction, pointInRegion} from "./util";
  *     ]
  *  });
  * @example
- *	import {bb} from "billboard.js";
+ * 	import {bb} from "billboard.js";
  * import Stanford from "billboard.js/dist/billboardjs-plugin-stanford";
  *
  * bb.generate({
@@ -156,7 +156,6 @@ export default class Stanford extends Plugin {
 		this.elements?.updateStanfordElements(duration);
 	}
 
-
 	getOptions(): Options {
 		return new Options();
 	}
@@ -192,7 +191,8 @@ export default class Stanford extends Plugin {
 		target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max(...epochs);
 
 		target.colors = isFunction(config.colors) ?
-			config.colors : d3InterpolateHslLong(d3Hsl(250, 1, 0.5), d3Hsl(0, 1, 0.5));
+			config.colors :
+			d3InterpolateHslLong(d3Hsl(250, 1, 0.5), d3Hsl(0, 1, 0.5));
 
 		target.colorscale = d3ScaleSequentialLog(target.colors)
 			.domain([target.minEpochs, target.maxEpochs]);
@@ -224,7 +224,9 @@ export default class Stanford extends Plugin {
 							<th class="value">${defaultValueFormat(value)}</th>
 						</tr>
 						<tr class="${$TOOLTIP.tooltipName}-${id}">
-							<td class="name"><span style="background-color:${color(v)}"></span>Epochs</td>
+							<td class="name"><span style="background-color:${
+						color(v)
+					}"></span>Epochs</td>
 							<td class="value">${defaultValueFormat(epochs)}</td>
 						</tr>`;
 				});
@@ -238,8 +240,10 @@ export default class Stanford extends Plugin {
 		const $$ = this;
 		const target = $$.data.targets[0];
 
-		const total = target.values.reduce((accumulator, currentValue) =>
-			accumulator + Number(currentValue.epochs), 0);
+		const total = target.values.reduce(
+			(accumulator, currentValue) => accumulator + Number(currentValue.epochs),
+			0
+		);
 
 		const value = target.values.reduce((accumulator, currentValue) => {
 			if (pointInRegion(currentValue, region)) {

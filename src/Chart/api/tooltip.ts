@@ -87,7 +87,9 @@ const tooltip = {
 			const y = $$.getYScaleById(data.id)?.(data.value);
 
 			if (hasTreemap && data.id) {
-				eventReceiver.rect = $el.main.select(`${$$.selectorTarget(data.id, undefined, "rect")}`);
+				eventReceiver.rect = $el.main.select(
+					`${$$.selectorTarget(data.id, undefined, "rect")}`
+				);
 			} else if ($$.isMultipleX()) {
 				// if multiple xs, target point will be determined by mouse
 				mouse = [$$.xx(data), y];
@@ -108,9 +110,7 @@ const tooltip = {
 			index = args.index;
 		}
 
-		(inputType === "mouse" ?
-			["mouseover", "mousemove"] : ["touchstart"]
-		).forEach(eventName => {
+		(inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach(eventName => {
 			$$.dispatchEvent(eventName, index, mouse);
 		});
 	},
@@ -130,9 +130,7 @@ const tooltip = {
 			const {index} = JSON.parse(data.current)[0];
 
 			// make to finalize, possible pending event flow set from '.tooltip.show()' call
-			(inputType === "mouse" ?
-				["mouseout"] : ["touchend"]
-			).forEach(eventName => {
+			(inputType === "mouse" ? ["mouseout"] : ["touchend"]).forEach(eventName => {
 				$$.dispatchEvent(eventName, index);
 			});
 		}

@@ -3,9 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection"; // selection
+import type {AxisType, RegionsType} from "../../../types/types";
 import {$REGION} from "../../config/classes";
 import {isValue, parseDate} from "../../module/util";
-import type {AxisType, RegionsType} from "../../../types/types";
 
 export default {
 	initRegion(): void {
@@ -76,7 +76,9 @@ export default {
 			.attr("transform", d => {
 				const {x = 0, y = 0, rotated = false} = d.label ?? {};
 
-				return `translate(${$$.regionX.bind($$)(d) + x}, ${$$.regionY.bind($$)(d) + y})${rotated ? ` rotate(-90)` : ``}`;
+				return `translate(${$$.regionX.bind($$)(d) + x}, ${$$.regionY.bind($$)(d) + y})${
+					rotated ? ` rotate(-90)` : ``
+				}`;
 			})
 			.attr("text-anchor", d => (d.label?.rotated ? "end" : null))
 			.attr("dy", "1em")
@@ -167,5 +169,5 @@ export default {
 
 	isRegionOnX(d: RegionsType): boolean {
 		return !d.axis || d.axis === "x";
-	},
+	}
 };

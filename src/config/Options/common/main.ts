@@ -34,7 +34,7 @@ export default {
 	 *    classname: "bill-board"  // ex) <div id='chart' class='bill-board'>
 	 * }
 	 */
-	bindto: <string|{element: string; classname?: string}> "#chart",
+	bindto: <string | {element: string, classname?: string}>"#chart",
 
 	/**
 	 * Set chart background.
@@ -55,7 +55,7 @@ export default {
 	 *    imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
 	 * }
 	 */
-	background: <{class?: string; color?: string; imgUrl?: string;}> {},
+	background: <{class?: string, color?: string, imgUrl?: string}>{},
 
 	/**
 	 * Set 'clip-path' attribute for chart element
@@ -85,7 +85,7 @@ export default {
 	 *   classname: "test_class"
 	 * }
 	 */
-	svg_classname: <string|undefined> undefined,
+	svg_classname: <string | undefined>undefined,
 
 	/**
 	 * The desired size of the chart element.
@@ -103,8 +103,8 @@ export default {
 	 *   height: 480
 	 * }
 	 */
-	size_width: <number|undefined> undefined,
-	size_height: <number|undefined> undefined,
+	size_width: <number | undefined>undefined,
+	size_height: <number | undefined>undefined,
 
 	/**
 	 * The padding of the chart element.
@@ -150,11 +150,11 @@ export default {
 	 * }
 	 */
 	padding: true,
-	padding_mode: <"fit"|undefined> undefined,
-	padding_left: <number|undefined> undefined,
-	padding_right: <number|undefined> undefined,
-	padding_top: <number|undefined> undefined,
-	padding_bottom: <number|undefined> undefined,
+	padding_mode: <"fit" | undefined>undefined,
+	padding_left: <number | undefined>undefined,
+	padding_right: <number | undefined>undefined,
+	padding_top: <number | undefined>undefined,
+	padding_bottom: <number | undefined>undefined,
 
 	/**
 	 * Set chart resize options
@@ -199,7 +199,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onclick: <(() => void)|undefined> undefined,
+	onclick: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute when mouse/touch enters the chart.
@@ -214,7 +214,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onover: <(() => void)|undefined> undefined,
+	onover: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute when mouse/touch leaves the chart.
@@ -229,7 +229,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onout: <(() => void)|undefined> undefined,
+	onout: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute when user resizes the screen.
@@ -243,7 +243,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onresize: <(() => void)|undefined> undefined,
+	onresize: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute when screen resize finished.
@@ -257,7 +257,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onresized: <(() => void)|undefined> undefined,
+	onresized: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute before the chart is initialized
@@ -271,7 +271,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onbeforeinit: <(() => void)|undefined> undefined,
+	onbeforeinit: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute when the chart is initialized.
@@ -285,7 +285,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	oninit: <(() => void)|undefined> undefined,
+	oninit: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback to execute after the chart is initialized
@@ -299,7 +299,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onafterinit: <(() => void)|undefined> undefined,
+	onafterinit: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
@@ -313,7 +313,7 @@ export default {
 	 *   ...
 	 * }
 	 */
-	onrendered: <(() => void)|undefined> undefined,
+	onrendered: <(() => void) | undefined>undefined,
 
 	/**
 	 * Set duration of transition (in milliseconds) for chart animation.<br><br>
@@ -360,7 +360,7 @@ export default {
 	 * }
 	 *
 	 * @example
-	 *	// <!-- render.lazy will detect visibility defined -->
+	 * 	// <!-- render.lazy will detect visibility defined -->
 	 *  // (a) <div id='chart' class='hide'></div>
 	 *  // (b) <div id='chart' style='display:none'></div>
 	 *
@@ -373,7 +373,7 @@ export default {
 	 *  document.getElementById('chart').style.display = 'block';  // (b)
 	 *
 	 * @example
-	 *	// chart won't be rendered and not observing bind element's visiblity changes
+	 * 	// chart won't be rendered and not observing bind element's visiblity changes
 	 *  var chart = bb.generate({
 	 *     render: {
 	 *          lazy: true,
@@ -384,7 +384,7 @@ export default {
 	 *  // call at any point when you want to render
 	 *  chart.flush();
 	 */
-	render: <{lazy?: boolean; observe?: boolean;}> {},
+	render: <{lazy?: boolean, observe?: boolean}>{},
 
 	/**
 	 * Show rectangles inside the chart.<br><br>
@@ -416,5 +416,5 @@ export default {
 	 *    }
 	 *  ]
 	 */
-	regions: <RegionsType[]> []
+	regions: <RegionsType[]>[]
 };

@@ -66,11 +66,11 @@ export default {
 	 *  }
 	 */
 	polar_label_show: true,
-	polar_label_format: <(() => number|string)|undefined> undefined,
+	polar_label_format: <(() => number | string) | undefined>undefined,
 	polar_label_threshold: 0.05,
-	polar_label_ratio: <(() => number)|undefined> undefined,
+	polar_label_ratio: <(() => number) | undefined>undefined,
 	polar_level_depth: 3,
-	polar_level_max: <number|undefined> undefined,
+	polar_level_max: <number | undefined>undefined,
 	polar_level_show: true,
 	polar_level_text_backgroundColor: "#fff",
 	polar_level_text_format: (x: number) => (x % 1 === 0 ? x : x.toFixed(2)),

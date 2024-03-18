@@ -10,7 +10,7 @@ export default {
 	initGauge(): void {
 		const $$ = this;
 		const {config, $el: {arcs}} = $$;
-		const appendText = (className = <null|string>null, value = "") => {
+		const appendText = (className = <null | string>null, value = "") => {
 			arcs.append("text")
 				.attr("class", className)
 				.style("text-anchor", "middle")
@@ -42,12 +42,15 @@ export default {
 
 		// to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
 		const max = hasMultiGauge ?
-			$$.getMinMaxData().max[0].value : $$.getTotalDataSum(state.rendered);
+			$$.getMinMaxData().max[0].value :
+			$$.getTotalDataSum(state.rendered);
 
 		// if gauge_max less than max, make max to max value
-		if (!config.gauge_enforceMinMax && (
-			max + config.gauge_min * (config.gauge_min > 0 ? -1 : 1) > config.gauge_max
-		)) {
+		if (
+			!config.gauge_enforceMinMax && (
+				max + config.gauge_min * (config.gauge_min > 0 ? -1 : 1) > config.gauge_max
+			)
+		) {
 			config.gauge_max = max - config.gauge_min;
 		}
 	},
@@ -63,11 +66,13 @@ export default {
 
 		const mainArcLabelLine = arcLabelLines.enter()
 			.append("rect")
-			.attr("class", d => `${$ARC.arcLabelLine} ${$COMMON.target} ${$COMMON.target}-${d.data.id}`)
+			.attr("class",
+				d => `${$ARC.arcLabelLine} ${$COMMON.target} ${$COMMON.target}-${d.data.id}`)
 			.merge(arcLabelLines);
 
 		mainArcLabelLine
-			.style("fill", d => ($$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data)))
+			.style("fill",
+				d => ($$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data)))
 			.style("display", config.gauge_label_show ? null : "none")
 			.each(function(d) {
 				let lineLength = 0;
@@ -78,11 +83,13 @@ export default {
 
 				if (hiddenTargetIds.indexOf(d.data.id) < 0) {
 					const updated = $$.updateAngle(d);
-					const innerLineLength = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length *
+					const innerLineLength = state.gaugeArcWidth /
+						$$.filterTargetsToShow($$.data.targets).length *
 						(updated.index + 1);
 					const lineAngle = updated.endAngle - Math.PI / 2;
 					const arcInnerRadius = state.radius - innerLineLength;
-					const linePositioningAngle = lineAngle - (arcInnerRadius === 0 ? 0 : (1 / arcInnerRadius));
+					const linePositioningAngle = lineAngle -
+						(arcInnerRadius === 0 ? 0 : (1 / arcInnerRadius));
 
 					lineLength = state.radiusExpanded - state.radius + innerLineLength;
 					x = Math.cos(linePositioningAngle) * arcInnerRadius;

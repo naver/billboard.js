@@ -3,9 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 import {easeLinear as d3EaseLinear} from "d3-ease";
+import CLASS from "../../config/classes";
 import {generateWait} from "../../module/generator";
 import {diffDomain} from "../../module/util";
-import CLASS from "../../config/classes";
 
 export default {
 	/**
@@ -37,7 +37,17 @@ export default {
 			// target elements
 			const elements = {};
 
-			["axis.x", "grid.x", "gridLines.x", "region.list", "text", "bar", "line", "area", "circle"]
+			[
+				"axis.x",
+				"grid.x",
+				"gridLines.x",
+				"region.list",
+				"text",
+				"bar",
+				"line",
+				"area",
+				"circle"
+			]
 				.forEach(v => {
 					const name = v.split(".");
 					let node = $el[name[0]];
@@ -69,7 +79,7 @@ export default {
 			duration = args.duration,
 			index: flowIndex,
 			length: flowLength,
-			orgDataCount,
+			orgDataCount
 		} = flow;
 
 		const transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
@@ -227,7 +237,7 @@ export default {
 				x(flowStart?.x || 0) - x(flowEnd.x);
 		}
 
-		const scaleX = (diffDomain(orgDomain) / diffDomain(domain));
+		const scaleX = diffDomain(orgDomain) / diffDomain(domain);
 
 		return `translate(${translateX},0) scale(${scaleX},1)`;
 	}

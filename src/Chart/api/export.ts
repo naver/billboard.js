@@ -4,28 +4,23 @@
  */
 import {namespaces as d3Namespaces} from "d3-selection";
 import {document, window} from "../../module/browser";
-import {isFunction, toArray, getCssRules, mergeObj} from "../../module/util";
+import {getCssRules, isFunction, mergeObj, toArray} from "../../module/util";
 
 type TExportOption = TSize & {
-	preserveAspectRatio: boolean;
-	preserveFontStyle: boolean;
-	mimeType: string;
+	preserveAspectRatio: boolean,
+	preserveFontStyle: boolean,
+	mimeType: string
 };
 
-type TSize = {
-	x?: number;
-	y?: number;
-	width: number;
-	height: number;
-};
+type TSize = {x?: number, y?: number, width: number, height: number};
 
 type TTextGlyph = {
 	[key: string]: TSize & {
-		fill: string;
-		fontFamily: string;
-		fontSize: string;
-		textAnchor: string;
-		transform: string;
+		fill: string,
+		fontFamily: string,
+		fontSize: string,
+		textAnchor: string,
+		transform: string
 	}
 };
 
@@ -36,10 +31,12 @@ type TTextGlyph = {
  * @private
  * @see https://developer.mozilla.org/ko/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
  */
-const b64EncodeUnicode = (str: string): string => window.btoa?.(
-	encodeURIComponent(str)
-		.replace(/%([0-9A-F]{2})/g, (match, p: number | string): string => String.fromCharCode(Number(`0x${p}`)))
-);
+const b64EncodeUnicode = (str: string): string =>
+	window.btoa?.(
+		encodeURIComponent(str)
+			.replace(/%([0-9A-F]{2})/g,
+				(match, p: number | string): string => String.fromCharCode(Number(`0x${p}`)))
+	);
 
 /**
  * Convert svg node to data url
@@ -128,12 +125,22 @@ function getGlyph(svg: SVGElement): TTextGlyph[] {
 		.filter(filterFn)
 		.forEach((t: SVGTextElement) => { // eslint-disable-line
 			const getStyleFn = (ts: SVGTextElement): TTextGlyph => {
-				const {fill, fontFamily, fontSize, textAnchor, transform} = window.getComputedStyle(ts);
+				const {fill, fontFamily, fontSize, textAnchor, transform} = window.getComputedStyle(
+					ts
+				);
 				const {x, y, width, height} = getCoords(ts, {left, top});
 
 				return {
 					[ts.textContent as string]: {
-						x, y, width, height, fill, fontFamily, fontSize, textAnchor, transform
+						x,
+						y,
+						width,
+						height,
+						fill,
+						fontFamily,
+						fontSize,
+						textAnchor,
+						transform
 					}
 				};
 			};

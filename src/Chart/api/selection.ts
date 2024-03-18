@@ -3,9 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import {isDefined} from "../../module/util";
-import {$AREA, $LINE, $SELECT, $SHAPE} from "../../config/classes";
 import type {DataItem} from "../../../types/types";
+import {$AREA, $LINE, $SELECT, $SHAPE} from "../../config/classes";
+import {isDefined} from "../../module/util";
 
 /**
  * Toggler function to select or unselect

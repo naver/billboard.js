@@ -3,15 +3,14 @@
  * billboard.js project is licensed under the MIT license
  */
 import {
-	scaleTime as d3ScaleTime,
-	scaleUtc as d3ScaleUtc,
 	scaleLinear as d3ScaleLinear,
 	scaleLog as d3ScaleLog,
-	scaleSymlog as d3ScaleSymlog
+	scaleSymlog as d3ScaleSymlog,
+	scaleTime as d3ScaleTime,
+	scaleUtc as d3ScaleUtc
 } from "d3-scale";
 import {isString, isValue, parseDate} from "../../module/util";
 import type {IDataRow, IGridData} from "../data/IData";
-
 
 /**
  * Get scale
@@ -48,7 +47,8 @@ export default {
 	 */
 	getXScale(min: number, max: number, domain: number[], offset: Function) {
 		const $$ = this;
-		const scale = ($$.state.loading !== "append" && $$.scale.zoom) || getScale($$.axis.getAxisType("x"), min, max);
+		const scale = ($$.state.loading !== "append" && $$.scale.zoom) ||
+			getScale($$.axis.getAxisType("x"), min, max);
 
 		return $$.getCustomizedXScale(
 			domain ? scale.domain(domain) : scale,
@@ -121,9 +121,7 @@ export default {
 				if (!arguments.length) {
 					domain = this.orgDomain();
 
-					return isInverted ?
-						[domain[0] + 1, domain[1]] :
-						[domain[0], domain[1] + 1];
+					return isInverted ? [domain[0] + 1, domain[1]] : [domain[0], domain[1] + 1];
 				}
 
 				scaleValue.domain(domain);
@@ -143,7 +141,12 @@ export default {
 	 */
 	updateScales(isInit: boolean, updateXDomain = true): void {
 		const $$ = this;
-		const {axis, config, format, org, scale,
+		const {
+			axis,
+			config,
+			format,
+			org,
+			scale,
 			state: {current, width, height, width2, height2, hasAxis, hasTreemap}
 		} = $$;
 
@@ -173,8 +176,8 @@ export default {
 
 			scale.x = $$.getXScale(min.x, max.x, xDomain, () => axis.x.tickOffset());
 			scale.subX = $$.getXScale(min.x, max.x, xSubDomain, d => (
-				d % 1 ? 0 : (axis.subX ?? axis.x).tickOffset())
-			);
+				d % 1 ? 0 : (axis.subX ?? axis.x).tickOffset()
+			));
 
 			format.xAxisTick = axis.getXAxisTickFormat();
 			format.subXAxisTick = axis.getXAxisTickFormat(true);
@@ -186,17 +189,27 @@ export default {
 			}
 
 			// y Axis
-			scale.y = $$.getYScale("y", min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default);
+			scale.y = $$.getYScale("y", min.y, max.y,
+				scale.y ? scale.y.domain() : config.axis_y_default);
 			scale.subY = $$.getYScale(
-				"y", min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default);
+				"y",
+				min.subY,
+				max.subY,
+				scale.subY ? scale.subY.domain() : config.axis_y_default
+			);
 
 			axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit);
 
 			// y2 Axis
 			if (config.axis_y2_show) {
-				scale.y2 = $$.getYScale("y2", min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default);
+				scale.y2 = $$.getYScale("y2", min.y, max.y,
+					scale.y2 ? scale.y2.domain() : config.axis_y2_default);
 				scale.subY2 = $$.getYScale(
-					"y2", min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default);
+					"y2",
+					min.subY,
+					max.subY,
+					scale.subY2 ? scale.subY2.domain() : config.axis_y2_default
+				);
 
 				axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
 			}

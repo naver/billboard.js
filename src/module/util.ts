@@ -3,28 +3,28 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-import {pointer as d3Pointer} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
+import {pointer as d3Pointer} from "d3-selection";
 import type {d3Selection} from "../../types/types";
-import {document, window, requestAnimationFrame} from "./browser";
+import {document, requestAnimationFrame, window} from "./browser";
 
 export {
 	addCssRules,
 	asHalfPixel,
 	brushEmpty,
 	callFn,
-	capitalize,
 	camelize,
+	capitalize,
 	ceil10,
 	convertInputType,
 	deepClone,
 	diffDomain,
-	endall,
 	emulateEvent,
+	endall,
 	extend,
 	findIndex,
-	getBrushSelection,
 	getBoundingRect,
+	getBrushSelection,
 	getCssRules,
 	getMinMax,
 	getOption,
@@ -62,7 +62,7 @@ export {
 };
 
 const isValue = (v: any): boolean => v || v === 0;
-const isFunction = (v: unknown): v is ((...args: any[]) => any) => typeof v === "function";
+const isFunction = (v: unknown): v is (...args: any[]) => any => typeof v === "function";
 const isString = (v: unknown): v is string => typeof v === "string";
 const isNumber = (v: unknown): v is number => typeof v === "number";
 const isUndefined = (v: unknown): v is undefined => typeof v === "undefined";
@@ -171,7 +171,8 @@ function endall(transition, cb: Function): void {
  */
 function sanitize(str: string): string {
 	return isString(str) ?
-		str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") : str;
+		str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") :
+		str;
 }
 
 /**
@@ -227,7 +228,7 @@ function getRectSegList(path: SVGGraphicsElement): {x: number, y: number}[] {
 	 *   |               |
 	 *   |               |
 	 * seg0 ---------- seg3
-	 * */
+	 */
 	const {x, y, width, height} = path.getBBox();
 
 	return [
@@ -253,10 +254,12 @@ function getPathBox(
 	const y = Math.min(items[0].y, items[1].y);
 
 	return {
-		x, y, width, height
+		x,
+		y,
+		width,
+		height
 	};
 }
-
 
 /**
  * Get event's current position coordinates
@@ -266,7 +269,8 @@ function getPathBox(
  * @private
  */
 function getPointer(event, element?: Element): number[] {
-	const touches = event && (event.touches || (event.sourceEvent && event.sourceEvent.touches))?.[0];
+	const touches = event &&
+		(event.touches || (event.sourceEvent && event.sourceEvent.touches))?.[0];
 	let pointer = [0, 0];
 
 	try {
@@ -290,7 +294,7 @@ function getBrushSelection(ctx) {
 	// check from event
 	if (event && event.type === "brush") {
 		selection = event.selection;
-	// check from brush area selection
+		// check from brush area selection
 	} else if (main && (selection = main.select(".bb-brush").node())) {
 		selection = d3BrushSelection(selection);
 	}
@@ -305,16 +309,24 @@ function getBrushSelection(ctx) {
  * @returns {object}
  * @private
  */
-function getBoundingRect(node): {
-	left: number, top: number, right: number, bottom: number,
-	x: number, y: number, width: number, height: number
+function getBoundingRect(
+	node
+): {
+	left: number,
+	top: number,
+	right: number,
+	bottom: number,
+	x: number,
+	y: number,
+	width: number,
+	height: number
 } {
 	const needEvaluate = !("rect" in node) || (
-		"rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width")
+		"rect" in node && node.hasAttribute("width") &&
+		node.rect.width !== +node.getAttribute("width")
 	);
 
-	return needEvaluate ?
-		(node.rect = node.getBoundingClientRect()) : node.rect;
+	return needEvaluate ? (node.rect = node.getBoundingClientRect()) : node.rect;
 }
 
 /**
@@ -444,7 +456,6 @@ function extend(target = {}, source): object {
  */
 const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
-
 /**
  * Camelize from kebob style string
  * @param {string} str Target string
@@ -478,9 +489,10 @@ const toArray = (v: CSSStyleDeclaration | any): any => [].slice.call(v);
  */
 function addCssRules(style, selector: string, prop: string[]): number {
 	const {rootSelector = "", sheet} = style;
-	const getSelector = s => s
-		.replace(/\s?(bb-)/g, ".$1")
-		.replace(/\.+/g, ".");
+	const getSelector = s =>
+		s
+			.replace(/\s?(bb-)/g, ".$1")
+			.replace(/\.+/g, ".");
 
 	const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
 
@@ -586,8 +598,7 @@ function mergeObj(target: object, ...objectN): any {
 				!target[key] && (target[key] = {});
 				target[key] = mergeObj(target[key], value);
 			} else {
-				target[key] = isArray(value) ?
-					value.concat() : value;
+				target[key] = isArray(value) ? value.concat() : value;
 			}
 		});
 	}
@@ -625,7 +636,8 @@ function sortValue(data: any[], isAsc = true): any[] {
  * @returns {number|Date|undefined}
  * @private
  */
-function getMinMax(type: "min" | "max", data: number[] | Date[] | any): number | Date | undefined | any {
+function getMinMax(type: "min" | "max", data: number[] | Date[] | any): number | Date | undefined
+	| any {
 	let res = data.filter(v => notEmpty(v));
 
 	if (res.length) {
@@ -664,7 +676,12 @@ const getRange = (start: number, end: number, step = 1): number[] => {
 const emulateEvent = {
 	mouse: (() => {
 		const getParams = () => ({
-			bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
+			bubbles: false,
+			cancelable: false,
+			screenX: 0,
+			screenY: 0,
+			clientX: 0,
+			clientY: 0
 		});
 
 		try {
@@ -686,9 +703,16 @@ const emulateEvent = {
 					params.cancelable,
 					window,
 					0, // the event's mouse click count
-					params.screenX, params.screenY,
-					params.clientX, params.clientY,
-					false, false, false, false, 0, null
+					params.screenX,
+					params.screenY,
+					params.clientX,
+					params.clientY,
+					false,
+					false,
+					false,
+					false,
+					0,
+					null
 				);
 
 				el.dispatchEvent(mouseEvent);
@@ -788,9 +812,11 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
 		if (navigator && "maxTouchPoints" in navigator) {
 			hasTouch = navigator.maxTouchPoints > 0;
 
-		// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
-		// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-		} else if ("ontouchmove" in window || (DocumentTouch && document instanceof DocumentTouch)) {
+			// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+			// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+		} else if (
+			"ontouchmove" in window || (DocumentTouch && document instanceof DocumentTouch)
+		) {
 			hasTouch = true;
 		} else {
 			// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
@@ -800,10 +826,8 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
 				// Only as a last resort, fall back to user agent sniffing
 				const UA = navigator.userAgent;
 
-				hasTouch = (
-					/\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
-					/\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA)
-				);
+				hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) ||
+					/\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
 			}
 		}
 	}
@@ -831,4 +855,3 @@ function runUntil(fn: Function, conditionFn: Function): void {
 		fn();
 	}
 }
-

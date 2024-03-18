@@ -2,11 +2,11 @@
  * Copyright (c) 2021 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import Plugin from "../Plugin";
-import Options from "./Options";
-import {defaultStyle, tpl} from "./const";
 import {loadConfig} from "../../config/config";
 import {isNumber, tplProcess} from "../../module/util";
+import Plugin from "../Plugin";
+import {defaultStyle, tpl} from "./const";
+import Options from "./Options";
 
 /**
  * Table view plugin.<br>
@@ -115,7 +115,7 @@ export default class TableView extends Plugin {
 			title: dataToShow.length ? this.config.categoryTitle : ""
 		});
 		let tbody = "";
-		const rows: (number|string)[][] = [];
+		const rows: (number | string)[][] = [];
 
 		dataToShow.forEach(v => {
 			thead += tplProcess(tpl.thead, {title: v.id});
@@ -132,11 +132,13 @@ export default class TableView extends Plugin {
 
 		rows.forEach(v => {
 			tbody += `<tr>${
-				v.map((d, i) => tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
-					value: i === 0 ?
-						config.categoryFormat.bind(this)(d) :
-						(isNumber(d) ? d.toLocaleString() : config.nullString)
-				})).join("")
+				v.map((d, i) =>
+					tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
+						value: i === 0 ?
+							config.categoryFormat.bind(this)(d) :
+							(isNumber(d) ? d.toLocaleString() : config.nullString)
+					})
+				).join("")
 			}</tr>`;
 		});
 
