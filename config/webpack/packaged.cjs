@@ -1,9 +1,7 @@
 const {merge} = require("webpack-merge");
 const webpack = require("webpack");
-const TerserPlugin = require("terser-webpack-plugin");
-const terserConfig = require("../terserConfig.cjs");
 const banner = require("../template/banner.cjs");
-
+const {EsbuildPlugin} = require("esbuild-loader");
 
 const config = {
 	entry: {
@@ -13,7 +11,13 @@ const config = {
 	optimization: {
 		usedExports: true,
 		minimize: true,
-		minimizer: [new TerserPlugin(terserConfig)]
+		minimizer: [
+			new EsbuildPlugin({
+				include: /\.min\.js$/,
+				target: "es2015",
+				format: undefined
+			})
+		]
 	},
 	plugins: [
 		new webpack.BannerPlugin({
