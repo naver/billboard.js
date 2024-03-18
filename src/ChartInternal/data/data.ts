@@ -5,11 +5,10 @@
 import {select as d3Select} from "d3-selection";
 import {$BAR, $CANDLESTICK, $COMMON} from "../../config/classes";
 import {KEY} from "../../module/Cache";
-import type {IData, IDataPoint, IDataRow} from "./IData";
 import {
 	findIndex,
-	getUnique,
 	getScrollPosition,
+	getUnique,
 	hasValue,
 	isArray,
 	isboolean,
@@ -26,6 +25,7 @@ import {
 	parseDate,
 	sortValue
 } from "../../module/util";
+import type {IData, IDataPoint, IDataRow} from "./IData";
 
 export default {
 	isX(key) {
@@ -56,9 +56,7 @@ export default {
 	isGrouped(id?: string): boolean {
 		const groups = this.config.data_groups;
 
-		return id ?
-			groups.some(v => v.indexOf(id) >= 0 && v.length > 1) :
-			groups.length > 0;
+		return id ? groups.some(v => v.indexOf(id) >= 0 && v.length > 1) : groups.length > 0;
 	},
 
 	getXKey(id) {
@@ -66,7 +64,8 @@ export default {
 		const {config} = $$;
 
 		return config.data_x ?
-			config.data_x : (notEmpty(config.data_xs) ? config.data_xs[id] : null);
+			config.data_x :
+			(notEmpty(config.data_xs) ? config.data_xs[id] : null);
 	},
 
 	getXValuesOfXKey(key, targets) {
@@ -90,7 +89,7 @@ export default {
 	 * @returns {number} index number
 	 * @private
 	 */
-	getIndexByX(x: Date|number|string, basedX: (Date|number|string)[]): number {
+	getIndexByX(x: Date | number | string, basedX: (Date | number | string)[]): number {
 		const $$ = this;
 
 		return basedX ?
@@ -102,8 +101,10 @@ export default {
 		const $$ = this;
 
 		return id in $$.data.xs &&
-			$$.data.xs[id] &&
-			isValue($$.data.xs[id][i]) ? $$.data.xs[id][i] : i;
+				$$.data.xs[id] &&
+				isValue($$.data.xs[id][i]) ?
+			$$.data.xs[id][i] :
+			i;
 	},
 
 	getOtherTargetXs(): string | null {
@@ -413,7 +414,10 @@ export default {
 				.map(v => v.x);
 
 			target = sortValue(getUnique(target))
-				.map((x, index, array) => ({x, index: isInverted ? array.length - index - 1 : index}));
+				.map((x, index, array) => ({
+					x,
+					index: isInverted ? array.length - index - 1 : index
+				}));
 		} else if (length) {
 			target = target[0].values.concat();
 		}
@@ -527,8 +531,10 @@ export default {
 		const {hasAxis} = $$.state;
 		const ys = {};
 		const isMultipleX = $$.isMultipleX();
-		const xs = isMultipleX ? $$.mapTargetsToUniqueXs(targets)
-			.map(v => (isString(v) ? v : +v)) : null;
+		const xs = isMultipleX ?
+			$$.mapTargetsToUniqueXs(targets)
+				.map(v => (isString(v) ? v : +v)) :
+			null;
 
 		targets.forEach(t => {
 			const data: any[] = [];
@@ -540,7 +546,9 @@ export default {
 
 					// exclude 'volume' value to correct mis domain calculation
 					if (value !== null && $$.isCandlestickType(v)) {
-						value = isArray(value) ? value.slice(0, 4) : [value.open, value.high, value.low, value.close];
+						value = isArray(value) ?
+							value.slice(0, 4) :
+							[value.open, value.high, value.low, value.close];
 					}
 
 					if (isArray(value)) {
@@ -627,8 +635,8 @@ export default {
 		if (orderAsc || orderDesc) {
 			const reducer = (p, c) => p + Math.abs(c.value);
 			const sum = v => (isNumber(v) ? v : (
-				"values" in v ? v.values.reduce(reducer, 0) : v.value)
-			);
+				"values" in v ? v.values.reduce(reducer, 0) : v.value
+			));
 
 			fn = (t1: IData | IDataRow, t2: IData | IDataRow) => {
 				const t1Sum = sum(t1);
@@ -694,7 +702,9 @@ export default {
 			const scrollPos = getScrollPosition($el.chart.node());
 
 			// get data based on the mouse coords
-			const e = inputType === "touch" && event.changedTouches ? event.changedTouches[0] : event;
+			const e = inputType === "touch" && event.changedTouches ?
+				event.changedTouches[0] :
+				event;
 
 			index = findIndex(
 				coords,
@@ -782,8 +792,12 @@ export default {
 			.filter(v => $$.isBarType(v.id) || $$.isCandlestickType(v.id))
 			.forEach(v => {
 				const selector = $$.isBarType(v.id) ?
-					`.${$BAR.chartBar}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$BAR.bar}-${v.index}` :
-					`.${$CANDLESTICK.chartCandlestick}.${$COMMON.target}${$$.getTargetSelectorSuffix(v.id)} .${$CANDLESTICK.candlestick}-${v.index} path`;
+					`.${$BAR.chartBar}.${$COMMON.target}${
+						$$.getTargetSelectorSuffix(v.id)
+					} .${$BAR.bar}-${v.index}` :
+					`.${$CANDLESTICK.chartCandlestick}.${$COMMON.target}${
+						$$.getTargetSelectorSuffix(v.id)
+					} .${$CANDLESTICK.candlestick}-${v.index} path`;
 
 				if (!closest && $$.isWithinBar(main.select(selector).node())) {
 					closest = v;
@@ -968,7 +982,8 @@ export default {
 					// otherwise, based on the rendered angle value
 				} else {
 					const gaugeArcLength = config.gauge_fullCircle ?
-						$$.getArcLength() : $$.getStartingAngle() * -2;
+						$$.getArcLength() :
+						$$.getStartingAngle() * -2;
 					const arcLength = $$.hasType("gauge") ? gaugeArcLength : Math.PI * 2;
 
 					ratio = (d.endAngle - d.startAngle) / arcLength;
@@ -982,7 +997,9 @@ export default {
 
 					if (hiddenSum.length) {
 						hiddenSum = hiddenSum
-							.reduce((acc, curr) => acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i]));
+							.reduce((acc, curr) =>
+								acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i])
+							);
 
 						total = total.map((v, i) => v - hiddenSum[i]);
 					}
@@ -990,8 +1007,7 @@ export default {
 
 				const divisor = total[d.index];
 
-				d.ratio = isNumber(d.value) && total && divisor ?
-					d.value / divisor : 0;
+				d.ratio = isNumber(d.value) && total && divisor ? d.value / divisor : 0;
 
 				ratio = d.ratio;
 			} else if (type === "radar") {
@@ -1064,7 +1080,8 @@ export default {
 		const $$ = this;
 		const {value} = d;
 
-		return $$.isBarType(d) && isArray(value) && value.length >= 2 && value.every(v => isNumber(v));
+		return $$.isBarType(d) && isArray(value) && value.length >= 2 &&
+			value.every(v => isNumber(v));
 	},
 
 	/**

@@ -3,62 +3,55 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-type TDataRow = {
-    value: number | null;
-    id: string;
-    index: number;
-    name?: string;
-};
+type TDataRow = {value: number | null, id: string, index: number, name?: string};
 
 export type TDomain = Date | number;
 export type TDomainRange = [TDomain, TDomain];
 
 export interface ITreemapData {
-    name: string;
-    id?: string; // for compatibility
-    value?: number;
-    ratio?: number;
-    children?: ITreemapData[];
+	name: string;
+	id?: string; // for compatibility
+	value?: number;
+	ratio?: number;
+	children?: ITreemapData[];
 }
 
 export interface IDataRow extends TDataRow {
-    x: TDomain & string;
+	x: TDomain & string;
 }
 
 export interface IDataPoint extends IDataRow {
-    r: number;
+	r: number;
 }
 
 export interface IArcDataRow extends TDataRow {
-    ratio: number;
+	ratio: number;
 }
 
 export interface IData {
-    id: string;
-    id_org: string;
-    values: IDataRow[];
+	id: string;
+	id_org: string;
+	values: IDataRow[];
 }
 
 export interface IArcData {
-    data: IData;
-    index: number;
-    padAngle: number;
-    startAngle: number;
-    endAngle: number;
-    value: number | null;
+	data: IData;
+	index: number;
+	padAngle: number;
+	startAngle: number;
+	endAngle: number;
+	value: number | null;
 }
 
 export interface IGridData {
-    axis?: string;
-    text: string;
-    value: number;
+	axis?: string;
+	text: string;
+	value: number;
 }
 
 export interface IDataIndice {
-    [key: string]: number;
-    __max__: number;
+	[key: string]: number;
+	__max__: number;
 }
 
-export type TIndices = {} | {
-    [key:string]: IDataIndice
-};
+export type TIndices = {} | {[key: string]: IDataIndice};

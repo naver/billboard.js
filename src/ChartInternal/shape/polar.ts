@@ -116,7 +116,9 @@ export default {
 
 		if (config.polar_level_text_show) {
 			const levelTextBackgroundColor = config.polar_level_text_backgroundColor;
-			const defsId = `#${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(levelTextBackgroundColor)}`;
+			const defsId = `#${state.datetimeId}-labels-bg${
+				$$.getTargetSelectorSuffix(levelTextBackgroundColor)
+			}`;
 
 			levelEnter.append("text")
 				.style("text-anchor", "middle");

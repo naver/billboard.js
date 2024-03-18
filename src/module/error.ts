@@ -1,5 +1,5 @@
-import {window} from "./browser";
 import {TYPE, TYPE_METHOD_NEEDED} from "../config/const";
+import {window} from "./browser";
 import {camelize, isEmpty} from "./util";
 
 /**
@@ -7,10 +7,7 @@ import {camelize, isEmpty} from "./util";
  * billboard.js project is licensed under the MIT license
  */
 /* eslint no-console: "off" */
-export {
-	checkModuleImport,
-	logError
-};
+export {checkModuleImport, logError};
 
 /**
  * Check chart type module imports.
@@ -35,7 +32,9 @@ function checkModuleImport(ctx) {
 		}
 	}
 
-	type && logError(`Please, make sure if %c${camelize(type)}`, "module has been imported and specified correctly.");
+	type &&
+		logError(`Please, make sure if %c${camelize(type)}`,
+			"module has been imported and specified correctly.");
 }
 
 /**
@@ -46,11 +45,13 @@ function checkModuleImport(ctx) {
  */
 function logError(head, tail) {
 	const prefix = "[billboard.js]";
-	const info = "https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality";
+	const info =
+		"https://github.com/naver/billboard.js/wiki/CHANGELOG-v2#modularization-by-its-functionality";
 	const hasConsole = window.console?.error;
 
 	if (hasConsole) {
-		console.error(`❌ ${prefix} ${head}`, "background:red;color:white;display:block;font-size:15px", tail);
+		console.error(`❌ ${prefix} ${head}`,
+			"background:red;color:white;display:block;font-size:15px", tail);
 		console.info("%cℹ️", "font-size:15px", info);
 	}
 

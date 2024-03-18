@@ -29,6 +29,6 @@ export default {
 	 *      zerobased: false
 	 *  }
 	 */
-	bubble_maxR: <number|(() => number)> 35,
+	bubble_maxR: <number | (() => number)>35,
 	bubble_zerobased: false
 };

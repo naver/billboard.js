@@ -2,10 +2,10 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isUndefined, isDefined, isObject, isValue, notEmpty, isArray} from "../../module/util";
+import {isArray, isDefined, isObject, isUndefined, isValue, notEmpty} from "../../module/util";
 import {runWorker} from "../../module/worker";
-import {columns, json, rows, url} from "./convert.helper";
 import type {IData} from "../data/IData";
+import {columns, json, rows, url} from "./convert.helper";
 
 /**
  * Get data key for JSON
@@ -55,10 +55,8 @@ export default {
 		}
 
 		if (data.url && callback) {
-			url(data.url, data.mimeType, data.headers,
-				getDataKeyForJson(data.keys, config),
-				callback
-			);
+			url(data.url, data.mimeType, data.headers, getDataKeyForJson(data.keys, config),
+				callback);
 		} else if (data.json) {
 			runWorker(useWorker, json, callback, [columns, rows])(
 				data.json,
@@ -73,7 +71,7 @@ export default {
 		}
 	},
 
-	convertDataToTargets(data: {[key:string]: number|null}[], appendXs: boolean): IData[] {
+	convertDataToTargets(data: {[key: string]: number | null}[], appendXs: boolean): IData[] {
 		const $$ = this;
 		const {axis, config, state} = $$;
 		const chartType = config.data_type;
@@ -139,8 +137,7 @@ export default {
 			// when .load() with 'append' option is used for indexed axis
 			// @ts-ignore
 			const isDataAppend = data.__append__;
-			const xIndex = xKey === null && isDataAppend ?
-				$$.api.data.values(id).length : 0;
+			const xIndex = xKey === null && isDataAppend ? $$.api.data.values(id).length : 0;
 
 			return {
 				id: convertedId,
@@ -151,7 +148,8 @@ export default {
 					let x;
 
 					value = value !== null && !isNaN(value) && !isObject(value) ?
-						+value : (isArray(value) || isObject(value) ? value : null);
+						+value :
+						(isArray(value) || isObject(value) ? value : null);
 
 					// use x as categories if custom x and categorized
 					if ((isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX)) {
@@ -210,7 +208,9 @@ export default {
 		// set target types
 		if (chartType && $$.isValidChartType(chartType)) {
 			const targetIds = $$.mapToIds(targets)
-				.filter(id => !(id in config.data_types) || !$$.isValidChartType(config.data_types[id]));
+				.filter(id =>
+					!(id in config.data_types) || !$$.isValidChartType(config.data_types[id])
+				);
 
 			$$.setTargetType(targetIds, chartType);
 		}

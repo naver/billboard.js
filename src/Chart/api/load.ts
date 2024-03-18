@@ -2,9 +2,9 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {requestIdleCallback} from "../../module/browser";
-import {isString, isArray, isEmpty} from "../../module/util";
 import {callDone} from "../../ChartInternal/data/load";
+import {requestIdleCallback} from "../../module/browser";
+import {isArray, isEmpty, isString} from "../../module/util";
 
 export default {
 	/**

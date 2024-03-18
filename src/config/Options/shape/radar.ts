@@ -62,10 +62,10 @@ export default {
 	 *      }
 	 *  }
 	 */
-	radar_axis_max: <number|undefined> undefined,
+	radar_axis_max: <number | undefined>undefined,
 	radar_axis_line_show: true,
 	radar_axis_text_show: true,
-	radar_axis_text_position: <{x?: number; y?: number;}> {},
+	radar_axis_text_position: <{x?: number, y?: number}>{},
 	radar_level_depth: 3,
 	radar_level_show: true,
 	radar_level_text_format: (x: number) => (x % 1 === 0 ? x : x.toFixed(2)),

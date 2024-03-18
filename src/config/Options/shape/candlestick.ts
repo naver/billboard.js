@@ -53,8 +53,8 @@ export default {
 	 *      }
 	 *  }
 	 */
-	candlestick_width: <number|{ratio?: number; max?: number;}|undefined> undefined,
+	candlestick_width: <number | {ratio?: number, max?: number} | undefined>undefined,
 	candlestick_width_ratio: 0.6,
 	candlestick_width_max: undefined,
-	candlestick_color_down: <string|{[key: string]: string}> "red"
+	candlestick_color_down: <string | {[key: string]: string}>"red"
 };

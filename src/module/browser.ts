@@ -8,10 +8,12 @@
  */
 /* eslint-disable no-new-func, no-undef */
 export {
-	win as window,
+	cancelAnimationFrame,
+	cancelIdleCallback,
 	doc as document,
-	requestAnimationFrame, cancelAnimationFrame,
-	requestIdleCallback, cancelIdleCallback
+	requestAnimationFrame,
+	requestIdleCallback,
+	win as window
 };
 
 /**
@@ -20,7 +22,8 @@ export {
  * @private
  */
 function getGlobal() {
-	return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
+	return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object &&
+		globalThis) ||
 		(typeof global === "object" && global !== null && global.Object === Object && global) ||
 		(typeof self === "object" && self !== null && self.Object === Object && self) ||
 		Function("return this")();
@@ -33,8 +36,10 @@ function getGlobal() {
  * @private
  */
 function getFallback(w) {
-	const hasRAF = typeof w?.requestAnimationFrame === "function" && typeof w?.cancelAnimationFrame === "function";
-	const hasRIC = typeof w?.requestIdleCallback === "function" && typeof w?.cancelIdleCallback === "function";
+	const hasRAF = typeof w?.requestAnimationFrame === "function" &&
+		typeof w?.cancelAnimationFrame === "function";
+	const hasRIC = typeof w?.requestIdleCallback === "function" &&
+		typeof w?.cancelIdleCallback === "function";
 	const request = cb => setTimeout(cb, 1);
 	const cancel = id => clearTimeout(id);
 

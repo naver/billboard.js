@@ -2,12 +2,12 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {area as d3Area} from "d3-shape";
 import {select as d3Select} from "d3-selection";
+import {area as d3Area} from "d3-shape";
+import {d3Selection} from "../../../types";
 import {$AREA, $CIRCLE, $LINE} from "../../config/classes";
 import {getRandom} from "../../module/util";
 import type {IData, IDataRow} from "../data/IData";
-import {d3Selection} from "../../../types";
 
 type Indices = {[key: string | "__max__"]: number};
 
@@ -30,8 +30,7 @@ export default {
 	updateAreaColor(d: IDataRow): string {
 		const $$ = this;
 
-		return $$.config.area_linearGradient ?
-			$$.getGradienColortUrl(d.id) : $$.color(d);
+		return $$.config.area_linearGradient ? $$.getGradienColortUrl(d.id) : $$.color(d);
 	},
 
 	/**
@@ -79,14 +78,15 @@ export default {
 	 */
 	redrawArea(drawFn: Function, withTransition?: boolean, isSub = false): d3Selection[] {
 		const $$ = this;
-		const {area} = (isSub ? this.$el.subchart : this.$el);
+		const {area} = isSub ? this.$el.subchart : this.$el;
 		const {orgAreaOpacity} = $$.state;
 
 		return [
 			$$.$T(area, withTransition, getRandom())
 				.attr("d", drawFn)
 				.style("fill", $$.updateAreaColor.bind($$))
-				.style("opacity", d => String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity))
+				.style("opacity",
+					d => String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity))
 		];
 	},
 
@@ -107,18 +107,12 @@ export default {
 		const yScale = $$.getYScaleById.bind($$);
 
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
-		const value0 = (d, i) => ($$.isGrouped(d.id) ?
-			getPoints(d, i)[0][1] :
-			yScale(d.id, isSub)(
-				$$.isAreaRangeType(d) ?
-					$$.getRangedData(d, "high") : $$.getShapeYMin(d.id)
-			));
-		const value1 = (d, i) => ($$.isGrouped(d.id) ?
-			getPoints(d, i)[1][1] :
-			yScale(d.id, isSub)(
-				$$.isAreaRangeType(d) ?
-					$$.getRangedData(d, "low") : d.value
-			));
+		const value0 = (d, i) => ($$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)(
+			$$.isAreaRangeType(d) ? $$.getRangedData(d, "high") : $$.getShapeYMin(d.id)
+		));
+		const value1 = (d, i) => ($$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScale(d.id, isSub)(
+			$$.isAreaRangeType(d) ? $$.getRangedData(d, "low") : d.value
+		));
 
 		return d => {
 			let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
@@ -162,7 +156,8 @@ export default {
 	},
 
 	generateGetAreaPoints(
-		areaIndices: Indices, isSub?: boolean
+		areaIndices: Indices,
+		isSub?: boolean
 	): (d: IDataRow, i: number) => [number, number][] {
 		// partial duplication of generateGetBarPoints
 		const $$ = this;
@@ -180,9 +175,11 @@ export default {
 			let posY = y(d);
 
 			// fix posY not to overflow opposite quadrant
-			if (config.axis_rotated && (
-				(value > 0 && posY < y0) || (value < 0 && y0 < posY)
-			)) {
+			if (
+				config.axis_rotated && (
+					(value > 0 && posY < y0) || (value < 0 && y0 < posY)
+				)
+			) {
 				posY = y0;
 			}
 

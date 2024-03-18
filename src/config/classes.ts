@@ -103,8 +103,7 @@ export const $EVENT = {
 	eventRect: "bb-event-rect",
 	eventRects: "bb-event-rects",
 	eventRectsMultiple: "bb-event-rects-multiple",
-	eventRectsSingle: "bb-event-rects-single",
-
+	eventRectsSingle: "bb-event-rects-single"
 };
 
 export const $FOCUS = {
@@ -151,7 +150,7 @@ export const $SELECT = {
 
 export const $SHAPE = {
 	shape: "bb-shape",
-	shapes: "bb-shapes",
+	shapes: "bb-shapes"
 };
 
 export const $SUBCHART = {

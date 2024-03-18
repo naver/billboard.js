@@ -5,7 +5,8 @@
 import {$ARC, $AXIS} from "../../config/classes";
 import {asHalfPixel} from "../../module/util";
 
-type TranslateParam = "main" | "context" | "legend" | "x" | "y" | "y2" | "subX" | "arc" | "radar" | "polar";
+type TranslateParam = "main" | "context" | "legend" | "x" | "y" | "y2" | "subX" | "arc" | "radar"
+	| "polar";
 
 export default {
 	getTranslate(target: TranslateParam, index = 0): string {
@@ -72,7 +73,6 @@ export default {
 		const yAxis = transitions?.axisY ?
 			transitions.axisY :
 			$T(main.select(`.${$AXIS.axisY}`), withTransition);
-
 
 		const y2Axis = transitions?.axisY2 ?
 			transitions.axisY2 :

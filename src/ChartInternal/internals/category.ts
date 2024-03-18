@@ -13,5 +13,5 @@ export default {
 		const {axis_x_categories} = this.config;
 
 		return axis_x_categories?.[i] ?? i;
-	},
+	}
 };
