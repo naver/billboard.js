@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.2-nightly-20240314004552
+ * @version 3.11.3-nightly-20240319004555
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -90,707 +90,373 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ TableView; }
 });
 
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
-function _typeof(o) {
-  "@babel/helpers - typeof";
-
-  return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) {
-    return typeof o;
-  } : function (o) {
-    return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o;
-  }, _typeof(o);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPrimitive.js
-
-function toPrimitive(t, r) {
-  if ("object" != _typeof(t) || !t) return t;
-  var e = t[Symbol.toPrimitive];
-  if (void 0 !== e) {
-    var i = e.call(t, r || "default");
-    if ("object" != _typeof(i)) return i;
-    throw new TypeError("@@toPrimitive must return a primitive value.");
-  }
-  return ("string" === r ? String : Number)(t);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toPropertyKey.js
-
-
-function toPropertyKey(t) {
-  var i = toPrimitive(t, "string");
-  return "symbol" == _typeof(i) ? i : String(i);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-
-function _defineProperty(obj, key, value) {
-  key = toPropertyKey(key);
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-  return obj;
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/newArrowCheck.js
-function _newArrowCheck(innerThis, boundThis) {
-  if (innerThis !== boundThis) {
-    throw new TypeError("Cannot instantiate an arrow function");
-  }
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-  return self;
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-  return _setPrototypeOf(o, p);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
-
-function _inheritsLoose(subClass, superClass) {
-  subClass.prototype = Object.create(superClass.prototype);
-  subClass.prototype.constructor = subClass;
-  _setPrototypeOf(subClass, superClass);
-}
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Base class to generate billboard.js plugin
- * @class Plugin
- */
-/**
- * Version info string for plugin
- * @name version
- * @static
- * @memberof Plugin
- * @type {string}
- * @example
- *   bb.plugin.stanford.version;  // ex) 1.9.0
- */
-let Plugin = /*#__PURE__*/function () {
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+class Plugin {
   /**
    * Constructor
    * @param {Any} options config option object
    * @private
    */
-  function Plugin(options) {
-    if (options === void 0) {
-      options = {};
-    }
-    this.$$ = void 0;
-    this.options = void 0;
+  constructor(options = {}) {
+    __publicField(this, "$$");
+    __publicField(this, "options");
     this.options = options;
   }
-
   /**
    * Lifecycle hook for 'beforeInit' phase.
    * @private
    */
-  var _proto = Plugin.prototype;
-  _proto.$beforeInit = function $beforeInit() {}
-
+  $beforeInit() {
+  }
   /**
    * Lifecycle hook for 'init' phase.
    * @private
-   */;
-  _proto.$init = function $init() {}
-
+   */
+  $init() {
+  }
   /**
    * Lifecycle hook for 'afterInit' phase.
    * @private
-   */;
-  _proto.$afterInit = function $afterInit() {}
-
+   */
+  $afterInit() {
+  }
   /**
    * Lifecycle hook for 'redraw' phase.
    * @private
-   */;
-  _proto.$redraw = function $redraw() {}
-
+   */
+  $redraw() {
+  }
   /**
    * Lifecycle hook for 'willDestroy' phase.
    * @private
-   */;
-  _proto.$willDestroy = function $willDestroy() {
-    var _this = this;
-    Object.keys(this).forEach(function (key) {
-      _newArrowCheck(this, _this);
+   */
+  $willDestroy() {
+    Object.keys(this).forEach((key) => {
       this[key] = null;
       delete this[key];
-    }.bind(this));
-  };
-  return Plugin;
-}();
-Plugin.version = "3.11.2-nightly-20240314004552";
+    });
+  }
+}
+__publicField(Plugin, "version", "3.11.3-nightly-20240319004555");
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
-/**
- * Copyright (c) 2021 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * TableView plugin option class
- * @class TableviewOptions
- * @param {Options} options TableView plugin options
- * @augments Plugin
- * @returns {TableviewOptions}
- * @private
- */
-let Options = function () {
-  return {
-    /**
-     * Set tableview holder selector.
-     * - **NOTE:** If not set, will append new holder element dynamically right after chart element.
-     * @name selector
-     * @memberof plugin-tableview
-     * @type {string}
-     * @default undefined
-     * @example
-     *   selector: "#table-holder"
-     */
-    selector: undefined,
-    /**
-     * Set category title text
-     * @name categoryTitle
-     * @memberof plugin-tableview
-     * @type {string}
-     * @default "Category"
-     * @example
-     *   categoryTitle: "#table-holder"
-     */
-    categoryTitle: "Category",
-    /**
-     * Set category text format function.
-     * @name categoryFormat
-     * @memberof plugin-tableview
-     * @type {Function}
-     * @returns {string}
-     * @default function(v) { // will return formatted value according x Axis type }}
-     * @example
-     *   categoryFormat: "#table-holder"
-     */
-    categoryFormat: function categoryFormat(v) {
-      let category = v;
-      if (this.$$.axis.isCategorized()) {
-        category = this.$$.categoryName(v);
-      } else if (this.$$.axis.isTimeSeries()) {
-        category = v.toLocaleDateString();
-      }
-      return category;
-    },
-    /**
-     * Set tableview holder class name.
-     * @name class
-     * @memberof plugin-tableview
-     * @type {string}
-     * @default undefined
-     * @example
-     *   class: "table-class-name"
-     */
-    class: undefined,
-    /**
-     * Set to apply default style(`.bb-tableview`) to tableview element.
-     * @name style
-     * @memberof plugin-tableview
-     * @type {boolean}
-     * @default true
-     * @example
-     *   style: false
-     */
-    style: !0,
-    /**
-     * Set tableview title text.
-     * - **NOTE:** If set [title.text](https://naver.github.io/billboard.js/release/latest/doc/Options.html#.title), will be used when this option value is empty.
-     * @name title
-     * @memberof plugin-tableview
-     * @type {string}
-     * @default undefined
-     * @example
-     *   title: "Table Title Text"
-     */
-    title: undefined,
-    /**
-     * Update tableview from data visibility update(ex. legend toggle).
-     * @name updateOnToggle
-     * @memberof plugin-tableview
-     * @type {boolean}
-     * @default true
-     * @example
-     *   legendToggleUpdate: false
-     */
-    updateOnToggle: !0,
-    /**
-     * Set how null value to be shown.
-     * @name nullString
-     * @memberof plugin-tableview
-     * @type {string}
-     * @default "-"
-     * @example
-     *   nullString: "N/A"
-     */
-    nullString: "-"
-  };
-};
+class Options {
+  constructor() {
+    return {
+      /**
+       * Set tableview holder selector.
+       * - **NOTE:** If not set, will append new holder element dynamically right after chart element.
+       * @name selector
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default undefined
+       * @example
+       *   selector: "#table-holder"
+       */
+      selector: void 0,
+      /**
+       * Set category title text
+       * @name categoryTitle
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default "Category"
+       * @example
+       *   categoryTitle: "#table-holder"
+       */
+      categoryTitle: "Category",
+      /**
+       * Set category text format function.
+       * @name categoryFormat
+       * @memberof plugin-tableview
+       * @type {Function}
+       * @returns {string}
+       * @default function(v) { // will return formatted value according x Axis type }}
+       * @example
+       *   categoryFormat: "#table-holder"
+       */
+      categoryFormat: function(v) {
+        let category = v;
+        if (this.$$.axis.isCategorized()) {
+          category = this.$$.categoryName(v);
+        } else if (this.$$.axis.isTimeSeries()) {
+          category = v.toLocaleDateString();
+        }
+        return category;
+      },
+      /**
+       * Set tableview holder class name.
+       * @name class
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default undefined
+       * @example
+       *   class: "table-class-name"
+       */
+      class: void 0,
+      /**
+       * Set to apply default style(`.bb-tableview`) to tableview element.
+       * @name style
+       * @memberof plugin-tableview
+       * @type {boolean}
+       * @default true
+       * @example
+       *   style: false
+       */
+      style: true,
+      /**
+       * Set tableview title text.
+       * - **NOTE:** If set [title.text](https://naver.github.io/billboard.js/release/latest/doc/Options.html#.title), will be used when this option value is empty.
+       * @name title
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default undefined
+       * @example
+       *   title: "Table Title Text"
+       */
+      title: void 0,
+      /**
+       * Update tableview from data visibility update(ex. legend toggle).
+       * @name updateOnToggle
+       * @memberof plugin-tableview
+       * @type {boolean}
+       * @default true
+       * @example
+       *   legendToggleUpdate: false
+       */
+      updateOnToggle: true,
+      /**
+       * Set how null value to be shown.
+       * @name nullString
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default "-"
+       * @example
+       *   nullString: "N/A"
+       */
+      nullString: "-"
+    };
+  }
+}
 
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/const.ts
-/**
- * Copyright (c) 2021 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Constants values for plugin option
- * @ignore
- */
 
 const defaultStyle = {
-    id: "__tableview-style__",
-    class: "bb-tableview",
-    rule: ".bb-tableview {\n\t\tborder-collapse:collapse;\n\t\tborder-spacing:0;\n\t\tbackground:#fff;\n\t\tmin-width:100%;\n\t\tmargin-top:10px;\n\t\tfont-family:sans-serif;\n\t\tfont-size:.9em;\n\t}\n\t.bb-tableview tr:hover {\n\t\tbackground:#eef7ff;\n\t}\n\t.bb-tableview thead tr {\n\t\tbackground:#f8f8f8;\n\t}\n\t.bb-tableview caption,.bb-tableview td,.bb-tableview th {\n\t\ttext-align: center;\n\t\tborder:1px solid silver;\n\t\tpadding:.5em;\n\t}\n\t.bb-tableview caption {\n\t\tfont-size:1.1em;\n\t\tfont-weight:700;\n\t\tmargin-bottom: -1px;\n\t}"
-  },
-  tpl = {
-    body: "<caption>{=title}</caption>\n\t\t<thead><tr>{=thead}</tr></thead>\n\t\t<tbody>{=tbody}</tbody>",
-    thead: "<th scope=\"col\">{=title}</th>",
-    tbodyHeader: "<th scope=\"row\">{=value}</th>",
-    tbody: "<td>{=value}</td>"
-  }; // template
+  id: "__tableview-style__",
+  class: "bb-tableview",
+  rule: `.bb-tableview {
+		border-collapse:collapse;
+		border-spacing:0;
+		background:#fff;
+		min-width:100%;
+		margin-top:10px;
+		font-family:sans-serif;
+		font-size:.9em;
+	}
+	.bb-tableview tr:hover {
+		background:#eef7ff;
+	}
+	.bb-tableview thead tr {
+		background:#f8f8f8;
+	}
+	.bb-tableview caption,.bb-tableview td,.bb-tableview th {
+		text-align: center;
+		border:1px solid silver;
+		padding:.5em;
+	}
+	.bb-tableview caption {
+		font-size:1.1em;
+		font-weight:700;
+		margin-bottom: -1px;
+	}`
+};
+const tpl = {
+  body: `<caption>{=title}</caption>
+		<thead><tr>{=thead}</tr></thead>
+		<tbody>{=tbody}</tbody>`,
+  thead: `<th scope="col">{=title}</th>`,
+  tbodyHeader: `<th scope="row">{=value}</th>`,
+  tbody: `<td>{=value}</td>`
+};
+
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Window object
- * @private
- */
-/* eslint-disable no-new-func, no-undef */
-
-
-/**
- * Get global object
- * @returns {object} window object
- * @private
- */
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
-
-/**
- * Get fallback object
- * @param {object} w global object
- * @returns {Array} fallback object array
- * @private
- */
 function getFallback(w) {
-  var _this = this;
-  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function",
-    hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function",
-    request = function (cb) {
-      _newArrowCheck(this, _this);
-      return setTimeout(cb, 1);
-    }.bind(this),
-    cancel = function (id) {
-      _newArrowCheck(this, _this);
-      return clearTimeout(id);
-    }.bind(this);
-  return [hasRAF ? w.requestAnimationFrame : request, hasRAF ? w.cancelAnimationFrame : cancel, hasRIC ? w.requestIdleCallback : request, hasRIC ? w.cancelIdleCallback : cancel];
+  const hasRAF = typeof (w == null ? void 0 : w.requestAnimationFrame) === "function" && typeof (w == null ? void 0 : w.cancelAnimationFrame) === "function";
+  const hasRIC = typeof (w == null ? void 0 : w.requestIdleCallback) === "function" && typeof (w == null ? void 0 : w.cancelIdleCallback) === "function";
+  const request = (cb) => setTimeout(cb, 1);
+  const cancel = (id) => clearTimeout(id);
+  return [
+    hasRAF ? w.requestAnimationFrame : request,
+    hasRAF ? w.cancelAnimationFrame : cancel,
+    hasRIC ? w.requestIdleCallback : request,
+    hasRIC ? w.cancelIdleCallback : cancel
+  ];
 }
-const win = getGlobal(),
-  doc = win == null ? void 0 : win.document,
-  _getFallback = getFallback(win),
-  requestAnimationFrame = _getFallback[0],
-  cancelAnimationFrame = _getFallback[1],
-  requestIdleCallback = _getFallback[2],
-  cancelIdleCallback = _getFallback[3];
+const win = getGlobal();
+const doc = win == null ? void 0 : win.document;
+const [
+  requestAnimationFrame,
+  cancelAnimationFrame,
+  requestIdleCallback,
+  cancelIdleCallback
+] = getFallback(win);
+
 ;// CONCATENATED MODULE: ./src/module/util.ts
+var util_defProp = Object.defineProperty;
+var __getOwnPropSymbols = Object.getOwnPropertySymbols;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __propIsEnum = Object.prototype.propertyIsEnumerable;
+var util_defNormalProp = (obj, key, value) => key in obj ? util_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (__hasOwnProp.call(b, prop))
+      util_defNormalProp(a, prop, b[prop]);
+  if (__getOwnPropSymbols)
+    for (var prop of __getOwnPropSymbols(b)) {
+      if (__propIsEnum.call(b, prop))
+        util_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
 
 
-var _this = undefined;
-function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function _objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
 
 
-
-
-const isValue = function (v) {
-    _newArrowCheck(this, _this);
-    return v || v === 0;
-  }.bind(undefined),
-  isFunction = function (v) {
-    _newArrowCheck(this, _this);
-    return typeof v === "function";
-  }.bind(undefined),
-  isString = function (v) {
-    _newArrowCheck(this, _this);
-    return typeof v === "string";
-  }.bind(undefined),
-  isNumber = function (v) {
-    _newArrowCheck(this, _this);
-    return typeof v === "number";
-  }.bind(undefined),
-  isUndefined = function (v) {
-    _newArrowCheck(this, _this);
-    return typeof v === "undefined";
-  }.bind(undefined),
-  isDefined = function (v) {
-    _newArrowCheck(this, _this);
-    return typeof v !== "undefined";
-  }.bind(undefined),
-  isboolean = function (v) {
-    _newArrowCheck(this, _this);
-    return typeof v === "boolean";
-  }.bind(undefined),
-  ceil10 = function (v) {
-    _newArrowCheck(this, _this);
-    return Math.ceil(v / 10) * 10;
-  }.bind(undefined),
-  asHalfPixel = function (n) {
-    _newArrowCheck(this, _this);
-    return Math.ceil(n) + .5;
-  }.bind(undefined),
-  diffDomain = function (d) {
-    _newArrowCheck(this, _this);
-    return d[1] - d[0];
-  }.bind(undefined),
-  isObjectType = function (v) {
-    _newArrowCheck(this, _this);
-    return typeof v === "object";
-  }.bind(undefined),
-  isEmpty = function (o) {
-    _newArrowCheck(this, _this);
-    return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
-  }.bind(undefined),
-  notEmpty = function (o) {
-    _newArrowCheck(this, _this);
-    return !isEmpty(o);
-  }.bind(undefined),
-  isArray = function (arr) {
-    _newArrowCheck(this, _this);
-    return Array.isArray(arr);
-  }.bind(undefined),
-  isObject = function (obj) {
-    _newArrowCheck(this, _this);
-    return obj && !(obj != null && obj.nodeType) && isObjectType(obj) && !isArray(obj);
-  }.bind(undefined);
-/**
- * Check if is array
- * @param {Array} arr Data to be checked
- * @returns {boolean}
- * @private
- */
-/**
- * Check if is object
- * @param {object} obj Data to be checked
- * @returns {boolean}
- * @private
- */
-/**
- * Get specified key value from object
- * If default value is given, will return if given key value not found
- * @param {object} options Source object
- * @param {string} key Key value
- * @param {*} defaultValue Default value
- * @returns {*}
- * @private
- */
+const isValue = (v) => v || v === 0;
+const isFunction = (v) => typeof v === "function";
+const isString = (v) => typeof v === "string";
+const isNumber = (v) => typeof v === "number";
+const isUndefined = (v) => typeof v === "undefined";
+const isDefined = (v) => typeof v !== "undefined";
+const isboolean = (v) => typeof v === "boolean";
+const ceil10 = (v) => Math.ceil(v / 10) * 10;
+const asHalfPixel = (n) => Math.ceil(n) + 0.5;
+const diffDomain = (d) => d[1] - d[0];
+const isObjectType = (v) => typeof v === "object";
+const isEmpty = (o) => isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
+const notEmpty = (o) => !isEmpty(o);
+const isArray = (arr) => Array.isArray(arr);
+const isObject = (obj) => obj && !(obj == null ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj);
 function getOption(options, key, defaultValue) {
   return isDefined(options[key]) ? options[key] : defaultValue;
 }
-
-/**
- * Check if value exist in the given object
- * @param {object} dict Target object to be checked
- * @param {*} value Value to be checked
- * @returns {boolean}
- * @private
- */
 function hasValue(dict, value) {
-  var _this2 = this;
-  let found = !1;
-  Object.keys(dict).forEach(function (key) {
-    _newArrowCheck(this, _this2);
-    return dict[key] === value && (found = !0);
-  }.bind(this));
+  let found = false;
+  Object.keys(dict).forEach((key) => dict[key] === value && (found = true));
   return found;
 }
-
-/**
- * Call function with arguments
- * @param {Function} fn Function to be called
- * @param {*} thisArg "this" value for fn
- * @param {*} args Arguments for fn
- * @returns {boolean} true: fn is function, false: fn is not function
- * @private
- */
-function callFn(fn, thisArg) {
+function callFn(fn, thisArg, ...args) {
   const isFn = isFunction(fn);
-  for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-    args[_key - 2] = arguments[_key];
-  }
-  isFn && fn.call.apply(fn, [thisArg].concat(args));
+  isFn && fn.call(thisArg, ...args);
   return isFn;
 }
-
-/**
- * Call function after all transitions ends
- * @param {d3.transition} transition Transition
- * @param {Fucntion} cb Callback function
- * @private
- */
 function endall(transition, cb) {
-  var _this3 = this;
   let n = 0;
-  const end = function () {
-    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-      args[_key2] = arguments[_key2];
-    }
-    --n || cb.apply.apply(cb, [this].concat(args));
+  const end = function(...args) {
+    !--n && cb.apply(this, ...args);
   };
-
-  // if is transition selection
   if ("duration" in transition) {
-    transition.each(function () {
-      _newArrowCheck(this, _this3);
-      return ++n;
-    }.bind(this)).on("end", end);
+    transition.each(() => ++n).on("end", end);
   } else {
     ++n;
     transition.call(end);
   }
 }
-
-/**
- * Replace tag sign to html entity
- * @param {string} str Target string value
- * @returns {string}
- * @private
- */
 function sanitize(str) {
   return isString(str) ? str.replace(/<(script|img)?/ig, "&lt;").replace(/(script)?>/ig, "&gt;") : str;
 }
-
-/**
- * Set text value. If there's multiline add nodes.
- * @param {d3Selection} node Text node
- * @param {string} text Text value string
- * @param {Array} dy dy value for multilined text
- * @param {boolean} toMiddle To be alingned vertically middle
- * @private
- */
-function setTextValue(node, text, dy, toMiddle) {
-  var _this4 = this;
-  if (dy === void 0) {
-    dy = [-1, 1];
-  }
-  if (toMiddle === void 0) {
-    toMiddle = !1;
-  }
+function setTextValue(node, text, dy = [-1, 1], toMiddle = false) {
   if (!node || !isString(text)) {
     return;
   }
   if (text.indexOf("\n") === -1) {
     node.text(text);
   } else {
-    const diff = [node.text(), text].map(function (v) {
-      _newArrowCheck(this, _this4);
-      return v.replace(/[\s\n]/g, "");
-    }.bind(this));
+    const diff = [node.text(), text].map((v) => v.replace(/[\s\n]/g, ""));
     if (diff[0] !== diff[1]) {
-      const multiline = text.split("\n"),
-        len = toMiddle ? multiline.length - 1 : 1;
-      // reset possible text
+      const multiline = text.split("\n");
+      const len = toMiddle ? multiline.length - 1 : 1;
       node.html("");
-      multiline.forEach(function (v, i) {
-        _newArrowCheck(this, _this4);
-        node.append("tspan").attr("x", 0).attr("dy", (i === 0 ? dy[0] * len : dy[1]) + "em").text(v);
-      }.bind(this));
+      multiline.forEach((v, i) => {
+        node.append("tspan").attr("x", 0).attr("dy", `${i === 0 ? dy[0] * len : dy[1]}em`).text(v);
+      });
     }
   }
 }
-
-/**
- * Substitution of SVGPathSeg API polyfill
- * @param {SVGGraphicsElement} path Target svg element
- * @returns {Array}
- * @private
- */
 function getRectSegList(path) {
-  /*
-   * seg1 ---------- seg2
-   *   |               |
-   *   |               |
-   *   |               |
-   * seg0 ---------- seg3
-   * */
-  const _path$getBBox = path.getBBox(),
-    x = _path$getBBox.x,
-    y = _path$getBBox.y,
-    width = _path$getBBox.width,
-    height = _path$getBBox.height;
-  return [{
-    x: x,
-    y: y + height
-  },
-  // seg0
-  {
-    x: x,
-    y: y
-  },
-  // seg1
-  {
-    x: x + width,
-    y: y
-  },
-  // seg2
-  {
-    x: x + width,
-    y: y + height
-  } // seg3
+  const { x, y, width, height } = path.getBBox();
+  return [
+    { x, y: y + height },
+    // seg0
+    { x, y },
+    // seg1
+    { x: x + width, y },
+    // seg2
+    { x: x + width, y: y + height }
+    // seg3
   ];
 }
-
-/**
- * Get svg bounding path box dimension
- * @param {SVGGraphicsElement} path Target svg element
- * @returns {object}
- * @private
- */
 function getPathBox(path) {
-  const _path$getBoundingClie = path.getBoundingClientRect(),
-    width = _path$getBoundingClie.width,
-    height = _path$getBoundingClie.height,
-    items = getRectSegList(path),
-    x = items[0].x,
-    y = Math.min(items[0].y, items[1].y);
+  const { width, height } = path.getBoundingClientRect();
+  const items = getRectSegList(path);
+  const x = items[0].x;
+  const y = Math.min(items[0].y, items[1].y);
   return {
-    x: x,
-    y: y,
-    width: width,
-    height: height
+    x,
+    y,
+    width,
+    height
   };
 }
-
-/**
- * Get event's current position coordinates
- * @param {object} event Event object
- * @param {SVGElement|HTMLElement} element Target element
- * @returns {Array} [x, y] Coordinates x, y array
- * @private
- */
 function getPointer(event, element) {
-  var _ref,
-    _this5 = this;
-  const touches = event && ((_ref = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _ref[0]);
+  var _a;
+  const touches = event && ((_a = event.touches || event.sourceEvent && event.sourceEvent.touches) == null ? void 0 : _a[0]);
   let pointer = [0, 0];
   try {
     pointer = (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.pointer)(touches || event, element);
-  } catch (e) {}
-  return pointer.map(function (v) {
-    _newArrowCheck(this, _this5);
-    return isNaN(v) ? 0 : v;
-  }.bind(this));
+  } catch (e) {
+  }
+  return pointer.map((v) => isNaN(v) ? 0 : v);
 }
-
-/**
- * Return brush selection array
- * @param {object} ctx Current instance
- * @returns {d3.brushSelection}
- * @private
- */
 function getBrushSelection(ctx) {
-  const event = ctx.event,
-    $el = ctx.$el,
-    main = $el.subchart.main || $el.main;
+  const { event, $el } = ctx;
+  const main = $el.subchart.main || $el.main;
   let selection;
-
-  // check from event
   if (event && event.type === "brush") {
     selection = event.selection;
-    // check from brush area selection
   } else if (main && (selection = main.select(".bb-brush").node())) {
     selection = (0,external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_.brushSelection)(selection);
   }
   return selection;
 }
-
-/**
- * Get boundingClientRect.
- * Cache the evaluated value once it was called.
- * @param {HTMLElement} node Target element
- * @returns {object}
- * @private
- */
 function getBoundingRect(node) {
   const needEvaluate = !("rect" in node) || "rect" in node && node.hasAttribute("width") && node.rect.width !== +node.getAttribute("width");
   return needEvaluate ? node.rect = node.getBoundingClientRect() : node.rect;
 }
-
-/**
- * Retrun random number
- * @param {boolean} asStr Convert returned value as string
- * @param {number} min Minimum value
- * @param {number} max Maximum value
- * @returns {number|string}
- * @private
- */
-function getRandom(asStr, min, max) {
-  if (asStr === void 0) {
-    asStr = !0;
-  }
-  if (min === void 0) {
-    min = 0;
-  }
-  if (max === void 0) {
-    max = 1e4;
-  }
-  const crpt = win.crypto || win.msCrypto,
-    rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
-  return asStr ? rand + "" : rand;
+function getRandom(asStr = true, min = 0, max = 1e4) {
+  const crpt = win.crypto || win.msCrypto;
+  const rand = crpt ? min + crpt.getRandomValues(new Uint32Array(1))[0] % (max - min + 1) : Math.floor(Math.random() * (max - min) + min);
+  return asStr ? String(rand) : rand;
 }
-
-/**
- * Find index based on binary search
- * @param {Array} arr Data array
- * @param {number} v Target number to find
- * @param {number} start Start index of data array
- * @param {number} end End index of data arr
- * @param {boolean} isRotated Weather is roted axis
- * @returns {number} Index number
- * @private
- */
 function findIndex(arr, v, start, end, isRotated) {
   if (start > end) {
     return -1;
   }
   const mid = Math.floor((start + end) / 2);
-  let _arr$mid = arr[mid],
-    x = _arr$mid.x,
-    _arr$mid$w = _arr$mid.w,
-    w = _arr$mid$w === void 0 ? 0 : _arr$mid$w;
+  let { x, w = 0 } = arr[mid];
   if (isRotated) {
     x = arr[mid].y;
     w = arr[mid].h;
@@ -800,75 +466,30 @@ function findIndex(arr, v, start, end, isRotated) {
   }
   return v < x ? findIndex(arr, v, start, mid - 1, isRotated) : findIndex(arr, v, mid + 1, end, isRotated);
 }
-
-/**
- * Check if brush is empty
- * @param {object} ctx Bursh context
- * @returns {boolean}
- * @private
- */
 function brushEmpty(ctx) {
   const selection = getBrushSelection(ctx);
   if (selection) {
-    // brush selected area
-    // two-dimensional: [[x0, y0], [x1, y1]]
-    // one-dimensional: [x0, x1] or [y0, y1]
     return selection[0] === selection[1];
   }
-  return !0;
+  return true;
 }
-
-/**
- * Deep copy object
- * @param {object} objectN Source object
- * @returns {object} Cloned object
- * @private
- */
-function deepClone() {
-  var _this6 = this;
-  const _clone = function clone(v) {
-    _newArrowCheck(this, _this6);
+function deepClone(...objectN) {
+  const clone = (v) => {
     if (isObject(v) && v.constructor) {
       const r = new v.constructor();
       for (const k in v) {
-        r[k] = _clone(v[k]);
+        r[k] = clone(v[k]);
       }
       return r;
     }
     return v;
-  }.bind(this);
-  for (var _len3 = arguments.length, objectN = Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
-    objectN[_key3] = arguments[_key3];
-  }
-  return objectN.map(function (v) {
-    _newArrowCheck(this, _this6);
-    return _clone(v);
-  }.bind(this)).reduce(function (a, c) {
-    _newArrowCheck(this, _this6);
-    return _objectSpread(_objectSpread({}, a), c);
-  }.bind(this));
+  };
+  return objectN.map((v) => clone(v)).reduce((a, c) => __spreadValues(__spreadValues({}, a), c));
 }
-
-/**
- * Extend target from source object
- * @param {object} target Target object
- * @param {object|Array} source Source object
- * @returns {object}
- * @private
- */
-function extend(target, source) {
-  var _this7 = this;
-  if (target === void 0) {
-    target = {};
-  }
+function extend(target = {}, source) {
   if (isArray(source)) {
-    source.forEach(function (v) {
-      _newArrowCheck(this, _this7);
-      return extend(target, v);
-    }.bind(this));
+    source.forEach((v) => extend(target, v));
   }
-
-  // exclude name with only numbers
   for (const p in source) {
     if (/^\d+$/.test(p) || p in target) {
       continue;
@@ -877,569 +498,295 @@ function extend(target, source) {
   }
   return target;
 }
-
-/**
- * Return first letter capitalized
- * @param {string} str Target string
- * @returns {string} capitalized string
- * @private
- */
-const capitalize = function (str) {
-  _newArrowCheck(this, _this);
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}.bind(undefined);
-
-/**
- * Camelize from kebob style string
- * @param {string} str Target string
- * @param {string} separator Separator string
- * @returns {string} camelized string
- * @private
- */
-function camelize(str, separator) {
-  var _this8 = this;
-  if (separator === void 0) {
-    separator = "-";
-  }
-  return str.split(separator).map(function (v, i) {
-    _newArrowCheck(this, _this8);
-    return i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase();
-  }.bind(this)).join("");
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+function camelize(str, separator = "-") {
+  return str.split(separator).map((v, i) => i ? v.charAt(0).toUpperCase() + v.slice(1).toLowerCase() : v.toLowerCase()).join("");
 }
-
-/**
- * Convert to array
- * @param {object} v Target to be converted
- * @returns {Array}
- * @private
- */
-const toArray = function (v) {
-  _newArrowCheck(this, _this);
-  return [].slice.call(v);
-}.bind(undefined);
-
-/**
- * Add CSS rules
- * @param {object} style Style object
- * @param {string} selector Selector string
- * @param {Array} prop Prps arrary
- * @returns {number} Newely added rule index
- * @private
- */
+const toArray = (v) => [].slice.call(v);
 function addCssRules(style, selector, prop) {
-  var _this9 = this;
-  const _style$rootSelector = style.rootSelector,
-    rootSelector = _style$rootSelector === void 0 ? "" : _style$rootSelector,
-    sheet = style.sheet,
-    getSelector = function (s) {
-      _newArrowCheck(this, _this9);
-      return s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
-    }.bind(this),
-    rule = rootSelector + " " + getSelector(selector) + " {" + prop.join(";") + "}";
-  return sheet[sheet.insertRule ? "insertRule" : "addRule"](rule, sheet.cssRules.length);
+  const { rootSelector = "", sheet } = style;
+  const getSelector = (s) => s.replace(/\s?(bb-)/g, ".$1").replace(/\.+/g, ".");
+  const rule = `${rootSelector} ${getSelector(selector)} {${prop.join(";")}}`;
+  return sheet[sheet.insertRule ? "insertRule" : "addRule"](
+    rule,
+    sheet.cssRules.length
+  );
 }
-
-/**
- * Get css rules for specified stylesheets
- * @param {Array} styleSheets The stylesheets to get the rules from
- * @returns {Array}
- * @private
- */
 function getCssRules(styleSheets) {
-  var _this10 = this;
   let rules = [];
-  styleSheets.forEach(function (sheet) {
-    _newArrowCheck(this, _this10);
+  styleSheets.forEach((sheet) => {
+    var _a;
     try {
       if (sheet.cssRules && sheet.cssRules.length) {
         rules = rules.concat(toArray(sheet.cssRules));
       }
     } catch (e) {
-      var _window$console;
-      (_window$console = win.console) == null || _window$console.warn("Error while reading rules from " + sheet.href + ": " + e.toString());
+      (_a = win.console) == null ? void 0 : _a.warn(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
     }
-  }.bind(this));
+  });
   return rules;
 }
-
-/**
- * Get current window and container scroll position
- * @param {HTMLElement} node Target element
- * @returns {object} window scroll position
- * @private
- */
 function getScrollPosition(node) {
-  var _ref2, _ref3, _window$pageXOffset, _ref4, _ref5, _window$pageYOffset;
+  var _a, _b, _c, _d;
   return {
-    x: (_ref2 = ((_ref3 = (_window$pageXOffset = win.pageXOffset) != null ? _window$pageXOffset : win.scrollX) != null ? _ref3 : 0) + node.scrollLeft) != null ? _ref2 : 0,
-    y: (_ref4 = ((_ref5 = (_window$pageYOffset = win.pageYOffset) != null ? _window$pageYOffset : win.scrollY) != null ? _ref5 : 0) + node.scrollTop) != null ? _ref4 : 0
+    x: ((_b = (_a = win.pageXOffset) != null ? _a : win.scrollX) != null ? _b : 0) + node.scrollLeft,
+    y: ((_d = (_c = win.pageYOffset) != null ? _c : win.scrollY) != null ? _d : 0) + node.scrollTop
   };
 }
-
-/**
- * Gets the SVGMatrix of an SVGGElement
- * @param {SVGElement} node Node element
- * @returns {SVGMatrix} matrix
- * @private
- */
 function getTranslation(node) {
-  const transform = node ? node.transform : null,
-    baseVal = transform && transform.baseVal;
-  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
-    a: 0,
-    b: 0,
-    c: 0,
-    d: 0,
-    e: 0,
-    f: 0
-  };
+  const transform = node ? node.transform : null;
+  const baseVal = transform && transform.baseVal;
+  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : { a: 0, b: 0, c: 0, d: 0, e: 0, f: 0 };
 }
-
-/**
- * Get unique value from array
- * @param {Array} data Source data
- * @returns {Array} Unique array value
- * @private
- */
 function getUnique(data) {
-  var _this11 = this;
-  const isDate = data[0] instanceof Date,
-    d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
-      _newArrowCheck(this, _this11);
-      return self.indexOf(v) === i;
-    }.bind(this));
-  return isDate ? d.map(function (v) {
-    _newArrowCheck(this, _this11);
-    return new Date(v);
-  }.bind(this)) : d;
+  const isDate = data[0] instanceof Date;
+  const d = (isDate ? data.map(Number) : data).filter((v, i, self) => self.indexOf(v) === i);
+  return isDate ? d.map((v) => new Date(v)) : d;
 }
-
-/**
- * Merge array
- * @param {Array} arr Source array
- * @returns {Array}
- * @private
- */
 function mergeArray(arr) {
-  var _this12 = this;
-  return arr && arr.length ? arr.reduce(function (p, c) {
-    _newArrowCheck(this, _this12);
-    return p.concat(c);
-  }.bind(this)) : [];
+  return arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : [];
 }
-
-/**
- * Merge object returning new object
- * @param {object} target Target object
- * @param {object} objectN Source object
- * @returns {object} merged target object
- * @private
- */
-function mergeObj(target) {
-  for (var _this13 = this, _len4 = arguments.length, objectN = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
-    objectN[_key4 - 1] = arguments[_key4];
-  }
+function mergeObj(target, ...objectN) {
   if (!objectN.length || objectN.length === 1 && !objectN[0]) {
     return target;
   }
   const source = objectN.shift();
   if (isObject(target) && isObject(source)) {
-    Object.keys(source).forEach(function (key) {
-      _newArrowCheck(this, _this13);
+    Object.keys(source).forEach((key) => {
       const value = source[key];
       if (isObject(value)) {
-        target[key] || (target[key] = {});
+        !target[key] && (target[key] = {});
         target[key] = mergeObj(target[key], value);
       } else {
         target[key] = isArray(value) ? value.concat() : value;
       }
-    }.bind(this));
+    });
   }
-  return mergeObj.apply(void 0, [target].concat(objectN));
+  return mergeObj(target, ...objectN);
 }
-
-/**
- * Sort value
- * @param {Array} data value to be sorted
- * @param {boolean} isAsc true: asc, false: desc
- * @returns {number|string|Date} sorted date
- * @private
- */
-function sortValue(data, isAsc) {
-  var _this14 = this;
-  if (isAsc === void 0) {
-    isAsc = !0;
-  }
+function sortValue(data, isAsc = true) {
   let fn;
   if (data[0] instanceof Date) {
-    fn = isAsc ? function (a, b) {
-      _newArrowCheck(this, _this14);
-      return a - b;
-    }.bind(this) : function (a, b) {
-      _newArrowCheck(this, _this14);
-      return b - a;
-    }.bind(this);
+    fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
   } else {
     if (isAsc && !data.every(isNaN)) {
-      fn = function (a, b) {
-        _newArrowCheck(this, _this14);
-        return a - b;
-      }.bind(this);
+      fn = (a, b) => a - b;
     } else if (!isAsc) {
-      fn = function (a, b) {
-        _newArrowCheck(this, _this14);
-        return a > b && -1 || a < b && 1 || a === b && 0;
-      }.bind(this);
+      fn = (a, b) => a > b && -1 || a < b && 1 || a === b && 0;
     }
   }
   return data.concat().sort(fn);
 }
-
-/**
- * Get min/max value
- * @param {string} type 'min' or 'max'
- * @param {Array} data Array data value
- * @returns {number|Date|undefined}
- * @private
- */
 function getMinMax(type, data) {
-  var _this15 = this;
-  let res = data.filter(function (v) {
-    _newArrowCheck(this, _this15);
-    return notEmpty(v);
-  }.bind(this));
+  let res = data.filter((v) => notEmpty(v));
   if (res.length) {
     if (isNumber(res[0])) {
-      res = Math[type].apply(Math, res);
+      res = Math[type](...res);
     } else if (res[0] instanceof Date) {
       res = sortValue(res, type === "min")[0];
     }
   } else {
-    res = undefined;
+    res = void 0;
   }
   return res;
 }
-
-/**
- * Get range
- * @param {number} start Start number
- * @param {number} end End number
- * @param {number} step Step number
- * @returns {Array}
- * @private
- */
-const getRange = function (start, end, step) {
-    if (step === void 0) {
-      step = 1;
-    }
-    _newArrowCheck(this, _this);
-    const res = [],
-      n = Math.max(0, Math.ceil((end - start) / step)) | 0;
-    for (let i = start; i < n; i++) {
-      res.push(start + i * step);
-    }
-    return res;
-  }.bind(undefined),
-  emulateEvent = {
-    mouse: function () {
-      var _this16 = this;
-      _newArrowCheck(this, _this);
-      const getParams = function () {
-        _newArrowCheck(this, _this16);
-        return {
-          bubbles: !1,
-          cancelable: !1,
-          screenX: 0,
-          screenY: 0,
-          clientX: 0,
-          clientY: 0
-        };
-      }.bind(this);
-      try {
-        // eslint-disable-next-line no-new
-        new MouseEvent("t");
-        return function (el, eventType, params) {
-          if (params === void 0) {
-            params = getParams();
-          }
-          _newArrowCheck(this, _this16);
-          el.dispatchEvent(new MouseEvent(eventType, params));
-        }.bind(this);
-      } catch (e) {
-        // Polyfills DOM4 MouseEvent
-        return function (el, eventType, params) {
-          if (params === void 0) {
-            params = getParams();
-          }
-          _newArrowCheck(this, _this16);
-          const mouseEvent = doc.createEvent("MouseEvent");
-
-          // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
-          mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0,
+const getRange = (start, end, step = 1) => {
+  const res = [];
+  const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
+  for (let i = start; i < n; i++) {
+    res.push(start + i * step);
+  }
+  return res;
+};
+const emulateEvent = {
+  mouse: (() => {
+    const getParams = () => ({
+      bubbles: false,
+      cancelable: false,
+      screenX: 0,
+      screenY: 0,
+      clientX: 0,
+      clientY: 0
+    });
+    try {
+      new MouseEvent("t");
+      return (el, eventType, params = getParams()) => {
+        el.dispatchEvent(new MouseEvent(eventType, params));
+      };
+    } catch (e) {
+      return (el, eventType, params = getParams()) => {
+        const mouseEvent = doc.createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(
+          eventType,
+          params.bubbles,
+          params.cancelable,
+          win,
+          0,
           // the event's mouse click count
-          params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null);
-          el.dispatchEvent(mouseEvent);
-        }.bind(this);
-      }
-    }.bind(undefined)(),
-    touch: function touch(el, eventType, params) {
-      _newArrowCheck(this, _this);
-      const touchObj = new Touch(mergeObj({
-        identifier: Date.now(),
-        target: el,
-        radiusX: 2.5,
-        radiusY: 2.5,
-        rotationAngle: 10,
-        force: .5
-      }, params));
-      el.dispatchEvent(new TouchEvent(eventType, {
-        cancelable: !0,
-        bubbles: !0,
-        shiftKey: !0,
-        touches: [touchObj],
-        targetTouches: [],
-        changedTouches: [touchObj]
-      }));
-    }.bind(undefined)
-  }; // emulate event
-/**
- * Process the template  & return bound string
- * @param {string} tpl Template string
- * @param {object} data Data value to be replaced
- * @returns {string}
- * @private
- */
+          params.screenX,
+          params.screenY,
+          params.clientX,
+          params.clientY,
+          false,
+          false,
+          false,
+          false,
+          0,
+          null
+        );
+        el.dispatchEvent(mouseEvent);
+      };
+    }
+  })(),
+  touch: (el, eventType, params) => {
+    const touchObj = new Touch(mergeObj({
+      identifier: Date.now(),
+      target: el,
+      radiusX: 2.5,
+      radiusY: 2.5,
+      rotationAngle: 10,
+      force: 0.5
+    }, params));
+    el.dispatchEvent(new TouchEvent(eventType, {
+      cancelable: true,
+      bubbles: true,
+      shiftKey: true,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj]
+    }));
+  }
+};
 function tplProcess(tpl, data) {
   let res = tpl;
   for (const x in data) {
-    res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
+    res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
   }
   return res;
 }
-
-/**
- * Get parsed date value
- * (It must be called in 'ChartInternal' context)
- * @param {Date|string|number} date Value of date to be parsed
- * @returns {Date}
- * @private
- */
 function parseDate(date) {
+  var _a;
   let parsedDate;
   if (date instanceof Date) {
     parsedDate = date;
   } else if (isString(date)) {
-    var _format$dataTime;
-    const config = this.config,
-      format = this.format;
-
-    // if fails to parse, try by new Date()
-    // https://github.com/naver/billboard.js/issues/1714
-    parsedDate = (_format$dataTime = format.dataTime(config.data_xFormat)(date)) != null ? _format$dataTime : new Date(date);
+    const { config, format } = this;
+    parsedDate = (_a = format.dataTime(config.data_xFormat)(date)) != null ? _a : new Date(date);
   } else if (isNumber(date) && !isNaN(date)) {
-    parsedDate = new Date(+date);
+    parsedDate = /* @__PURE__ */ new Date(+date);
   }
   if (!parsedDate || isNaN(+parsedDate)) {
-    console && console.error && console.error("Failed to parse x '" + date + "' to Date object");
+    console && console.error && console.error(`Failed to parse x '${date}' to Date object`);
   }
   return parsedDate;
 }
-
-/**
- * Return if the current doc is visible or not
- * @returns {boolean}
- * @private
- */
 function isTabVisible() {
-  return (doc == null ? void 0 : doc.hidden) === !1 || (doc == null ? void 0 : doc.visibilityState) === "visible";
+  var _a, _b;
+  return ((_a = doc) == null ? void 0 : _a.hidden) === false || ((_b = doc) == null ? void 0 : _b.visibilityState) === "visible";
 }
-
-/**
- * Get the current input type
- * @param {boolean} mouse Config value: interaction.inputType.mouse
- * @param {boolean} touch Config value: interaction.inputType.touch
- * @returns {string} "mouse" | "touch" | null
- * @private
- */
 function convertInputType(mouse, touch) {
-  var _this17 = this;
-  const DocumentTouch = win.DocumentTouch,
-    matchMedia = win.matchMedia,
-    navigator = win.navigator;
-  let hasTouch = !1;
+  const { DocumentTouch, matchMedia, navigator } = win;
+  let hasTouch = false;
   if (touch) {
-    // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
     if (navigator && "maxTouchPoints" in navigator) {
       hasTouch = navigator.maxTouchPoints > 0;
-
-      // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
-      // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
     } else if ("ontouchmove" in win || DocumentTouch && doc instanceof DocumentTouch) {
-      hasTouch = !0;
+      hasTouch = true;
     } else {
-      // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#avoiding_user_agent_detection
-      if (matchMedia != null && matchMedia("(pointer:coarse)").matches) {
-        hasTouch = !0;
+      if (matchMedia == null ? void 0 : matchMedia("(pointer:coarse)").matches) {
+        hasTouch = true;
       } else {
-        // Only as a last resort, fall back to user agent sniffing
         const UA = navigator.userAgent;
         hasTouch = /\b(BlackBerry|webOS|iPhone|IEMobile)\b/i.test(UA) || /\b(Android|Windows Phone|iPad|iPod)\b/i.test(UA);
       }
     }
   }
-
-  // Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
-  // https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
-  // Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
-  const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some(function (v) {
-    _newArrowCheck(this, _this17);
-    return matchMedia == null ? void 0 : matchMedia("(" + v + ")").matches;
-  }.bind(this));
-
-  // fallback to 'mouse' if no input type is detected.
+  const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some((v) => matchMedia == null ? void 0 : matchMedia(`(${v})`).matches);
   return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
 }
-
-/**
- * Run function until given condition function return true
- * @param {Function} fn Function to be executed when condition is true
- * @param {Function} conditionFn Condition function to check if condition is true
- * @private
- */
 function runUntil(fn, conditionFn) {
-  var _this18 = this;
-  if (conditionFn() === !1) {
-    requestAnimationFrame(function () {
-      _newArrowCheck(this, _this18);
-      return runUntil(fn, conditionFn);
-    }.bind(this));
+  if (conditionFn() === false) {
+    requestAnimationFrame(() => runUntil(fn, conditionFn));
   } else {
     fn();
   }
 }
+
 ;// CONCATENATED MODULE: ./src/config/config.ts
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Load configuration option
- * @param {object} config User's generation config value
- * @private
- */
 function loadConfig(config) {
-  var _this = this;
   const thisConfig = this.config;
-  let target, keys, read;
-  const _find = function find() {
-    _newArrowCheck(this, _this);
+  let target;
+  let keys;
+  let read;
+  const find = () => {
     const key = keys.shift();
     if (key && target && isObjectType(target) && key in target) {
       target = target[key];
-      return _find();
+      return find();
     } else if (!key) {
       return target;
     }
-    return undefined;
-  }.bind(this);
-  Object.keys(thisConfig).forEach(function (key) {
-    _newArrowCheck(this, _this);
+    return void 0;
+  };
+  Object.keys(thisConfig).forEach((key) => {
     target = config;
     keys = key.split("_");
-    read = _find();
+    read = find();
     if (isDefined(read)) {
       thisConfig[key] = read;
     }
-  }.bind(this));
-
-  // only should run in the ChartInternal context
+  });
   if (this.api) {
     this.state.orgConfig = config;
   }
 }
+
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/index.ts
+var tableview_defProp = Object.defineProperty;
+var __defProps = Object.defineProperties;
+var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
+var tableview_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var tableview_hasOwnProp = Object.prototype.hasOwnProperty;
+var tableview_propIsEnum = Object.prototype.propertyIsEnumerable;
+var tableview_defNormalProp = (obj, key, value) => key in obj ? tableview_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var tableview_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (tableview_hasOwnProp.call(b, prop))
+      tableview_defNormalProp(a, prop, b[prop]);
+  if (tableview_getOwnPropSymbols)
+    for (var prop of tableview_getOwnPropSymbols(b)) {
+      if (tableview_propIsEnum.call(b, prop))
+        tableview_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
+var tableview_publicField = (obj, key, value) => {
+  tableview_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 
 
 
 
-function tableview_ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
-function tableview_objectSpread(e) { for (var r = 1, t; r < arguments.length; r++) { t = null != arguments[r] ? arguments[r] : {}; r % 2 ? tableview_ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : tableview_ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-/**
- * Copyright (c) 2021 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 
-
-
-
-
-
-/**
- * Table view plugin.<br>
- * Generates table view for bound dataset.
- * - **NOTE:**
- *   - Plugins aren't built-in. Need to be loaded or imported to be used.
- *   - Non required modules from billboard.js core, need to be installed separately.
- * @class plugin-tableview
- * @param {object} options table view plugin options
- * @augments Plugin
- * @returns {TableView}
- * @example
- * // Plugin must be loaded before the use.
- * <script src="$YOUR_PATH/plugin/billboardjs-plugin-tableview.js"></script>
- *
- *  var chart = bb.generate({
- *     ...
- *     plugins: [
- *        new bb.plugin.tableview({
- *          selector: "#my-table-view",
- *          categoryTitle: "Category",
- *          categoryFormat: function(v) {
- *              // do some transformation
- *              ...
- *              return v;
- *          },
- *          class: "my-class-name",
- *          style: true,
- *          title: "My Data List",
- *          updateOnToggle: false,
- *          nullString: "N/A"
- *        }),
- *     ]
- *  });
- * @example
- * import {bb} from "billboard.js";
- * import TableView from "billboard.js/dist/billboardjs-plugin-tableview";
- *
- * bb.generate({
- *     ...
- *     plugins: [
- *        new TableView({ ... })
- *     ]
- * })
- */
-let TableView = /*#__PURE__*/function (_Plugin) {
-  _inheritsLoose(TableView, _Plugin);
-  function TableView(options) {
-    var _this = _Plugin.call(this, options) || this;
-    _this.config = void 0;
-    _this.element = void 0;
-    _this.config = new Options();
-    return _assertThisInitialized(_this) || _assertThisInitialized(_this);
+class TableView extends Plugin {
+  constructor(options) {
+    super(options);
+    tableview_publicField(this, "config");
+    tableview_publicField(this, "element");
+    this.config = new Options();
+    return this;
   }
-  var _proto = TableView.prototype;
-  _proto.$beforeInit = function $beforeInit() {
+  $beforeInit() {
     loadConfig.call(this, this.options);
-  };
-  _proto.$init = function $init() {
-    var _element$classList;
-    const _this$config = this.config,
-      className = _this$config.class,
-      selector = _this$config.selector,
-      style = _this$config.style;
-    let element = document.querySelector(selector || "." + (className || defaultStyle.class));
+  }
+  $init() {
+    const { class: className, selector, style } = this.config;
+    let element = document.querySelector(
+      selector || `.${className || defaultStyle.class}`
+    );
     if (!element) {
       const chart = this.$$.$el.chart.node();
       element = document.createElement("table");
@@ -1450,84 +797,63 @@ let TableView = /*#__PURE__*/function (_Plugin) {
       element.appendChild(table);
       element = table;
     }
-
-    // append default css style
     if (style && !document.getElementById(defaultStyle.id)) {
       const s = document.createElement("style");
       s.id = defaultStyle.id;
       s.innerHTML = defaultStyle.rule;
       (document.head || document.getElementsByTagName("head")[0]).appendChild(s);
     }
-    (_element$classList = element.classList).add.apply(_element$classList, [style && defaultStyle.class, className].filter(Boolean));
+    element.classList.add(...[style && defaultStyle.class, className].filter(Boolean));
     this.element = element;
   }
-
   /**
    * Generate table
    * @private
-   */;
-  _proto.generateTable = function generateTable() {
-    var _this2 = this;
-    const $$ = this.$$,
-      config = this.config,
-      element = this.element,
-      dataToShow = $$.filterTargetsToShow($$.data.targets);
+   */
+  generateTable() {
+    const { $$, config, element } = this;
+    const dataToShow = $$.filterTargetsToShow($$.data.targets);
     let thead = tplProcess(tpl.thead, {
-        title: dataToShow.length ? this.config.categoryTitle : ""
-      }),
-      tbody = "";
+      title: dataToShow.length ? this.config.categoryTitle : ""
+    });
+    let tbody = "";
     const rows = [];
-    dataToShow.forEach(function (v) {
-      var _this3 = this;
-      _newArrowCheck(this, _this2);
-      thead += tplProcess(tpl.thead, {
-        title: v.id
-      });
-
-      // make up value rows
-      v.values.forEach(function (d, i) {
-        _newArrowCheck(this, _this3);
+    dataToShow.forEach((v) => {
+      thead += tplProcess(tpl.thead, { title: v.id });
+      v.values.forEach((d, i) => {
         if (!rows[i]) {
           rows[i] = [d.x];
         }
         rows[i].push(d.value);
-      }.bind(this));
-    }.bind(this));
-    rows.forEach(function (v) {
-      var _this4 = this;
-      _newArrowCheck(this, _this2);
-      tbody += "<tr>" + v.map(function (d, i) {
-        _newArrowCheck(this, _this4);
-        return tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
-          value: i === 0 ? config.categoryFormat.bind(this)(d) : isNumber(d) ? d.toLocaleString() : config.nullString
-        });
-      }.bind(this)).join("") + "</tr>";
-    }.bind(this));
-    const r = tplProcess(tpl.body, tableview_objectSpread(tableview_objectSpread({}, config), {}, {
+      });
+    });
+    rows.forEach((v) => {
+      tbody += `<tr>${v.map((d, i) => tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
+        value: i === 0 ? config.categoryFormat.bind(this)(d) : isNumber(d) ? d.toLocaleString() : config.nullString
+      })).join("")}</tr>`;
+    });
+    const rx = /(<\/?(script|img)[^>]*>|<[^>]+><\/[^>]+>)/ig;
+    const r = tplProcess(tpl.body, __spreadProps(tableview_spreadValues({}, config), {
       title: config.title || $$.config.title_text || "",
-      thead: thead,
-      tbody: tbody
-    })).replace(/(<\/?(script|img)[^>]*>|<[^>]+><\/[^>]+>)/ig, "");
+      thead,
+      tbody
+    })).replace(rx, "");
     element.innerHTML = r;
-  };
-  _proto.$redraw = function $redraw() {
-    const state = this.$$.state,
-      doNotUpdate = state.resizing || !this.config.updateOnToggle && state.toggling;
-    doNotUpdate || this.generateTable();
-  };
-  _proto.$willDestroy = function $willDestroy() {
-    var _this$element$parentN;
-    (_this$element$parentN = this.element.parentNode) == null || _this$element$parentN.removeChild(this.element);
-
-    // remove default css style when left one chart instance
+  }
+  $redraw() {
+    const { state } = this.$$;
+    const doNotUpdate = state.resizing || !this.config.updateOnToggle && state.toggling;
+    !doNotUpdate && this.generateTable();
+  }
+  $willDestroy() {
+    var _a, _b;
+    (_a = this.element.parentNode) == null ? void 0 : _a.removeChild(this.element);
     if (this.$$.charts.length === 1) {
-      var _s$parentNode;
       const s = document.getElementById(defaultStyle.id);
-      s == null || (_s$parentNode = s.parentNode) == null || _s$parentNode.removeChild(s);
+      (_b = s == null ? void 0 : s.parentNode) == null ? void 0 : _b.removeChild(s);
     }
-  };
-  return TableView;
-}(Plugin);
+  }
+}
 
 }();
 __webpack_exports__ = __webpack_exports__["default"];

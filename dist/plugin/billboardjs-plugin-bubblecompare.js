@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.2-nightly-20240314004552
+ * @version 3.11.3-nightly-20240319004555
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -83,224 +83,126 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ BubbleCompare; }
 });
 
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/newArrowCheck.js
-function _newArrowCheck(innerThis, boundThis) {
-  if (innerThis !== boundThis) {
-    throw new TypeError("Cannot instantiate an arrow function");
-  }
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-  return self;
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
-function _setPrototypeOf(o, p) {
-  _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-  return _setPrototypeOf(o, p);
-}
-;// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inheritsLoose.js
-
-function _inheritsLoose(subClass, superClass) {
-  subClass.prototype = Object.create(superClass.prototype);
-  subClass.prototype.constructor = subClass;
-  _setPrototypeOf(subClass, superClass);
-}
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Base class to generate billboard.js plugin
- * @class Plugin
- */
-/**
- * Version info string for plugin
- * @name version
- * @static
- * @memberof Plugin
- * @type {string}
- * @example
- *   bb.plugin.stanford.version;  // ex) 1.9.0
- */
-let Plugin = /*#__PURE__*/function () {
+var __defProp = Object.defineProperty;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+class Plugin {
   /**
    * Constructor
    * @param {Any} options config option object
    * @private
    */
-  function Plugin(options) {
-    if (options === void 0) {
-      options = {};
-    }
-    this.$$ = void 0;
-    this.options = void 0;
+  constructor(options = {}) {
+    __publicField(this, "$$");
+    __publicField(this, "options");
     this.options = options;
   }
-
   /**
    * Lifecycle hook for 'beforeInit' phase.
    * @private
    */
-  var _proto = Plugin.prototype;
-  _proto.$beforeInit = function $beforeInit() {}
-
+  $beforeInit() {
+  }
   /**
    * Lifecycle hook for 'init' phase.
    * @private
-   */;
-  _proto.$init = function $init() {}
-
+   */
+  $init() {
+  }
   /**
    * Lifecycle hook for 'afterInit' phase.
    * @private
-   */;
-  _proto.$afterInit = function $afterInit() {}
-
+   */
+  $afterInit() {
+  }
   /**
    * Lifecycle hook for 'redraw' phase.
    * @private
-   */;
-  _proto.$redraw = function $redraw() {}
-
+   */
+  $redraw() {
+  }
   /**
    * Lifecycle hook for 'willDestroy' phase.
    * @private
-   */;
-  _proto.$willDestroy = function $willDestroy() {
-    var _this = this;
-    Object.keys(this).forEach(function (key) {
-      _newArrowCheck(this, _this);
+   */
+  $willDestroy() {
+    Object.keys(this).forEach((key) => {
       this[key] = null;
       delete this[key];
-    }.bind(this));
-  };
-  return Plugin;
-}();
-Plugin.version = "3.11.2-nightly-20240314004552";
+    });
+  }
+}
+__publicField(Plugin, "version", "3.11.3-nightly-20240319004555");
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
+var bubblecompare_defProp = Object.defineProperty;
+var bubblecompare_defNormalProp = (obj, key, value) => key in obj ? bubblecompare_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var bubblecompare_publicField = (obj, key, value) => {
+  bubblecompare_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
 
 
-
-
-
-
-/**
- * Bubble compare diagram plugin.<br>
- * Compare data 3-dimensional ways: x-axis, y-axis & bubble-size.
- * - **NOTE:**
- *   - Plugins aren't built-in. Need to be loaded or imported to be used.
- *   - Non required modules from billboard.js core, need to be installed separately.
- * - **Required modules:**
- *   - [d3-selection](https://github.com/d3/d3-selection)
- * @class plugin-bubblecompare
- * @requires d3-selection
- * @param {object} options bubble compare plugin options
- * @augments Plugin
- * @returns {BubbleCompare}
- * @example
- * // Plugin must be loaded before the use.
- * <script src="$YOUR_PATH/plugin/billboardjs-plugin-bubblecompare.js"></script>
- *
- *  var chart = bb.generate({
- *     data: {
- *        columns: [ ... ],
- *        type: "bubble"
- *     }
- *     ...
- *     plugins: [
- *        new bb.plugin.bubblecompare({
- *          minR: 11,
- *          maxR: 74,
- *          expandScale: 1.1
- *        }),
- *     ]
- *  });
- * @example
- * import {bb} from "billboard.js";
- * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare";
- *
- * bb.generate({
- *     plugins: [
- *        new BubbleCompare({ ... })
- *     ]
- * })
- */
-let BubbleCompare = /*#__PURE__*/function (_Plugin) {
-  _inheritsLoose(BubbleCompare, _Plugin);
-  function BubbleCompare(options) {
-    var _this = _Plugin.call(this, options) || this;
-    _this.$$ = void 0;
-    return _assertThisInitialized(_this) || _assertThisInitialized(_this);
+const _BubbleCompare = class _BubbleCompare extends Plugin {
+  constructor(options) {
+    super(options);
+    bubblecompare_publicField(this, "$$");
+    return this;
   }
-  var _proto = BubbleCompare.prototype;
-  _proto.$init = function $init() {
-    const $$ = this.$$;
+  $init() {
+    const { $$ } = this;
     $$.findClosest = this.findClosest.bind(this);
     $$.getBubbleR = this.getBubbleR.bind(this);
     $$.pointExpandedR = this.pointExpandedR.bind(this);
-  };
-  _proto.pointExpandedR = function pointExpandedR(d) {
-    const baseR = this.getBubbleR(d),
-      _this$options$expandS = this.options.expandScale,
-      expandScale = _this$options$expandS === void 0 ? 1 : _this$options$expandS;
-    BubbleCompare.raiseFocusedBubbleLayer(d);
+  }
+  pointExpandedR(d) {
+    const baseR = this.getBubbleR(d);
+    const { expandScale = 1 } = this.options;
+    _BubbleCompare.raiseFocusedBubbleLayer(d);
     this.changeCursorPoint();
     return baseR * expandScale;
-  };
-  BubbleCompare.raiseFocusedBubbleLayer = function raiseFocusedBubbleLayer(d) {
+  }
+  static raiseFocusedBubbleLayer(d) {
     d.raise && (0,external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select)(d.node().parentNode.parentNode).raise();
-  };
-  _proto.changeCursorPoint = function changeCursorPoint() {
+  }
+  changeCursorPoint() {
     this.$$.$el.eventRect.style("cursor", "pointer");
-  };
-  _proto.findClosest = function findClosest(values, pos) {
-    var _this2 = this;
-    const $$ = this.$$;
-    return values.filter(function (v) {
-      _newArrowCheck(this, _this2);
-      return v && !$$.isBarType(v.id);
-    }.bind(this)).reduce(function (acc, cur) {
-      _newArrowCheck(this, _this2);
+  }
+  findClosest(values, pos) {
+    const { $$ } = this;
+    return values.filter((v) => v && !$$.isBarType(v.id)).reduce((acc, cur) => {
       const d = $$.dist(cur, pos);
       return d < this.getBubbleR(cur) ? cur : acc;
-    }.bind(this), 0);
-  };
-  _proto.getBubbleR = function getBubbleR(d) {
-    var _this3 = this;
-    const _this$options = this.options,
-      minR = _this$options.minR,
-      maxR = _this$options.maxR,
-      curVal = this.getZData(d);
-    if (!curVal) return minR;
-    const _this$$$$data$targets = this.$$.data.targets.reduce(function (_ref, cur) {
-        let accMin = _ref[0],
-          accMax = _ref[1];
-        _newArrowCheck(this, _this3);
+    }, 0);
+  }
+  getBubbleR(d) {
+    const { minR, maxR } = this.options;
+    const curVal = this.getZData(d);
+    if (!curVal)
+      return minR;
+    const [min, max] = this.$$.data.targets.reduce(
+      ([accMin, accMax], cur) => {
         const val = this.getZData(cur.values[0]);
         return [Math.min(accMin, val), Math.max(accMax, val)];
-      }.bind(this), [1e4, 0]),
-      min = _this$$$$data$targets[0],
-      max = _this$$$$data$targets[1],
-      size = min > 0 && max === min ? 0 : curVal / max;
+      },
+      [1e4, 0]
+    );
+    const size = min > 0 && max === min ? 0 : curVal / max;
     return Math.abs(size) * (maxR - minR) + minR;
-  };
-  _proto.getZData = function getZData(d) {
+  }
+  getZData(d) {
     return this.$$.isBubbleZType(d) ? this.$$.getBubbleZData(d.value, "z") : d.value;
-  };
-  return BubbleCompare;
-}(Plugin);
-BubbleCompare.version = "0.0.1";
+  }
+};
+bubblecompare_publicField(_BubbleCompare, "version", `0.0.1`);
+let BubbleCompare = _BubbleCompare;
+
 
 }();
 __webpack_exports__ = __webpack_exports__["default"];

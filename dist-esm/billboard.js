@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.2-nightly-20240314004552
+ * @version 3.11.3-nightly-20240319004555
 */
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
@@ -175,28 +175,31 @@ PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
 /* global Reflect, Promise, SuppressedError, Symbol */
 
-var _assign = function __assign() {
-  _assign = Object.assign || function (t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-      s = arguments[i];
-      for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-    }
-    return t;
-  };
-  return _assign.apply(this, arguments);
+
+var __assign = function() {
+    __assign = Object.assign || function __assign(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
 };
+
 function __spreadArray(to, from, pack) {
-  if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
-    if (ar || !(i in from)) {
-      if (!ar) ar = Array.prototype.slice.call(from, 0, i);
-      ar[i] = from[i];
+    if (pack || arguments.length === 2) for (var i = 0, l = from.length, ar; i < l; i++) {
+        if (ar || !(i in from)) {
+            if (!ar) ar = Array.prototype.slice.call(from, 0, i);
+            ar[i] = from[i];
+        }
     }
-  }
-  return to.concat(ar || Array.prototype.slice.call(from));
+    return to.concat(ar || Array.prototype.slice.call(from));
 }
+
 typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
-  var e = new Error(message);
-  return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+    var e = new Error(message);
+    return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
 };
 
 var isValue = function (v) { return v || v === 0; };
@@ -511,7 +514,7 @@ function deepClone() {
         return v;
     };
     return objectN.map(function (v) { return clone(v); })
-        .reduce(function (a, c) { return (_assign(_assign({}, a), c)); });
+        .reduce(function (a, c) { return (__assign(__assign({}, a), c)); });
 }
 /**
  * Extend target from source object
@@ -1091,7 +1094,7 @@ var $ZOOM = {
     buttonZoomReset: "bb-zoom-reset",
     zoomBrush: "bb-zoom-brush"
 };
-var CLASS = _assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign(_assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM);
+var CLASS = __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM);
 
 /**
  * Elements class.
@@ -3218,7 +3221,7 @@ var Options = /** @class */ (function () {
     }
     Options.setOptions = function (options) {
         this.data = options
-            .reduce(function (a, c) { return (_assign(_assign({}, a), c)); }, this.data);
+            .reduce(function (a, c) { return (__assign(__assign({}, a), c)); }, this.data);
     };
     Options.data = {};
     return Options;
@@ -17017,7 +17020,7 @@ var y2 = {
 /**
  * y Axis  config options
  */
-var optAxis = _assign(_assign(_assign({ 
+var optAxis = __assign(__assign(__assign({ 
     /**
      * Switch x and y axis position.
      * @name axis․rotated
@@ -17236,7 +17239,7 @@ function getAttrTweenFn(fn) {
         return function (t) {
             var interpolated = interpolate$1(t);
             var data = d.data, index = d.index, value = d.value;
-            return fn(_assign(_assign({}, interpolated), { data: data, index: index, value: value }));
+            return fn(__assign(__assign({}, interpolated), { data: data, index: index, value: value }));
         };
     };
 }
@@ -18708,7 +18711,7 @@ var shapeCandlestick = {
             }
         }
         else if (isObject(value)) {
-            d = _assign({}, value);
+            d = __assign({}, value);
         }
         if (d) {
             d._isUp = d.close >= d.open;
@@ -22295,7 +22298,7 @@ var drag = {
     }
 };
 
-var selection = _assign(_assign({}, drag), { 
+var selection = __assign(__assign({}, drag), { 
     /**
      * Select a point
      * @param {object} target Target point
@@ -23430,7 +23433,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.2-nightly-20240314004552
+ * @version 3.11.3-nightly-20240319004555
  */
 var bb = {
     /**
@@ -23440,7 +23443,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.2-nightly-20240314004552",
+    version: "3.11.3-nightly-20240319004555",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
