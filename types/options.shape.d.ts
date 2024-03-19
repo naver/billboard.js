@@ -42,6 +42,13 @@ export interface ArcOptions {
 		 *  - **NOTE:**
 		 *   - For single gauge chart, needle will point the data value by default, otherwise will point 0(zero).
 		 */
+		value?: number;
+
+		/**
+		 * Set needle value.
+		 *  - **NOTE:**
+		 *   - For single gauge chart, needle will point the data value by default, otherwise will point 0(zero).
+		 */
 		length?: number;
 
 		/**

@@ -3,9 +3,8 @@ const webpack = require("webpack");
 const fs = require("fs");
 const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
-const TerserPlugin = require("terser-webpack-plugin");
-const terserConfig = require("../terserConfig.cjs");
 const banner = require("../template/banner.cjs");
+const {EsbuildPlugin} = require("esbuild-loader");
 
 const srcPath = "./src/Plugin/";
 const distPath = path.resolve(__dirname, "../../dist/plugin/");
@@ -68,7 +67,12 @@ module.exports = (common, env) => {
 		config.optimization = {
 			usedExports: true,
 			minimize: true,
-			minimizer: [new TerserPlugin(terserConfig)]
+			minimizer: [
+				new EsbuildPlugin({
+					target: "es2015",
+					format: undefined
+				})
+			]
 		};
 	}
 

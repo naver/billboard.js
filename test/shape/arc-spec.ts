@@ -717,7 +717,7 @@ describe("SHAPE ARC", () => {
 			checkExpand(done);
 		});
 
-		it("set options: data.type='donut'", done => {
+		it("set options: data.type='donut'", () => {
 			args.data.type = "donut";
 		});
 
@@ -725,7 +725,7 @@ describe("SHAPE ARC", () => {
 			checkExpand(done);
 		});
 
-		it("set options: data.type='gauge'", done => {
+		it("set options: data.type='gauge'", () => {
 			args.data.type = "donut";
 		});
 

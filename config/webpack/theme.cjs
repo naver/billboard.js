@@ -5,7 +5,7 @@ const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const WebpackCleanPlugin = require("webpack-clean");
 const banner = require("../template/banner.cjs");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const {EsbuildPlugin} = require("esbuild-loader");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const srcPath = "./src/scss/theme/";
@@ -47,15 +47,11 @@ const config = {
 	optimization: {
 		minimize: true,
 		minimizer: [
-			new CssMinimizerPlugin({
-				test: /\.min\.css$/i,
-				minimizerOptions: {
-					preset: [
-						"default", {
-							discardComments: true
-						}
-					]
-				}
+			new EsbuildPlugin({
+				include: /\.min\.css$/,
+				target: "es2015",
+				css: true,
+				format: undefined
 			})
 		]
 	},

@@ -1,3 +1,12 @@
+## [3.11.3](https://github.com/naver/billboard.js/compare/3.11.2...3.11.3) (2024-03-18)
+
+
+### Bug Fixes
+
+* **clip:** Remove setting full domain url ([83bbd10](https://github.com/naver/billboard.js/commit/83bbd10a5949854868178499228d4f9ecf84da33)), closes [#3684](https://github.com/naver/billboard.js/issues/3684)
+* **legend:** Fix legend title to show data.names if set ([e8fa131](https://github.com/naver/billboard.js/commit/e8fa131be6c283ec98742eecc84fce84f24145f7)), closes [#3662](https://github.com/naver/billboard.js/issues/3662)
+* **tooltip:** Fix tooltip y coordinate with arc.rangeText ([d28258e](https://github.com/naver/billboard.js/commit/d28258e2c739f36227027641724ed85cc736b988)), closes [#3673](https://github.com/naver/billboard.js/issues/3673)
+
 ## [3.11.2](https://github.com/naver/billboard.js/compare/3.11.1...3.11.2) (2024-02-23)
 
 
