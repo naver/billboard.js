@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240319004555
+ * @version 3.11.3-nightly-20240320004559
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -1222,10 +1222,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.36.0',
+  version: '3.36.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2024 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.36.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.36.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -3140,7 +3140,8 @@ module.exports = function (FULL_NAME, wrapper, FORCED, IS_AGGREGATE_ERROR) {
 
 /* eslint-disable no-proto -- safe */
 var uncurryThisAccessor = __webpack_require__(114);
-var anObject = __webpack_require__(46);
+var isObject = __webpack_require__(20);
+var requireObjectCoercible = __webpack_require__(16);
 var aPossiblePrototype = __webpack_require__(115);
 
 // `Object.setPrototypeOf` method
@@ -3157,8 +3158,9 @@ module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
     CORRECT_SETTER = test instanceof Array;
   } catch (error) { /* empty */ }
   return function setPrototypeOf(O, proto) {
-    anObject(O);
+    requireObjectCoercible(O);
     aPossiblePrototype(proto);
+    if (!isObject(O)) return O;
     if (CORRECT_SETTER) setter(O, proto);
     else O.__proto__ = proto;
     return O;
@@ -4357,9 +4359,9 @@ module.exports = function from(arrayLike /* , mapfn = undefined, thisArg = undef
   var length, result, step, iterator, next, value;
   // if the target is not iterable or it's an array with the default iterator - use a simple case
   if (iteratorMethod && !(this === $Array && isArrayIteratorMethod(iteratorMethod))) {
+    result = IS_CONSTRUCTOR ? new this() : [];
     iterator = getIterator(O, iteratorMethod);
     next = iterator.next;
-    result = IS_CONSTRUCTOR ? new this() : [];
     for (;!(step = call(next, iterator)).done; index++) {
       value = mapping ? callWithSafeIterationClosing(iterator, mapfn, [step.value, index], true) : step.value;
       createProperty(result, index, value);
@@ -16072,13 +16074,24 @@ module.exports = typeof Bun == 'function' && Bun && typeof Bun.version == 'strin
 
 
 var $ = __webpack_require__(3);
+var globalThis = __webpack_require__(4);
 var microtask = __webpack_require__(344);
 var aCallable = __webpack_require__(30);
 var validateArgumentsLength = __webpack_require__(342);
+var fails = __webpack_require__(7);
+var DESCRIPTORS = __webpack_require__(6);
+
+// Bun ~ 1.0.30 bug
+// https://github.com/oven-sh/bun/issues/9249
+var WRONG_ARITY = fails(function () {
+  // getOwnPropertyDescriptor for prevent experimental warning in Node 11
+  // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+  return DESCRIPTORS && Object.getOwnPropertyDescriptor(globalThis, 'queueMicrotask').value.length !== 1;
+});
 
 // `queueMicrotask` method
 // https://html.spec.whatwg.org/multipage/timers-and-user-prompts.html#dom-queuemicrotask
-$({ global: true, enumerable: true, dontCallGetSet: true }, {
+$({ global: true, enumerable: true, dontCallGetSet: true, forced: WRONG_ARITY }, {
   queueMicrotask: function queueMicrotask(fn) {
     validateArgumentsLength(arguments.length, 1);
     microtask(aCallable(fn));
@@ -18514,9 +18527,15 @@ var THROWS_WITHOUT_ARGUMENTS = USE_NATIVE_URL && fails(function () {
   URL.canParse();
 });
 
+// Bun ~ 1.0.30 bug
+// https://github.com/oven-sh/bun/issues/9250
+var WRONG_ARITY = fails(function () {
+  return URL.canParse.length !== 1;
+});
+
 // `URL.canParse` method
 // https://url.spec.whatwg.org/#dom-url-canparse
-$({ target: 'URL', stat: true, forced: !THROWS_WITHOUT_ARGUMENTS }, {
+$({ target: 'URL', stat: true, forced: !THROWS_WITHOUT_ARGUMENTS || WRONG_ARITY }, {
   canParse: function canParse(url) {
     var length = validateArgumentsLength(arguments.length, 1);
     var urlString = toString(url);
@@ -47342,7 +47361,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.3-nightly-20240319004555",
+  version: "3.11.3-nightly-20240320004559",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
