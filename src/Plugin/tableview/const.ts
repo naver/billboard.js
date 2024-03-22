@@ -6,10 +6,7 @@
  * Constants values for plugin option
  * @ignore
  */
-export {
-	defaultStyle,
-	tpl
-};
+export {defaultStyle, tpl};
 
 const defaultStyle = {
 	id: "__tableview-style__",

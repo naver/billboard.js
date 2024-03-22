@@ -205,9 +205,11 @@ export default {
 				flow: {
 					index: baseValue.index,
 					length: length,
-					duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
+					duration: isValue(args.duration) ?
+						args.duration :
+						$$.config.transition_duration,
 					done: args.done,
-					orgDataCount: orgDataCount,
+					orgDataCount: orgDataCount
 				},
 				withLegend: true,
 				withTransition: orgDataCount > 1,

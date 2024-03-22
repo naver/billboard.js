@@ -100,7 +100,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_axes: <{[key: string]: string}> {},
+	data_axes: <{[key: string]: string}>{},
 
 	/**
 	 * Define regions for each data.<br>
@@ -130,7 +130,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_regions: <DataRegionsType> {},
+	data_regions: <DataRegionsType>{},
 
 	/**
 	 * Set the stacking to be normalized

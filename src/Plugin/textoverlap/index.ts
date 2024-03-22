@@ -4,10 +4,7 @@
  */
 import type {d3Selection} from "billboard.js/types/types";
 import {Delaunay as d3Delaunay} from "d3-delaunay";
-import {
-	polygonCentroid as d3PolygonCentroid,
-	polygonArea as d3PolygonArea
-} from "d3-polygon";
+import {polygonArea as d3PolygonArea, polygonCentroid as d3PolygonCentroid} from "d3-polygon";
 import {loadConfig} from "../../config/config";
 import Plugin from "../Plugin";
 import Options from "./Options";
@@ -46,7 +43,7 @@ import Options from "./Options";
  *     ]
  *  });
  * @example
- *	import {bb} from "billboard.js";
+ * 	import {bb} from "billboard.js";
  * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap";
  *
  * bb.generate({
@@ -124,7 +121,8 @@ export default class TextOverlap extends Plugin {
 				const yTranslate = angle === -1 ? -extent : extent + 5;
 
 				const txtAnchor = Math.abs(angle) === 1 ?
-					"middle" : (angle === 0 ? "start" : "end");
+					"middle" :
+					(angle === 0 ? "start" : "end");
 
 				this.style.display = polygonArea < area ? "none" : "";
 				this.setAttribute("text-anchor", txtAnchor);

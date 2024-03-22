@@ -122,19 +122,17 @@ export default {
 	bar_front: false,
 	bar_indices_removeNull: false,
 	bar_label_threshold: 0,
-	bar_linearGradient: <
-			boolean | {
-				x?: [number, number];
-				y?:[number, number];
-				stops?: [number, string | null | Function, number]
-			}
-		> false,
+	bar_linearGradient: <boolean | {
+		x?: [number, number],
+		y?: [number, number],
+		stops?: [number, string | null | Function, number]
+	}>false,
 	bar_overlap: false,
 	bar_padding: 0,
-	bar_radius: <number|{ratio: number}|undefined> undefined,
-	bar_radius_ratio: <number|undefined> undefined,
+	bar_radius: <number | {ratio: number} | undefined>undefined,
+	bar_radius_ratio: <number | undefined>undefined,
 	bar_sensitivity: 2,
-	bar_width: <number|{ratio?: number; max?: number;}|undefined> undefined,
+	bar_width: <number | {ratio?: number, max?: number} | undefined>undefined,
 	bar_width_ratio: 0.6,
 	bar_width_max: undefined,
 	bar_zerobased: true

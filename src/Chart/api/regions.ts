@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {$REGION} from "../../config/classes";
-import {getOption, extend, isTabVisible} from "../../module/util";
+import {extend, getOption, isTabVisible} from "../../module/util";
 
 type RegionsParam = {axis?: "add" | "update", class?: string, start?: number, end?: number}[];
 
@@ -68,7 +68,7 @@ extend(regions, {
 	 * chart.regions.add([
 	 *    {axis: "x", start: 5, class: "regionX"},
 	 *    {axis: "y", end: 50, class: "regionY"}
-	 *]);
+	 * ]);
 	 */
 	add: function(regions: RegionsParam): RegionsParam {
 		return regionsFn.bind(this)(regions, true);

@@ -2,8 +2,8 @@
  * Copyright (c) 2022 ~ present NAVER Corp.
  * @billboard.js/react project is licensed under the MIT license
  */
-import React, {forwardRef, HTMLProps, useEffect, useImperativeHandle, useRef} from "react";
 import type {bb, Chart, ChartOptions} from "billboard.js";
+import React, {forwardRef, HTMLProps, useEffect, useImperativeHandle, useRef} from "react";
 
 export {ChartOptions as IChartOptions};
 
@@ -50,7 +50,8 @@ export default forwardRef<IChart, IProp>((props, ref) => {
 
 	// customize ref to return the chart instance
 	useImperativeHandle(
-		ref, () => ({
+		ref,
+		() => ({
 			get instance() {
 				return instance.current as Chart;
 			}

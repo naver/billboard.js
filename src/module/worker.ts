@@ -62,22 +62,25 @@ function getWorker(src) {
  * @returns {object}
  * @example
  * 	const worker = runWorker(function(arg) {
- *		  // do some tasks...
- *		  console.log("param:", A(arg));
+ * 		  // do some tasks...
+ * 		  console.log("param:", A(arg));
  *
- *		  return 1234;
- *	   }, function(data) {
- *		  // callback after worker is done
- *	 	  console.log("result:", data);
- *	   },
- *	   [function A(){}]
- *	);
+ * 		  return 1234;
+ * 	   }, function(data) {
+ * 		  // callback after worker is done
+ * 	 	  console.log("result:", data);
+ * 	   },
+ * 	   [function A(){}]
+ * 	);
  *
- *	worker(11111);
+ * 	worker(11111);
  * @private
  */
 export function runWorker(
-	useWorker = true, fn: Function, callback: Function, depsFn?: Function[]
+	useWorker = true,
+	fn: Function,
+	callback: Function,
+	depsFn?: Function[]
 ): Function {
 	let runFn = function(...args) {
 		const res = fn(...args);

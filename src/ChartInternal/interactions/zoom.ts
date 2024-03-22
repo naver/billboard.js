@@ -3,7 +3,11 @@
  * billboard.js project is licensed under the MIT license
  */
 import {drag as d3Drag} from "d3-drag";
-import {zoomIdentity as d3ZoomIdentity, zoom as d3Zoom, zoomTransform as d3ZoomTransform} from "d3-zoom";
+import {
+	zoom as d3Zoom,
+	zoomIdentity as d3ZoomIdentity,
+	zoomTransform as d3ZoomTransform
+} from "d3-zoom";
 import {$COMMON, $ZOOM} from "../../config/classes";
 import {callFn, diffDomain, getPointer, isFunction} from "../../module/util";
 
@@ -79,7 +83,8 @@ export default {
 		 * @private
 		 */
 		// @ts-ignore
-		zoom.updateTransformScale = (transform: d3ZoomTransform, correctTransform: boolean): void => {
+		zoom.updateTransformScale = (transform: d3ZoomTransform,
+			correctTransform: boolean): void => {
 			const isRotated = config.axis_rotated;
 
 			// in case of resize, update range of orgXScale
@@ -102,7 +107,8 @@ export default {
 				const tX = isRotated ? transform.x : t;
 				const tY = isRotated ? t : transform.y;
 
-				$$.$el.eventRect.property("__zoom", d3ZoomIdentity.translate(tX, tY).scale(transform.k));
+				$$.$el.eventRect.property("__zoom",
+					d3ZoomIdentity.translate(tX, tY).scale(transform.k));
 			}
 
 			if (!$$.state.xTickOffset) {
@@ -172,7 +178,8 @@ export default {
 		if (
 			!config.zoom_enabled ||
 			$$.filterTargetsToShow($$.data.targets).length === 0 ||
-			(!scale.zoom && sourceEvent?.type.indexOf("touch") > -1 && sourceEvent?.touches.length === 1)
+			(!scale.zoom && sourceEvent?.type.indexOf("touch") > -1 &&
+				sourceEvent?.touches.length === 1)
 		) {
 			return;
 		}
@@ -197,8 +204,8 @@ export default {
 		// - when .unzoom() is called (event.transform === d3ZoomIdentity)
 		const doTransition = config.transition_duration > 0 &&
 			!config.subchart_show && (
-			state.dragging || isUnZoom || !event.sourceEvent
-		);
+				state.dragging || isUnZoom || !event.sourceEvent
+			);
 
 		$$.redraw({
 			withTransition: doTransition,
@@ -236,9 +243,11 @@ export default {
 		}
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
-		if (config.zoom_type === "drag" && (
-			e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY
-		)) {
+		if (
+			config.zoom_type === "drag" && (
+				e && startEvent.clientX === e.clientX && startEvent.clientY === e.clientY
+			)
+		) {
 			return;
 		}
 
@@ -268,15 +277,17 @@ export default {
 			const xDomain = subX.domain();
 			const delta = 0.015; // arbitrary value
 
-			const isfullyShown = $$.config.axis_x_inverted ? (
-				zoomDomain[0] >= xDomain[0] || (zoomDomain[0] + delta) >= xDomain[0]
-			) && (
-				xDomain[1] >= zoomDomain[1] || xDomain[1] >= (zoomDomain[1] + delta)
-			) : (
-				zoomDomain[0] <= xDomain[0] || (zoomDomain[0] - delta) <= xDomain[0]
-			) && (
-				xDomain[1] <= zoomDomain[1] || xDomain[1] <= (zoomDomain[1] - delta)
-			);
+			const isfullyShown = $$.config.axis_x_inverted ?
+				(
+					zoomDomain[0] >= xDomain[0] || (zoomDomain[0] + delta) >= xDomain[0]
+				) && (
+					xDomain[1] >= zoomDomain[1] || xDomain[1] >= (zoomDomain[1] + delta)
+				) :
+				(
+					zoomDomain[0] <= xDomain[0] || (zoomDomain[0] - delta) <= xDomain[0]
+				) && (
+					xDomain[1] <= zoomDomain[1] || xDomain[1] <= (zoomDomain[1] - delta)
+				);
 
 			// check if the zoomed chart is fully shown, then reset scale when zoom is out as initial
 			if (force || isfullyShown) {

@@ -2,10 +2,10 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {$SHAPE} from "../../config/classes";
 import type {d3Selection} from "../../../types/types";
-import type {IDataRow} from "../data/IData";
+import {$SHAPE} from "../../config/classes";
 import {addCssRules, isFunction, isString} from "../../module/util";
+import type {IDataRow} from "../data/IData";
 
 export default {
 	/**
@@ -21,23 +21,25 @@ export default {
 		const $$ = this;
 		const {config, state: {cssRule, style}} = $$;
 
-		return config.boost_useCssRule ? (selection: d3Selection) => {
-			selection.each((d: IDataRow) => {
-				const res = propsFn && propsFn?.call($$, d);
-				const shapeSelector = `${
-					withShape ? `.${$SHAPE.shapes + $$.getTargetSelectorSuffix(d.id)}` : ""
-				}${selector}`;
+		return config.boost_useCssRule ?
+			(selection: d3Selection) => {
+				selection.each((d: IDataRow) => {
+					const res = propsFn && propsFn?.call($$, d);
+					const shapeSelector = `${
+						withShape ? `.${$SHAPE.shapes + $$.getTargetSelectorSuffix(d.id)}` : ""
+					}${selector}`;
 
-				(selector in cssRule) && style.sheet.deleteRule(cssRule[shapeSelector]);
-				$$.state.cssRule[shapeSelector] = addCssRules(
-					style,
-					shapeSelector,
-					props.filter(Boolean).map(v => (
-						isString(res) && v.indexOf(":") === -1 ? `${v}: ${res}` : (v || "")
-					))
-				);
-			});
-		} : () => {};
+					(selector in cssRule) && style.sheet.deleteRule(cssRule[shapeSelector]);
+					$$.state.cssRule[shapeSelector] = addCssRules(
+						style,
+						shapeSelector,
+						props.filter(Boolean).map(v => (
+							isString(res) && v.indexOf(":") === -1 ? `${v}: ${res}` : (v || "")
+						))
+					);
+				});
+			} :
+			() => {};
 	},
 
 	/**
@@ -46,7 +48,7 @@ export default {
 	 * @returns {string|null}
 	 * @private
 	 */
-	getStylePropValue(v: Function|string): string|null {
+	getStylePropValue(v: Function | string): string | null {
 		const {config: {boost_useCssRule: useCssRule}} = this;
 
 		return useCssRule ? null : isFunction(v) ? v.bind(this) : v;

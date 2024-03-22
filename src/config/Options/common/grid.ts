@@ -5,7 +5,7 @@
 /**
  * grid config options
  */
-type Lines = {value?: number; text?: string; class?: string; position?: string}[];
+type Lines = {value?: number, text?: string, class?: string, position?: string}[];
 
 export default {
 	/**
@@ -68,10 +68,10 @@ export default {
 	 */
 	grid_x_show: false,
 	grid_x_type: "tick",
-	grid_x_lines: <Lines> [],
+	grid_x_lines: <Lines>[],
 	grid_y_show: false,
-	grid_y_lines: <Lines> [],
-	grid_y_ticks: <number|undefined> undefined,
+	grid_y_lines: <Lines>[],
+	grid_y_ticks: <number | undefined>undefined,
 	grid_focus_edge: false,
 	grid_focus_show: true,
 	grid_focus_y: false,

@@ -6,7 +6,7 @@ import {axisRight as d3AxisRight} from "d3-axis";
 import {format as d3Format} from "d3-format";
 import {scaleSequential as d3ScaleSequential, scaleSymlog as d3ScaleSymlog} from "d3-scale";
 import CLASS from "./classes";
-import {isFunction, getRange} from "./util";
+import {getRange, isFunction} from "./util";
 
 /**
  * Stanford diagram plugin color scale class
@@ -89,7 +89,8 @@ export default class ColorScale {
 				.text(d => Math.round(Math.log(d) / Math.LN10));
 		}
 
-		this.colorScale.attr("transform", `translate(${$$.state.current.width - this.xForColorScale()}, 0)`);
+		this.colorScale.attr("transform",
+			`translate(${$$.state.current.width - this.xForColorScale()}, 0)`);
 	}
 
 	xForColorScale(): number {
