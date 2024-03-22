@@ -66,12 +66,10 @@ export default {
 	area_above: false,
 	area_below: false,
 	area_front: true,
-	area_linearGradient: <
-			boolean | {
-				x?: [number, number];
-				y?:[number, number];
-				stops?: [number, string | null | Function, number]
-			}
-		> false,
+	area_linearGradient: <boolean | {
+		x?: [number, number],
+		y?: [number, number],
+		stops?: [number, string | null | Function, number]
+	}>false,
 	area_zerobased: true
 };

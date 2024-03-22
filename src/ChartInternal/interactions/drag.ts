@@ -23,7 +23,8 @@ export default {
 		const isSelectionGrouped = config.data_selection_grouped;
 		const isSelectable = config.interaction_enabled && config.data_selection_isselectable;
 
-		if ($$.hasArcType() ||
+		if (
+			$$.hasArcType() ||
 			!config.data_selection_enabled || // do nothing if not selectable
 			(config.zoom_enabled && !$$.zoom.altDomain) || // skip if zoomable because of conflict drag behavior
 			!config.data_selection_multiple // skip when single selection because drag is used for multiple selection

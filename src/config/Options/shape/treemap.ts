@@ -47,7 +47,7 @@ export default {
 	 *  }
 	 */
 	treemap_tile: "binary",
-	treemap_label_format: <(() => number|string)|undefined> undefined,
+	treemap_label_format: <(() => number | string) | undefined>undefined,
 	treemap_label_threshold: 0.05,
 	treemap_label_show: true
 };

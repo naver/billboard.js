@@ -30,8 +30,8 @@ export default {
 	 * @property {boolean} [point.focus.only=false] Show point only when is focused.
 	 * @property {number|null} [point.opacity=undefined] Set point opacity value.
 	 * - **NOTE:**
-	 *	- `null` will make to not set inline 'opacity' css prop.
-	 *	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
+	 * 	- `null` will make to not set inline 'opacity' css prop.
+	 * 	- when no value(or undefined) is set, it defaults to set opacity value according its chart types.
 	 * @property {number|string|Function} [point.sensitivity=10] The senstivity value for interaction boundary.
 	 * - **Available Values:**
 	 *   - {number}: Absolute sensitivity value which is the distance from the data point in pixel.
@@ -131,11 +131,11 @@ export default {
 	 *
 	 *      // callback for each point to determine the sensitivity
 	 *      sensitivity: function(d) {
-	 *	// ex. of argument d:
-	 *	// ==> {x: 2, value: 55, id: 'data3', index: 2, r: 19.820624179302296}
+	 * 	// ex. of argument d:
+	 * 	// ==> {x: 2, value: 55, id: 'data3', index: 2, r: 19.820624179302296}
 	 *
-	 *	// returning d.r, will make sensitivity same as point's radius value.
-	 *	return d.r;
+	 * 	// returning d.r, will make sensitivity same as point's radius value.
+	 * 	return d.r;
 	 *      }
 	 *
 	 *      // valid values are "circle" or "rectangle"
@@ -151,19 +151,18 @@ export default {
 	 */
 	point_show: true,
 	point_r: 2.5,
-	point_radialGradient: <
-		boolean | {
-			cx?: number;
-			cy?: number;
-			r?: number;
-			stops?: [number, string | null | Function, number]
-		}> false,
-	point_sensitivity: <number|"radius"|((d: IDataPoint) => number)> 10,
+	point_radialGradient: <boolean | {
+		cx?: number,
+		cy?: number,
+		r?: number,
+		stops?: [number, string | null | Function, number]
+	}>false,
+	point_sensitivity: <number | "radius" | ((d: IDataPoint) => number)>10,
 	point_focus_expand_enabled: true,
-	point_focus_expand_r: <number|undefined> undefined,
+	point_focus_expand_r: <number | undefined>undefined,
 	point_focus_only: false,
-	point_opacity: <number|null|undefined> undefined,
-	point_pattern: <string[]> [],
-	point_select_r: <number|undefined> undefined,
+	point_opacity: <number | null | undefined>undefined,
+	point_pattern: <string[]>[],
+	point_select_r: <number | undefined>undefined,
 	point_type: "circle"
 };

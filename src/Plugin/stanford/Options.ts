@@ -35,7 +35,7 @@ export default class Options {
 			 * @example
 			 * 	epochs: [ 1, 1, 2, 2, ... ]
 			 */
-			epochs: <number[]> [],
+			epochs: <number[]>[],
 
 			/**
 			 * Show additional lines anywhere on the chart.
@@ -84,10 +84,10 @@ export default class Options {
 			 *    }
 			 *  },
 			 */
-			scale_min: <number|undefined> undefined,
-			scale_max: <number|undefined> undefined,
-			scale_width: <number|undefined> 20,
-			scale_format: <number|undefined> undefined,
+			scale_min: <number | undefined>undefined,
+			scale_max: <number | undefined>undefined,
+			scale_width: <number | undefined>20,
+			scale_format: <number | undefined>undefined,
 
 			/**
 			 * The padding for color scale element

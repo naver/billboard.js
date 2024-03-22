@@ -2,14 +2,19 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	select as d3Select,
-	namespaces as d3Namespaces
-} from "d3-selection";
-import {document} from "../../module/browser";
+import {namespaces as d3Namespaces, select as d3Select} from "d3-selection";
 import {$FOCUS, $GAUGE, $LEGEND} from "../../config/classes";
+import {document} from "../../module/browser";
 import {KEY} from "../../module/Cache";
-import {callFn, isDefined, getOption, isEmpty, isFunction, notEmpty, tplProcess} from "../../module/util";
+import {
+	callFn,
+	getOption,
+	isDefined,
+	isEmpty,
+	isFunction,
+	notEmpty,
+	tplProcess
+} from "../../module/util";
 
 /**
  * Get color string for given data id
@@ -20,9 +25,7 @@ import {callFn, isDefined, getOption, isEmpty, isFunction, notEmpty, tplProcess}
 function getLegendColor(id: string): string {
 	const $$ = this;
 	const data = $$.getDataById(id);
-	const color = $$.levelColor ?
-		$$.levelColor(data.values[0].value) :
-		$$.color(data);
+	const color = $$.levelColor ? $$.levelColor(data.values[0].value) : $$.color(data);
 
 	return color;
 }
@@ -153,7 +156,9 @@ export default {
 			});
 
 			const legendItem = wrapper.html(html)
-				.selectAll(function() { return this.childNodes; })
+				.selectAll(function() {
+					return this.childNodes;
+				})
 				.data(ids);
 
 			$$.setLegendItem(legendItem);
@@ -169,27 +174,42 @@ export default {
 	 */
 	updateSizeForLegend(size): void {
 		const $$ = this;
-		const {config, state: {
-			isLegendTop, isLegendLeft, isLegendRight, isLegendInset, current
-		}} = $$;
+		const {
+			config,
+			state: {
+				isLegendTop,
+				isLegendLeft,
+				isLegendRight,
+				isLegendInset,
+				current
+			}
+		} = $$;
 		const {width, height} = size;
 
 		const insetLegendPosition = {
 			top: isLegendTop ?
 				$$.getCurrentPaddingByDirection("top") + config.legend_inset_y + 5.5 :
-				current.height - height - $$.getCurrentPaddingByDirection("bottom") - config.legend_inset_y,
+				current.height - height - $$.getCurrentPaddingByDirection("bottom") -
+				config.legend_inset_y,
 			left: isLegendLeft ?
 				$$.getCurrentPaddingByDirection("left") + config.legend_inset_x + 0.5 :
-				current.width - width - $$.getCurrentPaddingByDirection("right") - config.legend_inset_x + 0.5
+				current.width - width - $$.getCurrentPaddingByDirection("right") -
+				config.legend_inset_x + 0.5
 		};
 
 		$$.state.margin3 = {
 			top: isLegendRight ?
-				0 : isLegendInset ? insetLegendPosition.top : current.height - height,
+				0 :
+				isLegendInset ?
+				insetLegendPosition.top :
+				current.height - height,
 			right: NaN,
 			bottom: 0,
 			left: isLegendRight ?
-				current.width - width : isLegendInset ? insetLegendPosition.left : 0
+				current.width - width :
+				isLegendInset ?
+				insetLegendPosition.left :
+				0
 		};
 	},
 
@@ -255,12 +275,14 @@ export default {
 	 */
 	getLegendWidth(): number {
 		const $$ = this;
-		const {current: {width}, isLegendRight, isLegendInset, legendItemWidth, legendStep} = $$.state;
+		const {current: {width}, isLegendRight, isLegendInset, legendItemWidth, legendStep} =
+			$$.state;
 
-		return $$.config.legend_show ? (
-			isLegendRight || isLegendInset ?
-				legendItemWidth * (legendStep + 1) : width
-		) : 0;
+		return $$.config.legend_show ?
+			(
+				isLegendRight || isLegendInset ? legendItemWidth * (legendStep + 1) : width
+			) :
+			0;
 	},
 
 	/**
@@ -273,12 +295,13 @@ export default {
 		const {current, isLegendRight, legendItemHeight, legendStep} = $$.state;
 		const isFitPadding = $$.config.padding?.mode === "fit";
 
-		return $$.config.legend_show ? (
-			isLegendRight ?
-				current.height : (
+		return $$.config.legend_show ?
+			(
+				isLegendRight ? current.height : (
 					isFitPadding ? 10 : Math.max(20, legendItemHeight)
 				) * (legendStep + 1)
-		) : 0;
+			) :
+			0;
 	},
 
 	/**
@@ -306,8 +329,7 @@ export default {
 			.filter(id => targetIdz.indexOf(id) >= 0)
 			.classed($FOCUS.legendItemFocused, focus))
 			.style("opacity", function() {
-				return focus ? null :
-					$$.opacityForUnfocusedLegend.call($$, d3Select(this));
+				return focus ? null : $$.opacityForUnfocusedLegend.call($$, d3Select(this));
 			});
 	},
 
@@ -336,9 +358,7 @@ export default {
 		if (!config.legend_show) {
 			config.legend_show = true;
 
-			$el.legend ?
-				$el.legend.style("visibility", null) :
-				$$.initLegend();
+			$el.legend ? $el.legend.style("visibility", null) : $$.initLegend();
 
 			!$$.state.legendHasRendered && $$.updateLegend();
 		}
@@ -438,31 +458,36 @@ export default {
 			}
 
 			item
-				.on(interaction.dblclick ? "dblclick" : "click", interaction || isFunction(config.legend_item_onclick) ?
-					function(event, id) {
-						if (!callFn(config.legend_item_onclick, api, id)) {
-							const {altKey, target, type} = event;
+				.on(interaction.dblclick ? "dblclick" : "click",
+					interaction || isFunction(config.legend_item_onclick) ?
+						function(event, id) {
+							if (!callFn(config.legend_item_onclick, api, id)) {
+								const {altKey, target, type} = event;
 
-							if (type === "dblclick" || altKey) {
-								// when focused legend is clicked(with altKey or double clicked), reset all hiding.
-								if (state.hiddenTargetIds.length &&
-									target.parentNode.getAttribute("class").indexOf($LEGEND.legendItemHidden) === -1
-								) {
-									api.show();
+								if (type === "dblclick" || altKey) {
+									// when focused legend is clicked(with altKey or double clicked), reset all hiding.
+									if (
+										state.hiddenTargetIds.length &&
+										target.parentNode.getAttribute("class").indexOf(
+												$LEGEND.legendItemHidden
+											) === -1
+									) {
+										api.show();
+									} else {
+										api.hide();
+										api.show(id);
+									}
 								} else {
-									api.hide();
-									api.show(id);
+									api.toggle(id);
+
+									d3Select(this)
+										.classed($FOCUS.legendItemFocused, false);
 								}
-							} else {
-								api.toggle(id);
-
-								d3Select(this)
-									.classed($FOCUS.legendItemFocused, false);
 							}
-						}
 
-						isTouch && $$.hideTooltip();
-					} : null);
+							isTouch && $$.hideTooltip();
+						} :
+						null);
 
 			!isTouch && item
 				.on("mouseout", interaction || isFunction(config.legend_item_onout) ?
@@ -476,7 +501,8 @@ export default {
 
 							$$.api.revert();
 						}
-					} : null)
+					} :
+					null)
 				.on("mouseover", interaction || isFunction(config.legend_item_onover) ?
 					function(event, id) {
 						if (!callFn(config.legend_item_onover, api, id)) {
@@ -490,7 +516,8 @@ export default {
 								api.focus(id);
 							}
 						}
-					} : null);
+					} :
+					null);
 
 			// set cursor when has some interaction
 			!item.empty() && item.on("click mouseout mouseover") &&
@@ -647,7 +674,8 @@ export default {
 			const box = $$.getLegendItemTextBox(id, textElement);
 
 			const itemWidth = box.width + dimension.tileWidth +
-				(isLast && !isLegendRightOrInset ? 0 : dimension.padding.right) + config.legend_padding;
+				(isLast && !isLegendRightOrInset ? 0 : dimension.padding.right) +
+				config.legend_padding;
 			const itemHeight = box.height + dimension.padding.top;
 			const itemLength = isLegendRightOrInset ? itemHeight : itemWidth;
 			const areaLength = isLegendRightOrInset ? $$.getLegendHeight() : $$.getLegendWidth();
@@ -702,7 +730,9 @@ export default {
 
 			if (config.legend_equally) {
 				Object.keys(sizes.widths).forEach(id2 => (sizes.widths[id2] = dimension.max.width));
-				Object.keys(sizes.heights).forEach(id2 => (sizes.heights[id2] = dimension.max.height));
+				Object.keys(sizes.heights).forEach(
+					id2 => (sizes.heights[id2] = dimension.max.height)
+				);
 				margin = (areaLength - maxLength * targetIdz.length) / 2;
 
 				if (margin < dimension.posMin) {
@@ -769,7 +799,8 @@ export default {
 
 			l.append(d => {
 				const pattern = notEmpty(config.point_pattern) ?
-					config.point_pattern : [config.point_type];
+					config.point_pattern :
+					[config.point_type];
 
 				ids.indexOf(d) === -1 && ids.push(d);
 
@@ -779,7 +810,8 @@ export default {
 					point = "rect";
 				}
 
-				return document.createElementNS(d3Namespaces.svg, ("hasValidPointType" in $$) && $$.hasValidPointType(point) ? point : "use");
+				return document.createElementNS(d3Namespaces.svg,
+					("hasValidPointType" in $$) && $$.hasValidPointType(point) ? point : "use");
 			})
 				.attr("class", $LEGEND.legendItemPoint)
 				.style("fill", getLegendColor.bind($$))
@@ -842,8 +874,8 @@ export default {
 					let xOffset = 2;
 					let yOffset = 2.5;
 					let radius = null;
-					let width = <number|null>null;
-					let height = <number|null>null;
+					let width = <number | null>null;
+					let height = <number | null>null;
 
 					if (nodeName === "circle") {
 						const size = pointR * 0.2;

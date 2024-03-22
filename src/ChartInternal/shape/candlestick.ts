@@ -125,17 +125,19 @@ export default {
 
 			// set line position
 			const line = g.select("line");
-			const pos = isRotated ? {
-				x1: points[2][1],
-				x2: points[2][2],
-				y1: points[2][0],
-				y2: points[2][0]
-			} : {
-				x1: points[2][0],
-				x2: points[2][0],
-				y1: points[2][1],
-				y2: points[2][2]
-			};
+			const pos = isRotated ?
+				{
+					x1: points[2][1],
+					x2: points[2][2],
+					y1: points[2][0],
+					y2: points[2][0]
+				} :
+				{
+					x1: points[2][0],
+					x2: points[2][0],
+					y1: points[2][1],
+					y2: points[2][2]
+				};
 
 			for (const x in pos) {
 				line.attr(x, pos[x]);
@@ -184,7 +186,7 @@ export default {
 					low: y(value.low)
 				};
 
-				posY.start -= (y0 - offset);
+				posY.start -= y0 - offset;
 
 				points = [
 					[posX.start, posY.start],
@@ -209,7 +211,7 @@ export default {
 	redrawCandlestick(drawFn, withTransition?: boolean, isSub = false) {
 		const $$ = this;
 		const {$el, $T} = $$;
-		const {candlestick} = (isSub ? $el.subchart : $el);
+		const {candlestick} = isSub ? $el.subchart : $el;
 		const rand = getRandom(true);
 
 		return [

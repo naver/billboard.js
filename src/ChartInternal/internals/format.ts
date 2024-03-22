@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isArray, isValue, isFunction, isObjectType, isObject} from "../../module/util";
 import type {AxisType} from "../../../types/types";
+import {isArray, isFunction, isObject, isObjectType, isValue} from "../../module/util";
 
 /**
  * Get formatted
@@ -16,8 +16,7 @@ import type {AxisType} from "../../../types/types";
 function getFormat($$, typeValue: AxisType, v: number): number | string {
 	const {config} = $$;
 	const type = `axis_${typeValue}_tick_format`;
-	const format = config[type] ?
-		config[type] : $$.defaultValueFormat;
+	const format = config[type] ? config[type] : $$.defaultValueFormat;
 
 	return format.call($$.api, v);
 }
@@ -50,7 +49,7 @@ export default {
 		};
 	},
 
-	defaultValueFormat(v: number|number[]): number|string {
+	defaultValueFormat(v: number | number[]): number | string {
 		return isArray(v) ? v.join("~") : (isValue(v) ? +v : "");
 	},
 
@@ -85,7 +84,8 @@ export default {
 		} else if (isObjectType(dataLabels.format)) {
 			if (dataLabels.format[targetId]) {
 				format = dataLabels.format[targetId] === true ?
-					defaultFormat : dataLabels.format[targetId];
+					defaultFormat :
+					dataLabels.format[targetId];
 			} else {
 				format = () => "";
 			}

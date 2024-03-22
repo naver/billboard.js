@@ -2,11 +2,11 @@
  * Copyright (c) 2021 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import type {IData} from "../../ChartInternal/data/IData";
 import {$COMMON} from "../../config/classes";
+import {loadConfig} from "../../config/config";
 import Plugin from "../Plugin";
 import Options from "./Options";
-import type {IData} from "../../ChartInternal/data/IData";
-import {loadConfig} from "../../config/config";
 
 /**
  * Sparkline plugin.<br>
@@ -235,8 +235,7 @@ export default class Sparkline extends Plugin {
 
 		$$.state.event = e;
 
-		$$.isPointFocusOnly() ?
-			$$.hideCircleFocus() : $$.unexpandCircles();
+		$$.isPointFocusOnly() ? $$.hideCircleFocus() : $$.unexpandCircles();
 
 		$$.hideTooltip();
 	}

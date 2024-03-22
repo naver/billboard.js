@@ -25,9 +25,9 @@ export default {
 		const {axis, data, org, scale} = $$;
 		const {append} = args;
 		const zoomState = {
-			domain: <any> null,
-			currentDomain: <any> null,
-			x: <any> null
+			domain: <any>null,
+			currentDomain: <any>null,
+			x: <any>null
 		};
 		let targets = rawTargets;
 
@@ -50,8 +50,7 @@ export default {
 			data.targets.forEach(d => {
 				for (let i = 0; i < targets.length; i++) {
 					if (d.id === targets[i].id) {
-						d.values = append ?
-							d.values.concat(targets[i].values) : targets[i].values;
+						d.values = append ? d.values.concat(targets[i].values) : targets[i].values;
 
 						targets.splice(i, 1);
 						break;
@@ -66,7 +65,9 @@ export default {
 		$$.updateTargets(data.targets);
 
 		if (scale.zoom) {
-			zoomState.x = axis.isCategorized() ? scale.x.orgScale() : (org.xScale || scale.x).copy();
+			zoomState.x = axis.isCategorized() ?
+				scale.x.orgScale() :
+				(org.xScale || scale.x).copy();
 			zoomState.domain = $$.getXDomain(data.targets); // get updated xDomain
 
 			zoomState.x.domain(zoomState.domain);

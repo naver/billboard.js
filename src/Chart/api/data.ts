@@ -3,8 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 import type {DataItem} from "../../../types/types";
-import {extend, isUndefined, isArray} from "../../module/util";
 import type {IDataRow} from "../../ChartInternal/data/IData";
+import {extend, isArray, isUndefined} from "../../module/util";
 
 /**
  * Get data loaded in the chart.
@@ -24,7 +24,7 @@ import type {IDataRow} from "../../ChartInternal/data/IData";
  * // Get all data
  * chart.data();
  */
-const data = function(targetIds: string|string[]): DataItem[] {
+const data = function(targetIds: string | string[]): DataItem[] {
 	const {targets} = this.internal.data;
 
 	if (!isUndefined(targetIds)) {
@@ -72,7 +72,8 @@ extend(data, {
 	 * chart.data.values("data1");
 	 * // --> [10, 20, 30, 40]
 	 */
-	values: function(targetIds?: string | string[], flat: boolean = true): number[]|number[][]|null {
+	values: function(targetIds?: string | string[], flat: boolean = true): number[] | number[][]
+		| null {
 		let values: any = null;
 
 		if (targetIds) {
@@ -108,9 +109,9 @@ extend(data, {
 	 * chart.data.names({
 	 *  data1: "New Name 1",
 	 *  data2: "New Name 2"
-	 *});
+	 * });
 	 */
-	names: function(names?: Array<{ [key: string]: string|null; }>): {[key: string]: string|null} {
+	names: function(names?: Array<{[key: string]: string | null}>): {[key: string]: string | null} {
 		const $$ = this.internal;
 
 		return $$.updateDataAttributes("names", names);
@@ -134,7 +135,7 @@ extend(data, {
 	 *  data2: "#000000"
 	 * });
 	 */
-	colors: function(colors?: Array<{ [key: string]: string; }>): { [key: string]: string } {
+	colors: function(colors?: Array<{[key: string]: string}>): {[key: string]: string} {
 		return this.internal.updateDataAttributes("colors", colors);
 	},
 
@@ -157,7 +158,7 @@ extend(data, {
 	 *  data2: "y2"
 	 * });
 	 */
-	axes: function(axes?: Array<{ [key: string]: string }>): { [key: string]: string } {
+	axes: function(axes?: Array<{[key: string]: string}>): {[key: string]: string} {
 		return this.internal.updateDataAttributes("axes", axes);
 	},
 

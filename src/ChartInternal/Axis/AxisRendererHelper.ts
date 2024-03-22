@@ -3,9 +3,9 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-import {getScale} from "../internals/scale";
-import {isDefined, isNumber, isString, isValue} from "../../module/util";
 import type {d3Selection} from "../../../types/types";
+import {isDefined, isNumber, isString, isValue} from "../../module/util";
+import {getScale} from "../internals/scale";
 
 export default class AxisRendererHelper {
 	private owner;

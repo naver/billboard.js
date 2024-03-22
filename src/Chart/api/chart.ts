@@ -68,16 +68,18 @@ export default {
 			zoomResetBtn?.style("display", "none");
 			$$.scale.zoom = null;
 
-			soft ? $$.redraw({
-				withTransform: true,
-				withUpdateXDomain: true,
-				withUpdateOrgXDomain: true,
-				withLegend: true
-			}) : $$.updateAndRedraw({
-				withLegend: true,
-				withTransition: false,
-				withTransitionForTransform: false,
-			});
+			soft ?
+				$$.redraw({
+					withTransform: true,
+					withUpdateXDomain: true,
+					withUpdateOrgXDomain: true,
+					withLegend: true
+				}) :
+				$$.updateAndRedraw({
+					withLegend: true,
+					withTransition: false,
+					withTransitionForTransform: false
+				});
 
 			// reset subchart selection & selection state
 			if (!state.resizing && $$.brush) {
