@@ -4,27 +4,23 @@
  */
 import Chart from "../../Chart/Chart";
 import ChartInternal from "../../ChartInternal/ChartInternal";
-import Options from "../Options/Options";
-import {TYPE} from "../const";
 import {extend} from "../../module/util";
+import {TYPE} from "../const";
+import Options from "../Options/Options";
 
 // Axis
-import {
-	api as axisAPI,
-	internal as axisInternal,
-	options as axisOptions
-} from "./axis";
+import {api as axisAPI, internal as axisInternal, options as axisOptions} from "./axis";
 
 // Shape
 import shapeArc from "../../ChartInternal/shape/arc";
 import shapeArea from "../../ChartInternal/shape/area";
 import shapeBar from "../../ChartInternal/shape/bar";
+import shapeBubble from "../../ChartInternal/shape/bubble";
 import shapeCandlestick from "../../ChartInternal/shape/candlestick";
 import shapeGauge from "../../ChartInternal/shape/gauge";
-import shapeBubble from "../../ChartInternal/shape/bubble";
 import shapeLine from "../../ChartInternal/shape/line";
-import shapePointCommon from "../../ChartInternal/shape/point.common";
 import shapePoint from "../../ChartInternal/shape/point";
+import shapePointCommon from "../../ChartInternal/shape/point.common";
 import shapePolar from "../../ChartInternal/shape/polar";
 import shapeRadar from "../../ChartInternal/shape/radar";
 import shapeTreemap from "../../ChartInternal/shape/treemap";
@@ -151,17 +147,20 @@ let bar = (): string => (
 );
 let bubble = (): string => (
 	extendAxis(
-		[shapePointCommon, shapePoint, shapeBubble], [optBubble, optPoint]
+		[shapePointCommon, shapePoint, shapeBubble],
+		[optBubble, optPoint]
 	), (bubble = () => TYPE.BUBBLE)()
 );
 let candlestick = (): string => (
 	extendAxis(
-		[shapeCandlestick, shapePointCommon], [optCandlestick, optPoint]
+		[shapeCandlestick, shapePointCommon],
+		[optCandlestick, optPoint]
 	), (candlestick = () => TYPE.CANDLESTICK)()
 );
 let scatter = (): string => (
 	extendAxis(
-		[shapePointCommon, shapePoint], [optPoint, optScatter]
+		[shapePointCommon, shapePoint],
+		[optPoint, optScatter]
 	), (scatter = () => TYPE.SCATTER)()
 );
 

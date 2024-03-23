@@ -63,7 +63,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_type: <"category"|"indexed"|"log"|"timeseries"> "indexed",
+	axis_x_type: <"category" | "indexed" | "log" | "timeseries">"indexed",
 
 	/**
 	 * Set how to treat the timezone of x values.<br>
@@ -95,7 +95,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_categories: <string[]> [],
+	axis_x_categories: <string[]>[],
 
 	/**
 	 * centerize ticks on category axis.
@@ -141,7 +141,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_tick_format: <Function|string|undefined> undefined,
+	axis_x_tick_format: <Function | string | undefined>undefined,
 
 	/**
 	 * Setting for culling ticks.
@@ -219,7 +219,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_tick_count: <number|undefined>undefined,
+	axis_x_tick_count: <number | undefined>undefined,
 
 	/**
 	 * Show or hide x axis tick line.
@@ -283,7 +283,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_tick_text_inner: <{first?: boolean, last?: boolean}|boolean> false,
+	axis_x_tick_text_inner: <{first?: boolean, last?: boolean} | boolean>false,
 
 	/**
 	 * Set the x Axis tick text's position relatively its original position
@@ -350,7 +350,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_tick_values: <(string|Date|number)[]|(()=> number[])|null> null,
+	axis_x_tick_values: <(string | Date | number)[] | (() => number[]) | null>null,
 
 	/**
 	 * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
@@ -449,7 +449,6 @@ export default {
 	 */
 	axis_x_tick_multiline: true,
 
-
 	/**
 	 * Set tick width
 	 * - **NOTE:**
@@ -467,7 +466,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_tick_width: <number|null> null,
+	axis_x_tick_width: <number | null>null,
 
 	/**
 	 * Set to display system tooltip(via `<title>` element) for tick text
@@ -510,7 +509,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_max: <number|undefined> undefined,
+	axis_x_max: <number | undefined>undefined,
 
 	/**
 	 * Set min value of x axis range.
@@ -535,7 +534,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_min: <number|undefined> undefined,
+	axis_x_min: <number | undefined>undefined,
 
 	/**
 	 * Change the direction of x axis.<br><br>
@@ -596,7 +595,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_padding: <number|{left?: number; right?: number;}> {},
+	axis_x_padding: <number | {left?: number, right?: number}>{},
 
 	/**
 	 * Set height of x axis.<br><br>
@@ -612,7 +611,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_height: <number|undefined> undefined,
+	axis_x_height: <number | undefined>undefined,
 
 	/**
 	 * Set default extent for subchart and zoom. This can be an array or function that returns an array.
@@ -642,7 +641,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_x_extent: <(number|string)[]|Function|undefined> undefined,
+	axis_x_extent: <(number | string)[] | Function | undefined>undefined,
 
 	/**
 	 * Set label on x axis.<br><br>

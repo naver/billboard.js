@@ -2,10 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	namespaces as d3Namespaces,
-	select as d3Select
-} from "d3-selection";
+import {namespaces as d3Namespaces, select as d3Select} from "d3-selection";
 import {document} from "../../module/browser";
 import {isFunction, isObjectType, notEmpty, toArray} from "../../module/util";
 

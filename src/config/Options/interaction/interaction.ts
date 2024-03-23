@@ -41,5 +41,5 @@ export default {
 	interaction_enabled: true,
 	interaction_brighten: true,
 	interaction_inputType_mouse: true,
-	interaction_inputType_touch: <boolean|{preventDefault?: boolean|number}> {}
+	interaction_inputType_touch: <boolean | {preventDefault?: boolean | number}>{}
 };

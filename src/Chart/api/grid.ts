@@ -4,11 +4,7 @@
  */
 import {extend, isTabVisible} from "../../module/util";
 
-type GridsParam = {
-	value?: number,
-	class?: string,
-	text?: string
-}[];
+type GridsParam = {value?: number, class?: string, text?: string}[];
 
 /**
  * Update grid lines.

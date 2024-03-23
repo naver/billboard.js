@@ -20,7 +20,7 @@ export default {
 	 *   x: "date"
 	 * }
 	 */
-	data_x: <string|undefined> undefined,
+	data_x: <string | undefined>undefined,
 
 	/**
 	 * Converts data id value
@@ -59,7 +59,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_names: <{[key: string]: string|null}> {},
+	data_names: <{[key: string]: string | null}>{},
 
 	/**
 	 * Set custom data class.<br><br>
@@ -76,7 +76,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_classes: <{[key: string]: string}> {},
+	data_classes: <{[key: string]: string}>{},
 
 	/**
 	 * Set chart type at once.<br><br>
@@ -139,7 +139,7 @@ export default {
 	 *   }
 	 * });
 	 */
-	data_type: <ChartTypes|undefined> undefined,
+	data_type: <ChartTypes | undefined>undefined,
 
 	/**
 	 * Set chart type for each data.<br>
@@ -190,7 +190,7 @@ export default {
 	 *   }
 	 * });
 	 */
-	data_types: <{[key: string]: ChartTypes}> {},
+	data_types: <{[key: string]: ChartTypes}>{},
 
 	/**
 	 *  This option changes the order of stacking data and pieces of pie/donut.
@@ -242,7 +242,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_order: <"desc"|"asc"|Function|null> "desc",
+	data_order: <"desc" | "asc" | Function | null>"desc",
 
 	/**
 	 * Set groups for the data for stacking.
@@ -258,7 +258,7 @@ export default {
 	 *   ]
 	 * }
 	 */
-	data_groups: <string[][]> [],
+	data_groups: <string[][]>[],
 
 	/**
 	 * Set how zero value will be treated on groups.<br>
@@ -276,7 +276,7 @@ export default {
 	 *   groupsZeroAs: "zero" // "positive" or "negative"
 	 * }
 	 */
-	data_groupsZeroAs: <"zero" | "positive" | "negative"> "positive",
+	data_groupsZeroAs: <"zero" | "positive" | "negative">"positive",
 
 	/**
 	 * Set color converter function.<br><br>
@@ -291,7 +291,7 @@ export default {
 	 *   color: function(color, d) { ... }
 	 * }
 	 */
-	data_color: <Function|undefined> undefined,
+	data_color: <Function | undefined>undefined,
 
 	/**
 	 * Set color for each data.
@@ -310,7 +310,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	data_colors: <{[key: string]: string|(() => string);}> {},
+	data_colors: <{[key: string]: string | (() => string)}>{},
 
 	/**
 	 * Set labels options
@@ -419,23 +419,23 @@ export default {
 	 *        data2: {x: 10, y: -20}
 	 *     },
 	 *
-	 *	   // rotate degree for label text
+	 * 	   // rotate degree for label text
 	 *     rotate: 90
 	 *   }
 	 * }
 	 */
-	data_labels:
-		<boolean | {
-			centered?: boolean;
-			format?: (v: number, id: string, i: number, texts: d3Selection) => number;
-			colors?: string|{[key: string]: string};
-			position?: (type: "x" | "y", v: number, id: string, i: number, texts: d3Selection) => number |
-				{[key: string]: number} |
-				{[key: string]: {x?: number; y?: number;}};
-			rotate?: number;
-		}> {},
-	data_labels_backgroundColors: <string|{[key: string]: string}|undefined> undefined,
-	data_labels_colors: <string|object|Function|undefined> undefined,
+	data_labels: <boolean | {
+		centered?: boolean,
+		format?: (v: number, id: string, i: number, texts: d3Selection) => number,
+		colors?: string | {[key: string]: string},
+		position?: (type: "x" | "y", v: number, id: string, i: number, texts: d3Selection) =>
+			| number
+			| {[key: string]: number}
+			| {[key: string]: {x?: number, y?: number}},
+		rotate?: number
+	}>{},
+	data_labels_backgroundColors: <string | {[key: string]: string} | undefined>undefined,
+	data_labels_colors: <string | object | Function | undefined>undefined,
 	data_labels_position: {},
 
 	/**
@@ -454,7 +454,7 @@ export default {
 	 *   hide: ["data1", ...]
 	 * }
 	 */
-	data_hide: <string[]|boolean> false,
+	data_hide: <string[] | boolean>false,
 
 	/**
 	 * Filter values to be shown
@@ -474,7 +474,7 @@ export default {
 	 *      return v.id !== "data1";
 	 *   }
 	 */
-	data_filter: <(() => boolean)|undefined> undefined,
+	data_filter: <(() => boolean) | undefined>undefined,
 
 	/**
 	 * Set a callback for click event on each data point.<br><br>
@@ -554,7 +554,7 @@ export default {
 	 *    }
 	 *  }
 	 */
-	data_onshown: <Function|undefined> undefined,
+	data_onshown: <Function | undefined>undefined,
 
 	/**
 	 * Set a callback for when data is hidden.<br>
@@ -571,7 +571,7 @@ export default {
 	 *    }
 	 *  }
 	 */
-	data_onhidden: <Function|undefined> undefined,
+	data_onhidden: <Function | undefined>undefined,
 
 	/**
 	 * Set a callback for minimum data
@@ -587,7 +587,7 @@ export default {
 	 *    ...
 	 *  }
 	 */
-	data_onmin: <Function|undefined> undefined,
+	data_onmin: <Function | undefined>undefined,
 
 	/**
 	 * Set a callback for maximum data
@@ -603,7 +603,7 @@ export default {
 	 *    ...
 	 *  }
 	 */
-	data_onmax: <Function|undefined> undefined,
+	data_onmax: <Function | undefined>undefined,
 
 	/**
 	 * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
@@ -617,7 +617,7 @@ export default {
 	 *     url: "/data/test.csv"
 	 * }
 	 */
-	data_url: <string|undefined> undefined,
+	data_url: <string | undefined>undefined,
 
 	/**
 	 * XHR header value
@@ -636,7 +636,7 @@ export default {
 	 *     }
 	 * }
 	 */
-	data_headers: <object|undefined> undefined,
+	data_headers: <object | undefined>undefined,
 
 	/**
 	 * Parse a JSON object for data. See also data.keys.
@@ -664,7 +664,7 @@ export default {
 	 *     }
 	 * }
 	 */
-	data_json: <object[]|undefined> undefined,
+	data_json: <object[] | undefined>undefined,
 
 	/**
 	 * Load data from a multidimensional array, with the first element containing the data names, the following containing related data in that order.
@@ -743,20 +743,20 @@ export default {
 	 * data: {
 	 *   rows: [
 	 *      ["data1", "data2"],
-	 *		[
-	 *			// open, high, low, close, volume (optional)
-	 *			{open: 1300, high: 1369, low: 1200, close: 1339, volume: 100},
-	 *			[1000, 1100, 850, 870]
-	 *		],
-	 *		[
-	 *			{open: 1348, high: 1371, low: 1271, close: 1320},
-	 *			[870, 1250, 830, 1200, 50]
-	 *		]
+	 * 		[
+	 * 			// open, high, low, close, volume (optional)
+	 * 			{open: 1300, high: 1369, low: 1200, close: 1339, volume: 100},
+	 * 			[1000, 1100, 850, 870]
+	 * 		],
+	 * 		[
+	 * 			{open: 1348, high: 1371, low: 1271, close: 1320},
+	 * 			[870, 1250, 830, 1200, 50]
+	 * 		]
 	 *   ],
 	 *   type: "candlestick"
 	 * }
 	 */
-	data_rows: <(string|number)[][]|undefined> undefined,
+	data_rows: <(string | number)[][] | undefined>undefined,
 
 	/**
 	 * Load data from a multidimensional array, with each element containing an array consisting of a datum name and associated data values.
@@ -826,7 +826,7 @@ export default {
 	 *   type: "candlestick"
 	 * }
 	 */
-	data_columns: <(string|number)[][]|undefined> undefined,
+	data_columns: <(string | number)[][] | undefined>undefined,
 
 	/**
 	 * Used if loading JSON via data.url.
@@ -843,7 +843,7 @@ export default {
 	 *     mimeType: "json"
 	 * }
 	 */
-	data_mimeType: <"csv"|"json"|"tsv"> "csv",
+	data_mimeType: <"csv" | "json" | "tsv">"csv",
 
 	/**
 	 * Choose which JSON object keys correspond to desired data.
@@ -870,7 +870,7 @@ export default {
 	 *     }
 	 * }
 	 */
-	data_keys: <{x?: string; value?: string[]}|undefined> undefined,
+	data_keys: <{x?: string, value?: string[]} | undefined>undefined,
 
 	/**
 	 * Set text label to be displayed when there's no data to show.

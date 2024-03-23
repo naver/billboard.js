@@ -111,8 +111,6 @@ export default class BubbleCompare extends Plugin {
 	}
 
 	getZData(d): number {
-		return this.$$.isBubbleZType(d) ?
-			this.$$.getBubbleZData(d.value, "z") :
-			d.value;
+		return this.$$.isBubbleZType(d) ? this.$$.getBubbleZData(d.value, "z") : d.value;
 	}
 }

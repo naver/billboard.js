@@ -2,9 +2,9 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {extend, parseDate} from "../../module/util";
-import {$COMMON} from "../../config/classes";
 import type {TDomain} from "../../ChartInternal/data/IData";
+import {$COMMON} from "../../config/classes";
+import {extend, parseDate} from "../../module/util";
 
 /**
  * Select subchart by giving x domain range.

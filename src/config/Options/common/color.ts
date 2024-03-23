@@ -80,8 +80,8 @@ export default {
 	 *      }
 	 *  }
 	 */
-	color_pattern: <(string|null)[]> [],
-	color_tiles: <(() => [])|undefined> undefined,
-	color_threshold: <{unit?: string; values?: number[]; max: number;}> {},
-	color_onover: <string|object|undefined> undefined
+	color_pattern: <(string | null)[]>[],
+	color_tiles: <(() => []) | undefined>undefined,
+	color_threshold: <{unit?: string, values?: number[], max: number}>{},
+	color_onover: <string | object | undefined>undefined
 };

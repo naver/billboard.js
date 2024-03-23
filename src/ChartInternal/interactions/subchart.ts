@@ -2,12 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {brushSelection as d3BrushSelection, brushX as d3BrushX, brushY as d3BrushY} from "d3-brush";
 import {select as d3Select} from "d3-selection";
-import {
-	brushX as d3BrushX,
-	brushY as d3BrushY,
-	brushSelection as d3BrushSelection
-} from "d3-brush";
 import CLASS from "../../config/classes";
 import {brushEmpty, capitalize, isArray, isFunction, parseDate} from "../../module/util";
 
@@ -44,11 +40,12 @@ export default {
 			if (/(start|brush)/.test(type)) {
 				// when brush selection updates happens on one edge, update only chainging edge and
 				// is only for adjustment of given domain range to be used to return current domain range.
-				type === "brush" && sourceEvent && state.domain && lastSelection?.forEach((v, i) => {
-					if (v !== selection[i]) {
-						state.domain[i] = scale.x.orgDomain()[i];
-					}
-				});
+				type === "brush" && sourceEvent && state.domain &&
+					lastSelection?.forEach((v, i) => {
+						if (v !== selection[i]) {
+							state.domain[i] = scale.x.orgDomain()[i];
+						}
+					});
 
 				$$.redrawForBrush(type !== "start");
 			}
@@ -198,19 +195,18 @@ export default {
 		const customHandleClass = "handle--custom";
 
 		// brush handle shape's path
-		const path = isRotated ? [
-			"M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
-			"M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
-		] : [
-			"M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
-			"M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
-		];
+		const path = isRotated ?
+			[
+				"M8.5 0 a6 6 0 0 0 -6 -6.5 H-2.5 a 6 6 0 0 0 -6 6.5 z m-5 -2 H-3.5 m7 -2 H-3.5z",
+				"M8.5 0 a6 -6 0 0 1 -6 6.5 H-2.5 a 6 -6 0 0 1 -6 -6.5z m-5 2 H-3.5 m7 2 H-3.5z"
+			] :
+			[
+				"M0 -8.5 A6 6 0 0 0 -6.5 -3.5 V2.5 A6 6 0 0 0 0 8.5 Z M-2 -3.5 V3.5 M-4 -3.5 V3.5z",
+				"M0 -8.5 A6 6 0 0 1 6.5 -3.5 V2.5 A6 6 0 0 1 0 8.5 Z M2 -3.5 V3.5 M4 -3.5 V3.5z"
+			];
 
 		$$.brush.handle = brush.selectAll(`.${customHandleClass}`)
-			.data(isRotated ?
-				[{type: "n"}, {type: "s"}] :
-				[{type: "w"}, {type: "e"}]
-			)
+			.data(isRotated ? [{type: "n"}, {type: "s"}] : [{type: "w"}, {type: "e"}])
 			.enter()
 			.append("path")
 			.attr("class", customHandleClass)
@@ -271,7 +267,8 @@ export default {
 
 			// -- Brush --//
 			main.selectAll(`.${CLASS.brush} rect`)
-				.attr(config.axis_rotated ? "width" : "height", config.axis_rotated ? state.width2 : state.height2);
+				.attr(config.axis_rotated ? "width" : "height",
+					config.axis_rotated ? state.width2 : state.height2);
 		}
 	},
 
@@ -339,9 +336,14 @@ export default {
 	 */
 	redrawForBrush(callCallbck = true): void {
 		const $$ = this;
-		const {config: {
-			subchart_onbrush: onBrush, zoom_rescale: withY
-		}, scale, state} = $$;
+		const {
+			config: {
+				subchart_onbrush: onBrush,
+				zoom_rescale: withY
+			},
+			scale,
+			state
+		} = $$;
 
 		$$.redraw({
 			withTransition: false,

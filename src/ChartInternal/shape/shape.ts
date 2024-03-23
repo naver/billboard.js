@@ -2,31 +2,42 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {select as d3Select} from "d3-selection";
 import {
-	curveStepBefore as d3CurveStepBefore,
-	curveStepAfter as d3CurveStepAfter,
+	curveBasis as d3CurveBasis,
 	curveBasisClosed as d3CurveBasisClosed,
 	curveBasisOpen as d3CurveBasisOpen,
-	curveBasis as d3CurveBasis,
 	curveBundle as d3CurveBundle,
+	curveCardinal as d3CurveCardinal,
 	curveCardinalClosed as d3CurveCardinalClosed,
 	curveCardinalOpen as d3CurveCardinalOpen,
-	curveCardinal as d3CurveCardinal,
+	curveCatmullRom as d3CurveCatmullRom,
 	curveCatmullRomClosed as d3CurveCatmullRomClosed,
 	curveCatmullRomOpen as d3CurveCatmullRomOpen,
-	curveCatmullRom as d3CurveCatmullRom,
-	curveLinearClosed as d3CurveLinearClosed,
 	curveLinear as d3CurveLinear,
+	curveLinearClosed as d3CurveLinearClosed,
 	curveMonotoneX as d3CurveMonotoneX,
 	curveMonotoneY as d3CurveMonotoneY,
 	curveNatural as d3CurveNatural,
-	curveStep as d3CurveStep
+	curveStep as d3CurveStep,
+	curveStepAfter as d3CurveStepAfter,
+	curveStepBefore as d3CurveStepBefore
 } from "d3-shape";
-import {select as d3Select} from "d3-selection";
 import type {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
-import {capitalize, getPointer, getRectSegList, getUnique, isObjectType, isNumber, isValue, isUndefined, notEmpty, parseDate} from "../../module/util";
-import type {IDataRow, IDataIndice, TIndices} from "../data/IData";
+import {
+	capitalize,
+	getPointer,
+	getRectSegList,
+	getUnique,
+	isNumber,
+	isObjectType,
+	isUndefined,
+	isValue,
+	notEmpty,
+	parseDate
+} from "../../module/util";
+import type {IDataIndice, IDataRow, TIndices} from "../data/IData";
 
 /**
  * Get grouped data point function for y coordinate
@@ -50,7 +61,7 @@ function getGroupedDataPointsFn(d) {
 
 export interface IOffset {
 	_$width: number;
-	_$total: number[]
+	_$total: number[];
 }
 
 export default {
@@ -60,11 +71,7 @@ export default {
 	 * @private
 	 */
 	getDrawShape() {
-		type TShape = {
-			area?: any;
-			bar?: any;
-			line?: any;
-		};
+		type TShape = {area?: any, bar?: any, line?: any};
 
 		const $$ = this;
 		const isRotated = $$.config.axis_rotated;
@@ -74,9 +81,12 @@ export default {
 		!hasTreemap && ["bar", "candlestick", "line", "area"].forEach(v => {
 			const name = capitalize(/^(bubble|scatter)$/.test(v) ? "line" : v);
 
-			if ($$.hasType(v) || $$.hasTypeOf(name) || (
-				v === "line" && ($$.hasType("bubble") || $$.hasType("scatter"))
-			)) {
+			if (
+				$$.hasType(v) || $$.hasTypeOf(name) || (
+					v === "line" &&
+					($$.hasType("bubble") || $$.hasType("scatter"))
+				)
+			) {
 				const indices = $$.getShapeIndices($$[`is${name}Type`]);
 				const drawFn = $$[`generateDraw${name}`];
 
@@ -112,10 +122,10 @@ export default {
 	 * From the below example, indices will be:
 	 * ==> {data1: 0, data2: 0, data3: 1, data4: 1, __max__: 1}
 	 *
-	 *	data1 data3   data1 data3
-	 *	data2 data4   data2 data4
-	 *	-------------------------
-	 *		 0             1
+	 * 	data1 data3   data1 data3
+	 * 	data2 data4   data2 data4
+	 * 	-------------------------
+	 * 		 0             1
 	 * @param {Function} typeFilter Chart type filter function
 	 * @returns {object} Indices object with its position
 	 */
@@ -193,8 +203,7 @@ export default {
 			return ind;
 		}
 
-		return notEmpty(xs) ?
-			indices[xs[id]] : indices;
+		return notEmpty(xs) ? indices[xs[id]] : indices;
 	},
 
 	/**
@@ -208,7 +217,8 @@ export default {
 			// if is multiple xs, return total sum of xs' __max__ value
 			Object.keys(indices)
 				.map(v => indices[v].__max__ || 0)
-				.reduce((acc, curr) => acc + curr) : (indices as IDataIndice).__max__;
+				.reduce((acc, curr) => acc + curr) :
+			(indices as IDataIndice).__max__;
 	},
 
 	getShapeX(offset: IOffset, indices, isSub?: boolean): (d) => number {
@@ -236,14 +246,14 @@ export default {
 				if (halfWidth) {
 					const offsetWidth = offset[d.id] || offset._$width;
 
-					x = barOverlap ?
-						xPos - offsetWidth / 2 :
-						xPos - offsetWidth + offset._$total.slice(0, index + 1).reduce(sum) - halfWidth;
+					x = barOverlap ? xPos - offsetWidth / 2 : xPos - offsetWidth +
+						offset._$total.slice(0, index + 1).reduce(sum) -
+						halfWidth;
 				} else {
 					x = xPos - (isNumber(offset) ? offset : offset._$width) *
-						(targetsNum / 2 - (
-							barOverlap ? 1 : index
-						));
+							(targetsNum / 2 - (
+								barOverlap ? 1 : index
+							));
 				}
 			}
 
@@ -312,7 +322,9 @@ export default {
 	 */
 	getShapeOffsetData(typeFilter) {
 		const $$ = this;
-		const targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)));
+		const targets = $$.orderTargets(
+			$$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
+		);
 		const isStackNormalized = $$.isStackNormalized();
 
 		const shapeOffsetTargets = targets.map(target => {
@@ -349,7 +361,9 @@ export default {
 
 	getShapeOffset(typeFilter, indices, isSub?: boolean): Function {
 		const $$ = this;
-		const {shapeOffsetTargets, indexMapByTargetId} = $$.getShapeOffsetData(typeFilter);
+		const {shapeOffsetTargets, indexMapByTargetId} = $$.getShapeOffsetData(
+			typeFilter
+		);
 		const groupsZeroAs = $$.config.data_groupsZeroAs;
 
 		return (d, idx) => {
@@ -369,7 +383,12 @@ export default {
 			shapeOffsetTargets
 				.filter(t => t.id !== id && ind[t.id] === ind[id])
 				.forEach(t => {
-					const {id: tid, rowValueMapByXValue, rowValues, values: tvalues} = t;
+					const {
+						id: tid,
+						rowValueMapByXValue,
+						rowValues,
+						values: tvalues
+					} = t;
 
 					// for same stacked group (ind[tid] === ind[id])
 					if (indexMapByTargetId[tid] < indexMapByTargetId[id]) {
@@ -382,10 +401,13 @@ export default {
 						}
 
 						if (row?.value * value >= 0 && isNumber(rValue)) {
-							const addOffset = value === 0 ? (
-								(groupsZeroAs === "positive" && rValue > 0) ||
-								(groupsZeroAs === "negative" && rValue < 0)
-							) : true;
+							const addOffset = value === 0 ?
+								(
+									(groupsZeroAs === "positive" &&
+										rValue > 0) ||
+									(groupsZeroAs === "negative" && rValue < 0)
+								) :
+								true;
 
 							if (addOffset) {
 								offset += scale(rValue) - y0;
@@ -414,9 +436,7 @@ export default {
 			points = getGroupedDataPointsFn.bind($$)(d);
 		}
 
-		return points ?
-			points(d, i)[0][1] :
-			$$.getYScaleById(id)($$.getBaseValue(d));
+		return points ? points(d, i)[0][1] : $$.getYScaleById(id)($$.getBaseValue(d));
 	},
 
 	getBarW(type, axis, targetsNum: number): number | IOffset {
@@ -448,7 +468,8 @@ export default {
 			const ratio = id ? width.ratio : config[`${configName}_ratio`];
 			const max = id ? width.max : config[`${configName}_max`];
 			const w = isNumber(width) ?
-				width : targetsNum ? (tickInterval * ratio) / targetsNum : 0;
+				width :
+				(targetsNum ? (tickInterval * ratio) / targetsNum : 0);
 
 			return max && w > max ? max : w;
 		};
@@ -480,7 +501,7 @@ export default {
 	getShapeByIndex(shapeName: string, i: number, id?: string): d3Selection {
 		const $$ = this;
 		const {$el} = $$;
-		const suffix = (isValue(i) ? `-${i}` : ``);
+		const suffix = isValue(i) ? `-${i}` : ``;
 		let shape = $el[shapeName];
 
 		// filter from shape reference if has
@@ -489,8 +510,12 @@ export default {
 				.filter(d => (id ? d.id === id : true))
 				.filter(d => (isValue(i) ? d.index === i : true));
 		} else {
-			shape = (id ? $el.main
-				.selectAll(`.${CLASS[`${shapeName}s`]}${$$.getTargetSelectorSuffix(id)}`) : $el.main)
+			shape = (id ?
+				$el.main
+					.selectAll(
+						`.${CLASS[`${shapeName}s`]}${$$.getTargetSelectorSuffix(id)}`
+					) :
+				$el.main)
 				.selectAll(`.${CLASS[shapeName]}${suffix}`);
 		}
 
@@ -507,7 +532,10 @@ export default {
 		} else if ($$.hasValidPointType?.(that.nodeName)) {
 			isWithin = $$.isStepType(d) ?
 				$$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) :
-				$$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);
+				$$.isWithinCircle(
+					that,
+					$$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0
+				);
 		} else if (that.nodeName === "path") {
 			isWithin = shape.classed(CLASS.bar) ? $$.isWithinBar(that) : true;
 		}
@@ -520,11 +548,11 @@ export default {
 		const interpolation = $$.getInterpolateType(d);
 
 		return {
-			"basis": d3CurveBasis,
+			basis: d3CurveBasis,
 			"basis-closed": d3CurveBasisClosed,
 			"basis-open": d3CurveBasisOpen,
-			"bundle": d3CurveBundle,
-			"cardinal": d3CurveCardinal,
+			bundle: d3CurveBundle,
+			cardinal: d3CurveCardinal,
 			"cardinal-closed": d3CurveCardinalClosed,
 			"cardinal-open": d3CurveCardinalOpen,
 			"catmull-rom": d3CurveCatmullRom,
@@ -532,10 +560,10 @@ export default {
 			"catmull-rom-open": d3CurveCatmullRomOpen,
 			"monotone-x": d3CurveMonotoneX,
 			"monotone-y": d3CurveMonotoneY,
-			"natural": d3CurveNatural,
+			natural: d3CurveNatural,
 			"linear-closed": d3CurveLinearClosed,
-			"linear": d3CurveLinear,
-			"step": d3CurveStep,
+			linear: d3CurveLinear,
+			step: d3CurveStep,
 			"step-after": d3CurveStepAfter,
 			"step-before": d3CurveStepBefore
 		}[interpolation];
@@ -547,11 +575,9 @@ export default {
 		const type = config.spline_interpolation_type;
 		const interpolation = $$.isInterpolationType(type) ? type : "cardinal";
 
-		return $$.isSplineType(d) ?
-			interpolation : (
-				$$.isStepType(d) ?
-					config.line_step_type : "linear"
-			);
+		return $$.isSplineType(d) ? interpolation : (
+			$$.isStepType(d) ? config.line_step_type : "linear"
+		);
 	},
 
 	isWithinBar(that): boolean {

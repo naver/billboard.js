@@ -22,12 +22,24 @@
     ],
     "ignorePatterns": ["*.js", "node_modules"],
     "rules": {
+        // deprecated rules
+        // https://eslint.org/blog/2023/10/deprecating-formatting-rules/#the-deprecated-rules
         "linebreak-style": 0,
+        "comma-dangle": 0,
+        "array-element-newline": 0,
+        "spaced-comment": ["error", "always", {
+            "exceptions": ["-", "+"],
+            "markers": ["/"]
+        }],
+        "indent": 0,
+        "keyword-spacing": 0,
+        // end of deprecated rules
+
+        "array-bracket-newline": 0,
         "consistent-this": 0,
         "camelcase": 0,
         "no-nested-ternary": 0,
         "object-shorthand": 0,
-        "comma-dangle": 0,
         "no-lonely-if": 0,
         "no-shadow": 0,
         "default-case": 0,
@@ -40,14 +52,9 @@
                 "allow": ["error"]
             }
         ],
-        "array-element-newline": 0,
         "import/prefer-default-export": 0,
         "no-unused-vars": "off",
         "no-sequences": 0,
-        "spaced-comment": ["error", "always", {
-            "exceptions": ["-", "+"],
-            "markers": ["/"]
-        }],
         "@typescript-eslint/no-unused-vars": [
             "error", {
                 "vars": "all",

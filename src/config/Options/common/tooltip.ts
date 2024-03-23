@@ -44,9 +44,9 @@ export default {
 	 *      - if `axis.x.tick.format` option will be used if set.
 	 *      - otherwise, will return function based on tick format type(category, timeseries).
 	 *    - defaultValueFormat:
-	 *	    - for Arc type (except gauge, radar), the function will return value from `(ratio * 100).toFixed(1)`.
-	 *	    - for Axis based types, will be used `axis.[y|y2].tick.format` option value if is set.
-	 *	    - otherwise, will parse value and return as number.
+	 * 	    - for Arc type (except gauge, radar), the function will return value from `(ratio * 100).toFixed(1)`.
+	 * 	    - for Axis based types, will be used `axis.[y|y2].tick.format` option value if is set.
+	 * 	    - otherwise, will parse value and return as number.
 	 * @property {string|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
 	 *  - **NOTE:** When is specified, will not be updating tooltip's position.
 	 * @property {string} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
@@ -231,13 +231,15 @@ export default {
 	tooltip_show: true,
 	tooltip_doNotHide: false,
 	tooltip_grouped: true,
-	tooltip_format_title: <(() => string)|undefined> undefined,
-	tooltip_format_name: <(() => string)|undefined> undefined,
-	tooltip_format_value: <(() => number)|undefined> undefined,
-	tooltip_position: <(() => {top: number; left: number;})|undefined> undefined,
-	tooltip_contents: <
-			(() => string)|{bindto: string; template: string; text?: {[key: string]: string[]}}
-		> {},
+	tooltip_format_title: <(() => string) | undefined>undefined,
+	tooltip_format_name: <(() => string) | undefined>undefined,
+	tooltip_format_value: <(() => number) | undefined>undefined,
+	tooltip_position: <(() => {top: number, left: number}) | undefined>undefined,
+	tooltip_contents: <(() => string) | {
+		bindto: string,
+		template: string,
+		text?: {[key: string]: string[]}
+	}>{},
 	tooltip_init_show: false,
 	tooltip_init_x: 0,
 	tooltip_init_position: undefined,
@@ -247,5 +249,5 @@ export default {
 	tooltip_onhide: () => {},
 	tooltip_onshown: () => {},
 	tooltip_onhidden: () => {},
-	tooltip_order: <string|Function|null> null
+	tooltip_order: <string | Function | null>null
 };

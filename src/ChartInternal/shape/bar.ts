@@ -16,9 +16,7 @@ export default {
 
 		$el.bar = $el.main.select(`.${$COMMON.chart}`);
 
-		$el.bar = config.bar_front ?
-			$el.bar.append("g") :
-			$el.bar.insert("g", ":first-child");
+		$el.bar = config.bar_front ? $el.bar.append("g") : $el.bar.insert("g", ":first-child");
 
 		$el.bar
 			.attr("class", $BAR.chartBars)
@@ -26,9 +24,11 @@ export default {
 
 		// set clip-path attribute when condition meet
 		// https://github.com/naver/billboard.js/issues/2421
-		if (config.clipPath === false && (
-			config.bar_radius || config.bar_radius_ratio
-		)) {
+		if (
+			config.clipPath === false && (
+				config.bar_radius || config.bar_radius_ratio
+			)
+		) {
 			$el.bar.attr("clip-path", clip.pathXAxis.replace(/#[^)]*/, `#${clip.id}`));
 		}
 	},
@@ -110,8 +110,7 @@ export default {
 		const $$ = this;
 		const fn = $$.getStylePropValue($$.color);
 
-		return $$.config.bar_linearGradient ?
-			$$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
+		return $$.config.bar_linearGradient ? $$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
 	},
 
 	/**
@@ -124,7 +123,7 @@ export default {
 	 */
 	redrawBar(drawFn, withTransition?: boolean, isSub = false) {
 		const $$ = this;
-		const {bar} = (isSub ? $$.$el.subchart : $$.$el);
+		const {bar} = isSub ? $$.$el.subchart : $$.$el;
 
 		return [
 			$$.$T(bar, withTransition, getRandom())
@@ -141,15 +140,15 @@ export default {
 	 *
 	 * When gropus given as:
 	 *  groups: [
-	 *		["data1", "data2"],
-	 *		["data3", "data4"]
-	 *	],
+	 * 		["data1", "data2"],
+	 * 		["data3", "data4"]
+	 * 	],
 	 *
 	 * Will be rendered as:
 	 * 		data1 data3   data1 data3
-	 *		data2 data4   data2 data4
-	 *		-------------------------
-	 *			 0             1
+	 * 		data2 data4   data2 data4
+	 * 		-------------------------
+	 * 			 0             1
 	 * @param {boolean} isSub If is for subchart
 	 * @returns {Function}
 	 * @private
@@ -163,10 +162,9 @@ export default {
 		const barRadiusRatio = config.bar_radius_ratio;
 
 		// get the bar radius
-		const getRadius = isNumber(barRadius) && barRadius > 0 ?
-			() => barRadius : (
-				isNumber(barRadiusRatio) ? w => w * barRadiusRatio : null
-			);
+		const getRadius = isNumber(barRadius) && barRadius > 0 ? () => barRadius : (
+			isNumber(barRadiusRatio) ? w => w * barRadiusRatio : null
+		);
 
 		return (d: IDataRow, i: number) => {
 			// 4 points that make a bar
@@ -195,7 +193,9 @@ export default {
 				const arc = `a${radius},${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
 
 				pathRadius[+!isRotated] = `${arc}${radius},${radius}`;
-				pathRadius[+isRotated] = `${arc}${[-radius, radius][isRotated ? "sort" : "reverse"]()}`;
+				pathRadius[+isRotated] = `${arc}${
+					[-radius, radius][isRotated ? "sort" : "reverse"]()
+				}`;
 
 				isNegative && pathRadius.reverse();
 			}
@@ -203,8 +203,12 @@ export default {
 			// path string data shouldn't be containing new line chars
 			// https://github.com/naver/billboard.js/issues/530
 			const path = isRotated ?
-				`H${points[1][indexX] + (isNegative ? radius : -radius)} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` :
-				`V${points[1][indexY] + (isNegative ? -radius : radius)} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
+				`H${points[1][indexX] + (isNegative ? radius : -radius)} ${pathRadius[0]}V${
+					points[2][indexY] - radius
+				} ${pathRadius[1]}H${points[3][indexX]}` :
+				`V${points[1][indexY] + (isNegative ? -radius : radius)} ${pathRadius[0]}H${
+					points[2][indexX] - radius
+				} ${pathRadius[1]}V${points[3][indexY]}`;
 
 			return `M${points[0][indexX]},${points[0][indexY]}${path}z`;
 		};
@@ -237,10 +241,13 @@ export default {
 
 		// Get sorted Ids. Filter positive or negative values Ids from given value
 		const sortedIds = sortedList
-			.map(v => v.values.filter(
-				v2 => v2.index === index && (
-					isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0
-				))[0]
+			.map(v =>
+				v.values.filter(
+					v2 =>
+						v2.index === index && (
+							isNumber(value) && value > 0 ? v2.value > 0 : v2.value < 0
+						)
+				)[0]
 			)
 			.filter(Boolean)
 			.map(v => v.id);
@@ -256,7 +263,8 @@ export default {
 	 * @returns {Array} Array of coordinate points
 	 * @private
 	 */
-	generateGetBarPoints(barIndices, isSub?: boolean): (d: IDataRow, i: number) => [number, number][] {
+	generateGetBarPoints(barIndices,
+		isSub?: boolean): (d: IDataRow, i: number) => [number, number][] {
 		const $$ = this;
 		const {config} = $$;
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
@@ -278,14 +286,16 @@ export default {
 			let posY = barY(d);
 
 			// fix posY not to overflow opposite quadrant
-			if (config.axis_rotated && !isInverted && (
-				(value > 0 && posY < y0) || (value < 0 && y0 < posY)
-			)) {
+			if (
+				config.axis_rotated && !isInverted && (
+					(value > 0 && posY < y0) || (value < 0 && y0 < posY)
+				)
+			) {
 				posY = y0;
 			}
 
 			if (!$$.isBarRangeType(d)) {
-				posY -= (y0 - offset);
+				posY -= y0 - offset;
 			}
 
 			const startPosX = posX + width;

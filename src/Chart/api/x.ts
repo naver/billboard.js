@@ -19,7 +19,7 @@ export default {
 	 *  // Update x values for all targets
 	 *  chart.x([100, 200, 300, 400, ...]);
 	 */
-	x(x?: number[]): { [key: string] : number[] } {
+	x(x?: number[]): {[key: string]: number[]} {
 		const $$ = this.internal;
 		const {axis, data} = $$;
 		const isCategorized = axis.isCustomX() && axis.isCategorized();
@@ -57,7 +57,7 @@ export default {
 	 *    data2: [100, 200, 300, 400, ...]
 	 *  });
 	 */
-	xs(xs?: { [key: string] : number[] }): { [key: string] : number[] } {
+	xs(xs?: {[key: string]: number[]}): {[key: string]: number[]} {
 		const $$ = this.internal;
 
 		if (isObject(xs)) {

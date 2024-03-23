@@ -73,12 +73,12 @@ export default {
 	 *  }
 	 */
 	donut_label_show: true,
-	donut_label_format: <(() => number|string)|undefined> undefined,
+	donut_label_format: <(() => number | string) | undefined>undefined,
 	donut_label_threshold: 0.05,
-	donut_label_ratio: <number|(() => number)|undefined> undefined,
-	donut_width: <number|undefined> undefined,
+	donut_label_ratio: <number | (() => number) | undefined>undefined,
+	donut_width: <number | undefined>undefined,
 	donut_title: "",
-	donut_expand: <boolean|{rate?: number; duration?: number;}> {},
+	donut_expand: <boolean | {rate?: number, duration?: number}>{},
 	donut_expand_rate: 0.98,
 	donut_expand_duration: 50,
 	donut_padAngle: 0,

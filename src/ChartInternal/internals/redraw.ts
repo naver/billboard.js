@@ -171,7 +171,7 @@ export default {
 	},
 
 	getRedrawList(shape, flow, flowFn, withTransition: boolean): Function[] {
-		const $$ = <any> this;
+		const $$ = <any>this;
 		const {config, state: {hasAxis, hasRadar, hasTreemap}, $el: {grid}} = $$;
 		const {cx, cy, xForText, yForText} = shape.pos;
 		const list: Function[] = [];
@@ -227,7 +227,8 @@ export default {
 		options.withUpdateXDomain = true;
 		options.withUpdateOrgXDomain = true;
 		options.withTransitionForExit = false;
-		options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition);
+		options.withTransitionForTransform = getOption(options, "withTransitionForTransform",
+			options.withTransition);
 
 		// MEMO: called in updateLegend in redraw if withLegend
 		if (!(options.withLegend && config.legend_show)) {

@@ -3,9 +3,19 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import {KEY} from "../../module/Cache";
 import {$AXIS, $COMMON, $LEVEL, $RADAR, $SHAPE, $TEXT} from "../../config/classes";
-import {getMinMax, getPathBox, getRange, isDefined, isEmpty, isNumber, isUndefined, setTextValue, toArray} from "../../module/util";
+import {KEY} from "../../module/Cache";
+import {
+	getMinMax,
+	getPathBox,
+	getRange,
+	isDefined,
+	isEmpty,
+	isNumber,
+	isUndefined,
+	setTextValue,
+	toArray
+} from "../../module/util";
 
 /**
  * Get the position value
@@ -18,7 +28,8 @@ import {getMinMax, getPathBox, getRange, isDefined, isEmpty, isNumber, isUndefin
  * @returns {number}
  * @private
  */
-function getPosition(isClockwise: boolean, type: "x" | "y", edge: number, pos: number, range: number, ratio: number): number {
+function getPosition(isClockwise: boolean, type: "x" | "y", edge: number, pos: number,
+	range: number, ratio: number): number {
 	const index = isClockwise && pos > 0 ? edge - pos : pos;
 	const r = 2 * Math.PI;
 	const func = type === "x" ? Math.sin : Math.cos;
@@ -67,7 +78,7 @@ export default {
 		const $$ = this;
 		const {config, state: {arcWidth, arcHeight}} = $$;
 		const padding = config.axis_x_categories.length < 4 ? -20 : 10;
-		const size = ((Math.min(arcWidth, arcHeight) - padding) / 2);
+		const size = (Math.min(arcWidth, arcHeight) - padding) / 2;
 
 		return [size, size];
 	},
@@ -77,7 +88,9 @@ export default {
 		const {config} = $$;
 
 		if (isEmpty(config.axis_x_categories)) {
-			config.axis_x_categories = getRange(0, getMinMax("max", targets.map(v => v.values.length)));
+			config.axis_x_categories = getRange(0, getMinMax("max", targets.map(v =>
+				v.values.length
+			)));
 		}
 
 		$$.generateRadarPoints();
@@ -90,14 +103,16 @@ export default {
 		const edge = config.axis_x_categories.length;
 		const isClockwise = config.radar_direction_clockwise;
 
-		const pos = toArray(type).map(v => getPosition(
-			isClockwise,
-			v,
-			edge,
-			index,
-			isDefined(range) ? range : (type === "x" ? width : height),
-			isNumber(ratio) ? ratio : config.radar_size_ratio
-		));
+		const pos = toArray(type).map(v =>
+			getPosition(
+				isClockwise,
+				v,
+				edge,
+				index,
+				isDefined(range) ? range : (type === "x" ? width : height),
+				isNumber(ratio) ? ratio : config.radar_size_ratio
+			)
+		);
 
 		return pos.length === 1 ? pos[0] : pos;
 	},
@@ -177,8 +192,10 @@ export default {
 		// Generate points
 		const points = levelData.map(v => {
 			const range = levelRatio[v];
-			const pos = getRange(0, edge).map(i => (
-				$$.getRadarPosition(["x", "y"], i, range, 1)).join(",")
+			const pos = getRange(0, edge).map(i =>
+				(
+					$$.getRadarPosition(["x", "y"], i, range, 1)
+				).join(",")
 			);
 
 			return pos.join(" ");
@@ -209,14 +226,17 @@ export default {
 			levelEnter.append("text")
 				.attr("dx", "-.5em")
 				.style("text-anchor", "end")
-				.text(d => levelTextFormat(
-					state.current.dataMax / levelData.length * (d + 1)
-				));
+				.text(d =>
+					levelTextFormat(
+						state.current.dataMax / levelData.length * (d + 1)
+					)
+				);
 		}
 
 		levelEnter
 			.merge(level)
-			.attr("transform", d => `translate(${width - levelRatio[d]}, ${height - levelRatio[d]})`)
+			.attr("transform",
+				d => `translate(${width - levelRatio[d]}, ${height - levelRatio[d]})`)
 			.selectAll("polygon")
 			.attr("points", d => points[d]);
 
@@ -327,9 +347,7 @@ export default {
 			if (isMouse || noIndex) {
 				$$.hideTooltip();
 
-				focusOnly ?
-					$$.hideCircleFocus() :
-					$$.unexpandCircles();
+				focusOnly ? $$.hideCircleFocus() : $$.unexpandCircles();
 
 				if (isMouse) {
 					$$.setOverOut(false, index);
