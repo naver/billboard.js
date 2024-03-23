@@ -5,12 +5,12 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
 */
-import { interpolateHslLong } from 'd3-interpolate';
 import { hsl } from 'd3-color';
+import { interpolateHslLong } from 'd3-interpolate';
 import { scaleSequential, scaleSymlog, scaleSequentialLog } from 'd3-scale';
 import { axisRight } from 'd3-axis';
 import { format } from 'd3-format';
@@ -160,7 +160,7 @@ var $EVENT = {
     eventRect: "bb-event-rect",
     eventRects: "bb-event-rects",
     eventRectsMultiple: "bb-event-rects-multiple",
-    eventRectsSingle: "bb-event-rects-single",
+    eventRectsSingle: "bb-event-rects-single"
 };
 var $FOCUS = {
     focused: "bb-focused",
@@ -196,7 +196,7 @@ var $SELECT = {
 };
 var $SHAPE = {
     shape: "bb-shape",
-    shapes: "bb-shapes",
+    shapes: "bb-shapes"
 };
 var $SUBCHART = {
     brush: "bb-brush",
@@ -241,7 +241,8 @@ __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign
  * @private
  */
 function getGlobal() {
-    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
+    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object &&
+        globalThis) ||
         (typeof global === "object" && global !== null && global.Object === Object && global) ||
         (typeof self === "object" && self !== null && self.Object === Object && self) ||
         Function("return this")();
@@ -297,8 +298,7 @@ function mergeObj(target) {
                 target[key] = mergeObj(target[key], value);
             }
             else {
-                target[key] = isArray(value) ?
-                    value.concat() : value;
+                target[key] = isArray(value) ? value.concat() : value;
             }
         });
     }
@@ -325,7 +325,12 @@ var getRange = function (start, end, step) {
 ({
     mouse: (function () {
         var getParams = function () { return ({
-            bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
+            bubbles: false,
+            cancelable: false,
+            screenX: 0,
+            screenY: 0,
+            clientX: 0,
+            clientY: 0
         }); };
         try {
             // eslint-disable-next-line no-new
@@ -395,10 +400,6 @@ function parseDate(date) {
     return parsedDate;
 }
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 /**
  * Load configuration option
  * @param {object} config User's generation config value
@@ -492,10 +493,349 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.11.3-nightly-20240320004559";
+    Plugin.version = "3.11.3-nightly-20240323004543";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * CSS class names definition
+ * @private
+ */
+var CLASS = {
+    colorScale: "bb-colorscale",
+    stanfordElements: "bb-stanford-elements",
+    stanfordLine: "bb-stanford-line",
+    stanfordLines: "bb-stanford-lines",
+    stanfordRegion: "bb-stanford-region",
+    stanfordRegions: "bb-stanford-regions"
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+/**
+ * Check if point is in region
+ * @param {object} point Point
+ * @param {Array} region Region
+ * @returns {boolean}
+ * @private
+ */
+function pointInRegion(point, region) {
+    // ray-casting algorithm based on
+    // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+    var x = point.x;
+    var y = point.value;
+    var inside = false;
+    for (var i = 0, j = region.length - 1; i < region.length; j = i++) {
+        var xi = region[i].x;
+        var yi = region[i].y;
+        var xj = region[j].x;
+        var yj = region[j].y;
+        var intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+        if (intersect) {
+            inside = !inside;
+        }
+    }
+    return inside;
+}
+/**
+ * Compare epochs
+ * @param {object} a Target
+ * @param {object} b Source
+ * @returns {number}
+ * @private
+ */
+function compareEpochs(a, b) {
+    if (a.epochs < b.epochs) {
+        return -1;
+    }
+    if (a.epochs > b.epochs) {
+        return 1;
+    }
+    return 0;
+}
+/**
+ * Get region area
+ * @param {Array} points Points
+ * @returns {number}
+ * @private
+ */
+function getRegionArea(points) {
+    var area = 0;
+    var point1;
+    var point2;
+    for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+        point1 = points[i];
+        point2 = points[j];
+        area += point1.x * point2.y;
+        area -= point1.y * point2.x;
+    }
+    area /= 2;
+    return area;
+}
+/**
+ * Get centroid
+ * @param {Array} points Points
+ * @returns {object}
+ * @private
+ */
+function getCentroid(points) {
+    var area = getRegionArea(points);
+    var x = 0;
+    var y = 0;
+    var f;
+    for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+        var point1 = points[i];
+        var point2 = points[j];
+        f = point1.x * point2.y - point2.x * point1.y;
+        x += (point1.x + point2.x) * f;
+        y += (point1.y + point2.y) * f;
+    }
+    f = area * 6;
+    return {
+        x: x / f,
+        y: y / f
+    };
+}
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Stanford diagram plugin color scale class
+ * @class ColorScale
+ * @param {Stanford} owner Stanford instance
+ * @private
+ */
+var ColorScale = /** @class */ (function () {
+    function ColorScale(owner) {
+        this.owner = owner;
+    }
+    ColorScale.prototype.drawColorScale = function () {
+        var _a = this.owner, $$ = _a.$$, config = _a.config;
+        var target = $$.data.targets[0];
+        var height = $$.state.height - config.padding_bottom - config.padding_top;
+        var barWidth = config.scale_width;
+        var barHeight = 5;
+        var points = getRange(config.padding_bottom, height, barHeight);
+        var inverseScale = scaleSequential(target.colors)
+            .domain([points[points.length - 1], points[0]]);
+        if (this.colorScale) {
+            this.colorScale.remove();
+        }
+        this.colorScale = $$.$el.svg.append("g")
+            .attr("width", 50)
+            .attr("height", height)
+            .attr("class", CLASS.colorScale);
+        this.colorScale.append("g")
+            .attr("transform", "translate(0, ".concat(config.padding_top, ")"))
+            .selectAll("bars")
+            .data(points)
+            .enter()
+            .append("rect")
+            .attr("y", function (d, i) { return i * barHeight; })
+            .attr("x", 0)
+            .attr("width", barWidth)
+            .attr("height", barHeight)
+            .attr("fill", function (d) { return inverseScale(d); });
+        // Legend Axis
+        var axisScale = scaleSymlog()
+            .domain([target.minEpochs, target.maxEpochs])
+            .range([
+            points[0] + config.padding_top + points[points.length - 1] + barHeight - 1,
+            points[0] + config.padding_top
+        ]);
+        var legendAxis = axisRight(axisScale);
+        var scaleFormat = config.scale_format;
+        if (scaleFormat === "pow10") {
+            legendAxis.tickValues([1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]);
+        }
+        else if (isFunction(scaleFormat)) {
+            legendAxis.tickFormat(scaleFormat);
+        }
+        else {
+            legendAxis.tickFormat(format("d"));
+        }
+        // Draw Axis
+        var axis = this.colorScale.append("g")
+            .attr("class", "legend axis")
+            .attr("transform", "translate(".concat(barWidth, ",0)"))
+            .call(legendAxis);
+        if (scaleFormat === "pow10") {
+            axis.selectAll(".tick text")
+                .text(null)
+                .filter(function (d) { return d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1; }) // Power of Ten
+                .text(10)
+                .append("tspan")
+                .attr("dy", "-.7em") // https://bl.ocks.org/mbostock/6738229
+                .text(function (d) { return Math.round(Math.log(d) / Math.LN10); });
+        }
+        this.colorScale.attr("transform", "translate(".concat($$.state.current.width - this.xForColorScale(), ", 0)"));
+    };
+    ColorScale.prototype.xForColorScale = function () {
+        return this.owner.config.padding_right +
+            this.colorScale.node().getBBox().width;
+    };
+    ColorScale.prototype.getColorScalePadding = function () {
+        return this.xForColorScale() + this.owner.config.padding_left + 20;
+    };
+    return ColorScale;
+}());
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+// @ts-nocheck
+/**
+ * Stanford diagram plugin element class
+ * @class ColorScale
+ * @param {Stanford} owner Stanford instance
+ * @private
+ */
+var Elements = /** @class */ (function () {
+    function Elements(owner) {
+        this.owner = owner;
+        // MEMO: Avoid blocking eventRect
+        var elements = owner.$$.$el.main.select(".bb-chart")
+            .append("g")
+            .attr("class", CLASS.stanfordElements);
+        elements.append("g").attr("class", CLASS.stanfordLines);
+        elements.append("g").attr("class", CLASS.stanfordRegions);
+    }
+    Elements.prototype.updateStanfordLines = function (duration) {
+        var $$ = this.owner.$$;
+        var config = $$.config, main = $$.$el.main;
+        var isRotated = config.axis_rotated;
+        var xvCustom = this.xvCustom.bind($$);
+        var yvCustom = this.yvCustom.bind($$);
+        // Stanford-Lines
+        var stanfordLine = main.select(".".concat(CLASS.stanfordLines))
+            .style("shape-rendering", "geometricprecision")
+            .selectAll(".".concat(CLASS.stanfordLine))
+            .data(this.owner.config.lines);
+        // exit
+        stanfordLine.exit().transition()
+            .duration(duration)
+            .style("opacity", "0")
+            .remove();
+        // enter
+        var stanfordLineEnter = stanfordLine.enter().append("g");
+        stanfordLineEnter.append("line")
+            .style("opacity", "0");
+        stanfordLineEnter
+            .merge(stanfordLine)
+            .attr("class", function (d) { return CLASS.stanfordLine + (d.class ? " ".concat(d.class) : ""); })
+            .select("line")
+            .transition()
+            .duration(duration)
+            .attr("x1", function (d) {
+            var v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
+            return v;
+        })
+            .attr("x2", function (d) { return (isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2")); })
+            .attr("y1", function (d) {
+            var v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
+            return v;
+        })
+            .attr("y2", function (d) { return (isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")); })
+            .transition()
+            .style("opacity", null);
+    };
+    Elements.prototype.updateStanfordRegions = function (duration) {
+        var $$ = this.owner.$$;
+        var config = $$.config, main = $$.$el.main;
+        var isRotated = config.axis_rotated;
+        var xvCustom = this.xvCustom.bind($$);
+        var yvCustom = this.yvCustom.bind($$);
+        var countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
+        // Stanford-Regions
+        var stanfordRegion = main.select(".".concat(CLASS.stanfordRegions))
+            .selectAll(".".concat(CLASS.stanfordRegion))
+            .data(this.owner.config.regions);
+        // exit
+        stanfordRegion.exit().transition()
+            .duration(duration)
+            .style("opacity", "0")
+            .remove();
+        // enter
+        var stanfordRegionEnter = stanfordRegion.enter().append("g");
+        stanfordRegionEnter.append("polygon")
+            .style("opacity", "0");
+        stanfordRegionEnter.append("text")
+            .attr("transform", isRotated ? "rotate(-90)" : "")
+            .style("opacity", "0");
+        stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
+        // update
+        stanfordRegion
+            .attr("class", function (d) { return CLASS.stanfordRegion + (d.class ? " ".concat(d.class) : ""); })
+            .select("polygon")
+            .transition()
+            .duration(duration)
+            .attr("points", function (d) {
+            return d.points.map(function (value) {
+                return [
+                    isRotated ? yvCustom(value, "y") : xvCustom(value, "x"),
+                    isRotated ? xvCustom(value, "x") : yvCustom(value, "y")
+                ].join(",");
+            }).join(" ");
+        })
+            .transition()
+            .style("opacity", function (d) { return String(d.opacity ? d.opacity : 0.2); });
+        stanfordRegion.select("text")
+            .transition()
+            .duration(duration)
+            .attr("x", function (d) { return (isRotated ?
+            yvCustom(getCentroid(d.points), "y") :
+            xvCustom(getCentroid(d.points), "x")); })
+            .attr("y", function (d) { return (isRotated ?
+            xvCustom(getCentroid(d.points), "x") :
+            yvCustom(getCentroid(d.points), "y")); })
+            .text(function (d) {
+            if (d.text) {
+                var _a = countPointsInRegion(d.points), value = _a.value, percentage = _a.percentage;
+                return d.text(value, percentage);
+            }
+            return "";
+        })
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .transition()
+            .style("opacity", null);
+    };
+    Elements.prototype.updateStanfordElements = function (duration) {
+        if (duration === void 0) { duration = 0; }
+        this.updateStanfordLines(duration);
+        this.updateStanfordRegions(duration);
+    };
+    Elements.prototype.xvCustom = function (d, xyValue) {
+        var $$ = this;
+        var axis = $$.axis, config = $$.config;
+        var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+        if (axis.isTimeSeries()) {
+            value = parseDate.call($$, value);
+        }
+        else if (axis.isCategorized() && isString(value)) {
+            value = config.axis_x_categories.indexOf(d.value);
+        }
+        return Math.ceil($$.scale.x(value));
+    };
+    Elements.prototype.yvCustom = function (d, xyValue) {
+        var $$ = this;
+        var yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
+        var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+        return Math.ceil(yScale(value));
+    };
+    return Elements;
+}());
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -644,337 +984,6 @@ var Options = /** @class */ (function () {
 }());
 
 /**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * CSS class names definition
- * @private
- */
-var CLASS = {
-    colorScale: "bb-colorscale",
-    stanfordElements: "bb-stanford-elements",
-    stanfordLine: "bb-stanford-line",
-    stanfordLines: "bb-stanford-lines",
-    stanfordRegion: "bb-stanford-region",
-    stanfordRegions: "bb-stanford-regions"
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
-/**
- * Check if point is in region
- * @param {object} point Point
- * @param {Array} region Region
- * @returns {boolean}
- * @private
- */
-function pointInRegion(point, region) {
-    // ray-casting algorithm based on
-    // http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
-    var x = point.x;
-    var y = point.value;
-    var inside = false;
-    for (var i = 0, j = region.length - 1; i < region.length; j = i++) {
-        var xi = region[i].x;
-        var yi = region[i].y;
-        var xj = region[j].x;
-        var yj = region[j].y;
-        var intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-        if (intersect) {
-            inside = !inside;
-        }
-    }
-    return inside;
-}
-/**
- * Compare epochs
- * @param {object} a Target
- * @param {object} b Source
- * @returns {number}
- * @private
- */
-function compareEpochs(a, b) {
-    if (a.epochs < b.epochs) {
-        return -1;
-    }
-    if (a.epochs > b.epochs) {
-        return 1;
-    }
-    return 0;
-}
-/**
- * Get region area
- * @param {Array} points Points
- * @returns {number}
- * @private
- */
-function getRegionArea(points) {
-    var area = 0;
-    var point1;
-    var point2;
-    for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
-        point1 = points[i];
-        point2 = points[j];
-        area += point1.x * point2.y;
-        area -= point1.y * point2.x;
-    }
-    area /= 2;
-    return area;
-}
-/**
- * Get centroid
- * @param {Array} points Points
- * @returns {object}
- * @private
- */
-function getCentroid(points) {
-    var area = getRegionArea(points);
-    var x = 0;
-    var y = 0;
-    var f;
-    for (var i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
-        var point1 = points[i];
-        var point2 = points[j];
-        f = point1.x * point2.y - point2.x * point1.y;
-        x += (point1.x + point2.x) * f;
-        y += (point1.y + point2.y) * f;
-    }
-    f = area * 6;
-    return {
-        x: x / f,
-        y: y / f
-    };
-}
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-// @ts-nocheck
-/**
- * Stanford diagram plugin element class
- * @class ColorScale
- * @param {Stanford} owner Stanford instance
- * @private
- */
-var Elements = /** @class */ (function () {
-    function Elements(owner) {
-        this.owner = owner;
-        // MEMO: Avoid blocking eventRect
-        var elements = owner.$$.$el.main.select(".bb-chart")
-            .append("g")
-            .attr("class", CLASS.stanfordElements);
-        elements.append("g").attr("class", CLASS.stanfordLines);
-        elements.append("g").attr("class", CLASS.stanfordRegions);
-    }
-    Elements.prototype.updateStanfordLines = function (duration) {
-        var $$ = this.owner.$$;
-        var config = $$.config, main = $$.$el.main;
-        var isRotated = config.axis_rotated;
-        var xvCustom = this.xvCustom.bind($$);
-        var yvCustom = this.yvCustom.bind($$);
-        // Stanford-Lines
-        var stanfordLine = main.select(".".concat(CLASS.stanfordLines))
-            .style("shape-rendering", "geometricprecision")
-            .selectAll(".".concat(CLASS.stanfordLine))
-            .data(this.owner.config.lines);
-        // exit
-        stanfordLine.exit().transition()
-            .duration(duration)
-            .style("opacity", "0")
-            .remove();
-        // enter
-        var stanfordLineEnter = stanfordLine.enter().append("g");
-        stanfordLineEnter.append("line")
-            .style("opacity", "0");
-        stanfordLineEnter
-            .merge(stanfordLine)
-            .attr("class", function (d) { return CLASS.stanfordLine + (d.class ? " ".concat(d.class) : ""); })
-            .select("line")
-            .transition()
-            .duration(duration)
-            .attr("x1", function (d) {
-            var v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
-            return v;
-        })
-            .attr("x2", function (d) { return (isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2")); })
-            .attr("y1", function (d) {
-            var v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
-            return v;
-        })
-            .attr("y2", function (d) { return (isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")); })
-            .transition()
-            .style("opacity", null);
-    };
-    Elements.prototype.updateStanfordRegions = function (duration) {
-        var $$ = this.owner.$$;
-        var config = $$.config, main = $$.$el.main;
-        var isRotated = config.axis_rotated;
-        var xvCustom = this.xvCustom.bind($$);
-        var yvCustom = this.yvCustom.bind($$);
-        var countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
-        // Stanford-Regions
-        var stanfordRegion = main.select(".".concat(CLASS.stanfordRegions))
-            .selectAll(".".concat(CLASS.stanfordRegion))
-            .data(this.owner.config.regions);
-        // exit
-        stanfordRegion.exit().transition()
-            .duration(duration)
-            .style("opacity", "0")
-            .remove();
-        // enter
-        var stanfordRegionEnter = stanfordRegion.enter().append("g");
-        stanfordRegionEnter.append("polygon")
-            .style("opacity", "0");
-        stanfordRegionEnter.append("text")
-            .attr("transform", isRotated ? "rotate(-90)" : "")
-            .style("opacity", "0");
-        stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
-        // update
-        stanfordRegion
-            .attr("class", function (d) { return CLASS.stanfordRegion + (d.class ? " ".concat(d.class) : ""); })
-            .select("polygon")
-            .transition()
-            .duration(duration)
-            .attr("points", function (d) { return d.points.map(function (value) { return [
-            isRotated ? yvCustom(value, "y") : xvCustom(value, "x"),
-            isRotated ? xvCustom(value, "x") : yvCustom(value, "y")
-        ].join(","); }).join(" "); })
-            .transition()
-            .style("opacity", function (d) { return String(d.opacity ? d.opacity : 0.2); });
-        stanfordRegion.select("text")
-            .transition()
-            .duration(duration)
-            .attr("x", function (d) { return (isRotated ? yvCustom(getCentroid(d.points), "y") : xvCustom(getCentroid(d.points), "x")); })
-            .attr("y", function (d) { return (isRotated ? xvCustom(getCentroid(d.points), "x") : yvCustom(getCentroid(d.points), "y")); })
-            .text(function (d) {
-            if (d.text) {
-                var _a = countPointsInRegion(d.points), value = _a.value, percentage = _a.percentage;
-                return d.text(value, percentage);
-            }
-            return "";
-        })
-            .attr("text-anchor", "middle")
-            .attr("dominant-baseline", "middle")
-            .transition()
-            .style("opacity", null);
-    };
-    Elements.prototype.updateStanfordElements = function (duration) {
-        if (duration === void 0) { duration = 0; }
-        this.updateStanfordLines(duration);
-        this.updateStanfordRegions(duration);
-    };
-    Elements.prototype.xvCustom = function (d, xyValue) {
-        var $$ = this;
-        var axis = $$.axis, config = $$.config;
-        var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-        if (axis.isTimeSeries()) {
-            value = parseDate.call($$, value);
-        }
-        else if (axis.isCategorized() && isString(value)) {
-            value = config.axis_x_categories.indexOf(d.value);
-        }
-        return Math.ceil($$.scale.x(value));
-    };
-    Elements.prototype.yvCustom = function (d, xyValue) {
-        var $$ = this;
-        var yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
-        var value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-        return Math.ceil(yScale(value));
-    };
-    return Elements;
-}());
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Stanford diagram plugin color scale class
- * @class ColorScale
- * @param {Stanford} owner Stanford instance
- * @private
- */
-var ColorScale = /** @class */ (function () {
-    function ColorScale(owner) {
-        this.owner = owner;
-    }
-    ColorScale.prototype.drawColorScale = function () {
-        var _a = this.owner, $$ = _a.$$, config = _a.config;
-        var target = $$.data.targets[0];
-        var height = $$.state.height - config.padding_bottom - config.padding_top;
-        var barWidth = config.scale_width;
-        var barHeight = 5;
-        var points = getRange(config.padding_bottom, height, barHeight);
-        var inverseScale = scaleSequential(target.colors)
-            .domain([points[points.length - 1], points[0]]);
-        if (this.colorScale) {
-            this.colorScale.remove();
-        }
-        this.colorScale = $$.$el.svg.append("g")
-            .attr("width", 50)
-            .attr("height", height)
-            .attr("class", CLASS.colorScale);
-        this.colorScale.append("g")
-            .attr("transform", "translate(0, ".concat(config.padding_top, ")"))
-            .selectAll("bars")
-            .data(points)
-            .enter()
-            .append("rect")
-            .attr("y", function (d, i) { return i * barHeight; })
-            .attr("x", 0)
-            .attr("width", barWidth)
-            .attr("height", barHeight)
-            .attr("fill", function (d) { return inverseScale(d); });
-        // Legend Axis
-        var axisScale = scaleSymlog()
-            .domain([target.minEpochs, target.maxEpochs])
-            .range([
-            points[0] + config.padding_top + points[points.length - 1] + barHeight - 1,
-            points[0] + config.padding_top
-        ]);
-        var legendAxis = axisRight(axisScale);
-        var scaleFormat = config.scale_format;
-        if (scaleFormat === "pow10") {
-            legendAxis.tickValues([1, 10, 100, 1000, 10000, 100000, 1000000, 10000000]);
-        }
-        else if (isFunction(scaleFormat)) {
-            legendAxis.tickFormat(scaleFormat);
-        }
-        else {
-            legendAxis.tickFormat(format("d"));
-        }
-        // Draw Axis
-        var axis = this.colorScale.append("g")
-            .attr("class", "legend axis")
-            .attr("transform", "translate(".concat(barWidth, ",0)"))
-            .call(legendAxis);
-        if (scaleFormat === "pow10") {
-            axis.selectAll(".tick text")
-                .text(null)
-                .filter(function (d) { return d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1; }) // Power of Ten
-                .text(10)
-                .append("tspan")
-                .attr("dy", "-.7em") // https://bl.ocks.org/mbostock/6738229
-                .text(function (d) { return Math.round(Math.log(d) / Math.LN10); });
-        }
-        this.colorScale.attr("transform", "translate(".concat($$.state.current.width - this.xForColorScale(), ", 0)"));
-    };
-    ColorScale.prototype.xForColorScale = function () {
-        return this.owner.config.padding_right +
-            this.colorScale.node().getBBox().width;
-    };
-    ColorScale.prototype.getColorScalePadding = function () {
-        return this.xForColorScale() + this.owner.config.padding_left + 20;
-    };
-    return ColorScale;
-}());
-
-/**
  * Stanford diagram plugin
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
@@ -1050,7 +1059,7 @@ var ColorScale = /** @class */ (function () {
  *     ]
  *  });
  * @example
- *	import {bb} from "billboard.js";
+ * 	import {bb} from "billboard.js";
  * import Stanford from "billboard.js/dist/billboardjs-plugin-stanford";
  *
  * bb.generate({
@@ -1127,7 +1136,8 @@ var Stanford = /** @class */ (function (_super) {
         target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : Math.min.apply(Math, epochs);
         target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max.apply(Math, epochs);
         target.colors = isFunction(config.colors) ?
-            config.colors : interpolateHslLong(hsl(250, 1, 0.5), hsl(0, 1, 0.5));
+            config.colors :
+            interpolateHslLong(hsl(250, 1, 0.5), hsl(0, 1, 0.5));
         target.colorscale = scaleSequentialLog(target.colors)
             .domain([target.minEpochs, target.maxEpochs]);
     };
@@ -1152,9 +1162,7 @@ var Stanford = /** @class */ (function (_super) {
     Stanford.prototype.countEpochsInRegion = function (region) {
         var $$ = this;
         var target = $$.data.targets[0];
-        var total = target.values.reduce(function (accumulator, currentValue) {
-            return accumulator + Number(currentValue.epochs);
-        }, 0);
+        var total = target.values.reduce(function (accumulator, currentValue) { return accumulator + Number(currentValue.epochs); }, 0);
         var value = target.values.reduce(function (accumulator, currentValue) {
             if (pointInRegion(currentValue, region)) {
                 return accumulator + Number(currentValue.epochs);

@@ -5,20 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-selection"), require("d3-brush"));
+		module.exports = factory(require("d3-brush"), require("d3-selection"));
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-selection", "d3-brush"], factory);
+		define("bb", ["d3-brush", "d3-selection"], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-selection"), require("d3-brush"));
+		exports["bb"] = factory(require("d3-brush"), require("d3-selection"));
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["tableview"] = factory(root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__3__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__1__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -90,204 +90,10 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ TableView; }
 });
 
-;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
-var __defProp = Object.defineProperty;
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-class Plugin {
-  /**
-   * Constructor
-   * @param {Any} options config option object
-   * @private
-   */
-  constructor(options = {}) {
-    __publicField(this, "$$");
-    __publicField(this, "options");
-    this.options = options;
-  }
-  /**
-   * Lifecycle hook for 'beforeInit' phase.
-   * @private
-   */
-  $beforeInit() {
-  }
-  /**
-   * Lifecycle hook for 'init' phase.
-   * @private
-   */
-  $init() {
-  }
-  /**
-   * Lifecycle hook for 'afterInit' phase.
-   * @private
-   */
-  $afterInit() {
-  }
-  /**
-   * Lifecycle hook for 'redraw' phase.
-   * @private
-   */
-  $redraw() {
-  }
-  /**
-   * Lifecycle hook for 'willDestroy' phase.
-   * @private
-   */
-  $willDestroy() {
-    Object.keys(this).forEach((key) => {
-      this[key] = null;
-      delete this[key];
-    });
-  }
-}
-__publicField(Plugin, "version", "3.11.3-nightly-20240320004559");
-
-;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
-class Options {
-  constructor() {
-    return {
-      /**
-       * Set tableview holder selector.
-       * - **NOTE:** If not set, will append new holder element dynamically right after chart element.
-       * @name selector
-       * @memberof plugin-tableview
-       * @type {string}
-       * @default undefined
-       * @example
-       *   selector: "#table-holder"
-       */
-      selector: void 0,
-      /**
-       * Set category title text
-       * @name categoryTitle
-       * @memberof plugin-tableview
-       * @type {string}
-       * @default "Category"
-       * @example
-       *   categoryTitle: "#table-holder"
-       */
-      categoryTitle: "Category",
-      /**
-       * Set category text format function.
-       * @name categoryFormat
-       * @memberof plugin-tableview
-       * @type {Function}
-       * @returns {string}
-       * @default function(v) { // will return formatted value according x Axis type }}
-       * @example
-       *   categoryFormat: "#table-holder"
-       */
-      categoryFormat: function(v) {
-        let category = v;
-        if (this.$$.axis.isCategorized()) {
-          category = this.$$.categoryName(v);
-        } else if (this.$$.axis.isTimeSeries()) {
-          category = v.toLocaleDateString();
-        }
-        return category;
-      },
-      /**
-       * Set tableview holder class name.
-       * @name class
-       * @memberof plugin-tableview
-       * @type {string}
-       * @default undefined
-       * @example
-       *   class: "table-class-name"
-       */
-      class: void 0,
-      /**
-       * Set to apply default style(`.bb-tableview`) to tableview element.
-       * @name style
-       * @memberof plugin-tableview
-       * @type {boolean}
-       * @default true
-       * @example
-       *   style: false
-       */
-      style: true,
-      /**
-       * Set tableview title text.
-       * - **NOTE:** If set [title.text](https://naver.github.io/billboard.js/release/latest/doc/Options.html#.title), will be used when this option value is empty.
-       * @name title
-       * @memberof plugin-tableview
-       * @type {string}
-       * @default undefined
-       * @example
-       *   title: "Table Title Text"
-       */
-      title: void 0,
-      /**
-       * Update tableview from data visibility update(ex. legend toggle).
-       * @name updateOnToggle
-       * @memberof plugin-tableview
-       * @type {boolean}
-       * @default true
-       * @example
-       *   legendToggleUpdate: false
-       */
-      updateOnToggle: true,
-      /**
-       * Set how null value to be shown.
-       * @name nullString
-       * @memberof plugin-tableview
-       * @type {string}
-       * @default "-"
-       * @example
-       *   nullString: "N/A"
-       */
-      nullString: "-"
-    };
-  }
-}
-
-;// CONCATENATED MODULE: ./src/Plugin/tableview/const.ts
-
-const defaultStyle = {
-  id: "__tableview-style__",
-  class: "bb-tableview",
-  rule: `.bb-tableview {
-		border-collapse:collapse;
-		border-spacing:0;
-		background:#fff;
-		min-width:100%;
-		margin-top:10px;
-		font-family:sans-serif;
-		font-size:.9em;
-	}
-	.bb-tableview tr:hover {
-		background:#eef7ff;
-	}
-	.bb-tableview thead tr {
-		background:#f8f8f8;
-	}
-	.bb-tableview caption,.bb-tableview td,.bb-tableview th {
-		text-align: center;
-		border:1px solid silver;
-		padding:.5em;
-	}
-	.bb-tableview caption {
-		font-size:1.1em;
-		font-weight:700;
-		margin-bottom: -1px;
-	}`
-};
-const tpl = {
-  body: `<caption>{=title}</caption>
-		<thead><tr>{=thead}</tr></thead>
-		<tbody>{=tbody}</tbody>`,
-  thead: `<th scope="col">{=title}</th>`,
-  tbodyHeader: `<th scope="row">{=value}</th>`,
-  tbody: `<td>{=value}</td>`
-};
-
-// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
+// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
 
 function getGlobal() {
@@ -315,19 +121,19 @@ const [
 ] = getFallback(win);
 
 ;// CONCATENATED MODULE: ./src/module/util.ts
-var util_defProp = Object.defineProperty;
+var __defProp = Object.defineProperty;
 var __getOwnPropSymbols = Object.getOwnPropertySymbols;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
 var __propIsEnum = Object.prototype.propertyIsEnumerable;
-var util_defNormalProp = (obj, key, value) => key in obj ? util_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __spreadValues = (a, b) => {
   for (var prop in b || (b = {}))
     if (__hasOwnProp.call(b, prop))
-      util_defNormalProp(a, prop, b[prop]);
+      __defNormalProp(a, prop, b[prop]);
   if (__getOwnPropSymbols)
     for (var prop of __getOwnPropSymbols(b)) {
       if (__propIsEnum.call(b, prop))
-        util_defNormalProp(a, prop, b[prop]);
+        __defNormalProp(a, prop, b[prop]);
     }
   return a;
 };
@@ -742,6 +548,200 @@ function loadConfig(config) {
   }
 }
 
+;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+var Plugin_defProp = Object.defineProperty;
+var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+class Plugin {
+  /**
+   * Constructor
+   * @param {Any} options config option object
+   * @private
+   */
+  constructor(options = {}) {
+    __publicField(this, "$$");
+    __publicField(this, "options");
+    this.options = options;
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+  $beforeInit() {
+  }
+  /**
+   * Lifecycle hook for 'init' phase.
+   * @private
+   */
+  $init() {
+  }
+  /**
+   * Lifecycle hook for 'afterInit' phase.
+   * @private
+   */
+  $afterInit() {
+  }
+  /**
+   * Lifecycle hook for 'redraw' phase.
+   * @private
+   */
+  $redraw() {
+  }
+  /**
+   * Lifecycle hook for 'willDestroy' phase.
+   * @private
+   */
+  $willDestroy() {
+    Object.keys(this).forEach((key) => {
+      this[key] = null;
+      delete this[key];
+    });
+  }
+}
+__publicField(Plugin, "version", "3.11.3-nightly-20240323004543");
+
+;// CONCATENATED MODULE: ./src/Plugin/tableview/const.ts
+
+const defaultStyle = {
+  id: "__tableview-style__",
+  class: "bb-tableview",
+  rule: `.bb-tableview {
+		border-collapse:collapse;
+		border-spacing:0;
+		background:#fff;
+		min-width:100%;
+		margin-top:10px;
+		font-family:sans-serif;
+		font-size:.9em;
+	}
+	.bb-tableview tr:hover {
+		background:#eef7ff;
+	}
+	.bb-tableview thead tr {
+		background:#f8f8f8;
+	}
+	.bb-tableview caption,.bb-tableview td,.bb-tableview th {
+		text-align: center;
+		border:1px solid silver;
+		padding:.5em;
+	}
+	.bb-tableview caption {
+		font-size:1.1em;
+		font-weight:700;
+		margin-bottom: -1px;
+	}`
+};
+const tpl = {
+  body: `<caption>{=title}</caption>
+		<thead><tr>{=thead}</tr></thead>
+		<tbody>{=tbody}</tbody>`,
+  thead: `<th scope="col">{=title}</th>`,
+  tbodyHeader: `<th scope="row">{=value}</th>`,
+  tbody: `<td>{=value}</td>`
+};
+
+;// CONCATENATED MODULE: ./src/Plugin/tableview/Options.ts
+class Options {
+  constructor() {
+    return {
+      /**
+       * Set tableview holder selector.
+       * - **NOTE:** If not set, will append new holder element dynamically right after chart element.
+       * @name selector
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default undefined
+       * @example
+       *   selector: "#table-holder"
+       */
+      selector: void 0,
+      /**
+       * Set category title text
+       * @name categoryTitle
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default "Category"
+       * @example
+       *   categoryTitle: "#table-holder"
+       */
+      categoryTitle: "Category",
+      /**
+       * Set category text format function.
+       * @name categoryFormat
+       * @memberof plugin-tableview
+       * @type {Function}
+       * @returns {string}
+       * @default function(v) { // will return formatted value according x Axis type }}
+       * @example
+       *   categoryFormat: "#table-holder"
+       */
+      categoryFormat: function(v) {
+        let category = v;
+        if (this.$$.axis.isCategorized()) {
+          category = this.$$.categoryName(v);
+        } else if (this.$$.axis.isTimeSeries()) {
+          category = v.toLocaleDateString();
+        }
+        return category;
+      },
+      /**
+       * Set tableview holder class name.
+       * @name class
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default undefined
+       * @example
+       *   class: "table-class-name"
+       */
+      class: void 0,
+      /**
+       * Set to apply default style(`.bb-tableview`) to tableview element.
+       * @name style
+       * @memberof plugin-tableview
+       * @type {boolean}
+       * @default true
+       * @example
+       *   style: false
+       */
+      style: true,
+      /**
+       * Set tableview title text.
+       * - **NOTE:** If set [title.text](https://naver.github.io/billboard.js/release/latest/doc/Options.html#.title), will be used when this option value is empty.
+       * @name title
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default undefined
+       * @example
+       *   title: "Table Title Text"
+       */
+      title: void 0,
+      /**
+       * Update tableview from data visibility update(ex. legend toggle).
+       * @name updateOnToggle
+       * @memberof plugin-tableview
+       * @type {boolean}
+       * @default true
+       * @example
+       *   legendToggleUpdate: false
+       */
+      updateOnToggle: true,
+      /**
+       * Set how null value to be shown.
+       * @name nullString
+       * @memberof plugin-tableview
+       * @type {string}
+       * @default "-"
+       * @example
+       *   nullString: "N/A"
+       */
+      nullString: "-"
+    };
+  }
+}
+
 ;// CONCATENATED MODULE: ./src/Plugin/tableview/index.ts
 var tableview_defProp = Object.defineProperty;
 var __defProps = Object.defineProperties;
@@ -828,9 +828,11 @@ class TableView extends Plugin {
       });
     });
     rows.forEach((v) => {
-      tbody += `<tr>${v.map((d, i) => tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
-        value: i === 0 ? config.categoryFormat.bind(this)(d) : isNumber(d) ? d.toLocaleString() : config.nullString
-      })).join("")}</tr>`;
+      tbody += `<tr>${v.map(
+        (d, i) => tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
+          value: i === 0 ? config.categoryFormat.bind(this)(d) : isNumber(d) ? d.toLocaleString() : config.nullString
+        })
+      ).join("")}</tr>`;
     });
     const rx = /(<\/?(script|img)[^>]*>|<[^>]+><\/[^>]+>)/ig;
     const r = tplProcess(tpl.body, __spreadProps(tableview_spreadValues({}, config), {

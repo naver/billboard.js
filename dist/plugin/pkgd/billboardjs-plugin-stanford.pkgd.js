@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -20419,36 +20419,6 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/sourceEvent.js
-/* harmony default export */ function sourceEvent(event) {
-  let sourceEvent;
-  while (sourceEvent = event.sourceEvent)
-    event = sourceEvent;
-  return event;
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/pointer.js
-
-/* harmony default export */ function src_pointer(event, node) {
-  event = sourceEvent(event);
-  if (node === void 0)
-    node = event.currentTarget;
-  if (node) {
-    var svg = node.ownerSVGElement || node;
-    if (svg.createSVGPoint) {
-      var point = svg.createSVGPoint();
-      point.x = event.clientX, point.y = event.clientY;
-      point = point.matrixTransform(node.getScreenCTM().inverse());
-      return [point.x, point.y];
-    }
-    if (node.getBoundingClientRect) {
-      var rect = node.getBoundingClientRect();
-      return [event.clientX - rect.left - node.clientLeft, event.clientY - rect.top - node.clientTop];
-    }
-  }
-  return [event.pageX, event.pageY];
-}
-
 ;// CONCATENATED MODULE: ./node_modules/d3-dispatch/src/dispatch.js
 var noop = { value: () => {
 } };
@@ -21469,6 +21439,36 @@ function yesdrag(view, noclick) {
     root.style.MozUserSelect = root.__noselect;
     delete root.__noselect;
   }
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-selection/src/sourceEvent.js
+/* harmony default export */ function sourceEvent(event) {
+  let sourceEvent;
+  while (sourceEvent = event.sourceEvent)
+    event = sourceEvent;
+  return event;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-selection/src/pointer.js
+
+/* harmony default export */ function src_pointer(event, node) {
+  event = sourceEvent(event);
+  if (node === void 0)
+    node = event.currentTarget;
+  if (node) {
+    var svg = node.ownerSVGElement || node;
+    if (svg.createSVGPoint) {
+      var point = svg.createSVGPoint();
+      point.x = event.clientX, point.y = event.clientY;
+      point = point.matrixTransform(node.getScreenCTM().inverse());
+      return [point.x, point.y];
+    }
+    if (node.getBoundingClientRect) {
+      var rect = node.getBoundingClientRect();
+      return [event.clientX - rect.left - node.clientLeft, event.clientY - rect.top - node.clientTop];
+    }
+  }
+  return [event.pageX, event.pageY];
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-timer/src/timer.js
@@ -23585,7 +23585,333 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.11.3-nightly-20240320004559");
+__publicField(Plugin, "version", "3.11.3-nightly-20240323004543");
+
+;// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
+/* harmony default export */ function d3_axis_src_identity(x) {
+  return x;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-axis/src/axis.js
+
+var axis_top = 1, right = 2, bottom = 3, left = 4, epsilon = 1e-6;
+function translateX(x) {
+  return "translate(" + x + ",0)";
+}
+function translateY(y) {
+  return "translate(0," + y + ")";
+}
+function axis_number(scale) {
+  return (d) => +scale(d);
+}
+function center(scale, offset) {
+  offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
+  if (scale.round())
+    offset = Math.round(offset);
+  return (d) => +scale(d) + offset;
+}
+function entering() {
+  return !this.__axis;
+}
+function axis(orient, scale) {
+  var tickArguments = [], tickValues = null, tickFormat = null, tickSizeInner = 6, tickSizeOuter = 6, tickPadding = 3, offset = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5, k = orient === axis_top || orient === left ? -1 : 1, x = orient === left || orient === right ? "x" : "y", transform = orient === axis_top || orient === bottom ? translateX : translateY;
+  function axis2(context) {
+    var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format = tickFormat == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : d3_axis_src_identity : tickFormat, spacing = Math.max(tickSizeInner, 0) + tickPadding, range = scale.range(), range0 = +range[0] + offset, range1 = +range[range.length - 1] + offset, position = (scale.bandwidth ? center : axis_number)(scale.copy(), offset), selection = context.selection ? context.selection() : context, path = selection.selectAll(".domain").data([null]), tick = selection.selectAll(".tick").data(values, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line = tick.select("line"), text = tick.select("text");
+    path = path.merge(path.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
+    tick = tick.merge(tickEnter);
+    line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x + "2", k * tickSizeInner));
+    text = text.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x, k * spacing).attr("dy", orient === axis_top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
+    if (context !== selection) {
+      path = path.transition(context);
+      tick = tick.transition(context);
+      line = line.transition(context);
+      text = text.transition(context);
+      tickExit = tickExit.transition(context).attr("opacity", epsilon).attr("transform", function(d) {
+        return isFinite(d = position(d)) ? transform(d + offset) : this.getAttribute("transform");
+      });
+      tickEnter.attr("opacity", epsilon).attr("transform", function(d) {
+        var p = this.parentNode.__axis;
+        return transform((p && isFinite(p = p(d)) ? p : position(d)) + offset);
+      });
+    }
+    tickExit.remove();
+    path.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset + "H" + range1);
+    tick.attr("opacity", 1).attr("transform", function(d) {
+      return transform(position(d) + offset);
+    });
+    line.attr(x + "2", k * tickSizeInner);
+    text.attr(x, k * spacing).text(format);
+    selection.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
+    selection.each(function() {
+      this.__axis = position;
+    });
+  }
+  axis2.scale = function(_) {
+    return arguments.length ? (scale = _, axis2) : scale;
+  };
+  axis2.ticks = function() {
+    return tickArguments = Array.from(arguments), axis2;
+  };
+  axis2.tickArguments = function(_) {
+    return arguments.length ? (tickArguments = _ == null ? [] : Array.from(_), axis2) : tickArguments.slice();
+  };
+  axis2.tickValues = function(_) {
+    return arguments.length ? (tickValues = _ == null ? null : Array.from(_), axis2) : tickValues && tickValues.slice();
+  };
+  axis2.tickFormat = function(_) {
+    return arguments.length ? (tickFormat = _, axis2) : tickFormat;
+  };
+  axis2.tickSize = function(_) {
+    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis2) : tickSizeInner;
+  };
+  axis2.tickSizeInner = function(_) {
+    return arguments.length ? (tickSizeInner = +_, axis2) : tickSizeInner;
+  };
+  axis2.tickSizeOuter = function(_) {
+    return arguments.length ? (tickSizeOuter = +_, axis2) : tickSizeOuter;
+  };
+  axis2.tickPadding = function(_) {
+    return arguments.length ? (tickPadding = +_, axis2) : tickPadding;
+  };
+  axis2.offset = function(_) {
+    return arguments.length ? (offset = +_, axis2) : offset;
+  };
+  return axis2;
+}
+function axisTop(scale) {
+  return axis(axis_top, scale);
+}
+function axisRight(scale) {
+  return axis(right, scale);
+}
+function axisBottom(scale) {
+  return axis(bottom, scale);
+}
+function axisLeft(scale) {
+  return axis(left, scale);
+}
+
+;// CONCATENATED MODULE: ./src/Plugin/stanford/classes.ts
+/* harmony default export */ var stanford_classes = ({
+  colorScale: "bb-colorscale",
+  stanfordElements: "bb-stanford-elements",
+  stanfordLine: "bb-stanford-line",
+  stanfordLines: "bb-stanford-lines",
+  stanfordRegion: "bb-stanford-region",
+  stanfordRegions: "bb-stanford-regions"
+});
+
+;// CONCATENATED MODULE: ./src/Plugin/stanford/ColorScale.ts
+var ColorScale_defProp = Object.defineProperty;
+var ColorScale_defNormalProp = (obj, key, value) => key in obj ? ColorScale_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var ColorScale_publicField = (obj, key, value) => {
+  ColorScale_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+
+
+
+
+
+class ColorScale {
+  constructor(owner) {
+    ColorScale_publicField(this, "owner");
+    ColorScale_publicField(this, "colorScale");
+    this.owner = owner;
+  }
+  drawColorScale() {
+    const { $$, config } = this.owner;
+    const target = $$.data.targets[0];
+    const height = $$.state.height - config.padding_bottom - config.padding_top;
+    const barWidth = config.scale_width;
+    const barHeight = 5;
+    const points = getRange(config.padding_bottom, height, barHeight);
+    const inverseScale = sequential(target.colors).domain([points[points.length - 1], points[0]]);
+    if (this.colorScale) {
+      this.colorScale.remove();
+    }
+    this.colorScale = $$.$el.svg.append("g").attr("width", 50).attr("height", height).attr("class", stanford_classes.colorScale);
+    this.colorScale.append("g").attr("transform", `translate(0, ${config.padding_top})`).selectAll("bars").data(points).enter().append("rect").attr("y", (d, i) => i * barHeight).attr("x", 0).attr("width", barWidth).attr("height", barHeight).attr("fill", (d) => inverseScale(d));
+    const axisScale = symlog().domain([target.minEpochs, target.maxEpochs]).range([
+      points[0] + config.padding_top + points[points.length - 1] + barHeight - 1,
+      points[0] + config.padding_top
+    ]);
+    const legendAxis = axisRight(axisScale);
+    const scaleFormat = config.scale_format;
+    if (scaleFormat === "pow10") {
+      legendAxis.tickValues([1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7]);
+    } else if (isFunction(scaleFormat)) {
+      legendAxis.tickFormat(scaleFormat);
+    } else {
+      legendAxis.tickFormat(format("d"));
+    }
+    const axis = this.colorScale.append("g").attr("class", "legend axis").attr("transform", `translate(${barWidth},0)`).call(legendAxis);
+    if (scaleFormat === "pow10") {
+      axis.selectAll(".tick text").text(null).filter((d) => d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1).text(10).append("tspan").attr("dy", "-.7em").text((d) => Math.round(Math.log(d) / Math.LN10));
+    }
+    this.colorScale.attr(
+      "transform",
+      `translate(${$$.state.current.width - this.xForColorScale()}, 0)`
+    );
+  }
+  xForColorScale() {
+    return this.owner.config.padding_right + this.colorScale.node().getBBox().width;
+  }
+  getColorScalePadding() {
+    return this.xForColorScale() + this.owner.config.padding_left + 20;
+  }
+}
+
+;// CONCATENATED MODULE: ./src/Plugin/stanford/util.ts
+
+function pointInRegion(point, region) {
+  const x = point.x;
+  const y = point.value;
+  let inside = false;
+  for (let i = 0, j = region.length - 1; i < region.length; j = i++) {
+    const xi = region[i].x;
+    const yi = region[i].y;
+    const xj = region[j].x;
+    const yj = region[j].y;
+    const intersect = yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi;
+    if (intersect) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+function compareEpochs(a, b) {
+  if (a.epochs < b.epochs) {
+    return -1;
+  }
+  if (a.epochs > b.epochs) {
+    return 1;
+  }
+  return 0;
+}
+function getRegionArea(points) {
+  let area = 0;
+  let point1;
+  let point2;
+  for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+    point1 = points[i];
+    point2 = points[j];
+    area += point1.x * point2.y;
+    area -= point1.y * point2.x;
+  }
+  area /= 2;
+  return area;
+}
+function getCentroid(points) {
+  const area = getRegionArea(points);
+  let x = 0;
+  let y = 0;
+  let f;
+  for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+    const point1 = points[i];
+    const point2 = points[j];
+    f = point1.x * point2.y - point2.x * point1.y;
+    x += (point1.x + point2.x) * f;
+    y += (point1.y + point2.y) * f;
+  }
+  f = area * 6;
+  return {
+    x: x / f,
+    y: y / f
+  };
+}
+
+
+;// CONCATENATED MODULE: ./src/Plugin/stanford/Elements.ts
+var Elements_defProp = Object.defineProperty;
+var Elements_defNormalProp = (obj, key, value) => key in obj ? Elements_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var Elements_publicField = (obj, key, value) => {
+  Elements_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+
+
+class Elements {
+  constructor(owner) {
+    Elements_publicField(this, "owner");
+    this.owner = owner;
+    const elements = owner.$$.$el.main.select(".bb-chart").append("g").attr("class", stanford_classes.stanfordElements);
+    elements.append("g").attr("class", stanford_classes.stanfordLines);
+    elements.append("g").attr("class", stanford_classes.stanfordRegions);
+  }
+  updateStanfordLines(duration) {
+    const { $$ } = this.owner;
+    const { config, $el: { main } } = $$;
+    const isRotated = config.axis_rotated;
+    const xvCustom = this.xvCustom.bind($$);
+    const yvCustom = this.yvCustom.bind($$);
+    const stanfordLine = main.select(`.${stanford_classes.stanfordLines}`).style("shape-rendering", "geometricprecision").selectAll(`.${stanford_classes.stanfordLine}`).data(this.owner.config.lines);
+    stanfordLine.exit().transition().duration(duration).style("opacity", "0").remove();
+    const stanfordLineEnter = stanfordLine.enter().append("g");
+    stanfordLineEnter.append("line").style("opacity", "0");
+    stanfordLineEnter.merge(stanfordLine).attr("class", (d) => stanford_classes.stanfordLine + (d.class ? ` ${d.class}` : "")).select("line").transition().duration(duration).attr("x1", (d) => {
+      const v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
+      return v;
+    }).attr("x2", (d) => isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2")).attr("y1", (d) => {
+      const v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
+      return v;
+    }).attr("y2", (d) => isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")).transition().style("opacity", null);
+  }
+  updateStanfordRegions(duration) {
+    const { $$ } = this.owner;
+    const { config, $el: { main } } = $$;
+    const isRotated = config.axis_rotated;
+    const xvCustom = this.xvCustom.bind($$);
+    const yvCustom = this.yvCustom.bind($$);
+    const countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
+    let stanfordRegion = main.select(`.${stanford_classes.stanfordRegions}`).selectAll(`.${stanford_classes.stanfordRegion}`).data(this.owner.config.regions);
+    stanfordRegion.exit().transition().duration(duration).style("opacity", "0").remove();
+    const stanfordRegionEnter = stanfordRegion.enter().append("g");
+    stanfordRegionEnter.append("polygon").style("opacity", "0");
+    stanfordRegionEnter.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", "0");
+    stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
+    stanfordRegion.attr("class", (d) => stanford_classes.stanfordRegion + (d.class ? ` ${d.class}` : "")).select("polygon").transition().duration(duration).attr("points", (d) => d.points.map(
+      (value) => [
+        isRotated ? yvCustom(value, "y") : xvCustom(value, "x"),
+        isRotated ? xvCustom(value, "x") : yvCustom(value, "y")
+      ].join(",")
+    ).join(" ")).transition().style("opacity", (d) => String(d.opacity ? d.opacity : 0.2));
+    stanfordRegion.select("text").transition().duration(duration).attr(
+      "x",
+      (d) => isRotated ? yvCustom(getCentroid(d.points), "y") : xvCustom(getCentroid(d.points), "x")
+    ).attr(
+      "y",
+      (d) => isRotated ? xvCustom(getCentroid(d.points), "x") : yvCustom(getCentroid(d.points), "y")
+    ).text((d) => {
+      if (d.text) {
+        const { value, percentage } = countPointsInRegion(d.points);
+        return d.text(value, percentage);
+      }
+      return "";
+    }).attr("text-anchor", "middle").attr("dominant-baseline", "middle").transition().style("opacity", null);
+  }
+  updateStanfordElements(duration = 0) {
+    this.updateStanfordLines(duration);
+    this.updateStanfordRegions(duration);
+  }
+  xvCustom(d, xyValue) {
+    const $$ = this;
+    const { axis, config } = $$;
+    let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+    if (axis.isTimeSeries()) {
+      value = parseDate.call($$, value);
+    } else if (axis.isCategorized() && isString(value)) {
+      value = config.axis_x_categories.indexOf(d.value);
+    }
+    return Math.ceil($$.scale.x(value));
+  }
+  yvCustom(d, xyValue) {
+    const $$ = this;
+    const yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
+    const value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+    return Math.ceil(yScale(value));
+  }
+}
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 class Options {
@@ -23721,321 +24047,6 @@ class Options {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/classes.ts
-/* harmony default export */ var stanford_classes = ({
-  colorScale: "bb-colorscale",
-  stanfordElements: "bb-stanford-elements",
-  stanfordLine: "bb-stanford-line",
-  stanfordLines: "bb-stanford-lines",
-  stanfordRegion: "bb-stanford-region",
-  stanfordRegions: "bb-stanford-regions"
-});
-
-;// CONCATENATED MODULE: ./src/Plugin/stanford/util.ts
-
-function pointInRegion(point, region) {
-  const x = point.x;
-  const y = point.value;
-  let inside = false;
-  for (let i = 0, j = region.length - 1; i < region.length; j = i++) {
-    const xi = region[i].x;
-    const yi = region[i].y;
-    const xj = region[j].x;
-    const yj = region[j].y;
-    const intersect = yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi;
-    if (intersect) {
-      inside = !inside;
-    }
-  }
-  return inside;
-}
-function compareEpochs(a, b) {
-  if (a.epochs < b.epochs) {
-    return -1;
-  }
-  if (a.epochs > b.epochs) {
-    return 1;
-  }
-  return 0;
-}
-function getRegionArea(points) {
-  let area = 0;
-  let point1;
-  let point2;
-  for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
-    point1 = points[i];
-    point2 = points[j];
-    area += point1.x * point2.y;
-    area -= point1.y * point2.x;
-  }
-  area /= 2;
-  return area;
-}
-function getCentroid(points) {
-  const area = getRegionArea(points);
-  let x = 0;
-  let y = 0;
-  let f;
-  for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
-    const point1 = points[i];
-    const point2 = points[j];
-    f = point1.x * point2.y - point2.x * point1.y;
-    x += (point1.x + point2.x) * f;
-    y += (point1.y + point2.y) * f;
-  }
-  f = area * 6;
-  return {
-    x: x / f,
-    y: y / f
-  };
-}
-
-
-;// CONCATENATED MODULE: ./src/Plugin/stanford/Elements.ts
-var Elements_defProp = Object.defineProperty;
-var Elements_defNormalProp = (obj, key, value) => key in obj ? Elements_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var Elements_publicField = (obj, key, value) => {
-  Elements_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-
-
-class Elements {
-  constructor(owner) {
-    Elements_publicField(this, "owner");
-    this.owner = owner;
-    const elements = owner.$$.$el.main.select(".bb-chart").append("g").attr("class", stanford_classes.stanfordElements);
-    elements.append("g").attr("class", stanford_classes.stanfordLines);
-    elements.append("g").attr("class", stanford_classes.stanfordRegions);
-  }
-  updateStanfordLines(duration) {
-    const { $$ } = this.owner;
-    const { config, $el: { main } } = $$;
-    const isRotated = config.axis_rotated;
-    const xvCustom = this.xvCustom.bind($$);
-    const yvCustom = this.yvCustom.bind($$);
-    const stanfordLine = main.select(`.${stanford_classes.stanfordLines}`).style("shape-rendering", "geometricprecision").selectAll(`.${stanford_classes.stanfordLine}`).data(this.owner.config.lines);
-    stanfordLine.exit().transition().duration(duration).style("opacity", "0").remove();
-    const stanfordLineEnter = stanfordLine.enter().append("g");
-    stanfordLineEnter.append("line").style("opacity", "0");
-    stanfordLineEnter.merge(stanfordLine).attr("class", (d) => stanford_classes.stanfordLine + (d.class ? ` ${d.class}` : "")).select("line").transition().duration(duration).attr("x1", (d) => {
-      const v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
-      return v;
-    }).attr("x2", (d) => isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2")).attr("y1", (d) => {
-      const v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
-      return v;
-    }).attr("y2", (d) => isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")).transition().style("opacity", null);
-  }
-  updateStanfordRegions(duration) {
-    const { $$ } = this.owner;
-    const { config, $el: { main } } = $$;
-    const isRotated = config.axis_rotated;
-    const xvCustom = this.xvCustom.bind($$);
-    const yvCustom = this.yvCustom.bind($$);
-    const countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
-    let stanfordRegion = main.select(`.${stanford_classes.stanfordRegions}`).selectAll(`.${stanford_classes.stanfordRegion}`).data(this.owner.config.regions);
-    stanfordRegion.exit().transition().duration(duration).style("opacity", "0").remove();
-    const stanfordRegionEnter = stanfordRegion.enter().append("g");
-    stanfordRegionEnter.append("polygon").style("opacity", "0");
-    stanfordRegionEnter.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", "0");
-    stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
-    stanfordRegion.attr("class", (d) => stanford_classes.stanfordRegion + (d.class ? ` ${d.class}` : "")).select("polygon").transition().duration(duration).attr("points", (d) => d.points.map((value) => [
-      isRotated ? yvCustom(value, "y") : xvCustom(value, "x"),
-      isRotated ? xvCustom(value, "x") : yvCustom(value, "y")
-    ].join(",")).join(" ")).transition().style("opacity", (d) => String(d.opacity ? d.opacity : 0.2));
-    stanfordRegion.select("text").transition().duration(duration).attr("x", (d) => isRotated ? yvCustom(getCentroid(d.points), "y") : xvCustom(getCentroid(d.points), "x")).attr("y", (d) => isRotated ? xvCustom(getCentroid(d.points), "x") : yvCustom(getCentroid(d.points), "y")).text((d) => {
-      if (d.text) {
-        const { value, percentage } = countPointsInRegion(d.points);
-        return d.text(value, percentage);
-      }
-      return "";
-    }).attr("text-anchor", "middle").attr("dominant-baseline", "middle").transition().style("opacity", null);
-  }
-  updateStanfordElements(duration = 0) {
-    this.updateStanfordLines(duration);
-    this.updateStanfordRegions(duration);
-  }
-  xvCustom(d, xyValue) {
-    const $$ = this;
-    const { axis, config } = $$;
-    let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-    if (axis.isTimeSeries()) {
-      value = parseDate.call($$, value);
-    } else if (axis.isCategorized() && isString(value)) {
-      value = config.axis_x_categories.indexOf(d.value);
-    }
-    return Math.ceil($$.scale.x(value));
-  }
-  yvCustom(d, xyValue) {
-    const $$ = this;
-    const yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
-    const value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-    return Math.ceil(yScale(value));
-  }
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
-/* harmony default export */ function d3_axis_src_identity(x) {
-  return x;
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-axis/src/axis.js
-
-var axis_top = 1, right = 2, bottom = 3, left = 4, epsilon = 1e-6;
-function translateX(x) {
-  return "translate(" + x + ",0)";
-}
-function translateY(y) {
-  return "translate(0," + y + ")";
-}
-function axis_number(scale) {
-  return (d) => +scale(d);
-}
-function center(scale, offset) {
-  offset = Math.max(0, scale.bandwidth() - offset * 2) / 2;
-  if (scale.round())
-    offset = Math.round(offset);
-  return (d) => +scale(d) + offset;
-}
-function entering() {
-  return !this.__axis;
-}
-function axis(orient, scale) {
-  var tickArguments = [], tickValues = null, tickFormat = null, tickSizeInner = 6, tickSizeOuter = 6, tickPadding = 3, offset = typeof window !== "undefined" && window.devicePixelRatio > 1 ? 0 : 0.5, k = orient === axis_top || orient === left ? -1 : 1, x = orient === left || orient === right ? "x" : "y", transform = orient === axis_top || orient === bottom ? translateX : translateY;
-  function axis2(context) {
-    var values = tickValues == null ? scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain() : tickValues, format = tickFormat == null ? scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : d3_axis_src_identity : tickFormat, spacing = Math.max(tickSizeInner, 0) + tickPadding, range = scale.range(), range0 = +range[0] + offset, range1 = +range[range.length - 1] + offset, position = (scale.bandwidth ? center : axis_number)(scale.copy(), offset), selection = context.selection ? context.selection() : context, path = selection.selectAll(".domain").data([null]), tick = selection.selectAll(".tick").data(values, scale).order(), tickExit = tick.exit(), tickEnter = tick.enter().append("g").attr("class", "tick"), line = tick.select("line"), text = tick.select("text");
-    path = path.merge(path.enter().insert("path", ".tick").attr("class", "domain").attr("stroke", "currentColor"));
-    tick = tick.merge(tickEnter);
-    line = line.merge(tickEnter.append("line").attr("stroke", "currentColor").attr(x + "2", k * tickSizeInner));
-    text = text.merge(tickEnter.append("text").attr("fill", "currentColor").attr(x, k * spacing).attr("dy", orient === axis_top ? "0em" : orient === bottom ? "0.71em" : "0.32em"));
-    if (context !== selection) {
-      path = path.transition(context);
-      tick = tick.transition(context);
-      line = line.transition(context);
-      text = text.transition(context);
-      tickExit = tickExit.transition(context).attr("opacity", epsilon).attr("transform", function(d) {
-        return isFinite(d = position(d)) ? transform(d + offset) : this.getAttribute("transform");
-      });
-      tickEnter.attr("opacity", epsilon).attr("transform", function(d) {
-        var p = this.parentNode.__axis;
-        return transform((p && isFinite(p = p(d)) ? p : position(d)) + offset);
-      });
-    }
-    tickExit.remove();
-    path.attr("d", orient === left || orient === right ? tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H" + offset + "V" + range1 + "H" + k * tickSizeOuter : "M" + offset + "," + range0 + "V" + range1 : tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V" + offset + "H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + "," + offset + "H" + range1);
-    tick.attr("opacity", 1).attr("transform", function(d) {
-      return transform(position(d) + offset);
-    });
-    line.attr(x + "2", k * tickSizeInner);
-    text.attr(x, k * spacing).text(format);
-    selection.filter(entering).attr("fill", "none").attr("font-size", 10).attr("font-family", "sans-serif").attr("text-anchor", orient === right ? "start" : orient === left ? "end" : "middle");
-    selection.each(function() {
-      this.__axis = position;
-    });
-  }
-  axis2.scale = function(_) {
-    return arguments.length ? (scale = _, axis2) : scale;
-  };
-  axis2.ticks = function() {
-    return tickArguments = Array.from(arguments), axis2;
-  };
-  axis2.tickArguments = function(_) {
-    return arguments.length ? (tickArguments = _ == null ? [] : Array.from(_), axis2) : tickArguments.slice();
-  };
-  axis2.tickValues = function(_) {
-    return arguments.length ? (tickValues = _ == null ? null : Array.from(_), axis2) : tickValues && tickValues.slice();
-  };
-  axis2.tickFormat = function(_) {
-    return arguments.length ? (tickFormat = _, axis2) : tickFormat;
-  };
-  axis2.tickSize = function(_) {
-    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis2) : tickSizeInner;
-  };
-  axis2.tickSizeInner = function(_) {
-    return arguments.length ? (tickSizeInner = +_, axis2) : tickSizeInner;
-  };
-  axis2.tickSizeOuter = function(_) {
-    return arguments.length ? (tickSizeOuter = +_, axis2) : tickSizeOuter;
-  };
-  axis2.tickPadding = function(_) {
-    return arguments.length ? (tickPadding = +_, axis2) : tickPadding;
-  };
-  axis2.offset = function(_) {
-    return arguments.length ? (offset = +_, axis2) : offset;
-  };
-  return axis2;
-}
-function axisTop(scale) {
-  return axis(axis_top, scale);
-}
-function axisRight(scale) {
-  return axis(right, scale);
-}
-function axisBottom(scale) {
-  return axis(bottom, scale);
-}
-function axisLeft(scale) {
-  return axis(left, scale);
-}
-
-;// CONCATENATED MODULE: ./src/Plugin/stanford/ColorScale.ts
-var ColorScale_defProp = Object.defineProperty;
-var ColorScale_defNormalProp = (obj, key, value) => key in obj ? ColorScale_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var ColorScale_publicField = (obj, key, value) => {
-  ColorScale_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-
-
-
-
-
-class ColorScale {
-  constructor(owner) {
-    ColorScale_publicField(this, "owner");
-    ColorScale_publicField(this, "colorScale");
-    this.owner = owner;
-  }
-  drawColorScale() {
-    const { $$, config } = this.owner;
-    const target = $$.data.targets[0];
-    const height = $$.state.height - config.padding_bottom - config.padding_top;
-    const barWidth = config.scale_width;
-    const barHeight = 5;
-    const points = getRange(config.padding_bottom, height, barHeight);
-    const inverseScale = sequential(target.colors).domain([points[points.length - 1], points[0]]);
-    if (this.colorScale) {
-      this.colorScale.remove();
-    }
-    this.colorScale = $$.$el.svg.append("g").attr("width", 50).attr("height", height).attr("class", stanford_classes.colorScale);
-    this.colorScale.append("g").attr("transform", `translate(0, ${config.padding_top})`).selectAll("bars").data(points).enter().append("rect").attr("y", (d, i) => i * barHeight).attr("x", 0).attr("width", barWidth).attr("height", barHeight).attr("fill", (d) => inverseScale(d));
-    const axisScale = symlog().domain([target.minEpochs, target.maxEpochs]).range([
-      points[0] + config.padding_top + points[points.length - 1] + barHeight - 1,
-      points[0] + config.padding_top
-    ]);
-    const legendAxis = axisRight(axisScale);
-    const scaleFormat = config.scale_format;
-    if (scaleFormat === "pow10") {
-      legendAxis.tickValues([1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7]);
-    } else if (isFunction(scaleFormat)) {
-      legendAxis.tickFormat(scaleFormat);
-    } else {
-      legendAxis.tickFormat(format("d"));
-    }
-    const axis = this.colorScale.append("g").attr("class", "legend axis").attr("transform", `translate(${barWidth},0)`).call(legendAxis);
-    if (scaleFormat === "pow10") {
-      axis.selectAll(".tick text").text(null).filter((d) => d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1).text(10).append("tspan").attr("dy", "-.7em").text((d) => Math.round(Math.log(d) / Math.LN10));
-    }
-    this.colorScale.attr("transform", `translate(${$$.state.current.width - this.xForColorScale()}, 0)`);
-  }
-  xForColorScale() {
-    return this.owner.config.padding_right + this.colorScale.node().getBBox().width;
-  }
-  getColorScalePadding() {
-    return this.xForColorScale() + this.owner.config.padding_left + 20;
-  }
-}
-
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/index.ts
 var stanford_defProp = Object.defineProperty;
 var stanford_defNormalProp = (obj, key, value) => key in obj ? stanford_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -24153,7 +24164,10 @@ class Stanford extends Plugin {
   countEpochsInRegion(region) {
     const $$ = this;
     const target = $$.data.targets[0];
-    const total = target.values.reduce((accumulator, currentValue) => accumulator + Number(currentValue.epochs), 0);
+    const total = target.values.reduce(
+      (accumulator, currentValue) => accumulator + Number(currentValue.epochs),
+      0
+    );
     const value = target.values.reduce((accumulator, currentValue) => {
       if (pointInRegion(currentValue, region)) {
         return accumulator + Number(currentValue.epochs);

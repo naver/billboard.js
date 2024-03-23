@@ -5,20 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-interpolate"), require("d3-color"), require("d3-scale"), require("d3-selection"), require("d3-brush"), require("d3-axis"), require("d3-format"));
+		module.exports = factory(require("d3-color"), require("d3-interpolate"), require("d3-scale"), require("d3-brush"), require("d3-selection"), require("d3-axis"), require("d3-format"));
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-interpolate", "d3-color", "d3-scale", "d3-selection", "d3-brush", "d3-axis", "d3-format"], factory);
+		define("bb", ["d3-color", "d3-interpolate", "d3-scale", "d3-brush", "d3-selection", "d3-axis", "d3-format"], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-interpolate"), require("d3-color"), require("d3-scale"), require("d3-selection"), require("d3-brush"), require("d3-axis"), require("d3-format"));
+		exports["bb"] = factory(require("d3-color"), require("d3-interpolate"), require("d3-scale"), require("d3-brush"), require("d3-selection"), require("d3-axis"), require("d3-format"));
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -121,10 +121,10 @@ __webpack_require__.d(__webpack_exports__, {
   "default": function() { return /* binding */ Stanford; }
 });
 
-// EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(5);
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(6);
+var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(5);
+// EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(6);
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
 var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(7);
 ;// CONCATENATED MODULE: ./src/config/classes.ts
@@ -299,10 +299,10 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
-// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
+// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
 
 function getGlobal() {
@@ -810,7 +810,233 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.11.3-nightly-20240320004559");
+__publicField(Plugin, "version", "3.11.3-nightly-20240323004543");
+
+// EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
+var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);
+// EXTERNAL MODULE: external {"commonjs":"d3-format","commonjs2":"d3-format","amd":"d3-format","root":"d3"}
+var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(9);
+;// CONCATENATED MODULE: ./src/Plugin/stanford/classes.ts
+/* harmony default export */ var stanford_classes = ({
+  colorScale: "bb-colorscale",
+  stanfordElements: "bb-stanford-elements",
+  stanfordLine: "bb-stanford-line",
+  stanfordLines: "bb-stanford-lines",
+  stanfordRegion: "bb-stanford-region",
+  stanfordRegions: "bb-stanford-regions"
+});
+
+;// CONCATENATED MODULE: ./src/Plugin/stanford/ColorScale.ts
+var ColorScale_defProp = Object.defineProperty;
+var ColorScale_defNormalProp = (obj, key, value) => key in obj ? ColorScale_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var ColorScale_publicField = (obj, key, value) => {
+  ColorScale_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+
+
+
+
+
+class ColorScale {
+  constructor(owner) {
+    ColorScale_publicField(this, "owner");
+    ColorScale_publicField(this, "colorScale");
+    this.owner = owner;
+  }
+  drawColorScale() {
+    const { $$, config } = this.owner;
+    const target = $$.data.targets[0];
+    const height = $$.state.height - config.padding_bottom - config.padding_top;
+    const barWidth = config.scale_width;
+    const barHeight = 5;
+    const points = getRange(config.padding_bottom, height, barHeight);
+    const inverseScale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSequential)(target.colors).domain([points[points.length - 1], points[0]]);
+    if (this.colorScale) {
+      this.colorScale.remove();
+    }
+    this.colorScale = $$.$el.svg.append("g").attr("width", 50).attr("height", height).attr("class", stanford_classes.colorScale);
+    this.colorScale.append("g").attr("transform", `translate(0, ${config.padding_top})`).selectAll("bars").data(points).enter().append("rect").attr("y", (d, i) => i * barHeight).attr("x", 0).attr("width", barWidth).attr("height", barHeight).attr("fill", (d) => inverseScale(d));
+    const axisScale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSymlog)().domain([target.minEpochs, target.maxEpochs]).range([
+      points[0] + config.padding_top + points[points.length - 1] + barHeight - 1,
+      points[0] + config.padding_top
+    ]);
+    const legendAxis = (0,external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisRight)(axisScale);
+    const scaleFormat = config.scale_format;
+    if (scaleFormat === "pow10") {
+      legendAxis.tickValues([1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7]);
+    } else if (isFunction(scaleFormat)) {
+      legendAxis.tickFormat(scaleFormat);
+    } else {
+      legendAxis.tickFormat((0,external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_.format)("d"));
+    }
+    const axis = this.colorScale.append("g").attr("class", "legend axis").attr("transform", `translate(${barWidth},0)`).call(legendAxis);
+    if (scaleFormat === "pow10") {
+      axis.selectAll(".tick text").text(null).filter((d) => d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1).text(10).append("tspan").attr("dy", "-.7em").text((d) => Math.round(Math.log(d) / Math.LN10));
+    }
+    this.colorScale.attr(
+      "transform",
+      `translate(${$$.state.current.width - this.xForColorScale()}, 0)`
+    );
+  }
+  xForColorScale() {
+    return this.owner.config.padding_right + this.colorScale.node().getBBox().width;
+  }
+  getColorScalePadding() {
+    return this.xForColorScale() + this.owner.config.padding_left + 20;
+  }
+}
+
+;// CONCATENATED MODULE: ./src/Plugin/stanford/util.ts
+
+function pointInRegion(point, region) {
+  const x = point.x;
+  const y = point.value;
+  let inside = false;
+  for (let i = 0, j = region.length - 1; i < region.length; j = i++) {
+    const xi = region[i].x;
+    const yi = region[i].y;
+    const xj = region[j].x;
+    const yj = region[j].y;
+    const intersect = yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi;
+    if (intersect) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+function compareEpochs(a, b) {
+  if (a.epochs < b.epochs) {
+    return -1;
+  }
+  if (a.epochs > b.epochs) {
+    return 1;
+  }
+  return 0;
+}
+function getRegionArea(points) {
+  let area = 0;
+  let point1;
+  let point2;
+  for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+    point1 = points[i];
+    point2 = points[j];
+    area += point1.x * point2.y;
+    area -= point1.y * point2.x;
+  }
+  area /= 2;
+  return area;
+}
+function getCentroid(points) {
+  const area = getRegionArea(points);
+  let x = 0;
+  let y = 0;
+  let f;
+  for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
+    const point1 = points[i];
+    const point2 = points[j];
+    f = point1.x * point2.y - point2.x * point1.y;
+    x += (point1.x + point2.x) * f;
+    y += (point1.y + point2.y) * f;
+  }
+  f = area * 6;
+  return {
+    x: x / f,
+    y: y / f
+  };
+}
+
+
+;// CONCATENATED MODULE: ./src/Plugin/stanford/Elements.ts
+var Elements_defProp = Object.defineProperty;
+var Elements_defNormalProp = (obj, key, value) => key in obj ? Elements_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var Elements_publicField = (obj, key, value) => {
+  Elements_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+
+
+class Elements {
+  constructor(owner) {
+    Elements_publicField(this, "owner");
+    this.owner = owner;
+    const elements = owner.$$.$el.main.select(".bb-chart").append("g").attr("class", stanford_classes.stanfordElements);
+    elements.append("g").attr("class", stanford_classes.stanfordLines);
+    elements.append("g").attr("class", stanford_classes.stanfordRegions);
+  }
+  updateStanfordLines(duration) {
+    const { $$ } = this.owner;
+    const { config, $el: { main } } = $$;
+    const isRotated = config.axis_rotated;
+    const xvCustom = this.xvCustom.bind($$);
+    const yvCustom = this.yvCustom.bind($$);
+    const stanfordLine = main.select(`.${stanford_classes.stanfordLines}`).style("shape-rendering", "geometricprecision").selectAll(`.${stanford_classes.stanfordLine}`).data(this.owner.config.lines);
+    stanfordLine.exit().transition().duration(duration).style("opacity", "0").remove();
+    const stanfordLineEnter = stanfordLine.enter().append("g");
+    stanfordLineEnter.append("line").style("opacity", "0");
+    stanfordLineEnter.merge(stanfordLine).attr("class", (d) => stanford_classes.stanfordLine + (d.class ? ` ${d.class}` : "")).select("line").transition().duration(duration).attr("x1", (d) => {
+      const v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
+      return v;
+    }).attr("x2", (d) => isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2")).attr("y1", (d) => {
+      const v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
+      return v;
+    }).attr("y2", (d) => isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")).transition().style("opacity", null);
+  }
+  updateStanfordRegions(duration) {
+    const { $$ } = this.owner;
+    const { config, $el: { main } } = $$;
+    const isRotated = config.axis_rotated;
+    const xvCustom = this.xvCustom.bind($$);
+    const yvCustom = this.yvCustom.bind($$);
+    const countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
+    let stanfordRegion = main.select(`.${stanford_classes.stanfordRegions}`).selectAll(`.${stanford_classes.stanfordRegion}`).data(this.owner.config.regions);
+    stanfordRegion.exit().transition().duration(duration).style("opacity", "0").remove();
+    const stanfordRegionEnter = stanfordRegion.enter().append("g");
+    stanfordRegionEnter.append("polygon").style("opacity", "0");
+    stanfordRegionEnter.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", "0");
+    stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
+    stanfordRegion.attr("class", (d) => stanford_classes.stanfordRegion + (d.class ? ` ${d.class}` : "")).select("polygon").transition().duration(duration).attr("points", (d) => d.points.map(
+      (value) => [
+        isRotated ? yvCustom(value, "y") : xvCustom(value, "x"),
+        isRotated ? xvCustom(value, "x") : yvCustom(value, "y")
+      ].join(",")
+    ).join(" ")).transition().style("opacity", (d) => String(d.opacity ? d.opacity : 0.2));
+    stanfordRegion.select("text").transition().duration(duration).attr(
+      "x",
+      (d) => isRotated ? yvCustom(getCentroid(d.points), "y") : xvCustom(getCentroid(d.points), "x")
+    ).attr(
+      "y",
+      (d) => isRotated ? xvCustom(getCentroid(d.points), "x") : yvCustom(getCentroid(d.points), "y")
+    ).text((d) => {
+      if (d.text) {
+        const { value, percentage } = countPointsInRegion(d.points);
+        return d.text(value, percentage);
+      }
+      return "";
+    }).attr("text-anchor", "middle").attr("dominant-baseline", "middle").transition().style("opacity", null);
+  }
+  updateStanfordElements(duration = 0) {
+    this.updateStanfordLines(duration);
+    this.updateStanfordRegions(duration);
+  }
+  xvCustom(d, xyValue) {
+    const $$ = this;
+    const { axis, config } = $$;
+    let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+    if (axis.isTimeSeries()) {
+      value = parseDate.call($$, value);
+    } else if (axis.isCategorized() && isString(value)) {
+      value = config.axis_x_categories.indexOf(d.value);
+    }
+    return Math.ceil($$.scale.x(value));
+  }
+  yvCustom(d, xyValue) {
+    const $$ = this;
+    const yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
+    const value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+    return Math.ceil(yScale(value));
+  }
+}
 
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/Options.ts
 class Options {
@@ -946,221 +1172,6 @@ class Options {
   }
 }
 
-;// CONCATENATED MODULE: ./src/Plugin/stanford/classes.ts
-/* harmony default export */ var stanford_classes = ({
-  colorScale: "bb-colorscale",
-  stanfordElements: "bb-stanford-elements",
-  stanfordLine: "bb-stanford-line",
-  stanfordLines: "bb-stanford-lines",
-  stanfordRegion: "bb-stanford-region",
-  stanfordRegions: "bb-stanford-regions"
-});
-
-;// CONCATENATED MODULE: ./src/Plugin/stanford/util.ts
-
-function pointInRegion(point, region) {
-  const x = point.x;
-  const y = point.value;
-  let inside = false;
-  for (let i = 0, j = region.length - 1; i < region.length; j = i++) {
-    const xi = region[i].x;
-    const yi = region[i].y;
-    const xj = region[j].x;
-    const yj = region[j].y;
-    const intersect = yi > y !== yj > y && x < (xj - xi) * (y - yi) / (yj - yi) + xi;
-    if (intersect) {
-      inside = !inside;
-    }
-  }
-  return inside;
-}
-function compareEpochs(a, b) {
-  if (a.epochs < b.epochs) {
-    return -1;
-  }
-  if (a.epochs > b.epochs) {
-    return 1;
-  }
-  return 0;
-}
-function getRegionArea(points) {
-  let area = 0;
-  let point1;
-  let point2;
-  for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
-    point1 = points[i];
-    point2 = points[j];
-    area += point1.x * point2.y;
-    area -= point1.y * point2.x;
-  }
-  area /= 2;
-  return area;
-}
-function getCentroid(points) {
-  const area = getRegionArea(points);
-  let x = 0;
-  let y = 0;
-  let f;
-  for (let i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
-    const point1 = points[i];
-    const point2 = points[j];
-    f = point1.x * point2.y - point2.x * point1.y;
-    x += (point1.x + point2.x) * f;
-    y += (point1.y + point2.y) * f;
-  }
-  f = area * 6;
-  return {
-    x: x / f,
-    y: y / f
-  };
-}
-
-
-;// CONCATENATED MODULE: ./src/Plugin/stanford/Elements.ts
-var Elements_defProp = Object.defineProperty;
-var Elements_defNormalProp = (obj, key, value) => key in obj ? Elements_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var Elements_publicField = (obj, key, value) => {
-  Elements_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-
-
-class Elements {
-  constructor(owner) {
-    Elements_publicField(this, "owner");
-    this.owner = owner;
-    const elements = owner.$$.$el.main.select(".bb-chart").append("g").attr("class", stanford_classes.stanfordElements);
-    elements.append("g").attr("class", stanford_classes.stanfordLines);
-    elements.append("g").attr("class", stanford_classes.stanfordRegions);
-  }
-  updateStanfordLines(duration) {
-    const { $$ } = this.owner;
-    const { config, $el: { main } } = $$;
-    const isRotated = config.axis_rotated;
-    const xvCustom = this.xvCustom.bind($$);
-    const yvCustom = this.yvCustom.bind($$);
-    const stanfordLine = main.select(`.${stanford_classes.stanfordLines}`).style("shape-rendering", "geometricprecision").selectAll(`.${stanford_classes.stanfordLine}`).data(this.owner.config.lines);
-    stanfordLine.exit().transition().duration(duration).style("opacity", "0").remove();
-    const stanfordLineEnter = stanfordLine.enter().append("g");
-    stanfordLineEnter.append("line").style("opacity", "0");
-    stanfordLineEnter.merge(stanfordLine).attr("class", (d) => stanford_classes.stanfordLine + (d.class ? ` ${d.class}` : "")).select("line").transition().duration(duration).attr("x1", (d) => {
-      const v = isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
-      return v;
-    }).attr("x2", (d) => isRotated ? yvCustom(d, "y2") : xvCustom(d, "x2")).attr("y1", (d) => {
-      const v = isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
-      return v;
-    }).attr("y2", (d) => isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")).transition().style("opacity", null);
-  }
-  updateStanfordRegions(duration) {
-    const { $$ } = this.owner;
-    const { config, $el: { main } } = $$;
-    const isRotated = config.axis_rotated;
-    const xvCustom = this.xvCustom.bind($$);
-    const yvCustom = this.yvCustom.bind($$);
-    const countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
-    let stanfordRegion = main.select(`.${stanford_classes.stanfordRegions}`).selectAll(`.${stanford_classes.stanfordRegion}`).data(this.owner.config.regions);
-    stanfordRegion.exit().transition().duration(duration).style("opacity", "0").remove();
-    const stanfordRegionEnter = stanfordRegion.enter().append("g");
-    stanfordRegionEnter.append("polygon").style("opacity", "0");
-    stanfordRegionEnter.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", "0");
-    stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
-    stanfordRegion.attr("class", (d) => stanford_classes.stanfordRegion + (d.class ? ` ${d.class}` : "")).select("polygon").transition().duration(duration).attr("points", (d) => d.points.map((value) => [
-      isRotated ? yvCustom(value, "y") : xvCustom(value, "x"),
-      isRotated ? xvCustom(value, "x") : yvCustom(value, "y")
-    ].join(",")).join(" ")).transition().style("opacity", (d) => String(d.opacity ? d.opacity : 0.2));
-    stanfordRegion.select("text").transition().duration(duration).attr("x", (d) => isRotated ? yvCustom(getCentroid(d.points), "y") : xvCustom(getCentroid(d.points), "x")).attr("y", (d) => isRotated ? xvCustom(getCentroid(d.points), "x") : yvCustom(getCentroid(d.points), "y")).text((d) => {
-      if (d.text) {
-        const { value, percentage } = countPointsInRegion(d.points);
-        return d.text(value, percentage);
-      }
-      return "";
-    }).attr("text-anchor", "middle").attr("dominant-baseline", "middle").transition().style("opacity", null);
-  }
-  updateStanfordElements(duration = 0) {
-    this.updateStanfordLines(duration);
-    this.updateStanfordRegions(duration);
-  }
-  xvCustom(d, xyValue) {
-    const $$ = this;
-    const { axis, config } = $$;
-    let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-    if (axis.isTimeSeries()) {
-      value = parseDate.call($$, value);
-    } else if (axis.isCategorized() && isString(value)) {
-      value = config.axis_x_categories.indexOf(d.value);
-    }
-    return Math.ceil($$.scale.x(value));
-  }
-  yvCustom(d, xyValue) {
-    const $$ = this;
-    const yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
-    const value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-    return Math.ceil(yScale(value));
-  }
-}
-
-// EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);
-// EXTERNAL MODULE: external {"commonjs":"d3-format","commonjs2":"d3-format","amd":"d3-format","root":"d3"}
-var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(9);
-;// CONCATENATED MODULE: ./src/Plugin/stanford/ColorScale.ts
-var ColorScale_defProp = Object.defineProperty;
-var ColorScale_defNormalProp = (obj, key, value) => key in obj ? ColorScale_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var ColorScale_publicField = (obj, key, value) => {
-  ColorScale_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-
-
-
-
-
-class ColorScale {
-  constructor(owner) {
-    ColorScale_publicField(this, "owner");
-    ColorScale_publicField(this, "colorScale");
-    this.owner = owner;
-  }
-  drawColorScale() {
-    const { $$, config } = this.owner;
-    const target = $$.data.targets[0];
-    const height = $$.state.height - config.padding_bottom - config.padding_top;
-    const barWidth = config.scale_width;
-    const barHeight = 5;
-    const points = getRange(config.padding_bottom, height, barHeight);
-    const inverseScale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSequential)(target.colors).domain([points[points.length - 1], points[0]]);
-    if (this.colorScale) {
-      this.colorScale.remove();
-    }
-    this.colorScale = $$.$el.svg.append("g").attr("width", 50).attr("height", height).attr("class", stanford_classes.colorScale);
-    this.colorScale.append("g").attr("transform", `translate(0, ${config.padding_top})`).selectAll("bars").data(points).enter().append("rect").attr("y", (d, i) => i * barHeight).attr("x", 0).attr("width", barWidth).attr("height", barHeight).attr("fill", (d) => inverseScale(d));
-    const axisScale = (0,external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_.scaleSymlog)().domain([target.minEpochs, target.maxEpochs]).range([
-      points[0] + config.padding_top + points[points.length - 1] + barHeight - 1,
-      points[0] + config.padding_top
-    ]);
-    const legendAxis = (0,external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_.axisRight)(axisScale);
-    const scaleFormat = config.scale_format;
-    if (scaleFormat === "pow10") {
-      legendAxis.tickValues([1, 10, 100, 1e3, 1e4, 1e5, 1e6, 1e7]);
-    } else if (isFunction(scaleFormat)) {
-      legendAxis.tickFormat(scaleFormat);
-    } else {
-      legendAxis.tickFormat((0,external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_.format)("d"));
-    }
-    const axis = this.colorScale.append("g").attr("class", "legend axis").attr("transform", `translate(${barWidth},0)`).call(legendAxis);
-    if (scaleFormat === "pow10") {
-      axis.selectAll(".tick text").text(null).filter((d) => d / Math.pow(10, Math.ceil(Math.log(d) / Math.LN10 - 1e-12)) === 1).text(10).append("tspan").attr("dy", "-.7em").text((d) => Math.round(Math.log(d) / Math.LN10));
-    }
-    this.colorScale.attr("transform", `translate(${$$.state.current.width - this.xForColorScale()}, 0)`);
-  }
-  xForColorScale() {
-    return this.owner.config.padding_right + this.colorScale.node().getBBox().width;
-  }
-  getColorScalePadding() {
-    return this.xForColorScale() + this.owner.config.padding_left + 20;
-  }
-}
-
 ;// CONCATENATED MODULE: ./src/Plugin/stanford/index.ts
 var stanford_defProp = Object.defineProperty;
 var stanford_defNormalProp = (obj, key, value) => key in obj ? stanford_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -1278,7 +1289,10 @@ class Stanford extends Plugin {
   countEpochsInRegion(region) {
     const $$ = this;
     const target = $$.data.targets[0];
-    const total = target.values.reduce((accumulator, currentValue) => accumulator + Number(currentValue.epochs), 0);
+    const total = target.values.reduce(
+      (accumulator, currentValue) => accumulator + Number(currentValue.epochs),
+      0
+    );
     const value = target.values.reduce((accumulator, currentValue) => {
       if (pointInRegion(currentValue, region)) {
         return accumulator + Number(currentValue.epochs);

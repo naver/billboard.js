@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -66,6 +66,177 @@ function __spreadArray(to, from, pack) {
  * billboard.js project is licensed under the MIT license
  */
 /**
+ * Window object
+ * @private
+ */
+/* eslint-disable no-new-func, no-undef */
+/**
+ * Get global object
+ * @returns {object} window object
+ * @private
+ */
+function getGlobal() {
+    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object &&
+        globalThis) ||
+        (typeof global === "object" && global !== null && global.Object === Object && global) ||
+        (typeof self === "object" && self !== null && self.Object === Object && self) ||
+        Function("return this")();
+}
+var win = getGlobal();
+var doc = win === null || win === void 0 ? void 0 : win.document;
+
+var isNumber = function (v) { return typeof v === "number"; };
+var isDefined = function (v) { return typeof v !== "undefined"; };
+var isObjectType = function (v) { return typeof v === "object"; };
+/**
+ * Check if is array
+ * @param {Array} arr Data to be checked
+ * @returns {boolean}
+ * @private
+ */
+var isArray = function (arr) { return Array.isArray(arr); };
+/**
+ * Check if is object
+ * @param {object} obj Data to be checked
+ * @returns {boolean}
+ * @private
+ */
+var isObject = function (obj) { return obj && !(obj === null || obj === void 0 ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
+/**
+ * Merge object returning new object
+ * @param {object} target Target object
+ * @param {object} objectN Source object
+ * @returns {object} merged target object
+ * @private
+ */
+function mergeObj(target) {
+    var objectN = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        objectN[_i - 1] = arguments[_i];
+    }
+    if (!objectN.length || (objectN.length === 1 && !objectN[0])) {
+        return target;
+    }
+    var source = objectN.shift();
+    if (isObject(target) && isObject(source)) {
+        Object.keys(source).forEach(function (key) {
+            var value = source[key];
+            if (isObject(value)) {
+                !target[key] && (target[key] = {});
+                target[key] = mergeObj(target[key], value);
+            }
+            else {
+                target[key] = isArray(value) ? value.concat() : value;
+            }
+        });
+    }
+    return mergeObj.apply(void 0, __spreadArray([target], objectN, false));
+}
+// emulate event
+({
+    mouse: (function () {
+        var getParams = function () { return ({
+            bubbles: false,
+            cancelable: false,
+            screenX: 0,
+            screenY: 0,
+            clientX: 0,
+            clientY: 0
+        }); };
+        try {
+            // eslint-disable-next-line no-new
+            new MouseEvent("t");
+            return function (el, eventType, params) {
+                if (params === void 0) { params = getParams(); }
+                el.dispatchEvent(new MouseEvent(eventType, params));
+            };
+        }
+        catch (e) {
+            // Polyfills DOM4 MouseEvent
+            return function (el, eventType, params) {
+                if (params === void 0) { params = getParams(); }
+                var mouseEvent = doc.createEvent("MouseEvent");
+                // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+                mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
+                params.screenX, params.screenY, params.clientX, params.clientY, false, false, false, false, 0, null);
+                el.dispatchEvent(mouseEvent);
+            };
+        }
+    })(),
+    touch: function (el, eventType, params) {
+        var touchObj = new Touch(mergeObj({
+            identifier: Date.now(),
+            target: el,
+            radiusX: 2.5,
+            radiusY: 2.5,
+            rotationAngle: 10,
+            force: 0.5
+        }, params));
+        el.dispatchEvent(new TouchEvent(eventType, {
+            cancelable: true,
+            bubbles: true,
+            shiftKey: true,
+            touches: [touchObj],
+            targetTouches: [],
+            changedTouches: [touchObj]
+        }));
+    }
+});
+/**
+ * Process the template  & return bound string
+ * @param {string} tpl Template string
+ * @param {object} data Data value to be replaced
+ * @returns {string}
+ * @private
+ */
+function tplProcess(tpl, data) {
+    var res = tpl;
+    for (var x in data) {
+        res = res.replace(new RegExp("{=".concat(x, "}"), "g"), data[x]);
+    }
+    return res;
+}
+
+/**
+ * Load configuration option
+ * @param {object} config User's generation config value
+ * @private
+ */
+function loadConfig(config) {
+    var thisConfig = this.config;
+    var target;
+    var keys;
+    var read;
+    var find = function () {
+        var key = keys.shift();
+        if (key && target && isObjectType(target) && key in target) {
+            target = target[key];
+            return find();
+        }
+        else if (!key) {
+            return target;
+        }
+        return undefined;
+    };
+    Object.keys(thisConfig).forEach(function (key) {
+        target = config;
+        keys = key.split("_");
+        read = find();
+        if (isDefined(read)) {
+            thisConfig[key] = read;
+        }
+    });
+    // only should run in the ChartInternal context
+    if (this.api) {
+        this.state.orgConfig = config;
+    }
+}
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
  * Base class to generate billboard.js plugin
  * @class Plugin
  */
@@ -119,10 +290,31 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.11.3-nightly-20240320004559";
+    Plugin.version = "3.11.3-nightly-20240323004543";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
+
+/**
+ * Copyright (c) 2021 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Constants values for plugin option
+ * @ignore
+ */
+var defaultStyle = {
+    id: "__tableview-style__",
+    class: "bb-tableview",
+    rule: ".bb-tableview {\n\t\tborder-collapse:collapse;\n\t\tborder-spacing:0;\n\t\tbackground:#fff;\n\t\tmin-width:100%;\n\t\tmargin-top:10px;\n\t\tfont-family:sans-serif;\n\t\tfont-size:.9em;\n\t}\n\t.bb-tableview tr:hover {\n\t\tbackground:#eef7ff;\n\t}\n\t.bb-tableview thead tr {\n\t\tbackground:#f8f8f8;\n\t}\n\t.bb-tableview caption,.bb-tableview td,.bb-tableview th {\n\t\ttext-align: center;\n\t\tborder:1px solid silver;\n\t\tpadding:.5em;\n\t}\n\t.bb-tableview caption {\n\t\tfont-size:1.1em;\n\t\tfont-weight:700;\n\t\tmargin-bottom: -1px;\n\t}"
+};
+// template
+var tpl = {
+    body: "<caption>{=title}</caption>\n\t\t<thead><tr>{=thead}</tr></thead>\n\t\t<tbody>{=tbody}</tbody>",
+    thead: "<th scope=\"col\">{=title}</th>",
+    tbodyHeader: "<th scope=\"row\">{=value}</th>",
+    tbody: "<td>{=value}</td>"
+};
 
 /**
  * Copyright (c) 2021 ~ present NAVER Corp.
@@ -237,197 +429,6 @@ var Options = /** @class */ (function () {
 }());
 
 /**
- * Copyright (c) 2021 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Constants values for plugin option
- * @ignore
- */
-var defaultStyle = {
-    id: "__tableview-style__",
-    class: "bb-tableview",
-    rule: ".bb-tableview {\n\t\tborder-collapse:collapse;\n\t\tborder-spacing:0;\n\t\tbackground:#fff;\n\t\tmin-width:100%;\n\t\tmargin-top:10px;\n\t\tfont-family:sans-serif;\n\t\tfont-size:.9em;\n\t}\n\t.bb-tableview tr:hover {\n\t\tbackground:#eef7ff;\n\t}\n\t.bb-tableview thead tr {\n\t\tbackground:#f8f8f8;\n\t}\n\t.bb-tableview caption,.bb-tableview td,.bb-tableview th {\n\t\ttext-align: center;\n\t\tborder:1px solid silver;\n\t\tpadding:.5em;\n\t}\n\t.bb-tableview caption {\n\t\tfont-size:1.1em;\n\t\tfont-weight:700;\n\t\tmargin-bottom: -1px;\n\t}"
-};
-// template
-var tpl = {
-    body: "<caption>{=title}</caption>\n\t\t<thead><tr>{=thead}</tr></thead>\n\t\t<tbody>{=tbody}</tbody>",
-    thead: "<th scope=\"col\">{=title}</th>",
-    tbodyHeader: "<th scope=\"row\">{=value}</th>",
-    tbody: "<td>{=value}</td>"
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Window object
- * @private
- */
-/* eslint-disable no-new-func, no-undef */
-/**
- * Get global object
- * @returns {object} window object
- * @private
- */
-function getGlobal() {
-    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
-        (typeof global === "object" && global !== null && global.Object === Object && global) ||
-        (typeof self === "object" && self !== null && self.Object === Object && self) ||
-        Function("return this")();
-}
-var win = getGlobal();
-var doc = win === null || win === void 0 ? void 0 : win.document;
-
-var isNumber = function (v) { return typeof v === "number"; };
-var isDefined = function (v) { return typeof v !== "undefined"; };
-var isObjectType = function (v) { return typeof v === "object"; };
-/**
- * Check if is array
- * @param {Array} arr Data to be checked
- * @returns {boolean}
- * @private
- */
-var isArray = function (arr) { return Array.isArray(arr); };
-/**
- * Check if is object
- * @param {object} obj Data to be checked
- * @returns {boolean}
- * @private
- */
-var isObject = function (obj) { return obj && !(obj === null || obj === void 0 ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
-/**
- * Merge object returning new object
- * @param {object} target Target object
- * @param {object} objectN Source object
- * @returns {object} merged target object
- * @private
- */
-function mergeObj(target) {
-    var objectN = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        objectN[_i - 1] = arguments[_i];
-    }
-    if (!objectN.length || (objectN.length === 1 && !objectN[0])) {
-        return target;
-    }
-    var source = objectN.shift();
-    if (isObject(target) && isObject(source)) {
-        Object.keys(source).forEach(function (key) {
-            var value = source[key];
-            if (isObject(value)) {
-                !target[key] && (target[key] = {});
-                target[key] = mergeObj(target[key], value);
-            }
-            else {
-                target[key] = isArray(value) ?
-                    value.concat() : value;
-            }
-        });
-    }
-    return mergeObj.apply(void 0, __spreadArray([target], objectN, false));
-}
-// emulate event
-({
-    mouse: (function () {
-        var getParams = function () { return ({
-            bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
-        }); };
-        try {
-            // eslint-disable-next-line no-new
-            new MouseEvent("t");
-            return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
-                el.dispatchEvent(new MouseEvent(eventType, params));
-            };
-        }
-        catch (e) {
-            // Polyfills DOM4 MouseEvent
-            return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
-                var mouseEvent = doc.createEvent("MouseEvent");
-                // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
-                mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
-                params.screenX, params.screenY, params.clientX, params.clientY, false, false, false, false, 0, null);
-                el.dispatchEvent(mouseEvent);
-            };
-        }
-    })(),
-    touch: function (el, eventType, params) {
-        var touchObj = new Touch(mergeObj({
-            identifier: Date.now(),
-            target: el,
-            radiusX: 2.5,
-            radiusY: 2.5,
-            rotationAngle: 10,
-            force: 0.5
-        }, params));
-        el.dispatchEvent(new TouchEvent(eventType, {
-            cancelable: true,
-            bubbles: true,
-            shiftKey: true,
-            touches: [touchObj],
-            targetTouches: [],
-            changedTouches: [touchObj]
-        }));
-    }
-});
-/**
- * Process the template  & return bound string
- * @param {string} tpl Template string
- * @param {object} data Data value to be replaced
- * @returns {string}
- * @private
- */
-function tplProcess(tpl, data) {
-    var res = tpl;
-    for (var x in data) {
-        res = res.replace(new RegExp("{=".concat(x, "}"), "g"), data[x]);
-    }
-    return res;
-}
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Load configuration option
- * @param {object} config User's generation config value
- * @private
- */
-function loadConfig(config) {
-    var thisConfig = this.config;
-    var target;
-    var keys;
-    var read;
-    var find = function () {
-        var key = keys.shift();
-        if (key && target && isObjectType(target) && key in target) {
-            target = target[key];
-            return find();
-        }
-        else if (!key) {
-            return target;
-        }
-        return undefined;
-    };
-    Object.keys(thisConfig).forEach(function (key) {
-        target = config;
-        keys = key.split("_");
-        read = find();
-        if (isDefined(read)) {
-            thisConfig[key] = read;
-        }
-    });
-    // only should run in the ChartInternal context
-    if (this.api) {
-        this.state.orgConfig = config;
-    }
-}
-
-/**
  * Table view plugin.<br>
  * Generates table view for bound dataset.
  * - **NOTE:**
@@ -530,11 +531,13 @@ var TableView = /** @class */ (function (_super) {
             });
         });
         rows.forEach(function (v) {
-            tbody += "<tr>".concat(v.map(function (d, i) { return tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
-                value: i === 0 ?
-                    config.categoryFormat.bind(_this)(d) :
-                    (isNumber(d) ? d.toLocaleString() : config.nullString)
-            }); }).join(""), "</tr>");
+            tbody += "<tr>".concat(v.map(function (d, i) {
+                return tplProcess(i ? tpl.tbody : tpl.tbodyHeader, {
+                    value: i === 0 ?
+                        config.categoryFormat.bind(_this)(d) :
+                        (isNumber(d) ? d.toLocaleString() : config.nullString)
+                });
+            }).join(""), "</tr>");
         });
         var rx = /(<\/?(script|img)[^>]*>|<[^>]+><\/[^>]+>)/ig;
         var r = tplProcess(tpl.body, __assign(__assign({}, config), { title: config.title || $$.config.title_text || "", thead: thead, tbody: tbody })).replace(rx, "");

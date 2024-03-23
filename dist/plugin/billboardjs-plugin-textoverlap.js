@@ -5,20 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-delaunay"), require("d3-polygon"), require("d3-selection"), require("d3-brush"));
+		module.exports = factory(require("d3-delaunay"), require("d3-polygon"), require("d3-brush"), require("d3-selection"));
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-delaunay", "d3-polygon", "d3-selection", "d3-brush"], factory);
+		define("bb", ["d3-delaunay", "d3-polygon", "d3-brush", "d3-selection"], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-delaunay"), require("d3-polygon"), require("d3-selection"), require("d3-brush"));
+		exports["bb"] = factory(require("d3-delaunay"), require("d3-polygon"), require("d3-brush"), require("d3-selection"));
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["textoverlap"] = factory(root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__3__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__1__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
@@ -109,10 +109,10 @@ __webpack_require__.d(__webpack_exports__, {
 var external_commonjs_d3_delaunay_commonjs2_d3_delaunay_amd_d3_delaunay_root_d3_ = __webpack_require__(12);
 // EXTERNAL MODULE: external {"commonjs":"d3-polygon","commonjs2":"d3-polygon","amd":"d3-polygon","root":"d3"}
 var external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_ = __webpack_require__(13);
-// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
+// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
 
 function getGlobal() {
@@ -620,7 +620,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.11.3-nightly-20240320004559");
+__publicField(Plugin, "version", "3.11.3-nightly-20240323004543");
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 class Options {

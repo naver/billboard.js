@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -68,7 +68,8 @@ function __spreadArray(to, from, pack) {
  * @private
  */
 function getGlobal() {
-    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
+    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object &&
+        globalThis) ||
         (typeof global === "object" && global !== null && global.Object === Object && global) ||
         (typeof self === "object" && self !== null && self.Object === Object && self) ||
         Function("return this")();
@@ -116,8 +117,7 @@ function mergeObj(target) {
                 target[key] = mergeObj(target[key], value);
             }
             else {
-                target[key] = isArray(value) ?
-                    value.concat() : value;
+                target[key] = isArray(value) ? value.concat() : value;
             }
         });
     }
@@ -127,7 +127,12 @@ function mergeObj(target) {
 ({
     mouse: (function () {
         var getParams = function () { return ({
-            bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
+            bubbles: false,
+            cancelable: false,
+            screenX: 0,
+            screenY: 0,
+            clientX: 0,
+            clientY: 0
         }); };
         try {
             // eslint-disable-next-line no-new
@@ -169,10 +174,6 @@ function mergeObj(target) {
     }
 });
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 /**
  * Load configuration option
  * @param {object} config User's generation config value
@@ -266,7 +267,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.11.3-nightly-20240320004559";
+    Plugin.version = "3.11.3-nightly-20240323004543";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -357,7 +358,7 @@ var Options = /** @class */ (function () {
  *     ]
  *  });
  * @example
- *	import {bb} from "billboard.js";
+ * 	import {bb} from "billboard.js";
  * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap";
  *
  * bb.generate({
@@ -419,7 +420,8 @@ var TextOverlap = /** @class */ (function (_super) {
                 var xTranslate = extent * (angle === 0 ? 1 : -1);
                 var yTranslate = angle === -1 ? -extent : extent + 5;
                 var txtAnchor = Math.abs(angle) === 1 ?
-                    "middle" : (angle === 0 ? "start" : "end");
+                    "middle" :
+                    (angle === 0 ? "start" : "end");
                 this.style.display = polygonArea$1 < area ? "none" : "";
                 this.setAttribute("text-anchor", txtAnchor);
                 this.setAttribute("dy", "0.".concat(angle === 1 ? 71 : 35, "em"));

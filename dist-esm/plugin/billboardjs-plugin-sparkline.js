@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -154,7 +154,7 @@ var $EVENT = {
     eventRect: "bb-event-rect",
     eventRects: "bb-event-rects",
     eventRectsMultiple: "bb-event-rects-multiple",
-    eventRectsSingle: "bb-event-rects-single",
+    eventRectsSingle: "bb-event-rects-single"
 };
 var $FOCUS = {
     focused: "bb-focused",
@@ -190,7 +190,7 @@ var $SELECT = {
 };
 var $SHAPE = {
     shape: "bb-shape",
-    shapes: "bb-shapes",
+    shapes: "bb-shapes"
 };
 var $SUBCHART = {
     brush: "bb-brush",
@@ -219,6 +219,162 @@ var $ZOOM = {
     zoomBrush: "bb-zoom-brush"
 };
 __assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM);
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Window object
+ * @private
+ */
+/* eslint-disable no-new-func, no-undef */
+/**
+ * Get global object
+ * @returns {object} window object
+ * @private
+ */
+function getGlobal() {
+    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object &&
+        globalThis) ||
+        (typeof global === "object" && global !== null && global.Object === Object && global) ||
+        (typeof self === "object" && self !== null && self.Object === Object && self) ||
+        Function("return this")();
+}
+var win = getGlobal();
+var doc = win === null || win === void 0 ? void 0 : win.document;
+
+var isDefined = function (v) { return typeof v !== "undefined"; };
+var isObjectType = function (v) { return typeof v === "object"; };
+/**
+ * Check if is array
+ * @param {Array} arr Data to be checked
+ * @returns {boolean}
+ * @private
+ */
+var isArray = function (arr) { return Array.isArray(arr); };
+/**
+ * Check if is object
+ * @param {object} obj Data to be checked
+ * @returns {boolean}
+ * @private
+ */
+var isObject = function (obj) { return obj && !(obj === null || obj === void 0 ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
+/**
+ * Merge object returning new object
+ * @param {object} target Target object
+ * @param {object} objectN Source object
+ * @returns {object} merged target object
+ * @private
+ */
+function mergeObj(target) {
+    var objectN = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        objectN[_i - 1] = arguments[_i];
+    }
+    if (!objectN.length || (objectN.length === 1 && !objectN[0])) {
+        return target;
+    }
+    var source = objectN.shift();
+    if (isObject(target) && isObject(source)) {
+        Object.keys(source).forEach(function (key) {
+            var value = source[key];
+            if (isObject(value)) {
+                !target[key] && (target[key] = {});
+                target[key] = mergeObj(target[key], value);
+            }
+            else {
+                target[key] = isArray(value) ? value.concat() : value;
+            }
+        });
+    }
+    return mergeObj.apply(void 0, __spreadArray([target], objectN, false));
+}
+// emulate event
+({
+    mouse: (function () {
+        var getParams = function () { return ({
+            bubbles: false,
+            cancelable: false,
+            screenX: 0,
+            screenY: 0,
+            clientX: 0,
+            clientY: 0
+        }); };
+        try {
+            // eslint-disable-next-line no-new
+            new MouseEvent("t");
+            return function (el, eventType, params) {
+                if (params === void 0) { params = getParams(); }
+                el.dispatchEvent(new MouseEvent(eventType, params));
+            };
+        }
+        catch (e) {
+            // Polyfills DOM4 MouseEvent
+            return function (el, eventType, params) {
+                if (params === void 0) { params = getParams(); }
+                var mouseEvent = doc.createEvent("MouseEvent");
+                // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+                mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
+                params.screenX, params.screenY, params.clientX, params.clientY, false, false, false, false, 0, null);
+                el.dispatchEvent(mouseEvent);
+            };
+        }
+    })(),
+    touch: function (el, eventType, params) {
+        var touchObj = new Touch(mergeObj({
+            identifier: Date.now(),
+            target: el,
+            radiusX: 2.5,
+            radiusY: 2.5,
+            rotationAngle: 10,
+            force: 0.5
+        }, params));
+        el.dispatchEvent(new TouchEvent(eventType, {
+            cancelable: true,
+            bubbles: true,
+            shiftKey: true,
+            touches: [touchObj],
+            targetTouches: [],
+            changedTouches: [touchObj]
+        }));
+    }
+});
+
+/**
+ * Load configuration option
+ * @param {object} config User's generation config value
+ * @private
+ */
+function loadConfig(config) {
+    var thisConfig = this.config;
+    var target;
+    var keys;
+    var read;
+    var find = function () {
+        var key = keys.shift();
+        if (key && target && isObjectType(target) && key in target) {
+            target = target[key];
+            return find();
+        }
+        else if (!key) {
+            return target;
+        }
+        return undefined;
+    };
+    Object.keys(thisConfig).forEach(function (key) {
+        target = config;
+        keys = key.split("_");
+        read = find();
+        if (isDefined(read)) {
+            thisConfig[key] = read;
+        }
+    });
+    // only should run in the ChartInternal context
+    if (this.api) {
+        this.state.orgConfig = config;
+    }
+}
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -278,7 +434,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.11.3-nightly-20240320004559";
+    Plugin.version = "3.11.3-nightly-20240323004543";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -313,161 +469,6 @@ var Options = /** @class */ (function () {
     }
     return Options;
 }());
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Window object
- * @private
- */
-/* eslint-disable no-new-func, no-undef */
-/**
- * Get global object
- * @returns {object} window object
- * @private
- */
-function getGlobal() {
-    return (typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis) ||
-        (typeof global === "object" && global !== null && global.Object === Object && global) ||
-        (typeof self === "object" && self !== null && self.Object === Object && self) ||
-        Function("return this")();
-}
-var win = getGlobal();
-var doc = win === null || win === void 0 ? void 0 : win.document;
-
-var isDefined = function (v) { return typeof v !== "undefined"; };
-var isObjectType = function (v) { return typeof v === "object"; };
-/**
- * Check if is array
- * @param {Array} arr Data to be checked
- * @returns {boolean}
- * @private
- */
-var isArray = function (arr) { return Array.isArray(arr); };
-/**
- * Check if is object
- * @param {object} obj Data to be checked
- * @returns {boolean}
- * @private
- */
-var isObject = function (obj) { return obj && !(obj === null || obj === void 0 ? void 0 : obj.nodeType) && isObjectType(obj) && !isArray(obj); };
-/**
- * Merge object returning new object
- * @param {object} target Target object
- * @param {object} objectN Source object
- * @returns {object} merged target object
- * @private
- */
-function mergeObj(target) {
-    var objectN = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        objectN[_i - 1] = arguments[_i];
-    }
-    if (!objectN.length || (objectN.length === 1 && !objectN[0])) {
-        return target;
-    }
-    var source = objectN.shift();
-    if (isObject(target) && isObject(source)) {
-        Object.keys(source).forEach(function (key) {
-            var value = source[key];
-            if (isObject(value)) {
-                !target[key] && (target[key] = {});
-                target[key] = mergeObj(target[key], value);
-            }
-            else {
-                target[key] = isArray(value) ?
-                    value.concat() : value;
-            }
-        });
-    }
-    return mergeObj.apply(void 0, __spreadArray([target], objectN, false));
-}
-// emulate event
-({
-    mouse: (function () {
-        var getParams = function () { return ({
-            bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
-        }); };
-        try {
-            // eslint-disable-next-line no-new
-            new MouseEvent("t");
-            return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
-                el.dispatchEvent(new MouseEvent(eventType, params));
-            };
-        }
-        catch (e) {
-            // Polyfills DOM4 MouseEvent
-            return function (el, eventType, params) {
-                if (params === void 0) { params = getParams(); }
-                var mouseEvent = doc.createEvent("MouseEvent");
-                // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
-                mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
-                params.screenX, params.screenY, params.clientX, params.clientY, false, false, false, false, 0, null);
-                el.dispatchEvent(mouseEvent);
-            };
-        }
-    })(),
-    touch: function (el, eventType, params) {
-        var touchObj = new Touch(mergeObj({
-            identifier: Date.now(),
-            target: el,
-            radiusX: 2.5,
-            radiusY: 2.5,
-            rotationAngle: 10,
-            force: 0.5
-        }, params));
-        el.dispatchEvent(new TouchEvent(eventType, {
-            cancelable: true,
-            bubbles: true,
-            shiftKey: true,
-            touches: [touchObj],
-            targetTouches: [],
-            changedTouches: [touchObj]
-        }));
-    }
-});
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Load configuration option
- * @param {object} config User's generation config value
- * @private
- */
-function loadConfig(config) {
-    var thisConfig = this.config;
-    var target;
-    var keys;
-    var read;
-    var find = function () {
-        var key = keys.shift();
-        if (key && target && isObjectType(target) && key in target) {
-            target = target[key];
-            return find();
-        }
-        else if (!key) {
-            return target;
-        }
-        return undefined;
-    };
-    Object.keys(thisConfig).forEach(function (key) {
-        target = config;
-        keys = key.split("_");
-        read = find();
-        if (isDefined(read)) {
-            thisConfig[key] = read;
-        }
-    });
-    // only should run in the ChartInternal context
-    if (this.api) {
-        this.state.orgConfig = config;
-    }
-}
 
 /**
  * Sparkline plugin.<br>
@@ -654,8 +655,7 @@ var Sparkline = /** @class */ (function (_super) {
     Sparkline.prototype.outHandler = function (e) {
         var $$ = this.$$;
         $$.state.event = e;
-        $$.isPointFocusOnly() ?
-            $$.hideCircleFocus() : $$.unexpandCircles();
+        $$.isPointFocusOnly() ? $$.hideCircleFocus() : $$.unexpandCircles();
         $$.hideTooltip();
     };
     Sparkline.prototype.$redraw = function () {

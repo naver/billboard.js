@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -22195,36 +22195,6 @@ function* flatIterable(points, fx, fy, that) {
   return area / 2;
 }
 
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/sourceEvent.js
-/* harmony default export */ function sourceEvent(event) {
-  let sourceEvent;
-  while (sourceEvent = event.sourceEvent)
-    event = sourceEvent;
-  return event;
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-selection/src/pointer.js
-
-/* harmony default export */ function src_pointer(event, node) {
-  event = sourceEvent(event);
-  if (node === void 0)
-    node = event.currentTarget;
-  if (node) {
-    var svg = node.ownerSVGElement || node;
-    if (svg.createSVGPoint) {
-      var point = svg.createSVGPoint();
-      point.x = event.clientX, point.y = event.clientY;
-      point = point.matrixTransform(node.getScreenCTM().inverse());
-      return [point.x, point.y];
-    }
-    if (node.getBoundingClientRect) {
-      var rect = node.getBoundingClientRect();
-      return [event.clientX - rect.left - node.clientLeft, event.clientY - rect.top - node.clientTop];
-    }
-  }
-  return [event.pageX, event.pageY];
-}
-
 ;// CONCATENATED MODULE: ./node_modules/d3-dispatch/src/dispatch.js
 var noop = { value: () => {
 } };
@@ -23830,6 +23800,36 @@ function one(b) {
 /* harmony default export */ function value(a, b) {
   var t = typeof b, c;
   return b == null || t === "boolean" ? src_constant(b) : (t === "number" ? number : t === "string" ? (c = color(b)) ? (b = c, rgb) : string : b instanceof color ? rgb : b instanceof Date ? date : isNumberArray(b) ? numberArray : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object : number)(a, b);
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-selection/src/sourceEvent.js
+/* harmony default export */ function sourceEvent(event) {
+  let sourceEvent;
+  while (sourceEvent = event.sourceEvent)
+    event = sourceEvent;
+  return event;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-selection/src/pointer.js
+
+/* harmony default export */ function src_pointer(event, node) {
+  event = sourceEvent(event);
+  if (node === void 0)
+    node = event.currentTarget;
+  if (node) {
+    var svg = node.ownerSVGElement || node;
+    if (svg.createSVGPoint) {
+      var point = svg.createSVGPoint();
+      point.x = event.clientX, point.y = event.clientY;
+      point = point.matrixTransform(node.getScreenCTM().inverse());
+      return [point.x, point.y];
+    }
+    if (node.getBoundingClientRect) {
+      var rect = node.getBoundingClientRect();
+      return [event.clientX - rect.left - node.clientLeft, event.clientY - rect.top - node.clientTop];
+    }
+  }
+  return [event.pageX, event.pageY];
 }
 
 ;// CONCATENATED MODULE: ./node_modules/d3-timer/src/timer.js
@@ -25946,7 +25946,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.11.3-nightly-20240320004559");
+__publicField(Plugin, "version", "3.11.3-nightly-20240323004543");
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 class Options {

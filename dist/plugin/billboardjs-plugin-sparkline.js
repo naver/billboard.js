@@ -5,20 +5,20 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-selection"), require("d3-brush"));
+		module.exports = factory(require("d3-brush"), require("d3-selection"));
 	else if(typeof define === 'function' && define.amd)
-		define("bb", ["d3-selection", "d3-brush"], factory);
+		define("bb", ["d3-brush", "d3-selection"], factory);
 	else if(typeof exports === 'object')
-		exports["bb"] = factory(require("d3-selection"), require("d3-brush"));
+		exports["bb"] = factory(require("d3-brush"), require("d3-selection"));
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["sparkline"] = factory(root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__1__, __WEBPACK_EXTERNAL_MODULE__3__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__1__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ([
@@ -262,84 +262,10 @@ const $ZOOM = {
 };
 /* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
-;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
-var Plugin_defProp = Object.defineProperty;
-var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => {
-  Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-  return value;
-};
-class Plugin {
-  /**
-   * Constructor
-   * @param {Any} options config option object
-   * @private
-   */
-  constructor(options = {}) {
-    __publicField(this, "$$");
-    __publicField(this, "options");
-    this.options = options;
-  }
-  /**
-   * Lifecycle hook for 'beforeInit' phase.
-   * @private
-   */
-  $beforeInit() {
-  }
-  /**
-   * Lifecycle hook for 'init' phase.
-   * @private
-   */
-  $init() {
-  }
-  /**
-   * Lifecycle hook for 'afterInit' phase.
-   * @private
-   */
-  $afterInit() {
-  }
-  /**
-   * Lifecycle hook for 'redraw' phase.
-   * @private
-   */
-  $redraw() {
-  }
-  /**
-   * Lifecycle hook for 'willDestroy' phase.
-   * @private
-   */
-  $willDestroy() {
-    Object.keys(this).forEach((key) => {
-      this[key] = null;
-      delete this[key];
-    });
-  }
-}
-__publicField(Plugin, "version", "3.11.3-nightly-20240320004559");
-
-;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
-class Options {
-  constructor() {
-    return {
-      /**
-       * Specify sparkline charts holder selector.
-       * - **NOTE:** The amount of holder should match with the amount of data. If has less, will append necessaray amount nodes as sibling of main chart.
-       * @name selector
-       * @memberof plugin-sparkline
-       * @type {string}
-       * @default undefined
-       * @example
-       *   selector: ".sparkline"
-       */
-      selector: void 0
-    };
-  }
-}
-
-// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
+// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
 
 function getGlobal() {
@@ -791,6 +717,80 @@ function loadConfig(config) {
   });
   if (this.api) {
     this.state.orgConfig = config;
+  }
+}
+
+;// CONCATENATED MODULE: ./src/Plugin/Plugin.ts
+var Plugin_defProp = Object.defineProperty;
+var Plugin_defNormalProp = (obj, key, value) => key in obj ? Plugin_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => {
+  Plugin_defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
+  return value;
+};
+class Plugin {
+  /**
+   * Constructor
+   * @param {Any} options config option object
+   * @private
+   */
+  constructor(options = {}) {
+    __publicField(this, "$$");
+    __publicField(this, "options");
+    this.options = options;
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+  $beforeInit() {
+  }
+  /**
+   * Lifecycle hook for 'init' phase.
+   * @private
+   */
+  $init() {
+  }
+  /**
+   * Lifecycle hook for 'afterInit' phase.
+   * @private
+   */
+  $afterInit() {
+  }
+  /**
+   * Lifecycle hook for 'redraw' phase.
+   * @private
+   */
+  $redraw() {
+  }
+  /**
+   * Lifecycle hook for 'willDestroy' phase.
+   * @private
+   */
+  $willDestroy() {
+    Object.keys(this).forEach((key) => {
+      this[key] = null;
+      delete this[key];
+    });
+  }
+}
+__publicField(Plugin, "version", "3.11.3-nightly-20240323004543");
+
+;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
+class Options {
+  constructor() {
+    return {
+      /**
+       * Specify sparkline charts holder selector.
+       * - **NOTE:** The amount of holder should match with the amount of data. If has less, will append necessaray amount nodes as sibling of main chart.
+       * @name selector
+       * @memberof plugin-sparkline
+       * @type {string}
+       * @default undefined
+       * @example
+       *   selector: ".sparkline"
+       */
+      selector: void 0
+    };
   }
 }
 

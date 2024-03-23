@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240320004559
+ * @version 3.11.3-nightly-20240323004543
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -100,7 +100,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.11.3-nightly-20240320004559";
+    Plugin.version = "3.11.3-nightly-20240323004543";
     return Plugin;
 }());
 var Plugin$1 = Plugin;
@@ -196,9 +196,7 @@ var BubbleCompare = /** @class */ (function (_super) {
         return Math.abs(size) * (maxR - minR) + minR;
     };
     BubbleCompare.prototype.getZData = function (d) {
-        return this.$$.isBubbleZType(d) ?
-            this.$$.getBubbleZData(d.value, "z") :
-            d.value;
+        return this.$$.isBubbleZType(d) ? this.$$.getBubbleZData(d.value, "z") : d.value;
     };
     BubbleCompare.version = "0.0.1";
     return BubbleCompare;
