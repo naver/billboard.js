@@ -41,7 +41,7 @@ export default {
 
 		// set level text background color
 		if (levelTextShow && levelTextBgColor) {
-			$$.generateDataLabelBackgroundColorFilter(levelTextBgColor);
+			$$.generateTextBGColorFilter(levelTextBgColor);
 		}
 	},
 

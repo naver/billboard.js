@@ -143,6 +143,8 @@ class Axis {
 
 			this.generateAxes(v);
 		});
+
+		config.axis_tooltip && this.setAxisTooltip();
 	}
 
 	/**
@@ -1040,6 +1042,48 @@ class Axis {
 					$el.svg.selectAll(`.${$AXIS.axisX} .tick text`)
 						.attr("clip-path", clipPath);
 				}
+			}
+		});
+	}
+
+	/**
+	 * Set axis tooltip
+	 * @private
+	 */
+	setAxisTooltip(): void {
+		const $$ = this.owner;
+		const {config: {axis_rotated: isRotated, axis_tooltip}, $el: {axis, axisTooltip}} = $$;
+		const bgColor = axis_tooltip.backgroundColor ?? "black";
+
+		$$.generateTextBGColorFilter(
+			bgColor,
+			{
+				x: -0.15,
+				y: -0.2,
+				width: 1.3,
+				height: 1.3
+			}
+		);
+
+		["x", "y", "y2"].forEach(v => {
+			axisTooltip[v] = axis[v]?.append("text")
+				.classed($AXIS[`axis${v.toUpperCase()}Tooltip`], true)
+				.attr("filter", $$.updateTextBGColor({id: v}, bgColor));
+
+			if (isRotated) {
+				const pos = v === "x" ? "x" : "y";
+				const val = v === "y" ? "1.15em" : (v === "x" ? "-0.3em" : "-0.4em");
+
+				axisTooltip[v]?.attr(pos, val)
+					.attr(`d${v === "x" ? "y" : "x"}`, v === "x" ? "0.4em" : "-1.3em")
+					.style("text-anchor", v === "x" ? "end" : null);
+			} else {
+				const pos = v === "x" ? "y" : "x";
+				const val = v === "x" ? "1.15em" : `${v === "y" ? "-" : ""}0.4em`;
+
+				axisTooltip[v]?.attr(pos, val)
+					.attr(`d${v === "x" ? "x" : "y"}`, v === "x" ? "-1em" : "0.3em")
+					.style("text-anchor", v === "y" ? "end" : null);
 			}
 		});
 	}

@@ -3,8 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select, selectAll as d3SelectAll} from "d3-selection";
+import type {d3Selection} from "../../../types/types";
 import {$AXIS, $COMMON, $FOCUS, $GRID} from "../../config/classes";
-import {isArray, isValue} from "../../module/util";
+import {getPointer, isArray, isValue} from "../../module/util";
 
 // Grid position and text anchor helpers
 const getGridTextAnchor = d => isValue(d.position) || "end";
@@ -296,7 +297,14 @@ export default {
 		config.grid_y_show &&
 			grid.append("g").attr("class", $GRID.ygrids);
 
-		if (config.interaction_enabled && config.grid_focus_show) {
+		if (config.axis_tooltip) {
+			const axis = grid.append("g").attr("class", "bb-axis-tooltip");
+
+			axis.append("line").attr("class", "bb-axis-tooltip-x");
+			axis.append("line").attr("class", "bb-axis-tooltip-y");
+		}
+
+		if (config.interaction_enabled && config.grid_focus_show && !config.axis_tooltip) {
 			grid.append("g")
 				.attr("class", $FOCUS.xgridFocus)
 				.append("line")
@@ -310,6 +318,64 @@ export default {
 					.attr("class", $FOCUS.ygridFocus);
 			}
 		}
+	},
+
+	showAxisGridFocus() {
+		const $$ = this;
+		const {config, format, state: {event, width, height}} = $$;
+		const isRotated = config.axis_rotated;
+
+		// get mouse event position
+		const [x, y] = getPointer(event, $$.$el.eventRect?.node());
+		const pos = {x, y};
+
+		for (const [axis, node] of Object.entries($$.$el.axisTooltip)) {
+			const attr = (axis === "x" && !isRotated) || (axis !== "x" && isRotated) ? "x" : "y";
+			const value = pos[attr];
+			let scaleText = $$.scale[axis]?.invert(value);
+
+			if (scaleText) {
+				scaleText = axis === "x" && $$.axis.isTimeSeries() ?
+					format.xAxisTick(scaleText) :
+					scaleText?.toFixed(2);
+
+				// set position & its text value based on position
+				(node as d3Selection)?.attr(attr, value)
+					.text(scaleText);
+			}
+		}
+
+		$$.$el.main.selectAll(
+			`line.bb-axis-tooltip-x, line.bb-axis-tooltip-y`
+		).style("visibility", null)
+			.each(function(d, i) {
+				const line = d3Select(this);
+
+				if (i === 0) {
+					line
+						.attr("x1", x)
+						.attr("x2", x)
+						.attr("y1", i ? 0 : height)
+						.attr("y2", i ? height : 0);
+				} else {
+					line
+						.attr("x1", i ? 0 : width)
+						.attr("x2", i ? width : 0)
+						.attr("y1", y)
+						.attr("y2", y);
+				}
+			});
+	},
+
+	hideAxisGridFocus() {
+		const $$ = this;
+
+		$$.$el.main.selectAll(
+			`line.bb-axis-tooltip-x, line.bb-axis-tooltip-y`
+		).style("visibility", "hidden");
+
+		Object.values($$.$el.axisTooltip)
+			.forEach((v: d3Selection) => v?.style("display", "none"));
 	},
 
 	/**

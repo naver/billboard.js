@@ -24,6 +24,11 @@ export default class Element {
 				y2: null,
 				subX: null
 			},
+			axisTooltip: {
+				x: null,
+				y: null,
+				y2: null
+			},
 			defs: null,
 			tooltip: null,
 			legend: null,
