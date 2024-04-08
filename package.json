@@ -171,7 +171,7 @@
 		"style-loader": "^3.3.4",
 		"taffydb": "^2.7.3",
 		"tslib": "^2.6.2",
-		"typescript": "5.4.3",
+		"typescript": "5.4.4",
 		"webpack": "^5.91.0",
 		"webpack-bundle-analyzer": "^4.10.1",
 		"webpack-clean": "^1.2.5",
