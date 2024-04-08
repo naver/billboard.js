@@ -1177,6 +1177,58 @@ var demos = {
 				}
 			}
 		},
+		AxisTooltip: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 120, 220, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						type: "line",
+						axes: {
+							data1: "y",
+							data2: "y2"		
+						}
+					},
+					axis: {
+						tooltip: {
+							backgroundColor: {
+								x: "red",
+								y: "blue",
+								y2: "green"
+							}
+						},
+						y2: {
+							show: true
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 120, 220, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						type: "line"
+					},
+					axis: {
+						rotated: true,
+						tooltip: {
+							backgroundColor: {
+								x: "red",
+								y: "blue"
+							}
+						},
+						y2: {
+							show: true
+						}
+					}
+				}
+			}		
+		],
 		CategoryAxis: {
 			options: {
 				data: {

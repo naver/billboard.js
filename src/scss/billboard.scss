@@ -53,6 +53,12 @@
 /*-- Axis --*/
 .bb-axis {
 	shape-rendering: crispEdges;
+
+	.bb-axis-x-tooltip, .bb-axis-y-tooltip, .bb-axis-y2-tooltip {
+		font-size: 1em;
+		fill: #fff;
+		white-space: nowrap;
+	}
 }
 
 /*-- Grid --*/

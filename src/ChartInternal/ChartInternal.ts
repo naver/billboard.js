@@ -350,6 +350,7 @@ export default class ChartInternal {
 		const {hasAxis, hasTreemap} = state;
 		const hasInteraction = config.interaction_enabled;
 		const hasPolar = $$.hasType("polar");
+		const labelsBGColor = config.data_labels_backgroundColors;
 
 		// for arc type, set axes to not be shown
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
@@ -430,7 +431,7 @@ export default class ChartInternal {
 
 		if (
 			hasAxis || hasColorPatterns || hasPolar || hasTreemap ||
-			config.data_labels_backgroundColors || $$.hasLegendDefsPoint?.()
+			labelsBGColor || $$.hasLegendDefsPoint?.()
 		) {
 			$el.defs = $el.svg.append("defs");
 
@@ -441,7 +442,7 @@ export default class ChartInternal {
 			}
 
 			// Append data background color filter definition
-			$$.generateDataLabelBackgroundColorFilter();
+			$$.generateTextBGColorFilter(labelsBGColor);
 
 			// set color patterns
 			if (hasColorPatterns) {
