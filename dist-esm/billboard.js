@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240404004557
+ * @version 3.11.3-nightly-20240409004625
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -102,7 +102,10 @@ var $AXIS = {
     axisY: "bb-axis-y",
     axisY2: "bb-axis-y2",
     axisY2Label: "bb-axis-y2-label",
-    axisYLabel: "bb-axis-y-label"
+    axisYLabel: "bb-axis-y-label",
+    axisXTooltip: "bb-axis-x-tooltip",
+    axisYTooltip: "bb-axis-y-tooltip",
+    axisY2Tooltip: "bb-axis-y2-tooltip"
 };
 var $BAR = {
     bar: "bb-bar",
@@ -2889,6 +2892,11 @@ var Element = /** @class */ (function () {
                 y2: null,
                 subX: null
             },
+            axisTooltip: {
+                x: null,
+                y: null,
+                y2: null
+            },
             defs: null,
             tooltip: null,
             legend: null,
@@ -5401,30 +5409,36 @@ var color = {
     },
     /**
      * Append data backgound color filter definition
-     * @param {string} color Color string
+     * @param {string|object} color Color string
+     * @param {object} attr filter attribute
      * @private
      */
-    generateDataLabelBackgroundColorFilter: function (color) {
+    generateTextBGColorFilter: function (color, attr) {
+        if (attr === void 0) { attr = {
+            x: 0,
+            y: 0,
+            width: 1,
+            height: 1
+        }; }
         var $$ = this;
-        var $el = $$.$el, config = $$.config, state = $$.state;
-        var backgroundColors = color || config.data_labels_backgroundColors;
-        if (backgroundColors) {
+        var $el = $$.$el, state = $$.state;
+        if (color) {
             var ids = [];
-            if (isString(backgroundColors)) {
+            if (isString(color)) {
                 ids.push("");
             }
-            else if (isObject(backgroundColors)) {
-                ids = Object.keys(backgroundColors);
+            else if (isObject(color)) {
+                ids = Object.keys(color);
             }
             ids.forEach(function (v) {
-                var id = "".concat(state.datetimeId, "-labels-bg").concat($$.getTargetSelectorSuffix(v)).concat(color ? $$.getTargetSelectorSuffix(color) : "");
+                var id = "".concat(state.datetimeId, "-labels-bg").concat($$.getTargetSelectorSuffix(v)).concat(isString(color) ? $$.getTargetSelectorSuffix(color) : "");
                 $el.defs.append("filter")
-                    .attr("x", "0")
-                    .attr("y", "0")
-                    .attr("width", "1")
-                    .attr("height", "1")
+                    .attr("x", attr.x)
+                    .attr("y", attr.y)
+                    .attr("width", attr.width)
+                    .attr("height", attr.height)
                     .attr("id", id)
-                    .html("<feFlood flood-color=\"".concat(v === "" ? backgroundColors : backgroundColors[v], "\" /><feComposite in=\"SourceGraphic\"/>"));
+                    .html("<feFlood flood-color=\"".concat(v === "" ? color : color[v], "\" />\n\t\t\t\t\t\t<feComposite in=\"SourceGraphic\" />"));
             });
         }
     },
@@ -7783,16 +7797,16 @@ var text = {
     /**
      * Update data label text background color
      * @param {object} d Data object
+     * @param {object|string} option option object
      * @returns {string|null}
      * @private
      */
-    updateTextBackgroundColor: function (d) {
+    updateTextBGColor: function (d, option) {
         var $$ = this;
-        var $el = $$.$el, config = $$.config;
-        var backgroundColor = config.data_labels_backgroundColors;
+        var $el = $$.$el;
         var color = "";
-        if (isString(backgroundColor) || isObject(backgroundColor)) {
-            var id = isString(backgroundColor) ?
+        if (isString(option) || isObject(option)) {
+            var id = isString(option) ?
                 "" :
                 $$.getTargetSelectorSuffix("id" in d ? d.id : d.data.id);
             var filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
@@ -7821,7 +7835,7 @@ var text = {
         var rotateString = angle ? "rotate(".concat(angle, ")") : "";
         $$.$el.text
             .style("fill", $$.getStylePropValue($$.updateTextColor))
-            .attr("filter", $$.updateTextBackgroundColor.bind($$))
+            .attr("filter", function (d) { return $$.updateTextBGColor.bind($$)(d, config.data_labels_backgroundColors); })
             .style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
             .each(function (d, i) {
             // do not apply transition for newly added text elements
@@ -9737,6 +9751,7 @@ var ChartInternal = /** @class */ (function () {
         var hasAxis = state.hasAxis, hasTreemap = state.hasTreemap;
         var hasInteraction = config.interaction_enabled;
         var hasPolar = $$.hasType("polar");
+        var labelsBGColor = config.data_labels_backgroundColors;
         // for arc type, set axes to not be shown
         // $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
         if (hasAxis) {
@@ -9794,7 +9809,7 @@ var ChartInternal = /** @class */ (function () {
         // Define defs
         var hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
         if (hasAxis || hasColorPatterns || hasPolar || hasTreemap ||
-            config.data_labels_backgroundColors || ((_a = $$.hasLegendDefsPoint) === null || _a === void 0 ? void 0 : _a.call($$))) {
+            labelsBGColor || ((_a = $$.hasLegendDefsPoint) === null || _a === void 0 ? void 0 : _a.call($$))) {
             $el.defs = $el.svg.append("defs");
             if (hasAxis) {
                 ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
@@ -9802,7 +9817,7 @@ var ChartInternal = /** @class */ (function () {
                 });
             }
             // Append data background color filter definition
-            $$.generateDataLabelBackgroundColorFilter();
+            $$.generateTextBGColorFilter(labelsBGColor);
             // set color patterns
             if (hasColorPatterns) {
                 $$.patterns.forEach(function (p) { return $el.defs.append(function () { return p.node; }); });
@@ -13147,6 +13162,7 @@ var Axis = /** @class */ (function () {
                 .style("text-anchor", function () { return _this.textAnchorForAxisLabel(v); });
             _this.generateAxes(v);
         });
+        config.axis_tooltip && this.setAxisTooltip();
     };
     /**
      * Set axis orient according option value
@@ -13853,13 +13869,39 @@ var Axis = /** @class */ (function () {
             }
         });
     };
+    /**
+     * Set axis tooltip
+     * @private
+     */
+    Axis.prototype.setAxisTooltip = function () {
+        var _a;
+        var $$ = this.owner;
+        var _b = $$.config, isRotated = _b.axis_rotated, axis_tooltip = _b.axis_tooltip, _c = $$.$el, axis = _c.axis, axisTooltip = _c.axisTooltip;
+        var bgColor = (_a = axis_tooltip.backgroundColor) !== null && _a !== void 0 ? _a : "black";
+        $$.generateTextBGColorFilter(bgColor, {
+            x: -0.15,
+            y: -0.2,
+            width: 1.3,
+            height: 1.3
+        });
+        ["x", "y", "y2"].forEach(function (v) {
+            var _a, _b, _c;
+            axisTooltip[v] = (_a = axis[v]) === null || _a === void 0 ? void 0 : _a.append("text").classed($AXIS["axis".concat(v.toUpperCase(), "Tooltip")], true).attr("filter", $$.updateTextBGColor({ id: v }, bgColor));
+            if (isRotated) {
+                var pos = v === "x" ? "x" : "y";
+                var val = v === "y" ? "1.15em" : (v === "x" ? "-0.3em" : "-0.4em");
+                (_b = axisTooltip[v]) === null || _b === void 0 ? void 0 : _b.attr(pos, val).attr("d".concat(v === "x" ? "y" : "x"), v === "x" ? "0.4em" : "-1.3em").style("text-anchor", v === "x" ? "end" : null);
+            }
+            else {
+                var pos = v === "x" ? "y" : "x";
+                var val = v === "x" ? "1.15em" : "".concat(v === "y" ? "-" : "", "0.4em");
+                (_c = axisTooltip[v]) === null || _c === void 0 ? void 0 : _c.attr(pos, val).attr("d".concat(v === "x" ? "x" : "y"), v === "x" ? "-1em" : "0.3em").style("text-anchor", v === "y" ? "end" : null);
+            }
+        });
+    };
     return Axis;
 }());
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 var eventrect = {
     /**
      * Initialize the area that detects the event.
@@ -14278,6 +14320,8 @@ var eventrect = {
                 .on("mouseover", function (event) {
                 state.event = event;
                 $$.updateEventRect();
+                Object.values($$.$el.axisTooltip)
+                    .forEach(function (v) { return v === null || v === void 0 ? void 0 : v.style("display", null); });
             })
                 .on("mousemove", function (event) {
                 var d = getData_1(event);
@@ -14300,6 +14344,7 @@ var eventrect = {
                         index += 1;
                     }
                 }
+                $$.showAxisGridFocus();
                 var eventOnSameIdx = config.tooltip_grouped &&
                     index === eventReceiver.currentIdx;
                 // do nothing while dragging/flowing
@@ -14322,6 +14367,7 @@ var eventrect = {
                 if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
                     return;
                 }
+                $$.hideAxisGridFocus();
                 $$.unselectRect();
                 $$.setOverOut(false, eventReceiver.currentIdx);
                 // reset the event current index
@@ -14964,7 +15010,12 @@ var grid = {
             grid.append("g").attr("class", $GRID.xgrids);
         config.grid_y_show &&
             grid.append("g").attr("class", $GRID.ygrids);
-        if (config.interaction_enabled && config.grid_focus_show) {
+        if (config.axis_tooltip) {
+            var axis = grid.append("g").attr("class", "bb-axis-tooltip");
+            axis.append("line").attr("class", "bb-axis-tooltip-x");
+            axis.append("line").attr("class", "bb-axis-tooltip-y");
+        }
+        if (config.interaction_enabled && config.grid_focus_show && !config.axis_tooltip) {
             grid.append("g")
                 .attr("class", $FOCUS.xgridFocus)
                 .append("line")
@@ -14977,6 +15028,52 @@ var grid = {
                     .attr("class", $FOCUS.ygridFocus);
             }
         }
+    },
+    showAxisGridFocus: function () {
+        var _a, _b;
+        var $$ = this;
+        var config = $$.config, format = $$.format, _c = $$.state, event = _c.event, width = _c.width, height = _c.height;
+        var isRotated = config.axis_rotated;
+        // get mouse event position
+        var _d = getPointer(event, (_a = $$.$el.eventRect) === null || _a === void 0 ? void 0 : _a.node()), x = _d[0], y = _d[1];
+        var pos = { x: x, y: y };
+        for (var _i = 0, _e = Object.entries($$.$el.axisTooltip); _i < _e.length; _i++) {
+            var _f = _e[_i], axis = _f[0], node = _f[1];
+            var attr = (axis === "x" && !isRotated) || (axis !== "x" && isRotated) ? "x" : "y";
+            var value = pos[attr];
+            var scaleText = (_b = $$.scale[axis]) === null || _b === void 0 ? void 0 : _b.invert(value);
+            if (scaleText) {
+                scaleText = axis === "x" && $$.axis.isTimeSeries() ?
+                    format.xAxisTick(scaleText) :
+                    scaleText === null || scaleText === void 0 ? void 0 : scaleText.toFixed(2);
+                // set position & its text value based on position
+                node === null || node === void 0 ? void 0 : node.attr(attr, value).text(scaleText);
+            }
+        }
+        $$.$el.main.selectAll("line.bb-axis-tooltip-x, line.bb-axis-tooltip-y").style("visibility", null)
+            .each(function (d, i) {
+            var line = select(this);
+            if (i === 0) {
+                line
+                    .attr("x1", x)
+                    .attr("x2", x)
+                    .attr("y1", i ? 0 : height)
+                    .attr("y2", i ? height : 0);
+            }
+            else {
+                line
+                    .attr("x1", i ? 0 : width)
+                    .attr("x2", i ? width : 0)
+                    .attr("y1", y)
+                    .attr("y2", y);
+            }
+        });
+    },
+    hideAxisGridFocus: function () {
+        var $$ = this;
+        $$.$el.main.selectAll("line.bb-axis-tooltip-x, line.bb-axis-tooltip-y").style("visibility", "hidden");
+        Object.values($$.$el.axisTooltip)
+            .forEach(function (v) { return v === null || v === void 0 ? void 0 : v.style("display", "none"); });
     },
     /**
      * Show grid focus line
@@ -17065,7 +17162,40 @@ var optAxis = __assign(__assign(__assign({
      *   rotated: true
      * }
      */
-    axis_rotated: false }, x), y), y2);
+    axis_rotated: false, 
+    /**
+     * Set axis tooltip.
+     * - **NOTE:**
+     *   - When enabled, will disable default focus grid line.
+     *   - For `timeseries` x Axis, tootlip will be formatted using x Axis' tick format.
+     *   - For `category` x Axis, tootlip will be displaying scales' value text.
+     * @name axis․tooltip
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @property {object} axis Axis object
+     * @property {boolean} [axis.tooltip=false] Show tooltip or not.
+     * @property {string|object} [axis.tooltip.backgroundColor] Set axis tooltip text background colors.
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.AxisTooltip)
+     * @example
+     * axis: {
+     *     tooltip: true, // default background color is
+     *
+     *     // set backgound color for axis tooltip texts
+     *     tooltip: {
+     *          backgroundColor: "red",
+     *
+     *          // set differenct backround colors per axes
+     *          // NOTE: In this case, only specified axes tooltip will appear.
+     *          backgroundColor: {
+     *               x: "green",
+     *               y: "yellow",
+     *               y2: "red"
+     *          }
+     *     }
+     * }
+     */
+    axis_tooltip: false }, x), y), y2);
 
 var optGrid = {
     /**
@@ -17737,7 +17867,9 @@ var shapeArc = {
         if ($$.shouldShowArcLabel()) {
             selection
                 .style("fill", $$.updateTextColor.bind($$))
-                .attr("filter", $$.updateTextBackgroundColor.bind($$))
+                .attr("filter", function (d) {
+                return $$.updateTextBGColor.bind($$)(d, $$.config.data_labels_backgroundColors);
+            })
                 .each(function (d) {
                 var _a;
                 var node = select(this);
@@ -19940,7 +20072,7 @@ var shapePolar = {
             .attr("class", $LEVEL.levels);
         // set level text background color
         if (levelTextShow && levelTextBgColor) {
-            $$.generateDataLabelBackgroundColorFilter(levelTextBgColor);
+            $$.generateTextBGColorFilter(levelTextBgColor);
         }
     },
     /**
@@ -23648,7 +23780,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.3-nightly-20240404004557
+ * @version 3.11.3-nightly-20240409004625
  */
 var bb = {
     /**
@@ -23658,7 +23790,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.3-nightly-20240404004557",
+    version: "3.11.3-nightly-20240409004625",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
