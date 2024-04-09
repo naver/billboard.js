@@ -9,6 +9,13 @@ export interface Axis {
 	 * Switch x and y axis position.
 	 */
 	rotated?: boolean;
+
+	/**
+	 * Set axis tooltip.
+	 */
+	tooltip?: boolean | {
+		backgroundColor?: string | {x?: string; y?: string; y2?: string}
+	};
 	x?: xAxisConfiguration;
 	y?: yAxisConfiguration;
 	y2?: yAxisConfigurationBase;

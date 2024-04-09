@@ -3548,4 +3548,76 @@ describe("AXIS", function() {
  			expect(res.every((v, i) => v === expected[0][i]) || res.every((v, i) => v === expected[1][i])).to.be.true;
 		});
 	});
+
+	describe("axis.tooltip", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 120, 220, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "line",
+					axes: {
+						data1: "y",
+						data2: "y2"
+					}
+				},
+				axis: {
+					tooltip: true,
+					y2: {
+						show: true
+					}
+				}
+			};
+		});
+
+		it("axis tooltip generated & shows correct scale values?", () => {
+			const {internal: {$el}} = chart;
+			const expected = {
+				x: '3.00',
+				y: '373.97',
+				y2: '215.64'
+			};
+
+			// when
+			chart.tooltip.show({x: 3});
+
+			["x", "y", "y2"].forEach(id => {
+				expect($el.axisTooltip[id].text()).to.be.equal(expected[id]);
+			});
+		});
+
+		it("set options: axis.tooltip.backgroundColor", () => {
+			args.axis.tooltip = {
+				backgroundColor: {
+					x: "red",
+					y: "blue",
+					y2: "green"
+				}
+			};
+		});
+
+		it("should axis.tooltip.backgroundColor applied correctly?", () => {
+			const {internal: {$el}} = chart;
+			const expected = {
+				x: '3.00',
+				y: '373.97',
+				y2: '215.64'
+			};
+
+			// when
+			chart.tooltip.show({x: 3});
+
+			const filter = chart.internal.$el.defs.selectAll("filter");
+
+			["x", "y", "y2"].forEach(id => {
+				const url = $el.axisTooltip[id].attr("filter").replace(/(^url\(|\)$)/g, "");
+				const filter = $el.defs.select(url);
+				
+				expect(filter.size());
+				expect(args.axis.tooltip.backgroundColor[id]).to.be.equal(filter.select("feFlood").attr("flood-color"));
+			});
+		});
+	});
 });

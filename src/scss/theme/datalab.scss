@@ -43,6 +43,12 @@ $text-font-size: 11px;
 /*-- Axis --*/
 .bb-axis {
     stroke-width: $line-stroke-widdth;
+
+	.bb-axis-x-tooltip, .bb-axis-y-tooltip, .bb-axis-y2-tooltip {
+        font-size: 0.9em;
+        fill: #fff;
+		white-space: nowrap;
+	}
 }
 
 .bb-axis-y text, .bb-axis-y2 text {

@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import type {d3Selection} from "../../../types";
 import {$COMMON, $EVENT, $SHAPE} from "../../config/classes";
 import {getPointer, getScrollPosition, isboolean, isFunction} from "../../module/util";
 
@@ -510,6 +511,9 @@ export default {
 				.on("mouseover", event => {
 					state.event = event;
 					$$.updateEventRect();
+
+					Object.values($$.$el.axisTooltip)
+						.forEach((v: d3Selection) => v?.style("display", null));
 				})
 				.on("mousemove", function(event) {
 					const d = getData(event);
@@ -539,6 +543,8 @@ export default {
 						}
 					}
 
+					$$.showAxisGridFocus();
+
 					const eventOnSameIdx = config.tooltip_grouped &&
 						index === eventReceiver.currentIdx;
 
@@ -566,6 +572,8 @@ export default {
 					if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
 						return;
 					}
+
+					$$.hideAxisGridFocus();
 
 					$$.unselectRect();
 					$$.setOverOut(false, eventReceiver.currentIdx);

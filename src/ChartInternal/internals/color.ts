@@ -178,38 +178,42 @@ export default {
 
 	/**
 	 * Append data backgound color filter definition
-	 * @param {string} color Color string
+	 * @param {string|object} color Color string
+	 * @param {object} attr filter attribute
 	 * @private
 	 */
-	generateDataLabelBackgroundColorFilter(color?: string): void {
+	generateTextBGColorFilter(color: string | object, attr = {
+		x: 0,
+		y: 0,
+		width: 1,
+		height: 1
+	}): void {
 		const $$ = this;
-		const {$el, config, state} = $$;
-		const backgroundColors = color || config.data_labels_backgroundColors;
+		const {$el, state} = $$;
 
-		if (backgroundColors) {
+		if (color) {
 			let ids: string[] = [];
 
-			if (isString(backgroundColors)) {
+			if (isString(color)) {
 				ids.push("");
-			} else if (isObject(backgroundColors)) {
-				ids = Object.keys(backgroundColors);
+			} else if (isObject(color)) {
+				ids = Object.keys(color);
 			}
 
 			ids.forEach(v => {
 				const id = `${state.datetimeId}-labels-bg${$$.getTargetSelectorSuffix(v)}${
-					color ? $$.getTargetSelectorSuffix(color) : ""
+					isString(color) ? $$.getTargetSelectorSuffix(color) : ""
 				}`;
 
 				$el.defs.append("filter")
-					.attr("x", "0")
-					.attr("y", "0")
-					.attr("width", "1")
-					.attr("height", "1")
+					.attr("x", attr.x)
+					.attr("y", attr.y)
+					.attr("width", attr.width)
+					.attr("height", attr.height)
 					.attr("id", id)
 					.html(
-						`<feFlood flood-color="${
-							v === "" ? backgroundColors : backgroundColors[v]
-						}" /><feComposite in="SourceGraphic"/>`
+						`<feFlood flood-color="${v === "" ? color : color[v]}" />
+						<feComposite in="SourceGraphic" />`
 					);
 			});
 		}

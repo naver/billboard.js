@@ -271,17 +271,17 @@ export default {
 	/**
 	 * Update data label text background color
 	 * @param {object} d Data object
+	 * @param {object|string} option option object
 	 * @returns {string|null}
 	 * @private
 	 */
-	updateTextBackgroundColor(d: IDataRow | IArcData): string | null {
+	updateTextBGColor(d: IDataRow | IArcData, option): string | null {
 		const $$ = this;
-		const {$el, config} = $$;
-		const backgroundColor = config.data_labels_backgroundColors;
+		const {$el} = $$;
 		let color: string = "";
 
-		if (isString(backgroundColor) || isObject(backgroundColor)) {
-			const id = isString(backgroundColor) ?
+		if (isString(option) || isObject(option)) {
+			const id = isString(option) ?
 				"" :
 				$$.getTargetSelectorSuffix("id" in d ? d.id : d.data.id);
 			const filter = $el.defs.select(["filter[id*='labels-bg", "']"].join(id));
@@ -314,7 +314,8 @@ export default {
 
 		$$.$el.text
 			.style("fill", $$.getStylePropValue($$.updateTextColor))
-			.attr("filter", $$.updateTextBackgroundColor.bind($$))
+			.attr("filter",
+				d => $$.updateTextBGColor.bind($$)(d, config.data_labels_backgroundColors))
 			.style("fill-opacity", forFlow ? 0 : $$.opacityForText.bind($$))
 			.each(function(d: IDataRow, i: number) {
 				// do not apply transition for newly added text elements
