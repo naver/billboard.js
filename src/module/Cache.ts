@@ -98,7 +98,6 @@ export default class Cache {
 	 * @returns {object}
 	 * @private
 	 */
-	// eslint-disable-next-line camelcase
 	cloneTarget(target: DataRow): DataRow {
 		return {
 			id: target.id,

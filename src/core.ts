@@ -5,9 +5,6 @@
 import Chart from "./Chart/Chart";
 import {isObject, mergeObj} from "./module/util";
 
-// eslint-disable-next-line no-use-before-define
-export {bb, bb as default};
-
 let defaults = {};
 
 /**
@@ -157,3 +154,5 @@ const bb = {
 	 */
 	plugin: {}
 };
+
+export {bb, bb as default};

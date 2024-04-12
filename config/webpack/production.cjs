@@ -5,7 +5,6 @@ const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const banner = require("../template/banner.cjs");
 const {EsbuildPlugin} = require("esbuild-loader");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ESLintPlugin = require("eslint-webpack-plugin");
 
 const config = {
 	entry: {
@@ -50,10 +49,6 @@ const config = {
 		new webpack.BannerPlugin({
 			banner: banner.production,
 			entryOnly: true
-		}),
-		new ESLintPlugin({
-			failOnError: true,
-			formatter: "stylish"
 		})
 	]
 };
