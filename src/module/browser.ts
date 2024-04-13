@@ -7,15 +7,6 @@
  * @private
  */
 /* eslint-disable no-new-func, no-undef */
-export {
-	cancelAnimationFrame,
-	cancelIdleCallback,
-	doc as document,
-	requestAnimationFrame,
-	requestIdleCallback,
-	win as window
-};
-
 /**
  * Get global object
  * @returns {object} window object
@@ -60,3 +51,12 @@ const [
 	requestIdleCallback,
 	cancelIdleCallback
 ] = getFallback(win);
+
+export {
+	cancelAnimationFrame,
+	cancelIdleCallback,
+	doc as document,
+	requestAnimationFrame,
+	requestIdleCallback,
+	win as window
+};

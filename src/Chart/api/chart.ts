@@ -55,7 +55,6 @@ export default {
 
 		if (state.rendered) {
 			// reset possible zoom scale when is called from resize event
-			// eslint-disable-next-line prefer-rest-params
 			if (state.resizing) { // arguments[1] is given when is called from resize
 				$$.brush?.updateResize();
 			} else {
