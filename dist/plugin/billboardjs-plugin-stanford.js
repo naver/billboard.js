@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240412004610
+ * @version 3.11.3-nightly-20240413004531
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -307,7 +307,6 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(1);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
-
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
@@ -331,6 +330,7 @@ const [
   requestIdleCallback,
   cancelIdleCallback
 ] = getFallback(win);
+
 
 ;// CONCATENATED MODULE: ./src/module/util.ts
 var util_defProp = Object.defineProperty;
@@ -813,7 +813,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.11.3-nightly-20240412004610");
+__publicField(Plugin, "version", "3.11.3-nightly-20240413004531");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);

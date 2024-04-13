@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240412004610
+ * @version 3.11.3-nightly-20240413004531
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -3204,7 +3204,6 @@ var Cache = /** @class */ (function () {
      * @returns {object}
      * @private
      */
-    // eslint-disable-next-line camelcase
     Cache.prototype.cloneTarget = function (target) {
         return {
             id: target.id,
@@ -10238,7 +10237,6 @@ var apiChart = {
         var state = $$.state, zoomResetBtn = $$.$el.zoomResetBtn;
         if (state.rendered) {
             // reset possible zoom scale when is called from resize event
-            // eslint-disable-next-line prefer-rest-params
             if (state.resizing) { // arguments[1] is given when is called from resize
                 (_a = $$.brush) === null || _a === void 0 ? void 0 : _a.updateResize();
             }
@@ -23780,7 +23778,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.3-nightly-20240412004610
+ * @version 3.11.3-nightly-20240413004531
  */
 var bb = {
     /**
@@ -23790,7 +23788,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.3-nightly-20240412004610",
+    version: "3.11.3-nightly-20240413004531",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

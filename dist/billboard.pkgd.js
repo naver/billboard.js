@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240412004610
+ * @version 3.11.3-nightly-20240413004531
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -24787,7 +24787,6 @@ function brush_brush(dim) {
 
 
 ;// CONCATENATED MODULE: ./src/module/browser.ts
-
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
@@ -24811,6 +24810,7 @@ const [
   requestIdleCallback,
   cancelIdleCallback
 ] = getFallback(win);
+
 
 ;// CONCATENATED MODULE: ./src/module/util.ts
 var util_defProp = Object.defineProperty;
@@ -25592,7 +25592,6 @@ class Cache {
    * @returns {object}
    * @private
    */
-  // eslint-disable-next-line camelcase
   cloneTarget(target) {
     return {
       id: target.id,
@@ -47678,7 +47677,6 @@ let resolver_shape_treemap = () => (extendAxis([shape_treemap], [Options_shape_t
 ;// CONCATENATED MODULE: ./src/core.ts
 
 
-
 let defaults = {};
 const bb = {
   /**
@@ -47688,7 +47686,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.3-nightly-20240412004610",
+  version: "3.11.3-nightly-20240413004531",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -47816,6 +47814,7 @@ const bb = {
    */
   plugin: {}
 };
+
 
 ;// CONCATENATED MODULE: ./src/index.ts
 

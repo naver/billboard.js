@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240412004610
+ * @version 3.11.3-nightly-20240413004531
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2238,7 +2238,6 @@ const $ZOOM = {
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(4);
 ;// CONCATENATED MODULE: ./src/module/browser.ts
-
 function getGlobal() {
   return typeof globalThis === "object" && globalThis !== null && globalThis.Object === Object && globalThis || typeof global === "object" && global !== null && global.Object === Object && global || typeof self === "object" && self !== null && self.Object === Object && self || Function("return this")();
 }
@@ -2262,6 +2261,7 @@ const [
   requestIdleCallback,
   cancelIdleCallback
 ] = getFallback(win);
+
 
 ;// CONCATENATED MODULE: ./src/module/util.ts
 var util_defProp = Object.defineProperty;
@@ -3043,7 +3043,6 @@ class Cache {
    * @returns {object}
    * @private
    */
-  // eslint-disable-next-line camelcase
   cloneTarget(target) {
     return {
       id: target.id,
@@ -21149,7 +21148,6 @@ let resolver_shape_treemap = () => (extendAxis([treemap], [shape_treemap]), (res
 ;// CONCATENATED MODULE: ./src/core.ts
 
 
-
 let defaults = {};
 const bb = {
   /**
@@ -21159,7 +21157,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.3-nightly-20240412004610",
+  version: "3.11.3-nightly-20240413004531",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
@@ -21287,6 +21285,7 @@ const bb = {
    */
   plugin: {}
 };
+
 
 ;// CONCATENATED MODULE: ./src/index.ts
 
