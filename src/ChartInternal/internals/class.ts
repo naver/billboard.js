@@ -94,14 +94,15 @@ export default {
 		const target = this.getTargetSelectorSuffix(id);
 
 		// select target & circle
-		return `${prefix}.${CLASS.target + target} ${postfix}, ${prefix}.${CLASS.circles + target} ${postfix}`;
+		return `${prefix}.${CLASS.target + target} ${postfix}, ${prefix}.${
+			CLASS.circles + target
+		} ${postfix}`;
 	},
 
 	selectorTargets(idsValue, prefix: string): string[] | null {
 		const ids = idsValue || [];
 
-		return ids.length ?
-			ids.map(id => this.selectorTarget(id, prefix)) : null;
+		return ids.length ? ids.map(id => this.selectorTarget(id, prefix)) : null;
 	},
 
 	selectorLegend(id: string): string {
@@ -109,7 +110,6 @@ export default {
 	},
 
 	selectorLegends(ids): string[] | null {
-		return ids?.length ?
-			ids.map(id => this.selectorLegend(id)) : null;
+		return ids?.length ? ids.map(id => this.selectorLegend(id)) : null;
 	}
 };

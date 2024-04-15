@@ -6,12 +6,12 @@
 /* eslint-disable */
 import {
 	csvParse as d3CsvParse,
-	tsvParse as d3TsvParse,
 	csvParseRows as d3CsvParseRows,
-	tsvParseRows as d3TsvParseRows,
+	tsvParse as d3TsvParse,
+	tsvParseRows as d3TsvParseRows
 } from "d3-dsv";
 
-export {columns, json, rows, url, csv, tsv};
+export {columns, csv, json, rows, tsv, url};
 
 /***** Functions to be executed on Web Worker *****
  * NOTE: Don't allowed to use
@@ -84,66 +84,65 @@ function rows(rows) {
  * @private
  */
 function json(json, keysParam) {
-    const newRows: string[][] = [];
-    let targetKeys: string[];
-    let data;
+	const newRows: string[][] = [];
+	let targetKeys: string[];
+	let data;
 
-    if (Array.isArray(json)) {
+	if (Array.isArray(json)) {
 		const findValueInJson = function(object, path) {
 			if (object[path] !== undefined) {
 				return object[path];
 			}
-	
+
 			const convertedPath = path.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties (replace [] with .)
 			const pathArray = convertedPath.replace(/^\./, "").split("."); // strip a leading dot
 			let target = object;
-	
+
 			pathArray.some(function(k) {
 				return !(
-					target = target && k in target ?
-						target[k] : undefined
+					target = target && k in target ? target[k] : undefined
 				);
 			});
-	
+
 			return target;
 		};
 
-        if (keysParam.x) {
-            targetKeys = keysParam.value.concat(keysParam.x);
-        } else {
-            targetKeys = keysParam.value;
-        }
+		if (keysParam.x) {
+			targetKeys = keysParam.value.concat(keysParam.x);
+		} else {
+			targetKeys = keysParam.value;
+		}
 
-        newRows.push(targetKeys);
+		newRows.push(targetKeys);
 
-        json.forEach(function(o) {
-            const newRow = targetKeys.map(function(key) {
-                // convert undefined to null because undefined data will be removed in convertDataToTargets()
-                let v = findValueInJson(o, key);
+		json.forEach(function(o) {
+			const newRow = targetKeys.map(function(key) {
+				// convert undefined to null because undefined data will be removed in convertDataToTargets()
+				let v = findValueInJson(o, key);
 
-                if (typeof v === "undefined") {
-                    v = null;
-                }
+				if (typeof v === "undefined") {
+					v = null;
+				}
 
-                return v;
-            });
+				return v;
+			});
 
-            newRows.push(newRow);
-        });
+			newRows.push(newRow);
+		});
 
-        data = rows(newRows);
-    } else {
-        Object.keys(json).forEach(function(key) {
-            const tmp = json[key].concat();
+		data = rows(newRows);
+	} else {
+		Object.keys(json).forEach(function(key) {
+			const tmp = json[key].concat();
 
-            tmp.unshift?.(key);
-            newRows.push(tmp);
-        });
+			tmp.unshift?.(key);
+			newRows.push(tmp);
+		});
 
-        data = columns(newRows);
-    }
+		data = columns(newRows);
+	}
 
-    return data;
+	return data;
 }
 
 /***** Functions can't be executed on Web Worker *****/
@@ -157,34 +156,33 @@ function json(json, keysParam) {
  * @private
  */
 function url(url: string, mimeType = "csv", headers: object, keys: object, done: Function): void {
-    const req = new XMLHttpRequest();
-    const converter = {csv, tsv, json};
+	const req = new XMLHttpRequest();
+	const converter = {csv, tsv, json};
 
-    req.open("GET", url);
+	req.open("GET", url);
 
-    if (headers) {
-        Object.keys(headers).forEach(function(key) {
-            req.setRequestHeader(key, headers[key]);
-        });
-    }
+	if (headers) {
+		Object.keys(headers).forEach(function(key) {
+			req.setRequestHeader(key, headers[key]);
+		});
+	}
 
-    req.onreadystatechange = function() {
-        if (req.readyState === 4) {
-            if (req.status === 200) {
-                const response = req.responseText;
+	req.onreadystatechange = function() {
+		if (req.readyState === 4) {
+			if (req.status === 200) {
+				const response = req.responseText;
 
-				response && done.call(this,
-					converter[mimeType](
-						mimeType === "json" ? JSON.parse(response) : response,
-						keys
-					));
-            } else {
-                throw new Error(`${url}: Something went wrong loading!`);
-            }
-        }
-    };
+				response && done.call(this, converter[mimeType](
+					mimeType === "json" ? JSON.parse(response) : response,
+					keys
+				));
+			} else {
+				throw new Error(`${url}: Something went wrong loading!`);
+			}
+		}
+	};
 
-    req.send();
+	req.send();
 }
 
 /**
@@ -194,7 +192,7 @@ function url(url: string, mimeType = "csv", headers: object, keys: object, done:
  * @returns {object}
  * @private
  */
- function convertCsvTsvToData(parser, xsv) {
+function convertCsvTsvToData(parser, xsv) {
 	const rows = parser.rows(xsv);
 	let d;
 

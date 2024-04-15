@@ -14,9 +14,7 @@ type T = d3Selection | null;
  */
 export default class Element {
 	constructor() {
-		const element: {
-			[key: string]: T | {[key: string]: T}
-		} = {
+		const element: {[key: string]: T | {[key: string]: T}} = {
 			chart: null,
 			main: null,
 			svg: null,
@@ -25,6 +23,11 @@ export default class Element {
 				y: null,
 				y2: null,
 				subX: null
+			},
+			axisTooltip: {
+				x: null,
+				y: null,
+				y2: null
 			},
 			defs: null,
 			tooltip: null,
@@ -48,12 +51,12 @@ export default class Element {
 			grid: {
 				main: null, // grid (also focus)
 				x: null, // xgrid,
-				y: null, // ygrid,
+				y: null // ygrid,
 			},
 			gridLines: {
 				main: null, // gridLines
 				x: null, // xgridLines,
-				y: null, // ygridLines
+				y: null // ygridLines
 			},
 			region: {
 				main: null, // region

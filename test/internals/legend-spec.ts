@@ -531,6 +531,23 @@ describe("LEGEND", () => {
 
 			expect(nodes.size()).to.be.equal(chart.data().length);
 		});
+
+		it("should defs element added removed on unload?", done => {
+			const {$el: {defs}} = chart.internal;
+			const selector = "[id$=data-3]";
+			const hasDefPoint = !defs.select(selector).empty();
+
+			// when
+			chart.unload({
+				ids: ["data_3"],
+				done() {
+					expect(hasDefPoint).to.be.true;
+					expect(defs.select(selector).empty()).to.be.true;
+
+					done();
+				}
+			});
+		});
 	});
 
 	describe("legend item tile coloring with color_treshold", () => {
@@ -921,6 +938,33 @@ describe("LEGEND", () => {
 			const legendTitle = chart.$.legend.selectAll("title").nodes().map(v => v.textContent);
 
 			expect(dataIds).to.be.deep.equal(legendTitle);
+		});
+
+		it("set options: data.names", () => {
+			args = {
+				data: {
+					names: {
+					  "data1": "Detailed Name",
+					  "data2": "Name Detailed"
+					},
+					columns: [
+					  ["data1", 71.4],
+					  ["data2", 10],
+					],
+					type: "gauge"
+				},
+				legend: {
+					format: id => id.substr(0, 2) + "...",
+					tooltip: true
+				}
+			}
+		});
+
+		it("should legend title show data.names values.", () => {
+			const legendTitle = chart.$.legend.selectAll("title").nodes().map(v => v.textContent);
+			const dataNames = Object.values(chart.data.names());
+
+			expect(legendTitle).to.be.deep.equal(dataNames);
 		});
 	});
 });

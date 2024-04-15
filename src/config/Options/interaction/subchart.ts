@@ -65,8 +65,8 @@ export default {
 	subchart_size_height: 60,
 	subchart_axis_x_show: true,
 	subchart_axis_x_tick_show: true,
-	subchart_axis_x_tick_format: <Function|string|undefined> undefined,
+	subchart_axis_x_tick_format: <Function | string | undefined>undefined,
 	subchart_axis_x_tick_text_show: true,
-	subchart_init_range: <undefined|[number, number]> undefined,
+	subchart_init_range: <undefined | [number, number]>undefined,
 	subchart_onbrush: () => {}
 };

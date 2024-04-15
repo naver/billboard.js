@@ -2,7 +2,6 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {document, window} from "../../module/browser";
 
 export default {
 	initClip(): void {
@@ -27,17 +26,15 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 
-		if ((!config.clipPath && /-clip$/.test(id)) ||
+		if (
+			(!config.clipPath && /-clip$/.test(id)) ||
 			(!config.axis_x_clipPath && /-clip-xaxis$/.test(id)) ||
-			(!config.axis_y_clipPath && /-clip-yaxis$/.test(id))) {
+			(!config.axis_y_clipPath && /-clip-yaxis$/.test(id))
+		) {
 			return null;
 		}
 
-		const isIE9 = window.navigator ?
-			window.navigator.appVersion
-				.toLowerCase().indexOf("msie 9.") >= 0 : false;
-
-		return `url(${(isIE9 ? "" : document.URL.split("#")[0])}#${id})`;
+		return `url(#${id})`;
 	},
 
 	appendClip(parent, id: string): void {
@@ -83,7 +80,8 @@ export default {
 		const left = Math.max(30, margin.left) - (isRotated ? 20 : 0);
 		const isInner = config.axis_y_inner;
 
-		const x = isInner && !isRotated ? (config.axis_y_label.text ? -20 : -1) :
+		const x = isInner && !isRotated ?
+			(config.axis_y_label.text ? -20 : -1) :
 			(isRotated ? -(1 + left) : -(left - 1));
 		const y = -(isRotated ? 20 : margin.top);
 		const w = (isRotated ? width + 15 + left : margin.left + 20) + (isInner ? 20 : 0);
@@ -109,7 +107,8 @@ export default {
 			clip.idXAxisTickTexts = clipId;
 		}
 
-		if (!config.axis_x_tick_multiline &&
+		if (
+			!config.axis_x_tick_multiline &&
 			$$.getAxisTickRotate("x") &&
 			newXAxisHeight !== xAxisHeight
 		) {

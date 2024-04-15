@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {select as d3Select} from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
+import {select as d3Select} from "d3-selection";
 import {$ARC, $AXIS, $COMMON, $SHAPE, $TREEMAP} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {emulateEvent, getPointer, isNumber, isObject} from "../../module/util";
@@ -67,7 +67,9 @@ export default {
 			if (isArcTreemap && "id") {
 				const selector = hasTreemap ? $TREEMAP.treemap : $ARC.arc;
 
-				callback(d, main.select(`.${selector}${$$.getTargetSelectorSuffix((d as IArcDataRow).id)}`).node());
+				callback(d,
+					main.select(`.${selector}${$$.getTargetSelectorSuffix((d as IArcDataRow).id)}`)
+						.node());
 			} else if (!config.tooltip_grouped) {
 				const last = $$.cache.get(KEY.setOverOut) || [];
 
@@ -83,9 +85,11 @@ export default {
 				});
 
 				// call onout callback
-				if (!isOver || shapesAtIndex.empty() || (
-					last.length === shape.size() && shape.nodes().every(((v, i) => v !== last[i]))
-				)) {
+				if (
+					!isOver || shapesAtIndex.empty() || (
+						last.length === shape.size() && shape.nodes().every((v, i) => v !== last[i])
+					)
+				) {
 					while (last.length) {
 						const target = last.pop();
 
@@ -156,7 +160,8 @@ export default {
 				.on("end", event => {
 					state.event = event;
 					$$.dragend();
-				}) : () => {};
+				}) :
+			() => {};
 	},
 
 	/**
@@ -168,9 +173,16 @@ export default {
 	 */
 	dispatchEvent(type: string, index: number, mouse: [number, number]): void {
 		const $$ = this;
-		const {config, state: {
-			eventReceiver, hasAxis, hasRadar, hasTreemap
-		}, $el: {eventRect, radar, treemap}} = $$;
+		const {
+			config,
+			state: {
+				eventReceiver,
+				hasAxis,
+				hasRadar,
+				hasTreemap
+			},
+			$el: {eventRect, radar, treemap}
+		} = $$;
 		const element = (
 			(hasTreemap && eventReceiver.rect) ||
 			(hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`)) || (
@@ -213,7 +225,9 @@ export default {
 
 			emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](
 				hasTreemap ? treemap.node() : element,
-				type, params);
+				type,
+				params
+			);
 		}
 	},
 
@@ -239,7 +253,7 @@ export default {
 	 * Unbind all attached events
 	 * @private
 	 */
-	unbindAllEvents():	void {
+	unbindAllEvents(): void {
 		const $$ = this;
 		const {$el: {arcs, eventRect, legend, region, svg, treemap}, brush} = $$;
 		const list = [
@@ -262,7 +276,15 @@ export default {
 		].join(" ");
 
 		// detach all possible event types
-		[svg, eventRect, region?.list, brush?.getSelection(), arcs?.selectAll("path"), legend?.selectAll("g"), treemap]
+		[
+			svg,
+			eventRect,
+			region?.list,
+			brush?.getSelection(),
+			arcs?.selectAll("path"),
+			legend?.selectAll("g"),
+			treemap
+		]
 			.forEach(v => v?.on(list, null));
 
 		$$.unbindZoomEvent?.();

@@ -127,13 +127,11 @@ export default {
 	 *      }
 	 *  }
 	 */
-	arc_cornerRadius: <
-		number|((id: string, value: number) => number)
-	> 0,
+	arc_cornerRadius: <number | ((id: string, value: number) => number)>0,
 	arc_cornerRadius_ratio: 0,
 	arc_needle_show: false,
-	arc_needle_color: <string|undefined> undefined,
-	arc_needle_value: <number|undefined> undefined,
+	arc_needle_color: <string | undefined>undefined,
+	arc_needle_value: <number | undefined>undefined,
 	arc_needle_path: undefined,
 	arc_needle_length: 100,
 	arc_needle_top_rx: 0,
@@ -143,14 +141,13 @@ export default {
 	arc_needle_bottom_ry: 1,
 	arc_needle_bottom_width: 15,
 	arc_needle_bottom_len: 0,
-	arc_rangeText_values: <number[]|undefined> undefined,
-	arc_rangeText_unit: <"absolute"|"%"> "absolute",
+	arc_rangeText_values: <number[] | undefined>undefined,
+	arc_rangeText_unit: <"absolute" | "%">"absolute",
 	arc_rangeText_fixed: false,
-	arc_rangeText_format: <
-		((v: number) => number)|undefined
-	> undefined,
+	arc_rangeText_format: <((v: number) => number) | undefined>undefined,
 	arc_rangeText_position: <
-		((v: number) => {x?: number; y?: number})|
-		{x?: number, y?: number}|undefined
-	> undefined
+		| ((v: number) => {x?: number, y?: number})
+		| {x?: number, y?: number}
+		| undefined
+	>undefined
 };

@@ -4,8 +4,8 @@
  */
 import Chart from "../../Chart/Chart";
 import ChartInternal from "../../ChartInternal/ChartInternal";
-import Options from "../Options/Options";
 import {extend} from "../../module/util";
+import Options from "../Options/Options";
 
 // Chart
 import apiSelection from "../../Chart/api/selection";
@@ -13,20 +13,16 @@ import apiSubchart from "../../Chart/api/subchart";
 import apiZoom from "../../Chart/api/zoom";
 
 // ChartInternal
-import selection from "../../ChartInternal/internals/selection";
 import subchart from "../../ChartInternal/interactions/subchart";
 import zoom from "../../ChartInternal/interactions/zoom";
+import selection from "../../ChartInternal/internals/selection";
 
 // Axis based options
 import optDataSelection from "../Options/data/selection";
 import optSubchart from "../Options/interaction/subchart";
 import optZoom from "../Options/interaction/zoom";
 
-export {
-	selectionModule as selection,
-	subchartModule as subchart,
-	zoomModule as zoom
-};
+export {selectionModule as selection, subchartModule as subchart, zoomModule as zoom};
 
 let selectionModule = (): boolean => {
 	extend(ChartInternal.prototype, selection);

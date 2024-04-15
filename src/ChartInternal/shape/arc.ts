@@ -2,16 +2,23 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {select as d3Select} from "d3-selection";
-import {
-	arc as d3Arc,
-	pie as d3Pie
-} from "d3-shape";
 import {interpolate as d3Interpolate} from "d3-interpolate";
-import {document} from "../../module/browser";
-import {$ARC, $COMMON, $FOCUS, $GAUGE} from "../../config/classes";
-import {callFn, endall, isDefined, isFunction, isNumber, isObject, isUndefined, setTextValue, tplProcess} from "../../module/util";
+import {select as d3Select} from "d3-selection";
+import {arc as d3Arc, pie as d3Pie} from "d3-shape";
 import type {d3Selection} from "../../../types/types";
+import {$ARC, $COMMON, $FOCUS, $GAUGE} from "../../config/classes";
+import {document} from "../../module/browser";
+import {
+	callFn,
+	endall,
+	isDefined,
+	isFunction,
+	isNumber,
+	isObject,
+	isUndefined,
+	setTextValue,
+	tplProcess
+} from "../../module/util";
 import type {IArcData, IArcDataRow, IData} from "../data/IData";
 
 /**
@@ -27,11 +34,14 @@ function getRadiusFn(expandRate = 0) {
 	const {config, state} = $$;
 	const hasMultiArcGauge = $$.hasMultiArcGauge();
 	const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
-	const expandWidth = expandRate ? (
-		Math.min(
-			state.radiusExpanded * expandRate - state.radius,
-			singleArcWidth * 0.8 - (1 - expandRate) * 100
-		)) : 0;
+	const expandWidth = expandRate ?
+		(
+			Math.min(
+				state.radiusExpanded * expandRate - state.radius,
+				singleArcWidth * 0.8 - (1 - expandRate) * 100
+			)
+		) :
+		0;
 
 	return {
 		/**
@@ -45,7 +55,9 @@ function getRadiusFn(expandRate = 0) {
 
 			return hasMultiArcGauge ?
 				state.radius - singleArcWidth * (d.index + 1) :
-				isNumber(innerRadius) ? innerRadius : 0;
+				isNumber(innerRadius) ?
+				innerRadius :
+				0;
 		},
 
 		/**
@@ -98,7 +110,8 @@ function getRadiusFn(expandRate = 0) {
 				corner = ratio * outerRadius;
 			} else {
 				corner = isNumber(cornerRadius) ?
-					cornerRadius : cornerRadius.call($$.api, id, value, outerRadius);
+					cornerRadius :
+					cornerRadius.call($$.api, id, value, outerRadius);
 			}
 
 			return corner;
@@ -115,14 +128,17 @@ function getRadiusFn(expandRate = 0) {
 function getAttrTweenFn(fn: (d: IArcData) => string) {
 	return function(d: IArcData): (t: number) => string {
 		const getAngleKeyValue = ({startAngle = 0, endAngle = 0, padAngle = 0}) => ({
-			startAngle, endAngle, padAngle
+			startAngle,
+			endAngle,
+			padAngle
 		});
 
 		// d3.interpolate interpolates id value, if id is given as color string(ex. gold, silver, etc)
 		// to avoid unexpected behavior, interpolate only angle values
 		// https://github.com/naver/billboard.js/issues/3321
 		const interpolate = d3Interpolate(
-			getAngleKeyValue(this._current), getAngleKeyValue(d)
+			getAngleKeyValue(this._current),
+			getAngleKeyValue(d)
 		);
 
 		this._current = d;
@@ -144,8 +160,7 @@ export default {
 		const padding = config[`${dataType}_padding`];
 		const startingAngle = config[`${dataType}_startingAngle`] || 0;
 		const padAngle = (
-			padding ? padding * 0.01 :
-				config[`${dataType}_padAngle`]
+			padding ? padding * 0.01 : config[`${dataType}_padAngle`]
 		) || 0;
 
 		$$.pie = d3Pie()
@@ -186,7 +201,8 @@ export default {
 		// NOTE: inner/outerRadius can be an object by user setting, only for 'pie' type
 		state.outerRadius = config.pie_outerRadius;
 		state.innerRadius = $$.hasType("donut") || $$.hasType("gauge") ?
-			state.radius * state.innerRadiusRatio : innerRadius;
+			state.radius * state.innerRadiusRatio :
+			innerRadius;
 	},
 
 	/**
@@ -225,7 +241,7 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 		const arcLengthInPercent = config.gauge_arcLength * 3.6;
-		let len = (2 * (arcLengthInPercent / 360));
+		let len = 2 * (arcLengthInPercent / 360);
 
 		if (arcLengthInPercent < -360) {
 			len = -2;
@@ -280,7 +296,8 @@ export default {
 
 		const gStart = $$.getStartingAngle();
 		const radius = config.gauge_fullCircle || (forRange && !hasGauge) ?
-			$$.getArcLength() : gStart * -2;
+			$$.getArcLength() :
+			gStart * -2;
 
 		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
 			const {gauge_min: gMin, gauge_max: gMax} = config;
@@ -428,14 +445,14 @@ export default {
 						`${range}${isPercent ? "%" : ""}`
 					);
 				})
-				.merge(rangeText)
-			);
+				.merge(rangeText));
 
 			if ((!state.rendered || (state.rendered && !fixed)) && totalSum > 0) {
 				rangeText.attr("transform", (d, i) => $$.transformForArcLabel(pieData[i], true));
 			}
 
-			rangeText.style("opacity", d => (!fixed && (d > totalSum || totalSum === 0) ? "0" : null));
+			rangeText.style("opacity",
+				d => (!fixed && (d > totalSum || totalSum === 0) ? "0" : null));
 		}
 	},
 
@@ -456,13 +473,15 @@ export default {
 			if (forRange || $$.hasMultiArcGauge()) {
 				const y1 = Math.sin(updated.endAngle - Math.PI / 2);
 				const rangeTextPosition = config.arc_rangeText_position;
-				let x = Math.cos(updated.endAngle - Math.PI / 2) * (radiusExpanded + (forRange ? 5 : 25));
+				let x = Math.cos(updated.endAngle - Math.PI / 2) *
+					(radiusExpanded + (forRange ? 5 : 25));
 				let y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
 
 				if (forRange && rangeTextPosition) {
 					const rangeValues = config.arc_rangeText_values;
 					const pos = isFunction(rangeTextPosition) ?
-						rangeTextPosition(rangeValues[d.index]) : rangeTextPosition;
+						rangeTextPosition(rangeValues[d.index]) :
+						rangeTextPosition;
 
 					x += pos?.x ?? 0;
 					y += pos?.y ?? 0;
@@ -488,7 +507,10 @@ export default {
 					ratio = isFunction(ratio) ? ratio.bind($$.api)(d, outerRadius, h) : ratio;
 				} else {
 					ratio = outerRadius && (
-						h ? (36 / outerRadius > 0.375 ? 1.175 - 36 / outerRadius : 0.8) * outerRadius / h : 0
+						h ?
+							(36 / outerRadius > 0.375 ? 1.175 - 36 / outerRadius : 0.8) *
+							outerRadius / h :
+							0
 					);
 				}
 
@@ -504,7 +526,7 @@ export default {
 			id: "data" in d ? d.data.id : d.id,
 			value: d.value,
 			ratio: this.getRatio("arc", d),
-			index: d.index,
+			index: d.index
 		});
 	},
 
@@ -515,14 +537,14 @@ export default {
 		if ($$.shouldShowArcLabel()) {
 			selection
 				.style("fill", $$.updateTextColor.bind($$))
-				.attr("filter", $$.updateTextBackgroundColor.bind($$))
+				.attr("filter", d =>
+					$$.updateTextBGColor.bind($$)(d, $$.config.data_labels_backgroundColors))
 				.each(function(d) {
 					const node = d3Select(this);
 					const updated = $$.updateAngle(d);
 					const ratio = $$.getRatio("arc", updated);
 					const isUnderThreshold = $$.meetsLabelThreshold(ratio,
-						["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))?.[0]
-					);
+						["donut", "gauge", "pie", "polar"].filter($$.hasType.bind($$))?.[0]);
 
 					if (isUnderThreshold) {
 						const {value} = updated || d;
@@ -565,7 +587,9 @@ export default {
 				}
 
 				const expandDuration = $$.getExpandConfig(d.data.id, "duration");
-				const svgArcExpandedSub = $$.getSvgArcExpanded($$.getExpandConfig(d.data.id, "rate"));
+				const svgArcExpandedSub = $$.getSvgArcExpanded(
+					$$.getExpandConfig(d.data.id, "rate")
+				);
 
 				d3Select(this).selectAll("path")
 					.transition()
@@ -671,7 +695,12 @@ export default {
 
 		const mainPieEnter = mainPieUpdate.enter().append("g")
 			.attr("class", classChartArc)
-			.call(this.setCssRule(false, `.${$ARC.chartArcs} text`, ["pointer-events:none", "text-anchor:middle"]));
+			.call(
+				this.setCssRule(false, `.${$ARC.chartArcs} text`, [
+					"pointer-events:none",
+					"text-anchor:middle"
+				])
+			);
 
 		mainPieEnter.append("g")
 			.attr("class", classArcs)
@@ -1007,7 +1036,8 @@ export default {
 
 			backgroundArc.enter()
 				.append("path")
-				.attr("class", (d, i) => `${$ARC.chartArcsBackground} ${$ARC.chartArcsBackground}-${i}`)
+				.attr("class", (d, i) =>
+					`${$ARC.chartArcsBackground} ${$ARC.chartArcsBackground}-${i}`)
 				.merge(backgroundArc)
 				.style("fill", (config.gauge_background) || null)
 				.attr("d", ({id}) => {
@@ -1139,8 +1169,7 @@ export default {
 
 					$$.callOverOutForTouch(arcData);
 
-					isUndefined(id) ?
-						unselectArc() : selectArc(this, arcData, id);
+					isUndefined(id) ? unselectArc() : selectArc(this, arcData, id);
 				});
 		}
 	},
@@ -1162,11 +1191,13 @@ export default {
 				.attr("transform", d => $$.transformForArcLabel.bind($$)(d))
 				.style("font-size", d => (
 					$$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ?
-						`${Math.round(state.radius / 5)}px` : null
+						`${Math.round(state.radius / 5)}px` :
+						null
 				))
 				.transition()
 				.duration(duration)
-				.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0"));
+				.style("opacity",
+					d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? null : "0"));
 
 			hasMultiArcGauge && text.attr("dy", "-.1em");
 		}
@@ -1177,7 +1208,8 @@ export default {
 		if (hasGauge) {
 			const isFullCircle = config.gauge_fullCircle;
 
-			isFullCircle && text?.attr("dy", `${hasMultiArcGauge ? 0 : Math.round(state.radius / 14)}`);
+			isFullCircle &&
+				text?.attr("dy", `${hasMultiArcGauge ? 0 : Math.round(state.radius / 14)}`);
 
 			if (config.gauge_label_show) {
 				arcs.select(`.${$GAUGE.chartArcsGaugeUnit}`)
@@ -1185,7 +1217,11 @@ export default {
 					.text(config.gauge_units);
 
 				arcs.select(`.${$GAUGE.chartArcsGaugeMin}`)
-					.attr("dx", `${-1 * (state.innerRadius + ((state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)))}px`)
+					.attr("dx", `${
+						-1 *
+						(state.innerRadius +
+							((state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)))
+					}px`)
 					.attr("dy", "1.2em")
 					.text($$.textForGaugeMinMax(config.gauge_min, false));
 
@@ -1207,9 +1243,7 @@ export default {
 	getArcElementByIdOrIndex(value: string | number): d3Selection {
 		const $$ = this;
 		const {$el: {arcs}} = $$;
-		const filterFn = isNumber(value) ?
-			d => d.index === value :
-			d => d.data.id === value;
+		const filterFn = isNumber(value) ? d => d.index === value : d => d.data.id === value;
 
 		return arcs?.selectAll(`.${$COMMON.target} path`)
 			.filter(filterFn);

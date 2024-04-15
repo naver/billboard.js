@@ -2,37 +2,32 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	namespaces as d3Namespaces,
-	select as d3Select
-} from "d3-selection";
+import {select as d3Select} from "d3-selection";
 import type {d3Selection} from "../../../types/types";
 import {$CIRCLE, $COMMON, $SELECT} from "../../config/classes";
-import {document} from "../../module/browser";
+import {
+	getBoundingRect,
+	getPointer,
+	getRandom,
+	isFunction,
+	isObject,
+	isUndefined,
+	isValue
+} from "../../module/util";
 import type {IDataPoint, IDataRow} from "../data/IData";
-import {getBoundingRect, getPointer, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
 
 const getTransitionName = () => getRandom();
 
 export default {
-	hasValidPointType(type?: string): boolean {
-		return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
-	},
-
-	hasValidPointDrawMethods(type?: string): boolean {
-		const pointType = type || this.config.point_type;
-
-		return isObjectType(pointType) &&
-			isFunction(pointType.create) && isFunction(pointType.update);
-	},
-
 	initialOpacityForCircle(d): string | number | null {
 		const {config, state: {withoutFadeIn}} = this;
 		let opacity = config.point_opacity;
 
 		if (isUndefined(opacity)) {
 			opacity = this.getBaseValue(d) !== null &&
-				withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+					withoutFadeIn[d.id] ?
+				this.opacityForCircle(d) :
+				"0";
 		}
 
 		return opacity;
@@ -46,8 +41,8 @@ export default {
 			opacity = config.point_show && !this.isPointFocusOnly?.() ? null : "0";
 
 			opacity = isValue(this.getBaseValue(d)) ?
-				(this.isBubbleType(d) || this.isScatterType(d) ?
-					"0.5" : opacity) : "0";
+				(this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity) :
+				"0";
 		}
 
 		return opacity;
@@ -59,7 +54,10 @@ export default {
 
 		$$.point = $$.generatePoint();
 
-		if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select(`.${$CIRCLE.chartCircles}`).empty()) {
+		if (
+			($$.hasType("bubble") || $$.hasType("scatter")) &&
+			main.select(`.${$CIRCLE.chartCircles}`).empty()
+		) {
 			main.select(`.${$COMMON.chart}`)
 				.append("g")
 				.attr("class", $CIRCLE.chartCircles);
@@ -84,7 +82,7 @@ export default {
 
 		// only for scatter & bubble type should generate seprate <g> node
 		if (!targets) {
-			targets = (data.targets)
+			targets = data.targets
 				.filter(d => this.isScatterType(d) || this.isBubbleType(d));
 
 			const mainCircle = $el.main.select(`.${$CIRCLE.chartCircles}`)
@@ -103,7 +101,9 @@ export default {
 		enterNode.append("g")
 			.attr("class", classCircles)
 			.call(selection => {
-				$$.setCssRule(true, `.${$CIRCLE.circles}`, ["cursor:pointer"], isSelectable)(selection);
+				$$.setCssRule(true, `.${$CIRCLE.circles}`, ["cursor:pointer"], isSelectable)(
+					selection
+				);
 				$$.setCssRule(true, ` .${$CIRCLE.circle}`, ["fill", "stroke"], $$.color)(selection);
 			})
 			.style("opacity", function() {
@@ -137,14 +137,17 @@ export default {
 				.data(d => (
 					($$.isLineType(d) && $$.shouldDrawPointsForLine(d)) ||
 						$$.isBubbleType(d) || $$.isRadarType(d) || $$.isScatterType(d) ?
-						(focusOnly ? [d.values[0]] : d.values) : [])
-				);
+						(focusOnly ? [d.values[0]] : d.values) :
+						[]
+				));
 
 			circles.exit().remove();
 
 			circles.enter()
 				.filter(Boolean)
-				.append($$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$)));
+				.append(
+					$$.point("create", this, $$.pointR.bind($$), $$.updateCircleColor.bind($$))
+				);
 
 			$root.circle = $root.main.selectAll(`.${$CIRCLE.circles} .${$CIRCLE.circle}`)
 				.style("stroke", $$.getStylePropValue($$.color))
@@ -162,8 +165,7 @@ export default {
 		const $$ = this;
 		const fn = $$.getStylePropValue($$.color);
 
-		return $$.config.point_radialGradient ?
-			$$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
+		return $$.config.point_radialGradient ? $$.getGradienColortUrl(d.id) : (fn ? fn(d) : null);
 	},
 
 	redrawCircle(cx: Function, cy: Function, withTransition: boolean, flow, isSub = false) {
@@ -176,7 +178,8 @@ export default {
 			return [];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition, flow, selectedCircles);
+		const fn = $$.point("update", $$, cx, cy, $$.updateCircleColor.bind($$), withTransition,
+			flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
 		const t = getRandom();
@@ -214,15 +217,15 @@ export default {
 			const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
 			const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
 			const withTransition = toggling || isUndefined(d);
-			const fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color), resizing ? false : withTransition);
+			const fn = $$.point("update", $$, cx, cy, $$.getStylePropValue($$.color),
+				resizing ? false : withTransition);
 
 			if (d) {
 				circle = circle
 					.filter(function(t) {
 						const data = d.filter?.(v => v.id === t.id);
 
-						return data.length ?
-							d3Select(this).datum(data[0]) : false;
+						return data.length ? d3Select(this).datum(data[0]) : false;
 					});
 			}
 
@@ -347,15 +350,15 @@ export default {
 		const scale = $$.isBubbleType(d) ? 1.15 : 1.75;
 
 		return config.point_focus_expand_enabled ?
-			(config.point_focus_expand_r || $$.pointR(d) * scale) : $$.pointR(d);
+			(config.point_focus_expand_r || $$.pointR(d) * scale) :
+			$$.pointR(d);
 	},
 
 	pointSelectR(d): number {
 		const $$ = this;
 		const selectR = $$.config.point_select_r;
 
-		return isFunction(selectR) ?
-			selectR(d) : (selectR || $$.pointR(d) * 4);
+		return isFunction(selectR) ? selectR(d) : (selectR || $$.pointR(d) * 4);
 	},
 
 	/**
@@ -375,7 +378,9 @@ export default {
 		const mouse = getPointer(state.event, node);
 		const element = d3Select(node);
 		const prefix = this.isCirclePoint(node) ? "c" : "";
-		const sensitivity = config.point_sensitivity === "radius" ? node.getAttribute("r") : config.point_sensitivity;
+		const sensitivity = config.point_sensitivity === "radius" ?
+			node.getAttribute("r") :
+			config.point_sensitivity;
 		let cx = +element.attr(`${prefix}x`);
 		let cy = +element.attr(`${prefix}y`);
 
@@ -410,46 +415,6 @@ export default {
 		return sensitivity;
 	},
 
-	insertPointInfoDefs(point, id: string): void {
-		const $$ = this;
-		const copyAttr = (from, target) => {
-			const attribs = from.attributes;
-
-			for (let i = 0, name; (name = attribs[i]); i++) {
-				name = name.name;
-				target.setAttribute(name, from.getAttribute(name));
-			}
-		};
-
-		const doc = new DOMParser().parseFromString(point, "image/svg+xml");
-		const node = doc.documentElement;
-		const clone = document.createElementNS(d3Namespaces.svg, node.nodeName.toLowerCase());
-
-		clone.id = id;
-		clone.style.fill = "inherit";
-		clone.style.stroke = "inherit";
-
-		copyAttr(node, clone);
-
-		if (node.childNodes?.length) {
-			const parent = d3Select(clone);
-
-			if ("innerHTML" in clone) {
-				parent.html(node.innerHTML);
-			} else {
-				toArray(node.childNodes).forEach(v => {
-					copyAttr(v, parent.append(v.tagName).node());
-				});
-			}
-		}
-
-		$$.$el.defs.node().appendChild(clone);
-	},
-
-	pointFromDefs(id: string) {
-		return this.$el.defs.select(`#${id}`);
-	},
-
 	updatePointClass(d) {
 		const $$ = this;
 		const {circle} = $$.$el;
@@ -465,13 +430,14 @@ export default {
 					}
 
 					this.setAttribute("class", className);
-				}) : $$.getClass("circle", true)(d);
+				}) :
+				$$.getClass("circle", true)(d);
 		}
 
 		return pointClass;
 	},
 
-	generateGetLinePoints(lineIndices, isSub?: boolean):Function { // partial duplication of generateGetBarPoints
+	generateGetLinePoints(lineIndices, isSub?: boolean): Function { // partial duplication of generateGetBarPoints
 		const $$ = this;
 		const {config} = $$;
 		const x = $$.getShapeX(0, lineIndices, isSub);
@@ -486,9 +452,11 @@ export default {
 			let posY = y(d);
 
 			// fix posY not to overflow opposite quadrant
-			if (config.axis_rotated && (
-				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
-			)) {
+			if (
+				config.axis_rotated && (
+					(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+				)
+			) {
 				posY = y0;
 			}
 
@@ -504,43 +472,6 @@ export default {
 		};
 	},
 
-	generatePoint(): Function {
-		const $$ = this;
-		const {config, state: {datetimeId}} = $$;
-		const ids: string[] = [];
-		const pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
-
-		return function(method, context, ...args) {
-			return function(d) {
-				const id: string = $$.getTargetSelectorSuffix(d.id || d.data?.id || d);
-				const element = d3Select(this);
-
-				ids.indexOf(id) < 0 && ids.push(id);
-
-				let point = pattern[ids.indexOf(id) % pattern.length];
-
-				if ($$.hasValidPointType(point)) {
-					point = $$[point];
-				} else if (!$$.hasValidPointDrawMethods(point)) {
-					const pointId = `${datetimeId}-point${id}`;
-					const pointFromDefs = $$.pointFromDefs(pointId);
-
-					if (pointFromDefs.size() < 1) {
-						$$.insertPointInfoDefs(point, pointId);
-					}
-
-					if (method === "create") {
-						return $$.custom.create.bind(context)(element, pointId, ...args);
-					} else if (method === "update") {
-						return $$.custom.update.bind(context)(element, ...args);
-					}
-				}
-
-				return point[method].bind(context)(element, ...args);
-			};
-		};
-	},
-
 	custom: {
 		create(element, id, fillStyleFn) {
 			return element.append("use")
@@ -550,8 +481,7 @@ export default {
 				.node();
 		},
 
-		update(element, xPosFn, yPosFn, fillStyleFn,
-			withTransition, flow, selectedCircles) {
+		update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
 			const $$ = this;
 			const {width, height} = element.node().getBBox();
 
@@ -583,8 +513,7 @@ export default {
 				.node();
 		},
 
-		update(element, xPosFn, yPosFn, fillStyleFn,
-			withTransition, flow, selectedCircles) {
+		update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
 			const $$ = this;
 			let mainCircles = element;
 
@@ -623,8 +552,7 @@ export default {
 				.node();
 		},
 
-		update(element, xPosFn, yPosFn, fillStyleFn,
-			withTransition, flow, selectedCircles) {
+		update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
 			const $$ = this;
 			const r = $$.config.point_r;
 			const rectXPosFn = d => xPosFn(d) - r;

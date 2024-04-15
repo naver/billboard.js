@@ -64,8 +64,11 @@ module.exports = function(config) {
 						}
 					},
 					{
-						test: /(\.[jt]s)$/,
-						loader: "babel-loader",
+						test: /\.[jt]s$/,
+						loader: "esbuild-loader",
+						options: {
+							target: "es2015"
+						},
 						exclude: {
 							and: [/node_modules/],
 							not: [/(d3\-.*)$/, /internmap/]

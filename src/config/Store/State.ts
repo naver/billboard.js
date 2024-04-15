@@ -55,14 +55,20 @@ export default class State {
 				dataMax: 0,
 
 				maxTickSize: {
-					x: {width: 0, height: 0, ticks: <number[]> [], clipPath: 0, domain: ""},
+					x: {
+						width: 0,
+						height: 0,
+						ticks: <(number | string)[]>[],
+						clipPath: 0,
+						domain: ""
+					},
 					y: {width: 0, height: 0, domain: ""},
 					y2: {width: 0, height: 0, domain: ""}
 				},
 
 				// current used chart type list
-				types: <string[]> [],
-				needle: undefined, // arc needle current value
+				types: <string[]>[],
+				needle: undefined // arc needle current value
 			},
 
 			// legend
@@ -135,25 +141,25 @@ export default class State {
 			orgConfig: {}, // user original genration config
 
 			// ID strings
-			hiddenTargetIds: <string[]> [],
-			hiddenLegendIds: <string[]> [],
-			focusedTargetIds: <string[]> [],
-			defocusedTargetIds: <string[]> [],
+			hiddenTargetIds: <string[]>[],
+			hiddenLegendIds: <string[]>[],
+			focusedTargetIds: <string[]>[],
+			defocusedTargetIds: <string[]>[],
 
 			// value for Arc
 			radius: 0,
-			innerRadius: <{[key: string]: number}|number> 0,
-			outerRadius: <{[key: string]: number}|number|undefined> undefined,
+			innerRadius: <{[key: string]: number} | number>0,
+			outerRadius: <{[key: string]: number} | number | undefined>undefined,
 			innerRadiusRatio: 0,
 			gaugeArcWidth: 0,
 			radiusExpanded: 0,
 
 			// xgrid attribute
 			xgridAttr: {
-				x1: <number | null> null,
-				x2: <number | null> null,
-				y1: <number | null> null,
-				y2: <number | null> null
+				x1: <number | null>null,
+				x2: <number | null>null,
+				y1: <number | null>null,
+				y2: <number | null>null
 			}
 		};
 	}

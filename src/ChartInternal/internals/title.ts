@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isNumber, setTextValue} from "../../module/util";
 import {$TEXT} from "../../config/classes";
+import {isNumber, setTextValue} from "../../module/util";
 
 /**
  * Get the text position
@@ -72,10 +72,10 @@ export default {
 	 */
 	getTitlePadding(): number {
 		const $$ = this;
-		const {$el, config} = $$;
+		const {$el: {title}, config} = $$;
 
 		return (config.title_padding.top || 0) +
-			$$.getTextRect($el.title, $TEXT.title).height +
+			(title ? $$.getTextRect(title, $TEXT.title).height : 0) +
 			(config.title_padding.bottom || 0);
-	},
+	}
 };

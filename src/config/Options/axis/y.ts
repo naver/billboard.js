@@ -59,7 +59,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_type: <"indexed"|"log"|"timeseries"> "indexed",
+	axis_y_type: <"indexed" | "log" | "timeseries">"indexed",
 
 	/**
 	 * Set max value of y axis.
@@ -75,7 +75,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_max: <number|undefined> undefined,
+	axis_y_max: <number | undefined>undefined,
 
 	/**
 	 * Set min value of y axis.
@@ -92,7 +92,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_min: <number|undefined> undefined,
+	axis_y_min: <number | undefined>undefined,
 
 	/**
 	 * Change the direction of y axis.<br><br>
@@ -124,7 +124,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_center: <number|undefined> undefined,
+	axis_y_center: <number | undefined>undefined,
 
 	/**
 	 * Show y axis inside of the chart.
@@ -165,7 +165,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_label: <string|object> {},
+	axis_y_label: <string | object>{},
 
 	/**
 	 * Set formatter for y axis tick text.<br><br>
@@ -185,7 +185,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_tick_format: <Function|undefined> undefined,
+	axis_y_tick_format: <Function | undefined>undefined,
 
 	/**
 	 * Setting for culling ticks.
@@ -283,7 +283,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_tick_values: <number[]|(()=> number[])|null> null,
+	axis_y_tick_values: <number[] | (() => number[]) | null>null,
 
 	/**
 	 * Rotate y axis tick text.
@@ -320,7 +320,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_tick_count: <number|undefined> undefined,
+	axis_y_tick_count: <number | undefined>undefined,
 
 	/**
 	 * Show or hide y axis tick line.
@@ -358,7 +358,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_tick_stepSize: <number|null> null,
+	axis_y_tick_stepSize: <number | null>null,
 
 	/**
 	 * Show or hide y axis tick text.
@@ -425,7 +425,7 @@ export default {
 	 * }
 	 */
 	// @TODO: not fully implemented yet
-	axis_y_tick_time_value: <Function|undefined> undefined,
+	axis_y_tick_time_value: <Function | undefined>undefined,
 
 	/**
 	 * Set padding for y axis.<br><br>
@@ -452,7 +452,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_padding: <number|{top?: number; bottom?: number;}> {},
+	axis_y_padding: <number | {top?: number, bottom?: number}>{},
 
 	/**
 	 * Set default range of y axis.<br><br>
@@ -468,7 +468,7 @@ export default {
 	 *   }
 	 * }
 	 */
-	axis_y_default: <number[]|undefined> undefined,
+	axis_y_default: <number[] | undefined>undefined,
 
 	/**
 	 * Set additional axes for y Axis.
@@ -507,5 +507,5 @@ export default {
 	 *    ]
 	 * }
 	 */
-	axis_y_axes: <object[]> []
+	axis_y_axes: <object[]>[]
 };

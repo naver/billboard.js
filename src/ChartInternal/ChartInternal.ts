@@ -3,22 +3,34 @@
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
-import {
-	timeParse as d3TimeParse,
-	timeFormat as d3TimeFormat,
-	utcParse as d3UtcParse,
-	utcFormat as d3UtcFormat
-} from "d3-time-format";
 import {select as d3Select} from "d3-selection";
+import {
+	timeFormat as d3TimeFormat,
+	timeParse as d3TimeParse,
+	utcFormat as d3UtcFormat,
+	utcParse as d3UtcParse
+} from "d3-time-format";
 import type {d3Selection} from "../../types/types";
-import {checkModuleImport} from "../module/error";
-import {$COMMON, $CIRCLE, $TEXT} from "../config/classes";
-import Store from "../config/Store/Store";
+import {$CIRCLE, $COMMON, $TEXT} from "../config/classes";
 import Options from "../config/Options/Options";
+import Store from "../config/Store/Store";
 import {document, window} from "../module/browser";
 import Cache from "../module/Cache";
+import {checkModuleImport} from "../module/error";
 import {generateResize} from "../module/generator";
-import {capitalize, extend, notEmpty, convertInputType, getOption, getRandom, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
+import {
+	callFn,
+	capitalize,
+	convertInputType,
+	extend,
+	getOption,
+	getRandom,
+	isFunction,
+	isObject,
+	isString,
+	notEmpty,
+	sortValue
+} from "../module/util";
 
 // data
 import dataConvert from "./data/convert";
@@ -29,15 +41,14 @@ import dataLoad from "./data/load";
 import interaction from "./interactions/interaction";
 
 // internals
-import classModule from "./internals/class";
 import category from "./internals/category"; // used to retrieve radar Axis name
+import classModule from "./internals/class";
 import color from "./internals/color";
 import domain from "./internals/domain";
 import format from "./internals/format";
 import legend from "./internals/legend";
 import redraw from "./internals/redraw";
 import scale from "./internals/scale";
-import shape from "./shape/shape";
 import size from "./internals/size";
 import style from "./internals/style";
 import text from "./internals/text";
@@ -45,6 +56,7 @@ import title from "./internals/title";
 import tooltip from "./internals/tooltip";
 import transform from "./internals/transform";
 import typeInternals from "./internals/type";
+import shape from "./shape/shape";
 
 /**
  * Internal chart class.
@@ -54,7 +66,7 @@ import typeInternals from "./internals/type";
  * @private
  */
 export default class ChartInternal {
-	public api;	// API interface
+	public api; // API interface
 	public config; // config object
 	public cache; // cache instance
 	public $el; // elements
@@ -174,7 +186,7 @@ export default class ChartInternal {
 	}
 
 	init(): void {
-		const $$ = <any> this;
+		const $$ = <any>this;
 		const {config, state, $el} = $$;
 		const useCssRule = config.boost_useCssRule;
 
@@ -216,7 +228,8 @@ export default class ChartInternal {
 
 		// select bind element
 		$el.chart = isFunction(bindto.element.node) ?
-			config.bindto.element : d3Select(bindto.element || []);
+			config.bindto.element :
+			d3Select(bindto.element || []);
 
 		if ($el.chart.empty()) {
 			$el.chart = d3Select(document.body.appendChild(document.createElement("div")));
@@ -237,9 +250,10 @@ export default class ChartInternal {
 	 * @private
 	 */
 	initToRender(forced?: boolean): void {
-		const $$ = <any> this;
+		const $$ = <any>this;
 		const {config, state, $el: {chart}} = $$;
-		const isHidden = () => chart.style("display") === "none" || chart.style("visibility") === "hidden";
+		const isHidden = () =>
+			chart.style("display") === "none" || chart.style("visibility") === "hidden";
 
 		const isLazy = config.render.lazy || isHidden();
 		const MutationObserver = window.MutationObserver;
@@ -265,7 +279,7 @@ export default class ChartInternal {
 	}
 
 	initParams(): void {
-		const $$ = <any> this;
+		const $$ = <any>this;
 		const {config, format, state} = $$;
 		const isRotated = config.axis_rotated;
 
@@ -281,7 +295,7 @@ export default class ChartInternal {
 			config.subchart_show = false;
 		}
 
-		if ($$.hasPointType()) {
+		if ($$.hasPointType() || $$.hasLegendDefsPoint?.()) {
 			$$.point = $$.generatePoint();
 		}
 
@@ -296,7 +310,8 @@ export default class ChartInternal {
 
 			format.defaultAxisTime = d => {
 				const {x, zoom} = $$.scale;
-				const isZoomed = isDragZoom ? zoom :
+				const isZoomed = isDragZoom ?
+					zoom :
 					zoom && x.orgDomain().toString() !== zoom.domain().toString();
 
 				const specifier: string = (d.getMilliseconds() && ".%L") ||
@@ -304,7 +319,7 @@ export default class ChartInternal {
 					(d.getMinutes() && "%I:%M") ||
 					(d.getHours() && "%I %p") ||
 					(d.getDate() !== 1 && "%b %d") ||
-					(isZoomed && d.getDate() === 1 && "%b\'%y") ||
+					(isZoomed && d.getDate() === 1 && "%b'%y") ||
 					(d.getMonth() && "%-m/%-d") || "%Y";
 
 				return format.axisTime(specifier)(d);
@@ -330,11 +345,12 @@ export default class ChartInternal {
 	}
 
 	initWithData(data): void {
-		const $$ = <any> this;
+		const $$ = <any>this;
 		const {config, scale, state, $el, org} = $$;
 		const {hasAxis, hasTreemap} = state;
 		const hasInteraction = config.interaction_enabled;
 		const hasPolar = $$.hasType("polar");
+		const labelsBGColor = config.data_labels_backgroundColors;
 
 		// for arc type, set axes to not be shown
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
@@ -355,15 +371,13 @@ export default class ChartInternal {
 		// Set targets to hide if needed
 		if (config.data_hide) {
 			$$.addHiddenTargetIds(
-				config.data_hide === true ?
-					$$.mapToIds($$.data.targets) : config.data_hide
+				config.data_hide === true ? $$.mapToIds($$.data.targets) : config.data_hide
 			);
 		}
 
 		if (config.legend_hide) {
 			$$.addHiddenLegendIds(
-				config.legend_hide === true ?
-					$$.mapToIds($$.data.targets) : config.legend_hide
+				config.legend_hide === true ? $$.mapToIds($$.data.targets) : config.legend_hide
 			);
 		}
 
@@ -413,10 +427,12 @@ export default class ChartInternal {
 		config.svg_classname && $el.svg.attr("class", config.svg_classname);
 
 		// Define defs
-		const hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
+		const hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
 
-		if (hasAxis || hasColorPatterns || hasPolar || hasTreemap ||
-			config.data_labels_backgroundColors) {
+		if (
+			hasAxis || hasColorPatterns || hasPolar || hasTreemap ||
+			labelsBGColor || $$.hasLegendDefsPoint?.()
+		) {
 			$el.defs = $el.svg.append("defs");
 
 			if (hasAxis) {
@@ -426,7 +442,7 @@ export default class ChartInternal {
 			}
 
 			// Append data background color filter definition
-			$$.generateDataLabelBackgroundColorFilter();
+			$$.generateTextBGColorFilter(labelsBGColor);
 
 			// set color patterns
 			if (hasColorPatterns) {
@@ -530,7 +546,7 @@ export default class ChartInternal {
 	 * @private
 	 */
 	initChartElements(): void {
-		const $$ = <any> this;
+		const $$ = <any>this;
 		const {hasAxis, hasRadar, hasTreemap} = $$.state;
 		const types: string[] = [];
 
@@ -579,16 +595,26 @@ export default class ChartInternal {
 	 */
 	setChartElements(): void {
 		const $$ = this;
-		const {$el: {
-			chart, svg, defs, main, tooltip, legend, title, grid, needle,
-			arcs: arc,
-			circle: circles,
-			bar: bars,
-			candlestick,
-			line: lines,
-			area: areas,
-			text: texts,
-		}} = $$;
+		const {
+			$el: {
+				chart,
+				svg,
+				defs,
+				main,
+				tooltip,
+				legend,
+				title,
+				grid,
+				needle,
+				arcs: arc,
+				circle: circles,
+				bar: bars,
+				candlestick,
+				line: lines,
+				area: areas,
+				text: texts
+			}
+		} = $$;
 
 		// public
 		$$.api.$ = {
@@ -643,11 +669,12 @@ export default class ChartInternal {
 	 * @private
 	 */
 	updateTargets(targets): void {
-		const $$ = <any> this;
+		const $$ = <any>this;
 		const {hasAxis, hasRadar, hasTreemap} = $$.state;
-		const helper = type => $$[`updateTargetsFor${type}`](
-			targets.filter($$[`is${type}Type`].bind($$))
-		);
+		const helper = type =>
+			$$[`updateTargetsFor${type}`](
+				targets.filter($$[`is${type}Type`].bind($$))
+			);
 
 		// Text
 		$$.updateTargetsForText(targets);
@@ -665,7 +692,7 @@ export default class ChartInternal {
 			$$.updateTargetsForSubchart &&
 				$$.updateTargetsForSubchart(targets);
 
-		// Arc, Polar, Radar
+			// Arc, Polar, Radar
 		} else if ($$.hasArcType(targets)) {
 			let type = "Arc";
 
@@ -676,7 +703,7 @@ export default class ChartInternal {
 			}
 
 			helper(type);
-		// Arc, Polar, Radar
+			// Arc, Polar, Radar
 		} else if (hasTreemap) {
 			helper("Treemap");
 		}
@@ -698,7 +725,7 @@ export default class ChartInternal {
 	 * @private
 	 */
 	filterTargetsToShowAtInit(hasPointType: boolean = false): void {
-		const $$ = <any> this;
+		const $$ = <any>this;
 		const {$el: {svg}, $T} = $$;
 		let selector = `.${$COMMON.target}`;
 
@@ -707,8 +734,7 @@ export default class ChartInternal {
 		}
 
 		$T(svg.selectAll(selector)
-			.filter(d => $$.isTargetToShow(d.id))
-		).style("opacity", null);
+			.filter(d => $$.isTargetToShow(d.id))).style("opacity", null);
 	}
 
 	getWithOption(options) {
@@ -742,17 +768,19 @@ export default class ChartInternal {
 	}
 
 	initialOpacity(d): null | "0" {
-		const $$ = <any> this;
+		const $$ = <any>this;
 		const {withoutFadeIn} = $$.state;
 
 		const r = $$.getBaseValue(d) !== null &&
-			withoutFadeIn[d.id] ? null : "0";
+				withoutFadeIn[d.id] ?
+			null :
+			"0";
 
 		return r;
 	}
 
 	bindResize(): void {
-		const $$ = <any> this;
+		const $$ = <any>this;
 		const {config, state} = $$;
 		const resizeFunction = generateResize(config.resize_timer);
 		const list: Function[] = [];

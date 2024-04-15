@@ -39,7 +39,10 @@ export const $AXIS = {
 	axisY: "bb-axis-y",
 	axisY2: "bb-axis-y2",
 	axisY2Label: "bb-axis-y2-label",
-	axisYLabel: "bb-axis-y-label"
+	axisYLabel: "bb-axis-y-label",
+	axisXTooltip: "bb-axis-x-tooltip",
+	axisYTooltip: "bb-axis-y-tooltip",
+	axisY2Tooltip: "bb-axis-y2-tooltip"
 };
 
 export const $BAR = {
@@ -103,8 +106,7 @@ export const $EVENT = {
 	eventRect: "bb-event-rect",
 	eventRects: "bb-event-rects",
 	eventRectsMultiple: "bb-event-rects-multiple",
-	eventRectsSingle: "bb-event-rects-single",
-
+	eventRectsSingle: "bb-event-rects-single"
 };
 
 export const $FOCUS = {
@@ -151,7 +153,7 @@ export const $SELECT = {
 
 export const $SHAPE = {
 	shape: "bb-shape",
-	shapes: "bb-shapes",
+	shapes: "bb-shapes"
 };
 
 export const $SUBCHART = {

@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isString, isValue} from "./util";
 import type {DataRow} from "../../types/types";
+import {isString, isValue} from "./util";
 
 /**
  * Constant for cache key
@@ -57,7 +57,7 @@ export default class Cache {
 	 * @returns {*}
 	 * @private
 	 */
-	get(key: string|string[], isDataType = false): any | null {
+	get(key: string | string[], isDataType = false): any | null {
 		// when is isDataType, key should be string array
 		if (isDataType && Array.isArray(key)) {
 			const targets: any[] = [];
@@ -98,7 +98,6 @@ export default class Cache {
 	 * @returns {object}
 	 * @private
 	 */
-	// eslint-disable-next-line camelcase
 	cloneTarget(target: DataRow): DataRow {
 		return {
 			id: target.id,

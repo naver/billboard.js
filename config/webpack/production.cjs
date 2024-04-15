@@ -2,12 +2,9 @@ const {merge} = require("webpack-merge");
 const webpack = require("webpack");
 const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
-const TerserPlugin = require("terser-webpack-plugin");
-const terserConfig = require("../terserConfig.cjs");
 const banner = require("../template/banner.cjs");
-const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const {EsbuildPlugin} = require("esbuild-loader");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const ESLintPlugin = require("eslint-webpack-plugin");
 
 const config = {
 	entry: {
@@ -32,16 +29,11 @@ const config = {
 		usedExports: true,
 		minimize: true,
 		minimizer: [
-			new TerserPlugin(terserConfig),
-			new CssMinimizerPlugin({
-				test: /\.min\.css$/i,
-				minimizerOptions: {
-					preset: [
-						"default", {
-							discardComments: true
-						}
-					]
-				}
+			new EsbuildPlugin({
+				include: /\.min\.(js|css)$/,
+				target: "es2015",
+				css: true,
+				format: undefined
 			})
 		]
 	},
@@ -57,10 +49,6 @@ const config = {
 		new webpack.BannerPlugin({
 			banner: banner.production,
 			entryOnly: true
-		}),
-		new ESLintPlugin({
-			failOnError: true,
-			formatter: "stylish"
 		})
 	]
 };

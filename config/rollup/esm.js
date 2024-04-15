@@ -1,5 +1,4 @@
 import {readdirSync} from "fs";
-import babel from '@rollup/plugin-babel';
 import typescript from "@rollup/plugin-typescript";
 import resolve from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
@@ -26,9 +25,6 @@ const plugins = [
         runOnce: true
     }),
     resolve(),
-    babel({
-        babelHelpers: "runtime"
-    }),
     typescript(),
     replace({
         "__VERSION__": version,

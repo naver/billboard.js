@@ -1,0 +1,46 @@
+{
+	"lineWidth": 100,
+	"indentWidth": 4,
+	"useTabs": true,
+	"newLineKind": "lf",
+	"includes": [
+		"src/**/*.{ts,tsx,js,jsx,json}",
+		"packages/**/src/**/*.{ts,tsx,js,jsx,json}"
+	],
+	"typescript": {
+		// JavaScript and TypeScript configuration
+		// https://dprint.dev/plugins/typescript/config/
+		//"preferSingleLine": true,
+		// "conditionalType.preferSingleLine": true,
+		//"forInStatement.preferHanging": true,
+		//"preferHanging": true,
+		"quoteProps": "asNeeded",
+		"trailingCommas": "never",
+		"operatorPosition": "sameLine",
+		"arguments.preferHanging": "always",
+		"bracePosition": "maintain",
+		"parameters.preferHanging": "always",
+		"arrowFunction.useParentheses": "preferNone",
+		"singleBodyPosition": "maintain",
+		"conditionalExpression.preferSingleLine": true,
+		"typeLiteral.preferSingleLine": true,
+		"useBraces": "whenNotSingleLine",
+		"spaceSurroundingProperties": false,
+		"typeLiteral.separatorKind": "comma",
+		"typeAssertion.spaceBeforeExpression": false,
+		"unionAndIntersectionType.preferHanging": true,
+		"importDeclaration.spaceSurroundingNamedImports": false,
+		"exportDeclaration.spaceSurroundingNamedExports": false
+	},
+	"json": {
+		// https://dprint.dev/plugins/json/config/
+		"lineWidth": 100,
+		"trailingCommas": "never",
+		"newLineKind": "lf",
+		"useTabs": true
+	},
+	"plugins": [
+		"https://plugins.dprint.dev/typescript-0.89.3.wasm",
+		"https://plugins.dprint.dev/json-0.19.2.wasm"
+	]
+}

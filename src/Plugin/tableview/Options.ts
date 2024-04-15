@@ -46,7 +46,7 @@ export default class Options {
 			 * @example
 			 *   categoryFormat: "#table-holder"
 			 */
-			categoryFormat: function(v: Date|number|string): string {
+			categoryFormat: function(v: Date | number | string): string {
 				let category = v;
 
 				if (this.$$.axis.isCategorized()) {

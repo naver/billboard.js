@@ -72,15 +72,15 @@ export default {
 	 *      ...
 	 * }
 	 */
-	zoom_enabled: <boolean> false,
-	zoom_type: <"wheel" | "drag"> "wheel",
-	zoom_extent: <number[]|undefined> undefined,
+	zoom_enabled: <boolean>false,
+	zoom_type: <"wheel" | "drag">"wheel",
+	zoom_extent: <number[] | undefined>undefined,
 	zoom_privileged: false,
 	zoom_rescale: false,
-	zoom_onzoom: <Function|undefined> undefined,
-	zoom_onzoomstart: <Function|undefined> undefined,
-	zoom_onzoomend: <Function|undefined> undefined,
-	zoom_resetButton: <{text: string;}|boolean> true,
-	zoom_x_min: <Number|Date|undefined> undefined,
-	zoom_x_max: <Number|Date|undefined> undefined
+	zoom_onzoom: <Function | undefined>undefined,
+	zoom_onzoomstart: <Function | undefined>undefined,
+	zoom_onzoomend: <Function | undefined>undefined,
+	zoom_resetButton: <{text: string} | boolean>true,
+	zoom_x_min: <Number | Date | undefined>undefined,
+	zoom_x_max: <Number | Date | undefined>undefined
 };

@@ -2,8 +2,9 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import type {d3Selection} from "../../../types";
 import {$COMMON, $EVENT, $SHAPE} from "../../config/classes";
-import {isboolean, getPointer, getScrollPosition, isFunction} from "../../module/util";
+import {getPointer, getScrollPosition, isboolean, isFunction} from "../../module/util";
 
 export default {
 	/**
@@ -33,12 +34,14 @@ export default {
 		if ($el.eventRect) {
 			$$.updateEventRect($el.eventRect, true);
 
-		// do not initialize eventRect when data is empty
+			// do not initialize eventRect when data is empty
 		} else if ($$.data.targets.length) {
 			const eventRects = $$.$el.main.select(`.${$EVENT.eventRects}`)
-				.style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? (
-					config.axis_rotated ? "ns-resize" : "ew-resize"
-				) : null)
+				.style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ?
+					(
+						config.axis_rotated ? "ns-resize" : "ew-resize"
+					) :
+					null)
 				.classed($EVENT.eventRectsMultiple, isMultipleX)
 				.classed($EVENT.eventRectsSingle, !isMultipleX);
 
@@ -60,7 +63,10 @@ export default {
 
 			$el.eventRect = eventRectUpdate;
 
-			if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
+			if (
+				$$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") &&
+				!$$.hasArcType()
+			) {
 				$$.bindTouchOnEventRect();
 			}
 
@@ -99,9 +105,7 @@ export default {
 
 				$$.callOverOutForTouch(index);
 
-				index === -1 ?
-					$$.unselectRect() :
-					$$.selectRectForSingle(context, index);
+				index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, index);
 			}
 		};
 
@@ -130,9 +134,12 @@ export default {
 					startPx = currentXY;
 				}
 			} else if (eventType === "touchmove") {
-				if (isPrevented || startPx === true || (
-					preventThreshold !== null && Math.abs(startPx - currentXY) >= preventThreshold
-				)) {
+				if (
+					isPrevented || startPx === true || (
+						preventThreshold !== null &&
+						Math.abs(startPx - currentXY) >= preventThreshold
+					)
+				) {
 					// once prevented, keep prevented during whole 'touchmove' context
 					startPx = true;
 					event.preventDefault();
@@ -151,7 +158,10 @@ export default {
 
 				if (!eventRect.empty() && eventRect.classed($EVENT.eventRect)) {
 					// if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
-					if (state.dragging || state.flowing || $$.hasArcType() || event.touches.length > 1) {
+					if (
+						state.dragging || state.flowing || $$.hasArcType() ||
+						event.touches.length > 1
+					) {
 						return;
 					}
 
@@ -344,7 +354,11 @@ export default {
 		}
 
 		// remove possible previous focused state
-		!circle && main.selectAll(`.${$COMMON.EXPANDED}:not(.${$SHAPE.shape}-${index})`).classed($COMMON.EXPANDED, false);
+		!circle &&
+			main.selectAll(`.${$COMMON.EXPANDED}:not(.${$SHAPE.shape}-${index})`).classed(
+				$COMMON.EXPANDED,
+				false
+			);
 
 		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
 			.classed($COMMON.EXPANDED, true)
@@ -364,7 +378,8 @@ export default {
 			.call(selected => {
 				const d = selected.data();
 
-				if (isSelectionEnabled &&
+				if (
+					isSelectionEnabled &&
 					(isSelectionGrouped || isSelectable?.bind($$.api)(d))
 				) {
 					context.style.cursor = "pointer";
@@ -410,8 +425,10 @@ export default {
 		}
 
 		const sameXData = (
-			$$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped
-		) ? [closest] : $$.filterByX(targetsToShow, closest.x);
+				$$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped
+			) ?
+			[closest] :
+			$$.filterByX(targetsToShow, closest.x);
 
 		// show tooltip when cursor is close to some point
 		const selectedData = sameXData.map(d => $$.addName(d));
@@ -470,14 +487,14 @@ export default {
 		const {eventReceiver} = state;
 
 		const rect = eventRectEnter
-			.style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
+			.style("cursor",
+				config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
 			.on("click", function(event) {
 				state.event = event;
 
 				const {currentIdx, data} = eventReceiver;
 				const d = data[
-					currentIdx === -1 ?
-						$$.getDataIndexFromEvent(event) : currentIdx
+					currentIdx === -1 ? $$.getDataIndexFromEvent(event) : currentIdx
 				];
 
 				$$.clickHandlerForSingleX.bind(this)(d, $$);
@@ -494,6 +511,9 @@ export default {
 				.on("mouseover", event => {
 					state.event = event;
 					$$.updateEventRect();
+
+					Object.values($$.$el.axisTooltip)
+						.forEach((v: d3Selection) => v?.style("display", null));
 				})
 				.on("mousemove", function(event) {
 					const d = getData(event);
@@ -508,7 +528,10 @@ export default {
 					const stepType = config.line_step_type;
 
 					// tooltip position match for step-before & step-after
-					if (config.line_step_tooltipMatch && $$.hasType("step") && /^step\-(before|after)$/.test(stepType)) {
+					if (
+						config.line_step_tooltipMatch && $$.hasType("step") &&
+						/^step\-(before|after)$/.test(stepType)
+					) {
 						const scale = $$.scale.zoom || $$.scale.x;
 						const xs = $$.axis.xs[index];
 						const inverted = scale.invert(getPointer(event, this)[0]);
@@ -520,7 +543,10 @@ export default {
 						}
 					}
 
-					const eventOnSameIdx = config.tooltip_grouped && index === eventReceiver.currentIdx;
+					$$.showAxisGridFocus();
+
+					const eventOnSameIdx = config.tooltip_grouped &&
+						index === eventReceiver.currentIdx;
 
 					// do nothing while dragging/flowing
 					if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
@@ -533,8 +559,7 @@ export default {
 						eventReceiver.currentIdx = index;
 					}
 
-					index === -1 ?
-						$$.unselectRect() : $$.selectRectForSingle(this, index);
+					index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, index);
 
 					// As of individual data point(or <path>) element can't bind mouseover/out event
 					// to determine current interacting element, so use 'mousemove' event instead.
@@ -547,6 +572,8 @@ export default {
 					if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
 						return;
 					}
+
+					$$.hideAxisGridFocus();
 
 					$$.unselectRect();
 					$$.setOverOut(false, eventReceiver.currentIdx);
@@ -626,7 +653,9 @@ export default {
 
 		const mouse = getPointer(state.event, this);
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
-		const sensitivity = config.point_sensitivity === "radius" ? closest.r : config.point_sensitivity;
+		const sensitivity = config.point_sensitivity === "radius" ?
+			closest.r :
+			config.point_sensitivity;
 
 		if (!closest) {
 			return;

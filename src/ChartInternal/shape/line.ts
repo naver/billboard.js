@@ -3,9 +3,17 @@
  * billboard.js project is licensed under the MIT license
  */
 import {line as d3Line} from "d3-shape";
-import {getScale} from "../internals/scale";
 import {$COMMON, $LINE} from "../../config/classes";
-import {getPointer, getRandom, isArray, isDefined, isUndefined, isValue, parseDate} from "../../module/util";
+import {
+	getPointer,
+	getRandom,
+	isArray,
+	isDefined,
+	isUndefined,
+	isValue,
+	parseDate
+} from "../../module/util";
+import {getScale} from "../internals/scale";
 
 export default {
 	initLine(): void {
@@ -94,7 +102,7 @@ export default {
 	redrawLine(drawFn, withTransition?: boolean, isSub = false) {
 		const $$ = this;
 		const {$el, $T} = $$;
-		const {line} = (isSub ? $el.subchart : $el);
+		const {line} = isSub ? $el.subchart : $el;
 
 		return [
 			$T(line, withTransition, getRandom())
@@ -116,31 +124,33 @@ export default {
 
 		// when is step & rotated, should be computed in different way
 		// https://github.com/naver/billboard.js/issues/471
-		return isRotatedStepType ? context => {
-			const step = $$.getInterpolate(d)(context);
+		return isRotatedStepType ?
+			context => {
+				const step = $$.getInterpolate(d)(context);
 
-			// keep the original method
-			step.orgPoint = step.point;
+				// keep the original method
+				step.orgPoint = step.point;
 
-			// to get rotated path data
-			step.pointRotated = function(x, y) {
-				this._point === 1 && (this._point = 2);
+				// to get rotated path data
+				step.pointRotated = function(x, y) {
+					this._point === 1 && (this._point = 2);
 
-				const y1 = this._y * (1 - this._t) + y * this._t;
+					const y1 = this._y * (1 - this._t) + y * this._t;
 
-				this._context.lineTo(this._x, y1);
-				this._context.lineTo(x, y1);
+					this._context.lineTo(this._x, y1);
+					this._context.lineTo(x, y1);
 
-				this._x = x;
-				this._y = y;
-			};
+					this._x = x;
+					this._y = y;
+				};
 
-			step.point = function(x, y) {
-				this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
-			};
+				step.point = function(x, y) {
+					this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
+				};
 
-			return step;
-		} : $$.getInterpolate(d);
+				return step;
+			} :
+			$$.getInterpolate(d);
 	},
 
 	generateDrawLine(lineIndices, isSub?: boolean): (d) => string {
@@ -154,15 +164,12 @@ export default {
 
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (
-			$$.isGrouped(d.id) ?
-				getPoints(d, i)[0][1] :
-				yScale(d.id, isSub)($$.getBaseValue(d))
+			$$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)($$.getBaseValue(d))
 		);
 
 		let line = d3Line();
 
-		line = isRotated ?
-			line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
+		line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
 
 		if (!lineConnectNull) {
 			line = line.defined(d => $$.getBaseValue(d) !== null);
@@ -236,25 +243,34 @@ export default {
 		const yValue = isRotated ? dt => x(dt.x) : dt => y(dt.value);
 
 		// Define svg generator function for region
-		const generateM = points => `M${points[0][0]},${points[0][1]}L${points[1][0]},${points[1][1]}`;
-		const sWithRegion = isTimeSeries ? (d0, d1, k, timeseriesDiff) => {
-			const x0 = d0.x.getTime();
-			const xDiff = d1.x - d0.x;
-			const xv0 = new Date(x0 + xDiff * k);
-			const xv1 = new Date(x0 + xDiff * (k + timeseriesDiff));
+		const generateM = points =>
+			`M${points[0][0]},${points[0][1]}L${points[1][0]},${points[1][1]}`;
+		const sWithRegion = isTimeSeries ?
+			(d0, d1, k, timeseriesDiff) => {
+				const x0 = d0.x.getTime();
+				const xDiff = d1.x - d0.x;
+				const xv0 = new Date(x0 + xDiff * k);
+				const xv1 = new Date(x0 + xDiff * (k + timeseriesDiff));
 
-			const points = isRotated ?
-				[[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] :
-				[[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
+				const points = isRotated ?
+					[[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] :
+					[[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
 
-			return generateM(points);
-		} : (d0, d1, k, otherDiff) => {
-			const points = isRotated ?
-				[[y(yp(k), true), x(xp(k))], [y(yp(k + otherDiff), true), x(xp(k + otherDiff))]] :
-				[[x(xp(k), true), y(yp(k))], [x(xp(k + otherDiff), true), y(yp(k + otherDiff))]];
+				return generateM(points);
+			} :
+			(d0, d1, k, otherDiff) => {
+				const points = isRotated ?
+					[[y(yp(k), true), x(xp(k))], [
+						y(yp(k + otherDiff), true),
+						x(xp(k + otherDiff))
+					]] :
+					[[x(xp(k), true), y(yp(k))], [
+						x(xp(k + otherDiff), true),
+						y(yp(k + otherDiff))
+					]];
 
-			return generateM(points);
-		};
+				return generateM(points);
+			};
 
 		// Generate
 		const axisType = {x: $$.axis.getAxisType("x"), y: $$.axis.getAxisType("y")};
@@ -324,5 +340,5 @@ export default {
 
 		return linePoint === true ||
 			(isArray(linePoint) && linePoint.indexOf(d.id) !== -1);
-	},
+	}
 };

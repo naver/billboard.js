@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isNumber} from "../../module/util";
 import type {AxisType} from "../../../types/types";
+import {isNumber} from "../../module/util";
 
 export default {
 	/**
@@ -32,7 +32,9 @@ export default {
 			return width + (
 				$$.config.padding?.mode === "fit" ?
 					position.isInner ? (10 + gap) : 10 :
-					position.isInner ? (20 + gap) : 40
+					position.isInner ?
+					(20 + gap) :
+					40
 			);
 		} else {
 			return 40;
@@ -48,8 +50,9 @@ export default {
 		const isInner = config[`axis_${id}_inner`];
 		const hasLabelText = config[`axis_${id}_label`].text;
 		const defaultHeight = 13;
-		let h = config.padding?.mode === "fit" ? (isInner && !hasLabelText ? (id === "y" ? 1 : 0) : 20) : 30;
-
+		let h = config.padding?.mode === "fit" ?
+			(isInner && !hasLabelText ? (id === "y" ? 1 : 0) : 20) :
+			30;
 
 		if (id === "x" && !config.axis_x_show) {
 			return 8;
@@ -61,8 +64,10 @@ export default {
 
 		if (id === "y" && !config.axis_y_show) {
 			return config.legend_show &&
-				!isLegendRight &&
-				!isLegendInset ? 10 : 1;
+					!isLegendRight &&
+					!isLegendInset ?
+				10 :
+				1;
 		}
 
 		if (id === "y2" && !config.axis_y2_show) {
@@ -71,11 +76,14 @@ export default {
 
 		const maxtickSize = $$.axis.getMaxTickSize(id);
 
-		const isXAxisTickRotated = config.axis_x_tick_rotate > 0 && (
+		const isXAxisTickRotated = Math.abs(config.axis_x_tick_rotate) > 0 && (
 			!config.axis_x_tick_autorotate || $$.needToRotateXAxisTickTexts()
 		);
 
-		if ((config.axis_x_tick_multiline || isXAxisTickRotated) && maxtickSize.height > defaultHeight) {
+		if (
+			(config.axis_x_tick_multiline || isXAxisTickRotated) &&
+			maxtickSize.height > defaultHeight
+		) {
 			h += maxtickSize.height - defaultHeight;
 		}
 
@@ -130,15 +138,15 @@ export default {
 				state.axis.x.tickCount = tickCount;
 			}
 
-			if ($el.svg &&
+			if (
+				$el.svg &&
 				config.axis_x_tick_autorotate &&
 				config.axis_x_tick_fit &&
 				!config.axis_x_tick_multiline &&
 				!config.axis_x_tick_culling &&
 				allowedXAxisTypes
 			) {
-				rotate = $$.needToRotateXAxisTickTexts() ?
-					config.axis_x_tick_rotate : 0;
+				rotate = $$.needToRotateXAxisTickTexts() ? config.axis_x_tick_rotate : 0;
 			}
 		}
 

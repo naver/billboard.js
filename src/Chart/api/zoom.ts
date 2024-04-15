@@ -3,8 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 import {zoomIdentity as d3ZoomIdentity, zoomTransform as d3ZoomTransform} from "d3-zoom";
-import {extend, getMinMax, isDefined, isObject, parseDate} from "../../module/util";
 import type {TDomainRange} from "../../ChartInternal/data/IData";
+import {extend, getMinMax, isDefined, isObject, parseDate} from "../../module/util";
 
 /**
  * Zoom by giving x domain range.
@@ -183,7 +183,7 @@ extend(zoom, {
 	 *      max: 100
 	 *  });
 	 */
-	range(range): {min: (number|undefined)[], max: (number|undefined)[]} {
+	range(range): {min: (number | undefined)[], max: (number | undefined)[]} {
 		const zoom = this.zoom;
 
 		if (isObject(range)) {

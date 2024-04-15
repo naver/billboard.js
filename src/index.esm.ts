@@ -25,10 +25,6 @@ export {
 } from "./config/resolver/shape";
 
 // interaction module
-export {
-	selection,
-	subchart,
-	zoom
-} from "./config/resolver/interaction";
+export {selection, subchart, zoom} from "./config/resolver/interaction";
 
-export {default, bb} from "./core";
+export {bb, default} from "./core";

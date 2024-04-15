@@ -55,7 +55,6 @@ export default {
 
 		if (state.rendered) {
 			// reset possible zoom scale when is called from resize event
-			// eslint-disable-next-line prefer-rest-params
 			if (state.resizing) { // arguments[1] is given when is called from resize
 				$$.brush?.updateResize();
 			} else {
@@ -68,16 +67,18 @@ export default {
 			zoomResetBtn?.style("display", "none");
 			$$.scale.zoom = null;
 
-			soft ? $$.redraw({
-				withTransform: true,
-				withUpdateXDomain: true,
-				withUpdateOrgXDomain: true,
-				withLegend: true
-			}) : $$.updateAndRedraw({
-				withLegend: true,
-				withTransition: false,
-				withTransitionForTransform: false,
-			});
+			soft ?
+				$$.redraw({
+					withTransform: true,
+					withUpdateXDomain: true,
+					withUpdateOrgXDomain: true,
+					withLegend: true
+				}) :
+				$$.updateAndRedraw({
+					withLegend: true,
+					withTransition: false,
+					withTransitionForTransform: false
+				});
 
 			// reset subchart selection & selection state
 			if (!state.resizing && $$.brush) {

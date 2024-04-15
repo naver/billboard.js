@@ -5,15 +5,15 @@
  */
 import {select as d3Select} from "d3-selection";
 import type {d3Selection} from "../../../types/types";
+import {isArray, isFunction, isNumber, isString, toArray} from "../../module/util";
 import Helper from "./AxisRendererHelper";
-import {isArray, toArray, isFunction, isString, isNumber} from "../../module/util";
 
 export default class AxisRenderer {
 	private helper;
 	private config;
 	private params;
 	private g;
-	private generatedTicks: (Date|number)[];
+	private generatedTicks: (Date | number)[];
 
 	constructor(params: any = {}) {
 		const config = {
@@ -71,7 +71,8 @@ export default class AxisRenderer {
 		// // get the axis' tick position configuration
 		const id = params.id;
 		const tickTextPos = id && /^(x|y|y2)$/.test(id) ?
-			params.config[`axis_${id}_tick_text_position`] : {x: 0, y: 0};
+			params.config[`axis_${id}_tick_text_position`] :
+			{x: 0, y: 0};
 
 		// tick visiblity
 		const prefix = id === "subX" ? `subchart_axis_x` : `axis_${id}`;
@@ -91,8 +92,7 @@ export default class AxisRenderer {
 			$g = g;
 			this.__chart__ = scale1;
 
-			config.tickOffset = params.isCategory ?
-				Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
+			config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
 
 			// update selection - data join
 			const path = g.selectAll(".domain").data([0]);
@@ -143,9 +143,11 @@ export default class AxisRenderer {
 					.selectAll("tspan")
 					.data((d, index) => {
 						const split = params.tickMultiline ?
-							splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : (
+							splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) :
+							(
 								isArray(helper.textFormatted(d)) ?
-									helper.textFormatted(d).concat() : [helper.textFormatted(d)]
+									helper.textFormatted(d).concat() :
+									[helper.textFormatted(d)]
 							);
 
 						counts[index] = split.length;
@@ -168,7 +170,8 @@ export default class AxisRenderer {
 						let dx = 0;
 
 						if (/(top|bottom)/.test(orient) && rotate) {
-							dx = 8 * Math.sin(Math.PI * (rotate / 180)) * (orient === "top" ? -1 : 1);
+							dx = 8 * Math.sin(Math.PI * (rotate / 180)) *
+								(orient === "top" ? -1 : 1);
 						}
 
 						return dx + (tickTextPos.x || 0);
@@ -181,13 +184,13 @@ export default class AxisRenderer {
 							dy = sizeFor1Char.h;
 
 							if (i === 0) {
-								dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) :
+								dy = isLeftRight ?
+									-((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) :
 									(tickTextPos.y === 0 ? defValue : 0);
 							}
 						}
 
-						return isNumber(dy) && tickTextPos.y ?
-							dy + tickTextPos.y : dy || defValue;
+						return isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || defValue;
 					});
 
 				const lineUpdate = tick.select("line");
@@ -238,7 +241,7 @@ export default class AxisRenderer {
 	 * @returns {Array} Generated ticks
 	 * @private
 	 */
-	getGeneratedTicks(count: number): (Date|number)[] {
+	getGeneratedTicks(count: number): (Date | number)[] {
 		const len = this.generatedTicks?.length - 1;
 		let res = this.generatedTicks;
 
@@ -248,7 +251,7 @@ export default class AxisRenderer {
 			res = this.generatedTicks
 				.map((v, i) => (i % interval === 0 ? v : null))
 				.filter(v => v !== null)
-				.splice(0, count) as (Date|number)[];
+				.splice(0, count) as (Date | number)[];
 		}
 
 		return res;
@@ -313,10 +316,12 @@ export default class AxisRenderer {
 			return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
 		};
 
-		const {config: {
-			axis_rotated: isRotated,
-			axis_x_tick_text_inner: inner
-		}} = this.params.owner;
+		const {
+			config: {
+				axis_rotated: isRotated,
+				axis_x_tick_text_inner: inner
+			}
+		} = this.params.owner;
 
 		switch (orient) {
 			case "bottom":
@@ -332,7 +337,9 @@ export default class AxisRenderer {
 					.style("text-anchor", (d, i, {length}) => {
 						if (!isRotated && i === 0 && (inner === true || inner.first)) {
 							return "start";
-						} else if (!isRotated && i === length - 1 && (inner === true || inner.last)) {
+						} else if (
+							!isRotated && i === length - 1 && (inner === true || inner.last)
+						) {
 							return "end";
 						}
 
@@ -379,7 +386,8 @@ export default class AxisRenderer {
 		const {params} = this;
 		const tickText = this.helper.textFormatted(d);
 		const splitted = isString(tickText) && tickText.indexOf("\n") > -1 ?
-			tickText.split("\n") : [];
+			tickText.split("\n") :
+			[];
 
 		if (splitted.length) {
 			return splitted;
@@ -393,13 +401,15 @@ export default class AxisRenderer {
 
 		if (!tickWidth || tickWidth <= 0) {
 			tickWidth = isLeftRight ? 95 : (
-				params.isCategory ?	(
-					Math.ceil(
-						params.isInverted ?
-							scale(ticks[0]) - scale(ticks[1]) :
-							scale(ticks[1]) - scale(ticks[0])
-					) - 12
-				) : 110
+				params.isCategory ?
+					(
+						Math.ceil(
+							params.isInverted ?
+								scale(ticks[0]) - scale(ticks[1]) :
+								scale(ticks[1]) - scale(ticks[0])
+						) - 12
+					) :
+					110
 			);
 		}
 
@@ -449,11 +459,13 @@ export default class AxisRenderer {
 		}
 
 		this.config.orient = x in {
-			top: 1,
-			right: 1,
-			bottom: 1,
-			left: 1
-		} ? String(x) : "bottom";
+				top: 1,
+				right: 1,
+				bottom: 1,
+				left: 1
+			} ?
+			String(x) :
+			"bottom";
 
 		return this;
 	}
@@ -505,6 +517,7 @@ export default class AxisRenderer {
 		if (this.params.isCategory) {
 			interval = tickOffset * 2;
 		} else {
+			const scale = this.params.owner.scale.zoom ?? this.helper.scale;
 			const length = this.g.select("path.domain")
 				.node()
 				.getTotalLength() - outerTickSize * 2;
@@ -512,13 +525,14 @@ export default class AxisRenderer {
 			interval = length / (size || this.g.selectAll("line").size());
 
 			// get the interval by its values
-			const intervalByValue = tickValues ? tickValues
-				.map((v, i, arr) => {
-					const next = i + 1;
+			const intervalByValue = tickValues ?
+				tickValues
+					.map((v, i, arr) => {
+						const next = i + 1;
 
-					return next < arr.length ?
-						this.helper.scale(arr[next]) - this.helper.scale(v) : null;
-				}).filter(Boolean) : [];
+						return next < arr.length ? scale(arr[next]) - scale(v) : null;
+					}).filter(Boolean) :
+				[];
 
 			interval = Math.min(...intervalByValue, interval);
 		}
@@ -550,7 +564,9 @@ export default class AxisRenderer {
 		return this;
 	}
 
-	tickValues(x?: (number|Date|string)[]|Function): AxisRenderer | (number|Date|string)[] {
+	tickValues(
+		x?: (number | Date | string)[] | Function
+	): AxisRenderer | (number | Date | string)[] {
 		const {config} = this;
 
 		if (isFunction(x)) {

@@ -425,8 +425,9 @@ var billboardDemo = {
 				this.$chartArea.innerHTML = "";
 			}
 
+			index > 1 && this.$chartArea.appendChild(document.createElement("hr"));
 			this.$chartArea.appendChild($el);
-
+			
 			if (/^(legend|tooltip)Template/.test(key) || /(sparkline)/.test(key)) {
 				const name = RegExp.$1;
 				let attrName = "id";

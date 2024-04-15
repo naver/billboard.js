@@ -55,13 +55,13 @@ export default {
 		}
 
 		const max = getMinMax("max", $$.getMinMaxData().max.map(d => (
-			$$.isBubbleZType(d) ?
-				$$.getBubbleZData(d.value, "y") : (
-					isObject(d.value) ? d.value.mid : d.value
-				)
+			$$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : (
+				isObject(d.value) ? d.value.mid : d.value
+			)
 		)));
 		const maxArea = maxR * maxR * Math.PI;
-		const area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
+		const area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) *
+			(maxArea / max);
 
 		return Math.sqrt(area / Math.PI);
 	},

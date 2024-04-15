@@ -51,6 +51,10 @@ g > text.bb-title {
     margin-top: 0;
   }
 
+  .code {
+    margin:0;
+  }
+  
   .code .html {
     max-height: 80px;
     overflow: auto;

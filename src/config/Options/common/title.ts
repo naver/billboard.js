@@ -35,12 +35,12 @@ export default {
 	 *      position: "center"
 	 *  }
 	 */
-	title_text: <string|undefined> undefined,
+	title_text: <string | undefined>undefined,
 	title_padding: {
 		top: 0,
 		right: 0,
 		bottom: 0,
 		left: 0
 	},
-	title_position: <"center"|"right"|"left"> "center"
+	title_position: <"center" | "right" | "left">"center"
 };

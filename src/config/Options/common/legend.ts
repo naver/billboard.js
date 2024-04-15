@@ -68,7 +68,7 @@ export default {
 	 *   - rectangle
 	 * @property {boolean} [legend.format] Set formatter function for legend text.
 	 * The argument:<br>
-	 *  - `id`: legend text(which is data id) value
+	 *  - `id`: legend text value. When `data.names` is specified, will pass from it, otherwise will pass data id.
 	 * @property {boolean} [legend.tooltip=false] Show full legend text value using system tooltip(via `<title>` element).
 	 * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
 	 * @see [Demo: format](https://naver.github.io/billboard.js/demo/#Legend.LegendFormat)
@@ -147,28 +147,27 @@ export default {
 	 *      usePoint: true
 	 *  }
 	 */
-	legend_contents_bindto: <string|HTMLElement|undefined> undefined,
-	legend_contents_template: <string|(() => string)|undefined> "<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>",
+	legend_contents_bindto: <string | HTMLElement | undefined>undefined,
+	legend_contents_template: <string | (() => string)
+		| undefined>"<span style='color:#fff;padding:5px;background-color:{=COLOR}'>{=TITLE}</span>",
 	legend_equally: false,
 	legend_hide: false,
-	legend_inset_anchor: <"top-left"|"top-right"|"bottom-left"|"bottom-right"> "top-left",
+	legend_inset_anchor: <"top-left" | "top-right" | "bottom-left" | "bottom-right">"top-left",
 	legend_inset_x: 10,
 	legend_inset_y: 0,
-	legend_inset_step: <number|undefined> undefined,
-	legend_item_interaction: <boolean|{
-		dblclick?: boolean;
-	}> true,
+	legend_inset_step: <number | undefined>undefined,
+	legend_item_interaction: <boolean | {dblclick?: boolean}>true,
 	legend_item_dblclick: false,
-	legend_item_onclick: <Function|undefined> undefined,
-	legend_item_onover: <Function|undefined> undefined,
-	legend_item_onout: <Function|undefined> undefined,
+	legend_item_onclick: <Function | undefined>undefined,
+	legend_item_onover: <Function | undefined>undefined,
+	legend_item_onout: <Function | undefined>undefined,
 	legend_item_tile_width: 10,
 	legend_item_tile_height: 10,
 	legend_item_tile_r: 5,
-	legend_item_tile_type: <"rectangle"|"circle"> "rectangle",
-	legend_format: <Function|undefined> undefined,
+	legend_item_tile_type: <"rectangle" | "circle">"rectangle",
+	legend_format: <Function | undefined>undefined,
 	legend_padding: 0,
-	legend_position: <"bottom"|"right"|"inset"> "bottom",
+	legend_position: <"bottom" | "right" | "inset">"bottom",
 	legend_show: true,
 	legend_tooltip: false,
 	legend_usePoint: false

@@ -8,11 +8,11 @@
 // Chart
 import apiAxis from "../../Chart/api/axis";
 import apiCategory from "../../Chart/api/category";
+import apiFlow from "../../Chart/api/flow";
 import apiGrid from "../../Chart/api/grid";
 import apiGroup from "../../Chart/api/group";
 import apiRegion from "../../Chart/api/regions";
 import apiX from "../../Chart/api/x";
-import apiFlow from "../../Chart/api/flow";
 
 // ChartInternal
 import axis from "../../ChartInternal/Axis/Axis";
@@ -25,9 +25,9 @@ import region from "../../ChartInternal/internals/region";
 import sizeAxis from "../../ChartInternal/internals/size.axis";
 
 // Axis based options
-import optDataAxis from "../Options/data/axis";
 import optAxis from "../Options/axis/axis";
 import optGrid from "../Options/common/grid";
+import optDataAxis from "../Options/data/axis";
 
 export const api = [
 	apiAxis,
@@ -39,18 +39,18 @@ export const api = [
 	apiX
 ];
 
-export const internal = [
+export const internal = {
 	axis,
 	clip,
 	eventrect,
 	flow,
 	grid,
 	region,
-	sizeAxis,
-];
+	sizeAxis
+};
 
-export const options = [
+export const options = {
 	optDataAxis,
 	optAxis,
-	optGrid,
-];
+	optGrid
+};
