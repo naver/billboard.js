@@ -408,6 +408,13 @@ export interface RegionOptions {
 	start?: string | number | Date;
 	end?: string | number | Date;
 	class?: string;
+	label?: {
+		text?: string;
+		x?: number;
+		y?: number;
+		color?: string;
+		rotated?: boolean;
+	}
 }
 
 export interface LegendOptions {
