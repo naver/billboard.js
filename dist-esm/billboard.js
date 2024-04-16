@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240413004531
+ * @version 3.11.3-nightly-20240416004620
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -12318,7 +12318,16 @@ function regionsFn(regions, isAdd) {
  * // Show 2 regions
  * chart.regions([
  *    {axis: "x", start: 5, class: "regionX"},
- *    {axis: "y", end: 50, class: "regionY"}
+ *    {
+ *      axis: "y", end: 50, class: "regionY",
+ *      label: {
+ *      	text: "Region Text",
+ *      	x: 5,  // position relative of the initial x coordinate
+ *      	y: 5,  // position relative of the initial y coordinate
+ *      	color: "red",  // color string
+ *      	rotated: true  // make text to show in vertical or horizontal
+ *      }
+ *    }
  * ]);
  */
 var regions = function (regions) {
@@ -12336,13 +12345,28 @@ extend(regions, {
      * @example
      * // Add a new region
      * chart.regions.add(
-     *    {axis: "x", start: 5, class: "regionX"}
+     *    {
+     *      axis: "x", start: 5, class: "regionX",
+     *      label: {
+     *      	text: "Region Text",
+     *      	color: "red"  // color string
+     *      }
+     *    }
      * );
      *
      * // Add new regions
      * chart.regions.add([
      *    {axis: "x", start: 5, class: "regionX"},
-     *    {axis: "y", end: 50, class: "regionY"}
+     *    {
+     *      axis: "y", end: 50, class: "regionY",
+     *      label: {
+     *      	text: "Region Text",
+     *      	x: 5,  // position relative of the initial x coordinate
+     *      	y: 5,  // position relative of the initial y coordinate
+     *      	color: "red",  // color string
+     *      	rotated: true  // make text to show in vertical or horizontal
+     *      }
+     *    }
      * ]);
      */
     add: function (regions) {
@@ -23778,7 +23802,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.3-nightly-20240413004531
+ * @version 3.11.3-nightly-20240416004620
  */
 var bb = {
     /**
@@ -23788,7 +23812,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.3-nightly-20240413004531",
+    version: "3.11.3-nightly-20240416004620",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
