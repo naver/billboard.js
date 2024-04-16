@@ -42,7 +42,16 @@ function regionsFn(regions: RegionsParam, isAdd = false): RegionsParam {
  * // Show 2 regions
  * chart.regions([
  *    {axis: "x", start: 5, class: "regionX"},
- *    {axis: "y", end: 50, class: "regionY"}
+ *    {
+ *      axis: "y", end: 50, class: "regionY",
+ *      label: {
+ *      	text: "Region Text",
+ *      	x: 5,  // position relative of the initial x coordinate
+ *      	y: 5,  // position relative of the initial y coordinate
+ *      	color: "red",  // color string
+ *      	rotated: true  // make text to show in vertical or horizontal
+ *      }
+ *    }
  * ]);
  */
 const regions = function(regions: RegionsParam): RegionsParam {
@@ -61,13 +70,28 @@ extend(regions, {
 	 * @example
 	 * // Add a new region
 	 * chart.regions.add(
-	 *    {axis: "x", start: 5, class: "regionX"}
+	 *    {
+	 *      axis: "x", start: 5, class: "regionX",
+	 *      label: {
+	 *      	text: "Region Text",
+	 *      	color: "red"  // color string
+	 *      }
+	 *    }
 	 * );
 	 *
 	 * // Add new regions
 	 * chart.regions.add([
 	 *    {axis: "x", start: 5, class: "regionX"},
-	 *    {axis: "y", end: 50, class: "regionY"}
+	 *    {
+	 *      axis: "y", end: 50, class: "regionY",
+	 *      label: {
+	 *      	text: "Region Text",
+	 *      	x: 5,  // position relative of the initial x coordinate
+	 *      	y: 5,  // position relative of the initial y coordinate
+	 *      	color: "red",  // color string
+	 *      	rotated: true  // make text to show in vertical or horizontal
+	 *      }
+	 *    }
 	 * ]);
 	 */
 	add: function(regions: RegionsParam): RegionsParam {
