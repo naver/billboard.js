@@ -100,6 +100,7 @@ export function runWorker(
 			worker.onmessage = function(e) {
 				// release object URL from memory
 				window.URL.revokeObjectURL(src);
+				console.log(src); // eslint-disable-line
 
 				return callback(e.data);
 			};
