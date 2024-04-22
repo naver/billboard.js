@@ -1186,4 +1186,97 @@ describe("API load", function() {
 			});
 		});
 	});
+
+	describe("Check different type loading", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 20, 50, 40, 60, 50],
+						["data2"]
+					],
+					type: "line", 
+					types: {
+						data2: "scatter"
+					}
+				}
+			};
+		});
+
+		it("should generate 'scatter' when line type is used at generation.", done => {
+			chart.load({
+				columns: [
+					["data2", 200, 130, 90, 240, 130, 220],
+				],
+				done() {
+					const pointer = this.$.circles.filter(({id}) => id === "data2");
+					const target = {
+						data: {
+							x: 3,
+							id: "data2",
+							value: 240
+						}
+					}
+
+					expect(pointer.size()).to.be.equal(this.data.values("data2").length);
+
+					// when
+					this.tooltip.show(target);
+
+					expect(+this.$.tooltip.select(".value").text()).to.be.equal(target.data.value);
+
+					// when unload
+					this.unload({
+						ids: ["data2"],
+						done() {
+							this.tooltip.show({x: 3});
+							expect(+this.$.tooltip.select(".value").text()).to.be.equal(40);
+	
+							done();
+						}
+					});
+				}
+			});
+		});
+
+		it("set options: data.types={data2: 'bubble'}", () => {
+			args.data.types.data2 = "bubble";
+		});
+
+		it("should generate 'bubble' when line type is used at generation.", done => {
+			chart.load({
+				columns: [
+					["data2", 200, 130, 90, 240, 130, 220],
+				],
+				done() {
+					const pointer = this.$.circles.filter(({id}) => id === "data2");
+					const target = {
+						data: {
+							x: 3,
+							id: "data2",
+							value: 240
+						}
+					}
+
+					expect(pointer.size()).to.be.equal(this.data.values("data2").length);
+
+					// when
+					this.tooltip.show(target);
+
+					expect(+this.$.tooltip.select(".value").text()).to.be.equal(target.data.value);
+
+					// when unload
+					this.unload({
+						ids: ["data2"],
+						done() {
+							this.tooltip.show({x: 3});
+							expect(+this.$.tooltip.select(".value").text()).to.be.equal(40);
+	
+							done();
+						}
+					});
+				}
+			});
+		});
+	});
 });

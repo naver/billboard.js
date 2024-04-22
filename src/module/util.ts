@@ -38,7 +38,7 @@ export {
 	getUnique,
 	hasValue,
 	isArray,
-	isboolean,
+	isBoolean,
 	isDefined,
 	isEmpty,
 	isFunction,
@@ -67,7 +67,7 @@ const isString = (v: unknown): v is string => typeof v === "string";
 const isNumber = (v: unknown): v is number => typeof v === "number";
 const isUndefined = (v: unknown): v is undefined => typeof v === "undefined";
 const isDefined = (v: unknown): boolean => typeof v !== "undefined";
-const isboolean = (v: unknown): boolean => typeof v === "boolean";
+const isBoolean = (v: unknown): boolean => typeof v === "boolean";
 const ceil10 = (v: number): number => Math.ceil(v / 10) * 10;
 const asHalfPixel = (n: number): number => Math.ceil(n) + 0.5;
 const diffDomain = (d: number[]): number => d[1] - d[0];
