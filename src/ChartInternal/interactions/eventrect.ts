@@ -4,7 +4,7 @@
  */
 import type {d3Selection} from "../../../types";
 import {$COMMON, $EVENT, $SHAPE} from "../../config/classes";
-import {getPointer, getScrollPosition, isboolean, isFunction} from "../../module/util";
+import {getPointer, getScrollPosition, isBoolean, isFunction} from "../../module/util";
 
 export default {
 	/**
@@ -54,9 +54,8 @@ export default {
 			$$.updateEventRect(eventRectUpdate);
 
 			// bind event to <rect> element
-			isMultipleX ?
-				$$.generateEventRectsForMultipleXs(eventRectUpdate) :
-				$$.generateEventRectsForSingleX(eventRectUpdate);
+			$$.updateEventType(eventRectUpdate);
+
 
 			// bind draggable selection
 			eventRectUpdate.call($$.getDraggableSelection());
@@ -117,7 +116,7 @@ export default {
 		// call event.preventDefault()
 		// according 'interaction.inputType.touch.preventDefault' option
 		const preventDefault = config.interaction_inputType_touch.preventDefault;
-		const isPrevented = (isboolean(preventDefault) && preventDefault) || false;
+		const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
 		const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
 		let startPx;
 
@@ -233,6 +232,26 @@ export default {
 	},
 
 	/**
+	 * Update event type (single or multiple x)
+	 * @param {d3Selection | boolean} target Target element or boolean to rebind event
+	 */
+	updateEventType(target: d3Selection | boolean): void {
+		const $$ = this;
+		const isRebindCall = isBoolean(target);
+		const eventRect = isRebindCall ? $$.$el.eventRect : target;
+		const unbindEvent = isRebindCall ? target !== eventRect?.datum().multipleX : false;
+
+		if (eventRect) {
+			// release previous event listeners
+			unbindEvent && eventRect?.on("mouseover mousemove mouseout click", null);
+
+			$$.isMultipleX() ?
+				$$.generateEventRectsForMultipleXs(eventRect) :
+				$$.generateEventRectsForSingleX(eventRect);
+		}
+	},
+
+	/**
 	 * Updates the location and size of the eventRect.
 	 * @private
 	 */
@@ -241,12 +260,15 @@ export default {
 		const {config, scale, state} = $$;
 		const xScale = scale.zoom || scale.x;
 		const isRotated = config.axis_rotated;
+		const isMultipleX = $$.isMultipleX();
 		let x;
 		let y;
 		let w;
 		let h;
 
-		if ($$.isMultipleX()) {
+		$$.updateEventType(isMultipleX);
+
+		if (isMultipleX) {
 			// TODO: rotated not supported yet
 			x = 0;
 			y = 0;
@@ -498,7 +520,8 @@ export default {
 				];
 
 				$$.clickHandlerForSingleX.bind(this)(d, $$);
-			});
+			})
+			.datum({multipleX: false});
 
 		if (state.inputType === "mouse") {
 			const getData = event => {
@@ -621,7 +644,8 @@ export default {
 			.on("click", function(event) {
 				state.event = event;
 				$$.clickHandlerForMultipleXS.bind(this)($$);
-			});
+			})
+			.datum({multipleX: true});
 
 		if (state.inputType === "mouse") {
 			eventRectEnter

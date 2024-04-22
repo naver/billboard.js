@@ -52,11 +52,11 @@ export default {
 		const $$ = this;
 		const {$el: {main}} = $$;
 
-		$$.point = $$.generatePoint();
+		!$$.point && ($$.point = $$.generatePoint());
 
 		if (
 			($$.hasType("bubble") || $$.hasType("scatter")) &&
-			main.select(`.${$CIRCLE.chartCircles}`).empty()
+			main.select(`.${$COMMON.chart} > .${$CIRCLE.chartCircles}`).empty()
 		) {
 			main.select(`.${$COMMON.chart}`)
 				.append("g")
@@ -75,7 +75,7 @@ export default {
 			return;
 		}
 
-		!$el.circle && $$.initCircle();
+		$$.initCircle();
 
 		let targets = targetsValue;
 		let enterNode = enterNodeValue;
