@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240417004609
+ * @version 3.11.3-nightly-20240423004619
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2164,7 +2164,7 @@ var isString = function (v) { return typeof v === "string"; };
 var isNumber = function (v) { return typeof v === "number"; };
 var isUndefined = function (v) { return typeof v === "undefined"; };
 var isDefined = function (v) { return typeof v !== "undefined"; };
-var isboolean = function (v) { return typeof v === "boolean"; };
+var isBoolean = function (v) { return typeof v === "boolean"; };
 var ceil10 = function (v) { return Math.ceil(v / 10) * 10; };
 var asHalfPixel = function (n) { return Math.ceil(n) + 0.5; };
 var diffDomain = function (d) { return d[1] - d[0]; };
@@ -4427,7 +4427,7 @@ var data$1 = {
     },
     hasDataLabel: function () {
         var dataLabels = this.config.data_labels;
-        return (isboolean(dataLabels) && dataLabels) ||
+        return (isBoolean(dataLabels) && dataLabels) ||
             (isObjectType(dataLabels) && notEmpty(dataLabels));
     },
     /**
@@ -13966,9 +13966,7 @@ var eventrect = {
                 .append("rect");
             $$.updateEventRect(eventRectUpdate);
             // bind event to <rect> element
-            isMultipleX ?
-                $$.generateEventRectsForMultipleXs(eventRectUpdate) :
-                $$.generateEventRectsForSingleX(eventRectUpdate);
+            $$.updateEventType(eventRectUpdate);
             // bind draggable selection
             eventRectUpdate.call($$.getDraggableSelection());
             $el.eventRect = eventRectUpdate;
@@ -14013,7 +14011,7 @@ var eventrect = {
         // call event.preventDefault()
         // according 'interaction.inputType.touch.preventDefault' option
         var preventDefault = config.interaction_inputType_touch.preventDefault;
-        var isPrevented = (isboolean(preventDefault) && preventDefault) || false;
+        var isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
         var preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
         var startPx;
         var preventEvent = function (event) {
@@ -14111,6 +14109,23 @@ var eventrect = {
         updateClientRect();
     },
     /**
+     * Update event type (single or multiple x)
+     * @param {d3Selection | boolean} target Target element or boolean to rebind event
+     */
+    updateEventType: function (target) {
+        var $$ = this;
+        var isRebindCall = isBoolean(target);
+        var eventRect = isRebindCall ? $$.$el.eventRect : target;
+        var unbindEvent = isRebindCall ? target !== (eventRect === null || eventRect === void 0 ? void 0 : eventRect.datum().multipleX) : false;
+        if (eventRect) {
+            // release previous event listeners
+            unbindEvent && (eventRect === null || eventRect === void 0 ? void 0 : eventRect.on("mouseover mousemove mouseout click", null));
+            $$.isMultipleX() ?
+                $$.generateEventRectsForMultipleXs(eventRect) :
+                $$.generateEventRectsForSingleX(eventRect);
+        }
+    },
+    /**
      * Updates the location and size of the eventRect.
      * @private
      */
@@ -14119,11 +14134,13 @@ var eventrect = {
         var config = $$.config, scale = $$.scale, state = $$.state;
         var xScale = scale.zoom || scale.x;
         var isRotated = config.axis_rotated;
+        var isMultipleX = $$.isMultipleX();
         var x;
         var y;
         var w;
         var h;
-        if ($$.isMultipleX()) {
+        $$.updateEventType(isMultipleX);
+        if (isMultipleX) {
             // TODO: rotated not supported yet
             x = 0;
             y = 0;
@@ -14333,7 +14350,8 @@ var eventrect = {
             var currentIdx = eventReceiver.currentIdx, data = eventReceiver.data;
             var d = data[currentIdx === -1 ? $$.getDataIndexFromEvent(event) : currentIdx];
             $$.clickHandlerForSingleX.bind(this)(d, $$);
-        });
+        })
+            .datum({ multipleX: false });
         if (state.inputType === "mouse") {
             var getData_1 = function (event) {
                 var index = event ? $$.getDataIndexFromEvent(event) : eventReceiver.currentIdx;
@@ -14429,7 +14447,8 @@ var eventrect = {
             .on("click", function (event) {
             state.event = event;
             $$.clickHandlerForMultipleXS.bind(this)($$);
-        });
+        })
+            .datum({ multipleX: true });
         if (state.inputType === "mouse") {
             eventRectEnter
                 .on("mouseover mousemove", function (event) {
@@ -14838,7 +14857,7 @@ function getGridTextX(isX, width, height) {
  * @private
  */
 function smoothLines(el, type) {
-    if (type === "grid") {
+    {
         el.each(function () {
             var g = select(this);
             ["x1", "x2", "y1", "y2"]
@@ -14931,7 +14950,7 @@ var grid = {
             .attr("x2", isRotated ? pos : state.width)
             .attr("y1", isRotated ? 0 : pos)
             .attr("y2", isRotated ? state.height : pos);
-        smoothLines(grid.y, "grid");
+        smoothLines(grid.y);
     },
     updateGrid: function () {
         var $$ = this;
@@ -15164,7 +15183,7 @@ var grid = {
             ["x1", "y1", "x2", "y2"]
                 .forEach(function (v, i) { return el.attr(v, xy[i]); });
         });
-        smoothLines(focusEl, "grid");
+        smoothLines(focusEl);
         (_a = $$.showCircleFocus) === null || _a === void 0 ? void 0 : _a.call($$, data);
     },
     hideGridFocus: function () {
@@ -18343,7 +18362,7 @@ var shapeArc = {
         }
         // eslint-disable-next-line
         function unselectArc(arcData) {
-            var id = (arcData === null || arcData === void 0 ? void 0 : arcData.id) || undefined;
+            var id = undefined;
             $$.unexpandArc(id);
             $$.api.revert();
             $$.revertLegend();
@@ -19531,9 +19550,9 @@ var shapePoint = {
     initCircle: function () {
         var $$ = this;
         var main = $$.$el.main;
-        $$.point = $$.generatePoint();
+        !$$.point && ($$.point = $$.generatePoint());
         if (($$.hasType("bubble") || $$.hasType("scatter")) &&
-            main.select(".".concat($CIRCLE.chartCircles)).empty()) {
+            main.select(".".concat($COMMON.chart, " > .").concat($CIRCLE.chartCircles)).empty()) {
             main.select(".".concat($COMMON.chart))
                 .append("g")
                 .attr("class", $CIRCLE.chartCircles);
@@ -19549,7 +19568,7 @@ var shapePoint = {
         if (!config.point_show) {
             return;
         }
-        !$el.circle && $$.initCircle();
+        $$.initCircle();
         var targets = targetsValue;
         var enterNode = enterNodeValue;
         // only for scatter & bubble type should generate seprate <g> node
@@ -23803,7 +23822,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.3-nightly-20240417004609
+ * @version 3.11.3-nightly-20240423004619
  */
 var bb = {
     /**
@@ -23813,7 +23832,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.3-nightly-20240417004609",
+    version: "3.11.3-nightly-20240423004619",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240417004609
+ * @version 3.11.3-nightly-20240423004619
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -25356,7 +25356,7 @@ const isString = (v) => typeof v === "string";
 const isNumber = (v) => typeof v === "number";
 const isUndefined = (v) => typeof v === "undefined";
 const isDefined = (v) => typeof v !== "undefined";
-const isboolean = (v) => typeof v === "boolean";
+const isBoolean = (v) => typeof v === "boolean";
 const ceil10 = (v) => Math.ceil(v / 10) * 10;
 const asHalfPixel = (n) => Math.ceil(n) + 0.5;
 const diffDomain = (d) => d[1] - d[0];
@@ -27278,7 +27278,7 @@ function getDataKeyForJson(keysParam, config) {
   },
   hasDataLabel() {
     const dataLabels = this.config.data_labels;
-    return isboolean(dataLabels) && dataLabels || isObjectType(dataLabels) && notEmpty(dataLabels);
+    return isBoolean(dataLabels) && dataLabels || isObjectType(dataLabels) && notEmpty(dataLabels);
   },
   /**
    * Get data index from the event coodinates
@@ -39954,7 +39954,7 @@ class Axis_Axis {
       const eventRects = $$.$el.main.select(`.${$EVENT.eventRects}`).style("cursor", config.zoom_enabled && config.zoom_type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed($EVENT.eventRectsMultiple, isMultipleX).classed($EVENT.eventRectsSingle, !isMultipleX);
       const eventRectUpdate = eventRects.selectAll(`.${$EVENT.eventRect}`).data([0]).enter().append("rect");
       $$.updateEventRect(eventRectUpdate);
-      isMultipleX ? $$.generateEventRectsForMultipleXs(eventRectUpdate) : $$.generateEventRectsForSingleX(eventRectUpdate);
+      $$.updateEventType(eventRectUpdate);
       eventRectUpdate.call($$.getDraggableSelection());
       $el.eventRect = eventRectUpdate;
       if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
@@ -39991,7 +39991,7 @@ class Axis_Axis {
       $$.callOverOutForTouch();
     };
     const preventDefault = config.interaction_inputType_touch.preventDefault;
-    const isPrevented = isboolean(preventDefault) && preventDefault || false;
+    const isPrevented = isBoolean(preventDefault) && preventDefault || false;
     const preventThreshold = !isNaN(preventDefault) && preventDefault || null;
     let startPx;
     const preventEvent = (event) => {
@@ -40069,6 +40069,20 @@ class Axis_Axis {
     updateClientRect();
   },
   /**
+   * Update event type (single or multiple x)
+   * @param {d3Selection | boolean} target Target element or boolean to rebind event
+   */
+  updateEventType(target) {
+    const $$ = this;
+    const isRebindCall = isBoolean(target);
+    const eventRect = isRebindCall ? $$.$el.eventRect : target;
+    const unbindEvent = isRebindCall ? target !== (eventRect == null ? void 0 : eventRect.datum().multipleX) : false;
+    if (eventRect) {
+      unbindEvent && (eventRect == null ? void 0 : eventRect.on("mouseover mousemove mouseout click", null));
+      $$.isMultipleX() ? $$.generateEventRectsForMultipleXs(eventRect) : $$.generateEventRectsForSingleX(eventRect);
+    }
+  },
+  /**
    * Updates the location and size of the eventRect.
    * @private
    */
@@ -40077,11 +40091,13 @@ class Axis_Axis {
     const { config, scale, state } = $$;
     const xScale = scale.zoom || scale.x;
     const isRotated = config.axis_rotated;
+    const isMultipleX = $$.isMultipleX();
     let x;
     let y;
     let w;
     let h;
-    if ($$.isMultipleX()) {
+    $$.updateEventType(isMultipleX);
+    if (isMultipleX) {
       x = 0;
       y = 0;
       w = state.width;
@@ -40266,7 +40282,7 @@ class Axis_Axis {
       const { currentIdx, data } = eventReceiver;
       const d = data[currentIdx === -1 ? $$.getDataIndexFromEvent(event) : currentIdx];
       $$.clickHandlerForSingleX.bind(this)(d, $$);
-    });
+    }).datum({ multipleX: false });
     if (state.inputType === "mouse") {
       const getData = (event) => {
         const index = event ? $$.getDataIndexFromEvent(event) : eventReceiver.currentIdx;
@@ -40347,7 +40363,7 @@ class Axis_Axis {
     eventRectEnter.on("click", function(event) {
       state.event = event;
       $$.clickHandlerForMultipleXS.bind(this)($$);
-    });
+    }).datum({ multipleX: true });
     if (state.inputType === "mouse") {
       eventRectEnter.on("mouseover mousemove", function(event) {
         state.event = event;
@@ -45424,8 +45440,8 @@ const getTransitionName = () => getRandom();
   initCircle() {
     const $$ = this;
     const { $el: { main } } = $$;
-    $$.point = $$.generatePoint();
-    if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select(`.${$CIRCLE.chartCircles}`).empty()) {
+    !$$.point && ($$.point = $$.generatePoint());
+    if (($$.hasType("bubble") || $$.hasType("scatter")) && main.select(`.${$COMMON.chart} > .${$CIRCLE.chartCircles}`).empty()) {
       main.select(`.${$COMMON.chart}`).append("g").attr("class", $CIRCLE.chartCircles);
     }
   },
@@ -45438,7 +45454,7 @@ const getTransitionName = () => getRandom();
     if (!config.point_show) {
       return;
     }
-    !$el.circle && $$.initCircle();
+    $$.initCircle();
     let targets = targetsValue;
     let enterNode = enterNodeValue;
     if (!targets) {
@@ -48219,7 +48235,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.3-nightly-20240417004609",
+  version: "3.11.3-nightly-20240423004619",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

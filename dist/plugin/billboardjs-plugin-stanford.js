@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240417004609
+ * @version 3.11.3-nightly-20240423004619
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -359,7 +359,7 @@ const isString = (v) => typeof v === "string";
 const isNumber = (v) => typeof v === "number";
 const isUndefined = (v) => typeof v === "undefined";
 const isDefined = (v) => typeof v !== "undefined";
-const isboolean = (v) => typeof v === "boolean";
+const isBoolean = (v) => typeof v === "boolean";
 const ceil10 = (v) => Math.ceil(v / 10) * 10;
 const asHalfPixel = (n) => Math.ceil(n) + 0.5;
 const diffDomain = (d) => d[1] - d[0];
@@ -813,7 +813,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.11.3-nightly-20240417004609");
+__publicField(Plugin, "version", "3.11.3-nightly-20240423004619");
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(8);
