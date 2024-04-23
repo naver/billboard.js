@@ -56,7 +56,6 @@ export default {
 			// bind event to <rect> element
 			$$.updateEventType(eventRectUpdate);
 
-
 			// bind draggable selection
 			eventRectUpdate.call($$.getDraggableSelection());
 
