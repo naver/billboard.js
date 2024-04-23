@@ -11,7 +11,7 @@ import {
 	getUnique,
 	hasValue,
 	isArray,
-	isboolean,
+	isBoolean,
 	isDefined,
 	isFunction,
 	isNumber,
@@ -672,7 +672,7 @@ export default {
 	hasDataLabel() {
 		const dataLabels = this.config.data_labels;
 
-		return (isboolean(dataLabels) && dataLabels) ||
+		return (isBoolean(dataLabels) && dataLabels) ||
 			(isObjectType(dataLabels) && notEmpty(dataLabels));
 	},
 

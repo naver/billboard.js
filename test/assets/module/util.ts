@@ -38,7 +38,7 @@ export const {
 	getUnique,
 	hasValue,
 	isArray,
-	isboolean,
+	isBoolean,
 	isDefined,
 	isEmpty,
 	isFunction,
