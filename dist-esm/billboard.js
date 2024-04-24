@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240423004619
+ * @version 3.11.3-nightly-20240424004612
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -14857,7 +14857,7 @@ function getGridTextX(isX, width, height) {
  * @private
  */
 function smoothLines(el, type) {
-    {
+    if (type === "grid") {
         el.each(function () {
             var g = select(this);
             ["x1", "x2", "y1", "y2"]
@@ -14950,7 +14950,7 @@ var grid = {
             .attr("x2", isRotated ? pos : state.width)
             .attr("y1", isRotated ? 0 : pos)
             .attr("y2", isRotated ? state.height : pos);
-        smoothLines(grid.y);
+        smoothLines(grid.y, "grid");
     },
     updateGrid: function () {
         var $$ = this;
@@ -15183,7 +15183,7 @@ var grid = {
             ["x1", "y1", "x2", "y2"]
                 .forEach(function (v, i) { return el.attr(v, xy[i]); });
         });
-        smoothLines(focusEl);
+        smoothLines(focusEl, "grid");
         (_a = $$.showCircleFocus) === null || _a === void 0 ? void 0 : _a.call($$, data);
     },
     hideGridFocus: function () {
@@ -18362,7 +18362,7 @@ var shapeArc = {
         }
         // eslint-disable-next-line
         function unselectArc(arcData) {
-            var id = undefined;
+            var id = (arcData === null || arcData === void 0 ? void 0 : arcData.id) || undefined;
             $$.unexpandArc(id);
             $$.api.revert();
             $$.revertLegend();
@@ -23822,7 +23822,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.3-nightly-20240423004619
+ * @version 3.11.3-nightly-20240424004612
  */
 var bb = {
     /**
@@ -23832,7 +23832,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.3-nightly-20240423004619",
+    version: "3.11.3-nightly-20240424004612",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
