@@ -65,3 +65,4 @@ Do Yoon Kim <doyoonkim1002@gmail.com>
 RobinDeeCee <robindecock@gmail.com>
 nekoya <ryo.studiom@gmail.com>
 Ubin Park <https://github.com/Ubinquitous>
+William Nolden <william.nolden@able-group.de>
