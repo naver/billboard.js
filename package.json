@@ -102,7 +102,7 @@
 		"d3-zoom": "^3.0.0"
 	},
 	"devDependencies": {
-		"@commitlint/cli": "19.2.2",
+		"@commitlint/cli": "19.3.0",
 		"@commitlint/config-conventional": "^19.2.2",
 		"@eslint/js": "^9.1.1",
 		"@rollup/plugin-node-resolve": "^15.2.3",
