@@ -191,7 +191,7 @@ export interface BarOptions {
 	/**
 	 * Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
 	 */
-	orverlap?: boolean;
+	overlap?: boolean;
 
 	/**
 	 * The padding pixel value between each bar.
