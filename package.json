@@ -102,7 +102,7 @@
 		"d3-zoom": "^3.0.0"
 	},
 	"devDependencies": {
-		"@commitlint/cli": "19.2.2",
+		"@commitlint/cli": "19.3.0",
 		"@commitlint/config-conventional": "^19.2.2",
 		"@eslint/js": "^9.1.1",
 		"@rollup/plugin-node-resolve": "^15.2.3",
@@ -159,7 +159,7 @@
 		"mocha": "^10.4.0",
 		"node-sass": "^9.0.0",
 		"regenerator-runtime": "^0.14.1",
-		"rollup": "^4.16.2",
+		"rollup": "^4.17.2",
 		"rollup-plugin-delete": "^2.0.0",
 		"sass-loader": "^14.2.1",
 		"semantic-release": "^23.0.8",
@@ -170,7 +170,7 @@
 		"taffydb": "^2.7.3",
 		"tslib": "^2.6.2",
 		"typescript": "5.4.5",
-		"typescript-eslint": "^7.7.1",
+		"typescript-eslint": "^7.8.0",
 		"webpack": "^5.91.0",
 		"webpack-bundle-analyzer": "^4.10.2",
 		"webpack-clean": "^1.2.5",
