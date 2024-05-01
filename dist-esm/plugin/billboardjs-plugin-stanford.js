@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240424004612
+ * @version 3.11.3-nightly-20240501004628
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -316,7 +316,6 @@ function mergeObj(target) {
  * @private
  */
 var getRange = function (start, end, step) {
-    if (step === void 0) { step = 1; }
     var res = [];
     var n = Math.max(0, Math.ceil((end - start) / step)) | 0;
     for (var i = start; i < n; i++) {
@@ -496,10 +495,9 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.11.3-nightly-20240424004612";
+    Plugin.version = "3.11.3-nightly-20240501004628";
     return Plugin;
 }());
-var Plugin$1 = Plugin;
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -1178,6 +1176,6 @@ var Stanford = /** @class */ (function (_super) {
         };
     };
     return Stanford;
-}(Plugin$1));
+}(Plugin));
 
 export { Stanford as default };
