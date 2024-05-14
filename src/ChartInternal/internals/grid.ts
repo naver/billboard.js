@@ -397,8 +397,9 @@ export default {
 
 		// Hide when bubble/scatter/stanford plot exists
 		if (
-			!config.tooltip_show || dataToShow.length === 0 || $$.hasType("bubble") ||
-			$$.hasArcType()
+			!config.tooltip_show || dataToShow.length === 0 || (
+				!config.axis_x_forceAsSingle && $$.hasType("bubble")
+			) || $$.hasArcType()
 		) {
 			return;
 		}
