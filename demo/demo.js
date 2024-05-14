@@ -1229,6 +1229,47 @@ var demos = {
 				}
 			}		
 		],
+		ForceAsSingle: [
+			{
+				description: "Force the x axis to interact as single rather than multiple x axes.",
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 120, 220, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						type: "scatter"
+					},
+					axis: {
+						x: {
+							forceAsSingle: true
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["x1", 1, 3, 6, 7, 9],
+							["x2", 2, 4, 6, 8, 10],
+							["data1", 300, 350, 300, 120, 220, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						type: "line",
+						xs: {
+							data1: "x1",
+							data2: "x2"
+						}
+					},
+					axis: {
+						x: {
+							forceAsSingle: true
+						}
+					}
+				}
+			},
+		],
 		CategoryAxis: {
 			options: {
 				data: {
