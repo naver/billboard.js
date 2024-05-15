@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240509004616
+ * @version 3.11.3-nightly-20240515004623
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -1215,10 +1215,10 @@ var SHARED = '__core-js_shared__';
 var store = module.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 
 (store.versions || (store.versions = [])).push({
-  version: '3.37.0',
+  version: '3.37.1',
   mode: IS_PURE ? 'pure' : 'global',
   copyright: '© 2014-2024 Denis Pushkarev (zloirock.ru)',
-  license: 'https://github.com/zloirock/core-js/blob/v3.37.0/LICENSE',
+  license: 'https://github.com/zloirock/core-js/blob/v3.37.1/LICENSE',
   source: 'https://github.com/zloirock/core-js'
 });
 
@@ -19032,12 +19032,13 @@ var $ = __webpack_require__(3);
 var getBuiltIn = __webpack_require__(23);
 var validateArgumentsLength = __webpack_require__(342);
 var toString = __webpack_require__(68);
+var USE_NATIVE_URL = __webpack_require__(550);
 
 var URL = getBuiltIn('URL');
 
 // `URL.parse` method
 // https://url.spec.whatwg.org/#dom-url-canparse
-$({ target: 'URL', stat: true }, {
+$({ target: 'URL', stat: true, forced: !USE_NATIVE_URL }, {
   parse: function parse(url) {
     var length = validateArgumentsLength(arguments.length, 1);
     var urlString = toString(url);
@@ -26463,7 +26464,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.11.3-nightly-20240509004616");
+__publicField(Plugin, "version", "3.11.3-nightly-20240515004623");
 
 ;// CONCATENATED MODULE: ./src/Plugin/textoverlap/Options.ts
 class Options {

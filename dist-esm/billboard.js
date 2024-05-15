@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240509004616
+ * @version 3.11.3-nightly-20240515004623
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -3980,10 +3980,15 @@ var data$1 = {
             config.data_xs[id] = xs[id];
         });
     },
+    /**
+     * Determine if x axis is multiple
+     * @returns {boolean} true: multiple, false: single
+     * @private
+     */
     isMultipleX: function () {
-        return notEmpty(this.config.data_xs) ||
+        return !this.config.axis_x_forceAsSingle && (notEmpty(this.config.data_xs) ||
             this.hasType("bubble") ||
-            this.hasType("scatter");
+            this.hasType("scatter"));
     },
     addName: function (data) {
         var $$ = this;
@@ -15131,8 +15136,7 @@ var grid = {
             return d && isValue($$.getBaseValue(d));
         });
         // Hide when bubble/scatter/stanford plot exists
-        if (!config.tooltip_show || dataToShow.length === 0 || $$.hasType("bubble") ||
-            $$.hasArcType()) {
+        if (!config.tooltip_show || dataToShow.length === 0 || (!config.axis_x_forceAsSingle && $$.hasType("bubble")) || $$.hasArcType()) {
             return;
         }
         var isEdge = config.grid_focus_edge && !config.tooltip_grouped;
@@ -15587,6 +15591,27 @@ var x = {
      */
     axis_x_show: true,
     /**
+     * Force the x axis to interact as single rather than multiple x axes.
+     * - **NOTE:** The tooltip event will be triggered nearing each data points(for multiple xs) rather than x axis based(as single x does) in below condition:
+     *   - for `bubble` & `scatter` type
+     *   - when `data.xs` is set
+     *   - when `tooltip.grouped=false` is set
+     *     - `tooltip.grouped` options will take precedence over `axis.forceSingleX` option.
+     * @name axis․x․forceAsSingle
+     * @memberof Options
+     * @type {boolean}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.ForceAsSingle)
+     * @example
+     * axis: {
+     *   x: {
+     *      // will work as single x axis
+     *      forceAsSingle: true
+     *   }
+     * }
+     */
+    axis_x_forceAsSingle: false,
+    /**
      * Set type of x axis.<br><br>
      * **Available Values:**
      * - category
@@ -15599,7 +15624,6 @@ var x = {
      *   - the x values specified by [`data.x`](#.data%25E2%2580%25A4x)(or by any equivalent option), must be exclusively-positive.
      *   - x axis min value should be >= 0.
      *   - for 'category' type, `data.xs` option isn't supported.
-     *
      * @name axis․x․type
      * @memberof Options
      * @type {string}
@@ -23821,7 +23845,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.3-nightly-20240509004616
+ * @version 3.11.3-nightly-20240515004623
  */
 var bb = {
     /**
@@ -23831,7 +23855,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.3-nightly-20240509004616",
+    version: "3.11.3-nightly-20240515004623",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
