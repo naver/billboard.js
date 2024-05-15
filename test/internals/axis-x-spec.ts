@@ -19,7 +19,7 @@ describe("X AXIS", function() {
 		},
 		axis: {
 			x: {
-				inverted: true,
+				inverted: true
 			}
 		}
 	};
@@ -356,6 +356,89 @@ describe("X AXIS", function() {
 						expect(anchor).to.be.equal(i === 0 ? "middle" : "end");
 					});
 			});
+		});
+	});
+
+	describe("axis.x.forceAsSingle", () => {
+		before(() => {
+			args = {
+				data: {
+				  columns: [
+					  ["data1", 30, 350, 200, 380, 150]
+				  ],
+				  type: "scatter"
+				},
+				tooltip: {
+				  grouped: true
+				},
+				axis: {
+				  x: {
+					forceAsSingle: true
+				  }
+				}
+			};
+		});
+
+		function checkSingleX(ctx, x = 2) {
+			const {grid, tooltip} = ctx.$;
+
+			// when
+			ctx.tooltip.show({x});
+
+			expect(+tooltip.select("th").text()).to.be.equal(x);
+			expect(+grid.main.select("line.bb-xgrid-focus").attr("x1") > 0).to.be.ok;
+		}
+
+		it("scatter: should interact as single x", () => {
+			checkSingleX(chart);
+		});
+
+		it("set options: data.type='bubble'", () => {
+			args.data.type = "bubble";
+		});
+
+		it("bubble: should interact as single x", () => {
+			checkSingleX(chart);
+		});
+
+		it("set options: tooltop.grouped=false", () => {
+			args.tooltip.grouped = false;
+		});
+
+		it("shouldn't work as single x, when tooltip.grouped=false is set", () => {
+			chart.tooltip.show({x: 2});
+
+			expect(chart.$.tooltip.html()).to.be.empty;
+		});
+
+		it("set options: data.type='line'", () => {
+			args = {
+				data: {
+					columns: [
+						["x1", 1, 3, 5, 7, 9],
+						["x2", 2, 4, 6, 8, 10],
+						["data1", 30, 350, 200, 380, 150],
+						["data2", 130, 120, 330, 280, 230]
+					],
+					type: "line",
+					xs: {
+						data1: "x1",
+						data2: "x2"
+					}
+				},
+				tooltip: {
+					grouped: true
+				},
+				axis: {
+					x: {
+						forceAsSingle: true
+					}
+				}
+			};
+		});
+
+		it("line data.xs: should interact as single x", () => {
+			checkSingleX(chart, 5);
 		});
 	});
 });

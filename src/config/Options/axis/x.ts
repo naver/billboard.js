@@ -35,6 +35,28 @@ export default {
 	axis_x_show: true,
 
 	/**
+	 * Force the x axis to interact as single rather than multiple x axes.
+	 * - **NOTE:** The tooltip event will be triggered nearing each data points(for multiple xs) rather than x axis based(as single x does) in below condition:
+	 *   - for `bubble` & `scatter` type
+	 *   - when `data.xs` is set
+	 *   - when `tooltip.grouped=false` is set
+	 *     - `tooltip.grouped` options will take precedence over `axis.forceSingleX` option.
+	 * @name axis․x․forceAsSingle
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default false
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.ForceAsSingle)
+	 * @example
+	 * axis: {
+	 *   x: {
+	 *      // will work as single x axis
+	 *      forceAsSingle: true
+	 *   } 
+	 * }
+	 */
+	axis_x_forceAsSingle: false,
+
+	/**
 	 * Set type of x axis.<br><br>
 	 * **Available Values:**
 	 * - category
@@ -47,7 +69,6 @@ export default {
 	 *   - the x values specified by [`data.x`](#.data%25E2%2580%25A4x)(or by any equivalent option), must be exclusively-positive.
 	 *   - x axis min value should be >= 0.
 	 *   - for 'category' type, `data.xs` option isn't supported.
-	 *
 	 * @name axis․x․type
 	 * @memberof Options
 	 * @type {string}
