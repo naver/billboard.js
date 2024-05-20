@@ -4,7 +4,7 @@
  */
 import {drag as d3Drag} from "d3-drag";
 import {select as d3Select} from "d3-selection";
-import {$ARC, $AXIS, $COMMON, $SHAPE, $TREEMAP} from "../../config/classes";
+import {$ARC, $AXIS, $COMMON, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {emulateEvent, getPointer, isNumber, isObject} from "../../module/util";
 import type {IArcDataRow} from "../data/IData";
@@ -65,10 +65,11 @@ export default {
 			config.color_onover && $$.setOverColor(isOver, d, isArcTreemap);
 
 			if (isArcTreemap && "id") {
-				const selector = hasTreemap ? $TREEMAP.treemap : $ARC.arc;
+				const suffix = $$.getTargetSelectorSuffix((d as IArcDataRow).id);
+				const selector = hasTreemap ? `${$COMMON.target + suffix} > *`: $ARC.arc + suffix;
 
 				callback(d,
-					main.select(`.${selector}${$$.getTargetSelectorSuffix((d as IArcDataRow).id)}`)
+					main.select(`.${selector}`)
 						.node());
 			} else if (!config.tooltip_grouped) {
 				const last = $$.cache.get(KEY.setOverOut) || [];
