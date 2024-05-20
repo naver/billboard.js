@@ -51,7 +51,7 @@ export default {
 	 *   x: {
 	 *      // will work as single x axis
 	 *      forceAsSingle: true
-	 *   } 
+	 *   }
 	 * }
 	 */
 	axis_x_forceAsSingle: false,
