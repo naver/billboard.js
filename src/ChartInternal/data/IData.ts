@@ -8,6 +8,13 @@ type TDataRow = {value: number | null, id: string, index: number, name?: string}
 export type TDomain = Date | number;
 export type TDomainRange = [TDomain, TDomain];
 
+export interface IFunnelData {
+	id: string; // for compatibility
+	value: number;
+	ratio?: number;
+	coords?: number[][];
+}
+
 export interface ITreemapData {
 	name: string;
 	id?: string; // for compatibility

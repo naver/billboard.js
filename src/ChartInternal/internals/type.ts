@@ -192,6 +192,10 @@ export default {
 		return this.isTypeOf(d, "pie");
 	},
 
+	isFunnelType(d): boolean {
+		return this.isTypeOf(d, "funnel");
+	},
+
 	isGaugeType(d): boolean {
 		return this.isTypeOf(d, "gauge");
 	},
@@ -254,6 +258,7 @@ export default {
 				this.isScatterType(d) ||
 				this.isBubbleType(d) ||
 				this.isCandlestickType(d) ||
+				this.isFunnelType(d) ||
 				this.isRadarType(d) ||
 				this.isTreemapType(d) ?
 			d.values.filter(v => isNumber(v.value) || Boolean(v.value)) :

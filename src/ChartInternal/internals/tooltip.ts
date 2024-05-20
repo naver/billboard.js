@@ -240,7 +240,7 @@ export default {
 					continue;
 				}
 
-				const name = nameFormat(row.name, ...param);
+				const name = nameFormat(row.name ?? row.id, ...param);
 				const color = getBgColor(row);
 				const contentValue = {
 					CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
@@ -368,7 +368,8 @@ export default {
 		currPos: {[key: string]: number}): {top: number, left: number} {
 		const $$ = this;
 		const {config, scale, state} = $$;
-		const {width, height, current, hasRadar, hasTreemap, isLegendRight, inputType} = state;
+		const {width, height, current, hasFunnel, hasRadar, hasTreemap, isLegendRight, inputType} =
+			state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const isRotated = config.axis_rotated;
 		const hasArcType = $$.hasArcType();
@@ -394,7 +395,7 @@ export default {
 				x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
 				y += (hasGauge ? height : (height / 2) + tHeight) + titlePadding;
 			}
-		} else if (hasTreemap) {
+		} else if (hasFunnel || hasTreemap) {
 			y += tHeight;
 		} else {
 			const padding = {
@@ -414,7 +415,7 @@ export default {
 
 		// when tooltip left + tWidth > chart's width
 		if ((x + tWidth + 15) > chartRight) {
-			x -= tWidth + (hasTreemap || hasArcType ? 0 : (isRotated ? size * 2 : 38));
+			x -= tWidth + (hasFunnel || hasTreemap || hasArcType ? 0 : (isRotated ? size * 2 : 38));
 		}
 
 		if (y + tHeight > current.height) {

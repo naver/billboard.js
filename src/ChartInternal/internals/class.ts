@@ -18,7 +18,7 @@ export default {
 	 */
 	getClass(type: string, withShape: boolean): Function {
 		const isPlural = /s$/.test(type);
-		const useIdKey = /^(area|arc|line|treemap)s?$/.test(type);
+		const useIdKey = /^(area|arc|line|funnel|treemap)s?$/.test(type);
 		const key = isPlural ? "id" : "index";
 
 		return (d): string => {

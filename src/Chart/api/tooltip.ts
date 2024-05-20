@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {$SHAPE} from "../../config/classes";
 import {isDefined} from "../../module/util";
 
 /**
@@ -72,7 +73,7 @@ const tooltip = {
 	 */
 	show: function(args): void {
 		const $$ = this.internal;
-		const {$el, config, state: {eventReceiver, hasTreemap, inputType}} = $$;
+		const {$el, config, state: {eventReceiver, hasFunnel, hasTreemap, inputType}} = $$;
 		let index;
 		let mouse;
 
@@ -86,10 +87,10 @@ const tooltip = {
 			const {data} = args;
 			const y = $$.getYScaleById(data.id)?.(data.value);
 
-			if (hasTreemap && data.id) {
-				eventReceiver.rect = $el.main.select(
-					`${$$.selectorTarget(data.id, undefined, "rect")}`
-				);
+			if ((hasFunnel || hasTreemap) && data.id) {
+				const selector = $$.selectorTarget(data.id, undefined, `.${$SHAPE.shape}`);
+
+				eventReceiver.rect = $el.main.select(selector);
 			} else if ($$.isMultipleX()) {
 				// if multiple xs, target point will be determined by mouse
 				mouse = [$$.xx(data), y];

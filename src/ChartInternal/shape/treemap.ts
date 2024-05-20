@@ -232,7 +232,6 @@ export default {
 			.attr("class", classChartTreemap)
 			.select("rect")
 			.attr("class", classTreemap)
-			.attr("fill", d => $$.color(d.data.name))
 			.attr("fill", d => $$.color(d.data.name));
 	},
 

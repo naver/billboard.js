@@ -17,6 +17,7 @@ import shapeArea from "../../ChartInternal/shape/area";
 import shapeBar from "../../ChartInternal/shape/bar";
 import shapeBubble from "../../ChartInternal/shape/bubble";
 import shapeCandlestick from "../../ChartInternal/shape/candlestick";
+import shapeFunnel from "../../ChartInternal/shape/funnel";
 import shapeGauge from "../../ChartInternal/shape/gauge";
 import shapeLine from "../../ChartInternal/shape/line";
 import shapePoint from "../../ChartInternal/shape/point";
@@ -38,6 +39,7 @@ import optSpline from "../Options/shape/spline";
 // Non-Axis based
 import optArc from "../Options/shape/arc";
 import optDonut from "../Options/shape/donut";
+import optFunnel from "../Options/shape/funnel";
 import optGauge from "../Options/shape/gauge";
 import optPie from "../Options/shape/pie";
 import optPolar from "../Options/shape/polar";
@@ -54,6 +56,7 @@ export {
 	bubble,
 	candlestick,
 	donut,
+	funnel,
 	gauge,
 	line,
 	pie,
@@ -165,6 +168,9 @@ let scatter = (): string => (
 );
 
 // Non Axis based types
+let funnel = (): string => (
+	extendArc([shapeFunnel], [optFunnel]), (funnel = () => TYPE.FUNNEL)()
+);
 let treemap = (): string => (
 	extendAxis([shapeTreemap], [optTreemap]), (treemap = () => TYPE.TREEMAP)()
 );
