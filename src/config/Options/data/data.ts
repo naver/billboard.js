@@ -87,6 +87,7 @@ export default {
 	 * - area-spline
 	 * - area-spline-range
 	 * - area-step
+	 * - area-step-range
 	 * - bar
 	 * - bubble
 	 * - candlestick
@@ -575,7 +576,7 @@ export default {
 
 	/**
 	 * Set a callback for minimum data
-	 * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
+	 * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
 	 * @name data․onmin
 	 * @memberof Options
 	 * @type {Function}
@@ -591,7 +592,7 @@ export default {
 
 	/**
 	 * Set a callback for maximum data
-	 * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
+	 * - **NOTE:** For 'area-line-range', 'area-step-range' and 'area-spline-range', `mid` data will be taken for the comparison
 	 * @name data․onmax
 	 * @memberof Options
 	 * @type {Function}
@@ -698,7 +699,7 @@ export default {
 	 *   type: "bar"
 	 * }
 	 *
-	 * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
+	 * // for 'range' types('area-line-range' or 'area-step-range' or 'area-spline-range'), data should contain:
 	 * // - an array of [high, mid, low] data following the order
 	 * // - or an object with 'high', 'mid' and 'low' key value
 	 * data: {
@@ -784,7 +785,7 @@ export default {
 	 *   type: "bar"
 	 * }
 	 *
-	 * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
+	 * // for 'range' types('area-line-range' or 'area-step-range' or 'area-spline-range'), data should contain:
 	 * // - an array of [high, mid, low] data following the order
 	 * // - or an object with 'high', 'mid' and 'low' key value
 	 * data: {

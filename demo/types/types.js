@@ -5,6 +5,7 @@ const Types = {
         "area-spline",
         "area-spline-range",
         "area-step",
+        "area-step-range",
         "bar",
         "grouped-bar",
         "bubble",
