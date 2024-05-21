@@ -1,3 +1,18 @@
+# [3.12.0-next.2](https://github.com/naver/billboard.js/compare/3.12.0-next.1...3.12.0-next.2) (2024-05-21)
+
+
+### Bug Fixes
+
+* **api:** Fix scatter type loading ([413812d](https://github.com/naver/billboard.js/commit/413812d2db3553c7a12ca62b91c852e46a12efe6)), closes [#3740](https://github.com/naver/billboard.js/issues/3740)
+* **treemap:** Fix missing element arg on data.onover/out ([22428dc](https://github.com/naver/billboard.js/commit/22428dc19bd0f038686ad62e99a2cc7c87584b35)), closes [#3766](https://github.com/naver/billboard.js/issues/3766)
+* **types:** Correct typo in BarOptions ([a0ad93a](https://github.com/naver/billboard.js/commit/a0ad93a20b19b7282fc2f76267e9f4595bda1bce)), closes [#3749](https://github.com/naver/billboard.js/issues/3749)
+
+
+### Features
+
+* **axis:** Intent to ship axis.x.forceAsSingle ([6ad0554](https://github.com/naver/billboard.js/commit/6ad05543e0aa9aa51f3b9e1a07cbdb1275888f3a)), closes [#3764](https://github.com/naver/billboard.js/issues/3764)
+* **funnel:** Intent to ship funnel type ([e4cdda1](https://github.com/naver/billboard.js/commit/e4cdda1f99480e82c8ac97e63164880b0d75e1ad)), closes [#3449](https://github.com/naver/billboard.js/issues/3449)
+
 # [3.12.0-next.1](https://github.com/naver/billboard.js/compare/3.11.3...3.12.0-next.1) (2024-04-15)
 
 
