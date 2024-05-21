@@ -139,7 +139,7 @@ export default {
 
 		$el.main.select(`.${$COMMON.chart}`).append("g")
 			.attr("class", $TEXT.chartTexts)
-			.style("pointer-events", $el.treemap ? "none" : null);
+			.style("pointer-events", $el.funnel || $el.treemap ? "none" : null);
 	},
 
 	/**
@@ -240,9 +240,10 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 		const labelColors = config.data_labels_colors;
-		const defaultColor = ($$.isArcType(d) && !$$.isRadarType(d)) || $$.isTreemapType(d) ?
-			null :
-			$$.color(d);
+		const defaultColor =
+			($$.isArcType(d) && !$$.isRadarType(d)) || $$.isFunnelType(d) || $$.isTreemapType(d) ?
+				null :
+				$$.color(d);
 		let color;
 
 		if (isString(labelColors)) {
@@ -390,11 +391,12 @@ export default {
 	 */
 	generateXYForText(indices, forX?: boolean): (d, i) => number {
 		const $$ = this;
-		const {state: {hasRadar, hasTreemap}} = $$;
+		const {state: {hasRadar, hasFunnel, hasTreemap}} = $$;
 		const types = Object.keys(indices);
 		const points = {};
 		const getter = forX ? $$.getXForText : $$.getYForText;
 
+		hasFunnel && types.push("funnel");
 		hasRadar && types.push("radar");
 		hasTreemap && types.push("treemap");
 
@@ -406,6 +408,7 @@ export default {
 			const type = ($$.isAreaType(d) && "area") ||
 				($$.isBarType(d) && "bar") ||
 				($$.isCandlestickType(d) && "candlestick") ||
+				($$.isFunnelType(d) && "funnel") ||
 				($$.isRadarType(d) && "radar") ||
 				($$.isTreemapType(d) && "treemap") || "line";
 
@@ -474,8 +477,9 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
+		const isFunnelType = $$.isFunnelType(d);
 		const isTreemapType = $$.isTreemapType(d);
-		let xPos = points[0][0];
+		let xPos = points ? points[0][0] : 0;
 
 		if ($$.isCandlestickType(d)) {
 			if (isRotated) {
@@ -483,6 +487,8 @@ export default {
 			} else {
 				xPos += (points[1][0] - xPos) / 2;
 			}
+		} else if (isFunnelType) {
+			xPos += $$.state.current.width / 2;
 		} else if (isTreemapType) {
 			xPos += config.data_labels.centered ? 0 : 5;
 		} else {
@@ -524,6 +530,7 @@ export default {
 		const isRotated = config.axis_rotated;
 		const isInverted = config[`axis_${axis?.getId(d.id)}_inverted`];
 		const isBarType = $$.isBarType(d);
+		const isFunnelType = $$.isFunnelType(d);
 		const isTreemapType = $$.isTreemapType(d);
 		const r = config.point_r;
 		const rect = getBoundingRect(textElement);
@@ -544,6 +551,10 @@ export default {
 					yPos += 15 * (value._isUp ? 1 : -1);
 				}
 			}
+		} else if (isFunnelType) {
+			yPos = points ?
+				points[0][1] + ((points[1][1] - points[0][1]) / 2) + rect.height / 2 - 3 :
+				0;
 		} else if (isTreemapType) {
 			yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);
 		} else {

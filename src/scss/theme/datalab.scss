@@ -40,6 +40,17 @@ $text-font-size: 11px;
 	}
 }
 
+/*-- Funnel --*/
+.bb-chart-funnels {
+	path {
+		stroke-width: 0;
+	}
+
+	+ .bb-chart-texts text {
+		fill: #fff;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
     stroke-width: $line-stroke-widdth;

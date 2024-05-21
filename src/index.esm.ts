@@ -13,6 +13,7 @@ export {
 	bubble,
 	candlestick,
 	donut,
+	funnel,
 	gauge,
 	line,
 	pie,

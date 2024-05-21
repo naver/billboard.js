@@ -91,9 +91,9 @@ export default {
 
 	transformAll(withTransition: boolean, transitions): void {
 		const $$ = this;
-		const {config, state: {hasAxis, hasTreemap}, $el} = $$;
+		const {config, state: {hasAxis, hasFunnel, hasTreemap}, $el} = $$;
 
-		!hasTreemap && $$.transformMain(withTransition, transitions);
+		!hasFunnel && !hasTreemap && $$.transformMain(withTransition, transitions);
 
 		hasAxis && config.subchart_show &&
 			$$.transformContext(withTransition, transitions);

@@ -48,6 +48,17 @@ $axis-color: #8c8c8c;
 	}
 }
 
+/*-- Funnel --*/
+.bb-chart-funnels {
+	path {
+		stroke-width: 0;
+	}
+
+	+ .bb-chart-texts text {
+		fill: #fff;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
     shape-rendering: crispEdges;

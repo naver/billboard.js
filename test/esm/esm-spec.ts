@@ -86,6 +86,9 @@ describe("ESM build", function() {
                             expect(this.querySelector("line")).to.not.be.null;
                         });
 
+                    } else if (v === "funnel") {
+                        path = chart.internal.$el.funnel.selectAll("path").size();
+
                     } else if (v === "polar") {
                         path = chart.$.main.selectAll("path").attr("d");
                     
