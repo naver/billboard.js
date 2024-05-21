@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240515004623
+ * @version 3.11.3-nightly-20240521004621
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -4976,8 +4976,9 @@ var interaction = {
             var callback_1 = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
             config.color_onover && $$.setOverColor(isOver, d, isArcTreemap);
             if (isArcTreemap && "id") {
-                var selector = hasTreemap ? $TREEMAP.treemap : $ARC.arc;
-                callback_1(d, main.select(".".concat(selector).concat($$.getTargetSelectorSuffix(d.id)))
+                var suffix = $$.getTargetSelectorSuffix(d.id);
+                var selector = hasTreemap ? "".concat($COMMON.target + suffix, " > *") : $ARC.arc + suffix;
+                callback_1(d, main.select(".".concat(selector))
                     .node());
             }
             else if (!config.tooltip_grouped) {
@@ -23845,7 +23846,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.3-nightly-20240515004623
+ * @version 3.11.3-nightly-20240521004621
  */
 var bb = {
     /**
@@ -23855,7 +23856,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.3-nightly-20240515004623",
+    version: "3.11.3-nightly-20240521004621",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
