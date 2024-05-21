@@ -51,6 +51,16 @@ export interface xAxisConfiguration extends AxisConfigurationBase {
 	type?: "category" | "indexed" | "log" | "timeseries";
 
 	/**
+	 * Force the x axis to interact as single rather than multiple x axes.
+	 * - NOTE: The tooltip event will be triggered nearing each data points(for multiple xs) rather than x axis based(as single x does) in below condition:
+	 *   - for `bubble` & `scatter` type
+	 *   - when `data.xs` is set
+	 *   - when `tooltip.grouped=false` is set
+	 *     - `tooltip.grouped` options will take precedence over `axis.forceSingleX` option.
+	 */
+	forceAsSingle?: boolean;
+
+	/**
 	 * Set how to treat the timezone of x values.
 	 * If true, treat x value as localtime. If false, convert to UTC internally.
 	 */

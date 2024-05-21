@@ -4,7 +4,7 @@
  */
 import {drag as d3Drag} from "d3-drag";
 import {select as d3Select} from "d3-selection";
-import {$ARC, $AXIS, $COMMON, $SHAPE, $TREEMAP} from "../../config/classes";
+import {$ARC, $AXIS, $COMMON, $SHAPE} from "../../config/classes";
 import {KEY} from "../../module/Cache";
 import {emulateEvent, getPointer, isNumber, isObject} from "../../module/util";
 import type {IArcDataRow} from "../data/IData";
@@ -55,21 +55,22 @@ export default {
 	 */
 	setOverOut(isOver: boolean, d: number | IArcDataRow): void {
 		const $$ = this;
-		const {config, state: {hasRadar, hasTreemap}, $el: {main}} = $$;
-		const isArcTreemap = isObject(d);
+		const {config, state: {hasFunnel, hasRadar, hasTreemap}, $el: {main}} = $$;
+		const isArcishData = isObject(d);
 
 		// Call event handler
-		if (isArcTreemap || d !== -1) {
+		if (isArcishData || d !== -1) {
 			const callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
 
-			config.color_onover && $$.setOverColor(isOver, d, isArcTreemap);
+			config.color_onover && $$.setOverColor(isOver, d, isArcishData);
 
-			if (isArcTreemap && "id") {
-				const selector = hasTreemap ? $TREEMAP.treemap : $ARC.arc;
+			if (isArcishData && "id") {
+				const suffix = $$.getTargetSelectorSuffix((d as IArcDataRow).id);
+				const selector = hasFunnel || hasTreemap ?
+					`${$COMMON.target + suffix} .${$SHAPE.shape}` :
+					$ARC.arc + suffix;
 
-				callback(d,
-					main.select(`.${selector}${$$.getTargetSelectorSuffix((d as IArcDataRow).id)}`)
-						.node());
+				callback(d, main.select(`.${selector}`).node());
 			} else if (!config.tooltip_grouped) {
 				const last = $$.cache.get(KEY.setOverOut) || [];
 
@@ -178,13 +179,14 @@ export default {
 			state: {
 				eventReceiver,
 				hasAxis,
+				hasFunnel,
 				hasRadar,
 				hasTreemap
 			},
-			$el: {eventRect, radar, treemap}
+			$el: {eventRect, funnel, radar, treemap}
 		} = $$;
-		const element = (
-			(hasTreemap && eventReceiver.rect) ||
+		let element = (
+			((hasFunnel || hasTreemap) && eventReceiver.rect) ||
 			(hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`)) || (
 				eventRect || $$.getArcElementByIdOrIndex?.(index)
 			)
@@ -223,8 +225,13 @@ export default {
 				bubbles: hasRadar // radar type needs to bubble up event
 			};
 
+			// for funnel and treemap event bound to <g> node
+			if (hasFunnel || hasTreemap) {
+				element = (funnel ?? treemap).node();
+			}
+
 			emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](
-				hasTreemap ? treemap.node() : element,
+				element,
 				type,
 				params
 			);

@@ -82,6 +82,9 @@ export default {
 			// polar
 			$el.polar && $$.redrawPolar();
 
+			// funnel
+			$el.funnel && $$.redrawFunnel();
+
 			// treemap
 			treemap && $$.updateTreemap(durationForExit);
 		}

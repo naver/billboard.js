@@ -191,7 +191,7 @@ export interface BarOptions {
 	/**
 	 * Bars will be rendered at same position, which will be overlapped each other. (for non-grouped bars only)
 	 */
-	orverlap?: boolean;
+	overlap?: boolean;
 
 	/**
 	 * The padding pixel value between each bar.
@@ -349,6 +349,24 @@ export interface DonutOptions {
 	 * Set title of donut chart.
 	 */
 	title?: string;
+}
+
+export interface FunnelOptions {
+	neck: {
+		/**
+		 * Set funnel neck width.
+		 */
+		width?: number | {
+			ratio: number
+		};
+		
+		/**
+		 * Set funnel neck height.
+		 */
+		height?: number | {
+			ratio: number
+		};
+	}
 }
 
 export interface GaugeOptions {

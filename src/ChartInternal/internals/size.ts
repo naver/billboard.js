@@ -309,7 +309,7 @@ export default {
 		const $$ = this;
 		const {config, state, $el: {legend}} = $$;
 		const isRotated = config.axis_rotated;
-		const isNonAxis = $$.hasArcType() || state.hasTreemap;
+		const isNonAxis = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
 		const isFitPadding = config.padding?.mode === "fit";
 
 		!isInit && $$.setContainerSize();

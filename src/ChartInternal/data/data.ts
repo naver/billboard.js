@@ -11,7 +11,7 @@ import {
 	getUnique,
 	hasValue,
 	isArray,
-	isboolean,
+	isBoolean,
 	isDefined,
 	isFunction,
 	isNumber,
@@ -129,10 +129,17 @@ export default {
 		});
 	},
 
+	/**
+	 * Determine if x axis is multiple
+	 * @returns {boolean} true: multiple, false: single
+	 * @private
+	 */
 	isMultipleX(): boolean {
-		return notEmpty(this.config.data_xs) ||
+		return !this.config.axis_x_forceAsSingle && (
+			notEmpty(this.config.data_xs) ||
 			this.hasType("bubble") ||
-			this.hasType("scatter");
+			this.hasType("scatter")
+		);
 	},
 
 	addName(data) {
@@ -672,7 +679,7 @@ export default {
 	hasDataLabel() {
 		const dataLabels = this.config.data_labels;
 
-		return (isboolean(dataLabels) && dataLabels) ||
+		return (isBoolean(dataLabels) && dataLabels) ||
 			(isObjectType(dataLabels) && notEmpty(dataLabels));
 	},
 

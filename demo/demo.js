@@ -414,6 +414,79 @@ var demos = {
 				];
 			}
 		},
+		FunnelChart: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 45],
+							["data3", 25],
+							["data4", 55]
+						],
+						type: "funnel",
+						order: null,
+						labels: {
+							format: function(v, id, i, texts) {
+						return id;
+							}
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 11300],
+							["data2", 12245],
+							["data3", 11125],
+							["data4", 13355],
+							["data5", 18562]
+						],
+						type: "funnel",
+						labels: true,
+						order: "asc"
+					},
+					funnel: {
+						neck: {
+							width: 200,
+							height: 50
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 130],
+							["data2", 245],
+							["data3", 425],
+							["data4", 325],
+							["data5", 555]
+						],
+						type: "funnel",
+						order: "desc",
+						labels: {
+							format: function(v, id, i, texts) {
+						return `${id} ${v}`;
+							}
+						}
+					},
+					funnel: {
+						neck: {
+							width: {
+								ratio: 0.3
+							},
+							height: {
+								ratio: 0.5
+							}
+						}
+					}
+				}
+			},
+		],
 		GaugeChart: {
 			options: {
 				data: {
@@ -1228,6 +1301,47 @@ var demos = {
 					}
 				}
 			}		
+		],
+		ForceAsSingle: [
+			{
+				description: "Force the x axis to interact as single rather than multiple x axes.",
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 120, 220, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						type: "scatter"
+					},
+					axis: {
+						x: {
+							forceAsSingle: true
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["x1", 1, 3, 6, 7, 9],
+							["x2", 2, 4, 6, 8, 10],
+							["data1", 300, 350, 300, 120, 220, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						type: "line",
+						xs: {
+							data1: "x1",
+							data2: "x2"
+						}
+					},
+					axis: {
+						x: {
+							forceAsSingle: true
+						}
+					}
+				}
+			},
 		],
 		CategoryAxis: {
 			options: {
@@ -5580,7 +5694,7 @@ setTimeout(function() {
 				]
 			}
 		],
-DonutRangeText: [{
+		DonutRangeText: [{
 			options: {
 				title: {
 					text: "Range text in 'absolute' value"
