@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240521004621
+ * @version 3.11.3-nightly-20240522004617
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -19244,6 +19244,7 @@ __webpack_require__.d(resolver_shape_namespaceObject, {
   bubble: function() { return resolver_shape_bubble; },
   candlestick: function() { return resolver_shape_candlestick; },
   donut: function() { return shape_donut; },
+  funnel: function() { return resolver_shape_funnel; },
   gauge: function() { return resolver_shape_gauge; },
   line: function() { return resolver_shape_line; },
   pie: function() { return resolver_shape_pie; },
@@ -21010,6 +21011,12 @@ const $DRAG = {
   dragarea: "bb-dragarea",
   INCLUDED: "_included_"
 };
+const $FUNNEL = {
+  funnel: "bb-funnel",
+  chartFunnel: "bb-chart-funnel",
+  chartFunnels: "bb-chart-funnels",
+  funnelBackground: "bb-funnel-background"
+};
 const $GAUGE = {
   chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
   chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
@@ -21104,7 +21111,7 @@ const $ZOOM = {
   buttonZoomReset: "bb-zoom-reset",
   zoomBrush: "bb-zoom-brush"
 };
-/* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
+/* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
 ;// CONCATENATED MODULE: ./src/config/Options/common/boost.ts
 /* harmony default export */ var boost = ({
@@ -22146,6 +22153,7 @@ const $ZOOM = {
    * - bubble
    * - candlestick
    * - donut
+   * - funnel
    * - gauge
    * - line
    * - pie
@@ -22176,6 +22184,7 @@ const $ZOOM = {
    *   bubble,
    *   candlestick,
    *   donut,
+   *   funnel,
    *   gauge,
    *   line,
    *   pie,
@@ -22223,6 +22232,7 @@ const $ZOOM = {
    *   bubble,
    *   candlestick,
    *   donut,
+   *   funnel,
    *   gauge,
    *   line,
    *   pie,
@@ -25887,6 +25897,7 @@ class State {
       arcHeight: 0,
       xAxisHeight: 0,
       hasAxis: false,
+      hasFunnel: false,
       hasRadar: false,
       hasTreemap: false,
       // for data CSS rule index (used when boost.useCssRule is true)
@@ -26130,6 +26141,7 @@ const TYPE = {
   BUBBLE: "bubble",
   CANDLESTICK: "candlestick",
   DONUT: "donut",
+  FUNNEL: "funnel",
   GAUGE: "gauge",
   LINE: "line",
   PIE: "pie",
@@ -26150,6 +26162,7 @@ const TYPE_METHOD_NEEDED = {
   BUBBLE: "initCircle",
   CANDLESTICK: "initCandlestick",
   DONUT: "initArc",
+  FUNNEL: "initFunnel",
   GAUGE: "initArc",
   LINE: "initLine",
   PIE: "initArc",
@@ -27933,18 +27946,15 @@ function drag_defaultTouchable() {
    */
   setOverOut(isOver, d) {
     const $$ = this;
-    const { config, state: { hasRadar, hasTreemap }, $el: { main } } = $$;
-    const isArcTreemap = isObject(d);
-    if (isArcTreemap || d !== -1) {
+    const { config, state: { hasFunnel, hasRadar, hasTreemap }, $el: { main } } = $$;
+    const isArcishData = isObject(d);
+    if (isArcishData || d !== -1) {
       const callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
-      config.color_onover && $$.setOverColor(isOver, d, isArcTreemap);
-      if (isArcTreemap && "id") {
+      config.color_onover && $$.setOverColor(isOver, d, isArcishData);
+      if (isArcishData && "id") {
         const suffix = $$.getTargetSelectorSuffix(d.id);
-        const selector = hasTreemap ? `${$COMMON.target + suffix} > *` : $ARC.arc + suffix;
-        callback(
-          d,
-          main.select(`.${selector}`).node()
-        );
+        const selector = hasFunnel || hasTreemap ? `${$COMMON.target + suffix} .${$SHAPE.shape}` : $ARC.arc + suffix;
+        callback(d, main.select(`.${selector}`).node());
       } else if (!config.tooltip_grouped) {
         const last = $$.cache.get(KEY.setOverOut) || [];
         const shapesAtIndex = main.selectAll(`.${$SHAPE.shape}-${d}`).filter(function(d2) {
@@ -28025,12 +28035,13 @@ function drag_defaultTouchable() {
       state: {
         eventReceiver,
         hasAxis,
+        hasFunnel,
         hasRadar,
         hasTreemap
       },
-      $el: { eventRect, radar, treemap }
+      $el: { eventRect, funnel, radar, treemap }
     } = $$;
-    const element = (_b = hasTreemap && eventReceiver.rect || hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) == null ? void 0 : _a.call($$, index)))) == null ? void 0 : _b.node();
+    let element = (_b = (hasFunnel || hasTreemap) && eventReceiver.rect || hasRadar && radar.axes.select(`.${$AXIS.axis}-${index} text`) || (eventRect || ((_a = $$.getArcElementByIdOrIndex) == null ? void 0 : _a.call($$, index)))) == null ? void 0 : _b.node();
     if (element) {
       const isMultipleX = $$.isMultipleX();
       const isRotated = config.axis_rotated;
@@ -28057,8 +28068,11 @@ function drag_defaultTouchable() {
         bubbles: hasRadar
         // radar type needs to bubble up event
       };
+      if (hasFunnel || hasTreemap) {
+        element = (funnel != null ? funnel : treemap).node();
+      }
       emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](
-        hasTreemap ? treemap.node() : element,
+        element,
         type,
         params
       );
@@ -28146,7 +28160,7 @@ function drag_defaultTouchable() {
    */
   getClass(type, withShape) {
     const isPlural = /s$/.test(type);
-    const useIdKey = /^(area|arc|line|treemap)s?$/.test(type);
+    const useIdKey = /^(area|arc|line|funnel|treemap)s?$/.test(type);
     const key = isPlural ? "id" : "index";
     return (d) => {
       const data = d.data || d;
@@ -29671,6 +29685,7 @@ function getFormattedText(id, formatted = true) {
       $el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
       $el.radar && $$.redrawRadar();
       $el.polar && $$.redrawPolar();
+      $el.funnel && $$.redrawFunnel();
       treemap && $$.updateTreemap(durationForExit);
     }
     if (!state.resizing && !treemap && ($$.hasPointType() || state.hasRadar)) {
@@ -31230,7 +31245,7 @@ function getScale(type = "linear", min = 0, max = 1) {
     const $$ = this;
     const { config, state, $el: { legend } } = $$;
     const isRotated = config.axis_rotated;
-    const isNonAxis = $$.hasArcType() || state.hasTreemap;
+    const isNonAxis = $$.hasArcType() || state.hasFunnel || state.hasTreemap;
     const isFitPadding = ((_a = config.padding) == null ? void 0 : _a.mode) === "fit";
     !isInit && $$.setContainerSize();
     const currLegend = {
@@ -31442,7 +31457,7 @@ function getTextPos(d, type) {
    */
   initText() {
     const { $el } = this;
-    $el.main.select(`.${$COMMON.chart}`).append("g").attr("class", $TEXT.chartTexts).style("pointer-events", $el.treemap ? "none" : null);
+    $el.main.select(`.${$COMMON.chart}`).append("g").attr("class", $TEXT.chartTexts).style("pointer-events", $el.funnel || $el.treemap ? "none" : null);
   },
   /**
    * Update chartText
@@ -31509,7 +31524,7 @@ function getTextPos(d, type) {
     const $$ = this;
     const { config } = $$;
     const labelColors = config.data_labels_colors;
-    const defaultColor = $$.isArcType(d) && !$$.isRadarType(d) || $$.isTreemapType(d) ? null : $$.color(d);
+    const defaultColor = $$.isArcType(d) && !$$.isRadarType(d) || $$.isFunnelType(d) || $$.isTreemapType(d) ? null : $$.color(d);
     let color;
     if (isString(labelColors)) {
       color = labelColors;
@@ -31624,17 +31639,18 @@ function getTextPos(d, type) {
    */
   generateXYForText(indices, forX) {
     const $$ = this;
-    const { state: { hasRadar, hasTreemap } } = $$;
+    const { state: { hasRadar, hasFunnel, hasTreemap } } = $$;
     const types = Object.keys(indices);
     const points = {};
     const getter = forX ? $$.getXForText : $$.getYForText;
+    hasFunnel && types.push("funnel");
     hasRadar && types.push("radar");
     hasTreemap && types.push("treemap");
     types.forEach((v) => {
       points[v] = $$[`generateGet${capitalize(v)}Points`](indices[v], false);
     });
     return function(d, i) {
-      const type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || $$.isCandlestickType(d) && "candlestick" || $$.isRadarType(d) && "radar" || $$.isTreemapType(d) && "treemap" || "line";
+      const type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || $$.isCandlestickType(d) && "candlestick" || $$.isFunnelType(d) && "funnel" || $$.isRadarType(d) && "radar" || $$.isTreemapType(d) && "treemap" || "line";
       return getter.call($$, points[type](d, i), d, this);
     };
   },
@@ -31683,14 +31699,17 @@ function getTextPos(d, type) {
     const $$ = this;
     const { config } = $$;
     const isRotated = config.axis_rotated;
+    const isFunnelType = $$.isFunnelType(d);
     const isTreemapType = $$.isTreemapType(d);
-    let xPos = points[0][0];
+    let xPos = points ? points[0][0] : 0;
     if ($$.isCandlestickType(d)) {
       if (isRotated) {
         xPos = ((_a = $$.getCandlestickData(d)) == null ? void 0 : _a._isUp) ? points[2][2] + 4 : points[2][1] - 4;
       } else {
         xPos += (points[1][0] - xPos) / 2;
       }
+    } else if (isFunnelType) {
+      xPos += $$.state.current.width / 2;
     } else if (isTreemapType) {
       xPos += config.data_labels.centered ? 0 : 5;
     } else {
@@ -31727,6 +31746,7 @@ function getTextPos(d, type) {
     const isRotated = config.axis_rotated;
     const isInverted = config[`axis_${axis == null ? void 0 : axis.getId(d.id)}_inverted`];
     const isBarType = $$.isBarType(d);
+    const isFunnelType = $$.isFunnelType(d);
     const isTreemapType = $$.isTreemapType(d);
     const r = config.point_r;
     const rect = getBoundingRect(textElement);
@@ -31744,6 +31764,8 @@ function getTextPos(d, type) {
           yPos += 15 * (value._isUp ? 1 : -1);
         }
       }
+    } else if (isFunnelType) {
+      yPos = points ? points[0][1] + (points[1][1] - points[0][1]) / 2 + rect.height / 2 - 3 : 0;
     } else if (isTreemapType) {
       yPos = points[0][1] + (config.data_labels.centered ? 0 : rect.height + 5);
     } else {
@@ -31945,6 +31967,7 @@ function getTextXPos(pos = "left", width) {
    * @private
    */
   getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
+    var _a;
     const $$ = this;
     const { api, config, state, $el } = $$;
     const [titleFn, nameFn, valueFn] = ["title", "name", "value"].map((v) => {
@@ -32033,7 +32056,7 @@ function getTextXPos(pos = "left", width) {
         if (row.name === null) {
           continue;
         }
-        const name = nameFormat(row.name, ...param);
+        const name = nameFormat((_a = row.name) != null ? _a : row.id, ...param);
         const color2 = getBgColor(row);
         const contentValue = {
           CLASS_TOOLTIP_NAME: $TOOLTIP.tooltipName + $$.getTargetSelectorSuffix(row.id),
@@ -32127,7 +32150,7 @@ function getTextXPos(pos = "left", width) {
     var _a, _b, _c;
     const $$ = this;
     const { config, scale, state } = $$;
-    const { width, height, current, hasRadar, hasTreemap, isLegendRight, inputType } = state;
+    const { width, height, current, hasFunnel, hasRadar, hasTreemap, isLegendRight, inputType } = state;
     const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
     const isRotated = config.axis_rotated;
     const hasArcType = $$.hasArcType();
@@ -32148,7 +32171,7 @@ function getTextXPos(pos = "left", width) {
         x += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
         y += (hasGauge ? height : height / 2 + tHeight) + titlePadding;
       }
-    } else if (hasTreemap) {
+    } else if (hasFunnel || hasTreemap) {
       y += tHeight;
     } else {
       const padding = {
@@ -32165,7 +32188,7 @@ function getTextXPos(pos = "left", width) {
       }
     }
     if (x + tWidth + 15 > chartRight) {
-      x -= tWidth + (hasTreemap || hasArcType ? 0 : isRotated ? size * 2 : 38);
+      x -= tWidth + (hasFunnel || hasTreemap || hasArcType ? 0 : isRotated ? size * 2 : 38);
     }
     if (y + tHeight > current.height) {
       const gap = hasTreemap ? tHeight + 10 : 30;
@@ -32394,8 +32417,8 @@ function getTextXPos(pos = "left", width) {
   },
   transformAll(withTransition, transitions) {
     const $$ = this;
-    const { config, state: { hasAxis, hasTreemap }, $el } = $$;
-    !hasTreemap && $$.transformMain(withTransition, transitions);
+    const { config, state: { hasAxis, hasFunnel, hasTreemap }, $el } = $$;
+    !hasFunnel && !hasTreemap && $$.transformMain(withTransition, transitions);
     hasAxis && config.subchart_show && $$.transformContext(withTransition, transitions);
     $el.legend && $$.transformLegend(withTransition);
   }
@@ -32557,6 +32580,9 @@ function getTextXPos(pos = "left", width) {
   isPieType(d) {
     return this.isTypeOf(d, "pie");
   },
+  isFunnelType(d) {
+    return this.isTypeOf(d, "funnel");
+  },
   isGaugeType(d) {
     return this.isTypeOf(d, "gauge");
   },
@@ -32597,7 +32623,7 @@ function getTextXPos(pos = "left", width) {
    * @private
    */
   labelishData(d) {
-    return this.isBarType(d) || this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isCandlestickType(d) || this.isRadarType(d) || this.isTreemapType(d) ? d.values.filter((v) => isNumber(v.value) || Boolean(v.value)) : [];
+    return this.isBarType(d) || this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isCandlestickType(d) || this.isFunnelType(d) || this.isRadarType(d) || this.isTreemapType(d) ? d.values.filter((v) => isNumber(v.value) || Boolean(v.value)) : [];
   },
   barLineBubbleData(d) {
     return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ? d.values : [];
@@ -34114,8 +34140,9 @@ class ChartInternal {
     const useCssRule = config.boost_useCssRule;
     checkModuleImport($$);
     state.hasRadar = !state.hasAxis && $$.hasType("radar");
+    state.hasFunnel = !state.hasAxis && $$.hasType("funnel");
     state.hasTreemap = !state.hasAxis && $$.hasType("treemap");
-    state.hasAxis = !$$.hasArcType() && !state.hasTreemap;
+    state.hasAxis = !$$.hasArcType() && !state.hasFunnel && !state.hasTreemap;
     state.datetimeId = `bb-${+/* @__PURE__ */ new Date() * getRandom()}`;
     if (useCssRule) {
       const styleEl = browser_doc.createElement("style");
@@ -34216,7 +34243,7 @@ class ChartInternal {
     var _a, _b, _c;
     const $$ = this;
     const { config, scale: scale2, state, $el, org } = $$;
-    const { hasAxis, hasTreemap } = state;
+    const { hasAxis, hasFunnel, hasTreemap } = state;
     const hasInteraction = config.interaction_enabled;
     const hasPolar = $$.hasType("polar");
     const labelsBGColor = config.data_labels_backgroundColors;
@@ -34279,7 +34306,7 @@ class ChartInternal {
     }
     $$.updateSvgSize();
     $$.bindResize();
-    const main = $el.svg.append("g").classed($COMMON.main, true).attr("transform", hasTreemap ? null : $$.getTranslate("main"));
+    const main = $el.svg.append("g").classed($COMMON.main, true).attr("transform", hasFunnel || hasTreemap ? null : $$.getTranslate("main"));
     $el.main = main;
     config.subchart_show && $$.initSubchart();
     config.tooltip_show && $$.initTooltip();
@@ -34341,6 +34368,8 @@ class ChartInternal {
       });
     } else if (hasTreemap) {
       types.push("Treemap");
+    } else if ($$.hasType("funnel")) {
+      types.push("Funnel");
     } else {
       const hasPolar = $$.hasType("polar");
       if (!hasRadar) {
@@ -34428,7 +34457,7 @@ class ChartInternal {
   updateTargets(targets) {
     var _a;
     const $$ = this;
-    const { hasAxis, hasRadar, hasTreemap } = $$.state;
+    const { hasAxis, hasFunnel, hasRadar, hasTreemap } = $$.state;
     const helper = (type) => $$[`updateTargetsFor${type}`](
       targets.filter($$[`is${type}Type`].bind($$))
     );
@@ -34449,6 +34478,8 @@ class ChartInternal {
         type = "Polar";
       }
       helper(type);
+    } else if (hasFunnel) {
+      helper("Funnel");
     } else if (hasTreemap) {
       helper("Treemap");
     }
@@ -35606,6 +35637,7 @@ function showHide(show, targetIdsValue, options) {
 
 ;// CONCATENATED MODULE: ./src/Chart/api/tooltip.ts
 
+
 const tooltip_tooltip = {
   /**
    * Show tooltip
@@ -35671,7 +35703,7 @@ const tooltip_tooltip = {
   show: function(args) {
     var _a, _b, _c;
     const $$ = this.internal;
-    const { $el, config, state: { eventReceiver, hasTreemap, inputType } } = $$;
+    const { $el, config, state: { eventReceiver, hasFunnel, hasTreemap, inputType } } = $$;
     let index;
     let mouse;
     if (args.mouse) {
@@ -35680,10 +35712,9 @@ const tooltip_tooltip = {
     if (args.data) {
       const { data } = args;
       const y = (_a = $$.getYScaleById(data.id)) == null ? void 0 : _a(data.value);
-      if (hasTreemap && data.id) {
-        eventReceiver.rect = $el.main.select(
-          `${$$.selectorTarget(data.id, void 0, "rect")}`
-        );
+      if ((hasFunnel || hasTreemap) && data.id) {
+        const selector = $$.selectorTarget(data.id, void 0, `.${$SHAPE.shape}`);
+        eventReceiver.rect = $el.main.select(selector);
       } else if ($$.isMultipleX()) {
         mouse = [$$.xx(data), y];
       } else {
@@ -41311,7 +41342,7 @@ function smoothLines(el, type) {
    *   x: {
    *      // will work as single x axis
    *      forceAsSingle: true
-   *   } 
+   *   }
    * }
    */
   axis_x_forceAsSingle: false,
@@ -45145,6 +45176,232 @@ var candlestick_spreadValues = (a, b) => {
   }
 });
 
+;// CONCATENATED MODULE: ./src/ChartInternal/shape/funnel.ts
+var funnel_defProp = Object.defineProperty;
+var funnel_getOwnPropSymbols = Object.getOwnPropertySymbols;
+var funnel_hasOwnProp = Object.prototype.hasOwnProperty;
+var funnel_propIsEnum = Object.prototype.propertyIsEnumerable;
+var funnel_defNormalProp = (obj, key, value) => key in obj ? funnel_defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var funnel_spreadValues = (a, b) => {
+  for (var prop in b || (b = {}))
+    if (funnel_hasOwnProp.call(b, prop))
+      funnel_defNormalProp(a, prop, b[prop]);
+  if (funnel_getOwnPropSymbols)
+    for (var prop of funnel_getOwnPropSymbols(b)) {
+      if (funnel_propIsEnum.call(b, prop))
+        funnel_defNormalProp(a, prop, b[prop]);
+    }
+  return a;
+};
+
+
+
+function getSize(checkNeck = false) {
+  const $$ = this;
+  const { config, state: { current: { width, height } } } = $$;
+  const padding = $$.getCurrentPadding();
+  const size = funnel_spreadValues({
+    width: width - (padding.left + padding.right),
+    height: height - (config.legend_show ? $$.getLegendHeight() + 10 : 0) - (padding.top + padding.bottom)
+  }, padding);
+  if (checkNeck) {
+    const { width: neckWidth } = getNecklSize.call($$, {
+      width: size.width,
+      height: size.height
+    });
+    if (size.width < neckWidth) {
+      size.width = neckWidth;
+    }
+  }
+  return size;
+}
+function getNecklSize(current) {
+  const $$ = this;
+  const { config } = $$;
+  let width = config.funnel_neck_width;
+  let height = config.funnel_neck_height;
+  [width, height] = [width, height].map((v, i) => {
+    let size = v;
+    if (isObject(v)) {
+      size = current[i ? "height" : "width"] * v.ratio;
+    }
+    return size;
+  });
+  return {
+    width,
+    height
+  };
+}
+function getCoord(d) {
+  const $$ = this;
+  const { top, width } = getSize.call($$, true);
+  const coords = [];
+  d.forEach((d2, i) => {
+    const { ratio } = d2;
+    const y = i > 0 ? coords[i - 1][2][1] : top;
+    coords.push(d2.coords = [
+      [0, y],
+      // M
+      [width, y],
+      // 1
+      [width, i > 0 ? ratio + y : ratio + top],
+      // 2
+      [0, i > 0 ? ratio + y : ratio + top],
+      // 3
+      [0, y]
+      // 4
+    ]);
+  });
+  return coords;
+}
+function getNeckPath() {
+  const $$ = this;
+  const { width, height, top, left } = getSize.call($$, true);
+  const neck = getNecklSize.call($$, { width, height });
+  const rightX = (width + neck.width) / 2;
+  const leftX = (width - neck.width) / 2;
+  const bodyHeigth = height - neck.height;
+  const coords = [
+    [0 + left, 0 + top],
+    // M
+    [width + left, 0 + top],
+    // 1
+    [rightX, bodyHeigth],
+    // 2
+    [rightX, height + top],
+    // 3
+    [leftX, height + top],
+    // 4
+    [leftX, bodyHeigth],
+    // 5
+    [0 + left, 0 + top]
+    // 6
+  ];
+  return `M${coords.join("L")}z`;
+}
+function getFunnelData(d) {
+  const $$ = this;
+  const { config } = $$;
+  const data = d.map((d2) => ({
+    id: d2.id,
+    value: d2.values.reduce((a, b) => a + b.value, 0)
+  }));
+  if (config.data_order) {
+    data.sort($$.getSortCompareFn.bind($$)(true));
+  }
+  return updateRatio.call($$, data);
+}
+function updateRatio(data) {
+  const $$ = this;
+  const { height } = getSize.call($$);
+  const total = $$.getTotalDataSum(true);
+  data.forEach((d) => {
+    d.ratio = d.value / total * height;
+  });
+  return data;
+}
+/* harmony default export */ var funnel = ({
+  /**
+   * Initialize polar
+   * @private
+   */
+  initFunnel() {
+    const $$ = this;
+    const { $el } = $$;
+    $el.funnel = $el.main.select(`.${$COMMON.chart}`).append("g").classed($FUNNEL.chartFunnels, true);
+    $el.funnel.background = $el.funnel.append("path").classed($FUNNEL.funnelBackground, true);
+    $$.bindFunnelEvent();
+  },
+  /**
+   * Bind events
+   * @private
+   */
+  bindFunnelEvent() {
+    const $$ = this;
+    const { $el: { funnel }, config, state } = $$;
+    const getTarget = (event) => {
+      var _a;
+      const target = event.isTrusted ? event.target : (_a = state.eventReceiver.rect) == null ? void 0 : _a.node();
+      let data;
+      if (/^path$/i.test(target.tagName)) {
+        state.event = event;
+        data = src_select(target).datum();
+      }
+      return data;
+    };
+    if (config.interaction_enabled) {
+      const isTouch = state.inputType === "touch";
+      funnel.on(isTouch ? "touchstart" : "mouseover mousemove", (event) => {
+        const data = getTarget(event);
+        if (data) {
+          $$.showTooltip([data], event.target);
+          /^(touchstart|mouseover)$/.test(event.type) && $$.setOverOut(true, data);
+        }
+      }).on(isTouch ? "touchend" : "mouseout", (event) => {
+        const data = getTarget(event);
+        $$.hideTooltip();
+        $$.setOverOut(false, data);
+      });
+    }
+  },
+  /**
+   * Update polar based on given data array
+   * @param {object} t Data object
+   * @private
+   */
+  updateTargetsForFunnel(t) {
+    const $$ = this;
+    const { $el: { funnel } } = $$;
+    const classChartFunnel = $$.getChartClass("Funnel");
+    const classFunnel = $$.getClass("funnel", true);
+    if (!funnel) {
+      $$.initFunnel();
+    }
+    const targets = getFunnelData.call($$, t.filter($$.isFunnelType.bind($$)));
+    const mainFunnelUpdate = funnel.selectAll(`.${$FUNNEL.chartFunnel}`).data(targets);
+    mainFunnelUpdate.exit().remove();
+    const mainFunnelEnter = mainFunnelUpdate.enter().insert("g", `.${$FUNNEL.funnelBackground}`);
+    mainFunnelEnter.append("path");
+    funnel.path = mainFunnelEnter.merge(mainFunnelUpdate).attr("class", (d) => classChartFunnel(d)).select("path").attr("class", classFunnel).style("opacity", "0").style("fill", $$.color);
+  },
+  /**
+   * Generate treemap coordinate points data
+   * @returns {Array} Array of coordinate points
+   * @private
+   */
+  generateGetFunnelPoints() {
+    var _a;
+    const $$ = this;
+    const { $el: { funnel } } = $$;
+    const targets = $$.filterTargetsToShow(funnel.path);
+    const points = {};
+    let accumulatedHeight = (_a = getSize.call($$).top) != null ? _a : 0;
+    targets.each((d, i) => {
+      var _a2;
+      points[d.id] = [
+        [0, accumulatedHeight],
+        [0, accumulatedHeight += ((_a2 = targets == null ? void 0 : targets[i]) != null ? _a2 : d).ratio]
+      ];
+    });
+    return (d) => points[d.id];
+  },
+  /**
+   * Called whenever redraw happens
+   * @private
+   */
+  redrawFunnel() {
+    const $$ = this;
+    const { $T, $el: { funnel } } = $$;
+    const targets = $$.filterTargetsToShow(funnel.path);
+    const coords = getCoord.call($$, updateRatio.call($$, targets.data()));
+    const neckPath = getNeckPath.bind($$)();
+    funnel.attr("clip-path", `path('${neckPath}')`);
+    funnel.background.attr("d", neckPath);
+    $T(targets).attr("d", (d, i) => `M${coords[i].join("L")}z`).style("opacity", "1");
+    funnel.selectAll("g").style("opacity", null);
+  }
+});
+
 ;// CONCATENATED MODULE: ./src/ChartInternal/shape/gauge.ts
 
 
@@ -46894,10 +47151,11 @@ function convertDataToTreemapData(data) {
     const { $el, $T } = $$;
     const data = $el.treemap.datum();
     const classChartTreemap = $$.getChartClass("Treemap");
+    const classTreemap = $$.getClass("treemap", true);
     const treemap = $el.treemap.selectAll("g").data(data.children);
     $T(treemap.exit(), durationForExit).style("opacity", "0").remove();
     treemap.enter().append("g").append("rect");
-    $el.treemap.selectAll("g").attr("class", classChartTreemap).select("rect").attr("fill", (d) => $$.color(d.data.name));
+    $el.treemap.selectAll("g").attr("class", classChartTreemap).select("rect").attr("class", classTreemap).attr("fill", (d) => $$.color(d.data.name));
   },
   /**
    * Generate treemap coordinate points data
@@ -47738,6 +47996,39 @@ ${percentValue}%`;
   donut_startingAngle: 0
 });
 
+;// CONCATENATED MODULE: ./src/config/Options/shape/funnel.ts
+/* harmony default export */ var shape_funnel = ({
+  /**
+   * Set funnel options
+   * @name funnel
+   * @memberof Options
+   * @type {object}
+   * @property {object} funnel Funnel object
+   * @property {number} [funnel.neck.width=0] Set funnel neck width.
+   * @property {number} [funnel.neck.height=0] Set funnel neck height.
+   * @property {number} [funnel.neck.width.ratio] Set funnel neck width in ratio.
+   * @property {number} [funnel.neck.height.ratio] Set funnel neck height in ratio.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.PolarChart)
+   * @example
+   *  funnel: {
+   *      neck: {
+   *          width: 200,
+   *          height: 100,
+   *
+   *          // or specify as ratio value (relative to the chart size)
+   *          width: {
+   *            ratio: 0.5
+   *          },
+   *          height: {
+   *            ratio: 0.5
+   *          }
+   *      }
+   *  }
+   */
+  funnel_neck_width: 0,
+  funnel_neck_height: 0
+});
+
 ;// CONCATENATED MODULE: ./src/config/Options/shape/gauge.ts
 /* harmony default export */ var shape_gauge = ({
   /**
@@ -48205,6 +48496,8 @@ ${percentValue}%`;
 
 
 
+
+
 function extendAxis(module, option) {
   util_extend(ChartInternal.prototype, Object.values(internal).concat(module));
   util_extend(Chart.prototype, api);
@@ -48247,6 +48540,7 @@ let shape_scatter = () => (extendAxis(
   [point_common, shape_point],
   [common_point, scatter]
 ), (shape_scatter = () => TYPE.SCATTER)());
+let resolver_shape_funnel = () => (extendArc([funnel], [shape_funnel]), (resolver_shape_funnel = () => TYPE.FUNNEL)());
 let resolver_shape_treemap = () => (extendAxis([shape_treemap], [Options_shape_treemap]), (resolver_shape_treemap = () => TYPE.TREEMAP)());
 
 ;// CONCATENATED MODULE: ./src/core.ts
@@ -48261,7 +48555,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.3-nightly-20240521004621",
+  version: "3.11.3-nightly-20240522004617",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

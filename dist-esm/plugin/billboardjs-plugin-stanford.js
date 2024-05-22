@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240521004621
+ * @version 3.11.3-nightly-20240522004617
  * @requires billboard.js
  * @summary billboard.js plugin
 */
@@ -137,6 +137,12 @@ var $DRAG = {
     dragarea: "bb-dragarea",
     INCLUDED: "_included_"
 };
+var $FUNNEL = {
+    funnel: "bb-funnel",
+    chartFunnel: "bb-chart-funnel",
+    chartFunnels: "bb-chart-funnels",
+    funnelBackground: "bb-funnel-background"
+};
 var $GAUGE = {
     chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
     chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
@@ -227,7 +233,7 @@ var $ZOOM = {
     buttonZoomReset: "bb-zoom-reset",
     zoomBrush: "bb-zoom-brush"
 };
-__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM);
+__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign(__assign({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM);
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -495,7 +501,7 @@ var Plugin = /** @class */ (function () {
             delete _this[key];
         });
     };
-    Plugin.version = "3.11.3-nightly-20240521004621";
+    Plugin.version = "3.11.3-nightly-20240522004617";
     return Plugin;
 }());
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240521004621
+ * @version 3.11.3-nightly-20240522004617
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -169,6 +169,12 @@ const $DRAG = {
   dragarea: "bb-dragarea",
   INCLUDED: "_included_"
 };
+const $FUNNEL = {
+  funnel: "bb-funnel",
+  chartFunnel: "bb-chart-funnel",
+  chartFunnels: "bb-chart-funnels",
+  funnelBackground: "bb-funnel-background"
+};
 const $GAUGE = {
   chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
   chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
@@ -263,7 +269,7 @@ const $ZOOM = {
   buttonZoomReset: "bb-zoom-reset",
   zoomBrush: "bb-zoom-brush"
 };
-/* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
+/* harmony default export */ var classes = (__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues(__spreadValues({}, $COMMON), $ARC), $AREA), $AXIS), $BAR), $CANDLESTICK), $CIRCLE), $COLOR), $DRAG), $GAUGE), $LEGEND), $LINE), $EVENT), $FOCUS), $FUNNEL), $GRID), $RADAR), $REGION), $SELECT), $SHAPE), $SUBCHART), $TEXT), $TOOLTIP), $TREEMAP), $ZOOM));
 
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
 var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(3);
@@ -776,7 +782,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.11.3-nightly-20240521004621");
+__publicField(Plugin, "version", "3.11.3-nightly-20240522004617");
 
 ;// CONCATENATED MODULE: ./src/Plugin/sparkline/Options.ts
 class Options {
