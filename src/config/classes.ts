@@ -77,6 +77,13 @@ export const $DRAG = {
 	INCLUDED: "_included_"
 };
 
+export const $FUNNEL = {
+	funnel: "bb-funnel",
+	chartFunnel: "bb-chart-funnel",
+	chartFunnels: "bb-chart-funnels",
+	funnelBackground: "bb-funnel-background"
+};
+
 export const $GAUGE = {
 	chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
 	chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
@@ -202,6 +209,7 @@ export default {
 	...$LINE,
 	...$EVENT,
 	...$FOCUS,
+	...$FUNNEL,
 	...$GRID,
 	...$RADAR,
 	...$REGION,

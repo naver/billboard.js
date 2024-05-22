@@ -43,6 +43,17 @@ $font-family: sans-serif, Arial, "nanumgothic", "Dotum";
 	}
 }
 
+/*-- Funnel --*/
+.bb-chart-funnels {
+	path {
+		stroke-width: 0;
+	}
+
+	+ .bb-chart-texts text {
+		fill: #fff;
+	}
+}
+
 /*-- Axis --*/
 .bb-axis {
     shape-rendering: crispEdges;
