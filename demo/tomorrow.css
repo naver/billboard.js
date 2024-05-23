@@ -41,7 +41,7 @@ g > text.bb-title {
 }
 
 @media (min-width: 1200px) {
-  .example-grid {
+  .example-grid:has(.chart_area div) {
     display: grid;
     grid-template-columns: 45% 55%;
     grid-gap: 0 20px;
