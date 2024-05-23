@@ -44,25 +44,28 @@ function initDom(idValue) {
 /**
  * Generate chart
  * @param {Object} args chart options
+ * @param {boolean} raw Generate with only given options
  * @return {bb} billboard.js instance
  */
-function generate(args) {
+function generate(args, raw = false) {
 	let chart;
 	let inputType = "mouse";
 
 	if (args) {
-		if (!args.bindto) {
-			args.bindto = "#chart";
+		if (!raw) {
+			if (!args.bindto) {
+				args.bindto = "#chart";
+			}
+
+			initDom(args.bindto);
+
+			// when touch param is set, make to be 'touch' input mode
+			if (args.interaction?.inputType?.touch) {
+				inputType = "touch";
+			}
+
+			window.$$TEST$$.convertInputType = inputType;
 		}
-
-		initDom(args.bindto);
-
-		// when touch param is set, make to be 'touch' input mode
-		if (args.interaction?.inputType?.touch) {
-			inputType = "touch";
-		}
-
-		window.$$TEST$$.convertInputType = inputType;
 
 		chart = bb.generate(args);
 	}

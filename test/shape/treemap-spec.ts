@@ -190,6 +190,25 @@ describe("TREEMAP", () => {
 
 			treemap.destroy();
 		});
+
+		it("should generate w/o error", () => {
+			const param = {
+				data: {
+					columns: [
+						["data1", 1300],
+					],
+					type: "treemap"
+				  },
+				  bindto: "#chart25"
+			};
+
+			// generate with only given argument
+			const treemap = util.generate(param, true)
+
+			treemap.destroy();
+
+			expect(true).to.be.ok;
+		});
 	});
 
 	describe("label options", () => {
