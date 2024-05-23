@@ -68,7 +68,7 @@ var billboardDemo = {
 		});
 
 		window.addEventListener("hashchange", function() {
-			ctx.showDemo(location.hash);
+			location.hash && ctx.showDemo(location.hash);
 		});
 
 		this.$code.addEventListener("keydown", function(e) {
