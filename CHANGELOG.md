@@ -1,3 +1,11 @@
+# [3.12.0-next.3](https://github.com/naver/billboard.js/compare/3.12.0-next.2...3.12.0-next.3) (2024-05-23)
+
+
+### Bug Fixes
+
+* **treemap:** Fix generation w/non-exist node ([02987ab](https://github.com/naver/billboard.js/commit/02987ab5e6798c381cef4106c5fe3f5f34b71fd4)), closes [#3777](https://github.com/naver/billboard.js/issues/3777)
+* **types:** Fix missing polar type ([7f5d5b0](https://github.com/naver/billboard.js/commit/7f5d5b08e4753aa1ea5df1cb6ca4f42b8a9d28d9)), closes [#3778](https://github.com/naver/billboard.js/issues/3778)
+
 # [3.12.0-next.2](https://github.com/naver/billboard.js/compare/3.12.0-next.1...3.12.0-next.2) (2024-05-21)
 
 
