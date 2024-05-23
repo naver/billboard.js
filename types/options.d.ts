@@ -13,6 +13,7 @@ import {
 	BubbleOptions,
 	CandlestickOptions,
 	DonutOptions,
+	FunnelOptions,
 	GaugeOptions,
 	LineOptions,
 	PieOptions,
@@ -285,6 +286,7 @@ export interface ChartOptions {
 	bubble?: BubbleOptions;
 	candlestick?: CandlestickOptions;
 	donut?: DonutOptions;
+	funnel?: FunnelOptions;
 	gauge?: GaugeOptions;
 	line?: LineOptions;
 	polar?: PolarOptions;

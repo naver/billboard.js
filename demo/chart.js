@@ -68,7 +68,7 @@ var billboardDemo = {
 		});
 
 		window.addEventListener("hashchange", function() {
-			ctx.showDemo(location.hash);
+			location.hash && ctx.showDemo(location.hash);
 		});
 
 		this.$code.addEventListener("keydown", function(e) {
@@ -160,7 +160,6 @@ var billboardDemo = {
 		}
 
 		this.$description.innerHTML = desc.description || (Array.isArray(desc) && desc[0].description) || "";
-
 		this.$codeArea.style.display = "block";
 
 		// remove selected class
@@ -237,7 +236,7 @@ var billboardDemo = {
 
 		// UMD
 		code.data = code.data.join("")
-			.replace(/"(area|area-line-range|area-spline|area-spline-range|area-step|area-step-range|bar|bubble|candlestick|donut|gauge|line|pie|polar|radar|scatter|spline|step|treemap|selection|subchart|zoom)(\(\))?",?/g, function(match, p1, p2, p3, offset, string) {
+			.replace(/"(area|area-line-range|area-spline|area-spline-range|area-step|area-step-range|bar|bubble|candlestick|donut|funnel|gauge|line|pie|polar|radar|scatter|spline|step|treemap|selection|subchart|zoom)(\(\))?",?/g, function(match, p1, p2, p3, offset, string) {
 				var module = camelize(p1);
 		
 				code.esm.indexOf(module) === -1 &&
@@ -393,7 +392,7 @@ var billboardDemo = {
 			if (/(polarChart|multiline|gaugeneedle)/i.test(options.bindto)) {
 				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
 					.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n")
-					.replace('+"\\\\n"+', '+"\\n+"');
+					.replace('+"\\\\n"+', '+"\\n"+');
 			} else {
 				codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
 					.replace(/\\(u)/g, "\$1");
@@ -560,7 +559,6 @@ var billboardDemo = {
 		} else {
 			this.$title.innerHTML = "Code Editor ("+ type +")";
 			this.$codeArea.style.display = "none";
-			location.hash = "";
 
 			if (!this.$chartArea.querySelector("#editor")) {
 				this.$chartArea.innerHTML = "<div id='editor'></div>";

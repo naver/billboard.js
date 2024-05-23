@@ -201,7 +201,7 @@ export default {
 		const treemapData = $$.treemapFn($$.getTreemapData(targets ?? $$.data.targets));
 
 		// using $el.treemap reference can alter data, so select treemap <g> again
-		treemap.data(treemapData);
+		treemap.data([treemapData]);
 	},
 
 	/**
@@ -214,6 +214,7 @@ export default {
 		const {$el, $T} = $$;
 		const data = $el.treemap.datum();
 		const classChartTreemap = $$.getChartClass("Treemap");
+		const classTreemap = $$.getClass("treemap", true);
 
 		const treemap = $el.treemap
 			.selectAll("g")
@@ -230,6 +231,7 @@ export default {
 		$el.treemap.selectAll("g")
 			.attr("class", classChartTreemap)
 			.select("rect")
+			.attr("class", classTreemap)
 			.attr("fill", d => $$.color(d.data.name));
 	},
 

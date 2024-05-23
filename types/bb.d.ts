@@ -43,6 +43,7 @@ export function bar(): "bar";
 export function bubble(): "bubble";
 export function candlestick(): "candlestick";
 export function donut(): "donut";
+export function funnel(): "funnel";
 export function gauge(): "gauge";
 export function line(): "line";
 export function pie(): "pie";

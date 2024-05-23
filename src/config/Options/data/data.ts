@@ -92,6 +92,7 @@ export default {
 	 * - bubble
 	 * - candlestick
 	 * - donut
+	 * - funnel
 	 * - gauge
 	 * - line
 	 * - pie
@@ -122,6 +123,7 @@ export default {
 	 *   bubble,
 	 *   candlestick,
 	 *   donut,
+	 *   funnel,
 	 *   gauge,
 	 *   line,
 	 *   pie,
@@ -170,6 +172,7 @@ export default {
 	 *   bubble,
 	 *   candlestick,
 	 *   donut,
+	 *   funnel,
 	 *   gauge,
 	 *   line,
 	 *   pie,

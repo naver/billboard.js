@@ -351,6 +351,24 @@ export interface DonutOptions {
 	title?: string;
 }
 
+export interface FunnelOptions {
+	neck: {
+		/**
+		 * Set funnel neck width.
+		 */
+		width?: number | {
+			ratio: number
+		};
+		
+		/**
+		 * Set funnel neck height.
+		 */
+		height?: number | {
+			ratio: number
+		};
+	}
+}
+
 export interface GaugeOptions {
 	/**
 	 * Set background color. (The `.bb-chart-arcs-background` element)

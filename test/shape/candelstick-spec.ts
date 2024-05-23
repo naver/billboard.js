@@ -8,8 +8,6 @@ import {expect} from "chai";
 import util from "../assets/util";
 import {isArray} from "../../src/module/util";
 import {$CANDLESTICK, $COMMON} from "../../src/config/classes";
-import { line } from "d3-shape";
-import { brushY } from "d3-brush";
 
 describe("SHAPE CANDLESTICK", () => {
 	let chart;
