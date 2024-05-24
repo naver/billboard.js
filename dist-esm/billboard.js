@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240522004617
+ * @version 3.11.3-nightly-20240524004610
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -20982,7 +20982,7 @@ var shapeTreemap = {
         var treemap = $$.$el.treemap;
         var treemapData = $$.treemapFn($$.getTreemapData(targets !== null && targets !== void 0 ? targets : $$.data.targets));
         // using $el.treemap reference can alter data, so select treemap <g> again
-        treemap.data(treemapData);
+        treemap.data([treemapData]);
     },
     /**
      * Render treemap
@@ -24188,7 +24188,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.3-nightly-20240522004617
+ * @version 3.11.3-nightly-20240524004610
  */
 var bb = {
     /**
@@ -24198,7 +24198,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.3-nightly-20240522004617",
+    version: "3.11.3-nightly-20240524004610",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

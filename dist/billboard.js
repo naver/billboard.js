@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240522004617
+ * @version 3.11.3-nightly-20240524004610
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -20092,7 +20092,7 @@ function convertDataToTreemapData(data) {
     const $$ = this;
     const { $el: { treemap } } = $$;
     const treemapData = $$.treemapFn($$.getTreemapData(targets != null ? targets : $$.data.targets));
-    treemap.data(treemapData);
+    treemap.data([treemapData]);
   },
   /**
    * Render treemap
@@ -21508,7 +21508,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.3-nightly-20240522004617",
+  version: "3.11.3-nightly-20240524004610",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
