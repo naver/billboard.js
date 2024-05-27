@@ -1,3 +1,10 @@
+## [3.12.1](https://github.com/naver/billboard.js/compare/3.12.0...3.12.1) (2024-05-27)
+
+
+### Bug Fixes
+
+* **treemap:** Fix generation w/non-exist node ([#3781](https://github.com/naver/billboard.js/issues/3781)) ([eb53a12](https://github.com/naver/billboard.js/commit/eb53a128f952289880c0963576f3fe6529c18a6b)), closes [#3777](https://github.com/naver/billboard.js/issues/3777)
+
 # [3.12.0](https://github.com/naver/billboard.js/compare/3.11.3...3.12.0) (2024-05-27)
 
 
