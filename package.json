@@ -131,7 +131,7 @@
 		"d3-format": "^3.1.0",
 		"d3-polygon": "^3.0.1",
 		"docdash": "^2.0.2",
-		"dprint": "^0.45.1",
+		"dprint": "^0.46.1",
 		"esbuild-loader": "^4.1.0",
 		"eslint": "^9.3.0",
 		"eslint-config-naver": "^2.1.0",
