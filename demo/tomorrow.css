@@ -40,6 +40,12 @@ g > text.bb-title {
   font-weight: bold;
 }
 
+g > text.bb-title {
+  font-size: 1.3em;
+  stroke-width: 2px;
+  font-weight: bold;
+}
+
 @media (min-width: 1200px) {
   .example-grid:has(.chart_area div) {
     display: grid;
