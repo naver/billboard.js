@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>ChartInternal/interactions/eventrect.ts - billboard.js API doc</title>
+    
+    <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
+    
+        <meta name="keywords" content="chart, SVG, D3, Data Visualization" />
+        <meta name="keyword" content="chart, SVG, D3, Data Visualization" />
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://naver.github.io/billboard.js/demo/" target="_blank" >Examples</a></h2><h2><a href="https://github.com/naver/billboard.js" target="_blank" >GitHub</a></h2><h3>Namespaces</h3><ul><li><a href="bb.html">bb</a><ul class='members'><li data-type='member'><a href="bb.html#.instance">instance</a></li><li data-type='member'><a href="bb.html#.plugin">plugin</a></li><li data-type='member'><a href="bb.html#.version">version</a></li></ul><ul class='methods'><li data-type='method'><a href="bb.html#.defaults">defaults</a></li><li data-type='method'><a href="bb.html#.generate">generate</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="Chart.html">Chart</a><ul class='members'><li data-type='member'><a href="Chart.html#.$">$</a></li><li data-type='member'><a href="Chart.html#.plugins">plugins</a></li></ul><ul class='methods'><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4labels">axis․labels</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4max">axis․max</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4min">axis․min</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4range">axis․range</a></li><li data-type='method'><a href="Chart.html#categories">categories</a></li><li data-type='method'><a href="Chart.html#category">category</a></li><li data-type='method'><a href="Chart.html#color">color</a></li><li data-type='method'><a href="Chart.html#config">config</a></li><li data-type='method'><a href="Chart.html#data">data</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4axes">data․axes</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4colors">data․colors</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4max">data․max</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4min">data․min</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4names">data․names</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4shown">data․shown</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4values">data․values</a></li><li data-type='method'><a href="Chart.html#defocus">defocus</a></li><li data-type='method'><a href="Chart.html#destroy">destroy</a></li><li data-type='method'><a href="Chart.html#export">export</a></li><li data-type='method'><a href="Chart.html#flow">flow</a></li><li data-type='method'><a href="Chart.html#flush">flush</a></li><li data-type='method'><a href="Chart.html#focus">focus</a></li><li data-type='method'><a href="Chart.html#groups">groups</a></li><li data-type='method'><a href="Chart.html#hide">hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4hide">legend․hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4show">legend․show</a></li><li data-type='method'><a href="Chart.html#load">load</a></li><li data-type='method'><a href="Chart.html#regions">regions</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4add">regions․add</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4remove">regions․remove</a></li><li data-type='method'><a href="Chart.html#resize">resize</a></li><li data-type='method'><a href="Chart.html#revert">revert</a></li><li data-type='method'><a href="Chart.html#select">select</a></li><li data-type='method'><a href="Chart.html#selected">selected</a></li><li data-type='method'><a href="Chart.html#show">show</a></li><li data-type='method'><a href="Chart.html#subchart">subchart</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4hide">subchart․hide</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4reset">subchart․reset</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4show">subchart․show</a></li><li data-type='method'><a href="Chart.html#subchart%25E2%2580%25A4toggle">subchart․toggle</a></li><li data-type='method'><a href="Chart.html#toggle">toggle</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4hide">tooltip․hide</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4show">tooltip․show</a></li><li data-type='method'><a href="Chart.html#unload">unload</a></li><li data-type='method'><a href="Chart.html#unselect">unselect</a></li><li data-type='method'><a href="Chart.html#unzoom">unzoom</a></li><li data-type='method'><a href="Chart.html#x">x</a></li><li data-type='method'><a href="Chart.html#xgrids">xgrids</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4add">xgrids․add</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4remove">xgrids․remove</a></li><li data-type='method'><a href="Chart.html#xs">xs</a></li><li data-type='method'><a href="Chart.html#ygrids">ygrids</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4add">ygrids․add</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4remove">ygrids․remove</a></li><li data-type='method'><a href="Chart.html#zoom">zoom</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4enable">zoom․enable</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4max">zoom․max</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4min">zoom․min</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4range">zoom․range</a></li></ul></li><li><a href="Options.html">Options</a><ul class='members'><li data-type='member'><a href="Options.html#.arc">arc</a></li><li data-type='member'><a href="Options.html#.area">area</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4rotated">axis․rotated</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4tooltip">axis․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4axes">axis․x․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4categories">axis․x․categories</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4clipPath">axis․x․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4extent">axis․x․extent</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4forceAsSingle">axis․x․forceAsSingle</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4height">axis․x․height</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4inverted">axis․x․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4label">axis․x․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4localtime">axis․x․localtime</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4max">axis․x․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4min">axis․x․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4padding">axis․x․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4show">axis․x․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4autorotate">axis․x․tick․autorotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4centered">axis․x․tick․centered</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4count">axis․x․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․x․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․x․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․x․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4fit">axis․x․tick․fit</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4format">axis․x․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4multiline">axis․x․tick․multiline</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․x․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․x․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4show">axis․x․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4inner">axis․x․tick․text․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․x․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․x․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4tooltip">axis․x․tick․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4values">axis․x․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4width">axis․x․tick․width</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4type">axis․x․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4axes">axis․y2․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4center">axis․y2․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4default">axis․y2․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inner">axis․y2․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inverted">axis․y2․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4label">axis․y2․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4max">axis․y2․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4min">axis․y2․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4padding">axis․y2․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4show">axis․y2․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y2․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y2․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․y2․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y2․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y2․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y2․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y2․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y2․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y2․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y2․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y2․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y2․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4type">axis․y2․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4axes">axis․y․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4center">axis․y․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4clipPath">axis․y․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4default">axis․y․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inner">axis․y․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inverted">axis․y․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4label">axis․y․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4max">axis․y․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4min">axis․y․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4padding">axis․y․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4show">axis․y․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4lines">axis․y․tick․culling․lines</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4type">axis․y․type</a></li><li data-type='member'><a href="Options.html#.background">background</a></li><li data-type='member'><a href="Options.html#.bar">bar</a></li><li data-type='member'><a href="Options.html#.bindto">bindto</a></li><li data-type='member'><a href="Options.html#.boost">boost</a></li><li data-type='member'><a href="Options.html#.bubble">bubble</a></li><li data-type='member'><a href="Options.html#.candlestick">candlestick</a></li><li data-type='member'><a href="Options.html#.clipPath">clipPath</a></li><li data-type='member'><a href="Options.html#.color">color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4axes">data․axes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4classes">data․classes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4color">data․color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4colors">data․colors</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4columns">data․columns</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4empty%25E2%2580%25A4label%25E2%2580%25A4text">data․empty․label․text</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4filter">data․filter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groups">data․groups</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groupsZeroAs">data․groupsZeroAs</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4headers">data․headers</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4hide">data․hide</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4idConverter">data․idConverter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4json">data․json</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4keys">data․keys</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4labels">data․labels</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4mimeType">data․mimeType</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4names">data․names</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onclick">data․onclick</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onhidden">data․onhidden</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmax">data․onmax</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmin">data․onmin</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onout">data․onout</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onover">data․onover</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onselected">data․onselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onshown">data․onshown</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onunselected">data․onunselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4order">data․order</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4regions">data․regions</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4rows">data․rows</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4draggable">data․selection․draggable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled">data․selection․enabled</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4grouped">data․selection․grouped</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4isselectable">data․selection․isselectable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4multiple">data․selection․multiple</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4stack%25E2%2580%25A4normalize">data․stack․normalize</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4type">data․type</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4types">data․types</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4url">data․url</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4x">data․x</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xFormat">data․xFormat</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xLocaltime">data․xLocaltime</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xSort">data․xSort</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xs">data․xs</a></li><li data-type='member'><a href="Options.html#.donut">donut</a></li><li data-type='member'><a href="Options.html#.funnel">funnel</a></li><li data-type='member'><a href="Options.html#.gauge">gauge</a></li><li data-type='member'><a href="Options.html#.grid">grid</a></li><li data-type='member'><a href="Options.html#.interaction">interaction</a></li><li data-type='member'><a href="Options.html#.legend">legend</a></li><li data-type='member'><a href="Options.html#.line">line</a></li><li data-type='member'><a href="Options.html#.onafterinit">onafterinit</a></li><li data-type='member'><a href="Options.html#.onbeforeinit">onbeforeinit</a></li><li data-type='member'><a href="Options.html#.onclick">onclick</a></li><li data-type='member'><a href="Options.html#.oninit">oninit</a></li><li data-type='member'><a href="Options.html#.onout">onout</a></li><li data-type='member'><a href="Options.html#.onover">onover</a></li><li data-type='member'><a href="Options.html#.onrendered">onrendered</a></li><li data-type='member'><a href="Options.html#.onresize">onresize</a></li><li data-type='member'><a href="Options.html#.onresized">onresized</a></li><li data-type='member'><a href="Options.html#.padding">padding</a></li><li data-type='member'><a href="Options.html#.pie">pie</a></li><li data-type='member'><a href="Options.html#.plugins">plugins</a></li><li data-type='member'><a href="Options.html#.point">point</a></li><li data-type='member'><a href="Options.html#.polar">polar</a></li><li data-type='member'><a href="Options.html#.radar">radar</a></li><li data-type='member'><a href="Options.html#.regions">regions</a></li><li data-type='member'><a href="Options.html#.render">render</a></li><li data-type='member'><a href="Options.html#.resize">resize</a></li><li data-type='member'><a href="Options.html#.scatter">scatter</a></li><li data-type='member'><a href="Options.html#.size">size</a></li><li data-type='member'><a href="Options.html#.spline">spline</a></li><li data-type='member'><a href="Options.html#.subchart">subchart</a></li><li data-type='member'><a href="Options.html#.svg">svg</a></li><li data-type='member'><a href="Options.html#.title">title</a></li><li data-type='member'><a href="Options.html#.tooltip">tooltip</a></li><li data-type='member'><a href="Options.html#.transition">transition</a></li><li data-type='member'><a href="Options.html#.treemap">treemap</a></li><li data-type='member'><a href="Options.html#.zoom">zoom</a></li></ul></li><li><a href="Plugin.html">Plugin</a><ul class='members'><li data-type='member'><a href="Plugin.html#.version">version</a></li></ul></li><li><a href="plugin-bubblecompare.html">plugin-bubblecompare</a><ul class='members'><li data-type='member'><a href="plugin-bubblecompare.html#.expandScale">expandScale</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.maxR">maxR</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.minR">minR</a></li></ul></li><li><a href="plugin-sparkline.html">plugin-sparkline</a><ul class='members'><li data-type='member'><a href="plugin-sparkline.html#.selector">selector</a></li></ul></li><li><a href="plugin-stanford.html">plugin-stanford</a><ul class='members'><li data-type='member'><a href="plugin-stanford.html#.colors">colors</a></li><li data-type='member'><a href="plugin-stanford.html#.epochs">epochs</a></li><li data-type='member'><a href="plugin-stanford.html#.lines">lines</a></li><li data-type='member'><a href="plugin-stanford.html#.padding">padding</a></li><li data-type='member'><a href="plugin-stanford.html#.regions">regions</a></li><li data-type='member'><a href="plugin-stanford.html#.scale">scale</a></li></ul></li><li><a href="plugin-tableview.html">plugin-tableview</a><ul class='members'><li data-type='member'><a href="plugin-tableview.html#.categoryFormat">categoryFormat</a></li><li data-type='member'><a href="plugin-tableview.html#.categoryTitle">categoryTitle</a></li><li data-type='member'><a href="plugin-tableview.html#.class">class</a></li><li data-type='member'><a href="plugin-tableview.html#.nullString">nullString</a></li><li data-type='member'><a href="plugin-tableview.html#.selector">selector</a></li><li data-type='member'><a href="plugin-tableview.html#.style">style</a></li><li data-type='member'><a href="plugin-tableview.html#.title">title</a></li><li data-type='member'><a href="plugin-tableview.html#.updateOnToggle">updateOnToggle</a></li></ul></li><li><a href="plugin-textoverlap.html">plugin-textoverlap</a><ul class='members'><li data-type='member'><a href="plugin-textoverlap.html#.area">area</a></li><li data-type='member'><a href="plugin-textoverlap.html#.extent">extent</a></li><li data-type='member'><a href="plugin-textoverlap.html#.selector">selector</a></li></ul></li></ul>
+    
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">ChartInternal/interactions/eventrect.ts</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+import type {d3Selection} from "../../../types";
+import {$COMMON, $EVENT, $SHAPE} from "../../config/classes";
+import {getPointer, getScrollPosition, isBoolean, isFunction} from "../../module/util";
+
+export default {
+	/**
+	 * Initialize the area that detects the event.
+	 * Add a container for the zone that detects the event.
+	 * @private
+	 */
+	initEventRect(): void {
+		const $$ = this;
+
+		$$.$el.main.select(`.${$COMMON.chart}`)
+			.append("g")
+			.attr("class", $EVENT.eventRects)
+			.style("fill-opacity", "0");
+	},
+
+	/**
+	 * Redraws the area that detects the event.
+	 * @private
+	 */
+	redrawEventRect(): void {
+		const $$ = this;
+		const {config, state, $el} = $$;
+		const isMultipleX = $$.isMultipleX();
+		const isInverted = config.axis_x_inverted;
+
+		if ($el.eventRect) {
+			$$.updateEventRect($el.eventRect, true);
+
+			// do not initialize eventRect when data is empty
+		} else if ($$.data.targets.length) {
+			const eventRects = $$.$el.main.select(`.${$EVENT.eventRects}`)
+				.style("cursor", config.zoom_enabled &amp;&amp; config.zoom_type !== "drag" ?
+					(
+						config.axis_rotated ? "ns-resize" : "ew-resize"
+					) :
+					null)
+				.classed($EVENT.eventRectsMultiple, isMultipleX)
+				.classed($EVENT.eventRectsSingle, !isMultipleX);
+
+			// append event &lt;rect>
+			const eventRectUpdate = eventRects.selectAll(`.${$EVENT.eventRect}`)
+				.data([0])
+				.enter()
+				.append("rect");
+
+			$$.updateEventRect(eventRectUpdate);
+
+			// bind event to &lt;rect> element
+			$$.updateEventType(eventRectUpdate);
+
+			// bind draggable selection
+			eventRectUpdate.call($$.getDraggableSelection());
+
+			$el.eventRect = eventRectUpdate;
+
+			if (
+				$$.state.inputType === "touch" &amp;&amp; !$el.svg.on("touchstart.eventRect") &amp;&amp;
+				!$$.hasArcType()
+			) {
+				$$.bindTouchOnEventRect();
+			}
+
+			// when initilazed with empty data and data loaded later, need to update eventRect
+			state.rendered &amp;&amp; $$.updateEventRect($el.eventRect, true);
+		}
+
+		if (!isMultipleX) {
+			// Set data and update eventReceiver.data
+			const xAxisTickValues = $$.getMaxDataCountTarget();
+
+			if (!config.data_xSort || isInverted) {
+				xAxisTickValues.sort((a, b) => (isInverted ? b.x - a.x : a.x - b.x));
+			}
+
+			// update data's index value to be alinged with the x Axis
+			$$.updateDataIndexByX(xAxisTickValues);
+			$$.updateXs(xAxisTickValues);
+			$$.updatePointClass?.(true);
+
+			state.eventReceiver.data = xAxisTickValues;
+		}
+
+		$$.updateEventRectData();
+	},
+
+	bindTouchOnEventRect(): void {
+		const $$ = this;
+		const {config, state, $el: {eventRect, svg}} = $$;
+
+		const selectRect = context => {
+			if ($$.isMultipleX()) {
+				$$.selectRectForMultipleXs(context);
+			} else {
+				const index = $$.getDataIndexFromEvent(state.event);
+
+				$$.callOverOutForTouch(index);
+
+				index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, index);
+			}
+		};
+
+		const unselectRect = () => {
+			$$.unselectRect();
+			$$.callOverOutForTouch();
+		};
+
+		// call event.preventDefault()
+		// according 'interaction.inputType.touch.preventDefault' option
+		const preventDefault = config.interaction_inputType_touch.preventDefault;
+		const isPrevented = (isBoolean(preventDefault) &amp;&amp; preventDefault) || false;
+		const preventThreshold = (!isNaN(preventDefault) &amp;&amp; preventDefault) || null;
+		let startPx;
+
+		const preventEvent = event => {
+			const eventType = event.type;
+			const touch = event.changedTouches[0];
+			const currentXY = touch[`client${config.axis_rotated ? "Y" : "X"}`];
+
+			// prevent document scrolling
+			if (eventType === "touchstart") {
+				if (isPrevented) {
+					event.preventDefault();
+				} else if (preventThreshold !== null) {
+					startPx = currentXY;
+				}
+			} else if (eventType === "touchmove") {
+				if (
+					isPrevented || startPx === true || (
+						preventThreshold !== null &amp;&amp;
+						Math.abs(startPx - currentXY) >= preventThreshold
+					)
+				) {
+					// once prevented, keep prevented during whole 'touchmove' context
+					startPx = true;
+					event.preventDefault();
+				}
+			}
+		};
+
+		// bind touch events
+		eventRect
+			.on("touchstart", event => {
+				state.event = event;
+				$$.updateEventRect();
+			})
+			.on("touchstart.eventRect touchmove.eventRect", event => {
+				state.event = event;
+
+				if (!eventRect.empty() &amp;&amp; eventRect.classed($EVENT.eventRect)) {
+					// if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
+					if (
+						state.dragging || state.flowing || $$.hasArcType() ||
+						event.touches.length > 1
+					) {
+						return;
+					}
+
+					preventEvent(event);
+					selectRect(eventRect.node());
+				} else {
+					unselectRect();
+				}
+			}, true)
+			.on("touchend.eventRect", event => {
+				state.event = event;
+
+				if (!eventRect.empty() &amp;&amp; eventRect.classed($EVENT.eventRect)) {
+					if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
+						state.cancelClick &amp;&amp; (state.cancelClick = false);
+					}
+				}
+			}, true);
+
+		svg.on("touchstart", event => {
+			state.event = event;
+			const {target} = event;
+
+			if (target &amp;&amp; target !== eventRect.node()) {
+				unselectRect();
+			}
+		});
+	},
+
+	/**
+	 * Update event rect size
+	 * @param {d3Selection} eventRect Event &lt;rect> element
+	 * @param {boolean} force Force to update
+	 * @private
+	 */
+	updateEventRect(eventRect?, force = false): void {
+		const $$ = this;
+		const {state, $el} = $$;
+		const {eventReceiver, width, height, rendered, resizing} = state;
+		const rectElement = eventRect || $el.eventRect;
+
+		const updateClientRect = (): void => {
+			if (eventReceiver) {
+				const scrollPos = getScrollPosition($el.chart.node());
+
+				eventReceiver.rect = rectElement.node()
+					.getBoundingClientRect()
+					.toJSON();
+
+				eventReceiver.rect.top += scrollPos.y;
+				eventReceiver.rect.left += scrollPos.x;
+			}
+		};
+
+		if (!rendered || resizing || force) {
+			rectElement
+				.attr("x", 0)
+				.attr("y", 0)
+				.attr("width", width)
+				.attr("height", height);
+
+			// only for init
+			if (!rendered || force) {
+				rectElement.classed($EVENT.eventRect, true);
+			}
+		}
+
+		updateClientRect();
+	},
+
+	/**
+	 * Update event type (single or multiple x)
+	 * @param {d3Selection | boolean} target Target element or boolean to rebind event
+	 */
+	updateEventType(target: d3Selection | boolean): void {
+		const $$ = this;
+		const isRebindCall = isBoolean(target);
+		const eventRect = isRebindCall ? $$.$el.eventRect : target;
+		const unbindEvent = isRebindCall ? target !== eventRect?.datum().multipleX : false;
+
+		if (eventRect) {
+			// release previous event listeners
+			unbindEvent &amp;&amp; eventRect?.on("mouseover mousemove mouseout click", null);
+
+			$$.isMultipleX() ?
+				$$.generateEventRectsForMultipleXs(eventRect) :
+				$$.generateEventRectsForSingleX(eventRect);
+		}
+	},
+
+	/**
+	 * Updates the location and size of the eventRect.
+	 * @private
+	 */
+	updateEventRectData(): void {
+		const $$ = this;
+		const {config, scale, state} = $$;
+		const xScale = scale.zoom || scale.x;
+		const isRotated = config.axis_rotated;
+		const isMultipleX = $$.isMultipleX();
+		let x;
+		let y;
+		let w;
+		let h;
+
+		$$.updateEventType(isMultipleX);
+
+		if (isMultipleX) {
+			// TODO: rotated not supported yet
+			x = 0;
+			y = 0;
+			w = state.width;
+			h = state.height;
+		} else {
+			let rectW;
+			let rectX;
+
+			if ($$.axis.isCategorized()) {
+				rectW = $$.getEventRectWidth();
+				rectX = d => xScale(d.x) - (rectW / 2);
+			} else {
+				const getPrevNextX = ({index}) => ({
+					prev: $$.getPrevX(index),
+					next: $$.getNextX(index)
+				});
+
+				rectW = (d): number => {
+					const x = getPrevNextX(d);
+					const xDomain = xScale.domain();
+					let val: number;
+
+					// if there this is a single data point make the eventRect full width (or height)
+					if (x.prev === null &amp;&amp; x.next === null) {
+						val = isRotated ? state.height : state.width;
+					} else if (x.prev === null) {
+						val = (xScale(x.next) + xScale(d.x)) / 2;
+					} else if (x.next === null) {
+						val = xScale(xDomain[1]) - (
+							(xScale(x.prev) + xScale(d.x)) / 2
+						);
+					} else {
+						Object.keys(x).forEach((key, i) => {
+							x[key] = x[key] ?? xDomain[i];
+						});
+
+						val = Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
+					}
+
+					return val;
+				};
+
+				rectX = (d): number => {
+					const x = getPrevNextX(d);
+					let val: number;
+
+					// if there this is a single data point position the eventRect at 0
+					if (x.prev === null &amp;&amp; x.next === null) {
+						val = 0;
+					} else if (x.prev === null) {
+						val = xScale(xScale.domain()[0]);
+					} else {
+						val = (xScale(d.x) + xScale(x.prev)) / 2;
+					}
+
+					return val;
+				};
+			}
+
+			x = isRotated ? 0 : rectX;
+			y = isRotated ? rectX : 0;
+			w = isRotated ? state.width : rectW;
+			h = isRotated ? rectW : state.height;
+		}
+
+		const {eventReceiver} = state;
+		const call: any = (fn, v) => (isFunction(fn) ? fn(v) : fn);
+
+		// reset for possible remains coords data before the data loading
+		eventReceiver.coords.splice(eventReceiver.data.length);
+
+		eventReceiver.data.forEach((d, i) => {
+			eventReceiver.coords[i] = {
+				x: call(x, d),
+				y: call(y, d),
+				w: call(w, d),
+				h: call(h, d)
+			};
+		});
+	},
+
+	/**
+	 * Seletct rect for single x value
+	 * @param {d3Selection} context Event rect element
+	 * @param {number} index x Axis index
+	 * @private
+	 */
+	selectRectForSingle(context: SVGRectElement, index: number): void {
+		const $$ = this;
+		const {config, $el: {main, circle}} = $$;
+		const isSelectionEnabled = config.data_selection_enabled;
+		const isSelectionGrouped = config.data_selection_grouped;
+		const isSelectable = config.data_selection_isselectable;
+		const isTooltipGrouped = config.tooltip_grouped;
+		const selectedData = $$.getAllValuesOnIndex(index);
+
+		if (isTooltipGrouped) {
+			$$.showTooltip(selectedData, context);
+			$$.showGridFocus?.(selectedData);
+
+			if (!isSelectionEnabled || isSelectionGrouped) {
+				return;
+			}
+		}
+
+		// remove possible previous focused state
+		!circle &amp;&amp;
+			main.selectAll(`.${$COMMON.EXPANDED}:not(.${$SHAPE.shape}-${index})`).classed(
+				$COMMON.EXPANDED,
+				false
+			);
+
+		const shapeAtIndex = main.selectAll(`.${$SHAPE.shape}-${index}`)
+			.classed($COMMON.EXPANDED, true)
+			.style("cursor", isSelectable ? "pointer" : null)
+			.filter(function(d) {
+				return $$.isWithinShape(this, d);
+			});
+
+		if (shapeAtIndex.empty() &amp;&amp; !isTooltipGrouped) {
+			$$.hideGridFocus?.();
+			$$.hideTooltip();
+
+			!isSelectionGrouped &amp;&amp; $$.setExpand(index);
+		}
+
+		shapeAtIndex
+			.call(selected => {
+				const d = selected.data();
+
+				if (
+					isSelectionEnabled &amp;&amp;
+					(isSelectionGrouped || isSelectable?.bind($$.api)(d))
+				) {
+					context.style.cursor = "pointer";
+				}
+
+				if (!isTooltipGrouped) {
+					$$.showTooltip(d, context);
+					$$.showGridFocus?.(d);
+					$$.unexpandCircles?.();
+
+					selected.each(d => $$.setExpand(index, d.id));
+				}
+			});
+	},
+
+	/**
+	 * Select rect for multiple x values
+	 * @param {d3Selection} context Event rect element
+	 * @param {boolean} [triggerEvent=true] Whether trigger event or not
+	 * @private
+	 */
+	selectRectForMultipleXs(context: SVGRectElement, triggerEvent = true): void {
+		const $$ = this;
+		const {config, state} = $$;
+		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+
+		// do nothing when dragging
+		if (state.dragging || $$.hasArcType(targetsToShow)) {
+			return;
+		}
+
+		const mouse = getPointer(state.event, context);
+		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
+
+		if (triggerEvent &amp;&amp; state.mouseover &amp;&amp; (!closest || closest.id !== state.mouseover.id)) {
+			config.data_onout.call($$.api, state.mouseover);
+			state.mouseover = undefined;
+		}
+
+		if (!closest) {
+			$$.unselectRect();
+			return;
+		}
+
+		const sameXData = (
+				$$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped
+			) ?
+			[closest] :
+			$$.filterByX(targetsToShow, closest.x);
+
+		// show tooltip when cursor is close to some point
+		const selectedData = sameXData.map(d => $$.addName(d));
+
+		$$.showTooltip(selectedData, context);
+
+		// expand points
+		$$.setExpand(closest.index, closest.id, true);
+
+		// Show xgrid focus line
+		$$.showGridFocus(selectedData);
+
+		const dist = $$.dist(closest, mouse);
+
+		// Show cursor as pointer if point is close to mouse position
+		if ($$.isBarType(closest.id) || dist &lt; $$.getPointSensitivity(closest)) {
+			$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", "pointer");
+
+			if (triggerEvent &amp;&amp; !state.mouseover) {
+				config.data_onover.call($$.api, closest);
+				state.mouseover = closest;
+			}
+		}
+	},
+
+	/**
+	 * Unselect EventRect.
+	 * @private
+	 */
+	unselectRect(): void {
+		const $$ = this;
+		const {$el: {circle, tooltip}} = $$;
+
+		$$.$el.svg.select(`.${$EVENT.eventRect}`).style("cursor", null);
+		$$.hideGridFocus();
+
+		if (tooltip) {
+			$$.hideTooltip();
+			$$._handleLinkedCharts(false);
+		}
+
+		circle &amp;&amp; !$$.isPointFocusOnly() &amp;&amp; $$.unexpandCircles();
+		$$.expandBarTypeShapes(false);
+	},
+
+	/**
+	 * Create eventRect for each data on the x-axis.
+	 * Register touch and drag events.
+	 * @param {object} eventRectEnter d3.select($EVENT.eventRects) object.
+	 * @returns {object} d3.select($EVENT.eventRects) object.
+	 * @private
+	 */
+	generateEventRectsForSingleX(eventRectEnter) {
+		const $$ = this;
+		const {config, state} = $$;
+		const {eventReceiver} = state;
+
+		const rect = eventRectEnter
+			.style("cursor",
+				config.data_selection_enabled &amp;&amp; config.data_selection_grouped ? "pointer" : null)
+			.on("click", function(event) {
+				state.event = event;
+
+				const {currentIdx, data} = eventReceiver;
+				const d = data[
+					currentIdx === -1 ? $$.getDataIndexFromEvent(event) : currentIdx
+				];
+
+				$$.clickHandlerForSingleX.bind(this)(d, $$);
+			})
+			.datum({multipleX: false});
+
+		if (state.inputType === "mouse") {
+			const getData = event => {
+				const index = event ? $$.getDataIndexFromEvent(event) : eventReceiver.currentIdx;
+
+				return index > -1 ? eventReceiver.data[index] : null;
+			};
+
+			rect
+				.on("mouseover", event => {
+					state.event = event;
+					$$.updateEventRect();
+
+					Object.values($$.$el.axisTooltip)
+						.forEach((v: d3Selection) => v?.style("display", null));
+				})
+				.on("mousemove", function(event) {
+					const d = getData(event);
+
+					state.event = event;
+
+					if (!d) {
+						return;
+					}
+
+					let {index} = d;
+					const stepType = config.line_step_type;
+
+					// tooltip position match for step-before &amp; step-after
+					if (
+						config.line_step_tooltipMatch &amp;&amp; $$.hasType("step") &amp;&amp;
+						/^step\-(before|after)$/.test(stepType)
+					) {
+						const scale = $$.scale.zoom || $$.scale.x;
+						const xs = $$.axis.xs[index];
+						const inverted = scale.invert(getPointer(event, this)[0]);
+
+						if (stepType === "step-after" &amp;&amp; inverted &lt; xs) {
+							index -= 1;
+						} else if (stepType === "step-before" &amp;&amp; inverted > xs) {
+							index += 1;
+						}
+					}
+
+					$$.showAxisGridFocus();
+
+					const eventOnSameIdx = config.tooltip_grouped &amp;&amp;
+						index === eventReceiver.currentIdx;
+
+					// do nothing while dragging/flowing
+					if (state.dragging || state.flowing || $$.hasArcType() || eventOnSameIdx) {
+						config.tooltip_show &amp;&amp; eventOnSameIdx &amp;&amp; $$.setTooltipPosition();
+						return;
+					}
+
+					if (index !== eventReceiver.currentIdx) {
+						$$.setOverOut(false, eventReceiver.currentIdx);
+						eventReceiver.currentIdx = index;
+					}
+
+					index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, index);
+
+					// As of individual data point(or &lt;path>) element can't bind mouseover/out event
+					// to determine current interacting element, so use 'mousemove' event instead.
+					$$.setOverOut(index !== -1, index);
+				})
+				.on("mouseout", event => {
+					state.event = event;
+
+					// chart is destroyed
+					if (!config || $$.hasArcType() || eventReceiver.currentIdx === -1) {
+						return;
+					}
+
+					$$.hideAxisGridFocus();
+
+					$$.unselectRect();
+					$$.setOverOut(false, eventReceiver.currentIdx);
+
+					// reset the event current index
+					eventReceiver.currentIdx = -1;
+				});
+		}
+
+		return rect;
+	},
+
+	clickHandlerForSingleX(d, ctx): void {
+		const $$ = ctx;
+		const {config, state, $el: {main}} = $$;
+
+		if (!d || $$.hasArcType() || state.cancelClick) {
+			state.cancelClick &amp;&amp; (state.cancelClick = false);
+
+			return;
+		}
+
+		const {index} = d;
+
+		main.selectAll(`.${$SHAPE.shape}-${index}`)
+			.each(function(d2) {
+				if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
+					$$.toggleShape?.(this, d2, index);
+					config.data_onclick.bind($$.api)(d2, this);
+				}
+			});
+	},
+
+	/**
+	 * Create an eventRect,
+	 * Register touch and drag events.
+	 * @param {object} eventRectEnter d3.select($EVENT.eventRects) object.
+	 * @private
+	 */
+	generateEventRectsForMultipleXs(eventRectEnter): void {
+		const $$ = this;
+		const {state} = $$;
+
+		eventRectEnter
+			.on("click", function(event) {
+				state.event = event;
+				$$.clickHandlerForMultipleXS.bind(this)($$);
+			})
+			.datum({multipleX: true});
+
+		if (state.inputType === "mouse") {
+			eventRectEnter
+				.on("mouseover mousemove", function(event) {
+					state.event = event;
+					$$.selectRectForMultipleXs(this);
+				})
+				.on("mouseout", event => {
+					state.event = event;
+
+					// chart is destroyed
+					if (!$$.config || $$.hasArcType()) {
+						return;
+					}
+
+					$$.unselectRect();
+				});
+		}
+	},
+
+	clickHandlerForMultipleXS(ctx): void {
+		const $$ = ctx;
+		const {config, state} = $$;
+		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+
+		if ($$.hasArcType(targetsToShow)) {
+			return;
+		}
+
+		const mouse = getPointer(state.event, this);
+		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
+		const sensitivity = config.point_sensitivity === "radius" ?
+			closest.r :
+			config.point_sensitivity;
+
+		if (!closest) {
+			return;
+		}
+
+		// select if selection enabled
+		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) &lt; sensitivity) {
+			$$.$el.main.selectAll(`.${$SHAPE.shapes}${$$.getTargetSelectorSuffix(closest.id)}`)
+				.selectAll(`.${$SHAPE.shape}-${closest.index}`)
+				.each(function() {
+					if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
+						$$.toggleShape?.(this, closest, closest.index);
+						config.data_onclick.bind($$.api)(closest, this);
+					}
+				});
+		}
+	}
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.3</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="static/doc.css">
+    
+    <script src="static/analytics.js"></script>
+    
+</body>
+</html>
