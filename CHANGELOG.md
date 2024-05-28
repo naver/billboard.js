@@ -1,3 +1,10 @@
+## [3.12.2](https://github.com/naver/billboard.js/compare/3.12.1...3.12.2) (2024-05-28)
+
+
+### Bug Fixes
+
+* **funnel:** Fix padding and unload ([945251b](https://github.com/naver/billboard.js/commit/945251b3a768944d16fb515cd5331f910a14ecfe)), closes [#3787](https://github.com/naver/billboard.js/issues/3787)
+
 ## [3.12.1](https://github.com/naver/billboard.js/compare/3.12.0...3.12.1) (2024-05-27)
 
 
