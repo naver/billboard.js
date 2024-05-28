@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240524004610
+ * @version 3.12.1-nightly-20240528004628
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -46527,173 +46527,6 @@ const cacheKeyTextWidth = KEY.radarTextWidth;
   }
 });
 
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/round.js
-/* harmony default export */ function treemap_round(node) {
-  node.x0 = Math.round(node.x0);
-  node.y0 = Math.round(node.y0);
-  node.x1 = Math.round(node.x1);
-  node.y1 = Math.round(node.y1);
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/dice.js
-/* harmony default export */ function dice(parent, x0, y0, x1, y1) {
-  var nodes = parent.children, node, i = -1, n = nodes.length, k = parent.value && (x1 - x0) / parent.value;
-  while (++i < n) {
-    node = nodes[i], node.y0 = y0, node.y1 = y1;
-    node.x0 = x0, node.x1 = x0 += node.value * k;
-  }
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/slice.js
-/* harmony default export */ function treemap_slice(parent, x0, y0, x1, y1) {
-  var nodes = parent.children, node, i = -1, n = nodes.length, k = parent.value && (y1 - y0) / parent.value;
-  while (++i < n) {
-    node = nodes[i], node.x0 = x0, node.x1 = x1;
-    node.y0 = y0, node.y1 = y0 += node.value * k;
-  }
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/squarify.js
-
-
-var phi = (1 + Math.sqrt(5)) / 2;
-function squarifyRatio(ratio, parent, x0, y0, x1, y1) {
-  var rows = [], nodes = parent.children, row, nodeValue, i0 = 0, i1 = 0, n = nodes.length, dx, dy, value = parent.value, sumValue, minValue, maxValue, newRatio, minRatio, alpha, beta;
-  while (i0 < n) {
-    dx = x1 - x0, dy = y1 - y0;
-    do
-      sumValue = nodes[i1++].value;
-    while (!sumValue && i1 < n);
-    minValue = maxValue = sumValue;
-    alpha = Math.max(dy / dx, dx / dy) / (value * ratio);
-    beta = sumValue * sumValue * alpha;
-    minRatio = Math.max(maxValue / beta, beta / minValue);
-    for (; i1 < n; ++i1) {
-      sumValue += nodeValue = nodes[i1].value;
-      if (nodeValue < minValue)
-        minValue = nodeValue;
-      if (nodeValue > maxValue)
-        maxValue = nodeValue;
-      beta = sumValue * sumValue * alpha;
-      newRatio = Math.max(maxValue / beta, beta / minValue);
-      if (newRatio > minRatio) {
-        sumValue -= nodeValue;
-        break;
-      }
-      minRatio = newRatio;
-    }
-    rows.push(row = { value: sumValue, dice: dx < dy, children: nodes.slice(i0, i1) });
-    if (row.dice)
-      dice(row, x0, y0, x1, value ? y0 += dy * sumValue / value : y1);
-    else
-      treemap_slice(row, x0, y0, value ? x0 += dx * sumValue / value : x1, y1);
-    value -= sumValue, i0 = i1;
-  }
-  return rows;
-}
-/* harmony default export */ var squarify = ((function custom(ratio) {
-  function squarify(parent, x0, y0, x1, y1) {
-    squarifyRatio(ratio, parent, x0, y0, x1, y1);
-  }
-  squarify.ratio = function(x) {
-    return custom((x = +x) > 1 ? x : 1);
-  };
-  return squarify;
-})(phi));
-
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/accessors.js
-function optional(f) {
-  return f == null ? null : required(f);
-}
-function required(f) {
-  if (typeof f !== "function")
-    throw new Error();
-  return f;
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/constant.js
-function constantZero() {
-  return 0;
-}
-/* harmony default export */ function d3_hierarchy_src_constant(x) {
-  return function() {
-    return x;
-  };
-}
-
-;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/index.js
-
-
-
-
-/* harmony default export */ function treemap() {
-  var tile = squarify, round = false, dx = 1, dy = 1, paddingStack = [0], paddingInner = constantZero, paddingTop = constantZero, paddingRight = constantZero, paddingBottom = constantZero, paddingLeft = constantZero;
-  function treemap(root) {
-    root.x0 = root.y0 = 0;
-    root.x1 = dx;
-    root.y1 = dy;
-    root.eachBefore(positionNode);
-    paddingStack = [0];
-    if (round)
-      root.eachBefore(treemap_round);
-    return root;
-  }
-  function positionNode(node) {
-    var p = paddingStack[node.depth], x0 = node.x0 + p, y0 = node.y0 + p, x1 = node.x1 - p, y1 = node.y1 - p;
-    if (x1 < x0)
-      x0 = x1 = (x0 + x1) / 2;
-    if (y1 < y0)
-      y0 = y1 = (y0 + y1) / 2;
-    node.x0 = x0;
-    node.y0 = y0;
-    node.x1 = x1;
-    node.y1 = y1;
-    if (node.children) {
-      p = paddingStack[node.depth + 1] = paddingInner(node) / 2;
-      x0 += paddingLeft(node) - p;
-      y0 += paddingTop(node) - p;
-      x1 -= paddingRight(node) - p;
-      y1 -= paddingBottom(node) - p;
-      if (x1 < x0)
-        x0 = x1 = (x0 + x1) / 2;
-      if (y1 < y0)
-        y0 = y1 = (y0 + y1) / 2;
-      tile(node, x0, y0, x1, y1);
-    }
-  }
-  treemap.round = function(x) {
-    return arguments.length ? (round = !!x, treemap) : round;
-  };
-  treemap.size = function(x) {
-    return arguments.length ? (dx = +x[0], dy = +x[1], treemap) : [dx, dy];
-  };
-  treemap.tile = function(x) {
-    return arguments.length ? (tile = required(x), treemap) : tile;
-  };
-  treemap.padding = function(x) {
-    return arguments.length ? treemap.paddingInner(x).paddingOuter(x) : treemap.paddingInner();
-  };
-  treemap.paddingInner = function(x) {
-    return arguments.length ? (paddingInner = typeof x === "function" ? x : d3_hierarchy_src_constant(+x), treemap) : paddingInner;
-  };
-  treemap.paddingOuter = function(x) {
-    return arguments.length ? treemap.paddingTop(x).paddingRight(x).paddingBottom(x).paddingLeft(x) : treemap.paddingTop();
-  };
-  treemap.paddingTop = function(x) {
-    return arguments.length ? (paddingTop = typeof x === "function" ? x : d3_hierarchy_src_constant(+x), treemap) : paddingTop;
-  };
-  treemap.paddingRight = function(x) {
-    return arguments.length ? (paddingRight = typeof x === "function" ? x : d3_hierarchy_src_constant(+x), treemap) : paddingRight;
-  };
-  treemap.paddingBottom = function(x) {
-    return arguments.length ? (paddingBottom = typeof x === "function" ? x : d3_hierarchy_src_constant(+x), treemap) : paddingBottom;
-  };
-  treemap.paddingLeft = function(x) {
-    return arguments.length ? (paddingLeft = typeof x === "function" ? x : d3_hierarchy_src_constant(+x), treemap) : paddingLeft;
-  };
-  return treemap;
-}
-
 ;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/hierarchy/count.js
 function count(node) {
   var sum = 0, children = node.children, i = children && children.length;
@@ -46935,6 +46768,173 @@ Node.prototype = hierarchy.prototype = {
   [Symbol.iterator]: hierarchy_iterator
 };
 
+;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/round.js
+/* harmony default export */ function treemap_round(node) {
+  node.x0 = Math.round(node.x0);
+  node.y0 = Math.round(node.y0);
+  node.x1 = Math.round(node.x1);
+  node.y1 = Math.round(node.y1);
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/dice.js
+/* harmony default export */ function dice(parent, x0, y0, x1, y1) {
+  var nodes = parent.children, node, i = -1, n = nodes.length, k = parent.value && (x1 - x0) / parent.value;
+  while (++i < n) {
+    node = nodes[i], node.y0 = y0, node.y1 = y1;
+    node.x0 = x0, node.x1 = x0 += node.value * k;
+  }
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/slice.js
+/* harmony default export */ function treemap_slice(parent, x0, y0, x1, y1) {
+  var nodes = parent.children, node, i = -1, n = nodes.length, k = parent.value && (y1 - y0) / parent.value;
+  while (++i < n) {
+    node = nodes[i], node.x0 = x0, node.x1 = x1;
+    node.y0 = y0, node.y1 = y0 += node.value * k;
+  }
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/squarify.js
+
+
+var phi = (1 + Math.sqrt(5)) / 2;
+function squarifyRatio(ratio, parent, x0, y0, x1, y1) {
+  var rows = [], nodes = parent.children, row, nodeValue, i0 = 0, i1 = 0, n = nodes.length, dx, dy, value = parent.value, sumValue, minValue, maxValue, newRatio, minRatio, alpha, beta;
+  while (i0 < n) {
+    dx = x1 - x0, dy = y1 - y0;
+    do
+      sumValue = nodes[i1++].value;
+    while (!sumValue && i1 < n);
+    minValue = maxValue = sumValue;
+    alpha = Math.max(dy / dx, dx / dy) / (value * ratio);
+    beta = sumValue * sumValue * alpha;
+    minRatio = Math.max(maxValue / beta, beta / minValue);
+    for (; i1 < n; ++i1) {
+      sumValue += nodeValue = nodes[i1].value;
+      if (nodeValue < minValue)
+        minValue = nodeValue;
+      if (nodeValue > maxValue)
+        maxValue = nodeValue;
+      beta = sumValue * sumValue * alpha;
+      newRatio = Math.max(maxValue / beta, beta / minValue);
+      if (newRatio > minRatio) {
+        sumValue -= nodeValue;
+        break;
+      }
+      minRatio = newRatio;
+    }
+    rows.push(row = { value: sumValue, dice: dx < dy, children: nodes.slice(i0, i1) });
+    if (row.dice)
+      dice(row, x0, y0, x1, value ? y0 += dy * sumValue / value : y1);
+    else
+      treemap_slice(row, x0, y0, value ? x0 += dx * sumValue / value : x1, y1);
+    value -= sumValue, i0 = i1;
+  }
+  return rows;
+}
+/* harmony default export */ var squarify = ((function custom(ratio) {
+  function squarify(parent, x0, y0, x1, y1) {
+    squarifyRatio(ratio, parent, x0, y0, x1, y1);
+  }
+  squarify.ratio = function(x) {
+    return custom((x = +x) > 1 ? x : 1);
+  };
+  return squarify;
+})(phi));
+
+;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/accessors.js
+function optional(f) {
+  return f == null ? null : required(f);
+}
+function required(f) {
+  if (typeof f !== "function")
+    throw new Error();
+  return f;
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/constant.js
+function constantZero() {
+  return 0;
+}
+/* harmony default export */ function d3_hierarchy_src_constant(x) {
+  return function() {
+    return x;
+  };
+}
+
+;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/index.js
+
+
+
+
+/* harmony default export */ function treemap() {
+  var tile = squarify, round = false, dx = 1, dy = 1, paddingStack = [0], paddingInner = constantZero, paddingTop = constantZero, paddingRight = constantZero, paddingBottom = constantZero, paddingLeft = constantZero;
+  function treemap(root) {
+    root.x0 = root.y0 = 0;
+    root.x1 = dx;
+    root.y1 = dy;
+    root.eachBefore(positionNode);
+    paddingStack = [0];
+    if (round)
+      root.eachBefore(treemap_round);
+    return root;
+  }
+  function positionNode(node) {
+    var p = paddingStack[node.depth], x0 = node.x0 + p, y0 = node.y0 + p, x1 = node.x1 - p, y1 = node.y1 - p;
+    if (x1 < x0)
+      x0 = x1 = (x0 + x1) / 2;
+    if (y1 < y0)
+      y0 = y1 = (y0 + y1) / 2;
+    node.x0 = x0;
+    node.y0 = y0;
+    node.x1 = x1;
+    node.y1 = y1;
+    if (node.children) {
+      p = paddingStack[node.depth + 1] = paddingInner(node) / 2;
+      x0 += paddingLeft(node) - p;
+      y0 += paddingTop(node) - p;
+      x1 -= paddingRight(node) - p;
+      y1 -= paddingBottom(node) - p;
+      if (x1 < x0)
+        x0 = x1 = (x0 + x1) / 2;
+      if (y1 < y0)
+        y0 = y1 = (y0 + y1) / 2;
+      tile(node, x0, y0, x1, y1);
+    }
+  }
+  treemap.round = function(x) {
+    return arguments.length ? (round = !!x, treemap) : round;
+  };
+  treemap.size = function(x) {
+    return arguments.length ? (dx = +x[0], dy = +x[1], treemap) : [dx, dy];
+  };
+  treemap.tile = function(x) {
+    return arguments.length ? (tile = required(x), treemap) : tile;
+  };
+  treemap.padding = function(x) {
+    return arguments.length ? treemap.paddingInner(x).paddingOuter(x) : treemap.paddingInner();
+  };
+  treemap.paddingInner = function(x) {
+    return arguments.length ? (paddingInner = typeof x === "function" ? x : d3_hierarchy_src_constant(+x), treemap) : paddingInner;
+  };
+  treemap.paddingOuter = function(x) {
+    return arguments.length ? treemap.paddingTop(x).paddingRight(x).paddingBottom(x).paddingLeft(x) : treemap.paddingTop();
+  };
+  treemap.paddingTop = function(x) {
+    return arguments.length ? (paddingTop = typeof x === "function" ? x : d3_hierarchy_src_constant(+x), treemap) : paddingTop;
+  };
+  treemap.paddingRight = function(x) {
+    return arguments.length ? (paddingRight = typeof x === "function" ? x : d3_hierarchy_src_constant(+x), treemap) : paddingRight;
+  };
+  treemap.paddingBottom = function(x) {
+    return arguments.length ? (paddingBottom = typeof x === "function" ? x : d3_hierarchy_src_constant(+x), treemap) : paddingBottom;
+  };
+  treemap.paddingLeft = function(x) {
+    return arguments.length ? (paddingLeft = typeof x === "function" ? x : d3_hierarchy_src_constant(+x), treemap) : paddingLeft;
+  };
+  return treemap;
+}
+
 ;// CONCATENATED MODULE: ./node_modules/d3-hierarchy/src/treemap/binary.js
 /* harmony default export */ function binary(parent, x0, y0, x1, y1) {
   var nodes = parent.children, i, n = nodes.length, sum, sums = new Array(n + 1);
@@ -47032,6 +47032,16 @@ function convertDataToTreemapData(data) {
     };
   });
 }
+function getHierachyData(data) {
+  const $$ = this;
+  const hierarchyData = hierarchy(data).sum((d) => d.value);
+  const sortFn = $$.getSortCompareFn(true);
+  return [
+    $$.treemap(
+      sortFn ? hierarchyData.sort(sortFn) : hierarchyData
+    )
+  ];
+}
 /* harmony default export */ var shape_treemap = ({
   initTreemap() {
     const $$ = this;
@@ -47045,13 +47055,6 @@ function convertDataToTreemapData(data) {
     } = $$;
     clip.id = `${datetimeId}-clip`;
     $$.treemap = treemap().tile($$.getTreemapTile());
-    $$.treemapFn = (data) => {
-      const hierarchyData = hierarchy(data).sum((d) => d.value);
-      const sortFn = $$.getSortCompareFn(true);
-      return $$.treemap(
-        sortFn ? hierarchyData.sort(sortFn) : hierarchyData
-      );
-    };
     $el.defs.append("clipPath").attr("id", clip.id).append("rect").attr("width", width).attr("height", height);
     $el.treemap = $el.main.select(`.${$COMMON.chart}`).attr("clip-path", `url(#${clip.id})`).append("g").classed($TREEMAP.chartTreemaps, true);
     $$.bindTreemapEvent();
@@ -47138,8 +47141,8 @@ function convertDataToTreemapData(data) {
   updateTargetsForTreemap(targets) {
     const $$ = this;
     const { $el: { treemap } } = $$;
-    const treemapData = $$.treemapFn($$.getTreemapData(targets != null ? targets : $$.data.targets));
-    treemap.data([treemapData]);
+    const treemapData = getHierachyData.call($$, $$.getTreemapData(targets != null ? targets : $$.data.targets));
+    treemap.data(treemapData);
   },
   /**
    * Render treemap
@@ -48555,7 +48558,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.3-nightly-20240524004610",
+  version: "3.12.1-nightly-20240528004628",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.11.3-nightly-20240524004610
+ * @version 3.12.1-nightly-20240528004628
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -19985,6 +19985,16 @@ function convertDataToTreemapData(data) {
     };
   });
 }
+function getHierachyData(data) {
+  const $$ = this;
+  const hierarchyData = (0,external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.hierarchy)(data).sum((d) => d.value);
+  const sortFn = $$.getSortCompareFn(true);
+  return [
+    $$.treemap(
+      sortFn ? hierarchyData.sort(sortFn) : hierarchyData
+    )
+  ];
+}
 /* harmony default export */ var treemap = ({
   initTreemap() {
     const $$ = this;
@@ -19998,13 +20008,6 @@ function convertDataToTreemapData(data) {
     } = $$;
     clip.id = `${datetimeId}-clip`;
     $$.treemap = (0,external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.treemap)().tile($$.getTreemapTile());
-    $$.treemapFn = (data) => {
-      const hierarchyData = (0,external_commonjs_d3_hierarchy_commonjs2_d3_hierarchy_amd_d3_hierarchy_root_d3_.hierarchy)(data).sum((d) => d.value);
-      const sortFn = $$.getSortCompareFn(true);
-      return $$.treemap(
-        sortFn ? hierarchyData.sort(sortFn) : hierarchyData
-      );
-    };
     $el.defs.append("clipPath").attr("id", clip.id).append("rect").attr("width", width).attr("height", height);
     $el.treemap = $el.main.select(`.${$COMMON.chart}`).attr("clip-path", `url(#${clip.id})`).append("g").classed($TREEMAP.chartTreemaps, true);
     $$.bindTreemapEvent();
@@ -20091,8 +20094,8 @@ function convertDataToTreemapData(data) {
   updateTargetsForTreemap(targets) {
     const $$ = this;
     const { $el: { treemap } } = $$;
-    const treemapData = $$.treemapFn($$.getTreemapData(targets != null ? targets : $$.data.targets));
-    treemap.data([treemapData]);
+    const treemapData = getHierachyData.call($$, $$.getTreemapData(targets != null ? targets : $$.data.targets));
+    treemap.data(treemapData);
   },
   /**
    * Render treemap
@@ -21508,7 +21511,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.11.3-nightly-20240524004610",
+  version: "3.12.1-nightly-20240528004628",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

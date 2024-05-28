@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.11.3-nightly-20240524004610
+ * @version 3.12.1-nightly-20240528004628
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -18,7 +18,7 @@ import { curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardina
 import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
 import { easeLinear } from 'd3-ease';
 import { interpolate } from 'd3-interpolate';
-import { treemap as treemap$1, hierarchy, treemapBinary, treemapDice, treemapSlice, treemapSliceDice, treemapSquarify, treemapResquarify } from 'd3-hierarchy';
+import { treemap as treemap$1, treemapBinary, treemapDice, treemapSlice, treemapSliceDice, treemapSquarify, treemapResquarify, hierarchy } from 'd3-hierarchy';
 import { zoomIdentity, zoomTransform, zoom as zoom$2 } from 'd3-zoom';
 
 /******************************************************************************
@@ -20873,6 +20873,20 @@ function convertDataToTreemapData(data) {
         };
     });
 }
+/**
+ * Get hierarchy data
+ * @param {object} data Data object
+ * @returns {Array} Array of hierarchy data
+ * @private
+ */
+function getHierachyData(data) {
+    var $$ = this;
+    var hierarchyData = hierarchy(data).sum(function (d) { return d.value; });
+    var sortFn = $$.getSortCompareFn(true);
+    return [
+        $$.treemap(sortFn ? hierarchyData.sort(sortFn) : hierarchyData)
+    ];
+}
 var shapeTreemap = {
     initTreemap: function () {
         var $$ = this;
@@ -20880,11 +20894,6 @@ var shapeTreemap = {
         clip.id = "".concat(datetimeId, "-clip");
         $$.treemap = treemap$1()
             .tile($$.getTreemapTile());
-        $$.treemapFn = function (data) {
-            var hierarchyData = hierarchy(data).sum(function (d) { return d.value; });
-            var sortFn = $$.getSortCompareFn(true);
-            return $$.treemap(sortFn ? hierarchyData.sort(sortFn) : hierarchyData);
-        };
         $el.defs
             .append("clipPath")
             .attr("id", clip.id)
@@ -20980,9 +20989,9 @@ var shapeTreemap = {
     updateTargetsForTreemap: function (targets) {
         var $$ = this;
         var treemap = $$.$el.treemap;
-        var treemapData = $$.treemapFn($$.getTreemapData(targets !== null && targets !== void 0 ? targets : $$.data.targets));
+        var treemapData = getHierachyData.call($$, $$.getTreemapData(targets !== null && targets !== void 0 ? targets : $$.data.targets));
         // using $el.treemap reference can alter data, so select treemap <g> again
-        treemap.data([treemapData]);
+        treemap.data(treemapData);
     },
     /**
      * Render treemap
@@ -24188,7 +24197,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.11.3-nightly-20240524004610
+ * @version 3.12.1-nightly-20240528004628
  */
 var bb = {
     /**
@@ -24198,7 +24207,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.11.3-nightly-20240524004610",
+    version: "3.12.1-nightly-20240528004628",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
