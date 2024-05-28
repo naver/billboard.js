@@ -1,3 +1,31 @@
+## [3.12.1](https://github.com/naver/billboard.js/compare/3.12.0...3.12.1) (2024-05-27)
+
+
+### Bug Fixes
+
+* **treemap:** Fix generation w/non-exist node ([#3781](https://github.com/naver/billboard.js/issues/3781)) ([eb53a12](https://github.com/naver/billboard.js/commit/eb53a128f952289880c0963576f3fe6529c18a6b)), closes [#3777](https://github.com/naver/billboard.js/issues/3777)
+
+# [3.12.0](https://github.com/naver/billboard.js/compare/3.11.3...3.12.0) (2024-05-27)
+
+
+### Bug Fixes
+
+* **api:** Fix scatter type loading ([413812d](https://github.com/naver/billboard.js/commit/413812d2db3553c7a12ca62b91c852e46a12efe6)), closes [#3740](https://github.com/naver/billboard.js/issues/3740)
+* **treemap:** Fix generation w/non-exist node ([02987ab](https://github.com/naver/billboard.js/commit/02987ab5e6798c381cef4106c5fe3f5f34b71fd4)), closes [#3777](https://github.com/naver/billboard.js/issues/3777)
+* **treemap:** Fix missing element arg on data.onover/out ([22428dc](https://github.com/naver/billboard.js/commit/22428dc19bd0f038686ad62e99a2cc7c87584b35)), closes [#3766](https://github.com/naver/billboard.js/issues/3766)
+* **types:** Add missing arc.needle.value ([e0a30fe](https://github.com/naver/billboard.js/commit/e0a30fee0f48a5501198d71f8fe31a482121d7fd)), closes [#3697](https://github.com/naver/billboard.js/issues/3697)
+* **types:** Add missing region.label option ([e03057c](https://github.com/naver/billboard.js/commit/e03057c4f6396ad2b49dfb9ee3ac62f2386f11f2)), closes [#3732](https://github.com/naver/billboard.js/issues/3732)
+* **types:** Correct typo in BarOptions ([a0ad93a](https://github.com/naver/billboard.js/commit/a0ad93a20b19b7282fc2f76267e9f4595bda1bce)), closes [#3749](https://github.com/naver/billboard.js/issues/3749)
+* **types:** Fix missing polar type ([7f5d5b0](https://github.com/naver/billboard.js/commit/7f5d5b08e4753aa1ea5df1cb6ca4f42b8a9d28d9)), closes [#3778](https://github.com/naver/billboard.js/issues/3778)
+
+
+### Features
+
+* **axis:** Intent to ship axis.tooltip ([54e77cb](https://github.com/naver/billboard.js/commit/54e77cb5c34a6b1ca90b9b533e5e29033b80d821)), closes [#3603](https://github.com/naver/billboard.js/issues/3603)
+* **axis:** Intent to ship axis.x.forceAsSingle ([6ad0554](https://github.com/naver/billboard.js/commit/6ad05543e0aa9aa51f3b9e1a07cbdb1275888f3a)), closes [#3764](https://github.com/naver/billboard.js/issues/3764)
+* **bundler:** Migrate babel -> esbuild ([ff0a98c](https://github.com/naver/billboard.js/commit/ff0a98c50ae76222a3939e96d007d142842d963f)), closes [#3601](https://github.com/naver/billboard.js/issues/3601)
+* **funnel:** Intent to ship funnel type ([e4cdda1](https://github.com/naver/billboard.js/commit/e4cdda1f99480e82c8ac97e63164880b0d75e1ad)), closes [#3449](https://github.com/naver/billboard.js/issues/3449)
+
 ## [3.11.3](https://github.com/naver/billboard.js/compare/3.11.2...3.11.3) (2024-03-18)
 
 
