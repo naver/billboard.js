@@ -178,6 +178,9 @@ export default {
 		});
 
 		// since treemap uses different data types, it needs to be transformed
+		state.hasFunnel && $$.updateFunnel($$.data.targets);
+
+		// since treemap uses different data types, it needs to be transformed
 		state.hasTreemap && $$.updateTargetsForTreemap($$.data.targets);
 
 		// Update current state chart type and elements list after redraw
