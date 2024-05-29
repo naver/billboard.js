@@ -30,14 +30,18 @@ function getSize(checkNeck = false): TSize {
 
 	// determine if container width to not be less than neck width
 	if (checkNeck) {
-		const {width: neckWidth} = getNecklSize.call($$, {
+		const {width: neckWidth, height: neckHeight} = getNecklSize.call($$, {
 			width: size.width,
 			height: size.height
 		});
 
-		// prevent funnel width from being less than neck width
+		// prevent neck size to not exceeed funnel size
 		if (size.width < neckWidth) {
 			size.width = neckWidth;
+		}
+
+		if (size.height < neckHeight) {
+			size.height = neckHeight;
 		}
 	}
 
@@ -80,7 +84,7 @@ function getNecklSize(current: TSizeCurrent) {
  */
 function getCoord(d: IFunnelData[]) {
 	const $$ = this;
-	const {top, width} = getSize.call($$, true);
+	const {top, left, width} = getSize.call($$, true);
 	const coords: number[][][] = [];
 
 	d.forEach((d, i) => {
@@ -93,11 +97,11 @@ function getCoord(d: IFunnelData[]) {
 		//   |                   ˅
 		//  (3) <-------------- (2)
 		coords.push(d.coords = [
-			[0, y], // M
-			[width, y], // 1
-			[width, i > 0 ? ratio + y : ratio + top], // 2
-			[0, i > 0 ? ratio + y : ratio + top], // 3
-			[0, y] // 4
+			[left, y], // M
+			[left + width, y], // 1
+			[left + width, i > 0 ? ratio + y : ratio + top], // 2
+			[left, i > 0 ? ratio + y : ratio + top], // 3
+			[left, y] // 4
 		]);
 	});
 
@@ -105,28 +109,35 @@ function getCoord(d: IFunnelData[]) {
 }
 
 /**
- * Get neck path
+ * Get clip path
+ * @param {boolean} forBackground Determine if clip path for background
  * @returns {string} path
  * @private
  */
-function getNeckPath() {
+function getClipPath(forBackground = false): string {
 	const $$ = this;
 	const {width, height, top, left} = getSize.call($$, true);
 	const neck = getNecklSize.call($$, {width, height});
-
-	const rightX = (width + neck.width) / 2;
 	const leftX = (width - neck.width) / 2;
+	const rightX = (width + neck.width) / 2;
 	const bodyHeigth = height - neck.height;
 
 	const coords = [
-		[0 + left, 0 + top], // M
-		[width + left, 0 + top], // 1
+		[0, 0], // M
+		[width, 0], // 1
 		[rightX, bodyHeigth], // 2
-		[rightX, height + top], // 3
-		[leftX, height + top], // 4
+		[rightX, height], // 3
+		[leftX, height], // 4
 		[leftX, bodyHeigth], // 5
-		[0 + left, 0 + top] // 6
+		[0, 0] // 6
 	];
+
+	if (forBackground) {
+		coords.forEach(d => {
+			d[0] += left;
+			d[1] += top;
+		});
+	}
 
 	return `M${coords.join("L")}z`;
 }
@@ -158,7 +169,7 @@ function getFunnelData(d: IData[]): IFunnelData[] {
  * @returns {Array} Updated data object
  * @private
  */
-function updateRatio(data) {
+function updateRatio(data: IFunnelData[]): IFunnelData[] {
 	const $$ = this;
 	const {height} = getSize.call($$);
 	const total = $$.getTotalDataSum(true);
@@ -271,6 +282,19 @@ export default {
 	},
 
 	/**
+	 * Update funnel path selection
+	 * @param {object} targets Updated target data
+	 * @private
+	 */
+	updateFunnel(targets: IData[]): void {
+		const $$ = this;
+		const {$el: {funnel}} = $$;
+		const targetIds = targets.map(({id}) => id);
+
+		funnel.path = funnel.path.filter(d => targetIds.indexOf(d.id) >= 0);
+	},
+
+	/**
 	 * Generate treemap coordinate points data
 	 * @returns {Array} Array of coordinate points
 	 * @private
@@ -279,13 +303,15 @@ export default {
 		const $$ = this;
 		const {$el: {funnel}} = $$;
 		const targets = $$.filterTargetsToShow(funnel.path);
+		const {top, left, right} = getSize.call($$);
+		const center = (left - right) / 2;
 		const points = {};
-		let accumulatedHeight = getSize.call($$).top ?? 0;
+		let accumulatedHeight = top ?? 0;
 
 		targets.each((d, i) => {
 			points[d.id] = [
-				[0, accumulatedHeight],
-				[0, accumulatedHeight += (targets?.[i] ?? d).ratio]
+				[center, accumulatedHeight],
+				[center, accumulatedHeight += (targets?.[i] ?? d).ratio]
 			];
 		});
 
@@ -303,10 +329,8 @@ export default {
 		const coords = getCoord.call($$, updateRatio.call($$, targets.data()));
 
 		// set neck path
-		const neckPath = getNeckPath.bind($$)();
-
-		funnel.attr("clip-path", `path('${neckPath}')`);
-		funnel.background.attr("d", neckPath);
+		funnel.attr("clip-path", `path('${getClipPath.bind($$)()}')`);
+		funnel.background.attr("d", getClipPath.call($$, true));
 
 		$T(targets)
 			.attr("d", (d, i) => `M${coords[i].join("L")}z`)

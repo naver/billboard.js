@@ -161,6 +161,42 @@ describe("SHAPE FUNNEL", () => {
 		});
 	});
 
+	describe("padding option", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 50],
+						["data2", 50],
+						["data3", 50]
+					],
+					type: "funnel"
+				},
+				padding: {
+					top: 20,
+					bottom: 20,
+					left: 20,
+					right:20
+				},
+				funnel: {
+					neck: {
+						width: 200,
+						height: 100
+					}
+				}
+			};
+		});
+
+		it("check path value with padding", () => {
+			const {funnel} = chart.internal.$el;
+			const expectedClipPath = "M0,0L600,0L400,310L400,410L200,410L200,310L0,0z";
+			const expectedBackgroundPath = "M20,20L620,20L420,330L420,430L220,430L220,330L20,20z";
+
+			expect(funnel.attr("clip-path").indexOf(expectedClipPath) > -1).to.be.true;
+			expect(funnel.select(`.${$FUNNEL.funnelBackground}`).attr("d").indexOf(expectedBackgroundPath) > -1).to.be.true;
+		});
+	});
+
 	describe("neck option", () => {
 		before(() => {
 			args = {
@@ -312,6 +348,41 @@ describe("SHAPE FUNNEL", () => {
 					done();
 				}
 			});
+		});
+	});
+
+	describe(".unload() API", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 50],
+						["data2", 50],
+						["data3", 50],
+					],
+					type: "funnel"
+				},
+				legend: {
+					show: false
+				}
+			};
+		});
+
+		it("should unload and shape resized correctly.", done => {
+			// when
+			chart.unload({
+				ids: ["data1"],
+				done() {
+					const {internal: {$el}} = this;
+					const targets = this.internal.$el.funnel.selectAll(`.${$COMMON.target}`);
+					const height = targets.data().reduce((a, c) => a.ratio + c.ratio);
+
+					expect(targets.size()).to.be.equal(2);
+					expect(+$el.svg.attr("height")).to.be.equal(height);
+
+					done();
+				}
+			});			
 		});
 	});
 });
