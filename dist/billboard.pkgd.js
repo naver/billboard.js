@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.1-nightly-20240528004628
+ * @version 3.12.2-nightly-20240529004632
  *
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - @types/d3-selection ^3.0.0
@@ -27708,6 +27708,7 @@ function callDone(fn, resizeAfter = false) {
       $$.data.targets = $$.data.targets.filter((t) => t.id !== id);
       hasLegendDefsPoint && ((_a2 = $el.defs) == null ? void 0 : _a2.select(`#${$$.getDefsPointId(suffixId)}`).remove());
     });
+    state.hasFunnel && $$.updateFunnel($$.data.targets);
     state.hasTreemap && $$.updateTargetsForTreemap($$.data.targets);
     $$.updateTypesElements();
   }
@@ -45205,12 +45206,15 @@ function getSize(checkNeck = false) {
     height: height - (config.legend_show ? $$.getLegendHeight() + 10 : 0) - (padding.top + padding.bottom)
   }, padding);
   if (checkNeck) {
-    const { width: neckWidth } = getNecklSize.call($$, {
+    const { width: neckWidth, height: neckHeight } = getNecklSize.call($$, {
       width: size.width,
       height: size.height
     });
     if (size.width < neckWidth) {
       size.width = neckWidth;
+    }
+    if (size.height < neckHeight) {
+      size.height = neckHeight;
     }
   }
   return size;
@@ -45234,49 +45238,55 @@ function getNecklSize(current) {
 }
 function getCoord(d) {
   const $$ = this;
-  const { top, width } = getSize.call($$, true);
+  const { top, left, width } = getSize.call($$, true);
   const coords = [];
   d.forEach((d2, i) => {
     const { ratio } = d2;
     const y = i > 0 ? coords[i - 1][2][1] : top;
     coords.push(d2.coords = [
-      [0, y],
+      [left, y],
       // M
-      [width, y],
+      [left + width, y],
       // 1
-      [width, i > 0 ? ratio + y : ratio + top],
+      [left + width, i > 0 ? ratio + y : ratio + top],
       // 2
-      [0, i > 0 ? ratio + y : ratio + top],
+      [left, i > 0 ? ratio + y : ratio + top],
       // 3
-      [0, y]
+      [left, y]
       // 4
     ]);
   });
   return coords;
 }
-function getNeckPath() {
+function getClipPath(forBackground = false) {
   const $$ = this;
   const { width, height, top, left } = getSize.call($$, true);
   const neck = getNecklSize.call($$, { width, height });
-  const rightX = (width + neck.width) / 2;
   const leftX = (width - neck.width) / 2;
+  const rightX = (width + neck.width) / 2;
   const bodyHeigth = height - neck.height;
   const coords = [
-    [0 + left, 0 + top],
+    [0, 0],
     // M
-    [width + left, 0 + top],
+    [width, 0],
     // 1
     [rightX, bodyHeigth],
     // 2
-    [rightX, height + top],
+    [rightX, height],
     // 3
-    [leftX, height + top],
+    [leftX, height],
     // 4
     [leftX, bodyHeigth],
     // 5
-    [0 + left, 0 + top]
+    [0, 0]
     // 6
   ];
+  if (forBackground) {
+    coords.forEach((d) => {
+      d[0] += left;
+      d[1] += top;
+    });
+  }
   return `M${coords.join("L")}z`;
 }
 function getFunnelData(d) {
@@ -45365,22 +45375,34 @@ function updateRatio(data) {
     funnel.path = mainFunnelEnter.merge(mainFunnelUpdate).attr("class", (d) => classChartFunnel(d)).select("path").attr("class", classFunnel).style("opacity", "0").style("fill", $$.color);
   },
   /**
+   * Update funnel path selection
+   * @param {object} targets Updated target data
+   * @private
+   */
+  updateFunnel(targets) {
+    const $$ = this;
+    const { $el: { funnel } } = $$;
+    const targetIds = targets.map(({ id }) => id);
+    funnel.path = funnel.path.filter((d) => targetIds.indexOf(d.id) >= 0);
+  },
+  /**
    * Generate treemap coordinate points data
    * @returns {Array} Array of coordinate points
    * @private
    */
   generateGetFunnelPoints() {
-    var _a;
     const $$ = this;
     const { $el: { funnel } } = $$;
     const targets = $$.filterTargetsToShow(funnel.path);
+    const { top, left, right } = getSize.call($$);
+    const center = (left - right) / 2;
     const points = {};
-    let accumulatedHeight = (_a = getSize.call($$).top) != null ? _a : 0;
+    let accumulatedHeight = top != null ? top : 0;
     targets.each((d, i) => {
-      var _a2;
+      var _a;
       points[d.id] = [
-        [0, accumulatedHeight],
-        [0, accumulatedHeight += ((_a2 = targets == null ? void 0 : targets[i]) != null ? _a2 : d).ratio]
+        [center, accumulatedHeight],
+        [center, accumulatedHeight += ((_a = targets == null ? void 0 : targets[i]) != null ? _a : d).ratio]
       ];
     });
     return (d) => points[d.id];
@@ -45394,9 +45416,8 @@ function updateRatio(data) {
     const { $T, $el: { funnel } } = $$;
     const targets = $$.filterTargetsToShow(funnel.path);
     const coords = getCoord.call($$, updateRatio.call($$, targets.data()));
-    const neckPath = getNeckPath.bind($$)();
-    funnel.attr("clip-path", `path('${neckPath}')`);
-    funnel.background.attr("d", neckPath);
+    funnel.attr("clip-path", `path('${getClipPath.bind($$)()}')`);
+    funnel.background.attr("d", getClipPath.call($$, true));
     $T(targets).attr("d", (d, i) => `M${coords[i].join("L")}z`).style("opacity", "1");
     funnel.selectAll("g").style("opacity", null);
   }
@@ -48558,7 +48579,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.1-nightly-20240528004628",
+  version: "3.12.2-nightly-20240529004632",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
