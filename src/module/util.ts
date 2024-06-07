@@ -835,8 +835,7 @@ function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | n
 	// Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
 	// https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
 	// Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
-	const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"]
-		.some(v => matchMedia?.(`(${v})`).matches);
+	const hasMouse = mouse && (matchMedia?.("any-hover:hover").matches || matchMedia?.("any-pointer:fine").matches);
 
 	// fallback to 'mouse' if no input type is detected.
 	return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
