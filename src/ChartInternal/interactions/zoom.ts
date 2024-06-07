@@ -332,10 +332,6 @@ export default {
 		const {config, $el: {eventRect}} = $$;
 		const behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
 
-		// Since Chrome 89, wheel zoom not works properly
-		// Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
-		$$.$el.svg.on("wheel", () => {});
-
 		eventRect?.call(behaviour)
 			.on("dblclick.zoom", null);
 	},
