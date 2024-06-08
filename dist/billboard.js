@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.2-nightly-20240605004618
+ * @version 3.12.2-nightly-20240608004630
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2660,7 +2660,7 @@ function convertInputType(mouse, touch) {
       }
     }
   }
-  const hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"].some((v) => matchMedia == null ? void 0 : matchMedia(`(${v})`).matches);
+  const hasMouse = mouse && ((matchMedia == null ? void 0 : matchMedia("any-hover:hover").matches) || (matchMedia == null ? void 0 : matchMedia("any-pointer:fine").matches));
   return hasMouse && "mouse" || hasTouch && "touch" || "mouse";
 }
 function runUntil(fn, conditionFn) {
@@ -11204,8 +11204,6 @@ extend(zoom, {
     const $$ = this;
     const { config, $el: { eventRect } } = $$;
     const behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
-    $$.$el.svg.on("wheel", () => {
-    });
     eventRect == null ? void 0 : eventRect.call(behaviour).on("dblclick.zoom", null);
   },
   /**
@@ -21532,7 +21530,7 @@ const bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "3.12.2-nightly-20240605004618",
+  version: "3.12.2-nightly-20240608004630",
   /**
    * Generate chart
    * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:

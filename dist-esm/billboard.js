@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.12.2-nightly-20240605004618
+ * @version 3.12.2-nightly-20240608004630
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -2845,8 +2845,8 @@ function convertInputType(mouse, touch) {
     // Check if agent has mouse using any-hover, touch devices (e.g iPad) with external mouse will return true as long as mouse is connected
     // https://css-tricks.com/interaction-media-features-and-their-potential-for-incorrect-assumptions/#aa-testing-the-capabilities-of-all-inputs
     // Demo: https://patrickhlauke.github.io/touch/pointer-hover-any-pointer-any-hover/
-    var hasMouse = mouse && ["any-hover:hover", "any-pointer:fine"]
-        .some(function (v) { return matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("(".concat(v, ")")).matches; });
+    var hasMouse = mouse &&
+        ((matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("any-hover:hover").matches) || (matchMedia === null || matchMedia === void 0 ? void 0 : matchMedia("any-pointer:fine").matches));
     // fallback to 'mouse' if no input type is detected.
     return (hasMouse && "mouse") || (hasTouch && "touch") || "mouse";
 }
@@ -23549,9 +23549,6 @@ var zoom = {
         var $$ = this;
         var config = $$.config, eventRect = $$.$el.eventRect;
         var behaviour = config.zoom_type === "drag" ? $$.zoomBehaviour : $$.zoom;
-        // Since Chrome 89, wheel zoom not works properly
-        // Applying the workaround: https://github.com/d3/d3-zoom/issues/231#issuecomment-802305692
-        $$.$el.svg.on("wheel", function () { });
         eventRect === null || eventRect === void 0 ? void 0 : eventRect.call(behaviour).on("dblclick.zoom", null);
     },
     /**
@@ -24224,7 +24221,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.12.2-nightly-20240605004618
+ * @version 3.12.2-nightly-20240608004630
  */
 var bb = {
     /**
@@ -24234,7 +24231,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.12.2-nightly-20240605004618",
+    version: "3.12.2-nightly-20240608004630",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
