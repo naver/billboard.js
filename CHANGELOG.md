@@ -1,3 +1,11 @@
+## [3.12.3](https://github.com/naver/billboard.js/compare/3.12.2...3.12.3) (2024-06-10)
+
+
+### Bug Fixes
+
+* **util:** Update inputtype determination code ([f6201ad](https://github.com/naver/billboard.js/commit/f6201adc23791ec90135c6b41a485ef1dfb0937f)), closes [#3798](https://github.com/naver/billboard.js/issues/3798)
+* **zoom:** Remove unused wheel listener ([0b0e8f8](https://github.com/naver/billboard.js/commit/0b0e8f805799d442e9d74c0f3215ff34d08cfeb1)), closes [#3791](https://github.com/naver/billboard.js/issues/3791)
+
 ## [3.12.2](https://github.com/naver/billboard.js/compare/3.12.1...3.12.2) (2024-05-28)
 
 
