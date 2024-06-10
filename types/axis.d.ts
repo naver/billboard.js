@@ -326,6 +326,14 @@ export interface XTickConfiguration {
 		 * Show or hide tick text
 		 */
 		show?: boolean;
+
+		/**
+		 * Set the first/last axis tick text to be positioned inside the chart on non-rotated axis.
+		 */
+		inner?: boolean | {
+			first? : boolean;
+			last?: boolean;
+		};
 	};
 
 	/**
