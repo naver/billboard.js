@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  *
- * @version 3.12.3-nightly-20240611004634
+ * @version 3.12.3-nightly-20240612004629
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -75,8 +75,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__1__;
 /******/ 	
 /************************************************************************/
 var __webpack_exports__ = {};
-// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
-!function() {
 
 // EXPORTS
 __webpack_require__.d(__webpack_exports__, {
@@ -138,7 +136,7 @@ class Plugin {
     });
   }
 }
-__publicField(Plugin, "version", "3.12.3-nightly-20240611004634");
+__publicField(Plugin, "version", "3.12.3-nightly-20240612004629");
 
 ;// CONCATENATED MODULE: ./src/Plugin/bubblecompare/index.ts
 var bubblecompare_defProp = Object.defineProperty;
@@ -204,7 +202,6 @@ bubblecompare_publicField(_BubbleCompare, "version", `0.0.1`);
 let BubbleCompare = _BubbleCompare;
 
 
-}();
 __webpack_exports__ = __webpack_exports__["default"];
 /******/ 	return __webpack_exports__;
 /******/ })()
