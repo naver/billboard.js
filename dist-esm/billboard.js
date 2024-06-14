@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 3.12.3-nightly-20240613004626
+ * @version 3.12.4-nightly-20240614004635
 */
 import { pointer, select, namespaces, selectAll } from 'd3-selection';
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
@@ -5265,7 +5265,9 @@ var classModule = {
     },
     getTargetSelectorSuffix: function (targetId) {
         var targetStr = targetId || targetId === 0 ? "-".concat(targetId) : "";
-        return targetStr.replace(/([\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\])/g, "-");
+        // replace control ascii(0 ~ 32) and extended ascii(127 ~ 160)
+        return targetStr
+            .replace(/[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-"); // eslint-disable-line no-control-regex
     },
     selectorTarget: function (id, prefix, postfix) {
         if (prefix === void 0) { prefix = ""; }
@@ -24221,7 +24223,7 @@ var zoomModule = function () {
 var defaults = {};
 /**
  * @namespace bb
- * @version 3.12.3-nightly-20240613004626
+ * @version 3.12.4-nightly-20240614004635
  */
 var bb = {
     /**
@@ -24231,7 +24233,7 @@ var bb = {
      *    bb.version;  // "1.0.0"
      * @memberof bb
      */
-    version: "3.12.3-nightly-20240613004626",
+    version: "3.12.4-nightly-20240614004635",
     /**
      * Generate chart
      * - **NOTE:** Bear in mind for the possiblity of ***throwing an error***, during the generation when:
