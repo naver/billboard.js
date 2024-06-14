@@ -1,3 +1,11 @@
+## [3.12.4](https://github.com/naver/billboard.js/compare/3.12.3...3.12.4) (2024-06-13)
+
+
+### Bug Fixes
+
+* **class:** Fix to handle contorl/extended ascii for data names ([7059779](https://github.com/naver/billboard.js/commit/70597796c49d125e06577f73674cf124ed3979d2)), closes [#3804](https://github.com/naver/billboard.js/issues/3804)
+* **types:** Missing tick.text.inner type added for xAxis ([5c1a6a4](https://github.com/naver/billboard.js/commit/5c1a6a43d2f281528f5d2c43d33d6bcae38f0e6d)), closes [#3802](https://github.com/naver/billboard.js/issues/3802)
+
 ## [3.12.3](https://github.com/naver/billboard.js/compare/3.12.2...3.12.3) (2024-06-10)
 
 

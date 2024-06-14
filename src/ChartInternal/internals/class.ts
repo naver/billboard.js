@@ -87,7 +87,9 @@ export default {
 	getTargetSelectorSuffix(targetId?: string | number): string {
 		const targetStr = targetId || targetId === 0 ? `-${targetId}` : "";
 
-		return targetStr.replace(/([\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\])/g, "-");
+		// replace control ascii(0 ~ 32) and extended ascii(127 ~ 160)
+		return targetStr
+			.replace(/[\x00-\x20\x7F-\xA0\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-"); // eslint-disable-line no-control-regex
 	},
 
 	selectorTarget(id: string, prefix = "", postfix = ""): string {
